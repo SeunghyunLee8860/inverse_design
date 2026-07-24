@@ -1,0 +1,13 @@
+{
+  "source_fsp": "LOCAL_INPUT/ir_slab_b.fsp",
+  "replay_fsp": "LOCAL_OUTPUT/20260724T_constitutive_matrix/ir_slab_b_gpu_replay/ir_slab_b_gpu_replay.fsp",
+  "requested_engine": "GPU",
+  "resource": "Local Host",
+  "cpu_saved_RMSE_vs_TMM": 0.0056223417682055715,
+  "cpu_saved_T_RMSE_vs_TMM": 0.005708956713403997,
+  "gpu_R_RMSE_vs_TMM": 0.005622315518792694,
+  "gpu_T_RMSE_vs_TMM": 0.005708920502562043,
+  "gpu_A_RMSE_vs_TMM": 0.0006940043797308455,
+  "cpu_gpu_R_RMSE": 1.8046451145263627e-07,
+  "cpu_gpu_T_RMSE": 1.3728551187159121e-07
+}

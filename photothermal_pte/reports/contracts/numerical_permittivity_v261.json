@@ -1,0 +1,54 @@
+{
+  "project": "LOCAL_OUTPUT/20260724T_constitutive_matrix/flat_x_sampled_v261/fdtd_qon/fdtd_test.fsp",
+  "material_name": "TaIrTe4_ani",
+  "frequency_Hz": 74948114500000.0,
+  "dt_s": 1.5888123912751634e-17,
+  "dt_sources": {
+    "getdata_FDTD_dt": "LumApiError: \"in getdata, the d-card named FDTD was not found.\\n  Try the command '?getdata;' to see which d-cards are available.\"",
+    "getnamed_FDTD_dt": [
+      1.5888123912751634e-17
+    ]
+  },
+  "axes": [
+    {
+      "axis": "x",
+      "fitted_epsilon_n_squared": {
+        "real": -30.713258904405677,
+        "imag": 50.848092830132046
+      },
+      "finite_dt_numerical_permittivity": {
+        "real": -30.712953693661433,
+        "imag": 50.847618426607774
+      },
+      "relative_difference": 9.496048871306269e-06
+    },
+    {
+      "axis": "y",
+      "fitted_epsilon_n_squared": {
+        "real": 15.900726592215042,
+        "imag": 9.2891954756535
+      },
+      "finite_dt_numerical_permittivity": {
+        "real": 15.900726592215083,
+        "imag": 9.289152142164516
+      },
+      "relative_difference": 2.353127771731729e-06
+    },
+    {
+      "axis": "z",
+      "fitted_epsilon_n_squared": {
+        "real": 16.0,
+        "imag": 0.0
+      },
+      "finite_dt_numerical_permittivity": {
+        "real": 16.0,
+        "imag": 0.0
+      },
+      "relative_difference": 0.0
+    }
+  ],
+  "definition": "getnumericalpermittivity returns the finite-dt D/E numerical permittivity used by the FDTD update",
+  "heat_run": false,
+  "clipping": false,
+  "flux_gain": false
+}

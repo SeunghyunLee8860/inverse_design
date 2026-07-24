@@ -1,0 +1,187 @@
+{
+  "scope": {
+    "heat_run": false,
+    "clipping": false,
+    "flux_gain": false
+  },
+  "script_audit": {
+    "source_project": "LOCAL_OUTPUT/20260724T000000Z_recheck/fdtd_qon/fdtd_test.fsp",
+    "group": "stage1_pabs_adv",
+    "analysis_script_path": "LOCAL_OUTPUT/20260724T030000Z_anisotropic_yee_diagnostics/script_audit/pabs_adv_analysis_script.lsf",
+    "analysis_script_characters": 8114,
+    "setup_script_path": "LOCAL_OUTPUT/20260724T030000Z_anisotropic_yee_diagnostics/script_audit/pabs_adv_setup_script.lsf",
+    "setup_script_characters": 654,
+    "periodic_comment_present": true,
+    "periodic_correction_enabled": true,
+    "known_children": {
+      "field": 1,
+      "index": 1,
+      "Pabs": 0,
+      "Pabs_total": 0
+    },
+    "maxwell_rerun": false,
+    "heat_run": false
+  },
+  "component_analysis": {
+    "method": {
+      "raw_getdata_option": 1,
+      "fields_interpolated_before_Q": false,
+      "epsilon_component_specific": true,
+      "formula": "Qi=+0.5*omega*eps0*imag(eps_i)*abs(Ei)^2 at native Yee positions",
+      "mapping": "quadrature-mass-conservative linear deposition of scalar Qi onto the common x/y/z grid",
+      "periodic_mapping_axes": [
+        "x",
+        "y"
+      ],
+      "clipping": false,
+      "flux_gain": false,
+      "heat_run": false
+    },
+    "disk": {
+      "A_Qx_native": 0.45395726296115574,
+      "A_Qy_native": 0.05406218463673783,
+      "A_Qz_native": 2.4681242992670027e-12,
+      "A_Q_total_native": 0.5080194476003617,
+      "A_Qx_conservative_common": 0.45395726296115574,
+      "A_Qy_conservative_common": 0.05406218463673785,
+      "A_Qz_conservative_common": 2.4681242992670027e-12,
+      "A_Q_total_conservative_common": 0.5080194476003617,
+      "A_Q_pabs_adv_internal": 0.5080194475039502,
+      "A_local_flux": 0.45370935742204804,
+      "relative_mismatch": 0.11970238058765331,
+      "native_minus_conservative_common": 0.0,
+      "native_minus_pabs_adv": 9.64114343915412e-11,
+      "false_Ez_scalar_eps_x": 0.1354224898717778,
+      "false_Ez_scalar_eps_y": 0.024739690259322808
+    },
+    "square": {
+      "A_Qx_native": 0.3635794576777732,
+      "A_Qy_native": 0.10872589508332924,
+      "A_Qz_native": 2.484071035326303e-12,
+      "A_Q_total_native": 0.47230535276358654,
+      "A_Qx_conservative_common": 0.3635794576777732,
+      "A_Qy_conservative_common": 0.10872589508332924,
+      "A_Qz_conservative_common": 2.484071035326303e-12,
+      "A_Q_total_conservative_common": 0.47230535276358654,
+      "A_Q_pabs_adv_internal": 0.4723053526790394,
+      "A_local_flux": 0.36337605526584904,
+      "relative_mismatch": 0.29977015799250695,
+      "native_minus_conservative_common": 0.0,
+      "native_minus_pabs_adv": 8.454714706118693e-11,
+      "false_Ez_scalar_eps_x": 0.19156889100313795,
+      "false_Ez_scalar_eps_y": 0.03499680910627896
+    },
+    "flat": {
+      "A_Qx_native": 0.2566279598406459,
+      "A_Qy_native": 0.0,
+      "A_Qz_native": 0.0,
+      "A_Q_total_native": 0.2566279598406459,
+      "A_Qx_conservative_common": 0.2566279598406459,
+      "A_Qy_conservative_common": 0.0,
+      "A_Qz_conservative_common": 0.0,
+      "A_Q_total_conservative_common": 0.2566279598406459,
+      "A_Q_pabs_adv_internal": 0.25662795974340025,
+      "A_local_flux": 0.2566249251772783,
+      "relative_mismatch": 1.1825286906560537e-05,
+      "native_minus_conservative_common": 0.0,
+      "native_minus_pabs_adv": 9.724565597224455e-11,
+      "false_Ez_scalar_eps_x": 0.0,
+      "false_Ez_scalar_eps_y": 0.0
+    },
+    "disk_minus_flat": {
+      "DeltaA_Qx": 0.19732930312050984,
+      "DeltaA_Qy": 0.05406218463673785,
+      "DeltaA_Qz": 2.4681242992670027e-12,
+      "DeltaA_Q_total": 0.25139148775971576,
+      "DeltaA_flux": 0.19708443224476974,
+      "excess": 0.05430705551494602
+    },
+    "disk_false_Ez_comparison": {
+      "actual_disk_Q_minus_flux": 0.05431009017831362,
+      "false_Ez_scalar_eps_x": 0.1354224898717778,
+      "false_Ez_scalar_eps_y": 0.024739690259322808,
+      "false_eps_x_over_actual_excess": 2.4935051558034957,
+      "false_eps_y_over_actual_excess": 0.45552659143257196
+    },
+    "spatial_correlations_in_TaIrTe4": {
+      "DeltaQ_vs_DeltaQx": 0.9891900980353883,
+      "DeltaQ_vs_DeltaQy": 0.3381639292434084,
+      "DeltaQ_vs_false_DeltaQz_scalar_eps_x": 0.41750883398090577,
+      "DeltaQ_vs_Delta_Ez2": 0.2929094933681417,
+      "DeltaQ_vs_Delta_Ey2": 0.33500066731368633
+    }
+  },
+  "excess_channel": {
+    "integrals": {
+      "DeltaA_Q": 0.25139148776055015,
+      "DeltaA_Qx": 0.19732930312050986,
+      "DeltaA_Q_minus_DeltaA_Qx": 0.05406218464004029,
+      "DeltaA_Qy": 0.05406218463673782,
+      "residual_minus_Qy": 3.3024532984956297e-12,
+      "false_DeltaA_Qz_scalar_eps_x": 0.1354224898717778
+    },
+    "correlations_in_TaIrTe4": {
+      "residual_vs_DeltaQy": 0.999999999999997,
+      "residual_vs_false_DeltaQz": 0.2079352599092596,
+      "residual_vs_Delta_Ez2": 0.1828508826012409
+    },
+    "definition": "residual = DeltaQ_pabs_adv - conservative_DeltaQx",
+    "clipping": false,
+    "gain": false
+  },
+  "controls": [
+    {
+      "case": "disk anisotropic",
+      "material_control": "original_anisotropic",
+      "A_pabs_adv": 0.5080194475039502,
+      "A_local_top_bottom": 0.45370935742204804,
+      "A_six_face_net": 0.45370935742204804,
+      "Pabs_minus_six_face": 0.054310090081902185,
+      "relative_mismatch_vs_six_face": 0.11970238037515728,
+      "A_x_pair": 0.0,
+      "A_y_pair": 0.0,
+      "six_face_minus_top_bottom": 0.0,
+      "summary_path": "LOCAL_OUTPUT/20260724T030000Z_anisotropic_yee_diagnostics/controls/disk_anisotropic/fdtd_qon/fdtd_absorption_summary.json"
+    },
+    {
+      "case": "square anisotropic",
+      "material_control": "original_anisotropic",
+      "A_pabs_adv": 0.4723053526790394,
+      "A_local_top_bottom": 0.36337605526584904,
+      "A_six_face_net": 0.36337605526584904,
+      "Pabs_minus_six_face": 0.10892929741319035,
+      "relative_mismatch_vs_six_face": 0.29977015775983573,
+      "A_x_pair": 0.0,
+      "A_y_pair": 0.0,
+      "six_face_minus_top_bottom": 0.0,
+      "summary_path": "LOCAL_OUTPUT/20260724T030000Z_anisotropic_yee_diagnostics/controls/square_anisotropic/fdtd_qon/fdtd_absorption_summary.json"
+    },
+    {
+      "case": "disk isotropic eps_a",
+      "material_control": "isotropic_eps_a",
+      "A_pabs_adv": 0.4518817674023788,
+      "A_local_top_bottom": 0.45158671461767214,
+      "A_six_face_net": 0.45158671461767214,
+      "Pabs_minus_six_face": 0.00029505278470665086,
+      "relative_mismatch_vs_six_face": 0.0006533690543940205,
+      "A_x_pair": 0.0,
+      "A_y_pair": 0.0,
+      "six_face_minus_top_bottom": 0.0,
+      "summary_path": "LOCAL_OUTPUT/20260724T030000Z_anisotropic_yee_diagnostics/controls/disk_isotropic_a/fdtd_qon/fdtd_absorption_summary.json"
+    },
+    {
+      "case": "square isotropic eps_a",
+      "material_control": "isotropic_eps_a",
+      "A_pabs_adv": 0.3986979684796813,
+      "A_local_top_bottom": 0.39846978698156477,
+      "A_six_face_net": 0.39846978698156477,
+      "Pabs_minus_six_face": 0.00022818149811654198,
+      "relative_mismatch_vs_six_face": 0.0005726444151388041,
+      "A_x_pair": 0.0,
+      "A_y_pair": 0.0,
+      "six_face_minus_top_bottom": 0.0,
+      "summary_path": "LOCAL_OUTPUT/20260724T030000Z_anisotropic_yee_diagnostics/controls/square_isotropic_a/fdtd_qon/fdtd_absorption_summary.json"
+    }
+  ],
+  "control_conclusion": "The patterned isotropic controls close within 1%, so the large mismatch is anisotropy-specific rather than a generic finite-edge interpolation effect."
+}

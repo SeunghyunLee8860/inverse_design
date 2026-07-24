@@ -1,0 +1,88 @@
+{
+  "project": "LOCAL_OUTPUT/20260724T_constitutive_matrix/flat_x_sampled_v261/fdtd_qon/fdtd_test.fsp",
+  "solver_version": "v261",
+  "material_name": "TaIrTe4_ani",
+  "wavelength_m": 4e-06,
+  "frequency_Hz": 74948114500000.0,
+  "source_wavelength_range_m": [
+    4e-06,
+    4e-06
+  ],
+  "getfdtdindex_frequency_range_Hz": [
+    74948114425051.89,
+    74948114574948.12
+  ],
+  "single_frequency_limit_used": true,
+  "axes": [
+    {
+      "axis": "x",
+      "quantity": "complex relative permittivity epsilon_r",
+      "raw_imported_epsilon": {
+        "real": -30.713258904405674,
+        "imag": 50.84809283013206
+      },
+      "fitted_epsilon_getfdtdindex": {
+        "real": -30.713258904405677,
+        "imag": 50.848092830132046
+      },
+      "index_monitor_epsilon_index_squared": {
+        "real": -30.713258904405674,
+        "imag": 50.84809283013205
+      },
+      "fitted_refractive_index_sqrt_epsilon": {
+        "real": 3.787526957215641,
+        "imag": 6.712571739358981
+      },
+      "fit_relative_error_vs_raw_epsilon": 2.4658640385199166e-16,
+      "index_monitor_relative_error_vs_fitted_epsilon": 1.3373025369867152e-16
+    },
+    {
+      "axis": "y",
+      "quantity": "complex relative permittivity epsilon_r",
+      "raw_imported_epsilon": {
+        "real": 15.900726592215042,
+        "imag": 9.2891954756535
+      },
+      "fitted_epsilon_getfdtdindex": {
+        "real": 15.900726592215042,
+        "imag": 9.2891954756535
+      },
+      "index_monitor_epsilon_index_squared": {
+        "real": 15.900726592215042,
+        "imag": 9.2891954756535
+      },
+      "fitted_refractive_index_sqrt_epsilon": {
+        "real": 4.142221567240732,
+        "imag": 1.1212818200163703
+      },
+      "fit_relative_error_vs_raw_epsilon": 0.0,
+      "index_monitor_relative_error_vs_fitted_epsilon": 0.0
+    },
+    {
+      "axis": "z",
+      "quantity": "complex relative permittivity epsilon_r",
+      "raw_imported_epsilon": {
+        "real": 16.0,
+        "imag": 0.0
+      },
+      "fitted_epsilon_getfdtdindex": {
+        "real": 16.0,
+        "imag": 0.0
+      },
+      "index_monitor_epsilon_index_squared": {
+        "real": 16.0,
+        "imag": 0.0
+      },
+      "fitted_refractive_index_sqrt_epsilon": {
+        "real": 4.0,
+        "imag": 0.0
+      },
+      "fit_relative_error_vs_raw_epsilon": 0.0,
+      "index_monitor_relative_error_vs_fitted_epsilon": 0.0
+    }
+  ],
+  "quantity_warning": "raw/fitted/index-monitor values are epsilon_r, not n; the only n field is explicitly named fitted_refractive_index_sqrt_epsilon",
+  "heat_run": false,
+  "clipping": false,
+  "flux_gain": false
+}

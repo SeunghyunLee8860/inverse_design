@@ -1,0 +1,23 @@
+{
+  "resource": "Local Host",
+  "geometry": "centered n=4 disk touching TaIrTe4",
+  "source_span_um": [
+    3,
+    12
+  ],
+  "analysis_wavelength_um": 4.0,
+  "global_uniform_mesh_removed": true,
+  "mesh_refinement": "conformal variant 1",
+  "mesh_accuracy": 5.0,
+  "dt_s": 1.5888123912757566e-17,
+  "A_Q_internal": 0.46639369957138693,
+  "R": 0.48600140273393855,
+  "T": 0.04753830926232663,
+  "A_flux_global": 0.46646028800373485,
+  "A_flux_local": 0.4661187383780869,
+  "Q_minus_local_flux": 0.0002749611933000051,
+  "relative_mismatch": 0.000589895171897109,
+  "heat_run": false,
+  "clipping": false,
+  "flux_gain": false
+}

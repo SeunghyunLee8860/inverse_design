@@ -1,0 +1,510 @@
+{
+  "scope": {
+    "maxwell_only": true,
+    "heat_run": false,
+    "strict_geometric_clipping": false,
+    "flux_gain_applied": false
+  },
+  "deltaq": {
+    "status": "completed",
+    "disk_case": "LOCAL_OUTPUT/20260724T000000Z_recheck/fdtd_qon",
+    "flat_case": "LOCAL_OUTPUT/20260724T010500Z_no_design/fdtd_qon",
+    "same_grid_verified": true,
+    "no_clipping": true,
+    "no_flux_gain": true,
+    "metrics": {
+      "DeltaA_Q": 0.25139148776055015,
+      "DeltaA_flux_local": 0.19708443224476974,
+      "excess": 0.05430705551578041,
+      "A_local_flux_disk": 0.45370935742204804,
+      "A_local_flux_flat": 0.2566249251772783,
+      "incident_power_W": 3.600000000000001e-07
+    },
+    "mask_definitions": {
+      "dx_m": 2.4999999999999972e-08,
+      "dy_m": 2.4999999999999972e-08,
+      "disk_radius_m": 1.5e-06,
+      "radial_edge_half_width_cells": 2,
+      "radial_edge_half_width_m": 4.9999999999999945e-08,
+      "flake_z_min_m": -1e-07,
+      "flake_z_max_m": 0.0,
+      "flake_dz_m": 5.000000000000003e-09,
+      "z_boundary_cells_each_side": 2,
+      "z_boundary_width_m": 1.0000000000000007e-08
+    },
+    "radial_decomposition": {
+      "disk_interior": {
+        "delta_power_W": 7.408971452249127e-08,
+        "delta_absorptance": 0.2058047625624757,
+        "fraction_of_DeltaA_Q": 0.8186624153261081,
+        "fraction_of_excess": 3.78965054554787
+      },
+      "disk_edge_band": {
+        "delta_power_W": 1.1135171821169579e-08,
+        "delta_absorptance": 0.030931032836582155,
+        "fraction_of_DeltaA_Q": 0.12303930062279554,
+        "fraction_of_excess": 0.5695582745706824
+      },
+      "exterior": {
+        "delta_power_W": 5.276049250137219e-09,
+        "delta_absorptance": 0.01465569236149227,
+        "fraction_of_DeltaA_Q": 0.058298284051096376,
+        "fraction_of_excess": 0.2698671880163647
+      }
+    },
+    "z_decomposition": {
+      "below_flake_padding": {
+        "delta_power_W": 3.677241587720176e-19,
+        "delta_absorptance": 1.0214559965889375e-12,
+        "fraction_of_DeltaA_Q": 4.063208367507941e-12,
+        "fraction_of_excess": 1.8808900370084053e-11,
+        "z_samples_m": [
+          -1.499999999999979e-07,
+          -1.45e-07,
+          -1.4e-07,
+          -1.35e-07,
+          -1.3e-07,
+          -1.25e-07,
+          -1.2e-07,
+          -1.15e-07,
+          -1.1e-07,
+          -1.05e-07
+        ]
+      },
+      "bottom_boundary_cells": {
+        "delta_power_W": 8.835759082713101e-09,
+        "delta_absorptance": 0.02454377522975861,
+        "fraction_of_DeltaA_Q": 0.09763168772498973,
+        "fraction_of_excess": 0.4519445032814703,
+        "z_samples_m": [
+          -9.999999999999997e-08,
+          -9.499999999999996e-08,
+          -8.999999999999996e-08
+        ]
+      },
+      "flake_interior_cells": {
+        "delta_power_W": 6.552996853297806e-08,
+        "delta_absorptance": 0.18202769036938346,
+        "fraction_of_DeltaA_Q": 0.7240805645048907,
+        "fraction_of_excess": 3.351823969106377,
+        "z_samples_m": [
+          -8.499999999999995e-08,
+          -7.999999999999995e-08,
+          -7.499999999999994e-08,
+          -6.999999999999994e-08,
+          -6.499999999999993e-08,
+          -5.999999999999993e-08,
+          -5.499999999999993e-08,
+          -4.999999999999993e-08,
+          -4.499999999999993e-08,
+          -3.9999999999999935e-08,
+          -3.499999999999994e-08,
+          -2.999999999999994e-08,
+          -2.499999999999994e-08,
+          -1.999999999999993e-08,
+          -1.499999999999993e-08
+        ]
+      },
+      "top_boundary_cells": {
+        "delta_power_W": 1.6135207976981124e-08,
+        "delta_absorptance": 0.04482002215828089,
+        "fraction_of_DeltaA_Q": 0.1782877477576801,
+        "fraction_of_excess": 0.8253075356894869,
+        "z_samples_m": [
+          -9.99999999999993e-09,
+          -4.99999999999993e-09,
+          0.0
+        ]
+      },
+      "above_flake_padding": {
+        "delta_power_W": 7.580655482738677e-19,
+        "delta_absorptance": 2.1057376340940763e-12,
+        "fraction_of_DeltaA_Q": 8.376328303127697e-12,
+        "fraction_of_excess": 3.877466038426989e-11,
+        "z_samples_m": [
+          5.000000000000072e-09,
+          1.127520518712285e-08,
+          1.999457452089688e-08,
+          3.211009892395121e-08,
+          4.8944565493963e-08
+        ]
+      }
+    },
+    "radial_by_z_delta_absorptance": {
+      "disk_interior": {
+        "below_flake_padding": 6.368842826893282e-13,
+        "bottom_boundary_cells": 0.018783568148369612,
+        "flake_interior_cells": 0.14881389281106225,
+        "top_boundary_cells": 0.03820730160160408,
+        "above_flake_padding": 8.028860741128074e-13
+      },
+      "disk_edge_band": {
+        "below_flake_padding": 6.170312733595929e-14,
+        "bottom_boundary_cells": 0.0021173507804023006,
+        "flake_interior_cells": 0.02083856701576916,
+        "top_boundary_cells": 0.007975115040015454,
+        "above_flake_padding": 3.33536138889356e-13
+      },
+      "exterior": {
+        "below_flake_padding": 3.2286858656364983e-13,
+        "bottom_boundary_cells": 0.0036428563009867003,
+        "flake_interior_cells": 0.012375230542552032,
+        "top_boundary_cells": -0.0013623944833386456,
+        "above_flake_padding": 9.693154210919128e-13
+      }
+    },
+    "largest_absolute_radial_DeltaQ_region": "disk_interior",
+    "largest_absolute_z_DeltaQ_region": "flake_interior_cells",
+    "interpretation_guard": "DeltaA_flux is a scalar and has no unique spatial allocation. These maps localize DeltaQ; assigning the entire excess to a specific voxel requires the geometry/mesh controls."
+  },
+  "geometry_matrix": [
+    {
+      "label": "A",
+      "geometry": "no design",
+      "case_dir": "LOCAL_OUTPUT/20260724T010500Z_no_design/fdtd_qon",
+      "A_Q_lumerical_internal": 0.25662795974340025,
+      "A_Q_python_exported": 0.2566279597434004,
+      "A_local_flux": 0.2566249251772783,
+      "A_Q_minus_A_local_flux": 3.034566122106508e-06,
+      "signed_mismatch": 1.1824907966403529e-05,
+      "absolute_mismatch": 1.1824907966403529e-05,
+      "internal_minus_python": -1.6653345369377348e-16,
+      "global_flux_absorptance": 0.25674156215126975,
+      "summary_path": "LOCAL_OUTPUT/20260724T010500Z_no_design/fdtd_qon/fdtd_absorption_summary.json"
+    },
+    {
+      "label": "B",
+      "geometry": "full-cell uniform n=4 film, touching",
+      "case_dir": "LOCAL_OUTPUT/20260724T020000Z_pabs_diagnostics/geometry_matrix/B_full_film/fdtd_qon",
+      "A_Q_lumerical_internal": 0.5348460277427317,
+      "A_Q_python_exported": 0.5348460277427314,
+      "A_local_flux": 0.534837340196343,
+      "A_Q_minus_A_local_flux": 8.687546388386203e-06,
+      "signed_mismatch": 1.624334304182452e-05,
+      "absolute_mismatch": 1.624334304182452e-05,
+      "internal_minus_python": 3.3306690738754696e-16,
+      "global_flux_absorptance": 0.5349129590947778,
+      "summary_path": "LOCAL_OUTPUT/20260724T020000Z_pabs_diagnostics/geometry_matrix/B_full_film/fdtd_qon/fdtd_absorption_summary.json"
+    },
+    {
+      "label": "C",
+      "geometry": "grid-aligned square n=4 block, touching",
+      "case_dir": "LOCAL_OUTPUT/20260724T020000Z_pabs_diagnostics/geometry_matrix/C_square/fdtd_qon",
+      "A_Q_lumerical_internal": 0.4723053526790394,
+      "A_Q_python_exported": 0.4723053526790394,
+      "A_local_flux": 0.36337605526584904,
+      "A_Q_minus_A_local_flux": 0.10892929741319035,
+      "signed_mismatch": 0.29977015775983573,
+      "absolute_mismatch": 0.29977015775983573,
+      "internal_minus_python": 0.0,
+      "global_flux_absorptance": 0.36372789629575053,
+      "summary_path": "LOCAL_OUTPUT/20260724T020000Z_pabs_diagnostics/geometry_matrix/C_square/fdtd_qon/fdtd_absorption_summary.json"
+    },
+    {
+      "label": "D",
+      "geometry": "circular n=4 disk, touching",
+      "case_dir": "LOCAL_OUTPUT/20260724T000000Z_recheck/fdtd_qon",
+      "A_Q_lumerical_internal": 0.5080194475039502,
+      "A_Q_python_exported": 0.5080194475039503,
+      "A_local_flux": 0.45370935742204804,
+      "A_Q_minus_A_local_flux": 0.054310090081902296,
+      "signed_mismatch": 0.11970238037515753,
+      "absolute_mismatch": 0.11970238037515753,
+      "internal_minus_python": -1.1102230246251565e-16,
+      "global_flux_absorptance": 0.45402283752494865,
+      "summary_path": "LOCAL_OUTPUT/20260724T000000Z_recheck/fdtd_qon/fdtd_absorption_summary.json"
+    },
+    {
+      "label": "E",
+      "geometry": "circular n=4 disk, 50 nm air gap",
+      "case_dir": "LOCAL_OUTPUT/20260724T020000Z_pabs_diagnostics/geometry_matrix/E_disk_gap50nm/fdtd_qon",
+      "A_Q_lumerical_internal": 0.49004983072382463,
+      "A_Q_python_exported": 0.4900498307238247,
+      "A_local_flux": 0.3912200737943776,
+      "A_Q_minus_A_local_flux": 0.09882975692944707,
+      "signed_mismatch": 0.25261934023710464,
+      "absolute_mismatch": 0.25261934023710464,
+      "internal_minus_python": -5.551115123125783e-17,
+      "global_flux_absorptance": 0.3915746698303061,
+      "summary_path": "LOCAL_OUTPUT/20260724T020000Z_pabs_diagnostics/geometry_matrix/E_disk_gap50nm/fdtd_qon/fdtd_absorption_summary.json"
+    }
+  ],
+  "z_interface_mesh_sweep": [
+    {
+      "label": "10.0",
+      "geometry": "circular disk",
+      "case_dir": "LOCAL_OUTPUT/20260724T020000Z_pabs_diagnostics/mesh_sweep_z/disk_dz10nm/fdtd_qon",
+      "A_Q_lumerical_internal": 0.5081520840808974,
+      "A_Q_python_exported": 0.5081520840808973,
+      "A_local_flux": 0.45393035859038444,
+      "A_Q_minus_A_local_flux": 0.05422172549051285,
+      "signed_mismatch": 0.11944943638246765,
+      "absolute_mismatch": 0.11944943638246765,
+      "internal_minus_python": 1.1102230246251565e-16,
+      "global_flux_absorptance": 0.45424152010692753,
+      "summary_path": "LOCAL_OUTPUT/20260724T020000Z_pabs_diagnostics/mesh_sweep_z/disk_dz10nm/fdtd_qon/fdtd_absorption_summary.json",
+      "flake_dz_nm": 10.0
+    },
+    {
+      "label": "5.0",
+      "geometry": "circular disk",
+      "case_dir": "LOCAL_OUTPUT/20260724T000000Z_recheck/fdtd_qon",
+      "A_Q_lumerical_internal": 0.5080194475039502,
+      "A_Q_python_exported": 0.5080194475039503,
+      "A_local_flux": 0.45370935742204804,
+      "A_Q_minus_A_local_flux": 0.054310090081902296,
+      "signed_mismatch": 0.11970238037515753,
+      "absolute_mismatch": 0.11970238037515753,
+      "internal_minus_python": -1.1102230246251565e-16,
+      "global_flux_absorptance": 0.45402283752494865,
+      "summary_path": "LOCAL_OUTPUT/20260724T000000Z_recheck/fdtd_qon/fdtd_absorption_summary.json",
+      "flake_dz_nm": 5.0
+    },
+    {
+      "label": "2.5",
+      "geometry": "circular disk",
+      "case_dir": "LOCAL_OUTPUT/20260724T020000Z_pabs_diagnostics/mesh_sweep_z/disk_dz2p5nm/fdtd_qon",
+      "A_Q_lumerical_internal": 0.50748325889481,
+      "A_Q_python_exported": 0.5074832588948102,
+      "A_local_flux": 0.4536740005275912,
+      "A_Q_minus_A_local_flux": 0.05380925836721895,
+      "signed_mismatch": 0.11860776307357825,
+      "absolute_mismatch": 0.11860776307357825,
+      "internal_minus_python": -1.1102230246251565e-16,
+      "global_flux_absorptance": 0.45401624908933946,
+      "summary_path": "LOCAL_OUTPUT/20260724T020000Z_pabs_diagnostics/mesh_sweep_z/disk_dz2p5nm/fdtd_qon/fdtd_absorption_summary.json",
+      "flake_dz_nm": 2.5
+    }
+  ],
+  "xy_edge_mesh_sweep": [
+    {
+      "label": "50.0",
+      "geometry": "circular disk",
+      "case_dir": "LOCAL_OUTPUT/20260724T020000Z_pabs_diagnostics/mesh_sweep_xy/disk_designres20/fdtd_qon",
+      "A_Q_lumerical_internal": 0.5084486969055024,
+      "A_Q_python_exported": 0.5084486969055024,
+      "A_local_flux": 0.454503389673594,
+      "A_Q_minus_A_local_flux": 0.053945307231908435,
+      "signed_mismatch": 0.11869065986647488,
+      "absolute_mismatch": 0.11869065986647488,
+      "internal_minus_python": 0.0,
+      "global_flux_absorptance": 0.4556742371114926,
+      "summary_path": "LOCAL_OUTPUT/20260724T020000Z_pabs_diagnostics/mesh_sweep_xy/disk_designres20/fdtd_qon/fdtd_absorption_summary.json",
+      "design_edge_step_nm": 50.0
+    },
+    {
+      "label": "25.0",
+      "geometry": "circular disk",
+      "case_dir": "LOCAL_OUTPUT/20260724T000000Z_recheck/fdtd_qon",
+      "A_Q_lumerical_internal": 0.5080194475039502,
+      "A_Q_python_exported": 0.5080194475039503,
+      "A_local_flux": 0.45370935742204804,
+      "A_Q_minus_A_local_flux": 0.054310090081902296,
+      "signed_mismatch": 0.11970238037515753,
+      "absolute_mismatch": 0.11970238037515753,
+      "internal_minus_python": -1.1102230246251565e-16,
+      "global_flux_absorptance": 0.45402283752494865,
+      "summary_path": "LOCAL_OUTPUT/20260724T000000Z_recheck/fdtd_qon/fdtd_absorption_summary.json",
+      "design_edge_step_nm": 25.0
+    },
+    {
+      "label": "12.5",
+      "geometry": "circular disk",
+      "case_dir": "LOCAL_OUTPUT/20260724T020000Z_pabs_diagnostics/mesh_sweep_xy/disk_designres80/fdtd_qon",
+      "A_Q_lumerical_internal": 0.5066148062920194,
+      "A_Q_python_exported": 0.5066148062920195,
+      "A_local_flux": 0.4519861533853241,
+      "A_Q_minus_A_local_flux": 0.054628652906695385,
+      "signed_mismatch": 0.12086355411008298,
+      "absolute_mismatch": 0.12086355411008298,
+      "internal_minus_python": -1.1102230246251565e-16,
+      "global_flux_absorptance": 0.45208229457567434,
+      "summary_path": "LOCAL_OUTPUT/20260724T020000Z_pabs_diagnostics/mesh_sweep_xy/disk_designres80/fdtd_qon/fdtd_absorption_summary.json",
+      "design_edge_step_nm": 12.5
+    }
+  ],
+  "flat_diagnostics": {
+    "source_project": "LOCAL_OUTPUT/20260724T010500Z_no_design/fdtd_qon/fdtd_test.fsp",
+    "read_only_postprocess": true,
+    "maxwell_rerun": false,
+    "heat_run": false,
+    "diagnostics": {
+      "geometry": "none",
+      "z_contract": {
+        "TaIrTe4_z_min_m": -1e-07,
+        "TaIrTe4_z_max_m": 0.0,
+        "design_z_min_m": null,
+        "design_z_max_m": null,
+        "signed_gap_m": null,
+        "volume_overlap_m": 0.0,
+        "touching_at_single_interface": false
+      },
+      "mesh": {
+        "FDTD_mesh_refinement": "precise volume average",
+        "FDTD_mesh_type": "auto non-uniform",
+        "global_resolution_cells_per_um": 20,
+        "global_nominal_step_m": 5e-08,
+        "flake_override_dz_m": 5e-09,
+        "design_grid_step_xy_m": 2.5e-08,
+        "design_grid_step_z_m": 5e-08,
+        "design_mesh_order": 2.0,
+        "design_override_mesh_order": 0.0,
+        "TaIrTe4_mesh_order": 2.0,
+        "TaIrTe4_override_mesh_order": 0.0
+      },
+      "material_at_4um": {
+        "TaIrTe4_epsilon_diagonal": [
+          {
+            "real": -30.713256371885343,
+            "imag": 50.848086107787424
+          },
+          {
+            "real": 15.900726644538812,
+            "imag": 9.289194887622557
+          },
+          {
+            "real": 16.0,
+            "imag": 0.0
+          }
+        ],
+        "design_index": {
+          "real": 4.0,
+          "imag": 0.0
+        },
+        "SiO2_index": {
+          "real": 1.38,
+          "imag": 0.0
+        },
+        "Si_index": {
+          "real": 3.425,
+          "imag": 0.0
+        }
+      },
+      "solver_epsilon_material_slices": {
+        "path": "LOCAL_OUTPUT/20260724T010500Z_no_design/fdtd_qon/epsilon_material_slices.npz",
+        "material_id_legend": {
+          "0": "air_or_background",
+          "1": "SiO2",
+          "2": "TaIrTe4",
+          "3": "design_n4"
+        },
+        "xy_z_m": -4.999999999999993e-08,
+        "xz_y_m": 6.518183226917858e-21,
+        "yz_x_m": 6.518183226917858e-21,
+        "epsilon_imaginary_ranges": {
+          "x": [
+            9.999999999999999e-11,
+            50.84809283013205
+          ],
+          "y": [
+            9.999999999999999e-11,
+            9.2891954756535
+          ],
+          "z": [
+            0.0,
+            1e-10
+          ]
+        }
+      }
+    }
+  },
+  "disk_diagnostics": {
+    "source_project": "LOCAL_OUTPUT/20260724T000000Z_recheck/fdtd_qon/fdtd_test.fsp",
+    "read_only_postprocess": true,
+    "maxwell_rerun": false,
+    "heat_run": false,
+    "diagnostics": {
+      "geometry": "centered-disk",
+      "z_contract": {
+        "TaIrTe4_z_min_m": -1e-07,
+        "TaIrTe4_z_max_m": 0.0,
+        "design_z_min_m": 0.0,
+        "design_z_max_m": 6e-07,
+        "signed_gap_m": 0.0,
+        "volume_overlap_m": 0.0,
+        "touching_at_single_interface": true
+      },
+      "mesh": {
+        "FDTD_mesh_refinement": "precise volume average",
+        "FDTD_mesh_type": "auto non-uniform",
+        "global_resolution_cells_per_um": 20,
+        "global_nominal_step_m": 5e-08,
+        "flake_override_dz_m": 5e-09,
+        "design_grid_step_xy_m": 2.5e-08,
+        "design_grid_step_z_m": 5e-08,
+        "design_mesh_order": 2.0,
+        "design_override_mesh_order": 0.0,
+        "TaIrTe4_mesh_order": 2.0,
+        "TaIrTe4_override_mesh_order": 0.0
+      },
+      "material_at_4um": {
+        "TaIrTe4_epsilon_diagonal": [
+          {
+            "real": -30.713256371885343,
+            "imag": 50.848086107787424
+          },
+          {
+            "real": 15.900726644538812,
+            "imag": 9.289194887622557
+          },
+          {
+            "real": 16.0,
+            "imag": 0.0
+          }
+        ],
+        "TaIrTe4_refractive_index_diagonal": [
+          {
+            "real": 3.7875266581428106,
+            "imag": 6.7125713819688935
+          },
+          {
+            "real": 4.142221555223214,
+            "imag": 1.1212817522893201
+          },
+          {
+            "real": 4.0,
+            "imag": 0.0
+          }
+        ],
+        "design_index": {
+          "real": 4.0,
+          "imag": 0.0
+        },
+        "SiO2_index": {
+          "real": 1.38,
+          "imag": 0.0
+        },
+        "Si_index": {
+          "real": 3.425,
+          "imag": 0.0
+        }
+      },
+      "solver_epsilon_material_slices": {
+        "path": "LOCAL_OUTPUT/20260724T000000Z_recheck/fdtd_qon/epsilon_material_slices.npz",
+        "material_id_legend": {
+          "0": "air_or_background",
+          "1": "SiO2",
+          "2": "TaIrTe4",
+          "3": "design_n4"
+        },
+        "xy_z_m": -4.999999999999993e-08,
+        "xz_y_m": 6.518183226917858e-21,
+        "yz_x_m": 6.518183226917858e-21,
+        "epsilon_imaginary_ranges": {
+          "x": [
+            9.999999999999998e-11,
+            50.84809283013205
+          ],
+          "y": [
+            9.999999999999998e-11,
+            9.2891954756535
+          ],
+          "z": [
+            0.0,
+            1e-10
+          ]
+        }
+      }
+    }
+  }
+}

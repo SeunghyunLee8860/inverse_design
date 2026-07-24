@@ -1,0 +1,160 @@
+{
+  "project": "LOCAL_OUTPUT/20260724T030000Z_anisotropic_yee_diagnostics/controls/disk_anisotropic/fdtd_qon/fdtd_test.fsp",
+  "solver": {
+    "mesh type": "auto non-uniform",
+    "mesh refinement": "precise volume average",
+    "mesh accuracy": 2.0,
+    "min mesh step": 1e-09,
+    "simulation time": 4e-12,
+    "auto shutoff min": 1e-08
+  },
+  "mesh_objects": [
+    {
+      "name": "global_uniform_mesh",
+      "exists": true,
+      "enabled": 1.0,
+      "x min": -3e-06,
+      "x max": 3e-06,
+      "y min": -3e-06,
+      "y max": 3e-06,
+      "z min": -2.384999999999999e-06,
+      "z max": 2.5999999999999997e-06,
+      "x": 0.0,
+      "x span": 6e-06,
+      "y": 0.0,
+      "y span": 6e-06,
+      "z": 1.0750000000000024e-07,
+      "z span": 4.984999999999999e-06,
+      "override x mesh": 1.0,
+      "override y mesh": 1.0,
+      "override z mesh": 1.0,
+      "dx": 5e-08,
+      "dy": 5e-08,
+      "dz": 5e-08
+    },
+    {
+      "name": "design_mesh",
+      "exists": true,
+      "enabled": 1.0,
+      "x min": -3e-06,
+      "x max": 3e-06,
+      "y min": -3e-06,
+      "y max": 3e-06,
+      "z min": 0.0,
+      "z max": 6e-07,
+      "x": 0.0,
+      "x span": 6e-06,
+      "y": 0.0,
+      "y span": 6e-06,
+      "z": 3e-07,
+      "z span": 6e-07,
+      "override x mesh": 1.0,
+      "override y mesh": 1.0,
+      "override z mesh": 1.0,
+      "dx": 2.5e-08,
+      "dy": 2.5e-08,
+      "dz": 5e-08
+    },
+    {
+      "name": "flake_mesh",
+      "exists": true,
+      "enabled": 1.0,
+      "x min": -3.5999999999999994e-06,
+      "x max": 3.5999999999999994e-06,
+      "y min": -3.5999999999999994e-06,
+      "y max": 3.5999999999999994e-06,
+      "z min": -1.5000000000000002e-07,
+      "z max": 0.0,
+      "x": 0.0,
+      "x span": 7.199999999999999e-06,
+      "y": 0.0,
+      "y span": 7.199999999999999e-06,
+      "z": -7.500000000000001e-08,
+      "z span": 1.5000000000000002e-07,
+      "override x mesh": 0.0,
+      "override y mesh": 0.0,
+      "override z mesh": 1.0,
+      "dx": 2.49e-08,
+      "dy": 2.49e-08,
+      "dz": 5e-09
+    },
+    {
+      "name": "fixed_stack_z_mesh",
+      "exists": false
+    },
+    {
+      "name": "air_bulk_z_mesh",
+      "exists": false
+    },
+    {
+      "name": "si_bulk_z_mesh",
+      "exists": false
+    },
+    {
+      "name": "source_z_registration_mesh",
+      "exists": false
+    }
+  ],
+  "raw_native_pabs_field_axes": {
+    "x": {
+      "count": 241,
+      "min_m": -3e-06,
+      "max_m": 3e-06,
+      "minimum_step_m": 2.4999999999987055e-08,
+      "maximum_step_m": 2.500000000000103e-08,
+      "unique_steps_m_rounded_1e-18": [
+        2.5e-08
+      ]
+    },
+    "y": {
+      "count": 241,
+      "min_m": -3e-06,
+      "max_m": 3e-06,
+      "minimum_step_m": 2.4999999999987055e-08,
+      "maximum_step_m": 2.500000000000103e-08,
+      "unique_steps_m_rounded_1e-18": [
+        2.5e-08
+      ]
+    },
+    "z": {
+      "count": 36,
+      "min_m": -1.499999999999979e-07,
+      "max_m": 4.8944565493963e-08,
+      "minimum_step_m": 4.999999999997914e-09,
+      "maximum_step_m": 1.6834466570011795e-08,
+      "unique_steps_m_rounded_1e-18": [
+        5e-09,
+        6.275205187e-09,
+        8.719369334e-09,
+        1.2115524402999998e-08,
+        1.683446657e-08
+      ]
+    }
+  },
+  "geometry_mesh_order": {
+    "design": {
+      "mesh order": 2.0,
+      "override mesh order from material database": 0.0,
+      "material": "<Object defined dielectric>",
+      "z min": 0.0,
+      "z max": 6e-07
+    },
+    "TaIrTe4_flake": {
+      "mesh order": 2.0,
+      "override mesh order from material database": 0.0,
+      "material": "TaIrTe4_ani",
+      "z min": -1e-07,
+      "z max": 0.0
+    }
+  },
+  "interpretation": {
+    "global_uniform_mesh": "whole-domain 50 nm override",
+    "design_mesh": "local design-grid override; 25 nm x/y and 50 nm z in baseline",
+    "flake_mesh": "z-only 5 nm override from 50 nm below the flake through z=0",
+    "conformal_setting": "The FDTD 'mesh refinement' string is the active conformal algorithm. 'precise volume average' is not conformal variant 1 or 2.",
+    "density_grid_warning": "The imported design density grid is not by itself the complete Yee mesh; the mesh-object overrides and raw native axes are authoritative."
+  },
+  "heat_run": false,
+  "clipping": false,
+  "flux_gain": false
+}

@@ -1,0 +1,27 @@
+{
+  "flat_gpu_original": {
+    "A_Q": 0.979006628198342,
+    "A_flux": -1.1634547244510074e-06,
+    "expected": 0.42324404211944544
+  },
+  "flat_cpu_original": {
+    "A_Q": 0.4222629980585907,
+    "A_flux": 0.4222594527298587,
+    "expected": 0.42324404211944544
+  },
+  "flat_gpu_corrected": {
+    "A_Q": null,
+    "A_flux": 0.4227653101949138,
+    "expected": 0.42324404211944544
+  },
+  "disk_gpu_original": {
+    "A_Q": 0.5080194475039503,
+    "A_flux": 0.45370935742204804,
+    "expected": null
+  },
+  "disk_gpu_corrected": {
+    "A_Q": 0.46639369957138693,
+    "A_flux": 0.4661187383780869,
+    "expected": null
+  }
+}
