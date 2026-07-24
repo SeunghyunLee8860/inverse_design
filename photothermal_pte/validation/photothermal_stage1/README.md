@@ -164,3 +164,9 @@ These are diagnostic validation results, not a validated PTE prediction.
 
 Successful execution alone never sets `validated=true`; every relevant numeric
 criterion must pass.
+
+## Source-bandwidth validation
+
+- `22_run_source_bandwidth_case.py` replays the corrected v261 optical contract while varying only the source range and records component-resolved Q, local/six-face flux, flat-stack TMM, source pulse properties, fitted epsilon, dt, and mesh coordinates.
+- `23_summarize_source_bandwidth_sweep.py` applies the 0.5% selection gates and writes the compact sweep and selected-range regression report.
+- The validated selection is a single broadband 3–6 µm source with analysis monitors and Pabs evaluated only at 4 µm. HEAT is not called by either script.
