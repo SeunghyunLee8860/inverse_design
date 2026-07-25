@@ -75,28 +75,22 @@ def _append_internal_faces(
     columns: list[np.ndarray],
     values: list[np.ndarray],
 ) -> None:
+    resistance_per_area = _internal_face_resistance_per_area(
+        kappa=kappa,
+        widths=widths,
+        axis=axis,
+        resistance=resistance,
+    )
     dx, dy, dz = widths
     if axis == 0:
         left_ids, right_ids = ids[:-1, :, :], ids[1:, :, :]
-        left_k, right_k = kappa[:-1, :, :, 0], kappa[1:, :, :, 0]
-        left_d = dx[:-1, None, None]
-        right_d = dx[1:, None, None]
         area = dy[None, :, None] * dz[None, None, :]
     elif axis == 1:
         left_ids, right_ids = ids[:, :-1, :], ids[:, 1:, :]
-        left_k, right_k = kappa[:, :-1, :, 1], kappa[:, 1:, :, 1]
-        left_d = dy[None, :-1, None]
-        right_d = dy[None, 1:, None]
         area = dx[:, None, None] * dz[None, None, :]
     else:
         left_ids, right_ids = ids[:, :, :-1], ids[:, :, 1:]
-        left_k, right_k = kappa[:, :, :-1, 2], kappa[:, :, 1:, 2]
-        left_d = dz[None, None, :-1]
-        right_d = dz[None, None, 1:]
         area = dx[:, None, None] * dy[None, :, None]
-    resistance_per_area = (
-        0.5 * left_d / left_k + resistance + 0.5 * right_d / right_k
-    )
     conductance = area / resistance_per_area
     left_flat = left_ids.reshape(-1)
     right_flat = right_ids.reshape(-1)
@@ -106,6 +100,86 @@ def _append_internal_faces(
     rows.extend((left_flat, right_flat))
     columns.extend((right_flat, left_flat))
     values.extend((-conductance_flat, -conductance_flat))
+
+
+def _internal_face_resistance_per_area(
+    *,
+    kappa: np.ndarray,
+    widths: tuple[np.ndarray, np.ndarray, np.ndarray],
+    axis: int,
+    resistance: np.ndarray,
+) -> np.ndarray:
+    """Return the exact two-half-cell plus interface resistance per area."""
+    dx, dy, dz = widths
+    if axis == 0:
+        left_k, right_k = kappa[:-1, :, :, 0], kappa[1:, :, :, 0]
+        left_d = dx[:-1, None, None]
+        right_d = dx[1:, None, None]
+    elif axis == 1:
+        left_k, right_k = kappa[:, :-1, :, 1], kappa[:, 1:, :, 1]
+        left_d = dy[None, :-1, None]
+        right_d = dy[None, 1:, None]
+    else:
+        left_k, right_k = kappa[:, :, :-1, 2], kappa[:, :, 1:, 2]
+        left_d = dz[None, None, :-1]
+        right_d = dz[None, None, 1:]
+    return (
+        0.5 * left_d / left_k + resistance + 0.5 * right_d / right_k
+    )
+
+
+def internal_face_heat_flux_density(
+    *,
+    temperature_K: np.ndarray,
+    x_edges_m: np.ndarray,
+    y_edges_m: np.ndarray,
+    z_edges_m: np.ndarray,
+    kappa_W_mK: np.ndarray,
+    interface_resistance_m2K_W: Mapping[str, np.ndarray] | None = None,
+) -> dict[str, np.ndarray]:
+    """Return signed +axis heat flux density on every internal face.
+
+    The returned arrays use the same face shapes as
+    ``interface_resistance_m2K_W``.  Positive values flow from the lower
+    indexed cell toward the higher indexed cell.  The calculation uses the
+    exact resistance employed by the matrix assembly, so it is also a
+    conservative flux diagnostic for heterogeneous materials.
+    """
+    edges = (
+        _validated_edges("x", x_edges_m),
+        _validated_edges("y", y_edges_m),
+        _validated_edges("z", z_edges_m),
+    )
+    widths = tuple(np.diff(item) for item in edges)
+    shape = tuple(item.size for item in widths)
+    temperature = np.asarray(temperature_K, float)
+    kappa = np.asarray(kappa_W_mK, float)
+    if temperature.shape != shape:
+        raise ValueError(f"temperature shape {temperature.shape} != {shape}")
+    if kappa.shape != (*shape, 3):
+        raise ValueError(f"kappa shape {kappa.shape} != {(*shape, 3)}")
+    if not np.all(np.isfinite(temperature)):
+        raise ValueError("temperature contains NaN or Inf")
+    if not np.all(np.isfinite(kappa)) or np.any(kappa <= 0.0):
+        raise ValueError("all diagonal conductivity components must be finite and positive")
+
+    fluxes: dict[str, np.ndarray] = {}
+    for axis, axis_name in enumerate(("x", "y", "z")):
+        face_shape = list(shape)
+        face_shape[axis] -= 1
+        resistance = _face_resistance(
+            interface_resistance_m2K_W, axis_name, tuple(face_shape)
+        )
+        resistance_per_area = _internal_face_resistance_per_area(
+            kappa=kappa,
+            widths=widths,
+            axis=axis,
+            resistance=resistance,
+        )
+        left = np.take(temperature, np.arange(shape[axis] - 1), axis=axis)
+        right = np.take(temperature, np.arange(1, shape[axis]), axis=axis)
+        fluxes[axis_name] = (left - right) / resistance_per_area
+    return fluxes
 
 
 def _boundary_geometry(

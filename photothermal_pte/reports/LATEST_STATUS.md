@@ -9,14 +9,17 @@
 - Status: `BLOCKED_ANISOTROPIC_K_UNSUPPORTED`
 - Independent anisotropic fallback:
   `VALIDATED_DIAGONAL_KAPPA_FVM_CONTROLS`
+- Independent internal-interface fallback:
+  `VALIDATED_FVM_INTERNAL_INTERFACE_G_CONTROLS`
 - Full-device HEAT cases executed: `false`
+- Finite optical-Q imported into FVM: `false`
 - Transient/PTE/adjoint/gradient/optimization executed: `false`
 
 ### Active blockers
 
 - `BLOCKED_ANISOTROPIC_K_UNSUPPORTED` (native v261 HEAT only)
-- `BLOCKED_INTERFACE_G_UNVERIFIED`
-- `BLOCKED_REQUIRED_SOLVER_CONTROLS_UNVERIFIED`
+- `BLOCKED_INTERFACE_G_UNVERIFIED` (native v261 HEAT only)
+- `BLOCKED_3D_ISOTROPIC_HEAT_FVM_CROSS_VALIDATION`
 
 ### Key measurements
 
@@ -66,6 +69,35 @@
   `[2.27374e-13, 1.13687e-13, 2.84217e-13] K`
 - Perfect-contact heat-flux errors: all below `1.1e-13`
 
+### Independent FVM internal-interface controls
+
+- Status: `VALIDATED_FVM_INTERNAL_INTERFACE_G_CONTROLS`
+- Internal face law:
+  \(R''=\Delta z_1/(2k_1)+1/G+\Delta z_2/(2k_2)\)
+- Conditions: \(G=7.37\times10^6\), \(G=1.1\times10^9\)
+  \(\mathrm{W/(m^2K)}\), and perfect contact
+- Meshes for every condition: `100/50/25 nm`
+- Total cases: `9`; passed: `9`
+- \(G=7.37\times10^6\) analytic/numerical interface jump:
+  `3.518029903254 / [3.518029903254, 3.518029903257, 3.518029903248] K`
+- \(G=1.1\times10^9\) analytic/numerical interface jump:
+  `0.03623188405797 / [0.03623188405828, 0.03623188405885,
+  0.03623188405572] K`
+- Finite-\(G\) jump relative errors: all below `6.3e-11`
+- Analytic series-resistance heat-flux relative errors: all below `5.4e-12`
+- Material-1/material-2 flux mismatch: all below `9.4e-12`
+- Global energy-balance relative errors: all below `2.3e-11`
+- Temperature-profile relative errors: all below `1.1e-12`
+- Perfect-contact extrapolated jump: roundoff (`<2.3e-12 K`)
+- Perfect-contact raw adjacent-cell difference:
+  `0.5 -> 0.25 -> 0.125 K`; finest/coarsest ratio `0.25`
+- Solver attribution: independent conservative Cartesian Python/SciPy FVM;
+  not a Lumerical HEAT result
+- Next mandatory gate:
+  `LUMERICAL_HEAT_VS_FVM_3D_ISOTROPIC_PERFECT_CONTACT_CROSS_VALIDATION`
+- Optical \(Q\) import and full-device calculation remain prohibited until
+  that 3D cross-validation passes.
+
 ### Final control artifacts
 
 - Execution:
@@ -76,6 +108,12 @@
   `validation/photothermal_stage1/31_resolve_anisotropic_kappa.py`
 - Conservative diagonal-tensor solver:
   `validation/photothermal_stage1/anisotropic_heat_fvm.py`
+- Independent FVM interface execution:
+  `validation/photothermal_stage1/33_validate_fvm_internal_interface_controls.py`
+- Independent FVM interface report:
+  `reports/fvm_internal_interface_controls/FVM_INTERNAL_INTERFACE_G_CONTROL_REPORT.md`
+- Independent FVM interface summary/cases/raw manifest:
+  `reports/fvm_internal_interface_controls/`
 - Anisotropic-\(\kappa\) report:
   `reports/heat_material_interface_controls/HEAT_ANISOTROPIC_K_SOLVER_REPORT.md`
 - Internal-\(G\) report:
@@ -84,12 +122,12 @@
   `reports/heat_material_interface_controls/`
 
 Native v261 HEAT still cannot represent the requested conductivity tensor.
-The validated FVM path resolves the anisotropic equation independently, but
-adopting it for the finite-Q production calculation requires an explicit
-solver-path decision and a validated internal-interface-G control. Full-device
-HEAT, transient, PTE, adjoint, gradient, and optimization are not part of this
-control-only branch. No isotropic fallback or modification of the finite
-optical-Q artifact is permitted.
+The validated FVM path now resolves the anisotropic equation and finite
+internal-G law independently. Its next mandatory gate is the common 3D
+isotropic/perfect-contact Lumerical HEAT versus FVM cross-validation.
+Full-device HEAT, finite optical-Q import, transient, PTE, adjoint, gradient,
+and optimization are not part of this control-only checkpoint. No isotropic
+fallback or modification of the finite optical-Q artifact is permitted.
 
 ## Mechanical/MAPDL route probe
 

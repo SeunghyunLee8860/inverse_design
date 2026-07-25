@@ -198,3 +198,20 @@ criterion must pass.
 - `23_summarize_source_bandwidth_sweep.py` applies the 0.5% selection gates and writes the compact sweep and selected-range regression report.
 - `24_run_production_optical_regression.py` builds a fresh FSP through the production `eqc_lib.build_control_base(force=True)` entrypoint, asserts the realized source/material/monitor/mesh/solver contract before the solve, and records flat x/y/45-degree and fixed disk-x closure.
 - The validated selection is a single broadband 3–6 µm source with analysis monitors and Pabs evaluated only at 4 µm. HEAT is not called by either script.
+
+## Independent thermal FVM controls
+
+- `31_resolve_anisotropic_kappa.py` validates the diagonal-tensor Cartesian
+  FVM for independent x/y/z conduction controls.
+- `anisotropic_heat_fvm.py` is the conservative cell-centered solver. Its
+  internal-face conductance uses the exact resistance of both half cells plus
+  an optional per-area interface insulance.
+- `33_validate_fvm_internal_interface_controls.py` validates
+  `G=7.37e6 W/(m2 K)`, `G=1.1e9 W/(m2 K)`, and perfect contact at
+  100/50/25 nm. It independently checks the one-sided interface temperature
+  jump, heat flux in both materials and at the interface/boundaries, analytic
+  series resistance, temperature profile, energy balance, linear residual,
+  and perfect-contact mesh convergence.
+
+These controls are independent Python/SciPy FVM results, not Lumerical HEAT
+results. Script 33 does not import optical Q or run the full device.
