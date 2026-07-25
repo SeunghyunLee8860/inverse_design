@@ -45,6 +45,8 @@ KAPPA_TENSOR_W_MK = np.asarray([14.4, 3.8, 1.0], float)
 KAPPA_LIMIT = 0.01
 PROFILE_LIMIT = 0.01
 ENERGY_LIMIT = 0.01
+INTERFACE_G_W_M2K = (7.37e6, 1.1e9)
+INTERFACE_LIMIT = 0.01
 EXACT_BOUNDS_M = {
     "x": [-1.0e-6, 1.0e-6],
     "y": [-1.0e-6, 1.0e-6],
@@ -75,6 +77,7 @@ def parse_args() -> argparse.Namespace:
             "q-precheck",
             "license-probe",
             "kappa-controls",
+            "interface-api-probe",
             "interface-controls",
             "all",
         ),
@@ -826,6 +829,682 @@ def anisotropic_kappa_controls(
     }
 
 
+def targeted_boundary_properties(device: Any) -> dict[str, Any]:
+    """Read names plus only the interface fields needed by this control."""
+    names = flatten_strings(device.get())
+    normalized = {" ".join(name.lower().split()): name for name in names}
+    candidates = (
+        "surface type",
+        "thermal impedance",
+        "material 1",
+        "material 2",
+        "domain 1",
+        "domain 2",
+        "solid 1",
+        "solid 2",
+    )
+    values: dict[str, Any] = {}
+    for candidate in candidates:
+        exact = normalized.get(candidate)
+        if exact is None:
+            continue
+        try:
+            values[exact] = jsonable(device.get(exact))
+        except Exception as exc:
+            values[exact] = {
+                "__read_error__": f"{type(exc).__name__}: {exc}"
+            }
+    return {
+        "property_names": names,
+        "targeted_values": values,
+    }
+
+
+def interface_api_probe(output: Path, *, hide: bool) -> dict[str, Any]:
+    """Capture dynamic v261 properties for internal temperature boundaries."""
+    installation = select_installation("v261")
+    result: dict[str, Any] = {
+        "status": "BLOCKED_INTERFACE_G_UNVERIFIED",
+        "passed": False,
+        "surface_type_probes": {},
+    }
+    try:
+        with open_device(installation, hide=hide) as device:
+            result["v261_DEVICE_version"] = str(device.version())
+            region = device.addsimulationregion()
+            set_object(
+                region,
+                {
+                    "name": "interface API probe region",
+                    "dimension": "3D",
+                    "use relative coordinates": False,
+                    "x min": -0.5e-6,
+                    "x max": 0.5e-6,
+                    "y min": -0.5e-6,
+                    "y max": 0.5e-6,
+                    "z min": -1.0e-6,
+                    "z max": 1.0e-6,
+                },
+            )
+            for material_name, conductivity in (
+                ("interface API lower", 5.0),
+                ("interface API upper", 20.0),
+            ):
+                add_solid_material(device, material_name, conductivity)
+            for solid_name, material_name, z_min, z_max in (
+                (
+                    "interface API lower slab",
+                    "interface API lower",
+                    -1.0e-6,
+                    0.0,
+                ),
+                (
+                    "interface API upper slab",
+                    "interface API upper",
+                    0.0,
+                    1.0e-6,
+                ),
+            ):
+                slab = device.addrect()
+                set_object(
+                    slab,
+                    {
+                        "name": solid_name,
+                        "material": material_name,
+                        "x min": -0.5e-6,
+                        "x max": 0.5e-6,
+                        "y min": -0.5e-6,
+                        "y max": 0.5e-6,
+                        "z min": z_min,
+                        "z max": z_max,
+                    },
+                )
+            heat = device.addheatsolver()
+            set_object(
+                heat,
+                {
+                    "simulation region": "interface API probe region",
+                    "solver mode": "steady state",
+                    "solver physics": "thermal only",
+                },
+            )
+            for surface_type in ("material:material", "domain:domain"):
+                probe: dict[str, Any] = {}
+                device.addtemperaturebc("HEAT")
+                device.set(
+                    "name",
+                    "probe " + surface_type.replace(":", " to "),
+                )
+                probe["initial_properties"] = targeted_boundary_properties(
+                    device
+                )
+                try:
+                    device.set("surface type", surface_type)
+                    probe["surface_type_write_succeeded"] = True
+                    probe["properties_after_surface_type"] = (
+                        targeted_boundary_properties(device)
+                    )
+                except Exception as exc:
+                    probe.update(
+                        {
+                            "surface_type_write_succeeded": False,
+                            "exception_type": type(exc).__name__,
+                            "exception": str(exc),
+                        }
+                    )
+                result["surface_type_probes"][surface_type] = probe
+            result["status"] = "INTERFACE_API_PROBE_COMPLETED"
+    except Exception as exc:
+        result.update(
+            {
+                "exception_type": type(exc).__name__,
+                "exception": str(exc),
+                "traceback": traceback.format_exc(),
+            }
+        )
+    write_json(output / "interface_api_probe.json", result)
+    return result
+
+
+def selected_boundary_readback(
+    device: Any, property_names: tuple[str, ...]
+) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for name in property_names:
+        try:
+            result[name] = jsonable(device.get(name))
+        except Exception as exc:
+            result[name] = {
+                "__read_error__": f"{type(exc).__name__}: {exc}"
+            }
+    return result
+
+
+def named_boundary_readback(
+    device: Any, path: str, property_names: tuple[str, ...]
+) -> dict[str, Any]:
+    object_name = path.split("::")[-1]
+    candidates = (
+        path,
+        path.removeprefix("::model::"),
+        f"HEAT::{object_name}",
+        object_name,
+    )
+    result: dict[str, Any] = {"__candidate_paths__": list(candidates)}
+    for name in property_names:
+        errors = []
+        for candidate in candidates:
+            try:
+                result[name] = jsonable(device.getnamed(candidate, name))
+                result.setdefault("__resolved_path__", candidate)
+                break
+            except Exception as exc:
+                errors.append(f"{candidate}: {type(exc).__name__}: {exc}")
+        else:
+            result[name] = {"__read_errors__": errors}
+    return result
+
+
+def interface_temperature_fit(
+    coordinate_m: np.ndarray,
+    temperature_K: np.ndarray,
+    *,
+    mesh_m: float,
+) -> dict[str, Any]:
+    exclusion = max(1.5 * mesh_m, 0.08e-6)
+    lower = coordinate_m <= -exclusion
+    upper = coordinate_m >= exclusion
+    if np.count_nonzero(lower) < 3 or np.count_nonzero(upper) < 3:
+        lower = coordinate_m < 0.0
+        upper = coordinate_m > 0.0
+    if np.count_nonzero(lower) < 2 or np.count_nonzero(upper) < 2:
+        raise RuntimeError("temperature monitor lacks two-sided fit samples")
+    lower_fit = np.polyfit(coordinate_m[lower], temperature_K[lower], 1)
+    upper_fit = np.polyfit(coordinate_m[upper], temperature_K[upper], 1)
+    lower_at_interface = float(np.polyval(lower_fit, 0.0))
+    upper_at_interface = float(np.polyval(upper_fit, 0.0))
+    return {
+        "fit_exclusion_m": exclusion,
+        "lower_sample_count": int(np.count_nonzero(lower)),
+        "upper_sample_count": int(np.count_nonzero(upper)),
+        "lower_slope_K_m": float(lower_fit[0]),
+        "upper_slope_K_m": float(upper_fit[0]),
+        "lower_interface_temperature_K": lower_at_interface,
+        "upper_interface_temperature_K": upper_at_interface,
+        "temperature_jump_K": abs(
+            upper_at_interface - lower_at_interface
+        ),
+    }
+
+
+def heat_flux_monitor_result(
+    device: Any, object_name: str
+) -> dict[str, Any]:
+    try:
+        result_name, dataset, available = result_candidate(
+            device,
+            object_name,
+            ("heatflux", "heat flux", "power", "thermal"),
+        )
+        numeric = {
+            key: jsonable(value)
+            for key, value in dataset.items()
+            if key != "Lumerical_dataset"
+        }
+        return {
+            "available_results": available,
+            "result_name": result_name,
+            "dataset": numeric,
+        }
+    except Exception as exc:
+        return {
+            "available_results": result_names(device, object_name),
+            "exception_type": type(exc).__name__,
+            "exception": str(exc),
+        }
+
+
+def internal_interface_case(
+    output: Path,
+    *,
+    case_id: str,
+    conductance_W_m2K: float | None,
+    mesh_m: float,
+    hide: bool,
+) -> dict[str, Any]:
+    installation = select_installation("v261")
+    case_dir = output / case_id
+    case_dir.mkdir(parents=True, exist_ok=True)
+    project = case_dir / f"{case_id}.ldev"
+    area_m2 = 1.0e-12
+    half_length_m = 1.0e-6
+    lower_k_W_mK = 5.0
+    upper_k_W_mK = 20.0
+    cold_K, hot_K = 300.0, 310.0
+    delta_T_K = hot_K - cold_K
+    lower_material = f"{case_id} lower material"
+    upper_material = f"{case_id} upper material"
+    interface_name = f"{case_id} internal interface"
+    interface_path = (
+        f"::model::HEAT::boundary conditions::{interface_name}"
+    )
+    resistance_m2K_W = (
+        None
+        if conductance_W_m2K is None
+        else 1.0 / conductance_W_m2K
+    )
+    boundary_fields = (
+        "name",
+        "surface type",
+        "material 1",
+        "material 2",
+        "enable thermal impedance",
+        "thermal impedance",
+        "temperature",
+    )
+    result: dict[str, Any] = {
+        "case_id": case_id,
+        "status": "FAILED_INTERFACE_G_ANALYTIC_CONTROL",
+        "passed": False,
+        "perfect_contact": conductance_W_m2K is None,
+        "G_W_m2K": conductance_W_m2K,
+        "thermal_insulance_m2K_W": resistance_m2K_W,
+        "mesh_max_edge_m": mesh_m,
+        "project_path": str(project),
+        "interface_location_z_m": 0.0,
+        "interface_is_internal": True,
+        "full_device_HEAT_executed": False,
+    }
+    try:
+        with open_device(installation, hide=hide) as device:
+            result["v261_DEVICE_version"] = str(device.version())
+            region = device.addsimulationregion()
+            set_object(
+                region,
+                {
+                    "name": f"{case_id} region",
+                    "dimension": "3D",
+                    "use relative coordinates": False,
+                    "x min": -0.5e-6,
+                    "x max": 0.5e-6,
+                    "y min": -0.5e-6,
+                    "y max": 0.5e-6,
+                    "z min": -half_length_m,
+                    "z max": half_length_m,
+                },
+            )
+            result["materials"] = {
+                "lower": add_solid_material(
+                    device, lower_material, lower_k_W_mK
+                ),
+                "upper": add_solid_material(
+                    device, upper_material, upper_k_W_mK
+                ),
+            }
+            for solid_name, material_name, z_min, z_max in (
+                (
+                    f"{case_id} lower slab",
+                    lower_material,
+                    -half_length_m,
+                    0.0,
+                ),
+                (
+                    f"{case_id} upper slab",
+                    upper_material,
+                    0.0,
+                    half_length_m,
+                ),
+            ):
+                slab = device.addrect()
+                set_object(
+                    slab,
+                    {
+                        "name": solid_name,
+                        "material": material_name,
+                        "x min": -0.5e-6,
+                        "x max": 0.5e-6,
+                        "y min": -0.5e-6,
+                        "y max": 0.5e-6,
+                        "z min": z_min,
+                        "z max": z_max,
+                    },
+                )
+            heat = device.addheatsolver()
+            set_object(
+                heat,
+                {
+                    "simulation region": f"{case_id} region",
+                    "solver mode": "steady state",
+                    "solver physics": "thermal only",
+                    "use defaults": False,
+                    "min edge length": mesh_m / 4.0,
+                    "max edge length": mesh_m,
+                    "max plc edge length": mesh_m,
+                },
+            )
+            add_temperature_boundary(
+                device,
+                name=f"{case_id} T cold",
+                axis="z",
+                side="min",
+                temperature_K=cold_K,
+            )
+            add_temperature_boundary(
+                device,
+                name=f"{case_id} T hot",
+                axis="z",
+                side="max",
+                temperature_K=hot_K,
+            )
+            if conductance_W_m2K is not None:
+                device.addtemperaturebc("HEAT")
+                for name, value in {
+                    "name": interface_name,
+                    "bc mode": "steady state",
+                    "sweep type": "single",
+                    "temperature": 0.5 * (cold_K + hot_K),
+                    "surface type": "material:material",
+                    "material 1": lower_material,
+                    "material 2": upper_material,
+                    "enable thermal impedance": True,
+                    "thermal impedance": resistance_m2K_W,
+                }.items():
+                    device.set(name, value)
+                result["property_readback_before_save"] = (
+                    selected_boundary_readback(device, boundary_fields)
+                )
+                actual_interface_name = str(
+                    result["property_readback_before_save"].get(
+                        "name", interface_name
+                    )
+                )
+                result["requested_interface_object_name"] = interface_name
+                result["actual_interface_object_name_before_save"] = (
+                    actual_interface_name
+                )
+                interface_path = (
+                    "::model::HEAT::boundary conditions::"
+                    + actual_interface_name
+                )
+            line = device.addtemperaturemonitor()
+            set_object(
+                line,
+                {
+                    "name": f"{case_id} T line",
+                    "monitor type": "linear z",
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z min": -half_length_m,
+                    "z max": half_length_m,
+                },
+            )
+            for label, z_position in (
+                ("lower", -0.5 * half_length_m),
+                ("upper", 0.5 * half_length_m),
+            ):
+                monitor = device.addheatfluxmonitor()
+                set_object(
+                    monitor,
+                    {
+                        "name": f"{case_id} {label} flux",
+                        "monitor type": "2D z-normal",
+                        "x min": -0.5e-6,
+                        "x max": 0.5e-6,
+                        "y min": -0.5e-6,
+                        "y max": 0.5e-6,
+                        "z": z_position,
+                    },
+                )
+            device.save(str(project))
+            result["save_succeeded"] = project.is_file()
+            device.load(str(project))
+            result["load_succeeded"] = True
+            if conductance_W_m2K is not None:
+                result["property_readback_after_reload"] = (
+                    named_boundary_readback(
+                        device, interface_path, boundary_fields
+                    )
+                )
+            device.addjob(str(project), "HEAT")
+            device.runjobs("HEAT", 0)
+            device.load(str(project))
+            temperature_name, temperature_dataset, temperature_available = (
+                result_candidate(
+                    device,
+                    f"HEAT::{case_id} T line",
+                    ("temperature", "thermal"),
+                )
+            )
+            _, boundary_dataset, boundary_available = result_candidate(
+                device, "HEAT", ("boundaries",)
+            )
+            coordinate_m, temperature_K = dataset_temperature(
+                temperature_dataset, "z"
+            )
+            fit = interface_temperature_fit(
+                coordinate_m, temperature_K, mesh_m=mesh_m
+            )
+            power_values = {
+                key: float(np.asarray(value, float).reshape(-1)[0])
+                for key, value in boundary_dataset.items()
+                if key.startswith("P_") and np.asarray(value).size
+            }
+            cold_candidates = [
+                value
+                for key, value in power_values.items()
+                if "cold" in key.lower() or "z_min" in key.lower()
+            ]
+            hot_candidates = [
+                value
+                for key, value in power_values.items()
+                if "hot" in key.lower() or "z_max" in key.lower()
+            ]
+            if not cold_candidates or not hot_candidates:
+                outer = list(power_values.values())[:2]
+                if len(outer) != 2:
+                    raise RuntimeError(
+                        f"cannot identify outer boundary powers: {power_values}"
+                    )
+                cold_candidates, hot_candidates = [outer[0]], [outer[1]]
+            cold_power_W = float(cold_candidates[0])
+            hot_power_W = float(hot_candidates[0])
+            transmitted_power_W = 0.5 * (
+                abs(cold_power_W) + abs(hot_power_W)
+            )
+            transmitted_flux_W_m2 = transmitted_power_W / area_m2
+            transmission_error = abs(
+                abs(cold_power_W) - abs(hot_power_W)
+            ) / max(transmitted_power_W, np.finfo(float).tiny)
+            energy_error = abs(sum(power_values.values())) / max(
+                transmitted_power_W, np.finfo(float).tiny
+            )
+            analytic_total_resistance = (
+                half_length_m / lower_k_W_mK
+                + half_length_m / upper_k_W_mK
+                + (resistance_m2K_W or 0.0)
+            )
+            analytic_flux_W_m2 = delta_T_K / analytic_total_resistance
+            heat_flux_error = abs(
+                transmitted_flux_W_m2 - analytic_flux_W_m2
+            ) / analytic_flux_W_m2
+            expected_jump_K = (
+                0.0
+                if conductance_W_m2K is None
+                else transmitted_flux_W_m2 / conductance_W_m2K
+            )
+            jump_error = (
+                None
+                if conductance_W_m2K is None
+                else abs(fit["temperature_jump_K"] - expected_jump_K)
+                / max(expected_jump_K, np.finfo(float).tiny)
+            )
+            result.update(
+                {
+                    "temperature_monitor_result": temperature_name,
+                    "temperature_monitor_available_results": (
+                        temperature_available
+                    ),
+                    "HEAT_available_results": boundary_available,
+                    "boundary_powers_W": power_values,
+                    "cold_boundary_power_W": cold_power_W,
+                    "hot_boundary_power_W": hot_power_W,
+                    "transmitted_power_W": transmitted_power_W,
+                    "transmitted_heat_flux_W_m2": transmitted_flux_W_m2,
+                    "analytic_heat_flux_W_m2": analytic_flux_W_m2,
+                    "heat_flux_relative_error": heat_flux_error,
+                    "flux_transmission_relative_error": transmission_error,
+                    "global_energy_balance_relative_error": energy_error,
+                    "expected_interface_temperature_jump_K": expected_jump_K,
+                    "interface_temperature_jump_relative_error": jump_error,
+                    "temperature_fit": fit,
+                    "lower_flux_monitor": heat_flux_monitor_result(
+                        device, f"HEAT::{case_id} lower flux"
+                    ),
+                    "upper_flux_monitor": heat_flux_monitor_result(
+                        device, f"HEAT::{case_id} upper flux"
+                    ),
+                    "sample_count": int(coordinate_m.size),
+                }
+            )
+            device.save(str(project))
+        np.savez_compressed(
+            case_dir / "temperature_profile.npz",
+            z_m=coordinate_m,
+            temperature_K=temperature_K,
+        )
+        if conductance_W_m2K is None:
+            result["passed"] = bool(
+                result["save_succeeded"]
+                and result["load_succeeded"]
+                and heat_flux_error < INTERFACE_LIMIT
+                and transmission_error < INTERFACE_LIMIT
+                and energy_error < INTERFACE_LIMIT
+            )
+        else:
+            before = result["property_readback_before_save"]
+            after = result["property_readback_after_reload"]
+            property_passed = bool(
+                before.get("surface type") == "material:material"
+                and before.get("material 1") == lower_material
+                and before.get("material 2") == upper_material
+                and bool(before.get("enable thermal impedance"))
+                and np.isclose(
+                    float(before.get("thermal impedance")),
+                    resistance_m2K_W,
+                )
+                and after.get("surface type") == "material:material"
+                and after.get("material 1") == lower_material
+                and after.get("material 2") == upper_material
+                and bool(after.get("enable thermal impedance"))
+                and np.isclose(
+                    float(after.get("thermal impedance")),
+                    resistance_m2K_W,
+                )
+            )
+            result["internal_boundary_property_passed"] = property_passed
+            result["passed"] = bool(
+                property_passed
+                and result["save_succeeded"]
+                and result["load_succeeded"]
+                and jump_error is not None
+                and jump_error < INTERFACE_LIMIT
+                and heat_flux_error < INTERFACE_LIMIT
+                and transmission_error < INTERFACE_LIMIT
+                and energy_error < INTERFACE_LIMIT
+            )
+        result["status"] = (
+            "PASSED"
+            if result["passed"]
+            else "FAILED_INTERFACE_G_ANALYTIC_CONTROL"
+        )
+    except Exception as exc:
+        result.update(
+            {
+                "status": "FAILED_INTERFACE_G_ANALYTIC_CONTROL",
+                "passed": False,
+                "exception_type": type(exc).__name__,
+                "exception": str(exc),
+                "traceback": traceback.format_exc(),
+            }
+        )
+    result["criteria"] = {
+        "temperature_jump_relative_error_lt": INTERFACE_LIMIT,
+        "heat_flux_relative_error_lt": INTERFACE_LIMIT,
+        "flux_transmission_relative_error_lt": INTERFACE_LIMIT,
+        "energy_balance_relative_error_lt": INTERFACE_LIMIT,
+    }
+    write_json(case_dir / "case_result.json", result)
+    return result
+
+
+def internal_interface_controls(
+    output: Path, *, hide: bool
+) -> dict[str, Any]:
+    finite_cases = [
+        internal_interface_case(
+            output,
+            case_id=f"interface_G_{str(G).replace('.', 'p')}",
+            conductance_W_m2K=G,
+            mesh_m=50.0e-9,
+            hide=hide,
+        )
+        for G in INTERFACE_G_W_M2K
+    ]
+    perfect_meshes = (100.0e-9, 50.0e-9, 25.0e-9)
+    perfect_cases = [
+        internal_interface_case(
+            output,
+            case_id=f"perfect_contact_mesh_{mesh_m * 1e9:g}nm",
+            conductance_W_m2K=None,
+            mesh_m=mesh_m,
+            hide=hide,
+        )
+        for mesh_m in perfect_meshes
+    ]
+    perfect_jumps = [
+        case.get("temperature_fit", {}).get("temperature_jump_K")
+        for case in perfect_cases
+    ]
+    perfect_data_available = all(
+        jump is not None and np.isfinite(jump) for jump in perfect_jumps
+    )
+    perfect_converged = bool(
+        perfect_data_available
+        and all(case["passed"] for case in perfect_cases)
+        and perfect_jumps[-1] / 10.0 < 1.0e-3
+        and all(
+            perfect_jumps[index + 1]
+            <= perfect_jumps[index] + 1.0e-9
+            for index in range(len(perfect_jumps) - 1)
+        )
+    )
+    finite_passed = all(case["passed"] for case in finite_cases)
+    passed = finite_passed and perfect_converged
+    return {
+        "status": (
+            "INTERNAL_INTERFACE_G_SOLVER_CONTROL_PASSED"
+            if passed
+            else "BLOCKED_INTERFACE_G_UNVERIFIED"
+        ),
+        "passed": passed,
+        "finite_G_cases_passed": finite_passed,
+        "finite_G_case_status": (
+            "PASSED"
+            if finite_passed
+            else "FAILED_INTERFACE_G_ANALYTIC_CONTROL"
+        ),
+        "candidate_temperature_BC_has_contact_resistance_semantics": (
+            finite_passed
+        ),
+        "perfect_contact_mesh_converged_to_zero_jump": perfect_converged,
+        "perfect_contact_meshes_m": list(perfect_meshes),
+        "perfect_contact_temperature_jumps_K": perfect_jumps,
+        "isotropic_or_thin_layer_fallback_used": False,
+        "finite_G_cases": finite_cases,
+        "perfect_contact_cases": perfect_cases,
+    }
+
+
 def output_directory(explicit: str | None) -> Path:
     if explicit:
         output = Path(explicit).expanduser().resolve()
@@ -856,6 +1535,8 @@ def main() -> int:
         "q-precheck",
         "license-probe",
         "kappa-controls",
+        "interface-api-probe",
+        "interface-controls",
         "all",
     ):
         raise NotImplementedError(
@@ -873,24 +1554,45 @@ def main() -> int:
         result["anisotropic_kappa"] = anisotropic_kappa_controls(
             output, hide=args.hide_gui
         )
+    if args.phase == "interface-api-probe":
+        result["interface_api_probe"] = interface_api_probe(
+            output, hide=args.hide_gui
+        )
+    if args.phase in ("interface-controls", "all"):
+        result["internal_interface_G"] = internal_interface_controls(
+            output, hide=args.hide_gui
+        )
     q_pass = (
         args.phase not in ("q-precheck", "all")
         or result["q_precheck"]["blocker_release_allowed"]
     )
     license_pass = (
-        args.phase in ("q-precheck", "kappa-controls")
+        args.phase in (
+            "q-precheck",
+            "kappa-controls",
+            "interface-api-probe",
+            "interface-controls",
+        )
         or result["license_probe"]["passed"]
     )
     kappa_pass = (
         args.phase not in ("kappa-controls", "all")
         or result["anisotropic_kappa"]["passed"]
     )
+    interface_pass = (
+        args.phase not in ("interface-controls", "all")
+        or result["internal_interface_G"]["passed"]
+    )
     if not license_pass:
         result["status"] = "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE"
     elif not kappa_pass:
         result["status"] = result["anisotropic_kappa"]["status"]
+    elif not interface_pass:
+        result["status"] = result["internal_interface_G"]["status"]
     elif args.phase == "kappa-controls":
         result["status"] = "ANISOTROPIC_K_SOLVER_CONTROL_PASSED"
+    elif args.phase == "interface-api-probe":
+        result["status"] = result["interface_api_probe"]["status"]
     elif q_pass:
         result["status"] = (
             "DEVICE_LICENSE_API_PROBE_PASSED"
@@ -899,7 +1601,11 @@ def main() -> int:
         )
     write_json(output / f"{args.phase.replace('-', '_')}.json", result)
     print(json.dumps(jsonable(result), indent=2), flush=True)
-    return 0 if q_pass and license_pass and kappa_pass else 2
+    return (
+        0
+        if q_pass and license_pass and kappa_pass and interface_pass
+        else 2
+    )
 
 
 if __name__ == "__main__":
