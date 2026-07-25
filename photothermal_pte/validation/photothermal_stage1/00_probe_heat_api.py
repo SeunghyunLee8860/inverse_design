@@ -21,14 +21,14 @@ from lumerical_api import (
 
 
 OBJECT_COMMANDS = (
-    ("simulation_region", "addsimulationregion"),
-    ("heat_solver", "addheatsolver"),
-    ("uniform_heat", "adduniformheat"),
-    ("import_heat", "addimportheat"),
-    ("temperature_monitor", "addtemperaturemonitor"),
-    ("heat_flux_monitor", "addheatfluxmonitor"),
-    ("temperature_bc", "addtemperaturebc"),
-    ("heat_mesh", "addheatmesh"),
+    ("simulation_region", "addsimulationregion", ()),
+    ("heat_solver", "addheatsolver", ()),
+    ("uniform_heat", "adduniformheat", ()),
+    ("import_heat", "addimportheat", ("HEAT",)),
+    ("temperature_monitor", "addtemperaturemonitor", ("HEAT",)),
+    ("heat_flux_monitor", "addheatfluxmonitor", ("HEAT",)),
+    ("temperature_bc", "addtemperaturebc", ("HEAT",)),
+    ("heat_mesh", "addheatmesh", ()),
 )
 
 
@@ -64,6 +64,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--lumerical-version", choices=("auto", "v261", "v251"), default="auto")
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--hide-gui", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument(
+        "--material-only",
+        action="store_true",
+        help="Probe only scalar/diagonal thermal-conductivity round trips.",
+    )
     return parser.parse_args()
 
 
@@ -84,7 +89,7 @@ def main() -> int:
             except Exception as exc:
                 environment["lumerical_version_error"] = f"{type(exc).__name__}: {exc}"
         results = {}
-        for label, command in OBJECT_COMMANDS:
+        for label, command, command_args in (() if args.material_only else OBJECT_COMMANDS):
             print(f"[probe] {label}: {command}", flush=True)
             with open_device(installation, hide=args.hide_gui) as device:
                 if command not in ("addsimulationregion", "addheatsolver"):
@@ -94,6 +99,7 @@ def main() -> int:
                     device,
                     command,
                     prerequisite_region=(command == "addheatsolver"),
+                    command_args=command_args,
                 )
             result["lumerical_version"] = environment.get("lumerical_version")
             results[label] = result
@@ -104,15 +110,22 @@ def main() -> int:
     results["thermal_material"] = thermal_material
     write_json(probe_dir / "thermal_material.json", thermal_material)
 
+    all_commands_succeeded = all(v["success"] for v in results.values())
+    required_capabilities_succeeded = bool(
+        all_commands_succeeded
+        and thermal_material["scalar_round_trip"]
+        and thermal_material["diagonal_round_trip"]
+    )
     summary = {
         "environment": environment,
         "objects": results,
-        "all_commands_succeeded": all(v["success"] for v in results.values()),
+        "all_commands_succeeded": all_commands_succeeded,
+        "required_capabilities_succeeded": required_capabilities_succeeded,
     }
     write_json(probe_dir / "probe_summary.json", summary)
     write_json(output / "environment.json", environment)
     print(json.dumps(summary, indent=2, default=str))
-    return 0 if summary["all_commands_succeeded"] else 2
+    return 0 if summary["required_capabilities_succeeded"] else 2
 
 
 if __name__ == "__main__":

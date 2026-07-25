@@ -194,6 +194,7 @@ def add_and_probe(
     command: str,
     *,
     prerequisite_region: bool = False,
+    command_args: tuple[Any, ...] = (),
 ) -> dict[str, Any]:
     """Invoke one official add command and capture the selected object."""
     if prerequisite_region:
@@ -202,10 +203,11 @@ def add_and_probe(
         except Exception:
             pass
     try:
-        returned = getattr(session, command)()
+        returned = getattr(session, command)(*command_args)
         properties = selected_properties(session)
         return {
             "command": command,
+            "command_args": jsonable(command_args),
             "success": True,
             "returned_type": type(returned).__name__,
             "properties": properties,
@@ -213,6 +215,7 @@ def add_and_probe(
     except Exception as exc:
         return {
             "command": command,
+            "command_args": jsonable(command_args),
             "success": False,
             "exception_type": type(exc).__name__,
             "exception": str(exc),

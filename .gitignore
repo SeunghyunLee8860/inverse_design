@@ -2,10 +2,13 @@ __pycache__/
 .pytest_cache/
 *.py[cod]
 *.fsp
+*.ldev
 *.lms
 *.log
+*.mat
 *.npz
 *.npy
 runs/
 A/
 Local_bests/
+photothermal_pte/validation/photothermal_stage1/output/

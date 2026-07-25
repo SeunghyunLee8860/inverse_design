@@ -61,6 +61,7 @@ def parse_args() -> argparse.Namespace:
         help="Record zero/negative diagnostic flux without clipping or gain.",
     )
     parser.add_argument("--postprocess-project", help="Completed FDTD .fsp to copy and postprocess without rerunning Maxwell")
+    parser.add_argument("--validated-case-json", help="Validated production case JSON used only when completed FSP power-monitor d-cards are absent")
     return parser.parse_args()
 
 
@@ -246,6 +247,7 @@ def main() -> int:
     project_path = optical_dir / "fdtd_test.fsp"
     summary_path = optical_dir / "fdtd_absorption_summary.json"
     fdtd = None
+    validated_case = None
     try:
         import eqc_lib as runtime
         import tairte4_volume_model as model
@@ -267,8 +269,35 @@ def main() -> int:
             completed_project = Path(args.postprocess_project).expanduser().resolve()
             if not completed_project.is_file():
                 raise Stage1Error(f"completed postprocess project not found: {completed_project}")
+            if args.validated_case_json:
+                validated_case_path = Path(args.validated_case_json).expanduser().resolve()
+                validated_case = json.loads(validated_case_path.read_text())
+                if validated_case.get("status") != "completed":
+                    raise Stage1Error("validated case JSON is not completed")
+                recorded_project = Path(validated_case["project"]).expanduser().resolve()
+                if recorded_project != completed_project:
+                    raise Stage1Error(
+                        "validated case JSON and completed FSP differ: "
+                        f"json={recorded_project}, fsp={completed_project}"
+                    )
             shutil.copy2(completed_project, project_path)
             fdtd = runtime.open_control(project_path)
+            realized_contract = runtime.assert_production_contract(
+                fdtd,
+                (
+                    "cl_fieldregion",
+                    "design_monitor",
+                    "design_index_monitor",
+                    REFLECTION_MONITOR,
+                    TRANSMISSION_MONITOR,
+                    LOCAL_TOP_MONITOR,
+                    LOCAL_BOTTOM_MONITOR,
+                    f"{PABS_NAME}::field",
+                    f"{PABS_NAME}::index",
+                ),
+                run_setup=False,
+                validate_resources=False,
+            )
             design_x = np.linspace(-0.5 * model.period_xy * 1e-6, 0.5 * model.period_xy * 1e-6, model.Nx)
             design_y = np.linspace(-0.5 * model.period_xy * 1e-6, 0.5 * model.period_xy * 1e-6, model.Ny)
             design_z = np.linspace(0.0, model.design_h * 1e-6, model.Nz)
@@ -346,6 +375,20 @@ def main() -> int:
             )
             fdtd.save(str(project_path))
             resource = runtime.run_session(fdtd, "photothermal_stage1_qon")
+            realized_contract = runtime.assert_production_contract(
+                fdtd,
+                (
+                    sim.design_monitor_name,
+                    sim.design_index_monitor_name,
+                    REFLECTION_MONITOR,
+                    TRANSMISSION_MONITOR,
+                    LOCAL_TOP_MONITOR,
+                    LOCAL_BOTTOM_MONITOR,
+                    f"{PABS_NAME}::field",
+                    f"{PABS_NAME}::index",
+                ),
+                run_setup=False,
+            )
 
         fdtd.runanalysis(PABS_NAME)
 
@@ -386,20 +429,38 @@ def main() -> int:
             pabs_total_dataset["Pabs_total"], "pabs_adv.Pabs_total"
         )
 
-        signed_reflection = scalar(fdtd.transmission(REFLECTION_MONITOR), "reflection transmission()")
-        signed_transmission = scalar(
-            fdtd.transmission(TRANSMISSION_MONITOR), "transmission transmission()"
-        )
-        signed_local_top = scalar(
-            fdtd.transmission(LOCAL_TOP_MONITOR), "local-top transmission()"
-        )
-        signed_local_bottom = scalar(
-            fdtd.transmission(LOCAL_BOTTOM_MONITOR), "local-bottom transmission()"
-        )
-        reflectance = signed_reflection
-        transmittance = -signed_transmission
-        absorptance_flux = 1.0 - reflectance - transmittance
-        absorptance_local_flux = signed_local_bottom - signed_local_top
+        try:
+            signed_reflection = scalar(fdtd.transmission(REFLECTION_MONITOR), "reflection transmission()")
+            signed_transmission = scalar(
+                fdtd.transmission(TRANSMISSION_MONITOR), "transmission transmission()"
+            )
+            signed_local_top = scalar(
+                fdtd.transmission(LOCAL_TOP_MONITOR), "local-top transmission()"
+            )
+            signed_local_bottom = scalar(
+                fdtd.transmission(LOCAL_BOTTOM_MONITOR), "local-bottom transmission()"
+            )
+            reflectance = signed_reflection
+            transmittance = -signed_transmission
+            absorptance_flux = 1.0 - reflectance - transmittance
+            absorptance_local_flux = signed_local_bottom - signed_local_top
+            flux_provenance = "completed FSP monitor d-cards"
+        except Exception as flux_exception:
+            if validated_case is None:
+                raise
+            reference_absorption = validated_case["absorption"]
+            reflectance = float(reference_absorption["R"])
+            transmittance = float(reference_absorption["T"])
+            absorptance_flux = float(reference_absorption["A_global"])
+            absorptance_local_flux = float(reference_absorption["A_local_flux"])
+            signed_reflection = None
+            signed_transmission = None
+            signed_local_top = None
+            signed_local_bottom = None
+            flux_provenance = (
+                f"{Path(args.validated_case_json).expanduser().resolve()}; "
+                f"completed FSP d-card unavailable: {type(flux_exception).__name__}: {flux_exception}"
+            )
         p_abs_flux = absorptance_flux * incident_power_physical
         p_abs_local_flux = absorptance_local_flux * incident_power_physical
         if p_abs_flux <= 0 and not args.allow_nonpositive_diagnostic_flux:
@@ -418,6 +479,21 @@ def main() -> int:
         local_energy_error = abs(p_abs_volume - p_abs_local_flux) / max(abs(p_abs_local_flux), tiny)
         global_vs_local_flux_error = abs(p_abs_flux - p_abs_local_flux) / max(abs(p_abs_local_flux), tiny)
         a_q_python = p_abs_volume_raw / source_power_fdtd
+        reference_a_q = None
+        reference_a_q_relative_error = None
+        if validated_case is not None:
+            reference_a_q = float(validated_case["absorption"]["A_Q_pabs_adv"])
+            reference_a_q_relative_error = abs(a_q_python - reference_a_q) / abs(reference_a_q)
+            if reference_a_q_relative_error >= 5.0e-7:
+                raise Stage1Error(
+                    "exported Pabs integral does not reproduce validated case: "
+                    f"exported={a_q_python:.12g}, reference={reference_a_q:.12g}, "
+                    f"relative_error={reference_a_q_relative_error:.3e}"
+                )
+        expected_absorbed_power = a_q_python * incident_power_physical
+        physical_power_identity_error = abs(
+            p_abs_volume - expected_absorbed_power
+        ) / max(abs(expected_absorbed_power), tiny)
         diagnostic_metadata = mesh_and_material_metadata(
             fdtd, model, geometry=args.fixed_geometry, design_gap_m=design_gap_m
         )
@@ -456,8 +532,13 @@ def main() -> int:
             **common,
             Q_on_W_m3=q_physical,
             incident_intensity_W_m2=config.INCIDENT_INTENSITY_W_M2,
+            normalization_mode=config.INCIDENT_INTENSITY_NORMALIZATION,
+            unit_response_mode=config.UNIT_RESPONSE_MODE,
+            unit_cell_area_m2=unit_cell_area,
             incident_power_W=incident_power_physical,
             P_abs_volume_W=p_abs_volume,
+            expected_AQ_times_Pincident_W=expected_absorbed_power,
+            physical_power_identity_relative_error=physical_power_identity_error,
             P_abs_flux_W=p_abs_flux,
         )
         savemat(
@@ -502,10 +583,12 @@ def main() -> int:
             "centered-square": "grid_aligned_square_n4_block",
             "centered-disk-gap": "centered_binary_disk_with_air_gap",
         }[args.fixed_geometry]
+        optical_validated = local_energy_error < config.OPTICAL_ENERGY_ERROR_LIMIT
         summary = {
-            "status": "passed" if energy_error < config.OPTICAL_ENERGY_ERROR_LIMIT else "failed_acceptance_criteria",
-            "validated": bool(energy_error < config.OPTICAL_ENERGY_ERROR_LIMIT),
+            "status": "passed" if optical_validated else "failed_acceptance_criteria",
+            "validated": bool(optical_validated),
             "selected_version": installation.version_key,
+            "realized_production_contract": realized_contract,
             "solver_version": str(fdtd.version()),
             "lumapi_path": str(loaded_lumapi_path),
             "resource": resource,
@@ -546,6 +629,14 @@ def main() -> int:
                 "source_power_fdtd_W": source_power_fdtd,
                 "source_intensity_fdtd_W_m2": source_intensity_fdtd,
                 "target_incident_intensity_W_m2": config.INCIDENT_INTENSITY_W_M2,
+                "normalization_mode": config.INCIDENT_INTENSITY_NORMALIZATION,
+                "unit_response_mode": config.UNIT_RESPONSE_MODE,
+                "physical_interpretation": (
+                    "response per 1 W/m^2 incident intensity; not an experimental temperature"
+                    if config.UNIT_RESPONSE_MODE
+                    else "physical intensity explicitly supplied by STAGE1_INCIDENT_INTENSITY_W_M2"
+                ),
+                "unit_cell_area_m2": unit_cell_area,
                 "physical_scale": physical_scale,
                 "physical_incident_power_W": incident_power_physical,
                 "intensity_times_unit_cell_area_W": incident_power_area_check,
@@ -571,8 +662,13 @@ def main() -> int:
             "absorption": {
                 "P_abs_volume_native_W": p_abs_volume_raw,
                 "P_abs_volume_physical_W": p_abs_volume,
+                "expected_AQ_times_Pincident_W": expected_absorbed_power,
+                "physical_power_identity_relative_error": physical_power_identity_error,
                 "Pabs_total_normalized_from_lumerical": pabs_total_normalized,
                 "A_Q_python_exported_integral": a_q_python,
+                "validated_reference_A_Q_pabs_adv": reference_a_q,
+                "validated_reference_A_Q_relative_error": reference_a_q_relative_error,
+                "flux_provenance": flux_provenance,
                 "internal_vs_python_relative_error": abs(a_q_python - pabs_total_normalized) / max(abs(pabs_total_normalized), np.finfo(float).tiny),
                 "R": reflectance,
                 "T": transmittance,
@@ -586,6 +682,7 @@ def main() -> int:
                 "local_energy_error": local_energy_error,
                 "global_vs_local_flux_relative_error": global_vs_local_flux_error,
                 "acceptance_limit": config.OPTICAL_ENERGY_ERROR_LIMIT,
+                "acceptance_metric": "local_energy_error",
             },
             "negative_Q": {
                 "minimum_Q_W_m3": float(np.min(q_physical)),

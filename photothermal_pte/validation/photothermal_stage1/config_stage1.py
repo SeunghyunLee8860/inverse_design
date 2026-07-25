@@ -24,9 +24,20 @@ LUMERICAL_ORDER = ("v261", "v251")
 
 RANDOM_SEED = 20260723
 
-# Optical source normalization target.
-INCIDENT_INTENSITY_W_M2 = float(
-    os.environ.get("STAGE1_INCIDENT_INTENSITY_W_M2", "1.0e4")
+# Optical source normalization target.  An absent environment value is not a
+# physical illumination assumption: it is an explicitly labelled 1 W/m^2 unit
+# response used to report DeltaT / incident intensity.
+_incident_intensity_text = os.environ.get("STAGE1_INCIDENT_INTENSITY_W_M2")
+UNIT_RESPONSE_MODE = _incident_intensity_text in (None, "")
+INCIDENT_INTENSITY_W_M2 = (
+    1.0 if UNIT_RESPONSE_MODE else float(_incident_intensity_text)
+)
+if INCIDENT_INTENSITY_W_M2 <= 0:
+    raise ValueError("STAGE1_INCIDENT_INTENSITY_W_M2 must be positive")
+INCIDENT_INTENSITY_NORMALIZATION = (
+    "UNIT_RESPONSE_MODE_1_W_M2"
+    if UNIT_RESPONSE_MODE
+    else "EXPLICIT_PHYSICAL_INCIDENT_INTENSITY"
 )
 WAVELENGTH_M = 4.0e-6
 POLARIZATION = "x"
@@ -96,7 +107,7 @@ FIXED_DESIGN_DISK_RADIUS_M = 1.5e-6
 ANALYTIC_RELATIVE_DT_MAX_LIMIT = 0.01
 ANALYTIC_NRMSE_LIMIT = 0.01
 ANALYTIC_ENERGY_ERROR_LIMIT = 0.01
-OPTICAL_ENERGY_ERROR_LIMIT = 0.05
+OPTICAL_ENERGY_ERROR_LIMIT = 0.005
 HEAT_IMPORT_POWER_ERROR_LIMIT = 0.005
 HEAT_SCALING_R2_LIMIT = 0.999
 HEAT_SCALING_SLOPE_ERROR_LIMIT = 0.02
