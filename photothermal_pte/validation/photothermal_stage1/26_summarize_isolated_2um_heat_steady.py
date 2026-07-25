@@ -72,7 +72,7 @@ def write_cases_csv(path: Path, control: dict[str, Any]) -> None:
         "notes",
     )
     with path.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer = csv.DictWriter(handle, fieldnames=fields, lineterminator="\n")
         writer.writeheader()
         writer.writerow(
             {
@@ -81,6 +81,7 @@ def write_cases_csv(path: Path, control: dict[str, Any]) -> None:
                 "G_oxide_Si_W_m2K": control.get("sweep_contract", {}).get(
                     "G_oxide_Si_W_m2K"
                 ),
+                "raw_artifact_manifest": "RAW_ARTIFACT_MANIFEST.json",
                 "notes": "; ".join(control.get("blockers", [])),
             }
         )
@@ -218,7 +219,7 @@ def final_report(control: dict[str, Any]) -> str:
             "the task states that any failed control stops the workflow before the",
             "full 3-D model.",
             "",
-            "To unblock the physical run, both of the following are required:",
+            "To unblock the physical run, all of the following are required:",
             "",
             "1. A validated non-periodic Q artifact generated for the exact 2 um",
             "   by 2 um TaIrTe4 volume, preserving the <0.5% FDTD-to-HEAT power",
@@ -226,6 +227,8 @@ def final_report(control: dict[str, Any]) -> str:
             "2. A HEAT solver/version or verified material route that stores and",
             "   executes diag(14.4, 3.8, 1.0) W/(m K), plus a verified internal",
             "   interface-G route that passes the analytic temperature-jump test.",
+            "3. A working DEVICE license session, followed by solver-backed",
+            "   multilayer SiO2/Si and interface-G controls.",
             "",
         ]
     )

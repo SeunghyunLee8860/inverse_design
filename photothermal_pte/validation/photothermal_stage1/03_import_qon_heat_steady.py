@@ -38,15 +38,6 @@ def set_object(obj: Any, values: dict[str, Any]) -> None:
         obj[name] = value
 
 
-def npz_scalar(data: Any, name: str) -> float:
-    if name not in data:
-        raise Stage1Error(f"Q artifact is missing required scalar {name!r}")
-    value = np.asarray(data[name]).reshape(-1)
-    if value.size != 1 or not np.isfinite(float(value[0])):
-        raise Stage1Error(f"Q artifact scalar {name!r} is invalid")
-    return float(value[0])
-
-
 def thermal_inputs(placeholder: bool) -> tuple[dict[str, dict[str, Any]], str]:
     mode = "pipeline_placeholder" if placeholder else config.DESIGN_THERMAL_MODE
     design_k = config.DESIGN_K_W_MK
@@ -156,6 +147,8 @@ def main() -> int:
         fdtd_summary = json.loads(fdtd_summary_path.read_text())
         if not fdtd_summary.get("validated", False):
             raise Stage1Error("FDTD Q_on did not pass optical energy validation")
+        props, label = thermal_inputs(args.pipeline_placeholder)
+        suffix = f"_{label}" if label else ""
         data = np.load(source_path)
         x = np.asarray(data["x_m"], float).reshape(-1)
         y = np.asarray(data["y_m"], float).reshape(-1)
@@ -168,74 +161,6 @@ def main() -> int:
         if not np.all(np.isfinite(q)):
             raise Stage1Error("Q contains NaN/Inf")
         p_fdtd = trapz3(q, x, y, z)
-        incident_intensity = npz_scalar(data, "incident_intensity_W_m2")
-        incident_power = npz_scalar(data, "incident_power_W")
-        unit_cell_area = npz_scalar(data, "unit_cell_area_m2")
-        expected_absorbed_power = npz_scalar(data, "expected_AQ_times_Pincident_W")
-        exported_power = npz_scalar(data, "P_abs_volume_W")
-        tiny = np.finfo(float).tiny
-        source_identity_error = abs(p_fdtd - expected_absorbed_power) / max(
-            abs(expected_absorbed_power), tiny
-        )
-        export_reintegration_error = abs(p_fdtd - exported_power) / max(
-            abs(exported_power), tiny
-        )
-        flake_z_min = -100.0e-9
-        flake_z_max = 0.0
-        outside_flake = (z < flake_z_min) | (z > flake_z_max)
-        outside_values = np.zeros_like(q)
-        outside_values[:, :, outside_flake] = q[:, :, outside_flake]
-        outside_flake_power = trapz3(outside_values, x, y, z)
-        q_scale = max(float(np.max(np.abs(q))), tiny)
-        seam_x_relative_max = float(np.max(np.abs(q[0, :, :] - q[-1, :, :])) / q_scale)
-        seam_y_relative_max = float(np.max(np.abs(q[:, 0, :] - q[:, -1, :])) / q_scale)
-        negative_values = np.minimum(q, 0.0)
-        negative_power = trapz3(negative_values, x, y, z)
-        preflight = {
-            "status": "Q_ARTIFACT_PREFLIGHT_PASSED_THERMAL_PROPERTIES_NOT_YET_CHECKED",
-            "source_artifact": str(source_path),
-            "array_axis_order": ["x", "y", "z"],
-            "coordinate_units": "m",
-            "Q_units": "W/m^3",
-            "shape_xyz": list(q.shape),
-            "coordinates_strictly_increasing": True,
-            "coordinate_ranges_m": {
-                "x": [float(x[0]), float(x[-1])],
-                "y": [float(y[0]), float(y[-1])],
-                "z": [float(z[0]), float(z[-1])],
-            },
-            "periodic_seam": {
-                "endpoint_coordinates_are_both_present": True,
-                "x_endpoint_relative_max_difference": seam_x_relative_max,
-                "y_endpoint_relative_max_difference": seam_y_relative_max,
-                "integration_policy": "original coordinates and samples retained; no seam deletion or duplication",
-            },
-            "TaIrTe4_bounds_m": [flake_z_min, flake_z_max],
-            "P_Q_original_grid_W": p_fdtd,
-            "P_Q_exported_metadata_W": exported_power,
-            "P_expected_AQ_times_Pincident_W": expected_absorbed_power,
-            "export_reintegration_relative_error": export_reintegration_error,
-            "source_power_identity_relative_error": source_identity_error,
-            "incident_intensity_W_m2": incident_intensity,
-            "unit_cell_area_m2": unit_cell_area,
-            "incident_power_per_cell_W": incident_power,
-            "normalization_mode": str(np.asarray(data["normalization_mode"]).reshape(-1)[0]),
-            "unit_response_mode": bool(np.asarray(data["unit_response_mode"]).reshape(-1)[0]),
-            "outside_TaIrTe4_power_W": outside_flake_power,
-            "outside_TaIrTe4_power_fraction": outside_flake_power / max(abs(p_fdtd), tiny),
-            "minimum_Q_W_m3": float(np.min(q)),
-            "maximum_Q_W_m3": float(np.max(q)),
-            "negative_voxel_count": int(np.count_nonzero(q < 0.0)),
-            "integrated_negative_power_W": negative_power,
-            "nan_or_inf_count": int(q.size - np.count_nonzero(np.isfinite(q))),
-            "clipped": False,
-            "smoothed": False,
-            "rescaled_after_export": False,
-        }
-        write_json(stage_dir / "q_import_preflight.json", preflight)
-
-        props, label = thermal_inputs(args.pipeline_placeholder)
-        suffix = f"_{label}" if label else ""
 
         project_path = stage_dir / f"heat_steady{suffix}.ldev"
         with open_device(installation, hide=args.hide_gui) as device:

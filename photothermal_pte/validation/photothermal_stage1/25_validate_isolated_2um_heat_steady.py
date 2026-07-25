@@ -31,6 +31,7 @@ from lumerical_api import (
 
 
 BASELINE_COMMIT = "be2cbc2c9c77bbcc0265ce2c293affdbb08105de"
+Q_EVIDENCE_COMMIT = "2e46b658f57cbbcd2c5d9122d32d61c1f22de8bd"
 BATH_TEMPERATURE_K = 300.0
 ACTIVE_SPAN_M = 2.0e-6
 TAIRTE4_THICKNESS_M = 100.0e-9
@@ -56,6 +57,7 @@ BLOCKED_ANISOTROPIC = "BLOCKED_ANISOTROPIC_K_UNSUPPORTED"
 BLOCKED_Q_FOOTPRINT = "BLOCKED_Q_ARTIFACT_INCOMPATIBLE_WITH_2UM_FOOTPRINT"
 BLOCKED_INTERFACE_G = "BLOCKED_INTERFACE_G_UNVERIFIED"
 BLOCKED_LICENSE = "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE"
+BLOCKED_SOLVER_CONTROLS = "BLOCKED_REQUIRED_SOLVER_CONTROLS_UNVERIFIED"
 
 
 def parse_args() -> argparse.Namespace:
@@ -83,6 +85,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir")
     parser.add_argument("--lumerical-version", choices=("auto", "v261"), default="v261")
     parser.add_argument("--hide-gui", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument(
+        "--unit-response-mode",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help=(
+            "Interpret a 1 W/m2 Q artifact as DeltaT per incident intensity. "
+            "This is thermal-run metadata and does not modify the optical artifact."
+        ),
+    )
     parser.add_argument(
         "--live-api-probe",
         action=argparse.BooleanOptionalAction,
@@ -128,7 +139,12 @@ def scalar_from_npz(data: Any, name: str) -> float:
     return result
 
 
-def audit_q_artifact(path: Path, fdtd_summary_path: Path) -> dict[str, Any]:
+def audit_q_artifact(
+    path: Path,
+    fdtd_summary_path: Path,
+    *,
+    unit_response_mode: bool,
+) -> dict[str, Any]:
     if not path.is_file():
         raise FileNotFoundError(f"validated Q artifact is missing: {path}")
     if not fdtd_summary_path.is_file():
@@ -154,7 +170,10 @@ def audit_q_artifact(path: Path, fdtd_summary_path: Path) -> dict[str, Any]:
         total_power = trapz3(q, x, y, z)
         artifact_power = scalar_from_npz(data, "P_abs_volume_W")
         incident_intensity = scalar_from_npz(data, "incident_intensity_W_m2")
-        unit_response = bool(np.asarray(data["unit_response_mode"]).reshape(-1)[0])
+        if unit_response_mode and not np.isclose(incident_intensity, 1.0):
+            raise ValueError(
+                "--unit-response-mode requires incident_intensity_W_m2 == 1"
+            )
 
         half = 0.5 * ACTIVE_SPAN_M
         ix = (x >= -half) & (x <= half)
@@ -207,14 +226,17 @@ def audit_q_artifact(path: Path, fdtd_summary_path: Path) -> dict[str, Any]:
         "acceptance_limit": POWER_IMPORT_LIMIT,
         "compatible_without_clipping_or_rescaling": predicted_import_error < POWER_IMPORT_LIMIT,
         "normalization": {
-            "unit_response_mode": unit_response,
+            "unit_response_mode": unit_response_mode,
             "incident_intensity_W_m2": incident_intensity,
             "reporting_quantity": (
                 "DeltaT / incident intensity"
-                if unit_response
+                if unit_response_mode
                 else "DeltaT at explicitly supplied incident intensity"
             ),
-            "is_experimental_laser_temperature": False if unit_response else None,
+            "is_experimental_laser_temperature": (
+                False if unit_response_mode else None
+            ),
+            "provenance": "thermal validation command-line contract",
         },
         "prohibited_operations_applied": {
             "gain": False,
@@ -539,6 +561,11 @@ def raw_artifact_manifest(
             "Large solver projects and raw 3-D fields are not committed; "
             "record SHA-256, byte size, server path, and generation command."
         ),
+        "q_evidence_source_commit": Q_EVIDENCE_COMMIT,
+        "q_evidence_note": (
+            "The Q evidence was created during the audit at the recorded commit. "
+            "The final branch restores optical production files to the baseline."
+        ),
         "control_generation_command": current_command,
         "new_full_device_raw_artifacts": [],
         "new_full_device_raw_artifacts_reason": (
@@ -585,7 +612,11 @@ def main() -> int:
         "multilayer_SiO2_Si": multilayer_reference(),
         "interface_G_analytic": interface_g_reference(),
     }
-    q_audit = audit_q_artifact(q_artifact, fdtd_summary)
+    q_audit = audit_q_artifact(
+        q_artifact,
+        fdtd_summary,
+        unit_response_mode=args.unit_response_mode,
+    )
     prior_api = load_prior_api_evidence(api_evidence_path)
     live_api = (
         live_api_probe(args.lumerical_version, args.hide_gui)
@@ -615,6 +646,8 @@ def main() -> int:
         blockers.append(BLOCKED_INTERFACE_G)
     if live_api.get("status") == BLOCKED_LICENSE:
         blockers.append(BLOCKED_LICENSE)
+    if not solver_controls_ok:
+        blockers.append(BLOCKED_SOLVER_CONTROLS)
     blockers = list(dict.fromkeys(blockers))
 
     status = "READY_FOR_FULL_DEVICE" if (

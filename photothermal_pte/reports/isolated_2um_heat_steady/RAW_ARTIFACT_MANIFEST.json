@@ -1,15 +1,17 @@
 {
   "policy": "Large solver projects and raw 3-D fields are not committed; record SHA-256, byte size, server path, and generation command.",
-  "control_generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/25_validate_isolated_2um_heat_steady.py --output-dir photothermal_pte/validation/photothermal_stage1/output/20260725T_isolated_2um_heat_steady_controls_v3",
+  "q_evidence_source_commit": "2e46b658f57cbbcd2c5d9122d32d61c1f22de8bd",
+  "q_evidence_note": "The Q evidence was created during the audit at the recorded commit. The final branch restores optical production files to the baseline.",
+  "control_generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/25_validate_isolated_2um_heat_steady.py --output-dir photothermal_pte/validation/photothermal_stage1/output/20260725T_isolated_2um_heat_steady_controls_v4",
   "new_full_device_raw_artifacts": [],
   "new_full_device_raw_artifacts_reason": "mandatory controls failed before a full-device project or field was created",
   "compact_control_artifacts": {
     "control_results": {
-      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_isolated_2um_heat_steady_controls_v3/control_results.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_isolated_2um_heat_steady_controls_v4/control_results.json",
       "exists": true,
-      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/25_validate_isolated_2um_heat_steady.py --output-dir photothermal_pte/validation/photothermal_stage1/output/20260725T_isolated_2um_heat_steady_controls_v3",
-      "size_bytes": 14451,
-      "sha256": "85ceec9cd66df7c5653f5d275cc90794bf76524c79ef38443da48454b36976f8"
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/25_validate_isolated_2um_heat_steady.py --output-dir photothermal_pte/validation/photothermal_stage1/output/20260725T_isolated_2um_heat_steady_controls_v4",
+      "size_bytes": 14566,
+      "sha256": "1b922fef1a9f6cd42520e961b85e6db28066b27c4ca258b5c30e4c76a8e9f4dc"
     },
     "validated_FDTD_summary": {
       "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/fdtd_qon/fdtd_absorption_summary.json",

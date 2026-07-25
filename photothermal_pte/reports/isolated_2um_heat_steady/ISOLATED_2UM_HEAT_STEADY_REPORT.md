@@ -26,6 +26,7 @@
 - `BLOCKED_Q_ARTIFACT_INCOMPATIBLE_WITH_2UM_FOOTPRINT`
 - `BLOCKED_INTERFACE_G_UNVERIFIED`
 - `BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE`
+- `BLOCKED_REQUIRED_SOLVER_CONTROLS_UNVERIFIED`
 
 The immutable production Q grid spans 6 um by 6 um. Its total
 power is `1.6790733985800054e-11 W`, while the power
@@ -43,7 +44,7 @@ convergence, or interface-G sweeps. This is required behavior because
 the task states that any failed control stops the workflow before the
 full 3-D model.
 
-To unblock the physical run, both of the following are required:
+To unblock the physical run, all of the following are required:
 
 1. A validated non-periodic Q artifact generated for the exact 2 um
    by 2 um TaIrTe4 volume, preserving the <0.5% FDTD-to-HEAT power
@@ -51,3 +52,5 @@ To unblock the physical run, both of the following are required:
 2. A HEAT solver/version or verified material route that stores and
    executes diag(14.4, 3.8, 1.0) W/(m K), plus a verified internal
    interface-G route that passes the analytic temperature-jump test.
+3. A working DEVICE license session, followed by solver-backed
+   multilayer SiO2/Si and interface-G controls.
