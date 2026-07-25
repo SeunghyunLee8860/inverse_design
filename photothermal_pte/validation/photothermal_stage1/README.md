@@ -171,3 +171,38 @@ criterion must pass.
 - `23_summarize_source_bandwidth_sweep.py` applies the 0.5% selection gates and writes the compact sweep and selected-range regression report.
 - `24_run_production_optical_regression.py` builds a fresh FSP through the production `eqc_lib.build_control_base(force=True)` entrypoint, asserts the realized source/material/monitor/mesh/solver contract before the solve, and records flat x/y/45-degree and fixed disk-x closure.
 - The validated selection is a single broadband 3–6 µm source with analysis monitors and Pabs evaluated only at 4 µm. HEAT is not called by either script.
+
+## Finite 2 µm optical-Q validation
+
+- `27_validate_finite_2um_optical_q.py` is a separate, non-periodic v261
+  builder for a finite 2 µm × 2 µm × 100 nm TaIrTe4 flake on
+  285 nm SiO2/Si. Every FDTD boundary is PML.
+- The source is a 3–6 µm finite Gaussian beam and all reported absorption
+  quantities are evaluated at 4 µm. TFSF was rejected because the actual v261
+  GPU engine does not support it. The required empty layered-stack and
+  zero-amplitude controls use the same Gaussian builder.
+- Finite absorption is measured with a six-face flux box. The script also
+  exports unclipped component-resolved `Qx`, `Qy`, and `Qz`, normalizes to a
+  measured incident intensity of 1 W/m², and records the volume-Q versus
+  six-face closure.
+- A measured empty-stack reference is held fixed across domain/PML/dz sweeps
+  when polarization, Gaussian waist, and source aperture are unchanged. This
+  prevents a convergence error from being hidden by case-by-case
+  renormalization; waist changes require a new measured reference.
+- This path never calls HEAT, the optimizer, mapping/projection, adjoint, or
+  gradient code, and it does not crop, tile, gain-correct, or rescale a
+  periodic artifact.
+- `28_summarize_finite_2um_optical_q.py` reads completed case JSON/NPZ files
+  without rerunning FDTD, writes the required cases CSV, summary JSON, raw-file
+  SHA manifest, and domain/PML/mesh/waist convergence figures, and remains
+  fail-closed until all required sweeps exist.
+
+Example contract-only build:
+
+```bash
+python \
+  photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py \
+  --output-dir /absolute/path/to/new-empty-directory \
+  --case empty-stack --domain-um 8 --pml-layers 24 --flake-dz-nm 5 \
+  --source-span-um 6.8 --waist-um 2 --gpu-device "GPU 0" --contract-only
+```
