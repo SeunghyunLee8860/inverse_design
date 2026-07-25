@@ -78,6 +78,7 @@ def test_full_chain_safe_vs_safe(ctx, beta):
     h = 5e-3
     fd = (F_safe(lat + h * d) - F_safe(lat - h * d)) / (2 * h)
     rel = abs(ad - fd) / max(abs(ad), abs(fd), 1e-300)
+    print(f"[adfd] safe beta={beta}: rel={rel:.4e} ad={ad:.4e} fd={fd:.4e}", flush=True)
     assert rel < 0.05, f"safe beta={beta}: AD/FD rel err {rel:.3e} (ad={ad:.4e} fd={fd:.4e})"
 
 
@@ -86,9 +87,13 @@ def test_full_chain_exact_vs_exact(ctx):
     model, evs, _ = ctx
     mapping = model.mapping
     shape = (model.Nx, model.Ny, model.Nz)
-    beta = 2.0                              # low beta -> gray, rail-safe interior
+    beta = 8.0                              # soft enough that the exact probe is rail-safe
     rng = np.random.default_rng(1)
-    lat = np.clip(0.5 + 0.05 * rng.standard_normal(model.Nux * model.Nuy), 0.3, 0.7)
+    # Structured latent (NOT near-uniform).  A near-uniform flake makes the
+    # coherent FOM ~1e-16 (numerical noise floor) where an AD/FD ratio is
+    # meaningless.  std=0.5 at beta=8 keeps the physical density gray (rho in
+    # ~[0.36,0.66], exact centered probe safe) but gives a meaningful FOM.
+    lat = np.clip(0.5 + 0.5 * rng.standard_normal(model.Nux * model.Nuy), 0.05, 0.95)
 
     def F_exact(latent):
         phys = np.asarray(mapping(latent, beta), float).reshape(shape)
@@ -103,4 +108,5 @@ def test_full_chain_exact_vs_exact(ctx):
     h = 5e-3
     fd = (F_exact(lat + h * d) - F_exact(lat - h * d)) / (2 * h)
     rel = abs(ad - fd) / max(abs(ad), abs(fd), 1e-300)
+    print(f"[adfd] exact beta={beta}: rel={rel:.4e} ad={ad:.4e} fd={fd:.4e}", flush=True)
     assert rel < 0.05, f"exact: AD/FD rel err {rel:.3e} (ad={ad:.4e} fd={fd:.4e})"

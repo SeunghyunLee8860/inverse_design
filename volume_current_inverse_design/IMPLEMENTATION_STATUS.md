@@ -2,6 +2,29 @@
 
 작성: 2026-07-24, 코드리뷰 반영 갱신 2026-07-25. 명세 "TaIrTe4 500 nm 이진 설계: 전체 수정 명세"(0~18)에 대응.
 
+## Lumerical full-chain AD/FD 실측 인증 완료 (2026-07-25, GPU) — P0-8 CLOSED
+새 매핑 + solver-safe affine 층 + mapping VJP + FieldRegion adjoint(+ Yee 정합·주기소스 right-inverse·
+27-color rho→eps 측정 Jacobian) **전 경로**를 실제 FDTD로 검증. broadband 소스(3–6µm), 4µm 분석.
+`tests/test_full_chain_filter_project_adfd.py`, 각 케이스 ~10 solve.
+
+| mesh 계약 | safe β=4 (probe_safe) | safe β=32 (고-beta) | exact β=8 (delta=0) |
+|---|---|---|---|
+| **CV1 / accuracy 5 / auto non-uniform (프로덕션, P0-8)** | **1.80%** | **2.33%** | **1.20%** |
+| uniform / accuracy 2 / precise-volume-avg (대조) | PASS | 2.33% | 1.20% |
+
+전 케이스 **AD/FD < 5% → PASS**. CV1 적용은 fsp로 직접 확인(`mesh type=auto non-uniform`,
+`mesh accuracy=5`, `mesh refinement=conformal variant 1`, `source 3000–6000nm`).
+CV1과 uniform 수치가 표시정밀도까지 거의 동일한 이유 = **FOM 영역(flake)이 5nm mesh override로 지배돼
+bulk mesh 정밀도/refinement에 무감**(강건성; 버그 아님).
+
+**결론**:
+- 프로덕션 경로(probe_safe) + broadband 소스 + CV1 프로덕션 mesh 에서 adjoint gradient가 FD와 <2.5%로 정합
+  → "broadband으로 이상하게 나온다"는 우려는 **실측으로 완전 해소**.
+- exact-gradient 경로(검증전용, 프로덕션 미사용)도 구조 latent에서 1.2%로 정합. (앞선 21.5%는 near-uniform
+  latent에서 FOM이 노이즈바닥 1e-16이라 나온 **테스트 결함**이었고, 구조 latent로 교정하여 해소.)
+- Yee 정합/주기소스/rho→eps 코어는 안 바뀐 채 **실측 delta·index로 자동 적응 + 런타임 자기검증**(pairing<1e-13,
+  leakage)하며, 위 full-chain에 포함되어 함께 인증됨.
+
 ## 테스트 개수 (source vs GitHub bundle 구분 — 리뷰 #4)
 - **source tree** (`.../VOLUME_CURRENT_INVERSE_DESIGN_BASE_...`): `pytest inverse_design/tests/` = **69 passed**
   (source에는 구 Adam 파이프라인용 `test_adam/convergence/objectives`가 남아있음).
