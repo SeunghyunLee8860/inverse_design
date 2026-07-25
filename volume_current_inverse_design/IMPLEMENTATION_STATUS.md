@@ -2,8 +2,41 @@
 
 작성: 2026-07-24, 코드리뷰 반영 갱신 2026-07-25. 명세 "TaIrTe4 500 nm 이진 설계: 전체 수정 명세"(0~18)에 대응.
 
+## 테스트 개수 (source vs GitHub bundle 구분 — 리뷰 #4)
+- **source tree** (`.../VOLUME_CURRENT_INVERSE_DESIGN_BASE_...`): `pytest inverse_design/tests/` = **69 passed**
+  (source에는 구 Adam 파이프라인용 `test_adam/convergence/objectives`가 남아있음).
+- **GitHub bundle** (`volume_current_inverse_design/`, 최소 실행 세트): `pytest inverse_design/tests/` = **60 passed**
+  (구 Adam 모듈 3개와 그 테스트는 번들에서 제외). `pytest tests/` = **3개** — full-chain AD/FD로 **Lumerical 없으면 skip**.
+- 아래 각 라운드의 "N passed"는 **source tree** 기준. 번들은 위 60이 기준.
+
+## 코드리뷰 4차(2026-07-25, 7f8d726) 대응 — SUCCESS 완전성 + provenance 정책 + calibration 진단
+- **#1 SUCCESS capped 플래그**: `minimum_solid/void/gap_width_capped`를 SUCCESS에도 기록(하한값 의미 보존).
+- **#2 positive-path 강화**: manifest/SUCCESS의 `design_config_hash=="cfg-test"`, `design_attempt==1`,
+  `mapping_identity==ident` + capped 플래그까지 assert.
+- **#3 provenance 정책**: strict 모드에서 `config_hash`·`attempt`도 **필수**(없으면 missing_provenance);
+  `--allow-unsafe-provenance`는 없어도 허용하되 `None` 기록 + **design_mapping_identity / current_mapping_identity 분리 기록**.
+  누락 테스트 2개(config_hash/attempt) 추가.
+- **#5 lint**: `test_finalize_provenance.py`의 미사용 `import pytest` 제거.
+- **#6 450nm constraint (임의 튜닝 금지)**: 425/475/525nm 경계를 **진단 테스트로 pin**
+  (`test_constraint_calibration.py`). 재현 결과 아래. tol/p는 실런 calibration 대상 — env 노브 기록.
+
+### 450nm constraint calibration (재현, tol=1e-5·p=8 기본)
+| 폭 | cells | g_solid | constraint | DRC solid(µm) | DRC |
+|---:|---:|---:|---|---:|---|
+| 425nm | 17 | +1.45e-3 | FAIL | 0.45 | FAIL |
+| 475nm | 19 | -1.0e-5 (floor) | PASS | 0.50 | FAIL |
+| 525nm | 21 | -1.0e-5 (floor) | PASS | 0.55 | PASS |
+
+**진단**: 475·525 둘 다 penalty가 floor(≈0)라 `tol`/`p` 조정으로 분리 불가(필터반경↑ 또는 formulation 변경 필요) →
+**임의 튜닝하지 않음**. 최종 DRC가 475nm를 차단하므로 **잘못된 SUCCESS는 불가능**. optimizer 효율(475nm를 best로 좇을 위험)은
+실런에서 아래 노브로 보정:
+- `VC_TOL_SOLID`, `VC_TOL_VOID` (기본 1e-5): 낮추면 near-floor 설계를 infeasible로.
+- `VC_CONSTRAINT_PNORM` (기본 8): 높이면 worst-case에 더 민감.
+- `VC_FILTER_RADIUS_UM` (기본 MFS): 키우면 length-scale 강제가 강해짐(가장 근본적).
+판정 기준: 실런에서 425/475/525nm 재현값이 (425 infeasible, 475 infeasible, 525 feasible)이 되도록 위 노브를 조정 후 고정.
+
 ## 코드리뷰 3차(2026-07-25, b3948ba) 대응 — 성공 경로 NameError 수정
-`pytest inverse_design/tests/` = **65 passed** (positive-path test 추가).
+`pytest inverse_design/tests/` = **65 passed → (4차 후) 69 passed** (positive-path test 추가).
 
 - **P0(성공경로) `had_feasible` NameError**: finalizer 성공 경로에서 `had_feasible`가 정의 안 된 채 manifest에
   쓰여 FDTD까지 끝내고 `SUCCESS.json`을 못 만들던 버그 → provenance 분기 앞에서 **항상 정의**하도록 수정.

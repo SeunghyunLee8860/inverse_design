@@ -1,17 +1,18 @@
-"""Integration guards for finalizer provenance + checkpoint atomicity (review P0-2/5/6).
+"""Integration guards for finalizer provenance + checkpoint atomicity + success.
 
 All run WITHOUT Lumerical: final_projection --no-fdtd builds the mapping from env
-(no eqc_lib/lumapi) and rejects bad-provenance designs before any solver.
+(no eqc_lib/lumapi) and rejects bad-provenance designs before any solver; the
+positive-path test mocks the evaluator to reach SUCCESS.json.
 """
 
 import json
 import os
 import subprocess
 import sys
+import types
 from pathlib import Path
 
 import numpy as np
-import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = ROOT / "inverse_design"
@@ -35,8 +36,19 @@ def _hashes_and_identity():
                       MFS_UM="0.5", MGS_UM="0.5")
     ch = _code_hash(production_code_files(ROOT, HERE))
     m = _mapping_from_env()
-    ident = _identity(m, 0.5, 0.5)
-    return ch, ident, m
+    return ch, _identity(m, 0.5, 0.5), m
+
+
+def _valid_fields(ch, ident, m):
+    """A complete, strict-valid provenance set for a normal-runner NPZ."""
+    return dict(
+        latent=np.full(m.Nux * m.Nuy, 0.5),
+        had_feasible=np.array(True),
+        code_hash=np.array(ch),
+        config_hash=np.array("cfg-test"),
+        attempt=np.array(1),
+        mapping_identity=np.array(ident),
+    )
 
 
 def _run(design_npz, out):
@@ -53,53 +65,56 @@ def test_checkpoint_atomic_filename(tmp_path):
     # P0-2: temp name must end in .npz so numpy doesn't append and replace works
     tmp = tmp_path / "best_feasible.tmp.npz"
     np.savez_compressed(tmp, latent=np.zeros(4), beta=np.array(2.0), objective=np.array(1.0))
-    assert tmp.exists()                      # numpy did NOT append a second .npz
+    assert tmp.exists()
     tmp.replace(tmp_path / "best_feasible.npz")
     assert (tmp_path / "best_feasible.npz").exists()
 
 
-def test_missing_had_feasible_rejected(tmp_path):
+def _reject_case(tmp_path, drop=None, corrupt=None):
     ch, ident, m = _hashes_and_identity()
-    lat = np.full(m.Nux * m.Nuy, 0.5)
-    np.savez(tmp_path / "d.npz", latent=lat, code_hash=np.array(ch),
-             mapping_identity=np.array(ident))          # no had_feasible
-    rc, cat, ok = _run(tmp_path / "d.npz", tmp_path / "o")
+    fields = _valid_fields(ch, ident, m)
+    if drop:
+        fields.pop(drop)
+    if corrupt:
+        fields.update(corrupt)
+    np.savez(tmp_path / "d.npz", **fields)
+    return _run(tmp_path / "d.npz", tmp_path / "o")
+
+
+def test_missing_had_feasible_rejected(tmp_path):
+    rc, cat, ok = _reject_case(tmp_path, drop="had_feasible")
     assert rc == 2 and cat == "missing_provenance" and not ok
 
 
 def test_missing_code_hash_rejected(tmp_path):
-    ch, ident, m = _hashes_and_identity()
-    lat = np.full(m.Nux * m.Nuy, 0.5)
-    np.savez(tmp_path / "d.npz", latent=lat, had_feasible=np.array(True),
-             mapping_identity=np.array(ident))          # no code_hash
-    rc, cat, ok = _run(tmp_path / "d.npz", tmp_path / "o")
+    rc, cat, ok = _reject_case(tmp_path, drop="code_hash")
+    assert rc == 2 and cat == "missing_provenance" and not ok
+
+
+def test_missing_config_hash_rejected(tmp_path):
+    rc, cat, ok = _reject_case(tmp_path, drop="config_hash")
+    assert rc == 2 and cat == "missing_provenance" and not ok
+
+
+def test_missing_attempt_rejected(tmp_path):
+    rc, cat, ok = _reject_case(tmp_path, drop="attempt")
     assert rc == 2 and cat == "missing_provenance" and not ok
 
 
 def test_code_hash_mismatch_rejected(tmp_path):
-    ch, ident, m = _hashes_and_identity()
-    lat = np.full(m.Nux * m.Nuy, 0.5)
-    np.savez(tmp_path / "d.npz", latent=lat, had_feasible=np.array(True),
-             code_hash=np.array("deadbeef00000000"), mapping_identity=np.array(ident))
-    rc, cat, ok = _run(tmp_path / "d.npz", tmp_path / "o")
+    rc, cat, ok = _reject_case(tmp_path, corrupt={"code_hash": np.array("deadbeef00000000")})
     assert rc == 2 and cat == "code_hash_mismatch" and not ok
 
 
 def test_config_identity_mismatch_rejected(tmp_path):
     ch, ident, m = _hashes_and_identity()
-    lat = np.full(m.Nux * m.Nuy, 0.5)
     bad = ident.replace('"isolation_gap_um": 0.0', '"isolation_gap_um": 0.5')
-    np.savez(tmp_path / "d.npz", latent=lat, had_feasible=np.array(True),
-             code_hash=np.array(ch), mapping_identity=np.array(bad))
-    rc, cat, ok = _run(tmp_path / "d.npz", tmp_path / "o")
+    rc, cat, ok = _reject_case(tmp_path, corrupt={"mapping_identity": np.array(bad)})
     assert rc == 2 and cat == "config_mismatch" and not ok
 
 
 def test_positive_path_reaches_success(tmp_path, monkeypatch):
-    # THE missing test: valid provenance + DRC-passing design + (mocked) FDTD must
-    # reach status=completed and write SUCCESS.json.  This is what would have
-    # caught the had_feasible NameError on the success path.
-    import types
+    # valid provenance + DRC-passing design + (mocked) FDTD -> completed + SUCCESS
     ch, ident, m = _hashes_and_identity()
     import final_projection as FP
 
@@ -108,9 +123,9 @@ def test_positive_path_reaches_success(tmp_path, monkeypatch):
     lat[:120, :] = 0.95
     lat[120:, :] = 0.05
     design = tmp_path / "design.npz"
-    np.savez(design, latent=lat.reshape(-1), had_feasible=np.array(True),
-             code_hash=np.array(ch), mapping_identity=np.array(ident),
-             config_hash=np.array("cfg-test"), attempt=np.array(1))
+    fields = _valid_fields(ch, ident, m)
+    fields["latent"] = lat.reshape(-1)
+    np.savez(design, **fields)
 
     fake = types.ModuleType("volume_current_evaluator")
 
@@ -139,7 +154,18 @@ def test_positive_path_reaches_success(tmp_path, monkeypatch):
     man = json.loads((out / "final_manifest.json").read_text())
     assert man["status"] == "completed"
     assert man["had_feasible"] is True
+    assert man["design_config_hash"] == "cfg-test"
+    assert man["design_attempt"] == 1
+    assert man["mapping_identity"] == ident
+
     succ = json.loads((out / "SUCCESS.json").read_text())
     assert succ["exact_binary"] is True
     assert succ["Fx"] == 1.0 and succ["Fy"] == 2.0 and succ["F_sum"] == 3.0
+    assert succ["design_config_hash"] == "cfg-test"
+    assert succ["design_attempt"] == 1
+    assert succ["mapping_identity"] == ident
+    # capped flags present + True for the wide 3um grating (measured value is a
+    # lower bound, not exact)
+    assert succ["minimum_solid_width_capped"] is True
+    assert succ["minimum_void_width_capped"] is True
     assert succ["artifact_sha256"]

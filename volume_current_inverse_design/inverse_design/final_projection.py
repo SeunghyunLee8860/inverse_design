@@ -128,35 +128,41 @@ def main():
         print(f"FINALIZE FAILED [{category}]: {msg}")
         raise SystemExit(2)
 
-    # --- provenance: REQUIRE had_feasible(True), code_hash(match), identity(match) ---
-    # define had_feasible up front so it is ALWAYS bound (both strict and unsafe
-    # paths) -- it is written into the manifest on the success path.
-    had_feasible = bool(data["had_feasible"]) if "had_feasible" in data.files else None
+    # --- provenance ---
+    # All provenance values are read up front so they are ALWAYS bound (strict AND
+    # unsafe paths) for the manifest/SUCCESS.  A normal runner NPZ always carries
+    # had_feasible, code_hash, config_hash, attempt, mapping_identity; strict mode
+    # requires every one of them, unsafe mode allows None but records both the
+    # design's and the current mapping identity separately.
+    def _get(name):
+        return data[name] if name in data.files else None
+    had_feasible = bool(_get("had_feasible")) if _get("had_feasible") is not None else None
+    design_hash = str(_get("code_hash")) if _get("code_hash") is not None else None
+    design_config_hash = str(_get("config_hash")) if _get("config_hash") is not None else None
+    design_attempt = int(_get("attempt")) if _get("attempt") is not None else None
+    design_identity = str(_get("mapping_identity")) if _get("mapping_identity") is not None else None
+    current_hash = _code_hash(production_code_files(ROOT, HERE))
+    current_identity = _identity(mapping, args.mfs_um, args.mgs_um)
+
     if not args.allow_unsafe_provenance:
-        if "had_feasible" not in data.files:
-            fail("missing_provenance", "design NPZ has no had_feasible field")
+        for field in ("had_feasible", "code_hash", "config_hash", "attempt",
+                      "mapping_identity"):
+            if field not in data.files:
+                fail("missing_provenance", f"design NPZ has no {field} field "
+                     "(a normal run always writes it; use --allow-unsafe-provenance "
+                     "only for hand-built designs)")
         if had_feasible is not True:
             fail("not_feasible", "design was not flagged had_feasible by the optimiser")
-        if "code_hash" not in data.files:
-            fail("missing_provenance", "design NPZ has no code_hash field")
-        current_hash = _code_hash(production_code_files(ROOT, HERE))
-        design_hash = str(data["code_hash"])
         if design_hash != current_hash:
             fail("code_hash_mismatch",
                  f"design code_hash {design_hash} != current {current_hash}",
                  {"design_code_hash": design_hash, "current_code_hash": current_hash})
         # P0-6: mapping/mode/isolation/MFS identity must match
-        current_identity = _identity(mapping, args.mfs_um, args.mgs_um)
-        if "mapping_identity" not in data.files:
-            fail("missing_provenance", "design NPZ has no mapping_identity field")
-        design_identity = str(data["mapping_identity"])
         if design_identity != current_identity:
             fail("config_mismatch",
                  "mapping/mode/isolation/MFS differs from the design's",
-                 {"design_identity": design_identity, "current_identity": current_identity})
-    else:
-        current_hash = _code_hash(production_code_files(ROOT, HERE))
-        design_hash = str(data["code_hash"]) if "code_hash" in data.files else None
+                 {"design_mapping_identity": design_identity,
+                  "current_mapping_identity": current_identity})
 
     # --- exact binary mask on the unique grid (beta-independent) ---
     mask_u = _exact_binary_unique(mapping, latent)
@@ -218,8 +224,6 @@ def main():
             artifacts[name] = _sha256(p)
 
     # P1-5: full provenance in the manifest/SUCCESS (scientific reproducibility)
-    design_config_hash = str(data["config_hash"]) if "config_hash" in data.files else None
-    design_attempt = int(data["attempt"]) if "attempt" in data.files else None
     manifest = {
         "status": "completed",
         "exact_binary": True,
@@ -231,7 +235,9 @@ def main():
         "solid_fraction": float(mask_u.mean()),
         "design_code_hash": design_hash, "current_code_hash": current_hash,
         "design_config_hash": design_config_hash, "design_attempt": design_attempt,
-        "mapping_identity": _identity(mapping, args.mfs_um, args.mgs_um),
+        "design_mapping_identity": design_identity,
+        "current_mapping_identity": current_identity,
+        "mapping_identity": design_identity if design_identity is not None else current_identity,
         "had_feasible": had_feasible,
         "artifact_sha256": artifacts,
     }
@@ -246,14 +252,20 @@ def main():
         "void_width_500nm_drc": True,
         "gap_500nm_drc": True if args.min_gap_um is not None else "not_applicable",
         "exact_binary_fom_evaluated": True,
-        # measurements (kept separate from the pass flags)
+        # measurements (kept separate from the pass flags); *_capped=True means the
+        # value is a LOWER BOUND (feature wider than the search cap), not exact (#1).
         "minimum_solid_width_um": drc["minimum_solid_width_um"],
+        "minimum_solid_width_capped": drc.get("minimum_solid_width_capped", False),
         "minimum_void_width_um": drc["minimum_void_width_um"],
+        "minimum_void_width_capped": drc.get("minimum_void_width_capped", False),
         "minimum_gap_um": drc["minimum_gap_um"],
+        "minimum_gap_capped": drc.get("minimum_gap_capped", False),
         "Fx": fom["Fx"], "Fy": fom["Fy"], "F_sum": fom["F_sum"],
         # provenance (P1-5)
         "current_code_hash": current_hash, "design_code_hash": design_hash,
         "design_config_hash": design_config_hash, "design_attempt": design_attempt,
+        "design_mapping_identity": design_identity,
+        "current_mapping_identity": current_identity,
         "mapping_identity": manifest["mapping_identity"],
         "artifact_sha256": artifacts,
     }
