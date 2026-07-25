@@ -468,8 +468,10 @@ def main() -> int:
     if args.top_disk_support == "oxide-supported-overhang":
         xy_support = xy_design & ~xy_flake
         active[:, :, z_slices["flake"]] |= xy_support[:, :, None]
-        material_id[:, :, z_slices["flake"]] += (
-            5 * xy_support[:, :, None]
+        material_id[:, :, z_slices["flake"]] = np.where(
+            xy_support[:, :, None],
+            np.uint8(5),
+            material_id[:, :, z_slices["flake"]],
         )
     active[:, :, z_slices["design"]] = xy_design[:, :, None]
     material_id[:, :, z_slices["design"]] = (
