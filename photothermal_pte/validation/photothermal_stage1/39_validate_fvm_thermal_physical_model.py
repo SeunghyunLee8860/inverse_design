@@ -313,6 +313,8 @@ def build_row(
     definition: Case,
     result: dict[str, Any],
     reference: dict[str, Any],
+    *,
+    mesh_role: str = "native",
 ) -> dict[str, Any]:
     tmax, average = response(result)
     reference_tmax, reference_average = response(reference)
@@ -324,6 +326,7 @@ def build_row(
     return {
         "case_id": result["case_id"],
         "family": definition.family,
+        "mesh_role": mesh_role,
         "physical_basis": definition.physical_basis,
         "Tmax_K_per_W_m2": tmax,
         "TaIrTe4_average_K_per_W_m2": average,
@@ -360,6 +363,8 @@ def build_row(
             "optical_source_artifact_sha256"
         ],
         "mapped_source_power_W": result["source"]["mapped_source_power_W"],
+        "source_mesh_mode": result["source"]["thermal_source_mesh_mode"],
+        "active_solid_cells": result["grid"]["active_solid_cell_count"],
         "G_top_W_m2K": top_interface["G_W_m2K"],
         "TaIrTe4_kz_W_mK": result["materials_W_mK"][
             "TaIrTe4_diagonal"
@@ -471,6 +476,14 @@ def main() -> int:
             ),
             "numerical_error_separated_from_physical_variation": True,
         }
+        rows.append(
+            build_row(
+                maximum_definition,
+                refined,
+                reference,
+                mesh_role="refined_maximum_variation_scenario",
+            )
+        )
 
     expected_source = all(
         row["optical_source_SHA256"] == EXPECTED_OPTICAL_SHA256
@@ -505,7 +518,7 @@ def main() -> int:
             else "FAILED_FVM_THERMAL_PHYSICAL_MODEL_SCENARIOS"
         ),
         "passed": passed,
-        "case_count": len(rows) + (1 if refined is not None else 0),
+        "case_count": len(rows),
         "reference_case_id": REFERENCE_CASE_ID,
         "reference_is_unique_physical_truth": False,
         "G_top_scenarios": {

@@ -559,5 +559,44 @@
     "tiling": false,
     "source_deletion": false
   },
-  "transient_PTE_adjoint_gradient_optimization_executed": false
+  "transient_PTE_adjoint_gradient_optimization_executed": false,
+  "published_at_utc": "20260725T222852Z",
+  "published_status": "VALIDATED_FVM_THERMAL_PHYSICAL_MODEL_SCENARIOS_WITH_FABRICATION_GEOMETRY_BLOCKER",
+  "immutable_numerical_checkpoint": "437ec0644b15a4b9a6919a0151e4aa531fb1e0ab",
+  "numerical_convergence": {
+    "lateral_domain_um": {
+      "family": "lateral_domain_um",
+      "from_case": "domain_L16",
+      "to_case": "domain_L32",
+      "Tmax_relative_change": 4.8996878697628395e-05,
+      "flake_average_relative_change": 6.766335358896687e-05,
+      "flake_probe_3d_NRMSE": 5.177509243718818e-05
+    },
+    "Si_depth_um": {
+      "family": "Si_depth_um",
+      "from_case": "depth_D10_L32",
+      "to_case": "final_native",
+      "Tmax_relative_change": 0.00017833827805854453,
+      "flake_average_relative_change": 0.00024685948618043775,
+      "flake_probe_3d_NRMSE": 0.00018903693112946266
+    },
+    "thermal_mesh": {
+      "family": "thermal_mesh",
+      "from_case": "final_native",
+      "to_case": "mesh_refined",
+      "Tmax_relative_change": 0.0014069423315247367,
+      "flake_average_relative_change": 0.0009338868231933798,
+      "flake_probe_3d_NRMSE": 0.0006665902254473781
+    }
+  },
+  "physical_uncertainty_is_not_numerical_error": true,
+  "arbitrary_parameter_set_called_final_experimental_prediction": false,
+  "promoted_reference_metadata": {
+    "provisional_until_sensitivity_passes": false,
+    "next_required_gate": null,
+    "completed_gate": "DOMAIN_DEPTH_MESH_INTERFACE_BOUNDARY_SENSITIVITY",
+    "raw_per_case_JSON_modified": false
+  },
+  "report_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_thermal_physical_model/FVM_THERMAL_PHYSICAL_MODEL_REPORT.md",
+  "cases_CSV_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_thermal_physical_model/fvm_thermal_physical_model_cases.csv"
 }
