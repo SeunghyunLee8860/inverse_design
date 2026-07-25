@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "20260725T091553Z",
+  "generated_at_utc": "20260725T184456Z",
   "status": "BLOCKED_ANISOTROPIC_K_UNSUPPORTED",
   "status_allowed": true,
   "branch": "agent/unblock-heat-material-interface-controls",
@@ -228,6 +228,256 @@
         }
       },
       "v261_DEVICE_version": "7.17.4413"
+    },
+    "native_v261_deep_probe": {
+      "status": "BLOCKED_ANISOTROPIC_K_UNSUPPORTED",
+      "passed": false,
+      "v261_DEVICE_version": "7.17.4413",
+      "installation_root": "/opt/lumerical/v261",
+      "probe_scope": "fresh v261 DEVICE session; LSF-native tensor expressions, candidate hidden properties, and every HT database material",
+      "lsf_tensor_round_trips": {
+        "column_3x1": {
+          "material_path": "::model::materials::lsf column_3x1::lsf column_3x1 thermal",
+          "lsf_expression": "[14.4;3.8;1.0]",
+          "requested": [
+            [
+              14.4
+            ],
+            [
+              3.8
+            ],
+            [
+              1.0
+            ]
+          ],
+          "requested_shape": [
+            3,
+            1
+          ],
+          "returned": 0.0,
+          "returned_shape": [],
+          "round_trip_passed": false
+        },
+        "row_1x3": {
+          "material_path": "::model::materials::lsf row_1x3::lsf row_1x3 thermal",
+          "lsf_expression": "[14.4,3.8,1.0]",
+          "requested": [
+            [
+              14.4,
+              3.8,
+              1.0
+            ]
+          ],
+          "requested_shape": [
+            1,
+            3
+          ],
+          "returned": 0.0,
+          "returned_shape": [],
+          "round_trip_passed": false
+        },
+        "diagonal_3x3": {
+          "material_path": "::model::materials::lsf diagonal_3x3::lsf diagonal_3x3 thermal",
+          "lsf_expression": "[14.4,0,0;0,3.8,0;0,0,1.0]",
+          "requested": [
+            [
+              14.4,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              3.8,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "requested_shape": [
+            3,
+            3
+          ],
+          "returned": 0.0,
+          "returned_shape": [],
+          "round_trip_passed": false
+        }
+      },
+      "hidden_property_candidates": {
+        "anisotropy": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'anisotropy'  was not found\""
+        },
+        "thermal conductivity.anisotropy": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.anisotropy'  was not found\""
+        },
+        "thermal conductivity.constant.x": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.x'  was not found\""
+        },
+        "thermal conductivity.constant.y": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.y'  was not found\""
+        },
+        "thermal conductivity.constant.z": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.z'  was not found\""
+        },
+        "thermal conductivity.constant.kx": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.kx'  was not found\""
+        },
+        "thermal conductivity.constant.ky": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.ky'  was not found\""
+        },
+        "thermal conductivity.constant.kz": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.kz'  was not found\""
+        },
+        "thermal conductivity.constant.xx": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.xx'  was not found\""
+        },
+        "thermal conductivity.constant.yy": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.yy'  was not found\""
+        },
+        "thermal conductivity.constant.zz": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.zz'  was not found\""
+        }
+      },
+      "thermal_database_material_count": 64,
+      "thermal_database_scan": {
+        "scalar_conductivity_material_count": 59,
+        "nonscalar_conductivity_materials": {},
+        "errors": {
+          "AlGaInAs": "LumApiError: 'Thermal properties for quaternary alloys not implemented currently.'",
+          "AlGaInP": "LumApiError: 'Thermal properties for quaternary alloys not implemented currently.'",
+          "GaAlInN": "LumApiError: 'Thermal properties for quaternary alloys not implemented currently.'",
+          "GaInAsP": "LumApiError: 'Thermal properties for quaternary alloys not implemented currently.'",
+          "InGaAsP": "LumApiError: 'Thermal properties for quaternary alloys not implemented currently.'"
+        }
+      }
+    },
+    "validated_fvm_fallback": {
+      "status": "VALIDATED_DIAGONAL_KAPPA_FVM_CONTROLS",
+      "passed": true,
+      "solver_scope": "independent conservative Python finite-volume solver; not a v261 HEAT result",
+      "discretization": "cell-centered Cartesian finite volume with exact half-cell series resistance and adiabatic unspecified boundaries",
+      "requested_tensor_W_mK": [
+        14.4,
+        3.8,
+        1.0
+      ],
+      "isotropic_average_used": false,
+      "cases": [
+        {
+          "case_id": "fvm_x",
+          "status": "PASSED",
+          "passed": true,
+          "axis": "x",
+          "requested_tensor_W_mK": [
+            14.4,
+            3.8,
+            1.0
+          ],
+          "expected_kappa_W_mK": 14.4,
+          "effective_kappa_W_mK": 14.400000003164909,
+          "analytic_heat_flux_W_m2": 72000000.0,
+          "numerical_heat_flux_W_m2": 72000000.01582454,
+          "heat_flux_relative_error": 2.197852979103724e-10,
+          "temperature_profile_max_relative_error": 5.007336767448578e-11,
+          "energy_balance_relative_error": 1.1044368481988525e-11,
+          "linear_residual_relative": 7.887722830801208e-12,
+          "boundary_power_out_W": {
+            "x_min": 7.200000001622215e-05,
+            "x_max": -7.200000001542695e-05
+          },
+          "grid_shape": [
+            24,
+            8,
+            8
+          ],
+          "solver": "scipy.sparse.linalg.cg+jacobi",
+          "iterations": 92
+        },
+        {
+          "case_id": "fvm_y",
+          "status": "PASSED",
+          "passed": true,
+          "axis": "y",
+          "requested_tensor_W_mK": [
+            14.4,
+            3.8,
+            1.0
+          ],
+          "expected_kappa_W_mK": 3.8,
+          "effective_kappa_W_mK": 3.800000000872867,
+          "analytic_heat_flux_W_m2": 19000000.0,
+          "numerical_heat_flux_W_m2": 19000000.004364334,
+          "heat_flux_relative_error": 2.2970179193898252e-10,
+          "temperature_profile_max_relative_error": 3.2457592169521376e-11,
+          "energy_balance_relative_error": 1.4898328763678434e-11,
+          "linear_residual_relative": 6.8258689925476e-12,
+          "boundary_power_out_W": {
+            "y_min": 1.9000000004505867e-05,
+            "y_max": -1.90000000042228e-05
+          },
+          "grid_shape": [
+            8,
+            24,
+            8
+          ],
+          "solver": "scipy.sparse.linalg.cg+jacobi",
+          "iterations": 103
+        },
+        {
+          "case_id": "fvm_z",
+          "status": "PASSED",
+          "passed": true,
+          "axis": "z",
+          "requested_tensor_W_mK": [
+            14.4,
+            3.8,
+            1.0
+          ],
+          "expected_kappa_W_mK": 1.0,
+          "effective_kappa_W_mK": 1.0000000012962382,
+          "analytic_heat_flux_W_m2": 5000000.0,
+          "numerical_heat_flux_W_m2": 5000000.006481192,
+          "heat_flux_relative_error": 1.2962384149432183e-09,
+          "temperature_profile_max_relative_error": 2.7625901566352695e-11,
+          "energy_balance_relative_error": 4.9733539432333e-11,
+          "linear_residual_relative": 9.35914374014813e-12,
+          "boundary_power_out_W": {
+            "z_min": 5.000000006605527e-06,
+            "z_max": -5.000000006356859e-06
+          },
+          "grid_shape": [
+            8,
+            8,
+            24
+          ],
+          "solver": "scipy.sparse.linalg.cg+jacobi",
+          "iterations": 115
+        }
+      ]
     },
     "isotropic_fallback_used": false,
     "cases": [

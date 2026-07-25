@@ -1,0 +1,274 @@
+"""Conservative Cartesian finite-volume solver for diagonal thermal tensors.
+
+The discretization stores temperature at cell centers.  Conductance between
+adjacent cells is formed from the exact series resistance of the two half
+cells plus an optional interfacial thermal insulance.  This preserves heat
+flux across heterogeneous material interfaces and supports nonuniform grids.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Mapping
+
+import numpy as np
+from scipy import sparse
+from scipy.sparse import linalg as sparse_linalg
+
+
+FACE_NAMES = (
+    "x_min",
+    "x_max",
+    "y_min",
+    "y_max",
+    "z_min",
+    "z_max",
+)
+
+
+@dataclass(frozen=True)
+class SteadyHeatResult:
+    temperature_K: np.ndarray
+    boundary_power_out_W: dict[str, float]
+    source_power_W: float
+    energy_balance_relative_error: float
+    linear_residual_relative: float
+    solver: str
+    iterations: int
+
+
+def _validated_edges(name: str, values: np.ndarray) -> np.ndarray:
+    edges = np.asarray(values, float).reshape(-1)
+    if edges.size < 2 or not np.all(np.isfinite(edges)):
+        raise ValueError(f"{name} edges must contain finite values")
+    if not np.all(np.diff(edges) > 0.0):
+        raise ValueError(f"{name} edges must be strictly increasing")
+    return edges
+
+
+def _face_resistance(
+    interface_resistance_m2K_W: Mapping[str, np.ndarray] | None,
+    axis: str,
+    shape: tuple[int, ...],
+) -> np.ndarray:
+    if interface_resistance_m2K_W is None or axis not in interface_resistance_m2K_W:
+        return np.zeros(shape, float)
+    resistance = np.asarray(interface_resistance_m2K_W[axis], float)
+    if resistance.shape != shape:
+        raise ValueError(
+            f"{axis} interface resistance shape {resistance.shape} != {shape}"
+        )
+    if not np.all(np.isfinite(resistance)) or np.any(resistance < 0.0):
+        raise ValueError(f"{axis} interface resistance must be finite and nonnegative")
+    return resistance
+
+
+def _append_internal_faces(
+    *,
+    ids: np.ndarray,
+    kappa: np.ndarray,
+    widths: tuple[np.ndarray, np.ndarray, np.ndarray],
+    axis: int,
+    resistance: np.ndarray,
+    diagonal: np.ndarray,
+    rows: list[np.ndarray],
+    columns: list[np.ndarray],
+    values: list[np.ndarray],
+) -> None:
+    dx, dy, dz = widths
+    if axis == 0:
+        left_ids, right_ids = ids[:-1, :, :], ids[1:, :, :]
+        left_k, right_k = kappa[:-1, :, :, 0], kappa[1:, :, :, 0]
+        left_d = dx[:-1, None, None]
+        right_d = dx[1:, None, None]
+        area = dy[None, :, None] * dz[None, None, :]
+    elif axis == 1:
+        left_ids, right_ids = ids[:, :-1, :], ids[:, 1:, :]
+        left_k, right_k = kappa[:, :-1, :, 1], kappa[:, 1:, :, 1]
+        left_d = dy[None, :-1, None]
+        right_d = dy[None, 1:, None]
+        area = dx[:, None, None] * dz[None, None, :]
+    else:
+        left_ids, right_ids = ids[:, :, :-1], ids[:, :, 1:]
+        left_k, right_k = kappa[:, :, :-1, 2], kappa[:, :, 1:, 2]
+        left_d = dz[None, None, :-1]
+        right_d = dz[None, None, 1:]
+        area = dx[:, None, None] * dy[None, :, None]
+    resistance_per_area = (
+        0.5 * left_d / left_k + resistance + 0.5 * right_d / right_k
+    )
+    conductance = area / resistance_per_area
+    left_flat = left_ids.reshape(-1)
+    right_flat = right_ids.reshape(-1)
+    conductance_flat = conductance.reshape(-1)
+    np.add.at(diagonal, left_flat, conductance_flat)
+    np.add.at(diagonal, right_flat, conductance_flat)
+    rows.extend((left_flat, right_flat))
+    columns.extend((right_flat, left_flat))
+    values.extend((-conductance_flat, -conductance_flat))
+
+
+def _boundary_geometry(
+    face: str,
+    ids: np.ndarray,
+    kappa: np.ndarray,
+    widths: tuple[np.ndarray, np.ndarray, np.ndarray],
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    dx, dy, dz = widths
+    if face == "x_min":
+        return ids[0, :, :], kappa[0, :, :, 0], dy[:, None] * dz[None, :] / (0.5 * dx[0])
+    if face == "x_max":
+        return ids[-1, :, :], kappa[-1, :, :, 0], dy[:, None] * dz[None, :] / (0.5 * dx[-1])
+    if face == "y_min":
+        return ids[:, 0, :], kappa[:, 0, :, 1], dx[:, None] * dz[None, :] / (0.5 * dy[0])
+    if face == "y_max":
+        return ids[:, -1, :], kappa[:, -1, :, 1], dx[:, None] * dz[None, :] / (0.5 * dy[-1])
+    if face == "z_min":
+        return ids[:, :, 0], kappa[:, :, 0, 2], dx[:, None] * dy[None, :] / (0.5 * dz[0])
+    if face == "z_max":
+        return ids[:, :, -1], kappa[:, :, -1, 2], dx[:, None] * dy[None, :] / (0.5 * dz[-1])
+    raise ValueError(f"unknown boundary face {face}")
+
+
+def solve_steady_diagonal_kappa(
+    *,
+    x_edges_m: np.ndarray,
+    y_edges_m: np.ndarray,
+    z_edges_m: np.ndarray,
+    kappa_W_mK: np.ndarray,
+    source_W_m3: np.ndarray | None = None,
+    dirichlet_temperature_K: Mapping[str, float],
+    interface_resistance_m2K_W: Mapping[str, np.ndarray] | None = None,
+    relative_tolerance: float = 1.0e-11,
+    max_iterations: int = 5000,
+) -> SteadyHeatResult:
+    """Solve ``-div(K grad T) = Q`` for diagonal, cellwise ``K``.
+
+    Unspecified exterior faces are adiabatic.  Internal face resistance
+    arrays use per-area units of m2 K/W and have shapes ``(nx-1, ny, nz)``,
+    ``(nx, ny-1, nz)``, and ``(nx, ny, nz-1)`` for x, y, and z.
+    """
+    x_edges = _validated_edges("x", x_edges_m)
+    y_edges = _validated_edges("y", y_edges_m)
+    z_edges = _validated_edges("z", z_edges_m)
+    widths = (np.diff(x_edges), np.diff(y_edges), np.diff(z_edges))
+    shape = tuple(item.size for item in widths)
+    kappa = np.asarray(kappa_W_mK, float)
+    if kappa.shape != (*shape, 3):
+        raise ValueError(f"kappa shape {kappa.shape} != {(*shape, 3)}")
+    if not np.all(np.isfinite(kappa)) or np.any(kappa <= 0.0):
+        raise ValueError("all diagonal conductivity components must be finite and positive")
+    invalid_faces = sorted(set(dirichlet_temperature_K) - set(FACE_NAMES))
+    if invalid_faces:
+        raise ValueError(f"unknown Dirichlet faces: {invalid_faces}")
+    if not dirichlet_temperature_K:
+        raise ValueError("at least one Dirichlet face is required")
+
+    ids = np.arange(np.prod(shape), dtype=np.int64).reshape(shape)
+    diagonal = np.zeros(ids.size, float)
+    rows: list[np.ndarray] = []
+    columns: list[np.ndarray] = []
+    values: list[np.ndarray] = []
+    for axis, axis_name in enumerate(("x", "y", "z")):
+        face_shape = list(shape)
+        face_shape[axis] -= 1
+        resistance = _face_resistance(
+            interface_resistance_m2K_W, axis_name, tuple(face_shape)
+        )
+        _append_internal_faces(
+            ids=ids,
+            kappa=kappa,
+            widths=widths,
+            axis=axis,
+            resistance=resistance,
+            diagonal=diagonal,
+            rows=rows,
+            columns=columns,
+            values=values,
+        )
+
+    dx, dy, dz = widths
+    volume = dx[:, None, None] * dy[None, :, None] * dz[None, None, :]
+    source = (
+        np.zeros(shape, float)
+        if source_W_m3 is None
+        else np.asarray(source_W_m3, float)
+    )
+    if source.shape != shape:
+        raise ValueError(f"source shape {source.shape} != {shape}")
+    if not np.all(np.isfinite(source)):
+        raise ValueError("source contains NaN or Inf")
+    rhs = (source * volume).reshape(-1)
+    boundary_terms: dict[str, tuple[np.ndarray, np.ndarray, float]] = {}
+    for face, temperature in dirichlet_temperature_K.items():
+        temperature = float(temperature)
+        if not np.isfinite(temperature):
+            raise ValueError(f"{face} temperature must be finite")
+        face_ids, face_kappa, area_over_half_width = _boundary_geometry(
+            face, ids, kappa, widths
+        )
+        conductance = face_kappa * area_over_half_width
+        flat_ids = face_ids.reshape(-1)
+        flat_conductance = conductance.reshape(-1)
+        np.add.at(diagonal, flat_ids, flat_conductance)
+        np.add.at(rhs, flat_ids, flat_conductance * temperature)
+        boundary_terms[face] = (flat_ids, flat_conductance, temperature)
+    all_ids = np.arange(ids.size, dtype=np.int64)
+    rows.append(all_ids)
+    columns.append(all_ids)
+    values.append(diagonal)
+    matrix = sparse.coo_matrix(
+        (
+            np.concatenate(values),
+            (np.concatenate(rows), np.concatenate(columns)),
+        ),
+        shape=(ids.size, ids.size),
+    ).tocsr()
+    preconditioner = sparse_linalg.LinearOperator(
+        matrix.shape, matvec=lambda vector: vector / diagonal
+    )
+    iterations = 0
+
+    def count_iteration(_: np.ndarray) -> None:
+        nonlocal iterations
+        iterations += 1
+
+    solution, info = sparse_linalg.cg(
+        matrix,
+        rhs,
+        rtol=relative_tolerance,
+        atol=0.0,
+        maxiter=max_iterations,
+        M=preconditioner,
+        callback=count_iteration,
+    )
+    solver_name = "scipy.sparse.linalg.cg+jacobi"
+    if info != 0:
+        solution = sparse_linalg.spsolve(matrix, rhs)
+        solver_name = f"scipy.sparse.linalg.spsolve_after_cg_info_{info}"
+    residual = matrix @ solution - rhs
+    residual_relative = float(
+        np.linalg.norm(residual)
+        / max(np.linalg.norm(rhs), np.finfo(float).tiny)
+    )
+    boundary_power = {
+        face: float(
+            np.sum(conductance * (solution[face_ids] - temperature))
+        )
+        for face, (face_ids, conductance, temperature) in boundary_terms.items()
+    }
+    source_power = float(np.sum(source * volume))
+    energy_error = abs(sum(boundary_power.values()) - source_power) / max(
+        abs(source_power),
+        max((abs(value) for value in boundary_power.values()), default=0.0),
+        np.finfo(float).tiny,
+    )
+    return SteadyHeatResult(
+        temperature_K=solution.reshape(shape),
+        boundary_power_out_W=boundary_power,
+        source_power_W=source_power,
+        energy_balance_relative_error=float(energy_error),
+        linear_residual_relative=residual_relative,
+        solver=solver_name,
+        iterations=iterations,
+    )

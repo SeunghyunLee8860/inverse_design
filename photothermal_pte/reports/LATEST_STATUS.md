@@ -7,12 +7,14 @@
 - Finite-Q source: PR #3 commit `053260d`
 - PR #2 and PR #3 content: unchanged
 - Status: `BLOCKED_ANISOTROPIC_K_UNSUPPORTED`
+- Independent anisotropic fallback:
+  `VALIDATED_DIAGONAL_KAPPA_FVM_CONTROLS`
 - Full-device HEAT cases executed: `false`
 - Transient/PTE/adjoint/gradient/optimization executed: `false`
 
 ### Active blockers
 
-- `BLOCKED_ANISOTROPIC_K_UNSUPPORTED`
+- `BLOCKED_ANISOTROPIC_K_UNSUPPORTED` (native v261 HEAT only)
 - `BLOCKED_INTERFACE_G_UNVERIFIED`
 - `BLOCKED_REQUIRED_SOLVER_CONTROLS_UNVERIFIED`
 
@@ -32,9 +34,21 @@
 - Requested tensor readback after reload: `[0.0]`
 - Fresh vector/row/column/3x3-diagonal encoding probe: all returned scalar
   `0.0`; no tensor encoding round trip passed
+- Exhaustive native v261 probe: LSF-native 3x1/1x3/3x3 matrices all returned
+  scalar `0.0`; all 11 hidden-property candidates were rejected
+- v261 HT database scan: 64 entries, 59 readable scalar conductivity models,
+  0 non-scalar conductivity models, 5 unimplemented quaternary-alloy models
 - x/y/z effective kappa from solver: `[0.0, 0.0, 0.0] W/(m K)`
 - x/y/z heat-flux relative errors: `[100%, 100%, 100%]`
 - Isotropic fallback used: `false`
+- Independent conservative FVM x/y/z recovered kappa:
+  `[14.4000000032, 3.80000000087, 1.00000000130] W/(m K)`
+- Independent FVM x/y/z heat-flux relative errors:
+  `[2.20e-10, 2.30e-10, 1.30e-9]`
+- Independent FVM x/y/z temperature-profile relative errors:
+  `[5.01e-11, 3.25e-11, 2.76e-11]`
+- Independent FVM status: `VALIDATED_DIAGONAL_KAPPA_FVM_CONTROLS`;
+  this is not reported as a v261 HEAT result
 - Internal finite-\(G\) candidate: v261 `temperature` BC on the shared
   `material:material` surface with `thermal impedance = 1/G`
 - Finite-\(G\) property write/save/reload: `passed` for both requested values
@@ -58,6 +72,10 @@
   `validation/photothermal_stage1/29_validate_heat_material_interface_controls.py`
 - Summary:
   `validation/photothermal_stage1/30_summarize_heat_material_interface_controls.py`
+- Native anisotropy probe and validated FVM controls:
+  `validation/photothermal_stage1/31_resolve_anisotropic_kappa.py`
+- Conservative diagonal-tensor solver:
+  `validation/photothermal_stage1/anisotropic_heat_fvm.py`
 - Anisotropic-\(\kappa\) report:
   `reports/heat_material_interface_controls/HEAT_ANISOTROPIC_K_SOLVER_REPORT.md`
 - Internal-\(G\) report:
@@ -65,6 +83,10 @@
 - Machine-readable summary/cases/raw manifest:
   `reports/heat_material_interface_controls/`
 
-Full-device HEAT, transient, PTE, adjoint, gradient, and optimization are not
-part of this control-only branch. No isotropic fallback or modification of the
-finite optical-Q artifact is permitted.
+Native v261 HEAT still cannot represent the requested conductivity tensor.
+The validated FVM path resolves the anisotropic equation independently, but
+adopting it for the finite-Q production calculation requires an explicit
+solver-path decision and a validated internal-interface-G control. Full-device
+HEAT, transient, PTE, adjoint, gradient, and optimization are not part of this
+control-only branch. No isotropic fallback or modification of the finite
+optical-Q artifact is permitted.

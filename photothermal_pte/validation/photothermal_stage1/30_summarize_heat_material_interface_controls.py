@@ -51,6 +51,22 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--native-anisotropy-probe",
+        default=str(
+            raw_root
+            / "anisotropic_native_probe_v2"
+            / "anisotropic_kappa_resolution.json"
+        ),
+    )
+    parser.add_argument(
+        "--anisotropic-fvm-controls",
+        default=str(
+            raw_root
+            / "anisotropic_resolution_fvm_v2"
+            / "anisotropic_kappa_resolution.json"
+        ),
+    )
+    parser.add_argument(
         "--interface-controls",
         default=str(
             raw_root / "interface_controls_v3" / "interface_controls.json"
@@ -102,12 +118,16 @@ def make_summary(
     license_result: dict[str, Any],
     encoding_result: dict[str, Any],
     kappa_result: dict[str, Any],
+    native_result: dict[str, Any],
+    fvm_result: dict[str, Any],
     interface_result: dict[str, Any],
 ) -> dict[str, Any]:
     q = q_result["q_precheck"]
     license_probe = license_result["license_probe"]
     encoding = encoding_result["tensor_encoding_probe"]
     kappa = kappa_result["anisotropic_kappa"]
+    native = native_result["native_v261_probe"]
+    fvm = fvm_result["fvm_controls"]
     interface = interface_result["internal_interface_G"]
     finite_cases = interface["finite_G_cases"]
     perfect_cases = interface["perfect_contact_cases"]
@@ -135,6 +155,24 @@ def make_summary(
             "requested_tensor_W_mK": kappa["requested_tensor_W_mK"],
             "tensor_supported": False,
             "encoding_probe": encoding,
+            "native_v261_deep_probe": {
+                "status": native["status"],
+                "passed": native["passed"],
+                "v261_DEVICE_version": native["v261_DEVICE_version"],
+                "installation_root": native["installation_root"],
+                "probe_scope": native["probe_scope"],
+                "lsf_tensor_round_trips": native[
+                    "lsf_tensor_round_trips"
+                ],
+                "hidden_property_candidates": native[
+                    "hidden_property_candidates"
+                ],
+                "thermal_database_material_count": native[
+                    "thermal_database_material_count"
+                ],
+                "thermal_database_scan": native["thermal_database_scan"],
+            },
+            "validated_fvm_fallback": fvm,
             "isotropic_fallback_used": kappa[
                 "isotropic_fallback_used"
             ],
@@ -263,6 +301,38 @@ def write_cases_csv(path: Path, summary: dict[str, Any]) -> None:
                 "notes": "no isotropic fallback",
             }
         )
+    for case in summary["anisotropic_kappa"][
+        "validated_fvm_fallback"
+    ]["cases"]:
+        rows.append(
+            {
+                "case_id": case["case_id"],
+                "control": "diagonal_kappa_fvm_fallback",
+                "status": case["status"],
+                "passed": case["passed"],
+                "axis": case["axis"],
+                "requested_value": case["requested_tensor_W_mK"],
+                "analytic_heat_flux_W_m2": case[
+                    "analytic_heat_flux_W_m2"
+                ],
+                "numerical_heat_flux_W_m2": case[
+                    "numerical_heat_flux_W_m2"
+                ],
+                "heat_flux_relative_error": case[
+                    "heat_flux_relative_error"
+                ],
+                "temperature_profile_relative_error": case[
+                    "temperature_profile_max_relative_error"
+                ],
+                "energy_balance_relative_error": case[
+                    "energy_balance_relative_error"
+                ],
+                "notes": (
+                    "validated conservative Python FVM; "
+                    "not a v261 HEAT result"
+                ),
+            }
+        )
     interface = summary["internal_interface_G"]
     for case in interface["finite_G_cases"]:
         rows.append(
@@ -346,6 +416,8 @@ def write_cases_csv(path: Path, summary: dict[str, Any]) -> None:
 
 def kappa_report(summary: dict[str, Any]) -> str:
     kappa = summary["anisotropic_kappa"]
+    native = kappa["native_v261_deep_probe"]
+    fvm = kappa["validated_fvm_fallback"]
     lines = [
         "# HEAT anisotropic-kappa solver report",
         "",
@@ -393,9 +465,81 @@ def kappa_report(summary: dict[str, Any]) -> str:
             "No scalar average, coordinate remapping, or isotropic replacement was",
             "used. The production finite-Q source was not imported.",
             "",
+            "## Exhaustive native v261 probe",
+            "",
+            "A fresh DEVICE session tested LSF-native 3x1, 1x3, and 3x3",
+            "matrix expressions, eleven plausible hidden property names, and",
+            "every material returned by `addmaterialproperties(\"HT\")`.",
+            "",
+            f"- Native probe status: `{native['status']}`",
+            f"- HT database entries: `{native['thermal_database_material_count']}`",
+            "- Readable scalar conductivity entries: "
+            f"`{native['thermal_database_scan']['scalar_conductivity_material_count']}`",
+            "- Non-scalar conductivity entries: "
+            f"`{len(native['thermal_database_scan']['nonscalar_conductivity_materials'])}`",
+            "- Hidden property writes accepted: "
+            f"`{sum(item['write_succeeded'] for item in native['hidden_property_candidates'].values())}`",
+            "",
+            "| Native LSF encoding | requested | returned | exact round trip |",
+            "|---|---:|---:|---:|",
+        ]
+    )
+    for label, item in native["lsf_tensor_round_trips"].items():
+        lines.append(
+            f"| {label} | `{item['requested']}` | `{item['returned']}` | "
+            f"`{item['round_trip_passed']}` |"
+        )
+    lines.extend(
+        [
+            "",
+            "This closes the known native v261 material routes: the installed",
+            "HEAT material API exposes scalar conductivity only. Consequently",
+            "`BLOCKED_ANISOTROPIC_K_UNSUPPORTED` remains correct specifically",
+            "for a v261 HEAT-backed result.",
+            "",
+            "## Working anisotropic path",
+            "",
+            f"**Fallback status: `{fvm['status']}`.**",
+            "",
+            "A repository-native, cell-centered conservative finite-volume",
+            "solver now accepts cellwise `diag(kx, ky, kz)`. Conductances use",
+            "the exact series resistance of adjacent half cells; unspecified",
+            "outer faces are adiabatic. This is an independently validated",
+            "solver path, not a relabeled Lumerical result.",
+            "The present implementation is intentionally limited to diagonal",
+            "tensors aligned with the Cartesian grid; that exactly matches the",
+            "requested `diag(14.4, 3.8, 1.0)` tensor.",
+            "",
+            "| Axis | expected k (W/m K) | recovered k (W/m K) | flux error | profile error | energy error |",
+            "|---|---:|---:|---:|---:|---:|",
+        ]
+    )
+    for case in fvm["cases"]:
+        lines.append(
+            f"| {case['axis']} | `{case['expected_kappa_W_mK']:.9g}` | "
+            f"`{case['effective_kappa_W_mK']:.12g}` | "
+            f"`{100 * case['heat_flux_relative_error']:.6g}%` | "
+            f"`{100 * case['temperature_profile_max_relative_error']:.6g}%` | "
+            f"`{100 * case['energy_balance_relative_error']:.6g}%` |"
+        )
+    lines.extend(
+        [
+            "",
+            "All three controls satisfy the requested `<1%` heat-flux and",
+            "temperature-profile criteria without an isotropic average.",
+            "",
+            "Reproduce the controls with:",
+            "",
+            "```bash",
+            "python photothermal_pte/validation/photothermal_stage1/31_resolve_anisotropic_kappa.py \\",
+            "  --phase fvm-controls --output-dir /tmp/anisotropic-kappa-controls",
+            "```",
+            "",
             "Official Ansys scripting documentation describes the constant thermal",
-            "conductivity material field:",
+            "conductivity field as scalar and lists only Solid, Solid Alloy,",
+            "and Fluid thermal property types:",
             "https://optics.ansys.com/hc/en-us/articles/360034919233-Creating-and-modifying-thermal-materials-from-a-script",
+            "https://optics.ansys.com/hc/en-us/articles/360034924973-addhtmaterialproperty-Script-command",
             "",
         ]
     )
@@ -535,6 +679,12 @@ def main() -> int:
         "tensor_encoding_probe": Path(
             args.tensor_encoding_probe
         ).expanduser().resolve(),
+        "native_anisotropy_probe": Path(
+            args.native_anisotropy_probe
+        ).expanduser().resolve(),
+        "anisotropic_fvm_controls": Path(
+            args.anisotropic_fvm_controls
+        ).expanduser().resolve(),
         "interface_controls": Path(
             args.interface_controls
         ).expanduser().resolve(),
@@ -545,6 +695,8 @@ def main() -> int:
         data["license_probe"],
         data["tensor_encoding_probe"],
         data["kappa_controls"],
+        data["native_anisotropy_probe"],
+        data["anisotropic_fvm_controls"],
         data["interface_controls"],
     )
     report_dir = Path(args.report_dir).expanduser().resolve()

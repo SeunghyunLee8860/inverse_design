@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "20260725T091554Z",
+  "generated_at_utc": "20260725T184457Z",
   "generated_by": "photothermal_pte/validation/photothermal_stage1/30_summarize_heat_material_interface_controls.py",
   "status": "BLOCKED_ANISOTROPIC_K_UNSUPPORTED",
   "validated_finite_Q": {
@@ -133,6 +133,76 @@
       "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/tensor_encoding_probe_v1/tensor_encoding_probe.json",
       "bytes": 2067,
       "sha256": "fedef4da0a9bb86a447d11f769338a2fbf24450880aac24c4ca59a69e9335bc9",
+      "tracked_in_git": false
+    },
+    {
+      "category": "native_anisotropy_probe",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/anisotropic_native_probe_v2/anisotropic_kappa_resolution.json",
+      "bytes": 8118,
+      "sha256": "0c493438258db002cb1733c0b969342814c0b5fdc1733140398b8b45a42585ae",
+      "tracked_in_git": false
+    },
+    {
+      "category": "native_anisotropy_probe",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/anisotropic_native_probe_v2/native_v261_anisotropy_probe.json",
+      "bytes": 7244,
+      "sha256": "cb4788ef3a90a5f904802d148efeed581eb474ddd9beb14e408c6d6642bc389c",
+      "tracked_in_git": false
+    },
+    {
+      "category": "anisotropic_fvm_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/anisotropic_resolution_fvm_v2/anisotropic_kappa_fvm_controls.json",
+      "bytes": 3044,
+      "sha256": "07370b341bd8e8a4f798846eeab3552b2d3270fafd0572da55eedf335a3cdc49",
+      "tracked_in_git": false
+    },
+    {
+      "category": "anisotropic_fvm_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/anisotropic_resolution_fvm_v2/anisotropic_kappa_resolution.json",
+      "bytes": 3682,
+      "sha256": "cebb18bc4c91550c170dab4fa05801ba02db6fe0514e7348190b2714830f798e",
+      "tracked_in_git": false
+    },
+    {
+      "category": "anisotropic_fvm_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/anisotropic_resolution_fvm_v2/fvm_x/case_result.json",
+      "bytes": 754,
+      "sha256": "fcfa0d068ac45a6cd90aece65dcf48479801b75a6f9ee700f1d62657430a65e9",
+      "tracked_in_git": false
+    },
+    {
+      "category": "anisotropic_fvm_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/anisotropic_resolution_fvm_v2/fvm_x/temperature_profile.npz",
+      "bytes": 6204,
+      "sha256": "3925f36f588d9d3b8c3558ffa5d8f514924e94bebb63110e25f094a3ab103016",
+      "tracked_in_git": false
+    },
+    {
+      "category": "anisotropic_fvm_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/anisotropic_resolution_fvm_v2/fvm_y/case_result.json",
+      "bytes": 754,
+      "sha256": "34d23b00362a75bd11221c0b02a8d65f296a9e71339268df7ef28db0e06f6f26",
+      "tracked_in_git": false
+    },
+    {
+      "category": "anisotropic_fvm_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/anisotropic_resolution_fvm_v2/fvm_y/temperature_profile.npz",
+      "bytes": 7178,
+      "sha256": "5556d765107d9b07e5c155c75a7ae9b10871b9cdf0e56e6e8a64a42d6422fc23",
+      "tracked_in_git": false
+    },
+    {
+      "category": "anisotropic_fvm_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/anisotropic_resolution_fvm_v2/fvm_z/case_result.json",
+      "bytes": 751,
+      "sha256": "e1d04c4c3f667d0840781b397c9d4f8703c693c6cccad9fdc5fe3e8b11910890",
+      "tracked_in_git": false
+    },
+    {
+      "category": "anisotropic_fvm_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/anisotropic_resolution_fvm_v2/fvm_z/temperature_profile.npz",
+      "bytes": 7321,
+      "sha256": "f6f5a628801f99b143ec58abcc810b3142cc8b5e718c01301e6d82dc1a0e6205",
       "tracked_in_git": false
     },
     {
@@ -292,8 +362,8 @@
     {
       "category": "report",
       "repository_or_server_path": "photothermal_pte/reports/heat_material_interface_controls/HEAT_ANISOTROPIC_K_SOLVER_REPORT.md",
-      "bytes": 1535,
-      "sha256": "8fb9ee46609e567916bd7c500dd8d974b3d229025f51830b1ecb73e09c496360",
+      "bytes": 3903,
+      "sha256": "d04f5905030b2a3b05b335125993b7ac1b31ed61ffa0d7347a5ebc355e057134",
       "tracked_in_git": true
     },
     {
@@ -306,15 +376,15 @@
     {
       "category": "report",
       "repository_or_server_path": "photothermal_pte/reports/heat_material_interface_controls/heat_material_interface_controls_summary.json",
-      "bytes": 38057,
-      "sha256": "ad804511f0f238a58f2bd7a70cbc0f0517c18245f71d57266fff073e84f7f8b8",
+      "bytes": 47005,
+      "sha256": "381c5e3225fe9687f02b428502fad201e562ea97070f8ef7232f4aaa294080ec",
       "tracked_in_git": true
     },
     {
       "category": "report",
       "repository_or_server_path": "photothermal_pte/reports/heat_material_interface_controls/heat_material_interface_controls_cases.csv",
-      "bytes": 2676,
-      "sha256": "98287a5eab2c4e8ed401725506e98e75f995ad96d0033519d50be361fc4f9bb5",
+      "bytes": 3361,
+      "sha256": "cbddc4f3764f27b85bbbf853a0bfd77bee1a5b57064653ec4f3f2fb8af4f3549",
       "tracked_in_git": true
     }
   ],
