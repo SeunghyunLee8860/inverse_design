@@ -35,6 +35,8 @@ from lumerical_api import jsonable, load_lumapi, select_installation, write_json
 
 C0 = 299792458.0
 EPS0 = 8.8541878128e-12
+MU0 = 1.25663706212e-6
+ETA0 = float(np.sqrt(MU0 / EPS0))
 TARGET_WAVELENGTH_M = 4.0e-6
 TARGET_FREQUENCY_HZ = C0 / TARGET_WAVELENGTH_M
 SOURCE_START_M = 3.0e-6
@@ -61,8 +63,10 @@ PABS_PADDING_M = 50.0e-9
 
 FDTD_Z_MIN_M = -FLAKE_THICKNESS_M - SIO2_THICKNESS_M - SI_DEPTH_M
 FDTD_Z_MAX_M = DESIGN_HEIGHT_M + 2.0e-6
-TFSF_Z_MIN_M = -0.60e-6
-TFSF_Z_MAX_M = 1.20e-6
+GAUSSIAN_SOURCE_Z_M = 1.20e-6
+GAUSSIAN_FOCUS_Z_M = -0.05e-6
+GAUSSIAN_WAIST_DEFAULT_M = 2.0e-6
+INCIDENT_REFERENCE_Z_M = 0.05e-6
 INNER_BOX = {
     "x": (-1.75e-6, 1.75e-6),
     "y": (-1.75e-6, 1.75e-6),
@@ -72,13 +76,13 @@ INNER_BOX = {
 POWER_CLOSURE_LIMIT = 0.005
 CONVERGENCE_LIMIT = 0.01
 EMPTY_POWER_FRACTION_LIMIT = 1.0e-4
-EMPTY_FIELD_RATIO_LIMIT = 1.0e-4
 TARGET_INTENSITY_W_M2 = 1.0
 
 PABS_GROUP = "finite_pabs_adv"
 PABS_FIELD = f"{PABS_GROUP}::field"
 PABS_INDEX = f"{PABS_GROUP}::index"
-SOURCE_NAME = "finite_tfsf_source"
+SOURCE_NAME = "finite_gaussian_source"
+INCIDENT_REFERENCE_MONITOR = "finite_incident_reference"
 
 
 def parse_args() -> argparse.Namespace:
@@ -93,7 +97,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--domain-um", type=float, default=8.0)
     parser.add_argument("--pml-layers", type=int, default=24)
     parser.add_argument("--flake-dz-nm", type=float, default=5.0)
-    parser.add_argument("--tfsf-span-um", type=float, default=6.0)
+    parser.add_argument("--source-span-um", type=float, default=6.0)
+    parser.add_argument("--waist-um", type=float, default=2.0)
+    parser.add_argument(
+        "--incident-reference",
+        help=(
+            "case_result.json from a matching empty-stack Gaussian control; "
+            "required for flat/fixed-design normalization"
+        ),
+    )
     parser.add_argument("--gpu-device", default="GPU 0")
     parser.add_argument("--threads", default="8")
     parser.add_argument("--contract-only", action="store_true")
@@ -104,12 +116,16 @@ def parse_args() -> argparse.Namespace:
         parser.error("--pml-layers must be at least 8")
     if args.flake_dz_nm not in (2.5, 5.0, 10.0):
         parser.error("--flake-dz-nm must be 2.5, 5, or 10")
-    if args.tfsf_span_um + 1.0 >= args.domain_um:
-        parser.error("TFSF span needs at least 0.5 um clearance per lateral side")
+    if args.source_span_um + 1.0 >= args.domain_um:
+        parser.error("Gaussian source span needs at least 0.5 um clearance per side")
+    if args.waist_um <= 0.0:
+        parser.error("--waist-um must be positive")
     if args.case == "fixed-design" and not np.isclose(
         args.polarization_deg, 0.0
     ):
         parser.error("the required fixed-design case is x polarization")
+    if args.case in ("flat", "fixed-design") and not args.incident_reference:
+        parser.error("--incident-reference is required for material cases")
     return args
 
 
@@ -407,6 +423,107 @@ def field_intensity(fdtd: Any, monitor: str) -> tuple[np.ndarray, dict[str, np.n
     return np.asarray(intensity, float), coordinates
 
 
+def measured_downward_incident_intensity(fdtd: Any) -> dict[str, Any]:
+    """Decompose the empty-stack air fields into the downward Gaussian beam."""
+    electric = {
+        axis: np.asarray(
+            fdtd.getdata(INCIDENT_REFERENCE_MONITOR, f"E{axis}", 1)
+        ).squeeze()
+        for axis in "xyz"
+    }
+    magnetic = {
+        axis: np.asarray(
+            fdtd.getdata(INCIDENT_REFERENCE_MONITOR, f"H{axis}", 1)
+        ).squeeze()
+        for axis in "xyz"
+    }
+    x = np.asarray(
+        fdtd.getdata(INCIDENT_REFERENCE_MONITOR, "x", 1), float
+    ).reshape(-1)
+    y = np.asarray(
+        fdtd.getdata(INCIDENT_REFERENCE_MONITOR, "y", 1), float
+    ).reshape(-1)
+    ex_down = 0.5 * (electric["x"] - ETA0 * magnetic["y"])
+    ey_down = 0.5 * (electric["y"] + ETA0 * magnetic["x"])
+    intensity = (
+        np.abs(ex_down) ** 2 + np.abs(ey_down) ** 2
+    ) / (2.0 * ETA0)
+    intensity = np.asarray(intensity, float).reshape(x.size, y.size)
+    ix = int(np.argmin(np.abs(x)))
+    iy = int(np.argmin(np.abs(y)))
+    footprint = intensity[
+        (x >= FLAKE_BOUNDS_M["x"][0]) & (x <= FLAKE_BOUNDS_M["x"][1])
+    ][:, (y >= FLAKE_BOUNDS_M["y"][0]) & (y <= FLAKE_BOUNDS_M["y"][1])]
+    if footprint.size == 0:
+        raise RuntimeError("incident reference monitor does not cover flake")
+    central = float(intensity[ix, iy])
+    if central <= 0.0 or not np.isfinite(central):
+        raise RuntimeError("measured central incident intensity is invalid")
+    peak = float(np.max(footprint))
+    minimum = float(np.min(footprint))
+    mean = float(np.mean(footprint))
+    edge_peak = float(
+        max(
+            np.max(intensity[0, :]),
+            np.max(intensity[-1, :]),
+            np.max(intensity[:, 0]),
+            np.max(intensity[:, -1]),
+        )
+    )
+    return {
+        "x_m": x,
+        "y_m": y,
+        "downward_intensity_W_m2": intensity,
+        "central_incident_intensity_W_m2": central,
+        "peak_incident_intensity_over_flake_W_m2": peak,
+        "mean_incident_intensity_over_flake_W_m2": mean,
+        "minimum_incident_intensity_over_flake_W_m2": minimum,
+        "minimum_to_peak_over_flake": minimum / peak,
+        "peak_to_central": peak / central,
+        "source_aperture_edge_to_central": edge_peak / central,
+        "decomposition": (
+            "empty-layered-stack air-plane E/H decomposition into the -z "
+            "traveling wave at z=+50 nm"
+        ),
+    }
+
+
+def load_incident_reference(args: argparse.Namespace) -> dict[str, Any]:
+    path = Path(str(args.incident_reference)).expanduser().resolve()
+    payload = json.loads(path.read_text())
+    if payload.get("case") != "empty-stack":
+        raise RuntimeError(f"incident reference is not empty-stack: {path}")
+    expected = {
+        "polarization_deg": float(args.polarization_deg),
+        "domain_um": float(args.domain_um),
+        "pml_layers": int(args.pml_layers),
+        "flake_dz_nm": float(args.flake_dz_nm),
+        "source_span_um": float(args.source_span_um),
+        "waist_um": float(args.waist_um),
+    }
+    mismatches = {
+        key: (payload.get(key), value)
+        for key, value in expected.items()
+        if not np.isclose(float(payload.get(key, np.nan)), float(value))
+    }
+    if mismatches:
+        raise RuntimeError(
+            f"incident reference contract mismatch {mismatches}: {path}"
+        )
+    if payload.get("status") != "COMPLETED":
+        raise RuntimeError(f"incident reference did not pass: {path}")
+    reference = payload.get("run_result", {}).get("incident_reference", {})
+    intensity = float(reference.get("central_incident_intensity_W_m2", 0.0))
+    if not np.isfinite(intensity) or intensity <= 0.0:
+        raise RuntimeError(f"invalid incident reference intensity: {path}")
+    return {
+        **reference,
+        "case_result_path": str(path),
+        "case_result_sha256": sha256(path),
+        "generation_commit": payload.get("generation_commit"),
+    }
+
+
 def face_fluxes(
     fdtd: Any,
     faces: dict[str, dict[str, Any]],
@@ -440,7 +557,7 @@ def face_fluxes(
 
 def geometry_contract(
     args: argparse.Namespace,
-    tfsf_bounds: dict[str, tuple[float, float]],
+    source_bounds: dict[str, tuple[float, float] | float],
     outer_bounds: dict[str, tuple[float, float]],
 ) -> dict[str, Any]:
     return {
@@ -467,9 +584,16 @@ def geometry_contract(
             "material": SIO2_MATERIAL,
             "periodic_repetition": False,
         },
-        "tfsf_bounds_m": tfsf_bounds,
+        "gaussian_source": {
+            "injection_plane_bounds_m": source_bounds,
+            "waist_radius_m": args.waist_um * 1e-6,
+            "focus_z_m": GAUSSIAN_FOCUS_Z_M,
+            "polarization_deg": args.polarization_deg,
+            "propagation": "backward z",
+            "called_plane_wave": False,
+        },
         "six_face_absorption_box_bounds_m": INNER_BOX,
-        "outer_scattered_power_box_bounds_m": outer_bounds,
+        "outer_power_box_bounds_m": outer_bounds,
     }
 
 
@@ -479,26 +603,24 @@ def add_geometry_and_monitors(
     args: argparse.Namespace,
 ) -> dict[str, Any]:
     domain_m = args.domain_um * 1e-6
-    tfsf_span_m = args.tfsf_span_um * 1e-6
-    tfsf_bounds = {
-        "x": (-0.5 * tfsf_span_m, 0.5 * tfsf_span_m),
-        "y": (-0.5 * tfsf_span_m, 0.5 * tfsf_span_m),
-        "z": (TFSF_Z_MIN_M, TFSF_Z_MAX_M),
+    source_span_m = args.source_span_um * 1e-6
+    source_bounds = {
+        "x": (-0.5 * source_span_m, 0.5 * source_span_m),
+        "y": (-0.5 * source_span_m, 0.5 * source_span_m),
+        "z": GAUSSIAN_SOURCE_Z_M,
     }
     outer_clearance = 0.25e-6
     outer_bounds = {
         "x": (
-            tfsf_bounds["x"][0] - outer_clearance,
-            tfsf_bounds["x"][1] + outer_clearance,
+            source_bounds["x"][0] - outer_clearance,
+            source_bounds["x"][1] + outer_clearance,
         ),
         "y": (
-            tfsf_bounds["y"][0] - outer_clearance,
-            tfsf_bounds["y"][1] + outer_clearance,
+            source_bounds["y"][0] - outer_clearance,
+            source_bounds["y"][1] + outer_clearance,
         ),
-        "z": (
-            tfsf_bounds["z"][0] - outer_clearance,
-            tfsf_bounds["z"][1] + outer_clearance,
-        ),
+        # The upper face stays below the Gaussian injection plane.
+        "z": (-0.85e-6, 1.00e-6),
     }
     if max(abs(v) for v in outer_bounds["x"]) >= 0.5 * domain_m:
         raise RuntimeError("outer scattered-power box touches the lateral PML")
@@ -578,14 +700,21 @@ def add_geometry_and_monitors(
     mesh["override z mesh"] = 1
     mesh["dz"] = args.flake_dz_nm * 1e-9
 
-    source = fdtd.addtfsf()
+    source = fdtd.addgaussian()
     source["name"] = SOURCE_NAME
     source["injection axis"] = "z"
     source["direction"] = "backward"
     source["polarization angle"] = float(args.polarization_deg)
-    for axis in "xyz":
-        source[f"{axis} min"] = tfsf_bounds[axis][0]
-        source[f"{axis} max"] = tfsf_bounds[axis][1]
+    source["source shape"] = "Gaussian"
+    source["use scalar approximation"] = True
+    source["beam parameters"] = "Waist size and position"
+    source["waist radius w0"] = args.waist_um * 1e-6
+    source["distance from waist"] = GAUSSIAN_SOURCE_Z_M - GAUSSIAN_FOCUS_Z_M
+    source["x min"] = source_bounds["x"][0]
+    source["x max"] = source_bounds["x"][1]
+    source["y min"] = source_bounds["y"][0]
+    source["y max"] = source_bounds["y"][1]
+    source["z"] = GAUSSIAN_SOURCE_Z_M
     source["use global source settings"] = True
     source["override global source settings"] = False
     if args.case == "no-source":
@@ -610,6 +739,16 @@ def add_geometry_and_monitors(
 
     inner_faces = add_flux_box(fdtd, "finite_abs", INNER_BOX)
     outer_faces = add_flux_box(fdtd, "finite_scatter", outer_bounds)
+    add_field_monitor(
+        fdtd,
+        INCIDENT_REFERENCE_MONITOR,
+        "2D Z-normal",
+        {
+            "x": source_bounds["x"],
+            "y": source_bounds["y"],
+            "z": (INCIDENT_REFERENCE_Z_M, INCIDENT_REFERENCE_Z_M),
+        },
+    )
     add_field_monitor(
         fdtd,
         "finite_E_xy_inside",
@@ -645,17 +784,18 @@ def add_geometry_and_monitors(
         PABS_INDEX,
         *(face["name"] for face in inner_faces.values()),
         *(face["name"] for face in outer_faces.values()),
+        INCIDENT_REFERENCE_MONITOR,
         "finite_E_xy_inside",
         "finite_E_yz_outside_x",
         "finite_E_xz_outside_y",
     ):
         configure_single_frequency(fdtd, name)
     return {
-        "tfsf_bounds": tfsf_bounds,
+        "source_bounds": source_bounds,
         "outer_bounds": outer_bounds,
         "inner_faces": inner_faces,
         "outer_faces": outer_faces,
-        "geometry": geometry_contract(args, tfsf_bounds, outer_bounds),
+        "geometry": geometry_contract(args, source_bounds, outer_bounds),
     }
 
 
@@ -720,7 +860,25 @@ def assert_pre_run_contract(
         and np.isclose(source_stop, SOURCE_STOP_M, rtol=0.0, atol=1e-15)
     )
     source_type = str(fdtd.getnamed(SOURCE_NAME, "type"))
-    checks["source_is_TFSF"] = "total field" in source_type.lower() or "tfsf" in source_type.lower()
+    source_shape = str(fdtd.getnamed(SOURCE_NAME, "source shape"))
+    checks["source_is_Gaussian"] = (
+        "gaussian" in source_type.lower() or "gaussian" in source_shape.lower()
+    )
+    realized_waist = scalar(
+        fdtd.getnamed(SOURCE_NAME, "waist radius w0"), "Gaussian waist"
+    )
+    realized_distance = scalar(
+        fdtd.getnamed(SOURCE_NAME, "distance from waist"),
+        "Gaussian distance from waist",
+    )
+    checks["Gaussian_waist_and_focus"] = (
+        np.isclose(realized_waist, args.waist_um * 1e-6, atol=1e-15)
+        and np.isclose(
+            GAUSSIAN_SOURCE_Z_M - realized_distance,
+            GAUSSIAN_FOCUS_Z_M,
+            atol=1e-15,
+        )
+    )
     material = read_material_contract(fdtd)
     checks["material_600_samples"] = material["sample_count"] == MATERIAL_SAMPLES
     checks["material_range_2p7_to_13p2_um"] = (
@@ -743,14 +901,15 @@ def assert_pre_run_contract(
         == str(fdtd.getnamed("SiO2_spacer", "material"))
         == SIO2_MATERIAL
     )
-    source_bounds = setup["tfsf_bounds"]
-    checks["scatterer_inside_TFSF"] = (
+    source_bounds = setup["source_bounds"]
+    checks["Gaussian_source_clear_of_structure_and_PML"] = (
         INNER_BOX["x"][0] > source_bounds["x"][0]
         and INNER_BOX["x"][1] < source_bounds["x"][1]
         and INNER_BOX["y"][0] > source_bounds["y"][0]
         and INNER_BOX["y"][1] < source_bounds["y"][1]
-        and INNER_BOX["z"][0] > source_bounds["z"][0]
-        and INNER_BOX["z"][1] < source_bounds["z"][1]
+        and GAUSSIAN_SOURCE_Z_M > INNER_BOX["z"][1]
+        and source_bounds["x"][0] > -0.5 * args.domain_um * 1e-6
+        and source_bounds["x"][1] < 0.5 * args.domain_um * 1e-6
     )
     runtime.configure_session_resources(fdtd)
     fdtd.runsetup()
@@ -767,6 +926,7 @@ def assert_pre_run_contract(
         "boundaries": boundaries,
         "source": {
             "type": source_type,
+            "shape": source_shape,
             "injection_axis": safe_get(fdtd, SOURCE_NAME, "injection axis"),
             "direction": safe_get(fdtd, SOURCE_NAME, "direction"),
             "polarization_angle_deg": safe_get(
@@ -775,6 +935,12 @@ def assert_pre_run_contract(
             "wavelength_start_m": source_start,
             "wavelength_stop_m": source_stop,
             "bounds_m": source_bounds,
+            "waist_radius_m": realized_waist,
+            "focus_z_m": GAUSSIAN_SOURCE_Z_M - realized_distance,
+            "source_plane_z_m": GAUSSIAN_SOURCE_Z_M,
+            "scalar_approximation": safe_get(
+                fdtd, SOURCE_NAME, "use scalar approximation"
+            ),
         },
         "material": material,
         "mesh": {
@@ -843,18 +1009,25 @@ def plot_geometry(
                 label="finite SiO2 disk",
             )
         )
-    source = setup["tfsf_bounds"]
+    source = setup["source_bounds"]
     ax.add_patch(
         plt.Rectangle(
-            (source["x"][0] * 1e6, source["z"][0] * 1e6),
+            (source["x"][0] * 1e6, GAUSSIAN_SOURCE_Z_M * 1e6),
             (source["x"][1] - source["x"][0]) * 1e6,
-            (source["z"][1] - source["z"][0]) * 1e6,
+            0.01,
             fill=False,
             ls="--",
             lw=2,
             color="green",
-            label="TFSF",
+            label="Gaussian injection plane",
         )
+    )
+    ax.plot(
+        [0.0],
+        [GAUSSIAN_FOCUS_Z_M * 1e6],
+        marker="x",
+        color="green",
+        label=f"waist w0={args.waist_um:g} um",
     )
     ax.set(xlabel="x (um)", ylabel="z (um)", title="Finite geometry (x-z)")
     ax.legend(fontsize=8, loc="upper right")
@@ -886,7 +1059,7 @@ def plot_geometry(
                 label="SiO2 disk",
             )
         )
-    source_half = 0.5 * args.tfsf_span_um
+    source_half = 0.5 * args.source_span_um
     ax.add_patch(
         plt.Rectangle(
             (-source_half, -source_half),
@@ -896,7 +1069,7 @@ def plot_geometry(
             ls="--",
             lw=2,
             color="green",
-            label="TFSF",
+            label="Gaussian source aperture",
         )
     )
     inner = INNER_BOX["x"][1] * 1e6
@@ -935,7 +1108,11 @@ def plot_field_slices(
     for ax, image, title in zip(
         axes,
         (inside, outside_x, outside_y),
-        ("inside TFSF |E|^2", "outside x boundary |E|^2", "outside y boundary |E|^2"),
+        (
+            "inside power box |E|^2",
+            "near lateral PML x |E|^2",
+            "near lateral PML y |E|^2",
+        ),
     ):
         shown = np.squeeze(image)
         if shown.ndim != 2:
@@ -1061,26 +1238,26 @@ def run_case(
         }
 
     source_power_native = scalar(
-        fdtd.sourcepower(TARGET_FREQUENCY_HZ, SOURCE_NAME),
+        fdtd.sourcepower(TARGET_FREQUENCY_HZ, 2, SOURCE_NAME),
         "sourcepower at 4 um",
     )
-    source_intensity_native = scalar(
-        fdtd.sourceintensity(TARGET_FREQUENCY_HZ, SOURCE_NAME),
-        "sourceintensity at 4 um",
-    )
-    if source_power_native <= 0.0 or source_intensity_native <= 0.0:
-        raise RuntimeError("invalid measured TFSF source power/intensity")
-    intensity_scale = TARGET_INTENSITY_W_M2 / source_intensity_native
-    incident_power_scaled = source_power_native * intensity_scale
-    inner_flux = face_fluxes(
-        fdtd, setup["inner_faces"], source_power_native, intensity_scale
-    )
-    outer_flux = face_fluxes(
-        fdtd, setup["outer_faces"], source_power_native, intensity_scale
-    )
+    if source_power_native <= 0.0:
+        raise RuntimeError("invalid measured Gaussian source power")
     outside_field_ratio = max_outside / max(max_inside, np.finfo(float).tiny)
 
     if args.case == "empty-stack":
+        incident_reference = measured_downward_incident_intensity(fdtd)
+        source_intensity_native = incident_reference[
+            "central_incident_intensity_W_m2"
+        ]
+        intensity_scale = TARGET_INTENSITY_W_M2 / source_intensity_native
+        incident_power_scaled = source_power_native * intensity_scale
+        inner_flux = face_fluxes(
+            fdtd, setup["inner_faces"], source_power_native, intensity_scale
+        )
+        outer_flux = face_fluxes(
+            fdtd, setup["outer_faces"], source_power_native, intensity_scale
+        )
         fdtd.runanalysis(PABS_GROUP)
         q_data = common_grid_component_q(fdtd, TARGET_FREQUENCY_HZ)
         p_q_native = integrate_xyz(
@@ -1103,6 +1280,20 @@ def run_case(
         lateral_fraction = lateral_leakage / max(
             incident_power_scaled, np.finfo(float).tiny
         )
+        incident_reference[
+            "empty_outer_net_outward_power_W_at_1_W_m2"
+        ] = outer_flux["net_outward_power_W"]
+        incident_reference[
+            "measured_total_source_power_W_at_1_W_m2_central"
+        ] = incident_power_scaled
+        np.savez(
+            output / "incident_reference.npz",
+            x_m=incident_reference.pop("x_m"),
+            y_m=incident_reference.pop("y_m"),
+            downward_intensity_W_m2=incident_reference.pop(
+                "downward_intensity_W_m2"
+            ),
+        )
         return {
             "resource": resource,
             "source_enabled": True,
@@ -1117,8 +1308,9 @@ def run_case(
                 "maximum_outside_E2": max_outside,
                 "outside_to_inside_max_E2_ratio": outside_field_ratio,
             },
+            "incident_reference": incident_reference,
             "six_face": inner_flux,
-            "outer_scattered_box": outer_flux,
+            "outer_power_box": outer_flux,
             "empty_stack_P_Q_W_at_1_W_m2": p_q_scaled,
             "acceptance": {
                 "background_absorption_fraction_lt_1e_4": (
@@ -1128,12 +1320,24 @@ def run_case(
                 "lateral_leakage_fraction_lt_1e_4": (
                     lateral_fraction < EMPTY_POWER_FRACTION_LIMIT
                 ),
-                "outside_field_ratio_lt_1e_4": (
-                    outside_field_ratio < EMPTY_FIELD_RATIO_LIMIT
+                "source_aperture_edge_to_central_lt_5_percent": (
+                    incident_reference["source_aperture_edge_to_central"] < 0.05
                 ),
             },
         }
 
+    incident_reference = load_incident_reference(args)
+    source_intensity_native = incident_reference[
+        "central_incident_intensity_W_m2"
+    ]
+    intensity_scale = TARGET_INTENSITY_W_M2 / source_intensity_native
+    incident_power_scaled = source_power_native * intensity_scale
+    inner_flux = face_fluxes(
+        fdtd, setup["inner_faces"], source_power_native, intensity_scale
+    )
+    outer_flux = face_fluxes(
+        fdtd, setup["outer_faces"], source_power_native, intensity_scale
+    )
     fdtd.runanalysis(PABS_GROUP)
     q_data = common_grid_component_q(fdtd, TARGET_FREQUENCY_HZ)
     artifact = {
@@ -1184,8 +1388,16 @@ def run_case(
             "fixed_design": SIO2_MATERIAL if args.case == "fixed-design" else None,
             "Si_substrate": "Object defined dielectric n=3.425",
         },
-        "source_type": "TFSF normally incident layered-background plane wave",
+        "source_type": "finite scalar Gaussian beam; not a plane wave",
         "source_range_m": [SOURCE_START_M, SOURCE_STOP_M],
+        "Gaussian_beam": {
+            "waist_radius_m": args.waist_um * 1e-6,
+            "focus_z_m": GAUSSIAN_FOCUS_Z_M,
+            "source_plane_z_m": GAUSSIAN_SOURCE_Z_M,
+            "source_span_m": args.source_span_um * 1e-6,
+            "polarization_deg": args.polarization_deg,
+            "incident_reference": incident_reference,
+        },
         "analysis_wavelength_m": TARGET_WAVELENGTH_M,
         "incident_intensity_W_m2": TARGET_INTENSITY_W_M2,
         "exact_flake_bounds_m": FLAKE_BOUNDS_M,
@@ -1220,19 +1432,33 @@ def run_case(
             "scale_to_1_W_m2": intensity_scale,
             "incident_intensity_W_m2": TARGET_INTENSITY_W_M2,
             "incident_power_W_at_1_W_m2": incident_power_scaled,
-            "normalization_basis": "measured v261 TFSF sourceintensity",
+            "normalization_basis": (
+                "central -z incident intensity measured from the matching "
+                "empty-layered-stack E/H decomposition"
+            ),
+            "incident_reference": incident_reference,
             "empirical_flux_gain": False,
         },
         "component_power_W": component_power,
         "P_Q_W": p_q,
         "P_six_face_W": p_six_face,
         "six_face_relative_closure": closure,
-        "outer_scattered_box": outer_flux,
-        "PML_incident_scattered_power_W": outer_flux["net_outward_power_W"],
+        "outer_power_box": outer_flux,
+        "PML_incident_outgoing_power_W": sum(
+            max(0.0, face["outward_power_W_at_1_W_m2"])
+            for face in outer_flux["faces"].values()
+        ),
+        "background_subtracted_outer_net_power_W": (
+            outer_flux["net_outward_power_W"]
+            - float(
+                incident_reference["empty_outer_net_outward_power_W_at_1_W_m2"]
+            )
+        ),
         "PML_absorbed_power_W": None,
         "PML_absorption_note": (
-            "v261 case records the scattered power incident on the PML via the "
-            "outer box; no unsupported PML-loss getter is claimed"
+            "The outgoing total-field power incident on the PML is recorded. "
+            "A Gaussian total-field box is not mislabeled as pure scattered "
+            "power, and no unsupported direct PML-loss getter is claimed."
         ),
         "absorption_cross_section_m2": sigma_abs,
         "geometric_flake_area_m2": GEOMETRIC_AREA_M2,
@@ -1280,7 +1506,9 @@ def main() -> int:
         "domain_um": args.domain_um,
         "pml_layers": args.pml_layers,
         "flake_dz_nm": args.flake_dz_nm,
-        "source_type": "TFSF",
+        "source_type": "Gaussian",
+        "source_span_um": args.source_span_um,
+        "waist_um": args.waist_um,
         "generation_command": command,
         "generation_commit": commit,
         "project": str(project),

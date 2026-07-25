@@ -46,10 +46,8 @@ The finite path is therefore implemented only in
 
 ## Finite source decision
 
-The primary candidate is a normally incident TFSF source. The official v261
-object documentation states that TFSF supports non-periodic scatterers on
-multi-layer substrates. Its incident field in this case is the field of the
-unperturbed multi-layer stack:
+TFSF was investigated first. The official v261 object documentation states
+that it can represent non-periodic scatterers on multi-layer substrates:
 
 - https://optics.ansys.com/hc/en-us/articles/360034902093-Total-Field-Scattered-Field-TFSF-source-Simulation-object
 
@@ -66,22 +64,35 @@ See:
 
 - https://optics.ansys.com/hc/en-us/articles/360034382934-Tips-and-best-practices-when-using-the-FDTD-TFSF-source
 
-The installed v261 API was probed directly and exposes `addtfsf` with x/y/z
-min/max, injection-axis, direction, polarization, broadband wavelength, and
-time-domain properties. TFSF is not accepted on documentation alone: the
-empty-stack leakage and source-boundary controls are mandatory gates.
+The installed v261 API exposes the expected TFSF properties and its pre-run
+project contract passed. The actual GPU solve then stopped before producing
+monitor data with:
 
-If those controls fail, the workflow stops with
-`BLOCKED_TFSF_LAYERED_BACKGROUND_UNVERIFIED`. A Gaussian-beam fallback may be
-implemented only as an explicitly labelled beam result with a measured waist,
-focus, total power, central intensity, footprint uniformity, and waist
-convergence. It must not be called a plane wave.
+`Error: GPU simulation does not support the use of TFSF sources.`
+
+This is an official GPU limitation, not a layered-stack result:
+
+- https://optics.ansys.com/hc/en-us/articles/17518942465811-Getting-started-with-running-FDTD-on-GPU
+
+The required v261 GPU contract rules out a CPU-only TFSF workaround. The
+workflow therefore uses the prompt-authorized Gaussian alternative. The
+official beam-source documentation defines the Gaussian waist, focus distance,
+source aperture, and scalar approximation:
+
+- https://optics.ansys.com/hc/en-us/articles/360034382854-Sources-Plane-wave-and-Beam
+
+The actual v261 API probe exposes `addgaussian`, `waist radius w0`, `distance
+from waist`, source-plane spans, broadband wavelengths, and polarization. The
+implemented source is explicitly a finite Gaussian beam and is never called a
+plane wave. Its waist, focus, aperture, polarization, measured total power,
+central incident intensity, flake-footprint uniformity, edge truncation, and
+waist convergence are reportable contracts.
 
 ## Power and normalization contract
 
-The finite structure uses a six-face power box wholly inside the TFSF volume
-and outside the TaIrTe4/design geometry. Net inward flux is compared with the
-TaIrTe4 volume integral:
+The finite structure uses a six-face power box below the Gaussian injection
+plane and outside the TaIrTe4/design geometry. Net inward flux is compared
+with the TaIrTe4 volume integral:
 
 `abs(P_Q - P_six_face) / abs(P_six_face) < 0.5%`.
 
@@ -90,14 +101,13 @@ the absorption cross section:
 
 `sigma_abs = P_abs / I_inc`.
 
-Official TFSF normalization guidance explicitly recommends source intensity,
-not the arbitrary finite source-box power:
-
-- https://optics.ansys.com/hc/en-us/articles/360034902133-Understanding-source-normalization-in-the-TFSF-source
-
-The final Q artifact is normalized to measured `I_inc = 1 W/m2`. No empirical
-flux-matching gain, clipping, smoothing, rescaling, periodic cropping, or
-periodic tiling is permitted.
+The matching empty-layered-stack control records complex E/H on an air plane
+50 nm above the flake. The transverse fields are decomposed into their
+downward-traveling component and its central intensity is measured directly.
+The final Q artifact is normalized to that measured `I_inc = 1 W/m2`. This is
+not `sourcepower/source aperture area`, and no empirical flux-matching gain,
+clipping, smoothing, rescaling, periodic cropping, or periodic tiling is
+permitted.
 
 ## Mandatory pre-solve and post-solve checks
 
@@ -113,7 +123,8 @@ periodic tiling is permitted.
 - TaIrTe4 dz equals the case-requested 10, 5, or 2.5 nm value;
 - Pabs top/bottom zero padding equals 50 nm;
 - v261 GPU resource and realized dt are recorded;
-- source box, six-face box, and geometry have strict non-intersection margins;
+- Gaussian plane, six-face box, and geometry have strict non-intersection
+  margins;
 - Qx, Qy, Qz are retained without clipping;
 - artifact coordinates contain the exact flake bounds so HEAT needs no crop.
 

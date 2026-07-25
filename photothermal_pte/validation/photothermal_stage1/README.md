@@ -177,9 +177,10 @@ criterion must pass.
 - `27_validate_finite_2um_optical_q.py` is a separate, non-periodic v261
   builder for a finite 2 µm × 2 µm × 100 nm TaIrTe4 flake on
   285 nm SiO2/Si. Every FDTD boundary is PML.
-- The source is a 3–6 µm TFSF object and all reported absorption quantities
-  are evaluated at 4 µm. The required empty layered-stack and zero-amplitude
-  controls use the same builder.
+- The source is a 3–6 µm finite Gaussian beam and all reported absorption
+  quantities are evaluated at 4 µm. TFSF was rejected because the actual v261
+  GPU engine does not support it. The required empty layered-stack and
+  zero-amplitude controls use the same Gaussian builder.
 - Finite absorption is measured with a six-face flux box. The script also
   exports unclipped component-resolved `Qx`, `Qy`, and `Qz`, normalizes to a
   measured incident intensity of 1 W/m², and records the volume-Q versus
@@ -195,5 +196,5 @@ python \
   photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py \
   --output-dir /absolute/path/to/new-empty-directory \
   --case empty-stack --domain-um 8 --pml-layers 24 --flake-dz-nm 5 \
-  --gpu-device "GPU 0" --contract-only
+  --source-span-um 6 --waist-um 2 --gpu-device "GPU 0" --contract-only
 ```
