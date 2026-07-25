@@ -24,6 +24,9 @@ cd "$HERE"
 # script agree on where final_design.npz / SUCCESS.json live.
 case "$OUT" in /*) : ;; *) OUT="$HERE/$OUT" ;; esac
 
+# Pin the r12 lumapi (never the system /opt/lumerical, whose lumapi fails on
+# importdataset with "Failed to evaluate code").
+export VC_LUMERICAL_ROOT="${VC_LUMERICAL_ROOT:-/home/seunghyun/lumerical_r12/opt/lumerical/v261}"
 export CL_GPU_DEVICE="$GPU" LUMERICAL_SESSION_GPU_DEVICE="$GPU"
 export FDTD_THREADS="${FDTD_THREADS:-16}"
 export PERIOD_UM=6.0 TARGET_WL_UM=4.0

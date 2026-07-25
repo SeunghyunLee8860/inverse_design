@@ -31,20 +31,27 @@ GPU_DEVICE_DEFAULT = os.environ.get("CL_GPU_DEVICE", "GPU 1")
 
 
 def _find_r12_root() -> Path:
+    # IMPORTANT: never fall back to the system install /opt/lumerical/v261 -- its
+    # lumapi is incompatible with this pipeline (importdataset -> "Failed to
+    # evaluate code", and it destabilises the shared license).  Only the R1.02
+    # (r12) trees are valid; VC_LUMERICAL_ROOT (if set) wins.
     configured = os.environ.get("VC_LUMERICAL_ROOT") or os.environ.get("LUMERICAL_ROOT")
     candidates = [
         Path(configured).expanduser() if configured else None,
-        Path("/opt/lumerical/v261"),
         Path("/home/seunghyun/lumerical_r12/opt/lumerical/v261"),
         Path("/home/eidl/lumerical_r12_runtime/opt/lumerical/v261"),
     ]
     for candidate in candidates:
-        if candidate is not None and (candidate / "api/python/lumapi.py").exists():
+        if candidate is None:
+            continue
+        if candidate.resolve() == Path("/opt/lumerical/v261"):
+            continue  # forbidden system install, even if pointed at explicitly
+        if (candidate / "api/python/lumapi.py").exists():
             return candidate.resolve()
     checked = ", ".join(str(v) for v in candidates if v is not None)
     raise RuntimeError(
-        "Lumerical 2026 R1.02 (v261) was not found. Set VC_LUMERICAL_ROOT. "
-        f"Checked: {checked}"
+        "Lumerical 2026 R1.02 (r12) was not found. Set VC_LUMERICAL_ROOT to an "
+        f"r12 tree (NOT /opt/lumerical). Checked: {checked}"
     )
 
 
