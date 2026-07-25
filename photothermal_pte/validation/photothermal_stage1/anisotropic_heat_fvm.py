@@ -92,9 +92,12 @@ def _append_internal_faces(
         left_ids, right_ids = ids[:, :, :-1], ids[:, :, 1:]
         area = dx[:, None, None] * dy[None, :, None]
     conductance = area / resistance_per_area
-    left_flat = left_ids.reshape(-1)
-    right_flat = right_ids.reshape(-1)
-    conductance_flat = conductance.reshape(-1)
+    connected = (left_ids >= 0) & (right_ids >= 0)
+    left_flat = left_ids[connected].reshape(-1)
+    right_flat = right_ids[connected].reshape(-1)
+    conductance_flat = np.broadcast_to(
+        conductance, left_ids.shape
+    )[connected].reshape(-1)
     np.add.at(diagonal, left_flat, conductance_flat)
     np.add.at(diagonal, right_flat, conductance_flat)
     rows.extend((left_flat, right_flat))
@@ -136,6 +139,7 @@ def internal_face_heat_flux_density(
     z_edges_m: np.ndarray,
     kappa_W_mK: np.ndarray,
     interface_resistance_m2K_W: Mapping[str, np.ndarray] | None = None,
+    active_mask: np.ndarray | None = None,
 ) -> dict[str, np.ndarray]:
     """Return signed +axis heat flux density on every internal face.
 
@@ -158,10 +162,21 @@ def internal_face_heat_flux_density(
         raise ValueError(f"temperature shape {temperature.shape} != {shape}")
     if kappa.shape != (*shape, 3):
         raise ValueError(f"kappa shape {kappa.shape} != {(*shape, 3)}")
-    if not np.all(np.isfinite(temperature)):
-        raise ValueError("temperature contains NaN or Inf")
-    if not np.all(np.isfinite(kappa)) or np.any(kappa <= 0.0):
-        raise ValueError("all diagonal conductivity components must be finite and positive")
+    active = (
+        np.ones(shape, bool)
+        if active_mask is None
+        else np.asarray(active_mask, bool)
+    )
+    if active.shape != shape:
+        raise ValueError(f"active mask shape {active.shape} != {shape}")
+    if not np.all(np.isfinite(temperature[active])):
+        raise ValueError("active-cell temperature contains NaN or Inf")
+    if not np.all(np.isfinite(kappa[active])) or np.any(
+        kappa[active] <= 0.0
+    ):
+        raise ValueError(
+            "all active-cell conductivity components must be finite and positive"
+        )
 
     fluxes: dict[str, np.ndarray] = {}
     for axis, axis_name in enumerate(("x", "y", "z")):
@@ -178,7 +193,18 @@ def internal_face_heat_flux_density(
         )
         left = np.take(temperature, np.arange(shape[axis] - 1), axis=axis)
         right = np.take(temperature, np.arange(1, shape[axis]), axis=axis)
-        fluxes[axis_name] = (left - right) / resistance_per_area
+        left_active = np.take(
+            active, np.arange(shape[axis] - 1), axis=axis
+        )
+        right_active = np.take(
+            active, np.arange(1, shape[axis]), axis=axis
+        )
+        connected = left_active & right_active
+        flux = np.full(tuple(face_shape), np.nan, float)
+        flux[connected] = (
+            (left - right) / resistance_per_area
+        )[connected]
+        fluxes[axis_name] = flux
     return fluxes
 
 
@@ -204,6 +230,82 @@ def _boundary_geometry(
     raise ValueError(f"unknown boundary face {face}")
 
 
+def _boundary_area(
+    face: str,
+    widths: tuple[np.ndarray, np.ndarray, np.ndarray],
+) -> np.ndarray:
+    dx, dy, dz = widths
+    if face in ("x_min", "x_max"):
+        return dy[:, None] * dz[None, :]
+    if face in ("y_min", "y_max"):
+        return dx[:, None] * dz[None, :]
+    if face in ("z_min", "z_max"):
+        return dx[:, None] * dy[None, :]
+    raise ValueError(f"unknown boundary face {face}")
+
+
+def _exposed_convection_terms(
+    *,
+    ids: np.ndarray,
+    kappa: np.ndarray,
+    widths: tuple[np.ndarray, np.ndarray, np.ndarray],
+    dirichlet_faces: set[str],
+    heat_transfer_W_m2K: float,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return cell ids and conductances for all solid-to-void surfaces."""
+    exposed_ids: list[np.ndarray] = []
+    exposed_conductance: list[np.ndarray] = []
+    dx, dy, dz = widths
+    for axis in range(3):
+        if axis == 0:
+            left_ids, right_ids = ids[:-1, :, :], ids[1:, :, :]
+            left_k, right_k = kappa[:-1, :, :, 0], kappa[1:, :, :, 0]
+            left_half_width = 0.5 * dx[:-1, None, None]
+            right_half_width = 0.5 * dx[1:, None, None]
+            area = dy[None, :, None] * dz[None, None, :]
+        elif axis == 1:
+            left_ids, right_ids = ids[:, :-1, :], ids[:, 1:, :]
+            left_k, right_k = kappa[:, :-1, :, 1], kappa[:, 1:, :, 1]
+            left_half_width = 0.5 * dy[None, :-1, None]
+            right_half_width = 0.5 * dy[None, 1:, None]
+            area = dx[:, None, None] * dz[None, None, :]
+        else:
+            left_ids, right_ids = ids[:, :, :-1], ids[:, :, 1:]
+            left_k, right_k = kappa[:, :, :-1, 2], kappa[:, :, 1:, 2]
+            left_half_width = 0.5 * dz[None, None, :-1]
+            right_half_width = 0.5 * dz[None, None, 1:]
+            area = dx[:, None, None] * dy[None, :, None]
+        area = np.broadcast_to(area, left_ids.shape)
+        left_exposed = (left_ids >= 0) & (right_ids < 0)
+        right_exposed = (right_ids >= 0) & (left_ids < 0)
+        for face_ids, face_k, half_width, selected in (
+            (left_ids, left_k, left_half_width, left_exposed),
+            (right_ids, right_k, right_half_width, right_exposed),
+        ):
+            half_width = np.broadcast_to(half_width, face_ids.shape)
+            conductance = area / (
+                half_width / face_k + 1.0 / heat_transfer_W_m2K
+            )
+            exposed_ids.append(face_ids[selected].reshape(-1))
+            exposed_conductance.append(conductance[selected].reshape(-1))
+
+    for face in FACE_NAMES:
+        if face in dirichlet_faces:
+            continue
+        face_ids, face_kappa, area_over_half_width = _boundary_geometry(
+            face, ids, kappa, widths
+        )
+        area = _boundary_area(face, widths)
+        active = face_ids >= 0
+        conduction = face_kappa * area_over_half_width
+        conductance = 1.0 / (
+            1.0 / conduction + 1.0 / (heat_transfer_W_m2K * area)
+        )
+        exposed_ids.append(face_ids[active].reshape(-1))
+        exposed_conductance.append(conductance[active].reshape(-1))
+    return np.concatenate(exposed_ids), np.concatenate(exposed_conductance)
+
+
 def solve_steady_diagonal_kappa(
     *,
     x_edges_m: np.ndarray,
@@ -213,14 +315,20 @@ def solve_steady_diagonal_kappa(
     source_W_m3: np.ndarray | None = None,
     dirichlet_temperature_K: Mapping[str, float],
     interface_resistance_m2K_W: Mapping[str, np.ndarray] | None = None,
+    active_mask: np.ndarray | None = None,
+    exposed_heat_transfer_W_m2K: float = 0.0,
+    ambient_temperature_K: float = 0.0,
     relative_tolerance: float = 1.0e-11,
     max_iterations: int = 5000,
 ) -> SteadyHeatResult:
     """Solve ``-div(K grad T) = Q`` for diagonal, cellwise ``K``.
 
-    Unspecified exterior faces are adiabatic.  Internal face resistance
-    arrays use per-area units of m2 K/W and have shapes ``(nx-1, ny, nz)``,
-    ``(nx, ny-1, nz)``, and ``(nx, ny, nz-1)`` for x, y, and z.
+    Unspecified exterior and solid-to-inactive faces are adiabatic unless
+    ``exposed_heat_transfer_W_m2K`` is positive.  In that case a Robin
+    condition is applied through the exact cell-center-to-surface conduction
+    resistance plus ``1/h``.  Internal face resistance arrays use per-area
+    units of m2 K/W and have shapes ``(nx-1, ny, nz)``, ``(nx, ny-1, nz)``,
+    and ``(nx, ny, nz-1)`` for x, y, and z.
     """
     x_edges = _validated_edges("x", x_edges_m)
     y_edges = _validated_edges("y", y_edges_m)
@@ -237,9 +345,28 @@ def solve_steady_diagonal_kappa(
         raise ValueError(f"unknown Dirichlet faces: {invalid_faces}")
     if not dirichlet_temperature_K:
         raise ValueError("at least one Dirichlet face is required")
+    exposed_heat_transfer_W_m2K = float(exposed_heat_transfer_W_m2K)
+    ambient_temperature_K = float(ambient_temperature_K)
+    if (
+        not np.isfinite(exposed_heat_transfer_W_m2K)
+        or exposed_heat_transfer_W_m2K < 0.0
+    ):
+        raise ValueError("exposed heat-transfer coefficient must be nonnegative")
+    if not np.isfinite(ambient_temperature_K):
+        raise ValueError("ambient temperature must be finite")
 
-    ids = np.arange(np.prod(shape), dtype=np.int64).reshape(shape)
-    diagonal = np.zeros(ids.size, float)
+    active = (
+        np.ones(shape, bool)
+        if active_mask is None
+        else np.asarray(active_mask, bool)
+    )
+    if active.shape != shape:
+        raise ValueError(f"active mask shape {active.shape} != {shape}")
+    if not np.any(active):
+        raise ValueError("active mask contains no solid cells")
+    ids = np.full(shape, -1, dtype=np.int64)
+    ids[active] = np.arange(np.count_nonzero(active), dtype=np.int64)
+    diagonal = np.zeros(np.count_nonzero(active), float)
     rows: list[np.ndarray] = []
     columns: list[np.ndarray] = []
     values: list[np.ndarray] = []
@@ -272,7 +399,9 @@ def solve_steady_diagonal_kappa(
         raise ValueError(f"source shape {source.shape} != {shape}")
     if not np.all(np.isfinite(source)):
         raise ValueError("source contains NaN or Inf")
-    rhs = (source * volume).reshape(-1)
+    if np.any(source[~active] != 0.0):
+        raise ValueError("source is nonzero in inactive cells")
+    rhs = (source * volume)[active].reshape(-1)
     boundary_terms: dict[str, tuple[np.ndarray, np.ndarray, float]] = {}
     for face, temperature in dirichlet_temperature_K.items():
         temperature = float(temperature)
@@ -282,12 +411,38 @@ def solve_steady_diagonal_kappa(
             face, ids, kappa, widths
         )
         conductance = face_kappa * area_over_half_width
-        flat_ids = face_ids.reshape(-1)
-        flat_conductance = conductance.reshape(-1)
+        boundary_active = face_ids >= 0
+        flat_ids = face_ids[boundary_active].reshape(-1)
+        flat_conductance = np.broadcast_to(
+            conductance, face_ids.shape
+        )[boundary_active].reshape(-1)
         np.add.at(diagonal, flat_ids, flat_conductance)
         np.add.at(rhs, flat_ids, flat_conductance * temperature)
         boundary_terms[face] = (flat_ids, flat_conductance, temperature)
-    all_ids = np.arange(ids.size, dtype=np.int64)
+    if exposed_heat_transfer_W_m2K > 0.0:
+        convection_ids, convection_conductance = _exposed_convection_terms(
+            ids=ids,
+            kappa=kappa,
+            widths=widths,
+            dirichlet_faces=set(dirichlet_temperature_K),
+            heat_transfer_W_m2K=exposed_heat_transfer_W_m2K,
+        )
+        np.add.at(diagonal, convection_ids, convection_conductance)
+        np.add.at(
+            rhs,
+            convection_ids,
+            convection_conductance * ambient_temperature_K,
+        )
+        boundary_terms["exposed_convection"] = (
+            convection_ids,
+            convection_conductance,
+            ambient_temperature_K,
+        )
+    if np.any(diagonal <= 0.0):
+        raise ValueError(
+            "one or more active cells have zero total conductance"
+        )
+    all_ids = np.arange(diagonal.size, dtype=np.int64)
     rows.append(all_ids)
     columns.append(all_ids)
     values.append(diagonal)
@@ -296,7 +451,7 @@ def solve_steady_diagonal_kappa(
             np.concatenate(values),
             (np.concatenate(rows), np.concatenate(columns)),
         ),
-        shape=(ids.size, ids.size),
+        shape=(diagonal.size, diagonal.size),
     ).tocsr()
     preconditioner = sparse_linalg.LinearOperator(
         matrix.shape, matvec=lambda vector: vector / diagonal
@@ -331,14 +486,16 @@ def solve_steady_diagonal_kappa(
         )
         for face, (face_ids, conductance, temperature) in boundary_terms.items()
     }
-    source_power = float(np.sum(source * volume))
+    source_power = float(np.sum((source * volume)[active]))
     energy_error = abs(sum(boundary_power.values()) - source_power) / max(
         abs(source_power),
         max((abs(value) for value in boundary_power.values()), default=0.0),
         np.finfo(float).tiny,
     )
+    full_temperature = np.full(shape, np.nan, float)
+    full_temperature[active] = solution
     return SteadyHeatResult(
-        temperature_K=solution.reshape(shape),
+        temperature_K=full_temperature,
         boundary_power_out_W=boundary_power,
         source_power_W=source_power,
         energy_balance_relative_error=float(energy_error),

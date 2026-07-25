@@ -17,14 +17,15 @@
   `VALIDATED_FINITE_OPTICAL_Q_FVM_IMPORT`
 - Full-device HEAT cases executed: `false`
 - Finite optical-Q mapped to FVM control volumes: `true`
-- Finite optical-Q used in a thermal solve: `false`
+- Finite optical-Q used in a thermal solve: `true`
+- Multi-material production FVM convergence:
+  `VALIDATED_MULTIMATERIAL_FVM_PRODUCTION_CONVERGENCE`
 - Transient/PTE/adjoint/gradient/optimization executed: `false`
 
 ### Active blockers
 
 - `BLOCKED_ANISOTROPIC_K_UNSUPPORTED` (native v261 HEAT only)
 - `BLOCKED_INTERFACE_G_UNVERIFIED` (native v261 HEAT only)
-- `BLOCKED_PRODUCTION_FVM_CONVERGENCE_UNVERIFIED`
 
 ### Key measurements
 
@@ -99,7 +100,8 @@
 - Solver attribution: independent conservative Cartesian Python/SciPy FVM;
   not a Lumerical HEAT result
 - Subsequent 3D cross-validation and finite-Q import gates: `completed`
-- Full-device thermal calculation at this checkpoint: `not executed`
+- Full-device thermal calculation after these prerequisite gates:
+  `executed with the independent FVM path`
 
 ### 3D isotropic/perfect-contact HEAT-FVM cross-validation
 
@@ -123,7 +125,7 @@
 - Independent fresh-project rerun reproduced all declared metrics within
   `1e-10`
 - Finite optical-Q mapped into thermal control volumes: `true`
-- Finite optical-Q used in a thermal solve: `false`
+- Finite optical-Q used in a thermal solve: `true`
 - Subsequent finite-Q conservative import gate: `completed`
 
 ### Finite optical-Q conservative FVM import
@@ -159,9 +161,50 @@
 - Empirical gain, global rescaling, and sample averaging in exact-flake
   deposition: all `false`
 - Independent import rerun reproduced SHA and power exactly
-- Finite optical-Q used in thermal solve: `false`
-- Next permitted step:
-  `ANISOTROPIC_FINITE_G_MULTIMATERIAL_FVM_PRODUCTION`
+- Finite optical-Q used in thermal solve: `true`
+- Subsequent anisotropic finite-G production and convergence gate:
+  `completed`
+
+### Multi-material anisotropic finite-G FVM production
+
+- Status: `VALIDATED_MULTIMATERIAL_FVM_PRODUCTION_CONVERGENCE`
+- Attribution: independent conservative Cartesian Python/SciPy FVM;
+  not a Lumerical HEAT result
+- Production reference: `32 um x 32 um` lateral domain, `20 um` Si depth,
+  native optical x/y source grid
+- Active solid cells: `1,625,064`
+- Material conductivity:
+  TaIrTe4 `diag(14.4, 3.8, 1.0)`, SiO2 `1.38`, Si `145 W/(m K)`
+- Interfaces:
+  `G_bottom=G_top=7.37e6 W/(m2 K)`,
+  `G_SiO2/Si=1.1e9 W/(m2 K)`
+- Exact source power: `2.56071371086521e-12 W`
+- Q mapping relative error in every case: `0`
+- Reference maximum unit response:
+  `3.12002156771575e-7 K/(W/m2)`
+- Reference TaIrTe4 volume-average unit response:
+  `2.25508130625815e-7 K/(W/m2)`
+- Reference energy-balance relative error: `3.36166e-12`
+- Total sensitivity cases: `22`; equation/conservation passes: `22`
+- Final `16 -> 32 um` lateral-domain changes
+  (`Tmax`, flake average, 3D probe NRMSE):
+  `[0.00489969%, 0.00676634%, 0.00517751%]`
+- Final `10 -> 20 um` Si-depth changes:
+  `[0.0178338%, 0.0246859%, 0.0189037%]`
+- Final native -> refined thermal-mesh changes:
+  `[0.140694%, 0.0933887%, 0.0666590%]`
+- \(G_{\rm bottom}\) sweep:
+  `1e6, 3e6, 7.37e6, 1.5e7, 3e7, 1e8, perfect`
+- \(G_{\rm top}\) sweep:
+  `7.37e4, 7.37e5, 7.37e6, 7.37e7, perfect`
+- SiO2/Si `1.1e9` versus perfect contact: completed
+- Exposed-surface adiabatic versus `h=10 W/(m2 K)`: completed
+- Refined source treatment: native optical x/y cells, piecewise-constant
+  `2x` subdivision in z with exact child-power conservation
+- No Q clipping, smoothing, gain, global rescaling, periodic tiling, or
+  outside-flake deletion was used
+- TaIrTe4 `kz=1.0 W/(m K)` remains an estimated physical input; interface-G
+  results retain the full sensitivity sweep
 
 ### Final control artifacts
 
@@ -191,6 +234,14 @@
   `reports/fvm_finite_q_import/FINITE_OPTICAL_Q_FVM_IMPORT_REPORT.md`
 - Finite-Q import summary/cases/raw manifest:
   `reports/fvm_finite_q_import/`
+- Multi-material production execution:
+  `validation/photothermal_stage1/36_run_fvm_multimaterial_thermal.py`
+- Domain/depth/mesh/interface/boundary sensitivity:
+  `validation/photothermal_stage1/37_run_fvm_production_sensitivity.py`
+- Production report generation:
+  `validation/photothermal_stage1/38_summarize_fvm_multimaterial_thermal.py`
+- Multi-material production report/summary/cases/convergence/raw manifest:
+  `reports/fvm_multimaterial_thermal/`
 - Anisotropic-\(\kappa\) report:
   `reports/heat_material_interface_controls/HEAT_ANISOTROPIC_K_SOLVER_REPORT.md`
 - Internal-\(G\) report:
@@ -202,12 +253,13 @@ Native v261 HEAT still cannot represent the requested conductivity tensor.
 The validated FVM path now resolves the anisotropic equation and finite
 internal-G law independently, and its common 3D scalar-isotropic/perfect-
 contact solution agrees with v261 HEAT. The finite optical-Q mapping now
-preserves the PR #3 source exactly. The next step is the first anisotropic,
-finite-G, multi-material production FVM solve followed by domain, substrate,
-mesh, interface-G, and boundary-location sensitivity. No production
-temperature, transient, PTE, adjoint, gradient, or optimization is claimed
-at this checkpoint. No isotropic fallback or modification of the finite
-optical-Q artifact is permitted.
+preserves the PR #3 source exactly. The independent anisotropic, finite-G,
+multi-material FVM solve and its domain, substrate-depth, mesh, interface-G,
+and exposed-boundary sensitivity are now complete. The reported temperature
+is a unit response, not a finite-power laser temperature. No transient, PTE,
+adjoint, gradient, or optimization is claimed at this checkpoint. No
+isotropic fallback or modification of the finite optical-Q artifact was
+used.
 
 ## Mechanical/MAPDL route probe
 
