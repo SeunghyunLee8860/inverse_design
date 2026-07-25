@@ -2,6 +2,22 @@
 
 작성: 2026-07-24, 코드리뷰 반영 갱신 2026-07-25. 명세 "TaIrTe4 500 nm 이진 설계: 전체 수정 명세"(0~18)에 대응.
 
+## 코드리뷰 2차(2026-07-25, d90fe21) 대응 — 실행 차단 버그 6개 P0 수정
+`pytest inverse_design/tests/` = **64 passed** (integration guard 추가).
+
+- **P0-1 경로 불일치**: runner/finalizer가 `--output`을 **CWD 기준**(`Path(args.output).resolve()`)으로 통일,
+  쉘은 OUT을 절대경로화 → shell OUT == runner run_root. (source+동작 테스트)
+- **P0-2 체크포인트 파일명**: `best_feasible.npz.tmp`(numpy가 `.npz` 재추가→replace 실패) →
+  **`best_feasible.tmp.npz`**. (원자저장 테스트)
+- **P0-3 launcher exit**: `exit "${frc:-5}"`(frc=0이면 0) 제거 → **rc≠0이면 그 rc, SUCCESS 없으면 exit 5**로 분리. (두 런처, bash 테스트)
+- **P0-4 stage 실패 전파**: 분류된 stage 실패 시 runner가 **`SystemExit(6)`** → 런처가 abort(자동 finalize 안 함).
+- **P0-5 provenance 필수화**: finalizer가 `had_feasible`/`code_hash`가 **없으면 거부**(옛 NPZ 통과 불가); `--allow-unsafe-provenance`로만 우회. (테스트)
+- **P0-6 config/identity 검증**: `final_design.npz`에 **mapping_identity**(config+isolation+MFS+mode) 저장,
+  finalizer가 현재와 불일치 시 **config_mismatch 거부**. `isolation_gap_um`을 MappingConfig에 포함. (테스트)
+- **P1-2** 고립 단일-island의 gap을 void-width(moat)로 측정(더 이상 None인데 PASS 아님). **P1-4** DRC CLI 자동 임계 제거(비이진 입력 거부).
+  **P1-5** `--no-fdtd`는 mapping을 env로 직접 빌드 → **Lumerical 없이 실행**(테스트가 그 경로로 통과). **P1-3** imageruler는 기록만(문구 정정). **P2-7** mapping 입력검증(radius>0, gap<period).
+- 잔여(정직): **P1-1** 제약이 450nm를 아직 feasible로 볼 수 있음(150–400nm는 잡음) — 최종 DRC가 거르므로 잘못된 SUCCESS는 없으나 optimizer 효율 이슈; tol/p 보정은 실런 대상. **P0-8**(broadband/CV1 EM 인증)·full-chain은 여전히 Lumerical 필요.
+
 ## 코드리뷰(2026-07-25) 대응 — 반영된 수정
 리뷰가 지적한 P0/P1을 수정하고 비-FDTD로 재검증했습니다 (`pytest inverse_design/tests/` = **55 passed**).
 

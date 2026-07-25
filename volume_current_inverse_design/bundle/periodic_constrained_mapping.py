@@ -59,6 +59,7 @@ class MappingConfig:
     eta_dilate: float
     eta_nominal: float
     eta_erode: float
+    isolation_gap_um: float
 
     def to_dict(self) -> dict:
         return {
@@ -69,6 +70,7 @@ class MappingConfig:
             "eta_dilate": self.eta_dilate,
             "eta_nominal": self.eta_nominal,
             "eta_erode": self.eta_erode,
+            "isolation_gap_um": self.isolation_gap_um,
         }
 
 
@@ -97,17 +99,13 @@ class PeriodicConstrainedMapping:
     ):
         self.Nx, self.Ny, self.Nz = int(Nx), int(Ny), int(Nz)
         self.Nux, self.Nuy = self.Nx - 1, self.Ny - 1
+        # P2-7 input validation
+        if self.Nux < 2 or self.Nuy < 2 or self.Nz < 1:
+            raise ValueError(f"invalid grid Nx,Ny,Nz={Nx},{Ny},{Nz}")
+        if float(filter_radius_um) <= 0.0:
+            raise ValueError("filter_radius_um must be > 0")
         if not (0.0 < eta_dilate < 0.5 < eta_erode < 1.0):
             raise ValueError("require eta_dilate < 0.5 < eta_erode in (0,1)")
-        self.config = MappingConfig(
-            period_um=float(period_um),
-            dx_um=float(period_um) / self.Nux,
-            dy_um=float(period_um) / self.Nuy,
-            filter_radius_um=float(filter_radius_um),
-            eta_dilate=float(eta_dilate),
-            eta_nominal=0.5,
-            eta_erode=float(eta_erode),
-        )
         # Optional periodic isolation moat: force a void frame of half-width
         # gap/2 inside every unit-cell edge.  Under periodic tiling neighbouring
         # cells are then separated by a full `gap` void band.  Imposed on the
@@ -116,6 +114,18 @@ class PeriodicConstrainedMapping:
         if isolation_gap_um is None:
             isolation_gap_um = float(os.environ.get("PERIODIC_ISOLATION_GAP_UM", "0.0"))
         self.isolation_gap_um = float(isolation_gap_um)
+        if not (0.0 <= self.isolation_gap_um < float(period_um)):
+            raise ValueError("isolation_gap_um must be in [0, period)")
+        self.config = MappingConfig(
+            period_um=float(period_um),
+            dx_um=float(period_um) / self.Nux,
+            dy_um=float(period_um) / self.Nuy,
+            filter_radius_um=float(filter_radius_um),
+            eta_dilate=float(eta_dilate),
+            eta_nominal=0.5,
+            eta_erode=float(eta_erode),
+            isolation_gap_um=self.isolation_gap_um,
+        )
         self._mask = None
         if self.isolation_gap_um > 0:
             half = 0.5 * self.isolation_gap_um

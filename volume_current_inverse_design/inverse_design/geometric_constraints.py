@@ -32,7 +32,6 @@ from autograd import grad
 
 from msopt.Filters import (
     constraint_solid,
-    constraint_void,
     get_conic_radius_from_eta_e,
     indicator_solid,
     indicator_void,

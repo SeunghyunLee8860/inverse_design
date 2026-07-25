@@ -22,9 +22,10 @@ Trivial-phase gate: an all-solid or all-void array has no second phase and is
 never a valid 500 nm two-phase design -> it FAILS (previously such arrays PASSED,
 a critical bug).
 
-If the `imageruler` package is importable it is used as an independent
-cross-check and its verdict must agree; otherwise the opposing-boundary measure
-is authoritative.  Output is a plain JSON-serialisable dict; no autograd/FDTD.
+If the `imageruler` package is importable its measurement is RECORDED alongside
+(field ``imageruler_cross_check_um``) for comparison, but the opposing-boundary
+measure is authoritative for pass/fail (the cross-check is informational, not
+enforced).  Output is a plain JSON-serialisable dict; no autograd/FDTD.
 """
 
 from __future__ import annotations
@@ -218,7 +219,14 @@ def geometry_drc(
     }
     if min_gap_um is not None:
         gap, gap_at = _min_disconnected_gap_um(solid, spacing_um)
-        gap_ok = (not trivial) and gap >= min_gap_um + guard
+        # P1-2: a single island tiled with a moat is ONE torus component, so the
+        # disconnected-component search returns inf.  Its separation from its own
+        # periodic image IS the moat = the void local width; use that so the gap
+        # rule is actually measured (previously reported None but SUCCESS said
+        # gap ok).
+        if not np.isfinite(gap):
+            gap, gap_at = void_w_um, void_at
+        gap_ok = (not trivial) and np.isfinite(gap) and gap >= min_gap_um + guard
         result["minimum_gap_um"] = None if not np.isfinite(gap) else round(gap, 6)
         result["gap_violations"] = [] if gap_ok else [{"pixel": gap_at, "gap_um": gap}]
         result["pass"] = bool(result["pass"] and gap_ok)
@@ -241,7 +249,9 @@ def _load_mask(path: Path) -> np.ndarray:
         arr = arr[:, :, arr.shape[2] // 2]
     if arr.shape[0] == arr.shape[1] and arr.shape[0] % 2 == 1:
         arr = arr[:-1, :-1]
-    return (arr >= 0.5).astype(np.uint8)
+    # P1-4: do NOT silently threshold a gray array.  An exact-binary DRC must be
+    # fed an exact-binary mask; geometry_drc() raises on non-binary input.
+    return arr
 
 
 def main():

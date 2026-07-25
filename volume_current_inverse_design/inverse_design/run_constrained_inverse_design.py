@@ -146,7 +146,10 @@ def main():
     nlat = model.Nux * model.Nuy
     shape = (model.Nx, model.Ny, model.Nz)
 
-    run_root = (HERE / args.output).resolve()
+    # P0-1: resolve --output relative to the CURRENT WORKING DIRECTORY (where the
+    # launcher runs), NOT relative to this file's dir, so the shell's OUT and the
+    # runner's run_root are the same path.
+    run_root = Path(args.output).expanduser().resolve()
     (run_root / "attempts").mkdir(parents=True, exist_ok=True)
     (run_root / "checkpoints").mkdir(exist_ok=True)
 
@@ -276,8 +279,10 @@ def main():
                 state["best_feasible_obj"] = f
                 state["best_feasible"] = np.array(x, copy=True)
                 state["best_beta"] = float(_beta)
-                # atomic-ish checkpoint carrying latent+beta+objective together
-                tmp = run_root / "checkpoints" / "best_feasible.npz.tmp"
+                # atomic checkpoint carrying latent+beta+objective together.
+                # P0-2: the temp name MUST end in .npz, else np.savez_compressed
+                # appends ".npz" (best_feasible.tmp.npz.npz) and replace() fails.
+                tmp = run_root / "checkpoints" / "best_feasible.tmp.npz"
                 np.savez_compressed(tmp, latent=x, beta=np.array(_beta),
                                     objective=np.array(f))
                 tmp.replace(run_root / "checkpoints" / "best_feasible.npz")
@@ -323,12 +328,21 @@ def main():
     had_feasible = state["best_feasible"] is not None
     best = state["best_feasible"] if had_feasible else latent
     best_beta = state["best_beta"] if had_feasible else _beta_stages(args.beta_schedule)[-1]
+    # P0-6: persist the mapping/mode identity so the finalizer can refuse a
+    # design produced under a different mapping/isolation/MFS/mode.
+    mapping_identity = json.dumps({
+        "mapping_config": mapping.config.to_dict(),
+        "isolation_gap_um": float(getattr(mapping, "isolation_gap_um", 0.0)),
+        "mfs_um": args.mfs_um, "mgs_um": args.mgs_um,
+        "mapping_mode": os.environ.get("MSOPT_MAPPING", "periodic_constrained"),
+    }, sort_keys=True)
     np.savez_compressed(run_root / "final_design.npz", latent=best,
                         beta=np.array(best_beta),
                         objective=np.array(state["best_feasible_obj"] if had_feasible else np.nan),
                         had_feasible=np.array(had_feasible),
                         code_hash=np.array(contract["code_hash"]),
                         config_hash=np.array(contract["config_hash"]),
+                        mapping_identity=np.array(mapping_identity),
                         attempt=np.array(attempt_id))
     if stage_failure is not None:
         category = stage_failure                 # deterministic/solver/license failure
@@ -349,6 +363,10 @@ def main():
     (attempt / "stop.json").write_text(json.dumps(stop, indent=2) + "\n")
     history.close()
     print(json.dumps(stop, indent=2))
+    # P0-4: a stage failure must make the PROCESS fail so the launcher aborts and
+    # never auto-finalises after an optimizer failure.
+    if stage_failure is not None:
+        raise SystemExit(6)
 
 
 if __name__ == "__main__":

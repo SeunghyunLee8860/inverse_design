@@ -40,9 +40,39 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()[:16]
 
 
-def _exact_binary_unique(model, latent) -> np.ndarray:
-    filtered = np.asarray(model.mapping.filter_unique(latent), float)
+def _exact_binary_unique(mapping, latent) -> np.ndarray:
+    filtered = np.asarray(mapping.filter_unique(latent), float)
     return (filtered >= 0.5).astype(np.uint8)
+
+
+def _mapping_from_env():
+    """Build the production mapping directly from env -- no Lumerical import.
+
+    Mirrors tairte4_volume_model's grid/mapping construction so the finalizer
+    (esp. --no-fdtd) runs without the Lumerical install, and so its mapping
+    identity matches the one the runner saved.
+    """
+    from periodic_constrained_mapping import PeriodicConstrainedMapping
+    period = float(os.environ.get("PERIOD_UM", "6.0"))
+    res_xy = int(os.environ.get("DESIGN_RES_XY", "40"))
+    res = int(os.environ.get("RES", "20"))
+    design_h = float(os.environ.get("DESIGN_H_UM", "0.6"))
+    mfs = float(os.environ.get("MFS_UM", "0.5"))
+    Nx = int(round(period * res_xy)) + 1
+    Nz = int(round(design_h * res)) + 1
+    radius = float(os.environ.get("VC_FILTER_RADIUS_UM", str(mfs)))
+    eta_e = float(os.environ.get("VC_ETA_ERODE", "0.75"))
+    eta_d = float(os.environ.get("VC_ETA_DILATE", "0.25"))
+    return PeriodicConstrainedMapping(Nx, Nx, Nz, period, radius, eta_d, eta_e)
+
+
+def _identity(mapping, mfs, mgs) -> str:
+    return json.dumps({
+        "mapping_config": mapping.config.to_dict(),
+        "isolation_gap_um": float(mapping.isolation_gap_um),
+        "mfs_um": mfs, "mgs_um": mgs,
+        "mapping_mode": os.environ.get("MSOPT_MAPPING", "periodic_constrained"),
+    }, sort_keys=True)
 
 
 def _write(path: Path, obj) -> None:
@@ -58,8 +88,8 @@ def main():
     ap.add_argument("--min-gap-um", type=float, default=None)
     ap.add_argument("--gpu", default=os.environ.get("CL_GPU_DEVICE", "GPU 1"))
     ap.add_argument("--no-fdtd", action="store_true")
-    ap.add_argument("--allow-hash-mismatch", action="store_true",
-                    help="(unsafe) finalise even if code hash != design's code hash")
+    ap.add_argument("--allow-unsafe-provenance", action="store_true",
+                    help="(unsafe) skip had_feasible/code_hash/identity provenance checks")
     args = ap.parse_args()
     os.environ["MFS_UM"] = str(args.mfs_um)
     os.environ["MGS_UM"] = str(args.mgs_um)
@@ -67,19 +97,20 @@ def main():
     os.environ["CL_GPU_DEVICE"] = args.gpu
     os.environ["LUMERICAL_SESSION_GPU_DEVICE"] = args.gpu
 
-    import eqc_lib as lib
-    model = lib.load_model()
     if os.environ["MSOPT_MAPPING"] != "periodic_constrained":
         raise SystemExit("final_projection requires MSOPT_MAPPING=periodic_constrained")
+    # Mapping is built standalone (no Lumerical); only the FDTD path imports the
+    # evaluator.  So --no-fdtd runs without the Lumerical install (P1-5).
+    mapping = _mapping_from_env()
 
     data = np.load(Path(args.design).resolve())
     if "latent" not in data.files:
         raise KeyError(f"{args.design} has no 'latent' array")
     latent = np.asarray(data["latent"], float).reshape(-1)
-    if latent.size != model.Nux * model.Nuy:
-        raise ValueError(f"latent size {latent.size} != Nux*Nuy {model.Nux*model.Nuy}")
+    if latent.size != mapping.Nux * mapping.Nuy:
+        raise ValueError(f"latent size {latent.size} != Nux*Nuy {mapping.Nux*mapping.Nuy}")
 
-    output = (HERE / args.output).resolve()
+    output = Path(args.output).expanduser().resolve()   # P0-1: CWD-relative, matches launcher
     output.mkdir(parents=True, exist_ok=True)
     # transaction start: remove any stale success, write pending manifest
     for stale in ("SUCCESS.json", "exact_binary_fom.json"):
@@ -97,23 +128,37 @@ def main():
         print(f"FINALIZE FAILED [{category}]: {msg}")
         raise SystemExit(2)
 
-    # --- P0-5 provenance: code hash + had_feasible ---
-    current_hash = _code_hash(production_code_files(ROOT, HERE))
-    design_hash = str(data["code_hash"]) if "code_hash" in data.files else None
-    had_feasible = bool(data["had_feasible"]) if "had_feasible" in data.files else None
-    if had_feasible is False:
-        fail("not_feasible",
-             "design was not flagged had_feasible by the optimiser; refuse to finalise")
-    if design_hash is not None and design_hash != current_hash and not args.allow_hash_mismatch:
-        fail("code_hash_mismatch",
-             f"design code_hash {design_hash} != current {current_hash}; "
-             "the mapping/pipeline changed since this latent was produced",
-             {"design_code_hash": design_hash, "current_code_hash": current_hash})
+    # --- provenance: REQUIRE had_feasible(True), code_hash(match), identity(match) ---
+    if not args.allow_unsafe_provenance:
+        if "had_feasible" not in data.files:
+            fail("missing_provenance", "design NPZ has no had_feasible field")
+        if bool(data["had_feasible"]) is not True:
+            fail("not_feasible", "design was not flagged had_feasible by the optimiser")
+        if "code_hash" not in data.files:
+            fail("missing_provenance", "design NPZ has no code_hash field")
+        current_hash = _code_hash(production_code_files(ROOT, HERE))
+        design_hash = str(data["code_hash"])
+        if design_hash != current_hash:
+            fail("code_hash_mismatch",
+                 f"design code_hash {design_hash} != current {current_hash}",
+                 {"design_code_hash": design_hash, "current_code_hash": current_hash})
+        # P0-6: mapping/mode/isolation/MFS identity must match
+        current_identity = _identity(mapping, args.mfs_um, args.mgs_um)
+        if "mapping_identity" not in data.files:
+            fail("missing_provenance", "design NPZ has no mapping_identity field")
+        design_identity = str(data["mapping_identity"])
+        if design_identity != current_identity:
+            fail("config_mismatch",
+                 "mapping/mode/isolation/MFS differs from the design's",
+                 {"design_identity": design_identity, "current_identity": current_identity})
+    else:
+        current_hash = _code_hash(production_code_files(ROOT, HERE))
+        design_hash = str(data["code_hash"]) if "code_hash" in data.files else None
 
     # --- exact binary mask on the unique grid (beta-independent) ---
-    mask_u = _exact_binary_unique(model, latent)
-    spacing_um = model.dx_um
-    if not np.isclose(model.dx_um, model.dy_um):
+    mask_u = _exact_binary_unique(mapping, latent)
+    spacing_um = mapping.config.dx_um
+    if not np.isclose(mapping.config.dx_um, mapping.config.dy_um):
         fail("nonsquare_pixels", "DRC assumes square design pixels")
 
     drc = geometry_drc(mask_u, spacing_um=spacing_um,
@@ -122,9 +167,9 @@ def main():
     _write(output / "geometry_drc.json", drc)
     print(json.dumps(drc, indent=2))
 
-    mp = model.mapping
+    mp = mapping
     mask_phys = np.asarray(mp.physical_from_unique(mask_u.astype(float)), float).reshape(
-        model.Nx, model.Ny, model.Nz).astype(np.uint8)
+        mapping.Nx, mapping.Ny, mapping.Nz).astype(np.uint8)
     diag = mapping_diagnostics(mask_phys.astype(float))
     if not diag.is_exact_binary:
         fail("not_binary", "exact-binary mask is not exactly {0,1}")

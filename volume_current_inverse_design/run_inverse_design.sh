@@ -20,6 +20,9 @@ MODE="${1:-connected}"
 GPU="${GPU:-GPU 1}"
 OUT="${OUT:-runs/${MODE}_500nm}"
 cd "$HERE"
+# P0-1: make OUT absolute so the runner (resolves --output vs CWD) and this
+# script agree on where final_design.npz / SUCCESS.json live.
+case "$OUT" in /*) : ;; *) OUT="$HERE/$OUT" ;; esac
 
 export CL_GPU_DEVICE="$GPU" LUMERICAL_SESSION_GPU_DEVICE="$GPU"
 export FDTD_THREADS="${FDTD_THREADS:-16}"
@@ -65,7 +68,11 @@ frc=0
 $PY inverse_design/final_projection.py "$OUT/final_design.npz" \
     --mfs-um 0.5 --mgs-um 0.5 --gpu "$GPU" $GAPARG \
     --output "$OUT/final_projection" || frc=$?
-if [ "$frc" -ne 0 ] || [ ! -f "$OUT/final_projection/SUCCESS.json" ]; then
-  echo "[finalize] FAILED: no SUCCESS.json (final_projection rc=$frc)"; exit "${frc:-5}"
+# P0-3: a zero finalizer rc with NO SUCCESS.json must still be a launcher failure.
+if [ "$frc" -ne 0 ]; then
+  echo "[finalize] FAILED: final_projection rc=$frc"; exit "$frc"
+fi
+if [ ! -f "$OUT/final_projection/SUCCESS.json" ]; then
+  echo "[finalize] FAILED: no SUCCESS.json"; exit 5
 fi
 echo "[done] SUCCESS $(date) -> $OUT/final_projection/SUCCESS.json"
