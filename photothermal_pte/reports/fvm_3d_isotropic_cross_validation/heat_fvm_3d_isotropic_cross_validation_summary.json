@@ -1,0 +1,213 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "20260725T201616Z",
+  "status": "VALIDATED_3D_ISOTROPIC_HEAT_FVM_CROSS_VALIDATION",
+  "passed": true,
+  "solver_scope": "v261 Lumerical HEAT scalar-isotropic perfect-contact control crossed with independent Cartesian Python/SciPy FVM",
+  "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/34_validate_3d_isotropic_heat_fvm_crosscheck.py --output-dir photothermal_pte/validation/photothermal_stage1/output/fvm_3d_isotropic_cross_validation/controls_v1",
+  "finite_optical_Q_imported": false,
+  "full_production_device_executed": false,
+  "geometry": {
+    "x_bounds_m": [
+      -1e-06,
+      1e-06
+    ],
+    "y_bounds_m": [
+      -1e-06,
+      1e-06
+    ],
+    "z_bounds_m": [
+      -1e-06,
+      5e-07
+    ],
+    "material_interface_z_m": 0.0,
+    "lower_kappa_W_mK": 10.0,
+    "upper_kappa_W_mK": 2.0,
+    "perfect_contact": true
+  },
+  "volumetric_Q": {
+    "type": "asymmetric axis-aligned uniform cuboid",
+    "bounds_m": {
+      "x": [
+        -5e-07,
+        3e-07
+      ],
+      "y": [
+        -3e-07,
+        5e-07
+      ],
+      "z": [
+        1e-07,
+        4e-07
+      ]
+    },
+    "Q_W_m3": 1000000000000000.0,
+    "analytic_volume_m3": 1.9199999999999997e-19,
+    "analytic_power_W": 0.00019199999999999998,
+    "clipping": false,
+    "smoothing": false,
+    "gain": false,
+    "rescaling": false,
+    "periodic_tiling": false
+  },
+  "boundary_conditions": {
+    "z_min": {
+      "type": "Dirichlet",
+      "temperature_K": 300.0
+    },
+    "x_min_x_max_y_min_y_max_z_max": "adiabatic"
+  },
+  "grid_target_m": 5e-08,
+  "lumerical": {
+    "version": "7.17.4413",
+    "installation_root": "/opt/lumerical/v261",
+    "project_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_3d_isotropic_cross_validation/controls_v1/isotropic_3d_crosscheck.ldev",
+    "raw_result_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_3d_isotropic_cross_validation/controls_v1/lumerical_3d_result.npz",
+    "session_startup": true,
+    "save_succeeded": true,
+    "load_succeeded": true,
+    "solver_run_succeeded": true,
+    "available_results": [
+      "thermal",
+      "integrated",
+      "boundaries"
+    ],
+    "temperature_monitor_results": [
+      "temperature"
+    ],
+    "materials_before_save": [
+      {
+        "name": "crosscheck lower",
+        "thermal_property": "crosscheck lower thermal",
+        "conductivity_write_W_mK": 10.0,
+        "conductivity_readback_W_mK": 10.0
+      },
+      {
+        "name": "crosscheck upper",
+        "thermal_property": "crosscheck upper thermal",
+        "conductivity_write_W_mK": 2.0,
+        "conductivity_readback_W_mK": 2.0
+      }
+    ],
+    "materials_after_reload": [
+      {
+        "path": "::model::materials::crosscheck lower::crosscheck lower thermal",
+        "expected_W_mK": 10.0,
+        "readback_W_mK": 10.0,
+        "passed": true
+      },
+      {
+        "path": "::model::materials::crosscheck upper::crosscheck upper thermal",
+        "expected_W_mK": 2.0,
+        "readback_W_mK": 2.0,
+        "passed": true
+      }
+    ],
+    "node_count": 128099,
+    "element_count": 772706,
+    "material_ID_values": [
+      1.0,
+      2.0
+    ],
+    "kappa_node_values_W_mK": [
+      2.0,
+      10.0
+    ],
+    "Q_node_range_W_m3": [
+      0.0,
+      999604743030478.0
+    ],
+    "prescribed_source_power_W": 0.00019199999999999998,
+    "integrated_source_power_W": 0.00019276862594034703,
+    "source_power_relative_error": 0.004003260105974254,
+    "boundary_power_out_W": 0.00019276806550603363,
+    "energy_balance_relative_error": 2.9072900772662042e-06,
+    "temperature_min_K": 300.0,
+    "temperature_max_K": 326.77232387096166,
+    "temperature_max_location_m": {
+      "x": -1.0437584443912202e-07,
+      "y": 1.0162527798485422e-07,
+      "z": 3.555168538176476e-07
+    }
+  },
+  "fvm": {
+    "raw_result_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_3d_isotropic_cross_validation/controls_v1/fvm_3d_result.npz",
+    "grid_m": 5e-08,
+    "grid_shape": [
+      40,
+      40,
+      30
+    ],
+    "cell_count": 48000,
+    "source_cell_count": 1536,
+    "source_volume_m3": 1.9199999999999997e-19,
+    "source_power_W": 0.00019200000000000006,
+    "boundary_power_out_W": {
+      "z_min": 0.00019199999999661464
+    },
+    "energy_balance_relative_error": 1.7632402518677013e-11,
+    "linear_residual_relative": 9.280343140722955e-12,
+    "solver": "scipy.sparse.linalg.cg+jacobi",
+    "iterations": 263,
+    "kappa_values_W_mK": [
+      2.0,
+      10.0
+    ],
+    "temperature_min_K": 300.09165574863164,
+    "temperature_max_K": 326.7117316933152,
+    "temperature_mean_K": 304.6466666666216,
+    "temperature_max_location_m": {
+      "x": -1.2500000000000002e-07,
+      "y": 1.2500000000000007e-07,
+      "z": 3.2500000000000017e-07
+    }
+  },
+  "comparison": {
+    "passed": true,
+    "common_grid_result_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_3d_isotropic_cross_validation/controls_v1/common_grid_comparison.npz",
+    "common_grid_shape": [
+      40,
+      40,
+      30
+    ],
+    "interpolation": "SciPy LinearNDInterpolator from the v261 unstructured FEM nodes to the FVM cell centers",
+    "maximum_FVM_temperature_rise_K": 26.711731693315187,
+    "Tmax_lumerical_node_K": 326.77232387096166,
+    "Tmax_lumerical_common_grid_K": 326.6284082914526,
+    "Tmax_fvm_K": 326.7117316933152,
+    "Tmax_node_relative_error_over_rise": 0.0022683732504558433,
+    "Tmax_common_grid_relative_error_over_rise": 0.0031193560499645184,
+    "Tmean_lumerical_common_grid_K": 304.6584243848347,
+    "Tmean_fvm_K": 304.6466666666216,
+    "Tmean_relative_error_over_rise": 0.0004401705717942714,
+    "temperature_field_NRMSE_over_rise": 0.0010775593794899946,
+    "temperature_field_p99_error_over_rise": 0.0045207037812384325,
+    "temperature_field_max_error_over_rise": 0.01052662140734514,
+    "temperature_field_correlation": 0.9999831907558526,
+    "hotspot_location_offset_m": 4.362352334248463e-08,
+    "prescribed_source_power_W": 0.00019199999999999998,
+    "lumerical_integrated_source_power_W": 0.00019276862594034703,
+    "fvm_source_power_W": 0.00019200000000000006,
+    "source_power_cross_relative_error": 0.004003260105973831,
+    "lumerical_boundary_power_out_W": 0.00019276806550603363,
+    "fvm_boundary_power_out_W": 0.00019199999999661464,
+    "boundary_power_cross_relative_error": 0.004000341194890584,
+    "criteria": {
+      "Tmax_relative_error_over_rise_lt": 0.01,
+      "Tmean_relative_error_over_rise_lt": 0.01,
+      "temperature_field_NRMSE_over_rise_lt": 0.01,
+      "temperature_field_correlation_gt": 0.999,
+      "source_power_cross_relative_error_lt": 0.01,
+      "boundary_power_cross_relative_error_lt": 0.01,
+      "each_solver_energy_balance_relative_error_lt": 0.01
+    },
+    "non_gating_diagnostics": {
+      "temperature_field_p99_error_over_rise": 0.0045207037812384325,
+      "temperature_field_max_error_over_rise": 0.01052662140734514,
+      "Tmax_common_grid_relative_error_over_rise": 0.0031193560499645184,
+      "hotspot_location_offset_m": 4.362352334248463e-08
+    }
+  },
+  "next_required_gate": "FINITE_OPTICAL_Q_CONSERVATIVE_IMPORT",
+  "output_directory": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_3d_isotropic_cross_validation/controls_v1"
+}

@@ -1,0 +1,226 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "20260725T191913Z",
+  "status": "BLOCKED_MECHANICAL_EXECUTABLE_UNAVAILABLE",
+  "anisotropic_kappa_status": "BLOCKED_MECHANICAL_EXECUTABLE_UNAVAILABLE",
+  "interface_G_status": "BLOCKED_MECHANICAL_EXECUTABLE_UNAVAILABLE",
+  "solver_executed": false,
+  "solver_validation_claimed": false,
+  "mechanical_probe": {
+    "executable": {
+      "status": "BLOCKED_MECHANICAL_EXECUTABLE_UNAVAILABLE",
+      "passed": false,
+      "executable": null,
+      "checked_paths": [
+        "/ansys_inc/v261/ansys/bin/linx64/ansys261",
+        "/usr/ansys_inc/v261/ansys/bin/linx64/ansys261",
+        "/opt/ansys_inc/v261/ansys/bin/linx64/ansys261",
+        "/ansys_inc/v252/ansys/bin/linx64/ansys252",
+        "/usr/ansys_inc/v252/ansys/bin/linx64/ansys252",
+        "/opt/ansys_inc/v252/ansys/bin/linx64/ansys252",
+        "/ansys_inc/v251/ansys/bin/linx64/ansys251",
+        "/usr/ansys_inc/v251/ansys/bin/linx64/ansys251",
+        "/opt/ansys_inc/v251/ansys/bin/linx64/ansys251"
+      ]
+    },
+    "license": {
+      "status": "BLOCKED_MECHANICAL_LICENSE_UNAVAILABLE",
+      "passed": false,
+      "license_reference_configured": true,
+      "license_reference_kind": "network",
+      "lmutil": "/ansys_inc/shared_files/licensing/linx64/lmutil",
+      "available_feature_names": [
+        "dynardo_osl",
+        "dynardo_osp",
+        "lum_charge_solve",
+        "lum_cml_compiler",
+        "lum_dgtd_solve",
+        "lum_eme_solve",
+        "lum_fde_solve",
+        "lum_fdtd_gui",
+        "lum_fdtd_solve",
+        "lum_feem_solve",
+        "lum_heat_solve",
+        "lum_interconnect_gui",
+        "lum_interconnect_solve",
+        "lum_mode_gui",
+        "lum_mqw_solve",
+        "lum_multiphysics_gui",
+        "lum_stack_solve",
+        "lum_varfdtd_solve",
+        "lum_veriloga_solve",
+        "optislang_ai_plus",
+        "optislang_level1",
+        "optislang_level2",
+        "optislang_level3"
+      ],
+      "mechanical_feature_names": [],
+      "lmstat_returncode": 0,
+      "license_server_reachable": true
+    }
+  },
+  "input_deck_static_audit": {
+    "status": "PASSED_MECHANICAL_INPUT_DECK_STATIC_AUDIT",
+    "passed": true,
+    "cases": [
+      {
+        "case_id": "mechanical_kappa_x",
+        "passed": true,
+        "missing_required_tokens": [],
+        "line_count": 226,
+        "sha256": "99ec1dcd14664184be4b1cdf43c45c1edd03c198c6d85f0039686743062e0c30"
+      },
+      {
+        "case_id": "mechanical_kappa_y",
+        "passed": true,
+        "missing_required_tokens": [],
+        "line_count": 226,
+        "sha256": "08f36e31b9c9a96f8c56aea600955ff85e93569c219ff692e72bbbb09faed616"
+      },
+      {
+        "case_id": "mechanical_kappa_z",
+        "passed": true,
+        "missing_required_tokens": [],
+        "line_count": 226,
+        "sha256": "d3a57c3d857e5994d39d2c7da1f9c517d474819f0420e6161c579adf483f27fd"
+      },
+      {
+        "case_id": "mechanical_interface_G_7370000",
+        "passed": true,
+        "missing_required_tokens": [],
+        "line_count": 366,
+        "sha256": "623b2dd9a9c68a5c5807fc84e928db46968fd1eea4c8622f0dbba6b7234d9e72"
+      },
+      {
+        "case_id": "mechanical_interface_G_1p1e09",
+        "passed": true,
+        "missing_required_tokens": [],
+        "line_count": 366,
+        "sha256": "d4ebbefe4f4c4f6269e5794b024f7f124cf6adb0f6bb838f65fa5ab1ebb3762f"
+      },
+      {
+        "case_id": "mechanical_perfect_contact_10x2",
+        "passed": true,
+        "missing_required_tokens": [],
+        "line_count": 227,
+        "sha256": "afd8a9844d533431ba958e4d37ed12b940aed3066d6b2e72ddf1d7298e0d616e"
+      },
+      {
+        "case_id": "mechanical_perfect_contact_20x2",
+        "passed": true,
+        "missing_required_tokens": [],
+        "line_count": 357,
+        "sha256": "901819540290c8e9493826388122e37b47386ee7a5c1b51f872edd2a4e943101"
+      },
+      {
+        "case_id": "mechanical_perfect_contact_40x2",
+        "passed": true,
+        "missing_required_tokens": [],
+        "line_count": 617,
+        "sha256": "24f77c7f491333e2ae3dbf9bfe72afd71b0eed12b0f78e6da311e4b2ee41646d"
+      }
+    ]
+  },
+  "requested_tensor_W_mK": [
+    14.4,
+    3.8,
+    1.0
+  ],
+  "requested_interface_G_W_m2K": [
+    7370000.0,
+    1100000000.0
+  ],
+  "isotropic_average_used": false,
+  "full_device_executed": false,
+  "cases": [
+    {
+      "case_id": "mechanical_kappa_x",
+      "control": "anisotropic_kappa",
+      "solver_executed": false,
+      "status": "OFFLINE_ANALYTIC_REFERENCE_ONLY",
+      "expected_kappa_W_mK": 14.4,
+      "analytic_heat_flux_W_m2": 72000000.0,
+      "exact_temperature_profile": "T=300+10*s/(2e-6), where s is the active-axis coordinate",
+      "input_deck": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_kappa_x/mechanical_kappa_x.inp"
+    },
+    {
+      "case_id": "mechanical_kappa_y",
+      "control": "anisotropic_kappa",
+      "solver_executed": false,
+      "status": "OFFLINE_ANALYTIC_REFERENCE_ONLY",
+      "expected_kappa_W_mK": 3.8,
+      "analytic_heat_flux_W_m2": 19000000.0,
+      "exact_temperature_profile": "T=300+10*s/(2e-6), where s is the active-axis coordinate",
+      "input_deck": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_kappa_y/mechanical_kappa_y.inp"
+    },
+    {
+      "case_id": "mechanical_kappa_z",
+      "control": "anisotropic_kappa",
+      "solver_executed": false,
+      "status": "OFFLINE_ANALYTIC_REFERENCE_ONLY",
+      "expected_kappa_W_mK": 1.0,
+      "analytic_heat_flux_W_m2": 5000000.0,
+      "exact_temperature_profile": "T=300+10*s/(2e-6), where s is the active-axis coordinate",
+      "input_deck": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_kappa_z/mechanical_kappa_z.inp"
+    },
+    {
+      "case_id": "mechanical_interface_G_7370000",
+      "control": "internal_interface_G",
+      "solver_executed": false,
+      "status": "OFFLINE_ANALYTIC_REFERENCE_ONLY",
+      "G_W_m2K": 7370000.0,
+      "thermal_insulance_m2K_W": 1.3568521031207598e-07,
+      "analytic_heat_flux_W_m2": 25927880.386983287,
+      "expected_interface_temperature_jump_K": 3.518029903254177,
+      "input_deck": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_interface_G_7370000/mechanical_interface_G_7370000.inp"
+    },
+    {
+      "case_id": "mechanical_interface_G_1p1e09",
+      "control": "internal_interface_G",
+      "solver_executed": false,
+      "status": "OFFLINE_ANALYTIC_REFERENCE_ONLY",
+      "G_W_m2K": 1100000000.0,
+      "thermal_insulance_m2K_W": 9.090909090909091e-10,
+      "analytic_heat_flux_W_m2": 39855072.463768125,
+      "expected_interface_temperature_jump_K": 0.03623188405797102,
+      "input_deck": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_interface_G_1p1e09/mechanical_interface_G_1p1e09.inp"
+    },
+    {
+      "case_id": "mechanical_perfect_contact_10x2",
+      "control": "perfect_contact",
+      "solver_executed": false,
+      "status": "OFFLINE_ANALYTIC_REFERENCE_ONLY",
+      "perfect_contact": true,
+      "cells_per_slab": 10,
+      "mesh_edge_z_m": 1e-07,
+      "analytic_heat_flux_W_m2": 40000000.0,
+      "expected_interface_temperature_jump_K": 0.0,
+      "input_deck": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_perfect_contact_10x2/mechanical_perfect_contact_10x2.inp"
+    },
+    {
+      "case_id": "mechanical_perfect_contact_20x2",
+      "control": "perfect_contact",
+      "solver_executed": false,
+      "status": "OFFLINE_ANALYTIC_REFERENCE_ONLY",
+      "perfect_contact": true,
+      "cells_per_slab": 20,
+      "mesh_edge_z_m": 5e-08,
+      "analytic_heat_flux_W_m2": 40000000.0,
+      "expected_interface_temperature_jump_K": 0.0,
+      "input_deck": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_perfect_contact_20x2/mechanical_perfect_contact_20x2.inp"
+    },
+    {
+      "case_id": "mechanical_perfect_contact_40x2",
+      "control": "perfect_contact",
+      "solver_executed": false,
+      "status": "OFFLINE_ANALYTIC_REFERENCE_ONLY",
+      "perfect_contact": true,
+      "cells_per_slab": 40,
+      "mesh_edge_z_m": 2.5e-08,
+      "analytic_heat_flux_W_m2": 40000000.0,
+      "expected_interface_temperature_jump_K": 0.0,
+      "input_deck": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_perfect_contact_40x2/mechanical_perfect_contact_40x2.inp"
+    }
+  ],
+  "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/32_validate_mechanical_thermal_controls.py --output-dir photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6"
+}

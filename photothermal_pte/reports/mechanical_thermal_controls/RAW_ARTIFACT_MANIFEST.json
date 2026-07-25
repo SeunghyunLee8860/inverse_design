@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "20260725T191913Z",
+  "status": "BLOCKED_MECHANICAL_EXECUTABLE_UNAVAILABLE",
+  "generated_by": "photothermal_pte/validation/photothermal_stage1/32_validate_mechanical_thermal_controls.py",
+  "artifacts": [
+    {
+      "category": "raw_mechanical_control",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_interface_G_1p1e09/mechanical_interface_G_1p1e09.inp",
+      "bytes": 17192,
+      "sha256": "d4ebbefe4f4c4f6269e5794b024f7f124cf6adb0f6bb838f65fa5ab1ebb3762f",
+      "tracked_in_git": false
+    },
+    {
+      "category": "raw_mechanical_control",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_interface_G_7370000/mechanical_interface_G_7370000.inp",
+      "bytes": 17196,
+      "sha256": "623b2dd9a9c68a5c5807fc84e928db46968fd1eea4c8622f0dbba6b7234d9e72",
+      "tracked_in_git": false
+    },
+    {
+      "category": "raw_mechanical_control",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_kappa_x/mechanical_kappa_x.inp",
+      "bytes": 9887,
+      "sha256": "99ec1dcd14664184be4b1cdf43c45c1edd03c198c6d85f0039686743062e0c30",
+      "tracked_in_git": false
+    },
+    {
+      "category": "raw_mechanical_control",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_kappa_y/mechanical_kappa_y.inp",
+      "bytes": 9887,
+      "sha256": "08f36e31b9c9a96f8c56aea600955ff85e93569c219ff692e72bbbb09faed616",
+      "tracked_in_git": false
+    },
+    {
+      "category": "raw_mechanical_control",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_kappa_z/mechanical_kappa_z.inp",
+      "bytes": 9887,
+      "sha256": "d3a57c3d857e5994d39d2c7da1f9c517d474819f0420e6161c579adf483f27fd",
+      "tracked_in_git": false
+    },
+    {
+      "category": "raw_mechanical_control",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_perfect_contact_10x2/mechanical_perfect_contact_10x2.inp",
+      "bytes": 8974,
+      "sha256": "afd8a9844d533431ba958e4d37ed12b940aed3066d6b2e72ddf1d7298e0d616e",
+      "tracked_in_git": false
+    },
+    {
+      "category": "raw_mechanical_control",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_perfect_contact_20x2/mechanical_perfect_contact_20x2.inp",
+      "bytes": 16207,
+      "sha256": "901819540290c8e9493826388122e37b47386ee7a5c1b51f872edd2a4e943101",
+      "tracked_in_git": false
+    },
+    {
+      "category": "raw_mechanical_control",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_perfect_contact_40x2/mechanical_perfect_contact_40x2.inp",
+      "bytes": 30769,
+      "sha256": "24f77c7f491333e2ae3dbf9bfe72afd71b0eed12b0f78e6da311e4b2ee41646d",
+      "tracked_in_git": false
+    },
+    {
+      "category": "raw_mechanical_control",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/mechanical_thermal_controls/mechanical_controls_probe_v6/mechanical_thermal_controls_result.json",
+      "bytes": 9503,
+      "sha256": "1a15ccb16096cfade7bc894e82a51f03b722f0d686f9ae5eee572acbcef713c1",
+      "tracked_in_git": false
+    },
+    {
+      "category": "report",
+      "repository_path": "photothermal_pte/reports/mechanical_thermal_controls/MECHANICAL_ANISOTROPIC_K_SOLVER_REPORT.md",
+      "bytes": 1394,
+      "sha256": "3364c93496dd0c81fd797eefa7b5b7671094a23dd5e2e836c004005311bd1c06",
+      "tracked_in_git": true
+    },
+    {
+      "category": "report",
+      "repository_path": "photothermal_pte/reports/mechanical_thermal_controls/MECHANICAL_INTERNAL_INTERFACE_G_SOLVER_REPORT.md",
+      "bytes": 1291,
+      "sha256": "03275751ba6006a4748bf4fb793120756fc6872983305551db1a0d4ddadcdc5f",
+      "tracked_in_git": true
+    },
+    {
+      "category": "report",
+      "repository_path": "photothermal_pte/reports/mechanical_thermal_controls/mechanical_thermal_controls_summary.json",
+      "bytes": 9503,
+      "sha256": "1a15ccb16096cfade7bc894e82a51f03b722f0d686f9ae5eee572acbcef713c1",
+      "tracked_in_git": true
+    },
+    {
+      "category": "report",
+      "repository_path": "photothermal_pte/reports/mechanical_thermal_controls/mechanical_thermal_controls_cases.csv",
+      "bytes": 3003,
+      "sha256": "40725839bc4d74c57915aa1d9cf5d3dd7db4a4c28905d538f756a1acd2a87692",
+      "tracked_in_git": true
+    }
+  ]
+}

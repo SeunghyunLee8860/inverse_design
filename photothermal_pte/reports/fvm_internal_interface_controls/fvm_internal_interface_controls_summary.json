@@ -1,0 +1,815 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "20260725T200530Z",
+  "status": "VALIDATED_FVM_INTERNAL_INTERFACE_G_CONTROLS",
+  "passed": true,
+  "branch": "agent/unblock-heat-material-interface-controls",
+  "solver_scope": "independent conservative Cartesian Python/SciPy FVM; not a Lumerical HEAT result",
+  "discretization": "cell-centered Cartesian finite volume with exact two-half-cell series resistance plus internal face insulance 1/G",
+  "face_resistance_equation": "dz_1/(2*k_1) + 1/G + dz_2/(2*k_2)",
+  "conductances_W_m2K": [
+    7370000.0,
+    1100000000.0,
+    "perfect_contact"
+  ],
+  "meshes_m": [
+    1e-07,
+    5e-08,
+    2.5e-08
+  ],
+  "case_count": 9,
+  "all_cases_passed": true,
+  "mesh_convergence": {
+    "G_7p37e6": {
+      "passed": true,
+      "meshes_m": [
+        1e-07,
+        5e-08,
+        2.5e-08
+      ],
+      "interface_temperature_jumps_K": [
+        3.518029903254444,
+        3.5180299032570588,
+        3.5180299032480207
+      ],
+      "interface_jump_relative_spread": 2.5690809479790967e-12,
+      "transmitted_heat_fluxes_W_m2": [
+        25927880.386975594,
+        25927880.386997454,
+        25927880.38712251
+      ],
+      "heat_flux_relative_spread": 5.666266247275789e-12,
+      "temperature_profile_relative_errors": [
+        2.842170943040401e-14,
+        5.343281372915954e-13,
+        1.0857093002414332e-12
+      ],
+      "energy_balance_relative_errors": [
+        1.9731960056337735e-12,
+        4.384807415157717e-12,
+        2.280060653268376e-11
+      ],
+      "raw_adjacent_cell_temperature_differences_K": [
+        3.842128408091469,
+        3.6800791556750028,
+        3.599054529459579
+      ],
+      "perfect_contact_raw_jump_strictly_decreases": null,
+      "perfect_contact_finest_to_coarsest_raw_jump_ratio": null
+    },
+    "G_1p1e9": {
+      "passed": true,
+      "meshes_m": [
+        1e-07,
+        5e-08,
+        2.5e-08
+      ],
+      "interface_temperature_jumps_K": [
+        0.036231884058281594,
+        0.03623188405885003,
+        0.03623188405572364
+      ],
+      "interface_jump_relative_spread": 8.628830983154628e-11,
+      "transmitted_heat_fluxes_W_m2": [
+        39855072.463763654,
+        39855072.463805094,
+        39855072.463832125
+      ],
+      "heat_flux_relative_spread": 1.717995513567838e-12,
+      "temperature_profile_relative_errors": [
+        1.1368683772161604e-14,
+        3.865352482534945e-13,
+        9.322320693172514e-13
+      ],
+      "energy_balance_relative_errors": [
+        4.277768953458427e-13,
+        5.1345129024227564e-12,
+        9.128004046207722e-12
+      ],
+      "raw_adjacent_cell_temperature_differences_K": [
+        0.5344202898549497,
+        0.28532608695661565,
+        0.1607789855070223
+      ],
+      "perfect_contact_raw_jump_strictly_decreases": null,
+      "perfect_contact_finest_to_coarsest_raw_jump_ratio": null
+    },
+    "perfect_contact": {
+      "passed": true,
+      "meshes_m": [
+        1e-07,
+        5e-08,
+        2.5e-08
+      ],
+      "interface_temperature_jumps_K": [
+        2.2737367544323206e-13,
+        6.821210263296962e-13,
+        -2.2168933355715126e-12
+      ],
+      "interface_jump_relative_spread": null,
+      "transmitted_heat_fluxes_W_m2": [
+        39999999.99999313,
+        40000000.00000706,
+        40000000.0001729
+      ],
+      "heat_flux_relative_spread": 4.494190216057971e-12,
+      "temperature_profile_relative_errors": [
+        2.842170943040401e-14,
+        4.774847184307873e-13,
+        1.0345502232667058e-12
+      ],
+      "energy_balance_relative_errors": [
+        9.947554932553655e-13,
+        1.1368876218044622e-12,
+        2.1600356594098965e-11
+      ],
+      "raw_adjacent_cell_temperature_differences_K": [
+        0.5,
+        0.25,
+        0.12500000000005684
+      ],
+      "perfect_contact_raw_jump_strictly_decreases": true,
+      "perfect_contact_finest_to_coarsest_raw_jump_ratio": 0.2500000000001137
+    }
+  },
+  "criteria": {
+    "finite_G_interface_jump_relative_error_lt": 0.01,
+    "heat_flux_relative_error_lt": 0.01,
+    "material_flux_relative_mismatch_lt": 0.01,
+    "temperature_profile_relative_error_lt": 0.01,
+    "energy_balance_relative_error_lt": 0.01,
+    "perfect_contact_extrapolated_jump_over_delta_T_lt": 1e-08,
+    "perfect_contact_finest_to_coarsest_raw_jump_ratio_lt": 0.3
+  },
+  "full_device_executed": false,
+  "finite_optical_Q_imported": false,
+  "next_required_gate": "LUMERICAL_HEAT_VS_FVM_3D_ISOTROPIC_PERFECT_CONTACT_CROSS_VALIDATION",
+  "cases": [
+    {
+      "case_id": "G_7p37e6_mesh_100nm",
+      "status": "PASSED",
+      "passed": true,
+      "solver_scope": "independent conservative Cartesian Python/SciPy FVM; not a Lumerical HEAT result",
+      "G_W_m2K": 7370000.0,
+      "perfect_contact": false,
+      "interface_insulance_m2K_W": 1.3568521031207598e-07,
+      "mesh_m": 1e-07,
+      "grid_shape": [
+        1,
+        1,
+        20
+      ],
+      "material_1": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 5.0
+      },
+      "material_2": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 20.0
+      },
+      "boundary_temperature_K": {
+        "hot": 310.0,
+        "cold": 300.0
+      },
+      "interface_face_index": 9,
+      "interface_is_internal": true,
+      "face_resistance_formula_m2K_W": 1.48185210312076e-07,
+      "face_resistance_terms_m2K_W": {
+        "material_1_half_cell": 1e-08,
+        "interface_1_over_G": 1.3568521031207598e-07,
+        "material_2_half_cell": 2.5e-09
+      },
+      "analytic_series_resistance_m2K_W": 3.85685210312076e-07,
+      "analytic_heat_flux_W_m2": 25927880.386983287,
+      "numerical_transmitted_heat_flux_W_m2": 25927880.386975594,
+      "heat_flux_relative_error": 2.966970053666968e-13,
+      "lower_material_heat_flux_W_m2": 25927880.38698409,
+      "interface_heat_flux_W_m2": 25927880.386983287,
+      "upper_material_heat_flux_W_m2": 25927880.386980936,
+      "boundary_input_heat_flux_W_m2": 25927880.386990413,
+      "boundary_output_heat_flux_W_m2": 25927880.386939254,
+      "material_flux_relative_mismatch": 1.2169605982841003e-13,
+      "all_flux_paths_relative_spread": 1.9731428448920368e-12,
+      "analytic_interface_temperature_jump_K": 3.518029903254177,
+      "numerical_interface_temperature_jump_K": 3.518029903254444,
+      "interface_temperature_jump_relative_error": 7.586564709782807e-14,
+      "lower_interface_temperature_K": 304.8144239226031,
+      "upper_interface_temperature_K": 301.29639401934867,
+      "raw_adjacent_cell_temperature_difference_K": 3.842128408091469,
+      "expected_raw_adjacent_cell_temperature_difference_K": 3.842128408091469,
+      "raw_adjacent_cell_difference_relative_error": 0.0,
+      "temperature_profile_max_relative_error": 2.842170943040401e-14,
+      "boundary_power_out_W": {
+        "z_min": -2.5927880386990412e-05,
+        "z_max": 2.592788038693925e-05
+      },
+      "source_power_W": 0.0,
+      "energy_balance_relative_error": 1.9731960056337735e-12,
+      "linear_residual_relative": 5.034862903022863e-16,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 20,
+      "criteria": {
+        "finite_G_interface_jump_relative_error_lt": 0.01,
+        "perfect_contact_jump_over_delta_T_lt": 1e-08,
+        "heat_flux_relative_error_lt": 0.01,
+        "material_flux_relative_mismatch_lt": 0.01,
+        "all_flux_paths_relative_spread_lt": 0.01,
+        "temperature_profile_relative_error_lt": 0.01,
+        "energy_balance_relative_error_lt": 0.01,
+        "linear_residual_relative_lt": 1e-09
+      }
+    },
+    {
+      "case_id": "G_7p37e6_mesh_50nm",
+      "status": "PASSED",
+      "passed": true,
+      "solver_scope": "independent conservative Cartesian Python/SciPy FVM; not a Lumerical HEAT result",
+      "G_W_m2K": 7370000.0,
+      "perfect_contact": false,
+      "interface_insulance_m2K_W": 1.3568521031207598e-07,
+      "mesh_m": 5e-08,
+      "grid_shape": [
+        1,
+        1,
+        40
+      ],
+      "material_1": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 5.0
+      },
+      "material_2": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 20.0
+      },
+      "boundary_temperature_K": {
+        "hot": 310.0,
+        "cold": 300.0
+      },
+      "interface_face_index": 19,
+      "interface_is_internal": true,
+      "face_resistance_formula_m2K_W": 1.4193521031207598e-07,
+      "face_resistance_terms_m2K_W": {
+        "material_1_half_cell": 5e-09,
+        "interface_1_over_G": 1.3568521031207598e-07,
+        "material_2_half_cell": 1.25e-09
+      },
+      "analytic_series_resistance_m2K_W": 3.85685210312076e-07,
+      "analytic_heat_flux_W_m2": 25927880.386983287,
+      "numerical_transmitted_heat_flux_W_m2": 25927880.386997454,
+      "heat_flux_relative_error": 5.464109982612823e-13,
+      "lower_material_heat_flux_W_m2": 25927880.386958994,
+      "interface_heat_flux_W_m2": 25927880.386998646,
+      "upper_material_heat_flux_W_m2": 25927880.38703738,
+      "boundary_input_heat_flux_W_m2": 25927880.38693928,
+      "boundary_output_heat_flux_W_m2": 25927880.38705297,
+      "material_flux_relative_mismatch": 3.0232921970569602e-12,
+      "all_flux_paths_relative_spread": 4.384793806186879e-12,
+      "analytic_interface_temperature_jump_K": 3.518029903254177,
+      "numerical_interface_temperature_jump_K": 3.5180299032570588,
+      "interface_temperature_jump_relative_error": 8.191217704123234e-13,
+      "lower_interface_temperature_K": 304.8144239226094,
+      "upper_interface_temperature_K": 301.29639401935236,
+      "raw_adjacent_cell_temperature_difference_K": 3.6800791556750028,
+      "expected_raw_adjacent_cell_temperature_difference_K": 3.6800791556728227,
+      "raw_adjacent_cell_difference_relative_error": 5.923877826903387e-13,
+      "temperature_profile_max_relative_error": 5.343281372915954e-13,
+      "boundary_power_out_W": {
+        "z_min": -2.592788038693928e-05,
+        "z_max": 2.5927880387052967e-05
+      },
+      "source_power_W": 0.0,
+      "energy_balance_relative_error": 4.384807415157717e-12,
+      "linear_residual_relative": 1.400510450431882e-15,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 40,
+      "criteria": {
+        "finite_G_interface_jump_relative_error_lt": 0.01,
+        "perfect_contact_jump_over_delta_T_lt": 1e-08,
+        "heat_flux_relative_error_lt": 0.01,
+        "material_flux_relative_mismatch_lt": 0.01,
+        "all_flux_paths_relative_spread_lt": 0.01,
+        "temperature_profile_relative_error_lt": 0.01,
+        "energy_balance_relative_error_lt": 0.01,
+        "linear_residual_relative_lt": 1e-09
+      }
+    },
+    {
+      "case_id": "G_7p37e6_mesh_25nm",
+      "status": "PASSED",
+      "passed": true,
+      "solver_scope": "independent conservative Cartesian Python/SciPy FVM; not a Lumerical HEAT result",
+      "G_W_m2K": 7370000.0,
+      "perfect_contact": false,
+      "interface_insulance_m2K_W": 1.3568521031207598e-07,
+      "mesh_m": 2.5e-08,
+      "grid_shape": [
+        1,
+        1,
+        80
+      ],
+      "material_1": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 5.0
+      },
+      "material_2": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 20.0
+      },
+      "boundary_temperature_K": {
+        "hot": 310.0,
+        "cold": 300.0
+      },
+      "interface_face_index": 39,
+      "interface_is_internal": true,
+      "face_resistance_formula_m2K_W": 1.3881021031207598e-07,
+      "face_resistance_terms_m2K_W": {
+        "material_1_half_cell": 2.5e-09,
+        "interface_1_over_G": 1.3568521031207598e-07,
+        "material_2_half_cell": 6.25e-10
+      },
+      "analytic_series_resistance_m2K_W": 3.85685210312076e-07,
+      "analytic_heat_flux_W_m2": 25927880.386983287,
+      "numerical_transmitted_heat_flux_W_m2": 25927880.38712251,
+      "heat_flux_relative_error": 5.369569241919706e-12,
+      "lower_material_heat_flux_W_m2": 25927880.38694945,
+      "interface_heat_flux_W_m2": 25927880.38695504,
+      "upper_material_heat_flux_W_m2": 25927880.387192864,
+      "boundary_input_heat_flux_W_m2": 25927880.386962015,
+      "boundary_output_heat_flux_W_m2": 25927880.38755319,
+      "material_flux_relative_mismatch": 9.38812543707566e-12,
+      "all_flux_paths_relative_spread": 2.3285326961014782e-11,
+      "analytic_interface_temperature_jump_K": 3.518029903254177,
+      "numerical_interface_temperature_jump_K": 3.5180299032480207,
+      "interface_temperature_jump_relative_error": 1.749959177566041e-12,
+      "lower_interface_temperature_K": 304.81442392261033,
+      "upper_interface_temperature_K": 301.2963940193623,
+      "raw_adjacent_cell_temperature_difference_K": 3.599054529459579,
+      "expected_raw_adjacent_cell_temperature_difference_K": 3.5990545294635,
+      "raw_adjacent_cell_difference_relative_error": 1.0894149009603015e-12,
+      "temperature_profile_max_relative_error": 1.0857093002414332e-12,
+      "boundary_power_out_W": {
+        "z_min": -2.5927880386962016e-05,
+        "z_max": 2.5927880387553188e-05
+      },
+      "source_power_W": 0.0,
+      "energy_balance_relative_error": 2.280060653268376e-11,
+      "linear_residual_relative": 2.3754922971552657e-15,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 80,
+      "criteria": {
+        "finite_G_interface_jump_relative_error_lt": 0.01,
+        "perfect_contact_jump_over_delta_T_lt": 1e-08,
+        "heat_flux_relative_error_lt": 0.01,
+        "material_flux_relative_mismatch_lt": 0.01,
+        "all_flux_paths_relative_spread_lt": 0.01,
+        "temperature_profile_relative_error_lt": 0.01,
+        "energy_balance_relative_error_lt": 0.01,
+        "linear_residual_relative_lt": 1e-09
+      }
+    },
+    {
+      "case_id": "G_1p1e9_mesh_100nm",
+      "status": "PASSED",
+      "passed": true,
+      "solver_scope": "independent conservative Cartesian Python/SciPy FVM; not a Lumerical HEAT result",
+      "G_W_m2K": 1100000000.0,
+      "perfect_contact": false,
+      "interface_insulance_m2K_W": 9.090909090909091e-10,
+      "mesh_m": 1e-07,
+      "grid_shape": [
+        1,
+        1,
+        20
+      ],
+      "material_1": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 5.0
+      },
+      "material_2": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 20.0
+      },
+      "boundary_temperature_K": {
+        "hot": 310.0,
+        "cold": 300.0
+      },
+      "interface_face_index": 9,
+      "interface_is_internal": true,
+      "face_resistance_formula_m2K_W": 1.3409090909090909e-08,
+      "face_resistance_terms_m2K_W": {
+        "material_1_half_cell": 1e-08,
+        "interface_1_over_G": 9.090909090909091e-10,
+        "material_2_half_cell": 2.5e-09
+      },
+      "analytic_series_resistance_m2K_W": 2.5090909090909087e-07,
+      "analytic_heat_flux_W_m2": 39855072.463768125,
+      "numerical_transmitted_heat_flux_W_m2": 39855072.463763654,
+      "heat_flux_relative_error": 1.1216510425914415e-13,
+      "lower_material_heat_flux_W_m2": 39855072.46376838,
+      "interface_heat_flux_W_m2": 39855072.46375896,
+      "upper_material_heat_flux_W_m2": 39855072.46377059,
+      "boundary_input_heat_flux_W_m2": 39855072.46376869,
+      "boundary_output_heat_flux_W_m2": 39855072.463751644,
+      "material_flux_relative_mismatch": 5.5521726608282583e-14,
+      "all_flux_paths_relative_spread": 4.753931002183926e-13,
+      "analytic_interface_temperature_jump_K": 0.03623188405797102,
+      "numerical_interface_temperature_jump_K": 0.036231884058281594,
+      "interface_temperature_jump_relative_error": 8.5717599684898e-12,
+      "lower_interface_temperature_K": 302.02898550724655,
+      "upper_interface_temperature_K": 301.99275362318826,
+      "raw_adjacent_cell_temperature_difference_K": 0.5344202898549497,
+      "expected_raw_adjacent_cell_temperature_difference_K": 0.5344202898550726,
+      "raw_adjacent_cell_difference_relative_error": 2.2997197366764287e-13,
+      "temperature_profile_max_relative_error": 1.1368683772161604e-14,
+      "boundary_power_out_W": {
+        "z_min": -3.985507246376869e-05,
+        "z_max": 3.9855072463751644e-05
+      },
+      "source_power_W": 0.0,
+      "energy_balance_relative_error": 4.277768953458427e-13,
+      "linear_residual_relative": 5.913432195448826e-16,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 20,
+      "criteria": {
+        "finite_G_interface_jump_relative_error_lt": 0.01,
+        "perfect_contact_jump_over_delta_T_lt": 1e-08,
+        "heat_flux_relative_error_lt": 0.01,
+        "material_flux_relative_mismatch_lt": 0.01,
+        "all_flux_paths_relative_spread_lt": 0.01,
+        "temperature_profile_relative_error_lt": 0.01,
+        "energy_balance_relative_error_lt": 0.01,
+        "linear_residual_relative_lt": 1e-09
+      }
+    },
+    {
+      "case_id": "G_1p1e9_mesh_50nm",
+      "status": "PASSED",
+      "passed": true,
+      "solver_scope": "independent conservative Cartesian Python/SciPy FVM; not a Lumerical HEAT result",
+      "G_W_m2K": 1100000000.0,
+      "perfect_contact": false,
+      "interface_insulance_m2K_W": 9.090909090909091e-10,
+      "mesh_m": 5e-08,
+      "grid_shape": [
+        1,
+        1,
+        40
+      ],
+      "material_1": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 5.0
+      },
+      "material_2": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 20.0
+      },
+      "boundary_temperature_K": {
+        "hot": 310.0,
+        "cold": 300.0
+      },
+      "interface_face_index": 19,
+      "interface_is_internal": true,
+      "face_resistance_formula_m2K_W": 7.159090909090909e-09,
+      "face_resistance_terms_m2K_W": {
+        "material_1_half_cell": 5e-09,
+        "interface_1_over_G": 9.090909090909091e-10,
+        "material_2_half_cell": 1.25e-09
+      },
+      "analytic_series_resistance_m2K_W": 2.5090909090909087e-07,
+      "analytic_heat_flux_W_m2": 39855072.463768125,
+      "numerical_transmitted_heat_flux_W_m2": 39855072.463805094,
+      "heat_flux_relative_error": 9.276054122231222e-13,
+      "lower_material_heat_flux_W_m2": 39855072.46375223,
+      "interface_heat_flux_W_m2": 39855072.46378126,
+      "upper_material_heat_flux_W_m2": 39855072.46382942,
+      "boundary_input_heat_flux_W_m2": 39855072.46372895,
+      "boundary_output_heat_flux_W_m2": 39855072.46393359,
+      "material_flux_relative_mismatch": 1.936717466872759e-12,
+      "all_flux_paths_relative_spread": 5.134544589297993e-12,
+      "analytic_interface_temperature_jump_K": 0.03623188405797102,
+      "numerical_interface_temperature_jump_K": 0.03623188405885003,
+      "interface_temperature_jump_relative_error": 2.4260543574072808e-11,
+      "lower_interface_temperature_K": 302.0289855072507,
+      "upper_interface_temperature_K": 301.99275362319185,
+      "raw_adjacent_cell_temperature_difference_K": 0.28532608695661565,
+      "expected_raw_adjacent_cell_temperature_difference_K": 0.2853260869565218,
+      "raw_adjacent_cell_difference_relative_error": 3.2898974549901873e-13,
+      "temperature_profile_max_relative_error": 3.865352482534945e-13,
+      "boundary_power_out_W": {
+        "z_min": -3.985507246372895e-05,
+        "z_max": 3.9855072463933587e-05
+      },
+      "source_power_W": 0.0,
+      "energy_balance_relative_error": 5.1345129024227564e-12,
+      "linear_residual_relative": 1.1342375460204148e-15,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 40,
+      "criteria": {
+        "finite_G_interface_jump_relative_error_lt": 0.01,
+        "perfect_contact_jump_over_delta_T_lt": 1e-08,
+        "heat_flux_relative_error_lt": 0.01,
+        "material_flux_relative_mismatch_lt": 0.01,
+        "all_flux_paths_relative_spread_lt": 0.01,
+        "temperature_profile_relative_error_lt": 0.01,
+        "energy_balance_relative_error_lt": 0.01,
+        "linear_residual_relative_lt": 1e-09
+      }
+    },
+    {
+      "case_id": "G_1p1e9_mesh_25nm",
+      "status": "PASSED",
+      "passed": true,
+      "solver_scope": "independent conservative Cartesian Python/SciPy FVM; not a Lumerical HEAT result",
+      "G_W_m2K": 1100000000.0,
+      "perfect_contact": false,
+      "interface_insulance_m2K_W": 9.090909090909091e-10,
+      "mesh_m": 2.5e-08,
+      "grid_shape": [
+        1,
+        1,
+        80
+      ],
+      "material_1": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 5.0
+      },
+      "material_2": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 20.0
+      },
+      "boundary_temperature_K": {
+        "hot": 310.0,
+        "cold": 300.0
+      },
+      "interface_face_index": 39,
+      "interface_is_internal": true,
+      "face_resistance_formula_m2K_W": 4.034090909090909e-09,
+      "face_resistance_terms_m2K_W": {
+        "material_1_half_cell": 2.5e-09,
+        "interface_1_over_G": 9.090909090909091e-10,
+        "material_2_half_cell": 6.25e-10
+      },
+      "analytic_series_resistance_m2K_W": 2.5090909090909087e-07,
+      "analytic_heat_flux_W_m2": 39855072.463768125,
+      "numerical_transmitted_heat_flux_W_m2": 39855072.463832125,
+      "heat_flux_relative_error": 1.6058304093100804e-12,
+      "lower_material_heat_flux_W_m2": 39855072.46372425,
+      "interface_heat_flux_W_m2": 39855072.4637126,
+      "upper_material_heat_flux_W_m2": 39855072.46394753,
+      "boundary_input_heat_flux_W_m2": 39855072.46370621,
+      "boundary_output_heat_flux_W_m2": 39855072.46407001,
+      "material_flux_relative_mismatch": 5.60227307405439e-12,
+      "all_flux_paths_relative_spread": 9.127996184594493e-12,
+      "analytic_interface_temperature_jump_K": 0.03623188405797102,
+      "numerical_interface_temperature_jump_K": 0.03623188405572364,
+      "interface_temperature_jump_relative_error": 6.202776625663374e-11,
+      "lower_interface_temperature_K": 302.0289855072554,
+      "upper_interface_temperature_K": 301.9927536231997,
+      "raw_adjacent_cell_temperature_difference_K": 0.1607789855070223,
+      "expected_raw_adjacent_cell_temperature_difference_K": 0.16077898550724642,
+      "raw_adjacent_cell_difference_relative_error": 1.3940022844969497e-12,
+      "temperature_profile_max_relative_error": 9.322320693172514e-13,
+      "boundary_power_out_W": {
+        "z_min": -3.985507246370621e-05,
+        "z_max": 3.9855072464070006e-05
+      },
+      "source_power_W": 0.0,
+      "energy_balance_relative_error": 9.128004046207722e-12,
+      "linear_residual_relative": 2.280318521664227e-15,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 80,
+      "criteria": {
+        "finite_G_interface_jump_relative_error_lt": 0.01,
+        "perfect_contact_jump_over_delta_T_lt": 1e-08,
+        "heat_flux_relative_error_lt": 0.01,
+        "material_flux_relative_mismatch_lt": 0.01,
+        "all_flux_paths_relative_spread_lt": 0.01,
+        "temperature_profile_relative_error_lt": 0.01,
+        "energy_balance_relative_error_lt": 0.01,
+        "linear_residual_relative_lt": 1e-09
+      }
+    },
+    {
+      "case_id": "perfect_contact_mesh_100nm",
+      "status": "PASSED",
+      "passed": true,
+      "solver_scope": "independent conservative Cartesian Python/SciPy FVM; not a Lumerical HEAT result",
+      "G_W_m2K": null,
+      "perfect_contact": true,
+      "interface_insulance_m2K_W": 0.0,
+      "mesh_m": 1e-07,
+      "grid_shape": [
+        1,
+        1,
+        20
+      ],
+      "material_1": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 5.0
+      },
+      "material_2": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 20.0
+      },
+      "boundary_temperature_K": {
+        "hot": 310.0,
+        "cold": 300.0
+      },
+      "interface_face_index": 9,
+      "interface_is_internal": true,
+      "face_resistance_formula_m2K_W": 1.25e-08,
+      "face_resistance_terms_m2K_W": {
+        "material_1_half_cell": 1e-08,
+        "interface_1_over_G": 0.0,
+        "material_2_half_cell": 2.5e-09
+      },
+      "analytic_series_resistance_m2K_W": 2.5e-07,
+      "analytic_heat_flux_W_m2": 40000000.0,
+      "numerical_transmitted_heat_flux_W_m2": 39999999.99999313,
+      "heat_flux_relative_error": 1.7173588275909425e-13,
+      "lower_material_heat_flux_W_m2": 40000000.00000089,
+      "interface_heat_flux_W_m2": 40000000.0,
+      "upper_material_heat_flux_W_m2": 39999999.99999773,
+      "boundary_input_heat_flux_W_m2": 40000000.00000341,
+      "boundary_output_heat_flux_W_m2": 39999999.99996362,
+      "material_flux_relative_mismatch": 7.897615432740614e-14,
+      "all_flux_paths_relative_spread": 9.94838774204425e-13,
+      "analytic_interface_temperature_jump_K": 0.0,
+      "numerical_interface_temperature_jump_K": 2.2737367544323206e-13,
+      "interface_temperature_jump_relative_error": 2.2737367544323207e-14,
+      "lower_interface_temperature_K": 301.9999999999998,
+      "upper_interface_temperature_K": 301.99999999999955,
+      "raw_adjacent_cell_temperature_difference_K": 0.5,
+      "expected_raw_adjacent_cell_temperature_difference_K": 0.5,
+      "raw_adjacent_cell_difference_relative_error": 0.0,
+      "temperature_profile_max_relative_error": 2.842170943040401e-14,
+      "boundary_power_out_W": {
+        "z_min": -4.000000000000341e-05,
+        "z_max": 3.999999999996362e-05
+      },
+      "source_power_W": 0.0,
+      "energy_balance_relative_error": 9.947554932553655e-13,
+      "linear_residual_relative": 9.20797512295587e-16,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 20,
+      "criteria": {
+        "finite_G_interface_jump_relative_error_lt": 0.01,
+        "perfect_contact_jump_over_delta_T_lt": 1e-08,
+        "heat_flux_relative_error_lt": 0.01,
+        "material_flux_relative_mismatch_lt": 0.01,
+        "all_flux_paths_relative_spread_lt": 0.01,
+        "temperature_profile_relative_error_lt": 0.01,
+        "energy_balance_relative_error_lt": 0.01,
+        "linear_residual_relative_lt": 1e-09
+      }
+    },
+    {
+      "case_id": "perfect_contact_mesh_50nm",
+      "status": "PASSED",
+      "passed": true,
+      "solver_scope": "independent conservative Cartesian Python/SciPy FVM; not a Lumerical HEAT result",
+      "G_W_m2K": null,
+      "perfect_contact": true,
+      "interface_insulance_m2K_W": 0.0,
+      "mesh_m": 5e-08,
+      "grid_shape": [
+        1,
+        1,
+        40
+      ],
+      "material_1": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 5.0
+      },
+      "material_2": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 20.0
+      },
+      "boundary_temperature_K": {
+        "hot": 310.0,
+        "cold": 300.0
+      },
+      "interface_face_index": 19,
+      "interface_is_internal": true,
+      "face_resistance_formula_m2K_W": 6.25e-09,
+      "face_resistance_terms_m2K_W": {
+        "material_1_half_cell": 5e-09,
+        "interface_1_over_G": 0.0,
+        "material_2_half_cell": 1.25e-09
+      },
+      "analytic_series_resistance_m2K_W": 2.5e-07,
+      "analytic_heat_flux_W_m2": 40000000.0,
+      "numerical_transmitted_heat_flux_W_m2": 40000000.00000706,
+      "heat_flux_relative_error": 1.7657876014709473e-13,
+      "lower_material_heat_flux_W_m2": 39999999.999980375,
+      "interface_heat_flux_W_m2": 40000000.00000004,
+      "upper_material_heat_flux_W_m2": 40000000.00008209,
+      "boundary_input_heat_flux_W_m2": 39999999.99996366,
+      "boundary_output_heat_flux_W_m2": 40000000.00000914,
+      "material_flux_relative_mismatch": 2.5428831577296534e-12,
+      "all_flux_paths_relative_spread": 2.9606744647020835e-12,
+      "analytic_interface_temperature_jump_K": 0.0,
+      "numerical_interface_temperature_jump_K": 6.821210263296962e-13,
+      "interface_temperature_jump_relative_error": 6.821210263296962e-14,
+      "lower_interface_temperature_K": 302.00000000000534,
+      "upper_interface_temperature_K": 302.00000000000466,
+      "raw_adjacent_cell_temperature_difference_K": 0.25,
+      "expected_raw_adjacent_cell_temperature_difference_K": 0.25,
+      "raw_adjacent_cell_difference_relative_error": 0.0,
+      "temperature_profile_max_relative_error": 4.774847184307873e-13,
+      "boundary_power_out_W": {
+        "z_min": -3.999999999996366e-05,
+        "z_max": 4.000000000000914e-05
+      },
+      "source_power_W": 0.0,
+      "energy_balance_relative_error": 1.1368876218044622e-12,
+      "linear_residual_relative": 1.607165415608403e-15,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 40,
+      "criteria": {
+        "finite_G_interface_jump_relative_error_lt": 0.01,
+        "perfect_contact_jump_over_delta_T_lt": 1e-08,
+        "heat_flux_relative_error_lt": 0.01,
+        "material_flux_relative_mismatch_lt": 0.01,
+        "all_flux_paths_relative_spread_lt": 0.01,
+        "temperature_profile_relative_error_lt": 0.01,
+        "energy_balance_relative_error_lt": 0.01,
+        "linear_residual_relative_lt": 1e-09
+      }
+    },
+    {
+      "case_id": "perfect_contact_mesh_25nm",
+      "status": "PASSED",
+      "passed": true,
+      "solver_scope": "independent conservative Cartesian Python/SciPy FVM; not a Lumerical HEAT result",
+      "G_W_m2K": null,
+      "perfect_contact": true,
+      "interface_insulance_m2K_W": 0.0,
+      "mesh_m": 2.5e-08,
+      "grid_shape": [
+        1,
+        1,
+        80
+      ],
+      "material_1": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 5.0
+      },
+      "material_2": {
+        "thickness_m": 1e-06,
+        "kappa_W_mK": 20.0
+      },
+      "boundary_temperature_K": {
+        "hot": 310.0,
+        "cold": 300.0
+      },
+      "interface_face_index": 39,
+      "interface_is_internal": true,
+      "face_resistance_formula_m2K_W": 3.125e-09,
+      "face_resistance_terms_m2K_W": {
+        "material_1_half_cell": 2.5e-09,
+        "interface_1_over_G": 0.0,
+        "material_2_half_cell": 6.25e-10
+      },
+      "analytic_series_resistance_m2K_W": 2.5e-07,
+      "analytic_heat_flux_W_m2": 40000000.0,
+      "numerical_transmitted_heat_flux_W_m2": 40000000.0001729,
+      "heat_flux_relative_error": 4.322454333305359e-12,
+      "lower_material_heat_flux_W_m2": 39999999.99994905,
+      "interface_heat_flux_W_m2": 40000000.000018224,
+      "upper_material_heat_flux_W_m2": 40000000.00019682,
+      "boundary_input_heat_flux_W_m2": 39999999.99991819,
+      "boundary_output_heat_flux_W_m2": 40000000.00078221,
+      "material_flux_relative_mismatch": 6.194226443740773e-12,
+      "all_flux_paths_relative_spread": 2.160035073747835e-11,
+      "analytic_interface_temperature_jump_K": 0.0,
+      "numerical_interface_temperature_jump_K": -2.2168933355715126e-12,
+      "interface_temperature_jump_relative_error": 2.2168933355715125e-13,
+      "lower_interface_temperature_K": 302.0000000000103,
+      "upper_interface_temperature_K": 302.0000000000125,
+      "raw_adjacent_cell_temperature_difference_K": 0.12500000000005684,
+      "expected_raw_adjacent_cell_temperature_difference_K": 0.125,
+      "raw_adjacent_cell_difference_relative_error": 4.547473508864641e-13,
+      "temperature_profile_max_relative_error": 1.0345502232667058e-12,
+      "boundary_power_out_W": {
+        "z_min": -3.9999999999918193e-05,
+        "z_max": 4.000000000078221e-05
+      },
+      "source_power_W": 0.0,
+      "energy_balance_relative_error": 2.1600356594098965e-11,
+      "linear_residual_relative": 2.8885130320775105e-15,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 80,
+      "criteria": {
+        "finite_G_interface_jump_relative_error_lt": 0.01,
+        "perfect_contact_jump_over_delta_T_lt": 1e-08,
+        "heat_flux_relative_error_lt": 0.01,
+        "material_flux_relative_mismatch_lt": 0.01,
+        "all_flux_paths_relative_spread_lt": 0.01,
+        "temperature_profile_relative_error_lt": 0.01,
+        "energy_balance_relative_error_lt": 0.01,
+        "linear_residual_relative_lt": 1e-09
+      }
+    }
+  ]
+}

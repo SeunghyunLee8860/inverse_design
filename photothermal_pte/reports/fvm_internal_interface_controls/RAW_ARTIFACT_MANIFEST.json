@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "20260725T200530Z",
+  "branch": "agent/unblock-heat-material-interface-controls",
+  "base_commit_before_control": "c0e4f18304db7235635447d6582352a807c8397c",
+  "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/33_validate_fvm_internal_interface_controls.py --output-dir photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2",
+  "solver_scope": "independent conservative Cartesian Python/SciPy FVM; not a Lumerical HEAT result",
+  "artifacts": [
+    {
+      "repository_path": "photothermal_pte/reports/fvm_internal_interface_controls/FVM_INTERNAL_INTERFACE_G_CONTROL_REPORT.md",
+      "bytes": 3407,
+      "sha256": "2b5a2f65c64b8e2efff2c3f516691b1ca3dd6b89711124149f81d2cb555c5780"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_internal_interface_controls/fvm_internal_interface_controls_cases.csv",
+      "bytes": 3874,
+      "sha256": "a1aa71292927f5024a6e544bd7efec72046fd3ea958d5c6771750414ad8735d1"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_internal_interface_controls/fvm_internal_interface_controls_summary.json",
+      "bytes": 31626,
+      "sha256": "237d9f9ad84e4cf00b99dc902d2060eb6c32c5c7a8b79e1a78f54c2a8abeaa0c"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/G_1p1e9_mesh_100nm/case_result.json",
+      "bytes": 2763,
+      "sha256": "2b09e07aef857c0471fa119a6ddcbe4645b23d6e6501f7948e0ad801a4b30ee9"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/G_1p1e9_mesh_100nm/temperature_profile.npz",
+      "bytes": 2040,
+      "sha256": "13564dc4e77f2e15c1d0385663a761183800862aa473f5c90a19a0e780177fb5"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/G_1p1e9_mesh_25nm/case_result.json",
+      "bytes": 2762,
+      "sha256": "d2acbc0ca4545ff6643b0c6a575700a596f8de2e78f55bb5ef88e142fe197924"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/G_1p1e9_mesh_25nm/temperature_profile.npz",
+      "bytes": 3642,
+      "sha256": "546145fbc69c791186043c1164c5b768eaa5e62a4f4675b34e0fe9cee0094541"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/G_1p1e9_mesh_50nm/case_result.json",
+      "bytes": 2763,
+      "sha256": "bc07f892667dac019298a09150717d1e6197e7b729321c55ba1853cbfea59a36"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/G_1p1e9_mesh_50nm/temperature_profile.npz",
+      "bytes": 2633,
+      "sha256": "80e23d64ab742581967e8c5bd842ce848be3783f40ce6cd8aa734028252cce15"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/G_7p37e6_mesh_100nm/case_result.json",
+      "bytes": 2737,
+      "sha256": "1bbfaa29a1c114da15395e6092cce0f56f199ab5b4db49b35a6fc9540deb4b1b"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/G_7p37e6_mesh_100nm/temperature_profile.npz",
+      "bytes": 2081,
+      "sha256": "ed7c8224d85db1e1be546c9905fe54c0cb2e12d3d8d40847e2e90f63dc5c8440"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/G_7p37e6_mesh_25nm/case_result.json",
+      "bytes": 2759,
+      "sha256": "bf69de8f84b42b2dae9b8a79dc1135c015b2d60edbd39cbb1aa5412d90095dbc"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/G_7p37e6_mesh_25nm/temperature_profile.npz",
+      "bytes": 3789,
+      "sha256": "d95f8f4e64d3e0f5ef2247dc2fc042b26d45d2782b1e6ef540b719691b34719b"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/G_7p37e6_mesh_50nm/case_result.json",
+      "bytes": 2757,
+      "sha256": "8a290dd4bbb2cf5d4a5a373664026a5217f23c01932870ce126ae683fa85c55f"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/G_7p37e6_mesh_50nm/temperature_profile.npz",
+      "bytes": 2723,
+      "sha256": "bc2478f36e344b52e0b25dd1f9b17be3ebaf3cb013615a0a1b047c983ed3ae78"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/perfect_contact_mesh_100nm/case_result.json",
+      "bytes": 2614,
+      "sha256": "3b2f2bef50ba944f8b5925908282711c28f84b5caae1324f4935b18c4df15eee"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/perfect_contact_mesh_100nm/temperature_profile.npz",
+      "bytes": 1950,
+      "sha256": "db4eb144bd03be26639d3a01964af2962b25652b44643c9e57ff9d8bd53cc5c1"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/perfect_contact_mesh_25nm/case_result.json",
+      "bytes": 2668,
+      "sha256": "983b47025e89bc07f78e8ecacc0e292306fb31d50b96183414b622e15416f164"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/perfect_contact_mesh_25nm/temperature_profile.npz",
+      "bytes": 3192,
+      "sha256": "036e2d54cb2304eb5db567dc7346673f0e12f60996b6b84be14c461eaca3f5e3"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/perfect_contact_mesh_50nm/case_result.json",
+      "bytes": 2629,
+      "sha256": "71206b999312bcc7d1339110223e0e1595ee0dcb6d83357994d8fbe5da7884e0"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_internal_interface_controls/controls_v2/perfect_contact_mesh_50nm/temperature_profile.npz",
+      "bytes": 2418,
+      "sha256": "3ab3a35331210302c9138ec3558525aa9a9e702016f92b11547f8fe49a53e8e4"
+    }
+  ]
+}

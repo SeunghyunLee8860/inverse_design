@@ -1,0 +1,431 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "20260725T211732Z",
+  "status": "VALIDATED_MULTIMATERIAL_FVM_PRODUCTION_CONVERGENCE",
+  "passed": true,
+  "solver_attribution": "independent conservative Cartesian Python/SciPy FVM; not a Lumerical HEAT result",
+  "case_count": 22,
+  "all_case_equations_converged_and_conserved": true,
+  "convergence_limit": 0.01,
+  "final_pair_comparisons": {
+    "lateral_domain_um": {
+      "family": "lateral_domain_um",
+      "from_case": "domain_L16",
+      "to_case": "domain_L32",
+      "Tmax_relative_change": 4.8996878697628395e-05,
+      "flake_average_relative_change": 6.766335358896687e-05,
+      "flake_probe_3d_NRMSE": 5.177509243718818e-05
+    },
+    "Si_depth_um": {
+      "family": "Si_depth_um",
+      "from_case": "depth_D10_L32",
+      "to_case": "final_native",
+      "Tmax_relative_change": 0.00017833827805854453,
+      "flake_average_relative_change": 0.00024685948618043775,
+      "flake_probe_3d_NRMSE": 0.00018903693112946266
+    },
+    "thermal_mesh": {
+      "family": "thermal_mesh",
+      "from_case": "final_native",
+      "to_case": "mesh_refined",
+      "Tmax_relative_change": 0.0014069423315247367,
+      "flake_average_relative_change": 0.0009338868231933798,
+      "flake_probe_3d_NRMSE": 0.0006665902254473781
+    }
+  },
+  "comparisons": [
+    {
+      "family": "lateral_domain_um",
+      "from_case": "domain_L4",
+      "to_case": "baseline_L8um_Si5um",
+      "Tmax_relative_change": 0.0019550325985954204,
+      "flake_average_relative_change": 0.00268868608949523,
+      "flake_probe_3d_NRMSE": 0.002056035857567417
+    },
+    {
+      "family": "lateral_domain_um",
+      "from_case": "baseline_L8um_Si5um",
+      "to_case": "domain_L16",
+      "Tmax_relative_change": 0.0006089773943637372,
+      "flake_average_relative_change": 0.0008408051890084228,
+      "flake_probe_3d_NRMSE": 0.0006433536420966885
+    },
+    {
+      "family": "lateral_domain_um",
+      "from_case": "domain_L16",
+      "to_case": "domain_L32",
+      "Tmax_relative_change": 4.8996878697628395e-05,
+      "flake_average_relative_change": 6.766335358896687e-05,
+      "flake_probe_3d_NRMSE": 5.177509243718818e-05
+    },
+    {
+      "family": "Si_depth_um",
+      "from_case": "depth_D2_L32",
+      "to_case": "depth_D5_L32",
+      "Tmax_relative_change": 0.001699555392928094,
+      "flake_average_relative_change": 0.002363235781751047,
+      "flake_probe_3d_NRMSE": 0.0018107536860335384
+    },
+    {
+      "family": "Si_depth_um",
+      "from_case": "depth_D5_L32",
+      "to_case": "depth_D10_L32",
+      "Tmax_relative_change": 0.0005895650893817756,
+      "flake_average_relative_change": 0.0008165947283273786,
+      "flake_probe_3d_NRMSE": 0.0006253533069721653
+    },
+    {
+      "family": "Si_depth_um",
+      "from_case": "depth_D10_L32",
+      "to_case": "final_native",
+      "Tmax_relative_change": 0.00017833827805854453,
+      "flake_average_relative_change": 0.00024685948618043775,
+      "flake_probe_3d_NRMSE": 0.00018903693112946266
+    },
+    {
+      "family": "thermal_mesh",
+      "from_case": "mesh_coarse",
+      "to_case": "final_native",
+      "Tmax_relative_change": 0.0026646392731875844,
+      "flake_average_relative_change": 0.003321891008194496,
+      "flake_probe_3d_NRMSE": 0.0023307553407135016
+    },
+    {
+      "family": "thermal_mesh",
+      "from_case": "final_native",
+      "to_case": "mesh_refined",
+      "Tmax_relative_change": 0.0014069423315247367,
+      "flake_average_relative_change": 0.0009338868231933798,
+      "flake_probe_3d_NRMSE": 0.0006665902254473781
+    }
+  ],
+  "reference_case": {
+    "schema_version": 1,
+    "generated_at_utc": "20260725T203915Z",
+    "case_id": "final_native",
+    "status": "PASSED_PROVISIONAL_MULTIMATERIAL_FVM_CASE",
+    "passed": true,
+    "provisional_until_sensitivity_passes": true,
+    "solver_attribution": "independent conservative Cartesian Python/SciPy FVM; not a Lumerical HEAT result",
+    "unit_response_mode": true,
+    "incident_intensity_W_m2": 1.0,
+    "reported_temperature_quantity": "Delta T / incident intensity [K/(W/m2)]",
+    "geometry": {
+      "lateral_domain_m": 3.2e-05,
+      "Si_depth_m": 1.9999999999999998e-05,
+      "TaIrTe4_bounds_m": {
+        "x": [
+          -1e-06,
+          1e-06
+        ],
+        "y": [
+          -1e-06,
+          1e-06
+        ],
+        "z": [
+          -1e-07,
+          0.0
+        ]
+      },
+      "bottom_SiO2_bounds_z_m": [
+        -3.85e-07,
+        -1e-07
+      ],
+      "design": {
+        "shape": "single centered disk",
+        "radius_m": 1.5e-06,
+        "z_bounds_m": [
+          0.0,
+          6e-07
+        ],
+        "material": "SiO2"
+      }
+    },
+    "materials_W_mK": {
+      "TaIrTe4_diagonal": [
+        14.4,
+        3.8,
+        1.0
+      ],
+      "TaIrTe4_kz_note": "estimated value",
+      "SiO2": 1.38,
+      "Si": 145.0
+    },
+    "interfaces": {
+      "oxide_Si": {
+        "G_W_m2K": 1100000000.0,
+        "perfect_contact": false,
+        "connected_face_count": 21316,
+        "signed_positive_z_power_W": -2.5601932534361556e-12,
+        "absolute_transmitted_power_W": 2.5601932534361556e-12,
+        "area_weighted_mean_temperature_jump_K": 2.2728988400534054e-12,
+        "maximum_temperature_jump_K": 5.650518340706247e-10
+      },
+      "TaIrTe4_bottom": {
+        "G_W_m2K": 7370000.0,
+        "perfect_contact": false,
+        "connected_face_count": 5776,
+        "signed_positive_z_power_W": -2.560713710865165e-12,
+        "absolute_transmitted_power_W": 2.560713710865165e-12,
+        "area_weighted_mean_temperature_jump_K": 8.686274460193912e-08,
+        "maximum_temperature_jump_K": 1.5885835422466706e-07
+      },
+      "TaIrTe4_top": {
+        "G_W_m2K": 7370000.0,
+        "perfect_contact": false,
+        "connected_face_count": 5776,
+        "signed_positive_z_power_W": 4.599374621800587e-26,
+        "absolute_transmitted_power_W": 2.2716896118402914e-13,
+        "area_weighted_mean_temperature_jump_K": 7.705867068657705e-09,
+        "maximum_temperature_jump_K": 3.90825953119553e-08
+      }
+    },
+    "boundary_conditions": {
+      "bottom_Si": "DeltaT=0 K (T=300 K)",
+      "far_x_y_Si_and_SiO2": "DeltaT=0 K (T=300 K)",
+      "top_and_internal_solid_air_surfaces": "adiabatic",
+      "exposed_heat_transfer_W_m2K": 0.0,
+      "periodic": false,
+      "thermal_PML": false
+    },
+    "grid": {
+      "shape": [
+        146,
+        146,
+        99
+      ],
+      "total_cell_count": 2110284,
+      "active_solid_cell_count": 1625064,
+      "material_cell_counts": {
+        "Si": 1001852,
+        "SiO2_bottom": 405004,
+        "TaIrTe4": 121296,
+        "SiO2_design": 96912
+      },
+      "minimum_steps_m": {
+        "x": 1.3333333333333135e-08,
+        "y": 1.3333333333333135e-08,
+        "z": 2.499999999999942e-09
+      },
+      "maximum_steps_m": {
+        "x": 1.0000000000000006e-06,
+        "y": 1.0000000000000006e-06,
+        "z": 6.352460093844265e-07
+      }
+    },
+    "source": {
+      "artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_finite_q_import/import_v4/finite_q_exact_flake_source.npz",
+      "artifact_file_sha256": "8aef19642f4576e6a922f33a9e63f70b3fb275417db0c714c08c0f74fa6b0404",
+      "optical_source_artifact_sha256": "7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794",
+      "expected_power_W": 2.56071371086521e-12,
+      "mapped_source_power_W": 2.56071371086521e-12,
+      "mapping_relative_error": 0.0,
+      "thermal_source_mesh_mode": "native",
+      "clipping": false,
+      "smoothing": false,
+      "gain": false,
+      "rescaling": false,
+      "tiling": false,
+      "outside_flake_deletion": false
+    },
+    "temperature_response": {
+      "DeltaT_max_K_per_W_m2": 3.1200215677157526e-07,
+      "TaIrTe4_volume_average_DeltaT_K_per_W_m2": 2.2550813062581508e-07,
+      "TaIrTe4_max_DeltaT_K_per_W_m2": 3.1200215677157526e-07,
+      "hotspot_location_m": {
+        "x": 1.3333333333333656e-08,
+        "y": -9.933333333333295e-07,
+        "z": -1.499999999999994e-08
+      }
+    },
+    "power_balance": {
+      "generated_W": 2.56071371086521e-12,
+      "bottom_outflow_W": 5.019492563593634e-13,
+      "lateral_outflow_W": 2.058764454514455e-12,
+      "top_convection_outflow_W": 0.0,
+      "exposed_convection_outflow_W": 0.0,
+      "total_escaped_W": 2.5607137108738183e-12,
+      "relative_error": 3.361661285929099e-12
+    },
+    "linear_solver": {
+      "name": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 1983,
+      "relative_residual": 1.2361352883917478e-10
+    },
+    "raw_field_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/final_native/temperature_flux_3d.npz",
+    "generation_command": "/home/eidl/miniconda3/bin/python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/36_run_fvm_multimaterial_thermal.py --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/final_native --case-id final_native --lateral-domain-um 32 --si-depth-um 20",
+    "next_required_gate": "DOMAIN_DEPTH_MESH_INTERFACE_BOUNDARY_SENSITIVITY",
+    "criteria": {
+      "Q_mapping_relative_error_lt": 0.005,
+      "energy_balance_relative_error_lt": 0.01,
+      "linear_residual_relative_lt": 1e-08
+    }
+  },
+  "mesh_refined_case": {
+    "schema_version": 1,
+    "generated_at_utc": "20260725T205951Z",
+    "case_id": "mesh_refined",
+    "status": "PASSED_PROVISIONAL_MULTIMATERIAL_FVM_CASE",
+    "passed": true,
+    "provisional_until_sensitivity_passes": true,
+    "solver_attribution": "independent conservative Cartesian Python/SciPy FVM; not a Lumerical HEAT result",
+    "unit_response_mode": true,
+    "incident_intensity_W_m2": 1.0,
+    "reported_temperature_quantity": "Delta T / incident intensity [K/(W/m2)]",
+    "geometry": {
+      "lateral_domain_m": 3.2e-05,
+      "Si_depth_m": 1.9999999999999998e-05,
+      "TaIrTe4_bounds_m": {
+        "x": [
+          -1e-06,
+          1e-06
+        ],
+        "y": [
+          -1e-06,
+          1e-06
+        ],
+        "z": [
+          -1e-07,
+          0.0
+        ]
+      },
+      "bottom_SiO2_bounds_z_m": [
+        -3.85e-07,
+        -1e-07
+      ],
+      "design": {
+        "shape": "single centered disk",
+        "radius_m": 1.5e-06,
+        "z_bounds_m": [
+          0.0,
+          6e-07
+        ],
+        "material": "SiO2"
+      }
+    },
+    "materials_W_mK": {
+      "TaIrTe4_diagonal": [
+        14.4,
+        3.8,
+        1.0
+      ],
+      "TaIrTe4_kz_note": "estimated value",
+      "SiO2": 1.38,
+      "Si": 145.0
+    },
+    "interfaces": {
+      "oxide_Si": {
+        "G_W_m2K": 1100000000.0,
+        "perfect_contact": false,
+        "connected_face_count": 40804,
+        "signed_positive_z_power_W": -2.5601934712399405e-12,
+        "absolute_transmitted_power_W": 2.5601934712399405e-12,
+        "area_weighted_mean_temperature_jump_K": 2.2728990334161402e-12,
+        "maximum_temperature_jump_K": 5.645997618873658e-10
+      },
+      "TaIrTe4_bottom": {
+        "G_W_m2K": 7370000.0,
+        "perfect_contact": false,
+        "connected_face_count": 5776,
+        "signed_positive_z_power_W": -2.560713710865119e-12,
+        "absolute_transmitted_power_W": 2.560713710865119e-12,
+        "area_weighted_mean_temperature_jump_K": 8.686274460193756e-08,
+        "maximum_temperature_jump_K": 1.601093361793676e-07
+      },
+      "TaIrTe4_top": {
+        "G_W_m2K": 7370000.0,
+        "perfect_contact": false,
+        "connected_face_count": 5776,
+        "signed_positive_z_power_W": -1.3338060185476868e-25,
+        "absolute_transmitted_power_W": 2.279598296569419e-13,
+        "area_weighted_mean_temperature_jump_K": 7.732694357426795e-09,
+        "maximum_temperature_jump_K": 3.997020852719595e-08
+      }
+    },
+    "boundary_conditions": {
+      "bottom_Si": "DeltaT=0 K (T=300 K)",
+      "far_x_y_Si_and_SiO2": "DeltaT=0 K (T=300 K)",
+      "top_and_internal_solid_air_surfaces": "adiabatic",
+      "exposed_heat_transfer_W_m2K": 0.0,
+      "periodic": false,
+      "thermal_PML": false
+    },
+    "grid": {
+      "shape": [
+        202,
+        202,
+        189
+      ],
+      "total_cell_count": 7711956,
+      "active_solid_cell_count": 5510892,
+      "material_cell_counts": {
+        "Si": 3468340,
+        "SiO2_bottom": 1550552,
+        "TaIrTe4": 242592,
+        "SiO2_design": 249408
+      },
+      "minimum_steps_m": {
+        "x": 1.3333333333333135e-08,
+        "y": 1.3333333333333135e-08,
+        "z": 1.249999999999971e-09
+      },
+      "maximum_steps_m": {
+        "x": 5.711845759999937e-07,
+        "y": 5.711845759999937e-07,
+        "z": 2.83399730800808e-07
+      }
+    },
+    "source": {
+      "artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_finite_q_import/import_v4/finite_q_exact_flake_source.npz",
+      "artifact_file_sha256": "8aef19642f4576e6a922f33a9e63f70b3fb275417db0c714c08c0f74fa6b0404",
+      "optical_source_artifact_sha256": "7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794",
+      "expected_power_W": 2.56071371086521e-12,
+      "mapped_source_power_W": 2.56071371086521e-12,
+      "mapping_relative_error": 0.0,
+      "thermal_source_mesh_mode": "piecewise_constant_refinement_1x1x2",
+      "clipping": false,
+      "smoothing": false,
+      "gain": false,
+      "rescaling": false,
+      "tiling": false,
+      "outside_flake_deletion": false
+    },
+    "temperature_response": {
+      "DeltaT_max_K_per_W_m2": 3.11563804466101e-07,
+      "TaIrTe4_volume_average_DeltaT_K_per_W_m2": 2.2529772804629724e-07,
+      "TaIrTe4_max_DeltaT_K_per_W_m2": 3.11563804466101e-07,
+      "hotspot_location_m": {
+        "x": 1.3333333333333656e-08,
+        "y": -9.933333333333295e-07,
+        "z": -1.6249999999999937e-08
+      }
+    },
+    "power_balance": {
+      "generated_W": 2.56071371086521e-12,
+      "bottom_outflow_W": 5.018721510335141e-13,
+      "lateral_outflow_W": 2.0588415598547243e-12,
+      "top_convection_outflow_W": 0.0,
+      "exposed_convection_outflow_W": 0.0,
+      "total_escaped_W": 2.560713710888238e-12,
+      "relative_error": 8.992873749225711e-12
+    },
+    "linear_solver": {
+      "name": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 2292,
+      "relative_residual": 1.3615455383724657e-10
+    },
+    "raw_field_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/mesh_refined/temperature_flux_3d.npz",
+    "generation_command": "/home/eidl/miniconda3/bin/python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/36_run_fvm_multimaterial_thermal.py --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/mesh_refined --case-id mesh_refined --lateral-domain-um 32 --si-depth-um 20 --source-refinement-factor-z 2 --near-lateral-step-nm 25 --oxide-cells 38 --design-step-nm 25 --max-outer-step-um 0.5 --max-si-step-um 0.25",
+    "next_required_gate": "DOMAIN_DEPTH_MESH_INTERFACE_BOUNDARY_SENSITIVITY",
+    "criteria": {
+      "Q_mapping_relative_error_lt": 0.005,
+      "energy_balance_relative_error_lt": 0.01,
+      "linear_residual_relative_lt": 1e-08
+    }
+  },
+  "output_directory": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1",
+  "published_at_utc": "20260725T211732Z",
+  "production_reference_promoted": true,
+  "production_reference_case_id": "final_native",
+  "report_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_multimaterial_thermal/FVM_MULTIMATERIAL_THERMAL_REPORT.md"
+}

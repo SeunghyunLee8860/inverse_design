@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "20260725T202541Z",
+  "status": "VALIDATED_FINITE_OPTICAL_Q_FVM_IMPORT",
+  "passed": true,
+  "pr3_manifest": {
+    "commit": "053260da6fd0caec28ce155221bd18f683a0e5e7",
+    "repository_path": "photothermal_pte/reports/finite_2um_optical_q/RAW_ARTIFACT_MANIFEST.json",
+    "entry": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8/finite_q_on_artifact.npz",
+      "bytes": 8692646,
+      "sha256": "7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8 --case fixed-design --polarization-deg 0 --domain-um 16 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --incident-reference photothermal_pte/validation/photothermal_stage1/output/finite_gaussian_controls/empty_L8_pml24_dz5_w2_span6p8_p0/case_result.json --gpu-device 'GPU 0'",
+      "generation_commit": "b13e45707c4bda06d1f4afa1a47f8fe72ce29435",
+      "reproduction": "checkout b13e45707c4bda06d1f4afa1a47f8fe72ce29435 and run: /home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8 --case fixed-design --polarization-deg 0 --domain-um 16 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --incident-reference photothermal_pte/validation/photothermal_stage1/output/finite_gaussian_controls/empty_L8_pml24_dz5_w2_span6p8_p0/case_result.json --gpu-device 'GPU 0'"
+    }
+  },
+  "source_artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8/finite_q_on_artifact.npz",
+  "source_artifact_sha256_expected": "7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794",
+  "source_artifact_sha256_actual": "7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794",
+  "mapped_artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_finite_q_import/import_v4/finite_q_fvm_control_volumes.npz",
+  "exact_flake_production_source_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_finite_q_import/import_v4/finite_q_exact_flake_source.npz",
+  "shape_xyz": [
+    80,
+    80,
+    41
+  ],
+  "coordinate_order": [
+    "x",
+    "y",
+    "z"
+  ],
+  "optical_coordinate_bounds_m": {
+    "x": [
+      -1.053538187784057e-06,
+      1.053538187784073e-06
+    ],
+    "y": [
+      -1.053538187784057e-06,
+      1.053538187784073e-06
+    ],
+    "z": [
+      -1.500000000000027e-07,
+      5e-08
+    ]
+  },
+  "fvm_control_volume_bounds_m": {
+    "x": [
+      -1.053538187784057e-06,
+      1.053538187784073e-06
+    ],
+    "y": [
+      -1.053538187784057e-06,
+      1.053538187784073e-06
+    ],
+    "z": [
+      -1.500000000000027e-07,
+      5e-08
+    ]
+  },
+  "exact_TaIrTe4_bounds_m": {
+    "x": [
+      -1e-06,
+      1e-06
+    ],
+    "y": [
+      -1e-06,
+      1e-06
+    ],
+    "z": [
+      -1e-07,
+      0.0
+    ]
+  },
+  "exact_mask_voxels": 115520,
+  "coordinate_roundoff_tolerance_m": 1e-15,
+  "roundoff_inclusive_physical_mask_voxels": 121296,
+  "nonzero_samples_outside_stored_mask_but_on_roundoff_boundary": 5772,
+  "mapped_Q_elementwise_identical": true,
+  "source_Q_array_sha256": "ff1484537aadfc36d90c2035280da9ad3a2e59895e9ba06a65bea30623e3715d",
+  "mapped_Q_array_sha256": "ff1484537aadfc36d90c2035280da9ad3a2e59895e9ba06a65bea30623e3715d",
+  "Q_component_sum_max_relative_error": 2.243096182380738e-16,
+  "maximum_Q_outside_stored_exact_mask_W_m3": 17333337.477634754,
+  "maximum_Q_outside_roundoff_inclusive_physical_mask_W_m3": 0.0,
+  "incident_intensity_W_m2": 1.0,
+  "P_Q_expected_W": 2.56071371086521e-12,
+  "P_Q_metadata_W": 2.56071371086521e-12,
+  "P_Q_original_trapezoidal_W": 2.56071371086521e-12,
+  "P_Q_FVM_sum_QdV_W": 2.56071371086521e-12,
+  "FVM_mapping_relative_error": 0.0,
+  "quadrature_equivalence_relative_error": 0.0,
+  "allowed_mapping_relative_error": 0.005,
+  "mapping_method": "elementwise Q copy; FVM cell widths exactly equal original trapezoidal quadrature weights",
+  "exact_flake_production_mapping": {
+    "status": "PASSED_CONSERVATIVE_EXACT_FLAKE_DEPOSITION",
+    "passed": true,
+    "shape_xyz": [
+      76,
+      76,
+      21
+    ],
+    "bounds_m": {
+      "x": [
+        -1e-06,
+        1e-06
+      ],
+      "y": [
+        -1e-06,
+        1e-06
+      ],
+      "z": [
+        -1e-07,
+        0.0
+      ]
+    },
+    "source_nodal_energy_array_sha256": "dece160abd9965047d2902e6d1bf07fad0146fc306a543a60d79b51a7fd31caf",
+    "mapped_cell_power_array_sha256": "dece160abd9965047d2902e6d1bf07fad0146fc306a543a60d79b51a7fd31caf",
+    "nonzero_source_energy_deleted_W": 0.0,
+    "P_Q_exact_flake_sum_cell_power_W": 2.56071371086521e-12,
+    "relative_power_error": 0.0,
+    "empirical_gain_applied": false,
+    "global_rescaling_applied": false,
+    "sample_averaging_applied": false,
+    "mapping_semantics": "each original nodal trapezoidal energy parcel is deposited one-to-one into its exact-flake boundary/interior cell; Q density is derived only by dividing conserved parcel power by the receiving physical cell volume"
+  },
+  "interpolation_applied": false,
+  "forbidden_operations_applied": {
+    "clipping": false,
+    "gain": false,
+    "rescaling": false,
+    "crop": false,
+    "tiling": false,
+    "smoothing": false,
+    "outside_flake_deletion": false
+  },
+  "finite_optical_Q_imported_into_thermal_solve": false,
+  "full_device_executed": false,
+  "next_required_gate": "ANISOTROPIC_FINITE_G_MULTIMATERIAL_FVM_PRODUCTION",
+  "criteria": {
+    "source_artifact_SHA256_exact": true,
+    "mapped_Q_elementwise_identical": true,
+    "sum_QdV_relative_error_lt": 0.005,
+    "quadrature_equivalence_relative_error_lt": 1e-12,
+    "exact_flake_conservative_deposition_relative_error_lt": 0.005,
+    "nonzero_source_energy_deleted_W_eq": 0.0,
+    "no_forbidden_operations": true
+  }
+}
