@@ -30,6 +30,8 @@
 - License-probe temperature range: `[300.0, 300.0499752615] K`
 - Requested tensor write/readback before save: `[14.4, 3.8, 1.0] -> [0.0]`
 - Requested tensor readback after reload: `[0.0]`
+- Fresh vector/row/column/3x3-diagonal encoding probe: all returned scalar
+  `0.0`; no tensor encoding round trip passed
 - x/y/z effective kappa from solver: `[0.0, 0.0, 0.0] W/(m K)`
 - x/y/z heat-flux relative errors: `[100%, 100%, 100%]`
 - Isotropic fallback used: `false`
@@ -49,6 +51,19 @@
 - Perfect-contact interface jumps:
   `[2.27374e-13, 1.13687e-13, 2.84217e-13] K`
 - Perfect-contact heat-flux errors: all below `1.1e-13`
+
+### Final control artifacts
+
+- Execution:
+  `validation/photothermal_stage1/29_validate_heat_material_interface_controls.py`
+- Summary:
+  `validation/photothermal_stage1/30_summarize_heat_material_interface_controls.py`
+- Anisotropic-\(\kappa\) report:
+  `reports/heat_material_interface_controls/HEAT_ANISOTROPIC_K_SOLVER_REPORT.md`
+- Internal-\(G\) report:
+  `reports/heat_material_interface_controls/HEAT_INTERNAL_INTERFACE_G_SOLVER_REPORT.md`
+- Machine-readable summary/cases/raw manifest:
+  `reports/heat_material_interface_controls/`
 
 Full-device HEAT, transient, PTE, adjoint, gradient, and optimization are not
 part of this control-only branch. No isotropic fallback or modification of the

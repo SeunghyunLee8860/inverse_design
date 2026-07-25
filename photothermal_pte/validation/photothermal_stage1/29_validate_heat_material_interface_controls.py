@@ -76,6 +76,7 @@ def parse_args() -> argparse.Namespace:
         choices=(
             "q-precheck",
             "license-probe",
+            "tensor-encoding-probe",
             "kappa-controls",
             "interface-api-probe",
             "interface-controls",
@@ -491,6 +492,77 @@ def license_probe(output: Path, *, hide: bool) -> dict[str, Any]:
     )
     if not result["passed"] and not result["session_startup"]:
         result["status"] = "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE"
+    return result
+
+
+def tensor_encoding_probe(output: Path, *, hide: bool) -> dict[str, Any]:
+    """Fail closed across plausible constant-conductivity tensor encodings."""
+    installation = select_installation("v261")
+    encodings = {
+        "vector_1d": KAPPA_TENSOR_W_MK,
+        "row_1x3": KAPPA_TENSOR_W_MK.reshape(1, 3),
+        "column_3x1": KAPPA_TENSOR_W_MK.reshape(3, 1),
+        "diagonal_3x3": np.diag(KAPPA_TENSOR_W_MK),
+    }
+    result: dict[str, Any] = {
+        "status": "BLOCKED_ANISOTROPIC_K_UNSUPPORTED",
+        "passed": False,
+        "encodings": {},
+    }
+    try:
+        with open_device(installation, hide=hide) as device:
+            result["v261_DEVICE_version"] = str(device.version())
+            for label, requested in encodings.items():
+                item: dict[str, Any] = {
+                    "requested": requested.tolist(),
+                    "requested_shape": list(requested.shape),
+                }
+                try:
+                    device.addmodelmaterial()
+                    device.set("name", f"tensor encoding {label}")
+                    device.addhtmaterialproperty("Solid")
+                    device.set("name", f"tensor encoding {label} thermal")
+                    device.set(
+                        "thermal conductivity.active model", "constant"
+                    )
+                    device.set("thermal conductivity.constant", requested)
+                    returned = np.asarray(
+                        device.get("thermal conductivity.constant"), float
+                    )
+                    item.update(
+                        {
+                            "returned": returned.tolist(),
+                            "returned_shape": list(returned.shape),
+                            "round_trip_passed": bool(
+                                returned.shape == requested.shape
+                                and np.allclose(returned, requested)
+                            ),
+                        }
+                    )
+                except Exception as exc:
+                    item.update(
+                        {
+                            "round_trip_passed": False,
+                            "exception_type": type(exc).__name__,
+                            "exception": str(exc),
+                        }
+                    )
+                result["encodings"][label] = item
+            result["passed"] = any(
+                item["round_trip_passed"]
+                for item in result["encodings"].values()
+            )
+            if result["passed"]:
+                result["status"] = "ANISOTROPIC_K_ENCODING_AVAILABLE"
+    except Exception as exc:
+        result.update(
+            {
+                "exception_type": type(exc).__name__,
+                "exception": str(exc),
+                "traceback": traceback.format_exc(),
+            }
+        )
+    write_json(output / "tensor_encoding_probe.json", result)
     return result
 
 
@@ -1534,6 +1606,7 @@ def main() -> int:
     if args.phase not in (
         "q-precheck",
         "license-probe",
+        "tensor-encoding-probe",
         "kappa-controls",
         "interface-api-probe",
         "interface-controls",
@@ -1548,6 +1621,10 @@ def main() -> int:
         )
     if args.phase in ("license-probe", "all"):
         result["license_probe"] = license_probe(
+            output, hide=args.hide_gui
+        )
+    if args.phase == "tensor-encoding-probe":
+        result["tensor_encoding_probe"] = tensor_encoding_probe(
             output, hide=args.hide_gui
         )
     if args.phase in ("kappa-controls", "all"):
@@ -1569,6 +1646,7 @@ def main() -> int:
     license_pass = (
         args.phase in (
             "q-precheck",
+            "tensor-encoding-probe",
             "kappa-controls",
             "interface-api-probe",
             "interface-controls",
@@ -1591,6 +1669,8 @@ def main() -> int:
         result["status"] = result["internal_interface_G"]["status"]
     elif args.phase == "kappa-controls":
         result["status"] = "ANISOTROPIC_K_SOLVER_CONTROL_PASSED"
+    elif args.phase == "tensor-encoding-probe":
+        result["status"] = result["tensor_encoding_probe"]["status"]
     elif args.phase == "interface-api-probe":
         result["status"] = result["interface_api_probe"]["status"]
     elif q_pass:

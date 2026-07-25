@@ -1,0 +1,322 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "20260725T091554Z",
+  "generated_by": "photothermal_pte/validation/photothermal_stage1/30_summarize_heat_material_interface_controls.py",
+  "status": "BLOCKED_ANISOTROPIC_K_UNSUPPORTED",
+  "validated_finite_Q": {
+    "pr3_commit": "053260d",
+    "sha256": "7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794",
+    "P_Q_W": 2.56071371086521e-12
+  },
+  "artifacts": [
+    {
+      "category": "q_precheck",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/q_precheck_v1/q_precheck.json",
+      "bytes": 4426,
+      "sha256": "6efd4fb01ffb8d48b0ec05dc74bbf7536b237869dd4770fd1ebeb2b6084c14cc",
+      "tracked_in_git": false
+    },
+    {
+      "category": "license_probe",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/license_probe_v2/device_license_probe.ldev",
+      "bytes": 13196888,
+      "sha256": "9e41e6db54129a49286e13915e697a142a8843f986136c6c6f5a8c19507baf97",
+      "tracked_in_git": false
+    },
+    {
+      "category": "license_probe",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/license_probe_v2/device_license_probe_p0.log",
+      "bytes": 1133,
+      "sha256": "6859c496329bc000e15dfd5ff95ad9ab702ea74d558004e7a6a20eb77ba95175",
+      "tracked_in_git": false
+    },
+    {
+      "category": "license_probe",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/license_probe_v2/license_probe.json",
+      "bytes": 1597,
+      "sha256": "00d86420876e57b4447f4502a150a51eaf59487b33a334d4101f39c31555f14f",
+      "tracked_in_git": false
+    },
+    {
+      "category": "kappa_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/kappa_controls_v2/kappa_controls.json",
+      "bytes": 6374,
+      "sha256": "8f80153362b1332dc8aa2fdfe5a7b572c4846b8f56eed13c3f6e2438c0dcae06",
+      "tracked_in_git": false
+    },
+    {
+      "category": "kappa_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/kappa_controls_v2/kappa_x/case_result.json",
+      "bytes": 1534,
+      "sha256": "558388bcc7572b3f13f0940c96b08d9e50604f422ebcaa3dcf509e9c879ef3f6",
+      "tracked_in_git": false
+    },
+    {
+      "category": "kappa_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/kappa_controls_v2/kappa_x/kappa_x.ldev",
+      "bytes": 24444737,
+      "sha256": "b460530b5b1cbd6fbb763402d443a26b4aeb5c86cc8121236a8f52b0639a91f0",
+      "tracked_in_git": false
+    },
+    {
+      "category": "kappa_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/kappa_controls_v2/kappa_x/kappa_x_p0.log",
+      "bytes": 1126,
+      "sha256": "d5949de65284f963f62175c12dfd682cce3eac069c13756fbac261ce22bef9e6",
+      "tracked_in_git": false
+    },
+    {
+      "category": "kappa_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/kappa_controls_v2/kappa_x/temperature_profile.npz",
+      "bytes": 2503,
+      "sha256": "85c1c029cc166bdd358f5db445e1e40403a3b01ab55f02d1dd791ff587838d61",
+      "tracked_in_git": false
+    },
+    {
+      "category": "kappa_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/kappa_controls_v2/kappa_y/case_result.json",
+      "bytes": 1533,
+      "sha256": "b09058f289e6a0ed37c649d35b7d09865745eb67e45d3174fe06b37482b61e49",
+      "tracked_in_git": false
+    },
+    {
+      "category": "kappa_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/kappa_controls_v2/kappa_y/kappa_y.ldev",
+      "bytes": 24560943,
+      "sha256": "c854425c303a4fcd0339d84ed151914d5bd2f56d3918083bb8d8a295eb474379",
+      "tracked_in_git": false
+    },
+    {
+      "category": "kappa_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/kappa_controls_v2/kappa_y/kappa_y_p0.log",
+      "bytes": 1126,
+      "sha256": "4d916ee86ca58c875f26433f42fdf31a383d1d4a1bd9df58792f305953cdb477",
+      "tracked_in_git": false
+    },
+    {
+      "category": "kappa_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/kappa_controls_v2/kappa_y/temperature_profile.npz",
+      "bytes": 2538,
+      "sha256": "7bc1b0fb2838234a6f8020b966305f386626f5b0cc06c0fa1aa0083be1895e7c",
+      "tracked_in_git": false
+    },
+    {
+      "category": "kappa_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/kappa_controls_v2/kappa_z/case_result.json",
+      "bytes": 1532,
+      "sha256": "ea8a71ee36db1a514ef06baee79c4f84f04e602ed5d722973269db26ece111d8",
+      "tracked_in_git": false
+    },
+    {
+      "category": "kappa_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/kappa_controls_v2/kappa_z/kappa_z.ldev",
+      "bytes": 24515710,
+      "sha256": "e1c28b2465af202ecd09e1887bd636281ff97b1080002b5335a303b7f1486ede",
+      "tracked_in_git": false
+    },
+    {
+      "category": "kappa_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/kappa_controls_v2/kappa_z/kappa_z_p0.log",
+      "bytes": 1126,
+      "sha256": "fcd2f35337a9a4f70b9937c29fd23832ad16cf02b1a006f17c3f377688c8b2ad",
+      "tracked_in_git": false
+    },
+    {
+      "category": "kappa_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/kappa_controls_v2/kappa_z/temperature_profile.npz",
+      "bytes": 2381,
+      "sha256": "1a99a4317bb61521c814c8c86695e154bf5bf5cc8f6a373e667288d76ab67c9e",
+      "tracked_in_git": false
+    },
+    {
+      "category": "tensor_encoding_probe",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/tensor_encoding_probe_v1/tensor_encoding_probe.json",
+      "bytes": 2067,
+      "sha256": "fedef4da0a9bb86a447d11f769338a2fbf24450880aac24c4ca59a69e9335bc9",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/interface_G_1100000000p0/case_result.json",
+      "bytes": 4881,
+      "sha256": "6a1833a20534280b8e243a9b3e3413236f12e5094c2110491579858a3aa210b7",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/interface_G_1100000000p0/interface_G_1100000000p0.ldev",
+      "bytes": 65838221,
+      "sha256": "40a2e50b7d4a52cc75f247efe9ff02f20856e27de4f9155eb563726fd35211af",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/interface_G_1100000000p0/interface_G_1100000000p0_p0.log",
+      "bytes": 1204,
+      "sha256": "4cce6df68e036e4a4e767360aec6e78987c78e1df49cdaf5909f24d137eddbd6",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/interface_G_1100000000p0/temperature_profile.npz",
+      "bytes": 3080,
+      "sha256": "d168cdfd8fc561793a9639bff2bdebad77283394b88fc91be7f8e540f1d1d636",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/interface_G_7370000p0/case_result.json",
+      "bytes": 4842,
+      "sha256": "1efe51f333ccfd7730b84bd23d88d0b29fad9b901ab4eea3de41b558344dcd4a",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/interface_G_7370000p0/interface_G_7370000p0.ldev",
+      "bytes": 65838118,
+      "sha256": "16d8188219535a77ed343bcc20243ac8d6465b237acf9e6108cda37dbb175336",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/interface_G_7370000p0/interface_G_7370000p0_p0.log",
+      "bytes": 1192,
+      "sha256": "6c11b3c1bff60f6d8e917b39d12d826f990e49c3e47b1da409208c67163603bf",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/interface_G_7370000p0/temperature_profile.npz",
+      "bytes": 3079,
+      "sha256": "cd6e896ff87d633a508d821c087db2074f7e0f0a5bbd3c99d4a1f409307e8ec5",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/interface_controls.json",
+      "bytes": 25158,
+      "sha256": "c925c3eb332fb49b25e4072a9579666cf5ddb8e34286f0b2c3d37f4e7a6b1a3b",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/perfect_contact_mesh_100nm/case_result.json",
+      "bytes": 3383,
+      "sha256": "20ab644d6029793952cb3da44f6f911df28d38e3cab86857bc688d8b243df93d",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/perfect_contact_mesh_100nm/perfect_contact_mesh_100nm.ldev",
+      "bytes": 18239050,
+      "sha256": "c94ad2eb66ba447c56994756e05f9ba8379c888b9c0d7073f0e3128a639449cb",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/perfect_contact_mesh_100nm/perfect_contact_mesh_100nm_p0.log",
+      "bytes": 1209,
+      "sha256": "98cda473a9ea5e906ec4904489a4688f990571a1447fac114b60f2fcc0a92bad",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/perfect_contact_mesh_100nm/temperature_profile.npz",
+      "bytes": 1753,
+      "sha256": "65dc5025442e9b2d0f8d81500178ca45372ac5fea2b23cadd7efaee0c4d9801d",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/perfect_contact_mesh_25nm/case_result.json",
+      "bytes": 3393,
+      "sha256": "063cf097bf7e319c9298b406ff0ee0d851c22ee1d6cb416e0705641d2f755935",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/perfect_contact_mesh_25nm/perfect_contact_mesh_25nm.ldev",
+      "bytes": 439118800,
+      "sha256": "52e16323a11cd0be40dbdca983df6f56ea863b9edcf672179962c845c4b786ea",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/perfect_contact_mesh_25nm/perfect_contact_mesh_25nm_p0.log",
+      "bytes": 1212,
+      "sha256": "73d6b1085953fb372301fd84cf34e265a5addd9b3b8ad8e50ffd663fef624941",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/perfect_contact_mesh_25nm/temperature_profile.npz",
+      "bytes": 5788,
+      "sha256": "5e9e6682f261a6d61a19416b2a0d830d5854439d256bfa0befbf3631e2eef760",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/perfect_contact_mesh_50nm/case_result.json",
+      "bytes": 3393,
+      "sha256": "16ecc2a56f61d59f6866185bbce448202f9d8f503f8a1f391d7b01879217444f",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/perfect_contact_mesh_50nm/perfect_contact_mesh_50nm.ldev",
+      "bytes": 65809677,
+      "sha256": "e6f3c604c81fbc300808356a56620fc32b19e7ae0bf96ee1726d623d884c881c",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/perfect_contact_mesh_50nm/perfect_contact_mesh_50nm_p0.log",
+      "bytes": 1208,
+      "sha256": "d66ef48ba1b917e5182c8eba0f74c410ea9f33d731e50d77367e4f3a54c24fe2",
+      "tracked_in_git": false
+    },
+    {
+      "category": "interface_controls",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/perfect_contact_mesh_50nm/temperature_profile.npz",
+      "bytes": 3063,
+      "sha256": "132fb2a1004b389bc0555a72cc331ca686a0f07a591f7d8834e651017e757d78",
+      "tracked_in_git": false
+    },
+    {
+      "category": "validated_finite_Q",
+      "repository_or_server_path": "photothermal_pte/validation/photothermal_stage1/output/finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8/finite_q_on_artifact.npz",
+      "bytes": 8692646,
+      "sha256": "7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794",
+      "tracked_in_git": false
+    },
+    {
+      "category": "report",
+      "repository_or_server_path": "photothermal_pte/reports/heat_material_interface_controls/HEAT_ANISOTROPIC_K_SOLVER_REPORT.md",
+      "bytes": 1535,
+      "sha256": "8fb9ee46609e567916bd7c500dd8d974b3d229025f51830b1ecb73e09c496360",
+      "tracked_in_git": true
+    },
+    {
+      "category": "report",
+      "repository_or_server_path": "photothermal_pte/reports/heat_material_interface_controls/HEAT_INTERNAL_INTERFACE_G_SOLVER_REPORT.md",
+      "bytes": 2046,
+      "sha256": "0e63e849fc70f0c6834deb0a52a1ccee771beae8231456d71f3b11309e812240",
+      "tracked_in_git": true
+    },
+    {
+      "category": "report",
+      "repository_or_server_path": "photothermal_pte/reports/heat_material_interface_controls/heat_material_interface_controls_summary.json",
+      "bytes": 38057,
+      "sha256": "ad804511f0f238a58f2bd7a70cbc0f0517c18245f71d57266fff073e84f7f8b8",
+      "tracked_in_git": true
+    },
+    {
+      "category": "report",
+      "repository_or_server_path": "photothermal_pte/reports/heat_material_interface_controls/heat_material_interface_controls_cases.csv",
+      "bytes": 2676,
+      "sha256": "98287a5eab2c4e8ed401725506e98e75f995ad96d0033519d50be361fc4f9bb5",
+      "tracked_in_git": true
+    }
+  ],
+  "note": "Raw DEVICE projects and solver arrays stay server-side and are identified by path, byte count, and SHA-256."
+}
