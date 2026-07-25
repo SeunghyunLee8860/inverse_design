@@ -315,8 +315,12 @@ def main():
         try:
             latent = opt.optimize(latent)
         except Exception as exc:  # P1-4: classify and STOP; do not mislabel completed
+            import traceback
             stage_failure = _classify(exc)
             completed_all_stages = False
+            tb = traceback.format_exc()
+            (attempt / f"stage_error_beta{beta:g}.txt").write_text(tb)
+            traceback.print_exc()
             log({"attempt": attempt_id, "beta": beta, "stage_error":
                  f"{type(exc).__name__}: {exc}", "category": stage_failure})
             break
