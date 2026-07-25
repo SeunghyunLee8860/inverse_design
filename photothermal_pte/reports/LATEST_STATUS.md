@@ -11,6 +11,8 @@
   `VALIDATED_DIAGONAL_KAPPA_FVM_CONTROLS`
 - Independent internal-interface fallback:
   `VALIDATED_FVM_INTERNAL_INTERFACE_G_CONTROLS`
+- Common-physics 3D cross-validation:
+  `VALIDATED_3D_ISOTROPIC_HEAT_FVM_CROSS_VALIDATION`
 - Full-device HEAT cases executed: `false`
 - Finite optical-Q imported into FVM: `false`
 - Transient/PTE/adjoint/gradient/optimization executed: `false`
@@ -19,7 +21,7 @@
 
 - `BLOCKED_ANISOTROPIC_K_UNSUPPORTED` (native v261 HEAT only)
 - `BLOCKED_INTERFACE_G_UNVERIFIED` (native v261 HEAT only)
-- `BLOCKED_3D_ISOTROPIC_HEAT_FVM_CROSS_VALIDATION`
+- `BLOCKED_FINITE_OPTICAL_Q_FVM_IMPORT_UNVALIDATED`
 
 ### Key measurements
 
@@ -96,7 +98,31 @@
 - Next mandatory gate:
   `LUMERICAL_HEAT_VS_FVM_3D_ISOTROPIC_PERFECT_CONTACT_CROSS_VALIDATION`
 - Optical \(Q\) import and full-device calculation remain prohibited until
-  that 3D cross-validation passes.
+  the 3D cross-validation and finite-Q import gates pass.
+
+### 3D isotropic/perfect-contact HEAT-FVM cross-validation
+
+- Status: `VALIDATED_3D_ISOTROPIC_HEAT_FVM_CROSS_VALIDATION`
+- Lumerical: v261 DEVICE `7.17.4413`, `772706` tetrahedral elements,
+  `128099` nodes
+- FVM: `40 x 40 x 30 = 48000` Cartesian cells at `50 nm`
+- Geometry: two scalar materials, `k=[10,2] W/(m K)`, perfect contact
+- Source: asymmetric grid-aligned synthetic cuboid,
+  `Q=1e15 W/m3`, prescribed power `1.92e-4 W`
+- Boundary conditions: bottom `300 K`; all other external faces adiabatic
+- \(T_{\max}\) difference / maximum FVM temperature rise: `0.226837%`
+- Mean-\(T\) difference / maximum FVM temperature rise: `0.0440171%`
+- Full 3D field NRMSE / maximum FVM temperature rise: `0.107756%`
+- Full 3D field correlation: `0.999983190756`
+- Source-power cross-solver difference: `0.400326%`
+- Boundary-power cross-solver difference: `0.400034%`
+- Lumerical/FVM energy errors: `2.90729e-6 / 1.76324e-11`
+- Non-gating pointwise diagnostics: 99th percentile `0.452070%`; maximum
+  source-edge point `1.05266%`
+- Independent fresh-project rerun reproduced all declared metrics within
+  `1e-10`
+- Finite optical-Q artifact imported: `false`
+- Next mandatory gate: `FINITE_OPTICAL_Q_CONSERVATIVE_IMPORT`
 
 ### Final control artifacts
 
@@ -114,6 +140,12 @@
   `reports/fvm_internal_interface_controls/FVM_INTERNAL_INTERFACE_G_CONTROL_REPORT.md`
 - Independent FVM interface summary/cases/raw manifest:
   `reports/fvm_internal_interface_controls/`
+- 3D cross-validation execution:
+  `validation/photothermal_stage1/34_validate_3d_isotropic_heat_fvm_crosscheck.py`
+- 3D cross-validation report:
+  `reports/fvm_3d_isotropic_cross_validation/HEAT_FVM_3D_ISOTROPIC_CROSS_VALIDATION_REPORT.md`
+- 3D cross-validation summary/cases/raw manifest:
+  `reports/fvm_3d_isotropic_cross_validation/`
 - Anisotropic-\(\kappa\) report:
   `reports/heat_material_interface_controls/HEAT_ANISOTROPIC_K_SOLVER_REPORT.md`
 - Internal-\(G\) report:
@@ -123,11 +155,12 @@
 
 Native v261 HEAT still cannot represent the requested conductivity tensor.
 The validated FVM path now resolves the anisotropic equation and finite
-internal-G law independently. Its next mandatory gate is the common 3D
-isotropic/perfect-contact Lumerical HEAT versus FVM cross-validation.
-Full-device HEAT, finite optical-Q import, transient, PTE, adjoint, gradient,
-and optimization are not part of this control-only checkpoint. No isotropic
-fallback or modification of the finite optical-Q artifact is permitted.
+internal-G law independently, and its common 3D scalar-isotropic/perfect-
+contact solution agrees with v261 HEAT. Its next mandatory gate is the
+conservative finite optical-Q mapping and reintegration test. Full-device
+production, finite optical-Q import, transient, PTE, adjoint, gradient, and
+optimization are not part of this checkpoint. No isotropic fallback or
+modification of the finite optical-Q artifact is permitted.
 
 ## Mechanical/MAPDL route probe
 

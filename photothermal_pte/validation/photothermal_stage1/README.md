@@ -215,3 +215,12 @@ criterion must pass.
 
 These controls are independent Python/SciPy FVM results, not Lumerical HEAT
 results. Script 33 does not import optical Q or run the full device.
+
+`34_validate_3d_isotropic_heat_fvm_crosscheck.py` then solves one common 3D
+problem in v261 Lumerical HEAT and the FVM. The control uses two scalar
+isotropic materials, perfect contact, an asymmetric grid-aligned synthetic
+volumetric source, a fixed bottom temperature, and adiabatic remaining
+boundaries. The v261 unstructured FEM temperature is interpolated to every
+FVM cell center before comparing Tmax, mean T, the 3D temperature field,
+source and boundary powers, material assignment, and energy conservation.
+This script also does not read the finite optical-Q artifact.

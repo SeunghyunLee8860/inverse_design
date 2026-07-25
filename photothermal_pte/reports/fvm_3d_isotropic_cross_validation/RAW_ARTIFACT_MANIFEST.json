@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "20260725T201616Z",
+  "branch": "agent/unblock-heat-material-interface-controls",
+  "base_commit_before_control": "fbc7367aeb6090005c7a4a0a6ac04fc22f8d86f3",
+  "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/34_validate_3d_isotropic_heat_fvm_crosscheck.py --output-dir photothermal_pte/validation/photothermal_stage1/output/fvm_3d_isotropic_cross_validation/controls_v1",
+  "finite_optical_Q_imported": false,
+  "artifacts": [
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_3d_isotropic_cross_validation/controls_v1/isotropic_3d_crosscheck.ldev",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_3d_isotropic_cross_validation/controls_v1/isotropic_3d_crosscheck.ldev",
+      "bytes": 212761336,
+      "sha256": "7c2a10aa6428d06c36d2832d7d4cca18588a75f6489b1344e8cd58c9f08c5306"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_3d_isotropic_cross_validation/controls_v1/lumerical_3d_result.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_3d_isotropic_cross_validation/controls_v1/lumerical_3d_result.npz",
+      "bytes": 16889478,
+      "sha256": "bde3798ed9687e462a604ab9ea2b90b1d470e2987630df4353da5d2c573e74d9"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_3d_isotropic_cross_validation/controls_v1/fvm_3d_result.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_3d_isotropic_cross_validation/controls_v1/fvm_3d_result.npz",
+      "bytes": 333868,
+      "sha256": "fb1aa2fe81800cd81b66e067b699022dc74ef63f59c584f734ddc8e20b0e376b"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_3d_isotropic_cross_validation/controls_v1/common_grid_comparison.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_3d_isotropic_cross_validation/controls_v1/common_grid_comparison.npz",
+      "bytes": 949653,
+      "sha256": "3cee51deaa0cb190bc6c0cbdaa3640a72c8d3e235d644779b5c178adeb064579"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_3d_isotropic_cross_validation/HEAT_FVM_3D_ISOTROPIC_CROSS_VALIDATION_REPORT.md",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_3d_isotropic_cross_validation/HEAT_FVM_3D_ISOTROPIC_CROSS_VALIDATION_REPORT.md",
+      "bytes": 1551,
+      "sha256": "b2e08652c30c573473c7c5c43692907c95777cea87c85265cff6f30dd15ee960"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_3d_isotropic_cross_validation/heat_fvm_3d_isotropic_cross_validation_summary.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_3d_isotropic_cross_validation/heat_fvm_3d_isotropic_cross_validation_summary.json",
+      "bytes": 7608,
+      "sha256": "a0bd47a223aa35999fae73f1af0a12849591cf4a9eebd48449bf9111d076b475"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_3d_isotropic_cross_validation/heat_fvm_3d_isotropic_cross_validation_cases.csv",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_3d_isotropic_cross_validation/heat_fvm_3d_isotropic_cross_validation_cases.csv",
+      "bytes": 528,
+      "sha256": "ab151882e8536d7712d75bf4845944b7d1df1ba888179781fd8f98e50c83babf"
+    }
+  ]
+}
