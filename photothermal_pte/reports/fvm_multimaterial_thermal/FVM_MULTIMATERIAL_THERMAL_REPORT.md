@@ -94,7 +94,8 @@ surface, including exact cell-center-to-surface conduction resistance.
 - Full field artifacts remain in the ignored validation output directory and
   are indexed by SHA-256 in `RAW_ARTIFACT_MANIFEST.json`.
 
-The numerical model is now suitable as the steady thermal production path
-for this geometry and source, subject to the stated material-property
-assumptions. In particular, TaIrTe4 kz=1.0 W/(m K) remains an estimated input,
-and the G sweeps should be retained when interpreting uncertainty.
+The numerical model is now suitable as a steady thermal production path for
+this geometry and source, subject to the stated material-property assumptions.
+This parameter set is a numerical-convergence checkpoint, not a unique final
+experimental prediction. In particular, TaIrTe4 kz=1.0 W/(m K), G_top, and
+the top-disk support geometry require separately named physical scenarios.

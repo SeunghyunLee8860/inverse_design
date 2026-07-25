@@ -80,6 +80,14 @@ def parse_args() -> argparse.Namespace:
             config.REPOSITORY_ROOT / "reports" / "fvm_finite_q_import"
         ),
     )
+    parser.add_argument(
+        "--allow-missing-pr3-git-object",
+        action="store_true",
+        help=(
+            "Use the embedded immutable PR #3 SHA contract when a clean or "
+            "shallow checkout does not contain the PR #3 commit object."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -117,7 +125,9 @@ def scalar(data: Any, key: str) -> float:
     return float(values[0])
 
 
-def read_pr3_manifest() -> dict[str, Any]:
+def read_pr3_manifest(
+    *, allow_missing_git_object: bool = False
+) -> dict[str, Any]:
     completed = subprocess.run(
         ["git", "show", f"{PR3_COMMIT}:{PR3_MANIFEST}"],
         cwd=config.REPOSITORY_ROOT.parent,
@@ -126,6 +136,21 @@ def read_pr3_manifest() -> dict[str, Any]:
         check=False,
     )
     if completed.returncode != 0:
+        if allow_missing_git_object:
+            return {
+                "commit": PR3_COMMIT,
+                "repository_path": PR3_MANIFEST,
+                "git_object_available": False,
+                "dependency_note": (
+                    "PR #3 is outside PR #4 ancestry; the externally "
+                    "supplied NPZ is authenticated against the immutable "
+                    "SHA-256 embedded in this validation code"
+                ),
+                "entry": {
+                    "sha256": EXPECTED_SHA256,
+                    "external_artifact_required": True,
+                },
+            }
         raise RuntimeError(
             f"cannot read PR #3 manifest: {completed.stderr.strip()}"
         )
@@ -142,6 +167,7 @@ def read_pr3_manifest() -> dict[str, Any]:
     return {
         "commit": PR3_COMMIT,
         "repository_path": PR3_MANIFEST,
+        "git_object_available": True,
         "entry": matches[0],
     }
 
@@ -207,8 +233,15 @@ def trapezoidal_integral(
     )
 
 
-def map_q(path: Path, output: Path) -> dict[str, Any]:
-    pr3_manifest = read_pr3_manifest()
+def map_q(
+    path: Path,
+    output: Path,
+    *,
+    allow_missing_pr3_git_object: bool = False,
+) -> dict[str, Any]:
+    pr3_manifest = read_pr3_manifest(
+        allow_missing_git_object=allow_missing_pr3_git_object
+    )
     if not path.is_file():
         raise FileNotFoundError(path)
     actual_sha = sha256_file(path)
@@ -727,7 +760,11 @@ def main() -> int:
     command = shlex.join([sys.executable, *sys.argv])
     try:
         result = map_q(
-            Path(args.q_artifact).expanduser().resolve(), output
+            Path(args.q_artifact).expanduser().resolve(),
+            output,
+            allow_missing_pr3_git_object=(
+                args.allow_missing_pr3_git_object
+            ),
         )
     except Exception as exc:
         result = {

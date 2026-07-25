@@ -424,8 +424,24 @@
     }
   },
   "output_directory": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1",
-  "published_at_utc": "20260725T211732Z",
+  "published_at_utc": "20260725T222559Z",
   "production_reference_promoted": true,
   "production_reference_case_id": "final_native",
+  "provisional_until_sensitivity_passes": false,
+  "next_required_gate": null,
+  "completed_gates": [
+    "DOMAIN_SENSITIVITY",
+    "SI_DEPTH_SENSITIVITY",
+    "THERMAL_MESH_SENSITIVITY",
+    "INTERFACE_G_SENSITIVITY",
+    "BOUNDARY_SENSITIVITY"
+  ],
+  "promoted_reference_metadata": {
+    "status": "PROMOTED_AFTER_COMPLETED_SENSITIVITY",
+    "provisional_until_sensitivity_passes": false,
+    "next_required_gate": null,
+    "raw_per_case_JSON_modified": false,
+    "raw_reference_case_provenance_preserved": true
+  },
   "report_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_multimaterial_thermal/FVM_MULTIMATERIAL_THERMAL_REPORT.md"
 }
