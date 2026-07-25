@@ -4,7 +4,7 @@
 
 - Branch: `agent/validate-finite-2um-optical-q`
 - Baseline: `be2cbc2c9c77bbcc0265ce2c293affdbb08105de`
-- Status: `FLAT_POLARIZATION_CONTROLS_PASSED_FIXED_DESIGN_PENDING`
+- Status: `FIXED_DESIGN_CLOSURE_PASSED_CONVERGENCE_PENDING`
 - HEAT Draft PR #2: unchanged and still blocked
 - Periodic production optical path: unchanged
 - New finite Q artifact validated: `false`
@@ -22,3 +22,8 @@ also pass the 0.5% volume-Q versus six-face gate: x 0.3339%, y 0.3223%, and
 1.56568e-12, 1.78061e-12, and 1.67315e-12 m2, respectively. The next gate is
 the fixed-design x closure; domain/PML/mesh/waist convergence and final
 artifact validation remain pending.
+
+The finite fixed-design x case also passes: `P_Q=2.55865e-12 W`,
+`P_six=2.56276e-12 W`, closure 0.1604%, and
+`sigma_abs/A_geo=0.639663`. Its design disk is the same optical SiO2 model as
+the bottom spacer and is not periodically repeated.
