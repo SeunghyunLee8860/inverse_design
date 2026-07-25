@@ -6,7 +6,7 @@
 - Stacked base: `agent/validate-isolated-2um-heat-steady`
 - Finite-Q source: PR #3 commit `053260d`
 - PR #2 and PR #3 content: unchanged
-- Status: `Q_PRECHECK_PASSED_DEVICE_LICENSE_PENDING`
+- Status: `DEVICE_LICENSE_API_PROBE_PASSED_KAPPA_PENDING`
 - Full-device HEAT cases executed: `false`
 - Transient/PTE/adjoint/gradient/optimization executed: `false`
 
@@ -14,7 +14,6 @@
 
 - `BLOCKED_ANISOTROPIC_K_UNSUPPORTED`
 - `BLOCKED_INTERFACE_G_UNVERIFIED`
-- `BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE`
 - `BLOCKED_REQUIRED_SOLVER_CONTROLS_UNVERIFIED`
 
 ### Key measurements
@@ -26,6 +25,9 @@
 - Q component-sum relative error: `2.24310e-16`
 - `BLOCKED_Q_ARTIFACT_INCOMPATIBLE_WITH_2UM_FOOTPRINT`: release candidate
 - Allowed import mismatch: `0.5%`
+- DEVICE version: `7.17.4413` from the v261 installation
+- DEVICE session startup/save/load/HEAT solve: `passed`
+- License-probe temperature range: `[300.0, 300.0499752615] K`
 
 Full-device HEAT, transient, PTE, adjoint, gradient, and optimization are not
 part of this control-only branch. No isotropic fallback or modification of the

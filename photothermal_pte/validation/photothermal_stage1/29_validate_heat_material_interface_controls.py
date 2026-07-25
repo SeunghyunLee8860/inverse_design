@@ -14,13 +14,21 @@ import json
 import shlex
 import subprocess
 import sys
+import traceback
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 
 import config_stage1 as config
-from lumerical_api import jsonable, utc_timestamp, write_json
+from lumerical_api import (
+    flatten_strings,
+    jsonable,
+    open_device,
+    select_installation,
+    utc_timestamp,
+    write_json,
+)
 
 
 PR3_COMMIT = "053260da6fd0caec28ce155221bd18f683a0e5e7"
@@ -284,6 +292,201 @@ def audit_q_artifact(path: Path) -> dict[str, Any]:
     }
 
 
+def set_object(obj: Any, values: dict[str, Any]) -> None:
+    for name, value in values.items():
+        obj[name] = value
+
+
+def add_solid_material(
+    device: Any, name: str, conductivity: float | np.ndarray
+) -> dict[str, Any]:
+    device.addmodelmaterial()
+    device.set("name", name)
+    device.addhtmaterialproperty("Solid")
+    property_name = f"{name} thermal"
+    device.set("name", property_name)
+    device.set("thermal conductivity.active model", "constant")
+    device.set("thermal conductivity.constant", conductivity)
+    returned = np.asarray(
+        device.get("thermal conductivity.constant"), float
+    ).reshape(-1)
+    return {
+        "model_material": name,
+        "thermal_property": property_name,
+        "conductivity_write_W_mK": np.asarray(
+            conductivity, float
+        ).reshape(-1).tolist(),
+        "conductivity_readback_W_mK": returned.tolist(),
+    }
+
+
+def license_probe(output: Path, *, hide: bool) -> dict[str, Any]:
+    installation = select_installation("v261")
+    project = output / "device_license_probe.ldev"
+    result: dict[str, Any] = {
+        "status": "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE",
+        "installation_root": str(installation.root),
+        "lumapi_path": str(installation.lumapi_path),
+        "device_executable": str(installation.device_executable),
+        "session_startup": False,
+        "save_succeeded": False,
+        "load_succeeded": False,
+        "solver_run_succeeded": False,
+        "project_path": str(project),
+    }
+    try:
+        with open_device(installation, hide=hide) as device:
+            result["session_startup"] = True
+            result["lumerical_version"] = str(device.version())
+            region = device.addsimulationregion()
+            set_object(
+                region,
+                {
+                    "name": "license probe region",
+                    "dimension": "3D",
+                    "use relative coordinates": False,
+                    "x": 0.0,
+                    "x span": 1.0e-6,
+                    "y": 0.0,
+                    "y span": 1.0e-6,
+                    "z min": 0.0,
+                    "z max": 1.0e-6,
+                },
+            )
+            result["material"] = add_solid_material(
+                device, "license probe solid", 10.0
+            )
+            slab = device.addrect()
+            set_object(
+                slab,
+                {
+                    "name": "license probe slab",
+                    "material": "license probe solid",
+                    "x": 0.0,
+                    "x span": 1.0e-6,
+                    "y": 0.0,
+                    "y span": 1.0e-6,
+                    "z min": 0.0,
+                    "z max": 1.0e-6,
+                },
+            )
+            heat = device.addheatsolver()
+            set_object(
+                heat,
+                {
+                    "simulation region": "license probe region",
+                    "solver mode": "steady state",
+                    "solver physics": "thermal only",
+                    "use defaults": False,
+                    "min edge length": 25.0e-9,
+                    "max edge length": 100.0e-9,
+                    "max plc edge length": 100.0e-9,
+                },
+            )
+            source = device.adduniformheat()
+            set_object(
+                source,
+                {
+                    "name": "license probe heat",
+                    "source type": "3D",
+                    "geometry type": "directly defined",
+                    "x": 0.0,
+                    "x span": 1.0e-6,
+                    "y": 0.0,
+                    "y span": 1.0e-6,
+                    "z min": 0.0,
+                    "z max": 1.0e-6,
+                    "total power": 1.0e-6,
+                },
+            )
+            device.addtemperaturebc("HEAT")
+            for name, value in {
+                "name": "license probe T bottom",
+                "bc mode": "steady state",
+                "sweep type": "single",
+                "temperature": 300.0,
+                "surface type": "simulation region",
+                "z min": True,
+            }.items():
+                device.set(name, value)
+            monitor = device.addtemperaturemonitor()
+            set_object(
+                monitor,
+                {
+                    "name": "license probe T",
+                    "monitor type": "linear z",
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z min": 0.0,
+                    "z max": 1.0e-6,
+                },
+            )
+            device.save(str(project))
+            result["save_succeeded"] = project.is_file()
+            device.load(str(project))
+            result["load_succeeded"] = True
+            device.addjob(str(project), "HEAT")
+            device.runjobs("HEAT", 0)
+            device.load(str(project))
+            available = flatten_strings(
+                device.getresult("HEAT::license probe T")
+            )
+            result["temperature_monitor_results"] = available
+            temperature_result = None
+            for candidate in ("temperature", "thermal"):
+                try:
+                    temperature_result = device.getresult(
+                        "HEAT::license probe T", candidate
+                    )
+                    result["temperature_result_name"] = candidate
+                    break
+                except Exception:
+                    continue
+            if temperature_result is None:
+                raise RuntimeError(
+                    f"no temperature result after solve; available={available}"
+                )
+            temperatures = np.asarray(
+                temperature_result.get(
+                    "T", temperature_result.get("temperature")
+                ),
+                float,
+            ).reshape(-1)
+            if temperatures.size == 0 or not np.all(np.isfinite(temperatures)):
+                raise RuntimeError("temperature result is empty or non-finite")
+            result["temperature_range_K"] = [
+                float(np.min(temperatures)),
+                float(np.max(temperatures)),
+            ]
+            result["solver_run_succeeded"] = True
+            result["status"] = "DEVICE_LICENSE_API_SOLVER_AVAILABLE"
+    except Exception as exc:
+        result.update(
+            {
+                "status": (
+                    "DEVICE_API_OR_SOLVER_PROBE_FAILED"
+                    if result["session_startup"]
+                    else "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE"
+                ),
+                "exception_type": type(exc).__name__,
+                "exception": str(exc),
+                "traceback": traceback.format_exc(),
+            }
+        )
+    result["passed"] = all(
+        bool(result[key])
+        for key in (
+            "session_startup",
+            "save_succeeded",
+            "load_succeeded",
+            "solver_run_succeeded",
+        )
+    )
+    if not result["passed"] and not result["session_startup"]:
+        result["status"] = "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE"
+    return result
+
+
 def output_directory(explicit: str | None) -> Path:
     if explicit:
         output = Path(explicit).expanduser().resolve()
@@ -310,17 +513,37 @@ def main() -> int:
         "PTE_executed": False,
         "optimization_executed": False,
     }
-    if args.phase not in ("q-precheck", "all"):
+    if args.phase not in ("q-precheck", "license-probe", "all"):
         raise NotImplementedError(
             f"{args.phase} will be enabled after the Q precheck checkpoint"
         )
-    result["q_precheck"] = audit_q_artifact(
-        Path(args.q_artifact).expanduser().resolve()
+    if args.phase in ("q-precheck", "all"):
+        result["q_precheck"] = audit_q_artifact(
+            Path(args.q_artifact).expanduser().resolve()
+        )
+    if args.phase in ("license-probe", "all"):
+        result["license_probe"] = license_probe(
+            output, hide=args.hide_gui
+        )
+    q_pass = (
+        args.phase == "license-probe"
+        or result["q_precheck"]["blocker_release_allowed"]
     )
-    result["status"] = "Q_PRECHECK_PASSED"
-    write_json(output / "q_precheck.json", result)
+    license_pass = (
+        args.phase == "q-precheck"
+        or result["license_probe"]["passed"]
+    )
+    if not license_pass:
+        result["status"] = "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE"
+    elif q_pass:
+        result["status"] = (
+            "DEVICE_LICENSE_API_PROBE_PASSED"
+            if args.phase in ("license-probe", "all")
+            else "Q_PRECHECK_PASSED"
+        )
+    write_json(output / f"{args.phase.replace('-', '_')}.json", result)
     print(json.dumps(jsonable(result), indent=2), flush=True)
-    return 0
+    return 0 if q_pass and license_pass else 2
 
 
 if __name__ == "__main__":
