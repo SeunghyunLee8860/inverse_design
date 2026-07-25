@@ -90,3 +90,31 @@ solver-path decision and a validated internal-interface-G control. Full-device
 HEAT, transient, PTE, adjoint, gradient, and optimization are not part of this
 control-only branch. No isotropic fallback or modification of the finite
 optical-Q artifact is permitted.
+
+## Mechanical/MAPDL route probe
+
+- Official capability: orthotropic/full-anisotropic thermal conductivity and
+  finite thermal contact conductance are supported
+- Generated material path: `MP,KXX/KYY/KZZ`
+- Generated interface path: `TARGE170/CONTA174`, pure thermal
+  `KEYOPT(1)=2`, bonded `KEYOPT(12)=5`, and `TCC=G` at real constant 14
+- Controls generated: x/y/z anisotropic kappa, `G=7.37e6`, `G=1.1e9`,
+  and perfect-contact meshes at 100/50/25 nm
+- Input-deck static audit:
+  `PASSED_MECHANICAL_INPUT_DECK_STATIC_AUDIT`
+- MAPDL executable:
+  `BLOCKED_MECHANICAL_EXECUTABLE_UNAVAILABLE`
+- Mechanical license feature:
+  `BLOCKED_MECHANICAL_LICENSE_UNAVAILABLE`
+- License server: reachable, but only Lumerical/optislang features are
+  advertised; no `ansys`, `mech_1`, `mech_2`, `struct`, or `preppost`
+- Actual Mechanical solver executed: `false`
+- Mechanical solver validation claimed: `false`
+- Execution:
+  `validation/photothermal_stage1/32_validate_mechanical_thermal_controls.py`
+- Reports:
+  `reports/mechanical_thermal_controls/`
+
+The Mechanical route is physically and API-capability compatible, but it
+cannot be solver-validated on this host until Mechanical/MAPDL is installed
+and an applicable Mechanical license feature is added.
