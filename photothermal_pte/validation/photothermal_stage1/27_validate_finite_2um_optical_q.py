@@ -731,9 +731,17 @@ def add_geometry_and_monitors(
     pabs = fdtd.addobject("pabs_adv")
     pabs["name"] = PABS_GROUP
     pabs["x"] = 0.5 * sum(FLAKE_BOUNDS_M["x"])
-    pabs["x span"] = FLAKE_BOUNDS_M["x"][1] - FLAKE_BOUNDS_M["x"][0]
+    pabs["x span"] = (
+        FLAKE_BOUNDS_M["x"][1]
+        - FLAKE_BOUNDS_M["x"][0]
+        + 2.0 * PABS_PADDING_M
+    )
     pabs["y"] = 0.5 * sum(FLAKE_BOUNDS_M["y"])
-    pabs["y span"] = FLAKE_BOUNDS_M["y"][1] - FLAKE_BOUNDS_M["y"][0]
+    pabs["y span"] = (
+        FLAKE_BOUNDS_M["y"][1]
+        - FLAKE_BOUNDS_M["y"][0]
+        + 2.0 * PABS_PADDING_M
+    )
     pabs["z"] = 0.5 * sum(FLAKE_BOUNDS_M["z"])
     pabs["z span"] = FLAKE_THICKNESS_M + 2.0 * PABS_PADDING_M
 
@@ -893,6 +901,14 @@ def assert_pre_run_contract(
         and np.isclose(
             scalar(fdtd.getnamed(PABS_GROUP, "z span"), "Pabs z span"),
             FLAKE_THICKNESS_M + 2.0 * PABS_PADDING_M,
+        )
+        and np.isclose(
+            scalar(fdtd.getnamed(PABS_GROUP, "x span"), "Pabs x span"),
+            FLAKE_SPAN_M + 2.0 * PABS_PADDING_M,
+        )
+        and np.isclose(
+            scalar(fdtd.getnamed(PABS_GROUP, "y span"), "Pabs y span"),
+            FLAKE_SPAN_M + 2.0 * PABS_PADDING_M,
         )
     )
     checks["bottom_and_design_share_SiO2_model"] = (
@@ -1421,6 +1437,10 @@ def run_case(
         "incident_intensity_W_m2": TARGET_INTENSITY_W_M2,
         "exact_flake_bounds_m": FLAKE_BOUNDS_M,
         "pabs_zero_padding_m": {
+            "x_min": PABS_PADDING_M,
+            "x_max": PABS_PADDING_M,
+            "y_min": PABS_PADDING_M,
+            "y_max": PABS_PADDING_M,
             "bottom": PABS_PADDING_M,
             "top": PABS_PADDING_M,
         },
