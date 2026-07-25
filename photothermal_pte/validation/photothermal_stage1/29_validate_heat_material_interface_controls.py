@@ -41,6 +41,10 @@ EXPECTED_Q_SHA256 = (
 )
 EXPECTED_P_Q_W = 2.56071371086521e-12
 POWER_LIMIT = 0.005
+KAPPA_TENSOR_W_MK = np.asarray([14.4, 3.8, 1.0], float)
+KAPPA_LIMIT = 0.01
+PROFILE_LIMIT = 0.01
+ENERGY_LIMIT = 0.01
 EXACT_BOUNDS_M = {
     "x": [-1.0e-6, 1.0e-6],
     "y": [-1.0e-6, 1.0e-6],
@@ -487,6 +491,341 @@ def license_probe(output: Path, *, hide: bool) -> dict[str, Any]:
     return result
 
 
+def result_names(device: Any, object_name: str) -> list[str]:
+    try:
+        return flatten_strings(device.getresult(object_name))
+    except Exception:
+        return []
+
+
+def result_candidate(
+    device: Any, object_name: str, candidates: tuple[str, ...]
+) -> tuple[str, dict[str, Any], list[str]]:
+    available = result_names(device, object_name)
+    normalized = {item.lower(): item for item in available}
+    errors = []
+    for candidate in candidates:
+        actual = normalized.get(candidate.lower(), candidate)
+        try:
+            return actual, device.getresult(object_name, actual), available
+        except Exception as exc:
+            errors.append(f"{actual}: {type(exc).__name__}: {exc}")
+    raise RuntimeError(
+        f"no result for {object_name}; available={available}; errors={errors}"
+    )
+
+
+def dataset_temperature(
+    dataset: dict[str, Any], axis: str
+) -> tuple[np.ndarray, np.ndarray]:
+    coordinate = np.asarray(dataset[axis], float).reshape(-1)
+    key = "T" if "T" in dataset else "temperature"
+    values = np.asarray(dataset[key], float).squeeze()
+    while values.ndim > 1 and 1 in values.shape:
+        values = np.squeeze(values, axis=values.shape.index(1))
+    values = np.asarray(values, float).reshape(-1)
+    if coordinate.size != values.size:
+        raise RuntimeError(
+            f"temperature length {values.size} != {axis} length {coordinate.size}"
+        )
+    order = np.argsort(coordinate)
+    return coordinate[order], values[order]
+
+
+def add_temperature_boundary(
+    device: Any,
+    *,
+    name: str,
+    axis: str,
+    side: str,
+    temperature_K: float,
+) -> None:
+    device.addtemperaturebc("HEAT")
+    values = {
+        "name": name,
+        "bc mode": "steady state",
+        "sweep type": "single",
+        "temperature": temperature_K,
+        "surface type": "simulation region",
+        f"{axis} {side}": True,
+    }
+    for property_name, value in values.items():
+        device.set(property_name, value)
+
+
+def anisotropic_kappa_case(
+    output: Path,
+    *,
+    axis: str,
+    tensor_index: int,
+    hide: bool,
+) -> dict[str, Any]:
+    installation = select_installation("v261")
+    case_dir = output / f"kappa_{axis}"
+    case_dir.mkdir(parents=True, exist_ok=True)
+    project = case_dir / f"kappa_{axis}.ldev"
+    length_m = 2.0e-6
+    cross_span_m = 1.0e-6
+    area_m2 = cross_span_m**2
+    cold_K, hot_K = 300.0, 310.0
+    delta_T_K = hot_K - cold_K
+    k_expected = float(KAPPA_TENSOR_W_MK[tensor_index])
+    analytic_heat_flux_W_m2 = -k_expected * delta_T_K / length_m
+    bounds = {
+        "x": [-0.5 * cross_span_m, 0.5 * cross_span_m],
+        "y": [-0.5 * cross_span_m, 0.5 * cross_span_m],
+        "z": [-0.5 * cross_span_m, 0.5 * cross_span_m],
+    }
+    bounds[axis] = [-0.5 * length_m, 0.5 * length_m]
+    material_name = f"kappa tensor {axis}"
+    thermal_name = f"{material_name} thermal"
+
+    with open_device(installation, hide=hide) as device:
+        version = str(device.version())
+        region = device.addsimulationregion()
+        region_values: dict[str, Any] = {
+            "name": f"kappa {axis} region",
+            "dimension": "3D",
+            "use relative coordinates": False,
+        }
+        for coordinate in ("x", "y", "z"):
+            region_values[f"{coordinate} min"] = bounds[coordinate][0]
+            region_values[f"{coordinate} max"] = bounds[coordinate][1]
+        set_object(region, region_values)
+        material = add_solid_material(
+            device,
+            material_name,
+            KAPPA_TENSOR_W_MK.reshape(3, 1),
+        )
+        property_write_readback = material[
+            "conductivity_readback_W_mK"
+        ]
+        tensor_readback_passed = bool(
+            len(property_write_readback) == 3
+            and np.allclose(property_write_readback, KAPPA_TENSOR_W_MK)
+        )
+        slab = device.addrect()
+        slab_values: dict[str, Any] = {
+            "name": f"kappa {axis} slab",
+            "material": material_name,
+        }
+        for coordinate in ("x", "y", "z"):
+            slab_values[f"{coordinate} min"] = bounds[coordinate][0]
+            slab_values[f"{coordinate} max"] = bounds[coordinate][1]
+        set_object(slab, slab_values)
+        heat = device.addheatsolver()
+        set_object(
+            heat,
+            {
+                "simulation region": f"kappa {axis} region",
+                "solver mode": "steady state",
+                "solver physics": "thermal only",
+                "use defaults": False,
+                "min edge length": 20.0e-9,
+                "max edge length": 80.0e-9,
+                "max plc edge length": 80.0e-9,
+            },
+        )
+        cold_name = f"T_{axis}_min"
+        hot_name = f"T_{axis}_max"
+        add_temperature_boundary(
+            device,
+            name=cold_name,
+            axis=axis,
+            side="min",
+            temperature_K=cold_K,
+        )
+        add_temperature_boundary(
+            device,
+            name=hot_name,
+            axis=axis,
+            side="max",
+            temperature_K=hot_K,
+        )
+        monitor = device.addtemperaturemonitor()
+        monitor_values: dict[str, Any] = {
+            "name": f"T_{axis}_line",
+            "monitor type": f"linear {axis}",
+        }
+        for coordinate in ("x", "y", "z"):
+            if coordinate == axis:
+                monitor_values[f"{coordinate} min"] = bounds[coordinate][0]
+                monitor_values[f"{coordinate} max"] = bounds[coordinate][1]
+            else:
+                monitor_values[coordinate] = 0.0
+        set_object(monitor, monitor_values)
+        flux = device.addheatfluxmonitor()
+        flux_values: dict[str, Any] = {
+            "name": f"flux_{axis}_mid",
+            "monitor type": f"2D {axis}-normal",
+            axis: 0.0,
+        }
+        for coordinate in ("x", "y", "z"):
+            if coordinate != axis:
+                flux_values[f"{coordinate} min"] = bounds[coordinate][0]
+                flux_values[f"{coordinate} max"] = bounds[coordinate][1]
+        set_object(flux, flux_values)
+
+        device.save(str(project))
+        save_succeeded = project.is_file()
+        device.load(str(project))
+        material_path = (
+            f"::model::materials::{material_name}::{thermal_name}"
+        )
+        reload_readback = np.asarray(
+            device.getnamed(
+                material_path, "thermal conductivity.constant"
+            ),
+            float,
+        ).reshape(-1)
+        reload_readback_passed = bool(
+            reload_readback.size == 3
+            and np.allclose(reload_readback, KAPPA_TENSOR_W_MK)
+        )
+        device.addjob(str(project), "HEAT")
+        device.runjobs("HEAT", 0)
+        device.load(str(project))
+        temperature_name, temperature_dataset, temperature_available = (
+            result_candidate(
+                device,
+                f"HEAT::T_{axis}_line",
+                ("temperature", "thermal"),
+            )
+        )
+        boundary_name, boundary_dataset, boundary_available = result_candidate(
+            device, "HEAT", ("boundaries",)
+        )
+        coordinate, temperature = dataset_temperature(
+            temperature_dataset, axis
+        )
+        power_values = {
+            key: float(np.asarray(value, float).reshape(-1)[0])
+            for key, value in boundary_dataset.items()
+            if key.startswith("P_")
+            and np.asarray(value).size
+        }
+        if len(power_values) < 2:
+            raise RuntimeError(
+                f"expected two boundary powers, got {power_values}"
+            )
+        selected_powers = [
+            value
+            for key, value in power_values.items()
+            if axis in key.lower()
+        ]
+        if len(selected_powers) != 2:
+            selected_powers = list(power_values.values())[:2]
+        mean_power_W = float(np.mean(np.abs(selected_powers)))
+        numerical_heat_flux_W_m2 = (
+            -np.sign(analytic_heat_flux_W_m2) * mean_power_W / area_m2
+        )
+        # The signed analytic value is negative because temperature rises in
+        # the +axis direction; compare magnitudes for the conductivity.
+        flux_error = abs(
+            abs(numerical_heat_flux_W_m2)
+            - abs(analytic_heat_flux_W_m2)
+        ) / abs(analytic_heat_flux_W_m2)
+        effective_k = (
+            abs(numerical_heat_flux_W_m2) * length_m / delta_T_K
+        )
+        energy_balance_error = abs(sum(selected_powers)) / max(
+            mean_power_W, np.finfo(float).tiny
+        )
+        exact_temperature = cold_K + delta_T_K * (
+            coordinate - bounds[axis][0]
+        ) / length_m
+        profile_error = float(
+            np.max(np.abs(temperature - exact_temperature)) / delta_T_K
+        )
+        device.save(str(project))
+
+    np.savez_compressed(
+        case_dir / "temperature_profile.npz",
+        coordinate_m=coordinate,
+        temperature_K=temperature,
+        exact_temperature_K=exact_temperature,
+    )
+    passed = bool(
+        tensor_readback_passed
+        and save_succeeded
+        and reload_readback_passed
+        and flux_error < KAPPA_LIMIT
+        and profile_error < PROFILE_LIMIT
+        and energy_balance_error < ENERGY_LIMIT
+    )
+    result = {
+        "case_id": f"kappa_{axis}",
+        "status": "PASSED" if passed else "FAILED_ANISOTROPIC_K_ANALYTIC_CONTROL",
+        "passed": passed,
+        "axis": axis,
+        "v261_DEVICE_version": version,
+        "project_path": str(project),
+        "property_write_W_mK": KAPPA_TENSOR_W_MK.tolist(),
+        "property_readback_before_save_W_mK": property_write_readback,
+        "property_readback_after_reload_W_mK": reload_readback.tolist(),
+        "tensor_readback_before_save_passed": tensor_readback_passed,
+        "tensor_readback_after_reload_passed": reload_readback_passed,
+        "save_succeeded": save_succeeded,
+        "length_m": length_m,
+        "cross_section_area_m2": area_m2,
+        "temperature_boundary_K": {
+            "min": cold_K,
+            "max": hot_K,
+        },
+        "analytic_heat_flux_W_m2": analytic_heat_flux_W_m2,
+        "numerical_heat_flux_W_m2": numerical_heat_flux_W_m2,
+        "effective_kappa_W_mK": effective_k,
+        "expected_kappa_W_mK": k_expected,
+        "heat_flux_relative_error": flux_error,
+        "temperature_profile_max_relative_error": profile_error,
+        "energy_balance_relative_error": energy_balance_error,
+        "boundary_powers_W": power_values,
+        "temperature_monitor_result": temperature_name,
+        "temperature_monitor_available_results": temperature_available,
+        "boundary_result": boundary_name,
+        "HEAT_available_results": boundary_available,
+        "sample_count": int(coordinate.size),
+        "criteria": {
+            "heat_flux_relative_error_lt": KAPPA_LIMIT,
+            "temperature_profile_relative_error_lt": PROFILE_LIMIT,
+            "energy_balance_relative_error_lt": ENERGY_LIMIT,
+        },
+    }
+    write_json(case_dir / "case_result.json", result)
+    return result
+
+
+def anisotropic_kappa_controls(
+    output: Path, *, hide: bool
+) -> dict[str, Any]:
+    cases = [
+        anisotropic_kappa_case(
+            output, axis=axis, tensor_index=index, hide=hide
+        )
+        for index, axis in enumerate(("x", "y", "z"))
+    ]
+    passed = all(case["passed"] for case in cases)
+    tensor_supported = all(
+        case["tensor_readback_before_save_passed"]
+        and case["tensor_readback_after_reload_passed"]
+        for case in cases
+    )
+    return {
+        "status": (
+            "ANISOTROPIC_K_SOLVER_CONTROL_PASSED"
+            if passed
+            else "BLOCKED_ANISOTROPIC_K_UNSUPPORTED"
+            if not tensor_supported
+            else "FAILED_ANISOTROPIC_K_ANALYTIC_CONTROL"
+        ),
+        "passed": passed,
+        "tensor_supported": tensor_supported,
+        "requested_tensor_W_mK": KAPPA_TENSOR_W_MK.tolist(),
+        "isotropic_fallback_used": False,
+        "cases": cases,
+    }
+
+
 def output_directory(explicit: str | None) -> Path:
     if explicit:
         output = Path(explicit).expanduser().resolve()
@@ -513,7 +852,12 @@ def main() -> int:
         "PTE_executed": False,
         "optimization_executed": False,
     }
-    if args.phase not in ("q-precheck", "license-probe", "all"):
+    if args.phase not in (
+        "q-precheck",
+        "license-probe",
+        "kappa-controls",
+        "all",
+    ):
         raise NotImplementedError(
             f"{args.phase} will be enabled after the Q precheck checkpoint"
         )
@@ -525,16 +869,28 @@ def main() -> int:
         result["license_probe"] = license_probe(
             output, hide=args.hide_gui
         )
+    if args.phase in ("kappa-controls", "all"):
+        result["anisotropic_kappa"] = anisotropic_kappa_controls(
+            output, hide=args.hide_gui
+        )
     q_pass = (
-        args.phase == "license-probe"
+        args.phase not in ("q-precheck", "all")
         or result["q_precheck"]["blocker_release_allowed"]
     )
     license_pass = (
-        args.phase == "q-precheck"
+        args.phase in ("q-precheck", "kappa-controls")
         or result["license_probe"]["passed"]
+    )
+    kappa_pass = (
+        args.phase not in ("kappa-controls", "all")
+        or result["anisotropic_kappa"]["passed"]
     )
     if not license_pass:
         result["status"] = "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE"
+    elif not kappa_pass:
+        result["status"] = result["anisotropic_kappa"]["status"]
+    elif args.phase == "kappa-controls":
+        result["status"] = "ANISOTROPIC_K_SOLVER_CONTROL_PASSED"
     elif q_pass:
         result["status"] = (
             "DEVICE_LICENSE_API_PROBE_PASSED"
@@ -543,7 +899,7 @@ def main() -> int:
         )
     write_json(output / f"{args.phase.replace('-', '_')}.json", result)
     print(json.dumps(jsonable(result), indent=2), flush=True)
-    return 0 if q_pass and license_pass else 2
+    return 0 if q_pass and license_pass and kappa_pass else 2
 
 
 if __name__ == "__main__":

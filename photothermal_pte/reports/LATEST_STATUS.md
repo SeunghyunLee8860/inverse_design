@@ -6,7 +6,7 @@
 - Stacked base: `agent/validate-isolated-2um-heat-steady`
 - Finite-Q source: PR #3 commit `053260d`
 - PR #2 and PR #3 content: unchanged
-- Status: `DEVICE_LICENSE_API_PROBE_PASSED_KAPPA_PENDING`
+- Status: `BLOCKED_ANISOTROPIC_K_UNSUPPORTED`
 - Full-device HEAT cases executed: `false`
 - Transient/PTE/adjoint/gradient/optimization executed: `false`
 
@@ -28,6 +28,11 @@
 - DEVICE version: `7.17.4413` from the v261 installation
 - DEVICE session startup/save/load/HEAT solve: `passed`
 - License-probe temperature range: `[300.0, 300.0499752615] K`
+- Requested tensor write/readback before save: `[14.4, 3.8, 1.0] -> [0.0]`
+- Requested tensor readback after reload: `[0.0]`
+- x/y/z effective kappa from solver: `[0.0, 0.0, 0.0] W/(m K)`
+- x/y/z heat-flux relative errors: `[100%, 100%, 100%]`
+- Isotropic fallback used: `false`
 
 Full-device HEAT, transient, PTE, adjoint, gradient, and optimization are not
 part of this control-only branch. No isotropic fallback or modification of the
