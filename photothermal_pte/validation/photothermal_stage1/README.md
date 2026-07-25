@@ -224,3 +224,12 @@ boundaries. The v261 unstructured FEM temperature is interpolated to every
 FVM cell center before comparing Tmax, mean T, the 3D temperature field,
 source and boundary powers, material assignment, and energy conservation.
 This script also does not read the finite optical-Q artifact.
+
+`35_validate_finite_q_fvm_import.py` authenticates the PR #3 optical artifact
+and performs the first allowed FVM source mapping without running a thermal
+solve. It copies Q element-for-element and represents the original nested
+trapezoidal weights as FVM control-volume widths, so `sum(Q*dV)` is
+algebraically identical to the original optical integration. It fails on a
+SHA mismatch, non-finite data, ordering/mask/normalization mismatch, power
+error at or above 0.5%, or any clipping, smoothing, gain, rescaling, crop,
+tiling, or outside-flake deletion.

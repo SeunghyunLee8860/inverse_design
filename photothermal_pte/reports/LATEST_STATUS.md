@@ -13,15 +13,18 @@
   `VALIDATED_FVM_INTERNAL_INTERFACE_G_CONTROLS`
 - Common-physics 3D cross-validation:
   `VALIDATED_3D_ISOTROPIC_HEAT_FVM_CROSS_VALIDATION`
+- Finite optical-Q conservative mapping:
+  `VALIDATED_FINITE_OPTICAL_Q_FVM_IMPORT`
 - Full-device HEAT cases executed: `false`
-- Finite optical-Q imported into FVM: `false`
+- Finite optical-Q mapped to FVM control volumes: `true`
+- Finite optical-Q used in a thermal solve: `false`
 - Transient/PTE/adjoint/gradient/optimization executed: `false`
 
 ### Active blockers
 
 - `BLOCKED_ANISOTROPIC_K_UNSUPPORTED` (native v261 HEAT only)
 - `BLOCKED_INTERFACE_G_UNVERIFIED` (native v261 HEAT only)
-- `BLOCKED_FINITE_OPTICAL_Q_FVM_IMPORT_UNVALIDATED`
+- `BLOCKED_PRODUCTION_FVM_CONVERGENCE_UNVERIFIED`
 
 ### Key measurements
 
@@ -95,10 +98,8 @@
   `0.5 -> 0.25 -> 0.125 K`; finest/coarsest ratio `0.25`
 - Solver attribution: independent conservative Cartesian Python/SciPy FVM;
   not a Lumerical HEAT result
-- Next mandatory gate:
-  `LUMERICAL_HEAT_VS_FVM_3D_ISOTROPIC_PERFECT_CONTACT_CROSS_VALIDATION`
-- Optical \(Q\) import and full-device calculation remain prohibited until
-  the 3D cross-validation and finite-Q import gates pass.
+- Subsequent 3D cross-validation and finite-Q import gates: `completed`
+- Full-device thermal calculation at this checkpoint: `not executed`
 
 ### 3D isotropic/perfect-contact HEAT-FVM cross-validation
 
@@ -121,8 +122,35 @@
   source-edge point `1.05266%`
 - Independent fresh-project rerun reproduced all declared metrics within
   `1e-10`
-- Finite optical-Q artifact imported: `false`
-- Next mandatory gate: `FINITE_OPTICAL_Q_CONSERVATIVE_IMPORT`
+- Finite optical-Q mapped into thermal control volumes: `true`
+- Finite optical-Q used in a thermal solve: `false`
+- Subsequent finite-Q conservative import gate: `completed`
+
+### Finite optical-Q conservative FVM import
+
+- Status: `VALIDATED_FINITE_OPTICAL_Q_FVM_IMPORT`
+- PR #3 artifact SHA-256:
+  `7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794`
+- Shape/order: `[80,80,41]`, `x,y,z`
+- Incident-intensity normalization: `1 W/m2`
+- Mapping: elementwise Q copy; FVM cell widths equal the original
+  trapezoidal quadrature weights
+- Original/mapped Q-array SHA-256:
+  `ff1484537aadfc36d90c2035280da9ad3a2e59895e9ba06a65bea30623e3715d`
+- Original nested-trapezoid power:
+  `2.56071371086521e-12 W`
+- FVM `sum(Q*dV)` power:
+  `2.56071371086521e-12 W`
+- Mapping relative error: `0`
+- Interpolation, clipping, smoothing, gain, rescaling, crop, tiling, and
+  outside-flake deletion: all `false`
+- `5772` nonzero boundary samples at `z=5.790264e-23 m` are excluded by the
+  stored strict boolean mask but lie inside the explicit `1e-15 m`
+  roundoff-inclusive physical mask; all were preserved unchanged
+- Independent import rerun reproduced SHA and power exactly
+- Finite optical-Q used in thermal solve: `false`
+- Next permitted step:
+  `ANISOTROPIC_FINITE_G_MULTIMATERIAL_FVM_PRODUCTION`
 
 ### Final control artifacts
 
@@ -146,6 +174,12 @@
   `reports/fvm_3d_isotropic_cross_validation/HEAT_FVM_3D_ISOTROPIC_CROSS_VALIDATION_REPORT.md`
 - 3D cross-validation summary/cases/raw manifest:
   `reports/fvm_3d_isotropic_cross_validation/`
+- Finite-Q import execution:
+  `validation/photothermal_stage1/35_validate_finite_q_fvm_import.py`
+- Finite-Q import report:
+  `reports/fvm_finite_q_import/FINITE_OPTICAL_Q_FVM_IMPORT_REPORT.md`
+- Finite-Q import summary/cases/raw manifest:
+  `reports/fvm_finite_q_import/`
 - Anisotropic-\(\kappa\) report:
   `reports/heat_material_interface_controls/HEAT_ANISOTROPIC_K_SOLVER_REPORT.md`
 - Internal-\(G\) report:
@@ -156,11 +190,13 @@
 Native v261 HEAT still cannot represent the requested conductivity tensor.
 The validated FVM path now resolves the anisotropic equation and finite
 internal-G law independently, and its common 3D scalar-isotropic/perfect-
-contact solution agrees with v261 HEAT. Its next mandatory gate is the
-conservative finite optical-Q mapping and reintegration test. Full-device
-production, finite optical-Q import, transient, PTE, adjoint, gradient, and
-optimization are not part of this checkpoint. No isotropic fallback or
-modification of the finite optical-Q artifact is permitted.
+contact solution agrees with v261 HEAT. The finite optical-Q mapping now
+preserves the PR #3 source exactly. The next step is the first anisotropic,
+finite-G, multi-material production FVM solve followed by domain, substrate,
+mesh, interface-G, and boundary-location sensitivity. No production
+temperature, transient, PTE, adjoint, gradient, or optimization is claimed
+at this checkpoint. No isotropic fallback or modification of the finite
+optical-Q artifact is permitted.
 
 ## Mechanical/MAPDL route probe
 
