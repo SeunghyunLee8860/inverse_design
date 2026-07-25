@@ -2,6 +2,17 @@
 
 작성: 2026-07-24, 코드리뷰 반영 갱신 2026-07-25. 명세 "TaIrTe4 500 nm 이진 설계: 전체 수정 명세"(0~18)에 대응.
 
+## 코드리뷰 3차(2026-07-25, b3948ba) 대응 — 성공 경로 NameError 수정
+`pytest inverse_design/tests/` = **65 passed** (positive-path test 추가).
+
+- **P0(성공경로) `had_feasible` NameError**: finalizer 성공 경로에서 `had_feasible`가 정의 안 된 채 manifest에
+  쓰여 FDTD까지 끝내고 `SUCCESS.json`을 못 만들던 버그 → provenance 분기 앞에서 **항상 정의**하도록 수정.
+- **positive-path integration test 추가**: FDTD evaluator를 mock해서 valid provenance + DRC PASS →
+  `status=completed` + `SUCCESS.json`(Fx/Fy/F_sum) + artifact hash 까지 **실제 도달**을 검증(이 테스트가 없어 NameError를 놓쳤음).
+- **P1-4 넓은 phase None→하한**: 규칙보다 충분히 넓어 측정이 cap된 경우 `minimum_*_width_um`을 **수치 하한값 + `*_capped: true`**로 기록(“측정 실패”처럼 보이던 None 제거). gap도 동일(넓은 moat는 PASS).
+- **P1-5 provenance 완전화**: SUCCESS/manifest에 `design_config_hash`·`design_attempt`·`mapping_identity` 추가.
+- 잔여: **P1-1**(450nm constraint) 및 **Lumerical full-chain/1-stage smoke**는 실행 환경 필요 — 코드로는 미해결(정직).
+
 ## 코드리뷰 2차(2026-07-25, d90fe21) 대응 — 실행 차단 버그 6개 P0 수정
 `pytest inverse_design/tests/` = **64 passed** (integration guard 추가).
 

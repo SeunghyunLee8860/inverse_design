@@ -129,10 +129,13 @@ def main():
         raise SystemExit(2)
 
     # --- provenance: REQUIRE had_feasible(True), code_hash(match), identity(match) ---
+    # define had_feasible up front so it is ALWAYS bound (both strict and unsafe
+    # paths) -- it is written into the manifest on the success path.
+    had_feasible = bool(data["had_feasible"]) if "had_feasible" in data.files else None
     if not args.allow_unsafe_provenance:
         if "had_feasible" not in data.files:
             fail("missing_provenance", "design NPZ has no had_feasible field")
-        if bool(data["had_feasible"]) is not True:
+        if had_feasible is not True:
             fail("not_feasible", "design was not flagged had_feasible by the optimiser")
         if "code_hash" not in data.files:
             fail("missing_provenance", "design NPZ has no code_hash field")
@@ -214,6 +217,9 @@ def main():
         if p.exists():
             artifacts[name] = _sha256(p)
 
+    # P1-5: full provenance in the manifest/SUCCESS (scientific reproducibility)
+    design_config_hash = str(data["config_hash"]) if "config_hash" in data.files else None
+    design_attempt = int(data["attempt"]) if "attempt" in data.files else None
     manifest = {
         "status": "completed",
         "exact_binary": True,
@@ -224,6 +230,8 @@ def main():
         "exact_binary_fom": fom,
         "solid_fraction": float(mask_u.mean()),
         "design_code_hash": design_hash, "current_code_hash": current_hash,
+        "design_config_hash": design_config_hash, "design_attempt": design_attempt,
+        "mapping_identity": _identity(mapping, args.mfs_um, args.mgs_um),
         "had_feasible": had_feasible,
         "artifact_sha256": artifacts,
     }
@@ -243,8 +251,10 @@ def main():
         "minimum_void_width_um": drc["minimum_void_width_um"],
         "minimum_gap_um": drc["minimum_gap_um"],
         "Fx": fom["Fx"], "Fy": fom["Fy"], "F_sum": fom["F_sum"],
-        # provenance
+        # provenance (P1-5)
         "current_code_hash": current_hash, "design_code_hash": design_hash,
+        "design_config_hash": design_config_hash, "design_attempt": design_attempt,
+        "mapping_identity": manifest["mapping_identity"],
         "artifact_sha256": artifacts,
     }
     _write(output / "SUCCESS.json", success)   # written LAST

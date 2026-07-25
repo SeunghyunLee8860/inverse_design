@@ -193,14 +193,27 @@ def geometry_drc(
     solid_ok = (not trivial) and solid_w_um >= min_solid_width_um + guard
     void_ok = (not trivial) and void_w_um >= min_void_width_um + guard
 
+    # P1-4: a phase wider than the search cap is reported as a numeric LOWER
+    # BOUND (>= cap) with a `*_capped` flag, not None (which reads as
+    # "measurement failed").  A finite value is the true measured width.
+    cap_um = round(r_cap * spacing_um, 6)
+
+    def _rep(w_um):
+        return (round(w_um, 6), False) if np.isfinite(w_um) else (cap_um, True)
+
+    solid_rep, solid_capped = _rep(solid_w_um)
+    void_rep, void_capped = _rep(void_w_um)
+
     result = {
         "pass": bool(solid_ok and void_ok),
         "trivial_topology": bool(trivial),
         "periodic": True,
         "spacing_um": float(spacing_um),
         "solid_fraction": frac,
-        "minimum_solid_width_um": None if not np.isfinite(solid_w) else round(solid_w_um, 6),
-        "minimum_void_width_um": None if not np.isfinite(void_w) else round(void_w_um, 6),
+        "minimum_solid_width_um": solid_rep,
+        "minimum_solid_width_capped": bool(solid_capped),
+        "minimum_void_width_um": void_rep,
+        "minimum_void_width_capped": bool(void_capped),
         "minimum_gap_um": None,
         "solid_violations": [] if solid_ok else [{"pixel": solid_at, "width_um": solid_w_um}],
         "void_violations": [] if void_ok else [{"pixel": void_at, "width_um": void_w_um}],
@@ -225,10 +238,12 @@ def geometry_drc(
         # rule is actually measured (previously reported None but SUCCESS said
         # gap ok).
         if not np.isfinite(gap):
-            gap, gap_at = void_w_um, void_at
-        gap_ok = (not trivial) and np.isfinite(gap) and gap >= min_gap_um + guard
-        result["minimum_gap_um"] = None if not np.isfinite(gap) else round(gap, 6)
-        result["gap_violations"] = [] if gap_ok else [{"pixel": gap_at, "gap_um": gap}]
+            gap, gap_at = void_w_um, void_at   # may still be inf if the moat is wider than the cap
+        gap_ok = (not trivial) and gap >= min_gap_um + guard   # inf (capped) passes
+        gap_rep, gap_capped = _rep(gap)
+        result["minimum_gap_um"] = gap_rep
+        result["minimum_gap_capped"] = bool(gap_capped)
+        result["gap_violations"] = [] if gap_ok else [{"pixel": gap_at, "gap_um": gap_rep}]
         result["pass"] = bool(result["pass"] and gap_ok)
 
     ir = _imageruler_widths(solid, spacing_um)
