@@ -1,0 +1,122 @@
+{
+  "policy": "Large solver projects and raw 3-D fields are not committed; record SHA-256, byte size, server path, and generation command.",
+  "control_generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/25_validate_isolated_2um_heat_steady.py --output-dir photothermal_pte/validation/photothermal_stage1/output/20260725T_isolated_2um_heat_steady_controls_v3",
+  "new_full_device_raw_artifacts": [],
+  "new_full_device_raw_artifacts_reason": "mandatory controls failed before a full-device project or field was created",
+  "compact_control_artifacts": {
+    "control_results": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_isolated_2um_heat_steady_controls_v3/control_results.json",
+      "exists": true,
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/25_validate_isolated_2um_heat_steady.py --output-dir photothermal_pte/validation/photothermal_stage1/output/20260725T_isolated_2um_heat_steady_controls_v3",
+      "size_bytes": 14451,
+      "sha256": "85ceec9cd66df7c5653f5d275cc90794bf76524c79ef38443da48454b36976f8"
+    },
+    "validated_FDTD_summary": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/fdtd_qon/fdtd_absorption_summary.json",
+      "exists": true,
+      "generation_command": "/home/eidl/miniconda3/bin/python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/02_export_fdtd_qon.py --lumerical-version v261 --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady --fixed-geometry centered-disk --postprocess-project /home/seunghyun/tairte4/VOLUME_CURRENT_INVERSE_DESIGN_BASE_20260721/validation/photothermal_stage1/output/20260724T_production_optical_regression_v3/disk_x/production_case.fsp --validated-case-json /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/production_optical/cases/disk_x.json",
+      "size_bytes": 12708,
+      "sha256": "a43ec0c8c8d0bd80a7f396d2f6dd8b66195d0ce668d8c1ca9ebce8ffdadd5d0e"
+    },
+    "prior_API_evidence": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/tensor_retry/api_probe/thermal_material.json",
+      "exists": true,
+      "generation_command": null,
+      "size_bytes": 2104,
+      "sha256": "9dda70a05323129e94ffe2d8da5ab58841010609aba46de42afa91b0ce1943dd"
+    },
+    "isotropic_slab_solver_evidence": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/analytic_heat/analytic_summary.json",
+      "exists": true,
+      "generation_command": "/home/eidl/miniconda3/bin/python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/01_validate_heat_analytic.py --lumerical-version v261 --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady",
+      "size_bytes": 4192,
+      "sha256": "efb516725a402228ee5218e5bee86465552f3de3fc00d1411a35876412da2207"
+    }
+  },
+  "pre_existing_large_artifacts": {
+    "analytic_heat/coarse/analytic_temperature_profile.npz": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/analytic_heat/coarse/analytic_temperature_profile.npz",
+      "exists": true,
+      "generation_command": "/home/eidl/miniconda3/bin/python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/01_validate_heat_analytic.py --lumerical-version v261 --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady",
+      "size_bytes": 2173,
+      "sha256": "df32fa2b6a8ebcb3183b2a22e72b4f6772af29f245d1df49b417c09daa3cabc3"
+    },
+    "analytic_heat/coarse/heat_analytic.ldev": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/analytic_heat/coarse/heat_analytic.ldev",
+      "exists": true,
+      "generation_command": "/home/eidl/miniconda3/bin/python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/01_validate_heat_analytic.py --lumerical-version v261 --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady",
+      "size_bytes": 14487132,
+      "sha256": "fa7d7cfd922e2bacfddd7a49c5d10647203cf6279f5e5db04e2e491fd153f492"
+    },
+    "analytic_heat/fine/analytic_temperature_profile.npz": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/analytic_heat/fine/analytic_temperature_profile.npz",
+      "exists": true,
+      "generation_command": "/home/eidl/miniconda3/bin/python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/01_validate_heat_analytic.py --lumerical-version v261 --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady",
+      "size_bytes": 6204,
+      "sha256": "1248113a35e8d884d3206c7405724e12f10518da514a12f581210f72956ed233"
+    },
+    "analytic_heat/fine/heat_analytic.ldev": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/analytic_heat/fine/heat_analytic.ldev",
+      "exists": true,
+      "generation_command": "/home/eidl/miniconda3/bin/python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/01_validate_heat_analytic.py --lumerical-version v261 --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady",
+      "size_bytes": 224072190,
+      "sha256": "211096a25e712e0f6bfff7e5f8616affe387ddce137e365b05aa17646adf042e"
+    },
+    "analytic_heat/medium/analytic_temperature_profile.npz": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/analytic_heat/medium/analytic_temperature_profile.npz",
+      "exists": true,
+      "generation_command": "/home/eidl/miniconda3/bin/python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/01_validate_heat_analytic.py --lumerical-version v261 --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady",
+      "size_bytes": 3634,
+      "sha256": "6c2c8a257468ae5b56df00238bb32db021ea528b53fcef4c472f0fbff0b9b0dd"
+    },
+    "analytic_heat/medium/heat_analytic.ldev": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/analytic_heat/medium/heat_analytic.ldev",
+      "exists": true,
+      "generation_command": "/home/eidl/miniconda3/bin/python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/01_validate_heat_analytic.py --lumerical-version v261 --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady",
+      "size_bytes": 38094028,
+      "sha256": "e9277291235b8084fef04baf358346430cfc3c9c894e58a5dfedbd327f40c647"
+    },
+    "fdtd_qon/epsilon_material_slices.npz": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/fdtd_qon/epsilon_material_slices.npz",
+      "exists": true,
+      "generation_command": "/home/eidl/miniconda3/bin/python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/02_export_fdtd_qon.py --lumerical-version v261 --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady --fixed-geometry centered-disk --postprocess-project /home/seunghyun/tairte4/VOLUME_CURRENT_INVERSE_DESIGN_BASE_20260721/validation/photothermal_stage1/output/20260724T_production_optical_regression_v3/disk_x/production_case.fsp --validated-case-json /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/production_optical/cases/disk_x.json",
+      "size_bytes": 19226,
+      "sha256": "431080984ed4ddb6967cee2f6fd0ab852e4c88bf0f27a3afed5adc14b3f67cfa"
+    },
+    "fdtd_qon/fdtd_test.fsp": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/fdtd_qon/fdtd_test.fsp",
+      "exists": true,
+      "generation_command": "/home/eidl/miniconda3/bin/python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/02_export_fdtd_qon.py --lumerical-version v261 --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady --fixed-geometry centered-disk --postprocess-project /home/seunghyun/tairte4/VOLUME_CURRENT_INVERSE_DESIGN_BASE_20260721/validation/photothermal_stage1/output/20260724T_production_optical_regression_v3/disk_x/production_case.fsp --validated-case-json /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/production_optical/cases/disk_x.json",
+      "size_bytes": 308730159,
+      "sha256": "2c9cc544d0da0d1ef55cf984ae5c1ab8da9b87349523f47f76353cfcee13554f"
+    },
+    "fdtd_qon/fixed_binary_design.npz": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/fdtd_qon/fixed_binary_design.npz",
+      "exists": true,
+      "generation_command": "/home/eidl/miniconda3/bin/python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/02_export_fdtd_qon.py --lumerical-version v261 --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady --fixed-geometry centered-disk --postprocess-project /home/seunghyun/tairte4/VOLUME_CURRENT_INVERSE_DESIGN_BASE_20260721/validation/photothermal_stage1/output/20260724T_production_optical_regression_v3/disk_x/production_case.fsp --validated-case-json /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/production_optical/cases/disk_x.json",
+      "size_bytes": 10738,
+      "sha256": "dddf1cb235a5f8814d37e401f91dc699dc85fdf51dd22497fd2bd5a66f68510d"
+    },
+    "fdtd_qon/q_on_for_lumerical.mat": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/fdtd_qon/q_on_for_lumerical.mat",
+      "exists": true,
+      "generation_command": "/home/eidl/miniconda3/bin/python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/02_export_fdtd_qon.py --lumerical-version v261 --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady --fixed-geometry centered-disk --postprocess-project /home/seunghyun/tairte4/VOLUME_CURRENT_INVERSE_DESIGN_BASE_20260721/validation/photothermal_stage1/output/20260724T_production_optical_regression_v3/disk_x/production_case.fsp --validated-case-json /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/production_optical/cases/disk_x.json",
+      "size_bytes": 5838674,
+      "sha256": "34c00d8d3bc43e8cf33fdf5c92987ab9146506fee87146b0cd2331b1721e9e45"
+    },
+    "fdtd_qon/q_on_physical.npz": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/fdtd_qon/q_on_physical.npz",
+      "exists": true,
+      "generation_command": "/home/eidl/miniconda3/bin/python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/02_export_fdtd_qon.py --lumerical-version v261 --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady --fixed-geometry centered-disk --postprocess-project /home/seunghyun/tairte4/VOLUME_CURRENT_INVERSE_DESIGN_BASE_20260721/validation/photothermal_stage1/output/20260724T_production_optical_regression_v3/disk_x/production_case.fsp --validated-case-json /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/production_optical/cases/disk_x.json",
+      "size_bytes": 5842103,
+      "sha256": "32976a83f965159722cb5a39d8cb80fc9e7d96b574f302b6a91031d3c569f1be"
+    },
+    "fdtd_qon/q_on_raw.npz": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/fdtd_qon/q_on_raw.npz",
+      "exists": true,
+      "generation_command": "/home/eidl/miniconda3/bin/python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/02_export_fdtd_qon.py --lumerical-version v261 --output-dir /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady --fixed-geometry centered-disk --postprocess-project /home/seunghyun/tairte4/VOLUME_CURRENT_INVERSE_DESIGN_BASE_20260721/validation/photothermal_stage1/output/20260724T_production_optical_regression_v3/disk_x/production_case.fsp --validated-case-json /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/production_optical/cases/disk_x.json",
+      "size_bytes": 5860211,
+      "sha256": "b3bdb19804615bbaae275857d69779b149580cb55bf85d706752aa6f9c2c03e3"
+    }
+  }
+}
