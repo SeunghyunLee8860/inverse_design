@@ -97,7 +97,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--domain-um", type=float, default=8.0)
     parser.add_argument("--pml-layers", type=int, default=24)
     parser.add_argument("--flake-dz-nm", type=float, default=5.0)
-    parser.add_argument("--source-span-um", type=float, default=6.0)
+    parser.add_argument("--source-span-um", type=float, default=6.8)
     parser.add_argument("--waist-um", type=float, default=2.0)
     parser.add_argument(
         "--incident-reference",
@@ -1280,6 +1280,21 @@ def run_case(
         lateral_fraction = lateral_leakage / max(
             incident_power_scaled, np.finfo(float).tiny
         )
+        pair_asymmetry = {}
+        for axis in ("x", "y"):
+            low = abs(
+                outer_flux["faces"][f"{axis}_min"][
+                    "outward_power_W_at_1_W_m2"
+                ]
+            )
+            high = abs(
+                outer_flux["faces"][f"{axis}_max"][
+                    "outward_power_W_at_1_W_m2"
+                ]
+            )
+            pair_asymmetry[axis] = abs(low - high) / max(
+                0.5 * (low + high), np.finfo(float).tiny
+            )
         incident_reference[
             "empty_outer_net_outward_power_W_at_1_W_m2"
         ] = outer_flux["net_outward_power_W"]
@@ -1312,13 +1327,17 @@ def run_case(
             "six_face": inner_flux,
             "outer_power_box": outer_flux,
             "empty_stack_P_Q_W_at_1_W_m2": p_q_scaled,
+            "expected_Gaussian_lateral_diffraction_fraction": lateral_fraction,
+            "opposite_lateral_face_asymmetry": pair_asymmetry,
             "acceptance": {
-                "background_absorption_fraction_lt_1e_4": (
-                    inner_fraction < EMPTY_POWER_FRACTION_LIMIT
-                    and q_fraction < EMPTY_POWER_FRACTION_LIMIT
+                "lossless_volume_Q_fraction_lt_1e_4": (
+                    q_fraction < EMPTY_POWER_FRACTION_LIMIT
                 ),
-                "lateral_leakage_fraction_lt_1e_4": (
-                    lateral_fraction < EMPTY_POWER_FRACTION_LIMIT
+                "empty_six_face_residual_lt_0p5_percent": (
+                    inner_fraction < POWER_CLOSURE_LIMIT
+                ),
+                "opposite_lateral_flux_asymmetry_lt_1e_4": (
+                    max(pair_asymmetry.values()) < 1.0e-4
                 ),
                 "source_aperture_edge_to_central_lt_5_percent": (
                     incident_reference["source_aperture_edge_to_central"] < 0.05

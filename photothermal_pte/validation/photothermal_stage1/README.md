@@ -196,5 +196,5 @@ python \
   photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py \
   --output-dir /absolute/path/to/new-empty-directory \
   --case empty-stack --domain-um 8 --pml-layers 24 --flake-dz-nm 5 \
-  --source-span-um 6 --waist-um 2 --gpu-device "GPU 0" --contract-only
+  --source-span-um 6.8 --waist-um 2 --gpu-device "GPU 0" --contract-only
 ```
