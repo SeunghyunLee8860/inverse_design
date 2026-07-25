@@ -232,4 +232,8 @@ trapezoidal weights as FVM control-volume widths, so `sum(Q*dV)` is
 algebraically identical to the original optical integration. It fails on a
 SHA mismatch, non-finite data, ordering/mask/normalization mismatch, power
 error at or above 0.5%, or any clipping, smoothing, gain, rescaling, crop,
-tiling, or outside-flake deletion.
+tiling, or outside-flake deletion. It also writes the production source on
+cells contained exactly inside the 2 um x 2 um x 100 nm flake: each original
+nodal quadrature energy parcel is deposited one-to-one, and the receiving Q
+density is derived from the conserved parcel power and physical cell volume.
+No nonzero parcel is discarded, averaged, or globally rescaled.

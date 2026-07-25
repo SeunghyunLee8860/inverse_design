@@ -41,6 +41,25 @@ They remain inside the explicit `1e-15 m` roundoff-inclusive physical mask
 used by PR #3, and the mapper preserves them without deletion or alteration.
 Q is exactly zero outside that physical mask.
 
+## Exact-flake production source
+
+For the thermal geometry, every original nodal quadrature energy parcel
+`Q*w_x*w_y*w_z` is deposited one-to-one into a cell contained inside the
+exact `2 um x 2 um x 100 nm` flake. This is necessary because the validated
+padded-grid trapezoid convention assigns a full quadrature weight to nonzero
+boundary samples. No parcel is deleted or averaged, and no empirical gain or
+global rescaling is applied. The receiving volumetric density is obtained
+only by dividing each conserved parcel power by its physical cell volume.
+
+The exact-flake source shape is
+`[76, 76, 21]` and its bounds are
+`{'x': [-1e-06, 1e-06], 'y': [-1e-06, 1e-06], 'z': [-1e-07, 0.0]}`. Its summed power is
+`2.56071371086521e-12 W`
+with relative error
+`0`.
+The source-energy and mapped-cell-power array hashes are identical:
+`dece160abd9965047d2902e6d1bf07fad0146fc306a543a60d79b51a7fd31caf`.
+
 ## Gate
 
 The finite optical-Q conservative import gate passes. The next permitted

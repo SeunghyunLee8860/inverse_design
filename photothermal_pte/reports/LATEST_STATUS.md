@@ -147,6 +147,17 @@
 - `5772` nonzero boundary samples at `z=5.790264e-23 m` are excluded by the
   stored strict boolean mask but lie inside the explicit `1e-15 m`
   roundoff-inclusive physical mask; all were preserved unchanged
+- Exact-flake production source: `[76,76,21]` cells with bounds exactly
+  `[-1,1] um x [-1,1] um x [-100,0] nm`
+- Exact-flake mapping: one-to-one deposition of each original
+  `Q*w_x*w_y*w_z` nodal energy parcel into its physical boundary/interior
+  cell
+- Source-energy/mapped-cell-power SHA-256:
+  `dece160abd9965047d2902e6d1bf07fad0146fc306a543a60d79b51a7fd31caf`
+- Exact-flake summed power: `2.56071371086521e-12 W`; relative error `0`
+- Nonzero source energy deleted: `0 W`
+- Empirical gain, global rescaling, and sample averaging in exact-flake
+  deposition: all `false`
 - Independent import rerun reproduced SHA and power exactly
 - Finite optical-Q used in thermal solve: `false`
 - Next permitted step:

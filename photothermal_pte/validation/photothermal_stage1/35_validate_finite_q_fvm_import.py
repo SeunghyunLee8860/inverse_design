@@ -172,6 +172,24 @@ def quadrature_edges(coordinate_m: np.ndarray) -> np.ndarray:
     return edges
 
 
+def exact_physical_edges(
+    coordinate_m: np.ndarray,
+    selected: np.ndarray,
+    bounds_m: list[float],
+) -> np.ndarray:
+    """Build cells contained exactly inside a requested physical interval."""
+    coordinate = np.asarray(coordinate_m, float).reshape(-1)[selected]
+    if coordinate.size < 2:
+        raise ValueError("physical interval has too few source samples")
+    edges = np.empty(coordinate.size + 1, float)
+    edges[0] = bounds_m[0]
+    edges[-1] = bounds_m[1]
+    edges[1:-1] = 0.5 * (coordinate[:-1] + coordinate[1:])
+    if not np.all(np.diff(edges) > 0.0):
+        raise ValueError("exact physical FVM edges are not increasing")
+    return edges
+
+
 def trapezoidal_integral(
     values: np.ndarray,
     x_m: np.ndarray,
@@ -354,6 +372,70 @@ def map_q(path: Path, output: Path) -> dict[str, Any]:
                 "elementwise_copy_to_trapezoidal_quadrature_control_volumes"
             ),
         )
+
+        selected_axes = (
+            (x >= EXACT_FLAKE_BOUNDS_M["x"][0] - COORDINATE_ROUNDOFF_TOLERANCE_M)
+            & (x <= EXACT_FLAKE_BOUNDS_M["x"][1] + COORDINATE_ROUNDOFF_TOLERANCE_M),
+            (y >= EXACT_FLAKE_BOUNDS_M["y"][0] - COORDINATE_ROUNDOFF_TOLERANCE_M)
+            & (y <= EXACT_FLAKE_BOUNDS_M["y"][1] + COORDINATE_ROUNDOFF_TOLERANCE_M),
+            (z >= EXACT_FLAKE_BOUNDS_M["z"][0] - COORDINATE_ROUNDOFF_TOLERANCE_M)
+            & (z <= EXACT_FLAKE_BOUNDS_M["z"][1] + COORDINATE_ROUNDOFF_TOLERANCE_M),
+        )
+        exact_edges = tuple(
+            exact_physical_edges(axis, selected, EXACT_FLAKE_BOUNDS_M[name])
+            for axis, selected, name in zip(
+                (x, y, z), selected_axes, ("x", "y", "z")
+            )
+        )
+        exact_widths = tuple(np.diff(item) for item in exact_edges)
+        exact_volume = (
+            exact_widths[0][:, None, None]
+            * exact_widths[1][None, :, None]
+            * exact_widths[2][None, None, :]
+        )
+        nodal_energy_W = q * volume
+        nonzero_energy_outside_physical_W = float(
+            np.sum(np.abs(nodal_energy_W[~physical_mask]))
+        )
+        exact_cell_power_W = nodal_energy_W[
+            np.ix_(*selected_axes)
+        ].copy()
+        exact_q_W_m3 = exact_cell_power_W / exact_volume
+        exact_power_W = float(np.sum(exact_cell_power_W))
+        exact_mapping_error = abs(
+            exact_power_W - EXPECTED_POWER_W
+        ) / EXPECTED_POWER_W
+        source_energy_sha = sha256_array(
+            nodal_energy_W[np.ix_(*selected_axes)]
+        )
+        mapped_cell_power_sha = sha256_array(exact_cell_power_W)
+        exact_mapping_passed = bool(
+            nonzero_energy_outside_physical_W == 0.0
+            and source_energy_sha == mapped_cell_power_sha
+            and exact_mapping_error < POWER_LIMIT
+            and np.all(np.isfinite(exact_q_W_m3))
+        )
+        exact_path = output / "finite_q_exact_flake_source.npz"
+        np.savez_compressed(
+            exact_path,
+            x_edges_m=exact_edges[0],
+            y_edges_m=exact_edges[1],
+            z_edges_m=exact_edges[2],
+            Q_fvm_W_m3=exact_q_W_m3,
+            source_power_per_cell_W=exact_cell_power_W,
+            source_optical_sample_x_m=x[selected_axes[0]],
+            source_optical_sample_y_m=y[selected_axes[1]],
+            source_optical_sample_z_m=z[selected_axes[2]],
+            incident_intensity_W_m2=incident_intensity,
+            source_artifact_sha256=actual_sha,
+            mapping_method=(
+                "one_to_one_conservative_nodal_quadrature_energy_deposition_"
+                "inside_exact_flake_bounds"
+            ),
+            empirical_gain_applied=False,
+            global_rescaling_applied=False,
+        )
+        passed = passed and exact_mapping_passed
     return {
         "status": (
             "VALIDATED_FINITE_OPTICAL_Q_FVM_IMPORT"
@@ -366,6 +448,7 @@ def map_q(path: Path, output: Path) -> dict[str, Any]:
         "source_artifact_sha256_expected": EXPECTED_SHA256,
         "source_artifact_sha256_actual": actual_sha,
         "mapped_artifact_path": str(mapped_path),
+        "exact_flake_production_source_path": str(exact_path),
         "shape_xyz": list(shape),
         "coordinate_order": ["x", "y", "z"],
         "optical_coordinate_bounds_m": {
@@ -413,6 +496,35 @@ def map_q(path: Path, output: Path) -> dict[str, Any]:
             "elementwise Q copy; FVM cell widths exactly equal original "
             "trapezoidal quadrature weights"
         ),
+        "exact_flake_production_mapping": {
+            "status": (
+                "PASSED_CONSERVATIVE_EXACT_FLAKE_DEPOSITION"
+                if exact_mapping_passed
+                else "FAILED_CONSERVATIVE_EXACT_FLAKE_DEPOSITION"
+            ),
+            "passed": exact_mapping_passed,
+            "shape_xyz": list(exact_q_W_m3.shape),
+            "bounds_m": {
+                name: [float(axis[0]), float(axis[-1])]
+                for name, axis in zip(("x", "y", "z"), exact_edges)
+            },
+            "source_nodal_energy_array_sha256": source_energy_sha,
+            "mapped_cell_power_array_sha256": mapped_cell_power_sha,
+            "nonzero_source_energy_deleted_W": (
+                nonzero_energy_outside_physical_W
+            ),
+            "P_Q_exact_flake_sum_cell_power_W": exact_power_W,
+            "relative_power_error": exact_mapping_error,
+            "empirical_gain_applied": False,
+            "global_rescaling_applied": False,
+            "sample_averaging_applied": False,
+            "mapping_semantics": (
+                "each original nodal trapezoidal energy parcel is deposited "
+                "one-to-one into its exact-flake boundary/interior cell; "
+                "Q density is derived only by dividing conserved parcel "
+                "power by the receiving physical cell volume"
+            ),
+        },
         "interpolation_applied": False,
         "forbidden_operations_applied": {
             **forbidden,
@@ -430,6 +542,10 @@ def map_q(path: Path, output: Path) -> dict[str, Any]:
             "mapped_Q_elementwise_identical": True,
             "sum_QdV_relative_error_lt": POWER_LIMIT,
             "quadrature_equivalence_relative_error_lt": 1.0e-12,
+            "exact_flake_conservative_deposition_relative_error_lt": (
+                POWER_LIMIT
+            ),
+            "nonzero_source_energy_deleted_W_eq": 0.0,
             "no_forbidden_operations": True,
         },
     }
@@ -453,6 +569,18 @@ def write_cases_csv(path: Path, result: dict[str, Any]) -> None:
         ],
         "interpolation_applied": result["interpolation_applied"],
         "incident_intensity_W_m2": result["incident_intensity_W_m2"],
+        "exact_flake_shape_xyz": "x".join(
+            map(
+                str,
+                result["exact_flake_production_mapping"]["shape_xyz"],
+            )
+        ),
+        "exact_flake_P_Q_W": result["exact_flake_production_mapping"][
+            "P_Q_exact_flake_sum_cell_power_W"
+        ],
+        "exact_flake_mapping_error": result[
+            "exact_flake_production_mapping"
+        ]["relative_power_error"],
     }
     with path.open("w", newline="", encoding="utf-8") as stream:
         writer = csv.DictWriter(
@@ -506,6 +634,25 @@ They remain inside the explicit `1e-15 m` roundoff-inclusive physical mask
 used by PR #3, and the mapper preserves them without deletion or alteration.
 Q is exactly zero outside that physical mask.
 
+## Exact-flake production source
+
+For the thermal geometry, every original nodal quadrature energy parcel
+`Q*w_x*w_y*w_z` is deposited one-to-one into a cell contained inside the
+exact `2 um x 2 um x 100 nm` flake. This is necessary because the validated
+padded-grid trapezoid convention assigns a full quadrature weight to nonzero
+boundary samples. No parcel is deleted or averaged, and no empirical gain or
+global rescaling is applied. The receiving volumetric density is obtained
+only by dividing each conserved parcel power by its physical cell volume.
+
+The exact-flake source shape is
+`{result["exact_flake_production_mapping"]["shape_xyz"]}` and its bounds are
+`{result["exact_flake_production_mapping"]["bounds_m"]}`. Its summed power is
+`{result["exact_flake_production_mapping"]["P_Q_exact_flake_sum_cell_power_W"]:.15g} W`
+with relative error
+`{result["exact_flake_production_mapping"]["relative_power_error"]:.6g}`.
+The source-energy and mapped-cell-power array hashes are identical:
+`{result["exact_flake_production_mapping"]["mapped_cell_power_array_sha256"]}`.
+
 ## Gate
 
 The finite optical-Q conservative import gate passes. The next permitted
@@ -543,6 +690,7 @@ def write_manifest(
 ) -> None:
     candidates = [
         output / "finite_q_fvm_control_volumes.npz",
+        output / "finite_q_exact_flake_source.npz",
         report_dir / "FINITE_OPTICAL_Q_FVM_IMPORT_REPORT.md",
         report_dir / "finite_q_fvm_import_summary.json",
         report_dir / "finite_q_fvm_import_cases.csv",

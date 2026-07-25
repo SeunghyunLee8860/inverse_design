@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "20260725T202139Z",
+  "generated_at_utc": "20260725T202541Z",
   "status": "VALIDATED_FINITE_OPTICAL_Q_FVM_IMPORT",
   "passed": true,
   "pr3_manifest": {
@@ -18,7 +18,8 @@
   "source_artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8/finite_q_on_artifact.npz",
   "source_artifact_sha256_expected": "7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794",
   "source_artifact_sha256_actual": "7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794",
-  "mapped_artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_finite_q_import/import_v2/finite_q_fvm_control_volumes.npz",
+  "mapped_artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_finite_q_import/import_v4/finite_q_fvm_control_volumes.npz",
+  "exact_flake_production_source_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_finite_q_import/import_v4/finite_q_exact_flake_source.npz",
   "shape_xyz": [
     80,
     80,
@@ -90,6 +91,38 @@
   "quadrature_equivalence_relative_error": 0.0,
   "allowed_mapping_relative_error": 0.005,
   "mapping_method": "elementwise Q copy; FVM cell widths exactly equal original trapezoidal quadrature weights",
+  "exact_flake_production_mapping": {
+    "status": "PASSED_CONSERVATIVE_EXACT_FLAKE_DEPOSITION",
+    "passed": true,
+    "shape_xyz": [
+      76,
+      76,
+      21
+    ],
+    "bounds_m": {
+      "x": [
+        -1e-06,
+        1e-06
+      ],
+      "y": [
+        -1e-06,
+        1e-06
+      ],
+      "z": [
+        -1e-07,
+        0.0
+      ]
+    },
+    "source_nodal_energy_array_sha256": "dece160abd9965047d2902e6d1bf07fad0146fc306a543a60d79b51a7fd31caf",
+    "mapped_cell_power_array_sha256": "dece160abd9965047d2902e6d1bf07fad0146fc306a543a60d79b51a7fd31caf",
+    "nonzero_source_energy_deleted_W": 0.0,
+    "P_Q_exact_flake_sum_cell_power_W": 2.56071371086521e-12,
+    "relative_power_error": 0.0,
+    "empirical_gain_applied": false,
+    "global_rescaling_applied": false,
+    "sample_averaging_applied": false,
+    "mapping_semantics": "each original nodal trapezoidal energy parcel is deposited one-to-one into its exact-flake boundary/interior cell; Q density is derived only by dividing conserved parcel power by the receiving physical cell volume"
+  },
   "interpolation_applied": false,
   "forbidden_operations_applied": {
     "clipping": false,
@@ -108,6 +141,8 @@
     "mapped_Q_elementwise_identical": true,
     "sum_QdV_relative_error_lt": 0.005,
     "quadrature_equivalence_relative_error_lt": 1e-12,
+    "exact_flake_conservative_deposition_relative_error_lt": 0.005,
+    "nonzero_source_energy_deleted_W_eq": 0.0,
     "no_forbidden_operations": true
   }
 }
