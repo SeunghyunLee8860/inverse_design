@@ -1198,6 +1198,7 @@ def run_case(
     args: argparse.Namespace,
     output: Path,
     setup: dict[str, Any],
+    pre_run_contract: dict[str, Any],
 ) -> dict[str, Any]:
     resource = runtime.run_session(
         fdtd,
@@ -1416,6 +1417,8 @@ def run_case(
         artifact["z_m"],
     )
     metadata = {
+        "generation_commit": git_commit(),
+        "generation_command": shlex.join([sys.executable, *sys.argv]),
         "geometry_bounds_m": setup["geometry"],
         "material_names": {
             "TaIrTe4": MATERIAL_NAME,
@@ -1435,6 +1438,7 @@ def run_case(
         },
         "analysis_wavelength_m": TARGET_WAVELENGTH_M,
         "incident_intensity_W_m2": TARGET_INTENSITY_W_M2,
+        "realized_pre_run_contract": pre_run_contract,
         "exact_flake_bounds_m": FLAKE_BOUNDS_M,
         "pabs_zero_padding_m": {
             "x_min": PABS_PADDING_M,
@@ -1455,6 +1459,20 @@ def run_case(
     np.savez(
         output / "finite_q_on_artifact.npz",
         **artifact,
+        exact_flake_mask=(
+            (
+                (artifact["x_m"][:, None, None] >= FLAKE_BOUNDS_M["x"][0])
+                & (artifact["x_m"][:, None, None] <= FLAKE_BOUNDS_M["x"][1])
+            )
+            & (
+                (artifact["y_m"][None, :, None] >= FLAKE_BOUNDS_M["y"][0])
+                & (artifact["y_m"][None, :, None] <= FLAKE_BOUNDS_M["y"][1])
+            )
+            & (
+                (artifact["z_m"][None, None, :] >= FLAKE_BOUNDS_M["z"][0])
+                & (artifact["z_m"][None, None, :] <= FLAKE_BOUNDS_M["z"][1])
+            )
+        ),
         incident_intensity_W_m2=np.asarray([TARGET_INTENSITY_W_M2]),
         P_abs_volume_W=np.asarray([p_q]),
         P_abs_six_face_W=np.asarray([p_six_face]),
@@ -1600,7 +1618,9 @@ def main() -> int:
             write_json(result_path, result)
             return_code = 0
         else:
-            run_result = run_case(fdtd, runtime, args, output, setup)
+            run_result = run_case(
+                fdtd, runtime, args, output, setup, pre_run
+            )
             result["run_result"] = run_result
             acceptance = run_result.get("acceptance", {})
             all_pass = bool(acceptance) and all(bool(v) for v in acceptance.values())

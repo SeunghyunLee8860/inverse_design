@@ -188,6 +188,10 @@ criterion must pass.
 - This path never calls HEAT, the optimizer, mapping/projection, adjoint, or
   gradient code, and it does not crop, tile, gain-correct, or rescale a
   periodic artifact.
+- `28_summarize_finite_2um_optical_q.py` reads completed case JSON/NPZ files
+  without rerunning FDTD, writes the required cases CSV, summary JSON, raw-file
+  SHA manifest, and domain/PML/mesh/waist convergence figures, and remains
+  fail-closed until all required sweeps exist.
 
 Example contract-only build:
 
