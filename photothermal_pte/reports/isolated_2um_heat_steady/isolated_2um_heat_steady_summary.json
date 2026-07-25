@@ -1,0 +1,180 @@
+{
+  "status": "BLOCKED",
+  "validated": false,
+  "baseline_optical_commit": "be2cbc2c9c77bbcc0265ce2c293affdbb08105de",
+  "blockers": [
+    "BLOCKED_ANISOTROPIC_K_UNSUPPORTED",
+    "BLOCKED_Q_ARTIFACT_INCOMPATIBLE_WITH_2UM_FOOTPRINT",
+    "BLOCKED_INTERFACE_G_UNVERIFIED",
+    "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE"
+  ],
+  "unit_response_mode": true,
+  "incident_intensity_W_m2": 1.0,
+  "Q_power": {
+    "P_Q_full_validated_grid_W": 1.6790733985800054e-11,
+    "P_Q_inside_requested_2um_TaIrTe4_W": 5.465816178457092e-12,
+    "inside_power_fraction": 0.32552574432300224,
+    "outside_power_fraction": 0.6744742556769978,
+    "predicted_FDTD_to_HEAT_import_relative_error": 0.6744742556769978,
+    "acceptance_limit": 0.005
+  },
+  "anisotropic_kappa": {
+    "diagonal_request_W_mK": [
+      14.4,
+      3.8,
+      1.0
+    ],
+    "diagonal_return": [
+      0.0
+    ],
+    "diagonal_round_trip": false,
+    "status": "BLOCKED_ANISOTROPIC_K_UNSUPPORTED"
+  },
+  "analytic_controls": {
+    "single_isotropic_slab": {
+      "name": "single_isotropic_slab",
+      "method": "independent cell-centered 1D finite-volume reference",
+      "solver_verified": true,
+      "offline_reference_passed": true,
+      "cells": 400,
+      "deltaT_top_exact_K": 5.0,
+      "deltaT_top_numeric_K": 5.000007812499674,
+      "relative_error_deltaT_top": 1.5624999347707558e-06,
+      "normalized_rmse": 1.5624999375666375e-06,
+      "solver_evidence": {
+        "available": true,
+        "artifact": {
+          "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/20260725T_validated_qon_heat_steady/analytic_heat/analytic_summary.json",
+          "exists": true,
+          "generation_command": null,
+          "size_bytes": 4192,
+          "sha256": "efb516725a402228ee5218e5bee86465552f3de3fc00d1411a35876412da2207"
+        },
+        "status": "passed",
+        "validated": true,
+        "selected_version": "v261",
+        "finest": {
+          "mesh_label": "fine",
+          "target_max_edge_length_m": 2.5e-08,
+          "material": {
+            "model_material": "stage1 analytic material",
+            "thermal_property": "stage1 analytic material thermal",
+            "thermal_conductivity_W_mK": 10.0,
+            "mass_density": "not set; unused by steady-state equation",
+            "specific_heat": "not set; unused by steady-state equation"
+          },
+          "input_power_W": 9.999999999999999e-05,
+          "bottom_outflow_power_W": 9.905341268465234e-05,
+          "bottom_power_raw_signed_W": -9.905341268465234e-05,
+          "bottom_power_attribute": "P_T_bottom",
+          "deltaT_max_exact_K": 5.0,
+          "deltaT_max_numeric_K": 4.999876753764568,
+          "T_max_exact_K": 305.0,
+          "T_max_numeric_K": 304.99987675376457,
+          "maximum_absolute_error_K": 0.0007829127242189315,
+          "relative_error_deltaT_max": 2.4649247086472316e-05,
+          "normalized_rmse": 6.480184410812752e-05,
+          "energy_error": 0.009465873153476556,
+          "pass": true
+        }
+      }
+    },
+    "multilayer_SiO2_Si": {
+      "name": "multilayer_SiO2_Si_1D_resistance",
+      "method": "layer-aligned finite-volume resistance sum",
+      "solver_verified": false,
+      "offline_reference_passed": true,
+      "heat_flux_W_m2": 1.0,
+      "thermal_resistance_exact_m2K_W": 3.4445277361319345e-07,
+      "thermal_resistance_numeric_m2K_W": 3.4445277361319345e-07,
+      "deltaT_exact_K": 3.4445277361319345e-07,
+      "relative_error": 0.0
+    },
+    "interface_G_analytic": {
+      "name": "thermal_impedance_interface_G",
+      "method": "series resistance with explicit 1/G interface",
+      "solver_verified": false,
+      "offline_reference_passed": true,
+      "G_W_m2K": 7370000.0,
+      "heat_flux_W_m2": 250000.0,
+      "expected_interface_temperature_jump_K": 0.033921302578018994,
+      "total_deltaT_exact_K": 0.063921302578019,
+      "total_deltaT_reconstructed_K": 0.063921302578019,
+      "relative_error": 0.0
+    }
+  },
+  "full_device_executed": false,
+  "cases_completed": 0,
+  "domain_converged": false,
+  "energy_balance_passed": false,
+  "sweep_contract": {
+    "active_device": {
+      "TaIrTe4_span_m": [
+        2e-06,
+        2e-06
+      ],
+      "TaIrTe4_thickness_m": 1e-07,
+      "design_material": "SiO2",
+      "design_height_m": 6e-07,
+      "bottom_SiO2_thickness_m": 2.85e-07
+    },
+    "materials_W_mK": {
+      "TaIrTe4_diagonal": [
+        14.4,
+        3.8,
+        1.0
+      ],
+      "TaIrTe4_kz_note": "estimated value",
+      "SiO2": 1.38,
+      "Si": 145.0
+    },
+    "lateral_domain_spans_m": [
+      4e-06,
+      8e-06,
+      1.6e-05,
+      3.2e-05
+    ],
+    "Si_depths_m": [
+      2e-06,
+      4.9999999999999996e-06,
+      9.999999999999999e-06,
+      1.9999999999999998e-05
+    ],
+    "G_bottom_W_m2K": [
+      1000000.0,
+      3000000.0,
+      7370000.0,
+      15000000.0,
+      30000000.0,
+      100000000.0,
+      "perfect"
+    ],
+    "G_top_W_m2K": [
+      73700.0,
+      737000.0,
+      7370000.0,
+      73700000.0,
+      "perfect"
+    ],
+    "G_oxide_Si_W_m2K": 1100000000.0,
+    "oxide_Si_perfect_contact_comparison": true,
+    "boundaries": {
+      "bottom_Si": "T=300 K",
+      "far_x_y_Si_and_SiO2": "T=300 K",
+      "top_exposed_baseline": "adiabatic",
+      "top_exposed_sensitivity": "h=10 W/(m2 K), Tamb=300 K",
+      "thermal_periodic": false,
+      "thermal_PML": false
+    },
+    "acceptance": {
+      "Q_import_relative_error": 0.005,
+      "energy_balance_relative_error": 0.01,
+      "domain_deltaT_max_relative_change": 0.01,
+      "domain_TaIrTe4_average_relative_change": 0.01
+    }
+  },
+  "raw_control_results_manifest": {
+    "filename": "control_results.json",
+    "not_committed_reason": "raw run output remains outside Git"
+  }
+}

@@ -4,22 +4,25 @@
 
 - Branch: `agent/validate-isolated-2um-heat-steady`
 - Optical baseline: `be2cbc2c9c77bbcc0265ce2c293affdbb08105de`
-- Optical code and validated production `Q_on`: unchanged
-- Scope: steady state only; no transient, PTE current, adjoint, gradient, or
-  optimization
-- Current state: execution-path audit complete; API/analytic controls in
-  progress
+- Optical code and validated production Q: unchanged
+- Status: `BLOCKED`
+- Full-device HEAT cases executed: `false`
+- Transient/PTE/adjoint/gradient/optimization executed: `false`
 
-### Fail-closed findings
+### Active blockers
 
-1. Existing v261 evidence does not round-trip diagonal TaIrTe4 conductivity:
-   requested `[14.4, 3.8, 1.0]`, returned `[0.0]`.
-2. The immutable validated source belongs to a 6 um periodic TaIrTe4 volume.
-   Only 32.5525744323% of its power lies inside the requested 2 um by 2 um
-   footprint, so importing it into that finite solid would violate the 0.5%
-   conservation criterion.
-3. A live v261 re-probe is currently unavailable because DEVICE cannot start
-   its Ansys license-sharing client on this host.
+- `BLOCKED_ANISOTROPIC_K_UNSUPPORTED`
+- `BLOCKED_Q_ARTIFACT_INCOMPATIBLE_WITH_2UM_FOOTPRINT`
+- `BLOCKED_INTERFACE_G_UNVERIFIED`
+- `BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE`
 
-Full-device domain/depth and interface-G sweeps remain prohibited until all
-mandatory controls pass.
+### Key measurements
+
+- Validated full-grid Q power: `1.6790733985800054e-11 W`
+- Q power inside requested 2 um footprint: `5.465816178457092e-12 W`
+- Predicted import mismatch: `67.447425568%`
+- Allowed import mismatch: `0.5%`
+- v261 diagonal-kappa request `[14.4, 3.8, 1.0]` returned `[0.0]`
+
+No isotropic fallback, Q clipping, gain, smoothing, rescaling, or
+periodic tiling is permitted.
