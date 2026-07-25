@@ -445,7 +445,7 @@ def write_cases_csv(path: Path, rows: list[dict[str, Any]]) -> None:
     public = [public_row(row) for row in rows]
     keys = list(public[0]) if public else []
     with path.open("w", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=keys)
+        writer = csv.DictWriter(stream, fieldnames=keys, lineterminator="\n")
         writer.writeheader()
         writer.writerows(public)
 

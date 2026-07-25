@@ -4,10 +4,10 @@
 
 - Branch: `agent/validate-finite-2um-optical-q`
 - Baseline: `be2cbc2c9c77bbcc0265ce2c293affdbb08105de`
-- Status: `CONVERGENCE_PASSED_FINAL_REPORT_PACKAGING`
+- Status: `FINITE_2UM_OPTICAL_Q_VALIDATED`
 - HEAT Draft PR #2: unchanged and still blocked
 - Periodic production optical path: unchanged
-- New finite Q artifact validated: `false` (final report packaging pending)
+- New finite Q artifact validated: `true`
 
 The actual v261 GPU solver rejected TFSF as unsupported. The validated source
 is therefore a finite Gaussian beam, never called a plane wave: 3–6 µm
