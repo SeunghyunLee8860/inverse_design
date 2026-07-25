@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "20260725T222853Z",
+  "branch": "agent/validate-fvm-thermal-physical-model",
+  "generation_commit": "e28d1ccd7056e2a9cb016467a69692995e401425",
+  "immutable_numerical_checkpoint": "437ec0644b15a4b9a6919a0151e4aa531fb1e0ab",
+  "PR3_artifact_in_ancestry": false,
+  "external_PR3_artifact_SHA256": "7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794",
+  "raw_NPZ_committed_to_git": false,
+  "artifact_count": 30,
+  "artifacts": [
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_control_Gtop_7p37e6_kz_1/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_control_Gtop_7p37e6_kz_1/case_result.json",
+      "bytes": 6666,
+      "sha256": "8fd973a37f0e9d28fe2283fea11e3b294117935d6037ac598021e7cc78d5680c"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_control_Gtop_7p37e6_kz_1/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_control_Gtop_7p37e6_kz_1/temperature_flux_3d.npz",
+      "bytes": 51812426,
+      "sha256": "205340042ab3cfbc0a75ebe158247fc20da3774ed5ed8719e21120f9da8342d0"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_evaporated_SiO2_estimate_Gtop_7p37e4/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_evaporated_SiO2_estimate_Gtop_7p37e4/case_result.json",
+      "bytes": 6741,
+      "sha256": "b69781645be92372bef87910f7a2889a7098be0de51da8be877f604244ad296f"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_evaporated_SiO2_estimate_Gtop_7p37e4/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_evaporated_SiO2_estimate_Gtop_7p37e4/temperature_flux_3d.npz",
+      "bytes": 51729240,
+      "sha256": "ce5fcd4413a5a5fcd4c2e55c0acbf8f206bf12e4d5d4e1c1d24e8dcf0cd7da77"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_exposed_convection_h10/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_exposed_convection_h10/case_result.json",
+      "bytes": 6746,
+      "sha256": "5fbe592c020d7e66a5530089b9f67be7e272d64ee466a8972a43af763c322450"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_exposed_convection_h10/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_exposed_convection_h10/temperature_flux_3d.npz",
+      "bytes": 51812120,
+      "sha256": "0bbaee9f148b582003c456e239880f4f767cb83ce1babc490ef32ea00ce57f68"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_exposed_convection_h20/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_exposed_convection_h20/case_result.json",
+      "bytes": 6743,
+      "sha256": "073bc313d8acc97a0eece199c90d2f45d7fc7e852dcb6ade3162982de6206e4b"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_exposed_convection_h20/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_exposed_convection_h20/temperature_flux_3d.npz",
+      "bytes": 51812628,
+      "sha256": "5c188c00d6a308a4e5085edee3e99f8157428cff22e1803ca169c62b3b1b93cf"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_exposed_convection_h5/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_exposed_convection_h5/case_result.json",
+      "bytes": 6736,
+      "sha256": "3d38d24b23a164659f83fe7617fdbf34035fda9167630d031479320d7234e45c"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_exposed_convection_h5/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_exposed_convection_h5/temperature_flux_3d.npz",
+      "bytes": 51812710,
+      "sha256": "7f62110d800a68318ac52b99bb3846f0766b482b877413be55b1f549e01c4b9f"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_far_xy_adiabatic_bottom_fixed/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_far_xy_adiabatic_bottom_fixed/case_result.json",
+      "bytes": 6680,
+      "sha256": "9ef845ae6fec80776125ec26a8495f9ae91f018aed2987a40a6a904b58474477"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_far_xy_adiabatic_bottom_fixed/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_far_xy_adiabatic_bottom_fixed/temperature_flux_3d.npz",
+      "bytes": 51753530,
+      "sha256": "9a2dbe669ec5f5d1ff111889a8b37b89468b86e8d3078da1da5afb1befc14278"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_geometry_oxide_supported_overhang/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_geometry_oxide_supported_overhang/case_result.json",
+      "bytes": 6779,
+      "sha256": "46f685964e566cd1ba8bf3eccf08fc668f524c5708281f76dce9ceaeb5d890f8"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_geometry_oxide_supported_overhang/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_geometry_oxide_supported_overhang/temperature_flux_3d.npz",
+      "bytes": 53354300,
+      "sha256": "297884490c2db5a9aaa16e240d373345919b0b0d95e220ff45ec73beaa825547"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_geometry_oxide_supported_overhang_refined/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_geometry_oxide_supported_overhang_refined/case_result.json",
+      "bytes": 7001,
+      "sha256": "de655032b2dccdaf35223b53bee188e787b30c888d7877248d8b7af2d7ee4a5c"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_geometry_oxide_supported_overhang_refined/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_geometry_oxide_supported_overhang_refined/temperature_flux_3d.npz",
+      "bytes": 181426596,
+      "sha256": "1d382083897631aff78c47a0d2f242468292986bf70d545b647ab3988c1f8e5c"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_kz_0p5/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_kz_0p5/case_result.json",
+      "bytes": 6556,
+      "sha256": "2f19d1add12a1b154be43b69ef1de4a58a47ffd69489b4a2e5d4ae72bd17a8a9"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_kz_0p5/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_kz_0p5/temperature_flux_3d.npz",
+      "bytes": 51879195,
+      "sha256": "5edc64f883f57dcc5b6756208e4b5c8d7ea52086a934457f29acdebc0f598ee6"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_kz_2p0/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_kz_2p0/case_result.json",
+      "bytes": 6562,
+      "sha256": "fc6a9c921647e1f82c15b103feaa8ac2bf0e715183d5c815eb7aadadd010c628"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_kz_2p0/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_model/sweep_v1/scenario_kz_2p0/temperature_flux_3d.npz",
+      "bytes": 51783892,
+      "sha256": "3370437df2fa4eca4c1987085cc53cf1db7c660af16a45c741b62a8d51731f00"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_reproduction/precheck_v1/dependency_precheck.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_thermal_physical_reproduction/precheck_v1/dependency_precheck.json",
+      "bytes": 697,
+      "sha256": "08495895cd2a97e3cf0fc38134c19e40d872e29b19029548867970f784ad52a2"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_thermal_physical_model/physical_model_all_cases.csv",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_thermal_physical_model/physical_model_all_cases.csv",
+      "bytes": 10639,
+      "sha256": "1b9840ddea04962ed7667744c464121d9486920a87cf991c35e6519528124a9f"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_thermal_physical_model/physical_model_all_summary.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_thermal_physical_model/physical_model_all_summary.json",
+      "bytes": 29320,
+      "sha256": "6614833ff6bb20fd6c729d21fcbbbf5fa3ed0f61099fd9913ce5c62ff6e60411"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_thermal_physical_model/physical_model_boundary_cases.csv",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_thermal_physical_model/physical_model_boundary_cases.csv",
+      "bytes": 6555,
+      "sha256": "382d7e26da1599687eab414677c08eb6aa9c2183f21b1f5930d4efb73bf778d1"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_thermal_physical_model/physical_model_boundary_summary.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_thermal_physical_model/physical_model_boundary_summary.json",
+      "bytes": 13512,
+      "sha256": "1fe7ee7591ef30ed2ac30e89d3d6b58b2d6a50a677bdd303ec78d4f592baffdb"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_thermal_physical_model/physical_model_material_cases.csv",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_thermal_physical_model/physical_model_material_cases.csv",
+      "bytes": 4459,
+      "sha256": "4f15b3ac0e7a12810085367110ba00fbf394f69fedc49e5625a268935e009f6c"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_thermal_physical_model/physical_model_material_summary.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_thermal_physical_model/physical_model_material_summary.json",
+      "bytes": 9514,
+      "sha256": "c6675526a2ef669f1efd548f8e0866df440e14391556490fc378f5daa5804b2a"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_thermal_physical_model/FVM_THERMAL_PHYSICAL_MODEL_REPORT.md",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_thermal_physical_model/FVM_THERMAL_PHYSICAL_MODEL_REPORT.md",
+      "bytes": 6144,
+      "sha256": "67bfeb9d64ec220c6c5b09e1be2337ae1f1a69c4b2db7f0b99ca3ccf5ca93616"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_thermal_physical_model/fvm_thermal_physical_model_summary.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_thermal_physical_model/fvm_thermal_physical_model_summary.json",
+      "bytes": 31166,
+      "sha256": "11e0d76a4a8fc2e2129bfe3871f5052c860c3f735b75cd44f199dd641dc3937b"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_thermal_physical_model/fvm_thermal_physical_model_cases.csv",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_thermal_physical_model/fvm_thermal_physical_model_cases.csv",
+      "bytes": 10639,
+      "sha256": "1b9840ddea04962ed7667744c464121d9486920a87cf991c35e6519528124a9f"
+    }
+  ]
+}

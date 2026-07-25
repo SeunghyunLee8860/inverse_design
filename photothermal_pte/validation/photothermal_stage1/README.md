@@ -237,3 +237,25 @@ cells contained exactly inside the 2 um x 2 um x 100 nm flake: each original
 nodal quadrature energy parcel is deposited one-to-one, and the receiving Q
 density is derived from the conserved parcel power and physical cell volume.
 No nonzero parcel is discarded, averaged, or globally rescaled.
+
+`36_run_fvm_multimaterial_thermal.py` runs the anisotropic finite-G
+multi-material steady FVM on named thermal scenarios. Its far-x/y boundary,
+exposed convection, TaIrTe4 kz, and top-disk thermal-support assumptions are
+explicit inputs. Artificial lateral/bottom boundary flux is metadata-labeled
+as a numerical truncation flux rather than a physical heat-path fraction.
+
+`39_validate_fvm_thermal_physical_model.py` compares the PR #4 numerical
+checkpoint scenario with the earlier `G_top=7.37e4 W/(m2 K)` evaporated-SiO2
+estimate label, numerical `kz=0.5/1/2 W/(m K)` scenarios, fixed/adiabatic
+far-x/y boundaries, `h=0/5/10/20 W/(m2 K)`, and suspended versus
+oxide-supported disk-overhang thermal geometries. The kz values are not a
+confidence interval. Repository evidence does not establish the fabrication
+support outside the flake, so the geometry remains blocked rather than
+guessed.
+
+PR #3 is not in PR #4 ancestry. For a clean checkout,
+`40_reproduce_fvm_thermal_physical_model.py` requires an explicit PR #3 raw
+NPZ path and authenticates SHA-256
+`7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794`
+before creating import/solver output. Missing or mismatched artifacts fail
+closed. Raw NPZ files remain uncommitted.

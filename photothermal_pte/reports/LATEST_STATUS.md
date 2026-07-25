@@ -2,8 +2,10 @@
 
 ## v261 HEAT material and interface controls
 
-- Branch: `agent/unblock-heat-material-interface-controls`
-- Stacked base: `agent/validate-isolated-2um-heat-steady`
+- Branch: `agent/validate-fvm-thermal-physical-model`
+- Stacked base: `agent/unblock-heat-material-interface-controls`
+- Immutable numerical checkpoint:
+  `437ec0644b15a4b9a6919a0151e4aa531fb1e0ab` (PR #4)
 - Finite-Q source: PR #3 commit `053260d`
 - PR #2 and PR #3 content: unchanged
 - Status: `BLOCKED_ANISOTROPIC_K_UNSUPPORTED`
@@ -20,12 +22,16 @@
 - Finite optical-Q used in a thermal solve: `true`
 - Multi-material production FVM convergence:
   `VALIDATED_MULTIMATERIAL_FVM_PRODUCTION_CONVERGENCE`
+- Physical-model scenarios:
+  `VALIDATED_FVM_THERMAL_PHYSICAL_MODEL_SCENARIOS`
+- Final experimental prediction promoted: `false`
 - Transient/PTE/adjoint/gradient/optimization executed: `false`
 
 ### Active blockers
 
 - `BLOCKED_ANISOTROPIC_K_UNSUPPORTED` (native v261 HEAT only)
 - `BLOCKED_INTERFACE_G_UNVERIFIED` (native v261 HEAT only)
+- `BLOCKED_FABRICATION_GEOMETRY_UNCONFIRMED`
 
 ### Key measurements
 
@@ -170,8 +176,8 @@
 - Status: `VALIDATED_MULTIMATERIAL_FVM_PRODUCTION_CONVERGENCE`
 - Attribution: independent conservative Cartesian Python/SciPy FVM;
   not a Lumerical HEAT result
-- Production reference: `32 um x 32 um` lateral domain, `20 um` Si depth,
-  native optical x/y source grid
+- Numerical-convergence checkpoint: `32 um x 32 um` lateral domain,
+  `20 um` Si depth, native optical x/y source grid
 - Active solid cells: `1,625,064`
 - Material conductivity:
   TaIrTe4 `diag(14.4, 3.8, 1.0)`, SiO2 `1.38`, Si `145 W/(m K)`
@@ -205,6 +211,49 @@
   outside-flake deletion was used
 - TaIrTe4 `kz=1.0 W/(m K)` remains an estimated physical input; interface-G
   results retain the full sensitivity sweep
+- This checkpoint parameter set is not a unique final experimental
+  prediction
+
+### FVM thermal physical-model sensitivity
+
+- Status: `VALIDATED_FVM_THERMAL_PHYSICAL_MODEL_SCENARIOS`
+- Fabrication status: `BLOCKED_FABRICATION_GEOMETRY_UNCONFIRMED`
+- \(G_{\rm top}=7.37e6\) W/(m2 K): named numerical-convergence checkpoint
+  scenario
+- \(G_{\rm top}=7.37e4\) W/(m2 K): named earlier evaporated-SiO2 estimate
+  scenario
+- Neither \(G_{\rm top}\) value is promoted as uniquely correct
+- \(G_{\rm top}=7.37e4\) versus checkpoint:
+  \(T_{\max}\) `+7.48897%`, flake average `-0.0800617%`,
+  common flake 3D NRMSE `2.15495%`
+- TaIrTe4 \(k_z=[0.5,1.0,2.0]\) W/(m K):
+  numerical scenarios, not a confidence interval; \(k_x=14.4\),
+  \(k_y=3.8\) unchanged
+- \(k_z=0.5\): \(T_{\max}\) `+12.3111%`; \(k_z=2.0\):
+  \(T_{\max}\) `-6.29652%`
+- Far-x/y fixed versus adiabatic with fixed bottom:
+  \(T_{\max}\) change `+0.0475768%`
+- Exposed convection `h=[0,5,10,20] W/(m2 K)`: completed
+- Lateral/bottom fractions are numerical truncation-boundary fluxes, not
+  physical heat-path fractions
+- Geometry A: suspended/overhanging disk outside the flake
+- Geometry B: 100 nm SiO2 support annulus connects the disk overhang to the
+  surrounding bottom oxide
+- Geometry B versus A: \(T_{\max}\) `-39.7356%`, flake average `-37.0430%`,
+  common flake 3D NRMSE `27.5386%`
+- Geometry-B native-to-refined numerical changes:
+  `[0.789170%, 0.743380%, 0.522514%]` for
+  `[Tmax, flake average, common flake 3D NRMSE]`
+- Physical support-geometry variation is much larger than its numerical mesh
+  error
+- Published promoted metadata:
+  `provisional_until_sensitivity_passes=false`,
+  `next_required_gate=null`
+- Raw per-case JSON metadata remains unchanged for provenance
+- PR #3 commit is not in PR #4 ancestry; clean reproduction requires an
+  external artifact with SHA-256
+  `7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794`
+- Missing or mismatched PR #3 artifacts fail closed before import or solve
 
 ### Final control artifacts
 
@@ -242,6 +291,14 @@
   `validation/photothermal_stage1/38_summarize_fvm_multimaterial_thermal.py`
 - Multi-material production report/summary/cases/convergence/raw manifest:
   `reports/fvm_multimaterial_thermal/`
+- Physical-model scenario execution:
+  `validation/photothermal_stage1/39_validate_fvm_thermal_physical_model.py`
+- Clean-checkout fail-closed reproduction:
+  `validation/photothermal_stage1/40_reproduce_fvm_thermal_physical_model.py`
+- Physical-model report generation:
+  `validation/photothermal_stage1/41_summarize_fvm_thermal_physical_model.py`
+- Physical-model report/summary/cases/raw manifest:
+  `reports/fvm_thermal_physical_model/`
 - Anisotropic-\(\kappa\) report:
   `reports/heat_material_interface_controls/HEAT_ANISOTROPIC_K_SOLVER_REPORT.md`
 - Internal-\(G\) report:
@@ -256,10 +313,12 @@ contact solution agrees with v261 HEAT. The finite optical-Q mapping now
 preserves the PR #3 source exactly. The independent anisotropic, finite-G,
 multi-material FVM solve and its domain, substrate-depth, mesh, interface-G,
 and exposed-boundary sensitivity are now complete. The reported temperature
-is a unit response, not a finite-power laser temperature. No transient, PTE,
-adjoint, gradient, or optimization is claimed at this checkpoint. No
-isotropic fallback or modification of the finite optical-Q artifact was
-used.
+is a unit response, not a finite-power laser temperature. Physical-model
+sensitivity shows that disk-support geometry and uncertain material/interface
+inputs dominate the remaining interpretation; no single scenario is called a
+final experimental prediction. No transient, PTE, adjoint, gradient, or
+optimization is claimed at this checkpoint. No isotropic fallback or
+modification of the finite optical-Q artifact was used.
 
 ## Mechanical/MAPDL route probe
 

@@ -100,6 +100,23 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--exposed-h-W-m2K", type=float, default=0.0
     )
+    parser.add_argument(
+        "--tairte4-kz-W-mK", type=float, default=1.0
+    )
+    parser.add_argument(
+        "--far-xy-boundary",
+        choices=("fixed", "adiabatic"),
+        default="fixed",
+    )
+    parser.add_argument(
+        "--top-disk-support",
+        choices=("suspended-overhang", "oxide-supported-overhang"),
+        default="suspended-overhang",
+    )
+    parser.add_argument(
+        "--physical-scenario-label",
+        default="numerical_convergence_checkpoint_parameters",
+    )
     return parser.parse_args()
 
 
@@ -366,6 +383,8 @@ def interface_statistics(
 
 def main() -> int:
     args = parse_args()
+    if not np.isfinite(args.tairte4_kz_W_mK) or args.tairte4_kz_W_mK <= 0.0:
+        raise ValueError("TaIrTe4 kz must be finite and positive")
     output = clean_output_directory(args.output_dir, args.case_id)
     command = shlex.join([sys.executable, *sys.argv])
     source_path = Path(args.source_artifact).expanduser().resolve()
@@ -446,6 +465,14 @@ def main() -> int:
     material_id[:, :, z_slices["flake"]] = (
         3 * xy_flake[:, :, None]
     )
+    if args.top_disk_support == "oxide-supported-overhang":
+        xy_support = xy_design & ~xy_flake
+        active[:, :, z_slices["flake"]] |= xy_support[:, :, None]
+        material_id[:, :, z_slices["flake"]] = np.where(
+            xy_support[:, :, None],
+            np.uint8(5),
+            material_id[:, :, z_slices["flake"]],
+        )
     active[:, :, z_slices["design"]] = xy_design[:, :, None]
     material_id[:, :, z_slices["design"]] = (
         4 * xy_design[:, :, None]
@@ -454,8 +481,12 @@ def main() -> int:
     kappa = np.ones((*shape, 3), float)
     kappa[material_id == 1] = SI_K_W_MK
     kappa[material_id == 2] = SIO2_K_W_MK
-    kappa[material_id == 3] = TAIRTE4_K_W_MK
+    tairte4_kappa = np.asarray(
+        [TAIRTE4_K_W_MK[0], TAIRTE4_K_W_MK[1], args.tairte4_kz_W_mK]
+    )
+    kappa[material_id == 3] = tairte4_kappa
     kappa[material_id == 4] = SIO2_K_W_MK
+    kappa[material_id == 5] = SIO2_K_W_MK
     source = np.zeros(shape, float)
     source[
         x_source_slice,
@@ -482,39 +513,60 @@ def main() -> int:
             "oxide_Si",
             OXIDE_BOUNDS_Z_M[0],
             args.G_oxide_si,
+            1,
+            2,
         ),
         (
             "TaIrTe4_bottom",
             TAIRTE4_BOUNDS_Z_M[0],
             args.G_bottom,
+            2,
+            3,
         ),
         (
             "TaIrTe4_top",
             TAIRTE4_BOUNDS_Z_M[1],
             args.G_top,
+            3,
+            4,
         ),
     )
     interface_faces: dict[str, int] = {}
-    for name, coordinate, conductance in interface_configuration:
+    interface_masks: dict[str, np.ndarray] = {}
+    for (
+        name,
+        coordinate,
+        conductance,
+        lower_material,
+        upper_material,
+    ) in interface_configuration:
         face = interface_face_index(z_edges, coordinate)
         interface_faces[name] = face
+        connected = (
+            (material_id[:, :, face] == lower_material)
+            & (material_id[:, :, face + 1] == upper_material)
+        )
+        interface_masks[name] = connected
         if conductance is not None:
-            connected = active[:, :, face] & active[:, :, face + 1]
             resistance_z[:, :, face][connected] = 1.0 / conductance
 
+    dirichlet_temperature_K = {"z_min": 0.0}
+    if args.far_xy_boundary == "fixed":
+        dirichlet_temperature_K.update(
+            {
+                "x_min": 0.0,
+                "x_max": 0.0,
+                "y_min": 0.0,
+                "y_max": 0.0,
+            }
+        )
     solved = solve_steady_diagonal_kappa(
         x_edges_m=x_edges,
         y_edges_m=y_edges,
         z_edges_m=z_edges,
         kappa_W_mK=kappa,
         source_W_m3=source,
-        dirichlet_temperature_K={
-            "x_min": 0.0,
-            "x_max": 0.0,
-            "y_min": 0.0,
-            "y_max": 0.0,
-            "z_min": 0.0,
-        },
+        dirichlet_temperature_K=dirichlet_temperature_K,
         interface_resistance_m2K_W={"z": resistance_z},
         active_mask=active,
         exposed_heat_transfer_W_m2K=args.exposed_h_W_m2K,
@@ -542,7 +594,7 @@ def main() -> int:
     boundary_powers = solved.boundary_power_out_W
     bottom_power_W = boundary_powers["z_min"]
     lateral_power_W = sum(
-        boundary_powers[name]
+        boundary_powers.get(name, 0.0)
         for name in ("x_min", "x_max", "y_min", "y_max")
     )
     convection_power_W = boundary_powers.get(
@@ -550,16 +602,15 @@ def main() -> int:
     )
     escaped_power_W = sum(boundary_powers.values())
     interface_results = {}
-    for name, _, conductance in interface_configuration:
+    for name, _, conductance, _, _ in interface_configuration:
         face = interface_faces[name]
-        connected = active[:, :, face] & active[:, :, face + 1]
         interface_results[name] = interface_statistics(
             fluxes["z"],
             face_index=face,
             conductance_W_m2K=conductance,
             x_widths_m=np.diff(x_edges),
             y_widths_m=np.diff(y_edges),
-            connected=connected,
+            connected=interface_masks[name],
         )
 
     raw_path = output / "temperature_flux_3d.npz"
@@ -588,6 +639,7 @@ def main() -> int:
         "schema_version": 1,
         "generated_at_utc": utc_timestamp(),
         "case_id": args.case_id,
+        "physical_scenario_label": args.physical_scenario_label,
         "status": (
             "PASSED_PROVISIONAL_MULTIMATERIAL_FVM_CASE"
             if passed
@@ -618,18 +670,31 @@ def main() -> int:
                 "radius_m": DESIGN_RADIUS_M,
                 "z_bounds_m": list(DESIGN_BOUNDS_Z_M),
                 "material": "SiO2",
+                "thermal_support_scenario": args.top_disk_support,
+                "fabrication_geometry_confirmed_from_repository": False,
+                "fabrication_geometry_blocker": (
+                    "BLOCKED_FABRICATION_GEOMETRY_UNCONFIRMED"
+                ),
             },
         },
         "materials_W_mK": {
-            "TaIrTe4_diagonal": TAIRTE4_K_W_MK.tolist(),
-            "TaIrTe4_kz_note": "estimated value",
+            "TaIrTe4_diagonal": tairte4_kappa.tolist(),
+            "TaIrTe4_kz_note": (
+                "numerical scenario; repository does not establish a "
+                "confidence interval"
+            ),
             "SiO2": SIO2_K_W_MK,
             "Si": SI_K_W_MK,
         },
         "interfaces": interface_results,
         "boundary_conditions": {
             "bottom_Si": "DeltaT=0 K (T=300 K)",
-            "far_x_y_Si_and_SiO2": "DeltaT=0 K (T=300 K)",
+            "far_x_y_Si_and_SiO2": (
+                "DeltaT=0 K (T=300 K)"
+                if args.far_xy_boundary == "fixed"
+                else "adiabatic"
+            ),
+            "far_x_y_boundary_mode": args.far_xy_boundary,
             "top_and_internal_solid_air_surfaces": (
                 "adiabatic"
                 if args.exposed_h_W_m2K == 0.0
@@ -648,6 +713,7 @@ def main() -> int:
                 "SiO2_bottom": int(np.count_nonzero(material_id == 2)),
                 "TaIrTe4": int(np.count_nonzero(material_id == 3)),
                 "SiO2_design": int(np.count_nonzero(material_id == 4)),
+                "SiO2_support": int(np.count_nonzero(material_id == 5)),
             },
             "minimum_steps_m": {
                 "x": float(np.min(np.diff(x_edges))),
@@ -698,6 +764,18 @@ def main() -> int:
             "exposed_convection_outflow_W": convection_power_W,
             "total_escaped_W": escaped_power_W,
             "relative_error": solved.energy_balance_relative_error,
+            "numerical_truncation_boundary_flux": {
+                "interpretation": (
+                    "numerical boundary flux; not a physical heat-path "
+                    "fraction"
+                ),
+                "bottom_fraction_of_generated": (
+                    bottom_power_W / solved.source_power_W
+                ),
+                "lateral_fraction_of_generated": (
+                    lateral_power_W / solved.source_power_W
+                ),
+            },
         },
         "linear_solver": {
             "name": solved.solver,

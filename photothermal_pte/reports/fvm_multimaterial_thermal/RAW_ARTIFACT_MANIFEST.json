@@ -1,7 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "20260725T211733Z",
-  "branch": "agent/unblock-heat-material-interface-controls",
+  "generated_at_utc": "20260725T222600Z",
+  "branch": "agent/validate-fvm-thermal-physical-model",
+  "generation_commit": "4b7534ef1e355b8fce4bdf9b043196cfef103f73",
   "solver_attribution": "independent conservative Cartesian Python/SciPy FVM; not a Lumerical HEAT result",
   "raw_artifact_count": 48,
   "artifacts": [
@@ -272,14 +273,14 @@
     {
       "repository_path": "photothermal_pte/reports/fvm_multimaterial_thermal/FVM_MULTIMATERIAL_THERMAL_REPORT.md",
       "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_multimaterial_thermal/FVM_MULTIMATERIAL_THERMAL_REPORT.md",
-      "bytes": 5027,
-      "sha256": "1b342f0490f72eaf5041a1fefaf90a07e955fa5521e5a531b52d7f9f7e799af2"
+      "bytes": 5119,
+      "sha256": "74576241f3e8d93196721f8f9543e3a02981aff64d00b8bbb5ff1426b3624f81"
     },
     {
       "repository_path": "photothermal_pte/reports/fvm_multimaterial_thermal/fvm_multimaterial_thermal_summary.json",
       "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_multimaterial_thermal/fvm_multimaterial_thermal_summary.json",
-      "bytes": 15990,
-      "sha256": "4d64c2ace7a17edbd6c7457016ca30f6508299065bf26817baa34929f377bf9c"
+      "bytes": 16511,
+      "sha256": "b0c983d9a17a4bf084adc510940ae65639eea3198c7ac960dc9b8e74cc53fa37"
     },
     {
       "repository_path": "photothermal_pte/reports/fvm_multimaterial_thermal/fvm_multimaterial_thermal_cases.csv",

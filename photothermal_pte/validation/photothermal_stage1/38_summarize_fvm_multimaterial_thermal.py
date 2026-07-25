@@ -7,6 +7,7 @@ import argparse
 import csv
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -58,6 +59,17 @@ def sha256_file(path: Path) -> str:
 
 def relative_change(value: float, reference: float) -> float:
     return (value - reference) / reference
+
+
+def git_value(*arguments: str) -> str | None:
+    completed = subprocess.run(
+        ["git", *arguments],
+        cwd=GIT_ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    return completed.stdout.strip() if completed.returncode == 0 else None
 
 
 def markdown_table(headers: list[str], rows: list[list[str]]) -> str:
@@ -205,10 +217,11 @@ surface, including exact cell-center-to-surface conduction resistance.
 - Full field artifacts remain in the ignored validation output directory and
   are indexed by SHA-256 in `RAW_ARTIFACT_MANIFEST.json`.
 
-The numerical model is now suitable as the steady thermal production path
-for this geometry and source, subject to the stated material-property
-assumptions. In particular, TaIrTe4 kz=1.0 W/(m K) remains an estimated input,
-and the G sweeps should be retained when interpreting uncertainty.
+The numerical model is now suitable as a steady thermal production path for
+this geometry and source, subject to the stated material-property assumptions.
+This parameter set is a numerical-convergence checkpoint, not a unique final
+experimental prediction. In particular, TaIrTe4 kz=1.0 W/(m K), G_top, and
+the top-disk support geometry require separately named physical scenarios.
 """
     report_path = report_dir / "FVM_MULTIMATERIAL_THERMAL_REPORT.md"
     report_path.write_text(report, encoding="utf-8")
@@ -217,6 +230,22 @@ and the G sweeps should be retained when interpreting uncertainty.
     summary_copy["published_at_utc"] = utc_timestamp()
     summary_copy["production_reference_promoted"] = True
     summary_copy["production_reference_case_id"] = "final_native"
+    summary_copy["provisional_until_sensitivity_passes"] = False
+    summary_copy["next_required_gate"] = None
+    summary_copy["completed_gates"] = [
+        "DOMAIN_SENSITIVITY",
+        "SI_DEPTH_SENSITIVITY",
+        "THERMAL_MESH_SENSITIVITY",
+        "INTERFACE_G_SENSITIVITY",
+        "BOUNDARY_SENSITIVITY",
+    ]
+    summary_copy["promoted_reference_metadata"] = {
+        "status": "PROMOTED_AFTER_COMPLETED_SENSITIVITY",
+        "provisional_until_sensitivity_passes": False,
+        "next_required_gate": None,
+        "raw_per_case_JSON_modified": False,
+        "raw_reference_case_provenance_preserved": True,
+    }
     summary_copy["report_path"] = str(report_path)
     write_json(
         report_dir / "fvm_multimaterial_thermal_summary.json",
@@ -282,7 +311,8 @@ and the G sweeps should be retained when interpreting uncertainty.
     manifest = {
         "schema_version": 1,
         "generated_at_utc": utc_timestamp(),
-        "branch": "agent/unblock-heat-material-interface-controls",
+        "branch": git_value("branch", "--show-current"),
+        "generation_commit": git_value("rev-parse", "HEAD"),
         "solver_attribution": summary["solver_attribution"],
         "raw_artifact_count": len(artifacts),
         "artifacts": artifacts,
