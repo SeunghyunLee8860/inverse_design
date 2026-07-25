@@ -31,6 +31,14 @@ production files outside this directory are not modified.
   3/6/12 um.
 - `05_validate_heat_transient.py`: runs a guarded pulse and time-step
   refinement only when every solid has explicit `rho` and `cp`.
+- `25_validate_isolated_2um_heat_steady.py`: audits the immutable production Q
+  against the requested 2 um finite TaIrTe4 footprint, evaluates the offline
+  analytic references, reuses the recorded v261 tensor round trip, attempts a
+  fresh live API probe, and stops before 3-D HEAT when any mandatory gate
+  fails.
+- `26_summarize_isolated_2um_heat_steady.py`: writes the compact JSON/CSV and
+  Markdown reports for the finite-device gate without treating a blocked run
+  as a scientific temperature result.
 - `run_stage1.py`: timestamped fail-closed orchestration and final JSON/Markdown
   report generation.
 
@@ -141,6 +149,25 @@ python \
 The runner refuses a non-empty output directory. Outputs are otherwise written
 under `output/<UTC timestamp>/`.
 
+Run only the isolated 2 um steady-state controls (never use `run_stage1.py` for
+this task because its default stage list includes transient):
+
+```bash
+python \
+  photothermal_pte/validation/photothermal_stage1/25_validate_isolated_2um_heat_steady.py \
+  --lumerical-version v261 \
+  --output-dir /absolute/path/to/new-empty-control-output
+
+python \
+  photothermal_pte/validation/photothermal_stage1/26_summarize_isolated_2um_heat_steady.py \
+  --control-results /absolute/path/to/new-empty-control-output/control_results.json
+```
+
+The isolated workflow uses exit code 2 and records explicit blocker codes when
+the solver tensor, interface-G, validated-Q footprint, or analytic gates do not
+pass. It never substitutes an isotropic conductivity or modifies Q to force a
+pass.
+
 ## Observed result on this host (v261)
 
 - The HEAT-only analytic slab previously passed on the 25 nm mesh: `Tmax=304.9998768 K`, Delta-T relative error `2.46e-5`, NRMSE `6.48e-5`, and energy error `0.9466%`.
@@ -154,7 +181,7 @@ These are diagnostic validation results, not a validated PTE prediction.
 
 - The analytic stage is an absolute gate: ΔTmax error, normalized RMSE, and
   energy error must each be below 1%.
-- FDTD volume absorption versus flux absorption must agree within 5%.
+- FDTD volume absorption versus local flux absorption must agree within 0.5%.
 - FDTD-to-HEAT imported power must agree within 0.5%.
 - Scaling requires R² above 0.999 and slope error below 2%.
 - The 12 versus 6 um substrate comparison is reported separately; 3 um is
