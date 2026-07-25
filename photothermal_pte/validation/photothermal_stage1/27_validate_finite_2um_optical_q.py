@@ -495,9 +495,6 @@ def load_incident_reference(args: argparse.Namespace) -> dict[str, Any]:
         raise RuntimeError(f"incident reference is not empty-stack: {path}")
     expected = {
         "polarization_deg": float(args.polarization_deg),
-        "domain_um": float(args.domain_um),
-        "pml_layers": int(args.pml_layers),
-        "flake_dz_nm": float(args.flake_dz_nm),
         "source_span_um": float(args.source_span_um),
         "waist_um": float(args.waist_um),
     }
@@ -521,6 +518,21 @@ def load_incident_reference(args: argparse.Namespace) -> dict[str, Any]:
         "case_result_path": str(path),
         "case_result_sha256": sha256(path),
         "generation_commit": payload.get("generation_commit"),
+        "reference_geometry": {
+            "domain_um": payload.get("domain_um"),
+            "pml_layers": payload.get("pml_layers"),
+            "flake_dz_nm": payload.get("flake_dz_nm"),
+        },
+        "active_geometry": {
+            "domain_um": args.domain_um,
+            "pml_layers": args.pml_layers,
+            "flake_dz_nm": args.flake_dz_nm,
+        },
+        "normalization_contract": (
+            "polarization, Gaussian waist, and source aperture must match; "
+            "one measured source reference is intentionally held fixed over "
+            "domain/PML/dz convergence so those effects are not renormalized"
+        ),
     }
 
 

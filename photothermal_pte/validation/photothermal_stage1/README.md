@@ -185,6 +185,10 @@ criterion must pass.
   exports unclipped component-resolved `Qx`, `Qy`, and `Qz`, normalizes to a
   measured incident intensity of 1 W/m², and records the volume-Q versus
   six-face closure.
+- A measured empty-stack reference is held fixed across domain/PML/dz sweeps
+  when polarization, Gaussian waist, and source aperture are unchanged. This
+  prevents a convergence error from being hidden by case-by-case
+  renormalization; waist changes require a new measured reference.
 - This path never calls HEAT, the optimizer, mapping/projection, adjoint, or
   gradient code, and it does not crop, tile, gain-correct, or rescale a
   periodic artifact.
