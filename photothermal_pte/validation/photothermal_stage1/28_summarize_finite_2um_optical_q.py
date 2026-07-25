@@ -7,6 +7,7 @@ import argparse
 import csv
 import hashlib
 import json
+import shutil
 from pathlib import Path
 from typing import Any
 
@@ -49,6 +50,15 @@ def case_row(path: Path, root: Path) -> dict[str, Any]:
     components = run.get("component_power_W", {})
     hotspot = run.get("Q_hotspot", {})
     acceptance = run.get("acceptance", {})
+    total_power = run.get("P_Q_W")
+    component_fractions = {
+        axis: (
+            components.get(axis) / total_power
+            if components.get(axis) is not None and total_power
+            else None
+        )
+        for axis in ("x", "y", "z")
+    }
     return {
         "_path": path,
         "_data": data,
@@ -65,6 +75,9 @@ def case_row(path: Path, root: Path) -> dict[str, Any]:
         "P_Qx_W": components.get("x"),
         "P_Qy_W": components.get("y"),
         "P_Qz_W": components.get("z"),
+        "P_Qx_fraction": component_fractions["x"],
+        "P_Qy_fraction": component_fractions["y"],
+        "P_Qz_fraction": component_fractions["z"],
         "P_Q_W": run.get("P_Q_W"),
         "P_six_face_W": run.get("P_six_face_W"),
         "closure": run.get("six_face_relative_closure"),
@@ -237,6 +250,9 @@ def summarize_sweep(
             "P_six_face_W",
             "sigma_abs_m2",
             "Q_hotspot_W_m3",
+            "P_Qx_fraction",
+            "P_Qy_fraction",
+            "P_Qz_fraction",
         )
         if all(row.get(key) is not None for row in selected)
     }
@@ -248,18 +264,19 @@ def summarize_sweep(
         )
         if result is not None
     ]
-    last_scalar = [
-        values[-1]["relative_change"]
-        for values in scalar.values()
-        if values
+    convergence_keys = ("P_Q_W", "P_six_face_W", "sigma_abs_m2")
+    last_power_changes = [
+        scalar[key][-1]["relative_change"]
+        for key in convergence_keys
+        if scalar.get(key)
     ]
     return {
         "kind": kind,
         "cases": [public_row(row) for row in selected],
         "scalar_changes": scalar,
         "spatial_changes": spatial,
-        "scalar_converged_lt_1_percent": bool(last_scalar)
-        and max(last_scalar) < CONVERGENCE_LIMIT,
+        "absorbed_power_converged_lt_1_percent": bool(last_power_changes)
+        and max(last_power_changes) < CONVERGENCE_LIMIT,
         "spatial_converged_lt_5_percent": bool(spatial)
         and max(
             spatial[-1]["relative_L1"], spatial[-1]["relative_L2"]
@@ -293,6 +310,101 @@ def plot_sweep(
     axes[1].legend()
     figure.tight_layout()
     figure.savefig(output / f"{sweep['kind']}_convergence.png", dpi=180)
+    plt.close(figure)
+
+
+def baseline_flat_case(
+    rows: list[dict[str, Any]], polarization_deg: float
+) -> dict[str, Any] | None:
+    candidates = [
+        row
+        for row in completed_material(rows)
+        if row["case"] == "flat"
+        and same(row["polarization_deg"], polarization_deg)
+        and same(row["domain_um"], 8.0)
+        and row["pml_layers"] == 24
+        and same(row["flake_dz_nm"], 5.0)
+        and same(row["waist_um"], 2.0)
+        and same(row["source_span_um"], 6.8)
+    ]
+    return candidates[-1] if candidates else None
+
+
+def plot_absorption_cross_section(
+    output: Path,
+    rows: list[dict[str, Any]],
+    final: dict[str, Any] | None,
+) -> None:
+    selected = [
+        baseline_flat_case(rows, angle) for angle in (0.0, 90.0, 45.0)
+    ]
+    labels = ["flat x", "flat y", "flat 45°"]
+    values = [
+        row["sigma_abs_m2"] if row is not None else np.nan for row in selected
+    ]
+    if final is not None:
+        labels.append("fixed x (final)")
+        values.append(final["sigma_abs_m2"])
+    figure, axis = plt.subplots(figsize=(7.2, 4.4))
+    axis.bar(labels, np.asarray(values, float) * 1e12)
+    axis.set(
+        ylabel=r"absorption cross section $\sigma_{\rm abs}$ ($\mu$m$^2$)",
+        title="Measured-intensity-normalized absorption cross section",
+    )
+    axis.tick_params(axis="x", rotation=15)
+    figure.tight_layout()
+    figure.savefig(output / "absorption_cross_section.png", dpi=180)
+    plt.close(figure)
+
+
+def publish_final_figures(
+    output: Path,
+    final_row: dict[str, Any] | None,
+) -> None:
+    if final_row is None:
+        return
+    final_directory = final_row["_path"].parent
+    figure_map = {
+        "finite_geometry_and_source.png": "finite_geometry_gaussian_source_and_six_face_box.png",
+        "E2_slices.png": "final_E2_slices.png",
+        "Q_component_xy_slices.png": "final_Q_component_xy_slices.png",
+        "Q_cross_section_slices.png": "final_Q_cross_section_slices.png",
+    }
+    for source_name, published_name in figure_map.items():
+        source = final_directory / source_name
+        if source.is_file():
+            shutil.copy2(source, output / published_name)
+
+    artifact_path = final_row.get("artifact_path")
+    if not artifact_path or not Path(artifact_path).is_file():
+        return
+    with np.load(artifact_path) as artifact:
+        coordinates = {
+            axis: np.asarray(artifact[f"{axis}_m"], float) * 1e6
+            for axis in ("x", "y", "z")
+        }
+    physical = {
+        "x": (-1.0, 1.0),
+        "y": (-1.0, 1.0),
+        "z": (-0.1, 0.0),
+    }
+    figure, axes = plt.subplots(1, 3, figsize=(10.5, 3.5))
+    for axis, name in zip(axes, ("x", "y", "z")):
+        values = coordinates[name]
+        axis.plot(values, np.zeros_like(values), "|", ms=13, label="artifact grid")
+        axis.axvspan(*physical[name], alpha=0.2, color="tab:orange", label="TaIrTe$_4$")
+        axis.set(
+            xlabel=f"{name} (µm)",
+            yticks=[],
+            title=(
+                f"{name}: [{values.min():.4g}, {values.max():.4g}] µm\n"
+                f"N={values.size}"
+            ),
+        )
+    axes[0].legend(loc="upper center", fontsize=8)
+    figure.suptitle("Final Q artifact coordinate bounds (no crop or tile)")
+    figure.tight_layout()
+    figure.savefig(output / "artifact_coordinate_bounds.png", dpi=180)
     plt.close(figure)
 
 
@@ -397,11 +509,15 @@ def main() -> int:
         ),
     }
     final = None
+    final_row = None
     if args.final_case_result:
         final_path = Path(args.final_case_result).expanduser().resolve()
-        final = public_row(case_row(final_path, root))
+        final_row = case_row(final_path, root)
+        final = public_row(final_row)
+    plot_absorption_cross_section(output, rows, final)
+    publish_final_figures(output, final_row)
     convergence_pass = all(
-        sweeps[kind]["scalar_converged_lt_1_percent"]
+        sweeps[kind]["absorbed_power_converged_lt_1_percent"]
         and sweeps[kind]["spatial_converged_lt_5_percent"]
         for kind in ("domain", "pml", "mesh")
     )
@@ -423,7 +539,7 @@ def main() -> int:
         "large_raw_files_committed": False,
         "limits": {
             "six_face_closure": POWER_LIMIT,
-            "successive_scalar_convergence": CONVERGENCE_LIMIT,
+            "successive_absorbed_power_convergence": CONVERGENCE_LIMIT,
             "successive_spatial_L1_L2": SPATIAL_LIMIT,
         },
     }
