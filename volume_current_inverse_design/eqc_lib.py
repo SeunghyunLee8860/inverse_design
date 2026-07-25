@@ -401,8 +401,21 @@ def run_project(fdtd, run_name, getters, retries=3, retry_delay=15.0):
     raise RuntimeError(f"{run_name} failed after {retries} attempts: {last_error}")
 
 
-def physical_seed(model):
-    rho2 = np.asarray(model.x0, float).reshape(model.Nx, model.Ny).copy()
+def physical_seed(model, beta=1.0):
+    """Physical (Nx,Ny,Nz) density from the model seed.
+
+    Handles both representations: the production 240x240 unique latent (mapped
+    to physical through model.mapping) and the legacy 241x241 latent (fencepost
+    wrapped + z-extruded).  Fixes the 240-grid reshape crash.
+    """
+    x0 = np.asarray(model.x0, float).reshape(-1)
+    nux = int(model.Nx) - 1
+    nuy = int(model.Ny) - 1
+    if x0.size == nux * nuy:
+        return np.asarray(
+            model.mapping(x0, beta), float
+        ).reshape(model.Nx, model.Ny, model.Nz)
+    rho2 = x0.reshape(model.Nx, model.Ny).copy()
     rho2[-1, :] = rho2[0, :]
     rho2[:, -1] = rho2[:, 0]
     return np.repeat(rho2[..., None], model.Nz, axis=2)

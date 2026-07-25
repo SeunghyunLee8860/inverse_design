@@ -30,7 +30,13 @@ import autograd.numpy as anp
 import numpy as np
 from autograd import grad
 
-from msopt.Filters import constraint_solid, constraint_void, get_conic_radius_from_eta_e
+from msopt.Filters import (
+    constraint_solid,
+    constraint_void,
+    get_conic_radius_from_eta_e,
+    indicator_solid,
+    indicator_void,
+)
 from msopt.Sub_Mapping import tanh_projection_m
 
 
@@ -80,6 +86,13 @@ class LengthScaleConstraints:
         self.tol_void = float(
             tol_void if tol_void is not None else os.environ.get("VC_TOL_VOID", 1e-5)
         )
+        # Worst-case-preserving aggregate.  The plain Zhou penalty is a mean over
+        # 57,600 nodes, so one thin finger is diluted ~1e4x and reads feasible.
+        # A power mean with p>1 weights the largest local violations, so the
+        # aggregate actually rises when a sub-length-scale feature appears while
+        # staying autograd-smooth.  (The DRC remains the authoritative gate; this
+        # only steers the optimiser toward DRC-passing designs.)
+        self.pnorm_p = float(os.environ.get("VC_CONSTRAINT_PNORM", 8.0))
 
     @property
     def config(self) -> ConstraintConfig:
@@ -101,18 +114,43 @@ class LengthScaleConstraints:
     def _as2d(self, latent):
         return anp.reshape(latent, (self.mapping.Nux, self.mapping.Nuy))
 
-    # -- raw penalties -------------------------------------------------------
+    # -- per-node penalty fields (worst-case visible) ------------------------
+    def _pmean(self, field):
+        p = self.pnorm_p
+        return (anp.mean(anp.abs(field) ** p) + 1e-300) ** (1.0 / p)
+
+    def solid_penalty_field(self, latent, beta):
+        x2d = self._as2d(latent)
+        filt = anp.reshape(self._filter_f(x2d), (-1,))
+        Is = anp.reshape(
+            indicator_solid(x2d, self.c_decay, self._filter_f,
+                            self._threshold_f(beta), self.resolution, self.periodic_axes),
+            (-1,),
+        )
+        return Is * anp.minimum(filt - self.eta_erode, 0.0) ** 2
+
+    def void_penalty_field(self, latent, beta):
+        x2d = self._as2d(latent)
+        filt = anp.reshape(self._filter_f(x2d), (-1,))
+        Iv = anp.reshape(
+            indicator_void(x2d, self.c_decay, self._filter_f,
+                           self._threshold_f(beta), self.resolution, self.periodic_axes),
+            (-1,),
+        )
+        return Iv * anp.minimum(self.eta_dilate - filt, 0.0) ** 2
+
+    # -- aggregated penalties (power mean; worst-case preserving) -------------
     def solid_penalty(self, latent, beta):
+        return self._pmean(self.solid_penalty_field(latent, beta))
+
+    def void_penalty(self, latent, beta):
+        return self._pmean(self.void_penalty_field(latent, beta))
+
+    def mean_solid_penalty(self, latent, beta):
+        """Legacy global-mean Zhou penalty (for reference/diagnostics only)."""
         x2d = self._as2d(latent)
         return constraint_solid(
             x2d, self.c_decay, self.eta_erode, self._filter_f,
-            self._threshold_f(beta), self.resolution, self.periodic_axes,
-        )
-
-    def void_penalty(self, latent, beta):
-        x2d = self._as2d(latent)
-        return constraint_void(
-            x2d, self.c_decay, self.eta_dilate, self._filter_f,
             self._threshold_f(beta), self.resolution, self.periodic_axes,
         )
 

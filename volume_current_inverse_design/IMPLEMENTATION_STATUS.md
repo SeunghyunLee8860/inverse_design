@@ -1,6 +1,34 @@
 # 500 nm 이진 설계 수정 — 구현 상태 (섹션별 대응표)
 
-작성: 2026-07-24. 명세 "TaIrTe4 500 nm 이진 설계: 전체 수정 명세"(0~18)에 대응.
+작성: 2026-07-24, 코드리뷰 반영 갱신 2026-07-25. 명세 "TaIrTe4 500 nm 이진 설계: 전체 수정 명세"(0~18)에 대응.
+
+## 코드리뷰(2026-07-25) 대응 — 반영된 수정
+리뷰가 지적한 P0/P1을 수정하고 비-FDTD로 재검증했습니다 (`pytest inverse_design/tests/` = **55 passed**).
+
+- **P0-1 DRC 재작성**: 측정 방식을 inscribed-disk → **opposing-boundary(local linewidth)** 로 교체.
+  이제 all-solid/all-void는 **trivial gate로 FAIL**, 2µm 사각형/큰 island는 **PASS**(corner 오판 제거),
+  얇은 bar/finger/ring·대각(수직폭)·seam·island-gap 은 정확히 FAIL. adversarial fixture 전부 통과.
+- **P0-2 constraint**: 전역 mean → **power-mean(worst-case 보존)**. 국소 위반 희석 제거(단일노드 pmean/mean≈1.5e4),
+  얇은 설계가 두꺼운 설계보다 penalty 큼 확인. gradient FD 일치 유지. (DRC가 최종 gate.)
+- **P0-3 launcher**: `set -euo pipefail` + optimizer/DRC/FDTD 실패 시 nonzero exit, stale `final_design.npz` 선삭제,
+  `SUCCESS.json` 있을 때만 exit 0.
+- **P0-4 finalization transaction**: 진입 시 stale `SUCCESS.json` 삭제 + `status=pending`,
+  실패 시 `status=failed`(category), `SUCCESS.json`은 **맨 마지막에만** 기록. (stale 제거 실측 확인.)
+- **P0-5 provenance**: `final_design.npz`에 code/config hash·had_feasible 저장; finalizer가 **code_hash 불일치/미-feasible 거부**(실측 exit 2).
+- **P0-6 AD/FD**: full-chain 테스트를 **safe-vs-safe / exact-vs-exact**(동일 함수) 로 분리. skip을 fixture로 견고화.
+- **P0-7 240격자 깨짐**: `eqc_lib.physical_seed`를 240-latent→mapping 경로로 수정. (구 standalone adfd 스크립트는 번들에서 제외.)
+- **P1-1** `--robust`는 미구현이라 즉시 `SystemExit`. **P1-2/3** resume가 best-feasible latent·objective·**beta**를 복원/기록.
+  **P1-4** stage 예외를 분류(license/solver/numerical)하고 중단, 완주 못하면 `completed` 금지.
+  **P1-5** code_hash에 model/eqc_lib/msopt/DRC/finalizer 등 전부 포함 + 누락 시 실패, config_hash에 maxeval/제약/nlopt 포함.
+  **P1-6** attempt id = max+1, contract exclusive create. **P1-7** history `feasible`→`constraint_feasible`.
+- **P2-3** `SUCCESS.json` 은 pass(boolean)와 measurement(float) 분리. **P2-4** artifact sha256 기록.
+  **P2-1** 번들에서 무효 MANIFEST·캐시·legacy 런처 제외.
+
+미해결/주의: **P0-8**(broadband+CV1 mesh 계약의 EM AD/FD 인증)과 full-chain AD/FD는 **Lumerical+GPU 필요** → Go/No-Go로 남김(문서화).
+`--robust`는 의도적으로 미구현(raise). report generator(make_run_report)는 새 history.jsonl에 부분 대응.
+
+---
+
 
 ## 범례
 - ✅ **구현 + Lumerical 없이 실측 검증됨** (아래 pytest 실제 통과)

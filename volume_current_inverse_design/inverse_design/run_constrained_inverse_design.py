@@ -54,11 +54,8 @@ def _preflight_nlopt():
 
 def _code_hash(paths) -> str:
     h = hashlib.sha256()
-    for p in sorted(paths):
-        try:
-            h.update(Path(p).read_bytes())
-        except OSError:
-            pass
+    for p in sorted(str(x) for x in paths):
+        h.update(Path(p).read_bytes())  # strict: a missing/unreadable file must raise
     return h.hexdigest()[:16]
 
 
@@ -70,6 +67,30 @@ def _config_hash(cfg: dict) -> str:
 
 def _beta_stages(spec: str):
     return [float(v) for v in spec.split(",") if v.strip()]
+
+
+def production_code_files(root: Path, here: Path):
+    """Every source file whose contents change the result (shared with the
+    finalizer so its provenance check hashes the exact same set)."""
+    return [
+        root / "bundle/periodic_constrained_mapping.py",
+        root / "bundle/periodic_filter.py",
+        root / "bundle/tairte4_volume_model.py",
+        root / "bundle/msopt/Filters.py",
+        root / "bundle/msopt/Sub_Mapping.py",
+        root / "bundle/msopt/Lumerical_utill.py",
+        root / "bundle/msopt/Mapping.py",
+        root / "eqc_lib.py",
+        root / "volume_current_evaluator.py",
+        root / "volume_current_adjoint_core.py",
+        root / "volume_current_colored_jacobian.py",
+        root / "volume_current_yee_metric.py",
+        root / "collocated_coherent_fom.py",
+        here / "geometric_constraints.py",
+        here / "geometry_drc.py",
+        here / "final_projection.py",
+        here / "run_constrained_inverse_design.py",
+    ]
 
 
 def main():
@@ -88,6 +109,15 @@ def main():
     ap.add_argument("--robust", action="store_true")
     ap.add_argument("--resume", action="store_true")
     args = ap.parse_args()
+
+    if args.robust:
+        # P1-1: the epigraph three-field robust formulation is NOT implemented
+        # (optimizer dim, eroded/nominal/dilated constraints, 18-solve loop all
+        # absent).  Fail loudly rather than silently run the nominal problem.
+        raise SystemExit(
+            "--robust is not implemented yet (would need an epigraph variable and "
+            "the eroded/nominal/dilated worst-case constraints; 18 EM solves/eval). "
+            "Run the nominal formulation without --robust.")
 
     os.environ.setdefault("MSOPT_MAPPING", "periodic_constrained")
     os.environ["MFS_UM"] = str(args.mfs_um)
@@ -140,20 +170,36 @@ def main():
         "global_uniform_mesh": "absent (asserted from realized FSP)",
         "flake_dz_nm": 5.0,
         "period_um": model.period_xy,
+        # P1-5: record RESOLVED config that changes results
+        "maxeval_per_stage": int(args.maxeval_per_stage),
+        "optimizer": "nlopt.LD_MMA",
+        "nlopt_version": getattr(nlopt, "__version__", "unknown"),
+        "resolved_constraint": {
+            "c_decay": float(args.constraint_c if args.constraint_c is not None
+                             else os.environ.get("VC_CONSTRAINT_C", 400.0)),
+            "tol_solid": float(args.tol_solid if args.tol_solid is not None
+                               else os.environ.get("VC_TOL_SOLID", 1e-5)),
+            "tol_void": float(args.tol_void if args.tol_void is not None
+                              else os.environ.get("VC_TOL_VOID", 1e-5)),
+            "pnorm_p": float(os.environ.get("VC_CONSTRAINT_PNORM", 8.0)),
+        },
+        "safety_slack_env": os.environ.get("VC_SAFETY_SLACK"),
+        "gpu": args.gpu, "fdtd_threads": os.environ.get("FDTD_THREADS"),
     }
-    code_files = [
-        ROOT / "bundle/periodic_constrained_mapping.py",
-        ROOT / "bundle/periodic_filter.py",
-        ROOT / "volume_current_evaluator.py",
-        HERE / "geometric_constraints.py",
-        HERE / "run_constrained_inverse_design.py",
-    ]
+    # P1-5: hash EVERY file whose contents change the result, and fail loudly if
+    # any is unreadable (a silently-skipped file would make the hash meaningless).
+    code_files = production_code_files(ROOT, HERE)
+    missing = [str(p) for p in code_files if not Path(p).exists()]
+    if missing:
+        raise SystemExit(f"code hash incomplete; missing files: {missing}")
     contract["code_hash"] = _code_hash(code_files)
     contract["config_hash"] = _config_hash(contract)
 
     # attempt bookkeeping + resume guard
     existing = sorted((run_root / "attempts").glob("attempt_*"))
     latent = np.asarray(model.x0, float).reshape(-1).copy()
+    state = {"beta": 0.0, "iter": 0, "best_feasible": None,
+             "best_feasible_obj": -np.inf, "best_beta": None}
     if args.resume and existing:
         prev = json.loads((existing[-1] / "contract.json").read_text())
         if prev.get("code_hash") != contract["code_hash"] or \
@@ -162,10 +208,20 @@ def main():
                 "resume refused: code/config hash changed -> start a new attempt")
         ckpt = run_root / "checkpoints" / "best_feasible.npz"
         if ckpt.exists():
-            latent = np.asarray(np.load(ckpt)["latent"], float).reshape(-1).copy()
-    attempt_id = len(existing) + 1
+            z = np.load(ckpt)
+            latent = np.asarray(z["latent"], float).reshape(-1).copy()
+            # P1-2/P1-3: fully restore best-feasible state so a resume never
+            # regresses to "infeasible" or loses the winning beta/objective.
+            state["best_feasible"] = latent.copy()
+            state["best_feasible_obj"] = float(z["objective"]) if "objective" in z else -np.inf
+            state["best_beta"] = float(z["beta"]) if "beta" in z else None
+
+    # P1-6: attempt id = max numeric + 1 (gaps never collide); contract immutable
+    # via exclusive create (mkdir exist_ok=False).
+    nums = [int(p.name.split("_")[-1]) for p in existing if p.name.split("_")[-1].isdigit()]
+    attempt_id = (max(nums) + 1) if nums else 1
     attempt = run_root / "attempts" / f"attempt_{attempt_id:04d}"
-    attempt.mkdir(parents=True, exist_ok=True)
+    attempt.mkdir(parents=True, exist_ok=False)
     (attempt / "contract.json").write_text(json.dumps(contract, indent=2) + "\n")
     history = (run_root / "history.jsonl").open("a")
 
@@ -177,8 +233,6 @@ def main():
         mapping, c_decay=args.constraint_c,
         tol_solid=args.tol_solid, tol_void=args.tol_void,
     )
-
-    state = {"beta": 0.0, "iter": 0, "best_feasible": None, "best_feasible_obj": -np.inf}
 
     def objective_and_grad(x, beta):
         phys = np.asarray(mapping(x, beta), float).reshape(shape)
@@ -195,6 +249,17 @@ def main():
         history.write(json.dumps(rec, default=float) + "\n")
         history.flush()
 
+    def _classify(exc) -> str:
+        text = f"{type(exc).__name__}: {exc}".lower()
+        if any(k in text for k in ("licen", "ansysli", "flexnet")):
+            return "license_failure"
+        if any(k in text for k in ("no result", "no d-card", "session run failed",
+                                   "getresult", "solver")):
+            return "solver_failure"
+        return "numerical_failure"
+
+    stage_failure = None       # None => no deterministic stage failure
+    completed_all_stages = True
     for beta in _beta_stages(args.beta_schedule):
         state["beta"] = beta
         opt = nlopt.opt(nlopt.LD_MMA, nlat)
@@ -203,31 +268,37 @@ def main():
         opt.set_maxeval(int(args.maxeval_per_stage))
         opt.set_xtol_rel(1e-4)
 
-        def nlopt_obj(x, grad):
-            f, dlat, fx, fy = objective_and_grad(x, beta)
-            gs, gv = constraints.residuals(x, beta)
-            feasible = gs <= 0 and gv <= 0
-            if feasible and f > state["best_feasible_obj"]:
+        def nlopt_obj(x, grad, _beta=beta):
+            f, dlat, fx, fy = objective_and_grad(x, _beta)
+            gs, gv = constraints.residuals(x, _beta)
+            constraint_feasible = gs <= 0 and gv <= 0
+            if constraint_feasible and f > state["best_feasible_obj"]:
                 state["best_feasible_obj"] = f
                 state["best_feasible"] = np.array(x, copy=True)
-                np.savez_compressed(run_root / "checkpoints" / "best_feasible.npz",
-                                    latent=x, beta=np.array(beta), objective=np.array(f))
+                state["best_beta"] = float(_beta)
+                # atomic-ish checkpoint carrying latent+beta+objective together
+                tmp = run_root / "checkpoints" / "best_feasible.npz.tmp"
+                np.savez_compressed(tmp, latent=x, beta=np.array(_beta),
+                                    objective=np.array(f))
+                tmp.replace(run_root / "checkpoints" / "best_feasible.npz")
             state["iter"] += 1
-            log({"attempt": attempt_id, "iter": state["iter"], "beta": beta,
+            log({"attempt": attempt_id, "iter": state["iter"], "beta": _beta,
                  "Fx": fx, "Fy": fy, "objective": f,
-                 "g_solid": gs, "g_void": gv, "feasible": bool(feasible)})
+                 "g_solid": gs, "g_void": gv,
+                 # NOTE: constraint_feasible != DRC feasible; DRC is the final gate
+                 "constraint_feasible": bool(constraint_feasible)})
             if grad.size:
                 grad[:] = -dlat  # minimising -(Fx+Fy)
             return -f
 
-        def c_solid(x, grad):
-            val, g = constraints.solid_residual_and_grad(x, beta)
+        def c_solid(x, grad, _beta=beta):
+            val, g = constraints.solid_residual_and_grad(x, _beta)
             if grad.size:
                 grad[:] = g
             return val
 
-        def c_void(x, grad):
-            val, g = constraints.void_residual_and_grad(x, beta)
+        def c_void(x, grad, _beta=beta):
+            val, g = constraints.void_residual_and_grad(x, _beta)
             if grad.size:
                 grad[:] = g
             return val
@@ -238,24 +309,42 @@ def main():
         t0 = time.time()
         try:
             latent = opt.optimize(latent)
-        except Exception as exc:
-            log({"attempt": attempt_id, "beta": beta,
-                 "stage_error": f"{type(exc).__name__}: {exc}"})
+        except Exception as exc:  # P1-4: classify and STOP; do not mislabel completed
+            stage_failure = _classify(exc)
+            completed_all_stages = False
+            log({"attempt": attempt_id, "beta": beta, "stage_error":
+                 f"{type(exc).__name__}: {exc}", "category": stage_failure})
+            break
         log({"attempt": attempt_id, "beta": beta, "stage_done": True,
              "stop_reason": int(opt.last_optimize_result()),
              "stage_seconds": time.time() - t0})
 
-    # finalise: best feasible if any, else last latent (flagged)
-    best = state["best_feasible"] if state["best_feasible"] is not None else latent
+    # finalise: prefer best-feasible; record its OWN beta (P1-3), not the last.
+    had_feasible = state["best_feasible"] is not None
+    best = state["best_feasible"] if had_feasible else latent
+    best_beta = state["best_beta"] if had_feasible else _beta_stages(args.beta_schedule)[-1]
     np.savez_compressed(run_root / "final_design.npz", latent=best,
-                        beta=np.array(_beta_stages(args.beta_schedule)[-1]),
-                        had_feasible=np.array(state["best_feasible"] is not None))
+                        beta=np.array(best_beta),
+                        objective=np.array(state["best_feasible_obj"] if had_feasible else np.nan),
+                        had_feasible=np.array(had_feasible),
+                        code_hash=np.array(contract["code_hash"]),
+                        config_hash=np.array(contract["config_hash"]),
+                        attempt=np.array(attempt_id))
+    if stage_failure is not None:
+        category = stage_failure                 # deterministic/solver/license failure
+    elif not had_feasible:
+        category = "geometry_infeasible"
+    elif not completed_all_stages:
+        category = "incomplete"
+    else:
+        category = "completed"
     stop = {
-        "category": "completed" if state["best_feasible"] is not None
-        else "geometry_infeasible",
-        "best_feasible_objective": state["best_feasible_obj"]
-        if np.isfinite(state["best_feasible_obj"]) else None,
+        "category": category,
+        "had_feasible": bool(had_feasible),
+        "best_feasible_objective": state["best_feasible_obj"] if had_feasible else None,
+        "best_beta": best_beta if had_feasible else None,
         "attempt": attempt_id,
+        "note": "constraint-feasible only; 500 nm is certified by final_projection DRC",
     }
     (attempt / "stop.json").write_text(json.dumps(stop, indent=2) + "\n")
     history.close()

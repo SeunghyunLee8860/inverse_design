@@ -8,16 +8,17 @@
 # Env overrides: GPU="GPU 3", PY=/path/to/python, OUT=runs/foo, RESUME=1,
 #                FDTD_THREADS=16, VC_LUMERICAL_ROOT=/path/to/lumerical/v261
 #
-# Requires: Lumerical v261 + license + an idle GPU, and `pip install -r
-# requirements.txt` (numpy scipy autograd nlopt).  Success = exact binary design
-# that PASSES the independent geometry DRC and has an exact-binary FDTD FOM;
-# it is NOT "beta reached N".
-set -u
+# FAILURE PROPAGATION (review P0-3): optimizer or DRC/FDTD failure aborts with a
+# nonzero exit; a stale final_design.npz from a previous attempt is deleted
+# before optimizing; the launcher exits 0 ONLY when this run wrote SUCCESS.json.
+# Success = exact binary design that PASSES the independent geometry DRC and has
+# an exact-binary FDTD FOM -- NOT "beta reached N".
+set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PY="${PY:-python}"
-MODE="${1:-connected}"          # connected | isolated
+MODE="${1:-connected}"
 GPU="${GPU:-GPU 1}"
-OUT="${OUT:-runs/${MODE}_500nm_$(date +%Y%m%d 2>/dev/null || echo run)}"
+OUT="${OUT:-runs/${MODE}_500nm}"
 cd "$HERE"
 
 export CL_GPU_DEVICE="$GPU" LUMERICAL_SESSION_GPU_DEVICE="$GPU"
@@ -32,18 +33,18 @@ export MSOPT_MAPPING=periodic_constrained
 
 GAPARG=""
 if [ "$MODE" = "isolated" ]; then
-  export PERIODIC_ISOLATION_GAP_UM=0.5      # total tile-to-tile air gap (um)
+  export PERIODIC_ISOLATION_GAP_UM=0.5
   GAPARG="--min-gap-um 0.5"
   echo "[run] ISOLATED islands: 500 nm air moat between periodic cells"
 elif [ "$MODE" = "connected" ]; then
-  unset PERIODIC_ISOLATION_GAP_UM
+  unset PERIODIC_ISOLATION_GAP_UM || true
   echo "[run] CONNECTED film: no forced air border"
 else
   echo "usage: $0 {connected|isolated}"; exit 2
 fi
 
 echo "[preflight] $(date)"
-$PY - <<'PYEOF' || { echo "[preflight] FAILED (install requirements / check Lumerical)"; exit 3; }
+$PY - <<'PYEOF'
 import importlib
 for m in ("numpy", "scipy", "autograd", "nlopt"):
     importlib.import_module(m)
@@ -51,16 +52,20 @@ print("  python deps OK (numpy scipy autograd nlopt)")
 PYEOF
 
 echo "[optimize] $(date)  mode=$MODE gpu=$GPU out=$OUT"
+rm -f "$OUT/final_design.npz" 2>/dev/null || true   # never finalise a prior attempt's design
 $PY inverse_design/run_constrained_inverse_design.py --output "$OUT" \
     --mfs-um 0.5 --mgs-um 0.5 --beta-schedule "2,4,8,16,32,64" \
-    --maxeval-per-stage 12 --rho-step 0.001 --gpu "$GPU" \
-    ${RESUME:+--resume}
+    --maxeval-per-stage 12 --rho-step 0.001 --gpu "$GPU" ${RESUME:+--resume}
 
-echo "[finalize] exact binary -> independent DRC -> exact FDTD"
-if [ -f "$OUT/final_design.npz" ]; then
-  $PY inverse_design/final_projection.py "$OUT/final_design.npz" \
-      --mfs-um 0.5 --mgs-um 0.5 --gpu "$GPU" $GAPARG \
-      --output "$OUT/final_projection"
-  echo "[finalize] exit $? (0=SUCCESS.json written, 2=DRC failed -> no SUCCESS)"
+if [ ! -f "$OUT/final_design.npz" ]; then
+  echo "[finalize] no final_design.npz -> optimizer produced nothing; ABORT"; exit 4
 fi
-echo "[done] $(date)"
+echo "[finalize] exact binary -> independent DRC -> exact FDTD"
+frc=0
+$PY inverse_design/final_projection.py "$OUT/final_design.npz" \
+    --mfs-um 0.5 --mgs-um 0.5 --gpu "$GPU" $GAPARG \
+    --output "$OUT/final_projection" || frc=$?
+if [ "$frc" -ne 0 ] || [ ! -f "$OUT/final_projection/SUCCESS.json" ]; then
+  echo "[finalize] FAILED: no SUCCESS.json (final_projection rc=$frc)"; exit "${frc:-5}"
+fi
+echo "[done] SUCCESS $(date) -> $OUT/final_projection/SUCCESS.json"
