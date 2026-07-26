@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "generation_command": "export GPU='GPU 0'; source volume_current_inverse_design/env_production.sh; /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/thermal_adjoint/run_full_latent_thermal_pte_adfd.py --weight-npz /home/seunghyun/tairte4/artifacts/pte_adfd/thermal_pte_native_pullback_x_20260726/thermal_pte_native_yee_pullback.npz --solver-workdir /home/seunghyun/tairte4/artifacts/pte_adfd/full_latent_thermal_pte_adfd_x_20260726/solver_x --output-dir /home/seunghyun/tairte4/artifacts/pte_adfd/full_latent_thermal_pte_adfd_x_20260726 --polarization x --beta 8 --step 0.005",
+  "artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/full_latent_thermal_pte_adfd_x_20260726/solver_x/latent_thermal_pte_forward.fsp",
+      "bytes": 74516634,
+      "sha256": "039a7d0b12c6a66c7add2efdaeb17b432186e6b1a3d57892292a1a69f7670a98",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/full_latent_thermal_pte_adfd_x_20260726/solver_x/latent_thermal_pte_adjoint_x.fsp",
+      "bytes": 186031834,
+      "sha256": "faa30416802005afaa3c754a6871e8c4435fbaf6b3b6868afc65c0cab66f1939",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/full_latent_thermal_pte_adfd_x_20260726/solver_x/latent_thermal_pte_adjoint_y.fsp",
+      "bytes": 186031834,
+      "sha256": "33e61b30344c8727ca81afbd4cf8de8dd610eb918161ad111372133a4da1a12c",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/full_latent_thermal_pte_adfd_x_20260726/solver_x/latent_thermal_pte_fd_plus.fsp",
+      "bytes": 74516634,
+      "sha256": "2068a2ebf4ad141dbe7682b436bbbd5b4353fc1172aab538361b259564b0decb",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/full_latent_thermal_pte_adfd_x_20260726/solver_x/latent_thermal_pte_fd_minus.fsp",
+      "bytes": 74516642,
+      "sha256": "b9fc135a7329783eff33ed0cf6b25d8397444ece9167a49804c2256d6122bfd1",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/full_latent_thermal_pte_adfd_x_20260726/full_latent_thermal_pte_adfd.npz",
+      "bytes": 7427393,
+      "sha256": "092d313d5ac19d19e1b05b626053653d2ae3b62d77f1c8cfe739cced89dec443",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/full_latent_thermal_pte_adfd_x_20260726/full_latent_thermal_pte_adfd_summary.json",
+      "bytes": 6800,
+      "sha256": "12f2eba793cf13c2916f845b10692153e8cd919d6e91376deba83d3f77126daa",
+      "committed_to_git": false,
+      "note": "immutable raw provenance; published summary records the generic nested unit-label erratum"
+    }
+  ]
+}

@@ -139,6 +139,19 @@ def main() -> int:
         density_mode="probe_safe",
         weight_builder=frozen_weight,
     )
+    evaluation.metadata["objective"] = (
+        "fixed-K finite-local-mask PTE functional per incident intensity"
+    )
+    evaluation.metadata["objective_unit"] = "A m per (W/m2)"
+    # The generic evaluator's default weight is dimensionless and therefore
+    # labels its value as m^2.  This runner supplies the thermal/PTE pullback
+    # weight in A m/W, so replace that generic label before publication.
+    evaluation.metadata["objective"] = (
+        "fixed-K finite-local-mask thermal/PTE objective per incident "
+        "intensity"
+    )
+    evaluation.metadata["objective_unit"] = "A m per (W/m2)"
+    evaluation.metadata["native_density_weight_unit"] = "A m/W"
     physical_gradient = np.asarray(evaluation.gradient_physical, float)
     latent_gradient = np.asarray(
         tensor_jacobian_product(
