@@ -2,6 +2,31 @@
 
 작성: 2026-07-24, 코드리뷰 반영 갱신 2026-07-25. 명세 "TaIrTe4 500 nm 이진 설계: 전체 수정 명세"(0~18)에 대응.
 
+## Runtime 최적화 캠페인 인증 완료 (2026-07-26, GPU) — 프로덕션 설정 갱신
+한 변수씩 검증(Phase A→B→C→D), 각 phase 별도 커밋. **최종 승인 설정:**
+```
+VC_ADJOINT_COMPONENT_MODE=combined   VC_SIM_TIME_S=2e-12
+(mesh 무변경: auto non-uniform / accuracy 5 / CV1 / flake 5nm / in-plane 25nm)
+```
+**objective evaluation: 2518s → 915s (−64%)**, solve 6→4개/eval.
+
+- **Phase A `66fb531`** combined vector adjoint (전벡터 q 1회 solve): split 대비
+  FOM rel diff **0.0**, gradient cosine 1.0000000000, relL2 ≤2.2e-6, roundtrip 0 → 채택 (−31%).
+- **Phase B `7ffa7cf`** sim time 4→2ps: F_sum rel 3.3e-04, cos 1.000000, 방향미분 ≤5.9e-04
+  (기준: <1%/>0.995/<2%, AD/FD가 아닌 4ps 대조로 판정) → 2ps 채택.
+- **Phase C `c75d90e`** fast bulk mesh: z셀 113→101이지만 interface band 비보존 +
+  F_sum 1.13% 이동, 이득 −4.5%뿐 → **기각** (mesh 무변경 유지).
+- **Phase D** 최종 full-chain AD/FD (combined+2ps+auto mesh, `run_phaseD.sh`):
+
+| | safe β=4 | safe β=32 | exact β=8 |
+|---|---|---|---|
+| **combined+2ps (신규 승인)** | **1.80%** | **2.36%** | **1.27%** |
+| split+4ps (기존 baseline, 보존) | 1.80% | 2.33% | 1.20% |
+
+전 케이스 <5% PASS — 정확도 손실 없이 64% 단축. 기존 split/4ps 경로는 기본값으로 보존
+(env 미설정 시 bit-identical). 부수 수정: nlopt xtol 비활성(`44f7ea1`, adaptive controller가
+stage 종료 소유), eqc_lib의 VC_SIM_TIME_S/BULK_MESH_MODE env 배선.
+
 ## Lumerical full-chain AD/FD 실측 인증 완료 (2026-07-25, GPU) — P0-8 CLOSED
 새 매핑 + solver-safe affine 층 + mapping VJP + FieldRegion adjoint(+ Yee 정합·주기소스 right-inverse·
 27-color rho→eps 측정 Jacobian) **전 경로**를 실제 FDTD로 검증. broadband 소스(3–6µm), 4µm 분석.
