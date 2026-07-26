@@ -100,6 +100,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--source-span-um", type=float, default=6.8)
     parser.add_argument("--waist-um", type=float, default=2.0)
     parser.add_argument(
+        "--design-radius-um",
+        type=float,
+        default=1.5,
+        help=(
+            "radius of the centered SiO2 design disk; the PR #3 default is "
+            "1.5 um, while the in-flake proxy validation uses 0.8 um"
+        ),
+    )
+    parser.add_argument(
+        "--require-design-inside-flake",
+        action="store_true",
+        help="fail closed unless the complete centered design disk is in the flake footprint",
+    )
+    parser.add_argument(
         "--incident-reference",
         help=(
             "case_result.json from a matching empty-stack Gaussian control; "
@@ -120,6 +134,18 @@ def parse_args() -> argparse.Namespace:
         parser.error("Gaussian source span needs at least 0.5 um clearance per side")
     if args.waist_um <= 0.0:
         parser.error("--waist-um must be positive")
+    if args.design_radius_um <= 0.0:
+        parser.error("--design-radius-um must be positive")
+    if (
+        args.require_design_inside_flake
+        and args.case != "fixed-design"
+    ):
+        parser.error("--require-design-inside-flake applies only to fixed-design")
+    if (
+        args.require_design_inside_flake
+        and args.design_radius_um > 0.5 * FLAKE_SPAN_M * 1e6
+    ):
+        parser.error("the centered SiO2 disk extends outside the flake footprint")
     if args.case == "fixed-design" and not np.isclose(
         args.polarization_deg, 0.0
     ):
@@ -591,10 +617,18 @@ def geometry_contract(
         "fixed_design": {
             "enabled": args.case == "fixed-design",
             "shape": "single centered disk",
-            "radius_m": DESIGN_RADIUS_M,
+            "radius_m": args.design_radius_um * 1e-6,
             "z_bounds_m": (0.0, DESIGN_HEIGHT_M),
             "material": SIO2_MATERIAL,
             "periodic_repetition": False,
+            "complete_disk_inside_flake_footprint": (
+                args.case == "fixed-design"
+                and args.design_radius_um * 1e-6 <= 0.5 * FLAKE_SPAN_M
+            ),
+            "support_annulus": False,
+            "overhang_support": False,
+            "oxide_pillar": False,
+            "outside_disk_above_flake": "air",
         },
         "gaussian_source": {
             "injection_plane_bounds_m": source_bounds,
@@ -694,7 +728,7 @@ def add_geometry_and_monitors(
         design["name"] = "fixed_design_SiO2"
         design["x"] = 0.0
         design["y"] = 0.0
-        design["radius"] = DESIGN_RADIUS_M
+        design["radius"] = args.design_radius_um * 1e-6
         design["z min"] = 0.0
         design["z max"] = DESIGN_HEIGHT_M
         design["material"] = SIO2_MATERIAL
@@ -929,6 +963,43 @@ def assert_pre_run_contract(
         == str(fdtd.getnamed("SiO2_spacer", "material"))
         == SIO2_MATERIAL
     )
+    realized_design_radius = None
+    if args.case == "fixed-design":
+        realized_design_radius = scalar(
+            fdtd.getnamed("fixed_design_SiO2", "radius"),
+            "fixed_design_SiO2.radius",
+        )
+        checks["requested_design_radius"] = np.isclose(
+            realized_design_radius,
+            args.design_radius_um * 1e-6,
+            rtol=0.0,
+            atol=1e-15,
+        )
+        checks["single_centered_design_disk"] = (
+            int(fdtd.getnamednumber("fixed_design_SiO2")) == 1
+            and np.isclose(
+                scalar(fdtd.getnamed("fixed_design_SiO2", "x"), "design x"),
+                0.0,
+                atol=1e-15,
+            )
+            and np.isclose(
+                scalar(fdtd.getnamed("fixed_design_SiO2", "y"), "design y"),
+                0.0,
+                atol=1e-15,
+            )
+        )
+        checks["design_support_objects_absent"] = all(
+            int(fdtd.getnamednumber(name)) == 0
+            for name in (
+                "support_annulus",
+                "overhang_support",
+                "oxide_pillar",
+            )
+        )
+        if args.require_design_inside_flake:
+            checks["complete_design_inside_flake_footprint"] = (
+                realized_design_radius <= 0.5 * FLAKE_SPAN_M
+            )
     source_bounds = setup["source_bounds"]
     checks["Gaussian_source_clear_of_structure_and_PML"] = (
         INNER_BOX["x"][0] > source_bounds["x"][0]
@@ -987,6 +1058,11 @@ def assert_pre_run_contract(
             "resources": resources,
         },
         "geometry": setup["geometry"],
+        "design": {
+            "radius_m": realized_design_radius,
+            "height_m": DESIGN_HEIGHT_M if realized_design_radius is not None else None,
+            "required_inside_flake": bool(args.require_design_inside_flake),
+        },
     }
 
 
@@ -1029,8 +1105,8 @@ def plot_geometry(
     if args.case == "fixed-design":
         ax.add_patch(
             plt.Rectangle(
-                (-DESIGN_RADIUS_M * 1e6, 0.0),
-                2 * DESIGN_RADIUS_M * 1e6,
+                (-args.design_radius_um, 0.0),
+                2 * args.design_radius_um,
                 DESIGN_HEIGHT_M * 1e6,
                 color="deepskyblue",
                 alpha=0.6,
@@ -1081,7 +1157,7 @@ def plot_geometry(
         ax.add_patch(
             plt.Circle(
                 (0.0, 0.0),
-                DESIGN_RADIUS_M * 1e6,
+                args.design_radius_um,
                 color="deepskyblue",
                 alpha=0.5,
                 label="SiO2 disk",
@@ -1467,6 +1543,8 @@ def run_case(
         "rescaled_to_flux": False,
         "periodic_crop": False,
         "periodic_tiling": False,
+        "smoothed": False,
+        "source_deleted": False,
     }
     np.savez(
         output / "finite_q_on_artifact.npz",
@@ -1578,6 +1656,8 @@ def main() -> int:
         "source_type": "Gaussian",
         "source_span_um": args.source_span_um,
         "waist_um": args.waist_um,
+        "design_radius_um": args.design_radius_um,
+        "require_design_inside_flake": bool(args.require_design_inside_flake),
         "generation_command": command,
         "generation_commit": commit,
         "project": str(project),

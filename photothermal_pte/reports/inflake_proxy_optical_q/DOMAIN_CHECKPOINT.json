@@ -1,0 +1,19 @@
+{
+  "checkpoint": "FRESH_INFLAKE_PROXY_DOMAIN_CONVERGENCE_PASSED",
+  "generation_code_commit": "af6e93f7b2748da7d6eaffda269d389ac07a9327",
+  "from_case": "proxy_x_r0p8_L12_pml24_dz5",
+  "to_case": "proxy_x_r0p8_L16_pml24_dz5",
+  "P_Q_relative_change": 0.00024058140273890068,
+  "P_six_relative_change": 0.0002324864672018451,
+  "spatial_Q_relative_L2": 0.00025512953980293276,
+  "passed": true,
+  "promoted_baseline": {
+    "P_Q_W": 2.0361088604691824e-12,
+    "P_six_W": 2.040668004695463e-12,
+    "six_face_closure": 0.0022341430432536048,
+    "raw_NPZ_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz5/finite_q_on_artifact.npz",
+    "raw_NPZ_size_bytes": 8695110,
+    "raw_NPZ_sha256": "2ecdb8a8a2a01f85635914357ce05aab834576a66069cdc024a5dca49b0c71c3",
+    "raw_NPZ_committed": false
+  }
+}

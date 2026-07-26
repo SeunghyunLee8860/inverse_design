@@ -1,33 +1,36 @@
 # Latest photothermal validation status
 
-## Finite 2 um TaIrTe4 optical Q
+## Finite in-flake SiO2 proxy optical Q
 
-- Branch: `agent/validate-finite-2um-optical-q`
-- Baseline: `be2cbc2c9c77bbcc0265ce2c293affdbb08105de`
-- Status: `FINITE_2UM_OPTICAL_Q_VALIDATED`
-- HEAT Draft PR #2: unchanged and still blocked
-- Periodic production optical path: unchanged
-- New finite Q artifact validated: `true`
+- Branch: `agent/validate-inflake-proxy-optical-q`
+- Base: PR #3 head `053260da6fd0caec28ce155221bd18f683a0e5e7`
+- Status: `VALIDATED_FINITE_INFLAKE_PROXY_OPTICAL_Q`
+- PR #2–#5: unchanged
+- PR #3 radius-1.5-µm artifact: not reused or cropped
 
-The actual v261 GPU solver rejected TFSF as unsupported. The validated source
-is therefore a finite Gaussian beam, never called a plane wave: 3–6 µm
-broadband, 4 µm evaluation, 2 µm waist focused at the flake center, and
-measured empty-stack E/H intensity normalization. Source-off, x/y/45-degree
-empty-stack, flat x/y/45-degree, and fixed-design x controls all pass.
+Fresh v261 GPU FDTD was run for a centered radius-0.8-µm, 600-nm-high SiO2
+disk completely inside the 2 µm × 2 µm × 100 nm TaIrTe4 footprint. Outside
+the disk is air, with no support annulus, overhang support, or oxide pillar.
+The finite Gaussian source uses a 2 µm waist, 6.8 µm aperture, 3–6 µm source
+band, 4 µm analysis point, and measured central incident intensity of 1 W/m2.
 
-The final fixed-design x result uses a 16 µm lateral domain, 24 PML layers,
-5 nm TaIrTe4 dz, and unit central incident intensity. It has
-`P_Q=2.56071371e-12 W`, `P_six=2.56486066e-12 W`, 0.161683% six-face closure,
-`sigma_abs=2.56071371e-12 m2`, and `sigma_abs/A_geo=0.64017843`.
+The promoted x-polarized result uses a 16 µm lateral domain, 24 PML layers,
+and 5 nm TaIrTe4 dz:
 
-Final successive convergence changes are:
+- `P_Q=2.0361088604691824e-12 W`
+- `P_six=2.040668004695463e-12 W`
+- six-face closure `0.223414304%`
+- `Qx/Q=0.993324070`, `Qy/Q=0.006675930`, `Qz/Q=0`
+- raw NPZ SHA-256
+  `2ecdb8a8a2a01f85635914357ce05aab834576a66069cdc024a5dca49b0c71c3`
 
-- domain 12→16 µm: P_Q 0.01996%, spatial L2 0.02121%;
-- PML 16→24 layers: P_Q 0.000210%, spatial L2 0.000639%;
-- mesh 5→2.5 nm: P_Q 0.12778%, P_six 0.10913%, spatial L2 0.28295%;
-- waist 1.75→2 µm: P_Q 0.61986%, spatial L2 1.87002%.
+Final convergence changes are:
 
-The final raw NPZ is intentionally not committed. Its server path, size,
-SHA-256, generating command, commit, and reproduction instructions are
-recorded in the finite optical raw-artifact manifest. HEAT, adjoint,
-gradients, optimization, and PTE were not run.
+- domain 12→16 µm: P_Q 0.0240581%, P_six 0.0232486%, spatial L2 0.025513%;
+- PML 16→24: P_Q 0.000270435%, P_six 0.00134641%, spatial L2 0.000594892%;
+- flake dz 5→2.5 nm: P_Q 0.0769457%, P_six 0.0503751%, spatial L2 0.608514%.
+
+Source-off, empty-stack x/y/45-degree, finite-flat x/y/45-degree, proxy,
+six-face closure, domain, PML, mesh, finite-value, geometry, and P_Q
+reintegration gates pass. Raw NPZ/FSP files are not committed. Thermal, PTE,
+adjoint, gradient, and optimization were not run.

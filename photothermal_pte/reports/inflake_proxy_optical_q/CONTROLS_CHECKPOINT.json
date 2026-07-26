@@ -1,0 +1,57 @@
+{
+  "checkpoint": "FRESH_V261_GPU_OPTICAL_CONTROLS_PASSED",
+  "generation_code_commit": "072353d133bde000c567557ba83e4b914017bd42",
+  "raw_case_root": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases",
+  "raw_npz_or_fsp_committed": false,
+  "controls": {
+    "source_off": {
+      "case_id": "control_source_off_L12_pml24_dz5_retry1",
+      "status": "COMPLETED",
+      "no_source_background_is_zero": true
+    },
+    "empty_stack_x": {
+      "case_id": "empty_x_L12_pml24_dz5",
+      "status": "COMPLETED",
+      "all_acceptance_gates": true
+    },
+    "empty_stack_y": {
+      "case_id": "empty_y_L8_pml24_dz5",
+      "status": "COMPLETED",
+      "all_acceptance_gates": true
+    },
+    "empty_stack_45": {
+      "case_id": "empty_45_L8_pml24_dz5",
+      "status": "COMPLETED",
+      "all_acceptance_gates": true
+    },
+    "finite_flat_x": {
+      "case_id": "flat_x_L8_pml24_dz5",
+      "status": "COMPLETED",
+      "P_Q_W": 1.5666799961239582e-12,
+      "P_six_W": 1.5719281804220606e-12,
+      "six_face_closure": 0.003338692163845061,
+      "all_acceptance_gates": true
+    },
+    "finite_flat_y": {
+      "case_id": "flat_y_L8_pml24_dz5",
+      "status": "COMPLETED",
+      "P_Q_W": 1.7806100888070543e-12,
+      "P_six_W": 1.7863671346430803e-12,
+      "six_face_closure": 0.0032227674392231024,
+      "all_acceptance_gates": true
+    },
+    "finite_flat_45": {
+      "case_id": "flat_45_L8_pml24_dz5",
+      "status": "COMPLETED",
+      "P_Q_W": 1.6731528653418457e-12,
+      "P_six_W": 1.6786535900193833e-12,
+      "six_face_closure": 0.0032768670738517994,
+      "all_acceptance_gates": true
+    }
+  },
+  "thermal_run": false,
+  "PTE_run": false,
+  "adjoint_run": false,
+  "gradient_run": false,
+  "optimization_run": false
+}
