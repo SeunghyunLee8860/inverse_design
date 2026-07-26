@@ -1,0 +1,298 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "20260725T222600Z",
+  "branch": "agent/validate-fvm-thermal-physical-model",
+  "generation_commit": "4b7534ef1e355b8fce4bdf9b043196cfef103f73",
+  "solver_attribution": "independent conservative Cartesian Python/SciPy FVM; not a Lumerical HEAT result",
+  "raw_artifact_count": 48,
+  "artifacts": [
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_1e6/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_1e6/case_result.json",
+      "bytes": 5559,
+      "sha256": "221a76552b31b0dab8c916d59eaf62859aaff654cf14ebc244269cb4cd76a0e9"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_1e6/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_1e6/temperature_flux_3d.npz",
+      "bytes": 51630529,
+      "sha256": "6638e7935690f2f26615d4161405e78da780c364eadcf2a0991ff55a08b1275f"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_1e8/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_1e8/case_result.json",
+      "bytes": 5560,
+      "sha256": "9a0ceb9a6490d8bbb394b56810d3427a489ac0a75769695d219324a146adfb1a"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_1e8/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_1e8/temperature_flux_3d.npz",
+      "bytes": 51885106,
+      "sha256": "087f8b5383a4ab08b36c7583c60c6ad2d8fb7217c008a7e35b693767f4538adf"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_1p5e7/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_1p5e7/case_result.json",
+      "bytes": 5575,
+      "sha256": "1b1261c1fc8a266ea4e74cb4b220e3fee3648148c98d8a17159ccc2013f859eb"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_1p5e7/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_1p5e7/temperature_flux_3d.npz",
+      "bytes": 51850234,
+      "sha256": "1763ca6151682e220ceeae14d5bc396ec5fffe5d37f113390d93ecad01082d13"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_3e6/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_3e6/case_result.json",
+      "bytes": 5559,
+      "sha256": "5fbaf1f6da94d21814a57cf08a6d05846bbca1a9a57c80f4f22cf2ce73961aab"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_3e6/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_3e6/temperature_flux_3d.npz",
+      "bytes": 51728819,
+      "sha256": "de1e397ee9e76935bd5bdf2d84b9ae3333309649d55f74473ab92514b647b395"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_3e7/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_3e7/case_result.json",
+      "bytes": 5559,
+      "sha256": "eb076529995301d0045eb3b0b8069e3604d85eca3721b7834c480ab6aeba9e1e"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_3e7/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_3e7/temperature_flux_3d.npz",
+      "bytes": 51869966,
+      "sha256": "5d5d32366e93916696a8505ba6f4b6663e6249a38fa27d84672a38977817426c"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_perfect/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_perfect/case_result.json",
+      "bytes": 5542,
+      "sha256": "a3343a22eec82d3d56c64b03219bef8f272ae292bc3168184f7adaa4d45dcb6d"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_perfect/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gbottom_perfect/temperature_flux_3d.npz",
+      "bytes": 51892146,
+      "sha256": "bd53868fe3b3faa924198de05a2e97bd00b1d8d964637503ce7985844e41f4a4"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gtop_7p37e4/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gtop_7p37e4/case_result.json",
+      "bytes": 5556,
+      "sha256": "3300bdb1105f68c8f2d7fafc4379d2c581773e4bfee43080ed3268ea33a158ce"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gtop_7p37e4/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gtop_7p37e4/temperature_flux_3d.npz",
+      "bytes": 51728727,
+      "sha256": "c8b44663bb96237668c7520cff3fadd08441aac2858a616f1fd755cbd3cf3a08"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gtop_7p37e5/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gtop_7p37e5/case_result.json",
+      "bytes": 5555,
+      "sha256": "f0b133f873c9f82d9860b3eff7af9905b973bd942729d45c53b8a666cc91bd61"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gtop_7p37e5/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gtop_7p37e5/temperature_flux_3d.npz",
+      "bytes": 51781455,
+      "sha256": "3bc5569d78f8368d5037ead2f548b5aa230d991f0271993e4d8eb08afffb28ad"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gtop_7p37e7/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gtop_7p37e7/case_result.json",
+      "bytes": 5561,
+      "sha256": "6b618d71994357d0f351ce2c2a211bb9589b3e5290f13fa547ed7a2c15cb78e6"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gtop_7p37e7/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gtop_7p37e7/temperature_flux_3d.npz",
+      "bytes": 51808183,
+      "sha256": "c098983009358e547f9bc99f8c52377942e835f014a4d406adb1e31c2c10dd61"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gtop_perfect/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gtop_perfect/case_result.json",
+      "bytes": 5522,
+      "sha256": "1d854534dc9c792c6fb319fa5b11019984052c5089d456c4e29db50b52af2816"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gtop_perfect/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/Gtop_perfect/temperature_flux_3d.npz",
+      "bytes": 51795010,
+      "sha256": "575ee278b7fc72d86878bf2aefbed86d88f8d56889c1f205257768c408a973e9"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/convection_h10/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/convection_h10/case_result.json",
+      "bytes": 5645,
+      "sha256": "0c2e5d292efd469c7fdc49a6a83a1d99fa6f30da4d3f35e72e5d469b9c880a86"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/convection_h10/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/convection_h10/temperature_flux_3d.npz",
+      "bytes": 51811879,
+      "sha256": "5aa06b3f50fe80d4433d4c1c276ff355a5fca6751bd588a3e1950d080ece0b0c"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/depth_D10_L32/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/depth_D10_L32/case_result.json",
+      "bytes": 5552,
+      "sha256": "a60a6b860f616f821c3d7e092aecc77e76a5750e59a12f6ddb5b19e897ebeaa9"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/depth_D10_L32/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/depth_D10_L32/temperature_flux_3d.npz",
+      "bytes": 38614338,
+      "sha256": "b523cc7a5726cab296223eeb05e76390b258442c20a34e5bcd10b2a4bb84cb72"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/depth_D2_L32/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/depth_D2_L32/case_result.json",
+      "bytes": 5523,
+      "sha256": "1add7cbae4989f763355480c16bf536b817314ed38174cb7a66b6fe889033cc8"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/depth_D2_L32/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/depth_D2_L32/temperature_flux_3d.npz",
+      "bytes": 28013973,
+      "sha256": "bd0c30483bf2cb2bbac22f0563623727ad7782f801ed1452dae4b74cc7f8d33e"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/depth_D5_L32/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/depth_D5_L32/case_result.json",
+      "bytes": 5543,
+      "sha256": "71125a0702c5f83e655d24bb6808714ec6cb3be052b6b5b80d5fb03686d958c3"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/depth_D5_L32/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/depth_D5_L32/temperature_flux_3d.npz",
+      "bytes": 32095200,
+      "sha256": "b725f3bb42d4e87b56477c60a33a8698349e5cc06dbfe96e9e85e765d0c8be1c"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/domain_L16/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/domain_L16/case_result.json",
+      "bytes": 5517,
+      "sha256": "f6f35fda4e32deb3377f3675592fd660efbbbab925b7c9c56af87e7136a9cb12"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/domain_L16/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/domain_L16/temperature_flux_3d.npz",
+      "bytes": 27190850,
+      "sha256": "690329fb74109e0ad373ae1119af067038ccb77baf2533747b292f08a6983614"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/domain_L32/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/domain_L32/case_result.json",
+      "bytes": 5519,
+      "sha256": "58ae254d03634c7a522d5483771222454bf9fb7ff2e6208abc5c6b9911b6ab27"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/domain_L32/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/domain_L32/temperature_flux_3d.npz",
+      "bytes": 32095200,
+      "sha256": "b725f3bb42d4e87b56477c60a33a8698349e5cc06dbfe96e9e85e765d0c8be1c"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/domain_L4/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/domain_L4/case_result.json",
+      "bytes": 5516,
+      "sha256": "d02bf032f135b52a05da334124db6dff547b24f9dd89dd2c4e0702e3ef8b3e4f"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/domain_L4/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/domain_L4/temperature_flux_3d.npz",
+      "bytes": 22174624,
+      "sha256": "09fb171eff77d16299a6173b9a35276753102adef3f775b145ad4433b93b6599"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/final_native/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/final_native/case_result.json",
+      "bytes": 5550,
+      "sha256": "47e1805a2949210bc146b31a37abf905987e6021203d80d7d29eee6906bdb9a3"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/final_native/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/final_native/temperature_flux_3d.npz",
+      "bytes": 51812319,
+      "sha256": "0e72709a278b4e94922740a653d8e0d102214b3b1cd1513d3f8fb2e482f4fc6d"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/mesh_coarse/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/mesh_coarse/case_result.json",
+      "bytes": 5679,
+      "sha256": "fb1c30809aa288d63fa43869c2239aade633f1d03366a7af1f3e905d49d7872c"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/mesh_coarse/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/mesh_coarse/temperature_flux_3d.npz",
+      "bytes": 8339508,
+      "sha256": "adc978c57e7b2bb6efbd010bde04068f74576e718b17a1f62b1bdfc4bc3afa3d"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/mesh_refined/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/mesh_refined/case_result.json",
+      "bytes": 5717,
+      "sha256": "5f1d42c1c9bb761a48ca6bb3fd2e3c0fb0ead2e1d5e480292ea8a05b8f5e7f2c"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/mesh_refined/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/mesh_refined/temperature_flux_3d.npz",
+      "bytes": 175134810,
+      "sha256": "0c23ddde0161e5c9f52dbe875738a123800f29f653fde11140689bbd4c25877c"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/oxide_si_perfect/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/oxide_si_perfect/case_result.json",
+      "bytes": 5538,
+      "sha256": "5b9b75808a3cb0a7da476fee77475f1cb19d8568bdeb64d7e3a036755449fb59"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/oxide_si_perfect/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_sensitivity/sweep_v1/oxide_si_perfect/temperature_flux_3d.npz",
+      "bytes": 51783766,
+      "sha256": "200b34a7ff6284a8d3ab820aba1708d879ca7eb3fb2db2e305876886f2b5253d"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_thermal/baseline_v2/case_result.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_thermal/baseline_v2/case_result.json",
+      "bytes": 5357,
+      "sha256": "f6881cf4eb9a634f175a73d112bac9302c13a4e65173e3bd9ca21e694bd3be83"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_thermal/baseline_v2/temperature_flux_3d.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_multimaterial_thermal/baseline_v2/temperature_flux_3d.npz",
+      "bytes": 24902217,
+      "sha256": "314604f303d5297a82ed39ac85edb1ac9bc638f05f9292282f538a2972c2de4a"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_multimaterial_thermal/FVM_MULTIMATERIAL_THERMAL_REPORT.md",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_multimaterial_thermal/FVM_MULTIMATERIAL_THERMAL_REPORT.md",
+      "bytes": 5119,
+      "sha256": "74576241f3e8d93196721f8f9543e3a02981aff64d00b8bbb5ff1426b3624f81"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_multimaterial_thermal/fvm_multimaterial_thermal_summary.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_multimaterial_thermal/fvm_multimaterial_thermal_summary.json",
+      "bytes": 16511,
+      "sha256": "b0c983d9a17a4bf084adc510940ae65639eea3198c7ac960dc9b8e74cc53fa37"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_multimaterial_thermal/fvm_multimaterial_thermal_cases.csv",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_multimaterial_thermal/fvm_multimaterial_thermal_cases.csv",
+      "bytes": 3569,
+      "sha256": "f65670df9199de44940ca263b378bed5cc4bc0d387e881e20e1743fbbae1fe4d"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_multimaterial_thermal/fvm_multimaterial_convergence.csv",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_multimaterial_thermal/fvm_multimaterial_convergence.csv",
+      "bytes": 953,
+      "sha256": "0708fdf0a3a7576930e4b815f3d1f575fe70a5d25d210fa1a545c8bcaa5468d4"
+    }
+  ]
+}

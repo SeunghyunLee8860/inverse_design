@@ -1,0 +1,214 @@
+{
+  "selection_limit": 0.005,
+  "selection_rows": [
+    {
+      "source_range_um": "3.6-4.4",
+      "pulse_type": "standard",
+      "flat_y_closure": 2232655.5236608074,
+      "flat_y_TMM_error": 1.00000103337248,
+      "disk_closure": 0.1169305013595743,
+      "flat_solver": "CONVERGED",
+      "disk_solver": "CONVERGED",
+      "result": "FAIL"
+    },
+    {
+      "source_range_um": "3-6",
+      "pulse_type": "broadband",
+      "flat_y_closure": 4.184324981223344e-06,
+      "flat_y_TMM_error": 0.0011541222977403689,
+      "disk_closure": 0.000612063347892027,
+      "flat_solver": "CONVERGED",
+      "disk_solver": "CONVERGED",
+      "result": "PASS"
+    },
+    {
+      "source_range_um": "2.67-8",
+      "pulse_type": "broadband",
+      "flat_y_closure": 1.1365506122712585,
+      "flat_y_TMM_error": 0.5150447343511791,
+      "disk_closure": 110035.74678238423,
+      "flat_solver": "CONVERGED",
+      "disk_solver": "DIVERGED",
+      "result": "FAIL"
+    },
+    {
+      "source_range_um": "3-12",
+      "pulse_type": "broadband",
+      "flat_y_closure": 3.5755760851974515e-05,
+      "flat_y_TMM_error": 0.0011300282970729664,
+      "disk_closure": 0.0005898951722073443,
+      "flat_solver": "CONVERGED",
+      "disk_solver": "CONVERGED",
+      "result": "PASS"
+    }
+  ],
+  "selected_narrowest_source_range_um": "3-6",
+  "epsilon_dt_mesh_variation": {
+    "flat_y": {
+      "3.6-4.4": {
+        "epsilon_x_relative_change_vs_3_12": 0.0010645099372607132,
+        "epsilon_y_relative_change_vs_3_12": 0.00045215355662571135,
+        "epsilon_z_relative_change_vs_3_12": 0.0,
+        "dt_relative_change_vs_3_12": 3.046940931977879e-13,
+        "mesh_coordinates_identical_to_3_12": false
+      },
+      "3-6": {
+        "epsilon_x_relative_change_vs_3_12": 0.0004219818519461622,
+        "epsilon_y_relative_change_vs_3_12": 5.9179119665873345e-06,
+        "epsilon_z_relative_change_vs_3_12": 0.0,
+        "dt_relative_change_vs_3_12": 0.0,
+        "mesh_coordinates_identical_to_3_12": true
+      },
+      "2.67-8": {
+        "epsilon_x_relative_change_vs_3_12": 0.0005086489112100734,
+        "epsilon_y_relative_change_vs_3_12": 5.957120060688377e-06,
+        "epsilon_z_relative_change_vs_3_12": 0.0,
+        "dt_relative_change_vs_3_12": 4.4996199632009414e-14,
+        "mesh_coordinates_identical_to_3_12": false
+      },
+      "3-12": {
+        "epsilon_x_relative_change_vs_3_12": 0.0,
+        "epsilon_y_relative_change_vs_3_12": 0.0,
+        "epsilon_z_relative_change_vs_3_12": 0.0,
+        "dt_relative_change_vs_3_12": 0.0,
+        "mesh_coordinates_identical_to_3_12": true
+      }
+    },
+    "disk_x": {
+      "3.6-4.4": {
+        "epsilon_x_relative_change_vs_3_12": 0.0010645099372607132,
+        "epsilon_y_relative_change_vs_3_12": 0.00045215355662571135,
+        "epsilon_z_relative_change_vs_3_12": 0.0,
+        "dt_relative_change_vs_3_12": 3.046940931977879e-13,
+        "mesh_coordinates_identical_to_3_12": false
+      },
+      "3-6": {
+        "epsilon_x_relative_change_vs_3_12": 0.0004219818519461622,
+        "epsilon_y_relative_change_vs_3_12": 5.9179119665873345e-06,
+        "epsilon_z_relative_change_vs_3_12": 0.0,
+        "dt_relative_change_vs_3_12": 0.0,
+        "mesh_coordinates_identical_to_3_12": true
+      },
+      "2.67-8": {
+        "epsilon_x_relative_change_vs_3_12": 0.0005086489112100734,
+        "epsilon_y_relative_change_vs_3_12": 5.957120060688377e-06,
+        "epsilon_z_relative_change_vs_3_12": 0.0,
+        "dt_relative_change_vs_3_12": 4.4996199632009414e-14,
+        "mesh_coordinates_identical_to_3_12": false
+      },
+      "3-12": {
+        "epsilon_x_relative_change_vs_3_12": 0.0,
+        "epsilon_y_relative_change_vs_3_12": 0.0,
+        "epsilon_z_relative_change_vs_3_12": 0.0,
+        "dt_relative_change_vs_3_12": 0.0,
+        "mesh_coordinates_identical_to_3_12": true
+      }
+    }
+  },
+  "regression": {
+    "flat_x": {
+      "source_range_um": [
+        3.0,
+        6.0
+      ],
+      "A_global": 0.2575857418713912,
+      "A_local_flux": 0.2575847600902305,
+      "A_six_face": 0.2575847600902305,
+      "A_Qx": 0.2575925165260382,
+      "A_Qy": 0.0,
+      "A_Qz": 0.0,
+      "A_Q": 0.2575925165260385,
+      "delta_closure": 3.0112168923556115e-05,
+      "A_TMM": 0.2567229648800354,
+      "delta_TMM": 0.003356907359642904,
+      "solver_converged": true,
+      "pass_closure": true,
+      "pass_TMM": true
+    },
+    "flat_y": {
+      "source_range_um": [
+        3.0,
+        6.0
+      ],
+      "A_global": 0.4228051496578614,
+      "A_local_flux": 0.42275553911879127,
+      "A_six_face": 0.42275553911879127,
+      "A_Qx": 9.658067053888074e-34,
+      "A_Qy": 0.422757308065354,
+      "A_Qz": 0.0,
+      "A_Q": 0.42275730806535455,
+      "delta_closure": 4.184324981223344e-06,
+      "A_TMM": 0.42324401447328003,
+      "delta_TMM": 0.0011541222977403689,
+      "solver_converged": true,
+      "pass_closure": true,
+      "pass_TMM": true
+    },
+    "flat_45": {
+      "source_range_um": [
+        3.0,
+        6.0
+      ],
+      "A_global": 0.3401954348706643,
+      "A_local_flux": 0.3401690185966916,
+      "A_six_face": 0.3401690185966916,
+      "A_Qx": 0.12879482729616906,
+      "A_Qy": 0.2113786549554912,
+      "A_Qz": 0.0,
+      "A_Q": 0.34017348225166066,
+      "delta_closure": 1.3121873906986317e-05,
+      "A_TMM": 0.3399834896766577,
+      "delta_TMM": 0.0005456997932761988,
+      "solver_converged": true,
+      "pass_closure": true,
+      "pass_TMM": true
+    },
+    "disk_x": {
+      "source_range_um": [
+        3.0,
+        6.0
+      ],
+      "A_global": 0.46649078940295524,
+      "A_local_flux": 0.4661239820667759,
+      "A_six_face": 0.4661239820667759,
+      "A_Qx": 0.4401967457824757,
+      "A_Qy": 0.026212536657546772,
+      "A_Qz": 0.0,
+      "A_Q": 0.46640927947177246,
+      "delta_closure": 0.000612063347892027,
+      "A_TMM": null,
+      "delta_TMM": null,
+      "solver_converged": true,
+      "pass_closure": true,
+      "pass_TMM": true
+    }
+  },
+  "positive_control_disk_3_12": {
+    "A_Q": 0.46639369957153154,
+    "A_local_flux": 0.4661187383780869,
+    "delta_closure": 0.0005898951722073443
+  },
+  "selected_disk_repeatability": {
+    "A_Q_pabs_adv": 0.0,
+    "A_local_flux": 0.0,
+    "delta_closure_pabs_adv": 0.0
+  },
+  "production_contract": {
+    "source_range_um": "3-6",
+    "material_sampled_range_um": [
+      2.7,
+      13.2
+    ],
+    "analysis_monitor_wavelength_um": 4.0,
+    "mesh_type": "auto non-uniform",
+    "mesh_refinement": "conformal variant 1",
+    "mesh_accuracy": 5,
+    "global_uniform_mesh": "absent",
+    "TaIrTe4_dz_nm": 5.0
+  },
+  "heat_run": false,
+  "Qy_deleted": false,
+  "Q_clipped": false,
+  "flux_gain": false,
+  "Q_rescaled": false
+}

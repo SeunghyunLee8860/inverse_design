@@ -1,0 +1,37 @@
+Production optical regression solver execution evidence
+
+[flat_x]
+sha256=1b5913cb47c8f181b3941d23d90057237f3ae542f5e7e915abb829a4321b5937
+Configured with CUDA_VISIBLE_DEVICES=0
+Ansys Lumerical 2026 R1 FDTD Solver Version 8.35.4413 (Linux 64bit)
+Running fsp file: /opt/lumerical/v261/bin/fdtd-engine -gpu -t 8 -gpu -remote /home/seunghyun/tairte4/VOLUME_CURRENT_INVERSE_DESIGN_BASE_20260721/validation/photothermal_stage1/output/20260724T_production_optical_regression_v3/flat_x/production_case.fsp
+Detected GPU 0: NVIDIA RTX 6000 Ada Generation (UUID: c504fe9b-f787-8f6e-2c50-4aef0f711fae)
+Completed 8217 iterations, or 1.305527e-13s of Simulation Time
+Simulation completed successfully at: Fri Jul 24 22:30:28 2026
+
+[flat_y]
+sha256=389289f7bd9a7d4982ac1d6cbe363e0645ee42516cfa12a43ff2572938086811
+Configured with CUDA_VISIBLE_DEVICES=0
+Ansys Lumerical 2026 R1 FDTD Solver Version 8.35.4413 (Linux 64bit)
+Running fsp file: /opt/lumerical/v261/bin/fdtd-engine -gpu -t 8 -gpu -remote /home/seunghyun/tairte4/VOLUME_CURRENT_INVERSE_DESIGN_BASE_20260721/validation/photothermal_stage1/output/20260724T_production_optical_regression_v3/flat_y/production_case.fsp
+Detected GPU 0: NVIDIA RTX 6000 Ada Generation (UUID: c504fe9b-f787-8f6e-2c50-4aef0f711fae)
+Completed 8520 iterations, or 1.353668e-13s of Simulation Time
+Simulation completed successfully at: Fri Jul 24 22:31:27 2026
+
+[flat_45]
+sha256=c8d01b01d4445bc53f54721c885c0dcf3f239d5b12a1687dd2c6572157266cb1
+Configured with CUDA_VISIBLE_DEVICES=0
+Ansys Lumerical 2026 R1 FDTD Solver Version 8.35.4413 (Linux 64bit)
+Running fsp file: /opt/lumerical/v261/bin/fdtd-engine -gpu -t 8 -gpu -remote /home/seunghyun/tairte4/VOLUME_CURRENT_INVERSE_DESIGN_BASE_20260721/validation/photothermal_stage1/output/20260724T_production_optical_regression_v3/flat_45/production_case.fsp
+Detected GPU 0: NVIDIA RTX 6000 Ada Generation (UUID: c504fe9b-f787-8f6e-2c50-4aef0f711fae)
+Completed 8520 iterations, or 1.353668e-13s of Simulation Time
+Simulation completed successfully at: Fri Jul 24 22:32:18 2026
+
+[disk_x]
+sha256=a7e7676ca2bd97674a68c63babc7be606e4d96e1eaaf0bafda3063b4851c7c2a
+Configured with CUDA_VISIBLE_DEVICES=0
+Ansys Lumerical 2026 R1 FDTD Solver Version 8.35.4413 (Linux 64bit)
+Running fsp file: /opt/lumerical/v261/bin/fdtd-engine -gpu -t 8 -gpu -remote /home/seunghyun/tairte4/VOLUME_CURRENT_INVERSE_DESIGN_BASE_20260721/validation/photothermal_stage1/output/20260724T_production_optical_regression_v3/disk_x/production_case.fsp
+Detected GPU 0: NVIDIA RTX 6000 Ada Generation (UUID: c504fe9b-f787-8f6e-2c50-4aef0f711fae)
+Completed 251760 iterations, or 3.999994e-12s of Simulation Time
+Simulation completed successfully at: Fri Jul 24 22:48:53 2026

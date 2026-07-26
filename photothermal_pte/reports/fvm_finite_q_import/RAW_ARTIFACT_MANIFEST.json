@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "20260725T202541Z",
+  "branch": "agent/unblock-heat-material-interface-controls",
+  "base_commit_before_control": "79a41c928744dcf802253ebbce5facefabfad81d",
+  "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/35_validate_finite_q_fvm_import.py --output-dir photothermal_pte/validation/photothermal_stage1/output/fvm_finite_q_import/import_v4",
+  "source_artifact_sha256": "7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794",
+  "finite_optical_Q_imported_into_thermal_solve": false,
+  "artifacts": [
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_finite_q_import/import_v4/finite_q_fvm_control_volumes.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_finite_q_import/import_v4/finite_q_fvm_control_volumes.npz",
+      "bytes": 2794484,
+      "sha256": "13fb24e02f55bc62ded2698e1ffc6ae0b67364cf5b40cda127dcaae54cea7650"
+    },
+    {
+      "repository_path": "photothermal_pte/validation/photothermal_stage1/output/fvm_finite_q_import/import_v4/finite_q_exact_flake_source.npz",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/fvm_finite_q_import/import_v4/finite_q_exact_flake_source.npz",
+      "bytes": 1822095,
+      "sha256": "8aef19642f4576e6a922f33a9e63f70b3fb275417db0c714c08c0f74fa6b0404"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_finite_q_import/FINITE_OPTICAL_Q_FVM_IMPORT_REPORT.md",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_finite_q_import/FINITE_OPTICAL_Q_FVM_IMPORT_REPORT.md",
+      "bytes": 2713,
+      "sha256": "cc80926092b65ae659ef458b0225beceaa12394be2be8c972bf45385e0226742"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_finite_q_import/finite_q_fvm_import_summary.json",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_finite_q_import/finite_q_fvm_import_summary.json",
+      "bytes": 6438,
+      "sha256": "ee9889348b2f908cc23decc07959626e1dd59c9093223bbb39f29b4560a26ded"
+    },
+    {
+      "repository_path": "photothermal_pte/reports/fvm_finite_q_import/finite_q_fvm_import_cases.csv",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/reports/fvm_finite_q_import/finite_q_fvm_import_cases.csv",
+      "bytes": 542,
+      "sha256": "796bcc425fc046d5fd86e1ffe543577402a72dad8c309a713110fbadfcca9bf1"
+    }
+  ]
+}

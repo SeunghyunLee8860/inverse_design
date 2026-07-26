@@ -1,0 +1,349 @@
+# Latest photothermal validation status
+
+## v261 HEAT material and interface controls
+
+- Branch: `agent/validate-fvm-thermal-physical-model`
+- Stacked base: `agent/unblock-heat-material-interface-controls`
+- Immutable numerical checkpoint:
+  `437ec0644b15a4b9a6919a0151e4aa531fb1e0ab` (PR #4)
+- Finite-Q source: PR #3 commit `053260d`
+- PR #2 and PR #3 content: unchanged
+- Status: `BLOCKED_ANISOTROPIC_K_UNSUPPORTED`
+- Independent anisotropic fallback:
+  `VALIDATED_DIAGONAL_KAPPA_FVM_CONTROLS`
+- Independent internal-interface fallback:
+  `VALIDATED_FVM_INTERNAL_INTERFACE_G_CONTROLS`
+- Common-physics 3D cross-validation:
+  `VALIDATED_3D_ISOTROPIC_HEAT_FVM_CROSS_VALIDATION`
+- Finite optical-Q conservative mapping:
+  `VALIDATED_FINITE_OPTICAL_Q_FVM_IMPORT`
+- Full-device HEAT cases executed: `false`
+- Finite optical-Q mapped to FVM control volumes: `true`
+- Finite optical-Q used in a thermal solve: `true`
+- Multi-material production FVM convergence:
+  `VALIDATED_MULTIMATERIAL_FVM_PRODUCTION_CONVERGENCE`
+- Physical-model scenarios:
+  `VALIDATED_FVM_THERMAL_PHYSICAL_MODEL_SCENARIOS`
+- Final experimental prediction promoted: `false`
+- Transient/PTE/adjoint/gradient/optimization executed: `false`
+
+### Active blockers
+
+- `BLOCKED_ANISOTROPIC_K_UNSUPPORTED` (native v261 HEAT only)
+- `BLOCKED_INTERFACE_G_UNVERIFIED` (native v261 HEAT only)
+- `BLOCKED_FABRICATION_GEOMETRY_UNCONFIRMED`
+
+### Key measurements
+
+- Expected finite-Q SHA-256: `7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794`
+- Expected finite-Q power: `2.56071371086521e-12 W`
+- Reintegrated finite-Q power: `2.56071371086521e-12 W`
+- Reintegration relative error: `0`
+- Q component-sum relative error: `2.24310e-16`
+- `BLOCKED_Q_ARTIFACT_INCOMPATIBLE_WITH_2UM_FOOTPRINT`: release candidate
+- Allowed import mismatch: `0.5%`
+- DEVICE version: `7.17.4413` from the v261 installation
+- DEVICE session startup/save/load/HEAT solve: `passed`
+- License-probe temperature range: `[300.0, 300.0499752615] K`
+- Requested tensor write/readback before save: `[14.4, 3.8, 1.0] -> [0.0]`
+- Requested tensor readback after reload: `[0.0]`
+- Fresh vector/row/column/3x3-diagonal encoding probe: all returned scalar
+  `0.0`; no tensor encoding round trip passed
+- Exhaustive native v261 probe: LSF-native 3x1/1x3/3x3 matrices all returned
+  scalar `0.0`; all 11 hidden-property candidates were rejected
+- v261 HT database scan: 64 entries, 59 readable scalar conductivity models,
+  0 non-scalar conductivity models, 5 unimplemented quaternary-alloy models
+- x/y/z effective kappa from solver: `[0.0, 0.0, 0.0] W/(m K)`
+- x/y/z heat-flux relative errors: `[100%, 100%, 100%]`
+- Isotropic fallback used: `false`
+- Independent conservative FVM x/y/z recovered kappa:
+  `[14.4000000032, 3.80000000087, 1.00000000130] W/(m K)`
+- Independent FVM x/y/z heat-flux relative errors:
+  `[2.20e-10, 2.30e-10, 1.30e-9]`
+- Independent FVM x/y/z temperature-profile relative errors:
+  `[5.01e-11, 3.25e-11, 2.76e-11]`
+- Independent FVM status: `VALIDATED_DIAGONAL_KAPPA_FVM_CONTROLS`;
+  this is not reported as a v261 HEAT result
+- Internal finite-\(G\) candidate: v261 `temperature` BC on the shared
+  `material:material` surface with `thermal impedance = 1/G`
+- Finite-\(G\) property write/save/reload: `passed` for both requested values
+- \(G=7.37e6\) jump: `1.13687e-13 K` versus expected `6.55977 K`
+- \(G=7.37e6\) jump/flux/transmission/energy errors:
+  `[100%, 86.46%, 57.54%, 28.77%]`
+- \(G=1.1e9\) jump: `2.27374e-13 K` versus expected `0.0565884 K`
+- \(G=1.1e9\) jump/flux/transmission/energy errors:
+  `[100%, 56.18%, 119.13%, 59.57%]`
+- Finite-\(G\) candidate control status:
+  `FAILED_INTERFACE_G_ANALYTIC_CONTROL`
+- Verified internal-\(G\) path status: `BLOCKED_INTERFACE_G_UNVERIFIED`
+- Perfect-contact mesh controls (100/50/25 nm): `passed`
+- Perfect-contact interface jumps:
+  `[2.27374e-13, 1.13687e-13, 2.84217e-13] K`
+- Perfect-contact heat-flux errors: all below `1.1e-13`
+
+### Independent FVM internal-interface controls
+
+- Status: `VALIDATED_FVM_INTERNAL_INTERFACE_G_CONTROLS`
+- Internal face law:
+  \(R''=\Delta z_1/(2k_1)+1/G+\Delta z_2/(2k_2)\)
+- Conditions: \(G=7.37\times10^6\), \(G=1.1\times10^9\)
+  \(\mathrm{W/(m^2K)}\), and perfect contact
+- Meshes for every condition: `100/50/25 nm`
+- Total cases: `9`; passed: `9`
+- \(G=7.37\times10^6\) analytic/numerical interface jump:
+  `3.518029903254 / [3.518029903254, 3.518029903257, 3.518029903248] K`
+- \(G=1.1\times10^9\) analytic/numerical interface jump:
+  `0.03623188405797 / [0.03623188405828, 0.03623188405885,
+  0.03623188405572] K`
+- Finite-\(G\) jump relative errors: all below `6.3e-11`
+- Analytic series-resistance heat-flux relative errors: all below `5.4e-12`
+- Material-1/material-2 flux mismatch: all below `9.4e-12`
+- Global energy-balance relative errors: all below `2.3e-11`
+- Temperature-profile relative errors: all below `1.1e-12`
+- Perfect-contact extrapolated jump: roundoff (`<2.3e-12 K`)
+- Perfect-contact raw adjacent-cell difference:
+  `0.5 -> 0.25 -> 0.125 K`; finest/coarsest ratio `0.25`
+- Solver attribution: independent conservative Cartesian Python/SciPy FVM;
+  not a Lumerical HEAT result
+- Subsequent 3D cross-validation and finite-Q import gates: `completed`
+- Full-device thermal calculation after these prerequisite gates:
+  `executed with the independent FVM path`
+
+### 3D isotropic/perfect-contact HEAT-FVM cross-validation
+
+- Status: `VALIDATED_3D_ISOTROPIC_HEAT_FVM_CROSS_VALIDATION`
+- Lumerical: v261 DEVICE `7.17.4413`, `772706` tetrahedral elements,
+  `128099` nodes
+- FVM: `40 x 40 x 30 = 48000` Cartesian cells at `50 nm`
+- Geometry: two scalar materials, `k=[10,2] W/(m K)`, perfect contact
+- Source: asymmetric grid-aligned synthetic cuboid,
+  `Q=1e15 W/m3`, prescribed power `1.92e-4 W`
+- Boundary conditions: bottom `300 K`; all other external faces adiabatic
+- \(T_{\max}\) difference / maximum FVM temperature rise: `0.226837%`
+- Mean-\(T\) difference / maximum FVM temperature rise: `0.0440171%`
+- Full 3D field NRMSE / maximum FVM temperature rise: `0.107756%`
+- Full 3D field correlation: `0.999983190756`
+- Source-power cross-solver difference: `0.400326%`
+- Boundary-power cross-solver difference: `0.400034%`
+- Lumerical/FVM energy errors: `2.90729e-6 / 1.76324e-11`
+- Non-gating pointwise diagnostics: 99th percentile `0.452070%`; maximum
+  source-edge point `1.05266%`
+- Independent fresh-project rerun reproduced all declared metrics within
+  `1e-10`
+- Finite optical-Q mapped into thermal control volumes: `true`
+- Finite optical-Q used in a thermal solve: `true`
+- Subsequent finite-Q conservative import gate: `completed`
+
+### Finite optical-Q conservative FVM import
+
+- Status: `VALIDATED_FINITE_OPTICAL_Q_FVM_IMPORT`
+- PR #3 artifact SHA-256:
+  `7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794`
+- Shape/order: `[80,80,41]`, `x,y,z`
+- Incident-intensity normalization: `1 W/m2`
+- Mapping: elementwise Q copy; FVM cell widths equal the original
+  trapezoidal quadrature weights
+- Original/mapped Q-array SHA-256:
+  `ff1484537aadfc36d90c2035280da9ad3a2e59895e9ba06a65bea30623e3715d`
+- Original nested-trapezoid power:
+  `2.56071371086521e-12 W`
+- FVM `sum(Q*dV)` power:
+  `2.56071371086521e-12 W`
+- Mapping relative error: `0`
+- Interpolation, clipping, smoothing, gain, rescaling, crop, tiling, and
+  outside-flake deletion: all `false`
+- `5772` nonzero boundary samples at `z=5.790264e-23 m` are excluded by the
+  stored strict boolean mask but lie inside the explicit `1e-15 m`
+  roundoff-inclusive physical mask; all were preserved unchanged
+- Exact-flake production source: `[76,76,21]` cells with bounds exactly
+  `[-1,1] um x [-1,1] um x [-100,0] nm`
+- Exact-flake mapping: one-to-one deposition of each original
+  `Q*w_x*w_y*w_z` nodal energy parcel into its physical boundary/interior
+  cell
+- Source-energy/mapped-cell-power SHA-256:
+  `dece160abd9965047d2902e6d1bf07fad0146fc306a543a60d79b51a7fd31caf`
+- Exact-flake summed power: `2.56071371086521e-12 W`; relative error `0`
+- Nonzero source energy deleted: `0 W`
+- Empirical gain, global rescaling, and sample averaging in exact-flake
+  deposition: all `false`
+- Independent import rerun reproduced SHA and power exactly
+- Finite optical-Q used in thermal solve: `true`
+- Subsequent anisotropic finite-G production and convergence gate:
+  `completed`
+
+### Multi-material anisotropic finite-G FVM production
+
+- Status: `VALIDATED_MULTIMATERIAL_FVM_PRODUCTION_CONVERGENCE`
+- Attribution: independent conservative Cartesian Python/SciPy FVM;
+  not a Lumerical HEAT result
+- Numerical-convergence checkpoint: `32 um x 32 um` lateral domain,
+  `20 um` Si depth, native optical x/y source grid
+- Active solid cells: `1,625,064`
+- Material conductivity:
+  TaIrTe4 `diag(14.4, 3.8, 1.0)`, SiO2 `1.38`, Si `145 W/(m K)`
+- Interfaces:
+  `G_bottom=G_top=7.37e6 W/(m2 K)`,
+  `G_SiO2/Si=1.1e9 W/(m2 K)`
+- Exact source power: `2.56071371086521e-12 W`
+- Q mapping relative error in every case: `0`
+- Reference maximum unit response:
+  `3.12002156771575e-7 K/(W/m2)`
+- Reference TaIrTe4 volume-average unit response:
+  `2.25508130625815e-7 K/(W/m2)`
+- Reference energy-balance relative error: `3.36166e-12`
+- Total sensitivity cases: `22`; equation/conservation passes: `22`
+- Final `16 -> 32 um` lateral-domain changes
+  (`Tmax`, flake average, 3D probe NRMSE):
+  `[0.00489969%, 0.00676634%, 0.00517751%]`
+- Final `10 -> 20 um` Si-depth changes:
+  `[0.0178338%, 0.0246859%, 0.0189037%]`
+- Final native -> refined thermal-mesh changes:
+  `[0.140694%, 0.0933887%, 0.0666590%]`
+- \(G_{\rm bottom}\) sweep:
+  `1e6, 3e6, 7.37e6, 1.5e7, 3e7, 1e8, perfect`
+- \(G_{\rm top}\) sweep:
+  `7.37e4, 7.37e5, 7.37e6, 7.37e7, perfect`
+- SiO2/Si `1.1e9` versus perfect contact: completed
+- Exposed-surface adiabatic versus `h=10 W/(m2 K)`: completed
+- Refined source treatment: native optical x/y cells, piecewise-constant
+  `2x` subdivision in z with exact child-power conservation
+- No Q clipping, smoothing, gain, global rescaling, periodic tiling, or
+  outside-flake deletion was used
+- TaIrTe4 `kz=1.0 W/(m K)` remains an estimated physical input; interface-G
+  results retain the full sensitivity sweep
+- This checkpoint parameter set is not a unique final experimental
+  prediction
+
+### FVM thermal physical-model sensitivity
+
+- Status: `VALIDATED_FVM_THERMAL_PHYSICAL_MODEL_SCENARIOS`
+- Fabrication status: `BLOCKED_FABRICATION_GEOMETRY_UNCONFIRMED`
+- \(G_{\rm top}=7.37e6\) W/(m2 K): named numerical-convergence checkpoint
+  scenario
+- \(G_{\rm top}=7.37e4\) W/(m2 K): named earlier evaporated-SiO2 estimate
+  scenario
+- Neither \(G_{\rm top}\) value is promoted as uniquely correct
+- \(G_{\rm top}=7.37e4\) versus checkpoint:
+  \(T_{\max}\) `+7.48897%`, flake average `-0.0800617%`,
+  common flake 3D NRMSE `2.15495%`
+- TaIrTe4 \(k_z=[0.5,1.0,2.0]\) W/(m K):
+  numerical scenarios, not a confidence interval; \(k_x=14.4\),
+  \(k_y=3.8\) unchanged
+- \(k_z=0.5\): \(T_{\max}\) `+12.3111%`; \(k_z=2.0\):
+  \(T_{\max}\) `-6.29652%`
+- Far-x/y fixed versus adiabatic with fixed bottom:
+  \(T_{\max}\) change `+0.0475768%`
+- Exposed convection `h=[0,5,10,20] W/(m2 K)`: completed
+- Lateral/bottom fractions are numerical truncation-boundary fluxes, not
+  physical heat-path fractions
+- Geometry A: suspended/overhanging disk outside the flake
+- Geometry B: 100 nm SiO2 support annulus connects the disk overhang to the
+  surrounding bottom oxide
+- Geometry B versus A: \(T_{\max}\) `-39.7356%`, flake average `-37.0430%`,
+  common flake 3D NRMSE `27.5386%`
+- Geometry-B native-to-refined numerical changes:
+  `[0.789170%, 0.743380%, 0.522514%]` for
+  `[Tmax, flake average, common flake 3D NRMSE]`
+- Physical support-geometry variation is much larger than its numerical mesh
+  error
+- Published promoted metadata:
+  `provisional_until_sensitivity_passes=false`,
+  `next_required_gate=null`
+- Raw per-case JSON metadata remains unchanged for provenance
+- PR #3 commit is not in PR #4 ancestry; clean reproduction requires an
+  external artifact with SHA-256
+  `7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794`
+- Missing or mismatched PR #3 artifacts fail closed before import or solve
+
+### Final control artifacts
+
+- Execution:
+  `validation/photothermal_stage1/29_validate_heat_material_interface_controls.py`
+- Summary:
+  `validation/photothermal_stage1/30_summarize_heat_material_interface_controls.py`
+- Native anisotropy probe and validated FVM controls:
+  `validation/photothermal_stage1/31_resolve_anisotropic_kappa.py`
+- Conservative diagonal-tensor solver:
+  `validation/photothermal_stage1/anisotropic_heat_fvm.py`
+- Independent FVM interface execution:
+  `validation/photothermal_stage1/33_validate_fvm_internal_interface_controls.py`
+- Independent FVM interface report:
+  `reports/fvm_internal_interface_controls/FVM_INTERNAL_INTERFACE_G_CONTROL_REPORT.md`
+- Independent FVM interface summary/cases/raw manifest:
+  `reports/fvm_internal_interface_controls/`
+- 3D cross-validation execution:
+  `validation/photothermal_stage1/34_validate_3d_isotropic_heat_fvm_crosscheck.py`
+- 3D cross-validation report:
+  `reports/fvm_3d_isotropic_cross_validation/HEAT_FVM_3D_ISOTROPIC_CROSS_VALIDATION_REPORT.md`
+- 3D cross-validation summary/cases/raw manifest:
+  `reports/fvm_3d_isotropic_cross_validation/`
+- Finite-Q import execution:
+  `validation/photothermal_stage1/35_validate_finite_q_fvm_import.py`
+- Finite-Q import report:
+  `reports/fvm_finite_q_import/FINITE_OPTICAL_Q_FVM_IMPORT_REPORT.md`
+- Finite-Q import summary/cases/raw manifest:
+  `reports/fvm_finite_q_import/`
+- Multi-material production execution:
+  `validation/photothermal_stage1/36_run_fvm_multimaterial_thermal.py`
+- Domain/depth/mesh/interface/boundary sensitivity:
+  `validation/photothermal_stage1/37_run_fvm_production_sensitivity.py`
+- Production report generation:
+  `validation/photothermal_stage1/38_summarize_fvm_multimaterial_thermal.py`
+- Multi-material production report/summary/cases/convergence/raw manifest:
+  `reports/fvm_multimaterial_thermal/`
+- Physical-model scenario execution:
+  `validation/photothermal_stage1/39_validate_fvm_thermal_physical_model.py`
+- Clean-checkout fail-closed reproduction:
+  `validation/photothermal_stage1/40_reproduce_fvm_thermal_physical_model.py`
+- Physical-model report generation:
+  `validation/photothermal_stage1/41_summarize_fvm_thermal_physical_model.py`
+- Physical-model report/summary/cases/raw manifest:
+  `reports/fvm_thermal_physical_model/`
+- Anisotropic-\(\kappa\) report:
+  `reports/heat_material_interface_controls/HEAT_ANISOTROPIC_K_SOLVER_REPORT.md`
+- Internal-\(G\) report:
+  `reports/heat_material_interface_controls/HEAT_INTERNAL_INTERFACE_G_SOLVER_REPORT.md`
+- Machine-readable summary/cases/raw manifest:
+  `reports/heat_material_interface_controls/`
+
+Native v261 HEAT still cannot represent the requested conductivity tensor.
+The validated FVM path now resolves the anisotropic equation and finite
+internal-G law independently, and its common 3D scalar-isotropic/perfect-
+contact solution agrees with v261 HEAT. The finite optical-Q mapping now
+preserves the PR #3 source exactly. The independent anisotropic, finite-G,
+multi-material FVM solve and its domain, substrate-depth, mesh, interface-G,
+and exposed-boundary sensitivity are now complete. The reported temperature
+is a unit response, not a finite-power laser temperature. Physical-model
+sensitivity shows that disk-support geometry and uncertain material/interface
+inputs dominate the remaining interpretation; no single scenario is called a
+final experimental prediction. No transient, PTE, adjoint, gradient, or
+optimization is claimed at this checkpoint. No isotropic fallback or
+modification of the finite optical-Q artifact was used.
+
+## Mechanical/MAPDL route probe
+
+- Official capability: orthotropic/full-anisotropic thermal conductivity and
+  finite thermal contact conductance are supported
+- Generated material path: `MP,KXX/KYY/KZZ`
+- Generated interface path: `TARGE170/CONTA174`, pure thermal
+  `KEYOPT(1)=2`, bonded `KEYOPT(12)=5`, and `TCC=G` at real constant 14
+- Controls generated: x/y/z anisotropic kappa, `G=7.37e6`, `G=1.1e9`,
+  and perfect-contact meshes at 100/50/25 nm
+- Input-deck static audit:
+  `PASSED_MECHANICAL_INPUT_DECK_STATIC_AUDIT`
+- MAPDL executable:
+  `BLOCKED_MECHANICAL_EXECUTABLE_UNAVAILABLE`
+- Mechanical license feature:
+  `BLOCKED_MECHANICAL_LICENSE_UNAVAILABLE`
+- License server: reachable, but only Lumerical/optislang features are
+  advertised; no `ansys`, `mech_1`, `mech_2`, `struct`, or `preppost`
+- Actual Mechanical solver executed: `false`
+- Mechanical solver validation claimed: `false`
+- Execution:
+  `validation/photothermal_stage1/32_validate_mechanical_thermal_controls.py`
+- Reports:
+  `reports/mechanical_thermal_controls/`
+
+The Mechanical route is physically and API-capability compatible, but it
+cannot be solver-validated on this host until Mechanical/MAPDL is installed
+and an applicable Mechanical license feature is added.

@@ -1,0 +1,1372 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "20260725T184456Z",
+  "status": "BLOCKED_ANISOTROPIC_K_UNSUPPORTED",
+  "status_allowed": true,
+  "branch": "agent/unblock-heat-material-interface-controls",
+  "stacked_base": "agent/validate-isolated-2um-heat-steady",
+  "pr3_commit": "053260d",
+  "pr2_and_pr3_modified": false,
+  "blockers": [
+    "BLOCKED_ANISOTROPIC_K_UNSUPPORTED",
+    "BLOCKED_INTERFACE_G_UNVERIFIED"
+  ],
+  "finite_Q_precheck": {
+    "status": "Q_ARTIFACT_COMPATIBLE_2UM_FOOTPRINT",
+    "blocker_release_candidate": "BLOCKED_Q_ARTIFACT_INCOMPATIBLE_WITH_2UM_FOOTPRINT",
+    "blocker_release_allowed": true,
+    "pr3_manifest": {
+      "commit": "053260da6fd0caec28ce155221bd18f683a0e5e7",
+      "repository_path": "photothermal_pte/reports/finite_2um_optical_q/RAW_ARTIFACT_MANIFEST.json",
+      "entry": {
+        "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8/finite_q_on_artifact.npz",
+        "bytes": 8692646,
+        "sha256": "7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794",
+        "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8 --case fixed-design --polarization-deg 0 --domain-um 16 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --incident-reference photothermal_pte/validation/photothermal_stage1/output/finite_gaussian_controls/empty_L8_pml24_dz5_w2_span6p8_p0/case_result.json --gpu-device 'GPU 0'",
+        "generation_commit": "b13e45707c4bda06d1f4afa1a47f8fe72ce29435",
+        "reproduction": "checkout b13e45707c4bda06d1f4afa1a47f8fe72ce29435 and run: /home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8 --case fixed-design --polarization-deg 0 --domain-um 16 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --incident-reference photothermal_pte/validation/photothermal_stage1/output/finite_gaussian_controls/empty_L8_pml24_dz5_w2_span6p8_p0/case_result.json --gpu-device 'GPU 0'"
+      }
+    },
+    "artifact": {
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8/finite_q_on_artifact.npz",
+      "bytes": 8692646,
+      "sha256": "7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794"
+    },
+    "required_fields": [
+      "x_m",
+      "y_m",
+      "z_m",
+      "Q_on_W_m3",
+      "Qx_W_m3",
+      "Qy_W_m3",
+      "Qz_W_m3",
+      "exact_flake_mask",
+      "incident_intensity_W_m2",
+      "P_abs_volume_W",
+      "P_abs_six_face_W",
+      "absorption_cross_section_m2",
+      "metadata_json"
+    ],
+    "shape_xyz": [
+      80,
+      80,
+      41
+    ],
+    "coordinate_order": [
+      "x",
+      "y",
+      "z"
+    ],
+    "coordinate_ranges_m": {
+      "x": [
+        -1.053538187784057e-06,
+        1.053538187784073e-06
+      ],
+      "y": [
+        -1.053538187784057e-06,
+        1.053538187784073e-06
+      ],
+      "z": [
+        -1.500000000000027e-07,
+        5e-08
+      ]
+    },
+    "exact_TaIrTe4_bounds_m": {
+      "x": [
+        -1e-06,
+        1e-06
+      ],
+      "y": [
+        -1e-06,
+        1e-06
+      ],
+      "z": [
+        -1e-07,
+        0.0
+      ]
+    },
+    "exact_mask_voxels": 115520,
+    "coordinate_roundoff_tolerance_m": 1e-15,
+    "roundoff_inclusive_physical_voxels": 121296,
+    "Q_component_sum_max_relative_error": 2.243096182380738e-16,
+    "maximum_Q_outside_exact_mask_W_m3": 0.0,
+    "incident_intensity_W_m2": 1.0,
+    "P_Q_metadata_W": 2.56071371086521e-12,
+    "P_Q_expected_W": 2.56071371086521e-12,
+    "P_Q_reintegrated_W": 2.56071371086521e-12,
+    "reintegration_relative_error": 0.0,
+    "reintegration_limit": 0.005,
+    "no_NaN_or_Inf": true,
+    "forbidden_operations_applied": {
+      "clipping": false,
+      "gain": false,
+      "rescaling": false,
+      "crop": false,
+      "tiling": false,
+      "smoothing": false
+    }
+  },
+  "license_probe": {
+    "status": "DEVICE_LICENSE_API_SOLVER_AVAILABLE",
+    "installation_root": "/opt/lumerical/v261",
+    "lumapi_path": "/opt/lumerical/v261/api/python/lumapi.py",
+    "device_executable": "/opt/lumerical/v261/bin/device",
+    "session_startup": true,
+    "save_succeeded": true,
+    "load_succeeded": true,
+    "solver_run_succeeded": true,
+    "project_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/license_probe_v2/device_license_probe.ldev",
+    "lumerical_version": "7.17.4413",
+    "material": {
+      "model_material": "license probe solid",
+      "thermal_property": "license probe solid thermal",
+      "conductivity_write_W_mK": [
+        10.0
+      ],
+      "conductivity_readback_W_mK": [
+        10.0
+      ]
+    },
+    "temperature_monitor_results": [
+      "temperature"
+    ],
+    "temperature_result_name": "temperature",
+    "temperature_range_K": [
+      300.0,
+      300.04997526150504
+    ],
+    "passed": true
+  },
+  "anisotropic_kappa": {
+    "status": "BLOCKED_ANISOTROPIC_K_UNSUPPORTED",
+    "passed": false,
+    "candidate_case_status": "FAILED_ANISOTROPIC_K_ANALYTIC_CONTROL",
+    "requested_tensor_W_mK": [
+      14.4,
+      3.8,
+      1.0
+    ],
+    "tensor_supported": false,
+    "encoding_probe": {
+      "status": "BLOCKED_ANISOTROPIC_K_UNSUPPORTED",
+      "passed": false,
+      "encodings": {
+        "vector_1d": {
+          "requested": [
+            14.4,
+            3.8,
+            1.0
+          ],
+          "requested_shape": [
+            3
+          ],
+          "returned": 0.0,
+          "returned_shape": [],
+          "round_trip_passed": false
+        },
+        "row_1x3": {
+          "requested": [
+            [
+              14.4,
+              3.8,
+              1.0
+            ]
+          ],
+          "requested_shape": [
+            1,
+            3
+          ],
+          "returned": 0.0,
+          "returned_shape": [],
+          "round_trip_passed": false
+        },
+        "column_3x1": {
+          "requested": [
+            [
+              14.4
+            ],
+            [
+              3.8
+            ],
+            [
+              1.0
+            ]
+          ],
+          "requested_shape": [
+            3,
+            1
+          ],
+          "returned": 0.0,
+          "returned_shape": [],
+          "round_trip_passed": false
+        },
+        "diagonal_3x3": {
+          "requested": [
+            [
+              14.4,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              3.8,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "requested_shape": [
+            3,
+            3
+          ],
+          "returned": 0.0,
+          "returned_shape": [],
+          "round_trip_passed": false
+        }
+      },
+      "v261_DEVICE_version": "7.17.4413"
+    },
+    "native_v261_deep_probe": {
+      "status": "BLOCKED_ANISOTROPIC_K_UNSUPPORTED",
+      "passed": false,
+      "v261_DEVICE_version": "7.17.4413",
+      "installation_root": "/opt/lumerical/v261",
+      "probe_scope": "fresh v261 DEVICE session; LSF-native tensor expressions, candidate hidden properties, and every HT database material",
+      "lsf_tensor_round_trips": {
+        "column_3x1": {
+          "material_path": "::model::materials::lsf column_3x1::lsf column_3x1 thermal",
+          "lsf_expression": "[14.4;3.8;1.0]",
+          "requested": [
+            [
+              14.4
+            ],
+            [
+              3.8
+            ],
+            [
+              1.0
+            ]
+          ],
+          "requested_shape": [
+            3,
+            1
+          ],
+          "returned": 0.0,
+          "returned_shape": [],
+          "round_trip_passed": false
+        },
+        "row_1x3": {
+          "material_path": "::model::materials::lsf row_1x3::lsf row_1x3 thermal",
+          "lsf_expression": "[14.4,3.8,1.0]",
+          "requested": [
+            [
+              14.4,
+              3.8,
+              1.0
+            ]
+          ],
+          "requested_shape": [
+            1,
+            3
+          ],
+          "returned": 0.0,
+          "returned_shape": [],
+          "round_trip_passed": false
+        },
+        "diagonal_3x3": {
+          "material_path": "::model::materials::lsf diagonal_3x3::lsf diagonal_3x3 thermal",
+          "lsf_expression": "[14.4,0,0;0,3.8,0;0,0,1.0]",
+          "requested": [
+            [
+              14.4,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              3.8,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "requested_shape": [
+            3,
+            3
+          ],
+          "returned": 0.0,
+          "returned_shape": [],
+          "round_trip_passed": false
+        }
+      },
+      "hidden_property_candidates": {
+        "anisotropy": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'anisotropy'  was not found\""
+        },
+        "thermal conductivity.anisotropy": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.anisotropy'  was not found\""
+        },
+        "thermal conductivity.constant.x": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.x'  was not found\""
+        },
+        "thermal conductivity.constant.y": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.y'  was not found\""
+        },
+        "thermal conductivity.constant.z": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.z'  was not found\""
+        },
+        "thermal conductivity.constant.kx": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.kx'  was not found\""
+        },
+        "thermal conductivity.constant.ky": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.ky'  was not found\""
+        },
+        "thermal conductivity.constant.kz": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.kz'  was not found\""
+        },
+        "thermal conductivity.constant.xx": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.xx'  was not found\""
+        },
+        "thermal conductivity.constant.yy": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.yy'  was not found\""
+        },
+        "thermal conductivity.constant.zz": {
+          "write_succeeded": false,
+          "exception_type": "LumApiError",
+          "exception": "\"in set, the requested property 'thermal conductivity.constant.zz'  was not found\""
+        }
+      },
+      "thermal_database_material_count": 64,
+      "thermal_database_scan": {
+        "scalar_conductivity_material_count": 59,
+        "nonscalar_conductivity_materials": {},
+        "errors": {
+          "AlGaInAs": "LumApiError: 'Thermal properties for quaternary alloys not implemented currently.'",
+          "AlGaInP": "LumApiError: 'Thermal properties for quaternary alloys not implemented currently.'",
+          "GaAlInN": "LumApiError: 'Thermal properties for quaternary alloys not implemented currently.'",
+          "GaInAsP": "LumApiError: 'Thermal properties for quaternary alloys not implemented currently.'",
+          "InGaAsP": "LumApiError: 'Thermal properties for quaternary alloys not implemented currently.'"
+        }
+      }
+    },
+    "validated_fvm_fallback": {
+      "status": "VALIDATED_DIAGONAL_KAPPA_FVM_CONTROLS",
+      "passed": true,
+      "solver_scope": "independent conservative Python finite-volume solver; not a v261 HEAT result",
+      "discretization": "cell-centered Cartesian finite volume with exact half-cell series resistance and adiabatic unspecified boundaries",
+      "requested_tensor_W_mK": [
+        14.4,
+        3.8,
+        1.0
+      ],
+      "isotropic_average_used": false,
+      "cases": [
+        {
+          "case_id": "fvm_x",
+          "status": "PASSED",
+          "passed": true,
+          "axis": "x",
+          "requested_tensor_W_mK": [
+            14.4,
+            3.8,
+            1.0
+          ],
+          "expected_kappa_W_mK": 14.4,
+          "effective_kappa_W_mK": 14.400000003164909,
+          "analytic_heat_flux_W_m2": 72000000.0,
+          "numerical_heat_flux_W_m2": 72000000.01582454,
+          "heat_flux_relative_error": 2.197852979103724e-10,
+          "temperature_profile_max_relative_error": 5.007336767448578e-11,
+          "energy_balance_relative_error": 1.1044368481988525e-11,
+          "linear_residual_relative": 7.887722830801208e-12,
+          "boundary_power_out_W": {
+            "x_min": 7.200000001622215e-05,
+            "x_max": -7.200000001542695e-05
+          },
+          "grid_shape": [
+            24,
+            8,
+            8
+          ],
+          "solver": "scipy.sparse.linalg.cg+jacobi",
+          "iterations": 92
+        },
+        {
+          "case_id": "fvm_y",
+          "status": "PASSED",
+          "passed": true,
+          "axis": "y",
+          "requested_tensor_W_mK": [
+            14.4,
+            3.8,
+            1.0
+          ],
+          "expected_kappa_W_mK": 3.8,
+          "effective_kappa_W_mK": 3.800000000872867,
+          "analytic_heat_flux_W_m2": 19000000.0,
+          "numerical_heat_flux_W_m2": 19000000.004364334,
+          "heat_flux_relative_error": 2.2970179193898252e-10,
+          "temperature_profile_max_relative_error": 3.2457592169521376e-11,
+          "energy_balance_relative_error": 1.4898328763678434e-11,
+          "linear_residual_relative": 6.8258689925476e-12,
+          "boundary_power_out_W": {
+            "y_min": 1.9000000004505867e-05,
+            "y_max": -1.90000000042228e-05
+          },
+          "grid_shape": [
+            8,
+            24,
+            8
+          ],
+          "solver": "scipy.sparse.linalg.cg+jacobi",
+          "iterations": 103
+        },
+        {
+          "case_id": "fvm_z",
+          "status": "PASSED",
+          "passed": true,
+          "axis": "z",
+          "requested_tensor_W_mK": [
+            14.4,
+            3.8,
+            1.0
+          ],
+          "expected_kappa_W_mK": 1.0,
+          "effective_kappa_W_mK": 1.0000000012962382,
+          "analytic_heat_flux_W_m2": 5000000.0,
+          "numerical_heat_flux_W_m2": 5000000.006481192,
+          "heat_flux_relative_error": 1.2962384149432183e-09,
+          "temperature_profile_max_relative_error": 2.7625901566352695e-11,
+          "energy_balance_relative_error": 4.9733539432333e-11,
+          "linear_residual_relative": 9.35914374014813e-12,
+          "boundary_power_out_W": {
+            "z_min": 5.000000006605527e-06,
+            "z_max": -5.000000006356859e-06
+          },
+          "grid_shape": [
+            8,
+            8,
+            24
+          ],
+          "solver": "scipy.sparse.linalg.cg+jacobi",
+          "iterations": 115
+        }
+      ]
+    },
+    "isotropic_fallback_used": false,
+    "cases": [
+      {
+        "case_id": "kappa_x",
+        "status": "FAILED_ANISOTROPIC_K_ANALYTIC_CONTROL",
+        "passed": false,
+        "axis": "x",
+        "v261_DEVICE_version": "7.17.4413",
+        "project_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/kappa_controls_v2/kappa_x/kappa_x.ldev",
+        "property_write_W_mK": [
+          14.4,
+          3.8,
+          1.0
+        ],
+        "property_readback_before_save_W_mK": [
+          0.0
+        ],
+        "property_readback_after_reload_W_mK": [
+          0.0
+        ],
+        "tensor_readback_before_save_passed": false,
+        "tensor_readback_after_reload_passed": false,
+        "save_succeeded": true,
+        "length_m": 2e-06,
+        "cross_section_area_m2": 1e-12,
+        "temperature_boundary_K": {
+          "min": 300.0,
+          "max": 310.0
+        },
+        "analytic_heat_flux_W_m2": -72000000.0,
+        "numerical_heat_flux_W_m2": 0.0,
+        "effective_kappa_W_mK": 0.0,
+        "expected_kappa_W_mK": 14.4,
+        "heat_flux_relative_error": 1.0,
+        "temperature_profile_max_relative_error": 0.9736323748447262,
+        "energy_balance_relative_error": 0.0,
+        "boundary_powers_W": {
+          "P_T_x_min": 0.0,
+          "P_T_x_max": 0.0
+        },
+        "temperature_monitor_result": "temperature",
+        "temperature_monitor_available_results": [
+          "temperature"
+        ],
+        "boundary_result": "boundaries",
+        "HEAT_available_results": [
+          "thermal",
+          "integrated",
+          "boundaries"
+        ],
+        "sample_count": 117,
+        "criteria": {
+          "heat_flux_relative_error_lt": 0.01,
+          "temperature_profile_relative_error_lt": 0.01,
+          "energy_balance_relative_error_lt": 0.01
+        }
+      },
+      {
+        "case_id": "kappa_y",
+        "status": "FAILED_ANISOTROPIC_K_ANALYTIC_CONTROL",
+        "passed": false,
+        "axis": "y",
+        "v261_DEVICE_version": "7.17.4413",
+        "project_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/kappa_controls_v2/kappa_y/kappa_y.ldev",
+        "property_write_W_mK": [
+          14.4,
+          3.8,
+          1.0
+        ],
+        "property_readback_before_save_W_mK": [
+          0.0
+        ],
+        "property_readback_after_reload_W_mK": [
+          0.0
+        ],
+        "tensor_readback_before_save_passed": false,
+        "tensor_readback_after_reload_passed": false,
+        "save_succeeded": true,
+        "length_m": 2e-06,
+        "cross_section_area_m2": 1e-12,
+        "temperature_boundary_K": {
+          "min": 300.0,
+          "max": 310.0
+        },
+        "analytic_heat_flux_W_m2": -19000000.0,
+        "numerical_heat_flux_W_m2": 0.0,
+        "effective_kappa_W_mK": 0.0,
+        "expected_kappa_W_mK": 3.8,
+        "heat_flux_relative_error": 1.0,
+        "temperature_profile_max_relative_error": 0.9730396798744948,
+        "energy_balance_relative_error": 0.0,
+        "boundary_powers_W": {
+          "P_T_y_min": 0.0,
+          "P_T_y_max": 0.0
+        },
+        "temperature_monitor_result": "temperature",
+        "temperature_monitor_available_results": [
+          "temperature"
+        ],
+        "boundary_result": "boundaries",
+        "HEAT_available_results": [
+          "thermal",
+          "boundaries",
+          "integrated"
+        ],
+        "sample_count": 120,
+        "criteria": {
+          "heat_flux_relative_error_lt": 0.01,
+          "temperature_profile_relative_error_lt": 0.01,
+          "energy_balance_relative_error_lt": 0.01
+        }
+      },
+      {
+        "case_id": "kappa_z",
+        "status": "FAILED_ANISOTROPIC_K_ANALYTIC_CONTROL",
+        "passed": false,
+        "axis": "z",
+        "v261_DEVICE_version": "7.17.4413",
+        "project_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/kappa_controls_v2/kappa_z/kappa_z.ldev",
+        "property_write_W_mK": [
+          14.4,
+          3.8,
+          1.0
+        ],
+        "property_readback_before_save_W_mK": [
+          0.0
+        ],
+        "property_readback_after_reload_W_mK": [
+          0.0
+        ],
+        "tensor_readback_before_save_passed": false,
+        "tensor_readback_after_reload_passed": false,
+        "save_succeeded": true,
+        "length_m": 2e-06,
+        "cross_section_area_m2": 1e-12,
+        "temperature_boundary_K": {
+          "min": 300.0,
+          "max": 310.0
+        },
+        "analytic_heat_flux_W_m2": -5000000.0,
+        "numerical_heat_flux_W_m2": 0.0,
+        "effective_kappa_W_mK": 0.0,
+        "expected_kappa_W_mK": 1.0,
+        "heat_flux_relative_error": 1.0,
+        "temperature_profile_max_relative_error": 0.9680131649890995,
+        "energy_balance_relative_error": 0.0,
+        "boundary_powers_W": {
+          "P_T_z_min": 0.0,
+          "P_T_z_max": 0.0
+        },
+        "temperature_monitor_result": "temperature",
+        "temperature_monitor_available_results": [
+          "temperature"
+        ],
+        "boundary_result": "boundaries",
+        "HEAT_available_results": [
+          "thermal",
+          "boundaries",
+          "integrated"
+        ],
+        "sample_count": 109,
+        "criteria": {
+          "heat_flux_relative_error_lt": 0.01,
+          "temperature_profile_relative_error_lt": 0.01,
+          "energy_balance_relative_error_lt": 0.01
+        }
+      }
+    ]
+  },
+  "internal_interface_G": {
+    "status": "BLOCKED_INTERFACE_G_UNVERIFIED",
+    "passed": false,
+    "candidate_case_status": "FAILED_INTERFACE_G_ANALYTIC_CONTROL",
+    "candidate_path": "temperature BC on shared material:material surface, thermal impedance=1/G",
+    "candidate_property_save_reload_passed": true,
+    "candidate_has_contact_resistance_semantics": false,
+    "finite_G_cases": [
+      {
+        "case_id": "interface_G_7370000p0",
+        "status": "FAILED_INTERFACE_G_ANALYTIC_CONTROL",
+        "passed": false,
+        "perfect_contact": false,
+        "G_W_m2K": 7370000.0,
+        "thermal_insulance_m2K_W": 1.3568521031207598e-07,
+        "mesh_max_edge_m": 5e-08,
+        "project_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/interface_G_7370000p0/interface_G_7370000p0.ldev",
+        "interface_location_z_m": 0.0,
+        "interface_is_internal": true,
+        "full_device_HEAT_executed": false,
+        "v261_DEVICE_version": "7.17.4413",
+        "materials": {
+          "lower": {
+            "model_material": "interface_G_7370000p0 lower material",
+            "thermal_property": "interface_G_7370000p0 lower material thermal",
+            "conductivity_write_W_mK": [
+              5.0
+            ],
+            "conductivity_readback_W_mK": [
+              5.0
+            ]
+          },
+          "upper": {
+            "model_material": "interface_G_7370000p0 upper material",
+            "thermal_property": "interface_G_7370000p0 upper material thermal",
+            "conductivity_write_W_mK": [
+              20.0
+            ],
+            "conductivity_readback_W_mK": [
+              20.0
+            ]
+          }
+        },
+        "property_readback_before_save": {
+          "name": "temperature_2",
+          "surface type": "material:material",
+          "material 1": "interface_G_7370000p0 lower material",
+          "material 2": "interface_G_7370000p0 upper material",
+          "enable thermal impedance": 1.0,
+          "thermal impedance": 1.3568521031207598e-07,
+          "temperature": 305.0
+        },
+        "requested_interface_object_name": "interface_G_7370000p0 internal interface",
+        "actual_interface_object_name_before_save": "temperature_2",
+        "save_succeeded": true,
+        "load_succeeded": true,
+        "property_readback_after_reload": {
+          "__candidate_paths__": [
+            "::model::HEAT::boundary conditions::temperature_2",
+            "HEAT::boundary conditions::temperature_2",
+            "HEAT::temperature_2",
+            "temperature_2"
+          ],
+          "name": "temperature_2",
+          "__resolved_path__": "::model::HEAT::boundary conditions::temperature_2",
+          "surface type": "material:material",
+          "material 1": "interface_G_7370000p0 lower material",
+          "material 2": "interface_G_7370000p0 upper material",
+          "enable thermal impedance": 1.0,
+          "thermal impedance": 1.3568521031207598e-07,
+          "temperature": 305.0
+        },
+        "temperature_monitor_result": "temperature",
+        "temperature_monitor_available_results": [
+          "temperature"
+        ],
+        "HEAT_available_results": [
+          "thermal",
+          "integrated",
+          "boundaries"
+        ],
+        "boundary_powers_W": {
+          "P_temperature": -3.443633618520349e-05,
+          "P_temperature_1": 6.22546552591743e-05,
+          "P_temperature_2": -1.3909159253667106e-05
+        },
+        "cold_boundary_power_W": -3.443633618520349e-05,
+        "hot_boundary_power_W": 6.22546552591743e-05,
+        "transmitted_power_W": 4.8345495722188896e-05,
+        "transmitted_heat_flux_W_m2": 48345495.7221889,
+        "analytic_heat_flux_W_m2": 25927880.38698329,
+        "heat_flux_relative_error": 0.8646142685253994,
+        "flux_transmission_relative_error": 0.5754066363043451,
+        "global_energy_balance_relative_error": 0.2877033240124558,
+        "expected_interface_temperature_jump_K": 6.55976875470677,
+        "interface_temperature_jump_relative_error": 0.9999999999999827,
+        "temperature_fit": {
+          "fit_exclusion_m": 8e-08,
+          "lower_sample_count": 83,
+          "upper_sample_count": 85,
+          "lower_slope_K_m": 6887267.23704103,
+          "upper_slope_K_m": 3112732.7629589844,
+          "lower_interface_temperature_K": 306.88726723704093,
+          "upper_interface_temperature_K": 306.88726723704104,
+          "temperature_jump_K": 1.1368683772161603e-13
+        },
+        "lower_flux_monitor": {
+          "available_results": [
+            "temperature",
+            "heatflux"
+          ],
+          "result_name": "heatflux",
+          "dataset": {
+            "T_temperature": [
+              [
+                300.0
+              ]
+            ],
+            "T_temperature_1": [
+              [
+                310.0
+              ]
+            ],
+            "T_temperature_2": [
+              [
+                305.0
+              ]
+            ],
+            "P": [
+              0.00010508497093002953
+            ],
+            "area": [
+              1.0000000000000046e-12
+            ]
+          }
+        },
+        "upper_flux_monitor": {
+          "available_results": [
+            "temperature",
+            "heatflux"
+          ],
+          "result_name": "heatflux",
+          "dataset": {
+            "T_temperature": [
+              [
+                300.0
+              ]
+            ],
+            "T_temperature_1": [
+              [
+                310.0
+              ]
+            ],
+            "T_temperature_2": [
+              [
+                305.0
+              ]
+            ],
+            "P": [
+              4.770834084157711e-05
+            ],
+            "area": [
+              1.0000000000000022e-12
+            ]
+          }
+        },
+        "sample_count": 179,
+        "internal_boundary_property_passed": true,
+        "criteria": {
+          "temperature_jump_relative_error_lt": 0.01,
+          "heat_flux_relative_error_lt": 0.01,
+          "flux_transmission_relative_error_lt": 0.01,
+          "energy_balance_relative_error_lt": 0.01
+        }
+      },
+      {
+        "case_id": "interface_G_1100000000p0",
+        "status": "FAILED_INTERFACE_G_ANALYTIC_CONTROL",
+        "passed": false,
+        "perfect_contact": false,
+        "G_W_m2K": 1100000000.0,
+        "thermal_insulance_m2K_W": 9.090909090909091e-10,
+        "mesh_max_edge_m": 5e-08,
+        "project_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/interface_G_1100000000p0/interface_G_1100000000p0.ldev",
+        "interface_location_z_m": 0.0,
+        "interface_is_internal": true,
+        "full_device_HEAT_executed": false,
+        "v261_DEVICE_version": "7.17.4413",
+        "materials": {
+          "lower": {
+            "model_material": "interface_G_1100000000p0 lower material",
+            "thermal_property": "interface_G_1100000000p0 lower material thermal",
+            "conductivity_write_W_mK": [
+              5.0
+            ],
+            "conductivity_readback_W_mK": [
+              5.0
+            ]
+          },
+          "upper": {
+            "model_material": "interface_G_1100000000p0 upper material",
+            "thermal_property": "interface_G_1100000000p0 upper material thermal",
+            "conductivity_write_W_mK": [
+              20.0
+            ],
+            "conductivity_readback_W_mK": [
+              20.0
+            ]
+          }
+        },
+        "property_readback_before_save": {
+          "name": "temperature_2",
+          "surface type": "material:material",
+          "material 1": "interface_G_1100000000p0 lower material",
+          "material 2": "interface_G_1100000000p0 upper material",
+          "enable thermal impedance": 1.0,
+          "thermal impedance": 9.090909090909091e-10,
+          "temperature": 305.0
+        },
+        "requested_interface_object_name": "interface_G_1100000000p0 internal interface",
+        "actual_interface_object_name_before_save": "temperature_2",
+        "save_succeeded": true,
+        "load_succeeded": true,
+        "property_readback_after_reload": {
+          "__candidate_paths__": [
+            "::model::HEAT::boundary conditions::temperature_2",
+            "HEAT::boundary conditions::temperature_2",
+            "HEAT::temperature_2",
+            "temperature_2"
+          ],
+          "name": "temperature_2",
+          "__resolved_path__": "::model::HEAT::boundary conditions::temperature_2",
+          "surface type": "material:material",
+          "material 1": "interface_G_1100000000p0 lower material",
+          "material 2": "interface_G_1100000000p0 upper material",
+          "enable thermal impedance": 1.0,
+          "thermal impedance": 9.090909090909091e-10,
+          "temperature": 305.0
+        },
+        "temperature_monitor_result": "temperature",
+        "temperature_monitor_available_results": [
+          "temperature"
+        ],
+        "HEAT_available_results": [
+          "thermal",
+          "boundaries",
+          "integrated"
+        ],
+        "boundary_powers_W": {
+          "P_temperature": -2.516853932584176e-05,
+          "P_temperature_1": 9.932584269662159e-05,
+          "P_temperature_2": -3.7078647977807966e-05
+        },
+        "cold_boundary_power_W": -2.516853932584176e-05,
+        "hot_boundary_power_W": 9.932584269662159e-05,
+        "transmitted_power_W": 6.224719101123168e-05,
+        "transmitted_heat_flux_W_m2": 62247191.01123168,
+        "analytic_heat_flux_W_m2": 39855072.46376812,
+        "heat_flux_relative_error": 0.5618386108272676,
+        "flux_transmission_relative_error": 1.1913357400721767,
+        "global_energy_balance_relative_error": 0.5956679295983254,
+        "expected_interface_temperature_jump_K": 0.056588355464756074,
+        "interface_temperature_jump_relative_error": 0.999999999995982,
+        "temperature_fit": {
+          "fit_exclusion_m": 8e-08,
+          "lower_sample_count": 83,
+          "upper_sample_count": 85,
+          "lower_slope_K_m": 5033707.865168575,
+          "upper_slope_K_m": 4966292.13483134,
+          "lower_interface_temperature_K": 305.03370786516854,
+          "upper_interface_temperature_K": 305.03370786516876,
+          "temperature_jump_K": 2.2737367544323206e-13
+        },
+        "lower_flux_monitor": {
+          "available_results": [
+            "temperature",
+            "heatflux"
+          ],
+          "result_name": "heatflux",
+          "dataset": {
+            "T_temperature": [
+              [
+                300.0
+              ]
+            ],
+            "T_temperature_1": [
+              [
+                310.0
+              ]
+            ],
+            "T_temperature_2": [
+              [
+                305.0
+              ]
+            ],
+            "P": [
+              7.680361839839993e-05
+            ],
+            "area": [
+              1.0000000000000046e-12
+            ]
+          }
+        },
+        "upper_flux_monitor": {
+          "available_results": [
+            "temperature",
+            "heatflux"
+          ],
+          "result_name": "heatflux",
+          "dataset": {
+            "T_temperature": [
+              [
+                300.0
+              ]
+            ],
+            "T_temperature_1": [
+              [
+                310.0
+              ]
+            ],
+            "T_temperature_2": [
+              [
+                305.0
+              ]
+            ],
+            "P": [
+              7.611753913051812e-05
+            ],
+            "area": [
+              1.0000000000000022e-12
+            ]
+          }
+        },
+        "sample_count": 179,
+        "internal_boundary_property_passed": true,
+        "criteria": {
+          "temperature_jump_relative_error_lt": 0.01,
+          "heat_flux_relative_error_lt": 0.01,
+          "flux_transmission_relative_error_lt": 0.01,
+          "energy_balance_relative_error_lt": 0.01
+        }
+      }
+    ],
+    "perfect_contact_mesh_converged_to_zero_jump": true,
+    "perfect_contact_cases": [
+      {
+        "case_id": "perfect_contact_mesh_100nm",
+        "status": "PASSED",
+        "passed": true,
+        "perfect_contact": true,
+        "G_W_m2K": null,
+        "thermal_insulance_m2K_W": null,
+        "mesh_max_edge_m": 1e-07,
+        "project_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/perfect_contact_mesh_100nm/perfect_contact_mesh_100nm.ldev",
+        "interface_location_z_m": 0.0,
+        "interface_is_internal": true,
+        "full_device_HEAT_executed": false,
+        "v261_DEVICE_version": "7.17.4413",
+        "materials": {
+          "lower": {
+            "model_material": "perfect_contact_mesh_100nm lower material",
+            "thermal_property": "perfect_contact_mesh_100nm lower material thermal",
+            "conductivity_write_W_mK": [
+              5.0
+            ],
+            "conductivity_readback_W_mK": [
+              5.0
+            ]
+          },
+          "upper": {
+            "model_material": "perfect_contact_mesh_100nm upper material",
+            "thermal_property": "perfect_contact_mesh_100nm upper material thermal",
+            "conductivity_write_W_mK": [
+              20.0
+            ],
+            "conductivity_readback_W_mK": [
+              20.0
+            ]
+          }
+        },
+        "save_succeeded": true,
+        "load_succeeded": true,
+        "temperature_monitor_result": "temperature",
+        "temperature_monitor_available_results": [
+          "temperature"
+        ],
+        "HEAT_available_results": [
+          "thermal",
+          "boundaries",
+          "integrated"
+        ],
+        "boundary_powers_W": {
+          "P_temperature": -3.999999999999879e-05,
+          "P_temperature_1": 3.999999999999544e-05
+        },
+        "cold_boundary_power_W": -3.999999999999879e-05,
+        "hot_boundary_power_W": 3.999999999999544e-05,
+        "transmitted_power_W": 3.9999999999997117e-05,
+        "transmitted_heat_flux_W_m2": 39999999.99999712,
+        "analytic_heat_flux_W_m2": 40000000.0,
+        "heat_flux_relative_error": 7.208436727523803e-14,
+        "flux_transmission_relative_error": 8.368685518873091e-14,
+        "global_energy_balance_relative_error": 8.368685518873091e-14,
+        "expected_interface_temperature_jump_K": 0.0,
+        "interface_temperature_jump_relative_error": null,
+        "temperature_fit": {
+          "fit_exclusion_m": 1.5e-07,
+          "lower_sample_count": 40,
+          "upper_sample_count": 36,
+          "lower_slope_K_m": 8000000.000000196,
+          "upper_slope_K_m": 1999999.9999999006,
+          "lower_interface_temperature_K": 308.0,
+          "upper_interface_temperature_K": 308.0000000000002,
+          "temperature_jump_K": 2.2737367544323206e-13
+        },
+        "lower_flux_monitor": {
+          "available_results": [
+            "temperature",
+            "heatflux"
+          ],
+          "result_name": "heatflux",
+          "dataset": {
+            "T_temperature": [
+              [
+                300.0
+              ]
+            ],
+            "T_temperature_1": [
+              [
+                310.0
+              ]
+            ],
+            "P": 0.0001238851097035357,
+            "area": 1.0000000000000012e-12
+          }
+        },
+        "upper_flux_monitor": {
+          "available_results": [
+            "temperature",
+            "heatflux"
+          ],
+          "result_name": "heatflux",
+          "dataset": {
+            "T_temperature": [
+              [
+                300.0
+              ]
+            ],
+            "T_temperature_1": [
+              [
+                310.0
+              ]
+            ],
+            "P": 3.0925994142555786e-05,
+            "area": 1.0000000000000016e-12
+          }
+        },
+        "sample_count": 86,
+        "criteria": {
+          "temperature_jump_relative_error_lt": 0.01,
+          "heat_flux_relative_error_lt": 0.01,
+          "flux_transmission_relative_error_lt": 0.01,
+          "energy_balance_relative_error_lt": 0.01
+        }
+      },
+      {
+        "case_id": "perfect_contact_mesh_50nm",
+        "status": "PASSED",
+        "passed": true,
+        "perfect_contact": true,
+        "G_W_m2K": null,
+        "thermal_insulance_m2K_W": null,
+        "mesh_max_edge_m": 5e-08,
+        "project_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/perfect_contact_mesh_50nm/perfect_contact_mesh_50nm.ldev",
+        "interface_location_z_m": 0.0,
+        "interface_is_internal": true,
+        "full_device_HEAT_executed": false,
+        "v261_DEVICE_version": "7.17.4413",
+        "materials": {
+          "lower": {
+            "model_material": "perfect_contact_mesh_50nm lower material",
+            "thermal_property": "perfect_contact_mesh_50nm lower material thermal",
+            "conductivity_write_W_mK": [
+              5.0
+            ],
+            "conductivity_readback_W_mK": [
+              5.0
+            ]
+          },
+          "upper": {
+            "model_material": "perfect_contact_mesh_50nm upper material",
+            "thermal_property": "perfect_contact_mesh_50nm upper material thermal",
+            "conductivity_write_W_mK": [
+              20.0
+            ],
+            "conductivity_readback_W_mK": [
+              20.0
+            ]
+          }
+        },
+        "save_succeeded": true,
+        "load_succeeded": true,
+        "temperature_monitor_result": "temperature",
+        "temperature_monitor_available_results": [
+          "temperature"
+        ],
+        "HEAT_available_results": [
+          "thermal",
+          "integrated",
+          "boundaries"
+        ],
+        "boundary_powers_W": {
+          "P_temperature": -4.0000000000001325e-05,
+          "P_temperature_1": 3.9999999999990076e-05
+        },
+        "cold_boundary_power_W": -4.0000000000001325e-05,
+        "hot_boundary_power_W": 3.9999999999990076e-05,
+        "transmitted_power_W": 3.99999999999957e-05,
+        "transmitted_heat_flux_W_m2": 39999999.9999957,
+        "analytic_heat_flux_W_m2": 40000000.0,
+        "heat_flux_relative_error": 1.0747462511062622e-13,
+        "flux_transmission_relative_error": 2.8121493848845795e-13,
+        "global_energy_balance_relative_error": 2.8121493848845795e-13,
+        "expected_interface_temperature_jump_K": 0.0,
+        "interface_temperature_jump_relative_error": null,
+        "temperature_fit": {
+          "fit_exclusion_m": 8e-08,
+          "lower_sample_count": 83,
+          "upper_sample_count": 85,
+          "lower_slope_K_m": 8000000.000000314,
+          "upper_slope_K_m": 1999999.9999997925,
+          "lower_interface_temperature_K": 308.00000000000017,
+          "upper_interface_temperature_K": 308.0000000000003,
+          "temperature_jump_K": 1.1368683772161603e-13
+        },
+        "lower_flux_monitor": {
+          "available_results": [
+            "temperature",
+            "heatflux"
+          ],
+          "result_name": "heatflux",
+          "dataset": {
+            "T_temperature": [
+              [
+                300.0
+              ]
+            ],
+            "T_temperature_1": [
+              [
+                310.0
+              ]
+            ],
+            "P": 0.00012206289352603114,
+            "area": 1.0000000000000046e-12
+          }
+        },
+        "upper_flux_monitor": {
+          "available_results": [
+            "temperature",
+            "heatflux"
+          ],
+          "result_name": "heatflux",
+          "dataset": {
+            "T_temperature": [
+              [
+                300.0
+              ]
+            ],
+            "T_temperature_1": [
+              [
+                310.0
+              ]
+            ],
+            "P": 3.0653669604591785e-05,
+            "area": 1.0000000000000022e-12
+          }
+        },
+        "sample_count": 179,
+        "criteria": {
+          "temperature_jump_relative_error_lt": 0.01,
+          "heat_flux_relative_error_lt": 0.01,
+          "flux_transmission_relative_error_lt": 0.01,
+          "energy_balance_relative_error_lt": 0.01
+        }
+      },
+      {
+        "case_id": "perfect_contact_mesh_25nm",
+        "status": "PASSED",
+        "passed": true,
+        "perfect_contact": true,
+        "G_W_m2K": null,
+        "thermal_insulance_m2K_W": null,
+        "mesh_max_edge_m": 2.5e-08,
+        "project_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/heat_material_interface_controls/interface_controls_v3/perfect_contact_mesh_25nm/perfect_contact_mesh_25nm.ldev",
+        "interface_location_z_m": 0.0,
+        "interface_is_internal": true,
+        "full_device_HEAT_executed": false,
+        "v261_DEVICE_version": "7.17.4413",
+        "materials": {
+          "lower": {
+            "model_material": "perfect_contact_mesh_25nm lower material",
+            "thermal_property": "perfect_contact_mesh_25nm lower material thermal",
+            "conductivity_write_W_mK": [
+              5.0
+            ],
+            "conductivity_readback_W_mK": [
+              5.0
+            ]
+          },
+          "upper": {
+            "model_material": "perfect_contact_mesh_25nm upper material",
+            "thermal_property": "perfect_contact_mesh_25nm upper material thermal",
+            "conductivity_write_W_mK": [
+              20.0
+            ],
+            "conductivity_readback_W_mK": [
+              20.0
+            ]
+          }
+        },
+        "save_succeeded": true,
+        "load_succeeded": true,
+        "temperature_monitor_result": "temperature",
+        "temperature_monitor_available_results": [
+          "temperature"
+        ],
+        "HEAT_available_results": [
+          "thermal",
+          "integrated",
+          "boundaries"
+        ],
+        "boundary_powers_W": {
+          "P_temperature": -3.999999999999985e-05,
+          "P_temperature_1": 4.0000000000006475e-05
+        },
+        "cold_boundary_power_W": -3.999999999999985e-05,
+        "hot_boundary_power_W": 4.0000000000006475e-05,
+        "transmitted_power_W": 4.000000000000316e-05,
+        "transmitted_heat_flux_W_m2": 40000000.00000316,
+        "analytic_heat_flux_W_m2": 40000000.0,
+        "heat_flux_relative_error": 7.897615432739258e-14,
+        "flux_transmission_relative_error": 1.6567964448292804e-13,
+        "global_energy_balance_relative_error": 1.6567964448292804e-13,
+        "expected_interface_temperature_jump_K": 0.0,
+        "interface_temperature_jump_relative_error": null,
+        "temperature_fit": {
+          "fit_exclusion_m": 8e-08,
+          "lower_sample_count": 178,
+          "upper_sample_count": 170,
+          "lower_slope_K_m": 7999999.9999998845,
+          "upper_slope_K_m": 2000000.000000314,
+          "lower_interface_temperature_K": 308.0000000000001,
+          "upper_interface_temperature_K": 307.99999999999983,
+          "temperature_jump_K": 2.8421709430404007e-13
+        },
+        "lower_flux_monitor": {
+          "available_results": [
+            "temperature",
+            "heatflux"
+          ],
+          "result_name": "heatflux",
+          "dataset": {
+            "T_temperature": [
+              [
+                300.0
+              ]
+            ],
+            "T_temperature_1": [
+              [
+                310.0
+              ]
+            ],
+            "P": 0.00012251879395544166,
+            "area": 1.000000000000005e-12
+          }
+        },
+        "upper_flux_monitor": {
+          "available_results": [
+            "temperature",
+            "heatflux"
+          ],
+          "result_name": "heatflux",
+          "dataset": {
+            "T_temperature": [
+              [
+                300.0
+              ]
+            ],
+            "T_temperature_1": [
+              [
+                310.0
+              ]
+            ],
+            "P": 3.081275806834812e-05,
+            "area": 1.000000000000007e-12
+          }
+        },
+        "sample_count": 377,
+        "criteria": {
+          "temperature_jump_relative_error_lt": 0.01,
+          "heat_flux_relative_error_lt": 0.01,
+          "flux_transmission_relative_error_lt": 0.01,
+          "energy_balance_relative_error_lt": 0.01
+        }
+      }
+    ],
+    "thin_layer_or_isotropic_fallback_used": false
+  },
+  "scope_guard": {
+    "finite_Q_full_device_HEAT_import": false,
+    "production_temperature_result": false,
+    "domain_sweep": false,
+    "Si_depth_sweep": false,
+    "G_top_sweep": false,
+    "G_bottom_sweep": false,
+    "transient": false,
+    "PTE": false,
+    "optimization": false
+  },
+  "next_step_authorized": false,
+  "next_step_condition": "anisotropic-kappa and internal-interface-G controls must both pass"
+}

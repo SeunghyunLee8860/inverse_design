@@ -6,6 +6,8 @@ The runnable validation code is under `photothermal_pte/validation/photothermal_
 
 The latest GPU root-cause closure is documented in `photothermal_pte/reports/root_cause/ROOT_CAUSE_REPORT.md`. With the corrected broadband material/source fitting contract, no global uniform mesh override, auto non-uniform mesh, conformal variant 1, and mesh accuracy 5, the patterned disk gave `A_Q=0.466393700`, local-flux absorption `0.466118738`, and relative mismatch `0.0590%`. No Q clipping, flux gain, or HEAT run was used for that closure.
 
+The source-bandwidth follow-up is under `photothermal_pte/reports/source_bandwidth`. Of 3.6–4.4, 3–6, 2.67–8, and 3–12 µm, the narrowest range satisfying flat-y flux/Q closure, flat-y TMM agreement, and disk-x closure below 0.5% was **3–6 µm**. The audited production implementation and fresh flat x/y/45-degree plus disk-x regression are under `photothermal_pte/reports/production_optical`; all four cases passed. `production_optical_contract_proposed.patch` remains the immutable review input and was not applied verbatim because its material-wavelength units were incorrect.
+
 ## Stage-1 validation
 
 This directory is an isolated, forward-only validation of

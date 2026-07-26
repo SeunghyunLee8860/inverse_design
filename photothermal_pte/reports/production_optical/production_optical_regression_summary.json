@@ -1,0 +1,203 @@
+{
+  "status": "PASS",
+  "base_validation_commit": "008093a",
+  "production_entrypoints": [
+    "inverse_design/launch_G_constrained_500nm_20260724.sh",
+    "inverse_design/run_constrained_inverse_design.py",
+    "eqc_lib.build_control_base",
+    "volume_current_evaluator.VolumeCurrentEvaluator.prepare"
+  ],
+  "realized_fsp_contract": {
+    "source_range_um": [
+      3.0,
+      6.0
+    ],
+    "pulse_type": "broadband",
+    "analysis_wavelength_um": 4.0,
+    "material_sampled_range_um": [
+      2.7,
+      13.2
+    ],
+    "material_samples": 600,
+    "monitor_effective_frequency_points": 1,
+    "mesh_type": "auto non-uniform",
+    "mesh_refinement": "conformal variant 1",
+    "mesh_accuracy": 5,
+    "global_uniform_mesh_count": 0,
+    "TaIrTe4_dz_nm": 5.0,
+    "dt_s": 1.5888123912757566e-17,
+    "solver_root": "/opt/lumerical/v261",
+    "solver_version": "8.35.4413",
+    "pre_run_resources": {
+      "1": {
+        "active": "1",
+        "device type": "CPU",
+        "processes": "1",
+        "threads": "8",
+        "solver extra command line options": ""
+      },
+      "2": {
+        "active": "1",
+        "device type": "GPU 0",
+        "processes": "1",
+        "threads": "8",
+        "solver extra command line options": "-gpu"
+      }
+    },
+    "Pabs_z_padding_each_side_nm": 50.0
+  },
+  "cases": [
+    {
+      "case": "flat_x",
+      "A_Qx": 0.25759249642328014,
+      "A_Qy": 0.0,
+      "A_Qz": 0.0,
+      "A_Q": 0.25759249642328014,
+      "A_Q_pabs_adv": 0.2575924964232801,
+      "R": 0.7182830536245012,
+      "T": 0.024131847193416045,
+      "A_global": 0.2575850991820828,
+      "A_local": 0.2575844340102469,
+      "A_six_face": 0.2575844340102469,
+      "closure_fraction": 3.130007860984867e-05,
+      "closure_percent": 0.0031300078609848665,
+      "baseline_closure_percent": 0.0030112168923556114,
+      "closure_percent_point_difference": 0.00011879096862925523,
+      "A_TMM": 0.2567229648800206,
+      "TMM_error_fraction": 0.0033556371968081825,
+      "TMM_error_percent": 0.3355637196808182,
+      "mesh_coordinates_identical_to_bandwidth_sweep": true,
+      "dt_absolute_difference_s": 0.0,
+      "source_norm_relative_difference": 0.0,
+      "pass": true
+    },
+    {
+      "case": "flat_y",
+      "A_Qx": 9.658067053887805e-34,
+      "A_Qy": 0.4227573080653537,
+      "A_Qz": 0.0,
+      "A_Q": 0.4227573080653537,
+      "A_Q_pabs_adv": 0.42275730806535455,
+      "R": 0.24011061340463258,
+      "T": 0.337084236937506,
+      "A_global": 0.4228051496578614,
+      "A_local": 0.42275553911879127,
+      "A_six_face": 0.42275553911879127,
+      "closure_fraction": 4.184324981223344e-06,
+      "closure_percent": 0.0004184324981223344,
+      "baseline_closure_percent": 0.0004184324981223344,
+      "closure_percent_point_difference": 0.0,
+      "A_TMM": 0.42324401447328014,
+      "TMM_error_fraction": 0.0011541222977406308,
+      "TMM_error_percent": 0.11541222977406308,
+      "mesh_coordinates_identical_to_bandwidth_sweep": true,
+      "dt_absolute_difference_s": 0.0,
+      "source_norm_relative_difference": 0.0,
+      "pass": true
+    },
+    {
+      "case": "flat_45",
+      "A_Qx": 0.12879482729616554,
+      "A_Qy": 0.21137865495549124,
+      "A_Qz": 0.0,
+      "A_Q": 0.3401734822516568,
+      "A_Q_pabs_adv": 0.3401734822516572,
+      "R": 0.47919618998877156,
+      "T": 0.1806083751405642,
+      "A_global": 0.3401954348706643,
+      "A_local": 0.3401690185966916,
+      "A_six_face": 0.3401690185966916,
+      "closure_fraction": 1.3121873896868725e-05,
+      "closure_percent": 0.0013121873896868724,
+      "baseline_closure_percent": 0.0013121873906986317,
+      "closure_percent_point_difference": -1.011759171451812e-12,
+      "A_TMM": 0.3399834896766504,
+      "TMM_error_fraction": 0.000545699793297763,
+      "TMM_error_percent": 0.054569979329776294,
+      "mesh_coordinates_identical_to_bandwidth_sweep": true,
+      "dt_absolute_difference_s": 0.0,
+      "source_norm_relative_difference": 0.0,
+      "pass": true
+    },
+    {
+      "case": "disk_x",
+      "A_Qx": 0.4401967433144039,
+      "A_Qy": 0.026212537037183615,
+      "A_Qz": 0.0,
+      "A_Q": 0.4664092803515875,
+      "A_Q_pabs_adv": 0.46640927738333476,
+      "R": 0.48594643004392996,
+      "T": 0.04756277772681545,
+      "A_global": 0.46649079222925455,
+      "A_local": 0.46612396705472053,
+      "A_six_face": 0.46612396705472053,
+      "closure_fraction": 0.0006120910933136722,
+      "closure_percent": 0.061209109331367216,
+      "baseline_closure_percent": 0.0612063347892027,
+      "closure_percent_point_difference": 2.774542164519101e-06,
+      "A_TMM": null,
+      "TMM_error_fraction": null,
+      "TMM_error_percent": null,
+      "mesh_coordinates_identical_to_bandwidth_sweep": true,
+      "dt_absolute_difference_s": 0.0,
+      "source_norm_relative_difference": 0.0,
+      "pass": true
+    }
+  ],
+  "acceptance": {
+    "closure_relative_lt": 0.005,
+    "flat_TMM_relative_lt": 0.005,
+    "all_cases_pass": true
+  },
+  "proposed_patch_audit": {
+    "applied_verbatim": false,
+    "critical_issue": "The proposal sampled wavelengths in um but passed them to eps_flake(), whose input contract is nm. Production uses lam_s_nm=linspace(2700,13200,600) and converts only the sampled-data frequency column to SI.",
+    "additional_fixes": [
+      "central realized-FSP assertions",
+      "stale FSP rejection",
+      "global_uniform_mesh creation gated off",
+      "exporter 4 um source override removed",
+      "latest constrained launcher contract corrected"
+    ]
+  },
+  "known_v261_configuration_dependent_failures": [
+    {
+      "name": "2.67-8 um source divergence",
+      "reproduction": "Run validation/photothermal_stage1/22_run_source_bandwidth_case.py for disk-x with source-start 2.67 and source-stop 8 on v261 GPU using the same corrected base FSP.",
+      "expected": "Solver log contains electromagnetic-fields-diverging; resulting flux/Q is invalid and must not be interpreted physically."
+    },
+    {
+      "name": "shared Resource Manager GPU-ID race",
+      "reproduction": "Launch concurrent lumapi sessions with different LUMERICAL_SESSION_GPU_DEVICE values while sharing the same Lumerical config home.",
+      "expected": "getresource() can change between pre-run and post-run. Use isolated config homes or sequential runs; validate before launch and verify actual CUDA device in the solver log."
+    }
+  ],
+  "unchanged": [
+    "geometry",
+    "PBC/PML",
+    "source and monitor positions",
+    "TaIrTe4 tensor axes",
+    "pabs_adv formula",
+    "Qy",
+    "normalization",
+    "HEAT code",
+    "optimizer and mapping logic"
+  ],
+  "prohibited_actions": {
+    "heat_run": false,
+    "optimizer_run": false,
+    "adjoint_run": false,
+    "Qy_deleted": false,
+    "Q_clipped": false,
+    "flux_gain": false,
+    "Q_rescaled": false
+  },
+  "next_gate": "Forward-adjoint agreement and directional finite-difference gradients may begin only after this production optical regression; they were not run here.",
+  "gpu_execution_evidence": {
+    "configured_cuda_visible_devices_0": true,
+    "detected_gpu_0": true,
+    "completed_successfully": true,
+    "post_run_shared_resource_observation": "GPU 2",
+    "interpretation": "Pre-run resource assertion and solver log prove GPU 0 execution. The post-run GPU 2 value is shared Resource Manager state changed by another session after launch; it did not change the completed engine process."
+  }
+}
