@@ -185,7 +185,14 @@ def bootstrap_env() -> None:
     os.environ["MATERIAL_FIT_START_UM"] = "2.7"
     os.environ["MATERIAL_FIT_STOP_UM"] = "13.2"
     os.environ["MATERIAL_SAMPLE_COUNT"] = str(MATERIAL_SAMPLE_COUNT)
-    os.environ["BULK_MESH_MODE"] = "auto"
+    # Default stays the certified "auto"; an explicit env value (Phase-C
+    # "fast_bulk") is honoured.  The hard assignment here silently overrode
+    # BULK_MESH_MODE=fast_bulk in the first Phase-C attempt -- caught because
+    # the driver logs the model's realized mode and the mesh probe axes.
+    # Fail-closed remains intact either way: assert_production_contract reads
+    # the REALIZED fsp (auto non-uniform + accuracy + CV1 + no global uniform
+    # mesh + 5nm flake), which fast_bulk satisfies and "uniform" cannot.
+    os.environ.setdefault("BULK_MESH_MODE", "auto")
     os.environ["MESH_ACCURACY"] = str(MESH_ACCURACY)
     os.environ["FILM_DZ_NM"] = "5.0"
     os.environ["VC_MESH_REFINEMENT"] = MESH_REFINEMENT

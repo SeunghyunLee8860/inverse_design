@@ -51,8 +51,18 @@ MESH_ACCURACY = int(os.environ.get("MESH_ACCURACY", "5"))
 SOURCE_MESH_HALFSPAN_UM = float(os.environ.get("SOURCE_MESH_HALFSPAN_UM", "0.1"))
 AIR_BULK_DZ_NM = float(os.environ.get("AIR_BULK_DZ_NM", "100.0"))
 SI_BULK_DZ_NM = float(os.environ.get("SI_BULK_DZ_NM", "100.0"))
-if BULK_MESH_MODE not in ("auto", "uniform", "regional_uniform"):
-    raise ValueError("BULK_MESH_MODE must be auto, uniform, or regional_uniform")
+# fast_bulk (Phase C): keep the FULL production contract (auto non-uniform,
+# accuracy 5, CV1, 5 nm flake dz, 25 nm in-plane) and add two z-only override
+# caps that coarsen ONLY the far bulk.  The in-plane mesh cannot change (the
+# design override pins dx=dy=25 nm and a rectilinear grid applies that at
+# every z); dt cannot change (set by the 5 nm flake cells).  Whether the
+# realized interface-band z axis is bit-identical to baseline is asserted
+# empirically by the Phase-C driver, not assumed.
+FB_AIR_DZ_NM = float(os.environ.get("FB_AIR_DZ_NM", "150.0"))
+FB_SI_DZ_NM = float(os.environ.get("FB_SI_DZ_NM", "100.0"))
+if BULK_MESH_MODE not in ("auto", "uniform", "regional_uniform", "fast_bulk"):
+    raise ValueError(
+        "BULK_MESH_MODE must be auto, uniform, regional_uniform, or fast_bulk")
 si_h = float(os.environ.get("SI_H_UM", "2.0"))
 air_top = float(os.environ.get("AIR_TOP_UM", "2.0"))
 source_gap = float(os.environ.get("SOURCE_GAP_UM", "0.5"))
@@ -73,6 +83,13 @@ Z_max = design_h + air_top
 SI_COARSE_Z_MAX_UM = float(
     os.environ.get("SI_COARSE_Z_MAX_UM", str(-flake_h - sio2_h))
 )
+# fast_bulk band edges: air cap starts well above the design top (leaving the
+# design/air transition to auto grading); the Si cap starts below a guard band
+# under the SiO2/Si interface so interface-adjacent cells keep their baseline
+# grading.  Both are env-tunable for the Phase-C sweep.
+FB_AIR_ZMIN_UM = float(os.environ.get("FB_AIR_ZMIN_UM", str(design_h + 0.3)))
+FB_SI_ZMAX_UM = float(
+    os.environ.get("FB_SI_ZMAX_UM", str(-flake_h - sio2_h - 0.5)))
 if not (Z_min < SI_COARSE_Z_MAX_UM <= -flake_h - sio2_h):
     raise ValueError(
         f"SI_COARSE_Z_MAX_UM={SI_COARSE_Z_MAX_UM} must lie in "
@@ -190,6 +207,27 @@ def build_case(incident_polarization="x"):
         sim.fdtd.set("z max", SI_COARSE_Z_MAX_UM*1e-6)
         sim.fdtd.set("override x mesh", 0); sim.fdtd.set("override y mesh", 0)
         sim.fdtd.set("override z mesh", 1); sim.fdtd.set("dz", SI_BULK_DZ_NM*1e-9)
+    if BULK_MESH_MODE == "fast_bulk":
+        # Two z-only caps in the FAR bulk; everything between them (design,
+        # flake, SiO2, interface guard bands) keeps the untouched accuracy-5
+        # auto grading.  The Phase-C driver asserts the realized interface-band
+        # z axis is identical to baseline before any FOM comparison.
+        sim.fdtd.addmesh()
+        sim.fdtd.set("name", "air_fastbulk_z_mesh")
+        sim.fdtd.set("x", 0.0); sim.fdtd.set("x span", Sx*1e-6)
+        sim.fdtd.set("y", 0.0); sim.fdtd.set("y span", Sy*1e-6)
+        sim.fdtd.set("z min", FB_AIR_ZMIN_UM*1e-6)
+        sim.fdtd.set("z max", Z_max*1e-6)
+        sim.fdtd.set("override x mesh", 0); sim.fdtd.set("override y mesh", 0)
+        sim.fdtd.set("override z mesh", 1); sim.fdtd.set("dz", FB_AIR_DZ_NM*1e-9)
+        sim.fdtd.addmesh()
+        sim.fdtd.set("name", "si_fastbulk_z_mesh")
+        sim.fdtd.set("x", 0.0); sim.fdtd.set("x span", Sx*1e-6)
+        sim.fdtd.set("y", 0.0); sim.fdtd.set("y span", Sy*1e-6)
+        sim.fdtd.set("z min", Z_min*1e-6)
+        sim.fdtd.set("z max", FB_SI_ZMAX_UM*1e-6)
+        sim.fdtd.set("override x mesh", 0); sim.fdtd.set("override y mesh", 0)
+        sim.fdtd.set("override z mesh", 1); sim.fdtd.set("dz", FB_SI_DZ_NM*1e-9)
     if FLAKE_DZ_NM > 0:
         dz = FLAKE_DZ_NM * 1e-9
         sim.fdtd.addmesh()
