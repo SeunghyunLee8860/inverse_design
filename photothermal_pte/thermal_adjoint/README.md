@@ -16,3 +16,14 @@ temperature or electrode-current prediction.
 The governing contract and the later Maxwell chain are documented in
 `photothermal_pte/reports/inverse_design_pte_adfd/INVERSE_DESIGN_PTE_ADFD_CONTRACT.md`.
 
+Run the solver-free fixed-K certificate with:
+
+```bash
+/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
+  photothermal_pte/thermal_adjoint/run_thermal_pte_adfd_certificate.py \
+  --output-dir /tmp/tairte4-pte-adfd
+```
+
+The raw NPZ stays outside Git. The report, JSON, directional-derivative CSV,
+and manifest are written under
+`photothermal_pte/reports/inverse_design_pte_adfd/`.

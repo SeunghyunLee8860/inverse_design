@@ -1,0 +1,479 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "20260726T052639Z",
+  "status": "VALIDATED_FIXED_K_THERMAL_PTE_ADFD",
+  "passed": true,
+  "scope": "fixed-K discrete thermal/PTE derivative certificate",
+  "not_a_production_prediction": true,
+  "git": {
+    "branch": "agent/validate-inverse-design-pte-adfd",
+    "head_before_generated_reports": "be0485583affba154628ae170306ac86b416e296"
+  },
+  "grid": {
+    "shape": [
+      24,
+      24,
+      8
+    ],
+    "x_bounds_m": [
+      -3e-06,
+      3e-06
+    ],
+    "y_bounds_m": [
+      -3e-06,
+      3e-06
+    ],
+    "z_bounds_m": [
+      -2.385e-06,
+      0.0
+    ],
+    "x_edges_m": [
+      -3e-06,
+      -2.75e-06,
+      -2.5e-06,
+      -2.25e-06,
+      -2.0000000000000003e-06,
+      -1.7500000000000002e-06,
+      -1.5e-06,
+      -1.25e-06,
+      -1.0000000000000002e-06,
+      -7.5e-07,
+      -5.000000000000003e-07,
+      -2.5000000000000015e-07,
+      0.0,
+      2.499999999999997e-07,
+      4.999999999999999e-07,
+      7.499999999999996e-07,
+      9.999999999999997e-07,
+      1.2499999999999999e-06,
+      1.5e-06,
+      1.7499999999999993e-06,
+      1.9999999999999995e-06,
+      2.2499999999999996e-06,
+      2.4999999999999998e-06,
+      2.75e-06,
+      3e-06
+    ],
+    "y_edges_m": [
+      -3e-06,
+      -2.75e-06,
+      -2.5e-06,
+      -2.25e-06,
+      -2.0000000000000003e-06,
+      -1.7500000000000002e-06,
+      -1.5e-06,
+      -1.25e-06,
+      -1.0000000000000002e-06,
+      -7.5e-07,
+      -5.000000000000003e-07,
+      -2.5000000000000015e-07,
+      0.0,
+      2.499999999999997e-07,
+      4.999999999999999e-07,
+      7.499999999999996e-07,
+      9.999999999999997e-07,
+      1.2499999999999999e-06,
+      1.5e-06,
+      1.7499999999999993e-06,
+      1.9999999999999995e-06,
+      2.2499999999999996e-06,
+      2.4999999999999998e-06,
+      2.75e-06,
+      3e-06
+    ],
+    "z_edges_m": [
+      -2.385e-06,
+      -1.885e-06,
+      -1.385e-06,
+      -8.85e-07,
+      -3.85e-07,
+      -2.425e-07,
+      -1e-07,
+      -5e-08,
+      0.0
+    ],
+    "periodic_axes": [
+      "x",
+      "y"
+    ],
+    "bottom_boundary": "Dirichlet DeltaT=0",
+    "top_boundary": "adiabatic"
+  },
+  "materials": {
+    "Si_kappa_W_mK": [
+      145.0,
+      145.0,
+      145.0
+    ],
+    "SiO2_kappa_W_mK": [
+      1.38,
+      1.38,
+      1.38
+    ],
+    "TaIrTe4_kappa_W_mK": [
+      14.4,
+      3.8,
+      1.0
+    ],
+    "TaIrTe4_kz_note": "estimated numerical scenario",
+    "optical_design_thermal_material": "UNSPECIFIED_AND_OMITTED"
+  },
+  "interfaces": {
+    "SiO2_Si_G_W_m2K": 1100000000.0,
+    "TaIrTe4_SiO2_G_W_m2K": 7370000.0,
+    "SiO2_Si_z_face_index": 3,
+    "TaIrTe4_SiO2_z_face_index": 5,
+    "face_rule": "dx1/(2*k1)+1/G+dx2/(2*k2)"
+  },
+  "forward": {
+    "source_kind": "synthetic positive asymmetric numerical source",
+    "source_power_W": 1e-12,
+    "numerical_source_power_W": 1e-12,
+    "temperature_max_K_per_unit_run": 1.1005131577073525e-07,
+    "fom_A_m": 1.0839531974342586e-20,
+    "linear_solver": "scipy.sparse.linalg.cg+jacobi",
+    "iterations": 119,
+    "boundary_power_out_W": {
+      "z_min": 1.0000000000002769e-12
+    }
+  },
+  "pte": {
+    "readout_mask": "finite local numerical window; not electrodes or a solved weighting potential",
+    "sigma_a_S_m": 491000.0,
+    "sigma_b_S_m": 110000.0,
+    "Seebeck_a_V_K": -6e-06,
+    "Seebeck_b_V_K": 2.7e-05,
+    "functional_unit": "A m",
+    "temperature_adjoint_equation": "K_T^T lambda = c_T",
+    "Q_gradient_equation": "dF/dQ = M_V^T lambda"
+  },
+  "directional_derivatives": {
+    "seeds": {
+      "transpose": 2026072601,
+      "temperature": 2026072602,
+      "source_unrestricted": 2026072603,
+      "source_positive": 2026072604
+    },
+    "number_of_directions_per_family": 8,
+    "temperature_steps": [
+      0.01,
+      0.003,
+      0.001,
+      0.0003,
+      0.0001,
+      3e-05,
+      1e-05
+    ],
+    "source_steps": [
+      0.01,
+      0.003,
+      0.001,
+      0.0003,
+      0.0001,
+      3e-05,
+      1e-05
+    ],
+    "temperature_best_rows": [
+      {
+        "space": "temperature",
+        "family": "unrestricted",
+        "direction": 0,
+        "step": 0.01,
+        "analytic": 4.569773831438238e-15,
+        "finite_difference": 4.569773831438239e-15,
+        "absolute_error": 7.888609052210118e-31,
+        "relative_error": 1.7262580913610222e-16
+      },
+      {
+        "space": "temperature",
+        "family": "unrestricted",
+        "direction": 1,
+        "step": 0.001,
+        "analytic": -1.0045429839002222e-14,
+        "finite_difference": -1.0045429839002226e-14,
+        "absolute_error": 4.733165431326071e-30,
+        "relative_error": 4.711759981588005e-16
+      },
+      {
+        "space": "temperature",
+        "family": "unrestricted",
+        "direction": 2,
+        "step": 0.01,
+        "analytic": 1.8787450913440186e-14,
+        "finite_difference": 1.8787450913440182e-14,
+        "absolute_error": 3.1554436208840472e-30,
+        "relative_error": 1.6795485643167818e-16
+      },
+      {
+        "space": "temperature",
+        "family": "unrestricted",
+        "direction": 3,
+        "step": 0.01,
+        "analytic": -1.1232988490518652e-14,
+        "finite_difference": -1.1232988490518652e-14,
+        "absolute_error": 0.0,
+        "relative_error": 0.0
+      },
+      {
+        "space": "temperature",
+        "family": "unrestricted",
+        "direction": 4,
+        "step": 0.003,
+        "analytic": 1.179079243943076e-14,
+        "finite_difference": 1.1790792439430754e-14,
+        "absolute_error": 6.310887241768095e-30,
+        "relative_error": 5.352386003050337e-16
+      },
+      {
+        "space": "temperature",
+        "family": "unrestricted",
+        "direction": 5,
+        "step": 0.0003,
+        "analytic": -2.81378257773761e-15,
+        "finite_difference": -2.8137825777376093e-15,
+        "absolute_error": 7.888609052210118e-31,
+        "relative_error": 2.8035602731440835e-16
+      },
+      {
+        "space": "temperature",
+        "family": "unrestricted",
+        "direction": 6,
+        "step": 1e-05,
+        "analytic": 3.486889388737201e-15,
+        "finite_difference": 3.4868893887372008e-15,
+        "absolute_error": 3.944304526105059e-31,
+        "relative_error": 1.1311814303158934e-16
+      },
+      {
+        "space": "temperature",
+        "family": "unrestricted",
+        "direction": 7,
+        "step": 0.003,
+        "analytic": 1.497553480896854e-14,
+        "finite_difference": 1.497553480896854e-14,
+        "absolute_error": 0.0,
+        "relative_error": 0.0
+      }
+    ],
+    "source_best_rows": [
+      {
+        "space": "source_Q",
+        "family": "unrestricted",
+        "direction": 0,
+        "step": 0.01,
+        "analytic": 1.7145532591807404e-21,
+        "finite_difference": 1.7145532591808074e-21,
+        "absolute_error": 6.69561582228375e-35,
+        "relative_error": 3.905166425383073e-14,
+        "minimum_Q_plus_W_m3": -19598.360593663932,
+        "minimum_Q_minus_W_m3": -17368.72680484778
+      },
+      {
+        "space": "source_Q",
+        "family": "unrestricted",
+        "direction": 1,
+        "step": 0.003,
+        "analytic": 4.211537142423093e-21,
+        "finite_difference": 4.211537142423259e-21,
+        "absolute_error": 1.6550960459577808e-34,
+        "relative_error": 3.9299096505308916e-14,
+        "minimum_Q_plus_W_m3": -4438.717263969775,
+        "minimum_Q_minus_W_m3": -5684.735006633714
+      },
+      {
+        "space": "source_Q",
+        "family": "unrestricted",
+        "direction": 2,
+        "step": 0.01,
+        "analytic": -3.0407803127216105e-21,
+        "finite_difference": -3.0407803127220047e-21,
+        "absolute_error": 3.942137854917623e-34,
+        "relative_error": 1.2964231050908326e-13,
+        "minimum_Q_plus_W_m3": -16296.57963922312,
+        "minimum_Q_minus_W_m3": -17620.194160220573
+      },
+      {
+        "space": "source_Q",
+        "family": "unrestricted",
+        "direction": 3,
+        "step": 0.01,
+        "analytic": -1.89243564075753e-21,
+        "finite_difference": -1.8924356407570977e-21,
+        "absolute_error": 4.322057629103387e-34,
+        "relative_error": 2.283859770984494e-13,
+        "minimum_Q_plus_W_m3": -16491.328037423522,
+        "minimum_Q_minus_W_m3": -16822.323177683247
+      },
+      {
+        "space": "source_Q",
+        "family": "unrestricted",
+        "direction": 4,
+        "step": 0.01,
+        "analytic": 4.957726454205926e-22,
+        "finite_difference": 4.957726454205926e-22,
+        "absolute_error": 0.0,
+        "relative_error": 0.0,
+        "minimum_Q_plus_W_m3": -16868.5112281527,
+        "minimum_Q_minus_W_m3": -16069.62232588437
+      },
+      {
+        "space": "source_Q",
+        "family": "unrestricted",
+        "direction": 5,
+        "step": 0.003,
+        "analytic": -2.298501685119248e-21,
+        "finite_difference": -2.2985016851195163e-21,
+        "absolute_error": 2.682007910836131e-34,
+        "relative_error": 1.1668505305868358e-13,
+        "minimum_Q_plus_W_m3": -5929.684616576612,
+        "minimum_Q_minus_W_m3": -4767.895769946418
+      },
+      {
+        "space": "source_Q",
+        "family": "unrestricted",
+        "direction": 6,
+        "step": 0.01,
+        "analytic": -4.0105234677187155e-21,
+        "finite_difference": -4.010523467718927e-21,
+        "absolute_error": 2.114009040518802e-34,
+        "relative_error": 5.2711548942046266e-14,
+        "minimum_Q_plus_W_m3": -20031.67457425278,
+        "minimum_Q_minus_W_m3": -17381.18424601885
+      },
+      {
+        "space": "source_Q",
+        "family": "unrestricted",
+        "direction": 7,
+        "step": 0.01,
+        "analytic": -2.4966963997219344e-21,
+        "finite_difference": -2.496696399721933e-21,
+        "absolute_error": 1.504632769052528e-36,
+        "relative_error": 6.026494728073883e-16,
+        "minimum_Q_plus_W_m3": -17252.725487369084,
+        "minimum_Q_minus_W_m3": -19044.470021018307
+      },
+      {
+        "space": "source_Q",
+        "family": "positivity_preserving",
+        "direction": 0,
+        "step": 0.01,
+        "analytic": 4.136167842733311e-22,
+        "finite_difference": 4.136167842733749e-22,
+        "absolute_error": 4.3775409624621987e-35,
+        "relative_error": 1.0583567033317924e-13,
+        "minimum_Q_plus_W_m3": 0.0,
+        "minimum_Q_minus_W_m3": 0.0
+      },
+      {
+        "space": "source_Q",
+        "family": "positivity_preserving",
+        "direction": 1,
+        "step": 0.003,
+        "analytic": -5.174320973906473e-22,
+        "finite_difference": -5.1743209739063065e-22,
+        "absolute_error": 1.664500000764359e-35,
+        "relative_error": 3.216847213689e-14,
+        "minimum_Q_plus_W_m3": 0.0,
+        "minimum_Q_minus_W_m3": 0.0
+      },
+      {
+        "space": "source_Q",
+        "family": "positivity_preserving",
+        "direction": 2,
+        "step": 0.01,
+        "analytic": -2.784538437864717e-22,
+        "finite_difference": -2.7845384378609718e-22,
+        "absolute_error": 3.745125001719808e-34,
+        "relative_error": 1.3449715582276907e-12,
+        "minimum_Q_plus_W_m3": 0.0,
+        "minimum_Q_minus_W_m3": 0.0
+      },
+      {
+        "space": "source_Q",
+        "family": "positivity_preserving",
+        "direction": 3,
+        "step": 0.01,
+        "analytic": 3.441949092659919e-22,
+        "finite_difference": 3.441949092659126e-22,
+        "absolute_error": 7.927533901945507e-35,
+        "relative_error": 2.3032106775928964e-13,
+        "minimum_Q_plus_W_m3": 0.0,
+        "minimum_Q_minus_W_m3": 0.0
+      },
+      {
+        "space": "source_Q",
+        "family": "positivity_preserving",
+        "direction": 4,
+        "step": 0.01,
+        "analytic": -6.429450695061363e-22,
+        "finite_difference": -6.4294506950611e-22,
+        "absolute_error": 2.633107345841924e-35,
+        "relative_error": 4.095384614838847e-14,
+        "minimum_Q_plus_W_m3": 0.0,
+        "minimum_Q_minus_W_m3": 0.0
+      },
+      {
+        "space": "source_Q",
+        "family": "positivity_preserving",
+        "direction": 5,
+        "step": 0.01,
+        "analytic": -8.94351125029331e-22,
+        "finite_difference": -8.943511250291637e-22,
+        "absolute_error": 1.6720231646096218e-34,
+        "relative_error": 1.8695377216132943e-13,
+        "minimum_Q_plus_W_m3": 0.0,
+        "minimum_Q_minus_W_m3": 0.0
+      },
+      {
+        "space": "source_Q",
+        "family": "positivity_preserving",
+        "direction": 6,
+        "step": 0.003,
+        "analytic": -4.268257867390025e-22,
+        "finite_difference": -4.268257867397015e-22,
+        "absolute_error": 6.9899596077296504e-34,
+        "relative_error": 1.6376610375707933e-12,
+        "minimum_Q_plus_W_m3": 0.0,
+        "minimum_Q_minus_W_m3": 0.0
+      },
+      {
+        "space": "source_Q",
+        "family": "positivity_preserving",
+        "direction": 7,
+        "step": 0.01,
+        "analytic": 5.883442769588533e-22,
+        "finite_difference": 5.883442769594988e-22,
+        "absolute_error": 6.454874579235345e-34,
+        "relative_error": 1.0971254131340478e-12,
+        "minimum_Q_plus_W_m3": 0.0,
+        "minimum_Q_minus_W_m3": 0.0
+      }
+    ]
+  },
+  "gates": {
+    "linear_residual_relative": 8.315496971352787e-12,
+    "linear_residual_pass": true,
+    "energy_balance_relative_error": 2.768712450707732e-13,
+    "energy_balance_pass": true,
+    "matrix_asymmetry_relative": 0.0,
+    "matrix_symmetry_pass": true,
+    "minimum_eigenvalue_W_K": 7.044209944782905e-08,
+    "positive_definite_pass": true,
+    "temperature_worst_best_relative_error": 5.352386003050337e-16,
+    "temperature_adfd_pass": true,
+    "source_worst_best_relative_error": 1.6376610375707933e-12,
+    "source_adfd_pass": true,
+    "volume_transpose_worst_relative_error": 2.1145071563934503e-16,
+    "volume_transpose_pass": true
+  },
+  "blockers": [
+    "BLOCKED_FULL_RHO_DEPENDENT_THERMAL_MATERIAL_MODEL",
+    "BLOCKED_PHYSICAL_WEIGHTING_POTENTIAL_OR_FINITE_FLAKE_MASK"
+  ],
+  "raw_artifact": {
+    "path": "/tmp/tairte4-pte-adfd-first/fixed_k_thermal_pte_adfd_raw.npz",
+    "bytes": 103506,
+    "sha256": "ce67423bd566c73d935545ed47e74054a7359f4ab225d1e3d1b582b345a66dcc",
+    "committed_to_git": false
+  }
+}

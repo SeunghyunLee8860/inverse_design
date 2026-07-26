@@ -133,6 +133,18 @@ current. A current in A requires a declared `g` in 1/m:
 
 `I_approx = g F_local`.
 
+There is a second physical closure requirement:
+
+`BLOCKED_PHYSICAL_WEIGHTING_POTENTIAL_OR_FINITE_FLAKE_MASK`
+
+The present optical inverse-design cell is periodic in x/y and its TaIrTe4
+layer fills the period. With constant coefficients, the full-period integral
+of a periodic temperature derivative telescopes to zero. A physical nonzero
+terminal PTE current therefore requires a finite flake/contact geometry or a
+solved electrical weighting potential. The first AD–FD certificate uses an
+explicitly named finite local numerical readout window only to test the
+operator chain; that window is not an electrode model.
+
 ## Exact thermal adjoint
 
 For a fixed thermal operator,
@@ -235,5 +247,6 @@ certifies the Maxwell-to-Q extension. Passing stages 7–8 certifies the
 fixed-K optical-only inverse-design gradient. A full physical inverse-design
 claim remains blocked until the design material, thermal interpolation, and
 rho-dependent interface model are supplied and their matrix derivative is
-independently certified.
-
+independently certified. A terminal-current claim additionally remains
+blocked until the finite device/contact geometry or electrical weighting
+potential is supplied and certified.
