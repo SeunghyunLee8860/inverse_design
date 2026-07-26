@@ -16,6 +16,7 @@ for path in (THERMAL, VOLUME_CURRENT):
 from collocated_coherent_fom import fieldregion_periodic_source_right_inverse
 from volume_current_yee_metric import component_periodic_yee_volumes
 from yee_absorption_functional import weighted_yee_absorption_and_wirtinger
+from yee_absorption_functional import component_shifted_trapezoid_volumes
 
 
 def _fixture():
@@ -79,3 +80,20 @@ def test_periodic_fieldregion_fold_preserves_pairing():
     ).wirtinger_source
     folded = fieldregion_periodic_source_right_inverse(q)
     assert np.isclose(np.vdot(folded, field), np.vdot(q, field), rtol=1e-14)
+
+
+def test_shifted_trapezoid_volume_integrates_closed_fieldregion_bounds():
+    x = np.linspace(-3e-6, 3e-6, 9)
+    y = np.linspace(-3e-6, 3e-6, 7)
+    z = np.linspace(-100e-9, 0.0, 6)
+    volumes = component_shifted_trapezoid_volumes(
+        x_m=x,
+        y_m=y,
+        z_m=z,
+        delta_x_m=np.full_like(x, 0.5 * (x[1] - x[0])),
+        delta_y_m=np.full_like(y, 0.5 * (y[1] - y[0])),
+        delta_z_m=np.full_like(z, 0.5 * (z[1] - z[0])),
+    )
+    expected = (x[-1] - x[0]) * (y[-1] - y[0]) * (z[-1] - z[0])
+    for volume in volumes.values():
+        assert np.isclose(np.sum(volume), expected, rtol=2e-15)

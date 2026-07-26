@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "status": "COMPLETED_MAXWELL_ABSORPTION_FORWARD_SMOKE",
+  "is_inverse_design_geometry": true,
+  "is_disk_proxy": false,
+  "is_adfd_validation": false,
+  "polarization": "x",
+  "lumerical_version": "8.35.4522",
+  "analysis_wavelength_m": 4e-06,
+  "source_wavelength_range_m": [
+    3e-06,
+    6e-06
+  ],
+  "mesh": {
+    "type": "auto non-uniform",
+    "refinement": "conformal variant 1",
+    "accuracy": 5,
+    "flake_dz_m": 5e-09
+  },
+  "density": {
+    "shape": [
+      241,
+      241,
+      13
+    ],
+    "minimum": 0.38,
+    "maximum": 0.62,
+    "periodic_fencepost": true
+  },
+  "absorption": {
+    "epsilon_imaginary_fitted_v261": [
+      50.85010970213534,
+      9.289194655416972,
+      0.0
+    ],
+    "incident_intensity_W_m2": 0.0013272093648958553,
+    "component_power_per_intensity_m2": [
+      8.763584966562064e-12,
+      2.98099632534266e-14,
+      0.0
+    ],
+    "total_power_per_intensity_m2": 8.79339492981549e-12,
+    "weighted_objective_m2": 9.367200868199787e-12,
+    "quadrature": "component-shifted x/y/z coordinates with 3-D trapezoid weights"
+  },
+  "solver": {
+    "iterations": 245567,
+    "simulated_time_s": 3.901599e-12,
+    "wall_time_s": 723.125645,
+    "early_termination": "auto shutoff criteria satisfied"
+  },
+  "next_gate": "MAXWELL_ABSORPTION_PHYSICAL_DENSITY_ADFD"
+}
