@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "status": "VALIDATED_MAXWELL_ABSORPTION_PHYSICAL_DENSITY_ADFD",
+  "passed": true,
+  "scope": "frozen native-Yee absorption weight to physical design density",
+  "is_disk_proxy": false,
+  "is_thermal_adjoint_weight": false,
+  "polarization": "x",
+  "objective_m2": 9.367200868199787e-12,
+  "gradient": {
+    "l2": 3.875283946053369e-14,
+    "absolute_maximum": 1.3039760176038783e-16
+  },
+  "gates": {
+    "periodic_source_pairing_relative_error": 8.623640797858466e-16,
+    "periodic_source_pairing_limit": 1e-13,
+    "live_source_profile_roundtrip_max_abs_error": 0.0,
+    "rho_epsilon_owner_leakage_fraction": 0.0,
+    "robust_direction_relative_error": 0.024200935448899785,
+    "robust_direction_limit": 0.05
+  },
+  "density_chain": {
+    "rho_step": 0.0025,
+    "delta": 0.002501,
+    "chain_factor": 0.994998,
+    "formula": "rho_solver = delta + (1-2*delta)*rho_geom"
+  },
+  "cases": [
+    {
+      "direction": "uniform",
+      "step": 0.0025,
+      "adjoint_directional": -4.716716167139546e-12,
+      "finite_difference": -4.833696135289278e-12,
+      "relative_error": 0.024200935448899785,
+      "status": "PASSED"
+    },
+    {
+      "direction": "oscillatory_cancellation_prone",
+      "step": 0.02,
+      "adjoint_directional": -7.750926106180087e-16,
+      "finite_difference": -5.838636193698367e-16,
+      "relative_error": 0.24671760332703768,
+      "status": "FAILED_NOISE_FLOOR_DIAGNOSTIC"
+    }
+  ],
+  "remaining_gates": [
+    "THERMAL_ADJOINT_TO_NATIVE_YEE_PULLBACK",
+    "LATENT_FILTER_PROJECTION_FENCEPOST_MAXWELL_ADFD"
+  ],
+  "blockers": [
+    "BLOCKED_FULL_RHO_DEPENDENT_THERMAL_MATERIAL_MODEL",
+    "BLOCKED_PHYSICAL_WEIGHTING_POTENTIAL_OR_FINITE_FLAKE_MASK"
+  ]
+}

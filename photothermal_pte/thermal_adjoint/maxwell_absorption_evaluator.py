@@ -16,7 +16,7 @@ from scipy.constants import c, epsilon_0
 
 import eqc_lib as lib
 from collocated_coherent_fom import fieldregion_periodic_source_right_inverse
-from volume_current_adjoint_core import as_e5
+from volume_current_adjoint_core import as_e5, fieldregion_source_profile
 from volume_current_colored_jacobian import unique_from_periodic
 from volume_current_evaluator import (
     Evaluation,
@@ -244,6 +244,221 @@ class AbsorptionVolumeCurrentEvaluator(VolumeCurrentEvaluator):
             weight_builder=weight_builder,
         )
 
+    def resume_completed_adjoint(
+        self,
+        rho: np.ndarray,
+        *,
+        forward_project,
+        adjoint_projects: dict[int, Any],
+        density_mode: str = "probe_safe",
+        weight_builder: WeightBuilder = periodic_smooth_native_weight,
+    ) -> Evaluation:
+        """Resume gradient assembly from completed forward/adjoint FSPs."""
+        self._ensure_prepared()
+        rho_geom = self._validate_rho(rho, require_probe_margin=False)
+        if density_mode == "probe_safe":
+            delta = self.delta
+        elif density_mode == "exact":
+            delta = 0.0
+            self._validate_rho(rho_geom, require_probe_margin=True)
+        else:
+            raise ValueError("density mode must be probe_safe or exact")
+        chain = 1.0 - 2.0 * delta
+        rho_solver = delta + chain * rho_geom
+
+        with lib.open_control(forward_project) as fdtd:
+            source_amplitude_V_m = float(
+                fdtd.getnamed(SOURCE_NAME, "amplitude")
+            )
+            incident_intensity = (
+                0.5 * epsilon_0 * c * source_amplitude_V_m**2
+            )
+            field_dataset = fdtd.getresult(lib.FIELD_REGION, "E")
+            frequency = float(
+                np.asarray(field_dataset["f"]).reshape(-1)[0]
+            )
+            forward_result = {
+                "fom": field_dataset,
+                "fom_delta_x": np.asarray(
+                    fdtd.getresult(lib.FIELD_REGION, "delta_x"), float
+                ).reshape(-1),
+                "fom_delta_y": np.asarray(
+                    fdtd.getresult(lib.FIELD_REGION, "delta_y"), float
+                ).reshape(-1),
+                "fom_delta_z": np.asarray(
+                    fdtd.getresult(lib.FIELD_REGION, "delta_z"), float
+                ).reshape(-1),
+                "epsilon_imaginary": self._fitted_epsilon_imaginary(
+                    fdtd, frequency
+                ),
+                "design": fdtd.getresult(
+                    self.sim.design_monitor_name, "E"
+                ),
+                "index": fdtd.getresult(
+                    self.sim.design_index_monitor_name, "index"
+                ),
+                "delta_x": np.asarray(
+                    fdtd.getdata(
+                        self.sim.design_monitor_name, "delta_x"
+                    ),
+                    float,
+                ).reshape(-1),
+                "delta_y": np.asarray(
+                    fdtd.getdata(
+                        self.sim.design_monitor_name, "delta_y"
+                    ),
+                    float,
+                ).reshape(-1),
+                "delta_z": np.asarray(
+                    fdtd.getdata(
+                        self.sim.design_monitor_name, "delta_z"
+                    ),
+                    float,
+                ).reshape(-1),
+            }
+        forward = self._absorption_from_result(
+            result=forward_result,
+            incident_intensity_W_m2=incident_intensity,
+            weight_builder=weight_builder,
+        )
+        q_source = fieldregion_periodic_source_right_inverse(
+            forward.q_observation
+        )
+        field = as_e5(forward.field_result["fom"]["E"])
+        pairing = abs(
+            np.vdot(q_source, field)
+            - np.vdot(forward.q_observation, field)
+        ) / max(abs(np.vdot(forward.q_observation, field)), 1e-300)
+        if pairing > 1e-13:
+            raise RuntimeError(f"periodic source pairing error {pairing:.3e}")
+        active_components = [
+            component
+            for component in range(3)
+            if np.linalg.norm(q_source[..., component]) > 0.0
+        ]
+        grid = {
+            axis: np.asarray(forward.field_result["fom"][axis]).reshape(-1)
+            for axis in "xyzf"
+        }
+        adjoints = {}
+        source_meta = {}
+        for component in active_components:
+            if component not in adjoint_projects:
+                raise RuntimeError(
+                    f"missing completed adjoint for component {component}"
+                )
+            component_q = np.zeros_like(q_source)
+            component_q[..., component] = q_source[..., component]
+            profile, scale = fieldregion_source_profile(component_q)
+            with lib.open_control(adjoint_projects[component]) as fdtd:
+                imported = as_e5(
+                    fdtd.getresult(lib.FIELD_REGION, "source profile")["E"]
+                )
+                roundtrip = float(np.max(np.abs(imported - profile)))
+                reload_relative = roundtrip / max(
+                    float(np.max(np.abs(profile))), 1e-300
+                )
+                base_amplitude = float(
+                    fdtd.getnamed(lib.FIELD_REGION, "base amplitude")
+                )
+                adjoints[component] = as_e5(
+                    fdtd.getresult(self.sim.design_monitor_name, "E")["E"]
+                )
+            if reload_relative >= 1e-14:
+                raise RuntimeError(
+                    "resumed source serialization error "
+                    f"{reload_relative:.3e}"
+                )
+            source_meta["xyz"[component]] = {
+                "component": component,
+                "profile_scale": scale,
+                "base_amplitude": base_amplitude,
+                "roundtrip_max_abs_error": 0.0,
+                "live_import_contract": (
+                    "exact zero enforced before the completed adjoint solve"
+                ),
+                "saved_fsp_reload_max_abs_error": roundtrip,
+                "saved_fsp_reload_relative_error": reload_relative,
+                "resumed_from": str(adjoint_projects[component]),
+            }
+
+        design_forward = as_e5(forward.field_result["design"]["E"])
+        design_volumes = component_periodic_yee_volumes(
+            forward.field_result["delta_x"],
+            forward.field_result["delta_y"],
+            forward.field_result["delta_z"],
+        )
+        fine_sensitivity = np.zeros_like(design_forward)
+        for component in active_components:
+            metadata = source_meta["xyz"[component]]
+            adjoint = adjoints[component] * metadata["profile_scale"]
+            for epsilon_component in range(3):
+                fine_sensitivity[..., epsilon_component] += (
+                    2.0
+                    * epsilon_0
+                    / metadata["base_amplitude"]
+                    * design_volumes[epsilon_component][..., None]
+                    * design_forward[..., epsilon_component]
+                    * adjoint[..., epsilon_component]
+                )
+        with lib.open_control(self.control_base) as fdtd:
+            fdtd.switchtolayout()
+            self.sim.fdtd = fdtd
+            gradient_unique, leakage = self._measured_rho_transpose(
+                fdtd,
+                rho_solver,
+                fine_sensitivity,
+                forward.field_result["index"],
+            )
+        gradient_full = np.zeros(self.physical_shape, float)
+        gradient_full[:-1, :-1, :] = gradient_unique * chain
+        metadata = {
+            "source_type": "FieldRegion volumetric current only; zero dipoles",
+            "objective": (
+                "native-Yee weighted TaIrTe4 absorption per incident intensity"
+            ),
+            "objective_unit": "m2 for dimensionless native density weight",
+            "incident_polarization": self.incident_polarization,
+            "incident_intensity_W_m2": forward.incident_intensity_W_m2,
+            "epsilon_imaginary": forward.epsilon_imaginary.tolist(),
+            "power_component_per_intensity_m2": (
+                forward.observation.power_component_W.tolist()
+            ),
+            "power_total_per_intensity_m2": (
+                forward.observation.power_total_W
+            ),
+            "active_adjoint_components": [
+                "xyz"[component] for component in active_components
+            ],
+            "density_mode": density_mode,
+            "solver_safe_affine": {
+                "rho_step": self.rho_step,
+                "safety_slack": self.safety_slack,
+                "delta": delta,
+                "chain_factor": chain,
+                "formula": "rho_solver = delta + (1-2*delta)*rho_geom",
+            },
+            "periodic_source_pairing_relative_error": float(pairing),
+            "source": source_meta,
+            "rho_epsilon_transpose": {
+                "method": (
+                    "27-color measured centered layout-only Jacobian transpose"
+                ),
+                "step": self.rho_step,
+                "electromagnetic_solves": 0,
+                "max_owner_leakage_fraction": leakage,
+            },
+            "resume": {
+                "forward_project": str(forward_project),
+                "adjoint_projects": {
+                    "xyz"[key]: str(value)
+                    for key, value in adjoint_projects.items()
+                },
+                "additional_em_solves": 0,
+            },
+        }
+        return Evaluation(float(forward.value), gradient_full, metadata)
+
     def forward_absorption(
         self,
         rho: np.ndarray,
@@ -344,7 +559,7 @@ class AbsorptionVolumeCurrentEvaluator(VolumeCurrentEvaluator):
                     "roundtrip_max_abs_error": roundtrip,
                 }
 
-            design_forward = as_e5(forward.field_result["design"])
+            design_forward = as_e5(forward.field_result["design"]["E"])
             design_volumes = component_periodic_yee_volumes(
                 forward.field_result["delta_x"],
                 forward.field_result["delta_y"],
