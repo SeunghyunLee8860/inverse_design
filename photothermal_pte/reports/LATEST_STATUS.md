@@ -1,5 +1,32 @@
 # Latest photothermal validation status
 
+## Inverse-design paper-reduced thermal/PTE AD–FD
+
+- Status: `VALIDATED_PAPER_REDUCED_RHO_DEPENDENT_THERMAL_PTE_ADFD`
+- Material label: `n=4 optical proxy + paper SiO2 thermal boundary`
+- TaIrTe4 kappa: `diag(14.4, 3.8, 1.0) W/(m K)`
+- Fixed substrate Robin G: `7.37e6 W/(m2 K)`
+- Design boundary:
+  `G(rho_bar)=1+rho_bar*(G_SiO2-1) W/(m2 K)`
+- Thermally-grown baseline / evaporated sensitivity:
+  `7.37e6 / 7.37e4 W/(m2 K)`
+- Thermal-material-only AD–FD errors:
+  `1.86887e-8 / 1.17052e-11`
+- Combined physical-rho errors at steps `0.0025 / 0.00125`:
+  `1.02384% / 0.495604%`
+- Combined latent step sweep at `0.01 / 0.005 / 0.0025`:
+  `9.96381% / 1.55543% / 6.87508%`
+- Selected bracketed latent FD step: `0.005`
+- Selected optical / thermal-material / combined directional gradients:
+  `3.20854e-19 / 2.72040e-20 / 3.48058e-19`
+- Energy balance / linear residual:
+  `2.04340e-13 / 8.70484e-12`
+- Bulk air/SiO2/Si kappa and SiO2/Si G in this reduced model:
+  `omitted`
+- Remaining blocker:
+  `BLOCKED_PHYSICAL_WEIGHTING_POTENTIAL_OR_FINITE_FLAKE_MASK`
+- Terminal current, transient, and PTE optimization: `not executed`
+
 ## v261 HEAT material and interface controls
 
 - Branch: `agent/validate-fvm-thermal-physical-model`

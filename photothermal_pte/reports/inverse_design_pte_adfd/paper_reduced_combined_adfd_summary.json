@@ -1,0 +1,264 @@
+{
+  "schema_version": 1,
+  "status": "VALIDATED_PAPER_REDUCED_RHO_DEPENDENT_THERMAL_PTE_ADFD",
+  "passed": true,
+  "material_label": "n=4 optical proxy + paper SiO2 thermal boundary",
+  "thermal_contract": {
+    "TaIrTe4_kappa_W_mK": [
+      14.4,
+      3.8,
+      1.0
+    ],
+    "TaIrTe4_air_G_W_m2K": 1.0,
+    "TaIrTe4_thermally_grown_SiO2_G_W_m2K": 7370000.0,
+    "TaIrTe4_evaporated_SiO2_G_W_m2K": 73700.0,
+    "bath_temperature_K": 300.0,
+    "unknown_solved": "theta=T-T_bath",
+    "design_G_law": "G_air + rho_bar*(G_SiO2-G_air)",
+    "bulk_air_SiO2_Si_omitted": true,
+    "SiO2_Si_G_omitted": true
+  },
+  "thermal_material_only": [
+    {
+      "name": "thermally_grown_SiO2_baseline",
+      "G_SiO2_W_m2K": 7370000.0,
+      "passed": true,
+      "objective_A_m_per_W_m2": -2.145649330179035e-21,
+      "adjoint_directional": -1.6030177074177752e-21,
+      "best_step": {
+        "scenario": "thermally_grown_SiO2_baseline",
+        "G_SiO2_W_m2K": 7370000.0,
+        "step": 0.0001,
+        "adjoint_directional": -1.6030177074177752e-21,
+        "finite_difference": -1.6030177373760217e-21,
+        "absolute_error": 2.99582465357911e-29,
+        "relative_error": 1.8688655675656916e-08,
+        "plus_objective_A_m_per_W_m2": -2.145809644416683e-21,
+        "minus_objective_A_m_per_W_m2": -2.1454890408692078e-21
+      },
+      "gradient_thermal_material_l2_A_m": 5.489453051295547e-21,
+      "temperature_rise_max_K_per_W_m2": 2.865010194022847e-08,
+      "source_power_W_per_W_m2": 8.79339492981549e-12,
+      "energy_balance_relative_error": 1.837273484004126e-15,
+      "linear_residual_relative": 6.833333521242974e-12,
+      "boundary": {
+        "top_face_count": 576,
+        "bottom_face_count": 576,
+        "air_endpoint_face_count": 0,
+        "sio2_endpoint_face_count": 0,
+        "gray_face_count": 576,
+        "air_equivalent_area_fraction": 0.5,
+        "sio2_equivalent_area_fraction": 0.5,
+        "G_design_min_W_m2K": 2904465.3955762177,
+        "G_design_max_W_m2K": 4465535.604423782,
+        "G_design_area_weighted_mean_W_m2K": 3685000.5,
+        "top_active_area_m2": 3.6000000000000005e-11,
+        "bottom_active_area_m2": 3.6000000000000005e-11,
+        "boundary_power_out_W": {
+          "surface_robin_z_min": 5.575371642708374e-12,
+          "surface_robin_z_max": 3.2180232871071e-12
+        }
+      }
+    },
+    {
+      "name": "evaporated_SiO2_sensitivity",
+      "G_SiO2_W_m2K": 73700.0,
+      "passed": true,
+      "objective_A_m_per_W_m2": -1.638764341557909e-21,
+      "adjoint_directional": -3.3923584881121186e-23,
+      "best_step": {
+        "scenario": "evaporated_SiO2_sensitivity",
+        "G_SiO2_W_m2K": 73700.0,
+        "step": 0.0025,
+        "adjoint_directional": -3.3923584881121186e-23,
+        "finite_difference": -3.392358488151827e-23,
+        "absolute_error": 3.970819917077687e-34,
+        "relative_error": 1.170518956338547e-11,
+        "plus_objective_A_m_per_W_m2": -1.6388491524106798e-21,
+        "minus_objective_A_m_per_W_m2": -1.6386795344862722e-21
+      },
+      "gradient_thermal_material_l2_A_m": 1.1865957197595647e-22,
+      "temperature_rise_max_K_per_W_m2": 4.426929205233632e-08,
+      "source_power_W_per_W_m2": 8.79339492981549e-12,
+      "energy_balance_relative_error": 3.6745469680082516e-16,
+      "linear_residual_relative": 6.627450306032303e-12,
+      "boundary": {
+        "top_face_count": 576,
+        "bottom_face_count": 576,
+        "air_endpoint_face_count": 0,
+        "sio2_endpoint_face_count": 0,
+        "gray_face_count": 576,
+        "air_equivalent_area_fraction": 0.5,
+        "sio2_equivalent_area_fraction": 0.5,
+        "G_design_min_W_m2K": 29045.253803775508,
+        "G_design_max_W_m2K": 44655.74619622449,
+        "G_design_area_weighted_mean_W_m2K": 36850.5,
+        "top_active_area_m2": 3.6000000000000005e-11,
+        "bottom_active_area_m2": 3.6000000000000005e-11,
+        "boundary_power_out_W": {
+          "surface_robin_z_min": 8.739494922472726e-12,
+          "surface_robin_z_max": 5.390000734276139e-14
+        }
+      }
+    }
+  ],
+  "physical_rho_step_sweep": [
+    {
+      "step": 0.00125,
+      "adjoint": {
+        "optical_Q_directional": 1.3635705781388243e-20,
+        "thermal_material_directional": 2.266749612880263e-21,
+        "combined_directional": 1.590245539426851e-20,
+        "optical_gradient_l2": 8.072394979751755e-22,
+        "thermal_material_gradient_l2": 1.5225003423614114e-22,
+        "combined_gradient_l2": 7.905494137331009e-22
+      },
+      "finite_difference": 1.598166117500327e-20,
+      "relative_error": 0.004956041794869512,
+      "passed": true
+    },
+    {
+      "step": 0.0025,
+      "adjoint": {
+        "optical_Q_directional": 1.3635705781388243e-20,
+        "thermal_material_directional": 2.266749612880263e-21,
+        "combined_directional": 1.590245539426851e-20,
+        "optical_gradient_l2": 8.072394979751755e-22,
+        "thermal_material_gradient_l2": 1.5225003423614114e-22,
+        "combined_gradient_l2": 7.905494137331009e-22
+      },
+      "finite_difference": 1.6066955027316433e-20,
+      "relative_error": 0.01023838261626091,
+      "passed": true
+    }
+  ],
+  "latent_step_sweep": [
+    {
+      "step": 0.0025,
+      "adjoint": {
+        "optical_Q_directional": 3.208540012589646e-19,
+        "thermal_material_directional": 2.7204001641665613e-20,
+        "combined_directional": 3.480580029006301e-19,
+        "optical_latent_gradient_l2": 1.6971875998260266e-20,
+        "thermal_latent_gradient_l2": 2.7056304115721444e-21,
+        "combined_latent_gradient_l2": 1.6226931989444125e-20
+      },
+      "finite_difference": 3.737538970142996e-19,
+      "relative_error": 0.06875083930612876,
+      "passed_at_5_percent": false
+    },
+    {
+      "step": 0.005,
+      "adjoint": {
+        "optical_Q_directional": 3.208540012589646e-19,
+        "thermal_material_directional": 2.7204001641665613e-20,
+        "combined_directional": 3.480580029006301e-19,
+        "optical_latent_gradient_l2": 1.6971875998260266e-20,
+        "thermal_latent_gradient_l2": 2.7056304115721444e-21,
+        "combined_latent_gradient_l2": 1.6226931989444125e-20
+      },
+      "finite_difference": 3.4264419925115353e-19,
+      "relative_error": 0.015554314523324394,
+      "passed_at_5_percent": true
+    },
+    {
+      "step": 0.01,
+      "adjoint": {
+        "optical_Q_directional": 3.208540012589646e-19,
+        "thermal_material_directional": 2.7204001641665613e-20,
+        "combined_directional": 3.480580029006301e-19,
+        "optical_latent_gradient_l2": 1.6971875998260266e-20,
+        "thermal_latent_gradient_l2": 2.7056304115721444e-21,
+        "combined_latent_gradient_l2": 1.6226931989444125e-20
+      },
+      "finite_difference": 3.1337816713110473e-19,
+      "relative_error": 0.09963809330775936,
+      "passed_at_5_percent": false
+    }
+  ],
+  "selected_latent_step": {
+    "step": 0.005,
+    "relative_error": 0.015554314523324394,
+    "selection_rule": "minimum observed centered-FD error in a bracketed three-step sweep; larger h is nonlinear and smaller h is below the v261 FD numerical-noise floor"
+  },
+  "selected_gradient_decomposition": {
+    "optical_Q_directional": 3.208540012589646e-19,
+    "thermal_material_directional": 2.7204001641665613e-20,
+    "combined_directional": 3.480580029006301e-19,
+    "optical_latent_gradient_l2": 1.6971875998260266e-20,
+    "thermal_latent_gradient_l2": 2.7056304115721444e-21,
+    "combined_latent_gradient_l2": 1.6226931989444125e-20
+  },
+  "selected_boundary": {
+    "top_face_count": 576,
+    "bottom_face_count": 576,
+    "air_endpoint_face_count": 0,
+    "sio2_endpoint_face_count": 0,
+    "gray_face_count": 576,
+    "air_equivalent_area_fraction": 0.5,
+    "sio2_equivalent_area_fraction": 0.5,
+    "G_design_min_W_m2K": 695685.8421745079,
+    "G_design_max_W_m2K": 6674315.157825491,
+    "G_design_area_weighted_mean_W_m2K": 3685000.5,
+    "top_active_area_m2": 3.6000000000000005e-11,
+    "bottom_active_area_m2": 3.6000000000000005e-11,
+    "boundary_power_out_W": {
+      "surface_robin_z_min": 9.5302275566997e-12,
+      "surface_robin_z_max": 5.476021797712013e-12
+    }
+  },
+  "selected_gates": {
+    "mapping_replay_max_abs_error": 0.0,
+    "mapping_replay_pass": true,
+    "periodic_x_fencepost_exact": true,
+    "periodic_y_fencepost_exact": true,
+    "z_extrusion_exact": true,
+    "energy_balance_relative_error": 2.0434049226471754e-13,
+    "energy_balance_pass": true,
+    "linear_residual_relative": 8.70484422664875e-12,
+    "linear_residual_pass": true,
+    "combined_latent_adfd_relative_error": 0.015554314523324394,
+    "combined_latent_adfd_pass": true
+  },
+  "blockers": [
+    "BLOCKED_PHYSICAL_WEIGHTING_POTENTIAL_OR_FINITE_FLAKE_MASK"
+  ],
+  "raw_artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/paper_reduced_thermal_material_adfd_20260726/paper_reduced_thermal_material_adfd.npz",
+      "bytes": 40909,
+      "sha256": "97db4aa8ae975d86b6485ee4e84051ee55ea578d721d3170da168264d8ce83d6",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/paper_reduced_step_sweep_physical_20260726/h0p00125/paper_reduced_combined_physical_adfd.npz",
+      "bytes": 17749885,
+      "sha256": "c42bd242cbe04f4a4d19592cebaf87d83e00f5d2c8b458e9d8300fd0a39674eb",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/paper_reduced_combined_physical_20260726/paper_reduced_combined_physical_adfd.npz",
+      "bytes": 17749885,
+      "sha256": "4557624c2d84b3e81b7bebe460d50e477415bd8ac87f8aa6f51b5f5a6b0fbcb3",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/paper_reduced_step_sweep_latent_20260726/h0p0025/paper_reduced_combined_latent_adfd.npz",
+      "bytes": 16516439,
+      "sha256": "3ee50d6ae3865ac4a4efe28cde7a80d0a1853e75581545d1453bf102a7e9e36f",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/paper_reduced_combined_latent_20260726/paper_reduced_combined_latent_adfd.npz",
+      "bytes": 16516439,
+      "sha256": "d8a0a5e99d6f7a466101e5ea20896888e0fad6b947d1bc00f6abe2e22faac06f",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/paper_reduced_step_sweep_latent_20260726/h0p01/paper_reduced_combined_latent_adfd.npz",
+      "bytes": 16516439,
+      "sha256": "06c0ccc75f2c6624832eb44bee338177577057171bec61819fb8bae4bb7debb9",
+      "committed_to_git": false
+    }
+  ]
+}
