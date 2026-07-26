@@ -238,6 +238,86 @@ def raw_manifest(
     }
 
 
+def audit_final_artifact(final: dict[str, Any]) -> dict[str, Any]:
+    path = Path(str(final["_artifact"])).resolve()
+    with np.load(path) as data:
+        x, y, z = (np.asarray(data[f"{axis}_m"], float) for axis in "xyz")
+        components = [
+            np.asarray(data[f"Q{axis}_W_m3"], float) for axis in "xyz"
+        ]
+        q = np.asarray(data["Q_on_W_m3"], float)
+        metadata = json.loads(str(data["metadata_json"][0]))
+
+        def weights(values: np.ndarray) -> np.ndarray:
+            result = np.empty_like(values)
+            result[0] = 0.5 * (values[1] - values[0])
+            result[-1] = 0.5 * (values[-1] - values[-2])
+            result[1:-1] = 0.5 * (values[2:] - values[:-2])
+            return result
+
+        reintegrated = float(
+            np.einsum(
+                "i,j,k,ijk->",
+                weights(x),
+                weights(y),
+                weights(z),
+                q,
+                optimize=True,
+            )
+        )
+        saved = float(np.asarray(data["P_abs_volume_W"]).reshape(-1)[0])
+        component_sum_error = float(
+            np.max(np.abs(q - sum(components)))
+            / max(float(np.max(np.abs(q))), np.finfo(float).tiny)
+        )
+        geometry = metadata["geometry_bounds_m"]["fixed_design"]
+        prohibited = {
+            key: bool(metadata[key])
+            for key in (
+                "clipped",
+                "gain_applied",
+                "rescaled_to_flux",
+                "periodic_crop",
+                "periodic_tiling",
+                "smoothed",
+                "source_deleted",
+            )
+        }
+        finite = all(np.isfinite(array).all() for array in [*components, q])
+        passed = (
+            finite
+            and component_sum_error < 1e-12
+            and abs(reintegrated - saved)
+            / max(abs(saved), np.finfo(float).tiny)
+            < 1e-12
+            and np.isclose(float(geometry["radius_m"]), 0.8e-6)
+            and bool(geometry["complete_disk_inside_flake_footprint"])
+            and not any(prohibited.values())
+        )
+        return {
+            "passed": passed,
+            "path": str(path),
+            "array_axis_order": ["x", "y", "z"],
+            "shape": list(q.shape),
+            "coordinate_bounds_m": {
+                "x": [float(x[0]), float(x[-1])],
+                "y": [float(y[0]), float(y[-1])],
+                "z": [float(z[0]), float(z[-1])],
+            },
+            "all_Q_arrays_finite": finite,
+            "Q_component_sum_max_relative_error": component_sum_error,
+            "P_Q_reintegrated_W": reintegrated,
+            "P_Q_saved_W": saved,
+            "P_Q_reintegration_relative_error": abs(reintegrated - saved)
+            / max(abs(saved), np.finfo(float).tiny),
+            "design_radius_m": float(geometry["radius_m"]),
+            "complete_disk_inside_flake_footprint": bool(
+                geometry["complete_disk_inside_flake_footprint"]
+            ),
+            "prohibited_operations": prohibited,
+        }
+
+
 def write_report(path: Path, summary: dict[str, Any]) -> None:
     final = summary["final_case"]
     lines = [
@@ -256,6 +336,11 @@ def write_report(path: Path, summary: dict[str, Any]) -> None:
         "- finite Gaussian waist 2 µm, aperture 6.8 µm, source 3–6 µm, analysis 4 µm",
         "- six PML boundaries, auto nonuniform mesh, conformal variant 1, accuracy 5",
         "- central incident intensity: 1 W/m²",
+        "",
+        "All six outer FDTD faces use PML. The disk–TaIrTe4, "
+        "TaIrTe4–SiO2, SiO2–Si, and solid–air optical interfaces are solved "
+        "through their material permittivities and conformal Maxwell mesh; "
+        "thermal interface conductance is not part of this optical solve.",
         "",
         "## Promoted fresh result",
         "",
@@ -281,6 +366,10 @@ def write_report(path: Path, summary: dict[str, Any]) -> None:
         "",
         "All source-off, empty-stack x/y/45°, finite-flat x/y/45°, proxy, "
         "six-face closure, domain, PML, and flake-dz gates passed.",
+        "",
+        "The promoted NPZ independently passed finite-value, component-sum, "
+        "coordinate-order, geometry, prohibited-operation, and P_Q "
+        "reintegration audits.",
         "",
         "No clipping, smoothing, gain, global rescaling, tiling, source deletion, "
         "thermal solve, PTE, adjoint, gradient, or optimization was used.",
@@ -316,12 +405,14 @@ def main() -> int:
         ),
     }
     manifest = raw_manifest(rows, baseline)
+    artifact_audit = audit_final_artifact(baseline)
     closure_pass = float(baseline["six_face_closure"]) < POWER_GATE
     validated = (
         all(controls.values())
         and closure_pass
         and all(item["passed"] for item in convergence.values())
         and manifest["selected_final_SHA_differs_from_PR3"]
+        and artifact_audit["passed"]
     )
     summary = {
         "status": SUCCESS if validated else "FAILED_FINITE_INFLAKE_PROXY_OPTICAL_Q",
@@ -329,6 +420,7 @@ def main() -> int:
         "controls": controls,
         "final_case": public(baseline),
         "convergence": convergence,
+        "artifact_audit": artifact_audit,
         "gates": {
             "six_face_closure_lt_0p5_percent": closure_pass,
             "power_convergence_lt_1_percent": all(

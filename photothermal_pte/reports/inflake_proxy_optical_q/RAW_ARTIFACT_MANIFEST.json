@@ -1,0 +1,304 @@
+{
+  "raw_npz_or_fsp_committed": false,
+  "old_PR3_raw_Q_sha256": "7a63f82842751e7623e895701bac4ce92558679ed71bf13a3d404695a150e794",
+  "selected_final_raw_npz": {
+    "case_id": "proxy_x_r0p8_L16_pml24_dz5",
+    "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz5/finite_q_on_artifact.npz",
+    "size_bytes": 8695110,
+    "sha256": "2ecdb8a8a2a01f85635914357ce05aab834576a66069cdc024a5dca49b0c71c3",
+    "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz5 --case fixed-design --polarization-deg 0 --domain-um 16 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --require-design-inside-flake --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+    "generation_commit": "af6e93f7b2748da7d6eaffda269d389ac07a9327",
+    "committed_to_git": false
+  },
+  "selected_final_SHA_differs_from_PR3": true,
+  "artifacts": [
+    {
+      "case_id": "control_source_off_L12_pml24_dz5_retry1",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/control_source_off_L12_pml24_dz5_retry1/field_slices_raw.npz",
+      "size_bytes": 302992,
+      "sha256": "86ccf064b07c7242ca454557ddda5b88d1ef9c451db6b9f5d9e02df029eecab9",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/control_source_off_L12_pml24_dz5_retry1 --case no-source --polarization-deg 0 --domain-um 12 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "control_source_off_L12_pml24_dz5_retry1",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/control_source_off_L12_pml24_dz5_retry1/finite_2um_optical_q.fsp",
+      "size_bytes": 9000030,
+      "sha256": "37df6b9fbad910c6fb38631a34500b73ef2dda2d3a1afa7b674ea35e57f5a0c9",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/control_source_off_L12_pml24_dz5_retry1 --case no-source --polarization-deg 0 --domain-um 12 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "empty_45_L8_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_45_L8_pml24_dz5/field_slices_raw.npz",
+      "size_bytes": 300296,
+      "sha256": "2625f914d47ecb3770cd0f71376e6d315f044a92526a7026081a5cd31d4f2750",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_45_L8_pml24_dz5 --case empty-stack --polarization-deg 45 --domain-um 8 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "empty_45_L8_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_45_L8_pml24_dz5/finite_2um_optical_q.fsp",
+      "size_bytes": 10136389,
+      "sha256": "d7d2efb3c15ea8b75afcd062bfd1c344577c82045aec650b98325b69a25b2cc7",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_45_L8_pml24_dz5 --case empty-stack --polarization-deg 45 --domain-um 8 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "empty_45_L8_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_45_L8_pml24_dz5/incident_reference.npz",
+      "size_bytes": 240200,
+      "sha256": "a09c2d2f424006998779fe2cf845f62acab25f1a33d4eca9707e1cc1e1c69401",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_45_L8_pml24_dz5 --case empty-stack --polarization-deg 45 --domain-um 8 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "empty_x_L12_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/field_slices_raw.npz",
+      "size_bytes": 302992,
+      "sha256": "ed25807dad8b6c0ac15fa2460ba27a1514a1d01d7f748aae6d05f7ba373e244b",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5 --case empty-stack --polarization-deg 0 --domain-um 12 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "empty_x_L12_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/finite_2um_optical_q.fsp",
+      "size_bytes": 9925565,
+      "sha256": "1070c0048050bd0d84533a50104b4b4e3a197de5ec766ad2988d9f74ac272ebe",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5 --case empty-stack --polarization-deg 0 --domain-um 12 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "empty_x_L12_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/incident_reference.npz",
+      "size_bytes": 242976,
+      "sha256": "d4cc3246bc0dd1cf56c24deff94b5ae8f8e71c24de2188f821aba2c413f28f64",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5 --case empty-stack --polarization-deg 0 --domain-um 12 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "empty_y_L8_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_y_L8_pml24_dz5/field_slices_raw.npz",
+      "size_bytes": 300296,
+      "sha256": "25f0eb7c66c418419d7832dd8c809eed5f33ee2a348e73d25b7424f6adb6c64b",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_y_L8_pml24_dz5 --case empty-stack --polarization-deg 90 --domain-um 8 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "empty_y_L8_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_y_L8_pml24_dz5/finite_2um_optical_q.fsp",
+      "size_bytes": 10136389,
+      "sha256": "299f0cb369d565128d25c376c588a2d5300c65c711fabb515cee686a05e5a38c",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_y_L8_pml24_dz5 --case empty-stack --polarization-deg 90 --domain-um 8 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "empty_y_L8_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_y_L8_pml24_dz5/incident_reference.npz",
+      "size_bytes": 240200,
+      "sha256": "003d1b649b6b074eb4c114be6767278a35558b7027229e7ecde38ad1103ef979",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_y_L8_pml24_dz5 --case empty-stack --polarization-deg 90 --domain-um 8 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "flat_45_L8_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_45_L8_pml24_dz5/field_slices_raw.npz",
+      "size_bytes": 381832,
+      "sha256": "ab80d0ff1d80deccd3fd79decd814558924fc03894298e8b298f97ec52de75a1",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_45_L8_pml24_dz5 --case flat --polarization-deg 45 --domain-um 8 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_45_L8_pml24_dz5/case_result.json",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "flat_45_L8_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_45_L8_pml24_dz5/finite_2um_optical_q.fsp",
+      "size_bytes": 19145766,
+      "sha256": "dd7030232dfd8cd43893899ee2318c33c7804ea138ec28ca496a9ae2c1629e31",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_45_L8_pml24_dz5 --case flat --polarization-deg 45 --domain-um 8 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_45_L8_pml24_dz5/case_result.json",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "flat_45_L8_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_45_L8_pml24_dz5/finite_q_on_artifact.npz",
+      "size_bytes": 8694298,
+      "sha256": "be9ab441a685dc300eee82b956e02428562267df41565c6a6e941c6cc11ae3df",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_45_L8_pml24_dz5 --case flat --polarization-deg 45 --domain-um 8 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_45_L8_pml24_dz5/case_result.json",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "flat_x_L8_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_x_L8_pml24_dz5/field_slices_raw.npz",
+      "size_bytes": 381832,
+      "sha256": "d6a84f1095f366a1d435c9c3ba3a0ea2688cdff82e29a3feead043f0c204f805",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_x_L8_pml24_dz5 --case flat --polarization-deg 0 --domain-um 8 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "flat_x_L8_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_x_L8_pml24_dz5/finite_2um_optical_q.fsp",
+      "size_bytes": 19145766,
+      "sha256": "1015a07de1666906b95e5a9e7fa45b63c01413be553f6f72d59d7ae17bab2808",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_x_L8_pml24_dz5 --case flat --polarization-deg 0 --domain-um 8 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "flat_x_L8_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_x_L8_pml24_dz5/finite_q_on_artifact.npz",
+      "size_bytes": 8694222,
+      "sha256": "8b07661c3f6096e2a259a681a13c60825815dcf22ec48a87665966ee5245cbd8",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_x_L8_pml24_dz5 --case flat --polarization-deg 0 --domain-um 8 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "flat_y_L8_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_y_L8_pml24_dz5/field_slices_raw.npz",
+      "size_bytes": 381832,
+      "sha256": "21761a87ec35d90a90b14cb6f0bfa3909b2dc4ea5f9ddf750afc0d872cb9875b",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_y_L8_pml24_dz5 --case flat --polarization-deg 90 --domain-um 8 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_y_L8_pml24_dz5/case_result.json",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "flat_y_L8_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_y_L8_pml24_dz5/finite_2um_optical_q.fsp",
+      "size_bytes": 19145766,
+      "sha256": "1930e8d3b5ebb377c475ae19e74253c6a0c7bf4e3218c8e9631bea19a6796e90",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_y_L8_pml24_dz5 --case flat --polarization-deg 90 --domain-um 8 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_y_L8_pml24_dz5/case_result.json",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "flat_y_L8_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_y_L8_pml24_dz5/finite_q_on_artifact.npz",
+      "size_bytes": 8694294,
+      "sha256": "51e588ca4991f99a8d453037908be1cc4589caa3e13907b068b439a116deb27a",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/flat_y_L8_pml24_dz5 --case flat --polarization-deg 90 --domain-um 8 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_y_L8_pml24_dz5/case_result.json",
+      "generation_commit": "072353d133bde000c567557ba83e4b914017bd42",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "proxy_x_r0p8_L12_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L12_pml24_dz5/field_slices_raw.npz",
+      "size_bytes": 388648,
+      "sha256": "3cdc32703057969ec6eaaad266c291bd0d56d29c9ec1adb842189444ba21b377",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L12_pml24_dz5 --case fixed-design --polarization-deg 0 --domain-um 12 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --require-design-inside-flake --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+      "generation_commit": "af6e93f7b2748da7d6eaffda269d389ac07a9327",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "proxy_x_r0p8_L12_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L12_pml24_dz5/finite_2um_optical_q.fsp",
+      "size_bytes": 19071821,
+      "sha256": "21801bbe6f40db3cf84355a61a38614a40d9bdfbfa383f414e3a0fdf2cb5fbfc",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L12_pml24_dz5 --case fixed-design --polarization-deg 0 --domain-um 12 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --require-design-inside-flake --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+      "generation_commit": "af6e93f7b2748da7d6eaffda269d389ac07a9327",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "proxy_x_r0p8_L12_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L12_pml24_dz5/finite_q_on_artifact.npz",
+      "size_bytes": 8695110,
+      "sha256": "85740dfc9e123b60547484b01ef944da21a308655a7b921c4cab6b508e851616",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L12_pml24_dz5 --case fixed-design --polarization-deg 0 --domain-um 12 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --require-design-inside-flake --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+      "generation_commit": "af6e93f7b2748da7d6eaffda269d389ac07a9327",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "proxy_x_r0p8_L16_pml16_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml16_dz5/field_slices_raw.npz",
+      "size_bytes": 388648,
+      "sha256": "1cdbb01c1e0fe953e2fbb4cc4d8751ed44f17a986e8dce82d54530c72c595da1",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml16_dz5 --case fixed-design --polarization-deg 0 --domain-um 16 --pml-layers 16 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --require-design-inside-flake --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+      "generation_commit": "327102d2fdbb4f47a2f916c859672e216572cd32",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "proxy_x_r0p8_L16_pml16_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml16_dz5/finite_2um_optical_q.fsp",
+      "size_bytes": 19073037,
+      "sha256": "03acca14db1df6e4933fa64897a603296bd73ca3ed58fb6eb924cccc6367746f",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml16_dz5 --case fixed-design --polarization-deg 0 --domain-um 16 --pml-layers 16 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --require-design-inside-flake --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+      "generation_commit": "327102d2fdbb4f47a2f916c859672e216572cd32",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "proxy_x_r0p8_L16_pml16_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml16_dz5/finite_q_on_artifact.npz",
+      "size_bytes": 8695110,
+      "sha256": "c689f077af679603b49f26fc417ba525d3a830e0d7c57957358732c3f30df003",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml16_dz5 --case fixed-design --polarization-deg 0 --domain-um 16 --pml-layers 16 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --require-design-inside-flake --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+      "generation_commit": "327102d2fdbb4f47a2f916c859672e216572cd32",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "proxy_x_r0p8_L16_pml24_dz2p5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz2p5/field_slices_raw.npz",
+      "size_bytes": 504520,
+      "sha256": "9493fb28c7f93607d1d788b9a755cf72cd0441c44d59b954b7a56c1873b4def1",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz2p5 --case fixed-design --polarization-deg 0 --domain-um 16 --pml-layers 24 --flake-dz-nm 2.5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --require-design-inside-flake --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+      "generation_commit": "1fe2643554fe8aec7226c1bad3fa4686d82746e5",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "proxy_x_r0p8_L16_pml24_dz2p5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz2p5/finite_2um_optical_q.fsp",
+      "size_bytes": 31621813,
+      "sha256": "6133b0fc0c14415cce92fbc76479a38c81805cd818a9709c2243f9affba1f24c",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz2p5 --case fixed-design --polarization-deg 0 --domain-um 16 --pml-layers 24 --flake-dz-nm 2.5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --require-design-inside-flake --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+      "generation_commit": "1fe2643554fe8aec7226c1bad3fa4686d82746e5",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "proxy_x_r0p8_L16_pml24_dz2p5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz2p5/finite_q_on_artifact.npz",
+      "size_bytes": 16087418,
+      "sha256": "3ce50258d2bc54c00f8023451a5e884c219033836cead0bfca69fce35e228806",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz2p5 --case fixed-design --polarization-deg 0 --domain-um 16 --pml-layers 24 --flake-dz-nm 2.5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --require-design-inside-flake --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+      "generation_commit": "1fe2643554fe8aec7226c1bad3fa4686d82746e5",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "proxy_x_r0p8_L16_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz5/field_slices_raw.npz",
+      "size_bytes": 388648,
+      "sha256": "0d04c7b74165b00655ed99c15b333728a580b5878e63a8c48fa932b502f1d627",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz5 --case fixed-design --polarization-deg 0 --domain-um 16 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --require-design-inside-flake --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+      "generation_commit": "af6e93f7b2748da7d6eaffda269d389ac07a9327",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "proxy_x_r0p8_L16_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz5/finite_2um_optical_q.fsp",
+      "size_bytes": 19073421,
+      "sha256": "5517e9efda86ad2785dd125e2760eb5b56b79536e142b24941bc530b52e4fcab",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz5 --case fixed-design --polarization-deg 0 --domain-um 16 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --require-design-inside-flake --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+      "generation_commit": "af6e93f7b2748da7d6eaffda269d389ac07a9327",
+      "committed_to_git": false
+    },
+    {
+      "case_id": "proxy_x_r0p8_L16_pml24_dz5",
+      "server_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz5/finite_q_on_artifact.npz",
+      "size_bytes": 8695110,
+      "sha256": "2ecdb8a8a2a01f85635914357ce05aab834576a66069cdc024a5dca49b0c71c3",
+      "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz5 --case fixed-design --polarization-deg 0 --domain-um 16 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --require-design-inside-flake --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+      "generation_commit": "af6e93f7b2748da7d6eaffda269d389ac07a9327",
+      "committed_to_git": false
+    }
+  ]
+}
