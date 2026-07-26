@@ -54,7 +54,14 @@ export FDTD_THREADS="${FDTD_THREADS:-16}"
 export PERIOD_UM=6.0 TARGET_WL_UM=4.0
 export SOURCE_WL_START_UM=3.0 SOURCE_WL_STOP_UM=6.0        # broadband source
 export MATERIAL_FIT_START_UM=2.7 MATERIAL_FIT_STOP_UM=13.2 # material fit range
-export BULK_MESH_MODE=auto MESH_ACCURACY=5
-export VC_AUTO_SHUTOFF_MIN=1e-8 VC_SIM_TIME_S=4e-12
+export BULK_MESH_MODE=auto MESH_ACCURACY=5                 # fast_bulk REJECTED (Phase C)
 export MFS_UM=0.5 MGS_UM=0.5 ID_SEED=7 ID_SEED_AMP=0.10
 export MSOPT_MAPPING=periodic_constrained
+
+# --- certified runtime configuration (Phase A-D, 2026-07-26) ----------------
+# combined vector adjoint + 2 ps: full-chain AD/FD 1.80%/2.36%/1.27% (<5%),
+# objective evaluation 2518 s -> 915 s.  Explicit env overrides still win;
+# unset VC_* here reproduces the legacy split/4 ps path bit-identically.
+export VC_ADJOINT_COMPONENT_MODE="${VC_ADJOINT_COMPONENT_MODE:-combined}"
+export VC_SIM_TIME_S="${VC_SIM_TIME_S:-2e-12}"
+export VC_AUTO_SHUTOFF_MIN="${VC_AUTO_SHUTOFF_MIN:-1e-8}"

@@ -154,6 +154,7 @@ def main():
     )
     from geometric_constraints import LengthScaleConstraints
     from geometry_drc import geometry_drc
+    from iteration_plots import density_metrics, save_iteration_plots
     from volume_current_evaluator import VolumeCurrentEvaluator
     from autograd import tensor_jacobian_product
 
@@ -165,6 +166,15 @@ def main():
         latent_rms_tol=args.latent_rms_tol,
         latent_max_tol=args.latent_max_tol,
     ).validate()
+
+    # Validate the adjoint mode at startup, not 15 minutes into the first
+    # solve where the evaluator would otherwise catch a typo.
+    adjoint_component_mode = os.environ.get(
+        "VC_ADJOINT_COMPONENT_MODE", "split").strip().lower()
+    if adjoint_component_mode not in ("split", "combined"):
+        raise SystemExit(
+            f"VC_ADJOINT_COMPONENT_MODE={adjoint_component_mode!r} "
+            "must be 'split' or 'combined'")
 
     # Import provenance BEFORE the model is built (load_model imports lumapi).
     # A wrong Python API only explodes later, inside the adjoint, so record what
@@ -211,6 +221,13 @@ def main():
         "global_uniform_mesh": "absent (asserted from realized FSP)",
         "flake_dz_nm": 5.0,
         "period_um": model.period_xy,
+        # Certified runtime configuration (Phase A-D 2026-07-26).  These change
+        # results, so they are part of the config identity/hash: a resume under
+        # a different adjoint mode or simulation time is refused.
+        "adjoint_component_mode": adjoint_component_mode,
+        "sim_time_s": float(lib.SIM_TIME_S),
+        "auto_shutoff_min": float(lib.AUTO_SHUTOFF_MIN),
+        "bulk_mesh_mode": os.environ.get("BULK_MESH_MODE", "auto"),
         # P1-5: record RESOLVED config that changes results
         "maxeval_per_stage": int(args.maxeval_per_stage),
         # Adaptive continuation policy is part of the configuration identity:
@@ -247,7 +264,10 @@ def main():
     existing = sorted((run_root / "attempts").glob("attempt_*"))
     latent = np.asarray(model.x0, float).reshape(-1).copy()
     state = {"beta": 0.0, "iter": 0, "best_feasible": None,
-             "best_feasible_obj": -np.inf, "best_beta": None}
+             "best_feasible_obj": -np.inf, "best_beta": None,
+             # in-memory copy of every eval record, feeding the per-iteration
+             # plots (design image / FOM / constraints / binarization).
+             "records": []}
     if args.resume and existing:
         prev = json.loads((existing[-1] / "contract.json").read_text())
         if prev.get("code_hash") != contract["code_hash"] or \
@@ -372,12 +392,32 @@ def main():
                 tmp.replace(run_root / "checkpoints" / "best_feasible.npz")
             state["iter"] += 1
             decision = _controller.record(f, gs, gv, x)
-            log({"attempt": attempt_id, "iter": state["iter"], "beta": _beta,
-                 "Fx": fx, "Fy": fy, "objective": f,
-                 "g_solid": gs, "g_void": gv,
-                 # NOTE: constraint_feasible != DRC feasible; DRC is the final gate
-                 "constraint_feasible": bool(constraint_feasible),
-                 "adaptive_decision": decision})
+            # binarization metrics on the nominal unique field (cheap FFT+tanh)
+            rho_unique = np.asarray(
+                mapping.field_unique(np.asarray(x, float), _beta), float)
+            previous = state["records"][-1] if state["records"] else None
+            step_rms = float("nan")
+            if previous is not None and "latent" in previous:
+                delta = np.asarray(x, float) - previous["latent"]
+                step_rms = float(np.sqrt(np.mean(delta * delta)))
+            rec = {"attempt": attempt_id, "iter": state["iter"], "beta": _beta,
+                   "Fx": fx, "Fy": fy, "objective": f,
+                   "g_solid": gs, "g_void": gv,
+                   # NOTE: constraint_feasible != DRC feasible; DRC is the final gate
+                   "constraint_feasible": bool(constraint_feasible),
+                   "adaptive_decision": decision,
+                   "latent_step_rms": step_rms,
+                   **density_metrics(rho_unique)}
+            rec["frac_rails"] = rec["frac_below_0.01"] + rec["frac_above_0.99"]
+            log({k: v for k, v in rec.items() if k != "latent"})
+            rec["latent"] = np.array(x, copy=True)   # in-memory only
+            state["records"].append(rec)
+            try:
+                save_iteration_plots(run_root, rho_unique, state["iter"],
+                                     _beta, state["records"])
+            except Exception as plot_exc:  # noqa: BLE001 - plots never kill a run
+                print(f"[plots] skipped for iter {state['iter']}: {plot_exc}",
+                      flush=True)
             if decision != CONTINUE:
                 # Intentional stop: nlopt raises ForcedStop from optimize();
                 # is_intentional_stop() keeps it out of the failure classifier.
