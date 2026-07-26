@@ -123,9 +123,14 @@ class StageController:
 
         metrics = self.window_metrics()
         plateau = metrics["objective_rel_span"] < cfg.objective_rel_tol
+        # Quiet = small steps that are NOT growing.  The connected r1/r2
+        # post-mortem showed CCSA warm-up steps growing 10x per eval while
+        # still below latent_rms_tol; declaring that "stalled" aborted a run
+        # one evaluation before real movement started.
         quiet = (
             metrics["latent_rms_change"] < cfg.latent_rms_tol
             and metrics["latent_max_change"] < cfg.latent_max_tol
+            and not metrics["latent_step_accelerating"]
         )
         if plateau and quiet:
             self.stop_reason = (
@@ -156,6 +161,7 @@ class StageController:
         rel_span = (hi - lo) / max(abs(hi), abs(lo), np.finfo(float).tiny)
         rms_change = float("inf")
         max_change = float("inf")
+        accelerating = False
         if len(self._latents) >= 2:
             rms_list, max_list = [], []
             latents = list(self._latents)
@@ -165,6 +171,12 @@ class StageController:
                 max_list.append(float(np.max(np.abs(delta))))
             rms_change = max(rms_list)
             max_change = max(max_list)
+            # nlopt CCSA relaxes its inner penalty ~10x per outer iteration, so
+            # early steps GROW geometrically (measured 4.45e-6 -> 4.45e-5 ->
+            # 6.5e-4 on this problem).  Growing steps mean the optimizer is
+            # still waking up, NOT stalled -- "quiet" must never match them.
+            accelerating = bool(
+                len(rms_list) >= 2 and rms_list[-1] > 2.0 * rms_list[0])
         return {
             "objective_window": obj,
             "objective_rel_span": float(rel_span),
@@ -175,6 +187,7 @@ class StageController:
             ),
             "latent_rms_change": rms_change,
             "latent_max_change": max_change,
+            "latent_step_accelerating": accelerating,
         }
 
     def summary(self, stop_reason: str | None = None) -> dict:

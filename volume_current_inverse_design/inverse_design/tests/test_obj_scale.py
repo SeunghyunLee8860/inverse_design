@@ -1,9 +1,13 @@
-"""nlopt-only objective scaling (CCSA rho warm-up fix, connected r1 post-mortem).
+"""nlopt-only objective scaling knob (kept for experiments; default 1.0).
 
-Measured failure being guarded: with the physical objective at ~1e-6, nlopt
-CCSA's O(1) initial rho throttles steps to |grad|/rho, growing only ~10x per
-outer iteration (4.45e-6 -> 4.45e-5 in run r1) -- the stall detector then
-fires during warm-up and aborts an otherwise healthy run.
+History: this was first shipped as the CCSA warm-up "fix" -- and connected r2
+FALSIFIED it: with obj_scale=1e6 the production trajectory reproduced r1
+bit-for-bit, and the standalone MMA probe confirmed nlopt normalises each
+function internally, so uniform (value, gradient) scaling cannot change the
+step.  The real warm-up knob is rho_init (see test_rho_init.py).  The scaling
+plumbing stays because it is harmless, recorded in the config hash, and the
+pairing invariant (value and gradient scaled together, physical values kept
+everywhere else) is still worth guarding.
 """
 
 import importlib
@@ -74,7 +78,7 @@ def test_default_scale_env_override():
             "import os; os.environ['VC_OBJ_SCALE']='123.5';"
             "import argparse; ap=argparse.ArgumentParser();"
             "ap.add_argument('--obj-scale', type=float,"
-            " default=float(os.environ.get('VC_OBJ_SCALE','1e6')));"
+            " default=float(os.environ.get('VC_OBJ_SCALE','1.0')));"
             "print(ap.parse_args([]).obj_scale)")],
         capture_output=True, text=True, env=dict(os.environ))
     assert proc.stdout.strip() == "123.5"

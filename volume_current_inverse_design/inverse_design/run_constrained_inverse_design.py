@@ -105,7 +105,9 @@ def main():
     # Adaptive beta continuation (see adaptive_stage.py).  Env defaults let the
     # launcher steer a pilot without editing this file.
     ap.add_argument("--obj-scale", type=float,
-                    default=float(os.environ.get("VC_OBJ_SCALE", "1e6")))
+                    default=float(os.environ.get("VC_OBJ_SCALE", "1.0")))
+    ap.add_argument("--rho-init", type=float,
+                    default=float(os.environ.get("VC_RHO_INIT", "1e-2")))
     ap.add_argument("--min-evals-per-stage", type=int,
                     default=int(os.environ.get("MIN_EVALS_PER_STAGE", "3")))
     ap.add_argument("--convergence-window", type=int,
@@ -178,19 +180,24 @@ def main():
             f"VC_ADJOINT_COMPONENT_MODE={adjoint_component_mode!r} "
             "must be 'split' or 'combined'")
 
-    # nlopt-only objective scaling.  nlopt's CCSA/MMA initialises its inner
-    # penalty rho at O(1) and relaxes it ~10x per outer iteration; with our
-    # physical objective at ~1e-6 the quadratic penalty dominates for the
-    # first ~6-7 evaluations, producing steps that grow 4.4e-6 -> 4.4e-5 ->
-    # ... (measured, connected r1) and tripping the stall detector during
-    # warm-up.  Handing nlopt (obj_scale*F, obj_scale*grad) makes the
-    # subproblem O(1) from evaluation 1.  The optimisation problem is
-    # mathematically unchanged (positive constant), the certified evaluator
-    # chain is untouched, and all history/plots/checkpoints keep PHYSICAL
-    # values.
+    # nlopt-only objective scaling.  MEASURED to be a no-op on this constrained
+    # problem (connected r2 reproduced r1 bit-for-bit with obj_scale=1e6; the
+    # standalone MMA probe confirms nlopt normalises each function internally),
+    # so the default is 1.0.  The knob is kept for experiments only; the
+    # optimisation problem is mathematically unchanged for any positive value
+    # and history/plots/checkpoints always keep PHYSICAL values.
     if not (args.obj_scale > 0 and np.isfinite(args.obj_scale)):
         raise SystemExit(f"--obj-scale must be a finite positive number, "
                          f"got {args.obj_scale}")
+    # THE effective warm-up knob (measured, probe_mma_step): CCSA starts its
+    # inner penalty at rho_init and relaxes ~10x per outer iteration.  The
+    # default rho_init=1.0 throttles the first ~5 evaluations to step RMS
+    # 4.45e-6 -> 4.45e-5 -> 6.5e-4 (each a 915 s FDTD evaluation wasted, per
+    # beta stage).  rho_init=1e-2 starts at ~4.4e-4 and reaches real movement
+    # by evaluation 2-3 without violent first steps.
+    if not (args.rho_init > 0 and np.isfinite(args.rho_init)):
+        raise SystemExit(f"--rho-init must be a finite positive number, "
+                         f"got {args.rho_init}")
 
     # Import provenance BEFORE the model is built (load_model imports lumapi).
     # A wrong Python API only explodes later, inside the adjoint, so record what
@@ -244,10 +251,11 @@ def main():
         "sim_time_s": float(lib.SIM_TIME_S),
         "auto_shutoff_min": float(lib.AUTO_SHUTOFF_MIN),
         "bulk_mesh_mode": os.environ.get("BULK_MESH_MODE", "auto"),
-        # nlopt-subproblem objective scaling (see startup comment).  Changes
-        # the optimizer trajectory, so it is part of the config identity even
+        # nlopt-subproblem knobs (see startup comments).  Both change the
+        # optimizer trajectory, so they are part of the config identity even
         # though history/checkpoints stay in physical units.
         "objective_scale_nlopt": float(args.obj_scale),
+        "nlopt_rho_init": float(args.rho_init),
         # P1-5: record RESOLVED config that changes results
         "maxeval_per_stage": int(args.maxeval_per_stage),
         # Adaptive continuation policy is part of the configuration identity:
@@ -388,6 +396,16 @@ def main():
         # nlopt's own maxeval stays as a backstop; the controller normally
         # force-stops at exactly max_evals_per_stage itself.
         opt.set_maxeval(int(args.maxeval_per_stage))
+        # CCSA warm-up fix (see startup comment).  Fail closed on readback: an
+        # nlopt build that silently ignored the param would reintroduce the
+        # 5-wasted-evals-per-stage warm-up without any visible error.
+        opt.set_param("rho_init", float(args.rho_init))
+        realized_rho = float(opt.get_param("rho_init", -1.0))
+        if not np.isclose(realized_rho, args.rho_init, rtol=0, atol=0):
+            raise SystemExit(
+                f"nlopt did not accept rho_init={args.rho_init} "
+                f"(readback {realized_rho}); refusing to run with the "
+                "default warm-up behaviour")
         # xtol is DISABLED on purpose: the 2026-07-26 pilot showed nlopt's
         # xtol_rel=1e-4 ending the beta=2 stage after 2 evals (nlopt_stop_4),
         # bypassing min_evals_per_stage AND the feasibility gating.  Stage
