@@ -1,6 +1,6 @@
 # Inverse-design PTE AD–FD contract
 
-Status: `IN_PROGRESS_CONTRACT_FROZEN_BEFORE_SOLVER_CERTIFICATES`
+Status: `VALIDATED_FIXED_K_PHYSICAL_DENSITY_CHAIN_LATENT_PENDING`
 
 This contract separates the actual periodic inverse-design problem from the
 finite radius-1.5-µm and radius-0.8-µm disk fixtures. The disks are fixed

@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "status": "VALIDATED_FIXED_K_THERMAL_PTE_PHYSICAL_DENSITY_ADFD",
+  "passed": true,
+  "scope": "fixed-K finite-local-mask PTE on actual periodic inverse-design Maxwell geometry",
+  "objective_A_m_per_W_m2": -2.942908016968589e-21,
+  "direction": "uniform physical density",
+  "step": 0.0025,
+  "adjoint_directional": 3.6997999575952875e-20,
+  "finite_difference": 3.7409704548466367e-20,
+  "relative_error": 0.011005298691415874,
+  "gradient": {
+    "l2": 1.8239208653824576e-21,
+    "absolute_maximum": 8.516876074439928e-24
+  },
+  "gates": {
+    "relative_error_limit": 0.05,
+    "periodic_source_pairing_relative_error": 1.048115071343203e-14,
+    "periodic_source_pairing_limit": 1e-13,
+    "live_source_roundtrip_max_abs_error": 0.0,
+    "rho_epsilon_owner_leakage_fraction": 0.0
+  },
+  "remaining_gate": "LATENT_FILTER_PROJECTION_FENCEPOST_MAXWELL_ADFD",
+  "blockers": [
+    "BLOCKED_FULL_RHO_DEPENDENT_THERMAL_MATERIAL_MODEL",
+    "BLOCKED_PHYSICAL_WEIGHTING_POTENTIAL_OR_FINITE_FLAKE_MASK"
+  ]
+}

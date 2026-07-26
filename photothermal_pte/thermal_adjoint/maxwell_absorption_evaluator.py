@@ -463,6 +463,78 @@ class AbsorptionVolumeCurrentEvaluator(VolumeCurrentEvaluator):
         }
         return Evaluation(float(forward.value), gradient_full, metadata)
 
+    def run_adjoint_projects_from_completed_forward(
+        self,
+        rho: np.ndarray,
+        *,
+        forward_project,
+        label: str,
+        density_mode: str = "probe_safe",
+        weight_builder: WeightBuilder = periodic_smooth_native_weight,
+    ) -> Evaluation:
+        """Run only adjoints for a completed forward FSP, then resume assembly."""
+        self._ensure_prepared()
+        rho_geom = self._validate_rho(rho, require_probe_margin=False)
+        if density_mode == "probe_safe":
+            delta = self.delta
+        elif density_mode == "exact":
+            delta = 0.0
+            self._validate_rho(rho_geom, require_probe_margin=True)
+        else:
+            raise ValueError("density mode must be probe_safe or exact")
+        rho_solver = delta + (1.0 - 2.0 * delta) * rho_geom
+        forward = self.postprocess_completed_forward(
+            forward_project, weight_builder=weight_builder
+        )
+        q_source = fieldregion_periodic_source_right_inverse(
+            forward.q_observation
+        )
+        field = as_e5(forward.field_result["fom"]["E"])
+        pairing = abs(
+            np.vdot(q_source, field)
+            - np.vdot(forward.q_observation, field)
+        ) / max(abs(np.vdot(forward.q_observation, field)), 1e-300)
+        if pairing > 1e-13:
+            raise RuntimeError(f"periodic source pairing error {pairing:.3e}")
+        active_components = [
+            component
+            for component in range(3)
+            if np.linalg.norm(q_source[..., component]) > 0.0
+        ]
+        grid = {
+            axis: np.asarray(forward.field_result["fom"][axis]).reshape(-1)
+            for axis in "xyzf"
+        }
+        projects = {}
+        with lib.open_control(self.control_base) as fdtd:
+            self._set_forward_state(fdtd, rho_solver)
+            for component in active_components:
+                name = "xyz"[component]
+                project_label = f"{label}_adjoint_{name}"
+                self._adjoint(
+                    fdtd,
+                    grid,
+                    q_source,
+                    component,
+                    project_label,
+                )
+                projects[component] = self.root / f"{project_label}.fsp"
+        evaluation = self.resume_completed_adjoint(
+            rho_geom,
+            forward_project=forward_project,
+            adjoint_projects=projects,
+            density_mode=density_mode,
+            weight_builder=weight_builder,
+        )
+        evaluation.metadata["completed_forward_adjoint_run"] = {
+            "forward_reused_without_em_solve": str(forward_project),
+            "new_adjoint_projects": {
+                "xyz"[key]: str(value) for key, value in projects.items()
+            },
+            "periodic_source_pairing_relative_error": float(pairing),
+        }
+        return evaluation
+
     def forward_absorption(
         self,
         rho: np.ndarray,
