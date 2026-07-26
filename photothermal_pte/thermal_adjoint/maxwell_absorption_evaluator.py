@@ -46,6 +46,8 @@ class AbsorptionForward:
     field_result: dict[str, Any]
     incident_intensity_W_m2: float
     epsilon_imaginary: np.ndarray
+    grid: dict[str, np.ndarray]
+    component_volume_m3: dict[int, np.ndarray]
 
 
 def periodic_smooth_native_weight(
@@ -142,6 +144,8 @@ class AbsorptionVolumeCurrentEvaluator(VolumeCurrentEvaluator):
             field_result=result,
             incident_intensity_W_m2=incident_intensity_W_m2,
             epsilon_imaginary=epsilon_imaginary,
+            grid=grid,
+            component_volume_m3=volumes,
         )
 
     def _forward_absorption(

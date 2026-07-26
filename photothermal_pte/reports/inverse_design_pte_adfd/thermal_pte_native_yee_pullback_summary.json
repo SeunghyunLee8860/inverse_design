@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "status": "VALIDATED_THERMAL_PTE_TO_NATIVE_YEE_PULLBACK",
+  "passed": true,
+  "scope": "fixed-K finite-local-mask thermal/PTE pullback",
+  "power_W_per_W_m2": {
+    "native": 8.79339492981549e-12,
+    "common": 8.79339492981549e-12,
+    "thermal": 8.79339492981549e-12
+  },
+  "forward": {
+    "temperature_max_K_per_W_m2": 1.0736304860450285e-07,
+    "pte_from_temperature_A_m_per_W_m2": -2.9429080169821196e-21,
+    "pte_from_native_weight_A_m_per_W_m2": -2.942908016968589e-21
+  },
+  "gates": {
+    "native_to_common_power_relative_error": 0.0,
+    "common_to_thermal_power_relative_error": 0.0,
+    "worst_transpose_relative_error": 9.99496322622979e-16,
+    "forward_objective_identity_relative_error": 4.597760533396695e-12,
+    "thermal_linear_residual_relative": 7.730579602571028e-12,
+    "thermal_energy_balance_relative_error": 2.057746302084621e-14
+  },
+  "blockers": [
+    "BLOCKED_FULL_RHO_DEPENDENT_THERMAL_MATERIAL_MODEL",
+    "BLOCKED_PHYSICAL_WEIGHTING_POTENTIAL_OR_FINITE_FLAKE_MASK"
+  ]
+}

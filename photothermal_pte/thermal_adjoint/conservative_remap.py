@@ -79,6 +79,119 @@ class ConservativeDensityRemap:
         return float(np.sum(self.target_volume_m3 * target_density))
 
 
+@dataclass(frozen=True)
+class NodalDensityRemap1D:
+    """Mass-conservative nodal density map along one array axis."""
+
+    density_operator: sparse.csr_matrix
+    source_weight_m: np.ndarray
+    target_weight_m: np.ndarray
+    periodic: bool
+    period_m: float | None
+
+    def apply_axis(self, values: np.ndarray, axis: int) -> np.ndarray:
+        moved = np.moveaxis(np.asarray(values, float), axis, 0)
+        if moved.shape[0] != self.density_operator.shape[1]:
+            raise ValueError("source data axis does not match nodal remap")
+        mapped = self.density_operator @ moved.reshape(moved.shape[0], -1)
+        shape = (self.density_operator.shape[0], *moved.shape[1:])
+        return np.moveaxis(np.asarray(mapped).reshape(shape), 0, axis)
+
+    def transpose_axis(self, sensitivity: np.ndarray, axis: int) -> np.ndarray:
+        moved = np.moveaxis(np.asarray(sensitivity, float), axis, 0)
+        if moved.shape[0] != self.density_operator.shape[0]:
+            raise ValueError("target sensitivity axis does not match nodal remap")
+        mapped = self.density_operator.T @ moved.reshape(moved.shape[0], -1)
+        shape = (self.density_operator.shape[1], *moved.shape[1:])
+        return np.moveaxis(np.asarray(mapped).reshape(shape), 0, axis)
+
+
+def _trapezoid_weights(coordinates: np.ndarray) -> np.ndarray:
+    values = np.asarray(coordinates, float).reshape(-1)
+    weights = np.empty_like(values)
+    weights[0] = 0.5 * (values[1] - values[0])
+    weights[-1] = 0.5 * (values[-1] - values[-2])
+    weights[1:-1] = 0.5 * (values[2:] - values[:-2])
+    return weights
+
+
+def build_nodal_density_remap_1d(
+    *,
+    source_coordinates_m: np.ndarray,
+    target_coordinates_m: np.ndarray,
+    periodic: bool,
+) -> NodalDensityRemap1D:
+    """Build the sparse form of the validated nodal mass-deposition rule."""
+    source = _edges(source_coordinates_m, "source coordinates")
+    target = _edges(target_coordinates_m, "target coordinates")
+    source_weight = _trapezoid_weights(source)
+    target_weight = _trapezoid_weights(target)
+    locations = np.array(source, copy=True)
+    period = None
+    if periodic:
+        period = float(target[-1] - target[0])
+        if not np.isclose(
+            source[-1] - source[0], period, rtol=1e-12, atol=1e-15
+        ):
+            raise ValueError("periodic source and target periods differ")
+        locations = (locations - target[0]) % period + target[0]
+    elif (
+        np.min(locations) < target[0] - 1e-15
+        or np.max(locations) > target[-1] + 1e-15
+    ):
+        raise ValueError("nonperiodic nodal remap would crop the source")
+    else:
+        locations = np.clip(locations, target[0], target[-1])
+
+    upper = np.searchsorted(target, locations, side="right")
+    upper = np.clip(upper, 1, target.size - 1)
+    lower = upper - 1
+    fraction = (locations - target[lower]) / (
+        target[upper] - target[lower]
+    )
+    rows = np.concatenate([lower, upper])
+    columns = np.concatenate(
+        [np.arange(source.size), np.arange(source.size)]
+    )
+    deposited_mass = np.concatenate(
+        [source_weight * (1.0 - fraction), source_weight * fraction]
+    )
+    operator = sparse.coo_matrix(
+        (
+            deposited_mass
+            / np.concatenate([target_weight[lower], target_weight[upper]]),
+            (rows, columns),
+        ),
+        shape=(target.size, source.size),
+    ).tocsr()
+    column_mass = np.asarray(
+        target_weight @ operator
+    ).reshape(-1)
+    if not np.allclose(
+        column_mass, source_weight, rtol=2e-13, atol=1e-30
+    ):
+        raise RuntimeError("nodal remap does not conserve each source mass")
+    return NodalDensityRemap1D(
+        density_operator=operator,
+        source_weight_m=source_weight,
+        target_weight_m=target_weight,
+        periodic=bool(periodic),
+        period_m=period,
+    )
+
+
+def nodal_control_volume_edges(coordinates_m: np.ndarray) -> np.ndarray:
+    """Edges whose widths equal trapezoid weights at the input nodes."""
+    coordinates = _edges(coordinates_m, "nodal coordinates")
+    return np.concatenate(
+        [
+            coordinates[:1],
+            0.5 * (coordinates[:-1] + coordinates[1:]),
+            coordinates[-1:],
+        ]
+    )
+
+
 def build_conservative_density_remap(
     *,
     source_edges_m: tuple[np.ndarray, np.ndarray, np.ndarray],

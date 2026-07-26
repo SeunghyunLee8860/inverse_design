@@ -11,7 +11,11 @@ THERMAL = Path(__file__).resolve().parents[1]
 if str(THERMAL) not in sys.path:
     sys.path.insert(0, str(THERMAL))
 
-from conservative_remap import build_conservative_density_remap
+from conservative_remap import (
+    build_conservative_density_remap,
+    build_nodal_density_remap_1d,
+    nodal_control_volume_edges,
+)
 
 
 def _remap():
@@ -85,3 +89,45 @@ def test_different_bounds_fail_closed():
                 np.asarray([0.0, 1.0]),
             ),
         )
+
+
+def test_nodal_shifted_periodic_remap_conserves_mass_and_transpose():
+    target = np.linspace(-3e-6, 3e-6, 13)
+    delta = 0.5 * (target[1] - target[0])
+    source = target + delta
+    remap = build_nodal_density_remap_1d(
+        source_coordinates_m=source,
+        target_coordinates_m=target,
+        periodic=True,
+    )
+    rng = np.random.default_rng(2026072608)
+    density = rng.normal(size=(source.size, 4, 3))
+    mapped = remap.apply_axis(density, axis=0)
+    source_mass = np.einsum(
+        "i,ijk->", remap.source_weight_m, density
+    )
+    target_mass = np.einsum(
+        "i,ijk->", remap.target_weight_m, mapped
+    )
+    assert np.isclose(source_mass, target_mass, rtol=2e-14, atol=1e-30)
+    sensitivity = rng.normal(size=mapped.shape)
+    left = float(np.sum(sensitivity * mapped))
+    right = float(
+        np.sum(remap.transpose_axis(sensitivity, axis=0) * density)
+    )
+    assert np.isclose(left, right, rtol=2e-14, atol=1e-30)
+
+
+def test_nodal_control_edges_reproduce_trapezoid_weights():
+    coordinates = np.asarray([-3.0, -2.2, -0.1, 0.7, 3.0]) * 1e-6
+    edges = nodal_control_volume_edges(coordinates)
+    expected = np.asarray(
+        [
+            0.5 * (coordinates[1] - coordinates[0]),
+            0.5 * (coordinates[2] - coordinates[0]),
+            0.5 * (coordinates[3] - coordinates[1]),
+            0.5 * (coordinates[4] - coordinates[2]),
+            0.5 * (coordinates[4] - coordinates[3]),
+        ]
+    )
+    assert np.allclose(np.diff(edges), expected, rtol=2e-15, atol=1e-30)
