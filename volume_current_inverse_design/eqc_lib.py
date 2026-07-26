@@ -24,8 +24,12 @@ MESH_TYPE = "auto non-uniform"
 MESH_REFINEMENT = "conformal variant 1"
 MESH_ACCURACY = 5
 FLAKE_DZ_M = 5.0e-9
-AUTO_SHUTOFF_MIN = 1.0e-8
-SIM_TIME_S = 4.0e-12
+# Env-overridable for the Phase-B simulation-time convergence study.  The
+# launcher has exported VC_SIM_TIME_S/VC_AUTO_SHUTOFF_MIN since 2026-07-25 but
+# this module silently ignored them (they were hardcoded); defaults keep the
+# certified production contract (4 ps, 1e-8) bit-identical.
+AUTO_SHUTOFF_MIN = float(os.environ.get("VC_AUTO_SHUTOFF_MIN", "1e-8"))
+SIM_TIME_S = float(os.environ.get("VC_SIM_TIME_S", "4e-12"))
 EXPECTED_DT_S = 1.5888123913e-17
 GPU_DEVICE_DEFAULT = os.environ.get("CL_GPU_DEVICE", "GPU 1")
 
