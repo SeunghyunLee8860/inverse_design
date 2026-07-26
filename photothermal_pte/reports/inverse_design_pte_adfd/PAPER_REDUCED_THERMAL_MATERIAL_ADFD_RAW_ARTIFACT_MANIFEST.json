@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python /home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/thermal_adjoint/run_paper_reduced_thermal_material_adfd.py --q-npz /home/seunghyun/tairte4/artifacts/pte_adfd/thermal_pte_native_pullback_x_20260726/thermal_pte_native_yee_pullback.npz --density-npz /home/seunghyun/tairte4/artifacts/pte_adfd/maxwell_absorption_x_20260726/maxwell_absorption_adfd_x.npz --output-dir /home/seunghyun/tairte4/artifacts/pte_adfd/paper_reduced_thermal_material_adfd_20260726 --report-dir /home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd",
+  "raw_artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/paper_reduced_thermal_material_adfd_20260726/paper_reduced_thermal_material_adfd.npz",
+      "bytes": 40909,
+      "sha256": "97db4aa8ae975d86b6485ee4e84051ee55ea578d721d3170da168264d8ce83d6",
+      "committed_to_git": false
+    }
+  ],
+  "repository_artifacts": [
+    "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/paper_reduced_thermal_material_adfd_summary.json",
+    "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/paper_reduced_thermal_material_adfd_cases.csv",
+    "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/PAPER_REDUCED_THERMAL_MATERIAL_ADFD_REPORT.md",
+    "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/PAPER_REDUCED_THERMAL_MATERIAL_ADFD_RAW_ARTIFACT_MANIFEST.json"
+  ]
+}

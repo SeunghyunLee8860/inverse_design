@@ -424,6 +424,10 @@ def assemble_steady_diagonal_kappa(
     periodic_axes: tuple[str, ...] = (),
     exposed_heat_transfer_W_m2K: float = 0.0,
     ambient_temperature_K: float = 0.0,
+    surface_robin_heat_transfer_W_m2K: (
+        Mapping[str, float | np.ndarray] | None
+    ) = None,
+    surface_robin_temperature_K: Mapping[str, float] | None = None,
 ) -> AssembledThermalSystem:
     """Assemble ``K_T``, ``M_Q`` and ``b_T`` without solving.
 
@@ -433,6 +437,13 @@ def assemble_steady_diagonal_kappa(
     resistance plus ``1/h``.  Internal face resistance arrays use per-area
     units of m2 K/W and have shapes ``(nx-1, ny, nz)``, ``(nx, ny-1, nz)``,
     and ``(nx, ny, nz-1)`` for x, y, and z.
+
+    ``surface_robin_heat_transfer_W_m2K`` implements the reduced surface law
+    ``q'' = G (T_cell - T_bath)`` directly, so each selected face contributes
+    ``A*G`` to the matrix diagonal and ``A*G*T_bath`` to the load.  It does
+    not add a half-cell conduction resistance.  This distinct option is used
+    only when the governing reduced model defines temperature on the sheet
+    and supplies a surface conductance, rather than a bulk exterior domain.
     """
     x_edges = _validated_edges("x", x_edges_m)
     y_edges = _validated_edges("y", y_edges_m)
@@ -447,8 +458,37 @@ def assemble_steady_diagonal_kappa(
     invalid_faces = sorted(set(dirichlet_temperature_K) - set(FACE_NAMES))
     if invalid_faces:
         raise ValueError(f"unknown Dirichlet faces: {invalid_faces}")
-    if not dirichlet_temperature_K:
-        raise ValueError("at least one Dirichlet face is required")
+    robin = (
+        {}
+        if surface_robin_heat_transfer_W_m2K is None
+        else dict(surface_robin_heat_transfer_W_m2K)
+    )
+    robin_temperatures = (
+        {}
+        if surface_robin_temperature_K is None
+        else dict(surface_robin_temperature_K)
+    )
+    invalid_robin_faces = sorted(set(robin) - set(FACE_NAMES))
+    if invalid_robin_faces:
+        raise ValueError(f"unknown surface Robin faces: {invalid_robin_faces}")
+    missing_robin_temperatures = sorted(set(robin) - set(robin_temperatures))
+    if missing_robin_temperatures:
+        raise ValueError(
+            "missing surface Robin bath temperatures for "
+            f"{missing_robin_temperatures}"
+        )
+    extra_robin_temperatures = sorted(set(robin_temperatures) - set(robin))
+    if extra_robin_temperatures:
+        raise ValueError(
+            "surface Robin temperatures without conductance for "
+            f"{extra_robin_temperatures}"
+        )
+    conflicting_robin_faces = sorted(set(robin) & set(dirichlet_temperature_K))
+    if conflicting_robin_faces:
+        raise ValueError(
+            "faces cannot be both Dirichlet and surface Robin: "
+            f"{conflicting_robin_faces}"
+        )
     periodic = tuple(dict.fromkeys(str(axis) for axis in periodic_axes))
     invalid_periodic = sorted(set(periodic) - {"x", "y", "z"})
     if invalid_periodic:
@@ -471,6 +511,15 @@ def assemble_steady_diagonal_kappa(
         raise ValueError("exposed heat-transfer coefficient must be nonnegative")
     if not np.isfinite(ambient_temperature_K):
         raise ValueError("ambient temperature must be finite")
+    if (
+        not dirichlet_temperature_K
+        and not robin
+        and exposed_heat_transfer_W_m2K == 0.0
+    ):
+        raise ValueError(
+            "at least one Dirichlet, surface Robin, or exposed-convection "
+            "boundary is required"
+        )
 
     active = (
         np.ones(shape, bool)
@@ -550,6 +599,47 @@ def assemble_steady_diagonal_kappa(
             boundary_load, flat_ids, flat_conductance * temperature
         )
         boundary_terms[face] = (flat_ids, flat_conductance, temperature)
+    for face, heat_transfer in robin.items():
+        temperature = float(robin_temperatures[face])
+        if not np.isfinite(temperature):
+            raise ValueError(
+                f"{face} surface Robin temperature must be finite"
+            )
+        face_ids, _, _ = _boundary_geometry(face, ids, kappa, widths)
+        area = np.broadcast_to(
+            _boundary_area(face, widths), face_ids.shape
+        )
+        heat_transfer_array = np.asarray(heat_transfer, float)
+        if heat_transfer_array.ndim == 0:
+            heat_transfer_array = np.full(
+                face_ids.shape, float(heat_transfer_array)
+            )
+        elif heat_transfer_array.shape != face_ids.shape:
+            raise ValueError(
+                f"{face} surface Robin G shape "
+                f"{heat_transfer_array.shape} != {face_ids.shape}"
+            )
+        if (
+            not np.all(np.isfinite(heat_transfer_array))
+            or np.any(heat_transfer_array < 0.0)
+        ):
+            raise ValueError(
+                f"{face} surface Robin G must be finite and nonnegative"
+            )
+        boundary_active = face_ids >= 0
+        flat_ids = face_ids[boundary_active].reshape(-1)
+        flat_conductance = (
+            area * heat_transfer_array
+        )[boundary_active].reshape(-1)
+        np.add.at(diagonal, flat_ids, flat_conductance)
+        np.add.at(
+            boundary_load, flat_ids, flat_conductance * temperature
+        )
+        boundary_terms[f"surface_robin_{face}"] = (
+            flat_ids,
+            flat_conductance,
+            temperature,
+        )
     if exposed_heat_transfer_W_m2K > 0.0:
         convection_ids, convection_conductance = _exposed_convection_terms(
             ids=ids,
@@ -691,6 +781,10 @@ def solve_steady_diagonal_kappa(
     periodic_axes: tuple[str, ...] = (),
     exposed_heat_transfer_W_m2K: float = 0.0,
     ambient_temperature_K: float = 0.0,
+    surface_robin_heat_transfer_W_m2K: (
+        Mapping[str, float | np.ndarray] | None
+    ) = None,
+    surface_robin_temperature_K: Mapping[str, float] | None = None,
     relative_tolerance: float = 1.0e-11,
     max_iterations: int = 5000,
 ) -> SteadyHeatResult:
@@ -713,6 +807,10 @@ def solve_steady_diagonal_kappa(
         periodic_axes=periodic_axes,
         exposed_heat_transfer_W_m2K=exposed_heat_transfer_W_m2K,
         ambient_temperature_K=ambient_temperature_K,
+        surface_robin_heat_transfer_W_m2K=(
+            surface_robin_heat_transfer_W_m2K
+        ),
+        surface_robin_temperature_K=surface_robin_temperature_K,
     )
     return solve_assembled_thermal_system(
         system,

@@ -101,3 +101,74 @@ def test_source_volume_operator_owns_volume_exactly_once():
     )
     power_direct = float(np.sum(source * system.cell_volume_m3))
     assert power_from_operator == power_direct
+
+
+def test_direct_surface_robin_matches_reduced_sheet_balance():
+    x = np.asarray([0.0, 2.0e-6])
+    y = np.asarray([0.0, 3.0e-6])
+    z = np.asarray([0.0, 1.0e-7])
+    kappa = np.full((1, 1, 1, 3), 2.0)
+    source = np.full((1, 1, 1), 4.0e8)
+    bath = 300.0
+    g_bottom = 7.37e6
+    g_top = 1.0
+    system = assemble_steady_diagonal_kappa(
+        x_edges_m=x,
+        y_edges_m=y,
+        z_edges_m=z,
+        kappa_W_mK=kappa,
+        dirichlet_temperature_K={},
+        surface_robin_heat_transfer_W_m2K={
+            "z_min": g_bottom,
+            "z_max": g_top,
+        },
+        surface_robin_temperature_K={
+            "z_min": bath,
+            "z_max": bath,
+        },
+    )
+    result = solve_assembled_thermal_system(
+        system, source_W_m3=source
+    )
+    expected_rise = source[0, 0, 0] * (z[-1] - z[0]) / (
+        g_bottom + g_top
+    )
+    assert np.isclose(
+        result.temperature_K[0, 0, 0],
+        bath + expected_rise,
+        rtol=1e-13,
+    )
+    assert result.linear_residual_relative < 1e-13
+    # Boundary power subtracts two ~300 K values, so absolute-temperature
+    # roundoff is larger than the linear residual while remaining negligible.
+    assert result.energy_balance_relative_error < 1e-8
+
+
+def test_spatial_surface_robin_is_area_times_G():
+    x = np.asarray([0.0, 1.0e-6, 3.0e-6])
+    y = np.asarray([0.0, 2.0e-6])
+    z = np.asarray([0.0, 1.0e-7])
+    kappa = np.full((2, 1, 1, 3), 2.0)
+    top_g = np.asarray([[1.0], [7.37e6]])
+    system = assemble_steady_diagonal_kappa(
+        x_edges_m=x,
+        y_edges_m=y,
+        z_edges_m=z,
+        kappa_W_mK=kappa,
+        dirichlet_temperature_K={},
+        surface_robin_heat_transfer_W_m2K={
+            "z_min": 7.37e6,
+            "z_max": top_g,
+        },
+        surface_robin_temperature_K={
+            "z_min": 300.0,
+            "z_max": 300.0,
+        },
+    )
+    ids, conductance, temperature = system.boundary_terms[
+        "surface_robin_z_max"
+    ]
+    expected = np.diff(x) * np.diff(y)[0] * top_g[:, 0]
+    assert np.array_equal(ids, np.asarray([0, 1]))
+    assert np.allclose(conductance, expected, rtol=0.0, atol=0.0)
+    assert temperature == 300.0
