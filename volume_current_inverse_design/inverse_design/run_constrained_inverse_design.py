@@ -104,6 +104,8 @@ def main():
     ap.add_argument("--maxeval-per-stage", type=int, default=12)
     # Adaptive beta continuation (see adaptive_stage.py).  Env defaults let the
     # launcher steer a pilot without editing this file.
+    ap.add_argument("--obj-scale", type=float,
+                    default=float(os.environ.get("VC_OBJ_SCALE", "1e6")))
     ap.add_argument("--min-evals-per-stage", type=int,
                     default=int(os.environ.get("MIN_EVALS_PER_STAGE", "3")))
     ap.add_argument("--convergence-window", type=int,
@@ -176,6 +178,20 @@ def main():
             f"VC_ADJOINT_COMPONENT_MODE={adjoint_component_mode!r} "
             "must be 'split' or 'combined'")
 
+    # nlopt-only objective scaling.  nlopt's CCSA/MMA initialises its inner
+    # penalty rho at O(1) and relaxes it ~10x per outer iteration; with our
+    # physical objective at ~1e-6 the quadratic penalty dominates for the
+    # first ~6-7 evaluations, producing steps that grow 4.4e-6 -> 4.4e-5 ->
+    # ... (measured, connected r1) and tripping the stall detector during
+    # warm-up.  Handing nlopt (obj_scale*F, obj_scale*grad) makes the
+    # subproblem O(1) from evaluation 1.  The optimisation problem is
+    # mathematically unchanged (positive constant), the certified evaluator
+    # chain is untouched, and all history/plots/checkpoints keep PHYSICAL
+    # values.
+    if not (args.obj_scale > 0 and np.isfinite(args.obj_scale)):
+        raise SystemExit(f"--obj-scale must be a finite positive number, "
+                         f"got {args.obj_scale}")
+
     # Import provenance BEFORE the model is built (load_model imports lumapi).
     # A wrong Python API only explodes later, inside the adjoint, so record what
     # was actually loaded at both points and fail closed on a mismatch.
@@ -228,6 +244,10 @@ def main():
         "sim_time_s": float(lib.SIM_TIME_S),
         "auto_shutoff_min": float(lib.AUTO_SHUTOFF_MIN),
         "bulk_mesh_mode": os.environ.get("BULK_MESH_MODE", "auto"),
+        # nlopt-subproblem objective scaling (see startup comment).  Changes
+        # the optimizer trajectory, so it is part of the config identity even
+        # though history/checkpoints stay in physical units.
+        "objective_scale_nlopt": float(args.obj_scale),
         # P1-5: record RESOLVED config that changes results
         "maxeval_per_stage": int(args.maxeval_per_stage),
         # Adaptive continuation policy is part of the configuration identity:
@@ -423,8 +443,10 @@ def main():
                 # is_intentional_stop() keeps it out of the failure classifier.
                 _opt.force_stop()
             if grad.size:
-                grad[:] = -dlat  # minimising -(Fx+Fy)
-            return -f
+                # minimising -(Fx+Fy); obj_scale keeps the nlopt subproblem
+                # O(1) (CCSA rho warm-up fix) -- value/grad scaled as a PAIR.
+                grad[:] = -dlat * args.obj_scale
+            return -f * args.obj_scale
 
         def c_solid(x, grad, _beta=beta):
             val, g = constraints.solid_residual_and_grad(x, _beta)
