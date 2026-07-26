@@ -139,7 +139,18 @@ def main():
     from volume_current_evaluator import VolumeCurrentEvaluator
     from autograd import tensor_jacobian_product
 
+    # Import provenance BEFORE the model is built (load_model imports lumapi).
+    # A wrong Python API only explodes later, inside the adjoint, so record what
+    # was actually loaded at both points and fail closed on a mismatch.
+    print("[provenance] before load_model: "
+          + json.dumps(lib.import_provenance(), default=str), flush=True)
     model = lib.load_model()
+    provenance = lib.import_provenance()
+    print("[provenance] after  load_model: "
+          + json.dumps(provenance, default=str), flush=True)
+    lib.assert_approved_lumapi()
+    print(f"[provenance] lumapi OK: {provenance['lumapi_file']}", flush=True)
+    print(f"[provenance] engine   : {provenance['fdtd_engine']}", flush=True)
     if os.environ["MSOPT_MAPPING"] != "periodic_constrained":
         raise SystemExit("this runner requires MSOPT_MAPPING=periodic_constrained")
     mapping = model.mapping
@@ -197,6 +208,10 @@ def main():
         raise SystemExit(f"code hash incomplete; missing files: {missing}")
     contract["code_hash"] = _code_hash(code_files)
     contract["config_hash"] = _config_hash(contract)
+    # Recorded AFTER config_hash on purpose: which lumapi/engine was loaded is
+    # audit evidence, not part of the configuration identity.  Hashing it would
+    # make config_hash depend on PYTHONPATH and break every resume.
+    contract["import_provenance"] = provenance
 
     # attempt bookkeeping + resume guard
     existing = sorted((run_root / "attempts").glob("attempt_*"))

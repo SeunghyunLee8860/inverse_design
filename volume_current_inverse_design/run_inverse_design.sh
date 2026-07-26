@@ -15,7 +15,12 @@
 # an exact-binary FDTD FOM -- NOT "beta reached N".
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# A detached/setsid launch does not inherit an interactive PATH, so bare
+# "python" is often absent there.  Fall back to the lab conda interpreter and
+# fail closed rather than dying at the first solve.
 PY="${PY:-python}"
+command -v "$PY" >/dev/null 2>&1 || PY=/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python
+command -v "$PY" >/dev/null 2>&1 || { echo "[fatal] no usable python; set PY=" >&2; exit 3; }
 MODE="${1:-connected}"
 GPU="${GPU:-GPU 1}"
 OUT="${OUT:-runs/${MODE}_500nm}"
@@ -24,18 +29,9 @@ cd "$HERE"
 # script agree on where final_design.npz / SUCCESS.json live.
 case "$OUT" in /*) : ;; *) OUT="$HERE/$OUT" ;; esac
 
-# Pin the r12 lumapi (never the system /opt/lumerical, whose lumapi fails on
-# importdataset with "Failed to evaluate code").
-export VC_LUMERICAL_ROOT="${VC_LUMERICAL_ROOT:-/home/seunghyun/lumerical_r12/opt/lumerical/v261}"
-export CL_GPU_DEVICE="$GPU" LUMERICAL_SESSION_GPU_DEVICE="$GPU"
-export FDTD_THREADS="${FDTD_THREADS:-16}"
-export PERIOD_UM=6.0 TARGET_WL_UM=4.0
-export SOURCE_WL_START_UM=3.0 SOURCE_WL_STOP_UM=6.0        # broadband source
-export MATERIAL_FIT_START_UM=2.7 MATERIAL_FIT_STOP_UM=13.2 # material fit range
-export BULK_MESH_MODE=auto MESH_ACCURACY=5
-export VC_AUTO_SHUTOFF_MIN=1e-8 VC_SIM_TIME_S=4e-12
-export MFS_UM=0.5 MGS_UM=0.5 ID_SEED=7 ID_SEED_AMP=0.10
-export MSOPT_MAPPING=periodic_constrained
+# Single source of truth for the production environment; the smoke test sources
+# the same file so it cannot drift from what production actually runs under.
+. "$HERE/env_production.sh"
 
 GAPARG=""
 if [ "$MODE" = "isolated" ]; then
@@ -57,11 +53,33 @@ for m in ("numpy", "scipy", "autograd", "nlopt"):
 print("  python deps OK (numpy scipy autograd nlopt)")
 PYEOF
 
+# Preflight the API/engine pair in a THROWAWAY process: if the wrong lumapi
+# would be loaded, fail here rather than minutes into the first adjoint.
+$PY - <<'PYEOF'
+import json, sys
+sys.path.insert(0, "."); sys.path.insert(0, "bundle")
+import eqc_lib as lib
+lib.bootstrap_env()
+import lumapi
+lib.assert_approved_lumapi(lumapi)
+print("  lumapi preflight OK: " + json.dumps(lib.import_provenance(), default=str))
+PYEOF
+
+echo "[provenance] $(date)"
+echo "  mode=$MODE  gpu=$GPU  out=$OUT"
+echo "  r12_root=$R12"
+echo "  lumapi=$R12/api/python/lumapi.py"
+echo "  engine=$R12/bin/fdtd-engine"
+echo "  PYTHONPATH=${PYTHONPATH:-<unset>}"
+echo "  source_sha=$(cd "$HERE" && git rev-parse HEAD 2>/dev/null || echo 'not-a-git-checkout')"
+
 echo "[optimize] $(date)  mode=$MODE gpu=$GPU out=$OUT"
 rm -f "$OUT/final_design.npz" 2>/dev/null || true   # never finalise a prior attempt's design
+# BETA_SCHEDULE / MAXEVAL exist so the pre-production smoke can run the REAL
+# entrypoint with a short schedule instead of a separate near-copy of it.
 $PY inverse_design/run_constrained_inverse_design.py --output "$OUT" \
-    --mfs-um 0.5 --mgs-um 0.5 --beta-schedule "2,4,8,16,32,64" \
-    --maxeval-per-stage 12 --rho-step 0.001 --gpu "$GPU" ${RESUME:+--resume}
+    --mfs-um 0.5 --mgs-um 0.5 --beta-schedule "${BETA_SCHEDULE:-2,4,8,16,32,64}" \
+    --maxeval-per-stage "${MAXEVAL:-12}" --rho-step 0.001 --gpu "$GPU" ${RESUME:+--resume}
 
 if [ ! -f "$OUT/final_design.npz" ]; then
   echo "[finalize] no final_design.npz -> optimizer produced nothing; ABORT"; exit 4

@@ -30,6 +30,30 @@ EXPECTED_DT_S = 1.5888123913e-17
 GPU_DEVICE_DEFAULT = os.environ.get("CL_GPU_DEVICE", "GPU 1")
 
 
+FORBIDDEN_API_ROOT = Path("/opt/lumerical")
+
+
+def is_forbidden_lumerical_path(value) -> bool:
+    """True only for the SYSTEM install rooted at ``/opt/lumerical``.
+
+    Substring matching is WRONG here (a regression test caught it): the approved
+    tree ``/home/seunghyun/lumerical_r12/opt/lumerical/v261`` legitimately
+    contains the text ``/opt/lumerical``.  Anchor at the filesystem root.
+    """
+    if not value:
+        return False
+    try:
+        candidate = Path(value).expanduser()
+    except (TypeError, ValueError):
+        return False
+    if not candidate.is_absolute():
+        return False
+    return candidate == FORBIDDEN_API_ROOT or FORBIDDEN_API_ROOT in candidate.parents
+
+
+_forbidden = is_forbidden_lumerical_path
+
+
 def _find_r12_root() -> Path:
     # IMPORTANT: never fall back to the system install /opt/lumerical/v261 -- its
     # lumapi is incompatible with this pipeline (importdataset -> "Failed to
@@ -41,11 +65,16 @@ def _find_r12_root() -> Path:
         Path("/home/seunghyun/lumerical_r12/opt/lumerical/v261"),
         Path("/home/eidl/lumerical_r12_runtime/opt/lumerical/v261"),
     ]
+    if configured and _forbidden(configured):
+        # An operator explicitly asking for the forbidden install is a
+        # misconfiguration: surface it instead of silently using r12 instead.
+        raise RuntimeError(
+            f"VC_LUMERICAL_ROOT/LUMERICAL_ROOT points at the forbidden system "
+            f"install ({configured}). Set it to an r12 tree."
+        )
     for candidate in candidates:
-        if candidate is None:
+        if candidate is None or _forbidden(candidate):
             continue
-        if candidate.resolve() == Path("/opt/lumerical/v261"):
-            continue  # forbidden system install, even if pointed at explicitly
         if (candidate / "api/python/lumapi.py").exists():
             return candidate.resolve()
     checked = ", ".join(str(v) for v in candidates if v is not None)
@@ -61,8 +90,88 @@ CONTROL_BASE = ROOT / "runs/volume_current_control.fsp"
 DATA = ROOT / "runs/data"
 
 
+def assert_approved_lumapi(module=None) -> Path:
+    """Fail closed unless the imported lumapi lives under the approved r12 root.
+
+    A mismatched Python-API / solver-engine pair does not fail at startup: it
+    fails deep inside the FieldRegion adjoint (``importdataset`` ->
+    "Failed to evaluate code"), after minutes of solving.  So the pair is
+    verified before any solve.
+
+    A wrong module already cached in ``sys.modules`` is NEVER hot-swapped --
+    C extensions and module state are already bound.  The caller must start a
+    fresh interpreter.
+    """
+    if module is None:
+        module = sys.modules.get("lumapi")
+    if module is None:
+        raise RuntimeError("lumapi is not imported; cannot verify its path")
+    actual = Path(getattr(module, "__file__", "") or "").resolve()
+    approved = R12_API.resolve()
+    if approved not in actual.parents:
+        raise RuntimeError(
+            f"wrong lumapi loaded: {actual}; expected under {approved}. "
+            "Do NOT hot-swap sys.modules -- start a NEW python process with "
+            f"VC_LUMERICAL_ROOT={R12_ROOT} and a PYTHONPATH free of "
+            f"{FORBIDDEN_API_ROOT}."
+        )
+    return actual
+
+
+def import_provenance() -> dict:
+    """Everything needed to prove which Lumerical API/engine a run actually used."""
+    module = sys.modules.get("lumapi")
+    lumapi_file = None
+    if module is not None:
+        lumapi_file = str(Path(getattr(module, "__file__", "") or "").resolve())
+    return {
+        "r12_root": str(R12_ROOT),
+        "r12_api": str(R12_API),
+        "fdtd_engine": str(R12_ROOT / "bin/fdtd-engine"),
+        "lumapi_file": lumapi_file,
+        "lumapi_preloaded": module is not None,
+        "lumapi_approved": bool(
+            lumapi_file and R12_API.resolve() in Path(lumapi_file).parents
+        ),
+        "env": {
+            name: os.environ.get(name)
+            for name in (
+                "PYTHONPATH", "VC_LUMERICAL_ROOT", "LUMERICAL_ROOT",
+                "LUMERICAL_PYTHONPATH", "CL_GPU_DEVICE",
+                "LUMERICAL_SESSION_GPU_DEVICE", "FDTD_THREADS",
+            )
+        },
+        "sys_path_head": [str(p) for p in sys.path[:4]],
+    }
+
+
+def _purge_forbidden_api_paths() -> None:
+    """Drop any /opt/lumerical API dir a parent shell injected via PYTHONPATH.
+
+    Uses the anchored test, so the approved r12 tree (whose path also contains
+    the text "/opt/lumerical") is never purged.
+    """
+    sys.path[:] = [p for p in sys.path if not _forbidden(p)]
+    raw = os.environ.get("PYTHONPATH", "")
+    if raw:
+        kept = [
+            part for part in raw.split(os.pathsep)
+            if part and not _forbidden(part)
+        ]
+        if kept:
+            os.environ["PYTHONPATH"] = os.pathsep.join(kept)
+        else:
+            os.environ.pop("PYTHONPATH", None)
+
+
 def bootstrap_env() -> None:
     """Pin all version/geometry settings before importing lumapi or the model."""
+    # Fail closed FIRST: a lumapi already cached in sys.modules from a different
+    # install cannot be repaired by editing sys.path below, and the resulting
+    # API/engine mismatch only surfaces inside the adjoint.
+    if "lumapi" in sys.modules:
+        assert_approved_lumapi()
+    _purge_forbidden_api_paths()
     os.environ.setdefault("EIDL_RUN_DIR", str(ROOT / "runs/model"))
     # Production optical contract. These are intentionally separate: source
     # bandwidth, analysis wavelength, and material-fit support are not aliases.
@@ -78,7 +187,11 @@ def bootstrap_env() -> None:
     os.environ["VC_MESH_REFINEMENT"] = MESH_REFINEMENT
     os.environ.setdefault("PERIOD_UM", "6.0")
     os.environ["MSOPT_MESH_REFINEMENT_PIN"] = MESH_REFINEMENT
+    # Pin every variable the downstream discovery paths consult, so
+    # msopt.Lumerical_utill can never fall back to a system install.
     os.environ["LUMERICAL_ROOT"] = str(R12_ROOT)
+    os.environ["VC_LUMERICAL_ROOT"] = str(R12_ROOT)
+    os.environ["LUMERICAL_PYTHONPATH"] = str(R12_API)
     os.environ.setdefault(
         "LUMERICAL_SESSION_GPU_DEVICE",
         os.environ.get("CL_GPU_DEVICE", GPU_DEVICE_DEFAULT),
@@ -530,6 +643,9 @@ def build_control_base(model, force=False, incident_polarization="x"):
 def open_control(fsp=None):
     bootstrap_env()
     import lumapi
+    # Every session opens through here, so this is the single choke point that
+    # guarantees the Python API matches the r12 engine before any solve.
+    assert_approved_lumapi(lumapi)
     path = Path(fsp) if fsp is not None else CONTROL_BASE
     if not path.exists():
         raise RuntimeError(f"missing control project {path}; call prepare() first")

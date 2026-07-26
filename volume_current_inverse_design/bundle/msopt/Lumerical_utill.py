@@ -22,32 +22,74 @@ _FOM_INTERP_MODES = {
 }
 
 
+# The system install /opt/lumerical is FORBIDDEN: its lumapi is incompatible
+# with this pipeline (importdataset -> "Failed to evaluate code") and pairing it
+# with the r12 fdtd-engine fails only deep inside the adjoint.  There is
+# therefore no filesystem-glob fallback -- an explicit approved root is required.
+FORBIDDEN_API_ROOT = Path("/opt/lumerical")
+
+
+def _is_forbidden(value):
+    """Anchored test for the system install.
+
+    NOT a substring match: the approved tree
+    /home/seunghyun/lumerical_r12/opt/lumerical/v261 also contains the text
+    "/opt/lumerical" and must not be rejected.
+    """
+    if not value:
+        return False
+    try:
+        candidate = Path(value).expanduser()
+    except (TypeError, ValueError):
+        return False
+    if not candidate.is_absolute():
+        return False
+    return candidate == FORBIDDEN_API_ROOT or FORBIDDEN_API_ROOT in candidate.parents
+
+
 def _discover_lumapi_path():
+    """Approved lumapi dir from env only (VC_LUMERICAL_ROOT wins). Never globs."""
     explicit = os.environ.get("LUMERICAL_PYTHONPATH")
     if explicit:
         p = Path(explicit).expanduser()
-        if (p / "lumapi.py").exists():
+        if not _is_forbidden(p) and (p / "lumapi.py").exists():
             return str(p)
 
-    root = os.environ.get("LUMERICAL_ROOT")
-    if root:
+    for name in ("VC_LUMERICAL_ROOT", "LUMERICAL_ROOT"):
+        root = os.environ.get(name)
+        if not root:
+            continue
         p = Path(root).expanduser() / "api" / "python"
-        if (p / "lumapi.py").exists():
+        if not _is_forbidden(p) and (p / "lumapi.py").exists():
             return str(p)
-
-    candidates = sorted(Path("/opt/lumerical").glob("v*/api/python/lumapi.py")) if Path("/opt/lumerical").exists() else []
-    if candidates:
-        return str(candidates[-1].parent)
     return None
+
+
+def _assert_approved_lumapi(module):
+    """Refuse a lumapi that came from the forbidden system install."""
+    actual = Path(getattr(module, "__file__", "") or "").resolve()
+    if _is_forbidden(actual):
+        raise RuntimeError(
+            f"forbidden lumapi loaded: {actual}. Set VC_LUMERICAL_ROOT to an r12 "
+            "tree and remove /opt/lumerical from PYTHONPATH, then start a NEW "
+            "python process (a cached sys.modules entry cannot be swapped)."
+        )
+    return actual
 
 
 try:
     import lumapi
 except ModuleNotFoundError:
     lumapi_dir = _discover_lumapi_path()
-    if lumapi_dir and lumapi_dir not in sys.path:
+    if lumapi_dir is None:
+        raise RuntimeError(
+            "no approved lumapi found; set VC_LUMERICAL_ROOT (or "
+            f"LUMERICAL_PYTHONPATH) to an r12 tree, NOT {FORBIDDEN_API_ROOT}"
+        )
+    if lumapi_dir not in sys.path:
         sys.path.insert(0, lumapi_dir)
     import lumapi
+_assert_approved_lumapi(lumapi)
 
 
 def _is_lumerical_messaging_error(exc):
