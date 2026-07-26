@@ -86,6 +86,7 @@ def production_code_files(root: Path, here: Path):
         root / "volume_current_colored_jacobian.py",
         root / "volume_current_yee_metric.py",
         root / "collocated_coherent_fom.py",
+        here / "adaptive_stage.py",
         here / "geometric_constraints.py",
         here / "geometry_drc.py",
         here / "final_projection.py",
@@ -101,6 +102,18 @@ def main():
     ap.add_argument("--mgs-um", type=float, default=0.5)
     ap.add_argument("--beta-schedule", default="2,4,8,16,32,64")
     ap.add_argument("--maxeval-per-stage", type=int, default=12)
+    # Adaptive beta continuation (see adaptive_stage.py).  Env defaults let the
+    # launcher steer a pilot without editing this file.
+    ap.add_argument("--min-evals-per-stage", type=int,
+                    default=int(os.environ.get("MIN_EVALS_PER_STAGE", "3")))
+    ap.add_argument("--convergence-window", type=int,
+                    default=int(os.environ.get("VC_CONV_WINDOW", "3")))
+    ap.add_argument("--objective-rel-tol", type=float,
+                    default=float(os.environ.get("VC_OBJ_REL_TOL", "5e-3")))
+    ap.add_argument("--latent-rms-tol", type=float,
+                    default=float(os.environ.get("VC_LATENT_RMS_TOL", "1e-3")))
+    ap.add_argument("--latent-max-tol", type=float,
+                    default=float(os.environ.get("VC_LATENT_MAX_TOL", "1e-2")))
     ap.add_argument("--gpu", default=os.environ.get("CL_GPU_DEVICE", "GPU 1"))
     ap.add_argument("--rho-step", type=float, default=0.001)
     ap.add_argument("--constraint-c", type=float, default=None)
@@ -135,9 +148,23 @@ def main():
     nlopt = _preflight_nlopt()
 
     import eqc_lib as lib
+    from adaptive_stage import (
+        ABORT_REASONS, CONTINUE, AdaptiveConfig, StageController,
+        is_intentional_stop,
+    )
     from geometric_constraints import LengthScaleConstraints
+    from geometry_drc import geometry_drc
     from volume_current_evaluator import VolumeCurrentEvaluator
     from autograd import tensor_jacobian_product
+
+    adaptive_cfg = AdaptiveConfig(
+        min_evals_per_stage=args.min_evals_per_stage,
+        max_evals_per_stage=args.maxeval_per_stage,
+        convergence_window=args.convergence_window,
+        objective_rel_tol=args.objective_rel_tol,
+        latent_rms_tol=args.latent_rms_tol,
+        latent_max_tol=args.latent_max_tol,
+    ).validate()
 
     # Import provenance BEFORE the model is built (load_model imports lumapi).
     # A wrong Python API only explodes later, inside the adjoint, so record what
@@ -186,6 +213,9 @@ def main():
         "period_um": model.period_xy,
         # P1-5: record RESOLVED config that changes results
         "maxeval_per_stage": int(args.maxeval_per_stage),
+        # Adaptive continuation policy is part of the configuration identity:
+        # any change lands in config_hash and refuses to resume older attempts.
+        "adaptive": adaptive_cfg.to_dict(),
         "optimizer": "nlopt.LD_MMA",
         "nlopt_version": getattr(nlopt, "__version__", "unknown"),
         "resolved_constraint": {
@@ -276,17 +306,51 @@ def main():
             return "solver_failure"
         return "numerical_failure"
 
+    def _stage_drc_diagnostic(latent_like, beta, source_label):
+        """Exact-binary DRC snapshot of the current best -- DIAGNOSTIC ONLY.
+
+        Never used as an optimizer constraint or a gate; a diagnostics hiccup
+        must not kill a multi-hour production run, so errors are recorded
+        instead of raised.
+        """
+        path = run_root / f"stage_drc_beta{beta:g}.json"
+        try:
+            mask = (np.asarray(
+                mapping.filter_unique(np.asarray(latent_like, float))
+            ) >= 0.5).astype(np.uint8)
+            gap_env = os.environ.get("PERIODIC_ISOLATION_GAP_UM")
+            min_gap = float(gap_env) if gap_env and float(gap_env) > 0 else None
+            report = geometry_drc(
+                mask, spacing_um=mapping.config.dx_um,
+                min_solid_width_um=args.mfs_um, min_void_width_um=args.mgs_um,
+                min_gap_um=min_gap,
+            )
+            report.update({
+                "diagnostic_only": True, "beta": beta, "source": source_label,
+            })
+        except Exception as exc:  # noqa: BLE001 - diagnostics must not abort a run
+            report = {"diagnostic_only": True, "beta": beta,
+                      "source": source_label,
+                      "error": f"{type(exc).__name__}: {exc}"}
+        path.write_text(json.dumps(report, indent=2, default=float) + "\n")
+        return report
+
     stage_failure = None       # None => no deterministic stage failure
+    adaptive_abort = None      # set to an ABORT_REASONS value by the controller
     completed_all_stages = True
+    stage_summaries = []
     for beta in _beta_stages(args.beta_schedule):
         state["beta"] = beta
+        controller = StageController(adaptive_cfg, beta)
         opt = nlopt.opt(nlopt.LD_MMA, nlat)
         opt.set_lower_bounds(np.zeros(nlat))
         opt.set_upper_bounds(np.ones(nlat))
+        # nlopt's own maxeval stays as a backstop; the controller normally
+        # force-stops at exactly max_evals_per_stage itself.
         opt.set_maxeval(int(args.maxeval_per_stage))
         opt.set_xtol_rel(1e-4)
 
-        def nlopt_obj(x, grad, _beta=beta):
+        def nlopt_obj(x, grad, _beta=beta, _controller=controller, _opt=opt):
             f, dlat, fx, fy = objective_and_grad(x, _beta)
             gs, gv = constraints.residuals(x, _beta)
             constraint_feasible = gs <= 0 and gv <= 0
@@ -302,11 +366,17 @@ def main():
                                     objective=np.array(f))
                 tmp.replace(run_root / "checkpoints" / "best_feasible.npz")
             state["iter"] += 1
+            decision = _controller.record(f, gs, gv, x)
             log({"attempt": attempt_id, "iter": state["iter"], "beta": _beta,
                  "Fx": fx, "Fy": fy, "objective": f,
                  "g_solid": gs, "g_void": gv,
                  # NOTE: constraint_feasible != DRC feasible; DRC is the final gate
-                 "constraint_feasible": bool(constraint_feasible)})
+                 "constraint_feasible": bool(constraint_feasible),
+                 "adaptive_decision": decision})
+            if decision != CONTINUE:
+                # Intentional stop: nlopt raises ForcedStop from optimize();
+                # is_intentional_stop() keeps it out of the failure classifier.
+                _opt.force_stop()
             if grad.size:
                 grad[:] = -dlat  # minimising -(Fx+Fy)
             return -f
@@ -329,19 +399,53 @@ def main():
         t0 = time.time()
         try:
             latent = opt.optimize(latent)
-        except Exception as exc:  # P1-4: classify and STOP; do not mislabel completed
-            import traceback
-            stage_failure = _classify(exc)
-            completed_all_stages = False
-            tb = traceback.format_exc()
-            (attempt / f"stage_error_beta{beta:g}.txt").write_text(tb)
-            traceback.print_exc()
-            log({"attempt": attempt_id, "beta": beta, "stage_error":
-                 f"{type(exc).__name__}: {exc}", "category": stage_failure})
-            break
+        except Exception as exc:
+            if is_intentional_stop(exc, controller):
+                # Adaptive stop: hand the LAST OBSERVED latent to the next
+                # stage (optimize() raised, so it returned nothing).  The
+                # best-feasible checkpoint was already persisted per-eval.
+                latent = np.array(controller.last_latent, copy=True)
+            else:
+                # P1-4: classify and STOP; do not mislabel completed
+                import traceback
+                stage_failure = _classify(exc)
+                completed_all_stages = False
+                tb = traceback.format_exc()
+                (attempt / f"stage_error_beta{beta:g}.txt").write_text(tb)
+                traceback.print_exc()
+                log({"attempt": attempt_id, "beta": beta, "stage_error":
+                     f"{type(exc).__name__}: {exc}", "category": stage_failure})
+                break
+
+        try:
+            nlopt_code = int(opt.last_optimize_result())
+        except Exception:  # noqa: BLE001
+            nlopt_code = None
+        stage_reason = controller.stop_reason or f"nlopt_stop_{nlopt_code}"
+        summary = {
+            **controller.summary(stage_reason),
+            "nlopt_result_code": nlopt_code,
+            "best_feasible_objective": (
+                state["best_feasible_obj"]
+                if state["best_feasible"] is not None else None),
+            "stage_seconds": time.time() - t0,
+        }
+        drc_source = ("best_feasible" if state["best_feasible"] is not None
+                      else "last_latent")
+        drc_latent = (state["best_feasible"]
+                      if state["best_feasible"] is not None else latent)
+        drc = _stage_drc_diagnostic(drc_latent, beta, drc_source)
+        summary["stage_drc_pass"] = drc.get("pass")
+        stage_summaries.append(summary)
         log({"attempt": attempt_id, "beta": beta, "stage_done": True,
-             "stop_reason": int(opt.last_optimize_result()),
-             "stage_seconds": time.time() - t0})
+             "stage_summary": summary})
+        print(f"[stage] beta={beta:g} reason={stage_reason} "
+              f"evals={controller.evaluations} drc_pass={drc.get('pass')}",
+              flush=True)
+        if stage_reason in ABORT_REASONS:
+            adaptive_abort = stage_reason
+            completed_all_stages = False
+            break
 
     # finalise: prefer best-feasible; record its OWN beta (P1-3), not the last.
     had_feasible = state["best_feasible"] is not None
@@ -365,6 +469,8 @@ def main():
                         attempt=np.array(attempt_id))
     if stage_failure is not None:
         category = stage_failure                 # deterministic/solver/license failure
+    elif adaptive_abort is not None:
+        category = adaptive_abort                # stage_stalled_infeasible / maxeval_infeasible
     elif not had_feasible:
         category = "geometry_infeasible"
     elif not completed_all_stages:
@@ -377,15 +483,22 @@ def main():
         "best_feasible_objective": state["best_feasible_obj"] if had_feasible else None,
         "best_beta": best_beta if had_feasible else None,
         "attempt": attempt_id,
+        "adaptive": adaptive_cfg.to_dict(),
+        "stage_summaries": stage_summaries,
         "note": "constraint-feasible only; 500 nm is certified by final_projection DRC",
     }
-    (attempt / "stop.json").write_text(json.dumps(stop, indent=2) + "\n")
+    (attempt / "stop.json").write_text(
+        json.dumps(stop, indent=2, default=float) + "\n")
     history.close()
-    print(json.dumps(stop, indent=2))
+    print(json.dumps(stop, indent=2, default=float))
     # P0-4: a stage failure must make the PROCESS fail so the launcher aborts and
     # never auto-finalises after an optimizer failure.
     if stage_failure is not None:
         raise SystemExit(6)
+    # An adaptive abort is not a solver failure, but the ladder did NOT finish:
+    # exit nonzero (distinct code) so the launcher never auto-finalises it.
+    if adaptive_abort is not None:
+        raise SystemExit(7)
 
 
 if __name__ == "__main__":

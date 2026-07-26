@@ -8,6 +8,14 @@
 # Env overrides: GPU="GPU 3", PY=/path/to/python, OUT=runs/foo, RESUME=1,
 #                FDTD_THREADS=16, VC_LUMERICAL_ROOT=/path/to/lumerical/v261
 #
+# Adaptive beta continuation (fixed ladder, adaptive per-stage eval count):
+#   BETA_SCHEDULE=2,4,8,16,32,64   MAXEVAL=12   MIN_EVALS_PER_STAGE=3
+#   VC_CONV_WINDOW=3  VC_OBJ_REL_TOL=5e-3
+#   VC_LATENT_RMS_TOL=1e-3  VC_LATENT_MAX_TOL=1e-2
+# A stage advances early only when the objective plateaus while constraint-
+# feasible with a quiet latent; an infeasible plateau or an all-infeasible
+# maxeval stage ABORTS the run (exit 7).  See inverse_design/adaptive_stage.py.
+#
 # FAILURE PROPAGATION (review P0-3): optimizer or DRC/FDTD failure aborts with a
 # nonzero exit; a stale final_design.npz from a previous attempt is deleted
 # before optimizing; the launcher exits 0 ONLY when this run wrote SUCCESS.json.
