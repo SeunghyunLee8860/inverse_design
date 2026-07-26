@@ -8,6 +8,7 @@ of Lumerical's actual conformal rho->epsilon map.  No dipole object is created.
 from __future__ import annotations
 
 import os
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -214,9 +215,20 @@ class VolumeCurrentEvaluator:
             fom, _, _, _, _ = self._forward(fdtd, rho, label, need_design=False)
         return float(fom)
 
-    def _adjoint(self, fdtd, grid, q_source, component: int, label: str):
-        component_q = np.zeros_like(q_source)
-        component_q[..., component] = q_source[..., component]
+    def _adjoint(self, fdtd, grid, q_source, component, label: str):
+        """One FieldRegion adjoint solve.
+
+        component: 0/1/2 keeps only that source component (split mode);
+        None injects the FULL vector q in a single solve (combined mode).
+        The normalization pair (profile_scale, base_amplitude) always belongs
+        to THIS solve's imported profile -- combined mode must never reuse the
+        per-component scales of split mode.
+        """
+        if component is None:
+            component_q = q_source
+        else:
+            component_q = np.zeros_like(q_source)
+            component_q[..., component] = q_source[..., component]
         profile, scale = fieldregion_source_profile(component_q)
         fdtd.switchtolayout()
         fdtd.setnamed(SOURCE_NAME, "enabled", False)
@@ -322,10 +334,25 @@ class VolumeCurrentEvaluator:
         rho = delta + chain * rho_geom
         self._evaluation_index += 1
         prefix = label or f"eval_{self._evaluation_index:04d}"
+        # split    : one adjoint per source component (in-plane, z) = 2 solves.
+        # combined : ONE adjoint carrying the full vector q     = 1 solve.
+        # The adjoint response is linear in the source, and the sensitivity is
+        # linear in the adjoint field, so the two are mathematically identical;
+        # combined saves one EM solve per polarization (6 -> 4 per objective
+        # evaluation).  Phase-A validation compares them on the same latent.
+        adjoint_mode = os.environ.get(
+            "VC_ADJOINT_COMPONENT_MODE", "split").strip().lower()
+        if adjoint_mode not in ("split", "combined"):
+            raise ValueError(
+                f"VC_ADJOINT_COMPONENT_MODE={adjoint_mode!r} must be "
+                "'split' or 'combined'")
+        timings: dict[str, float] = {}
         with lib.open_control(self.control_base) as fdtd:
+            t0 = time.time()
             fom, overlap, q_observation, collocation, forward = self._forward(
                 fdtd, rho, f"{prefix}_forward", need_design=True
             )
+            timings["forward_s"] = time.time() - t0
             q_source = fieldregion_periodic_source_right_inverse(q_observation)
             pairing = abs(
                 np.vdot(q_source, _e5(forward["fom"]))
@@ -340,13 +367,19 @@ class VolumeCurrentEvaluator:
             source_meta = {}
             inplane_component = 0 if self.incident_polarization == "x" else 1
             inplane_name = self.incident_polarization
-            for name, component in ((inplane_name, inplane_component), ("z", 2)):
+            if adjoint_mode == "combined":
+                adjoint_plan = [("vector", None)]
+            else:
+                adjoint_plan = [(inplane_name, inplane_component), ("z", 2)]
+            for name, component in adjoint_plan:
+                t0 = time.time()
                 ea, scale, amp, roundtrip = self._adjoint(
                     fdtd, grid, q_source, component, f"{prefix}_adjoint_{name}"
                 )
+                timings[f"adjoint_{name}_s"] = time.time() - t0
                 adjoints[name] = ea
                 source_meta[name] = {
-                    "component": component,
+                    "component": component if component is not None else "xyz",
                     "profile_scale": scale,
                     "base_amplitude": amp,
                     "roundtrip_max_abs_error": roundtrip,
@@ -357,8 +390,11 @@ class VolumeCurrentEvaluator:
                 forward["delta_x"], forward["delta_y"], forward["delta_z"]
             )
             fine_sensitivity = np.zeros_like(ef)
-            for name in (inplane_name, "z"):
+            for name, _component in adjoint_plan:
                 meta = source_meta[name]
+                # Normalization pair belongs to THIS solve's imported profile:
+                # combined uses the whole-vector scale/base amplitude, never a
+                # reused per-component pair.
                 ea = adjoints[name] * meta["profile_scale"]
                 for c in range(3):
                     fine_sensitivity[..., c] += (
@@ -366,9 +402,11 @@ class VolumeCurrentEvaluator:
                         * volumes[c][..., None] * ef[..., c] * ea[..., c]
                     )
             fdtd.switchtolayout()
+            t0 = time.time()
             gradient_unique, leakage = self._measured_rho_transpose(
                 fdtd, rho, fine_sensitivity, forward["index"]
             )
+            timings["jacobian_probe_s"] = time.time() - t0
 
         gradient_full = np.zeros(self.physical_shape, float)
         # chain rule for the affine solver-safe layer: dF/drho_geom = (1-2*delta)*dF/drho_solver
@@ -377,6 +415,9 @@ class VolumeCurrentEvaluator:
             "source_type": "FieldRegion volumetric current only; zero dipoles",
             "incident_polarization": self.incident_polarization,
             "density_mode": density_mode,
+            "adjoint_component_mode": adjoint_mode,
+            "electromagnetic_solves": 1 + len(adjoint_plan),
+            "wall_time_s": timings,
             "solver_safe_affine": {
                 "rho_step": self.rho_step,
                 "safety_slack": self.safety_slack,
