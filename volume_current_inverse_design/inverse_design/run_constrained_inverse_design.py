@@ -348,7 +348,12 @@ def main():
         # nlopt's own maxeval stays as a backstop; the controller normally
         # force-stops at exactly max_evals_per_stage itself.
         opt.set_maxeval(int(args.maxeval_per_stage))
-        opt.set_xtol_rel(1e-4)
+        # xtol is DISABLED on purpose: the 2026-07-26 pilot showed nlopt's
+        # xtol_rel=1e-4 ending the beta=2 stage after 2 evals (nlopt_stop_4),
+        # bypassing min_evals_per_stage AND the feasibility gating.  Stage
+        # termination belongs to the adaptive controller alone (maxeval is the
+        # backstop); the controller's latent-quiet test replaces xtol.
+        opt.set_xtol_rel(0.0)
 
         def nlopt_obj(x, grad, _beta=beta, _controller=controller, _opt=opt):
             f, dlat, fx, fy = objective_and_grad(x, _beta)
