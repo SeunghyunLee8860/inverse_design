@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "status": "VALIDATED_LATENT_MAPPING_VJP",
+  "passed": true,
+  "scope": "solver-free production mapping VJP only; not a latent-to-Maxwell-objective central finite difference",
+  "git_execution_commit": "0395fd0faab0936815a50a2fd07603a10ffe5785",
+  "mapping": {
+    "version": "periodic_constrained_mapping/v1",
+    "latent_shape": [
+      240,
+      240
+    ],
+    "physical_shape": [
+      241,
+      241,
+      13
+    ],
+    "period_um": 6.0,
+    "spacing_um": 0.025,
+    "filter_radius_um": 0.5,
+    "eta_nominal": 0.5,
+    "eta_dilate": 0.25,
+    "eta_erode": 0.75,
+    "isolation_gap_um": 0.0
+  },
+  "step": 0.0001,
+  "relative_error_limit": 1e-05,
+  "cases": [
+    {
+      "beta": 4.0,
+      "adjoint_directional": -0.019566198820915603,
+      "finite_difference": -0.019566198776743704,
+      "relative_error": 2.25756158270105e-09,
+      "pass": true
+    },
+    {
+      "beta": 8.0,
+      "adjoint_directional": -0.036631784494927454,
+      "finite_difference": -0.03663178442359083,
+      "relative_error": 1.9473969147676157e-09,
+      "pass": true
+    },
+    {
+      "beta": 32.0,
+      "adjoint_directional": -0.10967091912009065,
+      "finite_difference": -0.10967091898628212,
+      "relative_error": 1.2200912946775672e-09,
+      "pass": true
+    }
+  ],
+  "periodic_x_fencepost_max_abs_error": 0.0,
+  "periodic_y_fencepost_max_abs_error": 0.0,
+  "z_extrusion_max_abs_error": 0.0,
+  "next_gate": "LATENT_TO_MAXWELL_OBJECTIVE_V261_CENTRAL_FD"
+}

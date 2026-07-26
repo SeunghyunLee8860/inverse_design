@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "generation_command": "source volume_current_inverse_design/env_production.sh; /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/thermal_adjoint/run_latent_mapping_vjp_certificate.py --physical-gradient-npz /home/seunghyun/tairte4/artifacts/pte_adfd/thermal_weighted_maxwell_adfd_x_20260726/thermal_weighted_maxwell_adfd.npz --output-dir /home/seunghyun/tairte4/artifacts/pte_adfd/latent_mapping_vjp_20260726 --betas 4,8,32 --step 1e-4",
+  "artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/latent_mapping_vjp_20260726/latent_mapping_vjp_certificate.npz",
+      "bytes": 7659472,
+      "sha256": "9c3999ec8a88729eca241a1aef97cfa5e4034b8c6fc797ce8542e42ea7d8192c",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/latent_mapping_vjp_20260726/latent_mapping_vjp_summary.json",
+      "bytes": 3287,
+      "sha256": "7a2b023d3021ab444ea84d1c8bb5c95ce693d3729ae277f5b80cad0d27a354ce",
+      "committed_to_git": false
+    }
+  ]
+}
