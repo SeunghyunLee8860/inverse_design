@@ -1,0 +1,277 @@
+{
+  "status": "VALIDATED_OPTICAL_DZ_DOWNSTREAM_PTE_GRADIENT_CONVERGENCE",
+  "generated_at_utc": "2026-07-27T18:44:26.249333+00:00",
+  "raw_artifacts_are_not_committed_to_git": true,
+  "artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/optical_dz_downstream_convergence_result.json",
+      "byte_size": 17030,
+      "sha256": "e309444be3a3005166a3dabaa23b15931aadedbd099d490b989ee432358ef525",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_2p5_20260727_1/optical_dz_downstream_case_result.json",
+      "byte_size": 9555,
+      "sha256": "239295d89aec17fc349507d1de39cce6b58a4b3ce578c8b23eb4e4bca8a06624",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_20260727_1/component_yee_jacobian_result.json",
+      "byte_size": 7298,
+      "sha256": "b992b75f15be5e661fb9e8749f71e847206e7af5f6750e4cfe31a0b13e83102f",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_2/combined_base_forward_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "24ed40a118435d7b2dc9768917ca1e74002d9aa3993ea7a6b9e01ca421e4d2ef",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_3/flake_4um_adjoint_gpu.fsp",
+      "byte_size": 31777060,
+      "sha256": "a87f444da902b0a1bad1684b308c6bb790b0d3388100ba82e61aa3977dced99e",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_2p5_20260727_1/flake_4um_downstream_raw.npz",
+      "byte_size": 21348546,
+      "sha256": "339c5bed0df1a089d9bbfd950e3323867b9c64e83b5e9001b84baaded21449cc",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_3/flake_6um_adjoint_gpu.fsp",
+      "byte_size": 31776532,
+      "sha256": "8826dedc85623db9772bcbd57470bfb6633426e44e31740135bcc2d9c88029aa",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_2p5_20260727_1/flake_6um_downstream_raw.npz",
+      "byte_size": 23106930,
+      "sha256": "421971b9715cd949c29ad9fbcf221d0de938d29fcb345f0322026df82761ec6f",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_20260727_1/J_x.npz",
+      "byte_size": 108237,
+      "sha256": "e5f33b47378771f22409fe93e1f69863b0892783b2968de89821a29f10ff4e6e",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_20260727_1/J_y.npz",
+      "byte_size": 106623,
+      "sha256": "4a86c24aafd84c235463e8005336e687a94520896a92ca11720b7749daefd219",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_20260727_1/J_z.npz",
+      "byte_size": 104868,
+      "sha256": "8565dbda23fb188a36e9f9582eaaa2d1cd55c3f7c8b883e9f51a45d606fe70ed",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_20260727_1/component_yee_coordinates.npz",
+      "byte_size": 53075,
+      "sha256": "5202ffcc691ea1d05b1022f74febfe484780347d5d3a76a0ce9d69c4c0608de9",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_1p25_20260727_1/optical_dz_downstream_case_result.json",
+      "byte_size": 10823,
+      "sha256": "12a5dc0047429dc434ef5b4ffa42ffd1825965678cc32bd6ded088e2eb641038",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_dz1p25_20260727_1/component_yee_jacobian_result.json",
+      "byte_size": 7321,
+      "sha256": "f1635fbce7fc4ad753be21298d05d7781a4910202be2301f0de42ed88ae6f7d4",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/nonuniform_optical_dz1p25_20260727_1/nonuniform_physical_rho_dz1p25nm_cpu_tfsf.fsp",
+      "byte_size": 208310578,
+      "sha256": "778fe0daae10fbb7ca7497549778a6105db242d8c9c0f31fc056ba6bdf2f3bbf",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_1p25_20260727_1/flake_4um_adjoint_template.fsp",
+      "byte_size": 33491938,
+      "sha256": "f547e5111194bd87b73058af43ca5b58163dfa60db45fb7be8bd8caa5024e355",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_1p25_20260727_1/flake_4um_adjoint_gpu.fsp",
+      "byte_size": 53161156,
+      "sha256": "eecb959980511f230ab9344450e2e8cc0862c8ee369fabe71a83877f9f09b743",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_1p25_20260727_1/flake_4um_downstream_raw.npz",
+      "byte_size": 34320951,
+      "sha256": "d583473e56bd059f77492a2a2cd359906aa059687dc16271f58ec731fe021294",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_1p25_20260727_1/flake_6um_adjoint_template.fsp",
+      "byte_size": 33491938,
+      "sha256": "1f98d3b28a91cb58808351cb63db6c61e9769a514d9156db9ee7bd7de1937fa7",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_1p25_20260727_1/flake_6um_adjoint_gpu.fsp",
+      "byte_size": 53160148,
+      "sha256": "4968712b1f8584ce53224ec63e05612e036975f4b7dfeb1f4e3de8419343e295",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_1p25_20260727_1/flake_6um_downstream_raw.npz",
+      "byte_size": 36081772,
+      "sha256": "3b0e1361e3ba4a8fe215947fc2d103b44a6d25f58200bcb04cbd80b2a71250b9",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_dz1p25_20260727_1/J_x.npz",
+      "byte_size": 143031,
+      "sha256": "2180d4409d87d6303bf15c33ab4391bf43d6887d1659590c538996eb3ac98702",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_dz1p25_20260727_1/J_y.npz",
+      "byte_size": 141155,
+      "sha256": "421fb6ace246125a51de6733fae48971c8c166f483974f648201673e52555e93",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_dz1p25_20260727_1/J_z.npz",
+      "byte_size": 141111,
+      "sha256": "dfda0671c9f6093f764af1fb1a92a2b0b7eeeed81952f0fa5f38dc86f8caca3e",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_dz1p25_20260727_1/component_yee_coordinates.npz",
+      "byte_size": 54276,
+      "sha256": "8dba9fa7a84e45587778c3c8b7edb235a4098f95ac1a91d485f4e0704fe761c8",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_0p625_20260727_1/optical_dz_downstream_case_result.json",
+      "byte_size": 10848,
+      "sha256": "d94e28db8d92d4882fda6c56c88f550672f94965343efd6c4dd0a07bba9809fe",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_dz0p625_20260727_1/component_yee_jacobian_result.json",
+      "byte_size": 7336,
+      "sha256": "cafd4959af9409c6f491c8276bb2bbc08bc7f93feeba049a12ef8cf102092cc7",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/nonuniform_optical_dz0p625_20260727_1/nonuniform_physical_rho_dz0p625nm_cpu_tfsf.fsp",
+      "byte_size": 251079346,
+      "sha256": "fe9d90813bdb0e1c29de65c7fe9c7358846dd11a275c8df7087101440100130b",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_0p625_20260727_1/flake_4um_adjoint_template.fsp",
+      "byte_size": 40279266,
+      "sha256": "ee93a3d28706ec83f0d8c0f15240350dc56dc03b2ae4018eb032fd0fb0948853",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_0p625_20260727_1/flake_4um_adjoint_gpu.fsp",
+      "byte_size": 63853300,
+      "sha256": "77ed286d06aecba41f7f0263b2dee21c37af9225217995aad3abf1b752d09b6a",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_0p625_20260727_1/flake_4um_downstream_raw.npz",
+      "byte_size": 40794162,
+      "sha256": "94739cab632737d9bc688798d52affeac94a757a73a0d7eec34e21a6bc47f2a0",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_0p625_20260727_1/flake_6um_adjoint_template.fsp",
+      "byte_size": 40279266,
+      "sha256": "a52169ceaa7025f67ac7e09f670888ada1d12763ba7e76b76f7ba5250a5e2d97",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_0p625_20260727_1/flake_6um_adjoint_gpu.fsp",
+      "byte_size": 63852004,
+      "sha256": "fdf34e091022379eccfe3a3a7f96090dbfd3580dc94df0fb16554d31bd6e4cf0",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_0p625_20260727_1/flake_6um_downstream_raw.npz",
+      "byte_size": 42555222,
+      "sha256": "603c9ad1fb25bc150610d83d4540472f7098a5bc74838a9be5fd59ad653d42b3",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_dz0p625_20260727_1/J_x.npz",
+      "byte_size": 155042,
+      "sha256": "45cf80e0fb7b0a1513d6652762445de9118c56fcae42af640a8837a4ad68cd7e",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_dz0p625_20260727_1/J_y.npz",
+      "byte_size": 152434,
+      "sha256": "5973721861c5b674abda937801ce1ebe323411e81cb346d0059710f164a844fd",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_dz0p625_20260727_1/J_z.npz",
+      "byte_size": 160020,
+      "sha256": "77a0efb8b6ca6cb21926918a1d69528884914d06d3aa9a29cd8c1ef51126a3dd",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_dz0p625_20260727_1/component_yee_coordinates.npz",
+      "byte_size": 54948,
+      "sha256": "e2e0c034e30d706e5078d328c70a4c495d27571e6f4a427037e2c6dca04ca8d0",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_2.5nm_4um_nodal_gradients.npz",
+      "byte_size": 110150,
+      "sha256": "36dab44b7c9fd35fb0eccb8ee52767b76b233d2bd3ce1d7a1ca28686af373df3",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_2.5nm_6um_nodal_gradients.npz",
+      "byte_size": 110041,
+      "sha256": "32d534440e5c52e8b53a91bc2ce9ba421b358b091ed41c1cd03666c0d330ffcd",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_1.25nm_4um_nodal_gradients.npz",
+      "byte_size": 110139,
+      "sha256": "d99157e8e9ccabe59c0c81638ab3fdf86a5efb61da70e9207d1e6379cecdf023",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_1.25nm_6um_nodal_gradients.npz",
+      "byte_size": 110058,
+      "sha256": "e4c40483e4899d6b3290b3accac8cf91f29e15404d7dab4fdfea294792acd016",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_0.625nm_4um_nodal_gradients.npz",
+      "byte_size": 110224,
+      "sha256": "0129500f67a87b4c1957c004afbb11235f7ed2d322ccb1a54065e4bd31b6228a",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_0.625nm_6um_nodal_gradients.npz",
+      "byte_size": 110062,
+      "sha256": "9a57891464950de38e0036390bb313924325ec9cbfee344e7fad4e1cb12d8424",
+      "committed_to_git": false
+    }
+  ],
+  "generation_commands": [
+    "python -m photothermal_pte.finite_inverse_design.run_nonuniform_optical_dz_forward",
+    "python -m photothermal_pte.finite_inverse_design.run_optical_dz_downstream_case",
+    "python -m photothermal_pte.finite_inverse_design.build_layout_component_yee_jacobian",
+    "python -m photothermal_pte.finite_inverse_design.summarize_optical_dz_downstream_convergence"
+  ]
+}

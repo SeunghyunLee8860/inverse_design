@@ -193,7 +193,30 @@
   gradient rescaling
 - The earlier separate `DESIGN_FIELD`/`DESIGN_INDEX` same-array-index
   multiplication path is removed from the promoted component-Jacobian path
-- Next gate: downstream `dz=2.5/1.25/0.625 nm` PTE and gradient convergence
+- Optical-dz downstream status:
+  `VALIDATED_OPTICAL_DZ_DOWNSTREAM_PTE_GRADIENT_CONVERGENCE`
+- Nonuniform physical-rho `P_Q` at `dz=2.5/1.25/0.625 nm`:
+  `1.692523974e-12 / 1.692526176e-12 / 1.692537364e-12 W`
+- Six-face closure at `dz=2.5/1.25/0.625 nm`:
+  `2.01444e-4 / 2.19647e-4 / 2.27224e-4`
+- Direct `2.5 -> 0.625 nm` remapped-Q NRMSE:
+  `0.302051%` for both named thermal footprints
+- Direct `2.5 -> 0.625 nm` TaIrTe4 temperature-field NRMSE:
+  `0.0133913% / 0.0139121%` for the 4 um / 6 um scenarios
+- Direct `2.5 -> 0.625 nm` raw-PTE relative change:
+  `0.0280247% / 0.0280219%`
+- Direct `2.5 -> 0.625 nm` optical directional-gradient change:
+  `0.0201621% / 0.0140111%`
+- Direct `2.5 -> 0.625 nm` combined directional-gradient change:
+  `0.0203074% / 0.0139892%`
+- Production optical flake mesh fixed at `dz=2.5 nm`: this is the coarsest
+  mesh whose raw PTE, optical gradient, and combined gradient are all within
+  `0.5%` of the `0.625 nm` reference for both named thermal footprints
+- Worst downstream component-J transpose error: `9.56908e-16`
+- No empirical normalization, gradient rescaling, clipping, smoothing, gain,
+  global Q rescaling, tiling, or Q-source deletion was used
+- Next gate: thermal raw-PTE convergence plus central-localized and
+  design-edge-localized thermal AD-FD
 - Gray-law sensitivity, filter/projection latent AD-FD, transient, and
   optimization remain unexecuted
 - Status: `VALIDATED_MIXED_CPU_TFSF_GPU_FIELDREGION_OPTICAL_ADFD`
