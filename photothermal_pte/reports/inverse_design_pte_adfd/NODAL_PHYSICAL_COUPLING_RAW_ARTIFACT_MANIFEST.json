@@ -1,0 +1,16 @@
+{
+  "status": "VALIDATED_81X81_NODAL_OPTICAL_THERMAL_MAPPING_JVP_VJP",
+  "generated_at_utc": "2026-07-27T07:48:45.726905+00:00",
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python -m photothermal_pte.finite_inverse_design.validate_nodal_physical_coupling --output-dir /home/seunghyun/tairte4_artifacts/nodal_physical_coupling_20260727_1 --fd-step 1e-5",
+  "raw_summary": {
+    "path": "/home/seunghyun/tairte4_artifacts/nodal_physical_coupling_20260727_1/nodal_physical_coupling_summary.json",
+    "byte_size": 5148,
+    "sha256": "0b325dd1c09101f85aa9c534dece449e7fe8c2a2afa7c4826591167e3c371b65"
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4_artifacts/nodal_physical_coupling_20260727_1/nodal_physical_coupling_certificate.npz",
+    "byte_size": 1218324,
+    "sha256": "47f10d96683c11be0168f45b780392947db210afcef918894c33eabf4862c53f"
+  },
+  "git_policy": "raw NPZ remains outside Git; path, size, and SHA-256 are recorded here"
+}

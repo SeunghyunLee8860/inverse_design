@@ -112,6 +112,26 @@
   `c3f4ac851d73c5f1159e95e40a9e1f15d1177234dbd6ed9a152ad3c071e85688`
 - 81x81 mapping, combined Maxwell-thermal AD-FD, latent AD-FD, transient,
   and optimization remain unexecuted
+- Nodal physical-density coupling status:
+  `VALIDATED_81X81_NODAL_OPTICAL_THERMAL_MAPPING_JVP_VJP`
+- Physical coordinates:
+  exact `81x81` nodes on `[-1,1] um` at `25 nm`; nonperiodic and not
+  81 finite-width pixels
+- Optical density target:
+  identity x-y nodes extruded exactly to `81x81x13` nodes over
+  `z=[0,600] nm`
+- Thermal density targets:
+  exact piecewise-bilinear area averages on native `20x20` (100 nm) and
+  refined `40x40` (50 nm) control cells
+- Worst nodal JVP-FD / JVP-VJP dot / endpoint / area-integral errors:
+  `6.18584e-11 / 2.93535e-16 / 5.99520e-15 / 2.01948e-16`
+- Opposite-boundary leakage and optical z-extrusion error:
+  `0 / 0`
+- Raw nodal coupling NPZ SHA-256:
+  `47f10d96683c11be0168f45b780392947db210afcef918894c33eabf4862c53f`
+- Filter/projection, imported-permittivity equivalence, Maxwell/thermal
+  combined AD-FD, latent AD-FD, transient, and optimization were not run by
+  this checkpoint
 - Status: `VALIDATED_MIXED_CPU_TFSF_GPU_FIELDREGION_OPTICAL_ADFD`
 - Protected design/PTE ROI: exactly `x,y=[-1,1] µm`
 - Optical TaIrTe4: 100 nm thick and extended through lateral PML as the
