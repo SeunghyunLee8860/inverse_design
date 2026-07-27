@@ -1,0 +1,1276 @@
+{
+  "status": "VALIDATED_FIXED_Q_THERMAL_DOMAIN_DEPTH_MESH_CONVERGENCE",
+  "passed": true,
+  "promoted_at_utc": "2026-07-27T07:32:25.475900+00:00",
+  "scope": "fixed local optical Q; independent thermal domain, Si-depth, and mesh convergence for named 4 um and 6 um TaIrTe4 footprint scenarios",
+  "native_P_Q_W": 1.6887880194040323e-12,
+  "input_native_Q_artifact": {
+    "path": "/home/seunghyun/tairte4_artifacts/support_remap_matched_optical_dz2p5_thermal4um_20260727_1/local_q_thermal_mapping.npz",
+    "byte_size": 1350054,
+    "sha256": "d6691afe8034ffca10e058b9bb008d63f449d1de351b6d7bf70e54cd1a3c8145",
+    "note": "only immutable native Yee Q arrays are reused; the prior mapped thermal Q is ignored"
+  },
+  "case_contract": [
+    {
+      "label": "native",
+      "lateral_domain_um": 32.0,
+      "si_depth_um": 20.0,
+      "core_xy_cell_size_nm": 100.0,
+      "flake_dz_nm": 25.0,
+      "design_dz_nm": 100.0
+    },
+    {
+      "label": "lateral_40um",
+      "lateral_domain_um": 40.0,
+      "si_depth_um": 20.0,
+      "core_xy_cell_size_nm": 100.0,
+      "flake_dz_nm": 25.0,
+      "design_dz_nm": 100.0
+    },
+    {
+      "label": "si_depth_30um",
+      "lateral_domain_um": 32.0,
+      "si_depth_um": 30.0,
+      "core_xy_cell_size_nm": 100.0,
+      "flake_dz_nm": 25.0,
+      "design_dz_nm": 100.0
+    },
+    {
+      "label": "refined",
+      "lateral_domain_um": 32.0,
+      "si_depth_um": 20.0,
+      "core_xy_cell_size_nm": 50.0,
+      "flake_dz_nm": 12.5,
+      "design_dz_nm": 50.0
+    }
+  ],
+  "common_probe": {
+    "method": "trilinear cell-center interpolation onto a fixed 100 nm x-y by 25 nm z grid covering the complete TaIrTe4 footprint",
+    "z_bounds_m": [
+      -1e-07,
+      0.0
+    ]
+  },
+  "boundary_flux_interpretation": "lateral and bottom Dirichlet power entries are numerical truncation-boundary fluxes, not intrinsic physical heat-path fractions",
+  "gates": {
+    "mapping_power_limit": 0.005,
+    "energy_balance_limit": 0.01,
+    "linear_residual_limit": 1e-08,
+    "convergence_metric_limit": 0.01,
+    "worst_mapping_power_error": 3.587455431046567e-16,
+    "worst_energy_balance_error": 5.63684913695577e-12,
+    "worst_linear_residual": 1.953723246545124e-11,
+    "worst_convergence_metric": 0.0031448498991036816
+  },
+  "thermal_model": {
+    "TaIrTe4_kappa_W_mK": [
+      14.4,
+      3.8,
+      1.0
+    ],
+    "SiO2_kappa_W_mK": 1.38,
+    "Si_kappa_W_mK": 145.0,
+    "air_kappa_W_mK": 0.026,
+    "TaIrTe4_bottom_SiO2_G_W_m2K": 7370000.0,
+    "TaIrTe4_air_G_W_m2K": 1.0,
+    "TaIrTe4_deposited_design_SiO2_G_W_m2K": 73700.0,
+    "SiO2_Si_G_W_m2K": 1100000000.0,
+    "exposed_SiO2_air_h_W_m2K": 10.0,
+    "gray_bulk_k_law": "k_air + rho*(k_SiO2-k_air), componentwise",
+    "gray_top_G_law": "G_air + rho*(G_deposited_SiO2-G_air)",
+    "rho_in_this_checkpoint": 0.5
+  },
+  "scenarios": [
+    {
+      "name": "TaIrTe4_4um_footprint",
+      "flake_span_um": 4.0,
+      "fabrication_truth": false,
+      "cases": [
+        {
+          "label": "native",
+          "flake_span_um": 4.0,
+          "controls": {
+            "lateral_domain_um": 32.0,
+            "si_depth_um": 20.0,
+            "core_xy_cell_size_nm": 100.0,
+            "flake_dz_nm": 25.0,
+            "design_dz_nm": 100.0
+          },
+          "grid_shape": [
+            76,
+            76,
+            76
+          ],
+          "total_cells": 438976,
+          "source": {
+            "native_power_W": 1.6887880194040323e-12,
+            "mapped_power_W": 1.6887880194040323e-12,
+            "relative_power_error": 0.0,
+            "outside_TaIrTe4_power_W": 0.0,
+            "outside_TaIrTe4_nonzero_cell_count": 0,
+            "components": {
+              "x": {
+                "native_power_W": 1.6885593488584841e-12,
+                "mapped_power_W": 1.6885593488584841e-12,
+                "exact_zero": false
+              },
+              "y": {
+                "native_power_W": 2.286705455481133e-16,
+                "mapped_power_W": 2.286705455481133e-16,
+                "exact_zero": false
+              },
+              "z": {
+                "native_power_W": 0.0,
+                "mapped_power_W": 0.0,
+                "exact_zero": true
+              }
+            }
+          },
+          "Tmax_DeltaT_K": 1.0699584410421907e-07,
+          "hotspot_m": {
+            "x": 4.9999999999999945e-08,
+            "y": 4.9999999999999945e-08,
+            "z": -1.25e-08,
+            "material_id": 3
+          },
+          "TaIrTe4_Tmax_DeltaT_K": 1.0699584410421907e-07,
+          "TaIrTe4_volume_average_DeltaT_K": 4.0862324700272296e-08,
+          "TaIrTe4_hotspot_m": {
+            "x": 4.9999999999999945e-08,
+            "y": 4.9999999999999945e-08,
+            "z": -1.25e-08
+          },
+          "PTE_objective_A": 3.4673224271291514e-16,
+          "PTE_absolute_contribution_scale_A": 6.89539065792213e-14,
+          "PTE_cancellation_ratio": 0.005028464084403306,
+          "source_power_W": 1.6887880194040323e-12,
+          "boundary_power_out_W": {
+            "x_min": 3.3958278097269007e-13,
+            "x_max": 3.410322256149283e-13,
+            "y_min": 3.392366207544922e-13,
+            "y_max": 3.392371418987595e-13,
+            "z_min": 3.2969248806381144e-13,
+            "exposed_convection": 6.762093979127326e-18
+          },
+          "numerical_boundary_power_fraction": {
+            "x_min": 0.20108076151116214,
+            "x_max": 0.20193903657326834,
+            "y_min": 0.20087578598183548,
+            "y_max": 0.2008760945725297,
+            "z_min": 0.19522431724744166,
+            "exposed_convection": 4.0041105819270594e-06
+          },
+          "energy_balance_relative_error": 3.180757567013588e-12,
+          "linear_residual_relative": 1.0135889149930047e-11,
+          "interface_diagnostics": {
+            "SiO2_Si": {
+              "face_index": 46,
+              "nonzero_interface_resistance_face_count": 5776,
+              "signed_plus_z_power_W": -1.6884210049736928e-12,
+              "absolute_power_W": 1.6884210049736928e-12,
+              "mean_adjacent_cell_temperature_jump_K": 1.853418747075868e-10,
+              "mean_contact_temperature_jump_K": 2.620381122992111e-11,
+              "interface_area_m2": 1.024e-09,
+              "minimum_G_W_m2K": 1100000000.0,
+              "maximum_G_W_m2K": 1100000000.0
+            },
+            "TaIrTe4_bottom_SiO2": {
+              "face_index": 65,
+              "nonzero_interface_resistance_face_count": 1600,
+              "signed_plus_z_power_W": -1.6831200301114053e-12,
+              "absolute_power_W": 1.6831200301114053e-12,
+              "mean_adjacent_cell_temperature_jump_K": 1.616005544440769e-08,
+              "mean_contact_temperature_jump_K": 1.4273405954133358e-08,
+              "interface_area_m2": 1.5999999999999996e-11,
+              "minimum_G_W_m2K": 7370000.0,
+              "maximum_G_W_m2K": 7370000.0
+            },
+            "TaIrTe4_top_design_or_air": {
+              "face_index": 69,
+              "nonzero_interface_resistance_face_count": 1600,
+              "signed_plus_z_power_W": 5.667973603824066e-15,
+              "absolute_power_W": 5.668034619508312e-15,
+              "mean_adjacent_cell_temperature_jump_K": 1.5891052461322757e-08,
+              "mean_contact_temperature_jump_K": 1.5861416993385082e-08,
+              "interface_area_m2": 1.5999999999999996e-11,
+              "minimum_G_W_m2K": 1.0,
+              "maximum_G_W_m2K": 36850.5,
+              "subinterfaces": {
+                "gray_design_contact": {
+                  "face_count": 400,
+                  "area_m2": 4.000000000000001e-12,
+                  "signed_plus_z_power_W": 5.667934645730347e-15,
+                  "absolute_power_W": 5.667934645730347e-15,
+                  "mean_contact_temperature_jump_K": 3.845222348224819e-08,
+                  "minimum_G_W_m2K": 36850.5,
+                  "maximum_G_W_m2K": 36850.5
+                },
+                "air_contact": {
+                  "face_count": 1200,
+                  "area_m2": 1.1999999999999997e-11,
+                  "signed_plus_z_power_W": 3.8958093719694724e-20,
+                  "absolute_power_W": 9.997377796516857e-20,
+                  "mean_contact_temperature_jump_K": 8.33114816376405e-09,
+                  "minimum_G_W_m2K": 1.0,
+                  "maximum_G_W_m2K": 1.0
+                }
+              }
+            }
+          },
+          "wall_s": 19.84525939077139,
+          "comparison_to_native": null,
+          "raw_artifact": {
+            "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/flake_4um_native.npz",
+            "byte_size": 3313950,
+            "sha256": "a3f382b195e14d951a7136a7158089a629b994b46a725cf16328ac5fcbde45a7"
+          }
+        },
+        {
+          "label": "lateral_40um",
+          "flake_span_um": 4.0,
+          "controls": {
+            "lateral_domain_um": 40.0,
+            "si_depth_um": 20.0,
+            "core_xy_cell_size_nm": 100.0,
+            "flake_dz_nm": 25.0,
+            "design_dz_nm": 100.0
+          },
+          "grid_shape": [
+            84,
+            84,
+            76
+          ],
+          "total_cells": 536256,
+          "source": {
+            "native_power_W": 1.6887880194040323e-12,
+            "mapped_power_W": 1.688788019404032e-12,
+            "relative_power_error": 1.1958184770155224e-16,
+            "outside_TaIrTe4_power_W": 0.0,
+            "outside_TaIrTe4_nonzero_cell_count": 0,
+            "components": {
+              "x": {
+                "native_power_W": 1.6885593488584841e-12,
+                "mapped_power_W": 1.6885593488584841e-12,
+                "exact_zero": false
+              },
+              "y": {
+                "native_power_W": 2.286705455481133e-16,
+                "mapped_power_W": 2.286705455481133e-16,
+                "exact_zero": false
+              },
+              "z": {
+                "native_power_W": 0.0,
+                "mapped_power_W": 0.0,
+                "exact_zero": true
+              }
+            }
+          },
+          "Tmax_DeltaT_K": 1.0701106846249064e-07,
+          "hotspot_m": {
+            "x": 4.9999999999999945e-08,
+            "y": 4.9999999999999945e-08,
+            "z": -1.25e-08,
+            "material_id": 3
+          },
+          "TaIrTe4_Tmax_DeltaT_K": 1.0701106846249064e-07,
+          "TaIrTe4_volume_average_DeltaT_K": 4.087759119423367e-08,
+          "TaIrTe4_hotspot_m": {
+            "x": 4.9999999999999945e-08,
+            "y": 4.9999999999999945e-08,
+            "z": -1.25e-08
+          },
+          "PTE_objective_A": 3.467340881681774e-16,
+          "PTE_absolute_contribution_scale_A": 6.902222195667819e-14,
+          "PTE_cancellation_ratio": 0.005023513853057427,
+          "source_power_W": 1.688788019404032e-12,
+          "boundary_power_out_W": {
+            "x_min": 2.819725207090414e-13,
+            "x_max": 2.830379836704135e-13,
+            "y_min": 2.818432764101062e-13,
+            "y_max": 2.8184365972038954e-13,
+            "z_min": 5.60083573840937e-13,
+            "exposed_convection": 7.005050377884994e-18
+          },
+          "numerical_boundary_power_fraction": {
+            "x_min": 0.1669673857637554,
+            "x_max": 0.16759828967184212,
+            "y_min": 0.16689085496329362,
+            "y_max": 0.16689108193688587,
+            "z_min": 0.33164823968764817,
+            "exposed_convection": 4.147974936698719e-06
+          },
+          "energy_balance_relative_error": 1.6381517316635643e-12,
+          "linear_residual_relative": 1.0097559550170549e-11,
+          "interface_diagnostics": {
+            "SiO2_Si": {
+              "face_index": 46,
+              "nonzero_interface_resistance_face_count": 7056,
+              "signed_plus_z_power_W": -1.6885067316655225e-12,
+              "absolute_power_W": 1.6885067316655225e-12,
+              "mean_adjacent_cell_temperature_jump_K": 1.517201260943549e-10,
+              "mean_contact_temperature_jump_K": 2.1450336305428358e-11,
+              "interface_area_m2": 1.5999999999999999e-09,
+              "minimum_G_W_m2K": 1100000000.0,
+              "maximum_G_W_m2K": 1100000000.0
+            },
+            "TaIrTe4_bottom_SiO2": {
+              "face_index": 65,
+              "nonzero_interface_resistance_face_count": 1600,
+              "signed_plus_z_power_W": -1.683120038694098e-12,
+              "absolute_power_W": 1.683120038694098e-12,
+              "mean_adjacent_cell_temperature_jump_K": 1.6160055526812262e-08,
+              "mean_contact_temperature_jump_K": 1.427340602691739e-08,
+              "interface_area_m2": 1.5999999999999996e-11,
+              "minimum_G_W_m2K": 7370000.0,
+              "maximum_G_W_m2K": 7370000.0
+            },
+            "TaIrTe4_top_design_or_air": {
+              "face_index": 69,
+              "nonzero_interface_resistance_face_count": 1600,
+              "signed_plus_z_power_W": 5.667965021197001e-15,
+              "absolute_power_W": 5.668026037504621e-15,
+              "mean_adjacent_cell_temperature_jump_K": 1.589103115496615e-08,
+              "mean_contact_temperature_jump_K": 1.586139573189461e-08,
+              "interface_area_m2": 1.5999999999999996e-11,
+              "minimum_G_W_m2K": 1.0,
+              "maximum_G_W_m2K": 36850.5,
+              "subinterfaces": {
+                "gray_design_contact": {
+                  "face_count": 400,
+                  "area_m2": 4.000000000000001e-12,
+                  "signed_plus_z_power_W": 5.667926063833956e-15,
+                  "absolute_power_W": 5.667926063833956e-15,
+                  "mean_contact_temperature_jump_K": 3.845216526121732e-08,
+                  "minimum_G_W_m2K": 36850.5,
+                  "maximum_G_W_m2K": 36850.5
+                },
+                "air_contact": {
+                  "face_count": 1200,
+                  "area_m2": 1.1999999999999997e-11,
+                  "signed_plus_z_power_W": 3.895736304467487e-20,
+                  "absolute_power_W": 9.997367066544445e-20,
+                  "mean_contact_temperature_jump_K": 8.331139222120371e-09,
+                  "minimum_G_W_m2K": 1.0,
+                  "maximum_G_W_m2K": 1.0
+                }
+              }
+            }
+          },
+          "wall_s": 29.28895026817918,
+          "comparison_to_native": {
+            "TaIrTe4_field_probe_NRMSE": 0.00030550665610533796,
+            "Tmax_relative_difference": 0.0001422690053497531,
+            "TaIrTe4_Tmax_relative_difference": 0.0001422690053497531,
+            "TaIrTe4_volume_average_relative_difference": 0.0003734685316665055,
+            "PTE_raw_relative_difference": 5.322393514844049e-06,
+            "PTE_contribution_normalized_difference": 2.6737117553242088e-08,
+            "maximum_thermal_metric_difference": 0.0003734685316665055,
+            "passed": true
+          },
+          "raw_artifact": {
+            "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/flake_4um_lateral_40um.npz",
+            "byte_size": 4001178,
+            "sha256": "c69e44f1eb2ae1ff7635ac7c42a9ac9facb1f31b4a1bb2dcb7f0b937a11be706"
+          }
+        },
+        {
+          "label": "si_depth_30um",
+          "flake_span_um": 4.0,
+          "controls": {
+            "lateral_domain_um": 32.0,
+            "si_depth_um": 30.0,
+            "core_xy_cell_size_nm": 100.0,
+            "flake_dz_nm": 25.0,
+            "design_dz_nm": 100.0
+          },
+          "grid_shape": [
+            76,
+            76,
+            96
+          ],
+          "total_cells": 554496,
+          "source": {
+            "native_power_W": 1.6887880194040323e-12,
+            "mapped_power_W": 1.6887880194040323e-12,
+            "relative_power_error": 0.0,
+            "outside_TaIrTe4_power_W": 0.0,
+            "outside_TaIrTe4_nonzero_cell_count": 0,
+            "components": {
+              "x": {
+                "native_power_W": 1.6885593488584841e-12,
+                "mapped_power_W": 1.6885593488584841e-12,
+                "exact_zero": false
+              },
+              "y": {
+                "native_power_W": 2.286705455481133e-16,
+                "mapped_power_W": 2.286705455481133e-16,
+                "exact_zero": false
+              },
+              "z": {
+                "native_power_W": 0.0,
+                "mapped_power_W": 0.0,
+                "exact_zero": true
+              }
+            }
+          },
+          "Tmax_DeltaT_K": 1.0699818015256422e-07,
+          "hotspot_m": {
+            "x": 4.9999999999999945e-08,
+            "y": 4.9999999999999945e-08,
+            "z": -1.25e-08,
+            "material_id": 3
+          },
+          "TaIrTe4_Tmax_DeltaT_K": 1.0699818015256422e-07,
+          "TaIrTe4_volume_average_DeltaT_K": 4.08646418133668e-08,
+          "TaIrTe4_hotspot_m": {
+            "x": 4.9999999999999945e-08,
+            "y": 4.9999999999999945e-08,
+            "z": -1.25e-08
+          },
+          "PTE_objective_A": 3.4673227436139304e-16,
+          "PTE_absolute_contribution_scale_A": 6.896420379023878e-14,
+          "PTE_cancellation_ratio": 0.00502771373125705,
+          "source_power_W": 1.6887880194040323e-12,
+          "boundary_power_out_W": {
+            "x_min": 4.0097722387190395e-13,
+            "x_max": 4.02505072908913e-13,
+            "y_min": 4.0065499464776796e-13,
+            "y_max": 4.0065554402551777e-13,
+            "z_min": 8.398841214975131e-14,
+            "exposed_convection": 6.77179325029204e-18
+          },
+          "numerical_boundary_power_fraction": {
+            "x_min": 0.2374349055445144,
+            "x_max": 0.23833960703425391,
+            "y_min": 0.2372441005290633,
+            "y_max": 0.23724442583794964,
+            "z_min": 0.04973295119620196,
+            "exposed_convection": 4.009853914455044e-06
+          },
+          "energy_balance_relative_error": 4.102374867249451e-12,
+          "linear_residual_relative": 9.792873823286384e-12,
+          "interface_diagnostics": {
+            "SiO2_Si": {
+              "face_index": 66,
+              "nonzero_interface_resistance_face_count": 5776,
+              "signed_plus_z_power_W": -1.688413269524757e-12,
+              "absolute_power_W": 1.688413269524757e-12,
+              "mean_adjacent_cell_temperature_jump_K": 1.853417873814692e-10,
+              "mean_contact_temperature_jump_K": 2.6203798883671202e-11,
+              "interface_area_m2": 1.024e-09,
+              "minimum_G_W_m2K": 1100000000.0,
+              "maximum_G_W_m2K": 1100000000.0
+            },
+            "TaIrTe4_bottom_SiO2": {
+              "face_index": 85,
+              "nonzero_interface_resistance_face_count": 1600,
+              "signed_plus_z_power_W": -1.6831200257610149e-12,
+              "absolute_power_W": 1.6831200257610149e-12,
+              "mean_adjacent_cell_temperature_jump_K": 1.6160055402638503e-08,
+              "mean_contact_temperature_jump_K": 1.4273405917240628e-08,
+              "interface_area_m2": 1.5999999999999996e-11,
+              "minimum_G_W_m2K": 7370000.0,
+              "maximum_G_W_m2K": 7370000.0
+            },
+            "TaIrTe4_top_design_or_air": {
+              "face_index": 89,
+              "nonzero_interface_resistance_face_count": 1600,
+              "signed_plus_z_power_W": 5.667977954178335e-15,
+              "absolute_power_W": 5.668038969554868e-15,
+              "mean_adjacent_cell_temperature_jump_K": 1.5891063053531787e-08,
+              "mean_contact_temperature_jump_K": 1.5861427562852748e-08,
+              "interface_area_m2": 1.5999999999999996e-11,
+              "minimum_G_W_m2K": 1.0,
+              "maximum_G_W_m2K": 36850.5,
+              "subinterfaces": {
+                "gray_design_contact": {
+                  "face_count": 400,
+                  "area_m2": 4.000000000000001e-12,
+                  "signed_plus_z_power_W": 5.6679389957258354e-15,
+                  "absolute_power_W": 5.6679389957258354e-15,
+                  "mean_contact_temperature_jump_K": 3.84522529933504e-08,
+                  "minimum_G_W_m2K": 36850.5,
+                  "maximum_G_W_m2K": 36850.5
+                },
+                "air_contact": {
+                  "face_count": 1200,
+                  "area_m2": 1.1999999999999997e-11,
+                  "signed_plus_z_power_W": 3.895845250003127e-20,
+                  "absolute_power_W": 9.997382903224242e-20,
+                  "mean_contact_temperature_jump_K": 8.331152419353536e-09,
+                  "minimum_G_W_m2K": 1.0,
+                  "maximum_G_W_m2K": 1.0
+                }
+              }
+            }
+          },
+          "wall_s": 21.953723840415478,
+          "comparison_to_native": {
+            "TaIrTe4_field_probe_NRMSE": 4.637941052482402e-05,
+            "Tmax_relative_difference": 2.1832598851861228e-05,
+            "TaIrTe4_Tmax_relative_difference": 2.1832598851861228e-05,
+            "TaIrTe4_volume_average_relative_difference": 5.670215109398598e-05,
+            "PTE_raw_relative_difference": 9.127641190415121e-08,
+            "PTE_contribution_normalized_difference": 4.589116694703755e-10,
+            "maximum_thermal_metric_difference": 5.670215109398598e-05,
+            "passed": true
+          },
+          "raw_artifact": {
+            "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/flake_4um_si_depth_30um.npz",
+            "byte_size": 4168686,
+            "sha256": "e454855ab9346d62e92b8b40ff1bc60992a4d6cfca80545ac68652a0faa0a7a5"
+          }
+        },
+        {
+          "label": "refined",
+          "flake_span_um": 4.0,
+          "controls": {
+            "lateral_domain_um": 32.0,
+            "si_depth_um": 20.0,
+            "core_xy_cell_size_nm": 50.0,
+            "flake_dz_nm": 12.5,
+            "design_dz_nm": 50.0
+          },
+          "grid_shape": [
+            120,
+            120,
+            86
+          ],
+          "total_cells": 1238400,
+          "source": {
+            "native_power_W": 1.6887880194040323e-12,
+            "mapped_power_W": 1.6887880194040317e-12,
+            "relative_power_error": 3.587455431046567e-16,
+            "outside_TaIrTe4_power_W": 0.0,
+            "outside_TaIrTe4_nonzero_cell_count": 0,
+            "components": {
+              "x": {
+                "native_power_W": 1.6885593488584841e-12,
+                "mapped_power_W": 1.688559348858484e-12,
+                "exact_zero": false
+              },
+              "y": {
+                "native_power_W": 2.286705455481133e-16,
+                "mapped_power_W": 2.286705455481133e-16,
+                "exact_zero": false
+              },
+              "z": {
+                "native_power_W": 0.0,
+                "mapped_power_W": 0.0,
+                "exact_zero": true
+              }
+            }
+          },
+          "Tmax_DeltaT_K": 1.072998620511132e-07,
+          "hotspot_m": {
+            "x": 2.4999999999999972e-08,
+            "y": 2.4999999999999972e-08,
+            "z": -6.25e-09,
+            "material_id": 3
+          },
+          "TaIrTe4_Tmax_DeltaT_K": 1.072998620511132e-07,
+          "TaIrTe4_volume_average_DeltaT_K": 4.076778839475326e-08,
+          "TaIrTe4_hotspot_m": {
+            "x": 2.4999999999999972e-08,
+            "y": 2.4999999999999972e-08,
+            "z": -6.25e-09
+          },
+          "PTE_objective_A": 3.4514680345556366e-16,
+          "PTE_absolute_contribution_scale_A": 6.780627437910073e-14,
+          "PTE_cancellation_ratio": 0.005090189759223003,
+          "source_power_W": 1.6887880194040317e-12,
+          "boundary_power_out_W": {
+            "x_min": 3.3959219740855924e-13,
+            "x_max": 3.410431869267598e-13,
+            "y_min": 3.3923802730792327e-13,
+            "y_max": 3.392385479625442e-13,
+            "z_min": 3.2966930206269976e-13,
+            "exposed_convection": 6.75773710832311e-18
+          },
+          "numerical_boundary_power_fraction": {
+            "x_min": 0.2010863373654204,
+            "x_max": 0.20194552721135062,
+            "y_min": 0.20087661885926889,
+            "y_max": 0.2008769271600236,
+            "z_min": 0.19521058787416024,
+            "exposed_convection": 4.0015307017087294e-06
+          },
+          "energy_balance_relative_error": 9.25443919362313e-13,
+          "linear_residual_relative": 1.907100736577123e-11,
+          "interface_diagnostics": {
+            "SiO2_Si": {
+              "face_index": 46,
+              "nonzero_interface_resistance_face_count": 14400,
+              "signed_plus_z_power_W": -1.6884209745260588e-12,
+              "absolute_power_W": 1.6884209745260588e-12,
+              "mean_adjacent_cell_temperature_jump_K": 2.9500515605619795e-10,
+              "mean_contact_temperature_jump_K": 4.1708110664932203e-11,
+              "interface_area_m2": 1.024e-09,
+              "minimum_G_W_m2K": 1100000000.0,
+              "maximum_G_W_m2K": 1100000000.0
+            },
+            "TaIrTe4_bottom_SiO2": {
+              "face_index": 65,
+              "nonzero_interface_resistance_face_count": 6400,
+              "signed_plus_z_power_W": -1.6830888432931479e-12,
+              "absolute_power_W": 1.6830888432931479e-12,
+              "mean_adjacent_cell_temperature_jump_K": 1.5502299432571307e-08,
+              "mean_contact_temperature_jump_K": 1.4273141479758719e-08,
+              "interface_area_m2": 1.6e-11,
+              "minimum_G_W_m2K": 7370000.0,
+              "maximum_G_W_m2K": 7370000.0
+            },
+            "TaIrTe4_top_design_or_air": {
+              "face_index": 73,
+              "nonzero_interface_resistance_face_count": 6400,
+              "signed_plus_z_power_W": 5.69916152229999e-15,
+              "absolute_power_W": 5.69922204615997e-15,
+              "mean_adjacent_cell_temperature_jump_K": 1.5953077156147214e-08,
+              "mean_contact_temperature_jump_K": 1.5938177899774437e-08,
+              "interface_area_m2": 1.6e-11,
+              "minimum_G_W_m2K": 1.0,
+              "maximum_G_W_m2K": 36850.5,
+              "subinterfaces": {
+                "gray_design_contact": {
+                  "face_count": 1600,
+                  "area_m2": 4.000000000000001e-12,
+                  "signed_plus_z_power_W": 5.699121690520165e-15,
+                  "absolute_power_W": 5.699121690520165e-15,
+                  "mean_contact_temperature_jump_K": 3.866380164801133e-08,
+                  "minimum_G_W_m2K": 36850.5,
+                  "maximum_G_W_m2K": 36850.5
+                },
+                "air_contact": {
+                  "face_count": 4800,
+                  "area_m2": 1.2e-11,
+                  "signed_plus_z_power_W": 3.983177982433245e-20,
+                  "absolute_power_W": 1.0035563980434569e-19,
+                  "mean_contact_temperature_jump_K": 8.362969983695477e-09,
+                  "minimum_G_W_m2K": 1.0,
+                  "maximum_G_W_m2K": 1.0
+                }
+              }
+            }
+          },
+          "wall_s": 68.54869732260704,
+          "comparison_to_native": {
+            "TaIrTe4_field_probe_NRMSE": 0.0020092225089165215,
+            "Tmax_relative_difference": 0.002833348907282932,
+            "TaIrTe4_Tmax_relative_difference": 0.002833348907282932,
+            "TaIrTe4_volume_average_relative_difference": 0.002313532238130423,
+            "PTE_raw_relative_difference": 0.004572517528068998,
+            "PTE_contribution_normalized_difference": 2.2992740165199543e-05,
+            "maximum_thermal_metric_difference": 0.002833348907282932,
+            "passed": true
+          },
+          "raw_artifact": {
+            "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/flake_4um_refined.npz",
+            "byte_size": 9420346,
+            "sha256": "85c1d71f135cb6829c4f8ed5065513cb53168648bd72450eed051e39c934c4e7"
+          }
+        }
+      ]
+    },
+    {
+      "name": "TaIrTe4_6um_footprint",
+      "flake_span_um": 6.0,
+      "fabrication_truth": false,
+      "cases": [
+        {
+          "label": "native",
+          "flake_span_um": 6.0,
+          "controls": {
+            "lateral_domain_um": 32.0,
+            "si_depth_um": 20.0,
+            "core_xy_cell_size_nm": 100.0,
+            "flake_dz_nm": 25.0,
+            "design_dz_nm": 100.0
+          },
+          "grid_shape": [
+            94,
+            94,
+            76
+          ],
+          "total_cells": 671536,
+          "source": {
+            "native_power_W": 1.6887880194040323e-12,
+            "mapped_power_W": 1.688788019404032e-12,
+            "relative_power_error": 1.1958184770155224e-16,
+            "outside_TaIrTe4_power_W": 0.0,
+            "outside_TaIrTe4_nonzero_cell_count": 0,
+            "components": {
+              "x": {
+                "native_power_W": 1.6885593488584841e-12,
+                "mapped_power_W": 1.688559348858484e-12,
+                "exact_zero": false
+              },
+              "y": {
+                "native_power_W": 2.286705455481133e-16,
+                "mapped_power_W": 2.286705455481133e-16,
+                "exact_zero": false
+              },
+              "z": {
+                "native_power_W": 0.0,
+                "mapped_power_W": 0.0,
+                "exact_zero": true
+              }
+            }
+          },
+          "Tmax_DeltaT_K": 1.0518719644809754e-07,
+          "hotspot_m": {
+            "x": 5.0000000000000157e-08,
+            "y": 5.0000000000000157e-08,
+            "z": -1.25e-08,
+            "material_id": 3
+          },
+          "TaIrTe4_Tmax_DeltaT_K": 1.0518719644809754e-07,
+          "TaIrTe4_volume_average_DeltaT_K": 1.8732954753147718e-08,
+          "TaIrTe4_hotspot_m": {
+            "x": 5.0000000000000157e-08,
+            "y": 5.0000000000000157e-08,
+            "z": -1.25e-08
+          },
+          "PTE_objective_A": 9.511775516780675e-17,
+          "PTE_absolute_contribution_scale_A": 1.8345643034557378e-14,
+          "PTE_cancellation_ratio": 0.005184759944834588,
+          "source_power_W": 1.688788019404032e-12,
+          "boundary_power_out_W": {
+            "x_min": 3.401360826900563e-13,
+            "x_max": 3.418307814702019e-13,
+            "y_min": 3.3884199851921497e-13,
+            "y_max": 3.388425358172162e-13,
+            "z_min": 3.291262711830862e-13,
+            "exposed_convection": 1.0349718346362341e-17
+          },
+          "numerical_boundary_power_fraction": {
+            "x_min": 0.20140839393809132,
+            "x_max": 0.20241189393967451,
+            "y_min": 0.20064211412323452,
+            "y_max": 0.20064243227921089,
+            "z_min": 0.1948890372275579,
+            "exposed_convection": 6.128488731235034e-06
+          },
+          "energy_balance_relative_error": 3.499682354833628e-12,
+          "linear_residual_relative": 1.0053548635968175e-11,
+          "interface_diagnostics": {
+            "SiO2_Si": {
+              "face_index": 46,
+              "nonzero_interface_resistance_face_count": 8836,
+              "signed_plus_z_power_W": -1.6884169610219852e-12,
+              "absolute_power_W": 1.6884169610219852e-12,
+              "mean_adjacent_cell_temperature_jump_K": 1.223420100665055e-10,
+              "mean_contact_temperature_jump_K": 1.7296830208120203e-11,
+              "interface_area_m2": 1.0239999999999998e-09,
+              "minimum_G_W_m2K": 1100000000.0,
+              "maximum_G_W_m2K": 1100000000.0
+            },
+            "TaIrTe4_bottom_SiO2": {
+              "face_index": 65,
+              "nonzero_interface_resistance_face_count": 3600,
+              "signed_plus_z_power_W": -1.6842404223247339e-12,
+              "absolute_power_W": 1.6842404223247339e-12,
+              "mean_adjacent_cell_temperature_jump_K": 7.187027826511193e-09,
+              "mean_contact_temperature_jump_K": 6.347958775534199e-09,
+              "interface_area_m2": 3.6000000000000005e-11,
+              "minimum_G_W_m2K": 7370000.0,
+              "maximum_G_W_m2K": 7370000.0
+            },
+            "TaIrTe4_top_design_or_air": {
+              "face_index": 69,
+              "nonzero_interface_resistance_face_count": 3600,
+              "signed_plus_z_power_W": 4.547595072930362e-15,
+              "absolute_power_W": 4.548473956986631e-15,
+              "mean_adjacent_cell_temperature_jump_K": 1.2528297896542074e-08,
+              "mean_contact_temperature_jump_K": 1.2517715494809571e-08,
+              "interface_area_m2": 3.6000000000000005e-11,
+              "minimum_G_W_m2K": 1.0,
+              "maximum_G_W_m2K": 36850.5,
+              "subinterfaces": {
+                "gray_design_contact": {
+                  "face_count": 400,
+                  "area_m2": 4.0000000000000015e-12,
+                  "signed_plus_z_power_W": 4.547900959923051e-15,
+                  "absolute_power_W": 4.5481467408035804e-15,
+                  "mean_contact_temperature_jump_K": 3.085539369074761e-08,
+                  "minimum_G_W_m2K": 36850.5,
+                  "maximum_G_W_m2K": 36850.5
+                },
+                "air_contact": {
+                  "face_count": 3200,
+                  "area_m2": 3.2000000000000006e-11,
+                  "signed_plus_z_power_W": -3.0588699268816916e-19,
+                  "absolute_power_W": 3.2721618305015415e-19,
+                  "mean_contact_temperature_jump_K": 1.0225505720317316e-08,
+                  "minimum_G_W_m2K": 1.0,
+                  "maximum_G_W_m2K": 1.0
+                }
+              }
+            }
+          },
+          "wall_s": 34.371384136378765,
+          "comparison_to_native": null,
+          "raw_artifact": {
+            "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/flake_6um_native.npz",
+            "byte_size": 5120160,
+            "sha256": "7722d56a04d8a033e244ac811a91b7246a22c476079d7cb1e9c457e94db1f487"
+          }
+        },
+        {
+          "label": "lateral_40um",
+          "flake_span_um": 6.0,
+          "controls": {
+            "lateral_domain_um": 40.0,
+            "si_depth_um": 20.0,
+            "core_xy_cell_size_nm": 100.0,
+            "flake_dz_nm": 25.0,
+            "design_dz_nm": 100.0
+          },
+          "grid_shape": [
+            102,
+            102,
+            76
+          ],
+          "total_cells": 790704,
+          "source": {
+            "native_power_W": 1.6887880194040323e-12,
+            "mapped_power_W": 1.688788019404032e-12,
+            "relative_power_error": 1.1958184770155224e-16,
+            "outside_TaIrTe4_power_W": 0.0,
+            "outside_TaIrTe4_nonzero_cell_count": 0,
+            "components": {
+              "x": {
+                "native_power_W": 1.6885593488584841e-12,
+                "mapped_power_W": 1.6885593488584841e-12,
+                "exact_zero": false
+              },
+              "y": {
+                "native_power_W": 2.286705455481133e-16,
+                "mapped_power_W": 2.286705455481133e-16,
+                "exact_zero": false
+              },
+              "z": {
+                "native_power_W": 0.0,
+                "mapped_power_W": 0.0,
+                "exact_zero": true
+              }
+            }
+          },
+          "Tmax_DeltaT_K": 1.0520243712388058e-07,
+          "hotspot_m": {
+            "x": 5.0000000000000157e-08,
+            "y": 5.0000000000000157e-08,
+            "z": -1.25e-08,
+            "material_id": 3
+          },
+          "TaIrTe4_Tmax_DeltaT_K": 1.0520243712388058e-07,
+          "TaIrTe4_volume_average_DeltaT_K": 1.874831357539748e-08,
+          "TaIrTe4_hotspot_m": {
+            "x": 5.0000000000000157e-08,
+            "y": 5.0000000000000157e-08,
+            "z": -1.25e-08
+          },
+          "PTE_objective_A": 9.512347041949574e-17,
+          "PTE_absolute_contribution_scale_A": 1.8451147306745822e-14,
+          "PTE_cancellation_ratio": 0.005155423066007293,
+          "source_power_W": 1.688788019404032e-12,
+          "boundary_power_out_W": {
+            "x_min": 2.823531370251308e-13,
+            "x_max": 2.835986393472786e-13,
+            "y_min": 2.816518816333608e-13,
+            "y_max": 2.8165227697377786e-13,
+            "z_min": 5.595214915214458e-13,
+            "exposed_convection": 1.059290108687413e-17
+          },
+          "numerical_boundary_power_fraction": {
+            "x_min": 0.16719276414855924,
+            "x_max": 0.16793027667697433,
+            "y_min": 0.1667775223398108,
+            "y_max": 0.16677775643693402,
+            "z_min": 0.33131540790945396,
+            "exposed_convection": 6.272487112155338e-06
+          },
+          "energy_balance_relative_error": 1.1555193943400994e-12,
+          "linear_residual_relative": 1.0074923613274668e-11,
+          "interface_diagnostics": {
+            "SiO2_Si": {
+              "face_index": 46,
+              "nonzero_interface_resistance_face_count": 10404,
+              "signed_plus_z_power_W": -1.6885028961803643e-12,
+              "absolute_power_W": 1.6885028961803643e-12,
+              "mean_adjacent_cell_temperature_jump_K": 1.0390404465240209e-10,
+              "mean_contact_temperature_jump_K": 1.469005305138088e-11,
+              "interface_area_m2": 1.5999999999999996e-09,
+              "minimum_G_W_m2K": 1100000000.0,
+              "maximum_G_W_m2K": 1100000000.0
+            },
+            "TaIrTe4_bottom_SiO2": {
+              "face_index": 65,
+              "nonzero_interface_resistance_face_count": 3600,
+              "signed_plus_z_power_W": -1.6842404372123889e-12,
+              "absolute_power_W": 1.6842404372123889e-12,
+              "mean_adjacent_cell_temperature_jump_K": 7.1870278900401225e-09,
+              "mean_contact_temperature_jump_K": 6.347958831646271e-09,
+              "interface_area_m2": 3.6000000000000005e-11,
+              "minimum_G_W_m2K": 7370000.0,
+              "maximum_G_W_m2K": 7370000.0
+            },
+            "TaIrTe4_top_design_or_air": {
+              "face_index": 69,
+              "nonzero_interface_resistance_face_count": 3600,
+              "signed_plus_z_power_W": 4.547580185490261e-15,
+              "absolute_power_W": 4.548459196932379e-15,
+              "mean_adjacent_cell_temperature_jump_K": 1.2528375504382871e-08,
+              "mean_contact_temperature_jump_K": 1.2517793136771835e-08,
+              "interface_area_m2": 3.6000000000000005e-11,
+              "minimum_G_W_m2K": 1.0,
+              "maximum_G_W_m2K": 36850.5,
+              "subinterfaces": {
+                "gray_design_contact": {
+                  "face_count": 400,
+                  "area_m2": 4.0000000000000015e-12,
+                  "signed_plus_z_power_W": 4.5478860760727e-15,
+                  "absolute_power_W": 4.548131977553593e-15,
+                  "mean_contact_temperature_jump_K": 3.085529353437261e-08,
+                  "minimum_G_W_m2K": 36850.5,
+                  "maximum_G_W_m2K": 36850.5
+                },
+                "air_contact": {
+                  "face_count": 3200,
+                  "area_m2": 3.2000000000000006e-11,
+                  "signed_plus_z_power_W": -3.0589058243896203e-19,
+                  "absolute_power_W": 3.272193787862956e-19,
+                  "mean_contact_temperature_jump_K": 1.0225605587071738e-08,
+                  "minimum_G_W_m2K": 1.0,
+                  "maximum_G_W_m2K": 1.0
+                }
+              }
+            }
+          },
+          "wall_s": 28.20545156300068,
+          "comparison_to_native": {
+            "TaIrTe4_field_probe_NRMSE": 0.0004823143019801163,
+            "Tmax_relative_difference": 0.00014486998780357483,
+            "TaIrTe4_Tmax_relative_difference": 0.00014486998780357483,
+            "TaIrTe4_volume_average_relative_difference": 0.0008192108686466544,
+            "PTE_raw_relative_difference": 6.008245561040661e-05,
+            "PTE_contribution_normalized_difference": 3.097504775162495e-07,
+            "maximum_thermal_metric_difference": 0.0008192108686466544,
+            "passed": true
+          },
+          "raw_artifact": {
+            "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/flake_6um_lateral_40um.npz",
+            "byte_size": 5961934,
+            "sha256": "c0ac363f0c72e1b4f77d8cf32a2784c8635cc190ee7690557afaf1fc0bce0a00"
+          }
+        },
+        {
+          "label": "si_depth_30um",
+          "flake_span_um": 6.0,
+          "controls": {
+            "lateral_domain_um": 32.0,
+            "si_depth_um": 30.0,
+            "core_xy_cell_size_nm": 100.0,
+            "flake_dz_nm": 25.0,
+            "design_dz_nm": 100.0
+          },
+          "grid_shape": [
+            94,
+            94,
+            96
+          ],
+          "total_cells": 848256,
+          "source": {
+            "native_power_W": 1.6887880194040323e-12,
+            "mapped_power_W": 1.688788019404032e-12,
+            "relative_power_error": 1.1958184770155224e-16,
+            "outside_TaIrTe4_power_W": 0.0,
+            "outside_TaIrTe4_nonzero_cell_count": 0,
+            "components": {
+              "x": {
+                "native_power_W": 1.6885593488584841e-12,
+                "mapped_power_W": 1.688559348858484e-12,
+                "exact_zero": false
+              },
+              "y": {
+                "native_power_W": 2.286705455481133e-16,
+                "mapped_power_W": 2.286705455481133e-16,
+                "exact_zero": false
+              },
+              "z": {
+                "native_power_W": 0.0,
+                "mapped_power_W": 0.0,
+                "exact_zero": true
+              }
+            }
+          },
+          "Tmax_DeltaT_K": 1.0518952492245298e-07,
+          "hotspot_m": {
+            "x": 5.0000000000000157e-08,
+            "y": 5.0000000000000157e-08,
+            "z": -1.25e-08,
+            "material_id": 3
+          },
+          "TaIrTe4_Tmax_DeltaT_K": 1.0518952492245298e-07,
+          "TaIrTe4_volume_average_DeltaT_K": 1.8735230426446403e-08,
+          "TaIrTe4_hotspot_m": {
+            "x": 5.0000000000000157e-08,
+            "y": 5.0000000000000157e-08,
+            "z": -1.25e-08
+          },
+          "PTE_objective_A": 9.511784847756417e-17,
+          "PTE_absolute_contribution_scale_A": 1.836094683230048e-14,
+          "PTE_cancellation_ratio": 0.005180443543915358,
+          "source_power_W": 1.688788019404032e-12,
+          "boundary_power_out_W": {
+            "x_min": 4.0143046594789534e-13,
+            "x_max": 4.0321599115017894e-13,
+            "y_min": 4.0015182368962293e-13,
+            "y_max": 4.001523900040083e-13,
+            "z_min": 8.38269892197785e-14,
+            "exposed_convection": 1.0359383028549678e-17
+          },
+          "numerical_boundary_power_fraction": {
+            "x_min": 0.23770328859246578,
+            "x_max": 0.23876057060878048,
+            "y_min": 0.23694615256142998,
+            "y_max": 0.23694648789918632,
+            "z_min": 0.049637366120918354,
+            "exposed_convection": 6.134211582224199e-06
+          },
+          "energy_balance_relative_error": 5.63684913695577e-12,
+          "linear_residual_relative": 1.0144498441926168e-11,
+          "interface_diagnostics": {
+            "SiO2_Si": {
+              "face_index": 66,
+              "nonzero_interface_resistance_face_count": 8836,
+              "signed_plus_z_power_W": -1.6884092406535397e-12,
+              "absolute_power_W": 1.6884092406535397e-12,
+              "mean_adjacent_cell_temperature_jump_K": 1.2234191755168878e-10,
+              "mean_contact_temperature_jump_K": 1.7296817128287072e-11,
+              "interface_area_m2": 1.0239999999999998e-09,
+              "minimum_G_W_m2K": 1100000000.0,
+              "maximum_G_W_m2K": 1100000000.0
+            },
+            "TaIrTe4_bottom_SiO2": {
+              "face_index": 85,
+              "nonzero_interface_resistance_face_count": 3600,
+              "signed_plus_z_power_W": -1.6842404148936482e-12,
+              "absolute_power_W": 1.6842404148936482e-12,
+              "mean_adjacent_cell_temperature_jump_K": 7.187027794801101e-09,
+              "mean_contact_temperature_jump_K": 6.3479587475261874e-09,
+              "interface_area_m2": 3.6000000000000005e-11,
+              "minimum_G_W_m2K": 7370000.0,
+              "maximum_G_W_m2K": 7370000.0
+            },
+            "TaIrTe4_top_design_or_air": {
+              "face_index": 89,
+              "nonzero_interface_resistance_face_count": 3600,
+              "signed_plus_z_power_W": 4.547602504002915e-15,
+              "absolute_power_W": 4.548481324493824e-15,
+              "mean_adjacent_cell_temperature_jump_K": 1.252826067163955e-08,
+              "mean_contact_temperature_jump_K": 1.2517678252872455e-08,
+              "interface_area_m2": 3.6000000000000005e-11,
+              "minimum_G_W_m2K": 1.0,
+              "maximum_G_W_m2K": 36850.5,
+              "subinterfaces": {
+                "gray_design_contact": {
+                  "face_count": 400,
+                  "area_m2": 4.0000000000000015e-12,
+                  "signed_plus_z_power_W": 4.547908389260958e-15,
+                  "absolute_power_W": 4.5481541098514555e-15,
+                  "mean_contact_temperature_jump_K": 3.085544368360982e-08,
+                  "minimum_G_W_m2K": 36850.5,
+                  "maximum_G_W_m2K": 36850.5
+                },
+                "air_contact": {
+                  "face_count": 3200,
+                  "area_m2": 3.2000000000000006e-11,
+                  "signed_plus_z_power_W": -3.0588525804318113e-19,
+                  "absolute_power_W": 3.272146423689691e-19,
+                  "mean_contact_temperature_jump_K": 1.0225457574030282e-08,
+                  "minimum_G_W_m2K": 1.0,
+                  "maximum_G_W_m2K": 1.0
+                }
+              }
+            }
+          },
+          "wall_s": 32.26324764639139,
+          "comparison_to_native": {
+            "TaIrTe4_field_probe_NRMSE": 7.148640229937849e-05,
+            "Tmax_relative_difference": 2.213599079529627e-05,
+            "TaIrTe4_Tmax_relative_difference": 2.213599079529627e-05,
+            "TaIrTe4_volume_average_relative_difference": 0.00012146492180169722,
+            "PTE_raw_relative_difference": 9.809910433531871e-07,
+            "PTE_contribution_normalized_difference": 5.0819687171778095e-09,
+            "maximum_thermal_metric_difference": 0.00012146492180169722,
+            "passed": true
+          },
+          "raw_artifact": {
+            "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/flake_6um_si_depth_30um.npz",
+            "byte_size": 6436274,
+            "sha256": "7a32685fc02cd5386e217a3ad419ec402dd382fa00386dca9c3cbafeb2174727"
+          }
+        },
+        {
+          "label": "refined",
+          "flake_span_um": 6.0,
+          "controls": {
+            "lateral_domain_um": 32.0,
+            "si_depth_um": 20.0,
+            "core_xy_cell_size_nm": 50.0,
+            "flake_dz_nm": 12.5,
+            "design_dz_nm": 50.0
+          },
+          "grid_shape": [
+            158,
+            158,
+            86
+          ],
+          "total_cells": 2146904,
+          "source": {
+            "native_power_W": 1.6887880194040323e-12,
+            "mapped_power_W": 1.688788019404032e-12,
+            "relative_power_error": 1.1958184770155224e-16,
+            "outside_TaIrTe4_power_W": 0.0,
+            "outside_TaIrTe4_nonzero_cell_count": 0,
+            "components": {
+              "x": {
+                "native_power_W": 1.6885593488584841e-12,
+                "mapped_power_W": 1.688559348858484e-12,
+                "exact_zero": false
+              },
+              "y": {
+                "native_power_W": 2.286705455481133e-16,
+                "mapped_power_W": 2.286705455481133e-16,
+                "exact_zero": false
+              },
+              "z": {
+                "native_power_W": 0.0,
+                "mapped_power_W": 0.0,
+                "exact_zero": true
+              }
+            }
+          },
+          "Tmax_DeltaT_K": 1.0551903798405521e-07,
+          "hotspot_m": {
+            "x": 2.5000000000000184e-08,
+            "y": 2.5000000000000184e-08,
+            "z": -6.25e-09,
+            "material_id": 3
+          },
+          "TaIrTe4_Tmax_DeltaT_K": 1.0551903798405521e-07,
+          "TaIrTe4_volume_average_DeltaT_K": 1.8701063669035743e-08,
+          "TaIrTe4_hotspot_m": {
+            "x": 2.5000000000000184e-08,
+            "y": 2.5000000000000184e-08,
+            "z": -6.25e-09
+          },
+          "PTE_objective_A": 9.451895460234034e-17,
+          "PTE_absolute_contribution_scale_A": 1.8053032560971472e-14,
+          "PTE_cancellation_ratio": 0.005235627548065203,
+          "source_power_W": 1.688788019404032e-12,
+          "boundary_power_out_W": {
+            "x_min": 3.4014359001803806e-13,
+            "x_max": 3.4183867919559994e-13,
+            "y_min": 3.388440183022602e-13,
+            "y_max": 3.3884455483350864e-13,
+            "z_min": 3.2910683744481815e-13,
+            "exposed_convection": 1.0339610399407182e-17
+          },
+          "numerical_boundary_power_fraction": {
+            "x_min": 0.2014128393320043,
+            "x_max": 0.2024165705037591,
+            "y_min": 0.2006433101188373,
+            "y_max": 0.2006436278207882,
+            "z_min": 0.1948775297215567,
+            "exposed_convection": 6.1225034051674514e-06
+          },
+          "energy_balance_relative_error": 3.5073355930865273e-13,
+          "linear_residual_relative": 1.953723246545124e-11,
+          "interface_diagnostics": {
+            "SiO2_Si": {
+              "face_index": 46,
+              "nonzero_interface_resistance_face_count": 24964,
+              "signed_plus_z_power_W": -1.6884169391635459e-12,
+              "absolute_power_W": 1.6884169391635459e-12,
+              "mean_adjacent_cell_temperature_jump_K": 1.7286339575104659e-10,
+              "mean_contact_temperature_jump_K": 2.4439591959291604e-11,
+              "interface_area_m2": 1.024e-09,
+              "minimum_G_W_m2K": 1100000000.0,
+              "maximum_G_W_m2K": 1100000000.0
+            },
+            "TaIrTe4_bottom_SiO2": {
+              "face_index": 65,
+              "nonzero_interface_resistance_face_count": 14400,
+              "signed_plus_z_power_W": -1.684216599046483e-12,
+              "absolute_power_W": 1.684216599046483e-12,
+              "mean_adjacent_cell_temperature_jump_K": 6.894527452181284e-09,
+              "mean_contact_temperature_jump_K": 6.3478689847975375e-09,
+              "interface_area_m2": 3.6000000000000005e-11,
+              "minimum_G_W_m2K": 7370000.0,
+              "maximum_G_W_m2K": 7370000.0
+            },
+            "TaIrTe4_top_design_or_air": {
+              "face_index": 73,
+              "nonzero_interface_resistance_face_count": 14400,
+              "signed_plus_z_power_W": 4.571418792620875e-15,
+              "absolute_power_W": 4.573422667829041e-15,
+              "mean_adjacent_cell_temperature_jump_K": 1.2528146432007683e-08,
+              "mean_contact_temperature_jump_K": 1.2522826267366643e-08,
+              "interface_area_m2": 3.6000000000000005e-11,
+              "minimum_G_W_m2K": 1.0,
+              "maximum_G_W_m2K": 36850.5,
+              "subinterfaces": {
+                "gray_design_contact": {
+                  "face_count": 1600,
+                  "area_m2": 4.000000000000002e-12,
+                  "signed_plus_z_power_W": 4.571723126387553e-15,
+                  "absolute_power_W": 4.573095944696588e-15,
+                  "mean_contact_temperature_jump_K": 3.102465329301222e-08,
+                  "minimum_G_W_m2K": 36850.5,
+                  "maximum_G_W_m2K": 36850.5
+                },
+                "air_contact": {
+                  "face_count": 12800,
+                  "area_m2": 3.2000000000000006e-11,
+                  "signed_plus_z_power_W": -3.0433376667756414e-19,
+                  "absolute_power_W": 3.2672313245315026e-19,
+                  "mean_contact_temperature_jump_K": 1.0210097889160944e-08,
+                  "minimum_G_W_m2K": 1.0,
+                  "maximum_G_W_m2K": 1.0
+                }
+              }
+            }
+          },
+          "wall_s": 112.70373525843024,
+          "comparison_to_native": {
+            "TaIrTe4_field_probe_NRMSE": 0.0013900993995246713,
+            "Tmax_relative_difference": 0.0031448498991036816,
+            "TaIrTe4_Tmax_relative_difference": 0.0031448498991036816,
+            "TaIrTe4_volume_average_relative_difference": 0.0017024054417585101,
+            "PTE_raw_relative_difference": 0.006295360570799928,
+            "PTE_contribution_normalized_difference": 3.263993332577448e-05,
+            "maximum_thermal_metric_difference": 0.0031448498991036816,
+            "passed": true
+          },
+          "raw_artifact": {
+            "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/flake_6um_refined.npz",
+            "byte_size": 16308738,
+            "sha256": "bca0a4abc7e20d354c5ed503cbc4face050e2f0f5578f78f9b00436ec6fba5e0"
+          }
+        }
+      ]
+    }
+  ],
+  "forbidden_and_absent": [
+    "Q clipping",
+    "Q smoothing",
+    "empirical gain",
+    "global Q rescaling",
+    "periodic tiling",
+    "source deletion",
+    "optimization",
+    "transient solve"
+  ],
+  "next_gate": "FIXED_LOCAL_Q_PTE_THERMAL_ONLY_AD_FD"
+}

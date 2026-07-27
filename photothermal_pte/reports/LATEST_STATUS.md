@@ -64,6 +64,32 @@
 - The one-cell mapped-hotspot shift is between reflection-symmetric central
   thermal cells; the spatial NRMSE, not a chosen peak cell, is the primary
   convergence gate
+- Fixed-Q thermal domain/depth/mesh status:
+  `VALIDATED_FIXED_Q_THERMAL_DOMAIN_DEPTH_MESH_CONVERGENCE`
+- Named TaIrTe4 footprint scenarios: `4 um / 6 um`; neither is promoted as
+  fabrication truth
+- Native thermal grid:
+  `32 um lateral / 20 um Si / 100-25-100 nm core-flake-design`
+- Independent controls:
+  `40 um lateral`, `30 um Si`, and
+  `50-12.5-50 nm core-flake-design`
+- Worst fixed-Q thermal common-field/scalar convergence metric:
+  `0.314485%` (limit `1%`)
+- Worst Q-mapping / energy-balance / linear-residual errors:
+  `3.58746e-16 / 5.63685e-12 / 1.95372e-11`
+- Native 4 um / 6 um Tmax:
+  `1.069958441e-7 / 1.051871964e-7 K per 1 W/m2`
+- Refined 4 um / 6 um Tmax change:
+  `0.283335% / 0.314485%`
+- Thermal physical law held fixed in this checkpoint:
+  TaIrTe4 `diag(14.4,3.8,1.0) W/(m K)`,
+  bottom `G=7.37e6`, deposited-design endpoint `G=7.37e4`,
+  air `G=1`, SiO2/Si `G=1.1e9`, exposed-SiO2/air
+  `h=10 W/(m2 K)`
+- Lateral/bottom reported powers are numerical truncation-boundary fluxes,
+  not intrinsic physical heat-path fractions
+- Fixed-Q PTE thermal adjoint/FD, 81x81 mapping, combined AD-FD, latent
+  AD-FD, transient, and optimization were not executed by this checkpoint
 - Status: `VALIDATED_MIXED_CPU_TFSF_GPU_FIELDREGION_OPTICAL_ADFD`
 - Protected design/PTE ROI: exactly `x,y=[-1,1] µm`
 - Optical TaIrTe4: 100 nm thick and extended through lateral PML as the
