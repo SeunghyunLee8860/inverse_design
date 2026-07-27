@@ -2,6 +2,17 @@
 
 ## Large-background non-periodic inverse-design AD–FD
 
+- PTE/nodal-contract audit:
+  `AUDITED_PTE_DISCRETE_OPERATOR_AND_81X81_NODAL_CONTRACT`
+- Physical design variables: `81 × 81` nodes on exact
+  `[-1,1] um × [-1,1] um`, `25 nm` spacing; not 81 finite-width pixels
+- Physical density: 2D nodal field extruded from `z=0` to `600 nm`
+- PTE weighting surrogate:
+  `dpsi/dx=dpsi/dy=1/(4 um)`; periodic derivative wrap absent
+- PTE affine analytic / forward-source / temperature-source FD errors:
+  `0 / 0 / 5.42831e-11`
+- PTE meaning: uniform-45-degree surrogate only; not a solved finite-contact
+  terminal weighting potential
 - Status: `VALIDATED_MIXED_CPU_TFSF_GPU_FIELDREGION_OPTICAL_ADFD`
 - Protected design/PTE ROI: exactly `x,y=[-1,1] µm`
 - Optical TaIrTe4: 100 nm thick and extended through lateral PML as the

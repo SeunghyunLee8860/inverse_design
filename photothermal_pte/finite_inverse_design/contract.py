@@ -89,3 +89,42 @@ WEIGHTING_FIELD_Y_M_INV = 1.0 / (4.0e-6)
 
 PRIMARY_FD_STEP = 0.005
 DIAGNOSTIC_FD_STEPS = (0.0025, 0.01)
+
+
+def design_nodal_coordinates_m() -> tuple[np.ndarray, np.ndarray]:
+    """Return the approved finite 81x81 nonperiodic physical-density nodes."""
+
+    x = np.linspace(
+        DESIGN_BOUNDS_M["x"][0],
+        DESIGN_BOUNDS_M["x"][1],
+        DESIGN_NX,
+    )
+    y = np.linspace(
+        DESIGN_BOUNDS_M["y"][0],
+        DESIGN_BOUNDS_M["y"][1],
+        DESIGN_NY,
+    )
+    for coordinate, spacing, label in (
+        (x, DESIGN_DX_M, "x"),
+        (y, DESIGN_DY_M, "y"),
+    ):
+        if not np.allclose(
+            np.diff(coordinate), spacing, rtol=0.0, atol=2.0e-18
+        ):
+            raise RuntimeError(f"{label} nodal spacing contract changed")
+    return x, y
+
+
+def design_extrusion_nodes_m() -> np.ndarray:
+    """Return fixed z samples for the 2D-density 600 nm extrusion."""
+
+    z = np.linspace(
+        DESIGN_BOUNDS_M["z"][0],
+        DESIGN_BOUNDS_M["z"][1],
+        DESIGN_NZ,
+    )
+    if not np.allclose(
+        np.diff(z), DESIGN_DZ_M, rtol=0.0, atol=2.0e-18
+    ):
+        raise RuntimeError("z extrusion spacing contract changed")
+    return z

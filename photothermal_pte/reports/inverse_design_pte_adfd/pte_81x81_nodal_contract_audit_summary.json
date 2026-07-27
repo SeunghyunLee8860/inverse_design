@@ -1,0 +1,60 @@
+{
+  "status": "AUDITED_PTE_DISCRETE_OPERATOR_AND_81X81_NODAL_CONTRACT",
+  "passed": true,
+  "generated_at_utc": "2026-07-27T06:46:35.143650+00:00",
+  "pte_objective": "-integral[sigma_a*S_a*dTdx*dpsidx + sigma_b*S_b*dTdy*dpsidy]dV",
+  "weighting_field_m_inv": {
+    "x": 250000.0,
+    "y": 250000.0
+  },
+  "periodic_axes": [],
+  "forward_and_adjoint_use_identical_derivative_matrices": true,
+  "metrics": {
+    "affine_vs_analytic_relative_error": 0.0,
+    "affine_forward_vs_source_relative_error": 0.0,
+    "random_forward_vs_source_relative_error": 0.0,
+    "temperature_source_FD_relative_error": 5.4283056456927545e-11
+  },
+  "nodal_density": {
+    "shape": [
+      81,
+      81
+    ],
+    "x_bounds_m": [
+      -1e-06,
+      1e-06
+    ],
+    "y_bounds_m": [
+      -1e-06,
+      1e-06
+    ],
+    "dx_m": 2.5e-08,
+    "dy_m": 2.5e-08,
+    "coordinate_role": "nodal physical density on exact finite support; not 81 finite-width pixels",
+    "opposite_edge_wrap": false
+  },
+  "z_extrusion": {
+    "node_count": 13,
+    "bounds_m": [
+      0.0,
+      6e-07
+    ],
+    "two_dimensional_density_repeated_in_z": true
+  },
+  "design_bounds_m": {
+    "x": [
+      -1e-06,
+      1e-06
+    ],
+    "y": [
+      -1e-06,
+      1e-06
+    ],
+    "z": [
+      0.0,
+      6e-07
+    ]
+  },
+  "surrogate_warning": "uniform-45-degree weighting approximation; not a solved finite-contact terminal weighting potential",
+  "optimization_run": false
+}

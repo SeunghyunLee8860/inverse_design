@@ -58,3 +58,25 @@ def test_empty_air_tfsf_pass_does_not_promote_device_source():
     assert "gaussian" not in source
     assert contract.INCIDENT_INTENSITY_W_M2 == 1.0
     assert contract.ANALYSIS_WAVELENGTH_M == 4.0e-6
+
+
+def test_approved_81x81_nodal_density_coordinates():
+    x, y = contract.design_nodal_coordinates_m()
+    z = contract.design_extrusion_nodes_m()
+    assert x.shape == (contract.DESIGN_NX,)
+    assert y.shape == (contract.DESIGN_NY,)
+    assert np.array_equal(
+        x[[0, -1]], np.asarray(contract.DESIGN_BOUNDS_M["x"])
+    )
+    assert np.array_equal(
+        y[[0, -1]], np.asarray(contract.DESIGN_BOUNDS_M["y"])
+    )
+    assert np.allclose(
+        np.diff(x), contract.DESIGN_DX_M, rtol=0.0, atol=2e-18
+    )
+    assert np.allclose(
+        np.diff(y), contract.DESIGN_DY_M, rtol=0.0, atol=2e-18
+    )
+    assert np.array_equal(
+        z[[0, -1]], np.asarray(contract.DESIGN_BOUNDS_M["z"])
+    )
