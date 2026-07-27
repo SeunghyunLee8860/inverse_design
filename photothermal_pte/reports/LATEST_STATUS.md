@@ -90,6 +90,28 @@
   not intrinsic physical heat-path fractions
 - Fixed-Q PTE thermal adjoint/FD, 81x81 mapping, combined AD-FD, latent
   AD-FD, transient, and optimization were not executed by this checkpoint
+- Fixed-local-Q PTE thermal-only AD-FD status:
+  `VALIDATED_FIXED_LOCAL_Q_PTE_THERMAL_ONLY_ADFD`
+- Objective: uniform-45-degree PTE current surrogate; not a solved
+  finite-contact terminal current
+- Thermal density in this operator checkpoint:
+  native `20x20` cell-centered rho at `0.5`; not yet the approved
+  `81x81` nodal mapping
+- The matched native optical Q is bitwise fixed in every baseline/plus/minus
+  thermal solve; Maxwell and optical-Q gradients are absent
+- Thermal adjoint components:
+  bulk design kappa, internal TaIrTe4/design G, and exposed-surface
+  half-cell-kappa contribution
+- Selected FD step / worst conditioned AD-FD error:
+  `0.005 / 2.06536e-6`
+- Worst thermal PTE energy / forward-or-adjoint residual /
+  gradient-component-sum error:
+  `3.46728e-12 / 1.01751e-11 / 4.03793e-16`
+- Raw thermal PTE artifacts, 4 um / 6 um SHA-256:
+  `381e2c11bbf456cd9ed321c9fa83e0efccb20621e7c736f003009e1a702de77a` /
+  `c3f4ac851d73c5f1159e95e40a9e1f15d1177234dbd6ed9a152ad3c071e85688`
+- 81x81 mapping, combined Maxwell-thermal AD-FD, latent AD-FD, transient,
+  and optimization remain unexecuted
 - Status: `VALIDATED_MIXED_CPU_TFSF_GPU_FIELDREGION_OPTICAL_ADFD`
 - Protected design/PTE ROI: exactly `x,y=[-1,1] µm`
 - Optical TaIrTe4: 100 nm thick and extended through lateral PML as the
