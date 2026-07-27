@@ -64,7 +64,7 @@ def main() -> int:
             "committed_to_git": False,
         },
         "next_gate": (
-            "THERMAL_RAW_PTE_CONVERGENCE_AND_CENTRAL_EDGE_ADFD"
+            "CORRECTED_STRONG_AND_FIVE_DIRECTION_PHYSICAL_RHO_PTE_ADFD"
         ),
     }
     summary_path = (
@@ -94,6 +94,7 @@ def main() -> int:
                 "decisive_maximum",
                 "passed_0p5pct",
             ],
+            lineterminator="\n",
         )
         writer.writeheader()
         for comparison in result["comparisons"]:

@@ -1,7 +1,7 @@
 {
   "status": "VALIDATED_OPTICAL_DZ_DOWNSTREAM_PTE_GRADIENT_CONVERGENCE",
   "passed": true,
-  "generated_at_utc": "2026-07-27T18:43:28.741675+00:00",
+  "generated_at_utc": "2026-07-27T21:49:30.965160+00:00",
   "scope": "nonuniform physical-rho optical dz downstream convergence through conservative Q remap, explicit thermal/PTE, component-wise Yee J_c, and combined directional gradient",
   "records": {
     "2.5nm": {
@@ -30,19 +30,19 @@
           "thermal_adjoint_linear_residual_relative": 9.743242028247897e-12,
           "raw_path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_2p5_20260727_1/flake_4um_downstream_raw.npz",
           "gradient": {
-            "optical_directional_gradient_A": -7.584484157588178e-16,
+            "optical_directional_gradient_A": -7.798458252235802e-16,
             "thermal_directional_gradient_A": 1.0220258250929089e-17,
-            "combined_directional_gradient_A": -7.482281575078888e-16,
-            "optical_gradient_L2_A": 6.722506349482073e-17,
+            "combined_directional_gradient_A": -7.696255669726512e-16,
+            "optical_gradient_L2_A": 6.754499362023674e-17,
             "thermal_gradient_L2_A": 5.581660644534583e-19,
-            "combined_gradient_L2_A": 6.694766554517186e-17,
+            "combined_gradient_L2_A": 6.726506763698146e-17,
             "optical_component_directional_xyz_A": {
-              "x": -7.572079475247606e-16,
-              "y": 9.891970418152361e-19,
-              "z": -2.2296652758725455e-18
+              "x": -7.781469954392129e-16,
+              "y": 9.935895953793855e-19,
+              "z": -2.6924193797466935e-18
             },
-            "component_sum_relative_error": 0.0,
-            "JVP_VJP_dot_relative_error": 4.0991858170388017e-16,
+            "component_sum_relative_error": 1.2644500997919155e-16,
+            "JVP_VJP_dot_relative_error": 1.2645813098214975e-16,
             "empirical_normalization": false,
             "gradient_rescaling": false
           }
@@ -57,19 +57,19 @@
           "thermal_adjoint_linear_residual_relative": 9.687424894149903e-12,
           "raw_path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_2p5_20260727_1/flake_6um_downstream_raw.npz",
           "gradient": {
-            "optical_directional_gradient_A": -9.421847743414973e-17,
+            "optical_directional_gradient_A": -9.693606488644878e-17,
             "thermal_directional_gradient_A": 7.316585408538933e-19,
-            "combined_directional_gradient_A": -9.348681889329584e-17,
-            "optical_gradient_L2_A": 1.633231491709213e-17,
+            "combined_directional_gradient_A": -9.620440634559488e-17,
+            "optical_gradient_L2_A": 1.6384220784856668e-17,
             "thermal_gradient_L2_A": 1.0539924846592093e-19,
-            "combined_gradient_L2_A": 1.628045415978031e-17,
+            "combined_gradient_L2_A": 1.6331960831661315e-17,
             "optical_component_directional_xyz_A": {
-              "x": -9.393386137368074e-17,
-              "y": 1.1162565542129937e-19,
-              "z": -3.962417158903041e-19
+              "x": -9.653383592410552e-17,
+              "y": 1.0970161867687892e-19,
+              "z": -5.119305810201501e-19
             },
-            "component_sum_relative_error": 1.3082308247544164e-16,
-            "JVP_VJP_dot_relative_error": 3.24237985263615e-16,
+            "component_sum_relative_error": 1.2715547777307616e-16,
+            "JVP_VJP_dot_relative_error": 6.26360878006704e-16,
             "empirical_normalization": false,
             "gradient_rescaling": false
           }
@@ -102,19 +102,19 @@
           "thermal_adjoint_linear_residual_relative": 9.743242028247897e-12,
           "raw_path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_1p25_20260727_1/flake_4um_downstream_raw.npz",
           "gradient": {
-            "optical_directional_gradient_A": -7.5857489012407e-16,
+            "optical_directional_gradient_A": -7.798085388296298e-16,
             "thermal_directional_gradient_A": 1.0221020784930826e-17,
-            "combined_directional_gradient_A": -7.483538693391392e-16,
-            "optical_gradient_L2_A": 6.722806239221374e-17,
+            "combined_directional_gradient_A": -7.69587518044699e-16,
+            "optical_gradient_L2_A": 6.753543845361701e-17,
             "thermal_gradient_L2_A": 5.5811013295012095e-19,
-            "combined_gradient_L2_A": 6.69507029250554e-17,
+            "combined_gradient_L2_A": 6.725555283921743e-17,
             "optical_component_directional_xyz_A": {
-              "x": -7.573440810099426e-16,
-              "y": 9.895358386976775e-19,
-              "z": -2.2203449528250686e-18
+              "x": -7.781281985541057e-16,
+              "y": 9.937188388179975e-19,
+              "z": -2.6740591143419827e-18
             },
-            "component_sum_relative_error": 0.0,
-            "JVP_VJP_dot_relative_error": 5.467678718571302e-16,
+            "component_sum_relative_error": 1.2645105592280514e-16,
+            "JVP_VJP_dot_relative_error": 3.796671330185124e-16,
             "empirical_normalization": false,
             "gradient_rescaling": false
           }
@@ -129,19 +129,19 @@
           "thermal_adjoint_linear_residual_relative": 9.687424894149903e-12,
           "raw_path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_1p25_20260727_1/flake_6um_downstream_raw.npz",
           "gradient": {
-            "optical_directional_gradient_A": -9.422926300097075e-17,
+            "optical_directional_gradient_A": -9.692480255187755e-17,
             "thermal_directional_gradient_A": 7.317573961555234e-19,
-            "combined_directional_gradient_A": -9.349750560481522e-17,
-            "optical_gradient_L2_A": 1.6332221195731817e-17,
+            "combined_directional_gradient_A": -9.619304515572203e-17,
+            "optical_gradient_L2_A": 1.6381140554233724e-17,
             "thermal_gradient_L2_A": 1.053810844139086e-19,
-            "combined_gradient_L2_A": 1.6280370297313134e-17,
+            "combined_gradient_L2_A": 1.63288904026968e-17,
             "optical_component_directional_xyz_A": {
-              "x": -9.394711506552076e-17,
-              "y": 1.1166082936179661e-19,
-              "z": -3.938087648117812e-19
+              "x": -9.652712747046743e-17,
+              "y": 1.0971960524919893e-19,
+              "z": -5.073946866593251e-19
             },
-            "component_sum_relative_error": 1.3080810834688717e-16,
-            "JVP_VJP_dot_relative_error": 0.0,
+            "component_sum_relative_error": 0.0,
+            "JVP_VJP_dot_relative_error": 1.5665531884428896e-16,
             "empirical_normalization": false,
             "gradient_rescaling": false
           }
@@ -174,19 +174,19 @@
           "thermal_adjoint_linear_residual_relative": 9.743242028247897e-12,
           "raw_path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_0p625_20260727_1/flake_4um_downstream_raw.npz",
           "gradient": {
-            "optical_directional_gradient_A": -7.586013655288807e-16,
+            "optical_directional_gradient_A": -7.798023385938635e-16,
             "thermal_directional_gradient_A": 1.0221231154082787e-17,
-            "combined_directional_gradient_A": -7.483801343747981e-16,
-            "optical_gradient_L2_A": 6.722908645425936e-17,
+            "combined_directional_gradient_A": -7.695811074397807e-16,
+            "optical_gradient_L2_A": 6.75339597763402e-17,
             "thermal_gradient_L2_A": 5.581027617844115e-19,
-            "combined_gradient_L2_A": 6.695173257252572e-17,
+            "combined_gradient_L2_A": 6.725408012236793e-17,
             "optical_component_directional_xyz_A": {
-              "x": -7.573723460745986e-16,
-              "y": 9.895734374065642e-19,
-              "z": -2.2185928916887277e-18
+              "x": -7.78125543861431e-16,
+              "y": 9.937125010113917e-19,
+              "z": -2.6705072334437098e-18
             },
-            "component_sum_relative_error": 1.2998607388991361e-16,
-            "JVP_VJP_dot_relative_error": 9.56908129001907e-16,
+            "component_sum_relative_error": 1.264520613395894e-16,
+            "JVP_VJP_dot_relative_error": 2.531477772308509e-16,
             "empirical_normalization": false,
             "gradient_rescaling": false
           }
@@ -201,19 +201,19 @@
           "thermal_adjoint_linear_residual_relative": 9.687424894149903e-12,
           "raw_path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_0p625_20260727_1/flake_6um_downstream_raw.npz",
           "gradient": {
-            "optical_directional_gradient_A": -9.42316803182717e-17,
+            "optical_directional_gradient_A": -9.692282680858489e-17,
             "thermal_directional_gradient_A": 7.317815380455543e-19,
-            "combined_directional_gradient_A": -9.349989878022613e-17,
-            "optical_gradient_L2_A": 1.63323321699506e-17,
+            "combined_directional_gradient_A": -9.619104527053933e-17,
+            "optical_gradient_L2_A": 1.6380656578712798e-17,
             "thermal_gradient_L2_A": 1.053782080423622e-19,
-            "combined_gradient_L2_A": 1.628048283169004e-17,
+            "combined_gradient_L2_A": 1.6328407977551686e-17,
             "optical_component_directional_xyz_A": {
-              "x": -9.395000688266264e-17,
-              "y": 1.1166398843698129e-19,
-              "z": -3.9333742404603993e-19
+              "x": -9.652604107306084e-17,
+              "y": 1.097188983918074e-19,
+              "z": -5.06504633915851e-19
             },
-            "component_sum_relative_error": 0.0,
-            "JVP_VJP_dot_relative_error": 1.6215089287628019e-16,
+            "component_sum_relative_error": 1.271728451381336e-16,
+            "JVP_VJP_dot_relative_error": 1.56667285018771e-16,
             "empirical_normalization": false,
             "gradient_rescaling": false
           }
@@ -232,8 +232,8 @@
           "Tmax_relative_difference": 0.0001060472889822625,
           "TaIrTe4_temperature_field_NRMSE": 0.00011309911095510614,
           "PTE_objective_relative_difference": 0.00023870472204130588,
-          "optical_directional_gradient_relative_difference": 0.0001667262743583121,
-          "combined_directional_gradient_relative_difference": 0.0001679844741919042,
+          "optical_directional_gradient_relative_difference": 4.781251978845028e-05,
+          "combined_directional_gradient_relative_difference": 4.943823280436152e-05,
           "decisive_maximum": 0.00023870472204130588,
           "passed_0p5pct": true
         },
@@ -242,8 +242,8 @@
           "Tmax_relative_difference": 0.00010831689809017388,
           "TaIrTe4_temperature_field_NRMSE": 0.00011761390863213838,
           "PTE_objective_relative_difference": 0.0002387221865867779,
-          "optical_directional_gradient_relative_difference": 0.0001144609060659822,
-          "combined_directional_gradient_relative_difference": 0.00011429942916919187,
+          "optical_directional_gradient_relative_difference": 0.00011618312115743602,
+          "combined_directional_gradient_relative_difference": 0.00011809427763669242,
           "decisive_maximum": 0.0002387221865867779,
           "passed_0p5pct": true
         }
@@ -259,8 +259,8 @@
           "Tmax_relative_difference": 1.5651387665380435e-05,
           "TaIrTe4_temperature_field_NRMSE": 2.1523177736591985e-05,
           "PTE_objective_relative_difference": 4.155196010238148e-05,
-          "optical_directional_gradient_relative_difference": 3.490028625546425e-05,
-          "combined_directional_gradient_relative_difference": 3.50958482894871e-05,
+          "optical_directional_gradient_relative_difference": 7.950971882969778e-06,
+          "combined_directional_gradient_relative_difference": 8.329923196494118e-06,
           "decisive_maximum": 4.155196010238148e-05,
           "passed_0p5pct": true
         },
@@ -269,8 +269,8 @@
           "Tmax_relative_difference": 1.614303906188879e-05,
           "TaIrTe4_temperature_field_NRMSE": 2.2157902899764776e-05,
           "PTE_objective_relative_difference": 4.150636369927872e-05,
-          "optical_directional_gradient_relative_difference": 2.565291516377401e-05,
-          "combined_directional_gradient_relative_difference": 2.55954866489962e-05,
+          "optical_directional_gradient_relative_difference": 2.038429009548473e-05,
+          "combined_directional_gradient_relative_difference": 2.0790330314008265e-05,
           "decisive_maximum": 4.150636369927872e-05,
           "passed_0p5pct": true
         }
@@ -286,8 +286,8 @@
           "Tmax_relative_difference": 0.00012169701686041222,
           "TaIrTe4_temperature_field_NRMSE": 0.0001339127134313258,
           "PTE_objective_relative_difference": 0.0002802467634946008,
-          "optical_directional_gradient_relative_difference": 0.00020162074181907496,
-          "combined_directional_gradient_relative_difference": 0.00020307442692377007,
+          "optical_directional_gradient_relative_difference": 5.576311151541957e-05,
+          "combined_directional_gradient_relative_difference": 5.77677441841734e-05,
           "decisive_maximum": 0.0002802467634946008,
           "passed_0p5pct": true
         },
@@ -296,8 +296,8 @@
           "Tmax_relative_difference": 0.00012445818858814573,
           "TaIrTe4_temperature_field_NRMSE": 0.00013912058779936973,
           "PTE_objective_relative_difference": 0.00028021864179615706,
-          "optical_directional_gradient_relative_difference": 0.00014011088497384332,
-          "combined_directional_gradient_relative_difference": 0.0001398919902686748,
+          "optical_directional_gradient_relative_difference": 0.00013656504294247488,
+          "combined_directional_gradient_relative_difference": 0.0001388821527316604,
           "decisive_maximum": 0.00028021864179615706,
           "passed_0p5pct": true
         }
@@ -308,50 +308,50 @@
   "production_selection_rule": "coarsest candidate whose 4um and 6um raw PTE, optical directional gradient, and combined directional gradient all differ from the 0.625 nm reference by <0.5%",
   "gates": {
     "convergence_limit": 0.005,
-    "worst_JVP_VJP_dot_relative_error": 9.56908129001907e-16,
+    "worst_JVP_VJP_dot_relative_error": 6.26360878006704e-16,
     "mapping_transpose_limit": 1e-12
   },
   "gradient_artifacts": [
     {
-      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_2.5nm_4um_nodal_gradients.npz",
-      "byte_size": 110150,
-      "sha256": "36dab44b7c9fd35fb0eccb8ee52767b76b233d2bd3ce1d7a1ca28686af373df3"
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_2.5nm_4um_nodal_gradients.npz",
+      "byte_size": 109947,
+      "sha256": "dd84d8775ed42c3e1e2de751a632516d5866195dfd586c63675cef20c60d8be6"
     },
     {
-      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_2.5nm_6um_nodal_gradients.npz",
-      "byte_size": 110041,
-      "sha256": "32d534440e5c52e8b53a91bc2ce9ba421b358b091ed41c1cd03666c0d330ffcd"
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_2.5nm_6um_nodal_gradients.npz",
+      "byte_size": 109734,
+      "sha256": "d90d5640a24e0369c2902a3984227c9b119403df255891248cca285efd25d8bd"
     },
     {
-      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_1.25nm_4um_nodal_gradients.npz",
-      "byte_size": 110139,
-      "sha256": "d99157e8e9ccabe59c0c81638ab3fdf86a5efb61da70e9207d1e6379cecdf023"
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_1.25nm_4um_nodal_gradients.npz",
+      "byte_size": 109911,
+      "sha256": "df06857d5d2d616471e678086232494767cb79914cda8b329f076a39b85d951c"
     },
     {
-      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_1.25nm_6um_nodal_gradients.npz",
-      "byte_size": 110058,
-      "sha256": "e4c40483e4899d6b3290b3accac8cf91f29e15404d7dab4fdfea294792acd016"
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_1.25nm_6um_nodal_gradients.npz",
+      "byte_size": 109758,
+      "sha256": "b53a9d9238f55c8de32e9e714d4e291df764979011022a6bbaaabc83772d3d39"
     },
     {
-      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_0.625nm_4um_nodal_gradients.npz",
-      "byte_size": 110224,
-      "sha256": "0129500f67a87b4c1957c004afbb11235f7ed2d322ccb1a54065e4bd31b6228a"
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_0.625nm_4um_nodal_gradients.npz",
+      "byte_size": 109955,
+      "sha256": "9905920f7fe61a2646a8b9c5cc0671fcc64f8f865fe9cd929a304eb7fcd08168"
     },
     {
-      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_0.625nm_6um_nodal_gradients.npz",
-      "byte_size": 110062,
-      "sha256": "9a57891464950de38e0036390bb313924325ec9cbfee344e7fad4e1cb12d8424"
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_0.625nm_6um_nodal_gradients.npz",
+      "byte_size": 109747,
+      "sha256": "4febac2d28b30341cf8458ebc51e0846921b64bea1097b856ab38185a11c3229"
     }
   ],
   "gray_law_sensitivity_run": false,
   "full_latent_adfd_run": false,
   "optimization_run": false,
-  "published_at_utc": "2026-07-27T18:44:24.568788+00:00",
+  "published_at_utc": "2026-07-27T21:49:52.396630+00:00",
   "raw_result": {
-    "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/optical_dz_downstream_convergence_result.json",
-    "byte_size": 17030,
-    "sha256": "e309444be3a3005166a3dabaa23b15931aadedbd099d490b989ee432358ef525",
+    "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/optical_dz_downstream_convergence_result.json",
+    "byte_size": 17140,
+    "sha256": "fbfdf8e08708956bcd6d6a3a783fad6b5c6ae58dc4f75527dad1ccca4818ef37",
     "committed_to_git": false
   },
-  "next_gate": "THERMAL_RAW_PTE_CONVERGENCE_AND_CENTRAL_EDGE_ADFD"
+  "next_gate": "CORRECTED_STRONG_AND_FIVE_DIRECTION_PHYSICAL_RHO_PTE_ADFD"
 }

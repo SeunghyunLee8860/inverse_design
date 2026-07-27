@@ -11,9 +11,8 @@ from pathlib import Path
 import numpy as np
 from scipy import sparse
 
-from .contract import DESIGN_BOUNDS_M
 from .native_yee_q import EPS0
-from .nonperiodic_yee_metric import clipped_component_yee_volumes
+from .run_v261_large_background_mixed_optical_adfd import component_volumes
 from .run_v261_large_background_tfsf_forward import sha256
 from .yee_material_jacobian import SparseYeeMaterialJacobian
 
@@ -101,9 +100,7 @@ def gradient_record(
     shape = forward.shape[:3]
     if any(operator.component_shapes[c] != shape for c in "xyz"):
         raise ValueError("component-J and PABS field shapes differ")
-    volumes = clipped_component_yee_volumes(
-        component_grid(raw), DESIGN_BOUNDS_M
-    )
+    volumes = component_volumes(component_grid(raw))
     profile_scale = float(raw["profile_scale"][0])
     base_amplitude = float(raw["fieldregion_base_amplitude"][0])
     cotangent = {}

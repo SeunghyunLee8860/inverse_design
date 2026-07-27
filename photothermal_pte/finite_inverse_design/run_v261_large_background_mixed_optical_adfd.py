@@ -20,6 +20,7 @@ import time
 import traceback
 
 import numpy as np
+from scipy.interpolate import interp1d
 
 from .audit_v261_large_background_tfsf_geometry import (
     add_large_background_geometry,
@@ -31,7 +32,6 @@ from .native_yee_q import (
     frequency_slice,
     trapezoid_weights,
 )
-from .nonperiodic_yee_metric import clipped_component_yee_volumes
 from .probe_v261_cpu_tfsf_device import (
     FREQUENCY_HZ,
     PABS_FIELD,
@@ -487,8 +487,106 @@ def invert_fieldregion_linear_collocation(
     }
 
 
+def weighted_fieldregion_source_from_native_multiplier(
+    *,
+    electric: np.ndarray,
+    epsilon: np.ndarray,
+    coefficient: np.ndarray,
+    grid: dict[str, np.ndarray],
+    frequency_hz: float,
+) -> tuple[np.ndarray, dict[str, object]]:
+    """Keep the official FieldRegion E profile and collocate only dF/d|E|2.
+
+    ``getresult(FieldRegion, "E")`` is the supported lumopt source dataset.
+    Its complex E values must not be deconvolved.  The scalar absorption
+    multiplier, however, is defined at each component's native Yee
+    coordinate.  Interpolate that slowly varying scalar onto the common
+    FieldRegion labels before multiplying the unchanged forward E dataset.
+    """
+
+    field = as_e5(electric)
+    permittivity = as_e5(epsilon)
+    if field.shape != permittivity.shape:
+        raise ValueError("E/epsilon shapes differ")
+    if coefficient.shape != (*field.shape[:3], 3):
+        raise ValueError("coefficient shape differs from E")
+    omega = 2.0 * np.pi * float(frequency_hz)
+    source = np.zeros_like(field)
+    records = {}
+    for axis_index, component in enumerate("xyz"):
+        base = np.asarray(grid[component], float)
+        native = base + np.asarray(
+            grid[f"delta_{component}"], float
+        )
+        multiplier_native = (
+            0.5
+            * EPS0
+            * omega
+            * np.imag(permittivity[..., 0, axis_index])
+            * coefficient[..., axis_index]
+        )
+        multiplier_common = interp1d(
+            native,
+            multiplier_native,
+            axis=axis_index,
+            kind="linear",
+            bounds_error=False,
+            fill_value="extrapolate",
+            assume_sorted=True,
+        )(base)
+        source[..., 0, axis_index] = (
+            multiplier_common * field[..., 0, axis_index]
+        )
+        records[component] = {
+            "native_coordinate_bounds_m": [
+                float(native[0]),
+                float(native[-1]),
+            ],
+            "common_coordinate_bounds_m": [
+                float(base[0]),
+                float(base[-1]),
+            ],
+            "maximum_staggering_offset_m": float(
+                np.max(np.abs(native - base))
+            ),
+            "multiplier_native_L2": float(
+                np.linalg.norm(multiplier_native)
+            ),
+            "multiplier_common_L2": float(
+                np.linalg.norm(multiplier_common)
+            ),
+            "interpolation": (
+                "linear native-Yee scalar multiplier to common "
+                "FieldRegion coordinates"
+            ),
+            "boundary_policy": "linear extrapolation; no source deletion",
+        }
+    return source, {
+        "method": (
+            "unchanged official FieldRegion forward-E dataset multiplied "
+            "by coordinate-collocated native scalar absorption multiplier"
+        ),
+        "components": records,
+        "forward_E_deconvolution": False,
+        "empirical_normalization": False,
+        "gradient_rescaling": False,
+        "source_deletion": False,
+    }
+
+
 def import_fieldregion_profile(
     fdtd: object, grid: dict[str, np.ndarray], profile: np.ndarray
+) -> float:
+    return import_named_fieldregion_profile(
+        fdtd, FIELD_REGION, grid, profile
+    )
+
+
+def import_named_fieldregion_profile(
+    fdtd: object,
+    object_name: str,
+    grid: dict[str, np.ndarray],
+    profile: np.ndarray,
 ) -> float:
     value = as_e5(profile)
     expected = (
@@ -511,15 +609,235 @@ def import_fieldregion_profile(
         'ad_ds=rectilineardataset("EM fields",ad_x,ad_y,ad_z);'
         'ad_ds.addparameter("lambda",c/ad_f,"f",ad_f);'
         'ad_ds.addattribute("E",ad_Ex,ad_Ey,ad_Ez);'
-        f'select("{FIELD_REGION}");importdataset(ad_ds);'
+        f'select("{object_name}");importdataset(ad_ds);'
     )
-    imported = as_e5(fdtd.getresult(FIELD_REGION, "source profile")["E"])
+    imported = as_e5(
+        fdtd.getresult(object_name, "source profile")["E"]
+    )
     error = float(np.max(np.abs(imported - value)))
     if error != 0.0:
         raise RuntimeError(
             f"FieldRegion source round-trip error {error:.3e}"
         )
     return error
+
+
+def prepare_component_yee_adjoint_layout(
+    fdtd: object,
+    *,
+    grid: dict[str, np.ndarray],
+    native_source: np.ndarray,
+    template: Path,
+) -> tuple[float, dict[str, object]]:
+    """Create three sources on the exact Ex/Ey/Ez Yee coordinate sets.
+
+    A single FieldRegion vector source has one common rectilinear coordinate
+    set.  Native Yee Ex, Ey, and Ez samples do not share that set.  Three
+    simultaneously active FieldRegion sources avoid any component-to-common
+    interpolation: each source contains one nonzero vector component and is
+    placed directly on that component's physical Yee coordinates.
+    """
+
+    value = as_e5(native_source)
+    expected = (
+        grid["x"].size,
+        grid["y"].size,
+        grid["z"].size,
+        1,
+        3,
+    )
+    if value.shape != expected:
+        raise ValueError(f"native source {value.shape} != {expected}")
+    profile, profile_scale = fieldregion_profile(value)
+    fdtd.switchtolayout()
+    source_count_before = int(fdtd.getnamednumber(SOURCE_NAME))
+    if source_count_before != 1:
+        raise RuntimeError(
+            f"expected exactly one TFSF source, found {source_count_before}"
+        )
+    fdtd.select(SOURCE_NAME)
+    fdtd.delete()
+    if int(fdtd.getnamednumber(SOURCE_NAME)) != 0:
+        raise RuntimeError("TFSF source was not removed")
+
+    original_name = FIELD_REGION
+    records: dict[str, object] = {}
+    base_amplitudes = []
+    for index, component in enumerate("xyz"):
+        name = f"{FIELD_REGION}_adjoint_{component}"
+        if index == 0:
+            if int(fdtd.getnamednumber(original_name)) != 1:
+                raise RuntimeError("original FieldRegion is missing")
+            fdtd.setnamed(original_name, "name", name)
+        else:
+            region = fdtd.addfieldregion()
+            region["name"] = name
+            region["monitor type"] = "3D"
+            set_single_frequency(region)
+        component_grid = {
+            key: np.array(item, copy=True) for key, item in grid.items()
+        }
+        component_grid[component] = (
+            np.asarray(grid[component], float)
+            + np.asarray(grid[f"delta_{component}"], float)
+        )
+        for axis in "xyz":
+            fdtd.setnamed(
+                name, f"{axis} min", float(component_grid[axis][0])
+            )
+            fdtd.setnamed(
+                name, f"{axis} max", float(component_grid[axis][-1])
+            )
+        fdtd.setnamed(name, "source mode", True)
+        try:
+            fdtd.setnamed(name, "nuttall window pulse", False)
+        except Exception:
+            pass
+        component_profile = np.zeros_like(profile)
+        component_profile[..., index] = profile[..., index]
+        roundtrip = import_named_fieldregion_profile(
+            fdtd, name, component_grid, component_profile
+        )
+        base_amplitude = float(fdtd.getnamed(name, "base amplitude"))
+        base_amplitudes.append(base_amplitude)
+        records[component] = {
+            "object_name": name,
+            "array_shape": list(component_profile.shape),
+            "nonzero_vector_component": component,
+            "physical_coordinate_bounds_m": {
+                axis: [
+                    float(component_grid[axis][0]),
+                    float(component_grid[axis][-1]),
+                ]
+                for axis in "xyz"
+            },
+            "staggering_offset_bounds_m": [
+                float(np.min(grid[f"delta_{component}"])),
+                float(np.max(grid[f"delta_{component}"])),
+            ],
+            "source_profile_roundtrip_max_abs_error": roundtrip,
+            "base_amplitude": base_amplitude,
+        }
+    reference_amplitude = base_amplitudes[0]
+    amplitude_error = max(
+        abs(item - reference_amplitude)
+        / max(abs(reference_amplitude), np.finfo(float).tiny)
+        for item in base_amplitudes
+    )
+    if amplitude_error > 1.0e-12:
+        raise RuntimeError(
+            "component FieldRegion base amplitudes differ: "
+            f"{amplitude_error:.3e}"
+        )
+    fdtd.save(str(template))
+    return profile_scale, {
+        "method": (
+            "three simultaneous one-component FieldRegion sources, each "
+            "defined directly on its component-specific native Yee grid"
+        ),
+        "component_sources": records,
+        "number_of_adjoint_sources": 3,
+        "single_adjoint_Maxwell_solve": True,
+        "common_grid_interpolation": False,
+        "source_profile_global_scale": profile_scale,
+        "base_amplitude": reference_amplitude,
+        "base_amplitude_max_relative_difference": amplitude_error,
+        "empirical_normalization": False,
+        "gradient_rescaling": False,
+        "source_deletion": False,
+        "template": {
+            "path": str(template),
+            "byte_size": template.stat().st_size,
+            "sha256": sha256(template),
+        },
+    }
+
+
+def prepare_single_component_yee_adjoint_layout(
+    fdtd: object,
+    *,
+    grid: dict[str, np.ndarray],
+    native_source: np.ndarray,
+    component: str,
+    template: Path,
+) -> tuple[float, dict[str, object]]:
+    """Create one FieldRegion source on one exact Yee component grid."""
+
+    if component not in "xyz":
+        raise ValueError(component)
+    index = "xyz".index(component)
+    value = as_e5(native_source)
+    component_value = np.zeros_like(value)
+    component_value[..., index] = value[..., index]
+    profile, profile_scale = fieldregion_profile(component_value)
+    fdtd.switchtolayout()
+    if int(fdtd.getnamednumber(SOURCE_NAME)) != 1:
+        raise RuntimeError("expected exactly one TFSF source")
+    fdtd.select(SOURCE_NAME)
+    fdtd.delete()
+    if int(fdtd.getnamednumber(SOURCE_NAME)) != 0:
+        raise RuntimeError("TFSF source was not removed")
+    if int(fdtd.getnamednumber(FIELD_REGION)) != 1:
+        raise RuntimeError("expected exactly one original FieldRegion")
+    component_grid = {
+        key: np.array(item, copy=True) for key, item in grid.items()
+    }
+    component_grid[component] = (
+        np.asarray(grid[component], float)
+        + np.asarray(grid[f"delta_{component}"], float)
+    )
+    for axis in "xyz":
+        fdtd.setnamed(
+            FIELD_REGION,
+            f"{axis} min",
+            float(component_grid[axis][0]),
+        )
+        fdtd.setnamed(
+            FIELD_REGION,
+            f"{axis} max",
+            float(component_grid[axis][-1]),
+        )
+    fdtd.setnamed(FIELD_REGION, "source mode", True)
+    try:
+        fdtd.setnamed(FIELD_REGION, "nuttall window pulse", False)
+    except Exception:
+        pass
+    roundtrip = import_named_fieldregion_profile(
+        fdtd, FIELD_REGION, component_grid, profile
+    )
+    base_amplitude = float(
+        fdtd.getnamed(FIELD_REGION, "base amplitude")
+    )
+    fdtd.save(str(template))
+    return profile_scale, {
+        "method": (
+            "one single-component FieldRegion source directly on the "
+            f"native E{component} Yee grid"
+        ),
+        "component": component,
+        "physical_coordinate_bounds_m": {
+            axis: [
+                float(component_grid[axis][0]),
+                float(component_grid[axis][-1]),
+            ]
+            for axis in "xyz"
+        },
+        "staggering_offset_bounds_m": [
+            float(np.min(grid[f"delta_{component}"])),
+            float(np.max(grid[f"delta_{component}"])),
+        ],
+        "source_profile_roundtrip_max_abs_error": roundtrip,
+        "source_profile_scale": profile_scale,
+        "base_amplitude": base_amplitude,
+        "common_grid_interpolation": False,
+        "empirical_normalization": False,
+        "gradient_rescaling": False,
+        "template": {
+            "path": str(template),
+            "byte_size": template.stat().st_size,
+            "sha256": sha256(template),
+        },
+    }
 
 
 def set_gray_density(fdtd: object, rho: float) -> None:
@@ -757,9 +1075,12 @@ def gradient_from_adjoint(
             f"{forward_electric.shape}, {adjoint_electric.shape}, "
             f"{d_epsilon_d_rho.shape}"
         )
-    volumes = clipped_component_yee_volumes(
-        design_grid, design_bounds_m
-    )
+    # J=d(epsilon_Yee)/d(rho) already contains the exact conformal fill and
+    # design-support intersection. The Maxwell bilinear form is integrated
+    # over the complete Yee dual cell. Clipping dV to the nominal design box
+    # here would apply the support fraction a second time.
+    del design_bounds_m
+    volumes = component_volumes(design_grid)
     components = []
     for component in range(3):
         value = np.sum(

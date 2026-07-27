@@ -13,9 +13,7 @@ import traceback
 import numpy as np
 from scipy import sparse
 
-from .contract import DESIGN_BOUNDS_M
 from .native_yee_q import EPS0
-from .nonperiodic_yee_metric import clipped_component_yee_volumes
 from .probe_v261_cpu_tfsf_device import FREQUENCY_HZ, PABS_FIELD
 from .probe_v261_gpu_plane_wave_roi import load_lumapi
 from .run_combined_physical_rho_pte_adfd import (
@@ -158,9 +156,6 @@ def main() -> int:
             component_shapes={component: shape for component in "xyz"},
             matrices=matrices,
         )
-        clipped = clipped_component_yee_volumes(
-            base["grid"], DESIGN_BOUNDS_M
-        )
         full = component_volumes(base["grid"])
         base_amplitude = source_meta["fieldregion_base_amplitude"]
         cotangent_indirect = {}
@@ -171,7 +166,7 @@ def main() -> int:
             adjoint_field = adjoint_electric[..., 0, index]
             cotangent_indirect[component] = (
                 (2.0 * EPS0 / base_amplitude)
-                * clipped[index]
+                * full[index]
                 * forward
                 * (adjoint_field * profile_scale)
             )

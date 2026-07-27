@@ -1,0 +1,47 @@
+{
+  "status": "VALIDATED_FULL_YEE_DUAL_CELL_GRADIENT_MEASURE",
+  "generation_command": "python -m photothermal_pte.finite_inverse_design.diagnose_yee_dual_cell_measure_correction --base-forward <SHA-pinned FSP> --component-split <SHA-pinned JSON> --jacobian-dir <SHA-pinned J directory> --adjoint-4um <SHA-pinned FSP> --adjoint-6um <SHA-pinned FSP> --output-dir <external>",
+  "raw_artifacts": [
+    {
+      "role": "full_yee_measure_raw_result",
+      "path": "/home/seunghyun/tairte4_artifacts/yee_dual_cell_measure_correction_20260727_1/yee_dual_cell_measure_correction.json",
+      "byte_size": 6709,
+      "sha256": "2d25b2ee165543a2dac7eb83e9e47241523c54ae4590969c7629de3769a6291e"
+    },
+    {
+      "role": "immutable_failed_stage10",
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_3/combined_physical_rho_pte_adfd_result.json",
+      "byte_size": 48298,
+      "sha256": "e444b3a567a064fecb6d73344314db814d2a45b78853d39150c700f576bf04c6"
+    },
+    {
+      "role": "failed_inverse_collocation_strong_gate",
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_1/corrected_combined_physical_rho_pte_adfd.json",
+      "byte_size": 89192,
+      "sha256": "97a10ec1abafc255f4b3c19aa2e30fd710b418c4a187a7248d3bcc66b5c96edd"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_2/combined_base_forward_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "24ed40a118435d7b2dc9768917ca1e74002d9aa3993ea7a6b9e01ca421e4d2ef"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/combined_adfd_component_split_20260727_1/combined_adfd_component_split_result.json",
+      "byte_size": 8808,
+      "sha256": "3d5fd0aea47b487ef873a7e20729c652281715d0924f2cb69982c26e057ee3c7"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_3/flake_4um_adjoint_gpu.fsp",
+      "byte_size": 31777060,
+      "sha256": "a87f444da902b0a1bad1684b308c6bb790b0d3388100ba82e61aa3977dced99e",
+      "role": "official_fieldregion_adjoint_4um"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_3/flake_6um_adjoint_gpu.fsp",
+      "byte_size": 31776532,
+      "sha256": "8826dedc85623db9772bcbd57470bfb6633426e44e31740135bcc2d9c88029aa",
+      "role": "official_fieldregion_adjoint_6um"
+    }
+  ],
+  "raw_NPZ_or_FSP_committed_to_git": false
+}

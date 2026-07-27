@@ -14,14 +14,13 @@ import traceback
 import numpy as np
 from scipy import sparse
 
-from .contract import DESIGN_BOUNDS_M, design_nodal_coordinates_m
+from .contract import design_nodal_coordinates_m
 from .explicit_thermal import (
     build_explicit_geometry,
     evaluate_explicit_thermal,
     solve_explicit_forward,
 )
 from .native_yee_q import EPS0
-from .nonperiodic_yee_metric import clipped_component_yee_volumes
 from .probe_v261_cpu_tfsf_device import FREQUENCY_HZ, PABS_FIELD
 from .probe_v261_gpu_plane_wave_roi import load_lumapi
 from .run_combined_physical_rho_pte_adfd import (
@@ -36,8 +35,8 @@ from .run_combined_physical_rho_pte_adfd import (
 )
 from .run_v261_large_background_mixed_optical_adfd import (
     FIELD_REGION,
+    component_volumes,
     fieldregion_profile,
-    invert_fieldregion_linear_collocation,
     monitor_electric,
     prepare_adjoint_layout,
     run_adjoint,
@@ -64,6 +63,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--steps", default="0.01,0.005,0.0025")
     parser.add_argument("--threads", type=int, default=16)
     parser.add_argument("--gpu-device", default="GPU 1")
+    parser.add_argument(
+        "--strong-only",
+        action="store_true",
+        help=(
+            "Run/re-read only the adjoint-aligned direction and publish a "
+            "diagnostic result; never claim the full combined certificate."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -187,10 +194,8 @@ def prepare_corrected_source(
     output: Path,
     label: str,
 ):
-    native_profile, profile_scale = fieldregion_profile(weighted_source)
-    profile, source_grid, collocation = (
-        invert_fieldregion_linear_collocation(grid, native_profile)
-    )
+    profile, profile_scale = fieldregion_profile(weighted_source)
+    source_grid = grid
     fdtd.load(str(base_project))
     bounds_before = {
         axis: [
@@ -199,15 +204,16 @@ def prepare_corrected_source(
         ]
         for axis in "xyz"
     }
-    fdtd.switchtolayout()
-    for axis in "xyz":
-        fdtd.setnamed(
-            FIELD_REGION, f"{axis} max", float(source_grid[axis][-1])
-        )
-    collocation["fieldregion_bounds_before_m"] = bounds_before
-    collocation["fieldregion_bounds_after_m"] = {
-        axis: [bounds_before[axis][0], float(source_grid[axis][-1])]
-        for axis in "xyz"
+    collocation = {
+        "method": (
+            "official FieldRegion forward-E coordinate contract; no "
+            "inverse collocation or source-grid extension"
+        ),
+        "fieldregion_bounds_before_m": bounds_before,
+        "fieldregion_bounds_after_m": bounds_before,
+        "common_grid_interpolation": False,
+        "empirical_normalization": False,
+        "gradient_rescaling": False,
     }
     template = output / f"{label}_adjoint_template.fsp"
     source_meta = prepare_adjoint_layout(
@@ -225,9 +231,9 @@ def component_gradient(
     profile_scale: float,
     base_amplitude: float,
 ):
-    volumes = clipped_component_yee_volumes(
-        base["grid"], DESIGN_BOUNDS_M
-    )
+    # J already encodes conformal fill and exact design support. Use complete
+    # Yee dual-cell volumes; design-box clipping double-counts that support.
+    volumes = component_volumes(base["grid"])
     indirect = {}
     direct = {}
     omega = 2.0 * np.pi * FREQUENCY_HZ
@@ -410,14 +416,25 @@ def main() -> int:
                 )
             )
             adjoint_project = output / f"{label}_adjoint_gpu.fsp"
-            adjoint = run_adjoint(
-                fdtd,
-                template=template,
-                project=adjoint_project,
-                engine="GPU",
-                threads=args.threads,
-                gpu_device=args.gpu_device,
-            )
+            if adjoint_project.is_file():
+                adjoint = {
+                    "engine": "GPU",
+                    "reused_completed": True,
+                    "project": {
+                        "path": str(adjoint_project),
+                        "byte_size": adjoint_project.stat().st_size,
+                        "sha256": sha256(adjoint_project),
+                    },
+                }
+            else:
+                adjoint = run_adjoint(
+                    fdtd,
+                    template=template,
+                    project=adjoint_project,
+                    engine="GPU",
+                    threads=args.threads,
+                    gpu_device=args.gpu_device,
+                )
             fdtd.load(str(adjoint_project))
             adjoint_electric, adjoint_grid = monitor_electric(
                 fdtd, PABS_FIELD
@@ -475,6 +492,10 @@ def main() -> int:
                 "directions": {},
             }
         directions = fixed_directions(gradients)
+        if args.strong_only:
+            directions = {
+                "adjoint_aligned": directions["adjoint_aligned"]
+            }
         min_margin = min(float(np.min(rho)), float(np.min(1.0 - rho)))
         if max(steps) >= min_margin:
             raise RuntimeError("FD step would require clipping")
@@ -717,7 +738,7 @@ def main() -> int:
                 step_convergence
             ),
         }
-        passed = (
+        numerical_gates_passed = (
             gates["worst_strong_direction_relative_error"]
             < gates["strong_direction_limit"]
             and gates["worst_multidirection_normalized_error"]
@@ -736,10 +757,28 @@ def main() -> int:
             < gates["linear_residual_limit"]
             and gates["all_h_to_h_over_2_sequences_converged"]
         )
+        passed = numerical_gates_passed and not args.strong_only
+        if args.strong_only:
+            status = (
+                "DIAGNOSTIC_PASSED_CORRECTED_COMBINED_STRONG_DIRECTION_ADFD"
+                if gates["worst_strong_direction_relative_error"]
+                < gates["strong_direction_limit"]
+                else "DIAGNOSTIC_FAILED_CORRECTED_COMBINED_STRONG_DIRECTION_ADFD"
+            )
+        else:
+            status = STATUS_PASS if passed else STATUS_FAIL
         result.update(
             {
-                "status": STATUS_PASS if passed else STATUS_FAIL,
+                "status": status,
                 "passed": passed,
+                "strong_only_diagnostic": args.strong_only,
+                "strong_direction_gate_passed": (
+                    gates["worst_strong_direction_relative_error"]
+                    < gates["strong_direction_limit"]
+                ),
+                "all_evaluated_numerical_gates_passed": (
+                    numerical_gates_passed
+                ),
                 "generated_at_utc": datetime.now(timezone.utc).isoformat(),
                 "base_forward": compact_forward(base),
                 "base_forward_sha256_required": args.base_sha256,

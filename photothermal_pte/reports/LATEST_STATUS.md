@@ -1,31 +1,33 @@
 # Latest photothermal validation status
 
-## Weighted adjoint-source collocation correction
+## Full Yee dual-cell gradient-measure correction
 
-- Status: `VALIDATED_WEIGHTED_ADJOINT_SOURCE_COLLOCATION_DIAGNOSTIC`
-- Scope: one strong direction only; this is not the final multi-direction
-  combined physical-density AD--FD certificate
-- Preserved Stage 10 selected-step combined errors, 4 um / 6 um:
-  `2.14938% / 2.88520%`
-- Component split thermal-only errors at `h=0.005`, 4 um / 6 um:
-  `1.78582e-6 / 1.29945e-5`
-- Old spatially weighted optical errors at `h=0.005`, 4 um / 6 um:
-  `2.74461% / 2.80498%`
-- Nonuniform scalar-P_Q component-J control errors at `h=0.01/0.005`:
-  `0.204900% / 0.209005%`
-- Naive common-grid source errors at `h=0.01/0.005`:
-  `1.86860% / 1.86974%` (failed)
-- Exact component-collocation source errors at `h=0.01/0.005`:
-  `0.797340% / 0.798496%` (passed strong-direction 1% gate)
-- Maximum collocation reconstruction / native-Q transpose errors:
-  `1.24127e-16 / 8.25101e-16`
+- Status: `VALIDATED_FULL_YEE_DUAL_CELL_GRADIENT_MEASURE`
+- Root cause: `J_c=d epsilon_Yee,c/d rho` already encodes conformal fill and
+  exact design support; clipping `dV_c` again to the nominal design box
+  double-counted the support fraction
+- Correct Maxwell bilinear measure: complete component-specific Yee
+  dual-cell volume
+- Preserved old clipped combined errors at `h=0.005`, 4 um / 6 um:
+  `2.78106% / 2.82633%`
+- Corrected full-Yee combined errors at `h=0.005`, 4 um / 6 um:
+  `8.49222e-6 / 1.56977e-5`
+- Worst corrected optical/combined error across 4/6 um and
+  `h=0.01/0.005`: `1.56977e-5` (limit `1%`)
+- Old clipped computation reproduction error: `0`
+- Active `J_x/J_y/J_z` rows changed by erroneous clipping:
+  `5520 / 5520 / 6161`
+- Exact component-source GPU diagnostic reproduced the official FieldRegion
+  gradient; source staggering/collocation was not the root cause
 - Maximum forward/adjoint coordinate mismatch: `4.23516e-22 m`
-- One-cell positive-axis source-grid extension retains all original native
-  source samples; only the new exterior source samples are zero
-- Empirical normalization, gradient rescaling, source deletion, gray-law
-  sensitivity, latent AD--FD, and optimization: absent
+- Stage 10 failure and inverse-collocation strong failure remain immutable
+  diagnostics; neither is relabeled as passing
+- Empirical normalization, gradient rescaling, gray-law sensitivity,
+  latent AD--FD, and optimization: absent
+- This checkpoint validates the corrected measure on the existing smooth
+  direction only; it is not the final multi-direction combined certificate
 - Next gate:
-  `MULTIDIRECTION_MULTISTEP_COMBINED_PHYSICAL_RHO_PTE_ADFD`
+  `CORRECTED_STRONG_AND_FIVE_DIRECTION_PHYSICAL_RHO_PTE_ADFD`
 
 ## Large-background non-periodic inverse-design AD–FD
 
@@ -233,9 +235,9 @@
 - Direct `2.5 -> 0.625 nm` raw-PTE relative change:
   `0.0280247% / 0.0280219%`
 - Direct `2.5 -> 0.625 nm` optical directional-gradient change:
-  `0.0201621% / 0.0140111%`
+  `0.00557631% / 0.0136565%`
 - Direct `2.5 -> 0.625 nm` combined directional-gradient change:
-  `0.0203074% / 0.0139892%`
+  `0.00577677% / 0.0138882%`
 - Production optical flake mesh fixed at `dz=2.5 nm`: this is the coarsest
   mesh whose raw PTE, optical gradient, and combined gradient are all within
   `0.5%` of the `0.625 nm` reference for both named thermal footprints

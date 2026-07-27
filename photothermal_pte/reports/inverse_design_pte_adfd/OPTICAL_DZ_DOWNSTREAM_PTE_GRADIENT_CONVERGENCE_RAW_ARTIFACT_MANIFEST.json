@@ -1,12 +1,12 @@
 {
   "status": "VALIDATED_OPTICAL_DZ_DOWNSTREAM_PTE_GRADIENT_CONVERGENCE",
-  "generated_at_utc": "2026-07-27T18:44:26.249333+00:00",
+  "generated_at_utc": "2026-07-27T21:49:54.058973+00:00",
   "raw_artifacts_are_not_committed_to_git": true,
   "artifacts": [
     {
-      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/optical_dz_downstream_convergence_result.json",
-      "byte_size": 17030,
-      "sha256": "e309444be3a3005166a3dabaa23b15931aadedbd099d490b989ee432358ef525",
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/optical_dz_downstream_convergence_result.json",
+      "byte_size": 17140,
+      "sha256": "fbfdf8e08708956bcd6d6a3a783fad6b5c6ae58dc4f75527dad1ccca4818ef37",
       "committed_to_git": false
     },
     {
@@ -232,39 +232,39 @@
       "committed_to_git": false
     },
     {
-      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_2.5nm_4um_nodal_gradients.npz",
-      "byte_size": 110150,
-      "sha256": "36dab44b7c9fd35fb0eccb8ee52767b76b233d2bd3ce1d7a1ca28686af373df3",
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_2.5nm_4um_nodal_gradients.npz",
+      "byte_size": 109947,
+      "sha256": "dd84d8775ed42c3e1e2de751a632516d5866195dfd586c63675cef20c60d8be6",
       "committed_to_git": false
     },
     {
-      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_2.5nm_6um_nodal_gradients.npz",
-      "byte_size": 110041,
-      "sha256": "32d534440e5c52e8b53a91bc2ce9ba421b358b091ed41c1cd03666c0d330ffcd",
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_2.5nm_6um_nodal_gradients.npz",
+      "byte_size": 109734,
+      "sha256": "d90d5640a24e0369c2902a3984227c9b119403df255891248cca285efd25d8bd",
       "committed_to_git": false
     },
     {
-      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_1.25nm_4um_nodal_gradients.npz",
-      "byte_size": 110139,
-      "sha256": "d99157e8e9ccabe59c0c81638ab3fdf86a5efb61da70e9207d1e6379cecdf023",
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_1.25nm_4um_nodal_gradients.npz",
+      "byte_size": 109911,
+      "sha256": "df06857d5d2d616471e678086232494767cb79914cda8b329f076a39b85d951c",
       "committed_to_git": false
     },
     {
-      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_1.25nm_6um_nodal_gradients.npz",
-      "byte_size": 110058,
-      "sha256": "e4c40483e4899d6b3290b3accac8cf91f29e15404d7dab4fdfea294792acd016",
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_1.25nm_6um_nodal_gradients.npz",
+      "byte_size": 109758,
+      "sha256": "b53a9d9238f55c8de32e9e714d4e291df764979011022a6bbaaabc83772d3d39",
       "committed_to_git": false
     },
     {
-      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_0.625nm_4um_nodal_gradients.npz",
-      "byte_size": 110224,
-      "sha256": "0129500f67a87b4c1957c004afbb11235f7ed2d322ccb1a54065e4bd31b6228a",
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_0.625nm_4um_nodal_gradients.npz",
+      "byte_size": 109955,
+      "sha256": "9905920f7fe61a2646a8b9c5cc0671fcc64f8f865fe9cd929a304eb7fcd08168",
       "committed_to_git": false
     },
     {
-      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_20260727_1/dz_0.625nm_6um_nodal_gradients.npz",
-      "byte_size": 110062,
-      "sha256": "9a57891464950de38e0036390bb313924325ec9cbfee344e7fad4e1cb12d8424",
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_0.625nm_6um_nodal_gradients.npz",
+      "byte_size": 109747,
+      "sha256": "4febac2d28b30341cf8458ebc51e0846921b64bea1097b856ab38185a11c3229",
       "committed_to_git": false
     }
   ],
