@@ -1,0 +1,50 @@
+{
+  "status": "VALIDATED_COMPONENT_WISE_YEE_MATERIAL_JACOBIAN",
+  "generated_at_utc": "2026-07-27T17:28:55.493406+00:00",
+  "generation_command": "python -m photothermal_pte.finite_inverse_design.summarize_component_yee_material_jacobian --raw-result <external>/component_yee_jacobian_result.json --report-dir photothermal_pte/reports/inverse_design_pte_adfd",
+  "artifacts": [
+    {
+      "role": "raw_result",
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_20260727_1/component_yee_jacobian_result.json",
+      "byte_size": 7298,
+      "sha256": "b992b75f15be5e661fb9e8749f71e847206e7af5f6750e4cfe31a0b13e83102f"
+    },
+    {
+      "role": "forward_FSP",
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_2/combined_base_forward_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "24ed40a118435d7b2dc9768917ca1e74002d9aa3993ea7a6b9e01ca421e4d2ef"
+    },
+    {
+      "role": "adjoint_FSP",
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_3/flake_4um_adjoint_gpu.fsp",
+      "byte_size": 31777060,
+      "sha256": "a87f444da902b0a1bad1684b308c6bb790b0d3388100ba82e61aa3977dced99e"
+    },
+    {
+      "role": "component_coordinates",
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_20260727_1/component_yee_coordinates.npz",
+      "byte_size": 53075,
+      "sha256": "5202ffcc691ea1d05b1022f74febfe484780347d5d3a76a0ce9d69c4c0608de9"
+    },
+    {
+      "role": "J_x",
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_20260727_1/J_x.npz",
+      "byte_size": 108237,
+      "sha256": "e5f33b47378771f22409fe93e1f69863b0892783b2968de89821a29f10ff4e6e"
+    },
+    {
+      "role": "J_y",
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_20260727_1/J_y.npz",
+      "byte_size": 106623,
+      "sha256": "4a86c24aafd84c235463e8005336e687a94520896a92ca11720b7749daefd219"
+    },
+    {
+      "role": "J_z",
+      "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_20260727_1/J_z.npz",
+      "byte_size": 104868,
+      "sha256": "8565dbda23fb188a36e9f9582eaaa2d1cd55c3f7c8b883e9f51a45d606fe70ed"
+    }
+  ],
+  "git_policy": "Raw FSP, sparse-J NPZ, and coordinate NPZ artifacts stay outside Git; only paths, sizes, and SHA-256 values are committed"
+}

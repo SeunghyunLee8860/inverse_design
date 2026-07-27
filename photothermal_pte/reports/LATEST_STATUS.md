@@ -172,9 +172,28 @@
 - Passing diagnostic controls: Q mapping `2.38678e-16`, six-face closure
   `2.02707e-4`, thermal energy `3.16735e-12`, residual `1.02050e-11`,
   and CPU/GPU adjoint field NRMSE `4.00238e-5`
-- Unresolved gate: component-specific nonuniform
+- Previously unresolved gate, now resolved: component-specific nonuniform
   `rho_81x81 -> epsilon_Yee,{x,y,z}` Jacobian and exact E/index Yee
   collocation
+- Component-wise Yee material-Jacobian status:
+  `VALIDATED_COMPONENT_WISE_YEE_MATERIAL_JACOBIAN`
+- Production chain:
+  `rho81x81 -> epsilon -> n -> importnk2(81x81x13) -> v261 conformal
+  index_detail -> epsilon_Yee,{x,y,z}`
+- Explicit sparse `Jx/Jy/Jz` shapes:
+  `194392 x 6561` each; nonzeros `53960 / 53960 / 48749`
+- v261 completed-solver versus layout `index_detail` epsilon error:
+  `0`
+- Maximum forward/adjoint/index component-coordinate mismatch:
+  `4.23516e-22 m`
+- Five-direction worst mapping-only FD / JVP-VJP transpose errors:
+  `2.62931e-10 / 8.81466e-15`
+- Construction used 25-color local layout perturbations, zero Maxwell
+  solves, no per-pixel Maxwell solves, no empirical normalization, and no
+  gradient rescaling
+- The earlier separate `DESIGN_FIELD`/`DESIGN_INDEX` same-array-index
+  multiplication path is removed from the promoted component-Jacobian path
+- Next gate: downstream `dz=2.5/1.25/0.625 nm` PTE and gradient convergence
 - Gray-law sensitivity, filter/projection latent AD-FD, transient, and
   optimization remain unexecuted
 - Status: `VALIDATED_MIXED_CPU_TFSF_GPU_FIELDREGION_OPTICAL_ADFD`
