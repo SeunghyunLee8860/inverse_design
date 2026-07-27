@@ -129,9 +129,26 @@
   `0 / 0`
 - Raw nodal coupling NPZ SHA-256:
   `47f10d96683c11be0168f45b780392947db210afcef918894c33eabf4862c53f`
-- Filter/projection, imported-permittivity equivalence, Maxwell/thermal
-  combined AD-FD, latent AD-FD, transient, and optimization were not run by
-  this checkpoint
+- Imported-permittivity endpoint status:
+  `VALIDATED_IMPORTED_PERMITTIVITY_ENDPOINT_EQUIVALENCE`
+- Imported object: exact `81x81x13` samples on
+  `x,y=[-1,1] um`, `z=[0,600] nm`
+- Scalar/imported endpoint comparison at rho `0/1` and flake
+  `dz=5/2.5 nm`: worst gated relative metric `6.13849e-17`
+- Imported-object readback bounds error: `0 m`
+- Rho1 raw spatial-Q convergence trace:
+  `1.04065%` (5->2.5 nm), `0.530395%` (2.5->1.25 nm), and
+  `0.107027%` (1.25->0.625 nm)
+- Promoted finest-pair mesh metric:
+  `0.107027%` (limit `0.5%`)
+- The two coarse raw-Q failures are preserved in the report; the endpoint
+  representation equivalence is independently exact at both matched
+  5 and 2.5 nm meshes
+- Finest rho1 P_Q / P_six relative changes:
+  `2.30908e-7 / 1.43701e-5`
+- Combined Maxwell/thermal physical-rho AD-FD, gray-law sensitivity,
+  filter/projection latent AD-FD, transient, and optimization remain
+  unexecuted
 - Status: `VALIDATED_MIXED_CPU_TFSF_GPU_FIELDREGION_OPTICAL_ADFD`
 - Protected design/PTE ROI: exactly `x,y=[-1,1] µm`
 - Optical TaIrTe4: 100 nm thick and extended through lateral PML as the

@@ -16,6 +16,10 @@ from .audit_v261_large_background_tfsf_geometry import (
     _mesh_coordinate,
     add_large_background_geometry,
 )
+from .contract import (
+    design_extrusion_nodes_m,
+    design_nodal_coordinates_m,
+)
 from .large_background_contract import (
     Bounds3D,
     baseline_contract,
@@ -58,6 +62,11 @@ def parse_args() -> argparse.Namespace:
         choices=("source-off", "flat", "rho0", "rho1", "gray"),
     )
     parser.add_argument("--gray-rho", type=float, default=0.5)
+    parser.add_argument(
+        "--design-representation",
+        choices=("scalar", "imported-permittivity"),
+        default="scalar",
+    )
     parser.add_argument("--domain-um", type=float, default=6.4)
     parser.add_argument("--tfsf-span-um", type=float, default=2.6)
     parser.add_argument("--pml-layers", type=int, default=24)
@@ -88,25 +97,102 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def configure_design(fdtd: object, case: str, gray_rho: float) -> None:
+def configure_design(
+    fdtd: object,
+    case: str,
+    gray_rho: float,
+    representation: str = "scalar",
+) -> dict[str, object]:
     name = "finite_design_placeholder_air"
     if case == "flat" or case == "source-off":
         fdtd.select(name)
         fdtd.delete()
-        return
+        return {"representation": "absent"}
+    if representation == "imported-permittivity":
+        density = {
+            "rho0": 0.0,
+            "rho1": 1.0,
+            "gray": float(gray_rho),
+        }.get(case)
+        if density is None:
+            raise ValueError(
+                f"imported-permittivity representation invalid for {case}"
+            )
+        x, y = design_nodal_coordinates_m()
+        z = design_extrusion_nodes_m()
+        epsilon = 1.0 + density * (1.38**2 - 1.0)
+        index = np.full(
+            (x.size, y.size, z.size), np.sqrt(epsilon), float
+        )
+        fdtd.select(name)
+        fdtd.delete()
+        imported_name = f"finite_design_{case}_imported_permittivity"
+        fdtd.addimport(
+            {
+                "name": imported_name,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 300.0e-9,
+            }
+        )
+        fdtd.importnk2(index, x, y, z)
+        bounds = {
+            axis: [
+                float(np.asarray(fdtd.getnamed(
+                    imported_name, f"{axis} min"
+                )).reshape(-1)[0]),
+                float(np.asarray(fdtd.getnamed(
+                    imported_name, f"{axis} max"
+                )).reshape(-1)[0]),
+            ]
+            for axis in "xyz"
+        }
+        return {
+            "representation": representation,
+            "object_name": imported_name,
+            "rho": density,
+            "epsilon": epsilon,
+            "index": float(np.sqrt(epsilon)),
+            "sample_shape": list(index.shape),
+            "sample_bounds_m": {
+                "x": [float(x[0]), float(x[-1])],
+                "y": [float(y[0]), float(y[-1])],
+                "z": [float(z[0]), float(z[-1])],
+            },
+            "object_bounds_readback_m": bounds,
+            "spatial_interpolation": "importnk2 piecewise interpolation",
+        }
+    if representation != "scalar":
+        raise ValueError(representation)
     if case == "rho0":
         fdtd.setnamed(name, "index", 1.0)
         fdtd.setnamed(name, "name", "finite_design_rho0_air")
-        return
+        return {
+            "representation": representation,
+            "object_name": "finite_design_rho0_air",
+            "rho": 0.0,
+            "index": 1.0,
+        }
     if case == "rho1":
         fdtd.setnamed(name, "material", SIO2_MATERIAL)
         fdtd.setnamed(name, "name", "finite_design_rho1_SiO2")
-        return
+        return {
+            "representation": representation,
+            "object_name": "finite_design_rho1_SiO2",
+            "rho": 1.0,
+            "index": 1.38,
+        }
     if case == "gray":
         epsilon = 1.0 + gray_rho * (1.38**2 - 1.0)
         fdtd.setnamed(name, "index", float(np.sqrt(epsilon)))
         fdtd.setnamed(name, "name", "finite_design_gray")
-        return
+        return {
+            "representation": representation,
+            "object_name": "finite_design_gray",
+            "rho": float(gray_rho),
+            "epsilon": epsilon,
+            "index": float(np.sqrt(epsilon)),
+        }
     raise ValueError(case)
 
 
@@ -245,7 +331,9 @@ def reference_stack(fdtd: object) -> dict[str, object]:
     return result
 
 
-def save_native_npz(path: Path, q: dict[str, object]) -> None:
+def save_native_npz(
+    path: Path, q: dict[str, object], fdtd: object | None = None
+) -> None:
     arrays: dict[str, np.ndarray] = {}
     for axis in "xyz":
         arrays[f"base_{axis}_m"] = q["base_coordinates"][axis]
@@ -256,6 +344,27 @@ def save_native_npz(path: Path, q: dict[str, object]) -> None:
             arrays[f"Q{component}_{axis}_m"] = q[
                 "native_coordinates"
             ][component][axis]
+    if fdtd is not None:
+        spatial_shape = tuple(
+            np.asarray(q["base_coordinates"][axis]).size for axis in "xyz"
+        )
+        frequency_index = int(q["frequency_index_zero_based"])
+        frequency_count = int(q["frequency_count"])
+        for component in "xyz":
+            arrays[f"E{component}_V_m"] = frequency_slice(
+                np.asarray(fdtd.getdata(PABS_FIELD, f"E{component}", 1)),
+                spatial_shape,
+                frequency_index,
+                frequency_count,
+                f"E{component}",
+            )
+            arrays[f"index_{component}"] = frequency_slice(
+                np.asarray(fdtd.getdata(PABS_INDEX, f"index_{component}", 1)),
+                spatial_shape,
+                frequency_index,
+                frequency_count,
+                f"index_{component}",
+            )
     np.savez_compressed(path, **arrays)
 
 
@@ -283,6 +392,7 @@ def main() -> int:
         "status": "BLOCKED_LARGE_BACKGROUND_FORWARD_NOT_RUN",
         "case": args.case,
         "gray_rho": args.gray_rho if args.case == "gray" else None,
+        "design_representation_requested": args.design_representation,
         "solver_root": str(APPROVED_ROOT),
         "lumapi_path": str(APPROVED_API),
         "engine": "CPU_TFSF_FORWARD",
@@ -311,7 +421,12 @@ def main() -> int:
             ),
             "layers": args.pml_layers,
         }
-        configure_design(fdtd, args.case, args.gray_rho)
+        result["design_representation"] = configure_design(
+            fdtd,
+            args.case,
+            args.gray_rho,
+            args.design_representation,
+        )
         simulation_time_ps = (
             min(args.simulation_time_ps, 0.1)
             if args.case == "source-off"
@@ -441,7 +556,7 @@ def main() -> int:
             }
             result["six_face"]["closure_relative_error"] = closure
             result["reference_corner_stack"] = reference_stack(fdtd)
-            save_native_npz(npz_path, q)
+            save_native_npz(npz_path, q, fdtd)
             result["passed"] = bool(
                 np.isfinite(p_q)
                 and np.isfinite(p_six)
