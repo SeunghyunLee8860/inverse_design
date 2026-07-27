@@ -49,6 +49,21 @@
   `711c4c93589603f32bfc0525e1b63b36fd773a0ace561509ed0391cb2604ddb2`
 - Matched native/complete wall time:
   `583.974 / 590.597 s`, contended reference only
+- Support-remap spatial-deposition status:
+  `VALIDATED_SUPPORT_REMAP_SPATIAL_CONVERGENCE`
+- Matched optical flake `dz=5 -> 2.5 nm` mapped-power difference /
+  volume-weighted spatial-Q NRMSE:
+  `0.0179774% / 0.488139%`
+- Lateral-integrated / depth-integrated energy NRMSE:
+  `0.165346% / 0.0230061%`
+- Support-remap coarse/fine exact-TaIrTe4 exterior nonzero counts:
+  `0 / 0`
+- Coarse/fine mapping SHA-256:
+  `9971edd6bc61c0028d7fad7a86958099b6bcbe698aa1eedbf6a80a0c903eb290` /
+  `d6691afe8034ffca10e058b9bb008d63f449d1de351b6d7bf70e54cd1a3c8145`
+- The one-cell mapped-hotspot shift is between reflection-symmetric central
+  thermal cells; the spatial NRMSE, not a chosen peak cell, is the primary
+  convergence gate
 - Status: `VALIDATED_MIXED_CPU_TFSF_GPU_FIELDREGION_OPTICAL_ADFD`
 - Protected design/PTE ROI: exactly `x,y=[-1,1] µm`
 - Optical TaIrTe4: 100 nm thick and extended through lateral PML as the

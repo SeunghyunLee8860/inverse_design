@@ -43,7 +43,15 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--expected-input-sha256")
     parser.add_argument("--output-dir", required=True)
-    parser.add_argument("--thermal-cell-size-nm", type=float, default=100.0)
+    parser.add_argument(
+        "--thermal-core-xy-cell-size-nm",
+        "--thermal-cell-size-nm",
+        dest="thermal_core_xy_cell_size_nm",
+        type=float,
+        default=100.0,
+    )
+    parser.add_argument("--thermal-flake-dz-nm", type=float, default=25.0)
+    parser.add_argument("--thermal-design-dz-nm", type=float, default=100.0)
     parser.add_argument("--thermal-domain-um", type=float, default=32.0)
     parser.add_argument("--thermal-si-depth-um", type=float, default=20.0)
     parser.add_argument("--thermal-flake-span-um", type=float, default=4.0)
@@ -136,17 +144,27 @@ def main() -> int:
     fdtd = None
     started = time.monotonic()
     try:
-        cell_size_m = args.thermal_cell_size_nm * 1.0e-9
-        design_cells = int(round(2.0e-6 / cell_size_m))
-        if not np.isclose(design_cells * cell_size_m, 2.0e-6):
-            raise ValueError("thermal cell size must divide the design span")
+        core_xy_cell_size_m = (
+            args.thermal_core_xy_cell_size_nm * 1.0e-9
+        )
+        flake_dz_m = args.thermal_flake_dz_nm * 1.0e-9
+        design_dz_m = args.thermal_design_dz_nm * 1.0e-9
+        design_cells = int(round(2.0e-6 / core_xy_cell_size_m))
+        if not np.isclose(
+            design_cells * core_xy_cell_size_m, 2.0e-6
+        ):
+            raise ValueError(
+                "thermal core xy cell size must divide the design span"
+            )
         rho = np.full((design_cells, design_cells), 0.5)
         geometry = build_explicit_geometry(
             rho,
             lateral_domain_m=args.thermal_domain_um * 1.0e-6,
             si_depth_m=args.thermal_si_depth_um * 1.0e-6,
             flake_span_m=args.thermal_flake_span_um * 1.0e-6,
-            cell_size_m=cell_size_m,
+            core_xy_cell_size_m=core_xy_cell_size_m,
+            flake_dz_m=flake_dz_m,
+            design_dz_m=design_dz_m,
         )
         target_edges = (
             geometry.x_edges_m,
@@ -400,7 +418,9 @@ def main() -> int:
                     "lateral_domain_m": geometry.lateral_domain_m,
                     "si_depth_m": geometry.si_depth_m,
                     "flake_span_m": geometry.flake_span_m,
-                    "core_cell_size_m": geometry.cell_size_m,
+                    "core_xy_cell_size_m": geometry.core_xy_cell_size_m,
+                    "flake_dz_m": geometry.flake_dz_m,
+                    "design_dz_m": geometry.design_dz_m,
                     "embedding_note": (
                         "target-only cells receive exact zero; every nonzero "
                         "native source control volume is covered once"
