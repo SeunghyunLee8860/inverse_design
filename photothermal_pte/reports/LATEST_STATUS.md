@@ -146,6 +146,21 @@
   5 and 2.5 nm meshes
 - Finest rho1 P_Q / P_six relative changes:
   `2.30908e-7 / 1.43701e-5`
+- Uniform rho=0.5 representation status:
+  `VALIDATED_RHO05_IMPORTED_PERMITTIVITY_EQUIVALENCE`
+- Matched scalar/imported `P_Q`, `P_six`, complex-field NRMSE, and
+  spatial-Q NRMSE differences:
+  `0 / 0 / 0 / 0`
+- Matched scalar/imported index NRMSE:
+  `4.15226e-17`
+- Imported rho=0.5 object:
+  exact `81x81x13`, exact `x,y=[-1,1] um`, `z=[0,600] nm`,
+  bounds error `0 m`
+- Imported rho=0.5 `P_Q / P_six / closure`:
+  `1.6887880194040323e-12 W / 1.6893345559747856e-12 W / 3.23522e-4`
+- The scalar completed FSP was SHA-pinned and re-read to extract the
+  missing native E/index arrays; no additional scalar electromagnetic solve
+  was run
 - Combined physical-rho PTE AD-FD diagnostic status:
   `DIAGNOSTIC_FAILED_COMBINED_PHYSICAL_RHO_PTE_ADFD`
 - Combined 4 um / 6 um selected-step errors at `h=0.005`:

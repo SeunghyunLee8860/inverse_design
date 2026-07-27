@@ -1,0 +1,109 @@
+{
+  "status": "VALIDATED_RHO05_IMPORTED_PERMITTIVITY_EQUIVALENCE",
+  "passed": true,
+  "generated_at_utc": "2026-07-27T17:11:02.911814+00:00",
+  "scope": "uniform rho=0.5 scalar-index versus 81x81x13 imported-permittivity v261 CPU-TFSF equivalence",
+  "rho": 0.5,
+  "epsilon_law": "epsilon=1+rho*(1.38^2-1)",
+  "expected_epsilon": 1.4522,
+  "imported_epsilon_absolute_error": 0.0,
+  "imported_sample_shape": [
+    81,
+    81,
+    13
+  ],
+  "imported_object_bounds_readback_m": {
+    "x": [
+      -1e-06,
+      1e-06
+    ],
+    "y": [
+      -1e-06,
+      1e-06
+    ],
+    "z": [
+      0.0,
+      6e-07
+    ]
+  },
+  "imported_bounds_max_abs_error_m": 0.0,
+  "exact_forward_contract_match": true,
+  "scalar_representation_provenance": "legacy matched-rho0.5 checkpoint predating the explicit design_representation_requested metadata field; its case, rho, geometry, source, mesh, PML, closure, native NPZ, FSP SHA and generation manifest are retained",
+  "power": {
+    "P_Q_reference_W": 1.6887880194040323e-12,
+    "P_Q_candidate_W": 1.6887880194040323e-12,
+    "P_Q_relative_difference": 0.0,
+    "P_six_reference_W": 1.6893345559747856e-12,
+    "P_six_candidate_W": 1.6893345559747856e-12,
+    "P_six_relative_difference": 0.0,
+    "Q_components": {
+      "x": {
+        "reference_W": 1.6885593488584841e-12,
+        "candidate_W": 1.6885593488584841e-12,
+        "relative_difference": 0.0,
+        "maximum_fraction_of_total_P_Q": 0.9998645948793332,
+        "low_power_diagnostic": false
+      },
+      "y": {
+        "reference_W": 2.286705455481133e-16,
+        "candidate_W": 2.286705455481133e-16,
+        "relative_difference": 0.0,
+        "maximum_fraction_of_total_P_Q": 0.00013540512066683797,
+        "low_power_diagnostic": false
+      },
+      "z": {
+        "reference_W": 0.0,
+        "candidate_W": 0.0,
+        "relative_difference": 0.0,
+        "maximum_fraction_of_total_P_Q": 0.0,
+        "low_power_diagnostic": true
+      }
+    }
+  },
+  "spatial": {
+    "all_component_coordinates_equal": true,
+    "common_grid": "reference native Yee coordinates; candidate is used directly when identical, otherwise trilinearly interpolated",
+    "combined_complex_field_NRMSE": 0.0,
+    "combined_spatial_Q_NRMSE": 0.0,
+    "combined_index_NRMSE": 4.152262159842862e-17,
+    "components": {
+      "x": {
+        "coordinate_equal": true,
+        "complex_field_NRMSE": 0.0,
+        "spatial_Q_NRMSE": 0.0,
+        "index_NRMSE": 3.2915242040912727e-17
+      },
+      "y": {
+        "coordinate_equal": true,
+        "complex_field_NRMSE": 0.0,
+        "spatial_Q_NRMSE": 0.0,
+        "index_NRMSE": 5.106713562671771e-17
+      },
+      "z": {
+        "coordinate_equal": true,
+        "complex_field_NRMSE": 0.0,
+        "spatial_Q_NRMSE": 0.0,
+        "index_NRMSE": 4.9377298231363084e-17
+      }
+    }
+  },
+  "gated_metrics": {
+    "P_Q": 0.0,
+    "P_six": 0.0,
+    "complex_field": 0.0,
+    "spatial_Q": 0.0,
+    "index": 4.152262159842862e-17,
+    "major_Q_component": 0.0
+  },
+  "maximum_gated_metric": 4.152262159842862e-17,
+  "gates": {
+    "metric_limit": 0.005,
+    "bounds_limit_m": 2e-18,
+    "contract_must_match_exactly": true
+  },
+  "next_gate": "COMPONENT_WISE_YEE_MATERIAL_JACOBIAN_AND_COLLOCATION",
+  "thermal_run": false,
+  "adjoint_run": false,
+  "gradient_run": false,
+  "optimization_run": false
+}

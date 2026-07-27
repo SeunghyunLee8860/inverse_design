@@ -1,0 +1,44 @@
+{
+  "status": "VALIDATED_RHO05_IMPORTED_PERMITTIVITY_EQUIVALENCE",
+  "generated_at_utc": "2026-07-27T17:11:02.911814+00:00",
+  "generation_command": "python -m photothermal_pte.finite_inverse_design.summarize_rho05_imported_permittivity_equivalence --scalar-result <external>/case_result.json --scalar-npz <SHA-pinned completed-FSP extraction> --imported-result <external>/case_result.json --imported-npz <external>/large_background_gray_native_q.npz --report-dir photothermal_pte/reports/inverse_design_pte_adfd",
+  "artifacts": [
+    {
+      "role": "rho05_scalar_result",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz2p5_20260727_2/case_result.json",
+      "byte_size": 29519,
+      "sha256": "aaac6c4a60771360baee0a0910a6bb017998fb5e2ae05a1999152314ab8ed990"
+    },
+    {
+      "role": "rho05_scalar_npz",
+      "path": "/home/seunghyun/tairte4_artifacts/rho05_imported_equivalence_dz2p5_20260727_1/scalar_completed_native_yee_fields.npz",
+      "byte_size": 10101102,
+      "sha256": "d839348749ee92950fd11d74d139fc71253381a504e43fba27e8558f530fca67"
+    },
+    {
+      "role": "rho05_scalar_FSP",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz2p5_20260727_2/large_background_gray.fsp",
+      "byte_size": 103899092,
+      "sha256": "6ae319a6d725b34243d08d028489d12a044472309f7294319d0f91f159b28fff"
+    },
+    {
+      "role": "rho05_imported_result",
+      "path": "/home/seunghyun/tairte4_artifacts/rho05_imported_equivalence_dz2p5_20260727_1/case_result.json",
+      "byte_size": 30242,
+      "sha256": "e64ec6b70dfe393d7fb7fe7e824a5491b46fdefc200a6093b2d7b12f2ead8bdc"
+    },
+    {
+      "role": "rho05_imported_npz",
+      "path": "/home/seunghyun/tairte4_artifacts/rho05_imported_equivalence_dz2p5_20260727_1/large_background_gray_native_q.npz",
+      "byte_size": 10113236,
+      "sha256": "e043737e08361acd293a3f521c0890c8aead30cae540e5d86c648e6cefe19798"
+    },
+    {
+      "role": "rho05_imported_FSP",
+      "path": "/home/seunghyun/tairte4_artifacts/rho05_imported_equivalence_dz2p5_20260727_1/large_background_gray.fsp",
+      "byte_size": 104583148,
+      "sha256": "6991f7b505ade2493d813ddb3091a9a3a3fb506b178739e77719e6d80db53e9b"
+    }
+  ],
+  "git_policy": "Raw FSP and native field/Q NPZ artifacts stay outside Git; only paths, sizes, and SHA-256 values are committed"
+}
