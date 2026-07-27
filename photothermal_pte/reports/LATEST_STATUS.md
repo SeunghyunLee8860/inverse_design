@@ -35,6 +35,20 @@
 - A separate pre-existing GPU FDTD optimization process was observed and was
   neither started nor modified by this checkpoint; it must not overlap the
   timed matched CPU-TFSF gate
+- Matched uniform-rho optical forward:
+  `VALIDATED_MATCHED_RHO05_CPU_TFSF_FORWARD`
+- Matched case: rho `0.5`, PML `32`, x/y stabilized and z standard, flake
+  `dz=2.5 nm`
+- PML-32 outer x/y expansion `6.4 -> 7.2 um` preserved realized PML-inner
+  x/y at approximately `[-2,2] um`; ROI/TFSF/Q bounds were unchanged
+- Matched `P_Q / P_six / closure`:
+  `1.6887880194040323e-12 W / 1.6893345559747856e-12 W / 3.23522e-4`
+- Matched `Qx / Qy / Qz`:
+  `1.6885593488584841e-12 / 2.286705455481133e-16 / 0 W`
+- Matched native Q SHA-256:
+  `711c4c93589603f32bfc0525e1b63b36fd773a0ace561509ed0391cb2604ddb2`
+- Matched native/complete wall time:
+  `583.974 / 590.597 s`, contended reference only
 - Status: `VALIDATED_MIXED_CPU_TFSF_GPU_FIELDREGION_OPTICAL_ADFD`
 - Protected design/PTE ROI: exactly `x,y=[-1,1] µm`
 - Optical TaIrTe4: 100 nm thick and extended through lateral PML as the

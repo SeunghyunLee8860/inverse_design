@@ -61,6 +61,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--domain-um", type=float, default=6.4)
     parser.add_argument("--tfsf-span-um", type=float, default=2.6)
     parser.add_argument("--pml-layers", type=int, default=24)
+    parser.add_argument(
+        "--pml-profile",
+        choices=("standard", "stabilized-xy"),
+        default="standard",
+    )
     parser.add_argument("--transverse-mesh-nm", type=float, default=50.0)
     parser.add_argument("--flake-dz-nm", type=float, default=5.0)
     parser.add_argument("--z-min-um", type=float, default=-3.2)
@@ -103,6 +108,29 @@ def configure_design(fdtd: object, case: str, gray_rho: float) -> None:
         fdtd.setnamed(name, "name", "finite_design_gray")
         return
     raise ValueError(case)
+
+
+def configure_pml_profile(fdtd: object, profile: str) -> list:
+    """Set and read back the six-face PML profile matrix.
+
+    The large layered background crosses only the transverse PML faces.
+    Stabilized x/y PML therefore retains standard PML on the propagation-axis
+    z faces.  v261 enum values are standard=1 and stabilized=2.
+    """
+
+    if profile == "standard":
+        fdtd.setnamed("FDTD", "same settings on all boundaries", 1)
+        fdtd.setnamed("FDTD", "pml profile", 1)
+    elif profile == "stabilized-xy":
+        fdtd.setnamed("FDTD", "same settings on all boundaries", 0)
+        fdtd.setnamed(
+            "FDTD",
+            "pml profile",
+            np.asarray([[2], [2], [2], [2], [1], [1]], float),
+        )
+    else:
+        raise ValueError(profile)
+    return np.asarray(fdtd.getnamed("FDTD", "pml profile")).tolist()
 
 
 def add_monitors(fdtd: object, contract: object) -> dict[str, float]:
@@ -276,6 +304,13 @@ def main() -> int:
         lumapi = load_lumapi()
         fdtd = lumapi.FDTD(hide=True, serverArgs={"platform": "offscreen"})
         add_large_background_geometry(fdtd, contract)
+        result["pml"] = {
+            "profile": args.pml_profile,
+            "profile_matrix_readback": configure_pml_profile(
+                fdtd, args.pml_profile
+            ),
+            "layers": args.pml_layers,
+        }
         configure_design(fdtd, args.case, args.gray_rho)
         simulation_time_ps = (
             min(args.simulation_time_ps, 0.1)
