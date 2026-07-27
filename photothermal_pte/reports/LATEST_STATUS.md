@@ -1,5 +1,66 @@
 # Latest photothermal validation status
 
+## Large-background non-periodic inverse-design AD–FD
+
+- Status: `VALIDATED_MIXED_CPU_TFSF_GPU_FIELDREGION_OPTICAL_ADFD`
+- Protected design/PTE ROI: exactly `x,y=[-1,1] µm`
+- Optical TaIrTe4: 100 nm thick and extended through lateral PML as the
+  large-background model; this does not set the finite thermal flake footprint
+- Inverse-designed material: actual SiO2, `2 µm × 2 µm × 600 nm`
+- Optical boundaries: six PML faces; periodic boundaries forbidden
+- Requested illumination: normal-incidence ideal plane wave; Gaussian and
+  periodic/Bloch boundaries are not substituted
+- Installed v261 GPU TFSF probe:
+  `BLOCKED_GPU_TFSF_UNSUPPORTED`
+- Explicit engine error:
+  `GPU simulation does not support the use of TFSF sources`
+- Bloch/periodic source crossing transverse PML: rejected as an invalid
+  source/boundary pairing
+- Official all-PML Diffracting source: executed through a `24 µm` domain and
+  `20 µm` aperture; best displayed ROI intensity RMS `4.974%`,
+  peak-to-peak `15.184%`, max phase `2.027°`, and `Ez/Ex=6.466%`; rejected
+- GPU source-integrity status:
+  `BLOCKED_GPU_ONLY_SIX_PML_IDEAL_PLANE_WAVE`
+- User-authorized CPU TFSF source gate: six PML, `4×4 µm` lateral domain,
+  `2.6 µm` TFSF span, exact central `2×2 µm` ROI
+- CPU TFSF PML-24/PML-32 status:
+  `VALIDATED_CPU_TFSF_4UM_DOMAIN_2UM_ROI_SOURCE_GATE`
+- PML-24 ROI mean-|E|² error / spatial RMS / peak-to-peak:
+  `0.0144312% / 0.00000856% / 0.00005593%`
+- PML-24 closed-box energy error: `0.00007052%`
+- PML-24 native engine / Python run / complete-session wall times:
+  `3.270815 / 5.525168 / 10.508481 s`
+- PML-32 native engine / Python run / complete-session wall times:
+  `4.346625 / 7.462453 / 12.466042 s`
+- Validated large-background geometry: FDTD outer x/y `±3.2 µm`, realized
+  PML-inner x/y `±2.0 µm`, minimum TFSF-to-PML-inner gap `209.677 nm`
+- Design optical endpoints: air `n=1` and actual SiO2 `n=1.38`
+- Thermal model: explicit design-SiO2/TaIrTe4/bottom-SiO2/Si domains
+- Exposed SiO2/air: Robin `h=10 W/(m2 K)` to `300 K`
+- Exposed TaIrTe4 sidewalls: `G_air=1 W/(m2 K)`, not adiabatic
+- PTE weighting field: uniform 45-degree direction,
+  `grad(psi)=(xhat+yhat)/(4 µm)`
+- Flat baseline `P_Q/P_six/closure`:
+  `1.3567412718462558e-12 W / 1.3567343935235152e-12 W / 5.06976e-6`
+- Mixed rho=0.5 `P_Q/P_six/closure`:
+  `1.689091619450848e-12 W / 1.6895947794697648e-12 W / 2.97799e-4`
+- GPU adjoint / centered FD (`h=0.01`) gradients:
+  `7.316714058728351e-13 / 7.317295351329038e-13 W/rho`
+- Direct mixed optical AD–FD relative error: `7.94409e-5`
+- CPU/GPU adjoint complex-field NRMSE: `2.19978e-5`
+- Local optical-to-thermal Q mapping power/transpose errors:
+  `2.39121e-16 / 8.07866e-16`
+- Current scope: local optical and mapping certificate only
+- Remaining physical inputs before fixed-Q thermal/combined PTE:
+  actual finite illumination footprint and actual thermal TaIrTe4 footprint
+- Thermal solve, combined/full-latent PTE, and optimization for this
+  large-background plane-wave chain: not executed
+
+### Superseded periodic certificate
+
+- The following section records the immutable 6 µm periodic numerical
+  checkpoint only. It does not validate the finite 2 µm problem.
+
 ## Inverse-design paper-reduced thermal/PTE AD–FD
 
 - Status: `VALIDATED_PAPER_REDUCED_RHO_DEPENDENT_THERMAL_PTE_ADFD`

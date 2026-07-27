@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "status": "VALIDATED_MIXED_CPU_TFSF_GPU_FIELDREGION_OPTICAL_ADFD",
+  "passed": true,
+  "scope": "local large-background plane-wave optical and Q-mapping certificate; not final thermal/PTE",
+  "geometry": {
+    "design_bounds_m": {
+      "x": [-1e-06, 1e-06],
+      "y": [-1e-06, 1e-06],
+      "z": [0.0, 6e-07]
+    },
+    "omega_Q_bounds_m": {
+      "x": [-1.15e-06, 1.15e-06],
+      "y": [-1.15e-06, 1.15e-06],
+      "z": [-1.5e-07, 7.5e-07]
+    },
+    "periodic_or_bloch": false,
+    "all_six_boundaries": "PML",
+    "minimum_realized_TFSF_to_PML_inner_gap_m": 2.0967741935483398e-07
+  },
+  "source": {
+    "type": "normal-incidence CPU TFSF plane wave",
+    "polarization": "x",
+    "wavelength_start_m": 3e-06,
+    "wavelength_stop_m": 6e-06,
+    "analysis_wavelength_m": 4e-06,
+    "target_incident_intensity_W_m2": 1.0,
+    "realized_incident_intensity_W_m2": 0.9990759709401065,
+    "post_solve_rescaling": false
+  },
+  "mixed_optical_adfd": {
+    "rho": 0.5,
+    "P_Q_W": 1.689091619450848e-12,
+    "P_six_W": 1.6895947794697648e-12,
+    "six_face_closure_relative_error": 0.0002977992267913773,
+    "GPU_adjoint_W_per_rho": 7.316714058728351e-13,
+    "CPU_adjoint_W_per_rho": 7.316713533711392e-13,
+    "CPU_GPU_gradient_relative_difference": 7.175584457451004e-08,
+    "CPU_GPU_complex_field_NRMSE": 2.1997801629533088e-05,
+    "centered_FD_h_0p01_W_per_rho": 7.317295351329038e-13,
+    "AD_FD_relative_error": 7.944090989600567e-05,
+    "FD_step_change_relative": 1.050474648358887e-05,
+    "design_metric": "raw Yee control-volume intersection with exact finite design support",
+    "empirical_gradient_rescaling": false
+  },
+  "local_Q_mapping": {
+    "status": "VALIDATED_LOCAL_Q_OPTICAL_THERMAL_MAPPING",
+    "native_P_Q_W": 1.6890916194508481e-12,
+    "mapped_P_Q_W": 1.6890916194508477e-12,
+    "relative_power_error": 2.391207077354819e-16,
+    "transpose_dot_test_relative_error": 8.078657004942031e-16,
+    "is_complete_physical_plane_wave_source": false
+  },
+  "physical_blockers_before_combined_PTE": [
+    "actual finite illumination footprint",
+    "actual thermal TaIrTe4 lateral footprint"
+  ],
+  "thermal_run": false,
+  "pte_run": false,
+  "optimization_run": false
+}
