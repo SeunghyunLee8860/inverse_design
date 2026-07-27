@@ -1,0 +1,47 @@
+{
+  "status": "VALIDATED_WEIGHTED_ADJOINT_SOURCE_COLLOCATION_DIAGNOSTIC",
+  "raw_artifacts_are_not_committed_to_git": true,
+  "artifacts": [
+    {
+      "role": "preserved_stage10_failed_result",
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_6/combined_physical_rho_pte_adfd_result.json",
+      "byte_size": 49895,
+      "sha256": "2bdc7f82f4230c8fded8f41caba81013890aa403d62ba10a98fb1c2e829d48dd"
+    },
+    {
+      "role": "component_split",
+      "path": "/home/seunghyun/tairte4_artifacts/combined_adfd_component_split_20260727_1/combined_adfd_component_split_result.json",
+      "byte_size": 8808,
+      "sha256": "3d5fd0aea47b487ef873a7e20729c652281715d0924f2cb69982c26e057ee3c7"
+    },
+    {
+      "role": "nonuniform_P_Q_control",
+      "path": "/home/seunghyun/tairte4_artifacts/nonuniform_optical_pq_adfd_20260727_1/nonuniform_optical_pq_adfd_result.json",
+      "byte_size": 2213,
+      "sha256": "5761808247098d1cbffc522705201fe5c0db52297d687649cf1feea28207f19e"
+    },
+    {
+      "role": "naive_common_grid_collocation",
+      "path": "/home/seunghyun/tairte4_artifacts/collocated_weighted_adjoint_source_20260727_1/collocated_weighted_adjoint_source_result.json",
+      "byte_size": 3933,
+      "sha256": "60733827a76f112232670fbf8dbb81b3db4d8c0d456fc42a6241ed0fcf3cc635"
+    },
+    {
+      "role": "exact_component_collocation",
+      "path": "/home/seunghyun/tairte4_artifacts/inverse_collocated_weighted_adjoint_source_20260727_3/collocated_weighted_adjoint_source_result.json",
+      "byte_size": 5803,
+      "sha256": "d82a381a9c721141855d6984cd456e17f8bd30e864657b73db48d4c17e09ebf8"
+    },
+    {
+      "role": "exact_component_collocation_adjoint_fsp",
+      "path": "/home/seunghyun/tairte4_artifacts/inverse_collocated_weighted_adjoint_source_20260727_3/collocated_weighted_adjoint_gpu.fsp",
+      "byte_size": 32801076,
+      "sha256": "b700c92cc2566f3f8a18c0dc5a5605f275b4a0db2da957f2725e1a4f528b482b"
+    }
+  ],
+  "generation_commands": [
+    "python -m photothermal_pte.finite_inverse_design.diagnose_combined_adfd_component_split",
+    "python -m photothermal_pte.finite_inverse_design.diagnose_nonuniform_optical_pq_adfd",
+    "python -m photothermal_pte.finite_inverse_design.diagnose_weighted_adjoint_source_collocation"
+  ]
+}

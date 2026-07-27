@@ -360,6 +360,133 @@ def fieldregion_profile(
     return np.ascontiguousarray(profile / scale), scale
 
 
+def invert_fieldregion_linear_collocation(
+    grid: dict[str, np.ndarray], profile: np.ndarray
+) -> tuple[np.ndarray, dict[str, np.ndarray], dict[str, object]]:
+    """Solve the component-axis common-grid interpolation exactly.
+
+    For positive Yee offsets, native sample i lies between common samples
+    i and i+1.  v261's linear placement is therefore
+
+        native_i = alpha_i * common_i + beta_i * common_{i+1}.
+
+    A one-cell positive-axis extension supplies the final common-grid degree
+    of freedom, so the last native target is retained.  The new exterior
+    common sample is fixed to zero and the bidiagonal system is solved
+    backwards.  This is a coordinate-operator inverse, not empirical
+    gradient normalization.
+    """
+
+    value = as_e5(profile)
+    expected = (
+        grid["x"].size,
+        grid["y"].size,
+        grid["z"].size,
+        1,
+        3,
+    )
+    if value.shape != expected:
+        raise ValueError(f"profile {value.shape} != {expected}")
+    extended_grid = {
+        key: np.array(item, copy=True) for key, item in grid.items()
+    }
+    for axis in "xyz":
+        base = np.asarray(grid[axis], float)
+        extended_grid[axis] = np.append(
+            base, base[-1] + (base[-1] - base[-2])
+        )
+    extended_shape = tuple(
+        extended_grid[axis].size for axis in "xyz"
+    ) + (1, 3)
+    result = np.zeros(extended_shape, dtype=value.dtype)
+    records: dict[str, object] = {}
+    for axis_index, component in enumerate("xyz"):
+        base = np.asarray(grid[component], float)
+        common_coordinate = extended_grid[component]
+        native = base + np.asarray(
+            grid[f"delta_{component}"], float
+        )
+        spacing = np.diff(common_coordinate)
+        alpha = (
+            common_coordinate[1:] - native
+        ) / spacing
+        beta = 1.0 - alpha
+        if np.any(alpha <= 0.0) or np.any(beta < 0.0):
+            raise RuntimeError(
+                f"{component} Yee points do not bracket on the base grid"
+            )
+        target = np.asarray(value[..., axis_index])
+        padded_shape = tuple(
+            extended_grid[axis].size for axis in "xyz"
+        ) + (1,)
+        padded_target = np.zeros(padded_shape, dtype=target.dtype)
+        original = tuple(
+            slice(0, grid[axis].size) for axis in "xyz"
+        ) + (slice(None),)
+        padded_target[original] = target
+        common = np.zeros_like(padded_target)
+        common_view = np.moveaxis(common, axis_index, 0)
+        target_view = np.moveaxis(padded_target, axis_index, 0)
+        for i in range(base.size - 1, -1, -1):
+            common_view[i] = (
+                target_view[i] - beta[i] * common_view[i + 1]
+            ) / alpha[i]
+        reconstructed = (
+            alpha.reshape((-1,) + (1,) * (common_view.ndim - 1))
+            * common_view[: base.size]
+            + beta.reshape((-1,) + (1,) * (common_view.ndim - 1))
+            * common_view[1 : base.size + 1]
+        )
+        reconstruction_error = float(
+            np.max(np.abs(reconstructed - target_view[: base.size]))
+        )
+        result[..., axis_index] = common
+        target_scale = float(np.max(np.abs(target)))
+        records[component] = {
+            "array_shape": list(target.shape),
+            "native_coordinate_bounds_m": [
+                float(native[0]),
+                float(native[-1]),
+            ],
+            "extended_common_coordinate_bounds_m": [
+                float(common_coordinate[0]),
+                float(common_coordinate[-1]),
+            ],
+            "maximum_staggering_offset_m": float(
+                np.max(np.abs(native - base))
+            ),
+            "alpha_bounds": [
+                float(np.min(alpha)),
+                float(np.max(alpha)),
+            ],
+            "beta_bounds": [
+                float(np.min(beta)),
+                float(np.max(beta)),
+            ],
+            "reconstruction_max_abs_error": reconstruction_error,
+            "common_to_native_max_amplitude_ratio": float(
+                np.max(np.abs(common))
+                / max(target_scale, np.finfo(float).tiny)
+            ),
+            "boundary_condition": (
+                "one-cell +axis common-grid extension with outer "
+                "common sample zero; no native target deletion"
+            ),
+        }
+    return np.ascontiguousarray(result), extended_grid, {
+        "method": (
+            "exact backward solve of component-wise linear "
+            "common-FieldRegion-to-native-Yee collocation operator "
+            "on one-cell +axis-extended source grid"
+        ),
+        "original_shape": list(value.shape),
+        "extended_shape": list(result.shape),
+        "components": records,
+        "empirical_normalization": False,
+        "gradient_rescaling": False,
+    }
+
+
 def import_fieldregion_profile(
     fdtd: object, grid: dict[str, np.ndarray], profile: np.ndarray
 ) -> float:

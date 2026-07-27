@@ -1,5 +1,32 @@
 # Latest photothermal validation status
 
+## Weighted adjoint-source collocation correction
+
+- Status: `VALIDATED_WEIGHTED_ADJOINT_SOURCE_COLLOCATION_DIAGNOSTIC`
+- Scope: one strong direction only; this is not the final multi-direction
+  combined physical-density AD--FD certificate
+- Preserved Stage 10 selected-step combined errors, 4 um / 6 um:
+  `2.14938% / 2.88520%`
+- Component split thermal-only errors at `h=0.005`, 4 um / 6 um:
+  `1.78582e-6 / 1.29945e-5`
+- Old spatially weighted optical errors at `h=0.005`, 4 um / 6 um:
+  `2.74461% / 2.80498%`
+- Nonuniform scalar-P_Q component-J control errors at `h=0.01/0.005`:
+  `0.204900% / 0.209005%`
+- Naive common-grid source errors at `h=0.01/0.005`:
+  `1.86860% / 1.86974%` (failed)
+- Exact component-collocation source errors at `h=0.01/0.005`:
+  `0.797340% / 0.798496%` (passed strong-direction 1% gate)
+- Maximum collocation reconstruction / native-Q transpose errors:
+  `1.24127e-16 / 8.25101e-16`
+- Maximum forward/adjoint coordinate mismatch: `4.23516e-22 m`
+- One-cell positive-axis source-grid extension retains all original native
+  source samples; only the new exterior source samples are zero
+- Empirical normalization, gradient rescaling, source deletion, gray-law
+  sensitivity, latent AD--FD, and optimization: absent
+- Next gate:
+  `MULTIDIRECTION_MULTISTEP_COMBINED_PHYSICAL_RHO_PTE_ADFD`
+
 ## Large-background non-periodic inverse-design AD–FD
 
 - PTE/nodal-contract audit:
