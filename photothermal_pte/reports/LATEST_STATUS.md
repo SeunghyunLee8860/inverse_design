@@ -13,6 +13,16 @@
   `0 / 0 / 5.42831e-11`
 - PTE meaning: uniform-45-degree surrogate only; not a solved finite-contact
   terminal weighting potential
+- Explicit thermal grid-parameter audit:
+  `AUDITED_EXPLICIT_THERMAL_INDEPENDENT_GRID_PARAMETERS`
+- Independent parameters:
+  `core_xy_cell_size_m`, `flake_dz_m`, `design_dz_m`
+- Legacy 100 nm baseline versus explicit `100/25/100 nm` parameterization:
+  bitwise-equal grid, material, kappa, and z-interface arrays
+- Realized baseline / xy-refined / flake-z-refined / design-z-refined
+  TaIrTe4/design z-cell counts:
+  `4/6`, `4/6`, `8/6`, `4/12`
+- This parameter audit does not claim thermal convergence
 - Status: `VALIDATED_MIXED_CPU_TFSF_GPU_FIELDREGION_OPTICAL_ADFD`
 - Protected design/PTE ROI: exactly `x,y=[-1,1] µm`
 - Optical TaIrTe4: 100 nm thick and extended through lateral PML as the

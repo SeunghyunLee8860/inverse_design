@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "raw_artifacts_committed_to_git": false,
+  "note": "This audit generated only text/JSON outputs. It did not execute a thermal solve.",
+  "generation_command": "python -m photothermal_pte.finite_inverse_design.audit_explicit_thermal_grid_contract --output-dir /home/seunghyun/tairte4_artifacts/explicit_thermal_grid_contract_audit_20260727_1",
+  "artifacts": [
+    {
+      "role": "audit_report",
+      "path": "/home/seunghyun/tairte4_artifacts/explicit_thermal_grid_contract_audit_20260727_1/EXPLICIT_THERMAL_GRID_CONTRACT_AUDIT.md",
+      "byte_size": 731,
+      "sha256": "1b73113d962f3a63bd5868b822ce57cc56dfd9cbdfcc0fd691eb10541476b10d"
+    },
+    {
+      "role": "audit_summary",
+      "path": "/home/seunghyun/tairte4_artifacts/explicit_thermal_grid_contract_audit_20260727_1/explicit_thermal_grid_contract_audit_summary.json",
+      "byte_size": 2893,
+      "sha256": "d788f227c5880ca829fba01d892eefb7ede2773357a118cdec9e3fca79e64840"
+    }
+  ]
+}

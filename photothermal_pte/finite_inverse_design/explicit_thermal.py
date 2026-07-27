@@ -76,6 +76,9 @@ class ExplicitThermalGeometry:
     lateral_domain_m: float
     si_depth_m: float
     cell_size_m: float
+    core_xy_cell_size_m: float
+    flake_dz_m: float
+    design_dz_m: float
 
 
 @dataclass(frozen=True)
@@ -156,7 +159,8 @@ def _lateral_edges(
 def _z_edges(
     *,
     si_depth_m: float,
-    cell_size_m: float,
+    flake_dz_m: float,
+    design_dz_m: float,
 ) -> np.ndarray:
     si_top = BOTTOM_SIO2_BOUNDS_Z_M[0]
     si = si_top - _growing_positions(
@@ -182,15 +186,17 @@ def _z_edges(
         BOTTOM_SIO2_BOUNDS_Z_M[1],
         oxide_cells + 1,
     )
-    flake_cells = max(
-        1,
-        int(
-            round(
-                (FLAKE_BOUNDS_Z_M[1] - FLAKE_BOUNDS_Z_M[0])
-                / min(cell_size_m, 25.0e-9)
-            )
-        ),
+    flake_cells = int(
+        round(
+            (FLAKE_BOUNDS_Z_M[1] - FLAKE_BOUNDS_Z_M[0])
+            / flake_dz_m
+        )
     )
+    if flake_cells < 1 or not np.isclose(
+        flake_cells * flake_dz_m,
+        FLAKE_BOUNDS_Z_M[1] - FLAKE_BOUNDS_Z_M[0],
+    ):
+        raise ValueError("flake_dz_m must divide the TaIrTe4 thickness")
     flake = np.linspace(
         FLAKE_BOUNDS_Z_M[0],
         FLAKE_BOUNDS_Z_M[1],
@@ -199,9 +205,14 @@ def _z_edges(
     design_cells = int(
         round(
             (DESIGN_BOUNDS_M["z"][1] - DESIGN_BOUNDS_M["z"][0])
-            / cell_size_m
+            / design_dz_m
         )
     )
+    if design_cells < 1 or not np.isclose(
+        design_cells * design_dz_m,
+        DESIGN_BOUNDS_M["z"][1] - DESIGN_BOUNDS_M["z"][0],
+    ):
+        raise ValueError("design_dz_m must divide the design height")
     design = np.linspace(
         DESIGN_BOUNDS_M["z"][0],
         DESIGN_BOUNDS_M["z"][1],
@@ -246,16 +257,43 @@ def build_explicit_geometry(
     si_depth_m: float = 20.0e-6,
     flake_span_m: float = 4.0e-6,
     cell_size_m: float = 50.0e-9,
+    core_xy_cell_size_m: float | None = None,
+    flake_dz_m: float = 25.0e-9,
+    design_dz_m: float | None = None,
 ) -> ExplicitThermalGeometry:
+    core_xy = (
+        float(cell_size_m)
+        if core_xy_cell_size_m is None
+        else float(core_xy_cell_size_m)
+    )
+    if design_dz_m is None:
+        legacy_design_cells = max(
+            1,
+            int(
+                round(
+                    (
+                        DESIGN_BOUNDS_M["z"][1]
+                        - DESIGN_BOUNDS_M["z"][0]
+                    )
+                    / core_xy
+                )
+            ),
+        )
+        design_dz = (
+            DESIGN_BOUNDS_M["z"][1] - DESIGN_BOUNDS_M["z"][0]
+        ) / legacy_design_cells
+    else:
+        design_dz = float(design_dz_m)
     x_edges = _lateral_edges(
         lateral_domain_m=lateral_domain_m,
         flake_span_m=flake_span_m,
-        cell_size_m=cell_size_m,
+        cell_size_m=core_xy,
     )
     y_edges = x_edges.copy()
     z_edges = _z_edges(
         si_depth_m=si_depth_m,
-        cell_size_m=cell_size_m,
+        flake_dz_m=float(flake_dz_m),
+        design_dz_m=design_dz,
     )
     x = 0.5 * (x_edges[:-1] + x_edges[1:])
     y = 0.5 * (y_edges[:-1] + y_edges[1:])
@@ -376,7 +414,10 @@ def build_explicit_geometry(
         flake_span_m=float(flake_span_m),
         lateral_domain_m=float(lateral_domain_m),
         si_depth_m=float(si_depth_m),
-        cell_size_m=float(cell_size_m),
+        cell_size_m=core_xy,
+        core_xy_cell_size_m=core_xy,
+        flake_dz_m=float(flake_dz_m),
+        design_dz_m=design_dz,
     )
 
 
@@ -589,6 +630,9 @@ def solve_explicit_forward(
     si_depth_m: float = 20.0e-6,
     flake_span_m: float = 4.0e-6,
     cell_size_m: float = 50.0e-9,
+    core_xy_cell_size_m: float | None = None,
+    flake_dz_m: float = 25.0e-9,
+    design_dz_m: float | None = None,
 ) -> ExplicitThermalForward:
     geometry = build_explicit_geometry(
         rho,
@@ -596,6 +640,9 @@ def solve_explicit_forward(
         si_depth_m=si_depth_m,
         flake_span_m=flake_span_m,
         cell_size_m=cell_size_m,
+        core_xy_cell_size_m=core_xy_cell_size_m,
+        flake_dz_m=flake_dz_m,
+        design_dz_m=design_dz_m,
     )
     source = (
         fixed_control_source(geometry)
@@ -660,6 +707,9 @@ def evaluate_explicit_thermal(
     si_depth_m: float = 20.0e-6,
     flake_span_m: float = 4.0e-6,
     cell_size_m: float = 50.0e-9,
+    core_xy_cell_size_m: float | None = None,
+    flake_dz_m: float = 25.0e-9,
+    design_dz_m: float | None = None,
 ) -> ExplicitThermalEvaluation:
     forward = solve_explicit_forward(
         rho=rho,
@@ -668,6 +718,9 @@ def evaluate_explicit_thermal(
         si_depth_m=si_depth_m,
         flake_span_m=flake_span_m,
         cell_size_m=cell_size_m,
+        core_xy_cell_size_m=core_xy_cell_size_m,
+        flake_dz_m=flake_dz_m,
+        design_dz_m=design_dz_m,
     )
     system = forward.system
     matrix = system.matrix_W_K
