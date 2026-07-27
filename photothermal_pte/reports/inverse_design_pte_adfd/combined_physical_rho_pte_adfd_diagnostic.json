@@ -1,0 +1,142 @@
+{
+  "status": "DIAGNOSTIC_FAILED_COMBINED_PHYSICAL_RHO_PTE_ADFD",
+  "raw_status": "FAILED_COMBINED_PHYSICAL_RHO_PTE_ADFD",
+  "passed": false,
+  "diagnostic_only": true,
+  "generated_at_utc": "2026-07-27T17:00:58.719182+00:00",
+  "reason": "Combined physical-density AD--FD exceeded the original 0.5% gate and is preserved without empirical normalization or gradient rescaling.",
+  "physical_density": {
+    "shape": [
+      81,
+      81
+    ],
+    "bounds_m": {
+      "x": [
+        -1e-06,
+        1e-06
+      ],
+      "y": [
+        -1e-06,
+        1e-06
+      ]
+    },
+    "spacing_m": 2.5e-08,
+    "baseline_min": 0.40386429853167094,
+    "baseline_max": 0.5855483363441585,
+    "baseline_sha256": "123965529e7e4cb4952d6b4cde0ee0e2c573280d652ab1242012eb6d917b5c4b",
+    "direction_sha256": "48d1d7acb86ff1caad5e7598e9dcc28993256957d7430bcac768ad46b5444e64"
+  },
+  "adjoint_source_definition": "native_weight_c=R_Q^T(dI/dQ_thermal); dI/dE_c*=c_c*(omega*epsilon0/2)*Im(epsilon_c)*E_c; vector FieldRegion source",
+  "scalar_P_Q_source_reused": false,
+  "layout_directional_epsilon": {
+    "method": "centered completed-CPU-TFSF imported-permittivity directional epsilon_Yee derivative",
+    "pairing": "same-shape Lumerical E/index component-array pairing; no coordinate interpolation",
+    "step": 0.005,
+    "electromagnetic_solves": 2,
+    "solves_shared_with_objective_centered_FD": true,
+    "base_design_coordinate_readback": {
+      "x": {
+        "field_bounds": [
+          -1.0000000000000027e-06,
+          9.99999999999996e-07
+        ],
+        "index_bounds": [
+          -1e-06,
+          9.999999999999961e-07
+        ],
+        "maximum_same_array_index_difference": 2.752857078576476e-21
+      },
+      "y": {
+        "field_bounds": [
+          -1.0000000000000027e-06,
+          9.99999999999996e-07
+        ],
+        "index_bounds": [
+          -1e-06,
+          9.999999999999961e-07
+        ],
+        "maximum_same_array_index_difference": 2.752857078576476e-21
+      },
+      "z": {
+        "field_bounds": [
+          6.948317145445432e-23,
+          6.205882352941177e-07
+        ],
+        "index_bounds": [
+          6.948317145445432e-23,
+          6.000000000000001e-07
+        ],
+        "maximum_same_array_index_difference": 2.0588235294117637e-08
+      },
+      "f": {
+        "field_bounds": [
+          74948114500000.02,
+          74948114500000.02
+        ],
+        "index_bounds": [
+          74948114500000.0,
+          74948114500000.0
+        ],
+        "maximum_same_array_index_difference": 0.015625
+      }
+    }
+  },
+  "scenarios": {
+    "4um": {
+      "base_objective_A": 4.626383564099684e-16,
+      "thermal_material_directional_A": 1.0220258250929089e-17,
+      "optical_Q_directional_A": -7.633100568397052e-16,
+      "combined_adjoint_directional_A": -7.530897985887762e-16,
+      "cpu_gpu_adjoint_field_NRMSE": 4.002375888906184e-05,
+      "fd_rows": [
+        {
+          "step": 0.01,
+          "finite_difference_directional_A": -7.696232220118062e-16,
+          "relative_error": 0.02148249032794441
+        },
+        {
+          "step": 0.005,
+          "finite_difference_directional_A": -7.696321028569287e-16,
+          "relative_error": 0.021493781518138712
+        }
+      ]
+    },
+    "6um": {
+      "base_objective_A": 1.2562592197848088e-16,
+      "thermal_material_directional_A": 7.316585408538933e-19,
+      "optical_Q_directional_A": -9.416183896023261e-17,
+      "combined_adjoint_directional_A": -9.343018041937872e-17,
+      "cpu_gpu_adjoint_field_NRMSE": null,
+      "fd_rows": [
+        {
+          "step": 0.01,
+          "finite_difference_directional_A": -9.620416471460541e-17,
+          "relative_error": 0.028834347280659395
+        },
+        {
+          "step": 0.005,
+          "finite_difference_directional_A": -9.620591655669392e-17,
+          "relative_error": 0.02885203152427182
+        }
+      ]
+    }
+  },
+  "gates": {
+    "worst_selected_combined_AD_FD_relative_error": 0.02885203152427182,
+    "combined_AD_FD_limit": 0.005,
+    "worst_Q_mapping_relative_error": 2.3867829483216114e-16,
+    "Q_mapping_limit": 0.005,
+    "worst_six_face_closure_relative_error": 0.00020270677599462065,
+    "six_face_closure_limit": 0.005,
+    "worst_thermal_energy_balance_relative_error": 3.1673495068766763e-12,
+    "thermal_energy_balance_limit": 0.01,
+    "worst_forward_or_adjoint_linear_residual_relative": 1.0204950143485226e-11,
+    "linear_residual_limit": 1e-08,
+    "worst_pullback_transpose_relative_error": 8.251007226564848e-16,
+    "worst_pullback_objective_identity_relative_error": 9.695775055064267e-11,
+    "four_um_CPU_GPU_adjoint_field_NRMSE": 4.002375888906184e-05
+  },
+  "normalization_or_gradient_rescaling_used": false,
+  "next_gate": "RHO05_REPRESENTATION_EQUIVALENCE_THEN_COMPONENT_YEE_MATERIAL_JACOBIAN",
+  "optimization_run": false
+}

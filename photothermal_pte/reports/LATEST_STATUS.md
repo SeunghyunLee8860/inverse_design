@@ -146,9 +146,22 @@
   5 and 2.5 nm meshes
 - Finest rho1 P_Q / P_six relative changes:
   `2.30908e-7 / 1.43701e-5`
-- Combined Maxwell/thermal physical-rho AD-FD, gray-law sensitivity,
-  filter/projection latent AD-FD, transient, and optimization remain
-  unexecuted
+- Combined physical-rho PTE AD-FD diagnostic status:
+  `DIAGNOSTIC_FAILED_COMBINED_PHYSICAL_RHO_PTE_ADFD`
+- Combined 4 um / 6 um selected-step errors at `h=0.005`:
+  `2.14938% / 2.88520%` (original gate `<0.5%`; failed)
+- The diagnostic used
+  `dI/dQ_thermal -> R_Q^T -> native-Yee vector source`; it did not reuse
+  the scalar `P_Q` adjoint source
+- No empirical normalization or gradient rescaling was used
+- Passing diagnostic controls: Q mapping `2.38678e-16`, six-face closure
+  `2.02707e-4`, thermal energy `3.16735e-12`, residual `1.02050e-11`,
+  and CPU/GPU adjoint field NRMSE `4.00238e-5`
+- Unresolved gate: component-specific nonuniform
+  `rho_81x81 -> epsilon_Yee,{x,y,z}` Jacobian and exact E/index Yee
+  collocation
+- Gray-law sensitivity, filter/projection latent AD-FD, transient, and
+  optimization remain unexecuted
 - Status: `VALIDATED_MIXED_CPU_TFSF_GPU_FIELDREGION_OPTICAL_ADFD`
 - Protected design/PTE ROI: exactly `x,y=[-1,1] µm`
 - Optical TaIrTe4: 100 nm thick and extended through lateral PML as the
