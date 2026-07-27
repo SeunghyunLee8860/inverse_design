@@ -100,6 +100,21 @@ def test_repair_and_seed_in_contract_before_config_hash():
         assert 0 < src.find(key) < hash_pos, key
 
 
+def test_feasibility_repair_is_code_hashed():
+    """repair alters the optimization trajectory, so its source must be part
+    of code_hash -- otherwise a resume could silently mix repair versions
+    (this was missed when the module was first added; caught in review)."""
+    runner = importlib.import_module("run_constrained_inverse_design")
+    files = runner.production_code_files(runner.ROOT, runner.HERE)
+    names = [p.name for p in files]
+    assert "feasibility_repair.py" in names
+    # and its content genuinely moves the hash
+    with_file = runner._code_hash(files)
+    without_file = runner._code_hash(
+        [p for p in files if p.name != "feasibility_repair.py"])
+    assert with_file != without_file
+
+
 def test_repair_and_seed_change_config_hash():
     runner = importlib.import_module("run_constrained_inverse_design")
     base = {"feasibility_repair": {"enabled": True, "maxeval": 60000,

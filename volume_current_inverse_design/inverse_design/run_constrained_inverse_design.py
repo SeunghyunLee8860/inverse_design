@@ -87,6 +87,7 @@ def production_code_files(root: Path, here: Path):
         root / "volume_current_yee_metric.py",
         root / "collocated_coherent_fom.py",
         here / "adaptive_stage.py",
+        here / "feasibility_repair.py",
         here / "geometric_constraints.py",
         here / "geometry_drc.py",
         here / "final_projection.py",
