@@ -161,6 +161,102 @@ def build_conservative_embedding_remap(
     )
 
 
+def project_remap_to_material_support_along_axis(
+    remap: ConservativeEmbeddingRemap,
+    *,
+    target_edges_m: tuple[np.ndarray, np.ndarray, np.ndarray],
+    target_support_mask: np.ndarray,
+    axis: int = 2,
+) -> ConservativeEmbeddingRemap:
+    """Conservatively relocate target energy to material-support cells.
+
+    A native staggered Yee control volume may straddle a material boundary.
+    Its integrated absorption belongs to the lossy material even when the
+    unconstrained geometric embedding overlaps a neighboring thermal cell.
+    This operator moves each target-cell energy to the nearest supported cell
+    along ``axis`` while preserving every source-cell energy exactly.
+
+    The operation is linear, contains no empirical or global rescaling, and
+    returns the literal density operator so ``transpose`` remains exact.
+    Columns with no supported cell are left unchanged; callers must fail
+    closed if a nonzero source reaches such a column.
+    """
+
+    if axis not in (0, 1, 2):
+        raise ValueError("axis must be 0, 1, or 2")
+    target_edges = tuple(
+        np.asarray(values, float).reshape(-1)
+        for values in target_edges_m
+    )
+    target_shape = tuple(values.size - 1 for values in target_edges)
+    if target_shape != remap.target_shape:
+        raise ValueError(
+            f"target edge shape {target_shape} != {remap.target_shape}"
+        )
+    support = np.asarray(target_support_mask, bool)
+    if support.shape != remap.target_shape:
+        raise ValueError(
+            f"support shape {support.shape} != {remap.target_shape}"
+        )
+    centers = 0.5 * (
+        target_edges[axis][:-1] + target_edges[axis][1:]
+    )
+    destination = np.arange(support.size, dtype=np.int64).reshape(
+        support.shape
+    )
+    transverse_shape = tuple(
+        size for index, size in enumerate(support.shape) if index != axis
+    )
+    for transverse_index in np.ndindex(transverse_shape):
+        selector: list[object] = []
+        cursor = iter(transverse_index)
+        for index in range(3):
+            selector.append(slice(None) if index == axis else next(cursor))
+        line_selector = tuple(selector)
+        supported_indices = np.flatnonzero(support[line_selector])
+        if supported_indices.size == 0:
+            continue
+        nearest = supported_indices[
+            np.argmin(
+                np.abs(
+                    centers[:, None] - centers[supported_indices][None, :]
+                ),
+                axis=1,
+            )
+        ]
+        line_destinations = destination[line_selector]
+        for source_index, destination_index in enumerate(nearest):
+            destination_full = list(selector)
+            destination_full[axis] = int(destination_index)
+            line_destinations[source_index] = np.ravel_multi_index(
+                tuple(destination_full), support.shape
+            )
+
+    source_target_ids = np.arange(support.size, dtype=np.int64)
+    energy_projection = sparse.coo_matrix(
+        (
+            np.ones(support.size, float),
+            (destination.reshape(-1), source_target_ids),
+        ),
+        shape=(support.size, support.size),
+    ).tocsr()
+    target_volume = remap.target_volume_m3.reshape(-1)
+    density_projection = (
+        sparse.diags(1.0 / target_volume, format="csr")
+        @ energy_projection
+        @ sparse.diags(target_volume, format="csr")
+    )
+    return ConservativeEmbeddingRemap(
+        density_operator=(
+            density_projection @ remap.density_operator
+        ).tocsr(),
+        source_volume_m3=remap.source_volume_m3,
+        target_volume_m3=remap.target_volume_m3,
+        source_shape=remap.source_shape,
+        target_shape=remap.target_shape,
+    )
+
+
 def exact_nonzero_box(
     density: np.ndarray,
 ) -> tuple[tuple[slice, slice, slice], int]:

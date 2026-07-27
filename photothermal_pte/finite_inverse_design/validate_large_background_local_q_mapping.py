@@ -18,8 +18,9 @@ from .finite_q_mapping import (
     build_conservative_embedding_remap,
     exact_nonzero_box,
     nodal_control_volume_edges,
+    project_remap_to_material_support_along_axis,
 )
-from .native_yee_q import extract_native_yee_q
+from .native_yee_q import extract_native_yee_q, integrate_xyz
 from .probe_v261_cpu_tfsf_device import PABS_FIELD, PABS_INDEX
 from .probe_v261_gpu_plane_wave_roi import load_lumapi
 from .run_v261_large_background_mixed_optical_adfd import WAVELENGTH_M
@@ -31,13 +32,60 @@ STATUS_FAIL = "FAILED_LOCAL_Q_OPTICAL_THERMAL_MAPPING"
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--project", required=True)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--project")
+    source.add_argument(
+        "--input-mapping",
+        help=(
+            "Existing mapping NPZ containing immutable native Q arrays; "
+            "the old mapped Q is not reused"
+        ),
+    )
+    parser.add_argument("--expected-input-sha256")
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--thermal-cell-size-nm", type=float, default=100.0)
     parser.add_argument("--thermal-domain-um", type=float, default=32.0)
     parser.add_argument("--thermal-si-depth-um", type=float, default=20.0)
     parser.add_argument("--thermal-flake-span-um", type=float, default=4.0)
     return parser.parse_args()
+
+
+def native_q_from_mapping(path: Path) -> dict[str, object]:
+    """Reconstruct immutable native Yee Q without opening Lumerical."""
+
+    with np.load(path, allow_pickle=False) as stored:
+        base = {
+            axis: np.asarray(stored[f"native_{axis}_m"], float)
+            for axis in "xyz"
+        }
+        delta = {
+            axis: np.asarray(stored[f"native_delta_{axis}_m"], float)
+            for axis in "xyz"
+        }
+        components = {
+            axis: np.asarray(stored[f"native_Q{axis}_W_m3"], float)
+            for axis in "xyz"
+        }
+    coordinates = {}
+    power = {}
+    for component in "xyz":
+        current = {axis: values.copy() for axis, values in base.items()}
+        current[component] = current[component] + delta[component]
+        coordinates[component] = current
+        power[component] = integrate_xyz(
+            components[component],
+            current["x"],
+            current["y"],
+            current["z"],
+        )
+    return {
+        "base_coordinates": base,
+        "delta_coordinates": delta,
+        "native_coordinates": coordinates,
+        "Q_components": components,
+        "component_power_W": power,
+        "P_Q_W": float(sum(power.values())),
+    }
 
 
 def sha256(path: Path) -> str:
@@ -50,7 +98,16 @@ def sha256(path: Path) -> str:
 
 def main() -> int:
     args = parse_args()
-    project = Path(args.project).expanduser().resolve()
+    project = (
+        Path(args.project).expanduser().resolve()
+        if args.project is not None
+        else None
+    )
+    input_mapping = (
+        Path(args.input_mapping).expanduser().resolve()
+        if args.input_mapping is not None
+        else None
+    )
     output = Path(args.output_dir).expanduser().resolve()
     if output.exists() and any(output.iterdir()):
         raise FileExistsError(f"refusing non-empty output directory: {output}")
@@ -98,15 +155,45 @@ def main() -> int:
         )
         target_shape = tuple(axis.size - 1 for axis in target_edges)
 
-        lumapi = load_lumapi()
-        fdtd = lumapi.FDTD(hide=True, serverArgs={"platform": "offscreen"})
-        fdtd.load(str(project))
-        native = extract_native_yee_q(
-            fdtd,
-            field_monitor=PABS_FIELD,
-            index_monitor=PABS_INDEX,
-            wavelength_m=WAVELENGTH_M,
-        )
+        if project is not None:
+            lumapi = load_lumapi()
+            fdtd = lumapi.FDTD(
+                hide=True, serverArgs={"platform": "offscreen"}
+            )
+            fdtd.load(str(project))
+            native = extract_native_yee_q(
+                fdtd,
+                field_monitor=PABS_FIELD,
+                index_monitor=PABS_INDEX,
+                wavelength_m=WAVELENGTH_M,
+            )
+            optical_input = {
+                "kind": "Lumerical FSP",
+                "path": str(project),
+                "byte_size": project.stat().st_size,
+                "sha256": sha256(project),
+            }
+        else:
+            if input_mapping is None or not input_mapping.is_file():
+                raise FileNotFoundError(input_mapping)
+            input_sha = sha256(input_mapping)
+            if (
+                args.expected_input_sha256 is None
+                or input_sha != args.expected_input_sha256
+            ):
+                raise RuntimeError(
+                    "input mapping SHA-256 missing or does not match"
+                )
+            native = native_q_from_mapping(input_mapping)
+            optical_input = {
+                "kind": (
+                    "immutable native Yee arrays from prior mapping NPZ; "
+                    "prior mapped Q ignored"
+                ),
+                "path": str(input_mapping),
+                "byte_size": input_mapping.stat().st_size,
+                "sha256": input_sha,
+            }
         mapped_total = np.zeros(target_shape, float)
         component_records = {}
         active_data = {}
@@ -136,13 +223,34 @@ def main() -> int:
                 for axis, section in zip("xyz", box)
             )
             source = density[box]
-            remap = build_conservative_embedding_remap(
+            geometric_remap = build_conservative_embedding_remap(
                 source_edges_m=component_edges,
                 target_edges_m=target_edges,
             )
+            remap = project_remap_to_material_support_along_axis(
+                geometric_remap,
+                target_edges_m=target_edges,
+                target_support_mask=geometry.flake_mask,
+                axis=2,
+            )
+            geometric_mapped = geometric_remap.apply(source)
             mapped = remap.apply(source)
             source_power = remap.power_source(source)
             mapped_power = remap.power_target(mapped)
+            geometric_outside_power = float(
+                np.sum(
+                    geometric_remap.target_volume_m3[
+                        ~geometry.flake_mask
+                    ]
+                    * geometric_mapped[~geometry.flake_mask]
+                )
+            )
+            projected_outside_power = float(
+                np.sum(
+                    remap.target_volume_m3[~geometry.flake_mask]
+                    * mapped[~geometry.flake_mask]
+                )
+            )
             native_power = float(
                 native["component_power_W"][component]
             )
@@ -167,6 +275,14 @@ def main() -> int:
                     mapped_power - native_power
                 )
                 / max(abs(native_power), np.finfo(float).tiny),
+                "geometric_embedding_outside_TaIrTe4_power_W": (
+                    geometric_outside_power
+                ),
+                "material_support_projection_outside_TaIrTe4_power_W": (
+                    projected_outside_power
+                ),
+                "relocated_power_fraction": geometric_outside_power
+                / max(abs(native_power), np.finfo(float).tiny),
                 "skipped_exact_zero_component": False,
             }
             mapped_total += mapped
@@ -179,6 +295,15 @@ def main() -> int:
             * np.diff(target_edges[2])[None, None, :]
         )
         mapped_total_power = float(np.sum(target_volume * mapped_total))
+        outside_flake_power = float(
+            np.sum(
+                target_volume[~geometry.flake_mask]
+                * mapped_total[~geometry.flake_mask]
+            )
+        )
+        outside_flake_nonzero_count = int(
+            np.count_nonzero(mapped_total[~geometry.flake_mask])
+        )
         native_total_power = float(native["P_Q_W"])
         mapping_error = abs(
             mapped_total_power - native_total_power
@@ -223,17 +348,17 @@ def main() -> int:
                     STATUS_PASS
                     if mapping_error < 5.0e-3
                     and transpose_error < 1.0e-12
+                    and outside_flake_power == 0.0
+                    and outside_flake_nonzero_count == 0
                     else STATUS_FAIL
                 ),
                 "passed": bool(
                     mapping_error < 5.0e-3
                     and transpose_error < 1.0e-12
+                    and outside_flake_power == 0.0
+                    and outside_flake_nonzero_count == 0
                 ),
-                "optical_project": {
-                    "path": str(project),
-                    "byte_size": project.stat().st_size,
-                    "sha256": sha256(project),
-                },
+                "optical_input": optical_input,
                 "omega_Q_bounds_m": {
                     "x": [-1.15e-6, 1.15e-6],
                     "y": [-1.15e-6, 1.15e-6],
@@ -248,6 +373,26 @@ def main() -> int:
                     "right": right,
                     "relative_error": transpose_error,
                     "limit": 1.0e-12,
+                },
+                "material_support_projection": {
+                    "support": "exact thermal TaIrTe4 cells",
+                    "axis": "z",
+                    "method": (
+                        "nearest supported cell energy relocation per "
+                        "thermal x-y column"
+                    ),
+                    "outside_TaIrTe4_power_W": outside_flake_power,
+                    "outside_TaIrTe4_nonzero_cell_count": (
+                        outside_flake_nonzero_count
+                    ),
+                    "source_energy_deleted_W": 0.0,
+                    "empirical_gain": False,
+                    "global_rescaling": False,
+                    "reason": (
+                        "native staggered Yee control volumes straddle the "
+                        "lossy-material z faces; their complete integrated "
+                        "energy physically belongs to TaIrTe4"
+                    ),
                 },
                 "components": component_records,
                 "thermal_target": {
