@@ -118,6 +118,8 @@ def main():
                     default=float(os.environ.get("VC_LATENT_RMS_TOL", "1e-3")))
     ap.add_argument("--latent-max-tol", type=float,
                     default=float(os.environ.get("VC_LATENT_MAX_TOL", "1e-2")))
+    ap.add_argument("--feas-gate-beta", type=float,
+                    default=float(os.environ.get("VC_FEAS_GATE_BETA", "16")))
     ap.add_argument("--gpu", default=os.environ.get("CL_GPU_DEVICE", "GPU 1"))
     ap.add_argument("--rho-step", type=float, default=0.001)
     ap.add_argument("--constraint-c", type=float, default=None)
@@ -169,6 +171,7 @@ def main():
         objective_rel_tol=args.objective_rel_tol,
         latent_rms_tol=args.latent_rms_tol,
         latent_max_tol=args.latent_max_tol,
+        feasibility_gate_beta=args.feas_gate_beta,
     ).validate()
 
     # Validate the adjoint mode at startup, not 15 minutes into the first

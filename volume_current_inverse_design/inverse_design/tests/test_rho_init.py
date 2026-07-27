@@ -44,7 +44,7 @@ def test_warmup_growing_steps_do_not_stall():
 
 def test_constant_tiny_steps_still_stall_infeasible():
     """A genuine stall (flat steps) keeps the honest abort behaviour."""
-    controller = StageController(CFG, beta=2.0)
+    controller = StageController(CFG, beta=32.0)   # gated regime
     latent = np.full(64, 0.5)
     decision = None
     for objective in [1.0, 1.0001, 1.0002]:

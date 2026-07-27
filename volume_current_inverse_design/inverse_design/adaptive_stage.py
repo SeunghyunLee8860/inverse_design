@@ -5,25 +5,34 @@ should CONTINUE, ADVANCE to the next beta early, or ABORT the whole run.
 Keeping this FDTD-free lets the policy be regression-tested without Lumerical.
 
 Policy (fixed ladder 2,4,8,16,32,64 stays; only the per-stage eval count is
-adaptive):
+adaptive).  Feasibility-based aborts apply only at beta >= feasibility_gate_beta
+(default 16): below the gate NO design -- including independently-DRC-passing
+geometry -- can satisfy the Zhou constraints (measured; see the table at the
+REASON_*_PREGATE definitions), so pre-gate stages advance on plateau/maxeval
+like classic beta continuation.
 
-  early advance (all must hold):
+  beta >= gate, early advance (all must hold):
     * evaluations >= min_evals_per_stage and >= convergence_window
     * relative span of the last `convergence_window` objectives
       < objective_rel_tol            (plateau; also bounds improvement)
     * g_solid <= 0 AND g_void <= 0 for every eval in the window
     * consecutive latent changes in the window are quiet:
-      max RMS < latent_rms_tol AND max |Delta| < latent_max_tol
+      max RMS < latent_rms_tol AND max |Delta| < latent_max_tol,
+      and NOT accelerating (CCSA warm-up growth is not a stall)
     -> reason "adaptive_converged_feasible"
 
-  plateau while INFEASIBLE is NOT convergence:
+  beta >= gate, plateau while INFEASIBLE is NOT convergence:
     -> reason "stage_stalled_infeasible"; the run must ABORT (advancing beta
        from an infeasible stall would just harden an infeasible design).
 
-  max_evals_per_stage reached:
+  beta >= gate, max_evals_per_stage reached:
     * stage saw at least one constraint-feasible eval -> advance,
       reason "maxeval_feasible"
     * otherwise -> ABORT, reason "maxeval_infeasible"
+
+  beta < gate:
+    * plateau+quiet -> advance, reason "advance_plateau_prefeasibility"
+    * maxeval       -> advance, reason "maxeval_prefeasibility"
 
 The runner realises a stop via nlopt's force_stop(); the resulting
 nlopt.ForcedStop is INTENTIONAL whenever ``stop_reason`` is set and must never
@@ -43,11 +52,25 @@ REASON_CONVERGED = "adaptive_converged_feasible"
 REASON_STALLED_INFEASIBLE = "stage_stalled_infeasible"
 REASON_MAXEVAL_FEASIBLE = "maxeval_feasible"
 REASON_MAXEVAL_INFEASIBLE = "maxeval_infeasible"
-ADVANCE_REASONS = (REASON_CONVERGED, REASON_MAXEVAL_FEASIBLE)
+# Pre-gate stages (beta < feasibility_gate_beta): constraint feasibility is
+# STRUCTURALLY unreachable there (measured 2026-07-27: a 3 um stripe and a
+# 525 nm bar -- both independent-DRC-PASS designs -- have g_solid/g_void ~ +1e-2 at
+# beta=2, +4e-3 at beta=4, +2e-4 at beta=8, and only reach the <=0 floor from
+# beta=16: the Zhou penalty at low beta charges the intrinsic grayness of the
+# tanh projection itself).  Aborting for infeasibility below the gate would
+# therefore abort EVERY run unconditionally; instead such stages advance on
+# plateau/maxeval like classic beta continuation.  The feasibility POLICY at
+# beta >= gate and the final DRC/exact-FDTD SUCCESS gates are unchanged.
+REASON_PLATEAU_PREGATE = "advance_plateau_prefeasibility"
+REASON_MAXEVAL_PREGATE = "maxeval_prefeasibility"
+ADVANCE_REASONS = (
+    REASON_CONVERGED, REASON_MAXEVAL_FEASIBLE,
+    REASON_PLATEAU_PREGATE, REASON_MAXEVAL_PREGATE,
+)
 ABORT_REASONS = (REASON_STALLED_INFEASIBLE, REASON_MAXEVAL_INFEASIBLE)
 CONTINUE = "continue"
 
-POLICY_VERSION = "adaptive_stage/v1"
+POLICY_VERSION = "adaptive_stage/v2-feasibility-gate"
 
 
 @dataclass(frozen=True)
@@ -58,6 +81,7 @@ class AdaptiveConfig:
     objective_rel_tol: float = 5e-3
     latent_rms_tol: float = 1e-3
     latent_max_tol: float = 1e-2
+    feasibility_gate_beta: float = 16.0
 
     def validate(self) -> "AdaptiveConfig":
         if self.min_evals_per_stage < 1:
@@ -69,6 +93,8 @@ class AdaptiveConfig:
         for name in ("objective_rel_tol", "latent_rms_tol", "latent_max_tol"):
             if getattr(self, name) <= 0:
                 raise ValueError(f"{name} must be > 0")
+        if self.feasibility_gate_beta <= 0:
+            raise ValueError("feasibility_gate_beta must be > 0")
         return self
 
     def to_dict(self) -> dict:
@@ -82,6 +108,7 @@ class AdaptiveConfig:
             "objective_rel_tol": float(self.objective_rel_tol),
             "latent_rms_tol": float(self.latent_rms_tol),
             "latent_max_tol": float(self.latent_max_tol),
+            "feasibility_gate_beta": float(self.feasibility_gate_beta),
         }
 
 
@@ -112,11 +139,18 @@ class StageController:
 
         cfg = self.config
         n = len(self.objectives)
+        # Below the gate, constraint feasibility is structurally unreachable
+        # (see the measured table at the REASON_*_PREGATE definitions), so the
+        # feasibility-based abort semantics only apply at beta >= gate.
+        gated = self.beta >= cfg.feasibility_gate_beta
         if n >= cfg.max_evals_per_stage:
-            self.stop_reason = (
-                REASON_MAXEVAL_FEASIBLE if self.stage_saw_feasible
-                else REASON_MAXEVAL_INFEASIBLE
-            )
+            if not gated:
+                self.stop_reason = REASON_MAXEVAL_PREGATE
+            else:
+                self.stop_reason = (
+                    REASON_MAXEVAL_FEASIBLE if self.stage_saw_feasible
+                    else REASON_MAXEVAL_INFEASIBLE
+                )
             return self.stop_reason
         if n < cfg.min_evals_per_stage or n < cfg.convergence_window:
             return CONTINUE
@@ -133,10 +167,15 @@ class StageController:
             and not metrics["latent_step_accelerating"]
         )
         if plateau and quiet:
-            self.stop_reason = (
-                REASON_CONVERGED if metrics["window_feasible"]
-                else REASON_STALLED_INFEASIBLE
-            )
+            if not gated:
+                # classic continuation: shaped as far as this beta can; the
+                # ladder (not feasibility) is the driver before the gate.
+                self.stop_reason = REASON_PLATEAU_PREGATE
+            else:
+                self.stop_reason = (
+                    REASON_CONVERGED if metrics["window_feasible"]
+                    else REASON_STALLED_INFEASIBLE
+                )
             return self.stop_reason
         return CONTINUE
 

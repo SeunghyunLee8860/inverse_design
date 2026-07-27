@@ -36,8 +36,9 @@ CFG = AdaptiveConfig(
 N = 64
 
 
-def _controller(cfg=CFG):
-    return StageController(cfg, beta=2.0)
+def _controller(cfg=CFG, beta=32.0):
+    # beta=32 >= feasibility_gate_beta: the gated (abort-capable) regime.
+    return StageController(cfg, beta=beta)
 
 
 def _feed(controller, objectives, g_solid, g_void, step=0.0):
@@ -100,7 +101,7 @@ def test_maxeval_feasible_advances():
     cfg = AdaptiveConfig(min_evals_per_stage=3, max_evals_per_stage=5,
                          convergence_window=3, objective_rel_tol=1e-9,
                          latent_rms_tol=1e-12, latent_max_tol=1e-12)
-    controller = StageController(cfg, beta=2.0)
+    controller = StageController(cfg, beta=32.0)
     objectives = [1.0, 2.0, 3.0, 4.0, 5.0]     # never a plateau
     decision, evals = _feed(
         controller, objectives, [-1e-6] * 5, [-1e-6] * 5, step=0.1)
@@ -113,7 +114,7 @@ def test_maxeval_infeasible_aborts():
     cfg = AdaptiveConfig(min_evals_per_stage=3, max_evals_per_stage=5,
                          convergence_window=3, objective_rel_tol=1e-9,
                          latent_rms_tol=1e-12, latent_max_tol=1e-12)
-    controller = StageController(cfg, beta=2.0)
+    controller = StageController(cfg, beta=32.0)
     objectives = [1.0, 2.0, 3.0, 4.0, 5.0]
     decision, _ = _feed(
         controller, objectives, [1e-3] * 5, [1e-3] * 5, step=0.1)
@@ -127,7 +128,7 @@ def test_maxeval_feasible_counts_any_feasible_eval_in_stage():
     cfg = AdaptiveConfig(min_evals_per_stage=3, max_evals_per_stage=4,
                          convergence_window=3, objective_rel_tol=1e-9,
                          latent_rms_tol=1e-12, latent_max_tol=1e-12)
-    controller = StageController(cfg, beta=2.0)
+    controller = StageController(cfg, beta=32.0)
     decision, _ = _feed(controller, [1.0, 2.0, 3.0, 4.0],
                         [-1e-6, 1e-3, 1e-3, 1e-3],
                         [-1e-6, 1e-3, 1e-3, 1e-3], step=0.1)
@@ -205,7 +206,7 @@ def test_forced_stop_end_to_end_with_real_nlopt():
     cfg = AdaptiveConfig(min_evals_per_stage=2, max_evals_per_stage=4,
                          convergence_window=2, objective_rel_tol=1e-9,
                          latent_rms_tol=1e-12, latent_max_tol=1e-12)
-    controller = StageController(cfg, beta=2.0)
+    controller = StageController(cfg, beta=32.0)
     opt = nlopt.opt(nlopt.LD_MMA, 4)
     opt.set_lower_bounds(np.zeros(4))
     opt.set_upper_bounds(np.ones(4))
