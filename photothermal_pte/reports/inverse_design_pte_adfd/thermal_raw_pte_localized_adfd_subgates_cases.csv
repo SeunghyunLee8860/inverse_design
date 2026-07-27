@@ -1,0 +1,16 @@
+kind,scenario,name,step,relative_error,signal_ratio,included_in_gate
+thermal_mesh,TaIrTe4_6um_footprint,preserved_refined_50nm->additional_40nm,,0.0018437394074543251,,True
+thermal_mesh,TaIrTe4_6um_footprint,additional_40nm->additional_33p333nm,,0.0033674514139837067,,True
+thermal_mesh,TaIrTe4_6um_footprint,preserved_refined_50nm->additional_33p333nm,,0.0015265265236375362,,True
+thermal_localized_ADFD,TaIrTe4_4um_footprint,central_localized,0.01,3.1022708191064475e-05,9.305052582888826e-05,True
+thermal_localized_ADFD,TaIrTe4_4um_footprint,central_localized,0.005,7.842702643904481e-06,9.305052582888826e-05,True
+thermal_localized_ADFD,TaIrTe4_4um_footprint,central_localized,0.0025,1.90768126343893e-06,9.305052582888826e-05,True
+thermal_localized_ADFD,TaIrTe4_4um_footprint,design_edge_localized,0.01,1.376301973796546e-06,0.01816017085454656,True
+thermal_localized_ADFD,TaIrTe4_4um_footprint,design_edge_localized,0.005,3.441968422178914e-07,0.01816017085454656,True
+thermal_localized_ADFD,TaIrTe4_4um_footprint,design_edge_localized,0.0025,8.709871141997109e-08,0.01816017085454656,True
+thermal_localized_ADFD,TaIrTe4_6um_footprint,central_localized,0.01,3.427707784836468e-05,0.00014922344215459972,True
+thermal_localized_ADFD,TaIrTe4_6um_footprint,central_localized,0.005,8.36910020338919e-06,0.00014922344215459972,True
+thermal_localized_ADFD,TaIrTe4_6um_footprint,central_localized,0.0025,1.9186246891407475e-06,0.00014922344215459972,True
+thermal_localized_ADFD,TaIrTe4_6um_footprint,design_edge_localized,0.01,2.928073360274263e-06,0.018444741992672747,True
+thermal_localized_ADFD,TaIrTe4_6um_footprint,design_edge_localized,0.005,7.29307961286619e-07,0.018444741992672747,True
+thermal_localized_ADFD,TaIrTe4_6um_footprint,design_edge_localized,0.0025,1.812023982817002e-07,0.018444741992672747,True

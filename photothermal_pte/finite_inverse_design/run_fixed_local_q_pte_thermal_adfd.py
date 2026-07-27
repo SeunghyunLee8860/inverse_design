@@ -63,12 +63,32 @@ def directions(
     rng = np.random.default_rng(2026072707)
     x = np.linspace(-1.0, 1.0, shape[0])[:, None]
     y = np.linspace(-1.0, 1.0, shape[1])[None, :]
+    x_cell = (
+        -1.0
+        + (np.arange(shape[0], dtype=float) + 0.5)
+        * (2.0 / shape[0])
+    )[:, None]
+    y_cell = (
+        -1.0
+        + (np.arange(shape[1], dtype=float) + 0.5)
+        * (2.0 / shape[1])
+    )[None, :]
     raw = {
         "adjoint_aligned": gradient,
         "seeded_random": rng.normal(size=shape),
         "asymmetric_smooth": (
             np.sin(0.7 * np.pi * (x + 0.15))
             * np.cos(0.45 * np.pi * (y - 0.2))
+        ),
+        "central_localized": np.exp(
+            -(x_cell**2 + y_cell**2) / (2.0 * 0.14**2)
+        ),
+        "design_edge_localized": np.exp(
+            -(
+                (x_cell - 0.88) ** 2
+                + (y_cell + 0.23) ** 2
+            )
+            / (2.0 * 0.075**2)
         ),
     }
     result = {}

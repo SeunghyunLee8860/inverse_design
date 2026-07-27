@@ -215,8 +215,27 @@
 - Worst downstream component-J transpose error: `9.56908e-16`
 - No empirical normalization, gradient rescaling, clipping, smoothing, gain,
   global Q rescaling, tiling, or Q-source deletion was used
-- Next gate: thermal raw-PTE convergence plus central-localized and
-  design-edge-localized thermal AD-FD
+- Thermal raw-PTE/localized-ADFD subgate status:
+  `VALIDATED_THERMAL_RAW_PTE_AND_LOCALIZED_ADFD_SUBGATES`
+- Historical 6 um native-to-50 nm refined raw-PTE change remains
+  `0.629536%` and is preserved as
+  `RAW_PTE_LT_0P5PCT_UNRESOLVED`; it was not rewritten
+- New 6 um fixed-Q raw-PTE changes:
+  `0.184374%` for 50→40 nm, `0.336745%` for 40→33.333 nm, and
+  `0.152652%` for the direct 50→33.333 nm comparison
+- New successive-mesh TaIrTe4 common-field NRMSE:
+  `0.0422701% / 0.0480763%`
+- Fixed-Q thermal-only AD-FD now includes adjoint-aligned, fixed-seed
+  random, asymmetric-smooth, central-localized, and design-edge-localized
+  directions at `h=0.01/0.005/0.0025`
+- Worst selected five-direction thermal-only AD-FD error at `h=0.0025`:
+  `1.91862e-6`
+- Central-localized / design-edge-localized `h=0.0025` errors, 4 um:
+  `1.90768e-6 / 8.70987e-8`; 6 um:
+  `1.91862e-6 / 1.81202e-7`
+- Next gate: rerun combined physical-rho PTE AD-FD using the promoted
+  component-specific Yee Jacobian/collocation and production optical
+  `dz=2.5 nm`
 - Gray-law sensitivity, filter/projection latent AD-FD, transient, and
   optimization remain unexecuted
 - Status: `VALIDATED_MIXED_CPU_TFSF_GPU_FIELDREGION_OPTICAL_ADFD`
