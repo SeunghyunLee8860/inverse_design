@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "raw_artifacts_committed_to_git": false,
+  "note": "Raw NPZ/FSP files remain outside Git. The rejected pre-support thermal run is not promoted or listed as an input.",
+  "generation_contract": {
+    "mapping": "validate_large_background_local_q_mapping with immutable native arrays, expected SHA-256, and exact TaIrTe4 support",
+    "thermal": "run_large_background_local_q_thermal_adfd with 4/6 um scenarios, 32 um lateral domain, 20 um Si depth, 100 nm core cells, and FD steps 0.01/0.005"
+  },
+  "artifacts": [
+    {
+      "role": "thermal_run_summary",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_local_q_materialsupport_explicit_thermal_adfd_20260727_1/local_q_explicit_thermal_adfd_summary.json",
+      "byte_size": 17991,
+      "sha256": "f7fdecd9004ac9e8728c5816bb46172ee74d7af0d9eae3e349f97ea9ab851dd9"
+    },
+    {
+      "role": "thermal_run_cases",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_local_q_materialsupport_explicit_thermal_adfd_20260727_1/local_q_explicit_thermal_adfd_cases.csv",
+      "byte_size": 3492,
+      "sha256": "d14fec91c1a829e70090b70a259e8c4622459ada02b357ada97d4229f8d2c477"
+    },
+    {
+      "role": "thermal_raw_npz",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_local_q_materialsupport_explicit_thermal_adfd_20260727_1/local_q_explicit_thermal_adfd_raw.npz",
+      "byte_size": 8286411,
+      "sha256": "634af2d97a8d7cf482c457b70046adefc8ba3fd8cb06925bfa56334f0a748b77"
+    },
+    {
+      "role": "mapping_1_summary",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_local_q_mapping_materialsupport_flake4um_20260727_2/local_q_mapping_summary.json",
+      "byte_size": 4893,
+      "sha256": "f6014c55a6318b600e0c941b1c5c7cf19363fd4a925748e45d1376d1491d4baa"
+    },
+    {
+      "role": "mapping_1_raw_npz",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_local_q_mapping_materialsupport_flake4um_20260727_2/local_q_thermal_mapping.npz",
+      "byte_size": 705907,
+      "sha256": "9971edd6bc61c0028d7fad7a86958099b6bcbe698aa1eedbf6a80a0c903eb290"
+    },
+    {
+      "role": "mapping_1_immutable_input_npz",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_local_q_mapping_20260727_1/local_q_thermal_mapping.npz",
+      "byte_size": 715456,
+      "sha256": "694bc64d1a909f690ba6655a4217c6a6a7dcaaf5392b308ee8274335684be6f1"
+    },
+    {
+      "role": "mapping_2_summary",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_local_q_mapping_materialsupport_flake6um_20260727_1/local_q_mapping_summary.json",
+      "byte_size": 4900,
+      "sha256": "f24cdbcb4a5ea3519b697ce0a6036cb8588cf38fcf75bbf08dbf19174200044e"
+    },
+    {
+      "role": "mapping_2_raw_npz",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_local_q_mapping_materialsupport_flake6um_20260727_1/local_q_thermal_mapping.npz",
+      "byte_size": 708832,
+      "sha256": "73617d249cfa261dd87f1c2b94a38cdb328b6793212b698e31034470430e0ba2"
+    },
+    {
+      "role": "mapping_2_immutable_input_npz",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_local_q_mapping_flake6um_20260727_1/local_q_thermal_mapping.npz",
+      "byte_size": 718447,
+      "sha256": "7754400745b8128f1303e44e5e18dca0d67c59b3b5fa3db3005197c0645db5dd"
+    }
+  ]
+}

@@ -50,11 +50,31 @@
 - CPU/GPU adjoint complex-field NRMSE: `2.19978e-5`
 - Local optical-to-thermal Q mapping power/transpose errors:
   `2.39121e-16 / 8.07866e-16`
-- Current scope: local optical and mapping certificate only
-- Remaining physical inputs before fixed-Q thermal/combined PTE:
+- Material-support mapping status:
+  `VALIDATED_LOCAL_Q_OPTICAL_THERMAL_MAPPING`
+- Corrected 4 um / 6 um mapping SHA-256:
+  `9971edd6bc61c0028d7fad7a86958099b6bcbe698aa1eedbf6a80a0c903eb290` /
+  `73617d249cfa261dd87f1c2b94a38cdb328b6793212b698e31034470430e0ba2`
+- Mapped source outside exact TaIrTe4 support:
+  `0 W`, `0` nonzero cells
+- Fixed-local-Q explicit thermal status:
+  `VALIDATED_NAMED_LOCAL_Q_EXPLICIT_THERMAL_ADFD_SCENARIOS`
+- Named thermal footprints: `4 × 4 um` and `6 × 6 um`; neither is
+  promoted as the unconfirmed fabrication geometry
+- Central 2 um TaIrTe4 average DeltaT, 4 um / 6 um:
+  `8.27733069135e-8 / 8.06057559735e-8 K`
+- TaIrTe4 Tmax, 4 um / 6 um:
+  `1.07023617860e-7 / 1.05215987646e-7 K`
+- Worst thermal AD-FD / energy / linear-residual errors:
+  `1.30271e-4 / 3.51866e-12 / 1.02259e-11`
+- Global thermal hotspots: inside TaIrTe4 at approximately
+  `(0.05, 0.05, -0.0125) um` in both named scenarios
+- Current thermal-source scope: validated local `Omega_Q` only; absorption
+  outside the local volume for a truly extended ideal plane wave is omitted
+- Remaining physical inputs before combined/full-latent PTE:
   actual finite illumination footprint and actual thermal TaIrTe4 footprint
-- Thermal solve, combined/full-latent PTE, and optimization for this
-  large-background plane-wave chain: not executed
+- Terminal PTE, combined/full-latent PTE, transient, and optimization for
+  this large-background plane-wave chain: not executed
 
 ### Superseded periodic certificate
 
