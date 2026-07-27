@@ -23,6 +23,18 @@
   TaIrTe4/design z-cell counts:
   `4/6`, `4/6`, `8/6`, `4/12`
 - This parameter audit does not claim thermal convergence
+- v261 FDTD license/API gate:
+  `PASSED_V261_FDTD_LICENSE_API_PROBE`
+- FDTD application version / session / script / save / reload:
+  `8.35.4522 / passed / passed / passed / passed`
+- License/API probe solver and optimization execution:
+  `false / false`
+- Initial direct-probe failure cause:
+  restricted sandbox blocked the localhost Ansys license socket; not seat
+  exhaustion or missing entitlement
+- A separate pre-existing GPU FDTD optimization process was observed and was
+  neither started nor modified by this checkpoint; it must not overlap the
+  timed matched CPU-TFSF gate
 - Status: `VALIDATED_MIXED_CPU_TFSF_GPU_FIELDREGION_OPTICAL_ADFD`
 - Protected design/PTE ROI: exactly `x,y=[-1,1] µm`
 - Optical TaIrTe4: 100 nm thick and extended through lateral PML as the

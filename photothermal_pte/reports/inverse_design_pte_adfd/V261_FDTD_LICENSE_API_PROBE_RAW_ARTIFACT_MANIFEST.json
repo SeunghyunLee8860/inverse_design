@@ -1,0 +1,19 @@
+{
+  "status": "PASSED_V261_FDTD_LICENSE_API_PROBE",
+  "artifact_root": "/home/seunghyun/tairte4_artifacts/v261_fdtd_license_probe_20260727_5",
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python -m photothermal_pte.finite_inverse_design.probe_v261_fdtd_license --output-dir /home/seunghyun/tairte4_artifacts/v261_fdtd_license_probe_20260727_5",
+  "execution_requirement": "Run outside the restricted sandbox because the Ansys license client requires a localhost socket.",
+  "raw_files_committed_to_git": false,
+  "files": [
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/v261_fdtd_license_probe_20260727_5/v261_fdtd_license_probe.fsp",
+      "size_bytes": 457950,
+      "sha256": "7137af426d028240f9470f9b36518d37c740cbc6ae8c4ae54b2d8b15bdf37fd9"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/v261_fdtd_license_probe_20260727_5/v261_fdtd_license_probe.json",
+      "size_bytes": 513,
+      "sha256": "e4d71443cad1a37a33c9bd05a3295997259d4b4445e1942319b4550df6c35285"
+    }
+  ]
+}
