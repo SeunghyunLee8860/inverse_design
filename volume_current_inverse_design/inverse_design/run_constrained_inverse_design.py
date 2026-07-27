@@ -120,6 +120,20 @@ def main():
                     default=float(os.environ.get("VC_LATENT_MAX_TOL", "1e-2")))
     ap.add_argument("--feas-gate-beta", type=float,
                     default=float(os.environ.get("VC_FEAS_GATE_BETA", "16")))
+    # FDTD-free feasibility repair before each gated stage (see
+    # feasibility_repair.py; measured on r4: constraint-only CPU solve moves g
+    # 99.4% in minutes where 12 GPU evals moved it 3%).
+    ap.add_argument("--repair", type=int,
+                    default=int(os.environ.get("VC_REPAIR", "1")))
+    ap.add_argument("--repair-maxeval", type=int,
+                    default=int(os.environ.get("VC_REPAIR_MAXEVAL", "60000")))
+    ap.add_argument("--repair-margin", type=float,
+                    default=float(os.environ.get("VC_REPAIR_MARGIN", "1e-6")))
+    # Optional initial latent from a prior run's NPZ (key "latent"); the file
+    # hash joins the contract so the trajectory's starting point is part of
+    # the config identity.
+    ap.add_argument("--seed-npz",
+                    default=os.environ.get("VC_SEED_NPZ") or None)
     ap.add_argument("--gpu", default=os.environ.get("CL_GPU_DEVICE", "GPU 1"))
     ap.add_argument("--rho-step", type=float, default=0.001)
     ap.add_argument("--constraint-c", type=float, default=None)
@@ -158,6 +172,7 @@ def main():
         ABORT_REASONS, CONTINUE, AdaptiveConfig, StageController,
         is_intentional_stop,
     )
+    from feasibility_repair import repair_to_feasible
     from geometric_constraints import LengthScaleConstraints
     from geometry_drc import geometry_drc
     from iteration_plots import density_metrics, save_iteration_plots
@@ -259,6 +274,20 @@ def main():
         # though history/checkpoints stay in physical units.
         "objective_scale_nlopt": float(args.obj_scale),
         "nlopt_rho_init": float(args.rho_init),
+        # FDTD-free feasibility repair before gated stages + optional seed
+        # latent: both change the trajectory -> config identity.
+        "feasibility_repair": {
+            "enabled": bool(args.repair),
+            "maxeval": int(args.repair_maxeval),
+            "margin": float(args.repair_margin),
+        },
+        "seed": (
+            {"path": str(Path(args.seed_npz).expanduser().resolve()),
+             "sha256": hashlib.sha256(
+                 Path(args.seed_npz).expanduser().resolve().read_bytes()
+             ).hexdigest()[:16]}
+            if args.seed_npz else {"path": None, "source": "model.x0"}
+        ),
         # P1-5: record RESOLVED config that changes results
         "maxeval_per_stage": int(args.maxeval_per_stage),
         # Adaptive continuation policy is part of the configuration identity:
@@ -293,7 +322,21 @@ def main():
 
     # attempt bookkeeping + resume guard
     existing = sorted((run_root / "attempts").glob("attempt_*"))
-    latent = np.asarray(model.x0, float).reshape(-1).copy()
+    if args.seed_npz:
+        seed_path = Path(args.seed_npz).expanduser().resolve()
+        seed_data = np.load(seed_path)
+        if "latent" not in seed_data.files:
+            raise SystemExit(f"--seed-npz {seed_path} has no 'latent' array")
+        latent = np.asarray(seed_data["latent"], float).reshape(-1).copy()
+        if latent.size != nlat:
+            raise SystemExit(
+                f"seed latent size {latent.size} != Nux*Nuy {nlat}")
+        if np.min(latent) < 0.0 or np.max(latent) > 1.0:
+            raise SystemExit("seed latent outside [0,1]")
+        print(f"[seed] latent from {seed_path} "
+              f"(sha256 {contract['seed']['sha256']})", flush=True)
+    else:
+        latent = np.asarray(model.x0, float).reshape(-1).copy()
     state = {"beta": 0.0, "iter": 0, "best_feasible": None,
              "best_feasible_obj": -np.inf, "best_beta": None,
              # in-memory copy of every eval record, feeding the per-iteration
@@ -392,6 +435,42 @@ def main():
     stage_summaries = []
     for beta in _beta_stages(args.beta_schedule):
         state["beta"] = beta
+        # FDTD-free feasibility repair before a GATED stage: r4 measured 12
+        # GPU evaluations moving g by -3% at beta=16 while a constraint-only
+        # CPU solve moved the same latent by -99.4% in minutes.  Repair the
+        # latent for free, then spend GPU evaluations on the objective.
+        if args.repair and beta >= adaptive_cfg.feasibility_gate_beta:
+            gs0, gv0 = constraints.residuals(latent, beta)
+            if gs0 > -args.repair_margin or gv0 > -args.repair_margin:
+                print(f"[repair] beta={beta:g}: gs={gs0:.3e} gv={gv0:.3e} "
+                      "-> FDTD-free feasibility repair", flush=True)
+                rep = repair_to_feasible(
+                    constraints, latent, beta,
+                    margin=args.repair_margin,
+                    maxeval=args.repair_maxeval,
+                    rho_init=args.rho_init,
+                    log=lambda message: print(message, flush=True),
+                )
+                log({"attempt": attempt_id, "beta": beta, "repair": {
+                    key: value for key, value in rep.items()
+                    if key != "latent"}})
+                np.savez_compressed(
+                    run_root / f"repair_beta{beta:g}.npz",
+                    latent=rep["latent"],
+                    g_before=np.asarray(rep["g_before"]),
+                    g_after=np.asarray(rep["g_after"]))
+                if not rep["feasible"]:
+                    print(f"[repair] FAILED at beta={beta:g}: "
+                          f"g_after={rep['g_after']} -> aborting run",
+                          flush=True)
+                    adaptive_abort = "repair_infeasible"
+                    completed_all_stages = False
+                    break
+                latent = np.asarray(rep["latent"], float).reshape(-1)
+                print(f"[repair] beta={beta:g} feasible after "
+                      f"{rep['evaluations']} constraint evals "
+                      f"({rep['seconds']:.0f}s): g_after={rep['g_after']}",
+                      flush=True)
         controller = StageController(adaptive_cfg, beta)
         opt = nlopt.opt(nlopt.LD_MMA, nlat)
         opt.set_lower_bounds(np.zeros(nlat))
