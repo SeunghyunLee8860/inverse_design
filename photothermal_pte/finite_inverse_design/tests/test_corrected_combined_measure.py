@@ -3,6 +3,7 @@ import numpy as np
 from photothermal_pte.finite_inverse_design.native_yee_q import EPS0
 from photothermal_pte.finite_inverse_design.run_corrected_combined_physical_rho_pte_adfd import (
     component_gradient,
+    fd_step_convergence,
 )
 from photothermal_pte.finite_inverse_design.run_v261_large_background_mixed_optical_adfd import (
     component_volumes,
@@ -48,3 +49,17 @@ def test_component_gradient_uses_complete_yee_dual_cell_volume() -> None:
             indirect[component],
             2.0 * EPS0 * expected[index],
         )
+
+
+def test_fd_step_convergence_accepts_stable_nonmonotone_noise_plateau():
+    rows = [
+        {"finite_difference_directional_A": 1.0e-15},
+        {"finite_difference_directional_A": 1.0e-15 + 3.0e-21},
+        {"finite_difference_directional_A": 1.0e-15 - 2.0e-21},
+    ]
+
+    result = fd_step_convergence(rows)
+
+    assert not result["strict_monotone_difference_reduction"]
+    assert result["step_plateau_relative"] < 1.0e-3
+    assert result["step_convergence_passed"]

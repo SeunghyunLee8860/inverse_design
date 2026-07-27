@@ -1,5 +1,27 @@
 # Latest photothermal validation status
 
+## Corrected combined strong-direction PTE AD-FD
+
+- Status:
+  `DIAGNOSTIC_PASSED_CORRECTED_COMBINED_STRONG_DIRECTION_ADFD`
+- Scope: new corrected adjoint-aligned direction at
+  `h=0.01, 0.005, 0.0025`; not the final five-direction certificate
+- Worst strong-direction relative error: `2.427386e-5` (limit `1%`)
+- 4 um / 6 um FD step-plateau relative change:
+  `9.23008e-6 / 1.23328e-5` (limit `0.1%`)
+- Strict monotone difference reduction: `false / false`, explicitly retained
+- Worst optical closure: `2.16546e-4` (limit `0.5%`)
+- Worst Q mapping error: `2.38626e-16` (limit `0.5%`)
+- Worst thermal energy balance: `3.17640e-12` (limit `1%`)
+- Worst linear residual: `1.02135e-11` (limit `1e-8`)
+- Mapping transpose error: `2.98326e-15` (limit `1e-12`)
+- Empirical normalization and gradient rescaling: absent
+- Original Stage 10 failure and original monotonic-heuristic raw JSON:
+  immutable
+- Next gate: central-localized, design-edge-localized, smooth/asymmetric,
+  and fixed-seed-random combined physical-rho AD-FD
+- Gray-law sensitivity, full latent AD-FD, and optimization remain blocked
+
 ## Full Yee dual-cell gradient-measure correction
 
 - Status: `VALIDATED_FULL_YEE_DUAL_CELL_GRADIENT_MEASURE`

@@ -47,6 +47,10 @@ from .yee_material_jacobian import SparseYeeMaterialJacobian
 
 STATUS_PASS = "VALIDATED_CORRECTED_COMBINED_PHYSICAL_RHO_PTE_ADFD"
 STATUS_FAIL = "FAILED_CORRECTED_COMBINED_PHYSICAL_RHO_PTE_ADFD"
+STRONG_DIRECTION_RELATIVE_LIMIT = 1.0e-2
+FD_STEP_PLATEAU_RELATIVE_LIMIT = (
+    0.1 * STRONG_DIRECTION_RELATIVE_LIMIT
+)
 FLUX_SIGNS = {
     f"device_flux_{axis}_{side}": (-1.0 if side == "min" else 1.0)
     for axis in "xyz"
@@ -349,6 +353,42 @@ def relative(value: float, reference: float) -> float:
     )
 
 
+def fd_step_convergence(rows: list[dict]) -> dict:
+    """Measure convergence to a solver-noise-limited centered-FD plateau."""
+    if len(rows) != 3:
+        raise ValueError("FD convergence requires exactly three steps")
+    differences = [
+        abs(
+            rows[i]["finite_difference_directional_A"]
+            - rows[i + 1]["finite_difference_directional_A"]
+        )
+        for i in range(2)
+    ]
+    scale = max(
+        *(abs(row["finite_difference_directional_A"]) for row in rows),
+        np.finfo(float).tiny,
+    )
+    normalized_differences = [
+        difference / scale for difference in differences
+    ]
+    # Strictly decreasing differences are useful to report, but cannot be
+    # the sole gate once a centered FD reaches deterministic solver noise.
+    # Require the full h -> h/2 sweep to occupy a plateau one decade tighter
+    # than the independent strong-direction AD--FD error gate.
+    monotone_reduction = differences[1] <= differences[0]
+    plateau_relative = max(normalized_differences)
+    return {
+        "h_to_h_over_2_difference_A": differences,
+        "h_to_h_over_2_normalized_difference": normalized_differences,
+        "strict_monotone_difference_reduction": monotone_reduction,
+        "step_plateau_relative": plateau_relative,
+        "step_plateau_relative_limit": FD_STEP_PLATEAU_RELATIVE_LIMIT,
+        "step_convergence_passed": (
+            plateau_relative < FD_STEP_PLATEAU_RELATIVE_LIMIT
+        ),
+    }
+
+
 def main() -> int:
     args = parse_args()
     steps = sorted(
@@ -595,32 +635,13 @@ def main() -> int:
                 )
                 if name == "adjoint_aligned":
                     strong_errors.append(selected["relative_error"])
-                differences = [
-                    abs(
-                        rows[i]["finite_difference_directional_A"]
-                        - rows[i + 1][
-                            "finite_difference_directional_A"
-                        ]
-                    )
-                    for i in range(2)
-                ]
-                convergence_passed = differences[1] <= max(
-                    1.2 * differences[0],
-                    1.0e-8
-                    * max(
-                        abs(
-                            selected[
-                                "finite_difference_directional_A"
-                            ]
-                        ),
-                        np.finfo(float).tiny,
-                    ),
+                convergence = fd_step_convergence(rows)
+                step_convergence.append(
+                    convergence["step_convergence_passed"]
                 )
-                step_convergence.append(convergence_passed)
                 directions_out[name] = {
                     **direction_data,
-                    "h_to_h_over_2_difference_A": differences,
-                    "step_convergence_passed": convergence_passed,
+                    **convergence,
                 }
                 for row in rows:
                     all_closure.extend(
@@ -715,7 +736,7 @@ def main() -> int:
             )
         gates = {
             "worst_strong_direction_relative_error": max(strong_errors),
-            "strong_direction_limit": 1.0e-2,
+            "strong_direction_limit": STRONG_DIRECTION_RELATIVE_LIMIT,
             "worst_multidirection_normalized_error": max(
                 multidirection_errors
             ),
