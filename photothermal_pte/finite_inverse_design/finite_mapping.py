@@ -127,8 +127,14 @@ class FiniteDensityMapping:
     def physical(
         self, latent: np.ndarray, beta: float = CERTIFICATE_BETA
     ) -> np.ndarray:
-        projected = _projection(self.filtered(latent), beta, self.eta)
+        projected = self.physical_2d(latent, beta)
         return np.repeat(projected[:, :, None], self.nz, axis=2)
+
+    def physical_2d(
+        self, latent: np.ndarray, beta: float = CERTIFICATE_BETA
+    ) -> np.ndarray:
+        """Map the finite latent field to the single extruded 2D density."""
+        return _projection(self.filtered(latent), beta, self.eta)
 
     def jvp(
         self,
@@ -136,15 +142,24 @@ class FiniteDensityMapping:
         direction: np.ndarray,
         beta: float = CERTIFICATE_BETA,
     ) -> np.ndarray:
+        projected_direction = self.jvp_2d(latent, direction, beta)
+        return np.repeat(projected_direction[:, :, None], self.nz, axis=2)
+
+    def jvp_2d(
+        self,
+        latent: np.ndarray,
+        direction: np.ndarray,
+        beta: float = CERTIFICATE_BETA,
+    ) -> np.ndarray:
+        """Apply the exact 2D finite-filter/projection Jacobian."""
         filtered = self.filtered(latent)
         filtered_direction = np.asarray(
             self.filter_matrix @ np.asarray(direction, float).reshape(-1)
         ).reshape(self.nx, self.ny)
-        projected_direction = (
+        return (
             _projection_derivative(filtered, beta, self.eta)
             * filtered_direction
         )
-        return np.repeat(projected_direction[:, :, None], self.nz, axis=2)
 
     def vjp(
         self,
@@ -155,10 +170,22 @@ class FiniteDensityMapping:
         sensitivity = np.asarray(physical_sensitivity, float)
         if sensitivity.shape != self.physical_shape:
             raise ValueError("physical sensitivity has the wrong shape")
-        filtered = self.filtered(latent)
         projected_sensitivity = np.sum(sensitivity, axis=2)
+        return self.vjp_2d(latent, projected_sensitivity, beta)
+
+    def vjp_2d(
+        self,
+        latent: np.ndarray,
+        physical_sensitivity: np.ndarray,
+        beta: float = CERTIFICATE_BETA,
+    ) -> np.ndarray:
+        """Transpose the 2D finite-filter/projection Jacobian once."""
+        sensitivity = np.asarray(physical_sensitivity, float)
+        if sensitivity.shape != self.latent_shape:
+            raise ValueError("2D physical sensitivity has the wrong shape")
+        filtered = self.filtered(latent)
         filtered_sensitivity = (
-            projected_sensitivity
+            sensitivity
             * _projection_derivative(filtered, beta, self.eta)
         )
         return np.asarray(
