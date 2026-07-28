@@ -61,7 +61,10 @@ def _finite_conic_filter(
     constant_error = float(
         np.max(np.abs(matrix @ np.ones(nx * ny) - 1.0))
     )
-    if constant_error > 2.0e-15:
+    # Sparse row assembly order can move this last-bit error slightly across
+    # SciPy builds.  The matrix itself is unchanged; accept only a small
+    # multiple of binary64 roundoff.
+    if constant_error > 1.0e-14:
         raise RuntimeError(
             f"finite filter does not preserve constants: {constant_error}"
         )

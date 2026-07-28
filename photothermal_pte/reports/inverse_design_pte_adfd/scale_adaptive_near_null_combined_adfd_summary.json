@@ -1,0 +1,73 @@
+{
+  "status": "FAILED_SCALE_ADAPTIVE_NEAR_NULL_COMBINED_ADFD",
+  "passed": false,
+  "raw_result": {
+    "path": "/home/seunghyun/tairte4_artifacts/scale_adaptive_near_null_combined_adfd_20260728_2/scale_adaptive_near_null_combined_adfd.json",
+    "byte_size": 26730,
+    "sha256": "c7031b7546c59bcf7b9ddf325477a3c56d0b3016e118a1c20f08a641465588a1"
+  },
+  "immutable_original_failure": {
+    "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/full_five_direction_failed_noise_plateau_result.json",
+    "sha256": "566e601759e044b48f0b723f02123b4615fbf78577942e388deca3fc76f645c3",
+    "status": "FAILED_CORRECTED_COMBINED_PHYSICAL_RHO_PTE_ADFD"
+  },
+  "step_policy": {
+    "immutable_sequence": [
+      0.01,
+      0.005,
+      0.0025
+    ],
+    "near_null_sequence": [
+      0.02,
+      0.01,
+      0.005
+    ],
+    "reason": "avoid the measured finest-step FDTD cancellation floor without changing the density direction or gradient scale"
+  },
+  "diagnostic_gates": {
+    "worst_new_optical_closure_relative_error": 0.00020190497036779082,
+    "optical_closure_limit": 0.005,
+    "worst_new_Q_mapping_relative_error": 2.3861764503120576e-16,
+    "Q_mapping_limit": 0.005,
+    "worst_new_thermal_energy_balance_relative_error": 3.1662243467209816e-12,
+    "thermal_energy_balance_limit": 0.01,
+    "worst_new_linear_residual_relative": 1.0222917888025193e-11,
+    "linear_residual_limit": 1e-08
+  },
+  "failed_cases": [
+    {
+      "scenario": "4um",
+      "direction": "central_localized",
+      "selected_relative_error": 0.0014407175677318197,
+      "step_plateau_relative": 0.0017003801306478912,
+      "step_plateau_limit": 0.001
+    },
+    {
+      "scenario": "4um",
+      "direction": "fixed_seed_random",
+      "selected_relative_error": 0.0002650380929063025,
+      "step_plateau_relative": 0.0013748350327517063,
+      "step_plateau_limit": 0.001
+    },
+    {
+      "scenario": "6um",
+      "direction": "central_localized",
+      "selected_relative_error": 0.0019446730933574817,
+      "step_plateau_relative": 0.0014470131530579676,
+      "step_plateau_limit": 0.001
+    }
+  ],
+  "rejected_recovery_result": {
+    "path": "/home/seunghyun/tairte4_artifacts/scale_adaptive_near_null_combined_adfd_20260728_1/scale_adaptive_near_null_combined_adfd.json",
+    "byte_size": 26689,
+    "sha256": "a328149101fd6137caa3ecbcb357a535f42ea1b87628b9c72e3646059e9072f6"
+  },
+  "rejected_recovery_reason": "central h=0.02 plus came from an interrupted orphan process; its FSP byte size and six-face closure differed from the three clean pairs and its objective trend contradicted h=0.01",
+  "empirical_normalization": false,
+  "gradient_rescaling": false,
+  "clipping": false,
+  "gray_law_sensitivity_run": false,
+  "full_latent_adfd_run": false,
+  "optimization_run": false,
+  "next_gate": "RETAIN_COMBINED_PHYSICAL_RHO_FAIL_CLOSED"
+}

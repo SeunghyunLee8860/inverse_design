@@ -1,5 +1,36 @@
 # Latest photothermal validation status
 
+## Scale-adaptive near-null combined AD-FD diagnostic
+
+- Status: `FAILED_SCALE_ADAPTIVE_NEAR_NULL_COMBINED_ADFD`
+- The immutable five-direction failure remains unchanged.
+- A first recovered `h=0.02` central-plus orphan FSP was rejected:
+  its byte size, six-face closure, and objective trend disagreed with the
+  clean pairs. It remains provenance-only and is not used below.
+- Clean replacement central-plus FSP:
+  `122773042` bytes,
+  SHA-256
+  `b3e2f235ee52fe03843c30614d8bd55d05d5934d6ad3605b7b7c9af0c1513807`.
+- Clean new-pair worst optical closure / Q mapping / thermal energy /
+  linear residual:
+  `2.01905e-4 / 2.38618e-16 / 3.16622e-12 / 1.02229e-11`;
+  all pass their existing gates.
+- `h=0.02` AD-FD relative error, central 4/6 um:
+  `0.0105939% / 0.00986133%`.
+- Selected `h=0.005` AD-FD relative error, central 4/6 um:
+  `0.144072% / 0.194467%`.
+- Selected `h=0.005` AD-FD relative error, fixed-random 4/6 um:
+  `0.0265038% / 0.00232609%`.
+- Strict `0.02 -> 0.01 -> 0.005` step-plateau values,
+  central 4 um / random 4 um / central 6 um / random 6 um:
+  `0.170038% / 0.137484% / 0.144701% / 0.0745501%`
+  (limit `0.1%`; only the final case passes).
+- No clipping, empirical normalization, or gradient rescaling was used.
+- Combined physical-density promotion, gray-law sensitivity, full latent
+  AD-FD, and optimization remain blocked.
+- A 17-figure validation suite is published under
+  `photothermal_pte/reports/inverse_design_pte_adfd/figures/`.
+
 ## Corrected combined five-direction diagnostic
 
 - Status: `FAILED_CORRECTED_COMBINED_PHYSICAL_RHO_PTE_ADFD`
