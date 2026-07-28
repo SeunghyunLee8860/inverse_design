@@ -48,22 +48,24 @@ def _center(tiled: np.ndarray, nx: int, ny: int) -> np.ndarray:
     return tiled[nx : 2 * nx, ny : 2 * ny]
 
 
-def _min_width_px(mask: np.ndarray, r_cap: int) -> tuple:
-    """Minimum opposing-boundary width (in pixels) of the True phase, periodic.
+def _width_map_px(mask: np.ndarray, r_cap: int) -> tuple:
+    """Opposing-boundary width (pixels) of every near-boundary True pixel.
 
-    Returns (min_width_px, (ix,iy) in unique coords) or (inf, None) if the phase
-    is empty or full (no opposing boundary exists).
+    Returns (widths, ij) where ij[k] is the unique-grid pixel of widths[k].
+    Pixels with EDT > r_cap+1 are omitted: their width is >= 2*(r_cap+1) px,
+    i.e. provably wider than any rule the cap was sized for.  Empty/full
+    phases return empty arrays (no opposing boundary exists).
     """
     nx, ny = mask.shape
     if not mask.any() or mask.all():
-        return float("inf"), None
+        return np.empty(0), np.empty((0, 2), int)
     tile = _tile3(mask)
     edt, inds = distance_transform_edt(tile, return_indices=True)
     edt_c = _center(edt, nx, ny)
     cand = mask & (edt_c <= r_cap + 1.0)          # only near-boundary (thin) pixels
     ij = np.argwhere(cand)
     if ij.size == 0:
-        return float("inf"), None
+        return np.empty(0), np.empty((0, 2), int)
     P = ij + np.array([nx, ny])                    # tile coords of candidates
     d0 = edt[P[:, 0], P[:, 1]]                      # distance to nearest background
     V = np.stack([inds[0][P[:, 0], P[:, 1]], inds[1][P[:, 0], P[:, 1]]], axis=1)
@@ -86,6 +88,18 @@ def _min_width_px(mask: np.ndarray, r_cap: int) -> tuple:
         if not remaining.any():
             break
     width = d0 + d2
+    return width, ij
+
+
+def _min_width_px(mask: np.ndarray, r_cap: int) -> tuple:
+    """Minimum opposing-boundary width (in pixels) of the True phase, periodic.
+
+    Returns (min_width_px, (ix,iy) in unique coords) or (inf, None) if the phase
+    is empty or full (no opposing boundary exists).
+    """
+    width, ij = _width_map_px(mask, r_cap)
+    if width.size == 0:
+        return float("inf"), None
     k = int(np.argmin(width))
     return float(width[k]), (int(ij[k, 0]), int(ij[k, 1]))
 

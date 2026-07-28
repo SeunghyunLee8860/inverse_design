@@ -94,8 +94,12 @@ if [ ! -f "$OUT/final_design.npz" ]; then
 fi
 echo "[finalize] exact binary -> independent DRC -> exact FDTD"
 frc=0
+# DRC_CLEANUP=0 disables the deterministic cleanup fallback (default on: it is
+# a no-op when the raw exact-binary mask already passes DRC).
+CLEANARG=""
+[ "${DRC_CLEANUP:-1}" = "1" ] && CLEANARG="--drc-cleanup"
 $PY inverse_design/final_projection.py "$OUT/final_design.npz" \
-    --mfs-um 0.5 --mgs-um 0.5 --gpu "$GPU" $GAPARG \
+    --mfs-um 0.5 --mgs-um 0.5 --gpu "$GPU" $GAPARG $CLEANARG \
     --output "$OUT/final_projection" || frc=$?
 # P0-3: a zero finalizer rc with NO SUCCESS.json must still be a launcher failure.
 if [ "$frc" -ne 0 ]; then

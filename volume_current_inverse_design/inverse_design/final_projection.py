@@ -88,6 +88,14 @@ def main():
     ap.add_argument("--min-gap-um", type=float, default=None)
     ap.add_argument("--gpu", default=os.environ.get("CL_GPU_DEVICE", "GPU 1"))
     ap.add_argument("--no-fdtd", action="store_true")
+    ap.add_argument("--drc-cleanup", action="store_true",
+                    help="if the raw exact-binary mask fails DRC, apply the "
+                    "deterministic drc_cleanup and judge the cleaned mask "
+                    "(recorded in the manifest/SUCCESS; a no-op when raw DRC passes)")
+    ap.add_argument("--accept-design-code-hash", default=None, metavar="HASH",
+                    help="explicitly accept a design produced by this exact older "
+                    "code_hash (auditable, narrow alternative to "
+                    "--allow-unsafe-provenance; all other strict checks still run)")
     ap.add_argument("--allow-unsafe-provenance", action="store_true",
                     help="(unsafe) skip had_feasible/code_hash/identity provenance checks")
     args = ap.parse_args()
@@ -153,9 +161,11 @@ def main():
                      "only for hand-built designs)")
         if had_feasible is not True:
             fail("not_feasible", "design was not flagged had_feasible by the optimiser")
-        if design_hash != current_hash:
+        if design_hash != current_hash and design_hash != args.accept_design_code_hash:
             fail("code_hash_mismatch",
-                 f"design code_hash {design_hash} != current {current_hash}",
+                 f"design code_hash {design_hash} != current {current_hash} "
+                 "(pass --accept-design-code-hash to finalise a design from an "
+                 "audited older commit)",
                  {"design_code_hash": design_hash, "current_code_hash": current_hash})
         # P0-6: mapping/mode/isolation/MFS identity must match
         if design_identity != current_identity:
@@ -173,6 +183,32 @@ def main():
     drc = geometry_drc(mask_u, spacing_um=spacing_um,
                        min_solid_width_um=args.mfs_um, min_void_width_um=args.mgs_um,
                        min_gap_um=args.min_gap_um)
+    cleanup_block = None
+    if args.drc_cleanup and not drc["pass"]:
+        # Deterministic DRC-driven cleanup (see drc_cleanup.py header for the
+        # measured rationale).  The cleaned mask is judged by the SAME
+        # independent DRC below; nothing about the SUCCESS gates is weakened.
+        from drc_cleanup import drc_cleanup as _drc_cleanup
+        _write(output / "geometry_drc_precleanup.json", drc)
+        np.savez_compressed(output / "final_mask_unique_precleanup.npz",
+                            mask=mask_u, spacing_um=np.array(spacing_um))
+        res = _drc_cleanup(mask_u, spacing_um=spacing_um,
+                           min_solid_width_um=args.mfs_um,
+                           min_void_width_um=args.mgs_um,
+                           min_gap_um=args.min_gap_um)
+        mask_u = np.asarray(res["mask"], np.uint8)
+        drc = res["drc"]
+        cleanup_block = {
+            "applied": True, "version": res["version"],
+            "pixels_changed": res["pixels_changed"],
+            "pixels_changed_fraction": res["pixels_changed_fraction"],
+            "stages": res["stages"],
+            "precleanup_mask_sha256": _sha256(output / "final_mask_unique_precleanup.npz"),
+        }
+        _write(output / "drc_cleanup.json", cleanup_block)
+        print(f"[drc-cleanup] raw mask failed DRC -> cleanup: pass={res['pass']} "
+              f"pixels_changed={res['pixels_changed']} "
+              f"({res['pixels_changed_fraction']*100:.2f}%)")
     _write(output / "geometry_drc.json", drc)
     print(json.dumps(drc, indent=2))
 
@@ -218,7 +254,9 @@ def main():
     # --- artifact hashes (P2-4) ---
     artifacts = {}
     for name in ("final_mask_unique.npz", "final_mask_physical.npz",
-                 "geometry_drc.json", "exact_binary_fom.json"):
+                 "geometry_drc.json", "exact_binary_fom.json",
+                 "drc_cleanup.json", "geometry_drc_precleanup.json",
+                 "final_mask_unique_precleanup.npz"):
         p = output / name
         if p.exists():
             artifacts[name] = _sha256(p)
@@ -231,8 +269,10 @@ def main():
         and float(diag.periodic_y_max_abs_error) == 0.0,
         "z_invariant": float(diag.z_extrusion_max_abs_error) == 0.0,
         "drc_pass": True, "drc": drc,
+        "drc_cleanup": cleanup_block,
         "exact_binary_fom": fom,
         "solid_fraction": float(mask_u.mean()),
+        "accepted_design_code_hash": args.accept_design_code_hash,
         "design_code_hash": design_hash, "current_code_hash": current_hash,
         "design_config_hash": design_config_hash, "design_attempt": design_attempt,
         "design_mapping_identity": design_identity,
@@ -261,7 +301,9 @@ def main():
         "minimum_gap_um": drc["minimum_gap_um"],
         "minimum_gap_capped": drc.get("minimum_gap_capped", False),
         "Fx": fom["Fx"], "Fy": fom["Fy"], "F_sum": fom["F_sum"],
+        "drc_cleanup": cleanup_block,
         # provenance (P1-5)
+        "accepted_design_code_hash": args.accept_design_code_hash,
         "current_code_hash": current_hash, "design_code_hash": design_hash,
         "design_config_hash": design_config_hash, "design_attempt": design_attempt,
         "design_mapping_identity": design_identity,
