@@ -1,0 +1,440 @@
+{
+  "baseline": {
+    "acceptance": {
+      "closed_box_energy_error_lt_1_percent": true,
+      "cpu_resource_active": true,
+      "cross_polarized_components_lt_0p1_percent": true,
+      "exact_roi_monitor_bounds": true,
+      "field_finite": true,
+      "gpu_resource_inactive": true,
+      "intensity_peak_to_peak_lt_1_percent": true,
+      "intensity_rms_lt_0p5_percent": true,
+      "mean_intensity_error_lt_0p5_percent": true,
+      "phase_max_lt_1_degree": true
+    },
+    "adjoint_run": false,
+    "all_six_boundaries": "PML",
+    "closed_flux_box": {
+      "box_bounds_um": {
+        "x": [
+          -0.8,
+          0.8
+        ],
+        "y": [
+          -0.8,
+          0.8
+        ],
+        "z": [
+          -0.35,
+          0.35
+        ]
+      },
+      "net_outward_transmission": -2.6539284415134643e-07,
+      "outward_signed_transmission": {
+        "flux_x_max": -3.1064847758033442e-09,
+        "flux_x_min": 1.2113268974422922e-09,
+        "flux_y_max": -1.3210440303295634e-09,
+        "flux_y_min": -1.1522510854949975e-09,
+        "flux_z_max": -0.3763332414030162,
+        "flux_z_min": 0.37633298037862506
+      },
+      "raw_monitor_transmission": {
+        "flux_x_max": -3.1064847758033442e-09,
+        "flux_x_min": -1.2113268974422922e-09,
+        "flux_y_max": -1.3210440303295634e-09,
+        "flux_y_min": 1.1522510854949975e-09,
+        "flux_z_max": -0.3763332414030162,
+        "flux_z_min": -0.37633298037862506
+      },
+      "relative_energy_closure_error": 7.052070107520389e-07
+    },
+    "cpu_session_resource_name": "Local Host",
+    "device_geometry_present": false,
+    "domain_um": 4.0,
+    "engine": "CPU",
+    "fdtd_run_wall_s": 5.525168176740408,
+    "final_save_wall_s": 0.034291137009859085,
+    "finite_difference_run": false,
+    "fsp": {
+      "byte_size": 628843,
+      "path": "/home/seunghyun/tairte4_artifacts/cpu_tfsf_roi_d4_pml24_acc5_20260726_6/cpu_tfsf_roi_probe.fsp",
+      "sha256": "3d4c407b4f65003f0fd6dc9af3d8f0187efa1baf26c1b076458cf546ceef7895"
+    },
+    "initial_save_wall_s": 0.03585679084062576,
+    "lumapi_path": "/home/seunghyun/lumerical_r12/opt/lumerical/v261/api/python/lumapi.py",
+    "mesh_accuracy": 5,
+    "mesh_contract": {
+      "read_error": "LumApiError: \"Can not find result 'mesh' in the result provider 'FDTD'\""
+    },
+    "monitor_z_um": 0.5,
+    "periodic_boundary": false,
+    "pml_layers": 24,
+    "postprocess_wall_s": 0.005617830902338028,
+    "purpose": "empty-air TFSF source gate only",
+    "raw_artifacts": [
+      {
+        "byte_size": 5359,
+        "path": "/home/seunghyun/tairte4_artifacts/cpu_tfsf_roi_d4_pml24_acc5_20260726_6/probe_result.json",
+        "sha256": "e2f40c833a78818a837e83823fa8b2cba6fb701cf31c137ff11adb793a8f9b7a"
+      },
+      {
+        "byte_size": 5420,
+        "path": "/home/seunghyun/tairte4_artifacts/cpu_tfsf_roi_d4_pml24_acc5_20260726_6/cpu_tfsf_roi_probe_p0.log",
+        "sha256": "0373b3463f2366165a853c2bfbafc565e036061e205e74ce175cac5c7e01f8d5"
+      },
+      {
+        "byte_size": 628843,
+        "path": "/home/seunghyun/tairte4_artifacts/cpu_tfsf_roi_d4_pml24_acc5_20260726_6/cpu_tfsf_roi_probe.fsp",
+        "sha256": "3d4c407b4f65003f0fd6dc9af3d8f0187efa1baf26c1b076458cf546ceef7895"
+      }
+    ],
+    "resources_after_run": {
+      "1": {
+        "active": "1",
+        "device type": "CPU",
+        "processes": "1",
+        "solver extra command line options": "",
+        "threads": "16"
+      },
+      "2": {
+        "active": "0",
+        "device type": "GPU 1",
+        "processes": "1",
+        "solver extra command line options": "-gpu",
+        "threads": "16"
+      }
+    },
+    "resources_before_run": {
+      "1": {
+        "active": "1",
+        "device type": "CPU",
+        "processes": "1",
+        "solver extra command line options": "",
+        "threads": "16"
+      },
+      "2": {
+        "active": "0",
+        "device type": "GPU 1",
+        "processes": "1",
+        "solver extra command line options": "-gpu",
+        "threads": "16"
+      }
+    },
+    "roi_bounds_m": {
+      "x": [
+        -1e-06,
+        1e-06
+      ],
+      "y": [
+        -1e-06,
+        1e-06
+      ]
+    },
+    "roi_metrics": {
+      "Ey_to_Ex_L2": 2.3599891283614084e-08,
+      "Ez_to_Ex_L2": 5.3359044103989456e-08,
+      "all_fields_finite": true,
+      "intensity_relative_peak_to_peak": 5.592569082215972e-07,
+      "intensity_relative_rms": 8.556474213506659e-08,
+      "max_E2": 0.9998559690590583,
+      "mean_E2": 0.9998556882854406,
+      "mean_E2_relative_error_from_unit_source": 0.0001443117145594197,
+      "min_E2": 0.9998554098828574,
+      "phase_max_abs_deg": 6.186545691128405e-06,
+      "phase_rms_deg": 2.3198338439937715e-06,
+      "source_intensity_native_W_m2": 0.0013193877998567453,
+      "x_sample_max_m": 1e-06,
+      "x_sample_min_m": -1.0000000000000002e-06,
+      "y_sample_max_m": 1e-06,
+      "y_sample_min_m": -1.0000000000000002e-06
+    },
+    "sampling_dxy_nm": 100.0,
+    "session_startup_wall_s": 4.538343980908394,
+    "simulation_time_ps": 1.0,
+    "solver_log_metrics": {
+      "completed_iterations": 644,
+      "early_termination": true,
+      "engine_mesh_initialize_wall_s": 0.214551,
+      "engine_overall_wall_s": 3.270815,
+      "engine_time_step_wall_s": 1.865693,
+      "estimated_memory_GiB": 0.118,
+      "gridpoint_product": 517720,
+      "gridpoints_xyz": [
+        86,
+        86,
+        70
+      ],
+      "peak_cpu_memory_GiB": 0.194561,
+      "solver_speed_Mnodes_s": 178.706615,
+      "version": "Ansys Lumerical 2026 R1.2 FDTD Solver Version 8.35.4522 (Linux 64bit)"
+    },
+    "solver_root": "/home/seunghyun/lumerical_r12/opt/lumerical/v261",
+    "source_property_readback_after_save": {
+      "direction": "Backward",
+      "injection axis": "z-axis",
+      "plane wave type": "LumApiError: \"in getnamed, the requested property 'plane wave type' was not found\"",
+      "source shape": "LumApiError: \"in getnamed, the requested property 'source shape' was not found\"",
+      "wavelength start": 3e-06,
+      "wavelength stop": 6e-06,
+      "x span": 2.6e-06,
+      "y span": 2.6e-06,
+      "z": 0.0,
+      "z0": "LumApiError: \"in getnamed, the requested property 'z0' was not found\""
+    },
+    "source_property_readback_before_save": {
+      "direction": "Backward",
+      "injection axis": "z-axis",
+      "plane wave type": "LumApiError: \"in getnamed, the requested property 'plane wave type' was not found\"",
+      "source shape": "LumApiError: \"in getnamed, the requested property 'source shape' was not found\"",
+      "wavelength start": 3e-06,
+      "wavelength stop": 6e-06,
+      "x span": 2.6e-06,
+      "y span": 2.6e-06,
+      "z": 0.0,
+      "z0": "LumApiError: \"in getnamed, the requested property 'z0' was not found\""
+    },
+    "status": "VALIDATED_CPU_TFSF_4UM_DOMAIN_2UM_ROI_SOURCE_GATE",
+    "tfsf_span_um": 2.6,
+    "tfsf_z_span_um": 2.0,
+    "thermal_run": false,
+    "threads": 16,
+    "total_wall_s": 10.50848126038909,
+    "z_bounds_um": [
+      -1.5,
+      1.5
+    ]
+  },
+  "baseline_pml_layers": 24,
+  "geometry_gate": {
+    "consequence": "The 4 um domain is promoted only for the empty-air source gate. A 4 um flake requires a larger FDTD domain.",
+    "four_um_flake_fits_in_four_um_fdtd_domain": false,
+    "reason": "A finite scatterer must remain fully inside the TFSF box, and the TFSF box must remain inside the PML boundaries."
+  },
+  "lateral_fdtd_domain_um": 4.0,
+  "pml_convergence": {
+    "energy_closure_absolute_change": 5.585590525236372e-09,
+    "intensity_rms_absolute_change": 1.2472103144146476e-08,
+    "mean_E2_relative_change": 1.0340915188629801e-08,
+    "peak_to_peak_absolute_change": 7.863935861764755e-08,
+    "phase_max_abs_deg_change": 1.7783299836937272e-06
+  },
+  "protected_roi_um": {
+    "x": [
+      -1.0,
+      1.0
+    ],
+    "y": [
+      -1.0,
+      1.0
+    ]
+  },
+  "refined": {
+    "acceptance": {
+      "closed_box_energy_error_lt_1_percent": true,
+      "cpu_resource_active": true,
+      "cross_polarized_components_lt_0p1_percent": true,
+      "exact_roi_monitor_bounds": true,
+      "field_finite": true,
+      "gpu_resource_inactive": true,
+      "intensity_peak_to_peak_lt_1_percent": true,
+      "intensity_rms_lt_0p5_percent": true,
+      "mean_intensity_error_lt_0p5_percent": true,
+      "phase_max_lt_1_degree": true
+    },
+    "adjoint_run": false,
+    "all_six_boundaries": "PML",
+    "closed_flux_box": {
+      "box_bounds_um": {
+        "x": [
+          -0.8,
+          0.8
+        ],
+        "y": [
+          -0.8,
+          0.8
+        ],
+        "z": [
+          -0.35,
+          0.35
+        ]
+      },
+      "net_outward_transmission": -2.6329079829108087e-07,
+      "outward_signed_transmission": {
+        "flux_x_max": 1.1120153601824407e-09,
+        "flux_x_min": -1.6788361706050752e-09,
+        "flux_y_max": 3.37429557952406e-10,
+        "flux_y_min": -1.2484371236010395e-09,
+        "flux_z_max": -0.376333240565654,
+        "flux_z_min": 0.37633297875268407
+      },
+      "raw_monitor_transmission": {
+        "flux_x_max": 1.1120153601824407e-09,
+        "flux_x_min": 1.6788361706050752e-09,
+        "flux_y_max": 3.37429557952406e-10,
+        "flux_y_min": 1.2484371236010395e-09,
+        "flux_z_max": -0.376333240565654,
+        "flux_z_min": -0.37633297875268407
+      },
+      "relative_energy_closure_error": 6.996214202268025e-07
+    },
+    "cpu_session_resource_name": "Local Host",
+    "device_geometry_present": false,
+    "domain_um": 4.0,
+    "engine": "CPU",
+    "fdtd_run_wall_s": 7.462453339248896,
+    "final_save_wall_s": 0.03607763350009918,
+    "finite_difference_run": false,
+    "fsp": {
+      "byte_size": 629227,
+      "path": "/home/seunghyun/tairte4_artifacts/cpu_tfsf_roi_d4_pml32_acc5_20260726_1/cpu_tfsf_roi_probe.fsp",
+      "sha256": "2bebb4f89d90de525aa11e476df32cdf83abcc2f1138b46a85262f8729d66c27"
+    },
+    "initial_save_wall_s": 0.03499319404363632,
+    "lumapi_path": "/home/seunghyun/lumerical_r12/opt/lumerical/v261/api/python/lumapi.py",
+    "mesh_accuracy": 5,
+    "mesh_contract": {
+      "read_error": "LumApiError: \"Can not find result 'mesh' in the result provider 'FDTD'\""
+    },
+    "monitor_z_um": 0.5,
+    "periodic_boundary": false,
+    "pml_layers": 32,
+    "postprocess_wall_s": 0.0063369907438755035,
+    "purpose": "empty-air TFSF source gate only",
+    "raw_artifacts": [
+      {
+        "byte_size": 5350,
+        "path": "/home/seunghyun/tairte4_artifacts/cpu_tfsf_roi_d4_pml32_acc5_20260726_1/probe_result.json",
+        "sha256": "51f2f056a2912f91c941e2895106a52d7fcdd877ae266d7dc0985f54e3efa281"
+      },
+      {
+        "byte_size": 5426,
+        "path": "/home/seunghyun/tairte4_artifacts/cpu_tfsf_roi_d4_pml32_acc5_20260726_1/cpu_tfsf_roi_probe_p0.log",
+        "sha256": "403b7e397e424b602741d504e02a3dda45b7f05b0964178f4085fa4e3416dddb"
+      },
+      {
+        "byte_size": 629227,
+        "path": "/home/seunghyun/tairte4_artifacts/cpu_tfsf_roi_d4_pml32_acc5_20260726_1/cpu_tfsf_roi_probe.fsp",
+        "sha256": "2bebb4f89d90de525aa11e476df32cdf83abcc2f1138b46a85262f8729d66c27"
+      }
+    ],
+    "resources_after_run": {
+      "1": {
+        "active": "1",
+        "device type": "CPU",
+        "processes": "1",
+        "solver extra command line options": "",
+        "threads": "16"
+      },
+      "2": {
+        "active": "0",
+        "device type": "GPU 1",
+        "processes": "1",
+        "solver extra command line options": "-gpu",
+        "threads": "16"
+      }
+    },
+    "resources_before_run": {
+      "1": {
+        "active": "1",
+        "device type": "CPU",
+        "processes": "1",
+        "solver extra command line options": "",
+        "threads": "16"
+      },
+      "2": {
+        "active": "0",
+        "device type": "GPU 1",
+        "processes": "1",
+        "solver extra command line options": "-gpu",
+        "threads": "16"
+      }
+    },
+    "roi_bounds_m": {
+      "x": [
+        -1e-06,
+        1e-06
+      ],
+      "y": [
+        -1e-06,
+        1e-06
+      ]
+    },
+    "roi_metrics": {
+      "Ey_to_Ex_L2": 2.2371921046384667e-08,
+      "Ez_to_Ex_L2": 5.44819584555285e-08,
+      "all_fields_finite": true,
+      "intensity_relative_peak_to_peak": 6.378962668392448e-07,
+      "intensity_relative_rms": 9.803684527921307e-08,
+      "max_E2": 0.9998560626778294,
+      "mean_E2": 0.9998556779460177,
+      "mean_E2_relative_error_from_unit_source": 0.00014432205398229314,
+      "min_E2": 0.9998554248736251,
+      "phase_max_abs_deg": 7.964875674822132e-06,
+      "phase_rms_deg": 2.6382928123889804e-06,
+      "source_intensity_native_W_m2": 0.0013193877998567453,
+      "x_sample_max_m": 1e-06,
+      "x_sample_min_m": -1.0000000000000002e-06,
+      "y_sample_max_m": 1e-06,
+      "y_sample_min_m": -1.0000000000000002e-06
+    },
+    "sampling_dxy_nm": 100.0,
+    "session_startup_wall_s": 4.5651429034769535,
+    "simulation_time_ps": 1.0,
+    "solver_log_metrics": {
+      "completed_iterations": 644,
+      "early_termination": true,
+      "engine_mesh_initialize_wall_s": 0.325059,
+      "engine_overall_wall_s": 4.346625,
+      "engine_time_step_wall_s": 2.809821,
+      "estimated_memory_GiB": 0.152,
+      "gridpoint_product": 894744,
+      "gridpoints_xyz": [
+        102,
+        102,
+        86
+      ],
+      "peak_cpu_memory_GiB": 0.22414,
+      "solver_speed_Mnodes_s": 205.071831,
+      "version": "Ansys Lumerical 2026 R1.2 FDTD Solver Version 8.35.4522 (Linux 64bit)"
+    },
+    "solver_root": "/home/seunghyun/lumerical_r12/opt/lumerical/v261",
+    "source_property_readback_after_save": {
+      "direction": "Backward",
+      "injection axis": "z-axis",
+      "plane wave type": "LumApiError: \"in getnamed, the requested property 'plane wave type' was not found\"",
+      "source shape": "LumApiError: \"in getnamed, the requested property 'source shape' was not found\"",
+      "wavelength start": 3e-06,
+      "wavelength stop": 6e-06,
+      "x span": 2.6e-06,
+      "y span": 2.6e-06,
+      "z": 0.0,
+      "z0": "LumApiError: \"in getnamed, the requested property 'z0' was not found\""
+    },
+    "source_property_readback_before_save": {
+      "direction": "Backward",
+      "injection axis": "z-axis",
+      "plane wave type": "LumApiError: \"in getnamed, the requested property 'plane wave type' was not found\"",
+      "source shape": "LumApiError: \"in getnamed, the requested property 'source shape' was not found\"",
+      "wavelength start": 3e-06,
+      "wavelength stop": 6e-06,
+      "x span": 2.6e-06,
+      "y span": 2.6e-06,
+      "z": 0.0,
+      "z0": "LumApiError: \"in getnamed, the requested property 'z0' was not found\""
+    },
+    "status": "VALIDATED_CPU_TFSF_4UM_DOMAIN_2UM_ROI_SOURCE_GATE",
+    "tfsf_span_um": 2.6,
+    "tfsf_z_span_um": 2.0,
+    "thermal_run": false,
+    "threads": 16,
+    "total_wall_s": 12.466042406857014,
+    "z_bounds_um": [
+      -1.5,
+      1.5
+    ]
+  },
+  "refined_pml_layers": 32,
+  "scope": "empty-air source integrity and timing only; no device, Q, thermal, AD, FD, or optimization",
+  "status": "VALIDATED_CPU_TFSF_4UM_DOMAIN_2UM_ROI_SOURCE_GATE",
+  "tfsf_span_um": 2.6
+}

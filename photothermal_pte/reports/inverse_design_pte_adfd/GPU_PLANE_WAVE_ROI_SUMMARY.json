@@ -1,0 +1,103 @@
+{
+  "status": "BLOCKED_GPU_ONLY_SIX_PML_IDEAL_PLANE_WAVE",
+  "lumerical_version": "2026 R1.2",
+  "solver_version": "8.35.4522",
+  "protected_roi_m": {
+    "x": [
+      -1e-06,
+      1e-06
+    ],
+    "y": [
+      -1e-06,
+      1e-06
+    ]
+  },
+  "periodic_boundary": false,
+  "fdtd_time_step_hardware": "GPU",
+  "cpu_fdtd_resource_active": false,
+  "device_geometry_executed": false,
+  "ad_fd_executed": false,
+  "documentation": [
+    "https://optics.ansys.com/hc/en-us/articles/360034382854-Plane-wave-and-beam-source-Simulation-object",
+    "https://optics.ansys.com/hc/en-us/articles/360034382874-Understanding-field-truncation-issues-with-finite-sized-plane-wave-sources",
+    "https://optics.ansys.com/hc/en-us/articles/360034382914-Understanding-the-diffracting-option-of-the-plane-wave-source",
+    "https://optics.ansys.com/hc/en-us/articles/17518942465811-Getting-started-with-running-FDTD-on-GPU"
+  ],
+  "acceptance": {
+    "mean_E2_relative_error_max": 0.005,
+    "intensity_relative_rms_max": 0.005,
+    "intensity_relative_peak_to_peak_max": 0.01,
+    "phase_max_abs_deg_max": 1.0,
+    "Ey_to_Ex_L2_max": 0.001,
+    "Ez_to_Ex_L2_max": 0.001
+  },
+  "cases": [
+    {
+      "name": "bloch_source_crossing_pml_d6",
+      "source_type": "Bloch/periodic",
+      "domain_um": 6.0,
+      "aperture_um": 6.0,
+      "pml_layers": 24,
+      "source_monitor_gap_um": 0.15,
+      "mean_E2_relative_error": 0.172478311843441,
+      "intensity_relative_rms": 0.004905303447993625,
+      "intensity_relative_peak_to_peak": 0.02074873098409857,
+      "phase_max_abs_deg": 8.982836335773102,
+      "Ey_to_Ex_L2": 0.015980844004021177,
+      "Ez_to_Ex_L2": 0.16310732992793242,
+      "passed": false
+    },
+    {
+      "name": "diffracting_d6_aperture5",
+      "source_type": "Diffracting",
+      "domain_um": 6.0,
+      "aperture_um": 5.0,
+      "pml_layers": 24,
+      "source_monitor_gap_um": 0.15,
+      "mean_E2_relative_error": 0.410903294497626,
+      "intensity_relative_rms": 0.08745769777654949,
+      "intensity_relative_peak_to_peak": 0.32930778089792156,
+      "phase_max_abs_deg": 6.744669335228136,
+      "Ey_to_Ex_L2": 0.01782247545109147,
+      "Ez_to_Ex_L2": 0.16164574959838393,
+      "passed": false
+    },
+    {
+      "name": "diffracting_d24_aperture20",
+      "source_type": "Diffracting",
+      "domain_um": 24.0,
+      "aperture_um": 20.0,
+      "pml_layers": 24,
+      "source_monitor_gap_um": 0.15,
+      "mean_E2_relative_error": 0.1300003819636801,
+      "intensity_relative_rms": 0.06076964525365368,
+      "intensity_relative_peak_to_peak": 0.18615230256420354,
+      "phase_max_abs_deg": 0.7286789190054166,
+      "Ey_to_Ex_L2": 0.004669279447653482,
+      "Ez_to_Ex_L2": 0.06608497855877377,
+      "passed": false
+    },
+    {
+      "name": "diffracting_d24_aperture20_deep_z_pml32",
+      "source_type": "Diffracting",
+      "domain_um": 24.0,
+      "aperture_um": 20.0,
+      "pml_layers": 32,
+      "source_monitor_gap_um": 0.02,
+      "mean_E2_relative_error": 0.1145008110932937,
+      "intensity_relative_rms": 0.0497413017941577,
+      "intensity_relative_peak_to_peak": 0.15183865382738176,
+      "phase_max_abs_deg": 2.026676962728277,
+      "Ey_to_Ex_L2": 0.004703650481409519,
+      "Ez_to_Ex_L2": 0.06466092539574314,
+      "passed": false
+    },
+    {
+      "name": "v261_gpu_tfsf_compatibility",
+      "source_type": "TFSF",
+      "engine_error": "GPU simulation does not support the use of TFSF sources.",
+      "cpu_fallback": false,
+      "passed": false
+    }
+  ]
+}

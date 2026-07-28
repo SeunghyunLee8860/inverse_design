@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-07-27T00:54:26.107274+00:00",
+  "status": "VALIDATED_FINITE_EXPLICIT_THERMAL_ONLY_ADFD",
+  "passed": true,
+  "scope": "fixed-Q thermal-material/interface physical-density AD-FD unit certificate; not optical or full latent validation",
+  "solver": "independent conservative Cartesian Python/SciPy FVM; not Lumerical HEAT",
+  "geometry": {
+    "thermal_lateral_domain_m": 3.2e-05,
+    "Si_depth_m": 1.9999999999999998e-05,
+    "finite_TaIrTe4_flake_span_m": 4e-06,
+    "TaIrTe4_thickness_m": 1e-07,
+    "design_span_m": 2e-06,
+    "design_height_m": 6e-07,
+    "bottom_SiO2_thickness_m": 2.85e-07,
+    "grid_shape": [
+      76,
+      76,
+      76
+    ],
+    "total_cells": 438976,
+    "AD_certificate_core_cell_size_m": 1.0000000000000001e-07,
+    "mesh_note": "mathematical AD-FD grid; physical mesh convergence is a separate gate",
+    "periodic": false
+  },
+  "materials_W_mK": {
+    "TaIrTe4_diagonal": [
+      14.4,
+      3.8,
+      1.0
+    ],
+    "SiO2": 1.38,
+    "Si": 145.0,
+    "air": 0.026,
+    "gray_design_law": "k_air + rho*(k_SiO2-k_air), applied to x/y/z"
+  },
+  "interfaces_W_m2K": {
+    "TaIrTe4_bottom_thermally_grown_SiO2": 7370000.0,
+    "TaIrTe4_exposed_air": 1.0,
+    "TaIrTe4_design_deposited_SiO2_endpoint": 73700.0,
+    "gray_top_law": "G_air + rho*(G_deposited_SiO2-G_air)",
+    "bottom_SiO2_Si_candidate": 1100000000.0
+  },
+  "boundary_conditions": {
+    "far_x_min_x_max_y_min_y_max": "fixed DeltaT=0 K numerical truncation reservoirs",
+    "bottom_Si": "fixed DeltaT=0 K",
+    "top_exposed_surface": "Robin h=10.0 W/(m2 K), ambient DeltaT=0 K",
+    "flake_sidewalls": "explicit TaIrTe4/air interface G=1.0 W/(m2 K)",
+    "unlisted_adiabatic_physical_faces": false
+  },
+  "source": {
+    "kind": "deterministic positive asymmetric fixed-Q thermal control",
+    "is_optical_artifact": false,
+    "total_power_W": 2.5607137108652104e-12,
+    "changed_during_FD": false,
+    "normalization_note": "control definition only; no optical-Q promotion or post-solve gain"
+  },
+  "base": {
+    "objective_A": 9.115219356318594e-15,
+    "DeltaT_max_K": 7.557695857767482e-08,
+    "forward_linear_residual_relative": 1.0632444375278465e-11,
+    "adjoint_linear_residual_relative": 9.870442992951711e-12,
+    "energy_balance_relative_error": 1.5684492951381297e-12,
+    "forward_iterations": 918,
+    "adjoint_iterations": 691,
+    "base_elapsed_s": 38.30970172211528
+  },
+  "gradient_norms_A": {
+    "combined": 1.957887823237634e-18,
+    "bulk_k": 3.563501224377049e-20,
+    "interface_G": 1.972115359905915e-18,
+    "top_convection_k": 2.4249320070097924e-29
+  },
+  "directions": [
+    "uniform",
+    "sinusoidal",
+    "center_edge",
+    "seeded_random"
+  ],
+  "steps": [
+    0.01,
+    0.005,
+    0.0025,
+    0.00125
+  ],
+  "primary_step": 0.005,
+  "worst_primary_relative_error": 1.199701232125916e-06,
+  "best_relative_error_by_direction": {
+    "uniform": 8.581264854269301e-09,
+    "sinusoidal": 7.488931042659724e-08,
+    "center_edge": 6.626416455730162e-08,
+    "seeded_random": 1.305625797625031e-07
+  },
+  "worst_linear_residual_relative": 1.0708457164359093e-11,
+  "worst_energy_balance_relative_error": 1.5831180184333676e-12,
+  "criteria": {
+    "primary_directional_relative_error_lt": 0.01,
+    "best_step_each_direction_relative_error_lt": 0.01,
+    "linear_residual_relative_lt": 1e-08,
+    "energy_balance_relative_error_lt": 0.01
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4_artifacts/finite_explicit_thermal_only_adfd_20260727_1/finite_explicit_thermal_only_adfd.npz",
+    "bytes": 6700340,
+    "sha256": "893ad5021372e519f668384e27481d62f60ab497e119affc5382f086def31986"
+  },
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python /home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/finite_inverse_design/run_explicit_thermal_only_adfd.py --output-dir /home/seunghyun/tairte4_artifacts/finite_explicit_thermal_only_adfd_20260727_1 --report-dir /home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd",
+  "not_executed": [
+    "finite-device FDTD",
+    "optical adjoint",
+    "combined optical-thermal AD-FD",
+    "latent filter/projection AD-FD",
+    "optimization"
+  ]
+}
