@@ -1,0 +1,55 @@
+{
+  "status": "FAILED_CORRECTED_COMBINED_PHYSICAL_RHO_PTE_ADFD",
+  "passed": false,
+  "raw_result": {
+    "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/full_five_direction_failed_noise_plateau_result.json",
+    "byte_size": 371553,
+    "sha256": "566e601759e044b48f0b723f02123b4615fbf78577942e388deca3fc76f645c3"
+  },
+  "gates": {
+    "worst_strong_direction_relative_error": 2.427386080185865e-05,
+    "strong_direction_limit": 0.01,
+    "worst_multidirection_normalized_error": 3.1560580070477325e-05,
+    "multidirection_normalized_limit": 0.01,
+    "worst_directional_subspace_gradient_angle_deg": 0.0011922822875062634,
+    "gradient_angle_limit_deg": 1.0,
+    "mapping_transpose_relative_error": 2.98325923857715e-15,
+    "mapping_transpose_limit": 1e-12,
+    "worst_optical_closure_relative_error": 0.00021654605982619456,
+    "optical_closure_limit": 0.005,
+    "worst_Q_mapping_relative_error": 3.5800079272281825e-16,
+    "Q_mapping_limit": 0.005,
+    "worst_thermal_energy_balance_relative_error": 3.1763951666150213e-12,
+    "thermal_energy_balance_limit": 0.01,
+    "worst_linear_residual_relative": 1.0239768480619157e-11,
+    "linear_residual_limit": 1e-08,
+    "all_h_to_h_over_2_sequences_converged": false
+  },
+  "failed_step_plateau_subgates": [
+    {
+      "scenario": "4um",
+      "direction": "central_localized",
+      "step_plateau_relative": 0.0013950939221030279,
+      "step_plateau_limit": 0.001
+    },
+    {
+      "scenario": "4um",
+      "direction": "fixed_seed_random",
+      "step_plateau_relative": 0.005094110053632509,
+      "step_plateau_limit": 0.001
+    },
+    {
+      "scenario": "6um",
+      "direction": "fixed_seed_random",
+      "step_plateau_relative": 0.0024250789032312604,
+      "step_plateau_limit": 0.001
+    }
+  ],
+  "interpretation": "All requested AD-FD, multidirection, angle, closure, mapping, energy, residual, and transpose limits pass. The full status remains failed because central-4um and fixed-seed-random centered-FD derivatives do not meet the 0.1% step plateau.",
+  "empirical_normalization": false,
+  "gradient_rescaling": false,
+  "gray_law_sensitivity_run": false,
+  "full_latent_adfd_run": false,
+  "optimization_run": false,
+  "next_gate": "REDUCE_OFFENDING_DIRECTION_FDTD_FD_NOISE_FLOOR"
+}

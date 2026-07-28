@@ -1,5 +1,23 @@
 # Latest photothermal validation status
 
+## Corrected combined five-direction diagnostic
+
+- Status: `FAILED_CORRECTED_COMBINED_PHYSICAL_RHO_PTE_ADFD`
+- Full combined certificate: not validated
+- Worst strong error: `2.42739e-5` (limit `1%`)
+- Worst multidirection normalized error: `3.15606e-5` (limit `1%`)
+- Worst directional-subspace angle: `0.00119228 deg` (limit `1 deg`)
+- Closure, Q mapping, energy, residual, and transpose gates: passed
+- Unresolved FD step plateau:
+  central 4 um `0.139509%`, random 4 um `0.509411%`,
+  random 6 um `0.242508%` (limit `0.1%`)
+- Failed raw JSON SHA-256:
+  `566e601759e044b48f0b723f02123b4615fbf78577942e388deca3fc76f645c3`
+- No empirical normalization or gradient rescaling
+- Gray-law sensitivity, full latent AD-FD, and optimization remain blocked
+- Next gate: reduce the offending-direction FDTD finite-difference noise
+  floor and repeat only the unresolved subgate
+
 ## Corrected combined strong-direction PTE AD-FD
 
 - Status:
