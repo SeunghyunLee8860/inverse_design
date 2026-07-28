@@ -1,0 +1,33 @@
+{
+  "status": "VALIDATED_FULL_LATENT_COMBINED_PTE_ADFD_WITH_USER_ACCEPTED_FD_NOISE",
+  "generation_command": "python -m photothermal_pte.finite_inverse_design.publish_final_latent_gray_adfd --gray-result <external> --latent-result <external> --report-dir photothermal_pte/reports/inverse_design_pte_adfd",
+  "raw_artifacts_not_committed": [
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/gray_law_sensitivity_20260728_2/gray_law_sensitivity.json",
+      "byte_size": 34648,
+      "sha256": "20d28772bfac43aa430e51f8539d9f726b4eb1de515c046ca6e434e8faf9d075"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/gray_law_sensitivity_20260728_2/gray_law_sensitivity_arrays.npz",
+      "byte_size": 25631582,
+      "sha256": "d5c07d3a95f2c4c63c3750b5a0d6aa4983ac36707b236801fc0af486d3837136"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/full_latent_combined_pte_adfd_20260728_1/full_latent_combined_pte_adfd.json",
+      "byte_size": 190540,
+      "sha256": "177ec2166b1581b4ff4625a178bbec0d114807699d60b54fa9e4cb329677991c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/full_latent_combined_pte_adfd_20260728_1/full_latent_combined_pte_adfd_arrays.npz",
+      "byte_size": 8842233,
+      "sha256": "ceaeb3f0b62a044e994f287c34cea86c7df51be867c4cba318fd6c63821e0d45"
+    }
+  ],
+  "published_artifacts": [
+    "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/final_full_latent_pte_adfd_summary.json",
+    "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/final_full_latent_pte_adfd_cases.csv",
+    "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/18_full_latent_adfd_parity.png",
+    "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/19_full_latent_gradient_maps.png",
+    "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/20_gray_law_sensitivity.png"
+  ]
+}

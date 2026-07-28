@@ -826,3 +826,22 @@ Source-off, empty-stack x/y/45-degree, finite-flat x/y/45-degree, proxy,
 six-face closure, domain, PML, mesh, finite-value, geometry, and P_Q
 reintegration gates pass. Raw NPZ/FSP files are not committed. Thermal, PTE,
 adjoint, gradient, and optimization were not run.
+# Final finite 81x81 full-latent PTE AD–FD — 2026-07-28
+
+- Status: `VALIDATED_FULL_LATENT_COMBINED_PTE_ADFD_WITH_USER_ACCEPTED_FD_NOISE`.
+- End-to-end chain: finite nonperiodic latent → 500 nm conic filter → beta=8
+  projection → component Yee Maxwell Q → conservative thermal remap →
+  explicit anisotropic/material/interface thermal solve → uniform-45° PTE.
+- At `h=0.005`, five directions pass in both named 4 and 6 µm thermal
+  scenarios. Global normalized error is `0.014397%`, gradient angle is
+  `0.002225 deg`, and the largest individual directional error is
+  `0.172688%`.
+- The earlier physical-rho near-null strict plateau failure remains preserved.
+  Its plateau gate was waived by the user; no empirical normalization or
+  gradient rescaling was used.
+- Coupled gray-law sensitivity is complete. The choice is materially
+  important and remains explicit rather than being promoted as a measured
+  material law.
+- Optimization was not run.
+- Report:
+  `inverse_design_pte_adfd/FINAL_FULL_LATENT_PTE_ADFD_REPORT.md`.
