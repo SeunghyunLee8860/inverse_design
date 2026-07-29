@@ -826,6 +826,26 @@ Source-off, empty-stack x/y/45-degree, finite-flat x/y/45-degree, proxy,
 six-face closure, domain, PML, mesh, finite-value, geometry, and P_Q
 reintegration gates pass. Raw NPZ/FSP files are not committed. Thermal, PTE,
 adjoint, gradient, and optimization were not run.
+# Extended full-latent AD–FD — 10 directions — 2026-07-29
+
+- Status: `VALIDATED_EXTENDED_FULL_LATENT_PERTURBATION_ADFD`.
+- The original five-direction certificate is unchanged. Five fresh
+  `h=0.005` centered-FD directions were added: uniform, x-antisymmetric,
+  y-antisymmetric, diagonal-quadrupole, and radial-ring.
+- Total directions per named thermal scenario: `10`.
+- 4 µm: slope `1.00015826`, R2 `0.999999953`, NRMSE `0.026509%`,
+  angle `0.012183 deg`, worst individual error `0.304123%`.
+- 6 µm: slope `1.00013367`, R2 `0.999999943`, NRMSE `0.025968%`,
+  angle `0.012754 deg`, worst individual error `0.236677%`.
+- Worst new optical closure: `0.012878%`; worst Q remap error:
+  `3.56e-16`; thermal energy balance: `2.84e-12`; linear residual:
+  `1.02e-11`.
+- No clipping, empirical normalization, gradient rescaling, or optimization.
+- Separate figures:
+  `inverse_design_pte_adfd/figures/21_full_latent_adfd_4um_10directions.png`
+  and
+  `inverse_design_pte_adfd/figures/22_full_latent_adfd_6um_10directions.png`.
+
 # Final finite 81x81 full-latent PTE AD–FD — 2026-07-28
 
 - Status: `VALIDATED_FULL_LATENT_COMBINED_PTE_ADFD_WITH_USER_ACCEPTED_FD_NOISE`.

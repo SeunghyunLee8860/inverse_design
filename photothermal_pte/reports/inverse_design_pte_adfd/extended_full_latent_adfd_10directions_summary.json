@@ -1,0 +1,51 @@
+{
+  "status": "VALIDATED_EXTENDED_FULL_LATENT_PERTURBATION_ADFD",
+  "total_direction_count_per_scenario": 10,
+  "step": 0.005,
+  "direction_index": {
+    "1": "adjoint_aligned",
+    "2": "central_localized",
+    "3": "design_edge_localized",
+    "4": "smooth_asymmetric",
+    "5": "fixed_seed_random",
+    "6": "uniform",
+    "7": "x_antisymmetric",
+    "8": "y_antisymmetric",
+    "9": "diagonal_quadrupole",
+    "10": "radial_ring"
+  },
+  "metrics": {
+    "4um": {
+      "slope_through_origin": 1.0001582630671404,
+      "R2": 0.9999999533337376,
+      "NRMSE": 0.00026508980027081385,
+      "angle_deg": 0.01218274407172162,
+      "worst_individual_relative_error": 0.003041229943122547
+    },
+    "6um": {
+      "slope_through_origin": 1.0001336745537774,
+      "R2": 0.9999999433345687,
+      "NRMSE": 0.00025967561597674423,
+      "angle_deg": 0.012753851360920398,
+      "worst_individual_relative_error": 0.002366772362710394
+    }
+  },
+  "extended_gates": {
+    "worst_individual_relative_error": 0.003041229943122547,
+    "individual_relative_error_limit": 0.01,
+    "worst_optical_closure_relative_error": 0.00012878372101717692,
+    "optical_closure_limit": 0.005,
+    "worst_Q_mapping_relative_error": 3.5573578554240223e-16,
+    "Q_mapping_limit": 0.005,
+    "worst_thermal_energy_balance_relative_error": 2.8375059369215388e-12,
+    "thermal_energy_balance_limit": 0.01,
+    "worst_linear_residual_relative": 1.0233768553927115e-11,
+    "linear_residual_limit": 1e-08
+  },
+  "figures": {
+    "4um": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/21_full_latent_adfd_4um_10directions.png",
+    "6um": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/22_full_latent_adfd_6um_10directions.png",
+    "maps": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/23_ten_latent_perturbation_maps.png"
+  },
+  "optimization_run": false
+}
