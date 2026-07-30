@@ -1,5 +1,38 @@
 # Latest photothermal validation status
 
+## Offline w0=2 µm masked-planar and source-contract audit
+
+- Status: `VALIDATED_OFFLINE_MASKED_PLANAR_AND_SOURCE_AUDIT`.
+- No new FDTD, thermal, PTE, weighting-potential, adjoint, gradient,
+  optimization, or w0=6.5 µm calculation was executed. The analysis reads
+  the existing 4-ps planar-b and finite-edge-b artifacts only.
+- The exact bounded-dual-cell overlap with `y<=x` removes `49.950862%` of
+  planar power and explains `98.760752%` of the observed planar-to-edge
+  power drop. The remaining signed redistribution is
+  `D_EM/P_planar=+0.626783%`; the signed decomposition closes exactly.
+- Equal-power NRMSE is `99.664762%` for full planar versus analytic
+  half-plane-masked planar, `12.183080%` for analytic masked planar versus
+  finite edge, and `100.185592%` for full planar versus finite edge.
+  These pairwise metrics are not added or interpreted as a decomposition.
+- The component diagnostic
+  `f_c=Im(epsilon_edge,c)/Im(epsilon_planar,c)` is explicitly not
+  occupancy and is not clipped. It exceeds one in 268 x-component cells
+  and 268 y-component cells, reaching about `1.99951`; no negative values
+  occur. Near-floor denominator cells are separately inventoried.
+- Native E/index component-coordinate mismatch is at most `8.47e-22 m`.
+  Planar/edge coordinates agree, and the exact bounded-dual-cell
+  component-to-common remap has maximum relative power error `1.61e-16`.
+- The saved source-object field, not a paraxial formula, is primary source
+  evidence. Its square-boundary maximum is `73.5030%` of peak, its fitted
+  infinite-Gaussian square captured fraction is only `32.4850%`, and
+  `lambda/(pi*w0)=1.750704`; the nominal w0=2 µm scalar-source setup is
+  therefore an aperture-truncation diagnostic, not a paper-like beam
+  certificate.
+- Analysis implementation is checkpointed at `b231267`; 12 focused tests and the full
+  63-test finite-inverse-design suite pass. Report, JSON, CSV tables,
+  figures, and manifest:
+  `reports/paper_ir_w2_masked_planar_offline/`.
+
 ## Nominal-w0=2 µm planar/finite-edge optical diagnostic
 
 - Status:
