@@ -1,188 +1,232 @@
 {
-  "status": "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE_BEFORE_SOURCE_ONLY",
-  "generation_commit": "f3fc01614590200ca5217e5139ebe2b1b314bccc",
-  "preserved_prior_status": "VALIDATED_OFFLINE_MASKED_PLANAR_AND_SOURCE_AUDIT",
-  "paper_beam_audit_status": "FIXED_PAPER_LIKE_SCALAR_GAUSSIAN_CONTRACT_READY_FOR_GPU_PROBE",
-  "selected_scalar_scenario": {
-    "name": "fixed_paper_like_scalar_Gaussian_assumed_waist",
-    "classification": "EXPLICIT_ASSUMPTION",
-    "w0_m": 1.2e-05,
-    "definition": "fixed scalar-Gaussian scenario with an explicitly assumed 1/e^2 intensity waist radius; not an experimentally reproduced or paper-certified beam",
-    "eta_paraxial": 0.2917840623351415,
-    "Rayleigh_range_m": 4.112630382881185e-05,
-    "source_to_focus_distance_m": 5.065000000000001e-06,
-    "source_plane_radius_m": 1.2090663664331403e-05,
-    "selected_aperture": {
-      "half_span_over_radius": 2.0677111442403575,
-      "square_captured_fraction": 0.9999291407552987,
-      "inscribed_circle_fraction": 0.9998066210363443,
-      "boundary_max_intensity_over_peak": 0.00019337896365563605,
-      "boundary_mean_intensity_over_peak": 5.860489813727978e-05
-    },
-    "wavelength_m": 1.1e-05,
-    "incident_power_for_later_physical_scaling_W": 0.000285,
-    "source_model": "scalar Gaussian; waist size and position",
-    "scenario_label": "paper-like scalar-Gaussian scenario with an explicitly assumed waist",
-    "approved_for_current_sanity_check": true,
-    "experimentally_reproduced_beam": false,
-    "paper_certified_beam": false,
-    "propagation_direction": "-z",
-    "distance_from_waist_property_m": -5.065000000000001e-06,
-    "distance_sign_note": "negative for a backward source converging to the lower-z waist; the legacy positive sign is not reused",
-    "source_span_m": 5e-05,
-    "minimum_source_span_m_from_all_gates": 4.8504081094717945e-05,
-    "source_aperture_metrics": {
-      "half_span_over_radius": 2.0677111442403575,
-      "square_captured_fraction": 0.9999291407552987,
-      "inscribed_circle_fraction": 0.9998066210363443,
-      "boundary_max_intensity_over_peak": 0.00019337896365563605,
-      "boundary_mean_intensity_over_peak": 5.860489813727978e-05
-    },
-    "lateral_domain_m": 6e-05,
-    "lateral_source_to_PML_margin_m": 4.9999999999999996e-06,
-    "FDTD_z_bounds_m": [
-      -1.1065e-05,
-      1.6e-05
-    ],
-    "source_to_top_PML_margin_m": 1.1e-05,
-    "focus_to_bottom_PML_margin_m": 1.1e-05,
-    "all_optical_boundaries": "PML",
-    "periodic_or_Bloch": false
+  "status": "VALIDATED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY",
+  "generation_commit": "57c25e87fc8ca4cf39831c1af5540abe58cbea37",
+  "source_generation_commit": "57c25e87fc8ca4cf39831c1af5540abe58cbea37",
+  "scenario_label": "paper-like scalar-Gaussian scenario with an explicitly assumed waist",
+  "experimentally_reproduced_beam": false,
+  "paper_certified_beam": false,
+  "explicit_assumption": "physical target-plane w0=12 um",
+  "source_object_calibration": {
+    "classification": "NUMERICAL_SOURCE_CALIBRATION",
+    "baseline_input_w0_m": 1.2e-05,
+    "baseline_realized_effective_w0_m": 1.2083715082204207e-05,
+    "baseline_field_NPZ_sha256": "f0f848740730ce73f0e47f73f26c8a572afda5f59c8bab57c8d8dac94a112ad0",
+    "changes_physical_target_w0": false,
+    "changes_incident_power_or_Q": false,
+    "Q_clipping_smoothing_gain_or_rescaling": false
   },
-  "source_model_decision": {
-    "scenario_label": "paper-like scalar-Gaussian scenario with an explicitly assumed waist",
-    "scalar_Gaussian_fixed_for_current_sanity_check": true,
-    "experimentally_reproduced_beam": false,
-    "paper_certified_beam": false,
-    "matched_vectorial_thin_lens_required": false,
-    "thin_lens_status": "OPTIONAL_FUTURE_DIAGNOSTIC"
+  "calibration_is_Q_rescaling": false,
+  "license_diagnosis": {
+    "license_entitlement_valid": true,
+    "v261_GUI_checkout_observed": true,
+    "initial_license_unavailable_status_was_sandbox_false_negative": true,
+    "transient_solver_task_contention_observed": true,
+    "final_GPU_engine_host_threads": 3,
+    "CPU_FDTD_fallback": false
   },
-  "legacy_w0_2um": {
-    "status": "DIAGNOSTIC_ONLY_INVALID_FOR_PAPER_LIKE_BEAM",
-    "allowed_for_thermal_or_PTE": false
+  "final_metrics": {
+    "physical_target_w0_um": 12.0,
+    "Lumerical_source_object_input_w0_um": 11.916864889678678,
+    "realized_wx_um": 11.996332674298937,
+    "realized_wy_um": 12.005906747759084,
+    "waist_x_error_percent": 0.03056104750885913,
+    "waist_y_error_percent": 0.04922289799236257,
+    "Gaussian_fit_NRMSE_percent": 0.07580776619166288,
+    "beam_center_displacement_m": 5.637304977919194e-15,
+    "xy_ellipticity_percent": 0.07977650161549522,
+    "source_boundary_max_over_peak": 0.00017450102659066988,
+    "source_boundary_mean_over_peak": 5.225393378811611e-05,
+    "incident_power_W": 2.9028929127547816e-13,
+    "incident_power_closure_percent": 0.052936568369987835,
+    "field_component_E2_fractions": {
+      "x": 0.9781568970220225,
+      "y": 0.00012390915304467037,
+      "z": 0.021719193824932898
+    },
+    "native_mesh": {
+      "available": true,
+      "shape_xyz": [
+        190,
+        190,
+        87
+      ],
+      "grid_points": 3140700,
+      "bounds_m": {
+        "x": [
+          -3e-05,
+          3e-05
+        ],
+        "y": [
+          -3e-05,
+          3e-05
+        ],
+        "z": [
+          -1.1065e-05,
+          1.6000000000000003e-05
+        ]
+      },
+      "minimum_step_m": {
+        "x": 3.17460317460314e-07,
+        "y": 3.17460317460314e-07,
+        "z": 3.1470930232557977e-07
+      },
+      "maximum_step_m": {
+        "x": 3.1746031746032077e-07,
+        "y": 3.1746031746032077e-07,
+        "z": 3.1470930232558147e-07
+      }
+    },
+    "logged_solver_grid": {
+      "shape_xyz": [
+        237,
+        237,
+        134
+      ],
+      "grid_points": 7526646
+    },
+    "runtime_s": 5.617873709648848,
+    "GPU_memory_GiB": 0.277,
+    "auto_shutoff": 4.70241e-06,
+    "raw_NPZ": {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_target_w12_calibrated_57c25e8_t3_gpu4_4ps_20260730/paper_ir_source_only_fields.npz",
+      "size_bytes": 8551215,
+      "sha256": "61b01be39fa588e01658297f3e0dc87de4c4db5a48d9cb218a92d809f3856ff0"
+    },
+    "raw_FSP": {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_target_w12_calibrated_57c25e8_t3_gpu4_4ps_20260730/paper_ir_source_only.fsp",
+      "size_bytes": 2883020,
+      "sha256": "bd03b971921af56acf6b691c345d2afe3ca3051193fee71f65d10b4f8371ef6d"
+    }
   },
-  "probes": [
+  "acceptance": {
+    "requested_vs_realized_fitted_waist_x_lt_0p5_percent": true,
+    "requested_vs_realized_fitted_waist_y_lt_0p5_percent": true,
+    "Gaussian_fit_NRMSE_lt_0p5_percent": true,
+    "xy_ellipticity_lt_0p5_percent": true,
+    "beam_center_error_lt_one_optical_cell": true,
+    "square_captured_fraction_ge_99p9_percent": true,
+    "source_boundary_max_le_1e_minus_3": true,
+    "source_boundary_mean_le_1e_minus_4": true,
+    "incident_power_closure_lt_0p5_percent": true,
+    "actual_mesh_readback_available": true,
+    "GPU_memory_readback_available": true,
+    "no_NaN_or_Inf": true,
+    "no_CPU_fallback": true,
+    "auto_shutoff_le_1e_minus_5": true
+  },
+  "cases": [
     {
-      "case": "contract_only_probe_1",
-      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_w12_L60_contract_20260730/source_only_case_result.json",
-      "status": "BLOCKED_SOURCE_ONLY_EXECUTION",
-      "contract_only": true,
-      "FDTD_session_opened": false,
-      "runsetup_completed": false,
-      "GPU_solve_started": false,
-      "CPU_fallback": false,
-      "exception_type": "LumApiError",
-      "license_signature_detected": true
+      "case": "uncalibrated_negative_distance_accuracy5",
+      "role": "calibration_baseline",
+      "status": "FAILED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY_GATE",
+      "generation_commit": "4d92d8b4344120525fcfccb605cc349070024ffd",
+      "mesh_accuracy": 5.0,
+      "host_threads": "8",
+      "source_object_w0_um": 12.0,
+      "physical_target_w0_um": 12.0,
+      "distance_from_waist_um": -5.065,
+      "realized_wx_um": 12.079057771948957,
+      "realized_wy_um": 12.08837418817393,
+      "waist_x_error_percent": 0.6588147662413002,
+      "waist_y_error_percent": 0.736451568116081,
+      "Gaussian_fit_NRMSE_percent": 0.08355666489044077,
+      "ellipticity_percent": 0.07709893413867626,
+      "incident_power_closure_percent": 0.05477881445469235,
+      "auto_shutoff": 4.95952e-06,
+      "runtime_s": 4.457184683531523,
+      "GPU_memory_GiB": 0.277,
+      "NPZ_sha256": "f0f848740730ce73f0e47f73f26c8a572afda5f59c8bab57c8d8dac94a112ad0",
+      "source_only_gate_passed": false,
+      "failed_gates": "requested_vs_realized_fitted_waist_x_lt_0p5_percent;requested_vs_realized_fitted_waist_y_lt_0p5_percent"
     },
     {
-      "case": "contract_only_probe_2",
-      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_w12_L60_contract_retry1_20260730/source_only_case_result.json",
-      "status": "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE",
-      "contract_only": true,
-      "FDTD_session_opened": false,
-      "runsetup_completed": false,
-      "GPU_solve_started": false,
-      "CPU_fallback": false,
-      "exception_type": "LumApiError",
-      "license_signature_detected": true
+      "case": "uncalibrated_negative_distance_accuracy6",
+      "role": "mesh_refinement_control",
+      "status": "FAILED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY_GATE",
+      "generation_commit": "4d92d8b4344120525fcfccb605cc349070024ffd",
+      "mesh_accuracy": 6.0,
+      "host_threads": "8",
+      "source_object_w0_um": 12.0,
+      "physical_target_w0_um": 12.0,
+      "distance_from_waist_um": -5.065,
+      "realized_wx_um": 12.07886701640745,
+      "realized_wy_um": 12.088637956440744,
+      "waist_x_error_percent": 0.6572251367287452,
+      "waist_y_error_percent": 0.7386496370061835,
+      "Gaussian_fit_NRMSE_percent": 0.08087754065435711,
+      "ellipticity_percent": 0.08086014707989492,
+      "incident_power_closure_percent": 0.034179858270255714,
+      "auto_shutoff": 4.3712e-06,
+      "runtime_s": 7.428894326090813,
+      "GPU_memory_GiB": 0.381,
+      "NPZ_sha256": "43c9c6f6a33b78d619e5e6141f6daa45bcdf7ed25f38e8c3a1fcd302381e6bb8",
+      "source_only_gate_passed": false,
+      "failed_gates": "requested_vs_realized_fitted_waist_x_lt_0p5_percent;requested_vs_realized_fitted_waist_y_lt_0p5_percent"
     },
     {
-      "case": "contract_only_probe_3",
-      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_w12_L60_fixed_contract_20260730/source_only_case_result.json",
-      "status": "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE",
-      "contract_only": true,
-      "FDTD_session_opened": false,
-      "runsetup_completed": false,
-      "GPU_solve_started": false,
-      "CPU_fallback": false,
-      "exception_type": "LumApiError",
-      "license_signature_detected": true
+      "case": "positive_distance_accuracy5",
+      "role": "distance_sign_diagnostic",
+      "status": "FAILED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY_GATE",
+      "generation_commit": "4d92d8b4344120525fcfccb605cc349070024ffd",
+      "mesh_accuracy": 5.0,
+      "host_threads": "8",
+      "source_object_w0_um": 12.0,
+      "physical_target_w0_um": 12.0,
+      "distance_from_waist_um": 5.065,
+      "realized_wx_um": 12.399406388634459,
+      "realized_wy_um": 12.415636089980234,
+      "waist_x_error_percent": 3.328386571953823,
+      "waist_y_error_percent": 3.4636340831686097,
+      "Gaussian_fit_NRMSE_percent": 0.2278752420843274,
+      "ellipticity_percent": 0.13080534808482808,
+      "incident_power_closure_percent": 0.06135436250236381,
+      "auto_shutoff": 6.63405e-06,
+      "runtime_s": 5.788594480603933,
+      "GPU_memory_GiB": 0.277,
+      "NPZ_sha256": "540d2fdaf0f9d97b6e311b8b99fd412e12605e8ebe7d86a3188b2550e5f0e6cd",
+      "source_only_gate_passed": false,
+      "failed_gates": "requested_vs_realized_fitted_waist_x_lt_0p5_percent;requested_vs_realized_fitted_waist_y_lt_0p5_percent"
     },
     {
-      "case": "contract_only_probe_4",
-      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_w12_L60_fixed_contract_retry2_20260730/source_only_case_result.json",
-      "status": "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE",
-      "contract_only": true,
-      "FDTD_session_opened": false,
-      "runsetup_completed": false,
-      "GPU_solve_started": false,
-      "CPU_fallback": false,
-      "exception_type": "LumApiError",
-      "license_signature_detected": true
+      "case": "calibrated_negative_distance_accuracy5",
+      "role": "promoted_source_only_certificate",
+      "status": "VALIDATED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY",
+      "generation_commit": "57c25e87fc8ca4cf39831c1af5540abe58cbea37",
+      "mesh_accuracy": 5.0,
+      "host_threads": "3",
+      "source_object_w0_um": 11.916864889678678,
+      "physical_target_w0_um": 12.0,
+      "distance_from_waist_um": -5.065,
+      "realized_wx_um": 11.996332674298937,
+      "realized_wy_um": 12.005906747759084,
+      "waist_x_error_percent": 0.03056104750885913,
+      "waist_y_error_percent": 0.04922289799236257,
+      "Gaussian_fit_NRMSE_percent": 0.07580776619166288,
+      "ellipticity_percent": 0.07977650161549522,
+      "incident_power_closure_percent": 0.052936568369987835,
+      "auto_shutoff": 4.70241e-06,
+      "runtime_s": 5.617873709648848,
+      "GPU_memory_GiB": 0.277,
+      "NPZ_sha256": "61b01be39fa588e01658297f3e0dc87de4c4db5a48d9cb218a92d809f3856ff0",
+      "source_only_gate_passed": true,
+      "failed_gates": ""
     }
   ],
-  "actual_solver_readback": {
-    "available": false,
-    "reason": "the Lumerical FDTD session failed before runsetup because ANSYSLI did not provide a server port",
-    "grid": null,
-    "GPU_memory": null,
-    "runtime": null,
-    "realized_beam": null
-  },
-  "source_only_gates": {
-    "requested_vs_realized_x_waist_error_below_0p5pct": null,
-    "requested_vs_realized_y_waist_error_below_0p5pct": null,
-    "Gaussian_fit_NRMSE_below_0p5pct": null,
-    "beam_center_error_below_one_cell": null,
-    "xy_ellipticity_below_0p5pct": null,
-    "square_capture_at_least_99p9pct": null,
-    "realized_source_boundary_max_below_1e_minus_3": null,
-    "incident_power_closure_below_0p5pct": null,
-    "actual_mesh_readback_available": null,
-    "GPU_memory_readback_available": null,
-    "no_NaN_or_Inf": null,
-    "GPU_only_no_CPU_fallback": null,
-    "auto_shutoff_at_most_1e_minus_5": null
-  },
-  "historical_noncertifying_resource_reference": {
-    "source": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_edge_material_gradient_controls/paper_ir_checkpoint_failure_audit.json",
-    "case_description": "48-um high-index material case",
-    "grid_points": 343657881,
-    "GPU_memory_GiB": 15.169,
-    "maximum_progress_percent": 3.3357,
-    "scaled_60um_lateral_reference": {
-      "basis": "lateral-area scaling of a historical 48-um high-index material case; not a source-only runsetup estimate",
-      "grid_points": 536965439,
-      "GPU_memory_GiB": 23.7015625,
-      "certification_use": false
-    }
-  },
-  "historical_nonpredictive_runtime_reference": {
-    "source": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w2_masked_planar_offline/w2_masked_planar_offline_summary.json",
-    "old_w0_2um_four_ps_mean_s": 820.9329166666666,
-    "old_w0_2um_four_ps_max_s": 868.975029,
-    "five_case_old_grid_arithmetic_lower_bound_s": 4104.664583333333,
-    "five_case_old_grid_arithmetic_lower_bound_min": 68.41107638888889,
-    "usable_as_new_60um_runtime_estimate": false
-  },
-  "total_expected_GPU_time": {
-    "value": null,
-    "status": "UNRESOLVED_UNTIL_LICENSE_AND_RUNSETUP",
-    "reason": "the new homogeneous-air grid and memory were not generated; old 12/48-um material cases are not a defensible runtime model for the 60-um source-only contract"
-  },
-  "license_minimum_fix": {
-    "current_failure": "v261 LUMERICAL_GUI starts ANSYSLI, but ANSYSLI exits before the per-session server-port file can be read",
-    "port_1055_connectivity_alone_is_sufficient": false,
-    "required": "restore the v261 Ansys Licensing Client Proxy/server-port handshake for this user session, then rerun contract-only runsetup once",
-    "license_debug_log": "/home/seunghyun/.ansys/licdebug.aigpu1123.LUMERICAL_GUI.261.out",
-    "do_not_work_around_with_CPU_FDTD": true
-  },
-  "next_four_optical_cases": {
-    "executed": false,
-    "worth_executing_now": false,
-    "blockers": [
-      "Lumerical license/session startup unavailable",
-      "source-only realized-beam gates not evaluated"
-    ]
-  },
-  "prohibited_scope_confirmed_not_run": [
-    "TaIrTe4 planar/edge optical cases",
+  "successor_sequence_authorized": true,
+  "next_sequence": [
+    "planar TaIrTe4, E parallel a",
+    "planar TaIrTe4, E parallel b",
+    "straight 45-degree finite edge, E parallel a",
+    "straight 45-degree finite edge, E parallel b"
+  ],
+  "not_run": [
+    "TaIrTe4 planar/edge material cases",
     "thermal",
     "weighting potential",
     "PTE",
     "adjoint",
     "gradient",
     "optimization",
-    "CPU FDTD fallback"
+    "thin-lens diagnostic"
   ]
 }

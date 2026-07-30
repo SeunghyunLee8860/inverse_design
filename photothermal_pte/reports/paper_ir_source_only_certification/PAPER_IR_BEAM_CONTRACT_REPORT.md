@@ -41,6 +41,10 @@ a paper-certified beam.
 - eta=lambda/(pi*w0): `0.291784`
 - Rayleigh range: `41.126304 µm`
 - source-to-focus distance: `5.065000 µm`
+- physical target-plane 1/e² radius:
+  `12.000000 µm`
+- calibrated Lumerical source-object input:
+  `11.916864890 µm`
 - expected source-plane radius: `12.090664 µm`
 - source span: `50 µm`; lateral domain: `60 µm`
 - fitted-Gaussian square capture: `99.99291408%`
@@ -49,9 +53,17 @@ a paper-certified beam.
 - expected boundary mean/peak:
   `5.86048981e-05`
 
-The backward source must use
+The backward source uses
 `distance from waist = -5.065000 µm`.
-The legacy positive sign is not reused.
+This sign is certified by the realized target-plane field rather than inferred
+from the property name alone.
+
+The source-object waist input is a SHA-pinned numerical calibration, not a
+change to the physical 12-µm target beam and not a Q normalization.  The
+uncalibrated 12-µm input realized
+`12.083715082 µm`;
+the calibrated input is therefore
+`11.916864890 µm`.
 
 ## Source and mesh decision
 

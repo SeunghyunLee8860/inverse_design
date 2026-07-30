@@ -37,6 +37,12 @@ from scipy.optimize import least_squares
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[2]
+if str(REPOSITORY) not in sys.path:
+    sys.path.insert(0, str(REPOSITORY))
+from photothermal_pte.validation.paper_ir_sanity import (
+    audit_paper_ir_beam_contract as source_contract,
+)
+
 STAGE1 = HERE.parent / "photothermal_stage1"
 BASE_SCRIPT = STAGE1 / "27_validate_finite_2um_optical_q.py"
 APPROVED_ROOT = Path("/home/seunghyun/lumerical_r12/opt/lumerical/v261")
@@ -135,6 +141,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--auto-shutoff-min", type=float, default=1.0e-5)
     parser.add_argument("--source-span-um", type=float, default=50.0)
     parser.add_argument("--waist-um", type=float, default=12.0)
+    parser.add_argument(
+        "--source-object-waist-um",
+        type=float,
+        default=None,
+        help=(
+            "Lumerical source-object input; production defaults to the "
+            "SHA-pinned calibration that realizes the physical 12-um target"
+        ),
+    )
     parser.add_argument("--beam-x-um", type=float, default=0.0)
     parser.add_argument("--beam-y-um", type=float, default=0.0)
     parser.add_argument("--incident-reference")
@@ -167,6 +182,12 @@ def parse_args() -> argparse.Namespace:
         "diagnostic-smoke",
         "edge-isolation-smoke",
     )
+    if args.source_object_waist_um is None:
+        args.source_object_waist_um = (
+            source_contract.CALIBRATED_SOURCE_OBJECT_W0_M * 1.0e6
+            if not reduced_smoke
+            else args.waist_um
+        )
     minimum_domain_um = 60.0 if not reduced_smoke else 10.0
     if args.domain_um < minimum_domain_um:
         parser.error(
@@ -181,14 +202,20 @@ def parse_args() -> argparse.Namespace:
             np.isclose(args.domain_um, 60.0)
             and np.isclose(args.source_span_um, 50.0)
             and np.isclose(args.waist_um, 12.0)
+            and np.isclose(
+                args.source_object_waist_um,
+                source_contract.CALIBRATED_SOURCE_OBJECT_W0_M * 1.0e6,
+            )
         )
     ):
         parser.error(
             "production scalar source contract is fixed at domain=60 um, "
-            "source span=50 um, and w0=12 um"
+            "source span=50 um, physical target w0=12 um, and the "
+            "SHA-pinned calibrated Lumerical source-object input"
         )
     if (
         args.waist_um <= 0
+        or args.source_object_waist_um <= 0
         or args.flake_dz_nm <= 0
         or args.local_xy_mesh_nm <= 0
         or args.simulation_time_ps <= 0
@@ -1282,7 +1309,7 @@ def add_geometry_and_monitors(
     source["source shape"] = "Gaussian"
     source["use scalar approximation"] = True
     source["beam parameters"] = "Waist size and position"
-    source["waist radius w0"] = args.waist_um * 1e-6
+    source["waist radius w0"] = args.source_object_waist_um * 1e-6
     source["distance from waist"] = -(SOURCE_Z_M - FOCUS_Z_M)
     source["x min"], source["x max"] = source_bounds["x"]
     source["y min"], source["y max"] = source_bounds["y"]
@@ -1466,7 +1493,15 @@ def add_geometry_and_monitors(
         "source": {
             "wavelength_m": WAVELENGTH_M,
             "experimental_band_m": [SOURCE_START_M, SOURCE_STOP_M],
-            "waist_radius_m": args.waist_um * 1e-6,
+            "physical_target_waist_radius_m": args.waist_um * 1e-6,
+            "Lumerical_source_object_waist_radius_m": (
+                args.source_object_waist_um * 1e-6
+            ),
+            "source_object_calibration_field_NPZ_sha256": (
+                source_contract.CALIBRATION_BASELINE_FIELD_SHA256
+                if args.execution_contract == "production"
+                else None
+            ),
             "beam_center_m": [beam_x, beam_y],
             "source_span_m": args.source_span_um * 1e-6,
             "normal_incidence": True,
@@ -1639,7 +1674,7 @@ def assert_contract(
     )
     checks["correct_waist"] = np.isclose(
         base.scalar(fdtd.getnamed(base.SOURCE_NAME, "waist radius w0"), "waist"),
-        args.waist_um * 1e-6,
+        args.source_object_waist_um * 1e-6,
         atol=1e-15,
     )
     checks["scalar_Gaussian_source"] = bool(

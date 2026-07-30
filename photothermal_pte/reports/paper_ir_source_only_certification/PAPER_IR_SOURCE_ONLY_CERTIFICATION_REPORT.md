@@ -1,95 +1,58 @@
 # Paper-IR source-only beam certification
 
-Status: `BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE_BEFORE_SOURCE_ONLY`
+Status: `VALIDATED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY`
 
-The prior `VALIDATED_OFFLINE_MASKED_PLANAR_AND_SOURCE_AUDIT` result remains
-unchanged.  The paper/SI audit completed, but the new source-only case did not
-open a Lumerical FDTD session.  It is therefore neither a failed beam nor a
-certified beam: its optical observables were never produced.
+This is a **paper-like scalar-Gaussian scenario with an explicitly assumed
+waist**.  It is not an experimentally reproduced or paper-certified beam.
+The physical target-plane 1/e² radius remains 12 µm.  The Lumerical
+source-object input is 11.916864890 µm,
+obtained from the SHA-pinned uncalibrated field as a numerical source
+calibration.  It does not rescale incident power or Q.
 
-## Paper contract
+## Final GPU source-only certificate
 
-The paper reports a 7–13 µm Block LaserTune QCL, a 40x reflective objective
-with NA=0.4, an approximately 9–16 µm diffraction-limited spot, and 11 µm /
-285 µW for Figure 3.  It does not publish whether the spot is a radius,
-diameter, FWHM, or 1/e^2 width, nor the exact 11-µm waist plane or pupil fill.
-The detailed `PAPER_REPORTED`, `PAPER_INFERRED`, and `EXPLICIT_ASSUMPTION`
-records are in `paper_ir_beam_contract_summary.json`.
+- v261 internal version: `8.35.4522`
+- wavelength/source/domain: 11 / 50 / 60 µm
+- six boundaries: PML; periodic/Bloch: none
+- source-object input w0: 11.916864890 µm
+- realized target w0 x/y: 11.996332674 /
+  12.005906748 µm
+- target error x/y: 0.030561% /
+  0.049223%
+- linear-intensity Gaussian-fit NRMSE:
+  0.075808%
+- x/y ellipticity: 0.079777%
+- target incident power: 2.902892912754782e-13 W
+- incident-power closure: 0.052937%
+- source boundary max/mean: 1.74501027e-04 /
+  5.22539338e-05
+- auto-shutoff: 4.70241000e-06
+- solver grid: [237, 237, 134]
+- post-run native mesh: [190, 190, 87]
+- precise GPU memory: 0.277 GiB
+- API wall time: 5.618 s
+- GPU engine: yes; CPU FDTD fallback: no
 
-The fixed source-only scenario is an explicit assumption:
+All mandatory gates pass.  The final raw NPZ SHA-256 is
+`61b01be39fa588e01658297f3e0dc87de4c4db5a48d9cb218a92d809f3856ff0`.  Raw NPZ/FSP files remain outside Git.
 
-- wavelength: 11 µm
-- Gaussian 1/e^2 intensity radius: 12.0 µm
-- eta=lambda/(pi*w0): 0.291784
-- Rayleigh range: 41.126304 µm
-- backward-source distance from waist: -5.065000 µm
-- source span/domain: 50/60 µm
-- analytic square capture: 99.99291408%
-- analytic source-boundary maximum/mean: 1.93378964e-04 / 5.86048981e-05
+## Controls and corrections
 
-Its required label is **paper-like scalar-Gaussian scenario with an
-explicitly assumed waist**.  It is not an experimentally reproduced beam or
-a paper-certified beam.  A thin-lens comparison is an optional future
-diagnostic and is not a gate or blocker.  The old nominal `w0=2 µm`
-artifacts remain `DIAGNOSTIC_ONLY_INVALID_FOR_PAPER_LIKE_BEAM` and are
-forbidden for thermal, PTE, or Figure-3 reproduction.
+The original `BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE` interpretation was a
+sandbox-network false negative.  Host execution checked out v261
+successfully.  A later `lum_fdtd_solve` task shortage was transient license
+contention, not missing entitlement; the final GPU solve used three host
+orchestration threads without changing the GPU engine or numerical model.
 
-## Startup probes
-
-4 contract-only attempts failed before session creation.  They report:
-`ANSYSLI exited or could not read server port`.  None of the attempts completed
-`runsetup`, started a GPU solve, or invoked CPU fallback.  No TaIrTe4,
-substrate, thermal, PTE, weighting-potential, adjoint, gradient, or
-optimization calculation ran.
-
-The newest probe uses the fixed scalar contract at commit
-`f3fc01614590200ca5217e5139ebe2b1b314bccc`.  TCP/port reachability by
-itself is not a license certificate: the minimum fix is to restore the v261
-Ansys Licensing Client Proxy/server-port handshake for this user session.
-No CPU fallback is an acceptable workaround.
-
-## Source-only gates
-
-| Gate | Result |
-|---|---|
-| requested_vs_realized_x_waist_error_below_0p5pct | NOT EVALUATED |
-| requested_vs_realized_y_waist_error_below_0p5pct | NOT EVALUATED |
-| Gaussian_fit_NRMSE_below_0p5pct | NOT EVALUATED |
-| beam_center_error_below_one_cell | NOT EVALUATED |
-| xy_ellipticity_below_0p5pct | NOT EVALUATED |
-| square_capture_at_least_99p9pct | NOT EVALUATED |
-| realized_source_boundary_max_below_1e_minus_3 | NOT EVALUATED |
-| incident_power_closure_below_0p5pct | NOT EVALUATED |
-| actual_mesh_readback_available | NOT EVALUATED |
-| GPU_memory_readback_available | NOT EVALUATED |
-| no_NaN_or_Inf | NOT EVALUATED |
-| GPU_only_no_CPU_fallback | NOT EVALUATED |
-| auto_shutoff_at_most_1e_minus_5 | NOT EVALUATED |
-
-These are `NOT EVALUATED`, not failures and not passes.
-
-## Grid, memory, and runtime
-
-Actual contract-only grid/memory readback is unavailable because the session
-did not open.  For context only, a historical 48-µm high-index material case
-had 343,657,881 grid points and a 15.169-GiB
-precise GPU-memory estimate.  Blind lateral-area scaling to 60 µm would give
-about 536,965,439 points and
-23.702 GiB, but this is **not** a
-homogeneous-air source-only estimate and cannot certify feasibility.
-
-The old 12-µm nominal-w0=2-µm 4-ps cases averaged 820.933 s.  Five
-times that old-grid mean is 68.41 min, but it
-is only historical arithmetic, not a prediction for the 60-µm contract.
-Total expected GPU time remains
-`UNRESOLVED_UNTIL_LICENSE_AND_RUNSETUP`.
+The uncalibrated accuracy-5/6 controls realized approximately 12.08 µm, so
+mesh refinement did not remove the small waist offset.  A positive
+`distance from waist` diagnostic worsened the error above 3%; it is not
+promoted.  The negative-distance calibrated case is the sole promoted
+source-only contract.
 
 ## Decision
 
-The four planar/finite-edge optical cases are not worth executing now.  First
-restore license/session startup, obtain the actual source-only grid/memory
-readback, execute one GPU-only homogeneous-air case, and pass the realized
-beam gates.  If it passes, proceed directly to planar a/b and
-straight-45-degree finite-edge a/b with the identical scalar source geometry
-and incident-power normalization.  No production-Q promotion is made by this
-checkpoint.
+The source-only gate authorizes the ordered successor cases: planar
+TaIrTe4 a/b, followed by straight-45-degree finite-edge a/b.  None of those
+material cases, nor thermal/PTE/adjoint/optimization, was executed by this
+certificate.

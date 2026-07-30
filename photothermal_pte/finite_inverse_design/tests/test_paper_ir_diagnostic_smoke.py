@@ -35,6 +35,10 @@ class PaperIrDiagnosticSmokeTests(unittest.TestCase):
         self.assertEqual(args.domain_um, 60.0)
         self.assertEqual(args.source_span_um, 50.0)
         self.assertEqual(args.waist_um, 12.0)
+        self.assertAlmostEqual(
+            args.source_object_waist_um,
+            runner.source_contract.CALIBRATED_SOURCE_OBJECT_W0_M * 1.0e6,
+        )
         self.assertEqual(args.local_xy_mesh_nm, 100.0)
         self.assertTrue(
             np.allclose(args.absorption_bounds_m["x"], (-27e-6, 27e-6))
@@ -68,6 +72,7 @@ class PaperIrDiagnosticSmokeTests(unittest.TestCase):
         with patch.object(sys, "argv", argv):
             args = runner.parse_args()
         self.assertEqual(args.execution_contract, "diagnostic-smoke")
+        self.assertEqual(args.source_object_waist_um, 2.0)
         self.assertEqual(args.absorption_bounds_m["x"], (-4.5e-6, 4.5e-6))
         self.assertTrue(
             np.allclose(args.inner_box["x"], (-4.55e-6, 4.55e-6))

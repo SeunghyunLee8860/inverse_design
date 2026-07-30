@@ -2,47 +2,45 @@
 
 ## Paper-IR source-only certification
 
-- Status: `BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE_BEFORE_SOURCE_ONLY`.
+- Status: `VALIDATED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY`.
 - The paper/SI beam audit is complete. The paper reports a 7–13 µm
   Block LaserTune QCL, NA=0.4 reflective objective, approximately 9–16 µm
   diffraction-limited spot, and 11 µm / 285 µW for Figure 3, but it does
   not define the spot as radius/diameter/FWHM/1/e² or publish the exact
   11-µm waist plane and pupil fill.
-- The optical source contract is now fixed as the
+- The optical source contract is fixed as the
   **paper-like scalar-Gaussian scenario with an explicitly assumed waist**:
-  Gaussian 1/e² radius `w0=12 µm`, source span `50 µm`, lateral domain
-  `60 µm`. Its analytic square capture is `99.992914%`; analytic boundary
-  maximum/mean are `1.93379e-4 / 5.86049e-5`. This is not called an
-  experimentally reproduced or paper-certified beam.
+  physical target-plane Gaussian 1/e² radius `w0=12 µm`, source span
+  `50 µm`, and lateral domain `60 µm`. This remains an explicit assumption,
+  not an experimentally reproduced or paper-certified beam.
+- The SHA-pinned uncalibrated field realized an effective `12.083715 µm`
+  waist. A numerical source-object input of `11.916864890 µm` was therefore
+  used to retain the physical 12-µm target. This changes neither incident
+  power nor Q and uses no clipping, smoothing, gain, or rescaling.
+- The final commit-identified GPU certificate at `57c25e8` passes every
+  source-only gate. Realized x/y waists are
+  `11.996332674 / 12.005906748 µm`, errors are
+  `0.030561% / 0.049223%`, fit NRMSE is `0.075808%`, ellipticity is
+  `0.079777%`, and incident-power closure is `0.052937%`.
+- Target incident power is `2.902892912754782e-13 W`; auto-shutoff is
+  `4.70241e-6`. The solver grid is `237×237×134`, the saved native mesh is
+  `190×190×87`, precise GPU memory is `0.277 GiB`, and API wall time is
+  `5.618 s`.
+- The final raw NPZ remains outside Git at SHA-256
+  `61b01be39fa588e01658297f3e0dc87de4c4db5a48d9cb218a92d809f3856ff0`.
+- The earlier `BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE` result was a sandbox
+  localhost false negative. Host execution proved valid v261 checkout.
+  A later solve failure was transient `lum_fdtd_solve` task contention;
+  the final run remained GPU-engine-only with three host orchestration
+  threads and no CPU FDTD fallback.
 - A vectorial thin-lens comparison is no longer a gate or blocker and is
   retained only as an optional future diagnostic. The legacy nominal
   `w0=2 µm` case remains
   `DIAGNOSTIC_ONLY_INVALID_FOR_PAPER_LIKE_BEAM`.
-- Four contract-only probes, including the newest fixed-scalar-contract probe
-  at `f3fc016`, failed before an FDTD session opened:
-  `ANSYSLI exited or could not read server port`. At the newest retry,
-  `1055@localhost` was also unreachable and no licensing proxy process was
-  present. None completed `runsetup` or started a GPU solve; no CPU fallback
-  was used. Consequently there is no realized-beam, grid, memory, runtime,
-  closure, or auto-shutoff result.
-- Historical 12/48-µm material runs are recorded only as non-certifying
-  resource context. Total expected time for the new 60-µm homogeneous-air
-  contract is unresolved until license/session startup and actual
-  `runsetup` readback succeed.
-- Per the fail-closed order, planar-a/b, finite-edge-a/b, thermal,
-  weighting potential, PTE, adjoint, gradient, and optimization were not
-  run. The previous
-  `VALIDATED_OFFLINE_MASKED_PLANAR_AND_SOURCE_AUDIT` status below is
-  preserved.
-- When license startup succeeds, exactly one homogeneous-air GPU source-only
-  case is run first. A passing scalar source-only gate directly authorizes
-  planar-a/b then straight-45-degree finite-edge-a/b with identical source
-  geometry and incident-power normalization. No polarization-specific raw-Q
-  rescaling is allowed.
-- The homogeneous-air source-only case uses only the global auto-nonuniform
-  mesh. Subsequent material cases use an explicit 100-nm local x/y baseline
-  over the illuminated/Q region, a required 50-nm refinement comparison,
-  and the separate TaIrTe4 z override; no uniform global fine mesh is used.
+- The source-only pass authorizes planar-a/b followed by straight-45-degree
+  finite-edge-a/b with identical source geometry and incident-power
+  normalization. Those material cases, thermal, weighting potential, PTE,
+  adjoint, gradient, and optimization have not yet run.
 - Report, beam audit, summary, CSV tables, aperture figure, and manifest:
   `reports/paper_ir_source_only_certification/`.
 

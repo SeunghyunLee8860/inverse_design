@@ -568,9 +568,9 @@ a paper-certified beam.
 - Rayleigh range: `{selected['Rayleigh_range_m']*1e6:.6f} µm`
 - source-to-focus distance: `{selected['source_to_focus_distance_m']*1e6:.6f} µm`
 - physical target-plane 1/e² radius:
-  `{selected['target_realized_w0_m']*1e6:.6f} µm`
+  `{SELECTED_W0_M*1e6:.6f} µm`
 - calibrated Lumerical source-object input:
-  `{selected['Lumerical_source_object_input_w0_m']*1e6:.9f} µm`
+  `{CALIBRATED_SOURCE_OBJECT_W0_M*1e6:.9f} µm`
 - expected source-plane radius: `{selected_radius*1e6:.6f} µm`
 - source span: `50 µm`; lateral domain: `60 µm`
 - fitted-Gaussian square capture: `{source_metrics['square_captured_fraction']:.8%}`
@@ -587,9 +587,9 @@ from the property name alone.
 The source-object waist input is a SHA-pinned numerical calibration, not a
 change to the physical 12-µm target beam and not a Q normalization.  The
 uncalibrated 12-µm input realized
-`{selected['source_object_calibration']['baseline_realized_effective_w0_m']*1e6:.9f} µm`;
+`{CALIBRATION_BASELINE_REALIZED_W0_M*1e6:.9f} µm`;
 the calibrated input is therefore
-`{selected['Lumerical_source_object_input_w0_m']*1e6:.9f} µm`.
+`{CALIBRATED_SOURCE_OBJECT_W0_M*1e6:.9f} µm`.
 
 ## Source and mesh decision
 
