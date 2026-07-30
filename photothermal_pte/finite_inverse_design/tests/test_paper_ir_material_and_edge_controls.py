@@ -7,6 +7,9 @@ import numpy as np
 import pytest
 
 from photothermal_pte.validation.paper_ir_sanity import (
+    audit_paper_ir_checkpoint_failure as checkpoint_audit,
+)
+from photothermal_pte.validation.paper_ir_sanity import (
     audit_straight_edge_robust_gradient as robust,
 )
 from photothermal_pte.validation.paper_ir_sanity import (
@@ -82,3 +85,18 @@ def test_physical_line_quadratic_fit_recovers_linear_gradient() -> None:
     assert np.allclose(fitted["dT_dx_K_m"], 2.0, atol=1e-9)
     assert np.allclose(fitted["dT_dn_K_m"], expected_dn, atol=1e-9)
     assert np.max(fitted["fit_relative_residual"]) < 1e-10
+
+
+def test_checkpoint_audit_relative_change_matches_existing_symmetric_metric() -> None:
+    assert checkpoint_audit.rel_change(80.0, 100.0) == pytest.approx(0.2)
+    assert checkpoint_audit.rel_change(100.0, 80.0) == pytest.approx(0.2)
+
+
+def test_checkpoint_audit_coordinate_summary_uses_literal_steps() -> None:
+    summary = checkpoint_audit.coordinate_summary(
+        np.asarray([-2.0e-6, -1.0e-6, 1.0e-6, 4.0e-6])
+    )
+    assert summary["count"] == 4
+    assert summary["minimum_step_m"] == pytest.approx(1.0e-6)
+    assert summary["median_step_m"] == pytest.approx(2.0e-6)
+    assert summary["maximum_step_m"] == pytest.approx(3.0e-6)
