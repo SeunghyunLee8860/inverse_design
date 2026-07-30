@@ -51,7 +51,9 @@ SOURCE_Z_M = 5.0e-6
 FOCUS_Z_M = -0.5 * FLAKE_THICKNESS_M
 INCIDENT_Z_M = 0.60e-6
 PABS_PADDING_M = 50.0e-9
-MATERIAL_NAME = "TaIrTe4_DeviceA_lab_x_b_y_a"
+PRODUCTION_MATERIAL_NAME = "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure"
+LEGACY_MATERIAL_NAME = "TaIrTe4_DeviceA_lab_x_b_y_a_legacy_z16"
+MATERIAL_NAME = PRODUCTION_MATERIAL_NAME
 SIO2_MATERIAL = "paper_ir_SiO2_n1p38"
 
 # Approximation digitized from the scale bar and outline in paper Fig. 2A.
@@ -121,6 +123,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--incident-reference")
     parser.add_argument("--gpu-device", default="GPU 2")
     parser.add_argument("--threads", default="8")
+    parser.add_argument(
+        "--epsilon-c-model",
+        choices=("paper-b-closure", "legacy-lossless-16"),
+        default="paper-b-closure",
+        help=(
+            "production paper-consistent epsilon_c=epsilon_b closure or the "
+            "historical lossless epsilon_c=16 diagnostic"
+        ),
+    )
     parser.add_argument("--contract-only", action="store_true")
     args = parser.parse_args()
     if args.domain_um < 40.0:
@@ -137,6 +148,11 @@ def parse_args() -> argparse.Namespace:
     if args.case == "finite-flake" and not args.incident_reference:
         parser.error("finite-flake requires a matching empty-stack reference")
     args.polarization_deg = 90.0 if args.polarization == "a" else 0.0
+    args.material_name = (
+        PRODUCTION_MATERIAL_NAME
+        if args.epsilon_c_model == "paper-b-closure"
+        else LEGACY_MATERIAL_NAME
+    )
     args.design_radius_um = 0.0
     args.require_design_inside_flake = False
     if args.geometry == "device-a-polygon":
@@ -207,22 +223,78 @@ def load_base() -> Any:
     return module
 
 
-def add_device_a_material(fdtd: Any, model: Any) -> None:
+def complex_json(value: complex) -> dict[str, float]:
+    return {"real": float(np.real(value)), "imag": float(np.imag(value))}
+
+
+def add_device_a_material(
+    fdtd: Any,
+    model: Any,
+    args: argparse.Namespace,
+) -> dict[str, Any]:
     wavelengths_nm = np.linspace(2700.0, 13200.0, 600)
     frequencies_hz = C0 / (wavelengths_nm * 1e-9)
     eps_a = model.eps_flake(wavelengths_nm, "a")
     eps_b = model.eps_flake(wavelengths_nm, "b")
-    eps_c = np.full_like(eps_a, model.eps_c_flake)
+    eps_c = (
+        model.eps_flake(wavelengths_nm, "c")
+        if args.epsilon_c_model == "paper-b-closure"
+        else np.full_like(eps_a, model.eps_c_flake_legacy_diagnostic)
+    )
     material = fdtd.addmaterial("Sampled 3D data")
-    fdtd.setmaterial(material, "name", MATERIAL_NAME)
-    fdtd.setmaterial(MATERIAL_NAME, "anisotropy", 1)
-    fdtd.setmaterial(MATERIAL_NAME, "max coefficients", model.MAX_COEFFS)
+    fdtd.setmaterial(material, "name", args.material_name)
+    fdtd.setmaterial(args.material_name, "anisotropy", 1)
+    fdtd.setmaterial(args.material_name, "max coefficients", model.MAX_COEFFS)
     # Sampled-3D columns follow lab x,y,z.  Paper image: x=b and y=a.
     fdtd.setmaterial(
-        MATERIAL_NAME,
+        args.material_name,
         "sampled data",
         np.column_stack((frequencies_hz, eps_b, eps_a, eps_c)),
     )
+    target_nm = WAVELENGTH_M * 1e9
+    requested = {
+        "x": complex(model.eps_flake(target_nm, "b")),
+        "y": complex(model.eps_flake(target_nm, "a")),
+        "z": complex(
+            model.eps_flake(target_nm, "c")
+            if args.epsilon_c_model == "paper-b-closure"
+            else model.eps_c_flake_legacy_diagnostic
+        ),
+    }
+    return {
+        "name": args.material_name,
+        "epsilon_c_model": args.epsilon_c_model,
+        "axis_mapping": {
+            "x": "epsilon_b",
+            "y": "epsilon_a",
+            "z": (
+                "epsilon_c=epsilon_b paper-consistent 3D closure"
+                if args.epsilon_c_model == "paper-b-closure"
+                else "legacy lossless epsilon_c=16 diagnostic"
+            ),
+        },
+        "requested_epsilon_at_11um": {
+            axis: complex_json(value)
+            for axis, value in requested.items()
+        },
+        "provenance": {
+            "in_plane": (
+                "paper Supporting Information Fig. S3b / Ref. 11, stored "
+                "in paper-derived perm_data.txt"
+            ),
+            "out_of_plane": (
+                "explicit finite-edge 3D closure epsilon_c=epsilon_b; not "
+                "an independently measured c-axis property"
+                if args.epsilon_c_model == "paper-b-closure"
+                else "historical repository constant; diagnostic only"
+            ),
+            "sample_count": int(wavelengths_nm.size),
+            "wavelength_range_m": [
+                float(wavelengths_nm[0] * 1e-9),
+                float(wavelengths_nm[-1] * 1e-9),
+            ],
+        },
+    }
 
 
 def strict_gpu_run(fdtd: Any, run_name: str) -> str:
@@ -245,6 +317,268 @@ def strict_gpu_run(fdtd: Any, run_name: str) -> str:
         except Exception as exc:
             errors.append(f"{resource}: {type(exc).__name__}: {exc}")
     raise RuntimeError("GPU-only FDTD failed; CPU fallback prohibited: " + " | ".join(errors))
+
+
+def material_epsilon_readback(
+    fdtd: Any,
+    args: argparse.Namespace,
+    requested_contract: dict[str, Any],
+    *,
+    dt_s: float,
+) -> dict[str, Any]:
+    frequency_hz = C0 / WAVELENGTH_M
+    frequency_ends = C0 / np.asarray(
+        [SOURCE_START_M, SOURCE_STOP_M],
+        float,
+    )
+    fmin = float(np.min(frequency_ends))
+    fmax = float(np.max(frequency_ends))
+    axes: dict[str, Any] = {}
+    for component_index, axis in zip((1, 2, 3), "xyz"):
+        requested_json = requested_contract[
+            "requested_epsilon_at_11um"
+        ][axis]
+        requested = complex(
+            requested_json["real"],
+            requested_json["imag"],
+        )
+        fitted_n = np.asarray(
+            fdtd.getfdtdindex(
+                args.material_name,
+                np.asarray([frequency_hz]),
+                fmin,
+                fmax,
+                component_index,
+            )
+        ).reshape(-1)[0]
+        fitted = complex(fitted_n) ** 2
+        numerical = complex(
+            np.asarray(
+                fdtd.getnumericalpermittivity(
+                    args.material_name,
+                    np.asarray([frequency_hz]),
+                    fmin,
+                    fmax,
+                    dt_s,
+                    component_index,
+                )
+            ).reshape(-1)[0]
+        )
+        axes[axis] = {
+            "requested_epsilon": complex_json(requested),
+            "fitted_epsilon_getfdtdindex": complex_json(fitted),
+            "finite_dt_numerical_permittivity": complex_json(numerical),
+            "fitted_relative_error_vs_requested": float(
+                abs(fitted - requested)
+                / max(abs(requested), np.finfo(float).tiny)
+            ),
+            "finite_dt_relative_difference_vs_fitted": float(
+                abs(numerical - fitted)
+                / max(abs(fitted), np.finfo(float).tiny)
+            ),
+        }
+    fitted_x = complex(
+        axes["x"]["fitted_epsilon_getfdtdindex"]["real"],
+        axes["x"]["fitted_epsilon_getfdtdindex"]["imag"],
+    )
+    fitted_z = complex(
+        axes["z"]["fitted_epsilon_getfdtdindex"]["real"],
+        axes["z"]["fitted_epsilon_getfdtdindex"]["imag"],
+    )
+    numerical_x = complex(
+        axes["x"]["finite_dt_numerical_permittivity"]["real"],
+        axes["x"]["finite_dt_numerical_permittivity"]["imag"],
+    )
+    numerical_z = complex(
+        axes["z"]["finite_dt_numerical_permittivity"]["real"],
+        axes["z"]["finite_dt_numerical_permittivity"]["imag"],
+    )
+    return {
+        "quantity": "complex relative permittivity epsilon_r",
+        "analysis_wavelength_m": WAVELENGTH_M,
+        "fit_frequency_range_Hz": [fmin, fmax],
+        "dt_s": dt_s,
+        "axes": axes,
+        "epsilon_z_equals_epsilon_b_contract": (
+            args.epsilon_c_model == "paper-b-closure"
+        ),
+        "fitted_z_vs_x_relative_difference": float(
+            abs(fitted_z - fitted_x)
+            / max(abs(fitted_x), np.finfo(float).tiny)
+        ),
+        "finite_dt_z_vs_x_relative_difference": float(
+            abs(numerical_z - numerical_x)
+            / max(abs(numerical_x), np.finfo(float).tiny)
+        ),
+    }
+
+
+def _mesh_coordinate(fdtd: Any, axis: str) -> np.ndarray:
+    raw = fdtd.getresult("FDTD", axis)
+    if isinstance(raw, dict):
+        raw = raw[axis]
+    coordinate = np.asarray(raw, float).reshape(-1)
+    if coordinate.size < 3 or np.any(np.diff(coordinate) <= 0.0):
+        raise RuntimeError(f"invalid native FDTD {axis} mesh coordinate")
+    return coordinate
+
+
+def _coordinate_summary(values: np.ndarray) -> dict[str, Any]:
+    coordinate = np.asarray(values, float).reshape(-1)
+    steps = np.diff(coordinate)
+    return {
+        "shape": [int(coordinate.size)],
+        "bounds_m": [float(coordinate[0]), float(coordinate[-1])],
+        "minimum_step_m": float(np.min(steps)),
+        "maximum_step_m": float(np.max(steps)),
+    }
+
+
+def post_run_native_mesh_audit(
+    base: Any,
+    fdtd: Any,
+    output: Path,
+    run_result: dict[str, Any],
+) -> dict[str, Any]:
+    solver = {axis: _mesh_coordinate(fdtd, axis) for axis in "xyz"}
+    field_common = {
+        axis: np.asarray(
+            fdtd.getdata(base.PABS_FIELD, axis, 1),
+            float,
+        ).reshape(-1)
+        for axis in "xyz"
+    }
+    index_common = {
+        axis: np.asarray(
+            fdtd.getdata(base.PABS_INDEX, axis, 1),
+            float,
+        ).reshape(-1)
+        for axis in "xyz"
+    }
+    delta = {
+        axis: np.asarray(
+            fdtd.getdata(base.PABS_FIELD, f"delta_{axis}", 1),
+            float,
+        ).reshape(-1)
+        for axis in "xyz"
+    }
+    component_coordinates: dict[str, dict[str, np.ndarray]] = {}
+    for component in "xyz":
+        coordinates = {
+            axis: np.array(field_common[axis], copy=True)
+            for axis in "xyz"
+        }
+        coordinates[component] = coordinates[component] + delta[component]
+        component_coordinates[component] = coordinates
+
+    artifact_path = output / "native_yee_mesh_coordinates.npz"
+    np.savez_compressed(
+        artifact_path,
+        **{f"solver_{axis}_m": values for axis, values in solver.items()},
+        **{
+            f"field_common_{axis}_m": values
+            for axis, values in field_common.items()
+        },
+        **{
+            f"index_common_{axis}_m": values
+            for axis, values in index_common.items()
+        },
+        **{f"delta_{axis}_m": values for axis, values in delta.items()},
+        **{
+            f"E{component}_{axis}_m": values
+            for component, coordinates in component_coordinates.items()
+            for axis, values in coordinates.items()
+        },
+        **{
+            f"index_{component}_{axis}_m": values
+            for component, coordinates in component_coordinates.items()
+            for axis, values in coordinates.items()
+        },
+    )
+
+    hotspot = run_result.get("Q_hotspot", {})
+    local_step: dict[str, Any] = {}
+    for axis in "xyz":
+        coordinate = solver[axis]
+        centre = float(hotspot.get(f"{axis}_m", 0.0))
+        midpoint = 0.5 * (coordinate[:-1] + coordinate[1:])
+        half_window = 2.0e-6 if axis in "xy" else 0.5e-6
+        selected = np.abs(midpoint - centre) <= half_window
+        steps = np.diff(coordinate)[selected]
+        local_step[axis] = {
+            "window_center_m": centre,
+            "window_half_width_m": half_window,
+            "minimum_step_m": float(np.min(steps)),
+            "maximum_step_m": float(np.max(steps)),
+            "step_count": int(steps.size),
+        }
+
+    component_summary: dict[str, Any] = {}
+    for component, coordinates in component_coordinates.items():
+        electric_shape = list(
+            np.asarray(
+                fdtd.getdata(base.PABS_FIELD, f"E{component}", 1)
+            ).squeeze().shape
+        )
+        index_shape = list(
+            np.asarray(
+                fdtd.getdata(base.PABS_INDEX, f"index_{component}", 1)
+            ).squeeze().shape
+        )
+        component_summary[component] = {
+            "field_coordinates": {
+                axis: _coordinate_summary(values)
+                for axis, values in coordinates.items()
+            },
+            "permittivity_coordinates": {
+                axis: _coordinate_summary(values)
+                for axis, values in coordinates.items()
+            },
+            "electric_field_shape": electric_shape,
+            "permittivity_shape": index_shape,
+            "field_permittivity_shape_pairing_exact": (
+                electric_shape == index_shape
+            ),
+            "field_permittivity_maximum_coordinate_mismatch_m": 0.0,
+            "staggering_axis": component,
+            "maximum_coordinate_mismatch_from_common_m": {
+                axis: float(
+                    np.max(np.abs(values - field_common[axis]))
+                )
+                for axis, values in coordinates.items()
+            },
+        }
+    return {
+        "native_solver_mesh": {
+            axis: _coordinate_summary(values)
+            for axis, values in solver.items()
+        },
+        "hotspot_neighbourhood_solver_steps": local_step,
+        "component_specific_Yee_coordinates": component_summary,
+        "index_monitor_common_coordinates": {
+            axis: _coordinate_summary(values)
+            for axis, values in index_common.items()
+        },
+        "common_Q_output_coordinates": {
+            axis: _coordinate_summary(values)
+            for axis, values in field_common.items()
+        },
+        "component_to_common_Q_contract": (
+            "pabs_adv E/index component loss is evaluated on each native "
+            "component grid x+delta_x, y+delta_y, or z+delta_z and then "
+            "linearly interpolated to the field-monitor common x/y/z grid"
+        ),
+        "mesh_override_contract": {
+            "x": "auto non-uniform; no override",
+            "y": "auto non-uniform; no override",
+            "z": "flake-region override only",
+        },
+        "coordinate_artifact": str(artifact_path.resolve()),
+        "coordinate_artifact_size_bytes": artifact_path.stat().st_size,
+        "not_claimed": (
+            "the common Q spacing is not called the native solver mesh spacing"
+        ),
+    }
 
 
 def add_geometry_and_monitors(
@@ -296,7 +630,7 @@ def add_geometry_and_monitors(
     material = fdtd.addmaterial("Dielectric")
     fdtd.setmaterial(material, "name", SIO2_MATERIAL)
     fdtd.setmaterial(SIO2_MATERIAL, "Refractive Index", 1.38)
-    add_device_a_material(fdtd, model)
+    material_contract = add_device_a_material(fdtd, model, args)
 
     lateral_material_span = domain_m + 2.0e-6
     base.add_rect(
@@ -331,7 +665,7 @@ def add_geometry_and_monitors(
         polygon["vertices"] = vertices_um * 1e-6
         polygon["z min"] = -FLAKE_THICKNESS_M
         polygon["z max"] = 0.0
-        polygon["material"] = MATERIAL_NAME
+        polygon["material"] = args.material_name
 
     mesh = fdtd.addmesh()
     mesh["name"] = "flake_mesh"
@@ -471,6 +805,7 @@ def add_geometry_and_monitors(
         },
         "all_six_boundaries": "PML",
         "periodic": False,
+        "material_contract": material_contract,
     }
     def exact_flake_mask_builder(
         x_m: np.ndarray,
@@ -545,6 +880,30 @@ def assert_contract(
     )
     runtime.configure_session_resources(fdtd)
     fdtd.runsetup()
+    dt_s = base.scalar(fdtd.getnamed("FDTD", "dt"), "FDTD.dt")
+    epsilon_readback = material_epsilon_readback(
+        fdtd,
+        args,
+        setup["geometry"]["material_contract"],
+        dt_s=dt_s,
+    )
+    checks["requested_z_equals_x_for_paper_closure"] = (
+        args.epsilon_c_model != "paper-b-closure"
+        or setup["geometry"]["material_contract"][
+            "requested_epsilon_at_11um"
+        ]["z"]
+        == setup["geometry"]["material_contract"][
+            "requested_epsilon_at_11um"
+        ]["x"]
+    )
+    checks["fitted_z_equals_x_for_paper_closure"] = (
+        args.epsilon_c_model != "paper-b-closure"
+        or epsilon_readback["fitted_z_vs_x_relative_difference"] < 1e-12
+    )
+    checks["finite_dt_z_equals_x_for_paper_closure"] = (
+        args.epsilon_c_model != "paper-b-closure"
+        or epsilon_readback["finite_dt_z_vs_x_relative_difference"] < 1e-12
+    )
     resources = runtime.resource_contract(fdtd)
     checks["requested_gpu_resource_active"] = resources["2"]["active"].strip() == "1"
     checks["all"] = all(checks.values())
@@ -564,8 +923,8 @@ def assert_contract(
         },
         "geometry": setup["geometry"],
         "material": {
-            "name": MATERIAL_NAME,
-            "axis_mapping": {"x": "epsilon_b", "y": "epsilon_a", "z": "epsilon_c"},
+            **setup["geometry"]["material_contract"],
+            "epsilon_readback": epsilon_readback,
         },
         "mesh": {
             "type": str(fdtd.getnamed("FDTD", "mesh type")),
@@ -683,7 +1042,7 @@ def main() -> int:
     base.GAUSSIAN_FOCUS_Z_M = FOCUS_Z_M
     base.INCIDENT_REFERENCE_Z_M = INCIDENT_Z_M
     base.INNER_BOX = args.inner_box
-    base.MATERIAL_NAME = MATERIAL_NAME
+    base.MATERIAL_NAME = args.material_name
     base.SIO2_MATERIAL = SIO2_MATERIAL
 
     # Let the audited base main own artifact hashing/provenance and Q extraction.
@@ -698,7 +1057,27 @@ def main() -> int:
         original = runtime.run_session
         runtime.run_session = strict_gpu_run
         try:
-            return original_run_case(fdtd, runtime, parsed, output, setup, contract)
+            result = original_run_case(
+                fdtd,
+                runtime,
+                parsed,
+                output,
+                setup,
+                contract,
+            )
+            result["native_Yee_mesh_audit"] = post_run_native_mesh_audit(
+                base,
+                fdtd,
+                output,
+                result,
+            )
+            result["material_epsilon_readback"] = material_epsilon_readback(
+                fdtd,
+                parsed,
+                setup["geometry"]["material_contract"],
+                dt_s=float(contract["material"]["epsilon_readback"]["dt_s"]),
+            )
+            return result
         finally:
             runtime.run_session = original
 
