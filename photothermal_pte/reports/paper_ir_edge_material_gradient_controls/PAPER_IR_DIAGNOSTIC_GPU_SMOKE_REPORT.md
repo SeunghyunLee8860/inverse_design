@@ -1,5 +1,12 @@
 # Paper-IR reduced GPU diagnostic smoke
 
+> Superseded interpretation (2026-07-30): the 9.18% number below compares
+> different Q and six-face control volumes and is **not** an FDTD
+> energy-conservation error. A later matched-volume smoke gives 0.0227%
+> native-Yee and 0.1878% common-grid closure. See
+> `PAPER_IR_MATCHED_CONTROL_VOLUME_SMOKE_REPORT.md`. This file retains the
+> original unmatched-volume checkpoint and raw numbers for provenance.
+
 ## Status
 
 - Official project status: `PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_RUNTIME_AND_UNRESOLVED_EDGE_METRIC`
@@ -51,9 +58,10 @@ Qz is finite and nonzero, as required by the lossy
 1.491525,
 0.000000) in (um, um, nm).
 
-## Why the gate failed
+## Why this historical comparison failed
 
-The 9.18% closure failure is real and is not corrected empirically.
+The 9.18% comparison is numerically reproducible, but it is not a valid
+same-control-volume energy-closure metric and is not corrected empirically.
 
 1. The control volumes are not identical.  The six-face box is x/y = +/-5
    um, while the actual common Q output ends near +/-4.542 um.  Because the

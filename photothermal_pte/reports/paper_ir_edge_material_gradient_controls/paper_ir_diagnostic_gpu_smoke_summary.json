@@ -265,5 +265,14 @@
   "raw_artifact_manifest": "PAPER_IR_DIAGNOSTIC_RAW_ARTIFACT_MANIFEST.json",
   "six_face_csv": "paper_ir_diagnostic_six_face_fluxes.csv",
   "thermal_run": false,
-  "validated": false
+  "validated": false,
+  "superseded_interpretation": {
+    "old_9p18_percent_is_FDTD_energy_error": false,
+    "reason": "the historical Q and six-face integrations used different lateral control volumes",
+    "replacement_report": "PAPER_IR_MATCHED_CONTROL_VOLUME_SMOKE_REPORT.md",
+    "matched_native_Yee_six_face_relative_closure": 0.00022673941959165867,
+    "matched_common_grid_six_face_relative_closure": 0.0018781381996241275,
+    "old_exact_zero_field_index_mismatch_claim_retracted": true,
+    "independent_maximum_field_index_coordinate_mismatch_m": 8.470329472543003e-22
+  }
 }

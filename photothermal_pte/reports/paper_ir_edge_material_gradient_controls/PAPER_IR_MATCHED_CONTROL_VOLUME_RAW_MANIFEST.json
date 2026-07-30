@@ -1,0 +1,53 @@
+{
+  "official_status": "PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_RUNTIME_AND_UNRESOLVED_EDGE_METRIC",
+  "smoke_status": "FAILED_MATCHED_CONTROL_VOLUME_SMOKE_AUTO_SHUTOFF_UNRESOLVED",
+  "policy": "Raw NPZ/FSP/H5/log files remain outside Git. This manifest records paths, sizes, SHA-256 hashes, and commands.",
+  "generation_commit": "3b08e8a9251f1531ac053bf017697c157fd785f4",
+  "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_matched_smoke_a_w2_L12_dz10_4ps_gpu4_20260730 --case finite-flake --polarization a --geometry straight-45-edge --domain-um 12 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 6 --waist-um 2 --execution-contract diagnostic-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4' --threads 8",
+  "read_only_recovery_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/paper_ir_sanity/recover_matched_paper_ir_smoke.py --fsp /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_matched_smoke_a_w2_L12_dz10_4ps_gpu4_20260730/finite_2um_optical_q.fsp --case-result /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_matched_smoke_a_w2_L12_dz10_4ps_gpu4_20260730/case_result.json --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_matched_smoke_a_w2_L12_dz10_4ps_gpu4_20260730",
+  "read_only_recovery_called_FDTD_solve": false,
+  "read_only_recovery_called_runanalysis": false,
+  "artifacts": {
+    "case_result.json": {
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_matched_smoke_a_w2_L12_dz10_4ps_gpu4_20260730/case_result.json",
+      "size_bytes": 16297,
+      "sha256": "adcf334ad8e487cbc1c02769a6d0e0a70a46446433fe4ab48debd9d60a113614",
+      "immutable_raw_failure": true
+    },
+    "finite_2um_optical_q.fsp": {
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_matched_smoke_a_w2_L12_dz10_4ps_gpu4_20260730/finite_2um_optical_q.fsp",
+      "size_bytes": 86978212,
+      "sha256": "ef4575939a6f4377f9574fe58be7c4b680e817f0900f603de8edd92c0cfbb1fe"
+    },
+    "finite_2um_optical_q_output.h5": {
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_matched_smoke_a_w2_L12_dz10_4ps_gpu4_20260730/finite_2um_optical_q/finite_2um_optical_q_output.h5",
+      "size_bytes": 34381390,
+      "sha256": "b8064ff6cb4fdac7d0706e3833b5d1c104ad5d9a810f7e5bce9aaa105b78d086"
+    },
+    "finite_2um_optical_q_p0.log": {
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_matched_smoke_a_w2_L12_dz10_4ps_gpu4_20260730/finite_2um_optical_q_p0.log",
+      "size_bytes": 16572,
+      "sha256": "5abb67f198f83293e8f7e1721c4dd0ff1043c04abb903be75f2049a70e365eae"
+    },
+    "diagnostic_q_common_grid_artifact.npz": {
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_matched_smoke_a_w2_L12_dz10_4ps_gpu4_20260730/diagnostic_q_common_grid_artifact.npz",
+      "size_bytes": 55581646,
+      "sha256": "951a4fe38a3ff57a48c2a11499e7e16ea1c431e2206b6fb5241c74e734c59ee2"
+    },
+    "read_only_matched_smoke_recovery.json": {
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_matched_smoke_a_w2_L12_dz10_4ps_gpu4_20260730/read_only_matched_smoke_recovery.json",
+      "size_bytes": 15282,
+      "sha256": "8167f6d4d597ff36b7080cea573b81809f585cc3dffca5c0f6e4b3d85c2161f1"
+    },
+    "paper_ir_device_a_geometry.png": {
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_matched_smoke_a_w2_L12_dz10_4ps_gpu4_20260730/paper_ir_device_a_geometry.png",
+      "size_bytes": 107507,
+      "sha256": "0284113b3c05bf72067f315ca75f52e03ceffed193bf1423126e70704dd9543e"
+    },
+    "RAW_ARTIFACT_MANIFEST.json": {
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_matched_smoke_a_w2_L12_dz10_4ps_gpu4_20260730/RAW_ARTIFACT_MANIFEST.json",
+      "size_bytes": 4105,
+      "sha256": "c32cf0bc611387ef5a570112feff5dad11e70df0be53429106851e643b2c38d1"
+    }
+  }
+}

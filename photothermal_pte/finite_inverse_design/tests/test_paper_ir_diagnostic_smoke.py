@@ -149,6 +149,44 @@ class PaperIrDiagnosticSmokeTests(unittest.TestCase):
         )
         self.assertAlmostEqual(float(np.sum(weights)), 1.0)
 
+    def test_matched_smoke_passes_closure_but_fails_shutoff(self) -> None:
+        repository = Path(__file__).resolve().parents[3]
+        path = (
+            repository
+            / "photothermal_pte"
+            / "reports"
+            / "paper_ir_edge_material_gradient_controls"
+            / "paper_ir_matched_control_volume_smoke_summary.json"
+        )
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(
+            payload["smoke_status"],
+            "FAILED_MATCHED_CONTROL_VOLUME_SMOKE_AUTO_SHUTOFF_UNRESOLVED",
+        )
+        self.assertFalse(payload["validated"])
+        self.assertTrue(
+            payload["acceptance"][
+                "native_Yee_six_face_closure_lt_0p5_percent"
+            ]
+        )
+        self.assertTrue(
+            payload["acceptance"][
+                "common_grid_six_face_closure_lt_0p5_percent"
+            ]
+        )
+        self.assertFalse(
+            payload["acceptance"]["auto_shutoff_lt_1e_minus_5"]
+        )
+        self.assertFalse(
+            payload["interpretation"][
+                "old_9p18_percent_is_FDTD_energy_error"
+            ]
+        )
+        self.assertFalse(payload["thermal_run"])
+        self.assertFalse(payload["PTE_run"])
+        self.assertFalse(payload["adjoint_run"])
+        self.assertFalse(payload["optimization_run"])
+
 
 if __name__ == "__main__":
     unittest.main()

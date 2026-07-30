@@ -1,5 +1,33 @@
 # Latest photothermal validation status
 
+## Matched-control-volume paper-IR GPU smoke
+
+- Official status remains:
+  `PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_RUNTIME_AND_UNRESOLVED_EDGE_METRIC`
+- New smoke substatus:
+  `FAILED_MATCHED_CONTROL_VOLUME_SMOKE_AUTO_SHUTOFF_UNRESOLVED`
+- The one approved 12 x 12 um, `a`-polarized GPU rerun completed normally
+  on GPU 4: 131,247 iterations, 4.000005 ps, and 640.481187 s wall time.
+  No CPU FDTD fallback was used.
+- Q and all six flux faces were read back on one realized volume:
+  x/y=`+/-4.542372881356 um`, z=`[-180,+50] nm`.
+- `P_Q(native Yee)=8.715867473376e-17 W`,
+  `P_Q(common)=8.701470836178e-17 W`, and
+  `P_six=8.717844152299e-17 W`. Native-Yee and common-grid closure are
+  `0.022674%` and `0.187814%`; both pass the `<0.5%` gate.
+- Therefore the earlier `9.18%` value was an unmatched-control-volume
+  comparison, not a 9.18% FDTD energy-conservation error.
+- Field and index coordinates are now independently read from their saved
+  monitors. Their maximum component-specific mismatch is
+  `8.47033e-22 m`; the earlier copied exact-zero claim is retracted.
+- The final auto-shutoff is `1.80982e-5`, still above the requested
+  `<1e-5` gate after 4 ps. The Q artifact is therefore not promoted.
+- The original postprocess-failure JSON is preserved. A separate read-only
+  recovery called neither FDTD `run` nor `runanalysis`; it did not alter Q.
+  No thermal, PTE, adjoint, gradient, or optimization calculation ran.
+- Report, JSON, face CSV, and manifest:
+  `reports/paper_ir_edge_material_gradient_controls/`.
+
 ## Reduced one-polarization paper-IR GPU diagnostic
 
 - Official status remains:
@@ -31,6 +59,8 @@
   from finite-time DFT error.
 - Per the fail-closed one-smoke contract, no second FDTD solve was started.
   No Q correction, thermal, PTE, adjoint, gradient, or optimization ran.
+- This historical unmatched-volume interpretation is superseded by the
+  matched-control-volume smoke above. Its raw values remain provenance only.
 - Report, JSON, face CSV, and raw-artifact manifest:
   `reports/paper_ir_edge_material_gradient_controls/`.
 
