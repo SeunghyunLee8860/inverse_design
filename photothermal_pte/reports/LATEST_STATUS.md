@@ -1,5 +1,38 @@
 # Latest photothermal validation status
 
+## Paper-like Device-A 11-um coupled sanity check
+
+- Status: `FAILED_COUPLED_DEVICE_A_IR_PTE_SANITY_GEOMETRY_UNRESOLVED`
+- This is an actual
+  `v261 GPU Lumerical Gaussian Q -> conservative thermal remap ->
+  Cartesian FVM -> solved approximate-contact weighting potential -> PTE`
+  calculation, not a parameter-only equation replay.
+- Published quantities held fixed:
+  130-nm TaIrTe4, 285-nm SiO2/Si,
+  `kappa_a,b,c=14.4/3.8/1.0 W/(m K)`,
+  `sigma_a,b=4.91e5/1.10e5 S/m`,
+  `S_a,b=-6/+27 uV/K`, and the paper interface conductances.
+- Central finite-Gaussian Lumerical absorption at 11 um,
+  `E||a / E||b = 17.350% / 25.114%`;
+  the independent TMM gives `17.673% / 26.329%` and the paper Fig. 3D is
+  approximately `18% / 26%`.
+- Central and edge six-face optical closure ranges from
+  `0.0103%` to `0.0636%`.
+- At the selected off-axis edge point and 285-uW incident power,
+  Lumerical absorbed power is `28.597 / 35.578 uW` for `E||a / E||b`.
+- Both the current expanded thermal model and a separate paper-Eq.-S4
+  reduced Robin model pass Q-power, thermal energy, and linear-residual
+  numerical gates.
+- The coupled PTE polarization trend does not pass:
+  expanded `|I_a|/|I_b|=1.189`, paper-reduced `1.227`, whereas the paper
+  reports approximately `0.8`.
+- The immediate diagnostic is a strong `E||a` optical hotspot at the
+  concave corner of the approximate Fig.-2A polygon. Exact Device-A CAD,
+  electrode mask, beam center, and wavelength-specific beam radius are not
+  published numerically, so the result is not promoted or fitted.
+- No empirical gain/current rescaling, transient, AD-FD, or optimization
+  was used in this separate paper sanity check.
+
 ## Scale-adaptive near-null combined AD-FD diagnostic
 
 - Status: `FAILED_SCALE_ADAPTIVE_NEAR_NULL_COMBINED_ADFD`
