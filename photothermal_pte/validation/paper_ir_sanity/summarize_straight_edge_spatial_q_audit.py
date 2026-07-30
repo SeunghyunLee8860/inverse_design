@@ -595,6 +595,61 @@ def main() -> int:
     figure.savefig(args.output_dir / "STRAIGHT_EDGE_AUDIT_METRICS.png", dpi=180)
     plt.close(figure)
 
+    figure, axes = plt.subplots(1, 2, figsize=(15, 5), constrained_layout=True)
+    metric_names = list(METRICS)
+    x = np.arange(len(metric_names))
+    mesh_ratio_cases = (
+        ("analytic 100 nm", "paper_analytic_100nm"),
+        ("analytic 50 nm", "paper_analytic_50nm"),
+        ("Maxwell Q 100 nm", "paper_reduced_with_Lumerical_Q_100nm"),
+        ("Maxwell Q 50 nm", "paper_reduced_with_Lumerical_Q_50nm"),
+    )
+    width = 0.19
+    for index, (label, key) in enumerate(mesh_ratio_cases):
+        axes[0].bar(
+            x + (index - 1.5) * width,
+            [ratios[key][name] for name in metric_names],
+            width,
+            label=label,
+        )
+    axes[0].axhline(1.0, color="black", linestyle="--")
+    axes[0].set(
+        ylabel="gradient ratio b/a",
+        title="Polarization trend under 100→50 nm refinement",
+        xticks=x,
+        xticklabels=[METRICS[name] for name in metric_names],
+    )
+    axes[0].legend(fontsize=8, ncol=2)
+    axes[0].grid(axis="y", alpha=0.25)
+
+    for key, changes in thermal_mesh_convergence.items():
+        label = (
+            key.replace("analytic_paper_source", "analytic")
+            .replace("lumerical_edge_q", "Maxwell Q")
+            .replace("_100_to_50", "")
+        )
+        axes[1].plot(
+            x,
+            [100.0 * changes[name] for name in metric_names],
+            marker="o",
+            label=label,
+        )
+    axes[1].axhline(1.0, color="black", linestyle="--", label="1% gate")
+    axes[1].set_yscale("log")
+    axes[1].set(
+        ylabel="100→50 nm relative change (%)",
+        title="Peak-gradient mesh convergence (fail-closed)",
+        xticks=x,
+        xticklabels=[METRICS[name] for name in metric_names],
+    )
+    axes[1].grid(alpha=0.25, which="both")
+    axes[1].legend(fontsize=8, ncol=2)
+    figure.savefig(
+        args.output_dir / "STRAIGHT_EDGE_THERMAL_MESH_CONVERGENCE.png",
+        dpi=180,
+    )
+    plt.close(figure)
+
     figure, axes = plt.subplots(1, 2, figsize=(12, 4.5), constrained_layout=True)
     for ax, polarization in zip(axes, ("a", "b")):
         directory = run_directory(
@@ -736,6 +791,10 @@ that is not relabeled as native Yee-mesh readback.  The remote polygon faces
 are at x=+25 µm and y=-25 µm, beyond the actual +/-24 µm FDTD outer boundary;
 the flake therefore does not terminate inside the lateral PML in these saved
 artifacts.
+
+Published figures are `STRAIGHT_EDGE_AUDIT_METRICS.png`,
+`STRAIGHT_EDGE_THERMAL_MESH_CONVERGENCE.png`, and
+`STRAIGHT_EDGE_Q_PROFILES.png`.
 """
     (args.output_dir / "STRAIGHT_EDGE_SPATIAL_Q_AUDIT_REPORT.md").write_text(
         report

@@ -96,3 +96,7 @@ that is not relabeled as native Yee-mesh readback.  The remote polygon faces
 are at x=+25 µm and y=-25 µm, beyond the actual +/-24 µm FDTD outer boundary;
 the flake therefore does not terminate inside the lateral PML in these saved
 artifacts.
+
+Published figures are `STRAIGHT_EDGE_AUDIT_METRICS.png`,
+`STRAIGHT_EDGE_THERMAL_MESH_CONVERGENCE.png`, and
+`STRAIGHT_EDGE_Q_PROFILES.png`.
