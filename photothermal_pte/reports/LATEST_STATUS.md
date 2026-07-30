@@ -1,5 +1,32 @@
 # Latest photothermal validation status
 
+## Corner-free straight 45-degree edge optical/thermal control
+
+- Status: `FAILED_STRAIGHT_45_EDGE_PAPER_GRADIENT_TREND`
+- A single `y=x` TaIrTe4/air edge replaces the approximate polygon; TaIrTe4
+  occupies `y<=x`, and all remote polygon faces lie outside the 48-um optical
+  domain. There is no physical corner in the calculation.
+- Independent 11-um `E||a` and `E||b` v261 GPU-FDTD runs use a centred
+  `w0=6.5 um` Gaussian and pass six-face closure at
+  `0.249998% / 0.411927%`.
+- At 285-uW incident power, `P_abs(a/b)=30.0635/37.2358 uW`;
+  `P_abs,b/P_abs,a=1.23857`.
+- The explicit anisotropic/multimaterial thermal FVM was run at 200- and
+  100-nm lateral meshes. Q mapping, energy balance, and linear residual pass
+  in all four cases.
+- On the 100-nm mesh, flake-average
+  `DeltaT(a/b)=0.0341940/0.0422899 K`, but flake
+  `Tmax(a/b)=0.239721/0.228105 K` and max edge-normal gradient
+  `35.972/29.022 kK/m`.
+- Thus the requested Figure-3F ordering
+  `|grad T_b|>|grad T_a|` is not reproduced. The same reversal occurs at
+  200 nm, although the peak gradient magnitude itself is not mesh converged.
+- The earlier concave polygon corner is therefore not the sole cause of the
+  failed trend. No weighting field or PTE current was applied, and no
+  empirical gain, fitting, AD-FD, or optimization was used.
+- Report and machine-readable outputs:
+  `reports/paper_ir_straight_45_edge/`.
+
 ## Paper-like Device-A 11-um coupled sanity check
 
 - Status: `FAILED_COUPLED_DEVICE_A_IR_PTE_SANITY_GEOMETRY_UNRESOLVED`
@@ -26,10 +53,11 @@
 - The coupled PTE polarization trend does not pass:
   expanded `|I_a|/|I_b|=1.189`, paper-reduced `1.227`, whereas the paper
   reports approximately `0.8`.
-- The immediate diagnostic is a strong `E||a` optical hotspot at the
-  concave corner of the approximate Fig.-2A polygon. Exact Device-A CAD,
-  electrode mask, beam center, and wavelength-specific beam radius are not
-  published numerically, so the result is not promoted or fitted.
+- The initial diagnostic was a strong `E||a` hotspot at the concave corner
+  of the approximate Fig.-2A polygon. The newer corner-free straight-edge
+  control above still reverses the gradient ordering, so that corner is no
+  longer considered the sole cause. Exact Device-A CAD, electrode mask,
+  beam center, and wavelength-specific beam radius remain unpublished.
 - No empirical gain/current rescaling, transient, AD-FD, or optimization
   was used in this separate paper sanity check.
 

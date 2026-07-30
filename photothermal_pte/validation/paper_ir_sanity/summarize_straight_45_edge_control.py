@@ -107,6 +107,7 @@ def optical_metrics(case_dir: Path) -> dict[str, Any]:
         "raw_npz": str((case_dir / "finite_q_on_artifact.npz").resolve()),
         "raw_npz_sha256": sha256(case_dir / "finite_q_on_artifact.npz"),
         "generation_command": case["generation_command"],
+        "raw_case_reported_generation_commit": case["generation_commit"],
     }
 
 
@@ -431,7 +432,9 @@ def main() -> int:
             "linear_residual",
             "PTE_evaluated",
         ]
-        writer = csv.DictWriter(stream, fieldnames=fieldnames)
+        writer = csv.DictWriter(
+            stream, fieldnames=fieldnames, lineterminator="\n"
+        )
         writer.writeheader()
         for mesh in ("200nm", "100nm"):
             for polarization in ("a", "b"):
@@ -513,6 +516,18 @@ def main() -> int:
         "policy": "Raw NPZ/FSP/log/3-D fields remain outside Git.",
         "status": status,
         "generation_commit": git_commit(),
+        "provenance_note": (
+            "The external optical case JSON self-reports the pre-checkpoint "
+            "HEAD because the new straight-edge source was executed from the "
+            "working tree. The identical execution-source content is frozen "
+            "by this report's generation commit; raw metadata was not rewritten."
+        ),
+        "raw_case_reported_generation_commits": {
+            polarization: optical[polarization][
+                "raw_case_reported_generation_commit"
+            ]
+            for polarization in ("a", "b")
+        },
         "raw_artifacts": manifest_entries,
     }
     (args.output_dir / "RAW_ARTIFACT_MANIFEST.json").write_text(
@@ -564,6 +579,11 @@ Both closures are below 0.5%, both raw Q fields have zero negative voxels,
 and the analytic exact-flake mask exactly equals `y<=x` over the 130-nm
 thickness. No clipping, smoothing, gain, global rescaling, tiling, or source
 deletion was used.
+
+The external optical case JSON records the pre-checkpoint HEAD because these
+runs were launched from the working tree. The identical straight-edge
+execution-source content is frozen by report generation commit `{git_commit()}`;
+the raw metadata was preserved rather than rewritten.
 
 ## Thermal result
 
