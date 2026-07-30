@@ -413,7 +413,9 @@ def main() -> int:
     with (output / "paper_ir_beam_audit.csv").open(
         "w", newline="", encoding="utf-8"
     ) as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(paper_records[0]))
+        writer = csv.DictWriter(
+            handle, fieldnames=list(paper_records[0]), lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(paper_records)
     with (output / "paper_ir_beam_scenarios.csv").open(
@@ -428,7 +430,9 @@ def main() -> int:
             "source_plane_radius_um",
             "definition",
         ]
-        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer = csv.DictWriter(
+            handle, fieldnames=fields, lineterminator="\n"
+        )
         writer.writeheader()
         for row in scenarios:
             writer.writerow(
