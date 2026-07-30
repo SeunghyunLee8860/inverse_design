@@ -5,7 +5,9 @@
 ## Repository and provenance
 
 - Branch: `agent/validate-inverse-design-pte-adfd`
-- HEAD: `c92cab70f7a7064c0a628a54eb23ef483b97117c`
+- Immutable audit basis: `651797fefbcaa254737bcec3cac854979ae2bfef`
+- Report-generation HEAD: `98f58323961f515d071ec4ee9c44422690174d26` (descends from the audit basis:
+  `True`)
 - Dirty/untracked at audit start: `[]`
 - All six 200/100/50 nm paper-reduced cases use the same geometry, Robin
   boundary, source, and remap contract within each polarization.  Only the

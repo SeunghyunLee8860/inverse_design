@@ -2,18 +2,13 @@
   "status": "AUDITED_EXISTING_PAPER_IR_CHECKPOINTS_UNRESOLVED_ENGINE_TERMINATION_AND_EDGE_METRIC",
   "repository": {
     "branch": "agent/validate-inverse-design-pte-adfd",
-    "head": "c92cab70f7a7064c0a628a54eb23ef483b97117c",
-    "expected_head_prefix": "651797f",
-    "expected_head_matches": false,
+    "audit_basis_commit": "651797fefbcaa254737bcec3cac854979ae2bfef",
+    "expected_audit_basis_prefix": "651797f",
+    "audit_basis_matches": true,
+    "report_generation_head": "98f58323961f515d071ec4ee9c44422690174d26",
+    "report_generation_head_descends_from_audit_basis": true,
     "dirty_or_untracked_at_audit_start": [],
-    "current_dirty_or_untracked_after_adding_audit_code": [
-      " M photothermal_pte/finite_inverse_design/tests/test_paper_ir_material_and_edge_controls.py",
-      " M photothermal_pte/reports/LATEST_STATUS.md",
-      "?? photothermal_pte/reports/paper_ir_edge_material_gradient_controls/PAPER_IR_CHECKPOINT_FAILURE_AUDIT.md",
-      "?? photothermal_pte/reports/paper_ir_edge_material_gradient_controls/paper_ir_checkpoint_failure_audit.json",
-      "?? photothermal_pte/reports/paper_ir_edge_material_gradient_controls/paper_reduced_thermal_audit_cases.csv",
-      "?? photothermal_pte/reports/paper_ir_edge_material_gradient_controls/partial_h5_monitor_coordinate_audit.csv"
-    ],
+    "current_dirty_or_untracked_after_adding_audit_code": [],
     "checkpoint_commits": [
       "0ba30f7 Define paper IR optical closure and edge controls",
       "184ecdc Summarize paper IR material and edge controls",
