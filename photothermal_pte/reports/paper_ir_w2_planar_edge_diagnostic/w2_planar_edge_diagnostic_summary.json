@@ -1,0 +1,2378 @@
+{
+  "cases": {
+    "finite_edge_b": {
+      "P_Q_common_grid_W": 9.663323072087994e-17,
+      "P_Q_native_Yee_W": 9.663812301951972e-17,
+      "P_six_face_W": 9.664803053253684e-17,
+      "Q_component_power_common_grid_W": {
+        "x": 9.400607895882811e-17,
+        "y": 2.384070351009318e-18,
+        "z": 2.4308141104251634e-19
+      },
+      "auto_shutoff_1p2ps": {
+        "final_value": 2.0095e-05,
+        "log_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t1p2_gpu4_20260730/finite_2um_optical_q_p0.log",
+        "simulation_completed_successfully": true
+      },
+      "auto_shutoff_4ps": {
+        "final_value": 2.00846e-05,
+        "log_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/finite_2um_optical_q_p0.log",
+        "simulation_completed_successfully": true
+      },
+      "axis_mapping": {
+        "x": "crystal b",
+        "y": "crystal a",
+        "z": "c closure with epsilon_c=epsilon_b"
+      },
+      "common_grid_six_face_closure": 0.00015313102166019283,
+      "field_component_norms": {
+        "flake": {
+          "Ex": 10.32149232637242,
+          "Ey": 1.6311756336633172,
+          "Ez": 7.706058719717967,
+          "Hx": 0.0033430041200247745,
+          "Hy": 0.08418576272172594,
+          "Hz": 0.010760393767590611
+        },
+        "incident": {
+          "Ex": 11.146648173268808,
+          "Ey": 1.3745817460439227,
+          "Ez": 11.785648637276692,
+          "Hx": 0.006287318818726463,
+          "Hy": 0.09181320242041409,
+          "Hz": 0.010723221423972251
+        },
+        "source_profile": {
+          "Ex_L2": 160.95649607395112,
+          "Ey_L2": 0.0,
+          "Ez_L2": 0.0
+        }
+      },
+      "geometry": {
+        "absorption_analysis_bounds_m": {
+          "x": [
+            -4.5e-06,
+            4.5e-06
+          ],
+          "y": [
+            -4.5e-06,
+            4.5e-06
+          ],
+          "z": [
+            -1.3e-07,
+            0.0
+          ]
+        },
+        "all_six_boundaries": "PML",
+        "coordinate_contract": {
+          "lab_x": "crystal b",
+          "lab_y": "crystal a"
+        },
+        "diagnostic_difference_from_production": {
+          "classification": "reduced-cost one-polarization diagnostic only; not a paper-like optical result and not a replacement for the 48 um production contract",
+          "diagnostic_absorption_padding_um": 1.5,
+          "diagnostic_lateral_domain_um": 12.0,
+          "diagnostic_source_span_um": 6.0,
+          "diagnostic_waist_um": 2.0,
+          "production_absorption_padding_um": 4.0,
+          "production_lateral_domain_um": 48.0,
+          "production_source_span_um": 32.0,
+          "production_waist_um": 6.5,
+          "removed_monitors": [
+            "outer six-face box",
+            "three production diagnostic field slices"
+          ],
+          "unchanged": [
+            "11 um analysis wavelength and 7-13 um source band",
+            "normal incidence",
+            "straight 45-degree TaIrTe4 edge",
+            "130 nm TaIrTe4 thickness",
+            "285 nm SiO2 on Si stack",
+            "epsilon_x=epsilon_b, epsilon_y=epsilon_a, epsilon_z=epsilon_b",
+            "six PML boundaries",
+            "auto non-uniform mesh accuracy 5",
+            "conformal variant 1",
+            "10 nm flake-region z override",
+            "pabs_adv component-resolved Q extraction"
+          ]
+        },
+        "domain_bounds_m": {
+          "x": [
+            -6e-06,
+            6e-06
+          ],
+          "y": [
+            -6e-06,
+            6e-06
+          ],
+          "z": [
+            -3.4150000000000003e-06,
+            1e-05
+          ]
+        },
+        "electrode_note": "Off-axis-edge optical certificate intentionally excludes Au/Ti; contacts enter the separate weighting-potential geometry. A contact optical scenario is required before interpreting contact hotspots.",
+        "electrodes_in_optical_model": false,
+        "exact_flake_mask_kind": "analytic half-plane lab_y<=lab_x",
+        "execution_contract": "edge-isolation-smoke",
+        "flake_area_m2": 9.8e-11,
+        "flake_thickness_m": 1.3e-07,
+        "flake_vertices_um": [
+          [
+            -7.0,
+            -7.0
+          ],
+          [
+            7.0,
+            -7.0
+          ],
+          [
+            7.0,
+            7.0
+          ]
+        ],
+        "geometry_name": "straight-45-edge",
+        "geometry_source": "paper Figure 3F straight 45-degree half-plane control; TaIrTe4 occupies lab y<=x and remote triangle faces lie outside the PML-bounded physical domain",
+        "material_contract": {
+          "axis_mapping": {
+            "x": "epsilon_b",
+            "y": "epsilon_a",
+            "z": "epsilon_c=epsilon_b paper-consistent 3D closure"
+          },
+          "epsilon_c_model": "paper-b-closure",
+          "name": "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure",
+          "provenance": {
+            "in_plane": "paper Supporting Information Fig. S3b / Ref. 11, stored in paper-derived perm_data.txt",
+            "out_of_plane": "explicit finite-edge 3D closure epsilon_c=epsilon_b; not an independently measured c-axis property",
+            "sample_count": 600,
+            "wavelength_range_m": [
+              2.7e-06,
+              1.32e-05
+            ]
+          },
+          "requested_epsilon_at_11um": {
+            "x": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            },
+            "y": {
+              "imag": 204.5326948215291,
+              "real": -42.96623156686853
+            },
+            "z": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            }
+          }
+        },
+        "monitor_contract": {
+          "diagnostic_field_slice_monitors": true,
+          "frequency_points": 1,
+          "incident_reference_monitor": true,
+          "outer_flux_box": false,
+          "pabs_field_and_index": true,
+          "six_face_absorption_box": true
+        },
+        "outer_flux_box_bounds_m": null,
+        "pabs_nominal_control_volume_bounds_m": {
+          "x": [
+            -4.5500000000000005e-06,
+            4.5500000000000005e-06
+          ],
+          "y": [
+            -4.5500000000000005e-06,
+            4.5500000000000005e-06
+          ],
+          "z": [
+            -1.8e-07,
+            5e-08
+          ]
+        },
+        "periodic": false,
+        "six_face_absorption_box_bounds_m": {
+          "x": [
+            -4.5500000000000005e-06,
+            4.5500000000000005e-06
+          ],
+          "y": [
+            -4.5500000000000005e-06,
+            4.5500000000000005e-06
+          ],
+          "z": [
+            -1.8e-07,
+            5e-08
+          ]
+        },
+        "source": {
+          "auto_shutoff_min": 1e-05,
+          "beam_center_m": [
+            0.0,
+            0.0
+          ],
+          "experimental_band_m": [
+            7e-06,
+            1.3e-05
+          ],
+          "normal_incidence": true,
+          "polarization_axis": "b",
+          "simulation_time_s": 4e-12,
+          "source_span_m": 6e-06,
+          "waist_radius_m": 2e-06,
+          "wavelength_m": 1.1e-05
+        },
+        "substrate": "285 nm SiO2 on Si"
+      },
+      "incident_plane_power_over_source_power": 0.3262289709619655,
+      "material_epsilon_readback": {
+        "analysis_wavelength_m": 1.1e-05,
+        "axes": {
+          "x": {
+            "finite_dt_numerical_permittivity": {
+              "imag": 26.181870569634192,
+              "real": 13.26802338813748
+            },
+            "finite_dt_relative_difference_vs_fitted": 1.3479535176893692e-08,
+            "fitted_epsilon_getfdtdindex": {
+              "imag": 26.181870955490027,
+              "real": 13.2680233006527
+            },
+            "fitted_relative_error_vs_requested": 4.950097940416724e-06,
+            "requested_epsilon": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            }
+          },
+          "y": {
+            "finite_dt_numerical_permittivity": {
+              "imag": 204.53386977212233,
+              "real": -42.970037238835026
+            },
+            "finite_dt_relative_difference_vs_fitted": 2.922041423718917e-08,
+            "fitted_epsilon_getfdtdindex": {
+              "imag": 204.53387562805196,
+              "real": -42.97003897202558
+            },
+            "fitted_relative_error_vs_requested": 1.907351537359719e-05,
+            "requested_epsilon": {
+              "imag": 204.5326948215291,
+              "real": -42.96623156686853
+            }
+          },
+          "z": {
+            "finite_dt_numerical_permittivity": {
+              "imag": 26.181870569634192,
+              "real": 13.26802338813748
+            },
+            "finite_dt_relative_difference_vs_fitted": 1.3479535176893692e-08,
+            "fitted_epsilon_getfdtdindex": {
+              "imag": 26.181870955490027,
+              "real": 13.2680233006527
+            },
+            "fitted_relative_error_vs_requested": 4.950097940416724e-06,
+            "requested_epsilon": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            }
+          }
+        },
+        "dt_s": 2.4219981323399165e-18,
+        "epsilon_z_equals_epsilon_b_contract": true,
+        "finite_dt_z_vs_x_relative_difference": 0.0,
+        "fit_frequency_range_Hz": [
+          23060958307692.31,
+          42827494000000.0
+        ],
+        "fitted_z_vs_x_relative_difference": 0.0,
+        "quantity": "complex relative permittivity epsilon_r"
+      },
+      "native_Yee_six_face_closure": 0.00010251127687268462,
+      "no_Q_modification": true,
+      "nominal_source": {
+        "auto_shutoff_min": 1e-05,
+        "beam_center_m": [
+          0.0,
+          0.0
+        ],
+        "experimental_band_m": [
+          7e-06,
+          1.3e-05
+        ],
+        "normal_incidence": true,
+        "polarization_axis": "b",
+        "simulation_time_s": 4e-12,
+        "source_span_m": 6e-06,
+        "waist_radius_m": 2e-06,
+        "wavelength_m": 1.1e-05
+      },
+      "observable_Q_convergence": {
+        "FDTD_run": false,
+        "acceptance": {
+          "P_Q_relative_change_lt_0p5_percent": true,
+          "auto_shutoff_gate": {
+            "1p2ps_final": 2.0095e-05,
+            "4ps_final": 2.00846e-05,
+            "case_result_1p2ps": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t1p2_gpu4_20260730/case_result.json",
+            "case_result_4ps": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/case_result.json",
+            "kept_separate_from_observable_Q_convergence": true,
+            "passed": false,
+            "threshold": 1e-05
+          },
+          "normalized_spatial_Q_NRMSE_lt_0p5_percent": true,
+          "primary_all": true
+        },
+        "artifacts": {
+          "1p2ps": {
+            "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t1p2_gpu4_20260730/diagnostic_q_common_grid_artifact.npz",
+            "sha256": "dbe1dd7172881b24e692cc76ca1564877f2abc8b0c1d562fb138076ec56f78c4",
+            "size_bytes": 57402304
+          },
+          "4ps": {
+            "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/diagnostic_q_common_grid_artifact.npz",
+            "sha256": "199155f99c9b95810d80b3b5c2b74a13d11555d60133b2949502801ca457b13b",
+            "size_bytes": 57402260
+          }
+        },
+        "centroid_shift_m": 1.2343058086714073e-12,
+        "centroid_shift_over_2um_waist": 6.171529043357037e-07,
+        "comparison": "w0=2um nominal finite straight-45-edge b: saved 1.2 ps versus 4 ps common-grid Q",
+        "distribution_1p2ps": {
+          "centroid_m": {
+            "edge_normal": -1.8970513257713776e-06,
+            "edge_tangent": -6.292843869364258e-08,
+            "x": 1.2969207309821148e-06,
+            "y": -1.3859149824416278e-06,
+            "z": -6.32337303185805e-08
+          },
+          "hotspot": {
+            "Q_W_m3": 41.385994570924474,
+            "index_xyz": [
+              122,
+              120,
+              17
+            ],
+            "x_m": -4.06779661016953e-07,
+            "y_m": -4.745762711864445e-07,
+            "z_m": -9.999999999999937e-09
+          },
+          "power_W": 9.663265584860807e-17,
+          "sigma_m": {
+            "edge_normal": 1.3416643054790522e-06,
+            "edge_tangent": 2.2737679530545704e-06,
+            "x": 1.9155634305935114e-06,
+            "y": 1.8167830240035206e-06,
+            "z": 3.7750285816380994e-08
+          }
+        },
+        "distribution_4ps": {
+          "centroid_m": {
+            "edge_normal": -1.8970512918036384e-06,
+            "edge_tangent": -6.292967252448102e-08,
+            "x": 1.2969198345131435e-06,
+            "y": -1.385915830872962e-06,
+            "z": -6.323373461786361e-08
+          },
+          "hotspot": {
+            "Q_W_m3": 41.386169949656356,
+            "index_xyz": [
+              122,
+              120,
+              17
+            ],
+            "x_m": -4.06779661016953e-07,
+            "y_m": -4.745762711864445e-07,
+            "z_m": -9.999999999999937e-09
+          },
+          "power_W": 9.66332307208799e-17,
+          "sigma_m": {
+            "edge_normal": 1.3416641698843824e-06,
+            "edge_tangent": 2.273767182221438e-06,
+            "x": 1.91556238968656e-06,
+            "y": 1.8167830566463025e-06,
+            "z": 3.7750288188456436e-08
+          }
+        },
+        "edge_normal_profile": {
+          "NRMSE": 6.617428810702789e-07,
+          "correlation": 0.9999999999996401,
+          "first": {
+            "center_m": -2.383023359796722e-06,
+            "peak_location_m": -3.405482569478613e-08,
+            "peak_value_normalized_per_m": 297581.7623460152,
+            "sigma_m": 1.6336950457588916e-06
+          },
+          "second": {
+            "center_m": -2.3830226065389695e-06,
+            "peak_location_m": -3.405482569478613e-08,
+            "peak_value_normalized_per_m": 297581.48874589097,
+            "sigma_m": 1.6336944526269284e-06
+          },
+          "tangent_window_m": 2e-06
+        },
+        "generation_commit": "707e9a0b46a72a36477034073a08b0bdc1579457",
+        "grid_contract": {
+          "bounds_m": {
+            "x": [
+              -4.542372881355942e-06,
+              4.542372881355934e-06
+            ],
+            "y": [
+              -4.542372881355942e-06,
+              4.542372881355934e-06
+            ],
+            "z": [
+              -1.8e-07,
+              5.000000000000006e-08
+            ]
+          },
+          "coordinates_bitwise_equal": true,
+          "interpolation_used": false,
+          "shape_xyz": [
+            269,
+            269,
+            24
+          ],
+          "volume_quadrature": "tensor-product trapezoid/dual-cell weights"
+        },
+        "hotspot_shift_m": 0.0,
+        "normalized_spatial_Q": {
+          "definition": "Q divided by integral(Q dV)",
+          "volume_weighted_NRMSE": 3.362905994856005e-06,
+          "volume_weighted_Pearson_correlation": 0.9999999999924115,
+          "volume_weighted_cosine_similarity": 0.9999999999943454
+        },
+        "power": {
+          "P_Q_1p2ps_W": 9.663265584860807e-17,
+          "P_Q_4ps_W": 9.66332307208799e-17,
+          "components": {
+            "x": {
+              "P_1p2ps_W": 9.400551203021629e-17,
+              "P_4ps_W": 9.400607895882807e-17,
+              "relative_change": 6.0308018066283594e-06
+            },
+            "y": {
+              "P_1p2ps_W": 2.38406396505721e-18,
+              "P_4ps_W": 2.384070351009318e-18,
+              "relative_change": 2.6785993168668206e-06
+            },
+            "z": {
+              "P_1p2ps_W": 2.4307985333455243e-19,
+              "P_4ps_W": 2.430814110425163e-19,
+              "relative_change": 6.408215006256544e-06
+            }
+          },
+          "relative_change": 5.9490476255643005e-06
+        },
+        "promoted_to_production_Q": false,
+        "sigma_relative_change": {
+          "edge_normal": 1.0106452803682093e-07,
+          "edge_tangent": 3.390113451525852e-07,
+          "x": 5.433946663146229e-07,
+          "y": 1.7967352973081582e-08,
+          "z": 6.283595980211438e-08
+        },
+        "status": "VALIDATED_DIAGNOSTIC_Q_OBSERVABLE_CONVERGENCE",
+        "validated_for_diagnostic_heat_source": true
+      },
+      "polarization_deg": 0.0,
+      "realized_control_volume": {
+        "bounds_m": {
+          "x": [
+            -4.542372881355942e-06,
+            4.542372881355934e-06
+          ],
+          "y": [
+            -4.542372881355942e-06,
+            4.542372881355934e-06
+          ],
+          "z": [
+            -1.8e-07,
+            5.000000000000006e-08
+          ]
+        },
+        "face_coordinates": {
+          "x_max": {
+            "x": {
+              "bounds_m": [
+                4.542372881355934e-06,
+                4.542372881355934e-06
+              ],
+              "shape": [
+                1
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                -1.8e-07,
+                5.000000000000006e-08
+              ],
+              "maximum_step_m": 1.0000000000000116e-08,
+              "median_step_m": 9.999999999999997e-09,
+              "minimum_step_m": 9.999999999999984e-09,
+              "shape": [
+                24
+              ]
+            }
+          },
+          "x_min": {
+            "x": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                -4.542372881355942e-06
+              ],
+              "shape": [
+                1
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                -1.8e-07,
+                5.000000000000006e-08
+              ],
+              "maximum_step_m": 1.0000000000000116e-08,
+              "median_step_m": 9.999999999999997e-09,
+              "minimum_step_m": 9.999999999999984e-09,
+              "shape": [
+                24
+              ]
+            }
+          },
+          "y_max": {
+            "x": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                4.542372881355934e-06,
+                4.542372881355934e-06
+              ],
+              "shape": [
+                1
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                -1.8e-07,
+                5.000000000000006e-08
+              ],
+              "maximum_step_m": 1.0000000000000116e-08,
+              "median_step_m": 9.999999999999997e-09,
+              "minimum_step_m": 9.999999999999984e-09,
+              "shape": [
+                24
+              ]
+            }
+          },
+          "y_min": {
+            "x": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                -4.542372881355942e-06
+              ],
+              "shape": [
+                1
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                -1.8e-07,
+                5.000000000000006e-08
+              ],
+              "maximum_step_m": 1.0000000000000116e-08,
+              "median_step_m": 9.999999999999997e-09,
+              "minimum_step_m": 9.999999999999984e-09,
+              "shape": [
+                24
+              ]
+            }
+          },
+          "z_max": {
+            "x": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                5.000000000000006e-08,
+                5.000000000000006e-08
+              ],
+              "shape": [
+                1
+              ]
+            }
+          },
+          "z_min": {
+            "x": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                -1.8e-07,
+                -1.8e-07
+              ],
+              "shape": [
+                1
+              ]
+            }
+          }
+        },
+        "maximum_transverse_boundary_mismatch_m": 0.0,
+        "transverse_boundary_mismatch_m": {
+          "x_max:y": 0.0,
+          "x_max:z": 0.0,
+          "x_min:y": 0.0,
+          "x_min:z": 0.0,
+          "y_max:x": 0.0,
+          "y_max:z": 0.0,
+          "y_min:x": 0.0,
+          "y_min:z": 0.0,
+          "z_max:x": 0.0,
+          "z_max:y": 0.0,
+          "z_min:x": 0.0,
+          "z_min:y": 0.0
+        }
+      },
+      "realized_flake_midplane_total_field_fit": {
+        "amplitude_over_observed_peak": 0.4630347607789176,
+        "center_x_m": -4.542372881355941e-06,
+        "center_y_m": 6.077557064560376e-07,
+        "fit_message": "`ftol` termination condition is satisfied.",
+        "fit_relative_RMS_over_peak": 0.07185864791234556,
+        "fit_selected_point_count": 72361,
+        "fit_success": true,
+        "integrated_incident_power_W": 1.9371132293359774e-13,
+        "moment_center_x_m": -1.313214316081217e-06,
+        "moment_center_y_m": 5.228506907811761e-07,
+        "moment_waist_x_m": 4.6963391978776295e-06,
+        "moment_waist_y_m": 4.389298061191122e-06,
+        "waist_effective_geometric_mean_m": 6.814314809575141e-06,
+        "waist_x_m": 8.511913542404827e-06,
+        "waist_y_m": 5.455281716932957e-06
+      },
+      "realized_incident_plane_beam": {
+        "amplitude_over_observed_peak": 0.8118943358912387,
+        "center_x_m": -9.210242334321044e-08,
+        "center_y_m": -2.585910305077558e-08,
+        "fit_message": "`ftol` termination condition is satisfied.",
+        "fit_relative_RMS_over_peak": 0.028884672760343483,
+        "fit_selected_point_count": 72361,
+        "fit_success": true,
+        "integrated_incident_power_W": 7.632414606769436e-16,
+        "moment_center_x_m": -4.374560643285402e-08,
+        "moment_center_y_m": -1.864642636738443e-08,
+        "moment_waist_x_m": 4.638352289851085e-06,
+        "moment_waist_y_m": 4.556542236770757e-06,
+        "waist_effective_geometric_mean_m": 6.3686635238064554e-06,
+        "waist_x_m": 6.56801034261332e-06,
+        "waist_y_m": 6.175367114803393e-06
+      },
+      "solver_resource_contract": {
+        "1": {
+          "active": "1",
+          "device type": "CPU",
+          "processes": "1",
+          "solver extra command line options": "",
+          "threads": "8"
+        },
+        "2": {
+          "active": "1",
+          "device type": "GPU 4",
+          "processes": "1",
+          "solver extra command line options": "-gpu",
+          "threads": "8"
+        }
+      },
+      "solver_resource_label": "Local Host",
+      "solver_version": "8.35.4522",
+      "source_power_native_W": 2.339588229783334e-15
+    },
+    "planar_a": {
+      "P_Q_common_grid_W": 1.3352178211012233e-16,
+      "P_Q_native_Yee_W": 1.3366467316782877e-16,
+      "P_six_face_W": 1.3368131277848303e-16,
+      "Q_component_power_common_grid_W": {
+        "x": 4.8692631206507335e-19,
+        "y": 1.3276353487563558e-16,
+        "z": 2.7132092242168795e-19
+      },
+      "auto_shutoff_1p2ps": {
+        "final_value": 1.56493e-05,
+        "log_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t1p2_gpu4_20260730/finite_2um_optical_q_p0.log",
+        "simulation_completed_successfully": true
+      },
+      "auto_shutoff_4ps": {
+        "final_value": 1.56401e-05,
+        "log_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730/finite_2um_optical_q_p0.log",
+        "simulation_completed_successfully": true
+      },
+      "axis_mapping": {
+        "x": "crystal b",
+        "y": "crystal a",
+        "z": "c closure with epsilon_c=epsilon_b"
+      },
+      "common_grid_six_face_closure": 0.0011933655126879937,
+      "field_component_norms": {
+        "flake": {
+          "Ex": 0.40955651904123314,
+          "Ey": 2.3472314387094255,
+          "Ez": 0.2921690204500044,
+          "Hx": 0.06491275887923892,
+          "Hy": 0.004438100962749456,
+          "Hz": 0.0015663911609249252
+        },
+        "incident": {
+          "Ex": 0.375467573473901,
+          "Ey": 3.7184644829586975,
+          "Ez": 14.435819143408667,
+          "Hx": 0.11159828460211652,
+          "Hy": 0.005345350199738441,
+          "Hz": 0.0024039161005839195
+        },
+        "source_profile": {
+          "Ex_L2": 9.855742885946884e-15,
+          "Ey_L2": 160.95649607395112,
+          "Ez_L2": 0.0
+        }
+      },
+      "geometry": {
+        "absorption_analysis_bounds_m": {
+          "x": [
+            -4.5e-06,
+            4.5e-06
+          ],
+          "y": [
+            -4.5e-06,
+            4.5e-06
+          ],
+          "z": [
+            -1.3e-07,
+            0.0
+          ]
+        },
+        "all_six_boundaries": "PML",
+        "coordinate_contract": {
+          "lab_x": "crystal b",
+          "lab_y": "crystal a"
+        },
+        "diagnostic_difference_from_production": {
+          "classification": "reduced-cost one-polarization diagnostic only; not a paper-like optical result and not a replacement for the 48 um production contract",
+          "diagnostic_absorption_padding_um": 1.5,
+          "diagnostic_lateral_domain_um": 12.0,
+          "diagnostic_source_span_um": 6.0,
+          "diagnostic_waist_um": 2.0,
+          "production_absorption_padding_um": 4.0,
+          "production_lateral_domain_um": 48.0,
+          "production_source_span_um": 32.0,
+          "production_waist_um": 6.5,
+          "removed_monitors": [
+            "outer six-face box",
+            "three production diagnostic field slices"
+          ],
+          "unchanged": [
+            "11 um analysis wavelength and 7-13 um source band",
+            "normal incidence",
+            "edge-free planar TaIrTe4 layer",
+            "130 nm TaIrTe4 thickness",
+            "285 nm SiO2 on Si stack",
+            "epsilon_x=epsilon_b, epsilon_y=epsilon_a, epsilon_z=epsilon_b",
+            "six PML boundaries",
+            "auto non-uniform mesh accuracy 5",
+            "conformal variant 1",
+            "10 nm flake-region z override",
+            "pabs_adv component-resolved Q extraction"
+          ]
+        },
+        "domain_bounds_m": {
+          "x": [
+            -6e-06,
+            6e-06
+          ],
+          "y": [
+            -6e-06,
+            6e-06
+          ],
+          "z": [
+            -3.4150000000000003e-06,
+            1e-05
+          ]
+        },
+        "electrode_note": "Off-axis-edge optical certificate intentionally excludes Au/Ti; contacts enter the separate weighting-potential geometry. A contact optical scenario is required before interpreting contact hotspots.",
+        "electrodes_in_optical_model": false,
+        "exact_flake_mask_kind": "all lateral samples inside the matched control volume",
+        "execution_contract": "edge-isolation-smoke",
+        "flake_area_m2": 1.96e-10,
+        "flake_thickness_m": 1.3e-07,
+        "flake_vertices_um": [
+          [
+            -7.0,
+            -7.0
+          ],
+          [
+            7.0,
+            -7.0
+          ],
+          [
+            7.0,
+            7.0
+          ],
+          [
+            -7.0,
+            7.0
+          ]
+        ],
+        "geometry_name": "planar-stack",
+        "geometry_source": "edge-free planar TaIrTe4 layer extended 1 um beyond each lateral PML-bounded domain face",
+        "material_contract": {
+          "axis_mapping": {
+            "x": "epsilon_b",
+            "y": "epsilon_a",
+            "z": "epsilon_c=epsilon_b paper-consistent 3D closure"
+          },
+          "epsilon_c_model": "paper-b-closure",
+          "name": "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure",
+          "provenance": {
+            "in_plane": "paper Supporting Information Fig. S3b / Ref. 11, stored in paper-derived perm_data.txt",
+            "out_of_plane": "explicit finite-edge 3D closure epsilon_c=epsilon_b; not an independently measured c-axis property",
+            "sample_count": 600,
+            "wavelength_range_m": [
+              2.7e-06,
+              1.32e-05
+            ]
+          },
+          "requested_epsilon_at_11um": {
+            "x": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            },
+            "y": {
+              "imag": 204.5326948215291,
+              "real": -42.96623156686853
+            },
+            "z": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            }
+          }
+        },
+        "monitor_contract": {
+          "diagnostic_field_slice_monitors": true,
+          "frequency_points": 1,
+          "incident_reference_monitor": true,
+          "outer_flux_box": false,
+          "pabs_field_and_index": true,
+          "six_face_absorption_box": true
+        },
+        "outer_flux_box_bounds_m": null,
+        "pabs_nominal_control_volume_bounds_m": {
+          "x": [
+            -4.5500000000000005e-06,
+            4.5500000000000005e-06
+          ],
+          "y": [
+            -4.5500000000000005e-06,
+            4.5500000000000005e-06
+          ],
+          "z": [
+            -1.8e-07,
+            5e-08
+          ]
+        },
+        "periodic": false,
+        "six_face_absorption_box_bounds_m": {
+          "x": [
+            -4.5500000000000005e-06,
+            4.5500000000000005e-06
+          ],
+          "y": [
+            -4.5500000000000005e-06,
+            4.5500000000000005e-06
+          ],
+          "z": [
+            -1.8e-07,
+            5e-08
+          ]
+        },
+        "source": {
+          "auto_shutoff_min": 1e-05,
+          "beam_center_m": [
+            0.0,
+            0.0
+          ],
+          "experimental_band_m": [
+            7e-06,
+            1.3e-05
+          ],
+          "normal_incidence": true,
+          "polarization_axis": "a",
+          "simulation_time_s": 4e-12,
+          "source_span_m": 6e-06,
+          "waist_radius_m": 2e-06,
+          "wavelength_m": 1.1e-05
+        },
+        "substrate": "285 nm SiO2 on Si"
+      },
+      "incident_plane_power_over_source_power": 0.32612360249031963,
+      "material_epsilon_readback": {
+        "analysis_wavelength_m": 1.1e-05,
+        "axes": {
+          "x": {
+            "finite_dt_numerical_permittivity": {
+              "imag": 26.181870569634192,
+              "real": 13.26802338813748
+            },
+            "finite_dt_relative_difference_vs_fitted": 1.3479535176893692e-08,
+            "fitted_epsilon_getfdtdindex": {
+              "imag": 26.181870955490027,
+              "real": 13.2680233006527
+            },
+            "fitted_relative_error_vs_requested": 4.950097940416724e-06,
+            "requested_epsilon": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            }
+          },
+          "y": {
+            "finite_dt_numerical_permittivity": {
+              "imag": 204.53386977212233,
+              "real": -42.970037238835026
+            },
+            "finite_dt_relative_difference_vs_fitted": 2.922041423718917e-08,
+            "fitted_epsilon_getfdtdindex": {
+              "imag": 204.53387562805196,
+              "real": -42.97003897202558
+            },
+            "fitted_relative_error_vs_requested": 1.907351537359719e-05,
+            "requested_epsilon": {
+              "imag": 204.5326948215291,
+              "real": -42.96623156686853
+            }
+          },
+          "z": {
+            "finite_dt_numerical_permittivity": {
+              "imag": 26.181870569634192,
+              "real": 13.26802338813748
+            },
+            "finite_dt_relative_difference_vs_fitted": 1.3479535176893692e-08,
+            "fitted_epsilon_getfdtdindex": {
+              "imag": 26.181870955490027,
+              "real": 13.2680233006527
+            },
+            "fitted_relative_error_vs_requested": 4.950097940416724e-06,
+            "requested_epsilon": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            }
+          }
+        },
+        "dt_s": 2.4219981323399165e-18,
+        "epsilon_z_equals_epsilon_b_contract": true,
+        "finite_dt_z_vs_x_relative_difference": 0.0,
+        "fit_frequency_range_Hz": [
+          23060958307692.31,
+          42827494000000.0
+        ],
+        "fitted_z_vs_x_relative_difference": 0.0,
+        "quantity": "complex relative permittivity epsilon_r"
+      },
+      "native_Yee_six_face_closure": 0.0001244722265843792,
+      "no_Q_modification": true,
+      "nominal_source": {
+        "auto_shutoff_min": 1e-05,
+        "beam_center_m": [
+          0.0,
+          0.0
+        ],
+        "experimental_band_m": [
+          7e-06,
+          1.3e-05
+        ],
+        "normal_incidence": true,
+        "polarization_axis": "a",
+        "simulation_time_s": 4e-12,
+        "source_span_m": 6e-06,
+        "waist_radius_m": 2e-06,
+        "wavelength_m": 1.1e-05
+      },
+      "observable_Q_convergence": {
+        "FDTD_run": false,
+        "acceptance": {
+          "P_Q_relative_change_lt_0p5_percent": true,
+          "auto_shutoff_gate": {
+            "1p2ps_final": 1.56493e-05,
+            "4ps_final": 1.56401e-05,
+            "case_result_1p2ps": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t1p2_gpu4_20260730/case_result.json",
+            "case_result_4ps": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730/case_result.json",
+            "kept_separate_from_observable_Q_convergence": true,
+            "passed": false,
+            "threshold": 1e-05
+          },
+          "normalized_spatial_Q_NRMSE_lt_0p5_percent": true,
+          "primary_all": true
+        },
+        "artifacts": {
+          "1p2ps": {
+            "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t1p2_gpu4_20260730/diagnostic_q_common_grid_artifact.npz",
+            "sha256": "a1384f8568276e873153314893d22b504212779f878ba2f232db62e4cdd69b67",
+            "size_bytes": 57401792
+          },
+          "4ps": {
+            "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730/diagnostic_q_common_grid_artifact.npz",
+            "sha256": "ee8c90f08c366c5dc1f8cf6500d411d894701e64507e7d83de951f8c213f52af",
+            "size_bytes": 57401792
+          }
+        },
+        "centroid_shift_m": 1.3602540478327833e-14,
+        "centroid_shift_over_2um_waist": 6.801270239163917e-09,
+        "comparison": "w0=2um nominal planar-stack a: saved 1.2 ps versus 4 ps common-grid Q",
+        "distribution_1p2ps": {
+          "centroid_m": {
+            "edge_normal": 3.3188056514106472e-09,
+            "edge_tangent": 3.4025228296703408e-09,
+            "x": 5.919698444923014e-11,
+            "y": 4.752696947554678e-09,
+            "z": -5.790380145533164e-08
+          },
+          "hotspot": {
+            "Q_W_m3": 30.99765576439264,
+            "index_xyz": [
+              134,
+              134,
+              17
+            ],
+            "x_m": -3.970466940254533e-21,
+            "y_m": -3.970466940254533e-21,
+            "z_m": -9.999999999999937e-09
+          },
+          "power_W": 1.3352139021166168e-16,
+          "sigma_m": {
+            "edge_normal": 2.294537284747249e-06,
+            "edge_tangent": 2.29453717433371e-06,
+            "x": 2.25776825576672e-06,
+            "y": 2.3307262170290843e-06,
+            "z": 3.813511902768053e-08
+          }
+        },
+        "distribution_4ps": {
+          "centroid_m": {
+            "edge_normal": 3.3188043067842776e-09,
+            "edge_tangent": 3.4025188994893463e-09,
+            "x": 5.919515618610585e-11,
+            "y": 4.7526932177026075e-09,
+            "z": -5.790381440812149e-08
+          },
+          "hotspot": {
+            "Q_W_m3": 30.99771399265619,
+            "index_xyz": [
+              134,
+              134,
+              17
+            ],
+            "x_m": -3.970466940254533e-21,
+            "y_m": -3.970466940254533e-21,
+            "z_m": -9.999999999999937e-09
+          },
+          "power_W": 1.3352178211012233e-16,
+          "sigma_m": {
+            "edge_normal": 2.2945372031699925e-06,
+            "edge_tangent": 2.2945370931693765e-06,
+            "x": 2.257768403824133e-06,
+            "y": 2.3307259133915277e-06,
+            "z": 3.8135118607622785e-08
+          }
+        },
+        "edge_normal_profile": {
+          "NRMSE": 1.635285820716699e-07,
+          "correlation": 0.9999999999999591,
+          "first": {
+            "center_m": 1.4464598360366291e-08,
+            "peak_location_m": -1.5652061004059164e-10,
+            "peak_value_normalized_per_m": 130551.5022222713,
+            "sigma_m": 2.8834792799165184e-06
+          },
+          "second": {
+            "center_m": 1.4464590735249916e-08,
+            "peak_location_m": -1.5652061004059164e-10,
+            "peak_value_normalized_per_m": 130551.51922308325,
+            "sigma_m": 2.8834789779732653e-06
+          },
+          "tangent_window_m": 2e-06
+        },
+        "generation_commit": "707e9a0b46a72a36477034073a08b0bdc1579457",
+        "grid_contract": {
+          "bounds_m": {
+            "x": [
+              -4.542372881355942e-06,
+              4.542372881355934e-06
+            ],
+            "y": [
+              -4.542372881355942e-06,
+              4.542372881355934e-06
+            ],
+            "z": [
+              -1.8e-07,
+              5.000000000000006e-08
+            ]
+          },
+          "coordinates_bitwise_equal": true,
+          "interpolation_used": false,
+          "shape_xyz": [
+            269,
+            269,
+            24
+          ],
+          "volume_quadrature": "tensor-product trapezoid/dual-cell weights"
+        },
+        "hotspot_shift_m": 0.0,
+        "normalized_spatial_Q": {
+          "definition": "Q divided by integral(Q dV)",
+          "volume_weighted_NRMSE": 7.636349730368994e-07,
+          "volume_weighted_Pearson_correlation": 0.9999999999994219,
+          "volume_weighted_cosine_similarity": 0.9999999999997095
+        },
+        "power": {
+          "P_Q_1p2ps_W": 1.3352139021166168e-16,
+          "P_Q_4ps_W": 1.3352178211012233e-16,
+          "components": {
+            "x": {
+              "P_1p2ps_W": 4.869274495191584e-19,
+              "P_4ps_W": 4.869263120650734e-19,
+              "relative_change": 2.335982672717751e-06
+            },
+            "y": {
+              "P_1p2ps_W": 1.327631441979061e-16,
+              "P_4ps_W": 1.3276353487563558e-16,
+              "relative_change": 2.9426670470052772e-06
+            },
+            "z": {
+              "P_1p2ps_W": 2.7131856423641694e-19,
+              "P_4ps_W": 2.7132092242168795e-19,
+              "relative_change": 8.691573603321745e-06
+            }
+          },
+          "relative_change": 2.9350987136332215e-06
+        },
+        "promoted_to_production_Q": false,
+        "sigma_relative_change": {
+          "edge_normal": 3.555281366396252e-08,
+          "edge_tangent": 3.537285618269825e-08,
+          "x": 6.557688658939503e-08,
+          "y": 1.3027594332323587e-07,
+          "z": 1.1014984550881684e-08
+        },
+        "status": "VALIDATED_DIAGNOSTIC_Q_OBSERVABLE_CONVERGENCE",
+        "validated_for_diagnostic_heat_source": true
+      },
+      "polarization_deg": 90.0,
+      "realized_control_volume": {
+        "bounds_m": {
+          "x": [
+            -4.542372881355942e-06,
+            4.542372881355934e-06
+          ],
+          "y": [
+            -4.542372881355942e-06,
+            4.542372881355934e-06
+          ],
+          "z": [
+            -1.8e-07,
+            5.000000000000006e-08
+          ]
+        },
+        "face_coordinates": {
+          "x_max": {
+            "x": {
+              "bounds_m": [
+                4.542372881355934e-06,
+                4.542372881355934e-06
+              ],
+              "shape": [
+                1
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                -1.8e-07,
+                5.000000000000006e-08
+              ],
+              "maximum_step_m": 1.0000000000000116e-08,
+              "median_step_m": 9.999999999999997e-09,
+              "minimum_step_m": 9.999999999999984e-09,
+              "shape": [
+                24
+              ]
+            }
+          },
+          "x_min": {
+            "x": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                -4.542372881355942e-06
+              ],
+              "shape": [
+                1
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                -1.8e-07,
+                5.000000000000006e-08
+              ],
+              "maximum_step_m": 1.0000000000000116e-08,
+              "median_step_m": 9.999999999999997e-09,
+              "minimum_step_m": 9.999999999999984e-09,
+              "shape": [
+                24
+              ]
+            }
+          },
+          "y_max": {
+            "x": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                4.542372881355934e-06,
+                4.542372881355934e-06
+              ],
+              "shape": [
+                1
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                -1.8e-07,
+                5.000000000000006e-08
+              ],
+              "maximum_step_m": 1.0000000000000116e-08,
+              "median_step_m": 9.999999999999997e-09,
+              "minimum_step_m": 9.999999999999984e-09,
+              "shape": [
+                24
+              ]
+            }
+          },
+          "y_min": {
+            "x": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                -4.542372881355942e-06
+              ],
+              "shape": [
+                1
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                -1.8e-07,
+                5.000000000000006e-08
+              ],
+              "maximum_step_m": 1.0000000000000116e-08,
+              "median_step_m": 9.999999999999997e-09,
+              "minimum_step_m": 9.999999999999984e-09,
+              "shape": [
+                24
+              ]
+            }
+          },
+          "z_max": {
+            "x": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                5.000000000000006e-08,
+                5.000000000000006e-08
+              ],
+              "shape": [
+                1
+              ]
+            }
+          },
+          "z_min": {
+            "x": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                -1.8e-07,
+                -1.8e-07
+              ],
+              "shape": [
+                1
+              ]
+            }
+          }
+        },
+        "maximum_transverse_boundary_mismatch_m": 0.0,
+        "transverse_boundary_mismatch_m": {
+          "x_max:y": 0.0,
+          "x_max:z": 0.0,
+          "x_min:y": 0.0,
+          "x_min:z": 0.0,
+          "y_max:x": 0.0,
+          "y_max:z": 0.0,
+          "y_min:x": 0.0,
+          "y_min:z": 0.0,
+          "z_max:x": 0.0,
+          "z_max:y": 0.0,
+          "z_min:x": 0.0,
+          "z_min:y": 0.0
+        }
+      },
+      "realized_flake_midplane_total_field_fit": {
+        "amplitude_over_observed_peak": 0.9583673065683166,
+        "center_x_m": -1.5278009370545345e-15,
+        "center_y_m": -4.4635620514068945e-14,
+        "fit_message": "`ftol` termination condition is satisfied.",
+        "fit_relative_RMS_over_peak": 0.023021688847238847,
+        "fit_selected_point_count": 72361,
+        "fit_success": true,
+        "integrated_incident_power_W": 6.621769268216975e-15,
+        "moment_center_x_m": 7.578114543954313e-15,
+        "moment_center_y_m": -9.211810047759794e-15,
+        "moment_waist_x_m": 4.593629043783498e-06,
+        "moment_waist_y_m": 4.7720596958484894e-06,
+        "waist_effective_geometric_mean_m": 6.812281536643197e-06,
+        "waist_x_m": 6.317572471220368e-06,
+        "waist_y_m": 7.345729700117758e-06
+      },
+      "realized_incident_plane_beam": {
+        "amplitude_over_observed_peak": 0.9743139482456065,
+        "center_x_m": 6.7231687953635215e-15,
+        "center_y_m": -1.966910438268338e-14,
+        "fit_message": "`ftol` termination condition is satisfied.",
+        "fit_relative_RMS_over_peak": 0.011816937264555438,
+        "fit_selected_point_count": 72361,
+        "fit_success": true,
+        "integrated_incident_power_W": 7.629949418408906e-16,
+        "moment_center_x_m": -2.3122944931704485e-15,
+        "moment_center_y_m": -4.494230074833908e-15,
+        "moment_waist_x_m": 4.529361489258495e-06,
+        "moment_waist_y_m": 4.681282353399556e-06,
+        "waist_effective_geometric_mean_m": 6.437054040602408e-06,
+        "waist_x_m": 6.07023575186332e-06,
+        "waist_y_m": 6.826038792466452e-06
+      },
+      "solver_resource_contract": {
+        "1": {
+          "active": "1",
+          "device type": "CPU",
+          "processes": "1",
+          "solver extra command line options": "",
+          "threads": "8"
+        },
+        "2": {
+          "active": "1",
+          "device type": "GPU 4",
+          "processes": "1",
+          "solver extra command line options": "-gpu",
+          "threads": "8"
+        }
+      },
+      "solver_resource_label": "Local Host",
+      "solver_version": "8.35.4522",
+      "source_power_native_W": 2.339588229783334e-15
+    },
+    "planar_b": {
+      "P_Q_common_grid_W": 1.9552534308818033e-16,
+      "P_Q_native_Yee_W": 1.957206640760113e-16,
+      "P_six_face_W": 1.9572587830802887e-16,
+      "Q_component_power_common_grid_W": {
+        "x": 1.9509255959418058e-16,
+        "y": 9.101255588973623e-20,
+        "z": 3.4177093811002797e-19
+      },
+      "auto_shutoff_1p2ps": {
+        "final_value": 1.9541e-05,
+        "log_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_retry_20260730/finite_2um_optical_q_p0.log",
+        "simulation_completed_successfully": true
+      },
+      "auto_shutoff_4ps": {
+        "final_value": 1.95295e-05,
+        "log_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/finite_2um_optical_q_p0.log",
+        "simulation_completed_successfully": true
+      },
+      "axis_mapping": {
+        "x": "crystal b",
+        "y": "crystal a",
+        "z": "c closure with epsilon_c=epsilon_b"
+      },
+      "common_grid_six_face_closure": 0.0010245718225003742,
+      "field_component_norms": {
+        "flake": {
+          "Ex": 8.152424780434211,
+          "Ey": 0.05941398784286314,
+          "Ez": 0.34357813113265595,
+          "Hx": 0.0031708373473990268,
+          "Hy": 0.0794840903705915,
+          "Hz": 0.006545812118066675
+        },
+        "incident": {
+          "Ex": 8.789257343139294,
+          "Ey": 0.030171613547670378,
+          "Ez": 12.369609309422005,
+          "Hx": 0.004465618094933414,
+          "Hy": 0.09633261995101573,
+          "Hz": 0.007090833744862483
+        },
+        "source_profile": {
+          "Ex_L2": 160.95649607395112,
+          "Ey_L2": 0.0,
+          "Ez_L2": 0.0
+        }
+      },
+      "geometry": {
+        "absorption_analysis_bounds_m": {
+          "x": [
+            -4.5e-06,
+            4.5e-06
+          ],
+          "y": [
+            -4.5e-06,
+            4.5e-06
+          ],
+          "z": [
+            -1.3e-07,
+            0.0
+          ]
+        },
+        "all_six_boundaries": "PML",
+        "coordinate_contract": {
+          "lab_x": "crystal b",
+          "lab_y": "crystal a"
+        },
+        "diagnostic_difference_from_production": {
+          "classification": "reduced-cost one-polarization diagnostic only; not a paper-like optical result and not a replacement for the 48 um production contract",
+          "diagnostic_absorption_padding_um": 1.5,
+          "diagnostic_lateral_domain_um": 12.0,
+          "diagnostic_source_span_um": 6.0,
+          "diagnostic_waist_um": 2.0,
+          "production_absorption_padding_um": 4.0,
+          "production_lateral_domain_um": 48.0,
+          "production_source_span_um": 32.0,
+          "production_waist_um": 6.5,
+          "removed_monitors": [
+            "outer six-face box",
+            "three production diagnostic field slices"
+          ],
+          "unchanged": [
+            "11 um analysis wavelength and 7-13 um source band",
+            "normal incidence",
+            "edge-free planar TaIrTe4 layer",
+            "130 nm TaIrTe4 thickness",
+            "285 nm SiO2 on Si stack",
+            "epsilon_x=epsilon_b, epsilon_y=epsilon_a, epsilon_z=epsilon_b",
+            "six PML boundaries",
+            "auto non-uniform mesh accuracy 5",
+            "conformal variant 1",
+            "10 nm flake-region z override",
+            "pabs_adv component-resolved Q extraction"
+          ]
+        },
+        "domain_bounds_m": {
+          "x": [
+            -6e-06,
+            6e-06
+          ],
+          "y": [
+            -6e-06,
+            6e-06
+          ],
+          "z": [
+            -3.4150000000000003e-06,
+            1e-05
+          ]
+        },
+        "electrode_note": "Off-axis-edge optical certificate intentionally excludes Au/Ti; contacts enter the separate weighting-potential geometry. A contact optical scenario is required before interpreting contact hotspots.",
+        "electrodes_in_optical_model": false,
+        "exact_flake_mask_kind": "all lateral samples inside the matched control volume",
+        "execution_contract": "edge-isolation-smoke",
+        "flake_area_m2": 1.96e-10,
+        "flake_thickness_m": 1.3e-07,
+        "flake_vertices_um": [
+          [
+            -7.0,
+            -7.0
+          ],
+          [
+            7.0,
+            -7.0
+          ],
+          [
+            7.0,
+            7.0
+          ],
+          [
+            -7.0,
+            7.0
+          ]
+        ],
+        "geometry_name": "planar-stack",
+        "geometry_source": "edge-free planar TaIrTe4 layer extended 1 um beyond each lateral PML-bounded domain face",
+        "material_contract": {
+          "axis_mapping": {
+            "x": "epsilon_b",
+            "y": "epsilon_a",
+            "z": "epsilon_c=epsilon_b paper-consistent 3D closure"
+          },
+          "epsilon_c_model": "paper-b-closure",
+          "name": "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure",
+          "provenance": {
+            "in_plane": "paper Supporting Information Fig. S3b / Ref. 11, stored in paper-derived perm_data.txt",
+            "out_of_plane": "explicit finite-edge 3D closure epsilon_c=epsilon_b; not an independently measured c-axis property",
+            "sample_count": 600,
+            "wavelength_range_m": [
+              2.7e-06,
+              1.32e-05
+            ]
+          },
+          "requested_epsilon_at_11um": {
+            "x": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            },
+            "y": {
+              "imag": 204.5326948215291,
+              "real": -42.96623156686853
+            },
+            "z": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            }
+          }
+        },
+        "monitor_contract": {
+          "diagnostic_field_slice_monitors": true,
+          "frequency_points": 1,
+          "incident_reference_monitor": true,
+          "outer_flux_box": false,
+          "pabs_field_and_index": true,
+          "six_face_absorption_box": true
+        },
+        "outer_flux_box_bounds_m": null,
+        "pabs_nominal_control_volume_bounds_m": {
+          "x": [
+            -4.5500000000000005e-06,
+            4.5500000000000005e-06
+          ],
+          "y": [
+            -4.5500000000000005e-06,
+            4.5500000000000005e-06
+          ],
+          "z": [
+            -1.8e-07,
+            5e-08
+          ]
+        },
+        "periodic": false,
+        "six_face_absorption_box_bounds_m": {
+          "x": [
+            -4.5500000000000005e-06,
+            4.5500000000000005e-06
+          ],
+          "y": [
+            -4.5500000000000005e-06,
+            4.5500000000000005e-06
+          ],
+          "z": [
+            -1.8e-07,
+            5e-08
+          ]
+        },
+        "source": {
+          "auto_shutoff_min": 1e-05,
+          "beam_center_m": [
+            0.0,
+            0.0
+          ],
+          "experimental_band_m": [
+            7e-06,
+            1.3e-05
+          ],
+          "normal_incidence": true,
+          "polarization_axis": "b",
+          "simulation_time_s": 4e-12,
+          "source_span_m": 6e-06,
+          "waist_radius_m": 2e-06,
+          "wavelength_m": 1.1e-05
+        },
+        "substrate": "285 nm SiO2 on Si"
+      },
+      "incident_plane_power_over_source_power": 0.3265949219914994,
+      "material_epsilon_readback": {
+        "analysis_wavelength_m": 1.1e-05,
+        "axes": {
+          "x": {
+            "finite_dt_numerical_permittivity": {
+              "imag": 26.181870569634192,
+              "real": 13.26802338813748
+            },
+            "finite_dt_relative_difference_vs_fitted": 1.3479535176893692e-08,
+            "fitted_epsilon_getfdtdindex": {
+              "imag": 26.181870955490027,
+              "real": 13.2680233006527
+            },
+            "fitted_relative_error_vs_requested": 4.950097940416724e-06,
+            "requested_epsilon": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            }
+          },
+          "y": {
+            "finite_dt_numerical_permittivity": {
+              "imag": 204.53386977212233,
+              "real": -42.970037238835026
+            },
+            "finite_dt_relative_difference_vs_fitted": 2.922041423718917e-08,
+            "fitted_epsilon_getfdtdindex": {
+              "imag": 204.53387562805196,
+              "real": -42.97003897202558
+            },
+            "fitted_relative_error_vs_requested": 1.907351537359719e-05,
+            "requested_epsilon": {
+              "imag": 204.5326948215291,
+              "real": -42.96623156686853
+            }
+          },
+          "z": {
+            "finite_dt_numerical_permittivity": {
+              "imag": 26.181870569634192,
+              "real": 13.26802338813748
+            },
+            "finite_dt_relative_difference_vs_fitted": 1.3479535176893692e-08,
+            "fitted_epsilon_getfdtdindex": {
+              "imag": 26.181870955490027,
+              "real": 13.2680233006527
+            },
+            "fitted_relative_error_vs_requested": 4.950097940416724e-06,
+            "requested_epsilon": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            }
+          }
+        },
+        "dt_s": 2.4219981323399165e-18,
+        "epsilon_z_equals_epsilon_b_contract": true,
+        "finite_dt_z_vs_x_relative_difference": 0.0,
+        "fit_frequency_range_Hz": [
+          23060958307692.31,
+          42827494000000.0
+        ],
+        "fitted_z_vs_x_relative_difference": 0.0,
+        "quantity": "complex relative permittivity epsilon_r"
+      },
+      "native_Yee_six_face_closure": 2.6640483428422038e-05,
+      "no_Q_modification": true,
+      "nominal_source": {
+        "auto_shutoff_min": 1e-05,
+        "beam_center_m": [
+          0.0,
+          0.0
+        ],
+        "experimental_band_m": [
+          7e-06,
+          1.3e-05
+        ],
+        "normal_incidence": true,
+        "polarization_axis": "b",
+        "simulation_time_s": 4e-12,
+        "source_span_m": 6e-06,
+        "waist_radius_m": 2e-06,
+        "wavelength_m": 1.1e-05
+      },
+      "observable_Q_convergence": {
+        "FDTD_run": false,
+        "acceptance": {
+          "P_Q_relative_change_lt_0p5_percent": true,
+          "auto_shutoff_gate": {
+            "1p2ps_final": 1.9541e-05,
+            "4ps_final": 1.95295e-05,
+            "case_result_1p2ps": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_retry_20260730/case_result.json",
+            "case_result_4ps": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/case_result.json",
+            "kept_separate_from_observable_Q_convergence": true,
+            "passed": false,
+            "threshold": 1e-05
+          },
+          "normalized_spatial_Q_NRMSE_lt_0p5_percent": true,
+          "primary_all": true
+        },
+        "artifacts": {
+          "1p2ps": {
+            "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_retry_20260730/diagnostic_q_common_grid_artifact.npz",
+            "sha256": "0646bb4e41b593e2ca196899600001fa6dbea5b06e9390f9a017b8a758183c58",
+            "size_bytes": 57401852
+          },
+          "4ps": {
+            "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/diagnostic_q_common_grid_artifact.npz",
+            "sha256": "b742fbfb481e780c0962ab6240e666146a02ac4a8f725d7913aa6db5fe2cfdfa",
+            "size_bytes": 57401780
+          }
+        },
+        "centroid_shift_m": 1.885732479370575e-14,
+        "centroid_shift_over_2um_waist": 9.428662396852877e-09,
+        "comparison": "w0=2um nominal planar-stack b: saved 1.2 ps versus 4 ps common-grid Q",
+        "distribution_1p2ps": {
+          "centroid_m": {
+            "edge_normal": -3.159857299807729e-09,
+            "edge_tangent": 3.1716254113432468e-09,
+            "x": 4.477034360020381e-09,
+            "y": 8.321311468496711e-12,
+            "z": -6.339236129950082e-08
+          },
+          "hotspot": {
+            "Q_W_m3": 36.08435743519645,
+            "index_xyz": [
+              134,
+              134,
+              17
+            ],
+            "x_m": -3.970466940254533e-21,
+            "y_m": -3.970466940254533e-21,
+            "z_m": -9.999999999999937e-09
+          },
+          "power_W": 1.9552433904422643e-16,
+          "sigma_m": {
+            "edge_normal": 2.282727687621067e-06,
+            "edge_tangent": 2.2827276735486115e-06,
+            "x": 2.3004943752616403e-06,
+            "y": 2.2648216169946004e-06,
+            "z": 3.771989879279953e-08
+          }
+        },
+        "distribution_4ps": {
+          "centroid_m": {
+            "edge_normal": -3.159843876828333e-09,
+            "edge_tangent": 3.1716138433078776e-09,
+            "x": 4.477016688704251e-09,
+            "y": 8.322623112126347e-12,
+            "z": -6.339236774952994e-08
+          },
+          "hotspot": {
+            "Q_W_m3": 36.08451660166726,
+            "index_xyz": [
+              134,
+              134,
+              17
+            ],
+            "x_m": -3.970466940254533e-21,
+            "y_m": -3.970466940254533e-21,
+            "z_m": -9.999999999999937e-09
+          },
+          "power_W": 1.9552534308818033e-16,
+          "sigma_m": {
+            "edge_normal": 2.28272745437371e-06,
+            "edge_tangent": 2.282727441121557e-06,
+            "x": 2.300493067285723e-06,
+            "y": 2.264822476215559e-06,
+            "z": 3.771989870144608e-08
+          }
+        },
+        "edge_normal_profile": {
+          "NRMSE": 3.830255405059856e-07,
+          "correlation": 0.9999999999998874,
+          "first": {
+            "center_m": -7.869728291205106e-09,
+            "peak_location_m": -1.5652061004059164e-10,
+            "peak_value_normalized_per_m": 132331.79995845672,
+            "sigma_m": 2.849978389284125e-06
+          },
+          "second": {
+            "center_m": -7.869698759315214e-09,
+            "peak_location_m": -1.5652061004059164e-10,
+            "peak_value_normalized_per_m": 132331.81674318857,
+            "sigma_m": 2.8499775239036246e-06
+          },
+          "tangent_window_m": 2e-06
+        },
+        "generation_commit": "707e9a0b46a72a36477034073a08b0bdc1579457",
+        "grid_contract": {
+          "bounds_m": {
+            "x": [
+              -4.542372881355942e-06,
+              4.542372881355934e-06
+            ],
+            "y": [
+              -4.542372881355942e-06,
+              4.542372881355934e-06
+            ],
+            "z": [
+              -1.8e-07,
+              5.000000000000006e-08
+            ]
+          },
+          "coordinates_bitwise_equal": true,
+          "interpolation_used": false,
+          "shape_xyz": [
+            269,
+            269,
+            24
+          ],
+          "volume_quadrature": "tensor-product trapezoid/dual-cell weights"
+        },
+        "hotspot_shift_m": 0.0,
+        "normalized_spatial_Q": {
+          "definition": "Q divided by integral(Q dV)",
+          "volume_weighted_NRMSE": 1.1597519326109069e-06,
+          "volume_weighted_Pearson_correlation": 0.9999999999986415,
+          "volume_weighted_cosine_similarity": 0.9999999999993283
+        },
+        "power": {
+          "P_Q_1p2ps_W": 1.9552433904422643e-16,
+          "P_Q_4ps_W": 1.9552534308818033e-16,
+          "components": {
+            "x": {
+              "P_1p2ps_W": 1.9509155573574229e-16,
+              "P_4ps_W": 1.9509255959418058e-16,
+              "relative_change": 5.145576057893305e-06
+            },
+            "y": {
+              "P_1p2ps_W": 9.101497261330506e-20,
+              "P_4ps_W": 9.101255588973623e-20,
+              "relative_change": 2.6553032972897394e-05
+            },
+            "z": {
+              "P_1p2ps_W": 3.4176833587085664e-19,
+              "P_4ps_W": 3.4177093811002783e-19,
+              "relative_change": 7.614044070419398e-06
+            }
+          },
+          "relative_change": 5.135135394419884e-06
+        },
+        "promoted_to_production_Q": false,
+        "sigma_relative_change": {
+          "edge_normal": 1.0217922973080325e-07,
+          "edge_tangent": 1.0181987856811418e-07,
+          "x": 5.685629712076845e-07,
+          "y": 3.793768798809993e-07,
+          "z": 2.4218901052151234e-09
+        },
+        "status": "VALIDATED_DIAGNOSTIC_Q_OBSERVABLE_CONVERGENCE",
+        "validated_for_diagnostic_heat_source": true
+      },
+      "polarization_deg": 0.0,
+      "realized_control_volume": {
+        "bounds_m": {
+          "x": [
+            -4.542372881355942e-06,
+            4.542372881355934e-06
+          ],
+          "y": [
+            -4.542372881355942e-06,
+            4.542372881355934e-06
+          ],
+          "z": [
+            -1.8e-07,
+            5.000000000000006e-08
+          ]
+        },
+        "face_coordinates": {
+          "x_max": {
+            "x": {
+              "bounds_m": [
+                4.542372881355934e-06,
+                4.542372881355934e-06
+              ],
+              "shape": [
+                1
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                -1.8e-07,
+                5.000000000000006e-08
+              ],
+              "maximum_step_m": 1.0000000000000116e-08,
+              "median_step_m": 9.999999999999997e-09,
+              "minimum_step_m": 9.999999999999984e-09,
+              "shape": [
+                24
+              ]
+            }
+          },
+          "x_min": {
+            "x": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                -4.542372881355942e-06
+              ],
+              "shape": [
+                1
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                -1.8e-07,
+                5.000000000000006e-08
+              ],
+              "maximum_step_m": 1.0000000000000116e-08,
+              "median_step_m": 9.999999999999997e-09,
+              "minimum_step_m": 9.999999999999984e-09,
+              "shape": [
+                24
+              ]
+            }
+          },
+          "y_max": {
+            "x": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                4.542372881355934e-06,
+                4.542372881355934e-06
+              ],
+              "shape": [
+                1
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                -1.8e-07,
+                5.000000000000006e-08
+              ],
+              "maximum_step_m": 1.0000000000000116e-08,
+              "median_step_m": 9.999999999999997e-09,
+              "minimum_step_m": 9.999999999999984e-09,
+              "shape": [
+                24
+              ]
+            }
+          },
+          "y_min": {
+            "x": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                -4.542372881355942e-06
+              ],
+              "shape": [
+                1
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                -1.8e-07,
+                5.000000000000006e-08
+              ],
+              "maximum_step_m": 1.0000000000000116e-08,
+              "median_step_m": 9.999999999999997e-09,
+              "minimum_step_m": 9.999999999999984e-09,
+              "shape": [
+                24
+              ]
+            }
+          },
+          "z_max": {
+            "x": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                5.000000000000006e-08,
+                5.000000000000006e-08
+              ],
+              "shape": [
+                1
+              ]
+            }
+          },
+          "z_min": {
+            "x": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "y": {
+              "bounds_m": [
+                -4.542372881355942e-06,
+                4.542372881355934e-06
+              ],
+              "maximum_step_m": 3.389830508474681e-08,
+              "median_step_m": 3.389830508474596e-08,
+              "minimum_step_m": 3.389830508474469e-08,
+              "shape": [
+                269
+              ]
+            },
+            "z": {
+              "bounds_m": [
+                -1.8e-07,
+                -1.8e-07
+              ],
+              "shape": [
+                1
+              ]
+            }
+          }
+        },
+        "maximum_transverse_boundary_mismatch_m": 0.0,
+        "transverse_boundary_mismatch_m": {
+          "x_max:y": 0.0,
+          "x_max:z": 0.0,
+          "x_min:y": 0.0,
+          "x_min:z": 0.0,
+          "y_max:x": 0.0,
+          "y_max:z": 0.0,
+          "y_min:x": 0.0,
+          "y_min:z": 0.0,
+          "z_max:x": 0.0,
+          "z_max:y": 0.0,
+          "z_min:x": 0.0,
+          "z_min:y": 0.0
+        }
+      },
+      "realized_flake_midplane_total_field_fit": {
+        "amplitude_over_observed_peak": 0.977160396119386,
+        "center_x_m": 1.1872159380734849e-15,
+        "center_y_m": -4.321770911396938e-15,
+        "fit_message": "`ftol` termination condition is satisfied.",
+        "fit_relative_RMS_over_peak": 0.010350292063302539,
+        "fit_selected_point_count": 72361,
+        "fit_success": true,
+        "integrated_incident_power_W": 7.651089428874686e-14,
+        "moment_center_x_m": 3.342248292311658e-15,
+        "moment_center_y_m": -2.1058171017146473e-15,
+        "moment_waist_x_m": 4.6202202852401195e-06,
+        "moment_waist_y_m": 4.541093123268317e-06,
+        "waist_effective_geometric_mean_m": 6.307497553402732e-06,
+        "waist_x_m": 6.497553945082857e-06,
+        "waist_y_m": 6.123000397140084e-06
+      },
+      "realized_incident_plane_beam": {
+        "amplitude_over_observed_peak": 0.9751402226524064,
+        "center_x_m": 1.1049817470138936e-14,
+        "center_y_m": -1.6582439368631053e-14,
+        "fit_message": "`ftol` termination condition is satisfied.",
+        "fit_relative_RMS_over_peak": 0.011279943391284233,
+        "fit_selected_point_count": 72361,
+        "fit_success": true,
+        "integrated_incident_power_W": 7.640976353983181e-16,
+        "moment_center_x_m": 1.0026407278013548e-14,
+        "moment_center_y_m": -7.646262726637588e-15,
+        "moment_waist_x_m": 4.649699062346875e-06,
+        "moment_waist_y_m": 4.536821552191799e-06,
+        "waist_effective_geometric_mean_m": 6.369224038404281e-06,
+        "waist_x_m": 6.648239779173103e-06,
+        "waist_y_m": 6.101918131543775e-06
+      },
+      "solver_resource_contract": {
+        "1": {
+          "active": "1",
+          "device type": "CPU",
+          "processes": "1",
+          "solver extra command line options": "",
+          "threads": "8"
+        },
+        "2": {
+          "active": "1",
+          "device type": "GPU 4",
+          "processes": "1",
+          "solver extra command line options": "-gpu",
+          "threads": "8"
+        }
+      },
+      "solver_resource_label": "Local Host",
+      "solver_version": "8.35.4522",
+      "source_power_native_W": 2.339588229783334e-15
+    }
+  },
+  "comparisons": {
+    "planar_a_vs_planar_b": {
+      "equal_power_normalized_spatial_Q_NRMSE": 0.1609452277293677,
+      "equal_power_normalized_spatial_Q_Pearson_correlation": 0.9738827342604705,
+      "equal_power_normalized_spatial_Q_cosine_similarity": 0.9869799238116437,
+      "first_power_W": 1.3352178211012233e-16,
+      "raw_power_relative_difference": 0.464370382106797,
+      "realized_beam": {
+        "center_shift_m": 5.3148273409312654e-15,
+        "effective_waist_relative_difference": 0.01053742935359587,
+        "incident_power_relative_difference": 0.001445217388685429,
+        "interpretation": "The plane is close to the scatterer and uses a total-field downward decomposition; a planar-to-edge change includes edge-scattered/evanescent field effects and is not called a literal source displacement."
+      },
+      "second_power_W": 1.9552534308818033e-16
+    },
+    "planar_b_vs_finite_edge_b": {
+      "equal_power_normalized_spatial_Q_NRMSE": 1.0018559191203458,
+      "equal_power_normalized_spatial_Q_Pearson_correlation": 0.5673694199188862,
+      "equal_power_normalized_spatial_Q_cosine_similarity": 0.7033371587675636,
+      "first_power_W": 1.9552534308818033e-16,
+      "raw_power_relative_difference": 0.5057764420988685,
+      "realized_beam": {
+        "center_shift_m": 9.566373803118348e-08,
+        "effective_waist_relative_difference": 8.800359265840631e-05,
+        "incident_power_relative_difference": 0.0011205043461863158,
+        "interpretation": "The plane is close to the scatterer and uses a total-field downward decomposition; a planar-to-edge change includes edge-scattered/evanescent field effects and is not called a literal source displacement."
+      },
+      "second_power_W": 9.66332307208799e-17
+    }
+  },
+  "critical_interpretation": {
+    "nominal_vs_realized_beam": "The requested scalar Gaussian waist is 2 um, but the fitted field-plane effective waists are about 6.37-6.44 um. This is therefore a nominal-w0=2 um source diagnostic, not a realized 2 um beam certificate.",
+    "raw_vs_equal_power": "Raw Q retains physical absorbed-power differences. Equal-power normalization is used only to compare spatial shape; no saved Q artifact was rescaled."
+  },
+  "gates": {
+    "auto_shutoff_kept_separate_from_observable_Q": true,
+    "auto_shutoff_le_1e_minus_5_all": false,
+    "matched_volume_closure_lt_0p5_percent_all": true,
+    "observable_Q_1p2_to_4ps_lt_0p5_percent_all": true
+  },
+  "generation_commit": "96de14d532417fc9cc5792f17fc1a7fc2b4b7b58",
+  "scope": {
+    "FDTD_cases": [
+      "planar-stack a polarization",
+      "planar-stack b polarization",
+      "finite straight-45-degree edge b polarization"
+    ],
+    "PTE_run": false,
+    "adjoint_run": false,
+    "nominal_waist_m": 2e-06,
+    "optimization_run": false,
+    "paper_like_result": false,
+    "production_Q": false,
+    "thermal_run": false
+  },
+  "status": "PARTIAL_W2_EDGE_ISOLATION_OBSERVABLE_Q_VALIDATED_AUTO_SHUTOFF_FAILED"
+}

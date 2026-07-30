@@ -1,0 +1,337 @@
+{
+  "artifacts": [
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t1p2_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization a --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t1p2_gpu4_20260730/case_result.json",
+      "role": "planar_a 1p2ps case result",
+      "sha256": "632ff5cf1683000404587b53e3380b2ff1326ed7ab9905b424dfb6cfa1123f75",
+      "size_bytes": 91255
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t1p2_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization a --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t1p2_gpu4_20260730/diagnostic_q_common_grid_artifact.npz",
+      "role": "planar_a 1p2ps raw Q",
+      "sha256": "a1384f8568276e873153314893d22b504212779f878ba2f232db62e4cdd69b67",
+      "size_bytes": 57401792
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t1p2_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization a --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t1p2_gpu4_20260730/w2_beam_and_field_components.npz",
+      "role": "planar_a 1p2ps fields",
+      "sha256": "a2448a3e6e735302035da717c551357468241ad9f18a3932715847267e5d7d1e",
+      "size_bytes": 16270176
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t1p2_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization a --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t1p2_gpu4_20260730/native_yee_mesh_coordinates.npz",
+      "role": "planar_a 1p2ps Yee coordinates",
+      "sha256": "1787084b84a620b4d006d7ad6b99ecc028c5f323bb4a207441df873127a3cf79",
+      "size_bytes": 37320
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t1p2_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization a --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t1p2_gpu4_20260730/finite_2um_optical_q.fsp",
+      "role": "planar_a 1p2ps FSP",
+      "sha256": "6a4b905e19d05a9a840cca133087da3049832060adaf0de2f53556e9fe843861",
+      "size_bytes": 100867990
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t1p2_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization a --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t1p2_gpu4_20260730/finite_2um_optical_q_p0.log",
+      "role": "planar_a 1p2ps solver log",
+      "sha256": "6a00f93158e8b9d96928abc5793a4257a7a441187b5b745ea72a82e67dfc86a8",
+      "size_bytes": 15953
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization a --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730/case_result.json",
+      "role": "planar_a 4ps case result",
+      "sha256": "70ea794d4aba18bf218c014dc4530605816641654b2e67848b44b714a522565c",
+      "size_bytes": 91242
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization a --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730/diagnostic_q_common_grid_artifact.npz",
+      "role": "planar_a 4ps raw Q",
+      "sha256": "ee8c90f08c366c5dc1f8cf6500d411d894701e64507e7d83de951f8c213f52af",
+      "size_bytes": 57401792
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization a --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730/w2_beam_and_field_components.npz",
+      "role": "planar_a 4ps fields",
+      "sha256": "0b1e605b033ac15ea060f386efbfda00e5fd20642db90a0e008c2f30b6d2fa8f",
+      "size_bytes": 16282271
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization a --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730/native_yee_mesh_coordinates.npz",
+      "role": "planar_a 4ps Yee coordinates",
+      "sha256": "1787084b84a620b4d006d7ad6b99ecc028c5f323bb4a207441df873127a3cf79",
+      "size_bytes": 37320
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization a --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730/finite_2um_optical_q.fsp",
+      "role": "planar_a 4ps FSP",
+      "sha256": "89b367549475f12e6a41fa6be4dcee423465e4d09db33adab2db787a1d76d933",
+      "size_bytes": 100889806
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization a --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730/finite_2um_optical_q_p0.log",
+      "role": "planar_a 4ps solver log",
+      "sha256": "a8b227e200ee81d3f1be26ad10c5cda7aeb4cb9a74accefe7c8037e6e32ac352",
+      "size_bytes": 16637
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_observable_1p2_vs_4_20260730/q_observable_convergence.json",
+      "role": "planar_a observable-Q certificate",
+      "sha256": "7ec4eb78d6276470b4a2a500afcb38f84e43145007c3df4b6099aaf714ab9524",
+      "size_bytes": 5312
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_observable_1p2_vs_4_20260730/q_component_power_convergence.csv",
+      "role": "planar_a component convergence",
+      "sha256": "41ee147da777883056a7b7af563bcccfab587739b43607f8d8c9c4669f5600fa",
+      "size_bytes": 332
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_observable_1p2_vs_4_20260730/q_observable_convergence_profiles.npz",
+      "role": "planar_a convergence profiles",
+      "sha256": "73777a0800f145402cd9989d0c236d14f4702c462543bc4fcd7daa3e75b4eb08",
+      "size_bytes": 9978
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_observable_1p2_vs_4_20260730/q_observable_convergence.png",
+      "role": "planar_a convergence plot",
+      "sha256": "e15dff2b40f1b1e2dc75850a0085f36383c4e5bc13daf017b01b6d3e343ab256",
+      "size_bytes": 99492
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_retry_20260730 --case finite-flake --geometry planar-stack --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_retry_20260730/case_result.json",
+      "role": "planar_b 1p2ps case result",
+      "sha256": "9d74768ef47cc4eb6946b641a3e0df4fa813d7c6a0b15addaaa97b86433de274",
+      "size_bytes": 91303
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_retry_20260730 --case finite-flake --geometry planar-stack --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_retry_20260730/diagnostic_q_common_grid_artifact.npz",
+      "role": "planar_b 1p2ps raw Q",
+      "sha256": "0646bb4e41b593e2ca196899600001fa6dbea5b06e9390f9a017b8a758183c58",
+      "size_bytes": 57401852
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_retry_20260730 --case finite-flake --geometry planar-stack --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_retry_20260730/w2_beam_and_field_components.npz",
+      "role": "planar_b 1p2ps fields",
+      "sha256": "8452649b1706917a3716f115e4aa9a2ba85413790d3d5ae7e07ad5a6e53c59d2",
+      "size_bytes": 15964787
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_retry_20260730 --case finite-flake --geometry planar-stack --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_retry_20260730/native_yee_mesh_coordinates.npz",
+      "role": "planar_b 1p2ps Yee coordinates",
+      "sha256": "1787084b84a620b4d006d7ad6b99ecc028c5f323bb4a207441df873127a3cf79",
+      "size_bytes": 37320
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_retry_20260730 --case finite-flake --geometry planar-stack --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_retry_20260730/finite_2um_optical_q.fsp",
+      "role": "planar_b 1p2ps FSP",
+      "sha256": "ee27631b13ba70fa3ae4271f504384349c5a4d9428e63565c2f336d42048d389",
+      "size_bytes": 100867990
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_retry_20260730 --case finite-flake --geometry planar-stack --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_retry_20260730/finite_2um_optical_q_p0.log",
+      "role": "planar_b 1p2ps solver log",
+      "sha256": "07ab0fd17d3e0090fa2a1bc6fed60c39b79cf3c953fbf0e085c5bec1a80ba394",
+      "size_bytes": 15957
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/case_result.json",
+      "role": "planar_b 4ps case result",
+      "sha256": "60c9c86efd5333ff61f3911e8da63c08317ffccf46c6f4a442292ee03bf1fad7",
+      "size_bytes": 91245
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/diagnostic_q_common_grid_artifact.npz",
+      "role": "planar_b 4ps raw Q",
+      "sha256": "b742fbfb481e780c0962ab6240e666146a02ac4a8f725d7913aa6db5fe2cfdfa",
+      "size_bytes": 57401780
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/w2_beam_and_field_components.npz",
+      "role": "planar_b 4ps fields",
+      "sha256": "55abf216249bcd6f3ae9a7a45efd56a66be4cfc720183e13f9584271a10fe4a2",
+      "size_bytes": 15990691
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/native_yee_mesh_coordinates.npz",
+      "role": "planar_b 4ps Yee coordinates",
+      "sha256": "1787084b84a620b4d006d7ad6b99ecc028c5f323bb4a207441df873127a3cf79",
+      "size_bytes": 37320
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/finite_2um_optical_q.fsp",
+      "role": "planar_b 4ps FSP",
+      "sha256": "55adf7dcda947cbd904ee488a2c2349a21b445941aaa766a84886ff2a289bb49",
+      "size_bytes": 100889806
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730 --case finite-flake --geometry planar-stack --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/finite_2um_optical_q_p0.log",
+      "role": "planar_b 4ps solver log",
+      "sha256": "141078625634ddde94532fbbb7a87da439406a4b59f9127da489052daeffbebd",
+      "size_bytes": 16604
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_observable_1p2_vs_4_20260730/q_observable_convergence.json",
+      "role": "planar_b observable-Q certificate",
+      "sha256": "a7ceeefec2b7def1bdbe30767a270a558a18dfd566bc8e61fb5ba9f16e3158fa",
+      "size_bytes": 5322
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_observable_1p2_vs_4_20260730/q_component_power_convergence.csv",
+      "role": "planar_b component convergence",
+      "sha256": "e5a81b8286af97071dcefd2567ea3483a972876a75c972a57eb6159b42aed7ec",
+      "size_bytes": 332
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_observable_1p2_vs_4_20260730/q_observable_convergence_profiles.npz",
+      "role": "planar_b convergence profiles",
+      "sha256": "0828cf2e759b2a253827c436196c71cbac6f61d7eae65fcda5bb4c8a1810a956",
+      "size_bytes": 9978
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_observable_1p2_vs_4_20260730/q_observable_convergence.png",
+      "role": "planar_b convergence plot",
+      "sha256": "fffcf34dd0a9bbf9fcc0e3e631d988f8bd6f4e7194cbc36f59695b2451c7f45f",
+      "size_bytes": 100574
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t1p2_gpu4_20260730 --case finite-flake --geometry straight-45-edge --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t1p2_gpu4_20260730/case_result.json",
+      "role": "finite_edge_b 1p2ps case result",
+      "sha256": "38a1d0863a25a5fcbec329d0897dbd123921ff2b5172983c97093cc591ceaec5",
+      "size_bytes": 91648
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t1p2_gpu4_20260730 --case finite-flake --geometry straight-45-edge --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t1p2_gpu4_20260730/diagnostic_q_common_grid_artifact.npz",
+      "role": "finite_edge_b 1p2ps raw Q",
+      "sha256": "dbe1dd7172881b24e692cc76ca1564877f2abc8b0c1d562fb138076ec56f78c4",
+      "size_bytes": 57402304
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t1p2_gpu4_20260730 --case finite-flake --geometry straight-45-edge --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t1p2_gpu4_20260730/w2_beam_and_field_components.npz",
+      "role": "finite_edge_b 1p2ps fields",
+      "sha256": "ad4b6d9cae0f39baacfeedbb752906a51ea11f5598d41d536413db87881a66e2",
+      "size_bytes": 16316055
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t1p2_gpu4_20260730 --case finite-flake --geometry straight-45-edge --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t1p2_gpu4_20260730/native_yee_mesh_coordinates.npz",
+      "role": "finite_edge_b 1p2ps Yee coordinates",
+      "sha256": "1787084b84a620b4d006d7ad6b99ecc028c5f323bb4a207441df873127a3cf79",
+      "size_bytes": 37320
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t1p2_gpu4_20260730 --case finite-flake --geometry straight-45-edge --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t1p2_gpu4_20260730/finite_2um_optical_q.fsp",
+      "role": "finite_edge_b 1p2ps FSP",
+      "sha256": "5b3ec31c006aba59fb7dc3bf203957aff702618b3d011e3afd52474ab5409ce6",
+      "size_bytes": 100867976
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t1p2_gpu4_20260730 --case finite-flake --geometry straight-45-edge --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t1p2_gpu4_20260730/finite_2um_optical_q_p0.log",
+      "role": "finite_edge_b 1p2ps solver log",
+      "sha256": "f30825bb813adcf59cc230b1834bfc6ab2624846c98b814b2d7ee67c85fd999c",
+      "size_bytes": 15885
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730 --case finite-flake --geometry straight-45-edge --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/case_result.json",
+      "role": "finite_edge_b 4ps case result",
+      "sha256": "8c0c6cabba1b898fc9a0b03c3d9b8ddd14b4f2c877e2697ffdfb1ce8d33ad7d2",
+      "size_bytes": 91628
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730 --case finite-flake --geometry straight-45-edge --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/diagnostic_q_common_grid_artifact.npz",
+      "role": "finite_edge_b 4ps raw Q",
+      "sha256": "199155f99c9b95810d80b3b5c2b74a13d11555d60133b2949502801ca457b13b",
+      "size_bytes": 57402260
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730 --case finite-flake --geometry straight-45-edge --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/w2_beam_and_field_components.npz",
+      "role": "finite_edge_b 4ps fields",
+      "sha256": "7b307803966a378561bb1837f9ef2576b3c83e50b04dd65298546fccba628a69",
+      "size_bytes": 16316149
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730 --case finite-flake --geometry straight-45-edge --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/native_yee_mesh_coordinates.npz",
+      "role": "finite_edge_b 4ps Yee coordinates",
+      "sha256": "1787084b84a620b4d006d7ad6b99ecc028c5f323bb4a207441df873127a3cf79",
+      "size_bytes": 37320
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730 --case finite-flake --geometry straight-45-edge --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/finite_2um_optical_q.fsp",
+      "role": "finite_edge_b 4ps FSP",
+      "sha256": "574bc65b274fa6f159febcc360f05416a05c8831cf9bbf4d60a3ab1d61c5ff5e",
+      "size_bytes": 100889792
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730 --case finite-flake --geometry straight-45-edge --polarization b --domain-um 12 --source-span-um 6 --waist-um 2 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --execution-contract edge-isolation-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4'",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/finite_2um_optical_q_p0.log",
+      "role": "finite_edge_b 4ps solver log",
+      "sha256": "3b79a0ab0f1a1d0662d6cc24839b6bb57bdac678280ca932daae1f942e165857",
+      "size_bytes": 16625
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_observable_1p2_vs_4_20260730/q_observable_convergence.json",
+      "role": "finite_edge_b observable-Q certificate",
+      "sha256": "d371bfec6cd25d59d71d7855af340b2be9025853b1d2599dcc9c6b2435133f57",
+      "size_bytes": 5342
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_observable_1p2_vs_4_20260730/q_component_power_convergence.csv",
+      "role": "finite_edge_b component convergence",
+      "sha256": "a0050ccccf0f4eaa1682a5e223d04c39f6b75495f2eb9fd9f8f18481950394bf",
+      "size_bytes": 327
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_observable_1p2_vs_4_20260730/q_observable_convergence_profiles.npz",
+      "role": "finite_edge_b convergence profiles",
+      "sha256": "b9bf27fd823e79835e6956300eb4600c7d826ea842fa201f322032067a4183eb",
+      "size_bytes": 9978
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_observable_1p2_vs_4_20260730/q_observable_convergence.png",
+      "role": "finite_edge_b convergence plot",
+      "sha256": "2f1fc5b66b88552bc0bf729ca74559215ac0cee90afa1c68dc1824113df2cdca",
+      "size_bytes": 91609
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_20260730/case_result.json",
+      "role": "preserved first planar-b GPU launch failure diagnostic",
+      "sha256": "78acddf124369827388103db1b6e6cdb3e4c6c1babb86371c1844b868cd540a6",
+      "size_bytes": 15853
+    }
+  ],
+  "generation_commit": "96de14d532417fc9cc5792f17fc1a7fc2b4b7b58",
+  "raw_artifacts_committed_to_git": false,
+  "summary_generation_command": "photothermal_pte/validation/paper_ir_sanity/summarize_w2_planar_edge_diagnostic.py --planar-a-1p2-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t1p2_gpu4_20260730 --planar-a-4-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730 --planar-a-convergence-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_observable_1p2_vs_4_20260730 --planar-b-1p2-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_retry_20260730 --planar-b-4-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730 --planar-b-convergence-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_observable_1p2_vs_4_20260730 --edge-b-1p2-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t1p2_gpu4_20260730 --edge-b-4-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730 --edge-b-convergence-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_observable_1p2_vs_4_20260730 --failed-planar-b-launch-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t1p2_gpu4_20260730 --output-dir photothermal_pte/reports/paper_ir_w2_planar_edge_diagnostic"
+}

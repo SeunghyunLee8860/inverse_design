@@ -1,5 +1,40 @@
 # Latest photothermal validation status
 
+## Nominal-w0=2 µm planar/finite-edge optical diagnostic
+
+- Status:
+  `PARTIAL_W2_EDGE_ISOLATION_OBSERVABLE_Q_VALIDATED_AUTO_SHUTOFF_FAILED`.
+- The approved GPU-only stage is complete for planar-a, planar-b, and
+  finite straight-45-degree-edge-b at 1.2 ps and 4 ps. No `w0=6.5 µm`
+  calculation was started. No CPU FDTD fallback, thermal, PTE, adjoint,
+  gradient, or optimization calculation was used.
+- All six completed solves use the same 12 µm domain, six PML boundaries,
+  24 PML layers, 10 nm flake-region `dz`, 130 nm TaIrTe4 thickness,
+  11 µm wavelength, nominal 2 µm scalar-Gaussian waist, and the explicit
+  `epsilon_c=epsilon_b` 3D closure with `x=b`, `y=a`.
+- Matched-volume common/native six-face closure is below 0.5% in every
+  4 ps case. Common-grid closure is `0.119337% / 0.102457% / 0.015313%`
+  for planar-a / planar-b / finite-edge-b.
+- Each 1.2→4 ps observable-Q comparison passes: P_Q changes
+  `0.000294% / 0.000514% / 0.000595%` and normalized spatial-Q NRMSE is
+  `0.000076% / 0.000116% / 0.000336%`.
+- Auto-shutoff remains above `1e-5` in every pair
+  (`1.56401e-5`, `1.95295e-5`, `2.00846e-5` at 4 ps), so the artifacts
+  are not promoted to production Q. This failure is kept separate from
+  the observable-Q pass.
+- The requested waist is 2 µm, but the fitted field-plane effective
+  waists are `6.437 / 6.369 / 6.369 µm`. This is therefore a
+  nominal-w0=2 µm diagnostic, not a realized 2 µm beam certificate and
+  not a paper-like result.
+- At 4 ps, raw P_Q is
+  `1.335218e-16 / 1.955253e-16 / 9.663323e-17 W`. Planar-b versus
+  finite-edge-b changes raw power by `50.5776%`; after equal-power
+  normalization its spatial-Q NRMSE is `100.1856%`, demonstrating a
+  large finite-edge spatial effect in this diagnostic.
+- Raw NPZ/FSP files remain external and are SHA-256 inventoried. Report,
+  JSON, CSV, figures, and manifest:
+  `reports/paper_ir_w2_planar_edge_diagnostic/`.
+
 ## Offline paper-IR Q, thermal, and remap controls
 
 - Overall status:
