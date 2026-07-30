@@ -62,7 +62,9 @@ next cases are planar a/b and straight-45-degree-edge a/b with the identical
 scalar geometry and incident-power normalization.
 
 The optical solver uses auto non-uniform mesh, conformal variant 1, accuracy
-5.  Material cases must use local fine regions at TaIrTe4, the illuminated
-edge, and Q extraction volume, plus a separate TaIrTe4 z override.  A uniform
-fine mesh over the 60-µm domain is prohibited, as are Q clipping, smoothing,
-gain, and rescaling.
+5.  Material cases use a 100-nm local x/y baseline over TaIrTe4, the
+illuminated edge, and Q extraction volume, with a required 50-nm refinement
+comparison, plus a separate TaIrTe4 z override.  The homogeneous-air
+source-only case does not use this material mesh object.  A uniform fine mesh
+over the 60-µm domain is prohibited, as are Q clipping, smoothing, gain, and
+rescaling.

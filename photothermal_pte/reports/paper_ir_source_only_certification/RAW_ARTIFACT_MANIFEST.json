@@ -1,14 +1,14 @@
 {
   "raw_artifacts_committed_to_git": false,
   "new_raw_FSP_or_NPZ_generated": false,
-  "generation_commit": "076434595267b971527700ee12cf5ff7d2b46d06",
+  "generation_commit": "1a66a117c1be2b2c7e45e98c85f8e27211f58a7a",
   "generation_command": "python3 photothermal_pte/validation/paper_ir_sanity/summarize_paper_ir_source_only_certification.py [arguments recorded by this report]",
   "artifacts": [
     {
       "role": "paper_beam_audit",
       "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_source_only_certification/paper_ir_beam_contract_summary.json",
-      "size_bytes": 11418,
-      "sha256": "9a3d73facdf44ef5233edeef7f7fdf7b5ef57bd0a882de76f72eb7dcf1761e61"
+      "size_bytes": 11646,
+      "sha256": "2fa852e2054e2e8d5a717c9a25d4b0b2ad0b48c2604c4cf6b1ad42ac4f44b48d"
     },
     {
       "role": "historical_resource_reference",

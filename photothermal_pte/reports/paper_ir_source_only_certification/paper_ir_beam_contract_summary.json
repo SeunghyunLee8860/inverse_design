@@ -1,6 +1,6 @@
 {
   "status": "FIXED_PAPER_LIKE_SCALAR_GAUSSIAN_CONTRACT_READY_FOR_GPU_PROBE",
-  "generation_commit": "076434595267b971527700ee12cf5ff7d2b46d06",
+  "generation_commit": "1a66a117c1be2b2c7e45e98c85f8e27211f58a7a",
   "paper_sources": {
     "main": {
       "path": "/home/seunghyun/tairte4/papers/Adv Funct Materials - 2026 - Blevins - Large Transverse Thermoelectric Effect in Weyl Semimetal TaIrTe4 Engineered for-2.pdf",
@@ -258,6 +258,9 @@
       "illuminated straight edge",
       "Q extraction region"
     ],
+    "material_case_local_xy_baseline_m": 1e-07,
+    "required_local_xy_refinement_m": 5e-08,
+    "refinement_gate": "required before material Q is promoted; source-only homogeneous air does not use this material mesh override",
     "far_air_SiO2_Si": "wavelength-appropriate nonuniform coarse mesh",
     "TaIrTe4_thickness_resolution": "separate local z override"
   },
