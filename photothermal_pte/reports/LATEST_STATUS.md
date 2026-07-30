@@ -8,13 +8,15 @@
   diffraction-limited spot, and 11 µm / 285 µW for Figure 3, but it does
   not define the spot as radius/diameter/FWHM/1/e² or publish the exact
   11-µm waist plane and pupil fill.
-- The first source-only candidate is therefore an explicit numerical
-  assumption: Gaussian 1/e² radius `w0=12 µm`, source span `50 µm`,
-  lateral domain `60 µm`. Its analytic square capture is `99.992914%`;
-  analytic boundary maximum/mean are `1.93379e-4 / 5.86049e-5`.
-- The scalar source is not production-approved. A matched NA=0.4 fully
-  vectorial thin-lens comparison remains mandatory before planar/edge
-  material cases. The legacy nominal `w0=2 µm` case remains
+- The optical source contract is now fixed as the
+  **paper-like scalar-Gaussian scenario with an explicitly assumed waist**:
+  Gaussian 1/e² radius `w0=12 µm`, source span `50 µm`, lateral domain
+  `60 µm`. Its analytic square capture is `99.992914%`; analytic boundary
+  maximum/mean are `1.93379e-4 / 5.86049e-5`. This is not called an
+  experimentally reproduced or paper-certified beam.
+- A vectorial thin-lens comparison is no longer a gate or blocker and is
+  retained only as an optional future diagnostic. The legacy nominal
+  `w0=2 µm` case remains
   `DIAGNOSTIC_ONLY_INVALID_FOR_PAPER_LIKE_BEAM`.
 - Two contract-only probes failed before an FDTD session opened:
   `ANSYSLI exited or could not read server port`. Neither `runsetup` nor
@@ -29,6 +31,11 @@
   run. The previous
   `VALIDATED_OFFLINE_MASKED_PLANAR_AND_SOURCE_AUDIT` status below is
   preserved.
+- When license startup succeeds, exactly one homogeneous-air GPU source-only
+  case is run first. A passing scalar source-only gate directly authorizes
+  planar-a/b then straight-45-degree finite-edge-a/b with identical source
+  geometry and incident-power normalization. No polarization-specific raw-Q
+  rescaling is allowed.
 - Report, beam audit, summary, CSV tables, aperture figure, and manifest:
   `reports/paper_ir_source_only_certification/`.
 
@@ -261,9 +268,8 @@
   provenance only. CPU FDTD fallback was not used. Therefore production
   Qx/Qy/Qz, P_Q, six-face closure, native Yee coordinates, and edge-normal
   Q remain blocked; legacy `epsilon_c=16` has exactly `Qz=0`.
-- Scalar versus thin-lens vectorial Gaussian comparison remains plan-only:
-  incident power, realized waist/focus, aperture/NA, and flake-plane field
-  must be matched before the finite-edge comparison.
+- The historical scalar-versus-thin-lens comparison remains an optional,
+  unexecuted diagnostic only and is no longer a finite-edge gate.
 - No raw Lumerical Q modification, PTE current, adjoint, gradient, or
   optimization was performed.
 - Report and machine-readable outputs:

@@ -89,7 +89,10 @@ def main() -> int:
     probes = [read_json(path) for path in probe_results]
     resource = read_json(resource_path)
     runtime = read_json(runtime_path)
-    if audit.get("status") != "PROPOSED_PAPER_IR_SOURCE_CONTRACT_READY_FOR_GPU_PROBE":
+    if (
+        audit.get("status")
+        != "FIXED_PAPER_LIKE_SCALAR_GAUSSIAN_CONTRACT_READY_FOR_GPU_PROBE"
+    ):
         raise ValueError(f"unexpected audit status: {audit.get('status')}")
     for probe in probes:
         if probe.get("status") not in ACCEPTED_PROBE_STATUSES:
@@ -112,7 +115,7 @@ def main() -> int:
         ):
             raise ValueError("a blocked probe incorrectly reports executed scope")
 
-    selected = audit["selected_source_only_candidate"]
+    selected = audit["selected_source_only_scenario"]
     historical_failure = resource["failure"]
     historical_memory = float(
         historical_failure["memory"]["precise_total_GiB"]
@@ -154,12 +157,16 @@ def main() -> int:
         )
 
     gates = {
-        "requested_vs_realized_width_relative_error_below_0p5pct": None,
+        "requested_vs_realized_x_waist_error_below_0p5pct": None,
+        "requested_vs_realized_y_waist_error_below_0p5pct": None,
+        "Gaussian_fit_NRMSE_below_0p5pct": None,
         "beam_center_error_below_one_cell": None,
+        "xy_ellipticity_below_0p5pct": None,
         "square_capture_at_least_99p9pct": None,
         "realized_source_boundary_max_below_1e_minus_3": None,
         "incident_power_closure_below_0p5pct": None,
-        "field_time_convergence_below_0p5pct": None,
+        "actual_mesh_readback_available": None,
+        "GPU_memory_readback_available": None,
         "no_NaN_or_Inf": None,
         "GPU_only_no_CPU_fallback": None,
         "auto_shutoff_at_most_1e_minus_5": None,
@@ -171,11 +178,14 @@ def main() -> int:
             "VALIDATED_OFFLINE_MASKED_PLANAR_AND_SOURCE_AUDIT"
         ),
         "paper_beam_audit_status": audit["status"],
-        "selected_candidate": selected,
+        "selected_scalar_scenario": selected,
         "source_model_decision": {
-            "scalar_candidate_production_approved": False,
-            "matched_vectorial_thin_lens_required": True,
-            "reason": selected["production_blocker"],
+            "scenario_label": selected["scenario_label"],
+            "scalar_Gaussian_fixed_for_current_sanity_check": True,
+            "experimentally_reproduced_beam": False,
+            "paper_certified_beam": False,
+            "matched_vectorial_thin_lens_required": False,
+            "thin_lens_status": "OPTIONAL_FUTURE_DIAGNOSTIC",
         },
         "legacy_w0_2um": {
             "status": "DIAGNOSTIC_ONLY_INVALID_FOR_PAPER_LIKE_BEAM",
@@ -231,7 +241,6 @@ def main() -> int:
             "blockers": [
                 "Lumerical license/session startup unavailable",
                 "source-only realized-beam gates not evaluated",
-                "matched scalar/vectorial source comparison incomplete",
             ],
         },
         "prohibited_scope_confirmed_not_run": [
@@ -239,7 +248,7 @@ def main() -> int:
             "thermal",
             "weighting potential",
             "PTE",
-            "adjoint",
+        "adjoint",
             "gradient",
             "optimization",
             "CPU FDTD fallback",
@@ -305,7 +314,7 @@ diameter, FWHM, or 1/e^2 width, nor the exact 11-µm waist plane or pupil fill.
 The detailed `PAPER_REPORTED`, `PAPER_INFERRED`, and `EXPLICIT_ASSUMPTION`
 records are in `paper_ir_beam_contract_summary.json`.
 
-The first source-only candidate is an explicit assumption:
+The fixed source-only scenario is an explicit assumption:
 
 - wavelength: 11 µm
 - Gaussian 1/e^2 intensity radius: 12.0 µm
@@ -316,10 +325,12 @@ The first source-only candidate is an explicit assumption:
 - analytic square capture: {selected['source_aperture_metrics']['square_captured_fraction']:.8%}
 - analytic source-boundary maximum/mean: {selected['source_aperture_metrics']['boundary_max_intensity_over_peak']:.8e} / {selected['source_aperture_metrics']['boundary_mean_intensity_over_peak']:.8e}
 
-The scalar model is not production-approved.  A matched NA=0.4 vector
-thin-lens comparison is still required.  The old nominal `w0=2 µm` artifacts
-remain `DIAGNOSTIC_ONLY_INVALID_FOR_PAPER_LIKE_BEAM` and are forbidden for
-thermal, PTE, or Figure-3 reproduction.
+Its required label is **paper-like scalar-Gaussian scenario with an
+explicitly assumed waist**.  It is not an experimentally reproduced beam or
+a paper-certified beam.  A thin-lens comparison is an optional future
+diagnostic and is not a gate or blocker.  The old nominal `w0=2 µm`
+artifacts remain `DIAGNOSTIC_ONLY_INVALID_FOR_PAPER_LIKE_BEAM` and are
+forbidden for thermal, PTE, or Figure-3 reproduction.
 
 ## Startup probes
 
@@ -358,8 +369,10 @@ Total expected GPU time remains
 The four planar/finite-edge optical cases are not worth executing now.  First
 restore license/session startup, obtain the actual source-only grid/memory
 readback, execute one GPU-only homogeneous-air case, and pass the realized
-beam gates.  Then perform the matched scalar/vectorial comparison before any
-material case.  No production-Q promotion is made by this checkpoint.
+beam gates.  If it passes, proceed directly to planar a/b and
+straight-45-degree finite-edge a/b with the identical scalar source geometry
+and incident-power normalization.  No production-Q promotion is made by this
+checkpoint.
 """
     (output / "PAPER_IR_SOURCE_ONLY_CERTIFICATION_REPORT.md").write_text(
         report, encoding="utf-8"

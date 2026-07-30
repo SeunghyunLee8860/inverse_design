@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""GPU-only homogeneous-air certification of the paper-IR source candidate.
+"""GPU-only certification of the fixed paper-like scalar-Gaussian scenario.
 
 Only a source and three field/power monitors are created.  There is no
 TaIrTe4, substrate, thermal, PTE, weighting-potential, adjoint, gradient, or
@@ -50,10 +50,12 @@ SOURCE_START_M = 7.0e-6
 SOURCE_STOP_M = 13.0e-6
 PML_LAYERS = 24
 MESH_ACCURACY = 5
-SOURCE_NAME = "paper_ir_scalar_source_candidate"
+SOURCE_NAME = "paper_like_scalar_Gaussian_assumed_waist"
+FIT_RESIDUAL_GATE = 0.005
+ELLIPTICITY_GATE = 0.005
 MONITORS = {
     "source_plane": contract.SOURCE_Z_M - 0.5e-6,
-    "focus_plane": contract.FOCUS_Z_M,
+    "flake_target_plane": contract.FOCUS_Z_M,
     "downstream_plane": contract.FOCUS_Z_M - 5.0e-6,
 }
 
@@ -179,7 +181,10 @@ def setup(fdtd: Any, duration_ps: float, shutoff: float) -> dict[str, Any]:
     return {
         "source": {
             "name": SOURCE_NAME,
-            "model": "scalar Gaussian candidate",
+            "model": (
+                "paper-like scalar-Gaussian scenario with an explicitly "
+                "assumed waist"
+            ),
             "wavelength_m": contract.WAVELENGTH_M,
             "numerical_pulse_band_m": [SOURCE_START_M, SOURCE_STOP_M],
             "waist_radius_m": contract.SELECTED_W0_M,
@@ -205,6 +210,25 @@ def setup(fdtd: Any, duration_ps: float, shutoff: float) -> dict[str, Any]:
             "PML_layers": PML_LAYERS,
             "periodic_or_Bloch": False,
             "materials": [],
+        },
+        "mesh_contract": {
+            "global_mesh": "auto non-uniform",
+            "mesh_refinement": "conformal variant 1",
+            "mesh_accuracy": MESH_ACCURACY,
+            "uniform_global_fine_mesh": False,
+            "source_only_local_overrides": [],
+            "material_successor_local_fine_regions": [
+                "TaIrTe4",
+                "illuminated straight edge",
+                "Q extraction region",
+            ],
+            "TaIrTe4_z_resolution": "separate local z override",
+        },
+        "Q_processing": {
+            "clipping": False,
+            "smoothing": False,
+            "gain": False,
+            "rescaling": False,
         },
         "monitors": MONITORS,
     }
@@ -287,6 +311,34 @@ def source_readback(fdtd: Any) -> dict[str, Any]:
     }
 
 
+def domain_readback(fdtd: Any) -> dict[str, Any]:
+    numeric = {
+        prop: scalar(fdtd.getnamed("FDTD", prop), f"FDTD.{prop}")
+        for prop in (
+            "x min",
+            "x max",
+            "y min",
+            "y max",
+            "z min",
+            "z max",
+            "pml layers",
+            "mesh accuracy",
+        )
+    }
+    return {
+        **numeric,
+        "mesh type": str(fdtd.getnamed("FDTD", "mesh type")),
+        "mesh refinement": str(fdtd.getnamed("FDTD", "mesh refinement")),
+        "boundaries": {
+            f"{axis}_{side}": str(
+                fdtd.getnamed("FDTD", f"{axis} {side} bc")
+            )
+            for axis in "xyz"
+            for side in ("min", "max")
+        },
+    }
+
+
 def monitor_fields(fdtd: Any, name: str) -> dict[str, Any]:
     coordinates = {
         axis: np.asarray(fdtd.getdata(name, axis, 1), float).reshape(-1)
@@ -337,6 +389,17 @@ def fit_gaussian(
     solved, *_ = np.linalg.lstsq(
         matrix, np.log(intensity[selected]), rcond=None
     )
+    fitted = np.exp(
+        solved[0]
+        + solved[1] * xx
+        + solved[2] * yy
+        + solved[3] * xx**2
+        + solved[4] * yy**2
+    )
+    fit_nrmse = float(
+        np.linalg.norm(intensity - fitted)
+        / max(np.linalg.norm(intensity), np.finfo(float).tiny)
+    )
     ax = solved[3]
     ay = solved[4]
     fitted_wx = np.sqrt(-2.0 / ax) if ax < 0.0 else np.nan
@@ -354,6 +417,11 @@ def fit_gaussian(
         "fitted_waist_x_m": float(fitted_wx),
         "fitted_waist_y_m": float(fitted_wy),
         "fitted_waist_effective_m": float(np.sqrt(fitted_wx * fitted_wy)),
+        "Gaussian_fit_NRMSE": fit_nrmse,
+        "fitted_xy_ellipticity": float(
+            abs(fitted_wx - fitted_wy)
+            / max(0.5 * (fitted_wx + fitted_wy), np.finfo(float).tiny)
+        ),
     }
 
 
@@ -369,7 +437,17 @@ def plane_metrics(fields: dict[str, Any], source_power_w: float) -> tuple[dict[s
         np.abs(ex_down) ** 2 + np.abs(ey_down) ** 2
     ) / (2.0 * ETA0)
     intensity = np.asarray(intensity, float).reshape(x.size, y.size)
+    poynting_z = 0.5 * np.real(
+        electric["x"] * np.conj(magnetic["y"])
+        - electric["y"] * np.conj(magnetic["x"])
+    )
+    poynting_z = np.asarray(poynting_z, float).reshape(x.size, y.size)
+    downward_poynting = -poynting_z
     fit = fit_gaussian(x, y, intensity)
+    peak = float(np.max(intensity))
+    boundary = np.concatenate(
+        [intensity[0, :], intensity[-1, :], intensity[:, 0], intensity[:, -1]]
+    )
     e2 = {
         axis: integrate_xy(
             np.asarray(np.abs(electric[axis]) ** 2, float).reshape(
@@ -385,6 +463,19 @@ def plane_metrics(fields: dict[str, Any], source_power_w: float) -> tuple[dict[s
     result = {
         **fit,
         "power_over_sourcepower": fit["integrated_power_W"] / source_power_w,
+        "incident_power_integrated_W": fit["integrated_power_W"],
+        "downward_Poynting_power_W": integrate_xy(
+            downward_poynting, x, y
+        ),
+        "downward_Poynting_power_over_sourcepower": (
+            integrate_xy(downward_poynting, x, y) / source_power_w
+        ),
+        "boundary_max_intensity_over_peak": float(
+            np.max(boundary) / peak
+        ),
+        "boundary_mean_intensity_over_peak": float(
+            np.mean(boundary) / peak
+        ),
         "beam_center_error_m": float(
             np.hypot(fit["fitted_center_x_m"], fit["fitted_center_y_m"])
         ),
@@ -404,6 +495,8 @@ def plane_metrics(fields: dict[str, Any], source_power_w: float) -> tuple[dict[s
         "downward_Ex": ex_down,
         "downward_Ey": ey_down,
         "downward_intensity_W_m2": intensity,
+        "Poynting_z_W_m2": poynting_z,
+        "downward_Poynting_W_m2": downward_poynting,
         **{
             f"E{axis}": electric[axis]
             for axis in "xyz"
@@ -579,6 +672,7 @@ def main() -> int:
         fdtd.runsetup()
         mesh = mesh_readback(fdtd)
         readback = source_readback(fdtd)
+        domain = domain_readback(fdtd)
         expected_distance = -(contract.SOURCE_Z_M - contract.FOCUS_Z_M)
         checks = {
             "v261_session": "2026" in str(fdtd.version())
@@ -590,7 +684,7 @@ def main() -> int:
                 for side in ("min", "max")
             ),
             "no_periodic_or_Bloch": True,
-            "scalar_source_candidate": bool(
+            "scalar_source_fixed": bool(
                 round(readback["use scalar approximation"])
             ),
             "waist_readback": np.isclose(
@@ -605,6 +699,31 @@ def main() -> int:
                 rtol=0.0,
                 atol=1e-15,
             ),
+            "source_bounds_readback": all(
+                np.isclose(readback[prop], expected, rtol=0.0, atol=1e-15)
+                for prop, expected in {
+                    "x min": -0.5 * contract.SOURCE_SPAN_M,
+                    "x max": 0.5 * contract.SOURCE_SPAN_M,
+                    "y min": -0.5 * contract.SOURCE_SPAN_M,
+                    "y max": 0.5 * contract.SOURCE_SPAN_M,
+                    "z": contract.SOURCE_Z_M,
+                }.items()
+            ),
+            "PML_bounds_readback": all(
+                np.isclose(domain[prop], expected, rtol=0.0, atol=1e-15)
+                for prop, expected in {
+                    "x min": -0.5 * contract.LATERAL_DOMAIN_M,
+                    "x max": 0.5 * contract.LATERAL_DOMAIN_M,
+                    "y min": -0.5 * contract.LATERAL_DOMAIN_M,
+                    "y max": 0.5 * contract.LATERAL_DOMAIN_M,
+                    "z min": contract.FDTD_Z_MIN_M,
+                    "z max": contract.FDTD_Z_MAX_M,
+                }.items()
+            ),
+            "auto_nonuniform_not_uniform_fine_mesh": (
+                "auto" in domain["mesh type"].lower()
+                and "non" in domain["mesh type"].lower()
+            ),
             "GPU_resource_active": resources["2"]["active"].strip() == "1",
             "GPU_resource_has_gpu_flag": "-gpu"
             in resources["2"]["solver extra command line options"],
@@ -618,6 +737,7 @@ def main() -> int:
             "version": str(fdtd.version()),
             "built_contract": built,
             "source_readback": readback,
+            "domain_readback": domain,
             "resources": resources,
             "checks": checks,
             "mesh_after_runsetup": {
@@ -676,15 +796,29 @@ def main() -> int:
                 ),
             )
             log = log_audit(output)
-            focus = planes["focus_plane"]
+            focus = planes["flake_target_plane"]
             acceptance = {
-                "requested_vs_realized_fitted_waist_lt_0p5_percent": (
+                "requested_vs_realized_fitted_waist_x_lt_0p5_percent": (
                     abs(
-                        focus["fitted_waist_effective_m"]
+                        focus["fitted_waist_x_m"]
                         - contract.SELECTED_W0_M
                     )
                     / contract.SELECTED_W0_M
                     < 0.005
+                ),
+                "requested_vs_realized_fitted_waist_y_lt_0p5_percent": (
+                    abs(
+                        focus["fitted_waist_y_m"]
+                        - contract.SELECTED_W0_M
+                    )
+                    / contract.SELECTED_W0_M
+                    < 0.005
+                ),
+                "Gaussian_fit_NRMSE_lt_0p5_percent": (
+                    focus["Gaussian_fit_NRMSE"] < FIT_RESIDUAL_GATE
+                ),
+                "xy_ellipticity_lt_0p5_percent": (
+                    focus["fitted_xy_ellipticity"] < ELLIPTICITY_GATE
                 ),
                 "beam_center_error_lt_one_optical_cell": (
                     focus["beam_center_error_m"]
@@ -705,7 +839,15 @@ def main() -> int:
                     <= 1.0e-4
                 ),
                 "incident_power_closure_lt_0p5_percent": (
-                    abs(focus["power_over_sourcepower"] - 1.0) < 0.005
+                    abs(
+                        focus["downward_Poynting_power_over_sourcepower"]
+                        - 1.0
+                    )
+                    < 0.005
+                ),
+                "actual_mesh_readback_available": bool(mesh["available"]),
+                "GPU_memory_readback_available": (
+                    log["precise_GPU_memory_GiB"] is not None
                 ),
                 "no_NaN_or_Inf": all(
                     row["all_fields_finite"] for row in planes.values()
@@ -715,11 +857,15 @@ def main() -> int:
                     log["final_auto_shutoff"] is not None
                     and log["final_auto_shutoff"] <= args.auto_shutoff_min
                 ),
-                "field_profile_time_convergence_lt_0p5_percent": False,
             }
+            mandatory_pass = all(acceptance.values())
             payload.update(
                 {
-                    "status": "SOURCE_ONLY_SINGLE_DURATION_COMPLETE",
+                    "status": (
+                        "VALIDATED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY"
+                        if mandatory_pass
+                        else "FAILED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY_GATE"
+                    ),
                     "GPU_resource_used": resource,
                     "solver_wall_time_s": wall_s,
                     "source_power_readback_W": source_power,
@@ -732,10 +878,15 @@ def main() -> int:
                         "sha256": sha256(artifact),
                     },
                     "acceptance": acceptance,
-                    "acceptance_note": (
-                        "time-convergence is intentionally unresolved in one "
-                        "duration; the paired summarizer evaluates it"
-                    ),
+                    "source_only_gate_passed": mandatory_pass,
+                    "successor_sequence_authorized": mandatory_pass,
+                    "successor_sequence": [
+                        "planar TaIrTe4, E parallel a",
+                        "planar TaIrTe4, E parallel b",
+                        "straight 45-degree finite edge, E parallel a",
+                        "straight 45-degree finite edge, E parallel b",
+                    ],
+                    "thin_lens_status": "OPTIONAL_FUTURE_DIAGNOSTIC",
                 }
             )
             fdtd.save(str(project))

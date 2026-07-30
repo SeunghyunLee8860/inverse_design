@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Build the paper-IR beam audit and one source-only candidate contract.
+"""Build the paper-IR beam audit and fixed scalar source contract.
 
 This module is deliberately solver-free.  It separates values stated in the
 paper/SI from inferences and numerical assumptions, then derives a finite
-scalar-Gaussian aperture for the first source-only certification.  The scalar
-case is a candidate only: the selected waist is comparable to the wavelength,
-so a matched fully-vectorial thin-lens comparison remains a production gate.
+scalar-Gaussian aperture for the first source-only certification.  The user
+has selected this explicitly assumed scalar scenario for the present sanity
+check.  A vectorial thin-lens comparison is optional and is not a gate.
 """
 
 from __future__ import annotations
@@ -197,12 +197,13 @@ def main() -> int:
             ),
         ),
         beam_scenario(
-            "selected_scalar_source_only_candidate",
+            "fixed_paper_like_scalar_Gaussian_assumed_waist",
             "EXPLICIT_ASSUMPTION",
             SELECTED_W0_M,
             (
-                "rounded Gaussian-equivalent radius for the first scalar "
-                "source-only certification; not yet production approved"
+                "fixed scalar-Gaussian scenario with an explicitly assumed "
+                "1/e^2 intensity waist radius; not an experimentally "
+                "reproduced or paper-certified beam"
             ),
         ),
     ]
@@ -313,15 +314,15 @@ def main() -> int:
             "classification": "EXPLICIT_ASSUMPTION",
             "item": "first source model",
             "value": (
-                "scalar Gaussian candidate w0=12 um; vector thin-lens match "
-                "required before production"
+                "scalar Gaussian w0=12 um fixed for this sanity check; "
+                "thin-lens comparison is optional and not a gate"
             ),
             "location": "numerical source contract",
         },
     ]
 
     payload = {
-        "status": "PROPOSED_PAPER_IR_SOURCE_CONTRACT_READY_FOR_GPU_PROBE",
+        "status": "FIXED_PAPER_LIKE_SCALAR_GAUSSIAN_CONTRACT_READY_FOR_GPU_PROBE",
         "generation_commit": git_commit(),
         "paper_sources": {
             "main": {
@@ -337,16 +338,18 @@ def main() -> int:
         },
         "paper_audit": paper_records,
         "beam_scenarios": scenarios,
-        "selected_source_only_candidate": {
+        "selected_source_only_scenario": {
             **selected,
             "wavelength_m": WAVELENGTH_M,
             "incident_power_for_later_physical_scaling_W": REPORTED_POWER_W,
-            "source_model": "scalar Gaussian candidate",
-            "production_approval": False,
-            "production_blocker": (
-                "w0 is only about 1.09 wavelengths; matched vectorial "
-                "thin-lens flake-plane field comparison remains required"
+            "source_model": "scalar Gaussian; waist size and position",
+            "scenario_label": (
+                "paper-like scalar-Gaussian scenario with an explicitly "
+                "assumed waist"
             ),
+            "approved_for_current_sanity_check": True,
+            "experimentally_reproduced_beam": False,
+            "paper_certified_beam": False,
             "propagation_direction": "-z",
             "distance_from_waist_property_m": -(SOURCE_Z_M - FOCUS_Z_M),
             "distance_sign_note": (
@@ -367,23 +370,34 @@ def main() -> int:
             "periodic_or_Bloch": False,
         },
         "aperture_gate_ratios": ratios,
-        "scalar_vector_match_contract": {
-            "required": True,
-            "not_implemented_by_boolean_only": True,
-            "vector_source": "fully vectorial thin-lens, objective NA=0.4",
-            "must_match": [
-                "flake-plane incident power",
-                "beam center",
-                "fitted and second-moment widths",
-                "focus",
-                "aperture/NA",
-                "normalized flake-plane intensity",
+        "optional_future_diagnostic": {
+            "name": "scalar versus vectorial thin-lens comparison",
+            "required_for_current_sanity_check": False,
+            "blocks_source_only_or_material_cases": False,
+            "execute_now": False,
+        },
+        "successor_optical_sequence": {
+            "condition": "only after the scalar source-only gate passes",
+            "cases": [
+                "planar TaIrTe4, E parallel a",
+                "planar TaIrTe4, E parallel b",
+                "straight 45-degree finite edge, E parallel a",
+                "straight 45-degree finite edge, E parallel b",
             ],
-            "gates": {
-                "incident_power_relative_difference": 0.005,
-                "beam_width_relative_difference": 0.005,
-                "normalized_intensity_NRMSE": 0.005,
-            },
+            "same_scalar_source_geometry": True,
+            "same_incident_power_normalization": True,
+            "polarization_specific_raw_Q_rescaling_prohibited": True,
+        },
+        "mesh_contract": {
+            "global_mesh": "auto non-uniform, conformal variant 1, accuracy 5",
+            "uniform_global_fine_mesh": False,
+            "material_case_local_fine_regions": [
+                "TaIrTe4",
+                "illuminated straight edge",
+                "Q extraction region",
+            ],
+            "far_air_SiO2_Si": "wavelength-appropriate nonuniform coarse mesh",
+            "TaIrTe4_thickness_resolution": "separate local z override",
         },
         "prohibited": {
             "thermal": True,
@@ -472,9 +486,9 @@ def main() -> int:
     figure.savefig(output / "paper_ir_source_aperture_contract.png", dpi=180)
     plt.close(figure)
 
-    report = f"""# Paper-like IR beam audit and proposed source contract
+    report = f"""# Paper-like IR beam audit and fixed scalar source contract
 
-Status: `PROPOSED_PAPER_IR_SOURCE_CONTRACT_READY_FOR_GPU_PROBE`
+Status: `FIXED_PAPER_LIKE_SCALAR_GAUSSIAN_CONTRACT_READY_FOR_GPU_PROBE`
 
 No FDTD, thermal, PTE, weighting-potential, adjoint, gradient, or
 optimization solve was run by this audit.
@@ -502,12 +516,15 @@ The paper does **not** state whether the 9–16 µm spot is a radius, diameter,
 FWHM, or 1/e^2 width.  It does not publish the exact wavelength-specific
 11 µm spot, waist-plane location, objective pupil fill, or alignment error.
 
-## Selected first source-only candidate
+## Fixed source-only scenario
 
 The 0.4-NA Airy FWHM estimate at 11 µm is
 `{inferred_fwhm*1e6:.6f} µm`; its same-FWHM Gaussian radius is
 `{inferred_w0*1e6:.6f} µm`.  The first candidate therefore uses a rounded
 `w0=12.0 µm`, explicitly as an assumption rather than a paper value.
+Its required label is **paper-like scalar-Gaussian scenario with an
+explicitly assumed waist**.  It is not an experimentally reproduced beam or
+a paper-certified beam.
 
 - eta=lambda/(pi*w0): `{selected['eta_paraxial']:.6f}`
 - Rayleigh range: `{selected['Rayleigh_range_m']*1e6:.6f} µm`
@@ -524,19 +541,24 @@ The backward source must use
 `distance from waist = {-selected['source_to_focus_distance_m']*1e6:.6f} µm`.
 The legacy positive sign is not reused.
 
-## Scalar/vector status
+## Source and mesh decision
 
-Since `w0` is only about 1.09 wavelengths, the scalar source is a
-source-only calibration candidate, not a production approval.  Before any
-planar/edge material case, it must be matched against a fully vectorial
-thin-lens source using NA=0.4 by realized flake-plane power, center, fitted
-and second-moment widths, focus, and normalized spatial intensity.  Merely
-toggling the scalar Boolean with identical numeric parameters is prohibited.
+The scalar Gaussian is fixed for this sanity check.  A vectorial thin-lens
+comparison is an optional future diagnostic and is neither executed nor kept
+as a blocker.  After one homogeneous-air GPU source-only case passes, the
+next cases are planar a/b and straight-45-degree-edge a/b with the identical
+scalar geometry and incident-power normalization.
+
+The optical solver uses auto non-uniform mesh, conformal variant 1, accuracy
+5.  Material cases must use local fine regions at TaIrTe4, the illuminated
+edge, and Q extraction volume, plus a separate TaIrTe4 z override.  A uniform
+fine mesh over the 60-µm domain is prohibited, as are Q clipping, smoothing,
+gain, and rescaling.
 """
     (output / "PAPER_IR_BEAM_CONTRACT_REPORT.md").write_text(
         report, encoding="utf-8"
     )
-    print(json.dumps(payload["selected_source_only_candidate"], indent=2))
+    print(json.dumps(payload["selected_source_only_scenario"], indent=2))
     return 0
 
 

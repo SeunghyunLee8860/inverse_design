@@ -15,6 +15,8 @@ from photothermal_pte.validation.paper_ir_sanity.audit_paper_ir_beam_contract im
     square_metrics,
 )
 from photothermal_pte.validation.paper_ir_sanity.validate_paper_ir_source_only_gpu import (
+    ELLIPTICITY_GATE,
+    FIT_RESIDUAL_GATE,
     fit_gaussian,
     strict_gpu_run,
 )
@@ -52,6 +54,8 @@ def test_plane_fit_recovers_gaussian_1e2_radius() -> None:
         SELECTED_W0_M,
         rtol=1e-10,
     )
+    assert fit["Gaussian_fit_NRMSE"] < FIT_RESIDUAL_GATE
+    assert fit["fitted_xy_ellipticity"] < ELLIPTICITY_GATE
 
 
 def test_gpu_runner_never_requests_cpu_solver() -> None:

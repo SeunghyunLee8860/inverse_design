@@ -17,6 +17,29 @@ from photothermal_pte.validation.paper_ir_sanity import (
 
 
 class PaperIrDiagnosticSmokeTests(unittest.TestCase):
+    def test_production_scalar_source_contract_defaults_are_fixed(self) -> None:
+        argv = [
+            "run_lumerical_device_a_ir_q.py",
+            "--output-dir",
+            "/tmp/not-created-by-parse",
+            "--case",
+            "empty-stack",
+            "--polarization",
+            "a",
+            "--geometry",
+            "planar-stack",
+        ]
+        with patch.object(sys, "argv", argv):
+            args = runner.parse_args()
+        self.assertEqual(args.execution_contract, "production")
+        self.assertEqual(args.domain_um, 60.0)
+        self.assertEqual(args.source_span_um, 50.0)
+        self.assertEqual(args.waist_um, 12.0)
+        self.assertTrue(
+            np.allclose(args.absorption_bounds_m["x"], (-27e-6, 27e-6))
+        )
+        self.assertLess(args.inner_box["x"][1], 0.5 * args.domain_um * 1e-6)
+
     def test_reduced_contract_has_nested_nominal_bounds(self) -> None:
         argv = [
             "run_lumerical_device_a_ir_q.py",

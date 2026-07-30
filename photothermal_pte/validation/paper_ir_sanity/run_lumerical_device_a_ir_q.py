@@ -119,13 +119,13 @@ def parse_args() -> argparse.Namespace:
         choices=("device-a-polygon", "straight-45-edge", "planar-stack"),
         default="device-a-polygon",
     )
-    parser.add_argument("--domain-um", type=float, default=44.0)
+    parser.add_argument("--domain-um", type=float, default=60.0)
     parser.add_argument("--pml-layers", type=int, default=24)
     parser.add_argument("--flake-dz-nm", type=float, default=5.0)
     parser.add_argument("--simulation-time-ps", type=float, default=1.2)
     parser.add_argument("--auto-shutoff-min", type=float, default=1.0e-5)
-    parser.add_argument("--source-span-um", type=float, default=32.0)
-    parser.add_argument("--waist-um", type=float, default=6.5)
+    parser.add_argument("--source-span-um", type=float, default=50.0)
+    parser.add_argument("--waist-um", type=float, default=12.0)
     parser.add_argument("--beam-x-um", type=float, default=0.0)
     parser.add_argument("--beam-y-um", type=float, default=0.0)
     parser.add_argument("--incident-reference")
@@ -134,7 +134,8 @@ def parse_args() -> argparse.Namespace:
         choices=("production", "diagnostic-smoke", "edge-isolation-smoke"),
         default="production",
         help=(
-            "production preserves the paper-like geometry; diagnostic-smoke "
+            "production uses the fixed paper-like scalar-Gaussian scenario "
+            "with an explicitly assumed waist; diagnostic-smoke "
             "is a separately labeled reduced-cost engine/material/Q check; "
             "edge-isolation-smoke is the approved w0=2 um planar/edge "
             "observable-Q diagnostic"
@@ -157,9 +158,7 @@ def parse_args() -> argparse.Namespace:
         "diagnostic-smoke",
         "edge-isolation-smoke",
     )
-    minimum_domain_um = (
-        40.0 if not reduced_smoke else 10.0
-    )
+    minimum_domain_um = 60.0 if not reduced_smoke else 10.0
     if args.domain_um < minimum_domain_um:
         parser.error(
             f"{args.execution_contract} optical domain must be at least "
@@ -167,6 +166,18 @@ def parse_args() -> argparse.Namespace:
         )
     if args.source_span_um >= args.domain_um - 2.0:
         parser.error("source aperture needs at least 1 um PML clearance per side")
+    if (
+        args.execution_contract == "production"
+        and not (
+            np.isclose(args.domain_um, 60.0)
+            and np.isclose(args.source_span_um, 50.0)
+            and np.isclose(args.waist_um, 12.0)
+        )
+    ):
+        parser.error(
+            "production scalar source contract is fixed at domain=60 um, "
+            "source span=50 um, and w0=12 um"
+        )
     if (
         args.waist_um <= 0
         or args.flake_dz_nm <= 0
@@ -228,10 +239,11 @@ def parse_args() -> argparse.Namespace:
             [[-outer, -outer], [outer, -outer], [outer, outer]],
             dtype=float,
         )
-        # Production keeps 4 um analysis padding.  The separate smoke contract
+        # The fixed 60/50-um production contract keeps 2 um analysis padding.
+        # The separate smoke contract
         # uses 1.5 um only to exercise engine/material/Q/closure at lower cost.
         analysis_padding_um = (
-            4.0 if args.execution_contract == "production" else 1.5
+            2.0 if args.execution_contract == "production" else 1.5
         )
         half_analysis = 0.5 * args.source_span_um + analysis_padding_um
         absorption_bounds_um = {
@@ -258,7 +270,7 @@ def parse_args() -> argparse.Namespace:
             dtype=float,
         )
         analysis_padding_um = (
-            4.0 if args.execution_contract == "production" else 1.5
+            2.0 if args.execution_contract == "production" else 1.5
         )
         half_analysis = 0.5 * args.source_span_um + analysis_padding_um
         absorption_bounds_um = {
@@ -1259,7 +1271,7 @@ def add_geometry_and_monitors(
     source["use scalar approximation"] = True
     source["beam parameters"] = "Waist size and position"
     source["waist radius w0"] = args.waist_um * 1e-6
-    source["distance from waist"] = SOURCE_Z_M - FOCUS_Z_M
+    source["distance from waist"] = -(SOURCE_Z_M - FOCUS_Z_M)
     source["x min"], source["x max"] = source_bounds["x"]
     source["y min"], source["y max"] = source_bounds["y"]
     source["z"] = SOURCE_Z_M
@@ -1449,6 +1461,12 @@ def add_geometry_and_monitors(
             "polarization_axis": args.polarization,
             "simulation_time_s": args.simulation_time_ps * 1e-12,
             "auto_shutoff_min": args.auto_shutoff_min,
+            "scenario_label": (
+                "paper-like scalar-Gaussian scenario with an explicitly "
+                "assumed waist"
+            ),
+            "experimentally_reproduced_beam": False,
+            "paper_certified_beam": False,
         },
         "domain_bounds_m": {
             "x": [-0.5 * domain_m, 0.5 * domain_m],
@@ -1457,6 +1475,23 @@ def add_geometry_and_monitors(
         },
         "all_six_boundaries": "PML",
         "periodic": False,
+        "Q_processing": {
+            "clipping": False,
+            "smoothing": False,
+            "gain": False,
+            "global_rescaling": False,
+            "polarization_matching_rescaling": False,
+        },
+        "large_domain_mesh_policy": {
+            "uniform_global_fine_mesh": False,
+            "global_mesh": "auto non-uniform, conformal variant 1, accuracy 5",
+            "local_region": (
+                "flake/Q bounds receive the dedicated mesh object; lateral "
+                "resolution remains auto non-uniform and TaIrTe4 z uses the "
+                "separate flake_dz override"
+            ),
+            "far_air_SiO2_Si": "wavelength-appropriate automatic coarse mesh",
+        },
         "execution_contract": args.execution_contract,
         "monitor_contract": {
             "pabs_field_and_index": True,
@@ -1485,13 +1520,13 @@ def add_geometry_and_monitors(
                     "paper-like optical result and not a replacement for the "
                     "48 um production contract"
                 ),
-                "production_lateral_domain_um": 48.0,
+                "production_lateral_domain_um": 60.0,
                 "diagnostic_lateral_domain_um": args.domain_um,
-                "production_source_span_um": 32.0,
+                "production_source_span_um": 50.0,
                 "diagnostic_source_span_um": args.source_span_um,
-                "production_waist_um": 6.5,
+                "production_waist_um": 12.0,
                 "diagnostic_waist_um": args.waist_um,
-                "production_absorption_padding_um": 4.0,
+                "production_absorption_padding_um": 2.0,
                 "diagnostic_absorption_padding_um": 1.5,
                 "removed_monitors": (
                     [
@@ -1589,6 +1624,23 @@ def assert_contract(
     checks["correct_waist"] = np.isclose(
         base.scalar(fdtd.getnamed(base.SOURCE_NAME, "waist radius w0"), "waist"),
         args.waist_um * 1e-6,
+        atol=1e-15,
+    )
+    checks["scalar_Gaussian_source"] = bool(
+        round(
+            base.scalar(
+                fdtd.getnamed(base.SOURCE_NAME, "use scalar approximation"),
+                "source.use scalar approximation",
+            )
+        )
+    )
+    checks["negative_converging_distance_from_waist"] = np.isclose(
+        base.scalar(
+            fdtd.getnamed(base.SOURCE_NAME, "distance from waist"),
+            "source.distance from waist",
+        ),
+        -(SOURCE_Z_M - FOCUS_Z_M),
+        rtol=0.0,
         atol=1e-15,
     )
     checks["correct_dz"] = np.isclose(
