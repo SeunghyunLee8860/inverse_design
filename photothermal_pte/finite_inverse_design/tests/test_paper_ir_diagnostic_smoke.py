@@ -6,6 +6,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+import numpy as np
+
 from photothermal_pte.validation.paper_ir_sanity import (
     run_lumerical_device_a_ir_q as runner,
 )
@@ -34,6 +36,8 @@ class PaperIrDiagnosticSmokeTests(unittest.TestCase):
             "2",
             "--flake-dz-nm",
             "10",
+            "--simulation-time-ps",
+            "4",
             "--execution-contract",
             "diagnostic-smoke",
         ]
@@ -41,7 +45,12 @@ class PaperIrDiagnosticSmokeTests(unittest.TestCase):
             args = runner.parse_args()
         self.assertEqual(args.execution_contract, "diagnostic-smoke")
         self.assertEqual(args.absorption_bounds_m["x"], (-4.5e-6, 4.5e-6))
-        self.assertEqual(args.inner_box["x"], (-5.0e-6, 5.0e-6))
+        self.assertTrue(
+            np.allclose(args.inner_box["x"], (-4.55e-6, 4.55e-6))
+        )
+        self.assertTrue(
+            np.allclose(args.inner_box["z"], (-180.0e-9, 50.0e-9))
+        )
         self.assertLess(args.inner_box["x"][1], 0.5 * args.domain_um * 1e-6)
 
     def test_diagnostic_contract_rejects_empty_stack(self) -> None:
@@ -57,6 +66,8 @@ class PaperIrDiagnosticSmokeTests(unittest.TestCase):
             "12",
             "--source-span-um",
             "6",
+            "--simulation-time-ps",
+            "4",
             "--execution-contract",
             "diagnostic-smoke",
         ]
@@ -100,6 +111,31 @@ class PaperIrDiagnosticSmokeTests(unittest.TestCase):
         self.assertFalse(payload["PTE_run"])
         self.assertFalse(payload["adjoint_run"])
         self.assertFalse(payload["optimization_run"])
+
+    def test_bounded_dual_cell_weights_close_on_realized_faces(self) -> None:
+        coordinate = np.asarray([0.25, 0.75])
+        weights = runner.bounded_dual_cell_weights(
+            coordinate,
+            0.0,
+            1.0,
+        )
+        self.assertTrue(
+            np.allclose(weights, np.asarray([0.5, 0.5]))
+        )
+        volume = runner.integrate_xyz_bounded(
+            np.ones((2, 2, 2)),
+            {
+                "x": coordinate,
+                "y": coordinate,
+                "z": coordinate,
+            },
+            {
+                "x": (0.0, 1.0),
+                "y": (0.0, 1.0),
+                "z": (0.0, 1.0),
+            },
+        )
+        self.assertAlmostEqual(volume, 1.0)
 
 
 if __name__ == "__main__":

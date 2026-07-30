@@ -19,6 +19,7 @@ import argparse
 import importlib.util
 import json
 import os
+import re
 import shlex
 import sys
 from pathlib import Path
@@ -173,6 +174,20 @@ def parse_args() -> argparse.Namespace:
         and args.case != "finite-flake"
     ):
         parser.error("diagnostic smoke is defined only for finite-flake")
+    if (
+        args.execution_contract == "diagnostic-smoke"
+        and args.simulation_time_ps < 4.0
+    ):
+        parser.error(
+            "diagnostic rerun requires at least 4 ps to permit source decay"
+        )
+    if (
+        args.execution_contract == "diagnostic-smoke"
+        and args.auto_shutoff_min > 1.0e-5
+    ):
+        parser.error(
+            "diagnostic rerun requires auto-shutoff min <= 1e-5"
+        )
     args.polarization_deg = 90.0 if args.polarization == "a" else 0.0
     args.material_name = (
         PRODUCTION_MATERIAL_NAME
@@ -223,18 +238,30 @@ def parse_args() -> argparse.Namespace:
         for axis, bounds in absorption_bounds_um.items()
     }
     args.absorption_bounds_m["z"] = (-FLAKE_THICKNESS_M, 0.0)
-    flux_padding_m = 0.5e-6
-    args.inner_box = {
-        "x": (
-            args.absorption_bounds_m["x"][0] - flux_padding_m,
-            args.absorption_bounds_m["x"][1] + flux_padding_m,
-        ),
-        "y": (
-            args.absorption_bounds_m["y"][0] - flux_padding_m,
-            args.absorption_bounds_m["y"][1] + flux_padding_m,
-        ),
-        "z": (-1.2e-6, SOURCE_Z_M - 0.5e-6),
-    }
+    if args.execution_contract == "diagnostic-smoke":
+        # Use one nominal control volume for both pabs_adv and all six power
+        # faces.  Post-run gates independently read the realized coordinates
+        # and close the volume quadrature on the realized face locations.
+        args.inner_box = {
+            axis: (
+                args.absorption_bounds_m[axis][0] - PABS_PADDING_M,
+                args.absorption_bounds_m[axis][1] + PABS_PADDING_M,
+            )
+            for axis in "xyz"
+        }
+    else:
+        flux_padding_m = 0.5e-6
+        args.inner_box = {
+            "x": (
+                args.absorption_bounds_m["x"][0] - flux_padding_m,
+                args.absorption_bounds_m["x"][1] + flux_padding_m,
+            ),
+            "y": (
+                args.absorption_bounds_m["y"][0] - flux_padding_m,
+                args.absorption_bounds_m["y"][1] + flux_padding_m,
+            ),
+            "z": (-1.2e-6, SOURCE_Z_M - 0.5e-6),
+        }
     inner_limit_um = max(
         abs(value) * 1e6
         for axis in ("x", "y")
@@ -473,11 +500,284 @@ def _coordinate_summary(values: np.ndarray) -> dict[str, Any]:
     }
 
 
+def _monitor_coordinate(
+    fdtd: Any,
+    monitor: str,
+    axis: str,
+) -> np.ndarray:
+    coordinate = np.asarray(
+        fdtd.getdata(monitor, axis, 1),
+        float,
+    ).reshape(-1)
+    if coordinate.size == 0 or np.any(~np.isfinite(coordinate)):
+        raise RuntimeError(
+            f"invalid {monitor}.{axis} realized coordinate"
+        )
+    if coordinate.size > 1 and np.any(np.diff(coordinate) <= 0.0):
+        raise RuntimeError(
+            f"non-increasing {monitor}.{axis} realized coordinate"
+        )
+    return coordinate
+
+
+def bounded_dual_cell_weights(
+    coordinate: np.ndarray,
+    low: float,
+    high: float,
+) -> np.ndarray:
+    """Close nodal samples on independently realized control-volume faces."""
+    values = np.asarray(coordinate, float).reshape(-1)
+    if (
+        values.size == 0
+        or not np.isfinite(low)
+        or not np.isfinite(high)
+        or high <= low
+        or np.any(~np.isfinite(values))
+        or (values.size > 1 and np.any(np.diff(values) <= 0.0))
+    ):
+        raise RuntimeError("invalid bounded dual-cell coordinate contract")
+    tolerance = 1.0e-15
+    if values[0] < low - tolerance or values[-1] > high + tolerance:
+        raise RuntimeError(
+            "Q sample coordinate lies outside realized flux faces: "
+            f"[{values[0]}, {values[-1]}] versus [{low}, {high}]"
+        )
+    if values.size == 1:
+        return np.asarray([high - low], float)
+    midpoints = 0.5 * (values[:-1] + values[1:])
+    edges = np.concatenate(([low], midpoints, [high]))
+    weights = np.diff(edges)
+    if np.any(weights <= 0.0):
+        raise RuntimeError(
+            "realized face is too far inside the Q sampling support"
+        )
+    if not np.isclose(
+        float(np.sum(weights)),
+        high - low,
+        rtol=1.0e-13,
+        atol=1.0e-18,
+    ):
+        raise RuntimeError("bounded dual-cell weights do not close")
+    return weights
+
+
+def integrate_xyz_bounded(
+    values: np.ndarray,
+    coordinates: dict[str, np.ndarray],
+    bounds: dict[str, tuple[float, float] | list[float]],
+) -> float:
+    weights = {
+        axis: bounded_dual_cell_weights(
+            coordinates[axis],
+            float(bounds[axis][0]),
+            float(bounds[axis][1]),
+        )
+        for axis in "xyz"
+    }
+    return float(
+        np.einsum(
+            "i,j,k,ijk->",
+            weights["x"],
+            weights["y"],
+            weights["z"],
+            np.asarray(values, float),
+            optimize=True,
+        )
+    )
+
+
+def native_component_absorption_bounded(
+    base: Any,
+    fdtd: Any,
+    frequency_hz: float,
+    bounds: dict[str, tuple[float, float] | list[float]],
+) -> dict[str, Any]:
+    field_common = {
+        axis: _monitor_coordinate(fdtd, base.PABS_FIELD, axis)
+        for axis in "xyz"
+    }
+    index_common = {
+        axis: _monitor_coordinate(fdtd, base.PABS_INDEX, axis)
+        for axis in "xyz"
+    }
+    field_delta = {
+        axis: np.asarray(
+            fdtd.getdata(base.PABS_FIELD, f"delta_{axis}", 1),
+            float,
+        ).reshape(-1)
+        for axis in "xyz"
+    }
+    index_delta = {
+        axis: np.asarray(
+            fdtd.getdata(base.PABS_INDEX, f"delta_{axis}", 1),
+            float,
+        ).reshape(-1)
+        for axis in "xyz"
+    }
+    omega = 2.0 * np.pi * frequency_hz
+    component_power: dict[str, float] = {}
+    pairing: dict[str, Any] = {}
+    for component in "xyz":
+        electric = np.asarray(
+            fdtd.getdata(base.PABS_FIELD, f"E{component}", 1)
+        ).squeeze()
+        epsilon = (
+            np.asarray(
+                fdtd.getdata(
+                    base.PABS_INDEX,
+                    f"index_{component}",
+                    1,
+                )
+            ).squeeze()
+            ** 2
+        )
+        field_coordinates = {
+            axis: np.array(field_common[axis], copy=True)
+            for axis in "xyz"
+        }
+        index_coordinates = {
+            axis: np.array(index_common[axis], copy=True)
+            for axis in "xyz"
+        }
+        field_coordinates[component] += field_delta[component]
+        index_coordinates[component] += index_delta[component]
+        if electric.shape != epsilon.shape:
+            raise RuntimeError(
+                f"E/index shape mismatch for {component}: "
+                f"{electric.shape} != {epsilon.shape}"
+            )
+        coordinate_mismatch = {}
+        for axis in "xyz":
+            if (
+                field_coordinates[axis].shape
+                != index_coordinates[axis].shape
+            ):
+                raise RuntimeError(
+                    f"E/index {component}:{axis} coordinate shape mismatch"
+                )
+            coordinate_mismatch[axis] = float(
+                np.max(
+                    np.abs(
+                        field_coordinates[axis]
+                        - index_coordinates[axis]
+                    )
+                )
+            )
+        maximum_mismatch = max(coordinate_mismatch.values())
+        if maximum_mismatch > 1.0e-15:
+            raise RuntimeError(
+                "independent E/index coordinate mismatch exceeds 1 fm: "
+                f"{component}={maximum_mismatch}"
+            )
+        q_native = (
+            0.5
+            * base.EPS0
+            * omega
+            * np.abs(electric) ** 2
+            * np.imag(epsilon)
+        )
+        component_power[component] = integrate_xyz_bounded(
+            q_native,
+            field_coordinates,
+            bounds,
+        )
+        pairing[component] = {
+            "field_shape": list(electric.shape),
+            "index_shape": list(epsilon.shape),
+            "coordinate_mismatch_m": coordinate_mismatch,
+            "maximum_coordinate_mismatch_m": maximum_mismatch,
+            "field_coordinates_read_from": base.PABS_FIELD,
+            "index_coordinates_read_from": base.PABS_INDEX,
+            "field_delta_read_independently": True,
+            "index_delta_read_independently": True,
+        }
+    return {
+        "component_power_W": component_power,
+        "total_power_W": float(sum(component_power.values())),
+        "independent_field_index_pairing": pairing,
+        "maximum_coordinate_mismatch_m": max(
+            value["maximum_coordinate_mismatch_m"]
+            for value in pairing.values()
+        ),
+    }
+
+
+def final_logged_auto_shutoff(
+    output: Path,
+) -> dict[str, Any]:
+    logs = sorted(output.glob("*_p0.log"))
+    if not logs:
+        raise RuntimeError("FDTD engine log missing after completed run")
+    log_path = logs[-1]
+    text = log_path.read_text(encoding="utf-8", errors="replace")
+    values = re.findall(r"Auto Shutoff: ([0-9.eE+-]+)", text)
+    if not values:
+        raise RuntimeError("FDTD engine log has no auto-shutoff samples")
+    return {
+        "log_path": str(log_path.resolve()),
+        "final_value": float(values[-1]),
+        "simulation_completed_successfully": (
+            "Simulation completed successfully" in text
+        ),
+    }
+
+
+def realized_six_face_control_volume(
+    fdtd: Any,
+    faces: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    coordinates = {
+        key: {
+            axis: _monitor_coordinate(fdtd, face["name"], axis)
+            for axis in "xyz"
+        }
+        for key, face in faces.items()
+    }
+    bounds = {
+        axis: [
+            float(coordinates[f"{axis}_min"][axis][0]),
+            float(coordinates[f"{axis}_max"][axis][0]),
+        ]
+        for axis in "xyz"
+    }
+    transverse_mismatches: dict[str, float] = {}
+    for face_key, face_coordinates in coordinates.items():
+        normal_axis = face_key[0]
+        for axis in "xyz":
+            if axis == normal_axis:
+                continue
+            mismatch = max(
+                abs(float(face_coordinates[axis][0]) - bounds[axis][0]),
+                abs(float(face_coordinates[axis][-1]) - bounds[axis][1]),
+            )
+            transverse_mismatches[f"{face_key}:{axis}"] = mismatch
+    return {
+        "bounds_m": bounds,
+        "face_coordinates": {
+            face: {
+                axis: _coordinate_summary(values)
+                if values.size > 1
+                else {
+                    "shape": [1],
+                    "bounds_m": [float(values[0]), float(values[0])],
+                }
+                for axis, values in axes.items()
+            }
+            for face, axes in coordinates.items()
+        },
+        "maximum_transverse_boundary_mismatch_m": float(
+            max(transverse_mismatches.values(), default=0.0)
+        ),
+        "transverse_boundary_mismatch_m": transverse_mismatches,
+    }
+
+
 def post_run_native_mesh_audit(
     base: Any,
     fdtd: Any,
     output: Path,
     run_result: dict[str, Any],
+    faces: dict[str, dict[str, Any]],
 ) -> dict[str, Any]:
     solver = {axis: _mesh_coordinate(fdtd, axis) for axis in "xyz"}
     field_common = {
@@ -494,21 +794,78 @@ def post_run_native_mesh_audit(
         ).reshape(-1)
         for axis in "xyz"
     }
-    delta = {
+    field_delta = {
         axis: np.asarray(
             fdtd.getdata(base.PABS_FIELD, f"delta_{axis}", 1),
             float,
         ).reshape(-1)
         for axis in "xyz"
     }
-    component_coordinates: dict[str, dict[str, np.ndarray]] = {}
+    index_delta = {
+        axis: np.asarray(
+            fdtd.getdata(base.PABS_INDEX, f"delta_{axis}", 1),
+            float,
+        ).reshape(-1)
+        for axis in "xyz"
+    }
+    realized_control_volume = realized_six_face_control_volume(
+        fdtd,
+        faces,
+    )
+    realized_bounds = realized_control_volume["bounds_m"]
+    common_Q_bounded_weights = {
+        axis: bounded_dual_cell_weights(
+            field_common[axis],
+            float(realized_bounds[axis][0]),
+            float(realized_bounds[axis][1]),
+        )
+        for axis in "xyz"
+    }
+    common_Q_support = {
+        axis: {
+            "sample_bounds_m": [
+                float(field_common[axis][0]),
+                float(field_common[axis][-1]),
+            ],
+            "realized_face_bounds_m": realized_bounds[axis],
+            "low_face_to_first_sample_m": float(
+                field_common[axis][0] - realized_bounds[axis][0]
+            ),
+            "last_sample_to_high_face_m": float(
+                realized_bounds[axis][1] - field_common[axis][-1]
+            ),
+            "bounded_weight_sum_m": float(
+                np.sum(common_Q_bounded_weights[axis])
+            ),
+            "realized_span_m": float(
+                realized_bounds[axis][1] - realized_bounds[axis][0]
+            ),
+        }
+        for axis in "xyz"
+    }
+    field_component_coordinates: dict[
+        str, dict[str, np.ndarray]
+    ] = {}
+    index_component_coordinates: dict[
+        str, dict[str, np.ndarray]
+    ] = {}
     for component in "xyz":
-        coordinates = {
+        field_coordinates = {
             axis: np.array(field_common[axis], copy=True)
             for axis in "xyz"
         }
-        coordinates[component] = coordinates[component] + delta[component]
-        component_coordinates[component] = coordinates
+        index_coordinates = {
+            axis: np.array(index_common[axis], copy=True)
+            for axis in "xyz"
+        }
+        field_coordinates[component] = (
+            field_coordinates[component] + field_delta[component]
+        )
+        index_coordinates[component] = (
+            index_coordinates[component] + index_delta[component]
+        )
+        field_component_coordinates[component] = field_coordinates
+        index_component_coordinates[component] = index_coordinates
 
     artifact_path = output / "native_yee_mesh_coordinates.npz"
     np.savez_compressed(
@@ -522,15 +879,37 @@ def post_run_native_mesh_audit(
             f"index_common_{axis}_m": values
             for axis, values in index_common.items()
         },
-        **{f"delta_{axis}_m": values for axis, values in delta.items()},
+        **{
+            f"field_delta_{axis}_m": values
+            for axis, values in field_delta.items()
+        },
+        **{
+            f"index_delta_{axis}_m": values
+            for axis, values in index_delta.items()
+        },
+        **{
+            f"realized_control_volume_{axis}_bounds_m": np.asarray(
+                bounds,
+                float,
+            )
+            for axis, bounds in realized_bounds.items()
+        },
+        **{
+            f"common_Q_bounded_{axis}_weights_m": values
+            for axis, values in common_Q_bounded_weights.items()
+        },
         **{
             f"E{component}_{axis}_m": values
-            for component, coordinates in component_coordinates.items()
+            for component, coordinates in (
+                field_component_coordinates.items()
+            )
             for axis, values in coordinates.items()
         },
         **{
             f"index_{component}_{axis}_m": values
-            for component, coordinates in component_coordinates.items()
+            for component, coordinates in (
+                index_component_coordinates.items()
+            )
             for axis, values in coordinates.items()
         },
     )
@@ -568,7 +947,11 @@ def post_run_native_mesh_audit(
         }
 
     component_summary: dict[str, Any] = {}
-    for component, coordinates in component_coordinates.items():
+    independent_pairing_maximum_mismatch = 0.0
+    for component, field_coordinates in (
+        field_component_coordinates.items()
+    ):
+        index_coordinates = index_component_coordinates[component]
         electric_shape = list(
             np.asarray(
                 fdtd.getdata(base.PABS_FIELD, f"E{component}", 1)
@@ -579,27 +962,64 @@ def post_run_native_mesh_audit(
                 fdtd.getdata(base.PABS_INDEX, f"index_{component}", 1)
             ).squeeze().shape
         )
+        coordinate_mismatch = {
+            axis: (
+                float(
+                    np.max(
+                        np.abs(
+                            field_coordinates[axis]
+                            - index_coordinates[axis]
+                        )
+                    )
+                )
+                if (
+                    field_coordinates[axis].shape
+                    == index_coordinates[axis].shape
+                )
+                else None
+            )
+            for axis in "xyz"
+        }
+        finite_mismatch = [
+            value
+            for value in coordinate_mismatch.values()
+            if value is not None
+        ]
+        component_maximum_mismatch = (
+            max(finite_mismatch) if finite_mismatch else float("inf")
+        )
+        independent_pairing_maximum_mismatch = max(
+            independent_pairing_maximum_mismatch,
+            component_maximum_mismatch,
+        )
         component_summary[component] = {
             "field_coordinates": {
                 axis: _coordinate_summary(values)
-                for axis, values in coordinates.items()
+                for axis, values in field_coordinates.items()
             },
             "permittivity_coordinates": {
                 axis: _coordinate_summary(values)
-                for axis, values in coordinates.items()
+                for axis, values in index_coordinates.items()
             },
+            "field_delta_read_independently": True,
+            "permittivity_delta_read_independently": True,
             "electric_field_shape": electric_shape,
             "permittivity_shape": index_shape,
             "field_permittivity_shape_pairing_exact": (
                 electric_shape == index_shape
             ),
-            "field_permittivity_maximum_coordinate_mismatch_m": 0.0,
+            "field_permittivity_coordinate_mismatch_m": (
+                coordinate_mismatch
+            ),
+            "field_permittivity_maximum_coordinate_mismatch_m": (
+                component_maximum_mismatch
+            ),
             "staggering_axis": component,
             "maximum_coordinate_mismatch_from_common_m": {
                 axis: float(
                     np.max(np.abs(values - field_common[axis]))
                 )
-                for axis, values in coordinates.items()
+                for axis, values in field_coordinates.items()
             },
         }
     return {
@@ -619,6 +1039,22 @@ def post_run_native_mesh_audit(
         "hotspot_neighbourhood_solver_steps": local_step,
         "edge_beam_neighbourhood_solver_steps": edge_beam_step,
         "component_specific_Yee_coordinates": component_summary,
+        "independent_field_index_pairing": {
+            "method": (
+                "field-detail and index-detail x/y/z plus delta_x/delta_y/"
+                "delta_z are read separately; no field coordinate is copied "
+                "into the permittivity contract"
+            ),
+            "maximum_coordinate_mismatch_m": (
+                independent_pairing_maximum_mismatch
+            ),
+            "all_component_shapes_match": all(
+                value[
+                    "field_permittivity_shape_pairing_exact"
+                ]
+                for value in component_summary.values()
+            ),
+        },
         "index_monitor_common_coordinates": {
             axis: _coordinate_summary(values)
             for axis, values in index_common.items()
@@ -627,6 +1063,13 @@ def post_run_native_mesh_audit(
             axis: _coordinate_summary(values)
             for axis, values in field_common.items()
         },
+        "realized_six_face_control_volume": realized_control_volume,
+        "common_Q_support_in_realized_control_volume": common_Q_support,
+        "common_Q_quadrature_contract": (
+            "dual-cell weights use the independently read six-face "
+            "locations as the outer cell boundaries; each axis weight sum "
+            "equals the realized face-to-face span"
+        ),
         "component_to_common_Q_contract": (
             "pabs_adv E/index component loss is evaluated on each native "
             "component grid x+delta_x, y+delta_y, or z+delta_z and then "
@@ -770,20 +1213,22 @@ def add_geometry_and_monitors(
 
     pabs = fdtd.addobject("pabs_adv")
     pabs["name"] = base.PABS_GROUP
-    pabs["x"] = 0.5 * sum(absorption_bounds["x"])
-    pabs["x span"] = (
-        absorption_bounds["x"][1]
-        - absorption_bounds["x"][0]
-        + 2 * PABS_PADDING_M
+    pabs_bounds = (
+        inner_box
+        if args.execution_contract == "diagnostic-smoke"
+        else {
+            axis: (
+                absorption_bounds[axis][0] - PABS_PADDING_M,
+                absorption_bounds[axis][1] + PABS_PADDING_M,
+            )
+            for axis in "xyz"
+        }
     )
-    pabs["y"] = 0.5 * sum(absorption_bounds["y"])
-    pabs["y span"] = (
-        absorption_bounds["y"][1]
-        - absorption_bounds["y"][0]
-        + 2 * PABS_PADDING_M
-    )
-    pabs["z"] = -0.5 * FLAKE_THICKNESS_M
-    pabs["z span"] = FLAKE_THICKNESS_M + 2 * PABS_PADDING_M
+    for axis in "xyz":
+        pabs[axis] = 0.5 * sum(pabs_bounds[axis])
+        pabs[f"{axis} span"] = (
+            pabs_bounds[axis][1] - pabs_bounds[axis][0]
+        )
 
     inner_faces = base.add_flux_box(fdtd, "paper_ir_abs", inner_box)
     if args.execution_contract == "production":
@@ -872,6 +1317,7 @@ def add_geometry_and_monitors(
         "flake_thickness_m": FLAKE_THICKNESS_M,
         "flake_area_m2": polygon_area(vertices_um) * 1e-12,
         "absorption_analysis_bounds_m": absorption_bounds,
+        "pabs_nominal_control_volume_bounds_m": pabs_bounds,
         "six_face_absorption_box_bounds_m": inner_box,
         "outer_flux_box_bounds_m": (
             outer_bounds if outer_faces else None
@@ -1028,6 +1474,22 @@ def assert_contract(
         base.scalar(fdtd.getnamed("TaIrTe4_flake", "z span"), "flake thickness"),
         FLAKE_THICKNESS_M,
         atol=1e-15,
+    )
+    checks["diagnostic_nominal_Q_and_six_face_control_volume_match"] = (
+        args.execution_contract != "diagnostic-smoke"
+        or all(
+            np.allclose(
+                setup["geometry"][
+                    "pabs_nominal_control_volume_bounds_m"
+                ][axis],
+                setup["geometry"][
+                    "six_face_absorption_box_bounds_m"
+                ][axis],
+                rtol=0.0,
+                atol=1.0e-18,
+            )
+            for axis in "xyz"
+        )
     )
     runtime.configure_session_resources(fdtd)
     fdtd.runsetup()
@@ -1207,6 +1669,9 @@ def assert_contract(
             "absorption_analysis": setup["geometry"][
                 "absorption_analysis_bounds_m"
             ],
+            "pabs_nominal_control_volume": setup["geometry"][
+                "pabs_nominal_control_volume_bounds_m"
+            ],
             "six_face_absorption_box": setup["geometry"][
                 "six_face_absorption_box_bounds_m"
             ],
@@ -1313,6 +1778,12 @@ def run_diagnostic_gpu_smoke_case(
         source_power_native,
         1.0,
     )
+    realized_control_volume = realized_six_face_control_volume(
+        fdtd,
+        setup["inner_faces"],
+    )
+    realized_bounds = realized_control_volume["bounds_m"]
+    auto_shutoff = final_logged_auto_shutoff(output)
     fdtd.runanalysis(base.PABS_GROUP)
     q_data = base.common_grid_component_q(
         fdtd,
@@ -1322,10 +1793,25 @@ def run_diagnostic_gpu_smoke_case(
         "x_m": np.asarray(q_data["x_m"], float),
         "y_m": np.asarray(q_data["y_m"], float),
         "z_m": np.asarray(q_data["z_m"], float),
-        "Qx_native_W_m3": np.asarray(q_data["Qx_native_W_m3"], float),
-        "Qy_native_W_m3": np.asarray(q_data["Qy_native_W_m3"], float),
-        "Qz_native_W_m3": np.asarray(q_data["Qz_native_W_m3"], float),
-        "Q_native_W_m3": np.asarray(q_data["Q_native_W_m3"], float),
+        # The base pabs helper historically calls these arrays "native".
+        # They have already been interpolated to the field-monitor common
+        # grid, so the published artifact uses the physically correct name.
+        "Qx_common_grid_W_m3": np.asarray(
+            q_data["Qx_native_W_m3"],
+            float,
+        ),
+        "Qy_common_grid_W_m3": np.asarray(
+            q_data["Qy_native_W_m3"],
+            float,
+        ),
+        "Qz_common_grid_W_m3": np.asarray(
+            q_data["Qz_native_W_m3"],
+            float,
+        ),
+        "Q_common_grid_W_m3": np.asarray(
+            q_data["Q_native_W_m3"],
+            float,
+        ),
     }
     finite_arrays = all(
         np.all(np.isfinite(value))
@@ -1343,41 +1829,91 @@ def run_diagnostic_gpu_smoke_case(
         ),
         dtype=bool,
     )
-    if exact_flake_mask.shape != artifact["Q_native_W_m3"].shape:
+    if exact_flake_mask.shape != artifact["Q_common_grid_W_m3"].shape:
         raise RuntimeError(
             "exact flake mask shape mismatch: "
             f"{exact_flake_mask.shape} != "
-            f"{artifact['Q_native_W_m3'].shape}"
+            f"{artifact['Q_common_grid_W_m3'].shape}"
         )
 
-    component_power = {
-        axis: base.integrate_xyz(
-            artifact[f"Q{axis}_native_W_m3"],
-            artifact["x_m"],
-            artifact["y_m"],
-            artifact["z_m"],
+    common_coordinates = {
+        axis: artifact[f"{axis}_m"]
+        for axis in "xyz"
+    }
+    component_power_common = {
+        axis: integrate_xyz_bounded(
+            artifact[f"Q{axis}_common_grid_W_m3"],
+            common_coordinates,
+            realized_bounds,
         )
         for axis in "xyz"
     }
-    p_q = float(sum(component_power.values()))
+    native_absorption = native_component_absorption_bounded(
+        base,
+        fdtd,
+        base.TARGET_FREQUENCY_HZ,
+        realized_bounds,
+    )
+    component_power_native = native_absorption["component_power_W"]
+    p_q_common = float(sum(component_power_common.values()))
+    p_q_native = float(native_absorption["total_power_W"])
     p_six = float(inner_flux["net_inward_power_W"])
-    closure = abs(p_q - p_six) / max(
+    common_closure = abs(p_q_common - p_six) / max(
         abs(p_six),
         np.finfo(float).tiny,
     )
-    q_total = artifact["Q_native_W_m3"]
-    support_power = base.integrate_xyz(
+    native_closure = abs(p_q_native - p_six) / max(
+        abs(p_six),
+        np.finfo(float).tiny,
+    )
+    q_total = artifact["Q_common_grid_W_m3"]
+    support_power = integrate_xyz_bounded(
         np.where(exact_flake_mask, q_total, 0.0),
-        artifact["x_m"],
-        artifact["y_m"],
-        artifact["z_m"],
+        common_coordinates,
+        realized_bounds,
     )
-    outside_support_power = base.integrate_xyz(
+    outside_support_power = integrate_xyz_bounded(
         np.where(~exact_flake_mask, q_total, 0.0),
-        artifact["x_m"],
-        artifact["y_m"],
-        artifact["z_m"],
+        common_coordinates,
+        realized_bounds,
     )
+    common_native_component_difference = {
+        axis: abs(
+            component_power_common[axis]
+            - component_power_native[axis]
+        )
+        / max(
+            abs(component_power_native[axis]),
+            np.finfo(float).tiny,
+        )
+        for axis in "xyz"
+    }
+    common_native_total_difference = abs(
+        p_q_common - p_q_native
+    ) / max(abs(p_q_native), np.finfo(float).tiny)
+    q_support_contract = {}
+    for axis in "xyz":
+        coordinate = common_coordinates[axis]
+        step = np.diff(coordinate)
+        low_gap = float(coordinate[0] - realized_bounds[axis][0])
+        high_gap = float(realized_bounds[axis][1] - coordinate[-1])
+        q_support_contract[axis] = {
+            "common_Q_sample_bounds_m": [
+                float(coordinate[0]),
+                float(coordinate[-1]),
+            ],
+            "realized_flux_face_bounds_m": realized_bounds[axis],
+            "low_face_to_first_sample_m": low_gap,
+            "last_sample_to_high_face_m": high_gap,
+            "maximum_common_grid_step_m": float(np.max(step)),
+            "samples_inside_realized_faces": (
+                low_gap >= -1.0e-15 and high_gap >= -1.0e-15
+            ),
+            "outer_gap_no_more_than_one_grid_step": (
+                low_gap <= float(np.max(step)) + 1.0e-15
+                and high_gap <= float(np.max(step)) + 1.0e-15
+            ),
+        }
     hotspot_index = np.unravel_index(
         int(np.argmax(q_total)),
         q_total.shape,
@@ -1386,7 +1922,7 @@ def run_diagnostic_gpu_smoke_case(
         "x_m": float(artifact["x_m"][hotspot_index[0]]),
         "y_m": float(artifact["y_m"][hotspot_index[1]]),
         "z_m": float(artifact["z_m"][hotspot_index[2]]),
-        "Q_native_W_m3": float(q_total[hotspot_index]),
+        "Q_common_grid_W_m3": float(q_total[hotspot_index]),
     }
     metadata = {
         "classification": (
@@ -1403,7 +1939,19 @@ def run_diagnostic_gpu_smoke_case(
             "normalization and no empirical flux gain"
         ),
         "array_axis_order": ["x", "y", "z"],
+        "Q_array_grid": (
+            "field-monitor common x/y/z grid after component-specific "
+            "native Yee interpolation"
+        ),
         "Q_units": "W/m^3 at native source amplitude",
+        "realized_control_volume": realized_control_volume,
+        "quadrature_contract": (
+            "bounded dual-cell weights close exactly on independently read "
+            "six-face locations; common-grid arrays are not called native"
+        ),
+        "independent_field_index_pairing": native_absorption[
+            "independent_field_index_pairing"
+        ],
         "exact_flake_mask_is_analysis_only": True,
         "Q_operations": {
             "clipped": False,
@@ -1414,14 +1962,22 @@ def run_diagnostic_gpu_smoke_case(
             "source_deleted_outside_support": False,
         },
     }
-    artifact_path = output / "diagnostic_q_native_artifact.npz"
+    artifact_path = output / "diagnostic_q_common_grid_artifact.npz"
     np.savez(
         artifact_path,
         **artifact,
         exact_flake_mask=exact_flake_mask,
         source_power_native_W=np.asarray([source_power_native]),
-        P_Q_native_W=np.asarray([p_q]),
+        P_Q_common_grid_bounded_W=np.asarray([p_q_common]),
+        P_Q_native_component_bounded_W=np.asarray([p_q_native]),
         P_six_native_W=np.asarray([p_six]),
+        **{
+            f"realized_control_volume_{axis}_bounds_m": np.asarray(
+                bounds,
+                float,
+            )
+            for axis, bounds in realized_bounds.items()
+        },
         metadata_json=np.asarray([json.dumps(base.jsonable(metadata))]),
     )
     base.plot_q_slices(
@@ -1430,10 +1986,10 @@ def run_diagnostic_gpu_smoke_case(
             "x_m": artifact["x_m"],
             "y_m": artifact["y_m"],
             "z_m": artifact["z_m"],
-            "Qx_W_m3": artifact["Qx_native_W_m3"],
-            "Qy_W_m3": artifact["Qy_native_W_m3"],
-            "Qz_W_m3": artifact["Qz_native_W_m3"],
-            "Q_on_W_m3": artifact["Q_native_W_m3"],
+            "Qx_W_m3": artifact["Qx_common_grid_W_m3"],
+            "Qy_W_m3": artifact["Qy_common_grid_W_m3"],
+            "Qz_W_m3": artifact["Qz_common_grid_W_m3"],
+            "Q_on_W_m3": artifact["Q_common_grid_W_m3"],
         },
     )
 
@@ -1448,41 +2004,102 @@ def run_diagnostic_gpu_smoke_case(
             "incident_intensity_normalization_applied": False,
             "empirical_flux_gain": False,
         },
-        "component_power_native_W": component_power,
-        "P_Q_native_W": p_q,
+        "component_power_common_grid_bounded_W": component_power_common,
+        "component_power_native_Yee_bounded_W": component_power_native,
+        "P_Q_common_grid_bounded_W": p_q_common,
+        "P_Q_native_Yee_bounded_W": p_q_native,
         "P_six_face_native_W": p_six,
-        "six_face_relative_closure": closure,
+        "common_grid_six_face_relative_closure": common_closure,
+        "native_Yee_six_face_relative_closure": native_closure,
+        "common_native_component_relative_difference": (
+            common_native_component_difference
+        ),
+        "common_native_total_relative_difference": (
+            common_native_total_difference
+        ),
+        "realized_control_volume": realized_control_volume,
+        "Q_support_contract": q_support_contract,
+        "independent_field_index_pairing": native_absorption[
+            "independent_field_index_pairing"
+        ],
+        "maximum_independent_field_index_coordinate_mismatch_m": (
+            native_absorption["maximum_coordinate_mismatch_m"]
+        ),
+        "auto_shutoff": auto_shutoff,
         "Q_hotspot": hotspot,
         "support_analysis": {
             "P_Q_inside_exact_flake_mask_native_W": support_power,
             "P_Q_outside_exact_flake_mask_native_W": outside_support_power,
             "outside_fraction_of_total": abs(outside_support_power)
-            / max(abs(p_q), np.finfo(float).tiny),
+            / max(abs(p_q_common), np.finfo(float).tiny),
             "note": (
                 "mask is used only for auditing; the saved full-grid Q was "
                 "not cropped or altered"
             ),
         },
-        "component_interpolation_relative_error": q_data[
-            "component_interpolation_relative_error"
-        ],
-        "minimum_Q_native_W_m3": float(np.min(q_total)),
-        "maximum_Q_native_W_m3": float(np.max(q_total)),
+        "minimum_Q_common_grid_W_m3": float(np.min(q_total)),
+        "maximum_Q_common_grid_W_m3": float(np.max(q_total)),
+        "six_face_native_source_amplitude": {
+            "faces": {
+                key: {
+                    "monitor": value["monitor"],
+                    "normalized_signed_axis_flux": value[
+                        "normalized_signed_axis_flux"
+                    ],
+                    "signed_axis_power_native_W": value[
+                        "signed_axis_power_W_at_1_W_m2"
+                    ],
+                    "outward_power_native_W": value[
+                        "outward_power_W_at_1_W_m2"
+                    ],
+                }
+                for key, value in inner_flux["faces"].items()
+            },
+            "net_inward_power_native_W": p_six,
+            "sum_absolute_face_power_native_W": inner_flux[
+                "sum_absolute_face_power_W"
+            ],
+        },
         "artifact": artifact_path.name,
         "artifact_metadata": metadata,
         "acceptance": {
             "solver_returned_normally": True,
+            "solver_log_reports_successful_completion": auto_shutoff[
+                "simulation_completed_successfully"
+            ],
+            "auto_shutoff_reached_requested_threshold": (
+                auto_shutoff["final_value"] <= args.auto_shutoff_min
+            ),
             "source_power_positive": source_power_native > 0.0,
             "Q_arrays_finite": finite_arrays,
             "Qx_Qy_Qz_exported": all(
-                artifact[f"Q{axis}_native_W_m3"].size > 0
+                artifact[f"Q{axis}_common_grid_W_m3"].size > 0
                 for axis in "xyz"
             ),
             "lossy_epsilon_z_produces_nonzero_integrated_Qz": (
-                abs(component_power["z"]) > np.finfo(float).tiny
+                abs(component_power_native["z"])
+                > np.finfo(float).tiny
             ),
-            "six_face_closure_lt_0p5_percent": (
-                closure < base.POWER_CLOSURE_LIMIT
+            "common_grid_six_face_closure_lt_0p5_percent": (
+                common_closure < base.POWER_CLOSURE_LIMIT
+            ),
+            "native_Yee_six_face_closure_lt_0p5_percent": (
+                native_closure < base.POWER_CLOSURE_LIMIT
+            ),
+            "independent_field_index_coordinate_mismatch_lt_1fm": (
+                native_absorption["maximum_coordinate_mismatch_m"]
+                < 1.0e-15
+            ),
+            "realized_six_face_surfaces_form_one_box_lt_1fm": (
+                realized_control_volume[
+                    "maximum_transverse_boundary_mismatch_m"
+                ]
+                < 1.0e-15
+            ),
+            "common_Q_samples_inside_realized_faces": all(
+                value["samples_inside_realized_faces"]
+                and value["outer_gap_no_more_than_one_grid_step"]
+                for value in q_support_contract.values()
             ),
             "no_Q_clipping_smoothing_gain_rescaling_tiling_or_deletion": True,
         },
@@ -1576,6 +2193,7 @@ def main() -> int:
                 fdtd,
                 output,
                 result,
+                setup["inner_faces"],
             )
             if parsed.execution_contract == "diagnostic-smoke":
                 result["acceptance"][
