@@ -363,6 +363,76 @@ def cell_gradient(
     return gx, gy
 
 
+def straight_edge_temperature_metrics(
+    temperature_K: np.ndarray,
+    geometry: Geometry,
+    *,
+    edge_window_um: float = 10.0,
+) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
+    """Measure the just-inside normal gradient of the y=x half-plane edge."""
+    x = 0.5 * (geometry.x_edges_m[:-1] + geometry.x_edges_m[1:])
+    y = 0.5 * (geometry.y_edges_m[:-1] + geometry.y_edges_m[1:])
+    dz = np.diff(geometry.z_edges_m)
+    flake_z = np.flatnonzero(np.any(geometry.flake_mask, axis=(0, 1)))
+    if flake_z.size == 0:
+        raise RuntimeError("straight-edge control has no TaIrTe4 cells")
+    thickness = float(np.sum(dz[flake_z]))
+    average = np.sum(
+        temperature_K[:, :, flake_z] * dz[flake_z][None, None, :],
+        axis=2,
+    ) / thickness
+    mask = np.any(geometry.flake_mask, axis=2)
+    grad_x, grad_y = cell_gradient(average, mask, x, y)
+    # TaIrTe4 is y<=x; the outward normal toward air is (-x,+y)/sqrt(2).
+    normal = np.asarray([-1.0, 1.0]) / np.sqrt(2.0)
+    tangent_coordinate = (x[:, None] + y[None, :]) / np.sqrt(2.0)
+    grad_normal = normal[0] * grad_x + normal[1] * grad_y
+    grad_magnitude = np.hypot(grad_x, grad_y)
+
+    air = ~mask
+    air_minus_x = np.zeros_like(mask)
+    air_minus_x[1:, :] = air[:-1, :]
+    air_plus_y = np.zeros_like(mask)
+    air_plus_y[:, :-1] = air[:, 1:]
+    edge_cells = mask & (air_minus_x | air_plus_y)
+    edge_window = edge_cells & (
+        np.abs(tangent_coordinate) <= edge_window_um * 1e-6
+    )
+    if not np.any(edge_window):
+        raise RuntimeError("no straight-edge cells in the requested window")
+    selected = np.abs(grad_normal[edge_window])
+    peak_flat = int(
+        np.argmax(np.where(edge_window, np.abs(grad_normal), -1.0))
+    )
+    peak_index = np.unravel_index(peak_flat, grad_normal.shape)
+    metrics = {
+        "edge_definition": "TaIrTe4 y<=x; outward normal=(-x+y)/sqrt(2)",
+        "edge_window_um": edge_window_um,
+        "edge_cell_count": int(np.count_nonzero(edge_window)),
+        "max_abs_edge_normal_gradient_K_m": float(np.max(selected)),
+        "p99_abs_edge_normal_gradient_K_m": float(
+            np.percentile(selected, 99.0)
+        ),
+        "max_inplane_gradient_K_m": float(
+            np.max(grad_magnitude[edge_window])
+        ),
+        "peak_edge_gradient_location_m": {
+            "x": float(x[peak_index[0]]),
+            "y": float(y[peak_index[1]]),
+        },
+        "Tmax_rise_K": float(np.max(average[mask])),
+        "TaIrTe4_area_average_rise_K": float(np.mean(average[mask])),
+    }
+    return metrics, {
+        "temperature_flake_average_K": average,
+        "grad_T_x_K_m": grad_x,
+        "grad_T_y_K_m": grad_y,
+        "grad_T_normal_K_m": grad_normal,
+        "grad_T_magnitude_K_m": grad_magnitude,
+        "edge_window_mask": edge_window,
+    }
+
+
 def load_and_map_q(
     artifact_path: Path,
     result_path: Path,
@@ -486,12 +556,28 @@ def main() -> int:
     parser.add_argument("--core-step-nm", type=float, default=200.0)
     parser.add_argument("--flake-dz-nm", type=float, default=26.0)
     parser.add_argument(
+        "--geometry",
+        choices=("device-a-polygon", "straight-45-edge"),
+        default="device-a-polygon",
+    )
+    parser.add_argument(
         "--thermal-model",
         choices=("expanded", "paper-reduced"),
         default="expanded",
     )
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=False)
+    global FLAKE_VERTICES_UM
+    if args.geometry == "straight-45-edge":
+        outer_um = 0.5 * args.thermal_domain_um + 1.0
+        FLAKE_VERTICES_UM = np.asarray(
+            [
+                [-outer_um, -outer_um],
+                [outer_um, -outer_um],
+                [outer_um, outer_um],
+            ],
+            dtype=float,
+        )
     geometry = build_geometry(
         domain_m=args.thermal_domain_um * 1e-6,
         si_depth_m=args.si_depth_um * 1e-6,
@@ -545,27 +631,54 @@ def main() -> int:
         max_iterations=12000,
     )
     flake_xy = np.any(geometry.flake_mask, axis=2)
-    psi, grad_x, grad_y, weighting = solve_weighting_potential(
-        geometry.x_edges_m, geometry.y_edges_m, flake_xy
-    )
-    current, fields = pte_current(
-        solved.temperature_K, geometry, grad_x, grad_y
-    )
+    if args.geometry == "straight-45-edge":
+        edge_metrics, fields = straight_edge_temperature_metrics(
+            solved.temperature_K,
+            geometry,
+        )
+        psi = None
+        grad_x = None
+        grad_y = None
+        weighting = {
+            "applied": False,
+            "reason": (
+                "straight-edge optical/thermal subgate intentionally precedes "
+                "weighting-field and PTE-current evaluation"
+            ),
+        }
+        weighting_passed = True
+        current = None
+    else:
+        edge_metrics = None
+        psi, grad_x, grad_y, weighting = solve_weighting_potential(
+            geometry.x_edges_m, geometry.y_edges_m, flake_xy
+        )
+        current, fields = pte_current(
+            solved.temperature_K, geometry, grad_x, grad_y
+        )
+        weighting_passed = (
+            weighting["top_contact_cells"] > 0
+            and weighting["bottom_contact_cells"] > 0
+            # Values are stored at cell centres, not on Dirichlet faces.
+            and weighting["minimum_psi"] < 0.05
+            and weighting["maximum_psi"] > 0.95
+            and weighting["linear_residual_relative"] < 1e-8
+        )
     flake_temperature = solved.temperature_K[geometry.flake_mask]
-    weighting_passed = (
-        weighting["top_contact_cells"] > 0
-        and weighting["bottom_contact_cells"] > 0
-        # Values are stored at cell centres, not on Dirichlet faces.
-        and weighting["minimum_psi"] < 0.05
-        and weighting["maximum_psi"] > 0.95
-        and weighting["linear_residual_relative"] < 1e-8
-    )
     summary = {
         "status": (
             (
-                "COMPLETED_DEVICE_A_EXPANDED_THERMAL_PTE_SANITY"
+                (
+                    "COMPLETED_STRAIGHT_45_EDGE_THERMAL_CONTROL"
+                    if args.geometry == "straight-45-edge"
+                    else "COMPLETED_DEVICE_A_EXPANDED_THERMAL_PTE_SANITY"
+                )
                 if args.thermal_model == "expanded"
-                else "COMPLETED_DEVICE_A_PAPER_REDUCED_THERMAL_PTE_REFERENCE"
+                else (
+                    "COMPLETED_STRAIGHT_45_EDGE_PAPER_REDUCED_CONTROL"
+                    if args.geometry == "straight-45-edge"
+                    else "COMPLETED_DEVICE_A_PAPER_REDUCED_THERMAL_PTE_REFERENCE"
+                )
             )
             if (
                 mapping["mapping_relative_power_error"] < 0.005
@@ -573,7 +686,11 @@ def main() -> int:
                 and solved.linear_residual_relative < 1e-8
                 and weighting_passed
             )
-            else "FAILED_DEVICE_A_EXPANDED_THERMAL_PTE_SANITY"
+            else (
+                "FAILED_STRAIGHT_45_EDGE_THERMAL_CONTROL"
+                if args.geometry == "straight-45-edge"
+                else "FAILED_DEVICE_A_EXPANDED_THERMAL_PTE_SANITY"
+            )
         ),
         "model_identity": (
             (
@@ -605,9 +722,20 @@ def main() -> int:
             "bottom_boundary": "fixed DeltaT=0 numerical truncation",
         },
         "geometry": {
+            "geometry_name": args.geometry,
             "flake_vertices_um": FLAKE_VERTICES_UM.tolist(),
-            "flake_CAD_status": "approximation from paper Figure 2A",
-            "contacts_status": weighting["geometry_status"],
+            "flake_CAD_status": (
+                "approximation from paper Figure 2A"
+                if args.geometry == "device-a-polygon"
+                else (
+                    "corner-free paper-Figure-3F half-plane control; "
+                    "TaIrTe4 occupies y<=x"
+                )
+            ),
+            "contacts_status": weighting.get(
+                "geometry_status",
+                "not applied in the straight-edge thermal subgate",
+            ),
             "thermal_domain_um": args.thermal_domain_um,
             "si_depth_um": args.si_depth_um,
             "core_step_nm": args.core_step_nm,
@@ -629,41 +757,120 @@ def main() -> int:
         "weighting": weighting,
         "weighting_gate_passed": weighting_passed,
         "PTE_current_A_at_285uW_incident": current,
-        "PTE_current_pA_at_285uW_incident": current * 1e12,
+        "PTE_current_pA_at_285uW_incident": (
+            None if current is None else current * 1e12
+        ),
+        "straight_edge_metrics": edge_metrics,
         "no_optimization": True,
         "no_gradient": True,
     }
     (args.output_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+    field_payload = {
+        "x_edges_m": geometry.x_edges_m,
+        "y_edges_m": geometry.y_edges_m,
+        "z_edges_m": geometry.z_edges_m,
+        "flake_mask": geometry.flake_mask,
+        "Q_W_m3": q,
+        "temperature_rise_K": solved.temperature_K,
+        **fields,
+    }
+    if psi is not None:
+        field_payload.update(
+            {
+                "weighting_potential": psi,
+                "weighting_grad_x_m_inv": grad_x,
+                "weighting_grad_y_m_inv": grad_y,
+            }
+        )
     np.savez(
         args.output_dir / "thermal_pte_fields.npz",
-        x_edges_m=geometry.x_edges_m,
-        y_edges_m=geometry.y_edges_m,
-        z_edges_m=geometry.z_edges_m,
-        flake_mask=geometry.flake_mask,
-        Q_W_m3=q,
-        temperature_rise_K=solved.temperature_K,
-        weighting_potential=psi,
-        weighting_grad_x_m_inv=grad_x,
-        weighting_grad_y_m_inv=grad_y,
-        **fields,
+        **field_payload,
     )
 
     x = 0.5 * (geometry.x_edges_m[:-1] + geometry.x_edges_m[1:]) * 1e6
     y = 0.5 * (geometry.y_edges_m[:-1] + geometry.y_edges_m[1:]) * 1e6
     extent = [x[0], x[-1], y[0], y[-1]]
-    fig, axes = plt.subplots(2, 2, figsize=(12, 10), constrained_layout=True)
-    images = (
-        (np.sum(q * np.diff(geometry.z_edges_m)[None, None, :], axis=2), "absorbed areal power (W/m²)", "inferno"),
-        (fields["temperature_flake_average_K"], "TaIrTe4 ΔT (K)", "inferno"),
-        (psi, "weighting potential ψ", "viridis"),
-        (fields["shockley_ramo_integrand_A_m2"], "PTE collection integrand", "RdBu_r"),
+    areal_q = np.sum(
+        q * np.diff(geometry.z_edges_m)[None, None, :],
+        axis=2,
     )
-    for ax, (image, title, cmap) in zip(axes.ravel(), images):
-        handle = ax.imshow(image.T, origin="lower", extent=extent, aspect="equal", cmap=cmap)
-        ax.set(title=title, xlabel="lab x = b (µm)", ylabel="lab y = a (µm)")
+    if args.geometry == "straight-45-edge":
+        fig, axes = plt.subplots(
+            2,
+            2,
+            figsize=(12, 10),
+            constrained_layout=True,
+        )
+        images = (
+            (areal_q, "absorbed areal power (W/m²)", "inferno"),
+            (
+                fields["temperature_flake_average_K"],
+                "TaIrTe4 ΔT (K)",
+                "inferno",
+            ),
+            (
+                np.abs(fields["grad_T_normal_K_m"]),
+                "|edge-normal ∂T/∂n| (K/m)",
+                "magma",
+            ),
+            (
+                fields["grad_T_magnitude_K_m"],
+                "|in-plane ∇T| (K/m)",
+                "magma",
+            ),
+        )
+        title = (
+            "Straight 45° edge: Lumerical Q → expanded thermal FVM "
+            "(no weighting/PTE)"
+        )
+        figure_name = "straight_45_edge_thermal_control.png"
+    else:
+        fig, axes = plt.subplots(
+            2,
+            2,
+            figsize=(12, 10),
+            constrained_layout=True,
+        )
+        images = (
+            (areal_q, "absorbed areal power (W/m²)", "inferno"),
+            (
+                fields["temperature_flake_average_K"],
+                "TaIrTe4 ΔT (K)",
+                "inferno",
+            ),
+            (psi, "weighting potential ψ", "viridis"),
+            (
+                fields["shockley_ramo_integrand_A_m2"],
+                "PTE collection integrand",
+                "RdBu_r",
+            ),
+        )
+        title = "Device-A IR sanity: Lumerical Q → expanded thermal FVM → PTE"
+        figure_name = "device_a_ir_thermal_pte.png"
+    for ax, (image, panel_title, cmap) in zip(axes.ravel(), images):
+        handle = ax.imshow(
+            image.T,
+            origin="lower",
+            extent=extent,
+            aspect="equal",
+            cmap=cmap,
+        )
+        if args.geometry == "straight-45-edge":
+            ax.plot(
+                [extent[0], extent[1]],
+                [extent[0], extent[1]],
+                color="cyan",
+                ls="--",
+                lw=0.8,
+            )
+        ax.set(
+            title=panel_title,
+            xlabel="lab x = b (µm)",
+            ylabel="lab y = a (µm)",
+        )
         fig.colorbar(handle, ax=ax)
-    fig.suptitle("Device-A IR sanity: Lumerical Q → expanded thermal FVM → PTE")
-    fig.savefig(args.output_dir / "device_a_ir_thermal_pte.png", dpi=200)
+    fig.suptitle(title)
+    fig.savefig(args.output_dir / figure_name, dpi=200)
     plt.close(fig)
     print(json.dumps(summary, indent=2))
     return 0 if summary["status"].startswith("COMPLETED") else 2

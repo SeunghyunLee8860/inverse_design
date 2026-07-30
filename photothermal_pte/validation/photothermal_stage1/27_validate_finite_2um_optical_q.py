@@ -1546,10 +1546,9 @@ def run_case(
         "smoothed": False,
         "source_deleted": False,
     }
-    np.savez(
-        output / "finite_q_on_artifact.npz",
-        **artifact,
-        exact_flake_mask=(
+    exact_mask_builder = setup.get("exact_flake_mask_builder")
+    if exact_mask_builder is None:
+        exact_flake_mask = (
             (
                 (artifact["x_m"][:, None, None] >= FLAKE_BOUNDS_M["x"][0])
                 & (artifact["x_m"][:, None, None] <= FLAKE_BOUNDS_M["x"][1])
@@ -1562,7 +1561,30 @@ def run_case(
                 (artifact["z_m"][None, None, :] >= FLAKE_BOUNDS_M["z"][0])
                 & (artifact["z_m"][None, None, :] <= FLAKE_BOUNDS_M["z"][1])
             )
-        ),
+        )
+    else:
+        exact_flake_mask = np.asarray(
+            exact_mask_builder(
+                artifact["x_m"],
+                artifact["y_m"],
+                artifact["z_m"],
+            ),
+            dtype=bool,
+        )
+        if exact_flake_mask.shape != artifact["Q_on_W_m3"].shape:
+            raise RuntimeError(
+                "exact flake mask shape mismatch: "
+                f"{exact_flake_mask.shape} != "
+                f"{artifact['Q_on_W_m3'].shape}"
+            )
+    metadata["exact_flake_mask_kind"] = setup["geometry"].get(
+        "exact_flake_mask_kind",
+        "axis-aligned bounds",
+    )
+    np.savez(
+        output / "finite_q_on_artifact.npz",
+        **artifact,
+        exact_flake_mask=exact_flake_mask,
         incident_intensity_W_m2=np.asarray([TARGET_INTENSITY_W_M2]),
         P_abs_volume_W=np.asarray([p_q]),
         P_abs_six_face_W=np.asarray([p_six_face]),

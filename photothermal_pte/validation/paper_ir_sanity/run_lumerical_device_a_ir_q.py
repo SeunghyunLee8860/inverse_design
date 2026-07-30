@@ -27,6 +27,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.path import Path as PolygonPath
 import numpy as np
 
 
@@ -103,6 +104,11 @@ def parse_args() -> argparse.Namespace:
         required=True,
         help="crystal-axis polarization; lab x=b and lab y=a",
     )
+    parser.add_argument(
+        "--geometry",
+        choices=("device-a-polygon", "straight-45-edge"),
+        default="device-a-polygon",
+    )
     parser.add_argument("--domain-um", type=float, default=44.0)
     parser.add_argument("--pml-layers", type=int, default=24)
     parser.add_argument("--flake-dz-nm", type=float, default=5.0)
@@ -133,6 +139,58 @@ def parse_args() -> argparse.Namespace:
     args.polarization_deg = 90.0 if args.polarization == "a" else 0.0
     args.design_radius_um = 0.0
     args.require_design_inside_flake = False
+    if args.geometry == "device-a-polygon":
+        args.flake_vertices_um = np.array(FLAKE_VERTICES_UM, copy=True)
+        absorption_bounds_um = {
+            "x": (
+                float(np.min(args.flake_vertices_um[:, 0])) - 0.05,
+                float(np.max(args.flake_vertices_um[:, 0])) + 0.05,
+            ),
+            "y": (
+                float(np.min(args.flake_vertices_um[:, 1])) - 0.05,
+                float(np.max(args.flake_vertices_um[:, 1])) + 0.05,
+            ),
+        }
+    else:
+        # TaIrTe4 occupies y <= x.  The other two triangle faces remain 1 um
+        # beyond the FDTD x/y bounds, so only one straight 45-degree edge is
+        # present in the physical calculation region.
+        outer = 0.5 * args.domain_um + 1.0
+        args.flake_vertices_um = np.asarray(
+            [[-outer, -outer], [outer, -outer], [outer, outer]],
+            dtype=float,
+        )
+        # The metallic-axis edge launches a longer lateral absorption tail than
+        # the incident aperture.  Four micrometres of analysis padding is the
+        # minimum matched box that is rechecked by the six-face closure gate.
+        half_analysis = 0.5 * args.source_span_um + 4.0
+        absorption_bounds_um = {
+            "x": (
+                args.beam_x_um - half_analysis,
+                args.beam_x_um + half_analysis,
+            ),
+            "y": (
+                args.beam_y_um - half_analysis,
+                args.beam_y_um + half_analysis,
+            ),
+        }
+    args.absorption_bounds_m = {
+        axis: tuple(value * 1e-6 for value in bounds)
+        for axis, bounds in absorption_bounds_um.items()
+    }
+    args.absorption_bounds_m["z"] = (-FLAKE_THICKNESS_M, 0.0)
+    flux_padding_m = 0.5e-6
+    args.inner_box = {
+        "x": (
+            args.absorption_bounds_m["x"][0] - flux_padding_m,
+            args.absorption_bounds_m["x"][1] + flux_padding_m,
+        ),
+        "y": (
+            args.absorption_bounds_m["y"][0] - flux_padding_m,
+            args.absorption_bounds_m["y"][1] + flux_padding_m,
+        ),
+        "z": (-1.2e-6, SOURCE_Z_M - 0.5e-6),
+    }
     return args
 
 
@@ -192,6 +250,9 @@ def strict_gpu_run(fdtd: Any, run_name: str) -> str:
 def add_geometry_and_monitors(
     base: Any, fdtd: Any, model: Any, args: argparse.Namespace
 ) -> dict[str, Any]:
+    vertices_um = np.asarray(args.flake_vertices_um, float)
+    absorption_bounds = args.absorption_bounds_m
+    inner_box = args.inner_box
     domain_m = args.domain_um * 1e-6
     half_source = 0.5 * args.source_span_um * 1e-6
     beam_x = args.beam_x_um * 1e-6
@@ -267,17 +328,17 @@ def add_geometry_and_monitors(
     if args.case == "finite-flake":
         polygon = fdtd.addpoly()
         polygon["name"] = "TaIrTe4_flake"
-        polygon["vertices"] = FLAKE_VERTICES_UM * 1e-6
+        polygon["vertices"] = vertices_um * 1e-6
         polygon["z min"] = -FLAKE_THICKNESS_M
         polygon["z max"] = 0.0
         polygon["material"] = MATERIAL_NAME
 
     mesh = fdtd.addmesh()
     mesh["name"] = "flake_mesh"
-    mesh["x min"] = FLAKE_BOUNDS_M["x"][0] - 0.5e-6
-    mesh["x max"] = FLAKE_BOUNDS_M["x"][1] + 0.5e-6
-    mesh["y min"] = FLAKE_BOUNDS_M["y"][0] - 0.5e-6
-    mesh["y max"] = FLAKE_BOUNDS_M["y"][1] + 0.5e-6
+    mesh["x min"] = absorption_bounds["x"][0] - 0.5e-6
+    mesh["x max"] = absorption_bounds["x"][1] + 0.5e-6
+    mesh["y min"] = absorption_bounds["y"][0] - 0.5e-6
+    mesh["y max"] = absorption_bounds["y"][1] + 0.5e-6
     mesh["z min"] = -FLAKE_THICKNESS_M - 10 * args.flake_dz_nm * 1e-9
     mesh["z max"] = 10 * args.flake_dz_nm * 1e-9
     mesh["override x mesh"] = 0
@@ -311,14 +372,22 @@ def add_geometry_and_monitors(
 
     pabs = fdtd.addobject("pabs_adv")
     pabs["name"] = base.PABS_GROUP
-    pabs["x"] = 0.5 * sum(FLAKE_BOUNDS_M["x"])
-    pabs["x span"] = FLAKE_BOUNDS_M["x"][1] - FLAKE_BOUNDS_M["x"][0] + 2 * PABS_PADDING_M
-    pabs["y"] = 0.5 * sum(FLAKE_BOUNDS_M["y"])
-    pabs["y span"] = FLAKE_BOUNDS_M["y"][1] - FLAKE_BOUNDS_M["y"][0] + 2 * PABS_PADDING_M
+    pabs["x"] = 0.5 * sum(absorption_bounds["x"])
+    pabs["x span"] = (
+        absorption_bounds["x"][1]
+        - absorption_bounds["x"][0]
+        + 2 * PABS_PADDING_M
+    )
+    pabs["y"] = 0.5 * sum(absorption_bounds["y"])
+    pabs["y span"] = (
+        absorption_bounds["y"][1]
+        - absorption_bounds["y"][0]
+        + 2 * PABS_PADDING_M
+    )
     pabs["z"] = -0.5 * FLAKE_THICKNESS_M
     pabs["z span"] = FLAKE_THICKNESS_M + 2 * PABS_PADDING_M
 
-    inner_faces = base.add_flux_box(fdtd, "paper_ir_abs", INNER_BOX)
+    inner_faces = base.add_flux_box(fdtd, "paper_ir_abs", inner_box)
     outer_faces = base.add_flux_box(fdtd, "paper_ir_outer", outer_bounds)
     base.add_field_monitor(
         fdtd,
@@ -330,7 +399,7 @@ def add_geometry_and_monitors(
         fdtd,
         "finite_E_xy_inside",
         "2D Z-normal",
-        {"x": INNER_BOX["x"], "y": INNER_BOX["y"], "z": (0.5e-6, 0.5e-6)},
+        {"x": inner_box["x"], "y": inner_box["y"], "z": (0.5e-6, 0.5e-6)},
     )
     base.add_field_monitor(
         fdtd,
@@ -357,11 +426,26 @@ def add_geometry_and_monitors(
         base.configure_single_frequency(fdtd, name)
 
     geometry = {
-        "geometry_source": "approximation digitized from paper Figure 2A, not exact CAD",
+        "geometry_name": args.geometry,
+        "geometry_source": (
+            "approximation digitized from paper Figure 2A, not exact CAD"
+            if args.geometry == "device-a-polygon"
+            else (
+                "paper Figure 3F straight 45-degree half-plane control; "
+                "TaIrTe4 occupies lab y<=x and remote triangle faces lie "
+                "outside the PML-bounded physical domain"
+            )
+        ),
         "coordinate_contract": {"lab_x": "crystal b", "lab_y": "crystal a"},
-        "flake_vertices_um": FLAKE_VERTICES_UM.tolist(),
+        "flake_vertices_um": vertices_um.tolist(),
         "flake_thickness_m": FLAKE_THICKNESS_M,
-        "flake_area_m2": polygon_area(FLAKE_VERTICES_UM) * 1e-12,
+        "flake_area_m2": polygon_area(vertices_um) * 1e-12,
+        "absorption_analysis_bounds_m": absorption_bounds,
+        "exact_flake_mask_kind": (
+            "digitized polygon"
+            if args.geometry == "device-a-polygon"
+            else "analytic half-plane lab_y<=lab_x"
+        ),
         "substrate": "285 nm SiO2 on Si",
         "electrodes_in_optical_model": False,
         "electrode_note": (
@@ -388,12 +472,29 @@ def add_geometry_and_monitors(
         "all_six_boundaries": "PML",
         "periodic": False,
     }
+    def exact_flake_mask_builder(
+        x_m: np.ndarray,
+        y_m: np.ndarray,
+        z_m: np.ndarray,
+    ) -> np.ndarray:
+        if args.geometry == "straight-45-edge":
+            xy = y_m[None, :] <= x_m[:, None] + 1e-15
+        else:
+            xx, yy = np.meshgrid(x_m, y_m, indexing="ij")
+            xy = PolygonPath(vertices_um * 1e-6).contains_points(
+                np.column_stack((xx.ravel(), yy.ravel())),
+                radius=1e-15,
+            ).reshape(xx.shape)
+        zz = (z_m >= -FLAKE_THICKNESS_M) & (z_m <= 0.0)
+        return xy[:, :, None] & zz[None, None, :]
+
     return {
         "source_bounds": source_bounds,
         "outer_bounds": outer_bounds,
         "inner_faces": inner_faces,
         "outer_faces": outer_faces,
         "geometry": geometry,
+        "exact_flake_mask_builder": exact_flake_mask_builder,
     }
 
 
@@ -483,7 +584,8 @@ def assert_contract(
 def plot_geometry(output: Path, args: argparse.Namespace, setup: dict[str, Any]) -> None:
     figure, axes = plt.subplots(1, 2, figsize=(12, 5))
     ax = axes[0]
-    vertices = np.vstack((FLAKE_VERTICES_UM, FLAKE_VERTICES_UM[0]))
+    flake_vertices = np.asarray(args.flake_vertices_um, float)
+    vertices = np.vstack((flake_vertices, flake_vertices[0]))
     ax.fill(vertices[:, 0], vertices[:, 1], color="#d89023", alpha=0.75, label="130 nm TaIrTe4")
     half = 0.5 * args.source_span_um
     ax.add_patch(
@@ -509,7 +611,15 @@ def plot_geometry(output: Path, args: argparse.Namespace, setup: dict[str, Any])
     ax.arrow(-1, -3, 5 if args.polarization == "b" else 0, 5 if args.polarization == "a" else 0,
              width=0.15, color="black", length_includes_head=True)
     ax.set_aspect("equal")
-    ax.set(xlabel="lab x = crystal b (um)", ylabel="lab y = crystal a (um)", title="Approximate Device A optical geometry")
+    ax.set(
+        xlabel="lab x = crystal b (um)",
+        ylabel="lab y = crystal a (um)",
+        title=(
+            "Approximate Device A optical geometry"
+            if args.geometry == "device-a-polygon"
+            else "Corner-free straight 45-degree edge control"
+        ),
+    )
     ax.legend(fontsize=8)
 
     ax = axes[1]
@@ -551,8 +661,19 @@ def main() -> int:
     base.SOURCE_START_M = SOURCE_START_M
     base.SOURCE_STOP_M = SOURCE_STOP_M
     base.FLAKE_THICKNESS_M = FLAKE_THICKNESS_M
-    base.FLAKE_BOUNDS_M = FLAKE_BOUNDS_M
-    base.GEOMETRIC_AREA_M2 = polygon_area(FLAKE_VERTICES_UM) * 1e-12
+    base.FLAKE_BOUNDS_M = args.absorption_bounds_m
+    if args.geometry == "straight-45-edge":
+        span_x = (
+            args.absorption_bounds_m["x"][1]
+            - args.absorption_bounds_m["x"][0]
+        )
+        span_y = (
+            args.absorption_bounds_m["y"][1]
+            - args.absorption_bounds_m["y"][0]
+        )
+        base.GEOMETRIC_AREA_M2 = 0.5 * span_x * span_y
+    else:
+        base.GEOMETRIC_AREA_M2 = polygon_area(args.flake_vertices_um) * 1e-12
     base.SIO2_THICKNESS_M = SIO2_THICKNESS_M
     base.SI_DEPTH_M = SI_DEPTH_M
     base.PABS_PADDING_M = PABS_PADDING_M
@@ -561,7 +682,7 @@ def main() -> int:
     base.GAUSSIAN_SOURCE_Z_M = SOURCE_Z_M
     base.GAUSSIAN_FOCUS_Z_M = FOCUS_Z_M
     base.INCIDENT_REFERENCE_Z_M = INCIDENT_Z_M
-    base.INNER_BOX = INNER_BOX
+    base.INNER_BOX = args.inner_box
     base.MATERIAL_NAME = MATERIAL_NAME
     base.SIO2_MATERIAL = SIO2_MATERIAL
 
