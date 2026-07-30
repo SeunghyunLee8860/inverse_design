@@ -16,7 +16,7 @@ diameter, FWHM, or 1/e^2 width, nor the exact 11-µm waist plane or pupil fill.
 The detailed `PAPER_REPORTED`, `PAPER_INFERRED`, and `EXPLICIT_ASSUMPTION`
 records are in `paper_ir_beam_contract_summary.json`.
 
-The first source-only candidate is an explicit assumption:
+The fixed source-only scenario is an explicit assumption:
 
 - wavelength: 11 µm
 - Gaussian 1/e^2 intensity radius: 12.0 µm
@@ -27,29 +27,41 @@ The first source-only candidate is an explicit assumption:
 - analytic square capture: 99.99291408%
 - analytic source-boundary maximum/mean: 1.93378964e-04 / 5.86048981e-05
 
-The scalar model is not production-approved.  A matched NA=0.4 vector
-thin-lens comparison is still required.  The old nominal `w0=2 µm` artifacts
-remain `DIAGNOSTIC_ONLY_INVALID_FOR_PAPER_LIKE_BEAM` and are forbidden for
-thermal, PTE, or Figure-3 reproduction.
+Its required label is **paper-like scalar-Gaussian scenario with an
+explicitly assumed waist**.  It is not an experimentally reproduced beam or
+a paper-certified beam.  A thin-lens comparison is an optional future
+diagnostic and is not a gate or blocker.  The old nominal `w0=2 µm`
+artifacts remain `DIAGNOSTIC_ONLY_INVALID_FOR_PAPER_LIKE_BEAM` and are
+forbidden for thermal, PTE, or Figure-3 reproduction.
 
 ## Startup probes
 
-Two contract-only attempts failed before session creation.  Both report:
+3 contract-only attempts failed before session creation.  They report:
 `ANSYSLI exited or could not read server port`.  Neither attempt completed
 `runsetup`, started a GPU solve, or invoked CPU fallback.  No TaIrTe4,
 substrate, thermal, PTE, weighting-potential, adjoint, gradient, or
 optimization calculation ran.
 
+The newest probe uses the fixed scalar contract at commit
+`f89c7b79c1a2c239ebf3886ddb789ea007a0781f`.  TCP/port reachability by
+itself is not a license certificate: the minimum fix is to restore the v261
+Ansys Licensing Client Proxy/server-port handshake for this user session.
+No CPU fallback is an acceptable workaround.
+
 ## Source-only gates
 
 | Gate | Result |
 |---|---|
-| requested_vs_realized_width_relative_error_below_0p5pct | NOT EVALUATED |
+| requested_vs_realized_x_waist_error_below_0p5pct | NOT EVALUATED |
+| requested_vs_realized_y_waist_error_below_0p5pct | NOT EVALUATED |
+| Gaussian_fit_NRMSE_below_0p5pct | NOT EVALUATED |
 | beam_center_error_below_one_cell | NOT EVALUATED |
+| xy_ellipticity_below_0p5pct | NOT EVALUATED |
 | square_capture_at_least_99p9pct | NOT EVALUATED |
 | realized_source_boundary_max_below_1e_minus_3 | NOT EVALUATED |
 | incident_power_closure_below_0p5pct | NOT EVALUATED |
-| field_time_convergence_below_0p5pct | NOT EVALUATED |
+| actual_mesh_readback_available | NOT EVALUATED |
+| GPU_memory_readback_available | NOT EVALUATED |
 | no_NaN_or_Inf | NOT EVALUATED |
 | GPU_only_no_CPU_fallback | NOT EVALUATED |
 | auto_shutoff_at_most_1e_minus_5 | NOT EVALUATED |
@@ -77,5 +89,7 @@ Total expected GPU time remains
 The four planar/finite-edge optical cases are not worth executing now.  First
 restore license/session startup, obtain the actual source-only grid/memory
 readback, execute one GPU-only homogeneous-air case, and pass the realized
-beam gates.  Then perform the matched scalar/vectorial comparison before any
-material case.  No production-Q promotion is made by this checkpoint.
+beam gates.  If it passes, proceed directly to planar a/b and
+straight-45-degree finite-edge a/b with the identical scalar source geometry
+and incident-power normalization.  No production-Q promotion is made by this
+checkpoint.

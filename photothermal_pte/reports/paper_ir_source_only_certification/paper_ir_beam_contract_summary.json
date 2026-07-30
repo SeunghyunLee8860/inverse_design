@@ -1,6 +1,6 @@
 {
-  "status": "PROPOSED_PAPER_IR_SOURCE_CONTRACT_READY_FOR_GPU_PROBE",
-  "generation_commit": "84f8fe0534547e0556d05860e3a2f1082d49aeeb",
+  "status": "FIXED_PAPER_LIKE_SCALAR_GAUSSIAN_CONTRACT_READY_FOR_GPU_PROBE",
+  "generation_commit": "076434595267b971527700ee12cf5ff7d2b46d06",
   "paper_sources": {
     "main": {
       "path": "/home/seunghyun/tairte4/papers/Adv Funct Materials - 2026 - Blevins - Large Transverse Thermoelectric Effect in Weyl Semimetal TaIrTe4 Engineered for-2.pdf",
@@ -95,7 +95,7 @@
     {
       "classification": "EXPLICIT_ASSUMPTION",
       "item": "first source model",
-      "value": "scalar Gaussian candidate w0=12 um; vector thin-lens match required before production",
+      "value": "scalar Gaussian w0=12 um fixed for this sanity check; thin-lens comparison is optional and not a gate",
       "location": "numerical source contract"
     }
   ],
@@ -163,10 +163,10 @@
       }
     },
     {
-      "name": "selected_scalar_source_only_candidate",
+      "name": "fixed_paper_like_scalar_Gaussian_assumed_waist",
       "classification": "EXPLICIT_ASSUMPTION",
       "w0_m": 1.2e-05,
-      "definition": "rounded Gaussian-equivalent radius for the first scalar source-only certification; not yet production approved",
+      "definition": "fixed scalar-Gaussian scenario with an explicitly assumed 1/e^2 intensity waist radius; not an experimentally reproduced or paper-certified beam",
       "eta_paraxial": 0.2917840623351415,
       "Rayleigh_range_m": 4.112630382881185e-05,
       "source_to_focus_distance_m": 5.065000000000001e-06,
@@ -180,11 +180,11 @@
       }
     }
   ],
-  "selected_source_only_candidate": {
-    "name": "selected_scalar_source_only_candidate",
+  "selected_source_only_scenario": {
+    "name": "fixed_paper_like_scalar_Gaussian_assumed_waist",
     "classification": "EXPLICIT_ASSUMPTION",
     "w0_m": 1.2e-05,
-    "definition": "rounded Gaussian-equivalent radius for the first scalar source-only certification; not yet production approved",
+    "definition": "fixed scalar-Gaussian scenario with an explicitly assumed 1/e^2 intensity waist radius; not an experimentally reproduced or paper-certified beam",
     "eta_paraxial": 0.2917840623351415,
     "Rayleigh_range_m": 4.112630382881185e-05,
     "source_to_focus_distance_m": 5.065000000000001e-06,
@@ -198,9 +198,11 @@
     },
     "wavelength_m": 1.1e-05,
     "incident_power_for_later_physical_scaling_W": 0.000285,
-    "source_model": "scalar Gaussian candidate",
-    "production_approval": false,
-    "production_blocker": "w0 is only about 1.09 wavelengths; matched vectorial thin-lens flake-plane field comparison remains required",
+    "source_model": "scalar Gaussian; waist size and position",
+    "scenario_label": "paper-like scalar-Gaussian scenario with an explicitly assumed waist",
+    "approved_for_current_sanity_check": true,
+    "experimentally_reproduced_beam": false,
+    "paper_certified_beam": false,
     "propagation_direction": "-z",
     "distance_from_waist_property_m": -5.065000000000001e-06,
     "distance_sign_note": "negative for a backward source converging to the lower-z waist; the legacy positive sign is not reused",
@@ -230,23 +232,34 @@
     "boundary_mean_gate": 2.0058485804137267,
     "governing": 2.0058485804137267
   },
-  "scalar_vector_match_contract": {
-    "required": true,
-    "not_implemented_by_boolean_only": true,
-    "vector_source": "fully vectorial thin-lens, objective NA=0.4",
-    "must_match": [
-      "flake-plane incident power",
-      "beam center",
-      "fitted and second-moment widths",
-      "focus",
-      "aperture/NA",
-      "normalized flake-plane intensity"
+  "optional_future_diagnostic": {
+    "name": "scalar versus vectorial thin-lens comparison",
+    "required_for_current_sanity_check": false,
+    "blocks_source_only_or_material_cases": false,
+    "execute_now": false
+  },
+  "successor_optical_sequence": {
+    "condition": "only after the scalar source-only gate passes",
+    "cases": [
+      "planar TaIrTe4, E parallel a",
+      "planar TaIrTe4, E parallel b",
+      "straight 45-degree finite edge, E parallel a",
+      "straight 45-degree finite edge, E parallel b"
     ],
-    "gates": {
-      "incident_power_relative_difference": 0.005,
-      "beam_width_relative_difference": 0.005,
-      "normalized_intensity_NRMSE": 0.005
-    }
+    "same_scalar_source_geometry": true,
+    "same_incident_power_normalization": true,
+    "polarization_specific_raw_Q_rescaling_prohibited": true
+  },
+  "mesh_contract": {
+    "global_mesh": "auto non-uniform, conformal variant 1, accuracy 5",
+    "uniform_global_fine_mesh": false,
+    "material_case_local_fine_regions": [
+      "TaIrTe4",
+      "illuminated straight edge",
+      "Q extraction region"
+    ],
+    "far_air_SiO2_Si": "wavelength-appropriate nonuniform coarse mesh",
+    "TaIrTe4_thickness_resolution": "separate local z override"
   },
   "prohibited": {
     "thermal": true,

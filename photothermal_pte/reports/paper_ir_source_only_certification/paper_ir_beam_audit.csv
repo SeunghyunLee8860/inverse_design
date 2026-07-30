@@ -12,4 +12,4 @@ PAPER_REPORTED,thermal source equation,Gaussian intensity; w0=2 sigma is called 
 PAPER_REPORTED,Figure 3F/G geometry,"130 nm flake, 285 nm SiO2/Si, 45-degree insulating edge",main paper PDF pp.5-6 and Figure 3 caption
 PAPER_INFERRED,incidence angle for LWIR source model,normal incidence,SI PDF p.7 normal-incidence symmetry discussion and shared SPCM optical axis; no numerical alignment tolerance reported
 EXPLICIT_ASSUMPTION,waist plane,TaIrTe4 midplane z=-65 nm,numerical source contract; not stated by paper
-EXPLICIT_ASSUMPTION,first source model,scalar Gaussian candidate w0=12 um; vector thin-lens match required before production,numerical source contract
+EXPLICIT_ASSUMPTION,first source model,scalar Gaussian w0=12 um fixed for this sanity check; thin-lens comparison is optional and not a gate,numerical source contract

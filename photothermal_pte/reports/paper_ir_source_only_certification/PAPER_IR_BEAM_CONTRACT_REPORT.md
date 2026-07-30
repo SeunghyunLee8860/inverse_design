@@ -1,6 +1,6 @@
-# Paper-like IR beam audit and proposed source contract
+# Paper-like IR beam audit and fixed scalar source contract
 
-Status: `PROPOSED_PAPER_IR_SOURCE_CONTRACT_READY_FOR_GPU_PROBE`
+Status: `FIXED_PAPER_LIKE_SCALAR_GAUSSIAN_CONTRACT_READY_FOR_GPU_PROBE`
 
 No FDTD, thermal, PTE, weighting-potential, adjoint, gradient, or
 optimization solve was run by this audit.
@@ -28,12 +28,15 @@ The paper does **not** state whether the 9–16 µm spot is a radius, diameter,
 FWHM, or 1/e^2 width.  It does not publish the exact wavelength-specific
 11 µm spot, waist-plane location, objective pupil fill, or alignment error.
 
-## Selected first source-only candidate
+## Fixed source-only scenario
 
 The 0.4-NA Airy FWHM estimate at 11 µm is
 `14.135000 µm`; its same-FWHM Gaussian radius is
-`12.005164 µm`.  The first candidate therefore uses a rounded
+`12.005164 µm`.  The fixed scenario uses a rounded
 `w0=12.0 µm`, explicitly as an assumption rather than a paper value.
+Its required label is **paper-like scalar-Gaussian scenario with an
+explicitly assumed waist**.  It is not an experimentally reproduced beam or
+a paper-certified beam.
 
 - eta=lambda/(pi*w0): `0.291784`
 - Rayleigh range: `41.126304 µm`
@@ -50,11 +53,16 @@ The backward source must use
 `distance from waist = -5.065000 µm`.
 The legacy positive sign is not reused.
 
-## Scalar/vector status
+## Source and mesh decision
 
-Since `w0` is only about 1.09 wavelengths, the scalar source is a
-source-only calibration candidate, not a production approval.  Before any
-planar/edge material case, it must be matched against a fully vectorial
-thin-lens source using NA=0.4 by realized flake-plane power, center, fitted
-and second-moment widths, focus, and normalized spatial intensity.  Merely
-toggling the scalar Boolean with identical numeric parameters is prohibited.
+The scalar Gaussian is fixed for this sanity check.  A vectorial thin-lens
+comparison is an optional future diagnostic and is neither executed nor kept
+as a blocker.  After one homogeneous-air GPU source-only case passes, the
+next cases are planar a/b and straight-45-degree-edge a/b with the identical
+scalar geometry and incident-power normalization.
+
+The optical solver uses auto non-uniform mesh, conformal variant 1, accuracy
+5.  Material cases must use local fine regions at TaIrTe4, the illuminated
+edge, and Q extraction volume, plus a separate TaIrTe4 z override.  A uniform
+fine mesh over the 60-µm domain is prohibited, as are Q clipping, smoothing,
+gain, and rescaling.

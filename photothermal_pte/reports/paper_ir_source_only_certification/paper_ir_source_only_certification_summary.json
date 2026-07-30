@@ -1,13 +1,13 @@
 {
   "status": "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE_BEFORE_SOURCE_ONLY",
-  "generation_commit": "84f8fe0534547e0556d05860e3a2f1082d49aeeb",
+  "generation_commit": "076434595267b971527700ee12cf5ff7d2b46d06",
   "preserved_prior_status": "VALIDATED_OFFLINE_MASKED_PLANAR_AND_SOURCE_AUDIT",
-  "paper_beam_audit_status": "PROPOSED_PAPER_IR_SOURCE_CONTRACT_READY_FOR_GPU_PROBE",
-  "selected_candidate": {
-    "name": "selected_scalar_source_only_candidate",
+  "paper_beam_audit_status": "FIXED_PAPER_LIKE_SCALAR_GAUSSIAN_CONTRACT_READY_FOR_GPU_PROBE",
+  "selected_scalar_scenario": {
+    "name": "fixed_paper_like_scalar_Gaussian_assumed_waist",
     "classification": "EXPLICIT_ASSUMPTION",
     "w0_m": 1.2e-05,
-    "definition": "rounded Gaussian-equivalent radius for the first scalar source-only certification; not yet production approved",
+    "definition": "fixed scalar-Gaussian scenario with an explicitly assumed 1/e^2 intensity waist radius; not an experimentally reproduced or paper-certified beam",
     "eta_paraxial": 0.2917840623351415,
     "Rayleigh_range_m": 4.112630382881185e-05,
     "source_to_focus_distance_m": 5.065000000000001e-06,
@@ -21,9 +21,11 @@
     },
     "wavelength_m": 1.1e-05,
     "incident_power_for_later_physical_scaling_W": 0.000285,
-    "source_model": "scalar Gaussian candidate",
-    "production_approval": false,
-    "production_blocker": "w0 is only about 1.09 wavelengths; matched vectorial thin-lens flake-plane field comparison remains required",
+    "source_model": "scalar Gaussian; waist size and position",
+    "scenario_label": "paper-like scalar-Gaussian scenario with an explicitly assumed waist",
+    "approved_for_current_sanity_check": true,
+    "experimentally_reproduced_beam": false,
+    "paper_certified_beam": false,
     "propagation_direction": "-z",
     "distance_from_waist_property_m": -5.065000000000001e-06,
     "distance_sign_note": "negative for a backward source converging to the lower-z waist; the legacy positive sign is not reused",
@@ -48,9 +50,12 @@
     "periodic_or_Bloch": false
   },
   "source_model_decision": {
-    "scalar_candidate_production_approved": false,
-    "matched_vectorial_thin_lens_required": true,
-    "reason": "w0 is only about 1.09 wavelengths; matched vectorial thin-lens flake-plane field comparison remains required"
+    "scenario_label": "paper-like scalar-Gaussian scenario with an explicitly assumed waist",
+    "scalar_Gaussian_fixed_for_current_sanity_check": true,
+    "experimentally_reproduced_beam": false,
+    "paper_certified_beam": false,
+    "matched_vectorial_thin_lens_required": false,
+    "thin_lens_status": "OPTIONAL_FUTURE_DIAGNOSTIC"
   },
   "legacy_w0_2um": {
     "status": "DIAGNOSTIC_ONLY_INVALID_FOR_PAPER_LIKE_BEAM",
@@ -80,6 +85,18 @@
       "CPU_fallback": false,
       "exception_type": "LumApiError",
       "license_signature_detected": true
+    },
+    {
+      "case": "contract_only_probe_3",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_w12_L60_fixed_contract_20260730/source_only_case_result.json",
+      "status": "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE",
+      "contract_only": true,
+      "FDTD_session_opened": false,
+      "runsetup_completed": false,
+      "GPU_solve_started": false,
+      "CPU_fallback": false,
+      "exception_type": "LumApiError",
+      "license_signature_detected": true
     }
   ],
   "actual_solver_readback": {
@@ -91,12 +108,16 @@
     "realized_beam": null
   },
   "source_only_gates": {
-    "requested_vs_realized_width_relative_error_below_0p5pct": null,
+    "requested_vs_realized_x_waist_error_below_0p5pct": null,
+    "requested_vs_realized_y_waist_error_below_0p5pct": null,
+    "Gaussian_fit_NRMSE_below_0p5pct": null,
     "beam_center_error_below_one_cell": null,
+    "xy_ellipticity_below_0p5pct": null,
     "square_capture_at_least_99p9pct": null,
     "realized_source_boundary_max_below_1e_minus_3": null,
     "incident_power_closure_below_0p5pct": null,
-    "field_time_convergence_below_0p5pct": null,
+    "actual_mesh_readback_available": null,
+    "GPU_memory_readback_available": null,
     "no_NaN_or_Inf": null,
     "GPU_only_no_CPU_fallback": null,
     "auto_shutoff_at_most_1e_minus_5": null
@@ -127,13 +148,19 @@
     "status": "UNRESOLVED_UNTIL_LICENSE_AND_RUNSETUP",
     "reason": "the new homogeneous-air grid and memory were not generated; old 12/48-um material cases are not a defensible runtime model for the 60-um source-only contract"
   },
+  "license_minimum_fix": {
+    "current_failure": "v261 LUMERICAL_GUI starts ANSYSLI, but ANSYSLI exits before the per-session server-port file can be read",
+    "port_1055_connectivity_alone_is_sufficient": false,
+    "required": "restore the v261 Ansys Licensing Client Proxy/server-port handshake for this user session, then rerun contract-only runsetup once",
+    "license_debug_log": "/home/seunghyun/.ansys/licdebug.aigpu1123.LUMERICAL_GUI.261.out",
+    "do_not_work_around_with_CPU_FDTD": true
+  },
   "next_four_optical_cases": {
     "executed": false,
     "worth_executing_now": false,
     "blockers": [
       "Lumerical license/session startup unavailable",
-      "source-only realized-beam gates not evaluated",
-      "matched scalar/vectorial source comparison incomplete"
+      "source-only realized-beam gates not evaluated"
     ]
   },
   "prohibited_scope_confirmed_not_run": [
