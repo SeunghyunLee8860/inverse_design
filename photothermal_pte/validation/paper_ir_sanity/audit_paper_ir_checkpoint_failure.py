@@ -270,6 +270,25 @@ def main() -> int:
         cwd=args.repository,
         text=True,
     ).strip()
+    audit_basis = subprocess.check_output(
+        ["git", "rev-parse", EXPECTED_HEAD],
+        cwd=args.repository,
+        text=True,
+    ).strip()
+    current_descends_from_basis = (
+        subprocess.run(
+            [
+                "git",
+                "merge-base",
+                "--is-ancestor",
+                audit_basis,
+                head,
+            ],
+            cwd=args.repository,
+            check=False,
+        ).returncode
+        == 0
+    )
     porcelain = subprocess.check_output(
         ["git", "status", "--porcelain=v1"],
         cwd=args.repository,
@@ -572,9 +591,13 @@ def main() -> int:
                 cwd=args.repository,
                 text=True,
             ).strip(),
-            "head": head,
-            "expected_head_prefix": EXPECTED_HEAD,
-            "expected_head_matches": head.startswith(EXPECTED_HEAD),
+            "audit_basis_commit": audit_basis,
+            "expected_audit_basis_prefix": EXPECTED_HEAD,
+            "audit_basis_matches": audit_basis.startswith(EXPECTED_HEAD),
+            "report_generation_head": head,
+            "report_generation_head_descends_from_audit_basis": (
+                current_descends_from_basis
+            ),
             "dirty_or_untracked_at_audit_start": audit_start_porcelain,
             "current_dirty_or_untracked_after_adding_audit_code": (
                 current_porcelain
@@ -631,7 +654,9 @@ def main() -> int:
 ## Repository and provenance
 
 - Branch: `{audit['repository']['branch']}`
-- HEAD: `{head}`
+- Immutable audit basis: `{audit_basis}`
+- Report-generation HEAD: `{head}` (descends from the audit basis:
+  `{current_descends_from_basis}`)
 - Dirty/untracked at audit start: `{audit['repository']['dirty_or_untracked_at_audit_start']}`
 - All six 200/100/50 nm paper-reduced cases use the same geometry, Robin
   boundary, source, and remap contract within each polarization.  Only the
