@@ -200,6 +200,13 @@ def main() -> int:
     selected_lumapi_dir = installation.lumapi_path.parent.resolve()
     os.environ["LUMERICAL_PYTHONPATH"] = str(selected_lumapi_dir)
     os.environ["TARGET_WL_UM"] = "4.0"
+    os.environ["SOURCE_WL_START_UM"] = "3.0"
+    os.environ["SOURCE_WL_STOP_UM"] = "6.0"
+    os.environ["MATERIAL_FIT_START_UM"] = "2.7"
+    os.environ["MATERIAL_FIT_STOP_UM"] = "13.2"
+    os.environ["BULK_MESH_MODE"] = "auto"
+    os.environ["MESH_ACCURACY"] = "5"
+    os.environ["VC_MESH_REFINEMENT"] = "conformal variant 1"
     if args.global_resolution is not None:
         os.environ["RES"] = str(args.global_resolution)
     if args.design_resolution_xy is not None:
@@ -311,10 +318,33 @@ def main() -> int:
             add_power_monitor(fdtd, TRANSMISSION_MONITOR, transmission_z, float(model.Sx) * 1e-6, float(model.Sy) * 1e-6)
             add_power_monitor(fdtd, LOCAL_TOP_MONITOR, local_top_z, float(model.Sx) * 1e-6, float(model.Sy) * 1e-6)
             add_power_monitor(fdtd, LOCAL_BOTTOM_MONITOR, local_bottom_z, float(model.Sx) * 1e-6, float(model.Sy) * 1e-6)
-            fdtd.setglobalsource("wavelength start", config.WAVELENGTH_M)
-            fdtd.setglobalsource("wavelength stop", config.WAVELENGTH_M)
-            fdtd.save(str(project_path))
+            fdtd.setglobalsource("wavelength start", runtime.SOURCE_WL_START)
+            fdtd.setglobalsource("wavelength stop", runtime.SOURCE_WL_STOP)
+            for monitor in (
+                REFLECTION_MONITOR,
+                TRANSMISSION_MONITOR,
+                LOCAL_TOP_MONITOR,
+                LOCAL_BOTTOM_MONITOR,
+                f"{PABS_NAME}::field",
+                f"{PABS_NAME}::index",
+            ):
+                configure_single_frequency(fdtd, monitor)
             runtime.configure_session_resources(fdtd)
+            runtime.assert_production_contract(
+                fdtd,
+                (
+                    sim.design_monitor_name,
+                    sim.design_index_monitor_name,
+                    REFLECTION_MONITOR,
+                    TRANSMISSION_MONITOR,
+                    LOCAL_TOP_MONITOR,
+                    LOCAL_BOTTOM_MONITOR,
+                    f"{PABS_NAME}::field",
+                    f"{PABS_NAME}::index",
+                ),
+                run_setup=True,
+            )
+            fdtd.save(str(project_path))
             resource = runtime.run_session(fdtd, "photothermal_stage1_qon")
 
         fdtd.runanalysis(PABS_NAME)

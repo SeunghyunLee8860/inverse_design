@@ -19,7 +19,18 @@ HERE = Path(__file__).resolve().parent
 c0 = 299792458.0
 seed = int(os.environ.get("ID_SEED", "240"))
 
-TARGET_WL_UM = [float(w) for w in os.environ.get("TARGET_WL_UM", "4.0").split(",")]
+TARGET_WL_UM = float(os.environ.get("TARGET_WL_UM", "4.0"))
+SOURCE_WL_START_UM = float(os.environ.get("SOURCE_WL_START_UM", "3.0"))
+SOURCE_WL_STOP_UM = float(os.environ.get("SOURCE_WL_STOP_UM", "6.0"))
+MATERIAL_FIT_START_UM = float(os.environ.get("MATERIAL_FIT_START_UM", "2.7"))
+MATERIAL_FIT_STOP_UM = float(os.environ.get("MATERIAL_FIT_STOP_UM", "13.2"))
+MATERIAL_SAMPLE_COUNT = int(os.environ.get("MATERIAL_SAMPLE_COUNT", "600"))
+if not (0.0 < SOURCE_WL_START_UM < TARGET_WL_UM < SOURCE_WL_STOP_UM):
+    raise ValueError("source range must contain the single analysis wavelength")
+if not (0.0 < MATERIAL_FIT_START_UM < SOURCE_WL_START_UM):
+    raise ValueError("material fit must start below the source range")
+if not (SOURCE_WL_STOP_UM < MATERIAL_FIT_STOP_UM):
+    raise ValueError("material fit must stop above the source range")
 GLOBAL_RESOLUTION = int(os.environ.get("RES", "20"))
 DESIGN_RESOLUTION_XY = int(os.environ.get("DESIGN_RES_XY", "40"))
 FLAKE_DZ_NM = float(os.environ.get("FILM_DZ_NM", "5.0"))
@@ -35,8 +46,8 @@ ID_SEED_AMP = float(os.environ.get("ID_SEED_AMP", "0.15"))
 sio2_h = 0.285
 flake_h = 0.100
 PML_LAYERS = int(os.environ.get("PML_LAYERS", "24"))
-BULK_MESH_MODE = os.environ.get("BULK_MESH_MODE", "uniform").strip().lower()
-MESH_ACCURACY = int(os.environ.get("MESH_ACCURACY", "2"))
+BULK_MESH_MODE = os.environ.get("BULK_MESH_MODE", "auto").strip().lower()
+MESH_ACCURACY = int(os.environ.get("MESH_ACCURACY", "5"))
 SOURCE_MESH_HALFSPAN_UM = float(os.environ.get("SOURCE_MESH_HALFSPAN_UM", "0.1"))
 AIR_BULK_DZ_NM = float(os.environ.get("AIR_BULK_DZ_NM", "100.0"))
 SI_BULK_DZ_NM = float(os.environ.get("SI_BULK_DZ_NM", "100.0"))
@@ -88,7 +99,7 @@ design_grid_steps = [
     1e-6 / GLOBAL_RESOLUTION,
 ]
 
-target_wl = np.asarray(TARGET_WL_UM, dtype=float)
+target_wl = np.asarray([TARGET_WL_UM], dtype=float)
 si_index = [3.425]
 sio2_index = [1.38]
 design_high_index = [DESIGN_N]
@@ -109,9 +120,14 @@ def eps_flake(lam_nm, axis):
 
 
 def add_flake_material(sim):
-    lam_s = np.linspace(min(target_wl) * 900, max(target_wl) * 1100, 400)
-    f_s = c0 / (lam_s * 1e-9)
-    ea, eb = eps_flake(lam_s, "a"), eps_flake(lam_s, "b")
+    # perm_data.txt uses nanometres; eps_flake() therefore receives nm.
+    lam_s_nm = np.linspace(
+        MATERIAL_FIT_START_UM * 1e3,
+        MATERIAL_FIT_STOP_UM * 1e3,
+        MATERIAL_SAMPLE_COUNT,
+    )
+    f_s = c0 / (lam_s_nm * 1e-9)
+    ea, eb = eps_flake(lam_s_nm, "a"), eps_flake(lam_s_nm, "b")
     ec = np.full_like(ea, eps_c_flake)
     material = sim.fdtd.addmaterial("Sampled 3D data")
     sim.fdtd.setmaterial(material, "name", "TaIrTe4_ani")
@@ -130,6 +146,7 @@ def build_case(incident_polarization="x"):
         sim_size=[Sx, Sy, Sz], resolution=GLOBAL_RESOLUTION, unit=1e-6,
         background_index=1.0, center_wl=float(np.mean(target_wl)),
         N_f=len(target_wl), bc_x="Periodic", bc_y="Periodic", bc_z="PML",
+        create_global_uniform_mesh=(BULK_MESH_MODE == "uniform"),
     )
     sim.fdtd.setnamed("FDTD", "z", sim_center_z * 1e-6)
     try:
@@ -138,7 +155,7 @@ def build_case(incident_polarization="x"):
         pass
     if BULK_MESH_MODE != "uniform":
         if sim.fdtd.getnamednumber("global_uniform_mesh") > 0:
-            sim.fdtd.eval("select(\"global_uniform_mesh\"); delete;")
+            raise RuntimeError("global_uniform_mesh was unexpectedly created")
         sim.fdtd.setnamed("FDTD", "mesh type", "auto non-uniform")
         sim.fdtd.setnamed("FDTD", "mesh accuracy", MESH_ACCURACY)
     else:
@@ -147,16 +164,6 @@ def build_case(incident_polarization="x"):
     sim.add_geo(center=si_c, size=si_s, index=si_index, name="Si_substrate")
     sim.add_geo(center=sio2_c, size=sio2_s, index=sio2_index, name="SiO2_spacer")
     sim.add_geo(center=flake_c, size=flake_s, index="TaIrTe4_ani", name="TaIrTe4_flake")
-    if BULK_MESH_MODE != "uniform":
-        sim.fdtd.addmesh()
-        sim.fdtd.set("name", "fixed_stack_z_mesh")
-        sim.fdtd.set("x", 0.0); sim.fdtd.set("x span", Sx*lateral_pad*1e-6)
-        sim.fdtd.set("y", 0.0); sim.fdtd.set("y span", Sy*lateral_pad*1e-6)
-        sim.fdtd.set("z min", SI_COARSE_Z_MAX_UM*1e-6)
-        sim.fdtd.set("z max", design_h*1e-6)
-        sim.fdtd.set("override x mesh", 0); sim.fdtd.set("override y mesh", 0)
-        sim.fdtd.set("override z mesh", 1)
-        sim.fdtd.set("dz", 1e-6/GLOBAL_RESOLUTION)
     if BULK_MESH_MODE == "regional_uniform":
         sim.fdtd.addmesh()
         sim.fdtd.set("name", "air_bulk_z_mesh")
@@ -173,16 +180,6 @@ def build_case(incident_polarization="x"):
         sim.fdtd.set("z max", SI_COARSE_Z_MAX_UM*1e-6)
         sim.fdtd.set("override x mesh", 0); sim.fdtd.set("override y mesh", 0)
         sim.fdtd.set("override z mesh", 1); sim.fdtd.set("dz", SI_BULK_DZ_NM*1e-9)
-    if BULK_MESH_MODE != "uniform":
-        sim.fdtd.addmesh()
-        sim.fdtd.set("name", "source_z_registration_mesh")
-        sim.fdtd.set("x", 0.0); sim.fdtd.set("x span", Sx*1e-6)
-        sim.fdtd.set("y", 0.0); sim.fdtd.set("y span", Sy*1e-6)
-        sim.fdtd.set("z min", (src_c[2]-SOURCE_MESH_HALFSPAN_UM)*1e-6)
-        sim.fdtd.set("z max", (src_c[2]+SOURCE_MESH_HALFSPAN_UM)*1e-6)
-        sim.fdtd.set("override x mesh", 0); sim.fdtd.set("override y mesh", 0)
-        sim.fdtd.set("override z mesh", 1)
-        sim.fdtd.set("dz", 1e-6/GLOBAL_RESOLUTION)
     if FLAKE_DZ_NM > 0:
         dz = FLAKE_DZ_NM * 1e-9
         sim.fdtd.addmesh()
@@ -195,8 +192,8 @@ def build_case(incident_polarization="x"):
         sim.fdtd.set("override z mesh", 1); sim.fdtd.set("dz", dz)
     sim.add_source(
         mode="plane", name="source", center=src_c, size=[Sx, Sy, 0],
-        direction="backward", src_wl=list(target_wl), bandwidth=0.0,
-        pol=polarization_angle,
+        direction="backward", src_wl=[SOURCE_WL_START_UM, SOURCE_WL_STOP_UM],
+        bandwidth=0.0, pol=polarization_angle, single=True,
     )
     sim.min_mesh_step_m = MIN_MESH_STEP_NM * 1e-9
     sim.add_design_grid(

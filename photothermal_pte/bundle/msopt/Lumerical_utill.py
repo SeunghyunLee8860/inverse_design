@@ -192,6 +192,7 @@ class LumericalFDTDSimulator:
         background_index: float = 1.0,
         center_wl: float = 1.0,
         N_f: int = 1,
+        create_global_uniform_mesh: bool = True,
     ):
         self.dims = ['x', 'y', 'z']
         self.kw_to_idx = {kw: i for i, kw in enumerate(self.dims)}
@@ -208,6 +209,7 @@ class LumericalFDTDSimulator:
         self.n_bg = background_index
         self.resolution = resolution
         self.ppw = points_per_wavelength
+        self.create_global_uniform_mesh = bool(create_global_uniform_mesh)
         self.bc = {'x': bc_x, 'y': bc_y, 'z': bc_z}
         self.material_cache = {}
         self.src_wl = np.asarray([center_wl], dtype=float).reshape(-1) * self.unit
@@ -258,22 +260,29 @@ class LumericalFDTDSimulator:
                 self.sim_grid = self.center_wl / (float(self.ppw))
                 mode_desc = f"uniform dx=dy=dz={self.sim_grid:.3e} m (ppw={self.ppw} @ λ0={self.center_wl:g} m, n={self.n_bg})"
 
-            # add one big mesh override to enforce dx,dy,dz
-            self.fdtd.addmesh()
-            self.fdtd.set("name", "global_uniform_mesh")
-            for dim in nz_dims:
-                idx = self.kw_to_idx[dim]
-                self.fdtd.set(dim, self.sim_center[idx])
-                self.fdtd.set(f"{dim} span", self.sim_size[idx])
+            if self.create_global_uniform_mesh:
+                # Legacy opt-in path. Production auto-mesh builders set this
+                # false and keep sim_grid only as the import-grid coordinate
+                # reference; no whole-domain mesh object is created.
+                self.fdtd.addmesh()
+                self.fdtd.set("name", "global_uniform_mesh")
+                for dim in nz_dims:
+                    idx = self.kw_to_idx[dim]
+                    self.fdtd.set(dim, self.sim_center[idx])
+                    self.fdtd.set(f"{dim} span", self.sim_size[idx])
 
-            # override per-axis and set steps
-            self.fdtd.set("override x mesh", 1)
-            self.fdtd.set("override y mesh", 1)
-            self.fdtd.set("override z mesh", 1)
-            self.fdtd.set("dx", float(self.sim_grid))
-            self.fdtd.set("dy", float(self.sim_grid))
-            self.fdtd.set("dz", float(self.sim_grid))
-            print(f"[FDTD] Mesh override enabled: {mode_desc}")
+                self.fdtd.set("override x mesh", 1)
+                self.fdtd.set("override y mesh", 1)
+                self.fdtd.set("override z mesh", 1)
+                self.fdtd.set("dx", float(self.sim_grid))
+                self.fdtd.set("dy", float(self.sim_grid))
+                self.fdtd.set("dz", float(self.sim_grid))
+                print(f"[FDTD] Mesh override enabled: {mode_desc}")
+            else:
+                print(
+                    "[FDTD] Mesh coordinate reference only; "
+                    f"global override disabled ({mode_desc})"
+                )
         else:
             # fallback: use mesh accuracy only
             self.fdtd.set("mesh accuracy", 2)
