@@ -1,0 +1,41 @@
+{
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_spcm_sanity/validate_paper_spcm_sanity.py --output-dir photothermal_pte/reports/paper_spcm_sanity --raw-dir /home/seunghyun/tairte4/artifacts/paper_spcm_sanity/20260730",
+  "published_files": [
+    {
+      "byte_size": 115493,
+      "path": "photothermal_pte/reports/paper_spcm_sanity/PAPER_SPCM_BEAM_RADIUS_SENSITIVITY.png",
+      "sha256": "01c39e4fd347b56ff9b75f919bd6ef8e6e4e910d4d2bbe181474bb9a962955d4"
+    },
+    {
+      "byte_size": 325374,
+      "path": "photothermal_pte/reports/paper_spcm_sanity/PAPER_SPCM_NUMERICAL_CONVERGENCE.png",
+      "sha256": "1686ff3f5cd750be0d9cac37f206258f87c5d304a77409b98772a3aeee858901"
+    },
+    {
+      "byte_size": 3990,
+      "path": "photothermal_pte/reports/paper_spcm_sanity/PAPER_SPCM_SANITY_CHECK_REPORT.md",
+      "sha256": "6d356c9dcee17c2c095a864f1dc0f58a84b847aaa61d8b7c12988e65707ebc38"
+    },
+    {
+      "byte_size": 305945,
+      "path": "photothermal_pte/reports/paper_spcm_sanity/PAPER_SPCM_SANITY_MAPS.png",
+      "sha256": "6c996cb13e3bbdf8087e788c8c2b56a636bdb1487fee68564190a5a17247c542"
+    },
+    {
+      "byte_size": 4456,
+      "path": "photothermal_pte/reports/paper_spcm_sanity/paper_spcm_sanity_cases.csv",
+      "sha256": "02a72b8ce260b397ad86e713a15c99d6d1476417acdca69db5f03872719f3e75"
+    },
+    {
+      "byte_size": 10886,
+      "path": "photothermal_pte/reports/paper_spcm_sanity/paper_spcm_sanity_summary.json",
+      "sha256": "a0c5bd3d27bfb472299b63970ca86729f3a1a30819d5e8b2cb0065d5266c81db"
+    }
+  ],
+  "raw_artifact_not_committed": {
+    "byte_size": 626485,
+    "path": "/home/seunghyun/tairte4/artifacts/paper_spcm_sanity/20260730/paper_spcm_sanity_raw.npz",
+    "sha256": "9d033d18ecadee4cf478301c6ec3d9a42ddc17abb0789149669cc2d9f0af1f39"
+  },
+  "status": "VALIDATED_PAPER_SPCM_MECHANISM_SANITY_CHECK"
+}
