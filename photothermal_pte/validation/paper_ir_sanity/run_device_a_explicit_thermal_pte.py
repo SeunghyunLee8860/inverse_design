@@ -30,7 +30,6 @@ import matplotlib.pyplot as plt
 from matplotlib.path import Path as PolygonPath
 import numpy as np
 from scipy import sparse
-from scipy.ndimage import distance_transform_edt
 from scipy.sparse import linalg as spla
 
 
@@ -48,7 +47,7 @@ from anisotropic_heat_fvm import (  # noqa: E402
 from photothermal_pte.finite_inverse_design.finite_q_mapping import (  # noqa: E402
     build_conservative_embedding_remap,
     nodal_control_volume_edges,
-    project_remap_to_material_support_along_axis,
+    project_remap_to_nearest_material_support,
 )
 
 
@@ -310,12 +309,16 @@ def solve_weighting_potential(
             f"bottom={np.count_nonzero(bottom)}"
         )
     load = np.zeros(n)
-    for selected, value, half_width, area in (
-        (top, 1.0, 0.5 * dy[-1], dx[:, None]),
-        (bottom, 0.0, 0.5 * dy[0], dx[:, None]),
+    contact_half_widths: dict[str, np.ndarray] = {}
+    for label, selected, value in (
+        ("top", top, 1.0),
+        ("bottom", bottom, 0.0),
     ):
         flat = ids[selected]
-        g = np.broadcast_to(area / half_width, ids.shape)[selected]
+        area = np.broadcast_to(dx[:, None], ids.shape)[selected]
+        half_width = 0.5 * np.broadcast_to(dy[None, :], ids.shape)[selected]
+        contact_half_widths[label] = half_width
+        g = area / half_width
         np.add.at(diagonal, flat, g)
         np.add.at(load, flat, g * value)
     matrix = sparse.diags(diagonal) + sparse.coo_matrix(
@@ -335,6 +338,14 @@ def solve_weighting_potential(
         "minimum_psi": float(np.nanmin(psi)),
         "maximum_psi": float(np.nanmax(psi)),
         "linear_residual_relative": float(residual),
+        "top_contact_half_width_m": {
+            "minimum": float(np.min(contact_half_widths["top"])),
+            "maximum": float(np.max(contact_half_widths["top"])),
+        },
+        "bottom_contact_half_width_m": {
+            "minimum": float(np.min(contact_half_widths["bottom"])),
+            "maximum": float(np.max(contact_half_widths["bottom"])),
+        },
         "geometry_status": "approximate contacts inferred from paper Figure 2A",
     }
 
@@ -363,6 +374,23 @@ def cell_gradient(
     return gx, gy
 
 
+def measure_weighted_mean(
+    values: np.ndarray,
+    mask: np.ndarray,
+    measure: np.ndarray,
+) -> float:
+    """Return a literal area/volume weighted mean on ``mask``."""
+    field = np.asarray(values, float)
+    selected = np.asarray(mask, bool)
+    weights = np.broadcast_to(np.asarray(measure, float), field.shape)
+    if field.shape != selected.shape or not np.any(selected):
+        raise ValueError("weighted mean needs matching nonempty values/mask")
+    denominator = float(np.sum(weights[selected]))
+    if denominator <= 0.0:
+        raise ValueError("weighted mean has nonpositive total measure")
+    return float(np.sum(field[selected] * weights[selected]) / denominator)
+
+
 def straight_edge_temperature_metrics(
     temperature_K: np.ndarray,
     geometry: Geometry,
@@ -382,11 +410,18 @@ def straight_edge_temperature_metrics(
         axis=2,
     ) / thickness
     mask = np.any(geometry.flake_mask, axis=2)
+    fixed_roi = (
+        mask
+        & (np.abs(x[:, None]) <= 12.0e-6)
+        & (np.abs(y[None, :]) <= 12.0e-6)
+    )
     grad_x, grad_y = cell_gradient(average, mask, x, y)
     # TaIrTe4 is y<=x; the outward normal toward air is (-x,+y)/sqrt(2).
     normal = np.asarray([-1.0, 1.0]) / np.sqrt(2.0)
     tangent_coordinate = (x[:, None] + y[None, :]) / np.sqrt(2.0)
     grad_normal = normal[0] * grad_x + normal[1] * grad_y
+    tangent = np.asarray([1.0, 1.0]) / np.sqrt(2.0)
+    grad_tangent = tangent[0] * grad_x + tangent[1] * grad_y
     grad_magnitude = np.hypot(grad_x, grad_y)
 
     air = ~mask
@@ -413,21 +448,46 @@ def straight_edge_temperature_metrics(
         "p99_abs_edge_normal_gradient_K_m": float(
             np.percentile(selected, 99.0)
         ),
+        "max_abs_grad_T_x_K_m": float(np.max(np.abs(grad_x[edge_window]))),
+        "max_abs_grad_T_y_K_m": float(np.max(np.abs(grad_y[edge_window]))),
         "max_inplane_gradient_K_m": float(
             np.max(grad_magnitude[edge_window])
+        ),
+        "max_abs_edge_tangent_gradient_K_m": float(
+            np.max(np.abs(grad_tangent[edge_window]))
+        ),
+        "paper_Fig3G_comparator": (
+            "max_abs_grad_T_x_K_m; all five components are retained because "
+            "edge-normal gradient is not identical to the paper observable"
         ),
         "peak_edge_gradient_location_m": {
             "x": float(x[peak_index[0]]),
             "y": float(y[peak_index[1]]),
         },
         "Tmax_rise_K": float(np.max(average[mask])),
-        "TaIrTe4_area_average_rise_K": float(np.mean(average[mask])),
+        "TaIrTe4_area_average_rise_K": measure_weighted_mean(
+            average,
+            mask,
+            np.diff(geometry.x_edges_m)[:, None]
+            * np.diff(geometry.y_edges_m)[None, :],
+        ),
+        "fixed_24um_ROI_area_average_rise_K": measure_weighted_mean(
+            average,
+            fixed_roi,
+            np.diff(geometry.x_edges_m)[:, None]
+            * np.diff(geometry.y_edges_m)[None, :],
+        ),
+        "fixed_ROI_definition": (
+            "TaIrTe4 cells with |x|<=12 um and |y|<=12 um; used for "
+            "thermal-domain comparisons"
+        ),
     }
     return metrics, {
         "temperature_flake_average_K": average,
         "grad_T_x_K_m": grad_x,
         "grad_T_y_K_m": grad_y,
         "grad_T_normal_K_m": grad_normal,
+        "grad_T_tangent_K_m": grad_tangent,
         "grad_T_magnitude_K_m": grad_magnitude,
         "edge_window_mask": edge_window,
     }
@@ -448,45 +508,30 @@ def load_and_map_q(
         q = np.asarray(raw["Q_on_W_m3"], float)
     source_edges = tuple(nodal_control_volume_edges(axis) for axis in (x, y, z))
     target_edges = (geometry.x_edges_m, geometry.y_edges_m, geometry.z_edges_m)
-    remap = build_conservative_embedding_remap(
+    base_remap = build_conservative_embedding_remap(
         source_edges_m=source_edges,
         target_edges_m=target_edges,
     )
-    for axis in (0, 1, 2, 0):
-        remap = project_remap_to_material_support_along_axis(
-            remap,
-            target_edges_m=target_edges,
-            target_support_mask=geometry.flake_mask,
-            axis=axis,
-        )
     incident_at_unit = float(
         result["run_result"]["normalization"]["incident_power_W_at_1_W_m2"]
     )
     physical_scale = EXPERIMENTAL_INCIDENT_POWER_W / incident_at_unit
-    mapped = remap.apply(q * physical_scale)
-    p_source = remap.power_source(q * physical_scale)
-    target_volume = remap.target_volume_m3
+    scaled_q = q * physical_scale
+    unprojected = base_remap.apply(scaled_q)
     outside_power_before = float(
-        np.sum(remap.target_volume_m3[~geometry.flake_mask] * mapped[~geometry.flake_mask])
+        np.sum(
+            base_remap.target_volume_m3[~geometry.flake_mask]
+            * unprojected[~geometry.flake_mask]
+        )
     )
-    # A final literal energy projection closes polygon/support discretization
-    # at oblique edges. It moves energy; it never deletes or globally rescales
-    # it. The before/after power is retained as a diagnostic.
-    energy = mapped * target_volume
-    outside_nonzero = (~geometry.flake_mask) & (energy != 0.0)
-    if np.any(outside_nonzero):
-        nearest = distance_transform_edt(
-            ~geometry.flake_mask,
-            return_distances=False,
-            return_indices=True,
-        )
-        destinations = tuple(
-            nearest[axis][outside_nonzero] for axis in range(3)
-        )
-        moved = energy[outside_nonzero].copy()
-        energy[outside_nonzero] = 0.0
-        np.add.at(energy, destinations, moved)
-        mapped = energy / target_volume
+    remap = project_remap_to_nearest_material_support(
+        base_remap,
+        target_edges_m=target_edges,
+        target_support_mask=geometry.flake_mask,
+    )
+    mapped = remap.apply(scaled_q)
+    p_source = remap.power_source(scaled_q)
+    target_volume = remap.target_volume_m3
     p_target = remap.power_target(mapped)
     outside_power = float(
         np.sum(target_volume[~geometry.flake_mask] * mapped[~geometry.flake_mask])
@@ -508,10 +553,10 @@ def load_and_map_q(
         ),
         "mapped_power_outside_flake_W": outside_power,
         "mapping_operations": (
-            "validated linear conservative embedding plus x/y/z/x "
-            "material-support projection and a final nearest-support cell-energy "
-            "projection at the oblique polygon edge; no clipping, smoothing, "
-            "gain, global rescaling, or tiling"
+            "validated linear conservative embedding plus one physical-3D-"
+            "nearest material-support projection with exact nearest-distance "
+            "ties split uniformly; no coordinate-axis order, clipping, "
+            "smoothing, gain, global rescaling, or tiling"
         ),
     }
 
@@ -664,7 +709,11 @@ def main() -> int:
             and weighting["maximum_psi"] > 0.95
             and weighting["linear_residual_relative"] < 1e-8
         )
-    flake_temperature = solved.temperature_K[geometry.flake_mask]
+    cell_volume = (
+        np.diff(geometry.x_edges_m)[:, None, None]
+        * np.diff(geometry.y_edges_m)[None, :, None]
+        * np.diff(geometry.z_edges_m)[None, None, :]
+    )
     summary = {
         "status": (
             (
@@ -746,11 +795,24 @@ def main() -> int:
         "mapping": mapping,
         "thermal": {
             "Tmax_rise_K": float(np.nanmax(solved.temperature_K)),
-            "TaIrTe4_volume_average_rise_K": float(np.mean(flake_temperature)),
+            "TaIrTe4_volume_average_rise_K": measure_weighted_mean(
+                solved.temperature_K,
+                geometry.flake_mask,
+                cell_volume,
+            ),
             "linear_residual_relative": solved.linear_residual_relative,
             "energy_balance_relative_error": solved.energy_balance_relative_error,
             "source_power_W": solved.source_power_W,
             "boundary_power_out_W": solved.boundary_power_out_W,
+            "boundary_flux_interpretation": (
+                "x/y and bottom Dirichlet entries are numerical truncation-"
+                "boundary fluxes, not intrinsic physical heat-path fractions"
+                if args.thermal_model == "expanded"
+                else (
+                    "surface_robin_z_min/z_max are the paper reduced model's "
+                    "substrate/air bath heat paths"
+                )
+            ),
             "solver": solved.solver,
             "iterations": solved.iterations,
         },

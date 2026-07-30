@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 import numpy as np
 from scipy import sparse
+from scipy.spatial import cKDTree
 
 
 def nodal_control_volume_edges(coordinates_m: np.ndarray) -> np.ndarray:
@@ -250,6 +251,131 @@ def project_remap_to_material_support_along_axis(
         density_operator=(
             density_projection @ remap.density_operator
         ).tocsr(),
+        source_volume_m3=remap.source_volume_m3,
+        target_volume_m3=remap.target_volume_m3,
+        source_shape=remap.source_shape,
+        target_shape=remap.target_shape,
+    )
+
+
+def project_remap_to_nearest_material_support(
+    remap: ConservativeEmbeddingRemap,
+    *,
+    target_edges_m: tuple[np.ndarray, np.ndarray, np.ndarray],
+    target_support_mask: np.ndarray,
+    nearest_neighbours: int = 16,
+) -> ConservativeEmbeddingRemap:
+    """Relocate target energy to nearest support in physical 3D distance.
+
+    Unlike repeated axis-wise projection, this construction has no preferred
+    coordinate-axis order.  Only target rows reached by ``remap`` are
+    considered, so the sparse operator remains practical on a large thermal
+    grid.  Exact nearest-distance ties are split uniformly; this preserves
+    reflection/rotation symmetry on a Cartesian grid instead of resolving a
+    tie with a hidden x/y preference.
+
+    The returned operator is still literal and linear.  It preserves each
+    source-column energy, supports an exact transpose, and performs no
+    clipping, smoothing, gain, or global rescaling.
+    """
+
+    target_edges = tuple(
+        np.asarray(values, float).reshape(-1)
+        for values in target_edges_m
+    )
+    target_shape = tuple(values.size - 1 for values in target_edges)
+    if target_shape != remap.target_shape:
+        raise ValueError(
+            f"target edge shape {target_shape} != {remap.target_shape}"
+        )
+    support = np.asarray(target_support_mask, bool)
+    if support.shape != remap.target_shape:
+        raise ValueError(
+            f"support shape {support.shape} != {remap.target_shape}"
+        )
+    support_flat = np.flatnonzero(support.reshape(-1))
+    if support_flat.size == 0:
+        raise ValueError("material support is empty")
+    if nearest_neighbours < 1:
+        raise ValueError("nearest_neighbours must be positive")
+
+    source_rows = np.unique(remap.density_operator.nonzero()[0])
+    supported_rows = source_rows[support.reshape(-1)[source_rows]]
+    outside_rows = source_rows[~support.reshape(-1)[source_rows]]
+
+    projection_source = [supported_rows]
+    projection_destination = [supported_rows]
+    projection_weight = [np.ones(supported_rows.size, float)]
+    if outside_rows.size:
+        centers = tuple(
+            0.5 * (axis[:-1] + axis[1:]) for axis in target_edges
+        )
+
+        def physical_points(flat_indices: np.ndarray) -> np.ndarray:
+            indices = np.unravel_index(flat_indices, target_shape)
+            return np.column_stack(
+                [centers[axis][indices[axis]] for axis in range(3)]
+            )
+
+        support_points = physical_points(support_flat)
+        query_points = physical_points(outside_rows)
+        neighbours = min(int(nearest_neighbours), support_flat.size)
+        distances, neighbour_indices = cKDTree(support_points).query(
+            query_points,
+            k=neighbours,
+        )
+        if neighbours == 1:
+            distances = np.asarray(distances)[:, None]
+            neighbour_indices = np.asarray(neighbour_indices)[:, None]
+        else:
+            distances = np.asarray(distances)
+            neighbour_indices = np.asarray(neighbour_indices)
+        minimum = distances[:, :1]
+        # Coordinates are in metres.  The absolute term is far below any
+        # production cell size but large enough to catch round-off in exact
+        # diagonal-grid ties.
+        tie_tolerance = np.maximum(1.0e-18, minimum * 1.0e-10)
+        tied = distances <= minimum + tie_tolerance
+        if (
+            neighbours < support_flat.size
+            and np.any(tied[:, -1])
+        ):
+            raise RuntimeError(
+                "nearest-support tie reaches the candidate limit; increase "
+                "nearest_neighbours so every exact physical-distance tie is "
+                "split explicitly"
+            )
+        tie_count = np.sum(tied, axis=1)
+        repeated_source = np.repeat(outside_rows, tie_count)
+        selected_destination = support_flat[neighbour_indices[tied]]
+        selected_weight = np.concatenate(
+            [
+                np.full(count, 1.0 / count, float)
+                for count in tie_count
+            ]
+        )
+        projection_source.append(repeated_source)
+        projection_destination.append(selected_destination)
+        projection_weight.append(selected_weight)
+
+    source_row = np.concatenate(projection_source)
+    destination_row = np.concatenate(projection_destination)
+    energy_weight = np.concatenate(projection_weight)
+    target_volume = remap.target_volume_m3.reshape(-1)
+    density_weight = (
+        energy_weight
+        * target_volume[source_row]
+        / target_volume[destination_row]
+    )
+    projection = sparse.coo_matrix(
+        (density_weight, (destination_row, source_row)),
+        shape=(support.size, support.size),
+    ).tocsr()
+    projected_operator = (
+        projection @ remap.density_operator
+    ).tocsr()
+    return ConservativeEmbeddingRemap(
+        density_operator=projected_operator,
         source_volume_m3=remap.source_volume_m3,
         target_volume_m3=remap.target_volume_m3,
         source_shape=remap.source_shape,

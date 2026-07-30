@@ -5,6 +5,7 @@ from photothermal_pte.finite_inverse_design.finite_q_mapping import (
     build_conservative_embedding_remap,
     exact_nonzero_box,
     nodal_control_volume_edges,
+    project_remap_to_nearest_material_support,
     project_remap_to_material_support_along_axis,
 )
 
@@ -96,3 +97,66 @@ def test_nodal_edges_match_trapezoid_length_and_nonzero_box() -> None:
     box, outside_nonzero = exact_nonzero_box(density)
     assert outside_nonzero == 0
     assert density[box].shape == (3, 3, 3)
+
+
+def test_nearest_support_projection_is_conservative_transposable_and_symmetric() -> None:
+    axis = np.linspace(-1.0, 1.0, 33)
+    edges = (axis, axis, np.array([-0.5, 0.5]))
+    base = build_conservative_embedding_remap(
+        source_edges_m=edges,
+        target_edges_m=edges,
+    )
+    center = 0.5 * (axis[:-1] + axis[1:])
+    xx, yy = np.meshgrid(center, center, indexing="ij")
+    source = np.exp(-8.0 * (xx**2 + yy**2))[:, :, None]
+    support = (yy <= xx)[:, :, None]
+    projected = project_remap_to_nearest_material_support(
+        base,
+        target_edges_m=edges,
+        target_support_mask=support,
+    )
+    target = projected.apply(source)
+    sensitivity = np.arange(target.size, dtype=float).reshape(target.shape)
+    assert np.count_nonzero(target[~support]) == 0
+    assert projected.power_target(target) == pytest.approx(
+        projected.power_source(source), rel=2e-13
+    )
+    assert np.sum(sensitivity * target) == pytest.approx(
+        np.sum(projected.transpose(sensitivity) * source), rel=2e-13
+    )
+
+    # (x,y)->(-y,-x) leaves both this half-plane and circular source
+    # invariant.  The projected result must therefore share the symmetry.
+    reflected = target[::-1, ::-1, :].transpose(1, 0, 2)
+    assert target == pytest.approx(reflected, rel=2e-13, abs=1e-14)
+
+
+def test_axis_order_projection_exposes_the_regression_guarded_above() -> None:
+    axis = np.linspace(-1.0, 1.0, 33)
+    edges = (axis, axis, np.array([-0.5, 0.5]))
+    base = build_conservative_embedding_remap(
+        source_edges_m=edges,
+        target_edges_m=edges,
+    )
+    center = 0.5 * (axis[:-1] + axis[1:])
+    xx, yy = np.meshgrid(center, center, indexing="ij")
+    source = np.exp(-8.0 * (xx**2 + yy**2))[:, :, None]
+    support = (yy <= xx)[:, :, None]
+
+    def sequential(order: tuple[int, ...]) -> np.ndarray:
+        mapped = base
+        for coordinate_axis in order:
+            mapped = project_remap_to_material_support_along_axis(
+                mapped,
+                target_edges_m=edges,
+                target_support_mask=support,
+                axis=coordinate_axis,
+            )
+        return mapped.apply(source)
+
+    x_first = sequential((0, 1, 2, 0))
+    y_first = sequential((1, 0, 2, 1))
+    relative_l1 = np.sum(np.abs(x_first - y_first)) / np.sum(
+        np.abs(x_first)
+    )
+    assert relative_l1 == pytest.approx(0.5, rel=1e-12)

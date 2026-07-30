@@ -1,8 +1,49 @@
 # Latest photothermal validation status
 
+## Straight-edge spatial-Q/remap/gradient audit
+
+- Status:
+  `UNRESOLVED_STRAIGHT_EDGE_SPATIAL_Q_REMAP_AND_GRADIENT_METRIC`
+- The earlier `x/y/z/x` support projection is coordinate-order dependent.
+  A symmetric Gaussian regression gives a 50.0% relative L1 difference
+  against `y/x/z/y` with identical total power. The straight-edge path now
+  uses one physical-3D-nearest support projection with symmetric tie
+  splitting; conservation, transpose, and reflection tests pass.
+- The 50.0% value is a structural synthetic regression, not the actual-Q
+  error. On the saved raw Q, x-first versus y-first differs by only
+  `0.002586% / 0.002235%` for a/b; historical versus physical-nearest differs
+  by `0.019838% / 0.004467%`. The old operator is invalid in principle, but
+  it does not explain the roughly 20% gradient-order reversal.
+- Area/volume averages now use literal cell measures. The report retains
+  `max|dT/dx|`, `max|dT/dy|`, `max|grad T|`, `max|dT/dn|`, and
+  `max|dT/dt|` separately. The Figure-3G comparator is `max|dT/dx|`.
+- Paper analytic Gaussian--Beer--Lambert Q plus the Eq.-S4 reduced Robin
+  model gives `max|dT/dx| b/a = 1.44677`, reproducing the requested
+  polarization order.
+- Saved finite-edge Lumerical Q on the same reduced thermal operator gives
+  `b/a = 0.805447` at 100 nm and `0.881330` at 50 nm; the expanded 80-um
+  FVM gives `0.817054`. All five finite-edge-Q gradient ratios remain below
+  one.
+- The paper-reduced 100-to-50-nm thermal refinement does not pass:
+  the worst change among the five edge-gradient observables is `67.8619%`
+  (limit `1%`). `Tmax` changes by up to `2.735%` and the fixed-ROI average
+  by only `0.224%`, demonstrating that local derivatives, not the integrated
+  temperature response, remain mesh unresolved.
+- Expanded-model 48-to-80-um relative changes are at most `0.0882%` for
+  `Tmax`, `0.444%` for the fixed 24-um ROI average, and `0.00772%` for the
+  five edge-gradient metrics. Lateral/bottom Dirichlet powers are reported
+  as numerical truncation-boundary fluxes, not physical path fractions.
+- The common Q artifact grid is `33.9703/33.9703/10 nm`, but native Yee
+  lateral-mesh and fitted sampled-epsilon readbacks remain absent.
+  `epsilon_c=16+0i` forces `Qz=0` and remains an edge-model blocker.
+- No new FDTD was run. Report and data:
+  `reports/paper_ir_straight_45_edge_spatial_q_audit/`.
+
 ## Corner-free straight 45-degree edge optical/thermal control
 
-- Status: `FAILED_STRAIGHT_45_EDGE_PAPER_GRADIENT_TREND`
+- Legacy status: `FAILED_STRAIGHT_45_EDGE_PAPER_GRADIENT_TREND`
+- This is preserved as the pre-audit checkpoint; its unweighted averages and
+  axis-ordered remap must not be used as promoted values.
 - A single `y=x` TaIrTe4/air edge replaces the approximate polygon; TaIrTe4
   occupies `y<=x`, and all remote polygon faces lie outside the 48-um optical
   domain. There is no physical corner in the calculation.
@@ -51,8 +92,13 @@
   reduced Robin model pass Q-power, thermal energy, and linear-residual
   numerical gates.
 - The coupled PTE polarization trend does not pass:
-  expanded `|I_a|/|I_b|=1.189`, paper-reduced `1.227`, whereas the paper
+  after the local contact-cell-width correction, expanded
+  `|I_a|/|I_b|=1.18855` and paper-reduced `1.22589`, whereas the paper
   reports approximately `0.8`.
+- The corrected expanded currents are `24.6549/20.7436 nA` for a/b;
+  the old `24.0479/20.2183 nA` values remain legacy diagnostics. The current
+  changes by `2.52%/2.60%`, confirming that the contact-width bug was
+  material even though the polarization ratio changes only slightly.
 - The initial diagnostic was a strong `E||a` hotspot at the concave corner
   of the approximate Fig.-2A polygon. The newer corner-free straight-edge
   control above still reverses the gradient ordering, so that corner is no
