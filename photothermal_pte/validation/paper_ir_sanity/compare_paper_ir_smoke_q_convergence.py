@@ -276,8 +276,14 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--artifact-1p2ps", type=Path, required=True)
     parser.add_argument("--artifact-4ps", type=Path, required=True)
+    parser.add_argument("--case-result-1p2ps", type=Path)
+    parser.add_argument("--case-result-4ps", type=Path)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--tangent-window-um", type=float, default=2.0)
+    parser.add_argument(
+        "--comparison-label",
+        default="saved 1.2 ps versus saved 4 ps common-grid Q",
+    )
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=False)
 
@@ -383,6 +389,35 @@ def main() -> int:
         first_metrics["power_W"],
         second_metrics["power_W"],
     )
+    auto_shutoff = {
+        "passed": False,
+        "1p2ps_final": None,
+        "4ps_final": None,
+        "threshold": 1.0e-5,
+        "kept_separate_from_observable_Q_convergence": True,
+    }
+    if bool(args.case_result_1p2ps) != bool(args.case_result_4ps):
+        raise RuntimeError("both --case-result arguments must be supplied together")
+    if args.case_result_1p2ps:
+        case_first = json.loads(args.case_result_1p2ps.read_text())
+        case_second = json.loads(args.case_result_4ps.read_text())
+        auto_first = case_first["run_result"]["auto_shutoff"]["final_value"]
+        auto_second = case_second["run_result"]["auto_shutoff"]["final_value"]
+        threshold = float(
+            case_first["run_result"]["artifact_metadata"]["geometry"]["source"][
+                "auto_shutoff_min"
+            ]
+        )
+        auto_shutoff.update(
+            {
+                "passed": auto_first <= threshold and auto_second <= threshold,
+                "1p2ps_final": auto_first,
+                "4ps_final": auto_second,
+                "threshold": threshold,
+                "case_result_1p2ps": str(args.case_result_1p2ps.resolve()),
+                "case_result_4ps": str(args.case_result_4ps.resolve()),
+            }
+        )
     primary_gate = total_power_change < 0.005 and spatial_nrmse < 0.005
     payload = {
         "status": (
@@ -393,7 +428,7 @@ def main() -> int:
         "validated_for_diagnostic_heat_source": primary_gate,
         "promoted_to_production_Q": False,
         "FDTD_run": False,
-        "comparison": "saved 1.2 ps versus saved 4 ps common-grid Q",
+        "comparison": args.comparison_label,
         "grid_contract": {
             "shape_xyz": list(first["total"].shape),
             "coordinates_bitwise_equal": True,
@@ -435,13 +470,7 @@ def main() -> int:
                 spatial_nrmse < 0.005
             ),
             "primary_all": primary_gate,
-            "auto_shutoff_gate": {
-                "passed": False,
-                "1p2ps_final": 1.81076e-5,
-                "4ps_final": 1.80982e-5,
-                "threshold": 1.0e-5,
-                "kept_separate_from_observable_Q_convergence": True,
-            },
+            "auto_shutoff_gate": auto_shutoff,
         },
         "artifacts": {
             "1p2ps": {
