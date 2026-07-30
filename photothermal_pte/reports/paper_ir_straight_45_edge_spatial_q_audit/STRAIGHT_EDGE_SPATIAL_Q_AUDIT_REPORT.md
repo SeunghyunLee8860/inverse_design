@@ -61,9 +61,13 @@ at 100 nm and
 at 50 nm.
 With the expanded production FVM it is
 **0.817054** at 80 µm.
-All five gradient ratios remain below one in the finite-edge Maxwell-Q chain.
-Thus the inversion is source-spatial-distribution sensitive; it is not
-explained solely by choosing edge-normal rather than x-gradient.
+The paper comparator and four of five 50-nm gradient ratios remain below
+one; `max|dT/dy|` is numerically near-null at
+1.000035.
+Thus the apparent inversion is source-spatial-distribution sensitive, but
+the unconverged peak-gradient estimator prevents promotion as a physical
+reversal. It is not explained solely by choosing edge-normal rather than
+x-gradient.
 
 The worst 100-to-50 nm change among the five paper-reduced gradient
 observables is **67.861930%**.  The

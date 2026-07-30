@@ -104,21 +104,22 @@ def row_from_run(
     else:
         thermal = payload["remapped_Lumerical_thermal_solve"]
         metrics = thermal["straight_edge_metrics"]
+    with np.load(profile_path, allow_pickle=False) as raw:
+        thermal_domain_um = (
+            48
+            if model == "paper-reduced"
+            else int(
+                round(
+                    (float(raw["x_edges_m"][-1]) - float(raw["x_edges_m"][0]))
+                    * 1e6
+                )
+            )
+        )
     row: dict[str, Any] = {
         "thermal_model": model,
         "source_model": source,
         "polarization": payload["polarization"],
-        "thermal_domain_um": (
-            48
-            if model == "paper-reduced"
-            else int(round(
-                (
-                    np.load(profile_path, allow_pickle=False)["x_edges_m"][-1]
-                    - np.load(profile_path, allow_pickle=False)["x_edges_m"][0]
-                )
-                * 1e6
-            ))
-        ),
+        "thermal_domain_um": thermal_domain_um,
         "core_step_nm": payload["geometry"]["core_step_nm"],
         "source_power_W": thermal["source_power_W"],
         "linear_residual_relative": thermal["linear_residual_relative"],
@@ -358,6 +359,37 @@ def main() -> int:
             "summary_path": str(path.resolve()),
             "summary_sha256": sha256(path),
         }
+    artifact_path = (
+        args.artifact_root
+        / "straight45_a_w6p5_dz10_L48_gpu4_20260730"
+        / "finite_q_on_artifact.npz"
+    )
+    with np.load(artifact_path, allow_pickle=False) as raw:
+        artifact_axes = {
+            name: np.asarray(raw[name], float)
+            for name in ("x_m", "y_m", "z_m")
+        }
+    artifact_grid_readback = {
+        axis: {
+            "node_count": int(values.size),
+            "bounds_m": [float(values[0]), float(values[-1])],
+            "step_min_m": float(np.min(np.diff(values))),
+            "step_max_m": float(np.max(np.diff(values))),
+            "uniform_within_1e-12_relative": bool(
+                np.allclose(
+                    np.diff(values),
+                    np.diff(values)[0],
+                    rtol=1e-12,
+                    atol=1e-18,
+                )
+            ),
+        }
+        for axis, values in zip(("x", "y", "z"), artifact_axes.values())
+    }
+    artifact_grid_readback["warning"] = (
+        "This is the common absorption-artifact sampling grid, not a "
+        "solver-native staggered Yee-mesh certificate."
+    )
 
     legacy_device = json.loads(args.legacy_device_summary.read_text())
     device_weighting_correction: dict[str, Any] = {}
@@ -416,8 +448,10 @@ def main() -> int:
         "status": STATUS,
         "decision": (
             "paper-source/reduced-boundary control reproduces b>a gradient, "
-            "whereas saved finite-edge Lumerical Q reverses all five gradient "
-            "observables; do not promote a paper reproduction"
+            "whereas saved finite-edge Lumerical Q reverses the paper "
+            "max|dT/dx| comparator on both 100 and 50 nm grids; absolute "
+            "edge gradients are not mesh converged, so do not promote a "
+            "paper reproduction or a physical reversal"
         ),
         "axis_order_regression": {
             "old_projection_orders": ["x/y/z/x", "y/x/z/y"],
@@ -488,15 +522,7 @@ def main() -> int:
                 ]
             ),
         ],
-        "artifact_Q_grid_readback": {
-            "dx_m": 33.9702760085e-9,
-            "dy_m": 33.9702760085e-9,
-            "dz_m": 10.0e-9,
-            "warning": (
-                "this is the common absorption-artifact grid, not a "
-                "solver-native Yee mesh certificate"
-            ),
-        },
+        "artifact_Q_grid_readback": artifact_grid_readback,
         "remote_polygon_faces": {
             "polygon_remote_coordinates_um": {"x_max": 25.0, "y_min": -25.0},
             "FDTD_outer_coordinates_um": {"x": [-24.0, 24.0], "y": [-24.0, 24.0]},
@@ -675,9 +701,13 @@ at 100 nm and
 at 50 nm.
 With the expanded production FVM it is
 **{ratios['production_L80']['max_abs_grad_T_x_K_m']:.6f}** at 80 µm.
-All five gradient ratios remain below one in the finite-edge Maxwell-Q chain.
-Thus the inversion is source-spatial-distribution sensitive; it is not
-explained solely by choosing edge-normal rather than x-gradient.
+The paper comparator and four of five 50-nm gradient ratios remain below
+one; `max|dT/dy|` is numerically near-null at
+{ratios['paper_reduced_with_Lumerical_Q_50nm']['max_abs_grad_T_y_K_m']:.6f}.
+Thus the apparent inversion is source-spatial-distribution sensitive, but
+the unconverged peak-gradient estimator prevents promotion as a physical
+reversal. It is not explained solely by choosing edge-normal rather than
+x-gradient.
 
 The worst 100-to-50 nm change among the five paper-reduced gradient
 observables is **{100*worst_thermal_gradient_mesh_change:.6f}%**.  The

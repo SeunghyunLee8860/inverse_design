@@ -1,6 +1,6 @@
 {
   "status": "UNRESOLVED_STRAIGHT_EDGE_OPTICAL_AND_THERMAL_SPATIAL_CONVERGENCE",
-  "decision": "paper-source/reduced-boundary control reproduces b>a gradient, whereas saved finite-edge Lumerical Q reverses all five gradient observables; do not promote a paper reproduction",
+  "decision": "paper-source/reduced-boundary control reproduces b>a gradient, whereas saved finite-edge Lumerical Q reverses the paper max|dT/dx| comparator on both 100 and 50 nm grids; absolute edge gradients are not mesh converged, so do not promote a paper reproduction or a physical reversal",
   "axis_order_regression": {
     "old_projection_orders": [
       "x/y/z/x",
@@ -35,7 +35,7 @@
       "max_abs_edge_normal_gradient_K_m": 1.4459323277206362,
       "max_abs_edge_tangent_gradient_K_m": 1.4472064634916697,
       "Tmax_rise_K": 1.4471685887664927,
-      "fixed_24um_ROI_area_average_rise_K": 1.4470699325371719
+      "fixed_24um_ROI_area_average_rise_K": 1.4470699325371716
     },
     "paper_analytic_50nm": {
       "max_abs_grad_T_x_K_m": 1.4469538806848083,
@@ -44,7 +44,7 @@
       "max_abs_edge_normal_gradient_K_m": 1.4464878032380448,
       "max_abs_edge_tangent_gradient_K_m": 1.4472149667250904,
       "Tmax_rise_K": 1.4471700451156506,
-      "fixed_24um_ROI_area_average_rise_K": 1.4470699351290865
+      "fixed_24um_ROI_area_average_rise_K": 1.447069935129087
     },
     "paper_reduced_with_Lumerical_Q_100nm": {
       "max_abs_grad_T_x_K_m": 0.8054467894682689,
@@ -133,7 +133,7 @@
   "paper_reduced_thermal_mesh_convergence_100_to_50": {
     "analytic_paper_source_a_100_to_50": {
       "Tmax_rise_K": 0.001055238006751471,
-      "fixed_24um_ROI_area_average_rise_K": 0.002240380132269162,
+      "fixed_24um_ROI_area_average_rise_K": 0.0022403801322693896,
       "max_abs_grad_T_x_K_m": 0.01860247266659415,
       "max_abs_grad_T_y_K_m": 0.10711431363451644,
       "max_inplane_gradient_K_m": 0.011602477793265804,
@@ -142,7 +142,7 @@
     },
     "analytic_paper_source_b_100_to_50": {
       "Tmax_rise_K": 0.001054230602018399,
-      "fixed_24um_ROI_area_average_rise_K": 0.0022403783371094574,
+      "fixed_24um_ROI_area_average_rise_K": 0.002240378337109142,
       "max_abs_grad_T_x_K_m": 0.01872727046091894,
       "max_abs_grad_T_y_K_m": 0.10740360237607971,
       "max_inplane_gradient_K_m": 0.011675077153621443,
@@ -151,7 +151,7 @@
     },
     "lumerical_edge_q_a_100_to_50": {
       "Tmax_rise_K": 0.01247236177909407,
-      "fixed_24um_ROI_area_average_rise_K": 0.0020738159599114196,
+      "fixed_24um_ROI_area_average_rise_K": 0.0020738159599116173,
       "max_abs_grad_T_x_K_m": 0.20001490447841397,
       "max_abs_grad_T_y_K_m": 0.6786192974386565,
       "max_inplane_gradient_K_m": 0.22362475218204514,
@@ -160,7 +160,7 @@
     },
     "lumerical_edge_q_b_100_to_50": {
       "Tmax_rise_K": 0.027350309008703576,
-      "fixed_24um_ROI_area_average_rise_K": 0.002073731665473605,
+      "fixed_24um_ROI_area_average_rise_K": 0.0020737316654739287,
       "max_abs_grad_T_x_K_m": 0.09669208839586126,
       "max_abs_grad_T_y_K_m": 0.5116686927931604,
       "max_inplane_gradient_K_m": 0.09463924307970782,
@@ -423,10 +423,37 @@
     "paper-reduced thermal edge-gradient 100-to-50 nm convergence exceeds 1%"
   ],
   "artifact_Q_grid_readback": {
-    "dx_m": 3.39702760085e-08,
-    "dy_m": 3.39702760085e-08,
-    "dz_m": 1e-08,
-    "warning": "this is the common absorption-artifact grid, not a solver-native Yee mesh certificate"
+    "x": {
+      "node_count": 1064,
+      "bounds_m": [
+        -1.805520169851381e-05,
+        1.805520169851377e-05
+      ],
+      "step_min_m": 3.397027600848576e-08,
+      "step_max_m": 3.39702760085027e-08,
+      "uniform_within_1e-12_relative": true
+    },
+    "y": {
+      "node_count": 1064,
+      "bounds_m": [
+        -1.805520169851381e-05,
+        1.805520169851377e-05
+      ],
+      "step_min_m": 3.397027600848576e-08,
+      "step_max_m": 3.39702760085027e-08,
+      "uniform_within_1e-12_relative": true
+    },
+    "z": {
+      "node_count": 24,
+      "bounds_m": [
+        -1.8e-07,
+        5.000000000000006e-08
+      ],
+      "step_min_m": 9.999999999999984e-09,
+      "step_max_m": 1.0000000000000116e-08,
+      "uniform_within_1e-12_relative": true
+    },
+    "warning": "This is the common absorption-artifact sampling grid, not a solver-native staggered Yee-mesh certificate."
   },
   "remote_polygon_faces": {
     "polygon_remote_coordinates_um": {

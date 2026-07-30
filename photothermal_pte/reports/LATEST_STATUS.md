@@ -3,7 +3,7 @@
 ## Straight-edge spatial-Q/remap/gradient audit
 
 - Status:
-  `UNRESOLVED_STRAIGHT_EDGE_SPATIAL_Q_REMAP_AND_GRADIENT_METRIC`
+  `UNRESOLVED_STRAIGHT_EDGE_OPTICAL_AND_THERMAL_SPATIAL_CONVERGENCE`
 - The earlier `x/y/z/x` support projection is coordinate-order dependent.
   A symmetric Gaussian regression gives a 50.0% relative L1 difference
   against `y/x/z/y` with identical total power. The straight-edge path now
@@ -22,8 +22,9 @@
   polarization order.
 - Saved finite-edge Lumerical Q on the same reduced thermal operator gives
   `b/a = 0.805447` at 100 nm and `0.881330` at 50 nm; the expanded 80-um
-  FVM gives `0.817054`. All five finite-edge-Q gradient ratios remain below
-  one.
+  FVM gives `0.817054`. At 50 nm, four of five gradient ratios remain below
+  one while `max|dT/dy|=1.000035` is numerically near-null; none is promoted
+  because the peak-gradient mesh gate fails.
 - The paper-reduced 100-to-50-nm thermal refinement does not pass:
   the worst change among the five edge-gradient observables is `67.8619%`
   (limit `1%`). `Tmax` changes by up to `2.735%` and the fixed-ROI average
