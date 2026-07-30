@@ -233,9 +233,48 @@ def main() -> int:
         },
         {
             "classification": "PAPER_REPORTED",
-            "item": "Figure 3H/I wavelength and power",
-            "value": "11 um and 285 uW time-averaged incident power",
+            "item": "Figure 3F wavelength and geometry",
+            "value": (
+                "11 um Gaussian heat source focused near a straight crystal "
+                "edge 45 degrees to the a axis; E parallel a and b"
+            ),
+            "location": "main paper PDF pp.5-6, Figure 3F and surrounding text",
+        },
+        {
+            "classification": "EXPLICIT_ASSUMPTION",
+            "item": "Figure 3F exact beam center and power",
+            "value": (
+                "not published numerically; no exact edge-normal beam-center "
+                "coordinate or Figure-3F incident power was identified"
+            ),
+            "location": "publication omission recorded by this audit",
+        },
+        {
+            "classification": "PAPER_REPORTED",
+            "item": "Figure 3H wavelength, power, polarization and scan region",
+            "value": (
+                "11 um, 285 uW time-averaged incident power, E parallel a/b, "
+                "SPCM map including the off-axis crystal edge"
+            ),
             "location": "main paper PDF p.6, Figure 3 caption",
+        },
+        {
+            "classification": "PAPER_REPORTED",
+            "item": "Figure 3I extraction",
+            "value": (
+                "line profile extracted along the black dashed lines in the "
+                "11-um Figure-3H SPCM maps"
+            ),
+            "location": "main paper PDF p.6, Figure 3 caption",
+        },
+        {
+            "classification": "EXPLICIT_ASSUMPTION",
+            "item": "Figure 3H/I scan coordinates and step",
+            "value": (
+                "exact absolute beam coordinates, raster step, and dashed-line "
+                "coordinates are not published"
+            ),
+            "location": "publication omission recorded by this audit",
         },
         {
             "classification": "PAPER_REPORTED",
@@ -447,6 +486,13 @@ optimization solve was run by this audit.
   diffraction-limited spot size.
 - Main paper PDF p.6, Figure 3: the 11 µm maps use 285 µW time-averaged
   incident power; Device A is 130 nm TaIrTe4 on 285 nm SiO2/Si.
+- Main paper PDF pp.5–6, Figure 3F: a Gaussian heat source is focused near
+  a crystal edge 45 degrees to the a axis at 11 µm for E parallel a/b.
+  Its exact beam-center coordinate and incident power are not published.
+- Main paper PDF p.6, Figure 3H/I: the 11 µm, 285 µW E-parallel-a/b SPCM
+  maps include the off-axis edge; Figure 3I is extracted along the plotted
+  dashed lines.  Absolute raster coordinates, scan step, and line coordinates
+  are not published.
 - SI PDF p.5, Figure S5: 7.84, 9.17, 10, 11 and 12.5 µm were measured for
   E parallel a and b.
 - SI PDF p.6, Equations S1–S2: the thermal model uses Gaussian intensity and
