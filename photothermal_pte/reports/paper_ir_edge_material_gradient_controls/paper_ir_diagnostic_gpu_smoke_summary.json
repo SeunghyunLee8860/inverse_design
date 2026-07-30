@@ -1,0 +1,269 @@
+{
+  "PTE_run": false,
+  "absorption": {
+    "P_Q_common_grid_native_W": 8.70146013299099e-17,
+    "P_Q_native_Yee_grid_W": 8.704063329996515e-17,
+    "P_six_face_native_W": 9.580832894733649e-17,
+    "Q_hotspot": {
+      "Q_native_W_m3": 54.99552986993311,
+      "x_m": 1.491525423728809e-06,
+      "y_m": 1.491525423728809e-06,
+      "z_m": 6.28657265540301e-23
+    },
+    "Q_operations": {
+      "clipped": false,
+      "gain_applied": false,
+      "globally_rescaled": false,
+      "smoothed": false,
+      "source_deleted_outside_support": false,
+      "tiled": false
+    },
+    "common_grid_six_face_relative_closure": 0.09178458401315286,
+    "component_power_common_grid_native_W": {
+      "x": 1.8020126160614587e-17,
+      "y": 6.844714403842801e-17,
+      "z": 5.473311308673025e-19
+    },
+    "component_power_native_Yee_grid_W": {
+      "x": 1.8045914119127728e-17,
+      "y": 6.844738804997012e-17,
+      "z": 5.473311308673026e-19
+    },
+    "lateral_control_volume_gap": {
+      "x": {
+        "Q_common_bounds_m": [
+          -4.542372881355942e-06,
+          4.542372881355934e-06
+        ],
+        "flux_box_bounds_m": [
+          -5e-06,
+          5e-06
+        ],
+        "high_side_gap_m": 4.5762711864406604e-07,
+        "low_side_gap_m": 4.576271186440584e-07
+      },
+      "y": {
+        "Q_common_bounds_m": [
+          -4.542372881355942e-06,
+          4.542372881355934e-06
+        ],
+        "flux_box_bounds_m": [
+          -5e-06,
+          5e-06
+        ],
+        "high_side_gap_m": 4.5762711864406604e-07,
+        "low_side_gap_m": 4.576271186440584e-07
+      }
+    },
+    "mismatch_relative_to_absolute_face_sum": 0.003698929753277682,
+    "native_common_relative_difference": 0.0002990783622349484,
+    "native_grid_six_face_relative_closure": 0.09151287517174768,
+    "net_to_absolute_face_ratio": 0.040419774226694107,
+    "six_face_sum_absolute_power_W": 2.370333105029136e-15,
+    "source_power_native_W": 2.339588229783334e-15,
+    "support_analysis": {
+      "P_Q_inside_exact_flake_mask_native_W": 8.205676755993053e-17,
+      "P_Q_outside_exact_flake_mask_native_W": 4.957833769979372e-18,
+      "note": "mask is used only for auditing; the saved full-grid Q was not cropped or altered",
+      "outside_fraction_of_total": 0.05697703252333577
+    }
+  },
+  "acceptance": {
+    "Q_arrays_finite": true,
+    "Qx_Qy_Qz_exported": true,
+    "lossy_epsilon_z_produces_nonzero_integrated_Qz": true,
+    "native_solver_and_component_Yee_coordinates_saved": true,
+    "no_Q_clipping_smoothing_gain_rescaling_tiling_or_deletion": true,
+    "six_face_closure_lt_0p5_percent": false,
+    "solver_returned_normally": true,
+    "source_power_positive": true
+  },
+  "adjoint_run": false,
+  "contract": {
+    "boundaries": {
+      "x_max": "PML",
+      "x_min": "PML",
+      "y_max": "PML",
+      "y_min": "PML",
+      "z_max": "PML",
+      "z_min": "PML"
+    },
+    "classification": "DIAGNOSTIC_ONE_POL_GPU_SMOKE_NOT_PRODUCTION_OR_PAPER_RESULT",
+    "diagnostic_difference_from_production": {
+      "classification": "reduced-cost one-polarization diagnostic only; not a paper-like optical result and not a replacement for the 48 um production contract",
+      "diagnostic_absorption_padding_um": 1.5,
+      "diagnostic_lateral_domain_um": 12.0,
+      "diagnostic_source_span_um": 6.0,
+      "diagnostic_waist_um": 2.0,
+      "production_absorption_padding_um": 4.0,
+      "production_lateral_domain_um": 48.0,
+      "production_source_span_um": 32.0,
+      "production_waist_um": 6.5,
+      "removed_monitors": [
+        "outer six-face box",
+        "incident-reference plane",
+        "three diagnostic field slices"
+      ],
+      "unchanged": [
+        "11 um analysis wavelength and 7-13 um source band",
+        "normal incidence",
+        "straight 45-degree TaIrTe4 edge",
+        "130 nm TaIrTe4 thickness",
+        "285 nm SiO2 on Si stack",
+        "epsilon_x=epsilon_b, epsilon_y=epsilon_a, epsilon_z=epsilon_b",
+        "six PML boundaries",
+        "auto non-uniform mesh accuracy 5",
+        "conformal variant 1",
+        "10 nm flake-region z override",
+        "pabs_adv component-resolved Q extraction"
+      ]
+    },
+    "domain_um": 12.0,
+    "flake_dz_nm": 10.0,
+    "material": {
+      "axis_mapping": {
+        "x": "epsilon_b",
+        "y": "epsilon_a",
+        "z": "epsilon_c=epsilon_b paper-consistent 3D closure"
+      },
+      "epsilon_c_model": "paper-b-closure",
+      "epsilon_readback": {
+        "analysis_wavelength_m": 1.1e-05,
+        "axes": {
+          "x": {
+            "finite_dt_numerical_permittivity": {
+              "imag": 26.181870569634192,
+              "real": 13.26802338813748
+            },
+            "finite_dt_relative_difference_vs_fitted": 1.3479535176893692e-08,
+            "fitted_epsilon_getfdtdindex": {
+              "imag": 26.181870955490027,
+              "real": 13.2680233006527
+            },
+            "fitted_relative_error_vs_requested": 4.950097940416724e-06,
+            "requested_epsilon": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            }
+          },
+          "y": {
+            "finite_dt_numerical_permittivity": {
+              "imag": 204.53386977212233,
+              "real": -42.970037238835026
+            },
+            "finite_dt_relative_difference_vs_fitted": 2.922041423718917e-08,
+            "fitted_epsilon_getfdtdindex": {
+              "imag": 204.53387562805196,
+              "real": -42.97003897202558
+            },
+            "fitted_relative_error_vs_requested": 1.907351537359719e-05,
+            "requested_epsilon": {
+              "imag": 204.5326948215291,
+              "real": -42.96623156686853
+            }
+          },
+          "z": {
+            "finite_dt_numerical_permittivity": {
+              "imag": 26.181870569634192,
+              "real": 13.26802338813748
+            },
+            "finite_dt_relative_difference_vs_fitted": 1.3479535176893692e-08,
+            "fitted_epsilon_getfdtdindex": {
+              "imag": 26.181870955490027,
+              "real": 13.2680233006527
+            },
+            "fitted_relative_error_vs_requested": 4.950097940416724e-06,
+            "requested_epsilon": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            }
+          }
+        },
+        "dt_s": 2.4219981323399165e-18,
+        "epsilon_z_equals_epsilon_b_contract": true,
+        "finite_dt_z_vs_x_relative_difference": 0.0,
+        "fit_frequency_range_Hz": [
+          23060958307692.31,
+          42827494000000.0
+        ],
+        "fitted_z_vs_x_relative_difference": 0.0,
+        "quantity": "complex relative permittivity epsilon_r"
+      },
+      "name": "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure",
+      "provenance": {
+        "in_plane": "paper Supporting Information Fig. S3b / Ref. 11, stored in paper-derived perm_data.txt",
+        "out_of_plane": "explicit finite-edge 3D closure epsilon_c=epsilon_b; not an independently measured c-axis property",
+        "sample_count": 600,
+        "wavelength_range_m": [
+          2.7e-06,
+          1.32e-05
+        ]
+      },
+      "requested_epsilon_at_11um": {
+        "x": {
+          "imag": 26.18179590766738,
+          "real": 13.268147712480612
+        },
+        "y": {
+          "imag": 204.5326948215291,
+          "real": -42.96623156686853
+        },
+        "z": {
+          "imag": 26.18179590766738,
+          "real": 13.268147712480612
+        }
+      }
+    },
+    "pml_layers": 24,
+    "polarization": "a",
+    "source_span_um": 6.0,
+    "waist_um": 2.0
+  },
+  "diagnostic_status": "FAILED_DIAGNOSTIC_ONE_POL_GPU_SMOKE_SIX_FACE_CLOSURE",
+  "execution": {
+    "CPU_FDTD_fallback": false,
+    "GPU": "GPU 4, NVIDIA RTX 6000 Ada Generation",
+    "GPU_simulation_time_s": 142.704535,
+    "auto_shutoff_gate_reached": false,
+    "final_logged_auto_shutoff": 1.81076e-05,
+    "generation_commit": "0f086255e92092573ccfe01376ded1b0fc335647",
+    "iterations": 39374,
+    "logged_gridpoint_product": 26018244,
+    "logged_gridpoints": [
+      402,
+      402,
+      161
+    ],
+    "precise_GPU_memory_estimate_GiB": 1.336,
+    "requested_auto_shutoff_min": 1e-05,
+    "requested_simulation_time_s": 1.2e-12,
+    "solver_completed_normally": true,
+    "solver_wall_time_s": 155.807035
+  },
+  "failure_analysis": {
+    "confirmed": [
+      "The six-face closure is 9.18%, above the 0.5% gate.",
+      "The Q monitor and flux surface do not enclose the same lateral control volume for the extended half-plane flake.",
+      "The run reached 1.2 ps with final auto shutoff 1.81e-5, above the requested 1e-5 threshold.",
+      "The net absorbed flux is a 4.04% remainder of the sum of absolute face powers, amplifying small DFT errors.",
+      "Native-to-common Q integration differs by only 0.0299%, so common-grid interpolation cannot explain 9.18%."
+    ],
+    "next_contract_fix_before_any_rerun": [
+      "Use exactly matched Q-volume and six-face lateral bounds for the extended half-plane.",
+      "Increase simulation time or tighten convergence so the requested auto-shutoff threshold is actually reached.",
+      "Keep one polarization and the reduced diagnostic label; do not promote it to the 48 um production result."
+    ],
+    "not_proven_without_another_solve": [
+      "How much of the closure error is caused separately by the lateral shell versus finite-time DFT convergence.",
+      "Whether a matched control volume and longer decay time would pass 0.5%."
+    ]
+  },
+  "gradient_run": false,
+  "official_status": "PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_RUNTIME_AND_UNRESOLVED_EDGE_METRIC",
+  "optimization_run": false,
+  "production_paper_like_result": false,
+  "raw_artifact_manifest": "PAPER_IR_DIAGNOSTIC_RAW_ARTIFACT_MANIFEST.json",
+  "six_face_csv": "paper_ir_diagnostic_six_face_fluxes.csv",
+  "thermal_run": false,
+  "validated": false
+}

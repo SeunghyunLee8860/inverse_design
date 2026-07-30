@@ -1,5 +1,39 @@
 # Latest photothermal validation status
 
+## Reduced one-polarization paper-IR GPU diagnostic
+
+- Official status remains:
+  `PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_RUNTIME_AND_UNRESOLVED_EDGE_METRIC`
+- Diagnostic substatus:
+  `FAILED_DIAGNOSTIC_ONE_POL_GPU_SMOKE_SIX_FACE_CLOSURE`
+- This was a separately labeled 12 x 12 um, `a`-polarized, GPU-only smoke;
+  it is not the 48-um paper-like production case and is not a paper result.
+- The v261 engine completed normally on GPU 4 in `155.807 s` solver wall
+  time (`142.705 s` GPU stepping), using a logged
+  `402 x 402 x 161 = 26,018,244` grid and `1.336 GiB` precise GPU memory
+  estimate. No CPU FDTD fallback was used.
+- The material and coordinate readbacks pass, including
+  `epsilon_x=epsilon_z=epsilon_b`; Qx, Qy, and nonzero Qz were exported with
+  finite values, and component-specific native Yee coordinates were saved.
+- In native source-amplitude units,
+  `P_Q(common)=8.701460132991e-17 W`,
+  `P_Q(native components)=8.704063329997e-17 W`, and
+  `P_six=9.580832894734e-17 W`. The common-grid closure is `9.178458%`,
+  so the required `<0.5%` gate fails.
+- Native/common Q integration differs by only `0.029908%`, excluding
+  component interpolation as the main 9.18% error. Two confirmed issues
+  remain: the Q output ends near x/y=`+/-4.542 um` while the flux box is
+  x/y=`+/-5 um`, and the 1.2-ps run ended at auto-shutoff
+  `1.81076e-5`, above the requested `1e-5`.
+- The face powers are strongly cancelling: the Q/flux mismatch is only
+  `0.369893%` of the sum of absolute face powers but `9.15%` of the small
+  net absorbed flux. Existing data cannot separate unmatched-volume loss
+  from finite-time DFT error.
+- Per the fail-closed one-smoke contract, no second FDTD solve was started.
+  No Q correction, thermal, PTE, adjoint, gradient, or optimization ran.
+- Report, JSON, face CSV, and raw-artifact manifest:
+  `reports/paper_ir_edge_material_gradient_controls/`.
+
 ## Existing paper-IR checkpoint and GPU-failure audit
 
 - Status:
