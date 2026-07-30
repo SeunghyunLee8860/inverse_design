@@ -122,6 +122,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--domain-um", type=float, default=60.0)
     parser.add_argument("--pml-layers", type=int, default=24)
     parser.add_argument("--flake-dz-nm", type=float, default=5.0)
+    parser.add_argument(
+        "--local-xy-mesh-nm",
+        type=float,
+        default=100.0,
+        help=(
+            "material-case local x/y mesh over the illuminated/Q region; "
+            "50 nm is the required refinement comparison"
+        ),
+    )
     parser.add_argument("--simulation-time-ps", type=float, default=1.2)
     parser.add_argument("--auto-shutoff-min", type=float, default=1.0e-5)
     parser.add_argument("--source-span-um", type=float, default=50.0)
@@ -181,6 +190,7 @@ def parse_args() -> argparse.Namespace:
     if (
         args.waist_um <= 0
         or args.flake_dz_nm <= 0
+        or args.local_xy_mesh_nm <= 0
         or args.simulation_time_ps <= 0
         or args.auto_shutoff_min <= 0
     ):
@@ -1257,9 +1267,11 @@ def add_geometry_and_monitors(
     mesh["y max"] = absorption_bounds["y"][1] + 0.5e-6
     mesh["z min"] = -FLAKE_THICKNESS_M - 10 * args.flake_dz_nm * 1e-9
     mesh["z max"] = 10 * args.flake_dz_nm * 1e-9
-    mesh["override x mesh"] = 0
-    mesh["override y mesh"] = 0
+    mesh["override x mesh"] = 1
+    mesh["override y mesh"] = 1
     mesh["override z mesh"] = 1
+    mesh["dx"] = args.local_xy_mesh_nm * 1e-9
+    mesh["dy"] = args.local_xy_mesh_nm * 1e-9
     mesh["dz"] = args.flake_dz_nm * 1e-9
 
     source = fdtd.addgaussian()
@@ -1485,11 +1497,15 @@ def add_geometry_and_monitors(
         "large_domain_mesh_policy": {
             "uniform_global_fine_mesh": False,
             "global_mesh": "auto non-uniform, conformal variant 1, accuracy 5",
-            "local_region": (
-                "flake/Q bounds receive the dedicated mesh object; lateral "
-                "resolution remains auto non-uniform and TaIrTe4 z uses the "
-                "separate flake_dz override"
+            "local_region_bounds_m": absorption_bounds,
+            "local_xy_baseline_m": args.local_xy_mesh_nm * 1e-9,
+            "required_local_xy_refinement_m": 0.5
+            * args.local_xy_mesh_nm
+            * 1e-9,
+            "local_xy_refinement_status": (
+                "REQUIRED_BEFORE_MATERIAL_Q_PROMOTION"
             ),
+            "TaIrTe4_z_override_m": args.flake_dz_nm * 1e-9,
             "far_air_SiO2_Si": "wavelength-appropriate automatic coarse mesh",
         },
         "execution_contract": args.execution_contract,
@@ -1646,6 +1662,16 @@ def assert_contract(
     checks["correct_dz"] = np.isclose(
         base.scalar(fdtd.getnamed("flake_mesh", "dz"), "flake dz"),
         args.flake_dz_nm * 1e-9,
+        atol=1e-15,
+    )
+    checks["correct_local_dx"] = np.isclose(
+        base.scalar(fdtd.getnamed("flake_mesh", "dx"), "local dx"),
+        args.local_xy_mesh_nm * 1e-9,
+        atol=1e-15,
+    )
+    checks["correct_local_dy"] = np.isclose(
+        base.scalar(fdtd.getnamed("flake_mesh", "dy"), "local dy"),
+        args.local_xy_mesh_nm * 1e-9,
         atol=1e-15,
     )
     checks["correct_thickness"] = args.case == "empty-stack" or np.isclose(
@@ -1836,6 +1862,14 @@ def assert_contract(
             fdtd.getnamed("flake_mesh", "dz"),
             "flake_mesh.dz",
         ),
+        "dx_m": base.scalar(
+            fdtd.getnamed("flake_mesh", "dx"),
+            "flake_mesh.dx",
+        ),
+        "dy_m": base.scalar(
+            fdtd.getnamed("flake_mesh", "dy"),
+            "flake_mesh.dy",
+        ),
     }
     return {
         "checks": checks,
@@ -1859,8 +1893,10 @@ def assert_contract(
                 "FDTD.min mesh step",
             ),
             "flake_dz_m": args.flake_dz_nm * 1e-9,
+            "local_xy_mesh_m": args.local_xy_mesh_nm * 1e-9,
             "override_objects": [mesh_override],
-            "global_x_or_y_override_present": False,
+            "uniform_global_fine_mesh_present": False,
+            "local_x_or_y_override_present": True,
         },
         "object_bounds_readback_m": {
             "FDTD_nominal_outer_bounds": fdtd_bounds,

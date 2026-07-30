@@ -35,6 +35,7 @@ class PaperIrDiagnosticSmokeTests(unittest.TestCase):
         self.assertEqual(args.domain_um, 60.0)
         self.assertEqual(args.source_span_um, 50.0)
         self.assertEqual(args.waist_um, 12.0)
+        self.assertEqual(args.local_xy_mesh_nm, 100.0)
         self.assertTrue(
             np.allclose(args.absorption_bounds_m["x"], (-27e-6, 27e-6))
         )

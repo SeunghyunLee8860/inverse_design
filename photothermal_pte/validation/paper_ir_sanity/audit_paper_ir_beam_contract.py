@@ -396,6 +396,12 @@ def main() -> int:
                 "illuminated straight edge",
                 "Q extraction region",
             ],
+            "material_case_local_xy_baseline_m": 100.0e-9,
+            "required_local_xy_refinement_m": 50.0e-9,
+            "refinement_gate": (
+                "required before material Q is promoted; source-only "
+                "homogeneous air does not use this material mesh override"
+            ),
             "far_air_SiO2_Si": "wavelength-appropriate nonuniform coarse mesh",
             "TaIrTe4_thickness_resolution": "separate local z override",
         },
@@ -554,10 +560,12 @@ next cases are planar a/b and straight-45-degree-edge a/b with the identical
 scalar geometry and incident-power normalization.
 
 The optical solver uses auto non-uniform mesh, conformal variant 1, accuracy
-5.  Material cases must use local fine regions at TaIrTe4, the illuminated
-edge, and Q extraction volume, plus a separate TaIrTe4 z override.  A uniform
-fine mesh over the 60-µm domain is prohibited, as are Q clipping, smoothing,
-gain, and rescaling.
+5.  Material cases use a 100-nm local x/y baseline over TaIrTe4, the
+illuminated edge, and Q extraction volume, with a required 50-nm refinement
+comparison, plus a separate TaIrTe4 z override.  The homogeneous-air
+source-only case does not use this material mesh object.  A uniform fine mesh
+over the 60-µm domain is prohibited, as are Q clipping, smoothing, gain, and
+rescaling.
 """
     (output / "PAPER_IR_BEAM_CONTRACT_REPORT.md").write_text(
         report, encoding="utf-8"

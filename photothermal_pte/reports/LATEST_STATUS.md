@@ -37,6 +37,10 @@
   planar-a/b then straight-45-degree finite-edge-a/b with identical source
   geometry and incident-power normalization. No polarization-specific raw-Q
   rescaling is allowed.
+- The homogeneous-air source-only case uses only the global auto-nonuniform
+  mesh. Subsequent material cases use an explicit 100-nm local x/y baseline
+  over the illuminated/Q region, a required 50-nm refinement comparison,
+  and the separate TaIrTe4 z override; no uniform global fine mesh is used.
 - Report, beam audit, summary, CSV tables, aperture figure, and manifest:
   `reports/paper_ir_source_only_certification/`.
 
