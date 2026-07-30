@@ -1,5 +1,37 @@
 # Latest photothermal validation status
 
+## Existing paper-IR checkpoint and GPU-failure audit
+
+- Status:
+  `AUDITED_EXISTING_PAPER_IR_CHECKPOINTS_UNRESOLVED_ENGINE_TERMINATION_AND_EDGE_METRIC`
+- The audit began from clean local HEAD
+  `651797fefbcaa254737bcec3cac854979ae2bfef`; the four existing checkpoints
+  remain unsquashed and unchanged.
+- The a/b 200/100/50 nm paper-reduced cases use the same geometry, Robin
+  boundary, polarization-specific source, and conservative remap contract.
+  Only the intended lateral core step and grid shape differ.
+- From 100 to 50 nm, analytic-source fitted-x strip mean changes by about
+  `0.61%`, but fitted edge-normal strip mean changes by about `2.99%`.
+  Legacy Maxwell-Q fitted-x strip mean changes by about `0.40%` for a and
+  `12.85%` for b using the existing symmetric relative metric. Raw maxima
+  remain diagnostic only, so the local edge-gradient gate is not promoted.
+- Retry 4 acquired a GPU solve license, meshed
+  `1461 x 1461 x 161 = 343,657,881` gridpoints, and began 39,362 time
+  steps. The log stops at `3.3357%`; the kernel records a contemporaneous
+  `fdtd-solutions-app` remote-messenger segfault. The external engine exit
+  code was not captured, so the formal classification remains
+  `UNRESOLVED_ENGINE_TERMINATION`.
+- No contemporaneous OOM, GPU Xid/reset, timeout, or retry-4 license failure
+  was found. Precise GPU memory estimate was `15.169 GiB` against
+  `49,140 MiB` capacity; host-available memory was `903.354 GiB`.
+- There is no x/y override. The large high-index TaIrTe4 half-plane spans
+  the 48-um domain, causing the accuracy-5 auto mesh to use approximately
+  `33.97 nm` lateral monitor spacing over tens of micrometres. Native solver
+  coordinates were not recovered; incomplete-HDF5 coordinates are explicitly
+  labeled monitor sampling grids.
+- Full table, audit JSON, and partial-HDF5 coordinate table:
+  `reports/paper_ir_edge_material_gradient_controls/`.
+
 ## Paper-like IR material/source/edge controls
 
 - Status:

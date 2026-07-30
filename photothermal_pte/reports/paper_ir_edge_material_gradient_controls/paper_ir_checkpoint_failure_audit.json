@@ -1,0 +1,297 @@
+{
+  "status": "AUDITED_EXISTING_PAPER_IR_CHECKPOINTS_UNRESOLVED_ENGINE_TERMINATION_AND_EDGE_METRIC",
+  "repository": {
+    "branch": "agent/validate-inverse-design-pte-adfd",
+    "head": "c92cab70f7a7064c0a628a54eb23ef483b97117c",
+    "expected_head_prefix": "651797f",
+    "expected_head_matches": false,
+    "dirty_or_untracked_at_audit_start": [],
+    "current_dirty_or_untracked_after_adding_audit_code": [
+      " M photothermal_pte/finite_inverse_design/tests/test_paper_ir_material_and_edge_controls.py",
+      " M photothermal_pte/reports/LATEST_STATUS.md",
+      "?? photothermal_pte/reports/paper_ir_edge_material_gradient_controls/PAPER_IR_CHECKPOINT_FAILURE_AUDIT.md",
+      "?? photothermal_pte/reports/paper_ir_edge_material_gradient_controls/paper_ir_checkpoint_failure_audit.json",
+      "?? photothermal_pte/reports/paper_ir_edge_material_gradient_controls/paper_reduced_thermal_audit_cases.csv",
+      "?? photothermal_pte/reports/paper_ir_edge_material_gradient_controls/partial_h5_monitor_coordinate_audit.csv"
+    ],
+    "checkpoint_commits": [
+      "0ba30f7 Define paper IR optical closure and edge controls",
+      "184ecdc Summarize paper IR material and edge controls",
+      "4d79124 Publish paper IR material and edge control diagnostics",
+      "651797f Record GPU smoke runtime blocker"
+    ]
+  },
+  "same_contract_200_100_50": {
+    "per_polarization": {
+      "a": true,
+      "b": true
+    },
+    "allowed_differences": [
+      "core_step_nm",
+      "grid_shape implied by core_step_nm"
+    ],
+    "geometry": "48 um square straight y=x half-plane",
+    "boundary": "paper-reduced flake-only Robin: bottom 7.37e6, top 1 W/(m2 K); no lateral Dirichlet",
+    "remap": "same conservative physical-3D-nearest support projection; no clipping, smoothing, gain, global rescaling, or tiling"
+  },
+  "convergence": {
+    "analytic_paper_source_a_100_to_50": {
+      "relative_changes": {
+        "Tmax_rise_K": 0.001054125653298219,
+        "fixed_24um_ROI_average_rise_K": 0.0022353720491420344,
+        "raw_max_abs_dTdx_K_m": 0.01860247266659415,
+        "raw_max_abs_dTdn_K_m": 0.05269544569116403,
+        "raw_p99_abs_dTdn_K_m": 0.05308405004716506,
+        "fitted_x_max_abs_K_m": 0.00450558892862746,
+        "fitted_x_p99_abs_K_m": 0.0041965626856757575,
+        "fitted_x_strip_mean_abs_K_m": 0.006095949923172695,
+        "fitted_x_integrated_abs_K": 0.006093622501263474,
+        "fitted_n_max_abs_K_m": 0.02022137321062989,
+        "fitted_n_p99_abs_K_m": 0.021043704746101868,
+        "fitted_n_strip_mean_abs_K_m": 0.029916136608793997,
+        "fitted_n_integrated_abs_K": 0.029904734166081227
+      },
+      "global_T_and_fixed_ROI_lt_1pct": true,
+      "fitted_x_all_lt_1pct": true,
+      "fitted_n_all_lt_1pct": false,
+      "raw_maxima_role": "diagnostic_only"
+    },
+    "analytic_paper_source_b_100_to_50": {
+      "relative_changes": {
+        "Tmax_rise_K": 0.0010531203702964236,
+        "fixed_24um_ROI_average_rise_K": 0.002235370261998742,
+        "raw_max_abs_dTdx_K_m": 0.01872727046091894,
+        "raw_max_abs_dTdn_K_m": 0.05305922648922569,
+        "raw_p99_abs_dTdn_K_m": 0.053441316182213164,
+        "fitted_x_max_abs_K_m": 0.004497386869828087,
+        "fitted_x_p99_abs_K_m": 0.0041889312666973195,
+        "fitted_x_strip_mean_abs_K_m": 0.006081637046056826,
+        "fitted_x_integrated_abs_K": 0.006079301149273852,
+        "fitted_n_max_abs_K_m": 0.02020566172443946,
+        "fitted_n_p99_abs_K_m": 0.021048535407177042,
+        "fitted_n_strip_mean_abs_K_m": 0.029902981175836587,
+        "fitted_n_integrated_abs_K": 0.02989151608894783
+      },
+      "global_T_and_fixed_ROI_lt_1pct": true,
+      "fitted_x_all_lt_1pct": true,
+      "fitted_n_all_lt_1pct": false,
+      "raw_maxima_role": "diagnostic_only"
+    },
+    "legacy_Lumerical_edge_Q_a_100_to_50": {
+      "relative_changes": {
+        "Tmax_rise_K": 0.01247236177909407,
+        "fixed_24um_ROI_average_rise_K": 0.0020738159599116173,
+        "raw_max_abs_dTdx_K_m": 0.16667701687034495,
+        "raw_max_abs_dTdn_K_m": 0.31862480525183856,
+        "raw_p99_abs_dTdn_K_m": 0.32499759272983847,
+        "fitted_x_max_abs_K_m": 0.043699397032997696,
+        "fitted_x_p99_abs_K_m": 0.043920322480185084,
+        "fitted_x_strip_mean_abs_K_m": 0.004007897674714871,
+        "fitted_x_integrated_abs_K": 0.004229252763740057,
+        "fitted_n_max_abs_K_m": 0.07974248720287053,
+        "fitted_n_p99_abs_K_m": 0.07978433938603131,
+        "fitted_n_strip_mean_abs_K_m": 0.034424152517837016,
+        "fitted_n_integrated_abs_K": 0.034919893139388036
+      },
+      "global_T_and_fixed_ROI_lt_1pct": false,
+      "fitted_x_all_lt_1pct": false,
+      "fitted_n_all_lt_1pct": false,
+      "raw_maxima_role": "diagnostic_only"
+    },
+    "legacy_Lumerical_edge_Q_b_100_to_50": {
+      "relative_changes": {
+        "Tmax_rise_K": 0.027350309008703576,
+        "fixed_24um_ROI_average_rise_K": 0.0020737316654739287,
+        "raw_max_abs_dTdx_K_m": 0.08816703377270954,
+        "raw_max_abs_dTdn_K_m": 0.26594117955227015,
+        "raw_p99_abs_dTdn_K_m": 0.276716043728321,
+        "fitted_x_max_abs_K_m": 0.11356172431439848,
+        "fitted_x_p99_abs_K_m": 0.1136378130988441,
+        "fitted_x_strip_mean_abs_K_m": 0.1285100664790035,
+        "fitted_x_integrated_abs_K": 0.128926757520296,
+        "fitted_n_max_abs_K_m": 0.13148509218945303,
+        "fitted_n_p99_abs_K_m": 0.131069201252599,
+        "fitted_n_strip_mean_abs_K_m": 0.14445931947874185,
+        "fitted_n_integrated_abs_K": 0.14438432021115283
+      },
+      "global_T_and_fixed_ROI_lt_1pct": false,
+      "fitted_x_all_lt_1pct": false,
+      "fitted_n_all_lt_1pct": false,
+      "raw_maxima_role": "diagnostic_only"
+    }
+  },
+  "failure": {
+    "classification": "UNRESOLVED_ENGINE_TERMINATION",
+    "confirmed_secondary_event": "FDTD_SOLUTIONS_REMOTE_MESSENGER_SEGFAULT",
+    "license": {
+      "acquired_for_retry4": true,
+      "earlier_attempts_failed_license": 3,
+      "release_directly_traceable_to_engine_pid": false
+    },
+    "phase": {
+      "meshing_completed": true,
+      "time_stepping_started": true,
+      "maximum_logged_progress_percent": 3.3357,
+      "normal_solver_completion": false,
+      "post_run_Q_extraction_started": false
+    },
+    "grid_shape": [
+      1461,
+      1461,
+      161
+    ],
+    "total_gridpoints": 343657881,
+    "nominal_lateral_average_step_m": 3.287671232876712e-08,
+    "memory": {
+      "initial_total_GiB": 18.52,
+      "precise_total_GiB": 15.169,
+      "peak_CPU_after_meshing_GiB": 5.701569,
+      "host_available_GiB": 903.354,
+      "GPU_capacity_MiB": 49140,
+      "GPU_free_at_precise_initialization_MiB": 48640,
+      "observed_fdtd_process_memory_MiB": 5322.0,
+      "observed_GPU_total_used_MiB": 20531.0,
+      "observation_is_peak": false,
+      "GPU_total_used_includes_other_processes": true
+    },
+    "OOM_evidence_at_failure_time": false,
+    "GPU_reset_or_Xid_evidence_at_failure_time": false,
+    "timeout_evidence": false,
+    "solver_exit_code": null,
+    "native_solver_coordinate_readback": "unavailable because the session/API host failed before post-run getresult(FDTD,x/y/z)",
+    "partial_HDF5_coordinate_role": "monitor sampling coordinates only; never promoted as native mesh",
+    "kernel_evidence": {
+      "wall_time_UTC": "2026-07-30 07:53:00",
+      "process": "lum::RemoteMess[1829144]",
+      "binary": "fdtd-solutions-app",
+      "event": "segfault at address 8",
+      "contemporaneous_other_API_host_segfaults": [
+        "lum::RemoteMess[1790129] at 07:52:56",
+        "lum::RemoteMess[1780725] at 07:52:56"
+      ],
+      "engine_pid_exit_code": null,
+      "interpretation": "an API-host remote-messenger segfault is confirmed, but the external fdtd-engine exit code was not captured; engine termination cause remains unresolved"
+    },
+    "exception_type": "RuntimeError",
+    "exception": "GPU-only FDTD failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'Failed to get variable' | localhost: LumApiError: 'Failed to put variable' | Local Computer: LumApiError: 'Failed to put variable'"
+  },
+  "artifacts": [
+    {
+      "role": "paper_reduced_summary",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_paper_reduced_a_core200_20260730_v2/summary.json",
+      "size_bytes": 8917,
+      "sha256": "f5577e991b05491f294bbecd79afda81b72c0af232919536be2b8c1d59c139d8"
+    },
+    {
+      "role": "paper_reduced_fields",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_paper_reduced_a_core200_20260730_v2/straight_edge_profiles.npz",
+      "size_bytes": 2539436,
+      "sha256": "1613d73cd1656befd5611c9027dd9732e7e1c2fc9b0e80d86e137bab78395f63"
+    },
+    {
+      "role": "paper_reduced_summary",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_paper_reduced_a_core100_20260730/summary.json",
+      "size_bytes": 7730,
+      "sha256": "086ac7ee8259cf8b4058251a02856d7aa9de6c8ff0ed2936693a67908c170166"
+    },
+    {
+      "role": "paper_reduced_fields",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_paper_reduced_a_core100_20260730/straight_edge_profiles.npz",
+      "size_bytes": 3631140,
+      "sha256": "54fcaba58acbd070d35862e1d808b9c43d70e3cb75ecbdfd36746b7deac8cd22"
+    },
+    {
+      "role": "paper_reduced_summary",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_paper_reduced_a_core50_20260730/summary.json",
+      "size_bytes": 8957,
+      "sha256": "d52dca5f0e2b6c2e2bdd657704aa272034acf6daebc8f8188a5af103aacc5a7a"
+    },
+    {
+      "role": "paper_reduced_fields",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_paper_reduced_a_core50_20260730/straight_edge_profiles.npz",
+      "size_bytes": 30102812,
+      "sha256": "c721506d49f62091e5139291948bcf693572015e9ec1128d9d53cf0b40b30fdc"
+    },
+    {
+      "role": "paper_reduced_summary",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_paper_reduced_b_core200_20260730_v2/summary.json",
+      "size_bytes": 8917,
+      "sha256": "0202957bad829cf41f3f472ed12cfd6eea1315982f112a40df61e1bb24a39e00"
+    },
+    {
+      "role": "paper_reduced_fields",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_paper_reduced_b_core200_20260730_v2/straight_edge_profiles.npz",
+      "size_bytes": 2539436,
+      "sha256": "9700576c13a81d353818f9036c5ed22e00eb33429ae066001ad6c1bcd4f4bf3a"
+    },
+    {
+      "role": "paper_reduced_summary",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_paper_reduced_b_core100_20260730/summary.json",
+      "size_bytes": 7708,
+      "sha256": "c9224039d82bec9bc660dbb7e307e7bd3538b85450f06a6763f4541eb9bcdaa7"
+    },
+    {
+      "role": "paper_reduced_fields",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_paper_reduced_b_core100_20260730/straight_edge_profiles.npz",
+      "size_bytes": 3631140,
+      "sha256": "220b3746c0561d9eb79d1dee2fd2fb5887591283b6add4e3245e575731bf8123"
+    },
+    {
+      "role": "paper_reduced_summary",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_paper_reduced_b_core50_20260730/summary.json",
+      "size_bytes": 8905,
+      "sha256": "6e69290d969984045560785718bff6d8d8fa776c8d47fe4ad028b134bf3f8717"
+    },
+    {
+      "role": "paper_reduced_fields",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_paper_reduced_b_core50_20260730/straight_edge_profiles.npz",
+      "size_bytes": 30102812,
+      "sha256": "234bf8ddf805faedca233b52d0b18e0d59f6be831a24f3d94c4dd8d8a84641f1"
+    },
+    {
+      "role": "robust_comparator_table",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/robust_edge_gradient_cases.csv",
+      "size_bytes": 24578,
+      "sha256": "d9cd77d35b8fdf99283a32132d5584e58b6be8c48ea2ca63fc657fe023b15215"
+    },
+    {
+      "role": "failed_GPU_engine_log",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730/finite_2um_optical_q_p0.log",
+      "size_bytes": 4070,
+      "sha256": "d8e1efcbae251cf7b81a0077148ff19d4724607f130c34dc5c69eb932d35f497"
+    },
+    {
+      "role": "failed_GPU_case_result",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730/case_result.json",
+      "size_bytes": 11306,
+      "sha256": "b309a178adaef0c7a5472f1819449f2aa7fba75cfbe38fde030264907a13e27a"
+    },
+    {
+      "role": "incomplete_GPU_external_engine_HDF5",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730/finite_2um_optical_q/finite_2um_optical_q_output.h5",
+      "size_bytes": 400464,
+      "sha256": "e423ce561a0385702fd5e0ff7af141f39d332c812d0cade77c839112f829fa32"
+    },
+    {
+      "role": "production_material_contract_readback",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/contract_straight45_a_cclosure_retry_20260730/case_result.json",
+      "size_bytes": 9374,
+      "sha256": "7b1f1d1904fa87ed5a13682d1d3470c7d29be98ad423359da339dbbbaa4b6068"
+    },
+    {
+      "role": "legacy_epsilon_c_16_Q_diagnostic",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_gpu4_20260730/finite_q_on_artifact.npz",
+      "size_bytes": 896668126,
+      "sha256": "b3b0f39bb48e85d9487a769069e9b53d4168a28ea9a779c24e340b72b232fa09"
+    }
+  ],
+  "forbidden_operations": {
+    "new_FDTD_run": false,
+    "new_thermal_run": false,
+    "CPU_FDTD_fallback": false,
+    "Q_rescaling": false,
+    "PTE": false,
+    "adjoint": false,
+    "optimization": false
+  }
+}
