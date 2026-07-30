@@ -15,10 +15,16 @@ from photothermal_pte.validation.paper_ir_sanity.audit_paper_ir_beam_contract im
     square_metrics,
 )
 from photothermal_pte.validation.paper_ir_sanity.validate_paper_ir_source_only_gpu import (
+    APPROVED_API,
+    APPROVED_ROOT,
+    CALIBRATED_SOURCE_OBJECT_W0_M,
+    CALIBRATION_BASELINE_REALIZED_W0_M,
     ELLIPTICITY_GATE,
     FIT_RESIDUAL_GATE,
     fit_gaussian,
     strict_gpu_run,
+    v261_session_provenance,
+    write_json,
 )
 
 
@@ -39,8 +45,18 @@ def test_mean_boundary_gate_governs_required_span() -> None:
     assert ratios["governing"] == ratios["boundary_mean_gate"]
 
 
-def test_backward_converging_source_distance_is_negative() -> None:
+def test_backward_source_property_uses_negative_distance() -> None:
     assert -(SOURCE_Z_M - FOCUS_Z_M) < 0.0
+
+
+def test_source_object_calibration_targets_physical_12um_waist() -> None:
+    predicted = (
+        CALIBRATION_BASELINE_REALIZED_W0_M
+        * CALIBRATED_SOURCE_OBJECT_W0_M
+        / SELECTED_W0_M
+    )
+    assert CALIBRATED_SOURCE_OBJECT_W0_M < SELECTED_W0_M
+    assert np.isclose(predicted, SELECTED_W0_M, rtol=0.0, atol=1e-18)
 
 
 def test_plane_fit_recovers_gaussian_1e2_radius() -> None:
@@ -72,3 +88,40 @@ def test_gpu_runner_never_requests_cpu_solver() -> None:
         pass
     assert calls
     assert all(engine == "GPU" for _, engine, _ in calls)
+
+
+def test_v261_session_uses_internal_8_35_version_and_exact_paths() -> None:
+    provenance = v261_session_provenance(
+        solver_version="8.35.4522",
+        loaded_lumapi_path=APPROVED_API / "lumapi.py",
+        installation_version_key="v261",
+        installation_root=APPROVED_ROOT,
+    )
+    assert provenance["all"]
+    assert all(provenance["checks"].values())
+
+
+def test_release_label_is_not_expected_from_fdtd_version() -> None:
+    provenance = v261_session_provenance(
+        solver_version="2026 R1",
+        loaded_lumapi_path=APPROVED_API / "lumapi.py",
+        installation_version_key="v261",
+        installation_root=APPROVED_ROOT,
+    )
+    assert not provenance["all"]
+    assert not provenance["checks"]["solver_version_8_35_series"]
+
+
+def test_source_result_json_accepts_numpy_scalars(tmp_path) -> None:
+    output = tmp_path / "result.json"
+    write_json(
+        output,
+        {
+            "gate": np.bool_(True),
+            "metric": np.float64(0.25),
+            "count": np.int64(3),
+        },
+    )
+    assert output.read_text(encoding="utf-8") == (
+        '{\n  "gate": true,\n  "metric": 0.25,\n  "count": 3\n}\n'
+    )

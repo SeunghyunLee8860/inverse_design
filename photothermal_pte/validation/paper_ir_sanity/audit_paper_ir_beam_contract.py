@@ -45,6 +45,16 @@ REPORTED_QCL_RANGE_M = (7.0e-6, 13.0e-6)
 REPORTED_SPOT_RANGE_M = (9.0e-6, 16.0e-6)
 AIRY_FWHM_DIAMETER_FACTOR = 0.514
 SELECTED_W0_M = 12.0e-6
+CALIBRATION_BASELINE_INPUT_W0_M = 12.0e-6
+CALIBRATION_BASELINE_REALIZED_W0_M = 12.083715082204208e-6
+CALIBRATED_SOURCE_OBJECT_W0_M = (
+    SELECTED_W0_M
+    * CALIBRATION_BASELINE_INPUT_W0_M
+    / CALIBRATION_BASELINE_REALIZED_W0_M
+)
+CALIBRATION_BASELINE_FIELD_SHA256 = (
+    "f0f848740730ce73f0e47f73f26c8a572afda5f59c8bab57c8d8dac94a112ad0"
+)
 FOCUS_Z_M = -65.0e-9
 SOURCE_Z_M = 5.0e-6
 SOURCE_SPAN_M = 50.0e-6
@@ -351,10 +361,28 @@ def main() -> int:
             "experimentally_reproduced_beam": False,
             "paper_certified_beam": False,
             "propagation_direction": "-z",
+            "target_realized_w0_m": SELECTED_W0_M,
+            "Lumerical_source_object_input_w0_m": (
+                CALIBRATED_SOURCE_OBJECT_W0_M
+            ),
+            "source_object_calibration": {
+                "classification": "NUMERICAL_SOURCE_CALIBRATION",
+                "baseline_input_w0_m": CALIBRATION_BASELINE_INPUT_W0_M,
+                "baseline_realized_effective_w0_m": (
+                    CALIBRATION_BASELINE_REALIZED_W0_M
+                ),
+                "baseline_field_NPZ_sha256": (
+                    CALIBRATION_BASELINE_FIELD_SHA256
+                ),
+                "changes_physical_target_w0": False,
+                "changes_incident_power_or_Q": False,
+                "Q_clipping_smoothing_gain_or_rescaling": False,
+            },
             "distance_from_waist_property_m": -(SOURCE_Z_M - FOCUS_Z_M),
             "distance_sign_note": (
-                "negative for a backward source converging to the lower-z "
-                "waist; the legacy positive sign is not reused"
+                "negative backward-source property retained because direct "
+                "target-plane field fits were substantially closer to the "
+                "requested waist than the positive-sign diagnostic"
             ),
             "source_span_m": SOURCE_SPAN_M,
             "minimum_source_span_m_from_all_gates": minimum_span,
@@ -539,6 +567,10 @@ a paper-certified beam.
 - eta=lambda/(pi*w0): `{selected['eta_paraxial']:.6f}`
 - Rayleigh range: `{selected['Rayleigh_range_m']*1e6:.6f} µm`
 - source-to-focus distance: `{selected['source_to_focus_distance_m']*1e6:.6f} µm`
+- physical target-plane 1/e² radius:
+  `{selected['target_realized_w0_m']*1e6:.6f} µm`
+- calibrated Lumerical source-object input:
+  `{selected['Lumerical_source_object_input_w0_m']*1e6:.9f} µm`
 - expected source-plane radius: `{selected_radius*1e6:.6f} µm`
 - source span: `50 µm`; lateral domain: `60 µm`
 - fitted-Gaussian square capture: `{source_metrics['square_captured_fraction']:.8%}`
@@ -547,9 +579,17 @@ a paper-certified beam.
 - expected boundary mean/peak:
   `{source_metrics['boundary_mean_intensity_over_peak']:.8e}`
 
-The backward source must use
+The backward source uses
 `distance from waist = {-selected['source_to_focus_distance_m']*1e6:.6f} µm`.
-The legacy positive sign is not reused.
+This sign is certified by the realized target-plane field rather than inferred
+from the property name alone.
+
+The source-object waist input is a SHA-pinned numerical calibration, not a
+change to the physical 12-µm target beam and not a Q normalization.  The
+uncalibrated 12-µm input realized
+`{selected['source_object_calibration']['baseline_realized_effective_w0_m']*1e6:.9f} µm`;
+the calibrated input is therefore
+`{selected['Lumerical_source_object_input_w0_m']*1e6:.9f} µm`.
 
 ## Source and mesh decision
 

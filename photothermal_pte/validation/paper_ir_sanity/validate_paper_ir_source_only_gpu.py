@@ -24,6 +24,7 @@ from types import SimpleNamespace
 from typing import Any
 
 import numpy as np
+from scipy.optimize import least_squares
 from scipy.special import erf
 
 HERE = Path(__file__).resolve().parent
@@ -50,6 +51,14 @@ SOURCE_START_M = 7.0e-6
 SOURCE_STOP_M = 13.0e-6
 PML_LAYERS = 24
 MESH_ACCURACY = 5
+CALIBRATION_BASELINE_INPUT_W0_M = contract.CALIBRATION_BASELINE_INPUT_W0_M
+CALIBRATION_BASELINE_REALIZED_W0_M = (
+    contract.CALIBRATION_BASELINE_REALIZED_W0_M
+)
+CALIBRATED_SOURCE_OBJECT_W0_M = contract.CALIBRATED_SOURCE_OBJECT_W0_M
+CALIBRATION_BASELINE_FIELD_SHA256 = (
+    contract.CALIBRATION_BASELINE_FIELD_SHA256
+)
 SOURCE_NAME = "paper_like_scalar_Gaussian_assumed_waist"
 FIT_RESIDUAL_GATE = 0.005
 ELLIPTICITY_GATE = 0.005
@@ -68,6 +77,44 @@ def load_module(path: Path, name: str) -> Any:
     sys.modules[name] = module
     spec.loader.exec_module(module)
     return module
+
+
+def v261_session_provenance(
+    *,
+    solver_version: str,
+    loaded_lumapi_path: Path,
+    installation_version_key: str,
+    installation_root: Path,
+) -> dict[str, Any]:
+    """Certify the selected v261 installation without parsing release labels.
+
+    Lumerical v261 reports the internal solver version ``8.35.x`` through
+    ``fdtd.version()``.  It does not return a string containing ``2026`` or
+    ``v261``.  The release identity therefore combines the documented
+    internal version series with the exact selected installation and API
+    paths.
+    """
+
+    expected_root = APPROVED_ROOT.resolve()
+    expected_lumapi = (APPROVED_API / "lumapi.py").resolve()
+    actual_root = installation_root.resolve()
+    actual_lumapi = loaded_lumapi_path.resolve()
+    checks = {
+        "installation_version_key_v261": installation_version_key == "v261",
+        "installation_root_exact": actual_root == expected_root,
+        "loaded_lumapi_exact": actual_lumapi == expected_lumapi,
+        "solver_version_8_35_series": str(solver_version).startswith("8.35"),
+    }
+    return {
+        "solver_version": str(solver_version),
+        "installation_version_key": installation_version_key,
+        "installation_root": str(actual_root),
+        "expected_installation_root": str(expected_root),
+        "loaded_lumapi_path": str(actual_lumapi),
+        "expected_lumapi_path": str(expected_lumapi),
+        "checks": checks,
+        "all": all(checks.values()),
+    }
 
 
 def git_commit() -> str:
@@ -89,9 +136,20 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def json_default(value: Any) -> Any:
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, Path):
+        return str(value)
+    raise TypeError(f"Object of type {type(value).__name__} is not JSON serializable")
+
+
 def write_json(path: Path, value: Any) -> None:
     temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+    temporary.write_text(
+        json.dumps(value, indent=2, default=json_default) + "\n",
+        encoding="utf-8",
+    )
     temporary.replace(path)
 
 
@@ -126,7 +184,13 @@ def add_monitor(fdtd: Any, name: str, z_m: float) -> None:
         pass
 
 
-def setup(fdtd: Any, duration_ps: float, shutoff: float) -> dict[str, Any]:
+def setup(
+    fdtd: Any,
+    duration_ps: float,
+    shutoff: float,
+    mesh_accuracy: int = MESH_ACCURACY,
+    source_object_w0_m: float = CALIBRATED_SOURCE_OBJECT_W0_M,
+) -> dict[str, Any]:
     fdtd.switchtolayout()
     solver = fdtd.addfdtd()
     for prop, value in (
@@ -140,7 +204,7 @@ def setup(fdtd: Any, duration_ps: float, shutoff: float) -> dict[str, Any]:
         ("pml layers", PML_LAYERS),
         ("mesh type", "auto non-uniform"),
         ("mesh refinement", "conformal variant 1"),
-        ("mesh accuracy", MESH_ACCURACY),
+        ("mesh accuracy", mesh_accuracy),
         ("simulation time", duration_ps * 1e-12),
         ("auto shutoff min", shutoff),
     ):
@@ -157,7 +221,7 @@ def setup(fdtd: Any, duration_ps: float, shutoff: float) -> dict[str, Any]:
     source["source shape"] = "Gaussian"
     source["use scalar approximation"] = True
     source["beam parameters"] = "Waist size and position"
-    source["waist radius w0"] = contract.SELECTED_W0_M
+    source["waist radius w0"] = source_object_w0_m
     source["distance from waist"] = -(
         contract.SOURCE_Z_M - contract.FOCUS_Z_M
     )
@@ -187,7 +251,22 @@ def setup(fdtd: Any, duration_ps: float, shutoff: float) -> dict[str, Any]:
             ),
             "wavelength_m": contract.WAVELENGTH_M,
             "numerical_pulse_band_m": [SOURCE_START_M, SOURCE_STOP_M],
-            "waist_radius_m": contract.SELECTED_W0_M,
+            "target_realized_waist_radius_m": contract.SELECTED_W0_M,
+            "Lumerical_source_object_waist_radius_m": source_object_w0_m,
+            "source_object_waist_calibration": {
+                "method": (
+                    "multiplicative one-step calibration from the immutable "
+                    "uncalibrated target-plane field fit"
+                ),
+                "baseline_input_w0_m": CALIBRATION_BASELINE_INPUT_W0_M,
+                "baseline_realized_effective_w0_m": (
+                    CALIBRATION_BASELINE_REALIZED_W0_M
+                ),
+                "baseline_field_NPZ_sha256": (
+                    CALIBRATION_BASELINE_FIELD_SHA256
+                ),
+                "Q_clipping_smoothing_gain_or_rescaling": False,
+            },
             "source_z_m": contract.SOURCE_Z_M,
             "focus_z_m": contract.FOCUS_Z_M,
             "distance_from_waist_requested_m": -(
@@ -214,7 +293,7 @@ def setup(fdtd: Any, duration_ps: float, shutoff: float) -> dict[str, Any]:
         "mesh_contract": {
             "global_mesh": "auto non-uniform",
             "mesh_refinement": "conformal variant 1",
-            "mesh_accuracy": MESH_ACCURACY,
+            "mesh_accuracy": mesh_accuracy,
             "uniform_global_fine_mesh": False,
             "source_only_local_overrides": [],
             "material_successor_local_fine_regions": [
@@ -255,12 +334,26 @@ def mesh_readback(fdtd: Any) -> dict[str, Any]:
     coordinates: dict[str, np.ndarray] = {}
     errors: dict[str, str] = {}
     for axis in "xyz":
-        try:
-            coordinates[axis] = np.asarray(
-                fdtd.getdata("FDTD", axis, 1), float
-            ).reshape(-1)
-        except Exception as exc:
-            errors[axis] = f"{type(exc).__name__}: {exc}"
+        attempts: list[str] = []
+        for reader in (
+            lambda axis=axis: fdtd.getresult("FDTD", axis),
+            lambda axis=axis: fdtd.getdata("FDTD", axis, 1),
+        ):
+            try:
+                raw = reader()
+                if isinstance(raw, dict):
+                    raw = raw[axis]
+                coordinate = np.asarray(raw, float).reshape(-1)
+                if coordinate.size < 3 or np.any(np.diff(coordinate) <= 0.0):
+                    raise RuntimeError(
+                        f"invalid {axis} coordinate with shape {coordinate.shape}"
+                    )
+                coordinates[axis] = coordinate
+                break
+            except Exception as exc:
+                attempts.append(f"{type(exc).__name__}: {exc}")
+        if axis not in coordinates:
+            errors[axis] = " | ".join(attempts)
     if len(coordinates) == 3:
         shape = [int(coordinates[axis].size) for axis in "xyz"]
         points = int(np.prod(shape, dtype=np.int64))
@@ -365,7 +458,7 @@ def integrate_xy(values: np.ndarray, x: np.ndarray, y: np.ndarray) -> float:
 
 def fit_gaussian(
     x: np.ndarray, y: np.ndarray, intensity: np.ndarray
-) -> dict[str, float]:
+) -> dict[str, Any]:
     total = integrate_xy(intensity, x, y)
     if not np.isfinite(total) or total <= 0.0:
         raise RuntimeError("invalid plane intensity integral")
@@ -376,36 +469,59 @@ def fit_gaussian(
     vy = integrate_xy(intensity * (yy - cy) ** 2, x, y) / total
     wx = 2.0 * np.sqrt(max(vx, np.finfo(float).tiny))
     wy = 2.0 * np.sqrt(max(vy, np.finfo(float).tiny))
-    selected = intensity > float(np.max(intensity)) * 1.0e-6
-    matrix = np.column_stack(
+    scale = 1.0e-6
+    xx_scaled = xx / scale
+    yy_scaled = yy / scale
+    peak = float(np.max(intensity))
+    normalized = intensity / peak
+    initial = np.asarray(
         [
-            np.ones(np.count_nonzero(selected)),
-            xx[selected],
-            yy[selected],
-            xx[selected] ** 2,
-            yy[selected] ** 2,
-        ]
+            0.0,
+            cx / scale,
+            cy / scale,
+            np.log(wx / scale),
+            np.log(wy / scale),
+        ],
+        float,
     )
-    solved, *_ = np.linalg.lstsq(
-        matrix, np.log(intensity[selected]), rcond=None
+
+    def residual(parameters: np.ndarray) -> np.ndarray:
+        amplitude = np.exp(parameters[0])
+        trial_wx = np.exp(parameters[3])
+        trial_wy = np.exp(parameters[4])
+        model = amplitude * np.exp(
+            -2.0
+            * (
+                (xx_scaled - parameters[1]) ** 2 / trial_wx**2
+                + (yy_scaled - parameters[2]) ** 2 / trial_wy**2
+            )
+        )
+        return (model - normalized).reshape(-1)
+
+    solution = least_squares(
+        residual,
+        initial,
+        xtol=1.0e-13,
+        ftol=1.0e-13,
+        gtol=1.0e-13,
+        max_nfev=200,
     )
-    fitted = np.exp(
-        solved[0]
-        + solved[1] * xx
-        + solved[2] * yy
-        + solved[3] * xx**2
-        + solved[4] * yy**2
+    fitted_amplitude = float(np.exp(solution.x[0]))
+    fitted_cx = float(solution.x[1] * scale)
+    fitted_cy = float(solution.x[2] * scale)
+    fitted_wx = float(np.exp(solution.x[3]) * scale)
+    fitted_wy = float(np.exp(solution.x[4]) * scale)
+    fitted = fitted_amplitude * peak * np.exp(
+        -2.0
+        * (
+            (xx - fitted_cx) ** 2 / fitted_wx**2
+            + (yy - fitted_cy) ** 2 / fitted_wy**2
+        )
     )
     fit_nrmse = float(
         np.linalg.norm(intensity - fitted)
         / max(np.linalg.norm(intensity), np.finfo(float).tiny)
     )
-    ax = solved[3]
-    ay = solved[4]
-    fitted_wx = np.sqrt(-2.0 / ax) if ax < 0.0 else np.nan
-    fitted_wy = np.sqrt(-2.0 / ay) if ay < 0.0 else np.nan
-    fitted_cx = -solved[1] / (2.0 * ax)
-    fitted_cy = -solved[2] / (2.0 * ay)
     return {
         "integrated_power_W": total,
         "moment_center_x_m": float(cx),
@@ -417,7 +533,10 @@ def fit_gaussian(
         "fitted_waist_x_m": float(fitted_wx),
         "fitted_waist_y_m": float(fitted_wy),
         "fitted_waist_effective_m": float(np.sqrt(fitted_wx * fitted_wy)),
+        "fitted_peak_amplitude_over_sampled_peak": fitted_amplitude,
         "Gaussian_fit_NRMSE": fit_nrmse,
+        "Gaussian_fit_objective": "unweighted linear-intensity L2",
+        "Gaussian_fit_converged": bool(solution.success),
         "fitted_xy_ellipticity": float(
             abs(fitted_wx - fitted_wy)
             / max(0.5 * (fitted_wx + fitted_wy), np.finfo(float).tiny)
@@ -509,11 +628,14 @@ def plane_metrics(fields: dict[str, Any], source_power_w: float) -> tuple[dict[s
     return result, arrays
 
 
-def source_profile(fdtd: Any) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
-    result = fdtd.getresult(SOURCE_NAME, "fields")
-    x = np.asarray(result["x"], float).reshape(-1)
-    y = np.asarray(result["y"], float).reshape(-1)
-    electric = np.asarray(result["E"]).squeeze()
+def source_profile_from_arrays(
+    x: np.ndarray,
+    y: np.ndarray,
+    electric: np.ndarray,
+) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
+    x = np.asarray(x, float).reshape(-1)
+    y = np.asarray(y, float).reshape(-1)
+    electric = np.asarray(electric).squeeze()
     intensity = np.sum(np.abs(electric) ** 2, axis=-1)
     peak = float(np.max(intensity))
     boundary = np.concatenate(
@@ -552,6 +674,11 @@ def source_profile(fdtd: Any) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
     }
 
 
+def source_profile(fdtd: Any) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
+    result = fdtd.getresult(SOURCE_NAME, "fields")
+    return source_profile_from_arrays(result["x"], result["y"], result["E"])
+
+
 def log_audit(output: Path) -> dict[str, Any]:
     logs = sorted(output.glob("*.log"))
     text = "\n".join(path.read_text(errors="replace") for path in logs)
@@ -559,7 +686,7 @@ def log_audit(output: Path) -> dict[str, Any]:
         r"auto shutoff\s*[:=]\s*([0-9.eE+-]+)", text, re.IGNORECASE
     )
     grid = re.findall(
-        r"(\d+)\s*x\s*(\d+)\s*x\s*(\d+)\s*=\s*([\d,]+)\s*grid",
+        r"(\d+)\s*x\s*(\d+)\s*x\s*(\d+)(?:\s*=\s*([\d,]+)\s*grid)?",
         text,
         re.IGNORECASE,
     )
@@ -576,7 +703,16 @@ def log_audit(output: Path) -> dict[str, Any]:
         "logged_grid": (
             {
                 "shape_xyz": [int(value) for value in grid[-1][:3]],
-                "grid_points": int(grid[-1][3].replace(",", "")),
+                "grid_points": (
+                    int(grid[-1][3].replace(",", ""))
+                    if grid[-1][3]
+                    else int(
+                        np.prod(
+                            [int(value) for value in grid[-1][:3]],
+                            dtype=np.int64,
+                        )
+                    )
+                ),
             }
             if grid
             else None
@@ -600,6 +736,67 @@ def strict_gpu_run(fdtd: Any, label: str) -> str:
     raise RuntimeError("GPU-only run failed; CPU fallback prohibited: " + " | ".join(errors))
 
 
+def source_acceptance(
+    *,
+    focus: dict[str, Any],
+    profile_metrics: dict[str, Any],
+    post_run_mesh: dict[str, Any],
+    log: dict[str, Any],
+    planes: dict[str, dict[str, Any]],
+    auto_shutoff_min: float,
+) -> dict[str, bool]:
+    return {
+        "requested_vs_realized_fitted_waist_x_lt_0p5_percent": bool(
+            abs(focus["fitted_waist_x_m"] - contract.SELECTED_W0_M)
+            / contract.SELECTED_W0_M
+            < 0.005
+        ),
+        "requested_vs_realized_fitted_waist_y_lt_0p5_percent": bool(
+            abs(focus["fitted_waist_y_m"] - contract.SELECTED_W0_M)
+            / contract.SELECTED_W0_M
+            < 0.005
+        ),
+        "Gaussian_fit_NRMSE_lt_0p5_percent": bool(
+            focus["Gaussian_fit_NRMSE"] < FIT_RESIDUAL_GATE
+        ),
+        "xy_ellipticity_lt_0p5_percent": bool(
+            focus["fitted_xy_ellipticity"] < ELLIPTICITY_GATE
+        ),
+        "beam_center_error_lt_one_optical_cell": bool(
+            focus["beam_center_error_m"]
+            < focus["maximum_lateral_cell_m"]
+        ),
+        "square_captured_fraction_ge_99p9_percent": bool(
+            profile_metrics[
+                "fitted_infinite_Gaussian_square_captured_fraction"
+            ]
+            >= 0.999
+        ),
+        "source_boundary_max_le_1e_minus_3": bool(
+            profile_metrics["boundary_max_intensity_over_peak"] <= 1.0e-3
+        ),
+        "source_boundary_mean_le_1e_minus_4": bool(
+            profile_metrics["boundary_mean_intensity_over_peak"] <= 1.0e-4
+        ),
+        "incident_power_closure_lt_0p5_percent": bool(
+            abs(focus["downward_Poynting_power_over_sourcepower"] - 1.0)
+            < 0.005
+        ),
+        "actual_mesh_readback_available": bool(post_run_mesh["available"]),
+        "GPU_memory_readback_available": bool(
+            log["precise_GPU_memory_GiB"] is not None
+        ),
+        "no_NaN_or_Inf": bool(
+            all(row["all_fields_finite"] for row in planes.values())
+        ),
+        "no_CPU_fallback": True,
+        "auto_shutoff_le_1e_minus_5": bool(
+            log["final_auto_shutoff"] is not None
+            and log["final_auto_shutoff"] <= auto_shutoff_min
+        ),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", required=True)
@@ -607,8 +804,18 @@ def main() -> int:
     parser.add_argument("--auto-shutoff-min", type=float, default=1.0e-5)
     parser.add_argument("--gpu-device", default="GPU 4")
     parser.add_argument("--threads", default="8")
+    parser.add_argument("--mesh-accuracy", type=int, default=MESH_ACCURACY)
+    parser.add_argument(
+        "--source-object-waist-um",
+        type=float,
+        default=CALIBRATED_SOURCE_OBJECT_W0_M * 1.0e6,
+    )
     parser.add_argument("--contract-only", action="store_true")
     args = parser.parse_args()
+    if not 1 <= args.mesh_accuracy <= 8:
+        parser.error("--mesh-accuracy must be between 1 and 8")
+    if args.source_object_waist_um <= 0.0:
+        parser.error("--source-object-waist-um must be positive")
     output = Path(args.output_dir).expanduser().resolve()
     if output.exists() and any(output.iterdir()):
         raise RuntimeError(f"refusing to overwrite non-empty {output}")
@@ -666,17 +873,29 @@ def main() -> int:
         import eqc_lib as runtime
 
         fdtd = lumapi.FDTD(hide=True, serverArgs={"platform": "offscreen"})
-        built = setup(fdtd, args.duration_ps, args.auto_shutoff_min)
+        built = setup(
+            fdtd,
+            args.duration_ps,
+            args.auto_shutoff_min,
+            args.mesh_accuracy,
+            args.source_object_waist_um * 1.0e-6,
+        )
         os.environ["LUMERICAL_SESSION_GPU_DEVICE"] = args.gpu_device
         resources = runtime.configure_session_resources(fdtd)
         fdtd.runsetup()
         mesh = mesh_readback(fdtd)
         readback = source_readback(fdtd)
         domain = domain_readback(fdtd)
+        solver_version = str(fdtd.version())
+        session_provenance = v261_session_provenance(
+            solver_version=solver_version,
+            loaded_lumapi_path=Path(lumapi.__file__),
+            installation_version_key=installation.version_key,
+            installation_root=installation.root,
+        )
         expected_distance = -(contract.SOURCE_Z_M - contract.FOCUS_Z_M)
         checks = {
-            "v261_session": "2026" in str(fdtd.version())
-            or "v261" in str(fdtd.version()).lower(),
+            "v261_session": session_provenance["all"],
             "all_six_PML": all(
                 str(fdtd.getnamed("FDTD", f"{axis} {side} bc")).upper()
                 == "PML"
@@ -689,11 +908,11 @@ def main() -> int:
             ),
             "waist_readback": np.isclose(
                 readback["waist radius w0"],
-                contract.SELECTED_W0_M,
+                args.source_object_waist_um * 1.0e-6,
                 rtol=0.0,
                 atol=1e-15,
             ),
-            "negative_distance_readback": np.isclose(
+            "backward_focus_distance_readback": np.isclose(
                 readback["distance from waist"],
                 expected_distance,
                 rtol=0.0,
@@ -724,17 +943,19 @@ def main() -> int:
                 "auto" in domain["mesh type"].lower()
                 and "non" in domain["mesh type"].lower()
             ),
+            "mesh_accuracy_readback": np.isclose(
+                domain["mesh accuracy"],
+                float(args.mesh_accuracy),
+                rtol=0.0,
+                atol=0.0,
+            ),
             "GPU_resource_active": resources["2"]["active"].strip() == "1",
             "GPU_resource_has_gpu_flag": "-gpu"
             in resources["2"]["solver extra command line options"],
         }
-        if not all(checks.values()):
-            raise RuntimeError(
-                f"source-only pre-run contract failed: "
-                f"{[key for key,value in checks.items() if not value]}"
-            )
         payload["pre_run"] = {
-            "version": str(fdtd.version()),
+            "version": solver_version,
+            "session_provenance": session_provenance,
             "built_contract": built,
             "source_readback": readback,
             "domain_readback": domain,
@@ -746,6 +967,11 @@ def main() -> int:
                 if key != "coordinate_arrays"
             },
         }
+        if not all(checks.values()):
+            raise RuntimeError(
+                f"source-only pre-run contract failed: "
+                f"{[key for key,value in checks.items() if not value]}"
+            )
         fdtd.save(str(project))
         if args.contract_only:
             payload["status"] = "CONTRACT_ONLY_GRID_ESTIMATE_COMPLETE"
@@ -757,6 +983,7 @@ def main() -> int:
                 fdtd, f"paper_ir_source_only_{args.duration_ps:g}ps"
             )
             wall_s = time.monotonic() - start
+            post_run_mesh = mesh_readback(fdtd)
             source_power = scalar(
                 fdtd.sourcepower(TARGET_FREQUENCY_HZ, 2, SOURCE_NAME),
                 "sourcepower",
@@ -797,67 +1024,14 @@ def main() -> int:
             )
             log = log_audit(output)
             focus = planes["flake_target_plane"]
-            acceptance = {
-                "requested_vs_realized_fitted_waist_x_lt_0p5_percent": (
-                    abs(
-                        focus["fitted_waist_x_m"]
-                        - contract.SELECTED_W0_M
-                    )
-                    / contract.SELECTED_W0_M
-                    < 0.005
-                ),
-                "requested_vs_realized_fitted_waist_y_lt_0p5_percent": (
-                    abs(
-                        focus["fitted_waist_y_m"]
-                        - contract.SELECTED_W0_M
-                    )
-                    / contract.SELECTED_W0_M
-                    < 0.005
-                ),
-                "Gaussian_fit_NRMSE_lt_0p5_percent": (
-                    focus["Gaussian_fit_NRMSE"] < FIT_RESIDUAL_GATE
-                ),
-                "xy_ellipticity_lt_0p5_percent": (
-                    focus["fitted_xy_ellipticity"] < ELLIPTICITY_GATE
-                ),
-                "beam_center_error_lt_one_optical_cell": (
-                    focus["beam_center_error_m"]
-                    < focus["maximum_lateral_cell_m"]
-                ),
-                "square_captured_fraction_ge_99p9_percent": (
-                    profile_metrics[
-                        "fitted_infinite_Gaussian_square_captured_fraction"
-                    ]
-                    >= 0.999
-                ),
-                "source_boundary_max_le_1e_minus_3": (
-                    profile_metrics["boundary_max_intensity_over_peak"]
-                    <= 1.0e-3
-                ),
-                "source_boundary_mean_le_1e_minus_4": (
-                    profile_metrics["boundary_mean_intensity_over_peak"]
-                    <= 1.0e-4
-                ),
-                "incident_power_closure_lt_0p5_percent": (
-                    abs(
-                        focus["downward_Poynting_power_over_sourcepower"]
-                        - 1.0
-                    )
-                    < 0.005
-                ),
-                "actual_mesh_readback_available": bool(mesh["available"]),
-                "GPU_memory_readback_available": (
-                    log["precise_GPU_memory_GiB"] is not None
-                ),
-                "no_NaN_or_Inf": all(
-                    row["all_fields_finite"] for row in planes.values()
-                ),
-                "no_CPU_fallback": True,
-                "auto_shutoff_le_1e_minus_5": (
-                    log["final_auto_shutoff"] is not None
-                    and log["final_auto_shutoff"] <= args.auto_shutoff_min
-                ),
-            }
+            acceptance = source_acceptance(
+                focus=focus,
+                profile_metrics=profile_metrics,
+                post_run_mesh=post_run_mesh,
+                log=log,
+                planes=planes,
+                auto_shutoff_min=args.auto_shutoff_min,
+            )
             mandatory_pass = all(acceptance.values())
             payload.update(
                 {
@@ -872,6 +1046,11 @@ def main() -> int:
                     "source_object_profile": profile_metrics,
                     "planes": planes,
                     "log_audit": log,
+                    "post_run_mesh": {
+                        key: value
+                        for key, value in post_run_mesh.items()
+                        if key != "coordinate_arrays"
+                    },
                     "field_artifact": {
                         "path": str(artifact),
                         "size_bytes": artifact.stat().st_size,

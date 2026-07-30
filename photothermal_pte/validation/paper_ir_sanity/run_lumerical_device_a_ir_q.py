@@ -1650,7 +1650,7 @@ def assert_contract(
             )
         )
     )
-    checks["negative_converging_distance_from_waist"] = np.isclose(
+    checks["backward_focus_distance_from_waist"] = np.isclose(
         base.scalar(
             fdtd.getnamed(base.SOURCE_NAME, "distance from waist"),
             "source.distance from waist",
