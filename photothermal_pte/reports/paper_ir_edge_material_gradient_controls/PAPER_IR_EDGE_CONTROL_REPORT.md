@@ -1,6 +1,6 @@
 # Paper-like IR material, source, and edge controls
 
-**Status: `PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_LICENSE_AND_UNRESOLVED_EDGE_METRIC`**
+**Status: `PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_RUNTIME_AND_UNRESOLVED_EDGE_METRIC`**
 
 ## What is validated
 
@@ -40,7 +40,7 @@ exceeds 10%.  Therefore no 50 or 100 nm edge-gradient mesh is promoted.
 The next numerical method candidate is a conservative exact-half-plane
 cut-cell treatment, not ad-hoc local cells.
 
-The v261 contract-only session and material fit succeeded, but all GPU-only solve attempts stopped before timestepping because the requested `lum_fdtd_solve` task count was unavailable.  Reducing host threads did not change the nine-task GPU license request.  No CPU FDTD fallback was used.  Native Yee coordinates, production Qx/Qy/Qz, P_Q, six-face closure, and the new edge-normal Q profile consequently remain blocked.
+The v261 contract-only session and material fit succeeded.  3 attempts stopped before timestepping because the requested `lum_fdtd_solve` task count was unavailable.  A later GPU-only attempt acquired the licenses, meshed `1461 x 1461 x 161` gridpoints, and started timestepping, but the Lumerical API/engine communication failed after the log reached `3.3357%`.  The incomplete HDF5 output is provenance only and is not treated as a recoverable optical result.  No CPU FDTD fallback was used.  Production Qx/Qy/Qz, P_Q, closure, native Yee coordinates, and the edge-normal Q profile therefore remain blocked.
 
 The scalar/thin-lens comparison remains plan-only.  See
 `SCALAR_VECTOR_GAUSSIAN_MATCH_PLAN.md`.

@@ -1,6 +1,6 @@
 {
   "policy": "raw NPZ/FSP/log artifacts remain outside Git; repository contains code, compact tables, plots, report, and this manifest",
-  "status": "PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_LICENSE_AND_UNRESOLVED_EDGE_METRIC",
+  "status": "PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_RUNTIME_AND_UNRESOLVED_EDGE_METRIC",
   "artifacts": [
     {
       "role": "external_analytic_source_controls_20260730",
@@ -443,6 +443,42 @@
     {
       "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730",
       "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730/paper_ir_device_a_geometry.png",
+      "size_bytes": 96393,
+      "sha256": "f7cd0417f4f4c6a5270e415489de69ea4fdbf375f14957b7f1e2ad7dd95021a1"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730/RAW_ARTIFACT_MANIFEST.json",
+      "size_bytes": 4712,
+      "sha256": "231c87ac42062f2c95a9244ccc81327f4c6e2a006cc4e6562468ddb75b8b2adb"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730/case_result.json",
+      "size_bytes": 11306,
+      "sha256": "b309a178adaef0c7a5472f1819449f2aa7fba75cfbe38fde030264907a13e27a"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730/finite_2um_optical_q/finite_2um_optical_q_output.h5",
+      "size_bytes": 400464,
+      "sha256": "e423ce561a0385702fd5e0ff7af141f39d332c812d0cade77c839112f829fa32"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730/finite_2um_optical_q.fsp",
+      "size_bytes": 571240,
+      "sha256": "6761bb80840c095ade75f8636b86f23b35312fe822408ce316d4757265feb88c"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730/finite_2um_optical_q_p0.log",
+      "size_bytes": 4070,
+      "sha256": "d8e1efcbae251cf7b81a0077148ff19d4724607f130c34dc5c69eb932d35f497"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730/paper_ir_device_a_geometry.png",
       "size_bytes": 96393,
       "sha256": "f7cd0417f4f4c6a5270e415489de69ea4fdbf375f14957b7f1e2ad7dd95021a1"
     },

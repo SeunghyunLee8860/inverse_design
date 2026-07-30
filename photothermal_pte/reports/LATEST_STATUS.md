@@ -3,7 +3,7 @@
 ## Paper-like IR material/source/edge controls
 
 - Status:
-  `PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_LICENSE_AND_UNRESOLVED_EDGE_METRIC`
+  `PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_RUNTIME_AND_UNRESOLVED_EDGE_METRIC`
 - The production 3D TaIrTe4 optical closure is now
   `epsilon_c(lambda)=epsilon_b(lambda)`. This is the paper-consistent
   finite-edge 3D implementation extending the reported in-plane
@@ -29,7 +29,10 @@
 - The v261 contract-only GPU session passes all geometry, PML, source,
   material, and resource readbacks. Three GPU-only solve attempts stopped
   before timestepping because only 4 of 9 requested `lum_fdtd_solve` tasks
-  were available. CPU FDTD fallback was not used. Therefore production
+  were available. A fourth acquired the licenses, meshed a
+  `1461 x 1461 x 161` grid, and started GPU timestepping, but Lumerical
+  API/engine communication failed after `3.3357%`. Its incomplete HDF5 is
+  provenance only. CPU FDTD fallback was not used. Therefore production
   Qx/Qy/Qz, P_Q, six-face closure, native Yee coordinates, and edge-normal
   Q remain blocked; legacy `epsilon_c=16` has exactly `Qz=0`.
 - Scalar versus thin-lens vectorial Gaussian comparison remains plan-only:

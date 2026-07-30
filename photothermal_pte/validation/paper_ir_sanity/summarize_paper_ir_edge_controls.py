@@ -7,6 +7,7 @@ import argparse
 import csv
 import hashlib
 import json
+import re
 import shutil
 from pathlib import Path
 from typing import Any
@@ -24,6 +25,10 @@ BLOCKED_STATUS = (
 SMOKE_COMPLETED_STATUS = (
     "PARTIAL_PAPER_IR_CONTROL_VALIDATION_"
     "OPTICAL_SMOKE_COMPLETED_EDGE_METRIC_UNRESOLVED"
+)
+RUNTIME_BLOCKED_STATUS = (
+    "PARTIAL_PAPER_IR_CONTROL_VALIDATION_"
+    "BLOCKED_OPTICAL_RUNTIME_AND_UNRESOLVED_EDGE_METRIC"
 )
 
 
@@ -94,7 +99,6 @@ def main() -> int:
     production_dir, production = (
         completed[-1] if completed else (None, None)
     )
-    status = SMOKE_COMPLETED_STATUS if production else BLOCKED_STATUS
     legacy = load_json(legacy_dir / "case_result.json")
 
     for source, target in (
@@ -188,10 +192,17 @@ def main() -> int:
         for directory in production_dirs
         if (directory / "finite_2um_optical_q_p0.log").is_file()
     ]
-    license_evidence = []
+    attempt_evidence = []
     for path in log_paths:
         text = path.read_text(errors="replace")
-        license_evidence.append(
+        progress = [
+            float(value)
+            for value in re.findall(
+                r"([0-9]+(?:\.[0-9]+)?)% complete",
+                text,
+            )
+        ]
+        attempt_evidence.append(
             {
                 "path": str(path.resolve()),
                 "sha256": sha256(path),
@@ -205,8 +216,35 @@ def main() -> int:
                 "licensed_users_reached": (
                     "Licensed number of users already reached" in text
                 ),
+                "time_stepping_started": (
+                    "Beginning initialization of 3D Simulation" in text
+                ),
+                "simulation_gridpoints": (
+                    re.search(
+                        r"Simulation size in gridpoints: ([^\n]+)",
+                        text,
+                    ).group(1)
+                    if "Simulation size in gridpoints:" in text
+                    else None
+                ),
+                "maximum_logged_progress_percent": (
+                    max(progress) if progress else None
+                ),
             }
         )
+    runtime_started = any(
+        item["time_stepping_started"] for item in attempt_evidence
+    )
+    license_attempt_count = sum(
+        bool(item["licensed_users_reached"]) for item in attempt_evidence
+    )
+    status = (
+        SMOKE_COMPLETED_STATUS
+        if production
+        else RUNTIME_BLOCKED_STATUS
+        if runtime_started
+        else BLOCKED_STATUS
+    )
 
     analytic_50 = analytic["comparisons"]["core_50_nm"]
     robust_a_x = robust["convergence"][
@@ -238,6 +276,8 @@ def main() -> int:
             "optical_GPU_smoke": (
                 "VALIDATED_ONE_POLARIZATION_GPU_SMOKE"
                 if smoke_passed
+                else "BLOCKED_LUMERICAL_GPU_RUNTIME_API_FAILURE"
+                if runtime_started
                 else "BLOCKED_LUMERICAL_SOLVE_LICENSE_BUSY"
             ),
             "native_Yee_mesh_audit": (
@@ -325,10 +365,12 @@ def main() -> int:
                         "finite_2um_optical_q.fsp",
                         "case_result.json",
                     ),
+                    "exception_type": item.get("exception_type"),
+                    "exception": item.get("exception"),
                 }
                 for item in production_attempts
             ],
-            "logs": license_evidence,
+            "logs": attempt_evidence,
         },
         "scalar_vector_source_status": {
             "scalar_production_smoke": (
@@ -386,6 +428,30 @@ No post-hoc Q gain, clipping, smoothing, or gradient rescaling is allowed.
             "GPU-only production smoke also completed and records native Yee "
             "coordinates, Qx/Qy/Qz, P_Q, six-face closure, and the edge-normal "
             "Q profile.  Full optical mesh/domain convergence is still not run."
+        )
+    elif runtime_started:
+        runtime_attempt = max(
+            (
+                item
+                for item in attempt_evidence
+                if item["time_stepping_started"]
+            ),
+            key=lambda item: item["maximum_logged_progress_percent"] or 0.0,
+        )
+        optical_paragraph = (
+            "The v261 contract-only session and material fit succeeded.  "
+            f"{license_attempt_count} attempts stopped before timestepping "
+            "because the requested "
+            "`lum_fdtd_solve` task count was unavailable.  A later GPU-only "
+            "attempt acquired the licenses, meshed "
+            f"`{runtime_attempt['simulation_gridpoints']}` gridpoints, and "
+            "started timestepping, but the Lumerical API/engine communication "
+            "failed after the log reached "
+            f"`{runtime_attempt['maximum_logged_progress_percent']}%`.  "
+            "The incomplete HDF5 output is provenance only and is not treated "
+            "as a recoverable optical result.  No CPU FDTD fallback was used.  "
+            "Production Qx/Qy/Qz, P_Q, closure, native Yee coordinates, and "
+            "the edge-normal Q profile therefore remain blocked."
         )
     else:
         optical_paragraph = (

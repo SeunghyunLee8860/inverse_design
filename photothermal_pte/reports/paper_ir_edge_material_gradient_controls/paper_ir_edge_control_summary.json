@@ -1,9 +1,9 @@
 {
-  "status": "PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_LICENSE_AND_UNRESOLVED_EDGE_METRIC",
+  "status": "PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_RUNTIME_AND_UNRESOLVED_EDGE_METRIC",
   "substatuses": {
     "analytic_thermal_controls": "VALIDATED_ANALYTIC_THERMAL_SOURCE_CONTROLS",
     "optical_material_contract": "VALIDATED_PAPER_CONSISTENT_EPSILON_C_EQUALS_B_CONTRACT",
-    "optical_GPU_smoke": "BLOCKED_LUMERICAL_SOLVE_LICENSE_BUSY",
+    "optical_GPU_smoke": "BLOCKED_LUMERICAL_GPU_RUNTIME_API_FAILURE",
     "native_Yee_mesh_audit": "BLOCKED_PENDING_COMPLETED_OPTICAL_SMOKE",
     "optical_Q_convergence": "NOT_RUN",
     "thermal_global_temperature_convergence": "PRESERVED_FROM_PRIOR_CHECKPOINT",
@@ -225,17 +225,30 @@
       {
         "status": "BLOCKED_EXECUTION_ERROR",
         "threads": "8",
-        "case_result": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_20260730/case_result.json"
+        "case_result": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_20260730/case_result.json",
+        "exception_type": "RuntimeError",
+        "exception": "GPU-only FDTD failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'in run:' | localhost: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Computer: LumApiError: 'in run: could not match resource name provided or the resource may not be active.'"
       },
       {
         "status": "BLOCKED_EXECUTION_ERROR",
         "threads": "1",
-        "case_result": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730/case_result.json"
+        "case_result": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730/case_result.json",
+        "exception_type": "RuntimeError",
+        "exception": "GPU-only FDTD failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'in run:' | localhost: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Computer: LumApiError: 'in run: could not match resource name provided or the resource may not be active.'"
       },
       {
         "status": "BLOCKED_EXECUTION_ERROR",
         "threads": "1",
-        "case_result": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_t1_20260730/case_result.json"
+        "case_result": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730/case_result.json",
+        "exception_type": "RuntimeError",
+        "exception": "GPU-only FDTD failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'Failed to get variable' | localhost: LumApiError: 'Failed to put variable' | Local Computer: LumApiError: 'Failed to put variable'"
+      },
+      {
+        "status": "BLOCKED_EXECUTION_ERROR",
+        "threads": "1",
+        "case_result": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_t1_20260730/case_result.json",
+        "exception_type": "RuntimeError",
+        "exception": "GPU-only FDTD failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'in run:' | localhost: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Computer: LumApiError: 'in run: could not match resource name provided or the resource may not be active.'"
       }
     ],
     "logs": [
@@ -245,7 +258,10 @@
         "requested_tasks": 9,
         "available_tasks": 4,
         "feature": "lum_fdtd_solve",
-        "licensed_users_reached": true
+        "licensed_users_reached": true,
+        "time_stepping_started": false,
+        "simulation_gridpoints": null,
+        "maximum_logged_progress_percent": null
       },
       {
         "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730/finite_2um_optical_q_p0.log",
@@ -253,7 +269,21 @@
         "requested_tasks": 9,
         "available_tasks": 4,
         "feature": "lum_fdtd_solve",
-        "licensed_users_reached": true
+        "licensed_users_reached": true,
+        "time_stepping_started": false,
+        "simulation_gridpoints": null,
+        "maximum_logged_progress_percent": null
+      },
+      {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730/finite_2um_optical_q_p0.log",
+        "sha256": "d8e1efcbae251cf7b81a0077148ff19d4724607f130c34dc5c69eb932d35f497",
+        "requested_tasks": null,
+        "available_tasks": null,
+        "feature": null,
+        "licensed_users_reached": false,
+        "time_stepping_started": true,
+        "simulation_gridpoints": "1461 x 1461 x 161",
+        "maximum_logged_progress_percent": 3.3357
       },
       {
         "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_t1_20260730/finite_2um_optical_q_p0.log",
@@ -261,7 +291,10 @@
         "requested_tasks": 9,
         "available_tasks": 4,
         "feature": "lum_fdtd_solve",
-        "licensed_users_reached": true
+        "licensed_users_reached": true,
+        "time_stepping_started": false,
+        "simulation_gridpoints": null,
+        "maximum_logged_progress_percent": null
       }
     ]
   },
