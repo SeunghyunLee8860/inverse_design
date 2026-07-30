@@ -305,7 +305,9 @@ def main() -> int:
         "w", newline=""
     ) as stream:
         writer = csv.DictWriter(
-            stream, fieldnames=sorted({key for row in rows for key in row})
+            stream,
+            fieldnames=sorted({key for row in rows for key in row}),
+            lineterminator="\n",
         )
         writer.writeheader()
         writer.writerows(rows)

@@ -1,5 +1,35 @@
 # Latest photothermal validation status
 
+## Offline paper-IR Q, thermal, and remap controls
+
+- Overall status:
+  `PARTIAL_OFFLINE_PAPER_IR_VALIDATION_BLOCKED_PLANAR_Q_AND_FIG3HI`.
+- No new FDTD solve was run. Saved 1.2-ps and 4-ps matched-control-volume
+  Q artifacts have observable convergence: P_Q changes `0.000123%`,
+  normalized spatial-Q NRMSE is `0.000738%`, spatial correlation is
+  `0.999999999965`, and the hotspot does not move.
+- This is diagnostic-Q convergence only. Auto-shutoff remains
+  `1.81076e-5 / 1.80982e-5`, above the `1e-5` gate, so neither artifact is
+  promoted to production Q.
+- The paper analytic Gaussian--Beer--Lambert source plus the reduced
+  TaIrTe4 Robin model reproduces the Figure-3F/G thermal trend. The robust
+  exact-edge x-gradient b/a ratio is `1.440200 / 1.440259 / 1.440266` on
+  200/100/50-nm meshes; the 100-to-50-nm robust metric changes about
+  `0.454%`. Raw cell-gradient maxima change about `9%` and Tmax changes
+  about `1.3%`, so those diagnostics remain unresolved.
+- Exact-cut-cell direct analytic Q versus 33.898-nm Yee-like layout plus
+  the current conservative remap passes its field gates: worst Q_T/T/grad
+  NRMSE are `0.494% / 0.040% / 0.334%`. The worst raw-cell peak changes
+  `1.891%` and remains diagnostic.
+- The required edge-free planar TaIrTe4-stack Q artifact does not exist.
+  Empty-stack is not TaIrTe4, finite-centre is an edged polygon, and the
+  saved straight-edge artifact is legacy `epsilon_c=16` with Qz=0.
+  Therefore the three-source decomposition is
+  `BLOCKED_PLANAR_STACK_Q_ARTIFACT_UNAVAILABLE`; per the approved order,
+  Figure 3H/I was not started.
+- Report, JSON, CSV, figures, and manifest:
+  `reports/paper_ir_offline_q_thermal_controls/`.
+
 ## Matched-control-volume paper-IR GPU smoke
 
 - Official status remains:

@@ -1,0 +1,7 @@
+P_Q_W,P_Qx_W,P_Qy_W,P_Qz_W,case,category,raw_max_abs_grad_T_x_b_over_a,rejection_reason,robust_n_strip_mean_b_over_a,robust_x_strip_mean_b_over_a,source_power_b_over_a,usable_as_planar_TaIrTe4_stack
+,,,,200nm,paper_cutcell_thermal,1.4498037685861094,,1.4387023656134452,1.4401997101160613,1.4897459421264716,
+,,,,100nm,paper_cutcell_thermal,1.4497191445282236,,1.4380327164609117,1.440258763184663,1.4897459421264718,
+,,,,50nm,paper_cutcell_thermal,1.447197263775189,,1.437580116897196,1.4402655971626048,1.4897459421264716,
+,,,,empty_stack_control,saved_source_audit,,no TaIrTe4 and no volume-Q artifact; incident/background control is not a planar TaIrTe4 stack,,,,False
+1.9320668872059266e-11,1.1278825051896293e-13,1.9207880621540302e-11,0.0,finite_device_a_polygon,saved_source_audit,,finite digitized Device-A polygon; it contains edges and is not an edge-free planar stack,,,,False
+1.1746919872169832e-11,1.4954382446947973e-12,1.0251481627475036e-11,0.0,finite_straight_45_edge_legacy_c,saved_source_audit,,"valid finite straight-edge diagnostic, but generated with legacy lossless epsilon_c=16 closure (P_Qz is exactly zero)",,,,False

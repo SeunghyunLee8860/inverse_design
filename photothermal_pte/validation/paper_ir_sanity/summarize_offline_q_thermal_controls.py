@@ -238,7 +238,9 @@ def main() -> int:
     csv_path = args.output_dir / "paper_ir_offline_controls_cases.csv"
     with csv_path.open("w", newline="") as stream:
         writer = csv.DictWriter(
-            stream, fieldnames=sorted({key for row in rows for key in row})
+            stream,
+            fieldnames=sorted({key for row in rows for key in row}),
+            lineterminator="\n",
         )
         writer.writeheader()
         writer.writerows(rows)
