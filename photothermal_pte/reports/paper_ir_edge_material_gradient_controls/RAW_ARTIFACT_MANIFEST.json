@@ -1,0 +1,492 @@
+{
+  "policy": "raw NPZ/FSP/log artifacts remain outside Git; repository contains code, compact tables, plots, report, and this manifest",
+  "status": "PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_LICENSE_AND_UNRESOLVED_EDGE_METRIC",
+  "artifacts": [
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/analytic_source_controls_cases.csv",
+      "size_bytes": 16156,
+      "sha256": "27be51e6efe10fbd1979ac277974337cec400061a980dcfd7cb1a3b84e58344d"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/analytic_source_controls_summary.json",
+      "size_bytes": 6807,
+      "sha256": "4d4013c3685e2183d5e110bad7baffc2daf7946f1313a00ce1e725099611f280"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/equal_absorbed_power_shape_control_a_core100.npz",
+      "size_bytes": 1942017,
+      "sha256": "47b3303c244267284252edbd0cc17ded4e38889717671d3815bb07ff997005eb"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/equal_absorbed_power_shape_control_a_core200.npz",
+      "size_bytes": 578314,
+      "sha256": "635a92a8c6b862f2167910d1b6eb6bc45ca2d2f309ff62c97ad879d985450dab"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/equal_absorbed_power_shape_control_a_core50.npz",
+      "size_bytes": 6986049,
+      "sha256": "4de1d0554b6560e3da0aaa61158b86b0eb4812a5eff2174e5826b22597ee3329"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/equal_absorbed_power_shape_control_b_core100.npz",
+      "size_bytes": 1942045,
+      "sha256": "766e0a2cd4e007e89ce787e0ceebe2728e9c783f5b967200d1ef5f34d1aaf58b"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/equal_absorbed_power_shape_control_b_core200.npz",
+      "size_bytes": 578377,
+      "sha256": "e3b9e4fd6d76648e8dccdabe4f7725f0c8211688de01663d582758ffcd653918"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/equal_absorbed_power_shape_control_b_core50.npz",
+      "size_bytes": 6986678,
+      "sha256": "6362a5069af4ae19042a8b5bac6339ce28fa041565a702ce6c9279cf8b107747"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/identical_Q_symmetry_control_a_core100.npz",
+      "size_bytes": 1942258,
+      "sha256": "9c571e04c164d49f5942fbcfa326ad754a8a802b828fe9915d295012b4ce5059"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/identical_Q_symmetry_control_a_core200.npz",
+      "size_bytes": 578247,
+      "sha256": "4fa09d2546950e33201835968c0f5462df6d964bbf932627be618c5dd2284f13"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/identical_Q_symmetry_control_a_core50.npz",
+      "size_bytes": 6986692,
+      "sha256": "533fa5335cabd26e4e92748a4d16a88da43c0cf978f50e95b8056ea9790ba1ad"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/identical_Q_symmetry_control_b_core100.npz",
+      "size_bytes": 1942258,
+      "sha256": "9c571e04c164d49f5942fbcfa326ad754a8a802b828fe9915d295012b4ce5059"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/identical_Q_symmetry_control_b_core200.npz",
+      "size_bytes": 578247,
+      "sha256": "4fa09d2546950e33201835968c0f5462df6d964bbf932627be618c5dd2284f13"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/identical_Q_symmetry_control_b_core50.npz",
+      "size_bytes": 6986692,
+      "sha256": "533fa5335cabd26e4e92748a4d16a88da43c0cf978f50e95b8056ea9790ba1ad"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/paper_like_absorbed_power_control_a_core100.npz",
+      "size_bytes": 1942258,
+      "sha256": "9c571e04c164d49f5942fbcfa326ad754a8a802b828fe9915d295012b4ce5059"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/paper_like_absorbed_power_control_a_core200.npz",
+      "size_bytes": 578247,
+      "sha256": "4fa09d2546950e33201835968c0f5462df6d964bbf932627be618c5dd2284f13"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/paper_like_absorbed_power_control_a_core50.npz",
+      "size_bytes": 6986692,
+      "sha256": "533fa5335cabd26e4e92748a4d16a88da43c0cf978f50e95b8056ea9790ba1ad"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/paper_like_absorbed_power_control_b_core100.npz",
+      "size_bytes": 1941977,
+      "sha256": "71ffcd92151c9c8c4e6c20825ee31416d5cf4a059c7a855b06d6fbb99cb5b4cc"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/paper_like_absorbed_power_control_b_core200.npz",
+      "size_bytes": 578358,
+      "sha256": "87a1ad30f4f543a21bea19fea51795e8b81a34e506193e50eb45a06015731e85"
+    },
+    {
+      "role": "external_analytic_source_controls_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_source_controls_20260730/cases/paper_like_absorbed_power_control_b_core50.npz",
+      "size_bytes": 6986381,
+      "sha256": "ef9eec02c2948b84475be872c6def59975151b6844fc25f49af254f288a8e082"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/ROBUST_EDGE_GRADIENT_CONVERGENCE.png",
+      "size_bytes": 67319,
+      "sha256": "8afe89c43b42f93739a467984bd00d4792be1fbd7a7f3580da86aef805bf2429"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/ROBUST_EDGE_GRADIENT_PROFILES.png",
+      "size_bytes": 533245,
+      "sha256": "e6b778debab74935bc533dcf8534958a46f85bfd965b631dfb693c9dc2551941"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_a_100nm_narrow.npz",
+      "size_bytes": 4986,
+      "sha256": "85569756e07369e8e641aef93255d11d431b203bf7aa7b7153454321bf3facdd"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_a_100nm_primary.npz",
+      "size_bytes": 4976,
+      "sha256": "ca4d050c45421f362bd03b59a0834d6286fd2c2ce824a5be89180d88de5dcea3"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_a_100nm_wide.npz",
+      "size_bytes": 4987,
+      "sha256": "79c335240a852c564a2171eb842c2103d9cca3368a2cdaa97f6b3df75492f23e"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_a_200nm_narrow.npz",
+      "size_bytes": 4979,
+      "sha256": "0ace903d09d1e3167ec2e6f26bb6f988d87add6eda884b391f073e7d1769e37c"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_a_200nm_primary.npz",
+      "size_bytes": 4984,
+      "sha256": "6814c6c2141742983cd58c49351106f7f9a3a4e6d20b675994c6837e67f30bb0"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_a_200nm_wide.npz",
+      "size_bytes": 4975,
+      "sha256": "1089e601e0927b866adbb5baf1133b491b02ea059a738020088bb72336ced280"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_a_50nm_narrow.npz",
+      "size_bytes": 4975,
+      "sha256": "50aa6bd6ec6d3b4a00b923eb336c1ef8927a936969097260e7b475d60bc296eb"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_a_50nm_primary.npz",
+      "size_bytes": 4983,
+      "sha256": "104bd538747f44bdbcc8ea608b40d963ff1dd9abc019cfebadf9da44f4479135"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_a_50nm_wide.npz",
+      "size_bytes": 4978,
+      "sha256": "52a8112933df60d51a674b6a6712e626a1268a8c3711e79d70565d540459f64f"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_b_100nm_narrow.npz",
+      "size_bytes": 4976,
+      "sha256": "b86fffd6e6cf09e85ec5565d19eff295e7b712b313f5b86aa4de805dcfe7f9c9"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_b_100nm_primary.npz",
+      "size_bytes": 4973,
+      "sha256": "6bad5000f5cb7afe0114ad1672a1d372e8198d5a9a750cc47e94984840cbf00a"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_b_100nm_wide.npz",
+      "size_bytes": 4984,
+      "sha256": "286cde4fd20366429b85399bcab316ba873cbc24ed341f061755d7dcb09dd761"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_b_200nm_narrow.npz",
+      "size_bytes": 4982,
+      "sha256": "facf7fcbefeb6a2b561bda96ee28ede0cf655e1c7508c8fab4d5bf104304664c"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_b_200nm_primary.npz",
+      "size_bytes": 4977,
+      "sha256": "994dd227ff7139df4e955c0687d5eea915b54c0fb7029cb69446240d32f30130"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_b_200nm_wide.npz",
+      "size_bytes": 4981,
+      "sha256": "e92d69fd2d0e062f3275398c2ed9b5ac7a8bd06c0dfaec1f224eaf993bafa357"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_b_50nm_narrow.npz",
+      "size_bytes": 4977,
+      "sha256": "eaa9bc52dabe83d8b8af1ec38f1822fe7c310d4858e21ea011d4539a495dcdf1"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_b_50nm_primary.npz",
+      "size_bytes": 4975,
+      "sha256": "14a8dbdcc48849e0b3e236d083e4ccc3461a93637c533bc0fc1b0880d6ac6487"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/analytic_paper_source_b_50nm_wide.npz",
+      "size_bytes": 4987,
+      "sha256": "e2b284d0c3282e22122c55859a958a565e592414352cde4368753113470c0b94"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_a_100nm_narrow.npz",
+      "size_bytes": 4977,
+      "sha256": "19a19ad279a6e54376691cd190cd1893f25a6ee8551d184c5c621732a46f1d44"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_a_100nm_primary.npz",
+      "size_bytes": 4962,
+      "sha256": "143e86896b52c206aa92b2dc52a936f7b027fc6f6f76f3c0332d2d910e3d6527"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_a_100nm_wide.npz",
+      "size_bytes": 4973,
+      "sha256": "58671d38dbc12d83c86f24297b9fd9efc8e5d3df0a391f281bfd7627eebb9784"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_a_200nm_narrow.npz",
+      "size_bytes": 4965,
+      "sha256": "cc214e8e52e5682d932f2ded89be934efd78291f0b48e318eb674976105f4df6"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_a_200nm_primary.npz",
+      "size_bytes": 4961,
+      "sha256": "c3eaae8f621ca552d0e7d0e90d64b3088b1f134c02af7921b53fa0a5fc5e200a"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_a_200nm_wide.npz",
+      "size_bytes": 4967,
+      "sha256": "c45d4089c7885fbe79708aa29666530e7ce2260c54e5fc6f8d386c5d48974b12"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_a_50nm_narrow.npz",
+      "size_bytes": 4968,
+      "sha256": "aed04b6a253dc904d77374a277f280a352438247365edf6b9131abf4572f0c6a"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_a_50nm_primary.npz",
+      "size_bytes": 4967,
+      "sha256": "aad0af5143b6b0c69b9eb0a9b38b69d7f53b29a84fad94296561a68610a72c78"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_a_50nm_wide.npz",
+      "size_bytes": 4956,
+      "sha256": "e11c351c01c46bc0195725a086b13e8c4dbfe3ee22a7a3dd22ac6dabbacc9fde"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_b_100nm_narrow.npz",
+      "size_bytes": 4968,
+      "sha256": "ffd1872e301c629b28c7d01f89164b9ff9fec8f5b7d6e18ff9f3ff0a2899c8bc"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_b_100nm_primary.npz",
+      "size_bytes": 4963,
+      "sha256": "c978a5720996ac2bcf2229b392f0b2f71374e55fa24e0a1270a9f08634a10da0"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_b_100nm_wide.npz",
+      "size_bytes": 4960,
+      "sha256": "39af1f51f5f5eaa13806facb3fd7dedbdd5f87369e7307c25ad37d6967297fd9"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_b_200nm_narrow.npz",
+      "size_bytes": 4982,
+      "sha256": "ea18295b85c27cab6f03e072a051f39b7963b6b7aff8ad6f2d625b8398577c8b"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_b_200nm_primary.npz",
+      "size_bytes": 4977,
+      "sha256": "e86002ee9493da6bd9e93c57aaa06c2e28bd5175fc4f0c2c7caa2f571a8ed3fc"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_b_200nm_wide.npz",
+      "size_bytes": 4976,
+      "sha256": "74b51b96aa0a59756c0b1ae72bc6c01f78ff7776b588dfc75bd061ad128a2b5b"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_b_50nm_narrow.npz",
+      "size_bytes": 4973,
+      "sha256": "177a5367f6c5747ba69ff9aef88c631a938839776045e0bc558294457fea5676"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_b_50nm_primary.npz",
+      "size_bytes": 4965,
+      "sha256": "31b84b07299fe041f66820f583aa3a2363e3543e6902e24d4a13944a69c5ef79"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/profiles/legacy_Lumerical_edge_Q_b_50nm_wide.npz",
+      "size_bytes": 4960,
+      "sha256": "f369dc653162216cabf9542fceac916c836f5d9796567604b96de0a6cd870220"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/robust_edge_gradient_cases.csv",
+      "size_bytes": 24578,
+      "sha256": "d9cd77d35b8fdf99283a32132d5584e58b6be8c48ea2ca63fc657fe023b15215"
+    },
+    {
+      "role": "external_robust_edge_gradient_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/robust_edge_gradient_20260730/robust_edge_gradient_summary.json",
+      "size_bytes": 26467,
+      "sha256": "2e695029c8cf108ff7be8d830f1bf2c54208879ac70e739f684cc6f9a893979b"
+    },
+    {
+      "role": "external_contract_straight45_a_cclosure_retry_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/contract_straight45_a_cclosure_retry_20260730/RAW_ARTIFACT_MANIFEST.json",
+      "size_bytes": 2848,
+      "sha256": "532eac6c4a235990e38d2aded2d1549432ed0b923843c399ae6db1851a9428de"
+    },
+    {
+      "role": "external_contract_straight45_a_cclosure_retry_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/contract_straight45_a_cclosure_retry_20260730/case_result.json",
+      "size_bytes": 9374,
+      "sha256": "7b1f1d1904fa87ed5a13682d1d3470c7d29be98ad423359da339dbbbaa4b6068"
+    },
+    {
+      "role": "external_contract_straight45_a_cclosure_retry_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/contract_straight45_a_cclosure_retry_20260730/finite_2um_optical_q.fsp",
+      "size_bytes": 571240,
+      "sha256": "6513e81abf5f54d34cef1da74fecd98e63a23d33ef9f3fd4ab498cde214fb3e5"
+    },
+    {
+      "role": "external_contract_straight45_a_cclosure_retry_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/contract_straight45_a_cclosure_retry_20260730/paper_ir_device_a_geometry.png",
+      "size_bytes": 96393,
+      "sha256": "f7cd0417f4f4c6a5270e415489de69ea4fdbf375f14957b7f1e2ad7dd95021a1"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_20260730/RAW_ARTIFACT_MANIFEST.json",
+      "size_bytes": 4662,
+      "sha256": "d78549d31601014a490c098d834692438e4451f98200efa8e7ed1abd90ce1af1"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_20260730/case_result.json",
+      "size_bytes": 11498,
+      "sha256": "4bbd81064e5a494601c2b5b40c3a5457a3769c409a51b70464a9130a123191a0"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_20260730/finite_2um_optical_q.fsp",
+      "size_bytes": 571240,
+      "sha256": "e785b9fae43e736149bba1407273e72f5340a8d2bdd3b49df28dea73b4146e0e"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_20260730/finite_2um_optical_q_p0.log",
+      "size_bytes": 451,
+      "sha256": "463106640330a203f589ff5879d67f55037304449fbf5b1f5e7de7a9c7c92e85"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_20260730/paper_ir_device_a_geometry.png",
+      "size_bytes": 96393,
+      "sha256": "f7cd0417f4f4c6a5270e415489de69ea4fdbf375f14957b7f1e2ad7dd95021a1"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730/RAW_ARTIFACT_MANIFEST.json",
+      "size_bytes": 4711,
+      "sha256": "6065aec4e14f0743e88b8ff5e3237e2db468d2de03177e1eb53d0e87941aa588"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730/case_result.json",
+      "size_bytes": 11512,
+      "sha256": "703d89b0734a6d2aceb32f41da016bb603d4a31e8103a9ec9d45f1d575d4f048"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730/finite_2um_optical_q.fsp",
+      "size_bytes": 571240,
+      "sha256": "cad871f2320e2fbb53ba704964ebcee942f4b3a6b42349c3b024233fd6bed0e5"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730/finite_2um_optical_q_p0.log",
+      "size_bytes": 451,
+      "sha256": "7d9db0d179a7ad2456e5c055513eebf176e2a2d3d984ce1948fd3c4111f06116"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730/paper_ir_device_a_geometry.png",
+      "size_bytes": 96393,
+      "sha256": "f7cd0417f4f4c6a5270e415489de69ea4fdbf375f14957b7f1e2ad7dd95021a1"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_t1_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_t1_20260730/RAW_ARTIFACT_MANIFEST.json",
+      "size_bytes": 4683,
+      "sha256": "b29a6d62ca6984616c776fbd0f4299d8264799cf886ca00ecc5d6aba7771fba3"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_t1_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_t1_20260730/case_result.json",
+      "size_bytes": 11504,
+      "sha256": "84a02f50635d07e72dc762bd90d491e9a81e0c89e0bb105cbecd9ce39dad34e3"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_t1_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_t1_20260730/finite_2um_optical_q.fsp",
+      "size_bytes": 571240,
+      "sha256": "46cc02022d4cc436f85d6579e238d3a01fe1216890d54618f257313835d2c0ee"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_t1_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_t1_20260730/finite_2um_optical_q_p0.log",
+      "size_bytes": 451,
+      "sha256": "7d9db0d179a7ad2456e5c055513eebf176e2a2d3d984ce1948fd3c4111f06116"
+    },
+    {
+      "role": "external_straight45_a_w6p5_dz10_L48_cclosure_gpu2_t1_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_t1_20260730/paper_ir_device_a_geometry.png",
+      "size_bytes": 96393,
+      "sha256": "f7cd0417f4f4c6a5270e415489de69ea4fdbf375f14957b7f1e2ad7dd95021a1"
+    },
+    {
+      "role": "legacy_epsilon_c_16",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_gpu4_20260730/case_result.json",
+      "size_bytes": 22311,
+      "sha256": "ec58cd8bc82131ecc3ccd954f349500a9154362594a1ff9ec96720d3444cf42f"
+    },
+    {
+      "role": "legacy_epsilon_c_16",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_gpu4_20260730/finite_q_on_artifact.npz",
+      "size_bytes": 896668126,
+      "sha256": "b3b0f39bb48e85d9487a769069e9b53d4168a28ea9a779c24e340b72b232fa09"
+    }
+  ]
+}

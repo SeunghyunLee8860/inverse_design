@@ -1,5 +1,45 @@
 # Latest photothermal validation status
 
+## Paper-like IR material/source/edge controls
+
+- Status:
+  `PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_LICENSE_AND_UNRESOLVED_EDGE_METRIC`
+- The production 3D TaIrTe4 optical closure is now
+  `epsilon_c(lambda)=epsilon_b(lambda)`. This is the paper-consistent
+  finite-edge 3D implementation extending the reported in-plane
+  `epsilon_a,epsilon_b` data; it is not described as a directly measured
+  c-axis property. The old lossless `epsilon_c=16` artifact is preserved as
+  legacy diagnostic only.
+- At 11 um, requested
+  `epsilon_x=epsilon_z=13.2681477+26.1817959i` and
+  `epsilon_y=-42.9662316+204.5326948i`. The v261 material fit and
+  finite-time-step readbacks give exact x/z equality; relative fit errors
+  against the requested x/y/z values are
+  `4.95e-6 / 1.91e-5 / 4.95e-6`.
+- Three same-contract analytic controls were run at 200/100/50 nm. At
+  50 nm the paper-like absorbed-power source gives
+  `max|dT/dx|_b/max|dT/dx|_a=1.446954`; the equal-power shape control gives
+  `0.967078`; exact-identical Q gives `1.000000` with zero field difference.
+  Equal-power normalization was used only for that analytic control.
+- The exact-coordinate robust comparator uses
+  `n=(-x+y)/sqrt(2), t=(x+y)/sqrt(2)` and retains raw maxima as diagnostics.
+  Analytic fitted-x strip mean changes `0.6096%` from 100 to 50 nm, but the
+  legacy Maxwell-Q b case changes `12.851%`; fit-band sensitivity also
+  exceeds 10%. No 50- or 100-nm local edge-gradient mesh is promoted.
+- The v261 contract-only GPU session passes all geometry, PML, source,
+  material, and resource readbacks. Three GPU-only solve attempts stopped
+  before timestepping because only 4 of 9 requested `lum_fdtd_solve` tasks
+  were available. CPU FDTD fallback was not used. Therefore production
+  Qx/Qy/Qz, P_Q, six-face closure, native Yee coordinates, and edge-normal
+  Q remain blocked; legacy `epsilon_c=16` has exactly `Qz=0`.
+- Scalar versus thin-lens vectorial Gaussian comparison remains plan-only:
+  incident power, realized waist/focus, aperture/NA, and flake-plane field
+  must be matched before the finite-edge comparison.
+- No raw Lumerical Q modification, PTE current, adjoint, gradient, or
+  optimization was performed.
+- Report and machine-readable outputs:
+  `reports/paper_ir_edge_material_gradient_controls/`.
+
 ## Straight-edge spatial-Q/remap/gradient audit
 
 - Status:
