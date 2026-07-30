@@ -32,6 +32,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.path import Path as PolygonPath
 import numpy as np
+from scipy.optimize import least_squares
 
 
 HERE = Path(__file__).resolve().parent
@@ -53,6 +54,10 @@ FDTD_Z_MAX_M = 10.0e-6
 SOURCE_Z_M = 5.0e-6
 FOCUS_Z_M = -0.5 * FLAKE_THICKNESS_M
 INCIDENT_Z_M = 0.60e-6
+W2_INCIDENT_PLANE_Z_M = 50.0e-9
+W2_FLAKE_MIDPLANE_Z_M = -0.5 * FLAKE_THICKNESS_M
+W2_INCIDENT_MONITOR = "w2_incident_plane"
+W2_FLAKE_FIELD_MONITOR = "w2_flake_midplane"
 PABS_PADDING_M = 50.0e-9
 PRODUCTION_MATERIAL_NAME = "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure"
 LEGACY_MATERIAL_NAME = "TaIrTe4_DeviceA_lab_x_b_y_a_legacy_z16"
@@ -111,7 +116,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--geometry",
-        choices=("device-a-polygon", "straight-45-edge"),
+        choices=("device-a-polygon", "straight-45-edge", "planar-stack"),
         default="device-a-polygon",
     )
     parser.add_argument("--domain-um", type=float, default=44.0)
@@ -126,11 +131,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--incident-reference")
     parser.add_argument(
         "--execution-contract",
-        choices=("production", "diagnostic-smoke"),
+        choices=("production", "diagnostic-smoke", "edge-isolation-smoke"),
         default="production",
         help=(
             "production preserves the paper-like geometry; diagnostic-smoke "
-            "is a separately labeled reduced-cost engine/material/Q check"
+            "is a separately labeled reduced-cost engine/material/Q check; "
+            "edge-isolation-smoke is the approved w0=2 um planar/edge "
+            "observable-Q diagnostic"
         ),
     )
     parser.add_argument("--gpu-device", default="GPU 2")
@@ -146,8 +153,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--contract-only", action="store_true")
     args = parser.parse_args()
+    reduced_smoke = args.execution_contract in (
+        "diagnostic-smoke",
+        "edge-isolation-smoke",
+    )
     minimum_domain_um = (
-        40.0 if args.execution_contract == "production" else 10.0
+        40.0 if not reduced_smoke else 10.0
     )
     if args.domain_um < minimum_domain_um:
         parser.error(
@@ -170,10 +181,10 @@ def parse_args() -> argparse.Namespace:
     ):
         parser.error("finite-flake requires a matching empty-stack reference")
     if (
-        args.execution_contract == "diagnostic-smoke"
+        reduced_smoke
         and args.case != "finite-flake"
     ):
-        parser.error("diagnostic smoke is defined only for finite-flake")
+        parser.error("reduced smoke contracts are defined only for finite-flake")
     if (
         args.execution_contract == "diagnostic-smoke"
         and args.simulation_time_ps < 4.0
@@ -182,7 +193,7 @@ def parse_args() -> argparse.Namespace:
             "diagnostic rerun requires at least 4 ps to permit source decay"
         )
     if (
-        args.execution_contract == "diagnostic-smoke"
+        reduced_smoke
         and args.auto_shutoff_min > 1.0e-5
     ):
         parser.error(
@@ -208,7 +219,7 @@ def parse_args() -> argparse.Namespace:
                 float(np.max(args.flake_vertices_um[:, 1])) + 0.05,
             ),
         }
-    else:
+    elif args.geometry == "straight-45-edge":
         # TaIrTe4 occupies y <= x.  The other two triangle faces remain 1 um
         # beyond the FDTD x/y bounds, so only one straight 45-degree edge is
         # present in the physical calculation region.
@@ -233,12 +244,39 @@ def parse_args() -> argparse.Namespace:
                 args.beam_y_um + half_analysis,
             ),
         }
+    else:
+        # The layer is deliberately continued beyond every lateral PML
+        # interface to remove a physical TaIrTe4 edge from the calculation.
+        outer = 0.5 * args.domain_um + 1.0
+        args.flake_vertices_um = np.asarray(
+            [
+                [-outer, -outer],
+                [outer, -outer],
+                [outer, outer],
+                [-outer, outer],
+            ],
+            dtype=float,
+        )
+        analysis_padding_um = (
+            4.0 if args.execution_contract == "production" else 1.5
+        )
+        half_analysis = 0.5 * args.source_span_um + analysis_padding_um
+        absorption_bounds_um = {
+            "x": (
+                args.beam_x_um - half_analysis,
+                args.beam_x_um + half_analysis,
+            ),
+            "y": (
+                args.beam_y_um - half_analysis,
+                args.beam_y_um + half_analysis,
+            ),
+        }
     args.absorption_bounds_m = {
         axis: tuple(value * 1e-6 for value in bounds)
         for axis, bounds in absorption_bounds_um.items()
     }
     args.absorption_bounds_m["z"] = (-FLAKE_THICKNESS_M, 0.0)
-    if args.execution_contract == "diagnostic-smoke":
+    if reduced_smoke:
         # Use one nominal control volume for both pabs_adv and all six power
         # faces.  Post-run gates independently read the realized coordinates
         # and close the volume quadrature on the realized face locations.
@@ -1174,12 +1212,30 @@ def add_geometry_and_monitors(
         material=SIO2_MATERIAL,
     )
     if args.case == "finite-flake":
-        polygon = fdtd.addpoly()
-        polygon["name"] = "TaIrTe4_flake"
-        polygon["vertices"] = vertices_um * 1e-6
-        polygon["z min"] = -FLAKE_THICKNESS_M
-        polygon["z max"] = 0.0
-        polygon["material"] = args.material_name
+        if args.geometry == "planar-stack":
+            base.add_rect(
+                fdtd,
+                "TaIrTe4_flake",
+                {
+                    "x": (
+                        -0.5 * lateral_material_span,
+                        0.5 * lateral_material_span,
+                    ),
+                    "y": (
+                        -0.5 * lateral_material_span,
+                        0.5 * lateral_material_span,
+                    ),
+                    "z": (-FLAKE_THICKNESS_M, 0.0),
+                },
+                material=args.material_name,
+            )
+        else:
+            polygon = fdtd.addpoly()
+            polygon["name"] = "TaIrTe4_flake"
+            polygon["vertices"] = vertices_um * 1e-6
+            polygon["z min"] = -FLAKE_THICKNESS_M
+            polygon["z max"] = 0.0
+            polygon["material"] = args.material_name
 
     mesh = fdtd.addmesh()
     mesh["name"] = "flake_mesh"
@@ -1222,7 +1278,8 @@ def add_geometry_and_monitors(
     pabs["name"] = base.PABS_GROUP
     pabs_bounds = (
         inner_box
-        if args.execution_contract == "diagnostic-smoke"
+        if args.execution_contract
+        in ("diagnostic-smoke", "edge-isolation-smoke")
         else {
             axis: (
                 absorption_bounds[axis][0] - PABS_PADDING_M,
@@ -1299,7 +1356,39 @@ def add_geometry_and_monitors(
         )
     else:
         outer_faces = {}
-        optional_monitor_names = ()
+        if args.execution_contract == "edge-isolation-smoke":
+            base.add_field_monitor(
+                fdtd,
+                W2_INCIDENT_MONITOR,
+                "2D Z-normal",
+                {
+                    "x": inner_box["x"],
+                    "y": inner_box["y"],
+                    "z": (
+                        W2_INCIDENT_PLANE_Z_M,
+                        W2_INCIDENT_PLANE_Z_M,
+                    ),
+                },
+            )
+            base.add_field_monitor(
+                fdtd,
+                W2_FLAKE_FIELD_MONITOR,
+                "2D Z-normal",
+                {
+                    "x": inner_box["x"],
+                    "y": inner_box["y"],
+                    "z": (
+                        W2_FLAKE_MIDPLANE_Z_M,
+                        W2_FLAKE_MIDPLANE_Z_M,
+                    ),
+                },
+            )
+            optional_monitor_names = (
+                W2_INCIDENT_MONITOR,
+                W2_FLAKE_FIELD_MONITOR,
+            )
+        else:
+            optional_monitor_names = ()
     for name in (
         base.PABS_FIELD,
         base.PABS_INDEX,
@@ -1317,6 +1406,11 @@ def add_geometry_and_monitors(
                 "paper Figure 3F straight 45-degree half-plane control; "
                 "TaIrTe4 occupies lab y<=x and remote triangle faces lie "
                 "outside the PML-bounded physical domain"
+                if args.geometry == "straight-45-edge"
+                else (
+                    "edge-free planar TaIrTe4 layer extended 1 um beyond "
+                    "each lateral PML-bounded domain face"
+                )
             )
         ),
         "coordinate_contract": {"lab_x": "crystal b", "lab_y": "crystal a"},
@@ -1332,7 +1426,11 @@ def add_geometry_and_monitors(
         "exact_flake_mask_kind": (
             "digitized polygon"
             if args.geometry == "device-a-polygon"
-            else "analytic half-plane lab_y<=lab_x"
+            else (
+                "analytic half-plane lab_y<=lab_x"
+                if args.geometry == "straight-45-edge"
+                else "all lateral samples inside the matched control volume"
+            )
         ),
         "substrate": "285 nm SiO2 on Si",
         "electrodes_in_optical_model": False,
@@ -1365,10 +1463,16 @@ def add_geometry_and_monitors(
             "six_face_absorption_box": True,
             "outer_flux_box": bool(outer_faces),
             "incident_reference_monitor": (
-                args.execution_contract == "production"
+                args.execution_contract in (
+                    "production",
+                    "edge-isolation-smoke",
+                )
             ),
             "diagnostic_field_slice_monitors": (
-                args.execution_contract == "production"
+                args.execution_contract in (
+                    "production",
+                    "edge-isolation-smoke",
+                )
             ),
             "frequency_points": 1,
         },
@@ -1389,15 +1493,26 @@ def add_geometry_and_monitors(
                 "diagnostic_waist_um": args.waist_um,
                 "production_absorption_padding_um": 4.0,
                 "diagnostic_absorption_padding_um": 1.5,
-                "removed_monitors": [
-                    "outer six-face box",
-                    "incident-reference plane",
-                    "three diagnostic field slices",
-                ],
+                "removed_monitors": (
+                    [
+                        "outer six-face box",
+                        "three production diagnostic field slices",
+                    ]
+                    if args.execution_contract == "edge-isolation-smoke"
+                    else [
+                        "outer six-face box",
+                        "incident-reference plane",
+                        "three diagnostic field slices",
+                    ]
+                ),
                 "unchanged": [
                     "11 um analysis wavelength and 7-13 um source band",
                     "normal incidence",
-                    "straight 45-degree TaIrTe4 edge",
+                    (
+                        "straight 45-degree TaIrTe4 edge"
+                        if args.geometry == "straight-45-edge"
+                        else "edge-free planar TaIrTe4 layer"
+                    ),
                     "130 nm TaIrTe4 thickness",
                     "285 nm SiO2 on Si stack",
                     "epsilon_x=epsilon_b, epsilon_y=epsilon_a, epsilon_z=epsilon_b",
@@ -1418,12 +1533,14 @@ def add_geometry_and_monitors(
     ) -> np.ndarray:
         if args.geometry == "straight-45-edge":
             xy = y_m[None, :] <= x_m[:, None] + 1e-15
-        else:
+        elif args.geometry == "device-a-polygon":
             xx, yy = np.meshgrid(x_m, y_m, indexing="ij")
             xy = PolygonPath(vertices_um * 1e-6).contains_points(
                 np.column_stack((xx.ravel(), yy.ravel())),
                 radius=1e-15,
             ).reshape(xx.shape)
+        else:
+            xy = np.ones((x_m.size, y_m.size), dtype=bool)
         zz = (z_m >= -FLAKE_THICKNESS_M) & (z_m <= 0.0)
         return xy[:, :, None] & zz[None, None, :]
 
@@ -1452,7 +1569,9 @@ def assert_contract(
             value = str(fdtd.getnamed("FDTD", f"{axis} {side} bc")).strip()
             boundaries[key] = value
             checks[f"{key}_pml"] = value.lower() == "pml"
-    checks["finite_polygon_count"] = int(fdtd.getnamednumber("TaIrTe4_flake")) == (
+    checks["one_TaIrTe4_geometry_object"] = int(
+        fdtd.getnamednumber("TaIrTe4_flake")
+    ) == (
         1 if args.case == "finite-flake" else 0
     )
     checks["no_periodic_boundary"] = all(v.lower() == "pml" for v in boundaries.values())
@@ -1483,7 +1602,8 @@ def assert_contract(
         atol=1e-15,
     )
     checks["diagnostic_nominal_Q_and_six_face_control_volume_match"] = (
-        args.execution_contract != "diagnostic-smoke"
+        args.execution_contract
+        not in ("diagnostic-smoke", "edge-isolation-smoke")
         or all(
             np.allclose(
                 setup["geometry"][
@@ -1570,38 +1690,63 @@ def assert_contract(
         ]
         for axis in "xyz"
     }
-    flake_vertices_readback = np.asarray(
-        fdtd.getnamed("TaIrTe4_flake", "vertices"),
-        float,
-    )
-    if (
-        flake_vertices_readback.ndim != 2
-        or flake_vertices_readback.shape[1] != 2
-    ):
-        raise RuntimeError(
-            "unexpected polygon vertices readback shape: "
-            f"{flake_vertices_readback.shape}"
+    if args.geometry == "planar-stack":
+        flake_vertices_readback = None
+        flake_bounds = {
+            axis: [
+                base.scalar(
+                    fdtd.getnamed("TaIrTe4_flake", f"{axis} min"),
+                    f"flake.{axis} min",
+                ),
+                base.scalar(
+                    fdtd.getnamed("TaIrTe4_flake", f"{axis} max"),
+                    f"flake.{axis} max",
+                ),
+            ]
+            for axis in "xyz"
+        }
+        for axis in "xy":
+            if not (
+                flake_bounds[axis][0] < fdtd_bounds[axis][0]
+                and flake_bounds[axis][1] > fdtd_bounds[axis][1]
+            ):
+                raise RuntimeError(
+                    f"planar TaIrTe4 does not extend through {axis}-PML: "
+                    f"{flake_bounds[axis]} versus {fdtd_bounds[axis]}"
+                )
+    else:
+        flake_vertices_readback = np.asarray(
+            fdtd.getnamed("TaIrTe4_flake", "vertices"),
+            float,
         )
-    flake_bounds = {
-        "x": [
-            float(np.min(flake_vertices_readback[:, 0])),
-            float(np.max(flake_vertices_readback[:, 0])),
-        ],
-        "y": [
-            float(np.min(flake_vertices_readback[:, 1])),
-            float(np.max(flake_vertices_readback[:, 1])),
-        ],
-        "z": [
-            base.scalar(
-                fdtd.getnamed("TaIrTe4_flake", "z min"),
-                "flake.z min",
-            ),
-            base.scalar(
-                fdtd.getnamed("TaIrTe4_flake", "z max"),
-                "flake.z max",
-            ),
-        ],
-    }
+        if (
+            flake_vertices_readback.ndim != 2
+            or flake_vertices_readback.shape[1] != 2
+        ):
+            raise RuntimeError(
+                "unexpected polygon vertices readback shape: "
+                f"{flake_vertices_readback.shape}"
+            )
+        flake_bounds = {
+            "x": [
+                float(np.min(flake_vertices_readback[:, 0])),
+                float(np.max(flake_vertices_readback[:, 0])),
+            ],
+            "y": [
+                float(np.min(flake_vertices_readback[:, 1])),
+                float(np.max(flake_vertices_readback[:, 1])),
+            ],
+            "z": [
+                base.scalar(
+                    fdtd.getnamed("TaIrTe4_flake", "z min"),
+                    "flake.z min",
+                ),
+                base.scalar(
+                    fdtd.getnamed("TaIrTe4_flake", "z max"),
+                    "flake.z max",
+                ),
+            ],
+        }
     mesh_override = {
         "name": "flake_mesh",
         "bounds_m": {
@@ -1672,7 +1817,11 @@ def assert_contract(
             ),
             "source": source_bounds,
             "flake": flake_bounds,
-            "flake_vertices_readback_m": flake_vertices_readback.tolist(),
+            "flake_vertices_readback_m": (
+                None
+                if flake_vertices_readback is None
+                else flake_vertices_readback.tolist()
+            ),
             "absorption_analysis": setup["geometry"][
                 "absorption_analysis_bounds_m"
             ],
@@ -1728,7 +1877,11 @@ def plot_geometry(output: Path, args: argparse.Namespace, setup: dict[str, Any])
         title=(
             "Approximate Device A optical geometry"
             if args.geometry == "device-a-polygon"
-            else "Corner-free straight 45-degree edge control"
+            else (
+                "Corner-free straight 45-degree edge control"
+                if args.geometry == "straight-45-edge"
+                else "Edge-free planar TaIrTe4 control"
+            )
         ),
     )
     ax.legend(fontsize=8)
@@ -1744,6 +1897,270 @@ def plot_geometry(output: Path, args: argparse.Namespace, setup: dict[str, Any])
     figure.tight_layout()
     figure.savefig(output / "paper_ir_device_a_geometry.png", dpi=200)
     plt.close(figure)
+
+
+def dual_cell_weights_1d(coordinate: np.ndarray) -> np.ndarray:
+    values = np.asarray(coordinate, float).reshape(-1)
+    if values.size < 2 or np.any(np.diff(values) <= 0.0):
+        raise ValueError("beam-plane coordinates must be strictly increasing")
+    boundaries = np.empty(values.size + 1, float)
+    boundaries[1:-1] = 0.5 * (values[:-1] + values[1:])
+    boundaries[0] = values[0] - 0.5 * (values[1] - values[0])
+    boundaries[-1] = values[-1] + 0.5 * (values[-1] - values[-2])
+    return np.diff(boundaries)
+
+
+def fit_elliptical_gaussian(
+    x_m: np.ndarray,
+    y_m: np.ndarray,
+    intensity_W_m2: np.ndarray,
+) -> dict[str, Any]:
+    """Fit I=A exp[-2((x-x0)^2/wx^2+(y-y0)^2/wy^2)]."""
+    x = np.asarray(x_m, float).reshape(-1)
+    y = np.asarray(y_m, float).reshape(-1)
+    intensity = np.asarray(intensity_W_m2, float).reshape(x.size, y.size)
+    if not np.all(np.isfinite(intensity)) or float(np.max(intensity)) <= 0.0:
+        raise RuntimeError("beam intensity is not finite and positive")
+    dx = dual_cell_weights_1d(x)
+    dy = dual_cell_weights_1d(y)
+    area = dx[:, None] * dy[None, :]
+    total = float(np.sum(intensity * area))
+    x0_moment = float(np.sum(intensity * area * x[:, None]) / total)
+    y0_moment = float(np.sum(intensity * area * y[None, :]) / total)
+    var_x = float(
+        np.sum(intensity * area * (x[:, None] - x0_moment) ** 2) / total
+    )
+    var_y = float(
+        np.sum(intensity * area * (y[None, :] - y0_moment) ** 2) / total
+    )
+    waist_x_moment = 2.0 * np.sqrt(max(var_x, np.finfo(float).tiny))
+    waist_y_moment = 2.0 * np.sqrt(max(var_y, np.finfo(float).tiny))
+    xx, yy = np.meshgrid(x, y, indexing="ij")
+    peak = float(np.max(intensity))
+    selected = intensity >= 1.0e-3 * peak
+    observed = intensity[selected] / peak
+
+    def residual(parameter: np.ndarray) -> np.ndarray:
+        amplitude = np.exp(parameter[0])
+        centre_x = parameter[1]
+        centre_y = parameter[2]
+        waist_x = np.exp(parameter[3])
+        waist_y = np.exp(parameter[4])
+        model = amplitude * np.exp(
+            -2.0
+            * (
+                (xx[selected] - centre_x) ** 2 / waist_x**2
+                + (yy[selected] - centre_y) ** 2 / waist_y**2
+            )
+        )
+        return model - observed
+
+    initial = np.asarray(
+        [
+            0.0,
+            x0_moment,
+            y0_moment,
+            np.log(waist_x_moment),
+            np.log(waist_y_moment),
+        ]
+    )
+    solved = least_squares(
+        residual,
+        initial,
+        bounds=(
+            np.asarray(
+                [
+                    np.log(0.05),
+                    float(x[0]),
+                    float(y[0]),
+                    np.log(max(np.min(np.diff(x)), 1.0e-12)),
+                    np.log(max(np.min(np.diff(y)), 1.0e-12)),
+                ]
+            ),
+            np.asarray(
+                [
+                    np.log(20.0),
+                    float(x[-1]),
+                    float(y[-1]),
+                    np.log(2.0 * (x[-1] - x[0])),
+                    np.log(2.0 * (y[-1] - y[0])),
+                ]
+            ),
+        ),
+        xtol=1.0e-12,
+        ftol=1.0e-12,
+        gtol=1.0e-12,
+        max_nfev=500,
+    )
+    fitted = {
+        "amplitude_over_observed_peak": float(np.exp(solved.x[0])),
+        "center_x_m": float(solved.x[1]),
+        "center_y_m": float(solved.x[2]),
+        "waist_x_m": float(np.exp(solved.x[3])),
+        "waist_y_m": float(np.exp(solved.x[4])),
+    }
+    fitted["waist_effective_geometric_mean_m"] = float(
+        np.sqrt(fitted["waist_x_m"] * fitted["waist_y_m"])
+    )
+    fitted.update(
+        {
+            "fit_success": bool(solved.success),
+            "fit_message": str(solved.message),
+            "fit_selected_point_count": int(np.count_nonzero(selected)),
+            "fit_relative_RMS_over_peak": float(
+                np.sqrt(np.mean(residual(solved.x) ** 2))
+            ),
+            "integrated_incident_power_W": total,
+            "moment_center_x_m": x0_moment,
+            "moment_center_y_m": y0_moment,
+            "moment_waist_x_m": float(waist_x_moment),
+            "moment_waist_y_m": float(waist_y_moment),
+        }
+    )
+    return fitted
+
+
+def monitor_fields(fdtd: Any, monitor: str) -> dict[str, Any]:
+    coordinates = {
+        axis: np.asarray(fdtd.getdata(monitor, axis, 1), float).reshape(-1)
+        for axis in "xyz"
+    }
+    electric = {
+        axis: np.asarray(fdtd.getdata(monitor, f"E{axis}", 1)).squeeze()
+        for axis in "xyz"
+    }
+    magnetic = {
+        axis: np.asarray(fdtd.getdata(monitor, f"H{axis}", 1)).squeeze()
+        for axis in "xyz"
+    }
+    return {
+        "coordinates": coordinates,
+        "electric": electric,
+        "magnetic": magnetic,
+    }
+
+
+def extract_w2_beam_and_fields(
+    base: Any,
+    fdtd: Any,
+    output: Path,
+    source_power_native_W: float,
+) -> dict[str, Any]:
+    incident_plane = monitor_fields(fdtd, W2_INCIDENT_MONITOR)
+    flake_plane = monitor_fields(fdtd, W2_FLAKE_FIELD_MONITOR)
+    x = incident_plane["coordinates"]["x"]
+    y = incident_plane["coordinates"]["y"]
+    eta0 = float(base.ETA0)
+    ex_down = 0.5 * (
+        incident_plane["electric"]["x"]
+        - eta0 * incident_plane["magnetic"]["y"]
+    )
+    ey_down = 0.5 * (
+        incident_plane["electric"]["y"]
+        + eta0 * incident_plane["magnetic"]["x"]
+    )
+    downward_intensity = (
+        np.abs(ex_down) ** 2 + np.abs(ey_down) ** 2
+    ) / (2.0 * eta0)
+    downward_intensity = np.asarray(downward_intensity, float).reshape(
+        x.size, y.size
+    )
+    beam_fit = fit_elliptical_gaussian(x, y, downward_intensity)
+    total_flake_e2 = sum(
+        np.abs(flake_plane["electric"][axis]) ** 2 for axis in "xyz"
+    )
+    total_flake_fit = fit_elliptical_gaussian(
+        flake_plane["coordinates"]["x"],
+        flake_plane["coordinates"]["y"],
+        np.asarray(total_flake_e2, float),
+    )
+    source_profile: dict[str, Any]
+    try:
+        profile = fdtd.getresult(base.SOURCE_NAME, "fields")
+        source_profile = {
+            "x_m": np.asarray(profile["x"], float).reshape(-1),
+            "y_m": np.asarray(profile["y"], float).reshape(-1),
+            "z_m": np.asarray(profile["z"], float).reshape(-1),
+            "E": np.asarray(profile["E"]),
+        }
+    except Exception as exc:
+        source_profile = {"error": f"{type(exc).__name__}: {exc}"}
+    artifact_path = output / "w2_beam_and_field_components.npz"
+    payload: dict[str, Any] = {
+        "incident_x_m": x,
+        "incident_y_m": y,
+        "incident_z_m": incident_plane["coordinates"]["z"],
+        "downward_Ex": ex_down,
+        "downward_Ey": ey_down,
+        "downward_intensity_W_m2": downward_intensity,
+        "flake_x_m": flake_plane["coordinates"]["x"],
+        "flake_y_m": flake_plane["coordinates"]["y"],
+        "flake_z_m": flake_plane["coordinates"]["z"],
+        "source_power_native_W": np.asarray([source_power_native_W]),
+        "beam_fit_json": np.asarray([json.dumps(base.jsonable(beam_fit))]),
+        "total_flake_fit_json": np.asarray(
+            [json.dumps(base.jsonable(total_flake_fit))]
+        ),
+    }
+    for prefix, fields in (
+        ("incident", incident_plane),
+        ("flake", flake_plane),
+    ):
+        for field_kind, short in (("electric", "E"), ("magnetic", "H")):
+            for axis, values in fields[field_kind].items():
+                payload[f"{prefix}_{short}{axis}"] = values
+    if "error" not in source_profile:
+        payload.update(
+            {
+                "source_profile_x_m": source_profile["x_m"],
+                "source_profile_y_m": source_profile["y_m"],
+                "source_profile_z_m": source_profile["z_m"],
+                "source_profile_E": source_profile["E"],
+            }
+        )
+    np.savez_compressed(artifact_path, **payload)
+    component_norms = {
+        prefix: {
+            f"{short}{axis}_L2": float(np.linalg.norm(values))
+            for field_kind, short in (("electric", "E"), ("magnetic", "H"))
+            for axis, values in fields[field_kind].items()
+        }
+        for prefix, fields in (
+            ("incident_plane_total_field", incident_plane),
+            ("flake_midplane_total_field", flake_plane),
+        )
+    }
+    return {
+        "incident_plane_z_m": W2_INCIDENT_PLANE_Z_M,
+        "incident_decomposition": (
+            "downward Ex/Ey from total E/H in homogeneous air using "
+            "Ex_down=(Ex-eta0 Hy)/2 and Ey_down=(Ey+eta0 Hx)/2"
+        ),
+        "beam_fit_from_downward_incident_intensity": beam_fit,
+        "flake_midplane_z_m": W2_FLAKE_MIDPLANE_Z_M,
+        "total_field_flake_midplane_fit": total_flake_fit,
+        "field_component_norms": component_norms,
+        "source_profile_readback": (
+            {"available": True, "E_shape": list(source_profile["E"].shape)}
+            if "error" not in source_profile
+            else {"available": False, "error": source_profile["error"]}
+        ),
+        "source_power_native_W": source_power_native_W,
+        "incident_plane_power_over_source_power": (
+            beam_fit["integrated_incident_power_W"] / source_power_native_W
+        ),
+        "all_saved_fields_finite": all(
+            np.all(np.isfinite(values))
+            for fields in (incident_plane, flake_plane)
+            for field_kind in ("electric", "magnetic")
+            for values in fields[field_kind].values()
+        ),
+        "artifact": {
+            "path": str(artifact_path.resolve()),
+            "size_bytes": artifact_path.stat().st_size,
+            "sha256": base.sha256(artifact_path),
+        },
+    }
 
 
 def run_diagnostic_gpu_smoke_case(
@@ -1776,6 +2193,16 @@ def run_diagnostic_gpu_smoke_case(
         raise RuntimeError(
             f"invalid native Gaussian source power: {source_power_native}"
         )
+    beam_and_fields = (
+        extract_w2_beam_and_fields(
+            base,
+            fdtd,
+            output,
+            source_power_native,
+        )
+        if args.execution_contract == "edge-isolation-smoke"
+        else None
+    )
 
     # The diagnostic deliberately remains in native source-amplitude units.
     # The common multiplicative scale cancels from the volume/flux closure.
@@ -1945,6 +2372,7 @@ def run_diagnostic_gpu_smoke_case(
             "native Lumerical source amplitude; no incident-intensity "
             "normalization and no empirical flux gain"
         ),
+        "beam_and_field_readback": beam_and_fields,
         "array_axis_order": ["x", "y", "z"],
         "Q_array_grid": (
             "field-monitor common x/y/z grid after component-specific "
@@ -2011,6 +2439,7 @@ def run_diagnostic_gpu_smoke_case(
             "incident_intensity_normalization_applied": False,
             "empirical_flux_gain": False,
         },
+        "beam_and_field_readback": beam_and_fields,
         "component_power_common_grid_bounded_W": component_power_common,
         "component_power_native_Yee_bounded_W": component_power_native,
         "P_Q_common_grid_bounded_W": p_q_common,
@@ -2078,6 +2507,20 @@ def run_diagnostic_gpu_smoke_case(
                 auto_shutoff["final_value"] <= args.auto_shutoff_min
             ),
             "source_power_positive": source_power_native > 0.0,
+            "flake_plane_beam_fit_and_field_components_saved": (
+                args.execution_contract != "edge-isolation-smoke"
+                or (
+                    beam_and_fields is not None
+                    and beam_and_fields["all_saved_fields_finite"]
+                    and beam_and_fields[
+                        "beam_fit_from_downward_incident_intensity"
+                    ]["fit_success"]
+                    and beam_and_fields[
+                        "beam_fit_from_downward_incident_intensity"
+                    ]["integrated_incident_power_W"]
+                    > 0.0
+                )
+            ),
             "Q_arrays_finite": finite_arrays,
             "Qx_Qy_Qz_exported": all(
                 artifact[f"Q{axis}_common_grid_W_m3"].size > 0
@@ -2150,6 +2593,16 @@ def main() -> int:
             - args.absorption_bounds_m["y"][0]
         )
         base.GEOMETRIC_AREA_M2 = 0.5 * span_x * span_y
+    elif args.geometry == "planar-stack":
+        span_x = (
+            args.absorption_bounds_m["x"][1]
+            - args.absorption_bounds_m["x"][0]
+        )
+        span_y = (
+            args.absorption_bounds_m["y"][1]
+            - args.absorption_bounds_m["y"][0]
+        )
+        base.GEOMETRIC_AREA_M2 = span_x * span_y
     else:
         base.GEOMETRIC_AREA_M2 = polygon_area(args.flake_vertices_um) * 1e-12
     base.SIO2_THICKNESS_M = SIO2_THICKNESS_M
@@ -2176,7 +2629,10 @@ def main() -> int:
         original = runtime.run_session
         runtime.run_session = strict_gpu_run
         try:
-            if parsed.execution_contract == "diagnostic-smoke":
+            if parsed.execution_contract in (
+                "diagnostic-smoke",
+                "edge-isolation-smoke",
+            ):
                 result = run_diagnostic_gpu_smoke_case(
                     base,
                     fdtd,
@@ -2202,7 +2658,10 @@ def main() -> int:
                 result,
                 setup["inner_faces"],
             )
-            if parsed.execution_contract == "diagnostic-smoke":
+            if parsed.execution_contract in (
+                "diagnostic-smoke",
+                "edge-isolation-smoke",
+            ):
                 result["acceptance"][
                     "native_solver_and_component_Yee_coordinates_saved"
                 ] = bool(

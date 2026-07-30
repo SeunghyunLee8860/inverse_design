@@ -75,6 +75,62 @@ class PaperIrDiagnosticSmokeTests(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 runner.parse_args()
 
+    def test_edge_isolation_contract_accepts_planar_time_checkpoints(self) -> None:
+        for simulation_time_ps in ("1.2", "4"):
+            argv = [
+                "run_lumerical_device_a_ir_q.py",
+                "--output-dir",
+                "/tmp/not-created-by-parse",
+                "--case",
+                "finite-flake",
+                "--polarization",
+                "a",
+                "--geometry",
+                "planar-stack",
+                "--domain-um",
+                "12",
+                "--source-span-um",
+                "6",
+                "--waist-um",
+                "2",
+                "--flake-dz-nm",
+                "10",
+                "--simulation-time-ps",
+                simulation_time_ps,
+                "--execution-contract",
+                "edge-isolation-smoke",
+            ]
+            with patch.object(sys, "argv", argv):
+                args = runner.parse_args()
+            self.assertEqual(args.geometry, "planar-stack")
+            self.assertEqual(args.execution_contract, "edge-isolation-smoke")
+            self.assertEqual(args.absorption_bounds_m["x"], (-4.5e-6, 4.5e-6))
+
+    def test_elliptical_gaussian_fit_recovers_center_and_waists(self) -> None:
+        x = np.linspace(-4.5e-6, 4.5e-6, 121)
+        y = np.linspace(-4.5e-6, 4.5e-6, 119)
+        xx, yy = np.meshgrid(x, y, indexing="ij")
+        expected = {
+            "center_x_m": 0.21e-6,
+            "center_y_m": -0.17e-6,
+            "waist_x_m": 2.1e-6,
+            "waist_y_m": 1.8e-6,
+        }
+        intensity = 3.2 * np.exp(
+            -2.0
+            * (
+                (xx - expected["center_x_m"]) ** 2
+                / expected["waist_x_m"] ** 2
+                + (yy - expected["center_y_m"]) ** 2
+                / expected["waist_y_m"] ** 2
+            )
+        )
+        fitted = runner.fit_elliptical_gaussian(x, y, intensity)
+        self.assertTrue(fitted["fit_success"])
+        for key, value in expected.items():
+            self.assertAlmostEqual(fitted[key], value, delta=2e-10)
+        self.assertLess(fitted["fit_relative_RMS_over_peak"], 1e-8)
+
     def test_published_failure_is_fail_closed(self) -> None:
         repository = Path(__file__).resolve().parents[3]
         path = (
