@@ -53,13 +53,20 @@ def read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def artifact_record(path: Path, role: str) -> dict[str, Any]:
-    return {
+def artifact_record(
+    path: Path,
+    role: str,
+    generation_command: str | None = None,
+) -> dict[str, Any]:
+    record = {
         "role": role,
         "path": str(path.resolve()),
         "size_bytes": path.stat().st_size,
         "sha256": sha256(path),
     }
+    if generation_command is not None:
+        record["generation_command"] = generation_command
+    return record
 
 
 def relative_difference(first: float, second: float) -> float:
@@ -204,6 +211,7 @@ def main() -> int:
             ],
         }
         for duration, case_dir in (("1p2ps", short_dir), ("4ps", long_dir)):
+            duration_case = short_case if duration == "1p2ps" else long_case
             for filename, role in (
                 ("case_result.json", f"{name} {duration} case result"),
                 ("diagnostic_q_common_grid_artifact.npz", f"{name} {duration} raw Q"),
@@ -214,7 +222,13 @@ def main() -> int:
             ):
                 path = case_dir / filename
                 if path.exists():
-                    manifest.append(artifact_record(path, role))
+                    manifest.append(
+                        artifact_record(
+                            path,
+                            role,
+                            duration_case["generation_command"],
+                        )
+                    )
         for filename, role in (
             ("q_observable_convergence.json", f"{name} observable-Q certificate"),
             ("q_component_power_convergence.csv", f"{name} component convergence"),
@@ -499,6 +513,7 @@ def main() -> int:
         json.dumps(
             {
                 "raw_artifacts_committed_to_git": False,
+                "summary_generation_command": " ".join(sys.argv),
                 "artifacts": manifest,
                 "generation_commit": git_commit(),
             },
