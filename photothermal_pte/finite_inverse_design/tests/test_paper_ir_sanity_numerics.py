@@ -1,6 +1,12 @@
+import json
+from pathlib import Path
+
 import numpy as np
 import pytest
 
+from photothermal_pte.validation.paper_ir_sanity.run_analytic_q_remap_control import (
+    analytic_q_on_edges,
+)
 from photothermal_pte.validation.paper_ir_sanity.run_device_a_explicit_thermal_pte import (
     Geometry,
     measure_weighted_mean,
@@ -80,3 +86,36 @@ def test_straight_edge_retains_all_five_gradient_observables() -> None:
         5.0 / np.sqrt(2.0)
     )
     assert "grad_T_tangent_K_m" in fields
+
+
+def test_analytic_q_uses_exact_half_measure_on_diagonal_cells() -> None:
+    edges_xy = np.array([-1.0e-6, 0.0, 1.0e-6])
+    edges_z = np.array([-130.0e-9, 0.0])
+    q = analytic_q_on_edges((edges_xy, edges_xy, edges_z), "a")
+    assert q[0, 1, 0] == pytest.approx(0.0)
+    assert q[1, 0, 0] > 0.0
+    assert q[0, 0, 0] == pytest.approx(0.5 * q[1, 0, 0], rel=1e-13)
+    assert q[1, 1, 0] == pytest.approx(0.5 * q[1, 0, 0], rel=1e-13)
+
+
+def test_offline_paper_ir_summary_is_fail_closed_after_planar_audit() -> None:
+    repository = Path(__file__).resolve().parents[3]
+    summary_path = (
+        repository
+        / "photothermal_pte"
+        / "reports"
+        / "paper_ir_offline_q_thermal_controls"
+        / "paper_ir_offline_controls_summary.json"
+    )
+    summary = json.loads(summary_path.read_text())
+    assert (
+        summary["validated_subgates"]["diagnostic_Q_observable_convergence"]
+        == "VALIDATED_DIAGNOSTIC_Q_OBSERVABLE_CONVERGENCE"
+    )
+    assert not summary["unresolved_or_blocked"]["auto_shutoff"]["passed"]
+    assert (
+        summary["unresolved_or_blocked"]["three_source_decomposition"]
+        == "BLOCKED_PLANAR_STACK_Q_ARTIFACT_UNAVAILABLE"
+    )
+    assert summary["execution_scope"]["new_FDTD_run"] is False
+    assert summary["execution_scope"]["PTE_run"] is False
