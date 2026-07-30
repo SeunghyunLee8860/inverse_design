@@ -520,7 +520,7 @@ FWHM, or 1/e^2 width.  It does not publish the exact wavelength-specific
 
 The 0.4-NA Airy FWHM estimate at 11 µm is
 `{inferred_fwhm*1e6:.6f} µm`; its same-FWHM Gaussian radius is
-`{inferred_w0*1e6:.6f} µm`.  The first candidate therefore uses a rounded
+`{inferred_w0*1e6:.6f} µm`.  The fixed scenario uses a rounded
 `w0=12.0 µm`, explicitly as an assumption rather than a paper value.
 Its required label is **paper-like scalar-Gaussian scenario with an
 explicitly assumed waist**.  It is not an experimentally reproduced beam or

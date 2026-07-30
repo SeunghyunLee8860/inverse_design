@@ -18,7 +18,8 @@
   retained only as an optional future diagnostic. The legacy nominal
   `w0=2 µm` case remains
   `DIAGNOSTIC_ONLY_INVALID_FOR_PAPER_LIKE_BEAM`.
-- Two contract-only probes failed before an FDTD session opened:
+- Three contract-only probes, including the new fixed-scalar-contract probe
+  at `f89c7b7`, failed before an FDTD session opened:
   `ANSYSLI exited or could not read server port`. Neither `runsetup` nor
   a GPU solve started; no CPU fallback was used. Consequently there is no
   realized-beam, grid, memory, runtime, closure, or auto-shutoff result.
