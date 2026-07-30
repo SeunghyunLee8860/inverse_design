@@ -67,6 +67,7 @@ def main() -> int:
     parser.add_argument("--probe-manifest", action="append", required=True)
     parser.add_argument("--historical-resource-audit", required=True)
     parser.add_argument("--historical-runtime-summary", required=True)
+    parser.add_argument("--license-debug-log", required=True)
     parser.add_argument("--output-dir", required=True)
     args = parser.parse_args()
 
@@ -79,6 +80,7 @@ def main() -> int:
     ]
     resource_path = Path(args.historical_resource_audit).expanduser().resolve()
     runtime_path = Path(args.historical_runtime_summary).expanduser().resolve()
+    license_log_path = Path(args.license_debug_log).expanduser().resolve()
     output = Path(args.output_dir).expanduser().resolve()
     output.mkdir(parents=True, exist_ok=True)
 
@@ -235,6 +237,20 @@ def main() -> int:
                 "model for the 60-um source-only contract"
             ),
         },
+        "license_minimum_fix": {
+            "current_failure": (
+                "v261 LUMERICAL_GUI starts ANSYSLI, but ANSYSLI exits before "
+                "the per-session server-port file can be read"
+            ),
+            "port_1055_connectivity_alone_is_sufficient": False,
+            "required": (
+                "restore the v261 Ansys Licensing Client Proxy/server-port "
+                "handshake for this user session, then rerun contract-only "
+                "runsetup once"
+            ),
+            "license_debug_log": str(license_log_path),
+            "do_not_work_around_with_CPU_FDTD": True,
+        },
         "next_four_optical_cases": {
             "executed": False,
             "worth_executing_now": False,
@@ -267,6 +283,7 @@ def main() -> int:
         artifact_record(audit_path, "paper_beam_audit"),
         artifact_record(resource_path, "historical_resource_reference"),
         artifact_record(runtime_path, "historical_runtime_reference"),
+        artifact_record(license_log_path, "v261_license_debug_log"),
     ]
     for result_path, manifest_path in zip(probe_results, probe_manifests):
         external_records.append(
@@ -334,11 +351,17 @@ forbidden for thermal, PTE, or Figure-3 reproduction.
 
 ## Startup probes
 
-Two contract-only attempts failed before session creation.  Both report:
+{len(probes)} contract-only attempts failed before session creation.  They report:
 `ANSYSLI exited or could not read server port`.  Neither attempt completed
 `runsetup`, started a GPU solve, or invoked CPU fallback.  No TaIrTe4,
 substrate, thermal, PTE, weighting-potential, adjoint, gradient, or
 optimization calculation ran.
+
+The newest probe uses the fixed scalar contract at commit
+`{probes[-1].get('generation_commit', 'UNKNOWN')}`.  TCP/port reachability by
+itself is not a license certificate: the minimum fix is to restore the v261
+Ansys Licensing Client Proxy/server-port handshake for this user session.
+No CPU fallback is an acceptable workaround.
 
 ## Source-only gates
 
