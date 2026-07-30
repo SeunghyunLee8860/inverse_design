@@ -1,5 +1,37 @@
 # Latest photothermal validation status
 
+## Paper-IR source-only certification
+
+- Status: `BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE_BEFORE_SOURCE_ONLY`.
+- The paper/SI beam audit is complete. The paper reports a 7–13 µm
+  Block LaserTune QCL, NA=0.4 reflective objective, approximately 9–16 µm
+  diffraction-limited spot, and 11 µm / 285 µW for Figure 3, but it does
+  not define the spot as radius/diameter/FWHM/1/e² or publish the exact
+  11-µm waist plane and pupil fill.
+- The first source-only candidate is therefore an explicit numerical
+  assumption: Gaussian 1/e² radius `w0=12 µm`, source span `50 µm`,
+  lateral domain `60 µm`. Its analytic square capture is `99.992914%`;
+  analytic boundary maximum/mean are `1.93379e-4 / 5.86049e-5`.
+- The scalar source is not production-approved. A matched NA=0.4 fully
+  vectorial thin-lens comparison remains mandatory before planar/edge
+  material cases. The legacy nominal `w0=2 µm` case remains
+  `DIAGNOSTIC_ONLY_INVALID_FOR_PAPER_LIKE_BEAM`.
+- Two contract-only probes failed before an FDTD session opened:
+  `ANSYSLI exited or could not read server port`. Neither `runsetup` nor
+  a GPU solve started; no CPU fallback was used. Consequently there is no
+  realized-beam, grid, memory, runtime, closure, or auto-shutoff result.
+- Historical 12/48-µm material runs are recorded only as non-certifying
+  resource context. Total expected time for the new 60-µm homogeneous-air
+  contract is unresolved until license/session startup and actual
+  `runsetup` readback succeed.
+- Per the fail-closed order, planar-a/b, finite-edge-a/b, thermal,
+  weighting potential, PTE, adjoint, gradient, and optimization were not
+  run. The previous
+  `VALIDATED_OFFLINE_MASKED_PLANAR_AND_SOURCE_AUDIT` status below is
+  preserved.
+- Report, beam audit, summary, CSV tables, aperture figure, and manifest:
+  `reports/paper_ir_source_only_certification/`.
+
 ## Offline w0=2 µm masked-planar and source-contract audit
 
 - Status: `VALIDATED_OFFLINE_MASKED_PLANAR_AND_SOURCE_AUDIT`.

@@ -1,0 +1,149 @@
+{
+  "status": "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE_BEFORE_SOURCE_ONLY",
+  "generation_commit": "84f8fe0534547e0556d05860e3a2f1082d49aeeb",
+  "preserved_prior_status": "VALIDATED_OFFLINE_MASKED_PLANAR_AND_SOURCE_AUDIT",
+  "paper_beam_audit_status": "PROPOSED_PAPER_IR_SOURCE_CONTRACT_READY_FOR_GPU_PROBE",
+  "selected_candidate": {
+    "name": "selected_scalar_source_only_candidate",
+    "classification": "EXPLICIT_ASSUMPTION",
+    "w0_m": 1.2e-05,
+    "definition": "rounded Gaussian-equivalent radius for the first scalar source-only certification; not yet production approved",
+    "eta_paraxial": 0.2917840623351415,
+    "Rayleigh_range_m": 4.112630382881185e-05,
+    "source_to_focus_distance_m": 5.065000000000001e-06,
+    "source_plane_radius_m": 1.2090663664331403e-05,
+    "selected_aperture": {
+      "half_span_over_radius": 2.0677111442403575,
+      "square_captured_fraction": 0.9999291407552987,
+      "inscribed_circle_fraction": 0.9998066210363443,
+      "boundary_max_intensity_over_peak": 0.00019337896365563605,
+      "boundary_mean_intensity_over_peak": 5.860489813727978e-05
+    },
+    "wavelength_m": 1.1e-05,
+    "incident_power_for_later_physical_scaling_W": 0.000285,
+    "source_model": "scalar Gaussian candidate",
+    "production_approval": false,
+    "production_blocker": "w0 is only about 1.09 wavelengths; matched vectorial thin-lens flake-plane field comparison remains required",
+    "propagation_direction": "-z",
+    "distance_from_waist_property_m": -5.065000000000001e-06,
+    "distance_sign_note": "negative for a backward source converging to the lower-z waist; the legacy positive sign is not reused",
+    "source_span_m": 5e-05,
+    "minimum_source_span_m_from_all_gates": 4.8504081094717945e-05,
+    "source_aperture_metrics": {
+      "half_span_over_radius": 2.0677111442403575,
+      "square_captured_fraction": 0.9999291407552987,
+      "inscribed_circle_fraction": 0.9998066210363443,
+      "boundary_max_intensity_over_peak": 0.00019337896365563605,
+      "boundary_mean_intensity_over_peak": 5.860489813727978e-05
+    },
+    "lateral_domain_m": 6e-05,
+    "lateral_source_to_PML_margin_m": 4.9999999999999996e-06,
+    "FDTD_z_bounds_m": [
+      -1.1065e-05,
+      1.6e-05
+    ],
+    "source_to_top_PML_margin_m": 1.1e-05,
+    "focus_to_bottom_PML_margin_m": 1.1e-05,
+    "all_optical_boundaries": "PML",
+    "periodic_or_Bloch": false
+  },
+  "source_model_decision": {
+    "scalar_candidate_production_approved": false,
+    "matched_vectorial_thin_lens_required": true,
+    "reason": "w0 is only about 1.09 wavelengths; matched vectorial thin-lens flake-plane field comparison remains required"
+  },
+  "legacy_w0_2um": {
+    "status": "DIAGNOSTIC_ONLY_INVALID_FOR_PAPER_LIKE_BEAM",
+    "allowed_for_thermal_or_PTE": false
+  },
+  "probes": [
+    {
+      "case": "contract_only_probe_1",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_w12_L60_contract_20260730/source_only_case_result.json",
+      "status": "BLOCKED_SOURCE_ONLY_EXECUTION",
+      "contract_only": true,
+      "FDTD_session_opened": false,
+      "runsetup_completed": false,
+      "GPU_solve_started": false,
+      "CPU_fallback": false,
+      "exception_type": "LumApiError",
+      "license_signature_detected": true
+    },
+    {
+      "case": "contract_only_probe_2",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_w12_L60_contract_retry1_20260730/source_only_case_result.json",
+      "status": "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE",
+      "contract_only": true,
+      "FDTD_session_opened": false,
+      "runsetup_completed": false,
+      "GPU_solve_started": false,
+      "CPU_fallback": false,
+      "exception_type": "LumApiError",
+      "license_signature_detected": true
+    }
+  ],
+  "actual_solver_readback": {
+    "available": false,
+    "reason": "the Lumerical FDTD session failed before runsetup because ANSYSLI did not provide a server port",
+    "grid": null,
+    "GPU_memory": null,
+    "runtime": null,
+    "realized_beam": null
+  },
+  "source_only_gates": {
+    "requested_vs_realized_width_relative_error_below_0p5pct": null,
+    "beam_center_error_below_one_cell": null,
+    "square_capture_at_least_99p9pct": null,
+    "realized_source_boundary_max_below_1e_minus_3": null,
+    "incident_power_closure_below_0p5pct": null,
+    "field_time_convergence_below_0p5pct": null,
+    "no_NaN_or_Inf": null,
+    "GPU_only_no_CPU_fallback": null,
+    "auto_shutoff_at_most_1e_minus_5": null
+  },
+  "historical_noncertifying_resource_reference": {
+    "source": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_edge_material_gradient_controls/paper_ir_checkpoint_failure_audit.json",
+    "case_description": "48-um high-index material case",
+    "grid_points": 343657881,
+    "GPU_memory_GiB": 15.169,
+    "maximum_progress_percent": 3.3357,
+    "scaled_60um_lateral_reference": {
+      "basis": "lateral-area scaling of a historical 48-um high-index material case; not a source-only runsetup estimate",
+      "grid_points": 536965439,
+      "GPU_memory_GiB": 23.7015625,
+      "certification_use": false
+    }
+  },
+  "historical_nonpredictive_runtime_reference": {
+    "source": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w2_masked_planar_offline/w2_masked_planar_offline_summary.json",
+    "old_w0_2um_four_ps_mean_s": 820.9329166666666,
+    "old_w0_2um_four_ps_max_s": 868.975029,
+    "five_case_old_grid_arithmetic_lower_bound_s": 4104.664583333333,
+    "five_case_old_grid_arithmetic_lower_bound_min": 68.41107638888889,
+    "usable_as_new_60um_runtime_estimate": false
+  },
+  "total_expected_GPU_time": {
+    "value": null,
+    "status": "UNRESOLVED_UNTIL_LICENSE_AND_RUNSETUP",
+    "reason": "the new homogeneous-air grid and memory were not generated; old 12/48-um material cases are not a defensible runtime model for the 60-um source-only contract"
+  },
+  "next_four_optical_cases": {
+    "executed": false,
+    "worth_executing_now": false,
+    "blockers": [
+      "Lumerical license/session startup unavailable",
+      "source-only realized-beam gates not evaluated",
+      "matched scalar/vectorial source comparison incomplete"
+    ]
+  },
+  "prohibited_scope_confirmed_not_run": [
+    "TaIrTe4 planar/edge optical cases",
+    "thermal",
+    "weighting potential",
+    "PTE",
+    "adjoint",
+    "gradient",
+    "optimization",
+    "CPU FDTD fallback"
+  ]
+}

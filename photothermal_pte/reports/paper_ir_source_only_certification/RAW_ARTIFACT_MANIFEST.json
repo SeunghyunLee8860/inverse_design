@@ -1,0 +1,50 @@
+{
+  "raw_artifacts_committed_to_git": false,
+  "new_raw_FSP_or_NPZ_generated": false,
+  "generation_commit": "84f8fe0534547e0556d05860e3a2f1082d49aeeb",
+  "generation_command": "python3 photothermal_pte/validation/paper_ir_sanity/summarize_paper_ir_source_only_certification.py [arguments recorded by this report]",
+  "artifacts": [
+    {
+      "role": "paper_beam_audit",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_source_only_certification/paper_ir_beam_contract_summary.json",
+      "size_bytes": 10700,
+      "sha256": "cf961ccb818fa00e6c9f1c1dec36cb39728ad12e79ec735f19f775b2323139e9"
+    },
+    {
+      "role": "historical_resource_reference",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_edge_material_gradient_controls/paper_ir_checkpoint_failure_audit.json",
+      "size_bytes": 13602,
+      "sha256": "dd293712b0cee4ed87c7393e8fcfc7c737e43ae139fe7631ffd0d3a63bc4b73c"
+    },
+    {
+      "role": "historical_runtime_reference",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w2_masked_planar_offline/w2_masked_planar_offline_summary.json",
+      "size_bytes": 33060,
+      "sha256": "3caf00e6affb66738af508d94919e275456fd8fb07931725d7b0e5150521ee6b"
+    },
+    {
+      "role": "blocked_source_only_probe",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_w12_L60_contract_20260730/source_only_case_result.json",
+      "size_bytes": 3301,
+      "sha256": "955517ab72d797a4def1d4679f834bdd7424c0fd2257477b1ae02116213a41f0"
+    },
+    {
+      "role": "external_probe_manifest",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_w12_L60_contract_20260730/RAW_ARTIFACT_MANIFEST.json",
+      "size_bytes": 772,
+      "sha256": "f6ac7cd274a057a9f2dd363350d21466bbf89b4bd03a469c11386d12b88d9886"
+    },
+    {
+      "role": "blocked_source_only_probe",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_w12_L60_contract_retry1_20260730/source_only_case_result.json",
+      "size_bytes": 3316,
+      "sha256": "cda67db12f9a8cfdce6a0b0e8ef52181a3a6240f5e96aaa59ad39d7a2eb0723d"
+    },
+    {
+      "role": "external_probe_manifest",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_w12_L60_contract_retry1_20260730/RAW_ARTIFACT_MANIFEST.json",
+      "size_bytes": 786,
+      "sha256": "2ca476c440936733da07b50bdbb451a634892dae36dca7d559e6f7eeb8dc51d3"
+    }
+  ]
+}

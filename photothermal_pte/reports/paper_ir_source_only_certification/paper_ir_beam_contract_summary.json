@@ -1,0 +1,259 @@
+{
+  "status": "PROPOSED_PAPER_IR_SOURCE_CONTRACT_READY_FOR_GPU_PROBE",
+  "generation_commit": "84f8fe0534547e0556d05860e3a2f1082d49aeeb",
+  "paper_sources": {
+    "main": {
+      "path": "/home/seunghyun/tairte4/papers/Adv Funct Materials - 2026 - Blevins - Large Transverse Thermoelectric Effect in Weyl Semimetal TaIrTe4 Engineered for-2.pdf",
+      "size_bytes": 3446019,
+      "sha256": "ad160823ce0805e709be2ea54c663a51280e56c498d76c8d33651599b8733155"
+    },
+    "supporting_information": {
+      "path": "/home/seunghyun/tairte4/papers/adfm75986-sup-0001-suppmat-2.pdf",
+      "size_bytes": 4284519,
+      "sha256": "c2ebe6bfbf00f954e0ccaa88431eec059db7d25beeaa4622ceb3c02d83b7f99c"
+    }
+  },
+  "paper_audit": [
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "LWIR source",
+      "value": "Block LaserTune QCL, 7-13 um",
+      "location": "main paper PDF p.9, Methods 2.3"
+    },
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "objective",
+      "value": "40x reflective objective, NA=0.4",
+      "location": "main paper PDF pp.8-9, Methods 2.3"
+    },
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "IR spot",
+      "value": "approximately 9-16 um diffraction-limited spot size",
+      "location": "main paper PDF p.9, Methods 2.3"
+    },
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "Figure 3F wavelength and geometry",
+      "value": "11 um Gaussian heat source focused near a straight crystal edge 45 degrees to the a axis; E parallel a and b",
+      "location": "main paper PDF pp.5-6, Figure 3F and surrounding text"
+    },
+    {
+      "classification": "EXPLICIT_ASSUMPTION",
+      "item": "Figure 3F exact beam center and power",
+      "value": "not published numerically; no exact edge-normal beam-center coordinate or Figure-3F incident power was identified",
+      "location": "publication omission recorded by this audit"
+    },
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "Figure 3H wavelength, power, polarization and scan region",
+      "value": "11 um, 285 uW time-averaged incident power, E parallel a/b, SPCM map including the off-axis crystal edge",
+      "location": "main paper PDF p.6, Figure 3 caption"
+    },
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "Figure 3I extraction",
+      "value": "line profile extracted along the black dashed lines in the 11-um Figure-3H SPCM maps",
+      "location": "main paper PDF p.6, Figure 3 caption"
+    },
+    {
+      "classification": "EXPLICIT_ASSUMPTION",
+      "item": "Figure 3H/I scan coordinates and step",
+      "value": "exact absolute beam coordinates, raster step, and dashed-line coordinates are not published",
+      "location": "publication omission recorded by this audit"
+    },
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "LWIR scan wavelengths",
+      "value": "7.84, 9.17, 10, 11, 12.5 um; E parallel a and b",
+      "location": "SI PDF p.5, Figure S5 caption"
+    },
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "thermal source equation",
+      "value": "Gaussian intensity; w0=2 sigma is called beam radius",
+      "location": "SI PDF p.6, Equations S1-S2"
+    },
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "Figure 3F/G geometry",
+      "value": "130 nm flake, 285 nm SiO2/Si, 45-degree insulating edge",
+      "location": "main paper PDF pp.5-6 and Figure 3 caption"
+    },
+    {
+      "classification": "PAPER_INFERRED",
+      "item": "incidence angle for LWIR source model",
+      "value": "normal incidence",
+      "location": "SI PDF p.7 normal-incidence symmetry discussion and shared SPCM optical axis; no numerical alignment tolerance reported"
+    },
+    {
+      "classification": "EXPLICIT_ASSUMPTION",
+      "item": "waist plane",
+      "value": "TaIrTe4 midplane z=-65 nm",
+      "location": "numerical source contract; not stated by paper"
+    },
+    {
+      "classification": "EXPLICIT_ASSUMPTION",
+      "item": "first source model",
+      "value": "scalar Gaussian candidate w0=12 um; vector thin-lens match required before production",
+      "location": "numerical source contract"
+    }
+  ],
+  "beam_scenarios": [
+    {
+      "name": "paper_reported_range_only",
+      "classification": "PAPER_REPORTED",
+      "wavelength_m": 1.1e-05,
+      "spot_range_m": [
+        9e-06,
+        1.6e-05
+      ],
+      "spot_definition": "not published",
+      "w0_m": null
+    },
+    {
+      "name": "reported_range_interpolated_as_1e2_diameter",
+      "classification": "EXPLICIT_ASSUMPTION",
+      "w0_m": 6.833333333333333e-06,
+      "definition": "linear interpolation of the approximate 9-16 um range at 11 um, then assuming it is a 1/e^2 intensity diameter",
+      "eta_paraxial": 0.5124012801982972,
+      "Rayleigh_range_m": 1.3335902148193033e-05,
+      "source_to_focus_distance_m": 5.065000000000001e-06,
+      "source_plane_radius_m": 7.309588999055387e-06,
+      "selected_aperture": {
+        "half_span_over_radius": 3.420164937212028,
+        "square_captured_fraction": 0.9999999999841978,
+        "inscribed_circle_fraction": 0.9999999999308716,
+        "boundary_max_intensity_over_peak": 6.912833609564616e-11,
+        "boundary_mean_intensity_over_peak": 1.2665985779579245e-11
+      }
+    },
+    {
+      "name": "reported_range_interpolated_as_FWHM_diameter",
+      "classification": "PAPER_INFERRED",
+      "w0_m": 1.1607397937269593e-05,
+      "definition": "linear interpolation of the approximate range, interpreted as Gaussian intensity FWHM diameter",
+      "eta_paraxial": 0.3016532014276176,
+      "Rayleigh_range_m": 3.8479279789957135e-05,
+      "source_to_focus_distance_m": 5.065000000000001e-06,
+      "source_plane_radius_m": 1.1707522547485742e-05,
+      "selected_aperture": {
+        "half_span_over_radius": 2.135379188773708,
+        "square_captured_fraction": 0.9999610385036278,
+        "inscribed_circle_fraction": 0.9998905112287574,
+        "boundary_max_intensity_over_peak": 0.00010948877124258387,
+        "boundary_mean_intensity_over_peak": 3.213039453325837e-05
+      }
+    },
+    {
+      "name": "NA0p4_Airy_FWHM_Gaussian_equivalent",
+      "classification": "PAPER_INFERRED",
+      "w0_m": 1.2005163647071147e-05,
+      "definition": "0.514 lambda/NA Airy FWHM diameter converted to the same-FWHM Gaussian 1/e^2 intensity radius",
+      "eta_paraxial": 0.29165856051249434,
+      "Rayleigh_range_m": 4.116170506353733e-05,
+      "source_to_focus_distance_m": 5.065000000000001e-06,
+      "source_plane_radius_m": 1.2095710956977147e-05,
+      "selected_aperture": {
+        "half_span_over_radius": 2.066848330695212,
+        "square_captured_fraction": 0.9999286063618794,
+        "inscribed_circle_fraction": 0.9998052364003239,
+        "boundary_max_intensity_over_peak": 0.00019476359967612446,
+        "boundary_mean_intensity_over_peak": 5.90491463585877e-05
+      }
+    },
+    {
+      "name": "selected_scalar_source_only_candidate",
+      "classification": "EXPLICIT_ASSUMPTION",
+      "w0_m": 1.2e-05,
+      "definition": "rounded Gaussian-equivalent radius for the first scalar source-only certification; not yet production approved",
+      "eta_paraxial": 0.2917840623351415,
+      "Rayleigh_range_m": 4.112630382881185e-05,
+      "source_to_focus_distance_m": 5.065000000000001e-06,
+      "source_plane_radius_m": 1.2090663664331403e-05,
+      "selected_aperture": {
+        "half_span_over_radius": 2.0677111442403575,
+        "square_captured_fraction": 0.9999291407552987,
+        "inscribed_circle_fraction": 0.9998066210363443,
+        "boundary_max_intensity_over_peak": 0.00019337896365563605,
+        "boundary_mean_intensity_over_peak": 5.860489813727978e-05
+      }
+    }
+  ],
+  "selected_source_only_candidate": {
+    "name": "selected_scalar_source_only_candidate",
+    "classification": "EXPLICIT_ASSUMPTION",
+    "w0_m": 1.2e-05,
+    "definition": "rounded Gaussian-equivalent radius for the first scalar source-only certification; not yet production approved",
+    "eta_paraxial": 0.2917840623351415,
+    "Rayleigh_range_m": 4.112630382881185e-05,
+    "source_to_focus_distance_m": 5.065000000000001e-06,
+    "source_plane_radius_m": 1.2090663664331403e-05,
+    "selected_aperture": {
+      "half_span_over_radius": 2.0677111442403575,
+      "square_captured_fraction": 0.9999291407552987,
+      "inscribed_circle_fraction": 0.9998066210363443,
+      "boundary_max_intensity_over_peak": 0.00019337896365563605,
+      "boundary_mean_intensity_over_peak": 5.860489813727978e-05
+    },
+    "wavelength_m": 1.1e-05,
+    "incident_power_for_later_physical_scaling_W": 0.000285,
+    "source_model": "scalar Gaussian candidate",
+    "production_approval": false,
+    "production_blocker": "w0 is only about 1.09 wavelengths; matched vectorial thin-lens flake-plane field comparison remains required",
+    "propagation_direction": "-z",
+    "distance_from_waist_property_m": -5.065000000000001e-06,
+    "distance_sign_note": "negative for a backward source converging to the lower-z waist; the legacy positive sign is not reused",
+    "source_span_m": 5e-05,
+    "minimum_source_span_m_from_all_gates": 4.8504081094717945e-05,
+    "source_aperture_metrics": {
+      "half_span_over_radius": 2.0677111442403575,
+      "square_captured_fraction": 0.9999291407552987,
+      "inscribed_circle_fraction": 0.9998066210363443,
+      "boundary_max_intensity_over_peak": 0.00019337896365563605,
+      "boundary_mean_intensity_over_peak": 5.860489813727978e-05
+    },
+    "lateral_domain_m": 6e-05,
+    "lateral_source_to_PML_margin_m": 4.9999999999999996e-06,
+    "FDTD_z_bounds_m": [
+      -1.1065e-05,
+      1.6e-05
+    ],
+    "source_to_top_PML_margin_m": 1.1e-05,
+    "focus_to_bottom_PML_margin_m": 1.1e-05,
+    "all_optical_boundaries": "PML",
+    "periodic_or_Bloch": false
+  },
+  "aperture_gate_ratios": {
+    "capture_gate": 1.7403447064152777,
+    "boundary_max_gate": 1.8584610944249191,
+    "boundary_mean_gate": 2.0058485804137267,
+    "governing": 2.0058485804137267
+  },
+  "scalar_vector_match_contract": {
+    "required": true,
+    "not_implemented_by_boolean_only": true,
+    "vector_source": "fully vectorial thin-lens, objective NA=0.4",
+    "must_match": [
+      "flake-plane incident power",
+      "beam center",
+      "fitted and second-moment widths",
+      "focus",
+      "aperture/NA",
+      "normalized flake-plane intensity"
+    ],
+    "gates": {
+      "incident_power_relative_difference": 0.005,
+      "beam_width_relative_difference": 0.005,
+      "normalized_intensity_NRMSE": 0.005
+    }
+  },
+  "prohibited": {
+    "thermal": true,
+    "PTE": true,
+    "adjoint": true,
+    "gradient": true,
+    "optimization": true,
+    "CPU_FDTD_fallback": true
+  }
+}

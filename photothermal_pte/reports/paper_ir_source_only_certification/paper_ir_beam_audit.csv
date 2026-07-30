@@ -1,0 +1,15 @@
+classification,item,value,location
+PAPER_REPORTED,LWIR source,"Block LaserTune QCL, 7-13 um","main paper PDF p.9, Methods 2.3"
+PAPER_REPORTED,objective,"40x reflective objective, NA=0.4","main paper PDF pp.8-9, Methods 2.3"
+PAPER_REPORTED,IR spot,approximately 9-16 um diffraction-limited spot size,"main paper PDF p.9, Methods 2.3"
+PAPER_REPORTED,Figure 3F wavelength and geometry,11 um Gaussian heat source focused near a straight crystal edge 45 degrees to the a axis; E parallel a and b,"main paper PDF pp.5-6, Figure 3F and surrounding text"
+EXPLICIT_ASSUMPTION,Figure 3F exact beam center and power,not published numerically; no exact edge-normal beam-center coordinate or Figure-3F incident power was identified,publication omission recorded by this audit
+PAPER_REPORTED,"Figure 3H wavelength, power, polarization and scan region","11 um, 285 uW time-averaged incident power, E parallel a/b, SPCM map including the off-axis crystal edge","main paper PDF p.6, Figure 3 caption"
+PAPER_REPORTED,Figure 3I extraction,line profile extracted along the black dashed lines in the 11-um Figure-3H SPCM maps,"main paper PDF p.6, Figure 3 caption"
+EXPLICIT_ASSUMPTION,Figure 3H/I scan coordinates and step,"exact absolute beam coordinates, raster step, and dashed-line coordinates are not published",publication omission recorded by this audit
+PAPER_REPORTED,LWIR scan wavelengths,"7.84, 9.17, 10, 11, 12.5 um; E parallel a and b","SI PDF p.5, Figure S5 caption"
+PAPER_REPORTED,thermal source equation,Gaussian intensity; w0=2 sigma is called beam radius,"SI PDF p.6, Equations S1-S2"
+PAPER_REPORTED,Figure 3F/G geometry,"130 nm flake, 285 nm SiO2/Si, 45-degree insulating edge",main paper PDF pp.5-6 and Figure 3 caption
+PAPER_INFERRED,incidence angle for LWIR source model,normal incidence,SI PDF p.7 normal-incidence symmetry discussion and shared SPCM optical axis; no numerical alignment tolerance reported
+EXPLICIT_ASSUMPTION,waist plane,TaIrTe4 midplane z=-65 nm,numerical source contract; not stated by paper
+EXPLICIT_ASSUMPTION,first source model,scalar Gaussian candidate w0=12 um; vector thin-lens match required before production,numerical source contract
