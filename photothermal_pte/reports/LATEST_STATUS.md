@@ -18,11 +18,13 @@
   retained only as an optional future diagnostic. The legacy nominal
   `w0=2 µm` case remains
   `DIAGNOSTIC_ONLY_INVALID_FOR_PAPER_LIKE_BEAM`.
-- Three contract-only probes, including the new fixed-scalar-contract probe
-  at `f89c7b7`, failed before an FDTD session opened:
-  `ANSYSLI exited or could not read server port`. Neither `runsetup` nor
-  a GPU solve started; no CPU fallback was used. Consequently there is no
-  realized-beam, grid, memory, runtime, closure, or auto-shutoff result.
+- Four contract-only probes, including the newest fixed-scalar-contract probe
+  at `f3fc016`, failed before an FDTD session opened:
+  `ANSYSLI exited or could not read server port`. At the newest retry,
+  `1055@localhost` was also unreachable and no licensing proxy process was
+  present. None completed `runsetup` or started a GPU solve; no CPU fallback
+  was used. Consequently there is no realized-beam, grid, memory, runtime,
+  closure, or auto-shutoff result.
 - Historical 12/48-µm material runs are recorded only as non-certifying
   resource context. Total expected time for the new 60-µm homogeneous-air
   contract is unresolved until license/session startup and actual

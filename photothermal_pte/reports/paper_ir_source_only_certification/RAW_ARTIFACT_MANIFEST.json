@@ -1,7 +1,7 @@
 {
   "raw_artifacts_committed_to_git": false,
   "new_raw_FSP_or_NPZ_generated": false,
-  "generation_commit": "1a66a117c1be2b2c7e45e98c85f8e27211f58a7a",
+  "generation_commit": "f3fc01614590200ca5217e5139ebe2b1b314bccc",
   "generation_command": "python3 photothermal_pte/validation/paper_ir_sanity/summarize_paper_ir_source_only_certification.py [arguments recorded by this report]",
   "artifacts": [
     {
@@ -25,8 +25,8 @@
     {
       "role": "v261_license_debug_log",
       "path": "/home/seunghyun/.ansys/licdebug.aigpu1123.LUMERICAL_GUI.261.out",
-      "size_bytes": 416613,
-      "sha256": "e7bdfe4b65ad87c4fb3b3c1c258c2dee611e15bec8973c15b6fdf3082f3d760f"
+      "size_bytes": 417889,
+      "sha256": "fbb219112a96ce0d8d37f6db4936b075048ae88d4beea003b6d2492e6040461d"
     },
     {
       "role": "blocked_source_only_probe",
@@ -63,6 +63,18 @@
       "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_w12_L60_fixed_contract_20260730/RAW_ARTIFACT_MANIFEST.json",
       "size_bytes": 784,
       "sha256": "37916a1b0f4e29103803a658b1c3dea72de01ce2b12bae51db252a6454003661"
+    },
+    {
+      "role": "blocked_source_only_probe",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_w12_L60_fixed_contract_retry2_20260730/source_only_case_result.json",
+      "size_bytes": 3322,
+      "sha256": "d35fb7444b36375a3d193a64b710fdde3a87a333b0f72df2eeceda54bcc5dcb3"
+    },
+    {
+      "role": "external_probe_manifest",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_w12_L60_fixed_contract_retry2_20260730/RAW_ARTIFACT_MANIFEST.json",
+      "size_bytes": 798,
+      "sha256": "b1d850bc08dc52da05fa034ef05a45a6d13b87b27a015f82da7735c68d52f7f1"
     }
   ]
 }

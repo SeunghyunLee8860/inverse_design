@@ -36,14 +36,14 @@ forbidden for thermal, PTE, or Figure-3 reproduction.
 
 ## Startup probes
 
-3 contract-only attempts failed before session creation.  They report:
-`ANSYSLI exited or could not read server port`.  Neither attempt completed
+4 contract-only attempts failed before session creation.  They report:
+`ANSYSLI exited or could not read server port`.  None of the attempts completed
 `runsetup`, started a GPU solve, or invoked CPU fallback.  No TaIrTe4,
 substrate, thermal, PTE, weighting-potential, adjoint, gradient, or
 optimization calculation ran.
 
 The newest probe uses the fixed scalar contract at commit
-`f89c7b79c1a2c239ebf3886ddb789ea007a0781f`.  TCP/port reachability by
+`f3fc01614590200ca5217e5139ebe2b1b314bccc`.  TCP/port reachability by
 itself is not a license certificate: the minimum fix is to restore the v261
 Ansys Licensing Client Proxy/server-port handshake for this user session.
 No CPU fallback is an acceptable workaround.

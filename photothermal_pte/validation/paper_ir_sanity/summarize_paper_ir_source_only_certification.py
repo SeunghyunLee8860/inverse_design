@@ -354,7 +354,7 @@ forbidden for thermal, PTE, or Figure-3 reproduction.
 ## Startup probes
 
 {len(probes)} contract-only attempts failed before session creation.  They report:
-`ANSYSLI exited or could not read server port`.  Neither attempt completed
+`ANSYSLI exited or could not read server port`.  None of the attempts completed
 `runsetup`, started a GPU solve, or invoked CPU fallback.  No TaIrTe4,
 substrate, thermal, PTE, weighting-potential, adjoint, gradient, or
 optimization calculation ran.

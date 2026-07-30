@@ -1,6 +1,6 @@
 {
   "status": "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE_BEFORE_SOURCE_ONLY",
-  "generation_commit": "1a66a117c1be2b2c7e45e98c85f8e27211f58a7a",
+  "generation_commit": "f3fc01614590200ca5217e5139ebe2b1b314bccc",
   "preserved_prior_status": "VALIDATED_OFFLINE_MASKED_PLANAR_AND_SOURCE_AUDIT",
   "paper_beam_audit_status": "FIXED_PAPER_LIKE_SCALAR_GAUSSIAN_CONTRACT_READY_FOR_GPU_PROBE",
   "selected_scalar_scenario": {
@@ -89,6 +89,18 @@
     {
       "case": "contract_only_probe_3",
       "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_w12_L60_fixed_contract_20260730/source_only_case_result.json",
+      "status": "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE",
+      "contract_only": true,
+      "FDTD_session_opened": false,
+      "runsetup_completed": false,
+      "GPU_solve_started": false,
+      "CPU_fallback": false,
+      "exception_type": "LumApiError",
+      "license_signature_detected": true
+    },
+    {
+      "case": "contract_only_probe_4",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_w12_L60_fixed_contract_retry2_20260730/source_only_case_result.json",
       "status": "BLOCKED_LUMERICAL_LICENSE_UNAVAILABLE",
       "contract_only": true,
       "FDTD_session_opened": false,
