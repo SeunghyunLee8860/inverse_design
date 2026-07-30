@@ -137,6 +137,18 @@ class PaperIrDiagnosticSmokeTests(unittest.TestCase):
         )
         self.assertAlmostEqual(volume, 1.0)
 
+    def test_bounded_dual_cell_weights_clip_staggered_outer_sample(self) -> None:
+        coordinate = np.asarray([0.25, 0.75, 1.25])
+        weights = runner.bounded_dual_cell_weights(
+            coordinate,
+            0.0,
+            1.0,
+        )
+        self.assertTrue(
+            np.allclose(weights, np.asarray([0.5, 0.5, 0.0]))
+        )
+        self.assertAlmostEqual(float(np.sum(weights)), 1.0)
+
 
 if __name__ == "__main__":
     unittest.main()

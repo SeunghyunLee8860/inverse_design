@@ -525,7 +525,7 @@ def bounded_dual_cell_weights(
     low: float,
     high: float,
 ) -> np.ndarray:
-    """Close nodal samples on independently realized control-volume faces."""
+    """Intersect every sample's dual cell with realized control-volume faces."""
     values = np.asarray(coordinate, float).reshape(-1)
     if (
         values.size == 0
@@ -536,20 +536,27 @@ def bounded_dual_cell_weights(
         or (values.size > 1 and np.any(np.diff(values) <= 0.0))
     ):
         raise RuntimeError("invalid bounded dual-cell coordinate contract")
-    tolerance = 1.0e-15
-    if values[0] < low - tolerance or values[-1] > high + tolerance:
-        raise RuntimeError(
-            "Q sample coordinate lies outside realized flux faces: "
-            f"[{values[0]}, {values[-1]}] versus [{low}, {high}]"
-        )
     if values.size == 1:
+        if values[0] < low or values[0] > high:
+            raise RuntimeError(
+                "single Q sample does not cover the realized flux volume"
+            )
         return np.asarray([high - low], float)
     midpoints = 0.5 * (values[:-1] + values[1:])
-    edges = np.concatenate(([low], midpoints, [high]))
-    weights = np.diff(edges)
-    if np.any(weights <= 0.0):
+    edges = np.concatenate(
+        (
+            [values[0] - 0.5 * (values[1] - values[0])],
+            midpoints,
+            [values[-1] + 0.5 * (values[-1] - values[-2])],
+        )
+    )
+    weights = np.maximum(
+        0.0,
+        np.minimum(edges[1:], high) - np.maximum(edges[:-1], low),
+    )
+    if not np.any(weights > 0.0):
         raise RuntimeError(
-            "realized face is too far inside the Q sampling support"
+            "Q sampling support does not intersect the realized flux volume"
         )
     if not np.isclose(
         float(np.sum(weights)),
