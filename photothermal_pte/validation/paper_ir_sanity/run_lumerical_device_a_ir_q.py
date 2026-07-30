@@ -17,7 +17,9 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import json
 import os
+import shlex
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -121,6 +123,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--beam-x-um", type=float, default=0.0)
     parser.add_argument("--beam-y-um", type=float, default=0.0)
     parser.add_argument("--incident-reference")
+    parser.add_argument(
+        "--execution-contract",
+        choices=("production", "diagnostic-smoke"),
+        default="production",
+        help=(
+            "production preserves the paper-like geometry; diagnostic-smoke "
+            "is a separately labeled reduced-cost engine/material/Q check"
+        ),
+    )
     parser.add_argument("--gpu-device", default="GPU 2")
     parser.add_argument("--threads", default="8")
     parser.add_argument(
@@ -134,8 +145,14 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--contract-only", action="store_true")
     args = parser.parse_args()
-    if args.domain_um < 40.0:
-        parser.error("Device-A optical domain must be at least 40 um")
+    minimum_domain_um = (
+        40.0 if args.execution_contract == "production" else 10.0
+    )
+    if args.domain_um < minimum_domain_um:
+        parser.error(
+            f"{args.execution_contract} optical domain must be at least "
+            f"{minimum_domain_um:g} um"
+        )
     if args.source_span_um >= args.domain_um - 2.0:
         parser.error("source aperture needs at least 1 um PML clearance per side")
     if (
@@ -145,8 +162,17 @@ def parse_args() -> argparse.Namespace:
         or args.auto_shutoff_min <= 0
     ):
         parser.error("waist, flake dz, simulation time, and shutoff must be positive")
-    if args.case == "finite-flake" and not args.incident_reference:
+    if (
+        args.execution_contract == "production"
+        and args.case == "finite-flake"
+        and not args.incident_reference
+    ):
         parser.error("finite-flake requires a matching empty-stack reference")
+    if (
+        args.execution_contract == "diagnostic-smoke"
+        and args.case != "finite-flake"
+    ):
+        parser.error("diagnostic smoke is defined only for finite-flake")
     args.polarization_deg = 90.0 if args.polarization == "a" else 0.0
     args.material_name = (
         PRODUCTION_MATERIAL_NAME
@@ -176,10 +202,12 @@ def parse_args() -> argparse.Namespace:
             [[-outer, -outer], [outer, -outer], [outer, outer]],
             dtype=float,
         )
-        # The metallic-axis edge launches a longer lateral absorption tail than
-        # the incident aperture.  Four micrometres of analysis padding is the
-        # minimum matched box that is rechecked by the six-face closure gate.
-        half_analysis = 0.5 * args.source_span_um + 4.0
+        # Production keeps 4 um analysis padding.  The separate smoke contract
+        # uses 1.5 um only to exercise engine/material/Q/closure at lower cost.
+        analysis_padding_um = (
+            4.0 if args.execution_contract == "production" else 1.5
+        )
+        half_analysis = 0.5 * args.source_span_um + analysis_padding_um
         absorption_bounds_um = {
             "x": (
                 args.beam_x_um - half_analysis,
@@ -207,6 +235,16 @@ def parse_args() -> argparse.Namespace:
         ),
         "z": (-1.2e-6, SOURCE_Z_M - 0.5e-6),
     }
+    inner_limit_um = max(
+        abs(value) * 1e6
+        for axis in ("x", "y")
+        for value in args.inner_box[axis]
+    )
+    if inner_limit_um >= 0.5 * args.domain_um - 0.5:
+        parser.error(
+            "absorption six-face box needs at least 0.5 um nominal "
+            "clearance from the lateral domain boundary"
+        )
     return args
 
 
@@ -430,6 +468,7 @@ def _coordinate_summary(values: np.ndarray) -> dict[str, Any]:
         "shape": [int(coordinate.size)],
         "bounds_m": [float(coordinate[0]), float(coordinate[-1])],
         "minimum_step_m": float(np.min(steps)),
+        "median_step_m": float(np.median(steps)),
         "maximum_step_m": float(np.max(steps)),
     }
 
@@ -498,6 +537,7 @@ def post_run_native_mesh_audit(
 
     hotspot = run_result.get("Q_hotspot", {})
     local_step: dict[str, Any] = {}
+    edge_beam_step: dict[str, Any] = {}
     for axis in "xyz":
         coordinate = solver[axis]
         centre = float(hotspot.get(f"{axis}_m", 0.0))
@@ -511,6 +551,20 @@ def post_run_native_mesh_audit(
             "minimum_step_m": float(np.min(steps)),
             "maximum_step_m": float(np.max(steps)),
             "step_count": int(steps.size),
+        }
+        edge_beam_centre = 0.0 if axis in "xy" else -0.5 * FLAKE_THICKNESS_M
+        edge_beam_half_window = 2.0e-6 if axis in "xy" else 0.5e-6
+        edge_beam_selected = (
+            np.abs(midpoint - edge_beam_centre) <= edge_beam_half_window
+        )
+        edge_beam_steps = np.diff(coordinate)[edge_beam_selected]
+        edge_beam_step[axis] = {
+            "window_center_m": edge_beam_centre,
+            "window_half_width_m": edge_beam_half_window,
+            "minimum_step_m": float(np.min(edge_beam_steps)),
+            "median_step_m": float(np.median(edge_beam_steps)),
+            "maximum_step_m": float(np.max(edge_beam_steps)),
+            "step_count": int(edge_beam_steps.size),
         }
 
     component_summary: dict[str, Any] = {}
@@ -553,7 +607,17 @@ def post_run_native_mesh_audit(
             axis: _coordinate_summary(values)
             for axis, values in solver.items()
         },
+        "native_solver_coordinate_counts": {
+            axis: int(values.size) for axis, values in solver.items()
+        },
+        "native_solver_gridpoint_product": int(
+            np.prod([values.size for values in solver.values()])
+        ),
+        "native_Yee_cell_count": int(
+            np.prod([max(values.size - 1, 0) for values in solver.values()])
+        ),
         "hotspot_neighbourhood_solver_steps": local_step,
+        "edge_beam_neighbourhood_solver_steps": edge_beam_step,
         "component_specific_Yee_coordinates": component_summary,
         "index_monitor_common_coordinates": {
             axis: _coordinate_summary(values)
@@ -722,40 +786,73 @@ def add_geometry_and_monitors(
     pabs["z span"] = FLAKE_THICKNESS_M + 2 * PABS_PADDING_M
 
     inner_faces = base.add_flux_box(fdtd, "paper_ir_abs", inner_box)
-    outer_faces = base.add_flux_box(fdtd, "paper_ir_outer", outer_bounds)
-    base.add_field_monitor(
-        fdtd,
-        base.INCIDENT_REFERENCE_MONITOR,
-        "2D Z-normal",
-        {"x": source_bounds["x"], "y": source_bounds["y"], "z": (INCIDENT_Z_M, INCIDENT_Z_M)},
-    )
-    base.add_field_monitor(
-        fdtd,
-        "finite_E_xy_inside",
-        "2D Z-normal",
-        {"x": inner_box["x"], "y": inner_box["y"], "z": (0.5e-6, 0.5e-6)},
-    )
-    base.add_field_monitor(
-        fdtd,
-        "finite_E_yz_outside_x",
-        "2D X-normal",
-        {"x": (outer_bounds["x"][1], outer_bounds["x"][1]), "y": outer_bounds["y"], "z": outer_bounds["z"]},
-    )
-    base.add_field_monitor(
-        fdtd,
-        "finite_E_xz_outside_y",
-        "2D Y-normal",
-        {"x": outer_bounds["x"], "y": (outer_bounds["y"][1], outer_bounds["y"][1]), "z": outer_bounds["z"]},
-    )
+    if args.execution_contract == "production":
+        outer_faces = base.add_flux_box(
+            fdtd,
+            "paper_ir_outer",
+            outer_bounds,
+        )
+        base.add_field_monitor(
+            fdtd,
+            base.INCIDENT_REFERENCE_MONITOR,
+            "2D Z-normal",
+            {
+                "x": source_bounds["x"],
+                "y": source_bounds["y"],
+                "z": (INCIDENT_Z_M, INCIDENT_Z_M),
+            },
+        )
+        base.add_field_monitor(
+            fdtd,
+            "finite_E_xy_inside",
+            "2D Z-normal",
+            {
+                "x": inner_box["x"],
+                "y": inner_box["y"],
+                "z": (0.5e-6, 0.5e-6),
+            },
+        )
+        base.add_field_monitor(
+            fdtd,
+            "finite_E_yz_outside_x",
+            "2D X-normal",
+            {
+                "x": (
+                    outer_bounds["x"][1],
+                    outer_bounds["x"][1],
+                ),
+                "y": outer_bounds["y"],
+                "z": outer_bounds["z"],
+            },
+        )
+        base.add_field_monitor(
+            fdtd,
+            "finite_E_xz_outside_y",
+            "2D Y-normal",
+            {
+                "x": outer_bounds["x"],
+                "y": (
+                    outer_bounds["y"][1],
+                    outer_bounds["y"][1],
+                ),
+                "z": outer_bounds["z"],
+            },
+        )
+        optional_monitor_names = (
+            *(face["name"] for face in outer_faces.values()),
+            base.INCIDENT_REFERENCE_MONITOR,
+            "finite_E_xy_inside",
+            "finite_E_yz_outside_x",
+            "finite_E_xz_outside_y",
+        )
+    else:
+        outer_faces = {}
+        optional_monitor_names = ()
     for name in (
         base.PABS_FIELD,
         base.PABS_INDEX,
         *(face["name"] for face in inner_faces.values()),
-        *(face["name"] for face in outer_faces.values()),
-        base.INCIDENT_REFERENCE_MONITOR,
-        "finite_E_xy_inside",
-        "finite_E_yz_outside_x",
-        "finite_E_xz_outside_y",
+        *optional_monitor_names,
     ):
         base.configure_single_frequency(fdtd, name)
 
@@ -775,6 +872,10 @@ def add_geometry_and_monitors(
         "flake_thickness_m": FLAKE_THICKNESS_M,
         "flake_area_m2": polygon_area(vertices_um) * 1e-12,
         "absorption_analysis_bounds_m": absorption_bounds,
+        "six_face_absorption_box_bounds_m": inner_box,
+        "outer_flux_box_bounds_m": (
+            outer_bounds if outer_faces else None
+        ),
         "exact_flake_mask_kind": (
             "digitized polygon"
             if args.geometry == "device-a-polygon"
@@ -805,6 +906,56 @@ def add_geometry_and_monitors(
         },
         "all_six_boundaries": "PML",
         "periodic": False,
+        "execution_contract": args.execution_contract,
+        "monitor_contract": {
+            "pabs_field_and_index": True,
+            "six_face_absorption_box": True,
+            "outer_flux_box": bool(outer_faces),
+            "incident_reference_monitor": (
+                args.execution_contract == "production"
+            ),
+            "diagnostic_field_slice_monitors": (
+                args.execution_contract == "production"
+            ),
+            "frequency_points": 1,
+        },
+        "diagnostic_difference_from_production": (
+            None
+            if args.execution_contract == "production"
+            else {
+                "classification": (
+                    "reduced-cost one-polarization diagnostic only; not a "
+                    "paper-like optical result and not a replacement for the "
+                    "48 um production contract"
+                ),
+                "production_lateral_domain_um": 48.0,
+                "diagnostic_lateral_domain_um": args.domain_um,
+                "production_source_span_um": 32.0,
+                "diagnostic_source_span_um": args.source_span_um,
+                "production_waist_um": 6.5,
+                "diagnostic_waist_um": args.waist_um,
+                "production_absorption_padding_um": 4.0,
+                "diagnostic_absorption_padding_um": 1.5,
+                "removed_monitors": [
+                    "outer six-face box",
+                    "incident-reference plane",
+                    "three diagnostic field slices",
+                ],
+                "unchanged": [
+                    "11 um analysis wavelength and 7-13 um source band",
+                    "normal incidence",
+                    "straight 45-degree TaIrTe4 edge",
+                    "130 nm TaIrTe4 thickness",
+                    "285 nm SiO2 on Si stack",
+                    "epsilon_x=epsilon_b, epsilon_y=epsilon_a, epsilon_z=epsilon_b",
+                    "six PML boundaries",
+                    "auto non-uniform mesh accuracy 5",
+                    "conformal variant 1",
+                    "10 nm flake-region z override",
+                    "pabs_adv component-resolved Q extraction",
+                ],
+            }
+        ),
         "material_contract": material_contract,
     }
     def exact_flake_mask_builder(
@@ -913,6 +1064,113 @@ def assert_contract(
             f"{[k for k,v in checks.items() if not v]}; "
             f"injection_axis_readback={injection_axis!r}"
         )
+    fdtd_bounds = {
+        axis: [
+            base.scalar(
+                fdtd.getnamed("FDTD", f"{axis} min"),
+                f"FDTD.{axis} min",
+            ),
+            base.scalar(
+                fdtd.getnamed("FDTD", f"{axis} max"),
+                f"FDTD.{axis} max",
+            ),
+        ]
+        for axis in "xyz"
+    }
+    source_bounds = {
+        axis: [
+            base.scalar(
+                fdtd.getnamed(base.SOURCE_NAME, f"{axis} min"),
+                f"source.{axis} min",
+            ),
+            base.scalar(
+                fdtd.getnamed(base.SOURCE_NAME, f"{axis} max"),
+                f"source.{axis} max",
+            ),
+        ]
+        if axis in "xy"
+        else [
+            base.scalar(
+                fdtd.getnamed(base.SOURCE_NAME, "z"),
+                "source.z",
+            ),
+            base.scalar(
+                fdtd.getnamed(base.SOURCE_NAME, "z"),
+                "source.z",
+            ),
+        ]
+        for axis in "xyz"
+    }
+    flake_vertices_readback = np.asarray(
+        fdtd.getnamed("TaIrTe4_flake", "vertices"),
+        float,
+    )
+    if (
+        flake_vertices_readback.ndim != 2
+        or flake_vertices_readback.shape[1] != 2
+    ):
+        raise RuntimeError(
+            "unexpected polygon vertices readback shape: "
+            f"{flake_vertices_readback.shape}"
+        )
+    flake_bounds = {
+        "x": [
+            float(np.min(flake_vertices_readback[:, 0])),
+            float(np.max(flake_vertices_readback[:, 0])),
+        ],
+        "y": [
+            float(np.min(flake_vertices_readback[:, 1])),
+            float(np.max(flake_vertices_readback[:, 1])),
+        ],
+        "z": [
+            base.scalar(
+                fdtd.getnamed("TaIrTe4_flake", "z min"),
+                "flake.z min",
+            ),
+            base.scalar(
+                fdtd.getnamed("TaIrTe4_flake", "z max"),
+                "flake.z max",
+            ),
+        ],
+    }
+    mesh_override = {
+        "name": "flake_mesh",
+        "bounds_m": {
+            axis: [
+                base.scalar(
+                    fdtd.getnamed("flake_mesh", f"{axis} min"),
+                    f"flake_mesh.{axis} min",
+                ),
+                base.scalar(
+                    fdtd.getnamed("flake_mesh", f"{axis} max"),
+                    f"flake_mesh.{axis} max",
+                ),
+            ]
+            for axis in "xyz"
+        },
+        "override_x_mesh": bool(
+            base.scalar(
+                fdtd.getnamed("flake_mesh", "override x mesh"),
+                "flake_mesh.override x",
+            )
+        ),
+        "override_y_mesh": bool(
+            base.scalar(
+                fdtd.getnamed("flake_mesh", "override y mesh"),
+                "flake_mesh.override y",
+            )
+        ),
+        "override_z_mesh": bool(
+            base.scalar(
+                fdtd.getnamed("flake_mesh", "override z mesh"),
+                "flake_mesh.override z",
+            )
+        ),
+        "dz_m": base.scalar(
+            fdtd.getnamed("flake_mesh", "dz"),
+            "flake_mesh.dz",
+        ),
+    }
     return {
         "checks": checks,
         "boundaries": boundaries,
@@ -930,8 +1188,30 @@ def assert_contract(
             "type": str(fdtd.getnamed("FDTD", "mesh type")),
             "refinement": str(fdtd.getnamed("FDTD", "mesh refinement")),
             "accuracy": base.scalar(fdtd.getnamed("FDTD", "mesh accuracy"), "accuracy"),
+            "minimum_mesh_step_m": base.scalar(
+                fdtd.getnamed("FDTD", "min mesh step"),
+                "FDTD.min mesh step",
+            ),
             "flake_dz_m": args.flake_dz_nm * 1e-9,
+            "override_objects": [mesh_override],
+            "global_x_or_y_override_present": False,
         },
+        "object_bounds_readback_m": {
+            "FDTD_nominal_outer_bounds": fdtd_bounds,
+            "PML_inner_bounds": (
+                "not available before native post-run mesh readback"
+            ),
+            "source": source_bounds,
+            "flake": flake_bounds,
+            "flake_vertices_readback_m": flake_vertices_readback.tolist(),
+            "absorption_analysis": setup["geometry"][
+                "absorption_analysis_bounds_m"
+            ],
+            "six_face_absorption_box": setup["geometry"][
+                "six_face_absorption_box_bounds_m"
+            ],
+        },
+        "execution_contract": args.execution_contract,
         "source_readback": {
             "injection_axis": injection_axis,
             "direction": str(fdtd.getnamed(base.SOURCE_NAME, "direction")),
@@ -992,6 +1272,221 @@ def plot_geometry(output: Path, args: argparse.Namespace, setup: dict[str, Any])
     figure.tight_layout()
     figure.savefig(output / "paper_ir_device_a_geometry.png", dpi=200)
     plt.close(figure)
+
+
+def run_diagnostic_gpu_smoke_case(
+    base: Any,
+    fdtd: Any,
+    runtime: Any,
+    args: argparse.Namespace,
+    output: Path,
+    setup: dict[str, Any],
+    pre_run_contract: dict[str, Any],
+) -> dict[str, Any]:
+    """Run the reduced diagnostic without incident normalization or Q edits."""
+    resource = runtime.run_session(
+        fdtd,
+        (
+            f"paper_ir_diagnostic_{args.polarization}_"
+            f"L{args.domain_um:g}_pml{args.pml_layers}_"
+            f"dz{args.flake_dz_nm:g}"
+        ),
+    )
+    source_power_native = base.scalar(
+        fdtd.sourcepower(
+            base.TARGET_FREQUENCY_HZ,
+            2,
+            base.SOURCE_NAME,
+        ),
+        "native source power at 11 um",
+    )
+    if not np.isfinite(source_power_native) or source_power_native <= 0.0:
+        raise RuntimeError(
+            f"invalid native Gaussian source power: {source_power_native}"
+        )
+
+    # The diagnostic deliberately remains in native source-amplitude units.
+    # The common multiplicative scale cancels from the volume/flux closure.
+    inner_flux = base.face_fluxes(
+        fdtd,
+        setup["inner_faces"],
+        source_power_native,
+        1.0,
+    )
+    fdtd.runanalysis(base.PABS_GROUP)
+    q_data = base.common_grid_component_q(
+        fdtd,
+        base.TARGET_FREQUENCY_HZ,
+    )
+    artifact = {
+        "x_m": np.asarray(q_data["x_m"], float),
+        "y_m": np.asarray(q_data["y_m"], float),
+        "z_m": np.asarray(q_data["z_m"], float),
+        "Qx_native_W_m3": np.asarray(q_data["Qx_native_W_m3"], float),
+        "Qy_native_W_m3": np.asarray(q_data["Qy_native_W_m3"], float),
+        "Qz_native_W_m3": np.asarray(q_data["Qz_native_W_m3"], float),
+        "Q_native_W_m3": np.asarray(q_data["Q_native_W_m3"], float),
+    }
+    finite_arrays = all(
+        np.all(np.isfinite(value))
+        for key, value in artifact.items()
+        if key.endswith("_m3")
+    )
+    if not finite_arrays:
+        raise RuntimeError("diagnostic Q contains NaN or Inf")
+
+    exact_flake_mask = np.asarray(
+        setup["exact_flake_mask_builder"](
+            artifact["x_m"],
+            artifact["y_m"],
+            artifact["z_m"],
+        ),
+        dtype=bool,
+    )
+    if exact_flake_mask.shape != artifact["Q_native_W_m3"].shape:
+        raise RuntimeError(
+            "exact flake mask shape mismatch: "
+            f"{exact_flake_mask.shape} != "
+            f"{artifact['Q_native_W_m3'].shape}"
+        )
+
+    component_power = {
+        axis: base.integrate_xyz(
+            artifact[f"Q{axis}_native_W_m3"],
+            artifact["x_m"],
+            artifact["y_m"],
+            artifact["z_m"],
+        )
+        for axis in "xyz"
+    }
+    p_q = float(sum(component_power.values()))
+    p_six = float(inner_flux["net_inward_power_W"])
+    closure = abs(p_q - p_six) / max(
+        abs(p_six),
+        np.finfo(float).tiny,
+    )
+    q_total = artifact["Q_native_W_m3"]
+    support_power = base.integrate_xyz(
+        np.where(exact_flake_mask, q_total, 0.0),
+        artifact["x_m"],
+        artifact["y_m"],
+        artifact["z_m"],
+    )
+    outside_support_power = base.integrate_xyz(
+        np.where(~exact_flake_mask, q_total, 0.0),
+        artifact["x_m"],
+        artifact["y_m"],
+        artifact["z_m"],
+    )
+    hotspot_index = np.unravel_index(
+        int(np.argmax(q_total)),
+        q_total.shape,
+    )
+    hotspot = {
+        "x_m": float(artifact["x_m"][hotspot_index[0]]),
+        "y_m": float(artifact["y_m"][hotspot_index[1]]),
+        "z_m": float(artifact["z_m"][hotspot_index[2]]),
+        "Q_native_W_m3": float(q_total[hotspot_index]),
+    }
+    metadata = {
+        "classification": (
+            "reduced-cost one-polarization GPU diagnostic; not a paper-like "
+            "optical result, not production Q, and not normalized to 1 W/m2"
+        ),
+        "generation_command": shlex.join([sys.executable, *sys.argv]),
+        "generation_commit": base.git_commit(),
+        "execution_contract": args.execution_contract,
+        "geometry": setup["geometry"],
+        "pre_run_contract": pre_run_contract,
+        "source_amplitude_contract": (
+            "native Lumerical source amplitude; no incident-intensity "
+            "normalization and no empirical flux gain"
+        ),
+        "array_axis_order": ["x", "y", "z"],
+        "Q_units": "W/m^3 at native source amplitude",
+        "exact_flake_mask_is_analysis_only": True,
+        "Q_operations": {
+            "clipped": False,
+            "smoothed": False,
+            "gain_applied": False,
+            "globally_rescaled": False,
+            "tiled": False,
+            "source_deleted_outside_support": False,
+        },
+    }
+    artifact_path = output / "diagnostic_q_native_artifact.npz"
+    np.savez(
+        artifact_path,
+        **artifact,
+        exact_flake_mask=exact_flake_mask,
+        source_power_native_W=np.asarray([source_power_native]),
+        P_Q_native_W=np.asarray([p_q]),
+        P_six_native_W=np.asarray([p_six]),
+        metadata_json=np.asarray([json.dumps(base.jsonable(metadata))]),
+    )
+    base.plot_q_slices(
+        output,
+        {
+            "x_m": artifact["x_m"],
+            "y_m": artifact["y_m"],
+            "z_m": artifact["z_m"],
+            "Qx_W_m3": artifact["Qx_native_W_m3"],
+            "Qy_W_m3": artifact["Qy_native_W_m3"],
+            "Qz_W_m3": artifact["Qz_native_W_m3"],
+            "Q_on_W_m3": artifact["Q_native_W_m3"],
+        },
+    )
+
+    return {
+        "classification": (
+            "DIAGNOSTIC_ONE_POL_GPU_SMOKE_NOT_PRODUCTION_OR_PAPER_RESULT"
+        ),
+        "resource": resource,
+        "polarization": args.polarization,
+        "normalization": {
+            "measured_source_power_native_W": source_power_native,
+            "incident_intensity_normalization_applied": False,
+            "empirical_flux_gain": False,
+        },
+        "component_power_native_W": component_power,
+        "P_Q_native_W": p_q,
+        "P_six_face_native_W": p_six,
+        "six_face_relative_closure": closure,
+        "Q_hotspot": hotspot,
+        "support_analysis": {
+            "P_Q_inside_exact_flake_mask_native_W": support_power,
+            "P_Q_outside_exact_flake_mask_native_W": outside_support_power,
+            "outside_fraction_of_total": abs(outside_support_power)
+            / max(abs(p_q), np.finfo(float).tiny),
+            "note": (
+                "mask is used only for auditing; the saved full-grid Q was "
+                "not cropped or altered"
+            ),
+        },
+        "component_interpolation_relative_error": q_data[
+            "component_interpolation_relative_error"
+        ],
+        "minimum_Q_native_W_m3": float(np.min(q_total)),
+        "maximum_Q_native_W_m3": float(np.max(q_total)),
+        "artifact": artifact_path.name,
+        "artifact_metadata": metadata,
+        "acceptance": {
+            "solver_returned_normally": True,
+            "source_power_positive": source_power_native > 0.0,
+            "Q_arrays_finite": finite_arrays,
+            "Qx_Qy_Qz_exported": all(
+                artifact[f"Q{axis}_native_W_m3"].size > 0
+                for axis in "xyz"
+            ),
+            "lossy_epsilon_z_produces_nonzero_integrated_Qz": (
+                abs(component_power["z"]) > np.finfo(float).tiny
+            ),
+            "six_face_closure_lt_0p5_percent": (
+                closure < base.POWER_CLOSURE_LIMIT
+            ),
+            "no_Q_clipping_smoothing_gain_rescaling_tiling_or_deletion": True,
+        },
+    }
 
 
 def main() -> int:
@@ -1057,20 +1552,39 @@ def main() -> int:
         original = runtime.run_session
         runtime.run_session = strict_gpu_run
         try:
-            result = original_run_case(
-                fdtd,
-                runtime,
-                parsed,
-                output,
-                setup,
-                contract,
-            )
+            if parsed.execution_contract == "diagnostic-smoke":
+                result = run_diagnostic_gpu_smoke_case(
+                    base,
+                    fdtd,
+                    runtime,
+                    parsed,
+                    output,
+                    setup,
+                    contract,
+                )
+            else:
+                result = original_run_case(
+                    fdtd,
+                    runtime,
+                    parsed,
+                    output,
+                    setup,
+                    contract,
+                )
             result["native_Yee_mesh_audit"] = post_run_native_mesh_audit(
                 base,
                 fdtd,
                 output,
                 result,
             )
+            if parsed.execution_contract == "diagnostic-smoke":
+                result["acceptance"][
+                    "native_solver_and_component_Yee_coordinates_saved"
+                ] = bool(
+                    result["native_Yee_mesh_audit"].get(
+                        "coordinate_artifact"
+                    )
+                )
             result["material_epsilon_readback"] = material_epsilon_readback(
                 fdtd,
                 parsed,
