@@ -1468,7 +1468,7 @@ maximum component-to-common conservative-remap power error is
 
 The analytic-cut residual on the material side is:
 
-| edge-normal band n (µm) | integral |Q_edge-Q_masked| / masked reference | absolute residual power (W) |
+| edge-normal band n (µm) | absolute-residual integral / masked reference | absolute residual power (W) |
 |---|---:|---:|
 {decay_table_rows}
 
