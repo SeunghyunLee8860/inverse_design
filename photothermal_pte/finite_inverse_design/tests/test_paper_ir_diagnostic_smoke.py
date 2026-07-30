@@ -1,0 +1,106 @@
+from __future__ import annotations
+
+import json
+import sys
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+
+from photothermal_pte.validation.paper_ir_sanity import (
+    run_lumerical_device_a_ir_q as runner,
+)
+from photothermal_pte.validation.paper_ir_sanity import (
+    summarize_paper_ir_diagnostic_smoke as summary_module,
+)
+
+
+class PaperIrDiagnosticSmokeTests(unittest.TestCase):
+    def test_reduced_contract_has_nested_nominal_bounds(self) -> None:
+        argv = [
+            "run_lumerical_device_a_ir_q.py",
+            "--output-dir",
+            "/tmp/not-created-by-parse",
+            "--case",
+            "finite-flake",
+            "--polarization",
+            "a",
+            "--geometry",
+            "straight-45-edge",
+            "--domain-um",
+            "12",
+            "--source-span-um",
+            "6",
+            "--waist-um",
+            "2",
+            "--flake-dz-nm",
+            "10",
+            "--execution-contract",
+            "diagnostic-smoke",
+        ]
+        with patch.object(sys, "argv", argv):
+            args = runner.parse_args()
+        self.assertEqual(args.execution_contract, "diagnostic-smoke")
+        self.assertEqual(args.absorption_bounds_m["x"], (-4.5e-6, 4.5e-6))
+        self.assertEqual(args.inner_box["x"], (-5.0e-6, 5.0e-6))
+        self.assertLess(args.inner_box["x"][1], 0.5 * args.domain_um * 1e-6)
+
+    def test_diagnostic_contract_rejects_empty_stack(self) -> None:
+        argv = [
+            "run_lumerical_device_a_ir_q.py",
+            "--output-dir",
+            "/tmp/not-created-by-parse",
+            "--case",
+            "empty-stack",
+            "--polarization",
+            "a",
+            "--domain-um",
+            "12",
+            "--source-span-um",
+            "6",
+            "--execution-contract",
+            "diagnostic-smoke",
+        ]
+        with patch.object(sys, "argv", argv):
+            with self.assertRaises(SystemExit):
+                runner.parse_args()
+
+    def test_published_failure_is_fail_closed(self) -> None:
+        repository = Path(__file__).resolve().parents[3]
+        path = (
+            repository
+            / "photothermal_pte"
+            / "reports"
+            / "paper_ir_edge_material_gradient_controls"
+            / "paper_ir_diagnostic_gpu_smoke_summary.json"
+        )
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(
+            payload["official_status"],
+            summary_module.OFFICIAL_STATUS,
+        )
+        self.assertEqual(
+            payload["diagnostic_status"],
+            summary_module.DIAGNOSTIC_STATUS,
+        )
+        self.assertFalse(payload["validated"])
+        self.assertFalse(payload["production_paper_like_result"])
+        self.assertGreater(
+            payload["absorption"]["common_grid_six_face_relative_closure"],
+            0.005,
+        )
+        self.assertLess(
+            payload["absorption"]["native_common_relative_difference"],
+            0.005,
+        )
+        self.assertFalse(
+            payload["execution"]["auto_shutoff_gate_reached"]
+        )
+        self.assertFalse(payload["execution"]["CPU_FDTD_fallback"])
+        self.assertFalse(payload["thermal_run"])
+        self.assertFalse(payload["PTE_run"])
+        self.assertFalse(payload["adjoint_run"])
+        self.assertFalse(payload["optimization_run"])
+
+
+if __name__ == "__main__":
+    unittest.main()
