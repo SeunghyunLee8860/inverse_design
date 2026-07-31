@@ -1803,7 +1803,10 @@ def assert_contract(
         ]
         for axis in "xyz"
     }
-    if args.geometry == "planar-stack":
+    if args.case == "empty-stack":
+        flake_vertices_readback = None
+        flake_bounds = None
+    elif args.geometry == "planar-stack":
         flake_vertices_readback = None
         flake_bounds = {
             axis: [
@@ -1969,7 +1972,14 @@ def plot_geometry(output: Path, args: argparse.Namespace, setup: dict[str, Any])
     ax = axes[0]
     flake_vertices = np.asarray(args.flake_vertices_um, float)
     vertices = np.vstack((flake_vertices, flake_vertices[0]))
-    ax.fill(vertices[:, 0], vertices[:, 1], color="#d89023", alpha=0.75, label="130 nm TaIrTe4")
+    if args.case == "finite-flake":
+        ax.fill(
+            vertices[:, 0],
+            vertices[:, 1],
+            color="#d89023",
+            alpha=0.75,
+            label="130 nm TaIrTe4",
+        )
     half = 0.5 * args.source_span_um
     ax.add_patch(
         plt.Rectangle(
@@ -2012,7 +2022,13 @@ def plot_geometry(output: Path, args: argparse.Namespace, setup: dict[str, Any])
     ax = axes[1]
     ax.axhspan(FDTD_Z_MIN_M * 1e6, -(FLAKE_THICKNESS_M + SIO2_THICKNESS_M) * 1e6, color="silver", label="Si")
     ax.axhspan(-(FLAKE_THICKNESS_M + SIO2_THICKNESS_M) * 1e6, -FLAKE_THICKNESS_M * 1e6, color="lightblue", label="285 nm SiO2")
-    ax.axhspan(-FLAKE_THICKNESS_M * 1e6, 0, color="#d89023", label="130 nm TaIrTe4")
+    if args.case == "finite-flake":
+        ax.axhspan(
+            -FLAKE_THICKNESS_M * 1e6,
+            0,
+            color="#d89023",
+            label="130 nm TaIrTe4",
+        )
     ax.axhline(SOURCE_Z_M * 1e6, color="tab:green", ls="--", label="Gaussian source")
     ax.plot([0], [FOCUS_Z_M * 1e6], marker="x", color="tab:green", label="focus")
     ax.set(xlabel="lateral (schematic)", ylabel="z (um)", title="Normal-incidence stack")
