@@ -21,6 +21,11 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+
+try:
+    from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import center_field
+except ModuleNotFoundError:  # Direct script execution outside the repository cwd.
+    from coordinate_plot import center_field
 from scipy.special import erf
 
 
@@ -221,17 +226,10 @@ def main() -> int:
             "Saved finite 45° edge FDTD\n(legacy $\\epsilon_c=16$)",
         ),
     ):
-        image = axis.imshow(
-            data.T,
-            origin="lower",
-            extent=[
-                edge["x_m"][0] * 1e6,
-                edge["x_m"][-1] * 1e6,
-                edge["y_m"][0] * 1e6,
-                edge["y_m"][-1] * 1e6,
-            ],
+        image = center_field(
+            axis, edge["x_m"], edge["y_m"], data,
+            coordinate_scale=1e6,
             cmap="inferno",
-            aspect="equal",
         )
         axis.set_xlim(-12, 12)
         axis.set_ylim(-12, 12)

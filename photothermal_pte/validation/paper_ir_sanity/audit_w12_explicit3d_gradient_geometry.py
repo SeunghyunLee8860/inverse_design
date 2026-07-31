@@ -38,6 +38,9 @@ if str(REPOSITORY) not in sys.path:
 from photothermal_pte.validation.paper_ir_sanity import (  # noqa: E402
     run_device_a_explicit_thermal_pte as thermal,
 )
+from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (  # noqa: E402
+    cell_field,
+)
 
 
 CASES = ("Maxwell_a", "Maxwell_b", "analytic_a", "analytic_b")
@@ -349,11 +352,10 @@ def write_case_projection_figure(
     path: Path,
     model: str,
     projection_data: dict[str, dict[str, dict[str, np.ndarray]]],
-    x: np.ndarray,
-    y: np.ndarray,
+    x_edges: np.ndarray,
+    y_edges: np.ndarray,
     mask: np.ndarray,
 ) -> None:
-    extent = [x[0] * 1e6, x[-1] * 1e6, y[0] * 1e6, y[-1] * 1e6]
     figure, axes = plt.subplots(
         2, 3, figsize=(15.5, 9.2), constrained_layout=True
     )
@@ -365,11 +367,12 @@ def write_case_projection_figure(
         shared_limit = max(float(np.max(np.abs(item[mask]))) for item in arrays)
         for row, polarization in enumerate(("a", "b")):
             data = np.where(mask, arrays[row], np.nan)
-            image = axes[row, column].imshow(
-                data.T,
-                origin="lower",
-                extent=extent,
-                aspect="equal",
+            image = cell_field(
+                axes[row, column],
+                x_edges,
+                y_edges,
+                data,
+                coordinate_scale=1e6,
                 cmap="coolwarm",
                 vmin=-shared_limit,
                 vmax=shared_limit,
@@ -391,20 +394,20 @@ def write_case_projection_figure(
 def write_identity_figure(
     path: Path,
     projection_data: dict[str, dict[str, dict[str, np.ndarray]]],
-    x: np.ndarray,
-    y: np.ndarray,
+    x_edges: np.ndarray,
+    y_edges: np.ndarray,
     mask: np.ndarray,
 ) -> None:
-    extent = [x[0] * 1e6, x[-1] * 1e6, y[0] * 1e6, y[-1] * 1e6]
     figure, axes = plt.subplots(2, 2, figsize=(11, 9), constrained_layout=True)
     for axis, case in zip(axes.flat, CASES):
         error = projection_data[case]["thickness_average"]["identity_error"]
         display = np.where(mask, np.log10(np.maximum(error, 1.0e-18)), np.nan)
-        image = axis.imshow(
-            display.T,
-            origin="lower",
-            extent=extent,
-            aspect="equal",
+        image = cell_field(
+            axis,
+            x_edges,
+            y_edges,
+            display,
+            coordinate_scale=1e6,
             cmap="viridis",
             vmin=-18,
             vmax=-12,
@@ -778,7 +781,7 @@ def main() -> int:
         / "analytic_surface_midplane_average_grad_n_shared_scale.png",
     }
     write_identity_figure(
-        figures["identity_error"], projection_data, x, y, mask
+        figures["identity_error"], projection_data, x_edges, y_edges, mask
     )
     write_linecut_figure(figures["linecut_derivative"], central_linecuts)
     write_reconstruction_figure(
@@ -800,16 +803,16 @@ def main() -> int:
         figures["Maxwell_shared_scale"],
         "Maxwell",
         projection_data,
-        x,
-        y,
+        x_edges,
+        y_edges,
         mask,
     )
     write_case_projection_figure(
         figures["analytic_shared_scale"],
         "analytic",
         projection_data,
-        x,
-        y,
+        x_edges,
+        y_edges,
         mask,
     )
     summary["figures"] = {

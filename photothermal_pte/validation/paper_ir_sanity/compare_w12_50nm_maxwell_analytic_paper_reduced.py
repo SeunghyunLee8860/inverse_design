@@ -32,6 +32,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+try:
+    from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import cell_field
+except ModuleNotFoundError:  # Direct script execution outside the repository cwd.
+    from coordinate_plot import cell_field
+
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[2]
@@ -914,7 +919,7 @@ def map_extent_um(geometry: Any) -> list[float]:
 
 def masked_for_plot(values: np.ndarray, geometry: Any) -> np.ndarray:
     mask = np.any(geometry.flake_mask, axis=2)
-    return np.where(mask, np.asarray(values, float), np.nan).T
+    return np.where(mask, np.asarray(values, float), np.nan)
 
 
 def plot_triplet(
@@ -946,22 +951,18 @@ def plot_triplet(
         plotted = masked_for_plot(value, geometry)
         if index == 2:
             limit = float(np.nanmax(np.abs(plotted)))
-            image = axis.imshow(
-                plotted,
-                origin="lower",
-                extent=extent,
+            image = cell_field(
+                axis, geometry.x_edges_m, geometry.y_edges_m, plotted,
+                coordinate_scale=1e6,
                 cmap="coolwarm",
                 vmin=-limit,
                 vmax=limit,
-                interpolation="nearest",
             )
         else:
-            image = axis.imshow(
-                plotted,
-                origin="lower",
-                extent=extent,
+            image = cell_field(
+                axis, geometry.x_edges_m, geometry.y_edges_m, plotted,
+                coordinate_scale=1e6,
                 cmap="inferno",
-                interpolation="nearest",
             )
         axis.plot(
             [extent[0], extent[1]],
@@ -1013,22 +1014,18 @@ def plot_cross_model(
             plotted = masked_for_plot(value, geometry)
             if column == 2:
                 limit = float(np.nanmax(np.abs(plotted)))
-                image = axes[row, column].imshow(
-                    plotted,
-                    origin="lower",
-                    extent=extent,
+                image = cell_field(
+                    axes[row, column], geometry.x_edges_m, geometry.y_edges_m, plotted,
+                    coordinate_scale=1e6,
                     cmap="coolwarm",
                     vmin=-limit,
                     vmax=limit,
-                    interpolation="nearest",
                 )
             else:
-                image = axes[row, column].imshow(
-                    plotted,
-                    origin="lower",
-                    extent=extent,
+                image = cell_field(
+                    axes[row, column], geometry.x_edges_m, geometry.y_edges_m, plotted,
+                    coordinate_scale=1e6,
                     cmap="inferno",
-                    interpolation="nearest",
                 )
             axes[row, column].plot(
                 [extent[0], extent[1]],

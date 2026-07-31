@@ -1,5 +1,18 @@
 # Latest photothermal validation status
 
+## Paper-IR coordinate-faithful figure correction
+
+- Status: `CORRECTED_PAPER_IR_NONUNIFORM_GRID_FIGURES`.
+- Thirty-five tracked paper-IR/Device-A physical-field PNGs were regenerated
+  from existing raw artifacts with exact cell-edge `pcolormesh` rendering.
+- The previous `imshow` path visually stretched nonuniform FVM cells and
+  displaced the reported lower-edge feature; it did not alter the stored
+  temperature or gradient arrays.
+- Numerical result JSON/CSV and raw NPZ/FSP artifacts were not changed.
+  Affected published-PNG hashes were refreshed in their manifests.
+- Report:
+  `reports/paper_ir_coordinate_figure_correction/PAPER_IR_COORDINATE_FIGURE_CORRECTION.md`.
+
 ## Device A single-position Maxwell-to-PTE sanity check
 
 - Status:

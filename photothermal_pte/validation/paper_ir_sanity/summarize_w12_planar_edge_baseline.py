@@ -25,6 +25,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+try:
+    from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import center_field
+except ModuleNotFoundError:  # Direct script execution outside the repository cwd.
+    from coordinate_plot import center_field
+
 
 REPOSITORY = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPOSITORY))
@@ -531,33 +536,23 @@ def main() -> int:
         name: maps[name] / cases[name]["P_Q_W"] * 1.0e-12
         for name in CASE_ORDER
     }
-    extent = [
-        coordinates["x"][0] * 1e6,
-        coordinates["x"][-1] * 1e6,
-        coordinates["y"][0] * 1e6,
-        coordinates["y"][-1] * 1e6,
-    ]
     figure, axes = plt.subplots(2, 4, figsize=(16.5, 7.8), constrained_layout=True)
     raw_max = max(float(np.max(value)) for value in maps.values())
     normalized_max = max(float(np.max(value)) for value in normalized_maps.values())
     for column, name in enumerate(CASE_ORDER):
-        raw_image = axes[0, column].imshow(
-            maps[name].T,
-            origin="lower",
-            extent=extent,
+        raw_image = center_field(
+            axes[0, column], coordinates["x"], coordinates["y"], maps[name],
+            coordinate_scale=1e6,
             cmap="magma",
             vmin=0.0,
             vmax=raw_max,
-            aspect="equal",
         )
-        norm_image = axes[1, column].imshow(
-            normalized_maps[name].T,
-            origin="lower",
-            extent=extent,
+        norm_image = center_field(
+            axes[1, column], coordinates["x"], coordinates["y"], normalized_maps[name],
+            coordinate_scale=1e6,
             cmap="viridis",
             vmin=0.0,
             vmax=normalized_max,
-            aspect="equal",
         )
         axes[0, column].set_title(f"{LABELS[name]}\nraw $\\int Q dz$")
         axes[1, column].set_title(f"{LABELS[name]}\nequal-power shape")

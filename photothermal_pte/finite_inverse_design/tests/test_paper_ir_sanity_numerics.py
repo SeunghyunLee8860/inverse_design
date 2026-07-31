@@ -4,6 +4,16 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
+from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (
+    cell_field,
+    dual_edges_from_centers,
+)
+
 from photothermal_pte.validation.paper_ir_sanity.run_analytic_q_remap_control import (
     analytic_q_on_edges,
 )
@@ -14,6 +24,41 @@ from photothermal_pte.validation.paper_ir_sanity.run_device_a_explicit_thermal_p
     solve_weighting_potential,
     straight_edge_temperature_metrics,
 )
+
+
+def test_coordinate_plot_preserves_nonuniform_cell_edges() -> None:
+    x_edges = np.asarray([-3.0, -2.0, 0.0, 4.0])
+    y_edges = np.asarray([-5.0, -1.0, 2.0])
+    values = np.arange(6.0).reshape(3, 2)
+    figure, axis = plt.subplots()
+    image = cell_field(axis, x_edges, y_edges, values)
+    coordinates = image.get_coordinates()
+    plt.close(figure)
+    assert np.array_equal(coordinates[0, :, 0], x_edges)
+    assert np.array_equal(coordinates[:, 0, 1], y_edges)
+
+
+def test_dual_edges_from_centers_has_half_cell_outer_boundaries() -> None:
+    centers = np.asarray([-2.0, -1.0, 2.0, 6.0])
+    assert np.array_equal(
+        dual_edges_from_centers(centers),
+        np.asarray([-2.5, -1.5, 0.5, 4.0, 8.0]),
+    )
+
+
+def test_physical_field_plotters_do_not_use_imshow() -> None:
+    directory = (
+        Path(__file__).resolve().parents[2]
+        / "validation"
+        / "paper_ir_sanity"
+    )
+    offenders = []
+    for path in directory.glob("*.py"):
+        if path.name == "digitize_device_a_geometry.py":
+            continue
+        if ".imshow(" in path.read_text(encoding="utf-8"):
+            offenders.append(path.name)
+    assert offenders == []
 
 
 def test_pte_volume_and_thickness_integrated_area_forms_are_equivalent() -> None:

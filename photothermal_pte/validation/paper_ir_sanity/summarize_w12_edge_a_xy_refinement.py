@@ -20,6 +20,11 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+
+try:
+    from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import cell_field
+except ModuleNotFoundError:  # Direct script execution outside the repository cwd.
+    from coordinate_plot import cell_field
 from scipy import sparse
 from scipy.interpolate import RegularGridInterpolator
 
@@ -688,12 +693,6 @@ def main() -> int:
     )
     normalized_coarse = lateral_density_coarse / coarse_power
     normalized_fine = lateral_density_fine / fine_power
-    extent = [
-        centers[0][0] * 1e6,
-        centers[0][-1] * 1e6,
-        centers[1][0] * 1e6,
-        centers[1][-1] * 1e6,
-    ]
     vmax = max(float(np.max(normalized_coarse)), float(np.max(normalized_fine)))
     figure, axes = plt.subplots(1, 3, figsize=(15, 4.4))
     images = (
@@ -709,21 +708,23 @@ def main() -> int:
     )
     for index, (axis, (image, title)) in enumerate(zip(axes, images)):
         if index < 2:
-            handle = axis.imshow(
-                image.T,
-                origin="lower",
-                extent=extent,
-                aspect="equal",
+            handle = cell_field(
+                axis,
+                coarse_edges[0],
+                coarse_edges[1],
+                image,
+                coordinate_scale=1e6,
                 vmin=0.0,
                 vmax=vmax,
             )
         else:
             limit = float(np.max(np.abs(image)))
-            handle = axis.imshow(
-                image.T,
-                origin="lower",
-                extent=extent,
-                aspect="equal",
+            handle = cell_field(
+                axis,
+                coarse_edges[0],
+                coarse_edges[1],
+                image,
+                coordinate_scale=1e6,
                 cmap="coolwarm",
                 vmin=-limit,
                 vmax=limit,

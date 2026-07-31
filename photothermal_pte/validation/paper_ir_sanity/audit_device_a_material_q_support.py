@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import sys
 
 import matplotlib
 
@@ -14,6 +15,15 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.path import Path as PolygonPath
 import numpy as np
+
+REPOSITORY = Path(__file__).resolve().parents[3]
+if str(REPOSITORY) not in sys.path:
+    sys.path.insert(0, str(REPOSITORY))
+
+try:
+    from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import center_field
+except ModuleNotFoundError:  # Direct script execution outside the repository cwd.
+    from coordinate_plot import center_field
 
 from photothermal_pte.validation.paper_ir_sanity import (
     run_lumerical_device_a_ir_q as runner,
@@ -220,16 +230,13 @@ def main() -> int:
     }
     common_vmax = max(float(np.max(values)) for values in areal.values())
     fig, axes = plt.subplots(1, 4, figsize=(19, 4.5), constrained_layout=True)
-    extent = [x[0] * 1e6, x[-1] * 1e6, y[0] * 1e6, y[-1] * 1e6]
     for ax, (name, values) in zip(axes, areal.items()):
-        image = ax.imshow(
-            values.T,
-            origin="lower",
-            extent=extent,
+        image = center_field(
+            ax, x, y, values,
+            coordinate_scale=1e6,
             cmap="inferno",
             vmin=0.0,
             vmax=common_vmax,
-            aspect="equal",
         )
         ax.set(title=f"{name} depth-integrated Q", xlabel="x=b (um)", ylabel="y=a (um)")
         fig.colorbar(image, ax=ax, label="W/m2")

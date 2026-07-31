@@ -49,6 +49,9 @@ from photothermal_pte.finite_inverse_design.finite_q_mapping import (  # noqa: E
     nodal_control_volume_edges,
     project_remap_to_nearest_material_support,
 )
+from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (  # noqa: E402
+    cell_field,
+)
 
 
 T_BATH_K = 300.0
@@ -1174,11 +1177,12 @@ def main() -> int:
         title = "Device-A IR sanity: Lumerical Q → expanded thermal FVM → PTE"
         figure_name = "device_a_ir_thermal_pte.png"
     for ax, (image, panel_title, cmap) in zip(axes.ravel(), images):
-        handle = ax.imshow(
-            image.T,
-            origin="lower",
-            extent=extent,
-            aspect="equal",
+        handle = cell_field(
+            ax,
+            geometry.x_edges_m,
+            geometry.y_edges_m,
+            image,
+            coordinate_scale=1e6,
             cmap=cmap,
         )
         if args.geometry == "straight-45-edge":

@@ -52,6 +52,9 @@ from photothermal_pte.validation.paper_ir_sanity import (  # noqa: E402
 from photothermal_pte.validation.paper_ir_sanity import (  # noqa: E402
     run_straight_edge_analytic_q_control as analytic_base,
 )
+from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (  # noqa: E402
+    cell_field,
+)
 
 
 STATUS_PASS = (
@@ -541,20 +544,18 @@ def map_figure(
     key: str,
     label: str,
 ) -> None:
-    x = 0.5 * (geometry.x_edges_m[:-1] + geometry.x_edges_m[1:]) * 1e6
-    y = 0.5 * (geometry.y_edges_m[:-1] + geometry.y_edges_m[1:]) * 1e6
-    extent = [x[0], x[-1], y[0], y[-1]]
     mask = np.any(geometry.flake_mask, axis=2)
     figure, axes = plt.subplots(2, 2, figsize=(11, 9), constrained_layout=True)
     for axis, case_id in zip(
         axes.flat, ("Maxwell_a", "Maxwell_b", "analytic_a", "analytic_b")
     ):
         data = np.where(mask, arrays[case_id][key], np.nan)
-        handle = axis.imshow(
-            data.T,
-            origin="lower",
-            extent=extent,
-            aspect="equal",
+        handle = cell_field(
+            axis,
+            geometry.x_edges_m,
+            geometry.y_edges_m,
+            data,
+            coordinate_scale=1e6,
             cmap="magma",
         )
         axis.set(
@@ -573,9 +574,6 @@ def gradient_figure(
     fields: dict[str, dict[str, np.ndarray]],
     model: str,
 ) -> None:
-    x = 0.5 * (geometry.x_edges_m[:-1] + geometry.x_edges_m[1:]) * 1e6
-    y = 0.5 * (geometry.y_edges_m[:-1] + geometry.y_edges_m[1:]) * 1e6
-    extent = [x[0], x[-1], y[0], y[-1]]
     mask = np.any(geometry.flake_mask, axis=2)
     columns = (
         ("grad_a_K_m", "∂aT"),
@@ -594,11 +592,12 @@ def gradient_figure(
             else:
                 limit = float(np.nanmax(np.abs(data)))
                 kwargs = {"cmap": "coolwarm", "vmin": -limit, "vmax": limit}
-            handle = axes[row, column].imshow(
-                data.T,
-                origin="lower",
-                extent=extent,
-                aspect="equal",
+            handle = cell_field(
+                axes[row, column],
+                geometry.x_edges_m,
+                geometry.y_edges_m,
+                data,
+                coordinate_scale=1e6,
                 **kwargs,
             )
             axes[row, column].set(

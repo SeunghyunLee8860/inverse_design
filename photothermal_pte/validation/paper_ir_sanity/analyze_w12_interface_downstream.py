@@ -39,6 +39,9 @@ from anisotropic_heat_fvm import (  # noqa: E402
 from photothermal_pte.validation.paper_ir_sanity import (  # noqa: E402
     run_device_a_explicit_thermal_pte as thermal,
 )
+from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (  # noqa: E402
+    cell_field,
+)
 from photothermal_pte.validation.paper_ir_sanity.summarize_w12_edge_a_xy_refinement import (  # noqa: E402
     bounded_dual_cells,
     overlap_fraction,
@@ -507,12 +510,8 @@ def plot_gradient_comparison(
     output_path: Path,
 ) -> None:
     with np.load(raw_path, allow_pickle=False) as artifact:
-        x = 0.5 * (
-            artifact["x_edges_m"][:-1] + artifact["x_edges_m"][1:]
-        ) * 1e6
-        y = 0.5 * (
-            artifact["y_edges_m"][:-1] + artifact["y_edges_m"][1:]
-        ) * 1e6
+        x_edges = np.asarray(artifact["x_edges_m"], float)
+        y_edges = np.asarray(artifact["y_edges_m"], float)
         gx50 = np.asarray(artifact["grad_T_x_50_K_m"], float)
         gx25 = np.asarray(artifact["grad_T_x_25_K_m"], float)
         gy50 = np.asarray(artifact["grad_T_y_50_K_m"], float)
@@ -520,7 +519,6 @@ def plot_gradient_comparison(
     magnitude50 = np.hypot(gx50, gy50)
     magnitude25 = np.hypot(gx25, gy25)
     difference = magnitude50 - magnitude25
-    extent = [x[0], x[-1], y[0], y[-1]]
     vmax = max(float(np.max(magnitude50)), float(np.max(magnitude25)))
     limit = float(np.max(np.abs(difference)))
     figure, axes = plt.subplots(1, 3, figsize=(15, 4.6))
@@ -528,22 +526,24 @@ def plot_gradient_comparison(
         (axes[0], magnitude50, "|in-plane grad T| 50 nm"),
         (axes[1], magnitude25, "|in-plane grad T| 25 nm"),
     ):
-        handle = axis.imshow(
-            image.T,
-            origin="lower",
-            extent=extent,
-            aspect="equal",
+        handle = cell_field(
+            axis,
+            x_edges,
+            y_edges,
+            image,
+            coordinate_scale=1e6,
             cmap="magma",
             vmin=0.0,
             vmax=vmax,
         )
         axis.set(title=title, xlabel="x=b (um)", ylabel="y=a (um)")
         figure.colorbar(handle, ax=axis)
-    handle = axes[2].imshow(
-        difference.T,
-        origin="lower",
-        extent=extent,
-        aspect="equal",
+    handle = cell_field(
+        axes[2],
+        x_edges,
+        y_edges,
+        difference,
+        coordinate_scale=1e6,
         cmap="coolwarm",
         vmin=-limit,
         vmax=limit,
@@ -943,9 +943,6 @@ def main() -> int:
                 }
             )
 
-    x = 0.5 * (geometry.x_edges_m[:-1] + geometry.x_edges_m[1:]) * 1e6
-    y = 0.5 * (geometry.y_edges_m[:-1] + geometry.y_edges_m[1:]) * 1e6
-    extent = [x[0], x[-1], y[0], y[-1]]
     figure, axes = plt.subplots(2, 3, figsize=(15, 9))
     images = (
         (
@@ -987,11 +984,12 @@ def main() -> int:
         ),
     )
     for axis, (image, title) in zip(axes.ravel(), images):
-        handle = axis.imshow(
-            image.T,
-            origin="lower",
-            extent=extent,
-            aspect="equal",
+        handle = cell_field(
+            axis,
+            geometry.x_edges_m,
+            geometry.y_edges_m,
+            image,
+            coordinate_scale=1e6,
             cmap="coolwarm" if "difference" in title else "inferno",
         )
         axis.set(title=title, xlabel="x=b (µm)", ylabel="y=a (µm)")

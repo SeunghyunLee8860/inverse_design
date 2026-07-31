@@ -19,6 +19,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+try:
+    from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import cell_field
+except ModuleNotFoundError:  # Direct script execution outside the repository cwd.
+    from coordinate_plot import cell_field
+
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[2]
@@ -193,11 +198,12 @@ def make_maps(
                 ),
             )
         ):
-            handle = axes[row, column].imshow(
-                values.T,
-                origin="lower",
-                extent=extent,
-                aspect="equal",
+            handle = cell_field(
+                axes[row, column],
+                data["x_edges_m"],
+                data["y_edges_m"],
+                values,
+                coordinate_scale=1e6,
                 vmin=0.0,
                 vmax=maximum,
                 cmap="inferno",

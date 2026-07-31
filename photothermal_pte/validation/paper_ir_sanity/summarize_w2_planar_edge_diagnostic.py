@@ -23,6 +23,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+try:
+    from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import center_field
+except ModuleNotFoundError:  # Direct script execution outside the repository cwd.
+    from coordinate_plot import center_field
+
 REPOSITORY = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPOSITORY))
 
@@ -442,29 +447,19 @@ def main() -> int:
     raw_max = max(float(np.max(value)) for value in maps.values())
     normalized_max = max(float(np.max(value)) for value in normalized_maps.values())
     for column, name in enumerate(("planar_a", "planar_b", "finite_edge_b")):
-        extent = [
-            coordinates["x"][0] * 1e6,
-            coordinates["x"][-1] * 1e6,
-            coordinates["y"][0] * 1e6,
-            coordinates["y"][-1] * 1e6,
-        ]
-        raw_image = axes[0, column].imshow(
-            maps[name].T,
-            origin="lower",
-            extent=extent,
+        raw_image = center_field(
+            axes[0, column], coordinates["x"], coordinates["y"], maps[name],
+            coordinate_scale=1e6,
             vmin=0,
             vmax=raw_max,
             cmap="magma",
-            aspect="equal",
         )
-        norm_image = axes[1, column].imshow(
-            normalized_maps[name].T,
-            origin="lower",
-            extent=extent,
+        norm_image = center_field(
+            axes[1, column], coordinates["x"], coordinates["y"], normalized_maps[name],
+            coordinate_scale=1e6,
             vmin=0,
             vmax=normalized_max,
             cmap="viridis",
-            aspect="equal",
         )
         axes[0, column].set_title(f"{name}: raw ∫Q dz")
         axes[1, column].set_title(f"{name}: equal-power shape")

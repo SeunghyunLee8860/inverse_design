@@ -33,6 +33,7 @@ if str(REPOSITORY) not in sys.path:
 from photothermal_pte.validation.paper_ir_sanity import (
     run_lumerical_device_a_ir_q as runner,
 )
+from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import center_field
 
 
 EPS0 = 8.8541878128e-12
@@ -1134,14 +1135,12 @@ def main() -> int:
     positive_max = max(float(np.max(item)) for item in maps[:3])
     residual_max = float(np.max(np.abs(maps[3])))
     for index, (axis, values, title) in enumerate(zip(axes, maps, titles)):
-        image = axis.imshow(
-            values.T,
-            origin="lower",
-            extent=extent,
+        image = center_field(
+            axis, coordinates["x"], coordinates["y"], values,
+            coordinate_scale=1e6,
             cmap="coolwarm" if index == 3 else "magma",
             vmin=-residual_max if index == 3 else 0.0,
             vmax=residual_max if index == 3 else positive_max,
-            aspect="equal",
         )
         axis.set(title=title, xlabel="x (µm)", ylabel="y (µm)")
         figure.colorbar(image, ax=axis, label="∫Q dz (W/m²)")
@@ -1252,14 +1251,12 @@ def main() -> int:
         np.abs(se[:, :, 0]) ** 2 + np.abs(se[:, :, 1]) ** 2
     ) / (2.0 * ETA0)
     figure, axes = plt.subplots(1, 2, figsize=(11.6, 4.5), constrained_layout=True)
-    image = axes[0].imshow(
-        (source_intensity / np.max(source_intensity)).T,
-        origin="lower",
-        extent=[sx[0] * 1e6, sx[-1] * 1e6, sy[0] * 1e6, sy[-1] * 1e6],
+    image = center_field(
+        axes[0], sx, sy, source_intensity / np.max(source_intensity),
+        coordinate_scale=1e6,
         vmin=0.0,
         vmax=1.0,
         cmap="viridis",
-        aspect="equal",
     )
     axes[0].set(
         title="saved source-object |Eₜ|² profile",

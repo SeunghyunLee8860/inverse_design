@@ -17,6 +17,14 @@ import matplotlib.pyplot as plt
 from matplotlib.path import Path as PolygonPath
 import numpy as np
 
+try:
+    from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (
+        cell_field,
+        center_field,
+    )
+except ModuleNotFoundError:  # Direct script execution outside the repository cwd.
+    from coordinate_plot import cell_field, center_field
+
 
 TMM = {"a": 0.17673296, "b": 0.26328721}
 PAPER_ABSORPTION_APPROX = {"a": 0.18, "b": 0.26}
@@ -88,8 +96,8 @@ def read_q_areal(case_dir: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
 def read_thermal(case_dir: Path) -> dict[str, Any]:
     summary = load_json(case_dir / "summary.json")
     with np.load(case_dir / "thermal_pte_fields.npz") as raw:
-        x = 0.5 * (raw["x_edges_m"][:-1] + raw["x_edges_m"][1:]) * 1e6
-        y = 0.5 * (raw["y_edges_m"][:-1] + raw["y_edges_m"][1:]) * 1e6
+        x_edges = np.asarray(raw["x_edges_m"], float)
+        y_edges = np.asarray(raw["y_edges_m"], float)
         fields = {
             key: np.asarray(raw[key])
             for key in (
@@ -103,7 +111,12 @@ def read_thermal(case_dir: Path) -> dict[str, Any]:
     mask = np.isfinite(fields["temperature_flake_average_K"])
     gradient = np.hypot(fields["grad_T_x_K_m"], fields["grad_T_y_K_m"])
     summary["max_inplane_gradient_K_m"] = float(np.max(gradient[mask]))
-    return {"summary": summary, "x_um": x, "y_um": y, **fields}
+    return {
+        "summary": summary,
+        "x_edges_m": x_edges,
+        "y_edges_m": y_edges,
+        **fields,
+    }
 
 
 def flake_limits(ax: Any) -> None:
@@ -138,12 +151,10 @@ def plot_summary(
     for column, axis in enumerate(("a", "b"), start=1):
         x, y, q = read_q_areal(edge_dirs[axis])
         ax = axes[0, column]
-        image = ax.imshow(
-            q.T,
-            origin="lower",
-            extent=[x[0], x[-1], y[0], y[-1]],
+        image = center_field(
+            ax, x, y, q,
+            coordinate_scale=1.0,
             cmap="inferno",
-            aspect="equal",
         )
         flake_limits(ax)
         ax.plot(-8.5, 3.5, "cx", ms=8, mew=2)
@@ -153,13 +164,13 @@ def plot_summary(
     for column, axis in enumerate(("a", "b")):
         data = expanded[axis]
         ax = axes[1, column]
-        x, y = data["x_um"], data["y_um"]
-        image = ax.imshow(
-            data["temperature_flake_average_K"].T,
-            origin="lower",
-            extent=[x[0], x[-1], y[0], y[-1]],
+        image = cell_field(
+            ax,
+            data["x_edges_m"],
+            data["y_edges_m"],
+            data["temperature_flake_average_K"],
+            coordinate_scale=1e6,
             cmap="inferno",
-            aspect="equal",
         )
         flake_limits(ax)
         ax.set_title(f"Expanded FVM ΔT, E∥{axis}")
@@ -186,18 +197,18 @@ def plot_summary(
 
     # Weighting and local collection diagnostics.
     data = expanded["b"]
-    x, y = data["x_um"], data["y_um"]
     fig, axes = plt.subplots(1, 3, figsize=(15, 4.8), constrained_layout=True)
     for ax, key, title, cmap in (
         (axes[0], "weighting_potential", "Approximate electrode weighting ψ", "viridis"),
         (axes[1], "shockley_ramo_integrand_A_m2", "Shockley–Ramo integrand, E∥b", "RdBu_r"),
         (axes[2], "temperature_flake_average_K", "Edge temperature, E∥b", "inferno"),
     ):
-        image = ax.imshow(
-            data[key].T,
-            origin="lower",
-            extent=[x[0], x[-1], y[0], y[-1]],
-            aspect="equal",
+        image = cell_field(
+            ax,
+            data["x_edges_m"],
+            data["y_edges_m"],
+            data[key],
+            coordinate_scale=1e6,
             cmap=cmap,
         )
         flake_limits(ax)

@@ -33,6 +33,9 @@ if str(REPOSITORY) not in sys.path:
 from photothermal_pte.validation.paper_ir_sanity import (  # noqa: E402
     run_device_a_explicit_thermal_pte as thermal,
 )
+from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (  # noqa: E402
+    cell_field,
+)
 
 
 CASES = ("Maxwell_a", "Maxwell_b", "analytic_a", "analytic_b")
@@ -181,8 +184,8 @@ def shared_scale_figure(
     projection: str,
     finite: dict[str, np.ndarray],
     least_squares: dict[str, np.ndarray],
-    x: np.ndarray,
-    y: np.ndarray,
+    x_edges: np.ndarray,
+    y_edges: np.ndarray,
     display_mask: np.ndarray,
 ) -> None:
     cases = (f"{model}_a", f"{model}_b")
@@ -195,17 +198,17 @@ def shared_scale_figure(
         float(np.nanmax(np.abs(np.where(display_mask, item, np.nan))))
         for item in arrays
     )
-    extent = [x[0] * 1e6, x[-1] * 1e6, y[0] * 1e6, y[-1] * 1e6]
     figure, axes = plt.subplots(2, 2, figsize=(12.5, 10), constrained_layout=True)
     for row, case in enumerate(cases):
         for column, (name, collection) in enumerate(
             (("finite difference", finite), ("LS radius 0.3 µm", least_squares))
         ):
-            image = axes[row, column].imshow(
-                np.where(display_mask, collection[case], np.nan).T,
-                origin="lower",
-                extent=extent,
-                aspect="equal",
+            image = cell_field(
+                axes[row, column],
+                x_edges,
+                y_edges,
+                np.where(display_mask, collection[case], np.nan),
+                coordinate_scale=1e6,
                 cmap="coolwarm",
                 vmin=-limit,
                 vmax=limit,
@@ -433,8 +436,8 @@ def main() -> int:
             "thickness average",
             finite_for_figure,
             ls_for_figure,
-            x,
-            y,
+            x_edges,
+            y_edges,
             display,
         )
     summary["figures"] = {
