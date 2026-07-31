@@ -1,5 +1,40 @@
 # Latest photothermal validation status
 
+## Paper-like w0=12 µm planar/straight-edge optical baseline
+
+- Status:
+  `BASELINE_PAPER_LIKE_W12_SCALAR_GAUSSIAN_OPTICAL_GATES_PASSED_REFINEMENT_PENDING`.
+- The source-only gate has now been followed by all four ordered GPU-only
+  material cases: planar TaIrTe4 for `E||a` and `E||b`, then the straight
+  45-degree finite edge for `E||a` and `E||b`.
+- Raw `(P_Q, P_six, closure)` values are
+  `(3.995457041e-11, 3.993046630e-11, 0.060365%)`,
+  `(5.934078089e-11, 5.931736740e-11, 0.039472%)`,
+  `(2.256660508e-11, 2.253087111e-11, 0.158600%)`, and
+  `(2.971653440e-11, 2.970831307e-11, 0.027674%)`, respectively.
+- All four runs reached auto-shutoff below `1e-5`, contain no negative-Q
+  voxels, reintegrate within 0.5%, and use no clipping, smoothing, gain,
+  rescaling, tiling, source deletion, periodic boundary, or CPU FDTD
+  fallback.
+- The raw finite-edge/planar absorbed-power ratios are `0.564807` for
+  a polarization and `0.500778` for b polarization. Equal-power
+  normalization is used only for spatial-shape plots and metrics; it never
+  overwrites the saved Q.
+- Read-only FSP extraction called neither FDTD `run` nor `runanalysis`.
+  The production incident-reference monitor requested at `z=0.6 um` is
+  realized at `z=0.5136 um`. Its downward total-field decomposition is not
+  called a pure incident beam because reflection, scattering, and evanescent
+  fields may contribute.
+- Flake-midplane `Ex/Ey/Ez` fields were read on component-specific Yee
+  coordinates and interpolated only to their exact common support. The
+  planar total-E2 widths remain near 12 um; finite-edge fields are explicitly
+  non-Gaussian diagnostics.
+- This is still not a paper reproduction or promoted production Q. The
+  required 50-nm local-x/y refinement has not run. No thermal, PTE, adjoint,
+  gradient, or optimization calculation ran in this checkpoint.
+- Report, JSON, two CSV tables, four figures, and manifest:
+  `reports/paper_ir_w12_planar_edge_baseline/`.
+
 ## Paper-IR source-only certification
 
 - Status: `VALIDATED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY`.
@@ -37,10 +72,10 @@
   retained only as an optional future diagnostic. The legacy nominal
   `w0=2 µm` case remains
   `DIAGNOSTIC_ONLY_INVALID_FOR_PAPER_LIKE_BEAM`.
-- The source-only pass authorizes planar-a/b followed by straight-45-degree
-  finite-edge-a/b with identical source geometry and incident-power
-  normalization. Those material cases, thermal, weighting potential, PTE,
-  adjoint, gradient, and optimization have not yet run.
+- The authorized planar-a/b and straight-45-degree finite-edge-a/b baseline
+  material cases have now run and are summarized above. Thermal, weighting
+  potential, PTE, adjoint, gradient, and optimization did not run in that
+  optical checkpoint.
 - Report, beam audit, summary, CSV tables, aperture figure, and manifest:
   `reports/paper_ir_source_only_certification/`.
 

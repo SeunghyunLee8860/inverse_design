@@ -1,0 +1,200 @@
+{
+  "artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_a_L60_xy100_dz5_pml24_t4_gpu4_20260731/case_result.json",
+      "role": "planar_a case result",
+      "sha256": "a208e91b9f20b26c5d80c87a7357f14e705ad28d1b7283d44b9852084d4c3615",
+      "size_bytes": 74145
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_a_L60_xy100_dz5_pml24_t4_gpu4_20260731/RAW_ARTIFACT_MANIFEST.json",
+      "role": "planar_a raw artifact manifest",
+      "sha256": "f3fa0eb9dcad5d19553a66fd8d9e6fc7cfa3adfed88536ede633c7b5288a46ef",
+      "size_bytes": 11425
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_a_L60_xy100_dz5_pml24_t4_gpu4_20260731/readonly_field_audit_v2/saved_field_monitor_audit.json",
+      "role": "planar_a read-only field audit",
+      "sha256": "1ecc02eac8db8a95bfe79caa640358c9a35143272f7bc7407f2ed084219f8be3",
+      "size_bytes": 9265
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_a_L60_xy100_dz5_pml24_t4_gpu4_20260731 --case finite-flake --polarization a --geometry planar-stack --domain-um 60 --pml-layers 24 --flake-dz-nm 5 --local-xy-mesh-nm 100 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 50 --waist-um 12 --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_a_L60_xy100_dz5_pml24_t4_gpu4_retry4_20260731/readonly_recovery_v2/case_result_recovered.json --execution-contract production --gpu-device 'GPU 4' --threads 3 --epsilon-c-model paper-b-closure",
+      "generation_commit": "ed7c6b870e005d01d51ba9c0557e4d377bec698a",
+      "hash_source": "case-local immutable raw manifest generated with the Q",
+      "reproduction": "checkout ed7c6b870e005d01d51ba9c0557e4d377bec698a, activate the project Miniconda environment, then run: /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_a_L60_xy100_dz5_pml24_t4_gpu4_20260731 --case finite-flake --polarization a --geometry planar-stack --domain-um 60 --pml-layers 24 --flake-dz-nm 5 --local-xy-mesh-nm 100 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 50 --waist-um 12 --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_a_L60_xy100_dz5_pml24_t4_gpu4_retry4_20260731/readonly_recovery_v2/case_result_recovered.json --execution-contract production --gpu-device 'GPU 4' --threads 3 --epsilon-c-model paper-b-closure",
+      "role": "planar_a raw Q NPZ",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_a_L60_xy100_dz5_pml24_t4_gpu4_20260731/finite_q_on_artifact.npz",
+      "sha256": "72f3e386435662dfe1fa9d660072e46f26fcc2546c4789adbbd73f41832b7972",
+      "size_bytes": 455705538
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_a_L60_xy100_dz5_pml24_t4_gpu4_20260731 --case finite-flake --polarization a --geometry planar-stack --domain-um 60 --pml-layers 24 --flake-dz-nm 5 --local-xy-mesh-nm 100 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 50 --waist-um 12 --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_a_L60_xy100_dz5_pml24_t4_gpu4_retry4_20260731/readonly_recovery_v2/case_result_recovered.json --execution-contract production --gpu-device 'GPU 4' --threads 3 --epsilon-c-model paper-b-closure",
+      "generation_commit": "ed7c6b870e005d01d51ba9c0557e4d377bec698a",
+      "hash_source": "case-local immutable raw manifest generated with the FSP",
+      "reproduction": "checkout ed7c6b870e005d01d51ba9c0557e4d377bec698a, activate the project Miniconda environment, then run: /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_a_L60_xy100_dz5_pml24_t4_gpu4_20260731 --case finite-flake --polarization a --geometry planar-stack --domain-um 60 --pml-layers 24 --flake-dz-nm 5 --local-xy-mesh-nm 100 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 50 --waist-um 12 --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_a_L60_xy100_dz5_pml24_t4_gpu4_retry4_20260731/readonly_recovery_v2/case_result_recovered.json --execution-contract production --gpu-device 'GPU 4' --threads 3 --epsilon-c-model paper-b-closure",
+      "role": "planar_a raw FSP",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_a_L60_xy100_dz5_pml24_t4_gpu4_20260731/finite_2um_optical_q.fsp",
+      "sha256": "e09358ad54978f882e7467f62d2908e252aa9412a52db9d0cd17335a44c9df28",
+      "size_bytes": 798021817
+    },
+    {
+      "hash_source": "read-only field audit",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_a_L60_xy100_dz5_pml24_t4_gpu4_20260731/readonly_field_audit_v2/saved_field_monitor_audit.npz",
+      "role": "planar_a read-only field NPZ",
+      "sha256": "d5dfa6d198884ef364759c338f0d19b51763621b6394182292ea623a687b5887",
+      "size_bytes": 79588273
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/case_result.json",
+      "role": "planar_b case result",
+      "sha256": "08d8a5a327cf922921ed6e8c95f0d30ef2f55caffe54a3bddad6d02d54656b4b",
+      "size_bytes": 74358
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/RAW_ARTIFACT_MANIFEST.json",
+      "role": "planar_b raw artifact manifest",
+      "sha256": "2fdde286eb2b3283eef21558cbfd577d1d9eb1731d104485f6950fe8f4588b9f",
+      "size_bytes": 11007
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/readonly_field_audit_v2/saved_field_monitor_audit.json",
+      "role": "planar_b read-only field audit",
+      "sha256": "0dd739dde0065650af98e0012611db4dcb96a915a471aac1f71655a5a38ddde7",
+      "size_bytes": 9261
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_b_L60_xy100_dz5_pml24_t4_gpu4_20260731 --case finite-flake --polarization b --geometry planar-stack --domain-um 60 --pml-layers 24 --flake-dz-nm 5 --local-xy-mesh-nm 100 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 50 --waist-um 12 --execution-contract production --gpu-device 'GPU 4' --threads 3 --epsilon-c-model paper-b-closure --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/case_result.json",
+      "generation_commit": "c9a2da2daae02dcd3901375bf318748a24631ba7",
+      "hash_source": "case-local immutable raw manifest generated with the Q",
+      "reproduction": "checkout c9a2da2daae02dcd3901375bf318748a24631ba7, activate the project Miniconda environment, then run: /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_b_L60_xy100_dz5_pml24_t4_gpu4_20260731 --case finite-flake --polarization b --geometry planar-stack --domain-um 60 --pml-layers 24 --flake-dz-nm 5 --local-xy-mesh-nm 100 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 50 --waist-um 12 --execution-contract production --gpu-device 'GPU 4' --threads 3 --epsilon-c-model paper-b-closure --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/case_result.json",
+      "role": "planar_b raw Q NPZ",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/finite_q_on_artifact.npz",
+      "sha256": "92a1363e9675c8954bab6556f0215125d7e150e51b2125c93246472f4ddad1bb",
+      "size_bytes": 455705238
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_b_L60_xy100_dz5_pml24_t4_gpu4_20260731 --case finite-flake --polarization b --geometry planar-stack --domain-um 60 --pml-layers 24 --flake-dz-nm 5 --local-xy-mesh-nm 100 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 50 --waist-um 12 --execution-contract production --gpu-device 'GPU 4' --threads 3 --epsilon-c-model paper-b-closure --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/case_result.json",
+      "generation_commit": "c9a2da2daae02dcd3901375bf318748a24631ba7",
+      "hash_source": "case-local immutable raw manifest generated with the FSP",
+      "reproduction": "checkout c9a2da2daae02dcd3901375bf318748a24631ba7, activate the project Miniconda environment, then run: /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_b_L60_xy100_dz5_pml24_t4_gpu4_20260731 --case finite-flake --polarization b --geometry planar-stack --domain-um 60 --pml-layers 24 --flake-dz-nm 5 --local-xy-mesh-nm 100 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 50 --waist-um 12 --execution-contract production --gpu-device 'GPU 4' --threads 3 --epsilon-c-model paper-b-closure --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/case_result.json",
+      "role": "planar_b raw FSP",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/finite_2um_optical_q.fsp",
+      "sha256": "3a036f8a31fa8032a523beb706ec7648523a8dda4d201dafdee10cce9458609c",
+      "size_bytes": 798021817
+    },
+    {
+      "hash_source": "read-only field audit",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/readonly_field_audit_v2/saved_field_monitor_audit.npz",
+      "role": "planar_b read-only field NPZ",
+      "sha256": "c886865780c07e3ec4c0cac4a3491c65b86acf46d7a5f7d49b501797835ff0f7",
+      "size_bytes": 76289684
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/case_result.json",
+      "role": "edge_a case result",
+      "sha256": "9ac81c21bb0a400fe7dc2c49bcee75d052ffa574d7a87613103ba2c339a7eace",
+      "size_bytes": 74927
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/RAW_ARTIFACT_MANIFEST.json",
+      "role": "edge_a raw artifact manifest",
+      "sha256": "951b5bf53f3ec6ab6af739b65a7028e2e6c8ccedfa9198b2b020897baed1d054",
+      "size_bytes": 11581
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/readonly_field_audit_v2/saved_field_monitor_audit.json",
+      "role": "edge_a read-only field audit",
+      "sha256": "daa6bab3a4be996e77562d5faf9a275830c6a9fcd7ed46ef1d87a213fe37942b",
+      "size_bytes": 9273
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731 --case finite-flake --polarization a --geometry straight-45-edge --domain-um 60 --pml-layers 24 --flake-dz-nm 5 --local-xy-mesh-nm 100 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 50 --waist-um 12 --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_a_L60_xy100_dz5_pml24_t4_gpu4_retry4_20260731/readonly_recovery_v2/case_result_recovered.json --execution-contract production --gpu-device 'GPU 4' --threads 3 --epsilon-c-model paper-b-closure",
+      "generation_commit": "f9948f2193fa657673780b3f25df6b3ba038e949",
+      "hash_source": "case-local immutable raw manifest generated with the Q",
+      "reproduction": "checkout f9948f2193fa657673780b3f25df6b3ba038e949, activate the project Miniconda environment, then run: /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731 --case finite-flake --polarization a --geometry straight-45-edge --domain-um 60 --pml-layers 24 --flake-dz-nm 5 --local-xy-mesh-nm 100 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 50 --waist-um 12 --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_a_L60_xy100_dz5_pml24_t4_gpu4_retry4_20260731/readonly_recovery_v2/case_result_recovered.json --execution-contract production --gpu-device 'GPU 4' --threads 3 --epsilon-c-model paper-b-closure",
+      "role": "edge_a raw Q NPZ",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/finite_q_on_artifact.npz",
+      "sha256": "e0bf7b2f251cd818a5d68bd085bb792de490b112a9b7ecb78f33c00a0471333a",
+      "size_bytes": 455705734
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731 --case finite-flake --polarization a --geometry straight-45-edge --domain-um 60 --pml-layers 24 --flake-dz-nm 5 --local-xy-mesh-nm 100 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 50 --waist-um 12 --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_a_L60_xy100_dz5_pml24_t4_gpu4_retry4_20260731/readonly_recovery_v2/case_result_recovered.json --execution-contract production --gpu-device 'GPU 4' --threads 3 --epsilon-c-model paper-b-closure",
+      "generation_commit": "f9948f2193fa657673780b3f25df6b3ba038e949",
+      "hash_source": "case-local immutable raw manifest generated with the FSP",
+      "reproduction": "checkout f9948f2193fa657673780b3f25df6b3ba038e949, activate the project Miniconda environment, then run: /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731 --case finite-flake --polarization a --geometry straight-45-edge --domain-um 60 --pml-layers 24 --flake-dz-nm 5 --local-xy-mesh-nm 100 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 50 --waist-um 12 --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_a_L60_xy100_dz5_pml24_t4_gpu4_retry4_20260731/readonly_recovery_v2/case_result_recovered.json --execution-contract production --gpu-device 'GPU 4' --threads 3 --epsilon-c-model paper-b-closure",
+      "role": "edge_a raw FSP",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/finite_2um_optical_q.fsp",
+      "sha256": "b15f10d532d993167ddec7f4205bb1e84830fab42d3e2c2ed36d7d1b6fc4fbb8",
+      "size_bytes": 798023867
+    },
+    {
+      "hash_source": "read-only field audit",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/readonly_field_audit_v2/saved_field_monitor_audit.npz",
+      "role": "edge_a read-only field NPZ",
+      "sha256": "ca92e4ca66bc247d93f82f15bffc8658d4e9c52c302dce96b0af0cc8ff36514b",
+      "size_bytes": 80253649
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/case_result.json",
+      "role": "edge_b case result",
+      "sha256": "f6366945d62cc0ec1b6cc2c289a039c9a1d2b4d6aac786d3a8cf030ecfd399aa",
+      "size_bytes": 74770
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/RAW_ARTIFACT_MANIFEST.json",
+      "role": "edge_b raw artifact manifest",
+      "sha256": "b2878a483c59aa260dd1c9c2865aceab9fd3b34282ddea7e2abfd3cd07948804",
+      "size_bytes": 11163
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/readonly_field_audit_v3/saved_field_monitor_audit.json",
+      "role": "edge_b read-only field audit",
+      "sha256": "2ceb4c5e39ab9e4939c4e9e6097ac10f8613627a0125b369f2d72270d324c0c3",
+      "size_bytes": 9280
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731 --case finite-flake --polarization b --geometry straight-45-edge --domain-um 60 --pml-layers 24 --flake-dz-nm 5 --local-xy-mesh-nm 100 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 50 --waist-um 12 --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/case_result.json --execution-contract production --gpu-device 'GPU 4' --threads 3 --epsilon-c-model paper-b-closure",
+      "generation_commit": "f9948f2193fa657673780b3f25df6b3ba038e949",
+      "hash_source": "case-local immutable raw manifest generated with the Q",
+      "reproduction": "checkout f9948f2193fa657673780b3f25df6b3ba038e949, activate the project Miniconda environment, then run: /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731 --case finite-flake --polarization b --geometry straight-45-edge --domain-um 60 --pml-layers 24 --flake-dz-nm 5 --local-xy-mesh-nm 100 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 50 --waist-um 12 --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/case_result.json --execution-contract production --gpu-device 'GPU 4' --threads 3 --epsilon-c-model paper-b-closure",
+      "role": "edge_b raw Q NPZ",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/finite_q_on_artifact.npz",
+      "sha256": "bedbeca11529d8da686f290403fc4f032a8b5c28edaa244857e4181897ba95c2",
+      "size_bytes": 455705434
+    },
+    {
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731 --case finite-flake --polarization b --geometry straight-45-edge --domain-um 60 --pml-layers 24 --flake-dz-nm 5 --local-xy-mesh-nm 100 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 50 --waist-um 12 --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/case_result.json --execution-contract production --gpu-device 'GPU 4' --threads 3 --epsilon-c-model paper-b-closure",
+      "generation_commit": "f9948f2193fa657673780b3f25df6b3ba038e949",
+      "hash_source": "case-local immutable raw manifest generated with the FSP",
+      "reproduction": "checkout f9948f2193fa657673780b3f25df6b3ba038e949, activate the project Miniconda environment, then run: /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731 --case finite-flake --polarization b --geometry straight-45-edge --domain-um 60 --pml-layers 24 --flake-dz-nm 5 --local-xy-mesh-nm 100 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --source-span-um 50 --waist-um 12 --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/case_result.json --execution-contract production --gpu-device 'GPU 4' --threads 3 --epsilon-c-model paper-b-closure",
+      "role": "edge_b raw FSP",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/finite_2um_optical_q.fsp",
+      "sha256": "8db4dfce5f259fdf6b0efec56900a1589ee762833bc300076e41d8eebd7c6d4b",
+      "size_bytes": 798022715
+    },
+    {
+      "hash_source": "read-only field audit",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/readonly_field_audit_v3/saved_field_monitor_audit.npz",
+      "role": "edge_b read-only field NPZ",
+      "sha256": "3be1e3bb2bb9506f2d4b973c33eb75c0f943ccea8756e1cbad1424ffc72915b3",
+      "size_bytes": 77366950
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_20260731/case_result.json",
+      "role": "preserved edge_a_license_start_race diagnostic",
+      "sha256": "ab09df548e1a2b0a02ea6798cdeb1b6e24985f7c1b51b7276b4abcc858f4fb03",
+      "size_bytes": 17200
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/case_result.json",
+      "role": "preserved edge_b_license_start_race diagnostic",
+      "sha256": "ad1d309144816fc113385b178e9210c2b6e53877ac66deb1d029e900217d85e9",
+      "size_bytes": 17160
+    }
+  ],
+  "generation_commit": "7f49b329a0c982ee7549a7c5e2e94754856344a2",
+  "raw_NPZ_or_FSP_committed_to_git": false,
+  "raw_artifact_hash_policy": "Large raw Q/FSP hashes are copied from their immutable case-local manifests; JSON/manifests are rehashed here.",
+  "summary_generation_command": "photothermal_pte/validation/paper_ir_sanity/summarize_w12_planar_edge_baseline.py --planar-a-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_a_L60_xy100_dz5_pml24_t4_gpu4_20260731 --planar-a-field-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_a_L60_xy100_dz5_pml24_t4_gpu4_20260731/readonly_field_audit_v2 --planar-b-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_b_L60_xy100_dz5_pml24_t4_gpu4_20260731 --planar-b-field-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/readonly_field_audit_v2 --edge-a-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731 --edge-a-field-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/readonly_field_audit_v2 --edge-b-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731 --edge-b-field-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/readonly_field_audit_v3 --failed-edge-a-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_20260731 --failed-edge-b-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_20260731 --output-dir photothermal_pte/reports/paper_ir_w12_planar_edge_baseline"
+}
