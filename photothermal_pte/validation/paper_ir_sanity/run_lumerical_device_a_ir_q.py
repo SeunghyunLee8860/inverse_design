@@ -3277,9 +3277,13 @@ def append_device_a_material_absorption_audit(
         & (z_m[None, None, :] <= 0.0)
     )
     ti_mask = metal_xy[:, :, None] & (
-        (z_m[None, None, :] > 0.0)
+        (z_m[None, None, :] >= 0.0)
         & (z_m[None, None, :] <= TI_THICKNESS_M)
     )
+    # Flake precedence only matters if a future figure-derived contract adds
+    # a finite under-contact overlap.  In the current visible-area contract
+    # the polygons merely meet at their lateral boundary.
+    ti_mask &= ~flake_mask
     au_mask = metal_xy[:, :, None] & (
         (z_m[None, None, :] > TI_THICKNESS_M)
         & (z_m[None, None, :] <= TI_THICKNESS_M + AU_THICKNESS_M)
@@ -3325,7 +3329,8 @@ def append_device_a_material_absorption_audit(
     ) / max(abs(p_total), np.finfo(float).tiny)
     powers["support_assignment_contract"] = (
         "analytic digitized polygon masks on the common pabs grid; z=0 is "
-        "assigned one-sided to TaIrTe4, z=5 nm one-sided to Ti, and both "
+        "assigned by lateral support (TaIrTe4 where the flake exists, Ti "
+        "where the metal exists), z=5 nm one-sided to Ti, and both "
         "exact-interface sample powers are retained as diagnostics"
     )
     result["material_absorption_power_W"] = powers
