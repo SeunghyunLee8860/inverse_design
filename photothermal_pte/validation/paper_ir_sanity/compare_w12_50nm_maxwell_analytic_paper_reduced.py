@@ -101,6 +101,20 @@ def artifact_record(path: Path, role: str) -> dict[str, Any]:
     }
 
 
+def jsonable(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {str(key): jsonable(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [jsonable(item) for item in value]
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, Path):
+        return str(value)
+    return value
+
+
 def git_commit() -> str:
     return subprocess.check_output(
         ["git", "rev-parse", "HEAD"],
@@ -126,12 +140,16 @@ class OpticalInput:
 def inspect_optical(directory: Path, polarization: str) -> OpticalInput:
     result_path = directory / "case_result.json"
     q_path = directory / "finite_q_on_artifact.npz"
-    fsp_path = directory / "finite_2um_optical_q.fsp"
     manifest_path = directory / "RAW_ARTIFACT_MANIFEST.json"
-    for path in (result_path, q_path, fsp_path, manifest_path):
+    for path in (result_path, q_path, manifest_path):
         if not path.is_file():
             raise FileNotFoundError(path)
     result = json.loads(result_path.read_text())
+    fsp_path = directory / "finite_2um_optical_q.fsp"
+    if not fsp_path.is_file():
+        fsp_path = Path(result["project"]).expanduser().resolve()
+    if not fsp_path.is_file():
+        raise FileNotFoundError(fsp_path)
     run = result["run_result"]
     component_power = {
         axis: float(run["component_power_W"][axis]) for axis in "xyz"
@@ -178,6 +196,10 @@ def inspect_optical(directory: Path, polarization: str) -> OpticalInput:
             result["pre_run_contract"]["geometry"]["flake_thickness_m"],
             THICKNESS_M,
         ),
+        "substrate_285nm_SiO2_on_Si": (
+            result["pre_run_contract"]["geometry"]["substrate"]
+            == "285 nm SiO2 on Si"
+        ),
         "epsilon_c_equals_b": result["pre_run_contract"]["material"][
             "epsilon_readback"
         ]["epsilon_z_equals_epsilon_b_contract"],
@@ -199,6 +221,7 @@ def inspect_optical(directory: Path, polarization: str) -> OpticalInput:
             and result["periodic_Q_used"] is False
         ),
     }
+    contract = {key: bool(value) for key, value in contract.items()}
     gates = {
         "contract_exact": all(contract.values()),
         "closure_lt_0p5_percent": (
@@ -231,6 +254,7 @@ def inspect_optical(directory: Path, polarization: str) -> OpticalInput:
             atol=0.0,
         ),
     }
+    gates = {key: bool(value) for key, value in gates.items()}
     gates["all_before_remap"] = all(gates.values())
     q_summary = {
         "P_Q_W_at_1_W_m2_central_intensity": float(run["P_Q_W"]),
@@ -348,6 +372,105 @@ def common_sheet_geometry(
         kappa,
         resistances,
     )
+
+
+def source_coordinate_bounds(
+    optical: OpticalInput,
+) -> dict[str, list[float]]:
+    with np.load(optical.q_path, allow_pickle=False) as raw:
+        return {
+            axis: [
+                float(np.asarray(raw[f"{axis}_m"], float)[0]),
+                float(np.asarray(raw[f"{axis}_m"], float)[-1]),
+            ]
+            for axis in "xyz"
+        }
+
+
+def embedding_geometry(sheet: Any, source_bounds: dict[str, list[float]]) -> Any:
+    z_edges = np.asarray(
+        sorted(
+            {
+                float(source_bounds["z"][0]),
+                -THICKNESS_M,
+                0.0,
+                float(source_bounds["z"][1]),
+            }
+        ),
+        float,
+    )
+    if (
+        z_edges[0] > source_bounds["z"][0]
+        or z_edges[-1] < source_bounds["z"][1]
+        or not np.any(np.isclose(z_edges, -THICKNESS_M))
+        or not np.any(np.isclose(z_edges, 0.0))
+    ):
+        raise RuntimeError("embedding z grid does not contain source")
+    shape = (
+        sheet.x_edges_m.size - 1,
+        sheet.y_edges_m.size - 1,
+        z_edges.size - 1,
+    )
+    z = 0.5 * (z_edges[:-1] + z_edges[1:])
+    flake_z = (z > -THICKNESS_M) & (z < 0.0)
+    if np.count_nonzero(flake_z) != 1:
+        raise RuntimeError("embedding grid must have exactly one sheet cell")
+    flake_xy = np.any(sheet.flake_mask, axis=2)
+    flake = flake_xy[:, :, None] & flake_z[None, None, :]
+    material = np.zeros(shape, np.uint8)
+    material[flake] = 3
+    kappa = np.ones((*shape, 3), float)
+    kappa[flake] = thermal.KAPPA_TAIRTE4_LAB_W_MK
+    resistances = {
+        "x": np.zeros((shape[0] - 1, shape[1], shape[2])),
+        "y": np.zeros((shape[0], shape[1] - 1, shape[2])),
+        "z": np.zeros((shape[0], shape[1], shape[2] - 1)),
+    }
+    return thermal.Geometry(
+        sheet.x_edges_m,
+        sheet.y_edges_m,
+        z_edges,
+        material,
+        flake,
+        kappa,
+        resistances,
+    )
+
+
+def map_Maxwell_q_to_sheet(
+    optical: OpticalInput,
+    sheet: Any,
+    source_bounds: dict[str, list[float]],
+) -> tuple[np.ndarray, dict[str, Any]]:
+    embedding = embedding_geometry(sheet, source_bounds)
+    mapped, audit = thermal.load_and_map_q(
+        optical.q_path,
+        optical.result_path,
+        embedding,
+    )
+    flake_z = np.flatnonzero(np.any(embedding.flake_mask, axis=(0, 1)))
+    if flake_z.size != 1:
+        raise RuntimeError("mapped embedding has no unique sheet cell")
+    q_sheet = mapped[:, :, flake_z[0] : flake_z[0] + 1]
+    power_sheet = integrate_q(q_sheet, sheet)
+    audit.update(
+        {
+            "embedding_target_z_edges_m": embedding.z_edges_m.tolist(),
+            "sheet_extraction_z_index": int(flake_z[0]),
+            "P_Q_sheet_W": power_sheet,
+            "embedding_to_sheet_relative_power_error": abs(
+                power_sheet - audit["P_Q_target_W"]
+            )
+            / abs(audit["P_Q_target_W"]),
+            "two_stage_contract": (
+                "the full stored common-Q coordinate box is first contained "
+                "by a 3D target; nearest-support projection preserves every "
+                "source-cell energy in the sole -130..0-nm TaIrTe4 cell; "
+                "that cell is then viewed as the exact sheet source"
+            ),
+        }
+    )
+    return q_sheet, audit
 
 
 def assemble_sheet_system(geometry: Any) -> Any:
@@ -1035,6 +1158,7 @@ def write_report(
     cross = summary["Maxwell_vs_analytic_same_incident_power"]
     optical = summary["optical_inputs"]
     trend = summary["paper_trend_assessment"]
+    cases = summary["cases"]
     text = f"""# W12 50-nm Maxwell vs analytic paper-reduced thermal sanity
 
 Status: `{summary['status']}`
@@ -1077,7 +1201,19 @@ permittivity coordinates were read independently; their maximum mismatch is
 reported in the JSON. Raw Q was not clipped, smoothed, gained, rescaled,
 tiled, or deleted.
 
+The independently measured a/b empty-stack incident powers differ by
+`{summary['a_b_incident_normalization_audit']['relative_difference']:.3e}`
+relative, passing the `<1e-5` same-normalization gate. No polarization-
+matching gain was applied.
+
 ## Same-incident-power results
+
+| case | absorbed power (W) | Tmax (K) | raw max |dT/dn| (K/m) | raw max |grad T| (K/m) | robust max |dT/dn| (K/m) | robust max |grad T| (K/m) |
+|---|---:|---:|---:|---:|---:|---:|
+| Maxwell a | {cases['Maxwell_a_same_incident_power']['source_power_W']:.9e} | {cases['Maxwell_a_same_incident_power']['Tmax_rise_K']:.9e} | {cases['Maxwell_a_same_incident_power']['raw_fixed_edge_window']['n']['raw_max_abs_K_m']:.9e} | {cases['Maxwell_a_same_incident_power']['raw_fixed_edge_window']['magnitude']['raw_max_abs_K_m']:.9e} | {cases['Maxwell_a_same_incident_power']['robust_exact_edge_window']['n']['maximum_abs_K_m']:.9e} | {cases['Maxwell_a_same_incident_power']['robust_exact_edge_window']['magnitude']['maximum_abs_K_m']:.9e} |
+| Maxwell b | {cases['Maxwell_b_same_incident_power']['source_power_W']:.9e} | {cases['Maxwell_b_same_incident_power']['Tmax_rise_K']:.9e} | {cases['Maxwell_b_same_incident_power']['raw_fixed_edge_window']['n']['raw_max_abs_K_m']:.9e} | {cases['Maxwell_b_same_incident_power']['raw_fixed_edge_window']['magnitude']['raw_max_abs_K_m']:.9e} | {cases['Maxwell_b_same_incident_power']['robust_exact_edge_window']['n']['maximum_abs_K_m']:.9e} | {cases['Maxwell_b_same_incident_power']['robust_exact_edge_window']['magnitude']['maximum_abs_K_m']:.9e} |
+| analytic a | {cases['analytic_a_same_incident_power']['source_power_W']:.9e} | {cases['analytic_a_same_incident_power']['Tmax_rise_K']:.9e} | {cases['analytic_a_same_incident_power']['raw_fixed_edge_window']['n']['raw_max_abs_K_m']:.9e} | {cases['analytic_a_same_incident_power']['raw_fixed_edge_window']['magnitude']['raw_max_abs_K_m']:.9e} | {cases['analytic_a_same_incident_power']['robust_exact_edge_window']['n']['maximum_abs_K_m']:.9e} | {cases['analytic_a_same_incident_power']['robust_exact_edge_window']['magnitude']['maximum_abs_K_m']:.9e} |
+| analytic b | {cases['analytic_b_same_incident_power']['source_power_W']:.9e} | {cases['analytic_b_same_incident_power']['Tmax_rise_K']:.9e} | {cases['analytic_b_same_incident_power']['raw_fixed_edge_window']['n']['raw_max_abs_K_m']:.9e} | {cases['analytic_b_same_incident_power']['raw_fixed_edge_window']['magnitude']['raw_max_abs_K_m']:.9e} | {cases['analytic_b_same_incident_power']['robust_exact_edge_window']['n']['maximum_abs_K_m']:.9e} | {cases['analytic_b_same_incident_power']['robust_exact_edge_window']['magnitude']['maximum_abs_K_m']:.9e} |
 
 | source | Pabs b/a | Tmax b/a | raw max |dT/dn| b/a | raw max |grad T| b/a | robust max |dT/dn| b/a | robust max |grad T| b/a |
 |---|---:|---:|---:|---:|---:|---:|
@@ -1087,9 +1223,19 @@ tiled, or deleted.
 Paper trend assessment:
 
 - analytic: `DeltaT_b > DeltaT_a` = `{trend['analytic_Tmax_b_gt_a']}`,
-  `|grad T|_b > |grad T|_a` = `{trend['analytic_gradient_b_gt_a']}`
+  raw `|grad T|_b > |grad T|_a` =
+  `{ratios['analytic_same_incident_power']['raw_max_grad_magnitude_b_over_a'] > 1.0}`,
+  robust = `{trend['analytic_gradient_b_gt_a']}`
 - Maxwell: `DeltaT_b > DeltaT_a` = `{trend['Maxwell_Tmax_b_gt_a']}`,
-  `|grad T|_b > |grad T|_a` = `{trend['Maxwell_gradient_b_gt_a']}`
+  raw `|grad T|_b > |grad T|_a` =
+  `{ratios['Maxwell_same_incident_power']['raw_max_grad_magnitude_b_over_a'] > 1.0}`,
+  robust = `{trend['Maxwell_gradient_b_gt_a']}`
+
+Thus the analytic path reproduces both paper trends. The Maxwell path does
+not reproduce the Tmax trend, and its gradient ordering depends on the
+comparator: the one-cell raw maximum gives `b<a`, whereas the fixed-physical-
+window exact-edge fit gives `b>a`. This disagreement is retained as a
+diagnostic result, not collapsed into one unconditional pass.
 
 Failure to match the paper numerically is not by itself a solver failure,
 because the beam width and exact position are unpublished. Differences are
@@ -1134,6 +1280,17 @@ def main() -> int:
     optical_prepass = all(
         item.gates["all_before_remap"] for item in optical.values()
     )
+    incident_power_a = optical["a"].q_summary[
+        "incident_power_W_at_1_W_m2"
+    ]
+    incident_power_b = optical["b"].q_summary[
+        "incident_power_W_at_1_W_m2"
+    ]
+    incident_power_relative_difference = abs(
+        incident_power_a - incident_power_b
+    ) / max(abs(incident_power_a), abs(incident_power_b))
+    same_incident_normalization = incident_power_relative_difference < 1.0e-5
+    optical_prepass = optical_prepass and same_incident_normalization
     if not optical_prepass:
         args.report_dir.mkdir(parents=True)
         blocked = {
@@ -1150,26 +1307,30 @@ def main() -> int:
             "generation_command": shlex.join([sys.executable, *sys.argv]),
         }
         (args.report_dir / "w12_50nm_maxwell_analytic_summary.json").write_text(
-            json.dumps(blocked, indent=2) + "\n",
+            json.dumps(jsonable(blocked), indent=2) + "\n",
             encoding="utf-8",
         )
-        print(json.dumps(blocked, indent=2))
+        print(json.dumps(jsonable(blocked), indent=2))
         return 2
 
     args.output_dir.mkdir(parents=True)
     args.report_dir.mkdir(parents=True)
     beam = measured_beam(args.incident_reference_npz)
 
-    bounds_a = optical["a"].result["pre_run_contract"]["geometry"][
-        "absorption_analysis_bounds_m"
-    ]
-    bounds_b = optical["b"].result["pre_run_contract"]["geometry"][
-        "absorption_analysis_bounds_m"
-    ]
-    if bounds_a != bounds_b:
-        raise RuntimeError("a/b absorption bounds differ")
+    bounds_a = source_coordinate_bounds(optical["a"])
+    bounds_b = source_coordinate_bounds(optical["b"])
+    if any(
+        not np.allclose(
+            bounds_a[axis],
+            bounds_b[axis],
+            rtol=0.0,
+            atol=1.0e-15,
+        )
+        for axis in "xyz"
+    ):
+        raise RuntimeError("a/b saved Q coordinate bounds differ")
     geometry = common_sheet_geometry(
-        bounds_a,
+        {"x": bounds_a["x"], "y": bounds_a["y"]},
         args.thermal_step_nm * 1.0e-9,
     )
     system = assemble_sheet_system(geometry)
@@ -1184,13 +1345,14 @@ def main() -> int:
     mapping: dict[str, Any] = {}
     for polarization in ("a", "b"):
         item = optical[polarization]
-        q_maxwell, mapped = thermal.load_and_map_q(
-            item.q_path,
-            item.result_path,
+        q_maxwell, mapped = map_Maxwell_q_to_sheet(
+            item,
             geometry,
+            bounds_a,
         )
         mapped["mapping_pass"] = (
             mapped["mapping_relative_power_error"] < 0.005
+            and mapped["embedding_to_sheet_relative_power_error"] < 0.005
             and abs(mapped["mapped_power_outside_flake_W"])
             <= np.finfo(float).eps
             * max(abs(mapped["P_Q_target_W"]), 1.0)
@@ -1353,6 +1515,7 @@ def main() -> int:
 
     numerical_gates = {
         "optical_prepass": optical_prepass,
+        "same_a_b_incident_normalization": same_incident_normalization,
         "mapping_power_error_lt_0p5_percent": all(
             item["mapping_relative_power_error"] < 0.005
             for item in mapping.values()
@@ -1424,9 +1587,9 @@ def main() -> int:
         / "maxwell_vs_analytic_gradient.png",
         "edge_profiles": args.report_dir / "edge_normal_profiles.png",
     }
-    for model, title in (
-        ("Maxwell", "Maxwell"),
-        ("analytic", "analytic Gaussian–Beer–Lambert"),
+    for model, title_temperature, title_gradient in (
+        ("Maxwell", "Maxwell ΔT", "Maxwell |∇T|"),
+        ("analytic", "Analytic ΔT", "Analytic |∇T|"),
     ):
         a_values = arrays[(model, "a", "same_incident_power")]
         b_values = arrays[(model, "b", "same_incident_power")]
@@ -1436,7 +1599,7 @@ def main() -> int:
             a_values,
             b_values,
             "temperature_rise_K",
-            f"{title} temperature rise",
+            title_temperature,
             "ΔT (K)",
         )
         plot_triplet(
@@ -1445,7 +1608,7 @@ def main() -> int:
             a_values,
             b_values,
             "grad_T_magnitude_K_m",
-            f"{title} gradient magnitude",
+            title_gradient,
             "|∇T| (K/m)",
         )
     plot_cross_model(
@@ -1492,6 +1655,17 @@ def main() -> int:
                 "gates": value.gates,
             }
             for key, value in optical.items()
+        },
+        "a_b_incident_normalization_audit": {
+            "incident_power_a_W_at_1_W_m2": incident_power_a,
+            "incident_power_b_W_at_1_W_m2": incident_power_b,
+            "relative_difference": incident_power_relative_difference,
+            "gate_lt_1e_minus_5": same_incident_normalization,
+            "interpretation": (
+                "independent matching empty-stack references use the same "
+                "central-intensity normalization without polarization "
+                "matching gain or rescaling"
+            ),
         },
         "Maxwell_mapping": mapping,
         "analytic_source_contracts": source_contracts,
@@ -1563,7 +1737,7 @@ def main() -> int:
         args.report_dir / "w12_50nm_maxwell_analytic_summary.json"
     )
     summary_path.write_text(
-        json.dumps(summary, indent=2) + "\n",
+        json.dumps(jsonable(summary), indent=2) + "\n",
         encoding="utf-8",
     )
     csv_path = (
@@ -1601,10 +1775,10 @@ def main() -> int:
     }
     manifest_path = args.report_dir / "RAW_ARTIFACT_MANIFEST.json"
     manifest_path.write_text(
-        json.dumps(manifest, indent=2) + "\n",
+        json.dumps(jsonable(manifest), indent=2) + "\n",
         encoding="utf-8",
     )
-    print(json.dumps(summary, indent=2))
+    print(json.dumps(jsonable(summary), indent=2))
     return 0 if status == STATUS_PASS else 2
 
 
