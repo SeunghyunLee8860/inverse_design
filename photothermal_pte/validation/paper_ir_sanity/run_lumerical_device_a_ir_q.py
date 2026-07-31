@@ -872,6 +872,9 @@ def post_run_native_mesh_audit(
     output: Path,
     run_result: dict[str, Any],
     faces: dict[str, dict[str, Any]],
+    q_quadrature_bounds: dict[
+        str, tuple[float, float] | list[float]
+    ],
 ) -> dict[str, Any]:
     solver = {axis: _mesh_coordinate(fdtd, axis) for axis in "xyz"}
     field_common = {
@@ -910,8 +913,8 @@ def post_run_native_mesh_audit(
     common_Q_bounded_weights = {
         axis: bounded_dual_cell_weights(
             field_common[axis],
-            float(realized_bounds[axis][0]),
-            float(realized_bounds[axis][1]),
+            float(q_quadrature_bounds[axis][0]),
+            float(q_quadrature_bounds[axis][1]),
         )
         for axis in "xyz"
     }
@@ -921,18 +924,19 @@ def post_run_native_mesh_audit(
                 float(field_common[axis][0]),
                 float(field_common[axis][-1]),
             ],
-            "realized_face_bounds_m": realized_bounds[axis],
-            "low_face_to_first_sample_m": float(
-                field_common[axis][0] - realized_bounds[axis][0]
+            "Q_quadrature_bounds_m": q_quadrature_bounds[axis],
+            "low_bound_to_first_sample_m": float(
+                field_common[axis][0] - q_quadrature_bounds[axis][0]
             ),
-            "last_sample_to_high_face_m": float(
-                realized_bounds[axis][1] - field_common[axis][-1]
+            "last_sample_to_high_bound_m": float(
+                q_quadrature_bounds[axis][1] - field_common[axis][-1]
             ),
             "bounded_weight_sum_m": float(
                 np.sum(common_Q_bounded_weights[axis])
             ),
-            "realized_span_m": float(
-                realized_bounds[axis][1] - realized_bounds[axis][0]
+            "Q_quadrature_span_m": float(
+                q_quadrature_bounds[axis][1]
+                - q_quadrature_bounds[axis][0]
             ),
         }
         for axis in "xyz"
@@ -1158,11 +1162,15 @@ def post_run_native_mesh_audit(
             for axis, values in field_common.items()
         },
         "realized_six_face_control_volume": realized_control_volume,
-        "common_Q_support_in_realized_control_volume": common_Q_support,
+        "Q_quadrature_control_volume_bounds_m": q_quadrature_bounds,
+        "common_Q_support_in_Q_quadrature_control_volume": (
+            common_Q_support
+        ),
         "common_Q_quadrature_contract": (
-            "dual-cell weights use the independently read six-face "
-            "locations as the outer cell boundaries; each axis weight sum "
-            "equals the realized face-to-face span"
+            "dual-cell weights use the pabs/Q analysis control-volume "
+            "bounds; in matched diagnostic cases these are identical to "
+            "the independently read six-face bounds, while production "
+            "uses a larger flux box around the thin lossy-Q volume"
         ),
         "component_to_common_Q_contract": (
             "pabs_adv E/index component loss is evaluated on each native "
@@ -2796,6 +2804,9 @@ def main() -> int:
                 output,
                 result,
                 setup["inner_faces"],
+                setup["geometry"][
+                    "pabs_nominal_control_volume_bounds_m"
+                ],
             )
             if parsed.execution_contract in (
                 "diagnostic-smoke",
