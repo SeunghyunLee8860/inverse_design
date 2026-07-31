@@ -1,5 +1,27 @@
 # Latest photothermal validation status
 
+## W12 straight-edge-a x/y mesh refinement
+
+- Status: `BLOCKED_W12_EDGE_A_XY_MESH_CONVERGENCE`.
+- The 100 nm baseline was compared with a GPU-only nested refinement that
+  retains 100 nm over the complete Q/closure region and adds 50 nm on
+  `x,y in [-22,22] µm`. The 100 nm artifact has only `0.0560%` of absorbed
+  power outside the fine square, and that outer support remains solved at
+  100 nm; no source is cropped or deleted.
+- `P_Q` changes `0.0545%`, `P_six` changes `0.0753%`, and six-face closure
+  remains `0.1586% / 0.1795%`. Both runs reached auto-shutoff below `1e-5`.
+- Exact cell-overlap remapping preserves fine-grid power to `1.43e-16`.
+  The equal-power lateral-Q NRMSE is `0.5206%` and full-3D Q NRMSE is
+  `1.4095%`; both exceed the strict `0.5%` spatial-Q promotion gate.
+  The `z≈0.514 µm` total-field E² equal-integral NRMSE is `0.0642%`.
+- The first full-area 50 nm attempt reached auto-shutoff but root-filesystem
+  exhaustion prevented project collection/write. It is retained only as a
+  failed diagnostic and is not used as a physical result. The successful
+  nested run wrote directly to `/data`.
+- No thermal, PTE, adjoint, gradient, or optimization calculation ran.
+  Report, JSON, CSV, figures, and manifest:
+  `reports/paper_ir_w12_edge_a_xy_refinement/`.
+
 ## Paper-like w0=12 µm planar/straight-edge optical baseline
 
 - Status:
