@@ -1,5 +1,34 @@
 # Latest photothermal validation status
 
+## Device A single-position Maxwell-to-PTE sanity check
+
+- Status:
+  `COMPLETED_DEVICE_A_SINGLE_POSITION_SANITY_DISAGREES_WITH_DIGITIZED_CURRENT_RATIO`.
+- The pre-registered Figure-3 edge position was evaluated end to end as
+  GPU Maxwell `Q(x,y,z)` -> conservative explicit-3D FVM -> digitized-contact
+  weighting potential -> Shockley-Ramo terminal current. No beam/contact
+  tuning or polarization-dependent Q rescaling was used.
+- Both optical polarizations pass matched-volume six-face closure
+  (`0.2364% / 0.0671%`) and auto-shutoff (`9.461e-6 / 9.969e-6`).
+- At 285 µW incident power, the named isolated-metal diagnostic gives
+  `Ia=8.07262 nA`, `Ib=4.99032 nA`, and `|Ia|/|Ib|=1.617656`.
+  The perfect-to-flake transfer diagnostic gives `Ia=8.19620 nA`,
+  `Ib=5.00198 nA`, and `|Ia|/|Ib|=1.638590`.
+- The digitized Figure-3I/J value is `0.836590 +/- 0.008526`. Neither metal
+  thermalization extreme reproduces it; relative ratio discrepancies are
+  `+93.36% / +95.87%`. This is a completed diagnostic disagreement, not a
+  successful paper reproduction or final experiment prediction.
+- All four remap errors are at roundoff, thermal residuals are below
+  `1.1e-10`, and energy-balance errors are below `1.1e-11`.
+- Visible Au/Ti regions are optical. Their hidden overlap with the flake and
+  finite metal/TaIrTe4 thermal conductance are unpublished, so no arbitrary
+  finite G was promoted. The isolated and perfect-transfer calculations are
+  explicitly named extremes.
+- Raw FSP/NPZ files remain external and are recorded by path, size, and
+  SHA-256. No adjoint, AD-FD, inverse design, or optimization ran.
+- Report, JSON, CSV, figures, and manifest:
+  `reports/paper_ir_device_a_end_to_end/`.
+
 ## W12 edge-local 12.5-nm Lumerical runsetup audit
 
 - Status:

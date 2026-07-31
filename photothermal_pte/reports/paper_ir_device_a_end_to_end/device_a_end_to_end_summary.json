@@ -1,0 +1,218 @@
+{
+  "status": "COMPLETED_DEVICE_A_SINGLE_POSITION_SANITY_DISAGREES_WITH_DIGITIZED_CURRENT_RATIO",
+  "comparison_contract": "single pre-registered beam position; no beam/contact tuning; no polarization-dependent Q rescaling",
+  "measured_abs_Ia_over_abs_Ib": 0.8365896980461811,
+  "measured_abs_Ib_over_abs_Ia": 1.1953290870488325,
+  "measured_digitization_uncertainty": 0.00852575488454707,
+  "scenario_ratios": {
+    "isolated": {
+      "abs_Ia_over_abs_Ib": 1.6176564405959337,
+      "abs_Ib_over_abs_Ia": 0.6181782329699171,
+      "relative_difference_from_digitized_measurement": 0.9336317962962012
+    },
+    "perfect": {
+      "abs_Ia_over_abs_Ib": 1.6385904523355788,
+      "abs_Ib_over_abs_Ia": 0.6102806217225553,
+      "relative_difference_from_digitized_measurement": 0.9586548294372206
+    }
+  },
+  "optical_gates": {
+    "cases": {
+      "a": {
+        "status": "COMPLETED",
+        "P_Q_W_at_1_W_m2": 3.1896570934616587e-11,
+        "P_six_W_at_1_W_m2": 3.1972162831501553e-11,
+        "six_face_closure": 0.002364303512507055,
+        "auto_shutoff_final": 9.46101e-06,
+        "negative_Q_voxel_count": 0,
+        "minimum_Q_W_m3": 0.0
+      },
+      "b": {
+        "status": "COMPLETED",
+        "P_Q_W_at_1_W_m2": 4.3616288326245206e-11,
+        "P_six_W_at_1_W_m2": 4.364555404615292e-11,
+        "six_face_closure": 0.0006705315248551616,
+        "auto_shutoff_final": 9.96851e-06,
+        "negative_Q_voxel_count": 0,
+        "minimum_Q_W_m3": 0.0
+      }
+    },
+    "all_closure_below_0p5pct": true,
+    "all_auto_shutoff_below_1e-5": true,
+    "no_negative_Q": true
+  },
+  "off_axis_edge_gradient_audit_perfect_to_flake": {
+    "a": {
+      "edge_band_half_width_um": 0.3,
+      "edge_band_cell_count": 524,
+      "edge_vertex_indices": [
+        4,
+        7
+      ],
+      "grad_a": {
+        "raw_max_abs_K_m": 82885.54652881567,
+        "p99_abs_K_m": 76513.82539682266,
+        "rms_K_m": 22743.76046979627,
+        "mean_abs_K_m": 15716.587784912923
+      },
+      "grad_b": {
+        "raw_max_abs_K_m": 178781.30414378364,
+        "p99_abs_K_m": 168245.71133359184,
+        "rms_K_m": 52222.08263336271,
+        "mean_abs_K_m": 31773.394144080412
+      },
+      "grad_n": {
+        "raw_max_abs_K_m": 175573.9516866943,
+        "p99_abs_K_m": 159326.0902471527,
+        "rms_K_m": 49358.48304748466,
+        "mean_abs_K_m": 31072.966482487253
+      },
+      "grad_t": {
+        "raw_max_abs_K_m": 88519.73248168899,
+        "p99_abs_K_m": 83310.08199718269,
+        "rms_K_m": 28428.23783009424,
+        "mean_abs_K_m": 20439.246521253568
+      },
+      "grad_magnitude": {
+        "raw_max_abs_K_m": 185982.1988534398,
+        "p99_abs_K_m": 174023.3107604108,
+        "rms_K_m": 56959.850376148555,
+        "mean_abs_K_m": 39171.35882366784
+      }
+    },
+    "b": {
+      "edge_band_half_width_um": 0.3,
+      "edge_band_cell_count": 524,
+      "edge_vertex_indices": [
+        4,
+        7
+      ],
+      "grad_a": {
+        "raw_max_abs_K_m": 30587.365781825898,
+        "p99_abs_K_m": 17519.05426660424,
+        "rms_K_m": 7217.853379970291,
+        "mean_abs_K_m": 5662.292904953472
+      },
+      "grad_b": {
+        "raw_max_abs_K_m": 69838.2180035604,
+        "p99_abs_K_m": 47591.30613594475,
+        "rms_K_m": 23729.327417332843,
+        "mean_abs_K_m": 18999.8676280621
+      },
+      "grad_n": {
+        "raw_max_abs_K_m": 45100.657778794746,
+        "p99_abs_K_m": 43474.31414291214,
+        "rms_K_m": 20694.852794380684,
+        "mean_abs_K_m": 15941.262700073332
+      },
+      "grad_t": {
+        "raw_max_abs_K_m": 56538.47744602954,
+        "p99_abs_K_m": 35565.74656270533,
+        "rms_K_m": 13671.190691108326,
+        "mean_abs_K_m": 11004.373567898409
+      },
+      "grad_magnitude": {
+        "raw_max_abs_K_m": 72323.36250476155,
+        "p99_abs_K_m": 48158.061235630834,
+        "rms_K_m": 24802.78990544678,
+        "mean_abs_K_m": 20328.237256016622
+      }
+    }
+  },
+  "off_axis_edge_gradient_abs_a_over_abs_b": {
+    "grad_a": {
+      "raw_max_abs_K_m": 2.709796820034231,
+      "p99_abs_K_m": 4.367463233599169,
+      "rms_K_m": 3.1510421828338506,
+      "mean_abs_K_m": 2.7756578560539986
+    },
+    "grad_b": {
+      "raw_max_abs_K_m": 2.559935079309573,
+      "p99_abs_K_m": 3.5352194548516342,
+      "rms_K_m": 2.2007401101144413,
+      "mean_abs_K_m": 1.6722955531096588
+    },
+    "grad_n": {
+      "raw_max_abs_K_m": 3.892935498808733,
+      "p99_abs_K_m": 3.6648327498256466,
+      "rms_K_m": 2.3850608428046933,
+      "mean_abs_K_m": 1.949216135955423
+    },
+    "grad_t": {
+      "raw_max_abs_K_m": 1.5656546918191792,
+      "p99_abs_K_m": 2.3424246655500447,
+      "rms_K_m": 2.0794266185302956,
+      "mean_abs_K_m": 1.8573748333006666
+    },
+    "grad_magnitude": {
+      "raw_max_abs_K_m": 2.571536947569263,
+      "p99_abs_K_m": 3.6135863092357154,
+      "rms_K_m": 2.296509811730493,
+      "mean_abs_K_m": 1.9269432135378168
+    }
+  },
+  "numerical_gates": {
+    "all_mapping_errors_below_0p5pct": true,
+    "all_residuals_below_1e-8": true,
+    "all_energy_balance_errors_below_1pct": true
+  },
+  "cases": [
+    {
+      "scenario": "isolated",
+      "polarization": "a",
+      "status": "COMPLETED_DEVICE_A_METAL_ISOLATED_LOWER_BOUND_DIAGNOSTIC",
+      "P_Q_thermal_W": 3.67419540543747e-05,
+      "Tmax_rise_K": 0.23039913445368806,
+      "TaIrTe4_average_rise_K": 0.02485318908289879,
+      "current_A": 8.072622429764236e-09,
+      "mapping_error": 1.8442850285007043e-16,
+      "residual": 1.0362805775793799e-10,
+      "energy_balance_error": 7.1451290574174305e-12,
+      "thermal_raw_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_isolated_100nm_20260731_v3/thermal_pte_fields.npz"
+    },
+    {
+      "scenario": "isolated",
+      "polarization": "b",
+      "status": "COMPLETED_DEVICE_A_METAL_ISOLATED_LOWER_BOUND_DIAGNOSTIC",
+      "P_Q_thermal_W": 5.0465130243434614e-05,
+      "Tmax_rise_K": 0.1444754661049431,
+      "TaIrTe4_average_rise_K": 0.03418416877239504,
+      "current_A": 4.990319469064974e-09,
+      "mapping_error": 0.0,
+      "residual": 1.0692680121363809e-10,
+      "energy_balance_error": 3.3971866850888437e-14,
+      "thermal_raw_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_isolated_100nm_20260731/thermal_pte_fields.npz"
+    },
+    {
+      "scenario": "perfect",
+      "polarization": "a",
+      "status": "COMPLETED_DEVICE_A_PERFECT_TO_FLAKE_UPPER_BOUND_DIAGNOSTIC",
+      "P_Q_thermal_W": 3.694596918264992e-05,
+      "Tmax_rise_K": 0.23040921186082441,
+      "TaIrTe4_average_rise_K": 0.024986578446378784,
+      "current_A": 8.196197440488383e-09,
+      "mapping_error": 1.8341009122090054e-16,
+      "residual": 1.0392287405090355e-10,
+      "energy_balance_error": 1.0379360472281984e-11,
+      "thermal_raw_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_perfect_100nm_20260731/thermal_pte_fields.npz"
+    },
+    {
+      "scenario": "perfect",
+      "polarization": "b",
+      "status": "COMPLETED_DEVICE_A_PERFECT_TO_FLAKE_UPPER_BOUND_DIAGNOSTIC",
+      "P_Q_thermal_W": 5.047214283838818e-05,
+      "Tmax_rise_K": 0.14447586597206497,
+      "TaIrTe4_average_rise_K": 0.034188536978839515,
+      "current_A": 5.001980469742066e-09,
+      "mapping_error": 1.3425749724421256e-16,
+      "residual": 1.0616242451281857e-10,
+      "energy_balance_error": 1.9010861609780495e-13,
+      "thermal_raw_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_perfect_100nm_20260731/thermal_pte_fields.npz"
+    }
+  ],
+  "interpretation": "The Maxwell-to-explicit-3D-FVM-to-Shockley-Ramo chain completed, but neither named metal-thermalization extreme reproduces the digitized polarization ratio. This is a diagnostic disagreement, not a paper reproduction or a final experiment prediction.",
+  "metal_model_limit": "The visible Au/Ti optical polygons are included optically. Hidden metal/flake overlap and finite metal/TaIrTe4 thermal G are not published; isolated and perfect-to-flake cases are named extremes.",
+  "no_adjoint": true,
+  "no_ad_fd": true,
+  "no_optimization": true
+}

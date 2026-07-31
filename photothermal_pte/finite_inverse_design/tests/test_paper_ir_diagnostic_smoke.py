@@ -12,11 +12,32 @@ from photothermal_pte.validation.paper_ir_sanity import (
     run_lumerical_device_a_ir_q as runner,
 )
 from photothermal_pte.validation.paper_ir_sanity import (
+    run_device_a_explicit_thermal_pte as thermal_runner,
+)
+from photothermal_pte.validation.paper_ir_sanity import (
     summarize_paper_ir_diagnostic_smoke as summary_module,
 )
 
 
 class PaperIrDiagnosticSmokeTests(unittest.TestCase):
+    def test_device_a_thermal_summary_numpy_metadata_is_jsonable(self) -> None:
+        converted = thermal_runner.jsonable(
+            {
+                "vertices": np.asarray([[1.0, 2.0], [3.0, 4.0]]),
+                "count": np.int64(2),
+                "tuple": (np.float64(0.5),),
+            }
+        )
+        self.assertEqual(
+            converted,
+            {
+                "vertices": [[1.0, 2.0], [3.0, 4.0]],
+                "count": 2,
+                "tuple": [0.5],
+            },
+        )
+        json.dumps(converted)
+
     def test_production_scalar_source_contract_defaults_are_fixed(self) -> None:
         argv = [
             "run_lumerical_device_a_ir_q.py",
