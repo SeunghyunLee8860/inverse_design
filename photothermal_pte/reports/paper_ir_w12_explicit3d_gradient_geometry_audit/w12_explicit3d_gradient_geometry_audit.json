@@ -1,0 +1,1562 @@
+{
+  "Maxwell_b_over_a": {
+    "midplane": {
+      "p99_abs_grad_n": 0.772347746488224,
+      "raw_max_abs_grad_n": 0.7727443116147935
+    },
+    "surface": {
+      "p99_abs_grad_n": 0.6903797926640051,
+      "raw_max_abs_grad_n": 0.6908696651811382
+    },
+    "thickness_average": {
+      "p99_abs_grad_n": 0.7989419779468152,
+      "raw_max_abs_grad_n": 0.798934254281901
+    }
+  },
+  "analytic_b_over_a": {
+    "midplane": {
+      "p99_abs_grad_n": 1.479925185385597,
+      "raw_max_abs_grad_n": 1.4778923958622079
+    },
+    "surface": {
+      "p99_abs_grad_n": 1.467823632817003,
+      "raw_max_abs_grad_n": 1.4712813789853536
+    },
+    "thickness_average": {
+      "p99_abs_grad_n": 1.479604425115409,
+      "raw_max_abs_grad_n": 1.4794826190023498
+    }
+  },
+  "cases": {
+    "Maxwell_a": {
+      "projection_storage_checks": {
+        "midplane_slice_max_abs_difference_K": 0.0,
+        "surface_slice_max_abs_difference_K": 0.0,
+        "thickness_average_max_abs_difference_K": 0.0
+      },
+      "projections": {
+        "midplane": {
+          "central_t0_linecut": {
+            "derivative_NRMSE": 0.010944020760545741,
+            "derivative_correlation": 0.9997616284689125,
+            "field_peak_abs_dTdn_K_m": 23831.053477059017,
+            "field_peak_abs_dTdn_location_m": -1.7500000000000798e-06,
+            "integral_closure_absolute_K": 2.566680009630229e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0002565038442593334,
+            "integrated_gradient_temperature_delta_K": 0.10003833095563461,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 23815.481706179427,
+            "linecut_peak_abs_dTdn_location_m": -1.7500000000000798e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00026983134642961416,
+            "sample_count": 195,
+            "tangent_coordinate_m": 0.0,
+            "temperature_delta_K": 0.10006399775573091
+          },
+          "coordinate_rotation_identity": {
+            "active_cell_count": 41041,
+            "maximum_absolute_error_K2_m2": 3.5762786865234375e-07,
+            "maximum_error_over_global_peak_norm2": 6.199403007543697e-16,
+            "maximum_pixelwise_relative_error": 7.451037169546872e-16,
+            "p99_pixelwise_relative_error": 4.648951663362636e-16,
+            "rms_error_over_rms_cartesian_norm2": 2.022334269483439e-16
+          },
+          "edge_band": {
+            "edge_band_cell_count": 1132,
+            "p99_abs_grad_n_K_m": 15639.504066281355,
+            "raw_max_abs_grad_n_K_m": 15842.744349198994,
+            "raw_max_over_p99": 1.012995315072415,
+            "raw_peak_normal_coordinate_m": -1.4142135623730933e-07,
+            "raw_peak_tangent_coordinate_m": -3.606244584051391e-06
+          },
+          "exact_cell_center_raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.010341651419735802,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.00791119199145584,
+            "derivative_correlation": 0.9998923874467108,
+            "field_peak_abs_dTdn_K_m": 21418.847277899116,
+            "field_peak_abs_dTdn_location_m": -1.8384776310850238e-06,
+            "integral_closure_absolute_K": 1.8112868554465145e-06,
+            "integral_closure_relative_to_temperature_delta": 2.2886227001870555e-05,
+            "integrated_gradient_temperature_delta_K": 0.07914128448417194,
+            "last_inside_cell_n_m": 0.0,
+            "last_inside_edge_cell_derivative_difference_K_m": 606.3046235155325,
+            "last_inside_edge_cell_difference_over_line_peak": 0.02840739867986722,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 21343.194086448697,
+            "linecut_peak_abs_dTdn_location_m": -1.8384776310850238e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.2705494208814505e-21,
+            "n_bounds_m": [
+              -9.899494936611666e-06,
+              0.0
+            ],
+            "realized_cell_center_tangent_coordinate_m": -3.606244584051391e-06,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0005991552099733244,
+            "requested_tangent_coordinate_m": -3.606244584051391e-06,
+            "sample_count": 71,
+            "temperature_delta_K": 0.07914309577102739
+          },
+          "exact_cell_center_t0_linecut": {
+            "derivative_NRMSE": 0.01878824253368604,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.0053916104887352205,
+            "derivative_correlation": 0.9994784348319308,
+            "field_peak_abs_dTdn_K_m": 23841.859170982378,
+            "field_peak_abs_dTdn_location_m": -1.7677669529663685e-06,
+            "integral_closure_absolute_K": 5.281388171864132e-05,
+            "integral_closure_relative_to_temperature_delta": 0.000543358501691032,
+            "integrated_gradient_temperature_delta_K": 0.09725177470459113,
+            "last_inside_cell_n_m": -7.071067811865467e-08,
+            "last_inside_edge_cell_derivative_difference_K_m": 1779.506845150796,
+            "last_inside_edge_cell_difference_over_line_peak": 0.07488135964808812,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 23764.350080096745,
+            "linecut_peak_abs_dTdn_location_m": -1.7677669529663685e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.796828222675829e-21,
+            "n_bounds_m": [
+              -9.97020561473032e-06,
+              -7.071067811865467e-08
+            ],
+            "realized_cell_center_tangent_coordinate_m": 0.0,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0005530987847265028,
+            "requested_tangent_coordinate_m": 0.0,
+            "sample_count": 71,
+            "temperature_delta_K": 0.0971989608228725
+          },
+          "raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.007673716580729472,
+            "derivative_correlation": 0.9999068103961443,
+            "field_peak_abs_dTdn_K_m": 21413.811553831987,
+            "field_peak_abs_dTdn_location_m": -1.8500000000000788e-06,
+            "integral_closure_absolute_K": 3.246105873276617e-05,
+            "integral_closure_relative_to_temperature_delta": 0.00038538921146210583,
+            "integrated_gradient_temperature_delta_K": 0.08419682654798055,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 21410.34961976283,
+            "linecut_peak_abs_dTdn_location_m": -1.9000000000000784e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0002876452207805981,
+            "sample_count": 195,
+            "tangent_coordinate_m": -3.606244584051391e-06,
+            "temperature_delta_K": 0.08422928760671332
+          }
+        },
+        "surface": {
+          "central_t0_linecut": {
+            "derivative_NRMSE": 0.011261753201426694,
+            "derivative_correlation": 0.9997477228960414,
+            "field_peak_abs_dTdn_K_m": 25285.111793889333,
+            "field_peak_abs_dTdn_location_m": -1.7500000000000798e-06,
+            "integral_closure_absolute_K": 2.8786753411419452e-05,
+            "integral_closure_relative_to_temperature_delta": 0.00027276016571568714,
+            "integrated_gradient_temperature_delta_K": 0.1055099136498779,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 25291.275545919303,
+            "linecut_peak_abs_dTdn_location_m": -1.7000000000000803e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00027245429236807657,
+            "sample_count": 195,
+            "tangent_coordinate_m": 0.0,
+            "temperature_delta_K": 0.10553870040328932
+          },
+          "coordinate_rotation_identity": {
+            "active_cell_count": 41041,
+            "maximum_absolute_error_K2_m2": 3.5762786865234375e-07,
+            "maximum_error_over_global_peak_norm2": 5.509699427547999e-16,
+            "maximum_pixelwise_relative_error": 6.800489848082969e-16,
+            "p99_pixelwise_relative_error": 4.621554126846795e-16,
+            "rms_error_over_rms_cartesian_norm2": 1.9913947143318984e-16
+          },
+          "edge_band": {
+            "edge_band_cell_count": 1132,
+            "p99_abs_grad_n_K_m": 16750.643573223188,
+            "raw_max_abs_grad_n_K_m": 16971.67391960936,
+            "raw_max_over_p99": 1.0131953345804277,
+            "raw_peak_normal_coordinate_m": -1.4142135623730933e-07,
+            "raw_peak_tangent_coordinate_m": -3.606244584051391e-06
+          },
+          "exact_cell_center_raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.015482091864627841,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.011362137226815063,
+            "derivative_correlation": 0.9997454386166419,
+            "field_peak_abs_dTdn_K_m": 22695.475907342785,
+            "field_peak_abs_dTdn_location_m": -1.8384776310850238e-06,
+            "integral_closure_absolute_K": 1.9090290964696166e-06,
+            "integral_closure_relative_to_temperature_delta": 2.2851781025978377e-05,
+            "integrated_gradient_temperature_delta_K": 0.08353771067491667,
+            "last_inside_cell_n_m": 0.0,
+            "last_inside_edge_cell_derivative_difference_K_m": 1002.7861882690177,
+            "last_inside_edge_cell_difference_over_line_peak": 0.04433895755523684,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 22616.368168326037,
+            "linecut_peak_abs_dTdn_location_m": -1.8384776310850238e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.2705494208814505e-21,
+            "n_bounds_m": [
+              -9.899494936611666e-06,
+              0.0
+            ],
+            "realized_cell_center_tangent_coordinate_m": -3.606244584051391e-06,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0006068528209622724,
+            "requested_tangent_coordinate_m": -3.606244584051391e-06,
+            "sample_count": 71,
+            "temperature_delta_K": 0.08353961970401313
+          },
+          "exact_cell_center_t0_linecut": {
+            "derivative_NRMSE": 0.02802435494079597,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.00589572913911136,
+            "derivative_correlation": 0.9988733087997462,
+            "field_peak_abs_dTdn_K_m": 25287.007879370885,
+            "field_peak_abs_dTdn_location_m": -1.7677669529663685e-06,
+            "integral_closure_absolute_K": 0.00010882682254700904,
+            "integral_closure_relative_to_temperature_delta": 0.0010617598006066298,
+            "integrated_gradient_temperature_delta_K": 0.1026054767096792,
+            "last_inside_cell_n_m": -7.071067811865467e-08,
+            "last_inside_edge_cell_derivative_difference_K_m": 2858.0237147604676,
+            "last_inside_edge_cell_difference_over_line_peak": 0.1133874557173248,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 25205.8192564575,
+            "linecut_peak_abs_dTdn_location_m": -1.7677669529663685e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.796828222675829e-21,
+            "n_bounds_m": [
+              -9.97020561473032e-06,
+              -7.071067811865467e-08
+            ],
+            "realized_cell_center_tangent_coordinate_m": 0.0,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0005933006326659907,
+            "requested_tangent_coordinate_m": 0.0,
+            "sample_count": 71,
+            "temperature_delta_K": 0.1024966498871322
+          },
+          "raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.007993187363156897,
+            "derivative_correlation": 0.9998984776482644,
+            "field_peak_abs_dTdn_K_m": 22684.411870772812,
+            "field_peak_abs_dTdn_location_m": -1.8500000000000788e-06,
+            "integral_closure_absolute_K": 3.8644799942103014e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0004348723955482615,
+            "integrated_gradient_temperature_delta_K": 0.08882604364132335,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 22674.20594307964,
+            "linecut_peak_abs_dTdn_location_m": -1.8500000000000788e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00029031355547242765,
+            "sample_count": 195,
+            "tangent_coordinate_m": -3.606244584051391e-06,
+            "temperature_delta_K": 0.08886468844126545
+          }
+        },
+        "thickness_average": {
+          "central_t0_linecut": {
+            "derivative_NRMSE": 0.011315718474674245,
+            "derivative_correlation": 0.9997471244754165,
+            "field_peak_abs_dTdn_K_m": 23515.671907886026,
+            "field_peak_abs_dTdn_location_m": -1.7500000000000798e-06,
+            "integral_closure_absolute_K": 2.7103001484257705e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0002744978153963812,
+            "integrated_gradient_temperature_delta_K": 0.09870957162421484,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 23500.33988124592,
+            "linecut_peak_abs_dTdn_location_m": -1.7500000000000798e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.000273008742548953,
+            "sample_count": 195,
+            "tangent_coordinate_m": 0.0,
+            "temperature_delta_K": 0.0987366746256991
+          },
+          "coordinate_rotation_identity": {
+            "active_cell_count": 41041,
+            "maximum_absolute_error_K2_m2": 3.5762786865234375e-07,
+            "maximum_error_over_global_peak_norm2": 6.366820731423699e-16,
+            "maximum_pixelwise_relative_error": 8.567624346238417e-16,
+            "p99_pixelwise_relative_error": 4.63140573993947e-16,
+            "rms_error_over_rms_cartesian_norm2": 1.9943245712764747e-16
+          },
+          "edge_band": {
+            "edge_band_cell_count": 1132,
+            "p99_abs_grad_n_K_m": 16304.676912339075,
+            "raw_max_abs_grad_n_K_m": 16514.41241539084,
+            "raw_max_over_p99": 1.0128635178838192,
+            "raw_peak_normal_coordinate_m": -1.4142135623730933e-07,
+            "raw_peak_tangent_coordinate_m": -3.4648232278140816e-06
+          },
+          "exact_cell_center_raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.012194200314661913,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.008400646911528606,
+            "derivative_correlation": 0.9998442657879283,
+            "field_peak_abs_dTdn_K_m": 21364.191931351434,
+            "field_peak_abs_dTdn_location_m": -1.8384776310850238e-06,
+            "integral_closure_absolute_K": 1.7765593353369358e-06,
+            "integral_closure_relative_to_temperature_delta": 2.2493849082247254e-05,
+            "integrated_gradient_temperature_delta_K": 0.07897800715136111,
+            "last_inside_cell_n_m": 0.0,
+            "last_inside_edge_cell_derivative_difference_K_m": 802.0574138576594,
+            "last_inside_edge_cell_difference_over_line_peak": 0.037674342817695744,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 21289.221095077228,
+            "linecut_peak_abs_dTdn_location_m": -1.8384776310850238e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.2705494208814505e-21,
+            "n_bounds_m": [
+              -9.899494936611665e-06,
+              0.0
+            ],
+            "realized_cell_center_tangent_coordinate_m": -3.4648232278140816e-06,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0006055883502659989,
+            "requested_tangent_coordinate_m": -3.4648232278140816e-06,
+            "sample_count": 71,
+            "temperature_delta_K": 0.07897978371069644
+          },
+          "exact_cell_center_t0_linecut": {
+            "derivative_NRMSE": 0.020131718419659092,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.00514282783121969,
+            "derivative_correlation": 0.9994275940015458,
+            "field_peak_abs_dTdn_K_m": 23526.1500591168,
+            "field_peak_abs_dTdn_location_m": -1.7677669529663685e-06,
+            "integral_closure_absolute_K": 5.235548120532951e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0005470084954629865,
+            "integrated_gradient_temperature_delta_K": 0.09576472857884064,
+            "last_inside_cell_n_m": -7.071067811865467e-08,
+            "last_inside_edge_cell_derivative_difference_K_m": 1905.5688068646014,
+            "last_inside_edge_cell_difference_over_line_peak": 0.08126203817187824,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 23449.680191802618,
+            "linecut_peak_abs_dTdn_location_m": -1.7677669529663685e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.796828222675829e-21,
+            "n_bounds_m": [
+              -9.97020561473032e-06,
+              -7.071067811865467e-08
+            ],
+            "realized_cell_center_tangent_coordinate_m": 0.0,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0005636644304827995,
+            "requested_tangent_coordinate_m": 0.0,
+            "sample_count": 71,
+            "temperature_delta_K": 0.0957123730976353
+          },
+          "raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.007968273592420319,
+            "derivative_correlation": 0.9998992250859223,
+            "field_peak_abs_dTdn_K_m": 21357.5519821915,
+            "field_peak_abs_dTdn_location_m": -1.8500000000000788e-06,
+            "integral_closure_absolute_K": 3.635464513722375e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0004315656122524414,
+            "integrated_gradient_temperature_delta_K": 0.0842026210866881,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 21348.85557508979,
+            "linecut_peak_abs_dTdn_location_m": -1.8500000000000788e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0002899486064569422,
+            "sample_count": 195,
+            "tangent_coordinate_m": -3.4648232278140816e-06,
+            "temperature_delta_K": 0.08423897573182533
+          }
+        }
+      },
+      "stored_thickness_average_gradient_max_abs_differences": {
+        "grad_a_K_m": 0.0,
+        "grad_b_K_m": 0.0,
+        "grad_magnitude_K_m": 0.0,
+        "grad_n_K_m": 3.637978807091713e-12,
+        "grad_t_K_m": 3.637978807091713e-12
+      }
+    },
+    "Maxwell_b": {
+      "projection_storage_checks": {
+        "midplane_slice_max_abs_difference_K": 0.0,
+        "surface_slice_max_abs_difference_K": 0.0,
+        "thickness_average_max_abs_difference_K": 0.0
+      },
+      "projections": {
+        "midplane": {
+          "central_t0_linecut": {
+            "derivative_NRMSE": 0.0065949887352940995,
+            "derivative_correlation": 0.9999519995039805,
+            "field_peak_abs_dTdn_K_m": 15454.237383300948,
+            "field_peak_abs_dTdn_location_m": -3.6500000000000616e-06,
+            "integral_closure_absolute_K": 1.9414228530023614e-05,
+            "integral_closure_relative_to_temperature_delta": 0.00023628225743359114,
+            "integrated_gradient_temperature_delta_K": 0.08214599565409786,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 15495.990198344949,
+            "linecut_peak_abs_dTdn_location_m": -3.6500000000000616e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00018940998302688388,
+            "sample_count": 195,
+            "tangent_coordinate_m": 0.0,
+            "temperature_delta_K": 0.08216540988262788
+          },
+          "coordinate_rotation_identity": {
+            "active_cell_count": 41041,
+            "maximum_absolute_error_K2_m2": 1.1920928955078125e-07,
+            "maximum_error_over_global_peak_norm2": 4.415357133341369e-16,
+            "maximum_pixelwise_relative_error": 7.229997281840286e-16,
+            "p99_pixelwise_relative_error": 4.718480274593589e-16,
+            "rms_error_over_rms_cartesian_norm2": 1.997764273551352e-16
+          },
+          "edge_band": {
+            "edge_band_cell_count": 1132,
+            "p99_abs_grad_n_K_m": 12079.13572178582,
+            "raw_max_abs_grad_n_K_m": 12242.390576210937,
+            "raw_max_over_p99": 1.013515441682692,
+            "raw_peak_normal_coordinate_m": 0.0,
+            "raw_peak_tangent_coordinate_m": -3.7476659402887004e-06
+          },
+          "exact_cell_center_raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.018402759797372898,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.0056945697321873325,
+            "derivative_correlation": 0.9997336700238979,
+            "field_peak_abs_dTdn_K_m": 12794.204822259642,
+            "field_peak_abs_dTdn_location_m": -3.676955262170047e-06,
+            "integral_closure_absolute_K": 2.633757275723181e-06,
+            "integral_closure_relative_to_temperature_delta": 4.243923026742751e-05,
+            "integrated_gradient_temperature_delta_K": 0.062056863060332985,
+            "last_inside_cell_n_m": 0.0,
+            "last_inside_edge_cell_derivative_difference_K_m": 1401.060296290072,
+            "last_inside_edge_cell_difference_over_line_peak": 0.10269105004174364,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 13643.45087250101,
+            "linecut_peak_abs_dTdn_location_m": 0.0,
+            "maximum_tangent_coordinate_mismatch_m": 1.2705494208814505e-21,
+            "n_bounds_m": [
+              -9.899494936611666e-06,
+              0.0
+            ],
+            "realized_cell_center_tangent_coordinate_m": -3.7476659402887004e-06,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00045461543195368144,
+            "requested_tangent_coordinate_m": -3.7476659402887004e-06,
+            "sample_count": 71,
+            "temperature_delta_K": 0.06205949681760871
+          },
+          "exact_cell_center_t0_linecut": {
+            "derivative_NRMSE": 0.005454527863025627,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.00470530107886561,
+            "derivative_correlation": 0.9999707607441823,
+            "field_peak_abs_dTdn_K_m": 15458.406893902042,
+            "field_peak_abs_dTdn_location_m": -3.6062445840513923e-06,
+            "integral_closure_absolute_K": 5.1567355730045006e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0006401010329405935,
+            "integrated_gradient_temperature_delta_K": 0.08050970824969593,
+            "last_inside_cell_n_m": -7.071067811865467e-08,
+            "last_inside_edge_cell_derivative_difference_K_m": 265.0233589273248,
+            "last_inside_edge_cell_difference_over_line_peak": 0.0171892796657828,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 15417.94444445998,
+            "linecut_peak_abs_dTdn_location_m": -3.6062445840513923e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.796828222675829e-21,
+            "n_bounds_m": [
+              -9.97020561473032e-06,
+              -7.071067811865467e-08
+            ],
+            "realized_cell_center_tangent_coordinate_m": 0.0,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0004021609424303261,
+            "requested_tangent_coordinate_m": 0.0,
+            "sample_count": 71,
+            "temperature_delta_K": 0.08056127560542597
+          },
+          "raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.007493853681134583,
+            "derivative_correlation": 0.9999434023421737,
+            "field_peak_abs_dTdn_K_m": 12783.839630198629,
+            "field_peak_abs_dTdn_location_m": -3.700000000000061e-06,
+            "integral_closure_absolute_K": 3.9874729259037345e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0006081040977264897,
+            "integrated_gradient_temperature_delta_K": 0.06553233471336178,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 12790.531933535422,
+            "linecut_peak_abs_dTdn_location_m": -3.700000000000061e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00018273215361271794,
+            "sample_count": 195,
+            "tangent_coordinate_m": -3.7476659402887004e-06,
+            "temperature_delta_K": 0.06557220944262082
+          }
+        },
+        "surface": {
+          "central_t0_linecut": {
+            "derivative_NRMSE": 0.005758795874459494,
+            "derivative_correlation": 0.9999628897401247,
+            "field_peak_abs_dTdn_K_m": 16087.262937541027,
+            "field_peak_abs_dTdn_location_m": -3.600000000000062e-06,
+            "integral_closure_absolute_K": 1.7057230093944775e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0001986050319465501,
+            "integrated_gradient_temperature_delta_K": 0.0858681286927649,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 16129.656584103219,
+            "linecut_peak_abs_dTdn_location_m": -3.6500000000000616e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0001859101484554207,
+            "sample_count": 195,
+            "tangent_coordinate_m": 0.0,
+            "temperature_delta_K": 0.08588518592285885
+          },
+          "coordinate_rotation_identity": {
+            "active_cell_count": 41041,
+            "maximum_absolute_error_K2_m2": 1.1920928955078125e-07,
+            "maximum_error_over_global_peak_norm2": 4.2093979110419798e-16,
+            "maximum_pixelwise_relative_error": 6.739616250834527e-16,
+            "p99_pixelwise_relative_error": 4.778809188763832e-16,
+            "rms_error_over_rms_cartesian_norm2": 2.0129428382707504e-16
+          },
+          "edge_band": {
+            "edge_band_cell_count": 1132,
+            "p99_abs_grad_n_K_m": 11564.305837070473,
+            "raw_max_abs_grad_n_K_m": 11725.214678403974,
+            "raw_max_over_p99": 1.0139142671942913,
+            "raw_peak_normal_coordinate_m": 0.0,
+            "raw_peak_tangent_coordinate_m": -4.03050865276332e-06
+          },
+          "exact_cell_center_raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.01712778436626759,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.00539676672724809,
+            "derivative_correlation": 0.9997680688690634,
+            "field_peak_abs_dTdn_K_m": 12927.932077274947,
+            "field_peak_abs_dTdn_location_m": -3.6769552621700476e-06,
+            "integral_closure_absolute_K": 2.7911807553571144e-06,
+            "integral_closure_relative_to_temperature_delta": 4.424511547756056e-05,
+            "integrated_gradient_temperature_delta_K": 0.06308170357602057,
+            "last_inside_cell_n_m": 0.0,
+            "last_inside_edge_cell_derivative_difference_K_m": 1310.876279352995,
+            "last_inside_edge_cell_difference_over_line_peak": 0.10055746646758197,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 13036.09095775697,
+            "linecut_peak_abs_dTdn_location_m": 0.0,
+            "maximum_tangent_coordinate_mismatch_m": 8.470329472543003e-22,
+            "n_bounds_m": [
+              -9.899494936611666e-06,
+              0.0
+            ],
+            "realized_cell_center_tangent_coordinate_m": -4.03050865276332e-06,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00044670517104190274,
+            "requested_tangent_coordinate_m": -4.03050865276332e-06,
+            "sample_count": 71,
+            "temperature_delta_K": 0.06308449475677592
+          },
+          "exact_cell_center_t0_linecut": {
+            "derivative_NRMSE": 0.00516457794461859,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.004779927581319331,
+            "derivative_correlation": 0.9999736285962331,
+            "field_peak_abs_dTdn_K_m": 16095.086786784452,
+            "field_peak_abs_dTdn_location_m": -3.6062445840513923e-06,
+            "integral_closure_absolute_K": 7.01317658289985e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0008290205486900426,
+            "integrated_gradient_temperature_delta_K": 0.08452580007182636,
+            "last_inside_cell_n_m": -7.071067811865467e-08,
+            "last_inside_edge_cell_derivative_difference_K_m": -195.69965615683486,
+            "last_inside_edge_cell_difference_over_line_peak": 0.012190626630273257,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 16053.28930925089,
+            "linecut_peak_abs_dTdn_location_m": -3.6062445840513923e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.796828222675829e-21,
+            "n_bounds_m": [
+              -9.97020561473032e-06,
+              -7.071067811865467e-08
+            ],
+            "realized_cell_center_tangent_coordinate_m": 0.0,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00039851889697167396,
+            "requested_tangent_coordinate_m": 0.0,
+            "sample_count": 71,
+            "temperature_delta_K": 0.08459593183765536
+          },
+          "raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.006900699522122119,
+            "derivative_correlation": 0.9999517404190578,
+            "field_peak_abs_dTdn_K_m": 12916.823886152017,
+            "field_peak_abs_dTdn_location_m": -3.700000000000061e-06,
+            "integral_closure_absolute_K": 3.53586788381377e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0005329470761556616,
+            "integrated_gradient_temperature_delta_K": 0.06631021374308513,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 12922.715183098633,
+            "linecut_peak_abs_dTdn_location_m": -3.700000000000061e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0001768618304038146,
+            "sample_count": 195,
+            "tangent_coordinate_m": -4.03050865276332e-06,
+            "temperature_delta_K": 0.06634557242192327
+          }
+        },
+        "thickness_average": {
+          "central_t0_linecut": {
+            "derivative_NRMSE": 0.006856134786433735,
+            "derivative_correlation": 0.9999482949070172,
+            "field_peak_abs_dTdn_K_m": 15242.099693702705,
+            "field_peak_abs_dTdn_location_m": -3.6500000000000616e-06,
+            "integral_closure_absolute_K": 2.071471088736787e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0002556839744498793,
+            "integrated_gradient_temperature_delta_K": 0.08099613795630431,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 15283.354566158765,
+            "linecut_peak_abs_dTdn_location_m": -3.6500000000000616e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00019074774618071502,
+            "sample_count": 195,
+            "tangent_coordinate_m": 0.0,
+            "temperature_delta_K": 0.08101685266719168
+          },
+          "coordinate_rotation_identity": {
+            "active_cell_count": 41041,
+            "maximum_absolute_error_K2_m2": 1.1920928955078125e-07,
+            "maximum_error_over_global_peak_norm2": 4.176970979008093e-16,
+            "maximum_pixelwise_relative_error": 7.066105612246661e-16,
+            "p99_pixelwise_relative_error": 4.65621737781804e-16,
+            "rms_error_over_rms_cartesian_norm2": 1.9896386425572423e-16
+          },
+          "edge_band": {
+            "edge_band_cell_count": 1132,
+            "p99_abs_grad_n_K_m": 13026.490822127953,
+            "raw_max_abs_grad_n_K_m": 13193.92976799405,
+            "raw_max_over_p99": 1.0128537261609758,
+            "raw_peak_normal_coordinate_m": 0.0,
+            "raw_peak_tangent_coordinate_m": -3.4648232278140816e-06
+          },
+          "exact_cell_center_raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.020413710959692993,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.006095365505329362,
+            "derivative_correlation": 0.9996770176020049,
+            "field_peak_abs_dTdn_K_m": 13193.92976799405,
+            "field_peak_abs_dTdn_location_m": 0.0,
+            "integral_closure_absolute_K": 2.5699519917710134e-06,
+            "integral_closure_relative_to_temperature_delta": 4.084597861501245e-05,
+            "integrated_gradient_temperature_delta_K": 0.062915545341406,
+            "last_inside_cell_n_m": 0.0,
+            "last_inside_edge_cell_derivative_difference_K_m": 1586.3312634722533,
+            "last_inside_edge_cell_difference_over_line_peak": 0.10732768928065937,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 14780.261031466303,
+            "linecut_peak_abs_dTdn_location_m": 0.0,
+            "maximum_tangent_coordinate_mismatch_m": 1.2705494208814505e-21,
+            "n_bounds_m": [
+              -9.899494936611665e-06,
+              0.0
+            ],
+            "realized_cell_center_tangent_coordinate_m": -3.4648232278140816e-06,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0004695807079912341,
+            "requested_tangent_coordinate_m": -3.4648232278140816e-06,
+            "sample_count": 71,
+            "temperature_delta_K": 0.06291811529339777
+          },
+          "exact_cell_center_t0_linecut": {
+            "derivative_NRMSE": 0.005946605171011508,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.005094282911294714,
+            "derivative_correlation": 0.9999660435285308,
+            "field_peak_abs_dTdn_K_m": 15245.926835193706,
+            "field_peak_abs_dTdn_location_m": -3.6062445840513923e-06,
+            "integral_closure_absolute_K": 5.6561026865784014e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0007137677640295414,
+            "integrated_gradient_temperature_delta_K": 0.07918633801703538,
+            "last_inside_cell_n_m": -7.071067811865467e-08,
+            "last_inside_edge_cell_derivative_difference_K_m": 292.31563758766606,
+            "last_inside_edge_cell_difference_over_line_peak": 0.01922366013327461,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 15206.034415979462,
+            "linecut_peak_abs_dTdn_location_m": -3.6062445840513923e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.796828222675829e-21,
+            "n_bounds_m": [
+              -9.97020561473032e-06,
+              -7.071067811865467e-08
+            ],
+            "realized_cell_center_tangent_coordinate_m": 0.0,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00041505637982608467,
+            "requested_tangent_coordinate_m": 0.0,
+            "sample_count": 71,
+            "temperature_delta_K": 0.07924289904390117
+          },
+          "raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.007826837942433013,
+            "derivative_correlation": 0.999938039522928,
+            "field_peak_abs_dTdn_K_m": 12957.781766778575,
+            "field_peak_abs_dTdn_location_m": -3.700000000000061e-06,
+            "integral_closure_absolute_K": 4.307905770969955e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0006464482215359468,
+            "integrated_gradient_temperature_delta_K": 0.0665965314703302,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 12965.093110680877,
+            "linecut_peak_abs_dTdn_location_m": -3.700000000000061e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0001859815886088144,
+            "sample_count": 195,
+            "tangent_coordinate_m": -3.4648232278140816e-06,
+            "temperature_delta_K": 0.0666396105280399
+          }
+        }
+      },
+      "stored_thickness_average_gradient_max_abs_differences": {
+        "grad_a_K_m": 0.0,
+        "grad_b_K_m": 0.0,
+        "grad_magnitude_K_m": 0.0,
+        "grad_n_K_m": 3.637978807091713e-12,
+        "grad_t_K_m": 3.637978807091713e-12
+      }
+    },
+    "analytic_a": {
+      "projection_storage_checks": {
+        "midplane_slice_max_abs_difference_K": 0.0,
+        "surface_slice_max_abs_difference_K": 0.0,
+        "thickness_average_max_abs_difference_K": 0.0
+      },
+      "projections": {
+        "midplane": {
+          "central_t0_linecut": {
+            "derivative_NRMSE": 0.004641067457983154,
+            "derivative_correlation": 0.9999469093532012,
+            "field_peak_abs_dTdn_K_m": 9074.995521134268,
+            "field_peak_abs_dTdn_location_m": -6.200000000000037e-06,
+            "integral_closure_absolute_K": 7.1584484492848155e-06,
+            "integral_closure_relative_to_temperature_delta": 0.00011398618875607108,
+            "integrated_gradient_temperature_delta_K": 0.06279385742377888,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 9091.208440540639,
+            "linecut_peak_abs_dTdn_location_m": -6.200000000000037e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0001392419121832766,
+            "sample_count": 195,
+            "tangent_coordinate_m": 0.0,
+            "temperature_delta_K": 0.06280101587222817
+          },
+          "coordinate_rotation_identity": {
+            "active_cell_count": 41041,
+            "maximum_absolute_error_K2_m2": 4.470348358154297e-08,
+            "maximum_error_over_global_peak_norm2": 4.026910368558503e-16,
+            "maximum_pixelwise_relative_error": 7.440497833093032e-16,
+            "p99_pixelwise_relative_error": 4.63348743479138e-16,
+            "rms_error_over_rms_cartesian_norm2": 2.0423012537790694e-16
+          },
+          "edge_band": {
+            "edge_band_cell_count": 1132,
+            "p99_abs_grad_n_K_m": 6074.4126331775415,
+            "raw_max_abs_grad_n_K_m": 6144.024984059176,
+            "raw_max_over_p99": 1.011459931204117,
+            "raw_peak_normal_coordinate_m": -1.4142135623730933e-07,
+            "raw_peak_tangent_coordinate_m": -4.454772721475249e-06
+          },
+          "exact_cell_center_raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.005376413817608242,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.004096709332447022,
+            "derivative_correlation": 0.9999629971655338,
+            "field_peak_abs_dTdn_K_m": 6948.914331955761,
+            "field_peak_abs_dTdn_location_m": -6.222539674441618e-06,
+            "integral_closure_absolute_K": 1.370479970404237e-06,
+            "integral_closure_relative_to_temperature_delta": 3.1378907667332e-05,
+            "integrated_gradient_temperature_delta_K": 0.04367382640494278,
+            "last_inside_cell_n_m": 0.0,
+            "last_inside_edge_cell_derivative_difference_K_m": 164.70197991629993,
+            "last_inside_edge_cell_difference_over_line_peak": 0.023704353369727968,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 6948.174343647581,
+            "linecut_peak_abs_dTdn_location_m": -6.222539674441618e-06,
+            "maximum_tangent_coordinate_mismatch_m": 8.470329472543003e-22,
+            "n_bounds_m": [
+              -9.899494936611665e-06,
+              0.0
+            ],
+            "realized_cell_center_tangent_coordinate_m": -4.454772721475249e-06,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0002385242249141013,
+            "requested_tangent_coordinate_m": -4.454772721475249e-06,
+            "sample_count": 71,
+            "temperature_delta_K": 0.043675196884913184
+          },
+          "exact_cell_center_t0_linecut": {
+            "derivative_NRMSE": 0.012630769111266529,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.0032923815260251592,
+            "derivative_correlation": 0.99969420498593,
+            "field_peak_abs_dTdn_K_m": 9074.900176132907,
+            "field_peak_abs_dTdn_location_m": -6.1518289963229625e-06,
+            "integral_closure_absolute_K": 3.5257988091307035e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0005711451796897819,
+            "integrated_gradient_temperature_delta_K": 0.06176735228757826,
+            "last_inside_cell_n_m": -7.071067811865467e-08,
+            "last_inside_edge_cell_derivative_difference_K_m": 731.6832519480718,
+            "last_inside_edge_cell_difference_over_line_peak": 0.08063284798560122,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 9074.257827017718,
+            "linecut_peak_abs_dTdn_location_m": -6.1518289963229625e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.796828222675829e-21,
+            "n_bounds_m": [
+              -9.97020561473032e-06,
+              -7.071067811865467e-08
+            ],
+            "realized_cell_center_tangent_coordinate_m": 0.0,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0002465586289660394,
+            "requested_tangent_coordinate_m": 0.0,
+            "sample_count": 71,
+            "temperature_delta_K": 0.06173209429948695
+          },
+          "raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.0036402031777864885,
+            "derivative_correlation": 0.9999766195965253,
+            "field_peak_abs_dTdn_K_m": 6948.797347650007,
+            "field_peak_abs_dTdn_location_m": -6.250000000000037e-06,
+            "integral_closure_absolute_K": 9.86790228164891e-06,
+            "integral_closure_relative_to_temperature_delta": 0.00021467150817752352,
+            "integrated_gradient_temperature_delta_K": 0.04595758425484675,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 6952.158812876319,
+            "linecut_peak_abs_dTdn_location_m": -6.250000000000037e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00011742727868269264,
+            "sample_count": 195,
+            "tangent_coordinate_m": -4.454772721475249e-06,
+            "temperature_delta_K": 0.0459674521571284
+          }
+        },
+        "surface": {
+          "central_t0_linecut": {
+            "derivative_NRMSE": 0.003630518032545508,
+            "derivative_correlation": 0.9999653150943589,
+            "field_peak_abs_dTdn_K_m": 9635.379784516388,
+            "field_peak_abs_dTdn_location_m": -6.150000000000038e-06,
+            "integral_closure_absolute_K": 5.4142770524040484e-06,
+            "integral_closure_relative_to_temperature_delta": 8.077458821923207e-05,
+            "integrated_gradient_temperature_delta_K": 0.06702404599960096,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 9652.502549503348,
+            "linecut_peak_abs_dTdn_location_m": -6.200000000000037e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00013409580297318784,
+            "sample_count": 195,
+            "tangent_coordinate_m": 0.0,
+            "temperature_delta_K": 0.06702946027665337
+          },
+          "coordinate_rotation_identity": {
+            "active_cell_count": 41041,
+            "maximum_absolute_error_K2_m2": 5.960464477539063e-08,
+            "maximum_error_over_global_peak_norm2": 5.170814287801093e-16,
+            "maximum_pixelwise_relative_error": 7.211597720574157e-16,
+            "p99_pixelwise_relative_error": 4.864736347600223e-16,
+            "rms_error_over_rms_cartesian_norm2": 2.0328448866861522e-16
+          },
+          "edge_band": {
+            "edge_band_cell_count": 1132,
+            "p99_abs_grad_n_K_m": 5451.2272974912585,
+            "raw_max_abs_grad_n_K_m": 5491.105921674186,
+            "raw_max_over_p99": 1.0073155313485607,
+            "raw_peak_normal_coordinate_m": -1.4142135623730994e-07,
+            "raw_peak_tangent_coordinate_m": -4.879036790187177e-06
+          },
+          "exact_cell_center_raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.0025104772258961057,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.001857706836237219,
+            "derivative_correlation": 0.999991683075681,
+            "field_peak_abs_dTdn_K_m": 6993.50392462403,
+            "field_peak_abs_dTdn_location_m": -6.222539674441618e-06,
+            "integral_closure_absolute_K": 1.5210664202694457e-06,
+            "integral_closure_relative_to_temperature_delta": 3.44099032395782e-05,
+            "integrated_gradient_temperature_delta_K": 0.04420280027906722,
+            "last_inside_cell_n_m": 0.0,
+            "last_inside_edge_cell_derivative_difference_K_m": 79.83074042204044,
+            "last_inside_edge_cell_difference_over_line_peak": 0.01141628158941755,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 6992.709473462921,
+            "linecut_peak_abs_dTdn_location_m": -6.222539674441618e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.6940658945086007e-21,
+            "n_bounds_m": [
+              -9.899494936611665e-06,
+              0.0
+            ],
+            "realized_cell_center_tangent_coordinate_m": -4.879036790187177e-06,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0002197098331097744,
+            "requested_tangent_coordinate_m": -4.879036790187177e-06,
+            "sample_count": 71,
+            "temperature_delta_K": 0.04420432134548749
+          },
+          "exact_cell_center_t0_linecut": {
+            "derivative_NRMSE": 0.006409712095759171,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.0023771070529492976,
+            "derivative_correlation": 0.9999104896710488,
+            "field_peak_abs_dTdn_K_m": 9635.48296085878,
+            "field_peak_abs_dTdn_location_m": -6.1518289963229625e-06,
+            "integral_closure_absolute_K": 2.0848558658720373e-05,
+            "integral_closure_relative_to_temperature_delta": 0.00031493469473435897,
+            "integrated_gradient_temperature_delta_K": 0.06622047345646717,
+            "last_inside_cell_n_m": -7.071067811865467e-08,
+            "last_inside_edge_cell_derivative_difference_K_m": 378.04637470588455,
+            "last_inside_edge_cell_difference_over_line_peak": 0.03923758050992583,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 9634.803415318922,
+            "linecut_peak_abs_dTdn_location_m": -6.1518289963229625e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.796828222675829e-21,
+            "n_bounds_m": [
+              -9.97020561473032e-06,
+              -7.071067811865467e-08
+            ],
+            "realized_cell_center_tangent_coordinate_m": 0.0,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0002222685222717404,
+            "requested_tangent_coordinate_m": 0.0,
+            "sample_count": 71,
+            "temperature_delta_K": 0.06619962489780845
+          },
+          "raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.003050176216996668,
+            "derivative_correlation": 0.9999830406925851,
+            "field_peak_abs_dTdn_K_m": 6993.347036424642,
+            "field_peak_abs_dTdn_location_m": -6.250000000000037e-06,
+            "integral_closure_absolute_K": 6.725359242745754e-06,
+            "integral_closure_relative_to_temperature_delta": 0.00014513138312482793,
+            "integrated_gradient_temperature_delta_K": 0.04633307446862256,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 6995.990024558915,
+            "linecut_peak_abs_dTdn_location_m": -6.250000000000037e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0001058609650616822,
+            "sample_count": 195,
+            "tangent_coordinate_m": -4.879036790187177e-06,
+            "temperature_delta_K": 0.046339799827865305
+          }
+        },
+        "thickness_average": {
+          "central_t0_linecut": {
+            "derivative_NRMSE": 0.004969586674767564,
+            "derivative_correlation": 0.9999399294939472,
+            "field_peak_abs_dTdn_K_m": 8967.98957259266,
+            "field_peak_abs_dTdn_location_m": -6.200000000000037e-06,
+            "integral_closure_absolute_K": 8.274190964892292e-06,
+            "integral_closure_relative_to_temperature_delta": 0.00013344182012379395,
+            "integrated_gradient_temperature_delta_K": 0.06199770682170659,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 8984.021011620938,
+            "linecut_peak_abs_dTdn_location_m": -6.200000000000037e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00014102411648740925,
+            "sample_count": 195,
+            "tangent_coordinate_m": 0.0,
+            "temperature_delta_K": 0.062005981012671484
+          },
+          "coordinate_rotation_identity": {
+            "active_cell_count": 41041,
+            "maximum_absolute_error_K2_m2": 4.470348358154297e-08,
+            "maximum_error_over_global_peak_norm2": 3.9104886738469084e-16,
+            "maximum_pixelwise_relative_error": 7.25870221362523e-16,
+            "p99_pixelwise_relative_error": 4.780848692430514e-16,
+            "rms_error_over_rms_cartesian_norm2": 2.0388513912900663e-16
+          },
+          "edge_band": {
+            "edge_band_cell_count": 1132,
+            "p99_abs_grad_n_K_m": 6562.903046616244,
+            "raw_max_abs_grad_n_K_m": 6654.492124937956,
+            "raw_max_over_p99": 1.0139555738780774,
+            "raw_peak_normal_coordinate_m": -1.4142135623730933e-07,
+            "raw_peak_tangent_coordinate_m": -4.17193000900063e-06
+          },
+          "exact_cell_center_raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.007599376497960986,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.004407944175979883,
+            "derivative_correlation": 0.9999274789458361,
+            "field_peak_abs_dTdn_K_m": 7095.967364359849,
+            "field_peak_abs_dTdn_location_m": -6.222539674441618e-06,
+            "integral_closure_absolute_K": 1.3154724077396596e-06,
+            "integral_closure_relative_to_temperature_delta": 2.9490846096223995e-05,
+            "integrated_gradient_temperature_delta_K": 0.04460481089804226,
+            "last_inside_cell_n_m": 0.0,
+            "last_inside_edge_cell_derivative_difference_K_m": 298.1988132716933,
+            "last_inside_edge_cell_difference_over_line_peak": 0.04202798825778668,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 7095.243565850309,
+            "linecut_peak_abs_dTdn_location_m": -6.222539674441618e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.6940658945086007e-21,
+            "n_bounds_m": [
+              -9.899494936611666e-06,
+              0.0
+            ],
+            "realized_cell_center_tangent_coordinate_m": -4.17193000900063e-06,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0002480119080621108,
+            "requested_tangent_coordinate_m": -4.17193000900063e-06,
+            "sample_count": 71,
+            "temperature_delta_K": 0.04460612637045
+          },
+          "exact_cell_center_t0_linecut": {
+            "derivative_NRMSE": 0.012742762316972021,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.0025818956453378407,
+            "derivative_correlation": 0.9997105300988754,
+            "field_peak_abs_dTdn_K_m": 8967.860479300363,
+            "field_peak_abs_dTdn_location_m": -6.1518289963229625e-06,
+            "integral_closure_absolute_K": 3.019070365904014e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0004965101416926902,
+            "integrated_gradient_temperature_delta_K": 0.06083600537667808,
+            "last_inside_cell_n_m": -7.071067811865467e-08,
+            "last_inside_edge_cell_derivative_difference_K_m": 741.45937276722,
+            "last_inside_edge_cell_difference_over_line_peak": 0.08268548526973445,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 8967.225267511589,
+            "linecut_peak_abs_dTdn_location_m": -6.1518289963229625e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.796828222675829e-21,
+            "n_bounds_m": [
+              -9.97020561473032e-06,
+              -7.071067811865467e-08
+            ],
+            "realized_cell_center_tangent_coordinate_m": 0.0,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0002474151925547339,
+            "requested_tangent_coordinate_m": 0.0,
+            "sample_count": 71,
+            "temperature_delta_K": 0.06080581467301904
+          },
+          "raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.004037815842057272,
+            "derivative_correlation": 0.9999711820006129,
+            "field_peak_abs_dTdn_K_m": 7095.811846369614,
+            "field_peak_abs_dTdn_location_m": -6.250000000000037e-06,
+            "integral_closure_absolute_K": 1.2239939589354931e-05,
+            "integral_closure_relative_to_temperature_delta": 0.00026015928717629516,
+            "integrated_gradient_temperature_delta_K": 0.04703562724287498,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 7099.687515041349,
+            "linecut_peak_abs_dTdn_location_m": -6.250000000000037e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00012278931230494275,
+            "sample_count": 195,
+            "tangent_coordinate_m": -4.17193000900063e-06,
+            "temperature_delta_K": 0.047047867182464335
+          }
+        }
+      },
+      "stored_thickness_average_gradient_max_abs_differences": {
+        "grad_a_K_m": 0.0,
+        "grad_b_K_m": 0.0,
+        "grad_magnitude_K_m": 0.0,
+        "grad_n_K_m": 1.8189894035458565e-12,
+        "grad_t_K_m": 1.8189894035458565e-12
+      }
+    },
+    "analytic_b": {
+      "projection_storage_checks": {
+        "midplane_slice_max_abs_difference_K": 0.0,
+        "surface_slice_max_abs_difference_K": 0.0,
+        "thickness_average_max_abs_difference_K": 0.0
+      },
+      "projections": {
+        "midplane": {
+          "central_t0_linecut": {
+            "derivative_NRMSE": 0.004660333320710759,
+            "derivative_correlation": 0.9999469183007293,
+            "field_peak_abs_dTdn_K_m": 13342.57786283088,
+            "field_peak_abs_dTdn_location_m": -6.200000000000037e-06,
+            "integral_closure_absolute_K": 1.0528044911806145e-05,
+            "integral_closure_relative_to_temperature_delta": 0.00011413925202591057,
+            "integrated_gradient_temperature_delta_K": 0.0922280728302384,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 13366.432025769804,
+            "linecut_peak_abs_dTdn_location_m": -6.200000000000037e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00013952441236821802,
+            "sample_count": 195,
+            "tangent_coordinate_m": 0.0,
+            "temperature_delta_K": 0.0922386008751502
+          },
+          "coordinate_rotation_identity": {
+            "active_cell_count": 41041,
+            "maximum_absolute_error_K2_m2": 1.1920928955078125e-07,
+            "maximum_error_over_global_peak_norm2": 4.958422363711586e-16,
+            "maximum_pixelwise_relative_error": 7.3111051574520255e-16,
+            "p99_pixelwise_relative_error": 4.821065032664809e-16,
+            "rms_error_over_rms_cartesian_norm2": 2.026288090647421e-16
+          },
+          "edge_band": {
+            "edge_band_cell_count": 1132,
+            "p99_abs_grad_n_K_m": 8989.676242263886,
+            "raw_max_abs_grad_n_K_m": 9080.207803928479,
+            "raw_max_over_p99": 1.0100706142495954,
+            "raw_peak_normal_coordinate_m": -1.4142135623730933e-07,
+            "raw_peak_tangent_coordinate_m": -4.313351365237939e-06
+          },
+          "exact_cell_center_raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.005388230565751649,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.004179679309511032,
+            "derivative_correlation": 0.9999626776672053,
+            "field_peak_abs_dTdn_K_m": 10388.525654400597,
+            "field_peak_abs_dTdn_location_m": -6.222539674441618e-06,
+            "integral_closure_absolute_K": 1.985418781977333e-06,
+            "integral_closure_relative_to_temperature_delta": 3.037532358259372e-05,
+            "integrated_gradient_temperature_delta_K": 0.06536089957497847,
+            "last_inside_cell_n_m": 0.0,
+            "last_inside_edge_cell_derivative_difference_K_m": 240.42939256900354,
+            "last_inside_edge_cell_difference_over_line_peak": 0.023146158434242135,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 10387.442618266854,
+            "linecut_peak_abs_dTdn_location_m": -6.222539674441618e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.6940658945086007e-21,
+            "n_bounds_m": [
+              -9.899494936611666e-06,
+              0.0
+            ],
+            "realized_cell_center_tangent_coordinate_m": -4.313351365237939e-06,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0002396436302630193,
+            "requested_tangent_coordinate_m": -4.313351365237939e-06,
+            "sample_count": 71,
+            "temperature_delta_K": 0.06536288499376045
+          },
+          "exact_cell_center_t0_linecut": {
+            "derivative_NRMSE": 0.012806819979987621,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.0033386570882508247,
+            "derivative_correlation": 0.999688150131448,
+            "field_peak_abs_dTdn_K_m": 13342.37647226224,
+            "field_peak_abs_dTdn_location_m": -6.1518289963229625e-06,
+            "integral_closure_absolute_K": 5.287629150646511e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0005833145995126297,
+            "integrated_gradient_temperature_delta_K": 0.09070085861638613,
+            "last_inside_cell_n_m": -7.071067811865467e-08,
+            "last_inside_edge_cell_derivative_difference_K_m": 1090.8411271722853,
+            "last_inside_edge_cell_difference_over_line_peak": 0.08176342673515848,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 13341.431135288032,
+            "linecut_peak_abs_dTdn_location_m": -6.1518289963229625e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.796828222675829e-21,
+            "n_bounds_m": [
+              -9.97020561473032e-06,
+              -7.071067811865467e-08
+            ],
+            "realized_cell_center_tangent_coordinate_m": 0.0,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0002479279048532478,
+            "requested_tangent_coordinate_m": 0.0,
+            "sample_count": 71,
+            "temperature_delta_K": 0.09064798232487967
+          },
+          "raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.003652144583999619,
+            "derivative_correlation": 0.9999763525973961,
+            "field_peak_abs_dTdn_K_m": 10388.340383808878,
+            "field_peak_abs_dTdn_location_m": -6.250000000000037e-06,
+            "integral_closure_absolute_K": 1.471126016787394e-05,
+            "integral_closure_relative_to_temperature_delta": 0.00021395839179229082,
+            "integrated_gradient_temperature_delta_K": 0.06874286372738167,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 10393.699724017368,
+            "linecut_peak_abs_dTdn_location_m": -6.250000000000037e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00011933969259451313,
+            "sample_count": 195,
+            "tangent_coordinate_m": -4.313351365237939e-06,
+            "temperature_delta_K": 0.06875757498754954
+          }
+        },
+        "surface": {
+          "central_t0_linecut": {
+            "derivative_NRMSE": 0.0036453203802360445,
+            "derivative_correlation": 0.9999656294519845,
+            "field_peak_abs_dTdn_K_m": 13939.27399900453,
+            "field_peak_abs_dTdn_location_m": -6.200000000000037e-06,
+            "integral_closure_absolute_K": 7.754075933397164e-06,
+            "integral_closure_relative_to_temperature_delta": 8.01284993985539e-05,
+            "integrated_gradient_temperature_delta_K": 0.09676275818374214,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 13964.135299959624,
+            "linecut_peak_abs_dTdn_location_m": -6.200000000000037e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00013453023767539326,
+            "sample_count": 195,
+            "tangent_coordinate_m": 0.0,
+            "temperature_delta_K": 0.09677051225967553
+          },
+          "coordinate_rotation_identity": {
+            "active_cell_count": 41041,
+            "maximum_absolute_error_K2_m2": 1.1920928955078125e-07,
+            "maximum_error_over_global_peak_norm2": 4.909174464099137e-16,
+            "maximum_pixelwise_relative_error": 7.185782109862859e-16,
+            "p99_pixelwise_relative_error": 4.858644289302523e-16,
+            "rms_error_over_rms_cartesian_norm2": 2.0475492334498207e-16
+          },
+          "edge_band": {
+            "edge_band_cell_count": 1132,
+            "p99_abs_grad_n_K_m": 8001.440255114831,
+            "raw_max_abs_grad_n_K_m": 8078.961892595437,
+            "raw_max_over_p99": 1.0096884604532355,
+            "raw_peak_normal_coordinate_m": -1.4142135623730994e-07,
+            "raw_peak_tangent_coordinate_m": -4.879036790187177e-06
+          },
+          "exact_cell_center_raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.0025348462833026924,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.001989080479658386,
+            "derivative_correlation": 0.9999917075622289,
+            "field_peak_abs_dTdn_K_m": 10119.300520858304,
+            "field_peak_abs_dTdn_location_m": -6.222539674441618e-06,
+            "integral_closure_absolute_K": 2.1943315402783714e-06,
+            "integral_closure_relative_to_temperature_delta": 3.443433673626104e-05,
+            "integrated_gradient_temperature_delta_K": 0.0637229053294511,
+            "last_inside_cell_n_m": 0.0,
+            "last_inside_edge_cell_derivative_difference_K_m": 107.87872720816813,
+            "last_inside_edge_cell_difference_over_line_peak": 0.010661902756614789,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 10118.14960901221,
+            "linecut_peak_abs_dTdn_location_m": -6.222539674441618e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.6940658945086007e-21,
+            "n_bounds_m": [
+              -9.899494936611665e-06,
+              0.0
+            ],
+            "realized_cell_center_tangent_coordinate_m": -4.879036790187177e-06,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00022124311830878961,
+            "requested_tangent_coordinate_m": -4.879036790187177e-06,
+            "sample_count": 71,
+            "temperature_delta_K": 0.06372509966099138
+          },
+          "exact_cell_center_t0_linecut": {
+            "derivative_NRMSE": 0.00660804064754653,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.002450175553331346,
+            "derivative_correlation": 0.9999064097050513,
+            "field_peak_abs_dTdn_K_m": 13939.285492089899,
+            "field_peak_abs_dTdn_location_m": -6.1518289963229625e-06,
+            "integral_closure_absolute_K": 3.175718437073427e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0003324037308981481,
+            "integrated_gradient_temperature_delta_K": 0.09556974734148181,
+            "last_inside_cell_n_m": -7.071067811865467e-08,
+            "last_inside_edge_cell_derivative_difference_K_m": 563.8572686434827,
+            "last_inside_edge_cell_difference_over_line_peak": 0.040453803618860855,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 13938.30043661443,
+            "linecut_peak_abs_dTdn_location_m": -6.1518289963229625e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.796828222675829e-21,
+            "n_bounds_m": [
+              -9.97020561473032e-06,
+              -7.071067811865467e-08
+            ],
+            "realized_cell_center_tangent_coordinate_m": 0.0,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00022409396766028374,
+            "requested_tangent_coordinate_m": 0.0,
+            "sample_count": 71,
+            "temperature_delta_K": 0.09553799015711108
+          },
+          "raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.003061819062178018,
+            "derivative_correlation": 0.9999832104114234,
+            "field_peak_abs_dTdn_K_m": 10119.171032106728,
+            "field_peak_abs_dTdn_location_m": -6.250000000000037e-06,
+            "integral_closure_absolute_K": 9.585596244574002e-06,
+            "integral_closure_relative_to_temperature_delta": 0.0001433801416890175,
+            "integrated_gradient_temperature_delta_K": 0.06684483462998561,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 10123.025832170464,
+            "linecut_peak_abs_dTdn_location_m": -6.250000000000037e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00010660210953538866,
+            "sample_count": 195,
+            "tangent_coordinate_m": -4.879036790187177e-06,
+            "temperature_delta_K": 0.06685442022623019
+          }
+        },
+        "thickness_average": {
+          "central_t0_linecut": {
+            "derivative_NRMSE": 0.004995710565274633,
+            "derivative_correlation": 0.9999398580571297,
+            "field_peak_abs_dTdn_K_m": 13170.217607317692,
+            "field_peak_abs_dTdn_location_m": -6.200000000000037e-06,
+            "integral_closure_absolute_K": 1.2181469660713096e-05,
+            "integral_closure_relative_to_temperature_delta": 0.00013392389926958104,
+            "integrated_gradient_temperature_delta_K": 0.09094596511321695,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 13193.780136717669,
+            "linecut_peak_abs_dTdn_location_m": -6.200000000000037e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0001413581904785047,
+            "sample_count": 195,
+            "tangent_coordinate_m": 0.0,
+            "temperature_delta_K": 0.09095814658287767
+          },
+          "coordinate_rotation_identity": {
+            "active_cell_count": 41041,
+            "maximum_absolute_error_K2_m2": 1.1920928955078125e-07,
+            "maximum_error_over_global_peak_norm2": 4.817499709561821e-16,
+            "maximum_pixelwise_relative_error": 7.055107267284544e-16,
+            "p99_pixelwise_relative_error": 4.733577461826155e-16,
+            "rms_error_over_rms_cartesian_norm2": 2.0237047847937455e-16
+          },
+          "edge_band": {
+            "edge_band_cell_count": 1132,
+            "p99_abs_grad_n_K_m": 9710.500389376793,
+            "raw_max_abs_grad_n_K_m": 9845.205437133718,
+            "raw_max_over_p99": 1.0138721015761754,
+            "raw_peak_normal_coordinate_m": -1.4142135623730933e-07,
+            "raw_peak_tangent_coordinate_m": -4.03050865276332e-06
+          },
+          "exact_cell_center_raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.007629574035024951,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.004504020134689093,
+            "derivative_correlation": 0.9999263955307373,
+            "field_peak_abs_dTdn_K_m": 10584.97316812672,
+            "field_peak_abs_dTdn_location_m": -6.222539674441618e-06,
+            "integral_closure_absolute_K": 1.901588317254621e-06,
+            "integral_closure_relative_to_temperature_delta": 2.8556835310266515e-05,
+            "integrated_gradient_temperature_delta_K": 0.06658770109678763,
+            "last_inside_cell_n_m": 0.0,
+            "last_inside_edge_cell_derivative_difference_K_m": 442.2989387337075,
+            "last_inside_edge_cell_difference_over_line_peak": 0.04178972675773711,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 10583.915546942852,
+            "linecut_peak_abs_dTdn_location_m": -6.222539674441618e-06,
+            "maximum_tangent_coordinate_mismatch_m": 8.470329472543003e-22,
+            "n_bounds_m": [
+              -9.899494936611666e-06,
+              0.0
+            ],
+            "realized_cell_center_tangent_coordinate_m": -4.03050865276332e-06,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0002490058483414237,
+            "requested_tangent_coordinate_m": -4.03050865276332e-06,
+            "sample_count": 71,
+            "temperature_delta_K": 0.06658960268510489
+          },
+          "exact_cell_center_t0_linecut": {
+            "derivative_NRMSE": 0.01293377213843455,
+            "derivative_NRMSE_excluding_last_inside_edge_cell": 0.0026211948210416803,
+            "derivative_correlation": 0.9997045131181064,
+            "field_peak_abs_dTdn_K_m": 13169.958339778252,
+            "field_peak_abs_dTdn_location_m": -6.1518289963229625e-06,
+            "integral_closure_absolute_K": 4.534138901710061e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0005084710361037455,
+            "integrated_gradient_temperature_delta_K": 0.08921736063427735,
+            "last_inside_cell_n_m": -7.071067811865467e-08,
+            "last_inside_edge_cell_derivative_difference_K_m": 1105.3834522369816,
+            "last_inside_edge_cell_difference_over_line_peak": 0.08393814235033133,
+            "line_sample_spacing_m": {
+              "maximum": 1.4142135623731153e-07,
+              "minimum": 1.4142135623730814e-07
+            },
+            "linecut_peak_abs_dTdn_K_m": 13169.024489766045,
+            "linecut_peak_abs_dTdn_location_m": -6.1518289963229625e-06,
+            "maximum_tangent_coordinate_mismatch_m": 1.796828222675829e-21,
+            "n_bounds_m": [
+              -9.97020561473032e-06,
+              -7.071067811865467e-08
+            ],
+            "realized_cell_center_tangent_coordinate_m": 0.0,
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.0002487870245525613,
+            "requested_tangent_coordinate_m": 0.0,
+            "sample_count": 71,
+            "temperature_delta_K": 0.08917201924526025
+          },
+          "raw_peak_t_linecut": {
+            "derivative_NRMSE": 0.004052285488045426,
+            "derivative_correlation": 0.9999708703304564,
+            "field_peak_abs_dTdn_K_m": 10584.737579540913,
+            "field_peak_abs_dTdn_location_m": -6.250000000000037e-06,
+            "integral_closure_absolute_K": 1.826550685357642e-05,
+            "integral_closure_relative_to_temperature_delta": 0.0002601688026702943,
+            "integrated_gradient_temperature_delta_K": 0.07018810307425513,
+            "line_sample_spacing_m": 4.999999999999952e-08,
+            "linecut_peak_abs_dTdn_K_m": 10590.838886649735,
+            "linecut_peak_abs_dTdn_location_m": -6.250000000000037e-06,
+            "n_bounds_m": [
+              -1e-05,
+              -3.000000000000937e-07
+            ],
+            "reconstructed_temperature_NRMSE_after_common_origin": 0.00012463903496948454,
+            "sample_count": 195,
+            "tangent_coordinate_m": -4.03050865276332e-06,
+            "temperature_delta_K": 0.07020636858110871
+          }
+        }
+      },
+      "stored_thickness_average_gradient_max_abs_differences": {
+        "grad_a_K_m": 0.0,
+        "grad_b_K_m": 0.0,
+        "grad_magnitude_K_m": 0.0,
+        "grad_n_K_m": 3.637978807091713e-12,
+        "grad_t_K_m": 3.637978807091713e-12
+      }
+    }
+  },
+  "coordinate_contract": {
+    "edge": "TaIrTe4 y<=x",
+    "lab_x": "crystal b",
+    "lab_y": "crystal a",
+    "outward_normal": "n=(-x+y)/sqrt(2)",
+    "tangent": "t=(x+y)/sqrt(2)"
+  },
+  "figures": {
+    "Maxwell_shared_scale": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_gradient_geometry_audit/Maxwell_surface_midplane_average_grad_n_shared_scale.png",
+    "analytic_shared_scale": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_gradient_geometry_audit/analytic_surface_midplane_average_grad_n_shared_scale.png",
+    "exact_linecut_derivative": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_gradient_geometry_audit/thickness_average_exact_cell_center_linecut_derivative.png",
+    "exact_linecut_reconstruction": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_gradient_geometry_audit/thickness_average_exact_cell_center_integral_reconstruction.png",
+    "exact_peak_linecut_derivative": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_gradient_geometry_audit/thickness_average_exact_peak_t_linecut_derivative.png",
+    "exact_peak_linecut_reconstruction": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_gradient_geometry_audit/thickness_average_exact_peak_t_integral_reconstruction.png",
+    "identity_error": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_gradient_geometry_audit/gradient_rotation_identity_error.png",
+    "linecut_derivative": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_gradient_geometry_audit/thickness_average_linecut_derivative_comparison.png",
+    "linecut_reconstruction": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_gradient_geometry_audit/thickness_average_gradient_integral_reconstruction.png"
+  },
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/audit_w12_explicit3d_gradient_geometry.py --input-npz /data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_50nm_maxwell_analytic_explicit3d_20260731/w12_50nm_maxwell_analytic_explicit3d_fields.npz --report-dir photothermal_pte/reports/paper_ir_w12_explicit3d_gradient_geometry_audit",
+  "grid_audit": {
+    "actual_coordinate_denominators_used": true,
+    "dx_m": {
+      "maximum": 1.000000000000004e-06,
+      "minimum": 9.999999999999904e-08
+    },
+    "dy_m": {
+      "maximum": 1.000000000000004e-06,
+      "minimum": 9.999999999999904e-08
+    },
+    "field_location": "thermal finite-volume cell centers",
+    "fixed_50nm_derivative_used": false,
+    "flake_thickness_m": 1.3e-07,
+    "flake_z_cell_count": 13,
+    "midplane_cell_center_z_m": -6.499999999999999e-08,
+    "surface_cell_center_z_m": -4.999999999999992e-09,
+    "x_cell_count": 286,
+    "y_cell_count": 286,
+    "z_cell_count": 86
+  },
+  "implementation_audit": {
+    "dz_weighted_thickness_average": true,
+    "flake_edge_stencil": "one-sided derivative using only TaIrTe4-side neighbour",
+    "gradient_before_mask": false,
+    "interface_cross_material_difference": false,
+    "interior_stencil": "centered two-cell coordinate difference using actual cell-center coordinates",
+    "mask_aware_gradient": true,
+    "old_gradient_figure_a_b_shared_color_scale": false,
+    "stored_report_also_contains_p99": true,
+    "stored_report_raw_max_is_single_cell_sensitive": true,
+    "this_audit_a_b_shared_color_scale": true
+  },
+  "input": {
+    "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_50nm_maxwell_analytic_explicit3d_20260731/w12_50nm_maxwell_analytic_explicit3d_fields.npz",
+    "sha256": "9b2287b5b18eb9c4d9c164ddd45d750ae05ff846d6a0f0e3936465e413be47ac",
+    "size_bytes": 262744866
+  },
+  "linecut_aggregate_metrics": {
+    "bilinear_central_maximum_derivative_NRMSE": 0.011315718474674245,
+    "bilinear_central_maximum_integral_closure": 0.0002744978153963812,
+    "bilinear_central_minimum_correlation": 0.9997471244754165,
+    "bilinear_peak_t_maximum_derivative_NRMSE": 0.007993187363156897,
+    "bilinear_peak_t_maximum_integral_closure": 0.0006464482215359468,
+    "bilinear_peak_t_minimum_correlation": 0.9998984776482644,
+    "exact_central_maximum_derivative_NRMSE": 0.02802435494079597,
+    "exact_central_maximum_derivative_NRMSE_without_last_edge_cell": 0.00589572913911136,
+    "exact_central_maximum_integral_closure": 0.0010617598006066298,
+    "exact_central_minimum_correlation": 0.9988733087997462,
+    "exact_peak_t_maximum_derivative_NRMSE": 0.020413710959692993,
+    "exact_peak_t_maximum_derivative_NRMSE_without_last_edge_cell": 0.011362137226815063,
+    "exact_peak_t_maximum_integral_closure": 4.424511547756056e-05,
+    "exact_peak_t_minimum_correlation": 0.9996770176020049
+  },
+  "scope": "offline audit only; no FDTD, thermal, PTE, adjoint, AD-FD, or optimization execution",
+  "status": "COMPLETED_OFFLINE_W12_EXPLICIT3D_GRADIENT_GEOMETRY_AUDIT"
+}

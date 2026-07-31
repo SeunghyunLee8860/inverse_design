@@ -1,5 +1,40 @@
 # Latest photothermal validation status
 
+## W12 edge-local 12.5-nm Lumerical runsetup audit
+
+- Status:
+  `BLOCKED_EDGE_LOCAL_12P5NM_RECTILINEAR_MESH_NOT_LOCAL`.
+- The fixed 11-µm scalar-Gaussian optical contract was not changed:
+  physical `w0=12 µm`, 50-µm source span, 60-µm lateral domain, six
+  24-layer PML boundaries, conformal variant 1, 130-nm TaIrTe4 with 5-nm
+  z override, paper-consistent `epsilon=(epsilon_b,epsilon_a,epsilon_b)`,
+  straight `y=x` edge, and no periodic/Bloch or CPU FDTD fallback.
+- 108 automatically generated, overlapping 1-µm axis-aligned boxes cover
+  `|n|<=0.5 µm` along the full diagonal of the inherited ±15-µm 25-nm
+  square.  Their maximum tangent spacing is `0.396508 µm`; the analytic
+  no-gap margin is `0.008853 µm`.
+- Actual v261 `runsetup` readback gives edge-band
+  `dx=dy=12.500000 nm` and TaIrTe4 `dz=5.000000 nm`, so those requested
+  resolution gates pass.
+- The realized native grid is `3011×3011×131`, or `1,177,813,000` Yee
+  cells.  A completed 25-nm reference has `396,307,080` cells and a precise
+  31.764-GiB GPU-memory estimate.  Cell-count scaling gives 94.402 GiB for
+  the requested box union, exceeding the 47.988-GiB RTX 6000 Ada capacity.
+- The construction is not edge-local on Lumerical's rectilinear native
+  coordinates.  At the off-edge `(0.123,5.123) µm` witness
+  (`|n|=3.536 µm`), inherited `25/25 nm` becomes `12.5/12.5 nm`.
+  At `(18.123,0.123)` and `(25.123,0.123) µm`, the inherited y step likewise
+  changes from 25 to 12.5 nm.  Thus the required off-edge 25/50/100-nm
+  hierarchy is not retained.
+- The preflight stopped before FDTD time stepping.  No new `E||a` Q exists;
+  `E||b` was not authorized, and no thermal, PTE, adjoint, AD-FD, or
+  optimization calculation ran.
+- The existing 50-nm Q remains the operational reference for its previously
+  passed total-power/lateral/downstream metrics, but it is not promoted as a
+  strict edge-gradient/full-3D-interface convergence certificate.
+- Report, JSON, CSV, plot, and manifest:
+  `reports/paper_ir_w12_edge_local_12p5nm_runsetup/`.
+
 ## W12 50-nm Maxwell vs analytic explicit-3D thermal sanity
 
 - Status:

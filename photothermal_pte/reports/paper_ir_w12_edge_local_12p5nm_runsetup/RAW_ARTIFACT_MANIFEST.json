@@ -1,0 +1,62 @@
+{
+  "status": "BLOCKED_EDGE_LOCAL_12P5NM_RECTILINEAR_MESH_NOT_LOCAL",
+  "raw_FSP_or_NPZ_committed_to_Git": false,
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/summarize_w12_edge_local_12p5nm_runsetup.py --overwrite",
+  "generation_commit": "23bdc05f005a86dd15691da8934cb1f1bffad210",
+  "artifacts": [
+    {
+      "role": "raw_runsetup_audit_JSON",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_edgeband12p5_h0p5_xy25_h15_xy50_h22_contract_retry2_20260731/EDGE_LOCAL_12P5NM_RUNSETUP_AUDIT.json",
+      "size_bytes": 112150,
+      "sha256": "7cf51371681fbb602a7fa3610f4d61e361af79f05625c023f33ea4ac4b53593a"
+    },
+    {
+      "role": "raw_fail_closed_case_result_JSON",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_edgeband12p5_h0p5_xy25_h15_xy50_h22_contract_retry2_20260731/case_result.json",
+      "size_bytes": 3277,
+      "sha256": "d853949467b1214e42c1f63fa4019869847bb0cc7fdcf513b371b76bbc28460d"
+    },
+    {
+      "role": "raw_native_mesh_coordinates_NPZ",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_edgeband12p5_h0p5_xy25_h15_xy50_h22_contract_retry2_20260731/edge_local_12p5nm_runsetup_mesh_coordinates.npz",
+      "size_bytes": 48945,
+      "sha256": "52f68f8b4f68b82cf021dc8ef8181caae58b72a608afc198e1a972bacda41123"
+    },
+    {
+      "role": "raw_mesh_box_geometry_PNG",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_edgeband12p5_h0p5_xy25_h15_xy50_h22_contract_retry2_20260731/EDGE_LOCAL_12P5NM_MESH_BOX_GEOMETRY.png",
+      "size_bytes": 155640,
+      "sha256": "427ba657170eba7c9c50ba91f6b71fee5b8c8fe7ce5fc744514021ec6012a5d7"
+    },
+    {
+      "role": "existing_25nm_Ea_reference_case_JSON",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_threelevel_xy25_h15_xy50_h22_dz5_pml24_t4_gpu5_20260731/case_result.json",
+      "size_bytes": 80850,
+      "sha256": "8f0f262d6a2089bc2d2bbf23ea34fa42972a451a6d50ea90ce0360555a348da7"
+    },
+    {
+      "role": "published_summary_JSON",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_edge_local_12p5nm_runsetup/w12_edge_local_12p5nm_runsetup_summary.json",
+      "size_bytes": 123014,
+      "sha256": "c013d08ed00d80c99013d4ec63ceececb254e7a9e85cb0bcf48df59ff3e3d82b"
+    },
+    {
+      "role": "published_cases_CSV",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_edge_local_12p5nm_runsetup/w12_edge_local_12p5nm_runsetup_cases.csv",
+      "size_bytes": 407,
+      "sha256": "489171dd23dfacf300cf747800a10461ffdcd55728a41c858a78b4f43917742b"
+    },
+    {
+      "role": "published_runsetup_audit_PNG",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_edge_local_12p5nm_runsetup/W12_EDGE_LOCAL_12P5NM_RUNSETUP_AUDIT.png",
+      "size_bytes": 378955,
+      "sha256": "ade8e247e78d1364a20a5e3646cd45d1c45133216c355cc4900887469cae3d48"
+    },
+    {
+      "role": "published_report",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_edge_local_12p5nm_runsetup/W12_EDGE_LOCAL_12P5NM_RUNSETUP_REPORT.md",
+      "size_bytes": 3626,
+      "sha256": "8606ee7465ea2a0746425374d53955eba8af64e01b35da0531fdaf6bba488799"
+    }
+  ]
+}

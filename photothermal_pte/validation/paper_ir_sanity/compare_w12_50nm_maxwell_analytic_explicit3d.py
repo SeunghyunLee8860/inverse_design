@@ -72,6 +72,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--incident-reference-npz", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--report-dir", type=Path, required=True)
+    parser.add_argument(
+        "--thermal-step-nm",
+        type=float,
+        default=100.0,
+        help="uniform x/y step inside the fixed 24-um thermal core",
+    )
     return parser.parse_args()
 
 
@@ -837,7 +843,7 @@ def main() -> int:
     geometry = thermal.build_geometry(
         domain_m=60.0e-6,
         si_depth_m=20.0e-6,
-        core_step_m=100.0e-9,
+        core_step_m=args.thermal_step_nm * 1.0e-9,
         flake_dz_m=10.0e-9,
     )
     system = downstream.assemble_downstream_system(geometry)
@@ -1142,7 +1148,7 @@ def main() -> int:
             ),
             "lateral_domain_um": 60.0,
             "Si_depth_um": 20.0,
-            "core_xy_cell_size_nm": 100.0,
+            "core_xy_cell_size_nm": args.thermal_step_nm,
             "flake_dz_nm": 10.0,
             "grid_shape": list(geometry.material_id.shape),
             "axis_mapping": "lab x=b, lab y=a, lab z=c",
