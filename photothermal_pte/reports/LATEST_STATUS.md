@@ -1,5 +1,47 @@
 # Latest photothermal validation status
 
+## W12 50-nm Maxwell vs analytic explicit-3D thermal sanity
+
+- Status:
+  `COMPLETED_W12_50NM_MAXWELL_ANALYTIC_EXPLICIT3D_THERMAL_SANITY`.
+  This is the primary existing-inverse-design explicit-3D FVM sanity
+  comparison, not a paper reproduction.
+- The completed edge-a and edge-b 50-nm GPU optical artifacts were reused.
+  Full `Qx+Qy+Qz` was conservatively remapped in 3D; no 25-nm or 12.5-nm
+  optical refinement, Q clipping, smoothing, gain, rescaling, tiling, or
+  source deletion was used.
+- All four primary cases use the same 285-µW incident power and one identical
+  `286×286×86` thermal matrix: 60-µm lateral domain, 20-µm Si depth,
+  100-nm core x/y, 10-nm TaIrTe4 dz, explicit air/130-nm
+  TaIrTe4/285-nm SiO2/Si, anisotropic TaIrTe4 kappa, finite material
+  interfaces, fixed far-x/y and bottom numerical boundaries, and exposed
+  `h=10 W/(m² K)`.
+- The analytic source is the full volumetric Gaussian--Beer--Lambert law,
+  integrated exactly over each 3D control volume. It is not collapsed to a
+  sheet. The previously implemented thickness-integrated paper-reduced
+  calculation is retained only as an optional control and was not published
+  as this primary result.
+- Every component remap closes at roundoff, all four residuals are below
+  `1.0e-9`, and all energy-balance errors are below `6.5e-11`.
+- At equal incident power, analytic Q gives `Tmax_b/Tmax_a=1.447051`,
+  TaIrTe4 mean-temperature ratio `1.470796`, edge-normal-gradient ratio
+  `1.475105`, and gradient-magnitude ratio `1.469806`.
+- Maxwell Q gives `Pabs_b/Pabs_a=1.316961`,
+  `Tmax_b/Tmax_a=1.016594`, and mean-temperature ratio `1.316410`, but its
+  edge-normal-gradient and gradient-magnitude ratios are only
+  `0.879613 / 0.908474`. Because the thermal operator is identical, the
+  local-gradient reversal remains attributable to the Maxwell volumetric-Q
+  distribution within this named model, not a boundary-model switch.
+- Maxwell--analytic volumetric-Q/gradient-vector NRMSE is
+  `34.3822% / 72.9218%` for a polarization and
+  `11.6933% / 29.0103%` for b polarization. Equal-absorbed-power copies are
+  separately named linearity diagnostics only.
+- External raw fields NPZ: 262,744,866 bytes, SHA-256
+  `9b2287b5b18eb9c4d9c164ddd45d750ae05ff846d6a0f0e3936465e413be47ac`.
+  No PTE, weighting potential, adjoint, AD-FD, or optimization ran.
+- Report, JSON, CSV, nine figures, and manifest:
+  `reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/`.
+
 ## W12 straight-edge-a interface/downstream convergence
 
 - Status: `BLOCKED_W12_INTERFACE_SLAB_OR_DOWNSTREAM_CONVERGENCE`.

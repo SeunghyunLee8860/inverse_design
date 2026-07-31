@@ -717,7 +717,9 @@ def write_cases_csv(
             }
         )
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(
+            handle, fieldnames=list(rows[0]), lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(rows)
 
@@ -757,17 +759,24 @@ exactly over every target cell. It is not collapsed to a 130-nm sheet.
 
 ## Primary same-incident-power results
 
-| case | Pabs (W) | Tmax (K) | TaIrTe4 mean (K) | max |dT/dn| (K/m) | max |grad T| (K/m) |
+| case | Pabs (W) | Tmax (K) | TaIrTe4 mean (K) | max \\|dT/dn\\| (K/m) | max \\|grad T\\| (K/m) |
 |---|---:|---:|---:|---:|---:|
 | Maxwell a | {cases['Maxwell_a']['source_power_W']:.9e} | {cases['Maxwell_a']['Tmax_rise_K']:.9e} | {cases['Maxwell_a']['TaIrTe4_volume_average_rise_K']:.9e} | {cases['Maxwell_a']['straight_edge_metrics']['max_abs_edge_normal_gradient_K_m']:.9e} | {cases['Maxwell_a']['straight_edge_metrics']['max_inplane_gradient_K_m']:.9e} |
 | Maxwell b | {cases['Maxwell_b']['source_power_W']:.9e} | {cases['Maxwell_b']['Tmax_rise_K']:.9e} | {cases['Maxwell_b']['TaIrTe4_volume_average_rise_K']:.9e} | {cases['Maxwell_b']['straight_edge_metrics']['max_abs_edge_normal_gradient_K_m']:.9e} | {cases['Maxwell_b']['straight_edge_metrics']['max_inplane_gradient_K_m']:.9e} |
 | analytic a | {cases['analytic_a']['source_power_W']:.9e} | {cases['analytic_a']['Tmax_rise_K']:.9e} | {cases['analytic_a']['TaIrTe4_volume_average_rise_K']:.9e} | {cases['analytic_a']['straight_edge_metrics']['max_abs_edge_normal_gradient_K_m']:.9e} | {cases['analytic_a']['straight_edge_metrics']['max_inplane_gradient_K_m']:.9e} |
 | analytic b | {cases['analytic_b']['source_power_W']:.9e} | {cases['analytic_b']['Tmax_rise_K']:.9e} | {cases['analytic_b']['TaIrTe4_volume_average_rise_K']:.9e} | {cases['analytic_b']['straight_edge_metrics']['max_abs_edge_normal_gradient_K_m']:.9e} | {cases['analytic_b']['straight_edge_metrics']['max_inplane_gradient_K_m']:.9e} |
 
-| model | Pabs b/a | Tmax b/a | mean T b/a | max |dT/dn| b/a | max |grad T| b/a |
+| model | Pabs b/a | Tmax b/a | mean T b/a | max \\|dT/dn\\| b/a | max \\|grad T\\| b/a |
 |---|---:|---:|---:|---:|---:|
 | Maxwell | {ratio['Maxwell']['absorbed_power']:.6f} | {ratio['Maxwell']['Tmax']:.6f} | {ratio['Maxwell']['TaIrTe4_mean']:.6f} | {ratio['Maxwell']['max_abs_grad_n']:.6f} | {ratio['Maxwell']['max_grad_magnitude']:.6f} |
 | analytic | {ratio['analytic']['absorbed_power']:.6f} | {ratio['analytic']['Tmax']:.6f} | {ratio['analytic']['TaIrTe4_mean']:.6f} | {ratio['analytic']['max_abs_grad_n']:.6f} | {ratio['analytic']['max_grad_magnitude']:.6f} |
+
+The analytic volumetric source reproduces the paper-like `b>a` temperature
+and gradient ordering. The Maxwell source gives `b>a` absorbed power, Tmax,
+and mean temperature, but its local edge-gradient maxima remain `b<a`.
+Because every case used one identical explicit-3D operator, this remaining
+reversal is attributed to the Maxwell spatial/depth source distribution
+within this named model, not to changing the thermal boundary contract.
 
 ## Maxwell--analytic differences
 
