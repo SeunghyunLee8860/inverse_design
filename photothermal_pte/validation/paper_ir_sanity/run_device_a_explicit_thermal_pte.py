@@ -77,6 +77,8 @@ FLAKE_VERTICES_UM = np.asarray(
         [-11.0, 1.0],
     ]
 )
+TOP_CONTACT_SEGMENT_UM: np.ndarray | None = None
+BOTTOM_CONTACT_SEGMENT_UM: np.ndarray | None = None
 
 
 def sha256(path: Path) -> str:
@@ -102,21 +104,32 @@ def growing_positions(
     return np.unique(np.asarray(values))
 
 
-def lateral_edges(domain_m: float, core_step_m: float) -> np.ndarray:
-    core_min, core_max = -12.0e-6, 12.0e-6
+def lateral_edges(
+    domain_m: float,
+    core_step_m: float,
+    core_min: float,
+    core_max: float,
+) -> np.ndarray:
     cells = int(round((core_max - core_min) / core_step_m))
     if not np.isclose(cells * core_step_m, core_max - core_min):
-        raise ValueError("core step must divide the 24 um Device-A core")
+        raise ValueError("core step must divide the Device-A core bounds")
     core = np.linspace(core_min, core_max, cells + 1)
     half = 0.5 * domain_m
     if half <= core_max:
         raise ValueError("thermal domain must extend beyond Device A")
-    outer = growing_positions(
+    outer_low = growing_positions(
+        core_min + half,
+        initial_step_m=core_step_m,
+        maximum_step_m=1.0e-6,
+    )[1:]
+    outer_high = growing_positions(
         half - core_max,
         initial_step_m=core_step_m,
         maximum_step_m=1.0e-6,
     )[1:]
-    return np.concatenate((-12.0e-6 - outer[::-1], core, 12.0e-6 + outer))
+    return np.concatenate(
+        (core_min - outer_low[::-1], core, core_max + outer_high)
+    )
 
 
 def z_edges(si_depth_m: float, flake_dz_m: float) -> np.ndarray:
@@ -165,8 +178,32 @@ def build_geometry(
     core_step_m: float,
     flake_dz_m: float,
 ) -> Geometry:
-    x_edges = lateral_edges(domain_m, core_step_m)
-    y_edges = lateral_edges(domain_m, core_step_m)
+    if np.max(np.abs(FLAKE_VERTICES_UM)) > 0.5 * domain_m * 1e6:
+        core_bounds_um = {"x": (-12.0, 12.0), "y": (-12.0, 12.0)}
+    else:
+        core_bounds_um = {}
+        for axis, column in (("x", 0), ("y", 1)):
+            low = np.floor(
+                (np.min(FLAKE_VERTICES_UM[:, column]) - 1.0)
+                * 1e-6
+                / core_step_m
+            ) * core_step_m
+            high = np.ceil(
+                (np.max(FLAKE_VERTICES_UM[:, column]) + 1.0)
+                * 1e-6
+                / core_step_m
+            ) * core_step_m
+            core_bounds_um[axis] = (float(low * 1e6), float(high * 1e6))
+    x_edges = lateral_edges(
+        domain_m,
+        core_step_m,
+        *(value * 1e-6 for value in core_bounds_um["x"]),
+    )
+    y_edges = lateral_edges(
+        domain_m,
+        core_step_m,
+        *(value * 1e-6 for value in core_bounds_um["y"]),
+    )
     z_edge = z_edges(si_depth_m, flake_dz_m)
     x = 0.5 * (x_edges[:-1] + x_edges[1:])
     y = 0.5 * (y_edges[:-1] + y_edges[1:])
@@ -301,8 +338,20 @@ def solve_weighting_potential(
     neighbour_below[:, 1:] = flake_xy[:, :-1]
     top_boundary = flake_xy & ~neighbour_above
     bottom_boundary = flake_xy & ~neighbour_below
-    top = top_boundary & (y[None, :] > 8.0e-6) & (x[:, None] > -5.8e-6)
-    bottom = bottom_boundary & (y[None, :] < -8.0e-6) & (x[:, None] > -10.5e-6)
+    if TOP_CONTACT_SEGMENT_UM is None or BOTTOM_CONTACT_SEGMENT_UM is None:
+        top = top_boundary & (y[None, :] > 8.0e-6) & (x[:, None] > -5.8e-6)
+        bottom = bottom_boundary & (y[None, :] < -8.0e-6) & (x[:, None] > -10.5e-6)
+        contact_source = "legacy approximate Figure-2 bounds"
+    else:
+        top_x = np.sort(np.asarray(TOP_CONTACT_SEGMENT_UM, float)[:, 0]) * 1e-6
+        bottom_x = np.sort(np.asarray(BOTTOM_CONTACT_SEGMENT_UM, float)[:, 0]) * 1e-6
+        top = top_boundary & (x[:, None] >= top_x[0]) & (x[:, None] <= top_x[-1])
+        bottom = (
+            bottom_boundary
+            & (x[:, None] >= bottom_x[0])
+            & (x[:, None] <= bottom_x[-1])
+        )
+        contact_source = "frozen Figure-2 digitized contact segments"
     if not np.any(top) or not np.any(bottom):
         raise RuntimeError(
             f"contact discretization failed: top={np.count_nonzero(top)}, "
@@ -346,7 +395,7 @@ def solve_weighting_potential(
             "minimum": float(np.min(contact_half_widths["bottom"])),
             "maximum": float(np.max(contact_half_widths["bottom"])),
         },
-        "geometry_status": "approximate contacts inferred from paper Figure 2A",
+        "geometry_status": contact_source,
     }
 
 
@@ -457,8 +506,9 @@ def straight_edge_temperature_metrics(
             np.max(np.abs(grad_tangent[edge_window]))
         ),
         "paper_Fig3G_comparator": (
-            "max_abs_grad_T_x_K_m; all five components are retained because "
-            "edge-normal gradient is not identical to the paper observable"
+            "max_abs_grad_T_y_K_m because code y=crystal a; all five "
+            "components are retained because edge-normal gradient is not "
+            "identical to the paper observable"
         ),
         "peak_edge_gradient_location_m": {
             "x": float(x[peak_index[0]]),
@@ -581,14 +631,39 @@ def pte_current(
     local_y = -SIGMA_LAB_S_M[1] * SEEBECK_LAB_V_K[1] * grad_ty
     area = np.diff(geometry.x_edges_m)[:, None] * np.diff(geometry.y_edges_m)[None, :]
     density = (local_x * grad_psi_x + local_y * grad_psi_y) * thickness
-    current = float(np.sum(density[mask] * area[mask]))
-    return current, {
+    sheet_current = float(np.sum(density[mask] * area[mask]))
+
+    local_x_3d = np.zeros_like(temperature_K)
+    local_y_3d = np.zeros_like(temperature_K)
+    integrand_3d = np.zeros_like(temperature_K)
+    volume_current = 0.0
+    for k in flake_z:
+        gx, gy = cell_gradient(temperature_K[:, :, k], mask, x, y)
+        jx = -SIGMA_LAB_S_M[0] * SEEBECK_LAB_V_K[0] * gx
+        jy = -SIGMA_LAB_S_M[1] * SEEBECK_LAB_V_K[1] * gy
+        integrand = jx * grad_psi_x + jy * grad_psi_y
+        local_x_3d[:, :, k] = jx
+        local_y_3d[:, :, k] = jy
+        integrand_3d[:, :, k] = integrand
+        volume_current += float(
+            np.sum(integrand[mask] * area[mask] * dz[k])
+        )
+    equivalence = abs(volume_current - sheet_current) / max(
+        abs(volume_current), abs(sheet_current), np.finfo(float).tiny
+    )
+    return volume_current, {
         "temperature_flake_average_K": average,
         "grad_T_x_K_m": grad_tx,
         "grad_T_y_K_m": grad_ty,
         "local_J_x_A_m2": local_x,
         "local_J_y_A_m2": local_y,
         "shockley_ramo_integrand_A_m2": density,
+        "local_J_x_A_m2_3d": local_x_3d,
+        "local_J_y_A_m2_3d": local_y_3d,
+        "shockley_ramo_integrand_A_m3_3d": integrand_3d,
+        "PTE_current_volume_integral_A": np.asarray([volume_current]),
+        "PTE_current_thickness_integrated_area_A": np.asarray([sheet_current]),
+        "PTE_volume_area_equivalence_relative_error": np.asarray([equivalence]),
     }
 
 
@@ -601,6 +676,12 @@ def main() -> int:
     parser.add_argument("--core-step-nm", type=float, default=200.0)
     parser.add_argument("--flake-dz-nm", type=float, default=26.0)
     parser.add_argument(
+        "--geometry-contract-json",
+        type=Path,
+        default=None,
+        help="frozen Device-A Figure-2/3 digitization contract",
+    )
+    parser.add_argument(
         "--geometry",
         choices=("device-a-polygon", "straight-45-edge"),
         default="device-a-polygon",
@@ -612,7 +693,29 @@ def main() -> int:
     )
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=False)
-    global FLAKE_VERTICES_UM
+    global FLAKE_VERTICES_UM, TOP_CONTACT_SEGMENT_UM, BOTTOM_CONTACT_SEGMENT_UM
+    digitized_contract = None
+    if args.geometry_contract_json is not None:
+        from photothermal_pte.validation.paper_ir_sanity.run_lumerical_device_a_ir_q import (
+            load_digitized_device_a_contract,
+        )
+
+        digitized_contract = load_digitized_device_a_contract(
+            args.geometry_contract_json,
+            domain_um=args.thermal_domain_um,
+            source_span_um=50.0,
+        )
+        FLAKE_VERTICES_UM = np.asarray(
+            digitized_contract["flake_vertices_simulation_um"], float
+        )
+        shift = np.asarray(digitized_contract["simulation_origin_shift_um"], float)
+        payload = digitized_contract["payload"]
+        TOP_CONTACT_SEGMENT_UM = np.asarray(
+            payload["top_electrical_contact_segment_code_um"], float
+        ) + shift
+        BOTTOM_CONTACT_SEGMENT_UM = np.asarray(
+            payload["bottom_electrical_contact_segment_code_um"], float
+        ) + shift
     if args.geometry == "straight-45-edge":
         outer_um = 0.5 * args.thermal_domain_um + 1.0
         FLAKE_VERTICES_UM = np.asarray(
@@ -791,6 +894,20 @@ def main() -> int:
             "flake_dz_nm": args.flake_dz_nm,
             "grid_shape": list(geometry.material_id.shape),
             "thermal_model": args.thermal_model,
+            "digitized_contract": (
+                None
+                if digitized_contract is None
+                else {
+                    key: value
+                    for key, value in digitized_contract.items()
+                    if key != "payload"
+                }
+            ),
+            "metal_thermal_geometry": (
+                "not included: the Au/Ti optical polygons are visible-area "
+                "digitizations, while their hidden under-flake overlap and "
+                "metal/TaIrTe4 thermal interface conductance are not published"
+            ),
         },
         "mapping": mapping,
         "thermal": {
@@ -821,6 +938,23 @@ def main() -> int:
         "PTE_current_A_at_285uW_incident": current,
         "PTE_current_pA_at_285uW_incident": (
             None if current is None else current * 1e12
+        ),
+        "PTE_current_integration_contract": (
+            None
+            if current is None
+            else {
+                "primary": "full flake-cell volume integral in A",
+                "secondary": "dz-integrated sheet form in A",
+                "volume_area_relative_difference": float(
+                    fields["PTE_volume_area_equivalence_relative_error"][0]
+                ),
+                "volume_integral_A": float(
+                    fields["PTE_current_volume_integral_A"][0]
+                ),
+                "thickness_integrated_area_A": float(
+                    fields["PTE_current_thickness_integrated_area_A"][0]
+                ),
+            }
         ),
         "straight_edge_metrics": edge_metrics,
         "no_optimization": True,
