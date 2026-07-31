@@ -1,0 +1,76 @@
+{
+  "status": "VALIDATED_DEVICE_A_WEIGHTING_POTENTIAL_AUDIT",
+  "model": "paper-SI Eq. S7 finite-volume weighting potential on the frozen Figure-2 digitized flake/contact geometry; psi=1 on the top collecting segment, psi=0 on the opposite segment, and zero normal flux on all remaining flake-air edges",
+  "geometry_provenance": {
+    "contract_path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json",
+    "contract_sha256": "291034c04b3caf153c1d68b3499718f6a35d24229a53102b0d5bea4b78a0325e",
+    "status": "FIGURE_DIGITIZED_APPROXIMATION_NOT_CAD",
+    "axis_mapping": "code x=b, code y=a",
+    "thermal_domain_um": 48.0,
+    "core_step_nm": 50.0,
+    "flake_dz_nm": 10.0,
+    "grid_shape_3d": [
+      670,
+      549,
+      86
+    ],
+    "flake_xy_cell_count": 262997,
+    "simulation_origin_shift_um": [
+      7.231221193496584,
+      -0.5972383224697246
+    ],
+    "top_contact_segment_um": [
+      [
+        -1.9400495247354606,
+        11.170717478635247
+      ],
+      [
+        22.258845502888846,
+        11.170717478635247
+      ]
+    ],
+    "bottom_contact_segment_um": [
+      [
+        -7.79640311589568,
+        -12.254696886005636
+      ],
+      [
+        22.203596884104318,
+        -12.365194123574696
+      ]
+    ]
+  },
+  "diagnostics": {
+    "top_contact_cells": 484,
+    "bottom_contact_cells": 600,
+    "minimum_psi": 0.0006459805847232649,
+    "maximum_psi": 0.9989088160622732,
+    "linear_residual_relative": 3.702318035134223e-15,
+    "top_contact_half_width_m": {
+      "minimum": 2.5000000000000608e-08,
+      "maximum": 2.5000000000000608e-08
+    },
+    "bottom_contact_half_width_m": {
+      "minimum": 2.499999999999976e-08,
+      "maximum": 2.5000000000000608e-08
+    },
+    "geometry_status": "frozen Figure-2 digitized contact segments",
+    "psi_min": 0.0006459805847232649,
+    "psi_max": 0.9989088160622732,
+    "weighting_gradient_max_m_inv": 149261.47154934623,
+    "weighting_gradient_p99_m_inv": 58092.52661140765
+  },
+  "gates": {
+    "nonempty_top_contact": true,
+    "nonempty_bottom_contact": true,
+    "psi_reaches_collecting_contact": true,
+    "psi_reaches_opposite_contact": true,
+    "linear_residual_lt_1e-8": true,
+    "finite_fields": true
+  },
+  "qualitative_Fig2G_comparison": "geometry and streamline topology can be compared qualitatively; pixelwise certification is impossible without device CAD and the raw paper weighting-potential field",
+  "thermal_run": false,
+  "PTE_run": false,
+  "adjoint_run": false,
+  "optimization_run": false
+}

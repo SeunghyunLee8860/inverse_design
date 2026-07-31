@@ -702,7 +702,10 @@ def main() -> int:
 
         digitized_contract = load_digitized_device_a_contract(
             args.geometry_contract_json,
-            domain_um=args.thermal_domain_um,
+            # The coordinate translation is part of the frozen 60 um optical
+            # contract.  A thermal-domain size must not be substituted into
+            # the optical source/PML-clearance audit.
+            domain_um=60.0,
             source_span_um=50.0,
         )
         FLAKE_VERTICES_UM = np.asarray(
@@ -716,6 +719,11 @@ def main() -> int:
         BOTTOM_CONTACT_SEGMENT_UM = np.asarray(
             payload["bottom_electrical_contact_segment_code_um"], float
         ) + shift
+        if np.max(np.abs(FLAKE_VERTICES_UM)) >= 0.5 * args.thermal_domain_um:
+            raise ValueError(
+                "thermal domain does not contain the frozen translated "
+                "Device-A flake polygon"
+            )
     if args.geometry == "straight-45-edge":
         outer_um = 0.5 * args.thermal_domain_um + 1.0
         FLAKE_VERTICES_UM = np.asarray(

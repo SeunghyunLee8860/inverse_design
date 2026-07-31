@@ -57,10 +57,29 @@ def main() -> int:
     raw_path = case_dir / "case_result.json"
     fsp = case_dir / "finite_2um_optical_q.fsp"
     raw = json.loads(raw_path.read_text())
-    if raw.get("status") != "BLOCKED_EXECUTION_ERROR":
-        raise RuntimeError("recovery requires a preserved postprocess failure")
-    if "bounded dual-cell weights do not close" not in str(raw.get("exception")):
-        raise RuntimeError("failure is not the audited boundary-dual-cell case")
+    raw_status = raw.get("status")
+    if raw_status == "BLOCKED_EXECUTION_ERROR":
+        if "bounded dual-cell weights do not close" not in str(
+            raw.get("exception")
+        ):
+            raise RuntimeError(
+                "execution failure is not the audited boundary-dual-cell case"
+            )
+    elif raw_status == "FAILED_ACCEPTANCE":
+        completed = raw.get("run_result", {}).get("auto_shutoff", {})
+        if not completed.get("simulation_completed_successfully", False):
+            raise RuntimeError(
+                "acceptance recovery requires a successfully completed solver log"
+            )
+        if float(completed.get("final_value", np.inf)) > 1e-5:
+            raise RuntimeError(
+                "acceptance recovery cannot waive the auto-shutoff gate"
+            )
+    else:
+        raise RuntimeError(
+            "recovery requires a preserved postprocess or completed-solver "
+            "acceptance checkpoint"
+        )
     pre_run = raw["pre_run_contract"]
     geometry = pre_run["geometry"]
     case = raw["case"]
@@ -203,8 +222,9 @@ def main() -> int:
             "runanalysis_called": True,
             "source_FSP": str(fsp),
             "source_FSP_sha256": sha256(fsp),
-            "raw_failure_preserved": str(raw_path),
-            "raw_failure_sha256": sha256(raw_path),
+            "raw_checkpoint_status": raw_status,
+            "raw_checkpoint_preserved": str(raw_path),
+            "raw_checkpoint_sha256": sha256(raw_path),
         },
         "run_result": result,
     }
