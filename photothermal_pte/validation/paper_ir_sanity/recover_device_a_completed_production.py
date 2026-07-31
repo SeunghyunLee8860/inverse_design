@@ -195,9 +195,10 @@ def main() -> int:
     )
     recovered = {
         **raw,
-        "status": "COMPLETED_READ_ONLY_RECOVERY" if all(acceptance.values()) else "FAILED_ACCEPTANCE_READ_ONLY_RECOVERY",
+        "status": "COMPLETED" if all(acceptance.values()) else "FAILED_ACCEPTANCE_READ_ONLY_RECOVERY",
         "validated": False,
         "recovery": {
+            "completion_mode": "READ_ONLY_POSTPROCESS_RECOVERY_OF_COMPLETED_GPU_FDTD",
             "FDTD_solve_called": False,
             "runanalysis_called": True,
             "source_FSP": str(fsp),
@@ -231,7 +232,7 @@ def main() -> int:
         json.dumps(manifest, indent=2) + "\n"
     )
     print(json.dumps({"status": recovered["status"], "acceptance": acceptance}, indent=2))
-    return 0 if recovered["status"] == "COMPLETED_READ_ONLY_RECOVERY" else 2
+    return 0 if recovered["status"] == "COMPLETED" else 2
 
 
 if __name__ == "__main__":
