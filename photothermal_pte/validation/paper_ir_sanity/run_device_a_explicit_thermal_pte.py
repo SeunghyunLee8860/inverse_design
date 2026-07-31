@@ -51,6 +51,7 @@ from photothermal_pte.finite_inverse_design.finite_q_mapping import (  # noqa: E
 )
 from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (  # noqa: E402
     cell_field,
+    strict_centered_xy_mask,
 )
 
 
@@ -437,6 +438,28 @@ def cell_gradient(
         elif j > 0 and mask[i, j - 1]:
             gy[i, j] = (field[i, j] - field[i, j - 1]) / (y_m[j] - y_m[j - 1])
     return gx, gy
+
+
+def strict_centered_cell_gradient(
+    field: np.ndarray,
+    mask: np.ndarray,
+    x_m: np.ndarray,
+    y_m: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Central x/y gradient with missing four-neighbour stencils masked."""
+
+    values = np.asarray(field, float)
+    valid = strict_centered_xy_mask(mask)
+    gx = np.full_like(values, np.nan)
+    gy = np.full_like(values, np.nan)
+    ii, jj = np.nonzero(valid)
+    gx[ii, jj] = (
+        values[ii + 1, jj] - values[ii - 1, jj]
+    ) / (x_m[ii + 1] - x_m[ii - 1])
+    gy[ii, jj] = (
+        values[ii, jj + 1] - values[ii, jj - 1]
+    ) / (y_m[jj + 1] - y_m[jj - 1])
+    return gx, gy, valid
 
 
 def measure_weighted_mean(
@@ -1177,6 +1200,11 @@ def main() -> int:
         title = "Device-A IR sanity: Lumerical Q → expanded thermal FVM → PTE"
         figure_name = "device_a_ir_thermal_pte.png"
     for ax, (image, panel_title, cmap) in zip(axes.ravel(), images):
+        if "∂T/∂n" in panel_title or "∇T" in panel_title:
+            strict = strict_centered_xy_mask(
+                np.any(geometry.flake_mask, axis=2)
+            )
+            image = np.where(strict, image, np.nan)
         handle = cell_field(
             ax,
             geometry.x_edges_m,

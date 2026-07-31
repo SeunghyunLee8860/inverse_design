@@ -20,9 +20,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 try:
-    from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import cell_field
+    from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (
+        cell_field,
+        strict_centered_xy_mask,
+    )
 except ModuleNotFoundError:  # Direct script execution outside the repository cwd.
-    from coordinate_plot import cell_field
+    from coordinate_plot import cell_field, strict_centered_xy_mask
 
 
 HERE = Path(__file__).resolve().parent
@@ -170,7 +173,9 @@ def make_maps(
             flake_xy, data["temperature_flake_average_K"], np.nan
         )
         g_maps[polarization] = np.where(
-            flake_xy, np.abs(data["grad_T_normal_K_m"]), np.nan
+            strict_centered_xy_mask(flake_xy),
+            np.abs(data["grad_T_normal_K_m"]),
+            np.nan,
         )
 
     maxima = {

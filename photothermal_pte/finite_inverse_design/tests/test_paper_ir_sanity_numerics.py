@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (
     cell_field,
     dual_edges_from_centers,
+    strict_centered_xy_mask,
 )
 
 from photothermal_pte.validation.paper_ir_sanity.run_analytic_q_remap_control import (
@@ -23,6 +24,7 @@ from photothermal_pte.validation.paper_ir_sanity.run_device_a_explicit_thermal_p
     pte_current,
     solve_weighting_potential,
     straight_edge_temperature_metrics,
+    strict_centered_cell_gradient,
 )
 
 
@@ -44,6 +46,25 @@ def test_dual_edges_from_centers_has_half_cell_outer_boundaries() -> None:
         dual_edges_from_centers(centers),
         np.asarray([-2.5, -1.5, 0.5, 4.0, 8.0]),
     )
+
+
+def test_strict_centered_gradient_masks_any_missing_xy_neighbour() -> None:
+    x = np.arange(5.0)
+    y = np.arange(5.0)
+    xx, yy = np.meshgrid(x, y, indexing="ij")
+    values = 2.0 * xx + 3.0 * yy
+    mask = np.ones((5, 5), bool)
+    mask[2, 3] = False
+    gx, gy, valid = strict_centered_cell_gradient(values, mask, x, y)
+    assert np.array_equal(valid, strict_centered_xy_mask(mask))
+    assert not valid[2, 2]
+    assert not valid[2, 4]
+    assert not valid[1, 3]
+    assert not valid[3, 3]
+    assert np.all(np.isnan(gx[~valid]))
+    assert np.all(np.isnan(gy[~valid]))
+    assert np.allclose(gx[valid], 2.0)
+    assert np.allclose(gy[valid], 3.0)
 
 
 def test_physical_field_plotters_do_not_use_imshow() -> None:

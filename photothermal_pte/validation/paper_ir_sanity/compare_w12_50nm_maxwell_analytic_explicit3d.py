@@ -54,6 +54,7 @@ from photothermal_pte.validation.paper_ir_sanity import (  # noqa: E402
 )
 from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (  # noqa: E402
     cell_field,
+    strict_centered_xy_mask,
 )
 
 
@@ -545,6 +546,8 @@ def map_figure(
     label: str,
 ) -> None:
     mask = np.any(geometry.flake_mask, axis=2)
+    if key.startswith("grad_"):
+        mask &= strict_centered_xy_mask(mask)
     figure, axes = plt.subplots(2, 2, figsize=(11, 9), constrained_layout=True)
     for axis, case_id in zip(
         axes.flat, ("Maxwell_a", "Maxwell_b", "analytic_a", "analytic_b")
@@ -575,6 +578,7 @@ def gradient_figure(
     model: str,
 ) -> None:
     mask = np.any(geometry.flake_mask, axis=2)
+    mask &= strict_centered_xy_mask(mask)
     columns = (
         ("grad_a_K_m", "∂aT"),
         ("grad_b_K_m", "∂bT"),

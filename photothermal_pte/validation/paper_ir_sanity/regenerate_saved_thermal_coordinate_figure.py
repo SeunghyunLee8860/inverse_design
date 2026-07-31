@@ -21,6 +21,7 @@ if str(REPOSITORY) not in sys.path:
 
 from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (  # noqa: E402
     cell_field,
+    strict_centered_xy_mask,
 )
 
 
@@ -35,6 +36,7 @@ def main() -> int:
         dz = np.diff(np.asarray(raw["z_edges_m"], float))
         areal_q = np.sum(np.asarray(raw["Q_W_m3"], float) * dz[None, None, :], axis=2)
         temperature = np.asarray(raw["temperature_flake_average_K"], float)
+        flake_xy = np.any(np.asarray(raw["flake_mask"], bool), axis=2)
         if "grad_T_normal_K_m" in raw.files:
             straight = True
             images = (
@@ -54,6 +56,8 @@ def main() -> int:
         images = tuple((np.asarray(a, float), b, c) for a, b, c in images)
     figure, axes = plt.subplots(2, 2, figsize=(12, 10), constrained_layout=True)
     for axis, (values, title, cmap) in zip(axes.flat, images):
+        if "∂T/∂n" in title or "∇T" in title:
+            values = np.where(strict_centered_xy_mask(flake_xy), values, np.nan)
         image = cell_field(
             axis, x_edges, y_edges, values, coordinate_scale=1e6, cmap=cmap
         )

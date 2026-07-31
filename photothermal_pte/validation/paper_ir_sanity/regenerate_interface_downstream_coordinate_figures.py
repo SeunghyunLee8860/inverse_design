@@ -21,6 +21,7 @@ if str(REPOSITORY) not in sys.path:
 
 from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (  # noqa: E402
     cell_field,
+    strict_centered_xy_mask,
 )
 
 
@@ -38,6 +39,7 @@ def main() -> int:
         x_edges = np.asarray(raw["x_edges_m"], float)
         y_edges = np.asarray(raw["y_edges_m"], float)
         z_edges = np.asarray(raw["z_edges_m"], float)
+        flake_xy = np.any(np.asarray(raw["flake_mask"], bool), axis=2)
         q50 = np.asarray(raw["Q_T_50_W_m3"], float)
         q25 = np.asarray(raw["Q_T_25_W_m3"], float)
         t50 = np.asarray(raw["flake_average_temperature_50_K"], float)
@@ -75,6 +77,9 @@ def main() -> int:
 
     magnitude50 = np.hypot(gx50, gy50)
     magnitude25 = np.hypot(gx25, gy25)
+    strict = strict_centered_xy_mask(flake_xy)
+    magnitude50 = np.where(strict, magnitude50, np.nan)
+    magnitude25 = np.where(strict, magnitude25, np.nan)
     difference = magnitude50 - magnitude25
     vmax = max(float(np.max(magnitude50)), float(np.max(magnitude25)))
     limit = float(np.max(np.abs(difference)))

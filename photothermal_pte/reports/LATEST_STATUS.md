@@ -10,6 +10,9 @@
   temperature or gradient arrays.
 - Numerical result JSON/CSV and raw NPZ/FSP artifacts were not changed.
   Affected published-PNG hashes were refreshed in their manifests.
+- Gradient PNGs additionally require all four same-material `±x/±y`
+  neighbours. Missing-stencil cells are `NaN`-masked rather than set to zero;
+  855/41,041 cells at 100 nm and 1,587/140,715 cells at 50 nm are masked.
 - Report:
   `reports/paper_ir_coordinate_figure_correction/PAPER_IR_COORDINATE_FIGURE_CORRECTION.md`.
 

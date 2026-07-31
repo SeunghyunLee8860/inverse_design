@@ -14,6 +14,23 @@ from typing import Any
 import numpy as np
 
 
+def strict_centered_xy_mask(material_mask: np.ndarray) -> np.ndarray:
+    """Cells having same-material neighbours in all four x/y directions."""
+
+    mask = np.asarray(material_mask, dtype=bool)
+    if mask.ndim != 2:
+        raise ValueError("material_mask must be two-dimensional")
+    valid = np.zeros_like(mask)
+    valid[1:-1, 1:-1] = (
+        mask[1:-1, 1:-1]
+        & mask[:-2, 1:-1]
+        & mask[2:, 1:-1]
+        & mask[1:-1, :-2]
+        & mask[1:-1, 2:]
+    )
+    return valid
+
+
 def dual_edges_from_centers(coordinates: np.ndarray) -> np.ndarray:
     """Return control-volume edges for a strictly increasing centre array."""
 

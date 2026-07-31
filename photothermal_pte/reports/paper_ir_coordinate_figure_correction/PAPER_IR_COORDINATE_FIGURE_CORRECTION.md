@@ -81,3 +81,19 @@ temperature differentiation were not invalidated by this plotting fix.
   plotters;
 - 19 focused numerical/plotting tests pass;
 - no FDTD, adjoint, AD-FD, or optimization solve was run for this correction.
+
+## Strict centered-gradient display contract
+
+The subsequently approved gradient display uses a stricter mask.  A cell is
+shown only when its `-x`, `+x`, `-y`, and `+y` neighbours are all TaIrTe4.
+Every other flake cell is stored/displayed as `NaN`, not zero, and is excluded
+from plotted gradient statistics.
+
+- 100 nm thermal grid: 41,041 flake cells, 40,186 strict-valid cells, 855
+  masked cells (`2.08328%`);
+- 50 nm thermal grid: 140,715 flake cells, 139,128 strict-valid cells, 1,587
+  masked cells (`1.12781%`).
+
+The historical one-sided arrays and metrics remain in the raw NPZ and
+reports for provenance.  The regenerated gradient PNGs now apply the strict
+four-neighbour mask.  Temperature and Q figures are unaffected.

@@ -40,6 +40,7 @@ from photothermal_pte.validation.paper_ir_sanity import (  # noqa: E402
 )
 from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (  # noqa: E402
     cell_field,
+    strict_centered_xy_mask,
 )
 
 
@@ -501,6 +502,7 @@ def main() -> int:
         dz = np.diff(z_edges)
         flake_mask_3d = np.asarray(raw["flake_mask"], bool)
         mask = np.any(flake_mask_3d, axis=2)
+        plot_mask = strict_centered_xy_mask(mask)
         flake_z = np.flatnonzero(np.any(flake_mask_3d, axis=(0, 1)))
         thickness = float(np.sum(dz[flake_z]))
         surface_index = int(flake_z[-1])
@@ -781,7 +783,7 @@ def main() -> int:
         / "analytic_surface_midplane_average_grad_n_shared_scale.png",
     }
     write_identity_figure(
-        figures["identity_error"], projection_data, x_edges, y_edges, mask
+        figures["identity_error"], projection_data, x_edges, y_edges, plot_mask
     )
     write_linecut_figure(figures["linecut_derivative"], central_linecuts)
     write_reconstruction_figure(
@@ -805,7 +807,7 @@ def main() -> int:
         projection_data,
         x_edges,
         y_edges,
-        mask,
+        plot_mask,
     )
     write_case_projection_figure(
         figures["analytic_shared_scale"],
@@ -813,7 +815,7 @@ def main() -> int:
         projection_data,
         x_edges,
         y_edges,
-        mask,
+        plot_mask,
     )
     summary["figures"] = {
         key: str(value.resolve()) for key, value in figures.items()

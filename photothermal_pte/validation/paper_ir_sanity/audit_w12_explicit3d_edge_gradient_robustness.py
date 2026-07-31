@@ -35,6 +35,7 @@ from photothermal_pte.validation.paper_ir_sanity import (  # noqa: E402
 )
 from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (  # noqa: E402
     cell_field,
+    strict_centered_xy_mask,
 )
 
 
@@ -276,6 +277,7 @@ def main() -> int:
             & (n <= 0.0)
             & (np.abs(tangent) <= 12.0e-6)
         )
+        strict_display = display & strict_centered_xy_mask(mask)
         regions = {
             "original_staircase_edge": edge,
             "inside_n_0p1um": (
@@ -438,7 +440,7 @@ def main() -> int:
             ls_for_figure,
             x_edges,
             y_edges,
-            display,
+            strict_display,
         )
     summary["figures"] = {
         key: str(value.resolve()) for key, value in figure_paths.items()
