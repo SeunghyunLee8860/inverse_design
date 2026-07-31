@@ -69,6 +69,17 @@ PRODUCTION_MATERIAL_NAME = "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure"
 LEGACY_MATERIAL_NAME = "TaIrTe4_DeviceA_lab_x_b_y_a_legacy_z16"
 MATERIAL_NAME = PRODUCTION_MATERIAL_NAME
 SIO2_MATERIAL = "paper_ir_SiO2_n1p38"
+AU_MATERIAL = "Au (Gold) - CRC"
+TI_MATERIAL = "Ti (Titanium) - CRC"
+TI_THICKNESS_M = 5.0e-9
+AU_THICKNESS_M = 50.0e-9
+DEFAULT_DEVICE_A_GEOMETRY_JSON = (
+    REPOSITORY
+    / "photothermal_pte"
+    / "reports"
+    / "paper_ir_device_a_end_to_end"
+    / "device_a_geometry_digitization.json"
+)
 
 # Approximation digitized from the scale bar and outline in paper Fig. 2A.
 # It preserves the two essential edge orientations: a 45-degree upper-left
@@ -106,6 +117,76 @@ def polygon_area(vertices_um: np.ndarray) -> float:
     x = vertices_um[:, 0]
     y = vertices_um[:, 1]
     return 0.5 * abs(float(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1))))
+
+
+def load_digitized_device_a_contract(
+    path: Path,
+    *,
+    domain_um: float,
+    source_span_um: float,
+) -> dict[str, Any]:
+    """Load Fig. 2/3 digitization and choose a lossless coordinate translation.
+
+    The paper-derived relative geometry is immutable.  Only the simulation
+    origin is translated so the 50-um source aperture and both metal polygons
+    have equal minimum clearance from the +/-30-um lateral PML interfaces.
+    """
+    payload = json.loads(path.read_text())
+    required = (
+        "flake_vertices_code_um",
+        "top_metal_polygon_code_um",
+        "bottom_metal_polygon_code_um",
+        "pre_registered_beam_center_code_um",
+    )
+    missing = [key for key in required if key not in payload]
+    if missing:
+        raise ValueError(f"digitized Device A contract is missing {missing}")
+    flake = np.asarray(payload[required[0]], float)
+    top = np.asarray(payload[required[1]], float)
+    bottom = np.asarray(payload[required[2]], float)
+    beam = np.asarray(payload[required[3]], float)
+    if any(array.ndim != 2 or array.shape[1] != 2 for array in (flake, top, bottom)):
+        raise ValueError("Device A polygons must be N-by-2 arrays")
+    if beam.shape != (2,):
+        raise ValueError("Device A beam center must contain x and y")
+
+    half_source = 0.5 * source_span_um
+    all_metal = np.vstack((top, bottom))
+    occupied_min = np.minimum(beam - half_source, np.min(all_metal, axis=0))
+    occupied_max = np.maximum(beam + half_source, np.max(all_metal, axis=0))
+    origin_shift = -0.5 * (occupied_min + occupied_max)
+    shifted_min = occupied_min + origin_shift
+    shifted_max = occupied_max + origin_shift
+    clearance = 0.5 * domain_um - np.maximum(
+        np.abs(shifted_min), np.abs(shifted_max)
+    )
+    if np.any(clearance < 0.5):
+        raise ValueError(
+            "digitized Device A/source union has less than 0.5 um nominal "
+            f"PML clearance after coordinate translation: {clearance.tolist()}"
+        )
+    return {
+        "path": str(path.resolve()),
+        "payload": payload,
+        "flake_vertices_digitized_um": flake,
+        "top_metal_polygon_digitized_um": top,
+        "bottom_metal_polygon_digitized_um": bottom,
+        "beam_center_digitized_um": beam,
+        "simulation_origin_shift_um": origin_shift,
+        "flake_vertices_simulation_um": flake + origin_shift,
+        "top_metal_polygon_simulation_um": top + origin_shift,
+        "bottom_metal_polygon_simulation_um": bottom + origin_shift,
+        "beam_center_simulation_um": beam + origin_shift,
+        "occupied_union_bounds_simulation_um": {
+            "x": [float(shifted_min[0]), float(shifted_max[0])],
+            "y": [float(shifted_min[1]), float(shifted_max[1])],
+        },
+        "minimum_lateral_PML_clearance_um": {
+            "x": float(clearance[0]),
+            "y": float(clearance[1]),
+        },
+        "translation_preserves_all_relative_coordinates": True,
+    }
 
 
 def parse_args() -> argparse.Namespace:
@@ -177,6 +258,21 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--beam-x-um", type=float, default=0.0)
     parser.add_argument("--beam-y-um", type=float, default=0.0)
+    parser.add_argument(
+        "--device-a-geometry-json",
+        type=Path,
+        default=None,
+        help=(
+            "optional frozen Figure-2/3 digitization contract; when supplied "
+            "it sets the flake, electrode polygons, and pre-registered beam "
+            "position before any optical result is inspected"
+        ),
+    )
+    parser.add_argument(
+        "--include-electrodes",
+        action="store_true",
+        help="include digitized 5-nm Ti / 50-nm Au top and bottom electrodes",
+    )
     parser.add_argument("--incident-reference")
     parser.add_argument(
         "--execution-contract",
@@ -320,16 +416,49 @@ def parse_args() -> argparse.Namespace:
     )
     args.design_radius_um = 0.0
     args.require_design_inside_flake = False
+    args.device_a_contract = None
+    if args.device_a_geometry_json is not None:
+        if args.geometry != "device-a-polygon":
+            parser.error("Device A geometry JSON requires --geometry device-a-polygon")
+        if not args.device_a_geometry_json.is_file():
+            parser.error(f"Device A geometry JSON not found: {args.device_a_geometry_json}")
+        args.device_a_contract = load_digitized_device_a_contract(
+            args.device_a_geometry_json,
+            domain_um=args.domain_um,
+            source_span_um=args.source_span_um,
+        )
+        args.flake_vertices_um = np.array(
+            args.device_a_contract["flake_vertices_simulation_um"], copy=True
+        )
+        args.top_metal_vertices_um = np.array(
+            args.device_a_contract["top_metal_polygon_simulation_um"], copy=True
+        )
+        args.bottom_metal_vertices_um = np.array(
+            args.device_a_contract["bottom_metal_polygon_simulation_um"], copy=True
+        )
+        args.beam_x_um, args.beam_y_um = (
+            float(value)
+            for value in args.device_a_contract["beam_center_simulation_um"]
+        )
+    elif args.include_electrodes:
+        parser.error("--include-electrodes requires --device-a-geometry-json")
     if args.geometry == "device-a-polygon":
-        args.flake_vertices_um = np.array(FLAKE_VERTICES_UM, copy=True)
+        if args.device_a_contract is None:
+            args.flake_vertices_um = np.array(FLAKE_VERTICES_UM, copy=True)
+        lateral_vertices = [args.flake_vertices_um]
+        if args.include_electrodes:
+            lateral_vertices.extend(
+                (args.top_metal_vertices_um, args.bottom_metal_vertices_um)
+            )
+        lateral_vertices = np.vstack(lateral_vertices)
         absorption_bounds_um = {
             "x": (
-                float(np.min(args.flake_vertices_um[:, 0])) - 0.05,
-                float(np.max(args.flake_vertices_um[:, 0])) + 0.05,
+                float(np.min(lateral_vertices[:, 0])) - 0.05,
+                float(np.max(lateral_vertices[:, 0])) + 0.05,
             ),
             "y": (
-                float(np.min(args.flake_vertices_um[:, 1])) - 0.05,
-                float(np.max(args.flake_vertices_um[:, 1])) + 0.05,
+                float(np.min(lateral_vertices[:, 1])) - 0.05,
+                float(np.max(lateral_vertices[:, 1])) + 0.05,
             ),
         }
     elif args.geometry == "straight-45-edge":
@@ -389,7 +518,21 @@ def parse_args() -> argparse.Namespace:
         axis: tuple(value * 1e-6 for value in bounds)
         for axis, bounds in absorption_bounds_um.items()
     }
-    args.absorption_bounds_m["z"] = (-FLAKE_THICKNESS_M, 0.0)
+    args.absorption_bounds_m["z"] = (
+        -FLAKE_THICKNESS_M,
+        TI_THICKNESS_M + AU_THICKNESS_M if args.include_electrodes else 0.0,
+    )
+    args.flake_bounds_m = {
+        "x": (
+            float(np.min(args.flake_vertices_um[:, 0])) * 1e-6,
+            float(np.max(args.flake_vertices_um[:, 0])) * 1e-6,
+        ),
+        "y": (
+            float(np.min(args.flake_vertices_um[:, 1])) * 1e-6,
+            float(np.max(args.flake_vertices_um[:, 1])) * 1e-6,
+        ),
+        "z": (-FLAKE_THICKNESS_M, 0.0),
+    }
     if args.refinement_half_span_um is not None:
         outer_mesh_half_span_um = max(
             max(abs(value) for value in absorption_bounds_um["x"]),
@@ -1383,9 +1526,34 @@ def add_geometry_and_monitors(
             polygon["z min"] = -FLAKE_THICKNESS_M
             polygon["z max"] = 0.0
             polygon["material"] = args.material_name
+        if args.include_electrodes:
+            for contact, vertices in (
+                ("top", args.top_metal_vertices_um),
+                ("bottom", args.bottom_metal_vertices_um),
+            ):
+                titanium = fdtd.addpoly()
+                titanium["name"] = f"{contact}_Ti_contact"
+                titanium["vertices"] = np.asarray(vertices, float) * 1e-6
+                titanium["z min"] = 0.0
+                titanium["z max"] = TI_THICKNESS_M
+                titanium["material"] = TI_MATERIAL
+                gold = fdtd.addpoly()
+                gold["name"] = f"{contact}_Au_contact"
+                gold["vertices"] = np.asarray(vertices, float) * 1e-6
+                gold["z min"] = TI_THICKNESS_M
+                gold["z max"] = TI_THICKNESS_M + AU_THICKNESS_M
+                gold["material"] = AU_MATERIAL
 
     mesh_z_min = -FLAKE_THICKNESS_M - 10 * args.flake_dz_nm * 1e-9
-    mesh_z_max = 10 * args.flake_dz_nm * 1e-9
+    mesh_z_max = max(
+        10 * args.flake_dz_nm * 1e-9,
+        (
+            TI_THICKNESS_M + AU_THICKNESS_M
+            + 2 * args.flake_dz_nm * 1e-9
+            if args.include_electrodes
+            else 0.0
+        ),
+    )
     outer_mesh_bounds = {
         "x": (
             absorption_bounds["x"][0] - 0.5e-6,
@@ -1646,11 +1814,57 @@ def add_geometry_and_monitors(
             )
         ),
         "substrate": "285 nm SiO2 on Si",
-        "electrodes_in_optical_model": False,
+        "electrodes_in_optical_model": bool(
+            args.case == "finite-flake" and args.include_electrodes
+        ),
         "electrode_note": (
-            "Off-axis-edge optical certificate intentionally excludes Au/Ti; "
-            "contacts enter the separate weighting-potential geometry. A contact "
-            "optical scenario is required before interpreting contact hotspots."
+            "Digitized Figure-2 top/bottom polygons with a 5-nm Ti adhesion "
+            "layer and 50-nm Au layer are included; their under-metal overlap "
+            "is a figure-digitized approximation rather than unpublished CAD."
+            if args.include_electrodes
+            else (
+                "Off-axis-edge optical certificate intentionally excludes Au/Ti; "
+                "contacts enter the separate weighting-potential geometry. A "
+                "contact optical scenario is required before interpreting contact "
+                "hotspots."
+            )
+        ),
+        "electrode_material_contract": (
+            {
+                "Ti": {
+                    "material": TI_MATERIAL,
+                    "thickness_m": TI_THICKNESS_M,
+                    "database_provenance": (
+                        "Ansys Lumerical v261 built-in CRC sampled-data material; "
+                        "fit range includes 11 um"
+                    ),
+                },
+                "Au": {
+                    "material": AU_MATERIAL,
+                    "thickness_m": AU_THICKNESS_M,
+                    "database_provenance": (
+                        "Ansys Lumerical v261 built-in CRC sampled-data material; "
+                        "fit range includes 11 um"
+                    ),
+                },
+                "top_polygon_simulation_um": (
+                    np.asarray(args.top_metal_vertices_um, float).tolist()
+                ),
+                "bottom_polygon_simulation_um": (
+                    np.asarray(args.bottom_metal_vertices_um, float).tolist()
+                ),
+            }
+            if args.include_electrodes
+            else None
+        ),
+        "digitized_device_a_contract": (
+            None
+            if args.device_a_contract is None
+            else {
+                key: value
+                for key, value in args.device_a_contract.items()
+                if key != "payload"
+            }
         ),
         "source": {
             "wavelength_m": WAVELENGTH_M,
@@ -1852,6 +2066,19 @@ def assert_contract(
     ) == (
         1 if args.case == "finite-flake" else 0
     )
+    checks["electrode_object_count"] = (
+        all(
+            int(fdtd.getnamednumber(name)) == 1
+            for name in (
+                "top_Ti_contact",
+                "bottom_Ti_contact",
+                "top_Au_contact",
+                "bottom_Au_contact",
+            )
+        )
+        if args.case == "finite-flake" and args.include_electrodes
+        else True
+    )
     checks["no_periodic_boundary"] = all(v.lower() == "pml" for v in boundaries.values())
     injection_axis = str(
         fdtd.getnamed(base.SOURCE_NAME, "injection axis")
@@ -1992,6 +2219,24 @@ def assert_contract(
         setup["geometry"]["material_contract"],
         dt_s=dt_s,
     )
+    electrode_material_readback = None
+    if args.include_electrodes:
+        electrode_material_readback = {}
+        for key, name in (("Au", AU_MATERIAL), ("Ti", TI_MATERIAL)):
+            refractive_index = complex(
+                np.asarray(fdtd.getindex(name, C0 / WAVELENGTH_M)).reshape(-1)[0]
+            )
+            electrode_material_readback[key] = {
+                "material": name,
+                "complex_index_at_11um": complex_json(refractive_index),
+                "complex_epsilon_at_11um": complex_json(refractive_index**2),
+                "wavelength_min_m": float(
+                    fdtd.getmaterial(name, "wavelength min")
+                ),
+                "wavelength_max_m": float(
+                    fdtd.getmaterial(name, "wavelength max")
+                ),
+            }
     checks["requested_z_equals_x_for_paper_closure"] = (
         args.epsilon_c_model != "paper-b-closure"
         or setup["geometry"]["material_contract"][
@@ -2183,7 +2428,8 @@ def assert_contract(
         "geometry": setup["geometry"],
         "material": {
             **setup["geometry"]["material_contract"],
-            "epsilon_readback": epsilon_readback,
+        "epsilon_readback": epsilon_readback,
+        "electrode_material_readback": electrode_material_readback,
         },
         "mesh": {
             "type": str(fdtd.getnamed("FDTD", "mesh type")),
@@ -2976,6 +3222,105 @@ def run_diagnostic_gpu_smoke_case(
     }
 
 
+def append_device_a_material_absorption_audit(
+    base: Any,
+    output: Path,
+    args: argparse.Namespace,
+    result: dict[str, Any],
+) -> None:
+    """Add non-destructive material support masks and signed power audit."""
+    if (
+        args.case != "finite-flake"
+        or args.geometry != "device-a-polygon"
+        or not args.include_electrodes
+    ):
+        return
+    artifact_path = output / "finite_q_on_artifact.npz"
+    with np.load(artifact_path, allow_pickle=False) as stored:
+        artifact = {key: np.array(stored[key], copy=True) for key in stored.files}
+    x_m = np.asarray(artifact["x_m"], float)
+    y_m = np.asarray(artifact["y_m"], float)
+    z_m = np.asarray(artifact["z_m"], float)
+    xx, yy = np.meshgrid(x_m, y_m, indexing="ij")
+    points = np.column_stack((xx.ravel(), yy.ravel()))
+
+    def polygon_xy(vertices_um: np.ndarray) -> np.ndarray:
+        return PolygonPath(np.asarray(vertices_um, float) * 1e-6).contains_points(
+            points, radius=1e-15
+        ).reshape(xx.shape)
+
+    flake_xy = polygon_xy(args.flake_vertices_um)
+    metal_xy = polygon_xy(args.top_metal_vertices_um) | polygon_xy(
+        args.bottom_metal_vertices_um
+    )
+    flake_mask = flake_xy[:, :, None] & (
+        (z_m[None, None, :] >= -FLAKE_THICKNESS_M)
+        & (z_m[None, None, :] <= 0.0)
+    )
+    ti_mask = metal_xy[:, :, None] & (
+        (z_m[None, None, :] > 0.0)
+        & (z_m[None, None, :] <= TI_THICKNESS_M)
+    )
+    au_mask = metal_xy[:, :, None] & (
+        (z_m[None, None, :] > TI_THICKNESS_M)
+        & (z_m[None, None, :] <= TI_THICKNESS_M + AU_THICKNESS_M)
+    )
+    assigned = flake_mask | ti_mask | au_mask
+    interface_z0 = np.isclose(z_m, 0.0, rtol=0.0, atol=1e-15)
+    interface_z_ti = np.isclose(
+        z_m, TI_THICKNESS_M, rtol=0.0, atol=1e-15
+    )
+    q_total = np.asarray(artifact["Q_on_W_m3"], float)
+
+    def power(mask: np.ndarray) -> float:
+        return float(base.integrate_xyz(q_total * mask, x_m, y_m, z_m))
+
+    powers = {
+        "TaIrTe4_W": power(flake_mask),
+        "Ti_W": power(ti_mask),
+        "Au_W": power(au_mask),
+        "unassigned_or_lossless_region_W": power(~assigned),
+        "z0_interface_sample_W": power(
+            np.broadcast_to(interface_z0[None, None, :], q_total.shape)
+        ),
+        "z5nm_interface_sample_W": power(
+            np.broadcast_to(interface_z_ti[None, None, :], q_total.shape)
+        ),
+    }
+    powers["decomposed_sum_W"] = sum(
+        powers[key]
+        for key in (
+            "TaIrTe4_W",
+            "Ti_W",
+            "Au_W",
+            "unassigned_or_lossless_region_W",
+        )
+    )
+    p_total = float(result["P_Q_W"])
+    powers["total_P_Q_W"] = p_total
+    powers["signed_decomposition_residual_W"] = (
+        p_total - powers["decomposed_sum_W"]
+    )
+    powers["relative_decomposition_residual"] = abs(
+        powers["signed_decomposition_residual_W"]
+    ) / max(abs(p_total), np.finfo(float).tiny)
+    powers["support_assignment_contract"] = (
+        "analytic digitized polygon masks on the common pabs grid; z=0 is "
+        "assigned one-sided to TaIrTe4, z=5 nm one-sided to Ti, and both "
+        "exact-interface sample powers are retained as diagnostics"
+    )
+    result["material_absorption_power_W"] = powers
+    artifact.update(
+        {
+            "TaIrTe4_support_mask": flake_mask,
+            "Ti_support_mask": ti_mask,
+            "Au_support_mask": au_mask,
+            "assigned_loss_material_support_mask": assigned,
+        }
+    )
+    np.savez(artifact_path, **artifact)
+
+
 def main() -> int:
     args = parse_args()
     if not APPROVED_API.joinpath("lumapi.py").is_file():
@@ -3002,7 +3347,7 @@ def main() -> int:
     base.SOURCE_START_M = SOURCE_START_M
     base.SOURCE_STOP_M = SOURCE_STOP_M
     base.FLAKE_THICKNESS_M = FLAKE_THICKNESS_M
-    base.FLAKE_BOUNDS_M = args.absorption_bounds_m
+    base.FLAKE_BOUNDS_M = args.flake_bounds_m
     if args.geometry == "straight-45-edge":
         span_x = (
             args.absorption_bounds_m["x"][1]
@@ -3071,6 +3416,9 @@ def main() -> int:
                     setup,
                     contract,
                 )
+            append_device_a_material_absorption_audit(
+                base, output, parsed, result
+            )
             auto_shutoff = final_logged_auto_shutoff(output)
             result["auto_shutoff"] = auto_shutoff
             result.setdefault("acceptance", {})[
