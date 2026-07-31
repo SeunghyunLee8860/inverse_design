@@ -39,8 +39,18 @@
 - External raw fields NPZ: 262,744,866 bytes, SHA-256
   `9b2287b5b18eb9c4d9c164ddd45d750ae05ff846d6a0f0e3936465e413be47ac`.
   No PTE, weighting potential, adjoint, AD-FD, or optimization ran.
-- Report, JSON, CSV, nine figures, and manifest:
+- Report, JSON, CSV, ten figures, and manifest:
   `reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/`.
+- The exact optical/thermal environment is now recorded in a six-panel
+  `xy/xz/yz` PNG.  It distinguishes optical six-face PML from the thermal
+  Dirichlet/convection/interface-conductance boundaries and shows the scalar
+  Gaussian source plane, propagation direction, waist plane, local mesh, and
+  six-face closure box.  No new optical or thermal solve was used to make it.
+- Paper Figure 3J plots measured `|I_a|/|I_b|`, not `I_b/I_a`.  A transparent
+  600-dpi digitization of the 11-µm point gives `0.836590`; inversion gives
+  `|I_b|/|I_a|=1.195329`.  Accounting for plot-line thickness, the reported
+  values are approximately `0.84±0.01` and `1.20±0.02`, respectively.  These
+  are paper magnitude ratios, not the present simulation output.
 
 ## W12 straight-edge-a interface/downstream convergence
 

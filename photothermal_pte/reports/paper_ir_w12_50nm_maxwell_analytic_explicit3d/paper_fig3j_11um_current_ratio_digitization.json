@@ -1,0 +1,47 @@
+{
+  "source": {
+    "paper_title": "Large Transverse Thermoelectric Effect in Weyl Semimetal TaIrTe4 Engineered for Photodetection",
+    "doi": "10.1002/adfm.75986",
+    "figure": "Figure 3J",
+    "local_pdf_path": "/home/seunghyun/tairte4/papers/Adv Funct Materials - 2026 - Blevins - Large Transverse Thermoelectric Effect in Weyl Semimetal TaIrTe4 Engineered for-2.pdf",
+    "local_pdf_size_bytes": 3446019,
+    "local_pdf_sha256": "ad160823ce0805e709be2ea54c663a51280e56c498d76c8d33651599b8733155",
+    "data_availability": "The exact tabulated points are not supplied in the paper or supporting PDF; value below is a transparent plot digitization."
+  },
+  "digitization": {
+    "pdf_page_one_indexed": 6,
+    "render_dpi": 600,
+    "crop_origin_in_rendered_page_px": [
+      3250,
+      2350
+    ],
+    "plot_axis_top_y_px": 186.5,
+    "plot_axis_bottom_y_px": 749.5,
+    "plot_axis_top_value": 1.2,
+    "plot_axis_bottom_value": 0.0,
+    "eleven_um_marker_center_in_crop_px": [
+      850.0,
+      357.0
+    ],
+    "estimated_marker_y_uncertainty_px": 4.0
+  },
+  "paper_plotted_quantity": "measured |I_a|/|I_b|",
+  "wavelength_um": 11.0,
+  "measured_abs_Ia_over_abs_Ib_digitized": 0.8365896980461811,
+  "measured_abs_Ia_over_abs_Ib_uncertainty_estimate": 0.00852575488454707,
+  "requested_abs_Ib_over_abs_Ia_inverted": 1.1953290870488325,
+  "requested_abs_Ib_over_abs_Ia_uncertainty_estimate": 0.012181697702408484,
+  "recommended_rounded_reporting": {
+    "|I_a|/|I_b|": "approximately 0.84 \u00b1 0.01",
+    "|I_b|/|I_a|": "approximately 1.20 \u00b1 0.02"
+  },
+  "signed_ratio_available": false,
+  "note": "The paper establishes |I_b|>|I_a| and plots magnitudes.  It does not publish a tabulated signed I_b/I_a value.  The unrelated 635-nm SI ratio I(P1)/I(P2)=-1.26 is not used here.",
+  "contract_checks": {
+    "optical_domain_60um": true,
+    "all_six_optical_boundaries_pml": true,
+    "straight_edge_y_le_x": true,
+    "thermal_domain_60um": true,
+    "thermal_boundary_contract_present": true
+  }
+}
