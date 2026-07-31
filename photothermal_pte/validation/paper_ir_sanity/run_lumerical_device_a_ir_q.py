@@ -2798,6 +2798,14 @@ def main() -> int:
                     setup,
                     contract,
                 )
+            auto_shutoff = final_logged_auto_shutoff(output)
+            result["auto_shutoff"] = auto_shutoff
+            result.setdefault("acceptance", {})[
+                "solver_log_reports_successful_completion"
+            ] = auto_shutoff["simulation_completed_successfully"]
+            result["acceptance"][
+                "auto_shutoff_reached_requested_threshold"
+            ] = auto_shutoff["final_value"] <= parsed.auto_shutoff_min
             result["native_Yee_mesh_audit"] = post_run_native_mesh_audit(
                 base,
                 fdtd,
