@@ -864,6 +864,25 @@ def bounded_dual_cell_weights(
             [values[-1] + 0.5 * (values[-1] - values[-2])],
         )
     )
+    # DFT monitor samples are cell-centred.  On a nonuniform mesh the last
+    # reported sample can leave a sub-cell sliver between its extrapolated
+    # dual edge and the user-requested monitor bound (1.40 nm in the frozen
+    # Device-A z audit).  Attribute at most one adjacent grid step to the
+    # outermost sample; larger gaps remain a fail-closed support error.
+    lower_gap = max(0.0, float(edges[0] - low))
+    upper_gap = max(0.0, float(high - edges[-1]))
+    lower_step = float(values[1] - values[0])
+    upper_step = float(values[-1] - values[-2])
+    tolerance = 1.0e-18
+    if lower_gap > lower_step + tolerance or upper_gap > upper_step + tolerance:
+        raise RuntimeError(
+            "Q sampling support misses the requested volume by more than "
+            "one boundary grid step"
+        )
+    if lower_gap > 0.0:
+        edges[0] = low
+    if upper_gap > 0.0:
+        edges[-1] = high
     weights = np.maximum(
         0.0,
         np.minimum(edges[1:], high) - np.maximum(edges[:-1], low),

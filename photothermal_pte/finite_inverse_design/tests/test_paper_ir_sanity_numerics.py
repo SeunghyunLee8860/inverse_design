@@ -10,9 +10,47 @@ from photothermal_pte.validation.paper_ir_sanity.run_analytic_q_remap_control im
 from photothermal_pte.validation.paper_ir_sanity.run_device_a_explicit_thermal_pte import (
     Geometry,
     measure_weighted_mean,
+    pte_current,
     solve_weighting_potential,
     straight_edge_temperature_metrics,
 )
+
+
+def test_pte_volume_and_thickness_integrated_area_forms_are_equivalent() -> None:
+    x_edges = np.linspace(-2.0e-6, 2.0e-6, 5)
+    y_edges = np.linspace(-2.0e-6, 2.0e-6, 5)
+    z_edges = np.array([-130.0e-9, -65.0e-9, 0.0])
+    x = 0.5 * (x_edges[:-1] + x_edges[1:])
+    y = 0.5 * (y_edges[:-1] + y_edges[1:])
+    z = 0.5 * (z_edges[:-1] + z_edges[1:])
+    xx, yy, zz = np.meshgrid(x, y, z, indexing="ij")
+    temperature = 2.0e5 * xx - 3.0e5 * yy + 1.0e5 * zz
+    shape = temperature.shape
+    flake = np.ones(shape, bool)
+    geometry = Geometry(
+        x_edges_m=x_edges,
+        y_edges_m=y_edges,
+        z_edges_m=z_edges,
+        material_id=np.full(shape, 3, np.uint8),
+        flake_mask=flake,
+        kappa_W_mK=np.ones((*shape, 3)),
+        interface_resistance_m2K_W={
+            "x": np.zeros((shape[0] - 1, shape[1], shape[2])),
+            "y": np.zeros((shape[0], shape[1] - 1, shape[2])),
+            "z": np.zeros((shape[0], shape[1], shape[2] - 1)),
+        },
+    )
+    current, fields = pte_current(
+        temperature,
+        geometry,
+        np.full(shape[:2], 2.0e4),
+        np.full(shape[:2], -1.0e4),
+    )
+    assert current == pytest.approx(
+        float(fields["PTE_current_thickness_integrated_area_A"][0]),
+        rel=2e-14,
+    )
+    assert fields["PTE_volume_area_equivalence_relative_error"][0] < 2e-14
 
 
 def test_weighted_mean_uses_literal_cell_measure() -> None:
