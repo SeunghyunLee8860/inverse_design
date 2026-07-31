@@ -1178,9 +1178,15 @@ def post_run_native_mesh_audit(
             "linearly interpolated to the field-monitor common x/y/z grid"
         ),
         "mesh_override_contract": {
-            "x": "auto non-uniform; no override",
-            "y": "auto non-uniform; no override",
-            "z": "flake-region override only",
+            "x": (
+                "local flake/illuminated-region override plus automatic "
+                "nonuniform mesh outside"
+            ),
+            "y": (
+                "local flake/illuminated-region override plus automatic "
+                "nonuniform mesh outside"
+            ),
+            "z": "flake-region override plus automatic nonuniform mesh outside",
         },
         "coordinate_artifact": str(artifact_path.resolve()),
         "coordinate_artifact_size_bytes": artifact_path.stat().st_size,
@@ -1459,23 +1465,32 @@ def add_geometry_and_monitors(
     geometry = {
         "geometry_name": args.geometry,
         "geometry_source": (
-            "approximation digitized from paper Figure 2A, not exact CAD"
-            if args.geometry == "device-a-polygon"
+            "matching empty SiO2/Si layered-stack incident reference; "
+            "no TaIrTe4 object"
+            if args.case == "empty-stack"
             else (
-                "paper Figure 3F straight 45-degree half-plane control; "
-                "TaIrTe4 occupies lab y<=x and remote triangle faces lie "
-                "outside the PML-bounded physical domain"
-                if args.geometry == "straight-45-edge"
+                "approximation digitized from paper Figure 2A, not exact CAD"
+                if args.geometry == "device-a-polygon"
                 else (
-                    "edge-free planar TaIrTe4 layer extended 1 um beyond "
-                    "each lateral PML-bounded domain face"
+                    "paper Figure 3F straight 45-degree half-plane control; "
+                    "TaIrTe4 occupies lab y<=x and remote triangle faces lie "
+                    "outside the PML-bounded physical domain"
+                    if args.geometry == "straight-45-edge"
+                    else (
+                        "edge-free planar TaIrTe4 layer extended 1 um beyond "
+                        "each lateral PML-bounded domain face"
+                    )
                 )
             )
         ),
         "coordinate_contract": {"lab_x": "crystal b", "lab_y": "crystal a"},
         "flake_vertices_um": vertices_um.tolist(),
         "flake_thickness_m": FLAKE_THICKNESS_M,
-        "flake_area_m2": polygon_area(vertices_um) * 1e-12,
+        "flake_area_m2": (
+            None
+            if args.case == "empty-stack"
+            else polygon_area(vertices_um) * 1e-12
+        ),
         "absorption_analysis_bounds_m": absorption_bounds,
         "pabs_nominal_control_volume_bounds_m": pabs_bounds,
         "six_face_absorption_box_bounds_m": inner_box,
@@ -1483,12 +1498,14 @@ def add_geometry_and_monitors(
             outer_bounds if outer_faces else None
         ),
         "exact_flake_mask_kind": (
-            "digitized polygon"
-            if args.geometry == "device-a-polygon"
+            "no TaIrTe4; lossless matched-volume control"
+            if args.case == "empty-stack"
             else (
-                "analytic half-plane lab_y<=lab_x"
-                if args.geometry == "straight-45-edge"
+                "digitized polygon"
+                if args.geometry == "device-a-polygon"
                 else "all lateral samples inside the matched control volume"
+                if args.geometry == "planar-stack"
+                else "analytic half-plane lab_y<=lab_x"
             )
         ),
         "substrate": "285 nm SiO2 on Si",
