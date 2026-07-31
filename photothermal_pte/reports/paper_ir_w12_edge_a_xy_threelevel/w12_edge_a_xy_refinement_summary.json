@@ -1,0 +1,162 @@
+{
+  "status": "BLOCKED_W12_EDGE_A_XY_MESH_CONVERGENCE",
+  "validated": false,
+  "scenario": "paper-like scalar-Gaussian scenario with an explicitly assumed 12-um waist; not a paper-certified beam",
+  "comparison": {
+    "coarse": {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_20260731",
+      "mesh": {
+        "outer_xy_m": 1.0000000000000001e-07,
+        "fine_xy_m": 5.0000000000000004e-08,
+        "fine_half_span_m": 2.2e-05,
+        "intermediate_xy_m": null,
+        "intermediate_half_span_m": null
+      },
+      "native_Yee_cell_count": 170135680,
+      "P_Q_W": 2.2554323620511252e-11,
+      "P_six_W": 2.2513910956067724e-11,
+      "closure": 0.0017950086292153708,
+      "auto_shutoff": 9.93242e-06
+    },
+    "fine": {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_threelevel_xy25_h15_xy50_h22_dz5_pml24_t4_gpu5_20260731",
+      "mesh": {
+        "outer_xy_m": 1.0000000000000001e-07,
+        "fine_xy_m": 2.5000000000000002e-08,
+        "fine_half_span_m": 1.4999999999999999e-05,
+        "intermediate_xy_m": 5.0000000000000004e-08,
+        "intermediate_half_span_m": 2.2e-05
+      },
+      "native_Yee_cell_count": 396307080,
+      "P_Q_W": 2.2547347225935546e-11,
+      "P_six_W": 2.2505471777121036e-11,
+      "closure": 0.0018606785598283193,
+      "auto_shutoff": 9.98889e-06
+    },
+    "P_Q_relative_change": 0.0003094108812801455,
+    "P_six_relative_change": 0.00037498342759771875,
+    "hotspot_shift_m": 8.923424230641989e-07,
+    "lateral_equal_power_Q_NRMSE": 0.0037370088402161176,
+    "vertical_equal_power_Q_NRMSE": 0.0007803153106826291,
+    "largest_full_3D_error_layers": [
+      {
+        "z_m": 1.3400325923359048e-22,
+        "fraction_of_full_3D_squared_error": 0.8771995947378052
+      },
+      {
+        "z_m": -1.299999999999999e-07,
+        "fraction_of_full_3D_squared_error": 0.0678740772481473
+      },
+      {
+        "z_m": -1.199999999999999e-07,
+        "fraction_of_full_3D_squared_error": 0.009842463469081214
+      },
+      {
+        "z_m": -1.149999999999999e-07,
+        "fraction_of_full_3D_squared_error": 0.0070128265952504685
+      },
+      {
+        "z_m": -1.099999999999999e-07,
+        "fraction_of_full_3D_squared_error": 0.004812607710289654
+      }
+    ],
+    "field_plane_z_m": 5.135875157604772e-07,
+    "field_E2_raw_area_weighted_NRMSE": 0.0003604172911277385,
+    "field_E2_equal_integral_NRMSE": 0.00035074339965542094,
+    "coarse_power_outside_fine_square_W": 5.171298891703025e-13,
+    "coarse_power_outside_fine_square_fraction": 0.022928199173033712
+  },
+  "component_metrics": {
+    "x": {
+      "coarse_power_W": 2.014722656246942e-12,
+      "fine_power_W": 2.0265976611601808e-12,
+      "power_relative_change": 0.005859576935680806,
+      "conservative_remap_power_error": 0.0,
+      "raw_density_volume_weighted_NRMSE": 0.012801418534935828,
+      "equal_power_energy_NRMSE": 0.011599084702799118,
+      "equal_power_energy_correlation": 0.9999322800545876
+    },
+    "y": {
+      "coarse_power_W": 2.0476166008973966e-11,
+      "fine_power_W": 2.0457761090488615e-11,
+      "power_relative_change": 0.0008996545811608023,
+      "conservative_remap_power_error": 3.158873792193739e-16,
+      "raw_density_volume_weighted_NRMSE": 0.014615876273339183,
+      "equal_power_energy_NRMSE": 0.014575338458451033,
+      "equal_power_energy_correlation": 0.9998883128089885
+    },
+    "z": {
+      "coarse_power_W": 6.342906674073286e-14,
+      "fine_power_W": 6.298255864561326e-14,
+      "power_relative_change": 0.007089392757636021,
+      "conservative_remap_power_error": 0.0,
+      "raw_density_volume_weighted_NRMSE": 0.16460506415970946,
+      "equal_power_energy_NRMSE": 0.16102138530462842,
+      "equal_power_energy_correlation": 0.9896794476125358
+    },
+    "total": {
+      "coarse_power_W": 2.2554317731961642e-11,
+      "fine_power_W": 2.2547341310294407e-11,
+      "power_relative_change": 0.00030941216399866904,
+      "conservative_remap_power_error": 0.0,
+      "raw_density_volume_weighted_NRMSE": 0.014167900026502181,
+      "equal_power_energy_NRMSE": 0.014156387425480808,
+      "equal_power_energy_correlation": 0.9998950629161376
+    }
+  },
+  "spatial_statistics": {
+    "coarse": {
+      "centroid_m": [
+        3.072615113350662e-06,
+        -3.1290680053951545e-06,
+        -5.80440903857018e-08
+      ],
+      "second_moment_sigma_m": [
+        5.046122532150402e-06,
+        4.912226373794426e-06,
+        3.7874956621194415e-08
+      ]
+    },
+    "fine_remapped_to_coarse": {
+      "centroid_m": [
+        3.0742116804171597e-06,
+        -3.130211563967076e-06,
+        -5.804446844396437e-08
+      ],
+      "second_moment_sigma_m": [
+        5.045800128948103e-06,
+        4.912119340870975e-06,
+        3.7867308671301903e-08
+      ]
+    }
+  },
+  "gates": {
+    "coarse_closure_lt_0p5_percent": true,
+    "fine_closure_lt_0p5_percent": true,
+    "P_Q_change_lt_0p5_percent": true,
+    "P_six_change_lt_0p5_percent": true,
+    "equal_power_spatial_Q_NRMSE_lt_0p5_percent": false,
+    "equal_power_lateral_Q_NRMSE_lt_0p5_percent": true,
+    "coarse_auto_shutoff_le_1e_5": true,
+    "fine_auto_shutoff_le_1e_5": true,
+    "conservative_remap_error_lt_1e_12": true,
+    "no_Q_modification": true,
+    "all": false
+  },
+  "failed_full_fine_mesh_diagnostic": null,
+  "Q_processing": {
+    "clipping": false,
+    "smoothing": false,
+    "gain": false,
+    "global_rescaling": false,
+    "tiling": false,
+    "source_deletion": false,
+    "equal_power_normalization_used_for_shape_metrics_only": true
+  },
+  "not_claimed": [
+    "not an experimentally reproduced beam",
+    "not a paper-certified beam",
+    "not a thermal, PTE, adjoint, gradient, or optimization result",
+    "not a four-case mesh convergence certificate"
+  ]
+}

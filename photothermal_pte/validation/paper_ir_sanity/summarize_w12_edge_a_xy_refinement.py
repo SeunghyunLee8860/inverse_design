@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Summarize the bounded 100->50 nm w12 edge-a optical refinement.
+"""Summarize two bounded nested-mesh w12 edge-a optical calculations.
 
-The fine run retains a 100-nm outer mesh over the complete Q/closure volume
-and overlays a 50-nm mesh on the central +/-22 um square.  No optical source
-support is cropped or deleted.  Fine Q is conservatively mapped to the coarse
-dual-cell grid using exact Cartesian cell overlaps before spatial comparison.
+No optical source support is cropped or deleted.  The finer Q is
+conservatively mapped to the coarser dual-cell grid using exact Cartesian
+cell overlaps before spatial comparison.
 """
 
 from __future__ import annotations
@@ -173,6 +172,54 @@ def load_case(directory: Path) -> tuple[dict[str, Any], Path, Path]:
     return result, npz_path, manifest_path
 
 
+def mesh_description(result: dict[str, Any]) -> dict[str, Any]:
+    mesh = result["pre_run_contract"]["mesh"]
+    overrides = {
+        entry["name"]: entry for entry in mesh["override_objects"]
+    }
+    fine = overrides["flake_mesh"]
+    intermediate = overrides.get("flake_intermediate_mesh")
+    outer = overrides.get("flake_outer_mesh", fine)
+    return {
+        "outer_xy_m": float(outer["dx_m"]),
+        "fine_xy_m": float(fine["dx_m"]),
+        "fine_half_span_m": 0.5
+        * (
+            float(fine["bounds_m"]["x"][1])
+            - float(fine["bounds_m"]["x"][0])
+        ),
+        "intermediate_xy_m": (
+            None
+            if intermediate is None
+            else float(intermediate["dx_m"])
+        ),
+        "intermediate_half_span_m": (
+            None
+            if intermediate is None
+            else 0.5
+            * (
+                float(intermediate["bounds_m"]["x"][1])
+                - float(intermediate["bounds_m"]["x"][0])
+            )
+        ),
+    }
+
+
+def mesh_label(mesh: dict[str, Any]) -> str:
+    levels = [f"{mesh['outer_xy_m']*1e9:g} nm outer"]
+    if mesh["intermediate_xy_m"] is not None:
+        levels.append(
+            f"{mesh['intermediate_xy_m']*1e9:g} nm "
+            f"within ±{mesh['intermediate_half_span_m']*1e6:g} µm"
+        )
+    if not np.isclose(mesh["fine_xy_m"], mesh["outer_xy_m"]):
+        levels.append(
+            f"{mesh['fine_xy_m']*1e9:g} nm "
+            f"within ±{mesh['fine_half_span_m']*1e6:g} µm"
+        )
+    return " + ".join(levels)
+
+
 def spatial_statistics(
     energy: np.ndarray,
     centers: tuple[np.ndarray, np.ndarray, np.ndarray],
@@ -207,6 +254,8 @@ def main() -> int:
     fine_result, fine_npz, fine_manifest = load_case(args.fine_case)
     coarse_run = coarse_result["run_result"]
     fine_run = fine_result["run_result"]
+    coarse_mesh = mesh_description(coarse_result)
+    fine_mesh = mesh_description(fine_result)
     bounds = {
         axis: tuple(
             coarse_run["native_Yee_mesh_audit"][
@@ -332,6 +381,17 @@ def main() -> int:
     fine_power = float(np.sum(energy_fine_target))
     coarse_stats = spatial_statistics(energy_coarse, centers)
     fine_stats = spatial_statistics(energy_fine_target, centers)
+    fine_square = (
+        np.abs(centers[0][:, None]) <= fine_mesh["fine_half_span_m"]
+    ) & (
+        np.abs(centers[1][None, :]) <= fine_mesh["fine_half_span_m"]
+    )
+    coarse_power_outside_fine_square = float(
+        np.sum(energy_coarse[~fine_square, :])
+    )
+    coarse_power_outside_fine_square_fraction = (
+        coarse_power_outside_fine_square / coarse_power
+    )
     lateral_coarse = np.sum(energy_coarse, axis=2)
     lateral_fine = np.sum(energy_fine_target, axis=2)
     lateral_equal_power_nrmse = float(
@@ -341,6 +401,32 @@ def main() -> int:
         )
         / np.linalg.norm(lateral_fine / fine_power)
     )
+    vertical_coarse = np.sum(energy_coarse, axis=(0, 1))
+    vertical_fine = np.sum(energy_fine_target, axis=(0, 1))
+    vertical_equal_power_nrmse = float(
+        np.linalg.norm(
+            vertical_coarse / coarse_power
+            - vertical_fine / fine_power
+        )
+        / np.linalg.norm(vertical_fine / fine_power)
+    )
+    normalized_energy_difference = (
+        energy_coarse / coarse_power - energy_fine_target / fine_power
+    )
+    error_squared_by_z = np.sum(
+        normalized_energy_difference**2, axis=(0, 1)
+    )
+    error_squared_total = float(np.sum(error_squared_by_z))
+    largest_z_error_indices = np.argsort(error_squared_by_z)[-5:][::-1]
+    largest_z_error_layers = [
+        {
+            "z_m": float(centers[2][index]),
+            "fraction_of_full_3D_squared_error": float(
+                error_squared_by_z[index] / error_squared_total
+            ),
+        }
+        for index in largest_z_error_indices
+    ]
 
     coarse_field_path = args.coarse_case / "field_slices_raw.npz"
     fine_field_path = args.fine_case / "field_slices_raw.npz"
@@ -479,8 +565,14 @@ def main() -> int:
         ),
     }
     gates["all"] = all(gates.values())
+    fine_nm = fine_mesh["fine_xy_m"] * 1e9
+    validated_status = (
+        "VALIDATED_W12_EDGE_A_THREE_LEVEL_25NM_XY_CONVERGENCE"
+        if fine_nm <= 25.0 + 1.0e-9
+        else "VALIDATED_W12_EDGE_A_NESTED_50NM_XY_CONVERGENCE"
+    )
     status = (
-        "VALIDATED_W12_EDGE_A_NESTED_50NM_XY_CONVERGENCE"
+        validated_status
         if gates["all"]
         else "BLOCKED_W12_EDGE_A_XY_MESH_CONVERGENCE"
     )
@@ -512,6 +604,9 @@ def main() -> int:
                 "used_as_physical_result": False,
             }
 
+    with np.load(coarse_field_path, allow_pickle=False) as coarse_field:
+        field_plane_z_m = float(coarse_field["inside_z_m"][0])
+
     summary = {
         "status": status,
         "validated": gates["all"],
@@ -522,7 +617,7 @@ def main() -> int:
         "comparison": {
             "coarse": {
                 "path": str(args.coarse_case.resolve()),
-                "local_xy_mesh_m": 100.0e-9,
+                "mesh": coarse_mesh,
                 "native_Yee_cell_count": coarse_run[
                     "native_Yee_mesh_audit"
                 ]["native_Yee_cell_count"],
@@ -533,9 +628,7 @@ def main() -> int:
             },
             "fine": {
                 "path": str(args.fine_case.resolve()),
-                "outer_local_xy_mesh_m": 100.0e-9,
-                "fine_local_xy_mesh_m": 50.0e-9,
-                "fine_half_span_m": 22.0e-6,
+                "mesh": fine_mesh,
                 "native_Yee_cell_count": fine_run[
                     "native_Yee_mesh_audit"
                 ]["native_Yee_cell_count"],
@@ -548,11 +641,17 @@ def main() -> int:
             "P_six_relative_change": p_six_relative,
             "hotspot_shift_m": hotspot_shift,
             "lateral_equal_power_Q_NRMSE": lateral_equal_power_nrmse,
-            "field_plane_z_m": float(
-                np.load(coarse_field_path)["inside_z_m"][0]
-            ),
+            "vertical_equal_power_Q_NRMSE": vertical_equal_power_nrmse,
+            "largest_full_3D_error_layers": largest_z_error_layers,
+            "field_plane_z_m": field_plane_z_m,
             "field_E2_raw_area_weighted_NRMSE": field_nrmse,
             "field_E2_equal_integral_NRMSE": field_equal_power_nrmse,
+            "coarse_power_outside_fine_square_W": (
+                coarse_power_outside_fine_square
+            ),
+            "coarse_power_outside_fine_square_fraction": (
+                coarse_power_outside_fine_square_fraction
+            ),
         },
         "component_metrics": component_metrics,
         "spatial_statistics": {
@@ -560,7 +659,7 @@ def main() -> int:
             "fine_remapped_to_coarse": fine_stats,
         },
         "gates": gates,
-        "failed_full_50nm_diagnostic": failed_diagnostic,
+        "failed_full_fine_mesh_diagnostic": failed_diagnostic,
         "Q_processing": {
             "clipping": False,
             "smoothing": False,
@@ -598,8 +697,11 @@ def main() -> int:
     vmax = max(float(np.max(normalized_coarse)), float(np.max(normalized_fine)))
     figure, axes = plt.subplots(1, 3, figsize=(15, 4.4))
     images = (
-        (normalized_coarse, "100 nm"),
-        (normalized_fine, "nested 50 nm → 100 nm"),
+        (normalized_coarse, mesh_label(coarse_mesh)),
+        (
+            normalized_fine,
+            f"{mesh_label(fine_mesh)} → coarse grid",
+        ),
         (
             normalized_fine - normalized_coarse,
             "equal-power difference",
@@ -644,12 +746,16 @@ def main() -> int:
         centers[:2], normalized_fine, bounds_error=True
     )(query)
     figure, axis = plt.subplots(figsize=(8, 4.5))
-    axis.plot(line_n * 1e6, profile_coarse, label="100 nm")
+    axis.plot(
+        line_n * 1e6,
+        profile_coarse,
+        label=mesh_label(coarse_mesh),
+    )
     axis.plot(
         line_n * 1e6,
         profile_fine,
         "--",
-        label="nested 50 nm → 100 nm",
+        label=f"{mesh_label(fine_mesh)} → coarse grid",
     )
     axis.axvline(0.0, color="k", lw=1, alpha=0.4)
     axis.set(
@@ -692,9 +798,11 @@ def main() -> int:
         writer.writerow(
             {
                 "case": "coarse",
-                "outer_xy_nm": 100,
-                "fine_xy_nm": 100,
-                "fine_half_span_um": 27.5,
+                "outer_xy_nm": coarse_mesh["outer_xy_m"] * 1e9,
+                "fine_xy_nm": coarse_mesh["fine_xy_m"] * 1e9,
+                "fine_half_span_um": (
+                    coarse_mesh["fine_half_span_m"] * 1e6
+                ),
                 "P_Q_W": coarse_run["P_Q_W"],
                 "P_six_W": coarse_run["P_six_face_W"],
                 "closure_percent": 100
@@ -708,9 +816,11 @@ def main() -> int:
         writer.writerow(
             {
                 "case": "nested_refined",
-                "outer_xy_nm": 100,
-                "fine_xy_nm": 50,
-                "fine_half_span_um": 22,
+                "outer_xy_nm": fine_mesh["outer_xy_m"] * 1e9,
+                "fine_xy_nm": fine_mesh["fine_xy_m"] * 1e9,
+                "fine_half_span_um": (
+                    fine_mesh["fine_half_span_m"] * 1e6
+                ),
                 "P_Q_W": fine_run["P_Q_W"],
                 "P_six_W": fine_run["P_six_face_W"],
                 "closure_percent": 100
@@ -737,18 +847,19 @@ beam.
 
 ## Mesh contract
 
-- Coarse: 100 nm over the complete Q/closure region.
-- Refined: the same 100 nm outer region plus 50 nm on
-  `x,y in [-22,22] µm`.
-- The 100 nm artifact places only 0.0560% of absorbed power outside that fine
-  square. That outer source support remains solved at 100 nm; it is not
-  cropped, deleted, smoothed, gained, tiled, or rescaled.
+- Coarse: {mesh_label(coarse_mesh)}.
+- Refined: {mesh_label(fine_mesh)}.
+- The coarse artifact places
+  `{coarse_power_outside_fine_square_fraction:.4%}` of absorbed power outside
+  the finest square. That outer source support remains solved on the coarser
+  nested levels; it is not cropped, deleted, smoothed, gained, tiled, or
+  rescaled.
 - Both use TaIrTe4 `dz=5 nm`, six PML boundaries, the same scalar source,
   material, incident reference, and control-volume definitions.
 
 ## Results
 
-| Metric | 100 nm | Nested 50 nm | Relative change |
+| Metric | {mesh_label(coarse_mesh)} | {mesh_label(fine_mesh)} | Relative change |
 |---|---:|---:|---:|
 | P_Q (W) | {coarse_run['P_Q_W']:.12e} | {fine_run['P_Q_W']:.12e} | {p_q_relative:.4%} |
 | P_six (W) | {coarse_run['P_six_face_W']:.12e} | {fine_run['P_six_face_W']:.12e} | {p_six_relative:.4%} |
@@ -765,24 +876,36 @@ Exact cell-overlap remapping preserves fine-grid power to
   `{total_metric['equal_power_energy_NRMSE']:.4%}`
 - Equal-power lateral Q NRMSE:
   `{lateral_equal_power_nrmse:.4%}`
+- Equal-power vertical Q marginal NRMSE:
+  `{vertical_equal_power_nrmse:.4%}`
 - Equal-power Q correlation:
   `{total_metric['equal_power_energy_correlation']:.9f}`
 - Hotspot displacement: `{hotspot_shift*1e9:.3f} nm`
-- `z=0.5 µm` total-field E² raw area-weighted NRMSE:
+- `z={field_plane_z_m*1e6:.6g} µm` total-field E² raw area-weighted NRMSE:
   `{field_nrmse:.4%}`
-- `z=0.5 µm` total-field E² equal-integral NRMSE:
+- `z={field_plane_z_m*1e6:.6g} µm` total-field E² equal-integral NRMSE:
   `{field_equal_power_nrmse:.4%}`
+
+| Q component | Power change | Equal-power 3D NRMSE | Correlation |
+|---|---:|---:|---:|
+| x | {component_metrics['x']['power_relative_change']:.4%} | {component_metrics['x']['equal_power_energy_NRMSE']:.4%} | {component_metrics['x']['equal_power_energy_correlation']:.9f} |
+| y | {component_metrics['y']['power_relative_change']:.4%} | {component_metrics['y']['equal_power_energy_NRMSE']:.4%} | {component_metrics['y']['equal_power_energy_correlation']:.9f} |
+| z | {component_metrics['z']['power_relative_change']:.4%} | {component_metrics['z']['equal_power_energy_NRMSE']:.4%} | {component_metrics['z']['equal_power_energy_correlation']:.9f} |
 
 The E² plane is a total-field diagnostic and is not called a pure incident
 beam waist measurement.
 
+The full-3D discrepancy is localized: the layer at
+`z={largest_z_error_layers[0]['z_m']*1e9:.6g} nm` contributes
+`{largest_z_error_layers[0]['fraction_of_full_3D_squared_error']:.4%}` of
+the squared equal-power 3D error. This localization is diagnostic evidence;
+it does not permit replacing the failed 3D gate by either marginal metric.
+
 ## Gate
 
 The strict spatial-Q promotion gate is 0.5%. The per-gate booleans are stored
-in the summary JSON. A failed full-area 50 nm run is retained only as a
-diagnostic: its time stepping reached auto-shutoff, but root-filesystem
-exhaustion prevented project collection/write. It is not used as a physical
-result.
+in the summary JSON. Passing total power and lateral-Q metrics does not
+override the failed full-3D spatial-Q gate.
 
 No thermal, PTE, adjoint, gradient, or optimization calculation was run.
 """,

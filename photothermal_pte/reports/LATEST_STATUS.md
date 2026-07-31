@@ -3,6 +3,23 @@
 ## W12 straight-edge-a x/y mesh refinement
 
 - Status: `BLOCKED_W12_EDGE_A_XY_MESH_CONVERGENCE`.
+- A third GPU-only mesh level now compares the successful nested 50 nm case
+  against 25 nm on `x,y in [-15,15] µm`, while retaining 50 nm to
+  `±22 µm` and 100 nm over the complete Q/closure region. The coarse artifact
+  has `2.2928%` of absorbed power outside the 25 nm square; that support is
+  retained on the nested coarser levels.
+- For 50→25 nm, `P_Q` changes `0.0309%`, `P_six` changes `0.0375%`,
+  closure is `0.1795% / 0.1861%`, and lateral-Q NRMSE is `0.3737%`.
+  These gates pass. Full-3D equal-power Q NRMSE remains `1.4156%`, so the
+  strict `0.5%` spatial-Q promotion gate still fails. Total power or lateral
+  agreement is not used to override that failure.
+- The vertical Q marginal NRMSE is only `0.0780%`, but `87.7200%` of the
+  squared full-3D discrepancy is localized at the `z≈0` interface layer.
+  This identifies where the unresolved metric originates; it is not used
+  to waive the full-3D gate.
+- The 25 nm result used 396,307,080 native Yee cells, reached auto-shutoff
+  `9.98889e-6`, and was generated with the GPU engine only. No 12.5 nm solve
+  was started.
 - The 100 nm baseline was compared with a GPU-only nested refinement that
   retains 100 nm over the complete Q/closure region and adds 50 nm on
   `x,y in [-22,22] µm`. The 100 nm artifact has only `0.0560%` of absorbed
@@ -19,8 +36,9 @@
   failed diagnostic and is not used as a physical result. The successful
   nested run wrote directly to `/data`.
 - No thermal, PTE, adjoint, gradient, or optimization calculation ran.
-  Report, JSON, CSV, figures, and manifest:
-  `reports/paper_ir_w12_edge_a_xy_refinement/`.
+  The 100→50 and 50→25 reports, JSON, CSV, figures, and manifests are:
+  `reports/paper_ir_w12_edge_a_xy_refinement/` and
+  `reports/paper_ir_w12_edge_a_xy_threelevel/`.
 
 ## Paper-like w0=12 µm planar/straight-edge optical baseline
 
