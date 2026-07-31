@@ -1,5 +1,32 @@
 # Latest photothermal validation status
 
+## W12 straight-edge-a interface/downstream convergence
+
+- Status: `BLOCKED_W12_INTERFACE_SLAB_OR_DOWNSTREAM_CONVERGENCE`.
+- No new FDTD ran. The existing 50/25 nm FSPs were reopened read-only for
+  component index assignment, and the existing raw Q artifacts were mapped
+  independently through the same exact-overlap/nearest-support operator.
+- The common-grid `z=0` dual cell spans `[-2.5,+2.5] nm` and carries
+  `2.8732% / 2.8594%` of total Q. The exact-overlap `[-10,0] nm` slab carries
+  `9.4203% / 9.4156%`; its total power changes only `0.0810%`, but its
+  equal-power lateral NRMSE is `1.3725%`.
+- Read-only index data show Ex/Ey use an exact `z=0` conformal sample with
+  about `50.0122%` of bulk material loss. Ez is one-sided and staggered:
+  `-2.5 nm` is TaIrTe4 and `+2.5 nm` is air. The maximum independently read
+  E/index coordinate mismatch is `6.78e-21 m`.
+- On the named 60 µm explicit anisotropic/interface FVM
+  (`100 nm` core x/y, `10 nm` flake z), mapped-Q NRMSE is `0.9685%`,
+  TaIrTe4 T-field NRMSE is `0.1230%`, in-plane gradient-vector NRMSE is
+  `0.9945%`, and the uniform-45-degree PTE diagnostic changes `0.4260%`.
+  Thus temperature and PTE pass 0.5%, while slab shape, mapped Q, and
+  gradient do not.
+- Both remaps preserve power below `1e-12`, leave exactly zero Q outside
+  the flake, and both thermal solves pass `1%` energy balance and `1e-8`
+  residual. An initially detected non-contiguous-array projection bug was
+  corrected and its result retained only as an external failed diagnostic.
+- Report, JSON, CSV, figure, and manifest:
+  `reports/paper_ir_w12_edge_a_interface_downstream/`.
+
 ## W12 straight-edge-a x/y mesh refinement
 
 - Status: `BLOCKED_W12_EDGE_A_XY_MESH_CONVERGENCE`.

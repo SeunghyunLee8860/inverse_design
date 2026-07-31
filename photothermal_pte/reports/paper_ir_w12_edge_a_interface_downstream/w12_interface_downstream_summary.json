@@ -1,0 +1,1240 @@
+{
+  "status": "BLOCKED_W12_INTERFACE_SLAB_OR_DOWNSTREAM_CONVERGENCE",
+  "validated": false,
+  "scope": "existing w12 edge-a 50/25 nm Q only; interface layer/slab, read-only component index audit, exact-overlap remap, explicit anisotropic/interface thermal FVM, and uniform-45 PTE diagnostic",
+  "interface_power": {
+    "50nm": {
+      "components": {
+        "x": {
+          "total_power_W": 2.014722656246942e-12,
+          "z0_layer_sample_coordinate_m": 1.340032592335905e-22,
+          "z0_layer_dual_cell_bounds_m": [
+            -2.4999999999998656e-09,
+            2.5000000000001336e-09
+          ],
+          "z0_layer_thickness_m": 4.999999999999999e-09,
+          "z0_layer_power_W": 3.7980168791546504e-14,
+          "z0_layer_power_fraction": 0.01885131369014164,
+          "interface_slab_bounds_m": [
+            -1e-08,
+            0.0
+          ],
+          "interface_slab_power_W": 1.3337576857738854e-13,
+          "interface_slab_power_fraction": 0.06620056024278949
+        },
+        "y": {
+          "total_power_W": 2.0476166008973966e-11,
+          "z0_layer_sample_coordinate_m": 1.340032592335905e-22,
+          "z0_layer_dual_cell_bounds_m": [
+            -2.4999999999998656e-09,
+            2.5000000000001336e-09
+          ],
+          "z0_layer_thickness_m": 4.999999999999999e-09,
+          "z0_layer_power_W": 6.093308565088867e-13,
+          "z0_layer_power_fraction": 0.029758054131903352,
+          "interface_slab_bounds_m": [
+            -1e-08,
+            0.0
+          ],
+          "interface_slab_power_W": 1.9891723806492605e-12,
+          "interface_slab_power_fraction": 0.09714574397264986
+        },
+        "z": {
+          "total_power_W": 6.342906674073286e-14,
+          "z0_layer_sample_coordinate_m": 1.340032592335905e-22,
+          "z0_layer_dual_cell_bounds_m": [
+            -2.4999999999998656e-09,
+            2.5000000000001336e-09
+          ],
+          "z0_layer_thickness_m": 4.999999999999999e-09,
+          "z0_layer_power_W": 7.272732056973281e-16,
+          "z0_layer_power_fraction": 0.011465929471579124,
+          "interface_slab_bounds_m": [
+            -1e-08,
+            0.0
+          ],
+          "interface_slab_power_W": 2.12865897081713e-15,
+          "interface_slab_power_fraction": 0.03355967666240545
+        },
+        "total": {
+          "total_power_W": 2.2554317731961642e-11,
+          "z0_layer_sample_coordinate_m": 1.340032592335905e-22,
+          "z0_layer_dual_cell_bounds_m": [
+            -2.4999999999998656e-09,
+            2.5000000000001336e-09
+          ],
+          "z0_layer_thickness_m": 4.999999999999999e-09,
+          "z0_layer_power_W": 6.480382985061306e-13,
+          "z0_layer_power_fraction": 0.028732338801266324,
+          "interface_slab_bounds_m": [
+            -1e-08,
+            0.0
+          ],
+          "interface_slab_power_W": 2.1246768081974657e-12,
+          "interface_slab_power_fraction": 0.09420266369603342
+        }
+      }
+    },
+    "25nm": {
+      "components": {
+        "x": {
+          "total_power_W": 2.0265976611601808e-12,
+          "z0_layer_sample_coordinate_m": 1.340032592335905e-22,
+          "z0_layer_dual_cell_bounds_m": [
+            -2.4999999999998656e-09,
+            2.5000000000001336e-09
+          ],
+          "z0_layer_thickness_m": 4.999999999999999e-09,
+          "z0_layer_power_W": 3.82210805788957e-14,
+          "z0_layer_power_fraction": 0.018859727962488127,
+          "interface_slab_bounds_m": [
+            -1e-08,
+            0.0
+          ],
+          "interface_slab_power_W": 1.342212805310874e-13,
+          "interface_slab_power_fraction": 0.06622986057047396
+        },
+        "y": {
+          "total_power_W": 2.0457761090488615e-11,
+          "z0_layer_sample_coordinate_m": 1.340032592335905e-22,
+          "z0_layer_dual_cell_bounds_m": [
+            -2.4999999999998656e-09,
+            2.5000000000001336e-09
+          ],
+          "z0_layer_thickness_m": 4.999999999999999e-09,
+          "z0_layer_power_W": 6.057620759953302e-13,
+          "z0_layer_power_fraction": 0.02961037981213721,
+          "interface_slab_bounds_m": [
+            -1e-08,
+            0.0
+          ],
+          "interface_slab_power_W": 1.9866003087640232e-12,
+          "interface_slab_power_fraction": 0.0971074156148812
+        },
+        "z": {
+          "total_power_W": 6.298255864561326e-14,
+          "z0_layer_sample_coordinate_m": 1.340032592335905e-22,
+          "z0_layer_dual_cell_bounds_m": [
+            -2.4999999999998656e-09,
+            2.5000000000001336e-09
+          ],
+          "z0_layer_thickness_m": 4.999999999999999e-09,
+          "z0_layer_power_W": 7.400126243682505e-16,
+          "z0_layer_power_fraction": 0.011749484941253533,
+          "interface_slab_bounds_m": [
+            -1e-08,
+            0.0
+          ],
+          "interface_slab_power_W": 2.135723412990969e-15,
+          "interface_slab_power_fraction": 0.03390975944639115
+        },
+        "total": {
+          "total_power_W": 2.2547341310294407e-11,
+          "z0_layer_sample_coordinate_m": 1.340032592335905e-22,
+          "z0_layer_dual_cell_bounds_m": [
+            -2.4999999999998656e-09,
+            2.5000000000001336e-09
+          ],
+          "z0_layer_thickness_m": 4.999999999999999e-09,
+          "z0_layer_power_W": 6.447231691985942e-13,
+          "z0_layer_power_fraction": 0.028594199215152428,
+          "interface_slab_bounds_m": [
+            -1e-08,
+            0.0
+          ],
+          "interface_slab_power_W": 2.122957312708101e-12,
+          "interface_slab_power_fraction": 0.09415554958308213
+        }
+      }
+    }
+  },
+  "z0_layer_comparison": {
+    "coarse_power_W": 6.480382985061306e-13,
+    "fine_power_W": 6.447231691985942e-13,
+    "power_relative_change": 0.0051419422566387684,
+    "conservative_remap_power_error": 0.0,
+    "raw_energy_NRMSE": 0.09143123606169114,
+    "equal_power_energy_NRMSE": 0.09071110404627722,
+    "correlation": 0.9955614182907659
+  },
+  "interface_slab_comparison": {
+    "coarse_power_W": 2.1246768081974657e-12,
+    "fine_power_W": 2.122957312708101e-12,
+    "power_relative_change": 0.0008099529270191154,
+    "conservative_remap_power_error": 1.902519570485082e-16,
+    "raw_energy_NRMSE": 0.01372499110011324,
+    "equal_power_energy_NRMSE": 0.013725051951731975,
+    "correlation": 0.9998972604569479
+  },
+  "component_interface_index_readback": {
+    "status": "EXTRACTED_W12_INTERFACE_INDEX_READ_ONLY",
+    "FDTD_run": false,
+    "runanalysis_called": false,
+    "thermal_run": false,
+    "PTE_run": false,
+    "scope": "component-specific E/index coordinate pairing and saved-index material assignment near the z=0 TaIrTe4/air interface",
+    "cases": {
+      "50nm": {
+        "fsp": {
+          "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_20260731/finite_2um_optical_q.fsp",
+          "size_bytes": 2634686647,
+          "sha256": "f18c72a03bab7768701955a94df5a90aa54469f78691cf26158aff0a331388f1"
+        },
+        "case_result": {
+          "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_20260731/case_result.json",
+          "size_bytes": 78343,
+          "sha256": "98c1d99374f68eea332abec20026b11e9e331689f02a2d7c54449234c4b3e1f9"
+        },
+        "Q_quadrature_control_volume_bounds_m": {
+          "x": [
+            -2.705e-05,
+            2.705e-05
+          ],
+          "y": [
+            -2.705e-05,
+            2.705e-05
+          ],
+          "z": [
+            -1.8e-07,
+            5e-08
+          ]
+        },
+        "components": {
+          "x": {
+            "staggering_axis": "x",
+            "shape": [
+              984,
+              984,
+              47
+            ],
+            "field_index_coordinate_mismatch_m": {
+              "x": 6.776263578034403e-21,
+              "y": 6.776263578034403e-21,
+              "z": 5.293955920339377e-23
+            },
+            "maximum_coordinate_mismatch_m": 6.776263578034403e-21,
+            "z_sample_bounds_m": [
+              -1.8000000000000177e-07,
+              5e-08
+            ],
+            "nearest_z_to_interface_m": 1.3400325923359048e-22,
+            "has_exact_z0_sample": true,
+            "interface_near_layers": [
+              {
+                "index": 34,
+                "z_m": -9.999999999999865e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 80200,
+                  "real_min": 12.454947657269937,
+                  "real_median": 13.268023300652702,
+                  "real_max": 13.268023300652702,
+                  "imag_min": 24.437465464614846,
+                  "imag_median": 26.181870955490027,
+                  "imag_max": 26.181870955490027
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.9333735494105874,
+                  "median": 1.0000000147036872,
+                  "maximum": 1.0000000147036872,
+                  "fraction_above_0p5": 1.0
+                }
+              },
+              {
+                "index": 35,
+                "z_m": -4.999999999999865e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 80200,
+                  "real_min": 12.454947657269937,
+                  "real_median": 13.268023300652702,
+                  "real_max": 13.268023300652702,
+                  "imag_min": 24.437465464614846,
+                  "imag_median": 26.181870955490027,
+                  "imag_max": 26.181870955490027
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.9333735494105874,
+                  "median": 1.0000000147036872,
+                  "maximum": 1.0000000147036872,
+                  "fraction_above_0p5": 1.0
+                }
+              },
+              {
+                "index": 36,
+                "z_m": 1.3400325923359048e-22,
+                "is_exact_z0_sample": true,
+                "epsilon": {
+                  "count": 80200,
+                  "real_min": 4.732021359829053,
+                  "real_median": 7.135509211764419,
+                  "real_max": 7.135509211764419,
+                  "imag_min": 7.787372839670411,
+                  "imag_median": 13.094131506914385,
+                  "imag_max": 13.094131506914385
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.29743378414064736,
+                  "median": 0.5001220776661385,
+                  "maximum": 0.5001220776661385,
+                  "fraction_above_0p5": 0.9950124688279302
+                }
+              },
+              {
+                "index": 37,
+                "z_m": 5.000000000000133e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 80200,
+                  "real_min": 1.0,
+                  "real_median": 1.0,
+                  "real_max": 1.0,
+                  "imag_min": 0.0,
+                  "imag_median": 0.0,
+                  "imag_max": 0.0
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.0,
+                  "median": 0.0,
+                  "maximum": 0.0,
+                  "fraction_above_0p5": 0.0
+                }
+              },
+              {
+                "index": 38,
+                "z_m": 1.0000000000000133e-08,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 80200,
+                  "real_min": 1.0,
+                  "real_median": 1.0,
+                  "real_max": 1.0,
+                  "imag_min": 0.0,
+                  "imag_median": 0.0,
+                  "imag_max": 0.0
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.0,
+                  "median": 0.0,
+                  "maximum": 0.0,
+                  "fraction_above_0p5": 0.0
+                }
+              }
+            ],
+            "interface_assignment": {
+              "kind": "exact-boundary tangential component sample with approximately half-loss conformal epsilon",
+              "below_loss_fraction_median": 1.0000000147036872,
+              "boundary_loss_fraction_median": 0.5001220776661385,
+              "above_loss_fraction_median": 0.0
+            },
+            "interface_sample_quadrature": {
+              "contract": "component-local dual widths on the component's own Yee/index coordinates; not common-Q bounds",
+              "nearest_z_index": 36,
+              "nearest_z_m": 1.3400325923359048e-22,
+              "z_dual_weight_m": 4.999999999999999e-09,
+              "positive_cell_volume_m3": {
+                "minimum": 1.2499999999999125e-23,
+                "median": 1.2499999999999971e-23,
+                "maximum": 1.2500000000000606e-23
+              }
+            },
+            "bulk_material_finite_dt_epsilon": {
+              "real": 13.26802338793218,
+              "imag": 26.181870570519994
+            }
+          },
+          "y": {
+            "staggering_axis": "y",
+            "shape": [
+              984,
+              984,
+              47
+            ],
+            "field_index_coordinate_mismatch_m": {
+              "x": 6.776263578034403e-21,
+              "y": 6.776263578034403e-21,
+              "z": 5.293955920339377e-23
+            },
+            "maximum_coordinate_mismatch_m": 6.776263578034403e-21,
+            "z_sample_bounds_m": [
+              -1.8000000000000177e-07,
+              5e-08
+            ],
+            "nearest_z_to_interface_m": 1.3400325923359048e-22,
+            "has_exact_z0_sample": true,
+            "interface_near_layers": [
+              {
+                "index": 34,
+                "z_m": -9.999999999999865e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 79800,
+                  "real_min": -42.97003897202557,
+                  "real_median": -42.97003897202557,
+                  "real_max": -40.03578507322357,
+                  "imag_min": 190.90540686971548,
+                  "imag_median": 204.53387562805196,
+                  "imag_max": 204.53387562805196
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.9333681852783353,
+                  "median": 1.000000028564849,
+                  "maximum": 1.000000028564849,
+                  "fraction_above_0p5": 1.0
+                }
+              },
+              {
+                "index": 35,
+                "z_m": -4.999999999999865e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 79800,
+                  "real_min": -42.97003897202557,
+                  "real_median": -42.97003897202557,
+                  "real_max": -40.03578507322357,
+                  "imag_min": 190.90540686971548,
+                  "imag_median": 204.53387562805196,
+                  "imag_max": 204.53387562805196
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.9333681852783353,
+                  "median": 1.000000028564849,
+                  "maximum": 1.000000028564849,
+                  "fraction_above_0p5": 1.0
+                }
+              },
+              {
+                "index": 36,
+                "z_m": 1.3400325923359048e-22,
+                "is_exact_z0_sample": true,
+                "epsilon": {
+                  "count": 79800,
+                  "real_min": -20.990386922410732,
+                  "real_median": -20.990386922410732,
+                  "real_max": -8.021145520445096,
+                  "imag_min": 62.880391429275925,
+                  "imag_median": 102.29190532814071,
+                  "imag_max": 102.29190532814071
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.30743265892929045,
+                  "median": 0.5001220845984113,
+                  "maximum": 0.5001220845984113,
+                  "fraction_above_0p5": 0.995
+                }
+              },
+              {
+                "index": 37,
+                "z_m": 5.000000000000133e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 79800,
+                  "real_min": 1.0,
+                  "real_median": 1.0,
+                  "real_max": 1.0,
+                  "imag_min": 0.0,
+                  "imag_median": 0.0,
+                  "imag_max": 0.0
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.0,
+                  "median": 0.0,
+                  "maximum": 0.0,
+                  "fraction_above_0p5": 0.0
+                }
+              },
+              {
+                "index": 38,
+                "z_m": 1.0000000000000133e-08,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 79800,
+                  "real_min": 1.0,
+                  "real_median": 1.0,
+                  "real_max": 1.0,
+                  "imag_min": 0.0,
+                  "imag_median": 0.0,
+                  "imag_max": 0.0
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.0,
+                  "median": 0.0,
+                  "maximum": 0.0,
+                  "fraction_above_0p5": 0.0
+                }
+              }
+            ],
+            "interface_assignment": {
+              "kind": "exact-boundary tangential component sample with approximately half-loss conformal epsilon",
+              "below_loss_fraction_median": 1.000000028564849,
+              "boundary_loss_fraction_median": 0.5001220845984113,
+              "above_loss_fraction_median": 0.0
+            },
+            "interface_sample_quadrature": {
+              "contract": "component-local dual widths on the component's own Yee/index coordinates; not common-Q bounds",
+              "nearest_z_index": 36,
+              "nearest_z_m": 1.3400325923359048e-22,
+              "z_dual_weight_m": 4.999999999999999e-09,
+              "positive_cell_volume_m3": {
+                "minimum": 1.2499999999999125e-23,
+                "median": 1.2499999999999971e-23,
+                "maximum": 1.2500000000000606e-23
+              }
+            },
+            "bulk_material_finite_dt_epsilon": {
+              "real": -42.97003724281048,
+              "imag": 204.53386978557285
+            }
+          },
+          "z": {
+            "staggering_axis": "z",
+            "shape": [
+              984,
+              984,
+              47
+            ],
+            "field_index_coordinate_mismatch_m": {
+              "x": 6.776263578034403e-21,
+              "y": 6.776263578034403e-21,
+              "z": 5.293955920339377e-23
+            },
+            "maximum_coordinate_mismatch_m": 6.776263578034403e-21,
+            "z_sample_bounds_m": [
+              -1.7750000000000087e-07,
+              5.250000000000006e-08
+            ],
+            "nearest_z_to_interface_m": -2.4999999999998656e-09,
+            "has_exact_z0_sample": false,
+            "interface_near_layers": [
+              {
+                "index": 34,
+                "z_m": -7.499999999999865e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 80200,
+                  "real_min": 7.135509120360437,
+                  "real_median": 13.268023300652702,
+                  "real_max": 13.268023300652702,
+                  "imag_min": 13.094131311844063,
+                  "imag_median": 26.181870955490027,
+                  "imag_max": 26.181870955490027
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.5001220702155508,
+                  "median": 1.0000000147036872,
+                  "maximum": 1.0000000147036872,
+                  "fraction_above_0p5": 1.0
+                }
+              },
+              {
+                "index": 35,
+                "z_m": -2.4999999999998656e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 80200,
+                  "real_min": 7.135509120360437,
+                  "real_median": 13.268023300652702,
+                  "real_max": 13.268023300652702,
+                  "imag_min": 13.094131311844063,
+                  "imag_median": 26.181870955490027,
+                  "imag_max": 26.181870955490027
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.5001220702155508,
+                  "median": 1.0000000147036872,
+                  "maximum": 1.0000000147036872,
+                  "fraction_above_0p5": 1.0
+                }
+              },
+              {
+                "index": 36,
+                "z_m": 2.5000000000001336e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 80200,
+                  "real_min": 1.0,
+                  "real_median": 1.0,
+                  "real_max": 1.0,
+                  "imag_min": 0.0,
+                  "imag_median": 0.0,
+                  "imag_max": 0.0
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.0,
+                  "median": 0.0,
+                  "maximum": 0.0,
+                  "fraction_above_0p5": 0.0
+                }
+              },
+              {
+                "index": 37,
+                "z_m": 7.500000000000133e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 80200,
+                  "real_min": 1.0,
+                  "real_median": 1.0,
+                  "real_max": 1.0,
+                  "imag_min": 0.0,
+                  "imag_median": 0.0,
+                  "imag_max": 0.0
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.0,
+                  "median": 0.0,
+                  "maximum": 0.0,
+                  "fraction_above_0p5": 0.0
+                }
+              }
+            ],
+            "interface_assignment": {
+              "kind": "z-staggered one-sided samples: negative-z material and positive-z air; no exact z=0 sample",
+              "below_loss_fraction_median": 1.0000000147036872,
+              "above_loss_fraction_median": 0.0
+            },
+            "interface_sample_quadrature": {
+              "contract": "component-local dual widths on the component's own Yee/index coordinates; not common-Q bounds",
+              "nearest_z_index": 35,
+              "nearest_z_m": -2.4999999999998656e-09,
+              "z_dual_weight_m": 4.999999999999999e-09,
+              "positive_cell_volume_m3": {
+                "minimum": 1.2499999999998912e-23,
+                "median": 1.2499999999999996e-23,
+                "maximum": 1.2500000000000606e-23
+              }
+            },
+            "bulk_material_finite_dt_epsilon": {
+              "real": 13.26802338793218,
+              "imag": 26.181870570519994
+            }
+          }
+        },
+        "maximum_field_index_coordinate_mismatch_m": 6.776263578034403e-21
+      },
+      "25nm": {
+        "fsp": {
+          "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_threelevel_xy25_h15_xy50_h22_dz5_pml24_t4_gpu5_20260731/finite_2um_optical_q.fsp",
+          "size_bytes": 6850719858,
+          "sha256": "9e972c7147f980ead5d908a89d0169e4f1a867c4eec59985e0ea98c3f460dd9b"
+        },
+        "case_result": {
+          "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_threelevel_xy25_h15_xy50_h22_dz5_pml24_t4_gpu5_20260731/case_result.json",
+          "size_bytes": 80850,
+          "sha256": "8f0f262d6a2089bc2d2bbf23ea34fa42972a451a6d50ea90ce0360555a348da7"
+        },
+        "Q_quadrature_control_volume_bounds_m": {
+          "x": [
+            -2.705e-05,
+            2.705e-05
+          ],
+          "y": [
+            -2.705e-05,
+            2.705e-05
+          ],
+          "z": [
+            -1.8e-07,
+            5e-08
+          ]
+        },
+        "components": {
+          "x": {
+            "staggering_axis": "x",
+            "shape": [
+              1586,
+              1586,
+              47
+            ],
+            "field_index_coordinate_mismatch_m": {
+              "x": 6.776263578034403e-21,
+              "y": 6.776263578034403e-21,
+              "z": 5.293955920339377e-23
+            },
+            "maximum_coordinate_mismatch_m": 6.776263578034403e-21,
+            "z_sample_bounds_m": [
+              -1.8000000000000177e-07,
+              5e-08
+            ],
+            "nearest_z_to_interface_m": 1.3400325923359048e-22,
+            "has_exact_z0_sample": true,
+            "interface_near_layers": [
+              {
+                "index": 34,
+                "z_m": -9.999999999999865e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 320400,
+                  "real_min": 12.454947657269937,
+                  "real_median": 13.268023300652702,
+                  "real_max": 13.268023300652702,
+                  "imag_min": 24.437465464614846,
+                  "imag_median": 26.181870955490027,
+                  "imag_max": 26.181870955490027
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.9333735494105874,
+                  "median": 1.0000000147036872,
+                  "maximum": 1.0000000147036872,
+                  "fraction_above_0p5": 1.0
+                }
+              },
+              {
+                "index": 35,
+                "z_m": -4.999999999999865e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 320400,
+                  "real_min": 12.454947657269937,
+                  "real_median": 13.268023300652702,
+                  "real_max": 13.268023300652702,
+                  "imag_min": 24.437465464614846,
+                  "imag_median": 26.181870955490027,
+                  "imag_max": 26.181870955490027
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.9333735494105874,
+                  "median": 1.0000000147036872,
+                  "maximum": 1.0000000147036872,
+                  "fraction_above_0p5": 1.0
+                }
+              },
+              {
+                "index": 36,
+                "z_m": 1.3400325923359048e-22,
+                "is_exact_z0_sample": true,
+                "epsilon": {
+                  "count": 320400,
+                  "real_min": 4.869140526597085,
+                  "real_median": 7.135509211764419,
+                  "real_max": 7.135509211764419,
+                  "imag_min": 7.5654991974795465,
+                  "imag_median": 13.094131506914385,
+                  "imag_max": 13.094131506914385
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.2889594605970619,
+                  "median": 0.5001220776661385,
+                  "maximum": 0.5001220776661385,
+                  "fraction_above_0p5": 0.9975031210986267
+                }
+              },
+              {
+                "index": 37,
+                "z_m": 5.000000000000133e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 320400,
+                  "real_min": 1.0,
+                  "real_median": 1.0,
+                  "real_max": 1.0,
+                  "imag_min": 0.0,
+                  "imag_median": 0.0,
+                  "imag_max": 0.0
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.0,
+                  "median": 0.0,
+                  "maximum": 0.0,
+                  "fraction_above_0p5": 0.0
+                }
+              },
+              {
+                "index": 38,
+                "z_m": 1.0000000000000133e-08,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 320400,
+                  "real_min": 1.0,
+                  "real_median": 1.0,
+                  "real_max": 1.0,
+                  "imag_min": 0.0,
+                  "imag_median": 0.0,
+                  "imag_max": 0.0
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.0,
+                  "median": 0.0,
+                  "maximum": 0.0,
+                  "fraction_above_0p5": 0.0
+                }
+              }
+            ],
+            "interface_assignment": {
+              "kind": "exact-boundary tangential component sample with approximately half-loss conformal epsilon",
+              "below_loss_fraction_median": 1.0000000147036872,
+              "boundary_loss_fraction_median": 0.5001220776661385,
+              "above_loss_fraction_median": 0.0
+            },
+            "interface_sample_quadrature": {
+              "contract": "component-local dual widths on the component's own Yee/index coordinates; not common-Q bounds",
+              "nearest_z_index": 36,
+              "nearest_z_m": 1.3400325923359048e-22,
+              "z_dual_weight_m": 4.999999999999999e-09,
+              "positive_cell_volume_m3": {
+                "minimum": 3.1249999999997812e-24,
+                "median": 3.1250000000000453e-24,
+                "maximum": 3.1250000000001515e-24
+              }
+            },
+            "bulk_material_finite_dt_epsilon": {
+              "real": 13.26802338793218,
+              "imag": 26.181870570519994
+            }
+          },
+          "y": {
+            "staggering_axis": "y",
+            "shape": [
+              1586,
+              1586,
+              47
+            ],
+            "field_index_coordinate_mismatch_m": {
+              "x": 6.776263578034403e-21,
+              "y": 6.776263578034403e-21,
+              "z": 5.293955920339377e-23
+            },
+            "maximum_coordinate_mismatch_m": 6.776263578034403e-21,
+            "z_sample_bounds_m": [
+              -1.8000000000000177e-07,
+              5e-08
+            ],
+            "nearest_z_to_interface_m": 1.3400325923359048e-22,
+            "has_exact_z0_sample": true,
+            "interface_near_layers": [
+              {
+                "index": 34,
+                "z_m": -9.999999999999865e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 319600,
+                  "real_min": -42.97003897202557,
+                  "real_median": -42.97003897202557,
+                  "real_max": -40.03578507322357,
+                  "imag_min": 190.90540686971548,
+                  "imag_median": 204.53387562805196,
+                  "imag_max": 204.53387562805196
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.9333681852783353,
+                  "median": 1.000000028564849,
+                  "maximum": 1.000000028564849,
+                  "fraction_above_0p5": 1.0
+                }
+              },
+              {
+                "index": 35,
+                "z_m": -4.999999999999865e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 319600,
+                  "real_min": -42.97003897202557,
+                  "real_median": -42.97003897202557,
+                  "real_max": -40.03578507322357,
+                  "imag_min": 190.90540686971548,
+                  "imag_median": 204.53387562805196,
+                  "imag_max": 204.53387562805196
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.9333681852783353,
+                  "median": 1.000000028564849,
+                  "maximum": 1.000000028564849,
+                  "fraction_above_0p5": 1.0
+                }
+              },
+              {
+                "index": 36,
+                "z_m": 1.3400325923359048e-22,
+                "is_exact_z0_sample": true,
+                "epsilon": {
+                  "count": 319600,
+                  "real_min": -20.990386922410732,
+                  "real_median": -20.990386922410732,
+                  "real_max": 5.5933710730503865,
+                  "imag_min": 63.63088006468902,
+                  "imag_median": 102.29190532814071,
+                  "imag_max": 102.29190532814071
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.31110192229481465,
+                  "median": 0.5001220845984113,
+                  "maximum": 0.5001220845984113,
+                  "fraction_above_0p5": 0.9975
+                }
+              },
+              {
+                "index": 37,
+                "z_m": 5.000000000000133e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 319600,
+                  "real_min": 1.0,
+                  "real_median": 1.0,
+                  "real_max": 1.0,
+                  "imag_min": 0.0,
+                  "imag_median": 0.0,
+                  "imag_max": 0.0
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.0,
+                  "median": 0.0,
+                  "maximum": 0.0,
+                  "fraction_above_0p5": 0.0
+                }
+              },
+              {
+                "index": 38,
+                "z_m": 1.0000000000000133e-08,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 319600,
+                  "real_min": 1.0,
+                  "real_median": 1.0,
+                  "real_max": 1.0,
+                  "imag_min": 0.0,
+                  "imag_median": 0.0,
+                  "imag_max": 0.0
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.0,
+                  "median": 0.0,
+                  "maximum": 0.0,
+                  "fraction_above_0p5": 0.0
+                }
+              }
+            ],
+            "interface_assignment": {
+              "kind": "exact-boundary tangential component sample with approximately half-loss conformal epsilon",
+              "below_loss_fraction_median": 1.000000028564849,
+              "boundary_loss_fraction_median": 0.5001220845984113,
+              "above_loss_fraction_median": 0.0
+            },
+            "interface_sample_quadrature": {
+              "contract": "component-local dual widths on the component's own Yee/index coordinates; not common-Q bounds",
+              "nearest_z_index": 36,
+              "nearest_z_m": 1.3400325923359048e-22,
+              "z_dual_weight_m": 4.999999999999999e-09,
+              "positive_cell_volume_m3": {
+                "minimum": 3.1249999999997812e-24,
+                "median": 3.1250000000000453e-24,
+                "maximum": 3.1250000000001515e-24
+              }
+            },
+            "bulk_material_finite_dt_epsilon": {
+              "real": -42.97003724281048,
+              "imag": 204.53386978557285
+            }
+          },
+          "z": {
+            "staggering_axis": "z",
+            "shape": [
+              1586,
+              1586,
+              47
+            ],
+            "field_index_coordinate_mismatch_m": {
+              "x": 6.776263578034403e-21,
+              "y": 6.776263578034403e-21,
+              "z": 5.293955920339377e-23
+            },
+            "maximum_coordinate_mismatch_m": 6.776263578034403e-21,
+            "z_sample_bounds_m": [
+              -1.7750000000000087e-07,
+              5.250000000000006e-08
+            ],
+            "nearest_z_to_interface_m": -2.4999999999998656e-09,
+            "has_exact_z0_sample": false,
+            "interface_near_layers": [
+              {
+                "index": 34,
+                "z_m": -7.499999999999865e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 320400,
+                  "real_min": 7.135509120360437,
+                  "real_median": 13.268023300652702,
+                  "real_max": 13.268023300652702,
+                  "imag_min": 13.094131311844063,
+                  "imag_median": 26.181870955490027,
+                  "imag_max": 26.181870955490027
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.5001220702155508,
+                  "median": 1.0000000147036872,
+                  "maximum": 1.0000000147036872,
+                  "fraction_above_0p5": 1.0
+                }
+              },
+              {
+                "index": 35,
+                "z_m": -2.4999999999998656e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 320400,
+                  "real_min": 7.135509120360437,
+                  "real_median": 13.268023300652702,
+                  "real_max": 13.268023300652702,
+                  "imag_min": 13.094131311844063,
+                  "imag_median": 26.181870955490027,
+                  "imag_max": 26.181870955490027
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.5001220702155508,
+                  "median": 1.0000000147036872,
+                  "maximum": 1.0000000147036872,
+                  "fraction_above_0p5": 1.0
+                }
+              },
+              {
+                "index": 36,
+                "z_m": 2.5000000000001336e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 320400,
+                  "real_min": 1.0,
+                  "real_median": 1.0,
+                  "real_max": 1.0,
+                  "imag_min": 0.0,
+                  "imag_median": 0.0,
+                  "imag_max": 0.0
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.0,
+                  "median": 0.0,
+                  "maximum": 0.0,
+                  "fraction_above_0p5": 0.0
+                }
+              },
+              {
+                "index": 37,
+                "z_m": 7.500000000000133e-09,
+                "is_exact_z0_sample": false,
+                "epsilon": {
+                  "count": 320400,
+                  "real_min": 1.0,
+                  "real_median": 1.0,
+                  "real_max": 1.0,
+                  "imag_min": 0.0,
+                  "imag_median": 0.0,
+                  "imag_max": 0.0
+                },
+                "loss_fraction_vs_bulk_material": {
+                  "minimum": 0.0,
+                  "median": 0.0,
+                  "maximum": 0.0,
+                  "fraction_above_0p5": 0.0
+                }
+              }
+            ],
+            "interface_assignment": {
+              "kind": "z-staggered one-sided samples: negative-z material and positive-z air; no exact z=0 sample",
+              "below_loss_fraction_median": 1.0000000147036872,
+              "above_loss_fraction_median": 0.0
+            },
+            "interface_sample_quadrature": {
+              "contract": "component-local dual widths on the component's own Yee/index coordinates; not common-Q bounds",
+              "nearest_z_index": 35,
+              "nearest_z_m": -2.4999999999998656e-09,
+              "z_dual_weight_m": 4.999999999999999e-09,
+              "positive_cell_volume_m3": {
+                "minimum": 3.124999999999728e-24,
+                "median": 3.1250000000000453e-24,
+                "maximum": 3.1250000000001515e-24
+              }
+            },
+            "bulk_material_finite_dt_epsilon": {
+              "real": 13.26802338793218,
+              "imag": 26.181870570519994
+            }
+          }
+        },
+        "maximum_field_index_coordinate_mismatch_m": 6.776263578034403e-21
+      }
+    }
+  },
+  "thermal_contract": {
+    "model": "current explicit anisotropic/material/interface Cartesian FVM; not the paper reduced Robin model",
+    "lateral_domain_um": 60.0,
+    "si_depth_um": 20.0,
+    "core_xy_cell_size_nm": 100.0,
+    "flake_dz_nm": 10.0,
+    "grid_shape": [
+      286,
+      286,
+      86
+    ],
+    "axis_mapping": "lab x=b, lab y=a, lab z=c",
+    "uniform_45_PTE": "diagnostic weighting field Wx=Wy=1/(4 um); no physical electrode solution and not a terminal-current prediction"
+  },
+  "downstream": {
+    "50nm": {
+      "mapping": {
+        "source_power_W": 2.2554317731961642e-11,
+        "target_power_W": 2.2554317731961645e-11,
+        "exact_overlap_power_error": 0.0,
+        "final_mapping_power_error": 1.4326189362874758e-16,
+        "projection": {
+          "outside_support_nonzero_cells_before_projection": 82865,
+          "outside_support_power_W_before_projection": 5.067732308290114e-13,
+          "power_before_W": 2.2554317731961642e-11,
+          "power_after_W": 2.2554317731961645e-11,
+          "relative_power_error": 1.4326189362874758e-16,
+          "outside_support_nonzero_cells_after_projection": 0,
+          "outside_support_power_W_after_projection": 0.0,
+          "method": "exact Cartesian cell-overlap energy remap followed by one physical-3D nearest-support projection with exact-distance ties split uniformly"
+        },
+        "Q_operations": {
+          "clipping": false,
+          "smoothing": false,
+          "gain": false,
+          "global_rescaling": false,
+          "tiling": false,
+          "source_deletion": false
+        }
+      },
+      "thermal": {
+        "Tmax_K": 1.0600410713399818e-07,
+        "TaIrTe4_Tmax_K": 1.0600410713399818e-07,
+        "TaIrTe4_volume_average_K": 5.670666933262898e-09,
+        "PTE_uniform45_diagnostic_A": 2.007141629870792e-13,
+        "energy_balance_relative_error": 8.111345155366059e-11,
+        "linear_residual_relative": 9.92701546051996e-10,
+        "source_power_W": 2.2554317731961645e-11,
+        "boundary_power_out_W": {
+          "x_min": 1.65182134932805e-12,
+          "x_max": 2.9591780905322394e-12,
+          "y_min": 2.9866165429083375e-12,
+          "y_max": 1.6307029572363695e-12,
+          "z_min": 1.3325965925825333e-11,
+          "exposed_convection": 3.2867960774228166e-17
+        },
+        "solver": "scipy.sparse.linalg.cg+jacobi+warm_start",
+        "iterations": 1271,
+        "straight_edge_metrics": {
+          "edge_definition": "TaIrTe4 y<=x; outward normal=(-x+y)/sqrt(2)",
+          "edge_window_um": 10.0,
+          "edge_cell_count": 142,
+          "max_abs_edge_normal_gradient_K_m": 0.011926590687350976,
+          "p99_abs_edge_normal_gradient_K_m": 0.011922941005924611,
+          "max_abs_grad_T_x_K_m": 0.014685653360373032,
+          "max_abs_grad_T_y_K_m": 0.0076383045108155845,
+          "max_inplane_gradient_K_m": 0.014785819390344726,
+          "max_abs_edge_tangent_gradient_K_m": 0.009475361319761955,
+          "paper_Fig3G_comparator": "max_abs_grad_T_x_K_m; all five components are retained because edge-normal gradient is not identical to the paper observable",
+          "peak_edge_gradient_location_m": {
+            "x": -2.5499999999999993e-06,
+            "y": -2.5499999999999993e-06
+          },
+          "Tmax_rise_K": 9.958534756039015e-08,
+          "TaIrTe4_area_average_rise_K": 5.670666933262897e-09,
+          "fixed_24um_ROI_area_average_rise_K": 3.077902826349145e-08,
+          "fixed_ROI_definition": "TaIrTe4 cells with |x|<=12 um and |y|<=12 um; used for thermal-domain comparisons"
+        }
+      }
+    },
+    "25nm": {
+      "mapping": {
+        "source_power_W": 2.2547341310294407e-11,
+        "target_power_W": 2.2547341310294407e-11,
+        "exact_overlap_power_error": 1.433062206012738e-16,
+        "final_mapping_power_error": 0.0,
+        "projection": {
+          "outside_support_nonzero_cells_before_projection": 82865,
+          "outside_support_power_W_before_projection": 4.948952273966144e-13,
+          "power_before_W": 2.2547341310294404e-11,
+          "power_after_W": 2.2547341310294407e-11,
+          "relative_power_error": 1.4330622060127382e-16,
+          "outside_support_nonzero_cells_after_projection": 0,
+          "outside_support_power_W_after_projection": 0.0,
+          "method": "exact Cartesian cell-overlap energy remap followed by one physical-3D nearest-support projection with exact-distance ties split uniformly"
+        },
+        "Q_operations": {
+          "clipping": false,
+          "smoothing": false,
+          "gain": false,
+          "global_rescaling": false,
+          "tiling": false,
+          "source_deletion": false
+        }
+      },
+      "thermal": {
+        "Tmax_K": 1.0582443339572889e-07,
+        "TaIrTe4_Tmax_K": 1.0582443339572889e-07,
+        "TaIrTe4_volume_average_K": 5.669132726601858e-09,
+        "PTE_uniform45_diagnostic_A": 1.9986266981410813e-13,
+        "energy_balance_relative_error": 1.1510326977450191e-10,
+        "linear_residual_relative": 9.950905200024087e-10,
+        "source_power_W": 2.2547341310294407e-11,
+        "boundary_power_out_W": {
+          "x_min": 1.6510435905353395e-12,
+          "x_max": 2.95861477517533e-12,
+          "y_min": 2.9858996136098722e-12,
+          "y_max": 1.6300596032830372e-12,
+          "z_min": 1.3321690926290061e-11,
+          "exposed_convection": 3.280399603848735e-17
+        },
+        "solver": "scipy.sparse.linalg.cg+jacobi",
+        "iterations": 1937,
+        "straight_edge_metrics": {
+          "edge_definition": "TaIrTe4 y<=x; outward normal=(-x+y)/sqrt(2)",
+          "edge_window_um": 10.0,
+          "edge_cell_count": 142,
+          "max_abs_edge_normal_gradient_K_m": 0.01248989002285317,
+          "p99_abs_edge_normal_gradient_K_m": 0.0124861694963153,
+          "max_abs_grad_T_x_K_m": 0.014998649394281138,
+          "max_abs_grad_T_y_K_m": 0.008060341746424898,
+          "max_inplane_gradient_K_m": 0.015153358548787457,
+          "max_abs_edge_tangent_gradient_K_m": 0.009442264146140335,
+          "paper_Fig3G_comparator": "max_abs_grad_T_x_K_m; all five components are retained because edge-normal gradient is not identical to the paper observable",
+          "peak_edge_gradient_location_m": {
+            "x": -2.4499999999999994e-06,
+            "y": -2.4499999999999994e-06
+          },
+          "Tmax_rise_K": 9.942175361825666e-08,
+          "TaIrTe4_area_average_rise_K": 5.669132726601856e-09,
+          "fixed_24um_ROI_area_average_rise_K": 3.0769822829261984e-08,
+          "fixed_ROI_definition": "TaIrTe4 cells with |x|<=12 um and |y|<=12 um; used for thermal-domain comparisons"
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "Q_T_volume_weighted_NRMSE": 0.009685131898852489,
+    "Q_T_power_relative_change": 0.00030941216399881237,
+    "Tmax_relative_change": 0.0016978473921746208,
+    "TaIrTe4_Tmax_relative_change": 0.0016978473921746208,
+    "TaIrTe4_temperature_field_volume_weighted_NRMSE": 0.001230070959730933,
+    "full_temperature_field_volume_weighted_NRMSE": 0.0011694939097214908,
+    "flake_average_temperature_area_weighted_NRMSE": 0.0012286179924235752,
+    "inplane_gradient_vector_area_weighted_NRMSE": 0.009945424932937302,
+    "PTE_uniform45_diagnostic_relative_change": 0.004260391266478304
+  },
+  "gates": {
+    "interface_slab_power_change_lt_0p5_percent": true,
+    "interface_slab_equal_power_NRMSE_lt_0p5_percent": false,
+    "component_field_index_pairing_lt_1fm": true,
+    "Q_T_NRMSE_lt_0p5_percent": false,
+    "Tmax_change_lt_0p5_percent": true,
+    "TaIrTe4_T_field_NRMSE_lt_0p5_percent": true,
+    "gradient_NRMSE_lt_0p5_percent": false,
+    "PTE_change_lt_0p5_percent": true,
+    "thermal_energy_balance_lt_1_percent": true,
+    "thermal_residual_lt_1e_8": true,
+    "mapping_power_error_lt_1e_12": true,
+    "mapped_Q_outside_flake_is_zero": true,
+    "all": false
+  },
+  "raw_artifact": {
+    "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge_a_interface_downstream_20260731/downstream_raw/w12_interface_downstream_fields.npz",
+    "size_bytes": 114650544,
+    "sha256": "592c7967d06d8d5d7392d221d3a090639144081b59fe6e224c8605e1352baa63"
+  },
+  "FDTD_run": false,
+  "Q_processing": {
+    "clipping": false,
+    "smoothing": false,
+    "gain": false,
+    "global_rescaling": false,
+    "tiling": false,
+    "source_deletion": false
+  },
+  "interpretation_limit": "a pass establishes insensitivity only for this named remap, thermal grid/boundary model, and diagnostic PTE functional; it does not make raw 3D voxel Q universally converged"
+}
