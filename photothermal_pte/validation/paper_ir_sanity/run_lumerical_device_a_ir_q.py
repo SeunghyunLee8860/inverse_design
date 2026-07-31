@@ -147,6 +147,21 @@ def parse_args() -> argparse.Namespace:
             "mesh so no source support is cropped or deleted"
         ),
     )
+    parser.add_argument(
+        "--intermediate-xy-mesh-nm",
+        type=float,
+        default=None,
+        help=(
+            "optional intermediate nested x/y mesh used between the fixed "
+            "100-nm outer mesh and the finest local mesh"
+        ),
+    )
+    parser.add_argument(
+        "--intermediate-half-span-um",
+        type=float,
+        default=None,
+        help="half span of the optional intermediate nested mesh",
+    )
     parser.add_argument("--simulation-time-ps", type=float, default=1.2)
     parser.add_argument("--auto-shutoff-min", type=float, default=1.0e-5)
     parser.add_argument("--source-span-um", type=float, default=50.0)
@@ -244,6 +259,33 @@ def parse_args() -> argparse.Namespace:
             parser.error(
                 "nested refinement requires a fine local x/y mesh below "
                 "the fixed 100-nm outer mesh"
+            )
+    intermediate_values = (
+        args.intermediate_xy_mesh_nm,
+        args.intermediate_half_span_um,
+    )
+    if any(value is not None for value in intermediate_values):
+        if not all(value is not None for value in intermediate_values):
+            parser.error(
+                "intermediate mesh size and half span must be provided together"
+            )
+        if args.refinement_half_span_um is None:
+            parser.error("intermediate mesh requires a finest refinement span")
+        if (
+            args.intermediate_xy_mesh_nm <= args.local_xy_mesh_nm
+            or args.intermediate_xy_mesh_nm
+            >= args.outer_local_xy_mesh_nm
+        ):
+            parser.error(
+                "intermediate mesh must lie strictly between the finest "
+                "and outer mesh sizes"
+            )
+        if (
+            args.intermediate_half_span_um
+            <= args.refinement_half_span_um
+        ):
+            parser.error(
+                "intermediate half span must exceed the finest half span"
             )
     if (
         args.execution_contract == "production"
@@ -356,6 +398,15 @@ def parse_args() -> argparse.Namespace:
         if args.refinement_half_span_um >= outer_mesh_half_span_um:
             parser.error(
                 "nested refinement half span must be smaller than the "
+                f"{outer_mesh_half_span_um:g}-um outer mesh half span"
+            )
+        if (
+            args.intermediate_half_span_um is not None
+            and args.intermediate_half_span_um
+            >= outer_mesh_half_span_um
+        ):
+            parser.error(
+                "intermediate half span must be smaller than the "
                 f"{outer_mesh_half_span_um:g}-um outer mesh half span"
             )
     if reduced_smoke:
@@ -1358,6 +1409,28 @@ def add_geometry_and_monitors(
         outer_mesh["dx"] = args.outer_local_xy_mesh_nm * 1e-9
         outer_mesh["dy"] = args.outer_local_xy_mesh_nm * 1e-9
         outer_mesh["dz"] = args.flake_dz_nm * 1e-9
+        if args.intermediate_half_span_um is not None:
+            intermediate_half_span = (
+                args.intermediate_half_span_um * 1e-6
+            )
+            intermediate_mesh = fdtd.addmesh()
+            intermediate_mesh["name"] = "flake_intermediate_mesh"
+            intermediate_mesh["x min"] = beam_x - intermediate_half_span
+            intermediate_mesh["x max"] = beam_x + intermediate_half_span
+            intermediate_mesh["y min"] = beam_y - intermediate_half_span
+            intermediate_mesh["y max"] = beam_y + intermediate_half_span
+            intermediate_mesh["z min"] = mesh_z_min
+            intermediate_mesh["z max"] = mesh_z_max
+            intermediate_mesh["override x mesh"] = 1
+            intermediate_mesh["override y mesh"] = 1
+            intermediate_mesh["override z mesh"] = 1
+            intermediate_mesh["dx"] = (
+                args.intermediate_xy_mesh_nm * 1e-9
+            )
+            intermediate_mesh["dy"] = (
+                args.intermediate_xy_mesh_nm * 1e-9
+            )
+            intermediate_mesh["dz"] = args.flake_dz_nm * 1e-9
         fine_half_span = args.refinement_half_span_um * 1e-6
         fine_mesh_bounds = {
             "x": (beam_x - fine_half_span, beam_x + fine_half_span),
@@ -1631,9 +1704,23 @@ def add_geometry_and_monitors(
                 "z": (mesh_z_min, mesh_z_max),
             },
             "fine_local_xy_mesh_m": args.local_xy_mesh_nm * 1e-9,
+            "intermediate_local_xy_mesh_m": (
+                None
+                if args.intermediate_xy_mesh_nm is None
+                else args.intermediate_xy_mesh_nm * 1e-9
+            ),
+            "intermediate_half_span_m": (
+                None
+                if args.intermediate_half_span_um is None
+                else args.intermediate_half_span_um * 1e-6
+            ),
             "local_xy_baseline_m": 100.0e-9,
             "required_local_xy_refinement_m": 50.0e-9,
             "local_xy_refinement_status": (
+                "ACTIVE_THREE_LEVEL_25NM_REFINEMENT"
+                if args.intermediate_half_span_um is not None
+                and args.local_xy_mesh_nm <= 25.0
+                else
                 "ACTIVE_NESTED_50NM_REFINEMENT"
                 if args.refinement_half_span_um is not None
                 and args.local_xy_mesh_nm <= 50.0
@@ -1838,6 +1925,36 @@ def assert_contract(
                 base.scalar(
                     fdtd.getnamed("flake_outer_mesh", "dz"),
                     "outer local dz",
+                ),
+                args.flake_dz_nm * 1e-9,
+                atol=1e-15,
+            )
+        )
+    )
+    checks["correct_intermediate_mesh"] = (
+        args.intermediate_half_span_um is None
+        or (
+            int(fdtd.getnamednumber("flake_intermediate_mesh")) == 1
+            and np.isclose(
+                base.scalar(
+                    fdtd.getnamed("flake_intermediate_mesh", "dx"),
+                    "intermediate dx",
+                ),
+                args.intermediate_xy_mesh_nm * 1e-9,
+                atol=1e-15,
+            )
+            and np.isclose(
+                base.scalar(
+                    fdtd.getnamed("flake_intermediate_mesh", "dy"),
+                    "intermediate dy",
+                ),
+                args.intermediate_xy_mesh_nm * 1e-9,
+                atol=1e-15,
+            )
+            and np.isclose(
+                base.scalar(
+                    fdtd.getnamed("flake_intermediate_mesh", "dz"),
+                    "intermediate dz",
                 ),
                 args.flake_dz_nm * 1e-9,
                 atol=1e-15,
@@ -2051,6 +2168,10 @@ def assert_contract(
         mesh_overrides.append(
             mesh_override_readback("flake_outer_mesh")
         )
+    if args.intermediate_half_span_um is not None:
+        mesh_overrides.append(
+            mesh_override_readback("flake_intermediate_mesh")
+        )
     return {
         "checks": checks,
         "boundaries": boundaries,
@@ -2081,6 +2202,16 @@ def assert_contract(
                 None
                 if args.refinement_half_span_um is None
                 else args.refinement_half_span_um * 1e-6
+            ),
+            "intermediate_local_xy_mesh_m": (
+                None
+                if args.intermediate_xy_mesh_nm is None
+                else args.intermediate_xy_mesh_nm * 1e-9
+            ),
+            "intermediate_half_span_m": (
+                None
+                if args.intermediate_half_span_um is None
+                else args.intermediate_half_span_um * 1e-6
             ),
             "override_objects": mesh_overrides,
             "uniform_global_fine_mesh_present": False,
