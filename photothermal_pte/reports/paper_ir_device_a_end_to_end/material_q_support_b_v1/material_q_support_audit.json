@@ -1,0 +1,253 @@
+{
+  "status": "DEVICE_A_MATERIAL_Q_SUPPORT_AUDITED_WITH_CONFORMAL_INTERFACE_AMBIGUITY",
+  "input": {
+    "artifact_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_b_50nm_t4_gpu4_20260731/finite_q_on_artifact.npz",
+    "artifact_size_bytes": 786662652,
+    "artifact_sha256": "1235bd8d13194cf0f00dac0f90d7f7a4241473342d9b13af1d8222e08f80b3f7",
+    "case_result_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_b_50nm_t4_gpu4_20260731/case_result.json",
+    "case_result_sha256": "8891793a7e64be8ef9d5d09a4692def8c31fd1150b8a43f2c555e712b3fa39d6"
+  },
+  "support_contract": "analytic material supports are reported separately; common-grid Q outside those exact supports is retained as conformal-interface ambiguity and is not silently assigned, clipped, smoothed, gained, rescaled, or deleted",
+  "ambiguity": {
+    "interpretation": "Yee/conformal interface samples cannot be assigned to a bulk thermal material from array indices alone; index-detail or a declared conservative interface rule is required before full metal-inclusive thermal propagation",
+    "positive_Q_bounds": {
+      "x_m": [
+        -1.06522156686347e-05,
+        2.754484313300569e-05
+      ],
+      "y_m": [
+        -1.579763263257149e-05,
+        1.742380231875221e-05
+      ],
+      "z_m": [
+        -1.299999999999999e-07,
+        5.500000000000012e-08
+      ],
+      "positive_sample_count": 73791
+    },
+    "nonzero_z_layer_power": [
+      {
+        "z_m": -1.299999999999999e-07,
+        "total_W": 7.793748825144229e-13,
+        "ambiguous_W": 5.926669466000434e-15
+      },
+      {
+        "z_m": -1.249999999999999e-07,
+        "total_W": 1.5457401173905041e-12,
+        "ambiguous_W": 7.306008506865719e-16
+      },
+      {
+        "z_m": -1.199999999999999e-07,
+        "total_W": 1.5569511859245382e-12,
+        "ambiguous_W": 8.934735080945107e-16
+      },
+      {
+        "z_m": -1.149999999999999e-07,
+        "total_W": 1.5678844590833637e-12,
+        "ambiguous_W": 8.333881709339045e-16
+      },
+      {
+        "z_m": -1.099999999999999e-07,
+        "total_W": 1.578776163735971e-12,
+        "ambiguous_W": 7.805895913602326e-16
+      },
+      {
+        "z_m": -1.049999999999999e-07,
+        "total_W": 1.5896271501920728e-12,
+        "ambiguous_W": 7.335617566348949e-16
+      },
+      {
+        "z_m": -9.999999999999989e-08,
+        "total_W": 1.6004409655757131e-12,
+        "ambiguous_W": 6.914259713054185e-16
+      },
+      {
+        "z_m": -9.499999999999988e-08,
+        "total_W": 1.6112227704965225e-12,
+        "ambiguous_W": 6.536702558860846e-16
+      },
+      {
+        "z_m": -8.999999999999988e-08,
+        "total_W": 1.6219789302856166e-12,
+        "ambiguous_W": 6.200059639892755e-16
+      },
+      {
+        "z_m": -8.499999999999989e-08,
+        "total_W": 1.632716665247227e-12,
+        "ambiguous_W": 5.902850682515821e-16
+      },
+      {
+        "z_m": -7.999999999999987e-08,
+        "total_W": 1.643443903006018e-12,
+        "ambiguous_W": 5.644535263500311e-16
+      },
+      {
+        "z_m": -7.499999999999986e-08,
+        "total_W": 1.6541692181187578e-12,
+        "ambiguous_W": 5.425255456126142e-16
+      },
+      {
+        "z_m": -6.999999999999986e-08,
+        "total_W": 1.6649017336583264e-12,
+        "ambiguous_W": 5.24570994905313e-16
+      },
+      {
+        "z_m": -6.499999999999985e-08,
+        "total_W": 1.67565118048369e-12,
+        "ambiguous_W": 5.107062512837046e-16
+      },
+      {
+        "z_m": -5.999999999999985e-08,
+        "total_W": 1.686427785997198e-12,
+        "ambiguous_W": 5.010980978373939e-16
+      },
+      {
+        "z_m": -5.499999999999985e-08,
+        "total_W": 1.6972424317725838e-12,
+        "ambiguous_W": 4.959656667930349e-16
+      },
+      {
+        "z_m": -4.999999999999985e-08,
+        "total_W": 1.7081066566190615e-12,
+        "ambiguous_W": 4.955883079104123e-16
+      },
+      {
+        "z_m": -4.499999999999985e-08,
+        "total_W": 1.7190328293192443e-12,
+        "ambiguous_W": 5.003233781736514e-16
+      },
+      {
+        "z_m": -3.999999999999986e-08,
+        "total_W": 1.730034344714419e-12,
+        "ambiguous_W": 5.106286689263563e-16
+      },
+      {
+        "z_m": -3.499999999999986e-08,
+        "total_W": 1.7411261422539216e-12,
+        "ambiguous_W": 5.271053279213769e-16
+      },
+      {
+        "z_m": -2.999999999999986e-08,
+        "total_W": 1.7523254313532692e-12,
+        "ambiguous_W": 5.505757794775418e-16
+      },
+      {
+        "z_m": -2.499999999999986e-08,
+        "total_W": 1.7636534181411373e-12,
+        "ambiguous_W": 5.822401441449327e-16
+      },
+      {
+        "z_m": -1.999999999999986e-08,
+        "total_W": 1.7751384888491483e-12,
+        "ambiguous_W": 6.24013027144661e-16
+      },
+      {
+        "z_m": -1.499999999999986e-08,
+        "total_W": 1.7868231485191785e-12,
+        "ambiguous_W": 6.793043797149639e-16
+      },
+      {
+        "z_m": -9.999999999999865e-09,
+        "total_W": 1.7987790612310817e-12,
+        "ambiguous_W": 7.549061656351622e-16
+      },
+      {
+        "z_m": -4.999999999999865e-09,
+        "total_W": 1.8110015727094308e-12,
+        "ambiguous_W": 8.363236756567002e-16
+      },
+      {
+        "z_m": 1.340032592335905e-22,
+        "total_W": 9.235687405358023e-13,
+        "ambiguous_W": 3.649850469562973e-15
+      },
+      {
+        "z_m": 5.000000000000133e-09,
+        "total_W": 3.559507525261279e-16,
+        "ambiguous_W": 1.5922377592149043e-24
+      },
+      {
+        "z_m": 1.000000000000013e-08,
+        "total_W": 3.7185602650497652e-22,
+        "ambiguous_W": 8.886876995918109e-23
+      },
+      {
+        "z_m": 1.500000000000013e-08,
+        "total_W": 3.565383427288107e-22,
+        "ambiguous_W": 8.697639998917273e-23
+      },
+      {
+        "z_m": 2.000000000000013e-08,
+        "total_W": 3.712692705050374e-22,
+        "ambiguous_W": 8.702815223354437e-23
+      },
+      {
+        "z_m": 2.500000000000013e-08,
+        "total_W": 4.18890054274891e-22,
+        "ambiguous_W": 8.894659745742979e-23
+      },
+      {
+        "z_m": 3.000000000000013e-08,
+        "total_W": 5.082294127367819e-22,
+        "ambiguous_W": 9.28147930643812e-23
+      },
+      {
+        "z_m": 3.500000000000013e-08,
+        "total_W": 6.554927485908981e-22,
+        "ambiguous_W": 9.879838057586154e-23
+      },
+      {
+        "z_m": 4.000000000000013e-08,
+        "total_W": 8.876099932601811e-22,
+        "ambiguous_W": 1.0721178686084527e-22
+      },
+      {
+        "z_m": 4.500000000000013e-08,
+        "total_W": 1.2472019805114896e-21,
+        "ambiguous_W": 1.1851246496407603e-22
+      },
+      {
+        "z_m": 5.000000000000012e-08,
+        "total_W": 1.8007390886629237e-21,
+        "ambiguous_W": 1.3335828853625786e-22
+      },
+      {
+        "z_m": 5.500000000000012e-08,
+        "total_W": 1.3430661081139525e-21,
+        "ambiguous_W": 8.328469489830749e-23
+      }
+    ]
+  },
+  "power_at_unit_central_intensity_W": {
+    "TaIrTe4_W": 4.358513144229532e-11,
+    "Ti_W": 6.060036173644141e-15,
+    "Au_W": 6.975092697350885e-21,
+    "conformal_interface_ambiguous_W": 2.53038509975863e-14,
+    "sum_W": 4.361649533644164e-11,
+    "common_grid_total_W": 4.361649533644164e-11,
+    "native_component_total_P_Q_W": 4.3616288326245206e-11,
+    "signed_partition_residual_W": 0.0,
+    "relative_partition_residual": 0.0,
+    "signed_common_minus_native_W": 2.0701019643240037e-16,
+    "relative_common_native_difference": 4.746167186074755e-06,
+    "ambiguous_fraction_of_common_grid_power": 0.0005801440671104288
+  },
+  "incident_power_normalization": {
+    "target_incident_power_W": 0.000285,
+    "incident_power_at_unit_central_intensity_W": 2.462871888119116e-10,
+    "single_common_linear_scale": 1157185.6472715402,
+    "polarization_dependent_Q_matching": false
+  },
+  "power_at_285uW_incident_W": {
+    "TaIrTe4_W": 5.0436088539467665e-05,
+    "Ti_W": 7.012586882087344e-09,
+    "Au_W": 8.071477157762978e-15,
+    "conformal_interface_ambiguous_W": 2.9281253195104514e-08,
+    "sum_W": 5.0472382387616336e-05,
+    "common_grid_total_W": 5.0472382387616336e-05,
+    "native_component_total_P_Q_W": 5.0472142838388186e-05,
+    "signed_partition_residual_W": 0.0,
+    "signed_common_minus_native_W": 2.3954922815043594e-10
+  },
+  "Q_modified": false
+}

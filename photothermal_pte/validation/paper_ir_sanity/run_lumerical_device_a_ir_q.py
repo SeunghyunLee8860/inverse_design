@@ -3272,21 +3272,40 @@ def append_device_a_material_absorption_audit(
     metal_xy = polygon_xy(args.top_metal_vertices_um) | polygon_xy(
         args.bottom_metal_vertices_um
     )
-    flake_mask = flake_xy[:, :, None] & (
-        (z_m[None, None, :] >= -FLAKE_THICKNESS_M)
-        & (z_m[None, None, :] <= 0.0)
+    at_flake_bottom = np.isclose(
+        z_m, -FLAKE_THICKNESS_M, rtol=0.0, atol=1e-15
     )
+    at_flake_top = np.isclose(z_m, 0.0, rtol=0.0, atol=1e-15)
+    flake_z = (
+        ((z_m >= -FLAKE_THICKNESS_M) | at_flake_bottom)
+        & ((z_m <= 0.0) | at_flake_top)
+    )
+    flake_mask = flake_xy[:, :, None] & flake_z[None, None, :]
+    at_ti_top = np.isclose(z_m, TI_THICKNESS_M, rtol=0.0, atol=1e-15)
     ti_mask = metal_xy[:, :, None] & (
-        (z_m[None, None, :] >= 0.0)
-        & (z_m[None, None, :] <= TI_THICKNESS_M)
+        ((z_m[None, None, :] >= 0.0) | at_flake_top[None, None, :])
+        & (
+            (z_m[None, None, :] <= TI_THICKNESS_M)
+            | at_ti_top[None, None, :]
+        )
     )
     # Flake precedence only matters if a future figure-derived contract adds
     # a finite under-contact overlap.  In the current visible-area contract
     # the polygons merely meet at their lateral boundary.
     ti_mask &= ~flake_mask
+    at_au_top = np.isclose(
+        z_m,
+        TI_THICKNESS_M + AU_THICKNESS_M,
+        rtol=0.0,
+        atol=1e-15,
+    )
     au_mask = metal_xy[:, :, None] & (
         (z_m[None, None, :] > TI_THICKNESS_M)
-        & (z_m[None, None, :] <= TI_THICKNESS_M + AU_THICKNESS_M)
+        & ~at_ti_top[None, None, :]
+        & (
+            (z_m[None, None, :] <= TI_THICKNESS_M + AU_THICKNESS_M)
+            | at_au_top[None, None, :]
+        )
     )
     assigned = flake_mask | ti_mask | au_mask
     interface_z0 = np.isclose(z_m, 0.0, rtol=0.0, atol=1e-15)

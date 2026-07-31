@@ -89,6 +89,19 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def jsonable(value: Any) -> Any:
+    """Convert NumPy-backed audit metadata without changing numeric values."""
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, dict):
+        return {key: jsonable(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [jsonable(item) for item in value]
+    return value
+
+
 def growing_positions(
     length_m: float,
     initial_step_m: float,
@@ -547,6 +560,7 @@ def load_and_map_q(
     artifact_path: Path,
     result_path: Path,
     geometry: Geometry,
+    metal_thermalization: str,
 ) -> tuple[np.ndarray, dict[str, Any]]:
     result = json.loads(result_path.read_text())
     if result.get("status") != "COMPLETED":
@@ -556,6 +570,50 @@ def load_and_map_q(
         y = np.asarray(raw["y_m"], float)
         z = np.asarray(raw["z_m"], float)
         q = np.asarray(raw["Q_on_W_m3"], float)
+    optical_geometry = result["pre_run_contract"]["geometry"]
+    electrode = optical_geometry.get("electrode_material_contract") or {}
+    xx, yy = np.meshgrid(x, y, indexing="ij")
+    points = np.column_stack((xx.ravel(), yy.ravel()))
+
+    def optical_xy_mask(vertices_um: list[list[float]]) -> np.ndarray:
+        return PolygonPath(np.asarray(vertices_um, float) * 1e-6).contains_points(
+            points, radius=1e-15
+        ).reshape(xx.shape)
+
+    flake_xy = optical_xy_mask(optical_geometry["flake_vertices_um"])
+    metal_xy = optical_xy_mask(electrode["top_polygon_simulation_um"]) | optical_xy_mask(
+        electrode["bottom_polygon_simulation_um"]
+    )
+    at_flake_bottom = np.isclose(z, -THICKNESS_M, rtol=0.0, atol=1e-15)
+    at_flake_top = np.isclose(z, 0.0, rtol=0.0, atol=1e-15)
+    flake_support = flake_xy[:, :, None] & (
+        ((z[None, None, :] >= -THICKNESS_M) | at_flake_bottom[None, None, :])
+        & ((z[None, None, :] <= 0.0) | at_flake_top[None, None, :])
+    )
+    ti_thickness_m = float(electrode["Ti"]["thickness_m"])
+    au_thickness_m = float(electrode["Au"]["thickness_m"])
+    at_ti_top = np.isclose(z, ti_thickness_m, rtol=0.0, atol=1e-15)
+    ti_support = metal_xy[:, :, None] & (
+        ((z[None, None, :] >= 0.0) | at_flake_top[None, None, :])
+        & (
+            (z[None, None, :] <= ti_thickness_m)
+            | at_ti_top[None, None, :]
+        )
+    )
+    ti_support &= ~flake_support
+    at_au_top = np.isclose(
+        z, ti_thickness_m + au_thickness_m, rtol=0.0, atol=1e-15
+    )
+    au_support = metal_xy[:, :, None] & (
+        (z[None, None, :] > ti_thickness_m)
+        & ~at_ti_top[None, None, :]
+        & (
+            (z[None, None, :] <= ti_thickness_m + au_thickness_m)
+            | at_au_top[None, None, :]
+        )
+    )
+    metal_support = ti_support | au_support
+    assigned_support = flake_support | metal_support
     source_edges = tuple(nodal_control_volume_edges(axis) for axis in (x, y, z))
     target_edges = (geometry.x_edges_m, geometry.y_edges_m, geometry.z_edges_m)
     base_remap = build_conservative_embedding_remap(
@@ -566,7 +624,43 @@ def load_and_map_q(
         result["run_result"]["normalization"]["incident_power_W_at_1_W_m2"]
     )
     physical_scale = EXPERIMENTAL_INCIDENT_POWER_W / incident_at_unit
-    scaled_q = q * physical_scale
+    full_scaled_q = q * physical_scale
+    source_power_by_support = {
+        "TaIrTe4_exact_support_W": base_remap.power_source(
+            full_scaled_q * flake_support
+        ),
+        "Ti_exact_support_W": base_remap.power_source(full_scaled_q * ti_support),
+        "Au_exact_support_W": base_remap.power_source(full_scaled_q * au_support),
+        "conformal_or_unassigned_W": base_remap.power_source(
+            full_scaled_q * ~assigned_support
+        ),
+        "full_common_grid_Q_W": base_remap.power_source(full_scaled_q),
+    }
+    exact_metal_power = (
+        source_power_by_support["Ti_exact_support_W"]
+        + source_power_by_support["Au_exact_support_W"]
+    )
+    full_power = source_power_by_support["full_common_grid_Q_W"]
+    if metal_thermalization == "fail-closed":
+        if exact_metal_power / max(abs(full_power), np.finfo(float).tiny) > 1e-6:
+            raise RuntimeError(
+                "Device-A Q contains finite Au/Ti absorption but the expanded "
+                "thermal geometry has no published hidden metal overlap or "
+                "metal/TaIrTe4 interface contract; choose an explicitly named "
+                "isolated-lower-bound or perfect-to-flake-upper-bound diagnostic"
+            )
+        scaled_q = full_scaled_q
+    elif metal_thermalization == "isolated-lower-bound":
+        # Exact metal absorption remains reported but is not injected into the
+        # flake-only thermal model.  No remaining Q is re-normalized.
+        scaled_q = full_scaled_q * ~metal_support
+    elif metal_thermalization == "perfect-to-flake-upper-bound":
+        # All absorbed power is conservatively delivered to the nearest flake
+        # cell, representing perfect local thermalization rather than an
+        # unpublished finite metal-interface G.
+        scaled_q = full_scaled_q
+    else:
+        raise ValueError(f"unknown metal thermalization scenario {metal_thermalization}")
     unprojected = base_remap.apply(scaled_q)
     outside_power_before = float(
         np.sum(
@@ -594,6 +688,14 @@ def load_and_map_q(
         "experimental_incident_power_W": EXPERIMENTAL_INCIDENT_POWER_W,
         "unit_central_intensity_incident_power_W": incident_at_unit,
         "physical_incident_power_scale": physical_scale,
+        "metal_thermalization_scenario": metal_thermalization,
+        "source_power_by_optical_material_support_W": source_power_by_support,
+        "exact_metal_power_excluded_from_modeled_source_W": (
+            exact_metal_power
+            if metal_thermalization == "isolated-lower-bound"
+            else 0.0
+        ),
+        "modeled_source_fraction_of_full_common_grid_Q": p_source / full_power,
         "P_Q_source_W": p_source,
         "P_Q_target_W": p_target,
         "mapping_relative_power_error": abs(p_target - p_source) / abs(p_source),
@@ -606,7 +708,8 @@ def load_and_map_q(
             "validated linear conservative embedding plus one physical-3D-"
             "nearest material-support projection with exact nearest-distance "
             "ties split uniformly; no coordinate-axis order, clipping, "
-            "smoothing, gain, global rescaling, or tiling"
+            "smoothing, gain, global rescaling, or tiling; metal handling is "
+            f"the explicitly named {metal_thermalization} scenario"
         ),
     }
 
@@ -691,6 +794,19 @@ def main() -> int:
         choices=("expanded", "paper-reduced"),
         default="expanded",
     )
+    parser.add_argument(
+        "--metal-thermalization",
+        choices=(
+            "fail-closed",
+            "isolated-lower-bound",
+            "perfect-to-flake-upper-bound",
+        ),
+        default="fail-closed",
+        help=(
+            "named diagnostic bound for optical Au/Ti absorption; neither "
+            "bound is a published finite metal-interface model"
+        ),
+    )
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=False)
     global FLAKE_VERTICES_UM, TOP_CONTACT_SEGMENT_UM, BOTTOM_CONTACT_SEGMENT_UM
@@ -744,6 +860,7 @@ def main() -> int:
         args.optical_case_dir / "finite_q_on_artifact.npz",
         args.optical_case_dir / "case_result.json",
         geometry,
+        args.metal_thermalization,
     )
     expanded_geometry = geometry
     if args.thermal_model == "paper-reduced":
@@ -825,33 +942,32 @@ def main() -> int:
         * np.diff(geometry.y_edges_m)[None, :, None]
         * np.diff(geometry.z_edges_m)[None, None, :]
     )
+    numerical_gates_passed = (
+        mapping["mapping_relative_power_error"] < 0.005
+        and solved.energy_balance_relative_error < 0.01
+        and solved.linear_residual_relative < 1e-8
+        and weighting_passed
+    )
+    if args.geometry == "straight-45-edge":
+        completed_status = (
+            "COMPLETED_STRAIGHT_45_EDGE_THERMAL_CONTROL"
+            if args.thermal_model == "expanded"
+            else "COMPLETED_STRAIGHT_45_EDGE_PAPER_REDUCED_CONTROL"
+        )
+        failed_status = "FAILED_STRAIGHT_45_EDGE_THERMAL_CONTROL"
+    elif args.metal_thermalization == "isolated-lower-bound":
+        completed_status = "COMPLETED_DEVICE_A_METAL_ISOLATED_LOWER_BOUND_DIAGNOSTIC"
+        failed_status = "FAILED_DEVICE_A_METAL_ISOLATED_LOWER_BOUND_DIAGNOSTIC"
+    elif args.metal_thermalization == "perfect-to-flake-upper-bound":
+        completed_status = "COMPLETED_DEVICE_A_PERFECT_TO_FLAKE_UPPER_BOUND_DIAGNOSTIC"
+        failed_status = "FAILED_DEVICE_A_PERFECT_TO_FLAKE_UPPER_BOUND_DIAGNOSTIC"
+    else:
+        # A finite-metal Device-A artifact should have failed closed in
+        # load_and_map_q before reaching this point.
+        completed_status = "COMPLETED_DEVICE_A_NO_METAL_Q_CONTROL"
+        failed_status = "FAILED_DEVICE_A_NO_METAL_Q_CONTROL"
     summary = {
-        "status": (
-            (
-                (
-                    "COMPLETED_STRAIGHT_45_EDGE_THERMAL_CONTROL"
-                    if args.geometry == "straight-45-edge"
-                    else "COMPLETED_DEVICE_A_EXPANDED_THERMAL_PTE_SANITY"
-                )
-                if args.thermal_model == "expanded"
-                else (
-                    "COMPLETED_STRAIGHT_45_EDGE_PAPER_REDUCED_CONTROL"
-                    if args.geometry == "straight-45-edge"
-                    else "COMPLETED_DEVICE_A_PAPER_REDUCED_THERMAL_PTE_REFERENCE"
-                )
-            )
-            if (
-                mapping["mapping_relative_power_error"] < 0.005
-                and solved.energy_balance_relative_error < 0.01
-                and solved.linear_residual_relative < 1e-8
-                and weighting_passed
-            )
-            else (
-                "FAILED_STRAIGHT_45_EDGE_THERMAL_CONTROL"
-                if args.geometry == "straight-45-edge"
-                else "FAILED_DEVICE_A_EXPANDED_THERMAL_PTE_SANITY"
-            )
-        ),
+        "status": completed_status if numerical_gates_passed else failed_status,
         "model_identity": (
             (
                 "current inverse-design expanded conservative Cartesian FVM; "
@@ -862,6 +978,11 @@ def main() -> int:
                 "paper Supplement Eq. S4 reduced flake-only Robin reference; "
                 "not the current expanded production thermal model"
             )
+        ),
+        "metal_thermalization_scenario": args.metal_thermalization,
+        "metal_thermalization_interpretation": (
+            "diagnostic lower/upper bound only; not a paper-certified explicit "
+            "Au/Ti thermal geometry or a measured metal/TaIrTe4 interface G"
         ),
         "published_parameters": {
             "TaIrTe4_thickness_m": THICKNESS_M,
@@ -968,6 +1089,7 @@ def main() -> int:
         "no_optimization": True,
         "no_gradient": True,
     }
+    summary = jsonable(summary)
     (args.output_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     field_payload = {
         "x_edges_m": geometry.x_edges_m,

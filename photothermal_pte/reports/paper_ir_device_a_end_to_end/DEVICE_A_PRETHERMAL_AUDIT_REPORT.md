@@ -23,16 +23,16 @@ gate.
 
 | Partition | Power at unit central intensity [W] |
 |---|---:|
-| TaIrTe4 exact support | 3.044497915864e-11 |
-| Ti exact support | 1.776391516528e-13 |
-| Au exact support | 1.953522630407e-15 |
-| conformal/interface ambiguous | 1.274573219164e-12 |
+| TaIrTe4 exact support | 3.152817129357e-11 |
+| Ti exact support | 1.761324156040e-13 |
+| Au exact support | 5.732552358198e-21 |
+| conformal/interface ambiguous | 1.948413371833e-13 |
 | common-grid total | 3.189914505209e-11 |
 
-Partition closure is 2.026e-16; the common-grid
+Partition closure is 0.000e+00; the common-grid
 versus native-component total difference is
 0.0081%. The ambiguous fraction is
-3.9956%. It is retained rather
+0.6108%. It is retained rather
 than clipped, rescaled, deleted, or silently assigned to a bulk material.
 
 ## Fail-closed consequence

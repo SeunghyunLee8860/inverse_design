@@ -58,18 +58,37 @@ def main() -> int:
     metal_xy = xy_mask(electrode["top_polygon_simulation_um"]) | xy_mask(
         electrode["bottom_polygon_simulation_um"]
     )
-    flake = flake_xy[:, :, None] & (
-        (z[None, None, :] >= -runner.FLAKE_THICKNESS_M)
-        & (z[None, None, :] <= 0.0)
+    at_flake_bottom = np.isclose(
+        z, -runner.FLAKE_THICKNESS_M, rtol=0.0, atol=1e-15
     )
+    at_flake_top = np.isclose(z, 0.0, rtol=0.0, atol=1e-15)
+    flake_z = (
+        ((z >= -runner.FLAKE_THICKNESS_M) | at_flake_bottom)
+        & ((z <= 0.0) | at_flake_top)
+    )
+    flake = flake_xy[:, :, None] & flake_z[None, None, :]
+    at_ti_top = np.isclose(z, runner.TI_THICKNESS_M, rtol=0.0, atol=1e-15)
     ti = metal_xy[:, :, None] & (
-        (z[None, None, :] >= 0.0)
-        & (z[None, None, :] <= runner.TI_THICKNESS_M)
+        ((z[None, None, :] >= 0.0) | at_flake_top[None, None, :])
+        & (
+            (z[None, None, :] <= runner.TI_THICKNESS_M)
+            | at_ti_top[None, None, :]
+        )
     )
     ti &= ~flake
+    at_au_top = np.isclose(
+        z,
+        runner.TI_THICKNESS_M + runner.AU_THICKNESS_M,
+        rtol=0.0,
+        atol=1e-15,
+    )
     au = metal_xy[:, :, None] & (
         (z[None, None, :] > runner.TI_THICKNESS_M)
-        & (z[None, None, :] <= runner.TI_THICKNESS_M + runner.AU_THICKNESS_M)
+        & ~at_ti_top[None, None, :]
+        & (
+            (z[None, None, :] <= runner.TI_THICKNESS_M + runner.AU_THICKNESS_M)
+            | at_au_top[None, None, :]
+        )
     )
     assigned = flake | ti | au
 

@@ -60,9 +60,11 @@ def main() -> int:
         },
         "material_Q_support_E_parallel_a": material,
         "full_metal_inclusive_thermal_blocker": (
-            "the exact common-grid power partition closes, but 3.996% of Q "
-            "is carried by conformal/interface samples without unique bulk-"
-            "material ownership; do not project all optical Q into TaIrTe4"
+            "the exact common-grid power partition closes, but "
+            f"{100.0 * material['power_at_unit_central_intensity_W']['ambiguous_fraction_of_common_grid_power']:.4f}% "
+            "of Q is carried by lateral conformal/interface samples and "
+            "finite exact Au/Ti absorption is also present; do not silently "
+            "project all optical Q into TaIrTe4"
         ),
         "next_gate": (
             "complete E-parallel-b optical Q, repeat the support audit, then "

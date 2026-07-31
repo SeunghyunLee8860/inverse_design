@@ -1,0 +1,27 @@
+{
+  "raw_artifacts_are_not_committed": true,
+  "a": {
+    "Q_NPZ": {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_a_50nm_t4_gpu2_20260731/finite_q_on_artifact.npz",
+      "size_bytes": 786662592,
+      "sha256": "333f6050497d4d980f0d8f3819fcfe3e1647c9d7621d9e8ea1460f6f7ac7aab9"
+    },
+    "FSP": {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_a_50nm_t4_gpu2_20260731/finite_2um_optical_q.fsp",
+      "size_bytes": 1254848085,
+      "sha256": "e8f53689eed90955305f0a8cd97f1678ae945d90703e531e17e27f0ef4eb6d6c"
+    }
+  },
+  "b": {
+    "Q_NPZ": {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_b_50nm_t4_gpu4_20260731/finite_q_on_artifact.npz",
+      "size_bytes": 786662652,
+      "sha256": "1235bd8d13194cf0f00dac0f90d7f7a4241473342d9b13af1d8222e08f80b3f7"
+    },
+    "FSP": {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_b_50nm_t4_gpu4_20260731/finite_2um_optical_q.fsp",
+      "size_bytes": 1254847509,
+      "sha256": "4da3f1dfe65626117153aa55346a5765c16739b14c90d6b686221152f9e8c8a0"
+    }
+  }
+}
