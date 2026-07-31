@@ -137,6 +137,16 @@ def parse_args() -> argparse.Namespace:
             "50 nm is the required refinement comparison"
         ),
     )
+    parser.add_argument(
+        "--refinement-half-span-um",
+        type=float,
+        default=None,
+        help=(
+            "optional nested fine-mesh half span about the beam centre; "
+            "the full Q/closure region remains on the fixed 100-nm outer "
+            "mesh so no source support is cropped or deleted"
+        ),
+    )
     parser.add_argument("--simulation-time-ps", type=float, default=1.2)
     parser.add_argument("--auto-shutoff-min", type=float, default=1.0e-5)
     parser.add_argument("--source-span-um", type=float, default=50.0)
@@ -222,6 +232,19 @@ def parse_args() -> argparse.Namespace:
         or args.auto_shutoff_min <= 0
     ):
         parser.error("waist, flake dz, simulation time, and shutoff must be positive")
+    args.outer_local_xy_mesh_nm = (
+        100.0
+        if args.refinement_half_span_um is not None
+        else args.local_xy_mesh_nm
+    )
+    if args.refinement_half_span_um is not None:
+        if args.refinement_half_span_um <= 0.0:
+            parser.error("refinement half span must be positive")
+        if args.local_xy_mesh_nm >= args.outer_local_xy_mesh_nm:
+            parser.error(
+                "nested refinement requires a fine local x/y mesh below "
+                "the fixed 100-nm outer mesh"
+            )
     if (
         args.execution_contract == "production"
         and args.case == "finite-flake"
@@ -325,6 +348,16 @@ def parse_args() -> argparse.Namespace:
         for axis, bounds in absorption_bounds_um.items()
     }
     args.absorption_bounds_m["z"] = (-FLAKE_THICKNESS_M, 0.0)
+    if args.refinement_half_span_um is not None:
+        outer_mesh_half_span_um = max(
+            max(abs(value) for value in absorption_bounds_um["x"]),
+            max(abs(value) for value in absorption_bounds_um["y"]),
+        ) + 0.5
+        if args.refinement_half_span_um >= outer_mesh_half_span_um:
+            parser.error(
+                "nested refinement half span must be smaller than the "
+                f"{outer_mesh_half_span_um:g}-um outer mesh half span"
+            )
     if reduced_smoke:
         # Use one nominal control volume for both pabs_adv and all six power
         # faces.  Post-run gates independently read the realized coordinates
@@ -1300,14 +1333,45 @@ def add_geometry_and_monitors(
             polygon["z max"] = 0.0
             polygon["material"] = args.material_name
 
+    mesh_z_min = -FLAKE_THICKNESS_M - 10 * args.flake_dz_nm * 1e-9
+    mesh_z_max = 10 * args.flake_dz_nm * 1e-9
+    outer_mesh_bounds = {
+        "x": (
+            absorption_bounds["x"][0] - 0.5e-6,
+            absorption_bounds["x"][1] + 0.5e-6,
+        ),
+        "y": (
+            absorption_bounds["y"][0] - 0.5e-6,
+            absorption_bounds["y"][1] + 0.5e-6,
+        ),
+    }
+    if args.refinement_half_span_um is not None:
+        outer_mesh = fdtd.addmesh()
+        outer_mesh["name"] = "flake_outer_mesh"
+        outer_mesh["x min"], outer_mesh["x max"] = outer_mesh_bounds["x"]
+        outer_mesh["y min"], outer_mesh["y max"] = outer_mesh_bounds["y"]
+        outer_mesh["z min"] = mesh_z_min
+        outer_mesh["z max"] = mesh_z_max
+        outer_mesh["override x mesh"] = 1
+        outer_mesh["override y mesh"] = 1
+        outer_mesh["override z mesh"] = 1
+        outer_mesh["dx"] = args.outer_local_xy_mesh_nm * 1e-9
+        outer_mesh["dy"] = args.outer_local_xy_mesh_nm * 1e-9
+        outer_mesh["dz"] = args.flake_dz_nm * 1e-9
+        fine_half_span = args.refinement_half_span_um * 1e-6
+        fine_mesh_bounds = {
+            "x": (beam_x - fine_half_span, beam_x + fine_half_span),
+            "y": (beam_y - fine_half_span, beam_y + fine_half_span),
+        }
+    else:
+        fine_mesh_bounds = outer_mesh_bounds
+
     mesh = fdtd.addmesh()
     mesh["name"] = "flake_mesh"
-    mesh["x min"] = absorption_bounds["x"][0] - 0.5e-6
-    mesh["x max"] = absorption_bounds["x"][1] + 0.5e-6
-    mesh["y min"] = absorption_bounds["y"][0] - 0.5e-6
-    mesh["y max"] = absorption_bounds["y"][1] + 0.5e-6
-    mesh["z min"] = -FLAKE_THICKNESS_M - 10 * args.flake_dz_nm * 1e-9
-    mesh["z max"] = 10 * args.flake_dz_nm * 1e-9
+    mesh["x min"], mesh["x max"] = fine_mesh_bounds["x"]
+    mesh["y min"], mesh["y max"] = fine_mesh_bounds["y"]
+    mesh["z min"] = mesh_z_min
+    mesh["z max"] = mesh_z_max
     mesh["override x mesh"] = 1
     mesh["override y mesh"] = 1
     mesh["override z mesh"] = 1
@@ -1557,14 +1621,30 @@ def add_geometry_and_monitors(
         "large_domain_mesh_policy": {
             "uniform_global_fine_mesh": False,
             "global_mesh": "auto non-uniform, conformal variant 1, accuracy 5",
-            "local_region_bounds_m": absorption_bounds,
-            "local_xy_baseline_m": args.local_xy_mesh_nm * 1e-9,
-            "required_local_xy_refinement_m": 0.5
-            * args.local_xy_mesh_nm
-            * 1e-9,
+            "outer_local_region_bounds_m": {
+                **outer_mesh_bounds,
+                "z": (mesh_z_min, mesh_z_max),
+            },
+            "outer_local_xy_mesh_m": args.outer_local_xy_mesh_nm * 1e-9,
+            "fine_refinement_region_bounds_m": {
+                **fine_mesh_bounds,
+                "z": (mesh_z_min, mesh_z_max),
+            },
+            "fine_local_xy_mesh_m": args.local_xy_mesh_nm * 1e-9,
+            "local_xy_baseline_m": 100.0e-9,
+            "required_local_xy_refinement_m": 50.0e-9,
             "local_xy_refinement_status": (
-                "REQUIRED_BEFORE_MATERIAL_Q_PROMOTION"
+                "ACTIVE_NESTED_50NM_REFINEMENT"
+                if args.refinement_half_span_um is not None
+                and args.local_xy_mesh_nm <= 50.0
+                else "REQUIRED_BEFORE_MATERIAL_Q_PROMOTION"
             ),
+            "refinement_half_span_m": (
+                None
+                if args.refinement_half_span_um is None
+                else args.refinement_half_span_um * 1e-6
+            ),
+            "source_support_outside_fine_region_is_preserved": True,
             "TaIrTe4_z_override_m": args.flake_dz_nm * 1e-9,
             "far_air_SiO2_Si": "wavelength-appropriate automatic coarse mesh",
         },
@@ -1734,6 +1814,36 @@ def assert_contract(
         args.local_xy_mesh_nm * 1e-9,
         atol=1e-15,
     )
+    checks["correct_nested_outer_mesh"] = (
+        args.refinement_half_span_um is None
+        or (
+            int(fdtd.getnamednumber("flake_outer_mesh")) == 1
+            and np.isclose(
+                base.scalar(
+                    fdtd.getnamed("flake_outer_mesh", "dx"),
+                    "outer local dx",
+                ),
+                args.outer_local_xy_mesh_nm * 1e-9,
+                atol=1e-15,
+            )
+            and np.isclose(
+                base.scalar(
+                    fdtd.getnamed("flake_outer_mesh", "dy"),
+                    "outer local dy",
+                ),
+                args.outer_local_xy_mesh_nm * 1e-9,
+                atol=1e-15,
+            )
+            and np.isclose(
+                base.scalar(
+                    fdtd.getnamed("flake_outer_mesh", "dz"),
+                    "outer local dz",
+                ),
+                args.flake_dz_nm * 1e-9,
+                atol=1e-15,
+            )
+        )
+    )
     checks["correct_thickness"] = args.case == "empty-stack" or np.isclose(
         base.scalar(fdtd.getnamed("TaIrTe4_flake", "z span"), "flake thickness"),
         FLAKE_THICKNESS_M,
@@ -1888,52 +1998,59 @@ def assert_contract(
                 ),
             ],
         }
-    mesh_override = {
-        "name": "flake_mesh",
-        "bounds_m": {
-            axis: [
+    def mesh_override_readback(name: str) -> dict[str, Any]:
+        return {
+            "name": name,
+            "bounds_m": {
+                axis: [
+                    base.scalar(
+                        fdtd.getnamed(name, f"{axis} min"),
+                        f"{name}.{axis} min",
+                    ),
+                    base.scalar(
+                        fdtd.getnamed(name, f"{axis} max"),
+                        f"{name}.{axis} max",
+                    ),
+                ]
+                for axis in "xyz"
+            },
+            "override_x_mesh": bool(
                 base.scalar(
-                    fdtd.getnamed("flake_mesh", f"{axis} min"),
-                    f"flake_mesh.{axis} min",
-                ),
+                    fdtd.getnamed(name, "override x mesh"),
+                    f"{name}.override x",
+                )
+            ),
+            "override_y_mesh": bool(
                 base.scalar(
-                    fdtd.getnamed("flake_mesh", f"{axis} max"),
-                    f"flake_mesh.{axis} max",
-                ),
-            ]
-            for axis in "xyz"
-        },
-        "override_x_mesh": bool(
-            base.scalar(
-                fdtd.getnamed("flake_mesh", "override x mesh"),
-                "flake_mesh.override x",
-            )
-        ),
-        "override_y_mesh": bool(
-            base.scalar(
-                fdtd.getnamed("flake_mesh", "override y mesh"),
-                "flake_mesh.override y",
-            )
-        ),
-        "override_z_mesh": bool(
-            base.scalar(
-                fdtd.getnamed("flake_mesh", "override z mesh"),
-                "flake_mesh.override z",
-            )
-        ),
-        "dz_m": base.scalar(
-            fdtd.getnamed("flake_mesh", "dz"),
-            "flake_mesh.dz",
-        ),
-        "dx_m": base.scalar(
-            fdtd.getnamed("flake_mesh", "dx"),
-            "flake_mesh.dx",
-        ),
-        "dy_m": base.scalar(
-            fdtd.getnamed("flake_mesh", "dy"),
-            "flake_mesh.dy",
-        ),
-    }
+                    fdtd.getnamed(name, "override y mesh"),
+                    f"{name}.override y",
+                )
+            ),
+            "override_z_mesh": bool(
+                base.scalar(
+                    fdtd.getnamed(name, "override z mesh"),
+                    f"{name}.override z",
+                )
+            ),
+            "dz_m": base.scalar(
+                fdtd.getnamed(name, "dz"),
+                f"{name}.dz",
+            ),
+            "dx_m": base.scalar(
+                fdtd.getnamed(name, "dx"),
+                f"{name}.dx",
+            ),
+            "dy_m": base.scalar(
+                fdtd.getnamed(name, "dy"),
+                f"{name}.dy",
+            ),
+        }
+
+    mesh_overrides = [mesh_override_readback("flake_mesh")]
+    if args.refinement_half_span_um is not None:
+        mesh_overrides.append(
+            mesh_override_readback("flake_outer_mesh")
+        )
     return {
         "checks": checks,
         "boundaries": boundaries,
@@ -1957,7 +2074,15 @@ def assert_contract(
             ),
             "flake_dz_m": args.flake_dz_nm * 1e-9,
             "local_xy_mesh_m": args.local_xy_mesh_nm * 1e-9,
-            "override_objects": [mesh_override],
+            "outer_local_xy_mesh_m": (
+                args.outer_local_xy_mesh_nm * 1e-9
+            ),
+            "refinement_half_span_m": (
+                None
+                if args.refinement_half_span_um is None
+                else args.refinement_half_span_um * 1e-6
+            ),
+            "override_objects": mesh_overrides,
             "uniform_global_fine_mesh_present": False,
             "local_x_or_y_override_present": True,
         },
