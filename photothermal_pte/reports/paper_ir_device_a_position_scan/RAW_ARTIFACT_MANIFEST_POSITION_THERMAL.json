@@ -1,0 +1,176 @@
+{
+  "status": "RECORDED_EXTERNAL_RAW_ARTIFACTS_NOT_COMMITTED",
+  "artifacts": [
+    {
+      "role": "thermal fields sminus1 E||a isolated",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_sminus1_a_isolated_60um_100nm_20260801/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "2675b4b4dcb544dc71f0b7412849be3e5d6ab172ca86e1988285d0fd8d7c0c85",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal summary sminus1 E||a isolated",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_sminus1_a_isolated_60um_100nm_20260801/summary.json",
+      "size_bytes": 9835,
+      "sha256": "d57d85f29909eb953692c1d63e61356fad6779d70bbf4f0681dae713f6dc58ab",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal fields sminus1 E||b isolated",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_sminus1_b_isolated_60um_100nm_20260801/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "2695f4035f82fdca784f4db15cbe1984c9c8d9d8c834a32c0a3ecb857578c67a",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal summary sminus1 E||b isolated",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_sminus1_b_isolated_60um_100nm_20260801/summary.json",
+      "size_bytes": 9813,
+      "sha256": "bef62912dc6283c3e4400e45b26e1e60e950b4d083001d4263cf14cc057f4506",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal fields s0 E||a isolated",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_isolated_100nm_20260731_v3/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "6bd4f9e318c8bd2163d46a3a18d17a379d39edc8bf661bb8fda76b5c94328612",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal summary s0 E||a isolated",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_isolated_100nm_20260731_v3/summary.json",
+      "size_bytes": 9826,
+      "sha256": "c35f4b5d3e3179c653e978399e876b8d8eb859c13aadb79fba8dbab12abf60da",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal fields s0 E||b isolated",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_isolated_100nm_20260731/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "8347a00371bc786bee64a0fe5b68f672cb9fbc80f5715854a7c60ec37f997fcb",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal summary s0 E||b isolated",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_isolated_100nm_20260731/summary.json",
+      "size_bytes": 9823,
+      "sha256": "df49bec4bacb0c55970ded4555fae5be7201e7472cd72ce8e54699e6929ff00e",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal fields splus1 E||a isolated",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_splus1_a_isolated_60um_100nm_20260801/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "4999983eda005809aee2a3e2af1b61a524d657e924556ac166ca8dd5e10e2065",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal summary splus1 E||a isolated",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_splus1_a_isolated_60um_100nm_20260801/summary.json",
+      "size_bytes": 9837,
+      "sha256": "3ba8ea1c37c0d9a7d2703f2fc9982f354940cb16eb42ec64c51929dda27635d0",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal fields splus1 E||b isolated",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_splus1_b_isolated_60um_100nm_20260801/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "979ca13eeaae88d33537b04ea47d4c53c717f15f3449b898dc4d9f255e432863",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal summary splus1 E||b isolated",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_splus1_b_isolated_60um_100nm_20260801/summary.json",
+      "size_bytes": 9805,
+      "sha256": "9c862aec3e312eafdfc586adeac33679943c03f848023f2169c5f474ff0f163a",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal fields sminus1 E||a perfect",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_sminus1_a_perfect_60um_100nm_20260801/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "f4ebb8b2144a4f56d8273d06493b69da19fb9aa1369aa06aba68578b16fef0eb",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal summary sminus1 E||a perfect",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_sminus1_a_perfect_60um_100nm_20260801/summary.json",
+      "size_bytes": 9832,
+      "sha256": "73d834bfc2438a4da249eb470c73def017eeac94d3adbe283710e67b20a70ec8",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal fields sminus1 E||b perfect",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_sminus1_b_perfect_60um_100nm_20260801/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "819a5e391fe1c5d71a9136932b22b69cf19d9aa449f4c5ec493953aaf4bd91de",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal summary sminus1 E||b perfect",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_sminus1_b_perfect_60um_100nm_20260801/summary.json",
+      "size_bytes": 9826,
+      "sha256": "a068e073bcc5de31a232b5a0c97ec6874314f50ec50395f978869faa61a45638",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal fields s0 E||a perfect",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_perfect_100nm_20260731/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "84f45d5b4317386d96152127b7d45cba26fd92d1979ce7942cdc2e31168450c7",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal summary s0 E||a perfect",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_perfect_100nm_20260731/summary.json",
+      "size_bytes": 9840,
+      "sha256": "55173ad3e1aa7c6a75bd454fc6ea70820464195c1311a73482465f3ed5b54e3b",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal fields s0 E||b perfect",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_perfect_100nm_20260731/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "8933665196f3c3e9d07d9384ff1f1cf92cc9730a7aa9d638dc36034583c78a67",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal summary s0 E||b perfect",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_perfect_100nm_20260731/summary.json",
+      "size_bytes": 9837,
+      "sha256": "5a4adfda794e0eda43f62ef8c1197f7d128a9d4c90e239af74049a36b939b23a",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal fields splus1 E||a perfect",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_splus1_a_perfect_60um_100nm_20260801/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "fd0ed387bc3905e890e4296f78cef179ccf9dbac1b03ba0ea2b7f8dc5e08c318",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal summary splus1 E||a perfect",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_splus1_a_perfect_60um_100nm_20260801/summary.json",
+      "size_bytes": 9811,
+      "sha256": "add5e33d2f1df2477324889d213770d78bc129b4df9a090a1348070ae7760976",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal fields splus1 E||b perfect",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_splus1_b_perfect_60um_100nm_20260801/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "a06f08d735dcf0625cfb19f4aa7a61742d2caccf4efdb2d2f772e23bb4f8e5d6",
+      "committed_to_git": false
+    },
+    {
+      "role": "thermal summary splus1 E||b perfect",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_splus1_b_perfect_60um_100nm_20260801/summary.json",
+      "size_bytes": 9805,
+      "sha256": "94d92584b2c22a4eefb5af5ac68a86b1ab3c3b78896747b6e5102fe06f846919",
+      "committed_to_git": false
+    }
+  ],
+  "optical_manifest": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_device_a_position_scan/RAW_ARTIFACT_MANIFEST_POSITION_OPTICAL.json",
+  "analytic_manifest": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_device_a_position_scan/RAW_ARTIFACT_MANIFEST_ANALYTIC_60um.json",
+  "generation_command": "photothermal_pte/validation/paper_ir_sanity/summarize_device_a_position_sensitivity.py --scan-contract photothermal_pte/reports/paper_ir_device_a_position_scan/device_a_position_scan_contract.json --geometry-contract photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --optical-summary photothermal_pte/reports/paper_ir_device_a_position_scan/device_a_position_optical_summary.json --analytic-summary photothermal_pte/reports/paper_ir_device_a_position_scan/device_a_analytic_position_60um_summary.json --thermal-batch-index /home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/device_a_position_maxwell_thermal_batch_index.json --s0-a-isolated /home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_isolated_100nm_20260731_v3 --s0-b-isolated /home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_isolated_100nm_20260731 --s0-a-perfect /home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_perfect_100nm_20260731 --s0-b-perfect /home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_perfect_100nm_20260731 --output-dir photothermal_pte/reports/paper_ir_device_a_position_scan"
+}

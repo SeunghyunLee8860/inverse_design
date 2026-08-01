@@ -255,7 +255,12 @@ def main() -> int:
             for polarization in ("a", "b")
         }
     analytic = json.loads(args.analytic_summary.read_text())
-    if float(analytic["thermal_contract"]["lateral_domain_m"]) != 60.0e-6:
+    if not np.isclose(
+        float(analytic["thermal_contract"]["lateral_domain_m"]),
+        60.0e-6,
+        rtol=0.0,
+        atol=1.0e-15,
+    ):
         raise RuntimeError("analytic comparison is not the promoted 60-um contract")
     analytic_alias = {"sminus1": "s-1um", "s0": "s0", "splus1": "s+1um"}
     analytic_ratios = {
