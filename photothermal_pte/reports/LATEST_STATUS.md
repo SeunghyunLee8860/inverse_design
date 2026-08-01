@@ -1,5 +1,28 @@
 # Latest photothermal validation status
 
+## Corrected-substrate corner-free 45-degree edge control
+
+- Status: `COMPLETED_CORRECTED_SUBSTRATE_STRAIGHT_45_EDGE_CONTROL`.
+- A new GPU-only optical baseline used the simple `y=x` TaIrTe4 half-plane,
+  the calibrated scalar-Gaussian `w0=8.75 um` source, six PML faces, and the
+  installed v261 Palik SiO2/Si materials.  There are no electrodes, corners,
+  weighting field, PTE current, adjoint, or optimization in this control.
+- Matched-volume optical closure is `0.312757% / 0.341076%` for `E||a/b`;
+  auto-shutoff is below `1e-5` in both cases.  Lossy-substrate Q is retained
+  in the raw closure artifact, while the explicit thermal solver receives
+  only the separately saved TaIrTe4-supported Q.
+- At equal 285-uW incident power, TaIrTe4 absorption has `b/a=1.248198` and
+  volume-average temperature has `b/a=1.248437`.  However, the strict-centred
+  edge-normal-gradient P99 ratio is `b/a=0.525989`; the paper-like `b/a>1`
+  gradient trend is therefore not reproduced by this Maxwell baseline.
+- Gradient samples require all four same-material `+x/-x/+y/-y` neighbours.
+  Literal staircase-edge cells are masked, so the prior one-sided boundary
+  stripe is not used in the comparator.  Thermal remap, residual, and energy
+  balance gates pass.  This remains a 100-nm lateral baseline, not a
+  mesh-converged production promotion.
+- Report, JSON, CSV, plots, and external-artifact manifest:
+  `reports/paper_ir_straight_45_edge_palik_w8p75/`.
+
 ## Device-A w0=8.75 um Maxwell-to-PTE paper sanity check
 
 - Status: `COMPLETED_DEVICE_A_SINGLE_POSITION_SANITY_DISAGREES_WITH_DIGITIZED_CURRENT_RATIO`.

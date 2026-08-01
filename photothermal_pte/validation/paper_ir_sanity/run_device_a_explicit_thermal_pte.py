@@ -940,12 +940,19 @@ def main() -> int:
             ],
             dtype=float,
         )
+    print("[thermal] building explicit 3D geometry", flush=True)
     geometry = build_geometry(
         domain_m=args.thermal_domain_um * 1e-6,
         si_depth_m=args.si_depth_um * 1e-6,
         core_step_m=args.core_step_nm * 1e-9,
         flake_dz_m=args.flake_dz_nm * 1e-9,
     )
+    print(
+        f"[thermal] grid shape={geometry.material_id.shape}, "
+        f"cells={geometry.material_id.size}",
+        flush=True,
+    )
+    print("[thermal] loading and conservatively remapping optical Q", flush=True)
     q, mapping = load_and_map_q(
         args.optical_case_dir / "finite_q_on_artifact.npz",
         args.optical_case_dir / "case_result.json",
@@ -953,6 +960,7 @@ def main() -> int:
         args.metal_thermalization,
         args.q_source,
     )
+    print("[thermal] optical Q remap complete", flush=True)
     expanded_geometry = geometry
     if args.thermal_model == "paper-reduced":
         geometry, q = reduced_flake_geometry(geometry, q)
@@ -971,6 +979,7 @@ def main() -> int:
             surface_robin_temperature_K={"z_min": 0.0, "z_max": 0.0},
         )
     else:
+        print("[thermal] assembling expanded FVM operator", flush=True)
         system = assemble_steady_diagonal_kappa(
             x_edges_m=geometry.x_edges_m,
             y_edges_m=geometry.y_edges_m,
@@ -988,12 +997,14 @@ def main() -> int:
             exposed_heat_transfer_W_m2K=H_EXPOSED_W_M2K,
             ambient_temperature_K=0.0,
         )
+    print("[thermal] solving linear system", flush=True)
     solved = solve_assembled_thermal_system(
         system,
         source_W_m3=q,
         relative_tolerance=1e-10,
         max_iterations=12000,
     )
+    print("[thermal] linear solve complete", flush=True)
     flake_xy = np.any(geometry.flake_mask, axis=2)
     if args.geometry == "straight-45-edge":
         edge_metrics, fields = straight_edge_temperature_metrics(

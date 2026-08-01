@@ -1,0 +1,54 @@
+{
+  "raw_artifacts_committed_to_git": false,
+  "artifacts": [
+    {
+      "polarization": "a",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_straight_45_edge_palik_w8p75/edge_a_palik_xy100_dz5_t4_gpu0_20260801/finite_q_on_artifact.npz",
+      "size_bytes": 897555160,
+      "sha256": "3d8510d920a3a3620e7d1d95df471140cf7e5eaa22e7b92b3a1755fe94ee9757"
+    },
+    {
+      "polarization": "a",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_straight_45_edge_palik_w8p75/edge_a_palik_xy100_dz5_t4_gpu0_20260801/case_result.json",
+      "size_bytes": 89459,
+      "sha256": "d7d53e10c05fb5cc1283d8c37d9300a88632d663cc4bd569cae17c32184e5935"
+    },
+    {
+      "polarization": "b",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_straight_45_edge_palik_w8p75/edge_b_palik_xy100_dz5_t4_gpu5_20260801/finite_q_on_artifact.npz",
+      "size_bytes": 897555088,
+      "sha256": "cfe5460ca2d0e7d55ff36e260c3f10b268bbb332c10333dc3026c66a7e4721df"
+    },
+    {
+      "polarization": "b",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_straight_45_edge_palik_w8p75/edge_b_palik_xy100_dz5_t4_gpu5_20260801/case_result.json",
+      "size_bytes": 89401,
+      "sha256": "0814f29eeee794ba6eaa0d58240029ec1ca65b0e2a06e0c426e31c9d61dc3417"
+    },
+    {
+      "polarization": "a",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_straight_45_edge_palik_w8p75/thermal_a_explicit3d_core100_dz10_L60_Si20_20260801_retry4/thermal_pte_fields.npz",
+      "size_bytes": 123602448,
+      "sha256": "b6fa110c0257611dec522e30d50fdfc6ef29ac6a5c64395bc7a462e4b34a967c"
+    },
+    {
+      "polarization": "a",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_straight_45_edge_palik_w8p75/thermal_a_explicit3d_core100_dz10_L60_Si20_20260801_retry4/summary.json",
+      "size_bytes": 6737,
+      "sha256": "2117dcd93957cdd6d0870696532481dc5536484b3e99f7998c7842dca07788e8"
+    },
+    {
+      "polarization": "b",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_straight_45_edge_palik_w8p75/thermal_b_explicit3d_core100_dz10_L60_Si20_20260801/thermal_pte_fields.npz",
+      "size_bytes": 123602448,
+      "sha256": "a6bf4b7773640e0a3fa17f03a29ff89bcc2a18881b01e0afa1b1537dba36b48a"
+    },
+    {
+      "polarization": "b",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_straight_45_edge_palik_w8p75/thermal_b_explicit3d_core100_dz10_L60_Si20_20260801/summary.json",
+      "size_bytes": 6741,
+      "sha256": "cdea365e91b06e3aa4b9788f27b7b2424072ea2a3293e07b162a919798570b3d"
+    }
+  ],
+  "plots_and_summaries_are_git_safe": true
+}
