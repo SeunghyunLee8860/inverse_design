@@ -1,0 +1,131 @@
+{
+  "status": "DEVICE_A_THREE_POSITION_SCAN_CONTRACT_FROZEN_NOT_SOLVED",
+  "scope": "geometry/source-coordinate audit only; no Maxwell, thermal, PTE, adjoint, AD-FD, optimization, or parameter fitting",
+  "coordinate_axes": {
+    "x": "crystal b",
+    "y": "crystal a"
+  },
+  "scan_line": {
+    "origin_code_um": [
+      -12.099447513812155,
+      2.375690607734806
+    ],
+    "direction_increasing_s": "inward normal from TaIrTe4/air edge",
+    "unit_direction_code": [
+      0.8053368838936223,
+      -0.5928174284216942
+    ],
+    "unit_tangent_code": [
+      0.5928174284216942,
+      0.8053368838936223
+    ],
+    "signed_coordinate": "r(s)=edge_midpoint+s*inward_normal",
+    "s_zero_meaning": "digitized TaIrTe4/air edge midpoint",
+    "existing_single_position_s0_um": 3.000000000000001,
+    "existing_single_position_tangent_offset_um": 2.220446049250313e-16,
+    "paper_interpretation": "Figure-3H black-dotted-line counterpart on the digitized Device-A geometry; not exact experimental stage coordinates"
+  },
+  "uncertainty_um": {
+    "visible_flake_edge": 0.4,
+    "beam_center_registration": 1.0,
+    "exact_stage_coordinate_available": false
+  },
+  "frozen_simulation_frame": {
+    "origin_shift_um": [
+      7.231221193496584,
+      -0.5972383224697246
+    ],
+    "baseline_beam_center_simulation_um": [
+      -2.452215668634704,
+      -8.881784197001252e-16
+    ],
+    "device_PML_monitors_fixed_across_scan": true,
+    "local_mesh_center_fixed_at_s0": true,
+    "only_source_center_moves": true,
+    "domain_um": 60.0,
+    "source_span_um": 50.0
+  },
+  "cases": [
+    {
+      "label": "s-1um",
+      "delta_s_from_s0_um": -1.0,
+      "signed_s_from_edge_um": 2.000000000000001,
+      "beam_center_code_um": [
+        -10.48877374602491,
+        1.1900557508914174
+      ],
+      "beam_center_simulation_um": [
+        -3.2575525525283258,
+        0.5928174284216927
+      ],
+      "source_only_offset_simulation_um": [
+        -0.8053368838936223,
+        0.5928174284216942
+      ],
+      "source_aperture_PML_clearance_um": {
+        "x_min": 1.742447447471676,
+        "x_max": 8.257552552528324,
+        "y_min": 5.592817428421693,
+        "y_max": 4.407182571578307
+      },
+      "minimum_source_aperture_PML_clearance_um": 1.742447447471676,
+      "reuse_existing_artifact": false
+    },
+    {
+      "label": "s0",
+      "delta_s_from_s0_um": 0.0,
+      "signed_s_from_edge_um": 3.000000000000001,
+      "beam_center_code_um": [
+        -9.683436862131288,
+        0.5972383224697231
+      ],
+      "beam_center_simulation_um": [
+        -2.452215668634704,
+        -1.5543122344752192e-15
+      ],
+      "source_only_offset_simulation_um": [
+        0.0,
+        -0.0
+      ],
+      "source_aperture_PML_clearance_um": {
+        "x_min": 2.547784331365296,
+        "x_max": 7.452215668634707,
+        "y_min": 5.0,
+        "y_max": 5.0
+      },
+      "minimum_source_aperture_PML_clearance_um": 2.547784331365296,
+      "reuse_existing_artifact": true
+    },
+    {
+      "label": "s+1um",
+      "delta_s_from_s0_um": 1.0,
+      "signed_s_from_edge_um": 4.000000000000001,
+      "beam_center_code_um": [
+        -8.878099978237664,
+        0.004420894048029034
+      ],
+      "beam_center_simulation_um": [
+        -1.6468787847410802,
+        -0.5928174284216956
+      ],
+      "source_only_offset_simulation_um": [
+        0.8053368838936223,
+        -0.5928174284216942
+      ],
+      "source_aperture_PML_clearance_um": {
+        "x_min": 3.35312121525892,
+        "x_max": 6.64687878474108,
+        "y_min": 4.4071825715783035,
+        "y_max": 5.5928174284216965
+      },
+      "minimum_source_aperture_PML_clearance_um": 3.35312121525892,
+      "reuse_existing_artifact": false
+    }
+  ],
+  "limits": {
+    "new_position_optical_solves": 4,
+    "additional_Au_Ti_off_optical_diagnostic": 1,
+    "no_25nm_or_12p5nm_refinement": true,
+    "no_dense_scan": true
+  }
+}

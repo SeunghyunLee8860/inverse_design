@@ -259,6 +259,26 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--beam-x-um", type=float, default=0.0)
     parser.add_argument("--beam-y-um", type=float, default=0.0)
     parser.add_argument(
+        "--beam-offset-x-um",
+        type=float,
+        default=0.0,
+        help=(
+            "translate only the optical source from the frozen Device-A "
+            "pre-registered beam position; the device, monitors, domain, "
+            "and PML coordinates remain fixed"
+        ),
+    )
+    parser.add_argument(
+        "--beam-offset-y-um",
+        type=float,
+        default=0.0,
+        help=(
+            "translate only the optical source from the frozen Device-A "
+            "pre-registered beam position; the device, monitors, domain, "
+            "and PML coordinates remain fixed"
+        ),
+    )
+    parser.add_argument(
         "--device-a-geometry-json",
         type=Path,
         default=None,
@@ -417,6 +437,8 @@ def parse_args() -> argparse.Namespace:
     args.design_radius_um = 0.0
     args.require_design_inside_flake = False
     args.device_a_contract = None
+    args.mesh_center_x_um = float(args.beam_x_um)
+    args.mesh_center_y_um = float(args.beam_y_um)
     if args.device_a_geometry_json is not None:
         if args.geometry != "device-a-polygon":
             parser.error("Device A geometry JSON requires --geometry device-a-polygon")
@@ -439,6 +461,23 @@ def parse_args() -> argparse.Namespace:
         args.beam_x_um, args.beam_y_um = (
             float(value)
             for value in args.device_a_contract["beam_center_simulation_um"]
+        )
+        args.mesh_center_x_um = float(args.beam_x_um)
+        args.mesh_center_y_um = float(args.beam_y_um)
+        args.beam_x_um += args.beam_offset_x_um
+        args.beam_y_um += args.beam_offset_y_um
+        args.device_a_contract["source_only_offset_um"] = [
+            float(args.beam_offset_x_um),
+            float(args.beam_offset_y_um),
+        ]
+        args.device_a_contract["shifted_beam_center_simulation_um"] = [
+            float(args.beam_x_um),
+            float(args.beam_y_um),
+        ]
+        args.device_a_contract["scan_coordinate_invariance"] = (
+            "flake/electrode polygons, monitors, FDTD domain, and PML remain "
+            "at the s0 simulation coordinates; only the Gaussian source is "
+            "translated, while the local optical mesh remains fixed at s0"
         )
     elif args.include_electrodes:
         parser.error("--include-electrodes requires --device-a-geometry-json")
@@ -522,6 +561,19 @@ def parse_args() -> argparse.Namespace:
         -FLAKE_THICKNESS_M,
         TI_THICKNESS_M + AU_THICKNESS_M if args.include_electrodes else 0.0,
     )
+    source_half_span_um = 0.5 * args.source_span_um
+    source_clearance_um = {
+        "x_min": args.beam_x_um - source_half_span_um + 0.5 * args.domain_um,
+        "x_max": 0.5 * args.domain_um - args.beam_x_um - source_half_span_um,
+        "y_min": args.beam_y_um - source_half_span_um + 0.5 * args.domain_um,
+        "y_max": 0.5 * args.domain_um - args.beam_y_um - source_half_span_um,
+    }
+    if min(source_clearance_um.values()) < 1.0:
+        parser.error(
+            "translated source aperture needs at least 1 um clearance from "
+            f"every lateral PML interface: {source_clearance_um}"
+        )
+    args.source_aperture_PML_clearance_um = source_clearance_um
     args.flake_bounds_m = {
         "x": (
             float(np.min(args.flake_vertices_um[:, 0])) * 1e-6,
@@ -1452,6 +1504,8 @@ def add_geometry_and_monitors(
     half_source = 0.5 * args.source_span_um * 1e-6
     beam_x = args.beam_x_um * 1e-6
     beam_y = args.beam_y_um * 1e-6
+    mesh_center_x = args.mesh_center_x_um * 1e-6
+    mesh_center_y = args.mesh_center_y_um * 1e-6
     source_bounds = {
         "x": (beam_x - half_source, beam_x + half_source),
         "y": (beam_y - half_source, beam_y + half_source),
@@ -1602,10 +1656,10 @@ def add_geometry_and_monitors(
             )
             intermediate_mesh = fdtd.addmesh()
             intermediate_mesh["name"] = "flake_intermediate_mesh"
-            intermediate_mesh["x min"] = beam_x - intermediate_half_span
-            intermediate_mesh["x max"] = beam_x + intermediate_half_span
-            intermediate_mesh["y min"] = beam_y - intermediate_half_span
-            intermediate_mesh["y max"] = beam_y + intermediate_half_span
+            intermediate_mesh["x min"] = mesh_center_x - intermediate_half_span
+            intermediate_mesh["x max"] = mesh_center_x + intermediate_half_span
+            intermediate_mesh["y min"] = mesh_center_y - intermediate_half_span
+            intermediate_mesh["y max"] = mesh_center_y + intermediate_half_span
             intermediate_mesh["z min"] = mesh_z_min
             intermediate_mesh["z max"] = mesh_z_max
             intermediate_mesh["override x mesh"] = 1
@@ -1620,8 +1674,8 @@ def add_geometry_and_monitors(
             intermediate_mesh["dz"] = args.flake_dz_nm * 1e-9
         fine_half_span = args.refinement_half_span_um * 1e-6
         fine_mesh_bounds = {
-            "x": (beam_x - fine_half_span, beam_x + fine_half_span),
-            "y": (beam_y - fine_half_span, beam_y + fine_half_span),
+            "x": (mesh_center_x - fine_half_span, mesh_center_x + fine_half_span),
+            "y": (mesh_center_y - fine_half_span, mesh_center_y + fine_half_span),
         }
     else:
         fine_mesh_bounds = outer_mesh_bounds
@@ -1898,6 +1952,15 @@ def add_geometry_and_monitors(
                 else None
             ),
             "beam_center_m": [beam_x, beam_y],
+            "fixed_local_mesh_center_m": [mesh_center_x, mesh_center_y],
+            "source_only_offset_m": [
+                args.beam_offset_x_um * 1e-6,
+                args.beam_offset_y_um * 1e-6,
+            ],
+            "source_aperture_PML_clearance_m": {
+                key: value * 1e-6
+                for key, value in args.source_aperture_PML_clearance_um.items()
+            },
             "source_span_m": args.source_span_um * 1e-6,
             "normal_incidence": True,
             "polarization_axis": args.polarization,
