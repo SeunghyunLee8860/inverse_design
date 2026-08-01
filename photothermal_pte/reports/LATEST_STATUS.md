@@ -1,5 +1,29 @@
 # Latest photothermal validation status
 
+## Device-A beam-position and Au/Ti optical diagnostics
+
+- Status: `ROBUST_MAXWELL_REVERSAL`.
+- The frozen single-position result was extended only to the predeclared
+  `s0-1 µm`, `s0`, and `s0+1 µm` points. Four new 50-nm GPU optical solves
+  were used; the s0 artifacts were reused. All optical and explicit-3D
+  thermal/PTE numerical gates pass.
+- The isolated-metal Maxwell `|Ia|/|Ib|` ratios are `1.517631`, `1.617656`,
+  and `1.898514`; the perfect-transfer ratios are `1.562067`, `1.638590`,
+  and `1.842354`. None crosses one, whereas the matched analytic controls
+  remain near `0.682--0.683` and the digitized paper value is
+  `0.836590 +/- 0.008526`.
+- One additional approved s0 `E||a` Au/Ti-off GPU diagnostic passed closure
+  (`0.01136%`) and auto-shutoff (`9.92474e-6`). Removing Au/Ti changes the
+  equal-power TaIrTe4 lateral-Q shape by `13.3168%`, but changes the
+  edge-localized power fraction by only `0.6570%` and terminal current by at
+  most `1.0556%`; therefore the predeclared 10% all-three contact-scattering
+  dominance rule is false.
+- No empirical normalization, polarization rescaling, optical refinement,
+  dense scan, adjoint, AD-FD, or optimization was used. Raw FSP/NPZ files
+  remain external and are recorded by path, size, and SHA-256.
+- Report, JSON, CSV, figures, and manifests:
+  `reports/paper_ir_device_a_position_scan/`.
+
 ## Paper-IR coordinate-faithful figure correction
 
 - Status: `CORRECTED_PAPER_IR_NONUNIFORM_GRID_FIGURES`.

@@ -1,0 +1,118 @@
+{
+  "status": "RECORDED_EXTERNAL_RAW_ARTIFACTS_NOT_COMMITTED",
+  "artifacts": [
+    {
+      "role": "AuTi on finite_q_on_artifact.npz",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_a_50nm_t4_gpu2_20260731/finite_q_on_artifact.npz",
+      "size_bytes": 786662592,
+      "sha256": "333f6050497d4d980f0d8f3819fcfe3e1647c9d7621d9e8ea1460f6f7ac7aab9",
+      "committed_to_git": false
+    },
+    {
+      "role": "AuTi on finite_2um_optical_q.fsp",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_a_50nm_t4_gpu2_20260731/finite_2um_optical_q.fsp",
+      "size_bytes": 1254848085,
+      "sha256": "e8f53689eed90955305f0a8cd97f1678ae945d90703e531e17e27f0ef4eb6d6c",
+      "committed_to_git": false
+    },
+    {
+      "role": "AuTi on case_result.json",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_a_50nm_t4_gpu2_20260731/case_result.json",
+      "size_bytes": 103070,
+      "sha256": "2e65f9d6930a802d804b43248546bc64478610c5ccae0c309a0940458f544af8",
+      "committed_to_git": false
+    },
+    {
+      "role": "AuTi off finite_q_on_artifact.npz",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/s0_a_no_AuTi_50nm_t4_gpu2_20260801/finite_q_on_artifact.npz",
+      "size_bytes": 375841104,
+      "sha256": "d42e25035f7654ec2a9fa460121e15aa2a3b75afa659129f7c8058f5f66f0d5c",
+      "committed_to_git": false
+    },
+    {
+      "role": "AuTi off finite_2um_optical_q.fsp",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/s0_a_no_AuTi_50nm_t4_gpu2_20260801/finite_2um_optical_q.fsp",
+      "size_bytes": 702212511,
+      "sha256": "c236a8d2cb3cf0facf1bd4352c6150848b30f3a99a6b0589793daced22c10124",
+      "committed_to_git": false
+    },
+    {
+      "role": "AuTi off case_result.json",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/s0_a_no_AuTi_50nm_t4_gpu2_20260801/case_result.json",
+      "size_bytes": 98965,
+      "sha256": "af9b4792b91cc625c4c407c43e57bfc246a93b073ca42e364922cb87bc86af67",
+      "committed_to_git": false
+    },
+    {
+      "role": "AuTi on E||a isolated thermal_pte_fields.npz",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_isolated_100nm_20260731_v3/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "6bd4f9e318c8bd2163d46a3a18d17a379d39edc8bf661bb8fda76b5c94328612",
+      "committed_to_git": false
+    },
+    {
+      "role": "AuTi on E||a isolated summary.json",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_isolated_100nm_20260731_v3/summary.json",
+      "size_bytes": 9826,
+      "sha256": "c35f4b5d3e3179c653e978399e876b8d8eb859c13aadb79fba8dbab12abf60da",
+      "committed_to_git": false
+    },
+    {
+      "role": "AuTi off E||a no-metal control thermal_pte_fields.npz",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_s0_a_no_AuTi_failclosed_60um_100nm_20260801_v2/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "5a180e2e82b4010bcff7a3f4c7110b7a4976da50cf8d931701ea081ab2d9fada",
+      "committed_to_git": false
+    },
+    {
+      "role": "AuTi off E||a no-metal control summary.json",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_s0_a_no_AuTi_failclosed_60um_100nm_20260801_v2/summary.json",
+      "size_bytes": 9704,
+      "sha256": "42aedeb29064f5a07e6a3b221e09c4d43f83518d6e6a9d6b31f5bc8b67e00822",
+      "committed_to_git": false
+    },
+    {
+      "role": "AuTi on E||a perfect thermal_pte_fields.npz",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_perfect_100nm_20260731/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "84f45d5b4317386d96152127b7d45cba26fd92d1979ce7942cdc2e31168450c7",
+      "committed_to_git": false
+    },
+    {
+      "role": "AuTi on E||a perfect summary.json",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_perfect_100nm_20260731/summary.json",
+      "size_bytes": 9840,
+      "sha256": "55173ad3e1aa7c6a75bd454fc6ea70820464195c1311a73482465f3ed5b54e3b",
+      "committed_to_git": false
+    },
+    {
+      "role": "baseline E||b isolated thermal_pte_fields.npz",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_isolated_100nm_20260731/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "8347a00371bc786bee64a0fe5b68f672cb9fbc80f5715854a7c60ec37f997fcb",
+      "committed_to_git": false
+    },
+    {
+      "role": "baseline E||b isolated summary.json",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_isolated_100nm_20260731/summary.json",
+      "size_bytes": 9823,
+      "sha256": "df49bec4bacb0c55970ded4555fae5be7201e7472cd72ce8e54699e6929ff00e",
+      "committed_to_git": false
+    },
+    {
+      "role": "baseline E||b perfect thermal_pte_fields.npz",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_perfect_100nm_20260731/thermal_pte_fields.npz",
+      "size_bytes": 388808004,
+      "sha256": "8933665196f3c3e9d07d9384ff1f1cf92cc9730a7aa9d638dc36034583c78a67",
+      "committed_to_git": false
+    },
+    {
+      "role": "baseline E||b perfect summary.json",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_perfect_100nm_20260731/summary.json",
+      "size_bytes": 9837,
+      "sha256": "5a4adfda794e0eda43f62ef8c1197f7d128a9d4c90e239af74049a36b939b23a",
+      "committed_to_git": false
+    }
+  ],
+  "generation_command": "photothermal_pte/validation/paper_ir_sanity/summarize_device_a_contact_optical_diagnostic.py --on-optical /home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_a_50nm_t4_gpu2_20260731 --off-optical /home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/s0_a_no_AuTi_50nm_t4_gpu2_20260801 --on-a-isolated /home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_isolated_100nm_20260731_v3 --off-a-isolated /home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_s0_a_no_AuTi_failclosed_60um_100nm_20260801_v2 --on-a-perfect /home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_perfect_100nm_20260731 --off-a-perfect /home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_s0_a_no_AuTi_failclosed_60um_100nm_20260801_v2 --b-isolated /home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_isolated_100nm_20260731 --b-perfect /home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_perfect_100nm_20260731 --geometry-contract photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --output-dir photothermal_pte/reports/paper_ir_device_a_position_scan"
+}

@@ -377,6 +377,22 @@ def main() -> int:
         table.append(
             f"| {iso['signed_s_from_edge_um']:.1f} | {iso['I_a_A']*1e9:.6g} | {iso['I_b_A']*1e9:.6g} | {iso['abs_Ia_over_abs_Ib']:.6f} | {perfect['abs_Ia_over_abs_Ib']:.6f} | {analytic_ratios[position]:.6f} |"
         )
+    contact_text = ""
+    if contact is not None:
+        contact_text = f"""
+## Au/Ti optical-scattering diagnostic
+
+The single approved s0 E||a Au/Ti-off GPU diagnostic passed its optical and
+thermal gates.  Its equal-power TaIrTe4 depth-integrated-Q NRMSE was
+`{contact['equal_power_TaIrTe4_q2d_NRMSE']:.4%}`, but the edge-localized power
+fraction changed by only `{contact['edge_localized_fraction_relative_change']:.4%}`
+and the largest isolated/perfect terminal-current change was
+`{max(value['relative_Ia_change'] for value in contact['terminal_current'].values()):.4%}`.
+Therefore the predeclared 10% all-three rule gives
+`contact_optical_scattering_dominant={contact['contact_optical_scattering_dominant']}`.
+This is an optical-scattering diagnostic, not an electrode-free device or
+paper reproduction.
+"""
     report = f"""# Device-A beam-position terminal-current sensitivity
 
 Status: `{primary_status}`
@@ -393,6 +409,8 @@ The paper digitization gives `{PAPER_RATIO:.6f} ± {PAPER_RATIO_UNCERTAINTY:.6f}
 The analytic source already inputs the larger b-polarized TMM absorption and
 is a control, not a paper reproduction. No empirical current normalization,
 polarization matching, Q clipping, smoothing, gain, or rescaling was used.
+
+{contact_text}
 
 All displayed gradient and local-integrand maps use the strict four-neighbour
 mask requested by the user: a cell is hidden if any of ±x or ±y lies outside

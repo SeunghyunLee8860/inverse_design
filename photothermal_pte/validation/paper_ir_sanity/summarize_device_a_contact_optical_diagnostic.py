@@ -14,6 +14,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy import sparse
 
 
 DOMINANCE_THRESHOLD = 0.10
@@ -35,6 +36,55 @@ def dual_widths(values: np.ndarray, bounds: list[float]) -> np.ndarray:
     return np.diff(np.clip(edges, float(bounds[0]), float(bounds[1])))
 
 
+def dual_edges(values: np.ndarray, bounds: list[float]) -> np.ndarray:
+    coordinates = np.asarray(values, float)
+    edges = np.empty(coordinates.size + 1)
+    edges[1:-1] = 0.5 * (coordinates[:-1] + coordinates[1:])
+    edges[0], edges[-1] = map(float, bounds)
+    return np.clip(edges, float(bounds[0]), float(bounds[1]))
+
+
+def overlap_matrix(target: np.ndarray, source: np.ndarray) -> sparse.csr_matrix:
+    rows, columns, values = [], [], []
+    source_index = 0
+    for target_index in range(target.size - 1):
+        while source_index + 1 < source.size and source[source_index + 1] <= target[target_index]:
+            source_index += 1
+        index = source_index
+        while index + 1 < source.size and source[index] < target[target_index + 1]:
+            overlap = min(target[target_index + 1], source[index + 1]) - max(
+                target[target_index], source[index]
+            )
+            if overlap > 0.0:
+                rows.append(target_index)
+                columns.append(index)
+                values.append(float(overlap))
+            index += 1
+    return sparse.csr_matrix(
+        (values, (rows, columns)),
+        shape=(target.size - 1, source.size - 1),
+    )
+
+
+def remap_q2d(source: dict[str, object], target: dict[str, object]) -> tuple[np.ndarray, float]:
+    source_x_edges = dual_edges(source["x_m"], source["x_bounds_m"])
+    source_y_edges = dual_edges(source["y_m"], source["y_bounds_m"])
+    target_x_edges = dual_edges(target["x_m"], target["x_bounds_m"])
+    target_y_edges = dual_edges(target["y_m"], target["y_bounds_m"])
+    overlap_x = overlap_matrix(target_x_edges, source_x_edges)
+    overlap_y = overlap_matrix(target_y_edges, source_y_edges)
+    source_q = np.asarray(source["q2d_W_m2"], float)
+    target_energy = overlap_x @ source_q @ overlap_y.T
+    target_area = np.diff(target_x_edges)[:, None] * np.diff(target_y_edges)[None, :]
+    mapped = np.asarray(target_energy) / target_area
+    source_power = float(
+        np.sum(source_q * np.diff(source_x_edges)[:, None] * np.diff(source_y_edges)[None, :])
+    )
+    target_power = float(np.sum(mapped * target_area))
+    error = abs(target_power - source_power) / max(abs(source_power), np.finfo(float).tiny)
+    return mapped, error
+
+
 def load_q(path: Path) -> dict[str, object]:
     case = json.loads((path / "case_result.json").read_text())
     with np.load(path / "finite_q_on_artifact.npz") as raw:
@@ -51,7 +101,12 @@ def load_q(path: Path) -> dict[str, object]:
             dual_widths(z, bounds["z"]),
         )
         volume = wx[:, None, None] * wy[None, :, None] * wz[None, None, :]
-        mask = np.asarray(raw["TaIrTe4_support_mask"], bool)
+        mask_key = (
+            "TaIrTe4_support_mask"
+            if "TaIrTe4_support_mask" in raw.files
+            else "exact_flake_mask"
+        )
+        mask = np.asarray(raw[mask_key], bool)
         q = np.asarray(raw["Q_on_W_m3"], float) * mask
         components = {
             component: float(np.sum(np.asarray(raw[f"Q{component}_W_m3"], float) * mask * volume))
@@ -63,6 +118,8 @@ def load_q(path: Path) -> dict[str, object]:
         "case": case,
         "x_m": x,
         "y_m": y,
+        "x_bounds_m": bounds["x"],
+        "y_bounds_m": bounds["y"],
         "wx_m": wx,
         "wy_m": wy,
         "q2d_W_m2": q2d,
@@ -94,9 +151,17 @@ def main() -> int:
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
     on, off = load_q(args.on_optical), load_q(args.off_optical)
-    for coordinate in ("x_m", "y_m"):
-        if not np.array_equal(on[coordinate], off[coordinate]):
-            raise RuntimeError("on/off Q coordinates differ; conservative remap required")
+    coordinate_grids_identical = all(
+        np.array_equal(on[coordinate], off[coordinate])
+        for coordinate in ("x_m", "y_m")
+    )
+    remap_error = 0.0
+    if not coordinate_grids_identical:
+        mapped_off, remap_error = remap_q2d(off, on)
+        off = dict(off)
+        off["q2d_W_m2"] = mapped_off
+        off["x_m"], off["y_m"] = on["x_m"], on["y_m"]
+        off["wx_m"], off["wy_m"] = on["wx_m"], on["wy_m"]
     geometry = json.loads(args.geometry_contract.read_text())
     frozen = on["case"]["pre_run_contract"]["geometry"]["digitized_device_a_contract"]
     shift = np.asarray(frozen["simulation_origin_shift_um"], float)
@@ -182,6 +247,12 @@ def main() -> int:
         "dominance_threshold_predeclared": DOMINANCE_THRESHOLD,
         "dominance_rule": "equal-power TaIrTe4 q2d NRMSE, edge-fraction relative change, and maximum |Ia| relative change must all be at least 10%",
         "contact_optical_scattering_dominant": dominant,
+        "spatial_comparison_grid": {
+            "coordinate_grids_identical": coordinate_grids_identical,
+            "common_grid": "Au/Ti-on bounded dual-cell x/y grid",
+            "AuTi_off_exact_overlap_conservative_remap_power_error": remap_error,
+            "simple_array_index_pairing_used": False,
+        },
         "metrics": metrics,
         "equal_power_TaIrTe4_q2d_NRMSE": weighted_nrmse,
         "edge_localized_fraction_relative_change": edge_fraction_change,
@@ -214,6 +285,17 @@ def main() -> int:
         for filename in ("finite_q_on_artifact.npz", "finite_2um_optical_q.fsp", "case_result.json"):
             target = path / filename
             artifacts.append({"role": f"AuTi {label} {filename}", "path": str(target.resolve()), "size_bytes": target.stat().st_size, "sha256": sha256(target), "committed_to_git": False})
+    thermal_paths = {
+        "AuTi on E||a isolated": args.on_a_isolated,
+        "AuTi off E||a no-metal control": args.off_a_isolated,
+        "AuTi on E||a perfect": args.on_a_perfect,
+        "baseline E||b isolated": args.b_isolated,
+        "baseline E||b perfect": args.b_perfect,
+    }
+    for label, path in thermal_paths.items():
+        for filename in ("thermal_pte_fields.npz", "summary.json"):
+            target = path / filename
+            artifacts.append({"role": f"{label} {filename}", "path": str(target.resolve()), "size_bytes": target.stat().st_size, "sha256": sha256(target), "committed_to_git": False})
     (args.output_dir / "RAW_ARTIFACT_MANIFEST_CONTACT_OPTICAL.json").write_text(json.dumps({"status": "RECORDED_EXTERNAL_RAW_ARTIFACTS_NOT_COMMITTED", "artifacts": artifacts, "generation_command": " ".join(sys.argv)}, indent=2) + "\n")
     report = f"""# Device-A Au/Ti optical-scattering diagnostic
 
