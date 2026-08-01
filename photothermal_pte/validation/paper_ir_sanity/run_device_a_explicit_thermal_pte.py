@@ -722,6 +722,20 @@ def load_and_map_q(
         ),
         "full_common_grid_Q_W": base_remap.power_source(full_scaled_q),
     }
+    if q_source == "TaIrTe4-plus-SiO2":
+        # The material-resolved optical arrays are already disjoint by exact
+        # analytic support.  Report their powers directly instead of folding
+        # the oxide contribution into the legacy "unassigned" diagnostic.
+        source_power_by_support.update(
+            {
+                "TaIrTe4_material_resolved_Q_W": base_remap.power_source(
+                    source_components["Q_TaIrTe4_only_W_m3"] * physical_scale
+                ),
+                "SiO2_material_resolved_Q_W": base_remap.power_source(
+                    source_components["Q_SiO2_only_W_m3"] * physical_scale
+                ),
+            }
+        )
     exact_metal_power = (
         source_power_by_support["Ti_exact_support_W"]
         + source_power_by_support["Au_exact_support_W"]
