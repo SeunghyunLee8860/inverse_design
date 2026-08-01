@@ -613,26 +613,35 @@ def load_and_map_q(
         x = np.asarray(raw["x_m"], float)
         y = np.asarray(raw["y_m"], float)
         z = np.asarray(raw["z_m"], float)
-        q_key = (
-            "Q_TaIrTe4_only_W_m3"
-            if q_source == "TaIrTe4-only"
-            else "Q_on_W_m3"
+        q_keys = (
+            ["Q_TaIrTe4_only_W_m3", "Q_SiO2_only_W_m3"]
+            if q_source == "TaIrTe4-plus-SiO2"
+            else [
+                "Q_TaIrTe4_only_W_m3"
+                if q_source == "TaIrTe4-only"
+                else "Q_on_W_m3"
+            ]
         )
-        if q_key not in raw.files:
+        missing = [key for key in q_keys if key not in raw.files]
+        if missing:
             raise RuntimeError(
-                f"requested optical source {q_key!r} is absent from artifact"
+                f"requested optical sources {missing!r} are absent from artifact"
             )
-        q = np.asarray(raw[q_key], float)
+        source_components = {
+            key: np.asarray(raw[key], float)
+            for key in q_keys
+        }
+        q = sum(source_components.values())
     optical_geometry = result["pre_run_contract"]["geometry"]
     substrate_contract = optical_geometry.get("substrate_optical_contract", {})
     if (
         substrate_contract.get("model") == "lumerical-palik-11um"
-        and q_source != "TaIrTe4-only"
+        and q_source not in ("TaIrTe4-only", "TaIrTe4-plus-SiO2")
     ):
         raise RuntimeError(
             "lossy Palik substrate artifact must use --q-source "
-            "TaIrTe4-only; projecting full control-volume Q would silently "
-            "move substrate absorption into the flake"
+            "TaIrTe4-only or TaIrTe4-plus-SiO2; projecting full control-volume "
+            "Q would silently move substrate absorption into the flake"
         )
     electrode = optical_geometry.get("electrode_material_contract") or {}
     xx, yy = np.meshgrid(x, y, indexing="ij")
@@ -745,15 +754,65 @@ def load_and_map_q(
             * unprojected[~geometry.flake_mask]
         )
     )
-    remap = project_remap_to_nearest_material_support(
-        base_remap,
-        target_edges_m=target_edges,
-        target_support_mask=geometry.flake_mask,
-    )
-    mapped = remap.apply(scaled_q)
-    p_source = remap.power_source(scaled_q)
-    target_volume = remap.target_volume_m3
-    p_target = remap.power_target(mapped)
+    if q_source == "TaIrTe4-plus-SiO2":
+        flake_remap = project_remap_to_nearest_material_support(
+            base_remap,
+            target_edges_m=target_edges,
+            target_support_mask=geometry.flake_mask,
+        )
+        sio2_target = geometry.material_id == 2
+        if not np.any(sio2_target):
+            raise RuntimeError("thermal geometry has no SiO2 target cells")
+        sio2_remap = project_remap_to_nearest_material_support(
+            base_remap,
+            target_edges_m=target_edges,
+            target_support_mask=sio2_target,
+        )
+        flake_source = (
+            source_components["Q_TaIrTe4_only_W_m3"] * physical_scale
+        )
+        sio2_source = source_components["Q_SiO2_only_W_m3"] * physical_scale
+        mapped_flake = flake_remap.apply(flake_source)
+        mapped_sio2 = sio2_remap.apply(sio2_source)
+        mapped = mapped_flake + mapped_sio2
+        p_source_flake = flake_remap.power_source(flake_source)
+        p_source_sio2 = sio2_remap.power_source(sio2_source)
+        p_source = p_source_flake + p_source_sio2
+        target_volume = base_remap.target_volume_m3
+        p_target_flake = flake_remap.power_target(mapped_flake)
+        p_target_sio2 = sio2_remap.power_target(mapped_sio2)
+        p_target = p_target_flake + p_target_sio2
+        material_target_power = {
+            "TaIrTe4_source_W": p_source_flake,
+            "TaIrTe4_target_W": p_target_flake,
+            "SiO2_source_W": p_source_sio2,
+            "SiO2_target_W": p_target_sio2,
+        }
+        mapping_description = (
+            "two independent conservative embeddings followed by separate "
+            "physical-3D nearest-support projections: TaIrTe4 Q to TaIrTe4 "
+            "cells and SiO2 Q to SiO2 cells"
+        )
+    else:
+        remap = project_remap_to_nearest_material_support(
+            base_remap,
+            target_edges_m=target_edges,
+            target_support_mask=geometry.flake_mask,
+        )
+        mapped = remap.apply(scaled_q)
+        p_source = remap.power_source(scaled_q)
+        target_volume = remap.target_volume_m3
+        p_target = remap.power_target(mapped)
+        material_target_power = {
+            "TaIrTe4_source_W": p_source,
+            "TaIrTe4_target_W": p_target,
+            "SiO2_source_W": 0.0,
+            "SiO2_target_W": 0.0,
+        }
+        mapping_description = (
+            "one conservative embedding plus physical-3D nearest-flake-support "
+            "projection"
+        )
     outside_power = float(
         np.sum(target_volume[~geometry.flake_mask] * mapped[~geometry.flake_mask])
     )
@@ -764,7 +823,7 @@ def load_and_map_q(
         "optical_result_sha256": sha256(result_path),
         "experimental_incident_power_W": EXPERIMENTAL_INCIDENT_POWER_W,
         "selected_Q_source": q_source,
-        "selected_Q_artifact_key": q_key,
+        "selected_Q_artifact_keys": q_keys,
         "substrate_optical_contract": substrate_contract,
         "unit_central_intensity_incident_power_W": incident_at_unit,
         "physical_incident_power_scale": physical_scale,
@@ -778,6 +837,7 @@ def load_and_map_q(
         "modeled_source_fraction_of_full_common_grid_Q": p_source / full_power,
         "P_Q_source_W": p_source,
         "P_Q_target_W": p_target,
+        "material_resolved_source_target_power_W": material_target_power,
         "mapping_relative_power_error": abs(p_target - p_source) / abs(p_source),
         "mapped_power_outside_flake_before_final_support_W": outside_power_before,
         "mapped_power_outside_flake_before_final_support_fraction": (
@@ -785,9 +845,8 @@ def load_and_map_q(
         ),
         "mapped_power_outside_flake_W": outside_power,
         "mapping_operations": (
-            "validated linear conservative embedding plus one physical-3D-"
-            "nearest material-support projection with exact nearest-distance "
-            "ties split uniformly; no coordinate-axis order, clipping, "
+            f"{mapping_description} with exact nearest-distance ties split "
+            "uniformly; no coordinate-axis order, clipping, "
             "smoothing, gain, global rescaling, or tiling; metal handling is "
             f"the explicitly named {metal_thermalization} scenario"
         ),
@@ -889,12 +948,17 @@ def main() -> int:
     )
     parser.add_argument(
         "--q-source",
-        choices=("full-control-volume", "TaIrTe4-only"),
+        choices=(
+            "full-control-volume",
+            "TaIrTe4-only",
+            "TaIrTe4-plus-SiO2",
+        ),
         default="full-control-volume",
         help=(
             "select the raw full optical control-volume Q or the explicitly "
-            "material-resolved TaIrTe4-only derivative; lossy Palik "
-            "substrates require TaIrTe4-only"
+            "material-resolved TaIrTe4-only derivative, or independently "
+            "mapped TaIrTe4-plus-SiO2 sources; lossy Palik substrates forbid "
+            "the unpartitioned full-control-volume source"
         ),
     )
     args = parser.parse_args()

@@ -357,6 +357,21 @@ def parse_args() -> argparse.Namespace:
             "TaIrTe4-only absorption"
         ),
     )
+    parser.add_argument(
+        "--full-sio2-q-control-volume",
+        action="store_true",
+        help=(
+            "extend the matched pabs/six-face volume through the complete "
+            "285-nm SiO2 layer plus 50-nm top/bottom padding and publish a "
+            "separate SiO2-supported volumetric Q"
+        ),
+    )
+    parser.add_argument(
+        "--sio2-q-dz-nm",
+        type=float,
+        default=10.0,
+        help="z mesh used only across the full-oxide Q extraction region",
+    )
     parser.add_argument("--contract-only", action="store_true")
     args = parser.parse_args()
     args.sio2_material_name = (
@@ -377,6 +392,14 @@ def parse_args() -> argparse.Namespace:
             "the lossy Palik substrate requires "
             "--matched-lossy-control-volume; otherwise P_Q and P_six "
             "would refer to different absorbing volumes"
+        )
+    if args.full_sio2_q_control_volume and (
+        args.substrate_optical_model != "lumerical-palik-11um"
+        or not args.matched_lossy_control_volume
+    ):
+        parser.error(
+            "--full-sio2-q-control-volume requires Palik SiO2/Si and "
+            "--matched-lossy-control-volume"
         )
     reduced_smoke = args.execution_contract in (
         "diagnostic-smoke",
@@ -427,6 +450,7 @@ def parse_args() -> argparse.Namespace:
         or args.local_xy_mesh_nm <= 0
         or args.simulation_time_ps <= 0
         or args.auto_shutoff_min <= 0
+        or args.sio2_q_dz_nm <= 0
     ):
         parser.error("waist, flake dz, simulation time, and shutoff must be positive")
     args.outer_local_xy_mesh_nm = (
@@ -670,6 +694,11 @@ def parse_args() -> argparse.Namespace:
         -FLAKE_THICKNESS_M,
         TI_THICKNESS_M + AU_THICKNESS_M if args.include_electrodes else 0.0,
     )
+    if args.full_sio2_q_control_volume:
+        args.absorption_bounds_m["z"] = (
+            -(FLAKE_THICKNESS_M + SIO2_THICKNESS_M),
+            TI_THICKNESS_M + AU_THICKNESS_M if args.include_electrodes else 0.0,
+        )
     source_half_span_um = 0.5 * args.source_span_um
     source_clearance_um = {
         "x_min": args.beam_x_um - source_half_span_um + 0.5 * args.domain_um,
@@ -1882,6 +1911,28 @@ def add_geometry_and_monitors(
     mesh["dy"] = args.local_xy_mesh_nm * 1e-9
     mesh["dz"] = args.flake_dz_nm * 1e-9
 
+    oxide_q_mesh_bounds = None
+    if args.full_sio2_q_control_volume:
+        oxide_q_mesh_bounds = {
+            "x": fine_mesh_bounds["x"],
+            "y": fine_mesh_bounds["y"],
+            "z": (
+                inner_box["z"][0],
+                -FLAKE_THICKNESS_M,
+            ),
+        }
+        oxide_mesh = fdtd.addmesh()
+        oxide_mesh["name"] = "full_sio2_q_mesh"
+        oxide_mesh["x min"], oxide_mesh["x max"] = oxide_q_mesh_bounds["x"]
+        oxide_mesh["y min"], oxide_mesh["y max"] = oxide_q_mesh_bounds["y"]
+        oxide_mesh["z min"], oxide_mesh["z max"] = oxide_q_mesh_bounds["z"]
+        oxide_mesh["override x mesh"] = 1
+        oxide_mesh["override y mesh"] = 1
+        oxide_mesh["override z mesh"] = 1
+        oxide_mesh["dx"] = args.local_xy_mesh_nm * 1e-9
+        oxide_mesh["dy"] = args.local_xy_mesh_nm * 1e-9
+        oxide_mesh["dz"] = args.sio2_q_dz_nm * 1e-9
+
     source = fdtd.addgaussian()
     source["name"] = base.SOURCE_NAME
     source["injection axis"] = "z"
@@ -2094,6 +2145,14 @@ def add_geometry_and_monitors(
             "TaIrTe4_only_Q_requires_material_support_decomposition": bool(
                 args.substrate_optical_model == "lumerical-palik-11um"
             ),
+            "full_SiO2_Q_control_volume": bool(
+                args.full_sio2_q_control_volume
+            ),
+            "SiO2_Q_z_mesh_m": (
+                args.sio2_q_dz_nm * 1e-9
+                if args.full_sio2_q_control_volume
+                else None
+            ),
         },
         "electrodes_in_optical_model": bool(
             args.case == "finite-flake" and args.include_electrodes
@@ -2240,6 +2299,16 @@ def add_geometry_and_monitors(
             ),
             "source_support_outside_fine_region_is_preserved": True,
             "TaIrTe4_z_override_m": args.flake_dz_nm * 1e-9,
+            "full_SiO2_Q_override": (
+                None
+                if oxide_q_mesh_bounds is None
+                else {
+                    "bounds_m": oxide_q_mesh_bounds,
+                    "dx_m": args.local_xy_mesh_nm * 1e-9,
+                    "dy_m": args.local_xy_mesh_nm * 1e-9,
+                    "dz_m": args.sio2_q_dz_nm * 1e-9,
+                }
+            ),
             "far_air_SiO2_Si": "wavelength-appropriate automatic coarse mesh",
         },
         "execution_contract": args.execution_contract,
@@ -3673,6 +3742,32 @@ def append_flake_substrate_absorption_audit(
         for axis in "xyz"
     }
     q_total = np.asarray(artifact["Q_on_W_m3"], float)
+    flake_xy = np.any(mask, axis=2)
+    at_oxide_bottom = np.isclose(
+        z_m,
+        -(FLAKE_THICKNESS_M + SIO2_THICKNESS_M),
+        rtol=0.0,
+        atol=1.0e-15,
+    )
+    at_flake_bottom = np.isclose(
+        z_m,
+        -FLAKE_THICKNESS_M,
+        rtol=0.0,
+        atol=1.0e-15,
+    )
+    sio2_interior_z = (
+        (z_m > -(FLAKE_THICKNESS_M + SIO2_THICKNESS_M))
+        & (z_m < -FLAKE_THICKNESS_M)
+    ) | at_oxide_bottom
+    sio2_mask = np.broadcast_to(
+        sio2_interior_z[None, None, :],
+        mask.shape,
+    ).copy()
+    if np.any(at_flake_bottom):
+        sio2_mask[:, :, at_flake_bottom] = (~flake_xy)[:, :, None]
+    sio2_mask &= ~mask
+    if not args.full_sio2_q_control_volume:
+        sio2_mask[:] = False
 
     def integrate(values: np.ndarray) -> float:
         return float(base.integrate_xyz(values, x_m, y_m, z_m))
@@ -3689,9 +3784,16 @@ def append_flake_substrate_absorption_audit(
         axis: full_component[axis] - flake_component[axis]
         for axis in "xyz"
     }
+    sio2_component = {
+        axis: integrate(
+            np.where(sio2_mask, np.asarray(artifact[key], float), 0.0)
+        )
+        for axis, key in component_keys.items()
+    }
     p_full = float(sum(full_component.values()))
     p_flake = float(sum(flake_component.values()))
     p_outside = float(sum(outside_component.values()))
+    p_sio2 = float(sum(sio2_component.values()))
     residual = p_full - (p_flake + p_outside)
     denominator = max(abs(p_full), np.finfo(float).tiny)
     z0 = np.isclose(z_m, 0.0, rtol=0.0, atol=1.0e-15)
@@ -3718,15 +3820,26 @@ def append_flake_substrate_absorption_audit(
         "full_control_volume_component_power_W": full_component,
         "TaIrTe4_exact_support_component_power_W": flake_component,
         "outside_TaIrTe4_support_component_power_W": outside_component,
+        "SiO2_exact_support_component_power_W": sio2_component,
         "P_Q_full_control_volume_W": p_full,
         "P_Q_TaIrTe4_exact_support_W": p_flake,
         "P_Q_outside_TaIrTe4_support_W": p_outside,
+        "P_Q_SiO2_exact_support_W": p_sio2,
+        "P_Q_TaIrTe4_plus_SiO2_W": p_flake + p_sio2,
         "outside_fraction_of_full_control_volume": p_outside / denominator,
         "signed_decomposition_residual_W": residual,
         "relative_decomposition_residual": abs(residual) / denominator,
         "interface_sample_power": interface_power,
         "raw_Q_preserved": True,
         "derived_TaIrTe4_Q_is_not_global_rescaling": True,
+        "full_SiO2_Q_control_volume": bool(
+            args.full_sio2_q_control_volume
+        ),
+        "SiO2_support_assignment": (
+            "analytic z support from -415 to -130 nm; the -415-nm sample "
+            "is assigned to SiO2, while the -130-nm sample is assigned to "
+            "TaIrTe4 where the flake exists and to SiO2 elsewhere"
+        ),
         "thermal_use_contract": (
             "only the derived TaIrTe4-support volumetric Q may enter the "
             "paper-like TaIrTe4 thermal source; substrate absorption is "
@@ -3749,6 +3862,8 @@ def append_flake_substrate_absorption_audit(
     metadata["material_resolved_absorption"] = material_audit
     artifact["metadata_json"] = np.asarray([json.dumps(base.jsonable(metadata))])
     artifact["Q_TaIrTe4_only_W_m3"] = np.where(mask, q_total, 0.0)
+    artifact["exact_SiO2_mask"] = sio2_mask
+    artifact["Q_SiO2_only_W_m3"] = np.where(sio2_mask, q_total, 0.0)
     for axis, key in component_keys.items():
         artifact[f"Q{axis}_TaIrTe4_only_W_m3"] = np.where(
             mask,
