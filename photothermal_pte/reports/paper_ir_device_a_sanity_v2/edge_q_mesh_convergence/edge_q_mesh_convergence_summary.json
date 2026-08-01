@@ -1,0 +1,266 @@
+{
+  "status": "COMPLETED_EDGE_Q_MESH_CONVERGENCE_ANALYSIS",
+  "contract": {
+    "geometry": "straight-45-edge (flake y <= x), 12 um domain",
+    "source": "edge-isolation-smoke Gaussian, nominal w0 = 2 um",
+    "meshes_nm": [
+      50.0,
+      25.0,
+      12.5
+    ],
+    "flake_dz_nm": 5.0,
+    "tangent_window_um": 2.0,
+    "profile_bin_um": 0.05
+  },
+  "runs": {
+    "a/50": {
+      "directory": "w2edge_conv_a_xy50_dz5_t4_gpu4_20260801",
+      "mesh_nm": 50.0,
+      "source_power_W": 2.1904931343096706e-15,
+      "P_Q_W": 8.781636953794589e-17,
+      "absorbed_fraction_of_source": 0.04008977164204673,
+      "component_power_W": {
+        "Qx": 1.8723680849781418e-17,
+        "Qy": 6.849109550669182e-17,
+        "Qz": 6.015931814726654e-19
+      },
+      "six_face_relative_closure": 0.0024625507673234764,
+      "auto_shutoff_final_value": 4.13006e-05,
+      "band_fraction_of_flake_absorption": {
+        "0.25um": 0.11366290908767497,
+        "0.5um": 0.22134651603554933
+      },
+      "edge_peak_over_plateau": 2.6589869280601826,
+      "plateau_level_per_W_m2": 1161878196.547002,
+      "edge_peak_per_W_m2": 3089418936.616618
+    },
+    "a/25": {
+      "directory": "w2edge_conv_a_xy25_dz5_t4_gpu4_20260801",
+      "mesh_nm": 25.0,
+      "source_power_W": 2.190625383986545e-15,
+      "P_Q_W": 8.726195531428061e-17,
+      "absorbed_fraction_of_source": 0.03983426648488821,
+      "component_power_W": {
+        "Qx": 1.8703107034273546e-17,
+        "Qy": 6.796695062659217e-17,
+        "Qz": 5.918976534149009e-19
+      },
+      "six_face_relative_closure": 0.0014654605415586773,
+      "auto_shutoff_final_value": 4.13404e-05,
+      "band_fraction_of_flake_absorption": {
+        "0.25um": 0.10932270006200208,
+        "0.5um": 0.21683322662947166
+      },
+      "edge_peak_over_plateau": 1.9522662180652164,
+      "plateau_level_per_W_m2": 1182874153.1366696,
+      "edge_peak_per_W_m2": 2309285249.3912215
+    },
+    "a/12p5": {
+      "directory": "w2edge_conv_a_xy12p5_dz5_t4_gpu4_20260801",
+      "mesh_nm": 12.5,
+      "source_power_W": 2.190658447024894e-15,
+      "P_Q_W": 8.70020476627149e-17,
+      "absorbed_fraction_of_source": 0.03971502165518832,
+      "component_power_W": {
+        "Qx": 1.870672368127162e-17,
+        "Qy": 6.770648603946869e-17,
+        "Qz": 5.888379419745794e-19
+      },
+      "six_face_relative_closure": 0.0008978783471775953,
+      "auto_shutoff_final_value": 4.13457e-05,
+      "band_fraction_of_flake_absorption": {
+        "0.25um": 0.10719598497905557,
+        "0.5um": 0.21462032063370623
+      },
+      "edge_peak_over_plateau": 1.9662169170203012,
+      "plateau_level_per_W_m2": 1167470136.9776292,
+      "edge_peak_per_W_m2": 2295499533.441423
+    },
+    "b/50": {
+      "directory": "w2edge_conv_b_xy50_dz5_t4_gpu0_20260801",
+      "mesh_nm": 50.0,
+      "source_power_W": 2.1904931343096706e-15,
+      "P_Q_W": 9.767694243902183e-17,
+      "absorbed_fraction_of_source": 0.04459130271129771,
+      "component_power_W": {
+        "Qx": 9.49116586875103e-17,
+        "Qy": 2.4717982751900196e-18,
+        "Qz": 2.934854763215008e-19
+      },
+      "six_face_relative_closure": 0.00026962501606152164,
+      "auto_shutoff_final_value": 4.19121e-05,
+      "band_fraction_of_flake_absorption": {
+        "0.25um": 0.09911319291747504,
+        "0.5um": 0.17893960423592953
+      },
+      "edge_peak_over_plateau": 1.909850046380728,
+      "plateau_level_per_W_m2": 1597855723.9285254,
+      "edge_peak_per_W_m2": 3051664828.454606
+    },
+    "b/25": {
+      "directory": "w2edge_conv_b_xy25_dz5_t4_gpu0_20260801",
+      "mesh_nm": 25.0,
+      "source_power_W": 2.190625383986545e-15,
+      "P_Q_W": 9.679799880010825e-17,
+      "absorbed_fraction_of_source": 0.04418738115047004,
+      "component_power_W": {
+        "Qx": 9.40208504759401e-17,
+        "Qy": 2.487539501129772e-18,
+        "Qz": 2.8960882303838206e-19
+      },
+      "six_face_relative_closure": 0.00037471383575830625,
+      "auto_shutoff_final_value": 4.21265e-05,
+      "band_fraction_of_flake_absorption": {
+        "0.25um": 0.09644357603646467,
+        "0.5um": 0.17671321769066525
+      },
+      "edge_peak_over_plateau": 1.4484762127299482,
+      "plateau_level_per_W_m2": 1621614180.4954236,
+      "edge_peak_per_W_m2": 2348869566.6731896
+    },
+    "b/12p5": {
+      "directory": "w2edge_conv_b_xy12p5_dz5_t4_gpu0_20260801",
+      "mesh_nm": 12.5,
+      "source_power_W": 2.190658447024894e-15,
+      "P_Q_W": 9.635705585263125e-17,
+      "absorbed_fraction_of_source": 0.04398543094816655,
+      "component_power_W": {
+        "Qx": 9.357208097181206e-17,
+        "Qy": 2.4971116244825888e-18,
+        "Qz": 2.8786325633658835e-19
+      },
+      "six_face_relative_closure": 0.00035305341722774214,
+      "auto_shutoff_final_value": 4.23251e-05,
+      "band_fraction_of_flake_absorption": {
+        "0.25um": 0.09509306089386087,
+        "0.5um": 0.17558352817416767
+      },
+      "edge_peak_over_plateau": 1.4553176257448295,
+      "plateau_level_per_W_m2": 1599733312.893437,
+      "edge_peak_per_W_m2": 2328120086.744987
+    }
+  },
+  "convergence": {
+    "a": {
+      "band_fraction_0.25um": {
+        "values_50_25_12p5": [
+          0.11366290908767497,
+          0.10932270006200208,
+          0.10719598497905557
+        ],
+        "rel_change_50_to_25": 0.03818491942982939,
+        "rel_change_25_to_12p5": 0.019453554309766877,
+        "convergence_ratio": 0.5094564713044831
+      },
+      "band_fraction_0.5um": {
+        "values_50_25_12p5": [
+          0.22134651603554933,
+          0.21683322662947166,
+          0.21462032063370623
+        ],
+        "rel_change_50_to_25": 0.020390153352821776,
+        "rel_change_25_to_12p5": 0.010205566878119106,
+        "convergence_ratio": 0.5005144738995682
+      },
+      "edge_peak_over_plateau": {
+        "values_50_25_12p5": [
+          2.6589869280601826,
+          1.9522662180652164,
+          1.9662169170203012
+        ],
+        "rel_change_50_to_25": 0.2657857030198121,
+        "rel_change_25_to_12p5": 0.007145899891107371,
+        "convergence_ratio": 0.02688594536845612
+      },
+      "absorbed_fraction_of_source": {
+        "values_50_25_12p5": [
+          0.04008977164204673,
+          0.03983426648488821,
+          0.03971502165518832
+        ],
+        "rel_change_50_to_25": 0.006373325331954272,
+        "rel_change_25_to_12p5": 0.002993523923557803,
+        "convergence_ratio": 0.4696957659683582
+      },
+      "edge_peak_per_W_m2": {
+        "values_50_25_12p5": [
+          3089418936.616618,
+          2309285249.3912215,
+          2295499533.441423
+        ],
+        "rel_change_50_to_25": 0.2525179340292907,
+        "rel_change_25_to_12p5": 0.005969689519054782,
+        "convergence_ratio": 0.02364065563106631
+      }
+    },
+    "b": {
+      "band_fraction_0.25um": {
+        "values_50_25_12p5": [
+          0.09911319291747504,
+          0.09644357603646467,
+          0.09509306089386087
+        ],
+        "rel_change_50_to_25": 0.026935030568868746,
+        "rel_change_25_to_12p5": 0.014003163280602325,
+        "convergence_ratio": 0.519886667468165
+      },
+      "band_fraction_0.5um": {
+        "values_50_25_12p5": [
+          0.17893960423592953,
+          0.17671321769066525,
+          0.17558352817416767
+        ],
+        "rel_change_50_to_25": 0.01244211171009864,
+        "rel_change_25_to_12p5": 0.00639278448585037,
+        "convergence_ratio": 0.5138022093678573
+      },
+      "edge_peak_over_plateau": {
+        "values_50_25_12p5": [
+          1.909850046380728,
+          1.4484762127299482,
+          1.4553176257448295
+        ],
+        "rel_change_50_to_25": 0.24157594703579416,
+        "rel_change_25_to_12p5": 0.004723179403814472,
+        "convergence_ratio": 0.019551530116177676
+      },
+      "absorbed_fraction_of_source": {
+        "values_50_25_12p5": [
+          0.04459130271129771,
+          0.04418738115047004,
+          0.04398543094816655
+        ],
+        "rel_change_50_to_25": 0.009058303666139193,
+        "rel_change_25_to_12p5": 0.00457031390060865,
+        "convergence_ratio": 0.5045441253744806
+      },
+      "edge_peak_per_W_m2": {
+        "values_50_25_12p5": [
+          3051664828.454606,
+          2348869566.6731896,
+          2328120086.744987
+        ],
+        "rel_change_50_to_25": 0.23029896836256394,
+        "rel_change_25_to_12p5": 0.00883381530528792,
+        "convergence_ratio": 0.038358032465784564
+      }
+    }
+  },
+  "a_over_b_contrast_by_mesh": {
+    "50": {
+      "edge_band_0.5um_fraction_a_over_b": 1.2369900837810441,
+      "edge_peak_over_plateau_a_over_b": 1.3922490580342215,
+      "absorbed_fraction_a_over_b": 0.899049124032197
+    },
+    "25": {
+      "edge_band_0.5um_fraction_a_over_b": 1.2270345674370329,
+      "edge_peak_over_plateau_a_over_b": 1.3478068889966603,
+      "absorbed_fraction_a_over_b": 0.9014851174194215
+    },
+    "12p5": {
+      "edge_band_0.5um_fraction_a_over_b": 1.2223260511134995,
+      "edge_peak_over_plateau_a_over_b": 1.3510568979840358,
+      "absorbed_fraction_a_over_b": 0.9029130964293478
+    }
+  }
+}

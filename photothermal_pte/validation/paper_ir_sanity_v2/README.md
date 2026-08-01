@@ -39,6 +39,23 @@ python photothermal_pte/validation/paper_ir_sanity_v2/run_device_a_offline_sensi
 Results: `photothermal_pte/reports/paper_ir_device_a_sanity_v2/`
 (`DEVICE_A_SANITY_V2_REPORT.md` plus JSON/CSV/figures).
 
-This check is diagnostic post-processing only.  It does not test edge-mesh
-convergence of the optical Q, metal heat sinking, SiO2 IR loss, the
-`eps_c = eps_b` closure, or beam assumptions; those require new solves.
+This check is diagnostic post-processing only.  It does not test metal
+heat sinking, SiO2 IR loss, the `eps_c = eps_b` closure, or beam
+assumptions; those require new solves.
+
+## Edge optical-Q mesh convergence (follow-up, GPU)
+
+`analyze_edge_q_mesh_convergence.py` post-processes the six
+`w2edge_conv_{a,b}_xy{50,25,12p5}_dz5_t4_*_20260801` edge-isolation-smoke
+runs (straight 45-deg edge, 12-um domain, uniform local mesh
+50/25/12.5 nm, both polarizations) and answers the one question the v2
+offline check left open: whether the E||a edge-localized Q is a mesh
+artifact.  Result (see
+`../../reports/paper_ir_device_a_sanity_v2/edge_q_mesh_convergence/`):
+the edge hotspot is real and converged by 25 nm (25 -> 12.5 nm moves
+every metric < 1 %); the 50-nm mesh overestimates only the edge *peak*
+(~25 %, both polarizations alike) while band-integrated edge power is
+within ~2-3 % at 50 nm; the a/b contrast is mesh-stable (1.237 -> 1.222),
+so mesh refinement cannot reconcile |Ia|/|Ib| = 1.62 with the paper's
+0.837.  The remaining suspects are physical-model assumptions (real edge
+non-ideality, metal heat sinking, SiO2 loss, eps_c closure, beam).
