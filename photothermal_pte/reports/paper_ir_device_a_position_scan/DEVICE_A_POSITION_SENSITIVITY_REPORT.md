@@ -17,6 +17,21 @@ The analytic source already inputs the larger b-polarized TMM absorption and
 is a control, not a paper reproduction. No empirical current normalization,
 polarization matching, Q clipping, smoothing, gain, or rescaling was used.
 
+
+## Au/Ti optical-scattering diagnostic
+
+The single approved s0 E||a Au/Ti-off GPU diagnostic passed its optical and
+thermal gates.  Its equal-power TaIrTe4 depth-integrated-Q NRMSE was
+`13.3168%`, but the edge-localized power
+fraction changed by only `0.6569%`
+and the largest isolated/perfect terminal-current change was
+`1.0556%`.
+Therefore the predeclared 10% all-three rule gives
+`contact_optical_scattering_dominant=False`.
+This is an optical-scattering diagnostic, not an electrode-free device or
+paper reproduction.
+
+
 All displayed gradient and local-integrand maps use the strict four-neighbour
 mask requested by the user: a cell is hidden if any of ±x or ±y lies outside
 the TaIrTe4 mask. Temperature and Q maps retain the full physical flake.
