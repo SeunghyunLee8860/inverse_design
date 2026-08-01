@@ -69,6 +69,7 @@ PRODUCTION_MATERIAL_NAME = "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure"
 LEGACY_MATERIAL_NAME = "TaIrTe4_DeviceA_lab_x_b_y_a_legacy_z16"
 MATERIAL_NAME = PRODUCTION_MATERIAL_NAME
 SIO2_MATERIAL = "paper_ir_SiO2_n1p38"
+SIO2_PALIK_MATERIAL = "SiO2 (Glass) - Palik"
 AU_MATERIAL = "Au (Gold) - CRC"
 TI_MATERIAL = "Ti (Titanium) - CRC"
 TI_THICKNESS_M = 5.0e-9
@@ -256,6 +257,28 @@ def parse_args() -> argparse.Namespace:
             "SHA-pinned calibration that realizes the physical 12-um target"
         ),
     )
+    parser.add_argument(
+        "--scenario-waist-um",
+        type=float,
+        default=None,
+        help=(
+            "named paper-consistent waist scenario: overrides the frozen "
+            "12-um production waist while keeping the full production "
+            "pipeline, monitors, normalization, and gates; recorded as an "
+            "explicit assumption, never as the frozen production source "
+            "contract"
+        ),
+    )
+    parser.add_argument(
+        "--sio2-model",
+        choices=("lossless-n1p38", "palik-lossy"),
+        default="lossless-n1p38",
+        help=(
+            "lossless n=1.38 SiO2 spacer (frozen production contract) or "
+            "the Lumerical built-in 'SiO2 (Glass) - Palik' sampled data "
+            "including the 8-13 um phonon absorption"
+        ),
+    )
     parser.add_argument("--beam-x-um", type=float, default=0.0)
     parser.add_argument("--beam-y-um", type=float, default=0.0)
     parser.add_argument(
@@ -323,10 +346,19 @@ def parse_args() -> argparse.Namespace:
         "diagnostic-smoke",
         "edge-isolation-smoke",
     )
+    if args.scenario_waist_um is not None:
+        if args.scenario_waist_um <= 0:
+            parser.error("scenario waist must be positive")
+        if args.execution_contract != "production":
+            parser.error(
+                "--scenario-waist-um is defined only on the production "
+                "pipeline"
+            )
+        args.waist_um = float(args.scenario_waist_um)
     if args.source_object_waist_um is None:
         args.source_object_waist_um = (
             source_contract.CALIBRATED_SOURCE_OBJECT_W0_M * 1.0e6
-            if not reduced_smoke
+            if not reduced_smoke and args.scenario_waist_um is None
             else args.waist_um
         )
     minimum_domain_um = 60.0 if not reduced_smoke else 10.0
@@ -339,6 +371,7 @@ def parse_args() -> argparse.Namespace:
         parser.error("source aperture needs at least 1 um PML clearance per side")
     if (
         args.execution_contract == "production"
+        and args.scenario_waist_um is None
         and not (
             np.isclose(args.domain_um, 60.0)
             and np.isclose(args.source_span_um, 50.0)
@@ -353,6 +386,14 @@ def parse_args() -> argparse.Namespace:
             "production scalar source contract is fixed at domain=60 um, "
             "source span=50 um, physical target w0=12 um, and the "
             "SHA-pinned calibrated Lumerical source-object input"
+        )
+    if args.scenario_waist_um is not None and not (
+        np.isclose(args.domain_um, 60.0)
+        and np.isclose(args.source_span_um, 50.0)
+    ):
+        parser.error(
+            "the named waist scenario keeps the frozen 60-um domain and "
+            "50-um source-span contract"
         )
     if (
         args.waist_um <= 0
@@ -1542,10 +1583,48 @@ def add_geometry_and_monitors(
         base.safe_set(fdtd, "FDTD", f"{axis} min bc", "PML")
         base.safe_set(fdtd, "FDTD", f"{axis} max bc", "PML")
 
-    material = fdtd.addmaterial("Dielectric")
-    fdtd.setmaterial(material, "name", SIO2_MATERIAL)
-    fdtd.setmaterial(SIO2_MATERIAL, "Refractive Index", 1.38)
+    if args.sio2_model == "lossless-n1p38":
+        material = fdtd.addmaterial("Dielectric")
+        fdtd.setmaterial(material, "name", SIO2_MATERIAL)
+        fdtd.setmaterial(SIO2_MATERIAL, "Refractive Index", 1.38)
+        sio2_material_name = SIO2_MATERIAL
+    else:
+        sio2_material_name = SIO2_PALIK_MATERIAL
     material_contract = add_device_a_material(fdtd, model, args)
+    sio2_frequency_hz = C0 / WAVELENGTH_M
+    sio2_index = complex(
+        np.asarray(
+            fdtd.getfdtdindex(
+                sio2_material_name,
+                np.asarray([sio2_frequency_hz]),
+                float(sio2_frequency_hz),
+                float(sio2_frequency_hz),
+            )
+        ).reshape(-1)[0]
+    )
+    sio2_epsilon = sio2_index**2
+    if args.sio2_model == "palik-lossy" and not sio2_epsilon.imag > 0.0:
+        raise RuntimeError(
+            "palik-lossy SiO2 is not lossy at 11 um in the solver fit: "
+            f"epsilon={sio2_epsilon}"
+        )
+    material_contract["sio2_contract"] = {
+        "model": args.sio2_model,
+        "material_name": sio2_material_name,
+        "fitted_epsilon_at_11um": {
+            "real": float(sio2_epsilon.real),
+            "imag": float(sio2_epsilon.imag),
+        },
+        "provenance": (
+            "frozen production lossless n=1.38 constant"
+            if args.sio2_model == "lossless-n1p38"
+            else (
+                "Ansys Lumerical v261 built-in Palik SiO2 sampled data "
+                "including the 8-13 um phonon absorption; explicit named "
+                "scenario, not the frozen production contract"
+            )
+        ),
+    }
 
     lateral_material_span = domain_m + 2.0e-6
     base.add_rect(
@@ -1572,7 +1651,7 @@ def add_geometry_and_monitors(
                 -FLAKE_THICKNESS_M,
             ),
         },
-        material=SIO2_MATERIAL,
+        material=sio2_material_name,
     )
     if args.case == "finite-flake":
         if args.geometry == "planar-stack":
@@ -1948,9 +2027,13 @@ def add_geometry_and_monitors(
             ),
             "source_object_calibration_field_NPZ_sha256": (
                 source_contract.CALIBRATION_BASELINE_FIELD_SHA256
-                if args.execution_contract == "production"
+                if (
+                    args.execution_contract == "production"
+                    and args.scenario_waist_um is None
+                )
                 else None
             ),
+            "scenario_waist_override_um": args.scenario_waist_um,
             "beam_center_m": [beam_x, beam_y],
             "fixed_local_mesh_center_m": [mesh_center_x, mesh_center_y],
             "source_only_offset_m": [
@@ -1967,8 +2050,15 @@ def add_geometry_and_monitors(
             "simulation_time_s": args.simulation_time_ps * 1e-12,
             "auto_shutoff_min": args.auto_shutoff_min,
             "scenario_label": (
-                "paper-like scalar-Gaussian scenario with an explicitly "
-                "assumed waist"
+                "named paper-consistent scenario: explicit waist and/or "
+                "lossy-SiO2 override on the full production pipeline; not "
+                "the frozen production source contract"
+                if (
+                    args.scenario_waist_um is not None
+                    or args.sio2_model != "lossless-n1p38"
+                )
+                else "paper-like scalar-Gaussian scenario with an "
+                "explicitly assumed waist"
             ),
             "experimentally_reproduced_beam": False,
             "paper_certified_beam": False,
@@ -3493,6 +3583,43 @@ def main() -> int:
     base.add_geometry_and_monitors = lambda fdtd, model, parsed: add_geometry_and_monitors(base, fdtd, model, parsed)
     base.assert_pre_run_contract = lambda fdtd, runtime, parsed, setup: assert_contract(base, fdtd, runtime, parsed, setup)
     base.plot_geometry = plot_geometry
+
+    original_load_incident_reference = base.load_incident_reference
+
+    def find_sio2_model(node: Any) -> Any:
+        if isinstance(node, dict):
+            contract_node = node.get("sio2_contract")
+            if isinstance(contract_node, dict) and "model" in contract_node:
+                return contract_node["model"]
+            for value in node.values():
+                found = find_sio2_model(value)
+                if found is not None:
+                    return found
+        elif isinstance(node, list):
+            for value in node:
+                found = find_sio2_model(value)
+                if found is not None:
+                    return found
+        return None
+
+    def load_incident_reference_checked(
+        parsed: argparse.Namespace,
+    ) -> dict[str, Any]:
+        payload = json.loads(
+            Path(str(parsed.incident_reference))
+            .expanduser()
+            .resolve()
+            .read_text()
+        )
+        reference_model = find_sio2_model(payload) or "lossless-n1p38"
+        if reference_model != parsed.sio2_model:
+            raise RuntimeError(
+                "incident reference SiO2 model mismatch: reference "
+                f"{reference_model!r} vs requested {parsed.sio2_model!r}"
+            )
+        return original_load_incident_reference(parsed)
+
+    base.load_incident_reference = load_incident_reference_checked
 
     original_run_case = base.run_case
 
