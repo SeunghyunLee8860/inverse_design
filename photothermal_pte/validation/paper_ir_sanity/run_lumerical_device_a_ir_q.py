@@ -3687,6 +3687,61 @@ def main() -> int:
                 setup["geometry"]["material_contract"],
                 dt_s=float(contract["material"]["epsilon_readback"]["dt_s"]),
             )
+            if (
+                parsed.sio2_model == "palik-lossy"
+                and parsed.case == "empty-stack"
+            ):
+                # These three gates encode "the empty reference stack is
+                # lossless", which is intentionally false under the lossy
+                # Palik SiO2 scenario: the reference volume now absorbs
+                # real power and the off-centre beam sees asymmetric
+                # lateral absorption.  The central downward
+                # incident-intensity measurement (taken in air above the
+                # stack from the -z travelling-wave decomposition) is
+                # unaffected, so the gates are replaced by a recorded
+                # absorption-sanity gate instead of being silently
+                # asserted or dropped.
+                lossless_stack_gates = (
+                    "lossless_volume_Q_fraction_lt_1e_4",
+                    "empty_six_face_residual_lt_0p5_percent",
+                    "opposite_lateral_flux_asymmetry_lt_1e_4",
+                )
+                acceptance = result.get("acceptance", {})
+                overridden = [
+                    gate
+                    for gate in lossless_stack_gates
+                    if gate in acceptance and not acceptance[gate]
+                ]
+                for gate in overridden:
+                    acceptance[gate] = True
+                incident_power = float(
+                    (result.get("normalization") or {}).get(
+                        "incident_power_W_at_1_W_m2", 0.0
+                    )
+                    or 0.0
+                )
+                absorbed = float(
+                    result.get("empty_stack_P_Q_W_at_1_W_m2", 0.0) or 0.0
+                )
+                fraction = (
+                    absorbed / incident_power
+                    if incident_power > 0.0
+                    else float("nan")
+                )
+                within_bounds = bool(0.0 < fraction < 0.2)
+                result["lossy_sio2_scenario_gate_note"] = {
+                    "overridden_lossless_stack_gates": overridden,
+                    "empty_stack_absorbed_fraction_of_incident": fraction,
+                    "reason": (
+                        "empty reference stack is intentionally lossy "
+                        "under --sio2-model palik-lossy; raw Q, six-face, "
+                        "and lateral-asymmetry values remain recorded "
+                        "unmodified in this payload"
+                    ),
+                }
+                acceptance[
+                    "lossy_sio2_empty_absorption_within_sanity_bounds"
+                ] = within_bounds
             return result
         finally:
             runtime.run_session = original
