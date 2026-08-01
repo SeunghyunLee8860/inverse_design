@@ -9,6 +9,12 @@
     "periodic": false,
     "boundaries": "six PML optical; explicit expanded thermal FVM"
   },
+  "heat_source_scope": {
+    "raw_optical_Q": "all electromagnetic loss inside the matched local control volume; this includes the upper 50 nm of lossy Palik SiO2 plus interface samples, the 130 nm TaIrTe4 layer, and 50 nm top padding",
+    "thermal_Q": "derived TaIrTe4-supported volumetric Q only",
+    "SiO2_absorption_used_as_thermal_source": false,
+    "reason": "the matched closure volume samples only the upper 50 nm of the 285 nm oxide and therefore is not a complete substrate-heating source"
+  },
   "substrate_readback": {
     "analysis_wavelength_m": 1.1e-05,
     "model": "lumerical-palik-11um",

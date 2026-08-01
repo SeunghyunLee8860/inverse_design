@@ -327,6 +327,19 @@ def main() -> int:
             "periodic": False,
             "boundaries": "six PML optical; explicit expanded thermal FVM",
         },
+        "heat_source_scope": {
+            "raw_optical_Q": (
+                "all electromagnetic loss inside the matched local control volume; "
+                "this includes the upper 50 nm of lossy Palik SiO2 plus interface "
+                "samples, the 130 nm TaIrTe4 layer, and 50 nm top padding"
+            ),
+            "thermal_Q": "derived TaIrTe4-supported volumetric Q only",
+            "SiO2_absorption_used_as_thermal_source": False,
+            "reason": (
+                "the matched closure volume samples only the upper 50 nm of the "
+                "285 nm oxide and therefore is not a complete substrate-heating source"
+            ),
+        },
         "substrate_readback": optical["a"]["run"]["substrate_epsilon_readback"],
         "cases": cases,
         "ratios": ratios,
@@ -397,6 +410,30 @@ PTE current, adjoint, or optimization.
   flake.
 - No clipping, smoothing, gain, global rescaling, tiling, or polarization
   matching was used.
+
+## FDTD geometry and source
+
+- Domain: `x,y=[-30,+30] um`, `z=[-3.415,+10] um`.
+- All six boundaries are PML with 24 layers; there is no periodic/Bloch face.
+- Scalar-Gaussian source plane: `z=+5 um`, square aperture `50 x 50 um2`,
+  propagation along `-z`, and focus/waist at the TaIrTe4 midplane `z=-65 nm`.
+- Target-plane physical waist radius: `8.75 um`; the calibrated Lumerical
+  source-object radius is `8.610602974768 um`.
+- The complete top/front/side/layer view is
+  [STRAIGHT_45_EDGE_FDTD_GEOMETRY_ALL_VIEWS.png](STRAIGHT_45_EDGE_FDTD_GEOMETRY_ALL_VIEWS.png).
+
+## SiO2 optical loss versus thermal source
+
+The answer is deliberately split.  The unmodified raw optical Q and its
+six-face closure include every loss sample in `z=[-180,+50] nm`, including
+the upper 50 nm of lossy Palik SiO2 and interface samples.  The present
+thermal solve did **not** use that SiO2 loss: it used the separately saved
+TaIrTe4-supported volumetric Q only.  The matched optical control volume
+does not cover the lower 235 nm of the oxide, so it cannot be presented as
+a complete explicit-substrate heating source.  A full-substrate thermal-Q
+case requires a new material-resolved Q extraction spanning the entire
+285 nm SiO2 (and any intended Si absorption), followed by conservative
+mapping into those thermal materials.
 
 ## Results
 
