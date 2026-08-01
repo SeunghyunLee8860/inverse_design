@@ -183,6 +183,7 @@ def main() -> int:
     parser.add_argument("--geometry-contract", type=Path, required=True)
     parser.add_argument("--case", action="append", type=parse_named_path, required=True)
     parser.add_argument("--primary-case", action="append", required=True)
+    parser.add_argument("--material-fdtd-started", action="store_true")
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -283,7 +284,7 @@ def main() -> int:
         "material_FDTD_authorized_waists_um": [
             case["target_waist_um"] for case in primary.values() if case["gate_passed"]
         ],
-        "material_FDTD_started": False,
+        "material_FDTD_started": bool(args.material_fdtd_started),
         "no_gate_relaxation_or_field_rescaling": True,
     }
     (args.output_dir / "device_a_waist_source_gate_summary.json").write_text(

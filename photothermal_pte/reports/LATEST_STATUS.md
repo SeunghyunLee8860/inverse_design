@@ -1,8 +1,33 @@
 # Latest photothermal validation status
 
+## Device-A w0=8.75 um Maxwell-to-PTE paper sanity check
+
+- Status: `COMPLETED_DEVICE_A_SINGLE_POSITION_SANITY_DISAGREES_WITH_DIGITIZED_CURRENT_RATIO`.
+- A one-step source-object calibration produced target-plane fitted waists
+  `8.7391/8.7710 um` (effective error `0.0580%`), fit NRMSE `0.2570%`,
+  ellipticity `0.3646%`, and auto-shutoff `3.901e-6`; every source gate passes.
+- Device-A `E||a/b` GPU Maxwell cases use the same 60-um six-PML domain,
+  50-um scalar source aperture, 50-nm local x/y mesh, 5-nm flake dz,
+  paper-consistent epsilon closure, and no CPU FDTD fallback. Their
+  `P_Q` values are `2.072511e-11 / 2.890062e-11 W` at 1 W/m2 central
+  intensity; six-face closure is `0.01939% / 0.09905%`.
+- At 285 uW incident power, the unchanged expanded explicit-3D operator gives
+  isolated-metal `Ia=12.6931 nA`, `Ib=9.12122 nA`, `|Ia|/|Ib|=1.391604`;
+  perfect-to-flake gives `Ia=12.7717 nA`, `Ib=9.12910 nA`, ratio `1.399008`.
+- The digitized paper ratio is `0.836590 +/- 0.008526`. Both named metal
+  extremes retain the opposite polarization trend. This is a completed
+  diagnostic disagreement, not an exact paper reproduction or final
+  experimental prediction; exact CAD, beam definition, hidden metal overlap,
+  and finite metal/TaIrTe4 interface data are not published.
+- All remap, residual, energy-balance, and weighting gates pass. No Q/current
+  matching, clipping, smoothing, gain, global rescaling, adjoint, AD-FD, or
+  optimization was used.
+- Report, JSON, CSV, plots, and external-artifact manifest:
+  `reports/paper_ir_device_a_waist_sweep/w8p75_device_a_end_to_end/`.
+
 ## Device-A explicit-waist source-only sensitivity
 
-- Status: `BLOCKED_DEVICE_A_WAIST_SWEEP_NO_SOURCE_GATE_PASSED`.
+- Status: `VALIDATED_AT_LEAST_ONE_DEVICE_A_WAIST_SOURCE_GATE`.
 - The paper SI defines `w0` as the 1/e2 intensity radius, while the main-text
   9--16 um diffraction-limited spot does not state a radius/diameter/FWHM
   convention. The tested 4.5, 6.5, and 8.0 um values are explicit
@@ -22,9 +47,9 @@
   failed scenarios. The non-monotonic small-waist result accompanies strong
   non-Gaussian/longitudinal-field content and is diagnostic only. The
   preserved validated 12-um large-beam source gives `4.2042%`.
-- Because no new waist passed the source gate, no Device-A material Q,
-  thermal, PTE, position scan, adjoint, AD-FD, or optimization case started.
-  No gate was relaxed and no field, Q, power, or current was rescaled.
+- The calibrated 8.75-um case passed and was advanced to the named Device-A
+  material/thermal/PTE sanity check above. The failed 4.5/6.5/8.0 fields were
+  not used. No gate was relaxed and no field, Q, power, or current was rescaled.
 - Report, JSON, CSV, figures, and external-artifact manifest:
   `reports/paper_ir_device_a_waist_sweep/`.
 

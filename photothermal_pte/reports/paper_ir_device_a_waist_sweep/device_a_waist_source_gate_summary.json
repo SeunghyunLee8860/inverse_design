@@ -1,5 +1,5 @@
 {
-  "status": "BLOCKED_DEVICE_A_WAIST_SWEEP_NO_SOURCE_GATE_PASSED",
+  "status": "VALIDATED_AT_LEAST_ONE_DEVICE_A_WAIST_SOURCE_GATE",
   "paper_spot_definition_ambiguity": true,
   "paper_SI_w0_definition": "1/e^2 intensity radius",
   "primary_cases": {
@@ -93,6 +93,32 @@
         "Gaussian_fit_NRMSE_lt_0p5_percent",
         "xy_ellipticity_lt_0p5_percent"
       ]
+    },
+    "w8p75_calibrated": {
+      "status": "VALIDATED_EXPLICIT_WAIST_SCALAR_GAUSSIAN_SOURCE_ONLY",
+      "gate_passed": true,
+      "target_waist_um": 8.75,
+      "source_object_waist_um": 8.610602974768,
+      "fitted_waist_x_um": 8.739128864800731,
+      "fitted_waist_y_um": 8.771046684858065,
+      "fitted_waist_effective_um": 8.755073229742734,
+      "waist_effective_relative_error": 0.0005797976848839426,
+      "Gaussian_fit_NRMSE": 0.0025696148381128404,
+      "ellipticity": 0.003645631075121585,
+      "boundary_max_intensity_over_peak": 3.507254896669817e-07,
+      "incident_plane_power_W_reintegrated": 1.4966633675666865e-13,
+      "incident_plane_power_W_reported": 1.4966633675666863e-13,
+      "incident_plane_reintegration_relative_error": 1.686655096537439e-16,
+      "top_electrode_power_fraction": 0.00498516349789071,
+      "bottom_electrode_power_fraction": 0.0022527443823213166,
+      "total_electrode_power_fraction": 0.0072379078802120266,
+      "flake_power_fraction": 0.7859846113732517,
+      "field_component_E2_fraction": {
+        "x": 0.9570643361732635,
+        "y": 0.0004867880450386778,
+        "z": 0.04244887578169784
+      },
+      "failed_gates": []
     }
   },
   "preserved_w12_large_beam_reference": {
@@ -121,7 +147,9 @@
     },
     "failed_gates": []
   },
-  "material_FDTD_authorized_waists_um": [],
-  "material_FDTD_started": false,
+  "material_FDTD_authorized_waists_um": [
+    8.75
+  ],
+  "material_FDTD_started": true,
   "no_gate_relaxation_or_field_rescaling": true
 }

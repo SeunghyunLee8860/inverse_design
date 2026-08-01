@@ -293,7 +293,18 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="include digitized 5-nm Ti / 50-nm Au top and bottom electrodes",
     )
-    parser.add_argument("--incident-reference")
+    parser.add_argument(
+        "--incident-reference",
+        help="polarization-matched empty-stack flux reference",
+    )
+    parser.add_argument(
+        "--source-only-reference",
+        help=(
+            "validated homogeneous-air source-only certificate for the "
+            "waist-sensitivity contract; distinct from the empty-stack "
+            "--incident-reference"
+        ),
+    )
     parser.add_argument(
         "--execution-contract",
         choices=(
@@ -425,12 +436,17 @@ def parse_args() -> argparse.Namespace:
         parser.error("finite-flake requires a matching empty-stack reference")
     args.waist_source_only_reference = None
     if args.execution_contract == "waist-sensitivity" and args.case == "finite-flake":
-        if not args.incident_reference:
+        if not args.source_only_reference:
             parser.error(
                 "waist-sensitivity finite-flake requires the matching "
-                "validated source-only result"
+                "validated --source-only-reference"
             )
-        reference_path = Path(args.incident_reference).expanduser().resolve()
+        if not args.incident_reference:
+            parser.error(
+                "waist-sensitivity finite-flake requires a matching "
+                "empty-stack --incident-reference"
+            )
+        reference_path = Path(args.source_only_reference).expanduser().resolve()
         if not reference_path.is_file():
             parser.error(f"source-only reference not found: {reference_path}")
         reference = json.loads(reference_path.read_text())
