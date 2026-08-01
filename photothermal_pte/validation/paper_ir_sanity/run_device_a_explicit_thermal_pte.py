@@ -503,23 +503,31 @@ def straight_edge_temperature_metrics(
         & (np.abs(x[:, None]) <= 12.0e-6)
         & (np.abs(y[None, :]) <= 12.0e-6)
     )
-    grad_x, grad_y = cell_gradient(average, mask, x, y)
+    grad_x, grad_y, centered_valid = strict_centered_cell_gradient(
+        average,
+        mask,
+        x,
+        y,
+    )
     # TaIrTe4 is y<=x; the outward normal toward air is (-x,+y)/sqrt(2).
     normal = np.asarray([-1.0, 1.0]) / np.sqrt(2.0)
     tangent_coordinate = (x[:, None] + y[None, :]) / np.sqrt(2.0)
+    normal_coordinate = (-x[:, None] + y[None, :]) / np.sqrt(2.0)
     grad_normal = normal[0] * grad_x + normal[1] * grad_y
     tangent = np.asarray([1.0, 1.0]) / np.sqrt(2.0)
     grad_tangent = tangent[0] * grad_x + tangent[1] * grad_y
     grad_magnitude = np.hypot(grad_x, grad_y)
 
-    air = ~mask
-    air_minus_x = np.zeros_like(mask)
-    air_minus_x[1:, :] = air[:-1, :]
-    air_plus_y = np.zeros_like(mask)
-    air_plus_y[:, :-1] = air[:, 1:]
-    edge_cells = mask & (air_minus_x | air_plus_y)
-    edge_window = edge_cells & (
-        np.abs(tangent_coordinate) <= edge_window_um * 1e-6
+    # The literal staircase-edge cells do not possess all four neighbours and
+    # are intentionally excluded.  Compare the nearest fully centred band
+    # inside the physical half-plane instead of inventing one-sided values at
+    # different face locations and combining them as one cell-centred vector.
+    lateral_step = max(float(np.max(np.diff(x))), float(np.max(np.diff(y))))
+    edge_window = (
+        centered_valid
+        & (normal_coordinate <= 0.0)
+        & (normal_coordinate >= -3.0 * lateral_step)
+        & (np.abs(tangent_coordinate) <= edge_window_um * 1e-6)
     )
     if not np.any(edge_window):
         raise RuntimeError("no straight-edge cells in the requested window")
@@ -530,6 +538,15 @@ def straight_edge_temperature_metrics(
     peak_index = np.unravel_index(peak_flat, grad_normal.shape)
     metrics = {
         "edge_definition": "TaIrTe4 y<=x; outward normal=(-x+y)/sqrt(2)",
+        "gradient_stencil": (
+            "strict centered x/y; a sample is masked unless all four "
+            "lateral neighbours lie inside TaIrTe4"
+        ),
+        "edge_comparator_band": (
+            "nearest fully centred interior band, -3*max(dx,dy)<=n<=0; "
+            "literal staircase-edge cells are excluded"
+        ),
+        "strict_centered_valid_cell_count": int(np.count_nonzero(centered_valid)),
         "edge_window_um": edge_window_um,
         "edge_cell_count": int(np.count_nonzero(edge_window)),
         "max_abs_edge_normal_gradient_K_m": float(np.max(selected)),
@@ -587,6 +604,7 @@ def load_and_map_q(
     result_path: Path,
     geometry: Geometry,
     metal_thermalization: str,
+    q_source: str,
 ) -> tuple[np.ndarray, dict[str, Any]]:
     result = json.loads(result_path.read_text())
     if result.get("status") != "COMPLETED":
@@ -595,8 +613,27 @@ def load_and_map_q(
         x = np.asarray(raw["x_m"], float)
         y = np.asarray(raw["y_m"], float)
         z = np.asarray(raw["z_m"], float)
-        q = np.asarray(raw["Q_on_W_m3"], float)
+        q_key = (
+            "Q_TaIrTe4_only_W_m3"
+            if q_source == "TaIrTe4-only"
+            else "Q_on_W_m3"
+        )
+        if q_key not in raw.files:
+            raise RuntimeError(
+                f"requested optical source {q_key!r} is absent from artifact"
+            )
+        q = np.asarray(raw[q_key], float)
     optical_geometry = result["pre_run_contract"]["geometry"]
+    substrate_contract = optical_geometry.get("substrate_optical_contract", {})
+    if (
+        substrate_contract.get("model") == "lumerical-palik-11um"
+        and q_source != "TaIrTe4-only"
+    ):
+        raise RuntimeError(
+            "lossy Palik substrate artifact must use --q-source "
+            "TaIrTe4-only; projecting full control-volume Q would silently "
+            "move substrate absorption into the flake"
+        )
     electrode = optical_geometry.get("electrode_material_contract") or {}
     xx, yy = np.meshgrid(x, y, indexing="ij")
     points = np.column_stack((xx.ravel(), yy.ravel()))
@@ -726,6 +763,9 @@ def load_and_map_q(
         "optical_result_path": str(result_path.resolve()),
         "optical_result_sha256": sha256(result_path),
         "experimental_incident_power_W": EXPERIMENTAL_INCIDENT_POWER_W,
+        "selected_Q_source": q_source,
+        "selected_Q_artifact_key": q_key,
+        "substrate_optical_contract": substrate_contract,
         "unit_central_intensity_incident_power_W": incident_at_unit,
         "physical_incident_power_scale": physical_scale,
         "metal_thermalization_scenario": metal_thermalization,
@@ -847,6 +887,16 @@ def main() -> int:
             "bound is a published finite metal-interface model"
         ),
     )
+    parser.add_argument(
+        "--q-source",
+        choices=("full-control-volume", "TaIrTe4-only"),
+        default="full-control-volume",
+        help=(
+            "select the raw full optical control-volume Q or the explicitly "
+            "material-resolved TaIrTe4-only derivative; lossy Palik "
+            "substrates require TaIrTe4-only"
+        ),
+    )
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=False)
     global FLAKE_VERTICES_UM, TOP_CONTACT_SEGMENT_UM, BOTTOM_CONTACT_SEGMENT_UM
@@ -901,6 +951,7 @@ def main() -> int:
         args.optical_case_dir / "case_result.json",
         geometry,
         args.metal_thermalization,
+        args.q_source,
     )
     expanded_geometry = geometry
     if args.thermal_model == "paper-reduced":

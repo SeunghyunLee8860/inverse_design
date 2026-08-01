@@ -68,7 +68,10 @@ PABS_PADDING_M = 50.0e-9
 PRODUCTION_MATERIAL_NAME = "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure"
 LEGACY_MATERIAL_NAME = "TaIrTe4_DeviceA_lab_x_b_y_a_legacy_z16"
 MATERIAL_NAME = PRODUCTION_MATERIAL_NAME
-SIO2_MATERIAL = "paper_ir_SiO2_n1p38"
+LEGACY_SIO2_MATERIAL = "paper_ir_SiO2_n1p38"
+PALIK_SIO2_MATERIAL = "SiO2 (Glass) - Palik"
+PALIK_SI_MATERIAL = "Si (Silicon) - Palik"
+SIO2_MATERIAL = LEGACY_SIO2_MATERIAL
 AU_MATERIAL = "Au (Gold) - CRC"
 TI_MATERIAL = "Ti (Titanium) - CRC"
 TI_THICKNESS_M = 5.0e-9
@@ -335,8 +338,46 @@ def parse_args() -> argparse.Namespace:
             "historical lossless epsilon_c=16 diagnostic"
         ),
     )
+    parser.add_argument(
+        "--substrate-optical-model",
+        choices=("legacy-lossless", "lumerical-palik-11um"),
+        default="legacy-lossless",
+        help=(
+            "legacy fixed lossless n values or the installed v261 Palik "
+            "SiO2/Si database models (including their 11-um loss)"
+        ),
+    )
+    parser.add_argument(
+        "--matched-lossy-control-volume",
+        action="store_true",
+        help=(
+            "make pabs_adv and the six flux faces share the same local "
+            "flake-plus-50-nm-padding volume; required for a lossy "
+            "substrate so total-volume closure is not confused with "
+            "TaIrTe4-only absorption"
+        ),
+    )
     parser.add_argument("--contract-only", action="store_true")
     args = parser.parse_args()
+    args.sio2_material_name = (
+        PALIK_SIO2_MATERIAL
+        if args.substrate_optical_model == "lumerical-palik-11um"
+        else LEGACY_SIO2_MATERIAL
+    )
+    args.si_material_name = (
+        PALIK_SI_MATERIAL
+        if args.substrate_optical_model == "lumerical-palik-11um"
+        else None
+    )
+    if (
+        args.substrate_optical_model == "lumerical-palik-11um"
+        and not args.matched_lossy_control_volume
+    ):
+        parser.error(
+            "the lossy Palik substrate requires "
+            "--matched-lossy-control-volume; otherwise P_Q and P_six "
+            "would refer to different absorbing volumes"
+        )
     reduced_smoke = args.execution_contract in (
         "diagnostic-smoke",
         "edge-isolation-smoke",
@@ -672,7 +713,7 @@ def parse_args() -> argparse.Namespace:
                 "intermediate half span must be smaller than the "
                 f"{outer_mesh_half_span_um:g}-um outer mesh half span"
             )
-    if reduced_smoke:
+    if reduced_smoke or args.matched_lossy_control_volume:
         # Use one nominal control volume for both pabs_adv and all six power
         # faces.  Post-run gates independently read the realized coordinates
         # and close the volume quadrature on the realized face locations.
@@ -908,6 +949,81 @@ def material_epsilon_readback(
         "finite_dt_z_vs_x_relative_difference": float(
             abs(numerical_z - numerical_x)
             / max(abs(numerical_x), np.finfo(float).tiny)
+        ),
+    }
+
+
+def substrate_epsilon_readback(
+    fdtd: Any,
+    args: argparse.Namespace,
+) -> dict[str, Any]:
+    """Read the actual fitted substrate optical constants at 11 um."""
+    frequency_hz = C0 / WAVELENGTH_M
+    frequency_ends = C0 / np.asarray(
+        [SOURCE_START_M, SOURCE_STOP_M],
+        float,
+    )
+    fmin = float(np.min(frequency_ends))
+    fmax = float(np.max(frequency_ends))
+    materials = {
+        "SiO2": args.sio2_material_name,
+        "Si": args.si_material_name,
+    }
+    readback: dict[str, Any] = {}
+    for label, material_name in materials.items():
+        if material_name is None:
+            n_value = complex(3.425, 0.0)
+            provenance = "object-defined nondispersive legacy value"
+        elif material_name == LEGACY_SIO2_MATERIAL:
+            n_value = complex(1.38, 0.0)
+            provenance = "object-defined nondispersive legacy value"
+        else:
+            raw_database_n = complex(
+                np.asarray(
+                    fdtd.getindex(
+                        material_name,
+                        np.asarray([frequency_hz]),
+                    )
+                ).reshape(-1)[0]
+            )
+            n_value = complex(
+                np.asarray(
+                    fdtd.getfdtdindex(
+                        material_name,
+                        np.asarray([frequency_hz]),
+                        fmin,
+                        fmax,
+                        1,
+                    )
+                ).reshape(-1)[0]
+            )
+            provenance = "installed Lumerical v261 material database fit"
+        if material_name is None or material_name == LEGACY_SIO2_MATERIAL:
+            raw_database_n = n_value
+        readback[label] = {
+            "material_name": (
+                material_name
+                if material_name is not None
+                else "object-defined n=3.425"
+            ),
+            "n_complex": complex_json(n_value),
+            "epsilon_r_complex": complex_json(n_value**2),
+            "raw_database_n_complex_at_11um": complex_json(raw_database_n),
+            "raw_database_epsilon_r_complex_at_11um": complex_json(
+                raw_database_n**2
+            ),
+            "FDTD_fit_band_m": [SOURCE_START_M, SOURCE_STOP_M],
+            "FDTD_uses_fitted_not_raw_database_value": bool(
+                material_name not in (None, LEGACY_SIO2_MATERIAL)
+            ),
+            "provenance": provenance,
+        }
+    return {
+        "analysis_wavelength_m": WAVELENGTH_M,
+        "model": args.substrate_optical_model,
+        "materials": readback,
+        "loss_is_retained": bool(
+            args.substrate_optical_model == "lumerical-palik-11um"
         ),
     }
 
@@ -1610,25 +1726,30 @@ def add_geometry_and_monitors(
         base.safe_set(fdtd, "FDTD", f"{axis} min bc", "PML")
         base.safe_set(fdtd, "FDTD", f"{axis} max bc", "PML")
 
-    material = fdtd.addmaterial("Dielectric")
-    fdtd.setmaterial(material, "name", SIO2_MATERIAL)
-    fdtd.setmaterial(SIO2_MATERIAL, "Refractive Index", 1.38)
+    if args.substrate_optical_model == "legacy-lossless":
+        material = fdtd.addmaterial("Dielectric")
+        fdtd.setmaterial(material, "name", args.sio2_material_name)
+        fdtd.setmaterial(args.sio2_material_name, "Refractive Index", 1.38)
     material_contract = add_device_a_material(fdtd, model, args)
 
     lateral_material_span = domain_m + 2.0e-6
-    base.add_rect(
-        fdtd,
-        "Si_substrate",
-        {
+    si_bounds = {
             "x": (-0.5 * lateral_material_span, 0.5 * lateral_material_span),
             "y": (-0.5 * lateral_material_span, 0.5 * lateral_material_span),
             "z": (
                 FDTD_Z_MIN_M - 0.5e-6,
                 -FLAKE_THICKNESS_M - SIO2_THICKNESS_M,
             ),
-        },
-        index=3.425,
-    )
+        }
+    if args.si_material_name is None:
+        base.add_rect(fdtd, "Si_substrate", si_bounds, index=3.425)
+    else:
+        base.add_rect(
+            fdtd,
+            "Si_substrate",
+            si_bounds,
+            material=args.si_material_name,
+        )
     base.add_rect(
         fdtd,
         "SiO2_spacer",
@@ -1640,7 +1761,7 @@ def add_geometry_and_monitors(
                 -FLAKE_THICKNESS_M,
             ),
         },
-        material=SIO2_MATERIAL,
+        material=args.sio2_material_name,
     )
     if args.case == "finite-flake":
         if args.geometry == "planar-stack":
@@ -1789,8 +1910,11 @@ def add_geometry_and_monitors(
     pabs["name"] = base.PABS_GROUP
     pabs_bounds = (
         inner_box
-        if args.execution_contract
-        in ("diagnostic-smoke", "edge-isolation-smoke")
+        if (
+            args.execution_contract
+            in ("diagnostic-smoke", "edge-isolation-smoke")
+            or args.matched_lossy_control_volume
+        )
         else {
             axis: (
                 absorption_bounds[axis][0] - PABS_PADDING_M,
@@ -1955,6 +2079,22 @@ def add_geometry_and_monitors(
             )
         ),
         "substrate": "285 nm SiO2 on Si",
+        "substrate_optical_contract": {
+            "model": args.substrate_optical_model,
+            "SiO2_material": args.sio2_material_name,
+            "Si_material": (
+                args.si_material_name
+                if args.si_material_name is not None
+                else "object-defined lossless n=3.425"
+            ),
+            "matched_local_absorption_control_volume": bool(
+                args.matched_lossy_control_volume
+            ),
+            "raw_Q_contains_all_loss_inside_control_volume": True,
+            "TaIrTe4_only_Q_requires_material_support_decomposition": bool(
+                args.substrate_optical_model == "lumerical-palik-11um"
+            ),
+        },
         "electrodes_in_optical_model": bool(
             args.case == "finite-flake" and args.include_electrodes
         ),
@@ -3510,6 +3650,114 @@ def append_device_a_material_absorption_audit(
     np.savez(artifact_path, **artifact)
 
 
+def append_flake_substrate_absorption_audit(
+    base: Any,
+    output: Path,
+    args: argparse.Namespace,
+    result: dict[str, Any],
+) -> None:
+    """Preserve full raw Q and publish an explicit TaIrTe4-only derivative."""
+    if args.case != "finite-flake":
+        return
+    artifact_path = output / "finite_q_on_artifact.npz"
+    if not artifact_path.is_file():
+        return
+    with np.load(artifact_path, allow_pickle=False) as stored:
+        artifact = {key: np.array(stored[key], copy=True) for key in stored.files}
+    mask = np.asarray(artifact["exact_flake_mask"], bool)
+    x_m = np.asarray(artifact["x_m"], float)
+    y_m = np.asarray(artifact["y_m"], float)
+    z_m = np.asarray(artifact["z_m"], float)
+    component_keys = {
+        axis: f"Q{axis}_W_m3"
+        for axis in "xyz"
+    }
+    q_total = np.asarray(artifact["Q_on_W_m3"], float)
+
+    def integrate(values: np.ndarray) -> float:
+        return float(base.integrate_xyz(values, x_m, y_m, z_m))
+
+    full_component = {
+        axis: integrate(np.asarray(artifact[key], float))
+        for axis, key in component_keys.items()
+    }
+    flake_component = {
+        axis: integrate(np.where(mask, np.asarray(artifact[key], float), 0.0))
+        for axis, key in component_keys.items()
+    }
+    outside_component = {
+        axis: full_component[axis] - flake_component[axis]
+        for axis in "xyz"
+    }
+    p_full = float(sum(full_component.values()))
+    p_flake = float(sum(flake_component.values()))
+    p_outside = float(sum(outside_component.values()))
+    residual = p_full - (p_flake + p_outside)
+    denominator = max(abs(p_full), np.finfo(float).tiny)
+    z0 = np.isclose(z_m, 0.0, rtol=0.0, atol=1.0e-15)
+    zbottom = np.isclose(
+        z_m,
+        -FLAKE_THICKNESS_M,
+        rtol=0.0,
+        atol=1.0e-15,
+    )
+    interface_power = {
+        "z0_full_control_volume_W": integrate(
+            np.where(z0[None, None, :], q_total, 0.0)
+        ),
+        "z_minus_130nm_full_control_volume_W": integrate(
+            np.where(zbottom[None, None, :], q_total, 0.0)
+        ),
+    }
+    material_audit = {
+        "classification": (
+            "material-support decomposition of the unmodified full raw Q; "
+            "the outside-mask term includes lossy substrate/air-padding "
+            "samples and interface discretization"
+        ),
+        "full_control_volume_component_power_W": full_component,
+        "TaIrTe4_exact_support_component_power_W": flake_component,
+        "outside_TaIrTe4_support_component_power_W": outside_component,
+        "P_Q_full_control_volume_W": p_full,
+        "P_Q_TaIrTe4_exact_support_W": p_flake,
+        "P_Q_outside_TaIrTe4_support_W": p_outside,
+        "outside_fraction_of_full_control_volume": p_outside / denominator,
+        "signed_decomposition_residual_W": residual,
+        "relative_decomposition_residual": abs(residual) / denominator,
+        "interface_sample_power": interface_power,
+        "raw_Q_preserved": True,
+        "derived_TaIrTe4_Q_is_not_global_rescaling": True,
+        "thermal_use_contract": (
+            "only the derived TaIrTe4-support volumetric Q may enter the "
+            "paper-like TaIrTe4 thermal source; substrate absorption is "
+            "reported separately and is not silently added to the flake"
+        ),
+    }
+    result["material_resolved_absorption"] = material_audit
+    result.setdefault("acceptance", {})[
+        "material_support_decomposition_residual_lt_1e_minus_12"
+    ] = material_audit["relative_decomposition_residual"] < 1.0e-12
+
+    metadata = json.loads(str(np.asarray(artifact["metadata_json"]).reshape(-1)[0]))
+    metadata["substrate_optical_model"] = args.substrate_optical_model
+    metadata["material_names"]["SiO2_spacer"] = args.sio2_material_name
+    metadata["material_names"]["Si_substrate"] = (
+        args.si_material_name
+        if args.si_material_name is not None
+        else "Object defined dielectric n=3.425"
+    )
+    metadata["material_resolved_absorption"] = material_audit
+    artifact["metadata_json"] = np.asarray([json.dumps(base.jsonable(metadata))])
+    artifact["Q_TaIrTe4_only_W_m3"] = np.where(mask, q_total, 0.0)
+    for axis, key in component_keys.items():
+        artifact[f"Q{axis}_TaIrTe4_only_W_m3"] = np.where(
+            mask,
+            np.asarray(artifact[key], float),
+            0.0,
+        )
+    np.savez(artifact_path, **artifact)
+
+
 def main() -> int:
     args = parse_args()
     if not APPROVED_API.joinpath("lumapi.py").is_file():
@@ -3569,7 +3817,7 @@ def main() -> int:
     base.INCIDENT_REFERENCE_Z_M = INCIDENT_Z_M
     base.INNER_BOX = args.inner_box
     base.MATERIAL_NAME = args.material_name
-    base.SIO2_MATERIAL = SIO2_MATERIAL
+    base.SIO2_MATERIAL = args.sio2_material_name
 
     # Let the audited base main own artifact hashing/provenance and Q extraction.
     base.parse_args = lambda: args
@@ -3608,6 +3856,9 @@ def main() -> int:
             append_device_a_material_absorption_audit(
                 base, output, parsed, result
             )
+            append_flake_substrate_absorption_audit(
+                base, output, parsed, result
+            )
             auto_shutoff = final_logged_auto_shutoff(output)
             result["auto_shutoff"] = auto_shutoff
             result.setdefault("acceptance", {})[
@@ -3643,6 +3894,39 @@ def main() -> int:
                 setup["geometry"]["material_contract"],
                 dt_s=float(contract["material"]["epsilon_readback"]["dt_s"]),
             )
+            result["substrate_epsilon_readback"] = (
+                substrate_epsilon_readback(fdtd, parsed)
+            )
+            if parsed.substrate_optical_model == "lumerical-palik-11um":
+                sio2_k = result["substrate_epsilon_readback"]["materials"][
+                    "SiO2"
+                ]["n_complex"]["imag"]
+                si_k = result["substrate_epsilon_readback"]["materials"][
+                    "Si"
+                ]["n_complex"]["imag"]
+                result.setdefault("acceptance", {})[
+                    "Palik_SiO2_and_Si_loss_readback_positive"
+                ] = bool(sio2_k > 0.0 and si_k > 0.0)
+                if parsed.case == "empty-stack":
+                    legacy_lossless_gate = result["acceptance"].pop(
+                        "lossless_volume_Q_fraction_lt_1e_4",
+                        None,
+                    )
+                    result["legacy_lossless_empty_stack_gate"] = {
+                        "gate": "lossless_volume_Q_fraction_lt_1e_4",
+                        "recorded_value": legacy_lossless_gate,
+                        "applicable": False,
+                        "reason": (
+                            "the Palik SiO2/Si background intentionally has "
+                            "positive optical loss at 11 um"
+                        ),
+                    }
+                    empty_q = float(
+                        result.get("empty_stack_P_Q_W_at_1_W_m2", 0.0)
+                    )
+                    result["acceptance"][
+                        "lossy_empty_stack_volume_absorption_positive"
+                    ] = bool(np.isfinite(empty_q) and empty_q > 0.0)
             return result
         finally:
             runtime.run_session = original
