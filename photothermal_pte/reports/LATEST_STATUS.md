@@ -1,5 +1,33 @@
 # Latest photothermal validation status
 
+## Device-A explicit-waist source-only sensitivity
+
+- Status: `BLOCKED_DEVICE_A_WAIST_SWEEP_NO_SOURCE_GATE_PASSED`.
+- The paper SI defines `w0` as the 1/e2 intensity radius, while the main-text
+  9--16 um diffraction-limited spot does not state a radius/diameter/FWHM
+  convention. The tested 4.5, 6.5, and 8.0 um values are explicit
+  diameter-interpretation scenarios, not paper-certified beam values.
+- All three v261 GPU-only source cases passed six-PML, completion,
+  auto-shutoff, aperture-capture, finite-field, and no-CPU-fallback checks,
+  but none passed the predeclared strict realized-Gaussian gate.
+- The 4.5-um case realized `5.705/5.749 um` with `1.8182%` fit NRMSE; the
+  6.5-um case realized `6.865/6.920 um` with `1.4536%` NRMSE. A one-step
+  input calibration did not close either source.
+- The calibrated 8-um case realized `7.995/8.036 um`; its remaining failures
+  are `0.5773%` fit NRMSE and `0.5184%` ellipticity versus 0.5% gates.
+  Mesh-accuracy 5->6 did not improve them, so the discrepancy is not waived
+  as a coarse homogeneous-air-grid artifact.
+- Exact target-plane Poynting integration over the digitized Au/Ti polygons
+  gives `0.2565%`, `0.0302%`, and `0.3196%` for the three named primary
+  failed scenarios. The non-monotonic small-waist result accompanies strong
+  non-Gaussian/longitudinal-field content and is diagnostic only. The
+  preserved validated 12-um large-beam source gives `4.2042%`.
+- Because no new waist passed the source gate, no Device-A material Q,
+  thermal, PTE, position scan, adjoint, AD-FD, or optimization case started.
+  No gate was relaxed and no field, Q, power, or current was rescaled.
+- Report, JSON, CSV, figures, and external-artifact manifest:
+  `reports/paper_ir_device_a_waist_sweep/`.
+
 ## Device-A beam-position and Au/Ti optical diagnostics
 
 - Status: `ROBUST_MAXWELL_REVERSAL`.
