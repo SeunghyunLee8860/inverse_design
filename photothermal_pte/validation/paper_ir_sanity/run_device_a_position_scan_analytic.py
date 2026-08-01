@@ -51,6 +51,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--scan-contract", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--report-dir", type=Path, required=True)
+    parser.add_argument("--thermal-domain-um", type=float, default=60.0)
+    parser.add_argument("--artifact-tag", default="60um")
     return parser.parse_args()
 
 
@@ -126,7 +128,7 @@ def analytic_q(
 
 
 def configure_geometry(
-    geometry_path: Path,
+    geometry_path: Path, thermal_domain_um: float,
 ) -> tuple[thermal.Geometry, dict[str, Any], dict[str, Any]]:
     raw = json.loads(geometry_path.read_text())
     from photothermal_pte.validation.paper_ir_sanity.run_lumerical_device_a_ir_q import (
@@ -147,7 +149,7 @@ def configure_geometry(
         raw["bottom_electrical_contact_segment_code_um"], float
     ) + shift
     geometry = thermal.build_geometry(
-        domain_m=48.0e-6,
+        domain_m=thermal_domain_um * 1e-6,
         si_depth_m=20.0e-6,
         core_step_m=100.0e-9,
         flake_dz_m=10.0e-9,
@@ -226,7 +228,9 @@ def main() -> int:
     args.output_dir.mkdir(parents=True, exist_ok=False)
     args.report_dir.mkdir(parents=True, exist_ok=True)
     scan = json.loads(args.scan_contract.read_text())
-    geometry, frozen, raw_geometry = configure_geometry(args.geometry_contract)
+    geometry, frozen, raw_geometry = configure_geometry(
+        args.geometry_contract, args.thermal_domain_um
+    )
     system = assemble(geometry)
     flake_xy = np.any(geometry.flake_mask, axis=2)
     psi, grad_psi_x, grad_psi_y, weighting = thermal.solve_weighting_potential(
@@ -314,16 +318,22 @@ def main() -> int:
         ratio = abs(a) / abs(b)
         cases_summary[f"{position['label']}_a"]["abs_Ia_over_abs_Ib"] = ratio
         cases_summary[f"{position['label']}_b"]["abs_Ia_over_abs_Ib"] = ratio
-    raw_path = args.output_dir / "device_a_position_scan_analytic_fields.npz"
+    raw_path = args.output_dir / (
+        f"device_a_position_scan_analytic_{args.artifact_tag}_fields.npz"
+    )
     np.savez(raw_path, **raw_payload)
     plot_maps(
-        args.report_dir / "DEVICE_A_ANALYTIC_POSITION_MAPS.png",
+        args.report_dir / f"DEVICE_A_ANALYTIC_POSITION_MAPS_{args.artifact_tag}.png",
         geometry,
         fields,
         inward,
     )
     summary = {
-        "status": "COMPLETED_DEVICE_A_ANALYTIC_THREE_POSITION_CONTROL",
+        "status": (
+            "COMPLETED_DEVICE_A_ANALYTIC_THREE_POSITION_CONTROL_60UM"
+            if abs(args.thermal_domain_um - 60.0) < 1e-12
+            else "COMPLETED_DEVICE_A_ANALYTIC_THREE_POSITION_DIAGNOSTIC_NONBASELINE_DOMAIN"
+        ),
         "scope": (
             "offline analytic Gaussian–Beer–Lambert/TMM Q through the frozen "
             "explicit-3D thermal and weighting-potential terminal-current chain"
@@ -337,7 +347,7 @@ def main() -> int:
             "rescaling_or_polarization_matching": False,
         },
         "thermal_contract": {
-            "lateral_domain_m": 48.0e-6,
+            "lateral_domain_m": args.thermal_domain_um * 1e-6,
             "Si_depth_m": 20.0e-6,
             "core_xy_cell_size_m": 100.0e-9,
             "flake_dz_m": 10.0e-9,
@@ -368,16 +378,16 @@ def main() -> int:
         "generation_commit": git_commit(),
         "generation_command": " ".join(sys.argv),
     }
-    (args.report_dir / "device_a_analytic_position_summary.json").write_text(
+    (args.report_dir / f"device_a_analytic_position_{args.artifact_tag}_summary.json").write_text(
         json.dumps(summary, indent=2) + "\n"
     )
-    with (args.report_dir / "device_a_analytic_position_cases.csv").open(
+    with (args.report_dir / f"device_a_analytic_position_{args.artifact_tag}_cases.csv").open(
         "w", newline=""
     ) as stream:
         writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
-    (args.report_dir / "RAW_ARTIFACT_MANIFEST_ANALYTIC.json").write_text(
+    (args.report_dir / f"RAW_ARTIFACT_MANIFEST_ANALYTIC_{args.artifact_tag}.json").write_text(
         json.dumps({"raw_artifact": summary["raw_artifact"]}, indent=2) + "\n"
     )
     lines = []
@@ -393,13 +403,17 @@ def main() -> int:
         )
     report = f"""# Device-A analytic three-position terminal-current control
 
-Status: `COMPLETED_DEVICE_A_ANALYTIC_THREE_POSITION_CONTROL`
+Status: `{summary['status']}`
 
 This is an offline control, not a paper reproduction. It uses the explicitly
 assumed 12-um scalar Gaussian, paper/TMM polarization-dependent absorption,
 the same expanded explicit-3D thermal operator, and the same digitized-contact
 weighting potential as the Maxwell Device-A chain. The larger b-polarized TMM
 absorption is an input. No current or Q rescaling was applied.
+
+The lateral thermal domain is `{args.thermal_domain_um:.1f} um`; only the
+60-um run matches the immutable s0 Device-A thermal artifact and is eligible
+for the promoted Maxwell--analytic comparison.
 
 | signed s from digitized edge (um) | analytic Ia (nA) | analytic Ib (nA) | abs(Ia)/abs(Ib) |
 |---:|---:|---:|---:|
@@ -409,7 +423,7 @@ Every terminal current is the full flake-cell volume integral with cell volume
 included exactly once. All residual, energy-balance, and finite/nonnegative-Q
 gates passed: `{all(summary['gates'].values())}`.
 """
-    (args.report_dir / "DEVICE_A_ANALYTIC_POSITION_CONTROL.md").write_text(report)
+    (args.report_dir / f"DEVICE_A_ANALYTIC_POSITION_CONTROL_{args.artifact_tag}.md").write_text(report)
     print(json.dumps(summary, indent=2))
     return 0 if all(summary["gates"].values()) else 2
 
