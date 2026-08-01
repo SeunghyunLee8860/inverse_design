@@ -2562,6 +2562,36 @@ def assert_contract(
             )
         )
     )
+    checks["correct_full_sio2_q_mesh"] = (
+        not args.full_sio2_q_control_volume
+        or (
+            int(fdtd.getnamednumber("full_sio2_q_mesh")) == 1
+            and np.isclose(
+                base.scalar(
+                    fdtd.getnamed("full_sio2_q_mesh", "dx"),
+                    "full SiO2 Q dx",
+                ),
+                args.local_xy_mesh_nm * 1e-9,
+                atol=1e-15,
+            )
+            and np.isclose(
+                base.scalar(
+                    fdtd.getnamed("full_sio2_q_mesh", "dy"),
+                    "full SiO2 Q dy",
+                ),
+                args.local_xy_mesh_nm * 1e-9,
+                atol=1e-15,
+            )
+            and np.isclose(
+                base.scalar(
+                    fdtd.getnamed("full_sio2_q_mesh", "dz"),
+                    "full SiO2 Q dz",
+                ),
+                args.sio2_q_dz_nm * 1e-9,
+                atol=1e-15,
+            )
+        )
+    )
     checks["correct_thickness"] = args.case == "empty-stack" or np.isclose(
         base.scalar(fdtd.getnamed("TaIrTe4_flake", "z span"), "flake thickness"),
         FLAKE_THICKNESS_M,
@@ -2790,6 +2820,10 @@ def assert_contract(
     if args.intermediate_half_span_um is not None:
         mesh_overrides.append(
             mesh_override_readback("flake_intermediate_mesh")
+        )
+    if args.full_sio2_q_control_volume:
+        mesh_overrides.append(
+            mesh_override_readback("full_sio2_q_mesh")
         )
     return {
         "checks": checks,
