@@ -389,11 +389,22 @@ def parse_args() -> argparse.Namespace:
         )
     if args.scenario_waist_um is not None and not (
         np.isclose(args.domain_um, 60.0)
-        and np.isclose(args.source_span_um, 50.0)
+        and (
+            np.isclose(args.source_span_um, 50.0)
+            or np.isclose(args.source_span_um, 40.0)
+        )
     ):
         parser.error(
-            "the named waist scenario keeps the frozen 60-um domain and "
-            "50-um source-span contract"
+            "the named waist scenario keeps the frozen 60-um domain and a "
+            "50-um (default) or 40-um (edge-scan clearance) source span"
+        )
+    if (
+        args.scenario_waist_um is not None
+        and args.source_span_um < 5.0 * args.scenario_waist_um
+    ):
+        parser.error(
+            "scenario source span must be at least 5x the scenario waist "
+            "so the truncated-Gaussian power capture stays above 0.999"
         )
     if (
         args.waist_um <= 0
