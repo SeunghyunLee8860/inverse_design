@@ -1,5 +1,27 @@
 # Latest photothermal validation status
 
+## Full-SiO2 Maxwell heat-source precheck
+
+- Status: `BLOCKED_FULL_SIO2_Q_SIX_FACE_CLOSURE`.
+- The optical path now extracts disjoint volumetric TaIrTe4 and full-285-nm
+  SiO2 heat sources.  The thermal path independently maps them into matching
+  TaIrTe4 and SiO2 cells; it never projects oxide absorption into the flake.
+- GPU-only `E||a` checks at 10-nm and 5-nm oxide `dz` both reached
+  auto-shutoff below `1e-5`.  Total TaIrTe4+SiO2 power changes by only
+  `0.04936%`, and normalized depth-integrated SiO2-Q NRMSE is `0.32478%`.
+  However, matched-volume six-face closure remains `1.24917% / 1.24922%`,
+  above the `0.5%` gate.
+- Lumerical's own `Pabs_total` agrees with the independently reconstructed
+  volume-Q integral, so this is not fixed by gain/rescaling or another oxide
+  mesh refinement.  `E||b` and real-source thermal solves were not run after
+  the fail-closed gate.  A diagnostic-only thermal bypass requires explicit
+  user approval.
+- Expanded-FVM thermal conductivities remain named assumptions, not values
+  supplied by the TaIrTe4 paper: bulk-reference `k_SiO2=1.38 W/(m K)` and
+  `k_Si=145 W/(m K)` at approximately 300 K.
+- Report, JSON, CSV, and external-artifact manifest:
+  `reports/paper_ir_straight_45_edge_palik_w8p75_full_sio2_heat/`.
+
 ## Corrected-substrate corner-free 45-degree edge control
 
 - Status: `COMPLETED_CORRECTED_SUBSTRATE_STRAIGHT_45_EDGE_CONTROL`.

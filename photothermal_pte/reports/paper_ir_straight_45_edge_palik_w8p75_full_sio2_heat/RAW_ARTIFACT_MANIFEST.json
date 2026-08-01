@@ -1,0 +1,47 @@
+{
+  "raw_artifacts_committed_to_git": false,
+  "artifacts": [
+    {
+      "case": "E_parallel_a_full_SiO2_oxide_dz_10nm",
+      "kind": "NPZ",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_straight_45_edge_palik_w8p75/edge_a_full_sio2_xy100_dz5_oxide10_gpu0_20260801_retry2/finite_q_on_artifact.npz",
+      "size_bytes": 1673981078,
+      "sha256": "073de4e37a415a7aeb3e757873fe883f26a85a7dbf6ecff1154e9b1eac94c1e4"
+    },
+    {
+      "case": "E_parallel_a_full_SiO2_oxide_dz_10nm",
+      "kind": "FSP",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_straight_45_edge_palik_w8p75/edge_a_full_sio2_xy100_dz5_oxide10_gpu0_20260801_retry2/finite_2um_optical_q.fsp",
+      "size_bytes": 1291554359,
+      "sha256": "71de6df0c9c48db870f559f815d8425581efcfd502b1b7e643349fb537742124"
+    },
+    {
+      "case": "E_parallel_a_full_SiO2_oxide_dz_5nm",
+      "kind": "NPZ",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_straight_45_edge_palik_w8p75/edge_a_full_sio2_xy100_dz5_oxide5_gpu0_20260801/finite_q_on_artifact.npz",
+      "size_bytes": 2260921806,
+      "sha256": "897638a5d1b382bd78ccce5496c2dca4e3da4cfb3a08c7b5c5dbbc2d0cafffd7"
+    },
+    {
+      "case": "E_parallel_a_full_SiO2_oxide_dz_5nm",
+      "kind": "FSP",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_straight_45_edge_palik_w8p75/edge_a_full_sio2_xy100_dz5_oxide5_gpu0_20260801/finite_2um_optical_q.fsp",
+      "size_bytes": 1735729071,
+      "sha256": "afdf46b5451c207c2ef345f986c8c045ddb11a60556699b1f3d0ab2708c48762"
+    },
+    {
+      "case": "E_parallel_a_full_SiO2_oxide_dz_10nm",
+      "kind": "JSON",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_straight_45_edge_palik_w8p75/edge_a_full_sio2_xy100_dz5_oxide10_gpu0_20260801_retry2/case_result.json",
+      "size_bytes": 93717,
+      "sha256": "5519b0bf3ab46fc07c11a6d2d4663e30c1180b05b56c2f610d1c69733d63c873"
+    },
+    {
+      "case": "E_parallel_a_full_SiO2_oxide_dz_5nm",
+      "kind": "JSON",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_straight_45_edge_palik_w8p75/edge_a_full_sio2_xy100_dz5_oxide5_gpu0_20260801/case_result.json",
+      "size_bytes": 93686,
+      "sha256": "d989db48f5ac2e031d6a9ef2c9c53c90c9361b0e942b1b925327a5f48343b9e3"
+    }
+  ]
+}

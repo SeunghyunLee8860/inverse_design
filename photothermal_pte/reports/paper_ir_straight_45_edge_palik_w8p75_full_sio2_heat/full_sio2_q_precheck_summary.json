@@ -1,0 +1,65 @@
+{
+  "status": "BLOCKED_FULL_SIO2_Q_SIX_FACE_CLOSURE",
+  "implemented": {
+    "full_285nm_SiO2_volumetric_Q": true,
+    "disjoint_TaIrTe4_and_SiO2_supports": true,
+    "independent_conservative_thermal_mapping": true,
+    "cross_material_source_projection": false,
+    "clipping_smoothing_gain_rescaling_tiling": false
+  },
+  "thermal_conductivity_contract": {
+    "TaIrTe4_lab_x_y_z_W_mK": [3.8, 14.4, 1.0],
+    "SiO2_W_mK": 1.38,
+    "Si_W_mK": 145.0,
+    "air_W_mK": 0.026,
+    "SiO2_and_Si_provenance": "named approximately-300-K bulk-reference scenario assumptions; not supplied by the TaIrTe4 paper or measured for the fabricated wafer"
+  },
+  "cases": [
+    {
+      "polarization": "a",
+      "oxide_dz_nm": 10.0,
+      "status": "FAILED_ACCEPTANCE",
+      "P_Q_full_W": 1.2611879359917496e-11,
+      "P_Q_TaIrTe4_W": 1.174108848212031e-11,
+      "P_Q_SiO2_W": 5.168273162833874e-13,
+      "P_Q_TaIrTe4_plus_SiO2_W": 1.2257915798403697e-11,
+      "P_six_W": 1.2771416094730729e-11,
+      "six_face_closure": 0.012491702848758831,
+      "auto_shutoff": 9.81673e-06
+    },
+    {
+      "polarization": "a",
+      "oxide_dz_nm": 5.0,
+      "status": "FAILED_ACCEPTANCE",
+      "P_Q_full_W": 1.2611104551458292e-11,
+      "P_Q_TaIrTe4_W": 1.1740436584041703e-11,
+      "P_Q_SiO2_W": 5.2353290822064e-13,
+      "P_Q_TaIrTe4_plus_SiO2_W": 1.2263969492262343e-11,
+      "P_six_W": 1.2770638338208644e-11,
+      "six_face_closure": 0.012492232770623574,
+      "auto_shutoff": 9.68584e-06,
+      "Lumerical_Pabs_total_scaled_W": 1.2611115300715404e-11
+    }
+  ],
+  "convergence_10nm_to_5nm": {
+    "full_power_relative_change": 6.143858819366394e-05,
+    "TaIrTe4_power_relative_change": 5.552588048492518e-05,
+    "SiO2_power_relative_change": 0.012808348495309096,
+    "TaIrTe4_plus_SiO2_power_relative_change": 0.0004936161870319001,
+    "TaIrTe4_depth_integrated_Q_raw_NRMSE": 7.897872875280692e-05,
+    "TaIrTe4_depth_integrated_Q_normalized_NRMSE": 4.0830575885370356e-05,
+    "SiO2_depth_integrated_Q_raw_NRMSE": 0.011943147701749188,
+    "SiO2_depth_integrated_Q_normalized_NRMSE": 0.00324782122811587,
+    "SiO2_depth_integrated_Q_spatial_correlation": 0.9999953551767402
+  },
+  "gates": {
+    "GPU_only": true,
+    "auto_shutoff_lt_1e_minus_5": true,
+    "no_negative_Q_NaN_or_Inf": true,
+    "material_support_decomposition_residual_lt_1e_minus_12": true,
+    "matched_volume_closure_lt_0p5_percent": false
+  },
+  "E_parallel_b_run": false,
+  "physical_thermal_run": false,
+  "PTE_adjoint_gradient_optimization_run": false
+}
