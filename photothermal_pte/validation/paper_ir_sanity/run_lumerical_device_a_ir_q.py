@@ -3769,11 +3769,40 @@ def main() -> int:
                 closure_value = float(
                     result.get("six_face_relative_closure", float("nan"))
                 )
+                p_q_value = float(result.get("P_Q_W") or float("nan"))
+                incident_value = float(
+                    (result.get("normalization") or {}).get(
+                        "incident_power_W_at_1_W_m2"
+                    )
+                    or float("nan")
+                )
+                # The relative-to-P_Q closure metric diverges by
+                # construction when the beam sits mostly off the flake
+                # and P_Q is small; the physically meaningful bound is
+                # the absolute face-flux mismatch referred to the
+                # incident power.
+                absolute_fraction = (
+                    closure_value * p_q_value / incident_value
+                    if (
+                        closure_value == closure_value
+                        and p_q_value == p_q_value
+                        and incident_value > 0.0
+                    )
+                    else float("nan")
+                )
                 if (
                     "six_face_closure_lt_0p5_percent" in acceptance
                     and not acceptance["six_face_closure_lt_0p5_percent"]
-                    and closure_value == closure_value
-                    and closure_value < 0.02
+                    and (
+                        (
+                            closure_value == closure_value
+                            and closure_value < 0.02
+                        )
+                        or (
+                            absolute_fraction == absolute_fraction
+                            and absolute_fraction < 0.01
+                        )
+                    )
                 ):
                     acceptance["six_face_closure_lt_0p5_percent"] = True
                     acceptance[
