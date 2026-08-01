@@ -296,10 +296,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--incident-reference")
     parser.add_argument(
         "--execution-contract",
-        choices=("production", "diagnostic-smoke", "edge-isolation-smoke"),
+        choices=(
+            "production",
+            "waist-sensitivity",
+            "diagnostic-smoke",
+            "edge-isolation-smoke",
+        ),
         default="production",
         help=(
-            "production uses the fixed paper-like scalar-Gaussian scenario "
+            "production uses the fixed paper-like scalar-Gaussian scenario; "
+            "waist-sensitivity changes only the explicitly assumed waist "
+            "after a same-waist source-only gate; "
             "with an explicitly assumed waist; diagnostic-smoke "
             "is a separately labeled reduced-cost engine/material/Q check; "
             "edge-isolation-smoke is the approved w0=2 um planar/edge "
@@ -324,11 +331,18 @@ def parse_args() -> argparse.Namespace:
         "edge-isolation-smoke",
     )
     if args.source_object_waist_um is None:
-        args.source_object_waist_um = (
-            source_contract.CALIBRATED_SOURCE_OBJECT_W0_M * 1.0e6
-            if not reduced_smoke
-            else args.waist_um
-        )
+        if args.execution_contract == "production":
+            args.source_object_waist_um = (
+                source_contract.CALIBRATED_SOURCE_OBJECT_W0_M * 1.0e6
+            )
+        elif args.execution_contract == "waist-sensitivity":
+            args.source_object_waist_um = (
+                args.waist_um
+                * source_contract.CALIBRATION_BASELINE_INPUT_W0_M
+                / source_contract.CALIBRATION_BASELINE_REALIZED_W0_M
+            )
+        else:
+            args.source_object_waist_um = args.waist_um
     minimum_domain_um = 60.0 if not reduced_smoke else 10.0
     if args.domain_um < minimum_domain_um:
         parser.error(
@@ -409,6 +423,40 @@ def parse_args() -> argparse.Namespace:
         and not args.incident_reference
     ):
         parser.error("finite-flake requires a matching empty-stack reference")
+    args.waist_source_only_reference = None
+    if args.execution_contract == "waist-sensitivity" and args.case == "finite-flake":
+        if not args.incident_reference:
+            parser.error(
+                "waist-sensitivity finite-flake requires the matching "
+                "validated source-only result"
+            )
+        reference_path = Path(args.incident_reference).expanduser().resolve()
+        if not reference_path.is_file():
+            parser.error(f"source-only reference not found: {reference_path}")
+        reference = json.loads(reference_path.read_text())
+        reference_target_m = reference.get("pre_run", {}).get(
+            "built_contract", {}
+        ).get("source", {}).get("target_realized_waist_radius_m")
+        if (
+            not reference.get("source_only_gate_passed", False)
+            or reference_target_m is None
+            or not np.isclose(
+                float(reference_target_m),
+                args.waist_um * 1e-6,
+                rtol=0.0,
+                atol=1e-15,
+            )
+        ):
+            parser.error(
+                "waist-sensitivity source-only reference failed its gate or "
+                "does not match --waist-um"
+            )
+        args.waist_source_only_reference = {
+            "path": str(reference_path),
+            "status": reference.get("status"),
+            "target_waist_m": float(reference_target_m),
+            "field_artifact": reference.get("field_artifact"),
+        }
     if (
         reduced_smoke
         and args.case != "finite-flake"
@@ -513,7 +561,9 @@ def parse_args() -> argparse.Namespace:
         # The separate smoke contract
         # uses 1.5 um only to exercise engine/material/Q/closure at lower cost.
         analysis_padding_um = (
-            2.0 if args.execution_contract == "production" else 1.5
+            2.0
+            if args.execution_contract in ("production", "waist-sensitivity")
+            else 1.5
         )
         half_analysis = 0.5 * args.source_span_um + analysis_padding_um
         absorption_bounds_um = {
@@ -540,7 +590,9 @@ def parse_args() -> argparse.Namespace:
             dtype=float,
         )
         analysis_padding_um = (
-            2.0 if args.execution_contract == "production" else 1.5
+            2.0
+            if args.execution_contract in ("production", "waist-sensitivity")
+            else 1.5
         )
         half_analysis = 0.5 * args.source_span_um + analysis_padding_um
         absorption_bounds_um = {
@@ -1738,7 +1790,7 @@ def add_geometry_and_monitors(
         )
 
     inner_faces = base.add_flux_box(fdtd, "paper_ir_abs", inner_box)
-    if args.execution_contract == "production":
+    if args.execution_contract in ("production", "waist-sensitivity"):
         outer_faces = base.add_flux_box(
             fdtd,
             "paper_ir_outer",
@@ -1948,8 +2000,11 @@ def add_geometry_and_monitors(
             ),
             "source_object_calibration_field_NPZ_sha256": (
                 source_contract.CALIBRATION_BASELINE_FIELD_SHA256
-                if args.execution_contract == "production"
+                if args.execution_contract in ("production", "waist-sensitivity")
                 else None
+            ),
+            "waist_sensitivity_source_only_reference": (
+                args.waist_source_only_reference
             ),
             "beam_center_m": [beam_x, beam_y],
             "fixed_local_mesh_center_m": [mesh_center_x, mesh_center_y],
@@ -2039,12 +2094,14 @@ def add_geometry_and_monitors(
             "incident_reference_monitor": (
                 args.execution_contract in (
                     "production",
+                    "waist-sensitivity",
                     "edge-isolation-smoke",
                 )
             ),
             "diagnostic_field_slice_monitors": (
                 args.execution_contract in (
                     "production",
+                    "waist-sensitivity",
                     "edge-isolation-smoke",
                 )
             ),
@@ -2055,9 +2112,15 @@ def add_geometry_and_monitors(
             if args.execution_contract == "production"
             else {
                 "classification": (
-                    "reduced-cost one-polarization diagnostic only; not a "
-                    "paper-like optical result and not a replacement for the "
-                    "48 um production contract"
+                    "same full Device-A numerical contract with only the "
+                    "explicitly assumed scalar-Gaussian waist changed; "
+                    "beam-size sensitivity scenario, not a paper-certified beam"
+                    if args.execution_contract == "waist-sensitivity"
+                    else (
+                        "reduced-cost one-polarization diagnostic only; not a "
+                        "paper-like optical result and not a replacement for "
+                        "the full production contract"
+                    )
                 ),
                 "production_lateral_domain_um": 60.0,
                 "diagnostic_lateral_domain_um": args.domain_um,
@@ -2066,9 +2129,13 @@ def add_geometry_and_monitors(
                 "production_waist_um": 12.0,
                 "diagnostic_waist_um": args.waist_um,
                 "production_absorption_padding_um": 2.0,
-                "diagnostic_absorption_padding_um": 1.5,
+                "diagnostic_absorption_padding_um": (
+                    2.0 if args.execution_contract == "waist-sensitivity" else 1.5
+                ),
                 "removed_monitors": (
-                    [
+                    []
+                    if args.execution_contract == "waist-sensitivity"
+                    else [
                         "outer six-face box",
                         "three production diagnostic field slices",
                     ]
@@ -2093,7 +2160,7 @@ def add_geometry_and_monitors(
                     "six PML boundaries",
                     "auto non-uniform mesh accuracy 5",
                     "conformal variant 1",
-                    "10 nm flake-region z override",
+                    f"{args.flake_dz_nm:g} nm flake-region z override",
                     "pabs_adv component-resolved Q extraction",
                 ],
             }

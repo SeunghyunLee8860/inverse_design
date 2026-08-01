@@ -190,6 +190,7 @@ def setup(
     shutoff: float,
     mesh_accuracy: int = MESH_ACCURACY,
     source_object_w0_m: float = CALIBRATED_SOURCE_OBJECT_W0_M,
+    target_w0_m: float = contract.SELECTED_W0_M,
 ) -> dict[str, Any]:
     fdtd.switchtolayout()
     solver = fdtd.addfdtd()
@@ -251,7 +252,7 @@ def setup(
             ),
             "wavelength_m": contract.WAVELENGTH_M,
             "numerical_pulse_band_m": [SOURCE_START_M, SOURCE_STOP_M],
-            "target_realized_waist_radius_m": contract.SELECTED_W0_M,
+            "target_realized_waist_radius_m": target_w0_m,
             "Lumerical_source_object_waist_radius_m": source_object_w0_m,
             "source_object_waist_calibration": {
                 "method": (
@@ -744,16 +745,17 @@ def source_acceptance(
     log: dict[str, Any],
     planes: dict[str, dict[str, Any]],
     auto_shutoff_min: float,
+    target_w0_m: float,
 ) -> dict[str, bool]:
     return {
         "requested_vs_realized_fitted_waist_x_lt_0p5_percent": bool(
-            abs(focus["fitted_waist_x_m"] - contract.SELECTED_W0_M)
-            / contract.SELECTED_W0_M
+            abs(focus["fitted_waist_x_m"] - target_w0_m)
+            / target_w0_m
             < 0.005
         ),
         "requested_vs_realized_fitted_waist_y_lt_0p5_percent": bool(
-            abs(focus["fitted_waist_y_m"] - contract.SELECTED_W0_M)
-            / contract.SELECTED_W0_M
+            abs(focus["fitted_waist_y_m"] - target_w0_m)
+            / target_w0_m
             < 0.005
         ),
         "Gaussian_fit_NRMSE_lt_0p5_percent": bool(
@@ -805,15 +807,24 @@ def main() -> int:
     parser.add_argument("--gpu-device", default="GPU 4")
     parser.add_argument("--threads", default="8")
     parser.add_argument("--mesh-accuracy", type=int, default=MESH_ACCURACY)
+    parser.add_argument("--target-waist-um", type=float, default=12.0)
     parser.add_argument(
         "--source-object-waist-um",
         type=float,
-        default=CALIBRATED_SOURCE_OBJECT_W0_M * 1.0e6,
+        default=None,
     )
     parser.add_argument("--contract-only", action="store_true")
     args = parser.parse_args()
     if not 1 <= args.mesh_accuracy <= 8:
         parser.error("--mesh-accuracy must be between 1 and 8")
+    if args.target_waist_um <= 0.0:
+        parser.error("--target-waist-um must be positive")
+    if args.source_object_waist_um is None:
+        args.source_object_waist_um = (
+            args.target_waist_um
+            * CALIBRATION_BASELINE_INPUT_W0_M
+            / CALIBRATION_BASELINE_REALIZED_W0_M
+        )
     if args.source_object_waist_um <= 0.0:
         parser.error("--source-object-waist-um must be positive")
     output = Path(args.output_dir).expanduser().resolve()
@@ -879,6 +890,7 @@ def main() -> int:
             args.auto_shutoff_min,
             args.mesh_accuracy,
             args.source_object_waist_um * 1.0e-6,
+            args.target_waist_um * 1.0e-6,
         )
         os.environ["LUMERICAL_SESSION_GPU_DEVICE"] = args.gpu_device
         resources = runtime.configure_session_resources(fdtd)
@@ -1031,14 +1043,15 @@ def main() -> int:
                 log=log,
                 planes=planes,
                 auto_shutoff_min=args.auto_shutoff_min,
+                target_w0_m=args.target_waist_um * 1.0e-6,
             )
             mandatory_pass = all(acceptance.values())
             payload.update(
                 {
                     "status": (
-                        "VALIDATED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY"
+                        "VALIDATED_EXPLICIT_WAIST_SCALAR_GAUSSIAN_SOURCE_ONLY"
                         if mandatory_pass
-                        else "FAILED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY_GATE"
+                        else "FAILED_EXPLICIT_WAIST_SCALAR_GAUSSIAN_SOURCE_ONLY_GATE"
                     ),
                     "GPU_resource_used": resource,
                     "solver_wall_time_s": wall_s,
