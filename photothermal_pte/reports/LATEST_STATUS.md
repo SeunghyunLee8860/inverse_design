@@ -1,5 +1,35 @@
 # Latest photothermal validation status
 
+## Registered Device-A sparse Maxwell–thermal–PTE scan
+
+- Status: `PARTIAL_REGISTERED_DEVICE_A_SPARSE_SCAN_CURRENT_TREND_OPPOSITE_PAPER`.
+  This is a sparse registered diagnostic, not a continuous peak fit or exact
+  Device-A reproduction.
+- Seven GPU Maxwell cases cover `E||a` at `d=-1,1,3,5 um` and `E||b` at
+  `d=1,3,5 um`.  Every case passes matched-volume closure `<0.5%`, final
+  auto-shutoff `<1e-5`, and an independently recomputed position-matched
+  empty-stack-reference audit.
+- The literal optical-cell/TaIrTe4 intersection-density map, unchanged
+  explicit 3D FVM, and full-volume Shockley–Ramo current integral pass their
+  mapping, residual, and energy gates.  No non-overlapping air/SiO2 power is
+  forced into TaIrTe4.
+- The sampled maxima occur at different coordinates: `|Ia|=13.722020 nA` at
+  `d=1 um`, and `|Ib|=11.462797 nA` at `d=3 um`.  Thus the sampled-maximum
+  ratio is `max|Ib|/max|Ia|=0.835358`, opposite the Figure-3I visual trend of
+  about `143/122=1.172131`.  The reversal is not only a common-position
+  sampling artifact, although the 2-um spacing is not a sub-micrometre peak
+  convergence certificate.
+- Absolute current remains blocked: the digitized geometry gives
+  `14.106622 ohm` versus the measured `213 ohm`; no resistance/current fit or
+  rescaling was used.  Exact CAD/contact geometry, contact resistance, metal
+  thermalization/interface data, and absolute scan metrology remain physical
+  uncertainties.
+- A parallel Lumerical launch exposed a shared user-level GPU-resource race
+  and failed closed before time stepping.  All production optical sessions
+  were subsequently run sequentially; the failure artifact is retained.
+- Report, summary JSON, cases CSV, plot, and external raw-artifact manifest:
+  `reports/paper_ir_device_a_fig3h_registered_scan/`.
+
 ## Device-A finite-Q fast-mesh convergence
 
 - Status: `FAILED_FAST_DEVICE_A_MATERIAL_OVERLAP_SPATIAL_CONVERGENCE`.  No

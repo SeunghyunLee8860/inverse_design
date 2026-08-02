@@ -1,0 +1,437 @@
+{
+  "status": "PARTIAL_REGISTERED_DEVICE_A_SPARSE_SCAN_CURRENT_TREND_OPPOSITE_PAPER",
+  "generation_commit": "17c477a3d5842c937d6ed1da0830a054458bc91d",
+  "scenario": {
+    "beam": "paper-like scalar-Gaussian scenario with explicitly assumed w0=8.75 um",
+    "beam_is_paper_certified": false,
+    "device_geometry": "Figure-digitized Device-A approximation, not unpublished CAD",
+    "scan_coordinate": "Figure-3I registered nominal d; source y offset is d-3 um",
+    "optical_solver": "Lumerical v261 GPU FDTD only",
+    "thermal_solver": "independent conservative explicit 3D Cartesian FVM",
+    "thermal_source": "TaIrTe4-only literal optical-cell/material intersection density",
+    "SiO2_and_Si_role": "thermal materials; optical absorption excluded from this current comparison",
+    "current": "full flake-volume Shockley-Ramo integral, never a one-point gradient",
+    "incident_power_W": 0.0002844
+  },
+  "records": [
+    {
+      "scan_distance_um": -1.0,
+      "polarization": "a",
+      "beam_center_x_um": -5.891747237569059,
+      "beam_center_y_um": -4.0,
+      "optical_status": "COMPLETED",
+      "position_matched_reference_passed": true,
+      "P_Q_W_at_unit_central_intensity": 2.7332135902654984e-11,
+      "P_six_W_at_unit_central_intensity": 2.735069043969022e-11,
+      "six_face_closure": 0.0006783937347449449,
+      "auto_shutoff": 9.84191e-06,
+      "P_Qx_W": 1.0418774838793573e-12,
+      "P_Qy_W": 2.606739388804542e-11,
+      "P_Qz_W": 2.228645307302086e-13,
+      "TaIrTe4_exact_support_power_W_at_unit_central_intensity": 2.5355504182270068e-11,
+      "mapped_TaIrTe4_power_W_at_284p40uW": 1.6291527364382168e-05,
+      "mapping_relative_power_error": 2.0796894687876863e-16,
+      "mapped_power_outside_TaIrTe4_W": 0.0,
+      "Tmax_rise_K": 0.29786662494039695,
+      "TaIrTe4_volume_average_rise_K": 0.01066642461095723,
+      "thermal_linear_residual_relative": 1.0035709057904844e-10,
+      "thermal_energy_balance_relative_error": 3.5964069983745468e-12,
+      "PTE_current_A": 1.1948408722554972e-08,
+      "PTE_current_nA": 11.948408722554973,
+      "predicted_resistance_ohm": 14.106621864415757,
+      "measured_resistance_ohm": 213.0,
+      "optical_case_result_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_dm1_finite_a_20260802/case_result.json",
+      "thermal_summary_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_dm1_thermal_a_intersection_20260802/summary.json",
+      "reference_audit": {
+        "reference_case_result": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_dm1_empty_a_20260802/case_result.json",
+        "finite_beam_center_m": [
+          -5.89174723756906e-06,
+          -4e-06
+        ],
+        "reference_beam_center_m": [
+          -5.89174723756906e-06,
+          -4e-06
+        ],
+        "checks": {
+          "polarization": true,
+          "beam_center_lt_1fm": true,
+          "physical_target_waist": true,
+          "source_object_waist": true,
+          "source_span": true,
+          "pulse_band": true,
+          "domain_um": true,
+          "pml_layers": true,
+          "flake_dz_nm": true,
+          "substrate_model": true
+        },
+        "passed": true
+      }
+    },
+    {
+      "scan_distance_um": 1.0,
+      "polarization": "a",
+      "beam_center_x_um": -5.891747237569059,
+      "beam_center_y_um": -2.0,
+      "optical_status": "COMPLETED",
+      "position_matched_reference_passed": true,
+      "P_Q_W_at_unit_central_intensity": 1.7587086326423214e-11,
+      "P_six_W_at_unit_central_intensity": 1.7597597305322095e-11,
+      "six_face_closure": 0.0005972962511025121,
+      "auto_shutoff": 9.76513e-06,
+      "P_Qx_W": 8.513683475208878e-13,
+      "P_Qy_W": 1.6554730150325947e-11,
+      "P_Qz_W": 1.809878285763804e-13,
+      "TaIrTe4_exact_support_power_W_at_unit_central_intensity": 1.6253621951015278e-11,
+      "mapped_TaIrTe4_power_W_at_284p40uW": 1.4332522980469223e-05,
+      "mapping_relative_power_error": 1.1819732623607766e-16,
+      "mapped_power_outside_TaIrTe4_W": 0.0,
+      "Tmax_rise_K": 0.26464296047011704,
+      "TaIrTe4_volume_average_rise_K": 0.009385197134150943,
+      "thermal_linear_residual_relative": 1.016684334297511e-10,
+      "thermal_energy_balance_relative_error": 9.83165359631694e-13,
+      "PTE_current_A": 1.3722019660897154e-08,
+      "PTE_current_nA": 13.722019660897153,
+      "predicted_resistance_ohm": 14.106621864415757,
+      "measured_resistance_ohm": 213.0,
+      "optical_case_result_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_d1_finite_a_retry_20260802/case_result.json",
+      "thermal_summary_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_d1_thermal_a_intersection_20260802/summary.json",
+      "reference_audit": {
+        "reference_case_result": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_d1_empty_a_20260802/case_result.json",
+        "finite_beam_center_m": [
+          -5.89174723756906e-06,
+          -2e-06
+        ],
+        "reference_beam_center_m": [
+          -5.89174723756906e-06,
+          -2e-06
+        ],
+        "checks": {
+          "polarization": true,
+          "beam_center_lt_1fm": true,
+          "physical_target_waist": true,
+          "source_object_waist": true,
+          "source_span": true,
+          "pulse_band": true,
+          "domain_um": true,
+          "pml_layers": true,
+          "flake_dz_nm": true,
+          "substrate_model": true
+        },
+        "passed": true
+      }
+    },
+    {
+      "scan_distance_um": 1.0,
+      "polarization": "b",
+      "beam_center_x_um": -5.891747237569059,
+      "beam_center_y_um": -2.0,
+      "optical_status": "COMPLETED",
+      "position_matched_reference_passed": true,
+      "P_Q_W_at_unit_central_intensity": 2.0597451760966993e-11,
+      "P_six_W_at_unit_central_intensity": 2.0607545938697993e-11,
+      "six_face_closure": 0.0004898291995091369,
+      "auto_shutoff": 9.97911e-06,
+      "P_Qx_W": 2.0298691268785814e-11,
+      "P_Qy_W": 1.4596258649689616e-13,
+      "P_Qz_W": 1.527979056842821e-13,
+      "TaIrTe4_exact_support_power_W_at_unit_central_intensity": 1.9172576022640128e-11,
+      "mapped_TaIrTe4_power_W_at_284p40uW": 1.6292148491243013e-05,
+      "mapping_relative_power_error": 0.0,
+      "mapped_power_outside_TaIrTe4_W": 0.0,
+      "Tmax_rise_K": 0.15111590149626838,
+      "TaIrTe4_volume_average_rise_K": 0.010756335924330099,
+      "thermal_linear_residual_relative": 1.0161297744142206e-10,
+      "thermal_energy_balance_relative_error": 4.384858068892868e-12,
+      "PTE_current_A": 1.1155378828929695e-08,
+      "PTE_current_nA": 11.155378828929695,
+      "predicted_resistance_ohm": 14.106621864415757,
+      "measured_resistance_ohm": 213.0,
+      "optical_case_result_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_d1_finite_b_20260802/case_result.json",
+      "thermal_summary_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_d1_thermal_b_intersection_20260802/summary.json",
+      "reference_audit": {
+        "reference_case_result": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_d1_empty_b_20260802/case_result.json",
+        "finite_beam_center_m": [
+          -5.89174723756906e-06,
+          -2e-06
+        ],
+        "reference_beam_center_m": [
+          -5.89174723756906e-06,
+          -2e-06
+        ],
+        "checks": {
+          "polarization": true,
+          "beam_center_lt_1fm": true,
+          "physical_target_waist": true,
+          "source_object_waist": true,
+          "source_span": true,
+          "pulse_band": true,
+          "domain_um": true,
+          "pml_layers": true,
+          "flake_dz_nm": true,
+          "substrate_model": true
+        },
+        "passed": true
+      }
+    },
+    {
+      "scan_distance_um": 3.0,
+      "polarization": "a",
+      "beam_center_x_um": -5.891747237569059,
+      "beam_center_y_um": 0.0,
+      "optical_status": "COMPLETED",
+      "position_matched_reference_passed": true,
+      "P_Q_W_at_unit_central_intensity": 1.3303154365266294e-11,
+      "P_six_W_at_unit_central_intensity": 1.3315576957456225e-11,
+      "six_face_closure": 0.0009329368325249523,
+      "auto_shutoff": 9.93797e-06,
+      "P_Qx_W": 7.579739766577058e-13,
+      "P_Qy_W": 1.2348764277390527e-11,
+      "P_Qz_W": 1.964161112180604e-13,
+      "TaIrTe4_exact_support_power_W_at_unit_central_intensity": 1.2113733492507977e-11,
+      "mapped_TaIrTe4_power_W_at_284p40uW": 1.1856170758696658e-05,
+      "mapping_relative_power_error": 0.0,
+      "mapped_power_outside_TaIrTe4_W": 0.0,
+      "Tmax_rise_K": 0.27858970189293375,
+      "TaIrTe4_volume_average_rise_K": 0.007757792234470522,
+      "thermal_linear_residual_relative": 1.0076757390789056e-10,
+      "thermal_energy_balance_relative_error": 1.1211737014406758e-11,
+      "PTE_current_A": 1.3699611729926187e-08,
+      "PTE_current_nA": 13.699611729926188,
+      "predicted_resistance_ohm": 14.106621864415757,
+      "measured_resistance_ohm": 213.0,
+      "optical_case_result_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_finite_a_64um_20260802/case_result.json",
+      "thermal_summary_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/thermal_a_intersection_expanded_60um_100nm_20260802/summary.json",
+      "reference_audit": {
+        "reference_case_result": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_a_64um_20260802/case_result.json",
+        "finite_beam_center_m": [
+          -5.89174723756906e-06,
+          0.0
+        ],
+        "reference_beam_center_m": [
+          -5.89174723756906e-06,
+          0.0
+        ],
+        "checks": {
+          "polarization": true,
+          "beam_center_lt_1fm": true,
+          "physical_target_waist": true,
+          "source_object_waist": true,
+          "source_span": true,
+          "pulse_band": true,
+          "domain_um": true,
+          "pml_layers": true,
+          "flake_dz_nm": true,
+          "substrate_model": true
+        },
+        "passed": true
+      }
+    },
+    {
+      "scan_distance_um": 3.0,
+      "polarization": "b",
+      "beam_center_x_um": -5.891747237569059,
+      "beam_center_y_um": 0.0,
+      "optical_status": "COMPLETED",
+      "position_matched_reference_passed": true,
+      "P_Q_W_at_unit_central_intensity": 1.5345087775462484e-11,
+      "P_six_W_at_unit_central_intensity": 1.5353107778963357e-11,
+      "six_face_closure": 0.0005223700384532067,
+      "auto_shutoff": 9.68878e-06,
+      "P_Qx_W": 1.5079558358921776e-11,
+      "P_Qy_W": 1.376307955172557e-13,
+      "P_Qz_W": 1.2789862102345215e-13,
+      "TaIrTe4_exact_support_power_W_at_unit_central_intensity": 1.409832745075437e-11,
+      "mapped_TaIrTe4_power_W_at_284p40uW": 1.3242878172519318e-05,
+      "mapping_relative_power_error": 1.2792278781390632e-16,
+      "mapped_power_outside_TaIrTe4_W": 0.0,
+      "Tmax_rise_K": 0.15283275492209442,
+      "TaIrTe4_volume_average_rise_K": 0.008734652195242653,
+      "thermal_linear_residual_relative": 1.0160933377328463e-10,
+      "thermal_energy_balance_relative_error": 8.859292670052084e-12,
+      "PTE_current_A": 1.1462797243763208e-08,
+      "PTE_current_nA": 11.462797243763207,
+      "predicted_resistance_ohm": 14.106621864415757,
+      "measured_resistance_ohm": 213.0,
+      "optical_case_result_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_finite_b_64um_20260802/case_result.json",
+      "thermal_summary_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/thermal_b_intersection_expanded_60um_100nm_20260802/summary.json",
+      "reference_audit": {
+        "reference_case_result": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_b_outergate_64um_20260802/case_result.json",
+        "finite_beam_center_m": [
+          -5.89174723756906e-06,
+          0.0
+        ],
+        "reference_beam_center_m": [
+          -5.89174723756906e-06,
+          0.0
+        ],
+        "checks": {
+          "polarization": true,
+          "beam_center_lt_1fm": true,
+          "physical_target_waist": true,
+          "source_object_waist": true,
+          "source_span": true,
+          "pulse_band": true,
+          "domain_um": true,
+          "pml_layers": true,
+          "flake_dz_nm": true,
+          "substrate_model": true
+        },
+        "passed": true
+      }
+    },
+    {
+      "scan_distance_um": 5.0,
+      "polarization": "a",
+      "beam_center_x_um": -5.891747237569059,
+      "beam_center_y_um": 2.0,
+      "optical_status": "COMPLETED",
+      "position_matched_reference_passed": true,
+      "P_Q_W_at_unit_central_intensity": 1.1802209895369608e-11,
+      "P_six_W_at_unit_central_intensity": 1.182561067394707e-11,
+      "six_face_closure": 0.001978822001050337,
+      "auto_shutoff": 9.60893e-06,
+      "P_Qx_W": 7.389623859271739e-13,
+      "P_Qy_W": 1.0799435088444629e-11,
+      "P_Qz_W": 2.6381242099780565e-13,
+      "TaIrTe4_exact_support_power_W_at_unit_central_intensity": 1.0444688874266408e-11,
+      "mapped_TaIrTe4_power_W_at_284p40uW": 9.175258469306206e-06,
+      "mapping_relative_power_error": 1.8463413321550803e-16,
+      "mapped_power_outside_TaIrTe4_W": 0.0,
+      "Tmax_rise_K": 0.24547284745348272,
+      "TaIrTe4_volume_average_rise_K": 0.0059941332537122895,
+      "thermal_linear_residual_relative": 1.0073719433224062e-10,
+      "thermal_energy_balance_relative_error": 1.635950737356009e-11,
+      "PTE_current_A": 1.2291305281839895e-08,
+      "PTE_current_nA": 12.291305281839895,
+      "predicted_resistance_ohm": 14.106621864415757,
+      "measured_resistance_ohm": 213.0,
+      "optical_case_result_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_d5_finite_a_20260802/case_result.json",
+      "thermal_summary_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_d5_thermal_a_intersection_20260802/summary.json",
+      "reference_audit": {
+        "reference_case_result": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_d5_empty_a_20260802/case_result.json",
+        "finite_beam_center_m": [
+          -5.89174723756906e-06,
+          2e-06
+        ],
+        "reference_beam_center_m": [
+          -5.89174723756906e-06,
+          2e-06
+        ],
+        "checks": {
+          "polarization": true,
+          "beam_center_lt_1fm": true,
+          "physical_target_waist": true,
+          "source_object_waist": true,
+          "source_span": true,
+          "pulse_band": true,
+          "domain_um": true,
+          "pml_layers": true,
+          "flake_dz_nm": true,
+          "substrate_model": true
+        },
+        "passed": true
+      }
+    },
+    {
+      "scan_distance_um": 5.0,
+      "polarization": "b",
+      "beam_center_x_um": -5.891747237569059,
+      "beam_center_y_um": 2.0,
+      "optical_status": "COMPLETED",
+      "position_matched_reference_passed": true,
+      "P_Q_W_at_unit_central_intensity": 1.3181658746486994e-11,
+      "P_six_W_at_unit_central_intensity": 1.3188589840246126e-11,
+      "six_face_closure": 0.000525537138017648,
+      "auto_shutoff": 9.85442e-06,
+      "P_Qx_W": 1.2893207891450103e-11,
+      "P_Qy_W": 1.5394546736483691e-13,
+      "P_Qz_W": 1.3450538767205429e-13,
+      "TaIrTe4_exact_support_power_W_at_unit_central_intensity": 1.1823163589766908e-11,
+      "mapped_TaIrTe4_power_W_at_284p40uW": 1.0036974339215109e-05,
+      "mapping_relative_power_error": 1.6878252720939774e-16,
+      "mapped_power_outside_TaIrTe4_W": 0.0,
+      "Tmax_rise_K": 0.14787975148765403,
+      "TaIrTe4_volume_average_rise_K": 0.006608886532966929,
+      "thermal_linear_residual_relative": 1.0197791750553584e-10,
+      "thermal_energy_balance_relative_error": 1.581677940731987e-11,
+      "PTE_current_A": 1.0382507995174953e-08,
+      "PTE_current_nA": 10.382507995174953,
+      "predicted_resistance_ohm": 14.106621864415757,
+      "measured_resistance_ohm": 213.0,
+      "optical_case_result_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_d5_finite_b_20260802/case_result.json",
+      "thermal_summary_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_d5_thermal_b_intersection_20260802/summary.json",
+      "reference_audit": {
+        "reference_case_result": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_d5_empty_b_20260802/case_result.json",
+        "finite_beam_center_m": [
+          -5.89174723756906e-06,
+          2e-06
+        ],
+        "reference_beam_center_m": [
+          -5.89174723756906e-06,
+          2e-06
+        ],
+        "checks": {
+          "polarization": true,
+          "beam_center_lt_1fm": true,
+          "physical_target_waist": true,
+          "source_object_waist": true,
+          "source_span": true,
+          "pulse_band": true,
+          "domain_um": true,
+          "pml_layers": true,
+          "flake_dz_nm": true,
+          "substrate_model": true
+        },
+        "passed": true
+      }
+    }
+  ],
+  "gates": {
+    "all_optical_cases_pass_closure_auto_shutoff_and_matched_reference": true,
+    "all_thermal_cases_pass_mapping_residual_and_energy_balance": true,
+    "absolute_current_certified": false
+  },
+  "sampled_maxima_not_continuous_peak_fit": {
+    "a": {
+      "scan_distance_um": 1.0,
+      "PTE_current_A": 1.3722019660897154e-08,
+      "PTE_current_nA": 13.722019660897153
+    },
+    "b": {
+      "scan_distance_um": 3.0,
+      "PTE_current_A": 1.1462797243763208e-08,
+      "PTE_current_nA": 11.462797243763207
+    },
+    "abs_Ib_over_abs_Ia": 0.8353578793089823,
+    "paper_Figure3I_visual_reference_pA": {
+      "a": 122.0,
+      "b": 143.0,
+      "abs_Ib_over_abs_Ia": 1.1721311475409837
+    }
+  },
+  "paired_point_abs_Ib_over_abs_Ia": {
+    "1.0": 0.8129545871967035,
+    "3.0": 0.8367242422442704,
+    "5.0": 0.8447034515133927
+  },
+  "interpretation": {
+    "single_position_artifact_excluded": "a and b sampled maxima occur at different registered positions",
+    "result": "sampled current trend remains |Ia|>|Ib|, opposite the paper Figure-3I trend",
+    "not_claimed": "the 2-um sparse spacing is not a continuous peak-convergence certificate",
+    "absolute_current_blocker": "predicted two-terminal resistance is about 14.11 ohm versus measured 213 ohm; no fitting or rescaling",
+    "likely_remaining_physical_uncertainty": "unpublished exact CAD/contact resistance, scan registration, metal thermalization/interface, and resulting weighting-field overlap"
+  },
+  "runtime_diagnostic": {
+    "parallel_lumerical_runs_supported": false,
+    "observation": "two concurrent sessions raced through Lumerical's user-level shared GPU-resource configuration; the mismatched session failed closed before time stepping",
+    "production_rule": "run Lumerical sessions sequentially; independent thermal solves may still run separately"
+  },
+  "forbidden_operations": {
+    "Q_clipping": false,
+    "smoothing": false,
+    "gain": false,
+    "global_rescaling": false,
+    "nearest_cell_relocation": false,
+    "empirical_current_or_resistance_fit": false
+  }
+}
