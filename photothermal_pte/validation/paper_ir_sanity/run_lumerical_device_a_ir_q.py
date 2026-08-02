@@ -347,6 +347,15 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--refinement-y-half-span-um",
+        type=float,
+        default=None,
+        help=(
+            "optional y-only half span for the finest rectangular mesh; "
+            "x continues to use --refinement-half-span-um"
+        ),
+    )
+    parser.add_argument(
         "--intermediate-xy-mesh-nm",
         type=float,
         default=None,
@@ -618,6 +627,13 @@ def parse_args() -> argparse.Namespace:
                 "nested refinement requires a fine local x/y mesh below "
                 "the selected outer local mesh"
             )
+    if args.refinement_y_half_span_um is not None:
+        if args.refinement_half_span_um is None:
+            parser.error("y refinement span requires the x refinement span")
+        if args.refinement_y_half_span_um <= 0.0:
+            parser.error("y refinement half span must be positive")
+    else:
+        args.refinement_y_half_span_um = args.refinement_half_span_um
     intermediate_values = (
         args.intermediate_xy_mesh_nm,
         args.intermediate_half_span_um,
@@ -906,6 +922,11 @@ def parse_args() -> argparse.Namespace:
         if args.refinement_half_span_um >= outer_mesh_half_span_um:
             parser.error(
                 "nested refinement half span must be smaller than the "
+                f"{outer_mesh_half_span_um:g}-um outer mesh half span"
+            )
+        if args.refinement_y_half_span_um >= outer_mesh_half_span_um:
+            parser.error(
+                "nested y refinement half span must be smaller than the "
                 f"{outer_mesh_half_span_um:g}-um outer mesh half span"
             )
         if (
@@ -2138,9 +2159,13 @@ def add_geometry_and_monitors(
             )
             intermediate_mesh["dz"] = args.flake_dz_nm * 1e-9
         fine_half_span = args.refinement_half_span_um * 1e-6
+        fine_y_half_span = args.refinement_y_half_span_um * 1e-6
         fine_mesh_bounds = {
             "x": (mesh_center_x - fine_half_span, mesh_center_x + fine_half_span),
-            "y": (mesh_center_y - fine_half_span, mesh_center_y + fine_half_span),
+            "y": (
+                mesh_center_y - fine_y_half_span,
+                mesh_center_y + fine_y_half_span,
+            ),
         }
     else:
         fine_mesh_bounds = outer_mesh_bounds
@@ -2596,6 +2621,16 @@ def add_geometry_and_monitors(
                 None
                 if args.refinement_half_span_um is None
                 else args.refinement_half_span_um * 1e-6
+            ),
+            "refinement_x_half_span_m": (
+                None
+                if args.refinement_half_span_um is None
+                else args.refinement_half_span_um * 1e-6
+            ),
+            "refinement_y_half_span_m": (
+                None
+                if args.refinement_y_half_span_um is None
+                else args.refinement_y_half_span_um * 1e-6
             ),
             "source_support_outside_fine_region_is_preserved": True,
             "TaIrTe4_z_override_m": args.flake_dz_nm * 1e-9,
@@ -3367,6 +3402,16 @@ def assert_contract(
                 None
                 if args.refinement_half_span_um is None
                 else args.refinement_half_span_um * 1e-6
+            ),
+            "refinement_x_half_span_m": (
+                None
+                if args.refinement_half_span_um is None
+                else args.refinement_half_span_um * 1e-6
+            ),
+            "refinement_y_half_span_m": (
+                None
+                if args.refinement_y_half_span_um is None
+                else args.refinement_y_half_span_um * 1e-6
             ),
             "intermediate_local_xy_mesh_m": (
                 None
