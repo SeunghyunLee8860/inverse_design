@@ -33,6 +33,9 @@ from photothermal_pte.validation.paper_ir_sanity.register_device_a_fig3h_approx 
     affine_pixel_to_device_um,
     source_device_envelope,
 )
+from photothermal_pte.validation.paper_ir_sanity.run_lumerical_device_a_ir_q import (
+    geometry_scenario_label,
+)
 
 
 def test_coordinate_plot_preserves_nonuniform_cell_edges() -> None:
@@ -110,6 +113,12 @@ def test_thermal_runner_fails_closed_without_explicit_optical_frame(
     (case_dir / "case_result.json").write_text(json.dumps({"domain_um": 64.0}))
     with pytest.raises(ValueError, match="source_span_um"):
         load_optical_coordinate_frame(case_dir)
+
+
+def test_device_a_metadata_does_not_claim_edge_free_planar_geometry() -> None:
+    assert "physical edges" in geometry_scenario_label("device-a-polygon")
+    assert "edge-free" not in geometry_scenario_label("device-a-polygon")
+    assert "edge-free planar" in geometry_scenario_label("planar-stack")
 
 
 def test_strict_centered_gradient_masks_any_missing_xy_neighbour() -> None:

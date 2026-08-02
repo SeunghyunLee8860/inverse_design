@@ -19,6 +19,16 @@ stepping was not executed.
 - empirical estimate: `5.899 GiB`,
   `274.9 s` per optical case.
 
+
+The finite Device-A runsetup independently read back the digitized TaIrTe4
+polygon and all four Ti/Au electrode objects:
+
+- native mesh: `628 x 690 x 88`;
+- estimated native Yee cells: `37584261`;
+- empirical estimate: `5.881 GiB`,
+  `274.1 s` per optical case.
+
+
 Every pre-run check passed. The registration remains an explicit affine
 figure-reading assumption, not raw experimental stage metrology. Raw FSP and
 case JSON remain outside Git and are SHA-pinned in the manifest.

@@ -19,7 +19,13 @@
     "source_PML_clearance_at_least_0p5um": true,
     "native_min_xy_step_at_most_50nm": true,
     "native_min_z_step_at_most_10nm": true,
-    "GPU_resource_configured": true
+    "GPU_resource_configured": true,
+    "finite_contract_built_not_solved": true,
+    "finite_all_pre_run_checks_passed": true,
+    "finite_geometry_is_device_a_polygon": true,
+    "finite_flake_and_electrodes_read_back": true,
+    "finite_frame_matches_empty_reference": true,
+    "finite_GPU_resource_configured": true
   },
   "readback": {
     "solver_version": "8.35.4522",
@@ -280,6 +286,236 @@
       "TaIrTe4_only_Q_requires_material_support_decomposition": true,
       "full_SiO2_Q_control_volume": false,
       "SiO2_Q_z_mesh_m": null
+    },
+    "finite_device": {
+      "geometry_name": "device-a-polygon",
+      "geometry_source": "approximation digitized from paper Figure 2A, not exact CAD",
+      "flake_vertices_um": [
+        [
+          1.4994820441988956,
+          8.767955801104971
+        ],
+        [
+          25.698377071823202,
+          8.767955801104971
+        ],
+        [
+          25.643128453038674,
+          -14.767955801104971
+        ],
+        [
+          -4.356871546961324,
+          -14.657458563535911
+        ],
+        [
+          -4.356871546961324,
+          -4.602209944751381
+        ],
+        [
+          -2.809910220994473,
+          -2.1712707182320443
+        ],
+        [
+          -2.809910220994473,
+          1.0331491712707175
+        ],
+        [
+          1.4994820441988956,
+          3.3535911602209936
+        ]
+      ],
+      "electrode_material_contract": {
+        "Ti": {
+          "material": "Ti (Titanium) - CRC",
+          "thickness_m": 5e-09,
+          "database_provenance": "Ansys Lumerical v261 built-in CRC sampled-data material; fit range includes 11 um"
+        },
+        "Au": {
+          "material": "Au (Gold) - CRC",
+          "thickness_m": 5e-08,
+          "database_provenance": "Ansys Lumerical v261 built-in CRC sampled-data material; fit range includes 11 um"
+        },
+        "top_polygon_simulation_um": [
+          [
+            -7.174551104972373,
+            14.955801104972373
+          ],
+          [
+            30.89174723756906,
+            14.955801104972373
+          ],
+          [
+            30.89174723756906,
+            8.767955801104971
+          ],
+          [
+            -7.174551104972373,
+            8.767955801104971
+          ]
+        ],
+        "bottom_polygon_simulation_um": [
+          [
+            -7.174551104972373,
+            -14.657458563535911
+          ],
+          [
+            30.89174723756906,
+            -14.657458563535911
+          ],
+          [
+            30.89174723756906,
+            -18.248618784530386
+          ],
+          [
+            -7.174551104972373,
+            -18.248618784530386
+          ]
+        ]
+      },
+      "native_mesh": {
+        "x": {
+          "shape": [
+            628
+          ],
+          "bounds_m": [
+            -3.2e-05,
+            3.2e-05
+          ],
+          "minimum_step_m": 4.999999999995378e-08,
+          "median_step_m": 5.000000000000037e-08,
+          "maximum_step_m": 1.9947633444990777e-07
+        },
+        "y": {
+          "shape": [
+            690
+          ],
+          "bounds_m": [
+            -3.2e-05,
+            3.2e-05
+          ],
+          "minimum_step_m": 4.999999999996564e-08,
+          "median_step_m": 5.000000000000037e-08,
+          "maximum_step_m": 1.9995937601560045e-07
+        },
+        "z": {
+          "shape": [
+            88
+          ],
+          "bounds_m": [
+            -3.4150000000000003e-06,
+            1e-05
+          ],
+          "minimum_step_m": 9.802631578947347e-09,
+          "median_step_m": 1.6784526220987325e-08,
+          "maximum_step_m": 6.600000000000005e-07
+        }
+      },
+      "native_runsetup_cell_count_estimate": 37584261,
+      "empirical_resource_estimate": {
+        "basis": "linear interpolation from completed 67.131579-million-cell nested candidate: 10.505 GiB and 489.597946 s",
+        "estimated_GPU_memory_GiB": 5.881325416239652,
+        "estimated_runtime_s": 274.10612504031684,
+        "estimate_is_not_a_solver_allocation_readback": true
+      },
+      "mesh_override_objects": [
+        {
+          "name": "flake_mesh",
+          "bounds_m": {
+            "x": [
+              -1.4891747237569059e-05,
+              3.1082527624309415e-06
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              -2.3000000000000002e-07,
+              1e-07
+            ]
+          },
+          "override_x_mesh": true,
+          "override_y_mesh": true,
+          "override_z_mesh": true,
+          "dz_m": 1e-08,
+          "dx_m": 5.0000000000000004e-08,
+          "dy_m": 5.0000000000000004e-08
+        },
+        {
+          "name": "flake_outer_mesh",
+          "bounds_m": {
+            "x": [
+              -7.724551104972371e-06,
+              3.1441747237569055e-05
+            ],
+            "y": [
+              -1.8798618784530382e-05,
+              1.5505801104972372e-05
+            ],
+            "z": [
+              -2.3000000000000002e-07,
+              1e-07
+            ]
+          },
+          "override_x_mesh": true,
+          "override_y_mesh": true,
+          "override_z_mesh": true,
+          "dz_m": 1e-08,
+          "dx_m": 2.0000000000000002e-07,
+          "dy_m": 2.0000000000000002e-07
+        },
+        {
+          "name": "flake_intermediate_mesh",
+          "bounds_m": {
+            "x": [
+              -1.789174723756906e-05,
+              6.10825276243094e-06
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              -2.3000000000000002e-07,
+              1e-07
+            ]
+          },
+          "override_x_mesh": true,
+          "override_y_mesh": true,
+          "override_z_mesh": true,
+          "dz_m": 1e-08,
+          "dx_m": 1.0000000000000001e-07,
+          "dy_m": 1.0000000000000001e-07
+        }
+      ],
+      "source_bounds_m": {
+        "x": [
+          -3.0891747237569055e-05,
+          1.910825276243094e-05
+        ],
+        "y": [
+          -2.4999999999999998e-05,
+          2.4999999999999998e-05
+        ],
+        "z": [
+          5e-06,
+          5e-06
+        ]
+      },
+      "flake_bounds_m": {
+        "x": [
+          -4.356871546961324e-06,
+          2.56983770718232e-05
+        ],
+        "y": [
+          -1.4767955801104971e-05,
+          8.767955801104971e-06
+        ],
+        "z": [
+          -1.3000000000000003e-07,
+          0.0
+        ]
+      }
     }
   },
   "execution_scope": {

@@ -299,6 +299,19 @@ def load_digitized_device_a_contract(
     }
 
 
+def geometry_scenario_label(geometry: str) -> str:
+    """Return an unambiguous geometry label for published metadata."""
+    labels = {
+        "device-a-polygon": "digitized finite Device-A TaIrTe4 polygon with physical edges",
+        "straight-45-edge": "straight 45-degree TaIrTe4 edge",
+        "planar-stack": "edge-free planar TaIrTe4 layer",
+    }
+    try:
+        return labels[geometry]
+    except KeyError as exc:
+        raise ValueError(f"unknown optical geometry: {geometry}") from exc
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", required=True)
@@ -3006,11 +3019,7 @@ def add_geometry_and_monitors(
                         f"{args.source_center_wavelength_m * 1e6:.6g} um"
                     ),
                     "normal incidence",
-                    (
-                        "straight 45-degree TaIrTe4 edge"
-                        if args.geometry == "straight-45-edge"
-                        else "edge-free planar TaIrTe4 layer"
-                    ),
+                    geometry_scenario_label(args.geometry),
                     "130 nm TaIrTe4 thickness",
                     "285 nm SiO2 on Si stack",
                     "epsilon_x=epsilon_b, epsilon_y=epsilon_a, epsilon_z=epsilon_b",

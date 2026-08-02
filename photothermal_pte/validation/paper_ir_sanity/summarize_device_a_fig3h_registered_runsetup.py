@@ -30,6 +30,7 @@ def artifact(path: Path, role: str) -> dict[str, object]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--runsetup-dir", type=Path, required=True)
+    parser.add_argument("--finite-runsetup-dir", type=Path)
     parser.add_argument("--registration-plan", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
@@ -38,6 +39,17 @@ def main() -> int:
     result_path = args.runsetup_dir / "case_result.json"
     project_path = args.runsetup_dir / "finite_2um_optical_q.fsp"
     result = json.loads(result_path.read_text())
+    finite_result_path = None
+    finite_project_path = None
+    finite_result = None
+    finite_pre = None
+    finite_mesh = None
+    if args.finite_runsetup_dir is not None:
+        finite_result_path = args.finite_runsetup_dir / "case_result.json"
+        finite_project_path = args.finite_runsetup_dir / "finite_2um_optical_q.fsp"
+        finite_result = json.loads(finite_result_path.read_text())
+        finite_pre = finite_result["pre_run_contract"]
+        finite_mesh = finite_pre["mesh"]
     plan = json.loads(args.registration_plan.read_text())
     pre = result["pre_run_contract"]
     mesh = pre["mesh"]
@@ -77,6 +89,34 @@ def main() -> int:
             "device type"
         ].startswith("GPU"),
     }
+    if finite_result is not None:
+        finite_source = finite_pre["geometry"]["source"]
+        checks.update(
+            {
+                "finite_contract_built_not_solved": finite_result["status"]
+                == "CONTRACT_BUILT_NOT_SOLVED",
+                "finite_all_pre_run_checks_passed": bool(
+                    finite_pre["checks"]["all"]
+                ),
+                "finite_geometry_is_device_a_polygon": finite_pre["geometry"][
+                    "geometry_name"
+                ]
+                == "device-a-polygon",
+                "finite_flake_and_electrodes_read_back": bool(
+                    finite_pre["checks"]["one_TaIrTe4_geometry_object"]
+                    and finite_pre["checks"]["electrode_object_count"]
+                ),
+                "finite_frame_matches_empty_reference": bool(
+                    float(finite_result["domain_um"]) == float(result["domain_um"])
+                    and float(finite_result["source_span_um"])
+                    == float(result["source_span_um"])
+                    and finite_source["beam_center_m"] == source["beam_center_m"]
+                ),
+                "finite_GPU_resource_configured": finite_pre["solver"][
+                    "resources"
+                ]["2"]["device type"].startswith("GPU"),
+            }
+        )
 
     summary = {
         "status": (
@@ -117,6 +157,34 @@ def main() -> int:
             "substrate_optical_contract": pre["geometry"][
                 "substrate_optical_contract"
             ],
+            "finite_device": (
+                None
+                if finite_result is None
+                else {
+                    "geometry_name": finite_pre["geometry"]["geometry_name"],
+                    "geometry_source": finite_pre["geometry"]["geometry_source"],
+                    "flake_vertices_um": finite_pre["geometry"][
+                        "flake_vertices_um"
+                    ],
+                    "electrode_material_contract": finite_pre["geometry"][
+                        "electrode_material_contract"
+                    ],
+                    "native_mesh": finite_mesh["native_runsetup_mesh"],
+                    "native_runsetup_cell_count_estimate": finite_mesh[
+                        "native_runsetup_cell_count_estimate"
+                    ],
+                    "empirical_resource_estimate": finite_mesh[
+                        "empirical_resource_estimate"
+                    ],
+                    "mesh_override_objects": finite_mesh["override_objects"],
+                    "source_bounds_m": finite_pre["object_bounds_readback_m"][
+                        "source"
+                    ],
+                    "flake_bounds_m": finite_pre["object_bounds_readback_m"][
+                        "flake"
+                    ],
+                }
+            ),
         },
         "execution_scope": {
             "Maxwell_time_stepping": False,
@@ -131,19 +199,51 @@ def main() -> int:
         json.dumps(summary, indent=2) + "\n"
     )
 
+    raw_artifacts = [
+        artifact(result_path, "empty-stack v261 runsetup case result"),
+        artifact(project_path, "empty-stack v261 runsetup FSP; no time stepping"),
+    ]
+    if finite_result_path is not None and finite_project_path is not None:
+        raw_artifacts.extend(
+            [
+                artifact(finite_result_path, "finite Device-A v261 runsetup case result"),
+                artifact(
+                    finite_project_path,
+                    "finite Device-A v261 runsetup FSP; no time stepping",
+                ),
+            ]
+        )
     manifest = {
         "status": "RAW_RUNSETUP_ARTIFACTS_RECORDED_NOT_COMMITTED",
-        "artifacts": [
-            artifact(result_path, "v261 runsetup case result"),
-            artifact(project_path, "v261 runsetup FSP; no time stepping"),
+        "artifacts": raw_artifacts,
+        "generation_commands": [
+            result["generation_command"],
+            *(
+                []
+                if finite_result is None
+                else [finite_result["generation_command"]]
+            ),
         ],
-        "generation_command": result["generation_command"],
     }
     (args.output_dir / "RAW_ARTIFACT_MANIFEST_RUNSETUP.json").write_text(
         json.dumps(manifest, indent=2) + "\n"
     )
 
     estimate = mesh["empirical_resource_estimate"]
+    finite_runsetup_text = ""
+    if finite_mesh is not None:
+        finite_native = finite_mesh["native_runsetup_mesh"]
+        finite_estimate = finite_mesh["empirical_resource_estimate"]
+        finite_runsetup_text = f"""
+
+The finite Device-A runsetup independently read back the digitized TaIrTe4
+polygon and all four Ti/Au electrode objects:
+
+- native mesh: `{finite_native['x']['shape'][0]} x {finite_native['y']['shape'][0]} x {finite_native['z']['shape'][0]}`;
+- estimated native Yee cells: `{finite_mesh['native_runsetup_cell_count_estimate']}`;
+- empirical estimate: `{finite_estimate['estimated_GPU_memory_GiB']:.3f} GiB`,
+  `{finite_estimate['estimated_runtime_s']:.1f} s` per optical case.
+"""
     report = f"""# Device-A Figure 3H registered runsetup
 
 Status: `{summary['status']}`
@@ -164,6 +264,7 @@ stepping was not executed.
   `{native['x']['minimum_step_m'] * 1e9:.6f} / {native['y']['minimum_step_m'] * 1e9:.6f} / {native['z']['minimum_step_m'] * 1e9:.6f} nm`;
 - empirical estimate: `{estimate['estimated_GPU_memory_GiB']:.3f} GiB`,
   `{estimate['estimated_runtime_s']:.1f} s` per optical case.
+{finite_runsetup_text}
 
 Every pre-run check passed. The registration remains an explicit affine
 figure-reading assumption, not raw experimental stage metrology. Raw FSP and
