@@ -391,13 +391,13 @@ def parse_args() -> argparse.Namespace:
         np.isclose(args.domain_um, 60.0)
         and any(
             np.isclose(args.source_span_um, allowed)
-            for allowed in (36.0, 40.0, 50.0)
+            for allowed in (34.0, 36.0, 40.0, 50.0)
         )
     ):
         parser.error(
             "the named waist scenario keeps the frozen 60-um domain and a "
-            "50-um (default), 40-um, or 36-um (edge-scan clearance) "
-            "source span"
+            "50-um (default), 40-um, 36-um, or 34-um (edge-scan "
+            "clearance) source span"
         )
     if args.scenario_waist_um is not None:
         # Fail-closed truncated-Gaussian capture: for a square aperture of

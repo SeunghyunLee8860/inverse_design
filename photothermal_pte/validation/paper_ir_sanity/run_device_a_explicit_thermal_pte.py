@@ -954,7 +954,7 @@ def main() -> int:
         optical_case_path = args.optical_case_dir / "case_result.json"
         optical_case = json.loads(optical_case_path.read_text())
         optical_span_um = float(optical_case.get("source_span_um") or 0.0)
-        if optical_span_um not in (36.0, 40.0, 50.0):
+        if optical_span_um not in (34.0, 36.0, 40.0, 50.0):
             raise RuntimeError(
                 "optical case source span must be 40 or 50 um so the "
                 "frozen coordinate translation can be reproduced; got "
