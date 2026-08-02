@@ -1505,6 +1505,37 @@ def pte_current_internal_face_bilinear(
     }
 
 
+def load_optical_coordinate_frame(
+    optical_case_dir: Path,
+) -> tuple[Path, dict[str, Any], float, float]:
+    """Read the coordinate frame frozen by the actual optical case.
+
+    Device-A is translated to center the union of its metal and finite source
+    aperture.  Consequently, changing the optical domain or source aperture
+    changes the simulation-frame coordinates even though every relative
+    physical coordinate is preserved.  Thermal post-processing must reuse
+    those exact optical values rather than silently falling back to 60/50 um.
+    """
+    result_path = optical_case_dir / "case_result.json"
+    if not result_path.is_file():
+        raise FileNotFoundError(f"optical case result is missing: {result_path}")
+    result = json.loads(result_path.read_text())
+    try:
+        domain_um = float(result["domain_um"])
+        source_span_um = float(result["source_span_um"])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise ValueError(
+            "optical case_result.json must explicitly record domain_um and "
+            "source_span_um so the thermal geometry uses the identical "
+            "translated Device-A coordinate frame"
+        ) from exc
+    if not np.isfinite(domain_um) or domain_um <= 0.0:
+        raise ValueError("optical domain_um must be finite and positive")
+    if not np.isfinite(source_span_um) or source_span_um <= 0.0:
+        raise ValueError("optical source_span_um must be finite and positive")
+    return result_path, result, domain_um, source_span_um
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--optical-case-dir", type=Path, required=True)
@@ -1596,6 +1627,12 @@ def main() -> int:
             "TaIrTe4-only source; do not mix material attribution contracts"
         )
     args.output_dir.mkdir(parents=True, exist_ok=False)
+    (
+        optical_result_path,
+        optical_case_result,
+        optical_domain_um,
+        optical_source_span_um,
+    ) = load_optical_coordinate_frame(args.optical_case_dir)
     global FLAKE_VERTICES_UM, TOP_CONTACT_SEGMENT_UM, BOTTOM_CONTACT_SEGMENT_UM
     digitized_contract = None
     if args.geometry_contract_json is not None:
@@ -1605,11 +1642,13 @@ def main() -> int:
 
         digitized_contract = load_digitized_device_a_contract(
             args.geometry_contract_json,
-            # The coordinate translation is part of the frozen 60 um optical
-            # contract.  A thermal-domain size must not be substituted into
-            # the optical source/PML-clearance audit.
-            domain_um=60.0,
-            source_span_um=50.0,
+            # The optical coordinate translation depends on the union of the
+            # source aperture and digitized electrodes.  Read the actual
+            # optical domain/source contract rather than silently imposing
+            # the historical 60/50-um frame.  The thermal-domain size is a
+            # separate convergence parameter and must not enter this call.
+            domain_um=optical_domain_um,
+            source_span_um=optical_source_span_um,
         )
         FLAKE_VERTICES_UM = np.asarray(
             digitized_contract["flake_vertices_simulation_um"], float
@@ -1894,6 +1933,13 @@ def main() -> int:
             "flake_dz_nm": args.flake_dz_nm,
             "grid_shape": list(geometry.material_id.shape),
             "thermal_model": args.thermal_model,
+            "optical_coordinate_frame": {
+                "case_result_path": str(optical_result_path.resolve()),
+                "optical_domain_um": optical_domain_um,
+                "optical_source_span_um": optical_source_span_um,
+                "translation_loaded_from_actual_optical_contract": True,
+                "thermal_domain_is_not_used_to_translate_optical_geometry": True,
+            },
             "digitized_contract": (
                 None
                 if digitized_contract is None

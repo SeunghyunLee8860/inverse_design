@@ -20,6 +20,7 @@ from photothermal_pte.validation.paper_ir_sanity.run_analytic_q_remap_control im
 )
 from photothermal_pte.validation.paper_ir_sanity.run_device_a_explicit_thermal_pte import (
     Geometry,
+    load_optical_coordinate_frame,
     measure_weighted_mean,
     pte_current,
     pte_current_internal_face_bilinear,
@@ -87,6 +88,28 @@ def test_registered_source_requires_larger_domain_if_span_is_preserved() -> None
     assert expanded["passes_existing_loader_clearance_gate"]
     assert old["minimum_PML_clearance_um"]["x"] < 0.0
     assert expanded["minimum_PML_clearance_um"]["x"] > 1.0
+
+
+def test_thermal_runner_reads_actual_64um_optical_frame(tmp_path: Path) -> None:
+    case_dir = tmp_path / "optical_case"
+    case_dir.mkdir()
+    payload = {"domain_um": 64.0, "source_span_um": 50.0}
+    (case_dir / "case_result.json").write_text(json.dumps(payload))
+    path, result, domain_um, source_span_um = load_optical_coordinate_frame(case_dir)
+    assert path == case_dir / "case_result.json"
+    assert result == payload
+    assert domain_um == 64.0
+    assert source_span_um == 50.0
+
+
+def test_thermal_runner_fails_closed_without_explicit_optical_frame(
+    tmp_path: Path,
+) -> None:
+    case_dir = tmp_path / "optical_case"
+    case_dir.mkdir()
+    (case_dir / "case_result.json").write_text(json.dumps({"domain_um": 64.0}))
+    with pytest.raises(ValueError, match="source_span_um"):
+        load_optical_coordinate_frame(case_dir)
 
 
 def test_strict_centered_gradient_masks_any_missing_xy_neighbour() -> None:
