@@ -122,6 +122,102 @@ def polygon_area(vertices_um: np.ndarray) -> float:
     return 0.5 * abs(float(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1))))
 
 
+def boundary_mesh_boxes(
+    polygons_um: dict[str, np.ndarray],
+    *,
+    beam_center_um: np.ndarray,
+    waist_um: float,
+    half_width_um: float,
+    segment_length_um: float,
+    minimum_relative_intensity: float,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Tile illuminated polygon edges with overlapping axis-aligned boxes."""
+
+    if not 0.0 < minimum_relative_intensity < 1.0:
+        raise ValueError("boundary mesh intensity threshold must lie in (0,1)")
+    radius_um = waist_um * np.sqrt(
+        -0.5 * np.log(minimum_relative_intensity)
+    )
+    boxes: list[dict[str, Any]] = []
+    audited_samples: list[np.ndarray] = []
+    uncovered_samples: list[np.ndarray] = []
+    for polygon_name, vertices in polygons_um.items():
+        polygon = np.asarray(vertices, float)
+        for edge_index, (start, stop) in enumerate(
+            zip(polygon, np.roll(polygon, -1, axis=0))
+        ):
+            length = float(np.linalg.norm(stop - start))
+            count = max(1, int(np.ceil(length / segment_length_um)))
+            for segment_index in range(count):
+                t0 = segment_index / count
+                t1 = (segment_index + 1) / count
+                sub_start = start + t0 * (stop - start)
+                sub_stop = start + t1 * (stop - start)
+                midpoint = 0.5 * (sub_start + sub_stop)
+                # Retain a box when any part of its padded segment can enter
+                # the named Gaussian illumination radius.
+                samples = np.linspace(0.0, 1.0, 7)[:, None]
+                sub_points = sub_start + samples * (sub_stop - sub_start)
+                if (
+                    np.min(
+                        np.linalg.norm(
+                            sub_points - beam_center_um[None, :], axis=1
+                        )
+                    )
+                    > radius_um + half_width_um
+                ):
+                    continue
+                bounds = {
+                    "x": [
+                        float(min(sub_start[0], sub_stop[0]) - half_width_um),
+                        float(max(sub_start[0], sub_stop[0]) + half_width_um),
+                    ],
+                    "y": [
+                        float(min(sub_start[1], sub_stop[1]) - half_width_um),
+                        float(max(sub_start[1], sub_stop[1]) + half_width_um),
+                    ],
+                }
+                boxes.append(
+                    {
+                        "name": f"boundary_fine_mesh_{len(boxes):04d}",
+                        "polygon": polygon_name,
+                        "edge_index": edge_index,
+                        "segment_index": segment_index,
+                        "segment_count": count,
+                        "segment_start_um": sub_start.tolist(),
+                        "segment_stop_um": sub_stop.tolist(),
+                        "midpoint_um": midpoint.tolist(),
+                        "bounds_um": bounds,
+                    }
+                )
+                audited_samples.extend(sub_points)
+
+    # Explicitly verify that every retained boundary sample lies in at least
+    # one padded box.  This catches round-off and segment-chain gaps before a
+    # licensed solve is allowed to start.
+    for point in audited_samples:
+        covered = any(
+            box["bounds_um"]["x"][0] <= point[0]
+            <= box["bounds_um"]["x"][1]
+            and box["bounds_um"]["y"][0] <= point[1]
+            <= box["bounds_um"]["y"][1]
+            for box in boxes
+        )
+        if not covered:
+            uncovered_samples.append(point)
+    audit = {
+        "Gaussian_relative_intensity_threshold": minimum_relative_intensity,
+        "Gaussian_radius_um": float(radius_um),
+        "half_width_um": float(half_width_um),
+        "maximum_segment_length_um": float(segment_length_um),
+        "box_count": len(boxes),
+        "audited_boundary_sample_count": len(audited_samples),
+        "uncovered_boundary_sample_count": len(uncovered_samples),
+        "no_planned_boundary_gaps": not uncovered_samples,
+    }
+    return boxes, audit
+
+
 def load_digitized_device_a_contract(
     path: Path,
     *,
@@ -264,6 +360,24 @@ def parse_args() -> argparse.Namespace:
         type=float,
         default=None,
         help="half span of the optional intermediate nested mesh",
+    )
+    parser.add_argument(
+        "--boundary-following-fine-mesh",
+        action="store_true",
+        help=(
+            "add overlapping axis-aligned 50-nm mesh boxes along illuminated "
+            "flake/electrode polygon edges; intended for the Device-A fast-"
+            "mesh convergence diagnostic"
+        ),
+    )
+    parser.add_argument(
+        "--boundary-mesh-half-width-um", type=float, default=0.4
+    )
+    parser.add_argument(
+        "--boundary-mesh-segment-length-um", type=float, default=0.5
+    )
+    parser.add_argument(
+        "--boundary-mesh-min-relative-intensity", type=float, default=1.0e-3
     )
     parser.add_argument("--simulation-time-ps", type=float, default=1.2)
     parser.add_argument("--auto-shutoff-min", type=float, default=1.0e-5)
@@ -472,6 +586,20 @@ def parse_args() -> argparse.Namespace:
         or args.sio2_q_dz_nm <= 0
     ):
         parser.error("waist, flake dz, simulation time, and shutoff must be positive")
+    if (
+        args.boundary_mesh_half_width_um <= 0.0
+        or args.boundary_mesh_segment_length_um <= 0.0
+        or not 0.0 < args.boundary_mesh_min_relative_intensity < 1.0
+    ):
+        parser.error("boundary mesh width/length/relative intensity are invalid")
+    if args.boundary_following_fine_mesh and (
+        args.case != "finite-flake"
+        or args.geometry != "device-a-polygon"
+        or not args.include_electrodes
+    ):
+        parser.error(
+            "boundary-following mesh requires finite Device-A with electrodes"
+        )
     if args.outer_local_xy_mesh_nm is None:
         args.outer_local_xy_mesh_nm = (
             100.0
@@ -747,6 +875,29 @@ def parse_args() -> argparse.Namespace:
         ),
         "z": (-FLAKE_THICKNESS_M, 0.0),
     }
+    args.boundary_mesh_boxes = []
+    args.boundary_mesh_plan_audit = None
+    if args.boundary_following_fine_mesh:
+        args.boundary_mesh_boxes, args.boundary_mesh_plan_audit = (
+            boundary_mesh_boxes(
+                {
+                    "flake": args.flake_vertices_um,
+                    "top_electrode": args.top_metal_vertices_um,
+                    "bottom_electrode": args.bottom_metal_vertices_um,
+                },
+                beam_center_um=np.asarray(
+                    [args.mesh_center_x_um, args.mesh_center_y_um], float
+                ),
+                waist_um=float(args.waist_um),
+                half_width_um=float(args.boundary_mesh_half_width_um),
+                segment_length_um=float(args.boundary_mesh_segment_length_um),
+                minimum_relative_intensity=float(
+                    args.boundary_mesh_min_relative_intensity
+                ),
+            )
+        )
+        if not args.boundary_mesh_plan_audit["no_planned_boundary_gaps"]:
+            parser.error("boundary-following mesh plan contains a gap")
     if args.refinement_half_span_um is not None:
         outer_mesh_half_span_um = max(
             max(abs(value) for value in absorption_bounds_um["x"]),
@@ -2007,6 +2158,33 @@ def add_geometry_and_monitors(
     mesh["dy"] = args.local_xy_mesh_nm * 1e-9
     mesh["dz"] = args.flake_dz_nm * 1e-9
 
+    boundary_mesh_bounds = []
+    for specification in args.boundary_mesh_boxes:
+        boundary_mesh = fdtd.addmesh()
+        boundary_mesh["name"] = specification["name"]
+        for axis in "xy":
+            low_um, high_um = specification["bounds_um"][axis]
+            boundary_mesh[f"{axis} min"] = low_um * 1e-6
+            boundary_mesh[f"{axis} max"] = high_um * 1e-6
+        boundary_mesh["z min"] = mesh_z_min
+        boundary_mesh["z max"] = mesh_z_max
+        boundary_mesh["override x mesh"] = 1
+        boundary_mesh["override y mesh"] = 1
+        boundary_mesh["override z mesh"] = 1
+        boundary_mesh["dx"] = args.local_xy_mesh_nm * 1e-9
+        boundary_mesh["dy"] = args.local_xy_mesh_nm * 1e-9
+        boundary_mesh["dz"] = args.flake_dz_nm * 1e-9
+        boundary_mesh_bounds.append(
+            {
+                **specification,
+                "bounds_m": {
+                    axis: [value * 1e-6 for value in specification["bounds_um"][axis]]
+                    for axis in "xy"
+                }
+                | {"z": [mesh_z_min, mesh_z_max]},
+            }
+        )
+
     oxide_q_mesh_bounds = None
     if args.full_sio2_q_control_volume:
         oxide_q_mesh_bounds = {
@@ -2381,6 +2559,17 @@ def add_geometry_and_monitors(
                 "z": (mesh_z_min, mesh_z_max),
             },
             "fine_local_xy_mesh_m": args.local_xy_mesh_nm * 1e-9,
+            "boundary_following_fine_mesh": {
+                "enabled": bool(args.boundary_following_fine_mesh),
+                "plan_audit": args.boundary_mesh_plan_audit,
+                "boxes": boundary_mesh_bounds,
+                "interpretation": (
+                    "overlapping axis-aligned boxes following illuminated "
+                    "flake/electrode polygon edges; not a rotated mesh"
+                    if args.boundary_following_fine_mesh
+                    else "disabled"
+                ),
+            },
             "intermediate_local_xy_mesh_m": (
                 None
                 if args.intermediate_xy_mesh_nm is None
@@ -2712,6 +2901,40 @@ def assert_contract(
             )
         )
     )
+    checks["correct_boundary_following_mesh_objects"] = (
+        not args.boundary_following_fine_mesh
+        or (
+            args.boundary_mesh_plan_audit["no_planned_boundary_gaps"]
+            and all(
+                int(fdtd.getnamednumber(specification["name"])) == 1
+                and np.isclose(
+                    base.scalar(
+                        fdtd.getnamed(specification["name"], "dx"),
+                        f"{specification['name']}.dx",
+                    ),
+                    args.local_xy_mesh_nm * 1e-9,
+                    atol=1e-15,
+                )
+                and np.isclose(
+                    base.scalar(
+                        fdtd.getnamed(specification["name"], "dy"),
+                        f"{specification['name']}.dy",
+                    ),
+                    args.local_xy_mesh_nm * 1e-9,
+                    atol=1e-15,
+                )
+                and np.isclose(
+                    base.scalar(
+                        fdtd.getnamed(specification["name"], "dz"),
+                        f"{specification['name']}.dz",
+                    ),
+                    args.flake_dz_nm * 1e-9,
+                    atol=1e-15,
+                )
+                for specification in args.boundary_mesh_boxes
+            )
+        )
+    )
     checks["correct_thickness"] = args.case == "empty-stack" or np.isclose(
         base.scalar(fdtd.getnamed("TaIrTe4_flake", "z span"), "flake thickness"),
         FLAKE_THICKNESS_M,
@@ -2809,6 +3032,62 @@ def assert_contract(
             axis: _mesh_coordinate(fdtd, axis) for axis in "xyz"
         }
         pabs_bounds = snapped_bounds
+    boundary_mesh_realized_audit = None
+    if args.boundary_following_fine_mesh:
+        realized_box_metrics = []
+
+        def maximum_intersecting_cell_step(
+            coordinates: np.ndarray, low_m: float, high_m: float
+        ) -> float:
+            cell_low = coordinates[:-1]
+            cell_high = coordinates[1:]
+            selected = (cell_high > low_m - 1e-15) & (
+                cell_low < high_m + 1e-15
+            )
+            if not np.any(selected):
+                raise RuntimeError("boundary mesh box has no realized mesh cell")
+            return float(np.max(np.diff(coordinates)[selected]))
+
+        for specification in args.boundary_mesh_boxes:
+            bounds_m = {
+                axis: [
+                    value * 1e-6
+                    for value in specification["bounds_um"][axis]
+                ]
+                for axis in "xy"
+            }
+            realized_box_metrics.append(
+                {
+                    "name": specification["name"],
+                    "polygon": specification["polygon"],
+                    "bounds_m": bounds_m,
+                    "maximum_realized_dx_m": maximum_intersecting_cell_step(
+                        native_setup_mesh["x"], *bounds_m["x"]
+                    ),
+                    "maximum_realized_dy_m": maximum_intersecting_cell_step(
+                        native_setup_mesh["y"], *bounds_m["y"]
+                    ),
+                }
+            )
+        maximum_dx = max(
+            item["maximum_realized_dx_m"] for item in realized_box_metrics
+        )
+        maximum_dy = max(
+            item["maximum_realized_dy_m"] for item in realized_box_metrics
+        )
+        boundary_mesh_realized_audit = {
+            "box_count": len(realized_box_metrics),
+            "boxes": realized_box_metrics,
+            "maximum_realized_dx_m": maximum_dx,
+            "maximum_realized_dy_m": maximum_dy,
+            "requested_maximum_dx_dy_m": args.local_xy_mesh_nm * 1e-9,
+            "maximum_spacing_gate_tolerance_m": 1e-12,
+            "maximum_dx_dy_gate_passed": max(maximum_dx, maximum_dy)
+            <= args.local_xy_mesh_nm * 1e-9 + 1e-12,
+        }
+        checks["realized_boundary_mesh_dx_dy_within_requested_gate"] = bool(
+            boundary_mesh_realized_audit["maximum_dx_dy_gate_passed"]
+        )
     pabs_bound_to_native_mesh_distance = {
         axis: [
             float(np.min(np.abs(native_setup_mesh[axis] - bound_m)))
@@ -3033,6 +3312,30 @@ def assert_contract(
         mesh_overrides.append(
             mesh_override_readback("full_sio2_q_mesh")
         )
+    for specification in args.boundary_mesh_boxes:
+        mesh_overrides.append(mesh_override_readback(specification["name"]))
+    estimated_cells = int(
+        np.prod(
+            [
+                max(native_setup_mesh[axis].size - 1, 0)
+                for axis in "xyz"
+            ],
+            dtype=np.int64,
+        )
+    )
+    empirical_resource_estimate = {
+        "basis": (
+            "linear interpolation from completed 67.131579-million-cell "
+            "nested candidate: 10.505 GiB and 489.597946 s"
+        ),
+        "estimated_GPU_memory_GiB": float(
+            estimated_cells / 67_131_579 * 10.505
+        ),
+        "estimated_runtime_s": float(
+            estimated_cells / 67_131_579 * 489.597946
+        ),
+        "estimate_is_not_a_solver_allocation_readback": True,
+    }
     return {
         "checks": checks,
         "boundaries": boundaries,
@@ -3076,6 +3379,8 @@ def assert_contract(
                 else args.intermediate_half_span_um * 1e-6
             ),
             "override_objects": mesh_overrides,
+            "boundary_following_realized_audit": boundary_mesh_realized_audit,
+            "empirical_resource_estimate": empirical_resource_estimate,
             "uniform_global_fine_mesh_present": False,
             "local_x_or_y_override_present": True,
             "native_runsetup_mesh": {

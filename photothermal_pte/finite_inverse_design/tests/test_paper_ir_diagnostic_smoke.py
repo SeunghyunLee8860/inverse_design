@@ -20,6 +20,32 @@ from photothermal_pte.validation.paper_ir_sanity import (
 
 
 class PaperIrDiagnosticSmokeTests(unittest.TestCase):
+    def test_boundary_mesh_boxes_cover_retained_edge_samples(self) -> None:
+        boxes, audit = runner.boundary_mesh_boxes(
+            {
+                "flake": np.asarray(
+                    [[-2.0, -1.0], [2.0, -1.0], [2.0, 1.0], [-2.0, 1.0]]
+                )
+            },
+            beam_center_um=np.zeros(2),
+            waist_um=2.0,
+            half_width_um=0.4,
+            segment_length_um=0.5,
+            minimum_relative_intensity=1.0e-3,
+        )
+        self.assertGreater(len(boxes), 0)
+        self.assertEqual(audit["box_count"], len(boxes))
+        self.assertTrue(audit["no_planned_boundary_gaps"])
+        self.assertEqual(audit["uncovered_boundary_sample_count"], 0)
+        self.assertTrue(
+            all(
+                box["bounds_um"][axis][1]
+                > box["bounds_um"][axis][0]
+                for box in boxes
+                for axis in "xy"
+            )
+        )
+
     def test_device_a_thermal_summary_numpy_metadata_is_jsonable(self) -> None:
         converted = thermal_runner.jsonable(
             {
