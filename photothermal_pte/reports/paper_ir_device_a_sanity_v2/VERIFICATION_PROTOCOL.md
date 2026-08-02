@@ -82,9 +82,13 @@ cross-check.
 
 ## V5 - comparator and consolidated report
 
-* I(s) tables and profiles for both weightings; per-polarization,
-  per-weighting edge-lobe extrema; extremum ratio and pointwise ratios
-  vs the digitized paper value 0.8366 +/- 0.0085.
+* I(s) tables and profiles for both weightings.  PRIMARY comparator:
+  the SAME-POSITION ratio profile r(s) = |I_a(s)|/|I_b(s)|, quoted at
+  the common edge-lobe peak (argmax of |I_a|+|I_b|), versus the
+  digitized paper value 0.8366 +/- 0.0085 - comparing per-polarization
+  extrema at different positions would conflate position dependence
+  with polarization dependence.  Per-polarization extrema are reported
+  only as secondary reference with their positions.
 * Laplace psi is the primary comparator (paper Eq. S7); the
   sigma-weighted result is reported alongside as model sensitivity.
 * Mandatory caveat list: simulated realized beam (7.3/7.0 um 1/e2)

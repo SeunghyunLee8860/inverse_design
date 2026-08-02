@@ -226,20 +226,43 @@ def main() -> int:
     verdict: dict[str, Any] = {}
     for weighting in ("laplace", "sigma"):
         entry: dict[str, Any] = {}
-        for pol in ("a", "b"):
-            table = profiles[weighting][pol]
+        table_a = profiles[weighting]["a"]
+        table_b = profiles[weighting]["b"]
+        common = sorted(set(table_a) & set(table_b))
+        # PRIMARY comparator: the same-position ratio profile
+        # r(s) = |I_a(s)| / |I_b(s)| at every scanned position, quoted
+        # at the common edge-lobe peak (argmax of the summed |I_a|+|I_b|).
+        # Comparing per-polarization extrema at DIFFERENT positions would
+        # conflate position dependence with polarization dependence.
+        if common:
+            entry["pointwise_ratio_by_s_um"] = {
+                f"{s:g}": abs(table_a[s]) / abs(table_b[s])
+                for s in common
+            }
+            summed = np.asarray(
+                [abs(table_a[s]) + abs(table_b[s]) for s in common]
+            )
+            s_peak = common[int(np.argmax(summed))]
+            entry["common_peak_s_um"] = float(s_peak)
+            entry["same_position_ratio_at_common_peak"] = abs(
+                table_a[s_peak]
+            ) / abs(table_b[s_peak])
+        # SECONDARY reference only (positions reported): each
+        # polarization's own |I| extremum.
+        for pol, table in (("a", table_a), ("b", table_b)):
             if table:
                 s_values = np.asarray(sorted(table))
                 currents = np.asarray([table[s] for s in s_values])
                 index = int(np.argmax(np.abs(currents)))
-                entry[pol] = {
+                entry.setdefault("per_polarization_extrema", {})[pol] = {
                     "s_um": float(s_values[index]),
                     "I_A": float(currents[index]),
                 }
-        if "a" in entry and "b" in entry:
-            entry["extremum_abs_Ia_over_abs_Ib"] = abs(
-                entry["a"]["I_A"]
-            ) / abs(entry["b"]["I_A"])
+        extrema = entry.get("per_polarization_extrema", {})
+        if "a" in extrema and "b" in extrema:
+            entry["secondary_extremum_abs_Ia_over_abs_Ib"] = abs(
+                extrema["a"]["I_A"]
+            ) / abs(extrema["b"]["I_A"])
         verdict[weighting] = entry
 
     result = {
@@ -283,9 +306,9 @@ def main() -> int:
                     color=color,
                     label=f"E||{pol}",
                 )
-        ratio = verdict[weighting].get("extremum_abs_Ia_over_abs_Ib")
+        ratio = verdict[weighting].get("same_position_ratio_at_common_peak")
         axis.set_title(
-            f"{title}\nextremum |Ia|/|Ib| = "
+            f"{title}\nsame-position r(s_peak) = "
             f"{ratio:.3f}" if ratio else title
         )
         axis.axvline(0.0, color="k", lw=1.0, ls=":")
