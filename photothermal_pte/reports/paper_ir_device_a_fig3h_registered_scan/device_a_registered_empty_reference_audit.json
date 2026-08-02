@@ -1,0 +1,73 @@
+{
+  "status": "BLOCKED_REGISTERED_EMPTY_B_INNER_LATERAL_FLUX_GATE_REQUIRES_PHYSICAL_REVIEW",
+  "scope": "offline audit of completed GPU empty-stack references",
+  "cases": {
+    "E_parallel_a": {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_a_64um_20260802",
+      "status": "COMPLETED",
+      "polarization_deg": 90.0,
+      "failed_acceptance_items": [],
+      "auto_shutoff": {
+        "log_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_a_64um_20260802/finite_2um_optical_q_p0.log",
+        "final_value": 8.35634e-06,
+        "simulation_completed_successfully": true
+      },
+      "source_aperture_edge_to_central": 1.5176068871996558e-06,
+      "inner_control_volume_maximum_absolute_lateral_flux_fraction": 1.0934903218003478e-05,
+      "outer_control_volume_maximum_absolute_lateral_flux_fraction": 5.365898645879808e-07,
+      "empty_stack_absorbed_power_W_at_1_W_m2": 5.217808191380817e-13,
+      "inner_net_inward_power_W_at_1_W_m2": 5.226963549625692e-13,
+      "solver_completed": true,
+      "matched_bounds": true
+    },
+    "E_parallel_b": {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_b_64um_20260802",
+      "status": "FAILED_ACCEPTANCE",
+      "polarization_deg": 0.0,
+      "failed_acceptance_items": [
+        "offset_source_max_absolute_lateral_flux_fraction_lt_1e_4"
+      ],
+      "auto_shutoff": {
+        "log_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_b_64um_20260802/finite_2um_optical_q_p0.log",
+        "final_value": 8.34516e-06,
+        "simulation_completed_successfully": true
+      },
+      "source_aperture_edge_to_central": 1.5956609411997796e-06,
+      "inner_control_volume_maximum_absolute_lateral_flux_fraction": 0.00010384335833649539,
+      "outer_control_volume_maximum_absolute_lateral_flux_fraction": 8.571098491460056e-07,
+      "empty_stack_absorbed_power_W_at_1_W_m2": 5.425640754541041e-13,
+      "inner_net_inward_power_W_at_1_W_m2": 5.47161169442323e-13,
+      "solver_completed": true,
+      "matched_bounds": true
+    }
+  },
+  "checks": {
+    "empty_a_all_existing_acceptance_passed": true,
+    "empty_b_only_inner_lateral_gate_failed": true,
+    "both_solver_runs_completed": true,
+    "both_auto_shutoff_below_1e_5": true,
+    "both_matched_control_volume_bounds": true,
+    "both_outer_lateral_flux_below_1e_4": true
+  },
+  "diagnosis": {
+    "registered_beam_is_outside_flake": true,
+    "inner_control_volume_is_flake_local": true,
+    "inner_lateral_flux_interpretation": "physical Gaussian-beam Poynting flux crossing the local flake absorption box; not a direct PML-truncation metric",
+    "outer_lateral_flux_interpretation": "large-box lateral boundary flux; proposed numerical truncation diagnostic",
+    "gate_was_not_relaxed_or_rescaled": true,
+    "finite_Device_A_started": false
+  },
+  "proposed_contract_change_not_yet_applied": {
+    "preserve_inner_lateral_flux_as_signed_diagnostic": true,
+    "replace_inner_gate_with_outer_lateral_flux_fraction_lt_1e_4": true,
+    "retain_matched_volume_closure_and_auto_shutoff_gates": true,
+    "reason": "the registered beam centre lies outside the finite flake, so the local absorption box intentionally intercepts real lateral beam power"
+  },
+  "execution_scope": {
+    "new_FDTD": false,
+    "thermal": false,
+    "PTE": false,
+    "adjoint": false,
+    "optimization": false
+  }
+}

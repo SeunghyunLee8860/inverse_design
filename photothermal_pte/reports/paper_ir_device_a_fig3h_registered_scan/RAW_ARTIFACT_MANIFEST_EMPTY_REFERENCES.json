@@ -1,0 +1,93 @@
+{
+  "status": "RAW_EMPTY_REFERENCE_ARTIFACTS_RECORDED_NOT_COMMITTED",
+  "artifacts": [
+    {
+      "role": "E||a case_result.json",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_a_64um_20260802/case_result.json",
+      "size_bytes": 67217,
+      "sha256": "4505d987a65d3f438ffb996a87780df8ae3acf3d4099219a036c8b4a00789388",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||a field_slices_raw.npz",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_a_64um_20260802/field_slices_raw.npz",
+      "size_bytes": 1734352,
+      "sha256": "bda8f7f67037a752d57149b0a5254d678c5997290738e3fda27ad48712897c09",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||a finite_2um_optical_q.fsp",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_a_64um_20260802/finite_2um_optical_q.fsp",
+      "size_bytes": 208109861,
+      "sha256": "8dd13c14f7657b1128ba12c1cbdd57e9e733f79ffa6e1332c299b85052959802",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||a finite_2um_optical_q_p0.log",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_a_64um_20260802/finite_2um_optical_q_p0.log",
+      "size_bytes": 5661,
+      "sha256": "54019a280efab2f118b5f0fb3737093de470aa31acbe059058ee0acd31b29370",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||a incident_reference.npz",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_a_64um_20260802/incident_reference.npz",
+      "size_bytes": 2763488,
+      "sha256": "a68bd49767d80f85adaf547a0490d9657e9f95d9043024fed0eb34489b1a3e08",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||a native_yee_mesh_coordinates.npz",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_a_64um_20260802/native_yee_mesh_coordinates.npz",
+      "size_bytes": 59207,
+      "sha256": "b8652c5c95d07d9f4be9372eefb1953f27c143be308075244c20661446f955b3",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||b case_result.json",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_b_64um_20260802/case_result.json",
+      "size_bytes": 67224,
+      "sha256": "ebb6a3246ed0df6ab847246a8f0fea5eb143b0087786d4e8765a979523e9c783",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||b field_slices_raw.npz",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_b_64um_20260802/field_slices_raw.npz",
+      "size_bytes": 1734352,
+      "sha256": "999af70d8637880d280756677156bd84ab75b85c7983a43e0467c1bd3fdcdd35",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||b finite_2um_optical_q.fsp",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_b_64um_20260802/finite_2um_optical_q.fsp",
+      "size_bytes": 208109861,
+      "sha256": "ee2655e6985a36ca5c2e9a2724d7fb701dd1459ae289d49feeb2ae2104e4e400",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||b finite_2um_optical_q_p0.log",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_b_64um_20260802/finite_2um_optical_q_p0.log",
+      "size_bytes": 5661,
+      "sha256": "a7bb797c0b22c3ba4edf27877d3e1323be084da93fc4e13c1cb46ee4c5a2e8d0",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||b incident_reference.npz",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_b_64um_20260802/incident_reference.npz",
+      "size_bytes": 2763488,
+      "sha256": "4c6e858937bf8a8059102dd4f87779e3328e3ff609198a76a7406d8edd74f7d9",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||b native_yee_mesh_coordinates.npz",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_b_64um_20260802/native_yee_mesh_coordinates.npz",
+      "size_bytes": 59207,
+      "sha256": "b8652c5c95d07d9f4be9372eefb1953f27c143be308075244c20661446f955b3",
+      "committed_to_git": false
+    }
+  ],
+  "generation_commands": [
+    "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_a_64um_20260802 --case empty-stack --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_fig3h_registered_scan/device_a_fig3h_registered_geometry.json --domain-um 64 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --execution-contract paper-measured-reproduction --substrate-optical-model paper-kitamura-palik-nk-11um --source-pulse-contract frequency-centered-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --intermediate-xy-mesh-nm 100 --intermediate-half-span-um 12 --local-xy-mesh-nm 50 --refinement-half-span-um 9 --refinement-y-half-span-um 12 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 0' --threads 3",
+    "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_empty_b_64um_20260802 --case empty-stack --polarization b --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_fig3h_registered_scan/device_a_fig3h_registered_geometry.json --domain-um 64 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --execution-contract paper-measured-reproduction --substrate-optical-model paper-kitamura-palik-nk-11um --source-pulse-contract frequency-centered-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --intermediate-xy-mesh-nm 100 --intermediate-half-span-um 12 --local-xy-mesh-nm 50 --refinement-half-span-um 9 --refinement-y-half-span-um 12 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 0' --threads 3"
+  ]
+}
