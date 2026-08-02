@@ -856,13 +856,28 @@ def main() -> int:
             load_digitized_device_a_contract,
         )
 
+        optical_case_path = args.optical_case_dir / "case_result.json"
+        optical_case = json.loads(optical_case_path.read_text())
+        optical_span_um = float(optical_case.get("source_span_um") or 0.0)
+        if optical_span_um not in (40.0, 50.0):
+            raise RuntimeError(
+                "optical case source span must be 40 or 50 um so the "
+                "frozen coordinate translation can be reproduced; got "
+                f"{optical_span_um}"
+            )
         digitized_contract = load_digitized_device_a_contract(
             args.geometry_contract_json,
-            # The coordinate translation is part of the frozen 60 um optical
-            # contract.  A thermal-domain size must not be substituted into
-            # the optical source/PML-clearance audit.
+            # The coordinate translation must match the frame the optical
+            # artifact was generated in: the recentering shift depends on
+            # the source span, so the span is read fail-closed from the
+            # optical case_result instead of being hardcoded to the 50-um
+            # production value.  A 40-um edge-scan artifact would otherwise
+            # be misregistered by ~2.5 um in x against the thermal
+            # geometry (observed as 17-49% of mapped power relocating
+            # from outside the flake support versus ~3% when the frames
+            # agree).
             domain_um=60.0,
-            source_span_um=50.0,
+            source_span_um=optical_span_um,
         )
         FLAKE_VERTICES_UM = np.asarray(
             digitized_contract["flake_vertices_simulation_um"], float
