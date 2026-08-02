@@ -1,6 +1,6 @@
 # Full-SiO2 Maxwell heat-source precheck
 
-Status: `BLOCKED_FULL_SIO2_Q_SIX_FACE_CLOSURE`
+Status: `BLOCKED_LUMERICAL_FDTD_LATE_TIME_DIVERGENCE`
 
 The requested material-resolved path is implemented.  The GPU Maxwell
 artifact now preserves separate, disjoint volumetric arrays for the complete
@@ -65,10 +65,23 @@ the lateral flux is negligible, but it invalidates the previous phrase
 
 ## Fail-closed decision
 
-The required closure gate is `<0.5%`; both meshes give about `1.249%`, and the
-realized-volume match gate is also false.  Refining the oxide from 10 to 5 nm
-does not improve closure, so no 2.5-nm run is justified.  The `E||b` full-oxide
-run and physical thermal solves were not started.  The failed artifacts remain
-useful diagnostics, but are not production heat sources.  Running a clearly
-labelled diagnostic thermal sensitivity with them would require an explicit
-decision to bypass the optical gates.
+The required closure gate is `<0.5%`; both early-stop meshes give about
+`1.249%`.  A single follow-up used native-mesh-aligned common bounds and
+`auto-shutoff=1e-6`.  The runsetup gate passed, but the strict run revealed a
+more fundamental blocker:
+
+- the old `1e-5` case stopped at `0.7367254 ps`, only `18.418%` of 4 ps;
+- the strict trace crossed the same apparent minimum, then increased by more
+  than ten orders of magnitude;
+- electromagnetic fields diverged at `1.626320 ps` (`40.658%` of 4 ps);
+- GPU wall time was `3844.93 s`;
+- no converged final Q or face-flux result exists for the strict run.
+
+The log alone does not establish whether the late rise is delayed source
+content or the onset of numerical instability; it does establish that the old
+early-stop monitor result did not test this interval.  Thus the old `P_Q` and
+1.249% closure are preserved only as early-stop
+diagnostics.  They cannot be promoted as a production Maxwell heat source.
+The `E||b` full-oxide run and physical thermal solves were not started, and no
+2.5-nm oxide refinement is justified.  The next task is an optical-stability
+diagnosis; it is not a thermal remap adjustment.

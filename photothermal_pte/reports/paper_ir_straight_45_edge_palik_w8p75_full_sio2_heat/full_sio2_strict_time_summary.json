@@ -1,0 +1,50 @@
+{
+  "status": "BLOCKED_LUMERICAL_FDTD_LATE_TIME_DIVERGENCE",
+  "new_thermal_PTE_adjoint_or_optimization_run": false,
+  "legacy_case": {
+    "status": "FAILED_ACCEPTANCE",
+    "requested_auto_shutoff": 1e-05,
+    "stopped_simulation_time_s": 7.367254e-13,
+    "stopped_fraction_of_requested_4ps": 0.18418135,
+    "final_reported_auto_shutoff": 9.68584e-06,
+    "P_Q_W": 1.2611104551458292e-11,
+    "P_six_W": 1.2770638338208644e-11,
+    "closure": 0.012492232770623574
+  },
+  "strict_matched_case": {
+    "status": "BLOCKED_EXECUTION_ERROR",
+    "requested_auto_shutoff": 1e-06,
+    "divergence": true,
+    "divergence_simulation_time_s": 1.62632e-12,
+    "divergence_fraction_of_requested_4ps": 0.40658000000000005,
+    "wall_time_s": 3844.9304,
+    "minimum_logged_auto_shutoff": 6.69093e-06,
+    "maximum_logged_auto_shutoff": 93861.7,
+    "strict_last_sample_at_or_before_legacy_stop": {
+      "progress_percent": 18.0509,
+      "simulation_time_s": 7.22035e-13,
+      "auto_shutoff": 1.05969e-05
+    },
+    "strict_first_sample_after_legacy_stop": {
+      "progress_percent": 18.9486,
+      "simulation_time_s": 7.57945e-13,
+      "auto_shutoff": 8.75269e-06
+    },
+    "strict_peak_logged_sample": {
+      "progress_percent": 40.5764,
+      "simulation_time_s": 1.62306e-12,
+      "auto_shutoff": 93861.7
+    },
+    "Pabs_bounds_on_native_solver_mesh_lt_1fm": true,
+    "final_Q_or_flux_published": false,
+    "reason": "solver terminated for diverging electromagnetic fields before a converged monitor result",
+    "rise_interpretation": "late-time field growth; the log alone does not distinguish delayed source content from numerical-instability growth"
+  },
+  "interpretation": "the legacy 1e-5 run stopped at 0.7367254 ps before the strict trace rose by more than ten orders of magnitude and diverged at 1.62632 ps; the legacy full-SiO2 Q is therefore an early-stop diagnostic, not a production Maxwell heat source",
+  "gates": {
+    "strict_run_completed_without_divergence": false,
+    "strict_auto_shutoff_lt_1e_minus_6": false,
+    "final_Q_and_six_face_closure_available": false,
+    "thermal_progression_allowed": false
+  }
+}

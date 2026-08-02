@@ -2,7 +2,7 @@
 
 ## Full-SiO2 Maxwell heat-source precheck
 
-- Status: `BLOCKED_FULL_SIO2_Q_SIX_FACE_CLOSURE`.
+- Status: `BLOCKED_LUMERICAL_FDTD_LATE_TIME_DIVERGENCE`.
 - The optical path now extracts disjoint volumetric TaIrTe4 and full-285-nm
   SiO2 heat sources.  The thermal path independently maps them into matching
   TaIrTe4 and SiO2 cells; it never projects oxide absorption into the flake.
@@ -18,10 +18,16 @@
   signed z-min/z-max fluxes.  This is not fixed by gain/rescaling or another
   oxide mesh refinement.
 - The audit exposed a separate 50-nm x/y offset between the Pabs/Q bounds and
-  realized six-face coordinates.  Lateral flux is too small for this to cause
-  the 1.249% discrepancy, but the old “matched-volume” wording is withdrawn
-  and future runs fail closed on the readback mismatch.  `E||b` and physical
-  thermal solves remain unrun.
+  realized six-face coordinates.  A new runsetup snapped both to native mesh
+  planes and passed the `<1 fm` gate.  The one approved strict GPU follow-up,
+  however, revealed that the old `1e-5` case stopped at `0.7367254 ps` before
+  a late-time field rise.  The strict trace then rose by more than ten orders of
+  magnitude and the electromagnetic fields diverged at `1.626320 ps` after
+  `3844.93 s` wall time.  No final strict Q/flux was published.
+- The old `P_Q` and 1.249% closure are now early-stop diagnostics only.  `E||b`
+  and physical thermal solves remain unrun; the next blocker is late-time
+  optical GPU stability, not thermal remapping.  The log alone does not
+  distinguish delayed source content from numerical-instability growth.
 - Expanded-FVM thermal conductivities remain named assumptions, not values
   supplied by the TaIrTe4 paper: bulk-reference `k_SiO2=1.38 W/(m K)` and
   `k_Si=145 W/(m K)` at approximately 300 K.

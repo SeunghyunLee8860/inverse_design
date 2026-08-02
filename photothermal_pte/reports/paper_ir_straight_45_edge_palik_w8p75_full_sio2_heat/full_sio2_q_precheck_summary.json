@@ -1,5 +1,5 @@
 {
-  "status": "BLOCKED_FULL_SIO2_Q_SIX_FACE_CLOSURE",
+  "status": "BLOCKED_LUMERICAL_FDTD_LATE_TIME_DIVERGENCE",
   "implemented": {
     "full_285nm_SiO2_volumetric_Q": true,
     "disjoint_TaIrTe4_and_SiO2_supports": true,
@@ -58,7 +58,10 @@
     "no_negative_Q_NaN_or_Inf": true,
     "material_support_decomposition_residual_lt_1e_minus_12": true,
     "six_face_closure_lt_0p5_percent": false,
-    "Pabs_and_realized_six_face_bounds_match_lt_1fm": false
+    "legacy_Pabs_and_realized_six_face_bounds_match_lt_1fm": false,
+    "strict_runsetup_Pabs_bounds_on_native_mesh_lt_1fm": true,
+    "strict_run_completed_without_divergence": false,
+    "strict_final_Q_and_flux_available": false
   },
   "offline_existing_artifact_flux_audit": {
     "new_FDTD_run": false,
@@ -76,6 +79,19 @@
     ],
     "maximum_Pabs_vs_realized_six_face_bounds_mismatch_m": 5.0000000000001215e-08,
     "interpretation": "all volume-Q paths retain the closure; the signed z-face flux balance is cancellation-sensitive, and the independent 50-nm lateral bounds mismatch is fail-closed but too weak in lateral power to explain 1.249 percent"
+  },
+  "strict_matched_time_diagnostic": {
+    "runsetup_Pabs_bounds_on_native_solver_mesh_lt_1fm": true,
+    "requested_auto_shutoff": 1e-06,
+    "legacy_stop_time_s": 7.367254e-13,
+    "legacy_stop_fraction_of_4ps": 0.18418135,
+    "divergence_time_s": 1.62632e-12,
+    "divergence_fraction_of_4ps": 0.40658,
+    "minimum_logged_auto_shutoff": 6.69093e-06,
+    "maximum_logged_auto_shutoff": 93861.7,
+    "wall_time_s": 3844.9304,
+    "final_Q_or_flux_published": false,
+    "status": "BLOCKED_LUMERICAL_FDTD_LATE_TIME_DIVERGENCE"
   },
   "E_parallel_b_run": false,
   "physical_thermal_run": false,

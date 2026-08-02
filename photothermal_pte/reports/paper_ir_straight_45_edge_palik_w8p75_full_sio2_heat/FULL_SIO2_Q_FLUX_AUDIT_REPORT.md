@@ -36,9 +36,11 @@ z-max; their absolute sum is `7.88583` times the small net flux.
 The maximum independently read E/index component-coordinate mismatch is
 `6.776e-21 m`.
 
-Every volume-Q path retains approximately the same 1.249% closure.  Changing
-the Python quadrature or oxide z mesh is therefore not a justified fix.  A
-future run must first construct the face box from realized mesh coordinates so
-its bounds exactly equal the Pabs box.  Only then is one stricter temporal/DFT
-GPU check justified; it must record Q and every signed face power and must not
-rescale Q.
+Every old volume-Q path retains approximately the same 1.249% closure.
+Changing the Python quadrature or oxide z mesh is therefore not a justified
+fix.  The requested one-run follow-up snapped Pabs and all six faces to native
+mesh planes and tightened auto-shutoff to `1e-6`.  It exposed a stronger
+problem: the old `1e-5` case stopped before a late-time field rise, while the
+strict run later diverged at `1.62632 ps`.  The log does not by itself assign
+that rise to the source or instability.  No final strict Q/flux exists.
+See `FULL_SIO2_STRICT_TIME_REPORT.md` and its time-trace plot.
