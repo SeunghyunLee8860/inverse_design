@@ -1,0 +1,854 @@
+{
+  "status": "COMPLETED_DEVICE_A_Q_CURRENT_COLOCALIZATION",
+  "generation_commit": "898544a2353432e075d83e572ec67d43f4bf9231",
+  "scope": "read-only partition of immutable material-overlap mapped TaIrTe4 Q and co-located PTE integrand; no Maxwell, thermal, weighting, adjoint, AD-FD, or optimization solve",
+  "contract": {
+    "Q_field": "thermal-grid Q_W_m3 after literal TaIrTe4 material-intersection-density mapping",
+    "no_Q_clipping_smoothing_gain_rescaling_or_relocation": true,
+    "device_regions": [
+      "top_contact_within_2um",
+      "bottom_contact_within_2um",
+      "free_edge_within_1um",
+      "flake_interior"
+    ],
+    "edge_distance_regions": [
+      "edge_um_0_to_0p25",
+      "edge_um_0p25_to_0p5",
+      "edge_um_0p5_to_1",
+      "edge_um_1_to_2",
+      "edge_um_ge_2"
+    ],
+    "depth_regions": [
+      "depth_bottom_third",
+      "depth_middle_third",
+      "depth_top_third"
+    ],
+    "beam_radius_m": 8.75e-06
+  },
+  "cases": [
+    {
+      "scan_distance_um": -1.0,
+      "polarization": "a",
+      "beam_center_x_um": -5.891747237569059,
+      "beam_center_y_um": -4.0,
+      "mapped_power_W": 1.6291527364382168e-05,
+      "reported_power_closure_relative_error": 0.0,
+      "PTE_current_A": 1.194840872255497e-08,
+      "reported_current_closure_relative_error": 1.384587072237597e-16,
+      "current_per_absorbed_W_A_W": 0.0007334124330587648,
+      "device_region_power_W": {
+        "top_contact_within_2um": 1.4564647167538673e-08,
+        "bottom_contact_within_2um": 3.046366979909145e-07,
+        "free_edge_within_1um": 6.067252197422198e-06,
+        "flake_interior": 9.905073821801519e-06
+      },
+      "device_region_power_fraction": {
+        "top_contact_within_2um": 0.0008940013322127834,
+        "bottom_contact_within_2um": 0.018699087640913,
+        "free_edge_within_1um": 0.3724176414967026,
+        "flake_interior": 0.6079892695301717
+      },
+      "device_region_current_A": {
+        "top_contact_within_2um": -6.888758899135334e-11,
+        "bottom_contact_within_2um": 5.720591322321972e-10,
+        "free_edge_within_1um": 4.2584572608060776e-09,
+        "flake_interior": 7.186779918508047e-09
+      },
+      "device_region_current_fraction": {
+        "top_contact_within_2um": -0.00576541952915575,
+        "bottom_contact_within_2um": 0.047877432511353846,
+        "free_edge_within_1um": 0.35640371531377246,
+        "flake_interior": 0.6014842717040293
+      },
+      "radial_region_power_W": {
+        "r_over_w0_0_to_0p5": 5.18290702119695e-06,
+        "r_over_w0_0p5_to_1": 8.654762074174443e-06,
+        "r_over_w0_1_to_1p5": 2.266119802967036e-06,
+        "r_over_w0_ge_1p5": 1.8773846604374177e-07
+      },
+      "radial_region_power_fraction": {
+        "r_over_w0_0_to_0p5": 0.31813512050001114,
+        "r_over_w0_0p5_to_1": 0.5312431351953023,
+        "r_over_w0_1_to_1p5": 0.1390980570625568,
+        "r_over_w0_ge_1p5": 0.011523687242129951
+      },
+      "radial_region_current_A": {
+        "r_over_w0_0_to_0p5": 4.314802766924122e-09,
+        "r_over_w0_0p5_to_1": 5.6818967560777e-09,
+        "r_over_w0_1_to_1p5": 2.0421164851213163e-09,
+        "r_over_w0_ge_1p5": -9.040728556816794e-11
+      },
+      "edge_distance_power_W": {
+        "edge_um_0_to_0p25": 2.7084522852688474e-06,
+        "edge_um_0p25_to_0p5": 1.5698423235840215e-06,
+        "edge_um_0p5_to_1": 1.9810277266545135e-06,
+        "edge_um_1_to_2": 2.759728576297505e-06,
+        "edge_um_ge_2": 7.272476452577283e-06
+      },
+      "edge_distance_power_fraction": {
+        "edge_um_0_to_0p25": 0.1662491321219078,
+        "edge_um_0p25_to_0p5": 0.09635943202085125,
+        "edge_um_0p5_to_1": 0.12159864955237984,
+        "edge_um_1_to_2": 0.16939655285673477,
+        "edge_um_ge_2": 0.4463962334481265
+      },
+      "edge_distance_current_A": {
+        "edge_um_0_to_0p25": 8.454703222378252e-10,
+        "edge_um_0p25_to_0p5": 1.0892956728368836e-09,
+        "edge_um_0p5_to_1": 2.513467916110612e-09,
+        "edge_um_1_to_2": 2.5285135928540805e-09,
+        "edge_um_ge_2": 4.97166121851557e-09
+      },
+      "depth_power_W": {
+        "depth_bottom_third": 4.3147951031999695e-06,
+        "depth_middle_third": 6.080660589192636e-06,
+        "depth_top_third": 5.896071671989565e-06
+      },
+      "depth_power_fraction": {
+        "depth_bottom_third": 0.2648490228505719,
+        "depth_middle_third": 0.37324067002377315,
+        "depth_top_third": 0.36191030712565514
+      },
+      "Q_current_sheet_Pearson": 0.614270058542159,
+      "Q_positive_current_sheet_Pearson": 0.6868433121228786,
+      "free_edge_Q_current_sheet_Pearson": 0.4830395781333345,
+      "Q_centroid_x_y_m": [
+        -1.2217014444573072e-06,
+        -4.9958129870364015e-06
+      ],
+      "Q_hotspot_x_y_um": [
+        -2.750000000000001,
+        -2.2499999999999996
+      ],
+      "positive_current_hotspot_x_y_um": [
+        -2.6500000000000004,
+        -2.45
+      ],
+      "mapped_Q_nonzero_cells": 857519,
+      "mapped_Q_negative_cells": 0,
+      "mapped_Q_finite": true
+    },
+    {
+      "scan_distance_um": 1.0,
+      "polarization": "a",
+      "beam_center_x_um": -5.891747237569059,
+      "beam_center_y_um": -2.0,
+      "mapped_power_W": 1.4332522980469223e-05,
+      "reported_power_closure_relative_error": 0.0,
+      "PTE_current_A": 1.3722019660897154e-08,
+      "reported_current_closure_relative_error": 0.0,
+      "current_per_absorbed_W_A_W": 0.0009574043369472357,
+      "device_region_power_W": {
+        "top_contact_within_2um": 4.3122522935192654e-08,
+        "bottom_contact_within_2um": 1.0357307229654534e-07,
+        "free_edge_within_1um": 5.684394175387773e-06,
+        "flake_interior": 8.501433209849709e-06
+      },
+      "device_region_power_fraction": {
+        "top_contact_within_2um": 0.0030087182133916868,
+        "bottom_contact_within_2um": 0.007226436855373145,
+        "free_edge_within_1um": 0.3966080628744735,
+        "flake_interior": 0.5931567820567615
+      },
+      "device_region_current_A": {
+        "top_contact_within_2um": -1.1096424148158662e-10,
+        "bottom_contact_within_2um": 2.805724996506115e-10,
+        "free_edge_within_1um": 4.682166111452751e-09,
+        "flake_interior": 8.87024529127538e-09
+      },
+      "device_region_current_fraction": {
+        "top_contact_within_2um": -0.008086582312499887,
+        "bottom_contact_within_2um": 0.02044688074964232,
+        "free_edge_within_1um": 0.34121552272623895,
+        "flake_interior": 0.6464241788366187
+      },
+      "radial_region_power_W": {
+        "r_over_w0_0_to_0p5": 4.225553050298667e-06,
+        "r_over_w0_0p5_to_1": 7.6231277481661965e-06,
+        "r_over_w0_1_to_1p5": 2.279878773503878e-06,
+        "r_over_w0_ge_1p5": 2.0396340850047927e-07
+      },
+      "radial_region_power_fraction": {
+        "r_over_w0_0_to_0p5": 0.2948226949335287,
+        "r_over_w0_0p5_to_1": 0.5318761922485072,
+        "r_over_w0_1_to_1p5": 0.159070303017176,
+        "r_over_w0_ge_1p5": 0.014230809800787904
+      },
+      "radial_region_current_A": {
+        "r_over_w0_0_to_0p5": 3.57528322090957e-09,
+        "r_over_w0_0p5_to_1": 7.507415165288136e-09,
+        "r_over_w0_1_to_1p5": 2.5043423044807654e-09,
+        "r_over_w0_ge_1p5": 1.3497897021868434e-10
+      },
+      "edge_distance_power_W": {
+        "edge_um_0_to_0p25": 2.3586123717940445e-06,
+        "edge_um_0p25_to_0p5": 1.5357467930426021e-06,
+        "edge_um_0p5_to_1": 1.8810395945333499e-06,
+        "edge_um_1_to_2": 2.531074814878214e-06,
+        "edge_um_ge_2": 6.026049406221011e-06
+      },
+      "edge_distance_power_fraction": {
+        "edge_um_0_to_0p25": 0.1645636553318701,
+        "edge_um_0p25_to_0p5": 0.10715118302167372,
+        "edge_um_0p5_to_1": 0.13124274052074592,
+        "edge_um_1_to_2": 0.17659659910033165,
+        "edge_um_ge_2": 0.42044582202537856
+      },
+      "edge_distance_current_A": {
+        "edge_um_0_to_0p25": 7.946672538638484e-10,
+        "edge_um_0p25_to_0p5": 1.2181632427887274e-09,
+        "edge_um_0p5_to_1": 2.7335869882617324e-09,
+        "edge_um_1_to_2": 2.9655377450304116e-09,
+        "edge_um_ge_2": 6.010064430952436e-09
+      },
+      "depth_power_W": {
+        "depth_bottom_third": 3.805576084867055e-06,
+        "depth_middle_third": 5.3546364352310076e-06,
+        "depth_top_third": 5.172310460371159e-06
+      },
+      "depth_power_fraction": {
+        "depth_bottom_third": 0.26552031976874363,
+        "depth_middle_third": 0.3736004081436125,
+        "depth_top_third": 0.3608792720876437
+      },
+      "Q_current_sheet_Pearson": 0.6098248802250915,
+      "Q_positive_current_sheet_Pearson": 0.6680486488759633,
+      "free_edge_Q_current_sheet_Pearson": 0.44965776160737503,
+      "Q_centroid_x_y_m": [
+        -9.725734502669853e-07,
+        -3.5813780735868555e-06
+      ],
+      "Q_hotspot_x_y_um": [
+        -2.750000000000001,
+        -2.2499999999999996
+      ],
+      "positive_current_hotspot_x_y_um": [
+        -2.6500000000000004,
+        -2.45
+      ],
+      "mapped_Q_nonzero_cells": 857519,
+      "mapped_Q_negative_cells": 0,
+      "mapped_Q_finite": true
+    },
+    {
+      "scan_distance_um": 1.0,
+      "polarization": "b",
+      "beam_center_x_um": -5.891747237569059,
+      "beam_center_y_um": -2.0,
+      "mapped_power_W": 1.6292148491243013e-05,
+      "reported_power_closure_relative_error": 0.0,
+      "PTE_current_A": 1.1155378828929695e-08,
+      "reported_current_closure_relative_error": 0.0,
+      "current_per_absorbed_W_A_W": 0.0006847088850758807,
+      "device_region_power_W": {
+        "top_contact_within_2um": 4.4296990248881235e-08,
+        "bottom_contact_within_2um": 1.3547634242640892e-07,
+        "free_edge_within_1um": 3.893076467955178e-06,
+        "flake_interior": 1.2219298690612545e-05
+      },
+      "device_region_power_fraction": {
+        "top_contact_within_2um": 0.0027189164322121637,
+        "bottom_contact_within_2um": 0.008315437494276896,
+        "free_edge_within_1um": 0.23895414837691276,
+        "flake_interior": 0.7500114976965981
+      },
+      "device_region_current_A": {
+        "top_contact_within_2um": -2.2396187969440543e-10,
+        "bottom_contact_within_2um": 5.152032103830424e-10,
+        "free_edge_within_1um": 4.657955825097017e-10,
+        "flake_interior": 1.0398341915731355e-08
+      },
+      "device_region_current_fraction": {
+        "top_contact_within_2um": -0.020076582169813544,
+        "bottom_contact_within_2um": 0.04618428636837909,
+        "free_edge_within_1um": 0.04175524557729363,
+        "flake_interior": 0.9321370502241407
+      },
+      "radial_region_power_W": {
+        "r_over_w0_0_to_0p5": 2.8902961682684304e-06,
+        "r_over_w0_0p5_to_1": 1.0240877053192421e-05,
+        "r_over_w0_1_to_1p5": 2.9415142595691094e-06,
+        "r_over_w0_ge_1p5": 2.1946101021305276e-07
+      },
+      "radial_region_power_fraction": {
+        "r_over_w0_0_to_0p5": 0.17740423675993114,
+        "r_over_w0_0p5_to_1": 0.6285774438341798,
+        "r_over_w0_1_to_1p5": 0.18054796524535519,
+        "r_over_w0_ge_1p5": 0.013470354160533982
+      },
+      "radial_region_current_A": {
+        "r_over_w0_0_to_0p5": -6.247971249271212e-10,
+        "r_over_w0_0p5_to_1": 8.358324377792289e-09,
+        "r_over_w0_1_to_1p5": 3.263413061621658e-09,
+        "r_over_w0_ge_1p5": 1.5843851444286997e-10
+      },
+      "edge_distance_power_W": {
+        "edge_um_0_to_0p25": 7.458951271266464e-07,
+        "edge_um_0p25_to_0p5": 9.785024379516344e-07,
+        "edge_um_0p5_to_1": 2.2431583806260194e-06,
+        "edge_um_1_to_2": 4.147554954426333e-06,
+        "edge_um_ge_2": 8.17703759111238e-06
+      },
+      "edge_distance_power_fraction": {
+        "edge_um_0_to_0p25": 0.04578249010727855,
+        "edge_um_0p25_to_0p5": 0.06005975445642279,
+        "edge_um_0p5_to_1": 0.13768339895942583,
+        "edge_um_1_to_2": 0.2545738492781129,
+        "edge_um_ge_2": 0.50190050719876
+      },
+      "edge_distance_current_A": {
+        "edge_um_0_to_0p25": 1.5878172218190593e-10,
+        "edge_um_0p25_to_0p5": -1.1675686798232297e-11,
+        "edge_um_0p5_to_1": 4.2037668525743274e-10,
+        "edge_um_1_to_2": 2.288591656033889e-09,
+        "edge_um_ge_2": 8.2993044522547e-09
+      },
+      "depth_power_W": {
+        "depth_bottom_third": 4.816331211077607e-06,
+        "depth_middle_third": 6.3753566596155376e-06,
+        "depth_top_third": 5.100460620549868e-06
+      },
+      "depth_power_fraction": {
+        "depth_bottom_third": 0.29562284026973923,
+        "depth_middle_third": 0.3913146668803243,
+        "depth_top_third": 0.3130624928499364
+      },
+      "Q_current_sheet_Pearson": 0.5090994454147809,
+      "Q_positive_current_sheet_Pearson": 0.6791011621749002,
+      "free_edge_Q_current_sheet_Pearson": -0.07435163751781353,
+      "Q_centroid_x_y_m": [
+        -5.686663408950695e-07,
+        -3.7280645627539804e-06
+      ],
+      "Q_hotspot_x_y_um": [
+        -3.650000000000001,
+        -3.65
+      ],
+      "positive_current_hotspot_x_y_um": [
+        1.4500000000000002,
+        3.2499999999999996
+      ],
+      "mapped_Q_nonzero_cells": 857519,
+      "mapped_Q_negative_cells": 0,
+      "mapped_Q_finite": true
+    },
+    {
+      "scan_distance_um": 3.0,
+      "polarization": "a",
+      "beam_center_x_um": -5.891747237569059,
+      "beam_center_y_um": 0.0,
+      "mapped_power_W": 1.1856170758696658e-05,
+      "reported_power_closure_relative_error": 0.0,
+      "PTE_current_A": 1.369961172992619e-08,
+      "reported_current_closure_relative_error": 2.4151943248029103e-16,
+      "current_per_absorbed_W_A_W": 0.001155483672489901,
+      "device_region_power_W": {
+        "top_contact_within_2um": 1.0969516411936412e-07,
+        "bottom_contact_within_2um": 3.316017874015417e-08,
+        "free_edge_within_1um": 4.957266356481051e-06,
+        "flake_interior": 6.7560490593560905e-06
+      },
+      "device_region_power_fraction": {
+        "top_contact_within_2um": 0.009252157914384057,
+        "bottom_contact_within_2um": 0.002796870879734145,
+        "free_edge_within_1um": 0.4181169837525181,
+        "flake_interior": 0.5698339874533638
+      },
+      "device_region_current_A": {
+        "top_contact_within_2um": -1.3007292128054562e-10,
+        "bottom_contact_within_2um": 1.1876922139972979e-10,
+        "free_edge_within_1um": 4.457310064946573e-09,
+        "flake_interior": 9.25360536486043e-09
+      },
+      "device_region_current_fraction": {
+        "top_contact_within_2um": -0.00949464290264571,
+        "bottom_contact_within_2um": 0.008669531935732435,
+        "free_edge_within_1um": 0.3253603206293634,
+        "flake_interior": 0.6754647903375496
+      },
+      "radial_region_power_W": {
+        "r_over_w0_0_to_0p5": 2.4594715875448593e-06,
+        "r_over_w0_0p5_to_1": 6.938370249606421e-06,
+        "r_over_w0_1_to_1p5": 2.246649460565552e-06,
+        "r_over_w0_ge_1p5": 2.1167946097982757e-07
+      },
+      "radial_region_power_fraction": {
+        "r_over_w0_0_to_0p5": 0.2074423216063082,
+        "r_over_w0_0p5_to_1": 0.5852117341104449,
+        "r_over_w0_1_to_1p5": 0.18949199588050847,
+        "r_over_w0_ge_1p5": 0.01785394840273854
+      },
+      "radial_region_current_A": {
+        "r_over_w0_0_to_0p5": 1.6103669179658802e-09,
+        "r_over_w0_0p5_to_1": 9.227431781859409e-09,
+        "r_over_w0_1_to_1p5": 2.4830991631445426e-09,
+        "r_over_w0_ge_1p5": 3.7871386695635513e-10
+      },
+      "edge_distance_power_W": {
+        "edge_um_0_to_0p25": 1.970472897167646e-06,
+        "edge_um_0p25_to_0p5": 1.3996431510898122e-06,
+        "edge_um_0p5_to_1": 1.6875219569785257e-06,
+        "edge_um_1_to_2": 2.22082562358361e-06,
+        "edge_um_ge_2": 4.5777071298770655e-06
+      },
+      "edge_distance_power_fraction": {
+        "edge_um_0_to_0p25": 0.1661980868251478,
+        "edge_um_0p25_to_0p5": 0.11805187185442276,
+        "edge_um_0p5_to_1": 0.14233279794327405,
+        "edge_um_1_to_2": 0.1873139033489885,
+        "edge_um_ge_2": 0.38610334002816693
+      },
+      "edge_distance_current_A": {
+        "edge_um_0_to_0p25": 6.52238924219059e-10,
+        "edge_um_0p25_to_0p5": 1.1935142202706447e-09,
+        "edge_um_0p5_to_1": 2.619311442819629e-09,
+        "edge_um_1_to_2": 3.143308641167237e-09,
+        "edge_um_ge_2": 6.091238501449616e-09
+      },
+      "depth_power_W": {
+        "depth_bottom_third": 3.1508375410325393e-06,
+        "depth_middle_third": 4.4280371849890295e-06,
+        "depth_top_third": 4.277296032675091e-06
+      },
+      "depth_power_fraction": {
+        "depth_bottom_third": 0.26575507431194495,
+        "depth_middle_third": 0.37347953863948913,
+        "depth_top_third": 0.36076538704856603
+      },
+      "Q_current_sheet_Pearson": 0.5921170108085028,
+      "Q_positive_current_sheet_Pearson": 0.6550568377281545,
+      "free_edge_Q_current_sheet_Pearson": 0.4136842771108683,
+      "Q_centroid_x_y_m": [
+        -6.451323268450537e-07,
+        -2.227873955659658e-06
+      ],
+      "Q_hotspot_x_y_um": [
+        -2.750000000000001,
+        -2.2499999999999996
+      ],
+      "positive_current_hotspot_x_y_um": [
+        -2.6500000000000004,
+        -2.2499999999999996
+      ],
+      "mapped_Q_nonzero_cells": 857519,
+      "mapped_Q_negative_cells": 0,
+      "mapped_Q_finite": true
+    },
+    {
+      "scan_distance_um": 3.0,
+      "polarization": "b",
+      "beam_center_x_um": -5.891747237569059,
+      "beam_center_y_um": 0.0,
+      "mapped_power_W": 1.3242878172519318e-05,
+      "reported_power_closure_relative_error": 0.0,
+      "PTE_current_A": 1.1462797243763208e-08,
+      "reported_current_closure_relative_error": 0.0,
+      "current_per_absorbed_W_A_W": 0.0008655820203458483,
+      "device_region_power_W": {
+        "top_contact_within_2um": 1.038505981389971e-07,
+        "bottom_contact_within_2um": 3.8049379674926054e-08,
+        "free_edge_within_1um": 3.5583649783964672e-06,
+        "flake_interior": 9.54261321630893e-06
+      },
+      "device_region_power_fraction": {
+        "top_contact_within_2um": 0.007841996036367722,
+        "bottom_contact_within_2um": 0.0028731956285668646,
+        "free_edge_within_1um": 0.2687002728591534,
+        "flake_interior": 0.7205845354759122
+      },
+      "device_region_current_A": {
+        "top_contact_within_2um": -3.938121328287877e-10,
+        "bottom_contact_within_2um": 1.9702973193586304e-10,
+        "free_edge_within_1um": 9.374482912613865e-10,
+        "flake_interior": 1.0722131353394746e-08
+      },
+      "device_region_current_fraction": {
+        "top_contact_within_2um": -0.03435567466248755,
+        "bottom_contact_within_2um": 0.017188625755643103,
+        "free_edge_within_1um": 0.08178180869171725,
+        "flake_interior": 0.9353852402151271
+      },
+      "radial_region_power_W": {
+        "r_over_w0_0_to_0p5": 1.4660789631129998e-06,
+        "r_over_w0_0p5_to_1": 8.61764669106983e-06,
+        "r_over_w0_1_to_1p5": 2.9146221539017794e-06,
+        "r_over_w0_ge_1p5": 2.445303644347106e-07
+      },
+      "radial_region_power_fraction": {
+        "r_over_w0_0_to_0p5": 0.11070697351541774,
+        "r_over_w0_0p5_to_1": 0.6507381989628629,
+        "r_over_w0_1_to_1p5": 0.22008978078118974,
+        "r_over_w0_ge_1p5": 0.018465046740529765
+      },
+      "radial_region_current_A": {
+        "r_over_w0_0_to_0p5": -2.0432854769559283e-10,
+        "r_over_w0_0p5_to_1": 7.888711244528961e-09,
+        "r_over_w0_1_to_1p5": 3.276691769362859e-09,
+        "r_over_w0_ge_1p5": 5.017227775669811e-10
+      },
+      "edge_distance_power_W": {
+        "edge_um_0_to_0p25": 7.276835210871549e-07,
+        "edge_um_0p25_to_0p5": 9.355040507354665e-07,
+        "edge_um_0p5_to_1": 1.9638311488869795e-06,
+        "edge_um_1_to_2": 3.4386115360178905e-06,
+        "edge_um_ge_2": 6.177247915791828e-06
+      },
+      "edge_distance_power_fraction": {
+        "edge_um_0_to_0p25": 0.05494904594057145,
+        "edge_um_0p25_to_0p5": 0.07064204914885935,
+        "edge_um_0p5_to_1": 0.14829337877336837,
+        "edge_um_1_to_2": 0.25965741670518827,
+        "edge_um_ge_2": 0.46645810943201266
+      },
+      "edge_distance_current_A": {
+        "edge_um_0_to_0p25": 1.3981304767224463e-10,
+        "edge_um_0p25_to_0p5": 7.403934890259824e-11,
+        "edge_um_0p5_to_1": 5.798886402168089e-10,
+        "edge_um_1_to_2": 2.463973812387107e-09,
+        "edge_um_ge_2": 8.20508239458445e-09
+      },
+      "depth_power_W": {
+        "depth_bottom_third": 3.916010657702775e-06,
+        "depth_middle_third": 5.181617142842742e-06,
+        "depth_top_third": 4.145250371973802e-06
+      },
+      "depth_power_fraction": {
+        "depth_bottom_third": 0.29570691557285506,
+        "depth_middle_third": 0.3912757540573972,
+        "depth_top_third": 0.3130173303697478
+      },
+      "Q_current_sheet_Pearson": 0.629911826054067,
+      "Q_positive_current_sheet_Pearson": 0.7371091476069079,
+      "free_edge_Q_current_sheet_Pearson": 0.19932844443910416,
+      "Q_centroid_x_y_m": [
+        -2.597392324377426e-07,
+        -2.390734483766356e-06
+      ],
+      "Q_hotspot_x_y_um": [
+        -1.9500000000000004,
+        1.3500000000000005
+      ],
+      "positive_current_hotspot_x_y_um": [
+        1.4500000000000002,
+        3.2499999999999996
+      ],
+      "mapped_Q_nonzero_cells": 857519,
+      "mapped_Q_negative_cells": 0,
+      "mapped_Q_finite": true
+    },
+    {
+      "scan_distance_um": 5.0,
+      "polarization": "a",
+      "beam_center_x_um": -5.891747237569059,
+      "beam_center_y_um": 2.0,
+      "mapped_power_W": 9.175258469306206e-06,
+      "reported_power_closure_relative_error": 0.0,
+      "PTE_current_A": 1.2291305281839892e-08,
+      "reported_current_closure_relative_error": 2.6919211380264617e-16,
+      "current_per_absorbed_W_A_W": 0.0013396140635119687,
+      "device_region_power_W": {
+        "top_contact_within_2um": 2.3108523092270837e-07,
+        "bottom_contact_within_2um": 1.1875662506452101e-08,
+        "free_edge_within_1um": 3.9831512349355015e-06,
+        "flake_interior": 4.949146340941545e-06
+      },
+      "device_region_power_fraction": {
+        "top_contact_within_2um": 0.025185691683319092,
+        "bottom_contact_within_2um": 0.0012943136747786996,
+        "free_edge_within_1um": 0.43411869521281077,
+        "flake_interior": 0.5394012994290915
+      },
+      "device_region_current_A": {
+        "top_contact_within_2um": -3.507984820757077e-11,
+        "bottom_contact_within_2um": 5.0120851396088946e-11,
+        "free_edge_within_1um": 3.815484231401189e-09,
+        "flake_interior": 8.460780047250184e-09
+      },
+      "device_region_current_fraction": {
+        "top_contact_within_2um": -0.002854037663469347,
+        "bottom_contact_within_2um": 0.004077748477221642,
+        "free_edge_within_1um": 0.31042140309040045,
+        "flake_interior": 0.6883548860958473
+      },
+      "radial_region_power_W": {
+        "r_over_w0_0_to_0p5": 9.292676823174916e-07,
+        "r_over_w0_0p5_to_1": 5.909260669053756e-06,
+        "r_over_w0_1_to_1p5": 2.1297140622433277e-06,
+        "r_over_w0_ge_1p5": 2.0701605569163252e-07
+      },
+      "radial_region_power_fraction": {
+        "r_over_w0_0_to_0p5": 0.101279728023592,
+        "r_over_w0_0p5_to_1": 0.6440429649826082,
+        "r_over_w0_1_to_1p5": 0.23211488475968434,
+        "r_over_w0_ge_1p5": 0.022562422234115677
+      },
+      "radial_region_current_A": {
+        "r_over_w0_0_to_0p5": 6.590415215274807e-11,
+        "r_over_w0_0p5_to_1": 8.69342431693939e-09,
+        "r_over_w0_1_to_1p5": 3.018763012202666e-09,
+        "r_over_w0_ge_1p5": 5.132138005450869e-10
+      },
+      "edge_distance_power_W": {
+        "edge_um_0_to_0p25": 1.584650312328437e-06,
+        "edge_um_0p25_to_0p5": 1.176042834993233e-06,
+        "edge_um_0p5_to_1": 1.4058683329751508e-06,
+        "edge_um_1_to_2": 1.8206236044078316e-06,
+        "edge_um_ge_2": 3.1880733846015535e-06
+      },
+      "edge_distance_power_fraction": {
+        "edge_um_0_to_0p25": 0.17270906510476336,
+        "edge_um_0p25_to_0p5": 0.128175444749314,
+        "edge_um_0p5_to_1": 0.15322383970742315,
+        "edge_um_1_to_2": 0.19842750048931312,
+        "edge_um_ge_2": 0.34746414994918634
+      },
+      "edge_distance_current_A": {
+        "edge_um_0_to_0p25": 5.412831640904074e-10,
+        "edge_um_0p25_to_0p5": 1.0806112490108819e-09,
+        "edge_um_0p5_to_1": 2.2765335882749457e-09,
+        "edge_um_1_to_2": 3.0027647510109565e-09,
+        "edge_um_ge_2": 5.390112529452701e-09
+      },
+      "depth_power_W": {
+        "depth_bottom_third": 2.435481763653636e-06,
+        "depth_middle_third": 3.419868551295425e-06,
+        "depth_top_third": 3.319908154357145e-06
+      },
+      "depth_power_fraction": {
+        "depth_bottom_third": 0.2654401259431547,
+        "depth_middle_third": 0.37272721664853775,
+        "depth_top_third": 0.36183265740830756
+      },
+      "Q_current_sheet_Pearson": 0.5695632742456844,
+      "Q_positive_current_sheet_Pearson": 0.6342297823999892,
+      "free_edge_Q_current_sheet_Pearson": 0.3781736572482911,
+      "Q_centroid_x_y_m": [
+        -2.3674250246170724e-07,
+        -9.229886828547625e-07
+      ],
+      "Q_hotspot_x_y_um": [
+        -2.750000000000001,
+        -0.35000000000000003
+      ],
+      "positive_current_hotspot_x_y_um": [
+        -2.6500000000000004,
+        -2.2499999999999996
+      ],
+      "mapped_Q_nonzero_cells": 857519,
+      "mapped_Q_negative_cells": 0,
+      "mapped_Q_finite": true
+    },
+    {
+      "scan_distance_um": 5.0,
+      "polarization": "b",
+      "beam_center_x_um": -5.891747237569059,
+      "beam_center_y_um": 2.0,
+      "mapped_power_W": 1.0036974339215109e-05,
+      "reported_power_closure_relative_error": 0.0,
+      "PTE_current_A": 1.0382507995174954e-08,
+      "reported_current_closure_relative_error": 1.5934119442767434e-16,
+      "current_per_absorbed_W_A_W": 0.0010344260774494383,
+      "device_region_power_W": {
+        "top_contact_within_2um": 1.9942993024145748e-07,
+        "bottom_contact_within_2um": 9.210228041258511e-09,
+        "free_edge_within_1um": 2.9842784604587596e-06,
+        "flake_interior": 6.844055720473632e-06
+      },
+      "device_region_power_fraction": {
+        "top_contact_within_2um": 0.01986952676189196,
+        "bottom_contact_within_2um": 0.0009176299281022921,
+        "free_edge_within_1um": 0.2973284935878525,
+        "flake_interior": 0.6818843497221531
+      },
+      "device_region_current_A": {
+        "top_contact_within_2um": -5.92197661455517e-10,
+        "bottom_contact_within_2um": 6.913928505981532e-11,
+        "free_edge_within_1um": 1.2542975738996613e-09,
+        "flake_interior": 9.651268797670995e-09
+      },
+      "device_region_current_fraction": {
+        "top_contact_within_2um": -0.057038016414793814,
+        "bottom_contact_within_2um": 0.006659208458297966,
+        "free_edge_within_1um": 0.12080872699376384,
+        "flake_interior": 0.929570080962732
+      },
+      "radial_region_power_W": {
+        "r_over_w0_0_to_0p5": 5.97597250833748e-07,
+        "r_over_w0_0p5_to_1": 6.348598048237496e-06,
+        "r_over_w0_1_to_1p5": 2.8467528655086518e-06,
+        "r_over_w0_ge_1p5": 2.440261746352121e-07
+      },
+      "radial_region_power_fraction": {
+        "r_over_w0_0_to_0p5": 0.05953958141537702,
+        "r_over_w0_0p5_to_1": 0.6325210998530815,
+        "r_over_w0_1_to_1p5": 0.2836265959539424,
+        "r_over_w0_ge_1p5": 0.024312722777599025
+      },
+      "radial_region_current_A": {
+        "r_over_w0_0_to_0p5": 2.884732519297272e-11,
+        "r_over_w0_0p5_to_1": 6.226781953775963e-09,
+        "r_over_w0_1_to_1p5": 3.4465313156956166e-09,
+        "r_over_w0_ge_1p5": 6.803474005104025e-10
+      },
+      "edge_distance_power_W": {
+        "edge_um_0_to_0p25": 6.546785717832485e-07,
+        "edge_um_0p25_to_0p5": 8.245113595050938e-07,
+        "edge_um_0p5_to_1": 1.6147391971181354e-06,
+        "edge_um_1_to_2": 2.6665843840000247e-06,
+        "edge_um_ge_2": 4.276460826808606e-06
+      },
+      "edge_distance_power_fraction": {
+        "edge_um_0_to_0p25": 0.06522668581759515,
+        "edge_um_0p25_to_0p5": 0.082147401362149,
+        "edge_um_0p5_to_1": 0.1608790799443658,
+        "edge_um_1_to_2": 0.2656761185072982,
+        "edge_um_ge_2": 0.4260707143685918
+      },
+      "edge_distance_current_A": {
+        "edge_um_0_to_0p25": 1.096902155062753e-10,
+        "edge_um_0p25_to_0p5": 1.4141117095944004e-10,
+        "edge_um_0p5_to_1": 6.739105977643026e-10,
+        "edge_um_1_to_2": 2.4005411867424997e-09,
+        "edge_um_ge_2": 7.056954824202437e-09
+      },
+      "depth_power_W": {
+        "depth_bottom_third": 2.9682409550486775e-06,
+        "depth_middle_third": 3.926305001747838e-06,
+        "depth_top_third": 3.1424283824185935e-06
+      },
+      "depth_power_fraction": {
+        "depth_bottom_third": 0.29573065096436163,
+        "depth_middle_third": 0.39118412272984593,
+        "depth_top_third": 0.3130852263057924
+      },
+      "Q_current_sheet_Pearson": 0.6867388006191729,
+      "Q_positive_current_sheet_Pearson": 0.7830758486724145,
+      "free_edge_Q_current_sheet_Pearson": 0.4100546501558132,
+      "Q_centroid_x_y_m": [
+        1.282941313891409e-07,
+        -1.1076887619287051e-06
+      ],
+      "Q_hotspot_x_y_um": [
+        -1.9500000000000004,
+        1.3500000000000005
+      ],
+      "positive_current_hotspot_x_y_um": [
+        1.4500000000000002,
+        3.2499999999999996
+      ],
+      "mapped_Q_nonzero_cells": 857519,
+      "mapped_Q_negative_cells": 0,
+      "mapped_Q_finite": true
+    }
+  ],
+  "same_position_b_over_a": [
+    {
+      "scan_distance_um": 1.0,
+      "total_power_b_over_a": 1.1367257888540734,
+      "total_current_b_over_a": 0.8129545871967035,
+      "current_efficiency_b_over_a": 0.7151721155338951,
+      "device_region_power_b_over_a": {
+        "top_contact_within_2um": 1.0272355890552518,
+        "bottom_contact_within_2um": 1.308026685145727,
+        "free_edge_within_1um": 0.6848709550810845,
+        "flake_interior": 1.437322200738499
+      },
+      "device_region_power_fraction_b_over_a": {
+        "top_contact_within_2um": 0.9036793210179581,
+        "bottom_contact_within_2um": 1.1506967625537383,
+        "free_edge_within_1um": 0.6024944289963712,
+        "flake_interior": 1.2644405667856404
+      },
+      "device_region_current_b_over_a": {
+        "top_contact_within_2um": 2.0183247927808314,
+        "bottom_contact_within_2um": 1.836256978230616,
+        "free_edge_within_1um": 0.09948292551397281,
+        "flake_interior": 1.1722721947677124
+      },
+      "free_edge_power_fraction_a": 0.3966080628744735,
+      "free_edge_power_fraction_b": 0.23895414837691276,
+      "free_edge_power_fraction_a_over_b": 1.6597663843395025,
+      "free_edge_current_A_a": 4.682166111452751e-09,
+      "free_edge_current_A_b": 4.657955825097017e-10,
+      "nearest_0p25um_power_fraction_a": 0.1645636553318701,
+      "nearest_0p25um_power_fraction_b": 0.04578249010727855,
+      "nearest_0p25um_power_fraction_a_over_b": 3.594467119334507,
+      "top_third_power_fraction_a": 0.3608792720876437,
+      "top_third_power_fraction_b": 0.3130624928499364
+    },
+    {
+      "scan_distance_um": 3.0,
+      "total_power_b_over_a": 1.1169608166115095,
+      "total_current_b_over_a": 0.8367242422442702,
+      "current_efficiency_b_over_a": 0.7491079631446835,
+      "device_region_power_b_over_a": {
+        "top_contact_within_2um": 0.9467199303881136,
+        "bottom_contact_within_2um": 1.1474419354938963,
+        "free_edge_within_1um": 0.7178079051056673,
+        "flake_interior": 1.4124546954101636
+      },
+      "device_region_power_fraction_b_over_a": {
+        "top_contact_within_2um": 0.8475856236928254,
+        "bottom_contact_within_2um": 1.0272893358738016,
+        "free_edge_within_1um": 0.642643765502231,
+        "flake_interior": 1.2645516963568026
+      },
+      "device_region_current_b_over_a": {
+        "top_contact_within_2um": 3.0276258036782346,
+        "bottom_contact_within_2um": 1.658929221003644,
+        "free_edge_within_1um": 0.2103170471881056,
+        "flake_interior": 1.1586977108523437
+      },
+      "free_edge_power_fraction_a": 0.4181169837525181,
+      "free_edge_power_fraction_b": 0.2687002728591534,
+      "free_edge_power_fraction_a_over_b": 1.556072047502853,
+      "free_edge_current_A_a": 4.457310064946573e-09,
+      "free_edge_current_A_b": 9.374482912613865e-10,
+      "nearest_0p25um_power_fraction_a": 0.1661980868251478,
+      "nearest_0p25um_power_fraction_b": 0.05494904594057145,
+      "nearest_0p25um_power_fraction_a_over_b": 3.024585486068212,
+      "top_third_power_fraction_a": 0.36076538704856603,
+      "top_third_power_fraction_b": 0.3130173303697478
+    },
+    {
+      "scan_distance_um": 5.0,
+      "total_power_b_over_a": 1.0939173400718445,
+      "total_current_b_over_a": 0.844703451513393,
+      "current_efficiency_b_over_a": 0.7721821572532306,
+      "device_region_power_b_over_a": {
+        "top_contact_within_2um": 0.8630146091342431,
+        "bottom_contact_within_2um": 0.7755548826227212,
+        "free_edge_within_1um": 0.7492254962061674,
+        "flake_interior": 1.3828760050711275
+      },
+      "device_region_power_fraction_b_over_a": {
+        "top_contact_within_2um": 0.7889212260567727,
+        "bottom_contact_within_2um": 0.7089702797578705,
+        "free_edge_within_1um": 0.6849013803519752,
+        "flake_interior": 1.2641503653103305
+      },
+      "device_region_current_b_over_a": {
+        "top_contact_within_2um": 16.88142029439317,
+        "bottom_contact_within_2um": 1.3794515283355786,
+        "free_edge_within_1um": 0.3287387649454487,
+        "flake_interior": 1.1407067367042272
+      },
+      "free_edge_power_fraction_a": 0.43411869521281077,
+      "free_edge_power_fraction_b": 0.2973284935878525,
+      "free_edge_power_fraction_a_over_b": 1.4600642204664467,
+      "free_edge_current_A_a": 3.815484231401189e-09,
+      "free_edge_current_A_b": 1.2542975738996613e-09,
+      "nearest_0p25um_power_fraction_a": 0.17270906510476336,
+      "nearest_0p25um_power_fraction_b": 0.06522668581759515,
+      "nearest_0p25um_power_fraction_a_over_b": 2.647828307385417,
+      "top_third_power_fraction_a": 0.36183265740830756,
+      "top_third_power_fraction_b": 0.3130852263057924
+    }
+  ],
+  "numerical_gates": {
+    "mapped_power_reintegration_lt_1e_minus_12": true,
+    "current_reintegration_lt_1e_minus_12": true,
+    "mapped_Q_finite_nonnegative": true
+  },
+  "interpretation_limit": "co-localization is not a causal Green-function source-region decomposition; masked-Q thermal re-solves are required for exact source-region attribution"
+}

@@ -27,6 +27,10 @@ from photothermal_pte.validation.paper_ir_sanity.analyze_device_a_spatial_curren
     distance_to_segment,
     partition_sheet_current,
 )
+from photothermal_pte.validation.paper_ir_sanity.analyze_device_a_q_current_colocalization import (
+    normalized_correlation,
+    partition,
+)
 
 from photothermal_pte.validation.paper_ir_sanity.run_analytic_q_remap_control import (
     analytic_q_on_edges,
@@ -543,3 +547,35 @@ def test_device_a_spatial_current_decomposition_closes_and_localizes_edge() -> N
         assert row["dominant_absolute_current_difference_region"] == "free_edge_within_1um"
         assert row["device_region_a_minus_b_A"]["free_edge_within_1um"] > 0.0
         assert row["device_region_a_minus_b_A"]["flake_interior"] < 0.0
+
+
+def test_q_current_colocalization_helpers_preserve_signed_values() -> None:
+    values = np.asarray([[1.0, -2.0], [3.0, 4.0]])
+    masks = {
+        "diagonal": np.asarray([[True, False], [False, True]]),
+        "off_diagonal": np.asarray([[False, True], [True, False]]),
+    }
+    result = partition(values, masks)
+    assert result["diagonal"] == pytest.approx(5.0)
+    assert result["off_diagonal"] == pytest.approx(1.0)
+    assert normalized_correlation(values, 2.0 * values + 3.0, np.ones_like(values, bool)) == pytest.approx(1.0)
+
+
+def test_device_a_q_current_colocalization_identifies_equal_power_edge_enrichment() -> None:
+    repository = Path(__file__).resolve().parents[3]
+    summary_path = (
+        repository
+        / "photothermal_pte"
+        / "reports"
+        / "paper_ir_device_a_q_current_colocalization"
+        / "device_a_q_current_colocalization_summary.json"
+    )
+    summary = json.loads(summary_path.read_text())
+    assert summary["status"] == "COMPLETED_DEVICE_A_Q_CURRENT_COLOCALIZATION"
+    assert all(summary["numerical_gates"].values())
+    for row in summary["same_position_b_over_a"]:
+        assert row["total_power_b_over_a"] > 1.0
+        assert row["total_current_b_over_a"] < 1.0
+        assert row["current_efficiency_b_over_a"] < 1.0
+        assert row["free_edge_power_fraction_a_over_b"] > 1.0
+        assert row["nearest_0p25um_power_fraction_a_over_b"] > 2.5

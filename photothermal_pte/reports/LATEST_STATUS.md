@@ -1,5 +1,29 @@
 # Latest photothermal validation status
 
+## Device-A mapped-Q/current co-localization
+
+- Status: `COMPLETED_DEVICE_A_Q_CURRENT_COLOCALIZATION`, limited to a
+  read-only partition of immutable material-overlap mapped TaIrTe4 Q and the
+  co-located PTE integrand. No solver was run.
+- At the same `d=1,3,5 um` positions, total absorbed-power ratios `Pb/Pa` are
+  `1.136726`, `1.116961`, and `1.093917`, but current ratios `Ib/Ia` are only
+  `0.812955`, `0.836724`, and `0.844703`. Thus the `b` polarization absorbs
+  more total power while its current per absorbed watt is only
+  `71.52--77.22%` of `a`.
+- The free-edge-within-1-um power fraction is `39.66--43.41%` for `a` and
+  `23.90--29.73%` for `b`, an equal-power enrichment of `1.46--1.66x` for
+  `a`. In the closest 0.25-um edge band, the enrichment increases to
+  `2.65--3.59x`.
+- The source localization matches the preceding current localization: the
+  equal-power `Qa-Qb` map is positive along the illuminated free edge. This
+  is strong co-localization evidence that the discrepancy begins in the
+  polarization-dependent Maxwell Q distribution, not total absorption.
+- Co-localization is not yet exact causal source attribution because thermal
+  response is nonlocal. The next control is an unchanged-operator linear
+  split `Q_full=Q_free-edge+Q_remainder`, without another FDTD run.
+- Report, JSON, CSV, plots, and external raw-artifact manifest:
+  `reports/paper_ir_device_a_q_current_colocalization/`.
+
 ## Device-A spatial PTE-current decomposition
 
 - Status: `COMPLETED_DEVICE_A_SPATIAL_CURRENT_DECOMPOSITION`, limited to a
