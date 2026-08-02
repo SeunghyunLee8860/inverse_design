@@ -1,0 +1,76 @@
+{
+  "status": "RAW_REGISTERED_SINGLE_POSITION_ARTIFACTS_RECORDED_NOT_COMMITTED",
+  "artifacts": [
+    {
+      "role": "E||a optical case JSON",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_finite_a_64um_20260802/case_result.json",
+      "size_bytes": 134262,
+      "sha256": "154e74c1d9f5d379de669599f26fd9d675d6a95ed508e91074e9bc429bb50c95",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||a raw volumetric Q",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_finite_a_64um_20260802/finite_q_on_artifact.npz",
+      "size_bytes": 474444080,
+      "sha256": "84db75a05c8233798dfff7e8011169cb846f41417565e4a0b3e99157316f3e24",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||a raw FSP",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_finite_a_64um_20260802/finite_2um_optical_q.fsp",
+      "size_bytes": 374220986,
+      "sha256": "ba8378cf8a75b771bd74d3799ab7649129878d529f21b034f562b09809a39c27",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||b optical case JSON",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_finite_b_64um_20260802/case_result.json",
+      "size_bytes": 134275,
+      "sha256": "203fc7de9dd3620fc1a3c579aafcbc95c0b67a354bdd4cc918265436bab79b99",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||b raw volumetric Q",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_finite_b_64um_20260802/finite_q_on_artifact.npz",
+      "size_bytes": 474444004,
+      "sha256": "0dae69afc19fb096fd4bb1e641ab1844864f481226130a4228e1e59d14be34d9",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||b raw FSP",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/phase1_finite_b_64um_20260802/finite_2um_optical_q.fsp",
+      "size_bytes": 374220194,
+      "sha256": "3622d22e22c8dc7428c774e8c573968843fd14200ba743763a72915826044d00",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||a thermal/PTE summary",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/thermal_a_intersection_expanded_60um_100nm_20260802/summary.json",
+      "size_bytes": 14701,
+      "sha256": "ab2f0d17b09d33513e93736f6a312fa375074f2de50b9c74faafe74d78036d70",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||a thermal/PTE fields",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/thermal_a_intersection_expanded_60um_100nm_20260802/thermal_pte_fields.npz",
+      "size_bytes": 387516314,
+      "sha256": "44792d24af1ec8c2d1e5dc7f51fe8dd1d6c092b5816acda921e829a7ccecbd85",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||b thermal/PTE summary",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/thermal_b_intersection_expanded_60um_100nm_20260802/summary.json",
+      "size_bytes": 14719,
+      "sha256": "cce61469d826090abcbbbea010801e87cfeb98392e38128232a5c47541116a5c",
+      "committed_to_git": false
+    },
+    {
+      "role": "E||b thermal/PTE fields",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/thermal_b_intersection_expanded_60um_100nm_20260802/thermal_pte_fields.npz",
+      "size_bytes": 387516314,
+      "sha256": "e065449d3e89d69345547490b92dde3f1ebc0e294ba9b0b70c185f691e08128f",
+      "committed_to_git": false
+    }
+  ],
+  "raw_NPZ_and_FSP_committed_to_git": false
+}
