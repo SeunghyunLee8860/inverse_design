@@ -753,6 +753,35 @@ def parse_args() -> argparse.Namespace:
             )
             for axis in "xyz"
         }
+        args.inner_box_requested_before_mesh_snap_m = {
+            axis: tuple(args.inner_box[axis]) for axis in "xyz"
+        }
+        if args.matched_lossy_control_volume:
+            # Power monitors are placed on Yee mesh planes.  A nominal face
+            # exactly halfway between two 100-nm planes was previously
+            # rounded by the solver, while pabs_adv retained its unsnapped
+            # object bounds.  Snap both shared x/y bounds to the known outer
+            # local-mesh lattice before either object is created.
+            xy_step_m = args.outer_local_xy_mesh_nm * 1.0e-9
+            for axis in "xy":
+                mesh_anchor_m = (
+                    args.absorption_bounds_m[axis][0] - 0.5e-6
+                )
+                args.inner_box[axis] = tuple(
+                    float(
+                        mesh_anchor_m
+                        + np.floor(
+                            (bound_m - mesh_anchor_m) / xy_step_m
+                            + 0.5
+                            + 1.0e-12
+                        )
+                        * xy_step_m
+                    )
+                    for bound_m in args.inner_box[axis]
+                )
+        args.inner_box_after_outer_mesh_snap_m = {
+            axis: tuple(args.inner_box[axis]) for axis in "xyz"
+        }
     else:
         flux_padding_m = 0.5e-6
         args.inner_box = {
@@ -766,6 +795,8 @@ def parse_args() -> argparse.Namespace:
             ),
             "z": (-1.2e-6, SOURCE_Z_M - 0.5e-6),
         }
+        args.inner_box_requested_before_mesh_snap_m = None
+        args.inner_box_after_outer_mesh_snap_m = None
     inner_limit_um = max(
         abs(value) * 1e6
         for axis in ("x", "y")
@@ -2156,6 +2187,18 @@ def add_geometry_and_monitors(
         "absorption_analysis_bounds_m": absorption_bounds,
         "pabs_nominal_control_volume_bounds_m": pabs_bounds,
         "six_face_absorption_box_bounds_m": inner_box,
+        "control_volume_bounds_before_outer_mesh_snap_m": (
+            args.inner_box_requested_before_mesh_snap_m
+        ),
+        "control_volume_bounds_after_outer_mesh_snap_m": (
+            args.inner_box_after_outer_mesh_snap_m
+        ),
+        "control_volume_mesh_snap_contract": (
+            "shared Pabs and six-face x/y bounds are snapped to the outer "
+            "local-mesh lattice before object creation"
+            if args.matched_lossy_control_volume
+            else None
+        ),
         "outer_flux_box_bounds_m": (
             outer_bounds if outer_faces else None
         ),
@@ -2657,6 +2700,22 @@ def assert_contract(
     )
     runtime.configure_session_resources(fdtd)
     fdtd.runsetup()
+    native_setup_mesh = {axis: _mesh_coordinate(fdtd, axis) for axis in "xyz"}
+    pabs_bounds = setup["geometry"][
+        "pabs_nominal_control_volume_bounds_m"
+    ]
+    pabs_bound_to_native_mesh_distance = {
+        axis: [
+            float(np.min(np.abs(native_setup_mesh[axis] - bound_m)))
+            for bound_m in pabs_bounds[axis]
+        ]
+        for axis in "xyz"
+    }
+    checks["Pabs_bounds_on_native_solver_mesh_lt_1fm"] = all(
+        distance_m < 1.0e-15
+        for distances in pabs_bound_to_native_mesh_distance.values()
+        for distance_m in distances
+    )
     dt_s = base.scalar(fdtd.getnamed("FDTD", "dt"), "FDTD.dt")
     epsilon_readback = material_epsilon_readback(
         fdtd,
@@ -2911,6 +2970,13 @@ def assert_contract(
             "override_objects": mesh_overrides,
             "uniform_global_fine_mesh_present": False,
             "local_x_or_y_override_present": True,
+            "native_runsetup_mesh": {
+                axis: _coordinate_summary(values)
+                for axis, values in native_setup_mesh.items()
+            },
+            "Pabs_bound_to_native_mesh_distance_m": (
+                pabs_bound_to_native_mesh_distance
+            ),
         },
         "object_bounds_readback_m": {
             "FDTD_nominal_outer_bounds": fdtd_bounds,
