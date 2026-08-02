@@ -28,6 +28,10 @@ from photothermal_pte.validation.paper_ir_sanity.run_device_a_explicit_thermal_p
     straight_edge_temperature_metrics,
     strict_centered_cell_gradient,
 )
+from photothermal_pte.validation.paper_ir_sanity.register_device_a_fig3h_approx import (
+    affine_pixel_to_device_um,
+    source_device_envelope,
+)
 
 
 def test_coordinate_plot_preserves_nonuniform_cell_edges() -> None:
@@ -48,6 +52,41 @@ def test_dual_edges_from_centers_has_half_cell_outer_boundaries() -> None:
         dual_edges_from_centers(centers),
         np.asarray([-2.5, -1.5, 0.5, 4.0, 8.0]),
     )
+
+
+def test_fig3h_affine_registration_preserves_axis_and_scale_contract() -> None:
+    mapped = affine_pixel_to_device_um(
+        np.asarray([[402.5, 485.5], [413.7, 474.3]]),
+        panel_center_px=np.asarray([402.5, 485.5]),
+        flake_center_um=np.asarray([0.0, 0.0]),
+        pixels_per_um=11.2,
+    )
+    assert mapped[0] == pytest.approx([0.0, 0.0])
+    assert mapped[1] == pytest.approx([1.0, 1.0])
+
+
+def test_registered_source_requires_larger_domain_if_span_is_preserved() -> None:
+    beam = np.asarray([-16.5625, 3.0])
+    top = np.asarray([[-17.8453, 11.768], [20.221, 17.956]])
+    bottom = np.asarray([[-17.8453, -15.249], [20.221, -11.657]])
+    old = source_device_envelope(
+        beam_um=beam,
+        source_span_um=50.0,
+        domain_um=60.0,
+        top_metal_um=top,
+        bottom_metal_um=bottom,
+    )
+    expanded = source_device_envelope(
+        beam_um=beam,
+        source_span_um=50.0,
+        domain_um=64.0,
+        top_metal_um=top,
+        bottom_metal_um=bottom,
+    )
+    assert not old["passes_existing_loader_clearance_gate"]
+    assert expanded["passes_existing_loader_clearance_gate"]
+    assert old["minimum_PML_clearance_um"]["x"] < 0.0
+    assert expanded["minimum_PML_clearance_um"]["x"] > 1.0
 
 
 def test_strict_centered_gradient_masks_any_missing_xy_neighbour() -> None:

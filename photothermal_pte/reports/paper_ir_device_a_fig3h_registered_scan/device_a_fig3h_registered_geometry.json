@@ -1,0 +1,306 @@
+{
+  "status": "DEVICE_A_FIG3H_APPROXIMATE_AFFINE_REGISTRATION",
+  "geometry_status": "FIGURE_DIGITIZED_APPROXIMATION",
+  "paper": {
+    "path": "/home/seunghyun/tairte4/papers/Adv Funct Materials - 2026 - Blevins - Large Transverse Thermoelectric Effect in Weyl Semimetal TaIrTe4 Engineered for-2.pdf",
+    "size_bytes": 3446019,
+    "sha256": "ad160823ce0805e709be2ea54c663a51280e56c498d76c8d33651599b8733155",
+    "render_dpi": 600,
+    "figure_2_page_one_indexed": 5,
+    "figure_3_page_one_indexed": 6
+  },
+  "coordinate_transform": {
+    "pixels_per_um": 18.1,
+    "origin_pixel_x": 413.0,
+    "origin_pixel_y": 599.0,
+    "x_code_direction": "image right = crystal b",
+    "y_code_direction": "image up = crystal a"
+  },
+  "flake_vertices_pixel": [
+    [
+      247.0,
+      386.0
+    ],
+    [
+      685.0,
+      386.0
+    ],
+    [
+      684.0,
+      812.0
+    ],
+    [
+      141.0,
+      810.0
+    ],
+    [
+      141.0,
+      628.0
+    ],
+    [
+      169.0,
+      584.0
+    ],
+    [
+      169.0,
+      526.0
+    ],
+    [
+      247.0,
+      484.0
+    ]
+  ],
+  "flake_vertices_code_um": [
+    [
+      -9.171270718232044,
+      11.767955801104971
+    ],
+    [
+      15.027624309392264,
+      11.767955801104971
+    ],
+    [
+      14.972375690607734,
+      -11.767955801104971
+    ],
+    [
+      -15.027624309392264,
+      -11.657458563535911
+    ],
+    [
+      -15.027624309392264,
+      -1.6022099447513811
+    ],
+    [
+      -13.480662983425413,
+      0.8287292817679557
+    ],
+    [
+      -13.480662983425413,
+      4.0331491712707175
+    ],
+    [
+      -9.171270718232044,
+      6.353591160220994
+    ]
+  ],
+  "top_metal_polygon_code_um": [
+    [
+      -17.845303867403313,
+      17.955801104972373
+    ],
+    [
+      20.22099447513812,
+      17.955801104972373
+    ],
+    [
+      20.22099447513812,
+      11.767955801104971
+    ],
+    [
+      -17.845303867403313,
+      11.767955801104971
+    ]
+  ],
+  "bottom_metal_polygon_code_um": [
+    [
+      -17.845303867403313,
+      -11.657458563535911
+    ],
+    [
+      20.22099447513812,
+      -11.657458563535911
+    ],
+    [
+      20.22099447513812,
+      -15.248618784530386
+    ],
+    [
+      -17.845303867403313,
+      -15.248618784530386
+    ]
+  ],
+  "top_electrical_contact_segment_code_um": [
+    [
+      -9.171270718232044,
+      11.767955801104971
+    ],
+    [
+      15.027624309392264,
+      11.767955801104971
+    ]
+  ],
+  "bottom_electrical_contact_segment_code_um": [
+    [
+      -15.027624309392264,
+      -11.657458563535911
+    ],
+    [
+      14.972375690607734,
+      -11.767955801104971
+    ]
+  ],
+  "off_axis_edge_vertex_indices": [
+    4,
+    7
+  ],
+  "off_axis_edge_midpoint_code_um": [
+    -12.099447513812155,
+    2.375690607734806
+  ],
+  "off_axis_edge_unit_tangent_code": [
+    0.5928174284216942,
+    0.8053368838936223
+  ],
+  "off_axis_edge_unit_inward_normal_code": [
+    0.8053368838936223,
+    -0.5928174284216942
+  ],
+  "pre_registered_beam_center_code_um": [
+    -16.5625,
+    3.0
+  ],
+  "beam_center_rule": "EXPLICIT_APPROXIMATION: align the Figure-3H map-panel centre with the digitized Figure-2 flake-bounding-box centre, use the visible 10-um scale bar without rotation/shear, and place the nominal source at Figure-3I distance +3 um along +a",
+  "figure_3I_peak_distance_digitization_um": 3.0,
+  "measured_ratio": {
+    "abs_Ia_over_abs_Ib": 0.8365896980461811,
+    "digitization_uncertainty": 0.00852575488454707
+  },
+  "uncertainty_um": {
+    "visible_flake_edge": 0.4,
+    "flake_under_metal": 0.8,
+    "contact_overlap_endpoint": 0.6,
+    "beam_center_registration": 1.0,
+    "scale_bar": 0.15
+  },
+  "limitations": [
+    "not unpublished CAD",
+    "contact overlap beneath metal is inferred",
+    "Figure 3I supplies a relative scan coordinate, not absolute stage metrology",
+    "w0=12 um remains an explicit assumption rather than a paper-published value",
+    "Figure-3H panel centre to Figure-2 flake-centre alignment is assumed",
+    "Figure-3I distance zero is assumed at that common centre",
+    "the registered line and source positions are not raw SPCM stage coordinates"
+  ],
+  "input_crops": {
+    "figure_2D": "/tmp/device-a-digitize.g02oXL/fig2D.png",
+    "figure_3H": "/tmp/device-a-digitize.g02oXL/fig3HI.png",
+    "figure_3I": "/tmp/device-a-digitize.g02oXL/fig3I.png"
+  },
+  "generation_command": "pdftoppm -f 5 -l 6 -r 600 -png PAPER page; Figure 2D crop=1050x1150+3550+150; Figure 3H crop=1900x1900+450+2300; Figure 3I crop=1200x1700+2250+2300",
+  "fig3h_approximate_affine_registration": {
+    "classification": "EXPLICIT_APPROXIMATION_NOT_STAGE_METROLOGY",
+    "pixel_to_code_axes": {
+      "image_right": "+b",
+      "image_up": "+a",
+      "rotation_or_shear": false
+    },
+    "panel_center_px": [
+      402.5,
+      485.5
+    ],
+    "panel_center_aligned_to_flake_bbox_center_code_um": [
+      0.0,
+      0.0
+    ],
+    "pixels_per_um": 11.2,
+    "black_scan_line_endpoints_px": [
+      [
+        217.0,
+        252.0
+      ],
+      [
+        217.0,
+        719.0
+      ]
+    ],
+    "black_scan_line_endpoints_code_um": [
+      [
+        -16.5625,
+        20.84821428571429
+      ],
+      [
+        -16.5625,
+        -20.84821428571429
+      ]
+    ],
+    "Fig3I_distance_zero_assumption": "panel centre equals flake-bounding-box centre along a",
+    "positive_distance_direction": "+a",
+    "nominal_peak_distance_um": 3.0,
+    "nominal_beam_center_code_um": [
+      -16.5625,
+      3.0
+    ],
+    "nearest_digitized_flake_boundary_point_um": [
+      -13.480662983425413,
+      3.0
+    ],
+    "nearest_digitized_flake_segment_start_index": 5,
+    "signed_distance_to_digitized_flake_um": 3.081837016574587,
+    "translation_uncertainty_scenarios_um": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        -2.0,
+        0.0
+      ],
+      [
+        2.0,
+        0.0
+      ],
+      [
+        0.0,
+        -2.0
+      ],
+      [
+        0.0,
+        2.0
+      ]
+    ],
+    "sparse_scan_positions": [
+      {
+        "label": "dm1um",
+        "distance_from_assumed_Fig3I_zero_um": -1.0,
+        "beam_center_code_um": [
+          -16.5625,
+          -1.0
+        ]
+      },
+      {
+        "label": "dp1um",
+        "distance_from_assumed_Fig3I_zero_um": 1.0,
+        "beam_center_code_um": [
+          -16.5625,
+          1.0
+        ]
+      },
+      {
+        "label": "dp3um",
+        "distance_from_assumed_Fig3I_zero_um": 3.0,
+        "beam_center_code_um": [
+          -16.5625,
+          3.0
+        ]
+      },
+      {
+        "label": "dp5um",
+        "distance_from_assumed_Fig3I_zero_um": 5.0,
+        "beam_center_code_um": [
+          -16.5625,
+          5.0
+        ]
+      },
+      {
+        "label": "dp7um",
+        "distance_from_assumed_Fig3I_zero_um": 7.0,
+        "beam_center_code_um": [
+          -16.5625,
+          7.0
+        ]
+      }
+    ],
+    "comparison_target": "separate maxima of |Ia| and |Ib| over the registered scan, not a single arbitrarily selected point"
+  }
+}

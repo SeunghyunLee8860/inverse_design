@@ -1,0 +1,20 @@
+{
+  "status": "RAW_RUNSETUP_ARTIFACTS_RECORDED_NOT_COMMITTED",
+  "artifacts": [
+    {
+      "role": "v261 runsetup case result",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/runsetup_empty_a_64um_20260802/case_result.json",
+      "size_bytes": 30427,
+      "sha256": "53a95063653bb16ee65b87307f4f2885a9bebf1231bfd083b916437c9c093795",
+      "committed_to_git": false
+    },
+    {
+      "role": "v261 runsetup FSP; no time stepping",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/runsetup_empty_a_64um_20260802/finite_2um_optical_q.fsp",
+      "size_bytes": 560186,
+      "sha256": "cfbeac4fd59c481c54149c2a74c2e40859499851200b40f11753d646e50ba29b",
+      "committed_to_git": false
+    }
+  ],
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/runsetup_empty_a_64um_20260802 --case empty-stack --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_fig3h_registered_scan/device_a_fig3h_registered_geometry.json --domain-um 64 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --execution-contract paper-measured-reproduction --substrate-optical-model paper-kitamura-palik-nk-11um --source-pulse-contract frequency-centered-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --intermediate-xy-mesh-nm 100 --intermediate-half-span-um 12 --local-xy-mesh-nm 50 --refinement-half-span-um 9 --refinement-y-half-span-um 12 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 0' --threads 3 --contract-only"
+}
