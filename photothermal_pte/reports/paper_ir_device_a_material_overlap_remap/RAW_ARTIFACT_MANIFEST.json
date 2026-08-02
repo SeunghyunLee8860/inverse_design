@@ -1,0 +1,48 @@
+{
+  "status": "VALIDATED_DEVICE_A_MATERIAL_OVERLAP_REMAP",
+  "artifacts": [
+    {
+      "role": "immutable_input_optical_Q",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/finite_w8p75_a_50nm_t4_gpu5_20260801_retry1/finite_q_on_artifact.npz",
+      "byte_size": 786680160,
+      "sha256": "78f1fba784b3be0237b7c09e5de88baa991bf24e956425d015483f627f3b2d3b",
+      "committed_to_git": false
+    },
+    {
+      "role": "immutable_input_optical_result",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/finite_w8p75_a_50nm_t4_gpu5_20260801_retry1/case_result.json",
+      "byte_size": 111824,
+      "sha256": "c92b8c4c9957ebd756701924fa615bd98e7fcf9a9ebbf228df7a48b094c1d82f",
+      "committed_to_git": false
+    },
+    {
+      "role": "500nm_mapping_control_summary",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_material_overlap_validation/w8p75_a_mapping_only_500nm_20260802/material_overlap_mapping_summary.json",
+      "byte_size": 4606,
+      "sha256": "8d72a0d5d1dd8634f1d2308b0598d96b72fe2c7992382ad66fcdd6ff22e79280",
+      "committed_to_git": false
+    },
+    {
+      "role": "500nm_mapping_control_Q",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_material_overlap_validation/w8p75_a_mapping_only_500nm_20260802/material_overlap_mapped_q.npz",
+      "byte_size": 120880,
+      "sha256": "0f8e173e08508030207a3794107d8ff281ee91d238f12fbd51f7d06e21bca91a",
+      "committed_to_git": false
+    },
+    {
+      "role": "100nm_mapping_control_summary",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_material_overlap_validation/w8p75_a_mapping_only_100nm_20260802/material_overlap_mapping_summary.json",
+      "byte_size": 4607,
+      "sha256": "109fce9e88af87bbc1b1f39859fffd386d4d96dce0fb94e0a3471d8f53ef9358",
+      "committed_to_git": false
+    },
+    {
+      "role": "100nm_mapping_control_Q",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_material_overlap_validation/w8p75_a_mapping_only_100nm_20260802/material_overlap_mapped_q.npz",
+      "byte_size": 6836985,
+      "sha256": "2ad9765dd084516ce8f0a2d8988a48c17fe7abc298ea87e7b9b55284a1151f56",
+      "committed_to_git": false
+    }
+  ],
+  "raw_NPZ_or_FSP_committed_to_git": false
+}

@@ -1,5 +1,48 @@
 # Latest photothermal validation status
 
+## Device-A material-overlap optical-Q remap
+
+- Status: `VALIDATED_DEVICE_A_MATERIAL_OVERLAP_REMAP` for the offline mapping
+  operator; no new FDTD, thermal, weighting-potential, PTE, adjoint, or
+  optimization calculation was run.
+- The production path no longer relocates optical power to the nearest
+  TaIrTe4 cell.  It preserves each covered optical-cell power and distributes
+  it only by exact intersection with the union of cells that the thermal FVM
+  itself assigns TaIrTe4 conductivity.  Zero-overlap power is reported and is
+  not forced into the flake.
+- On the existing Device-A `w0=8.75 um` artifact and 100-nm thermal grid,
+  source/target power error is exactly zero and mapped power outside TaIrTe4
+  is zero.  The full-Q partition is `99.543415%` material-overlap-attributed
+  TaIrTe4, `0.349384%` zero-overlap/non-TaIrTe4, and `0.107201%` explicitly
+  excluded metal, with zero signed residual.  Relative to the old
+  centre-point mask diagnostic, attributed TaIrTe4 power changes by
+  `+0.218052%`.
+- The current thermal material geometry is cell-centred/binary.  Therefore
+  the overlap domain is the exact discrete material volume solved by this
+  FVM; an analytic polygon cut-cell source is not claimed without a matching
+  cut-cell conductivity/interface operator.
+- The immutable input optical artifact predates the new 11-um Palik substrate
+  contract, so its watts are a mapping control rather than a promoted Palik
+  prediction.  The legacy `perfect-to-flake-upper-bound` route now fails
+  closed because it required forbidden nearest-cell relocation.
+- Report, JSON, CSV, plot, and external-artifact manifest:
+  `reports/paper_ir_device_a_material_overlap_remap/`.
+
+## Device-A fast empty-stack mesh precheck
+
+- Status: `VALIDATED_DEVICE_A_EMPTY_STACK_FAST_MESH`, limited to the empty
+  Palik SiO2/Si stack.  It does not validate finite Device-A Q or PTE.
+- Auto-mesh accuracy 3 versus 4 at the same 100-nm local source region changes
+  incident power by `0.023728%`, normalized target-plane intensity by
+  `0.049718%` NRMSE, and second-moment x/y waist by `0.056932%/0.031584%`.
+- This supports coarsening wavelength-scale remote air/substrate regions.
+  The next production test must retain the 50-nm illuminated-edge mesh and
+  5-nm TaIrTe4 z mesh while coarsening only the remote air/Si/SiO2 region.
+  The prematurely started finite 100-nm and 50-nm runs were interrupted and
+  are not validation artifacts.
+- Report, JSON, CSV, plot, and external-artifact manifest:
+  `reports/paper_ir_device_a_fast_mesh_validation/`.
+
 ## Full-SiO2 Maxwell heat-source precheck
 
 - Status: `BLOCKED_LUMERICAL_FDTD_LATE_TIME_DIVERGENCE`.

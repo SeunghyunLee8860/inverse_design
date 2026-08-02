@@ -66,6 +66,8 @@ class ConservativeEmbeddingRemap:
     target_volume_m3: np.ndarray
     source_shape: tuple[int, int, int]
     target_shape: tuple[int, int, int]
+    source_material_overlap_m3: np.ndarray | None = None
+    target_material_support_mask: np.ndarray | None = None
 
     def apply(self, source_density: np.ndarray) -> np.ndarray:
         source = np.asarray(source_density, float)
@@ -92,6 +94,19 @@ class ConservativeEmbeddingRemap:
 
     def power_target(self, target_density: np.ndarray) -> float:
         return float(np.sum(self.target_volume_m3 * target_density))
+
+    def uncovered_source_power(self, source_density: np.ndarray) -> float:
+        """Power in source cells having no overlap with selected material."""
+
+        source = np.asarray(source_density, float)
+        if source.shape != self.source_shape:
+            raise ValueError(
+                f"source shape {source.shape} != {self.source_shape}"
+            )
+        if self.source_material_overlap_m3 is None:
+            return 0.0
+        uncovered = np.asarray(self.source_material_overlap_m3) <= 0.0
+        return float(np.sum(self.source_volume_m3[uncovered] * source[uncovered]))
 
 
 def build_conservative_embedding_remap(
@@ -159,6 +174,110 @@ def build_conservative_embedding_remap(
         target_volume_m3=target_volume,
         source_shape=source_volume.shape,
         target_shape=target_volume.shape,
+    )
+
+
+def build_material_overlap_remap(
+    *,
+    source_edges_m: tuple[np.ndarray, np.ndarray, np.ndarray],
+    target_edges_m: tuple[np.ndarray, np.ndarray, np.ndarray],
+    target_material_support_mask: np.ndarray,
+    bounds_tolerance_m: float = 1.0e-15,
+) -> ConservativeEmbeddingRemap:
+    """Map optical-cell power by exact overlap with the FVM material volume.
+
+    Let ``Omega_h`` be the union of target FVM cells selected by
+    ``target_material_support_mask``.  For source cell ``m`` and target cell
+    ``i`` this builds the literal density operator corresponding to
+
+    ``p[m->i] = Q[m] V[m] |cell_m intersect cell_i intersect Omega_h|``
+    ``          / |cell_m intersect Omega_h|``.
+
+    Thus a conformal/interface source cell retains its already computed total
+    power, but that power is divided only among the absorbing-material
+    overlaps.  There is no nearest-cell relocation.  A source cell with zero
+    material overlap maps to zero and is exposed through
+    ``source_material_overlap_m3``/``uncovered_source_power`` so callers can
+    classify or fail closed rather than silently forcing it into material.
+    """
+
+    source = tuple(
+        np.asarray(axis, float).reshape(-1) for axis in source_edges_m
+    )
+    target = tuple(
+        np.asarray(axis, float).reshape(-1) for axis in target_edges_m
+    )
+    # Reuse the strict coordinate and containment audit.
+    base = build_conservative_embedding_remap(
+        source_edges_m=source,
+        target_edges_m=target,
+        bounds_tolerance_m=bounds_tolerance_m,
+    )
+    support = np.asarray(target_material_support_mask, bool)
+    if support.shape != base.target_shape:
+        raise ValueError(
+            f"support shape {support.shape} != {base.target_shape}"
+        )
+    if not np.any(support):
+        raise ValueError("material support is empty")
+
+    overlaps = [
+        _overlap_1d(target_axis, source_axis)
+        for target_axis, source_axis in zip(target, source)
+    ]
+    geometric_overlap = sparse.kron(
+        overlaps[0],
+        sparse.kron(overlaps[1], overlaps[2]),
+        format="csr",
+    )
+    material_overlap = (
+        sparse.diags(support.reshape(-1).astype(float), format="csr")
+        @ geometric_overlap
+    ).tocsr()
+    source_material_volume = np.asarray(
+        material_overlap.sum(axis=0)
+    ).reshape(base.source_shape)
+    source_volume = base.source_volume_m3.reshape(-1)
+    material_volume_flat = source_material_volume.reshape(-1)
+    column_scale = np.zeros_like(material_volume_flat)
+    covered = material_volume_flat > 0.0
+    column_scale[covered] = (
+        source_volume[covered] / material_volume_flat[covered]
+    )
+    target_volume = base.target_volume_m3.reshape(-1)
+    density_operator = (
+        sparse.diags(1.0 / target_volume, format="csr")
+        @ material_overlap
+        @ sparse.diags(column_scale, format="csr")
+    ).tocsr()
+    if np.any(density_operator.data < 0.0):
+        raise RuntimeError("material-overlap operator contains negative weights")
+
+    # Every covered source column must distribute exactly one source-cell
+    # volume of power; uncovered columns intentionally remain zero.
+    delivered_volume = np.asarray(
+        (
+            sparse.diags(target_volume, format="csr")
+            @ density_operator
+        ).sum(axis=0)
+    ).reshape(-1)
+    if not np.allclose(
+        delivered_volume[covered],
+        source_volume[covered],
+        rtol=2.0e-13,
+        atol=1.0e-30,
+    ):
+        raise RuntimeError("material-overlap source power does not close")
+    if np.any(delivered_volume[~covered] != 0.0):
+        raise RuntimeError("uncovered source column received material power")
+    return ConservativeEmbeddingRemap(
+        density_operator=density_operator,
+        source_volume_m3=base.source_volume_m3,
+        target_volume_m3=base.target_volume_m3,
+        source_shape=base.source_shape,
+        target_shape=base.target_shape,
+        source_material_overlap_m3=source_material_volume,
+        target_material_support_mask=support,
     )
 
 

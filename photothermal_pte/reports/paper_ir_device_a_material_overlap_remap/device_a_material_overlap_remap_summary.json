@@ -1,0 +1,223 @@
+{
+  "status": "VALIDATED_DEVICE_A_MATERIAL_OVERLAP_REMAP",
+  "scope": "offline remap validation only; the source artifact is a legacy w0=8.75 um Device-A optical diagnostic without the new Palik substrate contract, so the reported watts are not a promoted paper/production prediction",
+  "operator": {
+    "source_cell_power": "p_m = Q_m V_m",
+    "transfer": "p_mi = p_m |Omega_m intersection Omega_i intersection Omega_TaIrTe4,h| / |Omega_m intersection Omega_TaIrTe4,h|",
+    "target_density": "Q_T,i = sum_m p_mi / V_T,i",
+    "material_domain": "union of thermal FVM cells explicitly assigned material_id=3; this keeps source and conductivity geometry identical",
+    "nearest_cell_projection": false,
+    "clipping_smoothing_gain_rescaling_tiling": false
+  },
+  "production_100nm_mapping_control": {
+    "status": "VALIDATED_MATERIAL_OVERLAP_REMAP_EXECUTION",
+    "scope": "optical-to-thermal source mapping only; no thermal solve, weighting potential, PTE current, adjoint, or optimization",
+    "mapping": {
+      "optical_artifact_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/finite_w8p75_a_50nm_t4_gpu5_20260801_retry1/finite_q_on_artifact.npz",
+      "optical_artifact_sha256": "78f1fba784b3be0237b7c09e5de88baa991bf24e956425d015483f627f3b2d3b",
+      "optical_result_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/finite_w8p75_a_50nm_t4_gpu5_20260801_retry1/case_result.json",
+      "optical_result_sha256": "c92b8c4c9957ebd756701924fa615bd98e7fcf9a9ebbf228df7a48b094c1d82f",
+      "experimental_incident_power_W": 0.000285,
+      "selected_Q_source": "TaIrTe4-only",
+      "selected_Q_artifact_keys": [
+        "Q_on_W_m3"
+      ],
+      "selected_Q_derivation": {
+        "method": "material-overlap cell-power attribution",
+        "formula": "p_m=Q_on[m]*V_opt[m]; distribute p_m only by exact optical-cell/thermal-TaIrTe4-cell overlap; zero-overlap cells are reported and are not moved to a nearest cell",
+        "source_array_key": "Q_on_W_m3",
+        "stored_center_support_mask_used_for_mapping": false,
+        "raw_artifact_modified": false
+      },
+      "substrate_optical_contract": {},
+      "unit_central_intensity_incident_power_W": 1.4000716825418165e-10,
+      "physical_incident_power_scale": 2035610.0587834565,
+      "metal_thermalization_scenario": "isolated-lower-bound",
+      "source_power_by_optical_material_support_W": {
+        "TaIrTe4_exact_support_W": 4.1904243945619e-05,
+        "Ti_exact_support_W": 4.522630711480648e-08,
+        "Au_exact_support_W": 1.1141851431186497e-15,
+        "conformal_or_unassigned_W": 2.38772099479735e-07,
+        "full_common_grid_Q_W": 4.2188242353327724e-05
+      },
+      "exact_metal_power_excluded_from_modeled_source_W": 4.522630822899162e-08,
+      "modeled_source_fraction_of_full_common_grid_Q": 0.9954341494068835,
+      "P_Q_source_W": 4.199561714195624e-05,
+      "P_Q_target_W": 4.199561714195624e-05,
+      "material_resolved_source_target_power_W": {
+        "TaIrTe4_source_W": 4.199561714195624e-05,
+        "TaIrTe4_target_W": 4.199561714195624e-05,
+        "SiO2_source_W": 0.0,
+        "SiO2_target_W": 0.0
+      },
+      "mapping_relative_power_error": 0.0,
+      "material_resolved_support_leakage_W": {
+        "TaIrTe4_before_overlap_mapping_outside_TaIrTe4_W": 1.1733057653784009e-06,
+        "TaIrTe4_zero_overlap_unattributed_W": 1.473989031424926e-07,
+        "TaIrTe4_after_overlap_mapping_outside_TaIrTe4_W": 0.0,
+        "interpretation": "zero-overlap optical power is not called TaIrTe4 heat and is not relocated; covered source-cell power is divided only among actual optical/thermal-material overlap volumes"
+      },
+      "TaIrTe4_source_material_overlap": {
+        "material_domain": "union of thermal FVM cells explicitly assigned material_id=3; this keeps source and conductivity geometry identical",
+        "covered_source_cell_count": 5923773,
+        "zero_overlap_source_cell_count": 15334191,
+        "covered_overlap_fraction_minimum": 0.07669005232902044,
+        "covered_overlap_fraction_maximum": 1.0000000000000004,
+        "full_cell_power_is_preserved_for_every_covered_source_cell": true
+      },
+      "mapped_power_outside_flake_before_final_support_W": 1.1733057653784009e-06,
+      "mapped_power_outside_flake_before_final_support_fraction": 0.02793876707210466,
+      "mapped_power_outside_flake_W": 0.0,
+      "legacy_outside_flake_metric_interpretation": "legacy single-flake-support diagnostic",
+      "mapping_operations": "one exact optical-cell/thermal-TaIrTe4-material-overlap power map; no nearest-cell projection, coordinate-axis ordering, clipping, smoothing, gain, global rescaling, or tiling; zero-overlap power is retained only as an attribution diagnostic; metal handling is the explicitly named isolated-lower-bound scenario"
+    },
+    "thermal_grid_shape": [
+      359,
+      301,
+      86
+    ],
+    "thermal_cell_count": 9293074,
+    "mapped_Q_shape": [
+      359,
+      301,
+      86
+    ],
+    "mapped_Q_nonzero_cell_count": 855491,
+    "mapped_Q_min_W_m3": 0.0,
+    "mapped_Q_max_W_m3": 36232258567739.336,
+    "mapped_Q_finite": true,
+    "mapped_Q_negative_cell_count": 0,
+    "mapped_power_outside_TaIrTe4_W": 0.0,
+    "gates": {
+      "source_target_power_error_lt_1e_minus_12": true,
+      "mapped_Q_is_finite": true,
+      "mapped_Q_has_no_negative_cells": true,
+      "TaIrTe4_only_power_outside_TaIrTe4_is_zero": true
+    },
+    "heat_run": false,
+    "weighting_potential_run": false,
+    "PTE_run": false,
+    "adjoint_run": false,
+    "optimization_run": false
+  },
+  "coarse_500nm_operator_control": {
+    "status": "VALIDATED_MATERIAL_OVERLAP_REMAP_EXECUTION",
+    "scope": "optical-to-thermal source mapping only; no thermal solve, weighting potential, PTE current, adjoint, or optimization",
+    "mapping": {
+      "optical_artifact_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/finite_w8p75_a_50nm_t4_gpu5_20260801_retry1/finite_q_on_artifact.npz",
+      "optical_artifact_sha256": "78f1fba784b3be0237b7c09e5de88baa991bf24e956425d015483f627f3b2d3b",
+      "optical_result_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/finite_w8p75_a_50nm_t4_gpu5_20260801_retry1/case_result.json",
+      "optical_result_sha256": "c92b8c4c9957ebd756701924fa615bd98e7fcf9a9ebbf228df7a48b094c1d82f",
+      "experimental_incident_power_W": 0.000285,
+      "selected_Q_source": "TaIrTe4-only",
+      "selected_Q_artifact_keys": [
+        "Q_on_W_m3"
+      ],
+      "selected_Q_derivation": {
+        "method": "material-overlap cell-power attribution",
+        "formula": "p_m=Q_on[m]*V_opt[m]; distribute p_m only by exact optical-cell/thermal-TaIrTe4-cell overlap; zero-overlap cells are reported and are not moved to a nearest cell",
+        "source_array_key": "Q_on_W_m3",
+        "stored_center_support_mask_used_for_mapping": false,
+        "raw_artifact_modified": false
+      },
+      "substrate_optical_contract": {},
+      "unit_central_intensity_incident_power_W": 1.4000716825418165e-10,
+      "physical_incident_power_scale": 2035610.0587834565,
+      "metal_thermalization_scenario": "isolated-lower-bound",
+      "source_power_by_optical_material_support_W": {
+        "TaIrTe4_exact_support_W": 4.1904243945619e-05,
+        "Ti_exact_support_W": 4.522630711480648e-08,
+        "Au_exact_support_W": 1.1141851431186497e-15,
+        "conformal_or_unassigned_W": 2.38772099479735e-07,
+        "full_common_grid_Q_W": 4.2188242353327724e-05
+      },
+      "exact_metal_power_excluded_from_modeled_source_W": 4.522630822899162e-08,
+      "modeled_source_fraction_of_full_common_grid_Q": 0.9746676277746698,
+      "P_Q_source_W": 4.1119514094500786e-05,
+      "P_Q_target_W": 4.1119514094500786e-05,
+      "material_resolved_source_target_power_W": {
+        "TaIrTe4_source_W": 4.1119514094500786e-05,
+        "TaIrTe4_target_W": 4.1119514094500786e-05,
+        "SiO2_source_W": 0.0,
+        "SiO2_target_W": 0.0
+      },
+      "mapping_relative_power_error": 0.0,
+      "material_resolved_support_leakage_W": {
+        "TaIrTe4_before_overlap_mapping_outside_TaIrTe4_W": 1.0327734336334788e-06,
+        "TaIrTe4_zero_overlap_unattributed_W": 1.0235019505979418e-06,
+        "TaIrTe4_after_overlap_mapping_outside_TaIrTe4_W": 0.0,
+        "interpretation": "zero-overlap optical power is not called TaIrTe4 heat and is not relocated; covered source-cell power is divided only among actual optical/thermal-material overlap volumes"
+      },
+      "TaIrTe4_source_material_overlap": {
+        "material_domain": "union of thermal FVM cells explicitly assigned material_id=3; this keeps source and conductivity geometry identical",
+        "covered_source_cell_count": 5935221,
+        "zero_overlap_source_cell_count": 15322743,
+        "covered_overlap_fraction_minimum": 0.07521576117797445,
+        "covered_overlap_fraction_maximum": 1.0000000000000004,
+        "full_cell_power_is_preserved_for_every_covered_source_cell": true
+      },
+      "mapped_power_outside_flake_before_final_support_W": 1.0327734336334788e-06,
+      "mapped_power_outside_flake_before_final_support_fraction": 0.025116382242746375,
+      "mapped_power_outside_flake_W": 0.0,
+      "legacy_outside_flake_metric_interpretation": "legacy single-flake-support diagnostic",
+      "mapping_operations": "one exact optical-cell/thermal-TaIrTe4-material-overlap power map; no nearest-cell projection, coordinate-axis ordering, clipping, smoothing, gain, global rescaling, or tiling; zero-overlap power is retained only as an attribution diagnostic; metal handling is the explicitly named isolated-lower-bound scenario"
+    },
+    "thermal_grid_shape": [
+      95,
+      89,
+      78
+    ],
+    "thermal_cell_count": 659490,
+    "mapped_Q_shape": [
+      95,
+      89,
+      78
+    ],
+    "mapped_Q_nonzero_cell_count": 13145,
+    "mapped_Q_min_W_m3": 0.0,
+    "mapped_Q_max_W_m3": 7901091450662.089,
+    "mapped_Q_finite": true,
+    "mapped_Q_negative_cell_count": 0,
+    "mapped_power_outside_TaIrTe4_W": 0.0,
+    "gates": {
+      "source_target_power_error_lt_1e_minus_12": true,
+      "mapped_Q_is_finite": true,
+      "mapped_Q_has_no_negative_cells": true,
+      "TaIrTe4_only_power_outside_TaIrTe4_is_zero": true
+    },
+    "heat_run": false,
+    "weighting_potential_run": false,
+    "PTE_run": false,
+    "adjoint_run": false,
+    "optimization_run": false
+  },
+  "power_partition_W": {
+    "full_common_grid_Q": 4.2188242353327724e-05,
+    "old_center_mask_TaIrTe4_diagnostic": 4.1904243945619e-05,
+    "material_overlap_attributed_TaIrTe4": 4.199561714195624e-05,
+    "zero_overlap_non_TaIrTe4_unattributed": 1.473989031424926e-07,
+    "explicit_metal_excluded": 4.522630822899162e-08,
+    "signed_partition_residual": 0.0
+  },
+  "power_partition_fraction_of_full": {
+    "TaIrTe4_material_overlap_attributed": 0.9954341494068835,
+    "zero_overlap_non_TaIrTe4_unattributed": 0.0034938384469308443,
+    "explicit_metal_excluded": 0.0010720121461856602
+  },
+  "material_overlap_vs_old_center_mask_relative_change": 0.002180523682895191,
+  "gates": {
+    "source_target_power_error_lt_1e_minus_12": true,
+    "mapped_Q_is_finite": true,
+    "mapped_Q_has_no_negative_cells": true,
+    "TaIrTe4_only_power_outside_TaIrTe4_is_zero": true,
+    "full_power_partition_closes_lt_1e_minus_12": true,
+    "raw_optical_artifact_unchanged": true,
+    "nearest_cell_projection_absent": true
+  },
+  "thermal_run": false,
+  "weighting_potential_run": false,
+  "PTE_run": false,
+  "FDTD_run_for_this_checkpoint": false,
+  "adjoint_run": false,
+  "optimization_run": false
+}

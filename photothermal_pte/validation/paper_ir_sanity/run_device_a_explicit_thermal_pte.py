@@ -46,8 +46,8 @@ from anisotropic_heat_fvm import (  # noqa: E402
 )
 from photothermal_pte.finite_inverse_design.finite_q_mapping import (  # noqa: E402
     build_conservative_embedding_remap,
+    build_material_overlap_remap,
     nodal_control_volume_edges,
-    project_remap_to_nearest_material_support,
 )
 from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (  # noqa: E402
     cell_field,
@@ -609,19 +609,23 @@ def load_and_map_q(
     result = json.loads(result_path.read_text())
     if result.get("status") != "COMPLETED":
         raise RuntimeError("optical case did not complete")
+    source_derivation: dict[str, Any] = {
+        "method": "stored-array",
+        "raw_artifact_modified": False,
+    }
     with np.load(artifact_path, allow_pickle=False) as raw:
         x = np.asarray(raw["x_m"], float)
         y = np.asarray(raw["y_m"], float)
         z = np.asarray(raw["z_m"], float)
-        q_keys = (
-            ["Q_TaIrTe4_only_W_m3", "Q_SiO2_only_W_m3"]
-            if q_source == "TaIrTe4-plus-SiO2"
-            else [
-                "Q_TaIrTe4_only_W_m3"
-                if q_source == "TaIrTe4-only"
-                else "Q_on_W_m3"
-            ]
-        )
+        if q_source == "TaIrTe4-only":
+            # Material attribution is performed below from exact optical-cell
+            # / thermal-material overlap.  A centre-point support mask would
+            # discard the conformal interface cells that motivated this path.
+            q_keys = ["Q_on_W_m3"]
+        elif q_source == "TaIrTe4-plus-SiO2":
+            q_keys = ["Q_TaIrTe4_only_W_m3", "Q_SiO2_only_W_m3"]
+        else:
+            q_keys = ["Q_on_W_m3"]
         missing = [key for key in q_keys if key not in raw.files]
         if missing:
             raise RuntimeError(
@@ -631,6 +635,18 @@ def load_and_map_q(
             key: np.asarray(raw[key], float)
             for key in q_keys
         }
+        if q_source == "TaIrTe4-only":
+            source_derivation = {
+                "method": "material-overlap cell-power attribution",
+                "formula": (
+                    "p_m=Q_on[m]*V_opt[m]; distribute p_m only by exact "
+                    "optical-cell/thermal-TaIrTe4-cell overlap; zero-overlap "
+                    "cells are reported and are not moved to a nearest cell"
+                ),
+                "source_array_key": "Q_on_W_m3",
+                "stored_center_support_mask_used_for_mapping": False,
+                "raw_artifact_modified": False,
+            }
         q = sum(source_components.values())
     optical_geometry = result["pre_run_contract"]["geometry"]
     substrate_contract = optical_geometry.get("substrate_optical_contract", {})
@@ -746,8 +762,9 @@ def load_and_map_q(
             raise RuntimeError(
                 "Device-A Q contains finite Au/Ti absorption but the expanded "
                 "thermal geometry has no published hidden metal overlap or "
-                "metal/TaIrTe4 interface contract; choose an explicitly named "
-                "isolated-lower-bound or perfect-to-flake-upper-bound diagnostic"
+                "metal/TaIrTe4 interface contract; choose the explicitly named "
+                "isolated-lower-bound or add explicit metal thermal cells and "
+                "a documented interface"
             )
         scaled_q = full_scaled_q
     elif metal_thermalization == "isolated-lower-bound":
@@ -755,52 +772,72 @@ def load_and_map_q(
         # flake-only thermal model.  No remaining Q is re-normalized.
         scaled_q = full_scaled_q * ~metal_support
     elif metal_thermalization == "perfect-to-flake-upper-bound":
-        # All absorbed power is conservatively delivered to the nearest flake
-        # cell, representing perfect local thermalization rather than an
-        # unpublished finite metal-interface G.
-        scaled_q = full_scaled_q
+        raise RuntimeError(
+            "perfect-to-flake-upper-bound required nearest-cell relocation, "
+            "which is forbidden by the material-overlap contract; add explicit "
+            "metal thermal cells and a documented metal/TaIrTe4 interface "
+            "instead of forcing zero-overlap power into the flake"
+        )
     else:
         raise ValueError(f"unknown metal thermalization scenario {metal_thermalization}")
-    unprojected = base_remap.apply(scaled_q)
-    outside_power_before = float(
-        np.sum(
-            base_remap.target_volume_m3[~geometry.flake_mask]
-            * unprojected[~geometry.flake_mask]
-        )
+    flake_remap = build_material_overlap_remap(
+        source_edges_m=source_edges,
+        target_edges_m=target_edges,
+        target_material_support_mask=geometry.flake_mask,
+    )
+    flake_source_overlap = np.asarray(
+        flake_remap.source_material_overlap_m3, float
+    )
+    flake_source_active = flake_source_overlap > 0.0
+    source_cell_volume = base_remap.source_volume_m3
+    flake_overlap_fraction = np.divide(
+        flake_source_overlap,
+        source_cell_volume,
+        out=np.zeros_like(flake_source_overlap),
+        where=source_cell_volume > 0.0,
     )
     material_support_leakage: dict[str, float | str] = {}
     if q_source == "TaIrTe4-plus-SiO2":
-        flake_remap = project_remap_to_nearest_material_support(
-            base_remap,
-            target_edges_m=target_edges,
-            target_support_mask=geometry.flake_mask,
-        )
         sio2_target = geometry.material_id == 2
         if not np.any(sio2_target):
             raise RuntimeError("thermal geometry has no SiO2 target cells")
-        sio2_remap = project_remap_to_nearest_material_support(
-            base_remap,
+        sio2_remap = build_material_overlap_remap(
+            source_edges_m=source_edges,
             target_edges_m=target_edges,
-            target_support_mask=sio2_target,
+            target_material_support_mask=sio2_target,
         )
-        flake_source = (
+        sio2_source_overlap = np.asarray(
+            sio2_remap.source_material_overlap_m3, float
+        )
+        sio2_source_active = sio2_source_overlap > 0.0
+        flake_source_raw = (
             source_components["Q_TaIrTe4_only_W_m3"] * physical_scale
         )
-        sio2_source = source_components["Q_SiO2_only_W_m3"] * physical_scale
+        sio2_source_raw = (
+            source_components["Q_SiO2_only_W_m3"] * physical_scale
+        )
+        flake_source = np.where(flake_source_active, flake_source_raw, 0.0)
+        sio2_source = np.where(sio2_source_active, sio2_source_raw, 0.0)
         unprojected_flake = base_remap.apply(flake_source)
         unprojected_sio2 = base_remap.apply(sio2_source)
         material_support_leakage = {
-            "TaIrTe4_before_projection_outside_TaIrTe4_W": float(
+            "TaIrTe4_before_overlap_mapping_outside_TaIrTe4_W": float(
                 np.sum(
                     base_remap.target_volume_m3[~geometry.flake_mask]
                     * unprojected_flake[~geometry.flake_mask]
                 )
             ),
-            "SiO2_before_projection_outside_SiO2_W": float(
+            "SiO2_before_overlap_mapping_outside_SiO2_W": float(
                 np.sum(
                     base_remap.target_volume_m3[~sio2_target]
                     * unprojected_sio2[~sio2_target]
                 )
+            ),
+            "TaIrTe4_zero_overlap_unattributed_W": base_remap.power_source(
+                np.where(flake_source_active, 0.0, flake_source_raw)
+            ),
+            "SiO2_zero_overlap_unattributed_W": base_remap.power_source(
+                np.where(sio2_source_active, 0.0, sio2_source_raw)
             ),
         }
         mapped_flake = flake_remap.apply(flake_source)
@@ -821,13 +858,13 @@ def load_and_map_q(
         }
         material_support_leakage.update(
             {
-                "TaIrTe4_after_projection_outside_TaIrTe4_W": float(
+                "TaIrTe4_after_overlap_mapping_outside_TaIrTe4_W": float(
                     np.sum(
                         target_volume[~geometry.flake_mask]
                         * mapped_flake[~geometry.flake_mask]
                     )
                 ),
-                "SiO2_after_projection_outside_SiO2_W": float(
+                "SiO2_after_overlap_mapping_outside_SiO2_W": float(
                     np.sum(
                         target_volume[~sio2_target]
                         * mapped_sio2[~sio2_target]
@@ -844,42 +881,65 @@ def load_and_map_q(
                     )
                 ),
                 "interpretation": (
-                    "each optical material source is evaluated only against "
-                    "its corresponding explicit thermal material support"
+                    "each source-cell power is distributed only through its "
+                    "actual overlap with the corresponding discrete FVM "
+                    "material volume; zero-overlap power is reported rather "
+                    "than moved to a nearest cell"
                 ),
             }
         )
         mapping_description = (
-            "two independent conservative embeddings followed by separate "
-            "physical-3D nearest-support projections: TaIrTe4 Q to TaIrTe4 "
-            "cells and SiO2 Q to SiO2 cells"
+            "two independent exact material-overlap power maps: TaIrTe4 Q "
+            "to the discrete TaIrTe4 FVM volume and SiO2 Q to the discrete "
+            "SiO2 FVM volume"
         )
+        outside_power_before = None
     else:
-        remap = project_remap_to_nearest_material_support(
-            base_remap,
-            target_edges_m=target_edges,
-            target_support_mask=geometry.flake_mask,
+        material_source = np.where(flake_source_active, scaled_q, 0.0)
+        unattributed_source = np.where(flake_source_active, 0.0, scaled_q)
+        unprojected = base_remap.apply(material_source)
+        outside_power_before = float(
+            np.sum(
+                base_remap.target_volume_m3[~geometry.flake_mask]
+                * unprojected[~geometry.flake_mask]
+            )
         )
-        mapped = remap.apply(scaled_q)
-        p_source = remap.power_source(scaled_q)
-        target_volume = remap.target_volume_m3
-        p_target = remap.power_target(mapped)
+        mapped = flake_remap.apply(material_source)
+        p_source = flake_remap.power_source(material_source)
+        target_volume = flake_remap.target_volume_m3
+        p_target = flake_remap.power_target(mapped)
         material_target_power = {
             "TaIrTe4_source_W": p_source,
             "TaIrTe4_target_W": p_target,
             "SiO2_source_W": 0.0,
             "SiO2_target_W": 0.0,
         }
+        material_support_leakage = {
+            "TaIrTe4_before_overlap_mapping_outside_TaIrTe4_W": (
+                outside_power_before
+            ),
+            "TaIrTe4_zero_overlap_unattributed_W": (
+                base_remap.power_source(unattributed_source)
+            ),
+            "TaIrTe4_after_overlap_mapping_outside_TaIrTe4_W": float(
+                np.sum(
+                    target_volume[~geometry.flake_mask]
+                    * mapped[~geometry.flake_mask]
+                )
+            ),
+            "interpretation": (
+                "zero-overlap optical power is not called TaIrTe4 heat and "
+                "is not relocated; covered source-cell power is divided only "
+                "among actual optical/thermal-material overlap volumes"
+            ),
+        }
         mapping_description = (
-            "one conservative embedding plus physical-3D nearest-flake-support "
-            "projection"
+            "one exact optical-cell/thermal-TaIrTe4-material-overlap power map"
         )
     outside_power = float(
         np.sum(target_volume[~geometry.flake_mask] * mapped[~geometry.flake_mask])
     )
-    legacy_outside_flake_before = (
-        None if q_source == "TaIrTe4-plus-SiO2" else outside_power_before
-    )
+    legacy_outside_flake_before = outside_power_before
     legacy_outside_flake_after = (
         None if q_source == "TaIrTe4-plus-SiO2" else outside_power
     )
@@ -891,6 +951,7 @@ def load_and_map_q(
         "experimental_incident_power_W": EXPERIMENTAL_INCIDENT_POWER_W,
         "selected_Q_source": q_source,
         "selected_Q_artifact_keys": q_keys,
+        "selected_Q_derivation": source_derivation,
         "substrate_optical_contract": substrate_contract,
         "unit_central_intensity_incident_power_W": incident_at_unit,
         "physical_incident_power_scale": physical_scale,
@@ -907,6 +968,27 @@ def load_and_map_q(
         "material_resolved_source_target_power_W": material_target_power,
         "mapping_relative_power_error": abs(p_target - p_source) / abs(p_source),
         "material_resolved_support_leakage_W": material_support_leakage,
+        "TaIrTe4_source_material_overlap": {
+            "material_domain": (
+                "union of thermal FVM cells explicitly assigned material_id=3; "
+                "this keeps source and conductivity geometry identical"
+            ),
+            "covered_source_cell_count": int(np.count_nonzero(flake_source_active)),
+            "zero_overlap_source_cell_count": int(
+                flake_source_active.size - np.count_nonzero(flake_source_active)
+            ),
+            "covered_overlap_fraction_minimum": (
+                float(np.min(flake_overlap_fraction[flake_source_active]))
+                if np.any(flake_source_active)
+                else None
+            ),
+            "covered_overlap_fraction_maximum": (
+                float(np.max(flake_overlap_fraction[flake_source_active]))
+                if np.any(flake_source_active)
+                else None
+            ),
+            "full_cell_power_is_preserved_for_every_covered_source_cell": True,
+        },
         "mapped_power_outside_flake_before_final_support_W": (
             legacy_outside_flake_before
         ),
@@ -923,9 +1005,10 @@ def load_and_map_q(
             else "legacy single-flake-support diagnostic"
         ),
         "mapping_operations": (
-            f"{mapping_description} with exact nearest-distance ties split "
-            "uniformly; no coordinate-axis order, clipping, "
-            "smoothing, gain, global rescaling, or tiling; metal handling is "
+            f"{mapping_description}; no nearest-cell projection, coordinate-"
+            "axis ordering, clipping, smoothing, gain, global rescaling, or "
+            "tiling; zero-overlap power is retained only as an attribution "
+            "diagnostic; metal handling is "
             f"the explicitly named {metal_thermalization} scenario"
         ),
     }
@@ -996,6 +1079,14 @@ def main() -> int:
     parser.add_argument("--core-step-nm", type=float, default=200.0)
     parser.add_argument("--flake-dz-nm", type=float, default=26.0)
     parser.add_argument(
+        "--mapping-only",
+        action="store_true",
+        help=(
+            "build and audit the optical-to-thermal material-overlap map, "
+            "then stop before thermal, weighting-potential, or PTE solves"
+        ),
+    )
+    parser.add_argument(
         "--geometry-contract-json",
         type=Path,
         default=None,
@@ -1021,7 +1112,9 @@ def main() -> int:
         default="fail-closed",
         help=(
             "named diagnostic bound for optical Au/Ti absorption; neither "
-            "bound is a published finite metal-interface model"
+            "bound is a published finite metal-interface model; the legacy "
+            "perfect-to-flake option now fails closed because nearest-cell "
+            "power relocation is forbidden"
         ),
     )
     parser.add_argument(
@@ -1033,10 +1126,10 @@ def main() -> int:
         ),
         default="full-control-volume",
         help=(
-            "select the raw full optical control-volume Q or the explicitly "
-            "material-resolved TaIrTe4-only derivative, or independently "
-            "mapped TaIrTe4-plus-SiO2 sources; lossy Palik substrates forbid "
-            "the unpartitioned full-control-volume source"
+            "select the raw full optical control-volume Q, TaIrTe4 power "
+            "attributed by optical-cell/thermal-material overlap, or "
+            "independently mapped TaIrTe4-plus-SiO2 sources; lossy Palik "
+            "substrates forbid the unpartitioned full-control-volume source"
         ),
     )
     args = parser.parse_args()
@@ -1103,6 +1196,70 @@ def main() -> int:
         args.q_source,
     )
     print("[thermal] optical Q remap complete", flush=True)
+    if args.mapping_only:
+        thermal_volume_m3 = (
+            np.diff(geometry.x_edges_m)[:, None, None]
+            * np.diff(geometry.y_edges_m)[None, :, None]
+            * np.diff(geometry.z_edges_m)[None, None, :]
+        )
+        outside_selected_material_W = float(
+            np.sum(
+                thermal_volume_m3[~geometry.flake_mask]
+                * q[~geometry.flake_mask]
+            )
+        )
+        mapping_gates = {
+            "source_target_power_error_lt_1e_minus_12": (
+                mapping["mapping_relative_power_error"] < 1.0e-12
+            ),
+            "mapped_Q_is_finite": bool(np.all(np.isfinite(q))),
+            "mapped_Q_has_no_negative_cells": bool(np.count_nonzero(q < 0.0) == 0),
+            "TaIrTe4_only_power_outside_TaIrTe4_is_zero": (
+                args.q_source != "TaIrTe4-only"
+                or abs(outside_selected_material_W)
+                <= np.finfo(float).tiny
+            ),
+        }
+        mapping_only = {
+            "status": (
+                "VALIDATED_MATERIAL_OVERLAP_REMAP_EXECUTION"
+                if all(mapping_gates.values())
+                else "FAILED_MATERIAL_OVERLAP_REMAP_EXECUTION"
+            ),
+            "scope": (
+                "optical-to-thermal source mapping only; no thermal solve, "
+                "weighting potential, PTE current, adjoint, or optimization"
+            ),
+            "mapping": mapping,
+            "thermal_grid_shape": list(geometry.material_id.shape),
+            "thermal_cell_count": int(geometry.material_id.size),
+            "mapped_Q_shape": list(q.shape),
+            "mapped_Q_nonzero_cell_count": int(np.count_nonzero(q)),
+            "mapped_Q_min_W_m3": float(np.min(q)),
+            "mapped_Q_max_W_m3": float(np.max(q)),
+            "mapped_Q_finite": bool(np.all(np.isfinite(q))),
+            "mapped_Q_negative_cell_count": int(np.count_nonzero(q < 0.0)),
+            "mapped_power_outside_TaIrTe4_W": outside_selected_material_W,
+            "gates": mapping_gates,
+            "heat_run": False,
+            "weighting_potential_run": False,
+            "PTE_run": False,
+            "adjoint_run": False,
+            "optimization_run": False,
+        }
+        (args.output_dir / "material_overlap_mapping_summary.json").write_text(
+            json.dumps(jsonable(mapping_only), indent=2) + "\n"
+        )
+        np.savez_compressed(
+            args.output_dir / "material_overlap_mapped_q.npz",
+            x_edges_m=geometry.x_edges_m,
+            y_edges_m=geometry.y_edges_m,
+            z_edges_m=geometry.z_edges_m,
+            Q_W_m3=q,
+            TaIrTe4_support_mask=geometry.flake_mask,
+        )
+        print(json.dumps(jsonable(mapping_only), indent=2))
+        return 0
     expanded_geometry = geometry
     if args.thermal_model == "paper-reduced":
         geometry, q = reduced_flake_geometry(geometry, q)

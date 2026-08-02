@@ -3,6 +3,7 @@ import pytest
 
 from photothermal_pte.finite_inverse_design.finite_q_mapping import (
     build_conservative_embedding_remap,
+    build_material_overlap_remap,
     exact_nonzero_box,
     nodal_control_volume_edges,
     project_remap_to_nearest_material_support,
@@ -86,6 +87,62 @@ def test_material_support_projection_conserves_power_and_transpose() -> None:
     assert np.sum(sensitivity * target) == pytest.approx(
         np.sum(projected.transpose(sensitivity) * source), rel=2e-13
     )
+
+
+def test_material_overlap_remap_uses_overlap_not_nearest_cell() -> None:
+    source_edges = (
+        np.array([0.0, 1.0, 2.0]),
+        np.array([0.0, 1.0]),
+        np.array([0.0, 1.0]),
+    )
+    target_edges = (
+        np.array([0.0, 0.5, 1.0, 1.5, 2.0]),
+        np.array([0.0, 1.0]),
+        np.array([0.0, 1.0]),
+    )
+    support = np.zeros((4, 1, 1), bool)
+    support[[0, 2], 0, 0] = True
+    remap = build_material_overlap_remap(
+        source_edges_m=source_edges,
+        target_edges_m=target_edges,
+        target_material_support_mask=support,
+    )
+    source = np.array([2.0, 3.0])[:, None, None]
+    target = remap.apply(source)
+
+    # Each source cell has only half material overlap.  Its *complete* cell
+    # power is deposited into that overlap, so target density doubles without
+    # any empirical/global gain.  The unsupported nearest cells stay zero.
+    assert target[:, 0, 0] == pytest.approx([4.0, 0.0, 6.0, 0.0])
+    assert np.count_nonzero(target[~support]) == 0
+    assert remap.power_target(target) == pytest.approx(
+        remap.power_source(source), rel=2e-13
+    )
+    sensitivity = np.array([1.0, 7.0, -2.0, 5.0])[:, None, None]
+    assert np.sum(sensitivity * target) == pytest.approx(
+        np.sum(remap.transpose(sensitivity) * source), rel=2e-13
+    )
+    assert remap.uncovered_source_power(source) == 0.0
+
+
+def test_material_overlap_remap_reports_uncovered_power_without_relocation() -> None:
+    edges = (
+        np.array([0.0, 1.0, 2.0]),
+        np.array([0.0, 1.0]),
+        np.array([0.0, 1.0]),
+    )
+    support = np.zeros((2, 1, 1), bool)
+    support[0, 0, 0] = True
+    remap = build_material_overlap_remap(
+        source_edges_m=edges,
+        target_edges_m=edges,
+        target_material_support_mask=support,
+    )
+    source = np.array([2.0, 3.0])[:, None, None]
+    target = remap.apply(source)
+    assert target[:, 0, 0] == pytest.approx([2.0, 0.0])
+    assert remap.power_target(target) == pytest.approx(2.0)
+    assert remap.uncovered_source_power(source) == pytest.approx(3.0)
 
 
 def test_nodal_edges_match_trapezoid_length_and_nonzero_box() -> None:
