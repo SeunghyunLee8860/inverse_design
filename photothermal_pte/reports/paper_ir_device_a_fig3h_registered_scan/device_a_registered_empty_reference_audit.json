@@ -1,5 +1,5 @@
 {
-  "status": "BLOCKED_REGISTERED_EMPTY_B_INNER_LATERAL_FLUX_GATE_REQUIRES_PHYSICAL_REVIEW",
+  "status": "VALIDATED_REGISTERED_EMPTY_REFERENCES_OUTER_TRUNCATION_GATE",
   "scope": "offline audit of completed GPU empty-stack references",
   "cases": {
     "E_parallel_a": {
@@ -57,10 +57,11 @@
     "gate_was_not_relaxed_or_rescaled": true,
     "finite_Device_A_started": false
   },
-  "proposed_contract_change_not_yet_applied": {
+  "outer_gate_contract": {
     "preserve_inner_lateral_flux_as_signed_diagnostic": true,
     "replace_inner_gate_with_outer_lateral_flux_fraction_lt_1e_4": true,
     "retain_matched_volume_closure_and_auto_shutoff_gates": true,
+    "approved_and_promoted": true,
     "reason": "the registered beam centre lies outside the finite flake, so the local absorption box intentionally intercepts real lateral beam power"
   },
   "execution_scope": {

@@ -35,6 +35,7 @@ from photothermal_pte.validation.paper_ir_sanity.register_device_a_fig3h_approx 
 )
 from photothermal_pte.validation.paper_ir_sanity.run_lumerical_device_a_ir_q import (
     geometry_scenario_label,
+    maximum_absolute_lateral_flux_fraction,
 )
 
 
@@ -119,6 +120,18 @@ def test_device_a_metadata_does_not_claim_edge_free_planar_geometry() -> None:
     assert "physical edges" in geometry_scenario_label("device-a-polygon")
     assert "edge-free" not in geometry_scenario_label("device-a-polygon")
     assert "edge-free planar" in geometry_scenario_label("planar-stack")
+
+
+def test_outer_lateral_flux_gate_uses_all_four_signed_faces() -> None:
+    box = {
+        "faces": {
+            "x_min": {"normalized_signed_axis_flux": -2.0e-7},
+            "x_max": {"normalized_signed_axis_flux": 8.0e-7},
+            "y_min": {"normalized_signed_axis_flux": -5.0e-7},
+            "y_max": {"normalized_signed_axis_flux": 3.0e-7},
+        }
+    }
+    assert maximum_absolute_lateral_flux_fraction(box) == 8.0e-7
 
 
 def test_strict_centered_gradient_masks_any_missing_xy_neighbour() -> None:

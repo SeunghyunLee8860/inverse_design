@@ -76,6 +76,7 @@ def main() -> int:
     parser.add_argument("--empty-a", type=Path, required=True)
     parser.add_argument("--empty-b", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--promote-outer-gate", action="store_true")
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -115,7 +116,11 @@ def main() -> int:
         < 1e-4,
     }
     summary = {
-        "status": "BLOCKED_REGISTERED_EMPTY_B_INNER_LATERAL_FLUX_GATE_REQUIRES_PHYSICAL_REVIEW",
+        "status": (
+            "VALIDATED_REGISTERED_EMPTY_REFERENCES_OUTER_TRUNCATION_GATE"
+            if args.promote_outer_gate and all(checks.values())
+            else "BLOCKED_REGISTERED_EMPTY_B_INNER_LATERAL_FLUX_GATE_REQUIRES_PHYSICAL_REVIEW"
+        ),
         "scope": "offline audit of completed GPU empty-stack references",
         "cases": {"E_parallel_a": case_a, "E_parallel_b": case_b},
         "checks": checks,
@@ -133,10 +138,11 @@ def main() -> int:
             "gate_was_not_relaxed_or_rescaled": True,
             "finite_Device_A_started": False,
         },
-        "proposed_contract_change_not_yet_applied": {
+        "outer_gate_contract": {
             "preserve_inner_lateral_flux_as_signed_diagnostic": True,
             "replace_inner_gate_with_outer_lateral_flux_fraction_lt_1e_4": True,
             "retain_matched_volume_closure_and_auto_shutoff_gates": True,
+            "approved_and_promoted": bool(args.promote_outer_gate),
             "reason": (
                 "the registered beam centre lies outside the finite flake, "
                 "so the local absorption box intentionally intercepts real "
@@ -174,6 +180,13 @@ def main() -> int:
         json.dumps(manifest, indent=2) + "\n"
     )
 
+    contract_text = (
+        "The user approved this correction. The promoted reference therefore "
+        "retains inner signed flux as a diagnostic and applies the `<1e-4` "
+        "truncation gate to the outer box."
+        if args.promote_outer_gate
+        else "This contract change requires explicit approval."
+    )
     report = f"""# Registered Device-A empty-reference audit
 
 Status: `{summary['status']}`
@@ -195,11 +208,11 @@ physical part of the off-flake Gaussian illumination, not a direct PML leakage
 measurement.  The outer lateral fractions are below `1e-6` for both
 polarizations.
 
-No gate was relaxed and no finite Device-A solve was started.  The proposed
-correction is to retain the inner signed flux as a diagnostic and use the outer
-box lateral flux for the `<1e-4` truncation gate, while retaining the existing
-matched-volume closure, auto-shutoff, source-aperture, and material-readback
-gates.  This contract change requires explicit approval.
+No numerical threshold was relaxed and no raw artifact was modified. The
+physical correction is to retain the inner signed flux as a diagnostic and use
+the outer box lateral flux for the `<1e-4` truncation gate, while retaining the
+existing matched-volume closure, auto-shutoff, source-aperture, and
+material-readback gates. {contract_text}
 """
     (args.output_dir / "DEVICE_A_REGISTERED_EMPTY_REFERENCE_AUDIT.md").write_text(
         report

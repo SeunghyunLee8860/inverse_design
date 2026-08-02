@@ -312,6 +312,18 @@ def geometry_scenario_label(geometry: str) -> str:
         raise ValueError(f"unknown optical geometry: {geometry}") from exc
 
 
+def maximum_absolute_lateral_flux_fraction(
+    power_box: dict[str, Any],
+) -> float:
+    """Return max |x/y face flux| normalized to incident power."""
+    faces = power_box["faces"]
+    return max(
+        abs(float(faces[f"{axis}_{side}"]["normalized_signed_axis_flux"]))
+        for axis in "xy"
+        for side in ("min", "max")
+    )
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", required=True)
@@ -4908,15 +4920,13 @@ def main() -> int:
                 old_gate = result.setdefault("acceptance", {}).pop(
                     "opposite_lateral_flux_asymmetry_lt_1e_4", None
                 )
-                inner_faces = result["six_face"]["faces"]
-                maximum_lateral_fraction = max(
-                    abs(
-                        inner_faces[f"{axis}_{side}"][
-                            "normalized_signed_axis_flux"
-                        ]
+                inner_maximum_lateral_fraction = (
+                    maximum_absolute_lateral_flux_fraction(result["six_face"])
+                )
+                outer_maximum_lateral_fraction = (
+                    maximum_absolute_lateral_flux_fraction(
+                        result["outer_power_box"]
                     )
-                    for axis in "xy"
-                    for side in ("min", "max")
                 )
                 result["offset_source_lateral_flux_audit"] = {
                     "beam_center_um": [
@@ -4929,16 +4939,27 @@ def main() -> int:
                     "centered_source_asymmetry_gate_applicable": False,
                     "superseded_centered_source_gate_value": old_gate,
                     "maximum_absolute_inner_lateral_flux_fraction": (
-                        maximum_lateral_fraction
+                        inner_maximum_lateral_fraction
+                    ),
+                    "inner_lateral_flux_interpretation": (
+                        "physical signed Poynting flux through the local "
+                        "flake absorption control volume; diagnostic only"
+                    ),
+                    "maximum_absolute_outer_lateral_flux_fraction": (
+                        outer_maximum_lateral_fraction
+                    ),
+                    "outer_lateral_flux_interpretation": (
+                        "large outer-box lateral flux used to diagnose "
+                        "finite-domain/PML truncation"
                     ),
                     "replacement_gate": (
-                        "maximum absolute inner lateral flux / incident power "
+                        "maximum absolute outer lateral flux / incident power "
                         "< 1e-4"
                     ),
                 }
                 result["acceptance"][
-                    "offset_source_max_absolute_lateral_flux_fraction_lt_1e_4"
-                ] = maximum_lateral_fraction < 1.0e-4
+                    "offset_source_outer_max_absolute_lateral_flux_fraction_lt_1e_4"
+                ] = outer_maximum_lateral_fraction < 1.0e-4
             auto_shutoff = final_logged_auto_shutoff(output)
             result["auto_shutoff"] = auto_shutoff
             result.setdefault("acceptance", {})[
