@@ -1,5 +1,33 @@
 # Latest photothermal validation status
 
+## Device-A spatial PTE-current decomposition
+
+- Status: `COMPLETED_DEVICE_A_SPATIAL_CURRENT_DECOMPOSITION`, limited to a
+  read-only reintegration and spatial partition of immutable registered
+  thermal-PTE fields. No Maxwell, thermal, weighting-potential, adjoint,
+  AD-FD, or optimization solve was run.
+- The literal volume current uses both terms with `x=b`, `y=a`:
+  `-sigma_b*S_b*d_bT*d_bpsi` and `-sigma_a*S_a*d_aT*d_apsi`. The corresponding
+  coefficients are `-2.970` and `+2.946 A/(m K)`. Published current,
+  component sum, and spatial partitions close with maximum relative error
+  `3.02e-16`.
+- At the same registered beam positions `d=1,3,5 um`, the saved `E||a` field
+  exceeds `E||b` by `2.566641`, `2.236814`, and `1.908797 nA`. Both derivative
+  terms contribute; this is not explained by one omitted axis or one swapped
+  Seebeck term.
+- The exclusive free-edge-within-1-um region contributes `+4.216371`,
+  `+3.519862`, and `+2.561187 nA` to those differences, while the flake
+  interior contributes `-1.528097`, `-1.468526`, and `-1.190489 nA`. Thus the
+  interior favors `b`; the simulated `a>b` trend is created at the illuminated
+  free edge.
+- At `d=1 um`, the beam-core `r<0.5 w0` bin contributes `+4.200080 nA`; all
+  larger-radius bins together subtract `1.633439 nA`. The largest electrical
+  bin is consistently `psi=0.2--0.4`.
+- This localizes the existing discrepancy but does not validate the Maxwell
+  Q, approximate Figure-3H registration, exact CAD, or assumed beam radius.
+  Report, JSON, CSV, plots, and external raw-artifact manifest:
+  `reports/paper_ir_device_a_spatial_current_decomposition/`.
+
 ## Device-A current-cause controls
 
 - Status: `COMPLETED_DEVICE_A_CURRENT_CAUSE_CONTROLS`, limited to an offline

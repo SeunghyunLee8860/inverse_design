@@ -22,6 +22,11 @@ from photothermal_pte.validation.paper_ir_sanity.analyze_device_a_current_cause_
     planar_tmm_coefficients,
     tmm_q_per_incident_intensity,
 )
+from photothermal_pte.validation.paper_ir_sanity.analyze_device_a_spatial_current_decomposition import (
+    distance_to_polygon_boundary,
+    distance_to_segment,
+    partition_sheet_current,
+)
 
 from photothermal_pte.validation.paper_ir_sanity.run_analytic_q_remap_control import (
     analytic_q_on_edges,
@@ -491,3 +496,50 @@ def test_device_a_current_cause_summary_keeps_planar_oxide_diagnostic_only() -> 
         "Ta-only actual weighting"
     ]["abs_b_over_abs_a"]
     assert ratios["Ta+planar-SiO2 actual weighting"]["abs_b_over_abs_a"] < 1.0
+
+
+def test_spatial_decomposition_distances_are_geometric_not_grid_ordered() -> None:
+    xx, yy = np.meshgrid(np.asarray([0.0, 1.0]), np.asarray([0.0, 1.0]), indexing="ij")
+    diagonal = np.asarray([[0.0, 0.0], [1.0, 1.0]])
+    distance = distance_to_segment(xx, yy, diagonal)
+    assert distance[0, 0] == pytest.approx(0.0)
+    assert distance[1, 1] == pytest.approx(0.0)
+    assert distance[0, 1] == pytest.approx(1.0 / np.sqrt(2.0))
+    square = np.asarray([[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]])
+    center_distance = distance_to_polygon_boundary(
+        np.asarray([[0.5]]), np.asarray([[0.5]]), square
+    )
+    assert center_distance[0, 0] == pytest.approx(0.5)
+
+
+def test_spatial_current_partition_uses_literal_cell_area() -> None:
+    sheet = np.asarray([[1.0, -2.0], [3.0, 4.0]])
+    area = np.asarray([[1.0, 2.0], [3.0, 4.0]])
+    masks = {
+        "left": np.asarray([[True, True], [False, False]]),
+        "right": np.asarray([[False, False], [True, True]]),
+    }
+    partitioned = partition_sheet_current(sheet, area, masks)
+    assert partitioned["left"] == pytest.approx(-3.0)
+    assert partitioned["right"] == pytest.approx(25.0)
+    assert sum(partitioned.values()) == pytest.approx(np.sum(sheet * area))
+
+
+def test_device_a_spatial_current_decomposition_closes_and_localizes_edge() -> None:
+    repository = Path(__file__).resolve().parents[3]
+    summary_path = (
+        repository
+        / "photothermal_pte"
+        / "reports"
+        / "paper_ir_device_a_spatial_current_decomposition"
+        / "device_a_spatial_current_decomposition_summary.json"
+    )
+    summary = json.loads(summary_path.read_text())
+    assert summary["status"] == "COMPLETED_DEVICE_A_SPATIAL_CURRENT_DECOMPOSITION"
+    assert summary["maximum_decomposition_closure_relative_error"] < 1.0e-12
+    assert all(summary["numerical_gates"].values())
+    for row in summary["same_position_a_minus_b"]:
+        assert row["a_minus_b_total_current_A"] > 0.0
+        assert row["dominant_absolute_current_difference_region"] == "free_edge_within_1um"
+        assert row["device_region_a_minus_b_A"]["free_edge_within_1um"] > 0.0
+        assert row["device_region_a_minus_b_A"]["flake_interior"] < 0.0
