@@ -1,5 +1,34 @@
 # Latest photothermal validation status
 
+## Device-A finite-Q fast-mesh convergence
+
+- Status: `FAILED_FAST_DEVICE_A_SPATIAL_Q_CONVERGENCE`.  No fast finite-Q
+  candidate is promoted.
+- The user-authorized candidate uses TaIrTe4 `dz=10 nm`, a 50-nm optical x/y
+  mesh around the registered illuminated edge, a 200-nm outer Device-A/Q
+  mesh, auto mesh accuracy 3, and the fixed `w0=8.75 um` Palik SiO2/Si
+  one-polarization (`E||a`) optical contract.
+- `50-nm refinement half-span` is the half-width of the square fine-mesh
+  window about the beam centre; it is not a thermal convection coefficient.
+  Direct 5/7/9/12-um half-span cases and a 50-to-100-to-200-nm nested case
+  were actually run on GPU.  All completed with auto-shutoff below `1e-5`
+  and six-face closure between `0.0211%` and `0.0279%`.
+- Total power alone gives a false sense of convergence.  The best tested
+  nested candidate (50 nm within +/-9 um, 100 nm to +/-12 um, 200 nm outside)
+  is `20.4%` faster than the +/-12-um 50-nm reference (`489.6 s` versus
+  `615.0 s`) and changes total power by only `0.0560%`, but lateral-Q NRMSE is
+  `1.9577%` and full-3D-Q NRMSE is `9.2816%`, above the `0.5%` gate.
+- The raw NPZ/FSP files remain external.  Spatial comparisons use a common
+  physical control volume and exact conservative cell-overlap energy remap;
+  remap power error is zero to floating-point precision.
+- This checkpoint does not isolate `dz=10 nm` versus `dz=5 nm`; every finite
+  case here uses 10 nm.  No thermal, PTE, adjoint, or optimization run belongs
+  to this checkpoint.  The next minimal optical test is a 100-nm outer
+  Device-A mesh versus the failed 200-nm outer candidate, not another blind
+  expansion of the 50-nm square.
+- Report, JSON, CSV, plot, and external-artifact manifest:
+  `reports/paper_ir_device_a_fast_finite_mesh/`.
+
 ## Device-A material-overlap optical-Q remap
 
 - Status: `VALIDATED_DEVICE_A_MATERIAL_OVERLAP_REMAP` for the offline mapping
