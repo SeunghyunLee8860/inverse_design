@@ -42,12 +42,25 @@ repo's own scipy FVM and is executed as 12 parallel CPU processes
 
 ## V2 - optics-to-thermal mapping
 
+Primary boundary treatment is the **material-overlap remap**
+(`--q-remap material-overlap`): each optical cell's absorbed power
+p_m = Q_m V_m is split over thermal flake-support cells i in
+proportion to the geometric overlap |Omega_m ^ Omega_i ^ F| /
+|Omega_m ^ F| (power conserved analytically; interface-cell power is
+divided by the actual absorbing-material volume rather than moved to
+one nearest cell).  F is the thermal grid's flake support; the
+conformal-effective-epsilon caveat (coverage is a volume-fraction
+approximation of the solver's conformal average) is stated in V5.
+The legacy nearest-support projection is retained as the sensitivity
+cross-check.
+
 | gate | criterion |
 |---|---|
 | G2.1 frame | thermal runner frame span == optical artifact span (read fail-closed from case_result); recorded per case |
-| G2.2 registration | mapped-power-outside-flake-before-support < 5% every case (frame-consistent baseline is ~3%) |
-| G2.3 conservation | mapping relative power error < 0.5%; outside-flake after final support == 0 |
+| G2.2 registration | diagnostic mapped-power-outside-flake-before-support < 5% every case (frame-consistent baseline is ~3%); with material-overlap the final outside-support power is 0 by construction |
+| G2.3 conservation | mapping relative power error < 1e-9 (analytic conservation); zero-overlap residual fraction < 0.5% and recorded |
 | G2.4 metal routing | metal-excluded power recorded; isolated vs perfect degeneracy < 1% at one position (spot check) |
+| G2.5 method sensitivity | per-case current difference between material-overlap and nearest-support remaps reported in V5 (pilot case first; full 12x2 if the pilot difference exceeds 1%) |
 
 ## V3 - thermal solve
 
