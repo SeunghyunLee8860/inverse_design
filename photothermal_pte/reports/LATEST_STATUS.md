@@ -1704,3 +1704,26 @@ adjoint, gradient, and optimization were not run.
 - Optimization was not run.
 - Report:
   `inverse_design_pte_adfd/FINAL_FULL_LATENT_PTE_ADFD_REPORT.md`.
+
+# Device-A boundary-aware fast optical mesh — 2026-08-02
+
+- Status: `VALIDATED_DEVICE_A_BOUNDARY_AWARE_FAST_MESH`.
+- Scope: one `E || a` optical and material-overlap mapping validation only;
+  no thermal solve, PTE, adjoint, AD–FD, or optimization.
+- Fixed optical contract: scalar Gaussian at 11 um, explicitly assumed
+  `w0=8.75 um`, 50 um source span, 60 um lateral domain, six PML boundaries,
+  Palik SiO2/Si, anisotropic TaIrTe4, conformal variant 1, accuracy 3, and
+  TaIrTe4 `dz=10 nm`.
+- Promoted fast mesh: 50 nm inside `x=+/-9 um, y=+/-12 um`, 100 nm to
+  12 um outside the x window, and 200 nm in the remote region.
+- Optical result: `P_Q=2.0339097904481633e-11 W`,
+  `P_six=2.0333430205523875e-11 W`, closure `0.0278738%`, auto-shutoff
+  `9.95616e-6`, and zero negative-Q cells.
+- Versus the `x/y=+/-12 um` 50 nm reference: raw lateral/full-3D NRMSE are
+  `0.00935479%`/`0.00940693%`; material-overlap mapped lateral/full-3D NRMSE
+  are `0.00671321%`/`0.00674251%`; mapped power error is exactly zero.
+- The earlier nested and 230-box candidates remain failed diagnostics. The
+  failure was caused by rectilinear Yee-lattice/transition placement, not by
+  loss of optical-cell power in the material-overlap mapping.
+- Raw NPZ/FSP files remain external and are not committed.
+- Report: `paper_ir_device_a_boundary_aware_fast_mesh/`.

@@ -1,0 +1,471 @@
+{
+  "status": "VALIDATED_DEVICE_A_BOUNDARY_AWARE_FAST_MESH",
+  "scope": "E||a Device-A optical mesh and material-overlap source validation; no thermal solve, PTE, adjoint, AD-FD, or optimization",
+  "fixed_contract": {
+    "wavelength_um": 11.0,
+    "scalar_Gaussian_waist_um": 8.75,
+    "source_span_um": 50.0,
+    "lateral_domain_um": 60.0,
+    "six_PML_layers": 24,
+    "conformal_variant": 1,
+    "mesh_accuracy": 3,
+    "TaIrTe4_dz_nm": 10.0,
+    "outer_xy_nm": 200.0,
+    "intermediate_xy_nm_to_12um": 100.0,
+    "fine_xy_nm": 50.0,
+    "candidate_fine_half_spans_um": {
+      "x": 9.0,
+      "y": 12.0
+    },
+    "reference_fine_half_spans_um": {
+      "x": 12.0,
+      "y": 12.0
+    },
+    "Q_processing": {
+      "clipping": false,
+      "smoothing": false,
+      "gain": false,
+      "rescaling": false,
+      "tiling": false
+    }
+  },
+  "promoted_candidate": {
+    "P_Q_W": 2.0339097904481633e-11,
+    "P_six_W": 2.0333430205523875e-11,
+    "six_face_relative_closure": 0.0002787379650393549,
+    "auto_shutoff": 9.95616e-06,
+    "component_power_W": {
+      "x": 3.7864156768111744e-13,
+      "y": 1.9876347316862886e-11,
+      "z": 8.410901993762765e-14
+    },
+    "negative_Q_voxel_count": 0,
+    "runtime": {
+      "shape": [
+        687,
+        765,
+        139
+      ],
+      "gridpoints": 73052145,
+      "wall_time_s": 582.170322,
+      "estimated_GPU_memory_GiB": 11.477,
+      "log_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_x9_y12_dz10_a_gpu2_retry1_20260802/finite_2um_optical_q_p0.log"
+    }
+  },
+  "run_audits": {
+    "nested_9um_then_100nm_to_12um": {
+      "shape": [
+        687,
+        703,
+        139
+      ],
+      "gridpoints": 67131579,
+      "wall_time_s": 489.597946,
+      "estimated_GPU_memory_GiB": 10.505,
+      "log_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_mid100_h12_edge50_h9_dz10_a_gpu5_20260802/finite_2um_optical_q_p0.log"
+    },
+    "boundary_following_230_boxes": {
+      "shape": [
+        735,
+        880,
+        139
+      ],
+      "gridpoints": 89905200,
+      "wall_time_s": 383.048647,
+      "estimated_GPU_memory_GiB": 13.927,
+      "log_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_h9_boundary50_w0p4_I1e3_dz10_a_gpu3_20260802/finite_2um_optical_q_p0.log"
+    },
+    "anisotropic_rectangle_x9_y12": {
+      "shape": [
+        687,
+        765,
+        139
+      ],
+      "gridpoints": 73052145,
+      "wall_time_s": 582.170322,
+      "estimated_GPU_memory_GiB": 11.477,
+      "log_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_x9_y12_dz10_a_gpu2_retry1_20260802/finite_2um_optical_q_p0.log"
+    },
+    "reference_square_x12_y12": {
+      "shape": [
+        748,
+        765,
+        139
+      ],
+      "gridpoints": 79538580,
+      "wall_time_s": 615.046361,
+      "estimated_GPU_memory_GiB": 12.483,
+      "log_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h12_dz10_a_gpu5_20260802/finite_2um_optical_q_p0.log"
+    }
+  },
+  "raw_comparisons": {
+    "nested_vs_reference": {
+      "candidate": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_mid100_h12_edge50_h9_dz10_a_gpu5_20260802",
+      "reference": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h12_dz10_a_gpu5_20260802",
+      "common_control_volume_bounds_m": {
+        "x": [
+          -1.0752215668634711e-05,
+          2.7560769039523788e-05
+        ],
+        "y": [
+          -1.594204255634017e-05,
+          1.7457253917419933e-05
+        ],
+        "z": [
+          -1.7999999999999997e-07,
+          1e-07
+        ]
+      },
+      "component_metrics": {
+        "x": {
+          "candidate_power_W": 3.793131263093603e-13,
+          "reference_power_W": 3.786422637123815e-13,
+          "relative_power_change": 0.0017717583621049973,
+          "conservative_remap_power_error": 1.3333719653782495e-16,
+          "equal_power_full_3D_NRMSE": 0.10224160845132867,
+          "equal_power_lateral_NRMSE": 0.028283495439246884,
+          "equal_power_depth_NRMSE": 0.002442649591683539,
+          "correlation": 0.9947723107108501
+        },
+        "y": {
+          "candidate_power_W": 1.9890715038003425e-11,
+          "reference_power_W": 1.9876277563418926e-11,
+          "relative_power_change": 0.0007263671247512657,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.09865233709261186,
+          "equal_power_lateral_NRMSE": 0.024121319538315603,
+          "equal_power_depth_NRMSE": 0.003802139819339307,
+          "correlation": 0.9944534352162134
+        },
+        "z": {
+          "candidate_power_W": 8.038519207676554e-14,
+          "reference_power_W": 8.410898033346577e-14,
+          "relative_power_change": 0.044273372973213765,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.4642202882970263,
+          "equal_power_lateral_NRMSE": 0.2916250426047528,
+          "equal_power_depth_NRMSE": 0.11037425255399361,
+          "correlation": 0.8856391106627167
+        },
+        "total": {
+          "candidate_power_W": 2.035041335638955e-11,
+          "reference_power_W": 2.0339028807464774e-11,
+          "relative_power_change": 0.000559739062889672,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.09281643003141953,
+          "equal_power_lateral_NRMSE": 0.019577179488517095,
+          "equal_power_depth_NRMSE": 0.0035878315361822727,
+          "correlation": 0.9950937619050872
+        }
+      },
+      "candidate_closure": 0.00021132715247386126,
+      "reference_closure": 0.0002787979880502822,
+      "gates": {
+        "total_power_change_lt_0p5_percent": true,
+        "lateral_Q_NRMSE_lt_0p5_percent": false,
+        "full_3D_Q_NRMSE_lt_0p5_percent": false,
+        "depth_Q_NRMSE_lt_0p5_percent": true,
+        "conservative_remap_error_lt_1e_minus_12": true,
+        "both_closure_lt_0p5_percent": true,
+        "both_auto_shutoff_lt_1e_minus_5": true
+      },
+      "all_gates_pass": false
+    },
+    "boxes_vs_reference": {
+      "candidate": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_h9_boundary50_w0p4_I1e3_dz10_a_gpu3_20260802",
+      "reference": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h12_dz10_a_gpu5_20260802",
+      "common_control_volume_bounds_m": {
+        "x": [
+          -1.075221566863474e-05,
+          2.7560769039523788e-05
+        ],
+        "y": [
+          -1.594204255634017e-05,
+          1.7457253917419933e-05
+        ],
+        "z": [
+          -1.7999999999999997e-07,
+          1e-07
+        ]
+      },
+      "component_metrics": {
+        "x": {
+          "candidate_power_W": 3.806537180385279e-13,
+          "reference_power_W": 3.786422637123815e-13,
+          "relative_power_change": 0.005312281588497798,
+          "conservative_remap_power_error": 1.3333719653782495e-16,
+          "equal_power_full_3D_NRMSE": 0.18464737553337066,
+          "equal_power_lateral_NRMSE": 0.15130604195926403,
+          "equal_power_depth_NRMSE": 0.007776156156498397,
+          "correlation": 0.984254595455103
+        },
+        "y": {
+          "candidate_power_W": 1.9866678037262477e-11,
+          "reference_power_W": 1.9876277563418926e-11,
+          "relative_power_change": 0.0004829639818532589,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.08263245597330564,
+          "equal_power_lateral_NRMSE": 0.04825261339042562,
+          "equal_power_depth_NRMSE": 0.000984644917584152,
+          "correlation": 0.9963027683971021
+        },
+        "z": {
+          "candidate_power_W": 8.597894328618678e-14,
+          "reference_power_W": 8.410898033346578e-14,
+          "relative_power_change": 0.022232619457603485,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.684397645555618,
+          "equal_power_lateral_NRMSE": 0.4938751626152633,
+          "equal_power_depth_NRMSE": 0.06316127474387252,
+          "correlation": 0.8104051396195915
+        },
+        "total": {
+          "candidate_power_W": 2.033331069858719e-11,
+          "reference_power_W": 2.0339028807464774e-11,
+          "relative_power_change": 0.0002811397206678144,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.08321726693911388,
+          "equal_power_lateral_NRMSE": 0.049819071027425825,
+          "equal_power_depth_NRMSE": 0.0009168792151838022,
+          "correlation": 0.9962603329801448
+        }
+      },
+      "candidate_closure": 0.00035003930128153657,
+      "reference_closure": 0.0002787979880502822,
+      "gates": {
+        "total_power_change_lt_0p5_percent": true,
+        "lateral_Q_NRMSE_lt_0p5_percent": false,
+        "full_3D_Q_NRMSE_lt_0p5_percent": false,
+        "depth_Q_NRMSE_lt_0p5_percent": true,
+        "conservative_remap_error_lt_1e_minus_12": true,
+        "both_closure_lt_0p5_percent": true,
+        "both_auto_shutoff_lt_1e_minus_5": true
+      },
+      "all_gates_pass": false
+    },
+    "x9_y12_vs_reference": {
+      "candidate": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_x9_y12_dz10_a_gpu2_retry1_20260802",
+      "reference": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h12_dz10_a_gpu5_20260802",
+      "common_control_volume_bounds_m": {
+        "x": [
+          -1.0752215668634711e-05,
+          2.7560769039523788e-05
+        ],
+        "y": [
+          -1.594204255634017e-05,
+          1.7457253917419933e-05
+        ],
+        "z": [
+          -1.7999999999999997e-07,
+          1e-07
+        ]
+      },
+      "component_metrics": {
+        "x": {
+          "candidate_power_W": 3.7864156768111744e-13,
+          "reference_power_W": 3.786422637123815e-13,
+          "relative_power_change": 1.8382291961715158e-06,
+          "conservative_remap_power_error": 1.3333719653782495e-16,
+          "equal_power_full_3D_NRMSE": 8.176951970980136e-06,
+          "equal_power_lateral_NRMSE": 8.071816063806052e-06,
+          "equal_power_depth_NRMSE": 1.8873044812023125e-07,
+          "correlation": 0.9999999999681917
+        },
+        "y": {
+          "candidate_power_W": 1.987634731686289e-11,
+          "reference_power_W": 1.9876277563418926e-11,
+          "relative_power_change": 3.509381660653638e-06,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 9.61867192898383e-05,
+          "equal_power_lateral_NRMSE": 9.591058618640845e-05,
+          "equal_power_depth_NRMSE": 8.846523304364139e-08,
+          "correlation": 0.999999994792037
+        },
+        "z": {
+          "candidate_power_W": 8.410901993762773e-14,
+          "reference_power_W": 8.410898033346577e-14,
+          "relative_power_change": 4.708672225353267e-07,
+          "conservative_remap_power_error": 1.5006452858535207e-16,
+          "equal_power_full_3D_NRMSE": 0.0001501865655317657,
+          "equal_power_lateral_NRMSE": 0.00013064484953429162,
+          "equal_power_depth_NRMSE": 1.4435643716949527e-06,
+          "correlation": 0.999999988879053
+        },
+        "total": {
+          "candidate_power_W": 2.0339097904481636e-11,
+          "reference_power_W": 2.0339028807464774e-11,
+          "relative_power_change": 3.397262352867e-06,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 9.406930715255239e-05,
+          "equal_power_lateral_NRMSE": 9.354788051670288e-05,
+          "equal_power_depth_NRMSE": 1.0563421523700717e-07,
+          "correlation": 0.9999999950239322
+        }
+      },
+      "candidate_closure": 0.0002787379650393549,
+      "reference_closure": 0.0002787979880502822,
+      "gates": {
+        "total_power_change_lt_0p5_percent": true,
+        "lateral_Q_NRMSE_lt_0p5_percent": true,
+        "full_3D_Q_NRMSE_lt_0p5_percent": true,
+        "depth_Q_NRMSE_lt_0p5_percent": true,
+        "conservative_remap_error_lt_1e_minus_12": true,
+        "both_closure_lt_0p5_percent": true,
+        "both_auto_shutoff_lt_1e_minus_5": true
+      },
+      "all_gates_pass": true
+    }
+  },
+  "mapped_comparisons": {
+    "nested_vs_reference": {
+      "classification": "TaIrTe4-only material-overlap thermal source on one identical 100 nm lateral / 10 nm flake-z FVM grid",
+      "material_domain_limitation": "Omega_TaIrTe4 is the union of binary FVM cells selected by the thermal cell-center polygon mask; it is not an analytic polygon cut-cell volume",
+      "candidate_directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/material_overlap_candidate_core100_dz10_20260802",
+      "reference_directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/material_overlap_reference_core100_dz10_20260802",
+      "candidate_artifact_sha256": "c386a150db78d40e81360e7c98c4db7c7df1cbd8ed253b27acdc1d7a4b775679",
+      "reference_artifact_sha256": "ca16aa9bd6b610c938650fd8305b0553fbe1efe3ee22cf90bad0522446e3c9ea",
+      "candidate_power_W": 4.10455303371527e-05,
+      "reference_power_W": 4.104505203083414e-05,
+      "relative_power_change": 1.1653202880512522e-05,
+      "equal_power_full_3D_NRMSE": 0.033301642586937845,
+      "equal_power_lateral_NRMSE": 0.01000887917247249,
+      "equal_power_depth_NRMSE": 0.0012994637517147903,
+      "correlation": 0.9994338529293763,
+      "boundary_within_0p25um_fraction_of_global_squared_error": 0.9957495060517312,
+      "worst_z_layer_center_nm": -4.999999999999992,
+      "worst_z_layer_fraction_of_global_squared_error": 0.8186646509867879,
+      "regions": {
+        "inside_9um": {
+          "candidate_power_fraction": 0.9662180394789279,
+          "reference_power_fraction": 0.9662097594279163,
+          "local_full_3D_NRMSE": 0.001565106200975969,
+          "fraction_of_global_squared_error": 0.0021979775728710065
+        },
+        "transition_9_to_12um": {
+          "candidate_power_fraction": 0.03133145782873912,
+          "reference_power_fraction": 0.03134720656012992,
+          "local_full_3D_NRMSE": 0.45794217743800275,
+          "fraction_of_global_squared_error": 0.8116282741708036
+        },
+        "outside_12um": {
+          "candidate_power_fraction": 0.002450502692332958,
+          "reference_power_fraction": 0.0024430340119538214,
+          "local_full_3D_NRMSE": 0.5830116113523683,
+          "fraction_of_global_squared_error": 0.1861737482563253
+        }
+      },
+      "gates": {
+        "mapped_power_change_lt_0p5_percent": true,
+        "mapped_lateral_Q_NRMSE_lt_0p5_percent": false,
+        "mapped_full_3D_Q_NRMSE_lt_0p5_percent": false,
+        "mapped_depth_Q_NRMSE_lt_0p5_percent": true,
+        "both_mapping_power_errors_lt_1e_minus_12": true
+      },
+      "all_gates_pass": false
+    },
+    "boxes_vs_reference": {
+      "classification": "TaIrTe4-only material-overlap thermal source on one identical 100 nm lateral / 10 nm flake-z FVM grid",
+      "material_domain_limitation": "Omega_TaIrTe4 is the union of binary FVM cells selected by the thermal cell-center polygon mask; it is not an analytic polygon cut-cell volume",
+      "candidate_directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/material_overlap_boundary_candidate_core100_dz10_20260802",
+      "reference_directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/material_overlap_reference_core100_dz10_20260802",
+      "candidate_artifact_sha256": "d448290910221e3c027d76e440d8e3e631aff2747441cde132cddccd16f73d4b",
+      "reference_artifact_sha256": "ca16aa9bd6b610c938650fd8305b0553fbe1efe3ee22cf90bad0522446e3c9ea",
+      "candidate_power_W": 4.112267789532433e-05,
+      "reference_power_W": 4.104505203083414e-05,
+      "relative_power_change": 0.0018912356215768894,
+      "equal_power_full_3D_NRMSE": 0.04193439036398492,
+      "equal_power_lateral_NRMSE": 0.03225441702868651,
+      "equal_power_depth_NRMSE": 0.0005475943939120922,
+      "correlation": 0.9991297868186133,
+      "boundary_within_0p25um_fraction_of_global_squared_error": 0.9955863182978788,
+      "worst_z_layer_center_nm": -4.999999999999992,
+      "worst_z_layer_fraction_of_global_squared_error": 0.3808669768821144,
+      "regions": {
+        "inside_9um": {
+          "candidate_power_fraction": 0.966003765376416,
+          "reference_power_fraction": 0.9662097594279163,
+          "local_full_3D_NRMSE": 0.03309420018029225,
+          "fraction_of_global_squared_error": 0.6197692930719934
+        },
+        "transition_9_to_12um": {
+          "candidate_power_fraction": 0.031498849454780736,
+          "reference_power_fraction": 0.03134720656012992,
+          "local_full_3D_NRMSE": 0.2804221554136173,
+          "fraction_of_global_squared_error": 0.19193367011868642
+        },
+        "outside_12um": {
+          "candidate_power_fraction": 0.002497385168803225,
+          "reference_power_fraction": 0.0024430340119538214,
+          "local_full_3D_NRMSE": 0.7383196110431778,
+          "fraction_of_global_squared_error": 0.18829703680932022
+        }
+      },
+      "gates": {
+        "mapped_power_change_lt_0p5_percent": true,
+        "mapped_lateral_Q_NRMSE_lt_0p5_percent": false,
+        "mapped_full_3D_Q_NRMSE_lt_0p5_percent": false,
+        "mapped_depth_Q_NRMSE_lt_0p5_percent": true,
+        "both_mapping_power_errors_lt_1e_minus_12": true
+      },
+      "all_gates_pass": false
+    },
+    "x9_y12_vs_reference": {
+      "classification": "TaIrTe4-only material-overlap thermal source on one identical 100 nm lateral / 10 nm flake-z FVM grid",
+      "material_domain_limitation": "Omega_TaIrTe4 is the union of binary FVM cells selected by the thermal cell-center polygon mask; it is not an analytic polygon cut-cell volume",
+      "candidate_directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/material_overlap_x9_y12_candidate_core100_dz10_20260802",
+      "reference_directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/material_overlap_reference_core100_dz10_20260802",
+      "candidate_artifact_sha256": "4b3e0cc38d0b6f18ebfa5a05d0cb16bec6ff2675cdf5c22faf04923930f870e0",
+      "reference_artifact_sha256": "ca16aa9bd6b610c938650fd8305b0553fbe1efe3ee22cf90bad0522446e3c9ea",
+      "candidate_power_W": 4.104499196990632e-05,
+      "reference_power_W": 4.104505203083414e-05,
+      "relative_power_change": 1.4632927685799174e-06,
+      "equal_power_full_3D_NRMSE": 6.742508150367267e-05,
+      "equal_power_lateral_NRMSE": 6.713208875524135e-05,
+      "equal_power_depth_NRMSE": 9.303451819185682e-08,
+      "correlation": 0.9999999976832146,
+      "boundary_within_0p25um_fraction_of_global_squared_error": 0.011006141570149905,
+      "worst_z_layer_center_nm": -4.999999999999992,
+      "worst_z_layer_fraction_of_global_squared_error": 0.15321625769141456,
+      "regions": {
+        "inside_9um": {
+          "candidate_power_fraction": 0.9662115146903902,
+          "reference_power_fraction": 0.9662097594279163,
+          "local_full_3D_NRMSE": 5.499996172415417e-05,
+          "fraction_of_global_squared_error": 0.6621383734233831
+        },
+        "transition_9_to_12um": {
+          "candidate_power_fraction": 0.03134548067758564,
+          "reference_power_fraction": 0.03134720656012992,
+          "local_full_3D_NRMSE": 0.0005978934850174128,
+          "fraction_of_global_squared_error": 0.33749851875117476
+        },
+        "outside_12um": {
+          "candidate_power_fraction": 0.0024430046320241213,
+          "reference_power_fraction": 0.0024430340119538214,
+          "local_full_3D_NRMSE": 5.213046659095199e-05,
+          "fraction_of_global_squared_error": 0.00036310782544233855
+        }
+      },
+      "gates": {
+        "mapped_power_change_lt_0p5_percent": true,
+        "mapped_lateral_Q_NRMSE_lt_0p5_percent": true,
+        "mapped_full_3D_Q_NRMSE_lt_0p5_percent": true,
+        "mapped_depth_Q_NRMSE_lt_0p5_percent": true,
+        "both_mapping_power_errors_lt_1e_minus_12": true
+      },
+      "all_gates_pass": true
+    }
+  },
+  "gates": {
+    "raw_all_gates_pass": true,
+    "mapped_all_gates_pass": true,
+    "candidate_closure_lt_0p5_percent": true,
+    "candidate_auto_shutoff_lt_1e_minus_5": true
+  },
+  "interpretation": {
+    "diagnosis": "the earlier spatial-Q failure came from changing the global rectilinear Yee lattice and placing illuminated Device-A boundaries in the 100/200 nm transition, not from a loss of power in the material-overlap mapper",
+    "why_230_boxes_failed": "many small axis-aligned mesh objects re-anchored the global x/y lattice; they were not independent local subgrids",
+    "material_geometry_limit": "Omega_TaIrTe4 is the union of binary FVM cells selected by the thermal cell-center polygon mask; it is not an analytic polygon cut-cell volume",
+    "production_claim": "validated fast E||a optical/mapped-Q mesh candidate only; not a completed thermal or current prediction"
+  }
+}
