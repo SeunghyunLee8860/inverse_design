@@ -1421,6 +1421,37 @@ def post_run_native_mesh_audit(
         faces,
     )
     realized_bounds = realized_control_volume["bounds_m"]
+    pabs_readback_bounds = {
+        axis: [
+            float(np.asarray(fdtd.getnamed(base.PABS_GROUP, axis)).squeeze())
+            - 0.5
+            * float(
+                np.asarray(
+                    fdtd.getnamed(base.PABS_GROUP, f"{axis} span")
+                ).squeeze()
+            ),
+            float(np.asarray(fdtd.getnamed(base.PABS_GROUP, axis)).squeeze())
+            + 0.5
+            * float(
+                np.asarray(
+                    fdtd.getnamed(base.PABS_GROUP, f"{axis} span")
+                ).squeeze()
+            ),
+        ]
+        for axis in "xyz"
+    }
+    pabs_vs_realized_face_mismatch = {
+        axis: float(
+            max(
+                abs(pabs_readback_bounds[axis][side] - realized_bounds[axis][side])
+                for side in (0, 1)
+            )
+        )
+        for axis in "xyz"
+    }
+    maximum_pabs_vs_face_mismatch = max(
+        pabs_vs_realized_face_mismatch.values(), default=0.0
+    )
     common_Q_bounded_weights = {
         axis: bounded_dual_cell_weights(
             field_common[axis],
@@ -1674,14 +1705,24 @@ def post_run_native_mesh_audit(
         },
         "realized_six_face_control_volume": realized_control_volume,
         "Q_quadrature_control_volume_bounds_m": q_quadrature_bounds,
+        "Pabs_object_readback_control_volume_bounds_m": pabs_readback_bounds,
+        "Pabs_object_vs_realized_six_face_bounds_mismatch_m": (
+            pabs_vs_realized_face_mismatch
+        ),
+        "maximum_Pabs_object_vs_realized_six_face_bounds_mismatch_m": (
+            maximum_pabs_vs_face_mismatch
+        ),
+        "Pabs_object_and_realized_six_face_bounds_match_lt_1fm": bool(
+            maximum_pabs_vs_face_mismatch < 1.0e-15
+        ),
         "common_Q_support_in_Q_quadrature_control_volume": (
             common_Q_support
         ),
         "common_Q_quadrature_contract": (
             "dual-cell weights use the pabs/Q analysis control-volume "
-            "bounds; in matched diagnostic cases these are identical to "
-            "the independently read six-face bounds, while production "
-            "uses a larger flux box around the thin lossy-Q volume"
+            "bounds; the independently read six-face bounds are compared "
+            "explicitly and a mismatch is fail-closed rather than described "
+            "as a matched control volume"
         ),
         "component_to_common_Q_contract": (
             "pabs_adv E/index component loss is evaluated on each native "
@@ -4025,6 +4066,13 @@ def main() -> int:
                 setup["geometry"][
                     "pabs_nominal_control_volume_bounds_m"
                 ],
+            )
+            result["acceptance"][
+                "Pabs_and_realized_six_face_bounds_match_lt_1fm"
+            ] = bool(
+                result["native_Yee_mesh_audit"][
+                    "Pabs_object_and_realized_six_face_bounds_match_lt_1fm"
+                ]
             )
             if parsed.execution_contract in (
                 "diagnostic-smoke",

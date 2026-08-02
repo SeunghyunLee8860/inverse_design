@@ -43,12 +43,32 @@ reconstructed `P_Q=1.261110455146e-11 W`; therefore the blocker is not the
 Python component integration.  The remaining difference is between volume
 absorption and the subtraction of the large top/bottom fluxes.
 
+## Existing-artifact flux audit
+
+No new solve was used for this audit.  Common-grid trapezoid, common-grid
+bounded, native-Yee trapezoid, native-Yee bounded, and Lumerical `Pabs_total`
+all give closure in the narrow range `1.249138%--1.249223%`.  Native bounded
+and Lumerical `Pabs_total` differ by only `8.29e-9` relative.
+
+The six-face balance is cancellation sensitive:
+
+- `sum(abs(P_face))/abs(P_six) = 7.885904`;
+- z-min outward power is `+4.396774e-11 W`;
+- z-max outward power is `-5.673933e-11 W`;
+- all four lateral faces contribute only `7.444e-5*abs(P_six)` in absolute
+  aggregate.
+
+The audit also found that the Pabs/Q bounds and realized six-face bounds are
+offset by `50 nm` in x/y.  This is too small to explain the closure because
+the lateral flux is negligible, but it invalidates the previous phrase
+“matched-volume.”  Future runs now fail closed on that readback mismatch.
+
 ## Fail-closed decision
 
-The required matched-volume gate is `closure <0.5%`; both meshes give about
-`1.249%`.  Refining the oxide from 10 to 5 nm does not improve it, so no 2.5-nm
-run is justified.  The `E||b` full-oxide run and physical thermal solves were
-not started after this gate failed.  The failed artifacts remain useful
-diagnostics, but are not production heat sources.  Running a clearly labelled
-diagnostic thermal sensitivity with them would require an explicit decision to
-bypass the production optical-closure gate.
+The required closure gate is `<0.5%`; both meshes give about `1.249%`, and the
+realized-volume match gate is also false.  Refining the oxide from 10 to 5 nm
+does not improve closure, so no 2.5-nm run is justified.  The `E||b` full-oxide
+run and physical thermal solves were not started.  The failed artifacts remain
+useful diagnostics, but are not production heat sources.  Running a clearly
+labelled diagnostic thermal sensitivity with them would require an explicit
+decision to bypass the optical gates.

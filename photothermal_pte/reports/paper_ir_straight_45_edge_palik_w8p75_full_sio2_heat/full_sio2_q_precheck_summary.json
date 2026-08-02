@@ -57,7 +57,25 @@
     "auto_shutoff_lt_1e_minus_5": true,
     "no_negative_Q_NaN_or_Inf": true,
     "material_support_decomposition_residual_lt_1e_minus_12": true,
-    "matched_volume_closure_lt_0p5_percent": false
+    "six_face_closure_lt_0p5_percent": false,
+    "Pabs_and_realized_six_face_bounds_match_lt_1fm": false
+  },
+  "offline_existing_artifact_flux_audit": {
+    "new_FDTD_run": false,
+    "status": "DIAGNOSED_FULL_SIO2_Q_FLUX_CANCELLATION_UNRESOLVED",
+    "P_six_W": 1.2770638338208644e-11,
+    "sum_abs_face_power_over_abs_P_six": 7.885903843951714,
+    "z_face_cancellation_factor": 7.885829401490797,
+    "lateral_face_cancellation_factor": 7.444246091655077e-05,
+    "common_trapezoid_Q_W": 1.2611104551458292e-11,
+    "native_bounded_Q_W": 1.2611115405212249e-11,
+    "Lumerical_Pabs_total_W": 1.2611115300715404e-11,
+    "closure_range": [
+      0.012491382871529292,
+      0.012492232770623574
+    ],
+    "maximum_Pabs_vs_realized_six_face_bounds_mismatch_m": 5.0000000000001215e-08,
+    "interpretation": "all volume-Q paths retain the closure; the signed z-face flux balance is cancellation-sensitive, and the independent 50-nm lateral bounds mismatch is fail-closed but too weak in lateral power to explain 1.249 percent"
   },
   "E_parallel_b_run": false,
   "physical_thermal_run": false,

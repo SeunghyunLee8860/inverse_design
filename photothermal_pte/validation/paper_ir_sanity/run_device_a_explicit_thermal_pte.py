@@ -768,6 +768,7 @@ def load_and_map_q(
             * unprojected[~geometry.flake_mask]
         )
     )
+    material_support_leakage: dict[str, float | str] = {}
     if q_source == "TaIrTe4-plus-SiO2":
         flake_remap = project_remap_to_nearest_material_support(
             base_remap,
@@ -786,6 +787,22 @@ def load_and_map_q(
             source_components["Q_TaIrTe4_only_W_m3"] * physical_scale
         )
         sio2_source = source_components["Q_SiO2_only_W_m3"] * physical_scale
+        unprojected_flake = base_remap.apply(flake_source)
+        unprojected_sio2 = base_remap.apply(sio2_source)
+        material_support_leakage = {
+            "TaIrTe4_before_projection_outside_TaIrTe4_W": float(
+                np.sum(
+                    base_remap.target_volume_m3[~geometry.flake_mask]
+                    * unprojected_flake[~geometry.flake_mask]
+                )
+            ),
+            "SiO2_before_projection_outside_SiO2_W": float(
+                np.sum(
+                    base_remap.target_volume_m3[~sio2_target]
+                    * unprojected_sio2[~sio2_target]
+                )
+            ),
+        }
         mapped_flake = flake_remap.apply(flake_source)
         mapped_sio2 = sio2_remap.apply(sio2_source)
         mapped = mapped_flake + mapped_sio2
@@ -802,6 +819,36 @@ def load_and_map_q(
             "SiO2_source_W": p_source_sio2,
             "SiO2_target_W": p_target_sio2,
         }
+        material_support_leakage.update(
+            {
+                "TaIrTe4_after_projection_outside_TaIrTe4_W": float(
+                    np.sum(
+                        target_volume[~geometry.flake_mask]
+                        * mapped_flake[~geometry.flake_mask]
+                    )
+                ),
+                "SiO2_after_projection_outside_SiO2_W": float(
+                    np.sum(
+                        target_volume[~sio2_target]
+                        * mapped_sio2[~sio2_target]
+                    )
+                ),
+                "combined_after_projection_outside_material_union_W": float(
+                    np.sum(
+                        target_volume[
+                            ~(geometry.flake_mask | sio2_target)
+                        ]
+                        * mapped[
+                            ~(geometry.flake_mask | sio2_target)
+                        ]
+                    )
+                ),
+                "interpretation": (
+                    "each optical material source is evaluated only against "
+                    "its corresponding explicit thermal material support"
+                ),
+            }
+        )
         mapping_description = (
             "two independent conservative embeddings followed by separate "
             "physical-3D nearest-support projections: TaIrTe4 Q to TaIrTe4 "
@@ -830,6 +877,12 @@ def load_and_map_q(
     outside_power = float(
         np.sum(target_volume[~geometry.flake_mask] * mapped[~geometry.flake_mask])
     )
+    legacy_outside_flake_before = (
+        None if q_source == "TaIrTe4-plus-SiO2" else outside_power_before
+    )
+    legacy_outside_flake_after = (
+        None if q_source == "TaIrTe4-plus-SiO2" else outside_power
+    )
     return mapped, {
         "optical_artifact_path": str(artifact_path.resolve()),
         "optical_artifact_sha256": sha256(artifact_path),
@@ -853,11 +906,22 @@ def load_and_map_q(
         "P_Q_target_W": p_target,
         "material_resolved_source_target_power_W": material_target_power,
         "mapping_relative_power_error": abs(p_target - p_source) / abs(p_source),
-        "mapped_power_outside_flake_before_final_support_W": outside_power_before,
-        "mapped_power_outside_flake_before_final_support_fraction": (
-            outside_power_before / p_source
+        "material_resolved_support_leakage_W": material_support_leakage,
+        "mapped_power_outside_flake_before_final_support_W": (
+            legacy_outside_flake_before
         ),
-        "mapped_power_outside_flake_W": outside_power,
+        "mapped_power_outside_flake_before_final_support_fraction": (
+            None
+            if legacy_outside_flake_before is None
+            else legacy_outside_flake_before / p_source
+        ),
+        "mapped_power_outside_flake_W": legacy_outside_flake_after,
+        "legacy_outside_flake_metric_interpretation": (
+            "not applicable to a TaIrTe4-plus-SiO2 source because valid SiO2 "
+            "heating is outside the flake; use material_resolved_support_leakage_W"
+            if q_source == "TaIrTe4-plus-SiO2"
+            else "legacy single-flake-support diagnostic"
+        ),
         "mapping_operations": (
             f"{mapping_description} with exact nearest-distance ties split "
             "uniformly; no coordinate-axis order, clipping, "

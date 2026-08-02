@@ -12,10 +12,16 @@
   However, matched-volume six-face closure remains `1.24917% / 1.24922%`,
   above the `0.5%` gate.
 - Lumerical's own `Pabs_total` agrees with the independently reconstructed
-  volume-Q integral, so this is not fixed by gain/rescaling or another oxide
-  mesh refinement.  `E||b` and real-source thermal solves were not run after
-  the fail-closed gate.  A diagnostic-only thermal bypass requires explicit
-  user approval.
+  volume-Q integral.  An existing-artifact audit also finds common/native and
+  trapezoid/bounded closure consistently at `1.249138%--1.249223%`.
+  `sum(abs(P_face))/abs(P_six)=7.885904`, dominated by cancellation of the
+  signed z-min/z-max fluxes.  This is not fixed by gain/rescaling or another
+  oxide mesh refinement.
+- The audit exposed a separate 50-nm x/y offset between the Pabs/Q bounds and
+  realized six-face coordinates.  Lateral flux is too small for this to cause
+  the 1.249% discrepancy, but the old “matched-volume” wording is withdrawn
+  and future runs fail closed on the readback mismatch.  `E||b` and physical
+  thermal solves remain unrun.
 - Expanded-FVM thermal conductivities remain named assumptions, not values
   supplied by the TaIrTe4 paper: bulk-reference `k_SiO2=1.38 W/(m K)` and
   `k_Si=145 W/(m K)` at approximately 300 K.
