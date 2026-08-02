@@ -1,0 +1,62 @@
+{
+  "status": "VALIDATED_DEVICE_A_EMPTY_STACK_FAST_MESH",
+  "artifacts": [
+    {
+      "role": "reference_case_result",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json",
+      "byte_size": 66655,
+      "sha256": "d54fa665c8b70d9279baba667b5ac2873951d40cfd244f7382c689a784ff95dd",
+      "committed_to_git": false
+    },
+    {
+      "role": "reference_target_plane_incident_field",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/incident_reference.npz",
+      "byte_size": 1486568,
+      "sha256": "f18ba2dd05e7bbc52d5b183412410ca8c0bd86ee0d86d32f64516d308f8c8f37",
+      "committed_to_git": false
+    },
+    {
+      "role": "reference_raw_Lumerical_project",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/finite_2um_optical_q.fsp",
+      "byte_size": 282821296,
+      "sha256": "374837b8cda87b50b36f25116fe6c5599ec974dfc36e69de87f1b1d76961f4c4",
+      "committed_to_git": false
+    },
+    {
+      "role": "reference_raw_solver_log",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/finite_2um_optical_q_p0.log",
+      "byte_size": 7090,
+      "sha256": "469a16dd8fd40bf51cd8c0f47ab787d0b1926a6abe2b9cac956c8adcfa278f6f",
+      "committed_to_git": false
+    },
+    {
+      "role": "candidate_case_result",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc3_outer200_fine100_h12_a_gpu2_20260802/case_result.json",
+      "byte_size": 66151,
+      "sha256": "d5e01eafadf8e36f326e60397cb795684a31eb93a8673434e76cdcc4ad8a7e44",
+      "committed_to_git": false
+    },
+    {
+      "role": "candidate_target_plane_incident_field",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc3_outer200_fine100_h12_a_gpu2_20260802/incident_reference.npz",
+      "byte_size": 1296720,
+      "sha256": "6dba87e094979bf41d66f001028c471fc26c592527c82f6d598d54953117d386",
+      "committed_to_git": false
+    },
+    {
+      "role": "candidate_raw_Lumerical_project",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc3_outer200_fine100_h12_a_gpu2_20260802/finite_2um_optical_q.fsp",
+      "byte_size": 281455672,
+      "sha256": "3dc870c7b86ba06c814d13a8ea7155faf8e3cbff4bbf5809273dca3c90772a3d",
+      "committed_to_git": false
+    },
+    {
+      "role": "candidate_raw_solver_log",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc3_outer200_fine100_h12_a_gpu2_20260802/finite_2um_optical_q_p0.log",
+      "byte_size": 7063,
+      "sha256": "9ef977f3833f0c42b6e9c1ca4958fd6a6a101a6f10d47bff129ac960d35727fa",
+      "committed_to_git": false
+    }
+  ],
+  "raw_NPZ_or_FSP_committed_to_git": false
+}

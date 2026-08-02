@@ -1,0 +1,157 @@
+{
+  "status": "VALIDATED_DEVICE_A_EMPTY_STACK_FAST_MESH",
+  "scope": "empty Palik SiO2/Si layered stack only; this does not validate finite Device-A Q, thermal temperature, PTE current, or optimization",
+  "reference": {
+    "directory": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802",
+    "case_result_sha256": "d54fa665c8b70d9279baba667b5ac2873951d40cfd244f7382c689a784ff95dd",
+    "incident_reference_sha256": "f18ba2dd05e7bbc52d5b183412410ca8c0bd86ee0d86d32f64516d308f8c8f37",
+    "acceptance": {
+      "raw_status": "COMPLETED",
+      "raw_acceptance": {
+        "empty_six_face_residual_lt_0p5_percent": true,
+        "source_aperture_edge_to_central_lt_5_percent": true,
+        "offset_source_max_absolute_lateral_flux_fraction_lt_1e_4": true,
+        "solver_log_reports_successful_completion": true,
+        "auto_shutoff_reached_requested_threshold": true,
+        "Pabs_and_realized_six_face_bounds_match_lt_1fm": true,
+        "Palik_SiO2_and_Si_loss_readback_positive": true,
+        "lossy_empty_stack_volume_absorption_positive": true
+      },
+      "source_center_m": [
+        -2.452215668634704e-06,
+        -8.881784197001252e-22
+      ],
+      "offset_source": true,
+      "max_absolute_lateral_flux_over_incident": 3.614504604820575e-05,
+      "corrected_acceptance": {
+        "empty_six_face_residual_lt_0p5_percent": true,
+        "source_aperture_edge_to_central_lt_5_percent": true,
+        "offset_source_max_absolute_lateral_flux_fraction_lt_1e_4": true,
+        "solver_log_reports_successful_completion": true,
+        "auto_shutoff_reached_requested_threshold": true,
+        "Pabs_and_realized_six_face_bounds_match_lt_1fm": true,
+        "Palik_SiO2_and_Si_loss_readback_positive": true,
+        "lossy_empty_stack_volume_absorption_positive": true,
+        "offset_source_max_absolute_lateral_flux_lt_1e_4": true
+      },
+      "corrected_all_pass": true,
+      "raw_result_immutable": true
+    }
+  },
+  "candidate": {
+    "directory": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc3_outer200_fine100_h12_a_gpu2_20260802",
+    "case_result_sha256": "d5e01eafadf8e36f326e60397cb795684a31eb93a8673434e76cdcc4ad8a7e44",
+    "incident_reference_sha256": "6dba87e094979bf41d66f001028c471fc26c592527c82f6d598d54953117d386",
+    "acceptance": {
+      "raw_status": "FAILED_ACCEPTANCE",
+      "raw_acceptance": {
+        "empty_six_face_residual_lt_0p5_percent": true,
+        "opposite_lateral_flux_asymmetry_lt_1e_4": false,
+        "source_aperture_edge_to_central_lt_5_percent": true,
+        "solver_log_reports_successful_completion": true,
+        "auto_shutoff_reached_requested_threshold": true,
+        "Pabs_and_realized_six_face_bounds_match_lt_1fm": true,
+        "Palik_SiO2_and_Si_loss_readback_positive": true,
+        "lossy_empty_stack_volume_absorption_positive": true
+      },
+      "source_center_m": [
+        -2.452215668634704e-06,
+        -8.881784197001252e-22
+      ],
+      "offset_source": true,
+      "max_absolute_lateral_flux_over_incident": 3.412455024902895e-05,
+      "corrected_acceptance": {
+        "empty_six_face_residual_lt_0p5_percent": true,
+        "source_aperture_edge_to_central_lt_5_percent": true,
+        "solver_log_reports_successful_completion": true,
+        "auto_shutoff_reached_requested_threshold": true,
+        "Pabs_and_realized_six_face_bounds_match_lt_1fm": true,
+        "Palik_SiO2_and_Si_loss_readback_positive": true,
+        "lossy_empty_stack_volume_absorption_positive": true,
+        "offset_source_max_absolute_lateral_flux_lt_1e_4": true
+      },
+      "corrected_all_pass": true,
+      "raw_result_immutable": true
+    }
+  },
+  "common_grid": {
+    "step_m": 1.0000000000000001e-07,
+    "shape": [
+      501,
+      500
+    ],
+    "x_bounds_m": [
+      -2.737000367018802e-05,
+      2.262999632981198e-05
+    ],
+    "y_bounds_m": [
+      -2.4903403718298116e-05,
+      2.499659628170189e-05
+    ],
+    "interpolation": "linear RegularGridInterpolator; no clipping or rescaling"
+  },
+  "scalar_metrics": {
+    "incident_power_W_at_1_W_m2": {
+      "reference": 1.4080346646109174e-10,
+      "candidate": 1.4077005593130097e-10,
+      "relative_difference": 0.00023728485264245798
+    },
+    "central_incident_intensity_native_W_m2": {
+      "reference": 0.0010606803075407143,
+      "candidate": 0.0010569036807453955,
+      "relative_difference": 0.0035605702948094437
+    },
+    "common_grid_integrated_downward_power_native_W": {
+      "reference": 1.4952684632112962e-13,
+      "candidate": 1.4902206654573834e-13,
+      "relative_difference": 0.003375847132542294
+    }
+  },
+  "normalized_spatial_intensity": {
+    "NRMSE": 0.0004971825098995697,
+    "correlation": 0.9999998785942197
+  },
+  "moments": {
+    "reference": {
+      "centroid_m": [
+        -2.4521813273492344e-06,
+        8.377917172063622e-12
+      ],
+      "sigma_m": [
+        4.404187442560869e-06,
+        4.329566218014012e-06
+      ],
+      "intensity_1_over_e2_waist_m": [
+        8.808374885121738e-06,
+        8.659132436028023e-06
+      ]
+    },
+    "candidate": {
+      "centroid_m": [
+        -2.452194018491081e-06,
+        7.578546707785502e-12
+      ],
+      "sigma_m": [
+        4.406694830605889e-06,
+        4.328198771544565e-06
+      ],
+      "intensity_1_over_e2_waist_m": [
+        8.813389661211778e-06,
+        8.65639754308913e-06
+      ]
+    }
+  },
+  "centroid_shift_m": 1.2716291696526259e-11,
+  "waist_relative_difference": [
+    0.0005693191031765822,
+    0.0003158391396710476
+  ],
+  "gates": {
+    "reference_corrected_empty_stack_acceptance": true,
+    "candidate_corrected_empty_stack_acceptance": true,
+    "incident_power_relative_difference_lt_0p5_percent": true,
+    "central_intensity_relative_difference_lt_0p5_percent": true,
+    "normalized_spatial_intensity_NRMSE_lt_0p5_percent": true,
+    "both_second_moment_waists_relative_difference_lt_0p5_percent": true
+  }
+}

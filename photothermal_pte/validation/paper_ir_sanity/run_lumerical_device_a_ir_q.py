@@ -222,12 +222,31 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--outer-local-xy-mesh-nm",
+        type=float,
+        default=None,
+        help=(
+            "explicit x/y mesh over the full Device-A absorption/material "
+            "bounds when nested refinement is active; defaults to the "
+            "historical 100 nm"
+        ),
+    )
+    parser.add_argument(
+        "--mesh-accuracy",
+        type=int,
+        default=5,
+        help=(
+            "auto-nonuniform mesh accuracy outside local overrides; faster "
+            "candidates require an explicit convergence comparison"
+        ),
+    )
+    parser.add_argument(
         "--refinement-half-span-um",
         type=float,
         default=None,
         help=(
             "optional nested fine-mesh half span about the beam centre; "
-            "the full Q/closure region remains on the fixed 100-nm outer "
+            "the full Q/closure region remains on the selected outer "
             "mesh so no source support is cropped or deleted"
         ),
     )
@@ -453,18 +472,23 @@ def parse_args() -> argparse.Namespace:
         or args.sio2_q_dz_nm <= 0
     ):
         parser.error("waist, flake dz, simulation time, and shutoff must be positive")
-    args.outer_local_xy_mesh_nm = (
-        100.0
-        if args.refinement_half_span_um is not None
-        else args.local_xy_mesh_nm
-    )
+    if args.outer_local_xy_mesh_nm is None:
+        args.outer_local_xy_mesh_nm = (
+            100.0
+            if args.refinement_half_span_um is not None
+            else args.local_xy_mesh_nm
+        )
+    if args.mesh_accuracy < 1 or args.mesh_accuracy > 8:
+        parser.error("mesh accuracy must be an integer from 1 through 8")
+    if args.outer_local_xy_mesh_nm <= 0:
+        parser.error("outer local x/y mesh must be positive")
     if args.refinement_half_span_um is not None:
         if args.refinement_half_span_um <= 0.0:
             parser.error("refinement half span must be positive")
         if args.local_xy_mesh_nm >= args.outer_local_xy_mesh_nm:
             parser.error(
                 "nested refinement requires a fine local x/y mesh below "
-                "the fixed 100-nm outer mesh"
+                "the selected outer local mesh"
             )
     intermediate_values = (
         args.intermediate_xy_mesh_nm,
@@ -1817,7 +1841,7 @@ def add_geometry_and_monitors(
         ("pml layers", int(args.pml_layers)),
         ("mesh type", "auto non-uniform"),
         ("mesh refinement", "conformal variant 1"),
-        ("mesh accuracy", 5),
+        ("mesh accuracy", int(args.mesh_accuracy)),
         ("simulation time", args.simulation_time_ps * 1e-12),
         ("auto shutoff min", args.auto_shutoff_min),
         ("min mesh step", 1.0e-9),
@@ -2343,7 +2367,10 @@ def add_geometry_and_monitors(
         },
         "large_domain_mesh_policy": {
             "uniform_global_fine_mesh": False,
-            "global_mesh": "auto non-uniform, conformal variant 1, accuracy 5",
+            "global_mesh": (
+                "auto non-uniform, conformal variant 1, accuracy "
+                f"{args.mesh_accuracy}"
+            ),
             "outer_local_region_bounds_m": {
                 **outer_mesh_bounds,
                 "z": (mesh_z_min, mesh_z_max),
@@ -2467,7 +2494,7 @@ def add_geometry_and_monitors(
                     "285 nm SiO2 on Si stack",
                     "epsilon_x=epsilon_b, epsilon_y=epsilon_a, epsilon_z=epsilon_b",
                     "six PML boundaries",
-                    "auto non-uniform mesh accuracy 5",
+                    f"auto non-uniform mesh accuracy {args.mesh_accuracy}",
                     "conformal variant 1",
                     f"{args.flake_dz_nm:g} nm flake-region z override",
                     "pabs_adv component-resolved Q extraction",
@@ -2570,6 +2597,15 @@ def assert_contract(
         -(SOURCE_Z_M - FOCUS_Z_M),
         rtol=0.0,
         atol=1e-15,
+    )
+    checks["correct_global_mesh_accuracy"] = np.isclose(
+        base.scalar(
+            fdtd.getnamed("FDTD", "mesh accuracy"),
+            "FDTD.mesh accuracy",
+        ),
+        args.mesh_accuracy,
+        rtol=0.0,
+        atol=0.0,
     )
     checks["correct_dz"] = np.isclose(
         base.scalar(fdtd.getnamed("flake_mesh", "dz"), "flake dz"),
@@ -2704,6 +2740,75 @@ def assert_contract(
     pabs_bounds = setup["geometry"][
         "pabs_nominal_control_volume_bounds_m"
     ]
+    native_mesh_snap: dict[str, Any] | None = None
+    if args.matched_lossy_control_volume:
+        # Auto-nonuniform meshing chooses its native lattice anchor only in
+        # runsetup.  A precomputed nominal 100-nm lattice can therefore miss
+        # the actual Yee planes by O(1--20 nm), even though all Pabs and flux
+        # objects were requested with identical bounds.  Read the realized
+        # lattice, move *both* the Pabs group and all six faces to the same
+        # nearest native planes, then rebuild the setup.  This changes neither
+        # the material geometry nor Q values and keeps the strict 1-fm matched-
+        # control-volume gate instead of relaxing it.
+        requested_bounds = {
+            axis: tuple(float(value) for value in pabs_bounds[axis])
+            for axis in "xyz"
+        }
+        snapped_bounds = {
+            axis: tuple(
+                float(
+                    native_setup_mesh[axis][
+                        int(np.argmin(np.abs(native_setup_mesh[axis] - bound_m)))
+                    ]
+                )
+                for bound_m in requested_bounds[axis]
+            )
+            for axis in "xyz"
+        }
+        for axis in "xyz":
+            low, high = snapped_bounds[axis]
+            fdtd.setnamed(base.PABS_GROUP, axis, 0.5 * (low + high))
+            fdtd.setnamed(base.PABS_GROUP, f"{axis} span", high - low)
+        for face in setup["inner_faces"].values():
+            axis = face["axis"]
+            side_index = 0 if face["side"] == "min" else 1
+            fdtd.setnamed(
+                face["name"], axis, snapped_bounds[axis][side_index]
+            )
+            for transverse in "xyz":
+                if transverse == axis:
+                    continue
+                fdtd.setnamed(
+                    face["name"],
+                    f"{transverse} min",
+                    snapped_bounds[transverse][0],
+                )
+                fdtd.setnamed(
+                    face["name"],
+                    f"{transverse} max",
+                    snapped_bounds[transverse][1],
+                )
+        native_mesh_snap = {
+            "method": "post-runsetup nearest native Yee plane",
+            "requested_bounds_m": requested_bounds,
+            "snapped_bounds_m": snapped_bounds,
+            "maximum_absolute_shift_m": max(
+                abs(snapped_bounds[axis][side] - requested_bounds[axis][side])
+                for axis in "xyz"
+                for side in (0, 1)
+            ),
+            "Pabs_and_all_six_flux_faces_updated_together": True,
+        }
+        args.inner_box = snapped_bounds
+        base.INNER_BOX = snapped_bounds
+        setup["geometry"]["pabs_nominal_control_volume_bounds_m"] = snapped_bounds
+        setup["geometry"]["six_face_absorption_box_bounds_m"] = snapped_bounds
+        setup["geometry"]["post_runsetup_native_mesh_snap"] = native_mesh_snap
+        fdtd.runsetup()
+        native_setup_mesh = {
+            axis: _mesh_coordinate(fdtd, axis) for axis in "xyz"
+        }
+        pabs_bounds = snapped_bounds
     pabs_bound_to_native_mesh_distance = {
         axis: [
             float(np.min(np.abs(native_setup_mesh[axis] - bound_m)))
@@ -2765,7 +2870,10 @@ def assert_contract(
         raise RuntimeError(
             "paper IR contract failed: "
             f"{[k for k,v in checks.items() if not v]}; "
-            f"injection_axis_readback={injection_axis!r}"
+            f"injection_axis_readback={injection_axis!r}; "
+            "pabs_bound_to_native_mesh_distance_m="
+            f"{pabs_bound_to_native_mesh_distance!r}; "
+            f"requested_pabs_bounds_m={pabs_bounds!r}"
         )
     fdtd_bounds = {
         axis: [
@@ -2974,9 +3082,25 @@ def assert_contract(
                 axis: _coordinate_summary(values)
                 for axis, values in native_setup_mesh.items()
             },
+            "native_runsetup_grid_point_count": int(
+                np.prod(
+                    [native_setup_mesh[axis].size for axis in "xyz"],
+                    dtype=np.int64,
+                )
+            ),
+            "native_runsetup_cell_count_estimate": int(
+                np.prod(
+                    [
+                        max(native_setup_mesh[axis].size - 1, 0)
+                        for axis in "xyz"
+                    ],
+                    dtype=np.int64,
+                )
+            ),
             "Pabs_bound_to_native_mesh_distance_m": (
                 pabs_bound_to_native_mesh_distance
             ),
+            "post_runsetup_native_mesh_snap": native_mesh_snap,
         },
         "object_bounds_readback_m": {
             "FDTD_nominal_outer_bounds": fdtd_bounds,
@@ -4115,6 +4239,50 @@ def main() -> int:
             append_flake_substrate_absorption_audit(
                 base, output, parsed, result
             )
+            if parsed.case == "empty-stack" and not (
+                np.isclose(parsed.beam_x_um, 0.0, atol=1e-12)
+                and np.isclose(parsed.beam_y_um, 0.0, atol=1e-12)
+            ):
+                # Opposite-face *relative asymmetry* is meaningful only for
+                # a centered source.  Device A intentionally translates the
+                # beam to the digitized measurement position, so two tiny
+                # lateral fluxes can have a large ratio without appreciable
+                # leakage.  Preserve that ratio as a diagnostic and gate the
+                # physically relevant absolute lateral flux instead.
+                old_gate = result.setdefault("acceptance", {}).pop(
+                    "opposite_lateral_flux_asymmetry_lt_1e_4", None
+                )
+                inner_faces = result["six_face"]["faces"]
+                maximum_lateral_fraction = max(
+                    abs(
+                        inner_faces[f"{axis}_{side}"][
+                            "normalized_signed_axis_flux"
+                        ]
+                    )
+                    for axis in "xy"
+                    for side in ("min", "max")
+                )
+                result["offset_source_lateral_flux_audit"] = {
+                    "beam_center_um": [
+                        parsed.beam_x_um,
+                        parsed.beam_y_um,
+                    ],
+                    "opposite_face_asymmetry_retained_as_diagnostic": result.get(
+                        "opposite_lateral_face_asymmetry"
+                    ),
+                    "centered_source_asymmetry_gate_applicable": False,
+                    "superseded_centered_source_gate_value": old_gate,
+                    "maximum_absolute_inner_lateral_flux_fraction": (
+                        maximum_lateral_fraction
+                    ),
+                    "replacement_gate": (
+                        "maximum absolute inner lateral flux / incident power "
+                        "< 1e-4"
+                    ),
+                }
+                result["acceptance"][
+                    "offset_source_max_absolute_lateral_flux_fraction_lt_1e_4"
+                ] = maximum_lateral_fraction < 1.0e-4
             auto_shutoff = final_logged_auto_shutoff(output)
             result["auto_shutoff"] = auto_shutoff
             result.setdefault("acceptance", {})[
