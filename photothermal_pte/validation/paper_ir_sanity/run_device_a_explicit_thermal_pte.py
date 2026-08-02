@@ -725,13 +725,34 @@ def load_and_map_q(
         # cannot be attributed by overlap; that tiny remainder is
         # delivered through the legacy nearest-support projection and
         # recorded separately.
-        reverse_remap = build_conservative_embedding_remap(
-            source_edges_m=target_edges,
-            target_edges_m=source_edges,
+        def axis_overlap_matrix(
+            src_edges: np.ndarray, dst_edges: np.ndarray
+        ) -> np.ndarray:
+            low = np.maximum(
+                src_edges[:-1, None], dst_edges[None, :-1]
+            )
+            high = np.minimum(src_edges[1:, None], dst_edges[None, 1:])
+            return np.clip(high - low, 0.0, None)
+
+        overlap_x = axis_overlap_matrix(source_edges[0], target_edges[0])
+        overlap_y = axis_overlap_matrix(source_edges[1], target_edges[1])
+        overlap_z = axis_overlap_matrix(source_edges[2], target_edges[2])
+        mask_float = geometry.flake_mask.astype(float)
+        partial = np.tensordot(overlap_z, mask_float, axes=(1, 2))
+        partial = np.tensordot(overlap_y, partial, axes=(1, 2))
+        overlap_volume = np.tensordot(overlap_x, partial, axes=(1, 2))
+        source_volume = (
+            np.diff(source_edges[0])[:, None, None]
+            * np.diff(source_edges[1])[None, :, None]
+            * np.diff(source_edges[2])[None, None, :]
         )
-        coverage = reverse_remap.apply(
-            geometry.flake_mask.astype(float)
-        )
+        coverage = overlap_volume / source_volume
+        if float(np.max(coverage)) > 1.0 + 1.0e-9:
+            raise RuntimeError(
+                "flake coverage exceeded unity: "
+                f"{float(np.max(coverage))}"
+            )
+        coverage = np.clip(coverage, 0.0, 1.0)
         covered = coverage > 0.0
         q_overlap = np.where(covered, scaled_q, 0.0)
         with np.errstate(divide="ignore", invalid="ignore"):
