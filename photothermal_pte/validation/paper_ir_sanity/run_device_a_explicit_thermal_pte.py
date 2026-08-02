@@ -607,17 +607,31 @@ def load_and_map_q(
         ).reshape(xx.shape)
 
     flake_xy = optical_xy_mask(optical_geometry["flake_vertices_um"])
-    metal_xy = optical_xy_mask(electrode["top_polygon_simulation_um"]) | optical_xy_mask(
-        electrode["bottom_polygon_simulation_um"]
+    electrodes_enabled = bool(
+        optical_geometry.get("electrodes_in_optical_model", False)
     )
+    if electrodes_enabled:
+        metal_xy = optical_xy_mask(
+            electrode["top_polygon_simulation_um"]
+        ) | optical_xy_mask(electrode["bottom_polygon_simulation_um"])
+    else:
+        # A deliberately electrode-free optical diagnostic has no metal
+        # material contract.  Keep the metal support identically false rather
+        # than attempting to infer polygons from the separate electrical
+        # weighting geometry.
+        metal_xy = np.zeros(xx.shape, dtype=bool)
     at_flake_bottom = np.isclose(z, -THICKNESS_M, rtol=0.0, atol=1e-15)
     at_flake_top = np.isclose(z, 0.0, rtol=0.0, atol=1e-15)
     flake_support = flake_xy[:, :, None] & (
         ((z[None, None, :] >= -THICKNESS_M) | at_flake_bottom[None, None, :])
         & ((z[None, None, :] <= 0.0) | at_flake_top[None, None, :])
     )
-    ti_thickness_m = float(electrode["Ti"]["thickness_m"])
-    au_thickness_m = float(electrode["Au"]["thickness_m"])
+    ti_thickness_m = (
+        float(electrode["Ti"]["thickness_m"]) if electrodes_enabled else 0.0
+    )
+    au_thickness_m = (
+        float(electrode["Au"]["thickness_m"]) if electrodes_enabled else 0.0
+    )
     at_ti_top = np.isclose(z, ti_thickness_m, rtol=0.0, atol=1e-15)
     ti_support = metal_xy[:, :, None] & (
         ((z[None, None, :] >= 0.0) | at_flake_top[None, None, :])
