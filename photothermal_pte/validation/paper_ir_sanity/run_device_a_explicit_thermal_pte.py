@@ -587,6 +587,7 @@ def load_and_map_q(
     result_path: Path,
     geometry: Geometry,
     metal_thermalization: str,
+    q_remap: str = "nearest-support",
 ) -> tuple[np.ndarray, dict[str, Any]]:
     result = json.loads(result_path.read_text())
     if result.get("status") != "COMPLETED":
@@ -708,15 +709,67 @@ def load_and_map_q(
             * unprojected[~geometry.flake_mask]
         )
     )
-    remap = project_remap_to_nearest_material_support(
-        base_remap,
-        target_edges_m=target_edges,
-        target_support_mask=geometry.flake_mask,
-    )
-    mapped = remap.apply(scaled_q)
-    p_source = remap.power_source(scaled_q)
-    target_volume = remap.target_volume_m3
-    p_target = remap.power_target(mapped)
+    p_source = base_remap.power_source(scaled_q)
+    if q_remap == "material-overlap":
+        # Material-overlap redistribution: each optical cell's absorbed
+        # power p_m is split over thermal flake-support cells i in
+        # proportion to |Omega_m ^ Omega_i ^ F| where F is the thermal
+        # grid's flake support.  With c_m = |Omega_m ^ F| / |Omega_m|
+        # (the flake coverage of the optical cell, obtained by applying
+        # the REVERSE conservative embedding to the support indicator),
+        # the assignment reduces exactly to
+        #   mapped = base_remap.apply(q / c) restricted to F,
+        # which conserves the total attributable power analytically:
+        #   sum_i sum_m p_m w_mi / c_m = sum_m p_m  (i in F).
+        # Optical power in cells with zero flake overlap (c_m == 0)
+        # cannot be attributed by overlap; that tiny remainder is
+        # delivered through the legacy nearest-support projection and
+        # recorded separately.
+        reverse_remap = build_conservative_embedding_remap(
+            source_edges_m=target_edges,
+            target_edges_m=source_edges,
+        )
+        coverage = reverse_remap.apply(
+            geometry.flake_mask.astype(float)
+        )
+        covered = coverage > 0.0
+        q_overlap = np.where(covered, scaled_q, 0.0)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            q_boosted = np.where(
+                covered, q_overlap / np.where(covered, coverage, 1.0), 0.0
+            )
+        mapped = base_remap.apply(q_boosted)
+        mapped = np.where(geometry.flake_mask, mapped, 0.0)
+        q_residual = np.where(~covered, scaled_q, 0.0)
+        residual_power = float(base_remap.power_source(q_residual))
+        if abs(residual_power) > 0.0:
+            nearest = project_remap_to_nearest_material_support(
+                base_remap,
+                target_edges_m=target_edges,
+                target_support_mask=geometry.flake_mask,
+            )
+            mapped = mapped + nearest.apply(q_residual)
+        target_volume = base_remap.target_volume_m3
+        p_target = base_remap.power_target(mapped)
+        overlap_note = {
+            "q_remap_method": "material-overlap",
+            "zero_overlap_residual_power_W": residual_power,
+            "zero_overlap_residual_fraction": (
+                residual_power / p_source if p_source else 0.0
+            ),
+        }
+    elif q_remap == "nearest-support":
+        remap = project_remap_to_nearest_material_support(
+            base_remap,
+            target_edges_m=target_edges,
+            target_support_mask=geometry.flake_mask,
+        )
+        mapped = remap.apply(scaled_q)
+        target_volume = remap.target_volume_m3
+        p_target = remap.power_target(mapped)
+        overlap_note = {"q_remap_method": "nearest-support"}
+    else:
+        raise ValueError(f"unknown q remap method {q_remap}")
     outside_power = float(
         np.sum(target_volume[~geometry.flake_mask] * mapped[~geometry.flake_mask])
     )
@@ -744,12 +797,22 @@ def load_and_map_q(
             outside_power_before / p_source
         ),
         "mapped_power_outside_flake_W": outside_power,
+        **overlap_note,
         "mapping_operations": (
-            "validated linear conservative embedding plus one physical-3D-"
-            "nearest material-support projection with exact nearest-distance "
-            "ties split uniformly; no coordinate-axis order, clipping, "
-            "smoothing, gain, global rescaling, or tiling; metal handling is "
-            f"the explicitly named {metal_thermalization} scenario"
+            (
+                "validated linear conservative embedding with material-"
+                "overlap redistribution (power split over thermal flake-"
+                "support cells in proportion to the geometric overlap "
+                "volume; zero-overlap remainder via the legacy nearest-"
+                "support projection, recorded)"
+                if q_remap == "material-overlap"
+                else "validated linear conservative embedding plus one "
+                "physical-3D-nearest material-support projection with "
+                "exact nearest-distance ties split uniformly"
+            )
+            + "; no coordinate-axis order, clipping, smoothing, gain, "
+            "global rescaling, or tiling; metal handling is the "
+            f"explicitly named {metal_thermalization} scenario"
         ),
     }
 
@@ -847,6 +910,17 @@ def main() -> int:
             "bound is a published finite metal-interface model"
         ),
     )
+    parser.add_argument(
+        "--q-remap",
+        choices=("nearest-support", "material-overlap"),
+        default="nearest-support",
+        help=(
+            "boundary treatment for optical Q outside the thermal flake "
+            "support: legacy nearest-cell projection, or material-overlap "
+            "redistribution (power split in proportion to geometric "
+            "overlap with the flake support; conserves power exactly)"
+        ),
+    )
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=False)
     global FLAKE_VERTICES_UM, TOP_CONTACT_SEGMENT_UM, BOTTOM_CONTACT_SEGMENT_UM
@@ -916,6 +990,7 @@ def main() -> int:
         args.optical_case_dir / "case_result.json",
         geometry,
         args.metal_thermalization,
+        q_remap=args.q_remap,
     )
     expanded_geometry = geometry
     if args.thermal_model == "paper-reduced":
