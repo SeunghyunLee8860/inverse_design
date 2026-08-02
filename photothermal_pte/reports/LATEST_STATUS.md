@@ -1,5 +1,34 @@
 # Latest photothermal validation status
 
+## Device-A current-cause controls
+
+- Status: `COMPLETED_DEVICE_A_CURRENT_CAUSE_CONTROLS`, limited to an offline
+  weighting/equal-power decomposition and a CPU explicit-3D planar-background
+  SiO2 thermal sensitivity. No new FDTD, adjoint, AD-FD, or optimization was
+  run.
+- The saved Maxwell/TaIrTe4 fields give sampled-max `|Ib|/|Ia|=0.835358` with
+  the digitized Device-A weighting field. Replacing it by uniform 45-degree
+  weighting lowers the ratio to `0.558686`; therefore the current digitized
+  electrode weighting helps `b` relative to `a` and is not the identified
+  source of the reversal.
+- Equal-absorbed-power efficiency gives `0.772182`. The larger `b` absorption
+  is already helping, but the spatial current-generation efficiency still
+  favors `a`.
+- An explicitly named empty-stack air/285-nm-SiO2/Si planar TMM control uses
+  the 11-um optical constants, `w0=8.75 um`, and `Pinc=284.40 uW`. Its SiO2
+  absorptance is `2.294526%`; all four explicit-3D thermal solves pass depth
+  integration, residual, and energy gates. Adding this diagnostic source
+  changes the actual-weighting ratio only from `0.835358` to `0.842262`, far
+  below the Figure-3I visual reference near `1.172131`.
+- This planar source is not finite-device Maxwell SiO2 Q and is not a bound.
+  A stable finite-device oxide solve, matched beam-radius sensitivity,
+  chopping/frequency response, and exact CAD/contact data remain unresolved.
+  The strongest identified remaining cause is the polarization-dependent
+  spatial Maxwell TaIrTe4 Q and its downstream thermal/current-generation
+  efficiency.
+- Report, JSON, CSV, plots, and external raw-artifact manifest:
+  `reports/paper_ir_device_a_current_cause_controls/`.
+
 ## Registered Device-A sparse Maxwell–thermal–PTE scan
 
 - Status: `PARTIAL_REGISTERED_DEVICE_A_SPARSE_SCAN_CURRENT_TREND_OPPOSITE_PAPER`.

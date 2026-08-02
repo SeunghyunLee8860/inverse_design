@@ -15,6 +15,13 @@ from photothermal_pte.validation.paper_ir_sanity.coordinate_plot import (
     dual_edges_from_centers,
     strict_centered_xy_mask,
 )
+from photothermal_pte.validation.paper_ir_sanity.analyze_device_a_current_cause_controls import (
+    INCIDENT_POWER_W,
+    WAIST_M,
+    gaussian_cell_power,
+    planar_tmm_coefficients,
+    tmm_q_per_incident_intensity,
+)
 
 from photothermal_pte.validation.paper_ir_sanity.run_analytic_q_remap_control import (
     analytic_q_on_edges,
@@ -443,3 +450,44 @@ def test_offline_paper_ir_summary_is_fail_closed_after_planar_audit() -> None:
     )
     assert summary["execution_scope"]["new_FDTD_run"] is False
     assert summary["execution_scope"]["PTE_run"] is False
+
+
+def test_planar_sio2_tmm_volume_loss_matches_flux_absorptance() -> None:
+    thickness_m = 285.0e-9
+    nodes, weights = np.polynomial.legendre.leggauss(64)
+    depth_m = 0.5 * thickness_m * (nodes + 1.0)
+    integrated_absorptance = 0.5 * thickness_m * np.sum(
+        weights * tmm_q_per_incident_intensity(depth_m)
+    )
+    expected = planar_tmm_coefficients()["SiO2_absorptance_from_flux"]
+    assert integrated_absorptance == pytest.approx(expected, rel=2.0e-12)
+
+
+def test_planar_sio2_gaussian_cell_integration_preserves_wide_plane_power() -> None:
+    edges_m = np.linspace(-30.0e-6, 30.0e-6, 601)
+    x_fraction = gaussian_cell_power(edges_m, center_m=-5.891747237569059e-6)
+    y_fraction = gaussian_cell_power(edges_m, center_m=0.0)
+    captured_power = INCIDENT_POWER_W * np.sum(x_fraction) * np.sum(y_fraction)
+    assert captured_power / INCIDENT_POWER_W == pytest.approx(
+        0.9999999820978916, rel=2.0e-12
+    )
+    assert WAIST_M == pytest.approx(8.75e-6)
+
+
+def test_device_a_current_cause_summary_keeps_planar_oxide_diagnostic_only() -> None:
+    repository = Path(__file__).resolve().parents[3]
+    summary_path = (
+        repository
+        / "photothermal_pte"
+        / "reports"
+        / "paper_ir_device_a_current_cause_controls"
+        / "device_a_current_cause_controls_summary.json"
+    )
+    summary = json.loads(summary_path.read_text())
+    assert summary["status"] == "COMPLETED_DEVICE_A_CURRENT_CAUSE_CONTROLS"
+    assert summary["interpretation_limits"]["planar_SiO2_is_not_production"]
+    ratios = summary["sampled_maximum_ratios"]
+    assert ratios["Ta-only uniform 45deg weighting"]["abs_b_over_abs_a"] < ratios[
+        "Ta-only actual weighting"
+    ]["abs_b_over_abs_a"]
+    assert ratios["Ta+planar-SiO2 actual weighting"]["abs_b_over_abs_a"] < 1.0
