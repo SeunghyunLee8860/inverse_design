@@ -579,3 +579,30 @@ def test_device_a_q_current_colocalization_identifies_equal_power_edge_enrichmen
         assert row["current_efficiency_b_over_a"] < 1.0
         assert row["free_edge_power_fraction_a_over_b"] > 1.0
         assert row["nearest_0p25um_power_fraction_a_over_b"] > 2.5
+
+
+def test_device_a_edge_source_thermal_split_is_causal_and_closes() -> None:
+    repository = Path(__file__).resolve().parents[3]
+    summary_path = (
+        repository
+        / "photothermal_pte"
+        / "reports"
+        / "paper_ir_device_a_edge_source_thermal_superposition"
+        / "device_a_edge_source_thermal_superposition_summary.json"
+    )
+    summary = json.loads(summary_path.read_text())
+    assert (
+        summary["status"]
+        == "VALIDATED_DEVICE_A_FREE_EDGE_Q_CAUSAL_CURRENT_SPLIT"
+    )
+    assert all(summary["numerical_gates"].values())
+    for row in summary["same_position_a_minus_b"]:
+        assert row["full_a_minus_b_current_A"] > 0.0
+        assert row["free_edge_source_a_minus_b_current_A"] > 0.0
+        assert row["free_edge_fraction_of_full_a_minus_b"] > 0.9
+    near_edge = summary["same_position_a_minus_b"][:2]
+    assert all(
+        row["free_edge_fraction_of_full_a_minus_b"] > 1.0
+        and row["remainder_source_a_minus_b_current_A"] < 0.0
+        for row in near_edge
+    )

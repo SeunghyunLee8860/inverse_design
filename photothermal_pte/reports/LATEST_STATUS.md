@@ -1,5 +1,35 @@
 # Latest photothermal validation status
 
+## Device-A free-edge Q causal thermal-current split
+
+- Status: `VALIDATED_DEVICE_A_FREE_EDGE_Q_CAUSAL_CURRENT_SPLIT` for the
+  present discrete Device-A model. Six CPU explicit-3D thermal solves used
+  one unchanged matrix; no FDTD, weighting solve, adjoint, AD-FD, or
+  optimization was run.
+- Each immutable mapped source was partitioned exactly as
+  `Q_full=Q_free-edge+Q_remainder`, where `free-edge` is the exclusive
+  non-contact flake region within 1 um of the digitized free edge. No
+  equal-power normalization, clipping, smoothing, gain, rescaling, tiling,
+  nearest relocation, or source deletion was used.
+- At the same `d=1,3,5 um` positions, full `a-b` currents are `2.566641`,
+  `2.236814`, and `1.908797 nA`. The free-edge source alone produces
+  `3.449318`, `2.719125`, and `1.788827 nA`, or `134.4%`, `121.6%`, and
+  `93.7%` of the full polarization difference.
+- At `d=1,3 um`, the remainder source contributes `-0.882677` and
+  `-0.482311 nA`, so it favors `b` and partially cancels the edge term. At
+  `d=5 um`, it contributes only `+0.119970 nA` (`6.3%`). Thus the present
+  simulated `a>b` trend is causally dominated by the edge-localized Maxwell
+  source rather than by total absorbed power or a post-hoc current partition.
+- All source/current/`a-b` superposition gates pass. Maximum full/edge/
+  remainder linear residuals are `1.02e-10`, `1.00e-10`, and `2.61e-10`;
+  maximum edge-solve energy error is `4.41e-11`.
+- This result is conditional on the current digitized geometry, Maxwell Q,
+  thermal operator, and weighting field. It does not certify that the edge Q
+  is physically correct; exact CAD, edge optical mesh, contact/metal thermal
+  treatment, and beam-contract uncertainties remain.
+- Report, JSON, CSV, plots, and external raw-artifact manifest:
+  `reports/paper_ir_device_a_edge_source_thermal_superposition/`.
+
 ## Device-A mapped-Q/current co-localization
 
 - Status: `COMPLETED_DEVICE_A_Q_CURRENT_COLOCALIZATION`, limited to a
