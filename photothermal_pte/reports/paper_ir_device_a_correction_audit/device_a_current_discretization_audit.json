@@ -1,0 +1,127 @@
+{
+  "status": "DIAGNOSTIC_CURRENT_QUADRATURE_DISAGREEMENT_PRESERVED",
+  "scope": "offline reintegration of immutable temperature/weighting fields; no new FDTD or thermal solve",
+  "axis_mapping": "x=b, y=a",
+  "cases": {
+    "a": {
+      "directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/thermal_a_paper_reduced_L60_cpu120_127_20260802",
+      "fields": {
+        "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/thermal_a_paper_reduced_L60_cpu120_127_20260802/thermal_pte_fields.npz",
+        "size_bytes": 65386833,
+        "sha256": "fcbb505962bda4d3b34ea13f77191af9a360304420db43d0deb4fffb6cfbbcf7"
+      },
+      "legacy": {
+        "reported_A": 5.554954641958292e-09,
+        "offline_reintegrated_A": 5.554954641958293e-09,
+        "reintegration_relative_error": 1.4890861687781866e-16,
+        "signed_parts": {
+          "positive_A": 1.2422123296685416e-08,
+          "negative_A": -6.867168654727121e-09,
+          "net_A": 5.554954641958295e-09,
+          "absolute_sum_A": 1.9289291951412538e-08,
+          "cancellation_factor_abs_net_over_abs_sum": 0.28798126214018505
+        },
+        "contract": "stored one-sided/centered cell-gradient volume quadrature"
+      },
+      "strict_centered": {
+        "current_A": 5.598360341151528e-09,
+        "relative_change_vs_legacy": 0.00781387103782605,
+        "signed_parts": {
+          "positive_A": 1.2208507179226974e-08,
+          "negative_A": -6.610146838075447e-09,
+          "net_A": 5.598360341151527e-09,
+          "absolute_sum_A": 1.881865401730242e-08,
+          "cancellation_factor_abs_net_over_abs_sum": 0.2974899446051897
+        },
+        "valid_xy_cell_count": 64779,
+        "masked_flake_xy_cell_count": 1028,
+        "contract": "strict cell-centred +/-x,+/-y stencil; any missing neighbour masks the entire cell contribution",
+        "production_status": "DIAGNOSTIC_ONLY_BOUNDARY_VOLUME_REMOVED"
+      },
+      "internal_face": {
+        "current_A": 5.5407738119124435e-09,
+        "current_x_A": 2.692499390651783e-09,
+        "current_y_A": 2.848274421260661e-09,
+        "relative_change_vs_legacy": 0.0025528255332162384,
+        "signed_parts": {
+          "positive_A": 1.4057563157379306e-08,
+          "negative_A": -8.516789345466863e-09,
+          "net_A": 5.5407738119124435e-09,
+          "absolute_sum_A": 2.257435250284617e-08,
+          "cancellation_factor_abs_net_over_abs_sum": 0.24544552545699214
+        },
+        "connected_x_face_count": 65571,
+        "connected_y_face_count": 65506,
+        "contract": "symmetric TaIrTe4--TaIrTe4 internal-face bilinear form; T and psi differences share the same face and dual volume",
+        "exterior_boundary_half_control_volumes_included": false,
+        "production_status": "DIAGNOSTIC_ONLY_PENDING_EXPLICIT_CONTACT_BOUNDARY_FACE_QUADRATURE"
+      }
+    },
+    "b": {
+      "directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/thermal_b_paper_reduced_L60_cpu120_127_20260802",
+      "fields": {
+        "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/thermal_b_paper_reduced_L60_cpu120_127_20260802/thermal_pte_fields.npz",
+        "size_bytes": 65386833,
+        "sha256": "cf7983187e116fc590f9ba678e9e701e92029fc98ede809ecac80b57d7c6602c"
+      },
+      "legacy": {
+        "reported_A": 3.93853912424388e-09,
+        "offline_reintegrated_A": 3.938539124243879e-09,
+        "reintegration_relative_error": 2.1002219007074856e-16,
+        "signed_parts": {
+          "positive_A": 1.2935616678448892e-08,
+          "negative_A": -8.997077554205013e-09,
+          "net_A": 3.93853912424388e-09,
+          "absolute_sum_A": 2.1932694232653905e-08,
+          "cancellation_factor_abs_net_over_abs_sum": 0.17957388556395826
+        },
+        "contract": "stored one-sided/centered cell-gradient volume quadrature"
+      },
+      "strict_centered": {
+        "current_A": 4.03025509554655e-09,
+        "relative_change_vs_legacy": 0.023286799599909824,
+        "signed_parts": {
+          "positive_A": 1.2865620371128371e-08,
+          "negative_A": -8.835365275581822e-09,
+          "net_A": 4.0302550955465495e-09,
+          "absolute_sum_A": 2.1700985646710193e-08,
+          "cancellation_factor_abs_net_over_abs_sum": 0.18571760569582813
+        },
+        "valid_xy_cell_count": 64779,
+        "masked_flake_xy_cell_count": 1028,
+        "contract": "strict cell-centred +/-x,+/-y stencil; any missing neighbour masks the entire cell contribution",
+        "production_status": "DIAGNOSTIC_ONLY_BOUNDARY_VOLUME_REMOVED"
+      },
+      "internal_face": {
+        "current_A": 3.950074625397728e-09,
+        "current_x_A": 1.9142947406063487e-09,
+        "current_y_A": 2.03577988479138e-09,
+        "relative_change_vs_legacy": 0.0029288781423655605,
+        "signed_parts": {
+          "positive_A": 1.5208850830756057e-08,
+          "negative_A": -1.125877620535833e-08,
+          "net_A": 3.950074625397727e-09,
+          "absolute_sum_A": 2.6467627036114387e-08,
+          "cancellation_factor_abs_net_over_abs_sum": 0.14924173670756177
+        },
+        "connected_x_face_count": 65571,
+        "connected_y_face_count": 65506,
+        "contract": "symmetric TaIrTe4--TaIrTe4 internal-face bilinear form; T and psi differences share the same face and dual volume",
+        "exterior_boundary_half_control_volumes_included": false,
+        "production_status": "DIAGNOSTIC_ONLY_PENDING_EXPLICIT_CONTACT_BOUNDARY_FACE_QUADRATURE"
+      }
+    }
+  },
+  "abs_Ia_over_abs_Ib": {
+    "legacy": 1.4104099176683262,
+    "strict_centered": 1.3890833727467378,
+    "internal_face": 1.4027010467820085
+  },
+  "paper_digitized_abs_Ia_over_abs_Ib": 0.8365896980461811,
+  "interpretation": {
+    "legacy_is_not_promoted": true,
+    "strict_is_not_promoted": "it obeys the four-neighbour mask but deletes boundary volume",
+    "internal_face_is_not_promoted": "it collocates both differences on common faces but an explicit contact boundary-face quadrature is still missing",
+    "root_cause_test": "if every quadrature retains abs(Ia)/abs(Ib)>1, the old ratio cannot be explained solely by the one-sided cell stencil"
+  }
+}

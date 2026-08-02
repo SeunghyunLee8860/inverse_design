@@ -1,0 +1,108 @@
+{
+  "status": "BLOCKED_DEVICE_A_FIG3H_REGISTRATION_AND_EXACT_LOSS_ATTRIBUTION",
+  "scope": "offline figure registration, read-only completed-FSP E/index audit, two intersection-remap thermal solves, and offline current quadrature; no new Maxwell run",
+  "definite_findings": {
+    "old_fig3h_pixels_used_for_source_coordinate": false,
+    "old_scan_direction_mismatch_deg": 53.642802580004535,
+    "old_chord_is_literal_polygon_edge": false,
+    "E_index_component_collocation_maximum_mismatch_m": 5.082197683525802e-21,
+    "covered_cell_full_power_exceeds_literal_intersection_attribution": true,
+    "which_attribution_is_exact_for_conformal_loss": "UNRESOLVED",
+    "intersection_mapping_closure_maximum": 1.2851573838866019e-16,
+    "intersection_mapping_power_outside_TaIrTe4_W": {
+      "a": 0.0,
+      "b": 0.0
+    },
+    "one_sided_gradient_is_sole_polarization_reversal_cause": false
+  },
+  "power_and_current": {
+    "P_Q_covered_cell_full_power_W": {
+      "a": 4.0598993631165526e-05,
+      "b": 5.3823112102893526e-05
+    },
+    "P_Q_intersection_density_W": {
+      "a": 3.930443310170168e-05,
+      "b": 5.2727110803670396e-05
+    },
+    "P_Q_relative_change": {
+      "a": -0.03188651771087463,
+      "b": -0.02036302354884101
+    },
+    "legacy_current_ratio_covered_cell_full_power": 1.4104099176683262,
+    "legacy_current_ratio_intersection_density": 1.3717882341299703,
+    "ratio_relative_change": -0.027383303998744467,
+    "paper_digitized_ratio": 0.8365896980461811,
+    "all_named_quadratures_retain_Ia_over_Ib_gt_1": true,
+    "cases": [
+      {
+        "Q_attribution": "covered-cell-full-power",
+        "current_quadrature": "legacy",
+        "abs_Ia_over_abs_Ib": 1.4104099176683262,
+        "I_a_A": 5.554954641958292e-09,
+        "I_b_A": 3.93853912424388e-09
+      },
+      {
+        "Q_attribution": "covered-cell-full-power",
+        "current_quadrature": "strict_centered",
+        "abs_Ia_over_abs_Ib": 1.3890833727467378,
+        "I_a_A": 5.598360341151528e-09,
+        "I_b_A": 4.03025509554655e-09
+      },
+      {
+        "Q_attribution": "covered-cell-full-power",
+        "current_quadrature": "internal_face",
+        "abs_Ia_over_abs_Ib": 1.4027010467820085,
+        "I_a_A": 5.5407738119124435e-09,
+        "I_b_A": 3.950074625397728e-09
+      },
+      {
+        "Q_attribution": "intersection-density",
+        "current_quadrature": "legacy",
+        "abs_Ia_over_abs_Ib": 1.3717882341299703,
+        "I_a_A": 5.10117932583185e-09,
+        "I_b_A": 3.718634698064146e-09
+      },
+      {
+        "Q_attribution": "intersection-density",
+        "current_quadrature": "strict_centered",
+        "abs_Ia_over_abs_Ib": 1.3536053958382057,
+        "I_a_A": 5.175638909186727e-09,
+        "I_b_A": 3.823595063302601e-09
+      },
+      {
+        "Q_attribution": "intersection-density",
+        "current_quadrature": "internal_face",
+        "abs_Ia_over_abs_Ib": 1.3649155787327598,
+        "I_a_A": 5.099003156222557e-09,
+        "I_b_A": 3.73576449391593e-09
+      }
+    ]
+  },
+  "loss_proxy": {
+    "definition": "Im(epsilon_eff,c)/Im(epsilon_bulk-TaIrTe4,c)",
+    "status": "DIAGNOSTIC_ONLY_NOT_OCCUPANCY",
+    "no_clipping_applied": true,
+    "component_coordinate_pairing_passed": true,
+    "out_of_unit_interval_occurs": true,
+    "thermal_source_from_proxy": false,
+    "reason_not_promoted": "Q already contains Im(epsilon_eff), and cells containing lossy metal/SiO2 make the ratio exceed one; multiplying Q by the proxy can double-count conformal mixing"
+  },
+  "unresolved": {
+    "absolute_fig3h_source_coordinate": true,
+    "raw_experimental_stage_metadata_or_CAD": "not published in supplied files",
+    "exact_conformal_material_resolved_absorption": true,
+    "explicit_contact_boundary_face_current_quadrature": true,
+    "absolute_current_geometry_resistance_mismatch": {
+      "predicted_ohm": 14.139060834318492,
+      "measured_ohm": 213.0
+    }
+  },
+  "gates": {
+    "21_targeted_offline_tests_passed": true,
+    "new_FDTD_run": false,
+    "new_GPU_run": false,
+    "new_source_position_promoted": false,
+    "paper_trend_reproduced": false
+  },
+  "next_step_requires_explicit_assumption": "choose a named Fig3H-to-Fig2 affine registration or obtain raw scan coordinates; only then run one E||a/b Gaussian pair at the registered point. Do not reuse the old chord-normal s=3 um coordinate."
+}

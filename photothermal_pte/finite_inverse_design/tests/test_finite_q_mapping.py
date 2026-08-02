@@ -2,7 +2,9 @@ import numpy as np
 import pytest
 
 from photothermal_pte.finite_inverse_design.finite_q_mapping import (
+    apply_material_intersection_density_separable,
     build_conservative_embedding_remap,
+    build_material_intersection_remap,
     build_material_overlap_remap,
     exact_nonzero_box,
     nodal_control_volume_edges,
@@ -143,6 +145,49 @@ def test_material_overlap_remap_reports_uncovered_power_without_relocation() -> 
     assert target[:, 0, 0] == pytest.approx([2.0, 0.0])
     assert remap.power_target(target) == pytest.approx(2.0)
     assert remap.uncovered_source_power(source) == pytest.approx(3.0)
+
+
+def test_material_intersection_remap_does_not_force_cut_cell_power_into_material() -> None:
+    source_edges = (
+        np.array([0.0, 1.0, 2.0]),
+        np.array([0.0, 1.0]),
+        np.array([0.0, 1.0]),
+    )
+    target_edges = (
+        np.array([0.0, 0.5, 1.0, 1.5, 2.0]),
+        np.array([0.0, 1.0]),
+        np.array([0.0, 1.0]),
+    )
+    support = np.zeros((4, 1, 1), bool)
+    support[[0, 2], 0, 0] = True
+    remap = build_material_intersection_remap(
+        source_edges_m=source_edges,
+        target_edges_m=target_edges,
+        target_material_support_mask=support,
+    )
+    source = np.array([2.0, 3.0])[:, None, None]
+    target = remap.apply(source)
+
+    # Only half of each source cell intersects material.  The volumetric
+    # density is unchanged on that half and the other half is not reassigned.
+    assert target[:, 0, 0] == pytest.approx([2.0, 0.0, 3.0, 0.0])
+    assert remap.power_target(target) == pytest.approx(2.5)
+    assert remap.material_attributed_source_power(source) == pytest.approx(2.5)
+    assert remap.power_source(source) == pytest.approx(5.0)
+    sensitivity = np.array([1.0, 7.0, -2.0, 5.0])[:, None, None]
+    assert np.sum(sensitivity * target) == pytest.approx(
+        np.sum(remap.transpose(sensitivity) * source), rel=2e-13
+    )
+
+    separable, overlap, audit = apply_material_intersection_density_separable(
+        source_density=source,
+        source_edges_m=source_edges,
+        target_edges_m=target_edges,
+        target_material_support_mask=support,
+    )
+    assert separable == pytest.approx(target, rel=2e-13, abs=1e-14)
+    assert np.sum(overlap * source) == pytest.approx(2.5)
+    assert audit["relative_power_error"] < 2e-13
 
 
 def test_nodal_edges_match_trapezoid_length_and_nonzero_box() -> None:

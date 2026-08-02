@@ -108,6 +108,26 @@ class ConservativeEmbeddingRemap:
         uncovered = np.asarray(self.source_material_overlap_m3) <= 0.0
         return float(np.sum(self.source_volume_m3[uncovered] * source[uncovered]))
 
+    def material_attributed_source_power(self, source_density: np.ndarray) -> float:
+        """Power supported by the literal source/material intersection.
+
+        This differs from :meth:`power_source` for a cut source cell.  It is
+        the appropriate input-power measure for an intersection-density map,
+        which deliberately does not assign the non-overlapping fraction of a
+        source cell to the selected material.
+        """
+
+        source = np.asarray(source_density, float)
+        if source.shape != self.source_shape:
+            raise ValueError(
+                f"source shape {source.shape} != {self.source_shape}"
+            )
+        if self.source_material_overlap_m3 is None:
+            raise ValueError("remap has no material-overlap measure")
+        return float(
+            np.sum(np.asarray(self.source_material_overlap_m3) * source)
+        )
+
 
 def build_conservative_embedding_remap(
     *,
@@ -279,6 +299,171 @@ def build_material_overlap_remap(
         source_material_overlap_m3=source_material_volume,
         target_material_support_mask=support,
     )
+
+
+def build_material_intersection_remap(
+    *,
+    source_edges_m: tuple[np.ndarray, np.ndarray, np.ndarray],
+    target_edges_m: tuple[np.ndarray, np.ndarray, np.ndarray],
+    target_material_support_mask: np.ndarray,
+    bounds_tolerance_m: float = 1.0e-15,
+) -> ConservativeEmbeddingRemap:
+    """Deposit only the literal optical-cell/material intersection power.
+
+    If ``Q[m]`` is treated as a cell-average volumetric loss density, this
+    operator applies
+
+    ``p[m->i] = Q[m] |cell_m intersect cell_i intersect Omega_h|``.
+
+    Unlike :func:`build_material_overlap_remap`, it does *not* multiply a
+    cut-cell column by ``V_source/V_material``.  Consequently, power in the
+    non-overlapping air/oxide/metal fraction is not forced into the selected
+    material.  The operator is intentionally provided as a distinct physical
+    attribution scenario because a conformal Yee-cell loss density is not, by
+    itself, an exact material-occupancy measurement.
+    """
+
+    source = tuple(
+        np.asarray(axis, float).reshape(-1) for axis in source_edges_m
+    )
+    target = tuple(
+        np.asarray(axis, float).reshape(-1) for axis in target_edges_m
+    )
+    base = build_conservative_embedding_remap(
+        source_edges_m=source,
+        target_edges_m=target,
+        bounds_tolerance_m=bounds_tolerance_m,
+    )
+    support = np.asarray(target_material_support_mask, bool)
+    if support.shape != base.target_shape:
+        raise ValueError(
+            f"support shape {support.shape} != {base.target_shape}"
+        )
+    if not np.any(support):
+        raise ValueError("material support is empty")
+
+    overlaps = [
+        _overlap_1d(target_axis, source_axis)
+        for target_axis, source_axis in zip(target, source)
+    ]
+    geometric_overlap = sparse.kron(
+        overlaps[0],
+        sparse.kron(overlaps[1], overlaps[2]),
+        format="csr",
+    )
+    material_overlap = (
+        sparse.diags(support.reshape(-1).astype(float), format="csr")
+        @ geometric_overlap
+    ).tocsr()
+    source_material_volume = np.asarray(
+        material_overlap.sum(axis=0)
+    ).reshape(base.source_shape)
+    target_volume = base.target_volume_m3.reshape(-1)
+    density_operator = (
+        sparse.diags(1.0 / target_volume, format="csr")
+        @ material_overlap
+    ).tocsr()
+    if np.any(density_operator.data < 0.0):
+        raise RuntimeError("material-intersection operator has negative weights")
+
+    delivered_volume = np.asarray(
+        (
+            sparse.diags(target_volume, format="csr")
+            @ density_operator
+        ).sum(axis=0)
+    ).reshape(base.source_shape)
+    if not np.allclose(
+        delivered_volume,
+        source_material_volume,
+        rtol=2.0e-13,
+        atol=1.0e-30,
+    ):
+        raise RuntimeError("material-intersection volume does not close")
+    return ConservativeEmbeddingRemap(
+        density_operator=density_operator,
+        source_volume_m3=base.source_volume_m3,
+        target_volume_m3=base.target_volume_m3,
+        source_shape=base.source_shape,
+        target_shape=base.target_shape,
+        source_material_overlap_m3=source_material_volume,
+        target_material_support_mask=support,
+    )
+
+
+def apply_material_intersection_density_separable(
+    *,
+    source_density: np.ndarray,
+    source_edges_m: tuple[np.ndarray, np.ndarray, np.ndarray],
+    target_edges_m: tuple[np.ndarray, np.ndarray, np.ndarray],
+    target_material_support_mask: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray, dict[str, float]]:
+    """Memory-bounded exact Cartesian intersection deposition.
+
+    This is the large-grid application equivalent of
+    :func:`build_material_intersection_remap`.  It applies the three 1-D
+    overlap matrices sequentially instead of materializing their full 3-D
+    Kronecker product.  The returned source-overlap volume makes the
+    attributed input power independently reintegrable.
+    """
+
+    source_edges = tuple(
+        np.asarray(axis, float).reshape(-1) for axis in source_edges_m
+    )
+    target_edges = tuple(
+        np.asarray(axis, float).reshape(-1) for axis in target_edges_m
+    )
+    source = np.asarray(source_density, float)
+    source_shape = tuple(axis.size - 1 for axis in source_edges)
+    target_shape = tuple(axis.size - 1 for axis in target_edges)
+    support = np.asarray(target_material_support_mask, bool)
+    if source.shape != source_shape:
+        raise ValueError(f"source shape {source.shape} != {source_shape}")
+    if support.shape != target_shape:
+        raise ValueError(f"support shape {support.shape} != {target_shape}")
+    if np.any(~np.isfinite(source)):
+        raise ValueError("source density must be finite")
+
+    ox, oy, oz = (
+        _overlap_1d(target_axis, source_axis)
+        for target_axis, source_axis in zip(target_edges, source_edges)
+    )
+    target_power = np.zeros(target_shape, float)
+    for target_z in range(target_shape[2]):
+        weights_z = np.asarray(oz.getrow(target_z).toarray()).reshape(-1)
+        if not np.any(weights_z):
+            continue
+        source_xy_integrated = np.tensordot(source, weights_z, axes=(2, 0))
+        target_x_source_y = ox @ source_xy_integrated
+        target_xy_integrated = (oy @ target_x_source_y.T).T
+        target_power[:, :, target_z] = np.where(
+            support[:, :, target_z], target_xy_integrated, 0.0
+        )
+
+    source_material_overlap = np.zeros(source_shape, float)
+    support_float = support.astype(float)
+    for source_z in range(source_shape[2]):
+        weights_z = np.asarray(oz.getcol(source_z).toarray()).reshape(-1)
+        if not np.any(weights_z):
+            continue
+        target_xy_weighted = np.tensordot(
+            support_float, weights_z, axes=(2, 0)
+        )
+        source_x_target_y = ox.T @ target_xy_weighted
+        source_xy_overlap = (oy.T @ source_x_target_y.T).T
+        source_material_overlap[:, :, source_z] = source_xy_overlap
+
+    target_volume = _volumes(target_edges)
+    target_density = target_power / target_volume
+    attributed_source_power = float(np.sum(source * source_material_overlap))
+    target_integrated_power = float(np.sum(target_power))
+    closure = abs(target_integrated_power - attributed_source_power) / max(
+        abs(attributed_source_power), np.finfo(float).tiny
+    )
+    return target_density, source_material_overlap, {
+        "material_attributed_source_power_W": attributed_source_power,
+        "target_integrated_power_W": target_integrated_power,
+        "relative_power_error": closure,
+    }
 
 
 def project_remap_to_material_support_along_axis(

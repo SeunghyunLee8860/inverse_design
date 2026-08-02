@@ -22,6 +22,8 @@ from photothermal_pte.validation.paper_ir_sanity.run_device_a_explicit_thermal_p
     Geometry,
     measure_weighted_mean,
     pte_current,
+    pte_current_internal_face_bilinear,
+    pte_current_strict_centered,
     solve_weighting_potential,
     straight_edge_temperature_metrics,
     strict_centered_cell_gradient,
@@ -117,6 +119,83 @@ def test_pte_volume_and_thickness_integrated_area_forms_are_equivalent() -> None
         rel=2e-14,
     )
     assert fields["PTE_volume_area_equivalence_relative_error"][0] < 2e-14
+
+
+def test_internal_face_pte_pairs_temperature_and_weighting_on_same_faces() -> None:
+    x_edges = np.asarray([-2.0, -1.0, 0.5, 3.0]) * 1.0e-6
+    y_edges = np.asarray([-3.0, -0.5, 1.0, 4.0]) * 1.0e-6
+    z_edges = np.asarray([-130.0, -60.0, 0.0]) * 1.0e-9
+    x = 0.5 * (x_edges[:-1] + x_edges[1:])
+    y = 0.5 * (y_edges[:-1] + y_edges[1:])
+    z = 0.5 * (z_edges[:-1] + z_edges[1:])
+    xx, yy, zz = np.meshgrid(x, y, z, indexing="ij")
+    ax, ay = 2.0e5, -3.0e5
+    bx, by = -4.0e4, 5.0e4
+    temperature = ax * xx + ay * yy + 7.0e4 * zz
+    psi = bx * xx[:, :, 0] + by * yy[:, :, 0]
+    shape = temperature.shape
+    geometry = Geometry(
+        x_edges_m=x_edges,
+        y_edges_m=y_edges,
+        z_edges_m=z_edges,
+        material_id=np.full(shape, 3, np.uint8),
+        flake_mask=np.ones(shape, bool),
+        kappa_W_mK=np.ones((*shape, 3)),
+        interface_resistance_m2K_W={
+            "x": np.zeros((shape[0] - 1, shape[1], shape[2])),
+            "y": np.zeros((shape[0], shape[1] - 1, shape[2])),
+            "z": np.zeros((shape[0], shape[1], shape[2] - 1)),
+        },
+    )
+    current, fields = pte_current_internal_face_bilinear(
+        temperature, geometry, psi
+    )
+    thickness = z_edges[-1] - z_edges[0]
+    x_center_span = x[-1] - x[0]
+    y_center_span = y[-1] - y[0]
+    full_x_width = x_edges[-1] - x_edges[0]
+    full_y_width = y_edges[-1] - y_edges[0]
+    expected_x = (
+        -1.10e5 * 27.0e-6 * ax * bx
+        * x_center_span * full_y_width * thickness
+    )
+    expected_y = (
+        -4.91e5 * -6.0e-6 * ay * by
+        * full_x_width * y_center_span * thickness
+    )
+    assert fields["current_x_faces_A"] == pytest.approx(expected_x, rel=2e-14)
+    assert fields["current_y_faces_A"] == pytest.approx(expected_y, rel=2e-14)
+    assert current == pytest.approx(expected_x + expected_y, rel=2e-14)
+
+
+def test_strict_pte_masks_boundary_cells_and_any_missing_neighbour() -> None:
+    edges = np.linspace(-2.5e-6, 2.5e-6, 6)
+    z_edges = np.asarray([-130.0e-9, 0.0])
+    x = 0.5 * (edges[:-1] + edges[1:])
+    xx, yy = np.meshgrid(x, x, indexing="ij")
+    temperature = (2.0e5 * xx + 3.0e5 * yy)[:, :, None]
+    psi = -4.0e4 * xx + 5.0e4 * yy
+    shape = temperature.shape
+    flake = np.ones(shape, bool)
+    flake[2, 3, 0] = False
+    geometry = Geometry(
+        x_edges_m=edges,
+        y_edges_m=edges,
+        z_edges_m=z_edges,
+        material_id=np.where(flake, 3, 0).astype(np.uint8),
+        flake_mask=flake,
+        kappa_W_mK=np.ones((*shape, 3)),
+        interface_resistance_m2K_W={
+            "x": np.zeros((shape[0] - 1, shape[1], shape[2])),
+            "y": np.zeros((shape[0], shape[1] - 1, shape[2])),
+            "z": np.zeros((shape[0], shape[1], 0)),
+        },
+    )
+    _, fields = pte_current_strict_centered(temperature, geometry, psi)
+    expected_valid = strict_centered_xy_mask(flake[:, :, 0])
+    assert np.array_equal(fields["valid_xy_mask"], expected_valid)
+    contribution = fields["cell_contribution_A"][:, :, 0]
+    assert np.count_nonzero(contribution[~expected_valid]) == 0
 
 
 def test_weighted_mean_uses_literal_cell_measure() -> None:

@@ -1,0 +1,112 @@
+{
+  "status": "BLOCKED_FIG3H_TO_FIG2_ABSOLUTE_REGISTRATION_UNDERDETERMINED",
+  "scope": "offline figure-coordinate audit; no FDTD, thermal, PTE, or fitting",
+  "fig3h_input": {
+    "path": "/tmp/device_a_fig3_pcMIuS/fig3h.png",
+    "size_bytes": 555462,
+    "sha256": "9f19cb2b9bdc80cd81c7e344e4e01763569034fbf803899ba7b4aea3cddbaaba",
+    "render_dpi": 600,
+    "generation_command": "pdftoppm -f 6 -l 6 -r 600 -png -singlefile PAPER page6; crop=1900x1900+450+2300"
+  },
+  "visible_pixel_contract": {
+    "left_panel_bounds_px": [
+      [
+        125.0,
+        251.0
+      ],
+      [
+        680.0,
+        720.0
+      ]
+    ],
+    "black_scan_line_endpoints_px": [
+      [
+        217.0,
+        252.0
+      ],
+      [
+        217.0,
+        719.0
+      ]
+    ],
+    "black_scan_line_unit_direction_image_xy": [
+      0.0,
+      1.0
+    ],
+    "white_dashed_region_vertices_px": [
+      [
+        150.0,
+        365.0
+      ],
+      [
+        288.0,
+        365.0
+      ],
+      [
+        288.0,
+        554.0
+      ],
+      [
+        150.0,
+        554.0
+      ]
+    ],
+    "scale_bar_endpoints_px": [
+      [
+        263.0,
+        281.0
+      ],
+      [
+        375.0,
+        281.0
+      ]
+    ],
+    "scale_bar_length_px": 112.0,
+    "assumed_scale_bar_length_um": 10.0,
+    "scale_assumption_status": "EXPLICIT_FIGURE_READING_ASSUMPTION; the crop does not print the scale-bar label",
+    "pixels_per_um_under_assumption": 11.2,
+    "scan_line_length_um_under_assumption": 41.69642857142858
+  },
+  "old_contract_audit": {
+    "old_geometry_json": "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json",
+    "old_geometry_sha256": "291034c04b3caf153c1d68b3499718f6a35d24229a53102b0d5bea4b78a0325e",
+    "old_source_rule": "target off-axis segment midpoint plus 3 um inward, frozen before any simulated current is inspected",
+    "old_source_center_code_um": [
+      -9.683436862131288,
+      0.5972383224697237
+    ],
+    "old_chord_endpoint_vertices": [
+      4,
+      7
+    ],
+    "old_chord_endpoints_fig2_px": [
+      [
+        141.0,
+        628.0
+      ],
+      [
+        247.0,
+        484.0
+      ]
+    ],
+    "old_chord_is_literal_polygon_edge": false,
+    "intermediate_actual_polygon_vertices": [
+      5,
+      6
+    ],
+    "old_chord_normal_unit_direction_image_xy": [
+      0.8053368838936223,
+      0.5928174284216942
+    ],
+    "direction_mismatch_vs_fig3h_scan_deg": 53.642802580004535,
+    "fig3h_pixels_used_by_old_coordinate_calculation": false
+  },
+  "registration_gate": {
+    "fig3h_scan_line_digitized": true,
+    "fig3h_to_fig2_shared_fiducials_published": false,
+    "absolute_source_coordinate_identified": false,
+    "old_s2_s3_s4_um_sweep_is_fig3h_scan": false,
+    "new_FDTD_authorized_by_this_gate": false
+  },
+  "required_next_registration": "digitize at least two non-collinear structural fiducials visible in both Fig. 2D and Fig. 3H, or report a named approximate affine registration with uncertainty; do not reuse the old 3-um chord-normal point as an experimental coordinate"
+}
