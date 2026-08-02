@@ -389,23 +389,31 @@ def parse_args() -> argparse.Namespace:
         )
     if args.scenario_waist_um is not None and not (
         np.isclose(args.domain_um, 60.0)
-        and (
-            np.isclose(args.source_span_um, 50.0)
-            or np.isclose(args.source_span_um, 40.0)
+        and any(
+            np.isclose(args.source_span_um, allowed)
+            for allowed in (36.0, 40.0, 50.0)
         )
     ):
         parser.error(
             "the named waist scenario keeps the frozen 60-um domain and a "
-            "50-um (default) or 40-um (edge-scan clearance) source span"
+            "50-um (default), 40-um, or 36-um (edge-scan clearance) "
+            "source span"
         )
-    if (
-        args.scenario_waist_um is not None
-        and args.source_span_um < 5.0 * args.scenario_waist_um
-    ):
-        parser.error(
-            "scenario source span must be at least 5x the scenario waist "
-            "so the truncated-Gaussian power capture stays above 0.999"
+    if args.scenario_waist_um is not None:
+        # Fail-closed truncated-Gaussian capture: for a square aperture of
+        # half-width h the captured power fraction of a w0 Gaussian is
+        # erf(sqrt(2) h / w0)^2.
+        from math import erf, sqrt
+
+        half_width = 0.5 * args.source_span_um
+        capture = (
+            erf(sqrt(2.0) * half_width / args.scenario_waist_um) ** 2
         )
+        if capture < 0.999:
+            parser.error(
+                "scenario aperture captures only "
+                f"{capture:.6f} of the Gaussian power (< 0.999)"
+            )
     if (
         args.waist_um <= 0
         or args.source_object_waist_um <= 0
