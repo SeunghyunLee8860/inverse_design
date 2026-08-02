@@ -133,6 +133,125 @@ def polygon_area(vertices_um: np.ndarray) -> float:
     return 0.5 * abs(float(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1))))
 
 
+def validate_device_a_incident_reference_contract(
+    payload: dict[str, Any],
+    args: argparse.Namespace,
+) -> dict[str, Any]:
+    """Fail closed when a translated Device-A source uses the wrong reference.
+
+    The stage-1 loader intentionally permits one empty reference to be held
+    fixed across domain/PML/mesh convergence studies.  That is not valid for
+    the registered Device-A position scan: translating the finite-case source
+    changes the layered-stack incident field sampled by the local monitor.
+    This wrapper-only gate therefore requires a reference generated at the
+    same physical beam centre and with the same numerical source/domain
+    contract.  It does not alter the historical stage-1 convergence policy.
+    """
+
+    pre_run = payload.get("pre_run_contract", {})
+    geometry = pre_run.get("geometry", {})
+    source = geometry.get("source", {})
+    substrate = geometry.get("substrate_optical_contract", {})
+
+    expected_scalars = {
+        "domain_um": float(args.domain_um),
+        "pml_layers": float(args.pml_layers),
+        "flake_dz_nm": float(args.flake_dz_nm),
+        "source_span_m": float(args.source_span_um) * 1.0e-6,
+        "physical_target_waist_radius_m": float(args.waist_um) * 1.0e-6,
+        "Lumerical_source_object_waist_radius_m": (
+            float(args.source_object_waist_um) * 1.0e-6
+        ),
+    }
+    observed_scalars = {
+        "domain_um": payload.get("domain_um"),
+        "pml_layers": payload.get("pml_layers"),
+        "flake_dz_nm": payload.get("flake_dz_nm"),
+        "source_span_m": source.get("source_span_m"),
+        "physical_target_waist_radius_m": source.get(
+            "physical_target_waist_radius_m"
+        ),
+        "Lumerical_source_object_waist_radius_m": source.get(
+            "Lumerical_source_object_waist_radius_m"
+        ),
+    }
+    scalar_mismatches: dict[str, dict[str, Any]] = {}
+    for key, expected in expected_scalars.items():
+        observed = observed_scalars[key]
+        if observed is None or not np.isclose(
+            float(observed), expected, rtol=1.0e-12, atol=1.0e-15
+        ):
+            scalar_mismatches[key] = {
+                "observed": observed,
+                "expected": expected,
+            }
+
+    expected_beam_center_m = np.asarray(
+        [args.beam_x_um, args.beam_y_um], dtype=float
+    ) * 1.0e-6
+    observed_beam_center_m = np.asarray(
+        source.get("beam_center_m", [np.nan, np.nan]), dtype=float
+    )
+    beam_center_matches = bool(
+        observed_beam_center_m.shape == (2,)
+        and np.allclose(
+            observed_beam_center_m,
+            expected_beam_center_m,
+            rtol=0.0,
+            atol=1.0e-15,
+        )
+    )
+
+    expected_pulse_band_m = np.asarray(
+        [args.source_start_m, args.source_stop_m], dtype=float
+    )
+    observed_pulse_band_m = np.asarray(
+        source.get("numerical_pulse_band_m", [np.nan, np.nan]), dtype=float
+    )
+    pulse_band_matches = bool(
+        observed_pulse_band_m.shape == (2,)
+        and np.allclose(
+            observed_pulse_band_m,
+            expected_pulse_band_m,
+            rtol=0.0,
+            atol=1.0e-15,
+        )
+    )
+    observed_substrate_model = substrate.get("model")
+    substrate_matches = observed_substrate_model == args.substrate_optical_model
+
+    audit = {
+        "policy": (
+            "registered Device-A scan requires a polarization- and position-"
+            "matched empty-stack reference with identical domain/PML/dz, "
+            "source aperture, waist, source-object waist, pulse band, and "
+            "substrate optical model"
+        ),
+        "observed_beam_center_m": observed_beam_center_m.tolist(),
+        "expected_beam_center_m": expected_beam_center_m.tolist(),
+        "beam_center_matches_lt_1fm": beam_center_matches,
+        "observed_pulse_band_m": observed_pulse_band_m.tolist(),
+        "expected_pulse_band_m": expected_pulse_band_m.tolist(),
+        "pulse_band_matches": pulse_band_matches,
+        "observed_substrate_optical_model": observed_substrate_model,
+        "expected_substrate_optical_model": args.substrate_optical_model,
+        "substrate_optical_model_matches": substrate_matches,
+        "scalar_contract_mismatches": scalar_mismatches,
+    }
+    audit["passed"] = bool(
+        not scalar_mismatches
+        and beam_center_matches
+        and pulse_band_matches
+        and substrate_matches
+    )
+    if not audit["passed"]:
+        raise RuntimeError(
+            "Device-A incident reference does not match the active scan "
+            f"position/numerical contract: {audit}"
+        )
+    return audit
+
+
 def boundary_mesh_boxes(
     polygons_um: dict[str, np.ndarray],
     *,
@@ -4872,6 +4991,25 @@ def main() -> int:
     base.add_geometry_and_monitors = lambda fdtd, model, parsed: add_geometry_and_monitors(base, fdtd, model, parsed)
     base.assert_pre_run_contract = lambda fdtd, runtime, parsed, setup: assert_contract(base, fdtd, runtime, parsed, setup)
     base.plot_geometry = plot_geometry
+
+    # The generic stage-1 loader intentionally allows a fixed reference over
+    # numerical convergence sweeps.  Device-A position scans instead require
+    # a separately generated empty-stack reference at every translated beam
+    # position.  Keep that stricter policy local to this wrapper.
+    original_load_incident_reference = base.load_incident_reference
+
+    def load_registered_device_a_incident_reference(
+        parsed: argparse.Namespace,
+    ) -> dict[str, Any]:
+        reference_path = Path(str(parsed.incident_reference)).expanduser().resolve()
+        payload = json.loads(reference_path.read_text())
+        audit = validate_device_a_incident_reference_contract(payload, parsed)
+        reference = original_load_incident_reference(parsed)
+        reference["device_a_position_matched_reference_audit"] = audit
+        return reference
+
+    if args.device_a_contract is not None and args.incident_reference:
+        base.load_incident_reference = load_registered_device_a_incident_reference
 
     original_run_case = base.run_case
 

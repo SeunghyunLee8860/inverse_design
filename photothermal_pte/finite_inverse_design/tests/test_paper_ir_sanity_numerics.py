@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -36,6 +37,7 @@ from photothermal_pte.validation.paper_ir_sanity.register_device_a_fig3h_approx 
 from photothermal_pte.validation.paper_ir_sanity.run_lumerical_device_a_ir_q import (
     geometry_scenario_label,
     maximum_absolute_lateral_flux_fraction,
+    validate_device_a_incident_reference_contract,
 )
 
 
@@ -132,6 +134,61 @@ def test_outer_lateral_flux_gate_uses_all_four_signed_faces() -> None:
         }
     }
     assert maximum_absolute_lateral_flux_fraction(box) == 8.0e-7
+
+
+def device_a_reference_contract_fixture() -> tuple[dict, SimpleNamespace]:
+    args = SimpleNamespace(
+        domain_um=64.0,
+        pml_layers=24,
+        flake_dz_nm=10.0,
+        source_span_um=50.0,
+        waist_um=8.75,
+        source_object_waist_um=8.610602974768,
+        beam_x_um=-5.89174723756906,
+        beam_y_um=2.0,
+        source_start_m=9.428571428571428e-6,
+        source_stop_m=13.2e-6,
+        substrate_optical_model="paper-kitamura-palik-nk-11um",
+    )
+    source = {
+        "beam_center_m": [-5.89174723756906e-6, 2.0e-6],
+        "source_span_m": 50.0e-6,
+        "physical_target_waist_radius_m": 8.75e-6,
+        "Lumerical_source_object_waist_radius_m": 8.610602974768e-6,
+        "numerical_pulse_band_m": [9.428571428571428e-6, 13.2e-6],
+    }
+    payload = {
+        "domain_um": 64.0,
+        "pml_layers": 24,
+        "flake_dz_nm": 10.0,
+        "pre_run_contract": {
+            "geometry": {
+                "source": source,
+                "substrate_optical_contract": {
+                    "model": "paper-kitamura-palik-nk-11um"
+                },
+            }
+        },
+    }
+    return payload, args
+
+
+def test_device_a_incident_reference_requires_same_translated_beam() -> None:
+    payload, args = device_a_reference_contract_fixture()
+    audit = validate_device_a_incident_reference_contract(payload, args)
+    assert audit["passed"]
+    payload["pre_run_contract"]["geometry"]["source"]["beam_center_m"][1] = 0.0
+    with pytest.raises(RuntimeError, match="active scan position"):
+        validate_device_a_incident_reference_contract(payload, args)
+
+
+def test_device_a_incident_reference_requires_same_domain_pml_and_dz() -> None:
+    payload, args = device_a_reference_contract_fixture()
+    for key, wrong in (("domain_um", 60.0), ("pml_layers", 32), ("flake_dz_nm", 5.0)):
+        altered = json.loads(json.dumps(payload))
+        altered[key] = wrong
+        with pytest.raises(RuntimeError, match="numerical contract"):
+            validate_device_a_incident_reference_contract(altered, args)
 
 
 def test_strict_centered_gradient_masks_any_missing_xy_neighbour() -> None:
