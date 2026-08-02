@@ -69,7 +69,7 @@ G_SIO2_SI_W_M2K = 1.1e9
 H_EXPOSED_W_M2K = 10.0
 SIGMA_LAB_S_M = np.asarray([1.10e5, 4.91e5])  # b, a
 SEEBECK_LAB_V_K = np.asarray([27.0e-6, -6.0e-6])  # b, a
-EXPERIMENTAL_INCIDENT_POWER_W = 285.0e-6
+DEFAULT_EXPERIMENTAL_INCIDENT_POWER_W = 285.0e-6
 
 FLAKE_VERTICES_UM = np.asarray(
     [
@@ -416,6 +416,138 @@ def solve_weighting_potential(
     }
 
 
+def audit_two_terminal_resistance(
+    x_edges_m: np.ndarray,
+    y_edges_m: np.ndarray,
+    flake_xy: np.ndarray,
+    *,
+    thickness_m: float = THICKNESS_M,
+    measured_resistance_ohm: float = 213.0,
+) -> dict[str, Any]:
+    """Predict the digitized flake's sheet resistance without fitting it.
+
+    This is deliberately separate from the paper's Laplace weighting-field
+    operator.  It solves div(sigma grad(V))=0 with x=b and y=a, applies one
+    volt across the same digitized contacts, and integrates terminal current.
+    Contact resistance is not added because it was not published.
+    """
+    x = 0.5 * (x_edges_m[:-1] + x_edges_m[1:])
+    y = 0.5 * (y_edges_m[:-1] + y_edges_m[1:])
+    dx, dy = np.diff(x_edges_m), np.diff(y_edges_m)
+    ids = np.full(flake_xy.shape, -1, np.int64)
+    ids[flake_xy] = np.arange(np.count_nonzero(flake_xy))
+    count = int(np.count_nonzero(flake_xy))
+    diagonal = np.zeros(count)
+    load = np.zeros(count)
+    rows: list[np.ndarray] = []
+    cols: list[np.ndarray] = []
+    vals: list[np.ndarray] = []
+    for axis, conductivity in enumerate(SIGMA_LAB_S_M):
+        if axis == 0:
+            lhs, rhs = ids[:-1], ids[1:]
+            conductance = (
+                conductivity
+                * thickness_m
+                * 2.0
+                * dy[None, :]
+                / (dx[:-1, None] + dx[1:, None])
+            )
+        else:
+            lhs, rhs = ids[:, :-1], ids[:, 1:]
+            conductance = (
+                conductivity
+                * thickness_m
+                * 2.0
+                * dx[:, None]
+                / (dy[None, :-1] + dy[None, 1:])
+            )
+        connected = (lhs >= 0) & (rhs >= 0)
+        left_id, right_id = lhs[connected], rhs[connected]
+        g = np.broadcast_to(conductance, lhs.shape)[connected]
+        np.add.at(diagonal, left_id, g)
+        np.add.at(diagonal, right_id, g)
+        rows += [left_id, right_id]
+        cols += [right_id, left_id]
+        vals += [-g, -g]
+
+    neighbour_above = np.zeros_like(flake_xy)
+    neighbour_above[:, :-1] = flake_xy[:, 1:]
+    neighbour_below = np.zeros_like(flake_xy)
+    neighbour_below[:, 1:] = flake_xy[:, :-1]
+    top_boundary = flake_xy & ~neighbour_above
+    bottom_boundary = flake_xy & ~neighbour_below
+    if TOP_CONTACT_SEGMENT_UM is None or BOTTOM_CONTACT_SEGMENT_UM is None:
+        top = top_boundary & (y[None, :] > 8.0e-6) & (x[:, None] > -5.8e-6)
+        bottom = bottom_boundary & (y[None, :] < -8.0e-6) & (x[:, None] > -10.5e-6)
+        contact_source = "legacy approximate Figure-2 bounds"
+    else:
+        top_x = np.sort(np.asarray(TOP_CONTACT_SEGMENT_UM, float)[:, 0]) * 1e-6
+        bottom_x = np.sort(np.asarray(BOTTOM_CONTACT_SEGMENT_UM, float)[:, 0]) * 1e-6
+        top = top_boundary & (x[:, None] >= top_x[0]) & (x[:, None] <= top_x[-1])
+        bottom = (
+            bottom_boundary
+            & (x[:, None] >= bottom_x[0])
+            & (x[:, None] <= bottom_x[-1])
+        )
+        contact_source = "frozen Figure-2 digitized contact segments"
+    if not np.any(top) or not np.any(bottom):
+        raise RuntimeError("resistance-audit contact discretization failed")
+
+    terminal_faces: dict[str, tuple[np.ndarray, np.ndarray]] = {}
+    for label, selected, voltage in (
+        ("top", top, 1.0),
+        ("bottom", bottom, 0.0),
+    ):
+        flat = ids[selected]
+        face_width = np.broadcast_to(dx[:, None], ids.shape)[selected]
+        half_distance = 0.5 * np.broadcast_to(dy[None, :], ids.shape)[selected]
+        g = SIGMA_LAB_S_M[1] * thickness_m * face_width / half_distance
+        np.add.at(diagonal, flat, g)
+        np.add.at(load, flat, g * voltage)
+        terminal_faces[label] = (flat, g)
+    matrix = sparse.diags(diagonal) + sparse.coo_matrix(
+        (np.concatenate(vals), (np.concatenate(rows), np.concatenate(cols))),
+        shape=(count, count),
+    ).tocsr()
+    voltage = spla.spsolve(matrix.tocsc(), load)
+    residual = np.linalg.norm(matrix @ voltage - load) / max(
+        np.linalg.norm(load), np.finfo(float).tiny
+    )
+    top_ids, top_g = terminal_faces["top"]
+    bottom_ids, bottom_g = terminal_faces["bottom"]
+    current_in_A = float(np.sum(top_g * (1.0 - voltage[top_ids])))
+    current_out_A = float(np.sum(bottom_g * voltage[bottom_ids]))
+    resistance_ohm = 1.0 / current_in_A
+    balance = abs(current_in_A - current_out_A) / max(
+        abs(current_in_A), abs(current_out_A), np.finfo(float).tiny
+    )
+    relative_difference = abs(resistance_ohm - measured_resistance_ohm) / measured_resistance_ohm
+    return {
+        "purpose": (
+            "absolute-current geometry audit only; no empirical conductivity "
+            "or PTE-current rescaling is applied"
+        ),
+        "axis_mapping": "x=b, y=a",
+        "sigma_x_y_S_m": SIGMA_LAB_S_M.tolist(),
+        "thickness_m": thickness_m,
+        "contact_geometry": contact_source,
+        "contact_resistance_included": False,
+        "applied_voltage_V": 1.0,
+        "predicted_terminal_current_A": current_in_A,
+        "predicted_resistance_ohm": resistance_ohm,
+        "published_measured_device_A_resistance_ohm": measured_resistance_ohm,
+        "relative_difference_vs_measured": relative_difference,
+        "terminal_current_balance_relative_error": balance,
+        "linear_residual_relative": float(residual),
+        "absolute_current_geometry_gate_lt_10pct": bool(relative_difference < 0.10),
+        "interpretation": (
+            "a failure blocks certification of absolute PTE-current magnitude "
+            "because exact CAD/contact resistance are unpublished; it does not "
+            "invalidate a separately converged polarization ratio"
+        ),
+    }
+
+
 def cell_gradient(
     field: np.ndarray,
     mask: np.ndarray,
@@ -605,6 +737,7 @@ def load_and_map_q(
     geometry: Geometry,
     metal_thermalization: str,
     q_source: str,
+    incident_power_W: float = DEFAULT_EXPERIMENTAL_INCIDENT_POWER_W,
 ) -> tuple[np.ndarray, dict[str, Any]]:
     result = json.loads(result_path.read_text())
     if result.get("status") != "COMPLETED":
@@ -651,11 +784,16 @@ def load_and_map_q(
     optical_geometry = result["pre_run_contract"]["geometry"]
     substrate_contract = optical_geometry.get("substrate_optical_contract", {})
     if (
-        substrate_contract.get("model") == "lumerical-palik-11um"
+        substrate_contract.get("model")
+        in (
+            "lumerical-palik-11um",
+            "paper-kitamura-11um",
+            "paper-kitamura-palik-nk-11um",
+        )
         and q_source not in ("TaIrTe4-only", "TaIrTe4-plus-SiO2")
     ):
         raise RuntimeError(
-            "lossy Palik substrate artifact must use --q-source "
+            "lossy substrate artifact must use --q-source "
             "TaIrTe4-only or TaIrTe4-plus-SiO2; projecting full control-volume "
             "Q would silently move substrate absorption into the flake"
         )
@@ -725,7 +863,9 @@ def load_and_map_q(
     incident_at_unit = float(
         result["run_result"]["normalization"]["incident_power_W_at_1_W_m2"]
     )
-    physical_scale = EXPERIMENTAL_INCIDENT_POWER_W / incident_at_unit
+    if not np.isfinite(incident_power_W) or incident_power_W <= 0.0:
+        raise ValueError("incident power must be finite and positive")
+    physical_scale = incident_power_W / incident_at_unit
     full_scaled_q = q * physical_scale
     source_power_by_support = {
         "TaIrTe4_exact_support_W": base_remap.power_source(
@@ -948,7 +1088,7 @@ def load_and_map_q(
         "optical_artifact_sha256": sha256(artifact_path),
         "optical_result_path": str(result_path.resolve()),
         "optical_result_sha256": sha256(result_path),
-        "experimental_incident_power_W": EXPERIMENTAL_INCIDENT_POWER_W,
+        "experimental_incident_power_W": incident_power_W,
         "selected_Q_source": q_source,
         "selected_Q_artifact_keys": q_keys,
         "selected_Q_derivation": source_derivation,
@@ -1079,6 +1219,15 @@ def main() -> int:
     parser.add_argument("--core-step-nm", type=float, default=200.0)
     parser.add_argument("--flake-dz-nm", type=float, default=26.0)
     parser.add_argument(
+        "--incident-power-uw",
+        type=float,
+        default=285.0,
+        help=(
+            "time-averaged incident power; use 284.40 for the exact SI "
+            "Device-A 11-um measurement rather than the rounded 285-uW caption"
+        ),
+    )
+    parser.add_argument(
         "--mapping-only",
         action="store_true",
         help=(
@@ -1194,6 +1343,7 @@ def main() -> int:
         geometry,
         args.metal_thermalization,
         args.q_source,
+        args.incident_power_uw * 1.0e-6,
     )
     print("[thermal] optical Q remap complete", flush=True)
     if args.mapping_only:
@@ -1322,6 +1472,7 @@ def main() -> int:
         }
         weighting_passed = True
         current = None
+        resistance_audit = None
     else:
         edge_metrics = None
         psi, grad_x, grad_y, weighting = solve_weighting_potential(
@@ -1329,6 +1480,11 @@ def main() -> int:
         )
         current, fields = pte_current(
             solved.temperature_K, geometry, grad_x, grad_y
+        )
+        resistance_audit = audit_two_terminal_resistance(
+            geometry.x_edges_m,
+            geometry.y_edges_m,
+            flake_xy,
         )
         weighting_passed = (
             weighting["top_contact_cells"] > 0
@@ -1465,9 +1621,31 @@ def main() -> int:
         },
         "weighting": weighting,
         "weighting_gate_passed": weighting_passed,
+        "two_terminal_resistance_audit": resistance_audit,
+        "absolute_current_certification": (
+            "not_applicable_straight_edge_control"
+            if resistance_audit is None
+            else (
+                "GEOMETRY_RESISTANCE_GATE_PASSED"
+                if resistance_audit["absolute_current_geometry_gate_lt_10pct"]
+                else "BLOCKED_DIGITIZED_GEOMETRY_RESISTANCE_MISMATCH"
+            )
+        ),
+        "PTE_current_A_at_requested_incident_power": current,
+        "PTE_current_pA_at_requested_incident_power": (
+            None if current is None else current * 1e12
+        ),
+        "requested_incident_power_W": args.incident_power_uw * 1.0e-6,
+        # Backward-compatible keys are retained because several frozen
+        # checkpoint summarizers consume them.  They are historical labels,
+        # not an assertion that a non-default run used exactly 285 uW.
         "PTE_current_A_at_285uW_incident": current,
         "PTE_current_pA_at_285uW_incident": (
             None if current is None else current * 1e12
+        ),
+        "legacy_285uW_key_interpretation": (
+            "backward-compatible field name; authoritative power is "
+            "requested_incident_power_W"
         ),
         "PTE_current_integration_contract": (
             None

@@ -33,6 +33,7 @@ import matplotlib.pyplot as plt
 from matplotlib.path import Path as PolygonPath
 import numpy as np
 from scipy.optimize import least_squares
+from scipy.special import dawsn
 
 
 HERE = Path(__file__).resolve().parent
@@ -52,6 +53,13 @@ C0 = 299792458.0
 WAVELENGTH_M = 11.0e-6
 SOURCE_START_M = 7.0e-6
 SOURCE_STOP_M = 13.0e-6
+# A finite-bandwidth numerical pulse whose centre frequency is exactly the
+# measured 11-um frequency.  The upper wavelength stays inside the stored
+# TaIrTe4 optical-data range.  Only the 11-um monitor sample is interpreted as
+# the physical monochromatic experiment; the pulse bandwidth is not a claim of
+# broadband illumination.
+SOURCE_CENTERED_START_M = 9.428571428571428e-6
+SOURCE_CENTERED_STOP_M = 13.2e-6
 FLAKE_THICKNESS_M = 130.0e-9
 SIO2_THICKNESS_M = 285.0e-9
 SI_DEPTH_M = 3.0e-6
@@ -71,6 +79,9 @@ MATERIAL_NAME = PRODUCTION_MATERIAL_NAME
 LEGACY_SIO2_MATERIAL = "paper_ir_SiO2_n1p38"
 PALIK_SIO2_MATERIAL = "SiO2 (Glass) - Palik"
 PALIK_SI_MATERIAL = "Si (Silicon) - Palik"
+KITAMURA_SIO2_MATERIAL = "paper_ir_SiO2_Kitamura_2007"
+KITAMURA_SIO2_NK_MATERIAL = "paper_ir_SiO2_Kitamura_2007_nk_11um"
+PALIK_SI_NK_MATERIAL = "paper_ir_Si_Palik_nk_11um"
 SIO2_MATERIAL = LEGACY_SIO2_MATERIAL
 AU_MATERIAL = "Au (Gold) - CRC"
 TI_MATERIAL = "Ti (Titanium) - CRC"
@@ -455,6 +466,7 @@ def parse_args() -> argparse.Namespace:
         choices=(
             "production",
             "waist-sensitivity",
+            "paper-measured-reproduction",
             "diagnostic-smoke",
             "edge-isolation-smoke",
         ),
@@ -463,6 +475,9 @@ def parse_args() -> argparse.Namespace:
             "production uses the fixed paper-like scalar-Gaussian scenario; "
             "waist-sensitivity changes only the explicitly assumed waist "
             "after a same-waist source-only gate; "
+            "paper-measured-reproduction uses a newly measured empty-stack "
+            "reference and reports the realized beam without inheriting the "
+            "legacy source-only calibration; "
             "with an explicitly assumed waist; diagnostic-smoke "
             "is a separately labeled reduced-cost engine/material/Q check; "
             "edge-isolation-smoke is the approved w0=2 um planar/edge "
@@ -482,11 +497,37 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--substrate-optical-model",
-        choices=("legacy-lossless", "lumerical-palik-11um"),
+        choices=(
+            "legacy-lossless",
+            "lumerical-palik-11um",
+            "paper-kitamura-11um",
+            "paper-kitamura-palik-nk-11um",
+        ),
         default="legacy-lossless",
         help=(
-            "legacy fixed lossless n values or the installed v261 Palik "
-            "SiO2/Si database models (including their 11-um loss)"
+            "legacy fixed lossless n values; the installed v261 Palik "
+            "SiO2/Si database models; or the Kitamura-2007 fused-silica "
+            "fit cited by the paper together with Palik Si (the paper does "
+            "not specify a Si optical-data source)"
+        ),
+    )
+    parser.add_argument(
+        "--source-pulse-contract",
+        choices=("legacy-7-13um", "frequency-centered-11um"),
+        default="legacy-7-13um",
+        help=(
+            "The latter keeps a finite numerical pulse but places its centre "
+            "frequency exactly at the measured 11-um monitor frequency.  It "
+            "does not represent broadband experimental illumination."
+        ),
+    )
+    parser.add_argument(
+        "--sio2-max-coefficients",
+        type=int,
+        default=20,
+        help=(
+            "multi-coefficient fit order for the Kitamura sampled SiO2; "
+            "the actual 11-um fitted epsilon is fail-closed by readback"
         ),
     )
     parser.add_argument(
@@ -516,18 +557,38 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--contract-only", action="store_true")
     args = parser.parse_args()
-    args.sio2_material_name = (
-        PALIK_SIO2_MATERIAL
-        if args.substrate_optical_model == "lumerical-palik-11um"
-        else LEGACY_SIO2_MATERIAL
+    args.sio2_material_name = {
+        "legacy-lossless": LEGACY_SIO2_MATERIAL,
+        "lumerical-palik-11um": PALIK_SIO2_MATERIAL,
+        "paper-kitamura-11um": KITAMURA_SIO2_MATERIAL,
+        "paper-kitamura-palik-nk-11um": KITAMURA_SIO2_NK_MATERIAL,
+    }[args.substrate_optical_model]
+    args.si_material_name = {
+        "legacy-lossless": None,
+        "lumerical-palik-11um": PALIK_SI_MATERIAL,
+        "paper-kitamura-11um": PALIK_SI_MATERIAL,
+        "paper-kitamura-palik-nk-11um": PALIK_SI_NK_MATERIAL,
+    }[args.substrate_optical_model]
+    if args.source_pulse_contract == "frequency-centered-11um":
+        args.source_start_m = SOURCE_CENTERED_START_M
+        args.source_stop_m = SOURCE_CENTERED_STOP_M
+    else:
+        args.source_start_m = SOURCE_START_M
+        args.source_stop_m = SOURCE_STOP_M
+    source_center_frequency = 0.5 * C0 * (
+        1.0 / args.source_start_m + 1.0 / args.source_stop_m
     )
-    args.si_material_name = (
-        PALIK_SI_MATERIAL
-        if args.substrate_optical_model == "lumerical-palik-11um"
-        else None
-    )
+    args.source_center_wavelength_m = C0 / source_center_frequency
     if (
-        args.substrate_optical_model == "lumerical-palik-11um"
+        args.substrate_optical_model == "paper-kitamura-palik-nk-11um"
+        and abs(args.source_center_wavelength_m - WAVELENGTH_M) > 1.0e-15
+    ):
+        parser.error(
+            "the single-frequency n,k substrate requires a numerical pulse "
+            "whose centre frequency is exactly 11 um"
+        )
+    if (
+        args.substrate_optical_model != "legacy-lossless"
         and not args.matched_lossy_control_volume
     ):
         parser.error(
@@ -536,11 +597,11 @@ def parse_args() -> argparse.Namespace:
             "would refer to different absorbing volumes"
         )
     if args.full_sio2_q_control_volume and (
-        args.substrate_optical_model != "lumerical-palik-11um"
+        args.substrate_optical_model == "legacy-lossless"
         or not args.matched_lossy_control_volume
     ):
         parser.error(
-            "--full-sio2-q-control-volume requires Palik SiO2/Si and "
+            "--full-sio2-q-control-volume requires a lossy SiO2/Si model and "
             "--matched-lossy-control-volume"
         )
     reduced_smoke = args.execution_contract in (
@@ -662,7 +723,7 @@ def parse_args() -> argparse.Namespace:
                 "intermediate half span must exceed the finest half span"
             )
     if (
-        args.execution_contract == "production"
+        args.execution_contract in ("production", "paper-measured-reproduction")
         and args.case == "finite-flake"
         and not args.incident_reference
     ):
@@ -811,7 +872,8 @@ def parse_args() -> argparse.Namespace:
         # uses 1.5 um only to exercise engine/material/Q/closure at lower cost.
         analysis_padding_um = (
             2.0
-            if args.execution_contract in ("production", "waist-sensitivity")
+            if args.execution_contract
+            in ("production", "waist-sensitivity", "paper-measured-reproduction")
             else 1.5
         )
         half_analysis = 0.5 * args.source_span_um + analysis_padding_um
@@ -840,7 +902,8 @@ def parse_args() -> argparse.Namespace:
         )
         analysis_padding_um = (
             2.0
-            if args.execution_contract in ("production", "waist-sensitivity")
+            if args.execution_contract
+            in ("production", "waist-sensitivity", "paper-measured-reproduction")
             else 1.5
         )
         half_analysis = 0.5 * args.source_span_um + analysis_padding_um
@@ -1023,6 +1086,187 @@ def complex_json(value: complex) -> dict[str, float]:
     return {"real": float(np.real(value)), "imag": float(np.imag(value))}
 
 
+def kitamura_2007_sio2_epsilon(
+    wavelength_m: np.ndarray | float,
+) -> np.ndarray:
+    """Kitamura et al. 2007 fused-silica dielectric-function fit.
+
+    The parameters are Eq. (21)--(24) and Table 2 of
+    doi:10.1364/AO.46.008118.  The implementation includes the documented
+    sqrt(pi) correction to the printed Kramers--Kronig expression used by
+    the authors' public numerical implementation.
+    """
+    wavelength_um = np.asarray(wavelength_m, float) * 1.0e6
+    if np.any(~np.isfinite(wavelength_um)) or np.any(wavelength_um <= 0.0):
+        raise ValueError("Kitamura wavelength must be finite and positive")
+    wavenumber_cm = 1.0e4 / wavelength_um
+    epsilon = np.full(wavenumber_cm.shape, 2.1232 + 0.0j, complex)
+    alpha = np.asarray(
+        [3.7998, 0.46089, 1.2520, 7.8147, 1.0313, 5.3757, 6.3305, 1.2948]
+    )
+    center_cm = np.asarray(
+        [1089.7, 1187.7, 797.78, 1058.2, 446.13, 443.00, 465.80, 1026.7]
+    )
+    width_cm = np.asarray(
+        [31.454, 100.46, 91.601, 63.153, 275.111, 45.220, 22.680, 232.14]
+    )
+    root_two_log_two = np.sqrt(2.0 * np.log(2.0))
+    for oscillator_strength, center, width in zip(
+        alpha, center_cm, width_cm
+    ):
+        loss = oscillator_strength * np.exp(
+            -4.0 * np.log(2.0) * ((wavenumber_cm - center) / width) ** 2
+        ) - oscillator_strength * np.exp(
+            -4.0 * np.log(2.0) * ((wavenumber_cm + center) / width) ** 2
+        )
+        dispersion = 2.0 * oscillator_strength / np.sqrt(np.pi) * (
+            dawsn(root_two_log_two * (wavenumber_cm + center) / width)
+            - dawsn(root_two_log_two * (wavenumber_cm - center) / width)
+        )
+        epsilon += dispersion + 1j * loss
+    return epsilon
+
+
+def add_substrate_materials(
+    fdtd: Any,
+    args: argparse.Namespace,
+) -> dict[str, Any]:
+    """Install non-database substrate materials and freeze provenance."""
+    contract: dict[str, Any] = {
+        "model": args.substrate_optical_model,
+        "SiO2_material": args.sio2_material_name,
+        "Si_material": (
+            args.si_material_name
+            if args.si_material_name is not None
+            else "object-defined lossless n=3.425"
+        ),
+    }
+    if args.substrate_optical_model == "legacy-lossless":
+        material = fdtd.addmaterial("Dielectric")
+        fdtd.setmaterial(material, "name", args.sio2_material_name)
+        fdtd.setmaterial(args.sio2_material_name, "Refractive Index", 1.38)
+        contract.update(
+            {
+                "SiO2_provenance": "legacy nondispersive diagnostic",
+                "Si_provenance": "legacy nondispersive diagnostic",
+            }
+        )
+        return contract
+    if args.substrate_optical_model == "lumerical-palik-11um":
+        contract.update(
+            {
+                "SiO2_provenance": "installed Lumerical v261 Palik database",
+                "Si_provenance": "installed Lumerical v261 Palik database",
+            }
+        )
+        return contract
+
+    if args.substrate_optical_model == "paper-kitamura-palik-nk-11um":
+        requested_epsilon = complex(
+            kitamura_2007_sio2_epsilon(WAVELENGTH_M)
+        )
+        requested_sio2_n = complex(np.sqrt(requested_epsilon))
+        palik_si_n = complex(
+            np.asarray(
+                fdtd.getindex(PALIK_SI_MATERIAL, C0 / WAVELENGTH_M)
+            ).reshape(-1)[0]
+        )
+        for name, n_value in (
+            (args.sio2_material_name, requested_sio2_n),
+            (args.si_material_name, palik_si_n),
+        ):
+            material = fdtd.addmaterial("(n,k) Material")
+            fdtd.setmaterial(material, "name", name)
+            fdtd.setmaterial(name, "Refractive Index", float(n_value.real))
+            fdtd.setmaterial(
+                name,
+                "Imaginary Refractive Index",
+                float(n_value.imag),
+            )
+        contract.update(
+            {
+                "SiO2_provenance": (
+                    "Kitamura et al., Applied Optics 46, 8118 (2007), "
+                    "doi:10.1364/AO.46.008118; exact 11-um n,k entered in "
+                    "Lumerical's single-frequency (n,k) model"
+                ),
+                "SiO2_requested_epsilon_at_11um": complex_json(
+                    requested_epsilon
+                ),
+                "SiO2_requested_n_at_11um": complex_json(requested_sio2_n),
+                "Si_provenance": (
+                    "installed Lumerical v261 Palik database raw 11-um n,k, "
+                    "copied into a single-frequency (n,k) model; explicit "
+                    "closure because the TaIrTe4 paper does not identify "
+                    "its Si optical-data source"
+                ),
+                "Si_requested_n_at_11um": complex_json(palik_si_n),
+                "single_frequency_material_contract": True,
+                "source_centre_wavelength_m": float(
+                    args.source_center_wavelength_m
+                ),
+                "paper_identity_limit": (
+                    "paper-consistent silica closure and explicit Palik-Si "
+                    "closure, not proof that the authors used this exact Si "
+                    "dataset"
+                ),
+            }
+        )
+        return contract
+
+    wavelengths_m = np.linspace(SOURCE_START_M, SOURCE_STOP_M, 1201)
+    frequencies_hz = C0 / wavelengths_m
+    epsilon = kitamura_2007_sio2_epsilon(wavelengths_m)
+    material = fdtd.addmaterial("Sampled data")
+    fdtd.setmaterial(material, "name", args.sio2_material_name)
+    max_coefficients = int(getattr(args, "sio2_max_coefficients", 20))
+    if max_coefficients < 1:
+        raise ValueError("SiO2 max coefficients must be positive")
+    fdtd.setmaterial(
+        args.sio2_material_name,
+        "max coefficients",
+        max_coefficients,
+    )
+    # Official Lumerical guidance recommends zero tolerance when the best
+    # available fit is required; otherwise the default 0.1 target may stop
+    # with substantially fewer coefficients than the stated maximum.
+    fdtd.setmaterial(args.sio2_material_name, "tolerance", 0.0)
+    fdtd.setmaterial(
+        args.sio2_material_name,
+        "sampled data",
+        np.column_stack((frequencies_hz, epsilon)),
+    )
+    requested_11um = complex(kitamura_2007_sio2_epsilon(WAVELENGTH_M))
+    contract.update(
+        {
+            "SiO2_provenance": (
+                "Kitamura et al., Applied Optics 46, 8118 (2007), "
+                "doi:10.1364/AO.46.008118; cited by the TaIrTe4 paper for "
+                "the silica phonon"
+            ),
+            "SiO2_fit_equation": "Kitamura Eq.21-24/Table 2 with sqrt(pi) correction",
+            "SiO2_sampled_wavelength_range_m": [
+                float(wavelengths_m[0]),
+                float(wavelengths_m[-1]),
+            ],
+            "SiO2_sample_count": int(wavelengths_m.size),
+            "SiO2_max_coefficients": max_coefficients,
+            "SiO2_fit_tolerance": 0.0,
+            "SiO2_requested_epsilon_at_11um": complex_json(requested_11um),
+            "SiO2_requested_n_at_11um": complex_json(np.sqrt(requested_11um)),
+            "Si_provenance": (
+                "installed Lumerical v261 Palik database; explicit closure "
+                "because the TaIrTe4 paper does not identify its Si optical-data source"
+            ),
+            "paper_identity_limit": (
+                "paper-consistent silica closure, not proof that the authors "
+                "used this exact numerical substrate database in RCWA/COMSOL"
+            ),
+        }
+    )
+    return contract
+
+
 def add_device_a_material(
     fdtd: Any,
     model: Any,
@@ -1124,7 +1368,7 @@ def material_epsilon_readback(
 ) -> dict[str, Any]:
     frequency_hz = C0 / WAVELENGTH_M
     frequency_ends = C0 / np.asarray(
-        [SOURCE_START_M, SOURCE_STOP_M],
+        [args.source_start_m, args.source_stop_m],
         float,
     )
     fmin = float(np.min(frequency_ends))
@@ -1216,7 +1460,7 @@ def substrate_epsilon_readback(
     """Read the actual fitted substrate optical constants at 11 um."""
     frequency_hz = C0 / WAVELENGTH_M
     frequency_ends = C0 / np.asarray(
-        [SOURCE_START_M, SOURCE_STOP_M],
+        [args.source_start_m, args.source_stop_m],
         float,
     )
     fmin = float(np.min(frequency_ends))
@@ -1234,10 +1478,17 @@ def substrate_epsilon_readback(
             n_value = complex(1.38, 0.0)
             provenance = "object-defined nondispersive legacy value"
         else:
+            raw_material_name = material_name
+            if material_name == KITAMURA_SIO2_NK_MATERIAL:
+                raw_material_name = None
+            elif material_name == PALIK_SI_NK_MATERIAL:
+                raw_material_name = PALIK_SI_MATERIAL
             raw_database_n = complex(
-                np.asarray(
+                np.sqrt(kitamura_2007_sio2_epsilon(WAVELENGTH_M))
+                if raw_material_name is None
+                else np.asarray(
                     fdtd.getindex(
-                        material_name,
+                        raw_material_name,
                         np.asarray([frequency_hz]),
                     )
                 ).reshape(-1)[0]
@@ -1253,7 +1504,16 @@ def substrate_epsilon_readback(
                     )
                 ).reshape(-1)[0]
             )
-            provenance = "installed Lumerical v261 material database fit"
+            provenance = (
+                "Kitamura-2007 sampled-data fit installed by this run"
+                if material_name == KITAMURA_SIO2_MATERIAL
+                else (
+                    "exact 11-um n,k material installed by this run"
+                    if material_name
+                    in (KITAMURA_SIO2_NK_MATERIAL, PALIK_SI_NK_MATERIAL)
+                    else "installed Lumerical v261 material database fit"
+                )
+            )
         if material_name is None or material_name == LEGACY_SIO2_MATERIAL:
             raw_database_n = n_value
         readback[label] = {
@@ -1268,18 +1528,37 @@ def substrate_epsilon_readback(
             "raw_database_epsilon_r_complex_at_11um": complex_json(
                 raw_database_n**2
             ),
-            "FDTD_fit_band_m": [SOURCE_START_M, SOURCE_STOP_M],
+            "FDTD_fit_band_m": [args.source_start_m, args.source_stop_m],
             "FDTD_uses_fitted_not_raw_database_value": bool(
                 material_name not in (None, LEGACY_SIO2_MATERIAL)
             ),
             "provenance": provenance,
         }
+        if material_name in (
+            KITAMURA_SIO2_MATERIAL,
+            KITAMURA_SIO2_NK_MATERIAL,
+        ):
+            requested_epsilon = complex(
+                kitamura_2007_sio2_epsilon(WAVELENGTH_M)
+            )
+            readback[label]["requested_model_epsilon_r_complex_at_11um"] = (
+                complex_json(requested_epsilon)
+            )
+            readback[label]["requested_model_n_complex_at_11um"] = (
+                complex_json(np.sqrt(requested_epsilon))
+            )
+            readback[label][
+                "FDTD_fit_relative_error_vs_requested_epsilon"
+            ] = float(
+                abs(n_value**2 - requested_epsilon)
+                / max(abs(requested_epsilon), np.finfo(float).tiny)
+            )
     return {
         "analysis_wavelength_m": WAVELENGTH_M,
         "model": args.substrate_optical_model,
         "materials": readback,
         "loss_is_retained": bool(
-            args.substrate_optical_model == "lumerical-palik-11um"
+            args.substrate_optical_model != "legacy-lossless"
         ),
     }
 
@@ -2023,10 +2302,7 @@ def add_geometry_and_monitors(
         base.safe_set(fdtd, "FDTD", f"{axis} min bc", "PML")
         base.safe_set(fdtd, "FDTD", f"{axis} max bc", "PML")
 
-    if args.substrate_optical_model == "legacy-lossless":
-        material = fdtd.addmaterial("Dielectric")
-        fdtd.setmaterial(material, "name", args.sio2_material_name)
-        fdtd.setmaterial(args.sio2_material_name, "Refractive Index", 1.38)
+    substrate_material_contract = add_substrate_materials(fdtd, args)
     material_contract = add_device_a_material(fdtd, model, args)
 
     lateral_material_span = domain_m + 2.0e-6
@@ -2248,8 +2524,8 @@ def add_geometry_and_monitors(
     source["use global source settings"] = True
     source["override global source settings"] = False
 
-    fdtd.setglobalsource("wavelength start", SOURCE_START_M)
-    fdtd.setglobalsource("wavelength stop", SOURCE_STOP_M)
+    fdtd.setglobalsource("wavelength start", args.source_start_m)
+    fdtd.setglobalsource("wavelength stop", args.source_stop_m)
     fdtd.setglobalmonitor("use source limits", False)
     fdtd.setglobalmonitor("use wavelength spacing", True)
     fdtd.setglobalmonitor("wavelength center", WAVELENGTH_M)
@@ -2280,7 +2556,11 @@ def add_geometry_and_monitors(
         )
 
     inner_faces = base.add_flux_box(fdtd, "paper_ir_abs", inner_box)
-    if args.execution_contract in ("production", "waist-sensitivity"):
+    if args.execution_contract in (
+        "production",
+        "waist-sensitivity",
+        "paper-measured-reproduction",
+    ):
         outer_faces = base.add_flux_box(
             fdtd,
             "paper_ir_outer",
@@ -2442,19 +2722,13 @@ def add_geometry_and_monitors(
         ),
         "substrate": "285 nm SiO2 on Si",
         "substrate_optical_contract": {
-            "model": args.substrate_optical_model,
-            "SiO2_material": args.sio2_material_name,
-            "Si_material": (
-                args.si_material_name
-                if args.si_material_name is not None
-                else "object-defined lossless n=3.425"
-            ),
+            **substrate_material_contract,
             "matched_local_absorption_control_volume": bool(
                 args.matched_lossy_control_volume
             ),
             "raw_Q_contains_all_loss_inside_control_volume": True,
             "TaIrTe4_only_Q_requires_material_support_decomposition": bool(
-                args.substrate_optical_model == "lumerical-palik-11um"
+                args.substrate_optical_model != "legacy-lossless"
             ),
             "full_SiO2_Q_control_volume": bool(
                 args.full_sio2_q_control_volume
@@ -2519,7 +2793,18 @@ def add_geometry_and_monitors(
         ),
         "source": {
             "wavelength_m": WAVELENGTH_M,
-            "experimental_band_m": [SOURCE_START_M, SOURCE_STOP_M],
+            "numerical_pulse_band_m": [
+                args.source_start_m,
+                args.source_stop_m,
+            ],
+            "numerical_pulse_contract": args.source_pulse_contract,
+            "numerical_pulse_center_wavelength_m": (
+                args.source_center_wavelength_m
+            ),
+            "physical_interpretation": (
+                "monochromatic 11-um monitor response; the finite numerical "
+                "pulse bandwidth is not broadband experimental illumination"
+            ),
             "physical_target_waist_radius_m": args.waist_um * 1e-6,
             "Lumerical_source_object_waist_radius_m": (
                 args.source_object_waist_um * 1e-6
@@ -2655,6 +2940,7 @@ def add_geometry_and_monitors(
                 args.execution_contract in (
                     "production",
                     "waist-sensitivity",
+                    "paper-measured-reproduction",
                     "edge-isolation-smoke",
                 )
             ),
@@ -2662,6 +2948,7 @@ def add_geometry_and_monitors(
                 args.execution_contract in (
                     "production",
                     "waist-sensitivity",
+                    "paper-measured-reproduction",
                     "edge-isolation-smoke",
                 )
             ),
@@ -2675,7 +2962,8 @@ def add_geometry_and_monitors(
                     "same full Device-A numerical contract with only the "
                     "explicitly assumed scalar-Gaussian waist changed; "
                     "beam-size sensitivity scenario, not a paper-certified beam"
-                    if args.execution_contract == "waist-sensitivity"
+                    if args.execution_contract
+                    in ("waist-sensitivity", "paper-measured-reproduction")
                     else (
                         "reduced-cost one-polarization diagnostic only; not a "
                         "paper-like optical result and not a replacement for "
@@ -2690,11 +2978,15 @@ def add_geometry_and_monitors(
                 "diagnostic_waist_um": args.waist_um,
                 "production_absorption_padding_um": 2.0,
                 "diagnostic_absorption_padding_um": (
-                    2.0 if args.execution_contract == "waist-sensitivity" else 1.5
+                    2.0
+                    if args.execution_contract
+                    in ("waist-sensitivity", "paper-measured-reproduction")
+                    else 1.5
                 ),
                 "removed_monitors": (
                     []
-                    if args.execution_contract == "waist-sensitivity"
+                    if args.execution_contract
+                    in ("waist-sensitivity", "paper-measured-reproduction")
                     else [
                         "outer six-face box",
                         "three production diagnostic field slices",
@@ -2707,7 +2999,12 @@ def add_geometry_and_monitors(
                     ]
                 ),
                 "unchanged": [
-                    "11 um analysis wavelength and 7-13 um source band",
+                    (
+                        "11 um analysis wavelength; numerical pulse band "
+                        f"{args.source_start_m * 1e6:.6g}-"
+                        f"{args.source_stop_m * 1e6:.6g} um with centre "
+                        f"{args.source_center_wavelength_m * 1e6:.6g} um"
+                    ),
                     "normal incidence",
                     (
                         "straight 45-degree TaIrTe4 edge"
@@ -4511,8 +4808,8 @@ def main() -> int:
     )
     base.TARGET_WAVELENGTH_M = WAVELENGTH_M
     base.TARGET_FREQUENCY_HZ = C0 / WAVELENGTH_M
-    base.SOURCE_START_M = SOURCE_START_M
-    base.SOURCE_STOP_M = SOURCE_STOP_M
+    base.SOURCE_START_M = args.source_start_m
+    base.SOURCE_STOP_M = args.source_stop_m
     base.FLAKE_THICKNESS_M = FLAKE_THICKNESS_M
     base.FLAKE_BOUNDS_M = args.flake_bounds_m
     if args.geometry == "straight-45-edge":
@@ -4678,7 +4975,7 @@ def main() -> int:
             result["substrate_epsilon_readback"] = (
                 substrate_epsilon_readback(fdtd, parsed)
             )
-            if parsed.substrate_optical_model == "lumerical-palik-11um":
+            if parsed.substrate_optical_model != "legacy-lossless":
                 sio2_k = result["substrate_epsilon_readback"]["materials"][
                     "SiO2"
                 ]["n_complex"]["imag"]
@@ -4686,8 +4983,20 @@ def main() -> int:
                     "Si"
                 ]["n_complex"]["imag"]
                 result.setdefault("acceptance", {})[
-                    "Palik_SiO2_and_Si_loss_readback_positive"
+                    "lossy_SiO2_and_Si_readback_positive"
                 ] = bool(sio2_k > 0.0 and si_k > 0.0)
+                if parsed.substrate_optical_model in (
+                    "paper-kitamura-11um",
+                    "paper-kitamura-palik-nk-11um",
+                ):
+                    fit_error = result["substrate_epsilon_readback"][
+                        "materials"
+                    ]["SiO2"][
+                        "FDTD_fit_relative_error_vs_requested_epsilon"
+                    ]
+                    result["acceptance"][
+                        "Kitamura_SiO2_fit_error_lt_0p5_percent"
+                    ] = bool(fit_error < 0.005)
                 if parsed.case == "empty-stack":
                     legacy_lossless_gate = result["acceptance"].pop(
                         "lossless_volume_Q_fraction_lt_1e_4",
@@ -4698,7 +5007,7 @@ def main() -> int:
                         "recorded_value": legacy_lossless_gate,
                         "applicable": False,
                         "reason": (
-                            "the Palik SiO2/Si background intentionally has "
+                            "the selected lossy SiO2/Si background intentionally has "
                             "positive optical loss at 11 um"
                         ),
                     }

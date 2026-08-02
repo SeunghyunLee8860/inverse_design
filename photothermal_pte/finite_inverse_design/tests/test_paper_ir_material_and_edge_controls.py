@@ -15,6 +15,12 @@ from photothermal_pte.validation.paper_ir_sanity import (
 from photothermal_pte.validation.paper_ir_sanity import (
     run_straight_edge_analytic_source_controls as controls,
 )
+from photothermal_pte.validation.paper_ir_sanity import (
+    run_lumerical_device_a_ir_q as device_a_optical,
+)
+from photothermal_pte.validation.paper_ir_sanity import (
+    run_device_a_explicit_thermal_pte as device_a_thermal,
+)
 
 
 def test_paper_ir_c_table_is_exact_b_closure() -> None:
@@ -26,6 +32,69 @@ def test_paper_ir_c_table_is_exact_b_closure() -> None:
     data = np.loadtxt(path)
     assert data.shape[1] == 7
     assert np.array_equal(data[:, 3:5], data[:, 5:7])
+
+
+def test_kitamura_2007_sio2_exact_11um_value_and_passivity() -> None:
+    epsilon = complex(
+        device_a_optical.kitamura_2007_sio2_epsilon(11.0e-6)
+    )
+    assert epsilon.real == pytest.approx(4.051707451517633, rel=1e-14)
+    assert epsilon.imag == pytest.approx(0.6568047491827695, rel=1e-14)
+    refractive_index = np.sqrt(epsilon)
+    assert refractive_index.real == pytest.approx(
+        2.0194436826147366, rel=1e-14
+    )
+    assert refractive_index.imag == pytest.approx(
+        0.16262021932999673, rel=1e-14
+    )
+    band = device_a_optical.kitamura_2007_sio2_epsilon(
+        np.linspace(7.0e-6, 13.0e-6, 1201)
+    )
+    assert np.all(np.isfinite(band))
+    assert np.all(np.imag(band) >= 0.0)
+
+
+def test_finite_numerical_pulse_is_frequency_centered_at_11um() -> None:
+    center_frequency = 0.5 * device_a_optical.C0 * (
+        1.0 / device_a_optical.SOURCE_CENTERED_START_M
+        + 1.0 / device_a_optical.SOURCE_CENTERED_STOP_M
+    )
+    center_wavelength = device_a_optical.C0 / center_frequency
+    assert center_wavelength == pytest.approx(
+        device_a_optical.WAVELENGTH_M,
+        rel=0.0,
+        abs=1.0e-18,
+    )
+    assert device_a_optical.SOURCE_CENTERED_STOP_M <= 13.2e-6
+
+
+def test_two_terminal_resistance_audit_recovers_rectangle(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    width = 2.0e-6
+    length = 4.0e-6
+    thickness = 130.0e-9
+    x_edges = np.linspace(-0.5 * width, 0.5 * width, 41)
+    y_edges = np.linspace(-0.5 * length, 0.5 * length, 81)
+    flake = np.ones((x_edges.size - 1, y_edges.size - 1), bool)
+    full_contact = np.asarray([[-2.0, 0.0], [2.0, 0.0]])
+    monkeypatch.setattr(device_a_thermal, "TOP_CONTACT_SEGMENT_UM", full_contact)
+    monkeypatch.setattr(device_a_thermal, "BOTTOM_CONTACT_SEGMENT_UM", full_contact)
+    result = device_a_thermal.audit_two_terminal_resistance(
+        x_edges,
+        y_edges,
+        flake,
+        thickness_m=thickness,
+        measured_resistance_ohm=1.0,
+    )
+    expected = length / (
+        device_a_thermal.SIGMA_LAB_S_M[1] * width * thickness
+    )
+    assert result["predicted_resistance_ohm"] == pytest.approx(
+        expected, rel=1e-12
+    )
+    assert result["terminal_current_balance_relative_error"] < 1e-11
+    assert result["linear_residual_relative"] < 1e-12
 
 
 def test_equal_absorbed_power_control_is_exact_and_analytic_only() -> None:
