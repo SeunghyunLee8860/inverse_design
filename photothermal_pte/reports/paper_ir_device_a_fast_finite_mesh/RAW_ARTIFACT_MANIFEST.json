@@ -1,5 +1,5 @@
 {
-  "status": "FAILED_FAST_DEVICE_A_SPATIAL_Q_CONVERGENCE",
+  "status": "FAILED_FAST_DEVICE_A_MATERIAL_OVERLAP_SPATIAL_CONVERGENCE",
   "raw_artifacts_committed_to_git": false,
   "artifacts": [
     {
@@ -163,8 +163,40 @@
       "committed_to_git": false
     },
     {
+      "case": "mapped_candidate",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/material_overlap_candidate_core100_dz10_20260802/material_overlap_mapping_summary.json",
+      "size_bytes": 5047,
+      "sha256": "698cc84c67ec844cd3b6313fecbfbaf551bb0642a9c108cec8f972f5fc2f6bd1",
+      "generation_command": "run_device_a_explicit_thermal_pte.py --mapping-only --q-source TaIrTe4-only --core-step-nm 100 --flake-dz-nm 10",
+      "committed_to_git": false
+    },
+    {
+      "case": "mapped_candidate",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/material_overlap_candidate_core100_dz10_20260802/material_overlap_mapped_q.npz",
+      "size_bytes": 6836356,
+      "sha256": "c386a150db78d40e81360e7c98c4db7c7df1cbd8ed253b27acdc1d7a4b775679",
+      "generation_command": "run_device_a_explicit_thermal_pte.py --mapping-only --q-source TaIrTe4-only --core-step-nm 100 --flake-dz-nm 10",
+      "committed_to_git": false
+    },
+    {
+      "case": "mapped_reference",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/material_overlap_reference_core100_dz10_20260802/material_overlap_mapping_summary.json",
+      "size_bytes": 5034,
+      "sha256": "ba7f28f39339d61e1cf6c36b6978e6f81728f09464d6929e14ebd14b0740b234",
+      "generation_command": "run_device_a_explicit_thermal_pte.py --mapping-only --q-source TaIrTe4-only --core-step-nm 100 --flake-dz-nm 10",
+      "committed_to_git": false
+    },
+    {
+      "case": "mapped_reference",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/material_overlap_reference_core100_dz10_20260802/material_overlap_mapped_q.npz",
+      "size_bytes": 6836401,
+      "sha256": "ca16aa9bd6b610c938650fd8305b0553fbe1efe3ee22cf90bad0522446e3c9ea",
+      "generation_command": "run_device_a_explicit_thermal_pte.py --mapping-only --q-source TaIrTe4-only --core-step-nm 100 --flake-dz-nm 10",
+      "committed_to_git": false
+    },
+    {
       "case": "interrupted_12um_empty_precheck",
-      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/empty_acc3_outer200_edge50_h12_dz10_a_gpu2_20260802",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/empty_acc3_outer200_edge50_h12_dz10_a_contract_20260802",
       "exists": false,
       "removed_after_interrupt": true,
       "committed_to_git": false,

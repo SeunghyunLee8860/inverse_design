@@ -1,10 +1,41 @@
 # Device-A fast finite optical mesh validation
 
-Status: `FAILED_FAST_DEVICE_A_SPATIAL_Q_CONVERGENCE`
+Status: `FAILED_FAST_DEVICE_A_MATERIAL_OVERLAP_SPATIAL_CONVERGENCE`
 
 This is a one-polarization (`E || a`) finite Device-A optical mesh diagnostic.
 It is not a promoted production heat source and no thermal, PTE, adjoint, or
 optimization calculation was run.
+
+## Corrected material-overlap thermal-source comparison
+
+The earlier raw-control-volume comparison is retained below as an optical
+diagnostic, but it is **not** the TaIrTe4-only thermal source.  Both optical
+cases were independently mapped onto the same explicit thermal grid using
+optical-cell/thermal-material overlap, without nearest-cell relocation.
+
+- mapped power change: 0.001165%
+- mapped lateral Q NRMSE: 1.000888%
+- mapped full-3D Q NRMSE: 3.330164%
+- mapped depth Q NRMSE: 0.129946%
+- mapped correlation: 0.999433853
+- mapping power error: zero in both cases
+
+The spatial gate still fails, but its localization is now explicit:
+
+- within |x|,|y| <= 9 um: 0.156511% full-3D NRMSE
+- 9--12 um transition: 81.1628% of squared error
+- within 0.25 um of the binary FVM flake boundary: 99.5750% of squared error
+- worst z layer: -5.0 nm, carrying 81.8665% of squared error
+
+This identifies the failed candidate as a mesh-layout error: the 50-to-100 nm
+transition crossed illuminated Device-A material boundaries.  It is not a
+power-conservation failure in the remap.
+
+Important limitation:
+Omega_TaIrTe4 is the union of binary FVM cells selected by the thermal cell-center polygon mask; it is not an analytic polygon cut-cell volume.
+Consequently this report does not claim an analytic polygon cut-cell thermal
+geometry.
+
 
 ## Fixed contract
 
@@ -18,7 +49,7 @@ optimization calculation was run.
 `half-span` means the half-width of the square 50-nm refinement window around
 the registered beam centre.  It is not a convection coefficient.
 
-## Result
+## Raw optical control-volume diagnostic
 
 All five GPU calculations completed with auto-shutoff <= 1e-5 and six-face
 closure below 0.5%.  Total absorbed power appears converged much earlier than
@@ -43,9 +74,11 @@ pass.
 ## Interpretation and next minimal test
 
 The current data do not isolate `dz=10 nm` versus `dz=5 nm`; every case in this
-checkpoint uses 10 nm.  The observed failure is the x/y refinement-window
-sensitivity.  A next test should keep the 50-nm illuminated region but compare
-a 100-nm outer Device-A mesh against the current 200-nm outer mesh on one
-polarization.  It should not proceed to thermal/PTE unless the spatial optical
-gate is resolved or an explicitly approved downstream-observable gate replaces
-the strict raw-Q gate.
+checkpoint uses 10 nm.  The observed failure is localized at real Device-A
+material boundaries that the candidate accidentally placed in its 100/200-nm
+region.  The next economical optical test must follow those illuminated
+flake/electrode boundaries with narrow 50-nm mesh strips while leaving only
+homogeneous remote air/SiO2/Si coarse.  Blindly changing the whole outer region
+to 100 nm is not the diagnosed fix.  It should not proceed to thermal/PTE until
+the mapped thermal-source spatial gate is resolved or the user explicitly
+approves a downstream-observable replacement gate.

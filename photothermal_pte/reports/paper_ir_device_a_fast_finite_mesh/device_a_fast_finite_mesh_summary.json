@@ -1,5 +1,5 @@
 {
-  "status": "FAILED_FAST_DEVICE_A_SPATIAL_Q_CONVERGENCE",
+  "status": "FAILED_FAST_DEVICE_A_MATERIAL_OVERLAP_SPATIAL_CONVERGENCE",
   "classification": "one-polarization finite Device-A optical mesh diagnostic; not a promoted production Q and not a thermal/PTE result",
   "fixed_contract": {
     "wavelength_um": 11.0,
@@ -161,7 +161,7 @@
       }
     }
   },
-  "comparisons": {
+  "raw_control_volume_comparisons": {
     "5um_vs_7um": {
       "candidate": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h5_dz10_a_gpu5_20260802",
       "reference": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h7_dz10_a_gpu5_20260802",
@@ -451,7 +451,54 @@
       "all_gates_pass": false
     }
   },
+  "material_overlap_thermal_source_comparison": {
+    "classification": "TaIrTe4-only material-overlap thermal source on one identical 100 nm lateral / 10 nm flake-z FVM grid",
+    "material_domain_limitation": "Omega_TaIrTe4 is the union of binary FVM cells selected by the thermal cell-center polygon mask; it is not an analytic polygon cut-cell volume",
+    "candidate_directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/material_overlap_candidate_core100_dz10_20260802",
+    "reference_directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/material_overlap_reference_core100_dz10_20260802",
+    "candidate_artifact_sha256": "c386a150db78d40e81360e7c98c4db7c7df1cbd8ed253b27acdc1d7a4b775679",
+    "reference_artifact_sha256": "ca16aa9bd6b610c938650fd8305b0553fbe1efe3ee22cf90bad0522446e3c9ea",
+    "candidate_power_W": 4.10455303371527e-05,
+    "reference_power_W": 4.104505203083414e-05,
+    "relative_power_change": 1.1653202880512522e-05,
+    "equal_power_full_3D_NRMSE": 0.033301642586937845,
+    "equal_power_lateral_NRMSE": 0.01000887917247249,
+    "equal_power_depth_NRMSE": 0.0012994637517147903,
+    "correlation": 0.9994338529293763,
+    "boundary_within_0p25um_fraction_of_global_squared_error": 0.9957495060517312,
+    "worst_z_layer_center_nm": -4.999999999999992,
+    "worst_z_layer_fraction_of_global_squared_error": 0.8186646509867879,
+    "regions": {
+      "inside_9um": {
+        "candidate_power_fraction": 0.9662180394789279,
+        "reference_power_fraction": 0.9662097594279163,
+        "local_full_3D_NRMSE": 0.001565106200975969,
+        "fraction_of_global_squared_error": 0.0021979775728710065
+      },
+      "transition_9_to_12um": {
+        "candidate_power_fraction": 0.03133145782873912,
+        "reference_power_fraction": 0.03134720656012992,
+        "local_full_3D_NRMSE": 0.45794217743800275,
+        "fraction_of_global_squared_error": 0.8116282741708036
+      },
+      "outside_12um": {
+        "candidate_power_fraction": 0.002450502692332958,
+        "reference_power_fraction": 0.0024430340119538214,
+        "local_full_3D_NRMSE": 0.5830116113523683,
+        "fraction_of_global_squared_error": 0.1861737482563253
+      }
+    },
+    "gates": {
+      "mapped_power_change_lt_0p5_percent": true,
+      "mapped_lateral_Q_NRMSE_lt_0p5_percent": false,
+      "mapped_full_3D_Q_NRMSE_lt_0p5_percent": false,
+      "mapped_depth_Q_NRMSE_lt_0p5_percent": true,
+      "both_mapping_power_errors_lt_1e_minus_12": true
+    },
+    "all_gates_pass": false
+  },
   "interpretation": {
+    "raw_control_volume_is_not_the_TaIrTe4_thermal_source": true,
     "total_power_can_hide_spatial_nonconvergence": true,
     "no_fast_candidate_promoted": true,
     "thermal_PTE_adjoint_optimization_run": false,

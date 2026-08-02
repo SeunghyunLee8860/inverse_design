@@ -2,8 +2,8 @@
 
 ## Device-A finite-Q fast-mesh convergence
 
-- Status: `FAILED_FAST_DEVICE_A_SPATIAL_Q_CONVERGENCE`.  No fast finite-Q
-  candidate is promoted.
+- Status: `FAILED_FAST_DEVICE_A_MATERIAL_OVERLAP_SPATIAL_CONVERGENCE`.  No
+  fast finite-Q candidate is promoted.
 - The user-authorized candidate uses TaIrTe4 `dz=10 nm`, a 50-nm optical x/y
   mesh around the registered illuminated edge, a 200-nm outer Device-A/Q
   mesh, auto mesh accuracy 3, and the fixed `w0=8.75 um` Palik SiO2/Si
@@ -13,19 +13,30 @@
   Direct 5/7/9/12-um half-span cases and a 50-to-100-to-200-nm nested case
   were actually run on GPU.  All completed with auto-shutoff below `1e-5`
   and six-face closure between `0.0211%` and `0.0279%`.
-- Total power alone gives a false sense of convergence.  The best tested
-  nested candidate (50 nm within +/-9 um, 100 nm to +/-12 um, 200 nm outside)
-  is `20.4%` faster than the +/-12-um 50-nm reference (`489.6 s` versus
-  `615.0 s`) and changes total power by only `0.0560%`, but lateral-Q NRMSE is
-  `1.9577%` and full-3D-Q NRMSE is `9.2816%`, above the `0.5%` gate.
-- The raw NPZ/FSP files remain external.  Spatial comparisons use a common
-  physical control volume and exact conservative cell-overlap energy remap;
-  remap power error is zero to floating-point precision.
+- The previously published `1.9577%` lateral and `9.2816%` full-3D values are
+  retained as a **raw optical control-volume diagnostic**.  They include
+  lossy-substrate/conformal cells and are not the final TaIrTe4-only thermal
+  source; treating them as that source was a comparison-scope error.
+- Correctly mapping each case independently to the identical 100-nm lateral,
+  10-nm flake-z thermal grid gives `0.001165%` mapped-power change,
+  `1.000888%` lateral-Q NRMSE, `3.330164%` full-3D-Q NRMSE, `0.129946%`
+  depth-profile NRMSE, and exact source/target power closure.  Spatial
+  convergence therefore still fails, but by much less than the raw-Q result.
+- Error localization identifies the mesh-layout mistake: `99.5750%` of the
+  squared mapped-Q error is within 0.25 um of the binary FVM flake boundary,
+  `81.8665%` is in the top `z=-5 nm` layer, and `81.1628%` lies in the
+  9--12-um 50-to-100-nm transition.  Inside +/-9 um the local full-3D NRMSE is
+  only `0.156511%`.  The candidate incorrectly coarsened real illuminated
+  Device-A boundaries rather than only homogeneous remote material.
+- The raw NPZ/FSP and mapped NPZ files remain external.  The material-overlap
+  map uses exact optical/thermal cell intersection and has zero power error,
+  but its material domain is the union of binary cell-centred FVM cells—not
+  an analytic polygon cut-cell model.
 - This checkpoint does not isolate `dz=10 nm` versus `dz=5 nm`; every finite
   case here uses 10 nm.  No thermal, PTE, adjoint, or optimization run belongs
-  to this checkpoint.  The next minimal optical test is a 100-nm outer
-  Device-A mesh versus the failed 200-nm outer candidate, not another blind
-  expansion of the 50-nm square.
+  to this checkpoint.  The next minimal optical test is a narrow 50-nm mesh
+  following every illuminated flake/electrode boundary, while only remote
+  homogeneous air/SiO2/Si remains coarse.
 - Report, JSON, CSV, plot, and external-artifact manifest:
   `reports/paper_ir_device_a_fast_finite_mesh/`.
 

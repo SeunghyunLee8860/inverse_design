@@ -40,9 +40,185 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--case-9um", type=Path, required=True)
     parser.add_argument("--case-12um", type=Path, required=True)
     parser.add_argument("--case-9um-intermediate", type=Path, required=True)
+    parser.add_argument("--mapped-candidate-dir", type=Path)
+    parser.add_argument("--mapped-reference-dir", type=Path)
     parser.add_argument("--interrupted-case", type=Path)
     parser.add_argument("--output-dir", type=Path, required=True)
     return parser.parse_args()
+
+
+def compare_material_overlap_sources(
+    candidate_dir: Path, reference_dir: Path
+) -> dict[str, Any]:
+    """Compare the final TaIrTe4-only sources on one identical FVM grid.
+
+    This is deliberately separate from :func:`compare`, which audits the raw
+    optical control-volume Q and therefore includes lossy-substrate and
+    conformal/unassigned cells that are not part of the TaIrTe4-only thermal
+    source contract.
+    """
+
+    paths = {
+        "candidate": candidate_dir / "material_overlap_mapped_q.npz",
+        "reference": reference_dir / "material_overlap_mapped_q.npz",
+    }
+    summaries = {
+        name: json.loads(
+            (directory / "material_overlap_mapping_summary.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        for name, directory in (
+            ("candidate", candidate_dir),
+            ("reference", reference_dir),
+        )
+    }
+    with np.load(paths["candidate"], allow_pickle=False) as left, np.load(
+        paths["reference"], allow_pickle=False
+    ) as right:
+        for key in ("x_edges_m", "y_edges_m", "z_edges_m"):
+            if not np.array_equal(left[key], right[key]):
+                raise RuntimeError(f"mapped thermal grids differ: {key}")
+        x_edges = np.asarray(left["x_edges_m"], float)
+        y_edges = np.asarray(left["y_edges_m"], float)
+        z_edges = np.asarray(left["z_edges_m"], float)
+        candidate_q = np.asarray(left["Q_W_m3"], float)
+        reference_q = np.asarray(right["Q_W_m3"], float)
+        if candidate_q.shape != reference_q.shape:
+            raise RuntimeError("mapped Q shapes differ")
+        if not np.array_equal(
+            left["TaIrTe4_support_mask"], right["TaIrTe4_support_mask"]
+        ):
+            raise RuntimeError("mapped TaIrTe4 support masks differ")
+        support = np.asarray(left["TaIrTe4_support_mask"], bool)
+
+    cell_volume = (
+        np.diff(x_edges)[:, None, None]
+        * np.diff(y_edges)[None, :, None]
+        * np.diff(z_edges)[None, None, :]
+    )
+    candidate_energy = candidate_q * cell_volume
+    reference_energy = reference_q * cell_volume
+    candidate_power = float(np.sum(candidate_energy))
+    reference_power = float(np.sum(reference_energy))
+    candidate_normalized = candidate_energy / candidate_power
+    reference_normalized = reference_energy / reference_power
+
+    def nrmse(left: np.ndarray, right: np.ndarray) -> float:
+        return float(np.linalg.norm(left - right) / np.linalg.norm(right))
+
+    difference = candidate_normalized - reference_normalized
+    total_squared_error = float(np.sum(difference**2))
+    x = 0.5 * (x_edges[:-1] + x_edges[1:])
+    y = 0.5 * (y_edges[:-1] + y_edges[1:])
+    max_xy = np.maximum(np.abs(x[:, None]), np.abs(y[None, :]))
+    regions = {
+        "inside_9um": max_xy <= 9.0e-6,
+        "transition_9_to_12um": (max_xy > 9.0e-6) & (max_xy <= 12.0e-6),
+        "outside_12um": max_xy > 12.0e-6,
+    }
+    region_metrics = {}
+    for name, xy_mask in regions.items():
+        mask = np.broadcast_to(xy_mask[:, :, None], candidate_q.shape)
+        local_reference_norm = float(np.linalg.norm(reference_normalized[mask]))
+        local_error = float(np.linalg.norm(difference[mask]))
+        region_metrics[name] = {
+            "candidate_power_fraction": float(
+                np.sum(candidate_energy[mask]) / candidate_power
+            ),
+            "reference_power_fraction": float(
+                np.sum(reference_energy[mask]) / reference_power
+            ),
+            "local_full_3D_NRMSE": (
+                local_error / local_reference_norm
+                if local_reference_norm > 0.0
+                else 0.0
+            ),
+            "fraction_of_global_squared_error": (
+                float(np.sum(difference[mask] ** 2)) / total_squared_error
+                if total_squared_error > 0.0
+                else 0.0
+            ),
+        }
+
+    # A boundary-cell diagnostic on the same binary thermal material model.
+    # It is not an analytic polygon cut-cell calculation.
+    from scipy.ndimage import distance_transform_edt
+
+    support_xy = np.any(support, axis=2)
+    distance_inside = distance_transform_edt(
+        support_xy,
+        sampling=(float(np.median(np.diff(x))), float(np.median(np.diff(y)))),
+    )
+    boundary_xy = support_xy & (distance_inside <= 0.25e-6)
+    boundary = np.broadcast_to(boundary_xy[:, :, None], candidate_q.shape)
+    boundary_error_fraction = float(
+        np.sum(difference[boundary] ** 2) / total_squared_error
+    )
+    z_error = np.sum(difference**2, axis=(0, 1))
+    z = 0.5 * (z_edges[:-1] + z_edges[1:])
+    worst_z_index = int(np.argmax(z_error))
+
+    full_3d = nrmse(candidate_normalized, reference_normalized)
+    lateral = nrmse(
+        np.sum(candidate_normalized, axis=2),
+        np.sum(reference_normalized, axis=2),
+    )
+    depth = nrmse(
+        np.sum(candidate_normalized, axis=(0, 1)),
+        np.sum(reference_normalized, axis=(0, 1)),
+    )
+    gates = {
+        "mapped_power_change_lt_0p5_percent": (
+            abs(candidate_power - reference_power) / abs(reference_power) < GATE
+        ),
+        "mapped_lateral_Q_NRMSE_lt_0p5_percent": lateral < GATE,
+        "mapped_full_3D_Q_NRMSE_lt_0p5_percent": full_3d < GATE,
+        "mapped_depth_Q_NRMSE_lt_0p5_percent": depth < GATE,
+        "both_mapping_power_errors_lt_1e_minus_12": max(
+            summaries[name]["mapping"]["mapping_relative_power_error"]
+            for name in summaries
+        )
+        < 1.0e-12,
+    }
+    return {
+        "classification": (
+            "TaIrTe4-only material-overlap thermal source on one identical "
+            "100 nm lateral / 10 nm flake-z FVM grid"
+        ),
+        "material_domain_limitation": (
+            "Omega_TaIrTe4 is the union of binary FVM cells selected by the "
+            "thermal cell-center polygon mask; it is not an analytic polygon "
+            "cut-cell volume"
+        ),
+        "candidate_directory": str(candidate_dir.resolve()),
+        "reference_directory": str(reference_dir.resolve()),
+        "candidate_artifact_sha256": sha256(paths["candidate"]),
+        "reference_artifact_sha256": sha256(paths["reference"]),
+        "candidate_power_W": candidate_power,
+        "reference_power_W": reference_power,
+        "relative_power_change": abs(candidate_power - reference_power)
+        / abs(reference_power),
+        "equal_power_full_3D_NRMSE": full_3d,
+        "equal_power_lateral_NRMSE": lateral,
+        "equal_power_depth_NRMSE": depth,
+        "correlation": float(
+            np.corrcoef(
+                candidate_normalized.reshape(-1),
+                reference_normalized.reshape(-1),
+            )[0, 1]
+        ),
+        "boundary_within_0p25um_fraction_of_global_squared_error": (
+            boundary_error_fraction
+        ),
+        "worst_z_layer_center_nm": float(z[worst_z_index] * 1e9),
+        "worst_z_layer_fraction_of_global_squared_error": float(
+            z_error[worst_z_index] / total_squared_error
+        ),
+        "regions": region_metrics,
+        "gates": gates,
+        "all_gates_pass": all(gates.values()),
+    }
 
 
 def sha256(path: Path) -> str:
@@ -232,6 +408,14 @@ def main() -> int:
             cases["50nm_half_span_12um"],
         ),
     }
+    mapped_comparison = None
+    if (args.mapped_candidate_dir is None) != (args.mapped_reference_dir is None):
+        raise ValueError("both mapped source directories must be supplied")
+    if args.mapped_candidate_dir is not None:
+        mapped_comparison = compare_material_overlap_sources(
+            args.mapped_candidate_dir.resolve(),
+            args.mapped_reference_dir.resolve(),
+        )
     case_summary = {}
     for name, case in cases.items():
         result = case["result"]
@@ -256,7 +440,11 @@ def main() -> int:
             else mesh["intermediate_half_span_m"] * 1e6,
             "finite_solver": finite_grid_and_runtime(case),
         }
-    status = "FAILED_FAST_DEVICE_A_SPATIAL_Q_CONVERGENCE"
+    status = (
+        "FAILED_FAST_DEVICE_A_MATERIAL_OVERLAP_SPATIAL_CONVERGENCE"
+        if mapped_comparison is not None and not mapped_comparison["all_gates_pass"]
+        else "FAILED_FAST_DEVICE_A_RAW_CONTROL_VOLUME_SPATIAL_DIAGNOSTIC"
+    )
     summary = {
         "status": status,
         "classification": (
@@ -277,8 +465,10 @@ def main() -> int:
             "substrate": "Lumerical v261 Palik SiO2/Si at 11 um",
         },
         "cases": case_summary,
-        "comparisons": pairs,
+        "raw_control_volume_comparisons": pairs,
+        "material_overlap_thermal_source_comparison": mapped_comparison,
         "interpretation": {
+            "raw_control_volume_is_not_the_TaIrTe4_thermal_source": True,
             "total_power_can_hide_spatial_nonconvergence": True,
             "no_fast_candidate_promoted": True,
             "thermal_PTE_adjoint_optimization_run": False,
@@ -292,6 +482,7 @@ def main() -> int:
     with csv_path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(
             handle,
+            lineterminator="\n",
             fieldnames=[
                 "comparison",
                 "power_change_percent",
@@ -324,6 +515,23 @@ def main() -> int:
                     "candidate_runtime_s": case_summary[candidate_name]["finite_solver"]["wall_time_s"],
                     "reference_runtime_s": case_summary[reference_name]["finite_solver"]["wall_time_s"],
                     "all_gates_pass": comparison["all_gates_pass"],
+                }
+            )
+        if mapped_comparison is not None:
+            writer.writerow(
+                {
+                    "comparison": "mapped_TaIrTe4_source_candidate_vs_reference",
+                    "power_change_percent": 100
+                    * mapped_comparison["relative_power_change"],
+                    "lateral_NRMSE_percent": 100
+                    * mapped_comparison["equal_power_lateral_NRMSE"],
+                    "full_3D_NRMSE_percent": 100
+                    * mapped_comparison["equal_power_full_3D_NRMSE"],
+                    "depth_NRMSE_percent": 100
+                    * mapped_comparison["equal_power_depth_NRMSE"],
+                    "candidate_runtime_s": "offline_mapping_only",
+                    "reference_runtime_s": "offline_mapping_only",
+                    "all_gates_pass": mapped_comparison["all_gates_pass"],
                 }
             )
 
@@ -393,6 +601,30 @@ def main() -> int:
                         "committed_to_git": False,
                     }
                 )
+    if mapped_comparison is not None:
+        for label, directory in (
+            ("mapped_candidate", args.mapped_candidate_dir),
+            ("mapped_reference", args.mapped_reference_dir),
+        ):
+            for filename in (
+                "material_overlap_mapping_summary.json",
+                "material_overlap_mapped_q.npz",
+            ):
+                path = directory / filename
+                manifest_entries.append(
+                    {
+                        "case": label,
+                        "server_path": str(path.resolve()),
+                        "size_bytes": path.stat().st_size,
+                        "sha256": sha256(path),
+                        "generation_command": (
+                            "run_device_a_explicit_thermal_pte.py "
+                            "--mapping-only --q-source TaIrTe4-only "
+                            "--core-step-nm 100 --flake-dz-nm 10"
+                        ),
+                        "committed_to_git": False,
+                    }
+                )
     if args.interrupted_case is not None:
         manifest_entries.append(
             {
@@ -419,6 +651,40 @@ def main() -> int:
 
     final_pair = pairs["9um_plus_100nm_transition_vs_12um"]
     final_metric = final_pair["component_metrics"]["total"]
+    mapped_section = ""
+    if mapped_comparison is not None:
+        mapped_section = f"""
+## Corrected material-overlap thermal-source comparison
+
+The earlier raw-control-volume comparison is retained below as an optical
+diagnostic, but it is **not** the TaIrTe4-only thermal source.  Both optical
+cases were independently mapped onto the same explicit thermal grid using
+optical-cell/thermal-material overlap, without nearest-cell relocation.
+
+- mapped power change: {100 * mapped_comparison['relative_power_change']:.6f}%
+- mapped lateral Q NRMSE: {100 * mapped_comparison['equal_power_lateral_NRMSE']:.6f}%
+- mapped full-3D Q NRMSE: {100 * mapped_comparison['equal_power_full_3D_NRMSE']:.6f}%
+- mapped depth Q NRMSE: {100 * mapped_comparison['equal_power_depth_NRMSE']:.6f}%
+- mapped correlation: {mapped_comparison['correlation']:.9f}
+- mapping power error: zero in both cases
+
+The spatial gate still fails, but its localization is now explicit:
+
+- within |x|,|y| <= 9 um: {100 * mapped_comparison['regions']['inside_9um']['local_full_3D_NRMSE']:.6f}% full-3D NRMSE
+- 9--12 um transition: {100 * mapped_comparison['regions']['transition_9_to_12um']['fraction_of_global_squared_error']:.4f}% of squared error
+- within 0.25 um of the binary FVM flake boundary: {100 * mapped_comparison['boundary_within_0p25um_fraction_of_global_squared_error']:.4f}% of squared error
+- worst z layer: {mapped_comparison['worst_z_layer_center_nm']:.1f} nm, carrying {100 * mapped_comparison['worst_z_layer_fraction_of_global_squared_error']:.4f}% of squared error
+
+This identifies the failed candidate as a mesh-layout error: the 50-to-100 nm
+transition crossed illuminated Device-A material boundaries.  It is not a
+power-conservation failure in the remap.
+
+Important limitation:
+{mapped_comparison['material_domain_limitation']}.
+Consequently this report does not claim an analytic polygon cut-cell thermal
+geometry.
+"""
+
     report = f"""# Device-A fast finite optical mesh validation
 
 Status: `{status}`
@@ -426,6 +692,7 @@ Status: `{status}`
 This is a one-polarization (`E || a`) finite Device-A optical mesh diagnostic.
 It is not a promoted production heat source and no thermal, PTE, adjoint, or
 optimization calculation was run.
+{mapped_section}
 
 ## Fixed contract
 
@@ -439,7 +706,7 @@ optimization calculation was run.
 `half-span` means the half-width of the square 50-nm refinement window around
 the registered beam centre.  It is not a convection coefficient.
 
-## Result
+## Raw optical control-volume diagnostic
 
 All five GPU calculations completed with auto-shutoff <= 1e-5 and six-face
 closure below 0.5%.  Total absorbed power appears converged much earlier than
@@ -464,12 +731,14 @@ pass.
 ## Interpretation and next minimal test
 
 The current data do not isolate `dz=10 nm` versus `dz=5 nm`; every case in this
-checkpoint uses 10 nm.  The observed failure is the x/y refinement-window
-sensitivity.  A next test should keep the 50-nm illuminated region but compare
-a 100-nm outer Device-A mesh against the current 200-nm outer mesh on one
-polarization.  It should not proceed to thermal/PTE unless the spatial optical
-gate is resolved or an explicitly approved downstream-observable gate replaces
-the strict raw-Q gate.
+checkpoint uses 10 nm.  The observed failure is localized at real Device-A
+material boundaries that the candidate accidentally placed in its 100/200-nm
+region.  The next economical optical test must follow those illuminated
+flake/electrode boundaries with narrow 50-nm mesh strips while leaving only
+homogeneous remote air/SiO2/Si coarse.  Blindly changing the whole outer region
+to 100 nm is not the diagnosed fix.  It should not proceed to thermal/PTE until
+the mapped thermal-source spatial gate is resolved or the user explicitly
+approves a downstream-observable replacement gate.
 """
     (args.output_dir / "DEVICE_A_FAST_FINITE_MESH_REPORT.md").write_text(
         report, encoding="utf-8"
