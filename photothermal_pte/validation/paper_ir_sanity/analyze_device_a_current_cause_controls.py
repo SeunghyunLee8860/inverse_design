@@ -32,11 +32,6 @@ from photothermal_pte.validation.photothermal_stage1.anisotropic_heat_fvm import
 from photothermal_pte.validation.paper_ir_sanity import (
     run_device_a_explicit_thermal_pte as thermal,
 )
-from photothermal_pte.validation.paper_ir_sanity.run_lumerical_device_a_ir_q import (
-    load_digitized_device_a_contract,
-)
-
-
 WAVELENGTH_M = 11.0e-6
 SIO2_N = 2.0194436826147366 + 0.16262021932999673j
 SI_N = 3.4212896222169786 + 4.389880310197085e-5j
@@ -237,20 +232,24 @@ def setup_geometry(
     reference_thermal_fields: Path,
 ) -> thermal.Geometry:
     optical = json.loads(optical_case_result.read_text())
-    contract = load_digitized_device_a_contract(
-        geometry_contract,
-        domain_um=float(optical["domain_um"]),
-        source_span_um=float(optical["source_span_um"]),
-    )
+    contract = optical["pre_run_contract"]["geometry"][
+        "digitized_device_a_contract"
+    ]
+    if Path(str(contract["path"])).resolve() != geometry_contract.resolve():
+        raise RuntimeError(
+            "saved optical Device-A geometry contract path does not match "
+            "the requested immutable geometry contract"
+        )
     thermal.FLAKE_VERTICES_UM = np.asarray(
         contract["flake_vertices_simulation_um"], float
     )
     shift = np.asarray(contract["simulation_origin_shift_um"], float)
+    payload = json.loads(geometry_contract.read_text())
     thermal.TOP_CONTACT_SEGMENT_UM = np.asarray(
-        contract["payload"]["top_electrical_contact_segment_code_um"], float
+        payload["top_electrical_contact_segment_code_um"], float
     ) + shift
     thermal.BOTTOM_CONTACT_SEGMENT_UM = np.asarray(
-        contract["payload"]["bottom_electrical_contact_segment_code_um"], float
+        payload["bottom_electrical_contact_segment_code_um"], float
     ) + shift
     rebuilt = thermal.build_geometry(
         domain_m=60.0e-6,

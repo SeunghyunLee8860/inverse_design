@@ -21,6 +21,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.patches import Circle
 import numpy as np
 
 from photothermal_pte.validation.paper_ir_sanity import (
@@ -29,6 +30,9 @@ from photothermal_pte.validation.paper_ir_sanity import (
 from photothermal_pte.validation.paper_ir_sanity.analyze_device_a_current_cause_controls import (
     load_fields,
     setup_geometry,
+)
+from photothermal_pte.validation.paper_ir_sanity.run_lumerical_device_a_ir_q import (
+    DEVICE_A_CANONICAL_CODE_TO_LUMERICAL_SHIFT_UM,
 )
 
 
@@ -329,9 +333,17 @@ def plot_matched_difference_maps(
     path: Path,
     geometry: thermal.Geometry,
     maps: dict[tuple[float, str], dict[str, np.ndarray]],
+    solver_to_canonical_um: np.ndarray,
+    beam_centers_canonical_um: dict[float, tuple[float, float]],
 ) -> None:
-    x = 0.5 * (geometry.x_edges_m[:-1] + geometry.x_edges_m[1:]) * 1e6
-    y = 0.5 * (geometry.y_edges_m[:-1] + geometry.y_edges_m[1:]) * 1e6
+    x = (
+        0.5 * (geometry.x_edges_m[:-1] + geometry.x_edges_m[1:]) * 1e6
+        + solver_to_canonical_um[0]
+    )
+    y = (
+        0.5 * (geometry.y_edges_m[:-1] + geometry.y_edges_m[1:]) * 1e6
+        + solver_to_canonical_um[1]
+    )
     differences = []
     for distance in (1.0, 3.0, 5.0):
         differences.append(
@@ -356,18 +368,36 @@ def plot_matched_difference_maps(
                 vmax=bound,
             )
             axis.set_aspect("equal")
-            axis.set_xlabel("lab x=b (um)")
-            axis.set_ylabel("lab y=a (um)")
+            axis.set_xlabel("fixed Lumerical x=b (um)")
+            axis.set_ylabel("fixed Lumerical y=a (um)")
             axis.set_title(f"d={distance:g} um: {view}")
-            if row == 1:
-                axis.set_xlim(-10.0, 5.0)
-                axis.set_ylim(-12.0, 5.0)
+            beam_x, beam_y = beam_centers_canonical_um[distance]
+            axis.add_patch(
+                Circle(
+                    (beam_x, beam_y),
+                    WAIST_M * 1e6,
+                    fill=False,
+                    edgecolor="black",
+                    linestyle="--",
+                    linewidth=1.0,
+                )
+            )
+            axis.scatter(beam_x, beam_y, marker="x", color="black", s=35)
+            if row == 0:
+                axis.set_xlim(-30.0, 30.0)
+                axis.set_ylim(-30.0, 30.0)
+            else:
+                axis.set_xlim(-20.0, 5.0)
+                axis.set_ylim(-12.0, 7.0)
             figure.colorbar(
                 image,
                 ax=axis,
                 label="sheet current integrand difference (A/m2)",
             )
-    figure.suptitle("Where the Maxwell/TaIrTe4 field gives a more current than b")
+    figure.suptitle(
+        "Device A in one fixed Lumerical frame: where E||a contributes more current than E||b\n"
+        "black x/circle = Gaussian centre / w0=8.75 um"
+    )
     figure.savefig(path, dpi=180)
     plt.close(figure)
 
@@ -489,6 +519,17 @@ def main() -> int:
     args.report_dir.mkdir(parents=True, exist_ok=True)
     sparse = json.loads(args.sparse_summary.read_text())
     first_optical = Path(sparse["records"][0]["optical_case_result_path"])
+    first_optical_payload = json.loads(first_optical.read_text())
+    first_optical_device_contract = first_optical_payload["pre_run_contract"][
+        "geometry"
+    ]["digitized_device_a_contract"]
+    solver_shift_um = np.asarray(
+        first_optical_device_contract["simulation_origin_shift_um"], float
+    )
+    solver_to_canonical_um = (
+        np.asarray(DEVICE_A_CANONICAL_CODE_TO_LUMERICAL_SHIFT_UM, float)
+        - solver_shift_um
+    )
     first_fields = (
         Path(sparse["records"][0]["thermal_summary_path"]).parent
         / "thermal_pte_fields.npz"
@@ -520,6 +561,19 @@ def main() -> int:
 
     lookup = {(row["scan_distance_um"], row["polarization"]): row for row in rows}
     matched = [matched_difference(lookup[(distance, "a")], lookup[(distance, "b")]) for distance in (1.0, 3.0, 5.0)]
+    beam_centers_canonical_um = {
+        distance: (
+            float(
+                lookup[(distance, "a")]["beam_center_x_um"]
+                + solver_to_canonical_um[0]
+            ),
+            float(
+                lookup[(distance, "a")]["beam_center_y_um"]
+                + solver_to_canonical_um[1]
+            ),
+        )
+        for distance in (1.0, 3.0, 5.0)
+    }
     max_closure = max(
         max(
             row["reported_current_closure_relative_error"],
@@ -580,6 +634,24 @@ def main() -> int:
             "radial_bins": "r/w0=[0,.5),[.5,1),[1,1.5),[1.5,inf)",
             "w0_m": WAIST_M,
             "weighting_potential_bins": "five bins from psi=0 to 1",
+        },
+        "published_coordinate_frame": {
+            "name": "DEVICE_A_FIXED_LUMERICAL_X_B_Y_A",
+            "axis_mapping": "x=b, y=a",
+            "origin_in_digitized_code_um": [0.0, 3.0],
+            "code_to_fixed_lumerical_shift_um": (
+                np.asarray(
+                    DEVICE_A_CANONICAL_CODE_TO_LUMERICAL_SHIFT_UM, float
+                ).tolist()
+            ),
+            "historical_solver_to_fixed_lumerical_translation_um": (
+                solver_to_canonical_um.tolist()
+            ),
+            "beam_centers_um": {
+                f"d={distance:g}": list(beam_centers_canonical_um[distance])
+                for distance in (1.0, 3.0, 5.0)
+            },
+            "raw_historical_artifacts_rewritten": False,
         },
         "cases": rows,
         "same_position_a_minus_b": matched,
@@ -669,7 +741,13 @@ def main() -> int:
     region_plot = args.report_dir / "DEVICE_A_SPATIAL_REGION_DIFFERENCES.png"
     bin_plot = args.report_dir / "DEVICE_A_RADIAL_WEIGHTING_BIN_DIFFERENCES.png"
     plot_component_decomposition(component_plot, rows)
-    plot_matched_difference_maps(difference_plot, geometry, maps)
+    plot_matched_difference_maps(
+        difference_plot,
+        geometry,
+        maps,
+        solver_to_canonical_um,
+        beam_centers_canonical_um,
+    )
     plot_device_region_differences(region_plot, matched)
     plot_radial_and_weighting_differences(bin_plot, rows)
 
@@ -705,6 +783,18 @@ Status: `{status}`
 This is a read-only/offline decomposition of the immutable registered
 Maxwell -> explicit-3D thermal -> PTE fields. No new Maxwell, thermal, or
 weighting solve was run.
+
+## Fixed Lumerical coordinate frame
+
+Every published geometry/map now uses one immutable Device-A Lumerical
+frame: `x=b`, `y=a`, with digitized `(0,3) um` defined as Lumerical
+`(0,0) um`.  The immutable historical fields were not modified; only their
+stored solver-local coordinates were translated by
+`({solver_to_canonical_um[0]:.6f},{solver_to_canonical_um[1]:.6f}) um` for
+plotting.  The beam centres in this fixed frame are `(-16.5625,-2) um`,
+`(-16.5625,0) um`, and `(-16.5625,2) um` for `d=1,3,5 um`.  A case-dependent
+solver origin must not be labelled as the laboratory or fixed Lumerical
+device origin.
 
 ## Literal current equation
 

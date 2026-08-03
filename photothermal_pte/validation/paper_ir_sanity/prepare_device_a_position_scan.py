@@ -66,6 +66,11 @@ def main() -> int:
     baseline_sim = baseline + origin_shift
     half_source = 0.5 * args.source_span_um
     half_domain = 0.5 * args.domain_um
+    domain_center = np.asarray(
+        frozen["FDTD_lateral_center_simulation_um"], float
+    )
+    domain_min = domain_center - half_domain
+    domain_max = domain_center + half_domain
     cases = []
     for delta_s in SCAN_OFFSETS_UM:
         s_um = s0 + delta_s
@@ -73,10 +78,10 @@ def main() -> int:
         center_sim = center_code + origin_shift
         source_offset = delta_s * inward
         clearance = {
-            "x_min": float(center_sim[0] - half_source + half_domain),
-            "x_max": float(half_domain - center_sim[0] - half_source),
-            "y_min": float(center_sim[1] - half_source + half_domain),
-            "y_max": float(half_domain - center_sim[1] - half_source),
+            "x_min": float(center_sim[0] - half_source - domain_min[0]),
+            "x_max": float(domain_max[0] - center_sim[0] - half_source),
+            "y_min": float(center_sim[1] - half_source - domain_min[1]),
+            "y_max": float(domain_max[1] - center_sim[1] - half_source),
         }
         cases.append(
             {
@@ -121,6 +126,7 @@ def main() -> int:
         },
         "frozen_simulation_frame": {
             "origin_shift_um": origin_shift.tolist(),
+            "FDTD_lateral_center_um": domain_center.tolist(),
             "baseline_beam_center_simulation_um": baseline_sim.tolist(),
             "device_PML_monitors_fixed_across_scan": True,
             "local_mesh_center_fixed_at_s0": True,

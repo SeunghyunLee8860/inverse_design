@@ -1,6 +1,6 @@
 {
   "status": "COMPLETED_DEVICE_A_SPATIAL_CURRENT_DECOMPOSITION",
-  "generation_commit": "851cba947ecea1be0e04ab987ef4f5ac9afd8d28",
+  "generation_commit": "6652700b1fc84e828d979bfc2d89192f37e2b2eb",
   "scope": "offline reintegration and spatial partition of immutable Device-A thermal-PTE fields; no Maxwell, thermal solve, weighting solve, adjoint, AD-FD, or optimization",
   "equation": "I=int[-sigma_b*S_b*d_bT*d_bpsi - sigma_a*S_a*d_aT*d_apsi]dV",
   "thermoelectric_coefficients": {
@@ -28,6 +28,37 @@
     "radial_bins": "r/w0=[0,.5),[.5,1),[1,1.5),[1.5,inf)",
     "w0_m": 8.75e-06,
     "weighting_potential_bins": "five bins from psi=0 to 1"
+  },
+  "published_coordinate_frame": {
+    "name": "DEVICE_A_FIXED_LUMERICAL_X_B_Y_A",
+    "axis_mapping": "x=b, y=a",
+    "origin_in_digitized_code_um": [
+      0.0,
+      3.0
+    ],
+    "code_to_fixed_lumerical_shift_um": [
+      -0.0,
+      -3.0
+    ],
+    "historical_solver_to_fixed_lumerical_translation_um": [
+      -10.67075276243094,
+      0.0
+    ],
+    "beam_centers_um": {
+      "d=1": [
+        -16.5625,
+        -2.0
+      ],
+      "d=3": [
+        -16.5625,
+        0.0
+      ],
+      "d=5": [
+        -16.5625,
+        2.0
+      ]
+    },
+    "raw_historical_artifacts_rewritten": false
   },
   "cases": [
     {

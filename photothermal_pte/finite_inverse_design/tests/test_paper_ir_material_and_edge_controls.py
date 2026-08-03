@@ -69,7 +69,7 @@ def test_finite_numerical_pulse_is_frequency_centered_at_11um() -> None:
     assert device_a_optical.SOURCE_CENTERED_STOP_M <= 13.2e-6
 
 
-def test_device_a_beam_override_recomputes_frame_without_moving_relative_geometry(
+def test_device_a_beam_override_uses_fixed_lumerical_device_frame(
     tmp_path: Path,
 ) -> None:
     payload = {
@@ -89,23 +89,53 @@ def test_device_a_beam_override_recomputes_frame_without_moving_relative_geometr
         path,
         domain_um=64.0,
         source_span_um=50.0,
-        beam_center_code_um_override=(0.0, 0.0),
+        beam_center_code_um_override=(0.0, 3.0),
     )
     assert contract["beam_center_digitized_override_applied"]
     assert np.array_equal(
         contract["beam_center_digitized_original_um"], [-8.0, 0.0]
     )
-    assert np.array_equal(contract["beam_center_digitized_um"], [0.0, 0.0])
+    assert np.array_equal(contract["beam_center_digitized_um"], [0.0, 3.0])
     assert np.allclose(contract["beam_center_simulation_um"], [0.0, 0.0])
     assert np.allclose(
-        np.asarray(contract["flake_vertices_simulation_um"])
-        - np.asarray(contract["beam_center_simulation_um"]),
-        np.asarray(payload["flake_vertices_code_um"]),
+        np.asarray(contract["flake_vertices_simulation_um"]),
+        np.asarray(payload["flake_vertices_code_um"]) + [0.0, -3.0],
     )
+    assert np.allclose(contract["FDTD_lateral_center_simulation_um"], [0.0, 0.0])
     assert contract["minimum_lateral_PML_clearance_um"] == {
         "x": 7.0,
         "y": 7.0,
     }
+    canonical = contract["canonical_lumerical_frame"]
+    assert canonical["name"] == "DEVICE_A_FIXED_LUMERICAL_X_B_Y_A"
+    assert canonical["origin_in_digitized_code_um"] == [0.0, 3.0]
+    assert canonical["code_to_canonical_lumerical_shift_um"] == [0.0, -3.0]
+    assert np.allclose(canonical["beam_center_um"], [0.0, 0.0])
+    assert np.allclose(
+        canonical["flake_vertices_um"],
+        np.asarray(payload["flake_vertices_code_um"]) + [0.0, -3.0],
+    )
+    assert np.allclose(
+        np.asarray(contract["flake_vertices_simulation_um"])
+        + canonical["solver_to_canonical_lumerical_translation_um"],
+        canonical["flake_vertices_um"],
+    )
+    edge_contract = device_a_optical.load_digitized_device_a_contract(
+        path,
+        domain_um=64.0,
+        source_span_um=50.0,
+    )
+    assert np.array_equal(
+        edge_contract["flake_vertices_simulation_um"],
+        contract["flake_vertices_simulation_um"],
+    )
+    assert np.allclose(edge_contract["beam_center_simulation_um"], [-8.0, -3.0])
+    assert np.allclose(
+        edge_contract["FDTD_lateral_center_simulation_um"], [-8.0, -3.0]
+    )
+    assert edge_contract["canonical_lumerical_frame"][
+        "solver_to_canonical_lumerical_translation_um"
+    ] == [0.0, 0.0]
 
 
 def test_two_terminal_resistance_audit_recovers_rectangle(

@@ -1,5 +1,19 @@
 # Latest photothermal validation status
 
+## Fixed Device-A Lumerical coordinate convention
+
+- Every published Device-A geometry and cross-case map now uses one fixed
+  Lumerical frame: `x=b`, `y=a`, with digitized `(0,3) um` defined as
+  Lumerical `(0,0) um`. The flake and electrodes therefore never move between
+  plots.
+- In this frame the inside-flake beam is `(0,0) um`; the historical
+  `d=1,3,5 um` edge-scan beams are `(-16.5625,-2)`, `(-16.5625,0)`, and
+  `(-16.5625,2) um`.
+- Immutable old solver artifacts retain their original per-run translations.
+  Published plots apply the recorded solver-to-fixed-frame translation; no
+  field value, power, temperature, or current is changed. A solver-local
+  coordinate must no longer be labelled as the lab/device coordinate.
+
 ## Device-A inside-flake beam-centre diagnostic
 
 - Status: `COMPLETED_DEVICE_A_INSIDE_FLAKE_BEAM_CENTER_DIAGNOSTIC`. The

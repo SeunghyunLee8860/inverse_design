@@ -95,6 +95,17 @@ DEFAULT_DEVICE_A_GEOMETRY_JSON = (
     / "device_a_geometry_digitization.json"
 )
 
+# One immutable Device-A coordinate frame is used for every published plot
+# and cross-case comparison.  In this frame the explicitly selected
+# inside-flake point (digitized x=b, y=a = 0, 3 um) is the Lumerical origin.
+# Individual historical solves may have translated their complete geometry
+# to balance PML clearance; those solver-local coordinates must be converted
+# back with ``solver_to_canonical_lumerical_translation_um`` before plotting.
+DEVICE_A_CANONICAL_ORIGIN_CODE_UM = np.asarray([0.0, 3.0], dtype=float)
+DEVICE_A_CANONICAL_CODE_TO_LUMERICAL_SHIFT_UM = (
+    -DEVICE_A_CANONICAL_ORIGIN_CODE_UM
+)
+
 # Approximation digitized from the scale bar and outline in paper Fig. 2A.
 # It preserves the two essential edge orientations: a 45-degree upper-left
 # off-axis edge and a right edge parallel to crystal a.
@@ -355,11 +366,11 @@ def load_digitized_device_a_contract(
     source_span_um: float,
     beam_center_code_um_override: tuple[float, float] | None = None,
 ) -> dict[str, Any]:
-    """Load Fig. 2/3 digitization and choose a lossless coordinate translation.
+    """Load Fig. 2/3 digitization in one fixed Lumerical device frame.
 
-    The paper-derived relative geometry is immutable.  Only the simulation
-    origin is translated so the 50-um source aperture and both metal polygons
-    have equal minimum clearance from the +/-30-um lateral PML interfaces.
+    The flake/electrode coordinates never move between cases.  Digitized
+    ``(x=b,y=a)=(0,3) um`` is always Lumerical ``(0,0) um``.  Equal PML
+    clearance is retained by moving the FDTD-region centre, not the device.
     """
     payload = json.loads(path.read_text())
     required = (
@@ -389,17 +400,25 @@ def load_digitized_device_a_contract(
     all_metal = np.vstack((top, bottom))
     occupied_min = np.minimum(beam - half_source, np.min(all_metal, axis=0))
     occupied_max = np.maximum(beam + half_source, np.max(all_metal, axis=0))
-    origin_shift = -0.5 * (occupied_min + occupied_max)
+    origin_shift = np.array(
+        DEVICE_A_CANONICAL_CODE_TO_LUMERICAL_SHIFT_UM, copy=True
+    )
     shifted_min = occupied_min + origin_shift
     shifted_max = occupied_max + origin_shift
+    domain_center = 0.5 * (shifted_min + shifted_max)
     clearance = 0.5 * domain_um - np.maximum(
-        np.abs(shifted_min), np.abs(shifted_max)
+        np.abs(shifted_min - domain_center),
+        np.abs(shifted_max - domain_center),
     )
     if np.any(clearance < 0.5):
         raise ValueError(
             "digitized Device A/source union has less than 0.5 um nominal "
-            f"PML clearance after coordinate translation: {clearance.tolist()}"
+            f"PML clearance in the fixed Lumerical frame: {clearance.tolist()}"
         )
+    canonical_shift = np.array(
+        DEVICE_A_CANONICAL_CODE_TO_LUMERICAL_SHIFT_UM, copy=True
+    )
+    solver_to_canonical = canonical_shift - origin_shift
     return {
         "path": str(path.resolve()),
         "payload": payload,
@@ -416,9 +435,36 @@ def load_digitized_device_a_contract(
         "top_metal_polygon_simulation_um": top + origin_shift,
         "bottom_metal_polygon_simulation_um": bottom + origin_shift,
         "beam_center_simulation_um": beam + origin_shift,
+        "FDTD_lateral_center_simulation_um": domain_center,
+        "canonical_lumerical_frame": {
+            "name": "DEVICE_A_FIXED_LUMERICAL_X_B_Y_A",
+            "axis_mapping": "x=b, y=a",
+            "origin_in_digitized_code_um": (
+                DEVICE_A_CANONICAL_ORIGIN_CODE_UM.tolist()
+            ),
+            "code_to_canonical_lumerical_shift_um": canonical_shift.tolist(),
+            "flake_vertices_um": (flake + canonical_shift).tolist(),
+            "top_metal_polygon_um": (top + canonical_shift).tolist(),
+            "bottom_metal_polygon_um": (bottom + canonical_shift).tolist(),
+            "beam_center_um": (beam + canonical_shift).tolist(),
+            "solver_to_canonical_lumerical_translation_um": (
+                solver_to_canonical.tolist()
+            ),
+            "published_geometry_coordinates_are_case_invariant": True,
+        },
         "occupied_union_bounds_simulation_um": {
             "x": [float(shifted_min[0]), float(shifted_max[0])],
             "y": [float(shifted_min[1]), float(shifted_max[1])],
+        },
+        "FDTD_lateral_bounds_simulation_um": {
+            "x": [
+                float(domain_center[0] - 0.5 * domain_um),
+                float(domain_center[0] + 0.5 * domain_um),
+            ],
+            "y": [
+                float(domain_center[1] - 0.5 * domain_um),
+                float(domain_center[1] + 0.5 * domain_um),
+            ],
         },
         "minimum_lateral_PML_clearance_um": {
             "x": float(clearance[0]),
@@ -959,6 +1005,8 @@ def parse_args() -> argparse.Namespace:
     args.design_radius_um = 0.0
     args.require_design_inside_flake = False
     args.device_a_contract = None
+    args.domain_center_x_um = 0.0
+    args.domain_center_y_um = 0.0
     args.mesh_center_x_um = float(args.beam_x_um)
     args.mesh_center_y_um = float(args.beam_y_um)
     if args.device_a_geometry_json is not None:
@@ -994,6 +1042,12 @@ def parse_args() -> argparse.Namespace:
         args.beam_x_um, args.beam_y_um = (
             float(value)
             for value in args.device_a_contract["beam_center_simulation_um"]
+        )
+        args.domain_center_x_um, args.domain_center_y_um = (
+            float(value)
+            for value in args.device_a_contract[
+                "FDTD_lateral_center_simulation_um"
+            ]
         )
         args.mesh_center_x_um = float(args.beam_x_um)
         args.mesh_center_y_um = float(args.beam_y_um)
@@ -1106,11 +1160,15 @@ def parse_args() -> argparse.Namespace:
             TI_THICKNESS_M + AU_THICKNESS_M if args.include_electrodes else 0.0,
         )
     source_half_span_um = 0.5 * args.source_span_um
+    domain_x_min_um = args.domain_center_x_um - 0.5 * args.domain_um
+    domain_x_max_um = args.domain_center_x_um + 0.5 * args.domain_um
+    domain_y_min_um = args.domain_center_y_um - 0.5 * args.domain_um
+    domain_y_max_um = args.domain_center_y_um + 0.5 * args.domain_um
     source_clearance_um = {
-        "x_min": args.beam_x_um - source_half_span_um + 0.5 * args.domain_um,
-        "x_max": 0.5 * args.domain_um - args.beam_x_um - source_half_span_um,
-        "y_min": args.beam_y_um - source_half_span_um + 0.5 * args.domain_um,
-        "y_max": 0.5 * args.domain_um - args.beam_y_um - source_half_span_um,
+        "x_min": args.beam_x_um - source_half_span_um - domain_x_min_um,
+        "x_max": domain_x_max_um - args.beam_x_um - source_half_span_um,
+        "y_min": args.beam_y_um - source_half_span_um - domain_y_min_um,
+        "y_max": domain_y_max_um - args.beam_y_um - source_half_span_um,
     }
     if min(source_clearance_um.values()) < 1.0:
         parser.error(
@@ -1232,8 +1290,11 @@ def parse_args() -> argparse.Namespace:
         args.inner_box_requested_before_mesh_snap_m = None
         args.inner_box_after_outer_mesh_snap_m = None
     inner_limit_um = max(
-        abs(value) * 1e6
-        for axis in ("x", "y")
+        abs(value * 1e6 - center)
+        for axis, center in (
+            ("x", args.domain_center_x_um),
+            ("y", args.domain_center_y_um),
+        )
         for value in args.inner_box[axis]
     )
     if inner_limit_um >= 0.5 * args.domain_um - 0.5:
@@ -2436,6 +2497,8 @@ def add_geometry_and_monitors(
     absorption_bounds = args.absorption_bounds_m
     inner_box = args.inner_box
     domain_m = args.domain_um * 1e-6
+    domain_center_x = args.domain_center_x_um * 1e-6
+    domain_center_y = args.domain_center_y_um * 1e-6
     half_source = 0.5 * args.source_span_um * 1e-6
     beam_x = args.beam_x_um * 1e-6
     beam_y = args.beam_y_um * 1e-6
@@ -2446,21 +2509,27 @@ def add_geometry_and_monitors(
         "y": (beam_y - half_source, beam_y + half_source),
         "z": SOURCE_Z_M,
     }
-    for axis in ("x", "y"):
-        if max(abs(v) for v in source_bounds[axis]) >= 0.5 * domain_m - 0.5e-6:
+    for axis, center in (("x", domain_center_x), ("y", domain_center_y)):
+        if max(abs(v - center) for v in source_bounds[axis]) >= 0.5 * domain_m - 0.5e-6:
             raise RuntimeError(f"{axis} source aperture is too close to PML")
     outer_bounds = {
-        "x": (-0.5 * domain_m + 1.0e-6, 0.5 * domain_m - 1.0e-6),
-        "y": (-0.5 * domain_m + 1.0e-6, 0.5 * domain_m - 1.0e-6),
+        "x": (
+            domain_center_x - 0.5 * domain_m + 1.0e-6,
+            domain_center_x + 0.5 * domain_m - 1.0e-6,
+        ),
+        "y": (
+            domain_center_y - 0.5 * domain_m + 1.0e-6,
+            domain_center_y + 0.5 * domain_m - 1.0e-6,
+        ),
         "z": (-1.2e-6, SOURCE_Z_M - 0.5e-6),
     }
 
     fdtd.addfdtd()
     for prop, value in (
         ("dimension", "3D"),
-        ("x", 0.0),
+        ("x", domain_center_x),
         ("x span", domain_m),
-        ("y", 0.0),
+        ("y", domain_center_y),
         ("y span", domain_m),
         ("z min", FDTD_Z_MIN_M),
         ("z max", FDTD_Z_MAX_M),
@@ -2482,8 +2551,14 @@ def add_geometry_and_monitors(
 
     lateral_material_span = domain_m + 2.0e-6
     si_bounds = {
-            "x": (-0.5 * lateral_material_span, 0.5 * lateral_material_span),
-            "y": (-0.5 * lateral_material_span, 0.5 * lateral_material_span),
+            "x": (
+                domain_center_x - 0.5 * lateral_material_span,
+                domain_center_x + 0.5 * lateral_material_span,
+            ),
+            "y": (
+                domain_center_y - 0.5 * lateral_material_span,
+                domain_center_y + 0.5 * lateral_material_span,
+            ),
             "z": (
                 FDTD_Z_MIN_M - 0.5e-6,
                 -FLAKE_THICKNESS_M - SIO2_THICKNESS_M,
@@ -2502,8 +2577,14 @@ def add_geometry_and_monitors(
         fdtd,
         "SiO2_spacer",
         {
-            "x": (-0.5 * lateral_material_span, 0.5 * lateral_material_span),
-            "y": (-0.5 * lateral_material_span, 0.5 * lateral_material_span),
+            "x": (
+                domain_center_x - 0.5 * lateral_material_span,
+                domain_center_x + 0.5 * lateral_material_span,
+            ),
+            "y": (
+                domain_center_y - 0.5 * lateral_material_span,
+                domain_center_y + 0.5 * lateral_material_span,
+            ),
             "z": (
                 -FLAKE_THICKNESS_M - SIO2_THICKNESS_M,
                 -FLAKE_THICKNESS_M,
@@ -2518,12 +2599,12 @@ def add_geometry_and_monitors(
                 "TaIrTe4_flake",
                 {
                     "x": (
-                        -0.5 * lateral_material_span,
-                        0.5 * lateral_material_span,
+                        domain_center_x - 0.5 * lateral_material_span,
+                        domain_center_x + 0.5 * lateral_material_span,
                     ),
                     "y": (
-                        -0.5 * lateral_material_span,
-                        0.5 * lateral_material_span,
+                        domain_center_y - 0.5 * lateral_material_span,
+                        domain_center_y + 0.5 * lateral_material_span,
                     ),
                     "z": (-FLAKE_THICKNESS_M, 0.0),
                 },
@@ -3015,8 +3096,14 @@ def add_geometry_and_monitors(
             "paper_certified_beam": False,
         },
         "domain_bounds_m": {
-            "x": [-0.5 * domain_m, 0.5 * domain_m],
-            "y": [-0.5 * domain_m, 0.5 * domain_m],
+            "x": [
+                domain_center_x - 0.5 * domain_m,
+                domain_center_x + 0.5 * domain_m,
+            ],
+            "y": [
+                domain_center_y - 0.5 * domain_m,
+                domain_center_y + 0.5 * domain_m,
+            ],
             "z": [FDTD_Z_MIN_M, FDTD_Z_MAX_M],
         },
         "all_six_boundaries": "PML",

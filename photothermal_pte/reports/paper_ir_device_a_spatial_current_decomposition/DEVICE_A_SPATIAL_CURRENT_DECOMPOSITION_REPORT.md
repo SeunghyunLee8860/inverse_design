@@ -6,6 +6,18 @@ This is a read-only/offline decomposition of the immutable registered
 Maxwell -> explicit-3D thermal -> PTE fields. No new Maxwell, thermal, or
 weighting solve was run.
 
+## Fixed Lumerical coordinate frame
+
+Every published geometry/map now uses one immutable Device-A Lumerical
+frame: `x=b`, `y=a`, with digitized `(0,3) um` defined as Lumerical
+`(0,0) um`.  The immutable historical fields were not modified; only their
+stored solver-local coordinates were translated by
+`(-10.670753,0.000000) um` for
+plotting.  The beam centres in this fixed frame are `(-16.5625,-2) um`,
+`(-16.5625,0) um`, and `(-16.5625,2) um` for `d=1,3,5 um`.  A case-dependent
+solver origin must not be labelled as the laboratory or fixed Lumerical
+device origin.
+
 ## Literal current equation
 
 `x=b`, `y=a`, and

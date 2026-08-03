@@ -94,15 +94,44 @@ def plot_geometry(finite: dict[str, object], output: Path) -> None:
     geometry = finite["pre_run_contract"]["geometry"]
     digitized = geometry["digitized_device_a_contract"]
     source = geometry["source"]
-    flake = np.asarray(digitized["flake_vertices_simulation_um"], float)
-    top = np.asarray(digitized["top_metal_polygon_simulation_um"], float)
-    bottom = np.asarray(digitized["bottom_metal_polygon_simulation_um"], float)
-    beam = np.asarray(source["beam_center_m"], float) * 1.0e6
+    canonical = digitized.get("canonical_lumerical_frame")
+    if canonical is None:
+        # Immutable pre-contract artifacts do not contain the later published
+        # frame metadata.  Reconstruct it from their literal digitized
+        # coordinates and stored solver translation without modifying raw
+        # provenance.
+        canonical_shift = np.asarray([0.0, -3.0], float)
+        solver_shift = np.asarray(digitized["simulation_origin_shift_um"], float)
+        flake = (
+            np.asarray(digitized["flake_vertices_digitized_um"], float)
+            + canonical_shift
+        )
+        top = (
+            np.asarray(digitized["top_metal_polygon_digitized_um"], float)
+            + canonical_shift
+        )
+        bottom = (
+            np.asarray(digitized["bottom_metal_polygon_digitized_um"], float)
+            + canonical_shift
+        )
+        beam = (
+            np.asarray(digitized["beam_center_digitized_um"], float)
+            + canonical_shift
+        )
+        solver_to_canonical = canonical_shift - solver_shift
+    else:
+        flake = np.asarray(canonical["flake_vertices_um"], float)
+        top = np.asarray(canonical["top_metal_polygon_um"], float)
+        bottom = np.asarray(canonical["bottom_metal_polygon_um"], float)
+        beam = np.asarray(canonical["beam_center_um"], float)
+        solver_to_canonical = np.asarray(
+            canonical["solver_to_canonical_lumerical_translation_um"], float
+        )
     waist = float(source["physical_target_waist_radius_m"]) * 1.0e6
     source_span = float(source["source_span_m"]) * 1.0e6
     domain = np.asarray(
         [geometry["domain_bounds_m"][axis] for axis in "xy"], float
-    ) * 1.0e6
+    ) * 1.0e6 + solver_to_canonical[:, None]
 
     figure, axis = plt.subplots(figsize=(8.5, 8), constrained_layout=True)
     axis.add_patch(
@@ -149,12 +178,12 @@ def plot_geometry(finite: dict[str, object], output: Path) -> None:
     axis.set(
         xlim=(-33, 33),
         ylim=(-33, 33),
-        xlabel="x = b (µm)",
-        ylabel="y = a (µm)",
+        xlabel="fixed Lumerical x = b (µm)",
+        ylabel="fixed Lumerical y = a (µm)",
         aspect="equal",
         title=(
             "Device A inside-flake illumination diagnostic\n"
-            "beam centre = (0, 0) µm in the realized simulation frame"
+            "beam centre = (0, 0) µm in the fixed Lumerical device frame"
         ),
     )
     axis.legend(loc="upper right", fontsize=9)
@@ -256,6 +285,9 @@ def main() -> int:
         "beam_center": {
             "digitized_code_um": [0.0, 3.0],
             "realized_simulation_um": [0.0, 0.0],
+            "fixed_lumerical_um": [0.0, 0.0],
+            "published_coordinate_frame": "DEVICE_A_FIXED_LUMERICAL_X_B_Y_A",
+            "fixed_lumerical_origin_in_digitized_code_um": [0.0, 3.0],
             "x_axis": "crystal b",
             "y_axis": "crystal a",
             "inside_flake": True,
