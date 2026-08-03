@@ -1948,15 +1948,18 @@ adjoint, gradient, and optimization were not run.
 - Raw NPZ/FSP files remain external and are not committed.
 - Report: `paper_ir_device_a_boundary_aware_fast_mesh/`.
 
-# Device-A strict-centered PTE collection contract — 2026-08-03
+# Device-A full-footprint current with strict spatial diagnostics — 2026-08-03
 
-- The displayed nine-position current now requires a common centered stencil
-  with all `-x`, `+x`, `-y`, and `+y` TaIrTe4 neighbours present.
-- Missing-neighbour cells are `NaN` in temperature gradients, weighting-field
-  gradients, local `J_PTE`, and the Shockley-Ramo collection integrand; they
-  are excluded from the terminal-current integral.
-- The previous one-sided-boundary current is retained only as a named legacy
-  diagnostic. No optical or thermal solve was repeated for this offline
-  post-processing correction.
+- The reported scalar `E||a` and `E||b` currents integrate the complete
+  TaIrTe4 footprint and thickness. Interior gradients are centered and the
+  boundary-adjacent cells use the recorded one-sided reconstruction so no
+  flake volume is silently discarded.
+- Spatial gradient and local-current maps remain deliberately stricter:
+  missing-neighbour cells are `NaN` unless all `-x`, `+x`, `-y`, and `+y`
+  TaIrTe4 neighbours exist. This strict interior value is diagnostic only.
+- Thermally-grown and evaporated interfaces use the same full-footprint
+  quadrature and are tabulated as paired `I_a`, `I_b`, and `I_b/I_a` values.
+- No optical or thermal solve was repeated for this offline post-processing
+  correction.
 - Validation: 137 offline tests passed.
 - Report: `paper_ir_device_a_nine_position_two_interface/`.

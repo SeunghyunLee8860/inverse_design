@@ -107,6 +107,17 @@ def load_fields(root: Path, scenario: str, label: str, pol: str):
     return np.load(path, allow_pickle=False)
 
 
+def total_current(summary: dict[str, Any]) -> float:
+    """Return the all-flake-volume current across old and new raw schemas."""
+
+    thermal_summary = summary["thermal"]
+    if "total_full_footprint_current_A" in thermal_summary:
+        return float(thermal_summary["total_full_footprint_current_A"])
+    if "legacy_one_sided_current_A" in thermal_summary:
+        return float(thermal_summary["legacy_one_sided_current_A"])
+    return float(thermal_summary["production_current_A"])
+
+
 def raw_optical_qxy(
     path: Path,
     result_path: Path,
@@ -317,7 +328,7 @@ def make_case_panels(
                 for pol in POLARIZATIONS
             }
             annotation = "   ".join(
-                f"E||{pol}: I={summaries[pol]['thermal']['strict_current_A']*1e9:.4g} nA, "
+                f"E||{pol}: Itotal={total_current(summaries[pol])*1e9:.4g} nA, "
                 f"Tmax={summaries[pol]['thermal']['Tmax_rise_K']:.4g} K"
                 for pol in POLARIZATIONS
             )
@@ -377,10 +388,9 @@ def collect_table(
                     "TaIrTe4_volume_average_rise_K": summary["thermal"]["TaIrTe4_volume_average_rise_K"],
                     "strict_gradient_max_K_m": float(np.max(gradient)),
                     "strict_gradient_p99_K_m": float(np.percentile(gradient, 99.0)),
-                    "current_A": summary["thermal"]["strict_current_A"],
-                    "strict_current_A": summary["thermal"]["strict_current_A"],
-                    "legacy_one_sided_current_A": summary["thermal"][
-                        "production_current_A"
+                    "total_current_A": total_current(summary),
+                    "strict_interior_current_A": summary["thermal"][
+                        "strict_current_A"
                     ],
                     "mapping_relative_power_error": summary["mapping"]["mapping_relative_power_error"],
                     "thermal_energy_balance_relative_error": summary["thermal"]["energy_balance_relative_error"],
@@ -405,8 +415,8 @@ def make_summary_plots(rows: list[dict[str, Any]], output_dir: Path) -> list[Pat
             axes[0, 0].bar(x + offset, [r["mapped_source_power_W_at_285uW_incident"]*1e6 for r in selected], width, label=f"E||{pol}", color=color)
             axes[0, 1].bar(x + offset, [r["Tmax_rise_K"] for r in selected], width, label=f"E||{pol}", color=color)
             axes[1, 0].bar(x + offset, [r["strict_gradient_p99_K_m"] for r in selected], width, label=f"E||{pol}", color=color)
-            axes[1, 1].bar(x + offset, [r["current_A"]*1e9 for r in selected], width, label=f"E||{pol}", color=color)
-        for ax, ylabel in zip(axes.ravel(), ("mapped absorbed power (µW)", "Tmax rise (K)", "strict |∇T| P99 (K/m)", "production current (nA)"), strict=True):
+            axes[1, 1].bar(x + offset, [r["total_current_A"]*1e9 for r in selected], width, label=f"E||{pol}", color=color)
+        for ax, ylabel in zip(axes.ravel(), ("mapped absorbed power (µW)", "Tmax rise (K)", "strict |∇T| P99 (K/m)", "full-footprint total current (nA)"), strict=True):
             ax.set_xticks(x, labels, rotation=35, ha="right")
             ax.set_ylabel(ylabel)
             ax.grid(axis="y", alpha=0.25)
@@ -421,7 +431,7 @@ def make_summary_plots(rows: list[dict[str, Any]], output_dir: Path) -> list[Pat
     x = np.arange(len(labels))
     width = 0.36
     for offset, scenario, color in ((-width/2, "thermally_grown", "tab:green"), (width/2, "evaporated", "tab:red")):
-        for metric, ax, title in (("Tmax_rise_K", axes[0], "Tmax b/a"), ("current_A", axes[1], "|strict-centered current b/a|")):
+        for metric, ax, title in (("Tmax_rise_K", axes[0], "Tmax b/a"), ("total_current_A", axes[1], "|total current b/a|")):
             values = []
             for label in labels:
                 a = next(r for r in rows if r["scenario"] == scenario and r["position"] == label and r["polarization"] == "a")[metric]
@@ -442,6 +452,97 @@ def make_summary_plots(rows: list[dict[str, Any]], output_dir: Path) -> list[Pat
     return outputs
 
 
+def paired_total_current_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    paired: list[dict[str, Any]] = []
+    for scenario in SCENARIOS:
+        labels = list(
+            dict.fromkeys(
+                row["position"] for row in rows if row["scenario"] == scenario
+            )
+        )
+        for label in labels:
+            selected = {
+                row["polarization"]: row
+                for row in rows
+                if row["scenario"] == scenario and row["position"] == label
+            }
+            current_a = float(selected["a"]["total_current_A"])
+            current_b = float(selected["b"]["total_current_A"])
+            paired.append(
+                {
+                    "scenario": scenario,
+                    "position": label,
+                    "beam_x_b_um": selected["a"]["beam_x_b_um"],
+                    "beam_y_a_um": selected["a"]["beam_y_a_um"],
+                    "total_current_E_parallel_a_A": current_a,
+                    "total_current_E_parallel_b_A": current_b,
+                    "signed_Eb_over_Ea": (
+                        current_b / current_a if current_a != 0.0 else np.nan
+                    ),
+                    "absolute_Eb_over_Ea": (
+                        abs(current_b / current_a)
+                        if current_a != 0.0
+                        else np.nan
+                    ),
+                }
+            )
+    return paired
+
+
+def make_total_current_Ea_Eb_plot(
+    paired: list[dict[str, Any]], output_dir: Path
+) -> Path:
+    fig, axes = plt.subplots(2, 2, figsize=(19, 11), constrained_layout=True)
+    for row_index, scenario in enumerate(SCENARIOS):
+        selected = [row for row in paired if row["scenario"] == scenario]
+        labels = [row["position"] for row in selected]
+        x = np.arange(len(labels))
+        width = 0.36
+        axes[row_index, 0].bar(
+            x - width / 2,
+            [row["total_current_E_parallel_a_A"] * 1.0e9 for row in selected],
+            width,
+            label=r"$E\parallel a$",
+            color="tab:blue",
+        )
+        axes[row_index, 0].bar(
+            x + width / 2,
+            [row["total_current_E_parallel_b_A"] * 1.0e9 for row in selected],
+            width,
+            label=r"$E\parallel b$",
+            color="tab:orange",
+        )
+        axes[row_index, 0].axhline(0.0, color="black", linewidth=0.8)
+        axes[row_index, 0].set_ylabel("full-footprint total current (nA)")
+        axes[row_index, 0].set_title(
+            f"{scenario.replace('_', ' ')} SiO₂: total $I_a$ and $I_b$"
+        )
+        axes[row_index, 0].legend()
+        axes[row_index, 1].bar(
+            x,
+            [row["absolute_Eb_over_Ea"] for row in selected],
+            color="tab:purple",
+        )
+        axes[row_index, 1].axhline(
+            1.0, color="black", linestyle="--", linewidth=1.0
+        )
+        axes[row_index, 1].set_ylabel(r"$|I_b/I_a|$")
+        axes[row_index, 1].set_title(
+            f"{scenario.replace('_', ' ')} SiO₂: polarization ratio"
+        )
+        for axis in axes[row_index]:
+            axis.set_xticks(x, labels, rotation=35, ha="right")
+            axis.grid(axis="y", alpha=0.25)
+    fig.suptitle(
+        "Device-A full-footprint total PTE current — "
+        r"$E\parallel a$ versus $E\parallel b$; Lumerical x=b, y=a"
+    )
+    path = output_dir / "TOTAL_CURRENT_EA_EB_COMPARISON.png"
+    fig.savefig(path, dpi=180)
+    plt.close(fig)
+    return path
+
+
 def main() -> int:
     args = parse_args()
     contract = json.loads(args.position_contract.read_text())
@@ -455,6 +556,8 @@ def main() -> int:
     case_plots = make_case_panels(contract, args.thermal_root, args.output_dir, flake_vertices)
     rows = collect_table(contract, args.optical_root, args.thermal_root)
     summary_plots = make_summary_plots(rows, args.output_dir)
+    paired_rows = paired_total_current_rows(rows)
+    summary_plots.append(make_total_current_Ea_Eb_plot(paired_rows, args.output_dir))
     csv_path = args.output_dir / "device_a_nine_position_two_interface_results.csv"
     with csv_path.open("w", newline="") as stream:
         writer = csv.DictWriter(
@@ -462,16 +565,24 @@ def main() -> int:
         )
         writer.writeheader()
         writer.writerows(rows)
+    paired_csv_path = args.output_dir / "device_a_total_current_Ea_Eb.csv"
+    with paired_csv_path.open("w", newline="") as stream:
+        writer = csv.DictWriter(
+            stream, fieldnames=list(paired_rows[0]), lineterminator="\n"
+        )
+        writer.writeheader()
+        writer.writerows(paired_rows)
     json_path = args.output_dir / "device_a_nine_position_two_interface_summary.json"
     json_path.write_text(json.dumps({
         "status": "COMPLETED_DEVICE_A_NINE_POSITION_TWO_INTERFACE_SUMMARY",
         "coordinate_frame": contract["coordinate_frame"],
         "rows": rows,
+        "paired_total_currents": paired_rows,
         "interpretation": {
             "thermally_grown_and_evaporated_are_named_physical_scenarios": True,
             "absolute_current_is_not_claimed_as_experimentally_reproduced": True,
-            "current_definition": "strict-centered anisotropic Shockley-Ramo PTE current; a cell is NaN/masked unless all -x,+x,-y,+y TaIrTe4 neighbours exist",
-            "legacy_one_sided_current_is_diagnostic_only": True,
+            "total_current_definition": "full-TaIrTe4-footprint and full-thickness anisotropic Shockley-Ramo PTE volume integral; centered differences in the interior and one-sided reconstruction only in the boundary-adjacent cells",
+            "strict_interior_current_definition": "diagnostic only; a cell is NaN/masked unless all -x,+x,-y,+y TaIrTe4 neighbours exist",
             "thermal_Q_source": "TaIrTe4-only exact intersection-density overlap mapping at 285 uW incident power",
             "SiO2_optical_loss_is_not_used_as_a_thermal_source": True,
             "far_boundary_flux": "numerical truncation flux, not a physical heat-path fraction",
@@ -511,18 +622,17 @@ def main() -> int:
     }, indent=2) + "\n")
     report_path = args.output_dir / "DEVICE_A_NINE_POSITION_TWO_INTERFACE_REPORT.md"
     result_lines = [
-        "| interface | position | pol. | absorbed power (uW) | Tmax rise (K) | "
-        "TaIrTe4 avg. dT (K) | grad P99 (K/m) | current (nA) |",
-        "|---|---|---:|---:|---:|---:|---:|---:|",
+        "| interface | position | total current E∥a (nA) | "
+        "total current E∥b (nA) | signed Ib/Ia | abs. Ib/Ia |",
+        "|---|---|---:|---:|---:|---:|",
     ]
-    for row in rows:
+    for row in paired_rows:
         result_lines.append(
-            f"| {row['scenario']} | {row['position']} | {row['polarization']} | "
-            f"{row['mapped_source_power_W_at_285uW_incident'] * 1e6:.6g} | "
-            f"{row['Tmax_rise_K']:.6g} | "
-            f"{row['TaIrTe4_volume_average_rise_K']:.6g} | "
-            f"{row['strict_gradient_p99_K_m']:.6g} | "
-            f"{row['current_A'] * 1e9:.6g} |"
+            f"| {row['scenario']} | {row['position']} | "
+            f"{row['total_current_E_parallel_a_A'] * 1e9:.6g} | "
+            f"{row['total_current_E_parallel_b_A'] * 1e9:.6g} | "
+            f"{row['signed_Eb_over_Ea']:.6g} | "
+            f"{row['absolute_Eb_over_Ea']:.6g} |"
         )
     figure_lines = [
         "## Figure gallery",
@@ -544,6 +654,8 @@ def main() -> int:
         "![Evaporated SiO2 summary](NINE_POSITION_SUMMARY_EVAPORATED.png)",
         "",
         "![Polarization and interface-G ratios](POLARIZATION_AND_INTERFACE_G_RATIOS.png)",
+        "",
+        "![Full-footprint total current Ea Eb comparison](TOTAL_CURRENT_EA_EB_COMPARISON.png)",
         "",
         "### Per-case Lumerical-coordinate maps",
         "",
@@ -585,7 +697,7 @@ def main() -> int:
         "The production-Q mosaics and every case panel show the conservative "
         "optical-cell/TaIrTe4/thermal-cell intersection-density mapping actually used "
         "by the thermal solve; no boundary-cell power is forced from air into TaIrTe4.\n\n"
-        "Current uses the user-selected strict-centered anisotropic Shockley-Ramo PTE integral. Temperature and weighting-potential gradients, J_PTE, and the collection integrand are NaN/masked unless all -x, +x, -y, and +y TaIrTe4 neighbours exist. The former one-sided-boundary result is retained only as a legacy diagnostic. "
+        "The reported scalar current is the full-TaIrTe4-footprint, full-thickness anisotropic Shockley-Ramo volume integral. It uses centered differences in the interior and one-sided reconstruction only for boundary-adjacent cells so no flake volume is discarded. Spatial gradient/current maps remain strict diagnostics: temperature and weighting-potential gradients, J_PTE, and the displayed local collection integrand are NaN/masked unless all -x, +x, -y, and +y TaIrTe4 neighbours exist. "
         "Because the digitized-model resistance differs from the measured device, absolute current is not called an experimental reproduction.\n\n"
         + "\n".join(figure_lines)
         + "\n"
@@ -593,7 +705,7 @@ def main() -> int:
         + "\n".join(result_lines)
         + "\n\n"
         "Each per-case PNG uses the same Lumerical coordinate bounds for both polarizations and shows, in order, mapped Q, thickness-averaged temperature rise, dT/dx (crystal b), dT/dy (crystal a), gradient magnitude, and the strict-centered local current contribution. Gray cells explicitly mark NaN/masked locations where at least one of -x, +x, -y, or +y TaIrTe4 neighbours is missing.\n\n"
-        f"- [CSV]({csv_path.name})\n- [JSON]({json_path.name})\n- [manifest]({manifest_path.name})\n"
+        f"- [all-case CSV]({csv_path.name})\n- [paired Ea/Eb total-current CSV]({paired_csv_path.name})\n- [JSON]({json_path.name})\n- [manifest]({manifest_path.name})\n"
     )
     print(report_path)
     return 0

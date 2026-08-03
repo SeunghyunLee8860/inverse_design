@@ -398,9 +398,10 @@ def main() -> int:
                 "TaIrTe4_volume_average_rise_K": thermal.measure_weighted_mean(
                     solved.temperature_K, flake, volume
                 ),
-                "production_current_A": maps["strict_current_A"],
+                "production_current_A": production_current,
+                "total_full_footprint_current_A": production_current,
                 "strict_current_A": maps["strict_current_A"],
-                "legacy_one_sided_current_A": production_current,
+                "strict_interior_current_A": maps["strict_current_A"],
                 "linear_residual_relative": solved.linear_residual_relative,
                 "energy_balance_relative_error": solved.energy_balance_relative_error,
                 "lateral_numerical_boundary_flux_fraction": lateral_flux,
