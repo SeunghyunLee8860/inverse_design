@@ -101,9 +101,9 @@ def validate_result(path: Path, case: dict[str, Any], polarization: str) -> dict
         "output_dir": str(path.resolve()),
         "case_result": str(result_path.resolve()),
         "acceptance": acceptance,
-        "P_Q_W_at_1_W_m2": run["P_Q_W"],
-        "P_six_W_at_1_W_m2": run["P_six_face_W"],
-        "six_face_closure": run["six_face_relative_closure"],
+        "P_Q_W_at_1_W_m2": run.get("P_Q_W"),
+        "P_six_W_at_1_W_m2": run.get("P_six_face_W"),
+        "six_face_closure": run.get("six_face_relative_closure"),
         "auto_shutoff_final": run["auto_shutoff"]["final_value"],
     }
 

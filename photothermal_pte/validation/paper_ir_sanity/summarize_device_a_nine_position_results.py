@@ -170,9 +170,14 @@ def make_case_panels(
             arrays: dict[str, dict[str, np.ndarray]] = {}
             for pol, raw in loaded.items():
                 valid = np.asarray(raw["strict_valid_xy_mask"], bool)
+                flake_xy = np.any(np.asarray(raw["flake_mask"], bool), axis=2)
                 arrays[pol] = {
                     "Q": np.asarray(raw["Q_areal_W_m2"], float),
-                    "T": np.asarray(raw["temperature_flake_average_K"], float),
+                    "T": np.where(
+                        flake_xy,
+                        np.asarray(raw["temperature_flake_average_K"], float),
+                        np.nan,
+                    ),
                     "G": np.where(valid, np.asarray(raw["grad_T_magnitude_K_m"], float), np.nan),
                     "I": np.where(valid, np.asarray(raw["strict_current_contribution_A_m2"], float), np.nan),
                 }
