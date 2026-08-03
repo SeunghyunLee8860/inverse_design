@@ -272,6 +272,23 @@ def main() -> int:
                     completed.append(summary["index_record"])
                     continue
                 raise RuntimeError(f"refusing ambiguous resume output: {output}")
+            if output.exists():
+                # A disconnect may leave a directory before either atomic
+                # result file has been published.  Preserve it verbatim for
+                # provenance, then restart only that incomplete case.
+                if summary_path.exists():
+                    raise RuntimeError(
+                        f"summary exists without complete fields: {output}"
+                    )
+                suffix = 1
+                while True:
+                    quarantine = output.with_name(
+                        f"{output.name}_interrupted_resume_{suffix:03d}"
+                    )
+                    if not quarantine.exists():
+                        output.rename(quarantine)
+                        break
+                    suffix += 1
             output.mkdir(parents=True, exist_ok=False)
             print(
                 f"[nine-thermal] {scenario} {record['label']} "
