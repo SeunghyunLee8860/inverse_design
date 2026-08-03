@@ -1,0 +1,28 @@
+{
+  "status": "PASSED_DEVICE_A_EVAPORATED_SIO2_INTERFACE_RUNSETUP_AUDIT",
+  "interface_audit": {
+    "target_definition": "internal z faces with material IDs {TaIrTe4=3, SiO2=2}",
+    "changed_face_count": 65963,
+    "changed_area_m2": 6.596300000000001e-10,
+    "changed_face_z_bounds_m": [
+      -1.3e-07,
+      -1.3e-07
+    ],
+    "baseline_G_W_m2K": 7370000.0,
+    "evaporated_G_W_m2K": 73700.0,
+    "baseline_Rpp_m2K_W": 1.3568521031207598e-07,
+    "evaporated_Rpp_m2K_W": 1.3568521031207599e-05,
+    "resistance_ratio": 100.0,
+    "x_interface_array_unchanged": true,
+    "y_interface_array_unchanged": true,
+    "only_target_z_faces_changed": true
+  },
+  "grid_shape": [
+    359,
+    300,
+    86
+  ],
+  "bulk_kappa_bitwise_unchanged": true,
+  "material_id_bitwise_unchanged": true,
+  "flake_mask_bitwise_unchanged": true
+}

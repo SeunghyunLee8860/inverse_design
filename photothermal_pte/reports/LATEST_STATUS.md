@@ -1,5 +1,35 @@
 # Latest photothermal validation status
 
+## Device-A evaporated-SiO2 internal-interface-G sensitivity
+
+- Status: `VALIDATED_DEVICE_A_EVAPORATED_SIO2_INTERFACE_G_SENSITIVITY` for
+  a named physical scenario, not a replacement paper baseline. Only the
+  internal TaIrTe4/SiO2 z-face conductance changes from `7.37e6` to
+  `7.37e4 W/(m2 K)`; immutable Maxwell Q, bulk kappa, all other interfaces,
+  boundaries, and the Device-A weighting field remain fixed.
+- The audit changes exactly 65,963 faces at `z=-130 nm`, covering
+  `6.5963e-10 m2`. Interface resistance increases by exactly `100x`; x/y
+  interfaces, material IDs, flake mask, and bulk kappa are unchanged.
+- TaIrTe4 volume-average temperature rises by `31.85--32.19x`, while
+  production current rises by `15.62--18.81x`. These absolute nA currents are
+  not experimental predictions because the existing digitized-geometry
+  resistance mismatch remains unresolved.
+- At matched `d=1,3,5 um`, production `Ib/Ia` changes from `0.812955`,
+  `0.836724`, `0.844703` to `0.979130`, `0.983580`, `0.976278`. Strict
+  four-neighbour and symmetric internal-face diagnostics independently give
+  `0.979--0.987`. Thus lower G strongly reduces the simulated polarization
+  discrepancy but does not reverse it or reproduce the paper-like ratio near
+  `1.17`.
+- Contact temperature jump increases by `99.9986x`, while interface heat
+  power changes by only about `1.4e-5` relative. All residual, energy,
+  provenance, and current-reintegration gates pass.
+- This scenario assumes the complete flake bottom contact has the evaporated
+  estimate. Actual fabrication must establish whether the contact is
+  thermally grown, evaporated, or spatially mixed. No FDTD, new Q, adjoint,
+  AD-FD, or optimization was run.
+- Report, JSON, CSV, plots, runsetup audit, and external raw-artifact manifest:
+  `reports/paper_ir_device_a_evaporated_sio2_interface_sensitivity/`.
+
 ## Device-A free-edge Q causal thermal-current split
 
 - Status: `VALIDATED_DEVICE_A_FREE_EDGE_Q_CAUSAL_CURRENT_SPLIT` for the

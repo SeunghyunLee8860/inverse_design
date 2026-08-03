@@ -606,3 +606,32 @@ def test_device_a_edge_source_thermal_split_is_causal_and_closes() -> None:
         and row["remainder_source_a_minus_b_current_A"] < 0.0
         for row in near_edge
     )
+
+
+def test_device_a_evaporated_sio2_interface_sensitivity_is_fail_closed() -> None:
+    repository = Path(__file__).resolve().parents[3]
+    summary_path = (
+        repository
+        / "photothermal_pte"
+        / "reports"
+        / "paper_ir_device_a_evaporated_sio2_interface_sensitivity"
+        / "device_a_evaporated_sio2_interface_summary.json"
+    )
+    summary = json.loads(summary_path.read_text())
+    assert (
+        summary["status"]
+        == "VALIDATED_DEVICE_A_EVAPORATED_SIO2_INTERFACE_G_SENSITIVITY"
+    )
+    assert all(summary["numerical_gates"].values())
+    audit = summary["interface_audit"]
+    assert audit["resistance_ratio"] == pytest.approx(100.0)
+    assert audit["only_target_z_faces_changed"]
+    aggregate = summary["aggregate_interpretation"]
+    assert aggregate["Tavg_amplification_range"][0] > 31.0
+    assert aggregate["production_current_amplification_range"][0] > 15.0
+    assert aggregate["all_three_current_discretizations_remain_Ib_over_Ia_below_one"]
+    for row in summary["paired_Ib_over_Ia"]:
+        assert row["baseline_production_Ib_over_Ia"] < 0.86
+        assert 0.97 < row["evaporated_production_Ib_over_Ia"] < 1.0
+        assert 0.97 < row["evaporated_strict_Ib_over_Ia"] < 1.0
+        assert 0.97 < row["evaporated_face_Ib_over_Ia"] < 1.0
