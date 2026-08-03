@@ -700,6 +700,7 @@ def solve_assembled_thermal_system(
     system: AssembledThermalSystem,
     *,
     source_W_m3: np.ndarray | None = None,
+    initial_temperature_K: np.ndarray | None = None,
     relative_tolerance: float = 1.0e-11,
     max_iterations: int = 5000,
 ) -> SteadyHeatResult:
@@ -725,9 +726,21 @@ def solve_assembled_thermal_system(
         nonlocal iterations
         iterations += 1
 
+    initial_active = None
+    if initial_temperature_K is not None:
+        initial = np.asarray(initial_temperature_K, float)
+        if initial.shape != system.shape:
+            raise ValueError(
+                f"initial temperature shape {initial.shape} != {system.shape}"
+            )
+        initial_active = initial[system.active_mask].reshape(-1)
+        if not np.all(np.isfinite(initial_active)):
+            raise ValueError("initial active temperature contains NaN or Inf")
+
     solution, info = sparse_linalg.cg(
         matrix,
         rhs,
+        x0=initial_active,
         rtol=relative_tolerance,
         atol=0.0,
         maxiter=max_iterations,
@@ -735,6 +748,8 @@ def solve_assembled_thermal_system(
         callback=count_iteration,
     )
     solver_name = "scipy.sparse.linalg.cg+jacobi"
+    if initial_active is not None:
+        solver_name += "+warm_start"
     if info != 0:
         solution = sparse_linalg.spsolve(matrix, rhs)
         solver_name = f"scipy.sparse.linalg.spsolve_after_cg_info_{info}"

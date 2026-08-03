@@ -167,14 +167,67 @@ def make_raw_q_mosaics(
         fig.colorbar(
             m,
             ax=axes,
-            label="Maxwell TaIrTe₄-support Q at 285-µW incident power (W/m²)",
+            label="center-mask Maxwell Q diagnostic at 285-µW incident power (W/m²)",
         )
         fig.suptitle(
-            f"Device-A optical Q at common 285-µW incident power, E||{pol} "
+            f"Device-A center-mask optical-Q diagnostic at 285-µW incident power, E||{pol} "
             "— fixed Lumerical x=b, y=a",
             fontsize=15,
         )
         path = output_dir / f"RAW_OPTICAL_Q_LUMERICAL_COORDINATES_E{pol}.png"
+        fig.savefig(path, dpi=180)
+        plt.close(fig)
+        outputs.append(path)
+    return outputs
+
+
+def make_mapped_q_mosaics(
+    contract: dict[str, Any],
+    thermal_root: Path,
+    output_dir: Path,
+    flake_vertices_um: np.ndarray,
+) -> list[Path]:
+    """Plot the actual conservative-intersection Q used by thermal production."""
+    fields: dict[tuple[str, str], tuple[np.ndarray, np.ndarray, np.ndarray]] = {}
+    maximum = 0.0
+    for pol in POLARIZATIONS:
+        for case in contract["cases"]:
+            with load_fields(
+                thermal_root, "thermally_grown", case["label"], pol
+            ) as raw:
+                x = centers(np.asarray(raw["x_edges_m"], float)) * 1.0e6
+                y = centers(np.asarray(raw["y_edges_m"], float)) * 1.0e6
+                qxy = np.asarray(raw["Q_areal_W_m2"], float)
+            fields[(case["label"], pol)] = (x, y, qxy)
+            maximum = max(maximum, float(np.nanmax(qxy)))
+    outputs: list[Path] = []
+    for pol in POLARIZATIONS:
+        fig, axes = plt.subplots(3, 3, figsize=(14, 12), constrained_layout=True)
+        for ax, case in zip(axes.ravel(), contract["cases"], strict=True):
+            x, y, qxy = fields[(case["label"], pol)]
+            mesh = pcolor(
+                ax,
+                x,
+                y,
+                qxy,
+                f"{case['label']}  E||{pol}",
+                "inferno",
+                0.0,
+                maximum,
+                flake_vertices_um,
+                np.asarray(case["beam_center_lumerical_um"], float),
+            )
+        fig.colorbar(
+            mesh,
+            ax=axes,
+            label="intersection-density mapped TaIrTe₄ Q (W/m²)",
+        )
+        fig.suptitle(
+            f"Thermal production Q at 285-µW incident power, E||{pol} "
+            "— fixed Lumerical x=b, y=a",
+            fontsize=15,
+        )
+        path = output_dir / f"MAPPED_THERMAL_Q_LUMERICAL_COORDINATES_E{pol}.png"
         fig.savefig(path, dpi=180)
         plt.close(fig)
         outputs.append(path)
@@ -390,6 +443,9 @@ def main() -> int:
     first = json.loads((args.optical_root / contract["cases"][0]["label"] / "a" / "finite" / "case_result.json").read_text())
     flake_vertices = np.asarray(first["pre_run_contract"]["geometry"]["flake_vertices_um"], float)
     raw_plots = make_raw_q_mosaics(contract, args.optical_root, args.output_dir, flake_vertices)
+    mapped_q_plots = make_mapped_q_mosaics(
+        contract, args.thermal_root, args.output_dir, flake_vertices
+    )
     case_plots = make_case_panels(contract, args.thermal_root, args.output_dir, flake_vertices)
     rows = collect_table(contract, args.optical_root, args.thermal_root)
     summary_plots = make_summary_plots(rows, args.output_dir)
@@ -439,7 +495,10 @@ def main() -> int:
         "raw_artifacts_committed_to_git": False,
         "raw_optical_artifacts": artifacts,
         "raw_thermal_field_artifacts": thermal_artifacts,
-        "generated_report_artifacts": [str(path.resolve()) for path in raw_plots + case_plots + summary_plots],
+        "generated_report_artifacts": [
+            str(path.resolve())
+            for path in raw_plots + mapped_q_plots + case_plots + summary_plots
+        ],
     }, indent=2) + "\n")
     report_path = args.output_dir / "DEVICE_A_NINE_POSITION_TWO_INTERFACE_REPORT.md"
     result_lines = [
@@ -471,6 +530,10 @@ def main() -> int:
         "Position-comparison plots convert each artifact with its own matched empty-stack "
         "incident-power readback to the common 285-uW incident-power contract; this is "
         "physical source normalization, not empirical Q matching.\n\n"
+        "The raw optical-Q mosaics use the artifact center mask and are diagnostic only. "
+        "The production-Q mosaics and every case panel show the conservative "
+        "optical-cell/TaIrTe4/thermal-cell intersection-density mapping actually used "
+        "by the thermal solve; no boundary-cell power is forced from air into TaIrTe4.\n\n"
         "Current is a full-volume anisotropic Shockley-Ramo PTE integral. A strict-centered current-density map is also shown, with cells masked unless all +/-x and +/-y TaIrTe4 neighbours exist. "
         "Because the digitized-model resistance differs from the measured device, absolute current is not called an experimental reproduction.\n\n"
         "## Results\n\n"

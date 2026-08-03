@@ -62,6 +62,34 @@ def test_exposed_operator_matches_compatibility_forward():
     assert split.source_power_W == legacy.source_power_W
 
 
+def test_warm_start_preserves_solution_and_residual_gate():
+    x, y, z, kappa, interface, source = _case()
+    system = assemble_steady_diagonal_kappa(
+        x_edges_m=x,
+        y_edges_m=y,
+        z_edges_m=z,
+        kappa_W_mK=kappa,
+        dirichlet_temperature_K={"z_min": 0.0},
+        interface_resistance_m2K_W=interface,
+    )
+    cold = solve_assembled_thermal_system(system, source_W_m3=source)
+    perturbed_source = 1.01 * source
+    warm = solve_assembled_thermal_system(
+        system,
+        source_W_m3=perturbed_source,
+        initial_temperature_K=cold.temperature_K,
+    )
+    reference = solve_assembled_thermal_system(
+        system, source_W_m3=perturbed_source
+    )
+    assert np.allclose(
+        warm.temperature_K, reference.temperature_K, rtol=1.0e-10, atol=0.0
+    )
+    assert warm.linear_residual_relative < 1.0e-8
+    assert "+warm_start" in warm.solver
+    assert warm.iterations <= reference.iterations
+
+
 def test_periodic_matrix_is_symmetric_and_connects_seams():
     x, y, z, kappa, interface, source = _case(periodic=("x", "y"))
     system = assemble_steady_diagonal_kappa(

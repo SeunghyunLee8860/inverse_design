@@ -256,6 +256,7 @@ def main() -> int:
                 geometry.x_edges_m, geometry.y_edges_m, flake_xy
             )
         )
+        previous_temperature = None
         for record in records:
             output = (
                 args.output_root
@@ -289,9 +290,11 @@ def main() -> int:
             solved = thermal.solve_assembled_thermal_system(
                 system,
                 source_W_m3=q,
+                initial_temperature_K=previous_temperature,
                 relative_tolerance=1.0e-10,
                 max_iterations=12000,
             )
+            previous_temperature = solved.temperature_K
             production_current, production = thermal.pte_current(
                 solved.temperature_K,
                 geometry,
