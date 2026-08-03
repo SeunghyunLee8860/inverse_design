@@ -1,5 +1,40 @@
 # Latest photothermal validation status
 
+## Device-A inside-flake beam-centre diagnostic
+
+- Status: `COMPLETED_DEVICE_A_INSIDE_FLAKE_BEAM_CENTER_DIAGNOSTIC`. The
+  explicitly chosen digitized coordinate `(x=b,y=a)=(0,3) um` becomes
+  `(0,0) um` in the realized simulation frame. It is inside the flake and
+  outside the digitized metals, but it is a named diagnostic rather than a
+  paper-registered experimental stage coordinate.
+- The fixed optical contract is the 11-um scalar Gaussian with `w0=8.75 um`,
+  a 50-um source aperture, a 64-um six-PML domain, GPU-only FDTD, and the
+  measured/paper-derived TaIrTe4 and 11-um SiO2/Si optical models. The source
+  aperture has 7 um lateral PML clearance.
+- TaIrTe4-support optical power is `1.986512425e-11 W` for `E||a` and
+  `2.769596918e-11 W` for `E||b` at unit central intensity, so `Pb/Pa=1.3942`.
+  Six-face closure is `5.41e-5` and `1.78e-5`; auto-shutoff is `9.47e-6` and
+  `9.68e-6`.
+- Thermal uses only TaIrTe4 Maxwell volumetric Q through literal
+  optical-cell/thermal-material intersection density. SiO2 and metal optical
+  loss are excluded as heat sources; no clipping, smoothing, gain, rescaling,
+  tiling, or nearest-cell relocation is used.
+- At 285 uW incident power, corrected explicit-3D sources are `47.27` and
+  `65.62 uW`; `Tmax` is `0.16958` and `0.23214 K`, and TaIrTe4 average rise is
+  `0.03270` and `0.04518 K` for `a,b`. All mapping, residual, and energy gates
+  pass.
+- Integrated currents are `+340.44 pA` and `-3472.29 pA`, giving
+  `|Ib/Ia|=10.199`. Absolute current remains uncertified because the digitized
+  geometry gives about `14.1 ohm` instead of the measured `213 ohm`.
+- A critical coordinate bug was found and fixed: thermal previously rebuilt
+  the old outside-flake origin shift and displaced the flake by `10.67 um`
+  relative to the new optical Q. Thermal now consumes the realized translated
+  polygon from the actual optical `case_result.json` and fail-closes on path
+  or coordinate mismatch. The incorrect raw result is preserved as a failed
+  diagnostic.
+- Report, JSON, CSV, plots, and external raw-artifact manifest:
+  `reports/paper_ir_device_a_inside_flake_center/`.
+
 ## Device-A evaporated-SiO2 internal-interface-G sensitivity
 
 - Status: `VALIDATED_DEVICE_A_EVAPORATED_SIO2_INTERFACE_G_SENSITIVITY` for

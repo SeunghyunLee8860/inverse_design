@@ -1636,25 +1636,49 @@ def main() -> int:
     global FLAKE_VERTICES_UM, TOP_CONTACT_SEGMENT_UM, BOTTOM_CONTACT_SEGMENT_UM
     digitized_contract = None
     if args.geometry_contract_json is not None:
-        from photothermal_pte.validation.paper_ir_sanity.run_lumerical_device_a_ir_q import (
-            load_digitized_device_a_contract,
+        optical_digitized = optical_case_result.get("pre_run_contract", {}).get(
+            "geometry", {}
+        ).get("digitized_device_a_contract")
+        if not isinstance(optical_digitized, dict):
+            raise ValueError(
+                "optical case_result.json does not contain the realized "
+                "digitized Device-A coordinate contract"
+            )
+        requested_geometry_path = args.geometry_contract_json.resolve()
+        optical_geometry_path = Path(str(optical_digitized.get("path", ""))).resolve()
+        if optical_geometry_path != requested_geometry_path:
+            raise ValueError(
+                "thermal geometry contract differs from the geometry used by "
+                f"the optical solve: {requested_geometry_path} != "
+                f"{optical_geometry_path}"
+            )
+        payload = json.loads(requested_geometry_path.read_text())
+        shift = np.asarray(
+            optical_digitized["simulation_origin_shift_um"], float
         )
-
-        digitized_contract = load_digitized_device_a_contract(
-            args.geometry_contract_json,
-            # The optical coordinate translation depends on the union of the
-            # source aperture and digitized electrodes.  Read the actual
-            # optical domain/source contract rather than silently imposing
-            # the historical 60/50-um frame.  The thermal-domain size is a
-            # separate convergence parameter and must not enter this call.
-            domain_um=optical_domain_um,
-            source_span_um=optical_source_span_um,
+        realized_flake = np.asarray(
+            optical_digitized["flake_vertices_simulation_um"], float
         )
+        reconstructed_flake = (
+            np.asarray(payload["flake_vertices_code_um"], float) + shift
+        )
+        if not np.allclose(
+            realized_flake, reconstructed_flake, rtol=0.0, atol=1.0e-9
+        ):
+            raise ValueError(
+                "realized optical flake coordinates do not equal the frozen "
+                "digitized polygon plus the recorded optical origin shift"
+            )
+        digitized_contract = dict(optical_digitized)
+        digitized_contract["payload"] = payload
+        digitized_contract[
+            "thermal_geometry_loaded_from_actual_optical_case_result"
+        ] = True
+        digitized_contract["optical_domain_um"] = optical_domain_um
+        digitized_contract["optical_source_span_um"] = optical_source_span_um
         FLAKE_VERTICES_UM = np.asarray(
             digitized_contract["flake_vertices_simulation_um"], float
         )
-        shift = np.asarray(digitized_contract["simulation_origin_shift_um"], float)
-        payload = digitized_contract["payload"]
         TOP_CONTACT_SEGMENT_UM = np.asarray(
             payload["top_electrical_contact_segment_code_um"], float
         ) + shift

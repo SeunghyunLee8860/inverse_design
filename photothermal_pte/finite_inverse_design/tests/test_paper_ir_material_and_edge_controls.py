@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from types import SimpleNamespace
+import json
 
 import numpy as np
 import pytest
@@ -66,6 +67,45 @@ def test_finite_numerical_pulse_is_frequency_centered_at_11um() -> None:
         abs=1.0e-18,
     )
     assert device_a_optical.SOURCE_CENTERED_STOP_M <= 13.2e-6
+
+
+def test_device_a_beam_override_recomputes_frame_without_moving_relative_geometry(
+    tmp_path: Path,
+) -> None:
+    payload = {
+        "flake_vertices_code_um": [[-2, -2], [2, -2], [2, 2], [-2, 2]],
+        "top_metal_polygon_code_um": [[-3, 3], [3, 3], [3, 4], [-3, 4]],
+        "bottom_metal_polygon_code_um": [
+            [-3, -4],
+            [3, -4],
+            [3, -3],
+            [-3, -3],
+        ],
+        "pre_registered_beam_center_code_um": [-8, 0],
+    }
+    path = tmp_path / "geometry.json"
+    path.write_text(json.dumps(payload))
+    contract = device_a_optical.load_digitized_device_a_contract(
+        path,
+        domain_um=64.0,
+        source_span_um=50.0,
+        beam_center_code_um_override=(0.0, 0.0),
+    )
+    assert contract["beam_center_digitized_override_applied"]
+    assert np.array_equal(
+        contract["beam_center_digitized_original_um"], [-8.0, 0.0]
+    )
+    assert np.array_equal(contract["beam_center_digitized_um"], [0.0, 0.0])
+    assert np.allclose(contract["beam_center_simulation_um"], [0.0, 0.0])
+    assert np.allclose(
+        np.asarray(contract["flake_vertices_simulation_um"])
+        - np.asarray(contract["beam_center_simulation_um"]),
+        np.asarray(payload["flake_vertices_code_um"]),
+    )
+    assert contract["minimum_lateral_PML_clearance_um"] == {
+        "x": 7.0,
+        "y": 7.0,
+    }
 
 
 def test_two_terminal_resistance_audit_recovers_rectangle(

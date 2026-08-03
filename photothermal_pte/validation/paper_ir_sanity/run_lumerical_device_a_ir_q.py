@@ -353,6 +353,7 @@ def load_digitized_device_a_contract(
     *,
     domain_um: float,
     source_span_um: float,
+    beam_center_code_um_override: tuple[float, float] | None = None,
 ) -> dict[str, Any]:
     """Load Fig. 2/3 digitization and choose a lossless coordinate translation.
 
@@ -373,7 +374,12 @@ def load_digitized_device_a_contract(
     flake = np.asarray(payload[required[0]], float)
     top = np.asarray(payload[required[1]], float)
     bottom = np.asarray(payload[required[2]], float)
-    beam = np.asarray(payload[required[3]], float)
+    beam_original = np.asarray(payload[required[3]], float)
+    beam = (
+        np.asarray(beam_center_code_um_override, float)
+        if beam_center_code_um_override is not None
+        else np.array(beam_original, copy=True)
+    )
     if any(array.ndim != 2 or array.shape[1] != 2 for array in (flake, top, bottom)):
         raise ValueError("Device A polygons must be N-by-2 arrays")
     if beam.shape != (2,):
@@ -400,7 +406,11 @@ def load_digitized_device_a_contract(
         "flake_vertices_digitized_um": flake,
         "top_metal_polygon_digitized_um": top,
         "bottom_metal_polygon_digitized_um": bottom,
+        "beam_center_digitized_original_um": beam_original,
         "beam_center_digitized_um": beam,
+        "beam_center_digitized_override_applied": (
+            beam_center_code_um_override is not None
+        ),
         "simulation_origin_shift_um": origin_shift,
         "flake_vertices_simulation_um": flake + origin_shift,
         "top_metal_polygon_simulation_um": top + origin_shift,
@@ -586,6 +596,16 @@ def parse_args() -> argparse.Namespace:
             "optional frozen Figure-2/3 digitization contract; when supplied "
             "it sets the flake, electrode polygons, and pre-registered beam "
             "position before any optical result is inspected"
+        ),
+    )
+    parser.add_argument(
+        "--device-a-beam-center-code-x-um",
+        type=float,
+        default=None,
+        help=(
+            "replace the digitized Device-A beam-center x=b coordinate before "
+            "the lossless simulation-origin translation is computed; intended "
+            "for an explicitly named inside-flake illumination scenario"
         ),
     )
     parser.add_argument(
@@ -946,10 +966,21 @@ def parse_args() -> argparse.Namespace:
             parser.error("Device A geometry JSON requires --geometry device-a-polygon")
         if not args.device_a_geometry_json.is_file():
             parser.error(f"Device A geometry JSON not found: {args.device_a_geometry_json}")
+        beam_center_override = None
+        if args.device_a_beam_center_code_x_um is not None:
+            original_payload = json.loads(args.device_a_geometry_json.read_text())
+            original_beam = np.asarray(
+                original_payload["pre_registered_beam_center_code_um"], float
+            )
+            beam_center_override = (
+                float(args.device_a_beam_center_code_x_um),
+                float(original_beam[1]),
+            )
         args.device_a_contract = load_digitized_device_a_contract(
             args.device_a_geometry_json,
             domain_um=args.domain_um,
             source_span_um=args.source_span_um,
+            beam_center_code_um_override=beam_center_override,
         )
         args.flake_vertices_um = np.array(
             args.device_a_contract["flake_vertices_simulation_um"], copy=True
@@ -5045,10 +5076,30 @@ def main() -> int:
             append_flake_substrate_absorption_audit(
                 base, output, parsed, result
             )
-            if parsed.case == "empty-stack" and not (
-                np.isclose(parsed.beam_x_um, 0.0, atol=1e-12)
-                and np.isclose(parsed.beam_y_um, 0.0, atol=1e-12)
-            ):
+            local_control_bounds = setup["geometry"][
+                "six_face_absorption_box_bounds_m"
+            ]
+            local_control_center_um = np.asarray(
+                [
+                    0.5
+                    * (
+                        local_control_bounds[axis][0]
+                        + local_control_bounds[axis][1]
+                    )
+                    * 1.0e6
+                    for axis in "xy"
+                ],
+                dtype=float,
+            )
+            source_centered_on_local_control = bool(
+                np.allclose(
+                    np.asarray([parsed.beam_x_um, parsed.beam_y_um], dtype=float),
+                    local_control_center_um,
+                    rtol=0.0,
+                    atol=1.0e-6,
+                )
+            )
+            if parsed.case == "empty-stack" and not source_centered_on_local_control:
                 # Opposite-face *relative asymmetry* is meaningful only for
                 # a centered source.  Device A intentionally translates the
                 # beam to the digitized measurement position, so two tiny
@@ -5071,6 +5122,9 @@ def main() -> int:
                         parsed.beam_x_um,
                         parsed.beam_y_um,
                     ],
+                    "local_control_volume_center_um": (
+                        local_control_center_um.tolist()
+                    ),
                     "opposite_face_asymmetry_retained_as_diagnostic": result.get(
                         "opposite_lateral_face_asymmetry"
                     ),
