@@ -165,8 +165,8 @@ def strict_maps(
         np.diff(geometry.x_edges_m)[:, None]
         * np.diff(geometry.y_edges_m)[None, :]
     )
-    contribution = np.sum(strict["cell_contribution_A"], axis=2)
-    current_density = np.zeros_like(contribution)
+    contribution = np.nansum(strict["cell_contribution_A"], axis=2)
+    current_density = np.full_like(contribution, np.nan)
     current_density[valid] = contribution[valid] / area[valid]
     return {
         "temperature_flake_average_K": average,
@@ -176,6 +176,13 @@ def strict_maps(
         "strict_valid_xy_mask": valid,
         "strict_current_A": strict_current,
         "strict_current_contribution_A_m2": current_density,
+        "grad_weighting_x_m_inverse": strict["grad_weighting_x_m_inverse"],
+        "grad_weighting_y_m_inverse": strict["grad_weighting_y_m_inverse"],
+        "local_J_PTE_x_A_m2_3d": strict["local_J_PTE_x_A_m2_3d"],
+        "local_J_PTE_y_A_m2_3d": strict["local_J_PTE_y_A_m2_3d"],
+        "shockley_ramo_integrand_A_m3_3d": strict[
+            "shockley_ramo_integrand_A_m3_3d"
+        ],
         "strict_current_contract": strict["contract"],
     }
 
@@ -344,6 +351,13 @@ def main() -> int:
                 strict_current_contribution_A_m2=(
                     maps["strict_current_contribution_A_m2"]
                 ),
+                grad_weighting_x_m_inverse=maps["grad_weighting_x_m_inverse"],
+                grad_weighting_y_m_inverse=maps["grad_weighting_y_m_inverse"],
+                local_J_PTE_x_A_m2_3d=maps["local_J_PTE_x_A_m2_3d"],
+                local_J_PTE_y_A_m2_3d=maps["local_J_PTE_y_A_m2_3d"],
+                strict_shockley_ramo_integrand_A_m3_3d=(
+                    maps["shockley_ramo_integrand_A_m3_3d"]
+                ),
                 production_current_integrand_A_m2=(
                     production["shockley_ramo_integrand_A_m2"]
                 ),
@@ -384,8 +398,9 @@ def main() -> int:
                 "TaIrTe4_volume_average_rise_K": thermal.measure_weighted_mean(
                     solved.temperature_K, flake, volume
                 ),
-                "production_current_A": production_current,
+                "production_current_A": maps["strict_current_A"],
                 "strict_current_A": maps["strict_current_A"],
+                "legacy_one_sided_current_A": production_current,
                 "linear_residual_relative": solved.linear_residual_relative,
                 "energy_balance_relative_error": solved.energy_balance_relative_error,
                 "lateral_numerical_boundary_flux_fraction": lateral_flux,

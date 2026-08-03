@@ -352,7 +352,21 @@ def test_strict_pte_masks_boundary_cells_and_any_missing_neighbour() -> None:
     expected_valid = strict_centered_xy_mask(flake[:, :, 0])
     assert np.array_equal(fields["valid_xy_mask"], expected_valid)
     contribution = fields["cell_contribution_A"][:, :, 0]
-    assert np.count_nonzero(contribution[~expected_valid]) == 0
+    assert np.all(np.isnan(contribution[~expected_valid]))
+    assert np.all(np.isfinite(contribution[expected_valid]))
+    for name in (
+        "grad_weighting_x_m_inverse",
+        "grad_weighting_y_m_inverse",
+    ):
+        assert np.all(np.isnan(fields[name][~expected_valid]))
+    for name in (
+        "grad_temperature_x_K_m_3d",
+        "grad_temperature_y_K_m_3d",
+        "local_J_PTE_x_A_m2_3d",
+        "local_J_PTE_y_A_m2_3d",
+        "shockley_ramo_integrand_A_m3_3d",
+    ):
+        assert np.all(np.isnan(fields[name][:, :, 0][~expected_valid]))
 
 
 def test_weighted_mean_uses_literal_cell_measure() -> None:

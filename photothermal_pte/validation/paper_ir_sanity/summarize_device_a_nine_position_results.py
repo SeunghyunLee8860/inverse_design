@@ -315,7 +315,7 @@ def make_case_panels(
                 for pol in POLARIZATIONS
             }
             annotation = "   ".join(
-                f"E||{pol}: I={summaries[pol]['thermal']['production_current_A']*1e9:.4g} nA, "
+                f"E||{pol}: I={summaries[pol]['thermal']['strict_current_A']*1e9:.4g} nA, "
                 f"Tmax={summaries[pol]['thermal']['Tmax_rise_K']:.4g} K"
                 for pol in POLARIZATIONS
             )
@@ -374,8 +374,11 @@ def collect_table(
                     "TaIrTe4_volume_average_rise_K": summary["thermal"]["TaIrTe4_volume_average_rise_K"],
                     "strict_gradient_max_K_m": float(np.max(gradient)),
                     "strict_gradient_p99_K_m": float(np.percentile(gradient, 99.0)),
-                    "production_current_A": summary["thermal"]["production_current_A"],
+                    "current_A": summary["thermal"]["strict_current_A"],
                     "strict_current_A": summary["thermal"]["strict_current_A"],
+                    "legacy_one_sided_current_A": summary["thermal"][
+                        "production_current_A"
+                    ],
                     "mapping_relative_power_error": summary["mapping"]["mapping_relative_power_error"],
                     "thermal_energy_balance_relative_error": summary["thermal"]["energy_balance_relative_error"],
                     "linear_residual_relative": summary["thermal"]["linear_residual_relative"],
@@ -399,7 +402,7 @@ def make_summary_plots(rows: list[dict[str, Any]], output_dir: Path) -> list[Pat
             axes[0, 0].bar(x + offset, [r["mapped_source_power_W_at_285uW_incident"]*1e6 for r in selected], width, label=f"E||{pol}", color=color)
             axes[0, 1].bar(x + offset, [r["Tmax_rise_K"] for r in selected], width, label=f"E||{pol}", color=color)
             axes[1, 0].bar(x + offset, [r["strict_gradient_p99_K_m"] for r in selected], width, label=f"E||{pol}", color=color)
-            axes[1, 1].bar(x + offset, [r["production_current_A"]*1e9 for r in selected], width, label=f"E||{pol}", color=color)
+            axes[1, 1].bar(x + offset, [r["current_A"]*1e9 for r in selected], width, label=f"E||{pol}", color=color)
         for ax, ylabel in zip(axes.ravel(), ("mapped absorbed power (µW)", "Tmax rise (K)", "strict |∇T| P99 (K/m)", "production current (nA)"), strict=True):
             ax.set_xticks(x, labels, rotation=35, ha="right")
             ax.set_ylabel(ylabel)
@@ -415,7 +418,7 @@ def make_summary_plots(rows: list[dict[str, Any]], output_dir: Path) -> list[Pat
     x = np.arange(len(labels))
     width = 0.36
     for offset, scenario, color in ((-width/2, "thermally_grown", "tab:green"), (width/2, "evaporated", "tab:red")):
-        for metric, ax, title in (("Tmax_rise_K", axes[0], "Tmax b/a"), ("production_current_A", axes[1], "|current b/a|")):
+        for metric, ax, title in (("Tmax_rise_K", axes[0], "Tmax b/a"), ("current_A", axes[1], "|strict-centered current b/a|")):
             values = []
             for label in labels:
                 a = next(r for r in rows if r["scenario"] == scenario and r["position"] == label and r["polarization"] == "a")[metric]
@@ -451,7 +454,9 @@ def main() -> int:
     summary_plots = make_summary_plots(rows, args.output_dir)
     csv_path = args.output_dir / "device_a_nine_position_two_interface_results.csv"
     with csv_path.open("w", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(
+            stream, fieldnames=list(rows[0]), lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(rows)
     json_path = args.output_dir / "device_a_nine_position_two_interface_summary.json"
@@ -462,7 +467,8 @@ def main() -> int:
         "interpretation": {
             "thermally_grown_and_evaporated_are_named_physical_scenarios": True,
             "absolute_current_is_not_claimed_as_experimentally_reproduced": True,
-            "current_definition": "volume-integrated anisotropic Shockley-Ramo PTE current; strict-centered map is an additional diagnostic",
+            "current_definition": "strict-centered anisotropic Shockley-Ramo PTE current; a cell is NaN/masked unless all -x,+x,-y,+y TaIrTe4 neighbours exist",
+            "legacy_one_sided_current_is_diagnostic_only": True,
             "thermal_Q_source": "TaIrTe4-only exact intersection-density overlap mapping at 285 uW incident power",
             "SiO2_optical_loss_is_not_used_as_a_thermal_source": True,
             "far_boundary_flux": "numerical truncation flux, not a physical heat-path fraction",
@@ -513,7 +519,7 @@ def main() -> int:
             f"{row['Tmax_rise_K']:.6g} | "
             f"{row['TaIrTe4_volume_average_rise_K']:.6g} | "
             f"{row['strict_gradient_p99_K_m']:.6g} | "
-            f"{row['production_current_A'] * 1e9:.6g} |"
+            f"{row['current_A'] * 1e9:.6g} |"
         )
     figure_lines = [
         "## Figure gallery",
@@ -576,7 +582,7 @@ def main() -> int:
         "The production-Q mosaics and every case panel show the conservative "
         "optical-cell/TaIrTe4/thermal-cell intersection-density mapping actually used "
         "by the thermal solve; no boundary-cell power is forced from air into TaIrTe4.\n\n"
-        "Current is a full-volume anisotropic Shockley-Ramo PTE integral. A strict-centered current-density map is also shown, with cells masked unless all +/-x and +/-y TaIrTe4 neighbours exist. "
+        "Current uses the user-selected strict-centered anisotropic Shockley-Ramo PTE integral. Temperature and weighting-potential gradients, J_PTE, and the collection integrand are NaN/masked unless all -x, +x, -y, and +y TaIrTe4 neighbours exist. The former one-sided-boundary result is retained only as a legacy diagnostic. "
         "Because the digitized-model resistance differs from the measured device, absolute current is not called an experimental reproduction.\n\n"
         + "\n".join(figure_lines)
         + "\n"

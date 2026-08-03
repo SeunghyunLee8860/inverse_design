@@ -1947,3 +1947,16 @@ adjoint, gradient, and optimization were not run.
   loss of optical-cell power in the material-overlap mapping.
 - Raw NPZ/FSP files remain external and are not committed.
 - Report: `paper_ir_device_a_boundary_aware_fast_mesh/`.
+
+# Device-A strict-centered PTE collection contract — 2026-08-03
+
+- The displayed nine-position current now requires a common centered stencil
+  with all `-x`, `+x`, `-y`, and `+y` TaIrTe4 neighbours present.
+- Missing-neighbour cells are `NaN` in temperature gradients, weighting-field
+  gradients, local `J_PTE`, and the Shockley-Ramo collection integrand; they
+  are excluded from the terminal-current integral.
+- The previous one-sided-boundary current is retained only as a named legacy
+  diagnostic. No optical or thermal solve was repeated for this offline
+  post-processing correction.
+- Validation: 137 offline tests passed.
+- Report: `paper_ir_device_a_nine_position_two_interface/`.

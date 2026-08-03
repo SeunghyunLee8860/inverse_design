@@ -1380,9 +1380,9 @@ def pte_current_strict_centered(
 
     This implements the user's requested strict masking rule literally: a
     cell contributes only when all +/-x and +/-y neighbours are TaIrTe4 for
-    both the temperature and weighting-potential gradients.  It is a useful
-    stencil audit, but it removes the boundary-adjacent physical volume and is
-    therefore not silently promoted as the production terminal current.
+    both the temperature and weighting-potential gradients.  Every derived
+    field is NaN outside that common stencil so a missing neighbour can never
+    be mistaken for a physical zero.
     """
 
     x = 0.5 * (geometry.x_edges_m[:-1] + geometry.x_edges_m[1:])
@@ -1396,30 +1396,40 @@ def pte_current_strict_centered(
         weighting_potential, mask, x, y
     )
     area = dx[:, None] * dy[None, :]
-    cell_contribution = np.zeros_like(temperature_K)
+    cell_contribution = np.full_like(temperature_K, np.nan)
+    grad_temperature_x = np.full_like(temperature_K, np.nan)
+    grad_temperature_y = np.full_like(temperature_K, np.nan)
+    local_j_x = np.full_like(temperature_K, np.nan)
+    local_j_y = np.full_like(temperature_K, np.nan)
+    integrand_3d = np.full_like(temperature_K, np.nan)
     current = 0.0
     for k in flake_z:
         grad_tx, grad_ty, valid_t = strict_centered_cell_gradient(
             temperature_K[:, :, k], mask, x, y
         )
         common = valid & valid_t
-        integrand = (
-            -SIGMA_LAB_S_M[0]
-            * SEEBECK_LAB_V_K[0]
-            * grad_tx
-            * grad_psi_x
-            - SIGMA_LAB_S_M[1]
-            * SEEBECK_LAB_V_K[1]
-            * grad_ty
-            * grad_psi_y
-        )
-        contribution = np.zeros_like(integrand)
+        jx = -SIGMA_LAB_S_M[0] * SEEBECK_LAB_V_K[0] * grad_tx
+        jy = -SIGMA_LAB_S_M[1] * SEEBECK_LAB_V_K[1] * grad_ty
+        integrand = jx * grad_psi_x + jy * grad_psi_y
+        contribution = np.full_like(integrand, np.nan)
         contribution[common] = integrand[common] * area[common] * dz[k]
+        grad_temperature_x[:, :, k] = grad_tx
+        grad_temperature_y[:, :, k] = grad_ty
+        local_j_x[:, :, k] = jx
+        local_j_y[:, :, k] = jy
+        integrand_3d[:, :, k] = integrand
         cell_contribution[:, :, k] = contribution
-        current += float(np.sum(contribution))
+        current += float(np.sum(contribution[common]))
     return current, {
         "current_A": current,
         "cell_contribution_A": cell_contribution,
+        "grad_weighting_x_m_inverse": grad_psi_x,
+        "grad_weighting_y_m_inverse": grad_psi_y,
+        "grad_temperature_x_K_m_3d": grad_temperature_x,
+        "grad_temperature_y_K_m_3d": grad_temperature_y,
+        "local_J_PTE_x_A_m2_3d": local_j_x,
+        "local_J_PTE_y_A_m2_3d": local_j_y,
+        "shockley_ramo_integrand_A_m3_3d": integrand_3d,
         "valid_xy_mask": valid,
         "valid_xy_cell_count": int(np.count_nonzero(valid)),
         "masked_flake_xy_cell_count": int(np.count_nonzero(mask & ~valid)),
@@ -1427,7 +1437,7 @@ def pte_current_strict_centered(
             "strict cell-centred +/-x,+/-y stencil; any missing neighbour "
             "masks the entire cell contribution"
         ),
-        "production_status": "DIAGNOSTIC_ONLY_BOUNDARY_VOLUME_REMOVED",
+        "production_status": "USER_SELECTED_STRICT_CENTERED_MASK_CONTRACT",
     }
 
 
