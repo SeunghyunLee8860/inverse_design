@@ -515,6 +515,48 @@ def main() -> int:
             f"{row['strict_gradient_p99_K_m']:.6g} | "
             f"{row['production_current_A'] * 1e9:.6g} |"
         )
+    figure_lines = [
+        "## Figure gallery",
+        "",
+        "### Frozen nine-position geometry",
+        "",
+        "![Frozen nine-position Lumerical-coordinate geometry](../paper_ir_device_a_inside_flake_center/DEVICE_A_FINAL_BEAM_CENTER_PLAN.png)",
+        "",
+        "### Conservative thermal-production Q at 285 uW incident power",
+        "",
+        "![Mapped thermal Q, E parallel a](MAPPED_THERMAL_Q_LUMERICAL_COORDINATES_Ea.png)",
+        "",
+        "![Mapped thermal Q, E parallel b](MAPPED_THERMAL_Q_LUMERICAL_COORDINATES_Eb.png)",
+        "",
+        "### Nine-position scalar summaries",
+        "",
+        "![Thermally grown SiO2 summary](NINE_POSITION_SUMMARY_THERMALLY_GROWN.png)",
+        "",
+        "![Evaporated SiO2 summary](NINE_POSITION_SUMMARY_EVAPORATED.png)",
+        "",
+        "![Polarization and interface-G ratios](POLARIZATION_AND_INTERFACE_G_RATIOS.png)",
+        "",
+        "### Per-case Lumerical-coordinate maps",
+        "",
+        "Every panel below uses Lumerical **x = crystal b, y = crystal a** and shows, from left to right, mapped Q, thickness-averaged temperature rise, dT/dx, dT/dy, gradient magnitude, and strict-centered local current contribution. The two rows are E parallel a and E parallel b.",
+        "",
+    ]
+    for scenario in SCENARIOS:
+        figure_lines.extend([
+            f"#### {scenario.replace('_', ' ').title()} SiO2 interface",
+            "",
+        ])
+        for case in contract["cases"]:
+            filename = (
+                f"case_panels/{scenario}_{case['label']}"
+                "_Q_T_GRADIENT_CURRENT.png"
+            )
+            figure_lines.extend([
+                f"##### {case['label']}",
+                "",
+                f"![{scenario} {case['label']} Q temperature gradient current]({filename})",
+                "",
+            ])
     report_path.write_text(
         "# Device-A nine-position, two-interface-G result\n\n"
         "All spatial plots use the fixed Lumerical frame **x = crystal b, y = crystal a**. "
@@ -536,6 +578,8 @@ def main() -> int:
         "by the thermal solve; no boundary-cell power is forced from air into TaIrTe4.\n\n"
         "Current is a full-volume anisotropic Shockley-Ramo PTE integral. A strict-centered current-density map is also shown, with cells masked unless all +/-x and +/-y TaIrTe4 neighbours exist. "
         "Because the digitized-model resistance differs from the measured device, absolute current is not called an experimental reproduction.\n\n"
+        + "\n".join(figure_lines)
+        + "\n"
         "## Results\n\n"
         + "\n".join(result_lines)
         + "\n\n"
