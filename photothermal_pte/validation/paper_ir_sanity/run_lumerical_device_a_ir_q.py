@@ -615,6 +615,24 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--beam-x-um", type=float, default=0.0)
     parser.add_argument("--beam-y-um", type=float, default=0.0)
     parser.add_argument(
+        "--fixed-mesh-center-x-um",
+        type=float,
+        default=None,
+        help=(
+            "explicit case-invariant local-mesh centre in the fixed "
+            "Lumerical x=b frame; does not translate geometry or source"
+        ),
+    )
+    parser.add_argument(
+        "--fixed-mesh-center-y-um",
+        type=float,
+        default=None,
+        help=(
+            "explicit case-invariant local-mesh centre in the fixed "
+            "Lumerical y=a frame; does not translate geometry or source"
+        ),
+    )
+    parser.add_argument(
         "--beam-offset-x-um",
         type=float,
         default=0.0,
@@ -1068,6 +1086,10 @@ def parse_args() -> argparse.Namespace:
         )
     elif args.include_electrodes:
         parser.error("--include-electrodes requires --device-a-geometry-json")
+    if args.fixed_mesh_center_x_um is not None:
+        args.mesh_center_x_um = float(args.fixed_mesh_center_x_um)
+    if args.fixed_mesh_center_y_um is not None:
+        args.mesh_center_y_um = float(args.fixed_mesh_center_y_um)
     if args.geometry == "device-a-polygon":
         if args.device_a_contract is None:
             args.flake_vertices_um = np.array(FLAKE_VERTICES_UM, copy=True)

@@ -65,7 +65,10 @@ KAPPA_SIO2_W_MK = 1.38
 KAPPA_SI_W_MK = 145.0
 KAPPA_AIR_W_MK = 0.026
 G_TAIRTE4_AIR_W_M2K = 1.0
-G_TAIRTE4_SIO2_W_M2K = 7.37e6
+G_TAIRTE4_THERMALLY_GROWN_SIO2_W_M2K = 7.37e6
+G_TAIRTE4_EVAPORATED_SIO2_W_M2K = 7.37e4
+# Backward-compatible name used by frozen controls and imports.
+G_TAIRTE4_SIO2_W_M2K = G_TAIRTE4_THERMALLY_GROWN_SIO2_W_M2K
 G_SIO2_SI_W_M2K = 1.1e9
 H_EXPOSED_W_M2K = 10.0
 SIGMA_LAB_S_M = np.asarray([1.10e5, 4.91e5])  # b, a
@@ -195,7 +198,10 @@ def build_geometry(
     si_depth_m: float,
     core_step_m: float,
     flake_dz_m: float,
+    tairte4_sio2_G_W_m2K: float = G_TAIRTE4_SIO2_W_M2K,
 ) -> Geometry:
+    if not np.isfinite(tairte4_sio2_G_W_m2K) or tairte4_sio2_G_W_m2K <= 0.0:
+        raise ValueError("TaIrTe4/SiO2 interface G must be finite and positive")
     if np.max(np.abs(FLAKE_VERTICES_UM)) > 0.5 * domain_m * 1e6:
         core_bounds_um = {"x": (-12.0, 12.0), "y": (-12.0, 12.0)}
     else:
@@ -257,7 +263,7 @@ def build_geometry(
         1.0 / G_SIO2_SI_W_M2K
     )
     rz[((lower == 2) & (upper == 3)) | ((lower == 3) & (upper == 2))] = (
-        1.0 / G_TAIRTE4_SIO2_W_M2K
+        1.0 / tairte4_sio2_G_W_m2K
     )
     rz[((lower == 3) & (upper == 0)) | ((lower == 0) & (upper == 3))] = (
         1.0 / G_TAIRTE4_AIR_W_M2K
@@ -1545,6 +1551,15 @@ def main() -> int:
     parser.add_argument("--core-step-nm", type=float, default=200.0)
     parser.add_argument("--flake-dz-nm", type=float, default=26.0)
     parser.add_argument(
+        "--tairte4-sio2-interface-scenario",
+        choices=("thermally-grown", "evaporated"),
+        default="thermally-grown",
+        help=(
+            "named paper interface-G scenario; changes only internal "
+            "TaIrTe4/SiO2 z-face resistance"
+        ),
+    )
+    parser.add_argument(
         "--incident-power-uw",
         type=float,
         default=285.0,
@@ -1627,6 +1642,10 @@ def main() -> int:
             "TaIrTe4-only source; do not mix material attribution contracts"
         )
     args.output_dir.mkdir(parents=True, exist_ok=False)
+    selected_tairte4_sio2_G = {
+        "thermally-grown": G_TAIRTE4_THERMALLY_GROWN_SIO2_W_M2K,
+        "evaporated": G_TAIRTE4_EVAPORATED_SIO2_W_M2K,
+    }[args.tairte4_sio2_interface_scenario]
     (
         optical_result_path,
         optical_case_result,
@@ -1706,6 +1725,7 @@ def main() -> int:
         si_depth_m=args.si_depth_um * 1e-6,
         core_step_m=args.core_step_nm * 1e-9,
         flake_dz_m=args.flake_dz_nm * 1e-9,
+        tairte4_sio2_G_W_m2K=selected_tairte4_sio2_G,
     )
     print(
         f"[thermal] grid shape={geometry.material_id.shape}, "
@@ -1799,7 +1819,7 @@ def main() -> int:
             interface_resistance_m2K_W=geometry.interface_resistance_m2K_W,
             active_mask=geometry.flake_mask,
             surface_robin_heat_transfer_W_m2K={
-                "z_min": G_TAIRTE4_SIO2_W_M2K,
+                "z_min": selected_tairte4_sio2_G,
                 "z_max": G_TAIRTE4_AIR_W_M2K,
             },
             surface_robin_temperature_K={"z_min": 0.0, "z_max": 0.0},
@@ -1924,7 +1944,16 @@ def main() -> int:
             "sigma_a_b_S_m": [4.91e5, 1.10e5],
             "Seebeck_a_b_V_K": [-6e-6, 27e-6],
             "G_TaIrTe4_air_W_m2K": G_TAIRTE4_AIR_W_M2K,
-            "G_TaIrTe4_thermal_SiO2_W_m2K": G_TAIRTE4_SIO2_W_M2K,
+            "G_TaIrTe4_thermally_grown_SiO2_W_m2K": (
+                G_TAIRTE4_THERMALLY_GROWN_SIO2_W_M2K
+            ),
+            "G_TaIrTe4_evaporated_SiO2_W_m2K": (
+                G_TAIRTE4_EVAPORATED_SIO2_W_M2K
+            ),
+            "selected_TaIrTe4_SiO2_scenario": (
+                args.tairte4_sio2_interface_scenario
+            ),
+            "selected_G_TaIrTe4_SiO2_W_m2K": selected_tairte4_sio2_G,
             "T_bath_K": T_BATH_K,
         },
         "expanded_model_parameters_not_supplied_by_paper": {
@@ -1957,6 +1986,10 @@ def main() -> int:
             "flake_dz_nm": args.flake_dz_nm,
             "grid_shape": list(geometry.material_id.shape),
             "thermal_model": args.thermal_model,
+            "TaIrTe4_SiO2_interface_scenario": (
+                args.tairte4_sio2_interface_scenario
+            ),
+            "TaIrTe4_SiO2_interface_G_W_m2K": selected_tairte4_sio2_G,
             "optical_coordinate_frame": {
                 "case_result_path": str(optical_result_path.resolve()),
                 "optical_domain_um": optical_domain_um,

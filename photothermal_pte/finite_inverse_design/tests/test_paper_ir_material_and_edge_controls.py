@@ -22,6 +22,9 @@ from photothermal_pte.validation.paper_ir_sanity import (
 from photothermal_pte.validation.paper_ir_sanity import (
     run_device_a_explicit_thermal_pte as device_a_thermal,
 )
+from photothermal_pte.validation.paper_ir_sanity import (
+    plot_device_a_final_beam_center_plan as nine_position_plan,
+)
 
 
 def test_paper_ir_c_table_is_exact_b_closure() -> None:
@@ -165,6 +168,85 @@ def test_two_terminal_resistance_audit_recovers_rectangle(
     )
     assert result["terminal_current_balance_relative_error"] < 1e-11
     assert result["linear_residual_relative"] < 1e-12
+
+
+def test_named_tairte4_sio2_interface_scenarios_change_only_target_z_faces(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        device_a_thermal,
+        "FLAKE_VERTICES_UM",
+        np.asarray([[-1.0, -1.0], [1.0, -1.0], [1.0, 1.0], [-1.0, 1.0]]),
+    )
+    common = dict(
+        domain_m=6.0e-6,
+        si_depth_m=1.0e-6,
+        core_step_m=0.5e-6,
+        flake_dz_m=10.0e-9,
+    )
+    grown = device_a_thermal.build_geometry(
+        **common,
+        tairte4_sio2_G_W_m2K=(
+            device_a_thermal.G_TAIRTE4_THERMALLY_GROWN_SIO2_W_M2K
+        ),
+    )
+    evaporated = device_a_thermal.build_geometry(
+        **common,
+        tairte4_sio2_G_W_m2K=(
+            device_a_thermal.G_TAIRTE4_EVAPORATED_SIO2_W_M2K
+        ),
+    )
+    lower = grown.material_id[:, :, :-1]
+    upper = grown.material_id[:, :, 1:]
+    target = ((lower == 2) & (upper == 3)) | ((lower == 3) & (upper == 2))
+    assert np.any(target)
+    assert np.array_equal(
+        grown.interface_resistance_m2K_W["x"],
+        evaporated.interface_resistance_m2K_W["x"],
+    )
+    assert np.array_equal(
+        grown.interface_resistance_m2K_W["y"],
+        evaporated.interface_resistance_m2K_W["y"],
+    )
+    difference = (
+        grown.interface_resistance_m2K_W["z"]
+        != evaporated.interface_resistance_m2K_W["z"]
+    )
+    assert np.array_equal(difference, target)
+    assert np.all(
+        grown.interface_resistance_m2K_W["z"][target]
+        == 1.0 / device_a_thermal.G_TAIRTE4_THERMALLY_GROWN_SIO2_W_M2K
+    )
+    assert np.all(
+        evaporated.interface_resistance_m2K_W["z"][target]
+        == 1.0 / device_a_thermal.G_TAIRTE4_EVAPORATED_SIO2_W_M2K
+    )
+
+
+def test_device_a_nine_position_contract_is_fixed_lumerical_x_b_y_a() -> None:
+    path = (
+        Path(__file__).resolve().parents[2]
+        / "reports"
+        / "paper_ir_device_a_fig3h_registered_scan"
+        / "device_a_fig3h_registered_geometry.json"
+    )
+    contract = nine_position_plan.build_position_contract(
+        json.loads(path.read_text())
+    )
+    assert contract["coordinate_frame"]["axis_mapping"] == "x=b, y=a"
+    assert contract["coordinate_frame"]["only_source_is_translated"]
+    assert len(contract["cases"]) == 9
+    by_label = {case["label"]: case for case in contract["cases"]}
+    assert by_label["outside_middle"]["beam_center_lumerical_um"] == [
+        -16.5625,
+        0.0,
+    ]
+    assert by_label["inside_middle"]["beam_center_lumerical_um"] == [
+        -6.0,
+        0.0,
+    ]
+    for label in ("edge_top", "edge_middle", "edge_bottom"):
+        assert by_label[label]["edge_segment_index"] is not None
 
 
 def test_equal_absorbed_power_control_is_exact_and_analytic_only() -> None:
