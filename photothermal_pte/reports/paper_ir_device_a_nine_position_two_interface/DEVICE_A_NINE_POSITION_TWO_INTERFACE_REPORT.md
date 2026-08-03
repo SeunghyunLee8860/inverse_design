@@ -36,7 +36,7 @@ Current uses the user-selected strict-centered anisotropic Shockley-Ramo PTE int
 
 ### Per-case Lumerical-coordinate maps
 
-Every panel below uses Lumerical **x = crystal b, y = crystal a** and shows, from left to right, mapped Q, thickness-averaged temperature rise, dT/dx, dT/dy, gradient magnitude, and strict-centered local current contribution. The two rows are E parallel a and E parallel b.
+Every panel below uses Lumerical **x = crystal b, y = crystal a** and shows, from left to right, mapped Q, thickness-averaged temperature rise, dT/dx, dT/dy, gradient magnitude, and strict-centered local current contribution. Gray cells are explicit NaN/masked cells. The two rows are E parallel a and E parallel b.
 
 #### Thermally Grown SiO2 interface
 
@@ -155,7 +155,7 @@ Every panel below uses Lumerical **x = crystal b, y = crystal a** and shows, fro
 | evaporated | inside_bottom | a | 46.0591 | 3.01766 | 0.970566 | 326812 | 48.3141 |
 | evaporated | inside_bottom | b | 63.4702 | 4.22389 | 1.33725 | 466281 | 33.4741 |
 
-Each per-case PNG uses the same Lumerical coordinate bounds for both polarizations and shows, in order, mapped Q, thickness-averaged temperature rise, dT/dx (crystal b), dT/dy (crystal a), gradient magnitude, and the strict-centered local current contribution.
+Each per-case PNG uses the same Lumerical coordinate bounds for both polarizations and shows, in order, mapped Q, thickness-averaged temperature rise, dT/dx (crystal b), dT/dy (crystal a), gradient magnitude, and the strict-centered local current contribution. Gray cells explicitly mark NaN/masked locations where at least one of -x, +x, -y, or +y TaIrTe4 neighbours is missing.
 
 - [CSV](device_a_nine_position_two_interface_results.csv)
 - [JSON](device_a_nine_position_two_interface_summary.json)

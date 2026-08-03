@@ -67,12 +67,14 @@ def pcolor(
     flake_vertices_um: np.ndarray,
     beam_center_um: np.ndarray,
 ):
+    plotted_cmap = plt.get_cmap(cmap).copy()
+    plotted_cmap.set_bad("#b8b8b8")
     mesh = ax.pcolormesh(
         x_um,
         y_um,
         np.ma.masked_invalid(values).T,
         shading="auto",
-        cmap=cmap,
+        cmap=plotted_cmap,
         vmin=vmin,
         vmax=vmax,
         rasterized=True,
@@ -321,7 +323,8 @@ def make_case_panels(
             )
             fig.suptitle(
                 f"{case['label']} — {scenario.replace('_', ' ')} SiO₂ interface\n"
-                f"Lumerical x=b, y=a; green +=source center; cyan=flake; {annotation}",
+                "Lumerical x=b, y=a; green +=source center; cyan=flake; "
+                f"gray=NaN/masked; {annotation}",
                 fontsize=14,
             )
             path = panel_dir / f"{scenario}_{case['label']}_Q_T_GRADIENT_CURRENT.png"
@@ -544,7 +547,7 @@ def main() -> int:
         "",
         "### Per-case Lumerical-coordinate maps",
         "",
-        "Every panel below uses Lumerical **x = crystal b, y = crystal a** and shows, from left to right, mapped Q, thickness-averaged temperature rise, dT/dx, dT/dy, gradient magnitude, and strict-centered local current contribution. The two rows are E parallel a and E parallel b.",
+        "Every panel below uses Lumerical **x = crystal b, y = crystal a** and shows, from left to right, mapped Q, thickness-averaged temperature rise, dT/dx, dT/dy, gradient magnitude, and strict-centered local current contribution. Gray cells are explicit NaN/masked cells. The two rows are E parallel a and E parallel b.",
         "",
     ]
     for scenario in SCENARIOS:
@@ -589,7 +592,7 @@ def main() -> int:
         "## Results\n\n"
         + "\n".join(result_lines)
         + "\n\n"
-        "Each per-case PNG uses the same Lumerical coordinate bounds for both polarizations and shows, in order, mapped Q, thickness-averaged temperature rise, dT/dx (crystal b), dT/dy (crystal a), gradient magnitude, and the strict-centered local current contribution.\n\n"
+        "Each per-case PNG uses the same Lumerical coordinate bounds for both polarizations and shows, in order, mapped Q, thickness-averaged temperature rise, dT/dx (crystal b), dT/dy (crystal a), gradient magnitude, and the strict-centered local current contribution. Gray cells explicitly mark NaN/masked locations where at least one of -x, +x, -y, or +y TaIrTe4 neighbours is missing.\n\n"
         f"- [CSV]({csv_path.name})\n- [JSON]({json_path.name})\n- [manifest]({manifest_path.name})\n"
     )
     print(report_path)
