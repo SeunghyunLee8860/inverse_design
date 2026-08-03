@@ -140,20 +140,27 @@ def make_raw_q_mosaics(
     flake_vertices_um: np.ndarray,
 ) -> list[Path]:
     outputs: list[Path] = []
+    global_maximum = 0.0
+    for pol in POLARIZATIONS:
+        for case in contract["cases"]:
+            directory = optical_root / case["label"] / pol / "finite"
+            _, _, qxy = raw_optical_qxy(
+                directory / "finite_q_on_artifact.npz",
+                directory / "case_result.json",
+            )
+            global_maximum = max(global_maximum, float(np.nanmax(qxy)))
     for pol in POLARIZATIONS:
         fields = []
-        maximum = 0.0
         for case in contract["cases"]:
             artifact = optical_root / case["label"] / pol / "finite" / "finite_q_on_artifact.npz"
             result = optical_root / case["label"] / pol / "finite" / "case_result.json"
             x, y, qxy = raw_optical_qxy(artifact, result)
             fields.append((case, x, y, qxy))
-            maximum = max(maximum, float(np.nanmax(qxy)))
         fig, axes = plt.subplots(3, 3, figsize=(14, 12), constrained_layout=True)
         for ax, (case, x, y, qxy) in zip(axes.ravel(), fields, strict=True):
             m = pcolor(
                 ax, x, y, qxy,
-                f"{case['label']}  E||{pol}", "inferno", 0.0, maximum,
+                f"{case['label']}  E||{pol}", "inferno", 0.0, global_maximum,
                 flake_vertices_um,
                 np.asarray(case["beam_center_lumerical_um"], float),
             )
@@ -436,7 +443,7 @@ def main() -> int:
     }, indent=2) + "\n")
     report_path = args.output_dir / "DEVICE_A_NINE_POSITION_TWO_INTERFACE_REPORT.md"
     result_lines = [
-        "| interface | position | pol. | absorbed power (uW) | Tmax (K) | "
+        "| interface | position | pol. | absorbed power (uW) | Tmax rise (K) | "
         "TaIrTe4 avg. dT (K) | grad P99 (K/m) | current (nA) |",
         "|---|---|---:|---:|---:|---:|---:|---:|",
     ]
@@ -453,6 +460,8 @@ def main() -> int:
         "# Device-A nine-position, two-interface-G result\n\n"
         "All spatial plots use the fixed Lumerical frame **x = crystal b, y = crystal a**. "
         "The device, PML, monitor, and mesh geometry are invariant; only the scalar-Gaussian source is translated.\n\n"
+        "The frozen source centers are shown in the "
+        "[nine-position geometry plan](../paper_ir_device_a_inside_flake_center/DEVICE_A_FINAL_BEAM_CENTER_PLAN.png).\n\n"
         "The two TaIrTe4/SiO2 conductances are reported as separate named physical scenarios: "
         "thermally grown (7.37e6 W/m2K) and evaporated (7.37e4 W/m2K). "
         "Neither is promoted as a fabrication-independent truth.\n\n"
