@@ -105,7 +105,11 @@ def load_fields(root: Path, scenario: str, label: str, pol: str):
     return np.load(path, allow_pickle=False)
 
 
-def raw_optical_qxy(path: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def raw_optical_qxy(
+    path: Path,
+    result_path: Path,
+    incident_power_W: float = 285.0e-6,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     with np.load(path, allow_pickle=False) as raw:
         x = np.asarray(raw["x_m"], float)
         y = np.asarray(raw["y_m"], float)
@@ -118,6 +122,16 @@ def raw_optical_qxy(path: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     # by the artifact's exact flake support.  Production thermal attribution
     # is independently performed by exact optical/thermal volume overlap.
     qxy = np.sum(np.where(flake, q, 0.0) * dz[None, None, :], axis=2)
+    result = json.loads(result_path.read_text())["run_result"]
+    incident_at_unit_center = float(
+        result["normalization"]["incident_power_W_at_1_W_m2"]
+    )
+    if not incident_at_unit_center > 0.0:
+        raise RuntimeError(f"non-positive incident-power reference: {result_path}")
+    # The raw artifact is normalized to a unit central intensity. Translating
+    # the Gaussian changes that central sample, so position comparisons must
+    # first be converted to the common physical incident-power contract.
+    qxy *= incident_power_W / incident_at_unit_center
     return x * 1.0e6, y * 1.0e6, qxy
 
 
@@ -131,7 +145,8 @@ def make_raw_q_mosaics(
         maximum = 0.0
         for case in contract["cases"]:
             artifact = optical_root / case["label"] / pol / "finite" / "finite_q_on_artifact.npz"
-            x, y, qxy = raw_optical_qxy(artifact)
+            result = optical_root / case["label"] / pol / "finite" / "case_result.json"
+            x, y, qxy = raw_optical_qxy(artifact, result)
             fields.append((case, x, y, qxy))
             maximum = max(maximum, float(np.nanmax(qxy)))
         fig, axes = plt.subplots(3, 3, figsize=(14, 12), constrained_layout=True)
@@ -142,9 +157,14 @@ def make_raw_q_mosaics(
                 flake_vertices_um,
                 np.asarray(case["beam_center_lumerical_um"], float),
             )
-        fig.colorbar(m, ax=axes, label="Raw Maxwell TaIrTe₄-support Q areal (W/m²)")
+        fig.colorbar(
+            m,
+            ax=axes,
+            label="Maxwell TaIrTe₄-support Q at 285-µW incident power (W/m²)",
+        )
         fig.suptitle(
-            f"Device-A raw optical Q, E||{pol} — fixed Lumerical x=b, y=a",
+            f"Device-A optical Q at common 285-µW incident power, E||{pol} "
+            "— fixed Lumerical x=b, y=a",
             fontsize=15,
         )
         path = output_dir / f"RAW_OPTICAL_Q_LUMERICAL_COORDINATES_E{pol}.png"
@@ -178,17 +198,30 @@ def make_case_panels(
                         np.asarray(raw["temperature_flake_average_K"], float),
                         np.nan,
                     ),
-                    "G": np.where(valid, np.asarray(raw["grad_T_magnitude_K_m"], float), np.nan),
+                    "Gx": np.where(
+                        valid, np.asarray(raw["grad_T_x_K_m"], float), np.nan
+                    ),
+                    "Gy": np.where(
+                        valid, np.asarray(raw["grad_T_y_K_m"], float), np.nan
+                    ),
+                    "G": np.where(
+                        valid,
+                        np.asarray(raw["grad_T_magnitude_K_m"], float),
+                        np.nan,
+                    ),
                     "I": np.where(valid, np.asarray(raw["strict_current_contribution_A_m2"], float), np.nan),
                 }
             scales = {}
             for key in ("Q", "T", "G"):
                 combined = np.concatenate([finite_values(arrays[p][key]) for p in POLARIZATIONS])
                 scales[key] = (0.0, float(np.max(combined)))
-            current = np.concatenate([finite_values(arrays[p]["I"]) for p in POLARIZATIONS])
-            imax = float(np.max(np.abs(current)))
-            scales["I"] = (-imax, imax)
-            fig, axes = plt.subplots(2, 4, figsize=(21, 10), constrained_layout=True)
+            for key in ("Gx", "Gy", "I"):
+                combined = np.concatenate(
+                    [finite_values(arrays[p][key]) for p in POLARIZATIONS]
+                )
+                maximum = float(np.max(np.abs(combined)))
+                scales[key] = (-maximum, maximum)
+            fig, axes = plt.subplots(2, 6, figsize=(31, 10), constrained_layout=True)
             last_mesh = {}
             for row, pol in enumerate(POLARIZATIONS):
                 raw = loaded[pol]
@@ -198,6 +231,8 @@ def make_case_panels(
                 for col, (key, title, cmap, unit) in enumerate((
                     ("Q", "mapped TaIrTe₄ Q", "inferno", "W/m²"),
                     ("T", "thickness-avg ΔT", "magma", "K"),
+                    ("Gx", "strict ∂T/∂x (b)", "coolwarm", "K/m"),
+                    ("Gy", "strict ∂T/∂y (a)", "coolwarm", "K/m"),
                     ("G", "strict-centered |∇T|", "viridis", "K/m"),
                     ("I", "strict current contribution", "coolwarm", "A/m²"),
                 )):
@@ -206,7 +241,14 @@ def make_case_panels(
                         f"E||{pol}: {title}", cmap, *scales[key],
                         flake_vertices_um, beam,
                     )
-            for col, (key, unit) in enumerate((("Q", "W/m²"), ("T", "K"), ("G", "K/m"), ("I", "A/m²"))):
+            for col, (key, unit) in enumerate((
+                ("Q", "W/m²"),
+                ("T", "K"),
+                ("Gx", "K/m"),
+                ("Gy", "K/m"),
+                ("G", "K/m"),
+                ("I", "A/m²"),
+            )):
                 fig.colorbar(last_mesh[key], ax=axes[:, col], label=unit)
             summaries = {
                 pol: load_summary(thermal_root, scenario, case["label"], pol)
@@ -241,6 +283,9 @@ def collect_table(
                 summary = load_summary(thermal_root, scenario, case["label"], pol)
                 result_path = optical_root / case["label"] / pol / "finite" / "case_result.json"
                 optical = json.loads(result_path.read_text())["run_result"]
+                incident_at_unit_center = float(
+                    optical["normalization"]["incident_power_W_at_1_W_m2"]
+                )
                 with load_fields(thermal_root, scenario, case["label"], pol) as field:
                     valid = np.asarray(field["strict_valid_xy_mask"], bool)
                     gradient = np.asarray(field["grad_T_magnitude_K_m"], float)[valid]
@@ -255,6 +300,13 @@ def collect_table(
                     "beam_y_a_um": case["beam_center_lumerical_um"][1],
                     "P_Q_W_at_1_W_m2": optical["P_Q_W"],
                     "P_six_W_at_1_W_m2": optical["P_six_face_W"],
+                    "incident_power_W_at_1_W_m2": incident_at_unit_center,
+                    "optical_absorption_fraction": (
+                        optical["P_Q_W"] / incident_at_unit_center
+                    ),
+                    "P_Q_W_at_285uW_incident": (
+                        optical["P_Q_W"] * 285.0e-6 / incident_at_unit_center
+                    ),
                     "six_face_closure": optical["six_face_relative_closure"],
                     "auto_shutoff": optical["auto_shutoff"]["final_value"],
                     "mapped_source_power_W_at_285uW_incident": summary["thermal"]["source_power_W"],
@@ -355,16 +407,48 @@ def main() -> int:
     }, indent=2) + "\n")
     manifest_path = args.output_dir / "RAW_ARTIFACT_MANIFEST.json"
     artifacts = []
+    thermal_artifacts = []
     for case in contract["cases"]:
         for pol in POLARIZATIONS:
             path = args.optical_root / case["label"] / pol / "finite" / "finite_q_on_artifact.npz"
             artifacts.append({"position": case["label"], "polarization": pol, "path": str(path.resolve()), "size_bytes": path.stat().st_size, "sha256": sha256(path)})
+            for scenario in SCENARIOS:
+                thermal_path = (
+                    args.thermal_root
+                    / scenario
+                    / case["label"]
+                    / pol
+                    / "thermal_lumerical_coordinate_fields.npz"
+                )
+                thermal_artifacts.append({
+                    "scenario": scenario,
+                    "position": case["label"],
+                    "polarization": pol,
+                    "path": str(thermal_path.resolve()),
+                    "size_bytes": thermal_path.stat().st_size,
+                    "sha256": sha256(thermal_path),
+                })
     manifest_path.write_text(json.dumps({
         "raw_artifacts_committed_to_git": False,
         "raw_optical_artifacts": artifacts,
+        "raw_thermal_field_artifacts": thermal_artifacts,
         "generated_report_artifacts": [str(path.resolve()) for path in raw_plots + case_plots + summary_plots],
     }, indent=2) + "\n")
     report_path = args.output_dir / "DEVICE_A_NINE_POSITION_TWO_INTERFACE_REPORT.md"
+    result_lines = [
+        "| interface | position | pol. | absorbed power (uW) | Tmax (K) | "
+        "TaIrTe4 avg. dT (K) | grad P99 (K/m) | current (nA) |",
+        "|---|---|---:|---:|---:|---:|---:|---:|",
+    ]
+    for row in rows:
+        result_lines.append(
+            f"| {row['scenario']} | {row['position']} | {row['polarization']} | "
+            f"{row['mapped_source_power_W_at_285uW_incident'] * 1e6:.6g} | "
+            f"{row['Tmax_rise_K']:.6g} | "
+            f"{row['TaIrTe4_volume_average_rise_K']:.6g} | "
+            f"{row['strict_gradient_p99_K_m']:.6g} | "
+            f"{row['production_current_A'] * 1e9:.6g} |"
+        )
     report_path.write_text(
         "# Device-A nine-position, two-interface-G result\n\n"
         "All spatial plots use the fixed Lumerical frame **x = crystal b, y = crystal a**. "
@@ -374,8 +458,16 @@ def main() -> int:
         "Neither is promoted as a fabrication-independent truth.\n\n"
         "Thermal Q uses TaIrTe4-only, exact optical-cell/thermal-material intersection-density mapping at 285 uW incident power. "
         "SiO2 absorption remains in the optical audit but is not added as a thermal source. No Q clipping, smoothing, gain, rescaling, or tiling is used.\n\n"
+        "Raw optical artifacts use the solver's unit-central-intensity convention. "
+        "Position-comparison plots convert each artifact with its own matched empty-stack "
+        "incident-power readback to the common 285-uW incident-power contract; this is "
+        "physical source normalization, not empirical Q matching.\n\n"
         "Current is a full-volume anisotropic Shockley-Ramo PTE integral. A strict-centered current-density map is also shown, with cells masked unless all +/-x and +/-y TaIrTe4 neighbours exist. "
         "Because the digitized-model resistance differs from the measured device, absolute current is not called an experimental reproduction.\n\n"
+        "## Results\n\n"
+        + "\n".join(result_lines)
+        + "\n\n"
+        "Each per-case PNG uses the same Lumerical coordinate bounds for both polarizations and shows, in order, mapped Q, thickness-averaged temperature rise, dT/dx (crystal b), dT/dy (crystal a), gradient magnitude, and the strict-centered local current contribution.\n\n"
         f"- [CSV]({csv_path.name})\n- [JSON]({json_path.name})\n- [manifest]({manifest_path.name})\n"
     )
     print(report_path)

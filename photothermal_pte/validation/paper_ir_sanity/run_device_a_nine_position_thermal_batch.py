@@ -32,6 +32,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--only-scenario", choices=tuple(SCENARIOS), default=None)
     parser.add_argument("--only-label", action="append", default=[])
     parser.add_argument("--only-polarization", choices=("a", "b"), default=None)
+    parser.add_argument("--thermal-domain-um", type=float, default=60.0)
+    parser.add_argument("--si-depth-um", type=float, default=20.0)
+    parser.add_argument("--core-step-nm", type=float, default=100.0)
+    parser.add_argument("--flake-dz-nm", type=float, default=10.0)
     return parser.parse_args()
 
 
@@ -181,15 +185,16 @@ def write_progress(
     contract: dict[str, Any],
     completed: list[dict[str, Any]],
     status: str,
+    args: argparse.Namespace,
 ) -> None:
     payload = {
         "status": status,
         "coordinate_frame": contract["coordinate_frame"],
         "thermal_contract": {
-            "lateral_domain_um": 60.0,
-            "Si_depth_um": 20.0,
-            "core_xy_cell_size_nm": 100.0,
-            "flake_dz_nm": 10.0,
+            "lateral_domain_um": args.thermal_domain_um,
+            "Si_depth_um": args.si_depth_um,
+            "core_xy_cell_size_nm": args.core_step_nm,
+            "flake_dz_nm": args.flake_dz_nm,
             "bulk_kappa_W_mK": {
                 "TaIrTe4_x_b_y_a_z_c": [3.8, 14.4, 1.0],
                 "SiO2": 1.38,
@@ -238,10 +243,10 @@ def main() -> int:
         conductance = SCENARIOS[scenario]
         print(f"[nine-thermal] build {scenario} geometry/operator", flush=True)
         geometry = thermal.build_geometry(
-            domain_m=60.0e-6,
-            si_depth_m=20.0e-6,
-            core_step_m=100.0e-9,
-            flake_dz_m=10.0e-9,
+            domain_m=args.thermal_domain_um * 1.0e-6,
+            si_depth_m=args.si_depth_um * 1.0e-6,
+            core_step_m=args.core_step_nm * 1.0e-9,
+            flake_dz_m=args.flake_dz_nm * 1.0e-9,
             tairte4_sio2_G_W_m2K=conductance,
         )
         system = assemble(geometry)
@@ -380,6 +385,12 @@ def main() -> int:
                 "interface_scenario": scenario,
                 "G_TaIrTe4_SiO2_W_m2K": conductance,
                 "G_TaIrTe4_air_W_m2K": thermal.G_TAIRTE4_AIR_W_M2K,
+                "thermal_discretization": {
+                    "lateral_domain_um": args.thermal_domain_um,
+                    "Si_depth_um": args.si_depth_um,
+                    "core_xy_cell_size_nm": args.core_step_nm,
+                    "flake_dz_nm": args.flake_dz_nm,
+                },
                 "mapping": mapping,
                 "thermal": {
                     **index_record,
@@ -406,7 +417,7 @@ def main() -> int:
             if not all(gates.values()):
                 raise RuntimeError(f"thermal gates failed: {output}: {gates}")
             completed.append(index_record)
-            write_progress(index_path, contract, completed, "IN_PROGRESS")
+            write_progress(index_path, contract, completed, "IN_PROGRESS", args)
             del q, solved, production, maps
             gc.collect()
         del system, geometry
@@ -416,6 +427,7 @@ def main() -> int:
         contract,
         completed,
         "COMPLETED_DEVICE_A_NINE_POSITION_TWO_INTERFACE_G_THERMAL_BATCH",
+        args,
     )
     print(index_path)
     return 0
