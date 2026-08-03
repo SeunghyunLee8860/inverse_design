@@ -32,9 +32,9 @@ The reported scalar current is the full-TaIrTe4-footprint, full-thickness anisot
 
 ![Evaporated SiO2 summary](NINE_POSITION_SUMMARY_EVAPORATED.png)
 
-![Polarization and interface-G ratios](POLARIZATION_AND_INTERFACE_G_RATIOS.png)
+![Polarization and interface-G Ia over Ib ratios](POLARIZATION_AND_INTERFACE_IA_OVER_IB_RATIOS.png)
 
-![Full-footprint total current Ea Eb comparison](TOTAL_CURRENT_EA_EB_COMPARISON.png)
+![Full-footprint total current Ia over Ib comparison](TOTAL_CURRENT_IA_OVER_IB_COMPARISON.png)
 
 ### Per-case Lumerical-coordinate maps
 

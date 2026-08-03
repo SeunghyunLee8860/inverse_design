@@ -449,7 +449,7 @@ def make_summary_plots(rows: list[dict[str, Any]], output_dir: Path) -> list[Pat
         ax.legend()
     axes[0].set_ylabel("Tmax: E||b / E||a")
     axes[1].set_ylabel(r"total current: $|I_a/I_b|$")
-    path = output_dir / "POLARIZATION_AND_INTERFACE_G_RATIOS.png"
+    path = output_dir / "POLARIZATION_AND_INTERFACE_IA_OVER_IB_RATIOS.png"
     fig.savefig(path, dpi=180)
     plt.close(fig)
     outputs.append(path)
@@ -541,7 +541,7 @@ def make_total_current_Ea_Eb_plot(
         "Device-A full-footprint total PTE current — "
         r"$E\parallel a$ versus $E\parallel b$; Lumerical x=b, y=a"
     )
-    path = output_dir / "TOTAL_CURRENT_EA_EB_COMPARISON.png"
+    path = output_dir / "TOTAL_CURRENT_IA_OVER_IB_COMPARISON.png"
     fig.savefig(path, dpi=180)
     plt.close(fig)
     return path
@@ -657,9 +657,9 @@ def main() -> int:
         "",
         "![Evaporated SiO2 summary](NINE_POSITION_SUMMARY_EVAPORATED.png)",
         "",
-        "![Polarization and interface-G ratios](POLARIZATION_AND_INTERFACE_G_RATIOS.png)",
+        "![Polarization and interface-G Ia over Ib ratios](POLARIZATION_AND_INTERFACE_IA_OVER_IB_RATIOS.png)",
         "",
-        "![Full-footprint total current Ea Eb comparison](TOTAL_CURRENT_EA_EB_COMPARISON.png)",
+        "![Full-footprint total current Ia over Ib comparison](TOTAL_CURRENT_IA_OVER_IB_COMPARISON.png)",
         "",
         "### Per-case Lumerical-coordinate maps",
         "",
