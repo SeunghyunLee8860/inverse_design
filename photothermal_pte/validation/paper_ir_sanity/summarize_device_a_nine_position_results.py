@@ -431,20 +431,24 @@ def make_summary_plots(rows: list[dict[str, Any]], output_dir: Path) -> list[Pat
     x = np.arange(len(labels))
     width = 0.36
     for offset, scenario, color in ((-width/2, "thermally_grown", "tab:green"), (width/2, "evaporated", "tab:red")):
-        for metric, ax, title in (("Tmax_rise_K", axes[0], "Tmax b/a"), ("total_current_A", axes[1], "|total current b/a|")):
+        for metric, ax, title in (("Tmax_rise_K", axes[0], "Tmax b/a"), ("total_current_A", axes[1], "|total current Ia/Ib|")):
             values = []
             for label in labels:
                 a = next(r for r in rows if r["scenario"] == scenario and r["position"] == label and r["polarization"] == "a")[metric]
                 b = next(r for r in rows if r["scenario"] == scenario and r["position"] == label and r["polarization"] == "b")[metric]
-                values.append(abs(b/a) if a != 0.0 else np.nan)
+                if metric == "total_current_A":
+                    values.append(abs(a / b) if b != 0.0 else np.nan)
+                else:
+                    values.append(abs(b / a) if a != 0.0 else np.nan)
             ax.bar(x + offset, values, width, label=scenario.replace("_", " "), color=color)
             ax.set_title(title)
     for ax in axes:
         ax.axhline(1.0, color="black", linestyle="--", linewidth=1)
         ax.set_xticks(x, labels, rotation=35, ha="right")
-        ax.set_ylabel("E||b / E||a ratio")
         ax.grid(axis="y", alpha=0.25)
         ax.legend()
+    axes[0].set_ylabel("Tmax: E||b / E||a")
+    axes[1].set_ylabel(r"total current: $|I_a/I_b|$")
     path = output_dir / "POLARIZATION_AND_INTERFACE_G_RATIOS.png"
     fig.savefig(path, dpi=180)
     plt.close(fig)
@@ -476,12 +480,12 @@ def paired_total_current_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]
                     "beam_y_a_um": selected["a"]["beam_y_a_um"],
                     "total_current_E_parallel_a_A": current_a,
                     "total_current_E_parallel_b_A": current_b,
-                    "signed_Eb_over_Ea": (
-                        current_b / current_a if current_a != 0.0 else np.nan
+                    "signed_Ea_over_Eb": (
+                        current_a / current_b if current_b != 0.0 else np.nan
                     ),
-                    "absolute_Eb_over_Ea": (
-                        abs(current_b / current_a)
-                        if current_a != 0.0
+                    "absolute_Ea_over_Eb": (
+                        abs(current_a / current_b)
+                        if current_b != 0.0
                         else np.nan
                     ),
                 }
@@ -520,13 +524,13 @@ def make_total_current_Ea_Eb_plot(
         axes[row_index, 0].legend()
         axes[row_index, 1].bar(
             x,
-            [row["absolute_Eb_over_Ea"] for row in selected],
+            [row["absolute_Ea_over_Eb"] for row in selected],
             color="tab:purple",
         )
         axes[row_index, 1].axhline(
             1.0, color="black", linestyle="--", linewidth=1.0
         )
-        axes[row_index, 1].set_ylabel(r"$|I_b/I_a|$")
+        axes[row_index, 1].set_ylabel(r"$|I_a/I_b|$")
         axes[row_index, 1].set_title(
             f"{scenario.replace('_', ' ')} SiO₂: polarization ratio"
         )
@@ -623,7 +627,7 @@ def main() -> int:
     report_path = args.output_dir / "DEVICE_A_NINE_POSITION_TWO_INTERFACE_REPORT.md"
     result_lines = [
         "| interface | position | total current E∥a (nA) | "
-        "total current E∥b (nA) | signed Ib/Ia | abs. Ib/Ia |",
+        "total current E∥b (nA) | signed Ia/Ib | abs. Ia/Ib |",
         "|---|---|---:|---:|---:|---:|",
     ]
     for row in paired_rows:
@@ -631,8 +635,8 @@ def main() -> int:
             f"| {row['scenario']} | {row['position']} | "
             f"{row['total_current_E_parallel_a_A'] * 1e9:.6g} | "
             f"{row['total_current_E_parallel_b_A'] * 1e9:.6g} | "
-            f"{row['signed_Eb_over_Ea']:.6g} | "
-            f"{row['absolute_Eb_over_Ea']:.6g} |"
+            f"{row['signed_Ea_over_Eb']:.6g} | "
+            f"{row['absolute_Ea_over_Eb']:.6g} |"
         )
     figure_lines = [
         "## Figure gallery",

@@ -1958,7 +1958,7 @@ adjoint, gradient, and optimization were not run.
   missing-neighbour cells are `NaN` unless all `-x`, `+x`, `-y`, and `+y`
   TaIrTe4 neighbours exist. This strict interior value is diagnostic only.
 - Thermally-grown and evaporated interfaces use the same full-footprint
-  quadrature and are tabulated as paired `I_a`, `I_b`, and `I_b/I_a` values.
+  quadrature and are tabulated as paired `I_a`, `I_b`, and `I_a/I_b` values.
 - No optical or thermal solve was repeated for this offline post-processing
   correction.
 - Validation: 137 offline tests passed.

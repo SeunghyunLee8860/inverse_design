@@ -118,26 +118,26 @@ Every panel below uses Lumerical **x = crystal b, y = crystal a** and shows, fro
 
 ## Results
 
-| interface | position | total current E∥a (nA) | total current E∥b (nA) | signed Ib/Ia | abs. Ib/Ia |
+| interface | position | total current E∥a (nA) | total current E∥b (nA) | signed Ia/Ib | abs. Ia/Ib |
 |---|---|---:|---:|---:|---:|
-| thermally_grown | outside_top | 11.2904 | 9.4382 | 0.835953 | 0.835953 |
-| thermally_grown | outside_middle | 13.6215 | 11.4766 | 0.84254 | 0.84254 |
-| thermally_grown | outside_bottom | 12.8196 | 10.4744 | 0.817059 | 0.817059 |
-| thermally_grown | edge_top | 22.0453 | 16.4755 | 0.747349 | 0.747349 |
-| thermally_grown | edge_middle | 19.0614 | 16.9883 | 0.89124 | 0.89124 |
-| thermally_grown | edge_bottom | 15.9784 | 13.8992 | 0.869875 | 0.869875 |
-| thermally_grown | inside_top | 18.7985 | 10.1918 | 0.542157 | 0.542157 |
-| thermally_grown | inside_middle | 4.97608 | 0.120389 | 0.0241936 | 0.0241936 |
-| thermally_grown | inside_bottom | -1.88358 | -5.32404 | 2.82655 | 2.82655 |
-| evaporated | outside_top | 180.72 | 173.506 | 0.960085 | 0.960085 |
-| evaporated | outside_middle | 219.234 | 214.987 | 0.980627 | 0.980627 |
-| evaporated | outside_bottom | 197.363 | 192.726 | 0.976501 | 0.976501 |
-| evaporated | edge_top | 505.076 | 568.395 | 1.12536 | 1.12536 |
-| evaporated | edge_middle | 359.248 | 384.585 | 1.07053 | 1.07053 |
-| evaporated | edge_bottom | 273.554 | 286.713 | 1.04811 | 1.04811 |
-| evaporated | inside_top | 552.087 | 656.555 | 1.18922 | 1.18922 |
-| evaporated | inside_middle | 314.85 | 376.529 | 1.1959 | 1.1959 |
-| evaporated | inside_bottom | 47.3771 | 31.7418 | 0.669983 | 0.669983 |
+| thermally_grown | outside_top | 11.2904 | 9.4382 | 1.19624 | 1.19624 |
+| thermally_grown | outside_middle | 13.6215 | 11.4766 | 1.18689 | 1.18689 |
+| thermally_grown | outside_bottom | 12.8196 | 10.4744 | 1.2239 | 1.2239 |
+| thermally_grown | edge_top | 22.0453 | 16.4755 | 1.33806 | 1.33806 |
+| thermally_grown | edge_middle | 19.0614 | 16.9883 | 1.12203 | 1.12203 |
+| thermally_grown | edge_bottom | 15.9784 | 13.8992 | 1.14959 | 1.14959 |
+| thermally_grown | inside_top | 18.7985 | 10.1918 | 1.84448 | 1.84448 |
+| thermally_grown | inside_middle | 4.97608 | 0.120389 | 41.3333 | 41.3333 |
+| thermally_grown | inside_bottom | -1.88358 | -5.32404 | 0.353788 | 0.353788 |
+| evaporated | outside_top | 180.72 | 173.506 | 1.04157 | 1.04157 |
+| evaporated | outside_middle | 219.234 | 214.987 | 1.01976 | 1.01976 |
+| evaporated | outside_bottom | 197.363 | 192.726 | 1.02406 | 1.02406 |
+| evaporated | edge_top | 505.076 | 568.395 | 0.888601 | 0.888601 |
+| evaporated | edge_middle | 359.248 | 384.585 | 0.934116 | 0.934116 |
+| evaporated | edge_bottom | 273.554 | 286.713 | 0.954102 | 0.954102 |
+| evaporated | inside_top | 552.087 | 656.555 | 0.840884 | 0.840884 |
+| evaporated | inside_middle | 314.85 | 376.529 | 0.836191 | 0.836191 |
+| evaporated | inside_bottom | 47.3771 | 31.7418 | 1.49257 | 1.49257 |
 
 Each per-case PNG uses the same Lumerical coordinate bounds for both polarizations and shows, in order, mapped Q, thickness-averaged temperature rise, dT/dx (crystal b), dT/dy (crystal a), gradient magnitude, and the strict-centered local current contribution. Gray cells explicitly mark NaN/masked locations where at least one of -x, +x, -y, or +y TaIrTe4 neighbours is missing.
 
