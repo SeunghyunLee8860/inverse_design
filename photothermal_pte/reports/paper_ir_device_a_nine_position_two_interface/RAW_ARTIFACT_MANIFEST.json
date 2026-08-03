@@ -1,0 +1,448 @@
+{
+  "raw_artifacts_committed_to_git": false,
+  "raw_optical_artifacts": [
+    {
+      "position": "outside_top",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_20260803/outside_top/a/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789546692,
+      "sha256": "f02e85fc3092322ed277e58c4c2c0ded029c404216202d195656848a36094ab6"
+    },
+    {
+      "position": "outside_top",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_20260803/outside_top/b/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789546672,
+      "sha256": "5d180af01ae61ad5232abd7f599e1c52131a7906a3db8ccc1b35fd28ef5ec0db"
+    },
+    {
+      "position": "outside_middle",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_20260803/outside_middle/a/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789546604,
+      "sha256": "1bfe3cb1dc438c9c43263328f1de840b76bb3c8774461be0ded71e32f3fdc71a"
+    },
+    {
+      "position": "outside_middle",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_20260803/outside_middle/b/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789546608,
+      "sha256": "589ea99fbe26834d0865d579f85f9fd3852bc3a10127a5e6c34bf6c2e86e1665"
+    },
+    {
+      "position": "outside_bottom",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_20260803/outside_bottom/a/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789546780,
+      "sha256": "85c87d48ca1628abc08a56116f48175813bcc5675601dc902f5afdbe2305027f"
+    },
+    {
+      "position": "outside_bottom",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_20260803/outside_bottom/b/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789546768,
+      "sha256": "ced6de1c77a17d66a48191778b6a8d200a03c5fef84ac382984632800c966c37"
+    },
+    {
+      "position": "edge_top",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_20260803/edge_top/a/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789547272,
+      "sha256": "b7cb15242b7b1d3ab822bb35d111eeaf31f14b4760a888f02c5cbf256feb5e05"
+    },
+    {
+      "position": "edge_top",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_20260803/edge_top/b/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789547252,
+      "sha256": "4ef8b846404209f62a38ec2ddbff4b0f363819c2fd4652665ece586dc6fd60df"
+    },
+    {
+      "position": "edge_middle",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_20260803/edge_middle/a/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789547212,
+      "sha256": "a96b5cc8b69b0cf12468e70c77ebcd093a4609f3a13d54fac68803edc2a41043"
+    },
+    {
+      "position": "edge_middle",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_20260803/edge_middle/b/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789547344,
+      "sha256": "d966b397ae3be4d61311b87a8e43f08f5e1d9bfc7a76c8d332886922cdd6b4c4"
+    },
+    {
+      "position": "edge_bottom",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_gpu2_staging_20260803/edge_bottom/a/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789547504,
+      "sha256": "1baf21b0df5b1c67f694b45ea651bf9e02e4e695f6d9c8826d2d00b9c8e5e3f3"
+    },
+    {
+      "position": "edge_bottom",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_gpu2_staging_20260803/edge_bottom/b/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789547552,
+      "sha256": "a62548a3be61e748e76fa8ae7aabdfb47f6fd355839060779fcfc610da97c4fa"
+    },
+    {
+      "position": "inside_top",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_gpu2_staging_20260803/inside_top/a/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789546812,
+      "sha256": "a63be82595bdc15ddb68f63285476ad961b489e1668b81475e9b4ca00efd9ba1"
+    },
+    {
+      "position": "inside_top",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_gpu2_staging_20260803/inside_top/b/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789546772,
+      "sha256": "9e2a370425cf2169b7a4b166e8658f616b57c00b327a545c9704dee4f27a9833"
+    },
+    {
+      "position": "inside_middle",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_gpu2_staging_20260803/inside_middle/a/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789546716,
+      "sha256": "60b11c20120fa996842e8003b716a4bafaaf39e4e50b36577502486ad95d2dc9"
+    },
+    {
+      "position": "inside_middle",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_gpu2_staging_20260803/inside_middle/b/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789546852,
+      "sha256": "14d9a8a1831b7285a8cc15d32de43f617226329b57ad9a703165d94b932d96a5"
+    },
+    {
+      "position": "inside_bottom",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_gpu2_staging_20260803/inside_bottom/a/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789546868,
+      "sha256": "2281a81eba7fcd6a06e13e483a0ef0efdb96f9322acfc33dcb41863f0e2c7dd7"
+    },
+    {
+      "position": "inside_bottom",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_gpu2_staging_20260803/inside_bottom/b/finite/finite_q_on_artifact.npz",
+      "size_bytes": 789547012,
+      "sha256": "8912effb8a7dbc99a371a906f7eb7d68a11a6253fe94b1c804a61727583f752a"
+    }
+  ],
+  "raw_thermal_field_artifacts": [
+    {
+      "scenario": "thermally_grown",
+      "position": "outside_top",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/outside_top/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74142770,
+      "sha256": "24598a57427784759247dae8e81e08c69e1cc610d2655bd64cd52ad10f94aa37"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "outside_top",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/outside_top/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74607477,
+      "sha256": "b79d0fd331aa1b37d36cce9c97adb1528a63d28c21aaa7777f810bce2a3e14f3"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "outside_top",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/outside_top/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74326263,
+      "sha256": "350cd6434fb696d3077c0c70eb9c0ec3af96f97bc0e157ea3cace31d6f6c94df"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "outside_top",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/outside_top/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74640614,
+      "sha256": "9d36f25b9072a35850049c8fd286aba2edca30d071ccb211e7f2132b841de08c"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "outside_middle",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/outside_middle/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74024572,
+      "sha256": "bb3c823f9d4e6b96acfbe60cc02a6ab75a73743c02277b3f3720d189379ec3fb"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "outside_middle",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/outside_middle/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74469970,
+      "sha256": "d37f5c0be4bdec201a38d317e02539e2fe4ee8cc444fbe7650f7ffa707988229"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "outside_middle",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/outside_middle/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74076638,
+      "sha256": "0fd3b540aa30ce0d767209e81d12aa4ea191094d1a584374b6f875e25410b236"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "outside_middle",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/outside_middle/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74482547,
+      "sha256": "d878ac66f0d69dc8be279f87f5f1d21c78a4b5b1a88216caac54b445f625eabe"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "outside_bottom",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/outside_bottom/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 73931498,
+      "sha256": "68518c1f72e34fe8841c2471568256a5e77dd5aeaf6877af3d2f20836c0e099a"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "outside_bottom",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/outside_bottom/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74422005,
+      "sha256": "fb1f0ced898778b308efc6d5c0cf316069f5351931b5a617b1931a54e5cd2a5e"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "outside_bottom",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/outside_bottom/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 73976369,
+      "sha256": "2d15da27d85ef11f84c6c94376bf06ce6dccffe17727d0d0edd48c3a5cfbf63f"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "outside_bottom",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/outside_bottom/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74438365,
+      "sha256": "90777ca89ff2d91b800251c46e6f7bfda8d745b8edf58aa896131f722beb35e4"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "edge_top",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/edge_top/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74135934,
+      "sha256": "78f875ca94ab46919684367a2899fa2121d8c0b4ca177c59db91c141678cd1c9"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "edge_top",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/edge_top/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74706214,
+      "sha256": "3001aa6807b28cdffbdc8758095c2711ff65f1ecad21f136dfdf61f3ee191121"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "edge_top",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/edge_top/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74084335,
+      "sha256": "0e70db5a86e39f5cefd19ed6b24c2e9112b56daaed02360f6596f6dd8b6f8b03"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "edge_top",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/edge_top/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74698889,
+      "sha256": "d6f2baab2653447cb94af723e8ee291cb407f1347ee246e0ceaf40eb502bc31a"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "edge_middle",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/edge_middle/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74017486,
+      "sha256": "bb490f2960b8d8ffd57f922ebb214a283d023006c0f818ac8ba58aa5e173a9c4"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "edge_middle",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/edge_middle/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74542914,
+      "sha256": "1d0c64a9e8582f0dcebadaa19100056d57a796f685d2759da26c20621825a45f"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "edge_middle",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/edge_middle/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 73997728,
+      "sha256": "a29f101a52c3075c2e1164408ab25f1bb8f37d49646e91ac9b69512b4a168ea9"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "edge_middle",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/edge_middle/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74515430,
+      "sha256": "be725683deaed0c1adae6d57cbd59124fcec0a4c372c6b6b749554ff3efae9ae"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "edge_bottom",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/edge_bottom/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 73905367,
+      "sha256": "1f920458c1c17ce42eea471d38a4f6cfb283ce4833e3b84e8bb4679a41713ca3"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "edge_bottom",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/edge_bottom/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74483814,
+      "sha256": "20690abce1f1f8ae3c6cd1ddd2f4c3cbfd6ad5d1ecc9768d84d9f8416ff2deb3"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "edge_bottom",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/edge_bottom/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 73922567,
+      "sha256": "6938d4316120cec10fecb127e714f5001144281619800c0c58864d2fffeab895"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "edge_bottom",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/edge_bottom/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74469492,
+      "sha256": "dd4146210430c707d3478f78770e1c55351e325dc87a8defa4bc4443fc4e19ec"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "inside_top",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/inside_top/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74278930,
+      "sha256": "ebcafd8f2ae22a9c4524cd2b5150a31682b2c3465183e5b8ef32b068cbf65cb7"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "inside_top",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/inside_top/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74806693,
+      "sha256": "75c05b2ea61adadf555bf420a8de168dfaa57f6bb0ab17317ac7711ee0cea0db"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "inside_top",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/inside_top/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74179238,
+      "sha256": "33e7bc90651d3fbadd541fa925c9ffbe897f328142404fe71c7030aed5c7430e"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "inside_top",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/inside_top/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74800273,
+      "sha256": "9e437dd0df694cc1bf1c5a9c8fe431fe70417344fcd75a4bd9afd6138bcf9e88"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "inside_middle",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/inside_middle/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74302243,
+      "sha256": "0be61df8421c5daea5685067721cb0243695ba955909cfe49f7bb0503a532921"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "inside_middle",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/inside_middle/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74813064,
+      "sha256": "ef2b867e950e6bf558f5233cd24a188f4c4deaf16caf8dad4b9685e29ff2b014"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "inside_middle",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/inside_middle/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74207338,
+      "sha256": "eb4a4d0d11c8cb2a2f3121652787a37cd2a269b5ea08e7bd181aa103b30158ce"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "inside_middle",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/inside_middle/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74812791,
+      "sha256": "13c6d7d862817d9745bcd4fc1d4308b40f66ad56d220db22cc422c3fb71f993e"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "inside_bottom",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/inside_bottom/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74286722,
+      "sha256": "64ddc2fd767afc13614408d108df6b186b2bca6e1eb8cefde1fbe4e88ae8818b"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "inside_bottom",
+      "polarization": "a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/inside_bottom/a/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74787316,
+      "sha256": "1308a13a16b218ca02c4320114d2438354ba83677a3d7a0f1ef1b9637b794f99"
+    },
+    {
+      "scenario": "thermally_grown",
+      "position": "inside_bottom",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/thermally_grown/inside_bottom/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74215791,
+      "sha256": "e4b3c8dd047c74cdf535e1e6ae616a731009435ecf326e494d020ec1c8e0621c"
+    },
+    {
+      "scenario": "evaporated",
+      "position": "inside_bottom",
+      "polarization": "b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_nine_position_thermal_20260803/evaporated/inside_bottom/b/thermal_lumerical_coordinate_fields.npz",
+      "size_bytes": 74802921,
+      "sha256": "99ab204d6f59b7ab800fe5b2f47f534944877df1032324aaf6dd229d45758878"
+    }
+  ],
+  "generated_report_artifacts": [
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/RAW_OPTICAL_Q_LUMERICAL_COORDINATES_Ea.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/RAW_OPTICAL_Q_LUMERICAL_COORDINATES_Eb.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/MAPPED_THERMAL_Q_LUMERICAL_COORDINATES_Ea.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/MAPPED_THERMAL_Q_LUMERICAL_COORDINATES_Eb.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/thermally_grown_outside_top_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/thermally_grown_outside_middle_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/thermally_grown_outside_bottom_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/thermally_grown_edge_top_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/thermally_grown_edge_middle_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/thermally_grown_edge_bottom_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/thermally_grown_inside_top_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/thermally_grown_inside_middle_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/thermally_grown_inside_bottom_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/evaporated_outside_top_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/evaporated_outside_middle_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/evaporated_outside_bottom_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/evaporated_edge_top_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/evaporated_edge_middle_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/evaporated_edge_bottom_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/evaporated_inside_top_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/evaporated_inside_middle_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/case_panels/evaporated_inside_bottom_Q_T_GRADIENT_CURRENT.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/NINE_POSITION_SUMMARY_THERMALLY_GROWN.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/NINE_POSITION_SUMMARY_EVAPORATED.png",
+    "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_nine_position_two_interface/POLARIZATION_AND_INTERFACE_G_RATIOS.png"
+  ]
+}
