@@ -1,0 +1,216 @@
+{
+  "status": "COMPLETED_DEVICE_A_ANALYTIC_THREE_POSITION_CONTROL",
+  "scope": "offline analytic Gaussian\u2013Beer\u2013Lambert/TMM Q through the frozen explicit-3D thermal and weighting-potential terminal-current chain",
+  "not_paper_reproduction": true,
+  "source_contract": {
+    "assumed_waist_m": 1.2e-05,
+    "incident_power_W": 0.000285,
+    "TMM_absorption": {
+      "a": 0.17673296,
+      "b": 0.26328721
+    },
+    "b_polarization_larger_absorption_is_an_input": true,
+    "rescaling_or_polarization_matching": false
+  },
+  "thermal_contract": {
+    "lateral_domain_m": 4.8e-05,
+    "Si_depth_m": 2e-05,
+    "core_xy_cell_size_m": 1e-07,
+    "flake_dz_m": 1e-08,
+    "model": "same expanded explicit-3D operator as Device-A s0"
+  },
+  "weighting_contract": {
+    "top_contact_cells": 242,
+    "bottom_contact_cells": 300,
+    "minimum_psi": 0.0015302981584138673,
+    "maximum_psi": 0.9978552620801369,
+    "linear_residual_relative": 2.6318091653312094e-15,
+    "top_contact_half_width_m": {
+      "minimum": 4.999999999999952e-08,
+      "maximum": 4.999999999999952e-08
+    },
+    "bottom_contact_half_width_m": {
+      "minimum": 4.999999999999952e-08,
+      "maximum": 5.000000000000037e-08
+    },
+    "geometry_status": "frozen Figure-2 digitized contact segments"
+  },
+  "cases": {
+    "s-1um_a": {
+      "position_label": "s-1um",
+      "signed_s_from_edge_um": 2.000000000000001,
+      "polarization": "a",
+      "source_contract": {
+        "incident_power_W": 0.000285,
+        "TMM_absorption": 0.17673296,
+        "full_plane_absorbed_power_W": 5.0368893599999995e-05,
+        "finite_flake_absorbed_power_W": 3.1497485434236956e-05,
+        "finite_flake_fraction_of_full_plane": 0.6253360592823695,
+        "beta_m_inv": 12822441.103546137,
+        "eta_entrance_factor": 0.21787366562428911,
+        "waist_radius_m": 1.2e-05,
+        "center_x_m": -3.2575525525283256e-06,
+        "center_y_m": 5.928174284216927e-07
+      },
+      "source_power_reintegrated_W": 3.1497485434236956e-05,
+      "PTE_terminal_current_A": 5.616890901866741e-09,
+      "PTE_terminal_current_nA": 5.616890901866741,
+      "Tmax_rise_K": 0.09968538635647595,
+      "flake_average_rise_K": 0.021467507095717292,
+      "linear_residual_relative": 1.0388333247067078e-10,
+      "energy_balance_relative_error": 4.841004954230056e-12,
+      "weighting_volume_area_equivalence_relative_error": 1.4726663326825856e-16,
+      "no_Q_clipping_smoothing_gain_rescaling": true,
+      "abs_Ia_over_abs_Ib": 0.6820139617610312
+    },
+    "s-1um_b": {
+      "position_label": "s-1um",
+      "signed_s_from_edge_um": 2.000000000000001,
+      "polarization": "b",
+      "source_contract": {
+        "incident_power_W": 0.000285,
+        "TMM_absorption": 0.26328721,
+        "full_plane_absorbed_power_W": 7.503685485e-05,
+        "finite_flake_absorbed_power_W": 4.6923251112842154e-05,
+        "finite_flake_fraction_of_full_plane": 0.6253360592823695,
+        "beta_m_inv": 3239626.7980653625,
+        "eta_entrance_factor": 0.7660170731601501,
+        "waist_radius_m": 1.2e-05,
+        "center_x_m": -3.2575525525283256e-06,
+        "center_y_m": 5.928174284216927e-07
+      },
+      "source_power_reintegrated_W": 4.6923251112842154e-05,
+      "PTE_terminal_current_A": 8.23574181291442e-09,
+      "PTE_terminal_current_nA": 8.235741812914421,
+      "Tmax_rise_K": 0.14436635212607604,
+      "flake_average_rise_K": 0.03156095443377791,
+      "linear_residual_relative": 1.0407512405357555e-10,
+      "energy_balance_relative_error": 5.0977308398639194e-12,
+      "weighting_volume_area_equivalence_relative_error": 0.0,
+      "no_Q_clipping_smoothing_gain_rescaling": true,
+      "abs_Ia_over_abs_Ib": 0.6820139617610312
+    },
+    "s0_a": {
+      "position_label": "s0",
+      "signed_s_from_edge_um": 3.000000000000001,
+      "polarization": "a",
+      "source_contract": {
+        "incident_power_W": 0.000285,
+        "TMM_absorption": 0.17673296,
+        "full_plane_absorbed_power_W": 5.0368893599999995e-05,
+        "finite_flake_absorbed_power_W": 3.418312479836594e-05,
+        "finite_flake_fraction_of_full_plane": 0.678655462830455,
+        "beta_m_inv": 12822441.103546137,
+        "eta_entrance_factor": 0.21787366562428911,
+        "waist_radius_m": 1.2e-05,
+        "center_x_m": -2.452215668634704e-06,
+        "center_y_m": -1.5543122344752191e-21
+      },
+      "source_power_reintegrated_W": 3.418312479836594e-05,
+      "PTE_terminal_current_A": 3.97231003793286e-09,
+      "PTE_terminal_current_nA": 3.9723100379328597,
+      "Tmax_rise_K": 0.10014449800320183,
+      "flake_average_rise_K": 0.023337125345600104,
+      "linear_residual_relative": 1.0389999897899742e-10,
+      "energy_balance_relative_error": 6.204135006752825e-12,
+      "weighting_volume_area_equivalence_relative_error": 0.0,
+      "no_Q_clipping_smoothing_gain_rescaling": true,
+      "abs_Ia_over_abs_Ib": 0.6823290584562466
+    },
+    "s0_b": {
+      "position_label": "s0",
+      "signed_s_from_edge_um": 3.000000000000001,
+      "polarization": "b",
+      "source_contract": {
+        "incident_power_W": 0.000285,
+        "TMM_absorption": 0.26328721,
+        "full_plane_absorbed_power_W": 7.503685485e-05,
+        "finite_flake_absorbed_power_W": 5.092417145756841e-05,
+        "finite_flake_fraction_of_full_plane": 0.6786554628304549,
+        "beta_m_inv": 3239626.7980653625,
+        "eta_entrance_factor": 0.7660170731601501,
+        "waist_radius_m": 1.2e-05,
+        "center_x_m": -2.452215668634704e-06,
+        "center_y_m": -1.5543122344752191e-21
+      },
+      "source_power_reintegrated_W": 5.0924171457568415e-05,
+      "PTE_terminal_current_A": 5.8216926110696755e-09,
+      "PTE_terminal_current_nA": 5.821692611069675,
+      "Tmax_rise_K": 0.14505109576331932,
+      "flake_average_rise_K": 0.03431041890758572,
+      "linear_residual_relative": 1.0527464105641752e-10,
+      "energy_balance_relative_error": 6.260078679812268e-12,
+      "weighting_volume_area_equivalence_relative_error": 1.4208593064157705e-16,
+      "no_Q_clipping_smoothing_gain_rescaling": true,
+      "abs_Ia_over_abs_Ib": 0.6823290584562466
+    },
+    "s+1um_a": {
+      "position_label": "s+1um",
+      "signed_s_from_edge_um": 4.000000000000001,
+      "polarization": "a",
+      "source_contract": {
+        "incident_power_W": 0.000285,
+        "TMM_absorption": 0.17673296,
+        "full_plane_absorbed_power_W": 5.0368893599999995e-05,
+        "finite_flake_absorbed_power_W": 3.658227431525008e-05,
+        "finite_flake_fraction_of_full_plane": 0.726287033536311,
+        "beta_m_inv": 12822441.103546137,
+        "eta_entrance_factor": 0.21787366562428911,
+        "waist_radius_m": 1.2e-05,
+        "center_x_m": -1.6468787847410801e-06,
+        "center_y_m": -5.928174284216955e-07
+      },
+      "source_power_reintegrated_W": 3.658227431525008e-05,
+      "PTE_terminal_current_A": 2.0846979830753315e-09,
+      "PTE_terminal_current_nA": 2.0846979830753316,
+      "Tmax_rise_K": 0.10048651122369642,
+      "flake_average_rise_K": 0.0250144405463147,
+      "linear_residual_relative": 1.0251556154082551e-10,
+      "energy_balance_relative_error": 7.007939903859502e-12,
+      "weighting_volume_area_equivalence_relative_error": 0.0,
+      "no_Q_clipping_smoothing_gain_rescaling": true,
+      "abs_Ia_over_abs_Ib": 0.6833160892922476
+    },
+    "s+1um_b": {
+      "position_label": "s+1um",
+      "signed_s_from_edge_um": 4.000000000000001,
+      "polarization": "b",
+      "source_contract": {
+        "incident_power_W": 0.000285,
+        "TMM_absorption": 0.26328721,
+        "full_plane_absorbed_power_W": 7.503685485e-05,
+        "finite_flake_absorbed_power_W": 5.4498294714901245e-05,
+        "finite_flake_fraction_of_full_plane": 0.726287033536311,
+        "beta_m_inv": 3239626.7980653625,
+        "eta_entrance_factor": 0.7660170731601501,
+        "waist_radius_m": 1.2e-05,
+        "center_x_m": -1.6468787847410801e-06,
+        "center_y_m": -5.928174284216955e-07
+      },
+      "source_power_reintegrated_W": 5.4498294714901245e-05,
+      "PTE_terminal_current_A": 3.0508545250772316e-09,
+      "PTE_terminal_current_nA": 3.0508545250772316,
+      "Tmax_rise_K": 0.1455605743394441,
+      "flake_average_rise_K": 0.03677721853046599,
+      "linear_residual_relative": 1.0517166955578937e-10,
+      "energy_balance_relative_error": 7.016698563433763e-12,
+      "weighting_volume_area_equivalence_relative_error": 2.7113079491461087e-16,
+      "no_Q_clipping_smoothing_gain_rescaling": true,
+      "abs_Ia_over_abs_Ib": 0.6833160892922476
+    }
+  },
+  "gates": {
+    "all_residual_lt_1e-8": true,
+    "all_energy_balance_lt_1percent": true,
+    "all_Q_finite_nonnegative": true,
+    "terminal_current_volume_weight_once": true
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/analytic_3position_20260801/device_a_position_scan_analytic_fields.npz",
+    "size_bytes": 867655372,
+    "sha256": "30f2494fefa04ab7a3a228903d72e9bb761f1daa8ce7393d4fc377d0e3da57eb",
+    "committed_to_git": false
+  },
+  "generation_commit": "14a2c96917e746ecf426f1e10bb50bc8aa8a4cc8",
+  "generation_command": "photothermal_pte/validation/paper_ir_sanity/run_device_a_position_scan_analytic.py --geometry-contract photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --scan-contract photothermal_pte/reports/paper_ir_device_a_position_scan/device_a_position_scan_contract.json --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/analytic_3position_20260801 --report-dir photothermal_pte/reports/paper_ir_device_a_position_scan"
+}

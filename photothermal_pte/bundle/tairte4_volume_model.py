@@ -56,7 +56,13 @@ if BULK_MESH_MODE not in ("auto", "uniform", "regional_uniform"):
 si_h = float(os.environ.get("SI_H_UM", "2.0"))
 air_top = float(os.environ.get("AIR_TOP_UM", "2.0"))
 source_gap = float(os.environ.get("SOURCE_GAP_UM", "0.5"))
+# Legacy diagnostic only.  The paper-like 11-um finite-edge implementation
+# closes the unpublished out-of-plane response with epsilon_c=epsilon_b from
+# the duplicated third complex pair in perm_data.txt.  Keep this constant so
+# historical 4-um artifacts remain reproducible; do not use it as the
+# production paper-IR c-axis response.
 eps_c_flake = 16.0
+eps_c_flake_legacy_diagnostic = eps_c_flake
 MAX_COEFFS = 20
 
 flake_c = [0, 0, -0.5 * flake_h]
@@ -110,10 +116,23 @@ _order = np.argsort(_data[:, 0])
 _lam = _data[_order, 0]
 _eps_a = (_data[:, 1] + 1j * _data[:, 2])[_order]
 _eps_b = (_data[:, 3] + 1j * _data[:, 4])[_order]
+_eps_c_table = (_data[:, 5] + 1j * _data[:, 6])[_order]
+if not np.array_equal(_eps_b, _eps_c_table):
+    raise RuntimeError(
+        "paper-derived perm_data.txt no longer satisfies the approved "
+        "epsilon_c=epsilon_b 3D closure"
+    )
 
 
 def eps_flake(lam_nm, axis):
-    source = _eps_a if axis == "a" else _eps_b
+    if axis == "a":
+        source = _eps_a
+    elif axis == "b":
+        source = _eps_b
+    elif axis == "c":
+        source = _eps_c_table
+    else:
+        raise ValueError("TaIrTe4 optical axis must be a, b, or c")
     return np.interp(lam_nm, _lam, source.real) + 1j * np.interp(
         lam_nm, _lam, source.imag
     )

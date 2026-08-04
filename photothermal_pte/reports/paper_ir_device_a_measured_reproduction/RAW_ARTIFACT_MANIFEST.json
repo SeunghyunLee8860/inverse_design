@@ -1,0 +1,49 @@
+{
+  "status": "FAILED_DEVICE_A_PAPER_LIKE_CURRENT_POLARIZATION_RATIO",
+  "raw_artifacts": [
+    {
+      "role": "raw_Maxwell_Q_a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_a_gpu0_20260802/finite_q_on_artifact.npz",
+      "size_bytes": 606054472,
+      "sha256": "2ad4d576b2a8655ae5c064b0bbb0bffe8b1fc0d097f95871a3b028284deedaeb",
+      "committed_to_git": false
+    },
+    {
+      "role": "Lumerical_project_a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_a_gpu0_20260802/finite_2um_optical_q.fsp",
+      "size_bytes": 468719978,
+      "sha256": "abfa5dc6c19d92cda587085d1ba47491f4538cd01c8f1d1e20f60d8525020ff0",
+      "committed_to_git": false
+    },
+    {
+      "role": "optical_case_result_a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_a_gpu0_20260802/case_result.json",
+      "size_bytes": 135450,
+      "sha256": "a27167cd7d5a2e2e65619d69347e8ffcf073a577e3b3c1fdd2586372af6caf38",
+      "committed_to_git": false
+    },
+    {
+      "role": "raw_Maxwell_Q_b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_b_gpu0_20260802/finite_q_on_artifact.npz",
+      "size_bytes": 606054468,
+      "sha256": "c6a63d17bfdd5525307328e9b6493a62b5da46990baf74394b8fa8f1881ea674",
+      "committed_to_git": false
+    },
+    {
+      "role": "Lumerical_project_b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_b_gpu0_20260802/finite_2um_optical_q.fsp",
+      "size_bytes": 468719090,
+      "sha256": "2a2b4c06e5c7d9731e238c06a14b13da0d20a9927548f7697d83773a5a6af632",
+      "committed_to_git": false
+    },
+    {
+      "role": "optical_case_result_b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_b_gpu0_20260802/case_result.json",
+      "size_bytes": 135454,
+      "sha256": "6048fa14714035a5d78d95f4855b33ac9e97a033229826c86b329e066b02d149",
+      "committed_to_git": false
+    }
+  ],
+  "raw_NPZ_and_FSP_are_not_committed": true,
+  "no_Q_clipping_smoothing_gain_or_rescaling": true
+}

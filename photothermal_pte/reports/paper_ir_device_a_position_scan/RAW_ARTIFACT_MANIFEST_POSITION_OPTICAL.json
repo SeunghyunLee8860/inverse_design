@@ -1,0 +1,132 @@
+{
+  "status": "RECORDED_EXTERNAL_RAW_ARTIFACTS_NOT_COMMITTED",
+  "artifacts": [
+    {
+      "role": "raw Q sminus1 E||a",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/sminus1_a_50nm_t4_gpu4_20260801/finite_q_on_artifact.npz",
+      "size_bytes": 786668388,
+      "sha256": "25b2d07bb215fbb21998a916b0a92776a60e0349e2fbbf5e6d63bea885f767de",
+      "committed_to_git": false
+    },
+    {
+      "role": "raw FSP sminus1 E||a",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/sminus1_a_50nm_t4_gpu4_20260801/finite_2um_optical_q.fsp",
+      "size_bytes": 1254926533,
+      "sha256": "12152d641906505955a623424cbe83da10b043ecad727c30dc9e949f4ad6248d",
+      "committed_to_git": false
+    },
+    {
+      "role": "case result sminus1 E||a",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/sminus1_a_50nm_t4_gpu4_20260801/case_result.json",
+      "size_bytes": 106087,
+      "sha256": "a1b5b8af005d2642828561fd5d4365658f0603749b7919c99e2b6ce0f224e44f",
+      "committed_to_git": false
+    },
+    {
+      "role": "raw Q sminus1 E||b",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/sminus1_b_50nm_t4_gpu4_20260801/finite_q_on_artifact.npz",
+      "size_bytes": 786668448,
+      "sha256": "92f9594b9ca904f2587953c4cd32563128e85dee5cb008f7fad8c44e1be262c6",
+      "committed_to_git": false
+    },
+    {
+      "role": "raw FSP sminus1 E||b",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/sminus1_b_50nm_t4_gpu4_20260801/finite_2um_optical_q.fsp",
+      "size_bytes": 1254926005,
+      "sha256": "5a3a7a8dacab14ef5cdc61a0d15801a69032fece8431666900155a347d829c4f",
+      "committed_to_git": false
+    },
+    {
+      "role": "case result sminus1 E||b",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/sminus1_b_50nm_t4_gpu4_20260801/case_result.json",
+      "size_bytes": 106179,
+      "sha256": "f317e6ef432c328b3dbbee6c9ebceccac6d479c5ecd9a820426e0ade9b5f5170",
+      "committed_to_git": false
+    },
+    {
+      "role": "raw Q s0 E||a",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_a_50nm_t4_gpu2_20260731/finite_q_on_artifact.npz",
+      "size_bytes": 786662592,
+      "sha256": "333f6050497d4d980f0d8f3819fcfe3e1647c9d7621d9e8ea1460f6f7ac7aab9",
+      "committed_to_git": false
+    },
+    {
+      "role": "raw FSP s0 E||a",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_a_50nm_t4_gpu2_20260731/finite_2um_optical_q.fsp",
+      "size_bytes": 1254848085,
+      "sha256": "e8f53689eed90955305f0a8cd97f1678ae945d90703e531e17e27f0ef4eb6d6c",
+      "committed_to_git": false
+    },
+    {
+      "role": "case result s0 E||a",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_a_50nm_t4_gpu2_20260731/case_result.json",
+      "size_bytes": 103070,
+      "sha256": "2e65f9d6930a802d804b43248546bc64478610c5ccae0c309a0940458f544af8",
+      "committed_to_git": false
+    },
+    {
+      "role": "raw Q s0 E||b",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_b_50nm_t4_gpu4_20260731/finite_q_on_artifact.npz",
+      "size_bytes": 786662652,
+      "sha256": "1235bd8d13194cf0f00dac0f90d7f7a4241473342d9b13af1d8222e08f80b3f7",
+      "committed_to_git": false
+    },
+    {
+      "role": "raw FSP s0 E||b",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_b_50nm_t4_gpu4_20260731/finite_2um_optical_q.fsp",
+      "size_bytes": 1254847509,
+      "sha256": "4da3f1dfe65626117153aa55346a5765c16739b14c90d6b686221152f9e8c8a0",
+      "committed_to_git": false
+    },
+    {
+      "role": "case result s0 E||b",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_b_50nm_t4_gpu4_20260731/case_result.json",
+      "size_bytes": 103131,
+      "sha256": "8891793a7e64be8ef9d5d09a4692def8c31fd1150b8a43f2c555e712b3fa39d6",
+      "committed_to_git": false
+    },
+    {
+      "role": "raw Q splus1 E||a",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/splus1_a_50nm_t4_gpu0_20260801/finite_q_on_artifact.npz",
+      "size_bytes": 786668376,
+      "sha256": "69112580b52cbf9ce8b35f4025b59af92690a23e6482260075d54e3598c90356",
+      "committed_to_git": false
+    },
+    {
+      "role": "raw FSP splus1 E||a",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/splus1_a_50nm_t4_gpu0_20260801/finite_2um_optical_q.fsp",
+      "size_bytes": 1254770069,
+      "sha256": "dbcb719d340d088845df64886452267e1bb56d0e57b107b6d1a65d43bf180b41",
+      "committed_to_git": false
+    },
+    {
+      "role": "case result splus1 E||a",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/splus1_a_50nm_t4_gpu0_20260801/case_result.json",
+      "size_bytes": 106124,
+      "sha256": "fd422eb87b696ec16cadd2e0978148f2d4bbb31842ea98217072db89e68bb13a",
+      "committed_to_git": false
+    },
+    {
+      "role": "raw Q splus1 E||b",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/splus1_b_50nm_t4_gpu4_20260801/finite_q_on_artifact.npz",
+      "size_bytes": 786668436,
+      "sha256": "a0d1d8ca5b04a7db390df6cf91fc7f598647251e1d8020eec181d2e25570f6cf",
+      "committed_to_git": false
+    },
+    {
+      "role": "raw FSP splus1 E||b",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/splus1_b_50nm_t4_gpu4_20260801/finite_2um_optical_q.fsp",
+      "size_bytes": 1254769613,
+      "sha256": "4ee36c564d599686215be513fd81bbcab627ca1c81b87d064f70b60092c5f667",
+      "committed_to_git": false
+    },
+    {
+      "role": "case result splus1 E||b",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/splus1_b_50nm_t4_gpu4_20260801/case_result.json",
+      "size_bytes": 106170,
+      "sha256": "7e192d259226cc3d365f1c074a1fb91dec31de3468b99ae35039490e2e428454",
+      "committed_to_git": false
+    }
+  ],
+  "generation_command": "photothermal_pte/validation/paper_ir_sanity/summarize_device_a_position_optical.py --scan-contract photothermal_pte/reports/paper_ir_device_a_position_scan/device_a_position_scan_contract.json --output-dir photothermal_pte/reports/paper_ir_device_a_position_scan --sminus1-a /home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/sminus1_a_50nm_t4_gpu4_20260801 --sminus1-b /home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/sminus1_b_50nm_t4_gpu4_20260801 --s0-a /home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_a_50nm_t4_gpu2_20260731 --s0-b /home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/finite_b_50nm_t4_gpu4_20260731 --splus1-a /home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/splus1_a_50nm_t4_gpu0_20260801 --splus1-b /home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/splus1_b_50nm_t4_gpu4_20260801"
+}

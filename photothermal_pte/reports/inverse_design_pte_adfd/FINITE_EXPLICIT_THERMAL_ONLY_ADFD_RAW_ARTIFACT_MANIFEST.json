@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python /home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/finite_inverse_design/run_explicit_thermal_only_adfd.py --output-dir /home/seunghyun/tairte4_artifacts/finite_explicit_thermal_only_adfd_20260727_1 --report-dir /home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd",
+  "raw_artifacts_committed_to_git": false,
+  "artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/finite_explicit_thermal_only_adfd_20260727_1/finite_explicit_thermal_only_adfd.npz",
+      "bytes": 6700340,
+      "sha256": "893ad5021372e519f668384e27481d62f60ab497e119affc5382f086def31986"
+    }
+  ]
+}

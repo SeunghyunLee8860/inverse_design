@@ -1,0 +1,746 @@
+{
+  "status": "COMPLETED_DEVICE_A_CURRENT_CAUSE_CONTROLS",
+  "generation_commit": "76d1b6fe1ec7ab4cc817d990505d0c0715db9daf",
+  "scope": "offline weighting/equal-power decomposition plus CPU thermal FVM for an empty-stack planar-TMM SiO2 background; no new FDTD, adjoint, AD-FD, or optimization",
+  "model_contract": {
+    "Ta_source": "immutable Maxwell TaIrTe4 intersection-density thermal fields",
+    "oxide_source": "normal-incidence empty air/285-nm-SiO2/Si planar TMM with ideal scalar Gaussian w0=8.75 um; diagnostic, not finite-device Maxwell",
+    "thermal_operator": "unchanged 60-um lateral, 20-um Si, 100-nm xy, 10-nm flake-z explicit 3D FVM",
+    "incident_power_W": 0.0002844,
+    "no_Q_clipping_smoothing_gain_or_rescaling": true
+  },
+  "weighting_controls": [
+    {
+      "scan_distance_um": -1.0,
+      "polarization": "a",
+      "weighting_control": "actual_digitized",
+      "current_A": 1.194840872255497e-08,
+      "x_component_A": 6.465702287588598e-09,
+      "y_component_A": 5.482706434966371e-09,
+      "positive_A": 1.3401387957162953e-08,
+      "negative_A": -1.4529792346079833e-09,
+      "mapped_TaIrTe4_power_W": 1.6291527364382168e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0007334124330587648
+    },
+    {
+      "scan_distance_um": -1.0,
+      "polarization": "a",
+      "weighting_control": "uniform_45deg",
+      "current_A": 2.1695707813540663e-08,
+      "x_component_A": 1.8434903751247e-08,
+      "y_component_A": 3.2608040622936672e-09,
+      "positive_A": 2.1809394490602046e-08,
+      "negative_A": -1.1368667706138551e-10,
+      "mapped_TaIrTe4_power_W": 1.6291527364382168e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0013317172373275169
+    },
+    {
+      "scan_distance_um": -1.0,
+      "polarization": "a",
+      "weighting_control": "uniform_x_equals_b",
+      "current_A": 3.2814128677219656e-08,
+      "x_component_A": 3.2814128677219656e-08,
+      "y_component_A": 0.0,
+      "positive_A": 3.28518479392351e-08,
+      "negative_A": -3.771926201544231e-11,
+      "mapped_TaIrTe4_power_W": 1.6291527364382168e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0020141836884465794
+    },
+    {
+      "scan_distance_um": -1.0,
+      "polarization": "a",
+      "weighting_control": "uniform_y_equals_a",
+      "current_A": 7.4096568904885865e-09,
+      "x_component_A": 0.0,
+      "y_component_A": 7.4096568904885865e-09,
+      "positive_A": 1.2787526417542393e-08,
+      "negative_A": -5.3778695270538055e-09,
+      "mapped_TaIrTe4_power_W": 1.6291527364382168e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.00045481658808051156
+    },
+    {
+      "scan_distance_um": 1.0,
+      "polarization": "a",
+      "weighting_control": "actual_digitized",
+      "current_A": 1.3722019660897156e-08,
+      "x_component_A": 6.964066936292939e-09,
+      "y_component_A": 6.757952724604217e-09,
+      "positive_A": 1.4971182119723717e-08,
+      "negative_A": -1.2491624588265604e-09,
+      "mapped_TaIrTe4_power_W": 1.4332522980469223e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0009574043369472358
+    },
+    {
+      "scan_distance_um": 1.0,
+      "polarization": "a",
+      "weighting_control": "uniform_45deg",
+      "current_A": 2.0690758404254725e-08,
+      "x_component_A": 1.6538987830676684e-08,
+      "y_component_A": 4.15177057357804e-09,
+      "positive_A": 2.0804558364836587e-08,
+      "negative_A": -1.1379996058186394e-10,
+      "mapped_TaIrTe4_power_W": 1.4332522980469223e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.001443622901037717
+    },
+    {
+      "scan_distance_um": 1.0,
+      "polarization": "a",
+      "weighting_control": "uniform_x_equals_b",
+      "current_A": 2.9439398338604502e-08,
+      "x_component_A": 2.9439398338604502e-08,
+      "y_component_A": 0.0,
+      "positive_A": 2.9537562510008138e-08,
+      "negative_A": -9.816417140363902e-11,
+      "mapped_TaIrTe4_power_W": 1.4332522980469223e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0020540276390082373
+    },
+    {
+      "scan_distance_um": 1.0,
+      "polarization": "a",
+      "weighting_control": "uniform_y_equals_a",
+      "current_A": 9.434236111875201e-09,
+      "x_component_A": 0.0,
+      "y_component_A": 9.434236111875201e-09,
+      "positive_A": 1.3586234586566756e-08,
+      "negative_A": -4.151998474691553e-09,
+      "mapped_TaIrTe4_power_W": 1.4332522980469223e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0006582397338368921
+    },
+    {
+      "scan_distance_um": 1.0,
+      "polarization": "b",
+      "weighting_control": "actual_digitized",
+      "current_A": 1.1155378828929697e-08,
+      "x_component_A": 5.703369873882102e-09,
+      "y_component_A": 5.452008955047594e-09,
+      "positive_A": 1.3327599653805154e-08,
+      "negative_A": -2.1722208248754593e-09,
+      "mapped_TaIrTe4_power_W": 1.6292148491243013e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0006847088850758808
+    },
+    {
+      "scan_distance_um": 1.0,
+      "polarization": "b",
+      "weighting_control": "uniform_45deg",
+      "current_A": 1.2121080834932035e-08,
+      "x_component_A": 8.424597927650306e-09,
+      "y_component_A": 3.6964829072817302e-09,
+      "positive_A": 1.4632180273113035e-08,
+      "negative_A": -2.5110994381809998e-09,
+      "mapped_TaIrTe4_power_W": 1.6292148491243013e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0007439829585058769
+    },
+    {
+      "scan_distance_um": 1.0,
+      "polarization": "b",
+      "weighting_control": "uniform_x_equals_b",
+      "current_A": 1.4995784311217548e-08,
+      "x_component_A": 1.4995784311217548e-08,
+      "y_component_A": 0.0,
+      "positive_A": 2.0313511828621835e-08,
+      "negative_A": -5.317727517404287e-09,
+      "mapped_TaIrTe4_power_W": 1.6292148491243013e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0009204301273879098
+    },
+    {
+      "scan_distance_um": 1.0,
+      "polarization": "b",
+      "weighting_control": "uniform_y_equals_a",
+      "current_A": 8.399667542504016e-09,
+      "x_component_A": 0.0,
+      "y_component_A": 8.399667542504016e-09,
+      "positive_A": 1.2235174401070022e-08,
+      "negative_A": -3.835506858566005e-09,
+      "mapped_TaIrTe4_power_W": 1.6292148491243013e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0005155653686202783
+    },
+    {
+      "scan_distance_um": 3.0,
+      "polarization": "a",
+      "weighting_control": "actual_digitized",
+      "current_A": 1.3699611729926189e-08,
+      "x_component_A": 6.660130454875614e-09,
+      "y_component_A": 7.039481275050573e-09,
+      "positive_A": 1.492499797530792e-08,
+      "negative_A": -1.225386245381734e-09,
+      "mapped_TaIrTe4_power_W": 1.1856170758696658e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.001155483672489901
+    },
+    {
+      "scan_distance_um": 3.0,
+      "polarization": "a",
+      "weighting_control": "uniform_45deg",
+      "current_A": 1.8333506004932046e-08,
+      "x_component_A": 1.3974532916524249e-08,
+      "y_component_A": 4.358973088407797e-09,
+      "positive_A": 1.8447234998895693e-08,
+      "negative_A": -1.1372899396364275e-10,
+      "mapped_TaIrTe4_power_W": 1.1856170758696658e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.001546326075936801
+    },
+    {
+      "scan_distance_um": 3.0,
+      "polarization": "a",
+      "weighting_control": "uniform_x_equals_b",
+      "current_A": 2.4874668591413163e-08,
+      "x_component_A": 2.4874668591413163e-08,
+      "y_component_A": 0.0,
+      "positive_A": 2.5058138012528623e-08,
+      "negative_A": -1.8346942111545695e-10,
+      "mapped_TaIrTe4_power_W": 1.1856170758696658e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.002098035621928544
+    },
+    {
+      "scan_distance_um": 3.0,
+      "polarization": "a",
+      "weighting_control": "uniform_y_equals_a",
+      "current_A": 9.90507076259474e-09,
+      "x_component_A": 0.0,
+      "y_component_A": 9.90507076259474e-09,
+      "positive_A": 1.2978016132216606e-08,
+      "negative_A": -3.0729453696218677e-09,
+      "mapped_TaIrTe4_power_W": 1.1856170758696658e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0008354359062625038
+    },
+    {
+      "scan_distance_um": 3.0,
+      "polarization": "b",
+      "weighting_control": "actual_digitized",
+      "current_A": 1.146279724376321e-08,
+      "x_component_A": 5.620713388501213e-09,
+      "y_component_A": 5.842083855261995e-09,
+      "positive_A": 1.3290517122176217e-08,
+      "negative_A": -1.8277198784130077e-09,
+      "mapped_TaIrTe4_power_W": 1.3242878172519318e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0008655820203458484
+    },
+    {
+      "scan_distance_um": 3.0,
+      "polarization": "b",
+      "weighting_control": "uniform_45deg",
+      "current_A": 1.1445654995519093e-08,
+      "x_component_A": 7.32277142547179e-09,
+      "y_component_A": 4.122883570047303e-09,
+      "positive_A": 1.3171988135493951e-08,
+      "negative_A": -1.7263331399748582e-09,
+      "mapped_TaIrTe4_power_W": 1.3242878172519318e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0008642875699989678
+    },
+    {
+      "scan_distance_um": 3.0,
+      "polarization": "b",
+      "weighting_control": "uniform_x_equals_b",
+      "current_A": 1.3034533137339787e-08,
+      "x_component_A": 1.3034533137339787e-08,
+      "y_component_A": 0.0,
+      "positive_A": 1.71687950525727e-08,
+      "negative_A": -4.134261915232915e-09,
+      "mapped_TaIrTe4_power_W": 1.3242878172519318e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0009842673901801896
+    },
+    {
+      "scan_distance_um": 3.0,
+      "polarization": "b",
+      "weighting_control": "uniform_y_equals_a",
+      "current_A": 9.368595005979825e-09,
+      "x_component_A": 0.0,
+      "y_component_A": 9.368595005979825e-09,
+      "positive_A": 1.1542127480316249e-08,
+      "negative_A": -2.173532474336421e-09,
+      "mapped_TaIrTe4_power_W": 1.3242878172519318e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0007074440226612421
+    },
+    {
+      "scan_distance_um": 5.0,
+      "polarization": "a",
+      "weighting_control": "actual_digitized",
+      "current_A": 1.2291305281839892e-08,
+      "x_component_A": 5.608213320120845e-09,
+      "y_component_A": 6.683091961719047e-09,
+      "positive_A": 1.3256989269494569e-08,
+      "negative_A": -9.65683987654676e-10,
+      "mapped_TaIrTe4_power_W": 9.175258469306206e-06,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0013396140635119687
+    },
+    {
+      "scan_distance_um": 5.0,
+      "polarization": "a",
+      "weighting_control": "uniform_45deg",
+      "current_A": 1.5158877086327504e-08,
+      "x_component_A": 1.1121637437885395e-08,
+      "y_component_A": 4.037239648442109e-09,
+      "positive_A": 1.52596559348843e-08,
+      "negative_A": -1.0077884855679569e-10,
+      "mapped_TaIrTe4_power_W": 9.175258469306206e-06,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.001652147145177236
+    },
+    {
+      "scan_distance_um": 5.0,
+      "polarization": "a",
+      "weighting_control": "uniform_x_equals_b",
+      "current_A": 1.9796514639436007e-08,
+      "x_component_A": 1.9796514639436007e-08,
+      "y_component_A": 0.0,
+      "positive_A": 2.0019219465583216e-08,
+      "negative_A": -2.2270482614721165e-10,
+      "mapped_TaIrTe4_power_W": 9.175258469306206e-06,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.002157597489559652
+    },
+    {
+      "scan_distance_um": 5.0,
+      "polarization": "a",
+      "weighting_control": "uniform_y_equals_a",
+      "current_A": 9.17398286071526e-09,
+      "x_component_A": 0.0,
+      "y_component_A": 9.17398286071526e-09,
+      "positive_A": 1.1315304578214716e-08,
+      "negative_A": -2.1413217174994545e-09,
+      "mapped_TaIrTe4_power_W": 9.175258469306206e-06,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0009998609730074402
+    },
+    {
+      "scan_distance_um": 5.0,
+      "polarization": "b",
+      "weighting_control": "actual_digitized",
+      "current_A": 1.0382507995174956e-08,
+      "x_component_A": 4.872238095508394e-09,
+      "y_component_A": 5.5102698996665596e-09,
+      "positive_A": 1.196197917733125e-08,
+      "negative_A": -1.5794711821562975e-09,
+      "mapped_TaIrTe4_power_W": 1.0036974339215109e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0010344260774494385
+    },
+    {
+      "scan_distance_um": 5.0,
+      "polarization": "b",
+      "weighting_control": "uniform_45deg",
+      "current_A": 9.84838631803417e-09,
+      "x_component_A": 5.911036552193041e-09,
+      "y_component_A": 3.937349765841129e-09,
+      "positive_A": 1.0981130505244755e-08,
+      "negative_A": -1.1327441872105859e-09,
+      "mapped_TaIrTe4_power_W": 1.0036974339215109e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.000981210670187318
+    },
+    {
+      "scan_distance_um": 5.0,
+      "polarization": "b",
+      "weighting_control": "uniform_x_equals_b",
+      "current_A": 1.0521645062903614e-08,
+      "x_component_A": 1.0521645062903614e-08,
+      "y_component_A": 0.0,
+      "positive_A": 1.3547405401801588e-08,
+      "negative_A": -3.0257603388979745e-09,
+      "mapped_TaIrTe4_power_W": 1.0036974339215109e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0010482885287247238
+    },
+    {
+      "scan_distance_um": 5.0,
+      "polarization": "b",
+      "weighting_control": "uniform_y_equals_a",
+      "current_A": 8.946999042379413e-09,
+      "x_component_A": 0.0,
+      "y_component_A": 8.946999042379413e-09,
+      "positive_A": 1.0470651683654874e-08,
+      "negative_A": -1.5236526412754606e-09,
+      "mapped_TaIrTe4_power_W": 1.0036974339215109e-05,
+      "current_per_mapped_TaIrTe4_W_A_W": 0.0008914039968621727
+    }
+  ],
+  "planar_SiO2_controls": [
+    {
+      "status": "COMPLETED_PLANAR_SIO2_THERMAL_CONTROL",
+      "scan_distance_um": -1.0,
+      "beam_center_m": [
+        -5.891747237569059e-06,
+        -4e-06
+      ],
+      "infinite_plane_incident_power_W": 0.0002844,
+      "thermal_domain_captured_incident_power_W": 0.0002843999945123399,
+      "thermal_domain_capture_fraction": 0.9999999807044301,
+      "SiO2_source_power_W": 6.525632966171028e-06,
+      "expected_captured_power_times_TMM_absorptance_W": 6.525632966171163e-06,
+      "relative_depth_integration_error": 2.063834103321545e-14,
+      "TMM": {
+        "wavelength_m": 1.1e-05,
+        "SiO2_thickness_m": 2.85e-07,
+        "n_SiO2": [
+          2.0194436826147366,
+          0.16262021932999673
+        ],
+        "n_Si": [
+          3.4212896222169786,
+          4.389880310197085e-05
+        ],
+        "reflectance": 0.2894605874701109,
+        "transmittance_into_Si": 0.6875941484930151,
+        "SiO2_absorptance": 0.022945264036874025
+      },
+      "scope": "empty air/285-nm-SiO2/Si planar-background diagnostic applied over the full oxide plane; it is not finite-device Maxwell SiO2 absorption and is not claimed as a bound",
+      "Tmax_rise_K": 0.007580702928629482,
+      "TaIrTe4_volume_average_rise_K": 0.0006005242639738436,
+      "linear_residual_relative": 1.0279837076435732e-10,
+      "energy_balance_relative_error": 5.44553661236796e-12,
+      "iterations": 2090,
+      "current_controls_A": {
+        "actual_digitized": 3.774616733012889e-10,
+        "uniform_45deg": 6.334092097747685e-10,
+        "uniform_x_equals_b": 9.427229001622419e-10,
+        "uniform_y_equals_a": 2.3584531051512203e-10
+      },
+      "weighting_audit": {
+        "top_contact_cells": 242,
+        "bottom_contact_cells": 300,
+        "minimum_psi": 0.0015371916642321255,
+        "maximum_psi": 0.9978205409070287,
+        "linear_residual_relative": 2.603267417563893e-15,
+        "top_contact_half_width_m": {
+          "minimum": 4.999999999999952e-08,
+          "maximum": 4.999999999999952e-08
+        },
+        "bottom_contact_half_width_m": {
+          "minimum": 4.999999999999952e-08,
+          "maximum": 5.000000000000037e-08
+        },
+        "geometry_status": "frozen Figure-2 digitized contact segments"
+      },
+      "no_FDTD": true,
+      "no_adjoint_ADFD_or_optimization": true
+    },
+    {
+      "status": "COMPLETED_PLANAR_SIO2_THERMAL_CONTROL",
+      "scan_distance_um": 1.0,
+      "beam_center_m": [
+        -5.891747237569059e-06,
+        -2e-06
+      ],
+      "infinite_plane_incident_power_W": 0.0002844,
+      "thermal_domain_captured_incident_power_W": 0.0002843999948885069,
+      "thermal_domain_capture_fraction": 0.9999999820270988,
+      "SiO2_source_power_W": 6.5256329748022785e-06,
+      "expected_captured_power_times_TMM_absorptance_W": 6.525632974802413e-06,
+      "relative_depth_integration_error": 2.0638341005917763e-14,
+      "TMM": {
+        "wavelength_m": 1.1e-05,
+        "SiO2_thickness_m": 2.85e-07,
+        "n_SiO2": [
+          2.0194436826147366,
+          0.16262021932999673
+        ],
+        "n_Si": [
+          3.4212896222169786,
+          4.389880310197085e-05
+        ],
+        "reflectance": 0.2894605874701109,
+        "transmittance_into_Si": 0.6875941484930151,
+        "SiO2_absorptance": 0.022945264036874025
+      },
+      "scope": "empty air/285-nm-SiO2/Si planar-background diagnostic applied over the full oxide plane; it is not finite-device Maxwell SiO2 absorption and is not claimed as a bound",
+      "Tmax_rise_K": 0.00758253636438384,
+      "TaIrTe4_volume_average_rise_K": 0.0005467547820442567,
+      "linear_residual_relative": 1.0286747604203143e-10,
+      "energy_balance_relative_error": 1.3294985634416204e-11,
+      "iterations": 2090,
+      "current_controls_A": {
+        "actual_digitized": 4.570671294343023e-10,
+        "uniform_45deg": 6.301887894423171e-10,
+        "uniform_x_equals_b": 8.583780525542908e-10,
+        "uniform_y_equals_a": 3.3620169274855333e-10
+      },
+      "weighting_audit": {
+        "top_contact_cells": 242,
+        "bottom_contact_cells": 300,
+        "minimum_psi": 0.0015371916642321255,
+        "maximum_psi": 0.9978205409070287,
+        "linear_residual_relative": 2.603267417563893e-15,
+        "top_contact_half_width_m": {
+          "minimum": 4.999999999999952e-08,
+          "maximum": 4.999999999999952e-08
+        },
+        "bottom_contact_half_width_m": {
+          "minimum": 4.999999999999952e-08,
+          "maximum": 5.000000000000037e-08
+        },
+        "geometry_status": "frozen Figure-2 digitized contact segments"
+      },
+      "no_FDTD": true,
+      "no_adjoint_ADFD_or_optimization": true
+    },
+    {
+      "status": "COMPLETED_PLANAR_SIO2_THERMAL_CONTROL",
+      "scan_distance_um": 3.0,
+      "beam_center_m": [
+        -5.891747237569059e-06,
+        0.0
+      ],
+      "infinite_plane_incident_power_W": 0.0002844,
+      "thermal_domain_captured_incident_power_W": 0.00028439999490864035,
+      "thermal_domain_capture_fraction": 0.9999999820978916,
+      "SiO2_source_power_W": 6.525632975264246e-06,
+      "expected_captured_power_times_TMM_absorptance_W": 6.525632975264381e-06,
+      "relative_depth_integration_error": 2.0638341004456717e-14,
+      "TMM": {
+        "wavelength_m": 1.1e-05,
+        "SiO2_thickness_m": 2.85e-07,
+        "n_SiO2": [
+          2.0194436826147366,
+          0.16262021932999673
+        ],
+        "n_Si": [
+          3.4212896222169786,
+          4.389880310197085e-05
+        ],
+        "reflectance": 0.2894605874701109,
+        "transmittance_into_Si": 0.6875941484930151,
+        "SiO2_absorptance": 0.022945264036874025
+      },
+      "scope": "empty air/285-nm-SiO2/Si planar-background diagnostic applied over the full oxide plane; it is not finite-device Maxwell SiO2 absorption and is not claimed as a bound",
+      "Tmax_rise_K": 0.007583388271540076,
+      "TaIrTe4_volume_average_rise_K": 0.00047787909448620815,
+      "linear_residual_relative": 1.0196019724930489e-10,
+      "energy_balance_relative_error": 2.1289941456295977e-11,
+      "iterations": 2103,
+      "current_controls_A": {
+        "actual_digitized": 4.809938286548812e-10,
+        "uniform_45deg": 5.873050818366679e-10,
+        "uniform_x_equals_b": 7.440629705598262e-10,
+        "uniform_y_equals_a": 3.8468945758652263e-10
+      },
+      "weighting_audit": {
+        "top_contact_cells": 242,
+        "bottom_contact_cells": 300,
+        "minimum_psi": 0.0015371916642321255,
+        "maximum_psi": 0.9978205409070287,
+        "linear_residual_relative": 2.603267417563893e-15,
+        "top_contact_half_width_m": {
+          "minimum": 4.999999999999952e-08,
+          "maximum": 4.999999999999952e-08
+        },
+        "bottom_contact_half_width_m": {
+          "minimum": 4.999999999999952e-08,
+          "maximum": 5.000000000000037e-08
+        },
+        "geometry_status": "frozen Figure-2 digitized contact segments"
+      },
+      "no_FDTD": true,
+      "no_adjoint_ADFD_or_optimization": true
+    },
+    {
+      "status": "COMPLETED_PLANAR_SIO2_THERMAL_CONTROL",
+      "scan_distance_um": 5.0,
+      "beam_center_m": [
+        -5.891747237569059e-06,
+        2e-06
+      ],
+      "infinite_plane_incident_power_W": 0.0002844,
+      "thermal_domain_captured_incident_power_W": 0.0002843999948885068,
+      "thermal_domain_capture_fraction": 0.9999999820270986,
+      "SiO2_source_power_W": 6.5256329748022785e-06,
+      "expected_captured_power_times_TMM_absorptance_W": 6.525632974802412e-06,
+      "relative_depth_integration_error": 2.0508540119088093e-14,
+      "TMM": {
+        "wavelength_m": 1.1e-05,
+        "SiO2_thickness_m": 2.85e-07,
+        "n_SiO2": [
+          2.0194436826147366,
+          0.16262021932999673
+        ],
+        "n_Si": [
+          3.4212896222169786,
+          4.389880310197085e-05
+        ],
+        "reflectance": 0.2894605874701109,
+        "transmittance_into_Si": 0.6875941484930151,
+        "SiO2_absorptance": 0.022945264036874025
+      },
+      "scope": "empty air/285-nm-SiO2/Si planar-background diagnostic applied over the full oxide plane; it is not finite-device Maxwell SiO2 absorption and is not claimed as a bound",
+      "Tmax_rise_K": 0.007583332001530314,
+      "TaIrTe4_volume_average_rise_K": 0.0004023918124826805,
+      "linear_residual_relative": 1.0330249032524416e-10,
+      "energy_balance_relative_error": 1.9544508932604525e-11,
+      "iterations": 2112,
+      "current_controls_A": {
+        "actual_digitized": 4.558969564142925e-10,
+        "uniform_45deg": 5.141347476948382e-10,
+        "uniform_x_equals_b": 6.140129530610942e-10,
+        "uniform_y_equals_a": 3.8444284830091663e-10
+      },
+      "weighting_audit": {
+        "top_contact_cells": 242,
+        "bottom_contact_cells": 300,
+        "minimum_psi": 0.0015371916642321255,
+        "maximum_psi": 0.9978205409070287,
+        "linear_residual_relative": 2.603267417563893e-15,
+        "top_contact_half_width_m": {
+          "minimum": 4.999999999999952e-08,
+          "maximum": 4.999999999999952e-08
+        },
+        "bottom_contact_half_width_m": {
+          "minimum": 4.999999999999952e-08,
+          "maximum": 5.000000000000037e-08
+        },
+        "geometry_status": "frozen Figure-2 digitized contact segments"
+      },
+      "no_FDTD": true,
+      "no_adjoint_ADFD_or_optimization": true
+    }
+  ],
+  "combined_controls": [
+    {
+      "scan_distance_um": -1.0,
+      "polarization": "a",
+      "Ta_only_actual_current_A": 1.194840872255497e-08,
+      "Ta_plus_planar_SiO2_actual_current_A": 1.232587039585626e-08,
+      "Ta_only_uniform45_current_A": 2.1695707813540663e-08,
+      "Ta_plus_planar_SiO2_uniform45_current_A": 2.232911702331543e-08,
+      "planar_SiO2_actual_current_A": 3.774616733012889e-10,
+      "planar_SiO2_uniform45_current_A": 6.334092097747685e-10,
+      "Ta_plus_planar_SiO2_Tmax_rise_K": 0.3041926966387974,
+      "Ta_plus_planar_SiO2_volume_average_rise_K": 0.011266948874931074
+    },
+    {
+      "scan_distance_um": 1.0,
+      "polarization": "a",
+      "Ta_only_actual_current_A": 1.3722019660897156e-08,
+      "Ta_plus_planar_SiO2_actual_current_A": 1.4179086790331458e-08,
+      "Ta_only_uniform45_current_A": 2.0690758404254725e-08,
+      "Ta_plus_planar_SiO2_uniform45_current_A": 2.1320947193697042e-08,
+      "planar_SiO2_actual_current_A": 4.570671294343023e-10,
+      "planar_SiO2_uniform45_current_A": 6.301887894423171e-10,
+      "Ta_plus_planar_SiO2_Tmax_rise_K": 0.2700966105283494,
+      "Ta_plus_planar_SiO2_volume_average_rise_K": 0.0099319519161952
+    },
+    {
+      "scan_distance_um": 1.0,
+      "polarization": "b",
+      "Ta_only_actual_current_A": 1.1155378828929697e-08,
+      "Ta_plus_planar_SiO2_actual_current_A": 1.1612445958364e-08,
+      "Ta_only_uniform45_current_A": 1.2121080834932035e-08,
+      "Ta_plus_planar_SiO2_uniform45_current_A": 1.2751269624374352e-08,
+      "planar_SiO2_actual_current_A": 4.570671294343023e-10,
+      "planar_SiO2_uniform45_current_A": 6.301887894423171e-10,
+      "Ta_plus_planar_SiO2_Tmax_rise_K": 0.15630674011959206,
+      "Ta_plus_planar_SiO2_volume_average_rise_K": 0.011303090706374353
+    },
+    {
+      "scan_distance_um": 3.0,
+      "polarization": "a",
+      "Ta_only_actual_current_A": 1.3699611729926189e-08,
+      "Ta_plus_planar_SiO2_actual_current_A": 1.418060555858107e-08,
+      "Ta_only_uniform45_current_A": 1.8333506004932046e-08,
+      "Ta_plus_planar_SiO2_uniform45_current_A": 1.8920811086768716e-08,
+      "planar_SiO2_actual_current_A": 4.809938286548812e-10,
+      "planar_SiO2_uniform45_current_A": 5.873050818366679e-10,
+      "Ta_plus_planar_SiO2_Tmax_rise_K": 0.2840811666425128,
+      "Ta_plus_planar_SiO2_volume_average_rise_K": 0.008235671328956728
+    },
+    {
+      "scan_distance_um": 3.0,
+      "polarization": "b",
+      "Ta_only_actual_current_A": 1.146279724376321e-08,
+      "Ta_plus_planar_SiO2_actual_current_A": 1.194379107241809e-08,
+      "Ta_only_uniform45_current_A": 1.1445654995519093e-08,
+      "Ta_plus_planar_SiO2_uniform45_current_A": 1.203296007735576e-08,
+      "planar_SiO2_actual_current_A": 4.809938286548812e-10,
+      "planar_SiO2_uniform45_current_A": 5.873050818366679e-10,
+      "Ta_plus_planar_SiO2_Tmax_rise_K": 0.15778801656908695,
+      "Ta_plus_planar_SiO2_volume_average_rise_K": 0.009212531289728862
+    },
+    {
+      "scan_distance_um": 5.0,
+      "polarization": "a",
+      "Ta_only_actual_current_A": 1.2291305281839892e-08,
+      "Ta_plus_planar_SiO2_actual_current_A": 1.2747202238254185e-08,
+      "Ta_only_uniform45_current_A": 1.5158877086327504e-08,
+      "Ta_plus_planar_SiO2_uniform45_current_A": 1.5673011834022343e-08,
+      "planar_SiO2_actual_current_A": 4.558969564142925e-10,
+      "planar_SiO2_uniform45_current_A": 5.141347476948382e-10,
+      "Ta_plus_planar_SiO2_Tmax_rise_K": 0.2503100826950017,
+      "Ta_plus_planar_SiO2_volume_average_rise_K": 0.006396525066194969
+    },
+    {
+      "scan_distance_um": 5.0,
+      "polarization": "b",
+      "Ta_only_actual_current_A": 1.0382507995174956e-08,
+      "Ta_plus_planar_SiO2_actual_current_A": 1.0838404951589249e-08,
+      "Ta_only_uniform45_current_A": 9.84838631803417e-09,
+      "Ta_plus_planar_SiO2_uniform45_current_A": 1.0362521065729007e-08,
+      "planar_SiO2_actual_current_A": 4.558969564142925e-10,
+      "planar_SiO2_uniform45_current_A": 5.141347476948382e-10,
+      "Ta_plus_planar_SiO2_Tmax_rise_K": 0.15263901288949305,
+      "Ta_plus_planar_SiO2_volume_average_rise_K": 0.00701127834544961
+    }
+  ],
+  "sampled_maximum_ratios": {
+    "Ta-only actual weighting": {
+      "a_distance_um": 1.0,
+      "b_distance_um": 3.0,
+      "a_value": 1.3722019660897156e-08,
+      "b_value": 1.146279724376321e-08,
+      "abs_b_over_abs_a": 0.8353578793089823
+    },
+    "Ta-only equal-power efficiency": {
+      "a_distance_um": 5.0,
+      "b_distance_um": 5.0,
+      "a_value": 0.0013396140635119687,
+      "b_value": 0.0010344260774494385,
+      "abs_b_over_abs_a": 0.7721821572532308
+    },
+    "Ta-only uniform 45deg weighting": {
+      "a_distance_um": -1.0,
+      "b_distance_um": 1.0,
+      "a_value": 2.1695707813540663e-08,
+      "b_value": 1.2121080834932035e-08,
+      "abs_b_over_abs_a": 0.5586856598136457
+    },
+    "Ta+planar-SiO2 actual weighting": {
+      "a_distance_um": 3.0,
+      "b_distance_um": 3.0,
+      "a_value": 1.418060555858107e-08,
+      "b_value": 1.194379107241809e-08,
+      "abs_b_over_abs_a": 0.8422624141879878
+    },
+    "Ta+planar-SiO2 uniform 45deg": {
+      "a_distance_um": -1.0,
+      "b_distance_um": 1.0,
+      "a_value": 2.232911702331543e-08,
+      "b_value": 1.2751269624374352e-08,
+      "abs_b_over_abs_a": 0.5710601816928021
+    }
+  },
+  "causal_findings": {
+    "digitized_weighting_is_not_the_reversal_cause": true,
+    "evidence": "replacing the digitized weighting field by a uniform 45-degree field reduces |Ib|/|Ia| rather than restoring the paper trend",
+    "equal_power_removes_absorption_advantage_but_does_not_reverse_trend": true,
+    "planar_background_SiO2_is_insufficient_to_reverse_trend": true,
+    "strongest_identified_remaining_cause": "polarization-dependent spatial Maxwell TaIrTe4 Q and its downstream temperature/current-generation efficiency"
+  },
+  "numerical_gates": {
+    "TMM_depth_integration_lt_1e_minus_10": true,
+    "oxide_thermal_residual_lt_1e_minus_8": true,
+    "oxide_energy_balance_lt_1_percent": true,
+    "actual_current_reintegration_lt_1e_minus_12": true
+  },
+  "weighting_audit": {
+    "top_contact_cells": 242,
+    "bottom_contact_cells": 300,
+    "minimum_psi": 0.0015371916642321255,
+    "maximum_psi": 0.9978205409070287,
+    "linear_residual_relative": 2.603267417563893e-15,
+    "top_contact_half_width_m": {
+      "minimum": 4.999999999999952e-08,
+      "maximum": 4.999999999999952e-08
+    },
+    "bottom_contact_half_width_m": {
+      "minimum": 4.999999999999952e-08,
+      "maximum": 5.000000000000037e-08
+    },
+    "geometry_status": "frozen Figure-2 digitized contact segments"
+  },
+  "interpretation_limits": {
+    "planar_SiO2_is_not_production": true,
+    "reason": "the actual field beneath the TaIrTe4/electrodes and edge-dependent polarization redistribution require a stable full-SiO2 finite-device FDTD run",
+    "beam_radius_sensitivity_run_here": false,
+    "chopping_frequency_response_run_here": false
+  }
+}

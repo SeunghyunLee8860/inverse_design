@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "generation_command": "GPU='GPU 0'; source volume_current_inverse_design/env_production.sh; /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/thermal_adjoint/run_maxwell_absorption_adfd_certificate.py --phase forward --polarization x --output-dir /home/seunghyun/tairte4/artifacts/pte_adfd/maxwell_absorption_x_20260726 --force-rebuild",
+  "postprocess_command": "GPU='GPU 0'; source volume_current_inverse_design/env_production.sh; /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/thermal_adjoint/run_maxwell_absorption_adfd_certificate.py --phase postprocess-forward --polarization x --output-dir /home/seunghyun/tairte4/artifacts/pte_adfd/maxwell_absorption_x_20260726",
+  "artifacts": [
+    {
+      "kind": "completed_fsp",
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/maxwell_absorption_x_20260726/solver_x/absorption_certificate_forward.fsp",
+      "bytes": 74515202,
+      "sha256": "8cfdc5a02091a1a264a023ae2d8749790c758dbc6b6a50c1d0b98020b17e5a79",
+      "committed_to_git": false
+    },
+    {
+      "kind": "engine_output_h5",
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/maxwell_absorption_x_20260726/solver_x/absorption_certificate_forward/absorption_certificate_forward_output.h5",
+      "bytes": 72776990,
+      "sha256": "411d99eccf8233026b3e5cc56f92cc9eea6150b7d0a78b8fa359d3080873ddc3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "engine_log",
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/maxwell_absorption_x_20260726/solver_x/absorption_certificate_forward_p0.log",
+      "bytes": 16399,
+      "sha256": "411de34dce29c0923ec00a55a128b4d454ce957594d94fe97520086a68e958c5",
+      "committed_to_git": false
+    },
+    {
+      "kind": "postprocessed_native_fields",
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/maxwell_absorption_x_20260726/postprocess_forward_x.npz",
+      "bytes": 71666041,
+      "sha256": "e8ba79f2949a8c3974f16b7de0787a9426c9d91fb25a98f14f73effa38334cbd",
+      "committed_to_git": false
+    },
+    {
+      "kind": "external_summary",
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/maxwell_absorption_x_20260726/postprocess-forward_x_summary.json",
+      "bytes": 4359,
+      "sha256": "699adbc4dfc83474b317e0f9cf6d6d677971a3e7839fe268b52e83193002aed7",
+      "committed_to_git": false
+    }
+  ]
+}

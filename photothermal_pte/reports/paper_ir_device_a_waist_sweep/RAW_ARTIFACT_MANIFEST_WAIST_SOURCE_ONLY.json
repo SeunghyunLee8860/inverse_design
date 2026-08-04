@@ -1,0 +1,131 @@
+{
+  "status": "RECORDED_EXTERNAL_RAW_ARTIFACTS_NOT_COMMITTED",
+  "artifacts": [
+    {
+      "role": "w4p5_initial source result",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w4p5_gpu2_4ps_20260801/source_only_case_result.json",
+      "size_bytes": 14247,
+      "sha256": "6cf1df145071e59eeac78a5aa8d2a194ebad37220623e92e6587794cefbf4442",
+      "committed_to_git": false
+    },
+    {
+      "role": "w4p5_initial source field",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w4p5_gpu2_4ps_20260801/paper_ir_source_only_fields.npz",
+      "size_bytes": 8363331,
+      "sha256": "9c2cb3bd93d06429eab1b580ed8107afc1d9ce9fa1ceee14c285a4a5d901061e",
+      "committed_to_git": false
+    },
+    {
+      "role": "w4p5_initial source project",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w4p5_gpu2_4ps_20260801/paper_ir_source_only.fsp",
+      "size_bytes": 2883044,
+      "sha256": "c4de18f300520f3837004a8dead3183c4d7e239716cf7438d656504f472d4373",
+      "committed_to_git": false
+    },
+    {
+      "role": "w6p5_initial source result",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w6p5_gpu2_4ps_20260801/source_only_case_result.json",
+      "size_bytes": 14271,
+      "sha256": "26aebb05c09c872edf4c8c10c84cb6522a1dc03734d9fc4e7aa2ba1dc3020b92",
+      "committed_to_git": false
+    },
+    {
+      "role": "w6p5_initial source field",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w6p5_gpu2_4ps_20260801/paper_ir_source_only_fields.npz",
+      "size_bytes": 8549278,
+      "sha256": "6c244c6566f93c29e55f3f5d3a7063c5404a4b0e8cb51d08dac50a17d65257d9",
+      "committed_to_git": false
+    },
+    {
+      "role": "w6p5_initial source project",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w6p5_gpu2_4ps_20260801/paper_ir_source_only.fsp",
+      "size_bytes": 2883044,
+      "sha256": "43690ff556a428cedfc076cd713cef404f83da212bda9ae14c4df73db622f7df",
+      "committed_to_git": false
+    },
+    {
+      "role": "w8p0_cal2 source result",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p0_cal2_gpu2_4ps_20260801/source_only_case_result.json",
+      "size_bytes": 14321,
+      "sha256": "0c8022a4ba57932e3d440fc12d05c309ead711c5896d2c7ce581f84239ab8c00",
+      "committed_to_git": false
+    },
+    {
+      "role": "w8p0_cal2 source field",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p0_cal2_gpu2_4ps_20260801/paper_ir_source_only_fields.npz",
+      "size_bytes": 8737434,
+      "sha256": "4432370b93965877f24e14b60729bace6a05fdc92a60f79d51b22f02f4e1f5dd",
+      "committed_to_git": false
+    },
+    {
+      "role": "w8p0_cal2 source project",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p0_cal2_gpu2_4ps_20260801/paper_ir_source_only.fsp",
+      "size_bytes": 2883020,
+      "sha256": "3cd865de2fec8040485d1455e82ee88617c1e90c5bd0abfa4b100a4bf50e5f6b",
+      "committed_to_git": false
+    },
+    {
+      "role": "w8p75_initial source result",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_gpu0_4ps_20260801/source_only_case_result.json",
+      "size_bytes": 14293,
+      "sha256": "e694eeffe92564890d592c551dd2364cd89cecf334e632114ce5d9429296d9cf",
+      "committed_to_git": false
+    },
+    {
+      "role": "w8p75_initial source field",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_gpu0_4ps_20260801/paper_ir_source_only_fields.npz",
+      "size_bytes": 8761822,
+      "sha256": "2737d4ec0e1182f485af1656a2346e01dcdf706f48b672156176019df45bb0a8",
+      "committed_to_git": false
+    },
+    {
+      "role": "w8p75_initial source project",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_gpu0_4ps_20260801/paper_ir_source_only.fsp",
+      "size_bytes": 2883020,
+      "sha256": "7601d0cb9deea55bc3c63064e7f47a3dc0466aca4a48da91912790977e26c81c",
+      "committed_to_git": false
+    },
+    {
+      "role": "w8p75_calibrated source result",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json",
+      "size_bytes": 14338,
+      "sha256": "f3a93f46510542f8931526c04b1f7aff5c9f06b5f6cd155ab5edf5695a8ceaf6",
+      "committed_to_git": false
+    },
+    {
+      "role": "w8p75_calibrated source field",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/paper_ir_source_only_fields.npz",
+      "size_bytes": 8763636,
+      "sha256": "2f1ca7c4260e3167bd578ec4ab5af8c52e382f4bbeb2a33417b8d0664176a6b7",
+      "committed_to_git": false
+    },
+    {
+      "role": "w8p75_calibrated source project",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/paper_ir_source_only.fsp",
+      "size_bytes": 2883020,
+      "sha256": "8a299d0caa45694f97cd139d46885a73522f3cbd9e744ade98dd24fed1ad031a",
+      "committed_to_git": false
+    },
+    {
+      "role": "w12_validated source result",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_target_w12_calibrated_57c25e8_t3_gpu4_4ps_20260730/source_only_case_result.json",
+      "size_bytes": 14379,
+      "sha256": "933de9a41209d88673a6777d619d4fb06a79f12a370989d5081cc806ac052762",
+      "committed_to_git": false
+    },
+    {
+      "role": "w12_validated source field",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_target_w12_calibrated_57c25e8_t3_gpu4_4ps_20260730/paper_ir_source_only_fields.npz",
+      "size_bytes": 8551215,
+      "sha256": "61b01be39fa588e01658297f3e0dc87de4c4db5a48d9cb218a92d809f3856ff0",
+      "committed_to_git": false
+    },
+    {
+      "role": "w12_validated source project",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_target_w12_calibrated_57c25e8_t3_gpu4_4ps_20260730/paper_ir_source_only.fsp",
+      "size_bytes": 2883020,
+      "sha256": "bd03b971921af56acf6b691c345d2afe3ca3051193fee71f65d10b4f8371ef6d",
+      "committed_to_git": false
+    }
+  ]
+}

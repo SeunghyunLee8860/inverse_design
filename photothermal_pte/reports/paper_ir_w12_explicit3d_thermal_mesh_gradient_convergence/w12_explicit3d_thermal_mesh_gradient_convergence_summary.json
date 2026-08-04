@@ -1,0 +1,671 @@
+{
+  "case_scalar_convergence": {
+    "Maxwell_a": {
+      "TaIrTe4_mean_100nm_K": 0.007131823191435954,
+      "TaIrTe4_mean_50nm_K": 0.007131426730332922,
+      "TaIrTe4_mean_relative_change": 5.559351838322073e-05,
+      "Tmax_100nm_K": 0.13331810147763046,
+      "Tmax_50nm_K": 0.1344649422886432,
+      "Tmax_relative_change": 0.008528920560951303,
+      "energy_balance_100nm": 3.684153214073117e-11,
+      "energy_balance_50nm": 8.755958511189914e-12,
+      "iterations_100nm": 1867,
+      "iterations_50nm": 3453,
+      "residual_100nm": 9.991531658864245e-10,
+      "residual_50nm": 1.0197394597543316e-09
+    },
+    "Maxwell_b": {
+      "TaIrTe4_mean_100nm_K": 0.009388405424211944,
+      "TaIrTe4_mean_50nm_K": 0.009388746976239131,
+      "TaIrTe4_mean_relative_change": 3.637887228737049e-05,
+      "Tmax_100nm_K": 0.13553043716606747,
+      "Tmax_50nm_K": 0.1356193571811639,
+      "Tmax_relative_change": 0.0006556587270773043,
+      "energy_balance_100nm": 4.4541118665572076e-12,
+      "energy_balance_50nm": 9.756600080086031e-12,
+      "iterations_100nm": 1877,
+      "iterations_50nm": 3497,
+      "residual_100nm": 9.979593982365483e-10,
+      "residual_50nm": 1.017629692688597e-09
+    },
+    "analytic_a": {
+      "TaIrTe4_mean_100nm_K": 0.006455165653861921,
+      "TaIrTe4_mean_50nm_K": 0.006441342143456056,
+      "TaIrTe4_mean_relative_change": 0.0021460605721601756,
+      "Tmax_100nm_K": 0.09569412296515586,
+      "Tmax_50nm_K": 0.09559856273794726,
+      "Tmax_relative_change": 0.0009995989947103622,
+      "energy_balance_100nm": 6.490479368604028e-11,
+      "energy_balance_50nm": 2.900935863994719e-11,
+      "iterations_100nm": 1831,
+      "iterations_50nm": 3402,
+      "residual_100nm": 9.85132600237902e-10,
+      "residual_50nm": 1.0126115760395404e-09
+    },
+    "analytic_b": {
+      "TaIrTe4_mean_100nm_K": 0.009494234814438797,
+      "TaIrTe4_mean_50nm_K": 0.009473877958767477,
+      "TaIrTe4_mean_relative_change": 0.0021487352655287714,
+      "Tmax_100nm_K": 0.13847426566983487,
+      "Tmax_50nm_K": 0.13833218215603374,
+      "Tmax_relative_change": 0.001027118285756981,
+      "energy_balance_100nm": 5.363868642325703e-11,
+      "energy_balance_50nm": 3.380755284879215e-11,
+      "iterations_100nm": 1857,
+      "iterations_50nm": 3400,
+      "residual_100nm": 9.960163899510852e-10,
+      "residual_50nm": 1.0197681301148778e-09
+    }
+  },
+  "figures": {
+    "Maxwell_inside_band": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_thermal_mesh_gradient_convergence/Maxwell_inside_band_100nm_vs_50nm_b_over_a.png",
+    "Maxwell_original_edge": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_thermal_mesh_gradient_convergence/Maxwell_original_edge_100nm_vs_50nm_b_over_a.png",
+    "analytic_original_edge": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_thermal_mesh_gradient_convergence/analytic_original_edge_100nm_vs_50nm_b_over_a.png"
+  },
+  "gates": {
+    "Maxwell_gradient_ordering_preserved_all_metrics": true,
+    "Maxwell_gradient_ratio_changes_lt_1_percent": false,
+    "Maxwell_max_gradient_ratio_relative_change": 0.24360840306476236,
+    "all_Tmax_changes_lt_1_percent": true,
+    "analytic_gradient_ordering_preserved_all_metrics": true,
+    "analytic_max_gradient_ratio_relative_change": 0.0023771375462250605,
+    "both_existing_solve_acceptance_pass": true
+  },
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/summarize_w12_explicit3d_thermal_mesh_gradient_convergence.py --summary-100nm photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/w12_50nm_maxwell_analytic_explicit3d_summary.json --summary-50nm photothermal_pte/reports/paper_ir_w12_explicit3d_thermal50/w12_50nm_maxwell_analytic_explicit3d_summary.json --robust-100nm photothermal_pte/reports/paper_ir_w12_explicit3d_edge_gradient_robustness/w12_edge_gradient_robustness_summary.json --robust-50nm photothermal_pte/reports/paper_ir_w12_explicit3d_thermal50_gradient_robustness/w12_edge_gradient_robustness_summary.json --raw-100nm /data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_50nm_maxwell_analytic_explicit3d_20260731/w12_50nm_maxwell_analytic_explicit3d_fields.npz --raw-50nm /home/seunghyun/tairte4_artifacts/paper_ir_w12_explicit3d_thermal50_20260731/w12_50nm_maxwell_analytic_explicit3d_fields.npz --report-dir photothermal_pte/reports/paper_ir_w12_explicit3d_thermal_mesh_gradient_convergence",
+  "gradient_b_over_a_convergence": {
+    "Maxwell": {
+      "inside_band_0p1_to_0p3um": {
+        "least_squares_radius_0.2um": {
+          "mean_abs": {
+            "b_over_a_100nm": 0.4945610240860266,
+            "b_over_a_50nm": 0.45012142143905637,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.09872803321578212
+          },
+          "p99_abs": {
+            "b_over_a_100nm": 0.628490509424732,
+            "b_over_a_50nm": 0.5591174427171414,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.12407601946821493
+          },
+          "raw_max_abs": {
+            "b_over_a_100nm": 0.6316213020470082,
+            "b_over_a_50nm": 0.5654867084263608,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.1169516323463853
+          },
+          "rms_abs": {
+            "b_over_a_100nm": 0.507390550069165,
+            "b_over_a_50nm": 0.4481211162340517,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.13226208649394938
+          }
+        },
+        "least_squares_radius_0.3um": {
+          "mean_abs": {
+            "b_over_a_100nm": 0.47855190638217737,
+            "b_over_a_50nm": 0.41754975446182746,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.14609552818196364
+          },
+          "p99_abs": {
+            "b_over_a_100nm": 0.5257848374726268,
+            "b_over_a_50nm": 0.47614117857839733,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.10426247744933408
+          },
+          "raw_max_abs": {
+            "b_over_a_100nm": 0.5325826302836594,
+            "b_over_a_50nm": 0.4764108731429236,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.11790611908197199
+          },
+          "rms_abs": {
+            "b_over_a_100nm": 0.48065928158227855,
+            "b_over_a_50nm": 0.4071156867675403,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.1806454460123298
+          }
+        },
+        "least_squares_radius_0.4um": {
+          "mean_abs": {
+            "b_over_a_100nm": 0.4503623187228346,
+            "b_over_a_50nm": 0.37510367840674746,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.20063423700814706
+          },
+          "p99_abs": {
+            "b_over_a_100nm": 0.48439166782413173,
+            "b_over_a_50nm": 0.40588277481585544,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.1934275063628776
+          },
+          "raw_max_abs": {
+            "b_over_a_100nm": 0.48776091102297936,
+            "b_over_a_50nm": 0.40686856811142424,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.19881688892075364
+          },
+          "rms_abs": {
+            "b_over_a_100nm": 0.4500748407749365,
+            "b_over_a_50nm": 0.36191042105036203,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.24360840306476236
+          }
+        },
+        "mask_aware_finite_difference": {
+          "mean_abs": {
+            "b_over_a_100nm": 0.47865435988844063,
+            "b_over_a_50nm": 0.44535578942589843,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.07476846883581977
+          },
+          "p99_abs": {
+            "b_over_a_100nm": 0.6025770946888978,
+            "b_over_a_50nm": 0.6098774995905686,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.01197028076387773
+          },
+          "raw_max_abs": {
+            "b_over_a_100nm": 0.602675414052949,
+            "b_over_a_50nm": 0.6132174015997924,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.017191272653615124
+          },
+          "rms_abs": {
+            "b_over_a_100nm": 0.4935809882297093,
+            "b_over_a_50nm": 0.4507728661300397,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.09496605788894191
+          }
+        }
+      },
+      "original_staircase_edge": {
+        "least_squares_radius_0.2um": {
+          "mean_abs": {
+            "b_over_a_100nm": 0.7895287470459731,
+            "b_over_a_50nm": 0.7097551622830881,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.11239592045554864
+          },
+          "p99_abs": {
+            "b_over_a_100nm": 0.783959631021115,
+            "b_over_a_50nm": 0.7002958778467974,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.1194691498564277
+          },
+          "raw_max_abs": {
+            "b_over_a_100nm": 0.783776114844607,
+            "b_over_a_50nm": 0.7005403858423354,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.11881646038463337
+          },
+          "rms_abs": {
+            "b_over_a_100nm": 0.7860586523292513,
+            "b_over_a_50nm": 0.701056629643486,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.12124843998550025
+          }
+        },
+        "least_squares_radius_0.3um": {
+          "mean_abs": {
+            "b_over_a_100nm": 0.6677475610629596,
+            "b_over_a_50nm": 0.5888432417214766,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.13399885360118444
+          },
+          "p99_abs": {
+            "b_over_a_100nm": 0.6626347128296576,
+            "b_over_a_50nm": 0.5784577489454464,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.14551964086861902
+          },
+          "raw_max_abs": {
+            "b_over_a_100nm": 0.6626729270622402,
+            "b_over_a_50nm": 0.5785986869719595,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.1453066555167541
+          },
+          "rms_abs": {
+            "b_over_a_100nm": 0.6648699366699717,
+            "b_over_a_50nm": 0.5775625942228423,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.15116516083353462
+          }
+        },
+        "least_squares_radius_0.4um": {
+          "mean_abs": {
+            "b_over_a_100nm": 0.5845541483979302,
+            "b_over_a_50nm": 0.502913908543665,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.1623344243762883
+          },
+          "p99_abs": {
+            "b_over_a_100nm": 0.5796370055584495,
+            "b_over_a_50nm": 0.4902511770413951,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.1823265964530403
+          },
+          "raw_max_abs": {
+            "b_over_a_100nm": 0.5821212241499979,
+            "b_over_a_50nm": 0.49042211871932373,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.18697995447296495
+          },
+          "rms_abs": {
+            "b_over_a_100nm": 0.5819128661382859,
+            "b_over_a_50nm": 0.48969272467819785,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.18832246593144827
+          }
+        },
+        "mask_aware_finite_difference": {
+          "mean_abs": {
+            "b_over_a_100nm": 0.8900998930651466,
+            "b_over_a_50nm": 0.9123017459062915,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.024336085007805576
+          },
+          "p99_abs": {
+            "b_over_a_100nm": 0.8795782599486976,
+            "b_over_a_50nm": 0.913986764324041,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.03764661121847967
+          },
+          "raw_max_abs": {
+            "b_over_a_100nm": 0.8796125661594816,
+            "b_over_a_50nm": 0.9140243350763946,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.037648635376909136
+          },
+          "rms_abs": {
+            "b_over_a_100nm": 0.8860380098918159,
+            "b_over_a_50nm": 0.9152777546805776,
+            "ordering_100nm": "b<a",
+            "ordering_50nm": "b<a",
+            "ordering_preserved": true,
+            "relative_change": 0.03194630770739757
+          }
+        }
+      }
+    },
+    "analytic": {
+      "inside_band_0p1_to_0p3um": {
+        "least_squares_radius_0.2um": {
+          "mean_abs": {
+            "b_over_a_100nm": 1.4804790532328373,
+            "b_over_a_50nm": 1.4799849916181236,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 0.0003338288006377644
+          },
+          "p99_abs": {
+            "b_over_a_100nm": 1.4790459615097766,
+            "b_over_a_50nm": 1.479411192182025,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 0.0002468756990473171
+          },
+          "raw_max_abs": {
+            "b_over_a_100nm": 1.4787601248094788,
+            "b_over_a_50nm": 1.4786677408258306,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 6.247785158050177e-05
+          },
+          "rms_abs": {
+            "b_over_a_100nm": 1.4816227477721904,
+            "b_over_a_50nm": 1.481203694050651,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 0.00028291431031568607
+          }
+        },
+        "least_squares_radius_0.3um": {
+          "mean_abs": {
+            "b_over_a_100nm": 1.4804383789003748,
+            "b_over_a_50nm": 1.4804239428055053,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 9.75132490910023e-06
+          },
+          "p99_abs": {
+            "b_over_a_100nm": 1.480067066294275,
+            "b_over_a_50nm": 1.47933123566176,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 0.000497407622293433
+          },
+          "raw_max_abs": {
+            "b_over_a_100nm": 1.4796347667591017,
+            "b_over_a_50nm": 1.4796811082733026,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 3.131858205244445e-05
+          },
+          "rms_abs": {
+            "b_over_a_100nm": 1.4818362398698182,
+            "b_over_a_50nm": 1.4816581754087725,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 0.00012017917762745645
+          }
+        },
+        "least_squares_radius_0.4um": {
+          "mean_abs": {
+            "b_over_a_100nm": 1.4809873543696292,
+            "b_over_a_50nm": 1.4812277774193254,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 0.0001623133547461952
+          },
+          "p99_abs": {
+            "b_over_a_100nm": 1.4809779878228793,
+            "b_over_a_50nm": 1.481419945184014,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 0.0002983336106493615
+          },
+          "raw_max_abs": {
+            "b_over_a_100nm": 1.4802976089709277,
+            "b_over_a_50nm": 1.4803683016037876,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 4.775340892086357e-05
+          },
+          "rms_abs": {
+            "b_over_a_100nm": 1.4823096755457914,
+            "b_over_a_50nm": 1.4823699284083482,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 4.064630656771141e-05
+          }
+        },
+        "mask_aware_finite_difference": {
+          "mean_abs": {
+            "b_over_a_100nm": 1.4811207940339552,
+            "b_over_a_50nm": 1.4805920395958068,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 0.0003571236532467303
+          },
+          "p99_abs": {
+            "b_over_a_100nm": 1.4795132085977796,
+            "b_over_a_50nm": 1.4783206155181685,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 0.000806721537325678
+          },
+          "raw_max_abs": {
+            "b_over_a_100nm": 1.4794826190023498,
+            "b_over_a_50nm": 1.479394757901682,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 5.938989590070517e-05
+          },
+          "rms_abs": {
+            "b_over_a_100nm": 1.4820624725344262,
+            "b_over_a_50nm": 1.4815837088738892,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 0.0003231431728558234
+          }
+        }
+      },
+      "original_staircase_edge": {
+        "least_squares_radius_0.2um": {
+          "mean_abs": {
+            "b_over_a_100nm": 1.4742885405747923,
+            "b_over_a_50nm": 1.4743396856959823,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 3.4690188215230336e-05
+          },
+          "p99_abs": {
+            "b_over_a_100nm": 1.4768426323923387,
+            "b_over_a_50nm": 1.4768096824671222,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 2.231155822426185e-05
+          },
+          "raw_max_abs": {
+            "b_over_a_100nm": 1.4768390166336873,
+            "b_over_a_50nm": 1.4767973075040908,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 2.824296156596362e-05
+          },
+          "rms_abs": {
+            "b_over_a_100nm": 1.4762891822408382,
+            "b_over_a_50nm": 1.4762441179572146,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 3.0526308674453414e-05
+          }
+        },
+        "least_squares_radius_0.3um": {
+          "mean_abs": {
+            "b_over_a_100nm": 1.4769825663029563,
+            "b_over_a_50nm": 1.4769321968676015,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 3.410409459668185e-05
+          },
+          "p99_abs": {
+            "b_over_a_100nm": 1.47865921105185,
+            "b_over_a_50nm": 1.478484714287135,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 0.00011802405735332389
+          },
+          "raw_max_abs": {
+            "b_over_a_100nm": 1.478385498500522,
+            "b_over_a_50nm": 1.478518396683047,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 8.988605270194192e-05
+          },
+          "rms_abs": {
+            "b_over_a_100nm": 1.4786980411712645,
+            "b_over_a_50nm": 1.4786981290233765,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 5.941179629920451e-08
+          }
+        },
+        "least_squares_radius_0.4um": {
+          "mean_abs": {
+            "b_over_a_100nm": 1.4784628057867721,
+            "b_over_a_50nm": 1.4787166194165393,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 0.00017164453718476654
+          },
+          "p99_abs": {
+            "b_over_a_100nm": 1.4794821133004485,
+            "b_over_a_50nm": 1.4795225386360646,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 2.7323230677761885e-05
+          },
+          "raw_max_abs": {
+            "b_over_a_100nm": 1.4794851994014964,
+            "b_over_a_50nm": 1.4796299658693768,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 9.783964316737797e-05
+          },
+          "rms_abs": {
+            "b_over_a_100nm": 1.4801591169381951,
+            "b_over_a_50nm": 1.4802443039265158,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 5.7549276220654775e-05
+          }
+        },
+        "mask_aware_finite_difference": {
+          "mean_abs": {
+            "b_over_a_100nm": 1.4719254346833577,
+            "b_over_a_50nm": 1.4692628619606467,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 0.0018121826880983885
+          },
+          "p99_abs": {
+            "b_over_a_100nm": 1.4750996036206572,
+            "b_over_a_50nm": 1.4723970674433646,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 0.001835466965432882
+          },
+          "raw_max_abs": {
+            "b_over_a_100nm": 1.4751048501882105,
+            "b_over_a_50nm": 1.472460962655585,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 0.0017955569619022783
+          },
+          "rms_abs": {
+            "b_over_a_100nm": 1.4738300793683468,
+            "b_over_a_50nm": 1.4703348910932044,
+            "ordering_100nm": "b>a",
+            "ordering_50nm": "b>a",
+            "ordering_preserved": true,
+            "relative_change": 0.0023771375462250605
+          }
+        }
+      }
+    }
+  },
+  "interpretation": {
+    "not_validated": "a unique mesh-converged Maxwell b/a gradient magnitude; 0.879613 must not be promoted as the final quantitative ratio",
+    "validated": "Maxwell b<a and analytic b>a ordering is robust to 100-to-50 nm refinement, reconstruction method, robust statistic, and selected fixed physical edge region"
+  },
+  "provenance": {
+    "raw_100nm": {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_50nm_maxwell_analytic_explicit3d_20260731/w12_50nm_maxwell_analytic_explicit3d_fields.npz",
+      "sha256": "9b2287b5b18eb9c4d9c164ddd45d750ae05ff846d6a0f0e3936465e413be47ac",
+      "size_bytes": 262744866
+    },
+    "raw_50nm": {
+      "path": "/home/seunghyun/tairte4_artifacts/paper_ir_w12_explicit3d_thermal50_20260731/w12_50nm_maxwell_analytic_explicit3d_fields.npz",
+      "sha256": "399914ae58a3051b5405ccb24d44ee073c810e85302695b29f82633a5c882c2e",
+      "size_bytes": 903530132
+    },
+    "robust_100nm": {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_edge_gradient_robustness/w12_edge_gradient_robustness_summary.json",
+      "sha256": "37e4819805b9ab19add99815edcb9f86c707c65a9dd7c895a6a19b9bd120b481",
+      "size_bytes": 189080
+    },
+    "robust_50nm": {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_thermal50_gradient_robustness/w12_edge_gradient_robustness_summary.json",
+      "sha256": "375a9493fca25d73c0b5e6cb691c9703c6866eb6f7373c45029946228e4e10c4",
+      "size_bytes": 189058
+    },
+    "summary_100nm": {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/w12_50nm_maxwell_analytic_explicit3d_summary.json",
+      "sha256": "1d0eaec409590ae32ac1957838a3e42d131d5ca65bf02f2786773f346e44b5d5",
+      "size_bytes": 108683
+    },
+    "summary_50nm": {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_thermal50/w12_50nm_maxwell_analytic_explicit3d_summary.json",
+      "sha256": "22cc64e2a7e0bade4c325d1a30dd3e104d482406332cbbf2f15bbf07853e32b6",
+      "size_bytes": 108540
+    }
+  },
+  "scope": "same optical Q, explicit-3D geometry/material/interface/boundary contract; thermal core dx=dy changes only from 100 to 50 nm",
+  "status": "PARTIAL_W12_EXPLICIT3D_TEMPERATURE_CONVERGED_GRADIENT_MAGNITUDE_UNCONVERGED"
+}

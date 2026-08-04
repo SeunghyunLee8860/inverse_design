@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "raw_artifacts_committed_to_git": false,
+  "note": "Raw NPZ/FSP files remain outside Git; paths, sizes, and SHA-256 values are provenance only.",
+  "artifacts": [
+    {
+      "role": "geometry_audit",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_geometry_d6p4_zm3p2_zp3p0_tfsf2p6_pml24_global50_20260727_2/geometry_audit.json",
+      "byte_size": 8076,
+      "sha256": "6a81fd796fe3cff2f41d0ad092c1ec472f6cd05e8b0679a87322a0b530952317"
+    },
+    {
+      "role": "flat_baseline_result",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_flat_baseline_d6p4_pml24_xy50_dz5_analytic1W_20260727_1/case_result.json",
+      "byte_size": 24471,
+      "sha256": "04b0a6c4f25ddea5d842fd551032175517bea5a368c3899ca1e508774d8300b9"
+    },
+    {
+      "role": "flat_baseline_native_Q",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_flat_baseline_d6p4_pml24_xy50_dz5_analytic1W_20260727_1/large_background_flat_native_q.npz",
+      "byte_size": 624127,
+      "sha256": "010b40c34f329472e5f9c9dd184e07221a5a0c2d06dfb910cf807296c489114d"
+    },
+    {
+      "role": "matched_inner_pml32_result",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_flat_pml32_matched_inner_d7p2_xy50_dz5_analytic1W_20260727_1/case_result.json",
+      "byte_size": 24508,
+      "sha256": "4712879a08ad59e2ec89e86e242399a03c677005176b6c467cd6dec19d99bb3d"
+    },
+    {
+      "role": "flake_dz2p5_result",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_flat_dz2p5_d6p4_pml24_xy50_analytic1W_20260727_1/case_result.json",
+      "byte_size": 29209,
+      "sha256": "a2ab1d6816d6b8a412e0a8a51d73e084873f97e758cb60a86843474936503172"
+    },
+    {
+      "role": "xy25_result",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_flat_xy25_matched_inner_d5p2_pml24_dz5_analytic1W_sameomega_20260727_1/case_result.json",
+      "byte_size": 24505,
+      "sha256": "91fa281195958aee5808c7ba3439e5b859949c47e49ed084216c9769f8f7e64b"
+    },
+    {
+      "role": "tfsf3p0_result",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_flat_tfsf3p0_d6p4_pml24_xy50_dz5_analytic1W_20260727_1/case_result.json",
+      "byte_size": 24458,
+      "sha256": "beb3ad331b6aca4e9fd541d671cebf11ba8aee3748a9afbd3e226ff3b1fe03cf"
+    },
+    {
+      "role": "tfsf3p4_result",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_flat_tfsf3p4_d6p4_pml24_xy50_dz5_analytic1W_20260727_1/case_result.json",
+      "byte_size": 24439,
+      "sha256": "8c14fdd70ce69f9e04dfd3fa510d0df23f553319d7099cf78e1fd19900c24906"
+    },
+    {
+      "role": "rho0_result",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_rho0_air_d6p4_pml24_xy50_dz5_tfsf2p6_analytic1W_20260727_1/case_result.json",
+      "byte_size": 24477,
+      "sha256": "7ea60997132c73e47d1f19ed68710db1b6d3bd766b043d38259cb7845d66dd1c"
+    },
+    {
+      "role": "rho1_result",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_rho1_sio2_d6p4_pml24_xy50_dz5_tfsf2p6_analytic1W_20260727_1/case_result.json",
+      "byte_size": 24469,
+      "sha256": "ca5ca4d954c363bba478542bb092cc2d3960005ecbd0c2182d2cc7e5afc8814f"
+    },
+    {
+      "role": "rho0p5_standard_result",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_gray_rho0p5_d6p4_pml24_xy50_dz5_tfsf2p6_analytic1W_20260727_1/case_result.json",
+      "byte_size": 24467,
+      "sha256": "a0dc9edade8c4271ac711abb956bd2e4753f101221f6f57a618ea2858956c1d2"
+    },
+    {
+      "role": "mixed_base_forward_fsp",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_mixed_optical_adfd_stabilizedxy_pml32_rho0p5_20260727_1/mixed_base_forward_cpu_tfsf.fsp",
+      "byte_size": 81269793,
+      "sha256": "e9ab2c322e133b74c862de4ab0c388fdb70ffb1bc210f025bce9d1b9ccefc007"
+    },
+    {
+      "role": "adjoint_source_template_fsp",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_mixed_optical_adfd_stabilizedxy_pml32_rho0p5_20260727_1/mixed_adjoint_source_template.fsp",
+      "byte_size": 12021690,
+      "sha256": "3f43c97686a312ed2baa576300842d69979af0f58241a991b96c42a4bfe0c93e"
+    },
+    {
+      "role": "cpu_adjoint_fsp",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_mixed_optical_adfd_stabilizedxy_pml32_rho0p5_20260727_1/mixed_adjoint_cpu.fsp",
+      "byte_size": 30693246,
+      "sha256": "68c86d4a93a20767341697de288b94676e495d38b3d078031f92532212b7c0dd"
+    },
+    {
+      "role": "gpu_adjoint_fsp",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_mixed_optical_adfd_stabilizedxy_pml32_rho0p5_20260727_1/mixed_adjoint_gpu.fsp",
+      "byte_size": 19682532,
+      "sha256": "8af42985c9ec0275cb3566055137ec99d0ab02a292364b67c4f145a1e97d1507"
+    },
+    {
+      "role": "promoted_mixed_adfd_result",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_mixed_optical_adfd_stabilizedxy_pml32_rho0p5_clippedmetric_20260727_1/mixed_optical_adfd_resumed_result.json",
+      "byte_size": 17836,
+      "sha256": "b7207bb489f9beff281581cd330cd0a5997dcb084cc19c15b506f95f2d6f2ee8"
+    },
+    {
+      "role": "local_Q_mapping_summary",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_local_q_mapping_20260727_1/local_q_mapping_summary.json",
+      "byte_size": 3902,
+      "sha256": "4349bf8a760be72bf3f5fe5933b6188b203f15c83cb0003fc49f8122b4f1650a"
+    },
+    {
+      "role": "local_Q_mapping_raw_npz",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_local_q_mapping_20260727_1/local_q_thermal_mapping.npz",
+      "byte_size": 715456,
+      "sha256": "694bc64d1a909f690ba6655a4217c6a6a7dcaaf5392b308ee8274335684be6f1"
+    }
+  ]
+}

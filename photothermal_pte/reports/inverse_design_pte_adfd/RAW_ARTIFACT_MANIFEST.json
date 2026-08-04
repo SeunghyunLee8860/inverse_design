@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python /home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/thermal_adjoint/run_thermal_pte_adfd_certificate.py --output-dir /tmp/tairte4-pte-adfd-first --report-dir /home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd",
+  "raw_artifacts": [
+    {
+      "path": "/tmp/tairte4-pte-adfd-first/fixed_k_thermal_pte_adfd_raw.npz",
+      "bytes": 103506,
+      "sha256": "ce67423bd566c73d935545ed47e74054a7359f4ab225d1e3d1b582b345a66dcc",
+      "committed_to_git": false
+    }
+  ],
+  "repository_artifacts": [
+    {
+      "path": "photothermal_pte/reports/inverse_design_pte_adfd/THERMAL_PTE_ADFD_REPORT.md",
+      "bytes": 2197,
+      "sha256": "0ff70ae2cd05db221c993fcf4c63ecdf8afa209eaf5d3a1b3cfc74affa0bec7c"
+    },
+    {
+      "path": "photothermal_pte/reports/inverse_design_pte_adfd/thermal_pte_adfd_summary.json",
+      "bytes": 14171,
+      "sha256": "f4d6bf16f6eb85d51dc834953e5eaa283d67fd3b3ac5c96726a0536125b82c58"
+    },
+    {
+      "path": "photothermal_pte/reports/inverse_design_pte_adfd/thermal_pte_adfd_cases.csv",
+      "bytes": 23806,
+      "sha256": "50cacb3e100abbae83991446739df59a5baf7d015b762dae6992d44ed2cb350e"
+    }
+  ]
+}

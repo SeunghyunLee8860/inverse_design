@@ -1,0 +1,60 @@
+{
+  "raw_artifacts": {
+    "sminus_a": {
+      "case_result": {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/runsetup_sminus1_a_20260801_retry1/case_result.json",
+        "size_bytes": 25252,
+        "sha256": "7dbd8aca9e3a00206d79d23403592ef3e95aa35e086e09a10dae87d8b87cd8d3",
+        "committed_to_git": false
+      },
+      "project": {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/runsetup_sminus1_a_20260801_retry1/finite_2um_optical_q.fsp",
+        "size_bytes": 568666,
+        "sha256": "3bb83b548f6b7d5fb4cea603d7d8ce22cd8b0513dbb1294c5ac561a2a2f3d981",
+        "committed_to_git": false
+      }
+    },
+    "sminus_b": {
+      "case_result": {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/runsetup_sminus1_b_20260801/case_result.json",
+        "size_bytes": 25243,
+        "sha256": "abab7fc2e3eccf1c91e6287fca43ee138f1513ca5f063084f7d05babf868b334",
+        "committed_to_git": false
+      },
+      "project": {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/runsetup_sminus1_b_20260801/finite_2um_optical_q.fsp",
+        "size_bytes": 568666,
+        "sha256": "340c862d519321f9ce46f5902b460fe076cf16877248f3cbf9468b52f6fc2a7f",
+        "committed_to_git": false
+      }
+    },
+    "splus_a": {
+      "case_result": {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/runsetup_splus1_a_20260801/case_result.json",
+        "size_bytes": 25235,
+        "sha256": "aae9a160826d783449579f29e2131967e6ddefe142b143b5e3fb2cb179cc5bc7",
+        "committed_to_git": false
+      },
+      "project": {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/runsetup_splus1_a_20260801/finite_2um_optical_q.fsp",
+        "size_bytes": 568666,
+        "sha256": "7b8850c0eafae5f93bf95b318535dcfd015e49c3947e1a08bc61c045880dfa17",
+        "committed_to_git": false
+      }
+    },
+    "splus_b": {
+      "case_result": {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/runsetup_splus1_b_20260801/case_result.json",
+        "size_bytes": 25240,
+        "sha256": "57faf67f1c236ec4cc5546778d85cf77bf4aeb5a74ac7d65460c6f50ec5be625",
+        "committed_to_git": false
+      },
+      "project": {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/runsetup_splus1_b_20260801/finite_2um_optical_q.fsp",
+        "size_bytes": 568666,
+        "sha256": "1c8ebed3672617e87252da38bbf856c808b5e87ccecd1d675f0c5d14d6cfa009",
+        "committed_to_git": false
+      }
+    }
+  }
+}

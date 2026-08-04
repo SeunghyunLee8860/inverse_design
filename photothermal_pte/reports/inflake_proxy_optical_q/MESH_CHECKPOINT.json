@@ -1,0 +1,12 @@
+{
+  "checkpoint": "FRESH_INFLAKE_PROXY_FLAKE_MESH_CONVERGENCE_PASSED",
+  "generation_code_commit": "1fe2643554fe8aec7226c1bad3fa4686d82746e5",
+  "from_case": "proxy_x_r0p8_L16_pml24_dz5",
+  "to_case": "proxy_x_r0p8_L16_pml24_dz2p5",
+  "P_Q_relative_change": 0.0007694569354572697,
+  "P_six_relative_change": 0.000503750827673431,
+  "spatial_Q_relative_L2": 0.006085144797271193,
+  "refined_P_Q_W": 2.0376767649882227e-12,
+  "refined_six_face_closure": 0.001968826411199395,
+  "passed": true
+}

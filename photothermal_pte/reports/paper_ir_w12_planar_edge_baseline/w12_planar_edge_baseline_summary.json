@@ -1,0 +1,2236 @@
+{
+  "cases": {
+    "edge_a": {
+      "P_Q_W": 2.2566605075568207e-11,
+      "P_Q_reintegrated_W": 2.2566605075568204e-11,
+      "P_Q_reintegration_relative_error": 1.4318388862503307e-16,
+      "P_six_face_W": 2.253087111043805e-11,
+      "Q_hotspot": {
+        "Q_W_m3": 3134994.5636786115,
+        "x_m": 1.999999999999375e-07,
+        "y_m": -5.000000000000624e-07,
+        "z_m": -4.999999999999865e-09
+      },
+      "acceptance": {
+        "Q_not_clipped": true,
+        "auto_shutoff_reached_requested_threshold": true,
+        "measured_intensity_normalization": true,
+        "six_face_closure_lt_0p5_percent": true,
+        "solver_log_reports_successful_completion": true
+      },
+      "auto_shutoff": {
+        "final_value": 9.97181e-06,
+        "log_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/finite_2um_optical_q_p0.log",
+        "simulation_completed_successfully": true
+      },
+      "component_power_W": {
+        "x": 1.9926055321818145e-12,
+        "y": 2.0509136286816348e-11,
+        "z": 6.486325657004438e-14
+      },
+      "empirical_flux_gain": false,
+      "field_readback": {
+        "case": {
+          "generation_commit": "f9948f2193fa657673780b3f25df6b3ba038e949",
+          "geometry": "straight-45-edge",
+          "polarization_deg": 90.0
+        },
+        "certified_matching_empty_reference": {
+          "empirical_flux_gain": false,
+          "incident_power_W_at_1_W_m2_center": 2.266066822214843e-10,
+          "normalization_basis": "central -z incident intensity measured from the matching empty-layered-stack E/H decomposition"
+        },
+        "field_artifact": {
+          "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/readonly_field_audit_v2/saved_field_monitor_audit.npz",
+          "sha256": "ca92e4ca66bc247d93f82f15bffc8658d4e9c52c302dce96b0af0cc8ff36514b",
+          "size_bytes": 80253649
+        },
+        "flake_midplane_total_field": {
+          "bounds_m": {
+            "x": [
+              -2.69e-05,
+              2.709999999999987e-05
+            ],
+            "y": [
+              -2.69e-05,
+              2.709999999999987e-05
+            ]
+          },
+          "collocation": "Each native Yee E component was read with its own delta-c shifted coordinates and linearly interpolated to the common x/y plane at the physical flake midplane. The plane is restricted to the exact intersection of all component supports; same-index component pairing and extrapolation were not used.",
+          "component_metrics_native_amplitude_collocated": {
+            "x": {
+              "area_weighted_L2": 1.598295890248434e-06,
+              "maximum_absolute": 0.6965413275908185
+            },
+            "y": {
+              "area_weighted_L2": 5.76837453694493e-06,
+              "maximum_absolute": 0.9123177270224083
+            },
+            "z": {
+              "area_weighted_L2": 2.4128591293240995e-06,
+              "maximum_absolute": 0.2354062276138816
+            }
+          },
+          "interpretation": "This is the total Maxwell field inside TaIrTe4 at z=-65 nm. The fitted width is a spatial total-E2 diagnostic, not an incident Gaussian waist.",
+          "native_component_contract": {
+            "x": {
+              "bounds_m": {
+                "x": [
+                  -2.6949999999999998e-05,
+                  2.714999999999993e-05
+                ],
+                "y": [
+                  -2.7e-05,
+                  2.709999999999987e-05
+                ],
+                "z": [
+                  -1.800000000000018e-07,
+                  5e-08
+                ]
+              },
+              "shape": [
+                542,
+                542,
+                47
+              ],
+              "staggering_axis": "x"
+            },
+            "y": {
+              "bounds_m": {
+                "x": [
+                  -2.7e-05,
+                  2.709999999999987e-05
+                ],
+                "y": [
+                  -2.6949999999999998e-05,
+                  2.714999999999993e-05
+                ],
+                "z": [
+                  -1.800000000000018e-07,
+                  5e-08
+                ]
+              },
+              "shape": [
+                542,
+                542,
+                47
+              ],
+              "staggering_axis": "y"
+            },
+            "z": {
+              "bounds_m": {
+                "x": [
+                  -2.7e-05,
+                  2.709999999999987e-05
+                ],
+                "y": [
+                  -2.7e-05,
+                  2.709999999999987e-05
+                ],
+                "z": [
+                  -1.775000000000009e-07,
+                  5.250000000000006e-08
+                ]
+              },
+              "shape": [
+                542,
+                542,
+                47
+              ],
+              "staggering_axis": "z"
+            }
+          },
+          "total_E2_spatial_fit_at_1_W_m2_center": {
+            "amplitude_over_observed_peak": 0.18981582282412193,
+            "center_x_m": -2.2525669650296226e-06,
+            "center_y_m": 3.054384754507265e-06,
+            "fit_message": "`xtol` termination condition is satisfied.",
+            "fit_relative_RMS_over_peak": 0.04048657018786375,
+            "fit_selected_point_count": 93665,
+            "fit_success": true,
+            "integrated_total_E2_area_V2_at_1_W_m2_center": 3.24880879618041e-08,
+            "moment_center_x_m": -2.7378555543144246e-06,
+            "moment_center_y_m": 3.53577330032111e-06,
+            "moment_waist_x_m": 1.049968954448855e-05,
+            "moment_waist_y_m": 1.127383562020168e-05,
+            "waist_effective_geometric_mean_m": 9.936180671832883e-06,
+            "waist_x_m": 9.535537588030936e-06,
+            "waist_y_m": 1.035365708874442e-05
+          },
+          "z_m": -6.5e-08
+        },
+        "near_stack_total_field_plane": {
+          "bounds_m": {
+            "x": [
+              -2.500000000000002e-05,
+              2.499999999999989e-05
+            ],
+            "y": [
+              -2.500000000000002e-05,
+              2.499999999999989e-05
+            ]
+          },
+          "downward_decomposition_fit_at_1_W_m2_center": {
+            "amplitude_over_observed_peak": 0.987808601745389,
+            "center_x_m": -2.513862540743628e-08,
+            "center_y_m": -5.119432214068282e-08,
+            "fit_message": "`ftol` termination condition is satisfied.",
+            "fit_relative_RMS_over_peak": 0.007616622607743553,
+            "fit_selected_point_count": 154440,
+            "fit_success": true,
+            "integrated_incident_power_W": 2.2719984281493503e-10,
+            "moment_center_x_m": -1.0120083558236325e-08,
+            "moment_center_y_m": -2.211904007765937e-08,
+            "moment_waist_x_m": 1.2084770807449298e-05,
+            "moment_waist_y_m": 1.1935668157554317e-05,
+            "waist_effective_geometric_mean_m": 1.2016543197624823e-05,
+            "waist_x_m": 1.2099453632187468e-05,
+            "waist_y_m": 1.193420089947299e-05
+          },
+          "integrated_downward_decomposition_power_W_at_1_W_m2_center": 2.2719921409923968e-10,
+          "interpretation": "This production incident-reference monitor contains total fields. Its realized Yee-plane coordinate is recorded rather than silently replaced by the requested z. The homogeneous-air downward E/H decomposition can include reflected, scattered, and evanescent contributions and is not called a pure incident-beam waist or power.",
+          "requested_z_m": 6e-07,
+          "total_E2_fit_at_1_W_m2_center": {
+            "amplitude_over_observed_peak": 0.8221952714629963,
+            "center_x_m": -1.2152615720169578e-06,
+            "center_y_m": 1.4162002646783927e-06,
+            "fit_message": "`ftol` termination condition is satisfied.",
+            "fit_relative_RMS_over_peak": 0.039902206215979105,
+            "fit_selected_point_count": 168891,
+            "fit_success": true,
+            "integrated_incident_power_W": 1.0381146912999315e-07,
+            "moment_center_x_m": -8.023914839318808e-07,
+            "moment_center_y_m": 7.790483553805376e-07,
+            "moment_waist_x_m": 1.2072698365168065e-05,
+            "moment_waist_y_m": 1.328949535545455e-05,
+            "waist_effective_geometric_mean_m": 1.2313049586878266e-05,
+            "waist_x_m": 1.1772203081428093e-05,
+            "waist_y_m": 1.2878744027794242e-05
+          },
+          "total_field_component_metrics_native": {
+            "electric": {
+              "x": {
+                "area_weighted_L2": 6.180386583725975e-07,
+                "maximum_absolute": 0.10470869433373543
+              },
+              "y": {
+                "area_weighted_L2": 1.0837889653355569e-05,
+                "maximum_absolute": 0.8094396316930621
+              },
+              "z": {
+                "area_weighted_L2": 3.904672537819616e-06,
+                "maximum_absolute": 0.3431839081285142
+              }
+            },
+            "magnetic": {
+              "x": {
+                "area_weighted_L2": 6.249270114960495e-08,
+                "maximum_absolute": 0.004530903310770604
+              },
+              "y": {
+                "area_weighted_L2": 3.0348512649706134e-09,
+                "maximum_absolute": 0.0003325122898137738
+              },
+              "z": {
+                "area_weighted_L2": 5.579739829134933e-09,
+                "maximum_absolute": 0.0007070568862490616
+              }
+            }
+          },
+          "z_m": 5.135875157604772e-07
+        },
+        "provenance": {
+          "FDTD_solve_called": false,
+          "original_raw_artifacts_modified": false,
+          "runanalysis_called": false,
+          "source_FSP": {
+            "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/finite_2um_optical_q.fsp",
+            "sha256": "b15f10d532d993167ddec7f4205bb1e84830fab42d3e2c2ed36d7d1b6fc4fbb8",
+            "size_bytes": 798023867
+          },
+          "source_case_result": {
+            "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/case_result.json",
+            "sha256": "9ac81c21bb0a400fe7dc2c49bcee75d052ffa574d7a87613103ba2c339a7eace",
+            "size_bytes": 74927
+          }
+        },
+        "source_profile": {
+          "E_shape": [
+            501,
+            501,
+            1,
+            1,
+            3
+          ],
+          "all_finite": true
+        },
+        "status": "COMPLETED_READ_ONLY_FIELD_EXTRACTION",
+        "upper_total_field_plane": {
+          "bounds_m": {
+            "x": [
+              -2.75e-05,
+              2.749999999999988e-05
+            ],
+            "y": [
+              -2.75e-05,
+              2.749999999999988e-05
+            ]
+          },
+          "component_metrics_native": {
+            "electric": {
+              "x": {
+                "area_weighted_L2": 6.189082064799635e-07,
+                "maximum_absolute": 0.10470869433373543
+              },
+              "y": {
+                "area_weighted_L2": 1.083814426453083e-05,
+                "maximum_absolute": 0.8094396316930621
+              },
+              "z": {
+                "area_weighted_L2": 3.910156883384728e-06,
+                "maximum_absolute": 0.3431839081285142
+              }
+            },
+            "magnetic": {
+              "x": {
+                "area_weighted_L2": 6.249486543771182e-08,
+                "maximum_absolute": 0.004530903310770604
+              },
+              "y": {
+                "area_weighted_L2": 3.0577962941463733e-09,
+                "maximum_absolute": 0.0003325122898137738
+              },
+              "z": {
+                "area_weighted_L2": 5.5809224768736304e-09,
+                "maximum_absolute": 0.0007070568862490616
+              }
+            }
+          },
+          "z_m": 5.135875157604772e-07
+        }
+      },
+      "generation_commit": "f9948f2193fa657673780b3f25df6b3ba038e949",
+      "geometry": {
+        "Q_processing": {
+          "clipping": false,
+          "gain": false,
+          "global_rescaling": false,
+          "polarization_matching_rescaling": false,
+          "smoothing": false
+        },
+        "absorption_analysis_bounds_m": {
+          "x": [
+            -2.7e-05,
+            2.7e-05
+          ],
+          "y": [
+            -2.7e-05,
+            2.7e-05
+          ],
+          "z": [
+            -1.3e-07,
+            0.0
+          ]
+        },
+        "all_six_boundaries": "PML",
+        "coordinate_contract": {
+          "lab_x": "crystal b",
+          "lab_y": "crystal a"
+        },
+        "diagnostic_difference_from_production": null,
+        "domain_bounds_m": {
+          "x": [
+            -2.9999999999999997e-05,
+            2.9999999999999997e-05
+          ],
+          "y": [
+            -2.9999999999999997e-05,
+            2.9999999999999997e-05
+          ],
+          "z": [
+            -3.4150000000000003e-06,
+            1e-05
+          ]
+        },
+        "electrode_note": "Off-axis-edge optical certificate intentionally excludes Au/Ti; contacts enter the separate weighting-potential geometry. A contact optical scenario is required before interpreting contact hotspots.",
+        "electrodes_in_optical_model": false,
+        "exact_flake_mask_kind": "analytic half-plane lab_y<=lab_x",
+        "execution_contract": "production",
+        "flake_area_m2": 1.9219999999999998e-09,
+        "flake_thickness_m": 1.3e-07,
+        "flake_vertices_um": [
+          [
+            -31.0,
+            -31.0
+          ],
+          [
+            31.0,
+            -31.0
+          ],
+          [
+            31.0,
+            31.0
+          ]
+        ],
+        "geometry_name": "straight-45-edge",
+        "geometry_source": "paper Figure 3F straight 45-degree half-plane control; TaIrTe4 occupies lab y<=x and remote triangle faces lie outside the PML-bounded physical domain",
+        "large_domain_mesh_policy": {
+          "TaIrTe4_z_override_m": 5e-09,
+          "far_air_SiO2_Si": "wavelength-appropriate automatic coarse mesh",
+          "global_mesh": "auto non-uniform, conformal variant 1, accuracy 5",
+          "local_region_bounds_m": {
+            "x": [
+              -2.7e-05,
+              2.7e-05
+            ],
+            "y": [
+              -2.7e-05,
+              2.7e-05
+            ],
+            "z": [
+              -1.3e-07,
+              0.0
+            ]
+          },
+          "local_xy_baseline_m": 1.0000000000000001e-07,
+          "local_xy_refinement_status": "REQUIRED_BEFORE_MATERIAL_Q_PROMOTION",
+          "required_local_xy_refinement_m": 5.0000000000000004e-08,
+          "uniform_global_fine_mesh": false
+        },
+        "material_contract": {
+          "axis_mapping": {
+            "x": "epsilon_b",
+            "y": "epsilon_a",
+            "z": "epsilon_c=epsilon_b paper-consistent 3D closure"
+          },
+          "epsilon_c_model": "paper-b-closure",
+          "name": "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure",
+          "provenance": {
+            "in_plane": "paper Supporting Information Fig. S3b / Ref. 11, stored in paper-derived perm_data.txt",
+            "out_of_plane": "explicit finite-edge 3D closure epsilon_c=epsilon_b; not an independently measured c-axis property",
+            "sample_count": 600,
+            "wavelength_range_m": [
+              2.7e-06,
+              1.32e-05
+            ]
+          },
+          "requested_epsilon_at_11um": {
+            "x": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            },
+            "y": {
+              "imag": 204.5326948215291,
+              "real": -42.96623156686853
+            },
+            "z": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            }
+          }
+        },
+        "monitor_contract": {
+          "diagnostic_field_slice_monitors": true,
+          "frequency_points": 1,
+          "incident_reference_monitor": true,
+          "outer_flux_box": true,
+          "pabs_field_and_index": true,
+          "six_face_absorption_box": true
+        },
+        "outer_flux_box_bounds_m": {
+          "x": [
+            -2.8999999999999997e-05,
+            2.8999999999999997e-05
+          ],
+          "y": [
+            -2.8999999999999997e-05,
+            2.8999999999999997e-05
+          ],
+          "z": [
+            -1.2e-06,
+            4.5e-06
+          ]
+        },
+        "pabs_nominal_control_volume_bounds_m": {
+          "x": [
+            -2.705e-05,
+            2.705e-05
+          ],
+          "y": [
+            -2.705e-05,
+            2.705e-05
+          ],
+          "z": [
+            -1.8e-07,
+            5e-08
+          ]
+        },
+        "periodic": false,
+        "six_face_absorption_box_bounds_m": {
+          "x": [
+            -2.7499999999999998e-05,
+            2.7499999999999998e-05
+          ],
+          "y": [
+            -2.7499999999999998e-05,
+            2.7499999999999998e-05
+          ],
+          "z": [
+            -1.2e-06,
+            4.5e-06
+          ]
+        },
+        "source": {
+          "Lumerical_source_object_waist_radius_m": 1.1916864889678677e-05,
+          "auto_shutoff_min": 1e-05,
+          "beam_center_m": [
+            0.0,
+            0.0
+          ],
+          "experimental_band_m": [
+            7e-06,
+            1.3e-05
+          ],
+          "experimentally_reproduced_beam": false,
+          "normal_incidence": true,
+          "paper_certified_beam": false,
+          "physical_target_waist_radius_m": 1.2e-05,
+          "polarization_axis": "a",
+          "scenario_label": "paper-like scalar-Gaussian scenario with an explicitly assumed waist",
+          "simulation_time_s": 4e-12,
+          "source_object_calibration_field_NPZ_sha256": "f0f848740730ce73f0e47f73f26c8a572afda5f59c8bab57c8d8dac94a112ad0",
+          "source_span_m": 4.9999999999999996e-05,
+          "wavelength_m": 1.1e-05
+        },
+        "substrate": "285 nm SiO2 on Si"
+      },
+      "incident_power_W_at_1_W_m2_center": 2.266066822214843e-10,
+      "negative_Q_voxel_count": 0,
+      "polarization_deg": 90.0,
+      "six_face_relative_closure": 0.0015860001575172772,
+      "solver_wall_time_s": 463.105137,
+      "source_intensity_scale": 780.0120396661031,
+      "spatial_moments": {
+        "hotspot": {
+          "Q_W_m3": 3134994.5636786115,
+          "x_m": 1.999999999999375e-07,
+          "y_m": -5.000000000000624e-07,
+          "z_m": -4.999999999999865e-09
+        },
+        "x": {
+          "centroid_m": 3.069814435779948e-06,
+          "second_moment_sigma_m": 5.046817906209663e-06
+        },
+        "y": {
+          "centroid_m": -3.127118112363216e-06,
+          "second_moment_sigma_m": 4.912535168267256e-06
+        },
+        "z": {
+          "centroid_m": -5.8046670667726856e-08,
+          "second_moment_sigma_m": 3.7883874817663135e-08
+        }
+      }
+    },
+    "edge_b": {
+      "P_Q_W": 2.971653440358715e-11,
+      "P_Q_reintegrated_W": 2.971653440358714e-11,
+      "P_Q_reintegration_relative_error": 4.349328523847279e-16,
+      "P_six_face_W": 2.970831307085807e-11,
+      "Q_hotspot": {
+        "Q_W_m3": 2316633.194015743,
+        "x_m": -1.0000000000006249e-07,
+        "y_m": -2.000000000000625e-07,
+        "z_m": -4.999999999999865e-09
+      },
+      "acceptance": {
+        "Q_not_clipped": true,
+        "auto_shutoff_reached_requested_threshold": true,
+        "measured_intensity_normalization": true,
+        "six_face_closure_lt_0p5_percent": true,
+        "solver_log_reports_successful_completion": true
+      },
+      "auto_shutoff": {
+        "final_value": 9.59436e-06,
+        "log_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/finite_2um_optical_q_p0.log",
+        "simulation_completed_successfully": true
+      },
+      "component_power_W": {
+        "x": 2.9427007849466926e-11,
+        "y": 2.6900955374361556e-13,
+        "z": 2.0517000376611332e-14
+      },
+      "empirical_flux_gain": false,
+      "field_readback": {
+        "case": {
+          "generation_commit": "f9948f2193fa657673780b3f25df6b3ba038e949",
+          "geometry": "straight-45-edge",
+          "polarization_deg": 0.0
+        },
+        "certified_matching_empty_reference": {
+          "empirical_flux_gain": false,
+          "incident_power_W_at_1_W_m2_center": 2.2660668999948094e-10,
+          "normalization_basis": "central -z incident intensity measured from the matching empty-layered-stack E/H decomposition"
+        },
+        "field_artifact": {
+          "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/readonly_field_audit_v3/saved_field_monitor_audit.npz",
+          "sha256": "3be1e3bb2bb9506f2d4b973c33eb75c0f943ccea8756e1cbad1424ffc72915b3",
+          "size_bytes": 77366950
+        },
+        "flake_midplane_total_field": {
+          "bounds_m": {
+            "x": [
+              -2.69e-05,
+              2.709999999999987e-05
+            ],
+            "y": [
+              -2.69e-05,
+              2.709999999999987e-05
+            ]
+          },
+          "collocation": "Each native Yee E component was read with its own delta-c shifted coordinates and linearly interpolated to the common x/y plane at the physical flake midplane. The plane is restricted to the exact intersection of all component supports; same-index component pairing and extrapolation were not used.",
+          "component_metrics_native_amplitude_collocated": {
+            "x": {
+              "area_weighted_L2": 6.798097358467264e-06,
+              "maximum_absolute": 0.6884955567789394
+            },
+            "y": {
+              "area_weighted_L2": 6.207061605472781e-07,
+              "maximum_absolute": 0.30320255554991166
+            },
+            "z": {
+              "area_weighted_L2": 2.342316274926857e-06,
+              "maximum_absolute": 0.19218091550074945
+            }
+          },
+          "interpretation": "This is the total Maxwell field inside TaIrTe4 at z=-65 nm. The fitted width is a spatial total-E2 diagnostic, not an incident Gaussian waist.",
+          "native_component_contract": {
+            "x": {
+              "bounds_m": {
+                "x": [
+                  -2.6949999999999998e-05,
+                  2.714999999999993e-05
+                ],
+                "y": [
+                  -2.7e-05,
+                  2.709999999999987e-05
+                ],
+                "z": [
+                  -1.800000000000018e-07,
+                  5e-08
+                ]
+              },
+              "shape": [
+                542,
+                542,
+                47
+              ],
+              "staggering_axis": "x"
+            },
+            "y": {
+              "bounds_m": {
+                "x": [
+                  -2.7e-05,
+                  2.709999999999987e-05
+                ],
+                "y": [
+                  -2.6949999999999998e-05,
+                  2.714999999999993e-05
+                ],
+                "z": [
+                  -1.800000000000018e-07,
+                  5e-08
+                ]
+              },
+              "shape": [
+                542,
+                542,
+                47
+              ],
+              "staggering_axis": "y"
+            },
+            "z": {
+              "bounds_m": {
+                "x": [
+                  -2.7e-05,
+                  2.709999999999987e-05
+                ],
+                "y": [
+                  -2.7e-05,
+                  2.709999999999987e-05
+                ],
+                "z": [
+                  -1.775000000000009e-07,
+                  5.250000000000006e-08
+                ]
+              },
+              "shape": [
+                542,
+                542,
+                47
+              ],
+              "staggering_axis": "z"
+            }
+          },
+          "total_E2_spatial_fit_at_1_W_m2_center": {
+            "amplitude_over_observed_peak": 0.417053009112558,
+            "center_x_m": -2.1794325452620856e-06,
+            "center_y_m": 1.4780498949378648e-06,
+            "fit_message": "`ftol` termination condition is satisfied.",
+            "fit_relative_RMS_over_peak": 0.033565826248971316,
+            "fit_selected_point_count": 140333,
+            "fit_success": true,
+            "integrated_total_E2_area_V2_at_1_W_m2_center": 4.06276499226177e-08,
+            "moment_center_x_m": -1.9462704073750287e-06,
+            "moment_center_y_m": 1.2622474763758493e-06,
+            "moment_waist_x_m": 1.2571769056544286e-05,
+            "moment_waist_y_m": 1.1747098525153791e-05,
+            "waist_effective_geometric_mean_m": 1.1638526356556222e-05,
+            "waist_x_m": 1.216855348817903e-05,
+            "waist_y_m": 1.1131585679747392e-05
+          },
+          "z_m": -6.5e-08
+        },
+        "near_stack_total_field_plane": {
+          "bounds_m": {
+            "x": [
+              -2.500000000000002e-05,
+              2.499999999999989e-05
+            ],
+            "y": [
+              -2.500000000000002e-05,
+              2.499999999999989e-05
+            ]
+          },
+          "downward_decomposition_fit_at_1_W_m2_center": {
+            "amplitude_over_observed_peak": 0.9923710946325237,
+            "center_x_m": 2.10525585265026e-08,
+            "center_y_m": 1.2294184133280685e-08,
+            "fit_message": "`ftol` termination condition is satisfied.",
+            "fit_relative_RMS_over_peak": 0.0047127747600271275,
+            "fit_selected_point_count": 154391,
+            "fit_success": true,
+            "integrated_incident_power_W": 2.2665274112191664e-10,
+            "moment_center_x_m": 8.397413685775286e-09,
+            "moment_center_y_m": 5.969673908361381e-09,
+            "moment_waist_x_m": 1.1941600554880199e-05,
+            "moment_waist_y_m": 1.206044164952916e-05,
+            "waist_effective_geometric_mean_m": 1.2020991187276343e-05,
+            "waist_x_m": 1.1956032033149659e-05,
+            "waist_y_m": 1.208630327552809e-05
+          },
+          "integrated_downward_decomposition_power_W_at_1_W_m2_center": 2.266523127642404e-10,
+          "interpretation": "This production incident-reference monitor contains total fields. Its realized Yee-plane coordinate is recorded rather than silently replaced by the requested z. The homogeneous-air downward E/H decomposition can include reflected, scattered, and evanescent contributions and is not called a pure incident-beam waist or power.",
+          "requested_z_m": 6e-07,
+          "total_E2_fit_at_1_W_m2_center": {
+            "amplitude_over_observed_peak": 0.8830327620500519,
+            "center_x_m": -1.1691917115970996e-06,
+            "center_y_m": 1.0624899279580891e-06,
+            "fit_message": "`ftol` termination condition is satisfied.",
+            "fit_relative_RMS_over_peak": 0.02923686406818828,
+            "fit_selected_point_count": 164065,
+            "fit_success": true,
+            "integrated_incident_power_W": 1.06791818229573e-07,
+            "moment_center_x_m": -7.430187397920586e-07,
+            "moment_center_y_m": 7.470734533535049e-07,
+            "moment_waist_x_m": 1.2977793287547642e-05,
+            "moment_waist_y_m": 1.1979679323356563e-05,
+            "waist_effective_geometric_mean_m": 1.2222120517068307e-05,
+            "waist_x_m": 1.2733105409776507e-05,
+            "waist_y_m": 1.1731641663709747e-05
+          },
+          "total_field_component_metrics_native": {
+            "electric": {
+              "x": {
+                "area_weighted_L2": 1.1219508220708844e-05,
+                "maximum_absolute": 0.8042811968678036
+              },
+              "y": {
+                "area_weighted_L2": 3.4932817937356517e-07,
+                "maximum_absolute": 0.06588902154003766
+              },
+              "z": {
+                "area_weighted_L2": 3.303094441960885e-06,
+                "maximum_absolute": 0.21732505084630796
+              }
+            },
+            "magnetic": {
+              "x": {
+                "area_weighted_L2": 1.6772126158346608e-09,
+                "maximum_absolute": 0.00022394137770177796
+              },
+              "y": {
+                "area_weighted_L2": 5.702385648155641e-08,
+                "maximum_absolute": 0.003907333010338454
+              },
+              "z": {
+                "area_weighted_L2": 4.675688138349669e-09,
+                "maximum_absolute": 0.0004350965303425425
+              }
+            }
+          },
+          "z_m": 5.135875157604772e-07
+        },
+        "provenance": {
+          "FDTD_solve_called": false,
+          "original_raw_artifacts_modified": false,
+          "runanalysis_called": false,
+          "source_FSP": {
+            "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/finite_2um_optical_q.fsp",
+            "sha256": "8db4dfce5f259fdf6b0efec56900a1589ee762833bc300076e41d8eebd7c6d4b",
+            "size_bytes": 798022715
+          },
+          "source_case_result": {
+            "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731/case_result.json",
+            "sha256": "f6366945d62cc0ec1b6cc2c289a039c9a1d2b4d6aac786d3a8cf030ecfd399aa",
+            "size_bytes": 74770
+          }
+        },
+        "source_profile": {
+          "E_shape": [
+            501,
+            501,
+            1,
+            1,
+            3
+          ],
+          "all_finite": true
+        },
+        "status": "COMPLETED_READ_ONLY_FIELD_EXTRACTION",
+        "upper_total_field_plane": {
+          "bounds_m": {
+            "x": [
+              -2.75e-05,
+              2.749999999999988e-05
+            ],
+            "y": [
+              -2.75e-05,
+              2.749999999999988e-05
+            ]
+          },
+          "component_metrics_native": {
+            "electric": {
+              "x": {
+                "area_weighted_L2": 1.1219756381393229e-05,
+                "maximum_absolute": 0.8042811968678036
+              },
+              "y": {
+                "area_weighted_L2": 3.494862097320611e-07,
+                "maximum_absolute": 0.06588902154003766
+              },
+              "z": {
+                "area_weighted_L2": 3.305329368174031e-06,
+                "maximum_absolute": 0.21732505084630796
+              }
+            },
+            "magnetic": {
+              "x": {
+                "area_weighted_L2": 1.6899313575738257e-09,
+                "maximum_absolute": 0.00022394137770177796
+              },
+              "y": {
+                "area_weighted_L2": 5.702516883151506e-08,
+                "maximum_absolute": 0.003907333010338454
+              },
+              "z": {
+                "area_weighted_L2": 4.676801192587603e-09,
+                "maximum_absolute": 0.0004350965303425425
+              }
+            }
+          },
+          "z_m": 5.135875157604772e-07
+        }
+      },
+      "generation_commit": "f9948f2193fa657673780b3f25df6b3ba038e949",
+      "geometry": {
+        "Q_processing": {
+          "clipping": false,
+          "gain": false,
+          "global_rescaling": false,
+          "polarization_matching_rescaling": false,
+          "smoothing": false
+        },
+        "absorption_analysis_bounds_m": {
+          "x": [
+            -2.7e-05,
+            2.7e-05
+          ],
+          "y": [
+            -2.7e-05,
+            2.7e-05
+          ],
+          "z": [
+            -1.3e-07,
+            0.0
+          ]
+        },
+        "all_six_boundaries": "PML",
+        "coordinate_contract": {
+          "lab_x": "crystal b",
+          "lab_y": "crystal a"
+        },
+        "diagnostic_difference_from_production": null,
+        "domain_bounds_m": {
+          "x": [
+            -2.9999999999999997e-05,
+            2.9999999999999997e-05
+          ],
+          "y": [
+            -2.9999999999999997e-05,
+            2.9999999999999997e-05
+          ],
+          "z": [
+            -3.4150000000000003e-06,
+            1e-05
+          ]
+        },
+        "electrode_note": "Off-axis-edge optical certificate intentionally excludes Au/Ti; contacts enter the separate weighting-potential geometry. A contact optical scenario is required before interpreting contact hotspots.",
+        "electrodes_in_optical_model": false,
+        "exact_flake_mask_kind": "analytic half-plane lab_y<=lab_x",
+        "execution_contract": "production",
+        "flake_area_m2": 1.9219999999999998e-09,
+        "flake_thickness_m": 1.3e-07,
+        "flake_vertices_um": [
+          [
+            -31.0,
+            -31.0
+          ],
+          [
+            31.0,
+            -31.0
+          ],
+          [
+            31.0,
+            31.0
+          ]
+        ],
+        "geometry_name": "straight-45-edge",
+        "geometry_source": "paper Figure 3F straight 45-degree half-plane control; TaIrTe4 occupies lab y<=x and remote triangle faces lie outside the PML-bounded physical domain",
+        "large_domain_mesh_policy": {
+          "TaIrTe4_z_override_m": 5e-09,
+          "far_air_SiO2_Si": "wavelength-appropriate automatic coarse mesh",
+          "global_mesh": "auto non-uniform, conformal variant 1, accuracy 5",
+          "local_region_bounds_m": {
+            "x": [
+              -2.7e-05,
+              2.7e-05
+            ],
+            "y": [
+              -2.7e-05,
+              2.7e-05
+            ],
+            "z": [
+              -1.3e-07,
+              0.0
+            ]
+          },
+          "local_xy_baseline_m": 1.0000000000000001e-07,
+          "local_xy_refinement_status": "REQUIRED_BEFORE_MATERIAL_Q_PROMOTION",
+          "required_local_xy_refinement_m": 5.0000000000000004e-08,
+          "uniform_global_fine_mesh": false
+        },
+        "material_contract": {
+          "axis_mapping": {
+            "x": "epsilon_b",
+            "y": "epsilon_a",
+            "z": "epsilon_c=epsilon_b paper-consistent 3D closure"
+          },
+          "epsilon_c_model": "paper-b-closure",
+          "name": "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure",
+          "provenance": {
+            "in_plane": "paper Supporting Information Fig. S3b / Ref. 11, stored in paper-derived perm_data.txt",
+            "out_of_plane": "explicit finite-edge 3D closure epsilon_c=epsilon_b; not an independently measured c-axis property",
+            "sample_count": 600,
+            "wavelength_range_m": [
+              2.7e-06,
+              1.32e-05
+            ]
+          },
+          "requested_epsilon_at_11um": {
+            "x": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            },
+            "y": {
+              "imag": 204.5326948215291,
+              "real": -42.96623156686853
+            },
+            "z": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            }
+          }
+        },
+        "monitor_contract": {
+          "diagnostic_field_slice_monitors": true,
+          "frequency_points": 1,
+          "incident_reference_monitor": true,
+          "outer_flux_box": true,
+          "pabs_field_and_index": true,
+          "six_face_absorption_box": true
+        },
+        "outer_flux_box_bounds_m": {
+          "x": [
+            -2.8999999999999997e-05,
+            2.8999999999999997e-05
+          ],
+          "y": [
+            -2.8999999999999997e-05,
+            2.8999999999999997e-05
+          ],
+          "z": [
+            -1.2e-06,
+            4.5e-06
+          ]
+        },
+        "pabs_nominal_control_volume_bounds_m": {
+          "x": [
+            -2.705e-05,
+            2.705e-05
+          ],
+          "y": [
+            -2.705e-05,
+            2.705e-05
+          ],
+          "z": [
+            -1.8e-07,
+            5e-08
+          ]
+        },
+        "periodic": false,
+        "six_face_absorption_box_bounds_m": {
+          "x": [
+            -2.7499999999999998e-05,
+            2.7499999999999998e-05
+          ],
+          "y": [
+            -2.7499999999999998e-05,
+            2.7499999999999998e-05
+          ],
+          "z": [
+            -1.2e-06,
+            4.5e-06
+          ]
+        },
+        "source": {
+          "Lumerical_source_object_waist_radius_m": 1.1916864889678677e-05,
+          "auto_shutoff_min": 1e-05,
+          "beam_center_m": [
+            0.0,
+            0.0
+          ],
+          "experimental_band_m": [
+            7e-06,
+            1.3e-05
+          ],
+          "experimentally_reproduced_beam": false,
+          "normal_incidence": true,
+          "paper_certified_beam": false,
+          "physical_target_waist_radius_m": 1.2e-05,
+          "polarization_axis": "b",
+          "scenario_label": "paper-like scalar-Gaussian scenario with an explicitly assumed waist",
+          "simulation_time_s": 4e-12,
+          "source_object_calibration_field_NPZ_sha256": "f0f848740730ce73f0e47f73f26c8a572afda5f59c8bab57c8d8dac94a112ad0",
+          "source_span_m": 4.9999999999999996e-05,
+          "wavelength_m": 1.1e-05
+        },
+        "substrate": "285 nm SiO2 on Si"
+      },
+      "incident_power_W_at_1_W_m2_center": 2.2660668999948094e-10,
+      "negative_Q_voxel_count": 0,
+      "polarization_deg": 0.0,
+      "six_face_relative_closure": 0.0002767350912679393,
+      "solver_wall_time_s": 347.459024,
+      "source_intensity_scale": 780.0120664390604,
+      "spatial_moments": {
+        "hotspot": {
+          "Q_W_m3": 2316633.194015743,
+          "x_m": -1.0000000000006249e-07,
+          "y_m": -2.000000000000625e-07,
+          "z_m": -4.999999999999865e-09
+        },
+        "x": {
+          "centroid_m": 3.390802619160293e-06,
+          "second_moment_sigma_m": 4.944098254544772e-06
+        },
+        "y": {
+          "centroid_m": -3.436542084799438e-06,
+          "second_moment_sigma_m": 4.9743408667668e-06
+        },
+        "z": {
+          "centroid_m": -6.323705978887617e-08,
+          "second_moment_sigma_m": 3.755722794342827e-08
+        }
+      }
+    },
+    "planar_a": {
+      "P_Q_W": 3.9954570409619855e-11,
+      "P_Q_reintegrated_W": 3.9954570409619855e-11,
+      "P_Q_reintegration_relative_error": 0.0,
+      "P_six_face_W": 3.9930466295152346e-11,
+      "Q_hotspot": {
+        "Q_W_m3": 1927493.044165251,
+        "x_m": -6.246867986000465e-20,
+        "y_m": -6.246867986000465e-20,
+        "z_m": -4.999999999999865e-09
+      },
+      "acceptance": {
+        "Q_not_clipped": true,
+        "measured_intensity_normalization": true,
+        "six_face_closure_lt_0p5_percent": true
+      },
+      "auto_shutoff": {
+        "final_value": 7.58446e-06,
+        "log_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_a_L60_xy100_dz5_pml24_t4_gpu4_20260731/finite_2um_optical_q_p0.log",
+        "promoted_metadata_source": "independent immutable solver-log parse; original case JSON predates the explicit auto-shutoff result key",
+        "simulation_completed_successfully": true
+      },
+      "component_power_W": {
+        "x": 5.770458428560883e-15,
+        "y": 3.993368436307391e-11,
+        "z": 1.5115588117384e-14
+      },
+      "empirical_flux_gain": false,
+      "field_readback": {
+        "case": {
+          "generation_commit": "ed7c6b870e005d01d51ba9c0557e4d377bec698a",
+          "geometry": "planar-stack",
+          "polarization_deg": 90.0
+        },
+        "certified_matching_empty_reference": {
+          "empirical_flux_gain": false,
+          "incident_power_W_at_1_W_m2_center": 2.266066822214843e-10,
+          "normalization_basis": "central -z incident intensity measured from the matching empty-layered-stack E/H decomposition"
+        },
+        "field_artifact": {
+          "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_a_L60_xy100_dz5_pml24_t4_gpu4_20260731/readonly_field_audit_v2/saved_field_monitor_audit.npz",
+          "sha256": "d5dfa6d198884ef364759c338f0d19b51763621b6394182292ea623a687b5887",
+          "size_bytes": 79588273
+        },
+        "flake_midplane_total_field": {
+          "bounds_m": {
+            "x": [
+              -2.69e-05,
+              2.709999999999987e-05
+            ],
+            "y": [
+              -2.69e-05,
+              2.709999999999987e-05
+            ]
+          },
+          "collocation": "Each native Yee E component was read with its own delta-c shifted coordinates and linearly interpolated to the common x/y plane at the physical flake midplane. The plane is restricted to the exact intersection of all component supports; same-index component pairing and extrapolation were not used.",
+          "component_metrics_native_amplitude_collocated": {
+            "x": {
+              "area_weighted_L2": 5.3470454861310006e-08,
+              "maximum_absolute": 0.0027173025913274727
+            },
+            "y": {
+              "area_weighted_L2": 1.5412004995580983e-06,
+              "maximum_absolute": 0.10232312105630549
+            },
+            "z": {
+              "area_weighted_L2": 7.841940092553803e-08,
+              "maximum_absolute": 0.004563838334496899
+            }
+          },
+          "interpretation": "This is the total Maxwell field inside TaIrTe4 at z=-65 nm. The fitted width is a spatial total-E2 diagnostic, not an incident Gaussian waist.",
+          "native_component_contract": {
+            "x": {
+              "bounds_m": {
+                "x": [
+                  -2.6949999999999998e-05,
+                  2.714999999999993e-05
+                ],
+                "y": [
+                  -2.7e-05,
+                  2.709999999999987e-05
+                ],
+                "z": [
+                  -1.800000000000018e-07,
+                  5e-08
+                ]
+              },
+              "shape": [
+                542,
+                542,
+                47
+              ],
+              "staggering_axis": "x"
+            },
+            "y": {
+              "bounds_m": {
+                "x": [
+                  -2.7e-05,
+                  2.709999999999987e-05
+                ],
+                "y": [
+                  -2.6949999999999998e-05,
+                  2.714999999999993e-05
+                ],
+                "z": [
+                  -1.800000000000018e-07,
+                  5e-08
+                ]
+              },
+              "shape": [
+                542,
+                542,
+                47
+              ],
+              "staggering_axis": "y"
+            },
+            "z": {
+              "bounds_m": {
+                "x": [
+                  -2.7e-05,
+                  2.709999999999987e-05
+                ],
+                "y": [
+                  -2.7e-05,
+                  2.709999999999987e-05
+                ],
+                "z": [
+                  -1.775000000000009e-07,
+                  5.250000000000006e-08
+                ]
+              },
+              "shape": [
+                542,
+                542,
+                47
+              ],
+              "staggering_axis": "z"
+            }
+          },
+          "total_E2_spatial_fit_at_1_W_m2_center": {
+            "amplitude_over_observed_peak": 1.000674076231057,
+            "center_x_m": 1.1472437591342908e-13,
+            "center_y_m": -2.4516233409781556e-13,
+            "fit_message": "`ftol` termination condition is satisfied.",
+            "fit_relative_RMS_over_peak": 0.0003234282816711544,
+            "fit_selected_point_count": 156035,
+            "fit_success": true,
+            "integrated_total_E2_area_V2_at_1_W_m2_center": 1.8597895196140505e-09,
+            "moment_center_x_m": 1.228721047181069e-11,
+            "moment_center_y_m": 1.1130572229308709e-11,
+            "moment_waist_x_m": 1.2134807706115344e-05,
+            "moment_waist_y_m": 1.193500845482577e-05,
+            "waist_effective_geometric_mean_m": 1.2036083889663138e-05,
+            "waist_x_m": 1.2143162303172093e-05,
+            "waist_y_m": 1.1929949693677869e-05
+          },
+          "z_m": -6.5e-08
+        },
+        "near_stack_total_field_plane": {
+          "bounds_m": {
+            "x": [
+              -2.500000000000002e-05,
+              2.499999999999989e-05
+            ],
+            "y": [
+              -2.500000000000002e-05,
+              2.499999999999989e-05
+            ]
+          },
+          "downward_decomposition_fit_at_1_W_m2_center": {
+            "amplitude_over_observed_peak": 1.0012071420860156,
+            "center_x_m": 2.066331235913179e-14,
+            "center_y_m": -5.0012140875339945e-14,
+            "fit_message": "`ftol` termination condition is satisfied.",
+            "fit_relative_RMS_over_peak": 0.00036655589363135947,
+            "fit_selected_point_count": 155073,
+            "fit_success": true,
+            "integrated_incident_power_W": 2.2623336934095566e-10,
+            "moment_center_x_m": 1.5980786597786916e-14,
+            "moment_center_y_m": -1.2097309901331307e-14,
+            "moment_waist_x_m": 1.209957427283449e-05,
+            "moment_waist_y_m": 1.1892836859848579e-05,
+            "waist_effective_geometric_mean_m": 1.200207350254047e-05,
+            "waist_x_m": 1.2113443891828431e-05,
+            "waist_y_m": 1.1891727046967881e-05
+          },
+          "integrated_downward_decomposition_power_W_at_1_W_m2_center": 2.2623300748375615e-10,
+          "interpretation": "This production incident-reference monitor contains total fields. Its realized Yee-plane coordinate is recorded rather than silently replaced by the requested z. The homogeneous-air downward E/H decomposition can include reflected, scattered, and evanescent contributions and is not called a pure incident-beam waist or power.",
+          "requested_z_m": 6e-07,
+          "total_E2_fit_at_1_W_m2_center": {
+            "amplitude_over_observed_peak": 1.0235557143342373,
+            "center_x_m": 1.3308525042609796e-14,
+            "center_y_m": -5.388008356804429e-14,
+            "fit_message": "`xtol` termination condition is satisfied.",
+            "fit_relative_RMS_over_peak": 0.007637624994919758,
+            "fit_selected_point_count": 175211,
+            "fit_success": true,
+            "integrated_incident_power_W": 7.745255966699572e-08,
+            "moment_center_x_m": 7.503932928484488e-15,
+            "moment_center_y_m": -3.424910059359582e-14,
+            "moment_waist_x_m": 1.2080091540662645e-05,
+            "moment_waist_y_m": 1.394069762606448e-05,
+            "waist_effective_geometric_mean_m": 1.3258186940958633e-05,
+            "waist_x_m": 1.2107144714143024e-05,
+            "waist_y_m": 1.4518660271407203e-05
+          },
+          "total_field_component_metrics_native": {
+            "electric": {
+              "x": {
+                "area_weighted_L2": 1.2122701430150164e-07,
+                "maximum_absolute": 0.005896049759200939
+              },
+              "y": {
+                "area_weighted_L2": 9.145711778560564e-06,
+                "maximum_absolute": 0.596239478616309
+              },
+              "z": {
+                "area_weighted_L2": 3.954422881700778e-06,
+                "maximum_absolute": 0.22939413615750856
+              }
+            },
+            "magnetic": {
+              "x": {
+                "area_weighted_L2": 7.034900184593245e-08,
+                "maximum_absolute": 0.00468448040769401
+              },
+              "y": {
+                "area_weighted_L2": 6.357093347363022e-10,
+                "maximum_absolute": 3.251842596363487e-05
+              },
+              "z": {
+                "area_weighted_L2": 3.541182479595663e-09,
+                "maximum_absolute": 0.00019993839307541058
+              }
+            }
+          },
+          "z_m": 5.135875157604772e-07
+        },
+        "provenance": {
+          "FDTD_solve_called": false,
+          "original_raw_artifacts_modified": false,
+          "runanalysis_called": false,
+          "source_FSP": {
+            "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_a_L60_xy100_dz5_pml24_t4_gpu4_20260731/finite_2um_optical_q.fsp",
+            "sha256": "e09358ad54978f882e7467f62d2908e252aa9412a52db9d0cd17335a44c9df28",
+            "size_bytes": 798021817
+          },
+          "source_case_result": {
+            "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_a_L60_xy100_dz5_pml24_t4_gpu4_20260731/case_result.json",
+            "sha256": "a208e91b9f20b26c5d80c87a7357f14e705ad28d1b7283d44b9852084d4c3615",
+            "size_bytes": 74145
+          }
+        },
+        "source_profile": {
+          "E_shape": [
+            501,
+            501,
+            1,
+            1,
+            3
+          ],
+          "all_finite": true
+        },
+        "status": "COMPLETED_READ_ONLY_FIELD_EXTRACTION",
+        "upper_total_field_plane": {
+          "bounds_m": {
+            "x": [
+              -2.75e-05,
+              2.749999999999988e-05
+            ],
+            "y": [
+              -2.75e-05,
+              2.749999999999988e-05
+            ]
+          },
+          "component_metrics_native": {
+            "electric": {
+              "x": {
+                "area_weighted_L2": 1.2128417643501195e-07,
+                "maximum_absolute": 0.005896049759200939
+              },
+              "y": {
+                "area_weighted_L2": 9.145931308895138e-06,
+                "maximum_absolute": 0.596239478616309
+              },
+              "z": {
+                "area_weighted_L2": 3.955202360132135e-06,
+                "maximum_absolute": 0.22939413615750856
+              }
+            },
+            "magnetic": {
+              "x": {
+                "area_weighted_L2": 7.035034935426806e-08,
+                "maximum_absolute": 0.00468448040769401
+              },
+              "y": {
+                "area_weighted_L2": 6.358639531504137e-10,
+                "maximum_absolute": 3.251842596363487e-05
+              },
+              "z": {
+                "area_weighted_L2": 3.5422091435379344e-09,
+                "maximum_absolute": 0.00019993839307541058
+              }
+            }
+          },
+          "z_m": 5.135875157604772e-07
+        }
+      },
+      "generation_commit": "ed7c6b870e005d01d51ba9c0557e4d377bec698a",
+      "geometry": {
+        "Q_processing": {
+          "clipping": false,
+          "gain": false,
+          "global_rescaling": false,
+          "polarization_matching_rescaling": false,
+          "smoothing": false
+        },
+        "absorption_analysis_bounds_m": {
+          "x": [
+            -2.7e-05,
+            2.7e-05
+          ],
+          "y": [
+            -2.7e-05,
+            2.7e-05
+          ],
+          "z": [
+            -1.3e-07,
+            0.0
+          ]
+        },
+        "all_six_boundaries": "PML",
+        "coordinate_contract": {
+          "lab_x": "crystal b",
+          "lab_y": "crystal a"
+        },
+        "diagnostic_difference_from_production": null,
+        "domain_bounds_m": {
+          "x": [
+            -2.9999999999999997e-05,
+            2.9999999999999997e-05
+          ],
+          "y": [
+            -2.9999999999999997e-05,
+            2.9999999999999997e-05
+          ],
+          "z": [
+            -3.4150000000000003e-06,
+            1e-05
+          ]
+        },
+        "electrode_note": "Off-axis-edge optical certificate intentionally excludes Au/Ti; contacts enter the separate weighting-potential geometry. A contact optical scenario is required before interpreting contact hotspots.",
+        "electrodes_in_optical_model": false,
+        "exact_flake_mask_kind": "all lateral samples inside the matched control volume",
+        "execution_contract": "production",
+        "flake_area_m2": 3.8439999999999995e-09,
+        "flake_thickness_m": 1.3e-07,
+        "flake_vertices_um": [
+          [
+            -31.0,
+            -31.0
+          ],
+          [
+            31.0,
+            -31.0
+          ],
+          [
+            31.0,
+            31.0
+          ],
+          [
+            -31.0,
+            31.0
+          ]
+        ],
+        "geometry_name": "planar-stack",
+        "geometry_source": "edge-free planar TaIrTe4 layer extended 1 um beyond each lateral PML-bounded domain face",
+        "large_domain_mesh_policy": {
+          "TaIrTe4_z_override_m": 5e-09,
+          "far_air_SiO2_Si": "wavelength-appropriate automatic coarse mesh",
+          "global_mesh": "auto non-uniform, conformal variant 1, accuracy 5",
+          "local_region_bounds_m": {
+            "x": [
+              -2.7e-05,
+              2.7e-05
+            ],
+            "y": [
+              -2.7e-05,
+              2.7e-05
+            ],
+            "z": [
+              -1.3e-07,
+              0.0
+            ]
+          },
+          "local_xy_baseline_m": 1.0000000000000001e-07,
+          "local_xy_refinement_status": "REQUIRED_BEFORE_MATERIAL_Q_PROMOTION",
+          "required_local_xy_refinement_m": 5.0000000000000004e-08,
+          "uniform_global_fine_mesh": false
+        },
+        "material_contract": {
+          "axis_mapping": {
+            "x": "epsilon_b",
+            "y": "epsilon_a",
+            "z": "epsilon_c=epsilon_b paper-consistent 3D closure"
+          },
+          "epsilon_c_model": "paper-b-closure",
+          "name": "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure",
+          "provenance": {
+            "in_plane": "paper Supporting Information Fig. S3b / Ref. 11, stored in paper-derived perm_data.txt",
+            "out_of_plane": "explicit finite-edge 3D closure epsilon_c=epsilon_b; not an independently measured c-axis property",
+            "sample_count": 600,
+            "wavelength_range_m": [
+              2.7e-06,
+              1.32e-05
+            ]
+          },
+          "requested_epsilon_at_11um": {
+            "x": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            },
+            "y": {
+              "imag": 204.5326948215291,
+              "real": -42.96623156686853
+            },
+            "z": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            }
+          }
+        },
+        "monitor_contract": {
+          "diagnostic_field_slice_monitors": true,
+          "frequency_points": 1,
+          "incident_reference_monitor": true,
+          "outer_flux_box": true,
+          "pabs_field_and_index": true,
+          "six_face_absorption_box": true
+        },
+        "outer_flux_box_bounds_m": {
+          "x": [
+            -2.8999999999999997e-05,
+            2.8999999999999997e-05
+          ],
+          "y": [
+            -2.8999999999999997e-05,
+            2.8999999999999997e-05
+          ],
+          "z": [
+            -1.2e-06,
+            4.5e-06
+          ]
+        },
+        "pabs_nominal_control_volume_bounds_m": {
+          "x": [
+            -2.705e-05,
+            2.705e-05
+          ],
+          "y": [
+            -2.705e-05,
+            2.705e-05
+          ],
+          "z": [
+            -1.8e-07,
+            5e-08
+          ]
+        },
+        "periodic": false,
+        "six_face_absorption_box_bounds_m": {
+          "x": [
+            -2.7499999999999998e-05,
+            2.7499999999999998e-05
+          ],
+          "y": [
+            -2.7499999999999998e-05,
+            2.7499999999999998e-05
+          ],
+          "z": [
+            -1.2e-06,
+            4.5e-06
+          ]
+        },
+        "source": {
+          "Lumerical_source_object_waist_radius_m": 1.1916864889678677e-05,
+          "auto_shutoff_min": 1e-05,
+          "beam_center_m": [
+            0.0,
+            0.0
+          ],
+          "experimental_band_m": [
+            7e-06,
+            1.3e-05
+          ],
+          "experimentally_reproduced_beam": false,
+          "normal_incidence": true,
+          "paper_certified_beam": false,
+          "physical_target_waist_radius_m": 1.2e-05,
+          "polarization_axis": "a",
+          "scenario_label": "paper-like scalar-Gaussian scenario with an explicitly assumed waist",
+          "simulation_time_s": 4e-12,
+          "source_object_calibration_field_NPZ_sha256": "f0f848740730ce73f0e47f73f26c8a572afda5f59c8bab57c8d8dac94a112ad0",
+          "source_span_m": 4.9999999999999996e-05,
+          "wavelength_m": 1.1e-05
+        },
+        "substrate": "285 nm SiO2 on Si"
+      },
+      "incident_power_W_at_1_W_m2_center": 2.266066822214843e-10,
+      "negative_Q_voxel_count": 0,
+      "polarization_deg": 90.0,
+      "six_face_relative_closure": 0.0006036522160632967,
+      "solver_wall_time_s": 480.996523,
+      "source_intensity_scale": 780.0120396661031,
+      "spatial_moments": {
+        "hotspot": {
+          "Q_W_m3": 1927493.044165251,
+          "x_m": -6.246867986000465e-20,
+          "y_m": -6.246867986000465e-20,
+          "z_m": -4.999999999999865e-09
+        },
+        "x": {
+          "centroid_m": 6.020151596265841e-12,
+          "second_moment_sigma_m": 6.062067606495408e-06
+        },
+        "y": {
+          "centroid_m": 7.92251681587325e-12,
+          "second_moment_sigma_m": 5.948053469315567e-06
+        },
+        "z": {
+          "centroid_m": -5.7868562143026436e-08,
+          "second_moment_sigma_m": 3.790995617865903e-08
+        }
+      }
+    },
+    "planar_b": {
+      "P_Q_W": 5.934078088933018e-11,
+      "P_Q_reintegrated_W": 5.934078088933017e-11,
+      "P_Q_reintegration_relative_error": 2.1780463413930223e-16,
+      "P_six_face_W": 5.931736740386512e-11,
+      "Q_hotspot": {
+        "Q_W_m3": 2152128.8248549895,
+        "x_m": -6.246867986000465e-20,
+        "y_m": -6.246867986000465e-20,
+        "z_m": -4.999999999999865e-09
+      },
+      "acceptance": {
+        "Q_not_clipped": true,
+        "auto_shutoff_reached_requested_threshold": true,
+        "measured_intensity_normalization": true,
+        "six_face_closure_lt_0p5_percent": true,
+        "solver_log_reports_successful_completion": true
+      },
+      "auto_shutoff": {
+        "final_value": 8.48733e-06,
+        "log_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/finite_2um_optical_q_p0.log",
+        "simulation_completed_successfully": true
+      },
+      "component_power_W": {
+        "x": 5.931922504454857e-11,
+        "y": 1.3080815292802349e-15,
+        "z": 2.0247763252330657e-14
+      },
+      "empirical_flux_gain": false,
+      "field_readback": {
+        "case": {
+          "generation_commit": "c9a2da2daae02dcd3901375bf318748a24631ba7",
+          "geometry": "planar-stack",
+          "polarization_deg": 0.0
+        },
+        "certified_matching_empty_reference": {
+          "empirical_flux_gain": false,
+          "incident_power_W_at_1_W_m2_center": 2.2660668999948094e-10,
+          "normalization_basis": "central -z incident intensity measured from the matching empty-layered-stack E/H decomposition"
+        },
+        "field_artifact": {
+          "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/readonly_field_audit_v2/saved_field_monitor_audit.npz",
+          "sha256": "c886865780c07e3ec4c0cac4a3491c65b86acf46d7a5f7d49b501797835ff0f7",
+          "size_bytes": 76289684
+        },
+        "flake_midplane_total_field": {
+          "bounds_m": {
+            "x": [
+              -2.69e-05,
+              2.709999999999987e-05
+            ],
+            "y": [
+              -2.69e-05,
+              2.709999999999987e-05
+            ]
+          },
+          "collocation": "Each native Yee E component was read with its own delta-c shifted coordinates and linearly interpolated to the common x/y plane at the physical flake midplane. The plane is restricted to the exact intersection of all component supports; same-index component pairing and extrapolation were not used.",
+          "component_metrics_native_amplitude_collocated": {
+            "x": {
+              "area_weighted_L2": 5.428961503941873e-06,
+              "maximum_absolute": 0.3598860313119879
+            },
+            "y": {
+              "area_weighted_L2": 8.464031042021927e-09,
+              "maximum_absolute": 0.0004319386316290213
+            },
+            "z": {
+              "area_weighted_L2": 9.912133773065276e-08,
+              "maximum_absolute": 0.0057259106564100755
+            }
+          },
+          "interpretation": "This is the total Maxwell field inside TaIrTe4 at z=-65 nm. The fitted width is a spatial total-E2 diagnostic, not an incident Gaussian waist.",
+          "native_component_contract": {
+            "x": {
+              "bounds_m": {
+                "x": [
+                  -2.6949999999999998e-05,
+                  2.714999999999993e-05
+                ],
+                "y": [
+                  -2.7e-05,
+                  2.709999999999987e-05
+                ],
+                "z": [
+                  -1.800000000000018e-07,
+                  5e-08
+                ]
+              },
+              "shape": [
+                542,
+                542,
+                47
+              ],
+              "staggering_axis": "x"
+            },
+            "y": {
+              "bounds_m": {
+                "x": [
+                  -2.7e-05,
+                  2.709999999999987e-05
+                ],
+                "y": [
+                  -2.6949999999999998e-05,
+                  2.714999999999993e-05
+                ],
+                "z": [
+                  -1.800000000000018e-07,
+                  5e-08
+                ]
+              },
+              "shape": [
+                542,
+                542,
+                47
+              ],
+              "staggering_axis": "y"
+            },
+            "z": {
+              "bounds_m": {
+                "x": [
+                  -2.7e-05,
+                  2.709999999999987e-05
+                ],
+                "y": [
+                  -2.7e-05,
+                  2.709999999999987e-05
+                ],
+                "z": [
+                  -1.775000000000009e-07,
+                  5.250000000000006e-08
+                ]
+              },
+              "shape": [
+                542,
+                542,
+                47
+              ],
+              "staggering_axis": "z"
+            }
+          },
+          "total_E2_spatial_fit_at_1_W_m2_center": {
+            "amplitude_over_observed_peak": 1.0007748357386448,
+            "center_x_m": 2.485913812632822e-14,
+            "center_y_m": -6.248050051639411e-15,
+            "fit_message": "`ftol` termination condition is satisfied.",
+            "fit_relative_RMS_over_peak": 0.0002359898005114535,
+            "fit_selected_point_count": 155681,
+            "fit_success": true,
+            "integrated_total_E2_area_V2_at_1_W_m2_center": 2.2997510956756366e-08,
+            "moment_center_x_m": 1.0611565474849024e-11,
+            "moment_center_y_m": 1.1751305625912357e-11,
+            "moment_waist_x_m": 1.197625302872706e-05,
+            "moment_waist_y_m": 1.207992836161324e-05,
+            "waist_effective_geometric_mean_m": 1.2034372868156436e-05,
+            "waist_x_m": 1.197731953323758e-05,
+            "waist_y_m": 1.2091697973651032e-05
+          },
+          "z_m": -6.5e-08
+        },
+        "near_stack_total_field_plane": {
+          "bounds_m": {
+            "x": [
+              -2.500000000000002e-05,
+              2.499999999999989e-05
+            ],
+            "y": [
+              -2.500000000000002e-05,
+              2.499999999999989e-05
+            ]
+          },
+          "downward_decomposition_fit_at_1_W_m2_center": {
+            "amplitude_over_observed_peak": 1.001025223706757,
+            "center_x_m": 6.731358344615702e-15,
+            "center_y_m": -2.971299297212412e-14,
+            "fit_message": "`ftol` termination condition is satisfied.",
+            "fit_relative_RMS_over_peak": 0.0002975513475522145,
+            "fit_selected_point_count": 155037,
+            "fit_success": true,
+            "integrated_incident_power_W": 2.2635807081247377e-10,
+            "moment_center_x_m": 6.217783570716034e-15,
+            "moment_center_y_m": -2.24431329865006e-14,
+            "moment_waist_x_m": 1.19238658502652e-05,
+            "moment_waist_y_m": 1.2068447501753342e-05,
+            "waist_effective_geometric_mean_m": 1.2002479594622213e-05,
+            "waist_x_m": 1.1924318960469107e-05,
+            "waist_y_m": 1.2081152550254763e-05
+          },
+          "integrated_downward_decomposition_power_W_at_1_W_m2_center": 2.2635771105396876e-10,
+          "interpretation": "This production incident-reference monitor contains total fields. Its realized Yee-plane coordinate is recorded rather than silently replaced by the requested z. The homogeneous-air downward E/H decomposition can include reflected, scattered, and evanescent contributions and is not called a pure incident-beam waist or power.",
+          "requested_z_m": 6e-07,
+          "total_E2_fit_at_1_W_m2_center": {
+            "amplitude_over_observed_peak": 1.0111819703961877,
+            "center_x_m": 7.070242237273898e-14,
+            "center_y_m": -6.202455959601779e-14,
+            "fit_message": "`ftol` termination condition is satisfied.",
+            "fit_relative_RMS_over_peak": 0.003660791829572856,
+            "fit_selected_point_count": 170245,
+            "fit_success": true,
+            "integrated_incident_power_W": 8.220503810550857e-08,
+            "moment_center_x_m": 2.4288051646228897e-14,
+            "moment_center_y_m": -3.8242195623079683e-14,
+            "moment_waist_x_m": 1.3396141132798931e-05,
+            "moment_waist_y_m": 1.2047686265168006e-05,
+            "waist_effective_geometric_mean_m": 1.2861464430053207e-05,
+            "waist_x_m": 1.3704953996267667e-05,
+            "waist_y_m": 1.2069888547642896e-05
+          },
+          "total_field_component_metrics_native": {
+            "electric": {
+              "x": {
+                "area_weighted_L2": 9.690761981696695e-06,
+                "maximum_absolute": 0.6354131132947526
+              },
+              "y": {
+                "area_weighted_L2": 9.122637965742612e-08,
+                "maximum_absolute": 0.0044125088659914815
+              },
+              "z": {
+                "area_weighted_L2": 3.3867224983855747e-06,
+                "maximum_absolute": 0.1963563010908469
+              }
+            },
+            "magnetic": {
+              "x": {
+                "area_weighted_L2": 5.209118513815632e-10,
+                "maximum_absolute": 2.6813502349172645e-05
+              },
+              "y": {
+                "area_weighted_L2": 6.037994293008514e-08,
+                "maximum_absolute": 0.004022759586773069
+              },
+              "z": {
+                "area_weighted_L2": 3.755234864424107e-09,
+                "maximum_absolute": 0.00021258341732616944
+              }
+            }
+          },
+          "z_m": 5.135875157604772e-07
+        },
+        "provenance": {
+          "FDTD_solve_called": false,
+          "original_raw_artifacts_modified": false,
+          "runanalysis_called": false,
+          "source_FSP": {
+            "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/finite_2um_optical_q.fsp",
+            "sha256": "3a036f8a31fa8032a523beb706ec7648523a8dda4d201dafdee10cce9458609c",
+            "size_bytes": 798021817
+          },
+          "source_case_result": {
+            "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_b_L60_xy100_dz5_pml24_t4_gpu4_20260731/case_result.json",
+            "sha256": "08d8a5a327cf922921ed6e8c95f0d30ef2f55caffe54a3bddad6d02d54656b4b",
+            "size_bytes": 74358
+          }
+        },
+        "source_profile": {
+          "E_shape": [
+            501,
+            501,
+            1,
+            1,
+            3
+          ],
+          "all_finite": true
+        },
+        "status": "COMPLETED_READ_ONLY_FIELD_EXTRACTION",
+        "upper_total_field_plane": {
+          "bounds_m": {
+            "x": [
+              -2.75e-05,
+              2.749999999999988e-05
+            ],
+            "y": [
+              -2.75e-05,
+              2.749999999999988e-05
+            ]
+          },
+          "component_metrics_native": {
+            "electric": {
+              "x": {
+                "area_weighted_L2": 9.69097004767508e-06,
+                "maximum_absolute": 0.6354131132947526
+              },
+              "y": {
+                "area_weighted_L2": 9.127631659094061e-08,
+                "maximum_absolute": 0.0044125088659914815
+              },
+              "z": {
+                "area_weighted_L2": 3.3874163652719894e-06,
+                "maximum_absolute": 0.1963563010908469
+              }
+            },
+            "magnetic": {
+              "x": {
+                "area_weighted_L2": 5.210268646146745e-10,
+                "maximum_absolute": 2.6813502349172645e-05
+              },
+              "y": {
+                "area_weighted_L2": 6.038106923609631e-08,
+                "maximum_absolute": 0.004022759586773069
+              },
+              "z": {
+                "area_weighted_L2": 3.756258908145957e-09,
+                "maximum_absolute": 0.00021258341732616944
+              }
+            }
+          },
+          "z_m": 5.135875157604772e-07
+        }
+      },
+      "generation_commit": "c9a2da2daae02dcd3901375bf318748a24631ba7",
+      "geometry": {
+        "Q_processing": {
+          "clipping": false,
+          "gain": false,
+          "global_rescaling": false,
+          "polarization_matching_rescaling": false,
+          "smoothing": false
+        },
+        "absorption_analysis_bounds_m": {
+          "x": [
+            -2.7e-05,
+            2.7e-05
+          ],
+          "y": [
+            -2.7e-05,
+            2.7e-05
+          ],
+          "z": [
+            -1.3e-07,
+            0.0
+          ]
+        },
+        "all_six_boundaries": "PML",
+        "coordinate_contract": {
+          "lab_x": "crystal b",
+          "lab_y": "crystal a"
+        },
+        "diagnostic_difference_from_production": null,
+        "domain_bounds_m": {
+          "x": [
+            -2.9999999999999997e-05,
+            2.9999999999999997e-05
+          ],
+          "y": [
+            -2.9999999999999997e-05,
+            2.9999999999999997e-05
+          ],
+          "z": [
+            -3.4150000000000003e-06,
+            1e-05
+          ]
+        },
+        "electrode_note": "Off-axis-edge optical certificate intentionally excludes Au/Ti; contacts enter the separate weighting-potential geometry. A contact optical scenario is required before interpreting contact hotspots.",
+        "electrodes_in_optical_model": false,
+        "exact_flake_mask_kind": "all lateral samples inside the matched control volume",
+        "execution_contract": "production",
+        "flake_area_m2": 3.8439999999999995e-09,
+        "flake_thickness_m": 1.3e-07,
+        "flake_vertices_um": [
+          [
+            -31.0,
+            -31.0
+          ],
+          [
+            31.0,
+            -31.0
+          ],
+          [
+            31.0,
+            31.0
+          ],
+          [
+            -31.0,
+            31.0
+          ]
+        ],
+        "geometry_name": "planar-stack",
+        "geometry_source": "edge-free planar TaIrTe4 layer extended 1 um beyond each lateral PML-bounded domain face",
+        "large_domain_mesh_policy": {
+          "TaIrTe4_z_override_m": 5e-09,
+          "far_air_SiO2_Si": "wavelength-appropriate automatic coarse mesh",
+          "global_mesh": "auto non-uniform, conformal variant 1, accuracy 5",
+          "local_region_bounds_m": {
+            "x": [
+              -2.7e-05,
+              2.7e-05
+            ],
+            "y": [
+              -2.7e-05,
+              2.7e-05
+            ],
+            "z": [
+              -1.3e-07,
+              0.0
+            ]
+          },
+          "local_xy_baseline_m": 1.0000000000000001e-07,
+          "local_xy_refinement_status": "REQUIRED_BEFORE_MATERIAL_Q_PROMOTION",
+          "required_local_xy_refinement_m": 5.0000000000000004e-08,
+          "uniform_global_fine_mesh": false
+        },
+        "material_contract": {
+          "axis_mapping": {
+            "x": "epsilon_b",
+            "y": "epsilon_a",
+            "z": "epsilon_c=epsilon_b paper-consistent 3D closure"
+          },
+          "epsilon_c_model": "paper-b-closure",
+          "name": "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure",
+          "provenance": {
+            "in_plane": "paper Supporting Information Fig. S3b / Ref. 11, stored in paper-derived perm_data.txt",
+            "out_of_plane": "explicit finite-edge 3D closure epsilon_c=epsilon_b; not an independently measured c-axis property",
+            "sample_count": 600,
+            "wavelength_range_m": [
+              2.7e-06,
+              1.32e-05
+            ]
+          },
+          "requested_epsilon_at_11um": {
+            "x": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            },
+            "y": {
+              "imag": 204.5326948215291,
+              "real": -42.96623156686853
+            },
+            "z": {
+              "imag": 26.18179590766738,
+              "real": 13.268147712480612
+            }
+          }
+        },
+        "monitor_contract": {
+          "diagnostic_field_slice_monitors": true,
+          "frequency_points": 1,
+          "incident_reference_monitor": true,
+          "outer_flux_box": true,
+          "pabs_field_and_index": true,
+          "six_face_absorption_box": true
+        },
+        "outer_flux_box_bounds_m": {
+          "x": [
+            -2.8999999999999997e-05,
+            2.8999999999999997e-05
+          ],
+          "y": [
+            -2.8999999999999997e-05,
+            2.8999999999999997e-05
+          ],
+          "z": [
+            -1.2e-06,
+            4.5e-06
+          ]
+        },
+        "pabs_nominal_control_volume_bounds_m": {
+          "x": [
+            -2.705e-05,
+            2.705e-05
+          ],
+          "y": [
+            -2.705e-05,
+            2.705e-05
+          ],
+          "z": [
+            -1.8e-07,
+            5e-08
+          ]
+        },
+        "periodic": false,
+        "six_face_absorption_box_bounds_m": {
+          "x": [
+            -2.7499999999999998e-05,
+            2.7499999999999998e-05
+          ],
+          "y": [
+            -2.7499999999999998e-05,
+            2.7499999999999998e-05
+          ],
+          "z": [
+            -1.2e-06,
+            4.5e-06
+          ]
+        },
+        "source": {
+          "Lumerical_source_object_waist_radius_m": 1.1916864889678677e-05,
+          "auto_shutoff_min": 1e-05,
+          "beam_center_m": [
+            0.0,
+            0.0
+          ],
+          "experimental_band_m": [
+            7e-06,
+            1.3e-05
+          ],
+          "experimentally_reproduced_beam": false,
+          "normal_incidence": true,
+          "paper_certified_beam": false,
+          "physical_target_waist_radius_m": 1.2e-05,
+          "polarization_axis": "b",
+          "scenario_label": "paper-like scalar-Gaussian scenario with an explicitly assumed waist",
+          "simulation_time_s": 4e-12,
+          "source_object_calibration_field_NPZ_sha256": "f0f848740730ce73f0e47f73f26c8a572afda5f59c8bab57c8d8dac94a112ad0",
+          "source_span_m": 4.9999999999999996e-05,
+          "wavelength_m": 1.1e-05
+        },
+        "substrate": "285 nm SiO2 on Si"
+      },
+      "incident_power_W_at_1_W_m2_center": 2.2660668999948094e-10,
+      "negative_Q_voxel_count": 0,
+      "polarization_deg": 0.0,
+      "six_face_relative_closure": 0.000394715519076254,
+      "solver_wall_time_s": 337.719913,
+      "source_intensity_scale": 780.0120664390604,
+      "spatial_moments": {
+        "hotspot": {
+          "Q_W_m3": 2152128.8248549895,
+          "x_m": -6.246867986000465e-20,
+          "y_m": -6.246867986000465e-20,
+          "z_m": -4.999999999999865e-09
+        },
+        "x": {
+          "centroid_m": 8.013249095611236e-12,
+          "second_moment_sigma_m": 5.988092202343993e-06
+        },
+        "y": {
+          "centroid_m": 5.866462519687944e-12,
+          "second_moment_sigma_m": 6.040047067680279e-06
+        },
+        "z": {
+          "centroid_m": -6.328147412370726e-08,
+          "second_moment_sigma_m": 3.7543976322022604e-08
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "edge_a_vs_edge_b": {
+      "equal_power_spatial_Q_NRMSE": 0.289751117755596,
+      "equal_power_spatial_Q_Pearson_correlation": 0.9557585868899809,
+      "equal_power_spatial_Q_cosine_similarity": 0.9574935762322211,
+      "first_raw_power_W": 2.2566605075568204e-11,
+      "raw_power_ratio_second_over_first": 1.3168367286118647,
+      "raw_power_signed_difference_W": 7.149929328018934e-12,
+      "second_raw_power_W": 2.971653440358714e-11
+    },
+    "planar_a_vs_edge_a": {
+      "equal_power_spatial_Q_NRMSE": 1.0738229826806325,
+      "equal_power_spatial_Q_Pearson_correlation": 0.6804957768531177,
+      "equal_power_spatial_Q_cosine_similarity": 0.69557676139064,
+      "first_raw_power_W": 3.9954570409619855e-11,
+      "raw_power_ratio_second_over_first": 0.564806600201484,
+      "raw_power_signed_difference_W": -1.7387965334051652e-11,
+      "second_raw_power_W": 2.2566605075568204e-11
+    },
+    "planar_a_vs_planar_b": {
+      "equal_power_spatial_Q_NRMSE": 0.1501457756801355,
+      "equal_power_spatial_Q_Pearson_correlation": 0.9875988556983494,
+      "equal_power_spatial_Q_cosine_similarity": 0.9886764291347622,
+      "first_raw_power_W": 3.9954570409619855e-11,
+      "raw_power_ratio_second_over_first": 1.4852063301134304,
+      "raw_power_signed_difference_W": 1.938621047971031e-11,
+      "second_raw_power_W": 5.934078088933017e-11
+    },
+    "planar_b_vs_edge_b": {
+      "equal_power_spatial_Q_NRMSE": 0.9993506177293622,
+      "equal_power_spatial_Q_Pearson_correlation": 0.6897841672388844,
+      "equal_power_spatial_Q_cosine_similarity": 0.7066075881487653,
+      "first_raw_power_W": 5.934078088933017e-11,
+      "raw_power_ratio_second_over_first": 0.500777609566819,
+      "raw_power_signed_difference_W": -2.962424648574303e-11,
+      "second_raw_power_W": 2.971653440358714e-11
+    }
+  },
+  "gates": {
+    "all_four_Q_reintegration_error_lt_0p5_percent": true,
+    "all_four_auto_shutoff_le_1e_minus_5": true,
+    "all_four_no_negative_Q_voxels": true,
+    "all_four_six_face_closure_lt_0p5_percent": true,
+    "baseline_all": true,
+    "no_clipping_smoothing_gain_rescaling_tiling_or_periodic_Q": true,
+    "promotion_gate": "NOT_EVALUATED: 50 nm local-xy refinement is required before material-Q promotion"
+  },
+  "generation_commit": "7f49b329a0c982ee7549a7c5e2e94754856344a2",
+  "interpretation": {
+    "edge_field_fit": "A Gaussian fit to total fields in the finite-edge case is a shape diagnostic only; edge scattering makes it non-Gaussian.",
+    "near_stack_field": "The total-field downward decomposition at the realized z=0.5136 um plane can contain reflection, scattering and evanescent contributions; it is not a pure incident waist.",
+    "not_claimed": [
+      "experimentally reproduced beam",
+      "paper-certified beam",
+      "paper reproduction",
+      "promoted production Q"
+    ],
+    "raw_vs_equal_power": "Raw Q and absorbed power are never changed. Equal-power normalization is used only for spatial-shape comparison.",
+    "scenario_label": "paper-like scalar-Gaussian scenario with an explicitly assumed waist"
+  },
+  "preserved_license_start_failures": {
+    "edge_a_license_start_race": {
+      "CPU_fallback_used": false,
+      "FDTD_stepping_started": false,
+      "exception": "GPU-only FDTD failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'in run:' | localhost: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Computer: LumApiError: 'in run: could not match resource name provided or the resource may not be active.'",
+      "status": "BLOCKED_EXECUTION_ERROR"
+    },
+    "edge_b_license_start_race": {
+      "CPU_fallback_used": false,
+      "FDTD_stepping_started": false,
+      "exception": "GPU-only FDTD failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'in run:' | localhost: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Computer: LumApiError: 'in run: could not match resource name provided or the resource may not be active.'",
+      "status": "BLOCKED_EXECUTION_ERROR"
+    }
+  },
+  "scope": {
+    "CPU_FDTD_fallback": false,
+    "FDTD_lateral_span_m": 6e-05,
+    "GPU_FDTD_only": true,
+    "PTE_run": false,
+    "TaIrTe4_thickness_m": 1.3e-07,
+    "adjoint_run": false,
+    "assumed_waist_m": 1.2e-05,
+    "axis_mapping": {
+      "x": "b",
+      "y": "a",
+      "z": "c"
+    },
+    "epsilon_c": "epsilon_b paper-consistent 3D closure; not a directly measured c-axis property",
+    "flake_dz_m": 5e-09,
+    "local_xy_mesh_m": 1e-07,
+    "optimization_run": false,
+    "periodic": false,
+    "six_boundaries": "PML",
+    "source": "scalar Gaussian",
+    "source_span_m": 5e-05,
+    "substrate": "285 nm SiO2 on Si",
+    "thermal_run": false,
+    "waist_provenance": "EXPLICIT_ASSUMPTION_NOT_PUBLISHED_BY_PAPER",
+    "wavelength_m": 1.1e-05
+  },
+  "status": "BASELINE_PAPER_LIKE_W12_SCALAR_GAUSSIAN_OPTICAL_GATES_PASSED_REFINEMENT_PENDING"
+}

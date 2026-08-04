@@ -1,0 +1,134 @@
+{
+  "status": "COMPLETED_CORRECTED_SUBSTRATE_STRAIGHT_45_EDGE_CONTROL",
+  "classification": "corner-free straight-45-degree diagnostic with an explicitly assumed w0=8.75 um scalar Gaussian; not a paper reproduction",
+  "geometry": {
+    "TaIrTe4_support": "y<=x half-plane; remote triangle faces outside PML",
+    "electrodes": false,
+    "weighting_field": false,
+    "PTE_current": false,
+    "periodic": false,
+    "boundaries": "six PML optical; explicit expanded thermal FVM"
+  },
+  "heat_source_scope": {
+    "raw_optical_Q": "all electromagnetic loss inside the matched local control volume; this includes the upper 50 nm of lossy Palik SiO2 plus interface samples, the 130 nm TaIrTe4 layer, and 50 nm top padding",
+    "thermal_Q": "derived TaIrTe4-supported volumetric Q only",
+    "SiO2_absorption_used_as_thermal_source": false,
+    "reason": "the matched closure volume samples only the upper 50 nm of the 285 nm oxide and therefore is not a complete substrate-heating source"
+  },
+  "substrate_readback": {
+    "analysis_wavelength_m": 1.1e-05,
+    "model": "lumerical-palik-11um",
+    "materials": {
+      "SiO2": {
+        "material_name": "SiO2 (Glass) - Palik",
+        "n_complex": {
+          "real": 1.9885408590100595,
+          "imag": 0.04505653854970146
+        },
+        "epsilon_r_complex": {
+          "real": 3.9522646562863843,
+          "imag": 0.1791935357432864
+        },
+        "raw_database_n_complex_at_11um": {
+          "real": 1.9315964430001245,
+          "imag": 0.04880662411394142
+        },
+        "raw_database_epsilon_r_complex_at_11um": {
+          "real": 3.7286827320533336,
+          "imag": 0.18854940306666668
+        },
+        "FDTD_fit_band_m": [
+          7e-06,
+          1.3e-05
+        ],
+        "FDTD_uses_fitted_not_raw_database_value": true,
+        "provenance": "installed Lumerical v261 material database fit"
+      },
+      "Si": {
+        "material_name": "Si (Silicon) - Palik",
+        "n_complex": {
+          "real": 3.421856046181259,
+          "imag": 8.978657504799072e-06
+        },
+        "epsilon_r_complex": {
+          "real": 11.70909880070662,
+          "imag": 6.144734693877488e-05
+        },
+        "raw_database_n_complex_at_11um": {
+          "real": 3.4212896222169786,
+          "imag": 4.389880310197085e-05
+        },
+        "raw_database_epsilon_r_complex_at_11um": {
+          "real": 11.70522267716249,
+          "imag": 0.0003003810389610388
+        },
+        "FDTD_fit_band_m": [
+          7e-06,
+          1.3e-05
+        ],
+        "FDTD_uses_fitted_not_raw_database_value": true,
+        "provenance": "installed Lumerical v261 material database fit"
+      }
+    },
+    "loss_is_retained": true
+  },
+  "cases": [
+    {
+      "polarization": "a",
+      "P_Q_full_control_volume_W_at_1_W_m2": 1.2205763541327975e-11,
+      "P_Q_TaIrTe4_W_at_1_W_m2": 1.1752145968025344e-11,
+      "P_Q_outside_TaIrTe4_W_at_1_W_m2": 4.536175733026315e-13,
+      "P_six_W_at_1_W_m2": 1.2244057721032942e-11,
+      "matched_volume_closure": 0.0031275726215488787,
+      "auto_shutoff": 9.94009e-06,
+      "P_abs_TaIrTe4_W_at_285uW_incident": 2.7806972579175566e-05,
+      "Tmax_K": 0.23386540644682902,
+      "Tavg_TaIrTe4_K": 0.006933575839410251,
+      "strict_centered_max_abs_dTdn_K_m": 61037.23915272186,
+      "strict_centered_p99_abs_dTdn_K_m": 59184.70400574873,
+      "thermal_energy_balance": 1.0798728815595874e-11,
+      "thermal_linear_residual": 1.0275392278024081e-10,
+      "mapping_power_error": 0.0,
+      "gradient_rotation_identity_max_relative_error": 7.512014045559853e-16,
+      "finite_gradient_samples_outside_flake": 0
+    },
+    {
+      "polarization": "b",
+      "P_Q_full_control_volume_W_at_1_W_m2": 1.509664735857373e-11,
+      "P_Q_TaIrTe4_W_at_1_W_m2": 1.4669010881929403e-11,
+      "P_Q_outside_TaIrTe4_W_at_1_W_m2": 4.2763647664432683e-13,
+      "P_six_W_at_1_W_m2": 1.514831468360632e-11,
+      "matched_volume_closure": 0.0034107639108201123,
+      "auto_shutoff": 9.88047e-06,
+      "P_abs_TaIrTe4_W_at_285uW_incident": 3.470859569447072e-05,
+      "Tmax_K": 0.22044941412856914,
+      "Tavg_TaIrTe4_K": 0.008656135242562028,
+      "strict_centered_max_abs_dTdn_K_m": 32518.393214233165,
+      "strict_centered_p99_abs_dTdn_K_m": 31130.52893062811,
+      "thermal_energy_balance": 1.1470329748895602e-11,
+      "thermal_linear_residual": 1.0237009908956618e-10,
+      "mapping_power_error": 1.9523300907025462e-16,
+      "gradient_rotation_identity_max_relative_error": 7.235606803514095e-16,
+      "finite_gradient_samples_outside_flake": 0
+    }
+  ],
+  "ratios": {
+    "P_Q_TaIrTe4_b_over_a": 1.248198492585109,
+    "Tmax_b_over_a": 0.9426337031966714,
+    "Tavg_b_over_a": 1.2484373782083407,
+    "strict_centered_max_abs_dTdn_b_over_a": 0.5327631731977356,
+    "strict_centered_p99_abs_dTdn_b_over_a": 0.5259894334793722
+  },
+  "gates": {
+    "both_optical_cases_completed": true,
+    "matched_volume_closure_lt_0p5_percent": true,
+    "auto_shutoff_lt_1e_minus_5": true,
+    "thermal_mapping_error_lt_0p5_percent": true,
+    "thermal_energy_balance_lt_1_percent": true,
+    "thermal_residual_lt_1e_minus_8": true,
+    "gradient_rotation_identity_lt_1e_minus_12": true,
+    "no_finite_gradient_sample_outside_flake": true
+  },
+  "paper_gradient_trend_b_over_a_gt_1": false,
+  "optical_mesh_status": "100-nm lateral baseline only; no 50-nm promotion is claimed by this report"
+}

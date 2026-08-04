@@ -1,0 +1,186 @@
+{
+  "status": "VALIDATED_COMPONENT_WISE_YEE_MATERIAL_JACOBIAN",
+  "passed": true,
+  "generated_at_utc": "2026-07-27T17:28:55.493406+00:00",
+  "scope": "explicit component J_c=d epsilon_Yee,c/d rho81x81 from v261 layout index_detail",
+  "density_shape": [
+    81,
+    81
+  ],
+  "density_bounds_m": {
+    "x": [
+      -1e-06,
+      1e-06
+    ],
+    "y": [
+      -1e-06,
+      1e-06
+    ]
+  },
+  "density_to_solver_chain": "rho81x81 -> epsilon=1+rho*(1.38^2-1) -> n=sqrt(epsilon) -> importnk2 81x81x13 -> v261 component-specific conformal index_detail -> epsilon_Yee,c=index_c^2",
+  "construction": {
+    "method": "period-5x5 local coloring, centered layout-only material perturbations",
+    "centered_step": 0.0001,
+    "color_count": 25,
+    "layout_index_detail_evaluations": 62,
+    "Maxwell_solves": 0,
+    "per_pixel_Maxwell_solves": false,
+    "nonzero_threshold": 1e-08,
+    "maximum_allowed_local_assignment_distance_m": 8e-08,
+    "empirical_normalization": false,
+    "gradient_rescaling": false
+  },
+  "coordinate_audit": {
+    "components": {
+      "x": {
+        "shape": [
+          47,
+          47,
+          88
+        ],
+        "coordinate_bounds_m": {
+          "x": [
+            -1.1250000000000026e-06,
+            1.174999999999996e-06
+          ],
+          "y": [
+            -1.1500000000000025e-06,
+            1.1499999999999958e-06
+          ],
+          "z": [
+            -1.4904390427734322e-07,
+            7.694852941176472e-07
+          ]
+        },
+        "maximum_forward_adjoint_coordinate_mismatch_m": 4.235164736271502e-22,
+        "maximum_field_index_detail_coordinate_mismatch_m": 0.0,
+        "maximum_local_assignment_distance_m": 3.535533905933258e-08,
+        "J_shape": [
+          194392,
+          6561
+        ],
+        "J_nnz": 53960,
+        "maximum_J_nonzeros_per_Yee_sample": 4,
+        "active_J_row_count": 49200
+      },
+      "y": {
+        "shape": [
+          47,
+          47,
+          88
+        ],
+        "coordinate_bounds_m": {
+          "x": [
+            -1.1500000000000025e-06,
+            1.1499999999999958e-06
+          ],
+          "y": [
+            -1.1250000000000026e-06,
+            1.174999999999996e-06
+          ],
+          "z": [
+            -1.4904390427734322e-07,
+            7.694852941176472e-07
+          ]
+        },
+        "maximum_forward_adjoint_coordinate_mismatch_m": 4.235164736271502e-22,
+        "maximum_field_index_detail_coordinate_mismatch_m": 0.0,
+        "maximum_local_assignment_distance_m": 3.535533905933258e-08,
+        "J_shape": [
+          194392,
+          6561
+        ],
+        "J_nnz": 53960,
+        "maximum_J_nonzeros_per_Yee_sample": 4,
+        "active_J_row_count": 49200
+      },
+      "z": {
+        "shape": [
+          47,
+          47,
+          88
+        ],
+        "coordinate_bounds_m": {
+          "x": [
+            -1.1500000000000025e-06,
+            1.1499999999999958e-06
+          ],
+          "y": [
+            -1.1500000000000025e-06,
+            1.1499999999999958e-06
+          ],
+          "z": [
+            -1.4490315573717822e-07,
+            7.943014705882354e-07
+          ]
+        },
+        "maximum_forward_adjoint_coordinate_mismatch_m": 4.235164736271502e-22,
+        "maximum_field_index_detail_coordinate_mismatch_m": 0.0,
+        "maximum_local_assignment_distance_m": 5.390484668027487e-21,
+        "J_shape": [
+          194392,
+          6561
+        ],
+        "J_nnz": 48749,
+        "maximum_J_nonzeros_per_Yee_sample": 1,
+        "active_J_row_count": 48749
+      }
+    }
+  },
+  "maximum_coordinate_mismatch_m": 4.235164736271502e-22,
+  "completed_vs_layout_index_detail_epsilon_max_abs_error": 0.0,
+  "baseline_layout_roundtrip_epsilon_max_abs_error": 0.0,
+  "directions": {
+    "uniform": {
+      "direction_sha256": "ec3a15fac11ba86c71bddae5f930e2812d46b1d11c1415e006a89e3502cab481",
+      "mapping_only_centered_FD_step": 1e-05,
+      "mapping_only_FD_relative_error": 5.7856417796605103e-11,
+      "JVP_VJP_dot_relative_error": 2.1208359099401053e-15,
+      "clipping": false,
+      "Maxwell_solves": 0
+    },
+    "smooth_asymmetric": {
+      "direction_sha256": "6187218128770ea4255cec5e0be5696b748e4c364afabe5f2c773faef4a2b0d8",
+      "mapping_only_centered_FD_step": 1e-05,
+      "mapping_only_FD_relative_error": 7.994460694225535e-11,
+      "JVP_VJP_dot_relative_error": 8.814659421179926e-15,
+      "clipping": false,
+      "Maxwell_solves": 0
+    },
+    "central_localized": {
+      "direction_sha256": "96c5e3f898b13a4b517b84ede1e151911dd7811e1933047f3e72ef7e3da99a8e",
+      "mapping_only_centered_FD_step": 1e-05,
+      "mapping_only_FD_relative_error": 2.6293136730520924e-10,
+      "JVP_VJP_dot_relative_error": 0.0,
+      "clipping": false,
+      "Maxwell_solves": 0
+    },
+    "design_edge_localized": {
+      "direction_sha256": "ff0ed542b5d48cc00e2f15f6818cd95a0ba73903de8a8a7b697c505e704003b4",
+      "mapping_only_centered_FD_step": 1e-05,
+      "mapping_only_FD_relative_error": 2.2388580117091238e-10,
+      "JVP_VJP_dot_relative_error": 8.855235323266684e-16,
+      "clipping": false,
+      "Maxwell_solves": 0
+    },
+    "fixed_seed_random": {
+      "direction_sha256": "9ec93a29a2526d6b062130af64500560a783a956cbea70e9d7671eb4c7224538",
+      "mapping_only_centered_FD_step": 1e-05,
+      "mapping_only_FD_relative_error": 1.5950869078241348e-10,
+      "JVP_VJP_dot_relative_error": 1.0430607241784107e-15,
+      "clipping": false,
+      "Maxwell_solves": 0
+    }
+  },
+  "gates": {
+    "worst_mapping_only_FD_relative_error": 2.6293136730520924e-10,
+    "mapping_only_FD_limit": 1e-08,
+    "worst_JVP_VJP_dot_relative_error": 8.814659421179926e-15,
+    "dot_limit": 1e-12,
+    "coordinate_mismatch_limit_m": 2e-18
+  },
+  "next_gate": "OPTICAL_DZ_DOWNSTREAM_PTE_AND_GRADIENT_CONVERGENCE",
+  "gray_law_sensitivity_run": false,
+  "full_latent_adfd_run": false,
+  "optimization_run": false
+}

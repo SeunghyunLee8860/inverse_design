@@ -1,0 +1,56 @@
+{
+  "status": "VALIDATED_MATCHED_RHO05_CPU_TFSF_FORWARD",
+  "solver_status": "VALIDATED_LARGE_BACKGROUND_FORWARD_Q_CLOSURE",
+  "case": "gray",
+  "rho": 0.5,
+  "periodic_or_bloch": false,
+  "engine": "CPU_TFSF_FORWARD",
+  "thermal_run": false,
+  "adjoint_run": false,
+  "finite_difference_run": false,
+  "optimization_run": false,
+  "outer_bounds_m": {
+    "x": [-3.6e-06, 3.6e-06],
+    "y": [-3.6e-06, 3.6e-06],
+    "z": [-3.6e-06, 3.3999999999999996e-06]
+  },
+  "realized_pml_inner_bounds_m": {
+    "x": [-2.0000000000000016e-06, 1.9999999999999953e-06],
+    "y": [-2.0000000000000016e-06, 1.9999999999999953e-06],
+    "z": [-2.0114285714285744e-06, 1.8117647058823516e-06]
+  },
+  "pml_layers": 32,
+  "pml_profile": "stabilized-xy",
+  "pml_profile_matrix_readback": [[2.0], [2.0], [2.0], [2.0], [1.0], [1.0]],
+  "flake_dz_m": 2.5e-09,
+  "transverse_mesh_m": 5e-08,
+  "source_intensity_W_m2": 0.9990759709401064,
+  "source_intensity_relative_error": 0.0009240290598936385,
+  "P_Q_W": 1.6887880194040323e-12,
+  "P_six_W": 1.6893345559747856e-12,
+  "six_face_closure_relative_error": 0.00032352180852533735,
+  "component_power_W": {
+    "Qx": 1.6885593488584841e-12,
+    "Qy": 2.286705455481133e-16,
+    "Qz": 0.0
+  },
+  "dominant_Qx_hotspot_m": {
+    "x": 2.4999999999996717e-08,
+    "y": -3.282252670610414e-21,
+    "z": -2.4999999999999314e-09
+  },
+  "dominant_Qx_hotspot_W_m3": 6625457.662100932,
+  "roi_field_x_reflection_NRMSE": 4.560573437803035e-07,
+  "roi_field_y_reflection_NRMSE": 4.457018082047555e-07,
+  "run_wall_s": 583.9737408906221,
+  "total_wall_s": 590.5969020240009,
+  "wall_time_classification": "contended_reference_only",
+  "forbidden_operations_absent": [
+    "clipping",
+    "smoothing",
+    "gain",
+    "global_rescaling",
+    "tiling",
+    "old_artifact_crop"
+  ]
+}

@@ -1,0 +1,434 @@
+{
+  "status": "ROBUST_MAXWELL_REVERSAL",
+  "primary_classification_precedence": [
+    "NUMERICAL_GATE_FAILED",
+    "CONTACT_OPTICAL_SCATTERING_DOMINANT",
+    "POSITION_SENSITIVE_REVERSAL",
+    "ROBUST_MAXWELL_REVERSAL",
+    "ANALYTIC_MAXWELL_SOURCE_MISMATCH"
+  ],
+  "secondary_diagnostics": {
+    "analytic_maxwell_source_mismatch": true,
+    "all_three_positions_Maxwell_ratio_gt_1_both_metal_bounds": true,
+    "ratio_crosses_one_within_plus_minus_1um": false
+  },
+  "numerical_gates": {
+    "all_thermal_domains_match_immutable_s0_60um": true,
+    "all_mapping_error_lt_0p5percent": true,
+    "all_residual_lt_1e_8": true,
+    "all_energy_balance_lt_1percent": true,
+    "all_weighting_gates_passed": true,
+    "all_cases_completed": true
+  },
+  "optical_status": "VALIDATED_DEVICE_A_THREE_POSITION_OPTICAL_GATE",
+  "thermal_contract": {
+    "lateral_domain_um": 60.0,
+    "Si_depth_um": 20.0,
+    "core_xy_cell_size_nm": 100.0,
+    "flake_dz_nm": 10.0,
+    "same_as_immutable_s0": true
+  },
+  "Maxwell_ratios": {
+    "isolated": {
+      "sminus1": {
+        "signed_s_from_edge_um": 2.000000000000001,
+        "I_a_A": 1.0756687218166239e-08,
+        "I_b_A": 7.087814382757999e-09,
+        "abs_Ia_over_abs_Ib": 1.5176310548331
+      },
+      "s0": {
+        "signed_s_from_edge_um": 3.000000000000001,
+        "I_a_A": 8.072622429764236e-09,
+        "I_b_A": 4.990319469064974e-09,
+        "abs_Ia_over_abs_Ib": 1.6176564405959337
+      },
+      "splus1": {
+        "signed_s_from_edge_um": 4.000000000000001,
+        "I_a_A": 4.940608383785784e-09,
+        "I_b_A": 2.60235551444492e-09,
+        "abs_Ia_over_abs_Ib": 1.898514002549575
+      },
+      "current_change_per_1um": {
+        "a": [
+          -2.6840647884020032e-09,
+          -3.132014045978452e-09
+        ],
+        "b": [
+          -2.097494913693025e-09,
+          -2.387963954620054e-09
+        ]
+      }
+    },
+    "perfect": {
+      "sminus1": {
+        "signed_s_from_edge_um": 2.000000000000001,
+        "I_a_A": 1.1109599793303933e-08,
+        "I_b_A": 7.112114808221645e-09,
+        "abs_Ia_over_abs_Ib": 1.5620669931341904
+      },
+      "s0": {
+        "signed_s_from_edge_um": 3.000000000000001,
+        "I_a_A": 8.196197440488383e-09,
+        "I_b_A": 5.001980469742066e-09,
+        "abs_Ia_over_abs_Ib": 1.6385904523355788
+      },
+      "splus1": {
+        "signed_s_from_edge_um": 4.000000000000001,
+        "I_a_A": 4.79803354918874e-09,
+        "I_b_A": 2.604295111143177e-09,
+        "abs_Ia_over_abs_Ib": 1.842354013052923
+      },
+      "current_change_per_1um": {
+        "a": [
+          -2.91340235281555e-09,
+          -3.3981638912996425e-09
+        ],
+        "b": [
+          -2.1101343384795787e-09,
+          -2.397685358598889e-09
+        ]
+      }
+    }
+  },
+  "analytic_ratios": {
+    "sminus1": 0.6820231351439265,
+    "s0": 0.6823511500412078,
+    "splus1": 0.683383890817379
+  },
+  "paper_digitized_ratio": 0.83659,
+  "paper_digitized_uncertainty": 0.008526,
+  "contact_diagnostic": {
+    "status": "COMPLETED_DEVICE_A_AU_TI_OPTICAL_SCATTERING_DIAGNOSTIC",
+    "not_actual_device_or_paper_reproduction": true,
+    "dominance_threshold_predeclared": 0.1,
+    "dominance_rule": "equal-power TaIrTe4 q2d NRMSE, edge-fraction relative change, and maximum |Ia| relative change must all be at least 10%",
+    "contact_optical_scattering_dominant": false,
+    "spatial_comparison_grid": {
+      "coordinate_grids_identical": false,
+      "common_grid": "Au/Ti-on bounded dual-cell x/y grid",
+      "AuTi_off_exact_overlap_conservative_remap_power_error": 2.1222966300656438e-16,
+      "simple_array_index_pairing_used": false
+    },
+    "metrics": {
+      "AuTi_on": {
+        "raw_total_P_Q_W": 3.1896570934616587e-11,
+        "TaIrTe4_power_W": 3.044497915864199e-11,
+        "component_power_W": {
+          "x": 6.211388778582231e-13,
+          "y": 2.9581043237568596e-11,
+          "z": 2.427970432151604e-13
+        },
+        "edge_band_half_width_um": 1.0,
+        "edge_localized_TaIrTe4_power_fraction": 0.11112058069839897,
+        "six_face_closure": 0.002364303512507055,
+        "auto_shutoff": 9.46101e-06
+      },
+      "AuTi_off": {
+        "raw_total_P_Q_W": 3.153283197513759e-11,
+        "TaIrTe4_power_W": 3.044978936507402e-11,
+        "component_power_W": {
+          "x": 6.354820816961369e-13,
+          "y": 2.976613105871677e-11,
+          "z": 4.817622466111154e-14
+        },
+        "edge_band_half_width_um": 1.0,
+        "edge_localized_TaIrTe4_power_fraction": 0.11039057415390068,
+        "six_face_closure": 0.00011358944611644064,
+        "auto_shutoff": 9.92474e-06
+      }
+    },
+    "equal_power_TaIrTe4_q2d_NRMSE": 0.1331681000370819,
+    "edge_localized_fraction_relative_change": 0.006569499006486176,
+    "terminal_current": {
+      "isolated": {
+        "I_a_on_A": 8.072622429764236e-09,
+        "I_a_off_A": 8.109677989357083e-09,
+        "I_b_baseline_A": 4.990319469064974e-09,
+        "ratio_on": 1.6176564405959337,
+        "ratio_off": 1.625081929048638,
+        "relative_Ia_change": 0.004590275330631288,
+        "relative_ratio_change": 0.004590275330631268
+      },
+      "perfect": {
+        "I_a_on_A": 8.196197440488383e-09,
+        "I_a_off_A": 8.109677989357083e-09,
+        "I_b_baseline_A": 5.001980469742066e-09,
+        "ratio_on": 1.6385904523355788,
+        "ratio_off": 1.6212934133617818,
+        "relative_Ia_change": 0.010556047698888037,
+        "relative_ratio_change": 0.010556047698888085
+      }
+    },
+    "no_raw_Q_rescaling": true,
+    "equal_power_copy_used_only_for_spatial_shape_diagnostic": true
+  },
+  "cases": [
+    {
+      "position_label": "sminus1",
+      "signed_s_from_edge_um": 2.000000000000001,
+      "polarization": "a",
+      "scenario": "isolated",
+      "status": "COMPLETED_DEVICE_A_METAL_ISOLATED_LOWER_BOUND_DIAGNOSTIC",
+      "P_Q_thermal_W": 3.418191522135268e-05,
+      "Tmax_rise_K": 0.2506860133382882,
+      "flake_average_rise_K": 0.023065526901411153,
+      "PTE_current_A": 1.0756687218166239e-08,
+      "PTE_current_nA": 10.756687218166238,
+      "mapping_relative_power_error": 0.0,
+      "linear_residual_relative": 1.0290765879386558e-10,
+      "energy_balance_relative_error": 1.252527491847272e-11,
+      "weighting_gate_passed": true,
+      "summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_sminus1_a_isolated_60um_100nm_20260801/summary.json",
+      "fields_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_sminus1_a_isolated_60um_100nm_20260801/thermal_pte_fields.npz",
+      "thermal_domain_um": 60.0,
+      "Si_depth_um": 20.0,
+      "core_step_nm": 100.0,
+      "flake_dz_nm": 10.0
+    },
+    {
+      "position_label": "sminus1",
+      "signed_s_from_edge_um": 2.000000000000001,
+      "polarization": "b",
+      "scenario": "isolated",
+      "status": "COMPLETED_DEVICE_A_METAL_ISOLATED_LOWER_BOUND_DIAGNOSTIC",
+      "P_Q_thermal_W": 4.646789180139042e-05,
+      "Tmax_rise_K": 0.14608055387379457,
+      "flake_average_rise_K": 0.03142408316722272,
+      "PTE_current_A": 7.087814382757999e-09,
+      "PTE_current_nA": 7.087814382757999,
+      "mapping_relative_power_error": 0.0,
+      "linear_residual_relative": 1.0584164127196303e-10,
+      "energy_balance_relative_error": 1.1527607883161838e-12,
+      "weighting_gate_passed": true,
+      "summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_sminus1_b_isolated_60um_100nm_20260801/summary.json",
+      "fields_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_sminus1_b_isolated_60um_100nm_20260801/thermal_pte_fields.npz",
+      "thermal_domain_um": 60.0,
+      "Si_depth_um": 20.0,
+      "core_step_nm": 100.0,
+      "flake_dz_nm": 10.0
+    },
+    {
+      "position_label": "s0",
+      "signed_s_from_edge_um": 3.000000000000001,
+      "polarization": "a",
+      "scenario": "isolated",
+      "status": "COMPLETED_DEVICE_A_METAL_ISOLATED_LOWER_BOUND_DIAGNOSTIC",
+      "P_Q_thermal_W": 3.67419540543747e-05,
+      "Tmax_rise_K": 0.23039913445368806,
+      "flake_average_rise_K": 0.02485318908289879,
+      "PTE_current_A": 8.072622429764236e-09,
+      "PTE_current_nA": 8.072622429764236,
+      "mapping_relative_power_error": 1.8442850285007043e-16,
+      "linear_residual_relative": 1.0362805775793799e-10,
+      "energy_balance_relative_error": 7.1451290574174305e-12,
+      "weighting_gate_passed": true,
+      "summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_isolated_100nm_20260731_v3/summary.json",
+      "fields_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_isolated_100nm_20260731_v3/thermal_pte_fields.npz",
+      "thermal_domain_um": 60.0,
+      "Si_depth_um": 20.0,
+      "core_step_nm": 100.0,
+      "flake_dz_nm": 10.0
+    },
+    {
+      "position_label": "s0",
+      "signed_s_from_edge_um": 3.000000000000001,
+      "polarization": "b",
+      "scenario": "isolated",
+      "status": "COMPLETED_DEVICE_A_METAL_ISOLATED_LOWER_BOUND_DIAGNOSTIC",
+      "P_Q_thermal_W": 5.0465130243434614e-05,
+      "Tmax_rise_K": 0.1444754661049431,
+      "flake_average_rise_K": 0.03418416877239504,
+      "PTE_current_A": 4.990319469064974e-09,
+      "PTE_current_nA": 4.990319469064974,
+      "mapping_relative_power_error": 0.0,
+      "linear_residual_relative": 1.0692680121363809e-10,
+      "energy_balance_relative_error": 3.3971866850888437e-14,
+      "weighting_gate_passed": true,
+      "summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_isolated_100nm_20260731/summary.json",
+      "fields_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_isolated_100nm_20260731/thermal_pte_fields.npz",
+      "thermal_domain_um": 60.0,
+      "Si_depth_um": 20.0,
+      "core_step_nm": 100.0,
+      "flake_dz_nm": 10.0
+    },
+    {
+      "position_label": "splus1",
+      "signed_s_from_edge_um": 4.000000000000001,
+      "polarization": "a",
+      "scenario": "isolated",
+      "status": "COMPLETED_DEVICE_A_METAL_ISOLATED_LOWER_BOUND_DIAGNOSTIC",
+      "P_Q_thermal_W": 3.900259222946206e-05,
+      "Tmax_rise_K": 0.20649849980837734,
+      "flake_average_rise_K": 0.02644317679408217,
+      "PTE_current_A": 4.940608383785784e-09,
+      "PTE_current_nA": 4.940608383785784,
+      "mapping_relative_power_error": 0.0,
+      "linear_residual_relative": 1.0475948432403881e-10,
+      "energy_balance_relative_error": 3.739380196372297e-12,
+      "weighting_gate_passed": true,
+      "summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_splus1_a_isolated_60um_100nm_20260801/summary.json",
+      "fields_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_splus1_a_isolated_60um_100nm_20260801/thermal_pte_fields.npz",
+      "thermal_domain_um": 60.0,
+      "Si_depth_um": 20.0,
+      "core_step_nm": 100.0,
+      "flake_dz_nm": 10.0
+    },
+    {
+      "position_label": "splus1",
+      "signed_s_from_edge_um": 4.000000000000001,
+      "polarization": "b",
+      "scenario": "isolated",
+      "status": "COMPLETED_DEVICE_A_METAL_ISOLATED_LOWER_BOUND_DIAGNOSTIC",
+      "P_Q_thermal_W": 5.404145380489881e-05,
+      "Tmax_rise_K": 0.14704529394494686,
+      "flake_average_rise_K": 0.03666534852195676,
+      "PTE_current_A": 2.60235551444492e-09,
+      "PTE_current_nA": 2.60235551444492,
+      "mapping_relative_power_error": 0.0,
+      "linear_residual_relative": 1.0590238133871861e-10,
+      "energy_balance_relative_error": 2.30592403472233e-13,
+      "weighting_gate_passed": true,
+      "summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_splus1_b_isolated_60um_100nm_20260801/summary.json",
+      "fields_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_splus1_b_isolated_60um_100nm_20260801/thermal_pte_fields.npz",
+      "thermal_domain_um": 60.0,
+      "Si_depth_um": 20.0,
+      "core_step_nm": 100.0,
+      "flake_dz_nm": 10.0
+    },
+    {
+      "position_label": "sminus1",
+      "signed_s_from_edge_um": 2.000000000000001,
+      "polarization": "a",
+      "scenario": "perfect",
+      "status": "COMPLETED_DEVICE_A_PERFECT_TO_FLAKE_UPPER_BOUND_DIAGNOSTIC",
+      "P_Q_thermal_W": 3.4371590427295495e-05,
+      "Tmax_rise_K": 0.2506956452045244,
+      "flake_average_rise_K": 0.023189166273359787,
+      "PTE_current_A": 1.1109599793303933e-08,
+      "PTE_current_nA": 11.109599793303932,
+      "mapping_relative_power_error": 1.971472222784655e-16,
+      "linear_residual_relative": 1.0181865899659593e-10,
+      "energy_balance_relative_error": 1.718000039101232e-11,
+      "weighting_gate_passed": true,
+      "summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_sminus1_a_perfect_60um_100nm_20260801/summary.json",
+      "fields_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_sminus1_a_perfect_60um_100nm_20260801/thermal_pte_fields.npz",
+      "thermal_domain_um": 60.0,
+      "Si_depth_um": 20.0,
+      "core_step_nm": 100.0,
+      "flake_dz_nm": 10.0
+    },
+    {
+      "position_label": "sminus1",
+      "signed_s_from_edge_um": 2.000000000000001,
+      "polarization": "b",
+      "scenario": "perfect",
+      "status": "COMPLETED_DEVICE_A_PERFECT_TO_FLAKE_UPPER_BOUND_DIAGNOSTIC",
+      "P_Q_thermal_W": 4.647587781451593e-05,
+      "Tmax_rise_K": 0.14608104306173436,
+      "flake_average_rise_K": 0.031429054067817534,
+      "PTE_current_A": 7.112114808221645e-09,
+      "PTE_current_nA": 7.112114808221644,
+      "mapping_relative_power_error": 1.4580173407543373e-16,
+      "linear_residual_relative": 1.0609186876355725e-10,
+      "energy_balance_relative_error": 1.4365844858452487e-12,
+      "weighting_gate_passed": true,
+      "summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_sminus1_b_perfect_60um_100nm_20260801/summary.json",
+      "fields_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_sminus1_b_perfect_60um_100nm_20260801/thermal_pte_fields.npz",
+      "thermal_domain_um": 60.0,
+      "Si_depth_um": 20.0,
+      "core_step_nm": 100.0,
+      "flake_dz_nm": 10.0
+    },
+    {
+      "position_label": "s0",
+      "signed_s_from_edge_um": 3.000000000000001,
+      "polarization": "a",
+      "scenario": "perfect",
+      "status": "COMPLETED_DEVICE_A_PERFECT_TO_FLAKE_UPPER_BOUND_DIAGNOSTIC",
+      "P_Q_thermal_W": 3.694596918264992e-05,
+      "Tmax_rise_K": 0.23040921186082441,
+      "flake_average_rise_K": 0.024986578446378784,
+      "PTE_current_A": 8.196197440488383e-09,
+      "PTE_current_nA": 8.196197440488383,
+      "mapping_relative_power_error": 1.8341009122090054e-16,
+      "linear_residual_relative": 1.0392287405090355e-10,
+      "energy_balance_relative_error": 1.0379360472281984e-11,
+      "weighting_gate_passed": true,
+      "summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_perfect_100nm_20260731/summary.json",
+      "fields_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_a_perfect_100nm_20260731/thermal_pte_fields.npz",
+      "thermal_domain_um": 60.0,
+      "Si_depth_um": 20.0,
+      "core_step_nm": 100.0,
+      "flake_dz_nm": 10.0
+    },
+    {
+      "position_label": "s0",
+      "signed_s_from_edge_um": 3.000000000000001,
+      "polarization": "b",
+      "scenario": "perfect",
+      "status": "COMPLETED_DEVICE_A_PERFECT_TO_FLAKE_UPPER_BOUND_DIAGNOSTIC",
+      "P_Q_thermal_W": 5.047214283838818e-05,
+      "Tmax_rise_K": 0.14447586597206497,
+      "flake_average_rise_K": 0.034188536978839515,
+      "PTE_current_A": 5.001980469742066e-09,
+      "PTE_current_nA": 5.001980469742066,
+      "mapping_relative_power_error": 1.3425749724421256e-16,
+      "linear_residual_relative": 1.0616242451281857e-10,
+      "energy_balance_relative_error": 1.9010861609780495e-13,
+      "weighting_gate_passed": true,
+      "summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_perfect_100nm_20260731/summary.json",
+      "fields_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/thermal_b_perfect_100nm_20260731/thermal_pte_fields.npz",
+      "thermal_domain_um": 60.0,
+      "Si_depth_um": 20.0,
+      "core_step_nm": 100.0,
+      "flake_dz_nm": 10.0
+    },
+    {
+      "position_label": "splus1",
+      "signed_s_from_edge_um": 4.000000000000001,
+      "polarization": "a",
+      "scenario": "perfect",
+      "status": "COMPLETED_DEVICE_A_PERFECT_TO_FLAKE_UPPER_BOUND_DIAGNOSTIC",
+      "P_Q_thermal_W": 3.9225940255663386e-05,
+      "Tmax_rise_K": 0.20650927880962353,
+      "flake_average_rise_K": 0.026589639848316696,
+      "PTE_current_A": 4.79803354918874e-09,
+      "PTE_current_nA": 4.79803354918874,
+      "mapping_relative_power_error": 0.0,
+      "linear_residual_relative": 1.0374655227164791e-10,
+      "energy_balance_relative_error": 6.093222173047112e-12,
+      "weighting_gate_passed": true,
+      "summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_splus1_a_perfect_60um_100nm_20260801/summary.json",
+      "fields_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_splus1_a_perfect_60um_100nm_20260801/thermal_pte_fields.npz",
+      "thermal_domain_um": 60.0,
+      "Si_depth_um": 20.0,
+      "core_step_nm": 100.0,
+      "flake_dz_nm": 10.0
+    },
+    {
+      "position_label": "splus1",
+      "signed_s_from_edge_um": 4.000000000000001,
+      "polarization": "b",
+      "scenario": "perfect",
+      "status": "COMPLETED_DEVICE_A_PERFECT_TO_FLAKE_UPPER_BOUND_DIAGNOSTIC",
+      "P_Q_thermal_W": 5.404771849126927e-05,
+      "Tmax_rise_K": 0.14704564094652556,
+      "flake_average_rise_K": 0.0366692539667051,
+      "PTE_current_A": 2.604295111143177e-09,
+      "PTE_current_nA": 2.604295111143177,
+      "mapping_relative_power_error": 0.0,
+      "linear_residual_relative": 1.0739830759849541e-10,
+      "energy_balance_relative_error": 3.2146296456319087e-13,
+      "weighting_gate_passed": true,
+      "summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_splus1_b_perfect_60um_100nm_20260801/summary.json",
+      "fields_path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_position_scan/thermal_splus1_b_perfect_60um_100nm_20260801/thermal_pte_fields.npz",
+      "thermal_domain_um": 60.0,
+      "Si_depth_um": 20.0,
+      "core_step_nm": 100.0,
+      "flake_dz_nm": 10.0
+    }
+  ],
+  "terminal_current_contract": "full flake-cell volume integral; cell volume multiplied exactly once",
+  "no_empirical_current_normalization_or_polarization_rescaling": true,
+  "no_adjoint_adfd_or_optimization": true
+}

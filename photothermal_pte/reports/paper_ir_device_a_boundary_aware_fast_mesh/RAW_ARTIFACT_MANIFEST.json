@@ -1,0 +1,198 @@
+{
+  "status": "VALIDATED_DEVICE_A_BOUNDARY_AWARE_FAST_MESH",
+  "raw_artifacts_committed_to_git": false,
+  "artifacts": [
+    {
+      "kind": "nested_9um_then_100nm_to_12um_case_result",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_mid100_h12_edge50_h9_dz10_a_gpu5_20260802/case_result.json",
+      "size_bytes": 130400,
+      "sha256": "4102eed96e216bc369d6c7d3966c99bbd88ce5050e7fe168ede8b31fc1455c3f",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_mid100_h12_edge50_h9_dz10_a_gpu5_20260802 --case finite-flake --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --include-electrodes --domain-um 60 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --source-only-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json --execution-contract waist-sensitivity --substrate-optical-model lumerical-palik-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --intermediate-xy-mesh-nm 100 --intermediate-half-span-um 12 --local-xy-mesh-nm 50 --refinement-half-span-um 9 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 5' --threads 3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "nested_9um_then_100nm_to_12um_raw_Q_NPZ",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_mid100_h12_edge50_h9_dz10_a_gpu5_20260802/finite_q_on_artifact.npz",
+      "size_bytes": 503027376,
+      "sha256": "9f46a4f528b949cc22439b7a3292fae8ccd55262afd52b01779a1188f0a99383",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_mid100_h12_edge50_h9_dz10_a_gpu5_20260802 --case finite-flake --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --include-electrodes --domain-um 60 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --source-only-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json --execution-contract waist-sensitivity --substrate-optical-model lumerical-palik-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --intermediate-xy-mesh-nm 100 --intermediate-half-span-um 12 --local-xy-mesh-nm 50 --refinement-half-span-um 9 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 5' --threads 3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "nested_9um_then_100nm_to_12um_raw_FSP",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_mid100_h12_edge50_h9_dz10_a_gpu5_20260802/finite_2um_optical_q.fsp",
+      "size_bytes": 394446048,
+      "sha256": "1b45b01f0a838c849d87f1563a2ab5e92dfc16081badf05069e05959871b356b",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_mid100_h12_edge50_h9_dz10_a_gpu5_20260802 --case finite-flake --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --include-electrodes --domain-um 60 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --source-only-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json --execution-contract waist-sensitivity --substrate-optical-model lumerical-palik-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --intermediate-xy-mesh-nm 100 --intermediate-half-span-um 12 --local-xy-mesh-nm 50 --refinement-half-span-um 9 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 5' --threads 3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "nested_9um_then_100nm_to_12um_native_Yee_coordinates",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_mid100_h12_edge50_h9_dz10_a_gpu5_20260802/native_yee_mesh_coordinates.npz",
+      "size_bytes": 70467,
+      "sha256": "ac2ad2343d55d8d768c6cf058d85513a3f9615714037dcbea22b53e88ac94b2a",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_mid100_h12_edge50_h9_dz10_a_gpu5_20260802 --case finite-flake --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --include-electrodes --domain-um 60 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --source-only-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json --execution-contract waist-sensitivity --substrate-optical-model lumerical-palik-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --intermediate-xy-mesh-nm 100 --intermediate-half-span-um 12 --local-xy-mesh-nm 50 --refinement-half-span-um 9 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 5' --threads 3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "boundary_following_230_boxes_case_result",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_h9_boundary50_w0p4_I1e3_dz10_a_gpu3_20260802/case_result.json",
+      "size_bytes": 1634225,
+      "sha256": "1185253ba8204c7e4ba3fe35f49ee480a21e8be881ff7c2e35ea7840229524e9",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_h9_boundary50_w0p4_I1e3_dz10_a_gpu3_20260802 --case finite-flake --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --include-electrodes --domain-um 60 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --source-only-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json --execution-contract waist-sensitivity --substrate-optical-model lumerical-palik-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --intermediate-xy-mesh-nm 100 --intermediate-half-span-um 12 --local-xy-mesh-nm 50 --refinement-half-span-um 9 --boundary-following-fine-mesh --boundary-mesh-half-width-um 0.4 --boundary-mesh-segment-length-um 0.5 --boundary-mesh-min-relative-intensity 1e-3 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 3' --threads 3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "boundary_following_230_boxes_raw_Q_NPZ",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_h9_boundary50_w0p4_I1e3_dz10_a_gpu3_20260802/finite_q_on_artifact.npz",
+      "size_bytes": 753802938,
+      "sha256": "705c2bfa471c9c74b24061015657997958dca0fb427bc4e2f66c374f1bc98beb",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_h9_boundary50_w0p4_I1e3_dz10_a_gpu3_20260802 --case finite-flake --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --include-electrodes --domain-um 60 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --source-only-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json --execution-contract waist-sensitivity --substrate-optical-model lumerical-palik-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --intermediate-xy-mesh-nm 100 --intermediate-half-span-um 12 --local-xy-mesh-nm 50 --refinement-half-span-um 9 --boundary-following-fine-mesh --boundary-mesh-half-width-um 0.4 --boundary-mesh-segment-length-um 0.5 --boundary-mesh-min-relative-intensity 1e-3 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 3' --threads 3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "boundary_following_230_boxes_raw_FSP",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_h9_boundary50_w0p4_I1e3_dz10_a_gpu3_20260802/finite_2um_optical_q.fsp",
+      "size_bytes": 586764690,
+      "sha256": "b9fdb559209f638b7ad726fb284b926430891e65cce3cfff48c1bddf561d8845",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_h9_boundary50_w0p4_I1e3_dz10_a_gpu3_20260802 --case finite-flake --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --include-electrodes --domain-um 60 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --source-only-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json --execution-contract waist-sensitivity --substrate-optical-model lumerical-palik-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --intermediate-xy-mesh-nm 100 --intermediate-half-span-um 12 --local-xy-mesh-nm 50 --refinement-half-span-um 9 --boundary-following-fine-mesh --boundary-mesh-half-width-um 0.4 --boundary-mesh-segment-length-um 0.5 --boundary-mesh-min-relative-intensity 1e-3 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 3' --threads 3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "boundary_following_230_boxes_native_Yee_coordinates",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_h9_boundary50_w0p4_I1e3_dz10_a_gpu3_20260802/native_yee_mesh_coordinates.npz",
+      "size_bytes": 94714,
+      "sha256": "e124c4144111d2e6188f09e645c7be223dcdb75bc527e430ede86cda86ee722c",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_h9_boundary50_w0p4_I1e3_dz10_a_gpu3_20260802 --case finite-flake --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --include-electrodes --domain-um 60 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --source-only-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json --execution-contract waist-sensitivity --substrate-optical-model lumerical-palik-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --intermediate-xy-mesh-nm 100 --intermediate-half-span-um 12 --local-xy-mesh-nm 50 --refinement-half-span-um 9 --boundary-following-fine-mesh --boundary-mesh-half-width-um 0.4 --boundary-mesh-segment-length-um 0.5 --boundary-mesh-min-relative-intensity 1e-3 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 3' --threads 3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "anisotropic_rectangle_x9_y12_case_result",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_x9_y12_dz10_a_gpu2_retry1_20260802/case_result.json",
+      "size_bytes": 132352,
+      "sha256": "c0e358b718b4f28da6f921eec3a34a7dcc20ddb719e9c1dca7f814208eb0125a",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_x9_y12_dz10_a_gpu2_retry1_20260802 --case finite-flake --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --include-electrodes --domain-um 60 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --source-only-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json --execution-contract waist-sensitivity --substrate-optical-model lumerical-palik-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --intermediate-xy-mesh-nm 100 --intermediate-half-span-um 12 --local-xy-mesh-nm 50 --refinement-half-span-um 9 --refinement-y-half-span-um 12 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 2' --threads 3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "anisotropic_rectangle_x9_y12_raw_Q_NPZ",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_x9_y12_dz10_a_gpu2_retry1_20260802/finite_q_on_artifact.npz",
+      "size_bytes": 568946180,
+      "sha256": "b30c1f09db4dbfa57244b822ba8c630e8e93cd0c84fcdb9675eb9ccbb5894399",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_x9_y12_dz10_a_gpu2_retry1_20260802 --case finite-flake --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --include-electrodes --domain-um 60 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --source-only-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json --execution-contract waist-sensitivity --substrate-optical-model lumerical-palik-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --intermediate-xy-mesh-nm 100 --intermediate-half-span-um 12 --local-xy-mesh-nm 50 --refinement-half-span-um 9 --refinement-y-half-span-um 12 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 2' --threads 3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "anisotropic_rectangle_x9_y12_raw_FSP",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_x9_y12_dz10_a_gpu2_retry1_20260802/finite_2um_optical_q.fsp",
+      "size_bytes": 445230448,
+      "sha256": "cd537c1c0c1a142ccf778df53ac70cf010acb0631b073fafb5bc8565be7f3143",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_x9_y12_dz10_a_gpu2_retry1_20260802 --case finite-flake --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --include-electrodes --domain-um 60 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --source-only-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json --execution-contract waist-sensitivity --substrate-optical-model lumerical-palik-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --intermediate-xy-mesh-nm 100 --intermediate-half-span-um 12 --local-xy-mesh-nm 50 --refinement-half-span-um 9 --refinement-y-half-span-um 12 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 2' --threads 3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "anisotropic_rectangle_x9_y12_native_Yee_coordinates",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_x9_y12_dz10_a_gpu2_retry1_20260802/native_yee_mesh_coordinates.npz",
+      "size_bytes": 74240,
+      "sha256": "81947fccbaee4387ac431d1bf2ead2add12a6fd51ade2b171e21fdad5430e95d",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_x9_y12_dz10_a_gpu2_retry1_20260802 --case finite-flake --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --include-electrodes --domain-um 60 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --source-only-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json --execution-contract waist-sensitivity --substrate-optical-model lumerical-palik-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --intermediate-xy-mesh-nm 100 --intermediate-half-span-um 12 --local-xy-mesh-nm 50 --refinement-half-span-um 9 --refinement-y-half-span-um 12 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 2' --threads 3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "reference_square_x12_y12_case_result",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h12_dz10_a_gpu5_20260802/case_result.json",
+      "size_bytes": 128692,
+      "sha256": "dd5ee21bc2dad98efff11cc9ca363193edaa91438b78b9d1b2686698136b6aa8",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h12_dz10_a_gpu5_20260802 --case finite-flake --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --include-electrodes --domain-um 60 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --source-only-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json --execution-contract waist-sensitivity --substrate-optical-model lumerical-palik-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --local-xy-mesh-nm 50 --refinement-half-span-um 12 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 5' --threads 3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "reference_square_x12_y12_raw_Q_NPZ",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h12_dz10_a_gpu5_20260802/finite_q_on_artifact.npz",
+      "size_bytes": 606456298,
+      "sha256": "993528c2f64205bc4265bb0e96314ad48975287d711d5329f5f424f7b3265a2f",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h12_dz10_a_gpu5_20260802 --case finite-flake --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --include-electrodes --domain-um 60 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --source-only-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json --execution-contract waist-sensitivity --substrate-optical-model lumerical-palik-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --local-xy-mesh-nm 50 --refinement-half-span-um 12 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 5' --threads 3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "reference_square_x12_y12_raw_FSP",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h12_dz10_a_gpu5_20260802/finite_2um_optical_q.fsp",
+      "size_bytes": 475970725,
+      "sha256": "bc1de33c3df57b7db3361ee19f07f6a7e72777c0d181266e7dc88a2ffcd25fd7",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h12_dz10_a_gpu5_20260802 --case finite-flake --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --include-electrodes --domain-um 60 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --source-only-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json --execution-contract waist-sensitivity --substrate-optical-model lumerical-palik-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --local-xy-mesh-nm 50 --refinement-half-span-um 12 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 5' --threads 3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "reference_square_x12_y12_native_Yee_coordinates",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h12_dz10_a_gpu5_20260802/native_yee_mesh_coordinates.npz",
+      "size_bytes": 76523,
+      "sha256": "e522febbd049d8801cf20b05903314e45564e8abb8fbcf2616f01999742f4504",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h12_dz10_a_gpu5_20260802 --case finite-flake --polarization a --geometry device-a-polygon --device-a-geometry-json photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json --include-electrodes --domain-um 60 --source-span-um 50 --waist-um 8.75 --source-object-waist-um 8.610602974768 --source-only-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_waist_sweep/source_w8p75_calibrated_gpu0_4ps_20260801/source_only_case_result.json --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_device_a_mesh_validation/empty_acc4_outer200_fine100_h12_a_gpu2_20260802/case_result.json --execution-contract waist-sensitivity --substrate-optical-model lumerical-palik-11um --matched-lossy-control-volume --pml-layers 24 --flake-dz-nm 10 --mesh-accuracy 3 --outer-local-xy-mesh-nm 200 --local-xy-mesh-nm 50 --refinement-half-span-um 12 --simulation-time-ps 4 --auto-shutoff-min 1e-5 --epsilon-c-model paper-b-closure --gpu-device 'GPU 5' --threads 3",
+      "committed_to_git": false
+    },
+    {
+      "kind": "nested_mapping_summary",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/material_overlap_candidate_core100_dz10_20260802/material_overlap_mapping_summary.json",
+      "size_bytes": 5047,
+      "sha256": "698cc84c67ec844cd3b6313fecbfbaf551bb0642a9c108cec8f972f5fc2f6bd1",
+      "generation_command": "run_device_a_explicit_thermal_pte.py --mapping-only --q-source TaIrTe4-only --core-step-nm 100 --flake-dz-nm 10",
+      "committed_to_git": false
+    },
+    {
+      "kind": "nested_mapped_Q_NPZ",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/material_overlap_candidate_core100_dz10_20260802/material_overlap_mapped_q.npz",
+      "size_bytes": 6836356,
+      "sha256": "c386a150db78d40e81360e7c98c4db7c7df1cbd8ed253b27acdc1d7a4b775679",
+      "generation_command": "run_device_a_explicit_thermal_pte.py --mapping-only --q-source TaIrTe4-only --core-step-nm 100 --flake-dz-nm 10",
+      "committed_to_git": false
+    },
+    {
+      "kind": "boxes_mapping_summary",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/material_overlap_boundary_candidate_core100_dz10_20260802/material_overlap_mapping_summary.json",
+      "size_bytes": 5111,
+      "sha256": "af0964cf1f0c96cc2e3bb4479b0fe833de6f1559eefa43e8f0ffc72dab9938ec",
+      "generation_command": "run_device_a_explicit_thermal_pte.py --mapping-only --q-source TaIrTe4-only --core-step-nm 100 --flake-dz-nm 10",
+      "committed_to_git": false
+    },
+    {
+      "kind": "boxes_mapped_Q_NPZ",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/material_overlap_boundary_candidate_core100_dz10_20260802/material_overlap_mapped_q.npz",
+      "size_bytes": 6836880,
+      "sha256": "d448290910221e3c027d76e440d8e3e631aff2747441cde132cddccd16f73d4b",
+      "generation_command": "run_device_a_explicit_thermal_pte.py --mapping-only --q-source TaIrTe4-only --core-step-nm 100 --flake-dz-nm 10",
+      "committed_to_git": false
+    },
+    {
+      "kind": "candidate_mapping_summary",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/material_overlap_x9_y12_candidate_core100_dz10_20260802/material_overlap_mapping_summary.json",
+      "size_bytes": 5066,
+      "sha256": "da3b1331971bfaddd9c44d0c07e00971bec02a9946d7715d1aad3be59bbb2ef5",
+      "generation_command": "run_device_a_explicit_thermal_pte.py --mapping-only --q-source TaIrTe4-only --core-step-nm 100 --flake-dz-nm 10",
+      "committed_to_git": false
+    },
+    {
+      "kind": "candidate_mapped_Q_NPZ",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/material_overlap_x9_y12_candidate_core100_dz10_20260802/material_overlap_mapped_q.npz",
+      "size_bytes": 6836100,
+      "sha256": "4b3e0cc38d0b6f18ebfa5a05d0cb16bec6ff2675cdf5c22faf04923930f870e0",
+      "generation_command": "run_device_a_explicit_thermal_pte.py --mapping-only --q-source TaIrTe4-only --core-step-nm 100 --flake-dz-nm 10",
+      "committed_to_git": false
+    },
+    {
+      "kind": "reference_mapping_summary",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/material_overlap_reference_core100_dz10_20260802/material_overlap_mapping_summary.json",
+      "size_bytes": 5034,
+      "sha256": "ba7f28f39339d61e1cf6c36b6978e6f81728f09464d6929e14ebd14b0740b234",
+      "generation_command": "run_device_a_explicit_thermal_pte.py --mapping-only --q-source TaIrTe4-only --core-step-nm 100 --flake-dz-nm 10",
+      "committed_to_git": false
+    },
+    {
+      "kind": "reference_mapped_Q_NPZ",
+      "server_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/material_overlap_reference_core100_dz10_20260802/material_overlap_mapped_q.npz",
+      "size_bytes": 6836401,
+      "sha256": "ca16aa9bd6b610c938650fd8305b0553fbe1efe3ee22cf90bad0522446e3c9ea",
+      "generation_command": "run_device_a_explicit_thermal_pte.py --mapping-only --q-source TaIrTe4-only --core-step-nm 100 --flake-dz-nm 10",
+      "committed_to_git": false
+    }
+  ]
+}

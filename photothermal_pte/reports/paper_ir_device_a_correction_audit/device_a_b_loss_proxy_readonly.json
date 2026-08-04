@@ -1,0 +1,181 @@
+{
+  "status": "EXTRACTED_DEVICE_A_EFFECTIVE_LOSS_PROXY_READ_ONLY",
+  "scope": "saved FSP load/getdata only; no FDTD run, runanalysis, thermal, PTE, adjoint, or optimization",
+  "case": {
+    "directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_b_gpu0_20260802",
+    "fsp_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_b_gpu0_20260802/finite_2um_optical_q.fsp",
+    "fsp_size_bytes": 468719090,
+    "fsp_sha256": "2a2b4c06e5c7d9731e238c06a14b13da0d20a9927548f7697d83773a5a6af632",
+    "case_result_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_b_gpu0_20260802/case_result.json",
+    "case_result_sha256": "6048fa14714035a5d78d95f4855b33ac9e97a033229826c86b329e066b02d149",
+    "polarization": "b",
+    "normalization_scale_to_1_W_m2": 972.1121869646984
+  },
+  "axis_mapping": "x=b, y=a, z=c",
+  "components": {
+    "x": {
+      "shape": [
+        471,
+        532,
+        31
+      ],
+      "field_index_coordinate_mismatch_m": {
+        "x": 5.082197683525802e-21,
+        "y": 5.082197683525802e-21,
+        "z": 5.293955920339377e-23
+      },
+      "maximum_coordinate_mismatch_m": 5.082197683525802e-21,
+      "requested_bulk_TaIrTe4_epsilon": {
+        "real": 13.268037363253786,
+        "imag": 26.181833754366604
+      },
+      "loss_proxy_definition": "Im(epsilon_eff_component)/Im(epsilon_bulk_TaIrTe4_component)",
+      "loss_proxy_status": "DIAGNOSTIC_ONLY_NOT_OCCUPANCY_NOT_CERTIFIED_POWER_FRACTION",
+      "loss_proxy_all_cells": {
+        "count": 7767732,
+        "minimum": 0.0,
+        "median": 0.025086277582571072,
+        "maximum": 46.47736253172192
+      },
+      "loss_proxy_center_support_cells": {
+        "count": 2079961,
+        "minimum": 0.004097412842053864,
+        "median": 1.000002443945912,
+        "maximum": 1.000002443945912
+      },
+      "fractional_proxy_cell_count": 1932612,
+      "proxy_below_zero_cell_count": 0,
+      "proxy_above_one_cell_count": 2087771,
+      "proxy_above_one_plus_1e_minus_3_cell_count": 183624,
+      "proxy_below_zero_range": {
+        "count": 0,
+        "minimum": null,
+        "median": null,
+        "maximum": null
+      },
+      "proxy_above_one_range": {
+        "count": 2087771,
+        "minimum": 1.000002443945912,
+        "median": 1.000002443945912,
+        "maximum": 46.47736253172192
+      },
+      "native_raw_effective_loss_power_W": 2.7937298015018005e-14,
+      "native_exact_center_support_power_W": 2.6827681034615575e-14,
+      "native_proxy_weighted_power_W_diagnostic_only": 2.7383201611097156e-14,
+      "at_1_W_m2_raw_effective_loss_power_W": 2.7158187871263678e-11,
+      "at_1_W_m2_exact_center_support_power_W": 2.6079515681751507e-11,
+      "at_1_W_m2_proxy_weighted_power_W_diagnostic_only": 2.6619544004258907e-11,
+      "warning": "multiplying Q by this proxy can double-count conformal mixing because Q already contains Im(epsilon_eff); this number is not used as a thermal source"
+    },
+    "y": {
+      "shape": [
+        471,
+        532,
+        31
+      ],
+      "field_index_coordinate_mismatch_m": {
+        "x": 5.082197683525802e-21,
+        "y": 5.082197683525802e-21,
+        "z": 5.293955920339377e-23
+      },
+      "maximum_coordinate_mismatch_m": 5.082197683525802e-21,
+      "requested_bulk_TaIrTe4_epsilon": {
+        "real": -42.95829851187622,
+        "imag": 204.51166710431656
+      },
+      "loss_proxy_definition": "Im(epsilon_eff_component)/Im(epsilon_bulk_TaIrTe4_component)",
+      "loss_proxy_status": "DIAGNOSTIC_ONLY_NOT_OCCUPANCY_NOT_CERTIFIED_POWER_FRACTION",
+      "loss_proxy_all_cells": {
+        "count": 7767732,
+        "minimum": 0.0,
+        "median": 0.0032115759383436497,
+        "maximum": 5.8826131004811595
+      },
+      "loss_proxy_center_support_cells": {
+        "count": 2072291,
+        "minimum": 4.6977621502645044e-05,
+        "median": 1.0000047491441357,
+        "maximum": 1.0000047491441357
+      },
+      "fractional_proxy_cell_count": 1967474,
+      "proxy_below_zero_cell_count": 0,
+      "proxy_above_one_cell_count": 2054806,
+      "proxy_above_one_plus_1e_minus_3_cell_count": 144771,
+      "proxy_below_zero_range": {
+        "count": 0,
+        "minimum": null,
+        "median": null,
+        "maximum": null
+      },
+      "proxy_above_one_range": {
+        "count": 2054806,
+        "minimum": 1.0000047491441357,
+        "median": 1.0000047491441357,
+        "maximum": 5.8826131004811595
+      },
+      "native_raw_effective_loss_power_W": 6.360146208615022e-17,
+      "native_exact_center_support_power_W": 5.889361666570272e-17,
+      "native_proxy_weighted_power_W_diagnostic_only": 6.02288302979732e-17,
+      "at_1_W_m2_raw_effective_loss_power_W": 6.182775640271983e-14,
+      "at_1_W_m2_exact_center_support_power_W": 5.725120249515688e-14,
+      "at_1_W_m2_proxy_weighted_power_W_diagnostic_only": 5.85491799392884e-14,
+      "warning": "multiplying Q by this proxy can double-count conformal mixing because Q already contains Im(epsilon_eff); this number is not used as a thermal source"
+    },
+    "z": {
+      "shape": [
+        471,
+        532,
+        31
+      ],
+      "field_index_coordinate_mismatch_m": {
+        "x": 5.082197683525802e-21,
+        "y": 5.082197683525802e-21,
+        "z": 5.293955920339377e-23
+      },
+      "maximum_coordinate_mismatch_m": 5.082197683525802e-21,
+      "requested_bulk_TaIrTe4_epsilon": {
+        "real": 13.268037363253786,
+        "imag": 26.181833754366604
+      },
+      "loss_proxy_definition": "Im(epsilon_eff_component)/Im(epsilon_bulk_TaIrTe4_component)",
+      "loss_proxy_status": "DIAGNOSTIC_ONLY_NOT_OCCUPANCY_NOT_CERTIFIED_POWER_FRACTION",
+      "loss_proxy_all_cells": {
+        "count": 7767732,
+        "minimum": 0.0,
+        "median": 0.0,
+        "maximum": 45.95029604862752
+      },
+      "loss_proxy_center_support_cells": {
+        "count": 2075671,
+        "minimum": 3.229262378220547e-05,
+        "median": 1.000002443945912,
+        "maximum": 1.000002443945912
+      },
+      "fractional_proxy_cell_count": 1742880,
+      "proxy_below_zero_cell_count": 0,
+      "proxy_above_one_cell_count": 2060388,
+      "proxy_above_one_plus_1e_minus_3_cell_count": 153108,
+      "proxy_below_zero_range": {
+        "count": 0,
+        "minimum": null,
+        "median": null,
+        "maximum": null
+      },
+      "proxy_above_one_range": {
+        "count": 2060388,
+        "minimum": 1.000002443945912,
+        "median": 1.000002443945912,
+        "maximum": 45.95029604862752
+      },
+      "native_raw_effective_loss_power_W": 5.648614722344961e-17,
+      "native_exact_center_support_power_W": 2.4658119018352077e-17,
+      "native_proxy_weighted_power_W_diagnostic_only": 2.5375933380151203e-17,
+      "at_1_W_m2_raw_effective_loss_power_W": 5.4910872110597526e-14,
+      "at_1_W_m2_exact_center_support_power_W": 2.397045800536606e-14,
+      "at_1_W_m2_proxy_weighted_power_W_diagnostic_only": 2.4668254094449277e-14,
+      "warning": "multiplying Q by this proxy can double-count conformal mixing because Q already contains Im(epsilon_eff); this number is not used as a thermal source"
+    }
+  },
+  "maximum_field_index_coordinate_mismatch_m": 5.082197683525802e-21,
+  "thermal_source_promotion": false
+}

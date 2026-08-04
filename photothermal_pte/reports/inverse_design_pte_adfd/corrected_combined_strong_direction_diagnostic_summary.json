@@ -1,0 +1,88 @@
+{
+  "status": "DIAGNOSTIC_PASSED_CORRECTED_COMBINED_STRONG_DIRECTION_ADFD",
+  "passed_full_combined_certificate": false,
+  "strong_direction_gate_passed": true,
+  "scope": "adjoint-aligned direction only; not the five-direction combined physical-rho certificate",
+  "empirical_normalization": false,
+  "gradient_rescaling": false,
+  "raw_result": {
+    "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/corrected_combined_physical_rho_pte_adfd.json",
+    "byte_size": 83539,
+    "sha256": "4b423d5b5f12ded95c6967285df5ec41b71d106d814139945760ff7d5f8c4cb3"
+  },
+  "immutable_pre_plateau_heuristic_result": {
+    "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/strong_only_monotonic_heuristic_result.json",
+    "byte_size": 83997,
+    "sha256": "88a8cafa19a2053d5a2c64fbd88f56805fa2faca67774a2813314931eb78e7ee"
+  },
+  "gates": {
+    "worst_strong_direction_relative_error": 2.427386080185865e-05,
+    "strong_direction_limit": 0.01,
+    "worst_multidirection_normalized_error": 2.4274450036479875e-05,
+    "multidirection_normalized_limit": 0.01,
+    "worst_directional_subspace_gradient_angle_deg": 0.0,
+    "gradient_angle_limit_deg": 1.0,
+    "mapping_transpose_relative_error": 2.98325923857715e-15,
+    "mapping_transpose_limit": 1e-12,
+    "worst_optical_closure_relative_error": 0.00021654605982619456,
+    "optical_closure_limit": 0.005,
+    "worst_Q_mapping_relative_error": 2.386256017732831e-16,
+    "Q_mapping_limit": 0.005,
+    "worst_thermal_energy_balance_relative_error": 3.1763951666150213e-12,
+    "thermal_energy_balance_limit": 0.01,
+    "worst_linear_residual_relative": 1.021352236142191e-11,
+    "linear_residual_limit": 1e-08,
+    "all_h_to_h_over_2_sequences_converged": true
+  },
+  "scenarios": {
+    "4um": {
+      "analytic_directional_A": 1.599423887033223e-15,
+      "steps": [
+        {
+          "step": 0.01,
+          "finite_difference_directional_A": 1.59939755058442e-15,
+          "relative_error": 1.6466209499877618e-05
+        },
+        {
+          "step": 0.005,
+          "finite_difference_directional_A": 1.5994044112449195e-15,
+          "relative_error": 1.217675218027678e-05
+        },
+        {
+          "step": 0.0025,
+          "finite_difference_directional_A": 1.5993896486185328e-15,
+          "relative_error": 2.1406717110991595e-05
+        }
+      ],
+      "strict_monotone_difference_reduction": false,
+      "step_plateau_relative": 9.230077323078983e-06,
+      "step_plateau_relative_limit": 0.001,
+      "coordinate_mismatch_m": 4.235164736271502e-22
+    },
+    "6um": {
+      "analytic_directional_A": 3.883401770622571e-16,
+      "steps": [
+        {
+          "step": 0.01,
+          "finite_difference_directional_A": 3.883325293349138e-16,
+          "relative_error": 1.9693371417711897e-05
+        },
+        {
+          "step": 0.005,
+          "finite_difference_directional_A": 3.883355397924873e-16,
+          "relative_error": 1.1941256773621491e-05
+        },
+        {
+          "step": 0.0025,
+          "finite_difference_directional_A": 3.8833075054685534e-16,
+          "relative_error": 2.427386080185865e-05
+        }
+      ],
+      "strict_monotone_difference_reduction": false,
+      "step_plateau_relative": 1.2332751296787117e-05,
+      "step_plateau_relative_limit": 0.001,
+      "coordinate_mismatch_m": 4.235164736271502e-22
+    }
+  },
+  "next_gate": "CENTRAL_EDGE_SMOOTH_RANDOM_COMBINED_PHYSICAL_RHO_PTE_ADFD"
+}

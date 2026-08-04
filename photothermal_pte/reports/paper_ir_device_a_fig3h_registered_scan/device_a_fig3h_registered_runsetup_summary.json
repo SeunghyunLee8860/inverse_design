@@ -1,0 +1,529 @@
+{
+  "status": "VALIDATED_DEVICE_A_FIG3H_REGISTERED_RUNSETUP_READY_FOR_GPU_PHASE1",
+  "scope": "v261 runsetup/readback only; no Maxwell time stepping",
+  "registration_classification": "EXPLICIT_APPROXIMATION_NOT_STAGE_METROLOGY",
+  "registered_beam_center_code_um": [
+    -16.5625,
+    3.0
+  ],
+  "registered_beam_signed_distance_to_flake_um": 3.081837016574587,
+  "checks": {
+    "contract_built_not_solved": true,
+    "all_pre_run_checks_passed": true,
+    "no_heat_adjoint_gradient_optimization": true,
+    "no_periodic_Q": true,
+    "no_Q_clipping_gain_rescaling": true,
+    "six_PML_no_periodic": true,
+    "domain_matches_selected_64um": true,
+    "source_span_preserved_50um": true,
+    "source_PML_clearance_at_least_0p5um": true,
+    "native_min_xy_step_at_most_50nm": true,
+    "native_min_z_step_at_most_10nm": true,
+    "GPU_resource_configured": true,
+    "finite_contract_built_not_solved": true,
+    "finite_all_pre_run_checks_passed": true,
+    "finite_geometry_is_device_a_polygon": true,
+    "finite_flake_and_electrodes_read_back": true,
+    "finite_frame_matches_empty_reference": true,
+    "finite_GPU_resource_configured": true
+  },
+  "readback": {
+    "solver_version": "8.35.4522",
+    "domain_bounds_m": {
+      "x": [
+        -3.2e-05,
+        3.2e-05
+      ],
+      "y": [
+        -3.2e-05,
+        3.2e-05
+      ],
+      "z": [
+        -3.4150000000000003e-06,
+        1e-05
+      ]
+    },
+    "source_bounds_m": {
+      "x": [
+        -3.0891747237569055e-05,
+        1.910825276243094e-05
+      ],
+      "y": [
+        -2.4999999999999998e-05,
+        2.4999999999999998e-05
+      ],
+      "z": [
+        5e-06,
+        5e-06
+      ]
+    },
+    "source_PML_clearance_m": {
+      "x_min": 1.1082527624309399e-06,
+      "x_max": 1.2891747237569063e-05,
+      "y_min": 7e-06,
+      "y_max": 7e-06
+    },
+    "beam_center_m": [
+      -5.89174723756906e-06,
+      0.0
+    ],
+    "native_mesh": {
+      "x": {
+        "shape": [
+          629
+        ],
+        "bounds_m": [
+          -3.2e-05,
+          3.2e-05
+        ],
+        "minimum_step_m": 4.999999999995378e-08,
+        "median_step_m": 5.000000000000037e-08,
+        "maximum_step_m": 1.994071713801247e-07
+      },
+      "y": {
+        "shape": [
+          691
+        ],
+        "bounds_m": [
+          -3.2e-05,
+          3.2e-05
+        ],
+        "minimum_step_m": 4.999999999996564e-08,
+        "median_step_m": 5.000000000000037e-08,
+        "maximum_step_m": 1.9625934351641877e-07
+      },
+      "z": {
+        "shape": [
+          88
+        ],
+        "bounds_m": [
+          -3.4150000000000003e-06,
+          1e-05
+        ],
+        "minimum_step_m": 9.802631578947347e-09,
+        "median_step_m": 1.6784526220987325e-08,
+        "maximum_step_m": 6.600000000000005e-07
+      }
+    },
+    "native_runsetup_grid_point_count": 38248232,
+    "native_runsetup_cell_count_estimate": 37698840,
+    "empirical_resource_estimate": {
+      "basis": "linear interpolation from completed 67.131579-million-cell nested candidate: 10.505 GiB and 489.597946 s",
+      "estimated_GPU_memory_GiB": 5.89925516573951,
+      "estimated_runtime_s": 274.9417622157024,
+      "estimate_is_not_a_solver_allocation_readback": true
+    },
+    "mesh_override_objects": [
+      {
+        "name": "flake_mesh",
+        "bounds_m": {
+          "x": [
+            -1.4891747237569059e-05,
+            3.1082527624309415e-06
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -2.3000000000000002e-07,
+            1e-07
+          ]
+        },
+        "override_x_mesh": true,
+        "override_y_mesh": true,
+        "override_z_mesh": true,
+        "dz_m": 1e-08,
+        "dx_m": 5.0000000000000004e-08,
+        "dy_m": 5.0000000000000004e-08
+      },
+      {
+        "name": "flake_outer_mesh",
+        "bounds_m": {
+          "x": [
+            -4.906871546961323e-06,
+            2.62483770718232e-05
+          ],
+          "y": [
+            -1.5317955801104973e-05,
+            9.317955801104972e-06
+          ],
+          "z": [
+            -2.3000000000000002e-07,
+            1e-07
+          ]
+        },
+        "override_x_mesh": true,
+        "override_y_mesh": true,
+        "override_z_mesh": true,
+        "dz_m": 1e-08,
+        "dx_m": 2.0000000000000002e-07,
+        "dy_m": 2.0000000000000002e-07
+      },
+      {
+        "name": "flake_intermediate_mesh",
+        "bounds_m": {
+          "x": [
+            -1.789174723756906e-05,
+            6.10825276243094e-06
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -2.3000000000000002e-07,
+            1e-07
+          ]
+        },
+        "override_x_mesh": true,
+        "override_y_mesh": true,
+        "override_z_mesh": true,
+        "dz_m": 1e-08,
+        "dx_m": 1.0000000000000001e-07,
+        "dy_m": 1.0000000000000001e-07
+      }
+    ],
+    "requested_epsilon_at_11um": {
+      "x": {
+        "real": 13.268147712480612,
+        "imag": 26.18179590766738
+      },
+      "y": {
+        "real": -42.96623156686853,
+        "imag": 204.5326948215291
+      },
+      "z": {
+        "real": 13.268147712480612,
+        "imag": 26.18179590766738
+      }
+    },
+    "fitted_epsilon_readback": {
+      "quantity": "complex relative permittivity epsilon_r",
+      "analysis_wavelength_m": 1.1e-05,
+      "fit_frequency_range_Hz": [
+        22711549848484.848,
+        31796169787878.79
+      ],
+      "dt_s": 3.1194273376572034e-17,
+      "axes": {
+        "x": {
+          "requested_epsilon": {
+            "real": 13.268147712480612,
+            "imag": 26.18179590766738
+          },
+          "fitted_epsilon_getfdtdindex": {
+            "real": 13.268022867193153,
+            "imag": 26.18189774135218
+          },
+          "finite_dt_numerical_permittivity": {
+            "real": 13.268037363253846,
+            "imag": 26.1818337543666
+          },
+          "fitted_relative_error_vs_requested": 5.488925786503175e-06,
+          "finite_dt_relative_difference_vs_fitted": 2.2352396399926025e-06
+        },
+        "y": {
+          "requested_epsilon": {
+            "real": -42.96623156686853,
+            "imag": 204.5326948215291
+          },
+          "fitted_epsilon_getfdtdindex": {
+            "real": -42.95858462340635,
+            "imag": 204.51263835970107
+          },
+          "finite_dt_numerical_permittivity": {
+            "real": -42.95829851187618,
+            "imag": 204.5116671043166
+          },
+          "fitted_relative_error_vs_requested": 0.00010270387073674525,
+          "finite_dt_relative_difference_vs_fitted": 4.845155934537599e-06
+        },
+        "z": {
+          "requested_epsilon": {
+            "real": 13.268147712480612,
+            "imag": 26.18179590766738
+          },
+          "fitted_epsilon_getfdtdindex": {
+            "real": 13.268022867193153,
+            "imag": 26.18189774135218
+          },
+          "finite_dt_numerical_permittivity": {
+            "real": 13.268037363253846,
+            "imag": 26.1818337543666
+          },
+          "fitted_relative_error_vs_requested": 5.488925786503175e-06,
+          "finite_dt_relative_difference_vs_fitted": 2.2352396399926025e-06
+        }
+      },
+      "epsilon_z_equals_epsilon_b_contract": true,
+      "fitted_z_vs_x_relative_difference": 0.0,
+      "finite_dt_z_vs_x_relative_difference": 0.0
+    },
+    "substrate_optical_contract": {
+      "model": "paper-kitamura-palik-nk-11um",
+      "SiO2_material": "paper_ir_SiO2_Kitamura_2007_nk_11um",
+      "Si_material": "paper_ir_Si_Palik_nk_11um",
+      "SiO2_provenance": "Kitamura et al., Applied Optics 46, 8118 (2007), doi:10.1364/AO.46.008118; exact 11-um n,k entered in Lumerical's single-frequency (n,k) model",
+      "SiO2_requested_epsilon_at_11um": {
+        "real": 4.051707451517633,
+        "imag": 0.6568047491827695
+      },
+      "SiO2_requested_n_at_11um": {
+        "real": 2.0194436826147366,
+        "imag": 0.16262021932999673
+      },
+      "Si_provenance": "installed Lumerical v261 Palik database raw 11-um n,k, copied into a single-frequency (n,k) model; explicit closure because the TaIrTe4 paper does not identify its Si optical-data source",
+      "Si_requested_n_at_11um": {
+        "real": 3.4212896222169786,
+        "imag": 4.389880310197085e-05
+      },
+      "single_frequency_material_contract": true,
+      "source_centre_wavelength_m": 1.1e-05,
+      "paper_identity_limit": "paper-consistent silica closure and explicit Palik-Si closure, not proof that the authors used this exact Si dataset",
+      "matched_local_absorption_control_volume": true,
+      "raw_Q_contains_all_loss_inside_control_volume": true,
+      "TaIrTe4_only_Q_requires_material_support_decomposition": true,
+      "full_SiO2_Q_control_volume": false,
+      "SiO2_Q_z_mesh_m": null
+    },
+    "finite_device": {
+      "geometry_name": "device-a-polygon",
+      "geometry_source": "approximation digitized from paper Figure 2A, not exact CAD",
+      "flake_vertices_um": [
+        [
+          1.4994820441988956,
+          8.767955801104971
+        ],
+        [
+          25.698377071823202,
+          8.767955801104971
+        ],
+        [
+          25.643128453038674,
+          -14.767955801104971
+        ],
+        [
+          -4.356871546961324,
+          -14.657458563535911
+        ],
+        [
+          -4.356871546961324,
+          -4.602209944751381
+        ],
+        [
+          -2.809910220994473,
+          -2.1712707182320443
+        ],
+        [
+          -2.809910220994473,
+          1.0331491712707175
+        ],
+        [
+          1.4994820441988956,
+          3.3535911602209936
+        ]
+      ],
+      "electrode_material_contract": {
+        "Ti": {
+          "material": "Ti (Titanium) - CRC",
+          "thickness_m": 5e-09,
+          "database_provenance": "Ansys Lumerical v261 built-in CRC sampled-data material; fit range includes 11 um"
+        },
+        "Au": {
+          "material": "Au (Gold) - CRC",
+          "thickness_m": 5e-08,
+          "database_provenance": "Ansys Lumerical v261 built-in CRC sampled-data material; fit range includes 11 um"
+        },
+        "top_polygon_simulation_um": [
+          [
+            -7.174551104972373,
+            14.955801104972373
+          ],
+          [
+            30.89174723756906,
+            14.955801104972373
+          ],
+          [
+            30.89174723756906,
+            8.767955801104971
+          ],
+          [
+            -7.174551104972373,
+            8.767955801104971
+          ]
+        ],
+        "bottom_polygon_simulation_um": [
+          [
+            -7.174551104972373,
+            -14.657458563535911
+          ],
+          [
+            30.89174723756906,
+            -14.657458563535911
+          ],
+          [
+            30.89174723756906,
+            -18.248618784530386
+          ],
+          [
+            -7.174551104972373,
+            -18.248618784530386
+          ]
+        ]
+      },
+      "native_mesh": {
+        "x": {
+          "shape": [
+            628
+          ],
+          "bounds_m": [
+            -3.2e-05,
+            3.2e-05
+          ],
+          "minimum_step_m": 4.999999999995378e-08,
+          "median_step_m": 5.000000000000037e-08,
+          "maximum_step_m": 1.9947633444990777e-07
+        },
+        "y": {
+          "shape": [
+            690
+          ],
+          "bounds_m": [
+            -3.2e-05,
+            3.2e-05
+          ],
+          "minimum_step_m": 4.999999999996564e-08,
+          "median_step_m": 5.000000000000037e-08,
+          "maximum_step_m": 1.9995937601560045e-07
+        },
+        "z": {
+          "shape": [
+            88
+          ],
+          "bounds_m": [
+            -3.4150000000000003e-06,
+            1e-05
+          ],
+          "minimum_step_m": 9.802631578947347e-09,
+          "median_step_m": 1.6784526220987325e-08,
+          "maximum_step_m": 6.600000000000005e-07
+        }
+      },
+      "native_runsetup_cell_count_estimate": 37584261,
+      "empirical_resource_estimate": {
+        "basis": "linear interpolation from completed 67.131579-million-cell nested candidate: 10.505 GiB and 489.597946 s",
+        "estimated_GPU_memory_GiB": 5.881325416239652,
+        "estimated_runtime_s": 274.10612504031684,
+        "estimate_is_not_a_solver_allocation_readback": true
+      },
+      "mesh_override_objects": [
+        {
+          "name": "flake_mesh",
+          "bounds_m": {
+            "x": [
+              -1.4891747237569059e-05,
+              3.1082527624309415e-06
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              -2.3000000000000002e-07,
+              1e-07
+            ]
+          },
+          "override_x_mesh": true,
+          "override_y_mesh": true,
+          "override_z_mesh": true,
+          "dz_m": 1e-08,
+          "dx_m": 5.0000000000000004e-08,
+          "dy_m": 5.0000000000000004e-08
+        },
+        {
+          "name": "flake_outer_mesh",
+          "bounds_m": {
+            "x": [
+              -7.724551104972371e-06,
+              3.1441747237569055e-05
+            ],
+            "y": [
+              -1.8798618784530382e-05,
+              1.5505801104972372e-05
+            ],
+            "z": [
+              -2.3000000000000002e-07,
+              1e-07
+            ]
+          },
+          "override_x_mesh": true,
+          "override_y_mesh": true,
+          "override_z_mesh": true,
+          "dz_m": 1e-08,
+          "dx_m": 2.0000000000000002e-07,
+          "dy_m": 2.0000000000000002e-07
+        },
+        {
+          "name": "flake_intermediate_mesh",
+          "bounds_m": {
+            "x": [
+              -1.789174723756906e-05,
+              6.10825276243094e-06
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              -2.3000000000000002e-07,
+              1e-07
+            ]
+          },
+          "override_x_mesh": true,
+          "override_y_mesh": true,
+          "override_z_mesh": true,
+          "dz_m": 1e-08,
+          "dx_m": 1.0000000000000001e-07,
+          "dy_m": 1.0000000000000001e-07
+        }
+      ],
+      "source_bounds_m": {
+        "x": [
+          -3.0891747237569055e-05,
+          1.910825276243094e-05
+        ],
+        "y": [
+          -2.4999999999999998e-05,
+          2.4999999999999998e-05
+        ],
+        "z": [
+          5e-06,
+          5e-06
+        ]
+      },
+      "flake_bounds_m": {
+        "x": [
+          -4.356871546961324e-06,
+          2.56983770718232e-05
+        ],
+        "y": [
+          -1.4767955801104971e-05,
+          8.767955801104971e-06
+        ],
+        "z": [
+          -1.3000000000000003e-07,
+          0.0
+        ]
+      }
+    }
+  },
+  "execution_scope": {
+    "Maxwell_time_stepping": false,
+    "thermal": false,
+    "PTE": false,
+    "adjoint": false,
+    "AD_FD": false,
+    "optimization": false
+  }
+}

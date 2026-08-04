@@ -1,0 +1,2996 @@
+{
+  "status": "COMPLETED_W12_50NM_MAXWELL_ANALYTIC_EXPLICIT3D_THERMAL_SANITY",
+  "scope": "primary existing-inverse-design explicit-3D FVM comparison of full Maxwell volumetric Q and analytic volumetric Gaussian-Beer-Lambert Q",
+  "not_claimed": [
+    "paper reproduction",
+    "paper-reduced sheet result",
+    "optical 25-nm or 12.5-nm mesh convergence",
+    "PTE or terminal-current prediction"
+  ],
+  "optional_sheet_control": {
+    "status": "preserved separately; not executed as this primary result",
+    "used_by_primary_result": false,
+    "primary_Q_collapsed_to_sheet": false
+  },
+  "optical_mesh_contract": {
+    "lateral_mesh_nm": 50.0,
+    "edge_a_reused": true,
+    "edge_b_GPU_solve_count_for_this_checkpoint": 1,
+    "edge_b_postprocess": "completed FSP reopened read-only with correct b incident reference; no second solve",
+    "25nm_run_for_this_stage": false,
+    "12p5nm_run_for_this_stage": false
+  },
+  "beam": {
+    "reference_artifact": {
+      "role": "empty_stack_target_plane_incident_reference",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_a_L60_xy100_dz5_pml24_t4_gpu4_retry4_20260731/readonly_recovery_v2/incident_reference.npz",
+      "size_bytes": 2016800,
+      "sha256": "7e7af356d51e03e755daf1e2c848c54cc5ccd9581e95af269f408fdcc53aa8cf"
+    },
+    "fit": {
+      "amplitude_over_observed_peak": 1.0009385460615814,
+      "center_x_m": -4.7776404262645316e-14,
+      "center_y_m": 5.8597856964999296e-15,
+      "waist_x_m": 1.205577251069839e-05,
+      "waist_y_m": 1.1951638004295768e-05,
+      "waist_effective_geometric_mean_m": 1.2003592333547783e-05,
+      "fit_success": true,
+      "fit_message": "`ftol` termination condition is satisfied.",
+      "fit_selected_point_count": 155083,
+      "fit_relative_RMS_over_peak": 0.00026544809007421745,
+      "integrated_incident_power_W": 2.9040048234407826e-13,
+      "moment_center_x_m": -1.2822724770981732e-14,
+      "moment_center_y_m": -5.3243308612296e-15,
+      "moment_waist_x_m": 1.2043197999166848e-05,
+      "moment_waist_y_m": 1.1950544060730554e-05
+    },
+    "requested_waist_m": 1.2e-05,
+    "waist_convention": "Lumerical scalar-Gaussian 1/e^2 intensity radius; in the paper form exp(-r^2/(2 sigma^2)), w0=2 sigma",
+    "evidence_scope": "empty-layered-stack downward E/H decomposition at z=+50 nm; the same stored target-plane profile is used by both analytic polarizations"
+  },
+  "same_incident_power": {
+    "physical_incident_power_W": 0.000285,
+    "unit_reference_a_W": 2.2660966664176227e-10,
+    "unit_reference_b_W": 2.2660967441986136e-10,
+    "relative_difference": 3.432377327155657e-08,
+    "polarization_matching_rescaling": false
+  },
+  "optical_inputs": {
+    "a": {
+      "directory": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_20260731",
+      "Q": {
+        "P_Q_W_at_1_W_m2_central_intensity": 2.2554323620511252e-11,
+        "P_six_W_at_1_W_m2_central_intensity": 2.2513910956067724e-11,
+        "six_face_relative_closure": 0.0017950086292153708,
+        "Q_component_power_W_at_1_W_m2": {
+          "x": 2.0147202653818773e-12,
+          "y": 2.047617445047989e-11,
+          "z": 6.342890464948415e-14
+        },
+        "Q_component_fraction": {
+          "x": 0.0893274522118526,
+          "y": 0.9078602752626348,
+          "z": 0.0028122725255126215
+        },
+        "negative_Q_voxel_count": 0,
+        "minimum_Q_W_m3": 0.0,
+        "Q_shape": [
+          984,
+          984,
+          47
+        ],
+        "Q_coordinate_bounds_m": {
+          "x": [
+            -2.7e-05,
+            2.709999999999995e-05
+          ],
+          "y": [
+            -2.7e-05,
+            2.709999999999995e-05
+          ],
+          "z": [
+            -1.800000000000018e-07,
+            5e-08
+          ]
+        },
+        "incident_power_W_at_1_W_m2": 2.2660966664176227e-10,
+        "physical_incident_power_W": 0.000285,
+        "physical_power_scale": 1257669.2081302276,
+        "auto_shutoff_final": 9.93242e-06,
+        "native_field_index_pairing": {
+          "method": "field-detail and index-detail x/y/z plus delta_x/delta_y/delta_z are read separately; no field coordinate is copied into the permittivity contract",
+          "maximum_coordinate_mismatch_m": 6.776263578034403e-21,
+          "all_component_shapes_match": true
+        },
+        "component_specific_Yee_coordinates": {
+          "x": {
+            "field_coordinates": {
+              "x": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.6949999999999998e-05,
+                  2.7149999999999972e-05
+                ],
+                "minimum_step_m": 4.999999999988263e-08,
+                "median_step_m": 5.0000000000001215e-08,
+                "maximum_step_m": 1.0000000000002276e-07
+              },
+              "y": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.7e-05,
+                  2.709999999999995e-05
+                ],
+                "minimum_step_m": 4.999999999977082e-08,
+                "median_step_m": 5.000000000000037e-08,
+                "maximum_step_m": 1.000000000000397e-07
+              },
+              "z": {
+                "shape": [
+                  47
+                ],
+                "bounds_m": [
+                  -1.800000000000018e-07,
+                  5e-08
+                ],
+                "minimum_step_m": 4.999999999999866e-09,
+                "median_step_m": 5.000000000000003e-09,
+                "maximum_step_m": 5.000000000001805e-09
+              }
+            },
+            "permittivity_coordinates": {
+              "x": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.6949999999999998e-05,
+                  2.7149999999999976e-05
+                ],
+                "minimum_step_m": 4.999999999988602e-08,
+                "median_step_m": 5.0000000000001215e-08,
+                "maximum_step_m": 1.0000000000002276e-07
+              },
+              "y": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.7e-05,
+                  2.7099999999999954e-05
+                ],
+                "minimum_step_m": 4.999999999977082e-08,
+                "median_step_m": 5.000000000000037e-08,
+                "maximum_step_m": 1.0000000000004309e-07
+              },
+              "z": {
+                "shape": [
+                  47
+                ],
+                "bounds_m": [
+                  -1.8000000000000177e-07,
+                  5e-08
+                ],
+                "minimum_step_m": 4.999999999999873e-09,
+                "median_step_m": 5.000000000000005e-09,
+                "maximum_step_m": 5.000000000001805e-09
+              }
+            },
+            "field_delta_read_independently": true,
+            "permittivity_delta_read_independently": true,
+            "electric_field_shape": [
+              984,
+              984,
+              47
+            ],
+            "permittivity_shape": [
+              984,
+              984,
+              47
+            ],
+            "field_permittivity_shape_pairing_exact": true,
+            "field_permittivity_coordinate_mismatch_m": {
+              "x": 6.776263578034403e-21,
+              "y": 6.776263578034403e-21,
+              "z": 5.293955920339377e-23
+            },
+            "field_permittivity_maximum_coordinate_mismatch_m": 6.776263578034403e-21,
+            "staggering_axis": "x",
+            "maximum_coordinate_mismatch_from_common_m": {
+              "x": 5.0000000000021544e-08,
+              "y": 0.0,
+              "z": 0.0
+            }
+          },
+          "y": {
+            "field_coordinates": {
+              "x": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.7e-05,
+                  2.709999999999995e-05
+                ],
+                "minimum_step_m": 4.999999999977082e-08,
+                "median_step_m": 5.000000000000037e-08,
+                "maximum_step_m": 1.000000000000397e-07
+              },
+              "y": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.6949999999999998e-05,
+                  2.7149999999999972e-05
+                ],
+                "minimum_step_m": 4.999999999988263e-08,
+                "median_step_m": 5.0000000000001215e-08,
+                "maximum_step_m": 1.0000000000002276e-07
+              },
+              "z": {
+                "shape": [
+                  47
+                ],
+                "bounds_m": [
+                  -1.800000000000018e-07,
+                  5e-08
+                ],
+                "minimum_step_m": 4.999999999999866e-09,
+                "median_step_m": 5.000000000000003e-09,
+                "maximum_step_m": 5.000000000001805e-09
+              }
+            },
+            "permittivity_coordinates": {
+              "x": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.7e-05,
+                  2.7099999999999954e-05
+                ],
+                "minimum_step_m": 4.999999999977082e-08,
+                "median_step_m": 5.000000000000037e-08,
+                "maximum_step_m": 1.0000000000004309e-07
+              },
+              "y": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.6949999999999998e-05,
+                  2.7149999999999976e-05
+                ],
+                "minimum_step_m": 4.999999999988602e-08,
+                "median_step_m": 5.0000000000001215e-08,
+                "maximum_step_m": 1.0000000000002276e-07
+              },
+              "z": {
+                "shape": [
+                  47
+                ],
+                "bounds_m": [
+                  -1.8000000000000177e-07,
+                  5e-08
+                ],
+                "minimum_step_m": 4.999999999999873e-09,
+                "median_step_m": 5.000000000000005e-09,
+                "maximum_step_m": 5.000000000001805e-09
+              }
+            },
+            "field_delta_read_independently": true,
+            "permittivity_delta_read_independently": true,
+            "electric_field_shape": [
+              984,
+              984,
+              47
+            ],
+            "permittivity_shape": [
+              984,
+              984,
+              47
+            ],
+            "field_permittivity_shape_pairing_exact": true,
+            "field_permittivity_coordinate_mismatch_m": {
+              "x": 6.776263578034403e-21,
+              "y": 6.776263578034403e-21,
+              "z": 5.293955920339377e-23
+            },
+            "field_permittivity_maximum_coordinate_mismatch_m": 6.776263578034403e-21,
+            "staggering_axis": "y",
+            "maximum_coordinate_mismatch_from_common_m": {
+              "x": 0.0,
+              "y": 5.0000000000021544e-08,
+              "z": 0.0
+            }
+          },
+          "z": {
+            "field_coordinates": {
+              "x": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.7e-05,
+                  2.709999999999995e-05
+                ],
+                "minimum_step_m": 4.999999999977082e-08,
+                "median_step_m": 5.000000000000037e-08,
+                "maximum_step_m": 1.000000000000397e-07
+              },
+              "y": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.7e-05,
+                  2.709999999999995e-05
+                ],
+                "minimum_step_m": 4.999999999977082e-08,
+                "median_step_m": 5.000000000000037e-08,
+                "maximum_step_m": 1.000000000000397e-07
+              },
+              "z": {
+                "shape": [
+                  47
+                ],
+                "bounds_m": [
+                  -1.775000000000009e-07,
+                  5.250000000000006e-08
+                ],
+                "minimum_step_m": 4.999999999999939e-09,
+                "median_step_m": 5.000000000000002e-09,
+                "maximum_step_m": 5.000000000000905e-09
+              }
+            },
+            "permittivity_coordinates": {
+              "x": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.7e-05,
+                  2.7099999999999954e-05
+                ],
+                "minimum_step_m": 4.999999999977082e-08,
+                "median_step_m": 5.000000000000037e-08,
+                "maximum_step_m": 1.0000000000004309e-07
+              },
+              "y": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.7e-05,
+                  2.7099999999999954e-05
+                ],
+                "minimum_step_m": 4.999999999977082e-08,
+                "median_step_m": 5.000000000000037e-08,
+                "maximum_step_m": 1.0000000000004309e-07
+              },
+              "z": {
+                "shape": [
+                  47
+                ],
+                "bounds_m": [
+                  -1.7750000000000087e-07,
+                  5.250000000000006e-08
+                ],
+                "minimum_step_m": 4.999999999999939e-09,
+                "median_step_m": 5.000000000000005e-09,
+                "maximum_step_m": 5.000000000000905e-09
+              }
+            },
+            "field_delta_read_independently": true,
+            "permittivity_delta_read_independently": true,
+            "electric_field_shape": [
+              984,
+              984,
+              47
+            ],
+            "permittivity_shape": [
+              984,
+              984,
+              47
+            ],
+            "field_permittivity_shape_pairing_exact": true,
+            "field_permittivity_coordinate_mismatch_m": {
+              "x": 6.776263578034403e-21,
+              "y": 6.776263578034403e-21,
+              "z": 5.293955920339377e-23
+            },
+            "field_permittivity_maximum_coordinate_mismatch_m": 6.776263578034403e-21,
+            "staggering_axis": "z",
+            "maximum_coordinate_mismatch_from_common_m": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 2.5000000000009025e-09
+            }
+          }
+        },
+        "contract_checks": {
+          "status_completed": true,
+          "polarization": true,
+          "wavelength_11um": true,
+          "scalar_Gaussian": true,
+          "waist_12um": true,
+          "source_span_50um": true,
+          "domain_60um": true,
+          "six_PML_nonperiodic": true,
+          "flake_thickness_130nm": true,
+          "substrate_285nm_SiO2_on_Si": true,
+          "epsilon_c_equals_b": true,
+          "axis_mapping_x_b_y_a": true,
+          "straight_45_edge": true,
+          "local_xy_50nm": true,
+          "flake_dz_5nm": true,
+          "GPU_only_resource": true,
+          "raw_Q_unmodified": true
+        }
+      },
+      "gates": {
+        "contract_exact": true,
+        "closure_lt_0p5_percent": true,
+        "auto_shutoff_le_1e_minus_5": true,
+        "solver_completed": true,
+        "finite_Q": true,
+        "negative_Q_voxel_count_zero": true,
+        "field_index_shapes_match": true,
+        "field_index_coordinate_mismatch_roundoff": true,
+        "artifact_PQ_matches_result": true,
+        "artifact_Psix_matches_result": true,
+        "all_before_remap": true
+      }
+    },
+    "b": {
+      "directory": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_retry1_20260731/readonly_recovery_b_reference_retry1",
+      "Q": {
+        "P_Q_W_at_1_W_m2_central_intensity": 2.970316252028878e-11,
+        "P_six_W_at_1_W_m2_central_intensity": 2.9694201219411846e-11,
+        "six_face_relative_closure": 0.0003017862245466277,
+        "Q_component_power_W_at_1_W_m2": {
+          "x": 2.9407543223924734e-11,
+          "y": 2.7519247335916763e-13,
+          "z": 2.0426823004879703e-14
+        },
+        "Q_component_fraction": {
+          "x": 0.9900475480965327,
+          "y": 0.00926475331275574,
+          "z": 0.0006876985907115829
+        },
+        "negative_Q_voxel_count": 0,
+        "minimum_Q_W_m3": 0.0,
+        "Q_shape": [
+          984,
+          984,
+          47
+        ],
+        "Q_coordinate_bounds_m": {
+          "x": [
+            -2.7e-05,
+            2.709999999999995e-05
+          ],
+          "y": [
+            -2.7e-05,
+            2.709999999999995e-05
+          ],
+          "z": [
+            -1.800000000000018e-07,
+            5e-08
+          ]
+        },
+        "incident_power_W_at_1_W_m2": 2.2660967441986136e-10,
+        "physical_incident_power_W": 0.000285,
+        "physical_power_scale": 1257669.1649622747,
+        "auto_shutoff_final": 9.7329e-06,
+        "native_field_index_pairing": {
+          "method": "field-detail and index-detail x/y/z plus delta_x/delta_y/delta_z are read separately; no field coordinate is copied into the permittivity contract",
+          "maximum_coordinate_mismatch_m": 6.776263578034403e-21,
+          "all_component_shapes_match": true
+        },
+        "component_specific_Yee_coordinates": {
+          "x": {
+            "field_coordinates": {
+              "x": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.6949999999999998e-05,
+                  2.7149999999999972e-05
+                ],
+                "minimum_step_m": 4.999999999988263e-08,
+                "median_step_m": 5.0000000000001215e-08,
+                "maximum_step_m": 1.0000000000002276e-07
+              },
+              "y": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.7e-05,
+                  2.709999999999995e-05
+                ],
+                "minimum_step_m": 4.999999999977082e-08,
+                "median_step_m": 5.000000000000037e-08,
+                "maximum_step_m": 1.000000000000397e-07
+              },
+              "z": {
+                "shape": [
+                  47
+                ],
+                "bounds_m": [
+                  -1.800000000000018e-07,
+                  5e-08
+                ],
+                "minimum_step_m": 4.999999999999866e-09,
+                "median_step_m": 5.000000000000003e-09,
+                "maximum_step_m": 5.000000000001805e-09
+              }
+            },
+            "permittivity_coordinates": {
+              "x": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.6949999999999998e-05,
+                  2.7149999999999976e-05
+                ],
+                "minimum_step_m": 4.999999999988602e-08,
+                "median_step_m": 5.0000000000001215e-08,
+                "maximum_step_m": 1.0000000000002276e-07
+              },
+              "y": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.7e-05,
+                  2.7099999999999954e-05
+                ],
+                "minimum_step_m": 4.999999999977082e-08,
+                "median_step_m": 5.000000000000037e-08,
+                "maximum_step_m": 1.0000000000004309e-07
+              },
+              "z": {
+                "shape": [
+                  47
+                ],
+                "bounds_m": [
+                  -1.8000000000000177e-07,
+                  5e-08
+                ],
+                "minimum_step_m": 4.999999999999873e-09,
+                "median_step_m": 5.000000000000005e-09,
+                "maximum_step_m": 5.000000000001805e-09
+              }
+            },
+            "field_delta_read_independently": true,
+            "permittivity_delta_read_independently": true,
+            "electric_field_shape": [
+              984,
+              984,
+              47
+            ],
+            "permittivity_shape": [
+              984,
+              984,
+              47
+            ],
+            "field_permittivity_shape_pairing_exact": true,
+            "field_permittivity_coordinate_mismatch_m": {
+              "x": 6.776263578034403e-21,
+              "y": 6.776263578034403e-21,
+              "z": 5.293955920339377e-23
+            },
+            "field_permittivity_maximum_coordinate_mismatch_m": 6.776263578034403e-21,
+            "staggering_axis": "x",
+            "maximum_coordinate_mismatch_from_common_m": {
+              "x": 5.0000000000021544e-08,
+              "y": 0.0,
+              "z": 0.0
+            }
+          },
+          "y": {
+            "field_coordinates": {
+              "x": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.7e-05,
+                  2.709999999999995e-05
+                ],
+                "minimum_step_m": 4.999999999977082e-08,
+                "median_step_m": 5.000000000000037e-08,
+                "maximum_step_m": 1.000000000000397e-07
+              },
+              "y": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.6949999999999998e-05,
+                  2.7149999999999972e-05
+                ],
+                "minimum_step_m": 4.999999999988263e-08,
+                "median_step_m": 5.0000000000001215e-08,
+                "maximum_step_m": 1.0000000000002276e-07
+              },
+              "z": {
+                "shape": [
+                  47
+                ],
+                "bounds_m": [
+                  -1.800000000000018e-07,
+                  5e-08
+                ],
+                "minimum_step_m": 4.999999999999866e-09,
+                "median_step_m": 5.000000000000003e-09,
+                "maximum_step_m": 5.000000000001805e-09
+              }
+            },
+            "permittivity_coordinates": {
+              "x": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.7e-05,
+                  2.7099999999999954e-05
+                ],
+                "minimum_step_m": 4.999999999977082e-08,
+                "median_step_m": 5.000000000000037e-08,
+                "maximum_step_m": 1.0000000000004309e-07
+              },
+              "y": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.6949999999999998e-05,
+                  2.7149999999999976e-05
+                ],
+                "minimum_step_m": 4.999999999988602e-08,
+                "median_step_m": 5.0000000000001215e-08,
+                "maximum_step_m": 1.0000000000002276e-07
+              },
+              "z": {
+                "shape": [
+                  47
+                ],
+                "bounds_m": [
+                  -1.8000000000000177e-07,
+                  5e-08
+                ],
+                "minimum_step_m": 4.999999999999873e-09,
+                "median_step_m": 5.000000000000005e-09,
+                "maximum_step_m": 5.000000000001805e-09
+              }
+            },
+            "field_delta_read_independently": true,
+            "permittivity_delta_read_independently": true,
+            "electric_field_shape": [
+              984,
+              984,
+              47
+            ],
+            "permittivity_shape": [
+              984,
+              984,
+              47
+            ],
+            "field_permittivity_shape_pairing_exact": true,
+            "field_permittivity_coordinate_mismatch_m": {
+              "x": 6.776263578034403e-21,
+              "y": 6.776263578034403e-21,
+              "z": 5.293955920339377e-23
+            },
+            "field_permittivity_maximum_coordinate_mismatch_m": 6.776263578034403e-21,
+            "staggering_axis": "y",
+            "maximum_coordinate_mismatch_from_common_m": {
+              "x": 0.0,
+              "y": 5.0000000000021544e-08,
+              "z": 0.0
+            }
+          },
+          "z": {
+            "field_coordinates": {
+              "x": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.7e-05,
+                  2.709999999999995e-05
+                ],
+                "minimum_step_m": 4.999999999977082e-08,
+                "median_step_m": 5.000000000000037e-08,
+                "maximum_step_m": 1.000000000000397e-07
+              },
+              "y": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.7e-05,
+                  2.709999999999995e-05
+                ],
+                "minimum_step_m": 4.999999999977082e-08,
+                "median_step_m": 5.000000000000037e-08,
+                "maximum_step_m": 1.000000000000397e-07
+              },
+              "z": {
+                "shape": [
+                  47
+                ],
+                "bounds_m": [
+                  -1.775000000000009e-07,
+                  5.250000000000006e-08
+                ],
+                "minimum_step_m": 4.999999999999939e-09,
+                "median_step_m": 5.000000000000002e-09,
+                "maximum_step_m": 5.000000000000905e-09
+              }
+            },
+            "permittivity_coordinates": {
+              "x": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.7e-05,
+                  2.7099999999999954e-05
+                ],
+                "minimum_step_m": 4.999999999977082e-08,
+                "median_step_m": 5.000000000000037e-08,
+                "maximum_step_m": 1.0000000000004309e-07
+              },
+              "y": {
+                "shape": [
+                  984
+                ],
+                "bounds_m": [
+                  -2.7e-05,
+                  2.7099999999999954e-05
+                ],
+                "minimum_step_m": 4.999999999977082e-08,
+                "median_step_m": 5.000000000000037e-08,
+                "maximum_step_m": 1.0000000000004309e-07
+              },
+              "z": {
+                "shape": [
+                  47
+                ],
+                "bounds_m": [
+                  -1.7750000000000087e-07,
+                  5.250000000000006e-08
+                ],
+                "minimum_step_m": 4.999999999999939e-09,
+                "median_step_m": 5.000000000000005e-09,
+                "maximum_step_m": 5.000000000000905e-09
+              }
+            },
+            "field_delta_read_independently": true,
+            "permittivity_delta_read_independently": true,
+            "electric_field_shape": [
+              984,
+              984,
+              47
+            ],
+            "permittivity_shape": [
+              984,
+              984,
+              47
+            ],
+            "field_permittivity_shape_pairing_exact": true,
+            "field_permittivity_coordinate_mismatch_m": {
+              "x": 6.776263578034403e-21,
+              "y": 6.776263578034403e-21,
+              "z": 5.293955920339377e-23
+            },
+            "field_permittivity_maximum_coordinate_mismatch_m": 6.776263578034403e-21,
+            "staggering_axis": "z",
+            "maximum_coordinate_mismatch_from_common_m": {
+              "x": 0.0,
+              "y": 0.0,
+              "z": 2.5000000000009025e-09
+            }
+          }
+        },
+        "contract_checks": {
+          "status_completed": true,
+          "polarization": true,
+          "wavelength_11um": true,
+          "scalar_Gaussian": true,
+          "waist_12um": true,
+          "source_span_50um": true,
+          "domain_60um": true,
+          "six_PML_nonperiodic": true,
+          "flake_thickness_130nm": true,
+          "substrate_285nm_SiO2_on_Si": true,
+          "epsilon_c_equals_b": true,
+          "axis_mapping_x_b_y_a": true,
+          "straight_45_edge": true,
+          "local_xy_50nm": true,
+          "flake_dz_5nm": true,
+          "GPU_only_resource": true,
+          "raw_Q_unmodified": true
+        }
+      },
+      "gates": {
+        "contract_exact": true,
+        "closure_lt_0p5_percent": true,
+        "auto_shutoff_le_1e_minus_5": true,
+        "solver_completed": true,
+        "finite_Q": true,
+        "negative_Q_voxel_count_zero": true,
+        "field_index_shapes_match": true,
+        "field_index_coordinate_mismatch_roundoff": true,
+        "artifact_PQ_matches_result": true,
+        "artifact_Psix_matches_result": true,
+        "all_before_remap": true
+      }
+    }
+  },
+  "Maxwell_mapping": {
+    "a": {
+      "optical_artifact": {
+        "role": "edge_a_raw_Q_NPZ",
+        "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_20260731/finite_q_on_artifact.npz",
+        "size_bytes": 1501854558,
+        "sha256": "36183e802bcc5adcfbe94229492127c4d9e459e937840e3f0e4e1b8f83577961"
+      },
+      "optical_result": {
+        "role": "edge_a_case_result",
+        "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_20260731/case_result.json",
+        "size_bytes": 78343,
+        "sha256": "98c1d99374f68eea332abec20026b11e9e331689f02a2d7c54449234c4b3e1f9"
+      },
+      "incident_power_W": 0.000285,
+      "unit_central_intensity_incident_power_W": 2.2660966664176227e-10,
+      "physical_scale": 1257669.2081302276,
+      "components": {
+        "x": {
+          "source_power_W": 2.5338546476841205e-06,
+          "target_power_W": 2.5338546476841205e-06,
+          "exact_overlap_power_error": 0.0,
+          "final_mapping_power_error": 0.0,
+          "projection": {
+            "outside_support_nonzero_cells_before_projection": 289721,
+            "outside_support_power_W_before_projection": 6.492832005491035e-08,
+            "power_before_W": 2.5338546476841205e-06,
+            "power_after_W": 2.5338546476841205e-06,
+            "relative_power_error": 0.0,
+            "outside_support_nonzero_cells_after_projection": 0,
+            "outside_support_power_W_after_projection": 0.0,
+            "method": "exact Cartesian cell-overlap energy remap followed by one physical-3D nearest-support projection with exact-distance ties split uniformly"
+          }
+        },
+        "y": {
+          "source_power_W": 2.575224349004938e-05,
+          "target_power_W": 2.575224349004938e-05,
+          "exact_overlap_power_error": 0.0,
+          "final_mapping_power_error": 0.0,
+          "projection": {
+            "outside_support_nonzero_cells_before_projection": 289721,
+            "outside_support_power_W_before_projection": 5.813204800505708e-07,
+            "power_before_W": 2.575224349004938e-05,
+            "power_after_W": 2.575224349004938e-05,
+            "relative_power_error": 0.0,
+            "outside_support_nonzero_cells_after_projection": 0,
+            "outside_support_power_W_after_projection": 0.0,
+            "method": "exact Cartesian cell-overlap energy remap followed by one physical-3D nearest-support projection with exact-distance ties split uniformly"
+          }
+        },
+        "z": {
+          "source_power_W": 7.977278414025686e-08,
+          "target_power_W": 7.977278414025684e-08,
+          "exact_overlap_power_error": 0.0,
+          "final_mapping_power_error": 1.6590733222471967e-16,
+          "projection": {
+            "outside_support_nonzero_cells_before_projection": 284881,
+            "outside_support_power_W_before_projection": 5.220335870298216e-09,
+            "power_before_W": 7.977278414025686e-08,
+            "power_after_W": 7.977278414025684e-08,
+            "relative_power_error": 1.6590733222471967e-16,
+            "outside_support_nonzero_cells_after_projection": 0,
+            "outside_support_power_W_after_projection": 0.0,
+            "method": "exact Cartesian cell-overlap energy remap followed by one physical-3D nearest-support projection with exact-distance ties split uniformly"
+          }
+        }
+      },
+      "sum_component_target_power_W": 2.8365870921873756e-05,
+      "reintegrated_total_target_power_W": 2.8365870921873753e-05,
+      "component_sum_relative_error": 1.1944395426281493e-16,
+      "outside_flake_nonzero_count": 0,
+      "Q_operations": {
+        "clipping": false,
+        "smoothing": false,
+        "gain": false,
+        "global_rescaling": false,
+        "polarization_matching_rescaling": false,
+        "tiling": false,
+        "source_deletion": false
+      },
+      "remap_contract": "identical to the existing edge-a downstream audit: bounded source dual cells, exact Cartesian overlap energy remap, then one physical-3D nearest TaIrTe4-support projection with exact distance ties split uniformly"
+    },
+    "b": {
+      "optical_artifact": {
+        "role": "edge_b_raw_Q_NPZ",
+        "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_retry1_20260731/readonly_recovery_b_reference_retry1/finite_q_on_artifact.npz",
+        "size_bytes": 1501855394,
+        "sha256": "a507cd79b19b56d2fff148babab772c93a32dd5bfcaa3d95dc252be328ed5e4b"
+      },
+      "optical_result": {
+        "role": "edge_b_case_result",
+        "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_retry1_20260731/readonly_recovery_b_reference_retry1/case_result.json",
+        "size_bytes": 79953,
+        "sha256": "a57116a6bfd5430f13a487f23bcd1326252fcac110111694490f6750228865f1"
+      },
+      "incident_power_W": 0.000285,
+      "unit_central_intensity_incident_power_W": 2.2660967441986136e-10,
+      "physical_scale": 1257669.1649622747,
+      "components": {
+        "x": {
+          "source_power_W": 3.698496245697704e-05,
+          "target_power_W": 3.698496245697704e-05,
+          "exact_overlap_power_error": 0.0,
+          "final_mapping_power_error": 0.0,
+          "projection": {
+            "outside_support_nonzero_cells_before_projection": 289721,
+            "outside_support_power_W_before_projection": 7.369385489605064e-07,
+            "power_before_W": 3.698496245697704e-05,
+            "power_after_W": 3.698496245697704e-05,
+            "relative_power_error": 0.0,
+            "outside_support_nonzero_cells_after_projection": 0,
+            "outside_support_power_W_after_projection": 0.0,
+            "method": "exact Cartesian cell-overlap energy remap followed by one physical-3D nearest-support projection with exact-distance ties split uniformly"
+          }
+        },
+        "y": {
+          "source_power_W": 3.4609931548223863e-07,
+          "target_power_W": 3.4609931548223863e-07,
+          "exact_overlap_power_error": 1.529606007155208e-16,
+          "final_mapping_power_error": 0.0,
+          "projection": {
+            "outside_support_nonzero_cells_before_projection": 289721,
+            "outside_support_power_W_before_projection": 1.0227474396286963e-08,
+            "power_before_W": 3.460993154822386e-07,
+            "power_after_W": 3.4609931548223863e-07,
+            "relative_power_error": 1.5296060071552082e-16,
+            "outside_support_nonzero_cells_after_projection": 0,
+            "outside_support_power_W_after_projection": 0.0,
+            "method": "exact Cartesian cell-overlap energy remap followed by one physical-3D nearest-support projection with exact-distance ties split uniformly"
+          }
+        },
+        "z": {
+          "source_power_W": 2.5690178013469628e-08,
+          "target_power_W": 2.5690178013469628e-08,
+          "exact_overlap_power_error": 1.2879328623092115e-16,
+          "final_mapping_power_error": 0.0,
+          "projection": {
+            "outside_support_nonzero_cells_before_projection": 284881,
+            "outside_support_power_W_before_projection": 1.0349687848810945e-09,
+            "power_before_W": 2.569017801346963e-08,
+            "power_after_W": 2.5690178013469628e-08,
+            "relative_power_error": 1.2879328623092112e-16,
+            "outside_support_nonzero_cells_after_projection": 0,
+            "outside_support_power_W_after_projection": 0.0,
+            "method": "exact Cartesian cell-overlap energy remap followed by one physical-3D nearest-support projection with exact-distance ties split uniformly"
+          }
+        }
+      },
+      "sum_component_target_power_W": 3.735675195047275e-05,
+      "reintegrated_total_target_power_W": 3.735675195047275e-05,
+      "component_sum_relative_error": 0.0,
+      "outside_flake_nonzero_count": 0,
+      "Q_operations": {
+        "clipping": false,
+        "smoothing": false,
+        "gain": false,
+        "global_rescaling": false,
+        "polarization_matching_rescaling": false,
+        "tiling": false,
+        "source_deletion": false
+      },
+      "remap_contract": "identical to the existing edge-a downstream audit: bounded source dual cells, exact Cartesian overlap energy remap, then one physical-3D nearest TaIrTe4-support projection with exact distance ties split uniformly"
+    }
+  },
+  "analytic_source_contracts": {
+    "a": {
+      "equation": "Q=eta*P*beta*exp(-beta*d)/(2*pi*sigma_x*sigma_y)*exp(-(x-x0)^2/(2*sigma_x^2)-(y-y0)^2/(2*sigma_y^2)); d=-z is depth from the top TaIrTe4 surface",
+      "discretization": "analytic Gaussian and Beer-Lambert factors integrated exactly over every explicit-3D target control volume; no sheet collapse",
+      "polarization": "a",
+      "incident_power_W": 0.000285,
+      "TMM_absorption": 0.17673296,
+      "eta_entrance_factor": 0.21787366562428911,
+      "beta_m_inv": 12822441.103546137,
+      "absorbed_depth_fraction_over_130nm": 0.8111717379592174,
+      "sigma_x_m": 6.027886255349195e-06,
+      "sigma_y_m": 5.975819002147884e-06,
+      "realized_waist_x_m": 1.205577251069839e-05,
+      "realized_waist_y_m": 1.1951638004295768e-05,
+      "beam_center_m": [
+        -4.7776404262645316e-14,
+        5.8597856964999296e-15
+      ],
+      "requested_full_plane_absorbed_power_W": 5.0368893599999995e-05,
+      "finite_half_plane_absorbed_power_W": 2.524570211788544e-05,
+      "finite_half_plane_fraction_of_full_plane": 0.5012161338776249,
+      "minimum_Q_W_m3": 0.0,
+      "negative_Q_cell_count": 0,
+      "nonfinite_Q_cell_count": 0
+    },
+    "b": {
+      "equation": "Q=eta*P*beta*exp(-beta*d)/(2*pi*sigma_x*sigma_y)*exp(-(x-x0)^2/(2*sigma_x^2)-(y-y0)^2/(2*sigma_y^2)); d=-z is depth from the top TaIrTe4 surface",
+      "discretization": "analytic Gaussian and Beer-Lambert factors integrated exactly over every explicit-3D target control volume; no sheet collapse",
+      "polarization": "b",
+      "incident_power_W": 0.000285,
+      "TMM_absorption": 0.26328721,
+      "eta_entrance_factor": 0.7660170731601501,
+      "beta_m_inv": 3239626.7980653625,
+      "absorbed_depth_fraction_over_130nm": 0.34370932349304817,
+      "sigma_x_m": 6.027886255349195e-06,
+      "sigma_y_m": 5.975819002147884e-06,
+      "realized_waist_x_m": 1.205577251069839e-05,
+      "realized_waist_y_m": 1.1951638004295768e-05,
+      "beam_center_m": [
+        -4.7776404262645316e-14,
+        5.8597856964999296e-15
+      ],
+      "requested_full_plane_absorbed_power_W": 7.503685485e-05,
+      "finite_half_plane_absorbed_power_W": 3.76096822862535e-05,
+      "finite_half_plane_fraction_of_full_plane": 0.5012161338776249,
+      "minimum_Q_W_m3": 0.0,
+      "negative_Q_cell_count": 0,
+      "nonfinite_Q_cell_count": 0
+    }
+  },
+  "thermal_contract": {
+    "identity": "existing edge-a downstream explicit anisotropic/material/interface Cartesian FVM; not paper reduced Robin model",
+    "lateral_domain_um": 60.0,
+    "Si_depth_um": 20.0,
+    "core_xy_cell_size_nm": 50.0,
+    "flake_dz_nm": 10.0,
+    "grid_shape": [
+      530,
+      530,
+      86
+    ],
+    "axis_mapping": "lab x=b, lab y=a, lab z=c",
+    "TaIrTe4_thickness_nm": 130.0,
+    "SiO2_thickness_nm": 285.0,
+    "air_height_nm": 600.0,
+    "kappa_TaIrTe4_lab_W_mK": [
+      3.8,
+      14.4,
+      1.0
+    ],
+    "kappa_SiO2_W_mK": 1.38,
+    "kappa_Si_W_mK": 145.0,
+    "kappa_air_W_mK": 0.026,
+    "G_TaIrTe4_air_W_m2K": 1.0,
+    "G_TaIrTe4_SiO2_W_m2K": 7370000.0,
+    "G_SiO2_Si_W_m2K": 1100000000.0,
+    "far_xy_boundary": "fixed DeltaT=0 numerical truncation",
+    "bottom_boundary": "fixed DeltaT=0 numerical truncation",
+    "exposed_h_W_m2K": 10.0,
+    "straight_edge": "TaIrTe4 y<=x; lateral material boundary explicit"
+  },
+  "cases": {
+    "Maxwell_b": {
+      "source_power_W": 3.735675195047275e-05,
+      "Tmax_rise_K": 0.1356193571811639,
+      "TaIrTe4_Tmax_rise_K": 0.1356193571811639,
+      "TaIrTe4_volume_average_rise_K": 0.009388746976239131,
+      "surface_z_cell_center_m": -4.999999999999992e-09,
+      "midplane_z_cell_center_m": -6.499999999999999e-08,
+      "linear_residual_relative": 1.017629692688597e-09,
+      "energy_balance_relative_error": 9.756600080086031e-12,
+      "boundary_power_out_W": {
+        "x_min": 2.6363260064813766e-06,
+        "x_max": 5.011278503635653e-06,
+        "y_min": 5.088487895671976e-06,
+        "y_max": 2.631041757596719e-06,
+        "z_min": 2.1989570617442995e-05,
+        "exposed_convection": 4.716927955309008e-11
+      },
+      "iterations": 3497,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "straight_edge_metrics": {
+        "edge_definition": "TaIrTe4 y<=x; outward normal=(-x+y)/sqrt(2)",
+        "edge_window_um": 10.0,
+        "edge_cell_count": 282,
+        "max_abs_edge_normal_gradient_K_m": 9502.313182305754,
+        "p99_abs_edge_normal_gradient_K_m": 9499.042193422065,
+        "max_abs_grad_T_x_K_m": 14792.783521030307,
+        "max_abs_grad_T_y_K_m": 6056.327677304354,
+        "max_inplane_gradient_K_m": 14872.105130890826,
+        "max_abs_edge_tangent_gradient_K_m": 11607.325224939765,
+        "paper_Fig3G_comparator": "max_abs_grad_T_x_K_m; all five components are retained because edge-normal gradient is not identical to the paper observable",
+        "peak_edge_gradient_location_m": {
+          "x": -3.274999999999999e-06,
+          "y": -3.274999999999999e-06
+        },
+        "Tmax_rise_K": 0.12869403098326296,
+        "TaIrTe4_area_average_rise_K": 0.009388746976239133,
+        "fixed_24um_ROI_area_average_rise_K": 0.05047769346950456,
+        "fixed_ROI_definition": "TaIrTe4 cells with |x|<=12 um and |y|<=12 um; used for thermal-domain comparisons"
+      },
+      "source_moments": {
+        "power_W": 3.735675195047275e-05,
+        "centroid_m": {
+          "x": 3.3927108897945145e-06,
+          "y": -3.439325948494329e-06,
+          "z": -6.32444259399973e-08
+        },
+        "second_central_moment_m2": {
+          "xx": 2.4461475848888362e-11,
+          "yy": 2.476002618705598e-11,
+          "zz": 1.3977381959626736e-15
+        }
+      }
+    },
+    "Maxwell_a": {
+      "source_power_W": 2.8365870921873753e-05,
+      "Tmax_rise_K": 0.1344649422886432,
+      "TaIrTe4_Tmax_rise_K": 0.1344649422886432,
+      "TaIrTe4_volume_average_rise_K": 0.007131426730332922,
+      "surface_z_cell_center_m": -4.999999999999992e-09,
+      "midplane_z_cell_center_m": -6.499999999999999e-08,
+      "linear_residual_relative": 1.0197394597543316e-09,
+      "energy_balance_relative_error": 8.755958511189914e-12,
+      "boundary_power_out_W": {
+        "x_min": 2.0773031143365597e-06,
+        "x_max": 3.7217984639506875e-06,
+        "y_min": 3.7566746830129915e-06,
+        "y_max": 2.0504275971034866e-06,
+        "z_min": 1.6759624578513136e-05,
+        "exposed_convection": 4.2485205261881315e-11
+      },
+      "iterations": 3453,
+      "solver": "scipy.sparse.linalg.cg+jacobi+warm_start",
+      "straight_edge_metrics": {
+        "edge_definition": "TaIrTe4 y<=x; outward normal=(-x+y)/sqrt(2)",
+        "edge_window_um": 10.0,
+        "edge_cell_count": 282,
+        "max_abs_edge_normal_gradient_K_m": 10396.127124461676,
+        "p99_abs_edge_normal_gradient_K_m": 10392.975658074534,
+        "max_abs_grad_T_x_K_m": 15789.494335464055,
+        "max_abs_grad_T_y_K_m": 6052.010012670475,
+        "max_inplane_gradient_K_m": 15839.67968343328,
+        "max_abs_edge_tangent_gradient_K_m": 12119.38262091615,
+        "paper_Fig3G_comparator": "max_abs_grad_T_x_K_m; all five components are retained because edge-normal gradient is not identical to the paper observable",
+        "peak_edge_gradient_location_m": {
+          "x": -3.375e-06,
+          "y": -3.375e-06
+        },
+        "Tmax_rise_K": 0.1262906030714365,
+        "TaIrTe4_area_average_rise_K": 0.007131426730332923,
+        "fixed_24um_ROI_area_average_rise_K": 0.03876964835550967,
+        "fixed_ROI_definition": "TaIrTe4 cells with |x|<=12 um and |y|<=12 um; used for thermal-domain comparisons"
+      },
+      "source_moments": {
+        "power_W": 2.8365870921873753e-05,
+        "centroid_m": {
+          "x": 3.0733781343228366e-06,
+          "y": -3.1297862606134363e-06,
+          "z": -5.811253080879004e-08
+        },
+        "second_central_moment_m2": {
+          "xx": 2.5481777603284302e-11,
+          "yy": 2.4147000966295973e-11,
+          "zz": 1.419519568327194e-15
+        }
+      }
+    },
+    "analytic_b": {
+      "source_power_W": 3.760968228625351e-05,
+      "Tmax_rise_K": 0.13833218215603374,
+      "TaIrTe4_Tmax_rise_K": 0.13833218215603374,
+      "TaIrTe4_volume_average_rise_K": 0.009473877958767477,
+      "surface_z_cell_center_m": -4.999999999999992e-09,
+      "midplane_z_cell_center_m": -6.499999999999999e-08,
+      "linear_residual_relative": 1.0197681301148778e-09,
+      "energy_balance_relative_error": 3.380755284879215e-11,
+      "boundary_power_out_W": {
+        "x_min": 2.6560109541283308e-06,
+        "x_max": 5.0618728214613765e-06,
+        "y_min": 5.075597081791614e-06,
+        "y_max": 2.6662873334840818e-06,
+        "z_min": 2.214986520692632e-05,
+        "exposed_convection": 4.8887190291263986e-11
+      },
+      "iterations": 3400,
+      "solver": "scipy.sparse.linalg.cg+jacobi+warm_start",
+      "straight_edge_metrics": {
+        "edge_definition": "TaIrTe4 y<=x; outward normal=(-x+y)/sqrt(2)",
+        "edge_window_um": 10.0,
+        "edge_cell_count": 282,
+        "max_abs_edge_normal_gradient_K_m": 8674.26773729468,
+        "p99_abs_edge_normal_gradient_K_m": 8670.753982813378,
+        "max_abs_grad_T_x_K_m": 14915.45724379917,
+        "max_abs_grad_T_y_K_m": 5294.126535396331,
+        "max_inplane_gradient_K_m": 15159.473280275017,
+        "max_abs_edge_tangent_gradient_K_m": 12479.401267398687,
+        "paper_Fig3G_comparator": "max_abs_grad_T_x_K_m; all five components are retained because edge-normal gradient is not identical to the paper observable",
+        "peak_edge_gradient_location_m": {
+          "x": -3.5749999999999997e-06,
+          "y": -3.5749999999999997e-06
+        },
+        "Tmax_rise_K": 0.13081561741504644,
+        "TaIrTe4_area_average_rise_K": 0.009473877958767479,
+        "fixed_24um_ROI_area_average_rise_K": 0.051032852652957705,
+        "fixed_ROI_definition": "TaIrTe4 cells with |x|<=12 um and |y|<=12 um; used for thermal-domain comparisons"
+      },
+      "source_moments": {
+        "power_W": 3.760968228625351e-05,
+        "centroid_m": {
+          "x": 3.4080721639333426e-06,
+          "y": -3.3494409709143194e-06,
+          "z": -6.047795263031738e-08
+        },
+        "second_central_moment_m2": {
+          "xx": 2.4714903923616056e-11,
+          "yy": 2.448685520631566e-11,
+          "zz": 1.387598099024676e-15
+        }
+      }
+    },
+    "analytic_a": {
+      "source_power_W": 2.524570211788544e-05,
+      "Tmax_rise_K": 0.09559856273794726,
+      "TaIrTe4_Tmax_rise_K": 0.09559856273794726,
+      "TaIrTe4_volume_average_rise_K": 0.006441342143456056,
+      "surface_z_cell_center_m": -4.999999999999992e-09,
+      "midplane_z_cell_center_m": -6.499999999999999e-08,
+      "linear_residual_relative": 1.0126115760395404e-09,
+      "energy_balance_relative_error": 2.900935863994719e-11,
+      "boundary_power_out_W": {
+        "x_min": 1.782792384561529e-06,
+        "x_max": 3.3978803411044966e-06,
+        "y_min": 3.4075155188069655e-06,
+        "y_max": 1.7896732510813133e-06,
+        "z_min": 1.486780780004606e-05,
+        "exposed_convection": 3.2821552714282983e-11
+      },
+      "iterations": 3402,
+      "solver": "scipy.sparse.linalg.cg+jacobi+warm_start",
+      "straight_edge_metrics": {
+        "edge_definition": "TaIrTe4 y<=x; outward normal=(-x+y)/sqrt(2)",
+        "edge_window_um": 10.0,
+        "edge_cell_count": 282,
+        "max_abs_edge_normal_gradient_K_m": 5891.000140099217,
+        "p99_abs_edge_normal_gradient_K_m": 5888.869364477253,
+        "max_abs_grad_T_x_K_m": 10151.770782063842,
+        "max_abs_grad_T_y_K_m": 3593.0921910453344,
+        "max_inplane_gradient_K_m": 10320.924687388087,
+        "max_abs_edge_tangent_gradient_K_m": 8505.32498768529,
+        "paper_Fig3G_comparator": "max_abs_grad_T_x_K_m; all five components are retained because edge-normal gradient is not identical to the paper observable",
+        "peak_edge_gradient_location_m": {
+          "x": -3.5749999999999997e-06,
+          "y": -3.5749999999999997e-06
+        },
+        "Tmax_rise_K": 0.08907453255994417,
+        "TaIrTe4_area_average_rise_K": 0.006441342143456058,
+        "fixed_24um_ROI_area_average_rise_K": 0.03472304386125085,
+        "fixed_ROI_definition": "TaIrTe4 cells with |x|<=12 um and |y|<=12 um; used for thermal-domain comparisons"
+      },
+      "source_moments": {
+        "power_W": 2.524570211788544e-05,
+        "centroid_m": {
+          "x": 3.4080721639333426e-06,
+          "y": -3.3494409709143202e-06,
+          "z": -4.783310074578087e-08
+        },
+        "second_central_moment_m2": {
+          "xx": 2.471490392361606e-11,
+          "yy": 2.4486855206315664e-11,
+          "zz": 1.22399633103744e-15
+        }
+      }
+    }
+  },
+  "polarization_ratios_b_over_a": {
+    "Maxwell": {
+      "absorbed_power": 1.3169612191129962,
+      "Tmax": 1.0085852481165138,
+      "TaIrTe4_mean": 1.316531366199822,
+      "max_abs_grad_a": 1.0007134265516482,
+      "max_abs_grad_b": 0.9368750643144359,
+      "max_abs_grad_n": 0.9140243350763946,
+      "max_abs_grad_t": 0.9577488877120972,
+      "max_grad_magnitude": 0.938914512674493
+    },
+    "analytic": {
+      "absorbed_power": 1.4897459421264716,
+      "Tmax": 1.4470111076379566,
+      "TaIrTe4_mean": 1.470792537917313,
+      "max_abs_grad_a": 1.473417951420867,
+      "max_abs_grad_b": 1.4692468500324902,
+      "max_abs_grad_n": 1.4724609626555851,
+      "max_abs_grad_t": 1.4672456708553046,
+      "max_grad_magnitude": 1.4688096017985206
+    }
+  },
+  "Maxwell_vs_analytic_same_incident_power": {
+    "a": {
+      "absorbed_power_ratio_Maxwell_over_analytic": 1.123592078739526,
+      "Q_volume_weighted_NRMSE": 0.34442852339178576,
+      "temperature_3D_volume_weighted_NRMSE": 0.20550570051916517,
+      "TaIrTe4_temperature_3D_volume_weighted_NRMSE": 0.2162577323433383,
+      "temperature_surface_area_weighted_NRMSE": 0.20806058443308506,
+      "temperature_midplane_area_weighted_NRMSE": 0.2171631317988435,
+      "gradient_vector_area_weighted_NRMSE": 0.7377925718734574
+    },
+    "b": {
+      "absorbed_power_ratio_Maxwell_over_analytic": 0.9932748611419882,
+      "Q_volume_weighted_NRMSE": 0.11029048431010278,
+      "temperature_3D_volume_weighted_NRMSE": 0.03623110068602595,
+      "TaIrTe4_temperature_3D_volume_weighted_NRMSE": 0.04243271477706462,
+      "temperature_surface_area_weighted_NRMSE": 0.04338927578979209,
+      "temperature_midplane_area_weighted_NRMSE": 0.04238159905140353,
+      "gradient_vector_area_weighted_NRMSE": 0.28659636703163266
+    }
+  },
+  "equal_absorbed_power_shape_diagnostic": {
+    "a": {
+      "scope": "diagnostic copy derived by linearity; primary Maxwell and analytic Q remain unchanged",
+      "analytic_scale_to_Maxwell_power": 1.123592078739526,
+      "Q_volume_weighted_NRMSE": 0.31278920915308867,
+      "temperature_3D_volume_weighted_NRMSE": 0.12952054170169136,
+      "TaIrTe4_temperature_3D_volume_weighted_NRMSE": 0.14685359053841393,
+      "temperature_surface_area_weighted_NRMSE": 0.1451561504775573,
+      "temperature_midplane_area_weighted_NRMSE": 0.1470777852553071,
+      "gradient_vector_area_weighted_NRMSE": 0.6385706760824127
+    },
+    "b": {
+      "scope": "diagnostic copy derived by linearity; primary Maxwell and analytic Q remain unchanged",
+      "analytic_scale_to_Maxwell_power": 0.9932748611419882,
+      "Q_volume_weighted_NRMSE": 0.10995395210913508,
+      "temperature_3D_volume_weighted_NRMSE": 0.03470911513487567,
+      "TaIrTe4_temperature_3D_volume_weighted_NRMSE": 0.04106886758199688,
+      "temperature_surface_area_weighted_NRMSE": 0.04159102861561713,
+      "temperature_midplane_area_weighted_NRMSE": 0.04104515678351994,
+      "gradient_vector_area_weighted_NRMSE": 0.28808598803711827
+    }
+  },
+  "edge_normal_profiles": {
+    "a": {
+      "Maxwell": {
+        "q_areal": {
+          "n_m": [
+            -1.1900000000000001e-05,
+            -1.17e-05,
+            -1.1500000000000002e-05,
+            -1.13e-05,
+            -1.1100000000000002e-05,
+            -1.09e-05,
+            -1.0700000000000003e-05,
+            -1.0500000000000001e-05,
+            -1.0300000000000003e-05,
+            -1.0100000000000002e-05,
+            -9.900000000000003e-06,
+            -9.700000000000002e-06,
+            -9.500000000000004e-06,
+            -9.300000000000002e-06,
+            -9.100000000000004e-06,
+            -8.900000000000003e-06,
+            -8.700000000000005e-06,
+            -8.500000000000003e-06,
+            -8.300000000000005e-06,
+            -8.100000000000004e-06,
+            -7.900000000000006e-06,
+            -7.700000000000004e-06,
+            -7.500000000000005e-06,
+            -7.3000000000000055e-06,
+            -7.100000000000006e-06,
+            -6.900000000000006e-06,
+            -6.700000000000006e-06,
+            -6.500000000000006e-06,
+            -6.300000000000007e-06,
+            -6.100000000000007e-06,
+            -5.900000000000007e-06,
+            -5.700000000000007e-06,
+            -5.5000000000000075e-06,
+            -5.300000000000008e-06,
+            -5.100000000000008e-06,
+            -4.900000000000008e-06,
+            -4.700000000000008e-06,
+            -4.500000000000009e-06,
+            -4.300000000000009e-06,
+            -4.100000000000009e-06,
+            -3.900000000000009e-06,
+            -3.7000000000000095e-06,
+            -3.5000000000000097e-06,
+            -3.30000000000001e-06,
+            -3.10000000000001e-06,
+            -2.9000000000000104e-06,
+            -2.7000000000000106e-06,
+            -2.500000000000011e-06,
+            -2.300000000000011e-06,
+            -2.1000000000000112e-06,
+            -1.9000000000000115e-06,
+            -1.7000000000000117e-06,
+            -1.500000000000012e-06,
+            -1.3000000000000121e-06,
+            -1.1000000000000123e-06,
+            -9.000000000000126e-07,
+            -7.000000000000128e-07,
+            -5.00000000000013e-07,
+            -3.000000000000132e-07,
+            -1.0000000000001344e-07,
+            9.999999999998634e-08,
+            2.999999999999861e-07,
+            4.999999999999859e-07
+          ],
+          "value": [
+            29297.935362687113,
+            31107.818796607426,
+            33081.265950214714,
+            35407.293780944885,
+            37692.775201601165,
+            40123.56167761313,
+            42924.67605889094,
+            45609.460156868416,
+            48386.87255547575,
+            51492.13223168809,
+            54405.962446723075,
+            57402.28207692783,
+            60798.122684897666,
+            64057.508814012384,
+            67495.97990567698,
+            71470.31885677279,
+            75351.13340119096,
+            79499.45034225228,
+            84340.67134469275,
+            89051.65731354828,
+            93987.30757825208,
+            99529.6792324331,
+            104687.38274565607,
+            109854.87111188882,
+            115445.55004683157,
+            120464.60556981846,
+            125327.90590766692,
+            129999.0442453395,
+            134504.8334383893,
+            139297.22790148944,
+            143614.31537927865,
+            147893.26466911822,
+            152529.144153263,
+            156756.04325437528,
+            160931.41675152603,
+            165372.34989133972,
+            169230.09048923553,
+            172747.67773403611,
+            176070.4684765542,
+            178585.7340469311,
+            180571.8808785039,
+            182294.8267168907,
+            183684.3972738322,
+            185262.0051434513,
+            187717.5116854053,
+            191198.1337610029,
+            196515.85319576814,
+            204965.95278054077,
+            215557.32263553728,
+            229152.1871141506,
+            246997.2683047919,
+            265544.9365948424,
+            285314.5644648262,
+            306742.4850251675,
+            324562.40070134384,
+            338593.33764899825,
+            347704.8516274827,
+            348989.88761968643,
+            341567.47371070663,
+            316818.80951700435,
+            39416.13004888297,
+            0.0,
+            0.0
+          ]
+        },
+        "temperature": {
+          "n_m": [
+            -1.1900000000000001e-05,
+            -1.17e-05,
+            -1.1500000000000002e-05,
+            -1.13e-05,
+            -1.1100000000000002e-05,
+            -1.09e-05,
+            -1.0700000000000003e-05,
+            -1.0500000000000001e-05,
+            -1.0300000000000003e-05,
+            -1.0100000000000002e-05,
+            -9.900000000000003e-06,
+            -9.700000000000002e-06,
+            -9.500000000000004e-06,
+            -9.300000000000002e-06,
+            -9.100000000000004e-06,
+            -8.900000000000003e-06,
+            -8.700000000000005e-06,
+            -8.500000000000003e-06,
+            -8.300000000000005e-06,
+            -8.100000000000004e-06,
+            -7.900000000000006e-06,
+            -7.700000000000004e-06,
+            -7.500000000000005e-06,
+            -7.3000000000000055e-06,
+            -7.100000000000006e-06,
+            -6.900000000000006e-06,
+            -6.700000000000006e-06,
+            -6.500000000000006e-06,
+            -6.300000000000007e-06,
+            -6.100000000000007e-06,
+            -5.900000000000007e-06,
+            -5.700000000000007e-06,
+            -5.5000000000000075e-06,
+            -5.300000000000008e-06,
+            -5.100000000000008e-06,
+            -4.900000000000008e-06,
+            -4.700000000000008e-06,
+            -4.500000000000009e-06,
+            -4.300000000000009e-06,
+            -4.100000000000009e-06,
+            -3.900000000000009e-06,
+            -3.7000000000000095e-06,
+            -3.5000000000000097e-06,
+            -3.30000000000001e-06,
+            -3.10000000000001e-06,
+            -2.9000000000000104e-06,
+            -2.7000000000000106e-06,
+            -2.500000000000011e-06,
+            -2.300000000000011e-06,
+            -2.1000000000000112e-06,
+            -1.9000000000000115e-06,
+            -1.7000000000000117e-06,
+            -1.500000000000012e-06,
+            -1.3000000000000121e-06,
+            -1.1000000000000123e-06,
+            -9.000000000000126e-07,
+            -7.000000000000128e-07,
+            -5.00000000000013e-07,
+            -3.000000000000132e-07,
+            -1.0000000000001344e-07,
+            9.999999999998634e-08,
+            2.999999999999861e-07,
+            4.999999999999859e-07
+          ],
+          "value": [
+            0.014816281472209591,
+            0.015623336460519785,
+            0.01648202538679726,
+            0.017472692513365737,
+            0.018430309628882018,
+            0.019438583358061076,
+            0.02059663135463088,
+            0.021709711836320505,
+            0.022870620391762776,
+            0.024183575106491804,
+            0.0254307466597518,
+            0.02672635459207406,
+            0.028202398097333475,
+            0.029616974326725203,
+            0.031095144313537302,
+            0.03277510300032589,
+            0.03437990907117595,
+            0.036053300705387814,
+            0.03795855485899055,
+            0.03977191377244094,
+            0.0416391421981497,
+            0.04371287542438906,
+            0.04563484723792987,
+            0.047566719798533365,
+            0.049678311025068644,
+            0.051603958323729486,
+            0.053506028103135705,
+            0.05536684475751093,
+            0.057191402375349004,
+            0.05915036211912003,
+            0.06091567598718694,
+            0.06264862802563305,
+            0.06449439280771863,
+            0.06614511486487894,
+            0.06775157659875808,
+            0.0694569251602961,
+            0.07096758049409578,
+            0.07242014242606387,
+            0.0739364548127974,
+            0.07528002731372667,
+            0.07660640717547208,
+            0.07809329850623854,
+            0.07955211518011389,
+            0.08118577362828282,
+            0.08324587623542115,
+            0.08547431055568767,
+            0.08812253441380029,
+            0.09154139918378315,
+            0.09517546620812359,
+            0.09926404063456483,
+            0.1040854754008794,
+            0.10867378647543269,
+            0.11320926635074048,
+            0.11781506731209122,
+            0.12142368692090025,
+            0.12411437356331981,
+            0.12577108587723956,
+            0.1260003009342417,
+            0.12498326111712002,
+            0.12321235413133616,
+            0.037742467002415764,
+            0.01238689005596115,
+            0.008009667985316181
+          ]
+        },
+        "grad_n": {
+          "n_m": [
+            -1.1900000000000001e-05,
+            -1.17e-05,
+            -1.1500000000000002e-05,
+            -1.13e-05,
+            -1.1100000000000002e-05,
+            -1.09e-05,
+            -1.0700000000000003e-05,
+            -1.0500000000000001e-05,
+            -1.0300000000000003e-05,
+            -1.0100000000000002e-05,
+            -9.900000000000003e-06,
+            -9.700000000000002e-06,
+            -9.500000000000004e-06,
+            -9.300000000000002e-06,
+            -9.100000000000004e-06,
+            -8.900000000000003e-06,
+            -8.700000000000005e-06,
+            -8.500000000000003e-06,
+            -8.300000000000005e-06,
+            -8.100000000000004e-06,
+            -7.900000000000006e-06,
+            -7.700000000000004e-06,
+            -7.500000000000005e-06,
+            -7.3000000000000055e-06,
+            -7.100000000000006e-06,
+            -6.900000000000006e-06,
+            -6.700000000000006e-06,
+            -6.500000000000006e-06,
+            -6.300000000000007e-06,
+            -6.100000000000007e-06,
+            -5.900000000000007e-06,
+            -5.700000000000007e-06,
+            -5.5000000000000075e-06,
+            -5.300000000000008e-06,
+            -5.100000000000008e-06,
+            -4.900000000000008e-06,
+            -4.700000000000008e-06,
+            -4.500000000000009e-06,
+            -4.300000000000009e-06,
+            -4.100000000000009e-06,
+            -3.900000000000009e-06,
+            -3.7000000000000095e-06,
+            -3.5000000000000097e-06,
+            -3.30000000000001e-06,
+            -3.10000000000001e-06,
+            -2.9000000000000104e-06,
+            -2.7000000000000106e-06,
+            -2.500000000000011e-06,
+            -2.300000000000011e-06,
+            -2.1000000000000112e-06,
+            -1.9000000000000115e-06,
+            -1.7000000000000117e-06,
+            -1.500000000000012e-06,
+            -1.3000000000000121e-06,
+            -1.1000000000000123e-06,
+            -9.000000000000126e-07,
+            -7.000000000000128e-07,
+            -5.00000000000013e-07,
+            -3.000000000000132e-07,
+            -1.0000000000001344e-07,
+            9.999999999998634e-08,
+            2.999999999999861e-07,
+            4.999999999999859e-07
+          ],
+          "value": [
+            4018.3748247880303,
+            4268.008262902429,
+            4527.250358716818,
+            4812.800346361775,
+            5071.832425729293,
+            5324.438480588619,
+            5591.797598540199,
+            5829.525560815238,
+            6062.575644288125,
+            6316.655634746148,
+            6556.256469818122,
+            6810.143436468119,
+            7110.521967359606,
+            7410.609355684959,
+            7734.572612765766,
+            8106.919028639588,
+            8456.42127506277,
+            8801.112893498059,
+            9155.51653497496,
+            9443.330180071103,
+            9677.360272859907,
+            9859.298069777937,
+            9953.072002429464,
+            9973.235119640862,
+            9921.962932019364,
+            9818.167266545379,
+            9673.904556225476,
+            9507.596052155652,
+            9331.040153033538,
+            9138.690621809008,
+            8966.39693345385,
+            8796.21321158289,
+            8602.848114198618,
+            8406.832043831571,
+            8179.465275535728,
+            7891.246770161193,
+            7596.374417017923,
+            7296.307119281631,
+            7013.118710565621,
+            6855.664191393208,
+            6879.792109177396,
+            7202.454674310192,
+            7854.39789483685,
+            8928.164460266653,
+            10584.992787119076,
+            12521.178938607216,
+            14789.630257285013,
+            17457.24199750605,
+            19854.40158761604,
+            21901.085705361682,
+            23384.350193020287,
+            23751.944702545377,
+            22848.546677897433,
+            20267.348737191085,
+            16381.26782113774,
+            11128.66905677708,
+            4345.145753883807,
+            -2185.199178162873,
+            -7751.058724936718,
+            -8934.836495471603,
+            -853.1520779295928,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "analytic": {
+        "q_areal": {
+          "n_m": [
+            -1.1900000000000001e-05,
+            -1.17e-05,
+            -1.1500000000000002e-05,
+            -1.13e-05,
+            -1.1100000000000002e-05,
+            -1.09e-05,
+            -1.0700000000000003e-05,
+            -1.0500000000000001e-05,
+            -1.0300000000000003e-05,
+            -1.0100000000000002e-05,
+            -9.900000000000003e-06,
+            -9.700000000000002e-06,
+            -9.500000000000004e-06,
+            -9.300000000000002e-06,
+            -9.100000000000004e-06,
+            -8.900000000000003e-06,
+            -8.700000000000005e-06,
+            -8.500000000000003e-06,
+            -8.300000000000005e-06,
+            -8.100000000000004e-06,
+            -7.900000000000006e-06,
+            -7.700000000000004e-06,
+            -7.500000000000005e-06,
+            -7.3000000000000055e-06,
+            -7.100000000000006e-06,
+            -6.900000000000006e-06,
+            -6.700000000000006e-06,
+            -6.500000000000006e-06,
+            -6.300000000000007e-06,
+            -6.100000000000007e-06,
+            -5.900000000000007e-06,
+            -5.700000000000007e-06,
+            -5.5000000000000075e-06,
+            -5.300000000000008e-06,
+            -5.100000000000008e-06,
+            -4.900000000000008e-06,
+            -4.700000000000008e-06,
+            -4.500000000000009e-06,
+            -4.300000000000009e-06,
+            -4.100000000000009e-06,
+            -3.900000000000009e-06,
+            -3.7000000000000095e-06,
+            -3.5000000000000097e-06,
+            -3.30000000000001e-06,
+            -3.10000000000001e-06,
+            -2.9000000000000104e-06,
+            -2.7000000000000106e-06,
+            -2.500000000000011e-06,
+            -2.300000000000011e-06,
+            -2.1000000000000112e-06,
+            -1.9000000000000115e-06,
+            -1.7000000000000117e-06,
+            -1.500000000000012e-06,
+            -1.3000000000000121e-06,
+            -1.1000000000000123e-06,
+            -9.000000000000126e-07,
+            -7.000000000000128e-07,
+            -5.00000000000013e-07,
+            -3.000000000000132e-07,
+            -1.0000000000001344e-07,
+            9.999999999998634e-08,
+            2.999999999999861e-07,
+            4.999999999999859e-07
+          ],
+          "value": [
+            31160.105675603205,
+            33214.084391780416,
+            35370.31345816996,
+            37826.5753535085,
+            40175.1428748156,
+            42626.987474568705,
+            45426.44678733183,
+            48107.22065778718,
+            50897.341761765834,
+            54047.92414498635,
+            57034.18071863248,
+            60124.05050750228,
+            63620.65848375608,
+            66938.69740571562,
+            70360.81131053425,
+            74189.17783064271,
+            77784.30216322445,
+            81468.80877845858,
+            85598.68584414206,
+            89479.43959468462,
+            93442.85987569245,
+            97832.16031885248,
+            101912.55441422564,
+            106050.82395833512,
+            110640.86954718172,
+            114907.46993525152,
+            119217.75813198068,
+            123531.08926590733,
+            127863.45427244825,
+            132622.21400032297,
+            137000.87362393385,
+            141379.2565764871,
+            146121.90495676995,
+            150433.3915545252,
+            154704.30642949624,
+            159330.17979636937,
+            163523.68028026403,
+            167653.95841233953,
+            172055.7716696281,
+            175991.29941461427,
+            179819.9693019845,
+            183890.52999851416,
+            187506.78071724693,
+            190994.77029953556,
+            194626.83127653535,
+            197795.82658988988,
+            200795.0401685055,
+            203892.02004665654,
+            206553.38217202897,
+            209030.03132504044,
+            211502.60654693772,
+            213561.03898118966,
+            215400.93736978964,
+            217180.4049859547,
+            218588.16899047172,
+            219773.5590674636,
+            220804.68393098394,
+            221516.40838785213,
+            221984.03565519032,
+            222228.62651858883,
+            35771.4657951932,
+            0.0,
+            0.0
+          ]
+        },
+        "temperature": {
+          "n_m": [
+            -1.1900000000000001e-05,
+            -1.17e-05,
+            -1.1500000000000002e-05,
+            -1.13e-05,
+            -1.1100000000000002e-05,
+            -1.09e-05,
+            -1.0700000000000003e-05,
+            -1.0500000000000001e-05,
+            -1.0300000000000003e-05,
+            -1.0100000000000002e-05,
+            -9.900000000000003e-06,
+            -9.700000000000002e-06,
+            -9.500000000000004e-06,
+            -9.300000000000002e-06,
+            -9.100000000000004e-06,
+            -8.900000000000003e-06,
+            -8.700000000000005e-06,
+            -8.500000000000003e-06,
+            -8.300000000000005e-06,
+            -8.100000000000004e-06,
+            -7.900000000000006e-06,
+            -7.700000000000004e-06,
+            -7.500000000000005e-06,
+            -7.3000000000000055e-06,
+            -7.100000000000006e-06,
+            -6.900000000000006e-06,
+            -6.700000000000006e-06,
+            -6.500000000000006e-06,
+            -6.300000000000007e-06,
+            -6.100000000000007e-06,
+            -5.900000000000007e-06,
+            -5.700000000000007e-06,
+            -5.5000000000000075e-06,
+            -5.300000000000008e-06,
+            -5.100000000000008e-06,
+            -4.900000000000008e-06,
+            -4.700000000000008e-06,
+            -4.500000000000009e-06,
+            -4.300000000000009e-06,
+            -4.100000000000009e-06,
+            -3.900000000000009e-06,
+            -3.7000000000000095e-06,
+            -3.5000000000000097e-06,
+            -3.30000000000001e-06,
+            -3.10000000000001e-06,
+            -2.9000000000000104e-06,
+            -2.7000000000000106e-06,
+            -2.500000000000011e-06,
+            -2.300000000000011e-06,
+            -2.1000000000000112e-06,
+            -1.9000000000000115e-06,
+            -1.7000000000000117e-06,
+            -1.500000000000012e-06,
+            -1.3000000000000121e-06,
+            -1.1000000000000123e-06,
+            -9.000000000000126e-07,
+            -7.000000000000128e-07,
+            -5.00000000000013e-07,
+            -3.000000000000132e-07,
+            -1.0000000000001344e-07,
+            9.999999999998634e-08,
+            2.999999999999861e-07,
+            4.999999999999859e-07
+          ],
+          "value": [
+            0.015409297601832572,
+            0.016295781622956394,
+            0.017222806071475853,
+            0.018274872704575586,
+            0.01927719372316388,
+            0.02031993686357473,
+            0.021506491700288604,
+            0.022639000841559804,
+            0.023813942155458925,
+            0.025136550729012053,
+            0.02638641148156326,
+            0.027675848741150734,
+            0.029130867764269666,
+            0.030507729633315172,
+            0.0319239234622355,
+            0.0335040224751607,
+            0.03498402004628694,
+            0.03649696060363049,
+            0.0381885721023553,
+            0.039774244995258036,
+            0.04138980537781277,
+            0.04317470516593552,
+            0.04483012129750531,
+            0.04650512164471084,
+            0.048358728169561,
+            0.050077759411858117,
+            0.05181043399478761,
+            0.05354059209590901,
+            0.05527436479237228,
+            0.05717435819043802,
+            0.05891842859689126,
+            0.06065818051637034,
+            0.06253794088197541,
+            0.06424241043537379,
+            0.06592623592166572,
+            0.06774481257084855,
+            0.06938833765373002,
+            0.07100177330279399,
+            0.07271500767126675,
+            0.07424064754003137,
+            0.07571806392309334,
+            0.07728067468813339,
+            0.07866034996253381,
+            0.07998146734579432,
+            0.08134478853207897,
+            0.08252119816404999,
+            0.08361861018813853,
+            0.08473077851283956,
+            0.08566236981851147,
+            0.08649934976651243,
+            0.08729269380139504,
+            0.08790416929975003,
+            0.08838542760126325,
+            0.08875710937013755,
+            0.08893392421764093,
+            0.08892480129507999,
+            0.08867410447453081,
+            0.08819688369226542,
+            0.08745495414423962,
+            0.08657355170089796,
+            0.026849773598676824,
+            0.00918453508707321,
+            0.006157624008356831
+          ]
+        },
+        "grad_n": {
+          "n_m": [
+            -1.1900000000000001e-05,
+            -1.17e-05,
+            -1.1500000000000002e-05,
+            -1.13e-05,
+            -1.1100000000000002e-05,
+            -1.09e-05,
+            -1.0700000000000003e-05,
+            -1.0500000000000001e-05,
+            -1.0300000000000003e-05,
+            -1.0100000000000002e-05,
+            -9.900000000000003e-06,
+            -9.700000000000002e-06,
+            -9.500000000000004e-06,
+            -9.300000000000002e-06,
+            -9.100000000000004e-06,
+            -8.900000000000003e-06,
+            -8.700000000000005e-06,
+            -8.500000000000003e-06,
+            -8.300000000000005e-06,
+            -8.100000000000004e-06,
+            -7.900000000000006e-06,
+            -7.700000000000004e-06,
+            -7.500000000000005e-06,
+            -7.3000000000000055e-06,
+            -7.100000000000006e-06,
+            -6.900000000000006e-06,
+            -6.700000000000006e-06,
+            -6.500000000000006e-06,
+            -6.300000000000007e-06,
+            -6.100000000000007e-06,
+            -5.900000000000007e-06,
+            -5.700000000000007e-06,
+            -5.5000000000000075e-06,
+            -5.300000000000008e-06,
+            -5.100000000000008e-06,
+            -4.900000000000008e-06,
+            -4.700000000000008e-06,
+            -4.500000000000009e-06,
+            -4.300000000000009e-06,
+            -4.100000000000009e-06,
+            -3.900000000000009e-06,
+            -3.7000000000000095e-06,
+            -3.5000000000000097e-06,
+            -3.30000000000001e-06,
+            -3.10000000000001e-06,
+            -2.9000000000000104e-06,
+            -2.7000000000000106e-06,
+            -2.500000000000011e-06,
+            -2.300000000000011e-06,
+            -2.1000000000000112e-06,
+            -1.9000000000000115e-06,
+            -1.7000000000000117e-06,
+            -1.500000000000012e-06,
+            -1.3000000000000121e-06,
+            -1.1000000000000123e-06,
+            -9.000000000000126e-07,
+            -7.000000000000128e-07,
+            -5.00000000000013e-07,
+            -3.000000000000132e-07,
+            -1.0000000000001344e-07,
+            9.999999999998634e-08,
+            2.999999999999861e-07,
+            4.999999999999859e-07
+          ],
+          "value": [
+            4449.944955688118,
+            4647.864626980719,
+            4848.955063863576,
+            5070.325274772918,
+            5274.7140134151205,
+            5480.3880368684395,
+            5706.4858419810325,
+            5914.530159424715,
+            6122.300947731922,
+            6346.850874227315,
+            6550.236497930743,
+            6750.700962183162,
+            6966.3166475313665,
+            7160.059378927232,
+            7348.722597154699,
+            7546.99624414126,
+            7721.246394272282,
+            7887.244304024469,
+            8059.232503852484,
+            8207.26465350879,
+            8344.594324261809,
+            8480.813759754787,
+            8592.697878078334,
+            8690.629469915804,
+            8781.978747428917,
+            8850.21943501066,
+            8902.246979634325,
+            8937.802388880491,
+            8955.178317669508,
+            8953.95329571323,
+            8933.168321848616,
+            8892.49360484732,
+            8825.503152597665,
+            8743.341985815432,
+            8639.320991385855,
+            8501.56188927018,
+            8352.14962167385,
+            8180.058703534809,
+            7967.465601016398,
+            7750.019657952974,
+            7508.7072316060385,
+            7218.544161517471,
+            6926.972084439176,
+            6610.371511704414,
+            6237.540229313726,
+            5869.933348992353,
+            5473.390019249389,
+            5005.372728108637,
+            4539.996329301061,
+            4034.8553041785713,
+            3434.4203201023893,
+            2830.2713069226147,
+            2157.5157267710742,
+            1326.9809064462283,
+            453.53018682526033,
+            -558.7410259180932,
+            -1839.5828802716858,
+            -3157.9220154762584,
+            -4363.710346060581,
+            -4068.696556784878,
+            -372.315652385791,
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    "b": {
+      "Maxwell": {
+        "q_areal": {
+          "n_m": [
+            -1.1900000000000001e-05,
+            -1.17e-05,
+            -1.1500000000000002e-05,
+            -1.13e-05,
+            -1.1100000000000002e-05,
+            -1.09e-05,
+            -1.0700000000000003e-05,
+            -1.0500000000000001e-05,
+            -1.0300000000000003e-05,
+            -1.0100000000000002e-05,
+            -9.900000000000003e-06,
+            -9.700000000000002e-06,
+            -9.500000000000004e-06,
+            -9.300000000000002e-06,
+            -9.100000000000004e-06,
+            -8.900000000000003e-06,
+            -8.700000000000005e-06,
+            -8.500000000000003e-06,
+            -8.300000000000005e-06,
+            -8.100000000000004e-06,
+            -7.900000000000006e-06,
+            -7.700000000000004e-06,
+            -7.500000000000005e-06,
+            -7.3000000000000055e-06,
+            -7.100000000000006e-06,
+            -6.900000000000006e-06,
+            -6.700000000000006e-06,
+            -6.500000000000006e-06,
+            -6.300000000000007e-06,
+            -6.100000000000007e-06,
+            -5.900000000000007e-06,
+            -5.700000000000007e-06,
+            -5.5000000000000075e-06,
+            -5.300000000000008e-06,
+            -5.100000000000008e-06,
+            -4.900000000000008e-06,
+            -4.700000000000008e-06,
+            -4.500000000000009e-06,
+            -4.300000000000009e-06,
+            -4.100000000000009e-06,
+            -3.900000000000009e-06,
+            -3.7000000000000095e-06,
+            -3.5000000000000097e-06,
+            -3.30000000000001e-06,
+            -3.10000000000001e-06,
+            -2.9000000000000104e-06,
+            -2.7000000000000106e-06,
+            -2.500000000000011e-06,
+            -2.300000000000011e-06,
+            -2.1000000000000112e-06,
+            -1.9000000000000115e-06,
+            -1.7000000000000117e-06,
+            -1.500000000000012e-06,
+            -1.3000000000000121e-06,
+            -1.1000000000000123e-06,
+            -9.000000000000126e-07,
+            -7.000000000000128e-07,
+            -5.00000000000013e-07,
+            -3.000000000000132e-07,
+            -1.0000000000001344e-07,
+            9.999999999998634e-08,
+            2.999999999999861e-07,
+            4.999999999999859e-07
+          ],
+          "value": [
+            44760.31602891817,
+            47468.46046458957,
+            50298.68138265866,
+            53546.91138956593,
+            56713.00593338156,
+            60118.36114243673,
+            64153.08907805707,
+            68173.1010470767,
+            72518.71681090545,
+            77585.46175868389,
+            82500.00376106282,
+            87647.10848082208,
+            93472.36240570823,
+            98940.871953872,
+            104466.70410362174,
+            110486.63713907919,
+            115984.14714579418,
+            121484.58052434729,
+            127561.11034024386,
+            133263.61809108214,
+            139171.95696108675,
+            145905.02750774677,
+            152404.72325700734,
+            159273.35175369866,
+            167178.53206485393,
+            174723.8319281719,
+            182414.58774355182,
+            190019.63830883033,
+            197371.3862283244,
+            204912.74589325723,
+            211196.0342721609,
+            216717.99577889222,
+            221863.5100760908,
+            225885.97859908294,
+            229442.25705700245,
+            233210.27697034916,
+            236963.1366396339,
+            241477.57088904266,
+            247667.32867097438,
+            254800.9184567389,
+            263541.379376795,
+            274770.91881726513,
+            286268.9777179968,
+            298305.2844750458,
+            310990.0120282277,
+            321222.399403667,
+            328991.30608911463,
+            333739.164834255,
+            333934.56017742347,
+            329684.2574453444,
+            320543.5370711716,
+            309016.6491841959,
+            295961.10422613303,
+            282547.13815920503,
+            273689.1989138609,
+            271290.3285886925,
+            278585.6621901662,
+            295878.88051778474,
+            323414.43194146734,
+            345789.8294150359,
+            38209.27640569644,
+            0.0,
+            0.0
+          ]
+        },
+        "temperature": {
+          "n_m": [
+            -1.1900000000000001e-05,
+            -1.17e-05,
+            -1.1500000000000002e-05,
+            -1.13e-05,
+            -1.1100000000000002e-05,
+            -1.09e-05,
+            -1.0700000000000003e-05,
+            -1.0500000000000001e-05,
+            -1.0300000000000003e-05,
+            -1.0100000000000002e-05,
+            -9.900000000000003e-06,
+            -9.700000000000002e-06,
+            -9.500000000000004e-06,
+            -9.300000000000002e-06,
+            -9.100000000000004e-06,
+            -8.900000000000003e-06,
+            -8.700000000000005e-06,
+            -8.500000000000003e-06,
+            -8.300000000000005e-06,
+            -8.100000000000004e-06,
+            -7.900000000000006e-06,
+            -7.700000000000004e-06,
+            -7.500000000000005e-06,
+            -7.3000000000000055e-06,
+            -7.100000000000006e-06,
+            -6.900000000000006e-06,
+            -6.700000000000006e-06,
+            -6.500000000000006e-06,
+            -6.300000000000007e-06,
+            -6.100000000000007e-06,
+            -5.900000000000007e-06,
+            -5.700000000000007e-06,
+            -5.5000000000000075e-06,
+            -5.300000000000008e-06,
+            -5.100000000000008e-06,
+            -4.900000000000008e-06,
+            -4.700000000000008e-06,
+            -4.500000000000009e-06,
+            -4.300000000000009e-06,
+            -4.100000000000009e-06,
+            -3.900000000000009e-06,
+            -3.7000000000000095e-06,
+            -3.5000000000000097e-06,
+            -3.30000000000001e-06,
+            -3.10000000000001e-06,
+            -2.9000000000000104e-06,
+            -2.7000000000000106e-06,
+            -2.500000000000011e-06,
+            -2.300000000000011e-06,
+            -2.1000000000000112e-06,
+            -1.9000000000000115e-06,
+            -1.7000000000000117e-06,
+            -1.500000000000012e-06,
+            -1.3000000000000121e-06,
+            -1.1000000000000123e-06,
+            -9.000000000000126e-07,
+            -7.000000000000128e-07,
+            -5.00000000000013e-07,
+            -3.000000000000132e-07,
+            -1.0000000000001344e-07,
+            9.999999999998634e-08,
+            2.999999999999861e-07,
+            4.999999999999859e-07
+          ],
+          "value": [
+            0.021899551373082436,
+            0.023115075488784446,
+            0.02439220753496467,
+            0.02585434332938978,
+            0.02726466311893259,
+            0.028754751767917096,
+            0.030480098175001136,
+            0.03215653932011134,
+            0.033925214085504994,
+            0.0359449024559651,
+            0.037874180196160914,
+            0.03987779481016539,
+            0.04214365530827511,
+            0.04428438600388837,
+            0.046475793610173545,
+            0.048905133581937,
+            0.0511657194634709,
+            0.05346512916783677,
+            0.056030815396653576,
+            0.05843981283828085,
+            0.06090800400941958,
+            0.06365910181822285,
+            0.06623701716884045,
+            0.0688710976432773,
+            0.07180530582594226,
+            0.07452986196975708,
+            0.07725770929476361,
+            0.07994176398293609,
+            0.08256432044859571,
+            0.08533996570010492,
+            0.08778265637661398,
+            0.09011145763285011,
+            0.09252435457978925,
+            0.09464694622267493,
+            0.09672349819810268,
+            0.09900887594877929,
+            0.10117637832465855,
+            0.10347143892174741,
+            0.10614760234506417,
+            0.10877865345405745,
+            0.11157689012949702,
+            0.1147702188043298,
+            0.11773496723474608,
+            0.1206044070977621,
+            0.12344580315108591,
+            0.1256354962812557,
+            0.12725974182129965,
+            0.1282957657230272,
+            0.12849973937361855,
+            0.12797349266302627,
+            0.1267112367289958,
+            0.1251107715134618,
+            0.12331059135909897,
+            0.1214459339804761,
+            0.12009077884577574,
+            0.11929615349499173,
+            0.11906481243261809,
+            0.11923230086302884,
+            0.11929022606975505,
+            0.11868281517664293,
+            0.03729469060555156,
+            0.013048539501973815,
+            0.008826500570857604
+          ]
+        },
+        "grad_n": {
+          "n_m": [
+            -1.1900000000000001e-05,
+            -1.17e-05,
+            -1.1500000000000002e-05,
+            -1.13e-05,
+            -1.1100000000000002e-05,
+            -1.09e-05,
+            -1.0700000000000003e-05,
+            -1.0500000000000001e-05,
+            -1.0300000000000003e-05,
+            -1.0100000000000002e-05,
+            -9.900000000000003e-06,
+            -9.700000000000002e-06,
+            -9.500000000000004e-06,
+            -9.300000000000002e-06,
+            -9.100000000000004e-06,
+            -8.900000000000003e-06,
+            -8.700000000000005e-06,
+            -8.500000000000003e-06,
+            -8.300000000000005e-06,
+            -8.100000000000004e-06,
+            -7.900000000000006e-06,
+            -7.700000000000004e-06,
+            -7.500000000000005e-06,
+            -7.3000000000000055e-06,
+            -7.100000000000006e-06,
+            -6.900000000000006e-06,
+            -6.700000000000006e-06,
+            -6.500000000000006e-06,
+            -6.300000000000007e-06,
+            -6.100000000000007e-06,
+            -5.900000000000007e-06,
+            -5.700000000000007e-06,
+            -5.5000000000000075e-06,
+            -5.300000000000008e-06,
+            -5.100000000000008e-06,
+            -4.900000000000008e-06,
+            -4.700000000000008e-06,
+            -4.500000000000009e-06,
+            -4.300000000000009e-06,
+            -4.100000000000009e-06,
+            -3.900000000000009e-06,
+            -3.7000000000000095e-06,
+            -3.5000000000000097e-06,
+            -3.30000000000001e-06,
+            -3.10000000000001e-06,
+            -2.9000000000000104e-06,
+            -2.7000000000000106e-06,
+            -2.500000000000011e-06,
+            -2.300000000000011e-06,
+            -2.1000000000000112e-06,
+            -1.9000000000000115e-06,
+            -1.7000000000000117e-06,
+            -1.500000000000012e-06,
+            -1.3000000000000121e-06,
+            -1.1000000000000123e-06,
+            -9.000000000000126e-07,
+            -7.000000000000128e-07,
+            -5.00000000000013e-07,
+            -3.000000000000132e-07,
+            -1.0000000000001344e-07,
+            9.999999999998634e-08,
+            2.999999999999861e-07,
+            4.999999999999859e-07
+          ],
+          "value": [
+            6095.427967202763,
+            6383.877477283866,
+            6703.414655224355,
+            7088.72975957984,
+            7475.8504943333255,
+            7893.799204799065,
+            8376.241567776302,
+            8831.08348592704,
+            9282.820247258549,
+            9753.400791566663,
+            10151.628813597956,
+            10507.318006547463,
+            10845.42572557594,
+            11110.508393716967,
+            11338.77468276926,
+            11561.879725389244,
+            11759.882286987278,
+            11969.053367456298,
+            12226.33138722087,
+            12495.84978521257,
+            12796.633727251077,
+            13141.869075966963,
+            13450.54410783174,
+            13718.282122783061,
+            13925.410815426214,
+            14000.395909477353,
+            13931.129682453984,
+            13713.950861587447,
+            13343.972921142875,
+            12803.54089546955,
+            12230.917720749145,
+            11655.413202917542,
+            11118.307908423854,
+            10790.434592372798,
+            10698.524306552106,
+            10908.048721588888,
+            11394.702871477402,
+            12135.742296049322,
+            13114.774883985854,
+            14031.168587551827,
+            14788.516851297456,
+            15225.104731921392,
+            15076.106177489684,
+            14216.18650020226,
+            12406.15022347555,
+            9956.043421897608,
+            6818.803919420047,
+            2884.4895895297523,
+            -872.940156334934,
+            -4354.719507222719,
+            -7358.38579879231,
+            -9008.421223480076,
+            -9284.153125627545,
+            -8013.272949342277,
+            -5618.287142568003,
+            -2606.974066819686,
+            218.51664466964155,
+            1101.1714230453324,
+            -999.0542068563299,
+            -5280.276598816631,
+            -840.629604234526,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "analytic": {
+        "q_areal": {
+          "n_m": [
+            -1.1900000000000001e-05,
+            -1.17e-05,
+            -1.1500000000000002e-05,
+            -1.13e-05,
+            -1.1100000000000002e-05,
+            -1.09e-05,
+            -1.0700000000000003e-05,
+            -1.0500000000000001e-05,
+            -1.0300000000000003e-05,
+            -1.0100000000000002e-05,
+            -9.900000000000003e-06,
+            -9.700000000000002e-06,
+            -9.500000000000004e-06,
+            -9.300000000000002e-06,
+            -9.100000000000004e-06,
+            -8.900000000000003e-06,
+            -8.700000000000005e-06,
+            -8.500000000000003e-06,
+            -8.300000000000005e-06,
+            -8.100000000000004e-06,
+            -7.900000000000006e-06,
+            -7.700000000000004e-06,
+            -7.500000000000005e-06,
+            -7.3000000000000055e-06,
+            -7.100000000000006e-06,
+            -6.900000000000006e-06,
+            -6.700000000000006e-06,
+            -6.500000000000006e-06,
+            -6.300000000000007e-06,
+            -6.100000000000007e-06,
+            -5.900000000000007e-06,
+            -5.700000000000007e-06,
+            -5.5000000000000075e-06,
+            -5.300000000000008e-06,
+            -5.100000000000008e-06,
+            -4.900000000000008e-06,
+            -4.700000000000008e-06,
+            -4.500000000000009e-06,
+            -4.300000000000009e-06,
+            -4.100000000000009e-06,
+            -3.900000000000009e-06,
+            -3.7000000000000095e-06,
+            -3.5000000000000097e-06,
+            -3.30000000000001e-06,
+            -3.10000000000001e-06,
+            -2.9000000000000104e-06,
+            -2.7000000000000106e-06,
+            -2.500000000000011e-06,
+            -2.300000000000011e-06,
+            -2.1000000000000112e-06,
+            -1.9000000000000115e-06,
+            -1.7000000000000117e-06,
+            -1.500000000000012e-06,
+            -1.3000000000000121e-06,
+            -1.1000000000000123e-06,
+            -9.000000000000126e-07,
+            -7.000000000000128e-07,
+            -5.00000000000013e-07,
+            -3.000000000000132e-07,
+            -1.0000000000001344e-07,
+            9.999999999998634e-08,
+            2.999999999999861e-07,
+            4.999999999999859e-07
+          ],
+          "value": [
+            46420.6409864619,
+            49480.54744410104,
+            52692.78094605003,
+            56351.98713743047,
+            59850.75607210777,
+            63503.38161531466,
+            67673.86476665166,
+            71667.5367619212,
+            75824.10835461484,
+            80517.67567535273,
+            84966.43928809058,
+            89569.56026775853,
+            94778.61781158969,
+            99721.65283139661,
+            104819.73313459472,
+            110523.02662289912,
+            115878.84850880294,
+            121367.82728758613,
+            127520.29488766924,
+            133301.63203993213,
+            139206.12132050528,
+            145745.0638444769,
+            151823.81439033587,
+            157988.78465109848,
+            164826.7864412583,
+            171182.93705606044,
+            177604.1714065333,
+            184029.93896034834,
+            190484.06214865344,
+            197573.40514280964,
+            204096.49554903692,
+            210619.1737856789,
+            217684.51496513796,
+            224107.53462867648,
+            230470.11273283223,
+            237361.48880992242,
+            243608.73913910988,
+            249761.804226223,
+            256319.38766426715,
+            262182.3241524864,
+            267886.0695809381,
+            273950.17086077266,
+            279337.4656947167,
+            284533.6840211107,
+            289944.53212315193,
+            294665.5300318397,
+            299133.5962901529,
+            303747.30949647573,
+            307712.0629232784,
+            311401.6409490482,
+            315085.1498524721,
+            318151.69121854054,
+            320892.6723768822,
+            323543.62703720963,
+            325640.83775041066,
+            327406.7678074463,
+            328942.88188870146,
+            330003.170510233,
+            330699.8163341777,
+            331064.1945804069,
+            53290.39601230494,
+            0.0,
+            0.0
+          ]
+        },
+        "temperature": {
+          "n_m": [
+            -1.1900000000000001e-05,
+            -1.17e-05,
+            -1.1500000000000002e-05,
+            -1.13e-05,
+            -1.1100000000000002e-05,
+            -1.09e-05,
+            -1.0700000000000003e-05,
+            -1.0500000000000001e-05,
+            -1.0300000000000003e-05,
+            -1.0100000000000002e-05,
+            -9.900000000000003e-06,
+            -9.700000000000002e-06,
+            -9.500000000000004e-06,
+            -9.300000000000002e-06,
+            -9.100000000000004e-06,
+            -8.900000000000003e-06,
+            -8.700000000000005e-06,
+            -8.500000000000003e-06,
+            -8.300000000000005e-06,
+            -8.100000000000004e-06,
+            -7.900000000000006e-06,
+            -7.700000000000004e-06,
+            -7.500000000000005e-06,
+            -7.3000000000000055e-06,
+            -7.100000000000006e-06,
+            -6.900000000000006e-06,
+            -6.700000000000006e-06,
+            -6.500000000000006e-06,
+            -6.300000000000007e-06,
+            -6.100000000000007e-06,
+            -5.900000000000007e-06,
+            -5.700000000000007e-06,
+            -5.5000000000000075e-06,
+            -5.300000000000008e-06,
+            -5.100000000000008e-06,
+            -4.900000000000008e-06,
+            -4.700000000000008e-06,
+            -4.500000000000009e-06,
+            -4.300000000000009e-06,
+            -4.100000000000009e-06,
+            -3.900000000000009e-06,
+            -3.7000000000000095e-06,
+            -3.5000000000000097e-06,
+            -3.30000000000001e-06,
+            -3.10000000000001e-06,
+            -2.9000000000000104e-06,
+            -2.7000000000000106e-06,
+            -2.500000000000011e-06,
+            -2.300000000000011e-06,
+            -2.1000000000000112e-06,
+            -1.9000000000000115e-06,
+            -1.7000000000000117e-06,
+            -1.500000000000012e-06,
+            -1.3000000000000121e-06,
+            -1.1000000000000123e-06,
+            -9.000000000000126e-07,
+            -7.000000000000128e-07,
+            -5.00000000000013e-07,
+            -3.000000000000132e-07,
+            -1.0000000000001344e-07,
+            9.999999999998634e-08,
+            2.999999999999861e-07,
+            4.999999999999859e-07
+          ],
+          "value": [
+            0.022675427674814723,
+            0.023978088727531086,
+            0.02534028135012252,
+            0.026886168884094227,
+            0.02835892012301338,
+            0.029891024078685886,
+            0.03163438583681382,
+            0.03329829868108392,
+            0.035024512566800683,
+            0.03696763263673121,
+            0.03880383360293223,
+            0.04069813602813302,
+            0.04283564823792283,
+            0.04485830093953536,
+            0.046938691723916404,
+            0.04925981355068138,
+            0.05143384734460829,
+            0.05365623021588305,
+            0.056141019363908785,
+            0.05847015309327294,
+            0.06084314383198068,
+            0.06346481765328336,
+            0.06589626041757003,
+            0.06835642227429808,
+            0.07107886174372081,
+            0.07360359868322984,
+            0.07614832428962985,
+            0.07868930614888758,
+            0.08123554347306992,
+            0.08402583447110162,
+            0.08658708180781546,
+            0.08914192647485351,
+            0.091902303869747,
+            0.09440520302793866,
+            0.09687771298474507,
+            0.09954800261689352,
+            0.10196116806401714,
+            0.10433005706487736,
+            0.1068453543097527,
+            0.10908511340246889,
+            0.11125393797264982,
+            0.11354765484106452,
+            0.11557265964786695,
+            0.1175115011591689,
+            0.1195119954512318,
+            0.12123791297683195,
+            0.12284754761966385,
+            0.12447830810870096,
+            0.12584368195412407,
+            0.12706961479559822,
+            0.12823050354753504,
+            0.12912389260753626,
+            0.12982506225815466,
+            0.13036339716264356,
+            0.13061452925440836,
+            0.13059049297609954,
+            0.13020783376229714,
+            0.12949052267915415,
+            0.1283811467683029,
+            0.12706637839967125,
+            0.039698650263724114,
+            0.013686521008238096,
+            0.009175614250802865
+          ]
+        },
+        "grad_n": {
+          "n_m": [
+            -1.1900000000000001e-05,
+            -1.17e-05,
+            -1.1500000000000002e-05,
+            -1.13e-05,
+            -1.1100000000000002e-05,
+            -1.09e-05,
+            -1.0700000000000003e-05,
+            -1.0500000000000001e-05,
+            -1.0300000000000003e-05,
+            -1.0100000000000002e-05,
+            -9.900000000000003e-06,
+            -9.700000000000002e-06,
+            -9.500000000000004e-06,
+            -9.300000000000002e-06,
+            -9.100000000000004e-06,
+            -8.900000000000003e-06,
+            -8.700000000000005e-06,
+            -8.500000000000003e-06,
+            -8.300000000000005e-06,
+            -8.100000000000004e-06,
+            -7.900000000000006e-06,
+            -7.700000000000004e-06,
+            -7.500000000000005e-06,
+            -7.3000000000000055e-06,
+            -7.100000000000006e-06,
+            -6.900000000000006e-06,
+            -6.700000000000006e-06,
+            -6.500000000000006e-06,
+            -6.300000000000007e-06,
+            -6.100000000000007e-06,
+            -5.900000000000007e-06,
+            -5.700000000000007e-06,
+            -5.5000000000000075e-06,
+            -5.300000000000008e-06,
+            -5.100000000000008e-06,
+            -4.900000000000008e-06,
+            -4.700000000000008e-06,
+            -4.500000000000009e-06,
+            -4.300000000000009e-06,
+            -4.100000000000009e-06,
+            -3.900000000000009e-06,
+            -3.7000000000000095e-06,
+            -3.5000000000000097e-06,
+            -3.30000000000001e-06,
+            -3.10000000000001e-06,
+            -2.9000000000000104e-06,
+            -2.7000000000000106e-06,
+            -2.500000000000011e-06,
+            -2.300000000000011e-06,
+            -2.1000000000000112e-06,
+            -1.9000000000000115e-06,
+            -1.7000000000000117e-06,
+            -1.500000000000012e-06,
+            -1.3000000000000121e-06,
+            -1.1000000000000123e-06,
+            -9.000000000000126e-07,
+            -7.000000000000128e-07,
+            -5.00000000000013e-07,
+            -3.000000000000132e-07,
+            -1.0000000000001344e-07,
+            9.999999999998634e-08,
+            2.999999999999861e-07,
+            4.999999999999859e-07
+          ],
+          "value": [
+            6539.154754010573,
+            6829.7900595966985,
+            7125.07530571599,
+            7450.132725985918,
+            7750.248169599184,
+            8052.243899163933,
+            8384.220477796453,
+            8689.681676283108,
+            8994.733321621523,
+            9324.41099924353,
+            9623.006988562409,
+            9917.304687131578,
+            10233.834447067342,
+            10518.242908772427,
+            10795.182879244208,
+            11086.215645857448,
+            11341.971728843457,
+            11585.599580685994,
+            11838.000021612172,
+            12055.223880236585,
+            12256.720592946396,
+            12456.560092773108,
+            12620.66932009958,
+            12764.277950922115,
+            12898.188451313144,
+            12998.170783828133,
+            13074.331420485618,
+            13126.291866517367,
+            13151.54199190617,
+            13149.435479370984,
+            13118.614175383376,
+            13058.56768513086,
+            12959.828623623212,
+            12838.822281570592,
+            12685.691932371774,
+            12482.953138694871,
+            12263.106761406383,
+            12009.92110964962,
+            11697.1707939629,
+            11377.291810298751,
+            11022.303600682428,
+            10595.436397653684,
+            10166.466404100782,
+            9700.62177278047,
+            9151.955822212776,
+            8610.869980762123,
+            8027.043712581023,
+            7337.764910550732,
+            6652.107835409978,
+            5907.510922412457,
+            5021.953397095536,
+            4130.353741414262,
+            3136.802898374736,
+            1909.2963759333093,
+            617.3466181403616,
+            -881.08328660349,
+            -2778.2976854790704,
+            -4731.676540036058,
+            -6516.258499222894,
+            -6062.575581990374,
+            -553.7219216970524,
+            0.0,
+            0.0
+          ]
+        }
+      }
+    }
+  },
+  "acceptance": {
+    "optical_50nm_a_b_contract": true,
+    "same_incident_normalization_relative_difference_lt_1e_minus_5": true,
+    "component_mapping_power_error_lt_0p5_percent": true,
+    "all_sources_finite_nonnegative": true,
+    "linear_residual_lt_1e_minus_8": true,
+    "energy_balance_lt_1_percent": true,
+    "all": true
+  },
+  "raw_output": {
+    "role": "external_explicit3D_fields_NPZ",
+    "path": "/home/seunghyun/tairte4_artifacts/paper_ir_w12_explicit3d_thermal50_20260731/w12_50nm_maxwell_analytic_explicit3d_fields.npz",
+    "size_bytes": 903530132,
+    "sha256": "399914ae58a3051b5405ccb24d44ee073c810e85302695b29f82633a5c882c2e"
+  },
+  "figures": {
+    "Q_areal": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_thermal50/explicit3d_depth_integrated_Q.png",
+    "Q_midplane": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_thermal50/explicit3d_volumetric_Q_midplane.png",
+    "temperature_surface": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_thermal50/explicit3d_temperature_surface.png",
+    "temperature_midplane": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_thermal50/explicit3d_temperature_midplane.png",
+    "gradient_magnitude": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_thermal50/explicit3d_gradient_magnitude.png",
+    "Maxwell_gradients": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_thermal50/explicit3d_Maxwell_gradients.png",
+    "analytic_gradients": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_thermal50/explicit3d_analytic_gradients.png",
+    "edge_profiles": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_thermal50/explicit3d_edge_normal_profiles.png",
+    "depth_profiles": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_thermal50/explicit3d_Q_depth_profiles.png"
+  },
+  "PTE_run": false,
+  "weighting_potential_run": false,
+  "adjoint_run": false,
+  "AD_FD_run": false,
+  "optimization_run": false,
+  "generation_commit": "23bdc05f005a86dd15691da8934cb1f1bffad210",
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/compare_w12_50nm_maxwell_analytic_explicit3d.py --edge-a-dir /data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_20260731 --edge-b-dir /data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_retry1_20260731/readonly_recovery_b_reference_retry1 --incident-reference-npz /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_a_L60_xy100_dz5_pml24_t4_gpu4_retry4_20260731/readonly_recovery_v2/incident_reference.npz --output-dir /home/seunghyun/tairte4_artifacts/paper_ir_w12_explicit3d_thermal50_20260731 --report-dir /home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_explicit3d_thermal50 --thermal-step-nm 50"
+}

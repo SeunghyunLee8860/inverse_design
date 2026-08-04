@@ -1,0 +1,158 @@
+{
+  "status": "COMPLETED_DEVICE_A_INSIDE_FLAKE_BEAM_CENTER_DIAGNOSTIC",
+  "interpretation": "single explicitly chosen inside-flake beam position; not a paper-registered scan coordinate and not an absolute-current certification",
+  "beam_center": {
+    "digitized_code_um": [
+      0.0,
+      3.0
+    ],
+    "realized_simulation_um": [
+      0.0,
+      0.0
+    ],
+    "fixed_lumerical_um": [
+      0.0,
+      0.0
+    ],
+    "published_coordinate_frame": "DEVICE_A_FIXED_LUMERICAL_X_B_Y_A",
+    "fixed_lumerical_origin_in_digitized_code_um": [
+      0.0,
+      3.0
+    ],
+    "x_axis": "crystal b",
+    "y_axis": "crystal a",
+    "inside_flake": true,
+    "overlaps_digitized_metal": false,
+    "minimum_source_aperture_to_lateral_PML_um": 7.0
+  },
+  "source_contract": {
+    "wavelength_um": 11.0,
+    "waist_um": 8.75,
+    "source_span_um": 50.0,
+    "FDTD_domain_um": 64.0,
+    "six_PML": true,
+    "incident_power_for_thermal_PTE_uW": 285.0
+  },
+  "thermal_source_contract": {
+    "included": "TaIrTe4-only Maxwell volumetric Q",
+    "attribution": "literal optical-cell/thermal-TaIrTe4 intersection density",
+    "SiO2_absorption_included_as_thermal_source": false,
+    "metal_absorption_included_as_thermal_source": false,
+    "clipping_smoothing_gain_rescaling_tiling": false
+  },
+  "cases": {
+    "a": {
+      "polarization": "a",
+      "optical": {
+        "P_Q_full_control_volume_W_at_1_W_m2": 2.068891905818512e-11,
+        "P_six_W_at_1_W_m2": 2.0690037890163004e-11,
+        "six_face_relative_closure": 5.4075878634150855e-05,
+        "auto_shutoff": 9.46727e-06,
+        "P_Q_TaIrTe4_exact_support_W_at_1_W_m2": 1.9865124247267648e-11,
+        "component_power_W_at_1_W_m2": {
+          "x": 2.736524387652676e-14,
+          "y": 2.0545965766289137e-11,
+          "z": 1.155880480194569e-13
+        },
+        "negative_Q_voxel_count": 0,
+        "Q_hotspot": {
+          "x_m": -4.999999999998783e-08,
+          "y_m": 8.749999999999998e-06,
+          "z_m": 1.973684210526297e-09,
+          "Q_W_m3": 7530241.437059265
+        },
+        "acceptance": {
+          "six_face_closure_lt_0p5_percent": true,
+          "Q_not_clipped": true,
+          "measured_intensity_normalization": true,
+          "material_support_decomposition_residual_lt_1e_minus_12": true,
+          "solver_log_reports_successful_completion": true,
+          "auto_shutoff_reached_requested_threshold": true,
+          "Pabs_and_realized_six_face_bounds_match_lt_1fm": true,
+          "lossy_SiO2_and_Si_readback_positive": true,
+          "Kitamura_SiO2_fit_error_lt_0p5_percent": true
+        }
+      },
+      "thermal_pte": {
+        "source_power_W_at_285uW_incident": 4.7267561417641685e-05,
+        "Tmax_rise_K": 0.16958001776181642,
+        "TaIrTe4_volume_average_rise_K": 0.032701877481102655,
+        "linear_residual_relative": 1.0383598524192027e-10,
+        "energy_balance_relative_error": 7.362954358757166e-12,
+        "PTE_current_A_at_285uW_incident": 3.404406014335927e-10,
+        "absolute_current_certification": "BLOCKED_DIGITIZED_GEOMETRY_RESISTANCE_MISMATCH",
+        "mapping_relative_power_error": 0.0,
+        "mapped_power_outside_flake_W": 0.0,
+        "modeled_source_fraction_of_full_common_grid_Q": 0.9689542054300206
+      }
+    },
+    "b": {
+      "polarization": "b",
+      "optical": {
+        "P_Q_full_control_volume_W_at_1_W_m2": 2.868408954102906e-11,
+        "P_six_W_at_1_W_m2": 2.8684600942937254e-11,
+        "six_face_relative_closure": 1.782844771698581e-05,
+        "auto_shutoff": 9.68429e-06,
+        "P_Q_TaIrTe4_exact_support_W_at_1_W_m2": 2.7695969179093425e-11,
+        "component_power_W_at_1_W_m2": {
+          "x": 2.864782610744652e-11,
+          "y": 8.223871995942502e-15,
+          "z": 2.803956158659716e-14
+        },
+        "negative_Q_voxel_count": 0,
+        "Q_hotspot": {
+          "x_m": 1.218933350658142e-20,
+          "y_m": 9.99999999999834e-08,
+          "z_m": -7.828947368421071e-09,
+          "Q_W_m3": 1933860.3521829688
+        },
+        "acceptance": {
+          "six_face_closure_lt_0p5_percent": true,
+          "Q_not_clipped": true,
+          "measured_intensity_normalization": true,
+          "material_support_decomposition_residual_lt_1e_minus_12": true,
+          "solver_log_reports_successful_completion": true,
+          "auto_shutoff_reached_requested_threshold": true,
+          "Pabs_and_realized_six_face_bounds_match_lt_1fm": true,
+          "lossy_SiO2_and_Si_readback_positive": true,
+          "Kitamura_SiO2_fit_error_lt_0p5_percent": true
+        }
+      },
+      "thermal_pte": {
+        "source_power_W_at_285uW_incident": 6.561667364013426e-05,
+        "Tmax_rise_K": 0.23214408462467945,
+        "TaIrTe4_volume_average_rise_K": 0.04518331949912849,
+        "linear_residual_relative": 1.0449535715991601e-10,
+        "energy_balance_relative_error": 6.1609086549476175e-12,
+        "PTE_current_A_at_285uW_incident": -3.4722859201633105e-09,
+        "absolute_current_certification": "BLOCKED_DIGITIZED_GEOMETRY_RESISTANCE_MISMATCH",
+        "mapping_relative_power_error": 0.0,
+        "mapped_power_outside_flake_W": 0.0,
+        "modeled_source_fraction_of_full_common_grid_Q": 0.9701845319928009
+      }
+    }
+  },
+  "ratios": {
+    "TaIrTe4_optical_absorption_b_over_a": 1.3942006520750996,
+    "Tmax_b_over_a": 1.3689353715644574,
+    "TaIrTe4_average_temperature_b_over_a": 1.3816735606461266,
+    "absolute_PTE_current_b_over_a": 10.199388397099352,
+    "PTE_current_signs": {
+      "a": 1,
+      "b": -1
+    }
+  },
+  "gates": {
+    "both_optical_closure_lt_0p5_percent": true,
+    "both_auto_shutoff_lt_1e_minus_5": true,
+    "both_mapping_power_error_lt_1e_minus_12": true,
+    "both_thermal_energy_balance_lt_1_percent": true,
+    "both_linear_residual_lt_1e_minus_8": true,
+    "absolute_current_certified": false
+  },
+  "fail_closed_diagnostics_preserved": [
+    "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_inside_flake_x0/finite_a_20260803",
+    "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_inside_flake_x0/empty_b_20260803",
+    "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_inside_flake_x0/thermal_a_tairte4_only_20260803"
+  ]
+}

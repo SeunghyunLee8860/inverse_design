@@ -1,0 +1,69 @@
+{
+  "status": "PARTIAL_OFFLINE_PAPER_IR_VALIDATION_BLOCKED_PLANAR_Q_AND_FIG3HI",
+  "raw_artifacts_committed_to_git": false,
+  "generation_command": "python summarize_offline_q_thermal_controls.py --q-convergence-dir <saved-comparison> --thermal-convergence-dir <cutcell-thermal> --remap-control-dir <remap-control> --three-source-audit-dir <saved-source-audit> --output-dir <report-dir>",
+  "inputs": [
+    {
+      "role": "saved 1.2-vs-4 ps observable-Q comparison",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/q_observable_convergence_1p2_vs_4ps_20260730/q_observable_convergence.json",
+      "byte_size": 5054,
+      "sha256": "fec86b4badeff63aa184b6222a5362013050c47610998f8857b488b157bfd044"
+    },
+    {
+      "role": "Q profiles and comparison fields",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/q_observable_convergence_1p2_vs_4ps_20260730/q_observable_convergence_profiles.npz",
+      "byte_size": 9978,
+      "sha256": "c200242baeab86c9ef16d7e7b18154b7b50059ba662fcd1c50ebc1d60ec6e303"
+    },
+    {
+      "role": "paper cut-cell thermal convergence summary",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/paper_cutcell_thermal_convergence_20260730/paper_cutcell_thermal_summary.json",
+      "byte_size": 17275,
+      "sha256": "ba1b4e0abbbd3d4abe56b65c8f8f58151ec035d449e2ce6958f05ea4dd226d67"
+    },
+    {
+      "role": "paper cut-cell thermal cases",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/paper_cutcell_thermal_convergence_20260730/paper_cutcell_thermal_cases.csv",
+      "byte_size": 1197,
+      "sha256": "ea9ceeb929b9ae7c354f0580cda50b699bff6e9a80f9bc8abe653df0112f70e4"
+    },
+    {
+      "role": "analytic-Q remap summary",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_q_remap_cutcell_core100_src33p9_final_20260730/analytic_q_remap_control_summary.json",
+      "byte_size": 11704,
+      "sha256": "b63a2f037d30026c4dd5aed6409aefa95c2ef019f4e7c7127aebec4d4935abe2"
+    },
+    {
+      "role": "analytic-Q direct/remapped fields",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/analytic_q_remap_cutcell_core100_src33p9_final_20260730/analytic_q_remap_control_fields.npz",
+      "byte_size": 6654593,
+      "sha256": "3d42880151816122376fee90ea0e020836b06f1892869a006523b7feec86a813"
+    },
+    {
+      "role": "saved three-source availability audit",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/saved_three_source_q_audit_20260730/saved_three_source_q_audit.json",
+      "byte_size": 3535,
+      "sha256": "92ccf9b10fb992be7773b277e5ec95b6365cd5218d62206505cc31d7f51b3fb6"
+    },
+    {
+      "role": "saved source candidates",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/saved_three_source_q_audit_20260730/saved_three_source_q_audit.csv",
+      "byte_size": 1725,
+      "sha256": "5edb31a3db9a2e95f7b1249ed3bc688e6d8035ebcbd2639481600114ed74cca4"
+    }
+  ],
+  "published": [
+    {
+      "role": "published summary JSON",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_offline_q_thermal_controls/paper_ir_offline_controls_summary.json",
+      "byte_size": 8093,
+      "sha256": "b8eeb4ad244f6c913206f7da915f9cafbadcb01c101fbfd2ed2cb5989a820eb0"
+    },
+    {
+      "role": "published case table",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_offline_q_thermal_controls/paper_ir_offline_controls_cases.csv",
+      "byte_size": 1144,
+      "sha256": "674fbc9b278c60ec9303977c0511158163b7d14c40f9ded45f715539917fbcaa"
+    }
+  ]
+}

@@ -1,0 +1,785 @@
+{
+  "status": "VALIDATED_IMPORTED_PERMITTIVITY_ENDPOINT_EQUIVALENCE",
+  "passed": true,
+  "generated_at_utc": "2026-07-27T09:32:49.140322+00:00",
+  "scope": "v261 matched CPU-TFSF scalar-material versus 81x81x13 imported-permittivity endpoint equivalence",
+  "metric_limit": 0.005,
+  "low_Q_component_power_fraction": 1e-08,
+  "comparisons": [
+    {
+      "kind": "representation_equivalence",
+      "endpoint": "rho0",
+      "flake_dz_nm": 5.0,
+      "scalar_status": "VALIDATED_LARGE_BACKGROUND_FORWARD_Q_CLOSURE",
+      "imported_status": "VALIDATED_LARGE_BACKGROUND_FORWARD_Q_CLOSURE",
+      "imported_sample_shape": [
+        81,
+        81,
+        13
+      ],
+      "imported_bounds_max_abs_error_m": 0.0,
+      "power": {
+        "P_Q_reference_W": 1.3567329103326493e-12,
+        "P_Q_candidate_W": 1.3567329103326493e-12,
+        "P_Q_relative_difference": 0.0,
+        "P_six_reference_W": 1.356726572243094e-12,
+        "P_six_candidate_W": 1.356726572243094e-12,
+        "P_six_relative_difference": 0.0,
+        "Q_components": {
+          "x": {
+            "reference_W": 1.3567329103305648e-12,
+            "candidate_W": 1.3567329103305648e-12,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 0.9999999999984636,
+            "low_power_diagnostic": false
+          },
+          "y": {
+            "reference_W": 2.0844917576965048e-24,
+            "candidate_W": 2.0844917576965048e-24,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 1.5364053910842486e-12,
+            "low_power_diagnostic": true
+          },
+          "z": {
+            "reference_W": 0.0,
+            "candidate_W": 0.0,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 0.0,
+            "low_power_diagnostic": true
+          }
+        }
+      },
+      "spatial": {
+        "all_component_coordinates_equal": true,
+        "common_grid": "reference native Yee coordinates; candidate is used directly when identical, otherwise trilinearly interpolated",
+        "combined_complex_field_NRMSE": 0.0,
+        "combined_spatial_Q_NRMSE": 0.0,
+        "combined_index_NRMSE": 0.0,
+        "components": {
+          "x": {
+            "coordinate_equal": true,
+            "complex_field_NRMSE": 0.0,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 0.0
+          },
+          "y": {
+            "coordinate_equal": true,
+            "complex_field_NRMSE": 0.0,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 0.0
+          },
+          "z": {
+            "coordinate_equal": true,
+            "complex_field_NRMSE": 0.0,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 0.0
+          }
+        }
+      },
+      "gated_metrics": {
+        "P_Q": 0.0,
+        "P_six": 0.0,
+        "complex_field": 0.0,
+        "spatial_Q": 0.0,
+        "index": 0.0,
+        "major_Q_component": 0.0
+      },
+      "maximum_gated_metric": 0.0
+    },
+    {
+      "kind": "representation_equivalence",
+      "endpoint": "rho0",
+      "flake_dz_nm": 2.5,
+      "scalar_status": "VALIDATED_LARGE_BACKGROUND_FORWARD_Q_CLOSURE",
+      "imported_status": "VALIDATED_LARGE_BACKGROUND_FORWARD_Q_CLOSURE",
+      "imported_sample_shape": [
+        81,
+        81,
+        13
+      ],
+      "imported_bounds_max_abs_error_m": 0.0,
+      "power": {
+        "P_Q_reference_W": 1.3563616738655505e-12,
+        "P_Q_candidate_W": 1.3563616738655505e-12,
+        "P_Q_relative_difference": 0.0,
+        "P_six_reference_W": 1.3563608326643788e-12,
+        "P_six_candidate_W": 1.3563608326643788e-12,
+        "P_six_relative_difference": 0.0,
+        "Q_components": {
+          "x": {
+            "reference_W": 1.3563616738649178e-12,
+            "candidate_W": 1.3563616738649178e-12,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 0.9999999999995335,
+            "low_power_diagnostic": false
+          },
+          "y": {
+            "reference_W": 6.326177470274478e-25,
+            "candidate_W": 6.326177470274478e-25,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 4.664078609833649e-13,
+            "low_power_diagnostic": true
+          },
+          "z": {
+            "reference_W": 0.0,
+            "candidate_W": 0.0,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 0.0,
+            "low_power_diagnostic": true
+          }
+        }
+      },
+      "spatial": {
+        "all_component_coordinates_equal": true,
+        "common_grid": "reference native Yee coordinates; candidate is used directly when identical, otherwise trilinearly interpolated",
+        "combined_complex_field_NRMSE": 0.0,
+        "combined_spatial_Q_NRMSE": 0.0,
+        "combined_index_NRMSE": 0.0,
+        "components": {
+          "x": {
+            "coordinate_equal": true,
+            "complex_field_NRMSE": 0.0,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 0.0
+          },
+          "y": {
+            "coordinate_equal": true,
+            "complex_field_NRMSE": 0.0,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 0.0
+          },
+          "z": {
+            "coordinate_equal": true,
+            "complex_field_NRMSE": 0.0,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 0.0
+          }
+        }
+      },
+      "gated_metrics": {
+        "P_Q": 0.0,
+        "P_six": 0.0,
+        "complex_field": 0.0,
+        "spatial_Q": 0.0,
+        "index": 0.0,
+        "major_Q_component": 0.0
+      },
+      "maximum_gated_metric": 0.0
+    },
+    {
+      "kind": "representation_equivalence",
+      "endpoint": "rho1",
+      "flake_dz_nm": 5.0,
+      "scalar_status": "VALIDATED_LARGE_BACKGROUND_FORWARD_Q_CLOSURE",
+      "imported_status": "VALIDATED_LARGE_BACKGROUND_FORWARD_Q_CLOSURE",
+      "imported_sample_shape": [
+        81,
+        81,
+        13
+      ],
+      "imported_bounds_max_abs_error_m": 0.0,
+      "power": {
+        "P_Q_reference_W": 2.089634632539596e-12,
+        "P_Q_candidate_W": 2.089634632539596e-12,
+        "P_Q_relative_difference": 0.0,
+        "P_six_reference_W": 2.0906663769920964e-12,
+        "P_six_candidate_W": 2.0906663769920964e-12,
+        "P_six_relative_difference": 0.0,
+        "Q_components": {
+          "x": {
+            "reference_W": 2.0873817900467834e-12,
+            "candidate_W": 2.0873817900467834e-12,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 0.9989218964608781,
+            "low_power_diagnostic": false
+          },
+          "y": {
+            "reference_W": 2.2528424928125e-15,
+            "candidate_W": 2.2528424928125e-15,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 0.001078103539121838,
+            "low_power_diagnostic": false
+          },
+          "z": {
+            "reference_W": 0.0,
+            "candidate_W": 0.0,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 0.0,
+            "low_power_diagnostic": true
+          }
+        }
+      },
+      "spatial": {
+        "all_component_coordinates_equal": true,
+        "common_grid": "reference native Yee coordinates; candidate is used directly when identical, otherwise trilinearly interpolated",
+        "combined_complex_field_NRMSE": 0.0,
+        "combined_spatial_Q_NRMSE": 0.0,
+        "combined_index_NRMSE": 6.026016816590528e-17,
+        "components": {
+          "x": {
+            "coordinate_equal": true,
+            "complex_field_NRMSE": 0.0,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 4.385249509562388e-17
+          },
+          "y": {
+            "coordinate_equal": true,
+            "complex_field_NRMSE": 0.0,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 6.673343062663256e-17
+          },
+          "z": {
+            "coordinate_equal": true,
+            "complex_field_NRMSE": 0.0,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 8.375914691262423e-17
+          }
+        }
+      },
+      "gated_metrics": {
+        "P_Q": 0.0,
+        "P_six": 0.0,
+        "complex_field": 0.0,
+        "spatial_Q": 0.0,
+        "index": 6.026016816590528e-17,
+        "major_Q_component": 0.0
+      },
+      "maximum_gated_metric": 6.026016816590528e-17
+    },
+    {
+      "kind": "representation_equivalence",
+      "endpoint": "rho1",
+      "flake_dz_nm": 2.5,
+      "scalar_status": "VALIDATED_LARGE_BACKGROUND_FORWARD_Q_CLOSURE",
+      "imported_status": "VALIDATED_LARGE_BACKGROUND_FORWARD_Q_CLOSURE",
+      "imported_sample_shape": [
+        81,
+        81,
+        13
+      ],
+      "imported_bounds_max_abs_error_m": 0.0,
+      "power": {
+        "P_Q_reference_W": 2.089158650355584e-12,
+        "P_Q_candidate_W": 2.089158650355584e-12,
+        "P_Q_relative_difference": 0.0,
+        "P_six_reference_W": 2.090307137866763e-12,
+        "P_six_candidate_W": 2.090307137866763e-12,
+        "P_six_relative_difference": 0.0,
+        "Q_components": {
+          "x": {
+            "reference_W": 2.0869087630823947e-12,
+            "candidate_W": 2.0869087630823947e-12,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 0.9989230653819392,
+            "low_power_diagnostic": false
+          },
+          "y": {
+            "reference_W": 2.2498872731892436e-15,
+            "candidate_W": 2.2498872731892436e-15,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 0.0010769346180608654,
+            "low_power_diagnostic": false
+          },
+          "z": {
+            "reference_W": 0.0,
+            "candidate_W": 0.0,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 0.0,
+            "low_power_diagnostic": true
+          }
+        }
+      },
+      "spatial": {
+        "all_component_coordinates_equal": true,
+        "common_grid": "reference native Yee coordinates; candidate is used directly when identical, otherwise trilinearly interpolated",
+        "combined_complex_field_NRMSE": 0.0,
+        "combined_spatial_Q_NRMSE": 0.0,
+        "combined_index_NRMSE": 6.13849471947584e-17,
+        "components": {
+          "x": {
+            "coordinate_equal": true,
+            "complex_field_NRMSE": 0.0,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 4.500826915313827e-17
+          },
+          "y": {
+            "coordinate_equal": true,
+            "complex_field_NRMSE": 0.0,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 6.846892434225511e-17
+          },
+          "z": {
+            "coordinate_equal": true,
+            "complex_field_NRMSE": 0.0,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 8.4431164383055e-17
+          }
+        }
+      },
+      "gated_metrics": {
+        "P_Q": 0.0,
+        "P_six": 0.0,
+        "complex_field": 0.0,
+        "spatial_Q": 0.0,
+        "index": 6.13849471947584e-17,
+        "major_Q_component": 0.0
+      },
+      "maximum_gated_metric": 6.13849471947584e-17
+    }
+  ],
+  "mesh_convergence": [
+    {
+      "kind": "mesh_convergence_dz5_to_dz2.5",
+      "endpoint": "rho0",
+      "representation": "scalar",
+      "coarse_flake_dz_nm": 5.0,
+      "fine_flake_dz_nm": 2.5,
+      "promoted_for_gate": true,
+      "power": {
+        "P_Q_reference_W": 1.3567329103326493e-12,
+        "P_Q_candidate_W": 1.3563616738655505e-12,
+        "P_Q_relative_difference": 0.00027362531289066737,
+        "P_six_reference_W": 1.356726572243094e-12,
+        "P_six_candidate_W": 1.3563608326643788e-12,
+        "P_six_relative_difference": 0.00026957500958382953,
+        "Q_components": {
+          "x": {
+            "reference_W": 1.3567329103305648e-12,
+            "candidate_W": 1.3563616738649178e-12,
+            "relative_difference": 0.00027362531182101204,
+            "maximum_fraction_of_total_P_Q": 0.9999999999984636,
+            "low_power_diagnostic": false
+          },
+          "y": {
+            "reference_W": 2.0844917576965048e-24,
+            "candidate_W": 6.326177470274478e-25,
+            "relative_difference": 0.6965122338854771,
+            "maximum_fraction_of_total_P_Q": 1.5364053910842486e-12,
+            "low_power_diagnostic": true
+          },
+          "z": {
+            "reference_W": 0.0,
+            "candidate_W": 0.0,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 0.0,
+            "low_power_diagnostic": true
+          }
+        }
+      },
+      "spatial": {
+        "all_component_coordinates_equal": false,
+        "common_grid": "reference native Yee coordinates; candidate is used directly when identical, otherwise trilinearly interpolated",
+        "combined_complex_field_NRMSE": 4.958467024596539e-05,
+        "combined_spatial_Q_NRMSE": 0.0002361795597899198,
+        "combined_index_NRMSE": 2.0970277808350407e-16,
+        "components": {
+          "x": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 4.9576669429814595e-05,
+            "spatial_Q_NRMSE": 0.0002361795597899198,
+            "index_NRMSE": 2.4824623840652392e-16
+          },
+          "y": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 1.0645466836243669,
+            "spatial_Q_NRMSE": 0.7166444495316538,
+            "index_NRMSE": 1.996798198415878e-16
+          },
+          "z": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 0.6205693503087278,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 0.0
+          }
+        }
+      },
+      "gated_metrics": {
+        "P_Q": 0.00027362531289066737,
+        "P_six": 0.00026957500958382953,
+        "complex_field": 4.958467024596539e-05,
+        "spatial_Q": 0.0002361795597899198,
+        "major_Q_component": 0.00027362531182101204
+      },
+      "maximum_gated_metric": 0.00027362531289066737
+    },
+    {
+      "kind": "mesh_convergence_dz5_to_dz2.5",
+      "endpoint": "rho0",
+      "representation": "imported",
+      "coarse_flake_dz_nm": 5.0,
+      "fine_flake_dz_nm": 2.5,
+      "promoted_for_gate": false,
+      "power": {
+        "P_Q_reference_W": 1.3567329103326493e-12,
+        "P_Q_candidate_W": 1.3563616738655505e-12,
+        "P_Q_relative_difference": 0.00027362531289066737,
+        "P_six_reference_W": 1.356726572243094e-12,
+        "P_six_candidate_W": 1.3563608326643788e-12,
+        "P_six_relative_difference": 0.00026957500958382953,
+        "Q_components": {
+          "x": {
+            "reference_W": 1.3567329103305648e-12,
+            "candidate_W": 1.3563616738649178e-12,
+            "relative_difference": 0.00027362531182101204,
+            "maximum_fraction_of_total_P_Q": 0.9999999999984636,
+            "low_power_diagnostic": false
+          },
+          "y": {
+            "reference_W": 2.0844917576965048e-24,
+            "candidate_W": 6.326177470274478e-25,
+            "relative_difference": 0.6965122338854771,
+            "maximum_fraction_of_total_P_Q": 1.5364053910842486e-12,
+            "low_power_diagnostic": true
+          },
+          "z": {
+            "reference_W": 0.0,
+            "candidate_W": 0.0,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 0.0,
+            "low_power_diagnostic": true
+          }
+        }
+      },
+      "spatial": {
+        "all_component_coordinates_equal": false,
+        "common_grid": "reference native Yee coordinates; candidate is used directly when identical, otherwise trilinearly interpolated",
+        "combined_complex_field_NRMSE": 4.958467024596539e-05,
+        "combined_spatial_Q_NRMSE": 0.0002361795597899198,
+        "combined_index_NRMSE": 2.0970277808350407e-16,
+        "components": {
+          "x": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 4.9576669429814595e-05,
+            "spatial_Q_NRMSE": 0.0002361795597899198,
+            "index_NRMSE": 2.4824623840652392e-16
+          },
+          "y": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 1.0645466836243669,
+            "spatial_Q_NRMSE": 0.7166444495316538,
+            "index_NRMSE": 1.996798198415878e-16
+          },
+          "z": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 0.6205693503087278,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 0.0
+          }
+        }
+      },
+      "gated_metrics": {
+        "P_Q": 0.00027362531289066737,
+        "P_six": 0.00026957500958382953,
+        "complex_field": 4.958467024596539e-05,
+        "spatial_Q": 0.0002361795597899198,
+        "major_Q_component": 0.00027362531182101204
+      },
+      "maximum_gated_metric": 0.00027362531289066737
+    },
+    {
+      "kind": "mesh_convergence_dz5_to_dz2.5",
+      "endpoint": "rho1",
+      "representation": "scalar",
+      "coarse_flake_dz_nm": 5.0,
+      "fine_flake_dz_nm": 2.5,
+      "promoted_for_gate": false,
+      "power": {
+        "P_Q_reference_W": 2.089634632539596e-12,
+        "P_Q_candidate_W": 2.089158650355584e-12,
+        "P_Q_relative_difference": 0.00022778249202041591,
+        "P_six_reference_W": 2.0906663769920964e-12,
+        "P_six_candidate_W": 2.090307137866763e-12,
+        "P_six_relative_difference": 0.00017182996258359857,
+        "Q_components": {
+          "x": {
+            "reference_W": 2.0873817900467834e-12,
+            "candidate_W": 2.0869087630823947e-12,
+            "relative_difference": 0.00022661257592852046,
+            "maximum_fraction_of_total_P_Q": 0.9989218964608781,
+            "low_power_diagnostic": false
+          },
+          "y": {
+            "reference_W": 2.2528424928125e-15,
+            "candidate_W": 2.2498872731892436e-15,
+            "relative_difference": 0.0013117737403678252,
+            "maximum_fraction_of_total_P_Q": 0.001078103539121838,
+            "low_power_diagnostic": false
+          },
+          "z": {
+            "reference_W": 0.0,
+            "candidate_W": 0.0,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 0.0,
+            "low_power_diagnostic": true
+          }
+        }
+      },
+      "spatial": {
+        "all_component_coordinates_equal": false,
+        "common_grid": "reference native Yee coordinates; candidate is used directly when identical, otherwise trilinearly interpolated",
+        "combined_complex_field_NRMSE": 0.001382243629816845,
+        "combined_spatial_Q_NRMSE": 0.010406457098226065,
+        "combined_index_NRMSE": 0.0004825614980635887,
+        "components": {
+          "x": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 0.0006489990010443063,
+            "spatial_Q_NRMSE": 0.010406326305734034,
+            "index_NRMSE": 2.7384081845211476e-16
+          },
+          "y": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 0.0034226663692769094,
+            "spatial_Q_NRMSE": 0.03570339721561986,
+            "index_NRMSE": 1.9130791639471052e-16
+          },
+          "z": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 0.008829148429505624,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 0.0010328124200043223
+          }
+        }
+      },
+      "gated_metrics": {
+        "P_Q": 0.00022778249202041591,
+        "P_six": 0.00017182996258359857,
+        "complex_field": 0.001382243629816845,
+        "spatial_Q": 0.010406457098226065,
+        "major_Q_component": 0.0013117737403678252
+      },
+      "maximum_gated_metric": 0.010406457098226065
+    },
+    {
+      "kind": "mesh_convergence_dz2.5_to_dz1.25",
+      "endpoint": "rho1",
+      "representation": "scalar",
+      "coarse_flake_dz_nm": 2.5,
+      "fine_flake_dz_nm": 1.25,
+      "promoted_for_gate": false,
+      "power": {
+        "P_Q_reference_W": 2.089158650355584e-12,
+        "P_Q_candidate_W": 2.0891109036164687e-12,
+        "P_Q_relative_difference": 2.28545300315309e-05,
+        "P_six_reference_W": 2.090307137866763e-12,
+        "P_six_candidate_W": 2.090285027676247e-12,
+        "P_six_relative_difference": 1.0577484100531262e-05,
+        "Q_components": {
+          "x": {
+            "reference_W": 2.0869087630823947e-12,
+            "candidate_W": 2.0868624276569034e-12,
+            "relative_difference": 2.220289948030985e-05,
+            "maximum_fraction_of_total_P_Q": 0.9989230653819392,
+            "low_power_diagnostic": false
+          },
+          "y": {
+            "reference_W": 2.2498872731892436e-15,
+            "candidate_W": 2.2484759595654462e-15,
+            "relative_difference": 0.0006272819267948498,
+            "maximum_fraction_of_total_P_Q": 0.0010769346180608654,
+            "low_power_diagnostic": false
+          },
+          "z": {
+            "reference_W": 0.0,
+            "candidate_W": 0.0,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 0.0,
+            "low_power_diagnostic": true
+          }
+        }
+      },
+      "spatial": {
+        "all_component_coordinates_equal": false,
+        "common_grid": "reference native Yee coordinates; candidate is used directly when identical, otherwise trilinearly interpolated",
+        "combined_complex_field_NRMSE": 0.0008518324090441773,
+        "combined_spatial_Q_NRMSE": 0.005303949098737804,
+        "combined_index_NRMSE": 0.00034082642901113696,
+        "components": {
+          "x": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 0.00032970675058566765,
+            "spatial_Q_NRMSE": 0.005303909925450112,
+            "index_NRMSE": 3.962039442725031e-15
+          },
+          "y": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 0.001712821254873337,
+            "spatial_Q_NRMSE": 0.01445275459803025,
+            "index_NRMSE": 2.5336251571031286e-15
+          },
+          "z": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 0.005694356965297049,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 0.0007292808423068512
+          }
+        }
+      },
+      "gated_metrics": {
+        "P_Q": 2.28545300315309e-05,
+        "P_six": 1.0577484100531262e-05,
+        "complex_field": 0.0008518324090441773,
+        "spatial_Q": 0.005303949098737804,
+        "major_Q_component": 0.0006272819267948498
+      },
+      "maximum_gated_metric": 0.005303949098737804
+    },
+    {
+      "kind": "mesh_convergence_dz1.25_to_dz0.625",
+      "endpoint": "rho1",
+      "representation": "scalar",
+      "coarse_flake_dz_nm": 1.25,
+      "fine_flake_dz_nm": 0.625,
+      "promoted_for_gate": true,
+      "power": {
+        "P_Q_reference_W": 2.0891109036164687e-12,
+        "P_Q_candidate_W": 2.0891113860081795e-12,
+        "P_Q_relative_difference": 2.3090760698376182e-07,
+        "P_six_reference_W": 2.090285027676247e-12,
+        "P_six_candidate_W": 2.090315065613468e-12,
+        "P_six_relative_difference": 1.437005249361864e-05,
+        "Q_components": {
+          "x": {
+            "reference_W": 2.0868624276569034e-12,
+            "candidate_W": 2.086863211775613e-12,
+            "relative_difference": 3.7574034802129244e-07,
+            "maximum_fraction_of_total_P_Q": 0.9989240916616897,
+            "low_power_diagnostic": false
+          },
+          "y": {
+            "reference_W": 2.2484759595654462e-15,
+            "candidate_W": 2.248174232566523e-15,
+            "relative_difference": 0.00013419178338978938,
+            "maximum_fraction_of_total_P_Q": 0.001076283674396175,
+            "low_power_diagnostic": false
+          },
+          "z": {
+            "reference_W": 0.0,
+            "candidate_W": 0.0,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 0.0,
+            "low_power_diagnostic": true
+          }
+        }
+      },
+      "spatial": {
+        "all_component_coordinates_equal": false,
+        "common_grid": "reference native Yee coordinates; candidate is used directly when identical, otherwise trilinearly interpolated",
+        "combined_complex_field_NRMSE": 0.00016224669043565237,
+        "combined_spatial_Q_NRMSE": 0.0010702712546004007,
+        "combined_index_NRMSE": 6.021841408050756e-05,
+        "components": {
+          "x": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 6.673043501947882e-05,
+            "spatial_Q_NRMSE": 0.001070264581509454,
+            "index_NRMSE": 1.8468593949938644e-14
+          },
+          "y": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 0.00034034795941229566,
+            "spatial_Q_NRMSE": 0.0027200607630562513,
+            "index_NRMSE": 1.1263317961113406e-14
+          },
+          "z": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 0.0010720447984970678,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 0.00012883966102220315
+          }
+        }
+      },
+      "gated_metrics": {
+        "P_Q": 2.3090760698376182e-07,
+        "P_six": 1.437005249361864e-05,
+        "complex_field": 0.00016224669043565237,
+        "spatial_Q": 0.0010702712546004007,
+        "major_Q_component": 0.00013419178338978938
+      },
+      "maximum_gated_metric": 0.0010702712546004007
+    },
+    {
+      "kind": "mesh_convergence_dz5_to_dz2.5",
+      "endpoint": "rho1",
+      "representation": "imported",
+      "coarse_flake_dz_nm": 5.0,
+      "fine_flake_dz_nm": 2.5,
+      "promoted_for_gate": false,
+      "power": {
+        "P_Q_reference_W": 2.089634632539596e-12,
+        "P_Q_candidate_W": 2.089158650355584e-12,
+        "P_Q_relative_difference": 0.00022778249202041591,
+        "P_six_reference_W": 2.0906663769920964e-12,
+        "P_six_candidate_W": 2.090307137866763e-12,
+        "P_six_relative_difference": 0.00017182996258359857,
+        "Q_components": {
+          "x": {
+            "reference_W": 2.0873817900467834e-12,
+            "candidate_W": 2.0869087630823947e-12,
+            "relative_difference": 0.00022661257592852046,
+            "maximum_fraction_of_total_P_Q": 0.9989218964608781,
+            "low_power_diagnostic": false
+          },
+          "y": {
+            "reference_W": 2.2528424928125e-15,
+            "candidate_W": 2.2498872731892436e-15,
+            "relative_difference": 0.0013117737403678252,
+            "maximum_fraction_of_total_P_Q": 0.001078103539121838,
+            "low_power_diagnostic": false
+          },
+          "z": {
+            "reference_W": 0.0,
+            "candidate_W": 0.0,
+            "relative_difference": 0.0,
+            "maximum_fraction_of_total_P_Q": 0.0,
+            "low_power_diagnostic": true
+          }
+        }
+      },
+      "spatial": {
+        "all_component_coordinates_equal": false,
+        "common_grid": "reference native Yee coordinates; candidate is used directly when identical, otherwise trilinearly interpolated",
+        "combined_complex_field_NRMSE": 0.001382243629816845,
+        "combined_spatial_Q_NRMSE": 0.010406457098226065,
+        "combined_index_NRMSE": 0.0004825614980635881,
+        "components": {
+          "x": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 0.0006489990010443063,
+            "spatial_Q_NRMSE": 0.010406326305734034,
+            "index_NRMSE": 2.73931004741886e-16
+          },
+          "y": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 0.0034226663692769094,
+            "spatial_Q_NRMSE": 0.03570339721561986,
+            "index_NRMSE": 1.916066861055528e-16
+          },
+          "z": {
+            "coordinate_equal": false,
+            "complex_field_NRMSE": 0.008829148429505624,
+            "spatial_Q_NRMSE": 0.0,
+            "index_NRMSE": 0.0010328124200043207
+          }
+        }
+      },
+      "gated_metrics": {
+        "P_Q": 0.00022778249202041591,
+        "P_six": 0.00017182996258359857,
+        "complex_field": 0.001382243629816845,
+        "spatial_Q": 0.010406457098226065,
+        "major_Q_component": 0.0013117737403678252
+      },
+      "maximum_gated_metric": 0.010406457098226065
+    }
+  ],
+  "gates": {
+    "worst_representation_equivalence_metric": 6.13849471947584e-17,
+    "worst_mesh_convergence_metric": 0.0010702712546004007,
+    "worst_all_recorded_mesh_metric_including_coarse_failures": 0.010406457098226065,
+    "worst_imported_bounds_error_m": 0.0
+  },
+  "mesh_gate_policy": "Scalar/imported representation equivalence is gated at dz=5 and 2.5 nm. Physical mesh convergence is gated on the finest available scalar pair for each endpoint; all coarser failures remain in mesh_convergence. This is valid only because the two representations have identical discrete fields and Q at both matched meshes.",
+  "next_gate": "COMBINED_PHYSICAL_RHO_PTE_ADFD",
+  "optimization_run": false
+}

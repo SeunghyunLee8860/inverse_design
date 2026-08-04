@@ -1,0 +1,74 @@
+{
+  "status": "DIAGNOSTIC_FAILED_COMBINED_PHYSICAL_RHO_PTE_ADFD",
+  "generation_command": "python -m photothermal_pte.finite_inverse_design.summarize_combined_physical_rho_pte_adfd --result <external-result.json> --report-dir photothermal_pte/reports/inverse_design_pte_adfd",
+  "raw_result": {
+    "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_6/combined_physical_rho_pte_adfd_result.json",
+    "byte_size": 49895,
+    "sha256": "2bdc7f82f4230c8fded8f41caba81013890aa403d62ba10a98fb1c2e829d48dd"
+  },
+  "raw_npz": {
+    "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_6/combined_physical_rho_pte_adfd.npz",
+    "byte_size": 676241,
+    "sha256": "0d0a0c8337c5cfaf462cee0ff47662634165a3608b3e2cb7f00d3ef9c498f844"
+  },
+  "fsp_projects": [
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_3/fd_plus_h0.005_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "1a0a1455989e176137ce993d5d979f7416ab72aebe396d612a317aa854ad0c77"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_3/fd_minus_h0.005_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "bb25d6f9c43618db9e2b1e64619656e1a48cc04e8fc03495536ec3220e3d8bdb"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_3/fd_plus_h0.01_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "f2b7e2ce23f2ed2e06b333aef9527d26a25f5beb2f9eabd021fff6588330fbcf"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_3/flake_4um_adjoint_gpu.fsp",
+      "byte_size": 31777060,
+      "sha256": "a87f444da902b0a1bad1684b308c6bb790b0d3388100ba82e61aa3977dced99e"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_3/flake_4um_adjoint_cpu.fsp",
+      "byte_size": 48136046,
+      "sha256": "9180bd1b7d94f1e2e0e42d7cf2582fae3a365ecce1ebc9786642a54f7cdbb794"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_3/flake_6um_adjoint_gpu.fsp",
+      "byte_size": 31776532,
+      "sha256": "8826dedc85623db9772bcbd57470bfb6633426e44e31740135bcc2d9c88029aa"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_2/combined_base_forward_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "24ed40a118435d7b2dc9768917ca1e74002d9aa3993ea7a6b9e01ca421e4d2ef"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/combined_physical_rho_pte_adfd_20260727_6/fd_minus_h0.01_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "d152351a80d89c4041934389a6918adfa93da5f0722721a96a6b4ba6cf915933"
+    }
+  ],
+  "published": {
+    "summary": {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/combined_physical_rho_pte_adfd_diagnostic.json",
+      "byte_size": 4846,
+      "sha256": "029f2af6c4e9966a91a22fee48f744983c7a44d72d48f07e356ccb4d31af97a6"
+    },
+    "cases_csv": {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/combined_physical_rho_pte_adfd_diagnostic_cases.csv",
+      "byte_size": 947,
+      "sha256": "3413625f31f2729f52e3af1573d4b2d8ffffc98eba40483e8c7c4ab16b2c7d23"
+    },
+    "report": {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/COMBINED_PHYSICAL_RHO_PTE_ADFD_DIAGNOSTIC.md",
+      "byte_size": 1278,
+      "sha256": "722a1471f1e10b8a716d505cea09d6413c04bd3450a4551812cf825a7be90da2"
+    }
+  },
+  "raw_artifacts_committed_to_git": false
+}

@@ -1,0 +1,245 @@
+{
+  "status": "READY_FOR_GPU_PHASE1_WHEN_RESOURCE_AVAILABLE",
+  "scope": "offline approximate registration and source/PML envelope audit",
+  "new_FDTD_executed": false,
+  "thermal_executed": false,
+  "PTE_executed": false,
+  "registration": {
+    "classification": "EXPLICIT_APPROXIMATION_NOT_STAGE_METROLOGY",
+    "pixel_to_code_axes": {
+      "image_right": "+b",
+      "image_up": "+a",
+      "rotation_or_shear": false
+    },
+    "panel_center_px": [
+      402.5,
+      485.5
+    ],
+    "panel_center_aligned_to_flake_bbox_center_code_um": [
+      0.0,
+      0.0
+    ],
+    "pixels_per_um": 11.2,
+    "black_scan_line_endpoints_px": [
+      [
+        217.0,
+        252.0
+      ],
+      [
+        217.0,
+        719.0
+      ]
+    ],
+    "black_scan_line_endpoints_code_um": [
+      [
+        -16.5625,
+        20.84821428571429
+      ],
+      [
+        -16.5625,
+        -20.84821428571429
+      ]
+    ],
+    "Fig3I_distance_zero_assumption": "panel centre equals flake-bounding-box centre along a",
+    "positive_distance_direction": "+a",
+    "nominal_peak_distance_um": 3.0,
+    "nominal_beam_center_code_um": [
+      -16.5625,
+      3.0
+    ],
+    "nearest_digitized_flake_boundary_point_um": [
+      -13.480662983425413,
+      3.0
+    ],
+    "nearest_digitized_flake_segment_start_index": 5,
+    "signed_distance_to_digitized_flake_um": 3.081837016574587,
+    "translation_uncertainty_scenarios_um": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        -2.0,
+        0.0
+      ],
+      [
+        2.0,
+        0.0
+      ],
+      [
+        0.0,
+        -2.0
+      ],
+      [
+        0.0,
+        2.0
+      ]
+    ],
+    "sparse_scan_positions": [
+      {
+        "label": "dm1um",
+        "distance_from_assumed_Fig3I_zero_um": -1.0,
+        "beam_center_code_um": [
+          -16.5625,
+          -1.0
+        ]
+      },
+      {
+        "label": "dp1um",
+        "distance_from_assumed_Fig3I_zero_um": 1.0,
+        "beam_center_code_um": [
+          -16.5625,
+          1.0
+        ]
+      },
+      {
+        "label": "dp3um",
+        "distance_from_assumed_Fig3I_zero_um": 3.0,
+        "beam_center_code_um": [
+          -16.5625,
+          3.0
+        ]
+      },
+      {
+        "label": "dp5um",
+        "distance_from_assumed_Fig3I_zero_um": 5.0,
+        "beam_center_code_um": [
+          -16.5625,
+          5.0
+        ]
+      },
+      {
+        "label": "dp7um",
+        "distance_from_assumed_Fig3I_zero_um": 7.0,
+        "beam_center_code_um": [
+          -16.5625,
+          7.0
+        ]
+      }
+    ],
+    "comparison_target": "separate maxima of |Ia| and |Ib| over the registered scan, not a single arbitrarily selected point"
+  },
+  "source_and_domain_envelope_audit": {
+    "unchanged_60um_domain_50um_source": {
+      "domain_um": 60.0,
+      "source_span_um": 50.0,
+      "occupied_union_before_shift_um": {
+        "min": [
+          -41.5625,
+          -22.0
+        ],
+        "max": [
+          20.22099447513812,
+          28.0
+        ]
+      },
+      "simulation_origin_shift_um": [
+        10.67075276243094,
+        -3.0
+      ],
+      "occupied_union_after_shift_um": {
+        "min": [
+          -30.89174723756906,
+          -25.0
+        ],
+        "max": [
+          30.89174723756906,
+          25.0
+        ]
+      },
+      "minimum_PML_clearance_um": {
+        "x": -0.89174723756906,
+        "y": 5.0
+      },
+      "passes_existing_loader_clearance_gate": false,
+      "ideal_Gaussian_boundary_intensity_over_peak": 8.118538349144053e-08
+    },
+    "recommended_64um_domain_50um_source": {
+      "domain_um": 64.0,
+      "source_span_um": 50.0,
+      "occupied_union_before_shift_um": {
+        "min": [
+          -41.5625,
+          -22.0
+        ],
+        "max": [
+          20.22099447513812,
+          28.0
+        ]
+      },
+      "simulation_origin_shift_um": [
+        10.67075276243094,
+        -3.0
+      ],
+      "occupied_union_after_shift_um": {
+        "min": [
+          -30.89174723756906,
+          -25.0
+        ],
+        "max": [
+          30.89174723756906,
+          25.0
+        ]
+      },
+      "minimum_PML_clearance_um": {
+        "x": 1.10825276243094,
+        "y": 7.0
+      },
+      "passes_existing_loader_clearance_gate": true,
+      "ideal_Gaussian_boundary_intensity_over_peak": 8.118538349144053e-08
+    },
+    "faster_diagnostic_60um_domain_40um_source": {
+      "domain_um": 60.0,
+      "source_span_um": 40.0,
+      "occupied_union_before_shift_um": {
+        "min": [
+          -36.5625,
+          -17.0
+        ],
+        "max": [
+          20.22099447513812,
+          23.0
+        ]
+      },
+      "simulation_origin_shift_um": [
+        8.17075276243094,
+        -3.0
+      ],
+      "occupied_union_after_shift_um": {
+        "min": [
+          -28.39174723756906,
+          -20.0
+        ],
+        "max": [
+          28.39174723756906,
+          20.0
+        ]
+      },
+      "minimum_PML_clearance_um": {
+        "x": 1.60825276243094,
+        "y": 10.0
+      },
+      "passes_existing_loader_clearance_gate": true,
+      "ideal_Gaussian_boundary_intensity_over_peak": 2.89778274286711e-05
+    }
+  },
+  "selected_phase1_numerical_box": {
+    "domain_um": 64.0,
+    "source_span_um": 50.0,
+    "reason": "preserve the existing 50-um source aperture; 60 um fails the runner's 0.5-um source/electrode-to-PML clearance gate"
+  },
+  "phase_order": [
+    "new polarization-matched empty-stack a/b references",
+    "nominal registered finite Device-A E||a optical gate",
+    "nominal registered finite Device-A E||b optical gate",
+    "identical material-intersection-density thermal/PTE solves",
+    "only if nominal gates pass: sparse d=-1,1,3,5,7 um scan",
+    "report separate profile maxima and +/-2 um registration sensitivity"
+  ],
+  "inputs": {
+    "base_geometry_json": "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json",
+    "base_geometry_sha256": "291034c04b3caf153c1d68b3499718f6a35d24229a53102b0d5bea4b78a0325e",
+    "fig3h_crop": "/tmp/device_a_fig3_pcMIuS/fig3h.png",
+    "fig3h_crop_sha256": "9f19cb2b9bdc80cd81c7e344e4e01763569034fbf803899ba7b4aea3cddbaaba"
+  }
+}

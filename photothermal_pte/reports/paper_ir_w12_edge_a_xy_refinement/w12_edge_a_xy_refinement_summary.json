@@ -1,0 +1,134 @@
+{
+  "status": "BLOCKED_W12_EDGE_A_XY_MESH_CONVERGENCE",
+  "validated": false,
+  "scenario": "paper-like scalar-Gaussian scenario with an explicitly assumed 12-um waist; not a paper-certified beam",
+  "comparison": {
+    "coarse": {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy100_dz5_pml24_t4_gpu4_retry1_20260731",
+      "local_xy_mesh_m": 1e-07,
+      "native_Yee_cell_count": 64064520,
+      "P_Q_W": 2.2566605075568207e-11,
+      "P_six_W": 2.253087111043805e-11,
+      "closure": 0.0015860001575172772,
+      "auto_shutoff": 9.97181e-06
+    },
+    "fine": {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_20260731",
+      "outer_local_xy_mesh_m": 1e-07,
+      "fine_local_xy_mesh_m": 5e-08,
+      "fine_half_span_m": 2.2e-05,
+      "native_Yee_cell_count": 170135680,
+      "P_Q_W": 2.2554323620511252e-11,
+      "P_six_W": 2.2513910956067724e-11,
+      "closure": 0.0017950086292153708,
+      "auto_shutoff": 9.93242e-06
+    },
+    "P_Q_relative_change": 0.0005445277483642049,
+    "P_six_relative_change": 0.0007533188881941227,
+    "hotspot_shift_m": 7.071067811840453e-08,
+    "lateral_equal_power_Q_NRMSE": 0.005206498097711311,
+    "field_plane_z_m": 5.135875157604772e-07,
+    "field_E2_raw_area_weighted_NRMSE": 0.0006586568584396115,
+    "field_E2_equal_integral_NRMSE": 0.0006424257624437887
+  },
+  "component_metrics": {
+    "x": {
+      "coarse_power_W": 1.992607947422136e-12,
+      "fine_power_W": 2.014722656246942e-12,
+      "power_relative_change": 0.010976552408459817,
+      "conservative_remap_power_error": 0.0,
+      "raw_density_volume_weighted_NRMSE": 0.018656116816660795,
+      "equal_power_energy_NRMSE": 0.016118905841173627,
+      "equal_power_energy_correlation": 0.99987031095566
+    },
+    "y": {
+      "coarse_power_W": 2.0509127866047434e-11,
+      "fine_power_W": 2.0476166008973966e-11,
+      "power_relative_change": 0.001609767036417948,
+      "conservative_remap_power_error": 1.578017225670644e-16,
+      "raw_density_volume_weighted_NRMSE": 0.014476355817184606,
+      "equal_power_energy_NRMSE": 0.014368874457591335,
+      "equal_power_energy_correlation": 0.9998924178000207
+    },
+    "z": {
+      "coarse_power_W": 6.486341917142014e-14,
+      "fine_power_W": 6.342906674073286e-14,
+      "power_relative_change": 0.02261348785959938,
+      "conservative_remap_power_error": 0.0,
+      "raw_density_volume_weighted_NRMSE": 0.3087252050596582,
+      "equal_power_energy_NRMSE": 0.29315184723342624,
+      "equal_power_energy_correlation": 0.9708435981213128
+    },
+    "total": {
+      "coarse_power_W": 2.2566599232640987e-11,
+      "fine_power_W": 2.2554317731961642e-11,
+      "power_relative_change": 0.0005445299133097301,
+      "conservative_remap_power_error": 1.4326189362874758e-16,
+      "raw_density_volume_weighted_NRMSE": 0.014125595093572528,
+      "equal_power_energy_NRMSE": 0.014095096934311392,
+      "equal_power_energy_correlation": 0.9998968970705683
+    }
+  },
+  "spatial_statistics": {
+    "coarse": {
+      "centroid_m": [
+        3.0698012307657684e-06,
+        -3.127123875198265e-06,
+        -5.8046671488977266e-08
+      ],
+      "second_moment_sigma_m": [
+        5.046780746794804e-06,
+        4.912554607870207e-06,
+        3.788387479452944e-08
+      ]
+    },
+    "fine_remapped_to_coarse": {
+      "centroid_m": [
+        3.072614965608358e-06,
+        -3.1290678827390134e-06,
+        -5.804409038570197e-08
+      ],
+      "second_moment_sigma_m": [
+        5.046245794572556e-06,
+        4.9123530976399505e-06,
+        3.7874956621194534e-08
+      ]
+    }
+  },
+  "gates": {
+    "coarse_closure_lt_0p5_percent": true,
+    "fine_closure_lt_0p5_percent": true,
+    "P_Q_change_lt_0p5_percent": true,
+    "P_six_change_lt_0p5_percent": true,
+    "equal_power_spatial_Q_NRMSE_lt_0p5_percent": false,
+    "equal_power_lateral_Q_NRMSE_lt_0p5_percent": false,
+    "coarse_auto_shutoff_le_1e_5": true,
+    "fine_auto_shutoff_le_1e_5": true,
+    "conservative_remap_error_lt_1e_12": true,
+    "no_Q_modification": true,
+    "all": false
+  },
+  "failed_full_50nm_diagnostic": {
+    "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy50_dz5_pml24_t4_gpu5_retry1_20260731",
+    "status": "BLOCKED_EXECUTION_ERROR",
+    "exception": "GPU-only FDTD failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'in run: \"/home/seunghyun/lumerical_r12/opt/lumerical/v261/bin/fdtd-engine\" -gpu -t 3 -gpu \"/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_xy50_dz5_pml24_t4_gpu5_retry1_20260731/finite_2um_optical_q.fsp\"\\n\\naigpu1123(process 0): Warning: GPU minimal memory estimate may be inaccurate!\\naigpu1123(process 0): Could not copy data : memory overflow\\naigpu1123(process 0): This simulation failed. Please contact Lumerical Technical Support with\\nthis error message: the reason for the failure was: Unable to write project file.\\naigpu1123(process 0): Error: Process number: 0 had an error code 5 and had to terminate.' | localhost: LumApiError: 'in run: solver FDTD is not present in the model.' | Local Computer: LumApiError: 'in run: solver FDTD is not present in the model.'",
+    "auto_shutoff_reached": true,
+    "failure_stage": "post-solve project collection/write while root filesystem was exhausted",
+    "used_as_physical_result": false
+  },
+  "Q_processing": {
+    "clipping": false,
+    "smoothing": false,
+    "gain": false,
+    "global_rescaling": false,
+    "tiling": false,
+    "source_deletion": false,
+    "equal_power_normalization_used_for_shape_metrics_only": true
+  },
+  "not_claimed": [
+    "not an experimentally reproduced beam",
+    "not a paper-certified beam",
+    "not a thermal, PTE, adjoint, gradient, or optimization result",
+    "not a four-case mesh convergence certificate"
+  ]
+}

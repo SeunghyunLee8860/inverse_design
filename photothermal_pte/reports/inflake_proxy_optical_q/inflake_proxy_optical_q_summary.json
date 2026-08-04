@@ -1,0 +1,135 @@
+{
+  "status": "VALIDATED_FINITE_INFLAKE_PROXY_OPTICAL_Q",
+  "validated": true,
+  "controls": {
+    "source_off": true,
+    "empty_stack_x_y_45": true,
+    "finite_flat_x_y_45": true,
+    "inflake_proxy_x": true
+  },
+  "final_case": {
+    "case_id": "proxy_x_r0p8_L16_pml24_dz5",
+    "case": "fixed-design",
+    "polarization_deg": 0.0,
+    "domain_um": 16.0,
+    "pml_layers": 24,
+    "flake_dz_nm": 5.0,
+    "waist_um": 2.0,
+    "source_span_um": 6.8,
+    "design_radius_um": 0.8,
+    "status": "COMPLETED",
+    "all_case_acceptance": true,
+    "P_Qx_W": 2.0225159394906936e-12,
+    "P_Qy_W": 1.3592920978488833e-14,
+    "P_Qz_W": 0.0,
+    "P_Q_W": 2.0361088604691824e-12,
+    "P_six_W": 2.040668004695463e-12,
+    "six_face_closure": 0.0022341430432536048,
+    "Qx_fraction": 0.9933240696298741,
+    "Qy_fraction": 0.006675930370125988,
+    "Qz_fraction": 0.0,
+    "hotspot_x_m": -1.333333333333301e-08,
+    "hotspot_y_m": -9.733333333333333e-07,
+    "hotspot_z_m": -4.999999999999942e-09,
+    "hotspot_Q_W_m3": 23322114.12384901,
+    "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py --output-dir photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz5 --case fixed-design --polarization-deg 0 --domain-um 16 --pml-layers 24 --flake-dz-nm 5 --source-span-um 6.8 --waist-um 2 --design-radius-um 0.8 --require-design-inside-flake --incident-reference photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/empty_x_L12_pml24_dz5/case_result.json",
+    "generation_commit": "af6e93f7b2748da7d6eaffda269d389ac07a9327"
+  },
+  "convergence": {
+    "domain_12_to_16_um": {
+      "name": "domain 12\u219216 \u00b5m",
+      "from_case": "proxy_x_r0p8_L12_pml24_dz5",
+      "to_case": "proxy_x_r0p8_L16_pml24_dz5",
+      "P_Q_relative_change": 0.00024058140273890068,
+      "P_six_relative_change": 0.0002324864672018451,
+      "spatial_Q_relative_L2": 0.00025512953980293276,
+      "passed": true
+    },
+    "PML_16_to_24_layers": {
+      "name": "PML 16\u219224 layers",
+      "from_case": "proxy_x_r0p8_L16_pml16_dz5",
+      "to_case": "proxy_x_r0p8_L16_pml24_dz5",
+      "P_Q_relative_change": 2.704348402229341e-06,
+      "P_six_relative_change": 1.346409174006483e-05,
+      "spatial_Q_relative_L2": 5.948921983172856e-06,
+      "passed": true
+    },
+    "flake_dz_5_to_2p5_nm": {
+      "name": "flake dz 5\u21922.5 nm",
+      "from_case": "proxy_x_r0p8_L16_pml24_dz5",
+      "to_case": "proxy_x_r0p8_L16_pml24_dz2p5",
+      "P_Q_relative_change": 0.0007694569354572697,
+      "P_six_relative_change": 0.000503750827673431,
+      "spatial_Q_relative_L2": 0.006085144797271193,
+      "passed": true
+    }
+  },
+  "artifact_audit": {
+    "passed": true,
+    "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/inflake_proxy_optical_q_fresh/cases/proxy_x_r0p8_L16_pml24_dz5/finite_q_on_artifact.npz",
+    "array_axis_order": [
+      "x",
+      "y",
+      "z"
+    ],
+    "shape": [
+      80,
+      80,
+      41
+    ],
+    "coordinate_bounds_m": {
+      "x": [
+        -1.053538187784057e-06,
+        1.053538187784073e-06
+      ],
+      "y": [
+        -1.053538187784057e-06,
+        1.053538187784073e-06
+      ],
+      "z": [
+        -1.500000000000027e-07,
+        5e-08
+      ]
+    },
+    "all_Q_arrays_finite": true,
+    "Q_component_sum_max_relative_error": 1.5973210141581726e-16,
+    "P_Q_reintegrated_W": 2.0361088604691824e-12,
+    "P_Q_saved_W": 2.0361088604691824e-12,
+    "P_Q_reintegration_relative_error": 0.0,
+    "design_radius_m": 8e-07,
+    "complete_disk_inside_flake_footprint": true,
+    "prohibited_operations": {
+      "clipped": false,
+      "gain_applied": false,
+      "rescaled_to_flux": false,
+      "periodic_crop": false,
+      "periodic_tiling": false,
+      "smoothed": false,
+      "source_deleted": false
+    }
+  },
+  "gates": {
+    "six_face_closure_lt_0p5_percent": true,
+    "power_convergence_lt_1_percent": true,
+    "spatial_Q_L2_lt_5_percent": true,
+    "fresh_SHA_differs_from_PR3": true
+  },
+  "prohibited_operations": {
+    "reused_PR3_Q": false,
+    "cropped_PR3_Q": false,
+    "clipping": false,
+    "smoothing": false,
+    "gain": false,
+    "global_rescaling": false,
+    "tiling": false,
+    "source_deletion": false
+  },
+  "excluded_scope": {
+    "thermal": false,
+    "PTE": false,
+    "adjoint": false,
+    "gradient": false,
+    "optimization": false
+  },
+  "case_count": 11
+}

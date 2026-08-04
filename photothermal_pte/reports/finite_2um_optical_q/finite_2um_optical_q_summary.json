@@ -1,0 +1,765 @@
+{
+  "validated": true,
+  "controls": {
+    "no_source_pass": true,
+    "empty_stack_x_y_45_pass": true,
+    "flat_x_y_45_pass": true,
+    "fixed_x_pass": true
+  },
+  "convergence": {
+    "domain": {
+      "kind": "domain",
+      "cases": [
+        {
+          "case_id": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+          "case": "fixed-design",
+          "polarization_deg": 0.0,
+          "domain_um": 8.0,
+          "pml_layers": 24,
+          "flake_dz_nm": 5.0,
+          "source_span_um": 6.8,
+          "waist_um": 2.0,
+          "status": "COMPLETED",
+          "generation_commit": "4516ae3c929124a90af495b100c999100d85e5ea",
+          "P_Qx_W": 2.5301466984893047e-12,
+          "P_Qy_W": 2.8507100310768675e-14,
+          "P_Qz_W": 0.0,
+          "P_Qx_fraction": 0.9888585551026335,
+          "P_Qy_fraction": 0.011141444897366574,
+          "P_Qz_fraction": 0.0,
+          "P_Q_W": 2.558653798800073e-12,
+          "P_six_face_W": 2.5627633217771026e-12,
+          "closure": 0.0016035515032187077,
+          "sigma_abs_m2": 2.558653798800073e-12,
+          "sigma_over_Ageo": 0.6396634497000183,
+          "Q_hotspot_W_m3": 33190381.418434095,
+          "source_central_intensity_native_W_m2": 0.000652185260850769,
+          "all_case_acceptance": true,
+          "artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50/finite_q_on_artifact.npz"
+        },
+        {
+          "case_id": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+          "case": "fixed-design",
+          "polarization_deg": 0.0,
+          "domain_um": 12.0,
+          "pml_layers": 24,
+          "flake_dz_nm": 5.0,
+          "source_span_um": 6.8,
+          "waist_um": 2.0,
+          "status": "COMPLETED",
+          "generation_commit": "b13e45707c4bda06d1f4afa1a47f8fe72ce29435",
+          "P_Qx_W": 2.532696879123271e-12,
+          "P_Qy_W": 2.852783400358483e-14,
+          "P_Qz_W": 0.0,
+          "P_Qx_fraction": 0.988861643471823,
+          "P_Qy_fraction": 0.01113835652817702,
+          "P_Qz_fraction": 0.0,
+          "P_Q_W": 2.5612247131268556e-12,
+          "P_six_face_W": 2.5653623636146825e-12,
+          "closure": 0.001612891241608739,
+          "sigma_abs_m2": 2.5612247131268556e-12,
+          "sigma_over_Ageo": 0.6403061782817139,
+          "Q_hotspot_W_m3": 33222246.85979607,
+          "source_central_intensity_native_W_m2": 0.000652185260850769,
+          "all_case_acceptance": true,
+          "artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8/finite_q_on_artifact.npz"
+        },
+        {
+          "case_id": "finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8",
+          "case": "fixed-design",
+          "polarization_deg": 0.0,
+          "domain_um": 16.0,
+          "pml_layers": 24,
+          "flake_dz_nm": 5.0,
+          "source_span_um": 6.8,
+          "waist_um": 2.0,
+          "status": "COMPLETED",
+          "generation_commit": "b13e45707c4bda06d1f4afa1a47f8fe72ce29435",
+          "P_Qx_W": 2.532188621867e-12,
+          "P_Qy_W": 2.8525088998209955e-14,
+          "P_Qz_W": 0.0,
+          "P_Qx_fraction": 0.9888604927301413,
+          "P_Qy_fraction": 0.011139507269858738,
+          "P_Qz_fraction": 0.0,
+          "P_Q_W": 2.56071371086521e-12,
+          "P_six_face_W": 2.5648606611011944e-12,
+          "closure": 0.0016168325628277665,
+          "sigma_abs_m2": 2.56071371086521e-12,
+          "sigma_over_Ageo": 0.6401784277163025,
+          "Q_hotspot_W_m3": 33215609.100703213,
+          "source_central_intensity_native_W_m2": 0.000652185260850769,
+          "all_case_acceptance": true,
+          "artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8/finite_q_on_artifact.npz"
+        }
+      ],
+      "scalar_changes": {
+        "P_Q_W": [
+          {
+            "from": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "to": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+            "relative_change": 0.0010037831954400576
+          },
+          {
+            "from": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+            "to": "finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8",
+            "relative_change": 0.00019955462396183514
+          }
+        ],
+        "P_six_face_W": [
+          {
+            "from": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "to": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+            "relative_change": 0.0010131285445061863
+          },
+          {
+            "from": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+            "to": "finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8",
+            "relative_change": 0.00019560614777126853
+          }
+        ],
+        "sigma_abs_m2": [
+          {
+            "from": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "to": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+            "relative_change": 0.0010037831954400576
+          },
+          {
+            "from": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+            "to": "finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8",
+            "relative_change": 0.00019955462396183514
+          }
+        ],
+        "Q_hotspot_W_m3": [
+          {
+            "from": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "to": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+            "relative_change": 0.0009591597310215919
+          },
+          {
+            "from": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+            "to": "finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8",
+            "relative_change": 0.00019983854797700127
+          }
+        ],
+        "P_Qx_fraction": [
+          {
+            "from": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "to": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+            "relative_change": 3.1231560146813727e-06
+          },
+          {
+            "from": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+            "to": "finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8",
+            "relative_change": 1.1637047795733838e-06
+          }
+        ],
+        "P_Qy_fraction": [
+          {
+            "from": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "to": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+            "relative_change": 0.000277273328586784
+          },
+          {
+            "from": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+            "to": "finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8",
+            "relative_change": 0.00010330274525082115
+          }
+        ],
+        "P_Qz_fraction": [
+          {
+            "from": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "to": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+            "relative_change": 0.0
+          },
+          {
+            "from": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+            "to": "finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8",
+            "relative_change": 0.0
+          }
+        ]
+      },
+      "spatial_changes": [
+        {
+          "from": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+          "to": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+          "relative_L2": 0.0010495013162386214,
+          "relative_L1": 0.0010047288037807185,
+          "comparison_shape": [
+            75,
+            75,
+            20
+          ]
+        },
+        {
+          "from": "finite_convergence/domain/fixed_x_L12_pml24_dz5_w2_span6p8",
+          "to": "finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8",
+          "relative_L2": 0.000212134465111605,
+          "relative_L1": 0.00019915364265354598,
+          "comparison_shape": [
+            76,
+            76,
+            20
+          ]
+        }
+      ],
+      "absorbed_power_converged_lt_1_percent": true,
+      "spatial_converged_lt_5_percent": true
+    },
+    "pml": {
+      "kind": "pml",
+      "cases": [
+        {
+          "case_id": "finite_convergence/pml/fixed_x_L8_pml16_dz5_w2_span6p8",
+          "case": "fixed-design",
+          "polarization_deg": 0.0,
+          "domain_um": 8.0,
+          "pml_layers": 16,
+          "flake_dz_nm": 5.0,
+          "source_span_um": 6.8,
+          "waist_um": 2.0,
+          "status": "COMPLETED",
+          "generation_commit": "b13e45707c4bda06d1f4afa1a47f8fe72ce29435",
+          "P_Qx_W": 2.5301413455118496e-12,
+          "P_Qy_W": 2.850707085019039e-14,
+          "P_Qz_W": 0.0,
+          "P_Qx_fraction": 0.9888585431793233,
+          "P_Qy_fraction": 0.011141456820676661,
+          "P_Qz_fraction": 0.0,
+          "P_Q_W": 2.55864841636204e-12,
+          "P_six_face_W": 2.5627214663506775e-12,
+          "closure": 0.001589345561785672,
+          "sigma_abs_m2": 2.55864841636204e-12,
+          "sigma_over_Ageo": 0.63966210409051,
+          "Q_hotspot_W_m3": 33190180.543621644,
+          "source_central_intensity_native_W_m2": 0.000652185260850769,
+          "all_case_acceptance": true,
+          "artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_convergence/pml/fixed_x_L8_pml16_dz5_w2_span6p8/finite_q_on_artifact.npz"
+        },
+        {
+          "case_id": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+          "case": "fixed-design",
+          "polarization_deg": 0.0,
+          "domain_um": 8.0,
+          "pml_layers": 24,
+          "flake_dz_nm": 5.0,
+          "source_span_um": 6.8,
+          "waist_um": 2.0,
+          "status": "COMPLETED",
+          "generation_commit": "4516ae3c929124a90af495b100c999100d85e5ea",
+          "P_Qx_W": 2.5301466984893047e-12,
+          "P_Qy_W": 2.8507100310768675e-14,
+          "P_Qz_W": 0.0,
+          "P_Qx_fraction": 0.9888585551026335,
+          "P_Qy_fraction": 0.011141444897366574,
+          "P_Qz_fraction": 0.0,
+          "P_Q_W": 2.558653798800073e-12,
+          "P_six_face_W": 2.5627633217771026e-12,
+          "closure": 0.0016035515032187077,
+          "sigma_abs_m2": 2.558653798800073e-12,
+          "sigma_over_Ageo": 0.6396634497000183,
+          "Q_hotspot_W_m3": 33190381.418434095,
+          "source_central_intensity_native_W_m2": 0.000652185260850769,
+          "all_case_acceptance": true,
+          "artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50/finite_q_on_artifact.npz"
+        }
+      ],
+      "scalar_changes": {
+        "P_Q_W": [
+          {
+            "from": "finite_convergence/pml/fixed_x_L8_pml16_dz5_w2_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 2.1036210664785893e-06
+          }
+        ],
+        "P_six_face_W": [
+          {
+            "from": "finite_convergence/pml/fixed_x_L8_pml16_dz5_w2_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 1.633214665959884e-05
+          }
+        ],
+        "sigma_abs_m2": [
+          {
+            "from": "finite_convergence/pml/fixed_x_L8_pml16_dz5_w2_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 2.1036210664785893e-06
+          }
+        ],
+        "Q_hotspot_W_m3": [
+          {
+            "from": "finite_convergence/pml/fixed_x_L8_pml16_dz5_w2_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 6.052199579083267e-06
+          }
+        ],
+        "P_Qx_fraction": [
+          {
+            "from": "finite_convergence/pml/fixed_x_L8_pml16_dz5_w2_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 1.2057649869649157e-08
+          }
+        ],
+        "P_Qy_fraction": [
+          {
+            "from": "finite_convergence/pml/fixed_x_L8_pml16_dz5_w2_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 1.0701762830008119e-06
+          }
+        ],
+        "P_Qz_fraction": [
+          {
+            "from": "finite_convergence/pml/fixed_x_L8_pml16_dz5_w2_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 0.0
+          }
+        ]
+      },
+      "spatial_changes": [
+        {
+          "from": "finite_convergence/pml/fixed_x_L8_pml16_dz5_w2_span6p8",
+          "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+          "relative_L2": 6.393485528883148e-06,
+          "relative_L1": 5.8362886664658e-06,
+          "comparison_shape": [
+            75,
+            75,
+            20
+          ]
+        }
+      ],
+      "absorbed_power_converged_lt_1_percent": true,
+      "spatial_converged_lt_5_percent": true
+    },
+    "mesh": {
+      "kind": "mesh",
+      "cases": [
+        {
+          "case_id": "finite_convergence/mesh/fixed_x_L8_pml24_dz10_w2_span6p8",
+          "case": "fixed-design",
+          "polarization_deg": 0.0,
+          "domain_um": 8.0,
+          "pml_layers": 24,
+          "flake_dz_nm": 10.0,
+          "source_span_um": 6.8,
+          "waist_um": 2.0,
+          "status": "COMPLETED",
+          "generation_commit": "b13e45707c4bda06d1f4afa1a47f8fe72ce29435",
+          "P_Qx_W": 2.5329875271667123e-12,
+          "P_Qy_W": 2.868539678076991e-14,
+          "P_Qz_W": 0.0,
+          "P_Qx_fraction": 0.9888020845625497,
+          "P_Qy_fraction": 0.011197915437450282,
+          "P_Qz_fraction": 0.0,
+          "P_Q_W": 2.561672923947482e-12,
+          "P_six_face_W": 2.565960421612777e-12,
+          "closure": 0.0016709134050477568,
+          "sigma_abs_m2": 2.561672923947482e-12,
+          "sigma_over_Ageo": 0.6404182309868706,
+          "Q_hotspot_W_m3": 31803997.2669397,
+          "source_central_intensity_native_W_m2": 0.000652185260850769,
+          "all_case_acceptance": true,
+          "artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_convergence/mesh/fixed_x_L8_pml24_dz10_w2_span6p8/finite_q_on_artifact.npz"
+        },
+        {
+          "case_id": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+          "case": "fixed-design",
+          "polarization_deg": 0.0,
+          "domain_um": 8.0,
+          "pml_layers": 24,
+          "flake_dz_nm": 5.0,
+          "source_span_um": 6.8,
+          "waist_um": 2.0,
+          "status": "COMPLETED",
+          "generation_commit": "4516ae3c929124a90af495b100c999100d85e5ea",
+          "P_Qx_W": 2.5301466984893047e-12,
+          "P_Qy_W": 2.8507100310768675e-14,
+          "P_Qz_W": 0.0,
+          "P_Qx_fraction": 0.9888585551026335,
+          "P_Qy_fraction": 0.011141444897366574,
+          "P_Qz_fraction": 0.0,
+          "P_Q_W": 2.558653798800073e-12,
+          "P_six_face_W": 2.5627633217771026e-12,
+          "closure": 0.0016035515032187077,
+          "sigma_abs_m2": 2.558653798800073e-12,
+          "sigma_over_Ageo": 0.6396634497000183,
+          "Q_hotspot_W_m3": 33190381.418434095,
+          "source_central_intensity_native_W_m2": 0.000652185260850769,
+          "all_case_acceptance": true,
+          "artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50/finite_q_on_artifact.npz"
+        },
+        {
+          "case_id": "finite_convergence/mesh/fixed_x_L8_pml24_dz2p5_w2_span6p8",
+          "case": "fixed-design",
+          "polarization_deg": 0.0,
+          "domain_um": 8.0,
+          "pml_layers": 24,
+          "flake_dz_nm": 2.5,
+          "source_span_um": 6.8,
+          "waist_um": 2.0,
+          "status": "COMPLETED",
+          "generation_commit": "b13e45707c4bda06d1f4afa1a47f8fe72ce29435",
+          "P_Qx_W": 2.5334902568054557e-12,
+          "P_Qy_W": 2.8437204311884516e-14,
+          "P_Qz_W": 0.0,
+          "P_Qx_fraction": 0.9889000743606214,
+          "P_Qy_fraction": 0.011099925639378613,
+          "P_Qz_fraction": 0.0,
+          "P_Q_W": 2.56192746111734e-12,
+          "P_six_face_W": 2.5655631843610802e-12,
+          "closure": 0.001417124811387414,
+          "sigma_abs_m2": 2.56192746111734e-12,
+          "sigma_over_Ageo": 0.640481865279335,
+          "Q_hotspot_W_m3": 33985562.03162828,
+          "source_central_intensity_native_W_m2": 0.000652185260850769,
+          "all_case_acceptance": true,
+          "artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_convergence/mesh/fixed_x_L8_pml24_dz2p5_w2_span6p8/finite_q_on_artifact.npz"
+        }
+      ],
+      "scalar_changes": {
+        "P_Q_W": [
+          {
+            "from": "finite_convergence/mesh/fixed_x_L8_pml24_dz10_w2_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 0.0011799662575784546
+          },
+          {
+            "from": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "to": "finite_convergence/mesh/fixed_x_L8_pml24_dz2p5_w2_span6p8",
+            "relative_change": 0.0012778122593054158
+          }
+        ],
+        "P_six_face_W": [
+          {
+            "from": "finite_convergence/mesh/fixed_x_L8_pml24_dz10_w2_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 0.0012475205215038696
+          },
+          {
+            "from": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "to": "finite_convergence/mesh/fixed_x_L8_pml24_dz2p5_w2_span6p8",
+            "relative_change": 0.0010913247434500245
+          }
+        ],
+        "sigma_abs_m2": [
+          {
+            "from": "finite_convergence/mesh/fixed_x_L8_pml24_dz10_w2_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 0.0011799662575784546
+          },
+          {
+            "from": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "to": "finite_convergence/mesh/fixed_x_L8_pml24_dz2p5_w2_span6p8",
+            "relative_change": 0.0012778122593054158
+          }
+        ],
+        "Q_hotspot_W_m3": [
+          {
+            "from": "finite_convergence/mesh/fixed_x_L8_pml24_dz10_w2_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 0.041770660421648266
+          },
+          {
+            "from": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "to": "finite_convergence/mesh/fixed_x_L8_pml24_dz2p5_w2_span6p8",
+            "relative_change": 0.023397600794542117
+          }
+        ],
+        "P_Qx_fraction": [
+          {
+            "from": "finite_convergence/mesh/fixed_x_L8_pml24_dz10_w2_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 5.710679226310642e-05
+          },
+          {
+            "from": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "to": "finite_convergence/mesh/fixed_x_L8_pml24_dz2p5_w2_span6p8",
+            "relative_change": 4.1985291602635564e-05
+          }
+        ],
+        "P_Qy_fraction": [
+          {
+            "from": "finite_convergence/mesh/fixed_x_L8_pml24_dz10_w2_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 0.005068511364899866
+          },
+          {
+            "from": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "to": "finite_convergence/mesh/fixed_x_L8_pml24_dz2p5_w2_span6p8",
+            "relative_change": 0.003740498750790319
+          }
+        ],
+        "P_Qz_fraction": [
+          {
+            "from": "finite_convergence/mesh/fixed_x_L8_pml24_dz10_w2_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 0.0
+          },
+          {
+            "from": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "to": "finite_convergence/mesh/fixed_x_L8_pml24_dz2p5_w2_span6p8",
+            "relative_change": 0.0
+          }
+        ]
+      },
+      "spatial_changes": [
+        {
+          "from": "finite_convergence/mesh/fixed_x_L8_pml24_dz10_w2_span6p8",
+          "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+          "relative_L2": 0.0031342129349546718,
+          "relative_L1": 0.0016759044440448894,
+          "comparison_shape": [
+            75,
+            75,
+            10
+          ]
+        },
+        {
+          "from": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+          "to": "finite_convergence/mesh/fixed_x_L8_pml24_dz2p5_w2_span6p8",
+          "relative_L2": 0.002829539158922188,
+          "relative_L1": 0.0023601452926935223,
+          "comparison_shape": [
+            75,
+            75,
+            20
+          ]
+        }
+      ],
+      "absorbed_power_converged_lt_1_percent": true,
+      "spatial_converged_lt_5_percent": true
+    },
+    "waist": {
+      "kind": "waist",
+      "cases": [
+        {
+          "case_id": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p5_span6p8",
+          "case": "fixed-design",
+          "polarization_deg": 0.0,
+          "domain_um": 8.0,
+          "pml_layers": 24,
+          "flake_dz_nm": 5.0,
+          "source_span_um": 6.8,
+          "waist_um": 1.5,
+          "status": "COMPLETED",
+          "generation_commit": "b13e45707c4bda06d1f4afa1a47f8fe72ce29435",
+          "P_Qx_W": 2.5005738932301272e-12,
+          "P_Qy_W": 3.039471804903694e-14,
+          "P_Qz_W": 0.0,
+          "P_Qx_fraction": 0.9879908751481215,
+          "P_Qy_fraction": 0.012009124851878465,
+          "P_Qz_fraction": 0.0,
+          "P_Q_W": 2.5309686112791643e-12,
+          "P_six_face_W": 2.5349156880535125e-12,
+          "closure": 0.0015570840454181046,
+          "sigma_abs_m2": 2.5309686112791643e-12,
+          "sigma_over_Ageo": 0.6327421528197911,
+          "Q_hotspot_W_m3": 31338886.90457191,
+          "source_central_intensity_native_W_m2": 0.00034155787320142055,
+          "all_case_acceptance": true,
+          "artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p5_span6p8/finite_q_on_artifact.npz"
+        },
+        {
+          "case_id": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+          "case": "fixed-design",
+          "polarization_deg": 0.0,
+          "domain_um": 8.0,
+          "pml_layers": 24,
+          "flake_dz_nm": 5.0,
+          "source_span_um": 6.8,
+          "waist_um": 1.75,
+          "status": "COMPLETED",
+          "generation_commit": "b13e45707c4bda06d1f4afa1a47f8fe72ce29435",
+          "P_Qx_W": 2.5133521136447416e-12,
+          "P_Qy_W": 2.944158638880805e-14,
+          "P_Qz_W": 0.0,
+          "P_Qx_fraction": 0.9884215591739041,
+          "P_Qy_fraction": 0.011578440826095958,
+          "P_Qz_fraction": 0.0,
+          "P_Q_W": 2.5427937000335497e-12,
+          "P_six_face_W": 2.5469019935731842e-12,
+          "closure": 0.0016130552137464664,
+          "sigma_abs_m2": 2.5427937000335497e-12,
+          "sigma_over_Ageo": 0.6356984250083875,
+          "Q_hotspot_W_m3": 32251135.095521282,
+          "source_central_intensity_native_W_m2": 0.0004952276316238421,
+          "all_case_acceptance": true,
+          "artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8/finite_q_on_artifact.npz"
+        },
+        {
+          "case_id": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+          "case": "fixed-design",
+          "polarization_deg": 0.0,
+          "domain_um": 8.0,
+          "pml_layers": 24,
+          "flake_dz_nm": 5.0,
+          "source_span_um": 6.8,
+          "waist_um": 2.0,
+          "status": "COMPLETED",
+          "generation_commit": "4516ae3c929124a90af495b100c999100d85e5ea",
+          "P_Qx_W": 2.5301466984893047e-12,
+          "P_Qy_W": 2.8507100310768675e-14,
+          "P_Qz_W": 0.0,
+          "P_Qx_fraction": 0.9888585551026335,
+          "P_Qy_fraction": 0.011141444897366574,
+          "P_Qz_fraction": 0.0,
+          "P_Q_W": 2.558653798800073e-12,
+          "P_six_face_W": 2.5627633217771026e-12,
+          "closure": 0.0016035515032187077,
+          "sigma_abs_m2": 2.558653798800073e-12,
+          "sigma_over_Ageo": 0.6396634497000183,
+          "Q_hotspot_W_m3": 33190381.418434095,
+          "source_central_intensity_native_W_m2": 0.000652185260850769,
+          "all_case_acceptance": true,
+          "artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50/finite_q_on_artifact.npz"
+        }
+      ],
+      "scalar_changes": {
+        "P_Q_W": [
+          {
+            "from": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p5_span6p8",
+            "to": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+            "relative_change": 0.00465043182788655
+          },
+          {
+            "from": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 0.006198610681117269
+          }
+        ],
+        "P_six_face_W": [
+          {
+            "from": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p5_span6p8",
+            "to": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+            "relative_change": 0.004706229587914183
+          },
+          {
+            "from": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 0.006189150620791467
+          }
+        ],
+        "sigma_abs_m2": [
+          {
+            "from": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p5_span6p8",
+            "to": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+            "relative_change": 0.00465043182788655
+          },
+          {
+            "from": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 0.006198610681117269
+          }
+        ],
+        "Q_hotspot_W_m3": [
+          {
+            "from": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p5_span6p8",
+            "to": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+            "relative_change": 0.02828577004336374
+          },
+          {
+            "from": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 0.02829875050460102
+          }
+        ],
+        "P_Qx_fraction": [
+          {
+            "from": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p5_span6p8",
+            "to": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+            "relative_change": 0.00043572908925880455
+          },
+          {
+            "from": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 0.0004419195510566443
+          }
+        ],
+        "P_Qy_fraction": [
+          {
+            "from": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p5_span6p8",
+            "to": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+            "relative_change": 0.03719706584429001
+          },
+          {
+            "from": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 0.03922255441326769
+          }
+        ],
+        "P_Qz_fraction": [
+          {
+            "from": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p5_span6p8",
+            "to": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+            "relative_change": 0.0
+          },
+          {
+            "from": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+            "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+            "relative_change": 0.0
+          }
+        ]
+      },
+      "spatial_changes": [
+        {
+          "from": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p5_span6p8",
+          "to": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+          "relative_L2": 0.018549476012875807,
+          "relative_L1": 0.014766539696542087,
+          "comparison_shape": [
+            75,
+            75,
+            20
+          ]
+        },
+        {
+          "from": "finite_convergence/waist/fixed_x_L8_pml24_dz5_w1p75_span6p8",
+          "to": "finite_gaussian_cases/fixed_x_L8_pml24_dz5_w2_span6p8_pad50",
+          "relative_L2": 0.01870018187448349,
+          "relative_L1": 0.014345725728752154,
+          "comparison_shape": [
+            75,
+            75,
+            20
+          ]
+        }
+      ],
+      "absorbed_power_converged_lt_1_percent": true,
+      "spatial_converged_lt_5_percent": true
+    }
+  },
+  "waist_characterized": true,
+  "final_case": {
+    "case_id": "finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8",
+    "case": "fixed-design",
+    "polarization_deg": 0.0,
+    "domain_um": 16.0,
+    "pml_layers": 24,
+    "flake_dz_nm": 5.0,
+    "source_span_um": 6.8,
+    "waist_um": 2.0,
+    "status": "COMPLETED",
+    "generation_commit": "b13e45707c4bda06d1f4afa1a47f8fe72ce29435",
+    "P_Qx_W": 2.532188621867e-12,
+    "P_Qy_W": 2.8525088998209955e-14,
+    "P_Qz_W": 0.0,
+    "P_Qx_fraction": 0.9888604927301413,
+    "P_Qy_fraction": 0.011139507269858738,
+    "P_Qz_fraction": 0.0,
+    "P_Q_W": 2.56071371086521e-12,
+    "P_six_face_W": 2.5648606611011944e-12,
+    "closure": 0.0016168325628277665,
+    "sigma_abs_m2": 2.56071371086521e-12,
+    "sigma_over_Ageo": 0.6401784277163025,
+    "Q_hotspot_W_m3": 33215609.100703213,
+    "source_central_intensity_native_W_m2": 0.000652185260850769,
+    "all_case_acceptance": true,
+    "artifact_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/validation/photothermal_stage1/output/finite_convergence/domain/fixed_x_L16_pml24_dz5_w2_span6p8/finite_q_on_artifact.npz"
+  },
+  "case_count": 24,
+  "large_raw_files_committed": false,
+  "limits": {
+    "six_face_closure": 0.005,
+    "successive_absorbed_power_convergence": 0.01,
+    "successive_spatial_L1_L2": 0.05
+  }
+}

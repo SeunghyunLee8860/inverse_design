@@ -1,0 +1,12 @@
+case,step,relative_error,status
+stage10_combined_4um,0.005,0.0214938,diagnostic_failed_preserved
+stage10_combined_6um,0.005,0.028852,diagnostic_failed_preserved
+thermal_only_4um,0.005,1.7858200094318616e-06,passed
+thermal_only_6um,0.005,1.2994543859134729e-05,passed
+nonuniform_P_Q,0.01,0.002049001155932475,passed
+nonuniform_P_Q,0.005,0.00209005220179503,passed
+weighted_source_old_same_index,0.005,0.02744606356927276,failed
+weighted_source_naive_common_grid,0.01,0.018685986858031457,failed
+weighted_source_naive_common_grid,0.005,0.01869742424249898,failed
+weighted_source_exact_component_collocation,0.01,0.007973398553602148,passed
+weighted_source_exact_component_collocation,0.005,0.007984960795138295,passed

@@ -1,0 +1,63 @@
+{
+  "status": "FROZEN_DEVICE_A_EXPLICIT_WAIST_SENSITIVITY_CONTRACT",
+  "paper_statement": "7-13 um QCL with approximately 9-16 um diffraction-limited spot size; radius/diameter convention not stated",
+  "paper_SI_gaussian_definition": "I=2P/(pi*w0^2)*exp(-2*r^2/w0^2); w0 is the 1/e^2 intensity radius",
+  "waist_scenarios_um": [4.5, 6.5, 8.0],
+  "scenario_interpretation": "diameter interpretation of the reported 9-16 um spot-size range; explicit scenarios, not a confidence interval or paper-certified beam",
+  "preserved_reference": {
+    "waist_um": 12.0,
+    "label": "large-beam scenario",
+    "modified_or_deleted": false
+  },
+  "source_only": {
+    "wavelength_um": 11.0,
+    "source_type": "scalar Gaussian",
+    "source_span_um": 50.0,
+    "lateral_domain_um": 60.0,
+    "six_boundaries": "PML",
+    "pml_layers": 24,
+    "mesh": "auto non-uniform, accuracy 5, conformal variant 1",
+    "duration_ps": 4.0,
+    "auto_shutoff_min": 1e-5,
+    "GPU_only": true,
+    "CPU_fallback": false,
+    "waist_gate_relative": 0.005,
+    "Gaussian_fit_NRMSE_gate": 0.005,
+    "ellipticity_gate": 0.005,
+    "source_boundary_max_over_peak_gate": 0.001
+  },
+  "material_cases_after_source_gate": {
+    "beam_position": "frozen Device-A s0",
+    "polarizations": ["a", "b"],
+    "new_GPU_solves": 6,
+    "include_digitized_Au_Ti": true,
+    "local_xy_mesh_nm": 50.0,
+    "TaIrTe4_dz_nm": 5.0,
+    "simulation_time_ps": 4.0,
+    "epsilon_axes": "x=b, y=a, z=b closure",
+    "Q_processing_prohibited": [
+      "clipping",
+      "smoothing",
+      "gain",
+      "global rescaling",
+      "polarization matching",
+      "tiling"
+    ]
+  },
+  "current_comparison": {
+    "incident_power_W": 0.000285,
+    "normalization": "same integrated incident power for every waist and polarization; raw unit-intensity optical powers reported separately",
+    "thermal_operator": "unchanged 60 um lateral, 20 um Si depth, 100 nm core xy, 10 nm TaIrTe4 z explicit 3D FVM",
+    "terminal_current": "full flake-cell volume integral with cell volume applied exactly once"
+  },
+  "follow_up_rule": "Only after the three s0 waist pairs are reported may one selected waist receive s0 plus/minus 1 um position solves; no automatic dense scan",
+  "excluded": [
+    "25 nm or 12.5 nm optical refinement",
+    "thin-lens source",
+    "dense SPCM scan",
+    "adjoint",
+    "AD-FD",
+    "optimization",
+    "transient thermal"
+  ]
+}

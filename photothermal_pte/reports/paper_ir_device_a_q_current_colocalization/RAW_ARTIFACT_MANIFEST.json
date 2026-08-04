@@ -1,0 +1,70 @@
+{
+  "status": "COMPLETED_DEVICE_A_Q_CURRENT_COLOCALIZATION",
+  "raw_artifacts_committed_to_git": false,
+  "artifacts": [
+    {
+      "role": "registered sparse-scan summary",
+      "path": "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_fig3h_registered_scan/device_a_registered_sparse_scan_summary.json",
+      "size_bytes": 19391,
+      "sha256": "d906cde27c31b91ceb3c482a33fcb363e6d98440c9da6f914586987a78c128af",
+      "committed_to_git": true
+    },
+    {
+      "role": "registered geometry contract",
+      "path": "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_fig3h_registered_scan/device_a_fig3h_registered_geometry.json",
+      "size_bytes": 6923,
+      "sha256": "e24b72915bf3942cfe5c685abb5c1026da019e572f0fcfec2eecd8291aba7258",
+      "committed_to_git": true
+    },
+    {
+      "role": "d=-1 um E||a mapped-Q/thermal-PTE fields",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_dm1_thermal_a_intersection_20260802/thermal_pte_fields.npz",
+      "size_bytes": 387516314,
+      "sha256": "3faf11cc458ef2b986af193ac97f4542c3190f669a324fa46a35aede5dd33093",
+      "committed_to_git": false
+    },
+    {
+      "role": "d=1 um E||a mapped-Q/thermal-PTE fields",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_d1_thermal_a_intersection_20260802/thermal_pte_fields.npz",
+      "size_bytes": 387516314,
+      "sha256": "cb97c5d3d2d40c07b87f6b003292013db9caca27f0a10b2a2c7ba607b314ff72",
+      "committed_to_git": false
+    },
+    {
+      "role": "d=1 um E||b mapped-Q/thermal-PTE fields",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_d1_thermal_b_intersection_20260802/thermal_pte_fields.npz",
+      "size_bytes": 387516314,
+      "sha256": "e1dcf4a0fb65203e8dc224f369baa8ad34bfb11e88836878fa07740b3bca84fb",
+      "committed_to_git": false
+    },
+    {
+      "role": "d=3 um E||a mapped-Q/thermal-PTE fields",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/thermal_a_intersection_expanded_60um_100nm_20260802/thermal_pte_fields.npz",
+      "size_bytes": 387516314,
+      "sha256": "44792d24af1ec8c2d1e5dc7f51fe8dd1d6c092b5816acda921e829a7ccecbd85",
+      "committed_to_git": false
+    },
+    {
+      "role": "d=3 um E||b mapped-Q/thermal-PTE fields",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/thermal_b_intersection_expanded_60um_100nm_20260802/thermal_pte_fields.npz",
+      "size_bytes": 387516314,
+      "sha256": "e065449d3e89d69345547490b92dde3f1ebc0e294ba9b0b70c185f691e08128f",
+      "committed_to_git": false
+    },
+    {
+      "role": "d=5 um E||a mapped-Q/thermal-PTE fields",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_d5_thermal_a_intersection_20260802/thermal_pte_fields.npz",
+      "size_bytes": 387516314,
+      "sha256": "46413cdfa43a572b35582278281779edd88ec5413ecdb99e1b6278a171d44db1",
+      "committed_to_git": false
+    },
+    {
+      "role": "d=5 um E||b mapped-Q/thermal-PTE fields",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fig3h_registered_scan/scan_d5_thermal_b_intersection_20260802/thermal_pte_fields.npz",
+      "size_bytes": 387516314,
+      "sha256": "8ac592269eca50fa9d93903b75312ff34dae15d4d4d56d2d8dac246eaa2c689f",
+      "committed_to_git": false
+    }
+  ],
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python /home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/validation/paper_ir_sanity/analyze_device_a_q_current_colocalization.py --sparse-summary /home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_fig3h_registered_scan/device_a_registered_sparse_scan_summary.json --geometry-contract /home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_fig3h_registered_scan/device_a_fig3h_registered_geometry.json --report-dir /home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_q_current_colocalization"
+}

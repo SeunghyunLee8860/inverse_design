@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "status": "VALIDATED_FIXED_K_LATENT_THERMAL_PTE_ADFD",
+  "passed": true,
+  "scope": "actual periodic inverse-design Maxwell geometry; fixed-K thermal operator; finite-local-mask PTE functional",
+  "execution_commit": "63b9f0fe23a73b4b4d94ef711efa0f3ddae8d1a6",
+  "solver": {
+    "product": "Lumerical FDTD v261",
+    "version": "8.35.4522",
+    "device": "GPU 0",
+    "threads": 16,
+    "realized_grid": [
+      243,
+      243,
+      173
+    ]
+  },
+  "mapping": {
+    "version": "periodic_constrained_mapping/v1",
+    "latent_shape": [
+      240,
+      240
+    ],
+    "physical_shape": [
+      241,
+      241,
+      13
+    ],
+    "filter_radius_um": 0.5,
+    "beta": 8.0,
+    "step": 0.005,
+    "direction": "uniform latent perturbation",
+    "density_mode": "probe_safe",
+    "delta": 0.002501,
+    "chain_factor": 0.994998
+  },
+  "thermal_scenario": {
+    "grid": [
+      24,
+      24,
+      8
+    ],
+    "kappa_TaIrTe4_W_mK": [
+      14.4,
+      3.8,
+      1.0
+    ],
+    "kappa_SiO2_W_mK": 1.38,
+    "kappa_Si_W_mK": 145.0,
+    "G_top_W_m2K": 7370000.0,
+    "G_bottom_W_m2K": 1100000000.0,
+    "x_y_boundary": "periodic",
+    "top_boundary": "adiabatic",
+    "bottom_boundary": "fixed DeltaT=0"
+  },
+  "objective_A_m_per_W_m2": 1.3070866221153408e-20,
+  "plus_A_m_per_W_m2": 1.565664622317477e-20,
+  "minus_A_m_per_W_m2": 1.0389691598489054e-20,
+  "adjoint_directional": 5.376561779173102e-19,
+  "finite_difference": 5.266954624685716e-19,
+  "relative_error": 0.020386105282369334,
+  "relative_error_limit": 0.05,
+  "gates": {
+    "latent_adfd_pass": true,
+    "periodic_source_pairing_relative_error": 2.9929828170064076e-15,
+    "source_roundtrip_max_abs_error": 0.0,
+    "rho_epsilon_owner_leakage_fraction": 0.0,
+    "periodic_x_fencepost_max_abs_error": 0.0,
+    "periodic_y_fencepost_max_abs_error": 0.0,
+    "z_extrusion_max_abs_error": 0.0,
+    "gradients_finite_and_nonzero": true
+  },
+  "raw_summary_erratum": {
+    "field": "metadata.objective_unit",
+    "raw_value": "m2 for dimensionless native density weight",
+    "correct_value": "A m per (W/m2)",
+    "native_density_weight_unit": "A m/W",
+    "reason": "the raw nested string is the generic evaluator label; this execution supplied the fixed-K thermal/PTE pullback weight",
+    "raw_file_modified": false
+  },
+  "blockers": [
+    "BLOCKED_FULL_RHO_DEPENDENT_THERMAL_MATERIAL_MODEL",
+    "BLOCKED_PHYSICAL_WEIGHTING_POTENTIAL_OR_FINITE_FLAKE_MASK"
+  ]
+}

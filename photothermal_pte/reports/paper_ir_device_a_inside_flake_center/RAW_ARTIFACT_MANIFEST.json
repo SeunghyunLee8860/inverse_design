@@ -1,0 +1,66 @@
+{
+  "status": "COMPLETED_DEVICE_A_INSIDE_FLAKE_BEAM_CENTER_DIAGNOSTIC",
+  "raw_NPZ_and_FSP_committed_to_git": false,
+  "artifacts": [
+    {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_inside_flake_x0/finite_a_retry_20260803/case_result.json",
+      "size_bytes": 136110,
+      "sha256": "9b147b01d9f2229aca1deaa2c9954724bb55c7fabc8db50c3f43168b56b146fb",
+      "committed_to_git": false
+    },
+    {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_inside_flake_x0/finite_a_retry_20260803/finite_q_on_artifact.npz",
+      "size_bytes": 640701578,
+      "sha256": "80285a6568c55824f7520880f5af86c7cfc4f7c45ea429603016e72d99c8dbd2",
+      "committed_to_git": false
+    },
+    {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_inside_flake_x0/finite_a_retry_20260803/finite_2um_optical_q.fsp",
+      "size_bytes": 493651482,
+      "sha256": "317b8ed75cd3c92ca7c97d1098179bef2702849b3caebd6ad8a78910428abec2",
+      "committed_to_git": false
+    },
+    {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_inside_flake_x0/finite_b_20260803/case_result.json",
+      "size_bytes": 136110,
+      "sha256": "df6a28e58f6a51bcfcc1c02367fa3fafa7b6d2e72a5d66b1deef775291f50704",
+      "committed_to_git": false
+    },
+    {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_inside_flake_x0/finite_b_20260803/finite_q_on_artifact.npz",
+      "size_bytes": 640701542,
+      "sha256": "7d0433d954f4bf313166bc56baa08b9042ed7036341ce20cb0c461a6297cb868",
+      "committed_to_git": false
+    },
+    {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_inside_flake_x0/finite_b_20260803/finite_2um_optical_q.fsp",
+      "size_bytes": 493651602,
+      "sha256": "2a4eab6d00265c3e37fd5510b1c4855d06085574a4d3c82528881c132ef9267b",
+      "committed_to_git": false
+    },
+    {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_inside_flake_x0/thermal_a_framefix_20260803/summary.json",
+      "size_bytes": 15270,
+      "sha256": "443cba08129d123702e2a3807e4f516888a647f87c92650ea7b8d9d21ccd6e44",
+      "committed_to_git": false
+    },
+    {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_inside_flake_x0/thermal_a_framefix_20260803/thermal_pte_fields.npz",
+      "size_bytes": 388595722,
+      "sha256": "4923da0e6d8267011af376ec9056ce5f39ea511b89c8e6a68ff2b31d388d1760",
+      "committed_to_git": false
+    },
+    {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_inside_flake_x0/thermal_b_framefix_20260803/summary.json",
+      "size_bytes": 15256,
+      "sha256": "1b58884752a52cccc6b2cc1b77cb44170727b2774e9fc5e979e1d1d494bc2b54",
+      "committed_to_git": false
+    },
+    {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_inside_flake_x0/thermal_b_framefix_20260803/thermal_pte_fields.npz",
+      "size_bytes": 388595722,
+      "sha256": "146c06ff808ea4e5a5140427160277c1840d9494a2c7cb684b4053cdcf30cd86",
+      "committed_to_git": false
+    }
+  ]
+}

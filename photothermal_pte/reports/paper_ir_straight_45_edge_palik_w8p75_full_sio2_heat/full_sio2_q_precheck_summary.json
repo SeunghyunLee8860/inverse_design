@@ -1,0 +1,99 @@
+{
+  "status": "BLOCKED_LUMERICAL_FDTD_LATE_TIME_DIVERGENCE",
+  "implemented": {
+    "full_285nm_SiO2_volumetric_Q": true,
+    "disjoint_TaIrTe4_and_SiO2_supports": true,
+    "independent_conservative_thermal_mapping": true,
+    "cross_material_source_projection": false,
+    "clipping_smoothing_gain_rescaling_tiling": false
+  },
+  "thermal_conductivity_contract": {
+    "TaIrTe4_lab_x_y_z_W_mK": [3.8, 14.4, 1.0],
+    "SiO2_W_mK": 1.38,
+    "Si_W_mK": 145.0,
+    "air_W_mK": 0.026,
+    "SiO2_and_Si_provenance": "named approximately-300-K bulk-reference scenario assumptions; not supplied by the TaIrTe4 paper or measured for the fabricated wafer"
+  },
+  "cases": [
+    {
+      "polarization": "a",
+      "oxide_dz_nm": 10.0,
+      "status": "FAILED_ACCEPTANCE",
+      "P_Q_full_W": 1.2611879359917496e-11,
+      "P_Q_TaIrTe4_W": 1.174108848212031e-11,
+      "P_Q_SiO2_W": 5.168273162833874e-13,
+      "P_Q_TaIrTe4_plus_SiO2_W": 1.2257915798403697e-11,
+      "P_six_W": 1.2771416094730729e-11,
+      "six_face_closure": 0.012491702848758831,
+      "auto_shutoff": 9.81673e-06
+    },
+    {
+      "polarization": "a",
+      "oxide_dz_nm": 5.0,
+      "status": "FAILED_ACCEPTANCE",
+      "P_Q_full_W": 1.2611104551458292e-11,
+      "P_Q_TaIrTe4_W": 1.1740436584041703e-11,
+      "P_Q_SiO2_W": 5.2353290822064e-13,
+      "P_Q_TaIrTe4_plus_SiO2_W": 1.2263969492262343e-11,
+      "P_six_W": 1.2770638338208644e-11,
+      "six_face_closure": 0.012492232770623574,
+      "auto_shutoff": 9.68584e-06,
+      "Lumerical_Pabs_total_scaled_W": 1.2611115300715404e-11
+    }
+  ],
+  "convergence_10nm_to_5nm": {
+    "full_power_relative_change": 6.143858819366394e-05,
+    "TaIrTe4_power_relative_change": 5.552588048492518e-05,
+    "SiO2_power_relative_change": 0.012808348495309096,
+    "TaIrTe4_plus_SiO2_power_relative_change": 0.0004936161870319001,
+    "TaIrTe4_depth_integrated_Q_raw_NRMSE": 7.897872875280692e-05,
+    "TaIrTe4_depth_integrated_Q_normalized_NRMSE": 4.0830575885370356e-05,
+    "SiO2_depth_integrated_Q_raw_NRMSE": 0.011943147701749188,
+    "SiO2_depth_integrated_Q_normalized_NRMSE": 0.00324782122811587,
+    "SiO2_depth_integrated_Q_spatial_correlation": 0.9999953551767402
+  },
+  "gates": {
+    "GPU_only": true,
+    "auto_shutoff_lt_1e_minus_5": true,
+    "no_negative_Q_NaN_or_Inf": true,
+    "material_support_decomposition_residual_lt_1e_minus_12": true,
+    "six_face_closure_lt_0p5_percent": false,
+    "legacy_Pabs_and_realized_six_face_bounds_match_lt_1fm": false,
+    "strict_runsetup_Pabs_bounds_on_native_mesh_lt_1fm": true,
+    "strict_run_completed_without_divergence": false,
+    "strict_final_Q_and_flux_available": false
+  },
+  "offline_existing_artifact_flux_audit": {
+    "new_FDTD_run": false,
+    "status": "DIAGNOSED_FULL_SIO2_Q_FLUX_CANCELLATION_UNRESOLVED",
+    "P_six_W": 1.2770638338208644e-11,
+    "sum_abs_face_power_over_abs_P_six": 7.885903843951714,
+    "z_face_cancellation_factor": 7.885829401490797,
+    "lateral_face_cancellation_factor": 7.444246091655077e-05,
+    "common_trapezoid_Q_W": 1.2611104551458292e-11,
+    "native_bounded_Q_W": 1.2611115405212249e-11,
+    "Lumerical_Pabs_total_W": 1.2611115300715404e-11,
+    "closure_range": [
+      0.012491382871529292,
+      0.012492232770623574
+    ],
+    "maximum_Pabs_vs_realized_six_face_bounds_mismatch_m": 5.0000000000001215e-08,
+    "interpretation": "all volume-Q paths retain the closure; the signed z-face flux balance is cancellation-sensitive, and the independent 50-nm lateral bounds mismatch is fail-closed but too weak in lateral power to explain 1.249 percent"
+  },
+  "strict_matched_time_diagnostic": {
+    "runsetup_Pabs_bounds_on_native_solver_mesh_lt_1fm": true,
+    "requested_auto_shutoff": 1e-06,
+    "legacy_stop_time_s": 7.367254e-13,
+    "legacy_stop_fraction_of_4ps": 0.18418135,
+    "divergence_time_s": 1.62632e-12,
+    "divergence_fraction_of_4ps": 0.40658,
+    "minimum_logged_auto_shutoff": 6.69093e-06,
+    "maximum_logged_auto_shutoff": 93861.7,
+    "wall_time_s": 3844.9304,
+    "final_Q_or_flux_published": false,
+    "status": "BLOCKED_LUMERICAL_FDTD_LATE_TIME_DIVERGENCE"
+  },
+  "E_parallel_b_run": false,
+  "physical_thermal_run": false,
+  "PTE_adjoint_gradient_optimization_run": false
+}

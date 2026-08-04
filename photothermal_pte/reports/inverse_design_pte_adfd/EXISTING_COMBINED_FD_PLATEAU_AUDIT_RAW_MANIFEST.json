@@ -1,0 +1,10 @@
+{
+  "generation_command": "python -m photothermal_pte.finite_inverse_design.audit_existing_combined_fd_plateau --raw-result <external>/full_five_direction_failed_noise_plateau_result.json --expected-sha256 566e601759e044b48f0b723f02123b4615fbf78577942e388deca3fc76f645c3 --report-dir photothermal_pte/reports/inverse_design_pte_adfd",
+  "raw_result": {
+    "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/full_five_direction_failed_noise_plateau_result.json",
+    "byte_size": 371553,
+    "sha256": "566e601759e044b48f0b723f02123b4615fbf78577942e388deca3fc76f645c3"
+  },
+  "raw_result_modified": false,
+  "new_Lumerical_solves": 0
+}

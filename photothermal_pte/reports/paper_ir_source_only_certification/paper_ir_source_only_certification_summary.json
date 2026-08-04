@@ -1,0 +1,232 @@
+{
+  "status": "VALIDATED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY",
+  "generation_commit": "57c25e87fc8ca4cf39831c1af5540abe58cbea37",
+  "source_generation_commit": "57c25e87fc8ca4cf39831c1af5540abe58cbea37",
+  "scenario_label": "paper-like scalar-Gaussian scenario with an explicitly assumed waist",
+  "experimentally_reproduced_beam": false,
+  "paper_certified_beam": false,
+  "explicit_assumption": "physical target-plane w0=12 um",
+  "source_object_calibration": {
+    "classification": "NUMERICAL_SOURCE_CALIBRATION",
+    "baseline_input_w0_m": 1.2e-05,
+    "baseline_realized_effective_w0_m": 1.2083715082204207e-05,
+    "baseline_field_NPZ_sha256": "f0f848740730ce73f0e47f73f26c8a572afda5f59c8bab57c8d8dac94a112ad0",
+    "changes_physical_target_w0": false,
+    "changes_incident_power_or_Q": false,
+    "Q_clipping_smoothing_gain_or_rescaling": false
+  },
+  "calibration_is_Q_rescaling": false,
+  "license_diagnosis": {
+    "license_entitlement_valid": true,
+    "v261_GUI_checkout_observed": true,
+    "initial_license_unavailable_status_was_sandbox_false_negative": true,
+    "transient_solver_task_contention_observed": true,
+    "final_GPU_engine_host_threads": 3,
+    "CPU_FDTD_fallback": false
+  },
+  "final_metrics": {
+    "physical_target_w0_um": 12.0,
+    "Lumerical_source_object_input_w0_um": 11.916864889678678,
+    "realized_wx_um": 11.996332674298937,
+    "realized_wy_um": 12.005906747759084,
+    "waist_x_error_percent": 0.03056104750885913,
+    "waist_y_error_percent": 0.04922289799236257,
+    "Gaussian_fit_NRMSE_percent": 0.07580776619166288,
+    "beam_center_displacement_m": 5.637304977919194e-15,
+    "xy_ellipticity_percent": 0.07977650161549522,
+    "source_boundary_max_over_peak": 0.00017450102659066988,
+    "source_boundary_mean_over_peak": 5.225393378811611e-05,
+    "incident_power_W": 2.9028929127547816e-13,
+    "incident_power_closure_percent": 0.052936568369987835,
+    "field_component_E2_fractions": {
+      "x": 0.9781568970220225,
+      "y": 0.00012390915304467037,
+      "z": 0.021719193824932898
+    },
+    "native_mesh": {
+      "available": true,
+      "shape_xyz": [
+        190,
+        190,
+        87
+      ],
+      "grid_points": 3140700,
+      "bounds_m": {
+        "x": [
+          -3e-05,
+          3e-05
+        ],
+        "y": [
+          -3e-05,
+          3e-05
+        ],
+        "z": [
+          -1.1065e-05,
+          1.6000000000000003e-05
+        ]
+      },
+      "minimum_step_m": {
+        "x": 3.17460317460314e-07,
+        "y": 3.17460317460314e-07,
+        "z": 3.1470930232557977e-07
+      },
+      "maximum_step_m": {
+        "x": 3.1746031746032077e-07,
+        "y": 3.1746031746032077e-07,
+        "z": 3.1470930232558147e-07
+      }
+    },
+    "logged_solver_grid": {
+      "shape_xyz": [
+        237,
+        237,
+        134
+      ],
+      "grid_points": 7526646
+    },
+    "runtime_s": 5.617873709648848,
+    "GPU_memory_GiB": 0.277,
+    "auto_shutoff": 4.70241e-06,
+    "raw_NPZ": {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_target_w12_calibrated_57c25e8_t3_gpu4_4ps_20260730/paper_ir_source_only_fields.npz",
+      "size_bytes": 8551215,
+      "sha256": "61b01be39fa588e01658297f3e0dc87de4c4db5a48d9cb218a92d809f3856ff0"
+    },
+    "raw_FSP": {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/source_only_scalar_target_w12_calibrated_57c25e8_t3_gpu4_4ps_20260730/paper_ir_source_only.fsp",
+      "size_bytes": 2883020,
+      "sha256": "bd03b971921af56acf6b691c345d2afe3ca3051193fee71f65d10b4f8371ef6d"
+    }
+  },
+  "acceptance": {
+    "requested_vs_realized_fitted_waist_x_lt_0p5_percent": true,
+    "requested_vs_realized_fitted_waist_y_lt_0p5_percent": true,
+    "Gaussian_fit_NRMSE_lt_0p5_percent": true,
+    "xy_ellipticity_lt_0p5_percent": true,
+    "beam_center_error_lt_one_optical_cell": true,
+    "square_captured_fraction_ge_99p9_percent": true,
+    "source_boundary_max_le_1e_minus_3": true,
+    "source_boundary_mean_le_1e_minus_4": true,
+    "incident_power_closure_lt_0p5_percent": true,
+    "actual_mesh_readback_available": true,
+    "GPU_memory_readback_available": true,
+    "no_NaN_or_Inf": true,
+    "no_CPU_fallback": true,
+    "auto_shutoff_le_1e_minus_5": true
+  },
+  "cases": [
+    {
+      "case": "uncalibrated_negative_distance_accuracy5",
+      "role": "calibration_baseline",
+      "status": "FAILED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY_GATE",
+      "generation_commit": "4d92d8b4344120525fcfccb605cc349070024ffd",
+      "mesh_accuracy": 5.0,
+      "host_threads": "8",
+      "source_object_w0_um": 12.0,
+      "physical_target_w0_um": 12.0,
+      "distance_from_waist_um": -5.065,
+      "realized_wx_um": 12.079057771948957,
+      "realized_wy_um": 12.08837418817393,
+      "waist_x_error_percent": 0.6588147662413002,
+      "waist_y_error_percent": 0.736451568116081,
+      "Gaussian_fit_NRMSE_percent": 0.08355666489044077,
+      "ellipticity_percent": 0.07709893413867626,
+      "incident_power_closure_percent": 0.05477881445469235,
+      "auto_shutoff": 4.95952e-06,
+      "runtime_s": 4.457184683531523,
+      "GPU_memory_GiB": 0.277,
+      "NPZ_sha256": "f0f848740730ce73f0e47f73f26c8a572afda5f59c8bab57c8d8dac94a112ad0",
+      "source_only_gate_passed": false,
+      "failed_gates": "requested_vs_realized_fitted_waist_x_lt_0p5_percent;requested_vs_realized_fitted_waist_y_lt_0p5_percent"
+    },
+    {
+      "case": "uncalibrated_negative_distance_accuracy6",
+      "role": "mesh_refinement_control",
+      "status": "FAILED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY_GATE",
+      "generation_commit": "4d92d8b4344120525fcfccb605cc349070024ffd",
+      "mesh_accuracy": 6.0,
+      "host_threads": "8",
+      "source_object_w0_um": 12.0,
+      "physical_target_w0_um": 12.0,
+      "distance_from_waist_um": -5.065,
+      "realized_wx_um": 12.07886701640745,
+      "realized_wy_um": 12.088637956440744,
+      "waist_x_error_percent": 0.6572251367287452,
+      "waist_y_error_percent": 0.7386496370061835,
+      "Gaussian_fit_NRMSE_percent": 0.08087754065435711,
+      "ellipticity_percent": 0.08086014707989492,
+      "incident_power_closure_percent": 0.034179858270255714,
+      "auto_shutoff": 4.3712e-06,
+      "runtime_s": 7.428894326090813,
+      "GPU_memory_GiB": 0.381,
+      "NPZ_sha256": "43c9c6f6a33b78d619e5e6141f6daa45bcdf7ed25f38e8c3a1fcd302381e6bb8",
+      "source_only_gate_passed": false,
+      "failed_gates": "requested_vs_realized_fitted_waist_x_lt_0p5_percent;requested_vs_realized_fitted_waist_y_lt_0p5_percent"
+    },
+    {
+      "case": "positive_distance_accuracy5",
+      "role": "distance_sign_diagnostic",
+      "status": "FAILED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY_GATE",
+      "generation_commit": "4d92d8b4344120525fcfccb605cc349070024ffd",
+      "mesh_accuracy": 5.0,
+      "host_threads": "8",
+      "source_object_w0_um": 12.0,
+      "physical_target_w0_um": 12.0,
+      "distance_from_waist_um": 5.065,
+      "realized_wx_um": 12.399406388634459,
+      "realized_wy_um": 12.415636089980234,
+      "waist_x_error_percent": 3.328386571953823,
+      "waist_y_error_percent": 3.4636340831686097,
+      "Gaussian_fit_NRMSE_percent": 0.2278752420843274,
+      "ellipticity_percent": 0.13080534808482808,
+      "incident_power_closure_percent": 0.06135436250236381,
+      "auto_shutoff": 6.63405e-06,
+      "runtime_s": 5.788594480603933,
+      "GPU_memory_GiB": 0.277,
+      "NPZ_sha256": "540d2fdaf0f9d97b6e311b8b99fd412e12605e8ebe7d86a3188b2550e5f0e6cd",
+      "source_only_gate_passed": false,
+      "failed_gates": "requested_vs_realized_fitted_waist_x_lt_0p5_percent;requested_vs_realized_fitted_waist_y_lt_0p5_percent"
+    },
+    {
+      "case": "calibrated_negative_distance_accuracy5",
+      "role": "promoted_source_only_certificate",
+      "status": "VALIDATED_PAPER_LIKE_SCALAR_GAUSSIAN_SOURCE_ONLY",
+      "generation_commit": "57c25e87fc8ca4cf39831c1af5540abe58cbea37",
+      "mesh_accuracy": 5.0,
+      "host_threads": "3",
+      "source_object_w0_um": 11.916864889678678,
+      "physical_target_w0_um": 12.0,
+      "distance_from_waist_um": -5.065,
+      "realized_wx_um": 11.996332674298937,
+      "realized_wy_um": 12.005906747759084,
+      "waist_x_error_percent": 0.03056104750885913,
+      "waist_y_error_percent": 0.04922289799236257,
+      "Gaussian_fit_NRMSE_percent": 0.07580776619166288,
+      "ellipticity_percent": 0.07977650161549522,
+      "incident_power_closure_percent": 0.052936568369987835,
+      "auto_shutoff": 4.70241e-06,
+      "runtime_s": 5.617873709648848,
+      "GPU_memory_GiB": 0.277,
+      "NPZ_sha256": "61b01be39fa588e01658297f3e0dc87de4c4db5a48d9cb218a92d809f3856ff0",
+      "source_only_gate_passed": true,
+      "failed_gates": ""
+    }
+  ],
+  "successor_sequence_authorized": true,
+  "next_sequence": [
+    "planar TaIrTe4, E parallel a",
+    "planar TaIrTe4, E parallel b",
+    "straight 45-degree finite edge, E parallel a",
+    "straight 45-degree finite edge, E parallel b"
+  ],
+  "not_run": [
+    "TaIrTe4 planar/edge material cases",
+    "thermal",
+    "weighting potential",
+    "PTE",
+    "adjoint",
+    "gradient",
+    "optimization",
+    "thin-lens diagnostic"
+  ]
+}

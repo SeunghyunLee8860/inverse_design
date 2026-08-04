@@ -1,0 +1,61 @@
+{
+  "status": "VALIDATED_FULL_YEE_DUAL_CELL_GRADIENT_MEASURE",
+  "passed": true,
+  "generated_at_utc": "2026-07-27T21:48:48.196038+00:00",
+  "scope": "solver-free correction of the Maxwell material-gradient integration measure using SHA-pinned completed FSPs",
+  "root_cause": "The component J_c operators already encode conformal fill and exact design support. Clipping Yee dual-cell dV_c to the nominal design box applied support twice.",
+  "correct_measure": "complete component-specific Yee dual-cell volume",
+  "gates": {
+    "worst_full_measure_ADFD_relative_error": 1.5697694623095208e-05,
+    "limit": 0.01,
+    "clipped_path_reproduction_relative_error": 0.0,
+    "clipped_reproduction_limit": 1e-12
+  },
+  "component_J_support": {
+    "x": {
+      "active_J_row_count": 49200,
+      "clipped_to_full_volume_ratio_bounds": [
+        0.042592592592585195,
+        1.0000000000000033
+      ],
+      "active_rows_changed_by_clipping": 5520
+    },
+    "y": {
+      "active_J_row_count": 49200,
+      "clipped_to_full_volume_ratio_bounds": [
+        0.042592592592585195,
+        1.0000000000000033
+      ],
+      "active_rows_changed_by_clipping": 5520
+    },
+    "z": {
+      "active_J_row_count": 48749,
+      "clipped_to_full_volume_ratio_bounds": [
+        0.14629629629626362,
+        1.0000000000000029
+      ],
+      "active_rows_changed_by_clipping": 6161
+    }
+  },
+  "stage10_preserved": {
+    "status": "FAILED_COMBINED_PHYSICAL_RHO_PTE_ADFD",
+    "passed": false,
+    "reported_relative_error_range": [
+      0.0215,
+      0.0289
+    ]
+  },
+  "inverse_collocation_strong_diagnostic_preserved": {
+    "status": "DIAGNOSTIC_FAILED_CORRECTED_COMBINED_STRONG_DIRECTION_ADFD",
+    "passed": false,
+    "worst_strong_direction_relative_error": 0.019773279492347976
+  },
+  "rho05_representation_equivalence_checkpoint": "already validated at commit 6a73dea; not rerun",
+  "empirical_normalization": false,
+  "gradient_rescaling": false,
+  "gray_law_sensitivity_run": false,
+  "full_latent_adfd_run": false,
+  "optimization_run": false,
+  "combined_multidirection_gate_complete": false,
+  "next_gate": "corrected strong and five-direction physical-rho combined AD-FD using full Yee dual-cell volumes"
+}

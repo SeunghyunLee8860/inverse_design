@@ -1,0 +1,118 @@
+{
+  "status": "DEVICE_A_CORRECTION_AUDIT_RAW_MANIFEST",
+  "raw_artifacts_committed_to_git": false,
+  "artifacts": [
+    {
+      "kind": "thermal-summary-a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/thermal_a_paper_reduced_L60_cpu120_127_20260802/summary.json",
+      "size_bytes": 14351,
+      "sha256": "4ad8ba57d6d27f621b7deb904c18298de591e50abe87c4620df7d8b88c6327fe",
+      "committed_to_git": false
+    },
+    {
+      "kind": "thermal-fields-a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/thermal_a_paper_reduced_L60_cpu120_127_20260802/thermal_pte_fields.npz",
+      "size_bytes": 65386833,
+      "sha256": "fcbb505962bda4d3b34ea13f77191af9a360304420db43d0deb4fffb6cfbbcf7",
+      "committed_to_git": false
+    },
+    {
+      "kind": "thermal-summary-b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/thermal_b_paper_reduced_L60_cpu120_127_20260802/summary.json",
+      "size_bytes": 14349,
+      "sha256": "9f55afe68a415b1e7964982fea45e912fb57a90abfeec0bdd3d4d6db9be53806",
+      "committed_to_git": false
+    },
+    {
+      "kind": "thermal-fields-b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/thermal_b_paper_reduced_L60_cpu120_127_20260802/thermal_pte_fields.npz",
+      "size_bytes": 65386833,
+      "sha256": "cf7983187e116fc590f9ba678e9e701e92029fc98ede809ecac80b57d7c6602c",
+      "committed_to_git": false
+    },
+    {
+      "kind": "thermal-summary-a",
+      "path": "/home/seunghyun/tairte4/artifacts/device_a_correction_audit/thermal_a_intersection_paper_reduced_20260802/summary.json",
+      "size_bytes": 14199,
+      "sha256": "a8e47ac52896abf1d748109be6186d0cb7c4e6abb525f46758226cd0be28927f",
+      "committed_to_git": false
+    },
+    {
+      "kind": "thermal-fields-a",
+      "path": "/home/seunghyun/tairte4/artifacts/device_a_correction_audit/thermal_a_intersection_paper_reduced_20260802/thermal_pte_fields.npz",
+      "size_bytes": 65386833,
+      "sha256": "69e3024dfe4fffb98d756cc4b16eeecda89f93bbfbb85a57d10f460a1137fd73",
+      "committed_to_git": false
+    },
+    {
+      "kind": "thermal-summary-b",
+      "path": "/home/seunghyun/tairte4/artifacts/device_a_correction_audit/thermal_b_intersection_paper_reduced_20260802/summary.json",
+      "size_bytes": 14230,
+      "sha256": "4b8dda013740fe7a49a9cc4731885fa948ca4763d78d767bf8b13cce3f856950",
+      "committed_to_git": false
+    },
+    {
+      "kind": "thermal-fields-b",
+      "path": "/home/seunghyun/tairte4/artifacts/device_a_correction_audit/thermal_b_intersection_paper_reduced_20260802/thermal_pte_fields.npz",
+      "size_bytes": 65386833,
+      "sha256": "6aed1bd2775d5362378d2f7da02e43ea1f051ba72d78654b00b474190e602c2a",
+      "committed_to_git": false
+    },
+    {
+      "kind": "mapping-summary-a",
+      "path": "/home/seunghyun/tairte4/artifacts/device_a_correction_audit/mapping_a_intersection_separable_20260802/material_overlap_mapping_summary.json",
+      "size_bytes": 5876,
+      "sha256": "afdd9bf67c0978225565a5c38d84b33afac74a39a4f54220eea9b832a5bec696",
+      "committed_to_git": false
+    },
+    {
+      "kind": "mapping-Q-a",
+      "path": "/home/seunghyun/tairte4/artifacts/device_a_correction_audit/mapping_a_intersection_separable_20260802/material_overlap_mapped_q.npz",
+      "size_bytes": 6839958,
+      "sha256": "4e2e6b980b905c11d3b11c4591bf0b02f9b19627970bb0dc3d0036a57c0db075",
+      "committed_to_git": false
+    },
+    {
+      "kind": "mapping-summary-b",
+      "path": "/home/seunghyun/tairte4/artifacts/device_a_correction_audit/mapping_b_intersection_separable_20260802/material_overlap_mapping_summary.json",
+      "size_bytes": 5899,
+      "sha256": "ba30c28d0ba00a43c4ad82bd3360ad0b0bacd4751b757c8835f0e4e7348e6546",
+      "committed_to_git": false
+    },
+    {
+      "kind": "mapping-Q-b",
+      "path": "/home/seunghyun/tairte4/artifacts/device_a_correction_audit/mapping_b_intersection_separable_20260802/material_overlap_mapped_q.npz",
+      "size_bytes": 6833510,
+      "sha256": "4bfb8bd9d0a3925411093e5be3642f043b06438cab50d1c9fb91a08553be5a1f",
+      "committed_to_git": false
+    },
+    {
+      "kind": "optical-Q-a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_a_gpu0_20260802/finite_q_on_artifact.npz",
+      "size_bytes": 606054472,
+      "sha256": "2ad4d576b2a8655ae5c064b0bbb0bffe8b1fc0d097f95871a3b028284deedaeb",
+      "committed_to_git": false
+    },
+    {
+      "kind": "optical-FSP-a",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_a_gpu0_20260802/finite_2um_optical_q.fsp",
+      "size_bytes": 468719978,
+      "sha256": "abfa5dc6c19d92cda587085d1ba47491f4538cd01c8f1d1e20f60d8525020ff0",
+      "committed_to_git": false
+    },
+    {
+      "kind": "optical-Q-b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_b_gpu0_20260802/finite_q_on_artifact.npz",
+      "size_bytes": 606054468,
+      "sha256": "c6a63d17bfdd5525307328e9b6493a62b5da46990baf74394b8fa8f1881ea674",
+      "committed_to_git": false
+    },
+    {
+      "kind": "optical-FSP-b",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_b_gpu0_20260802/finite_2um_optical_q.fsp",
+      "size_bytes": 468719090,
+      "sha256": "2a2b4c06e5c7d9731e238c06a14b13da0d20a9927548f7697d83773a5a6af632",
+      "committed_to_git": false
+    }
+  ]
+}

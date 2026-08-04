@@ -1,0 +1,691 @@
+{
+  "status": "FAILED_STRAIGHT_45_EDGE_PAPER_GRADIENT_TREND",
+  "scope": "corner-free straight 45-degree TaIrTe4/air edge optical and thermal diagnostic only; no weighting field or PTE current",
+  "geometry_contract": {
+    "TaIrTe4_region": "lab y<=x",
+    "edge": "lab y=x",
+    "edge_outward_normal": "(-x+y)/sqrt(2)",
+    "lab_axes": {
+      "x": "crystal b",
+      "y": "crystal a"
+    },
+    "flake_thickness_m": 1.3e-07,
+    "substrate": "285 nm SiO2 on Si",
+    "corner_present": false
+  },
+  "illumination_contract": {
+    "wavelength_m": 1.1e-05,
+    "Gaussian_waist_radius_m": 6.5e-06,
+    "beam_center_m": [
+      0.0,
+      0.0
+    ],
+    "experimental_incident_power_W": 0.000285,
+    "polarizations": [
+      "E_parallel_a",
+      "E_parallel_b"
+    ],
+    "waist_note": "w0=6.5 um is a named scenario; an exact wavelength-specific experimental beam radius was not reported numerically"
+  },
+  "optical": {
+    "a": {
+      "case_dir": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_gpu4_20260730",
+      "status": "COMPLETED",
+      "solver_version": "8.35.4522",
+      "solver_device": "GPU 4",
+      "P_Q_W_at_1_W_m2": 1.1746885925763195e-11,
+      "P_six_W_at_1_W_m2": 1.1776326463225359e-11,
+      "six_face_closure_relative": 0.0024999763342244056,
+      "component_power_W": {
+        "x": 1.4954195301862405e-12,
+        "y": 1.0251466395576954e-11,
+        "z": 0.0
+      },
+      "hotspot": {
+        "x_m": 4.92569002123121e-07,
+        "y_m": -5.095541401276029e-08,
+        "z_m": -9.999999999999937e-09,
+        "Q_W_m3": 3032770.213144336
+      },
+      "negative_Q_voxel_count": 0,
+      "acceptance": {
+        "six_face_closure_lt_0p5_percent": true,
+        "Q_not_clipped": true,
+        "measured_intensity_normalization": true
+      },
+      "normalization": {
+        "measured_source_power_native_W": 8.340204581751367e-14,
+        "measured_source_intensity_native_W_m2": 0.0007489431227294916,
+        "scale_to_1_W_m2": 1335.2148776739443,
+        "incident_intensity_W_m2": 1.0,
+        "incident_power_W_at_1_W_m2": 1.1135965240398821e-10,
+        "normalization_basis": "central -z incident intensity measured from the matching empty-layered-stack E/H decomposition",
+        "incident_reference": {
+          "central_incident_intensity_W_m2": 0.0007489431227294916,
+          "peak_incident_intensity_over_flake_W_m2": 0.0007489431227294916,
+          "mean_incident_intensity_over_flake_W_m2": 0.00017755291516383692,
+          "minimum_incident_intensity_over_flake_W_m2": 9.571804650887374e-07,
+          "minimum_to_peak_over_flake": 0.0012780415976053477,
+          "peak_to_central": 1.0,
+          "source_aperture_edge_to_central": 0.0052760888482375435,
+          "decomposition": "empty-layered-stack air-plane E/H decomposition into the -z traveling wave at z=+50 nm",
+          "empty_outer_net_outward_power_W_at_1_W_m2": -1.4265191328874205e-14,
+          "measured_total_source_power_W_at_1_W_m2_central": 1.1135422331431587e-10,
+          "case_result_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/empty_a_w6p5_dz10_shut1e5_gpu2_20260730/case_result.json",
+          "case_result_sha256": "80f7af46c0956610b7e9e7fd2f7aea0040461561a101c10fc99188f4acefdc44",
+          "generation_commit": "a83fd92b5c053ae22abd13311fe7be604b09ac19",
+          "reference_geometry": {
+            "domain_um": 40.0,
+            "pml_layers": 24,
+            "flake_dz_nm": 10.0
+          },
+          "active_geometry": {
+            "domain_um": 48.0,
+            "pml_layers": 24,
+            "flake_dz_nm": 10.0
+          },
+          "normalization_contract": "polarization, Gaussian waist, and source aperture must match; one measured source reference is intentionally held fixed over domain/PML/dz convergence so those effects are not renormalized"
+        },
+        "empirical_flux_gain": false
+      },
+      "geometry": {
+        "geometry_name": "straight-45-edge",
+        "geometry_source": "paper Figure 3F straight 45-degree half-plane control; TaIrTe4 occupies lab y<=x and remote triangle faces lie outside the PML-bounded physical domain",
+        "coordinate_contract": {
+          "lab_x": "crystal b",
+          "lab_y": "crystal a"
+        },
+        "flake_vertices_um": [
+          [
+            -25.0,
+            -25.0
+          ],
+          [
+            25.0,
+            -25.0
+          ],
+          [
+            25.0,
+            25.0
+          ]
+        ],
+        "flake_thickness_m": 1.3e-07,
+        "flake_area_m2": 1.25e-09,
+        "absorption_analysis_bounds_m": {
+          "x": [
+            -1.8e-05,
+            1.8e-05
+          ],
+          "y": [
+            -1.8e-05,
+            1.8e-05
+          ],
+          "z": [
+            -1.3e-07,
+            0.0
+          ]
+        },
+        "exact_flake_mask_kind": "analytic half-plane lab_y<=lab_x",
+        "substrate": "285 nm SiO2 on Si",
+        "electrodes_in_optical_model": false,
+        "electrode_note": "Off-axis-edge optical certificate intentionally excludes Au/Ti; contacts enter the separate weighting-potential geometry. A contact optical scenario is required before interpreting contact hotspots.",
+        "source": {
+          "wavelength_m": 1.1e-05,
+          "experimental_band_m": [
+            7e-06,
+            1.3e-05
+          ],
+          "waist_radius_m": 6.5e-06,
+          "beam_center_m": [
+            0.0,
+            0.0
+          ],
+          "source_span_m": 2.8e-05,
+          "normal_incidence": true,
+          "polarization_axis": "a",
+          "simulation_time_s": 1.2e-12,
+          "auto_shutoff_min": 1e-05
+        },
+        "domain_bounds_m": {
+          "x": [
+            -2.4e-05,
+            2.4e-05
+          ],
+          "y": [
+            -2.4e-05,
+            2.4e-05
+          ],
+          "z": [
+            -3.4150000000000003e-06,
+            1e-05
+          ]
+        },
+        "all_six_boundaries": "PML",
+        "periodic": false
+      },
+      "raw_npz": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_gpu4_20260730/finite_q_on_artifact.npz",
+      "raw_npz_sha256": "b3b0f39bb48e85d9487a769069e9b53d4168a28ea9a779c24e340b72b232fa09",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_gpu4_20260730 --case finite-flake --geometry straight-45-edge --polarization a --domain-um 48 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --source-span-um 28 --waist-um 6.5 --beam-x-um 0 --beam-y-um 0 --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/empty_a_w6p5_dz10_shut1e5_gpu2_20260730/case_result.json --gpu-device 'GPU 4'",
+      "raw_case_reported_generation_commit": "23e46c38297ed3a84022fe75c24216a5fbc80e0c"
+    },
+    "b": {
+      "case_dir": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_b_w6p5_dz10_L48_gpu5_20260730",
+      "status": "COMPLETED",
+      "solver_version": "8.35.4522",
+      "solver_device": "GPU 5",
+      "P_Q_W_at_1_W_m2": 1.4549368085023664e-11,
+      "P_six_W_at_1_W_m2": 1.4489681209613729e-11,
+      "six_face_closure_relative": 0.004119267673765869,
+      "component_power_W": {
+        "x": 1.4339336338220487e-11,
+        "y": 2.1003174680317656e-13,
+        "z": 0.0
+      },
+      "hotspot": {
+        "x_m": -3.227176220807009e-07,
+        "y_m": -3.906581740976861e-07,
+        "z_m": -9.999999999999937e-09,
+        "Q_W_m3": 2320091.732643607
+      },
+      "negative_Q_voxel_count": 0,
+      "acceptance": {
+        "six_face_closure_lt_0p5_percent": true,
+        "Q_not_clipped": true,
+        "measured_intensity_normalization": true
+      },
+      "normalization": {
+        "measured_source_power_native_W": 8.340204581751364e-14,
+        "measured_source_intensity_native_W_m2": 0.0007489430446142894,
+        "scale_to_1_W_m2": 1335.2150169376453,
+        "incident_intensity_W_m2": 1.0,
+        "incident_power_W_at_1_W_m2": 1.1135966401886574e-10,
+        "normalization_basis": "central -z incident intensity measured from the matching empty-layered-stack E/H decomposition",
+        "incident_reference": {
+          "central_incident_intensity_W_m2": 0.0007489430446142894,
+          "peak_incident_intensity_over_flake_W_m2": 0.0007489430664947952,
+          "mean_incident_intensity_over_flake_W_m2": 0.00017704973238598043,
+          "minimum_incident_intensity_over_flake_W_m2": 8.101219031707161e-07,
+          "minimum_to_peak_over_flake": 0.0010816868990619678,
+          "peak_to_central": 1.0000000292151798,
+          "source_aperture_edge_to_central": 0.005276085789912262,
+          "decomposition": "empty-layered-stack air-plane E/H decomposition into the -z traveling wave at z=+50 nm",
+          "empty_outer_net_outward_power_W_at_1_W_m2": -1.4262482984956405e-14,
+          "measured_total_source_power_W_at_1_W_m2_central": 1.113542349286272e-10,
+          "case_result_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/empty_b_w6p5_dz10_gpu3_20260730/case_result.json",
+          "case_result_sha256": "c448acda4170e749530193feaf808fa4bda0c273a8366e6350fc16e2fff36ce4",
+          "generation_commit": "a83fd92b5c053ae22abd13311fe7be604b09ac19",
+          "reference_geometry": {
+            "domain_um": 40.0,
+            "pml_layers": 24,
+            "flake_dz_nm": 10.0
+          },
+          "active_geometry": {
+            "domain_um": 48.0,
+            "pml_layers": 24,
+            "flake_dz_nm": 10.0
+          },
+          "normalization_contract": "polarization, Gaussian waist, and source aperture must match; one measured source reference is intentionally held fixed over domain/PML/dz convergence so those effects are not renormalized"
+        },
+        "empirical_flux_gain": false
+      },
+      "geometry": {
+        "geometry_name": "straight-45-edge",
+        "geometry_source": "paper Figure 3F straight 45-degree half-plane control; TaIrTe4 occupies lab y<=x and remote triangle faces lie outside the PML-bounded physical domain",
+        "coordinate_contract": {
+          "lab_x": "crystal b",
+          "lab_y": "crystal a"
+        },
+        "flake_vertices_um": [
+          [
+            -25.0,
+            -25.0
+          ],
+          [
+            25.0,
+            -25.0
+          ],
+          [
+            25.0,
+            25.0
+          ]
+        ],
+        "flake_thickness_m": 1.3e-07,
+        "flake_area_m2": 1.25e-09,
+        "absorption_analysis_bounds_m": {
+          "x": [
+            -1.8e-05,
+            1.8e-05
+          ],
+          "y": [
+            -1.8e-05,
+            1.8e-05
+          ],
+          "z": [
+            -1.3e-07,
+            0.0
+          ]
+        },
+        "exact_flake_mask_kind": "analytic half-plane lab_y<=lab_x",
+        "substrate": "285 nm SiO2 on Si",
+        "electrodes_in_optical_model": false,
+        "electrode_note": "Off-axis-edge optical certificate intentionally excludes Au/Ti; contacts enter the separate weighting-potential geometry. A contact optical scenario is required before interpreting contact hotspots.",
+        "source": {
+          "wavelength_m": 1.1e-05,
+          "experimental_band_m": [
+            7e-06,
+            1.3e-05
+          ],
+          "waist_radius_m": 6.5e-06,
+          "beam_center_m": [
+            0.0,
+            0.0
+          ],
+          "source_span_m": 2.8e-05,
+          "normal_incidence": true,
+          "polarization_axis": "b",
+          "simulation_time_s": 1.2e-12,
+          "auto_shutoff_min": 1e-05
+        },
+        "domain_bounds_m": {
+          "x": [
+            -2.4e-05,
+            2.4e-05
+          ],
+          "y": [
+            -2.4e-05,
+            2.4e-05
+          ],
+          "z": [
+            -3.4150000000000003e-06,
+            1e-05
+          ]
+        },
+        "all_six_boundaries": "PML",
+        "periodic": false
+      },
+      "raw_npz": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_b_w6p5_dz10_L48_gpu5_20260730/finite_q_on_artifact.npz",
+      "raw_npz_sha256": "59edbe82a28075cab1470288bd1969c2e52507e9df03134eb147ce2d8f3a1037",
+      "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_b_w6p5_dz10_L48_gpu5_20260730 --case finite-flake --geometry straight-45-edge --polarization b --domain-um 48 --pml-layers 24 --flake-dz-nm 10 --simulation-time-ps 1.2 --auto-shutoff-min 1e-5 --source-span-um 28 --waist-um 6.5 --beam-x-um 0 --beam-y-um 0 --incident-reference /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/empty_b_w6p5_dz10_gpu3_20260730/case_result.json --gpu-device 'GPU 5'",
+      "raw_case_reported_generation_commit": "23e46c38297ed3a84022fe75c24216a5fbc80e0c"
+    }
+  },
+  "thermal": {
+    "200nm": {
+      "a": {
+        "case_dir": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_thermal_a_core200_20260730",
+        "status": "COMPLETED_STRAIGHT_45_EDGE_THERMAL_CONTROL",
+        "geometry": {
+          "geometry_name": "straight-45-edge",
+          "flake_vertices_um": [
+            [
+              -25.0,
+              -25.0
+            ],
+            [
+              25.0,
+              -25.0
+            ],
+            [
+              25.0,
+              25.0
+            ]
+          ],
+          "flake_CAD_status": "corner-free paper-Figure-3F half-plane control; TaIrTe4 occupies y<=x",
+          "contacts_status": "not applied in the straight-edge thermal subgate",
+          "thermal_domain_um": 48.0,
+          "si_depth_um": 20.0,
+          "core_step_nm": 200.0,
+          "flake_dz_nm": 26.0,
+          "grid_shape": [
+            150,
+            150,
+            78
+          ],
+          "thermal_model": "expanded"
+        },
+        "mapping": {
+          "optical_artifact_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_gpu4_20260730/finite_q_on_artifact.npz",
+          "optical_artifact_sha256": "b3b0f39bb48e85d9487a769069e9b53d4168a28ea9a779c24e340b72b232fa09",
+          "optical_result_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_gpu4_20260730/case_result.json",
+          "optical_result_sha256": "ec58cd8bc82131ecc3ccd954f349500a9154362594a1ff9ec96720d3444cf42f",
+          "experimental_incident_power_W": 0.000285,
+          "unit_central_intensity_incident_power_W": 1.1135965240398821e-10,
+          "physical_incident_power_scale": 2559275.2298299475,
+          "P_Q_source_W": 3.006351417744378e-05,
+          "P_Q_target_W": 3.0063514177443773e-05,
+          "mapping_relative_power_error": 2.2539825311302213e-16,
+          "mapped_power_outside_flake_before_final_support_W": 1.4354192167335368e-09,
+          "mapped_power_outside_flake_before_final_support_fraction": 4.774622182427732e-05,
+          "mapped_power_outside_flake_W": 0.0,
+          "mapping_operations": "validated linear conservative embedding plus x/y/z/x material-support projection and a final nearest-support cell-energy projection at the oblique polygon edge; no clipping, smoothing, gain, global rescaling, or tiling"
+        },
+        "thermal": {
+          "Tmax_rise_K": 0.2510227433566314,
+          "TaIrTe4_volume_average_rise_K": 0.02863998739654355,
+          "linear_residual_relative": 9.824929226184056e-11,
+          "energy_balance_relative_error": 1.2981248892411731e-11,
+          "source_power_W": 3.0063514177443773e-05,
+          "boundary_power_out_W": {
+            "x_min": 3.278480198542822e-06,
+            "x_max": 5.161493543974988e-06,
+            "y_min": 5.229016292443433e-06,
+            "y_max": 3.2742554771928934e-06,
+            "z_min": 1.312022926904524e-05,
+            "exposed_convection": 3.939663466027544e-11
+          },
+          "solver": "scipy.sparse.linalg.cg+jacobi",
+          "iterations": 1236
+        },
+        "straight_edge_metrics": {
+          "edge_definition": "TaIrTe4 y<=x; outward normal=(-x+y)/sqrt(2)",
+          "edge_window_um": 10.0,
+          "edge_cell_count": 70,
+          "max_abs_edge_normal_gradient_K_m": 48363.08864333956,
+          "p99_abs_edge_normal_gradient_K_m": 48325.22451338568,
+          "max_inplane_gradient_K_m": 55477.97863962581,
+          "peak_edge_gradient_location_m": {
+            "x": -1.2999999999999994e-06,
+            "y": -1.2999999999999994e-06
+          },
+          "Tmax_rise_K": 0.2359188459029535,
+          "TaIrTe4_area_average_rise_K": 0.028639987396543554
+        },
+        "weighting": {
+          "applied": false,
+          "reason": "straight-edge optical/thermal subgate intentionally precedes weighting-field and PTE-current evaluation"
+        },
+        "PTE_current_A": null
+      },
+      "b": {
+        "case_dir": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_thermal_b_core200_20260730",
+        "status": "COMPLETED_STRAIGHT_45_EDGE_THERMAL_CONTROL",
+        "geometry": {
+          "geometry_name": "straight-45-edge",
+          "flake_vertices_um": [
+            [
+              -25.0,
+              -25.0
+            ],
+            [
+              25.0,
+              -25.0
+            ],
+            [
+              25.0,
+              25.0
+            ]
+          ],
+          "flake_CAD_status": "corner-free paper-Figure-3F half-plane control; TaIrTe4 occupies y<=x",
+          "contacts_status": "not applied in the straight-edge thermal subgate",
+          "thermal_domain_um": 48.0,
+          "si_depth_um": 20.0,
+          "core_step_nm": 200.0,
+          "flake_dz_nm": 26.0,
+          "grid_shape": [
+            150,
+            150,
+            78
+          ],
+          "thermal_model": "expanded"
+        },
+        "mapping": {
+          "optical_artifact_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_b_w6p5_dz10_L48_gpu5_20260730/finite_q_on_artifact.npz",
+          "optical_artifact_sha256": "59edbe82a28075cab1470288bd1969c2e52507e9df03134eb147ce2d8f3a1037",
+          "optical_result_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_b_w6p5_dz10_L48_gpu5_20260730/case_result.json",
+          "optical_result_sha256": "517a9ee8caa9718622e03d1ed5f57d84f24fbe6898e1eee807f08fed16967e73",
+          "experimental_incident_power_W": 0.000285,
+          "unit_central_intensity_incident_power_W": 1.1135966401886574e-10,
+          "physical_incident_power_scale": 2559274.962896057,
+          "P_Q_source_W": 3.723583346596002e-05,
+          "P_Q_target_W": 3.723583346596002e-05,
+          "mapping_relative_power_error": 0.0,
+          "mapped_power_outside_flake_before_final_support_W": 3.484425198681737e-10,
+          "mapped_power_outside_flake_before_final_support_fraction": 9.357720438477908e-06,
+          "mapped_power_outside_flake_W": 0.0,
+          "mapping_operations": "validated linear conservative embedding plus x/y/z/x material-support projection and a final nearest-support cell-energy projection at the oblique polygon edge; no clipping, smoothing, gain, global rescaling, or tiling"
+        },
+        "thermal": {
+          "Tmax_rise_K": 0.23966173232643326,
+          "TaIrTe4_volume_average_rise_K": 0.03541835718542091,
+          "linear_residual_relative": 9.885450008357948e-11,
+          "energy_balance_relative_error": 8.558446801055475e-12,
+          "source_power_W": 3.723583346596002e-05,
+          "boundary_power_out_W": {
+            "x_min": 3.965956835109707e-06,
+            "x_max": 6.4874964118296314e-06,
+            "y_min": 6.664066974448269e-06,
+            "y_max": 3.918037659540743e-06,
+            "z_min": 1.620023377000473e-05,
+            "exposed_convection": 4.181534561514362e-11
+          },
+          "solver": "scipy.sparse.linalg.cg+jacobi",
+          "iterations": 1231
+        },
+        "straight_edge_metrics": {
+          "edge_definition": "TaIrTe4 y<=x; outward normal=(-x+y)/sqrt(2)",
+          "edge_window_um": 10.0,
+          "edge_cell_count": 70,
+          "max_abs_edge_normal_gradient_K_m": 36454.51392969908,
+          "p99_abs_edge_normal_gradient_K_m": 36393.253316491035,
+          "max_inplane_gradient_K_m": 44371.189131102095,
+          "peak_edge_gradient_location_m": {
+            "x": -1.6999999999999998e-06,
+            "y": -1.6999999999999998e-06
+          },
+          "Tmax_rise_K": 0.22761549469557588,
+          "TaIrTe4_area_average_rise_K": 0.03541835718542092
+        },
+        "weighting": {
+          "applied": false,
+          "reason": "straight-edge optical/thermal subgate intentionally precedes weighting-field and PTE-current evaluation"
+        },
+        "PTE_current_A": null
+      }
+    },
+    "100nm": {
+      "a": {
+        "case_dir": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_thermal_a_core100_20260730",
+        "status": "COMPLETED_STRAIGHT_45_EDGE_THERMAL_CONTROL",
+        "geometry": {
+          "geometry_name": "straight-45-edge",
+          "flake_vertices_um": [
+            [
+              -25.0,
+              -25.0
+            ],
+            [
+              25.0,
+              -25.0
+            ],
+            [
+              25.0,
+              25.0
+            ]
+          ],
+          "flake_CAD_status": "corner-free paper-Figure-3F half-plane control; TaIrTe4 occupies y<=x",
+          "contacts_status": "not applied in the straight-edge thermal subgate",
+          "thermal_domain_um": 48.0,
+          "si_depth_um": 20.0,
+          "core_step_nm": 100.0,
+          "flake_dz_nm": 26.0,
+          "grid_shape": [
+            274,
+            274,
+            78
+          ],
+          "thermal_model": "expanded"
+        },
+        "mapping": {
+          "optical_artifact_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_gpu4_20260730/finite_q_on_artifact.npz",
+          "optical_artifact_sha256": "b3b0f39bb48e85d9487a769069e9b53d4168a28ea9a779c24e340b72b232fa09",
+          "optical_result_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_gpu4_20260730/case_result.json",
+          "optical_result_sha256": "ec58cd8bc82131ecc3ccd954f349500a9154362594a1ff9ec96720d3444cf42f",
+          "experimental_incident_power_W": 0.000285,
+          "unit_central_intensity_incident_power_W": 1.1135965240398821e-10,
+          "physical_incident_power_scale": 2559275.2298299475,
+          "P_Q_source_W": 3.006351417744378e-05,
+          "P_Q_target_W": 3.0063514177443773e-05,
+          "mapping_relative_power_error": 2.2539825311302213e-16,
+          "mapped_power_outside_flake_before_final_support_W": 2.8727123234484797e-09,
+          "mapped_power_outside_flake_before_final_support_fraction": 9.555477468445237e-05,
+          "mapped_power_outside_flake_W": 0.0,
+          "mapping_operations": "validated linear conservative embedding plus x/y/z/x material-support projection and a final nearest-support cell-energy projection at the oblique polygon edge; no clipping, smoothing, gain, global rescaling, or tiling"
+        },
+        "thermal": {
+          "Tmax_rise_K": 0.25509058752874103,
+          "TaIrTe4_volume_average_rise_K": 0.03419404389130501,
+          "linear_residual_relative": 1.0041447482749503e-10,
+          "energy_balance_relative_error": 9.180358150166838e-12,
+          "source_power_W": 3.0063514177443773e-05,
+          "boundary_power_out_W": {
+            "x_min": 3.277983100827968e-06,
+            "x_max": 5.162089781711918e-06,
+            "y_min": 5.230914160006974e-06,
+            "y_max": 3.2724312905645182e-06,
+            "z_min": 1.3120053338433266e-05,
+            "exposed_convection": 4.250562313573732e-11
+          },
+          "solver": "scipy.sparse.linalg.cg+jacobi",
+          "iterations": 1896
+        },
+        "straight_edge_metrics": {
+          "edge_definition": "TaIrTe4 y<=x; outward normal=(-x+y)/sqrt(2)",
+          "edge_window_um": 10.0,
+          "edge_cell_count": 142,
+          "max_abs_edge_normal_gradient_K_m": 35971.863491173164,
+          "p99_abs_edge_normal_gradient_K_m": 35903.09837328531,
+          "max_inplane_gradient_K_m": 46828.11382550029,
+          "peak_edge_gradient_location_m": {
+            "x": -1.7499999999999993e-06,
+            "y": -1.7499999999999993e-06
+          },
+          "Tmax_rise_K": 0.23972081687217806,
+          "TaIrTe4_area_average_rise_K": 0.034194043891305
+        },
+        "weighting": {
+          "applied": false,
+          "reason": "straight-edge optical/thermal subgate intentionally precedes weighting-field and PTE-current evaluation"
+        },
+        "PTE_current_A": null
+      },
+      "b": {
+        "case_dir": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_thermal_b_core100_20260730",
+        "status": "COMPLETED_STRAIGHT_45_EDGE_THERMAL_CONTROL",
+        "geometry": {
+          "geometry_name": "straight-45-edge",
+          "flake_vertices_um": [
+            [
+              -25.0,
+              -25.0
+            ],
+            [
+              25.0,
+              -25.0
+            ],
+            [
+              25.0,
+              25.0
+            ]
+          ],
+          "flake_CAD_status": "corner-free paper-Figure-3F half-plane control; TaIrTe4 occupies y<=x",
+          "contacts_status": "not applied in the straight-edge thermal subgate",
+          "thermal_domain_um": 48.0,
+          "si_depth_um": 20.0,
+          "core_step_nm": 100.0,
+          "flake_dz_nm": 26.0,
+          "grid_shape": [
+            274,
+            274,
+            78
+          ],
+          "thermal_model": "expanded"
+        },
+        "mapping": {
+          "optical_artifact_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_b_w6p5_dz10_L48_gpu5_20260730/finite_q_on_artifact.npz",
+          "optical_artifact_sha256": "59edbe82a28075cab1470288bd1969c2e52507e9df03134eb147ce2d8f3a1037",
+          "optical_result_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_b_w6p5_dz10_L48_gpu5_20260730/case_result.json",
+          "optical_result_sha256": "517a9ee8caa9718622e03d1ed5f57d84f24fbe6898e1eee807f08fed16967e73",
+          "experimental_incident_power_W": 0.000285,
+          "unit_central_intensity_incident_power_W": 1.1135966401886574e-10,
+          "physical_incident_power_scale": 2559274.962896057,
+          "P_Q_source_W": 3.723583346596002e-05,
+          "P_Q_target_W": 3.723583346596002e-05,
+          "mapping_relative_power_error": 0.0,
+          "mapped_power_outside_flake_before_final_support_W": 6.979031882543889e-10,
+          "mapped_power_outside_flake_before_final_support_fraction": 1.8742784121977368e-05,
+          "mapped_power_outside_flake_W": 0.0,
+          "mapping_operations": "validated linear conservative embedding plus x/y/z/x material-support projection and a final nearest-support cell-energy projection at the oblique polygon edge; no clipping, smoothing, gain, global rescaling, or tiling"
+        },
+        "thermal": {
+          "Tmax_rise_K": 0.24019117718421998,
+          "TaIrTe4_volume_average_rise_K": 0.04228986952264621,
+          "linear_residual_relative": 1.00641646893817e-10,
+          "energy_balance_relative_error": 8.786106690658069e-13,
+          "source_power_W": 3.723583346596002e-05,
+          "boundary_power_out_W": {
+            "x_min": 3.96543504874432e-06,
+            "x_max": 6.488001017293747e-06,
+            "y_min": 6.66593230236483e-06,
+            "y_max": 3.916421578170737e-06,
+            "z_min": 1.6199998767383446e-05,
+            "exposed_convection": 4.475197022297862e-11
+          },
+          "solver": "scipy.sparse.linalg.cg+jacobi",
+          "iterations": 1868
+        },
+        "straight_edge_metrics": {
+          "edge_definition": "TaIrTe4 y<=x; outward normal=(-x+y)/sqrt(2)",
+          "edge_window_um": 10.0,
+          "edge_cell_count": 142,
+          "max_abs_edge_normal_gradient_K_m": 29022.17532609516,
+          "p99_abs_edge_normal_gradient_K_m": 29006.9474084718,
+          "max_inplane_gradient_K_m": 40610.28596695324,
+          "peak_edge_gradient_location_m": {
+            "x": -1.949999999999999e-06,
+            "y": -1.949999999999999e-06
+          },
+          "Tmax_rise_K": 0.22810456079723787,
+          "TaIrTe4_area_average_rise_K": 0.04228986952264621
+        },
+        "weighting": {
+          "applied": false,
+          "reason": "straight-edge optical/thermal subgate intentionally precedes weighting-field and PTE-current evaluation"
+        },
+        "PTE_current_A": null
+      }
+    }
+  },
+  "ratios": {
+    "200nm": {
+      "P_abs_b_over_a": 1.2385722190088322,
+      "Tmax_b_over_a": 0.9648042055495929,
+      "Tavg_b_over_a": 1.2366750269483506,
+      "max_edge_gradient_b_over_a": 0.7537672831141545,
+      "p99_edge_gradient_b_over_a": 0.7530902066768549
+    },
+    "100nm": {
+      "P_abs_b_over_a": 1.2385722190088322,
+      "Tmax_b_over_a": 0.9515425642774523,
+      "Tavg_b_over_a": 1.2367612809141841,
+      "max_edge_gradient_b_over_a": 0.8068021089098336,
+      "p99_edge_gradient_b_over_a": 0.8079232356741449
+    }
+  },
+  "gates": {
+    "optical_closure_and_nonnegative_Q": true,
+    "thermal_mapping_energy_residual": true,
+    "paper_direction_Pabs_DeltaT_gradient_b_gt_a": false
+  },
+  "interpretation": {
+    "P_abs_trend": "E||b > E||a",
+    "flake_average_temperature_trend": "E||b > E||a",
+    "Tmax_trend": "E||a > E||b",
+    "edge_normal_gradient_trend": "E||a > E||b",
+    "conclusion": "The corner artifact is eliminated, but the requested paper trend is not reproduced. Weighting/PTE remains intentionally unevaluated."
+  },
+  "weighting_field_applied": false,
+  "PTE_current_evaluated": false,
+  "optimization_run": false,
+  "generation_commit": "828207e257f69b9f2e9a3306ce5b7f9abdf16efa",
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/summarize_straight_45_edge_control.py"
+}

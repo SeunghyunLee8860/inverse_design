@@ -1,0 +1,31 @@
+{
+  "policy": "Raw FSP and solver artifacts remain outside Git.",
+  "artifacts": {
+    "empty_stack": {
+      "case_result": {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/runsetup_empty_a_50nm_20260731/case_result.json",
+        "size_bytes": 23155,
+        "sha256": "0fa016f9137c7a5374a516f6533b03e78e71869581eadb6bba95b457eaf5468f"
+      },
+      "project": {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/runsetup_empty_a_50nm_20260731/finite_2um_optical_q.fsp",
+        "size_bytes": 563493,
+        "sha256": "ab140c257828b2b649a6140705c410b1b433455934287e39e8775a4117d70591"
+      },
+      "raw_files_committed_to_git": false
+    },
+    "finite_device_a": {
+      "case_result": {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/runsetup_finite_a_50nm_20260731/case_result.json",
+        "size_bytes": 24284,
+        "sha256": "c8df815ce3e9861eee19801397b74bd31361d3edf155fff0ec6e012b07e0cb4b"
+      },
+      "project": {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/runsetup_finite_a_50nm_20260731/finite_2um_optical_q.fsp",
+        "size_bytes": 568666,
+        "sha256": "82a322e1ffaa7348ccfcae1618c3ced8bd92b78fa76a5ac8433fad791d04d952"
+      },
+      "raw_files_committed_to_git": false
+    }
+  }
+}

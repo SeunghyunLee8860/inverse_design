@@ -1,0 +1,129 @@
+{
+  "status": "PARTIAL_REGISTERED_DEVICE_A_SINGLE_POSITION_CURRENT_TREND_OPPOSITE_PAPER_SCAN_PEAK",
+  "scope": "one approximately registered scan position; not the Figure-3I scan maximum",
+  "cases": {
+    "a": {
+      "optical_status": "COMPLETED",
+      "optical_acceptance": {
+        "six_face_closure_lt_0p5_percent": true,
+        "Q_not_clipped": true,
+        "measured_intensity_normalization": true,
+        "material_support_decomposition_residual_lt_1e_minus_12": true,
+        "solver_log_reports_successful_completion": true,
+        "auto_shutoff_reached_requested_threshold": true,
+        "Pabs_and_realized_six_face_bounds_match_lt_1fm": true,
+        "lossy_SiO2_and_Si_readback_positive": true,
+        "Kitamura_SiO2_fit_error_lt_0p5_percent": true
+      },
+      "P_Q_full_control_volume_W_at_1_W_m2": 1.3303154365266294e-11,
+      "P_six_W_at_1_W_m2": 1.3315576957456225e-11,
+      "six_face_closure": 0.0009329368325249523,
+      "auto_shutoff": 9.93797e-06,
+      "Q_component_power_W_at_1_W_m2": {
+        "x": 7.579739766577058e-13,
+        "y": 1.2348764277390527e-11,
+        "z": 1.964161112180604e-13
+      },
+      "TaIrTe4_support_power_W_at_1_W_m2": 1.2113733492507977e-11,
+      "mapped_TaIrTe4_power_W_at_284p40uW": 1.1856170758696658e-05,
+      "mapping_relative_power_error": 0.0,
+      "mapped_power_outside_TaIrTe4_W": 0.0,
+      "Tmax_rise_K": 0.27858970189293375,
+      "TaIrTe4_volume_average_rise_K": 0.007757792234470522,
+      "thermal_linear_residual_relative": 1.0076757390789056e-10,
+      "thermal_energy_balance_relative_error": 1.1211737014406758e-11,
+      "PTE_current_A": 1.3699611729926187e-08,
+      "PTE_current_pA": 13699.611729926188,
+      "PTE_positive_contribution_A": 1.492155120330657e-08,
+      "PTE_negative_contribution_A": -1.2219394733803802e-09,
+      "PTE_x_component_A": 6.660130454875615e-09,
+      "PTE_y_component_A": 7.039481275050573e-09,
+      "Q_centroid_m": [
+        -6.451323268450534e-07,
+        -2.2278739556596578e-06
+      ],
+      "resistance_audit_ohm": 14.106621864415757,
+      "absolute_current_certification": "BLOCKED_DIGITIZED_GEOMETRY_RESISTANCE_MISMATCH"
+    },
+    "b": {
+      "optical_status": "COMPLETED",
+      "optical_acceptance": {
+        "six_face_closure_lt_0p5_percent": true,
+        "Q_not_clipped": true,
+        "measured_intensity_normalization": true,
+        "material_support_decomposition_residual_lt_1e_minus_12": true,
+        "solver_log_reports_successful_completion": true,
+        "auto_shutoff_reached_requested_threshold": true,
+        "Pabs_and_realized_six_face_bounds_match_lt_1fm": true,
+        "lossy_SiO2_and_Si_readback_positive": true,
+        "Kitamura_SiO2_fit_error_lt_0p5_percent": true
+      },
+      "P_Q_full_control_volume_W_at_1_W_m2": 1.5345087775462484e-11,
+      "P_six_W_at_1_W_m2": 1.5353107778963357e-11,
+      "six_face_closure": 0.0005223700384532067,
+      "auto_shutoff": 9.68878e-06,
+      "Q_component_power_W_at_1_W_m2": {
+        "x": 1.5079558358921776e-11,
+        "y": 1.376307955172557e-13,
+        "z": 1.2789862102345215e-13
+      },
+      "TaIrTe4_support_power_W_at_1_W_m2": 1.409832745075437e-11,
+      "mapped_TaIrTe4_power_W_at_284p40uW": 1.3242878172519318e-05,
+      "mapping_relative_power_error": 1.2792278781390632e-16,
+      "mapped_power_outside_TaIrTe4_W": 0.0,
+      "Tmax_rise_K": 0.15283275492209442,
+      "TaIrTe4_volume_average_rise_K": 0.008734652195242653,
+      "thermal_linear_residual_relative": 1.0160933377328463e-10,
+      "thermal_energy_balance_relative_error": 8.859292670052084e-12,
+      "PTE_current_A": 1.1462797243763208e-08,
+      "PTE_current_pA": 11462.797243763207,
+      "PTE_positive_contribution_A": 1.328929302392303e-08,
+      "PTE_negative_contribution_A": -1.8264957801598192e-09,
+      "PTE_x_component_A": 5.620713388501213e-09,
+      "PTE_y_component_A": 5.842083855261995e-09,
+      "Q_centroid_m": [
+        -2.597392324377429e-07,
+        -2.3907344837663565e-06
+      ],
+      "resistance_audit_ohm": 14.106621864415757,
+      "absolute_current_certification": "BLOCKED_DIGITIZED_GEOMETRY_RESISTANCE_MISMATCH"
+    }
+  },
+  "ratios": {
+    "raw_full_control_volume_PQ_b_over_a": 1.1534924239868667,
+    "TaIrTe4_support_PQ_b_over_a": 1.1638300825648684,
+    "mapped_power_b_over_a_at_equal_incident_power": 1.1169608166115095,
+    "Tmax_b_over_a": 0.5485944163895562,
+    "Tvolume_average_b_over_a": 1.1259198404968371,
+    "absolute_current_b_over_a": 0.8367242422442704
+  },
+  "gates": {
+    "both_optical_completed": true,
+    "both_optical_acceptance_all_true": true,
+    "both_optical_closure_lt_0p5_percent": true,
+    "both_auto_shutoff_lt_1e_minus_5": true,
+    "both_mapping_error_lt_1e_minus_12": true,
+    "both_zero_mapped_power_outside_TaIrTe4": true,
+    "both_thermal_residual_lt_1e_minus_8": true,
+    "both_energy_balance_lt_1_percent": true,
+    "coordinates_and_weighting_operator_identical": true
+  },
+  "interpretation": {
+    "absorption_trend": "b>a",
+    "Tmax_trend": "a>b due to stronger localized hotspot",
+    "current_trend_at_this_position": "a>b",
+    "paper_comparison_not_yet_closed": "Figure 3I compares a scan profile/peak; a single registered position cannot certify or refute the reported peak ratio",
+    "absolute_current_blocker": "digitized conductivity geometry predicts about 14.1 ohm versus the measured 213 ohm; no empirical rescaling applied",
+    "next_required_step": "registered sparse scan along the Figure-3H dashed line, then compare separate maxima of |Ia| and |Ib|"
+  },
+  "model_contract": {
+    "incident_power_W": 0.0002844,
+    "thermal_model": "expanded explicit 3D Cartesian FVM",
+    "Q_source": "TaIrTe4-only",
+    "Q_attribution": "literal intersection-density",
+    "SiO2_and_Si_optical_loss_in_thermal_source": false,
+    "metal_absorption_in_thermal_source": false,
+    "metal_scenario": "isolated-lower-bound diagnostic",
+    "no_Q_clipping_smoothing_gain_rescaling_or_nearest_relocation": true
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "status": "VALIDATED_THERMAL_RAW_PTE_AND_LOCALIZED_ADFD_SUBGATES",
+  "generated_at_utc": "2026-07-27T19:18:26.737278+00:00",
+  "raw_artifacts_are_not_committed_to_git": true,
+  "artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/thermal_raw_pte_refined_subgate_20260727_1/thermal_raw_pte_refined_subgate_result.json",
+      "byte_size": 6309,
+      "sha256": "84896f47105a4377886286b74233a5e7f253a1a5a593787707960bacbedd204b",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/fixed_local_q_pte_thermal_adfd_localized_20260727_1/fixed_local_q_pte_thermal_adfd_summary.json",
+      "byte_size": 85123,
+      "sha256": "9b7b2870cc9601e6ccb0a32c97420b68cd4f2ea09510504d3a20da84f65e309c",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/thermal_raw_pte_refined_subgate_20260727_1/preserved_refined_50nm.npz",
+      "byte_size": 16299831,
+      "sha256": "2252651b8c2a1013ed2cbb56c0d20109317cce4aed34172b86825ffc4e9a1167",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/thermal_raw_pte_refined_subgate_20260727_1/additional_40nm.npz",
+      "byte_size": 24939230,
+      "sha256": "df52d26479631c38dec2bd10ecb8d842fbf8620690f7ea6b0d8542ee49e95e5a",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/thermal_raw_pte_refined_subgate_20260727_1/additional_33p333nm.npz",
+      "byte_size": 35303194,
+      "sha256": "035e73366968a8c987519ce77eb588a68ee29209c565d6997b875085e6071195",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/fixed_local_q_pte_thermal_adfd_localized_20260727_1/flake_4um_adfd.npz",
+      "byte_size": 6598743,
+      "sha256": "381e2c11bbf456cd9ed321c9fa83e0efccb20621e7c736f003009e1a702de77a",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/fixed_local_q_pte_thermal_adfd_localized_20260727_1/flake_6um_adfd.npz",
+      "byte_size": 10126696,
+      "sha256": "c3f4ac851d73c5f1159e95e40a9e1f15d1177234dbd6ed9a152ad3c071e85688",
+      "committed_to_git": false
+    }
+  ],
+  "generation_commands": [
+    "python -m photothermal_pte.finite_inverse_design.run_fixed_local_q_pte_thermal_adfd --steps 0.01,0.005,0.0025",
+    "python -m photothermal_pte.finite_inverse_design.run_thermal_raw_pte_refined_subgate"
+  ]
+}

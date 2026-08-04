@@ -1,0 +1,35 @@
+{
+  "raw_files_committed_to_git": false,
+  "entries": [
+    {
+      "case": "bloch_source_crossing_pml_d6",
+      "path": "/home/seunghyun/tairte4_artifacts/gpu_bloch_roi_d6_final_gate_20260726_1/probe_result.json",
+      "bytes": 3879,
+      "sha256": "04d0efe6c125c44260e09a31a20a7c8f050abf80bf6057445df6ad20df0e1cc0"
+    },
+    {
+      "case": "diffracting_d6_aperture5",
+      "path": "/home/seunghyun/tairte4_artifacts/gpu_diff_roi_d6_ap5_fullmesh_gap015_pml24_20260726_1/probe_result.json",
+      "bytes": 3788,
+      "sha256": "5b1bf4c060cd7fbc58c73067059eada6f4bd19b56b591568474aab3590b7042d"
+    },
+    {
+      "case": "diffracting_d24_aperture20",
+      "path": "/home/seunghyun/tairte4_artifacts/gpu_diff_roi_d24_ap20_fullmesh_gap015_pml24_20260726_1/probe_result.json",
+      "bytes": 3894,
+      "sha256": "bff312fa9c447253a932c5d46df72b63d32beeb448cc6ebf0c85da7e367ad9b9"
+    },
+    {
+      "case": "diffracting_d24_aperture20_deep_z_pml32",
+      "path": "/home/seunghyun/tairte4_artifacts/gpu_diff_roi_d24_ap20_zdeep_pml32_20260726_1/probe_result.json",
+      "bytes": 3903,
+      "sha256": "e9b4709ad1cd99fe5a5e046dccaa3ef22cc6445537d0cc5d437f431a961e8046"
+    },
+    {
+      "case": "v261_gpu_tfsf_compatibility",
+      "path": "/home/seunghyun/tairte4_artifacts/gpu_tfsf_compatibility_v261_final_20260726_1/probe_result.json",
+      "bytes": 4928,
+      "sha256": "2d94b318114b15145f23f1a440deed52608cc1297897bd64fc7378678eea6102"
+    }
+  ]
+}

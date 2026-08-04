@@ -1,0 +1,96 @@
+{
+  "generation_command": "python -m photothermal_pte.finite_inverse_design.publish_corrected_combined_strong_direction --raw-result <external>/corrected_combined_physical_rho_pte_adfd.json --immutable-monotonic-result <external>/strong_only_monotonic_heuristic_result.json --report-dir photothermal_pte/reports/inverse_design_pte_adfd",
+  "raw_result": {
+    "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/corrected_combined_physical_rho_pte_adfd.json",
+    "byte_size": 83539,
+    "sha256": "4b423d5b5f12ded95c6967285df5ec41b71d106d814139945760ff7d5f8c4cb3"
+  },
+  "immutable_pre_plateau_heuristic_result": {
+    "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/strong_only_monotonic_heuristic_result.json",
+    "byte_size": 83997,
+    "sha256": "88a8cafa19a2053d5a2c64fbd88f56805fa2faca67774a2813314931eb78e7ee"
+  },
+  "raw_artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/adjoint_aligned_h0.0025_minus_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "841d0ae49a668b450eb0357adc5197f796eceae492940e2022baf777571092a8"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/adjoint_aligned_h0.0025_minus_cpu_tfsf.json",
+      "byte_size": 249,
+      "sha256": "753cb0c38ea25229c12612b7ab064af681d68161aab3495b51a47b99b498446a"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/adjoint_aligned_h0.0025_plus_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "64d9e308c9325581aa79678efd4f9ae1779bdc4fbad158f3a053da70b0a628be"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/adjoint_aligned_h0.0025_plus_cpu_tfsf.json",
+      "byte_size": 248,
+      "sha256": "c0eaeca0567ffaaf10a3821ec25360ba30d9627c1e8b67e801cceb7222b8a79d"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/adjoint_aligned_h0.005_minus_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "a3207099667851378d6696536319a9f42cb473b3dbbed59c20301538f694c490"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/adjoint_aligned_h0.005_minus_cpu_tfsf.json",
+      "byte_size": 248,
+      "sha256": "0e0c614bd2c5e43093e56969c0df0ffd8aea226786ace7e7ff0c70bcedbe399e"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/adjoint_aligned_h0.005_plus_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "f5b440a2ec4c93046b65f3c08876a4660d8240c6f55d2b907178fe854acf2b10"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/adjoint_aligned_h0.005_plus_cpu_tfsf.json",
+      "byte_size": 247,
+      "sha256": "b05201faa839a10f1bc45191cfbc9cf9710d578f207ce7df5e8a5fe002538239"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/adjoint_aligned_h0.01_minus_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "21c57e788b08adde3afbeebff3edd3e2cebf0f08595d109829597c2f5d925273"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/adjoint_aligned_h0.01_minus_cpu_tfsf.json",
+      "byte_size": 247,
+      "sha256": "cffda6641cf4ddbd9cd2e786deadb9d9444247e64dc4d38cf8935dd1ffdfaaaf"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/adjoint_aligned_h0.01_plus_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "e476c0788f8ac1ec270e4d1a0195a94308806cb0be076984d03f1c8d0eab52d9"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/adjoint_aligned_h0.01_plus_cpu_tfsf.json",
+      "byte_size": 246,
+      "sha256": "58cc6e61ecd2e791a744d5ad994f3e20b090f6ca62dfabf0b69944e1221a2f51"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/flake_4um_adjoint_gpu.fsp",
+      "byte_size": 31777060,
+      "sha256": "a2d3b0b6b97362646e9677dd05ec049ea3766b983d316a4db78a8d77622020a6"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/flake_4um_adjoint_template.fsp",
+      "byte_size": 19917282,
+      "sha256": "7c4642754b57192d90d9c4b311a53a27d03aa2b0f4c9683d2721fcbf85c8f310"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/flake_6um_adjoint_gpu.fsp",
+      "byte_size": 31776532,
+      "sha256": "051af585c78acf2381d4d74326041506b5733606409985a31334effff4438c3a"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/flake_6um_adjoint_template.fsp",
+      "byte_size": 19917282,
+      "sha256": "892242e3f12025b0d23993c64c16a4728fef8793eb3fd5ae42962e3ccf26a0dc"
+    }
+  ],
+  "raw_FSP_committed_to_git": false
+}

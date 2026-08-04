@@ -1,0 +1,64 @@
+{
+  "status": "VALIDATED_SUPPORT_REMAP_SPATIAL_CONVERGENCE",
+  "passed": true,
+  "scope": "matched optical flake dz 5->2.5 nm convergence after two independent conservative exact-TaIrTe4-support remaps",
+  "thermal_target": {
+    "shape": [76, 76, 76],
+    "lateral_domain_m": 3.2e-05,
+    "si_depth_m": 1.9999999999999998e-05,
+    "flake_span_m": 4e-06,
+    "core_xy_cell_size_m": 1.0000000000000001e-07,
+    "flake_dz_m": 2.5000000000000002e-08,
+    "design_dz_m": 1.0000000000000001e-07
+  },
+  "coarse_optical_flake_dz_m": 5e-09,
+  "fine_optical_flake_dz_m": 2.5e-09,
+  "coarse_P_Q_W": 1.6890916194508477e-12,
+  "fine_P_Q_W": 1.6887880194040323e-12,
+  "mapped_power_relative_difference": 0.00017977392267537533,
+  "spatial_Q_volume_weighted_NRMSE": 0.004881385911630864,
+  "normalized_cell_energy_shape_NRMSE": 0.0048757875759237275,
+  "lateral_integrated_energy_NRMSE": 0.001653458018489947,
+  "depth_integrated_energy_NRMSE": 0.0002300608164801713,
+  "peak_Q_coarse_W_m3": 5603622.669830894,
+  "peak_Q_fine_W_m3": 5601395.5670616375,
+  "peak_Q_relative_difference": 0.0003975978383588531,
+  "hotspot_coarse_m": [-4.9999999999999945e-08, -4.9999999999999945e-08, -1.25e-08],
+  "hotspot_fine_m": [4.9999999999999945e-08, -4.9999999999999945e-08, -1.25e-08],
+  "hotspot_distance_m": 9.999999999999989e-08,
+  "hotspot_interpretation": "one 100 nm central-cell shift across a reflection-symmetric near-degenerate maximum",
+  "outside_TaIrTe4_nonzero_cell_count": {
+    "coarse": 0,
+    "fine": 0
+  },
+  "limits": {
+    "power_relative": 0.005,
+    "spatial_Q_volume_weighted_NRMSE": 0.005,
+    "hotspot_distance_m": 1.0000000000000001e-07
+  },
+  "gates": {
+    "license_api_passed": true,
+    "matched_fine_forward_passed": true,
+    "forward_contracts_differ_only_by_optical_flake_dz": true,
+    "each_mapping_power_error_below_0p5pct": true,
+    "outside_TaIrTe4_nonzero_count_zero": true,
+    "mapped_power_relative_difference_below_limit": true,
+    "spatial_Q_volume_weighted_NRMSE_below_limit": true,
+    "hotspot_shift_no_more_than_one_thermal_xy_cell": true
+  },
+  "coarse_mapping_sha256": "9971edd6bc61c0028d7fad7a86958099b6bcbe698aa1eedbf6a80a0c903eb290",
+  "fine_mapping_sha256": "d6691afe8034ffca10e058b9bb008d63f449d1de351b6d7bf70e54cd1a3c8145",
+  "forbidden_operations_absent": [
+    "source clipping",
+    "nonzero source deletion",
+    "smoothing",
+    "gain",
+    "global rescaling",
+    "periodic tiling"
+  ],
+  "thermal_run": false,
+  "pte_run": false,
+  "adjoint_run": false,
+  "finite_difference_run": false,
+  "optimization_run": false
+}

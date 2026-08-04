@@ -1,0 +1,84 @@
+{
+  "status": "VALIDATED_SUPPORT_REMAP_SPATIAL_CONVERGENCE",
+  "generation_commands": [
+    "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python -m photothermal_pte.finite_inverse_design.run_v261_large_background_tfsf_forward --output-dir /home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz5_20260727_1 --case gray --gray-rho 0.5 --domain-um 7.2 --tfsf-span-um 2.6 --pml-layers 32 --pml-profile stabilized-xy --transverse-mesh-nm 50 --flake-dz-nm 5 --z-min-um -3.6 --z-max-um 3.4 --threads 16 --simulation-time-ps 4",
+    "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python -m photothermal_pte.finite_inverse_design.validate_large_background_local_q_mapping --project /home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz5_20260727_1/large_background_gray.fsp --output-dir /home/seunghyun/tairte4_artifacts/support_remap_matched_optical_dz5_thermal4um_20260727_1 --thermal-core-xy-cell-size-nm 100 --thermal-flake-dz-nm 25 --thermal-design-dz-nm 100 --thermal-domain-um 32 --thermal-si-depth-um 20 --thermal-flake-span-um 4",
+    "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python -m photothermal_pte.finite_inverse_design.validate_large_background_local_q_mapping --project /home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz2p5_20260727_2/large_background_gray.fsp --output-dir /home/seunghyun/tairte4_artifacts/support_remap_matched_optical_dz2p5_thermal4um_20260727_1 --thermal-core-xy-cell-size-nm 100 --thermal-flake-dz-nm 25 --thermal-design-dz-nm 100 --thermal-domain-um 32 --thermal-si-depth-um 20 --thermal-flake-span-um 4",
+    "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python -m photothermal_pte.finite_inverse_design.summarize_support_remap_spatial_convergence --license-summary photothermal_pte/reports/inverse_design_pte_adfd/v261_fdtd_license_api_probe_summary.json --coarse-forward-result /home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz5_20260727_1/case_result.json --fine-forward-result /home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz2p5_20260727_2/case_result.json --coarse-mapping-summary /home/seunghyun/tairte4_artifacts/support_remap_matched_optical_dz5_thermal4um_20260727_1/local_q_mapping_summary.json --fine-mapping-summary /home/seunghyun/tairte4_artifacts/support_remap_matched_optical_dz2p5_thermal4um_20260727_1/local_q_mapping_summary.json --coarse-mapping-npz /home/seunghyun/tairte4_artifacts/support_remap_matched_optical_dz5_thermal4um_20260727_1/local_q_thermal_mapping.npz --fine-mapping-npz /home/seunghyun/tairte4_artifacts/support_remap_matched_optical_dz2p5_thermal4um_20260727_1/local_q_thermal_mapping.npz --output-dir /home/seunghyun/tairte4_artifacts/support_remap_spatial_convergence_20260727_1"
+  ],
+  "raw_files_committed_to_git": false,
+  "files": [
+    {
+      "role": "coarse_forward_result",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz5_20260727_1/case_result.json",
+      "size_bytes": 24770,
+      "sha256": "89b56728b7d10069392e5580828737ba6ba10027861a8e216d778e5674444985"
+    },
+    {
+      "role": "coarse_forward_fsp",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz5_20260727_1/large_background_gray.fsp",
+      "size_bytes": 64210084,
+      "sha256": "2a1d00bab7ab8039caae1d81b4176369ad4b79e5ff80c5cce40d4c2798e41333"
+    },
+    {
+      "role": "coarse_native_q",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz5_20260727_1/large_background_gray_native_q.npz",
+      "size_bytes": 683020,
+      "sha256": "919b470f45a54165bbc66989e9b8b942cf58a52955696a11aefce552f2f34995"
+    },
+    {
+      "role": "fine_forward_result",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz2p5_20260727_2/case_result.json",
+      "size_bytes": 29519,
+      "sha256": "aaac6c4a60771360baee0a0910a6bb017998fb5e2ae05a1999152314ab8ed990"
+    },
+    {
+      "role": "fine_forward_fsp",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz2p5_20260727_2/large_background_gray.fsp",
+      "size_bytes": 103899092,
+      "sha256": "6ae319a6d725b34243d08d028489d12a044472309f7294319d0f91f159b28fff"
+    },
+    {
+      "role": "fine_native_q",
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz2p5_20260727_2/large_background_gray_native_q.npz",
+      "size_bytes": 1327768,
+      "sha256": "711c4c93589603f32bfc0525e1b63b36fd773a0ace561509ed0391cb2604ddb2"
+    },
+    {
+      "role": "coarse_mapping_summary",
+      "path": "/home/seunghyun/tairte4_artifacts/support_remap_matched_optical_dz5_thermal4um_20260727_1/local_q_mapping_summary.json",
+      "size_bytes": 4933,
+      "sha256": "10cc12bc2c46b04720bda95d1251689be2a560abf440a05511abcc200eeaf2a6"
+    },
+    {
+      "role": "coarse_mapping_npz",
+      "path": "/home/seunghyun/tairte4_artifacts/support_remap_matched_optical_dz5_thermal4um_20260727_1/local_q_thermal_mapping.npz",
+      "size_bytes": 705907,
+      "sha256": "9971edd6bc61c0028d7fad7a86958099b6bcbe698aa1eedbf6a80a0c903eb290"
+    },
+    {
+      "role": "fine_mapping_summary",
+      "path": "/home/seunghyun/tairte4_artifacts/support_remap_matched_optical_dz2p5_thermal4um_20260727_1/local_q_mapping_summary.json",
+      "size_bytes": 4884,
+      "sha256": "6c1a7240db66f1ae8b268ba53a307333e75c6c42992dedf64c714e11d16ed462"
+    },
+    {
+      "role": "fine_mapping_npz",
+      "path": "/home/seunghyun/tairte4_artifacts/support_remap_matched_optical_dz2p5_thermal4um_20260727_1/local_q_thermal_mapping.npz",
+      "size_bytes": 1350054,
+      "sha256": "d6691afe8034ffca10e058b9bb008d63f449d1de351b6d7bf70e54cd1a3c8145"
+    },
+    {
+      "role": "raw_convergence_summary",
+      "path": "/home/seunghyun/tairte4_artifacts/support_remap_spatial_convergence_20260727_1/support_remap_spatial_convergence_summary.json",
+      "size_bytes": 4619,
+      "sha256": "16c9640d3ba79e723fc08c5697bb6353878e1f56a2659dae9fd6b355dab62ce9"
+    },
+    {
+      "role": "raw_convergence_cases",
+      "path": "/home/seunghyun/tairte4_artifacts/support_remap_spatial_convergence_20260727_1/support_remap_spatial_convergence_cases.csv",
+      "size_bytes": 583,
+      "sha256": "f6aa907d561eb98611363f3493004ac7e2d322ef4ed17358ed09207950d2a4d2"
+    }
+  ]
+}

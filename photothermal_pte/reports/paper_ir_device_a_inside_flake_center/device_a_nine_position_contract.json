@@ -1,0 +1,152 @@
+{
+  "status": "FROZEN_DEVICE_A_NINE_POSITION_CONTRACT",
+  "coordinate_frame": {
+    "name": "DEVICE_A_FIXED_LUMERICAL_X_B_Y_A",
+    "axis_mapping": "x=b, y=a",
+    "digitized_to_lumerical_shift_um": [
+      0.0,
+      -3.0
+    ],
+    "fixed_baseline_source_center_um": [
+      -16.5625,
+      0.0
+    ],
+    "device_and_PML_are_case_invariant": true,
+    "only_source_is_translated": true
+  },
+  "waist_um": 8.75,
+  "cases": [
+    {
+      "label": "outside_top",
+      "category": "outside",
+      "vertical_level": "top",
+      "beam_center_lumerical_um": [
+        -16.5625,
+        3.0
+      ],
+      "beam_offset_from_fixed_baseline_um": [
+        0.0,
+        3.0
+      ],
+      "edge_segment_index": null
+    },
+    {
+      "label": "outside_middle",
+      "category": "outside",
+      "vertical_level": "middle",
+      "beam_center_lumerical_um": [
+        -16.5625,
+        0.0
+      ],
+      "beam_offset_from_fixed_baseline_um": [
+        0.0,
+        0.0
+      ],
+      "edge_segment_index": null
+    },
+    {
+      "label": "outside_bottom",
+      "category": "outside",
+      "vertical_level": "bottom",
+      "beam_center_lumerical_um": [
+        -16.5625,
+        -3.0
+      ],
+      "beam_offset_from_fixed_baseline_um": [
+        0.0,
+        -3.0
+      ],
+      "edge_segment_index": null
+    },
+    {
+      "label": "edge_top",
+      "category": "edge",
+      "vertical_level": "top",
+      "beam_center_lumerical_um": [
+        -9.827940015785318,
+        3.0
+      ],
+      "beam_offset_from_fixed_baseline_um": [
+        6.734559984214682,
+        3.0
+      ],
+      "edge_segment_index": 6
+    },
+    {
+      "label": "edge_middle",
+      "category": "edge",
+      "vertical_level": "middle",
+      "beam_center_lumerical_um": [
+        -13.480662983425413,
+        0.0
+      ],
+      "beam_offset_from_fixed_baseline_um": [
+        3.081837016574587,
+        0.0
+      ],
+      "edge_segment_index": 5
+    },
+    {
+      "label": "edge_bottom",
+      "category": "edge",
+      "vertical_level": "bottom",
+      "beam_center_lumerical_um": [
+        -14.008036162732294,
+        -3.0
+      ],
+      "beam_offset_from_fixed_baseline_um": [
+        2.554463837267706,
+        -3.0
+      ],
+      "edge_segment_index": 4
+    },
+    {
+      "label": "inside_top",
+      "category": "inside",
+      "vertical_level": "top",
+      "beam_center_lumerical_um": [
+        -6.0,
+        3.0
+      ],
+      "beam_offset_from_fixed_baseline_um": [
+        10.5625,
+        3.0
+      ],
+      "edge_segment_index": null
+    },
+    {
+      "label": "inside_middle",
+      "category": "inside",
+      "vertical_level": "middle",
+      "beam_center_lumerical_um": [
+        -6.0,
+        0.0
+      ],
+      "beam_offset_from_fixed_baseline_um": [
+        10.5625,
+        0.0
+      ],
+      "edge_segment_index": null
+    },
+    {
+      "label": "inside_bottom",
+      "category": "inside",
+      "vertical_level": "bottom",
+      "beam_center_lumerical_um": [
+        -6.0,
+        -3.0
+      ],
+      "beam_offset_from_fixed_baseline_um": [
+        10.5625,
+        -3.0
+      ],
+      "edge_segment_index": null
+    }
+  ],
+  "thermal_interface_scenarios_W_m2K": {
+    "thermally_grown_SiO2": 7370000.0,
+    "evaporated_SiO2": 73700.0
+  },
+  "solve_started": false,
+  "plot": "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_inside_flake_center/DEVICE_A_FINAL_BEAM_CENTER_PLAN.png"
+}

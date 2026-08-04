@@ -1,0 +1,628 @@
+{
+  "status": "FAILED_COUPLED_DEVICE_A_IR_PTE_SANITY_GEOMETRY_UNRESOLVED",
+  "optical_sanity_passed": true,
+  "thermal_numerical_gates_passed": true,
+  "paper_pte_polarization_trend_passed": false,
+  "central_absorption_ratio_a_over_b": 0.6908327141111436,
+  "edge_absorbed_power_ratio_a_over_b": 0.8037832818590629,
+  "expanded_edge_current_ratio_abs_a_over_b": 1.189408086943821,
+  "paper_reduced_edge_current_ratio_abs_a_over_b": 1.2274192228814034,
+  "paper_measured_edge_current_ratio_approx": 0.8,
+  "interpretation": "The material/thickness/polarization optical certificate agrees with paper Fig. 3D. The approximate full-device polygon creates an E||a corner hotspot and reverses the paper PTE trend in both thermal boundary models; exact CAD/beam metrology or a paper-like local half-plane geometry is required before promotion.",
+  "optical": {
+    "center_a": {
+      "case_dir": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/finite_center_a_w6p5_dz10_gpu2_20260730",
+      "case_result_sha256": "a800495e23da6b0d0f8f301d293a5fbf8b0bdea6c58b7cd1d713f3e57dda6115",
+      "Q_sha256": "17ea0ba92b6f95c34f9132a77161b914ae702e1e6719eae46bdc063ea59ed42d",
+      "P_Q_W_at_1_W_m2_central": 1.9320668872059263e-11,
+      "P_six_W_at_1_W_m2_central": 1.9318679919950108e-11,
+      "six_face_closure": 0.00010295486634679288,
+      "incident_power_W_at_1_W_m2_central": 1.1135960966347949e-10,
+      "absorbed_fraction_of_total_Gaussian": 0.173497993845748,
+      "hotspot": {
+        "x_m": -5.971935007385465e-06,
+        "y_m": 5.993208828522889e-06,
+        "z_m": -9.999999999999937e-09,
+        "Q_W_m3": 2497758.100002022
+      },
+      "component_power_W": {
+        "x": 1.1278825051896294e-13,
+        "y": 1.92078806215403e-11,
+        "z": 0.0
+      },
+      "domain_um": 40.0,
+      "pml_layers": 24,
+      "flake_dz_nm": 10.0,
+      "gpu_device": "GPU 2",
+      "version": "8.35.4522"
+    },
+    "center_b": {
+      "case_dir": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/finite_center_b_w6p5_dz10_gpu3_20260730",
+      "case_result_sha256": "d81d5b1b73a2b5c09a34eab1a137829fc53bffcfa7a6820d023544bbf2419a86",
+      "Q_sha256": "2bca4e0823420a87be0246cf029268a1477565d2a296ec01fa687648dfa7d33b",
+      "P_Q_W_at_1_W_m2_central": 2.7967201560183873e-11,
+      "P_six_W_at_1_W_m2_central": 2.797729477031831e-11,
+      "six_face_closure": 0.00036076433469702944,
+      "incident_power_W_at_1_W_m2_central": 1.1135954561579927e-10,
+      "absorbed_fraction_of_total_Gaussian": 0.2511432801340022,
+      "hotspot": {
+        "x_m": -6.056129985220796e-08,
+        "y_m": 1.697792869269022e-08,
+        "z_m": -9.999999999999937e-09,
+        "Q_W_m3": 2044994.2680269016
+      },
+      "component_power_W": {
+        "x": 2.794695925199334e-11,
+        "y": 2.024230819053382e-14,
+        "z": 0.0
+      },
+      "domain_um": 40.0,
+      "pml_layers": 24,
+      "flake_dz_nm": 10.0,
+      "gpu_device": "GPU 3",
+      "version": "8.35.4522"
+    },
+    "edge_a": {
+      "case_dir": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/finite_edge_a_w6p5_dz10_gpu4_20260730",
+      "case_result_sha256": "f82c459e9ac6a47bf46a0385a49c6a62f747965a76639b4142c91d6d194ca9d6",
+      "Q_sha256": "39f7c3b052bcd253d19916cd0204ac9dcd8e8c8cf2cf465c5d9cc6e647a35779",
+      "P_Q_W_at_1_W_m2_central": 1.1174072582877223e-11,
+      "P_six_W_at_1_W_m2_central": 1.1167539931793172e-11,
+      "six_face_closure": 0.0005849677837688494,
+      "incident_power_W_at_1_W_m2_central": 1.1136175590972885e-10,
+      "absorbed_fraction_of_total_Gaussian": 0.10034030526543652,
+      "hotspot": {
+        "x_m": -5.971935007385465e-06,
+        "y_m": 5.993208828522889e-06,
+        "z_m": -1.999999999999994e-08,
+        "Q_W_m3": 14962952.86121526
+      },
+      "component_power_W": {
+        "x": 8.639497971217545e-13,
+        "y": 1.0310122785755468e-11,
+        "z": 0.0
+      },
+      "domain_um": 48.0,
+      "pml_layers": 24,
+      "flake_dz_nm": 10.0,
+      "gpu_device": "GPU 4",
+      "version": "8.35.4522"
+    },
+    "edge_b": {
+      "case_dir": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/finite_edge_b_w6p5_dz10_gpu5_20260730",
+      "case_result_sha256": "c1c9a1564d1fe71e1610985dca2f98a2e15370a03fe948fd6505895d14b74491",
+      "Q_sha256": "0086b5ea61c542844549aa05f3ae5501b9ab0e92960d2907da6d46270c46434a",
+      "P_Q_W_at_1_W_m2_central": 1.3901847469423368e-11,
+      "P_six_W_at_1_W_m2_central": 1.3910695072743576e-11,
+      "six_face_closure": 0.000636028844995968,
+      "incident_power_W_at_1_W_m2_central": 1.1136124412605125e-10,
+      "absorbed_fraction_of_total_Gaussian": 0.12483559768502303,
+      "hotspot": {
+        "x_m": -9.675036927621845e-06,
+        "y_m": 2.258064516129024e-06,
+        "z_m": -9.999999999999937e-09,
+        "Q_W_m3": 2589699.6745656463
+      },
+      "component_power_W": {
+        "x": 1.3762917777472814e-11,
+        "y": 1.389296919505529e-13,
+        "z": 0.0
+      },
+      "domain_um": 48.0,
+      "pml_layers": 24,
+      "flake_dz_nm": 10.0,
+      "gpu_device": "GPU 5",
+      "version": "8.35.4522"
+    }
+  },
+  "expanded": {
+    "a": {
+      "status": "COMPLETED_DEVICE_A_EXPANDED_THERMAL_PTE_SANITY",
+      "model_identity": "current inverse-design expanded conservative Cartesian FVM; not the paper reduced Robin thermal model",
+      "published_parameters": {
+        "TaIrTe4_thickness_m": 1.3e-07,
+        "kappa_a_b_c_W_mK": [
+          14.4,
+          3.8,
+          1.0
+        ],
+        "sigma_a_b_S_m": [
+          491000.0,
+          110000.0
+        ],
+        "Seebeck_a_b_V_K": [
+          -6e-06,
+          2.7e-05
+        ],
+        "G_TaIrTe4_air_W_m2K": 1.0,
+        "G_TaIrTe4_thermal_SiO2_W_m2K": 7370000.0,
+        "T_bath_K": 300.0
+      },
+      "expanded_model_parameters_not_supplied_by_paper": {
+        "bulk_k_SiO2_W_mK": 1.38,
+        "bulk_k_Si_W_mK": 145.0,
+        "bulk_k_air_W_mK": 0.026,
+        "G_SiO2_Si_W_m2K": 1100000000.0,
+        "exposed_h_W_m2K": 10.0,
+        "far_xy_boundary": "fixed DeltaT=0 numerical truncation",
+        "bottom_boundary": "fixed DeltaT=0 numerical truncation"
+      },
+      "geometry": {
+        "flake_vertices_um": [
+          [
+            -11.0,
+            -10.0
+          ],
+          [
+            12.0,
+            -10.0
+          ],
+          [
+            12.0,
+            10.0
+          ],
+          [
+            -6.0,
+            10.0
+          ],
+          [
+            -6.0,
+            6.0
+          ],
+          [
+            -11.0,
+            1.0
+          ]
+        ],
+        "flake_CAD_status": "approximation from paper Figure 2A",
+        "contacts_status": "approximate contacts inferred from paper Figure 2A",
+        "thermal_domain_um": 48.0,
+        "si_depth_um": 20.0,
+        "core_step_nm": 200.0,
+        "flake_dz_nm": 26.0,
+        "grid_shape": [
+          150,
+          150,
+          78
+        ],
+        "thermal_model": "expanded"
+      },
+      "mapping": {
+        "optical_artifact_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/finite_edge_a_w6p5_dz10_gpu4_20260730/finite_q_on_artifact.npz",
+        "optical_artifact_sha256": "39f7c3b052bcd253d19916cd0204ac9dcd8e8c8cf2cf465c5d9cc6e647a35779",
+        "optical_result_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/finite_edge_a_w6p5_dz10_gpu4_20260730/case_result.json",
+        "optical_result_sha256": "f82c459e9ac6a47bf46a0385a49c6a62f747965a76639b4142c91d6d194ca9d6",
+        "experimental_incident_power_W": 0.000285,
+        "unit_central_intensity_incident_power_W": 1.1136175590972885e-10,
+        "physical_incident_power_scale": 2559226.8878287477,
+        "P_Q_source_W": 2.859698700064942e-05,
+        "P_Q_target_W": 2.8596987000649422e-05,
+        "mapping_relative_power_error": 1.1847862814849199e-16,
+        "mapped_power_outside_flake_before_final_support_W": 5.659491588361629e-09,
+        "mapped_power_outside_flake_before_final_support_fraction": 0.00019790517050740717,
+        "mapped_power_outside_flake_W": 0.0,
+        "mapping_operations": "validated linear conservative embedding plus x/y/z/x material-support projection and a final nearest-support cell-energy projection at the oblique polygon edge; no clipping, smoothing, gain, global rescaling, or tiling"
+      },
+      "thermal": {
+        "Tmax_rise_K": 0.2814221437000731,
+        "TaIrTe4_volume_average_rise_K": 0.028938770484303065,
+        "linear_residual_relative": 9.948602719186587e-11,
+        "energy_balance_relative_error": 2.2194245975172554e-11,
+        "source_power_W": 2.8596987000649422e-05,
+        "boundary_power_out_W": {
+          "x_min": 6.841848112670699e-06,
+          "x_max": 2.1402903430735884e-06,
+          "y_min": 3.138919196960807e-06,
+          "y_max": 4.506822949954665e-06,
+          "z_min": 1.1969072481205069e-05,
+          "exposed_convection": 3.391614990537099e-11
+        },
+        "solver": "scipy.sparse.linalg.cg+jacobi",
+        "iterations": 1102
+      },
+      "weighting": {
+        "top_contact_cells": 89,
+        "bottom_contact_cells": 112,
+        "minimum_psi": 0.016380236355160078,
+        "maximum_psi": 0.97948618585699,
+        "linear_residual_relative": 6.7384920146180564e-15,
+        "geometry_status": "approximate contacts inferred from paper Figure 2A"
+      },
+      "weighting_gate_passed": true,
+      "PTE_current_A_at_285uW_incident": 2.4047863399405294e-08,
+      "PTE_current_pA_at_285uW_incident": 24047.863399405294,
+      "no_optimization": true,
+      "no_gradient": true,
+      "max_inplane_gradient_K_m": 242998.83333988558
+    },
+    "b": {
+      "status": "COMPLETED_DEVICE_A_EXPANDED_THERMAL_PTE_SANITY",
+      "model_identity": "current inverse-design expanded conservative Cartesian FVM; not the paper reduced Robin thermal model",
+      "published_parameters": {
+        "TaIrTe4_thickness_m": 1.3e-07,
+        "kappa_a_b_c_W_mK": [
+          14.4,
+          3.8,
+          1.0
+        ],
+        "sigma_a_b_S_m": [
+          491000.0,
+          110000.0
+        ],
+        "Seebeck_a_b_V_K": [
+          -6e-06,
+          2.7e-05
+        ],
+        "G_TaIrTe4_air_W_m2K": 1.0,
+        "G_TaIrTe4_thermal_SiO2_W_m2K": 7370000.0,
+        "T_bath_K": 300.0
+      },
+      "expanded_model_parameters_not_supplied_by_paper": {
+        "bulk_k_SiO2_W_mK": 1.38,
+        "bulk_k_Si_W_mK": 145.0,
+        "bulk_k_air_W_mK": 0.026,
+        "G_SiO2_Si_W_m2K": 1100000000.0,
+        "exposed_h_W_m2K": 10.0,
+        "far_xy_boundary": "fixed DeltaT=0 numerical truncation",
+        "bottom_boundary": "fixed DeltaT=0 numerical truncation"
+      },
+      "geometry": {
+        "flake_vertices_um": [
+          [
+            -11.0,
+            -10.0
+          ],
+          [
+            12.0,
+            -10.0
+          ],
+          [
+            12.0,
+            10.0
+          ],
+          [
+            -6.0,
+            10.0
+          ],
+          [
+            -6.0,
+            6.0
+          ],
+          [
+            -11.0,
+            1.0
+          ]
+        ],
+        "flake_CAD_status": "approximation from paper Figure 2A",
+        "contacts_status": "approximate contacts inferred from paper Figure 2A",
+        "thermal_domain_um": 48.0,
+        "si_depth_um": 20.0,
+        "core_step_nm": 200.0,
+        "flake_dz_nm": 26.0,
+        "grid_shape": [
+          150,
+          150,
+          78
+        ],
+        "thermal_model": "expanded"
+      },
+      "mapping": {
+        "optical_artifact_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/finite_edge_b_w6p5_dz10_gpu5_20260730/finite_q_on_artifact.npz",
+        "optical_artifact_sha256": "0086b5ea61c542844549aa05f3ae5501b9ab0e92960d2907da6d46270c46434a",
+        "optical_result_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/finite_edge_b_w6p5_dz10_gpu5_20260730/case_result.json",
+        "optical_result_sha256": "c1c9a1564d1fe71e1610985dca2f98a2e15370a03fe948fd6505895d14b74491",
+        "experimental_incident_power_W": 0.000285,
+        "unit_central_intensity_incident_power_W": 1.1136124412605125e-10,
+        "physical_incident_power_scale": 2559238.649286324,
+        "P_Q_source_W": 3.557814534023156e-05,
+        "P_Q_target_W": 3.5578145340231567e-05,
+        "mapping_relative_power_error": 1.9046140582184432e-16,
+        "mapped_power_outside_flake_before_final_support_W": 2.039509745600404e-09,
+        "mapped_power_outside_flake_before_final_support_fraction": 5.732479099449116e-05,
+        "mapped_power_outside_flake_W": 0.0,
+        "mapping_operations": "validated linear conservative embedding plus x/y/z/x material-support projection and a final nearest-support cell-energy projection at the oblique polygon edge; no clipping, smoothing, gain, global rescaling, or tiling"
+      },
+      "thermal": {
+        "Tmax_rise_K": 0.2413453822916531,
+        "TaIrTe4_volume_average_rise_K": 0.0361225420396891,
+        "linear_residual_relative": 9.905036985434338e-11,
+        "energy_balance_relative_error": 1.9959974407317637e-11,
+        "source_power_W": 3.5578145340231567e-05,
+        "boundary_power_out_W": {
+          "x_min": 8.1874042514128e-06,
+          "x_max": 2.7580746245752465e-06,
+          "y_min": 4.014491083085991e-06,
+          "y_max": 5.573381369468641e-06,
+          "z_min": 1.504475993447721e-05,
+          "exposed_convection": 3.407650154088517e-11
+        },
+        "solver": "scipy.sparse.linalg.cg+jacobi",
+        "iterations": 1099
+      },
+      "weighting": {
+        "top_contact_cells": 89,
+        "bottom_contact_cells": 112,
+        "minimum_psi": 0.016380236355160078,
+        "maximum_psi": 0.97948618585699,
+        "linear_residual_relative": 6.7384920146180564e-15,
+        "geometry_status": "approximate contacts inferred from paper Figure 2A"
+      },
+      "weighting_gate_passed": true,
+      "PTE_current_A_at_285uW_incident": 2.0218345295764867e-08,
+      "PTE_current_pA_at_285uW_incident": 20218.345295764866,
+      "no_optimization": true,
+      "no_gradient": true,
+      "max_inplane_gradient_K_m": 104478.59162072705
+    }
+  },
+  "paper_reduced": {
+    "a": {
+      "status": "COMPLETED_DEVICE_A_PAPER_REDUCED_THERMAL_PTE_REFERENCE",
+      "model_identity": "paper Supplement Eq. S4 reduced flake-only Robin reference; not the current expanded production thermal model",
+      "published_parameters": {
+        "TaIrTe4_thickness_m": 1.3e-07,
+        "kappa_a_b_c_W_mK": [
+          14.4,
+          3.8,
+          1.0
+        ],
+        "sigma_a_b_S_m": [
+          491000.0,
+          110000.0
+        ],
+        "Seebeck_a_b_V_K": [
+          -6e-06,
+          2.7e-05
+        ],
+        "G_TaIrTe4_air_W_m2K": 1.0,
+        "G_TaIrTe4_thermal_SiO2_W_m2K": 7370000.0,
+        "T_bath_K": 300.0
+      },
+      "expanded_model_parameters_not_supplied_by_paper": {
+        "bulk_k_SiO2_W_mK": 1.38,
+        "bulk_k_Si_W_mK": 145.0,
+        "bulk_k_air_W_mK": 0.026,
+        "G_SiO2_Si_W_m2K": 1100000000.0,
+        "exposed_h_W_m2K": 10.0,
+        "far_xy_boundary": "fixed DeltaT=0 numerical truncation",
+        "bottom_boundary": "fixed DeltaT=0 numerical truncation"
+      },
+      "geometry": {
+        "flake_vertices_um": [
+          [
+            -11.0,
+            -10.0
+          ],
+          [
+            12.0,
+            -10.0
+          ],
+          [
+            12.0,
+            10.0
+          ],
+          [
+            -6.0,
+            10.0
+          ],
+          [
+            -6.0,
+            6.0
+          ],
+          [
+            -11.0,
+            1.0
+          ]
+        ],
+        "flake_CAD_status": "approximation from paper Figure 2A",
+        "contacts_status": "approximate contacts inferred from paper Figure 2A",
+        "thermal_domain_um": 48.0,
+        "si_depth_um": 20.0,
+        "core_step_nm": 200.0,
+        "flake_dz_nm": 26.0,
+        "grid_shape": [
+          150,
+          150,
+          5
+        ],
+        "thermal_model": "paper-reduced"
+      },
+      "mapping": {
+        "optical_artifact_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/finite_edge_a_w6p5_dz10_gpu4_20260730/finite_q_on_artifact.npz",
+        "optical_artifact_sha256": "39f7c3b052bcd253d19916cd0204ac9dcd8e8c8cf2cf465c5d9cc6e647a35779",
+        "optical_result_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/finite_edge_a_w6p5_dz10_gpu4_20260730/case_result.json",
+        "optical_result_sha256": "f82c459e9ac6a47bf46a0385a49c6a62f747965a76639b4142c91d6d194ca9d6",
+        "experimental_incident_power_W": 0.000285,
+        "unit_central_intensity_incident_power_W": 1.1136175590972885e-10,
+        "physical_incident_power_scale": 2559226.8878287477,
+        "P_Q_source_W": 2.859698700064942e-05,
+        "P_Q_target_W": 2.8596987000649422e-05,
+        "mapping_relative_power_error": 1.1847862814849199e-16,
+        "mapped_power_outside_flake_before_final_support_W": 5.659491588361629e-09,
+        "mapped_power_outside_flake_before_final_support_fraction": 0.00019790517050740717,
+        "mapped_power_outside_flake_W": 0.0,
+        "mapping_operations": "validated linear conservative embedding plus x/y/z/x material-support projection and a final nearest-support cell-energy projection at the oblique polygon edge; no clipping, smoothing, gain, global rescaling, or tiling"
+      },
+      "thermal": {
+        "Tmax_rise_K": 0.16642654596127213,
+        "TaIrTe4_volume_average_rise_K": 0.011351068146995595,
+        "linear_residual_relative": 9.788088981164858e-11,
+        "energy_balance_relative_error": 9.637999442623525e-12,
+        "source_power_W": 2.859698700064942e-05,
+        "boundary_power_out_W": {
+          "surface_robin_z_min": 2.8596981449592463e-05,
+          "surface_robin_z_max": 5.550781336773093e-12
+        },
+        "solver": "scipy.sparse.linalg.cg+jacobi",
+        "iterations": 140
+      },
+      "weighting": {
+        "top_contact_cells": 89,
+        "bottom_contact_cells": 112,
+        "minimum_psi": 0.016380236355160078,
+        "maximum_psi": 0.97948618585699,
+        "linear_residual_relative": 6.7384920146180564e-15,
+        "geometry_status": "approximate contacts inferred from paper Figure 2A"
+      },
+      "weighting_gate_passed": true,
+      "PTE_current_A_at_285uW_incident": 1.0529311029168213e-08,
+      "PTE_current_pA_at_285uW_incident": 10529.311029168213,
+      "no_optimization": true,
+      "no_gradient": true,
+      "max_inplane_gradient_K_m": 207138.57326613163
+    },
+    "b": {
+      "status": "COMPLETED_DEVICE_A_PAPER_REDUCED_THERMAL_PTE_REFERENCE",
+      "model_identity": "paper Supplement Eq. S4 reduced flake-only Robin reference; not the current expanded production thermal model",
+      "published_parameters": {
+        "TaIrTe4_thickness_m": 1.3e-07,
+        "kappa_a_b_c_W_mK": [
+          14.4,
+          3.8,
+          1.0
+        ],
+        "sigma_a_b_S_m": [
+          491000.0,
+          110000.0
+        ],
+        "Seebeck_a_b_V_K": [
+          -6e-06,
+          2.7e-05
+        ],
+        "G_TaIrTe4_air_W_m2K": 1.0,
+        "G_TaIrTe4_thermal_SiO2_W_m2K": 7370000.0,
+        "T_bath_K": 300.0
+      },
+      "expanded_model_parameters_not_supplied_by_paper": {
+        "bulk_k_SiO2_W_mK": 1.38,
+        "bulk_k_Si_W_mK": 145.0,
+        "bulk_k_air_W_mK": 0.026,
+        "G_SiO2_Si_W_m2K": 1100000000.0,
+        "exposed_h_W_m2K": 10.0,
+        "far_xy_boundary": "fixed DeltaT=0 numerical truncation",
+        "bottom_boundary": "fixed DeltaT=0 numerical truncation"
+      },
+      "geometry": {
+        "flake_vertices_um": [
+          [
+            -11.0,
+            -10.0
+          ],
+          [
+            12.0,
+            -10.0
+          ],
+          [
+            12.0,
+            10.0
+          ],
+          [
+            -6.0,
+            10.0
+          ],
+          [
+            -6.0,
+            6.0
+          ],
+          [
+            -11.0,
+            1.0
+          ]
+        ],
+        "flake_CAD_status": "approximation from paper Figure 2A",
+        "contacts_status": "approximate contacts inferred from paper Figure 2A",
+        "thermal_domain_um": 48.0,
+        "si_depth_um": 20.0,
+        "core_step_nm": 200.0,
+        "flake_dz_nm": 26.0,
+        "grid_shape": [
+          150,
+          150,
+          5
+        ],
+        "thermal_model": "paper-reduced"
+      },
+      "mapping": {
+        "optical_artifact_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/finite_edge_b_w6p5_dz10_gpu5_20260730/finite_q_on_artifact.npz",
+        "optical_artifact_sha256": "0086b5ea61c542844549aa05f3ae5501b9ab0e92960d2907da6d46270c46434a",
+        "optical_result_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/finite_edge_b_w6p5_dz10_gpu5_20260730/case_result.json",
+        "optical_result_sha256": "c1c9a1564d1fe71e1610985dca2f98a2e15370a03fe948fd6505895d14b74491",
+        "experimental_incident_power_W": 0.000285,
+        "unit_central_intensity_incident_power_W": 1.1136124412605125e-10,
+        "physical_incident_power_scale": 2559238.649286324,
+        "P_Q_source_W": 3.557814534023156e-05,
+        "P_Q_target_W": 3.5578145340231567e-05,
+        "mapping_relative_power_error": 1.9046140582184432e-16,
+        "mapped_power_outside_flake_before_final_support_W": 2.039509745600404e-09,
+        "mapped_power_outside_flake_before_final_support_fraction": 5.732479099449116e-05,
+        "mapped_power_outside_flake_W": 0.0,
+        "mapping_operations": "validated linear conservative embedding plus x/y/z/x material-support projection and a final nearest-support cell-energy projection at the oblique polygon edge; no clipping, smoothing, gain, global rescaling, or tiling"
+      },
+      "thermal": {
+        "Tmax_rise_K": 0.11041544559863813,
+        "TaIrTe4_volume_average_rise_K": 0.013947676155965734,
+        "linear_residual_relative": 9.13144236243758e-11,
+        "energy_balance_relative_error": 8.451915344750164e-12,
+        "source_power_W": 3.557814534023156e-05,
+        "boundary_power_out_W": {
+          "surface_robin_z_min": 3.557813859778414e-05,
+          "surface_robin_z_max": 6.74214672010771e-12
+        },
+        "solver": "scipy.sparse.linalg.cg+jacobi",
+        "iterations": 135
+      },
+      "weighting": {
+        "top_contact_cells": 89,
+        "bottom_contact_cells": 112,
+        "minimum_psi": 0.016380236355160078,
+        "maximum_psi": 0.97948618585699,
+        "linear_residual_relative": 6.7384920146180564e-15,
+        "geometry_status": "approximate contacts inferred from paper Figure 2A"
+      },
+      "weighting_gate_passed": true,
+      "PTE_current_A_at_285uW_incident": 8.578414638521254e-09,
+      "PTE_current_pA_at_285uW_incident": 8578.414638521253,
+      "no_optimization": true,
+      "no_gradient": true,
+      "max_inplane_gradient_K_m": 61759.05595850974
+    }
+  },
+  "assumptions_not_published": {
+    "flake_polygon": [
+      [
+        -11.0,
+        -10.0
+      ],
+      [
+        12.0,
+        -10.0
+      ],
+      [
+        12.0,
+        10.0
+      ],
+      [
+        -6.0,
+        10.0
+      ],
+      [
+        -6.0,
+        6.0
+      ],
+      [
+        -11.0,
+        1.0
+      ]
+    ],
+    "beam_waist_radius_um": 6.5,
+    "beam_waist_note": "named midpoint scenario inferred from a roughly 9-16 um diffraction-limited spot",
+    "beam_edge_center_um": [
+      -8.5,
+      3.5
+    ],
+    "electrode_masks": "approximated from paper Figure 2A",
+    "Au_Ti_in_off_axis_optical_model": false
+  },
+  "no_optimization": true,
+  "no_adjoint_gradient": true
+}

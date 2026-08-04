@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "generation_command": "GPU='GPU 0'; source volume_current_inverse_design/env_production.sh; /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/thermal_adjoint/build_thermal_pte_native_weight.py --polarization x --forward-fsp /home/seunghyun/tairte4/artifacts/pte_adfd/maxwell_absorption_x_20260726/solver_x/absorption_adfd_forward.fsp --solver-workdir /home/seunghyun/tairte4/artifacts/pte_adfd/maxwell_absorption_x_20260726/solver_x --output-dir /home/seunghyun/tairte4/artifacts/pte_adfd/thermal_pte_native_pullback_x_20260726",
+  "artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/thermal_pte_native_pullback_x_20260726/thermal_pte_native_yee_pullback.npz",
+      "bytes": 33269464,
+      "sha256": "da7d0d9f1ab4f7a409b67ad3e4bcad1275dead152698fdb864e350fd5d2f0264",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/thermal_pte_native_pullback_x_20260726/thermal_pte_native_yee_pullback_summary.json",
+      "bytes": 1786,
+      "sha256": "a0385d4a8fd6b667bb38cedffb378fa1b59123dc33e19c618eb5895597432827",
+      "committed_to_git": false
+    }
+  ]
+}

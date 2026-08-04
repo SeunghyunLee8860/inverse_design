@@ -1,0 +1,164 @@
+{
+  "status": "DIAGNOSED_FULL_SIO2_Q_FLUX_CANCELLATION_UNRESOLVED",
+  "new_FDTD_run": false,
+  "case_status_preserved": "FAILED_ACCEPTANCE",
+  "P_six_W": 1.2770638338208644e-11,
+  "face_powers": [
+    {
+      "face": "x_min",
+      "outward_power_W": 1.5310686969112808e-16,
+      "absolute_power_W": 1.5310686969112808e-16,
+      "absolute_power_over_abs_P_six": 1.1988975463587093e-05
+    },
+    {
+      "face": "x_max",
+      "outward_power_W": 1.880451072744886e-16,
+      "absolute_power_W": 1.880451072744886e-16,
+      "absolute_power_over_abs_P_six": 1.4724800929635124e-05
+    },
+    {
+      "face": "y_min",
+      "outward_power_W": 3.6529632384509123e-16,
+      "absolute_power_W": 3.6529632384509123e-16,
+      "absolute_power_over_abs_P_six": 2.8604390334362244e-05
+    },
+    {
+      "face": "y_max",
+      "outward_power_W": 2.442294445607939e-16,
+      "absolute_power_W": 2.442294445607939e-16,
+      "absolute_power_over_abs_P_six": 1.9124294188966304e-05
+    },
+    {
+      "face": "z_min",
+      "outward_power_W": 4.396774313364864e-11,
+      "absolute_power_W": 4.396774313364864e-11,
+      "absolute_power_over_abs_P_six": 3.44287747951494
+    },
+    {
+      "face": "z_max",
+      "outward_power_W": -5.6739332149602656e-11,
+      "absolute_power_W": 5.6739332149602656e-11,
+      "absolute_power_over_abs_P_six": 4.442951921975856
+    }
+  ],
+  "cancellation_factor_sum_abs_faces_over_abs_net": 7.885903843951714,
+  "z_face_cancellation_factor": 7.885829401490797,
+  "lateral_face_cancellation_factor": 7.444246091655077e-05,
+  "Q_quadratures": {
+    "common_trapezoid_W": 1.2611104551458292e-11,
+    "common_bounded_W": 1.2611104551458292e-11,
+    "native_trapezoid_W": 1.2611113558843358e-11,
+    "native_bounded_W": 1.2611115405212249e-11,
+    "Lumerical_Pabs_total_W": 1.2611115300715404e-11
+  },
+  "closures_relative_to_P_six": {
+    "common_trapezoid_W": 0.012492232770623574,
+    "common_bounded_W": 0.012492232770623574,
+    "native_trapezoid_W": 0.012491527450746285,
+    "native_bounded_W": 0.012491382871529292,
+    "Lumerical_Pabs_total_W": 0.01249139105411515
+  },
+  "component_native_quadrature": {
+    "x": {
+      "native_trapezoid_power_W": 1.1255992468862457e-12,
+      "native_bounded_power_W": 1.1255904602231285e-12,
+      "maximum_E_index_coordinate_mismatch_m": 6.776263578034403e-21,
+      "E_index_coordinate_mismatch_m": {
+        "x": 6.776263578034403e-21,
+        "y": 6.776263578034403e-21,
+        "z": 5.293955920339377e-23
+      },
+      "shape": [
+        542,
+        542,
+        104
+      ]
+    },
+    "y": {
+      "native_trapezoid_power_W": 1.1293178983260379e-11,
+      "native_bounded_power_W": 1.1293189586339054e-11,
+      "maximum_E_index_coordinate_mismatch_m": 6.776263578034403e-21,
+      "E_index_coordinate_mismatch_m": {
+        "x": 6.776263578034403e-21,
+        "y": 6.776263578034403e-21,
+        "z": 5.293955920339377e-23
+      },
+      "shape": [
+        542,
+        542,
+        104
+      ]
+    },
+    "z": {
+      "native_trapezoid_power_W": 1.9233532869673392e-13,
+      "native_bounded_power_W": 1.9233535865006597e-13,
+      "maximum_E_index_coordinate_mismatch_m": 6.776263578034403e-21,
+      "E_index_coordinate_mismatch_m": {
+        "x": 6.776263578034403e-21,
+        "y": 6.776263578034403e-21,
+        "z": 5.293955920339377e-23
+      },
+      "shape": [
+        542,
+        542,
+        104
+      ]
+    }
+  },
+  "bounds": {
+    "realized_six_face_m": {
+      "x": [
+        -2.7e-05,
+        2.709999999999987e-05
+      ],
+      "y": [
+        -2.7e-05,
+        2.709999999999987e-05
+      ],
+      "z": [
+        -4.64999999999997e-07,
+        5e-08
+      ]
+    },
+    "Q_quadrature_requested_m": {
+      "x": [
+        -2.705e-05,
+        2.705e-05
+      ],
+      "y": [
+        -2.705e-05,
+        2.705e-05
+      ],
+      "z": [
+        -4.6500000000000005e-07,
+        5e-08
+      ]
+    },
+    "Pabs_object_readback_m": {
+      "x": [
+        -2.705e-05,
+        2.705e-05
+      ],
+      "y": [
+        -2.705e-05,
+        2.705e-05
+      ],
+      "z": [
+        -4.6500000000000005e-07,
+        5e-08
+      ]
+    },
+    "requested_Q_vs_six_maximum_mismatch_m": {
+      "x": 5.0000000000001215e-08,
+      "y": 5.0000000000001215e-08,
+      "z": 3.0704944337968387e-21
+    },
+    "Pabs_object_vs_six_maximum_mismatch_m": {
+      "x": 5.0000000000001215e-08,
+      "y": 5.0000000000001215e-08,
+      "z": 3.0704944337968387e-21
+    },
+    "all_bounds_match_within_1e_minus_15_m": false
+  },
+  "interpretation": "common/native and trapezoid/bounded volume-Q paths are compared without rerunning FDTD; a persistent closure in every path isolates the unresolved discrepancy to volume absorption versus the cancellation-sensitive face-flux balance"
+}

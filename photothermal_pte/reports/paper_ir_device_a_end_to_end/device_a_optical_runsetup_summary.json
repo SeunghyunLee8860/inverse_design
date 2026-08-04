@@ -1,0 +1,1857 @@
+{
+  "status": "DEVICE_A_OPTICAL_RUNSETUP_AUDITED_NOT_SOLVED",
+  "scope": "v261 runsetup/geometry/material/GPU-resource audit only; no Maxwell time stepping, thermal, PTE, adjoint, or optimization",
+  "cases": {
+    "empty_stack": {
+      "status": "CONTRACT_BUILT_NOT_SOLVED",
+      "all_checks_passed": true,
+      "checks": {
+        "x_min_pml": true,
+        "x_max_pml": true,
+        "y_min_pml": true,
+        "y_max_pml": true,
+        "z_min_pml": true,
+        "z_max_pml": true,
+        "one_TaIrTe4_geometry_object": true,
+        "electrode_object_count": true,
+        "no_periodic_boundary": true,
+        "normal_incidence": true,
+        "correct_polarization": true,
+        "correct_waist": true,
+        "scalar_Gaussian_source": true,
+        "backward_focus_distance_from_waist": true,
+        "correct_dz": true,
+        "correct_local_dx": true,
+        "correct_local_dy": true,
+        "correct_nested_outer_mesh": true,
+        "correct_intermediate_mesh": true,
+        "correct_thickness": true,
+        "diagnostic_nominal_Q_and_six_face_control_volume_match": true,
+        "requested_z_equals_x_for_paper_closure": true,
+        "fitted_z_equals_x_for_paper_closure": true,
+        "finite_dt_z_equals_x_for_paper_closure": true,
+        "requested_gpu_resource_active": true,
+        "all": true
+      },
+      "boundaries": {
+        "x_min": "PML",
+        "x_max": "PML",
+        "y_min": "PML",
+        "y_max": "PML",
+        "z_min": "PML",
+        "z_max": "PML"
+      },
+      "solver": {
+        "version": "8.35.4522",
+        "root": "/home/seunghyun/lumerical_r12/opt/lumerical/v261",
+        "resources": {
+          "1": {
+            "active": "1",
+            "device type": "CPU",
+            "processes": "1",
+            "threads": "8",
+            "solver extra command line options": ""
+          },
+          "2": {
+            "active": "1",
+            "device type": "GPU 2",
+            "processes": "1",
+            "threads": "8",
+            "solver extra command line options": "-gpu"
+          }
+        }
+      },
+      "geometry": {
+        "geometry_name": "device-a-polygon",
+        "geometry_source": "matching empty SiO2/Si layered-stack incident reference; no TaIrTe4 object",
+        "coordinate_contract": {
+          "lab_x": "crystal b",
+          "lab_y": "crystal a"
+        },
+        "flake_vertices_um": [
+          [
+            -1.9400495247354606,
+            11.170717478635247
+          ],
+          [
+            22.258845502888846,
+            11.170717478635247
+          ],
+          [
+            22.203596884104318,
+            -12.365194123574696
+          ],
+          [
+            -7.79640311589568,
+            -12.254696886005636
+          ],
+          [
+            -7.79640311589568,
+            -2.199448267221106
+          ],
+          [
+            -6.249441789928829,
+            0.23149095929823105
+          ],
+          [
+            -6.249441789928829,
+            3.435910848800993
+          ],
+          [
+            -1.9400495247354606,
+            5.756352837751269
+          ]
+        ],
+        "flake_thickness_m": 1.3e-07,
+        "flake_area_m2": null,
+        "absorption_analysis_bounds_m": {
+          "x": [
+            -1.066408267390673e-05,
+            2.7502215668634703e-05
+          ],
+          "y": [
+            -1.589585710700011e-05,
+            1.7408562782502648e-05
+          ],
+          "z": [
+            -1.3e-07,
+            5.4999999999999996e-08
+          ]
+        },
+        "pabs_nominal_control_volume_bounds_m": {
+          "x": [
+            -1.071408267390673e-05,
+            2.7552215668634705e-05
+          ],
+          "y": [
+            -1.594585710700011e-05,
+            1.745856278250265e-05
+          ],
+          "z": [
+            -1.8e-07,
+            1.05e-07
+          ]
+        },
+        "six_face_absorption_box_bounds_m": {
+          "x": [
+            -1.116408267390673e-05,
+            2.8002215668634702e-05
+          ],
+          "y": [
+            -1.6395857107000108e-05,
+            1.7908562782502646e-05
+          ],
+          "z": [
+            -1.2e-06,
+            4.5e-06
+          ]
+        },
+        "outer_flux_box_bounds_m": {
+          "x": [
+            -2.8999999999999997e-05,
+            2.8999999999999997e-05
+          ],
+          "y": [
+            -2.8999999999999997e-05,
+            2.8999999999999997e-05
+          ],
+          "z": [
+            -1.2e-06,
+            4.5e-06
+          ]
+        },
+        "exact_flake_mask_kind": "no TaIrTe4; lossless matched-volume control",
+        "substrate": "285 nm SiO2 on Si",
+        "electrodes_in_optical_model": false,
+        "electrode_note": "Digitized Figure-2 top/bottom polygons with a 5-nm Ti adhesion layer and 50-nm Au layer are included; their under-metal overlap is a figure-digitized approximation rather than unpublished CAD.",
+        "electrode_material_contract": {
+          "Ti": {
+            "material": "Ti (Titanium) - CRC",
+            "thickness_m": 5e-09,
+            "database_provenance": "Ansys Lumerical v261 built-in CRC sampled-data material; fit range includes 11 um"
+          },
+          "Au": {
+            "material": "Au (Gold) - CRC",
+            "thickness_m": 5e-08,
+            "database_provenance": "Ansys Lumerical v261 built-in CRC sampled-data material; fit range includes 11 um"
+          },
+          "top_polygon_simulation_um": [
+            [
+              -10.61408267390673,
+              17.35856278250265
+            ],
+            [
+              27.452215668634704,
+              17.35856278250265
+            ],
+            [
+              27.452215668634704,
+              11.170717478635247
+            ],
+            [
+              -10.61408267390673,
+              11.170717478635247
+            ]
+          ],
+          "bottom_polygon_simulation_um": [
+            [
+              -10.61408267390673,
+              -12.254696886005636
+            ],
+            [
+              27.452215668634704,
+              -12.254696886005636
+            ],
+            [
+              27.452215668634704,
+              -15.84585710700011
+            ],
+            [
+              -10.61408267390673,
+              -15.84585710700011
+            ]
+          ]
+        },
+        "digitized_device_a_contract": {
+          "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json",
+          "flake_vertices_digitized_um": [
+            [
+              -9.171270718232044,
+              11.767955801104971
+            ],
+            [
+              15.027624309392264,
+              11.767955801104971
+            ],
+            [
+              14.972375690607734,
+              -11.767955801104971
+            ],
+            [
+              -15.027624309392264,
+              -11.657458563535911
+            ],
+            [
+              -15.027624309392264,
+              -1.6022099447513811
+            ],
+            [
+              -13.480662983425413,
+              0.8287292817679557
+            ],
+            [
+              -13.480662983425413,
+              4.0331491712707175
+            ],
+            [
+              -9.171270718232044,
+              6.353591160220994
+            ]
+          ],
+          "top_metal_polygon_digitized_um": [
+            [
+              -17.845303867403313,
+              17.955801104972373
+            ],
+            [
+              20.22099447513812,
+              17.955801104972373
+            ],
+            [
+              20.22099447513812,
+              11.767955801104971
+            ],
+            [
+              -17.845303867403313,
+              11.767955801104971
+            ]
+          ],
+          "bottom_metal_polygon_digitized_um": [
+            [
+              -17.845303867403313,
+              -11.657458563535911
+            ],
+            [
+              20.22099447513812,
+              -11.657458563535911
+            ],
+            [
+              20.22099447513812,
+              -15.248618784530386
+            ],
+            [
+              -17.845303867403313,
+              -15.248618784530386
+            ]
+          ],
+          "beam_center_digitized_um": [
+            -9.683436862131288,
+            0.5972383224697237
+          ],
+          "simulation_origin_shift_um": [
+            7.231221193496584,
+            -0.5972383224697246
+          ],
+          "flake_vertices_simulation_um": [
+            [
+              -1.9400495247354606,
+              11.170717478635247
+            ],
+            [
+              22.258845502888846,
+              11.170717478635247
+            ],
+            [
+              22.203596884104318,
+              -12.365194123574696
+            ],
+            [
+              -7.79640311589568,
+              -12.254696886005636
+            ],
+            [
+              -7.79640311589568,
+              -2.199448267221106
+            ],
+            [
+              -6.249441789928829,
+              0.23149095929823105
+            ],
+            [
+              -6.249441789928829,
+              3.435910848800993
+            ],
+            [
+              -1.9400495247354606,
+              5.756352837751269
+            ]
+          ],
+          "top_metal_polygon_simulation_um": [
+            [
+              -10.61408267390673,
+              17.35856278250265
+            ],
+            [
+              27.452215668634704,
+              17.35856278250265
+            ],
+            [
+              27.452215668634704,
+              11.170717478635247
+            ],
+            [
+              -10.61408267390673,
+              11.170717478635247
+            ]
+          ],
+          "bottom_metal_polygon_simulation_um": [
+            [
+              -10.61408267390673,
+              -12.254696886005636
+            ],
+            [
+              27.452215668634704,
+              -12.254696886005636
+            ],
+            [
+              27.452215668634704,
+              -15.84585710700011
+            ],
+            [
+              -10.61408267390673,
+              -15.84585710700011
+            ]
+          ],
+          "beam_center_simulation_um": [
+            -2.452215668634704,
+            -8.881784197001252e-16
+          ],
+          "occupied_union_bounds_simulation_um": {
+            "x": [
+              -27.452215668634704,
+              27.452215668634704
+            ],
+            "y": [
+              -25.0,
+              25.0
+            ]
+          },
+          "minimum_lateral_PML_clearance_um": {
+            "x": 2.547784331365296,
+            "y": 5.0
+          },
+          "translation_preserves_all_relative_coordinates": true
+        },
+        "source": {
+          "wavelength_m": 1.1e-05,
+          "experimental_band_m": [
+            7e-06,
+            1.3e-05
+          ],
+          "physical_target_waist_radius_m": 1.2e-05,
+          "Lumerical_source_object_waist_radius_m": 1.1916864889678677e-05,
+          "source_object_calibration_field_NPZ_sha256": "f0f848740730ce73f0e47f73f26c8a572afda5f59c8bab57c8d8dac94a112ad0",
+          "beam_center_m": [
+            -2.452215668634704e-06,
+            -8.881784197001252e-22
+          ],
+          "source_span_m": 4.9999999999999996e-05,
+          "normal_incidence": true,
+          "polarization_axis": "a",
+          "simulation_time_s": 4e-12,
+          "auto_shutoff_min": 1e-05,
+          "scenario_label": "paper-like scalar-Gaussian scenario with an explicitly assumed waist",
+          "experimentally_reproduced_beam": false,
+          "paper_certified_beam": false
+        },
+        "domain_bounds_m": {
+          "x": [
+            -2.9999999999999997e-05,
+            2.9999999999999997e-05
+          ],
+          "y": [
+            -2.9999999999999997e-05,
+            2.9999999999999997e-05
+          ],
+          "z": [
+            -3.4150000000000003e-06,
+            1e-05
+          ]
+        },
+        "all_six_boundaries": "PML",
+        "periodic": false,
+        "Q_processing": {
+          "clipping": false,
+          "smoothing": false,
+          "gain": false,
+          "global_rescaling": false,
+          "polarization_matching_rescaling": false
+        },
+        "large_domain_mesh_policy": {
+          "uniform_global_fine_mesh": false,
+          "global_mesh": "auto non-uniform, conformal variant 1, accuracy 5",
+          "outer_local_region_bounds_m": {
+            "x": [
+              -1.116408267390673e-05,
+              2.8002215668634702e-05
+            ],
+            "y": [
+              -1.6395857107000108e-05,
+              1.7908562782502646e-05
+            ],
+            "z": [
+              -1.8e-07,
+              6.5e-08
+            ]
+          },
+          "outer_local_xy_mesh_m": 1.0000000000000001e-07,
+          "fine_refinement_region_bounds_m": {
+            "x": [
+              -1.7452215668634703e-05,
+              1.2547784331365294e-05
+            ],
+            "y": [
+              -1.5e-05,
+              1.4999999999999997e-05
+            ],
+            "z": [
+              -1.8e-07,
+              6.5e-08
+            ]
+          },
+          "fine_local_xy_mesh_m": 5.0000000000000004e-08,
+          "intermediate_local_xy_mesh_m": null,
+          "intermediate_half_span_m": null,
+          "local_xy_baseline_m": 1e-07,
+          "required_local_xy_refinement_m": 5e-08,
+          "local_xy_refinement_status": "ACTIVE_NESTED_50NM_REFINEMENT",
+          "refinement_half_span_m": 1.4999999999999999e-05,
+          "source_support_outside_fine_region_is_preserved": true,
+          "TaIrTe4_z_override_m": 5e-09,
+          "far_air_SiO2_Si": "wavelength-appropriate automatic coarse mesh"
+        },
+        "execution_contract": "production",
+        "monitor_contract": {
+          "pabs_field_and_index": true,
+          "six_face_absorption_box": true,
+          "outer_flux_box": true,
+          "incident_reference_monitor": true,
+          "diagnostic_field_slice_monitors": true,
+          "frequency_points": 1
+        },
+        "diagnostic_difference_from_production": null,
+        "material_contract": {
+          "name": "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure",
+          "epsilon_c_model": "paper-b-closure",
+          "axis_mapping": {
+            "x": "epsilon_b",
+            "y": "epsilon_a",
+            "z": "epsilon_c=epsilon_b paper-consistent 3D closure"
+          },
+          "requested_epsilon_at_11um": {
+            "x": {
+              "real": 13.268147712480612,
+              "imag": 26.18179590766738
+            },
+            "y": {
+              "real": -42.96623156686853,
+              "imag": 204.5326948215291
+            },
+            "z": {
+              "real": 13.268147712480612,
+              "imag": 26.18179590766738
+            }
+          },
+          "provenance": {
+            "in_plane": "paper Supporting Information Fig. S3b / Ref. 11, stored in paper-derived perm_data.txt",
+            "out_of_plane": "explicit finite-edge 3D closure epsilon_c=epsilon_b; not an independently measured c-axis property",
+            "sample_count": 600,
+            "wavelength_range_m": [
+              2.7e-06,
+              1.32e-05
+            ]
+          }
+        }
+      },
+      "material": {
+        "name": "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure",
+        "epsilon_c_model": "paper-b-closure",
+        "axis_mapping": {
+          "x": "epsilon_b",
+          "y": "epsilon_a",
+          "z": "epsilon_c=epsilon_b paper-consistent 3D closure"
+        },
+        "requested_epsilon_at_11um": {
+          "x": {
+            "real": 13.268147712480612,
+            "imag": 26.18179590766738
+          },
+          "y": {
+            "real": -42.96623156686853,
+            "imag": 204.5326948215291
+          },
+          "z": {
+            "real": 13.268147712480612,
+            "imag": 26.18179590766738
+          }
+        },
+        "provenance": {
+          "in_plane": "paper Supporting Information Fig. S3b / Ref. 11, stored in paper-derived perm_data.txt",
+          "out_of_plane": "explicit finite-edge 3D closure epsilon_c=epsilon_b; not an independently measured c-axis property",
+          "sample_count": 600,
+          "wavelength_range_m": [
+            2.7e-06,
+            1.32e-05
+          ]
+        },
+        "epsilon_readback": {
+          "quantity": "complex relative permittivity epsilon_r",
+          "analysis_wavelength_m": 1.1e-05,
+          "fit_frequency_range_Hz": [
+            23060958307692.31,
+            42827494000000.0
+          ],
+          "dt_s": 9.9071216025423e-18,
+          "axes": {
+            "x": {
+              "requested_epsilon": {
+                "real": 13.268147712480612,
+                "imag": 26.18179590766738
+              },
+              "fitted_epsilon_getfdtdindex": {
+                "real": 13.2680233006527,
+                "imag": 26.181870955490027
+              },
+              "finite_dt_numerical_permittivity": {
+                "real": 13.26802476433487,
+                "imag": 26.181864499359232
+              },
+              "fitted_relative_error_vs_requested": 4.950097940416724e-06,
+              "finite_dt_relative_difference_vs_fitted": 2.255384301053896e-07
+            },
+            "y": {
+              "requested_epsilon": {
+                "real": -42.96623156686853,
+                "imag": 204.5326948215291
+              },
+              "fitted_epsilon_getfdtdindex": {
+                "real": -42.97003897202558,
+                "imag": 204.53387562805196
+              },
+              "finite_dt_numerical_permittivity": {
+                "real": -42.970009972231985,
+                "imag": 204.53377764685547
+              },
+              "fitted_relative_error_vs_requested": 1.907351537359719e-05,
+              "finite_dt_relative_difference_vs_fitted": 4.889150374669637e-07
+            },
+            "z": {
+              "requested_epsilon": {
+                "real": 13.268147712480612,
+                "imag": 26.18179590766738
+              },
+              "fitted_epsilon_getfdtdindex": {
+                "real": 13.2680233006527,
+                "imag": 26.181870955490027
+              },
+              "finite_dt_numerical_permittivity": {
+                "real": 13.26802476433487,
+                "imag": 26.181864499359232
+              },
+              "fitted_relative_error_vs_requested": 4.950097940416724e-06,
+              "finite_dt_relative_difference_vs_fitted": 2.255384301053896e-07
+            }
+          },
+          "epsilon_z_equals_epsilon_b_contract": true,
+          "fitted_z_vs_x_relative_difference": 0.0,
+          "finite_dt_z_vs_x_relative_difference": 0.0
+        },
+        "electrode_material_readback": {
+          "Au": {
+            "material": "Au (Gold) - CRC",
+            "complex_index_at_11um": {
+              "real": 7.63606714753164,
+              "imag": 78.77504144905157
+            },
+            "complex_epsilon_at_11um": {
+              "real": -6147.197633818181,
+              "imag": 1203.063012109092
+            },
+            "wavelength_min_m": 4.1356667e-08,
+            "wavelength_max_m": 1.2407e-05
+          },
+          "Ti": {
+            "material": "Ti (Titanium) - CRC",
+            "complex_index_at_11um": {
+              "real": 4.593463778901021,
+              "imag": 21.678892862256554
+            },
+            "complex_epsilon_at_11um": {
+              "real": -448.8744862451225,
+              "imag": 199.1624182589027
+            },
+            "wavelength_min_m": 4.1356667e-08,
+            "wavelength_max_m": 1.2407e-05
+          }
+        }
+      },
+      "mesh": {
+        "type": "auto non-uniform",
+        "refinement": "conformal variant 1",
+        "accuracy": 5.0,
+        "minimum_mesh_step_m": 1e-09,
+        "flake_dz_m": 5e-09,
+        "local_xy_mesh_m": 5.0000000000000004e-08,
+        "outer_local_xy_mesh_m": 1.0000000000000001e-07,
+        "refinement_half_span_m": 1.4999999999999999e-05,
+        "intermediate_local_xy_mesh_m": null,
+        "intermediate_half_span_m": null,
+        "override_objects": [
+          {
+            "name": "flake_mesh",
+            "bounds_m": {
+              "x": [
+                -1.7452215668634703e-05,
+                1.2547784331365294e-05
+              ],
+              "y": [
+                -1.5000000000000002e-05,
+                1.4999999999999995e-05
+              ],
+              "z": [
+                -1.7999999999999997e-07,
+                6.500000000000001e-08
+              ]
+            },
+            "override_x_mesh": true,
+            "override_y_mesh": true,
+            "override_z_mesh": true,
+            "dz_m": 5e-09,
+            "dx_m": 5.0000000000000004e-08,
+            "dy_m": 5.0000000000000004e-08
+          },
+          {
+            "name": "flake_outer_mesh",
+            "bounds_m": {
+              "x": [
+                -1.1164082673906729e-05,
+                2.8002215668634702e-05
+              ],
+              "y": [
+                -1.6395857107000108e-05,
+                1.7908562782502646e-05
+              ],
+              "z": [
+                -1.7999999999999997e-07,
+                6.500000000000001e-08
+              ]
+            },
+            "override_x_mesh": true,
+            "override_y_mesh": true,
+            "override_z_mesh": true,
+            "dz_m": 5e-09,
+            "dx_m": 1.0000000000000001e-07,
+            "dy_m": 1.0000000000000001e-07
+          }
+        ],
+        "uniform_global_fine_mesh_present": false,
+        "local_x_or_y_override_present": true
+      },
+      "object_bounds_readback_m": {
+        "FDTD_nominal_outer_bounds": {
+          "x": [
+            -2.9999999999999997e-05,
+            2.9999999999999997e-05
+          ],
+          "y": [
+            -2.9999999999999997e-05,
+            2.9999999999999997e-05
+          ],
+          "z": [
+            -3.4150000000000003e-06,
+            1e-05
+          ]
+        },
+        "PML_inner_bounds": "not available before native post-run mesh readback",
+        "source": {
+          "x": [
+            -2.7452215668634702e-05,
+            2.2547784331365293e-05
+          ],
+          "y": [
+            -2.4999999999999998e-05,
+            2.4999999999999998e-05
+          ],
+          "z": [
+            5e-06,
+            5e-06
+          ]
+        },
+        "flake": null,
+        "flake_vertices_readback_m": null,
+        "absorption_analysis": {
+          "x": [
+            -1.066408267390673e-05,
+            2.7502215668634703e-05
+          ],
+          "y": [
+            -1.589585710700011e-05,
+            1.7408562782502648e-05
+          ],
+          "z": [
+            -1.3e-07,
+            5.4999999999999996e-08
+          ]
+        },
+        "pabs_nominal_control_volume": {
+          "x": [
+            -1.071408267390673e-05,
+            2.7552215668634705e-05
+          ],
+          "y": [
+            -1.594585710700011e-05,
+            1.745856278250265e-05
+          ],
+          "z": [
+            -1.8e-07,
+            1.05e-07
+          ]
+        },
+        "six_face_absorption_box": {
+          "x": [
+            -1.116408267390673e-05,
+            2.8002215668634702e-05
+          ],
+          "y": [
+            -1.6395857107000108e-05,
+            1.7908562782502646e-05
+          ],
+          "z": [
+            -1.2e-06,
+            4.5e-06
+          ]
+        }
+      }
+    },
+    "finite_device_a": {
+      "status": "CONTRACT_BUILT_NOT_SOLVED",
+      "all_checks_passed": true,
+      "checks": {
+        "x_min_pml": true,
+        "x_max_pml": true,
+        "y_min_pml": true,
+        "y_max_pml": true,
+        "z_min_pml": true,
+        "z_max_pml": true,
+        "one_TaIrTe4_geometry_object": true,
+        "electrode_object_count": true,
+        "no_periodic_boundary": true,
+        "normal_incidence": true,
+        "correct_polarization": true,
+        "correct_waist": true,
+        "scalar_Gaussian_source": true,
+        "backward_focus_distance_from_waist": true,
+        "correct_dz": true,
+        "correct_local_dx": true,
+        "correct_local_dy": true,
+        "correct_nested_outer_mesh": true,
+        "correct_intermediate_mesh": true,
+        "correct_thickness": true,
+        "diagnostic_nominal_Q_and_six_face_control_volume_match": true,
+        "requested_z_equals_x_for_paper_closure": true,
+        "fitted_z_equals_x_for_paper_closure": true,
+        "finite_dt_z_equals_x_for_paper_closure": true,
+        "requested_gpu_resource_active": true,
+        "all": true
+      },
+      "boundaries": {
+        "x_min": "PML",
+        "x_max": "PML",
+        "y_min": "PML",
+        "y_max": "PML",
+        "z_min": "PML",
+        "z_max": "PML"
+      },
+      "solver": {
+        "version": "8.35.4522",
+        "root": "/home/seunghyun/lumerical_r12/opt/lumerical/v261",
+        "resources": {
+          "1": {
+            "active": "1",
+            "device type": "CPU",
+            "processes": "1",
+            "threads": "8",
+            "solver extra command line options": ""
+          },
+          "2": {
+            "active": "1",
+            "device type": "GPU 2",
+            "processes": "1",
+            "threads": "8",
+            "solver extra command line options": "-gpu"
+          }
+        }
+      },
+      "geometry": {
+        "geometry_name": "device-a-polygon",
+        "geometry_source": "approximation digitized from paper Figure 2A, not exact CAD",
+        "coordinate_contract": {
+          "lab_x": "crystal b",
+          "lab_y": "crystal a"
+        },
+        "flake_vertices_um": [
+          [
+            -1.9400495247354606,
+            11.170717478635247
+          ],
+          [
+            22.258845502888846,
+            11.170717478635247
+          ],
+          [
+            22.203596884104318,
+            -12.365194123574696
+          ],
+          [
+            -7.79640311589568,
+            -12.254696886005636
+          ],
+          [
+            -7.79640311589568,
+            -2.199448267221106
+          ],
+          [
+            -6.249441789928829,
+            0.23149095929823105
+          ],
+          [
+            -6.249441789928829,
+            3.435910848800993
+          ],
+          [
+            -1.9400495247354606,
+            5.756352837751269
+          ]
+        ],
+        "flake_thickness_m": 1.3e-07,
+        "flake_area_m2": 6.579347394768168e-10,
+        "absorption_analysis_bounds_m": {
+          "x": [
+            -1.066408267390673e-05,
+            2.7502215668634703e-05
+          ],
+          "y": [
+            -1.589585710700011e-05,
+            1.7408562782502648e-05
+          ],
+          "z": [
+            -1.3e-07,
+            5.4999999999999996e-08
+          ]
+        },
+        "pabs_nominal_control_volume_bounds_m": {
+          "x": [
+            -1.071408267390673e-05,
+            2.7552215668634705e-05
+          ],
+          "y": [
+            -1.594585710700011e-05,
+            1.745856278250265e-05
+          ],
+          "z": [
+            -1.8e-07,
+            1.05e-07
+          ]
+        },
+        "six_face_absorption_box_bounds_m": {
+          "x": [
+            -1.116408267390673e-05,
+            2.8002215668634702e-05
+          ],
+          "y": [
+            -1.6395857107000108e-05,
+            1.7908562782502646e-05
+          ],
+          "z": [
+            -1.2e-06,
+            4.5e-06
+          ]
+        },
+        "outer_flux_box_bounds_m": {
+          "x": [
+            -2.8999999999999997e-05,
+            2.8999999999999997e-05
+          ],
+          "y": [
+            -2.8999999999999997e-05,
+            2.8999999999999997e-05
+          ],
+          "z": [
+            -1.2e-06,
+            4.5e-06
+          ]
+        },
+        "exact_flake_mask_kind": "digitized polygon",
+        "substrate": "285 nm SiO2 on Si",
+        "electrodes_in_optical_model": true,
+        "electrode_note": "Digitized Figure-2 top/bottom polygons with a 5-nm Ti adhesion layer and 50-nm Au layer are included; their under-metal overlap is a figure-digitized approximation rather than unpublished CAD.",
+        "electrode_material_contract": {
+          "Ti": {
+            "material": "Ti (Titanium) - CRC",
+            "thickness_m": 5e-09,
+            "database_provenance": "Ansys Lumerical v261 built-in CRC sampled-data material; fit range includes 11 um"
+          },
+          "Au": {
+            "material": "Au (Gold) - CRC",
+            "thickness_m": 5e-08,
+            "database_provenance": "Ansys Lumerical v261 built-in CRC sampled-data material; fit range includes 11 um"
+          },
+          "top_polygon_simulation_um": [
+            [
+              -10.61408267390673,
+              17.35856278250265
+            ],
+            [
+              27.452215668634704,
+              17.35856278250265
+            ],
+            [
+              27.452215668634704,
+              11.170717478635247
+            ],
+            [
+              -10.61408267390673,
+              11.170717478635247
+            ]
+          ],
+          "bottom_polygon_simulation_um": [
+            [
+              -10.61408267390673,
+              -12.254696886005636
+            ],
+            [
+              27.452215668634704,
+              -12.254696886005636
+            ],
+            [
+              27.452215668634704,
+              -15.84585710700011
+            ],
+            [
+              -10.61408267390673,
+              -15.84585710700011
+            ]
+          ]
+        },
+        "digitized_device_a_contract": {
+          "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json",
+          "flake_vertices_digitized_um": [
+            [
+              -9.171270718232044,
+              11.767955801104971
+            ],
+            [
+              15.027624309392264,
+              11.767955801104971
+            ],
+            [
+              14.972375690607734,
+              -11.767955801104971
+            ],
+            [
+              -15.027624309392264,
+              -11.657458563535911
+            ],
+            [
+              -15.027624309392264,
+              -1.6022099447513811
+            ],
+            [
+              -13.480662983425413,
+              0.8287292817679557
+            ],
+            [
+              -13.480662983425413,
+              4.0331491712707175
+            ],
+            [
+              -9.171270718232044,
+              6.353591160220994
+            ]
+          ],
+          "top_metal_polygon_digitized_um": [
+            [
+              -17.845303867403313,
+              17.955801104972373
+            ],
+            [
+              20.22099447513812,
+              17.955801104972373
+            ],
+            [
+              20.22099447513812,
+              11.767955801104971
+            ],
+            [
+              -17.845303867403313,
+              11.767955801104971
+            ]
+          ],
+          "bottom_metal_polygon_digitized_um": [
+            [
+              -17.845303867403313,
+              -11.657458563535911
+            ],
+            [
+              20.22099447513812,
+              -11.657458563535911
+            ],
+            [
+              20.22099447513812,
+              -15.248618784530386
+            ],
+            [
+              -17.845303867403313,
+              -15.248618784530386
+            ]
+          ],
+          "beam_center_digitized_um": [
+            -9.683436862131288,
+            0.5972383224697237
+          ],
+          "simulation_origin_shift_um": [
+            7.231221193496584,
+            -0.5972383224697246
+          ],
+          "flake_vertices_simulation_um": [
+            [
+              -1.9400495247354606,
+              11.170717478635247
+            ],
+            [
+              22.258845502888846,
+              11.170717478635247
+            ],
+            [
+              22.203596884104318,
+              -12.365194123574696
+            ],
+            [
+              -7.79640311589568,
+              -12.254696886005636
+            ],
+            [
+              -7.79640311589568,
+              -2.199448267221106
+            ],
+            [
+              -6.249441789928829,
+              0.23149095929823105
+            ],
+            [
+              -6.249441789928829,
+              3.435910848800993
+            ],
+            [
+              -1.9400495247354606,
+              5.756352837751269
+            ]
+          ],
+          "top_metal_polygon_simulation_um": [
+            [
+              -10.61408267390673,
+              17.35856278250265
+            ],
+            [
+              27.452215668634704,
+              17.35856278250265
+            ],
+            [
+              27.452215668634704,
+              11.170717478635247
+            ],
+            [
+              -10.61408267390673,
+              11.170717478635247
+            ]
+          ],
+          "bottom_metal_polygon_simulation_um": [
+            [
+              -10.61408267390673,
+              -12.254696886005636
+            ],
+            [
+              27.452215668634704,
+              -12.254696886005636
+            ],
+            [
+              27.452215668634704,
+              -15.84585710700011
+            ],
+            [
+              -10.61408267390673,
+              -15.84585710700011
+            ]
+          ],
+          "beam_center_simulation_um": [
+            -2.452215668634704,
+            -8.881784197001252e-16
+          ],
+          "occupied_union_bounds_simulation_um": {
+            "x": [
+              -27.452215668634704,
+              27.452215668634704
+            ],
+            "y": [
+              -25.0,
+              25.0
+            ]
+          },
+          "minimum_lateral_PML_clearance_um": {
+            "x": 2.547784331365296,
+            "y": 5.0
+          },
+          "translation_preserves_all_relative_coordinates": true
+        },
+        "source": {
+          "wavelength_m": 1.1e-05,
+          "experimental_band_m": [
+            7e-06,
+            1.3e-05
+          ],
+          "physical_target_waist_radius_m": 1.2e-05,
+          "Lumerical_source_object_waist_radius_m": 1.1916864889678677e-05,
+          "source_object_calibration_field_NPZ_sha256": "f0f848740730ce73f0e47f73f26c8a572afda5f59c8bab57c8d8dac94a112ad0",
+          "beam_center_m": [
+            -2.452215668634704e-06,
+            -8.881784197001252e-22
+          ],
+          "source_span_m": 4.9999999999999996e-05,
+          "normal_incidence": true,
+          "polarization_axis": "a",
+          "simulation_time_s": 4e-12,
+          "auto_shutoff_min": 1e-05,
+          "scenario_label": "paper-like scalar-Gaussian scenario with an explicitly assumed waist",
+          "experimentally_reproduced_beam": false,
+          "paper_certified_beam": false
+        },
+        "domain_bounds_m": {
+          "x": [
+            -2.9999999999999997e-05,
+            2.9999999999999997e-05
+          ],
+          "y": [
+            -2.9999999999999997e-05,
+            2.9999999999999997e-05
+          ],
+          "z": [
+            -3.4150000000000003e-06,
+            1e-05
+          ]
+        },
+        "all_six_boundaries": "PML",
+        "periodic": false,
+        "Q_processing": {
+          "clipping": false,
+          "smoothing": false,
+          "gain": false,
+          "global_rescaling": false,
+          "polarization_matching_rescaling": false
+        },
+        "large_domain_mesh_policy": {
+          "uniform_global_fine_mesh": false,
+          "global_mesh": "auto non-uniform, conformal variant 1, accuracy 5",
+          "outer_local_region_bounds_m": {
+            "x": [
+              -1.116408267390673e-05,
+              2.8002215668634702e-05
+            ],
+            "y": [
+              -1.6395857107000108e-05,
+              1.7908562782502646e-05
+            ],
+            "z": [
+              -1.8e-07,
+              6.5e-08
+            ]
+          },
+          "outer_local_xy_mesh_m": 1.0000000000000001e-07,
+          "fine_refinement_region_bounds_m": {
+            "x": [
+              -1.7452215668634703e-05,
+              1.2547784331365294e-05
+            ],
+            "y": [
+              -1.5e-05,
+              1.4999999999999997e-05
+            ],
+            "z": [
+              -1.8e-07,
+              6.5e-08
+            ]
+          },
+          "fine_local_xy_mesh_m": 5.0000000000000004e-08,
+          "intermediate_local_xy_mesh_m": null,
+          "intermediate_half_span_m": null,
+          "local_xy_baseline_m": 1e-07,
+          "required_local_xy_refinement_m": 5e-08,
+          "local_xy_refinement_status": "ACTIVE_NESTED_50NM_REFINEMENT",
+          "refinement_half_span_m": 1.4999999999999999e-05,
+          "source_support_outside_fine_region_is_preserved": true,
+          "TaIrTe4_z_override_m": 5e-09,
+          "far_air_SiO2_Si": "wavelength-appropriate automatic coarse mesh"
+        },
+        "execution_contract": "production",
+        "monitor_contract": {
+          "pabs_field_and_index": true,
+          "six_face_absorption_box": true,
+          "outer_flux_box": true,
+          "incident_reference_monitor": true,
+          "diagnostic_field_slice_monitors": true,
+          "frequency_points": 1
+        },
+        "diagnostic_difference_from_production": null,
+        "material_contract": {
+          "name": "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure",
+          "epsilon_c_model": "paper-b-closure",
+          "axis_mapping": {
+            "x": "epsilon_b",
+            "y": "epsilon_a",
+            "z": "epsilon_c=epsilon_b paper-consistent 3D closure"
+          },
+          "requested_epsilon_at_11um": {
+            "x": {
+              "real": 13.268147712480612,
+              "imag": 26.18179590766738
+            },
+            "y": {
+              "real": -42.96623156686853,
+              "imag": 204.5326948215291
+            },
+            "z": {
+              "real": 13.268147712480612,
+              "imag": 26.18179590766738
+            }
+          },
+          "provenance": {
+            "in_plane": "paper Supporting Information Fig. S3b / Ref. 11, stored in paper-derived perm_data.txt",
+            "out_of_plane": "explicit finite-edge 3D closure epsilon_c=epsilon_b; not an independently measured c-axis property",
+            "sample_count": 600,
+            "wavelength_range_m": [
+              2.7e-06,
+              1.32e-05
+            ]
+          }
+        }
+      },
+      "material": {
+        "name": "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure",
+        "epsilon_c_model": "paper-b-closure",
+        "axis_mapping": {
+          "x": "epsilon_b",
+          "y": "epsilon_a",
+          "z": "epsilon_c=epsilon_b paper-consistent 3D closure"
+        },
+        "requested_epsilon_at_11um": {
+          "x": {
+            "real": 13.268147712480612,
+            "imag": 26.18179590766738
+          },
+          "y": {
+            "real": -42.96623156686853,
+            "imag": 204.5326948215291
+          },
+          "z": {
+            "real": 13.268147712480612,
+            "imag": 26.18179590766738
+          }
+        },
+        "provenance": {
+          "in_plane": "paper Supporting Information Fig. S3b / Ref. 11, stored in paper-derived perm_data.txt",
+          "out_of_plane": "explicit finite-edge 3D closure epsilon_c=epsilon_b; not an independently measured c-axis property",
+          "sample_count": 600,
+          "wavelength_range_m": [
+            2.7e-06,
+            1.32e-05
+          ]
+        },
+        "epsilon_readback": {
+          "quantity": "complex relative permittivity epsilon_r",
+          "analysis_wavelength_m": 1.1e-05,
+          "fit_frequency_range_Hz": [
+            23060958307692.31,
+            42827494000000.0
+          ],
+          "dt_s": 9.9071216025423e-18,
+          "axes": {
+            "x": {
+              "requested_epsilon": {
+                "real": 13.268147712480612,
+                "imag": 26.18179590766738
+              },
+              "fitted_epsilon_getfdtdindex": {
+                "real": 13.2680233006527,
+                "imag": 26.181870955490027
+              },
+              "finite_dt_numerical_permittivity": {
+                "real": 13.26802476433487,
+                "imag": 26.181864499359232
+              },
+              "fitted_relative_error_vs_requested": 4.950097940416724e-06,
+              "finite_dt_relative_difference_vs_fitted": 2.255384301053896e-07
+            },
+            "y": {
+              "requested_epsilon": {
+                "real": -42.96623156686853,
+                "imag": 204.5326948215291
+              },
+              "fitted_epsilon_getfdtdindex": {
+                "real": -42.97003897202558,
+                "imag": 204.53387562805196
+              },
+              "finite_dt_numerical_permittivity": {
+                "real": -42.970009972231985,
+                "imag": 204.53377764685547
+              },
+              "fitted_relative_error_vs_requested": 1.907351537359719e-05,
+              "finite_dt_relative_difference_vs_fitted": 4.889150374669637e-07
+            },
+            "z": {
+              "requested_epsilon": {
+                "real": 13.268147712480612,
+                "imag": 26.18179590766738
+              },
+              "fitted_epsilon_getfdtdindex": {
+                "real": 13.2680233006527,
+                "imag": 26.181870955490027
+              },
+              "finite_dt_numerical_permittivity": {
+                "real": 13.26802476433487,
+                "imag": 26.181864499359232
+              },
+              "fitted_relative_error_vs_requested": 4.950097940416724e-06,
+              "finite_dt_relative_difference_vs_fitted": 2.255384301053896e-07
+            }
+          },
+          "epsilon_z_equals_epsilon_b_contract": true,
+          "fitted_z_vs_x_relative_difference": 0.0,
+          "finite_dt_z_vs_x_relative_difference": 0.0
+        },
+        "electrode_material_readback": {
+          "Au": {
+            "material": "Au (Gold) - CRC",
+            "complex_index_at_11um": {
+              "real": 7.63606714753164,
+              "imag": 78.77504144905157
+            },
+            "complex_epsilon_at_11um": {
+              "real": -6147.197633818181,
+              "imag": 1203.063012109092
+            },
+            "wavelength_min_m": 4.1356667e-08,
+            "wavelength_max_m": 1.2407e-05
+          },
+          "Ti": {
+            "material": "Ti (Titanium) - CRC",
+            "complex_index_at_11um": {
+              "real": 4.593463778901021,
+              "imag": 21.678892862256554
+            },
+            "complex_epsilon_at_11um": {
+              "real": -448.8744862451225,
+              "imag": 199.1624182589027
+            },
+            "wavelength_min_m": 4.1356667e-08,
+            "wavelength_max_m": 1.2407e-05
+          }
+        }
+      },
+      "mesh": {
+        "type": "auto non-uniform",
+        "refinement": "conformal variant 1",
+        "accuracy": 5.0,
+        "minimum_mesh_step_m": 1e-09,
+        "flake_dz_m": 5e-09,
+        "local_xy_mesh_m": 5.0000000000000004e-08,
+        "outer_local_xy_mesh_m": 1.0000000000000001e-07,
+        "refinement_half_span_m": 1.4999999999999999e-05,
+        "intermediate_local_xy_mesh_m": null,
+        "intermediate_half_span_m": null,
+        "override_objects": [
+          {
+            "name": "flake_mesh",
+            "bounds_m": {
+              "x": [
+                -1.7452215668634703e-05,
+                1.2547784331365294e-05
+              ],
+              "y": [
+                -1.5000000000000002e-05,
+                1.4999999999999995e-05
+              ],
+              "z": [
+                -1.7999999999999997e-07,
+                6.500000000000001e-08
+              ]
+            },
+            "override_x_mesh": true,
+            "override_y_mesh": true,
+            "override_z_mesh": true,
+            "dz_m": 5e-09,
+            "dx_m": 5.0000000000000004e-08,
+            "dy_m": 5.0000000000000004e-08
+          },
+          {
+            "name": "flake_outer_mesh",
+            "bounds_m": {
+              "x": [
+                -1.1164082673906729e-05,
+                2.8002215668634702e-05
+              ],
+              "y": [
+                -1.6395857107000108e-05,
+                1.7908562782502646e-05
+              ],
+              "z": [
+                -1.7999999999999997e-07,
+                6.500000000000001e-08
+              ]
+            },
+            "override_x_mesh": true,
+            "override_y_mesh": true,
+            "override_z_mesh": true,
+            "dz_m": 5e-09,
+            "dx_m": 1.0000000000000001e-07,
+            "dy_m": 1.0000000000000001e-07
+          }
+        ],
+        "uniform_global_fine_mesh_present": false,
+        "local_x_or_y_override_present": true
+      },
+      "object_bounds_readback_m": {
+        "FDTD_nominal_outer_bounds": {
+          "x": [
+            -2.9999999999999997e-05,
+            2.9999999999999997e-05
+          ],
+          "y": [
+            -2.9999999999999997e-05,
+            2.9999999999999997e-05
+          ],
+          "z": [
+            -3.4150000000000003e-06,
+            1e-05
+          ]
+        },
+        "PML_inner_bounds": "not available before native post-run mesh readback",
+        "source": {
+          "x": [
+            -2.7452215668634702e-05,
+            2.2547784331365293e-05
+          ],
+          "y": [
+            -2.4999999999999998e-05,
+            2.4999999999999998e-05
+          ],
+          "z": [
+            5e-06,
+            5e-06
+          ]
+        },
+        "flake": {
+          "x": [
+            -7.79640311589568e-06,
+            2.2258845502888845e-05
+          ],
+          "y": [
+            -1.2365194123574696e-05,
+            1.1170717478635246e-05
+          ],
+          "z": [
+            -1.3000000000000003e-07,
+            0.0
+          ]
+        },
+        "flake_vertices_readback_m": [
+          [
+            -1.9400495247354606e-06,
+            1.1170717478635246e-05
+          ],
+          [
+            2.2258845502888845e-05,
+            1.1170717478635246e-05
+          ],
+          [
+            2.2203596884104318e-05,
+            -1.2365194123574696e-05
+          ],
+          [
+            -7.79640311589568e-06,
+            -1.2254696886005635e-05
+          ],
+          [
+            -7.79640311589568e-06,
+            -2.199448267221106e-06
+          ],
+          [
+            -6.249441789928829e-06,
+            2.3149095929823104e-07
+          ],
+          [
+            -6.249441789928829e-06,
+            3.435910848800993e-06
+          ],
+          [
+            -1.9400495247354606e-06,
+            5.756352837751269e-06
+          ]
+        ],
+        "absorption_analysis": {
+          "x": [
+            -1.066408267390673e-05,
+            2.7502215668634703e-05
+          ],
+          "y": [
+            -1.589585710700011e-05,
+            1.7408562782502648e-05
+          ],
+          "z": [
+            -1.3e-07,
+            5.4999999999999996e-08
+          ]
+        },
+        "pabs_nominal_control_volume": {
+          "x": [
+            -1.071408267390673e-05,
+            2.7552215668634705e-05
+          ],
+          "y": [
+            -1.594585710700011e-05,
+            1.745856278250265e-05
+          ],
+          "z": [
+            -1.8e-07,
+            1.05e-07
+          ]
+        },
+        "six_face_absorption_box": {
+          "x": [
+            -1.116408267390673e-05,
+            2.8002215668634702e-05
+          ],
+          "y": [
+            -1.6395857107000108e-05,
+            1.7908562782502646e-05
+          ],
+          "z": [
+            -1.2e-06,
+            4.5e-06
+          ]
+        }
+      }
+    }
+  },
+  "key_contract": {
+    "coordinate_axes": {
+      "lab_x": "crystal b",
+      "lab_y": "crystal a"
+    },
+    "simulation_origin_shift_um": [
+      7.231221193496584,
+      -0.5972383224697246
+    ],
+    "relative_geometry_preserved": true,
+    "minimum_lateral_PML_clearance_um": {
+      "x": 2.547784331365296,
+      "y": 5.0
+    },
+    "six_boundaries": {
+      "x_min": "PML",
+      "x_max": "PML",
+      "y_min": "PML",
+      "y_max": "PML",
+      "z_min": "PML",
+      "z_max": "PML"
+    },
+    "electrodes_in_finite_optical_model": true,
+    "source": {
+      "wavelength_m": 1.1e-05,
+      "experimental_band_m": [
+        7e-06,
+        1.3e-05
+      ],
+      "physical_target_waist_radius_m": 1.2e-05,
+      "Lumerical_source_object_waist_radius_m": 1.1916864889678677e-05,
+      "source_object_calibration_field_NPZ_sha256": "f0f848740730ce73f0e47f73f26c8a572afda5f59c8bab57c8d8dac94a112ad0",
+      "beam_center_m": [
+        -2.452215668634704e-06,
+        -8.881784197001252e-22
+      ],
+      "source_span_m": 4.9999999999999996e-05,
+      "normal_incidence": true,
+      "polarization_axis": "a",
+      "simulation_time_s": 4e-12,
+      "auto_shutoff_min": 1e-05,
+      "scenario_label": "paper-like scalar-Gaussian scenario with an explicitly assumed waist",
+      "experimentally_reproduced_beam": false,
+      "paper_certified_beam": false
+    },
+    "material": {
+      "name": "TaIrTe4_DeviceA_lab_x_b_y_a_z_b_closure",
+      "epsilon_c_model": "paper-b-closure",
+      "axis_mapping": {
+        "x": "epsilon_b",
+        "y": "epsilon_a",
+        "z": "epsilon_c=epsilon_b paper-consistent 3D closure"
+      },
+      "requested_epsilon_at_11um": {
+        "x": {
+          "real": 13.268147712480612,
+          "imag": 26.18179590766738
+        },
+        "y": {
+          "real": -42.96623156686853,
+          "imag": 204.5326948215291
+        },
+        "z": {
+          "real": 13.268147712480612,
+          "imag": 26.18179590766738
+        }
+      },
+      "provenance": {
+        "in_plane": "paper Supporting Information Fig. S3b / Ref. 11, stored in paper-derived perm_data.txt",
+        "out_of_plane": "explicit finite-edge 3D closure epsilon_c=epsilon_b; not an independently measured c-axis property",
+        "sample_count": 600,
+        "wavelength_range_m": [
+          2.7e-06,
+          1.32e-05
+        ]
+      },
+      "epsilon_readback": {
+        "quantity": "complex relative permittivity epsilon_r",
+        "analysis_wavelength_m": 1.1e-05,
+        "fit_frequency_range_Hz": [
+          23060958307692.31,
+          42827494000000.0
+        ],
+        "dt_s": 9.9071216025423e-18,
+        "axes": {
+          "x": {
+            "requested_epsilon": {
+              "real": 13.268147712480612,
+              "imag": 26.18179590766738
+            },
+            "fitted_epsilon_getfdtdindex": {
+              "real": 13.2680233006527,
+              "imag": 26.181870955490027
+            },
+            "finite_dt_numerical_permittivity": {
+              "real": 13.26802476433487,
+              "imag": 26.181864499359232
+            },
+            "fitted_relative_error_vs_requested": 4.950097940416724e-06,
+            "finite_dt_relative_difference_vs_fitted": 2.255384301053896e-07
+          },
+          "y": {
+            "requested_epsilon": {
+              "real": -42.96623156686853,
+              "imag": 204.5326948215291
+            },
+            "fitted_epsilon_getfdtdindex": {
+              "real": -42.97003897202558,
+              "imag": 204.53387562805196
+            },
+            "finite_dt_numerical_permittivity": {
+              "real": -42.970009972231985,
+              "imag": 204.53377764685547
+            },
+            "fitted_relative_error_vs_requested": 1.907351537359719e-05,
+            "finite_dt_relative_difference_vs_fitted": 4.889150374669637e-07
+          },
+          "z": {
+            "requested_epsilon": {
+              "real": 13.268147712480612,
+              "imag": 26.18179590766738
+            },
+            "fitted_epsilon_getfdtdindex": {
+              "real": 13.2680233006527,
+              "imag": 26.181870955490027
+            },
+            "finite_dt_numerical_permittivity": {
+              "real": 13.26802476433487,
+              "imag": 26.181864499359232
+            },
+            "fitted_relative_error_vs_requested": 4.950097940416724e-06,
+            "finite_dt_relative_difference_vs_fitted": 2.255384301053896e-07
+          }
+        },
+        "epsilon_z_equals_epsilon_b_contract": true,
+        "fitted_z_vs_x_relative_difference": 0.0,
+        "finite_dt_z_vs_x_relative_difference": 0.0
+      },
+      "electrode_material_readback": {
+        "Au": {
+          "material": "Au (Gold) - CRC",
+          "complex_index_at_11um": {
+            "real": 7.63606714753164,
+            "imag": 78.77504144905157
+          },
+          "complex_epsilon_at_11um": {
+            "real": -6147.197633818181,
+            "imag": 1203.063012109092
+          },
+          "wavelength_min_m": 4.1356667e-08,
+          "wavelength_max_m": 1.2407e-05
+        },
+        "Ti": {
+          "material": "Ti (Titanium) - CRC",
+          "complex_index_at_11um": {
+            "real": 4.593463778901021,
+            "imag": 21.678892862256554
+          },
+          "complex_epsilon_at_11um": {
+            "real": -448.8744862451225,
+            "imag": 199.1624182589027
+          },
+          "wavelength_min_m": 4.1356667e-08,
+          "wavelength_max_m": 1.2407e-05
+        }
+      }
+    },
+    "mesh": {
+      "type": "auto non-uniform",
+      "refinement": "conformal variant 1",
+      "accuracy": 5.0,
+      "minimum_mesh_step_m": 1e-09,
+      "flake_dz_m": 5e-09,
+      "local_xy_mesh_m": 5.0000000000000004e-08,
+      "outer_local_xy_mesh_m": 1.0000000000000001e-07,
+      "refinement_half_span_m": 1.4999999999999999e-05,
+      "intermediate_local_xy_mesh_m": null,
+      "intermediate_half_span_m": null,
+      "override_objects": [
+        {
+          "name": "flake_mesh",
+          "bounds_m": {
+            "x": [
+              -1.7452215668634703e-05,
+              1.2547784331365294e-05
+            ],
+            "y": [
+              -1.5000000000000002e-05,
+              1.4999999999999995e-05
+            ],
+            "z": [
+              -1.7999999999999997e-07,
+              6.500000000000001e-08
+            ]
+          },
+          "override_x_mesh": true,
+          "override_y_mesh": true,
+          "override_z_mesh": true,
+          "dz_m": 5e-09,
+          "dx_m": 5.0000000000000004e-08,
+          "dy_m": 5.0000000000000004e-08
+        },
+        {
+          "name": "flake_outer_mesh",
+          "bounds_m": {
+            "x": [
+              -1.1164082673906729e-05,
+              2.8002215668634702e-05
+            ],
+            "y": [
+              -1.6395857107000108e-05,
+              1.7908562782502646e-05
+            ],
+            "z": [
+              -1.7999999999999997e-07,
+              6.500000000000001e-08
+            ]
+          },
+          "override_x_mesh": true,
+          "override_y_mesh": true,
+          "override_z_mesh": true,
+          "dz_m": 5e-09,
+          "dx_m": 1.0000000000000001e-07,
+          "dy_m": 1.0000000000000001e-07
+        }
+      ],
+      "uniform_global_fine_mesh_present": false,
+      "local_x_or_y_override_present": true
+    }
+  },
+  "gates": {
+    "empty_runsetup_all_checks": true,
+    "finite_runsetup_all_checks": true,
+    "Maxwell_solve_authorized_next": true
+  },
+  "raw_artifacts": {
+    "empty_stack": {
+      "case_result": {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/runsetup_empty_a_50nm_20260731/case_result.json",
+        "size_bytes": 23155,
+        "sha256": "0fa016f9137c7a5374a516f6533b03e78e71869581eadb6bba95b457eaf5468f"
+      },
+      "project": {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/runsetup_empty_a_50nm_20260731/finite_2um_optical_q.fsp",
+        "size_bytes": 563493,
+        "sha256": "ab140c257828b2b649a6140705c410b1b433455934287e39e8775a4117d70591"
+      },
+      "raw_files_committed_to_git": false
+    },
+    "finite_device_a": {
+      "case_result": {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/runsetup_finite_a_50nm_20260731/case_result.json",
+        "size_bytes": 24284,
+        "sha256": "c8df815ce3e9861eee19801397b74bd31361d3edf155fff0ec6e012b07e0cb4b"
+      },
+      "project": {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_device_a_end_to_end/runsetup_finite_a_50nm_20260731/finite_2um_optical_q.fsp",
+        "size_bytes": 568666,
+        "sha256": "82a322e1ffaa7348ccfcae1618c3ced8bd92b78fa76a5ac8433fad791d04d952"
+      },
+      "raw_files_committed_to_git": false
+    }
+  }
+}

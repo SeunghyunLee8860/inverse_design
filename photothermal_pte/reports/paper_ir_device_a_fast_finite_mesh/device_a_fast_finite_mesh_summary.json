@@ -1,0 +1,507 @@
+{
+  "status": "FAILED_FAST_DEVICE_A_MATERIAL_OVERLAP_SPATIAL_CONVERGENCE",
+  "classification": "one-polarization finite Device-A optical mesh diagnostic; not a promoted production Q and not a thermal/PTE result",
+  "fixed_contract": {
+    "wavelength_um": 11.0,
+    "waist_um": 8.75,
+    "domain_um": 60.0,
+    "source_span_um": 50.0,
+    "polarization": "E parallel a",
+    "outer_xy_nm": 200.0,
+    "fine_xy_nm": 50.0,
+    "flake_dz_nm": 10.0,
+    "mesh_accuracy": 3,
+    "six_boundaries": "PML",
+    "substrate": "Lumerical v261 Palik SiO2/Si at 11 um"
+  },
+  "cases": {
+    "50nm_half_span_5um": {
+      "directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h5_dz10_a_gpu5_20260802",
+      "P_Q_W": 2.0350942496930007e-11,
+      "P_six_W": 2.0346319211382836e-11,
+      "six_face_relative_closure": 0.00022722957892964545,
+      "auto_shutoff": 9.94071e-06,
+      "component_power_W": {
+        "x": 3.769397195399078e-13,
+        "y": 1.989395459616207e-11,
+        "z": 8.004818122803124e-14
+      },
+      "flake_dz_nm": 10.0,
+      "outer_xy_nm": 200.00000000000003,
+      "fine_xy_nm": 50.00000000000001,
+      "fine_half_span_um": 5.0,
+      "intermediate_xy_nm": null,
+      "intermediate_half_span_um": null,
+      "finite_solver": {
+        "shape": [
+          546,
+          555,
+          139
+        ],
+        "gridpoints": 42121170,
+        "wall_time_s": 281.732081,
+        "estimated_GPU_memory_GiB": 6.68,
+        "log_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h5_dz10_a_gpu5_20260802/finite_2um_optical_q_p0.log"
+      }
+    },
+    "50nm_half_span_7um": {
+      "directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h7_dz10_a_gpu5_20260802",
+      "P_Q_W": 2.0359474925166148e-11,
+      "P_six_W": 2.0353854725931122e-11,
+      "six_face_relative_closure": 0.00027612456267883163,
+      "auto_shutoff": 9.97281e-06,
+      "component_power_W": {
+        "x": 3.8116637119199495e-13,
+        "y": 1.9897935396645955e-11,
+        "z": 8.03731573281984e-14
+      },
+      "flake_dz_nm": 10.0,
+      "outer_xy_nm": 200.00000000000003,
+      "fine_xy_nm": 50.00000000000001,
+      "fine_half_span_um": 7.0,
+      "intermediate_xy_nm": null,
+      "intermediate_half_span_um": null,
+      "finite_solver": {
+        "shape": [
+          606,
+          615,
+          139
+        ],
+        "gridpoints": 51803910,
+        "wall_time_s": 402.816287,
+        "estimated_GPU_memory_GiB": 7.925,
+        "log_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h7_dz10_a_gpu5_20260802/finite_2um_optical_q_p0.log"
+      }
+    },
+    "50nm_half_span_9um": {
+      "directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h9_dz10_a_gpu5_20260802",
+      "P_Q_W": 2.0349113904479476e-11,
+      "P_six_W": 2.0343510299344613e-11,
+      "six_face_relative_closure": 0.0002754492736213512,
+      "auto_shutoff": 9.9936e-06,
+      "component_power_W": {
+        "x": 3.7963376767268987e-13,
+        "y": 1.9892760174031446e-11,
+        "z": 7.671996277534078e-14
+      },
+      "flake_dz_nm": 10.0,
+      "outer_xy_nm": 200.00000000000003,
+      "fine_xy_nm": 50.00000000000001,
+      "fine_half_span_um": 9.0,
+      "intermediate_xy_nm": null,
+      "intermediate_half_span_um": null,
+      "finite_solver": {
+        "shape": [
+          663,
+          675,
+          139
+        ],
+        "gridpoints": 62205975,
+        "wall_time_s": 405.441891,
+        "estimated_GPU_memory_GiB": 9.653,
+        "log_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h9_dz10_a_gpu5_20260802/finite_2um_optical_q_p0.log"
+      }
+    },
+    "50nm_half_span_12um": {
+      "directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h12_dz10_a_gpu5_20260802",
+      "P_Q_W": 2.033902880746477e-11,
+      "P_six_W": 2.033335990763222e-11,
+      "six_face_relative_closure": 0.0002787979880502822,
+      "auto_shutoff": 9.95539e-06,
+      "component_power_W": {
+        "x": 3.786422637123815e-13,
+        "y": 1.9876277563418923e-11,
+        "z": 8.410898033346569e-14
+      },
+      "flake_dz_nm": 10.0,
+      "outer_xy_nm": 200.00000000000003,
+      "fine_xy_nm": 50.00000000000001,
+      "fine_half_span_um": 12.0,
+      "intermediate_xy_nm": null,
+      "intermediate_half_span_um": null,
+      "finite_solver": {
+        "shape": [
+          748,
+          765,
+          139
+        ],
+        "gridpoints": 79538580,
+        "wall_time_s": 615.046361,
+        "estimated_GPU_memory_GiB": 12.483,
+        "log_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h12_dz10_a_gpu5_20260802/finite_2um_optical_q_p0.log"
+      }
+    },
+    "50nm_half_span_9um_100nm_to_12um": {
+      "directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_mid100_h12_edge50_h9_dz10_a_gpu5_20260802",
+      "P_Q_W": 2.0350413356389554e-11,
+      "P_six_W": 2.0346113670123737e-11,
+      "six_face_relative_closure": 0.00021132715247386126,
+      "auto_shutoff": 9.98372e-06,
+      "component_power_W": {
+        "x": 3.793131263093603e-13,
+        "y": 1.9890715038003428e-11,
+        "z": 8.038519207676558e-14
+      },
+      "flake_dz_nm": 10.0,
+      "outer_xy_nm": 200.00000000000003,
+      "fine_xy_nm": 50.00000000000001,
+      "fine_half_span_um": 9.0,
+      "intermediate_xy_nm": 100.00000000000001,
+      "intermediate_half_span_um": 12.0,
+      "finite_solver": {
+        "shape": [
+          687,
+          703,
+          139
+        ],
+        "gridpoints": 67131579,
+        "wall_time_s": 489.597946,
+        "estimated_GPU_memory_GiB": 10.505,
+        "log_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_mid100_h12_edge50_h9_dz10_a_gpu5_20260802/finite_2um_optical_q_p0.log"
+      }
+    }
+  },
+  "raw_control_volume_comparisons": {
+    "5um_vs_7um": {
+      "candidate": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h5_dz10_a_gpu5_20260802",
+      "reference": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h7_dz10_a_gpu5_20260802",
+      "common_control_volume_bounds_m": {
+        "x": [
+          -1.0714446315323315e-05,
+          2.7560158044162166e-05
+        ],
+        "y": [
+          -1.5941891097453193e-05,
+          1.7455086892083618e-05
+        ],
+        "z": [
+          -1.7999999999999997e-07,
+          1e-07
+        ]
+      },
+      "component_metrics": {
+        "x": {
+          "candidate_power_W": 3.769397195399078e-13,
+          "reference_power_W": 3.811663710348227e-13,
+          "relative_power_change": 0.011088731367985136,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.22628930216314086,
+          "equal_power_lateral_NRMSE": 0.18871840432778042,
+          "equal_power_depth_NRMSE": 0.0009791182487153638,
+          "correlation": 0.9740087641254527
+        },
+        "y": {
+          "candidate_power_W": 1.9893954596162073e-11,
+          "reference_power_W": 1.9897933346186957e-11,
+          "relative_power_change": 0.00019995795320355549,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.0881055783000292,
+          "equal_power_lateral_NRMSE": 0.03687500264260974,
+          "equal_power_depth_NRMSE": 0.0025970058878444905,
+          "correlation": 0.9952998672884018
+        },
+        "z": {
+          "candidate_power_W": 8.004818122803124e-14,
+          "reference_power_W": 8.037304576093748e-14,
+          "relative_power_change": 0.0040419587167633145,
+          "conservative_remap_power_error": 1.5703989271575625e-16,
+          "equal_power_full_3D_NRMSE": 0.21451521058431777,
+          "equal_power_lateral_NRMSE": 0.16738770986063092,
+          "equal_power_depth_NRMSE": 0.006079071328243352,
+          "correlation": 0.9775833000592287
+        },
+        "total": {
+          "candidate_power_W": 2.0350942496930014e-11,
+          "reference_power_W": 2.0359472762982718e-11,
+          "relative_power_change": 0.0004189826599151574,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.08974740169115014,
+          "equal_power_lateral_NRMSE": 0.04245002440813476,
+          "equal_power_depth_NRMSE": 0.0025181349875150333,
+          "correlation": 0.9951194293386973
+        }
+      },
+      "candidate_closure": 0.00022722957892964545,
+      "reference_closure": 0.00027612456267883163,
+      "gates": {
+        "total_power_change_lt_0p5_percent": true,
+        "lateral_Q_NRMSE_lt_0p5_percent": false,
+        "full_3D_Q_NRMSE_lt_0p5_percent": false,
+        "depth_Q_NRMSE_lt_0p5_percent": true,
+        "conservative_remap_error_lt_1e_minus_12": true,
+        "both_closure_lt_0p5_percent": true,
+        "both_auto_shutoff_lt_1e_minus_5": true
+      },
+      "all_gates_pass": false
+    },
+    "7um_vs_9um": {
+      "candidate": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h7_dz10_a_gpu5_20260802",
+      "reference": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h9_dz10_a_gpu5_20260802",
+      "common_control_volume_bounds_m": {
+        "x": [
+          -1.0715096494100848e-05,
+          2.7560295583314495e-05
+        ],
+        "y": [
+          -1.5941911350971545e-05,
+          1.7455424057039413e-05
+        ],
+        "z": [
+          -1.7999999999999997e-07,
+          1e-07
+        ]
+      },
+      "component_metrics": {
+        "x": {
+          "candidate_power_W": 3.8116637119199505e-13,
+          "reference_power_W": 3.796332814940991e-13,
+          "relative_power_change": 0.004038343771816461,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.33323966105890596,
+          "equal_power_lateral_NRMSE": 0.09297938657718727,
+          "equal_power_depth_NRMSE": 0.010663997206622021,
+          "correlation": 0.9482058089017814
+        },
+        "y": {
+          "candidate_power_W": 1.989793539664595e-11,
+          "reference_power_W": 1.9892644901105883e-11,
+          "relative_power_change": 0.00026595234401307634,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.10125186532263682,
+          "equal_power_lateral_NRMSE": 0.02659883647271077,
+          "equal_power_depth_NRMSE": 0.0014523583573832276,
+          "correlation": 0.9938400324953757
+        },
+        "z": {
+          "candidate_power_W": 8.037315732819834e-14,
+          "reference_power_W": 7.671727980241576e-14,
+          "relative_power_change": 0.04765389929359124,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.44403207699127534,
+          "equal_power_lateral_NRMSE": 0.32889944134969135,
+          "equal_power_depth_NRMSE": 0.06942266774491315,
+          "correlation": 0.9182381307925219
+        },
+        "total": {
+          "candidate_power_W": 2.0359474925166145e-11,
+          "reference_power_W": 2.0348995462402397e-11,
+          "relative_power_change": 0.0005149867364760272,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.1033157775970981,
+          "equal_power_lateral_NRMSE": 0.028763287244615018,
+          "equal_power_depth_NRMSE": 0.001687413016061424,
+          "correlation": 0.993597843792211
+        }
+      },
+      "candidate_closure": 0.00027612456267883163,
+      "reference_closure": 0.0002754492736213512,
+      "gates": {
+        "total_power_change_lt_0p5_percent": true,
+        "lateral_Q_NRMSE_lt_0p5_percent": false,
+        "full_3D_Q_NRMSE_lt_0p5_percent": false,
+        "depth_Q_NRMSE_lt_0p5_percent": true,
+        "conservative_remap_error_lt_1e_minus_12": true,
+        "both_closure_lt_0p5_percent": true,
+        "both_auto_shutoff_lt_1e_minus_5": true
+      },
+      "all_gates_pass": false
+    },
+    "9um_vs_12um": {
+      "candidate": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h9_dz10_a_gpu5_20260802",
+      "reference": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h12_dz10_a_gpu5_20260802",
+      "common_control_volume_bounds_m": {
+        "x": [
+          -1.0752215668634711e-05,
+          2.75604586271061e-05
+        ],
+        "y": [
+          -1.5941942553776347e-05,
+          1.745591143290399e-05
+        ],
+        "z": [
+          -1.7999999999999997e-07,
+          1e-07
+        ]
+      },
+      "component_metrics": {
+        "x": {
+          "candidate_power_W": 3.796337676726898e-13,
+          "reference_power_W": 3.78642262837771e-13,
+          "relative_power_change": 0.002618579414479257,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.09070875880405446,
+          "equal_power_lateral_NRMSE": 0.025529956779449595,
+          "equal_power_depth_NRMSE": 0.002114292407022967,
+          "correlation": 0.9958734049611909
+        },
+        "y": {
+          "candidate_power_W": 1.989276017403145e-11,
+          "reference_power_W": 1.987627755288808e-11,
+          "relative_power_change": 0.0008292609669748659,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.09186755496351438,
+          "equal_power_lateral_NRMSE": 0.02245725457444087,
+          "equal_power_depth_NRMSE": 0.004217640815990414,
+          "correlation": 0.9951182678603655
+        },
+        "z": {
+          "candidate_power_W": 7.671996277534073e-14,
+          "reference_power_W": 8.41089658181895e-14,
+          "relative_power_change": 0.08785036138502626,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.6807228814040569,
+          "equal_power_lateral_NRMSE": 0.46581645478390615,
+          "equal_power_depth_NRMSE": 0.18408803652940933,
+          "correlation": 0.7319703417808184
+        },
+        "total": {
+          "candidate_power_W": 2.034911390447948e-11,
+          "reference_power_W": 2.033902878154404e-11,
+          "relative_power_change": 0.000495850762775409,
+          "conservative_remap_power_error": 1.5886571096832724e-16,
+          "equal_power_full_3D_NRMSE": 0.09266698837137272,
+          "equal_power_lateral_NRMSE": 0.02337630517587414,
+          "equal_power_depth_NRMSE": 0.00396681624920847,
+          "correlation": 0.9950322555470191
+        }
+      },
+      "candidate_closure": 0.0002754492736213512,
+      "reference_closure": 0.0002787979880502822,
+      "gates": {
+        "total_power_change_lt_0p5_percent": true,
+        "lateral_Q_NRMSE_lt_0p5_percent": false,
+        "full_3D_Q_NRMSE_lt_0p5_percent": false,
+        "depth_Q_NRMSE_lt_0p5_percent": true,
+        "conservative_remap_error_lt_1e_minus_12": true,
+        "both_closure_lt_0p5_percent": true,
+        "both_auto_shutoff_lt_1e_minus_5": true
+      },
+      "all_gates_pass": false
+    },
+    "9um_plus_100nm_transition_vs_12um": {
+      "candidate": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_mid100_h12_edge50_h9_dz10_a_gpu5_20260802",
+      "reference": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/finite_acc3_outer200_edge50_h12_dz10_a_gpu5_20260802",
+      "common_control_volume_bounds_m": {
+        "x": [
+          -1.0752215668634711e-05,
+          2.7560769039523788e-05
+        ],
+        "y": [
+          -1.594204255634017e-05,
+          1.7457253917419933e-05
+        ],
+        "z": [
+          -1.7999999999999997e-07,
+          1e-07
+        ]
+      },
+      "component_metrics": {
+        "x": {
+          "candidate_power_W": 3.793131263093603e-13,
+          "reference_power_W": 3.786422637123815e-13,
+          "relative_power_change": 0.0017717583621049973,
+          "conservative_remap_power_error": 1.3333719653782495e-16,
+          "equal_power_full_3D_NRMSE": 0.10224160845132867,
+          "equal_power_lateral_NRMSE": 0.028283495439246884,
+          "equal_power_depth_NRMSE": 0.002442649591683539,
+          "correlation": 0.9947723107108501
+        },
+        "y": {
+          "candidate_power_W": 1.9890715038003425e-11,
+          "reference_power_W": 1.9876277563418926e-11,
+          "relative_power_change": 0.0007263671247512657,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.09865233709261186,
+          "equal_power_lateral_NRMSE": 0.024121319538315603,
+          "equal_power_depth_NRMSE": 0.003802139819339307,
+          "correlation": 0.9944534352162134
+        },
+        "z": {
+          "candidate_power_W": 8.038519207676554e-14,
+          "reference_power_W": 8.410898033346577e-14,
+          "relative_power_change": 0.044273372973213765,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.4642202882970263,
+          "equal_power_lateral_NRMSE": 0.2916250426047528,
+          "equal_power_depth_NRMSE": 0.11037425255399361,
+          "correlation": 0.8856391106627167
+        },
+        "total": {
+          "candidate_power_W": 2.035041335638955e-11,
+          "reference_power_W": 2.0339028807464774e-11,
+          "relative_power_change": 0.000559739062889672,
+          "conservative_remap_power_error": 0.0,
+          "equal_power_full_3D_NRMSE": 0.09281643003141953,
+          "equal_power_lateral_NRMSE": 0.019577179488517095,
+          "equal_power_depth_NRMSE": 0.0035878315361822727,
+          "correlation": 0.9950937619050872
+        }
+      },
+      "candidate_closure": 0.00021132715247386126,
+      "reference_closure": 0.0002787979880502822,
+      "gates": {
+        "total_power_change_lt_0p5_percent": true,
+        "lateral_Q_NRMSE_lt_0p5_percent": false,
+        "full_3D_Q_NRMSE_lt_0p5_percent": false,
+        "depth_Q_NRMSE_lt_0p5_percent": true,
+        "conservative_remap_error_lt_1e_minus_12": true,
+        "both_closure_lt_0p5_percent": true,
+        "both_auto_shutoff_lt_1e_minus_5": true
+      },
+      "all_gates_pass": false
+    }
+  },
+  "material_overlap_thermal_source_comparison": {
+    "classification": "TaIrTe4-only material-overlap thermal source on one identical 100 nm lateral / 10 nm flake-z FVM grid",
+    "material_domain_limitation": "Omega_TaIrTe4 is the union of binary FVM cells selected by the thermal cell-center polygon mask; it is not an analytic polygon cut-cell volume",
+    "candidate_directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/material_overlap_candidate_core100_dz10_20260802",
+    "reference_directory": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_fast_convergence/material_overlap_reference_core100_dz10_20260802",
+    "candidate_artifact_sha256": "c386a150db78d40e81360e7c98c4db7c7df1cbd8ed253b27acdc1d7a4b775679",
+    "reference_artifact_sha256": "ca16aa9bd6b610c938650fd8305b0553fbe1efe3ee22cf90bad0522446e3c9ea",
+    "candidate_power_W": 4.10455303371527e-05,
+    "reference_power_W": 4.104505203083414e-05,
+    "relative_power_change": 1.1653202880512522e-05,
+    "equal_power_full_3D_NRMSE": 0.033301642586937845,
+    "equal_power_lateral_NRMSE": 0.01000887917247249,
+    "equal_power_depth_NRMSE": 0.0012994637517147903,
+    "correlation": 0.9994338529293763,
+    "boundary_within_0p25um_fraction_of_global_squared_error": 0.9957495060517312,
+    "worst_z_layer_center_nm": -4.999999999999992,
+    "worst_z_layer_fraction_of_global_squared_error": 0.8186646509867879,
+    "regions": {
+      "inside_9um": {
+        "candidate_power_fraction": 0.9662180394789279,
+        "reference_power_fraction": 0.9662097594279163,
+        "local_full_3D_NRMSE": 0.001565106200975969,
+        "fraction_of_global_squared_error": 0.0021979775728710065
+      },
+      "transition_9_to_12um": {
+        "candidate_power_fraction": 0.03133145782873912,
+        "reference_power_fraction": 0.03134720656012992,
+        "local_full_3D_NRMSE": 0.45794217743800275,
+        "fraction_of_global_squared_error": 0.8116282741708036
+      },
+      "outside_12um": {
+        "candidate_power_fraction": 0.002450502692332958,
+        "reference_power_fraction": 0.0024430340119538214,
+        "local_full_3D_NRMSE": 0.5830116113523683,
+        "fraction_of_global_squared_error": 0.1861737482563253
+      }
+    },
+    "gates": {
+      "mapped_power_change_lt_0p5_percent": true,
+      "mapped_lateral_Q_NRMSE_lt_0p5_percent": false,
+      "mapped_full_3D_Q_NRMSE_lt_0p5_percent": false,
+      "mapped_depth_Q_NRMSE_lt_0p5_percent": true,
+      "both_mapping_power_errors_lt_1e_minus_12": true
+    },
+    "all_gates_pass": false
+  },
+  "interpretation": {
+    "raw_control_volume_is_not_the_TaIrTe4_thermal_source": true,
+    "total_power_can_hide_spatial_nonconvergence": true,
+    "no_fast_candidate_promoted": true,
+    "thermal_PTE_adjoint_optimization_run": false,
+    "dz10_vs_dz5_not_yet_isolated": true
+  }
+}

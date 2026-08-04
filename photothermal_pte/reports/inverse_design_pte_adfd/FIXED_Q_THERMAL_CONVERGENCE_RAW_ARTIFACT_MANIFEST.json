@@ -1,0 +1,59 @@
+{
+  "status": "VALIDATED_FIXED_Q_THERMAL_DOMAIN_DEPTH_MESH_CONVERGENCE",
+  "generated_at_utc": "2026-07-27T07:32:25.478633+00:00",
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python -m photothermal_pte.finite_inverse_design.run_fixed_q_thermal_convergence --input-mapping /home/seunghyun/tairte4_artifacts/support_remap_matched_optical_dz2p5_thermal4um_20260727_1/local_q_thermal_mapping.npz --expected-input-sha256 d6691afe8034ffca10e058b9bb008d63f449d1de351b6d7bf70e54cd1a3c8145 --output-dir /home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1",
+  "raw_summary": {
+    "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/fixed_q_thermal_convergence_summary.json",
+    "byte_size": 54412,
+    "sha256": "b15c6813a6806182da3085ca2d14a6e050bb2d9ddc297f80a24c034646d04ec0"
+  },
+  "input_native_Q_artifact": {
+    "path": "/home/seunghyun/tairte4_artifacts/support_remap_matched_optical_dz2p5_thermal4um_20260727_1/local_q_thermal_mapping.npz",
+    "byte_size": 1350054,
+    "sha256": "d6691afe8034ffca10e058b9bb008d63f449d1de351b6d7bf70e54cd1a3c8145",
+    "note": "only immutable native Yee Q arrays are reused; the prior mapped thermal Q is ignored"
+  },
+  "raw_case_artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/flake_4um_native.npz",
+      "byte_size": 3313950,
+      "sha256": "a3f382b195e14d951a7136a7158089a629b994b46a725cf16328ac5fcbde45a7"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/flake_4um_lateral_40um.npz",
+      "byte_size": 4001178,
+      "sha256": "c69e44f1eb2ae1ff7635ac7c42a9ac9facb1f31b4a1bb2dcb7f0b937a11be706"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/flake_4um_si_depth_30um.npz",
+      "byte_size": 4168686,
+      "sha256": "e454855ab9346d62e92b8b40ff1bc60992a4d6cfca80545ac68652a0faa0a7a5"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/flake_4um_refined.npz",
+      "byte_size": 9420346,
+      "sha256": "85c1d71f135cb6829c4f8ed5065513cb53168648bd72450eed051e39c934c4e7"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/flake_6um_native.npz",
+      "byte_size": 5120160,
+      "sha256": "7722d56a04d8a033e244ac811a91b7246a22c476079d7cb1e9c457e94db1f487"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/flake_6um_lateral_40um.npz",
+      "byte_size": 5961934,
+      "sha256": "c0ac363f0c72e1b4f77d8cf32a2784c8635cc190ee7690557afaf1fc0bce0a00"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/flake_6um_si_depth_30um.npz",
+      "byte_size": 6436274,
+      "sha256": "7a32685fc02cd5386e217a3ad419ec402dd382fa00386dca9c3cbafeb2174727"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/fixed_q_thermal_convergence_20260727_1/flake_6um_refined.npz",
+      "byte_size": 16308738,
+      "sha256": "bca0a4abc7e20d354c5ed503cbc4face050e2f0f5578f78f9b00436ec6fba5e0"
+    }
+  ],
+  "git_policy": "raw per-case NPZ artifacts remain outside Git; only this path/size/SHA-256 manifest is committed"
+}

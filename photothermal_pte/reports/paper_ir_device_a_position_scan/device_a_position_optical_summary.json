@@ -1,0 +1,265 @@
+{
+  "status": "VALIDATED_DEVICE_A_THREE_POSITION_OPTICAL_GATE",
+  "scope": "six optical cases: four new GPU solves plus two immutable s0 artifacts",
+  "promotion_note": "case_result top-level validated=false is preserved; promotion here is based on the explicit per-case gates and independent raw-Q reintegration",
+  "gates": {
+    "all_case_acceptance_items_true": true,
+    "all_six_face_closure_lt_0p5percent": true,
+    "all_auto_shutoff_lt_or_equal_1e_5": true,
+    "all_Q_reintegration_error_lt_0p5percent": true,
+    "all_Q_finite_nonnegative": true,
+    "fixed_common_Q_shape_and_bounds": true,
+    "source_aperture_PML_clearance_at_least_1um": true
+  },
+  "cases": [
+    {
+      "position_label": "sminus1",
+      "signed_s_from_edge_um": 2.000000000000001,
+      "polarization": "a",
+      "source_center_x_um": -3.257552552528326,
+      "source_center_y_um": 0.5928174284216932,
+      "P_Q_W_at_1_W_m2": 2.967404433854614e-11,
+      "P_Q_reintegrated_W": 2.9677439794811726e-11,
+      "Q_reintegration_relative_error": 0.0001144251261083636,
+      "P_six_W_at_1_W_m2": 2.9745017556696203e-11,
+      "six_face_closure": 0.0023860540009694228,
+      "auto_shutoff_final": 9.99515e-06,
+      "P_Qx_W": 7.067487592034981e-13,
+      "P_Qy_W": 2.870684318599446e-11,
+      "P_Qz_W": 2.604523933481851e-13,
+      "negative_Q_voxel_count": 0,
+      "Q_finite": true,
+      "Q_shape": [
+        618,
+        637,
+        54
+      ],
+      "Q_coordinate_bounds_m": {
+        "x": [
+          -1.070221566863469e-05,
+          2.754484313300569e-05
+        ],
+        "y": [
+          -1.589733671164293e-05,
+          1.742380231875221e-05
+        ],
+        "z": [
+          -1.800000000000018e-07,
+          9.740269197847938e-08
+        ]
+      },
+      "source_aperture_minimum_PML_clearance_m": 1.7424474474716723e-06,
+      "case_acceptance_all_true": true,
+      "top_level_promoted_validated_flag": false,
+      "top_level_flag_interpretation": "legacy base-script promotion flag; individual production optical gates are audited independently"
+    },
+    {
+      "position_label": "sminus1",
+      "signed_s_from_edge_um": 2.000000000000001,
+      "polarization": "b",
+      "source_center_x_um": -3.257552552528326,
+      "source_center_y_um": 0.5928174284216932,
+      "P_Q_W_at_1_W_m2": 4.016286976049105e-11,
+      "P_Q_reintegrated_W": 4.0163188690650554e-11,
+      "Q_reintegration_relative_error": 7.940920591694991e-06,
+      "P_six_W_at_1_W_m2": 4.0211417982288344e-11,
+      "six_face_closure": 0.0012073242932809907,
+      "auto_shutoff_final": 9.71839e-06,
+      "P_Qx_W": 3.9986579932223224e-11,
+      "P_Qy_W": 1.4634252247655582e-13,
+      "P_Qz_W": 2.9947305791271526e-14,
+      "negative_Q_voxel_count": 0,
+      "Q_finite": true,
+      "Q_shape": [
+        618,
+        637,
+        54
+      ],
+      "Q_coordinate_bounds_m": {
+        "x": [
+          -1.070221566863469e-05,
+          2.754484313300569e-05
+        ],
+        "y": [
+          -1.589733671164293e-05,
+          1.742380231875221e-05
+        ],
+        "z": [
+          -1.800000000000018e-07,
+          9.740269197847938e-08
+        ]
+      },
+      "source_aperture_minimum_PML_clearance_m": 1.7424474474716723e-06,
+      "case_acceptance_all_true": true,
+      "top_level_promoted_validated_flag": false,
+      "top_level_flag_interpretation": "legacy base-script promotion flag; individual production optical gates are audited independently"
+    },
+    {
+      "position_label": "s0",
+      "signed_s_from_edge_um": 3.000000000000001,
+      "polarization": "a",
+      "source_center_x_um": -2.452215668634704,
+      "source_center_y_um": -8.881784197001252e-16,
+      "P_Q_W_at_1_W_m2": 3.1896570934616587e-11,
+      "P_Q_reintegrated_W": 3.1899145052089513e-11,
+      "Q_reintegration_relative_error": 8.070201270861442e-05,
+      "P_six_W_at_1_W_m2": 3.1972162831501553e-11,
+      "six_face_closure": 0.002364303512507055,
+      "auto_shutoff_final": 9.46101e-06,
+      "P_Qx_W": 6.437590084773525e-13,
+      "P_Qy_W": 3.096845840578203e-11,
+      "P_Qz_W": 2.843535203572047e-13,
+      "negative_Q_voxel_count": 0,
+      "Q_finite": true,
+      "Q_shape": [
+        618,
+        637,
+        54
+      ],
+      "Q_coordinate_bounds_m": {
+        "x": [
+          -1.070221566863469e-05,
+          2.754484313300569e-05
+        ],
+        "y": [
+          -1.589733671164293e-05,
+          1.742380231875221e-05
+        ],
+        "z": [
+          -1.800000000000018e-07,
+          9.740269197847938e-08
+        ]
+      },
+      "source_aperture_minimum_PML_clearance_m": 2.5477843313652952e-06,
+      "case_acceptance_all_true": true,
+      "top_level_promoted_validated_flag": false,
+      "top_level_flag_interpretation": "legacy base-script promotion flag; individual production optical gates are audited independently"
+    },
+    {
+      "position_label": "s0",
+      "signed_s_from_edge_um": 3.000000000000001,
+      "polarization": "b",
+      "source_center_x_um": -2.452215668634704,
+      "source_center_y_um": -8.881784197001252e-16,
+      "P_Q_W_at_1_W_m2": 4.3616288326245206e-11,
+      "P_Q_reintegrated_W": 4.361649533644164e-11,
+      "Q_reintegration_relative_error": 4.746167186074755e-06,
+      "P_six_W_at_1_W_m2": 4.364555404615292e-11,
+      "six_face_closure": 0.0006705315248551616,
+      "auto_shutoff_final": 9.96851e-06,
+      "P_Qx_W": 4.345366091032595e-11,
+      "P_Qy_W": 1.339345335685451e-13,
+      "P_Qz_W": 2.869288235071306e-14,
+      "negative_Q_voxel_count": 0,
+      "Q_finite": true,
+      "Q_shape": [
+        618,
+        637,
+        54
+      ],
+      "Q_coordinate_bounds_m": {
+        "x": [
+          -1.070221566863469e-05,
+          2.754484313300569e-05
+        ],
+        "y": [
+          -1.589733671164293e-05,
+          1.742380231875221e-05
+        ],
+        "z": [
+          -1.800000000000018e-07,
+          9.740269197847938e-08
+        ]
+      },
+      "source_aperture_minimum_PML_clearance_m": 2.5477843313652952e-06,
+      "case_acceptance_all_true": true,
+      "top_level_promoted_validated_flag": false,
+      "top_level_flag_interpretation": "legacy base-script promotion flag; individual production optical gates are audited independently"
+    },
+    {
+      "position_label": "splus1",
+      "signed_s_from_edge_um": 4.000000000000001,
+      "polarization": "a",
+      "source_center_x_um": -1.6468787847410813,
+      "source_center_y_um": -0.592817428421695,
+      "P_Q_W_at_1_W_m2": 3.386492892924058e-11,
+      "P_Q_reintegrated_W": 3.386682417051104e-11,
+      "Q_reintegration_relative_error": 5.596472015103312e-05,
+      "P_six_W_at_1_W_m2": 3.3895138863348024e-11,
+      "six_face_closure": 0.000891276304523698,
+      "auto_shutoff_final": 9.78222e-06,
+      "P_Qx_W": 5.709873856483815e-13,
+      "P_Qy_W": 3.2980266782373373e-11,
+      "P_Qz_W": 3.1367476121882783e-13,
+      "negative_Q_voxel_count": 0,
+      "Q_finite": true,
+      "Q_shape": [
+        618,
+        637,
+        54
+      ],
+      "Q_coordinate_bounds_m": {
+        "x": [
+          -1.070221566863469e-05,
+          2.754484313300569e-05
+        ],
+        "y": [
+          -1.589733671164293e-05,
+          1.742380231875221e-05
+        ],
+        "z": [
+          -1.800000000000018e-07,
+          9.740269197847938e-08
+        ]
+      },
+      "source_aperture_minimum_PML_clearance_m": 3.35312121525892e-06,
+      "case_acceptance_all_true": true,
+      "top_level_promoted_validated_flag": false,
+      "top_level_flag_interpretation": "legacy base-script promotion flag; individual production optical gates are audited independently"
+    },
+    {
+      "position_label": "splus1",
+      "signed_s_from_edge_um": 4.000000000000001,
+      "polarization": "b",
+      "source_center_x_um": -1.6468787847410813,
+      "source_center_y_um": -0.592817428421695,
+      "P_Q_W_at_1_W_m2": 4.6706165706453327e-11,
+      "P_Q_reintegrated_W": 4.670629655192308e-11,
+      "Q_reintegration_relative_error": 2.8014603163252147e-06,
+      "P_six_W_at_1_W_m2": 4.673525512870901e-11,
+      "six_face_closure": 0.0006224299444942131,
+      "auto_shutoff_final": 9.89737e-06,
+      "P_Qx_W": 4.655877655117059e-11,
+      "P_Qy_W": 1.2003737078019294e-13,
+      "P_Qz_W": 2.735178450254297e-14,
+      "negative_Q_voxel_count": 0,
+      "Q_finite": true,
+      "Q_shape": [
+        618,
+        637,
+        54
+      ],
+      "Q_coordinate_bounds_m": {
+        "x": [
+          -1.070221566863469e-05,
+          2.754484313300569e-05
+        ],
+        "y": [
+          -1.589733671164293e-05,
+          1.742380231875221e-05
+        ],
+        "z": [
+          -1.800000000000018e-07,
+          9.740269197847938e-08
+        ]
+      },
+      "source_aperture_minimum_PML_clearance_m": 3.35312121525892e-06,
+      "case_acceptance_all_true": true,
+      "top_level_promoted_validated_flag": false,
+      "top_level_flag_interpretation": "legacy base-script promotion flag; individual production optical gates are audited independently"
+    }
+  ],
+  "no_Q_clipping_smoothing_gain_rescaling": true,
+  "no_CPU_FDTD_fallback": true,
+  "no_25nm_or_12p5nm_refinement": true
+}

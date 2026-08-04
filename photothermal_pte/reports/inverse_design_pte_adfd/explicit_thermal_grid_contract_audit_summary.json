@@ -1,0 +1,150 @@
+{
+  "status": "AUDITED_EXPLICIT_THERMAL_INDEPENDENT_GRID_PARAMETERS",
+  "passed": true,
+  "generated_at_utc": "2026-07-27T06:47:59.324632+00:00",
+  "legacy_baseline_bitwise_equal": true,
+  "parameters": [
+    "core_xy_cell_size_m",
+    "flake_dz_m",
+    "design_dz_m"
+  ],
+  "one_at_a_time_variants": {
+    "baseline_legacy": {
+      "shape": [
+        76,
+        76,
+        76
+      ],
+      "total_cells": 438976,
+      "core_xy_cell_size_m": 1e-07,
+      "flake_dz_m": 2.5e-08,
+      "design_dz_m": 1e-07,
+      "flake_z_cell_count": 4,
+      "design_z_cell_count": 6,
+      "x_bounds_m": [
+        -1.6e-05,
+        1.6e-05
+      ],
+      "y_bounds_m": [
+        -1.6e-05,
+        1.6e-05
+      ],
+      "z_key_faces_m": [
+        -3.85e-07,
+        -1e-07,
+        0.0,
+        6e-07
+      ]
+    },
+    "baseline_explicit": {
+      "shape": [
+        76,
+        76,
+        76
+      ],
+      "total_cells": 438976,
+      "core_xy_cell_size_m": 1e-07,
+      "flake_dz_m": 2.5e-08,
+      "design_dz_m": 1e-07,
+      "flake_z_cell_count": 4,
+      "design_z_cell_count": 6,
+      "x_bounds_m": [
+        -1.6e-05,
+        1.6e-05
+      ],
+      "y_bounds_m": [
+        -1.6e-05,
+        1.6e-05
+      ],
+      "z_key_faces_m": [
+        -3.85e-07,
+        -1e-07,
+        0.0,
+        6e-07
+      ]
+    },
+    "xy_refined_only": {
+      "shape": [
+        120,
+        120,
+        76
+      ],
+      "total_cells": 1094400,
+      "core_xy_cell_size_m": 5e-08,
+      "flake_dz_m": 2.5e-08,
+      "design_dz_m": 1e-07,
+      "flake_z_cell_count": 4,
+      "design_z_cell_count": 6,
+      "x_bounds_m": [
+        -1.6e-05,
+        1.6e-05
+      ],
+      "y_bounds_m": [
+        -1.6e-05,
+        1.6e-05
+      ],
+      "z_key_faces_m": [
+        -3.85e-07,
+        -1e-07,
+        0.0,
+        6e-07
+      ]
+    },
+    "flake_z_refined_only": {
+      "shape": [
+        76,
+        76,
+        80
+      ],
+      "total_cells": 462080,
+      "core_xy_cell_size_m": 1e-07,
+      "flake_dz_m": 1.25e-08,
+      "design_dz_m": 1e-07,
+      "flake_z_cell_count": 8,
+      "design_z_cell_count": 6,
+      "x_bounds_m": [
+        -1.6e-05,
+        1.6e-05
+      ],
+      "y_bounds_m": [
+        -1.6e-05,
+        1.6e-05
+      ],
+      "z_key_faces_m": [
+        -3.85e-07,
+        -1e-07,
+        0.0,
+        6e-07
+      ]
+    },
+    "design_z_refined_only": {
+      "shape": [
+        76,
+        76,
+        82
+      ],
+      "total_cells": 473632,
+      "core_xy_cell_size_m": 1e-07,
+      "flake_dz_m": 2.5e-08,
+      "design_dz_m": 5e-08,
+      "flake_z_cell_count": 4,
+      "design_z_cell_count": 12,
+      "x_bounds_m": [
+        -1.6e-05,
+        1.6e-05
+      ],
+      "y_bounds_m": [
+        -1.6e-05,
+        1.6e-05
+      ],
+      "z_key_faces_m": [
+        -3.85e-07,
+        -1e-07,
+        0.0,
+        6e-07
+      ]
+    }
+  },
+  "solver_run": false,
+  "optimization_run": false
+}

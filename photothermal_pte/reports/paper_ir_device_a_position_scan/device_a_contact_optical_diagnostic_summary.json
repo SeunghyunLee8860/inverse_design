@@ -1,0 +1,65 @@
+{
+  "status": "COMPLETED_DEVICE_A_AU_TI_OPTICAL_SCATTERING_DIAGNOSTIC",
+  "not_actual_device_or_paper_reproduction": true,
+  "dominance_threshold_predeclared": 0.1,
+  "dominance_rule": "equal-power TaIrTe4 q2d NRMSE, edge-fraction relative change, and maximum |Ia| relative change must all be at least 10%",
+  "contact_optical_scattering_dominant": false,
+  "spatial_comparison_grid": {
+    "coordinate_grids_identical": false,
+    "common_grid": "Au/Ti-on bounded dual-cell x/y grid",
+    "AuTi_off_exact_overlap_conservative_remap_power_error": 2.1222966300656438e-16,
+    "simple_array_index_pairing_used": false
+  },
+  "metrics": {
+    "AuTi_on": {
+      "raw_total_P_Q_W": 3.1896570934616587e-11,
+      "TaIrTe4_power_W": 3.044497915864199e-11,
+      "component_power_W": {
+        "x": 6.211388778582231e-13,
+        "y": 2.9581043237568596e-11,
+        "z": 2.427970432151604e-13
+      },
+      "edge_band_half_width_um": 1.0,
+      "edge_localized_TaIrTe4_power_fraction": 0.11112058069839897,
+      "six_face_closure": 0.002364303512507055,
+      "auto_shutoff": 9.46101e-06
+    },
+    "AuTi_off": {
+      "raw_total_P_Q_W": 3.153283197513759e-11,
+      "TaIrTe4_power_W": 3.044978936507402e-11,
+      "component_power_W": {
+        "x": 6.354820816961369e-13,
+        "y": 2.976613105871677e-11,
+        "z": 4.817622466111154e-14
+      },
+      "edge_band_half_width_um": 1.0,
+      "edge_localized_TaIrTe4_power_fraction": 0.11039057415390068,
+      "six_face_closure": 0.00011358944611644064,
+      "auto_shutoff": 9.92474e-06
+    }
+  },
+  "equal_power_TaIrTe4_q2d_NRMSE": 0.1331681000370819,
+  "edge_localized_fraction_relative_change": 0.006569499006486176,
+  "terminal_current": {
+    "isolated": {
+      "I_a_on_A": 8.072622429764236e-09,
+      "I_a_off_A": 8.109677989357083e-09,
+      "I_b_baseline_A": 4.990319469064974e-09,
+      "ratio_on": 1.6176564405959337,
+      "ratio_off": 1.625081929048638,
+      "relative_Ia_change": 0.004590275330631288,
+      "relative_ratio_change": 0.004590275330631268
+    },
+    "perfect": {
+      "I_a_on_A": 8.196197440488383e-09,
+      "I_a_off_A": 8.109677989357083e-09,
+      "I_b_baseline_A": 5.001980469742066e-09,
+      "ratio_on": 1.6385904523355788,
+      "ratio_off": 1.6212934133617818,
+      "relative_Ia_change": 0.010556047698888037,
+      "relative_ratio_change": 0.010556047698888085
+    }
+  },
+  "no_raw_Q_rescaling": true,
+  "equal_power_copy_used_only_for_spatial_shape_diagnostic": true
+}

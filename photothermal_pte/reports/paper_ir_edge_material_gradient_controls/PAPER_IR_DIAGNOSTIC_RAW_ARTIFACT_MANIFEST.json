@@ -1,0 +1,55 @@
+{
+  "artifacts": {
+    "case_result.json": {
+      "exists_after_session_close": true,
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_smoke_a_w2_L12_dz10_gpu4_20260730/case_result.json",
+      "sha256": "e825e9717179abd927e0a135aae63cf9254eb58395cf446dcf99c2eaede51752",
+      "size_bytes": 51458
+    },
+    "diagnostic_q_native_artifact.npz": {
+      "exists_after_session_close": true,
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_smoke_a_w2_L12_dz10_gpu4_20260730/diagnostic_q_native_artifact.npz",
+      "sha256": "59aa4b6e4f0289c8b425d80785f387b9f5d1b574b2cde9dbfc817194d9b7b76a",
+      "size_bytes": 57367466
+    },
+    "finite_2um_optical_q.fsp": {
+      "exists_after_session_close": true,
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_smoke_a_w2_L12_dz10_gpu4_20260730/finite_2um_optical_q.fsp",
+      "sha256": "a5aaa73282b0dae75441dceace200d44f1670b78a45ea055910c2d39939127c8",
+      "size_bytes": 100857948
+    },
+    "finite_2um_optical_q_output.h5": {
+      "exists_after_session_close": false,
+      "note": "transient Lumerical engine H5 was not retained after the session closed; no hash is claimed",
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_smoke_a_w2_L12_dz10_gpu4_20260730/finite_2um_optical_q_output.h5",
+      "sha256": null,
+      "size_bytes": null
+    },
+    "finite_2um_optical_q_p0.log": {
+      "exists_after_session_close": true,
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_smoke_a_w2_L12_dz10_gpu4_20260730/finite_2um_optical_q_p0.log",
+      "sha256": "f977efa27cfe203e6f5f72e22b56acdde99d3022e8679c090f994de6e6d806d1",
+      "size_bytes": 15752
+    },
+    "native_yee_mesh_coordinates.npz": {
+      "exists_after_session_close": true,
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_smoke_a_w2_L12_dz10_gpu4_20260730/native_yee_mesh_coordinates.npz",
+      "sha256": "1b61344cf20a60119165f024a1483c0b4e1f49d44b225bff875570d0d7b0e534",
+      "size_bytes": 34783
+    },
+    "read_only_closure_postprocess.json": {
+      "exists_after_session_close": true,
+      "server_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_smoke_a_w2_L12_dz10_gpu4_20260730/read_only_closure_postprocess.json",
+      "sha256": "3f80c1ff2a107b633851d4f98db5114fe11f3012715fdee161f04ab6795c7b8b",
+      "size_bytes": 3296
+    }
+  },
+  "diagnostic_status": "FAILED_DIAGNOSTIC_ONE_POL_GPU_SMOKE_SIX_FACE_CLOSURE",
+  "generation_command": "/home/eidl/miniconda3/bin/python photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_smoke_a_w2_L12_dz10_gpu4_20260730 --case finite-flake --polarization a --geometry straight-45-edge --domain-um 12 --pml-layers 24 --flake-dz-nm 10 --source-span-um 6 --waist-um 2 --execution-contract diagnostic-smoke --epsilon-c-model paper-b-closure --gpu-device 'GPU 4' --threads 8",
+  "generation_commit": "0f086255e92092573ccfe01376ded1b0fc335647",
+  "official_status": "PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_RUNTIME_AND_UNRESOLVED_EDGE_METRIC",
+  "policy": "Raw NPZ/FSP/H5/log files remain outside Git. This manifest records immutable paths, sizes, hashes, and generation commands.",
+  "read_only_postprocess_command": "see read_only_closure_postprocess.json provenance; no FDTD solve or runanalysis was called",
+  "source_raw_manifest_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/diagnostic_smoke_a_w2_L12_dz10_gpu4_20260730/RAW_ARTIFACT_MANIFEST.json",
+  "source_raw_manifest_sha256": "715a33023d47b328a5cc1652643bd259a509aeec456f684b62645fe6a6447e58"
+}

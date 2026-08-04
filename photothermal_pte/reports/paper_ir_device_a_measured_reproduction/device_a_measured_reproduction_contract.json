@@ -1,0 +1,156 @@
+{
+  "status": "READY_DEVICE_A_MEASURED_REPRODUCTION_CONTRACT",
+  "scope": "offline evidence, material, equation, and absolute-current audit",
+  "sources": {
+    "main_paper": {
+      "path": "/home/seunghyun/tairte4/papers/Adv Funct Materials - 2026 - Blevins - Large Transverse Thermoelectric Effect in Weyl Semimetal TaIrTe4 Engineered for-2.pdf",
+      "size_bytes": 3446019,
+      "sha256": "ad160823ce0805e709be2ea54c663a51280e56c498d76c8d33651599b8733155",
+      "pages": 10
+    },
+    "supporting_information": {
+      "path": "/home/seunghyun/tairte4/papers/adfm75986-sup-0001-suppmat-2.pdf",
+      "size_bytes": 4284519,
+      "sha256": "c2ebe6bfbf00f954e0ccaa88431eec059db7d25beeaa4622ceb3c02d83b7f99c",
+      "pages": 14
+    },
+    "thesis": {
+      "path": "/home/seunghyun/tairte4/papers/PhD_Thesis_Blevins.pdf",
+      "size_bytes": 26256660,
+      "sha256": "06e159965f9ab0ca5b7dc9d601d9206d18f897d287e48f073cff1c6e7f487f30",
+      "pages": 164
+    },
+    "geometry_digitization": {
+      "path": "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json",
+      "size_bytes": 4116,
+      "sha256": "291034c04b3caf153c1d68b3499718f6a35d24229a53102b0d5bea4b78a0325e",
+      "pages": null
+    },
+    "figure_3J_digitization": {
+      "path": "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/paper_fig3j_11um_current_ratio_digitization.json",
+      "size_bytes": 2013,
+      "sha256": "607dfbd016e462ef6ba937c40fab488e9597d50d5266d44eb24062bdb6d12fc4",
+      "pages": null
+    },
+    "existing_Palik_case_result": {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_x9_y12_dz10_a_gpu2_retry1_20260802/case_result.json",
+      "size_bytes": 132352,
+      "sha256": "c0e358b718b4f28da6f921eec3a34a7dcc20ddb719e9c1dca7f814208eb0125a",
+      "pages": null
+    },
+    "exact_11um_nk_material_readback": {
+      "path": "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_measured_reproduction/kitamura_palik_nk_substrate_readback.json",
+      "size_bytes": 3597,
+      "sha256": "ad02e1fc32fb05b157a705f38ee1f6437c99f5f96667ba5b4e5ca1fface1308a",
+      "pages": null
+    }
+  },
+  "optical_substrate_models": {
+    "paper_consistent_scenario": {
+      "SiO2_model": "Kitamura et al. 2007 Eq.21-24/Table 2",
+      "SiO2_at_11um": {
+        "n_real": 2.0194436826147366,
+        "n_imag": 0.16262021932999673,
+        "epsilon_real": 4.051707451517633,
+        "epsilon_imag": 0.6568047491827695
+      },
+      "Si_model": "Lumerical v261 Palik raw 11-um n,k copied into the single-frequency n,k model; explicit closure",
+      "Si_at_11um": {
+        "n_real": 3.4212896222169786,
+        "n_imag": 4.3898803101970856e-05,
+        "epsilon_real": 11.70522267716249,
+        "epsilon_imag": 0.0003003810389610388
+      },
+      "identity_limit": "paper cites Kitamura for the SiO2 phonon but does not identify an exact Si database or say its RCWA used this exact fit",
+      "FDTD_material_contract": "exact 11-um Kitamura-SiO2 and Palik-Si n,k readback; finite numerical pulse centred in frequency at 11 um"
+    },
+    "legacy_comparison": {
+      "model": "Lumerical Palik SiO2/Si fitted over 7-13 um",
+      "SiO2_at_11um": {
+        "n_real": 1.9885408590100595,
+        "n_imag": 0.04505653854970146,
+        "epsilon_real": 3.9522646562863843,
+        "epsilon_imag": 0.1791935357432864
+      }
+    },
+    "SiO2_k_ratio_Kitamura_over_Palik": 3.609247948566041
+  },
+  "experimental_targets": {
+    "wavelength_m": 1.1e-05,
+    "incident_power_W_exact_SI": 0.0002844,
+    "incident_power_W_rounded_main_caption": 0.000285,
+    "figure_3J_digitized_ratio": {
+      "quantity": "|Ia|/|Ib|",
+      "value": 0.8365896980461811,
+      "uncertainty": 0.00852575488454707,
+      "inverse": 1.1953290870488325
+    },
+    "absolute_current_unit_consistency": "FAIL_PAPER_FIG3I_NA_VS_MAPS_PA",
+    "SI_Figure_S5_off_axis_Ea_frequency_fit": {
+      "I0_pA": 129.0,
+      "tau_s": 2.6e-05,
+      "tau_uncertainty_s": 3.3e-06,
+      "measurement_chopper_frequency_Hz": 3675.0,
+      "fitted_current_at_measurement_frequency_pA": 110.59909805088104
+    },
+    "main_Figure_3I_visual_profile_estimate": {
+      "Ia_minimum_plot_units_approx": -122.0,
+      "Ib_minimum_plot_units_approx": -143.0,
+      "printed_axis_unit": "nA",
+      "likely_physical_unit": "pA",
+      "basis": "the 11-um maps use +/-200 pA and the independent SI off-axis frequency fit gives I0=129 pA",
+      "not_a_tabulated_measurement": true
+    }
+  },
+  "absolute_current_audit": {
+    "two_terminal_resistance": {
+      "purpose": "absolute-current geometry audit only; no empirical conductivity or PTE-current rescaling is applied",
+      "axis_mapping": "x=b, y=a",
+      "sigma_x_y_S_m": [
+        110000.0,
+        491000.0
+      ],
+      "thickness_m": 1.3e-07,
+      "contact_geometry": "frozen Figure-2 digitized contact segments",
+      "contact_resistance_included": false,
+      "applied_voltage_V": 1.0,
+      "predicted_terminal_current_A": 0.07072605540905455,
+      "predicted_resistance_ohm": 14.139060834318453,
+      "published_measured_device_A_resistance_ohm": 213.0,
+      "relative_difference_vs_measured": 0.9336194327027303,
+      "terminal_current_balance_relative_error": 1.5677888996230077e-12,
+      "linear_residual_relative": 1.6837300912614442e-15,
+      "absolute_current_geometry_gate_lt_10pct": false,
+      "interpretation": "a failure blocks certification of absolute PTE-current magnitude because exact CAD/contact resistance are unpublished; it does not invalidate a separately converged polarization ratio"
+    },
+    "no_resistance_or_current_rescaling": true
+  },
+  "equation_contract": {
+    "coordinate_mapping": "x=b, y=a",
+    "Jx": "-sigma_b*S_b*dT/dx",
+    "Jy": "-sigma_a*S_a*dT/dy",
+    "collection": "volume integral J_local dot grad(psi)",
+    "thermal_primary": "paper SI Eq.S4 reduced flake-only Robin model"
+  },
+  "missing_for_exact_reproduction": [
+    "exact Device-A CAD and hidden metal/flakes overlap",
+    "contact resistance decomposition",
+    "11-um beam definition and measured x/y profile",
+    "objective transmission eta",
+    "exact off-axis scan coordinates",
+    "paper's exact Si optical dataset",
+    "internally consistent absolute-current units for Figure 3H/I"
+  ],
+  "prohibited_adjustments": [
+    "Q clipping",
+    "Q smoothing",
+    "optical gain or global rescaling",
+    "polarization power matching",
+    "current or conductivity fitting to 213 ohm"
+  ],
+  "FDTD_run": false,
+  "thermal_run": false,
+  "PTE_run": false,
+  "adjoint_run": false,
+  "optimization_run": false
+}

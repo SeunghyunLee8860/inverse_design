@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "20260726T190416Z",
+  "status": "VALIDATED_PAPER_REDUCED_THERMAL_MATERIAL_ADFD",
+  "passed": true,
+  "scope": "fixed optical Q; rho-dependent paper-reduced TaIrTe4 surface Robin thermal derivative",
+  "material_label": "n=4 optical proxy + paper SiO2 thermal boundary",
+  "paper_contract": {
+    "TaIrTe4_kappa_W_mK": [
+      14.4,
+      3.8,
+      1.0
+    ],
+    "TaIrTe4_air_G_W_m2K": 1.0,
+    "TaIrTe4_thermally_grown_SiO2_G_W_m2K": 7370000.0,
+    "TaIrTe4_evaporated_SiO2_G_W_m2K": 73700.0,
+    "bath_temperature_K": 300.0,
+    "unknown_solved": "theta=T-T_bath",
+    "design_G_law": "G_air + rho_bar*(G_SiO2-G_air)",
+    "bulk_air_SiO2_Si_omitted": true,
+    "SiO2_Si_G_omitted": true
+  },
+  "mapping": {
+    "physical_shape": [
+      241,
+      241,
+      13
+    ],
+    "thermal_face_shape": [
+      24,
+      24
+    ],
+    "block_shape": [
+      10,
+      10
+    ],
+    "rule": "drop duplicated x/y fencepost, average physical z, then 10x10 area average onto each thermal face"
+  },
+  "inputs": {
+    "fixed_Q": {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/thermal_pte_native_pullback_x_20260726/thermal_pte_native_yee_pullback.npz",
+      "bytes": 33269464,
+      "sha256": "da7d0d9f1ab4f7a409b67ad3e4bcad1275dead152698fdb864e350fd5d2f0264"
+    },
+    "physical_density_and_direction": {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/maxwell_absorption_x_20260726/maxwell_absorption_adfd_x.npz",
+      "bytes": 11655802,
+      "sha256": "50f2a9ced1763b275043a0c1bfe94af7eb8d3affad735afbd58909ff6b6d96a3"
+    }
+  },
+  "scenarios": [
+    {
+      "name": "thermally_grown_SiO2_baseline",
+      "G_SiO2_W_m2K": 7370000.0,
+      "passed": true,
+      "objective_A_m_per_W_m2": -2.145649330179035e-21,
+      "adjoint_directional": -1.6030177074177752e-21,
+      "best_step": {
+        "scenario": "thermally_grown_SiO2_baseline",
+        "G_SiO2_W_m2K": 7370000.0,
+        "step": 0.0001,
+        "adjoint_directional": -1.6030177074177752e-21,
+        "finite_difference": -1.6030177373760217e-21,
+        "absolute_error": 2.99582465357911e-29,
+        "relative_error": 1.8688655675656916e-08,
+        "plus_objective_A_m_per_W_m2": -2.145809644416683e-21,
+        "minus_objective_A_m_per_W_m2": -2.1454890408692078e-21
+      },
+      "gradient_thermal_material_l2_A_m": 5.489453051295547e-21,
+      "temperature_rise_max_K_per_W_m2": 2.865010194022847e-08,
+      "source_power_W_per_W_m2": 8.79339492981549e-12,
+      "energy_balance_relative_error": 1.837273484004126e-15,
+      "linear_residual_relative": 6.833333521242974e-12,
+      "boundary": {
+        "top_face_count": 576,
+        "bottom_face_count": 576,
+        "air_endpoint_face_count": 0,
+        "sio2_endpoint_face_count": 0,
+        "gray_face_count": 576,
+        "air_equivalent_area_fraction": 0.5,
+        "sio2_equivalent_area_fraction": 0.5,
+        "G_design_min_W_m2K": 2904465.3955762177,
+        "G_design_max_W_m2K": 4465535.604423782,
+        "G_design_area_weighted_mean_W_m2K": 3685000.5,
+        "top_active_area_m2": 3.6000000000000005e-11,
+        "bottom_active_area_m2": 3.6000000000000005e-11,
+        "boundary_power_out_W": {
+          "surface_robin_z_min": 5.575371642708374e-12,
+          "surface_robin_z_max": 3.2180232871071e-12
+        }
+      }
+    },
+    {
+      "name": "evaporated_SiO2_sensitivity",
+      "G_SiO2_W_m2K": 73700.0,
+      "passed": true,
+      "objective_A_m_per_W_m2": -1.638764341557909e-21,
+      "adjoint_directional": -3.3923584881121186e-23,
+      "best_step": {
+        "scenario": "evaporated_SiO2_sensitivity",
+        "G_SiO2_W_m2K": 73700.0,
+        "step": 0.0025,
+        "adjoint_directional": -3.3923584881121186e-23,
+        "finite_difference": -3.392358488151827e-23,
+        "absolute_error": 3.970819917077687e-34,
+        "relative_error": 1.170518956338547e-11,
+        "plus_objective_A_m_per_W_m2": -1.6388491524106798e-21,
+        "minus_objective_A_m_per_W_m2": -1.6386795344862722e-21
+      },
+      "gradient_thermal_material_l2_A_m": 1.1865957197595647e-22,
+      "temperature_rise_max_K_per_W_m2": 4.426929205233632e-08,
+      "source_power_W_per_W_m2": 8.79339492981549e-12,
+      "energy_balance_relative_error": 3.6745469680082516e-16,
+      "linear_residual_relative": 6.627450306032303e-12,
+      "boundary": {
+        "top_face_count": 576,
+        "bottom_face_count": 576,
+        "air_endpoint_face_count": 0,
+        "sio2_endpoint_face_count": 0,
+        "gray_face_count": 576,
+        "air_equivalent_area_fraction": 0.5,
+        "sio2_equivalent_area_fraction": 0.5,
+        "G_design_min_W_m2K": 29045.253803775508,
+        "G_design_max_W_m2K": 44655.74619622449,
+        "G_design_area_weighted_mean_W_m2K": 36850.5,
+        "top_active_area_m2": 3.6000000000000005e-11,
+        "bottom_active_area_m2": 3.6000000000000005e-11,
+        "boundary_power_out_W": {
+          "surface_robin_z_min": 8.739494922472726e-12,
+          "surface_robin_z_max": 5.390000734276139e-14
+        }
+      }
+    }
+  ],
+  "gates": {
+    "relative_error_limit": 0.0001,
+    "energy_balance_limit": 0.01,
+    "linear_residual_limit": 1e-08
+  },
+  "git": {
+    "branch": "agent/validate-inverse-design-pte-adfd",
+    "head_before_generated_reports": "e226b5240784b7fa02940a0f2e72aff665cc2bce"
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/paper_reduced_thermal_material_adfd_20260726/paper_reduced_thermal_material_adfd.npz",
+    "bytes": 40909,
+    "sha256": "97db4aa8ae975d86b6485ee4e84051ee55ea578d721d3170da168264d8ce83d6",
+    "committed_to_git": false
+  },
+  "blockers": [
+    "BLOCKED_COMBINED_RHO_DEPENDENT_MAXWELL_THERMAL_ADFD",
+    "BLOCKED_PHYSICAL_WEIGHTING_POTENTIAL_OR_FINITE_FLAKE_MASK"
+  ]
+}

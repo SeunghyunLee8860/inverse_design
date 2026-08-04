@@ -1,0 +1,48 @@
+{
+  "status": "VALIDATED_WEIGHTED_ADJOINT_SOURCE_COLLOCATION_DIAGNOSTIC",
+  "passed": true,
+  "scope": "single strong-direction diagnostic; not the final multi-direction combined AD-FD certificate",
+  "preserved_stage10_failure": {
+    "status": "DIAGNOSTIC_FAILED_COMBINED_PHYSICAL_RHO_PTE_ADFD",
+    "selected_step_errors": {
+      "4um": 0.0214938,
+      "6um": 0.028852
+    },
+    "empirical_normalization": false,
+    "gradient_rescaling": false
+  },
+  "component_split": {
+    "thermal_only_relative_error_h0p005": {
+      "4um": 1.7858200094318616e-06,
+      "6um": 1.2994543859134729e-05
+    },
+    "old_weighted_optical_relative_error_h0p005": {
+      "4um": 0.02744606356927276,
+      "6um": 0.02804980221932211
+    }
+  },
+  "nonuniform_P_Q_control": {
+    "relative_error_h0p01": 0.002049001155932475,
+    "relative_error_h0p005": 0.00209005220179503
+  },
+  "weighted_source_collocation": {
+    "naive_common_grid_interpolation_relative_error": {
+      "h0p01": 0.018685986858031457,
+      "h0p005": 0.01869742424249898
+    },
+    "exact_component_collocation_relative_error": {
+      "h0p01": 0.007973398553602148,
+      "h0p005": 0.007984960795138295
+    },
+    "worst_collocation_reconstruction_max_abs_error": 1.2412670766236366e-16,
+    "native_Q_mapping_transpose_relative_error": 8.251007226564848e-16,
+    "maximum_forward_adjoint_coordinate_mismatch_m": 4.235164736271502e-22,
+    "empirical_normalization": false,
+    "gradient_rescaling": false,
+    "source_deletion": false
+  },
+  "next_gate": "MULTIDIRECTION_MULTISTEP_COMBINED_PHYSICAL_RHO_PTE_ADFD",
+  "gray_law_sensitivity_run": false,
+  "full_latent_adfd_run": false,
+  "optimization_run": false
+}

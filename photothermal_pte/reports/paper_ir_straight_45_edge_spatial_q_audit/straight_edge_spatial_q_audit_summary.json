@@ -1,0 +1,478 @@
+{
+  "status": "UNRESOLVED_STRAIGHT_EDGE_OPTICAL_AND_THERMAL_SPATIAL_CONVERGENCE",
+  "decision": "paper-source/reduced-boundary control reproduces b>a gradient, whereas saved finite-edge Lumerical Q reverses the paper max|dT/dx| comparator on both 100 and 50 nm grids; absolute edge gradients are not mesh converged, so do not promote a paper reproduction or a physical reversal",
+  "axis_order_regression": {
+    "old_projection_orders": [
+      "x/y/z/x",
+      "y/x/z/y"
+    ],
+    "symmetric_Gaussian_relative_L1_difference": 0.5,
+    "power_conserved_in_both": true,
+    "replacement": "single physical-3D-nearest support projection with exact nearest-distance ties split uniformly",
+    "replacement_power_transpose_symmetry_tests": "passed",
+    "actual_saved_Q_artifact_audit": {
+      "a": {
+        "old_xfirst_vs_yfirst_relative_L1": 2.5857849804386054e-05,
+        "old_xfirst_vs_new_relative_L1": 0.00019838479537340398,
+        "unprojected_outside_support_fraction": 0.04358717000666918,
+        "new_projection_power_error_relative": 1.3753322745301685e-16,
+        "new_projection_outside_support_power_W": 0.0
+      },
+      "b": {
+        "old_xfirst_vs_yfirst_relative_L1": 2.2352170366364034e-05,
+        "old_xfirst_vs_new_relative_L1": 4.4673970053638643e-05,
+        "unprojected_outside_support_fraction": 0.03880214346840575,
+        "new_projection_power_error_relative": 2.2208347805230535e-16,
+        "new_projection_outside_support_power_W": 0.0
+      }
+    }
+  },
+  "ratios_b_over_a": {
+    "paper_analytic_100nm": {
+      "max_abs_grad_T_x_K_m": 1.4467698811863687,
+      "max_abs_grad_T_y_K_m": 1.4484251446474523,
+      "max_inplane_gradient_K_m": 1.4469379522089099,
+      "max_abs_edge_normal_gradient_K_m": 1.4459323277206362,
+      "max_abs_edge_tangent_gradient_K_m": 1.4472064634916697,
+      "Tmax_rise_K": 1.4471685887664927,
+      "fixed_24um_ROI_area_average_rise_K": 1.4470699325371716
+    },
+    "paper_analytic_50nm": {
+      "max_abs_grad_T_x_K_m": 1.4469538806848083,
+      "max_abs_grad_T_y_K_m": 1.448046770325349,
+      "max_inplane_gradient_K_m": 1.4470442398956578,
+      "max_abs_edge_normal_gradient_K_m": 1.4464878032380448,
+      "max_abs_edge_tangent_gradient_K_m": 1.4472149667250904,
+      "Tmax_rise_K": 1.4471700451156506,
+      "fixed_24um_ROI_area_average_rise_K": 1.447069935129087
+    },
+    "paper_reduced_with_Lumerical_Q_100nm": {
+      "max_abs_grad_T_x_K_m": 0.8054467894682689,
+      "max_abs_grad_T_y_K_m": 0.9005744875928755,
+      "max_inplane_gradient_K_m": 0.7906415517356722,
+      "max_abs_edge_normal_gradient_K_m": 0.7517163921335592,
+      "max_abs_edge_tangent_gradient_K_m": 0.9371499029056726,
+      "Tmax_rise_K": 0.8981664205796435,
+      "fixed_24um_ROI_area_average_rise_K": 1.2211187082767287
+    },
+    "paper_reduced_with_Lumerical_Q_50nm": {
+      "max_abs_grad_T_x_K_m": 0.8813304685547483,
+      "max_abs_grad_T_y_K_m": 1.0000350743925723,
+      "max_inplane_gradient_K_m": 0.8838058556036468,
+      "max_abs_edge_normal_gradient_K_m": 0.8098387677947864,
+      "max_abs_edge_tangent_gradient_K_m": 0.9357084783506938,
+      "Tmax_rise_K": 0.9119050489188681,
+      "fixed_24um_ROI_area_average_rise_K": 1.2211186051293137
+    },
+    "production_L48": {
+      "max_abs_grad_T_x_K_m": 0.8170714494561798,
+      "max_abs_grad_T_y_K_m": 0.9042889570671672,
+      "max_inplane_gradient_K_m": 0.7988949765839278,
+      "max_abs_edge_normal_gradient_K_m": 0.753642160213275,
+      "max_abs_edge_tangent_gradient_K_m": 0.9403428833925424,
+      "Tmax_rise_K": 0.9647931549722456,
+      "fixed_24um_ROI_area_average_rise_K": 1.2359002013340226
+    },
+    "production_L64": {
+      "max_abs_grad_T_x_K_m": 0.8170579603054229,
+      "max_abs_grad_T_y_K_m": 0.9042913508262942,
+      "max_inplane_gradient_K_m": 0.7988810430222227,
+      "max_abs_edge_normal_gradient_K_m": 0.7536427688267663,
+      "max_abs_edge_tangent_gradient_K_m": 0.9403344647393965,
+      "Tmax_rise_K": 0.9649601848525913,
+      "fixed_24um_ROI_area_average_rise_K": 1.2359625815868258
+    },
+    "production_L80": {
+      "max_abs_grad_T_x_K_m": 0.8170541072616362,
+      "max_abs_grad_T_y_K_m": 0.9042916732205853,
+      "max_inplane_gradient_K_m": 0.7988770824397401,
+      "max_abs_edge_normal_gradient_K_m": 0.753642631585054,
+      "max_abs_edge_tangent_gradient_K_m": 0.9403318093450003,
+      "Tmax_rise_K": 0.9650045920249067,
+      "fixed_24um_ROI_area_average_rise_K": 1.2359773815804032
+    }
+  },
+  "thermal_domain_convergence_relative_to_80um": {
+    "a_48_to_80": {
+      "Tmax_rise_K": 0.0006624994106143656,
+      "fixed_24um_ROI_area_average_rise_K": 0.004378924356399423,
+      "max_abs_grad_T_x_K_m": 1.8861775631429192e-05,
+      "max_abs_grad_T_y_K_m": 4.043041094236843e-06,
+      "max_inplane_gradient_K_m": 1.3183204518280784e-05,
+      "max_abs_edge_normal_gradient_K_m": 4.73772021469604e-06,
+      "max_abs_edge_tangent_gradient_K_m": 6.534249738374885e-05
+    },
+    "a_64_to_80": {
+      "Tmax_rise_K": 0.00014131398345569308,
+      "fixed_24um_ROI_area_average_rise_K": 0.0009269406971289649,
+      "max_abs_grad_T_x_K_m": 4.250458631515838e-06,
+      "max_abs_grad_T_y_K_m": 3.8069107985141767e-07,
+      "max_inplane_gradient_K_m": 3.0971224161139394e-06,
+      "max_abs_edge_normal_gradient_K_m": 6.011513006632392e-07,
+      "max_abs_edge_tangent_gradient_K_m": 1.3910429741603953e-05
+    },
+    "b_48_to_80": {
+      "Tmax_rise_K": 0.000881458965299011,
+      "fixed_24um_ROI_area_average_rise_K": 0.004441095623499469,
+      "max_abs_grad_T_x_K_m": 4.008744660490324e-05,
+      "max_abs_grad_T_y_K_m": 7.046654327789786e-06,
+      "max_inplane_gradient_K_m": 3.5582620502524585e-05,
+      "max_abs_edge_normal_gradient_K_m": 5.363175206146482e-06,
+      "max_abs_edge_tangent_gradient_K_m": 7.712001148879269e-05
+    },
+    "b_64_to_80": {
+      "Tmax_rise_K": 0.00018732505669623572,
+      "fixed_24um_ROI_area_average_rise_K": 0.000938903921603241,
+      "max_abs_grad_T_x_K_m": 8.966254231488021e-06,
+      "max_abs_grad_T_y_K_m": 7.372067682650593e-07,
+      "max_inplane_gradient_K_m": 8.054824716144234e-06,
+      "max_abs_edge_normal_gradient_K_m": 4.1904691316006896e-07,
+      "max_abs_edge_tangent_gradient_K_m": 1.6734359877247468e-05
+    }
+  },
+  "paper_reduced_thermal_mesh_convergence_100_to_50": {
+    "analytic_paper_source_a_100_to_50": {
+      "Tmax_rise_K": 0.001055238006751471,
+      "fixed_24um_ROI_area_average_rise_K": 0.0022403801322693896,
+      "max_abs_grad_T_x_K_m": 0.01860247266659415,
+      "max_abs_grad_T_y_K_m": 0.10711431363451644,
+      "max_inplane_gradient_K_m": 0.011602477793265804,
+      "max_abs_edge_normal_gradient_K_m": 0.05269544569116403,
+      "max_abs_edge_tangent_gradient_K_m": 0.00047664917448558445
+    },
+    "analytic_paper_source_b_100_to_50": {
+      "Tmax_rise_K": 0.001054230602018399,
+      "fixed_24um_ROI_area_average_rise_K": 0.002240378337109142,
+      "max_abs_grad_T_x_K_m": 0.01872727046091894,
+      "max_abs_grad_T_y_K_m": 0.10740360237607971,
+      "max_inplane_gradient_K_m": 0.011675077153621443,
+      "max_abs_edge_normal_gradient_K_m": 0.05305922648922569,
+      "max_abs_edge_tangent_gradient_K_m": 0.00047077078967368985
+    },
+    "lumerical_edge_q_a_100_to_50": {
+      "Tmax_rise_K": 0.01247236177909407,
+      "fixed_24um_ROI_area_average_rise_K": 0.0020738159599116173,
+      "max_abs_grad_T_x_K_m": 0.20001490447841397,
+      "max_abs_grad_T_y_K_m": 0.6786192974386565,
+      "max_inplane_gradient_K_m": 0.22362475218204514,
+      "max_abs_edge_normal_gradient_K_m": 0.4676202005997641,
+      "max_abs_edge_tangent_gradient_K_m": 0.039594984401644544
+    },
+    "lumerical_edge_q_b_100_to_50": {
+      "Tmax_rise_K": 0.027350309008703576,
+      "fixed_24um_ROI_area_average_rise_K": 0.0020737316654739287,
+      "max_abs_grad_T_x_K_m": 0.09669208839586126,
+      "max_abs_grad_T_y_K_m": 0.5116686927931604,
+      "max_inplane_gradient_K_m": 0.09463924307970782,
+      "max_abs_edge_normal_gradient_K_m": 0.36228865064255034,
+      "max_abs_edge_tangent_gradient_K_m": 0.03811551573780574
+    }
+  },
+  "thermal_gradient_mesh_gate_lt_1pct": false,
+  "profile_audit": {
+    "a": {
+      "analytic_Q_areal": {
+        "peak_value": 541760.1526247126,
+        "peak_location_m": -1.4999999999991301e-07,
+        "absolute_centroid_m": -2.591063666896573e-06,
+        "FWHM_m": 3.7000000000000273e-06
+      },
+      "native_Lumerical_Q_areal": {
+        "peak_value": 564402.9377286492,
+        "peak_location_m": -4.499999999999152e-07,
+        "absolute_centroid_m": -3.081715354779181e-06,
+        "FWHM_m": 2.600000000000019e-06
+      },
+      "remapped_Lumerical_Q_areal": {
+        "peak_value": 565778.3348191092,
+        "peak_location_m": -5.49999999999916e-07,
+        "absolute_centroid_m": -3.09336956941804e-06,
+        "FWHM_m": 2.600000000000019e-06
+      }
+    },
+    "b": {
+      "analytic_Q_areal": {
+        "peak_value": 810588.1710809908,
+        "peak_location_m": -1.4999999999991301e-07,
+        "absolute_centroid_m": -2.591063666896573e-06,
+        "FWHM_m": 3.7000000000000273e-06
+      },
+      "native_Lumerical_Q_areal": {
+        "peak_value": 550475.5465611491,
+        "peak_location_m": -1.4999999999991301e-07,
+        "absolute_centroid_m": -3.4513667410870526e-06,
+        "FWHM_m": 4.700000000000035e-06
+      },
+      "remapped_Lumerical_Q_areal": {
+        "peak_value": 557065.9103843418,
+        "peak_location_m": -1.4999999999991301e-07,
+        "absolute_centroid_m": -3.462124451211433e-06,
+        "FWHM_m": 4.600000000000034e-06
+      }
+    }
+  },
+  "actual_raw_Q_remap_audit": {
+    "a": {
+      "status": "VALIDATED_COORDINATE_ORDER_FREE_SUPPORT_REMAP",
+      "unprojected_outside_support_fraction": 0.04358717000666918,
+      "pairwise_energy_weighted_relative_L1": {
+        "historical_x_y_z_x__vs__reflected_y_x_z_y": 2.5857849804386054e-05,
+        "historical_x_y_z_x__vs__physical_nearest_support": 0.00019838479537340398,
+        "reflected_y_x_z_y__vs__physical_nearest_support": 0.00019839438225310266
+      },
+      "per_operator": {
+        "historical_x_y_z_x": {
+          "power_W": 1.1746885925763196e-11,
+          "centroid_x_m": 2.2068169252852736e-06,
+          "centroid_y_m": -2.203289385003835e-06,
+          "centroid_edge_normal_m": -3.1184160777590134e-06,
+          "centroid_edge_tangent_m": 2.494347653913794e-09,
+          "outside_support_power_W": 1.122471037880267e-15,
+          "power_error_relative": 2.750664549060337e-16
+        },
+        "reflected_y_x_z_y": {
+          "power_W": 1.1746885925763193e-11,
+          "centroid_x_m": 2.2067886680776477e-06,
+          "centroid_y_m": -2.2033176422114613e-06,
+          "centroid_edge_normal_m": -3.118416077759014e-06,
+          "centroid_edge_tangent_m": 2.454385927654309e-09,
+          "outside_support_power_W": 1.122471037880267e-15,
+          "power_error_relative": 2.750664549060337e-16
+        },
+        "physical_nearest_support": {
+          "power_W": 1.1746885925763195e-11,
+          "centroid_x_m": 2.2068075766626594e-06,
+          "centroid_y_m": -2.2033082935888468e-06,
+          "centroid_edge_normal_m": -3.1184228376732525e-06,
+          "centroid_edge_tangent_m": 2.474366790784445e-09,
+          "outside_support_power_W": 0.0,
+          "power_error_relative": 1.3753322745301685e-16
+        }
+      },
+      "summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_support_remap_a_core100_20260730/support_remap_audit.json",
+      "summary_sha256": "9517bdfa29506bb7b5d6e2c2fb76cea5e8dc817cf06fefbac86b1e12ed759757"
+    },
+    "b": {
+      "status": "VALIDATED_COORDINATE_ORDER_FREE_SUPPORT_REMAP",
+      "unprojected_outside_support_fraction": 0.03880214346840575,
+      "pairwise_energy_weighted_relative_L1": {
+        "historical_x_y_z_x__vs__reflected_y_x_z_y": 2.2352170366364034e-05,
+        "historical_x_y_z_x__vs__physical_nearest_support": 4.4673970053638643e-05,
+        "reflected_y_x_z_y__vs__physical_nearest_support": 4.467138902784397e-05
+      },
+      "per_operator": {
+        "historical_x_y_z_x": {
+          "power_W": 1.4549368085023667e-11,
+          "centroid_x_m": 2.4043257596912864e-06,
+          "centroid_y_m": -2.5394233268515137e-06,
+          "centroid_edge_normal_m": -3.4957585035792134e-06,
+          "centroid_edge_tangent_m": -9.552840586080185e-08,
+          "outside_support_power_W": 2.7269566512878585e-16,
+          "power_error_relative": 0.0
+        },
+        "reflected_y_x_z_y": {
+          "power_W": 1.4549368085023664e-11,
+          "centroid_x_m": 2.4043084564530192e-06,
+          "centroid_y_m": -2.5394406300897817e-06,
+          "centroid_edge_normal_m": -3.4957585035792142e-06,
+          "centroid_edge_tangent_m": -9.555287633503243e-08,
+          "outside_support_power_W": 2.7269566512878585e-16,
+          "power_error_relative": 2.2208347805230535e-16
+        },
+        "physical_nearest_support": {
+          "power_W": 1.4549368085023667e-11,
+          "centroid_x_m": 2.404318046111791e-06,
+          "centroid_y_m": -2.5394329165102867e-06,
+          "centroid_edge_normal_m": -3.495759830167593e-06,
+          "centroid_edge_tangent_m": -9.554064109791733e-08,
+          "outside_support_power_W": 0.0,
+          "power_error_relative": 2.2208347805230535e-16
+        }
+      },
+      "summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_support_remap_b_core100_20260730/support_remap_audit.json",
+      "summary_sha256": "b054e5b8097ecfe42eb538f3423e86b607fdd0a50c4ca6e885c8ae07efcda517"
+    }
+  },
+  "device_A_weighting_contact_correction": {
+    "expanded": {
+      "a": {
+        "legacy_current_A": 2.4047863399405294e-08,
+        "corrected_current_A": 2.4654869620907224e-08,
+        "relative_change": 0.02524158639045419,
+        "legacy_weighting_extrema": {
+          "minimum": 0.016380236355160078,
+          "maximum": 0.97948618585699
+        },
+        "corrected_weighting_extrema": {
+          "minimum": 0.0041082861071325555,
+          "maximum": 0.9948003044928551
+        },
+        "corrected_contact_half_width_m": {
+          "top": {
+            "minimum": 1.0000000000000074e-07,
+            "maximum": 1.0000000000000074e-07
+          },
+          "bottom": {
+            "minimum": 9.999999999999904e-08,
+            "maximum": 9.999999999999904e-08
+          }
+        },
+        "corrected_summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_device_a_weighting_a_expanded_core200_20260730/summary.json",
+        "corrected_summary_sha256": "f0992919ba9a54725ba716db0164c5d1684776a641c1a3194d14f189a4c77ff9"
+      },
+      "b": {
+        "legacy_current_A": 2.0218345295764867e-08,
+        "corrected_current_A": 2.0743573413244452e-08,
+        "relative_change": 0.025977799359752966,
+        "legacy_weighting_extrema": {
+          "minimum": 0.016380236355160078,
+          "maximum": 0.97948618585699
+        },
+        "corrected_weighting_extrema": {
+          "minimum": 0.0041082861071325555,
+          "maximum": 0.9948003044928551
+        },
+        "corrected_contact_half_width_m": {
+          "top": {
+            "minimum": 1.0000000000000074e-07,
+            "maximum": 1.0000000000000074e-07
+          },
+          "bottom": {
+            "minimum": 9.999999999999904e-08,
+            "maximum": 9.999999999999904e-08
+          }
+        },
+        "corrected_summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_device_a_weighting_b_expanded_core200_20260730/summary.json",
+        "corrected_summary_sha256": "b9a113270ed0569dc5cfcc891dd0c01bea50a1a790a318ba71e7c80c1889a9ca"
+      },
+      "ratio_abs_a_over_b": {
+        "legacy": 1.189408086943821,
+        "corrected": 1.1885546009717627
+      }
+    },
+    "paper-reduced": {
+      "a": {
+        "legacy_current_A": 1.0529311029168213e-08,
+        "corrected_current_A": 1.0797680618139367e-08,
+        "relative_change": 0.025487858438953806,
+        "legacy_weighting_extrema": {
+          "minimum": 0.016380236355160078,
+          "maximum": 0.97948618585699
+        },
+        "corrected_weighting_extrema": {
+          "minimum": 0.0041082861071325555,
+          "maximum": 0.9948003044928551
+        },
+        "corrected_contact_half_width_m": {
+          "top": {
+            "minimum": 1.0000000000000074e-07,
+            "maximum": 1.0000000000000074e-07
+          },
+          "bottom": {
+            "minimum": 9.999999999999904e-08,
+            "maximum": 9.999999999999904e-08
+          }
+        },
+        "corrected_summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_device_a_weighting_a_paper_reduced_core200_20260730/summary.json",
+        "corrected_summary_sha256": "5abe688eb468ee8c304b2a3362bece9df82cbaf3c061ac38b8d80248e3d24be8"
+      },
+      "b": {
+        "legacy_current_A": 8.578414638521254e-09,
+        "corrected_current_A": 8.808038286162019e-09,
+        "relative_change": 0.026767608855095743,
+        "legacy_weighting_extrema": {
+          "minimum": 0.016380236355160078,
+          "maximum": 0.97948618585699
+        },
+        "corrected_weighting_extrema": {
+          "minimum": 0.0041082861071325555,
+          "maximum": 0.9948003044928551
+        },
+        "corrected_contact_half_width_m": {
+          "top": {
+            "minimum": 1.0000000000000074e-07,
+            "maximum": 1.0000000000000074e-07
+          },
+          "bottom": {
+            "minimum": 9.999999999999904e-08,
+            "maximum": 9.999999999999904e-08
+          }
+        },
+        "corrected_summary_path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/audit_device_a_weighting_b_paper_reduced_core200_20260730/summary.json",
+        "corrected_summary_sha256": "e38140b016aa888825f70815b7210bd155d2f0773480973762f922b8ca11fe6f"
+      },
+      "ratio_abs_a_over_b": {
+        "legacy": 1.2274192228814034,
+        "corrected": 1.2258893827815442
+      }
+    }
+  },
+  "resolved_in_this_checkpoint": [
+    "axis-order-dependent x/y/z/x support projection removed from straight-edge path",
+    "area and volume means use literal cell area/volume",
+    "all x/y/magnitude/normal/tangent gradient observables retained",
+    "weighting-potential contacts use each local boundary-cell half width",
+    "48/64/80 um production thermal-domain trend evaluated",
+    "paper analytic source/reduced boundary separated from production model"
+  ],
+  "remaining_fail_closed_blockers": [
+    "solver-native lateral Yee mesh readback/refinement is absent",
+    "sampled-material fitted epsilon_x/y/z readback is absent",
+    "epsilon_c=16+0i makes Qz exactly zero and is not edge-validated",
+    "scalar-Gaussian versus vector-Gaussian edge-Q sensitivity is absent",
+    "paper-reduced thermal edge-gradient 100-to-50 nm convergence exceeds 1%"
+  ],
+  "artifact_Q_grid_readback": {
+    "x": {
+      "node_count": 1064,
+      "bounds_m": [
+        -1.805520169851381e-05,
+        1.805520169851377e-05
+      ],
+      "step_min_m": 3.397027600848576e-08,
+      "step_max_m": 3.39702760085027e-08,
+      "uniform_within_1e-12_relative": true
+    },
+    "y": {
+      "node_count": 1064,
+      "bounds_m": [
+        -1.805520169851381e-05,
+        1.805520169851377e-05
+      ],
+      "step_min_m": 3.397027600848576e-08,
+      "step_max_m": 3.39702760085027e-08,
+      "uniform_within_1e-12_relative": true
+    },
+    "z": {
+      "node_count": 24,
+      "bounds_m": [
+        -1.8e-07,
+        5.000000000000006e-08
+      ],
+      "step_min_m": 9.999999999999984e-09,
+      "step_max_m": 1.0000000000000116e-08,
+      "uniform_within_1e-12_relative": true
+    },
+    "warning": "This is the common absorption-artifact sampling grid, not a solver-native staggered Yee-mesh certificate."
+  },
+  "remote_polygon_faces": {
+    "polygon_remote_coordinates_um": {
+      "x_max": 25.0,
+      "y_min": -25.0
+    },
+    "FDTD_outer_coordinates_um": {
+      "x": [
+        -24.0,
+        24.0
+      ],
+      "y": [
+        -24.0,
+        24.0
+      ]
+    },
+    "conclusion": "remote faces are outside the FDTD domain, so this artifact's flake does not terminate inside its lateral PML"
+  },
+  "no_new_FDTD": true,
+  "no_weighting_or_PTE_in_straight_edge_subgate": true,
+  "no_optimization": true
+}

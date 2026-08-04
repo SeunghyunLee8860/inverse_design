@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "raw_artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/paper_reduced_thermal_material_adfd_20260726/paper_reduced_thermal_material_adfd.npz",
+      "bytes": 40909,
+      "sha256": "97db4aa8ae975d86b6485ee4e84051ee55ea578d721d3170da168264d8ce83d6",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/paper_reduced_step_sweep_physical_20260726/h0p00125/paper_reduced_combined_physical_adfd.npz",
+      "bytes": 17749885,
+      "sha256": "c42bd242cbe04f4a4d19592cebaf87d83e00f5d2c8b458e9d8300fd0a39674eb",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/paper_reduced_combined_physical_20260726/paper_reduced_combined_physical_adfd.npz",
+      "bytes": 17749885,
+      "sha256": "4557624c2d84b3e81b7bebe460d50e477415bd8ac87f8aa6f51b5f5a6b0fbcb3",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/paper_reduced_step_sweep_latent_20260726/h0p0025/paper_reduced_combined_latent_adfd.npz",
+      "bytes": 16516439,
+      "sha256": "3ee50d6ae3865ac4a4efe28cde7a80d0a1853e75581545d1453bf102a7e9e36f",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/paper_reduced_combined_latent_20260726/paper_reduced_combined_latent_adfd.npz",
+      "bytes": 16516439,
+      "sha256": "d8a0a5e99d6f7a466101e5ea20896888e0fad6b947d1bc00f6abe2e22faac06f",
+      "committed_to_git": false
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/pte_adfd/paper_reduced_step_sweep_latent_20260726/h0p01/paper_reduced_combined_latent_adfd.npz",
+      "bytes": 16516439,
+      "sha256": "06c0ccc75f2c6624832eb44bee338177577057171bec61819fb8bae4bb7debb9",
+      "committed_to_git": false
+    }
+  ],
+  "raw_fsp_committed_to_git": false
+}

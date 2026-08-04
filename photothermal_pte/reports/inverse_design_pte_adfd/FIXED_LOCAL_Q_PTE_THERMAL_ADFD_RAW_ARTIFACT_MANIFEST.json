@@ -1,0 +1,28 @@
+{
+  "status": "VALIDATED_FIXED_LOCAL_Q_PTE_THERMAL_ONLY_ADFD",
+  "generated_at_utc": "2026-07-27T07:44:30.166020+00:00",
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python -m photothermal_pte.finite_inverse_design.run_fixed_local_q_pte_thermal_adfd --input-mapping /home/seunghyun/tairte4_artifacts/support_remap_matched_optical_dz2p5_thermal4um_20260727_1/local_q_thermal_mapping.npz --expected-input-sha256 d6691afe8034ffca10e058b9bb008d63f449d1de351b6d7bf70e54cd1a3c8145 --output-dir /home/seunghyun/tairte4_artifacts/fixed_local_q_pte_thermal_adfd_20260727_1 --steps 0.01,0.005",
+  "raw_summary": {
+    "path": "/home/seunghyun/tairte4_artifacts/fixed_local_q_pte_thermal_adfd_20260727_1/fixed_local_q_pte_thermal_adfd_summary.json",
+    "byte_size": 42293,
+    "sha256": "dc0ab02403b5da9a0fd4266882937b6a118a64a7b1fd1c85975d62e4cb4c60f5"
+  },
+  "input_native_Q_artifact": {
+    "path": "/home/seunghyun/tairte4_artifacts/support_remap_matched_optical_dz2p5_thermal4um_20260727_1/local_q_thermal_mapping.npz",
+    "byte_size": 1350054,
+    "sha256": "d6691afe8034ffca10e058b9bb008d63f449d1de351b6d7bf70e54cd1a3c8145"
+  },
+  "raw_case_artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/fixed_local_q_pte_thermal_adfd_20260727_1/flake_4um_adfd.npz",
+      "byte_size": 6598743,
+      "sha256": "381e2c11bbf456cd9ed321c9fa83e0efccb20621e7c736f003009e1a702de77a"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/fixed_local_q_pte_thermal_adfd_20260727_1/flake_6um_adfd.npz",
+      "byte_size": 10126696,
+      "sha256": "c3f4ac851d73c5f1159e95e40a9e1f15d1177234dbd6ed9a152ad3c071e85688"
+    }
+  ],
+  "git_policy": "raw per-scenario NPZ remains outside Git; only path, size, SHA-256, reports, JSON, and CSV are committed"
+}

@@ -1,0 +1,3 @@
+case,FDTD_time_stepping,native_Yee_cells,estimated_or_precise_GPU_memory_GiB,edge_dx_nm,edge_dy_nm,flake_dz_nm,off_edge_inherited_mesh_retained,status
+completed_Ea_25nm_reference,True,396307080,31.764,25.0,25.0,5.0,True,EXISTING_REFERENCE
+edge_local_12p5nm_runsetup,False,1177813000,94.40167491330207,12.500000000000304,12.500000000000304,5.000000000000005,False,BLOCKED_EDGE_LOCAL_12P5NM_RUNSETUP_AUDIT

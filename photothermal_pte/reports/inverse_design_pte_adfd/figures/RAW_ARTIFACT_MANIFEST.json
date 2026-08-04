@@ -1,0 +1,101 @@
+{
+  "generation_command": "python -m photothermal_pte.finite_inverse_design.plot_adfd_validation_suite --combined-result /home/seunghyun/tairte4_artifacts/corrected_combined_physical_rho_pte_adfd_20260727_2/full_five_direction_failed_noise_plateau_result.json --gradient-dir /home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1 --thermal-result /home/seunghyun/tairte4_artifacts/fixed_local_q_pte_thermal_adfd_localized_20260727_1/fixed_local_q_pte_thermal_adfd_summary.json --report-dir /home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd --output-dir /home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures --near-null-result /home/seunghyun/tairte4_artifacts/scale_adaptive_near_null_combined_adfd_20260728_2/scale_adaptive_near_null_combined_adfd.json",
+  "raw_FSP_committed_to_git": false,
+  "figure_report": {
+    "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/ADFD_VALIDATION_FIGURE_REPORT.md",
+    "bytes": 3270,
+    "sha256": "114c74b8d19881d23fa320c621ac61a76871348daf180c7f1e8ff0ef83a919a3"
+  },
+  "summary": {
+    "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/adfd_validation_figure_summary.json",
+    "bytes": 6818,
+    "sha256": "c5562ffa7b795b5a5b9a40e131e50ec171e838c7df4bfbca9cb3b4addf5ea3fa"
+  },
+  "figures": [
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/01_combined_adfd_parity.png",
+      "bytes": 157881,
+      "sha256": "2964f1e32ab6c0e546382a29d1290c175fa352be1cabe2748ab4ba67359de9d4"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/02_combined_relative_error_vs_step.png",
+      "bytes": 152299,
+      "sha256": "cad29b757173b10f057cfff75f70d9cce42d8e4e974e0120814ab40d8d2db9dc"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/03_combined_fd_over_ad_vs_step.png",
+      "bytes": 153121,
+      "sha256": "3002ad7bb0043404a00a8a3c4cafc93915c669053ac0c4e8c0801c5a71557453"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/04_combined_error_heatmap.png",
+      "bytes": 146538,
+      "sha256": "c622a32357f52cdd61c3450dedd7932dd73cce49149c286fe7ecd688bac07165"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/05_combined_direction_maps.png",
+      "bytes": 196682,
+      "sha256": "63d56becaa2464f0cd9977fd1ad20f3ae509738b9f1fb717bd4bf0a87084a02a"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/06_combined_gradient_maps.png",
+      "bytes": 293093,
+      "sha256": "85edc946cb6ad842b4bb99615edfd15dc041506d1808bdaf625ab0a4acf891da"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/07_combined_gradient_norm_decomposition.png",
+      "bytes": 50961,
+      "sha256": "52e1c6b64f76b1e294dd082b0df3e4ec3957a7888f4e09b0320d5693594f303c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/08_thermal_only_adfd_parity.png",
+      "bytes": 145676,
+      "sha256": "552457a90799041eca9b00dd6d0ef7d1d3576c2d85f6ae6c76dc975d2fd4a5d7"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/09_thermal_only_relative_error_vs_step.png",
+      "bytes": 149691,
+      "sha256": "cfc3637dbf8c0ec7fba8b9c7a8bf855975a77927b55e44b9160da60a8cee9324"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/10_optical_dz_downstream_convergence.png",
+      "bytes": 188435,
+      "sha256": "61af949547e79df2a9c757d75eb494bcef5d94cf96323eefddd722329f338e50"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/11_supporting_gate_margins.png",
+      "bytes": 137093,
+      "sha256": "d2403cc8ad26ff0c14af8dfa5c8d5fa448b2c46476961b4f13b037c788f86511"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/12_adfd_validation_dashboard.png",
+      "bytes": 341170,
+      "sha256": "e00f961ca3a95c8e8d6ab40922f16d70ff960ca248ed75f1c618b9cdaf7d72fd"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/13_near_null_scale_adaptive_plateau.png",
+      "bytes": 149314,
+      "sha256": "079f29a066660cf566e208ed5e8c772cf63541ef6b036f1d6288e8b39d58ff5a"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/14_filter_projection_contract.png",
+      "bytes": 211921,
+      "sha256": "139ae72b6a559510819a5a2341902f5b6905dbca7fe74f979ff50fb01d96fffe"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/15_optical_thermal_gradient_scatter.png",
+      "bytes": 447208,
+      "sha256": "365b591b41b9b9f2a7645e29bf65447951476b7b2c740ac2b210d4b70fc64946"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/16_gradient_central_linecuts.png",
+      "bytes": 727133,
+      "sha256": "67d39f80462972b902c5a3ce091490279fa379b644a6c72d8f98975e72317583"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/17_directional_derivative_dynamic_range.png",
+      "bytes": 116926,
+      "sha256": "6aed434e5a1a6857930f4e2397fc987d279234415493e98342c1f2fff8c8c0e9"
+    }
+  ]
+}

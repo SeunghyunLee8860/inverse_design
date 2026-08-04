@@ -1,0 +1,170 @@
+{
+  "status": "VALIDATED_81X81_NODAL_OPTICAL_THERMAL_MAPPING_JVP_VJP",
+  "passed": true,
+  "promoted_at_utc": "2026-07-27T07:48:45.726411+00:00",
+  "scope": "solver-free 81x81 nodal physical-density coupling to optical import nodes and thermal cell averages",
+  "physical_density_contract": {
+    "shape": [
+      81,
+      81
+    ],
+    "kind": "nodal physical density on exact finite support; not 81 finite-width pixels",
+    "x_bounds_m": [
+      -1e-06,
+      1e-06
+    ],
+    "y_bounds_m": [
+      -1e-06,
+      1e-06
+    ],
+    "dx_m": 2.5e-08,
+    "dy_m": 2.5e-08,
+    "periodic": false
+  },
+  "optical_mapping": {
+    "shape": [
+      81,
+      81,
+      13
+    ],
+    "x_bounds_m": [
+      -1e-06,
+      1e-06
+    ],
+    "y_bounds_m": [
+      -1e-06,
+      1e-06
+    ],
+    "z_bounds_m": [
+      0.0,
+      6e-07
+    ],
+    "x_spacing_m": 2.4999999999999972e-08,
+    "y_spacing_m": 2.4999999999999972e-08,
+    "z_spacing_m": 5e-08,
+    "rho0_max_abs_error": 0.0,
+    "rho1_max_abs_error": 0.0,
+    "z_extrusion_max_abs_error": 0.0,
+    "mapping": "identity on exact x-y physical nodes, exact repeat on 13 z nodes; no interpolation, fencepost merge, or wrap",
+    "directions": [
+      {
+        "direction": "smooth",
+        "JVP_centered_FD_relative_error": 4.368814254023157e-12,
+        "JVP_VJP_dot_relative_error": 2.9353538737811007e-16,
+        "dot_left": 0.1891122965687015,
+        "dot_right": 0.18911229656870143
+      },
+      {
+        "direction": "seeded_random",
+        "JVP_centered_FD_relative_error": 1.1791424701562711e-11,
+        "JVP_VJP_dot_relative_error": 2.6350651520436783e-16,
+        "dot_left": 0.10533164841902487,
+        "dot_right": 0.1053316484190249
+      }
+    ]
+  },
+  "thermal_mappings": [
+    {
+      "core_xy_cell_size_nm": 100.0,
+      "shape": [
+        20,
+        20
+      ],
+      "bounds_m": {
+        "x": [
+          -1e-06,
+          1e-06
+        ],
+        "y": [
+          -1e-06,
+          1e-06
+        ]
+      },
+      "mapping": "exact area average of the nonperiodic piecewise-bilinear nodal interpolant",
+      "rho0_max_abs_error": 0.0,
+      "rho1_max_abs_error": 2.6645352591003757e-15,
+      "affine_cell_average_max_abs_error": 1.2212453270876722e-15,
+      "area_integral_relative_error": 2.01948391736579e-16,
+      "corner_to_opposite_corner_value": 0.0,
+      "corner_to_opposite_x_edge_max_abs": 0.0,
+      "corner_to_opposite_y_edge_max_abs": 0.0,
+      "directions": [
+        {
+          "direction": "smooth",
+          "JVP_centered_FD_relative_error": 4.78326822127448e-12,
+          "JVP_VJP_dot_relative_error": 2.0495255358821312e-16,
+          "dot_left": 1.0833951616487745,
+          "dot_right": 1.0833951616487747
+        },
+        {
+          "direction": "seeded_random",
+          "JVP_centered_FD_relative_error": 6.185836542226413e-11,
+          "JVP_VJP_dot_relative_error": 1.95899765298606e-16,
+          "dot_left": 0.03542063408463208,
+          "dot_right": 0.03542063408463207
+        }
+      ]
+    },
+    {
+      "core_xy_cell_size_nm": 50.0,
+      "shape": [
+        40,
+        40
+      ],
+      "bounds_m": {
+        "x": [
+          -1e-06,
+          1e-06
+        ],
+        "y": [
+          -1e-06,
+          1e-06
+        ]
+      },
+      "mapping": "exact area average of the nonperiodic piecewise-bilinear nodal interpolant",
+      "rho0_max_abs_error": 0.0,
+      "rho1_max_abs_error": 5.995204332975845e-15,
+      "affine_cell_average_max_abs_error": 3.1086244689504383e-15,
+      "area_integral_relative_error": 0.0,
+      "corner_to_opposite_corner_value": 0.0,
+      "corner_to_opposite_x_edge_max_abs": 0.0,
+      "corner_to_opposite_y_edge_max_abs": 0.0,
+      "directions": [
+        {
+          "direction": "smooth",
+          "JVP_centered_FD_relative_error": 4.9208490493923945e-12,
+          "JVP_VJP_dot_relative_error": 1.9857247379899624e-16,
+          "dot_left": 0.559102177348595,
+          "dot_right": 0.5591021773485951
+        },
+        {
+          "direction": "seeded_random",
+          "JVP_centered_FD_relative_error": 3.663059274866975e-11,
+          "JVP_VJP_dot_relative_error": 0.0,
+          "dot_left": 0.0334470805796036,
+          "dot_right": 0.0334470805796036
+        }
+      ]
+    }
+  ],
+  "gates": {
+    "JVP_centered_FD_limit": 1e-09,
+    "worst_JVP_centered_FD_relative_error": 6.185836542226413e-11,
+    "transpose_limit": 1e-12,
+    "worst_JVP_VJP_dot_relative_error": 2.9353538737811007e-16,
+    "constant_limit": 2e-13,
+    "worst_endpoint_constant_error": 5.995204332975845e-15,
+    "worst_area_integral_relative_error": 2.01948391736579e-16,
+    "worst_opposite_boundary_leakage": 0.0,
+    "optical_z_extrusion_error": 0.0
+  },
+  "next_gate": "IMPORTED_PERMITTIVITY_ENDPOINT_EQUIVALENCE",
+  "not_claimed": [
+    "filter/projection",
+    "permittivity import equivalence",
+    "Maxwell solve",
+    "thermal solve",
+    "combined AD-FD",
+    "optimization"
+  ]
+}

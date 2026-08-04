@@ -1,0 +1,357 @@
+{
+  "status": "VALIDATED_OPTICAL_DZ_DOWNSTREAM_PTE_GRADIENT_CONVERGENCE",
+  "passed": true,
+  "generated_at_utc": "2026-07-27T21:49:30.965160+00:00",
+  "scope": "nonuniform physical-rho optical dz downstream convergence through conservative Q remap, explicit thermal/PTE, component-wise Yee J_c, and combined directional gradient",
+  "records": {
+    "2.5nm": {
+      "flake_dz_nm": 2.5,
+      "case_result": {
+        "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_2p5_20260727_1/optical_dz_downstream_case_result.json",
+        "byte_size": 9555,
+        "sha256": "239295d89aec17fc349507d1de39cce6b58a4b3ce578c8b23eb4e4bca8a06624"
+      },
+      "jacobian_result": {
+        "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_20260727_1/component_yee_jacobian_result.json",
+        "byte_size": 7298,
+        "sha256": "b992b75f15be5e661fb9e8749f71e847206e7af5f6750e4cfe31a0b13e83102f"
+      },
+      "P_Q_W": 1.692523974134647e-12,
+      "P_six_W": 1.6928649908679292e-12,
+      "six_face_closure_relative_error": 0.0002014435499120881,
+      "scenarios": {
+        "4um": {
+          "mapped_Q_power_W": 1.692523974134647e-12,
+          "Tmax_DeltaT_K": 1.075170856068424e-07,
+          "PTE_objective_A": 4.626383564099684e-16,
+          "Q_mapping_relative_power_error": 0.0,
+          "thermal_energy_balance_relative_error": 2.816140872807249e-12,
+          "thermal_forward_linear_residual_relative": 9.904402103122697e-12,
+          "thermal_adjoint_linear_residual_relative": 9.743242028247897e-12,
+          "raw_path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_2p5_20260727_1/flake_4um_downstream_raw.npz",
+          "gradient": {
+            "optical_directional_gradient_A": -7.798458252235802e-16,
+            "thermal_directional_gradient_A": 1.0220258250929089e-17,
+            "combined_directional_gradient_A": -7.696255669726512e-16,
+            "optical_gradient_L2_A": 6.754499362023674e-17,
+            "thermal_gradient_L2_A": 5.581660644534583e-19,
+            "combined_gradient_L2_A": 6.726506763698146e-17,
+            "optical_component_directional_xyz_A": {
+              "x": -7.781469954392129e-16,
+              "y": 9.935895953793855e-19,
+              "z": -2.6924193797466935e-18
+            },
+            "component_sum_relative_error": 1.2644500997919155e-16,
+            "JVP_VJP_dot_relative_error": 1.2645813098214975e-16,
+            "empirical_normalization": false,
+            "gradient_rescaling": false
+          }
+        },
+        "6um": {
+          "mapped_Q_power_W": 1.6925239741346467e-12,
+          "Tmax_DeltaT_K": 1.0570527843912186e-07,
+          "PTE_objective_A": 1.2562592197848088e-16,
+          "Q_mapping_relative_power_error": 1.193178913993411e-16,
+          "thermal_energy_balance_relative_error": 3.1656229767159192e-12,
+          "thermal_forward_linear_residual_relative": 1.0154686284966228e-11,
+          "thermal_adjoint_linear_residual_relative": 9.687424894149903e-12,
+          "raw_path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_2p5_20260727_1/flake_6um_downstream_raw.npz",
+          "gradient": {
+            "optical_directional_gradient_A": -9.693606488644878e-17,
+            "thermal_directional_gradient_A": 7.316585408538933e-19,
+            "combined_directional_gradient_A": -9.620440634559488e-17,
+            "optical_gradient_L2_A": 1.6384220784856668e-17,
+            "thermal_gradient_L2_A": 1.0539924846592093e-19,
+            "combined_gradient_L2_A": 1.6331960831661315e-17,
+            "optical_component_directional_xyz_A": {
+              "x": -9.653383592410552e-17,
+              "y": 1.0970161867687892e-19,
+              "z": -5.119305810201501e-19
+            },
+            "component_sum_relative_error": 1.2715547777307616e-16,
+            "JVP_VJP_dot_relative_error": 6.26360878006704e-16,
+            "empirical_normalization": false,
+            "gradient_rescaling": false
+          }
+        }
+      }
+    },
+    "1.25nm": {
+      "flake_dz_nm": 1.25,
+      "case_result": {
+        "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_1p25_20260727_1/optical_dz_downstream_case_result.json",
+        "byte_size": 10823,
+        "sha256": "12a5dc0047429dc434ef5b4ffa42ffd1825965678cc32bd6ded088e2eb641038"
+      },
+      "jacobian_result": {
+        "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_dz1p25_20260727_1/component_yee_jacobian_result.json",
+        "byte_size": 7321,
+        "sha256": "f1635fbce7fc4ad753be21298d05d7781a4910202be2301f0de42ed88ae6f7d4"
+      },
+      "P_Q_W": 1.6925261763069e-12,
+      "P_six_W": 1.6928980160378578e-12,
+      "six_face_closure_relative_error": 0.00021964685848475425,
+      "scenarios": {
+        "4um": {
+          "mapped_Q_power_W": 1.6925261763069e-12,
+          "Tmax_DeltaT_K": 1.0750568371139452e-07,
+          "PTE_objective_A": 4.625279224496959e-16,
+          "Q_mapping_relative_power_error": 0.0,
+          "thermal_energy_balance_relative_error": 3.0591874372259546e-12,
+          "thermal_forward_linear_residual_relative": 1.013015540789995e-11,
+          "thermal_adjoint_linear_residual_relative": 9.743242028247897e-12,
+          "raw_path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_1p25_20260727_1/flake_4um_downstream_raw.npz",
+          "gradient": {
+            "optical_directional_gradient_A": -7.798085388296298e-16,
+            "thermal_directional_gradient_A": 1.0221020784930826e-17,
+            "combined_directional_gradient_A": -7.69587518044699e-16,
+            "optical_gradient_L2_A": 6.753543845361701e-17,
+            "thermal_gradient_L2_A": 5.5811013295012095e-19,
+            "combined_gradient_L2_A": 6.725555283921743e-17,
+            "optical_component_directional_xyz_A": {
+              "x": -7.781281985541057e-16,
+              "y": 9.937188388179975e-19,
+              "z": -2.6740591143419827e-18
+            },
+            "component_sum_relative_error": 1.2645105592280514e-16,
+            "JVP_VJP_dot_relative_error": 3.796671330185124e-16,
+            "empirical_normalization": false,
+            "gradient_rescaling": false
+          }
+        },
+        "6um": {
+          "mapped_Q_power_W": 1.6925261763068996e-12,
+          "Tmax_DeltaT_K": 1.0569382877124958e-07,
+          "PTE_objective_A": 1.255959322836942e-16,
+          "Q_mapping_relative_power_error": 2.386354723059366e-16,
+          "thermal_energy_balance_relative_error": 2.970653677000453e-12,
+          "thermal_forward_linear_residual_relative": 9.741763150941802e-12,
+          "thermal_adjoint_linear_residual_relative": 9.687424894149903e-12,
+          "raw_path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_1p25_20260727_1/flake_6um_downstream_raw.npz",
+          "gradient": {
+            "optical_directional_gradient_A": -9.692480255187755e-17,
+            "thermal_directional_gradient_A": 7.317573961555234e-19,
+            "combined_directional_gradient_A": -9.619304515572203e-17,
+            "optical_gradient_L2_A": 1.6381140554233724e-17,
+            "thermal_gradient_L2_A": 1.053810844139086e-19,
+            "combined_gradient_L2_A": 1.63288904026968e-17,
+            "optical_component_directional_xyz_A": {
+              "x": -9.652712747046743e-17,
+              "y": 1.0971960524919893e-19,
+              "z": -5.073946866593251e-19
+            },
+            "component_sum_relative_error": 0.0,
+            "JVP_VJP_dot_relative_error": 1.5665531884428896e-16,
+            "empirical_normalization": false,
+            "gradient_rescaling": false
+          }
+        }
+      }
+    },
+    "0.625nm": {
+      "flake_dz_nm": 0.625,
+      "case_result": {
+        "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_0p625_20260727_1/optical_dz_downstream_case_result.json",
+        "byte_size": 10848,
+        "sha256": "d94e28db8d92d4882fda6c56c88f550672f94965343efd6c4dd0a07bba9809fe"
+      },
+      "jacobian_result": {
+        "path": "/home/seunghyun/tairte4_artifacts/layout_component_yee_jacobian_dz0p625_20260727_1/component_yee_jacobian_result.json",
+        "byte_size": 7336,
+        "sha256": "cafd4959af9409c6f491c8276bb2bbc08bc7f93feeba049a12ef8cf102092cc7"
+      },
+      "P_Q_W": 1.6925373640505804e-12,
+      "P_six_W": 1.6929220371187788e-12,
+      "six_face_closure_relative_error": 0.00022722432561220543,
+      "scenarios": {
+        "4um": {
+          "mapped_Q_power_W": 1.6925373640505808e-12,
+          "Tmax_DeltaT_K": 1.0750400109826252e-07,
+          "PTE_objective_A": 4.625087035079161e-16,
+          "Q_mapping_relative_power_error": 2.386338949153549e-16,
+          "thermal_energy_balance_relative_error": 3.0586899480775613e-12,
+          "thermal_forward_linear_residual_relative": 1.0137633234852054e-11,
+          "thermal_adjoint_linear_residual_relative": 9.743242028247897e-12,
+          "raw_path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_0p625_20260727_1/flake_4um_downstream_raw.npz",
+          "gradient": {
+            "optical_directional_gradient_A": -7.798023385938635e-16,
+            "thermal_directional_gradient_A": 1.0221231154082787e-17,
+            "combined_directional_gradient_A": -7.695811074397807e-16,
+            "optical_gradient_L2_A": 6.75339597763402e-17,
+            "thermal_gradient_L2_A": 5.581027617844115e-19,
+            "combined_gradient_L2_A": 6.725408012236793e-17,
+            "optical_component_directional_xyz_A": {
+              "x": -7.78125543861431e-16,
+              "y": 9.937125010113917e-19,
+              "z": -2.6705072334437098e-18
+            },
+            "component_sum_relative_error": 1.264520613395894e-16,
+            "JVP_VJP_dot_relative_error": 2.531477772308509e-16,
+            "empirical_normalization": false,
+            "gradient_rescaling": false
+          }
+        },
+        "6um": {
+          "mapped_Q_power_W": 1.6925373640505806e-12,
+          "Tmax_DeltaT_K": 1.0569212255164312e-07,
+          "PTE_objective_A": 1.2559071925324968e-16,
+          "Q_mapping_relative_power_error": 1.1931694745767746e-16,
+          "thermal_energy_balance_relative_error": 2.970514723906338e-12,
+          "thermal_forward_linear_residual_relative": 9.759172478783897e-12,
+          "thermal_adjoint_linear_residual_relative": 9.687424894149903e-12,
+          "raw_path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_0p625_20260727_1/flake_6um_downstream_raw.npz",
+          "gradient": {
+            "optical_directional_gradient_A": -9.692282680858489e-17,
+            "thermal_directional_gradient_A": 7.317815380455543e-19,
+            "combined_directional_gradient_A": -9.619104527053933e-17,
+            "optical_gradient_L2_A": 1.6380656578712798e-17,
+            "thermal_gradient_L2_A": 1.053782080423622e-19,
+            "combined_gradient_L2_A": 1.6328407977551686e-17,
+            "optical_component_directional_xyz_A": {
+              "x": -9.652604107306084e-17,
+              "y": 1.097188983918074e-19,
+              "z": -5.06504633915851e-19
+            },
+            "component_sum_relative_error": 1.271728451381336e-16,
+            "JVP_VJP_dot_relative_error": 1.56667285018771e-16,
+            "empirical_normalization": false,
+            "gradient_rescaling": false
+          }
+        }
+      }
+    }
+  },
+  "comparisons": [
+    {
+      "coarse_dz_nm": 2.5,
+      "fine_dz_nm": 1.25,
+      "P_Q_relative_difference": 1.3011156246294497e-06,
+      "scenarios": {
+        "4um": {
+          "remapped_Q_field_NRMSE": 0.0025119637254406666,
+          "Tmax_relative_difference": 0.0001060472889822625,
+          "TaIrTe4_temperature_field_NRMSE": 0.00011309911095510614,
+          "PTE_objective_relative_difference": 0.00023870472204130588,
+          "optical_directional_gradient_relative_difference": 4.781251978845028e-05,
+          "combined_directional_gradient_relative_difference": 4.943823280436152e-05,
+          "decisive_maximum": 0.00023870472204130588,
+          "passed_0p5pct": true
+        },
+        "6um": {
+          "remapped_Q_field_NRMSE": 0.00251196372544063,
+          "Tmax_relative_difference": 0.00010831689809017388,
+          "TaIrTe4_temperature_field_NRMSE": 0.00011761390863213838,
+          "PTE_objective_relative_difference": 0.0002387221865867779,
+          "optical_directional_gradient_relative_difference": 0.00011618312115743602,
+          "combined_directional_gradient_relative_difference": 0.00011809427763669242,
+          "decisive_maximum": 0.0002387221865867779,
+          "passed_0p5pct": true
+        }
+      }
+    },
+    {
+      "coarse_dz_nm": 1.25,
+      "fine_dz_nm": 0.625,
+      "P_Q_relative_difference": 6.610042364821029e-06,
+      "scenarios": {
+        "4um": {
+          "remapped_Q_field_NRMSE": 0.000508735074424191,
+          "Tmax_relative_difference": 1.5651387665380435e-05,
+          "TaIrTe4_temperature_field_NRMSE": 2.1523177736591985e-05,
+          "PTE_objective_relative_difference": 4.155196010238148e-05,
+          "optical_directional_gradient_relative_difference": 7.950971882969778e-06,
+          "combined_directional_gradient_relative_difference": 8.329923196494118e-06,
+          "decisive_maximum": 4.155196010238148e-05,
+          "passed_0p5pct": true
+        },
+        "6um": {
+          "remapped_Q_field_NRMSE": 0.0005087350744242106,
+          "Tmax_relative_difference": 1.614303906188879e-05,
+          "TaIrTe4_temperature_field_NRMSE": 2.2157902899764776e-05,
+          "PTE_objective_relative_difference": 4.150636369927872e-05,
+          "optical_directional_gradient_relative_difference": 2.038429009548473e-05,
+          "combined_directional_gradient_relative_difference": 2.0790330314008265e-05,
+          "decisive_maximum": 4.150636369927872e-05,
+          "passed_0p5pct": true
+        }
+      }
+    },
+    {
+      "coarse_dz_nm": 2.5,
+      "fine_dz_nm": 0.625,
+      "P_Q_relative_difference": 7.911149389021079e-06,
+      "scenarios": {
+        "4um": {
+          "remapped_Q_field_NRMSE": 0.003020509847344251,
+          "Tmax_relative_difference": 0.00012169701686041222,
+          "TaIrTe4_temperature_field_NRMSE": 0.0001339127134313258,
+          "PTE_objective_relative_difference": 0.0002802467634946008,
+          "optical_directional_gradient_relative_difference": 5.576311151541957e-05,
+          "combined_directional_gradient_relative_difference": 5.77677441841734e-05,
+          "decisive_maximum": 0.0002802467634946008,
+          "passed_0p5pct": true
+        },
+        "6um": {
+          "remapped_Q_field_NRMSE": 0.0030205098473442362,
+          "Tmax_relative_difference": 0.00012445818858814573,
+          "TaIrTe4_temperature_field_NRMSE": 0.00013912058779936973,
+          "PTE_objective_relative_difference": 0.00028021864179615706,
+          "optical_directional_gradient_relative_difference": 0.00013656504294247488,
+          "combined_directional_gradient_relative_difference": 0.0001388821527316604,
+          "decisive_maximum": 0.00028021864179615706,
+          "passed_0p5pct": true
+        }
+      }
+    }
+  ],
+  "production_flake_dz_nm": 2.5,
+  "production_selection_rule": "coarsest candidate whose 4um and 6um raw PTE, optical directional gradient, and combined directional gradient all differ from the 0.625 nm reference by <0.5%",
+  "gates": {
+    "convergence_limit": 0.005,
+    "worst_JVP_VJP_dot_relative_error": 6.26360878006704e-16,
+    "mapping_transpose_limit": 1e-12
+  },
+  "gradient_artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_2.5nm_4um_nodal_gradients.npz",
+      "byte_size": 109947,
+      "sha256": "dd84d8775ed42c3e1e2de751a632516d5866195dfd586c63675cef20c60d8be6"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_2.5nm_6um_nodal_gradients.npz",
+      "byte_size": 109734,
+      "sha256": "d90d5640a24e0369c2902a3984227c9b119403df255891248cca285efd25d8bd"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_1.25nm_4um_nodal_gradients.npz",
+      "byte_size": 109911,
+      "sha256": "df06857d5d2d616471e678086232494767cb79914cda8b329f076a39b85d951c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_1.25nm_6um_nodal_gradients.npz",
+      "byte_size": 109758,
+      "sha256": "b53a9d9238f55c8de32e9e714d4e291df764979011022a6bbaaabc83772d3d39"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_0.625nm_4um_nodal_gradients.npz",
+      "byte_size": 109955,
+      "sha256": "9905920f7fe61a2646a8b9c5cc0671fcc64f8f865fe9cd929a304eb7fcd08168"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/dz_0.625nm_6um_nodal_gradients.npz",
+      "byte_size": 109747,
+      "sha256": "4febac2d28b30341cf8458ebc51e0846921b64bea1097b856ab38185a11c3229"
+    }
+  ],
+  "gray_law_sensitivity_run": false,
+  "full_latent_adfd_run": false,
+  "optimization_run": false,
+  "published_at_utc": "2026-07-27T21:49:52.396630+00:00",
+  "raw_result": {
+    "path": "/home/seunghyun/tairte4_artifacts/optical_dz_downstream_convergence_full_yee_20260727_1/optical_dz_downstream_convergence_result.json",
+    "byte_size": 17140,
+    "sha256": "fbfdf8e08708956bcd6d6a3a783fad6b5c6ae58dc4f75527dad1ccca4818ef37",
+    "committed_to_git": false
+  },
+  "next_gate": "CORRECTED_STRONG_AND_FIVE_DIRECTION_PHYSICAL_RHO_PTE_ADFD"
+}

@@ -1,0 +1,555 @@
+{
+  "status": "FAILED_DEVICE_A_PAPER_LIKE_CURRENT_POLARIZATION_RATIO",
+  "contract": {
+    "status": "READY_DEVICE_A_MEASURED_REPRODUCTION_CONTRACT",
+    "scope": "offline evidence, material, equation, and absolute-current audit",
+    "sources": {
+      "main_paper": {
+        "path": "/home/seunghyun/tairte4/papers/Adv Funct Materials - 2026 - Blevins - Large Transverse Thermoelectric Effect in Weyl Semimetal TaIrTe4 Engineered for-2.pdf",
+        "size_bytes": 3446019,
+        "sha256": "ad160823ce0805e709be2ea54c663a51280e56c498d76c8d33651599b8733155",
+        "pages": 10
+      },
+      "supporting_information": {
+        "path": "/home/seunghyun/tairte4/papers/adfm75986-sup-0001-suppmat-2.pdf",
+        "size_bytes": 4284519,
+        "sha256": "c2ebe6bfbf00f954e0ccaa88431eec059db7d25beeaa4622ceb3c02d83b7f99c",
+        "pages": 14
+      },
+      "thesis": {
+        "path": "/home/seunghyun/tairte4/papers/PhD_Thesis_Blevins.pdf",
+        "size_bytes": 26256660,
+        "sha256": "06e159965f9ab0ca5b7dc9d601d9206d18f897d287e48f073cff1c6e7f487f30",
+        "pages": 164
+      },
+      "geometry_digitization": {
+        "path": "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_end_to_end/device_a_geometry_digitization.json",
+        "size_bytes": 4116,
+        "sha256": "291034c04b3caf153c1d68b3499718f6a35d24229a53102b0d5bea4b78a0325e",
+        "pages": null
+      },
+      "figure_3J_digitization": {
+        "path": "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/paper_fig3j_11um_current_ratio_digitization.json",
+        "size_bytes": 2013,
+        "sha256": "607dfbd016e462ef6ba937c40fab488e9597d50d5266d44eb24062bdb6d12fc4",
+        "pages": null
+      },
+      "existing_Palik_case_result": {
+        "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_boundary_mesh/finite_acc3_outer200_mid100_h12_edge50_x9_y12_dz10_a_gpu2_retry1_20260802/case_result.json",
+        "size_bytes": 132352,
+        "sha256": "c0e358b718b4f28da6f921eec3a34a7dcc20ddb719e9c1dca7f814208eb0125a",
+        "pages": null
+      },
+      "exact_11um_nk_material_readback": {
+        "path": "/home/seunghyun/tairte4/worktrees/device_a_waist_sweep/photothermal_pte/reports/paper_ir_device_a_measured_reproduction/kitamura_palik_nk_substrate_readback.json",
+        "size_bytes": 3597,
+        "sha256": "ad02e1fc32fb05b157a705f38ee1f6437c99f5f96667ba5b4e5ca1fface1308a",
+        "pages": null
+      }
+    },
+    "optical_substrate_models": {
+      "paper_consistent_scenario": {
+        "SiO2_model": "Kitamura et al. 2007 Eq.21-24/Table 2",
+        "SiO2_at_11um": {
+          "n_real": 2.0194436826147366,
+          "n_imag": 0.16262021932999673,
+          "epsilon_real": 4.051707451517633,
+          "epsilon_imag": 0.6568047491827695
+        },
+        "Si_model": "Lumerical v261 Palik raw 11-um n,k copied into the single-frequency n,k model; explicit closure",
+        "Si_at_11um": {
+          "n_real": 3.4212896222169786,
+          "n_imag": 4.3898803101970856e-05,
+          "epsilon_real": 11.70522267716249,
+          "epsilon_imag": 0.0003003810389610388
+        },
+        "identity_limit": "paper cites Kitamura for the SiO2 phonon but does not identify an exact Si database or say its RCWA used this exact fit",
+        "FDTD_material_contract": "exact 11-um Kitamura-SiO2 and Palik-Si n,k readback; finite numerical pulse centred in frequency at 11 um"
+      },
+      "legacy_comparison": {
+        "model": "Lumerical Palik SiO2/Si fitted over 7-13 um",
+        "SiO2_at_11um": {
+          "n_real": 1.9885408590100595,
+          "n_imag": 0.04505653854970146,
+          "epsilon_real": 3.9522646562863843,
+          "epsilon_imag": 0.1791935357432864
+        }
+      },
+      "SiO2_k_ratio_Kitamura_over_Palik": 3.609247948566041
+    },
+    "experimental_targets": {
+      "wavelength_m": 1.1e-05,
+      "incident_power_W_exact_SI": 0.0002844,
+      "incident_power_W_rounded_main_caption": 0.000285,
+      "figure_3J_digitized_ratio": {
+        "quantity": "|Ia|/|Ib|",
+        "value": 0.8365896980461811,
+        "uncertainty": 0.00852575488454707,
+        "inverse": 1.1953290870488325
+      },
+      "absolute_current_unit_consistency": "FAIL_PAPER_FIG3I_NA_VS_MAPS_PA",
+      "SI_Figure_S5_off_axis_Ea_frequency_fit": {
+        "I0_pA": 129.0,
+        "tau_s": 2.6e-05,
+        "tau_uncertainty_s": 3.3e-06,
+        "measurement_chopper_frequency_Hz": 3675.0,
+        "fitted_current_at_measurement_frequency_pA": 110.59909805088104
+      },
+      "main_Figure_3I_visual_profile_estimate": {
+        "Ia_minimum_plot_units_approx": -122.0,
+        "Ib_minimum_plot_units_approx": -143.0,
+        "printed_axis_unit": "nA",
+        "likely_physical_unit": "pA",
+        "basis": "the 11-um maps use +/-200 pA and the independent SI off-axis frequency fit gives I0=129 pA",
+        "not_a_tabulated_measurement": true
+      }
+    },
+    "absolute_current_audit": {
+      "two_terminal_resistance": {
+        "purpose": "absolute-current geometry audit only; no empirical conductivity or PTE-current rescaling is applied",
+        "axis_mapping": "x=b, y=a",
+        "sigma_x_y_S_m": [
+          110000.0,
+          491000.0
+        ],
+        "thickness_m": 1.3e-07,
+        "contact_geometry": "frozen Figure-2 digitized contact segments",
+        "contact_resistance_included": false,
+        "applied_voltage_V": 1.0,
+        "predicted_terminal_current_A": 0.07072605540905455,
+        "predicted_resistance_ohm": 14.139060834318453,
+        "published_measured_device_A_resistance_ohm": 213.0,
+        "relative_difference_vs_measured": 0.9336194327027303,
+        "terminal_current_balance_relative_error": 1.5677888996230077e-12,
+        "linear_residual_relative": 1.6837300912614442e-15,
+        "absolute_current_geometry_gate_lt_10pct": false,
+        "interpretation": "a failure blocks certification of absolute PTE-current magnitude because exact CAD/contact resistance are unpublished; it does not invalidate a separately converged polarization ratio"
+      },
+      "no_resistance_or_current_rescaling": true
+    },
+    "equation_contract": {
+      "coordinate_mapping": "x=b, y=a",
+      "Jx": "-sigma_b*S_b*dT/dx",
+      "Jy": "-sigma_a*S_a*dT/dy",
+      "collection": "volume integral J_local dot grad(psi)",
+      "thermal_primary": "paper SI Eq.S4 reduced flake-only Robin model"
+    },
+    "missing_for_exact_reproduction": [
+      "exact Device-A CAD and hidden metal/flakes overlap",
+      "contact resistance decomposition",
+      "11-um beam definition and measured x/y profile",
+      "objective transmission eta",
+      "exact off-axis scan coordinates",
+      "paper's exact Si optical dataset",
+      "internally consistent absolute-current units for Figure 3H/I"
+    ],
+    "prohibited_adjustments": [
+      "Q clipping",
+      "Q smoothing",
+      "optical gain or global rescaling",
+      "polarization power matching",
+      "current or conductivity fitting to 213 ohm"
+    ],
+    "FDTD_run": false,
+    "thermal_run": false,
+    "PTE_run": false,
+    "adjoint_run": false,
+    "optimization_run": false
+  },
+  "optical": {
+    "a": {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_a_gpu0_20260802",
+      "status": "COMPLETED",
+      "P_Q_full_control_volume_W_at_1_W_m2": 2.0339292508338656e-11,
+      "P_Q_TaIrTe4_exact_support_W_at_1_W_m2": 1.9313409184087345e-11,
+      "P_Q_SiO2_exact_support_W_at_1_W_m2": 0.0,
+      "P_six_face_W_at_1_W_m2": 2.034658250200052e-11,
+      "six_face_relative_closure": 0.00035829081670834753,
+      "auto_shutoff": {
+        "log_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_a_gpu0_20260802/finite_2um_optical_q_p0.log",
+        "final_value": 9.69566e-06,
+        "simulation_completed_successfully": true
+      },
+      "component_power_W": {
+        "x": 3.5481050554822825e-13,
+        "y": 1.9869360907087003e-11,
+        "z": 1.151210957034245e-13
+      },
+      "incident_reference": {
+        "case_result_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/empty_a_gpu0_20260802/case_result.json",
+        "field_NPZ_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/empty_a_gpu0_20260802/incident_reference.npz",
+        "beam_fit_at_target_plane": {
+          "amplitude_over_observed_peak": 1.0011966551836464,
+          "center_x_m": -2.4522135969224657e-06,
+          "center_y_m": 7.266679718579347e-13,
+          "waist_x_m": 8.892843107483018e-06,
+          "waist_y_m": 8.69249564225287e-06,
+          "waist_effective_geometric_mean_m": 8.792098723230682e-06,
+          "fit_success": true,
+          "fit_message": "`ftol` termination condition is satisfied.",
+          "fit_selected_point_count": 231676,
+          "fit_relative_RMS_over_peak": 0.0005902378497772107,
+          "integrated_incident_power_W": 1.4652523732425568e-13,
+          "moment_center_x_m": -2.452214682861748e-06,
+          "moment_center_y_m": -1.7091960909064632e-12,
+          "moment_waist_x_m": 8.860643801169927e-06,
+          "moment_waist_y_m": 8.7225449484448e-06
+        },
+        "requested_physical_waist_m": 8.75e-06,
+        "evidence_scope": "downward E/H decomposition at z=+50 nm in the matching empty layered stack; it includes the substrate reflection contract and is not called a pure free-space incident waist"
+      },
+      "substrate_epsilon_readback": {
+        "analysis_wavelength_m": 1.1e-05,
+        "model": "paper-kitamura-palik-nk-11um",
+        "materials": {
+          "SiO2": {
+            "material_name": "paper_ir_SiO2_Kitamura_2007_nk_11um",
+            "n_complex": {
+              "real": 2.0194436826147366,
+              "imag": 0.16262021932999673
+            },
+            "epsilon_r_complex": {
+              "real": 4.051707451517633,
+              "imag": 0.6568047491827695
+            },
+            "raw_database_n_complex_at_11um": {
+              "real": 2.0194436826147366,
+              "imag": 0.16262021932999673
+            },
+            "raw_database_epsilon_r_complex_at_11um": {
+              "real": 4.051707451517633,
+              "imag": 0.6568047491827695
+            },
+            "FDTD_fit_band_m": [
+              9.428571428571428e-06,
+              1.32e-05
+            ],
+            "FDTD_uses_fitted_not_raw_database_value": true,
+            "provenance": "exact 11-um n,k material installed by this run",
+            "requested_model_epsilon_r_complex_at_11um": {
+              "real": 4.051707451517633,
+              "imag": 0.6568047491827695
+            },
+            "requested_model_n_complex_at_11um": {
+              "real": 2.0194436826147366,
+              "imag": 0.16262021932999673
+            },
+            "FDTD_fit_relative_error_vs_requested_epsilon": 0.0
+          },
+          "Si": {
+            "material_name": "paper_ir_Si_Palik_nk_11um",
+            "n_complex": {
+              "real": 3.4212896222169786,
+              "imag": 4.3898803101970856e-05
+            },
+            "epsilon_r_complex": {
+              "real": 11.70522267716249,
+              "imag": 0.0003003810389610388
+            },
+            "raw_database_n_complex_at_11um": {
+              "real": 3.4212896222169786,
+              "imag": 4.389880310197085e-05
+            },
+            "raw_database_epsilon_r_complex_at_11um": {
+              "real": 11.70522267716249,
+              "imag": 0.0003003810389610388
+            },
+            "FDTD_fit_band_m": [
+              9.428571428571428e-06,
+              1.32e-05
+            ],
+            "FDTD_uses_fitted_not_raw_database_value": true,
+            "provenance": "exact 11-um n,k material installed by this run"
+          }
+        },
+        "loss_is_retained": true
+      },
+      "all_acceptance_gates": true,
+      "acceptance": {
+        "six_face_closure_lt_0p5_percent": true,
+        "Q_not_clipped": true,
+        "measured_intensity_normalization": true,
+        "material_support_decomposition_residual_lt_1e_minus_12": true,
+        "solver_log_reports_successful_completion": true,
+        "auto_shutoff_reached_requested_threshold": true,
+        "Pabs_and_realized_six_face_bounds_match_lt_1fm": true,
+        "lossy_SiO2_and_Si_readback_positive": true,
+        "Kitamura_SiO2_fit_error_lt_0p5_percent": true
+      }
+    },
+    "b": {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_b_gpu0_20260802",
+      "status": "COMPLETED",
+      "P_Q_full_control_volume_W_at_1_W_m2": 2.7239033158096754e-11,
+      "P_Q_TaIrTe4_exact_support_W_at_1_W_m2": 2.6153631366652085e-11,
+      "P_Q_SiO2_exact_support_W_at_1_W_m2": 0.0,
+      "P_six_face_W_at_1_W_m2": 2.7241139277637337e-11,
+      "six_face_relative_closure": 7.731393019641864e-05,
+      "auto_shutoff": {
+        "log_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/device_a_b_gpu0_20260802/finite_2um_optical_q_p0.log",
+        "final_value": 9.9966e-06,
+        "simulation_completed_successfully": true
+      },
+      "component_power_W": {
+        "x": 2.712444383408261e-11,
+        "y": 6.175449755394768e-14,
+        "z": 5.2834826460197846e-14
+      },
+      "incident_reference": {
+        "case_result_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/empty_b_gpu0_20260802/case_result.json",
+        "field_NPZ_path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/empty_b_gpu0_20260802/incident_reference.npz",
+        "beam_fit_at_target_plane": {
+          "amplitude_over_observed_peak": 1.0014025610646806,
+          "center_x_m": -2.452215278791458e-06,
+          "center_y_m": -7.912045695371856e-13,
+          "waist_x_m": 8.691102090656846e-06,
+          "waist_y_m": 8.889782047772988e-06,
+          "waist_effective_geometric_mean_m": 8.78988073530486e-06,
+          "fit_success": true,
+          "fit_message": "`ftol` termination condition is satisfied.",
+          "fit_selected_point_count": 231681,
+          "fit_relative_RMS_over_peak": 0.0006313390895395127,
+          "integrated_incident_power_W": 1.465256012522569e-13,
+          "moment_center_x_m": -2.4522140958624896e-06,
+          "moment_center_y_m": -1.120548716486412e-12,
+          "moment_waist_x_m": 8.722621473482386e-06,
+          "moment_waist_y_m": 8.860638037632696e-06
+        },
+        "requested_physical_waist_m": 8.75e-06,
+        "evidence_scope": "downward E/H decomposition at z=+50 nm in the matching empty layered stack; it includes the substrate reflection contract and is not called a pure free-space incident waist"
+      },
+      "substrate_epsilon_readback": {
+        "analysis_wavelength_m": 1.1e-05,
+        "model": "paper-kitamura-palik-nk-11um",
+        "materials": {
+          "SiO2": {
+            "material_name": "paper_ir_SiO2_Kitamura_2007_nk_11um",
+            "n_complex": {
+              "real": 2.0194436826147366,
+              "imag": 0.16262021932999673
+            },
+            "epsilon_r_complex": {
+              "real": 4.051707451517633,
+              "imag": 0.6568047491827695
+            },
+            "raw_database_n_complex_at_11um": {
+              "real": 2.0194436826147366,
+              "imag": 0.16262021932999673
+            },
+            "raw_database_epsilon_r_complex_at_11um": {
+              "real": 4.051707451517633,
+              "imag": 0.6568047491827695
+            },
+            "FDTD_fit_band_m": [
+              9.428571428571428e-06,
+              1.32e-05
+            ],
+            "FDTD_uses_fitted_not_raw_database_value": true,
+            "provenance": "exact 11-um n,k material installed by this run",
+            "requested_model_epsilon_r_complex_at_11um": {
+              "real": 4.051707451517633,
+              "imag": 0.6568047491827695
+            },
+            "requested_model_n_complex_at_11um": {
+              "real": 2.0194436826147366,
+              "imag": 0.16262021932999673
+            },
+            "FDTD_fit_relative_error_vs_requested_epsilon": 0.0
+          },
+          "Si": {
+            "material_name": "paper_ir_Si_Palik_nk_11um",
+            "n_complex": {
+              "real": 3.4212896222169786,
+              "imag": 4.3898803101970856e-05
+            },
+            "epsilon_r_complex": {
+              "real": 11.70522267716249,
+              "imag": 0.0003003810389610388
+            },
+            "raw_database_n_complex_at_11um": {
+              "real": 3.4212896222169786,
+              "imag": 4.389880310197085e-05
+            },
+            "raw_database_epsilon_r_complex_at_11um": {
+              "real": 11.70522267716249,
+              "imag": 0.0003003810389610388
+            },
+            "FDTD_fit_band_m": [
+              9.428571428571428e-06,
+              1.32e-05
+            ],
+            "FDTD_uses_fitted_not_raw_database_value": true,
+            "provenance": "exact 11-um n,k material installed by this run"
+          }
+        },
+        "loss_is_retained": true
+      },
+      "all_acceptance_gates": true,
+      "acceptance": {
+        "six_face_closure_lt_0p5_percent": true,
+        "Q_not_clipped": true,
+        "measured_intensity_normalization": true,
+        "material_support_decomposition_residual_lt_1e_minus_12": true,
+        "solver_log_reports_successful_completion": true,
+        "auto_shutoff_reached_requested_threshold": true,
+        "Pabs_and_realized_six_face_bounds_match_lt_1fm": true,
+        "lossy_SiO2_and_Si_readback_positive": true,
+        "Kitamura_SiO2_fit_error_lt_0p5_percent": true
+      }
+    }
+  },
+  "thermal": {
+    "a": {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/thermal_a_paper_reduced_L60_cpu120_127_20260802",
+      "status": "COMPLETED_DEVICE_A_METAL_ISOLATED_LOWER_BOUND_DIAGNOSTIC",
+      "thermal": {
+        "Tmax_rise_K": 0.16156158645632637,
+        "TaIrTe4_volume_average_rise_K": 0.010932512179696261,
+        "linear_residual_relative": 9.678652591819036e-11,
+        "energy_balance_relative_error": 4.9274337972053965e-12,
+        "source_power_W": 4.059899363116552e-05,
+        "boundary_power_out_W": {
+          "surface_robin_z_min": 4.059898541412547e-05,
+          "surface_robin_z_max": 8.21684000246147e-12
+        },
+        "boundary_flux_interpretation": "surface_robin_z_min/z_max are the paper reduced model's substrate/air bath heat paths",
+        "solver": "scipy.sparse.linalg.cg+jacobi",
+        "iterations": 376
+      },
+      "weighting": {
+        "top_contact_cells": 242,
+        "bottom_contact_cells": 300,
+        "minimum_psi": 0.0015302981584138012,
+        "maximum_psi": 0.9978552620801369,
+        "linear_residual_relative": 2.639091752698895e-15,
+        "top_contact_half_width_m": {
+          "minimum": 4.999999999999952e-08,
+          "maximum": 4.999999999999952e-08
+        },
+        "bottom_contact_half_width_m": {
+          "minimum": 4.999999999999952e-08,
+          "maximum": 5.000000000000037e-08
+        },
+        "geometry_status": "frozen Figure-2 digitized contact segments"
+      },
+      "weighting_gate_passed": true,
+      "two_terminal_resistance_audit": {
+        "purpose": "absolute-current geometry audit only; no empirical conductivity or PTE-current rescaling is applied",
+        "axis_mapping": "x=b, y=a",
+        "sigma_x_y_S_m": [
+          110000.0,
+          491000.0
+        ],
+        "thickness_m": 1.3e-07,
+        "contact_geometry": "frozen Figure-2 digitized contact segments",
+        "contact_resistance_included": false,
+        "applied_voltage_V": 1.0,
+        "predicted_terminal_current_A": 0.07072605540905436,
+        "predicted_resistance_ohm": 14.139060834318492,
+        "published_measured_device_A_resistance_ohm": 213.0,
+        "relative_difference_vs_measured": 0.9336194327027301,
+        "terminal_current_balance_relative_error": 1.5546422342569619e-12,
+        "linear_residual_relative": 1.6819471117037291e-15,
+        "absolute_current_geometry_gate_lt_10pct": false,
+        "interpretation": "a failure blocks certification of absolute PTE-current magnitude because exact CAD/contact resistance are unpublished; it does not invalidate a separately converged polarization ratio"
+      },
+      "absolute_current_certification": "BLOCKED_DIGITIZED_GEOMETRY_RESISTANCE_MISMATCH",
+      "requested_incident_power_W": 0.0002844,
+      "PTE_current_A": 5.554954641958292e-09,
+      "PTE_current_pA": 5554.954641958292,
+      "mapping": {
+        "P_Q_source_W": 4.0598993631165526e-05,
+        "P_Q_target_W": 4.0598993631165526e-05,
+        "mapping_relative_power_error": 0.0
+      }
+    },
+    "b": {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_device_a_measured_reproduction_kitamura/thermal_b_paper_reduced_L60_cpu120_127_20260802",
+      "status": "COMPLETED_DEVICE_A_METAL_ISOLATED_LOWER_BOUND_DIAGNOSTIC",
+      "thermal": {
+        "Tmax_rise_K": 0.11085265675519296,
+        "TaIrTe4_volume_average_rise_K": 0.014302284716726165,
+        "linear_residual_relative": 9.553766852040383e-11,
+        "energy_balance_relative_error": 4.292896238368861e-12,
+        "source_power_W": 5.3823112102893506e-05,
+        "boundary_power_out_W": {
+          "surface_robin_z_min": 5.382310149185235e-05,
+          "surface_robin_z_max": 1.0610810097249554e-11
+        },
+        "boundary_flux_interpretation": "surface_robin_z_min/z_max are the paper reduced model's substrate/air bath heat paths",
+        "solver": "scipy.sparse.linalg.cg+jacobi",
+        "iterations": 358
+      },
+      "weighting": {
+        "top_contact_cells": 242,
+        "bottom_contact_cells": 300,
+        "minimum_psi": 0.0015302981584138012,
+        "maximum_psi": 0.9978552620801369,
+        "linear_residual_relative": 2.639091752698895e-15,
+        "top_contact_half_width_m": {
+          "minimum": 4.999999999999952e-08,
+          "maximum": 4.999999999999952e-08
+        },
+        "bottom_contact_half_width_m": {
+          "minimum": 4.999999999999952e-08,
+          "maximum": 5.000000000000037e-08
+        },
+        "geometry_status": "frozen Figure-2 digitized contact segments"
+      },
+      "weighting_gate_passed": true,
+      "two_terminal_resistance_audit": {
+        "purpose": "absolute-current geometry audit only; no empirical conductivity or PTE-current rescaling is applied",
+        "axis_mapping": "x=b, y=a",
+        "sigma_x_y_S_m": [
+          110000.0,
+          491000.0
+        ],
+        "thickness_m": 1.3e-07,
+        "contact_geometry": "frozen Figure-2 digitized contact segments",
+        "contact_resistance_included": false,
+        "applied_voltage_V": 1.0,
+        "predicted_terminal_current_A": 0.07072605540905436,
+        "predicted_resistance_ohm": 14.139060834318492,
+        "published_measured_device_A_resistance_ohm": 213.0,
+        "relative_difference_vs_measured": 0.9336194327027301,
+        "terminal_current_balance_relative_error": 1.5546422342569619e-12,
+        "linear_residual_relative": 1.6819471117037291e-15,
+        "absolute_current_geometry_gate_lt_10pct": false,
+        "interpretation": "a failure blocks certification of absolute PTE-current magnitude because exact CAD/contact resistance are unpublished; it does not invalidate a separately converged polarization ratio"
+      },
+      "absolute_current_certification": "BLOCKED_DIGITIZED_GEOMETRY_RESISTANCE_MISMATCH",
+      "requested_incident_power_W": 0.0002844,
+      "PTE_current_A": 3.93853912424388e-09,
+      "PTE_current_pA": 3938.5391242438795,
+      "mapping": {
+        "P_Q_source_W": 5.3823112102893526e-05,
+        "P_Q_target_W": 5.382311210289351e-05,
+        "mapping_relative_power_error": 2.517975387629104e-16
+      }
+    }
+  },
+  "experimental_target": {
+    "abs_Ia_over_abs_Ib": 0.8365896980461811,
+    "ratio_uncertainty": 0.00852575488454707,
+    "SI_Ea_fitted_current_at_3675Hz_pA": 110.59909805088104,
+    "Figure3I_visual_Ia_Ib_pA_assuming_unit_typo": [
+      122.0,
+      143.0
+    ]
+  },
+  "comparison": {
+    "simulated_abs_Ia_pA": 5554.954641958292,
+    "simulated_abs_Ib_pA": 3938.5391242438795,
+    "simulated_abs_Ia_over_abs_Ib": 1.4104099176683262,
+    "ratio_relative_difference_vs_paper": 0.6859039992510992,
+    "absolute_current_not_rescaled": true
+  },
+  "gates": {
+    "numerical_pass": true,
+    "polarization_ratio_within_10pct": false,
+    "absolute_current_geometry_resistance_gate": false
+  },
+  "no_Q_or_current_rescaling": true,
+  "no_adjoint": true,
+  "no_optimization": true
+}

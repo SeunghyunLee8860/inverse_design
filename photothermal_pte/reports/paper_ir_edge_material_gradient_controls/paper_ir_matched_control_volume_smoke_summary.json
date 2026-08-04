@@ -1,0 +1,112 @@
+{
+  "official_status": "PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_RUNTIME_AND_UNRESOLVED_EDGE_METRIC",
+  "smoke_status": "FAILED_MATCHED_CONTROL_VOLUME_SMOKE_AUTO_SHUTOFF_UNRESOLVED",
+  "validated": false,
+  "production_paper_like_result": false,
+  "classification": "reduced 12 um one-polarization GPU smoke; not production Q or a paper reproduction",
+  "execution": {
+    "generation_commit": "3b08e8a9251f1531ac053bf017697c157fd785f4",
+    "GPU": "GPU 4",
+    "CPU_FDTD_fallback": false,
+    "iterations": 131247,
+    "completed_simulation_time_s": 4.000005e-12,
+    "solver_wall_time_s": 640.481187,
+    "GPU_simulation_time_s": 627.725899,
+    "solver_completed_normally": true,
+    "requested_auto_shutoff_min": 1e-05,
+    "final_logged_auto_shutoff": 1.80982e-05,
+    "auto_shutoff_gate_reached": false
+  },
+  "control_volume": {
+    "source": "independent readback of all six flux-monitor coordinates",
+    "realized_bounds_m": {
+      "x": [
+        -4.542372881355942e-06,
+        4.542372881355934e-06
+      ],
+      "y": [
+        -4.542372881355942e-06,
+        4.542372881355934e-06
+      ],
+      "z": [
+        -1.8e-07,
+        5.000000000000006e-08
+      ]
+    },
+    "maximum_transverse_face_mismatch_m": 0.0,
+    "all_common_grid_dual_cell_axes_close": true
+  },
+  "absorption": {
+    "source_power_native_W": 2.339588229783334e-15,
+    "P_Q_common_grid_bounded_W": 8.701470836178439e-17,
+    "P_Q_native_Yee_bounded_W": 8.715867473376059e-17,
+    "P_six_face_native_W": 8.717844152299242e-17,
+    "common_grid_six_face_relative_closure": 0.0018781381996241275,
+    "native_Yee_six_face_relative_closure": 0.00022673941959165867,
+    "common_native_total_relative_difference": 0.0016517733021522958,
+    "component_power_common_grid_bounded_W": {
+      "x": 1.8020148852716366e-17,
+      "y": 6.844722670578904e-17,
+      "z": 5.473328032789779e-19
+    },
+    "component_power_native_Yee_bounded_W": {
+      "x": 1.8020539113716837e-17,
+      "y": 6.859080281676478e-17,
+      "z": 5.473328032789776e-19
+    },
+    "Q_hotspot": {
+      "x_m": 1.491525423728809e-06,
+      "y_m": 1.491525423728809e-06,
+      "z_m": 6.28657265540301e-23,
+      "Q_common_grid_W_m3": 55.002070625922144
+    },
+    "Q_operations": {
+      "clipped": false,
+      "smoothed": false,
+      "gain_applied": false,
+      "globally_rescaled": false,
+      "tiled": false,
+      "source_deleted": false
+    }
+  },
+  "coordinate_contract": {
+    "field_coordinates_read_independently": true,
+    "index_coordinates_read_independently": true,
+    "field_and_index_shapes_xyz": [
+      269,
+      269,
+      24
+    ],
+    "maximum_independent_field_index_coordinate_mismatch_m": 8.470329472543003e-22,
+    "old_exact_zero_claim_retracted": true,
+    "interpretation": "collocated within floating-point precision; exact zero is not claimed"
+  },
+  "acceptance": {
+    "common_grid_six_face_closure_lt_0p5_percent": true,
+    "native_Yee_six_face_closure_lt_0p5_percent": true,
+    "native_common_difference_lt_0p5_percent": true,
+    "independent_coordinate_mismatch_lt_1fm": true,
+    "auto_shutoff_lt_1e_minus_5": false,
+    "all": false
+  },
+  "interpretation": {
+    "old_9p18_percent_is_FDTD_energy_error": false,
+    "old_9p18_percent_cause": "unmatched Q and six-face control volumes",
+    "matched_volume_closure_passes": true,
+    "Q_promoted_to_production": false
+  },
+  "read_only_recovery": {
+    "FDTD_solve_called": false,
+    "runanalysis_called": false,
+    "raw_case_result_modified": false,
+    "raw_FSP_modified": false
+  },
+  "thermal_run": false,
+  "PTE_run": false,
+  "adjoint_run": false,
+  "gradient_run": false,
+  "optimization_run": false,
+  "report": "PAPER_IR_MATCHED_CONTROL_VOLUME_SMOKE_REPORT.md",
+  "six_face_csv": "paper_ir_matched_control_volume_six_face_fluxes.csv",
+  "raw_artifact_manifest": "PAPER_IR_MATCHED_CONTROL_VOLUME_RAW_MANIFEST.json"
+}

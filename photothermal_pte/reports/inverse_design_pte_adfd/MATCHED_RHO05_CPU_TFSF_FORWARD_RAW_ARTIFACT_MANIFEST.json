@@ -1,0 +1,28 @@
+{
+  "status": "VALIDATED_MATCHED_RHO05_CPU_TFSF_FORWARD",
+  "artifact_root": "/home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz2p5_20260727_2",
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python -m photothermal_pte.finite_inverse_design.run_v261_large_background_tfsf_forward --output-dir /home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz2p5_20260727_2 --case gray --gray-rho 0.5 --domain-um 7.2 --tfsf-span-um 2.6 --pml-layers 32 --pml-profile stabilized-xy --transverse-mesh-nm 50 --flake-dz-nm 2.5 --z-min-um -3.6 --z-max-um 3.4 --threads 16 --simulation-time-ps 4",
+  "raw_files_committed_to_git": false,
+  "files": [
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz2p5_20260727_2/case_result.json",
+      "size_bytes": 29519,
+      "sha256": "aaac6c4a60771360baee0a0910a6bb017998fb5e2ae05a1999152314ab8ed990"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz2p5_20260727_2/large_background_gray.fsp",
+      "size_bytes": 103899092,
+      "sha256": "6ae319a6d725b34243d08d028489d12a044472309f7294319d0f91f159b28fff"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz2p5_20260727_2/large_background_gray_native_q.npz",
+      "size_bytes": 1327768,
+      "sha256": "711c4c93589603f32bfc0525e1b63b36fd773a0ace561509ed0391cb2604ddb2"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/large_background_gray_rho05_matched_pml32_stabilized_xy_dz2p5_20260727_2/large_background_gray_p0.log",
+      "size_bytes": 5684,
+      "sha256": "efced7624b673ee3fa8d022c0fa4b5bd18fba6f56d25ac475b38adf1fcabed55"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "generation_command": "python -m photothermal_pte.finite_inverse_design.publish_scale_adaptive_near_null_diagnostic --adaptive-result <external>/scale_adaptive_near_null_combined_adfd.json --rejected-result <external>/scale_adaptive_near_null_combined_adfd.json --report-dir photothermal_pte/reports/inverse_design_pte_adfd",
+  "adaptive_result": {
+    "path": "/home/seunghyun/tairte4_artifacts/scale_adaptive_near_null_combined_adfd_20260728_2/scale_adaptive_near_null_combined_adfd.json",
+    "byte_size": 26730,
+    "sha256": "c7031b7546c59bcf7b9ddf325477a3c56d0b3016e118a1c20f08a641465588a1"
+  },
+  "rejected_result": {
+    "path": "/home/seunghyun/tairte4_artifacts/scale_adaptive_near_null_combined_adfd_20260728_1/scale_adaptive_near_null_combined_adfd.json",
+    "byte_size": 26689,
+    "sha256": "a328149101fd6137caa3ecbcb357a535f42ea1b87628b9c72e3646059e9072f6"
+  },
+  "raw_artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/scale_adaptive_near_null_combined_adfd_20260728_2/detached_driver.log",
+      "byte_size": 199,
+      "sha256": "880221083e7125540ca85ed203bdf8aeff54bdefef0f297de325285f0cc0e5c3"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/scale_adaptive_near_null_combined_adfd_20260728_1/near_null_central_localized_h0.02_minus_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "909c7eebe68a5be4166c357fc0f12edb8d986de7de490d5876a0e402007e4cb5"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/scale_adaptive_near_null_combined_adfd_20260728_1/near_null_central_localized_h0.02_minus_cpu_tfsf.json",
+      "byte_size": 259,
+      "sha256": "20f4d77a14be89ede0eb82e658fa40cb96a2ce5bca07657c977631a8986f3388"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/scale_adaptive_near_null_combined_adfd_20260728_2/near_null_central_localized_h0.02_plus_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "b3e2f235ee52fe03843c30614d8bd55d05d5934d6ad3605b7b7c9af0c1513807"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/scale_adaptive_near_null_combined_adfd_20260728_2/near_null_central_localized_h0.02_plus_cpu_tfsf.json",
+      "byte_size": 258,
+      "sha256": "4272f0c12beb60cfca8f7a0fa8f452b2a617ac37b936231998ac6f6ea05423d0"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/scale_adaptive_near_null_combined_adfd_20260728_2/near_null_central_localized_h0.02_plus_cpu_tfsf_p0.log",
+      "byte_size": 5754,
+      "sha256": "d7e2aee35df22df43f0a8fb68ce4ea61fb43094540a133572484b5eb0c91db69"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/scale_adaptive_near_null_combined_adfd_20260728_1/near_null_fixed_seed_random_h0.02_minus_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "eb0170636c1bddea549c9106f27f9c15ce97597edb435b7389d7a08c23b0e1eb"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/scale_adaptive_near_null_combined_adfd_20260728_1/near_null_fixed_seed_random_h0.02_minus_cpu_tfsf.json",
+      "byte_size": 259,
+      "sha256": "610c9168dbf9e47e78936314a1b4558fb164216b0b843cdd130cca59873f2dc6"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/scale_adaptive_near_null_combined_adfd_20260728_1/near_null_fixed_seed_random_h0.02_plus_cpu_tfsf.fsp",
+      "byte_size": 122773042,
+      "sha256": "f19d0cc2516c3ccbdd6e23a9923cfe53b0a8d13d5487efeccba6a7be34b07585"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/scale_adaptive_near_null_combined_adfd_20260728_1/near_null_fixed_seed_random_h0.02_plus_cpu_tfsf.json",
+      "byte_size": 258,
+      "sha256": "dc028986d96ddb7ecd84dc508b2e2d4b7dd0d3c80e1eb603571031c6b41f4bf3"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/scale_adaptive_near_null_combined_adfd_20260728_2/scale_adaptive_near_null_combined_adfd.json",
+      "byte_size": 26730,
+      "sha256": "c7031b7546c59bcf7b9ddf325477a3c56d0b3016e118a1c20f08a641465588a1"
+    }
+  ],
+  "published": {
+    "summary": {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/scale_adaptive_near_null_combined_adfd_summary.json",
+      "byte_size": 2878,
+      "sha256": "5be11e03a4381c03c17cfdfd8096d3a78cf458e5660f1fec8a92db15d0bddaf9"
+    },
+    "cases": {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/scale_adaptive_near_null_combined_adfd_cases.csv",
+      "byte_size": 2068,
+      "sha256": "d83b3f668d0c8568620a1a6cba2a79bc7ce5c7729322467b0294f74d6fe9c9da"
+    },
+    "report": {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/SCALE_ADAPTIVE_NEAR_NULL_COMBINED_ADFD_DIAGNOSTIC_REPORT.md",
+      "byte_size": 833,
+      "sha256": "b43fb831017c170ed1ea02fc754e4bc1aae7f578428ac50a0bdc9b8411213500"
+    }
+  },
+  "raw_FSP_committed_to_git": false
+}

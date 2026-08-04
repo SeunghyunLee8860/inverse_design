@@ -1,0 +1,52 @@
+{
+  "status": "BLOCKED_W12_INTERFACE_SLAB_OR_DOWNSTREAM_CONVERGENCE",
+  "raw_artifacts": [
+    {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge_a_interface_downstream_20260731/downstream_raw/w12_interface_downstream_fields.npz",
+      "size_bytes": 114650544,
+      "sha256": "592c7967d06d8d5d7392d221d3a090639144081b59fe6e224c8605e1352baa63"
+    },
+    {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge_a_interface_downstream_20260731/interface_index_readonly.json",
+      "size_bytes": 31713,
+      "sha256": "bd64d958ea0e6899619b95541236c29a9130d841d60332a3b93d3653315cfbd2"
+    },
+    {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_20260731/finite_q_on_artifact.npz",
+      "size_bytes": 1501854558,
+      "sha256": "36183e802bcc5adcfbe94229492127c4d9e459e937840e3f0e4e1b8f83577961"
+    },
+    {
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_threelevel_xy25_h15_xy50_h22_dz5_pml24_t4_gpu5_20260731/finite_q_on_artifact.npz",
+      "size_bytes": 3901482162,
+      "sha256": "a8ab1cf023f82efb82448e335175af249adf32f5b265406e00bdd3874c6d3c17"
+    }
+  ],
+  "published_files": [
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_edge_a_interface_downstream/W12_INTERFACE_DOWNSTREAM_REPORT.md",
+      "size_bytes": 2598,
+      "sha256": "d3046200b449104590e7b0fca43f6082624424ade338a626cd08e36bed5d90e8"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_edge_a_interface_downstream/w12_interface_downstream_summary.json",
+      "size_bytes": 48442,
+      "sha256": "fc292fd8649644e878a62fa71a49a5dd9bf6c46e6bb092feb21eb0cae1456737"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_edge_a_interface_downstream/w12_interface_downstream_cases.csv",
+      "size_bytes": 532,
+      "sha256": "bc26f65755e84067910e610d80c33ae16f45a47bae567ec2737b6fe8dc89233d"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_edge_a_interface_downstream/W12_INTERFACE_DOWNSTREAM_COMPARISON.png",
+      "size_bytes": 257260,
+      "sha256": "955558b041e7f60ca56bcd996b989f312e386def172b41a4cdaf183818ac4e6d"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_edge_a_interface_downstream/W12_INTERFACE_GRADIENT_COMPARISON.png",
+      "size_bytes": 81884,
+      "sha256": "1c671a8d501e6bebffee6ebb441cfb4c32ba3164b5bc7366ad60619ca29c1812"
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "status": "COMPLETED_W12_50NM_MAXWELL_ANALYTIC_EXPLICIT3D_THERMAL_SANITY",
+  "generation_commit": "42245b9848f725b3b29a2ecb71ecd9d63535058d",
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/validation/paper_ir_sanity/compare_w12_50nm_maxwell_analytic_explicit3d.py --edge-a-dir /data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_20260731 --edge-b-dir /data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_retry1_20260731/readonly_recovery_b_reference_retry1 --incident-reference-npz /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_a_L60_xy100_dz5_pml24_t4_gpu4_retry4_20260731/readonly_recovery_v2/incident_reference.npz --output-dir /data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_50nm_maxwell_analytic_explicit3d_20260731 --report-dir /home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d",
+  "raw_NPZ_and_FSP_committed_to_Git": false,
+  "artifacts": [
+    {
+      "role": "empty_stack_target_plane_incident_reference",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_planar_empty_reference_a_L60_xy100_dz5_pml24_t4_gpu4_retry4_20260731/readonly_recovery_v2/incident_reference.npz",
+      "size_bytes": 2016800,
+      "sha256": "7e7af356d51e03e755daf1e2c848c54cc5ccd9581e95af269f408fdcc53aa8cf"
+    },
+    {
+      "role": "external_explicit3D_fields_NPZ",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_50nm_maxwell_analytic_explicit3d_20260731/w12_50nm_maxwell_analytic_explicit3d_fields.npz",
+      "size_bytes": 262744866,
+      "sha256": "9b2287b5b18eb9c4d9c164ddd45d750ae05ff846d6a0f0e3936465e413be47ac"
+    },
+    {
+      "role": "published_summary_JSON",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/w12_50nm_maxwell_analytic_explicit3d_summary.json",
+      "size_bytes": 108683,
+      "sha256": "1d0eaec409590ae32ac1957838a3e42d131d5ca65bf02f2786773f346e44b5d5"
+    },
+    {
+      "role": "published_cases_CSV",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/w12_50nm_maxwell_analytic_explicit3d_cases.csv",
+      "size_bytes": 1057,
+      "sha256": "599c6e5158eb508de4aee1bed8aca480d3bdb5c0774cc3f95ac7cee57f7a2163"
+    },
+    {
+      "role": "published_report",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/W12_50NM_MAXWELL_VS_ANALYTIC_EXPLICIT3D_THERMAL_SANITY_REPORT.md",
+      "size_bytes": 4385,
+      "sha256": "3a28cea7f52c3c89aba362714ac94828b949b00f2b24702f49a0ae4d912b33c8"
+    },
+    {
+      "role": "edge_a_case_result",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_20260731/case_result.json",
+      "size_bytes": 78343,
+      "sha256": "98c1d99374f68eea332abec20026b11e9e331689f02a2d7c54449234c4b3e1f9"
+    },
+    {
+      "role": "edge_a_raw_Q_NPZ",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_20260731/finite_q_on_artifact.npz",
+      "size_bytes": 1501854558,
+      "sha256": "36183e802bcc5adcfbe94229492127c4d9e459e937840e3f0e4e1b8f83577961"
+    },
+    {
+      "role": "edge_a_FSP",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_20260731/finite_2um_optical_q.fsp",
+      "size_bytes": 2634686647,
+      "sha256": "f18c72a03bab7768701955a94df5a90aa54469f78691cf26158aff0a331388f1"
+    },
+    {
+      "role": "edge_a_manifest",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_a_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_20260731/RAW_ARTIFACT_MANIFEST.json",
+      "size_bytes": 11940,
+      "sha256": "a5d3dc3ce7e00b59b1312f05708cd46a1eaed2bb49e664ba4d060a01edfd06d5"
+    },
+    {
+      "role": "edge_b_case_result",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_retry1_20260731/readonly_recovery_b_reference_retry1/case_result.json",
+      "size_bytes": 79953,
+      "sha256": "a57116a6bfd5430f13a487f23bcd1326252fcac110111694490f6750228865f1"
+    },
+    {
+      "role": "edge_b_raw_Q_NPZ",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_retry1_20260731/readonly_recovery_b_reference_retry1/finite_q_on_artifact.npz",
+      "size_bytes": 1501855394,
+      "sha256": "a507cd79b19b56d2fff148babab772c93a32dd5bfcaa3d95dc252be328ed5e4b"
+    },
+    {
+      "role": "edge_b_FSP",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_retry1_20260731/finite_2um_optical_q.fsp",
+      "size_bytes": 2270604639,
+      "sha256": "57beccee97e042e5c8ad858f52d3a232cf6701ecd1609bbcbd5edd6089128ccb"
+    },
+    {
+      "role": "edge_b_manifest",
+      "path": "/data/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w12_edge45_b_L60_nested_xy50_h22_dz5_pml24_t4_gpu5_retry1_20260731/readonly_recovery_b_reference_retry1/RAW_ARTIFACT_MANIFEST.json",
+      "size_bytes": 4201,
+      "sha256": "b16ffc321079b118abd4708e921268098e8af0448c69363e75c70a1ffcffe342"
+    },
+    {
+      "role": "figure_Q_areal",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/explicit3d_depth_integrated_Q.png",
+      "size_bytes": 218639,
+      "sha256": "d9d5e171041a94a5b0f3862087ce4873416bf8b6eb26c4489717a5a12f828112"
+    },
+    {
+      "role": "figure_Q_midplane",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/explicit3d_volumetric_Q_midplane.png",
+      "size_bytes": 202421,
+      "sha256": "d177d127780daa5f77c9e90fae35adf63e8c68b9f020b599915e376b2a93bf91"
+    },
+    {
+      "role": "figure_temperature_surface",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/explicit3d_temperature_surface.png",
+      "size_bytes": 213817,
+      "sha256": "237451741a44a5b98f33b3fbb994400038e33e7a0e34aa8708672473ed5a5d65"
+    },
+    {
+      "role": "figure_temperature_midplane",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/explicit3d_temperature_midplane.png",
+      "size_bytes": 211585,
+      "sha256": "3f6590eb188b79db3b1e2b686cad48d321fb3a8cccd68ca5cc63f9a2121d18dd"
+    },
+    {
+      "role": "figure_gradient_magnitude",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/explicit3d_gradient_magnitude.png",
+      "size_bytes": 257166,
+      "sha256": "f92f766f69e3e88e0b5c6672f7b3187b963187f6e70979fd797cfb1af189b901"
+    },
+    {
+      "role": "figure_Maxwell_gradients",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/explicit3d_Maxwell_gradients.png",
+      "size_bytes": 346390,
+      "sha256": "b41c8328183b43c26226b011adc3ff34763d7d76390d231d1e03bd9c2919d01c"
+    },
+    {
+      "role": "figure_analytic_gradients",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/explicit3d_analytic_gradients.png",
+      "size_bytes": 343526,
+      "sha256": "7453483e52c70f7458738437fb8f7fa56d029e490839927f77db56fd3a939c12"
+    },
+    {
+      "role": "figure_edge_profiles",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/explicit3d_edge_normal_profiles.png",
+      "size_bytes": 384645,
+      "sha256": "0ce83d9558fde407530d7083e9080c4c8a1d001bb4fbfa947b6e6916936b2cbd"
+    },
+    {
+      "role": "figure_depth_profiles",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/explicit3d_Q_depth_profiles.png",
+      "size_bytes": 96807,
+      "sha256": "35cc44b4237f5cd1a8e1023a866999c2a1749e47fe34fd62fee558a3409d966f"
+    },
+    {
+      "role": "figure_optical_thermal_xy_xz_yz_environment",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/W12_OPTICAL_THERMAL_XY_XZ_YZ_ENVIRONMENT.png",
+      "size_bytes": 498229,
+      "sha256": "0395f9bffc0c18ea8d15ce3b2d6abcb5798cd1eda347beafdb622cf759af95df"
+    },
+    {
+      "role": "optical_thermal_environment_and_paper_ratio_report",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/W12_OPTICAL_THERMAL_ENVIRONMENT_AND_PAPER_RATIO.md",
+      "size_bytes": 3388,
+      "sha256": "4e7983fd70bc281fbeadc901e2524fde5d7eb57890bfa0ca2a1eebe9f8c82a6a"
+    },
+    {
+      "role": "paper_Figure_3J_11um_current_ratio_digitization",
+      "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/paper_ir_w12_50nm_maxwell_analytic_explicit3d/paper_fig3j_11um_current_ratio_digitization.json",
+      "size_bytes": 2013,
+      "sha256": "607dfbd016e462ef6ba937c40fab488e9597d50d5266d44eb24062bdb6d12fc4"
+    }
+  ]
+}

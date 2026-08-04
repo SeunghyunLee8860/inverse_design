@@ -1,0 +1,809 @@
+{
+  "component_specific_native_controls": {
+    "analytic_cut_cell_power_decomposition": {
+      "D_EM_W_signed": 1.2222090101742347e-18,
+      "D_EM_over_D_total_signed": 0.012335261057519675,
+      "D_EM_over_P_planar_signed": 0.006244660041106188,
+      "D_support_W": 9.786033204631732e-17,
+      "D_support_over_D_total": 0.9876647389424803,
+      "D_support_over_P_planar": 0.5000000000424671,
+      "D_total_W": 9.908254105649156e-17,
+      "P_edge_W": 9.663812301951969e-17,
+      "P_edge_over_P_masked": 0.9875106799167268,
+      "P_edge_over_P_planar": 0.49375533991642667,
+      "P_masked_W": 9.786033202969393e-17,
+      "P_planar_W": 1.9572066407601125e-16,
+      "decomposition_closure_W": 0.0,
+      "decomposition_closure_relative_to_P_planar": 0.0
+    },
+    "components": {
+      "x": {
+        "analytic_cut_fraction": {
+          "fractional_xy_cell_count": 536,
+          "maximum": 1.0,
+          "minimum": 0.0
+        },
+        "component_to_common_conservative_remap": {
+          "analytic": {
+            "relative_power_error": 1.262338875732672e-16,
+            "signed_power_error_W": -1.232595164407831e-32,
+            "source_power_W": 9.764376175869752e-17,
+            "target_power_W": 9.76437617586975e-17
+          },
+          "edge": {
+            "relative_power_error": 0.0,
+            "signed_power_error_W": 0.0,
+            "source_power_W": 9.400737732314966e-17,
+            "target_power_W": 9.400737732314966e-17
+          },
+          "full": {
+            "relative_power_error": 0.0,
+            "signed_power_error_W": 0.0,
+            "source_power_W": 1.9528752353268856e-16,
+            "target_power_W": 1.9528752353268856e-16
+          },
+          "loss_proxy": {
+            "relative_power_error": 0.0,
+            "signed_power_error_W": 0.0,
+            "source_power_W": 9.761784791054336e-17,
+            "target_power_W": 9.761784791054336e-17
+          }
+        },
+        "field_index_coordinate_mismatch_m": 8.470329472543003e-22,
+        "loss_participation_proxy": {
+          "clipping_applied": false,
+          "control_volume_cell_count": 1730208,
+          "definition": "Im(epsilon_edge,c)/Im(epsilon_planar,c); diagnostic loss-participation proxy, not geometric occupancy",
+          "denominator_active_cell_count": 1009288,
+          "denominator_floor": 2.6181870955490026e-11,
+          "denominator_near_floor_cell_count": 720920,
+          "f_greater_than_one_cell_count": 268,
+          "f_less_than_zero_cell_count": 0,
+          "f_max": 1.9995118379301953,
+          "f_min": 0.0,
+          "near_floor_cells_excluded_from_proxy": true,
+          "near_floor_direct_proxy_signed_power_W": 0.0
+        },
+        "planar_edge_coordinate_mismatch_m": 0.0
+      },
+      "y": {
+        "analytic_cut_fraction": {
+          "fractional_xy_cell_count": 536,
+          "maximum": 1.0,
+          "minimum": 0.0
+        },
+        "component_to_common_conservative_remap": {
+          "analytic": {
+            "relative_power_error": 1.3174033598248308e-16,
+            "signed_power_error_W": 6.018531076210112e-36,
+            "source_power_W": 4.568480132774497e-20,
+            "target_power_W": 4.568480132774498e-20
+          },
+          "edge": {
+            "relative_power_error": 1.6132334484561417e-16,
+            "signed_power_error_W": 3.851859888774472e-34,
+            "source_power_W": 2.3876642853275122e-18,
+            "target_power_W": 2.3876642853275126e-18
+          },
+          "full": {
+            "relative_power_error": 0.0,
+            "signed_power_error_W": 0.0,
+            "source_power_W": 9.136960521265279e-20,
+            "target_power_W": 9.136960521265279e-20
+          },
+          "loss_proxy": {
+            "relative_power_error": 1.3183425678674179e-16,
+            "signed_power_error_W": -6.018531076210112e-36,
+            "source_power_W": 4.565225475458803e-20,
+            "target_power_W": 4.565225475458802e-20
+          }
+        },
+        "field_index_coordinate_mismatch_m": 8.470329472543003e-22,
+        "loss_participation_proxy": {
+          "clipping_applied": false,
+          "control_volume_cell_count": 1730208,
+          "definition": "Im(epsilon_edge,c)/Im(epsilon_planar,c); diagnostic loss-participation proxy, not geometric occupancy",
+          "denominator_active_cell_count": 1009288,
+          "denominator_floor": 2.0453387562805196e-10,
+          "denominator_near_floor_cell_count": 720920,
+          "f_greater_than_one_cell_count": 268,
+          "f_less_than_zero_cell_count": 0,
+          "f_max": 1.9995118379301955,
+          "f_min": 0.0,
+          "near_floor_cells_excluded_from_proxy": true,
+          "near_floor_direct_proxy_signed_power_W": 0.0
+        },
+        "planar_edge_coordinate_mismatch_m": 0.0
+      },
+      "z": {
+        "analytic_cut_fraction": {
+          "fractional_xy_cell_count": 269,
+          "maximum": 1.0,
+          "minimum": 0.0
+        },
+        "component_to_common_conservative_remap": {
+          "analytic": {
+            "relative_power_error": 1.4087870871360262e-16,
+            "signed_power_error_W": 2.407412430484045e-35,
+            "source_power_W": 1.7088546966867507e-19,
+            "target_power_W": 1.708854696686751e-19
+          },
+          "edge": {
+            "relative_power_error": 0.0,
+            "signed_power_error_W": 0.0,
+            "source_power_W": 2.430814110425162e-19,
+            "target_power_W": 2.430814110425162e-19
+          },
+          "full": {
+            "relative_power_error": 0.0,
+            "signed_power_error_W": 0.0,
+            "source_power_W": 3.417709381100278e-19,
+            "target_power_W": 3.417709381100278e-19
+          },
+          "loss_proxy": {
+            "relative_power_error": 1.4085918616504548e-16,
+            "signed_power_error_W": -2.407412430484045e-35,
+            "source_power_W": 1.70909153746158e-19,
+            "target_power_W": 1.7090915374615797e-19
+          }
+        },
+        "field_index_coordinate_mismatch_m": 8.470329472543003e-22,
+        "loss_participation_proxy": {
+          "clipping_applied": false,
+          "control_volume_cell_count": 1664303,
+          "definition": "Im(epsilon_edge,c)/Im(epsilon_planar,c); diagnostic loss-participation proxy, not geometric occupancy",
+          "denominator_active_cell_count": 940693,
+          "denominator_floor": 2.6181870955490026e-11,
+          "denominator_near_floor_cell_count": 723610,
+          "f_greater_than_one_cell_count": 0,
+          "f_less_than_zero_cell_count": 0,
+          "f_max": 1.0,
+          "f_min": 0.0,
+          "near_floor_cells_excluded_from_proxy": true,
+          "near_floor_direct_proxy_signed_power_W": 1.0786386302836705e-29
+        },
+        "planar_edge_coordinate_mismatch_m": 0.0
+      }
+    },
+    "coordinate_pairing": {
+      "edge": {
+        "fsp": {
+          "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/finite_2um_optical_q.fsp",
+          "sha256": "574bc65b274fa6f159febcc360f05416a05c8831cf9bbf4d60a3ab1d61c5ff5e",
+          "size_bytes": 100889792
+        },
+        "maximum_field_index_coordinate_mismatch_m": 8.470329472543003e-22,
+        "pairing": {
+          "x": {
+            "coordinate_mismatch_m": {
+              "x": 8.470329472543003e-22,
+              "y": 8.470329472543003e-22,
+              "z": 5.293955920339377e-23
+            },
+            "maximum_coordinate_mismatch_m": 8.470329472543003e-22,
+            "shape": [
+              269,
+              269,
+              24
+            ]
+          },
+          "y": {
+            "coordinate_mismatch_m": {
+              "x": 8.470329472543003e-22,
+              "y": 8.470329472543003e-22,
+              "z": 5.293955920339377e-23
+            },
+            "maximum_coordinate_mismatch_m": 8.470329472543003e-22,
+            "shape": [
+              269,
+              269,
+              24
+            ]
+          },
+          "z": {
+            "coordinate_mismatch_m": {
+              "x": 8.470329472543003e-22,
+              "y": 8.470329472543003e-22,
+              "z": 5.293955920339377e-23
+            },
+            "maximum_coordinate_mismatch_m": 8.470329472543003e-22,
+            "shape": [
+              269,
+              269,
+              24
+            ]
+          }
+        }
+      },
+      "planar": {
+        "fsp": {
+          "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/finite_2um_optical_q.fsp",
+          "sha256": "55adf7dcda947cbd904ee488a2c2349a21b445941aaa766a84886ff2a289bb49",
+          "size_bytes": 100889806
+        },
+        "maximum_field_index_coordinate_mismatch_m": 8.470329472543003e-22,
+        "pairing": {
+          "x": {
+            "coordinate_mismatch_m": {
+              "x": 8.470329472543003e-22,
+              "y": 8.470329472543003e-22,
+              "z": 5.293955920339377e-23
+            },
+            "maximum_coordinate_mismatch_m": 8.470329472543003e-22,
+            "shape": [
+              269,
+              269,
+              24
+            ]
+          },
+          "y": {
+            "coordinate_mismatch_m": {
+              "x": 8.470329472543003e-22,
+              "y": 8.470329472543003e-22,
+              "z": 5.293955920339377e-23
+            },
+            "maximum_coordinate_mismatch_m": 8.470329472543003e-22,
+            "shape": [
+              269,
+              269,
+              24
+            ]
+          },
+          "z": {
+            "coordinate_mismatch_m": {
+              "x": 8.470329472543003e-22,
+              "y": 8.470329472543003e-22,
+              "z": 5.293955920339377e-23
+            },
+            "maximum_coordinate_mismatch_m": 8.470329472543003e-22,
+            "shape": [
+              269,
+              269,
+              24
+            ]
+          }
+        }
+      },
+      "planar_edge_coordinate_pairing": {
+        "x": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "y": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "z": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      }
+    },
+    "loss_participation_proxy_power_decomposition": {
+      "D_EM_W_signed": 1.196286299524407e-18,
+      "D_EM_over_D_total_signed": 0.012073633626759214,
+      "D_EM_over_P_planar_signed": 0.006112212551352319,
+      "D_support_W": 9.788625475696715e-17,
+      "D_support_over_D_total": 0.9879263663732408,
+      "D_support_over_P_planar": 0.500132447532221,
+      "D_total_W": 9.908254105649156e-17,
+      "P_edge_W": 9.663812301951969e-17,
+      "P_edge_over_P_masked": 0.9877723358494123,
+      "P_edge_over_P_planar": 0.49375533991642667,
+      "P_masked_W": 9.78344093190441e-17,
+      "P_planar_W": 1.9572066407601125e-16,
+      "decomposition_closure_W": 0.0,
+      "decomposition_closure_relative_to_P_planar": 0.0
+    },
+    "loss_participation_proxy_spatial_metrics": {
+      "full_planar_vs_finite_edge_native_remap": {
+        "Pearson_correlation": 0.5670690976822561,
+        "cosine_similarity": 0.7031670200776409,
+        "equal_power_NRMSE": 1.0028112393907767,
+        "first_power_W": 1.9572066407601125e-16,
+        "second_power_W": 9.663812301951969e-17
+      },
+      "full_planar_vs_loss_proxy_masked": {
+        "Pearson_correlation": 0.5754198748916746,
+        "cosine_similarity": 0.7078656920256873,
+        "equal_power_NRMSE": 0.9976870403471353,
+        "first_power_W": 1.9572066407601125e-16,
+        "second_power_W": 9.78344093190441e-17
+      },
+      "loss_proxy_masked_vs_finite_edge": {
+        "Pearson_correlation": 0.9900196051706981,
+        "cosine_similarity": 0.9925590797742918,
+        "equal_power_NRMSE": 0.12190832917931345,
+        "first_power_W": 9.78344093190441e-17,
+        "second_power_W": 9.663812301951969e-17
+      }
+    },
+    "remap": "piecewise-constant bounded-dual-cell overlap remap; no gain or global rescaling"
+  },
+  "derived_array_artifact": {
+    "generation_command": "photothermal_pte/validation/paper_ir_sanity/analyze_w2_masked_planar_offline.py --planar-q /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/diagnostic_q_common_grid_artifact.npz --edge-q /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/diagnostic_q_common_grid_artifact.npz --native-field-index /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_masked_planar_offline_20260730/w2_planar_edge_native_fields_index.npz --extraction-summary /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_masked_planar_offline_20260730/read_only_extraction_summary.json --source-fields /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/w2_beam_and_field_components.npz --runtime-log /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730/finite_2um_optical_q_p0.log --runtime-log /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/finite_2um_optical_q_p0.log --runtime-log /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/finite_2um_optical_q_p0.log --output-dir photothermal_pte/reports/paper_ir_w2_masked_planar_offline --derived-artifact-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_masked_planar_offline_20260730",
+    "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_masked_planar_offline_20260730/w2_masked_planar_offline_derived_arrays.npz",
+    "role": "offline analytic/loss-proxy masked Q and profiles",
+    "sha256": "4f9495d737db2349f963bfc4f5d209f1ce9c5109f574e2333804eae191fdf414",
+    "size_bytes": 27246819
+  },
+  "generation_commit": "b2312677c32b20f68432289e52d5542dd1ec459d",
+  "geometry": {
+    "analytic_mask": "exact overlap of each bounded dual cell with y<=x; not a center Boolean mask",
+    "common_grid_bounds_m": {
+      "x": [
+        -4.542372881355942e-06,
+        4.542372881355934e-06
+      ],
+      "y": [
+        -4.542372881355942e-06,
+        4.542372881355934e-06
+      ],
+      "z": [
+        -1.8e-07,
+        5.000000000000006e-08
+      ]
+    },
+    "common_grid_quadrature": "bounded tensor-product dual-cell volumes closing exactly on the independently realized six-face control volume",
+    "common_grid_shape": [
+      269,
+      269,
+      24
+    ],
+    "edge_half_plane": "y <= x",
+    "normal_coordinate": "n=(y-x)/sqrt(2); material side n<=0",
+    "tangent_coordinate": "t=(x+y)/sqrt(2)"
+  },
+  "ideal_symmetric_Gaussian_half_plane_control": {
+    "P_half_over_P_full": 0.5,
+    "Pearson_correlation": 0.692959352193384,
+    "cosine_similarity": 0.7092320352498555,
+    "equal_power_full_half_NRMSE": 0.9939978529091282
+  },
+  "primary_common_grid_analytic_cut_cell": {
+    "components": {
+      "x": {
+        "power_decomposition": {
+          "D_EM_W_signed": 3.6364574094779575e-18,
+          "D_EM_over_D_total_signed": 0.03597372652230012,
+          "D_EM_over_P_planar_signed": 0.018639651953115434,
+          "D_support_W": 9.745002322587453e-17,
+          "D_support_over_D_total": 0.9640262734776999,
+          "D_support_over_P_planar": 0.4995066107522707,
+          "D_total_W": 1.0108648063535249e-16,
+          "P_edge_W": 9.400607895882809e-17,
+          "P_edge_over_P_masked": 0.9627574462449305,
+          "P_edge_over_P_planar": 0.48185373729461384,
+          "P_masked_W": 9.764253636830604e-17,
+          "P_planar_W": 1.9509255959418058e-16,
+          "decomposition_closure_W": 0.0,
+          "decomposition_closure_relative_to_P_planar": 0.0
+        },
+        "spatial_metrics": {
+          "analytic_masked_vs_finite_edge": {
+            "Pearson_correlation": 0.988940790391009,
+            "cosine_similarity": 0.9917547230651517,
+            "equal_power_NRMSE": 0.12824589223210678,
+            "first_power_W": 9.764253636830604e-17,
+            "second_power_W": 9.400607895882809e-17
+          },
+          "full_planar_vs_analytic_masked": {
+            "Pearson_correlation": 0.5760897869589582,
+            "cosine_similarity": 0.7081154677642834,
+            "equal_power_NRMSE": 0.9966411570997616,
+            "first_power_W": 1.9509255959418058e-16,
+            "second_power_W": 9.764253636830604e-17
+          },
+          "full_planar_vs_finite_edge": {
+            "Pearson_correlation": 0.5655616522210282,
+            "cosine_similarity": 0.7025191976004089,
+            "equal_power_NRMSE": 1.0012520036976282,
+            "first_power_W": 1.9509255959418058e-16,
+            "second_power_W": 9.400607895882809e-17
+          }
+        }
+      },
+      "y": {
+        "power_decomposition": {
+          "D_EM_W_signed": -2.3387425364474012e-18,
+          "D_EM_over_D_total_signed": 1.0199230657967069,
+          "D_EM_over_P_planar_signed": -25.696921854176257,
+          "D_support_W": 4.568474132781959e-20,
+          "D_support_over_D_total": -0.01992306579670712,
+          "D_support_over_P_planar": 0.5019608655224196,
+          "D_total_W": -2.293057795119582e-18,
+          "P_edge_W": 2.384070351009318e-18,
+          "P_edge_over_P_masked": 52.596190088819256,
+          "P_edge_over_P_planar": 26.194960988653836,
+          "P_masked_W": 4.5327814561916655e-20,
+          "P_planar_W": 9.101255588973625e-20,
+          "decomposition_closure_W": -3.851859888774472e-34,
+          "decomposition_closure_relative_to_P_planar": -4.232229115113619e-15
+        },
+        "spatial_metrics": {
+          "analytic_masked_vs_finite_edge": {
+            "Pearson_correlation": 0.2002314371051478,
+            "cosine_similarity": 0.28276913136001924,
+            "equal_power_NRMSE": 1.3026149687323132,
+            "first_power_W": 4.5327814561916655e-20,
+            "second_power_W": 2.384070351009318e-18
+          },
+          "full_planar_vs_analytic_masked": {
+            "Pearson_correlation": 0.6561043594031994,
+            "cosine_similarity": 0.7064818975979443,
+            "equal_power_NRMSE": 1.0002438426759765,
+            "first_power_W": 9.101255588973625e-20,
+            "second_power_W": 4.5327814561916655e-20
+          },
+          "full_planar_vs_finite_edge": {
+            "Pearson_correlation": 0.06872081034994602,
+            "cosine_similarity": 0.20348439884950126,
+            "equal_power_NRMSE": 1.7427791464907416,
+            "first_power_W": 9.101255588973625e-20,
+            "second_power_W": 2.384070351009318e-18
+          }
+        }
+      },
+      "z": {
+        "power_decomposition": {
+          "D_EM_W_signed": -7.219594137384118e-20,
+          "D_EM_over_D_total_signed": -0.7315461277309936,
+          "D_EM_over_P_planar_signed": -0.21124072682446396,
+          "D_support_W": 1.7088546844135276e-19,
+          "D_support_over_D_total": 1.7315461277309936,
+          "D_support_over_P_planar": 0.4999999982044665,
+          "D_total_W": 9.868952706751159e-20,
+          "P_edge_W": 2.430814110425163e-19,
+          "P_edge_over_P_masked": 1.4224814521317688,
+          "P_edge_over_P_planar": 0.7112407286199974,
+          "P_masked_W": 1.7088546966867512e-19,
+          "P_planar_W": 3.417709381100279e-19,
+          "decomposition_closure_W": 0.0,
+          "decomposition_closure_relative_to_P_planar": 0.0
+        },
+        "spatial_metrics": {
+          "analytic_masked_vs_finite_edge": {
+            "Pearson_correlation": 0.5448880419734106,
+            "cosine_similarity": 0.6055953974544503,
+            "equal_power_NRMSE": 1.0321506548670116,
+            "first_power_W": 1.7088546966867512e-19,
+            "second_power_W": 2.430814110425163e-19
+          },
+          "full_planar_vs_analytic_masked": {
+            "Pearson_correlation": 0.6280637584495502,
+            "cosine_similarity": 0.7074733210042902,
+            "equal_power_NRMSE": 0.9989635428462805,
+            "first_power_W": 3.417709381100279e-19,
+            "second_power_W": 1.7088546966867512e-19
+          },
+          "full_planar_vs_finite_edge": {
+            "Pearson_correlation": 0.31149288405459946,
+            "cosine_similarity": 0.43297963009624973,
+            "equal_power_NRMSE": 1.6250565841043934,
+            "first_power_W": 3.417709381100279e-19,
+            "second_power_W": 2.430814110425163e-19
+          }
+        }
+      }
+    },
+    "power_decomposition": {
+      "D_EM_W_signed": 1.2255189316566858e-18,
+      "D_EM_over_D_total_signed": 0.01239248411546637,
+      "D_EM_over_P_planar_signed": 0.006267826524687322,
+      "D_support_W": 9.766659343564374e-17,
+      "D_support_over_D_total": 0.9876075158845337,
+      "D_support_over_P_planar": 0.499508615574181,
+      "D_total_W": 9.889211236730042e-17,
+      "P_edge_W": 9.663323072087993e-17,
+      "P_edge_over_P_masked": 0.9874766545044966,
+      "P_edge_over_P_planar": 0.49422355790113165,
+      "P_masked_W": 9.785874965253662e-17,
+      "P_planar_W": 1.9552534308818036e-16,
+      "decomposition_closure_W": 0.0,
+      "decomposition_closure_relative_to_P_planar": 0.0
+    },
+    "residual_definition": "Q_finite_edge_b - Q_planar_b*analytic_cut_fraction",
+    "spatial_metrics": {
+      "analytic_masked_vs_finite_edge": {
+        "Pearson_correlation": 0.9900323752061061,
+        "cosine_similarity": 0.9925683442651705,
+        "equal_power_NRMSE": 0.12183079825178056,
+        "first_power_W": 9.785874965253662e-17,
+        "second_power_W": 9.663323072087993e-17
+      },
+      "full_planar_vs_analytic_masked": {
+        "Pearson_correlation": 0.5758583415230301,
+        "cosine_similarity": 0.7081162179103189,
+        "equal_power_NRMSE": 0.9966476170756353,
+        "first_power_W": 1.9552534308818036e-16,
+        "second_power_W": 9.785874965253662e-17
+      },
+      "full_planar_vs_finite_edge": {
+        "Pearson_correlation": 0.5673694199188862,
+        "cosine_similarity": 0.7033371587675636,
+        "equal_power_NRMSE": 1.0018559191203453,
+        "first_power_W": 1.9552534308818036e-16,
+        "second_power_W": 9.663323072087993e-17
+      }
+    }
+  },
+  "proposed_GPU_runtime_projection": {
+    "five_case_same_grid_solver_wall_lower_bound_s": 4104.664583333333,
+    "interpretation": "This is only a lower-bound projection for five cases on the current 12 um diagnostic grid. A physically adequate paper-like aperture/domain can be much slower; run a contract-only grid/memory probe before approval.",
+    "observed_4ps_12um_wall_seconds": {
+      "w2_finite_edge_b_t4_gpu4_20260730": 754.00478,
+      "w2_planar_a_t4_gpu4_20260730": 868.975029,
+      "w2_planar_b_t4_gpu4_20260730": 839.818941
+    },
+    "observed_maximum_s": 868.975029,
+    "observed_mean_s": 820.9329166666666,
+    "observed_minimum_s": 754.00478
+  },
+  "residual_decay": [
+    {
+      "absolute_residual_over_reference": 0.16801959026505073,
+      "absolute_residual_power_W": 1.3289367404877418e-18,
+      "mask_kind": "analytic_cut_cell",
+      "normal_high_um": 0.0,
+      "normal_low_um": -0.25,
+      "reference_absolute_power_W": 7.909415434184462e-18
+    },
+    {
+      "absolute_residual_over_reference": 0.13198243122734618,
+      "absolute_residual_power_W": 1.0255371742838996e-18,
+      "mask_kind": "analytic_cut_cell",
+      "normal_high_um": -0.25,
+      "normal_low_um": -0.5,
+      "reference_absolute_power_W": 7.770255213115158e-18
+    },
+    {
+      "absolute_residual_over_reference": 0.1493706589521371,
+      "absolute_residual_power_W": 2.3340231602816366e-18,
+      "mask_kind": "analytic_cut_cell",
+      "normal_high_um": -0.5,
+      "normal_low_um": -1.0,
+      "reference_absolute_power_W": 1.562571375566823e-17
+    },
+    {
+      "absolute_residual_over_reference": 0.08599014432391781,
+      "absolute_residual_power_W": 2.3188265193432196e-18,
+      "mask_kind": "analytic_cut_cell",
+      "normal_high_um": -1.0,
+      "normal_low_um": -2.0,
+      "reference_absolute_power_W": 2.696618941129335e-17
+    },
+    {
+      "absolute_residual_over_reference": 0.08191344456465104,
+      "absolute_residual_power_W": 2.552109116883433e-18,
+      "mask_kind": "analytic_cut_cell",
+      "normal_high_um": -2.0,
+      "normal_low_um": -4.0,
+      "reference_absolute_power_W": 3.115616893474861e-17
+    },
+    {
+      "absolute_residual_over_reference": 0.324432213902457,
+      "absolute_residual_power_W": 1.2910021944615546e-19,
+      "mask_kind": "analytic_cut_cell",
+      "normal_high_um": 0.25,
+      "normal_low_um": 0.0,
+      "reference_absolute_power_W": 3.9792663587029125e-19
+    },
+    {
+      "absolute_residual_over_reference": 0.0,
+      "absolute_residual_power_W": 0.0,
+      "mask_kind": "analytic_cut_cell",
+      "normal_high_um": 0.5,
+      "normal_low_um": 0.25,
+      "reference_absolute_power_W": 0.0
+    },
+    {
+      "absolute_residual_over_reference": 0.0,
+      "absolute_residual_power_W": 0.0,
+      "mask_kind": "analytic_cut_cell",
+      "normal_high_um": 1.0,
+      "normal_low_um": 0.5,
+      "reference_absolute_power_W": 0.0
+    },
+    {
+      "absolute_residual_over_reference": 0.0,
+      "absolute_residual_power_W": 0.0,
+      "mask_kind": "analytic_cut_cell",
+      "normal_high_um": 2.0,
+      "normal_low_um": 1.0,
+      "reference_absolute_power_W": 0.0
+    },
+    {
+      "absolute_residual_over_reference": 0.0,
+      "absolute_residual_power_W": 0.0,
+      "mask_kind": "analytic_cut_cell",
+      "normal_high_um": 4.0,
+      "normal_low_um": 2.0,
+      "reference_absolute_power_W": 0.0
+    },
+    {
+      "absolute_residual_over_reference": 0.1682392835353784,
+      "absolute_residual_power_W": 1.3277145822141078e-18,
+      "mask_kind": "loss_participation_proxy",
+      "normal_high_um": 0.0,
+      "normal_low_um": -0.25,
+      "reference_absolute_power_W": 7.891822613087316e-18
+    },
+    {
+      "absolute_residual_over_reference": 0.13204919657768313,
+      "absolute_residual_power_W": 1.0260624545922874e-18,
+      "mask_kind": "loss_participation_proxy",
+      "normal_high_um": -0.25,
+      "normal_low_um": -0.5,
+      "reference_absolute_power_W": 7.770304410664596e-18
+    },
+    {
+      "absolute_residual_over_reference": 0.14938649551564215,
+      "absolute_residual_power_W": 2.334286929937586e-18,
+      "mask_kind": "loss_participation_proxy",
+      "normal_high_um": -0.5,
+      "normal_low_um": -1.0,
+      "reference_absolute_power_W": 1.5625822949258253e-17
+    },
+    {
+      "absolute_residual_over_reference": 0.08595619703042372,
+      "absolute_residual_power_W": 2.31793137794246e-18,
+      "mask_kind": "loss_participation_proxy",
+      "normal_high_um": -1.0,
+      "normal_low_um": -2.0,
+      "reference_absolute_power_W": 2.6966425435527832e-17
+    },
+    {
+      "absolute_residual_over_reference": 0.08191600661639331,
+      "absolute_residual_power_W": 2.55222911527198e-18,
+      "mask_kind": "loss_participation_proxy",
+      "normal_high_um": -2.0,
+      "normal_low_um": -4.0,
+      "reference_absolute_power_W": 3.115665937212837e-17
+    },
+    {
+      "absolute_residual_over_reference": 0.32248233514509006,
+      "absolute_residual_power_W": 1.2568587702139345e-19,
+      "mask_kind": "loss_participation_proxy",
+      "normal_high_um": 0.25,
+      "normal_low_um": 0.0,
+      "reference_absolute_power_W": 3.8974499786118616e-19
+    },
+    {
+      "absolute_residual_over_reference": 0.0,
+      "absolute_residual_power_W": 0.0,
+      "mask_kind": "loss_participation_proxy",
+      "normal_high_um": 0.5,
+      "normal_low_um": 0.25,
+      "reference_absolute_power_W": 0.0
+    },
+    {
+      "absolute_residual_over_reference": 0.0,
+      "absolute_residual_power_W": 0.0,
+      "mask_kind": "loss_participation_proxy",
+      "normal_high_um": 1.0,
+      "normal_low_um": 0.5,
+      "reference_absolute_power_W": 0.0
+    },
+    {
+      "absolute_residual_over_reference": 0.0,
+      "absolute_residual_power_W": 0.0,
+      "mask_kind": "loss_participation_proxy",
+      "normal_high_um": 2.0,
+      "normal_low_um": 1.0,
+      "reference_absolute_power_W": 0.0
+    },
+    {
+      "absolute_residual_over_reference": 0.0,
+      "absolute_residual_power_W": 0.0,
+      "mask_kind": "loss_participation_proxy",
+      "normal_high_um": 4.0,
+      "normal_low_um": 2.0,
+      "reference_absolute_power_W": 0.0
+    }
+  ],
+  "scope": {
+    "FDTD_run": false,
+    "PTE_run": false,
+    "adjoint_run": false,
+    "gradient_run": false,
+    "optimization_run": false,
+    "thermal_run": false,
+    "w0_6p5um_run": false,
+    "weighting_potential_run": false
+  },
+  "source_audit": {
+    "fit_vs_second_moment_explanation": "The nonlinear fit extrapolates an infinite Gaussian from the truncated square samples, while the second moment is calculated only from power retained inside that square. Truncation therefore biases the moment waist downward.",
+    "nominal_contract": {
+      "distance_from_waist_m": 5.065000000000001e-06,
+      "focus_z_m": -6.5e-08,
+      "requested_waist_m": 2e-06,
+      "source_z_m": 5e-06,
+      "square_aperture_full_span_m": 6e-06,
+      "use_scalar_approximation": true,
+      "wavelength_m": 1.1e-05
+    },
+    "paraxial_formula_failure_diagnostic": {
+      "Rayleigh_range_m": 1.1423973285781067e-06,
+      "aperture_corner_intensity_over_peak": 0.6468242318984089,
+      "aperture_mid_edge_intensity_over_peak": 0.804253835488777,
+      "inscribed_circle_fraction": 0.19574616451122295,
+      "interpretation": "lambda/(pi*w0) exceeds unity, so this paraxial expression is not a physical beam certificate. It diagnoses severe aperture truncation/inconsistent scalar-source parameters.",
+      "lambda_over_pi_w0": 1.7507043740108488,
+      "source_plane_expected_radius_m": 9.090067237562785e-06,
+      "square_captured_fraction": 0.24087030390727632
+    },
+    "primary_evidence": {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/w2_beam_and_field_components.npz",
+      "sha256": "55abf216249bcd6f3ae9a7a45efd56a66be4cfc720183e13f9584271a10fe4a2",
+      "size_bytes": 15990691,
+      "source_profile_bounds_m": {
+        "x": [
+          -2.9830508474576366e-06,
+          3.016949152542375e-06
+        ],
+        "y": [
+          -2.9830508474576366e-06,
+          3.016949152542375e-06
+        ]
+      },
+      "source_profile_shape": [
+        178,
+        178,
+        3
+      ]
+    },
+    "stored_source_object_profile": {
+      "E_integral_is_absolute_power_calibration": false,
+      "E_integral_over_native_sourcepower": 16.734984664872943,
+      "Gaussian_fit": {
+        "amplitude_over_observed_peak": 1.0000000000000002,
+        "center_x_m": -3.0520880141929734e-23,
+        "center_y_m": -7.431983401218486e-23,
+        "fit_message": "`xtol` termination condition is satisfied.",
+        "fit_relative_RMS_over_peak": 2.503646680455278e-16,
+        "fit_selected_point_count": 31684,
+        "fit_success": true,
+        "integrated_incident_power_W": 3.951049070555774e-14,
+        "moment_center_x_m": 1.3680713392901192e-08,
+        "moment_center_y_m": 1.3680713392901159e-08,
+        "moment_waist_x_m": 3.338921477828576e-06,
+        "moment_waist_y_m": 3.338921477828576e-06,
+        "waist_effective_geometric_mean_m": 7.603443210108292e-06,
+        "waist_x_m": 7.603443210108292e-06,
+        "waist_y_m": 7.603443210108292e-06
+      },
+      "boundary_max_intensity_over_peak": 0.735029972986029,
+      "boundary_mean_intensity_over_peak": 0.6623207335327583,
+      "fitted_infinite_Gaussian_inscribed_circle_fraction": 0.2675441452875325,
+      "fitted_infinite_Gaussian_square_captured_fraction": 0.32484971571148186,
+      "longitudinal_E2_fraction": 0.0,
+      "native_sourcepower_is_primary_absolute_power": true,
+      "native_sourcepower_readback_W": 2.339588229783334e-15,
+      "normalization_warning": "The getresult(source,'fields') E profile does not share the absolute spectral-amplitude normalization of sourcepower. Its spatial shape is primary evidence, but its naive E-only plane-wave integral is not used as launched watts.",
+      "transverse_E_plane_wave_integral_in_source_profile_normalization": 3.915297314754133e-14
+    },
+    "z50nm_total_field_downward_decomposition": {
+      "amplitude_over_observed_peak": 0.9751402226524064,
+      "center_x_m": 1.1049817470138936e-14,
+      "center_y_m": -1.6582439368631053e-14,
+      "fit_message": "`ftol` termination condition is satisfied.",
+      "fit_relative_RMS_over_peak": 0.011279943391284233,
+      "fit_selected_point_count": 72361,
+      "fit_success": true,
+      "integrated_incident_power_W": 7.640976353983181e-16,
+      "moment_center_x_m": 1.0026407278013548e-14,
+      "moment_center_y_m": -7.646262726637588e-15,
+      "moment_waist_x_m": 4.649699062346875e-06,
+      "moment_waist_y_m": 4.536821552191799e-06,
+      "pure_incident_beam_waist": false,
+      "waist_effective_geometric_mean_m": 6.369224038404281e-06,
+      "waist_x_m": 6.648239779173103e-06,
+      "waist_y_m": 6.101918131543775e-06,
+      "warning": "reflection, edge scattering, and evanescent fields may be present at this monitor"
+    }
+  },
+  "status": "VALIDATED_OFFLINE_MASKED_PLANAR_AND_SOURCE_AUDIT"
+}

@@ -1,0 +1,101 @@
+{
+  "status": "VALIDATED_KITAMURA_SUBSTRATE_MATERIAL_READBACK",
+  "hostname_context": "codex-nk-probe-20260802-04",
+  "Lumerical_version": "v261 / solver 8.35 series",
+  "contract": {
+    "model": "paper-kitamura-palik-nk-11um",
+    "SiO2_material": "paper_ir_SiO2_Kitamura_2007_nk_11um",
+    "Si_material": "paper_ir_Si_Palik_nk_11um",
+    "SiO2_provenance": "Kitamura et al., Applied Optics 46, 8118 (2007), doi:10.1364/AO.46.008118; exact 11-um n,k entered in Lumerical's single-frequency (n,k) model",
+    "SiO2_requested_epsilon_at_11um": {
+      "real": 4.051707451517633,
+      "imag": 0.6568047491827695
+    },
+    "SiO2_requested_n_at_11um": {
+      "real": 2.0194436826147366,
+      "imag": 0.16262021932999673
+    },
+    "Si_provenance": "installed Lumerical v261 Palik database raw 11-um n,k, copied into a single-frequency (n,k) model; explicit closure because the TaIrTe4 paper does not identify its Si optical-data source",
+    "Si_requested_n_at_11um": {
+      "real": 3.4212896222169786,
+      "imag": 4.389880310197085e-05
+    },
+    "single_frequency_material_contract": true,
+    "source_centre_wavelength_m": 1.1e-05,
+    "paper_identity_limit": "paper-consistent silica closure and explicit Palik-Si closure, not proof that the authors used this exact Si dataset"
+  },
+  "readback": {
+    "analysis_wavelength_m": 1.1e-05,
+    "model": "paper-kitamura-palik-nk-11um",
+    "materials": {
+      "SiO2": {
+        "material_name": "paper_ir_SiO2_Kitamura_2007_nk_11um",
+        "n_complex": {
+          "real": 2.0194436826147366,
+          "imag": 0.16262021932999673
+        },
+        "epsilon_r_complex": {
+          "real": 4.051707451517633,
+          "imag": 0.6568047491827695
+        },
+        "raw_database_n_complex_at_11um": {
+          "real": 2.0194436826147366,
+          "imag": 0.16262021932999673
+        },
+        "raw_database_epsilon_r_complex_at_11um": {
+          "real": 4.051707451517633,
+          "imag": 0.6568047491827695
+        },
+        "FDTD_fit_band_m": [
+          9.428571428571428e-06,
+          1.32e-05
+        ],
+        "FDTD_uses_fitted_not_raw_database_value": true,
+        "provenance": "exact 11-um n,k material installed by this run",
+        "requested_model_epsilon_r_complex_at_11um": {
+          "real": 4.051707451517633,
+          "imag": 0.6568047491827695
+        },
+        "requested_model_n_complex_at_11um": {
+          "real": 2.0194436826147366,
+          "imag": 0.16262021932999673
+        },
+        "FDTD_fit_relative_error_vs_requested_epsilon": 0.0
+      },
+      "Si": {
+        "material_name": "paper_ir_Si_Palik_nk_11um",
+        "n_complex": {
+          "real": 3.4212896222169786,
+          "imag": 4.3898803101970856e-05
+        },
+        "epsilon_r_complex": {
+          "real": 11.70522267716249,
+          "imag": 0.0003003810389610388
+        },
+        "raw_database_n_complex_at_11um": {
+          "real": 3.4212896222169786,
+          "imag": 4.389880310197085e-05
+        },
+        "raw_database_epsilon_r_complex_at_11um": {
+          "real": 11.70522267716249,
+          "imag": 0.0003003810389610388
+        },
+        "FDTD_fit_band_m": [
+          9.428571428571428e-06,
+          1.32e-05
+        ],
+        "FDTD_uses_fitted_not_raw_database_value": true,
+        "provenance": "exact 11-um n,k material installed by this run"
+      }
+    },
+    "loss_is_retained": true
+  },
+  "FDTD_solve_run": false,
+  "thermal_run": false,
+  "PTE_run": false,
+  "acceptance": {
+    "SiO2_fit_relative_error_lt_0p5_percent": true,
+    "SiO2_loss_positive": true,
+    "Si_loss_positive": true
+  }
+}

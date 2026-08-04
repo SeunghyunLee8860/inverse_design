@@ -1,0 +1,28 @@
+{
+  "status": "VALIDATED_EXTENDED_FULL_LATENT_PERTURBATION_ADFD",
+  "generation_command": "python -m photothermal_pte.finite_inverse_design.publish_extended_latent_perturbation_figures --full-result <external> --extended-result <external> --report-dir photothermal_pte/reports/inverse_design_pte_adfd",
+  "raw_artifacts_not_committed": [
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/full_latent_combined_pte_adfd_20260728_1/full_latent_combined_pte_adfd.json",
+      "byte_size": 190540,
+      "sha256": "177ec2166b1581b4ff4625a178bbec0d114807699d60b54fa9e4cb329677991c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/extended_latent_perturbation_adfd_20260729_1/extended_latent_perturbation_adfd.json",
+      "byte_size": 116543,
+      "sha256": "c71f82dda836c0031a1d90d3c2759cc7c55655be4f529025fbefa15cf2f97195"
+    },
+    {
+      "path": "/home/seunghyun/tairte4_artifacts/extended_latent_perturbation_adfd_20260729_1/extended_latent_perturbation_directions.npz",
+      "byte_size": 32673,
+      "sha256": "9e349518f37f58aac3c520831519af9a9efd61518c3913111bc91d00def29465"
+    }
+  ],
+  "published_artifacts": [
+    "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/21_full_latent_adfd_4um_10directions.png",
+    "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/22_full_latent_adfd_6um_10directions.png",
+    "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/figures/23_ten_latent_perturbation_maps.png",
+    "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/extended_full_latent_adfd_10directions.csv",
+    "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/reports/inverse_design_pte_adfd/extended_full_latent_adfd_10directions_summary.json"
+  ]
+}

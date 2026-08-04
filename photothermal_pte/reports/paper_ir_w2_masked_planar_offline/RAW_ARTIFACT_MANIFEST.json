@@ -1,0 +1,64 @@
+{
+  "artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/diagnostic_q_common_grid_artifact.npz",
+      "role": "existing planar-b 4 ps raw common-grid Q",
+      "sha256": "b742fbfb481e780c0962ab6240e666146a02ac4a8f725d7913aa6db5fe2cfdfa",
+      "size_bytes": 57401780
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/diagnostic_q_common_grid_artifact.npz",
+      "role": "existing finite-edge-b 4 ps raw common-grid Q",
+      "sha256": "199155f99c9b95810d80b3b5c2b74a13d11555d60133b2949502801ca457b13b",
+      "size_bytes": 57402260
+    },
+    {
+      "generation_command": "photothermal_pte/validation/paper_ir_sanity/extract_w2_native_index_readonly.py --planar-fsp /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/finite_2um_optical_q.fsp --edge-fsp /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/finite_2um_optical_q.fsp --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_masked_planar_offline_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_masked_planar_offline_20260730/w2_planar_edge_native_fields_index.npz",
+      "role": "read-only extracted planar/edge native E and epsilon",
+      "sha256": "9255dfa1ddeab5057f31f15db572696f0f16325c70a6199234973258f6522d84",
+      "size_bytes": 158686983
+    },
+    {
+      "generation_command": "photothermal_pte/validation/paper_ir_sanity/extract_w2_native_index_readonly.py --planar-fsp /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/finite_2um_optical_q.fsp --edge-fsp /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/finite_2um_optical_q.fsp --output-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_masked_planar_offline_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_masked_planar_offline_20260730/read_only_extraction_summary.json",
+      "role": "read-only extraction audit",
+      "sha256": "a2cc061d991b343349fb9f92ee10a6eaf93727dc077914c505e1cc74444b6d33",
+      "size_bytes": 4077
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/w2_beam_and_field_components.npz",
+      "role": "existing saved source-object and z=50nm fields",
+      "sha256": "55abf216249bcd6f3ae9a7a45efd56a66be4cfc720183e13f9584271a10fe4a2",
+      "size_bytes": 15990691
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730/finite_2um_optical_q_p0.log",
+      "role": "existing 4 ps GPU solver runtime log",
+      "sha256": "a8b227e200ee81d3f1be26ad10c5cda7aeb4cb9a74accefe7c8037e6e32ac352",
+      "size_bytes": 16637
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/finite_2um_optical_q_p0.log",
+      "role": "existing 4 ps GPU solver runtime log",
+      "sha256": "141078625634ddde94532fbbb7a87da439406a4b59f9127da489052daeffbebd",
+      "size_bytes": 16604
+    },
+    {
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/finite_2um_optical_q_p0.log",
+      "role": "existing 4 ps GPU solver runtime log",
+      "sha256": "3b79a0ab0f1a1d0662d6cc24839b6bb57bdac678280ca932daae1f942e165857",
+      "size_bytes": 16625
+    },
+    {
+      "generation_command": "photothermal_pte/validation/paper_ir_sanity/analyze_w2_masked_planar_offline.py --planar-q /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/diagnostic_q_common_grid_artifact.npz --edge-q /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/diagnostic_q_common_grid_artifact.npz --native-field-index /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_masked_planar_offline_20260730/w2_planar_edge_native_fields_index.npz --extraction-summary /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_masked_planar_offline_20260730/read_only_extraction_summary.json --source-fields /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/w2_beam_and_field_components.npz --runtime-log /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_a_t4_gpu4_20260730/finite_2um_optical_q_p0.log --runtime-log /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_planar_b_t4_gpu4_20260730/finite_2um_optical_q_p0.log --runtime-log /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_finite_edge_b_t4_gpu4_20260730/finite_2um_optical_q_p0.log --output-dir photothermal_pte/reports/paper_ir_w2_masked_planar_offline --derived-artifact-dir /home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_masked_planar_offline_20260730",
+      "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/w2_masked_planar_offline_20260730/w2_masked_planar_offline_derived_arrays.npz",
+      "role": "offline derived masked/residual arrays",
+      "sha256": "4f9495d737db2349f963bfc4f5d209f1ce9c5109f574e2333804eae191fdf414",
+      "size_bytes": 27246819
+    }
+  ],
+  "generation_commit": "b2312677c32b20f68432289e52d5542dd1ec459d",
+  "offline_analysis_only": true,
+  "raw_artifacts_committed_to_git": false
+}

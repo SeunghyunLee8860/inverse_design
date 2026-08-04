@@ -1,0 +1,131 @@
+{
+  "status": "VALIDATED_FULL_LATENT_COMBINED_PTE_ADFD_WITH_USER_ACCEPTED_FD_NOISE",
+  "passed": true,
+  "accepted_exception": {
+    "approved_by_user": true,
+    "scope": "continue past the preserved physical-rho near-null h-to-h/2 plateau miss",
+    "does_not_relabel_prior_failure": true
+  },
+  "latent_contract": {
+    "shape": [
+      81,
+      81
+    ],
+    "node_spacing_m": [
+      2.5e-08,
+      2.5e-08
+    ],
+    "filter_radius_m": 5e-07,
+    "filter_periodic_wrap": false,
+    "projection_beta": 8.0,
+    "projection_eta": 0.5,
+    "latent_bounds": [
+      0.40386429853167094,
+      0.5855483363441585
+    ],
+    "physical_rho_bounds": [
+      0.19482332523891677,
+      0.7799149130077585
+    ],
+    "latent_sha256": "123965529e7e4cb4952d6b4cde0ee0e2c573280d652ab1242012eb6d917b5c4b",
+    "physical_rho_sha256": "c17a875006eff0246fbabbfe8c3b5eb0bb13c4b5199a09dd9f0079bcc3291651"
+  },
+  "gates": {
+    "selected_step": 0.005,
+    "worst_strong_direction_relative_error": 0.00011676898835787123,
+    "strong_direction_limit": 0.01,
+    "global_multidirection_normalized_error": 0.00014397043182582252,
+    "multidirection_normalized_limit": 0.01,
+    "global_directional_gradient_angle_deg": 0.0022251701588349906,
+    "gradient_angle_limit_deg": 1.0,
+    "finite_mapping_transpose_relative_error": 6.052401816895514e-16,
+    "component_yee_mapping_transpose_relative_error": 2.98325923857715e-15,
+    "mapping_transpose_limit": 1e-12,
+    "worst_optical_closure_relative_error": 0.0001409341357567386,
+    "optical_closure_limit": 0.005,
+    "worst_Q_mapping_relative_error": 2.3716754399211927e-16,
+    "Q_mapping_limit": 0.005,
+    "worst_thermal_energy_balance_relative_error": 2.84298651599358e-12,
+    "thermal_energy_balance_limit": 0.01,
+    "worst_linear_residual_relative": 1.0231780569929526e-11,
+    "linear_residual_limit": 1e-08,
+    "strict_h_to_h_over_2_plateau_required": false,
+    "strict_plateau_waived_by_user": true
+  },
+  "scenario_metrics": {
+    "4um": {
+      "base_objective_A": 7.573418139705723e-16,
+      "physical_gradient_L2_A": 6.7790007237747e-17,
+      "latent_gradient_L2_A": 1.1025606953026221e-16,
+      "optical_gradient_L2_A": 6.805155031743177e-17,
+      "thermal_gradient_L2_A": 5.343381010602153e-19,
+      "directional_subspace_normalized_error": 0.00014541766946001765,
+      "directional_subspace_gradient_angle_deg": 0.002230563675498034
+    },
+    "6um": {
+      "base_objective_A": 2.0320047951118524e-16,
+      "physical_gradient_L2_A": 1.6472095013965933e-17,
+      "latent_gradient_L2_A": 2.652856044239446e-17,
+      "optical_gradient_L2_A": 1.6518529003670804e-17,
+      "thermal_gradient_L2_A": 9.911763900429325e-20,
+      "directional_subspace_normalized_error": 0.00010799449937271784,
+      "directional_subspace_gradient_angle_deg": 0.0009621627476532777
+    }
+  },
+  "gray_law": {
+    "status": "COMPLETED_COUPLED_GRAY_LAW_SENSITIVITY",
+    "definition": {
+      "definition": "phi_p(rho)=rho**p is applied consistently to optical epsilon, bulk kappa, and interface G through the existing linear effective-material operator",
+      "exponents": [
+        1.0,
+        2.0,
+        3.0
+      ],
+      "endpoints_preserved": true,
+      "interpretation": "named numerical relaxations, not material measurements or a confidence interval"
+    },
+    "comparisons": {
+      "p2_vs_p1": {
+        "P_Q_relative_change": 0.10237754147599493,
+        "P_six_relative_change": 0.10253730493931462,
+        "scenarios": {
+          "4um": {
+            "objective_relative_change": 0.040977815499522376,
+            "temperature_field_NRMSE": 0.2252237499914815,
+            "mapped_Q_field_NRMSE": 0.11394124109721192,
+            "nominal_gradient_L2_relative_change": 0.05716150383000195,
+            "nominal_gradient_angle_deg": 7.6288391983538295
+          },
+          "6um": {
+            "objective_relative_change": 0.039489933979318416,
+            "temperature_field_NRMSE": 0.24492963283841512,
+            "mapped_Q_field_NRMSE": 0.1139412410972118,
+            "nominal_gradient_L2_relative_change": 0.037134636788939065,
+            "nominal_gradient_angle_deg": 7.908595844835534
+          }
+        }
+      },
+      "p3_vs_p1": {
+        "P_Q_relative_change": 0.15043818143932533,
+        "P_six_relative_change": 0.1506255227358297,
+        "scenarios": {
+          "4um": {
+            "objective_relative_change": 0.11734816862713654,
+            "temperature_field_NRMSE": 0.3658321775471153,
+            "mapped_Q_field_NRMSE": 0.1665541452997233,
+            "nominal_gradient_L2_relative_change": 0.2931769229608597,
+            "nominal_gradient_angle_deg": 14.390569632563281
+          },
+          "6um": {
+            "objective_relative_change": 0.11350740382393078,
+            "temperature_field_NRMSE": 0.4124485469462836,
+            "mapped_Q_field_NRMSE": 0.16655414529972312,
+            "nominal_gradient_L2_relative_change": 0.26595586988902686,
+            "nominal_gradient_angle_deg": 14.777448663678875
+          }
+        }
+      }
+    }
+  },
+  "optimization_run": false
+}

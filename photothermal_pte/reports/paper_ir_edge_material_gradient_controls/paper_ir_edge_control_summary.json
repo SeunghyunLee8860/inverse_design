@@ -1,0 +1,313 @@
+{
+  "status": "PARTIAL_PAPER_IR_CONTROL_VALIDATION_BLOCKED_OPTICAL_RUNTIME_AND_UNRESOLVED_EDGE_METRIC",
+  "substatuses": {
+    "analytic_thermal_controls": "VALIDATED_ANALYTIC_THERMAL_SOURCE_CONTROLS",
+    "optical_material_contract": "VALIDATED_PAPER_CONSISTENT_EPSILON_C_EQUALS_B_CONTRACT",
+    "optical_GPU_smoke": "BLOCKED_LUMERICAL_GPU_RUNTIME_API_FAILURE",
+    "native_Yee_mesh_audit": "BLOCKED_PENDING_COMPLETED_OPTICAL_SMOKE",
+    "optical_Q_convergence": "NOT_RUN",
+    "thermal_global_temperature_convergence": "PRESERVED_FROM_PRIOR_CHECKPOINT",
+    "robust_edge_gradient_convergence": "UNRESOLVED_LOCAL_EDGE_GRADIENT_METRIC",
+    "final_PTE_current_convergence": "NOT_RUN"
+  },
+  "paper_consistent_3D_material": {
+    "production": "epsilon_c(lambda)=epsilon_b(lambda)",
+    "interpretation": "explicit closure extending the paper's in-plane epsilon_a, epsilon_b data to a finite-edge 3D Maxwell model; not a directly measured c-axis property",
+    "legacy": "epsilon_c=16 lossless diagnostic only",
+    "axis_mapping": {
+      "x": "epsilon_b",
+      "y": "epsilon_a",
+      "z": "epsilon_c=epsilon_b paper-consistent 3D closure"
+    },
+    "requested_epsilon_at_11um": {
+      "x": {
+        "real": 13.268147712480612,
+        "imag": 26.18179590766738
+      },
+      "y": {
+        "real": -42.96623156686853,
+        "imag": 204.5326948215291
+      },
+      "z": {
+        "real": 13.268147712480612,
+        "imag": 26.18179590766738
+      }
+    },
+    "readback": {
+      "quantity": "complex relative permittivity epsilon_r",
+      "analysis_wavelength_m": 1.1e-05,
+      "fit_frequency_range_Hz": [
+        23060958307692.31,
+        42827494000000.0
+      ],
+      "dt_s": 2.4221535834941338e-18,
+      "axes": {
+        "x": {
+          "requested_epsilon": {
+            "real": 13.268147712480612,
+            "imag": 26.18179590766738
+          },
+          "fitted_epsilon_getfdtdindex": {
+            "real": 13.2680233006527,
+            "imag": 26.181870955490027
+          },
+          "finite_dt_numerical_permittivity": {
+            "real": 13.268023388137559,
+            "imag": 26.181870569584863
+          },
+          "fitted_relative_error_vs_requested": 4.950097940416724e-06,
+          "finite_dt_relative_difference_vs_fitted": 1.3481174795205449e-08
+        },
+        "y": {
+          "requested_epsilon": {
+            "real": -42.96623156686853,
+            "imag": 204.5326948215291
+          },
+          "fitted_epsilon_getfdtdindex": {
+            "real": -42.97003897202558,
+            "imag": 204.53387562805196
+          },
+          "finite_dt_numerical_permittivity": {
+            "real": -42.970037238604746,
+            "imag": 204.53386977137728
+          },
+          "fitted_relative_error_vs_requested": 1.907351537359719e-05,
+          "finite_dt_relative_difference_vs_fitted": 2.922414519701035e-08
+        },
+        "z": {
+          "requested_epsilon": {
+            "real": 13.268147712480612,
+            "imag": 26.18179590766738
+          },
+          "fitted_epsilon_getfdtdindex": {
+            "real": 13.2680233006527,
+            "imag": 26.181870955490027
+          },
+          "finite_dt_numerical_permittivity": {
+            "real": 13.268023388137559,
+            "imag": 26.181870569584863
+          },
+          "fitted_relative_error_vs_requested": 4.950097940416724e-06,
+          "finite_dt_relative_difference_vs_fitted": 1.3481174795205449e-08
+        }
+      },
+      "epsilon_z_equals_epsilon_b_contract": true,
+      "fitted_z_vs_x_relative_difference": 0.0,
+      "finite_dt_z_vs_x_relative_difference": 0.0
+    },
+    "legacy_Qz_W": 0.0,
+    "production_Qz_W": null,
+    "production_smoke_result": null
+  },
+  "analytic_controls_at_50nm": {
+    "paper_like_absorbed_power_control": {
+      "absorbed_power_b_over_a": 1.496212239224062,
+      "Tmax_b_over_a": 1.4471700451156504,
+      "max_abs_grad_T_x_b_over_a": 1.4469538806848357,
+      "max_abs_grad_T_n_b_over_a": 1.4464878032382702
+    },
+    "equal_absorbed_power_shape_control": {
+      "absorbed_power_b_over_a": 1.0,
+      "Tmax_b_over_a": 0.9672224348773897,
+      "max_abs_grad_T_x_b_over_a": 0.9670779604337961,
+      "max_abs_grad_T_n_b_over_a": 0.9667664555318976,
+      "equal_absorbed_power_relative_error": 0.0
+    },
+    "identical_Q_symmetry_control": {
+      "absorbed_power_b_over_a": 1.0,
+      "Tmax_b_over_a": 1.0,
+      "max_abs_grad_T_x_b_over_a": 1.0,
+      "max_abs_grad_T_n_b_over_a": 1.0,
+      "field_symmetry": {
+        "Q_areal_W_m2": {
+          "maximum_absolute_difference": 0.0,
+          "relative_L2_difference": 0.0
+        },
+        "temperature_flake_average_K": {
+          "maximum_absolute_difference": 0.0,
+          "relative_L2_difference": 0.0
+        },
+        "grad_T_x_K_m": {
+          "maximum_absolute_difference": 0.0,
+          "relative_L2_difference": 0.0
+        },
+        "grad_T_y_K_m": {
+          "maximum_absolute_difference": 0.0,
+          "relative_L2_difference": 0.0
+        },
+        "grad_T_normal_K_m": {
+          "maximum_absolute_difference": 0.0,
+          "relative_L2_difference": 0.0
+        },
+        "grad_T_tangent_K_m": {
+          "maximum_absolute_difference": 0.0,
+          "relative_L2_difference": 0.0
+        },
+        "grad_T_magnitude_K_m": {
+          "maximum_absolute_difference": 0.0,
+          "relative_L2_difference": 0.0
+        }
+      }
+    }
+  },
+  "robust_comparator": {
+    "exact_coordinate_contract": {
+      "n": "(-x+y)/sqrt(2), positive into air",
+      "t": "(x+y)/sqrt(2)",
+      "exact_edge": "n=0",
+      "common_t_samples_um": [
+        -8.0,
+        8.000000000000014,
+        0.2
+      ],
+      "quadratic_terms": [
+        "1",
+        "n",
+        "t",
+        "n^2",
+        "n*t",
+        "t^2"
+      ],
+      "primary_inside_fit_band_um": [
+        -1.5,
+        -0.4,
+        0.1
+      ],
+      "derivative_location": "quadratic fit evaluated at n=0, t=t_sample",
+      "warning": "physical-line fitting stabilizes the observable but does not remove the underlying Cartesian stair-step geometry error"
+    },
+    "analytic_a_dx_100_to_50": {
+      "maximum_abs_K_m": 0.00450558892862746,
+      "p99_abs_K_m": 0.0041965626856757575,
+      "edge_strip_mean_abs_K_m": 0.006095949923172695,
+      "edge_integrated_abs_K": 0.006093622501263474
+    },
+    "legacy_Maxwell_b_dx_100_to_50": {
+      "maximum_abs_K_m": 0.11356172431439848,
+      "p99_abs_K_m": 0.1136378130988441,
+      "edge_strip_mean_abs_K_m": 0.1285100664790035,
+      "edge_integrated_abs_K": 0.128926757520296
+    },
+    "fit_band_sensitivity_lt_10pct": false,
+    "production_mesh_nm": null,
+    "decision": "do not promote; next compare an exact-half-plane cut-cell operator before attempting conservative AMR",
+    "refinement_options": {
+      "current_grid_plus_robust_comparator": {
+        "cost": "lowest",
+        "implementation": "completed here",
+        "conservation": "unchanged conservative Cartesian FVM",
+        "geometry_error": "stair-step remains explicit"
+      },
+      "conservative_local_AMR": {
+        "cost": "high",
+        "implementation": "new nonuniform topology, prolongation/restriction, and coarse/fine flux-matching operator required",
+        "conservation": "only valid with exact coarse/fine face-flux matching for the anisotropic tensor"
+      },
+      "cut_cell_embedded_boundary": {
+        "cost": "moderate-to-high",
+        "implementation": "exact half-plane cell area/face fractions and small-cell conditioning treatment required",
+        "conservation": "natural finite-volume conservation if every truncated face conductance is assembled consistently",
+        "preferred_next_if_needed": true
+      }
+    }
+  },
+  "license_blocker": {
+    "contract_only_session_opened": true,
+    "GPU_resource_readback": {
+      "active": "1",
+      "device type": "GPU 2",
+      "processes": "1",
+      "threads": "8",
+      "solver extra command line options": "-gpu"
+    },
+    "CPU_FDTD_fallback_used": false,
+    "attempts": [
+      {
+        "status": "BLOCKED_EXECUTION_ERROR",
+        "threads": "8",
+        "case_result": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_20260730/case_result.json",
+        "exception_type": "RuntimeError",
+        "exception": "GPU-only FDTD failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'in run:' | localhost: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Computer: LumApiError: 'in run: could not match resource name provided or the resource may not be active.'"
+      },
+      {
+        "status": "BLOCKED_EXECUTION_ERROR",
+        "threads": "1",
+        "case_result": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730/case_result.json",
+        "exception_type": "RuntimeError",
+        "exception": "GPU-only FDTD failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'in run:' | localhost: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Computer: LumApiError: 'in run: could not match resource name provided or the resource may not be active.'"
+      },
+      {
+        "status": "BLOCKED_EXECUTION_ERROR",
+        "threads": "1",
+        "case_result": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730/case_result.json",
+        "exception_type": "RuntimeError",
+        "exception": "GPU-only FDTD failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'Failed to get variable' | localhost: LumApiError: 'Failed to put variable' | Local Computer: LumApiError: 'Failed to put variable'"
+      },
+      {
+        "status": "BLOCKED_EXECUTION_ERROR",
+        "threads": "1",
+        "case_result": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_t1_20260730/case_result.json",
+        "exception_type": "RuntimeError",
+        "exception": "GPU-only FDTD failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'in run:' | localhost: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Computer: LumApiError: 'in run: could not match resource name provided or the resource may not be active.'"
+      }
+    ],
+    "logs": [
+      {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_20260730/finite_2um_optical_q_p0.log",
+        "sha256": "463106640330a203f589ff5879d67f55037304449fbf5b1f5e7de7a9c7c92e85",
+        "requested_tasks": 9,
+        "available_tasks": 4,
+        "feature": "lum_fdtd_solve",
+        "licensed_users_reached": true,
+        "time_stepping_started": false,
+        "simulation_gridpoints": null,
+        "maximum_logged_progress_percent": null
+      },
+      {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry3_20260730/finite_2um_optical_q_p0.log",
+        "sha256": "7d9db0d179a7ad2456e5c055513eebf176e2a2d3d984ce1948fd3c4111f06116",
+        "requested_tasks": 9,
+        "available_tasks": 4,
+        "feature": "lum_fdtd_solve",
+        "licensed_users_reached": true,
+        "time_stepping_started": false,
+        "simulation_gridpoints": null,
+        "maximum_logged_progress_percent": null
+      },
+      {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_retry4_20260730/finite_2um_optical_q_p0.log",
+        "sha256": "d8e1efcbae251cf7b81a0077148ff19d4724607f130c34dc5c69eb932d35f497",
+        "requested_tasks": null,
+        "available_tasks": null,
+        "feature": null,
+        "licensed_users_reached": false,
+        "time_stepping_started": true,
+        "simulation_gridpoints": "1461 x 1461 x 161",
+        "maximum_logged_progress_percent": 3.3357
+      },
+      {
+        "path": "/home/seunghyun/tairte4/artifacts/paper_ir_lumerical_sanity/straight45_a_w6p5_dz10_L48_cclosure_gpu2_t1_20260730/finite_2um_optical_q_p0.log",
+        "sha256": "7d9db0d179a7ad2456e5c055513eebf176e2a2d3d984ce1948fd3c4111f06116",
+        "requested_tasks": 9,
+        "available_tasks": 4,
+        "feature": "lum_fdtd_solve",
+        "licensed_users_reached": true,
+        "time_stepping_started": false,
+        "simulation_gridpoints": null,
+        "maximum_logged_progress_percent": null
+      }
+    ]
+  },
+  "scalar_vector_source_status": {
+    "scalar_production_smoke": "BLOCKED_LICENSE",
+    "matched_thin_lens_vectorial": "PLAN_ONLY_NOT_RUN",
+    "plan": "SCALAR_VECTOR_GAUSSIAN_MATCH_PLAN.md"
+  },
+  "forbidden_operations": {
+    "raw_Lumerical_Q_rescaled": false,
+    "Q_clipped": false,
+    "Q_smoothed": false,
+    "empirical_gradient_rescaling": false,
+    "optimization_run": false
+  }
+}

@@ -1,0 +1,286 @@
+{
+  "status": "FIXED_PAPER_LIKE_SCALAR_GAUSSIAN_CONTRACT_READY_FOR_GPU_PROBE",
+  "generation_commit": "57c25e87fc8ca4cf39831c1af5540abe58cbea37",
+  "paper_sources": {
+    "main": {
+      "path": "/home/seunghyun/tairte4/papers/Adv Funct Materials - 2026 - Blevins - Large Transverse Thermoelectric Effect in Weyl Semimetal TaIrTe4 Engineered for-2.pdf",
+      "size_bytes": 3446019,
+      "sha256": "ad160823ce0805e709be2ea54c663a51280e56c498d76c8d33651599b8733155"
+    },
+    "supporting_information": {
+      "path": "/home/seunghyun/tairte4/papers/adfm75986-sup-0001-suppmat-2.pdf",
+      "size_bytes": 4284519,
+      "sha256": "c2ebe6bfbf00f954e0ccaa88431eec059db7d25beeaa4622ceb3c02d83b7f99c"
+    }
+  },
+  "paper_audit": [
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "LWIR source",
+      "value": "Block LaserTune QCL, 7-13 um",
+      "location": "main paper PDF p.9, Methods 2.3"
+    },
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "objective",
+      "value": "40x reflective objective, NA=0.4",
+      "location": "main paper PDF pp.8-9, Methods 2.3"
+    },
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "IR spot",
+      "value": "approximately 9-16 um diffraction-limited spot size",
+      "location": "main paper PDF p.9, Methods 2.3"
+    },
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "Figure 3F wavelength and geometry",
+      "value": "11 um Gaussian heat source focused near a straight crystal edge 45 degrees to the a axis; E parallel a and b",
+      "location": "main paper PDF pp.5-6, Figure 3F and surrounding text"
+    },
+    {
+      "classification": "EXPLICIT_ASSUMPTION",
+      "item": "Figure 3F exact beam center and power",
+      "value": "not published numerically; no exact edge-normal beam-center coordinate or Figure-3F incident power was identified",
+      "location": "publication omission recorded by this audit"
+    },
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "Figure 3H wavelength, power, polarization and scan region",
+      "value": "11 um, 285 uW time-averaged incident power, E parallel a/b, SPCM map including the off-axis crystal edge",
+      "location": "main paper PDF p.6, Figure 3 caption"
+    },
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "Figure 3I extraction",
+      "value": "line profile extracted along the black dashed lines in the 11-um Figure-3H SPCM maps",
+      "location": "main paper PDF p.6, Figure 3 caption"
+    },
+    {
+      "classification": "EXPLICIT_ASSUMPTION",
+      "item": "Figure 3H/I scan coordinates and step",
+      "value": "exact absolute beam coordinates, raster step, and dashed-line coordinates are not published",
+      "location": "publication omission recorded by this audit"
+    },
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "LWIR scan wavelengths",
+      "value": "7.84, 9.17, 10, 11, 12.5 um; E parallel a and b",
+      "location": "SI PDF p.5, Figure S5 caption"
+    },
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "thermal source equation",
+      "value": "Gaussian intensity; w0=2 sigma is called beam radius",
+      "location": "SI PDF p.6, Equations S1-S2"
+    },
+    {
+      "classification": "PAPER_REPORTED",
+      "item": "Figure 3F/G geometry",
+      "value": "130 nm flake, 285 nm SiO2/Si, 45-degree insulating edge",
+      "location": "main paper PDF pp.5-6 and Figure 3 caption"
+    },
+    {
+      "classification": "PAPER_INFERRED",
+      "item": "incidence angle for LWIR source model",
+      "value": "normal incidence",
+      "location": "SI PDF p.7 normal-incidence symmetry discussion and shared SPCM optical axis; no numerical alignment tolerance reported"
+    },
+    {
+      "classification": "EXPLICIT_ASSUMPTION",
+      "item": "waist plane",
+      "value": "TaIrTe4 midplane z=-65 nm",
+      "location": "numerical source contract; not stated by paper"
+    },
+    {
+      "classification": "EXPLICIT_ASSUMPTION",
+      "item": "first source model",
+      "value": "scalar Gaussian w0=12 um fixed for this sanity check; thin-lens comparison is optional and not a gate",
+      "location": "numerical source contract"
+    }
+  ],
+  "beam_scenarios": [
+    {
+      "name": "paper_reported_range_only",
+      "classification": "PAPER_REPORTED",
+      "wavelength_m": 1.1e-05,
+      "spot_range_m": [
+        9e-06,
+        1.6e-05
+      ],
+      "spot_definition": "not published",
+      "w0_m": null
+    },
+    {
+      "name": "reported_range_interpolated_as_1e2_diameter",
+      "classification": "EXPLICIT_ASSUMPTION",
+      "w0_m": 6.833333333333333e-06,
+      "definition": "linear interpolation of the approximate 9-16 um range at 11 um, then assuming it is a 1/e^2 intensity diameter",
+      "eta_paraxial": 0.5124012801982972,
+      "Rayleigh_range_m": 1.3335902148193033e-05,
+      "source_to_focus_distance_m": 5.065000000000001e-06,
+      "source_plane_radius_m": 7.309588999055387e-06,
+      "selected_aperture": {
+        "half_span_over_radius": 3.420164937212028,
+        "square_captured_fraction": 0.9999999999841978,
+        "inscribed_circle_fraction": 0.9999999999308716,
+        "boundary_max_intensity_over_peak": 6.912833609564616e-11,
+        "boundary_mean_intensity_over_peak": 1.2665985779579245e-11
+      }
+    },
+    {
+      "name": "reported_range_interpolated_as_FWHM_diameter",
+      "classification": "PAPER_INFERRED",
+      "w0_m": 1.1607397937269593e-05,
+      "definition": "linear interpolation of the approximate range, interpreted as Gaussian intensity FWHM diameter",
+      "eta_paraxial": 0.3016532014276176,
+      "Rayleigh_range_m": 3.8479279789957135e-05,
+      "source_to_focus_distance_m": 5.065000000000001e-06,
+      "source_plane_radius_m": 1.1707522547485742e-05,
+      "selected_aperture": {
+        "half_span_over_radius": 2.135379188773708,
+        "square_captured_fraction": 0.9999610385036278,
+        "inscribed_circle_fraction": 0.9998905112287574,
+        "boundary_max_intensity_over_peak": 0.00010948877124258387,
+        "boundary_mean_intensity_over_peak": 3.213039453325837e-05
+      }
+    },
+    {
+      "name": "NA0p4_Airy_FWHM_Gaussian_equivalent",
+      "classification": "PAPER_INFERRED",
+      "w0_m": 1.2005163647071147e-05,
+      "definition": "0.514 lambda/NA Airy FWHM diameter converted to the same-FWHM Gaussian 1/e^2 intensity radius",
+      "eta_paraxial": 0.29165856051249434,
+      "Rayleigh_range_m": 4.116170506353733e-05,
+      "source_to_focus_distance_m": 5.065000000000001e-06,
+      "source_plane_radius_m": 1.2095710956977147e-05,
+      "selected_aperture": {
+        "half_span_over_radius": 2.066848330695212,
+        "square_captured_fraction": 0.9999286063618794,
+        "inscribed_circle_fraction": 0.9998052364003239,
+        "boundary_max_intensity_over_peak": 0.00019476359967612446,
+        "boundary_mean_intensity_over_peak": 5.90491463585877e-05
+      }
+    },
+    {
+      "name": "fixed_paper_like_scalar_Gaussian_assumed_waist",
+      "classification": "EXPLICIT_ASSUMPTION",
+      "w0_m": 1.2e-05,
+      "definition": "fixed scalar-Gaussian scenario with an explicitly assumed 1/e^2 intensity waist radius; not an experimentally reproduced or paper-certified beam",
+      "eta_paraxial": 0.2917840623351415,
+      "Rayleigh_range_m": 4.112630382881185e-05,
+      "source_to_focus_distance_m": 5.065000000000001e-06,
+      "source_plane_radius_m": 1.2090663664331403e-05,
+      "selected_aperture": {
+        "half_span_over_radius": 2.0677111442403575,
+        "square_captured_fraction": 0.9999291407552987,
+        "inscribed_circle_fraction": 0.9998066210363443,
+        "boundary_max_intensity_over_peak": 0.00019337896365563605,
+        "boundary_mean_intensity_over_peak": 5.860489813727978e-05
+      }
+    }
+  ],
+  "selected_source_only_scenario": {
+    "name": "fixed_paper_like_scalar_Gaussian_assumed_waist",
+    "classification": "EXPLICIT_ASSUMPTION",
+    "w0_m": 1.2e-05,
+    "definition": "fixed scalar-Gaussian scenario with an explicitly assumed 1/e^2 intensity waist radius; not an experimentally reproduced or paper-certified beam",
+    "eta_paraxial": 0.2917840623351415,
+    "Rayleigh_range_m": 4.112630382881185e-05,
+    "source_to_focus_distance_m": 5.065000000000001e-06,
+    "source_plane_radius_m": 1.2090663664331403e-05,
+    "selected_aperture": {
+      "half_span_over_radius": 2.0677111442403575,
+      "square_captured_fraction": 0.9999291407552987,
+      "inscribed_circle_fraction": 0.9998066210363443,
+      "boundary_max_intensity_over_peak": 0.00019337896365563605,
+      "boundary_mean_intensity_over_peak": 5.860489813727978e-05
+    },
+    "wavelength_m": 1.1e-05,
+    "incident_power_for_later_physical_scaling_W": 0.000285,
+    "source_model": "scalar Gaussian; waist size and position",
+    "scenario_label": "paper-like scalar-Gaussian scenario with an explicitly assumed waist",
+    "approved_for_current_sanity_check": true,
+    "experimentally_reproduced_beam": false,
+    "paper_certified_beam": false,
+    "propagation_direction": "-z",
+    "target_realized_w0_m": 1.2e-05,
+    "Lumerical_source_object_input_w0_m": 1.1916864889678679e-05,
+    "source_object_calibration": {
+      "classification": "NUMERICAL_SOURCE_CALIBRATION",
+      "baseline_input_w0_m": 1.2e-05,
+      "baseline_realized_effective_w0_m": 1.2083715082204207e-05,
+      "baseline_field_NPZ_sha256": "f0f848740730ce73f0e47f73f26c8a572afda5f59c8bab57c8d8dac94a112ad0",
+      "changes_physical_target_w0": false,
+      "changes_incident_power_or_Q": false,
+      "Q_clipping_smoothing_gain_or_rescaling": false
+    },
+    "distance_from_waist_property_m": -5.065000000000001e-06,
+    "distance_sign_note": "negative backward-source property retained because direct target-plane field fits were substantially closer to the requested waist than the positive-sign diagnostic",
+    "source_span_m": 5e-05,
+    "minimum_source_span_m_from_all_gates": 4.8504081094717945e-05,
+    "source_aperture_metrics": {
+      "half_span_over_radius": 2.0677111442403575,
+      "square_captured_fraction": 0.9999291407552987,
+      "inscribed_circle_fraction": 0.9998066210363443,
+      "boundary_max_intensity_over_peak": 0.00019337896365563605,
+      "boundary_mean_intensity_over_peak": 5.860489813727978e-05
+    },
+    "lateral_domain_m": 6e-05,
+    "lateral_source_to_PML_margin_m": 4.9999999999999996e-06,
+    "FDTD_z_bounds_m": [
+      -1.1065e-05,
+      1.6e-05
+    ],
+    "source_to_top_PML_margin_m": 1.1e-05,
+    "focus_to_bottom_PML_margin_m": 1.1e-05,
+    "all_optical_boundaries": "PML",
+    "periodic_or_Bloch": false
+  },
+  "aperture_gate_ratios": {
+    "capture_gate": 1.7403447064152777,
+    "boundary_max_gate": 1.8584610944249191,
+    "boundary_mean_gate": 2.0058485804137267,
+    "governing": 2.0058485804137267
+  },
+  "optional_future_diagnostic": {
+    "name": "scalar versus vectorial thin-lens comparison",
+    "required_for_current_sanity_check": false,
+    "blocks_source_only_or_material_cases": false,
+    "execute_now": false
+  },
+  "successor_optical_sequence": {
+    "condition": "only after the scalar source-only gate passes",
+    "cases": [
+      "planar TaIrTe4, E parallel a",
+      "planar TaIrTe4, E parallel b",
+      "straight 45-degree finite edge, E parallel a",
+      "straight 45-degree finite edge, E parallel b"
+    ],
+    "same_scalar_source_geometry": true,
+    "same_incident_power_normalization": true,
+    "polarization_specific_raw_Q_rescaling_prohibited": true
+  },
+  "mesh_contract": {
+    "global_mesh": "auto non-uniform, conformal variant 1, accuracy 5",
+    "uniform_global_fine_mesh": false,
+    "material_case_local_fine_regions": [
+      "TaIrTe4",
+      "illuminated straight edge",
+      "Q extraction region"
+    ],
+    "material_case_local_xy_baseline_m": 1e-07,
+    "required_local_xy_refinement_m": 5e-08,
+    "refinement_gate": "required before material Q is promoted; source-only homogeneous air does not use this material mesh override",
+    "far_air_SiO2_Si": "wavelength-appropriate nonuniform coarse mesh",
+    "TaIrTe4_thickness_resolution": "separate local z override"
+  },
+  "prohibited": {
+    "thermal": true,
+    "PTE": true,
+    "adjoint": true,
+    "gradient": true,
+    "optimization": true,
+    "CPU_FDTD_fallback": true
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "root": "/home/seunghyun/tairte4/artifacts/pte_adfd/maxwell_absorption_x_20260726",
+  "committed_to_git": false,
+  "artifacts": [
+    {
+      "path": "solver_x/absorption_adfd_forward.fsp",
+      "bytes": 74515146,
+      "sha256": "84554ee64b9a29ce6e55934147bb29819a29b30cd2923e684ce40edf02819347"
+    },
+    {
+      "path": "solver_x/absorption_adfd_adjoint_x.fsp",
+      "bytes": 186022264,
+      "sha256": "5d8e6129f4986d4b5419bbf578fc413dd839ab9fcc286598aba7faf7c2b96138"
+    },
+    {
+      "path": "solver_x/absorption_adfd_adjoint_y.fsp",
+      "bytes": 186031816,
+      "sha256": "4a513641f9cd7f5bf1946d105c5723434c61124641535c6c90c9536dda08da66"
+    },
+    {
+      "path": "solver_x/absorption_fd_uniform_plus_0.0025.fsp",
+      "bytes": 74515226,
+      "sha256": "90b4bc8aaed2092e7bbf199a70c8a8d589bdcfe2640cff7c3b233fe44d3fbba2"
+    },
+    {
+      "path": "solver_x/absorption_fd_uniform_minus_0.0025.fsp",
+      "bytes": 74515906,
+      "sha256": "5e345bf20ad1809aab128d5652812e50f2f8c6cccda483c4c8a9cc8637380b20"
+    },
+    {
+      "path": "solver_x/absorption_fd_plus_0.02.fsp",
+      "bytes": 74515146,
+      "sha256": "10ee09dc3e6e6fd0872377611090a531f301376199847db1f22a02704e262a4c"
+    },
+    {
+      "path": "solver_x/absorption_fd_minus_0.02.fsp",
+      "bytes": 74515154,
+      "sha256": "874d7f43f587368785636261f2104a61cfe20de5ff6c35bef0bd2abbd572d6c5"
+    },
+    {
+      "path": "maxwell_absorption_adfd_x_uniform.npz",
+      "bytes": 8872100,
+      "sha256": "88d595702a7fc1462f9520f16f779684a3d3a1c84c75d0fae704abd2516a2461"
+    },
+    {
+      "path": "maxwell_absorption_adfd_x_oscillatory.npz",
+      "bytes": 11655802,
+      "sha256": "50f2a9ced1763b275043a0c1bfe94af7eb8d3affad735afbd58909ff6b6d96a3"
+    },
+    {
+      "path": "resume-adfd_x_uniform_summary.json",
+      "bytes": 7489,
+      "sha256": "e89294aace10a97d61d502b12771d9e381500ad3ebd2f409c73017a2f550e76d"
+    },
+    {
+      "path": "resume-adfd_x_oscillatory_summary.json",
+      "bytes": 7455,
+      "sha256": "5c2a093160c0abc94afb5c4ce1792cb9a0e675ae3523a35b5a50eb348ade1b04"
+    }
+  ]
+}
