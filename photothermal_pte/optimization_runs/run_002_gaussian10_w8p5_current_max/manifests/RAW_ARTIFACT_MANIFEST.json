@@ -509,5 +509,97 @@
         "sha256": "229941ccdd7915a47c01fbe72b499c4f058871d4992a32129a2de7122fba8bae"
       }
     ]
+  },
+  "production_cuda_thermal_pte": {
+    "status": "VALIDATED_PRODUCTION_CUDA_THERMAL_PTE_SCENARIOS",
+    "raw_artifacts_committed_to_git": false,
+    "mapped_Q": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_3d_thermal_q_deposition_20260806/production_thermal_grid_material_q.npz",
+      "size_bytes": 66392496,
+      "sha256": "93bd834d02e576ec6efaca67cbb8bbed6ed827f02c566593a1349647d91342c6"
+    },
+    "promoted_cases": [
+      {
+        "scenario": "grown_grown",
+        "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_grown_grown_v3_20260806",
+        "artifacts": [
+          {
+            "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_grown_grown_v3_20260806/production_cuda_thermal_pte_result.json",
+            "size_bytes": 1611,
+            "sha256": "c85193f3c2b39c8ded5295044c823e398affabcd5b73593d3cdc2224eb79a8c3"
+          },
+          {
+            "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_grown_grown_v3_20260806/thermal_pte_grown_grown.npz",
+            "size_bytes": 73554643,
+            "sha256": "7b67826bdf719f5febf4b2f636f2a8a33c33c7c1aa58c02e6a0aa14425fdd54c"
+          }
+        ]
+      },
+      {
+        "scenario": "grown_evaporated",
+        "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_grown_evaporated_20260806",
+        "artifacts": [
+          {
+            "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_grown_evaporated_20260806/production_cuda_thermal_pte_result.json",
+            "size_bytes": 1629,
+            "sha256": "94fbb50a1647402035c81bc15e3bd1b91ae3daa2fd9f7b03e4481b2444d6afeb"
+          },
+          {
+            "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_grown_evaporated_20260806/thermal_pte_grown_evaporated.npz",
+            "size_bytes": 73687540,
+            "sha256": "20ee6ec9b6a812aa023c6b8f3476f540b895cc1be2c9d48e9d39fec262ab130a"
+          }
+        ]
+      },
+      {
+        "scenario": "evaporated_grown",
+        "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_evaporated_grown_20260806",
+        "artifacts": [
+          {
+            "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_evaporated_grown_20260806/production_cuda_thermal_pte_result.json",
+            "size_bytes": 1622,
+            "sha256": "5112e487781a92a2fbf190a58ab456e3370119b940dc2cd50b2b9929b332ea73"
+          },
+          {
+            "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_evaporated_grown_20260806/thermal_pte_evaporated_grown.npz",
+            "size_bytes": 74035117,
+            "sha256": "5374e22faf08e30a7c04dd42aa711b20faa9bb9b1ec980a6a0508a7e026b6305"
+          }
+        ]
+      },
+      {
+        "scenario": "evaporated_evaporated",
+        "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_evaporated_evaporated_20260806",
+        "artifacts": [
+          {
+            "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_evaporated_evaporated_20260806/production_cuda_thermal_pte_result.json",
+            "size_bytes": 1636,
+            "sha256": "0dcbe10814da9420c66b5ade3943c0b8678227752cc657abb42bd615bec7dcfd"
+          },
+          {
+            "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_evaporated_evaporated_20260806/thermal_pte_evaporated_evaporated.npz",
+            "size_bytes": 73982636,
+            "sha256": "4d2e2dd440bb99c22f19158374a56ac23ad127ee427e223836053e8a9bbba95f"
+          }
+        ]
+      }
+    ],
+    "preserved_failed_diagnostic": {
+      "role": "preserved_near_null_relative_metric_failure",
+      "reason": "The raw relative difference divided by two nearly-zero PTE currents; no empirical normalization or gradient rescaling was introduced.",
+      "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_grown_grown_20260806",
+      "artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_grown_grown_20260806/production_cuda_thermal_pte_result.json",
+          "size_bytes": 1460,
+          "sha256": "c626cb7925b87913f139d5def6ba6a2b4a0b9e617608bc45c70136fb84bc2661"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_grown_grown_20260806/thermal_pte_grown_grown.npz",
+          "size_bytes": 73554643,
+          "sha256": "7b67826bdf719f5febf4b2f636f2a8a33c33c7c1aa58c02e6a0aa14425fdd54c"
+        }
+      ]
+    }
   }
 }

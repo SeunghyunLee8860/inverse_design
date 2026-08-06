@@ -68,7 +68,7 @@ class OptimizationRunContractTest(unittest.TestCase):
         self.assertTrue(result.valid)
         self.assertEqual(
             result.status,
-            "PRODUCTION_3D_THERMAL_Q_DEPOSITION_VALIDATED",
+            "PRODUCTION_CUDA_THERMAL_PTE_VALIDATED",
         )
 
     def test_gaussian10_lossless_sio2_fails_closed(self) -> None:

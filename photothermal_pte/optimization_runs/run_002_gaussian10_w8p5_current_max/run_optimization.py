@@ -41,8 +41,8 @@ def main() -> int:
     print(
         "PREFLIGHT_ONLY: source-only, production forward, component-Yee "
         "mapping, material-Q attribution, 3D thermal-grid deposition, and "
-        "small CUDA controls passed; production CUDA thermal/PTE, window "
-        "selection, and Gaussian AD-FD still block execution"
+        "production CUDA thermal/PTE controls passed; design-window "
+        "selection and Gaussian combined AD-FD still block execution"
     )
     return 0
 

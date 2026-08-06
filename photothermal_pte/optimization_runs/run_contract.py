@@ -31,6 +31,7 @@ ALLOWED_STATUS = {
     "PRODUCTION_COMPONENT_YEE_MAPPING_VALIDATED",
     "PRODUCTION_MATERIAL_Q_ATTRIBUTION_VALIDATED",
     "PRODUCTION_3D_THERMAL_Q_DEPOSITION_VALIDATED",
+    "PRODUCTION_CUDA_THERMAL_PTE_VALIDATED",
     "RUNNING",
     "COMPLETED",
     "FAILED",
@@ -210,8 +211,14 @@ def _validate_physics_v2(config: dict[str, Any]) -> None:
         raise ValidationError("far lateral thermal boundary contract changed")
     if boundaries.get("z_min") != "Dirichlet_T_bath_at_bottom_of_20um_Si":
         raise ValidationError("bottom thermal boundary contract changed")
-    if boundaries.get("z_max") != "Robin_h_exposed_to_T_bath":
+    if boundaries.get("z_max") != "material_specific_Robin_to_T_bath":
         raise ValidationError("top thermal boundary contract changed")
+    expected_exposed = {
+        "TaIrTe4": "Robin_G_1_W_m2K_to_T_bath",
+        "SiO2_and_gray_design": "Robin_h_10_W_m2K_to_T_bath",
+    }
+    if boundaries.get("solid_air_exposed_surfaces") != expected_exposed:
+        raise ValidationError("material-specific exposed thermal boundaries changed")
     if boundaries.get("periodic_axes") != []:
         raise ValidationError("thermal periodic boundaries are forbidden")
 

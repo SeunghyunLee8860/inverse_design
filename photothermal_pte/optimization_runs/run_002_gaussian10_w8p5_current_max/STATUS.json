@@ -1,7 +1,7 @@
 {
   "run_id": "run_002_gaussian10_w8p5_current_max",
-  "status": "PRODUCTION_3D_THERMAL_Q_DEPOSITION_VALIDATED",
-  "last_updated_utc": "2026-08-06T07:31:00+00:00",
+  "status": "PRODUCTION_CUDA_THERMAL_PTE_VALIDATED",
+  "last_updated_utc": "2026-08-06T08:15:00+00:00",
   "optimization_started": false,
-  "message": "The rho=0.5 native component-Q has been deposited on the actual 362x362x91, 64um thermal grid by literal material intersection. Mapped power 7.20892118277057e-14 W equals the attributed physical-material power with zero total error and no nonzero cells outside their material. CUDA thermal/PTE forward-adjoint, Gaussian combined AD-FD, and design-window selection still block optimization."
+  "message": "All four named bottom/design interface-G scenarios passed on the actual 362x362x91 explicit 3D thermal grid. Forward and implicit-adjoint linear solves used CUDA float64 with no CPU solve fallback; worst residual 9.813e-11, energy balance 1.304e-11, and Cauchy-normalized reciprocity 1.008e-15. The centered rho=0.5 PTE response is a near-null numerical control, not an optimized or experimental current. Gaussian combined AD-FD and design-window selection still block optimization."
 }

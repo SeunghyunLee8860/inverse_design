@@ -81,7 +81,11 @@
     "boundary_conditions": {
       "x_min_x_max_y_min_y_max": "Dirichlet_T_bath_at_far_64um_domain",
       "z_min": "Dirichlet_T_bath_at_bottom_of_20um_Si",
-      "z_max": "Robin_h_exposed_to_T_bath",
+      "z_max": "material_specific_Robin_to_T_bath",
+      "solid_air_exposed_surfaces": {
+        "TaIrTe4": "Robin_G_1_W_m2K_to_T_bath",
+        "SiO2_and_gray_design": "Robin_h_10_W_m2K_to_T_bath"
+      },
       "periodic_axes": [],
       "internal_interfaces_are_not_external_boundaries": true
     },
@@ -101,6 +105,8 @@
     "Seebeck_a_V_K": -0.000006,
     "Seebeck_b_V_K": 0.000027,
     "weighting_model": "uniform_45_degree_surrogate",
+    "weighting_field_components_m_inv": [15625.0, 15625.0],
+    "weighting_potential_contract": "unit_difference_between_opposite_diagonal_equipotential_lines_of_32um_flake",
     "warning": "not the full experimental electrode operator"
   },
   "objective": {
@@ -112,7 +118,7 @@
   },
   "optimizer": {
     "algorithm": "NLopt_LD_MMA",
-    "driver_status": "BLOCKED_BY_SOURCE_WINDOW_Q_AND_CUDA_GATES",
+    "driver_status": "BLOCKED_BY_COMBINED_ADFD_AND_DESIGN_WINDOW_SELECTION",
     "initial_FOM_strategy": [
       "two_signed_objective_runs",
       "fixed_objective_nondimensionalization",
@@ -149,6 +155,6 @@
   "external_inputs": [],
   "execution": {
     "enabled": false,
-    "reason": "source, window, material-resolved-Q, Gaussian AD-FD, and CUDA thermal-adjoint gates remain"
+    "reason": "production CUDA thermal/PTE passed; Gaussian combined AD-FD and design-window selection remain"
   }
 }

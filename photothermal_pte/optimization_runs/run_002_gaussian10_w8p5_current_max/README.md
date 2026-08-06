@@ -1,11 +1,12 @@
 # Run 002 — 10 µm Gaussian current maximization
 
-Status: `PRODUCTION_3D_THERMAL_Q_DEPOSITION_VALIDATED`. A homogeneous-air
+Status: `PRODUCTION_CUDA_THERMAL_PTE_VALIDATED`. A homogeneous-air
 source-only Maxwell gate, small CUDA thermal forward/adjoint controls,
 uniform rho=0/0.5/1 scalar-vs-`importnk2` complex-material controls, and a
-matched-volume rho=0.5 production-candidate GPU forward have run.  No
-production thermal, PTE, combined finite-difference, or optimization solve has
-started.
+matched-volume rho=0.5 production-candidate GPU forward have run. The exact
+material-attributed Q has also passed the full production 3D CUDA thermal/PTE
+forward and implicit-adjoint controls for four interface-G scenarios. No
+combined finite-difference or optimization solve has started.
 
 This is a new physical contract, not a continuation that silently reuses the
 4 µm CPU-TFSF certificate.  The requested source is a scalar Gaussian at
@@ -97,10 +98,22 @@ air/interface cut-cell remainder is reported rather than forced into a nearby
 material.  No Q rescaling was used.  The next gate is deposition of those
 material-attributed contributions onto the actual 3D thermal grid.
 
-That deposition now passes on the `362×362×91` thermal grid: mapped power is
+That deposition passes on the `362×362×91` thermal grid: mapped power is
 `7.20892118277057e-14 W`, exactly equal to the material-attributed input at
 reported precision, and no nonzero source lies outside its own material. The
-frozen thermal boundaries are far-x/y and bottom Dirichlet at 300 K, plus a
-top exposed Robin boundary with `h=10 W/(m² K)`; internal interfaces remain
-explicit resistances, not external boundaries. Temperature/PTE has not yet
-been solved.
+frozen thermal boundaries are far-x/y and bottom Dirichlet at 300 K. Every
+solid/air exposed face uses a material-specific Robin condition: TaIrTe4 uses
+`G=1 W/(m² K)`, while SiO2 and the gray design use `h=10 W/(m² K)`. Internal
+interfaces remain explicit resistances, not external boundaries.
+
+The same source was then solved on the production grid for grown/grown,
+grown/evaporated, evaporated/grown, and evaporated/evaporated bottom/design
+interface combinations. All forward and implicit-adjoint linear solves used
+CUDA float64 with no CPU solve fallback. Across the four cases, the worst
+linear residual is `9.813e-11`, worst energy-balance error is `1.304e-11`, and
+worst Cauchy-normalized reciprocity error is `1.008e-15`. The uniform
+45-degree weighting field is `(15625,15625) 1/m`, a unit-potential surrogate
+across opposite diagonals of the finite 32 um flake; it is not a full electrode
+model. The centered rho=0.5 response is a near-null numerical control, not an
+optimized or experimental current. Combined Maxwell/thermal AD-FD and the
+coarse-gradient design-window selection still block optimization.
