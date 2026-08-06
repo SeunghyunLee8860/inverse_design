@@ -7,7 +7,7 @@
     "repository": "SeunghyunLee8860/inverse_design",
     "git_commit": "5b648323ac74b7ed6c8f78d1137cff7d78b2c2af",
     "base_pr": 8,
-    "adfd_status": "REQUIRES_NARROW_GAUSSIAN10_RECERTIFICATION",
+    "adfd_status": "FIXED_Q_THERMAL_MATERIAL_VALIDATED_COMBINED_MAXWELL_PENDING",
     "preserved_upstream": "4 um CPU-TFSF full-latent certificate remains unchanged"
   },
   "design": {
@@ -155,6 +155,6 @@
   "external_inputs": [],
   "execution": {
     "enabled": false,
-    "reason": "production CUDA thermal/PTE passed; Gaussian combined AD-FD and design-window selection remain"
+    "reason": "production CUDA thermal/PTE and fixed-Q thermal-material AD-FD passed; Gaussian combined Maxwell AD-FD and design-window selection remain"
   }
 }

@@ -1,7 +1,7 @@
 {
   "run_id": "run_002_gaussian10_w8p5_current_max",
-  "status": "PRODUCTION_CUDA_THERMAL_PTE_VALIDATED",
-  "last_updated_utc": "2026-08-06T08:15:00+00:00",
+  "status": "PRODUCTION_FIXED_Q_THERMAL_MATERIAL_ADFD_VALIDATED",
+  "last_updated_utc": "2026-08-06T09:10:00+00:00",
   "optimization_started": false,
-  "message": "All four named bottom/design interface-G scenarios passed on the actual 362x362x91 explicit 3D thermal grid. Forward and implicit-adjoint linear solves used CUDA float64 with no CPU solve fallback; worst residual 9.813e-11, energy balance 1.304e-11, and Cauchy-normalized reciprocity 1.008e-15. The centered rho=0.5 PTE response is a near-null numerical control, not an optimized or experimental current. Gaussian combined AD-FD and design-window selection still block optimization."
+  "message": "All four production CUDA thermal/PTE scenarios passed, followed by fixed-Maxwell-Q thermal-material AD-FD at the grown/grown and evaporated/evaporated interface endpoints. The 201x201 coarse nodal-to-200x200 thermal-cell mapping has worst transpose error 1.811e-15. Thermal-material directional errors are 2.229e-6 (grown/grown, h=0.0025) and 1.119e-5 (evaporated/evaporated, h=0.005). The original grown/grown fail JSON is immutable and preserved; its failure was only an obsolete over-strict mapping-FD classification. Combined Maxwell AD-FD and design-window selection still block optimization."
 }

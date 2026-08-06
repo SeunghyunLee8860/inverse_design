@@ -220,7 +220,9 @@ def main() -> int:
     PLOTS.mkdir(parents=True, exist_ok=True)
     csv_path = RESULTS / "production_cuda_thermal_pte_cases.csv"
     with csv_path.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(
+            handle, fieldnames=list(rows[0]), lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(rows)
 

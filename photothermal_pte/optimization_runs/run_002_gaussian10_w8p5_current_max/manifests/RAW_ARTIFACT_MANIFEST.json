@@ -601,5 +601,42 @@
         }
       ]
     }
+  },
+  "production_fixed_Q_thermal_material_adfd": {
+    "status": "VALIDATED_PRODUCTION_FIXED_Q_THERMAL_MATERIAL_ADFD_ENDPOINTS",
+    "raw_artifacts_committed_to_git": false,
+    "cases": {
+      "grown_grown": {
+        "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_thermal_material_adfd_grown_grown_20260806",
+        "artifacts": [
+          {
+            "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_thermal_material_adfd_grown_grown_20260806/production_thermal_material_adfd_result.json",
+            "size_bytes": 3792,
+            "sha256": "54d610dccd10efe58195493dcb5c079631372cd7c6b8947fcfe6d052c0faf788"
+          },
+          {
+            "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_thermal_material_adfd_grown_grown_20260806/thermal_material_adfd_grown_grown.npz",
+            "size_bytes": 149181199,
+            "sha256": "2f944568359be0a63226dcee180b674f5d9117a959f952351c6e7933071dca5c"
+          }
+        ]
+      },
+      "evaporated_evaporated": {
+        "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_thermal_material_adfd_evaporated_evaporated_20260806",
+        "artifacts": [
+          {
+            "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_thermal_material_adfd_evaporated_evaporated_20260806/production_thermal_material_adfd_result.json",
+            "size_bytes": 2920,
+            "sha256": "0344d13e19b2a70937019b7bf1935a861f82f8fae9e8d81dd08c8992fb145a64"
+          },
+          {
+            "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_thermal_material_adfd_evaporated_evaporated_20260806/thermal_material_adfd_evaporated_evaporated.npz",
+            "size_bytes": 150471757,
+            "sha256": "8a4942fb9fa0570f885b38603131dfcea3c4697a2937b04f74cabdf0632c2a30"
+          }
+        ]
+      }
+    },
+    "preserved_raw_failure": true
   }
 }

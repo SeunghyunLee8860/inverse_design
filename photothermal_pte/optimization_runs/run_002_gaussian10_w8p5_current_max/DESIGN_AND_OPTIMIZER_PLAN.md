@@ -1,8 +1,10 @@
 # Run 002 design, constraint, and optimizer plan
 
-This document is a reviewed plan, not an optimization result. The source-only
-GPU gate has passed; material-Q, Gaussian AD-FD, and production-scale thermal
-gates still block optimizer execution.
+This document remains the reviewed optimization plan. Source-only, production
+forward, component-Yee mapping, literal material-Q attribution, exact 3D
+thermal deposition, production CUDA thermal/PTE, and fixed-Q thermal-material
+AD-FD gates have passed. Combined Maxwell/thermal AD-FD and the one-time
+coarse-gradient window selection still block optimizer execution.
 
 ## Physical layout contract
 
@@ -104,17 +106,20 @@ before changing any physics.
 - The CUDA implementation differentiates the discrete equation, not the PCG
   iterations. Explicit residual and forward-adjoint reciprocity are gates.
 
-The small literal 8×8×8 FVM CUDA control passed. Production-scale memory,
-runtime, temperature parity, energy balance, and adjoint parity remain required
-before the optimization driver is enabled.
+The production `362×362×91` FVM now passes on CUDA float64 for all four named
+interface scenarios. Fixed-Q thermal-material derivatives also pass for the
+grown/grown and evaporated/evaporated endpoints. Host matrix assembly remains
+the expensive part of FD certification; optimization uses one forward/adjoint
+pair rather than repeated ±FD solves.
 
 ## Remaining fail-closed sequence
 
-1. one material forward smoke with exact 10 µm material readback and optical
-   closure;
-2. material-resolved TaIrTe4/bottom-SiO2/design-SiO2 Q conservation;
-3. coarse physical-gradient canvas and fixed finite design-window selection;
-4. nonperiodic mapping JVP/VJP and exact-binary DRC fixtures;
-5. production-size CPU-reference versus CUDA thermal forward/adjoint parity;
-6. representative Gaussian combined physical-density AD-FD smoke;
-7. only then enable a short nominal MMA pilot.
+1. build the thermal-adjoint pullback from material-resolved thermal Q to the
+   component-specific native Yee absorption grids;
+2. run one representative Gaussian combined physical-density Maxwell/thermal
+   AD-FD smoke without gradient rescaling;
+3. use the validated physical gradient on the coarse canvas to select and
+   freeze the smallest reviewed asymmetric design window;
+4. certify the finite nonperiodic filter/projection JVP/VJP and exact-binary
+   DRC fixtures on that window;
+5. only then enable a short nominal signed-objective MMA pilot.

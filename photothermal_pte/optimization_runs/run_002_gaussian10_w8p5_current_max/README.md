@@ -1,6 +1,6 @@
 # Run 002 — 10 µm Gaussian current maximization
 
-Status: `PRODUCTION_CUDA_THERMAL_PTE_VALIDATED`. A homogeneous-air
+Status: `PRODUCTION_FIXED_Q_THERMAL_MATERIAL_ADFD_VALIDATED`. A homogeneous-air
 source-only Maxwell gate, small CUDA thermal forward/adjoint controls,
 uniform rho=0/0.5/1 scalar-vs-`importnk2` complex-material controls, and a
 matched-volume rho=0.5 production-candidate GPU forward have run. The exact
@@ -117,3 +117,13 @@ across opposite diagonals of the finite 32 um flake; it is not a full electrode
 model. The centered rho=0.5 response is a near-null numerical control, not an
 optimized or experimental current. Combined Maxwell/thermal AD-FD and the
 coarse-gradient design-window selection still block optimization.
+
+The fixed-Q thermal-material derivative is now independently certified on the
+coarse 201×201 nodal canvas. Four-node averaging maps it to 200×200 thermal
+cells and the exact transpose returns the gradient. At the grown/grown
+endpoint the directional AD-FD error falls from `3.563e-5` at `h=0.01` to
+`2.229e-6` at `h=0.0025`; the evaporated/evaporated endpoint gives
+`1.119e-5` at `h=0.005`. The worst mapping transpose error is `1.811e-15`.
+This check includes the rho-dependent gray bulk kappa and TaIrTe4/design
+interface G, but freezes Maxwell Q to isolate the thermal branch. It therefore
+does not replace the pending combined Maxwell/thermal AD-FD.
