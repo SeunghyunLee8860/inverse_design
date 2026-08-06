@@ -9,6 +9,7 @@
     "base_pr": 8,
     "adfd_status": "COMBINED_PHYSICAL_RHO_ADFD_SMOKE_AND_WINDOW_VALIDATED_FULL_LATENT_PENDING",
     "selected_production_optical_chain_status": "VALIDATED_SELECTED_PRODUCTION_OPTICAL_CHAIN",
+    "selected_production_thermal_mapping_status": "VALIDATED_SELECTED_PRODUCTION_THERMAL_MAPPING",
     "preserved_upstream": "4 um CPU-TFSF full-latent certificate remains unchanged"
   },
   "design": {
@@ -164,6 +165,6 @@
   "external_inputs": [],
   "execution": {
     "enabled": false,
-    "reason": "the selected 18.6 um / 373 x 373 GPU forward, component-Yee material Jacobian, and finite nonperiodic filter/projection mapping passed; selected-grid thermal gray laws, the Maxwell adjoint, broader combined directions, exact-binary DRC fixtures, and full latent AD-FD remain"
+    "reason": "the selected 18.6 um / 373 x 373 GPU forward, component-Yee material Jacobian, finite filter/projection, exact 373-node-to-186-cell thermal density map, and conservative 3D Q deposition passed; selected-grid thermal gray-law solver AD-FD, the Maxwell adjoint, broader combined directions, exact-binary DRC fixtures, and full latent AD-FD remain"
   }
 }

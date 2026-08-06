@@ -25,6 +25,14 @@ class Run002ThermalMaterialMappingTest(unittest.TestCase):
         sys.modules[spec.name] = module
         spec.loader.exec_module(module)
         cls.module = module
+        selected_path = run_dir / "selected_thermal_density_mapping.py"
+        selected_spec = importlib.util.spec_from_file_location(
+            "run002_selected_thermal_density_mapping", selected_path
+        )
+        assert selected_spec is not None and selected_spec.loader is not None
+        selected = importlib.util.module_from_spec(selected_spec)
+        selected_spec.loader.exec_module(selected)
+        cls.selected = selected
 
     def test_nodal_to_cell_exact_transpose(self) -> None:
         rng = np.random.default_rng(2026080604)
@@ -46,6 +54,38 @@ class Run002ThermalMaterialMappingTest(unittest.TestCase):
         for direction in directions.values():
             self.assertLess(float(np.max(base + 0.01 * direction)), 1.0)
             self.assertGreater(float(np.min(base - 0.01 * direction)), 0.0)
+
+    def test_selected_373_to_186_mapping_and_exact_transpose(self) -> None:
+        rng = np.random.default_rng(2026080607)
+        nodal = rng.normal(size=(373, 373))
+        dual = rng.normal(size=(186, 186))
+        mapped = self.selected.selected_nodal_to_thermal_cell(nodal)
+        self.assertEqual(mapped.shape, (186, 186))
+        left = float(np.sum(mapped * dual))
+        right = float(
+            np.sum(
+                nodal
+                * self.selected.selected_nodal_to_thermal_cell_transpose(dual)
+            )
+        )
+        self.assertLess(
+            abs(left - right) / max(abs(left), abs(right), np.finfo(float).tiny),
+            1.0e-13,
+        )
+
+    def test_selected_mapping_preserves_bilinear_integral(self) -> None:
+        rng = np.random.default_rng(2026080608)
+        nodal = rng.random((373, 373))
+        mapped = self.selected.selected_nodal_to_thermal_cell(nodal)
+        nodal_integral = self.selected.bilinear_integral(nodal)
+        cell_integral = float(
+            np.sum(mapped) * self.selected.THERMAL_CELL_STEP_M**2
+        )
+        self.assertLess(
+            abs(nodal_integral - cell_integral)
+            / max(abs(nodal_integral), abs(cell_integral)),
+            1.0e-14,
+        )
 
 
 if __name__ == "__main__":

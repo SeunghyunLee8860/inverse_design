@@ -915,6 +915,41 @@
       "sha256": "dd9ec1b65dc039e5109149e82e11c593c8b7e1c3e7118417c374704c479adab8"
     }
   },
-  "current_promoted_status": "VALIDATED_SELECTED_PRODUCTION_OPTICAL_CHAIN",
-  "current_promoted_at_utc": "2026-08-06T17:31:06.893129+00:00"
+  "current_promoted_status": "VALIDATED_SELECTED_PRODUCTION_THERMAL_MAPPING",
+  "current_promoted_at_utc": "2026-08-06T17:31:06.893129+00:00",
+  "selected_production_thermal_mapping": {
+    "status": "VALIDATED_SELECTED_PRODUCTION_THERMAL_MAPPING",
+    "raw_artifacts_committed_to_git": false,
+    "density_mapping": {
+      "result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_thermal_density_mapping_20260806/selected_thermal_density_mapping_result.json",
+        "size_bytes": 1892,
+        "sha256": "63b0455cb614ef2276bed4b53c09a5a6ffbb8b2f12173c50f29aa7747c1dda95"
+      },
+      "NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_thermal_density_mapping_20260806/selected_thermal_density_mapping.npz",
+        "size_bytes": 4726097,
+        "sha256": "7a838b7d0080705b62f47ac88f5b29a2f97b6896de8e77b3b2d0549326ff4694"
+      }
+    },
+    "material_attribution": {
+      "result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_production_material_q_attribution_20260806/production_material_q_attribution.json",
+        "size_bytes": 4806,
+        "sha256": "e2897a274bfa3bb43d9273b3f1461a1ce792c6a487899401b19548b9ed02415e"
+      }
+    },
+    "thermal_Q_deposition": {
+      "result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_production_thermal_q_deposition_v2_20260806/production_thermal_q_deposition_result.json",
+        "size_bytes": 5793,
+        "sha256": "2f8a4b4e338a70490e5f96eeff0785c8e42f60df80e39e5e057da985d4964f17"
+      },
+      "NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_production_thermal_q_deposition_v2_20260806/production_thermal_grid_material_q.npz",
+        "size_bytes": 64254979,
+        "sha256": "31c009516cc6ba843fe0cdd99eb60c1108238dd6eee6fcf37b7f6fe3577c8024"
+      }
+    }
+  }
 }

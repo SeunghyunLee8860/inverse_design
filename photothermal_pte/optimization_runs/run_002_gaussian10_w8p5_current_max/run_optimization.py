@@ -46,8 +46,9 @@ def main() -> int:
         "production combined physical-rho Maxwell/CUDA-thermal AD-FD smoke "
         "also passed, and the centered 18.6 um production window is frozen. "
         "Finite nonperiodic filter/projection mapping, the selected-grid "
-        "GPU forward, and its 373 x 373 component-Yee Jacobians also passed. "
-        "Selected-grid thermal gray laws, the Maxwell adjoint, broader "
+        "GPU forward, its 373 x 373 component-Yee Jacobians, exact "
+        "373-node-to-186-cell density map, and conservative 3D Q deposition "
+        "also passed. Selected-grid thermal gray-law solver AD-FD, the Maxwell adjoint, broader "
         "directions, exact-binary DRC fixtures, and full-latent AD-FD still "
         "block execution"
     )

@@ -59,13 +59,19 @@ def thermal_edges() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     return lateral, lateral.copy(), z
 
 
-def material_masks(edges: tuple[np.ndarray, np.ndarray, np.ndarray]) -> dict[str, np.ndarray]:
+def material_masks(
+    edges: tuple[np.ndarray, np.ndarray, np.ndarray],
+    *,
+    design_half_span_m: float = 10.0e-6,
+) -> dict[str, np.ndarray]:
     centers = tuple(0.5 * (axis[:-1] + axis[1:]) for axis in edges)
     x, y, z = centers
     shape = (x.size, y.size, z.size)
     xy_all = np.ones((x.size, y.size), bool)
     flake_xy = (np.abs(x[:, None]) < 16e-6) & (np.abs(y[None, :]) < 16e-6)
-    design_xy = (np.abs(x[:, None]) < 10e-6) & (np.abs(y[None, :]) < 10e-6)
+    design_xy = (np.abs(x[:, None]) < design_half_span_m) & (
+        np.abs(y[None, :]) < design_half_span_m
+    )
     masks = {
         "Si": xy_all[:, :, None] & (z[None, None, :] < -0.385e-6),
         "bottom_SiO2": xy_all[:, :, None] & ((z[None, None, :] > -0.385e-6) & (z[None, None, :] < -0.100e-6)),
@@ -101,7 +107,13 @@ def main() -> int:
         raise RuntimeError("input attribution gate did not pass")
     native = np.load(q_path)
     target_edges = thermal_edges()
-    masks = material_masks(target_edges)
+    design_bounds = attribution["geometry_m"]["design_xy"]
+    if len(design_bounds) != 2 or not np.isclose(
+        float(design_bounds[0]), -float(design_bounds[1]), rtol=0.0, atol=2e-18
+    ):
+        raise RuntimeError("attribution design support is not a centered square")
+    design_half_span_m = float(design_bounds[1])
+    masks = material_masks(target_edges, design_half_span_m=design_half_span_m)
     shape = tuple(axis.size - 1 for axis in target_edges)
     material_sources = {name: np.zeros(shape, float) for name in MATERIALS}
     mapping_records: dict[str, object] = {}
@@ -159,7 +171,7 @@ def main() -> int:
             "minimum_step_m": {axis: float(np.min(np.diff(edge))) for axis, edge in zip("xyz", target_edges)},
             "maximum_step_m": {axis: float(np.max(np.diff(edge))) for axis, edge in zip("xyz", target_edges)},
             "finite_flake_span_m": 32e-6,
-            "design_span_m": 20e-6,
+            "design_span_m": 2.0 * design_half_span_m,
             "si_depth_m": 20e-6,
         },
         "power_W": {"total_mapped": total_power, "expected_material_attributed": expected_total, **material_power},

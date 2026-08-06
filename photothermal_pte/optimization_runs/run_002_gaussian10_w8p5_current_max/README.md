@@ -1,6 +1,6 @@
 # Run 002 — 10 µm Gaussian current maximization
 
-Status: `SELECTED_PRODUCTION_OPTICAL_CHAIN_VALIDATED`. A homogeneous-air
+Status: `SELECTED_PRODUCTION_THERMAL_MAPPING_VALIDATED`. A homogeneous-air
 source-only Maxwell gate, small CUDA thermal forward/adjoint controls,
 uniform rho=0/0.5/1 scalar-vs-`importnk2` complex-material controls, and a
 matched-volume rho=0.5 production-candidate GPU forward have run. The exact
@@ -177,3 +177,13 @@ solves. Its worst mapping-only FD error is `1.337e-9`, worst JVP/VJP error is
 `1.659e-14`, and no active Jacobian row lies outside the exact support. This
 does not yet certify the selected-grid thermal gray law, Maxwell adjoint, or
 full latent chain.
+
+The selected optical density and Q now also reach the explicit thermal grid
+without reverting to the old 201×201/200×200 contract. The 373 nodes map to
+186×186 thermal cells through exact bilinear area averaging, with transpose
+error `3.786e-16` and mapping-FD error `1.730e-13`. Literal material-overlap
+attribution retains `7.132301206388863e-14 W` as physical thermal source; the
+air/interface remainder is reported rather than moved. Conservative 3D
+deposition has total power error `3.539e-16`, worst component/material error
+`9.190e-16`, and zero source cells outside their material. Thermal gray-law
+solver AD-FD remains the next gate.

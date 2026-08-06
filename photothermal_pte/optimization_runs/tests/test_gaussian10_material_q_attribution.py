@@ -34,3 +34,8 @@ def test_literal_box_partition_has_no_gain() -> None:
     total = module.box_power(density, edges, domain)
     assert total == 8.0
     assert module.box_power(density, edges, left) + module.box_power(density, edges, right) == total
+
+
+def test_default_design_half_span_remains_backward_compatible() -> None:
+    module = load_module()
+    assert np.isclose(module.DEFAULT_DESIGN_HALF_SPAN_M, 10.0e-6)

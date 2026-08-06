@@ -17,7 +17,7 @@ import numpy as np
 
 
 PHYSICAL_FLAKE_HALF_SPAN_M = 16.0e-6
-DESIGN_HALF_SPAN_M = 10.0e-6
+DEFAULT_DESIGN_HALF_SPAN_M = 10.0e-6
 Z_SI_OXIDE_M = -0.385e-6
 Z_OXIDE_FLAKE_M = -0.100e-6
 Z_FLAKE_DESIGN_M = 0.0
@@ -74,7 +74,11 @@ def main() -> int:
     parser.add_argument("--native-q", required=True, type=Path)
     parser.add_argument("--native-q-sha256", required=True)
     parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument("--design-half-span-um", type=float, default=10.0)
     args = parser.parse_args()
+    design_half_span_m = float(args.design_half_span_um) * 1.0e-6
+    if not (0.0 < design_half_span_m <= PHYSICAL_FLAKE_HALF_SPAN_M):
+        raise ValueError("design half span must be positive and inside the physical flake")
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
         raise RuntimeError(f"refusing non-empty output directory: {output}")
@@ -138,8 +142,8 @@ def main() -> int:
                 density,
                 edges,
                 {
-                    "x": (-DESIGN_HALF_SPAN_M, DESIGN_HALF_SPAN_M),
-                    "y": (-DESIGN_HALF_SPAN_M, DESIGN_HALF_SPAN_M),
+                    "x": (-design_half_span_m, design_half_span_m),
+                    "y": (-design_half_span_m, design_half_span_m),
                     "z": (Z_FLAKE_DESIGN_M, Z_DESIGN_AIR_M),
                 },
             ),
@@ -183,7 +187,7 @@ def main() -> int:
         },
         "geometry_m": {
             "physical_flake_xy": [-PHYSICAL_FLAKE_HALF_SPAN_M, PHYSICAL_FLAKE_HALF_SPAN_M],
-            "design_xy": [-DESIGN_HALF_SPAN_M, DESIGN_HALF_SPAN_M],
+            "design_xy": [-design_half_span_m, design_half_span_m],
             "z_interfaces": [Z_SI_OXIDE_M, Z_OXIDE_FLAKE_M, Z_FLAKE_DESIGN_M, Z_DESIGN_AIR_M],
         },
         "component_records": component_records,

@@ -1,7 +1,7 @@
 {
   "run_id": "run_002_gaussian10_w8p5_current_max",
-  "status": "SELECTED_PRODUCTION_OPTICAL_CHAIN_VALIDATED",
-  "last_updated_utc": "2026-08-06T17:31:06+00:00",
+  "status": "SELECTED_PRODUCTION_THERMAL_MAPPING_VALIDATED",
+  "last_updated_utc": "2026-08-06T17:44:12+00:00",
   "optimization_started": false,
-  "message": "The selected centered 18.6 um, 373 x 373 production optical chain is now validated in its own environment. A GPU-only rho=0.5 forward completed in 230.229 s with six-face closure 6.422e-6 and auto-shutoff 8.280e-8. The component-specific 373 x 373 density-to-Yee Jacobians passed mapping-only FD at 1.337e-9, JVP/VJP transpose at 1.659e-14, and exact-support/coordinate audits. The earlier corrected finite nonperiodic filter/projection certificate remains valid. The first selected-geometry bookkeeping failure is preserved and launched no field solve. Thermal gray laws on the selected grid, the Maxwell adjoint, broader combined directions, exact-binary DRC fixtures, and full latent AD-FD still block optimization."
+  "message": "The selected 373-node optical density now maps exactly to the 186 x 186, 100 nm thermal cells by bilinear area integration. Constant and opposite-edge-wrap errors are zero, integral error is 4.483e-16, worst transpose error is 3.786e-16, and worst mapping FD error is 1.730e-13. The selected GPU Q artifact was partitioned by literal material overlap on the exact +/-9.3 um support and deposited conservatively on the 362 x 362 x 91 explicit 3D thermal grid. Total deposition error is 3.539e-16, worst component/material error is 9.190e-16, and no source cell lies outside its material. No Q was relocated or rescaled. Thermal gray-law solver AD-FD, the Maxwell adjoint, broader combined directions, exact-binary DRC fixtures, and full latent AD-FD still block optimization."
 }

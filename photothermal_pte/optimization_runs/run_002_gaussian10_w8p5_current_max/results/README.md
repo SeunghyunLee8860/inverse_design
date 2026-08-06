@@ -19,6 +19,10 @@ selected production optical-chain certificate records the actual 18.6 µm,
 373×373 GPU forward and component-specific density-to-Yee Jacobians. It does
 not promote the earlier 201×201 thermal/combined smoke to the selected grid.
 The
+selected production thermal-mapping certificate records exact bilinear
+373-node-to-186-cell density transfer, its transpose, selected-support literal
+material-Q attribution, and conservative deposition to the explicit 3D grid.
+The
 analytic setup audit is produced in memory by `run_optimization.py
 --setup-audit`.
 
