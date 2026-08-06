@@ -69,7 +69,7 @@ class OptimizationRunContractTest(unittest.TestCase):
         self.assertTrue(result.valid)
         self.assertEqual(
             result.status,
-            "VALIDATED_SELECTED_MULTIDIRECTION_COMBINED_PHYSICAL_RHO_ADFD",
+            "VALIDATED_SELECTED_FULL_LATENT_ADFD",
         )
 
     def test_selected_optical_gradient_status_is_allowed(self) -> None:
@@ -83,6 +83,9 @@ class OptimizationRunContractTest(unittest.TestCase):
             "VALIDATED_SELECTED_MULTIDIRECTION_COMBINED_PHYSICAL_RHO_ADFD",
             ALLOWED_STATUS,
         )
+
+    def test_selected_full_latent_status_is_allowed(self) -> None:
+        self.assertIn("VALIDATED_SELECTED_FULL_LATENT_ADFD", ALLOWED_STATUS)
 
     def test_gaussian10_lossless_sio2_fails_closed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

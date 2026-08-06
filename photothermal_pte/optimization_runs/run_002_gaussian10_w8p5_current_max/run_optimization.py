@@ -51,7 +51,9 @@ def main() -> int:
         "also passed. Selected-grid fixed-Q thermal p=1,2,3 gray-law AD-FD "
         "also passed. The selected-grid Maxwell optical adjoint and five-direction "
         "combined physical-density AD-FD pass after named-source CW normalization "
-        "was fixed. Full latent/filter/projection AD-FD still blocks execution; "
+        "was fixed. Full latent/filter/projection AD-FD also passes. Continuous "
+        "optimization is numerically authorized, but this preflight-only entry point "
+        "remains disabled until the checkpointing execution driver is committed; "
         "exact-binary DRC fixtures remain required before final fabrication promotion"
     )
     return 0

@@ -1,7 +1,7 @@
 {
   "run_id": "run_002_gaussian10_w8p5_current_max",
-  "status": "VALIDATED_SELECTED_MULTIDIRECTION_COMBINED_PHYSICAL_RHO_ADFD",
-  "last_updated_utc": "2026-08-06T21:04:12.375168+00:00",
+  "status": "VALIDATED_SELECTED_FULL_LATENT_ADFD",
+  "last_updated_utc": "2026-08-06T21:58:53.622048+00:00",
   "optimization_started": false,
-  "message": "Five combined physical-density AD-FD directions pass at h=0.005; worst directional error=2.045e-03, worst normalized error=2.820e-05. Full latent/filter/projection AD-FD still blocks optimization."
+  "message": "Full latent/filter/projection combined AD-FD passes at h=0.005 in aligned and fixed-seed-random directions; worst relative error=3.275e-04. Continuous optimization is numerically authorized."
 }

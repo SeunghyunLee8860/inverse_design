@@ -1,0 +1,111 @@
+{
+  "status": "VALIDATED_SELECTED_FULL_LATENT_ADFD",
+  "passed": true,
+  "generated_at_utc": "2026-08-06T21:58:53.622048+00:00",
+  "scope": "selected 373x373 latent -> finite nonperiodic conic filter -> beta=2 projection -> complex optical and thermal/PTE chain",
+  "optimizer_started": false,
+  "beta": 2.0,
+  "objective_A": 1.351217541491766e-20,
+  "gradient_norms_A": {
+    "physical": 6.827464514796432e-22,
+    "latent": 8.7894553072389e-22,
+    "optical_physical": 6.391907953912598e-22,
+    "thermal_physical": 5.434316032817204e-23
+  },
+  "gates": {
+    "worst_directional_relative_error": 0.0003274608535208211,
+    "worst_normalized_error": 7.258411697875344e-06,
+    "limit": 0.01,
+    "mapping_transpose_error": 0.0,
+    "worst_optical_closure": 5.69100310101232e-06,
+    "worst_Q_mapping_error": 0.0,
+    "worst_thermal_residual": 9.66404376305383e-11,
+    "worst_thermal_energy_balance": 1.6551733873440143e-13,
+    "worst_auto_shutoff": 8.93144e-08
+  },
+  "cases": [
+    {
+      "direction": "adjoint_aligned",
+      "beta": 2.0,
+      "step": 0.005,
+      "AD_A": 1.329719392101492e-19,
+      "FD_A": 1.3297244903722195e-19,
+      "relative_error": 3.8340804914408755e-06,
+      "normalized_error": 3.834095191670452e-06,
+      "optical_closure": 5.69100310101232e-06,
+      "Q_mapping_error": 0.0,
+      "thermal_residual": 9.66404376305383e-11,
+      "thermal_energy_balance": 1.6551733873440143e-13,
+      "auto_shutoff": 8.90557e-08,
+      "passed": true
+    },
+    {
+      "direction": "fixed_seed_random",
+      "beta": 2.0,
+      "step": 0.005,
+      "AD_A": -1.6574845101560561e-21,
+      "FD_A": -1.6569417488636629e-21,
+      "relative_error": 0.0003274608535208211,
+      "normalized_error": 7.258411697875344e-06,
+      "optical_closure": 5.550060723419913e-06,
+      "Q_mapping_error": 0.0,
+      "thermal_residual": 9.460492908246709e-11,
+      "thermal_energy_balance": 8.949603686623874e-14,
+      "auto_shutoff": 8.93144e-08,
+      "passed": true
+    }
+  ],
+  "raw_artifacts": {
+    "latent_reconstruction": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_full_latent_reconstruction_20260806/selected_full_latent_reconstruction.npz",
+      "size_bytes": 5049755,
+      "sha256": "4d4ba2ccb28bb425d553ea982461fc60ec94df59b59cdb94d6dfb214061ed778"
+    },
+    "preparation_result": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_full_latent_adjoint_preparation_20260806/selected_full_latent_adjoint_preparation_result.json",
+      "size_bytes": 10603,
+      "sha256": "8fb48e9487c28fea9bebb771c49b5b10144e154b6b1c51d0e90d72155c0c54e4"
+    },
+    "preparation_NPZ": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_full_latent_adjoint_preparation_20260806/selected_full_latent_adjoint_preparation.npz",
+      "size_bytes": 7257875,
+      "sha256": "d3617baf54d54e735feba9d85c439ee77bcdf5ddaeec47e12c812bf036b2c87e"
+    },
+    "directions": {
+      "adjoint_aligned": {
+        "result": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_full_latent_adjoint_aligned_h005_20260806/selected_full_latent_direction_adfd_result.json",
+          "size_bytes": 15930,
+          "sha256": "c740ac8cf35feb5d454ee9ba3ded2e4ed0e989098cbc22b54ae7ed0fe06d05bd"
+        },
+        "NPZ": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_full_latent_adjoint_aligned_h005_20260806/selected_full_latent_direction_adfd.npz",
+          "size_bytes": 6164861,
+          "sha256": "60158c800b3b5ad668fa2a88a60e4b1c0faaa79c036cb9579658d9a3aa1bc304"
+        }
+      },
+      "fixed_seed_random": {
+        "result": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_full_latent_fixed_seed_random_h005_20260806/selected_full_latent_direction_adfd_result.json",
+          "size_bytes": 15835,
+          "sha256": "38c773ecf4ef6096c0ebf8c0b84a9e8cf5c55f3cf9929f7681aa1dc747284559"
+        },
+        "NPZ": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_full_latent_fixed_seed_random_h005_20260806/selected_full_latent_direction_adfd.npz",
+          "size_bytes": 6173613,
+          "sha256": "da3932bbae886d1cb489c98ca3f489377e33f0ba8026cea8f9c5b153a4145d77"
+        }
+      }
+    },
+    "preserved_concurrent_license_failure": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_full_latent_fixed_seed_random_h005_concurrent_license_failed_20260806/selected_full_latent_direction_adfd_result.json",
+      "size_bytes": 2273,
+      "sha256": "601ebe1a84265297fea7491b39823d2afa36dd7b51ce6abf6045f52b7b718fad"
+    }
+  },
+  "optimization_authorized_by_numerical_gate": true,
+  "fabrication_promotion_still_requires": [
+    "exact-binary DRC fixtures",
+    "robust interface-scenario evaluation"
+  ]
+}
