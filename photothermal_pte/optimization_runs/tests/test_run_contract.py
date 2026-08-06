@@ -8,6 +8,7 @@ import tempfile
 import unittest
 
 from photothermal_pte.optimization_runs.run_contract import (
+    ALLOWED_STATUS,
     ValidationError,
     validate_run_directory,
 )
@@ -68,7 +69,13 @@ class OptimizationRunContractTest(unittest.TestCase):
         self.assertTrue(result.valid)
         self.assertEqual(
             result.status,
-            "SELECTED_THERMAL_GRAY_LAW_ADFD_VALIDATED",
+            "VALIDATED_SELECTED_OPTICAL_GRADIENT_ADFD",
+        )
+
+    def test_selected_optical_gradient_status_is_allowed(self) -> None:
+        self.assertIn(
+            "VALIDATED_SELECTED_OPTICAL_GRADIENT_ADFD",
+            ALLOWED_STATUS,
         )
 
     def test_gaussian10_lossless_sio2_fails_closed(self) -> None:
