@@ -1,0 +1,7 @@
+{
+  "run_id": "run_002_gaussian10_w8p5_current_max",
+  "status": "UNIFORM_COMPLEX_MATERIAL_EQUIVALENCE_VALIDATED",
+  "last_updated_utc": "2026-08-06T00:00:00+00:00",
+  "optimization_started": false,
+  "message": "10 um w0=8.5 um source-only GPU gate, small CUDA thermal forward/adjoint controls, and uniform rho=0/0.5/1 scalar-vs-imported complex-material controls passed. Nonuniform component-Yee mapping/JVP-VJP, Gaussian combined AD-FD, and production-scale CUDA parity still block optimization."
+}

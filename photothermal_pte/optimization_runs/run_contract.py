@@ -25,6 +25,8 @@ REQUIRED_FILES = (
 ALLOWED_STATUS = {
     "PLANNED",
     "PREFLIGHT_PASSED",
+    "SOURCE_ONLY_GPU_VALIDATED",
+    "UNIFORM_COMPLEX_MATERIAL_EQUIVALENCE_VALIDATED",
     "RUNNING",
     "COMPLETED",
     "FAILED",
@@ -90,7 +92,21 @@ def _positive(value: Any, label: str) -> float:
     return float(value)
 
 
-def _validate_physics(config: dict[str, Any]) -> None:
+def _validate_prohibitions(config: dict[str, Any]) -> None:
+    prohibitions = _require(config, "prohibitions", dict)
+    for key in (
+        "q_clipping",
+        "q_smoothing",
+        "q_gain",
+        "q_rescaling",
+        "periodic_tiling",
+        "gradient_rescaling",
+    ):
+        if prohibitions.get(key) is not False:
+            raise ValidationError(f"prohibition {key} must be explicitly false")
+
+
+def _validate_physics_v1(config: dict[str, Any]) -> None:
     design = _require(config, "design", dict)
     if design.get("latent_shape") != [81, 81]:
         raise ValidationError("design.latent_shape must remain [81, 81]")
@@ -130,17 +146,78 @@ def _validate_physics(config: dict[str, Any]) -> None:
     if objective.get("sense") not in {"maximize", "minimize"}:
         raise ValidationError("objective sense must be maximize or minimize")
 
-    prohibitions = _require(config, "prohibitions", dict)
-    for key in (
-        "q_clipping",
-        "q_smoothing",
-        "q_gain",
-        "q_rescaling",
-        "periodic_tiling",
-        "gradient_rescaling",
-    ):
-        if prohibitions.get(key) is not False:
-            raise ValidationError(f"prohibition {key} must be explicitly false")
+    _validate_prohibitions(config)
+
+
+def _validate_physics_v2(config: dict[str, Any]) -> None:
+    design = _require(config, "design", dict)
+    if design.get("periodic_wrap") is not False:
+        raise ValidationError("periodic wrapping is forbidden")
+    if design.get("production_node_spacing_nm") != 50.0:
+        raise ValidationError("Gaussian-10 production nodes must use 50 nm spacing")
+    if design.get("minimum_solid_nm") != 500.0 or design.get("minimum_void_nm") != 500.0:
+        raise ValidationError("minimum solid and void dimensions must remain 500 nm")
+    if float(design.get("differentiable_steering_target_nm", 0.0)) < 500.0:
+        raise ValidationError("differentiable length-scale steering cannot be below DRC")
+    if design.get("design_height_um") != 1.0:
+        raise ValidationError("reviewed Gaussian-10 baseline height must remain 1.0 um")
+
+    optical = _require(config, "optical", dict)
+    if optical.get("illumination") != "scalar_gaussian_waist_size_and_position":
+        raise ValidationError("Gaussian-10 illumination contract changed")
+    if optical.get("analysis_wavelength_um") != 10.0:
+        raise ValidationError("Gaussian-10 analysis wavelength must remain 10 um")
+    if optical.get("target_realized_waist_um") != 8.5:
+        raise ValidationError("Gaussian-10 realized waist target must remain 8.5 um")
+    if optical.get("boundary") != "six_pml" or optical.get("periodic") is not False:
+        raise ValidationError("optical boundary must be nonperiodic six-PML")
+    source_span = _positive(optical.get("source_span_um"), "source span")
+    domain = _positive(optical.get("candidate_domain_um"), "FDTD domain")
+    if source_span >= domain:
+        raise ValidationError("Gaussian source must stay strictly inside the FDTD domain")
+    if optical.get("sio2_optical_model") != "Kitamura_2007_complex_epsilon_at_10um":
+        raise ValidationError("10-um SiO2 must not silently revert to lossless n=1.38")
+
+    thermal = _require(config, "thermal", dict)
+    if thermal.get("tairte4_kappa_W_mK") != [14.4, 3.8, 1.0]:
+        raise ValidationError("TaIrTe4 anisotropic kappa changed")
+    if thermal.get("G_tairte4_air_W_m2K") != 1.0:
+        raise ValidationError("TaIrTe4/air G changed")
+    scenarios = _require(thermal, "interface_scenarios", list)
+    if len(scenarios) != 4:
+        raise ValidationError("all four bottom/design SiO2 interface scenarios are required")
+    pairs = {
+        (value.get("bottom"), value.get("design"))
+        for value in scenarios
+        if isinstance(value, dict)
+    }
+    expected = {
+        ("thermally_grown", "thermally_grown"),
+        ("thermally_grown", "evaporated"),
+        ("evaporated", "thermally_grown"),
+        ("evaporated", "evaporated"),
+    }
+    if pairs != expected:
+        raise ValidationError("bottom/design interface scenario matrix is incomplete")
+    if thermal.get("linear_solver_device") != "cuda_only":
+        raise ValidationError("production thermal forward/adjoint must be CUDA-only")
+
+    objective = _require(config, "objective", dict)
+    if objective.get("type") != "signed_uniform_45deg_pte_current_per_incident_power":
+        raise ValidationError("Gaussian-10 objective contract changed")
+    if objective.get("sign_runs") != [1, -1]:
+        raise ValidationError("absolute current must be handled as two signed runs")
+    _validate_prohibitions(config)
+
+
+def _validate_physics(config: dict[str, Any]) -> None:
+    schema = config.get("schema_version")
+    if schema == 1:
+        _validate_physics_v1(config)
+    elif schema == 2:
+        _validate_physics_v2(config)
+    else:
+        raise ValidationError(f"unsupported run schema_version: {schema}")
 
 
 def _validate_artifact(path: Path, expected: str, label: str) -> None:
@@ -186,8 +263,11 @@ def validate_run_directory(
     source_commit = _require(source, "git_commit", str)
     if not re.fullmatch(r"[0-9a-f]{40}", source_commit):
         raise ValidationError("source.git_commit must be a full Git SHA")
-    if source.get("base_pr") != 7:
-        raise ValidationError("baseline provenance must identify Draft PR #7")
+    expected_pr = 7 if config.get("schema_version") == 1 else 8
+    if source.get("base_pr") != expected_pr:
+        raise ValidationError(
+            f"baseline provenance must identify Draft PR #{expected_pr}"
+        )
     _validate_physics(config)
 
     repository_checked = 0

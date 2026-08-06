@@ -23,6 +23,12 @@ class OptimizationRunContractTest(unittest.TestCase):
             / "optimization_runs"
             / "run_001_baseline_p1"
         )
+        cls.gaussian10 = (
+            cls.repository_root
+            / "photothermal_pte"
+            / "optimization_runs"
+            / "run_002_gaussian10_w8p5_current_max"
+        )
 
     def test_baseline_repository_contract(self) -> None:
         result = validate_run_directory(
@@ -52,6 +58,34 @@ class OptimizationRunContractTest(unittest.TestCase):
                     copied,
                     repository_root=self.repository_root,
                 )
+
+    def test_gaussian10_repository_contract(self) -> None:
+        result = validate_run_directory(
+            self.gaussian10,
+            repository_root=self.repository_root,
+            require_external=False,
+        )
+        self.assertTrue(result.valid)
+        self.assertEqual(
+            result.status,
+            "UNIFORM_COMPLEX_MATERIAL_EQUIVALENCE_VALIDATED",
+        )
+
+    def test_gaussian10_lossless_sio2_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            copied = Path(temporary) / "run_997_bad_sio2"
+            shutil.copytree(self.gaussian10, copied)
+            config_path = copied / "run_config.json"
+            config = json.loads(config_path.read_text())
+            config["run_id"] = copied.name
+            config["optical"]["sio2_optical_model"] = "lossless_n1.38"
+            config_path.write_text(json.dumps(config, indent=2) + "\n")
+            status_path = copied / "STATUS.json"
+            status = json.loads(status_path.read_text())
+            status["run_id"] = copied.name
+            status_path.write_text(json.dumps(status, indent=2) + "\n")
+            with self.assertRaisesRegex(ValidationError, "lossless"):
+                validate_run_directory(copied, repository_root=self.repository_root)
 
     def test_repository_sha_mismatch_fails_closed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
