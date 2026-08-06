@@ -6,9 +6,9 @@ thermal deposition, production CUDA thermal/PTE, and fixed-Q thermal-material
 AD-FD gates have passed. The exact thermal-adjoint pullback to native
 component-Yee absorption grids has also passed. One production nonuniform
 physical-density combined Maxwell/thermal AD-FD smoke has passed at h=0.005
-with 0.538674% relative error. Broader directional evidence, gray-law and
-full-latent pullbacks, and the one-time coarse-gradient window selection still
-block optimizer execution.
+with 0.538674% relative error. The one-time coarse-gradient selection has now
+frozen a centered 18.6×18.6 µm production window. Broader directional evidence,
+gray-law sensitivity, and full-latent pullbacks still block optimizer execution.
 
 ## Physical layout contract
 
@@ -46,10 +46,12 @@ The first material forward/adjoint smoke uses a 20×20 µm, 100 nm coarse
 sensitivity canvas. We then select the smallest reviewed asymmetric window
 that retains at least 90% of the absolute physical-density gradient L1 norm.
 
-Candidate 12×6 µm strips are placed on the ±a and ±b sides; a centered 10×10
-µm window is a control. Production variables use 50 nm nodes. Window selection
-is gradient-driven and performed once before optimization; the window is not
-moved during the run.
+Candidate 12×6 µm strips were placed on the ±a and ±b sides; a centered 10×10
+µm window was a control. All failed the 90% absolute-gradient-L1 retention
+gate. The smallest centered square on the declared 0.2 µm span sequence that
+passes is 18.6×18.6 µm (`90.8872968%`); 18.4×18.4 µm fails at `89.4652232%`.
+The selected window is frozen at x,y=[-9.3,9.3] µm and uses 373×373 nodes at
+50 nm. It is not moved during the run.
 
 ## BPVE constraint audit
 
@@ -120,8 +122,8 @@ pair rather than repeated ±FD solves.
 
 1. preserve the completed representative Gaussian combined physical-density
    Maxwell/thermal AD-FD smoke and add a small independent-direction check;
-2. use the validated physical gradient on the coarse canvas to select and
-   freeze the smallest reviewed asymmetric design window;
+2. preserve the selected centered 18.6 µm window and its immutable gradient
+   provenance;
 3. certify gray-law sensitivity plus the finite nonperiodic
    filter/projection JVP/VJP and exact-binary DRC fixtures on that window;
 4. pass full latent/filter/projection AD-FD without gradient rescaling;

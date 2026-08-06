@@ -35,6 +35,7 @@ ALLOWED_STATUS = {
     "PRODUCTION_FIXED_Q_THERMAL_MATERIAL_ADFD_VALIDATED",
     "PRODUCTION_THERMAL_TO_NATIVE_YEE_PULLBACK_VALIDATED",
     "PRODUCTION_COMBINED_PHYSICAL_RHO_ADFD_SMOKE_VALIDATED",
+    "PRODUCTION_DESIGN_WINDOW_SELECTED",
     "RUNNING",
     "COMPLETED",
     "FAILED",
@@ -163,6 +164,17 @@ def _validate_physics_v2(config: dict[str, Any]) -> None:
         raise ValidationError("periodic wrapping is forbidden")
     if design.get("production_node_spacing_nm") != 50.0:
         raise ValidationError("Gaussian-10 production nodes must use 50 nm spacing")
+    if design.get("filter_radius_nm") != 500.0:
+        raise ValidationError("finite production filter radius must remain 500 nm")
+    expected_window = {
+        "name": "centered_18p6um",
+        "x_um": [-9.3, 9.3],
+        "y_um": [-9.3, 9.3],
+        "node_shape": [373, 373],
+        "absolute_gradient_L1_fraction": 0.9088729683975348,
+    }
+    if design.get("production_window") != expected_window:
+        raise ValidationError("reviewed 18.6 um production window changed")
     if design.get("minimum_solid_nm") != 500.0 or design.get("minimum_void_nm") != 500.0:
         raise ValidationError("minimum solid and void dimensions must remain 500 nm")
     if float(design.get("differentiable_steering_target_nm", 0.0)) < 500.0:

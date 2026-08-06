@@ -1,6 +1,6 @@
 # Run 002 — 10 µm Gaussian current maximization
 
-Status: `PRODUCTION_COMBINED_PHYSICAL_RHO_ADFD_SMOKE_VALIDATED`. A homogeneous-air
+Status: `PRODUCTION_DESIGN_WINDOW_SELECTED`. A homogeneous-air
 source-only Maxwell gate, small CUDA thermal forward/adjoint controls,
 uniform rho=0/0.5/1 scalar-vs-`importnk2` complex-material controls, and a
 matched-volume rho=0.5 production-candidate GPU forward have run. The exact
@@ -24,8 +24,8 @@ introduced.  The finite thermal flake and substrate remain explicit.
   sensitivity cases;
 - 50 nm production design nodes, 500 nm final solid/void DRC, and 525 nm
   differentiable steering target;
-- a coarse 20×20 µm sensitivity canvas selects a smaller asymmetric design
-  window before the iterative optimizer is enabled;
+- the immutable combined gradient on the coarse 20×20 µm canvas selected and
+  froze a centered 18.6×18.6 µm production window before optimization;
 - four named bottom/design TaIrTe4-SiO2 interface-G combinations;
 - material-resolved TaIrTe4 and SiO2 optical loss must both reach the thermal
   RHS without clipping, gain, or rescaling;
@@ -116,8 +116,8 @@ worst Cauchy-normalized reciprocity error is `1.008e-15`. The uniform
 45-degree weighting field is `(15625,15625) 1/m`, a unit-potential surrogate
 across opposite diagonals of the finite 32 um flake; it is not a full electrode
 model. The centered rho=0.5 response is a near-null numerical control, not an
-optimized or experimental current. Combined Maxwell/thermal AD-FD and the
-coarse-gradient design-window selection still block optimization.
+optimized or experimental current. Broader combined Maxwell/thermal AD-FD
+evidence still blocks optimization.
 
 The fixed-Q thermal-material derivative is now independently certified on the
 coarse 201×201 nodal canvas. Four-node averaging maps it to 200×200 thermal
@@ -136,7 +136,7 @@ one-dimensional overlap operators as the forward deposition and has a worst
 random dot-test error of `4.097e-15`. Its Cauchy-normalized objective identity
 error is `5.104e-14`; the raw relative metric is retained only as a near-null
 diagnostic for the centered rho=0.5 control. No Maxwell solve, gradient
-rescaling, design-window selection, or optimization occurred in this gate.
+rescaling, or optimization occurred in this gate.
 
 The first full-chain physical-density smoke now also passes. At the exact
 nonuniform 201×201 baseline, the adjoint-aligned `h=0.005` derivative is
@@ -149,3 +149,12 @@ mesh without adding illumination; the final source/mesh mismatch is at
 roundoff and the forward/adjoint field-coordinate mismatch is zero. This is
 one direction and one step only, not a multi-direction, gray-law, latent, or
 optimization certificate.
+
+The immutable combined physical-density gradient has now frozen the production
+window. Every predeclared 12×6 µm strip and the centered 10×10 µm control
+failed the 90% absolute-gradient-L1 retention gate. The smallest centered
+square on the declared 0.2 µm span sequence that passes is 18.6×18.6 µm:
+it retains `90.8872968%`, while 18.4×18.4 µm retains `89.4652232%` and fails.
+The resulting production density grid is 373×373 at 50 nm. This was offline
+selection from the SHA-pinned combined gradient; it launched no solver and no
+optimizer.

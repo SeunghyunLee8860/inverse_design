@@ -7,15 +7,22 @@
     "repository": "SeunghyunLee8860/inverse_design",
     "git_commit": "5b648323ac74b7ed6c8f78d1137cff7d78b2c2af",
     "base_pr": 8,
-    "adfd_status": "COMBINED_PHYSICAL_RHO_ADFD_SMOKE_VALIDATED_FULL_LATENT_PENDING",
+    "adfd_status": "COMBINED_PHYSICAL_RHO_ADFD_SMOKE_AND_WINDOW_VALIDATED_FULL_LATENT_PENDING",
     "preserved_upstream": "4 um CPU-TFSF full-latent certificate remains unchanged"
   },
   "design": {
     "periodic_wrap": false,
     "coarse_window_selection_canvas_um": {"x": [-10.0, 10.0], "y": [-10.0, 10.0]},
     "coarse_window_selection_spacing_nm": 100.0,
-    "production_window": "UNSELECTED_REQUIRES_COARSE_PHYSICAL_GRADIENT",
+    "production_window": {
+      "name": "centered_18p6um",
+      "x_um": [-9.3, 9.3],
+      "y_um": [-9.3, 9.3],
+      "node_shape": [373, 373],
+      "absolute_gradient_L1_fraction": 0.9088729683975348
+    },
     "production_node_spacing_nm": 50.0,
+    "filter_radius_nm": 500.0,
     "design_height_um": 1.0,
     "design_height_sensitivity_um": [0.6, 1.0, 1.5],
     "material_endpoints": {
@@ -118,7 +125,7 @@
   },
   "optimizer": {
     "algorithm": "NLopt_LD_MMA",
-    "driver_status": "BLOCKED_BY_COMBINED_ADFD_AND_DESIGN_WINDOW_SELECTION",
+    "driver_status": "BLOCKED_BY_FILTER_GRAY_LAW_AND_FULL_LATENT_ADFD",
     "initial_FOM_strategy": [
       "two_signed_objective_runs",
       "fixed_objective_nondimensionalization",
@@ -155,6 +162,6 @@
   "external_inputs": [],
   "execution": {
     "enabled": false,
-    "reason": "one adjoint-aligned h=0.005 combined physical-rho Maxwell/CUDA-thermal AD-FD smoke passed; broader directional evidence, gray-law sensitivity, full latent/filter/projection AD-FD, and design-window selection remain"
+    "reason": "the combined physical-rho smoke and one-time centered 18.6 um window selection passed; finite nonperiodic filter/projection certification, broader combined directions, gray-law sensitivity, and full latent AD-FD remain"
   }
 }

@@ -1,0 +1,172 @@
+{
+  "status": "VALIDATED_PRODUCTION_DESIGN_WINDOW_SELECTION",
+  "passed": true,
+  "generated_at_utc": "2026-08-06T17:03:32.582097+00:00",
+  "source": {
+    "combined_result": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v6_mesh_anchor_20260806/production_combined_adfd_smoke_result.json",
+      "size_bytes": 23379,
+      "sha256": "6da8496c474cb023139d22df12644704c628289b35b12a6c43a376b53bacc901"
+    },
+    "combined_gradient": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v6_mesh_anchor_20260806/production_combined_adfd_smoke.npz",
+      "size_bytes": 146248504,
+      "sha256": "fd855f2c01d08f6d049750adc5efc3fd555a3590332b46567bf2389517554adf"
+    }
+  },
+  "canvas_um": {
+    "x": [
+      -10.0,
+      10.0
+    ],
+    "y": [
+      -10.0,
+      10.0
+    ]
+  },
+  "coarse_node_spacing_nm": 100.0,
+  "selection_gate": {
+    "metric": "absolute combined physical-density gradient L1 fraction",
+    "minimum": 0.9
+  },
+  "original_reviewed_candidates": {
+    "a_positive_strip_12x6": {
+      "bounds_um": {
+        "x": [
+          -6.0,
+          6.0
+        ],
+        "y": [
+          1.0,
+          7.0
+        ]
+      },
+      "node_count": 7381,
+      "area_um2": 72.0,
+      "absolute_gradient_L1_A": 5.1669288024139585e-20,
+      "absolute_gradient_L1_fraction": 0.2664909940493934,
+      "passes_90_percent_gate": false
+    },
+    "a_negative_strip_12x6": {
+      "bounds_um": {
+        "x": [
+          -6.0,
+          6.0
+        ],
+        "y": [
+          -7.0,
+          -1.0
+        ]
+      },
+      "node_count": 7381,
+      "area_um2": 72.0,
+      "absolute_gradient_L1_A": 3.9244210929686316e-20,
+      "absolute_gradient_L1_fraction": 0.20240706193687347,
+      "passes_90_percent_gate": false
+    },
+    "b_positive_strip_6x12": {
+      "bounds_um": {
+        "x": [
+          1.0,
+          7.0
+        ],
+        "y": [
+          -6.0,
+          6.0
+        ]
+      },
+      "node_count": 7381,
+      "area_um2": 72.0,
+      "absolute_gradient_L1_A": 4.868729994033124e-20,
+      "absolute_gradient_L1_fraction": 0.2511110072315711,
+      "passes_90_percent_gate": false
+    },
+    "b_negative_strip_6x12": {
+      "bounds_um": {
+        "x": [
+          -7.0,
+          -1.0
+        ],
+        "y": [
+          -6.0,
+          6.0
+        ]
+      },
+      "node_count": 7381,
+      "area_um2": 72.0,
+      "absolute_gradient_L1_A": 5.211461839866587e-20,
+      "absolute_gradient_L1_fraction": 0.2687878426944232,
+      "passes_90_percent_gate": false
+    },
+    "centered_control_10x10": {
+      "bounds_um": {
+        "x": [
+          -5.0,
+          5.0
+        ],
+        "y": [
+          -5.0,
+          5.0
+        ]
+      },
+      "node_count": 10201,
+      "area_um2": 100.0,
+      "absolute_gradient_L1_A": 8.144815855207096e-20,
+      "absolute_gradient_L1_fraction": 0.4200793462819432,
+      "passes_90_percent_gate": false
+    }
+  },
+  "original_candidates_all_failed": true,
+  "promoted_window": {
+    "name": "centered_18p6um",
+    "bounds_um": {
+      "x": [
+        -9.3,
+        9.3
+      ],
+      "y": [
+        -9.3,
+        9.3
+      ]
+    },
+    "node_count": 34969,
+    "area_um2": 345.96000000000004,
+    "absolute_gradient_L1_A": 1.762191602346715e-19,
+    "absolute_gradient_L1_fraction": 0.9088729683975348,
+    "passes_90_percent_gate": true,
+    "selection_reason": "smallest centered square on the predeclared 0.2 um span sequence that retains at least 90%",
+    "production_node_spacing_nm": 50.0,
+    "production_shape": [
+      373,
+      373
+    ]
+  },
+  "immediately_smaller_centered_control": {
+    "name": "centered_18p4um",
+    "bounds_um": {
+      "x": [
+        -9.2,
+        9.2
+      ],
+      "y": [
+        -9.2,
+        9.2
+      ]
+    },
+    "node_count": 34225,
+    "area_um2": 338.55999999999995,
+    "absolute_gradient_L1_A": 1.7346193632854346e-19,
+    "absolute_gradient_L1_fraction": 0.8946522317150877,
+    "passes_90_percent_gate": false
+  },
+  "full_canvas_area_um2": 400.0,
+  "promoted_area_fraction": 0.8649000000000001,
+  "optimizer_started": false,
+  "Maxwell_solves": 0,
+  "thermal_solves": 0,
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_design_window_selection_20260806/production_design_window_selection.npz",
+    "size_bytes": 619683,
+    "sha256": "9644620db54156274a98a01f67184b5091774434dc7b62206bba363bc5973607"
+  }
+}

@@ -9,6 +9,9 @@ relocation or global rescaling, together with its exact 3D thermal-grid
 deposition. The first production combined physical-rho PTE gradient smoke is
 now recorded separately; it is one direction and one FD step, not a full
 latent or optimization certificate. The
+offline production-window certificate freezes a centered 18.6×18.6 µm,
+373×373-node window from the SHA-pinned combined gradient; it runs no solver
+or optimizer. The
 analytic setup audit is produced in memory by `run_optimization.py
 --setup-audit`.
 

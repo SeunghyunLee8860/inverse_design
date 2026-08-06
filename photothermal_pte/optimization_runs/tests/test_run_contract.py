@@ -68,7 +68,7 @@ class OptimizationRunContractTest(unittest.TestCase):
         self.assertTrue(result.valid)
         self.assertEqual(
             result.status,
-            "PRODUCTION_COMBINED_PHYSICAL_RHO_ADFD_SMOKE_VALIDATED",
+            "PRODUCTION_DESIGN_WINDOW_SELECTED",
         )
 
     def test_gaussian10_lossless_sio2_fails_closed(self) -> None:

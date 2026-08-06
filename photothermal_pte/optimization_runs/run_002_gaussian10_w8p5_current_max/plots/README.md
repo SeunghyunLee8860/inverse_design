@@ -12,3 +12,7 @@ optimization is still fail-closed.
 `production_combined_adfd_smoke.png` records the first production
 physical-density full-chain directional smoke, gate margins, and the
 forward/adjoint mesh-parity fix. It is not an optimization-history plot.
+
+`production_design_window_selection.png` records the immutable combined-gradient
+L1 coverage of the reviewed candidates and the promoted centered 18.6 µm
+window. It is an offline window-selection certificate, not an optimizer plot.

@@ -44,8 +44,10 @@ def main() -> int:
         "production CUDA thermal/PTE, fixed-Q thermal-material AD-FD, and "
         "exact thermal-to-native-Yee pullback controls passed; one "
         "production combined physical-rho Maxwell/CUDA-thermal AD-FD smoke "
-        "also passed. Broader directions, gray-law and full-latent AD-FD, "
-        "and design-window selection still block execution"
+        "also passed, and the centered 18.6 um production window is frozen. "
+        "Finite nonperiodic filter/projection certification, broader "
+        "directions, gray-law sensitivity, and full-latent AD-FD still "
+        "block execution"
     )
     return 0
 

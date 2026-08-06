@@ -1983,3 +1983,18 @@ adjoint, gradient, and optimization were not run.
   used. Optimization iterations remain zero.
 - Report:
   `optimization_runs/run_002_gaussian10_w8p5_current_max/results/PRODUCTION_COMBINED_ADFD_SMOKE_REPORT.md`.
+
+# Run 002 production design-window selection — 2026-08-06
+
+- Status: `VALIDATED_PRODUCTION_DESIGN_WINDOW_SELECTION`.
+- The centered 18.6×18.6 µm window retains `90.8872968%` of the immutable
+  combined physical-density gradient absolute L1 norm and passes the 90% gate.
+- The immediately smaller centered 18.4×18.4 µm control retains
+  `89.4652232%` and fails; every original 12×6 µm strip and the centered
+  10×10 µm control also fails.
+- Production variables are frozen to a 373×373 nonperiodic 50 nm nodal grid
+  over x,y=[-9.3,9.3] µm.
+- This was SHA-pinned offline analysis: zero Maxwell solves, zero thermal
+  solves, and zero optimization iterations.
+- Report:
+  `optimization_runs/run_002_gaussian10_w8p5_current_max/results/PRODUCTION_DESIGN_WINDOW_SELECTION_REPORT.md`.
