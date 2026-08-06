@@ -39,9 +39,10 @@ def main() -> int:
         raise RuntimeError("execution enabled before the reviewed production driver")
     print(json.dumps(result.as_dict(), indent=2))
     print(
-        "PREFLIGHT_ONLY: source-only, uniform complex-material, and small "
-        "CUDA controls passed; nonuniform component-Yee mapping, window, "
-        "Gaussian AD-FD, and production CUDA parity still block execution"
+        "PREFLIGHT_ONLY: source-only, production forward, component-Yee "
+        "mapping, and small CUDA controls passed; material-resolved thermal "
+        "remap, window selection, Gaussian AD-FD, and production CUDA parity "
+        "still block execution"
     )
     return 0
 

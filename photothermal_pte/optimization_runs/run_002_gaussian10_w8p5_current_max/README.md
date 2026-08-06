@@ -1,11 +1,11 @@
 # Run 002 — 10 µm Gaussian current maximization
 
-Status: `PRODUCTION_CANDIDATE_FORWARD_VALIDATED`. A homogeneous-air
+Status: `PRODUCTION_COMPONENT_YEE_MAPPING_VALIDATED`. A homogeneous-air
 source-only Maxwell gate, small CUDA thermal forward/adjoint controls,
 uniform rho=0/0.5/1 scalar-vs-`importnk2` complex-material controls, and a
 matched-volume rho=0.5 production-candidate GPU forward have run.  No
-production-geometry component-Yee Jacobian, production thermal, PTE, combined
-finite-difference, or optimization solve has started.
+production thermal, PTE, combined finite-difference, or optimization solve has
+started.
 
 This is a new physical contract, not a continuation that silently reuses the
 4 µm CPU-TFSF certificate.  The requested source is a scalar Gaussian at
@@ -80,3 +80,11 @@ background.  Its GPU forward produced `P_Q=7.296954820427281e-14 W` and
 `7.81123e-8` final auto-shutoff.  The immutable FSP and native component-Q NPZ
 are SHA-pinned in the raw-artifact manifest.  This validates only the forward
 gate; it does not authorize optimization.
+
+The same completed FSP was then switched to layout and used to construct the
+actual 201×201 production component operators without any Maxwell solve.  The
+worst five-direction centered mapping-FD error is `1.3371e-9`, the worst
+JVP/VJP transpose error is `5.3435e-15`, and the maximum field/index coordinate
+mismatch is `6.7763e-21 m`.  Every active sparse-J row lies inside the exact
+20×20×1 µm design support.  This closes the density-to-Yee material mapping,
+but not the Maxwell/PTE adjoint or conservative thermal-remap gates.

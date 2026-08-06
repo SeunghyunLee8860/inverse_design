@@ -2,8 +2,9 @@
 
 The homogeneous-air source-only result, uniform complex-material equivalence,
 nonuniform component-Yee Jacobian smoke, production-candidate geometry and
-GPU forward gates, and small literal-FVM CUDA forward/adjoint control are
-recorded here. None is a production PTE gradient or optimization result. The
+GPU forward gates, the 201×201 production component-Yee Jacobian, and small
+literal-FVM CUDA forward/adjoint control are recorded here. None is a
+production PTE gradient or optimization result. The
 analytic setup audit is produced in memory by `run_optimization.py
 --setup-audit`.
 

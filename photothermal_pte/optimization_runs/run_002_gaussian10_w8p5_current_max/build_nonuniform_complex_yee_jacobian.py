@@ -43,14 +43,16 @@ from photothermal_pte.optimization_runs.gaussian10_contract import (  # noqa: E4
 )
 
 import run_complex_material_control as material_control  # noqa: E402
+import audit_production_candidate_geometry as production_geometry  # noqa: E402
 
 
-IMPORTED_OBJECT = "rho0.5_imported_complex_block"
+ISOLATED_IMPORTED_OBJECT = "rho0.5_imported_complex_block"
 COLOR_PERIOD = 5
 BUILD_STEP = 1.0e-4
 CHECK_STEP = 1.0e-5
 NONZERO_THRESHOLD = 1.0e-9
-MAX_LOCAL_DISTANCE_M = 125.0e-9
+ISOLATED_MAX_LOCAL_DISTANCE_M = 125.0e-9
+PRODUCTION_MAX_LOCAL_DISTANCE_M = 175.0e-9
 FD_LIMIT = 1.0e-7
 DOT_LIMIT = 1.0e-12
 COORDINATE_LIMIT_M = 2.0e-18
@@ -86,10 +88,15 @@ def epsilon_sio2() -> complex:
     return complex(material["epsilon_real"], material["epsilon_imag"])
 
 
-def baseline_density() -> np.ndarray:
-    x, y, _ = material_control.imported_nodes()
-    xn = x[:, None] / 5.0e-6
-    yn = y[None, :] / 5.0e-6
+def baseline_density(
+    nodes: tuple[np.ndarray, np.ndarray, np.ndarray] | None = None,
+    half_span_m: float = 5.0e-6,
+) -> np.ndarray:
+    if nodes is None:
+        nodes = material_control.imported_nodes()
+    x, y, _ = nodes
+    xn = x[:, None] / half_span_m
+    yn = y[None, :] / half_span_m
     rho = (
         0.5
         + 0.12 * np.sin(0.70 * np.pi * xn) * np.cos(0.55 * np.pi * yn)
@@ -101,10 +108,15 @@ def baseline_density() -> np.ndarray:
     return rho
 
 
-def directions() -> dict[str, np.ndarray]:
-    x, y, _ = material_control.imported_nodes()
-    xn = x[:, None] / 5.0e-6
-    yn = y[None, :] / 5.0e-6
+def directions(
+    nodes: tuple[np.ndarray, np.ndarray, np.ndarray] | None = None,
+    half_span_m: float = 5.0e-6,
+) -> dict[str, np.ndarray]:
+    if nodes is None:
+        nodes = material_control.imported_nodes()
+    x, y, _ = nodes
+    xn = x[:, None] / half_span_m
+    yn = y[None, :] / half_span_m
     rng = np.random.default_rng(1008501)
     raw = {
         "uniform": np.ones((x.size, y.size)),
@@ -126,9 +138,14 @@ def directions() -> dict[str, np.ndarray]:
     }
 
 
-def imported_index(rho: np.ndarray) -> np.ndarray:
+def imported_index(
+    rho: np.ndarray,
+    nodes: tuple[np.ndarray, np.ndarray, np.ndarray] | None = None,
+) -> np.ndarray:
+    if nodes is None:
+        nodes = material_control.imported_nodes()
     density = np.asarray(rho, float)
-    x, y, z = material_control.imported_nodes()
+    x, y, z = nodes
     if density.shape != (x.size, y.size):
         raise ValueError(f"rho shape {density.shape} differs from {(x.size, y.size)}")
     if np.any(density < 0.0) or np.any(density > 1.0):
@@ -140,12 +157,18 @@ def imported_index(rho: np.ndarray) -> np.ndarray:
     return np.repeat(index[:, :, None], z.size, axis=2)
 
 
-def set_density(fdtd: object, rho: np.ndarray) -> None:
-    if int(fdtd.getnamednumber(IMPORTED_OBJECT)) != 1:
-        raise RuntimeError(f"expected exactly one {IMPORTED_OBJECT!r}")
-    x, y, z = material_control.imported_nodes()
-    fdtd.select(IMPORTED_OBJECT)
-    if int(fdtd.importnk2(imported_index(rho), x, y, z)) != 1:
+def set_density(
+    fdtd: object,
+    rho: np.ndarray,
+    *,
+    imported_object: str,
+    nodes: tuple[np.ndarray, np.ndarray, np.ndarray],
+) -> None:
+    if int(fdtd.getnamednumber(imported_object)) != 1:
+        raise RuntimeError(f"expected exactly one {imported_object!r}")
+    x, y, z = nodes
+    fdtd.select(imported_object)
+    if int(fdtd.importnk2(imported_index(rho, nodes), x, y, z)) != 1:
         raise RuntimeError("importnk2 returned failure")
 
 
@@ -221,7 +244,36 @@ def main() -> int:
     parser.add_argument("--base-project", required=True, type=Path)
     parser.add_argument("--base-sha256", required=True)
     parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument(
+        "--geometry",
+        choices=("isolated", "production"),
+        default="isolated",
+        help="Select the imported-object/nodal-coordinate contract.",
+    )
     args = parser.parse_args()
+    if args.geometry == "production":
+        imported_object = production_geometry.DESIGN_OBJECT
+        nodes = production_geometry.design_nodes()
+        half_span_m = 10.0e-6
+        maximum_local_distance_m = PRODUCTION_MAX_LOCAL_DISTANCE_M
+        validated_status = "VALIDATED_PRODUCTION_COMPLEX_COMPONENT_YEE_JACOBIAN"
+        failed_status = "FAILED_PRODUCTION_COMPLEX_COMPONENT_YEE_JACOBIAN"
+        scope = (
+            "10 um production 20x20x1 um imported complex-SiO2 candidate; "
+            "layout-only J_c=d epsilon_Yee,c/d rho on 201x201 nodes"
+        )
+    else:
+        imported_object = ISOLATED_IMPORTED_OBJECT
+        nodes = material_control.imported_nodes()
+        half_span_m = 5.0e-6
+        maximum_local_distance_m = ISOLATED_MAX_LOCAL_DISTANCE_M
+        validated_status = "VALIDATED_NONUNIFORM_COMPLEX_COMPONENT_YEE_JACOBIAN_SMOKE"
+        failed_status = "FAILED_NONUNIFORM_COMPLEX_COMPONENT_YEE_JACOBIAN_SMOKE"
+        scope = (
+            "10 um isolated 10x10x1 um imported complex-SiO2 control; "
+            "layout-only J_c=d epsilon_Yee,c/d rho on 101x101 nodes; "
+            "not the final production geometry"
+        )
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
         raise FileExistsError(f"refusing non-empty output directory: {output}")
@@ -245,10 +297,10 @@ def main() -> int:
         _, field_grid = monitor_electric(fdtd, PABS_FIELD)
         completed_detail = index_detail(fdtd)
         fdtd.switchtolayout()
-        baseline = baseline_density()
-        set_density(fdtd, baseline)
+        baseline = baseline_density(nodes, half_span_m)
+        set_density(fdtd, baseline, imported_object=imported_object, nodes=nodes)
         layout_detail = index_detail(fdtd)
-        x_nodes, y_nodes, _ = material_control.imported_nodes()
+        x_nodes, y_nodes, z_nodes = nodes
         shapes = {
             component: layout_detail[f"epsilon_{component}"].shape
             for component in "xyz"
@@ -264,7 +316,12 @@ def main() -> int:
                 mask[color_x::COLOR_PERIOD, color_y::COLOR_PERIOD] = 1.0
                 pair = {}
                 for sign, label in ((1.0, "plus"), (-1.0, "minus")):
-                    set_density(fdtd, baseline + sign * BUILD_STEP * mask)
+                    set_density(
+                        fdtd,
+                        baseline + sign * BUILD_STEP * mask,
+                        imported_object=imported_object,
+                        nodes=nodes,
+                    )
                     pair[label] = index_detail(fdtd)
                 for component in "xyz":
                     derivative = (
@@ -288,7 +345,7 @@ def main() -> int:
                         maximum_assignment_distance[component],
                         float(np.max(distance)),
                     )
-                    if np.any(distance > MAX_LOCAL_DISTANCE_M):
+                    if np.any(distance > maximum_local_distance_m):
                         raise RuntimeError(
                             f"{component} response is nonlocal under period-{COLOR_PERIOD} coloring; "
                             f"max distance={float(np.max(distance)):.6e} m"
@@ -297,7 +354,7 @@ def main() -> int:
                     column_parts[component].append(node_x * y_nodes.size + node_y)
                     value_parts[component].append(flat[rows])
 
-        set_density(fdtd, baseline)
+        set_density(fdtd, baseline, imported_object=imported_object, nodes=nodes)
         baseline_detail = index_detail(fdtd)
         matrices = {}
         for component in "xyz":
@@ -327,10 +384,15 @@ def main() -> int:
             for component in "xyz"
         }
         direction_records = {}
-        for name, direction in directions().items():
+        for name, direction in directions(nodes, half_span_m).items():
             pair = {}
             for sign, label in ((1.0, "plus"), (-1.0, "minus")):
-                set_density(fdtd, baseline + sign * CHECK_STEP * direction)
+                set_density(
+                    fdtd,
+                    baseline + sign * CHECK_STEP * direction,
+                    imported_object=imported_object,
+                    nodes=nodes,
+                )
                 pair[label] = index_detail(fdtd)
             finite_difference = {
                 component: (
@@ -367,7 +429,7 @@ def main() -> int:
                     / max(abs(left), abs(right), np.finfo(float).tiny)
                 ),
             }
-        set_density(fdtd, baseline)
+        set_density(fdtd, baseline, imported_object=imported_object, nodes=nodes)
 
         coordinate_audit = {"components": {}}
         maximum_coordinate_mismatch = 0.0
@@ -384,6 +446,19 @@ def main() -> int:
             )
             maximum_coordinate_mismatch = max(maximum_coordinate_mismatch, mismatch)
             row_nnz = np.diff(matrices[component].indptr)
+            support_axes = []
+            for axis, coordinate, node_coordinate in zip(
+                "xyz", detail_coordinates, (x_nodes, y_nodes, z_nodes)
+            ):
+                support_axes.append(
+                    (coordinate >= node_coordinate[0] - 2.0e-18)
+                    & (coordinate <= node_coordinate[-1] + 2.0e-18)
+                )
+            support_intersection = (
+                support_axes[0][:, None, None]
+                & support_axes[1][None, :, None]
+                & support_axes[2][None, None, :]
+            )
             coordinate_audit["components"][component] = {
                 "shape": list(shapes[component]),
                 "coordinate_bounds_m": {
@@ -399,6 +474,19 @@ def main() -> int:
                 "J_nnz": int(matrices[component].nnz),
                 "maximum_J_nonzeros_per_Yee_sample": int(np.max(row_nnz)),
                 "active_J_row_count": int(np.count_nonzero(row_nnz)),
+                "exact_design_support_intersection": {
+                    "Yee_sample_count": int(np.count_nonzero(support_intersection)),
+                    "active_J_rows_inside": int(
+                        np.count_nonzero(
+                            (row_nnz > 0) & support_intersection.reshape(-1)
+                        )
+                    ),
+                    "active_J_rows_outside": int(
+                        np.count_nonzero(
+                            (row_nnz > 0) & ~support_intersection.reshape(-1)
+                        )
+                    ),
+                },
             }
 
         matrix_artifacts = {}
@@ -445,18 +533,12 @@ def main() -> int:
             and worst_dot < DOT_LIMIT
         )
         result = {
-            "status": (
-                "VALIDATED_NONUNIFORM_COMPLEX_COMPONENT_YEE_JACOBIAN_SMOKE"
-                if passed
-                else "FAILED_NONUNIFORM_COMPLEX_COMPONENT_YEE_JACOBIAN_SMOKE"
-            ),
+            "status": validated_status if passed else failed_status,
             "passed": passed,
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-            "scope": (
-                "10 um isolated 10x10x1 um imported complex-SiO2 control; "
-                "layout-only J_c=d epsilon_Yee,c/d rho on 101x101 nodes; "
-                "not the final production geometry"
-            ),
+            "scope": scope,
+            "geometry": args.geometry,
+            "imported_object": imported_object,
             "base_FSP": {
                 "path": str(base_project),
                 "size_bytes": base_project.stat().st_size,
@@ -493,6 +575,7 @@ def main() -> int:
                 "worst_JVP_VJP_dot_relative_error": worst_dot,
                 "dot_limit": DOT_LIMIT,
                 "coordinate_mismatch_limit_m": COORDINATE_LIMIT_M,
+                "maximum_local_assignment_distance_limit_m": maximum_local_distance_m,
             },
             "artifacts": {
                 "component_J": matrix_artifacts,

@@ -46,6 +46,18 @@ def main() -> int:
     result = json.loads(result_path.read_text())
     if not result.get("passed", False):
         raise RuntimeError("nonuniform complex component-Yee control did not pass")
+    production = result.get("geometry") == "production"
+    declared_artifacts = list(result["artifacts"]["component_J"].values()) + [
+        result["artifacts"]["coordinates_and_density"]
+    ]
+    for declared in declared_artifacts:
+        declared_path = Path(declared["path"]).resolve()
+        if declared_path.parent != raw:
+            raise RuntimeError("declared mapping artifact is outside raw directory")
+        if declared_path.stat().st_size != declared["size_bytes"]:
+            raise RuntimeError(f"artifact byte-size mismatch: {declared_path}")
+        if sha256(declared_path) != declared["sha256"]:
+            raise RuntimeError(f"artifact SHA-256 mismatch: {declared_path}")
     coordinates_path = Path(
         result["artifacts"]["coordinates_and_density"]["path"]
     )
@@ -56,9 +68,14 @@ def main() -> int:
 
     RESULTS.mkdir(parents=True, exist_ok=True)
     PLOTS.mkdir(parents=True, exist_ok=True)
-    published_json = RESULTS / "nonuniform_complex_yee_jacobian_summary.json"
-    report_path = RESULTS / "NONUNIFORM_COMPLEX_YEE_JACOBIAN_REPORT.md"
-    plot_path = PLOTS / "nonuniform_complex_yee_jacobian.png"
+    stem = (
+        "production_complex_yee_jacobian"
+        if production
+        else "nonuniform_complex_yee_jacobian"
+    )
+    published_json = RESULTS / f"{stem}_summary.json"
+    report_path = RESULTS / f"{stem.upper()}_REPORT.md"
+    plot_path = PLOTS / f"{stem}.png"
     published_json.write_text(json.dumps(result, indent=2) + "\n")
 
     directions = list(result["directions"])
@@ -76,7 +93,11 @@ def main() -> int:
     axes[0].set(
         xlabel="x (µm)",
         ylabel="y (µm)",
-        title="Nonuniform mapping-control density",
+        title=(
+            "Production mapping-control density"
+            if production
+            else "Nonuniform mapping-control density"
+        ),
         aspect="equal",
     )
     positions = np.arange(len(directions))
@@ -115,7 +136,11 @@ def main() -> int:
     axes[2].set_xticks(indices, [r"$J_x$", r"$J_y$", r"$J_z$"])
     axes[2].set(ylabel="count", title="Sparse component operators")
     axes[2].legend()
-    fig.suptitle("10 µm nonuniform complex density → component-Yee mapping smoke")
+    fig.suptitle(
+        "10 µm production complex density → component-Yee mapping"
+        if production
+        else "10 µm nonuniform complex density → component-Yee mapping smoke"
+    )
     fig.savefig(plot_path, dpi=180)
     plt.close(fig)
 
@@ -132,17 +157,42 @@ def main() -> int:
         component_rows.append(
             f"| {component} | {row['shape']} | {row['J_nnz']:,} | "
             f"{row['maximum_J_nonzeros_per_Yee_sample']} | "
-            f"{row['maximum_field_index_coordinate_mismatch_m']:.6e} |"
+            f"{row['maximum_field_index_coordinate_mismatch_m']:.6e} | "
+            f"{row.get('exact_design_support_intersection', {}).get('active_J_rows_outside', 'n/a')} |"
         )
+    heading = (
+        "# Production complex component-Yee Jacobian"
+        if production
+        else "# Nonuniform complex component-Yee Jacobian smoke"
+    )
+    scope_text = (
+        "This is the layout-only mapping certificate for the actual 20×20×1 µm "
+        "coarse production-candidate design at 10 µm. It uses 201×201 physical-"
+        "density nodes and the actual v261 component-specific `index_detail` "
+        "coordinates. It performed zero Maxwell solves and no per-pixel solves."
+        if production
+        else "This is a layout-only mapping control for an isolated 10×10×1 µm "
+        "imported complex-SiO2 block at 10 µm. It uses 101×101 physical-density "
+        "nodes and the actual v261 component-specific `index_detail` coordinates. "
+        "It performed zero Maxwell solves and no per-pixel solves."
+    )
+    scope_boundary = (
+        "This validates the full production-geometry complex interpolation, "
+        "component coordinates, exact design-support intersection, and sparse "
+        "transpose. It is not yet a Maxwell adjoint, thermal/PTE gradient, or "
+        "optimization certificate."
+        if production
+        else "This validates the complex interpolation and sparse-Jacobian "
+        "construction method on the isolated control only. It is not the final "
+        "production-geometry Jacobian, a Maxwell adjoint certificate, a thermal/PTE "
+        "gradient certificate, or permission to start optimization."
+    )
     report_path.write_text(
-        f"""# Nonuniform complex component-Yee Jacobian smoke
+        f"""{heading}
 
 Status: `{result['status']}`
 
-This is a layout-only mapping control for an isolated 10×10×1 µm imported
-complex-SiO2 block at 10 µm.  It uses 101×101 physical-density nodes and the
-actual v261 component-specific `index_detail` coordinates.  It performed zero
-Maxwell solves and no per-pixel solves.
+{scope_text}
 
 The differentiated material chain is:
 
@@ -158,8 +208,8 @@ with `epsilon_SiO2={result['epsilon_SiO2'][0]:.16g} +
 |:--|--:|--:|
 {chr(10).join(rows)}
 
-| component | Yee shape | J nonzeros | max nonzeros/Yee sample | E/index coordinate mismatch (m) |
-|:--:|:--|--:|--:|--:|
+| component | Yee shape | J nonzeros | max nonzeros/Yee sample | E/index coordinate mismatch (m) | active rows outside exact support |
+|:--:|:--|--:|--:|--:|--:|
 {chr(10).join(component_rows)}
 
 Worst mapping FD error: `{result['gates']['worst_mapping_only_FD_relative_error']:.6e}`
@@ -173,15 +223,17 @@ Maximum component coordinate mismatch:
 
 ## Scope boundary
 
-This validates the complex interpolation and sparse-Jacobian construction
-method on the isolated control only.  It is not the final production-geometry
-Jacobian, a Maxwell adjoint certificate, a thermal/PTE gradient certificate,
-or permission to start optimization.
+{scope_boundary}
 """
     )
 
     manifest = json.loads(MANIFEST.read_text())
-    manifest["nonuniform_complex_component_yee_jacobian_smoke"] = {
+    manifest_key = (
+        "production_complex_component_yee_jacobian"
+        if production
+        else "nonuniform_complex_component_yee_jacobian_smoke"
+    )
+    manifest[manifest_key] = {
         "status": result["status"],
         "raw_directory": str(raw),
         "Maxwell_solves": 0,

@@ -1,7 +1,7 @@
 {
   "run_id": "run_002_gaussian10_w8p5_current_max",
-  "status": "PRODUCTION_CANDIDATE_FORWARD_VALIDATED",
-  "last_updated_utc": "2026-08-06T07:09:31+00:00",
+  "status": "PRODUCTION_COMPONENT_YEE_MAPPING_VALIDATED",
+  "last_updated_utc": "2026-08-06T07:15:14+00:00",
   "optimization_started": false,
-  "message": "Matched-volume rho=0.5 production-candidate GPU Maxwell forward passed closure and shutoff gates with immutable FSP/NPZ provenance. Production-geometry component-Yee mapping/JVP-VJP, material-resolved conservative thermal remap, Gaussian combined AD-FD, and production-scale CUDA parity still block optimization."
+  "message": "Matched-volume rho=0.5 GPU forward and the actual 201x201 production component-Yee material Jacobians passed. All active J rows lie inside exact design support, coordinate mismatch is 6.78e-21 m, worst mapping FD error is 1.34e-9, and worst transpose error is 5.35e-15. Material-resolved conservative thermal remap, Gaussian Maxwell/PTE AD-FD, and production-scale CUDA parity still block optimization."
 }
