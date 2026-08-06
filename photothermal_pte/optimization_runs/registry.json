@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "run_id": "run_001_baseline_p1",
+      "path": "photothermal_pte/optimization_runs/run_001_baseline_p1",
+      "status": "PLANNED",
+      "objective": "maximize the certified uniform-45-degree PTE current surrogate",
+      "gray_law_exponent": 1.0,
+      "optimization_started": false
+    }
+  ]
+}
