@@ -40,9 +40,9 @@ def main() -> int:
     print(json.dumps(result.as_dict(), indent=2))
     print(
         "PREFLIGHT_ONLY: source-only, production forward, component-Yee "
-        "mapping, and small CUDA controls passed; material-resolved thermal "
-        "remap, window selection, Gaussian AD-FD, and production CUDA parity "
-        "still block execution"
+        "mapping, literal material-Q attribution, and small CUDA controls "
+        "passed; 3D thermal-grid deposition, window selection, Gaussian "
+        "AD-FD, and production CUDA parity still block execution"
     )
     return 0
 

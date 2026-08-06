@@ -482,5 +482,16 @@
         "sha256": "453a2aca349cf6e4004d2871fc037a9931ffc7e1902744f727440792ee665d20"
       }
     ]
+  },
+  "production_material_intersection_q_attribution": {
+    "status": "VALIDATED_PRODUCTION_MATERIAL_INTERSECTION_Q_ATTRIBUTION",
+    "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_material_q_attribution_20260806",
+    "artifacts": [
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_material_q_attribution_20260806/production_material_q_attribution.json",
+        "size_bytes": 4829,
+        "sha256": "1bd0289f9422bb4db801d955860e1b317b32e6c923b706309630ecd94fe9afbd"
+      }
+    ]
   }
 }

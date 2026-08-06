@@ -1,7 +1,7 @@
 {
   "run_id": "run_002_gaussian10_w8p5_current_max",
-  "status": "PRODUCTION_COMPONENT_YEE_MAPPING_VALIDATED",
-  "last_updated_utc": "2026-08-06T07:15:14+00:00",
+  "status": "PRODUCTION_MATERIAL_Q_ATTRIBUTION_VALIDATED",
+  "last_updated_utc": "2026-08-06T07:23:00+00:00",
   "optimization_started": false,
-  "message": "Matched-volume rho=0.5 GPU forward and the actual 201x201 production component-Yee material Jacobians passed. All active J rows lie inside exact design support, coordinate mismatch is 6.78e-21 m, worst mapping FD error is 1.34e-9, and worst transpose error is 5.35e-15. Material-resolved conservative thermal remap, Gaussian Maxwell/PTE AD-FD, and production-scale CUDA parity still block optimization."
+  "message": "The rho=0.5 production forward, 201x201 component-Yee Jacobians, and literal material-intersection Q attribution passed. Physical thermal materials receive 98.7936% of full P_Q without nearest-material relocation or rescaling; artificial extended-background Q is 0.0103% and the reported air/cut-cell remainder is 1.1961%. The actual 3D conservative thermal-grid remap, CUDA thermal/PTE solve, Gaussian Maxwell/PTE AD-FD, and window selection still block optimization."
 }

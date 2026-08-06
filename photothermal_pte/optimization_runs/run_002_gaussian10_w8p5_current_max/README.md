@@ -1,6 +1,6 @@
 # Run 002 — 10 µm Gaussian current maximization
 
-Status: `PRODUCTION_COMPONENT_YEE_MAPPING_VALIDATED`. A homogeneous-air
+Status: `PRODUCTION_MATERIAL_Q_ATTRIBUTION_VALIDATED`. A homogeneous-air
 source-only Maxwell gate, small CUDA thermal forward/adjoint controls,
 uniform rho=0/0.5/1 scalar-vs-`importnk2` complex-material controls, and a
 matched-volume rho=0.5 production-candidate GPU forward have run.  No
@@ -88,3 +88,11 @@ JVP/VJP transpose error is `5.3435e-15`, and the maximum field/index coordinate
 mismatch is `6.7763e-21 m`.  Every active sparse-J row lies inside the exact
 20×20×1 µm design support.  This closes the density-to-Yee material mapping,
 but not the Maxwell/PTE adjoint or conservative thermal-remap gates.
+
+The native component-Q was also partitioned by literal dual-cell/material
+volume intersection.  Physical Si, bottom SiO2, finite 32×32 µm TaIrTe4, and
+the effective design material receive `98.793556%` of full P_Q.  The artificial
+long-TaIrTe4 background contributes `0.010320%`, while the `1.196124%`
+air/interface cut-cell remainder is reported rather than forced into a nearby
+material.  No Q rescaling was used.  The next gate is deposition of those
+material-attributed contributions onto the actual 3D thermal grid.
