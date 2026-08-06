@@ -4,20 +4,23 @@ This document remains the reviewed optimization plan. Source-only, production
 forward, component-Yee mapping, literal material-Q attribution, exact 3D
 thermal deposition, production CUDA thermal/PTE, and fixed-Q thermal-material
 AD-FD gates have passed. The exact thermal-adjoint pullback to native
-component-Yee absorption grids has also passed. One production nonuniform
-physical-density combined Maxwell/thermal AD-FD smoke has passed at h=0.005
-with 0.538674% relative error. The one-time coarse-gradient selection has now
-frozen a centered 18.6×18.6 µm production window. Broader directional evidence,
-coupled optical gray-law sensitivity, exact-binary DRC fixtures, and
-full-latent pullbacks still block optimizer execution. The finite nonperiodic filter/projection JVP and VJP
-are now certified on the selected 373×373 window. The same selected support
+component-Yee absorption grids has also passed. The selected 373×373 chain now
+passes five combined physical-density directions and two full
+latent/filter/projection directions. The worst full-latent relative error is
+0.032746% at h=0.005. The one-time gradient selection froze the centered
+18.6×18.6 µm production window. A beta=2 nominal MMA pilot has therefore
+started; iteration 1 increased the actual GPU-Maxwell/CUDA-thermal signed PTE
+objective by 8.993%. The finite nonperiodic filter/projection JVP and VJP are
+certified on the selected window. The same selected support
 also has a completed GPU rho=0.5 forward and component-specific density-to-Yee
 Jacobian certificate; it is no longer relying on the earlier 201×201 optical
 layout for future full-latent work. Its exact 373-node-to-186-cell thermal map
 and selected-support material-Q deposition are also certified.
 The fixed-Q thermal branch is additionally certified for p=1,2,3 on the
 grown/grown endpoint and p=1 on the evaporated/evaporated endpoint. This does
-not yet select a production p or certify the optical epsilon branch.
+not make those exponents confidence intervals. The nominal pilot uses the
+reviewed p=1 linear gray law. Exact-binary DRC and four-interface robust
+promotion remain pending.
 
 ## Physical layout contract
 
@@ -127,15 +130,14 @@ grown/grown and evaporated/evaporated endpoints. Host matrix assembly remains
 the expensive part of FD certification; optimization uses one forward/adjoint
 pair rather than repeated ±FD solves.
 
-## Remaining fail-closed sequence
+## Current optimization sequence
 
-1. preserve the completed representative coarse Gaussian combined
-   physical-density Maxwell/thermal AD-FD smoke;
-2. preserve the selected centered 18.6 µm window, its immutable gradient
-   provenance, selected-support GPU forward, and component-Yee Jacobians;
-3. preserve the certified thermal mapping and fixed-Q thermal gray-law AD-FD;
-   add a small independent selected-grid combined direction and coupled
-   optical gray-law sensitivity;
-4. certify exact-binary DRC fixtures and pass full
-   latent/filter/projection AD-FD without gradient rescaling;
-5. only then enable a short nominal signed-objective MMA pilot.
+1. preserve the completed physical-density and full-latent AD–FD certificates;
+2. continue the short beta=2 nominal +I pilot from the accepted iteration-1
+   checkpoint, with one GPU forward/adjoint pair per candidate;
+3. stop for diagnosis if two accepted steps improve the fixed scaled objective
+   by less than 0.1%; never alter the physics or rescale a gradient to force progress;
+4. after nominal progress, run the named interface scenarios and the opposite
+   signed objective as explicit robustness branches;
+5. apply independent exact-binary 500 nm solid/void DRC before any fabrication
+   or final-design promotion.

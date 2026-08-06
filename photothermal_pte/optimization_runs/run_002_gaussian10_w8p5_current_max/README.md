@@ -198,3 +198,17 @@ used CUDA float64 without CPU fallback. Relative to p=1, p=2 and p=3 rotate
 the thermal gradient by 5.363° and 9.800°, so p is an explicit material-model
 choice. This fixed-Q checkpoint does not include the optical epsilon gray law
 and is not a coupled or full-latent certificate.
+
+The selected production chain has since passed five combined physical-density
+directions and two complete latent→finite-filter→projection directions. The
+full-latent adjoint-aligned error is `0.000383%`; the fixed-seed-random error is
+`0.032746%`, both at `h=0.005`, without empirical or gradient rescaling.
+
+Nominal beta=2 MMA optimization has now started. Accepted iteration 1 moves the
+latent field by at most `0.0070493` and increases the actual signed PTE
+objective from `1.351217541492e-20 A` to `1.472735412129e-20 A` (`8.9932%`).
+The optimizer uses a fixed `1e12 W/A * I/P_incident` nondimensionalization,
+not a per-iteration scale. This is still a continuous grown/grown,
+uniform-45-degree weighting-surrogate pilot. Exact binary DRC, the four named
+interface scenarios, and full-electrode validation remain before final design
+promotion.

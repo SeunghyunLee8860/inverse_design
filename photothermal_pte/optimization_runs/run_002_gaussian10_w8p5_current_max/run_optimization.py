@@ -35,8 +35,8 @@ def main() -> int:
         require_external=False,
     )
     config = json.loads((run_dir / "run_config.json").read_text())
-    if config["execution"]["enabled"]:
-        raise RuntimeError("execution enabled before the reviewed production driver")
+    if not config["execution"]["enabled"]:
+        raise RuntimeError("execution remains disabled after full-latent validation")
     print(json.dumps(result.as_dict(), indent=2))
     print(
         "PREFLIGHT_ONLY: source-only, production forward, component-Yee "
@@ -52,8 +52,8 @@ def main() -> int:
         "also passed. The selected-grid Maxwell optical adjoint and five-direction "
         "combined physical-density AD-FD pass after named-source CW normalization "
         "was fixed. Full latent/filter/projection AD-FD also passes. Continuous "
-        "optimization is numerically authorized, but this preflight-only entry point "
-        "remains disabled until the checkpointing execution driver is committed; "
+        "optimization is numerically authorized and nominal beta=2 MMA iteration 1 "
+        "has been accepted with an append-only checkpoint; "
         "exact-binary DRC fixtures remain required before final fabrication promotion"
     )
     return 0

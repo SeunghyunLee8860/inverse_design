@@ -1,7 +1,7 @@
 {
   "run_id": "run_002_gaussian10_w8p5_current_max",
-  "status": "VALIDATED_SELECTED_FULL_LATENT_ADFD",
-  "last_updated_utc": "2026-08-06T21:58:53.622048+00:00",
-  "optimization_started": false,
-  "message": "Full latent/filter/projection combined AD-FD passes at h=0.005 in aligned and fixed-seed-random directions; worst relative error=3.275e-04. Continuous optimization is numerically authorized."
+  "status": "RUNNING_NOMINAL_MMA_PILOT",
+  "last_updated_utc": "2026-08-06T22:17:26.459915+00:00",
+  "optimization_started": true,
+  "message": "Nominal beta=2 MMA iteration 1 accepted; +I PTE objective improved by 8.993%. Exact binary DRC and robust interface scenarios remain."
 }

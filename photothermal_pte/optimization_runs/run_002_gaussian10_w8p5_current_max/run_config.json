@@ -124,12 +124,12 @@
     "type": "signed_uniform_45deg_pte_current_per_incident_power",
     "sign_runs": [1, -1],
     "scenario_aggregation": "late_stage_smooth_worst_case_over_four_interface_scenarios",
-    "fixed_nondimensionalization": "freeze_once_from_all_air_and_all_sio2_baselines",
+    "fixed_nondimensionalization": "1e12_W_per_A_times_I_PTE_over_P_incident_frozen_for_nominal_pilot",
     "dynamic_gradient_rescaling": false
   },
   "optimizer": {
     "algorithm": "NLopt_LD_MMA",
-    "driver_status": "BLOCKED_BY_GRAY_LAW_BROADER_COMBINED_EXACT_DRC_AND_FULL_LATENT_ADFD",
+    "driver_status": "NOMINAL_BETA2_MMA_PILOT_ITERATION_001_ACCEPTED",
     "initial_FOM_strategy": [
       "two_signed_objective_runs",
       "fixed_objective_nondimensionalization",
@@ -138,7 +138,11 @@
       "multiple_deterministic_starts",
       "best_feasible_checkpoint"
     ],
-    "maximum_iterations": 0,
+    "maximum_iterations": 5,
+    "accepted_iterations": 1,
+    "current_beta": 2.0,
+    "fixed_objective_scale_W_per_A": 1000000000000.0,
+    "initial_latent_move_limit": 0.02,
     "checkpoint_every_accepted_iterations": 1
   },
   "gates": {
@@ -165,7 +169,7 @@
   "repository_inputs": [],
   "external_inputs": [],
   "execution": {
-    "enabled": false,
-    "reason": "the selected 18.6 um / 373 x 373 optical and thermal mappings plus fixed-Q thermal p=1,2,3 gray-law AD-FD passed; coupled optical gray-law sensitivity, the selected-grid Maxwell adjoint and broader combined directions, exact-binary DRC fixtures, and full latent AD-FD remain"
+    "enabled": true,
+    "reason": "five-direction physical-rho and two-direction full latent/filter/projection AD-FD passed; nominal beta=2 MMA iteration 1 improved the actual GPU-Maxwell/CUDA-thermal objective by 8.993%. Exact binary DRC and robust four-interface evaluation remain before fabrication promotion"
   }
 }
