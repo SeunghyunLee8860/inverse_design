@@ -7,7 +7,7 @@
     "repository": "SeunghyunLee8860/inverse_design",
     "git_commit": "5b648323ac74b7ed6c8f78d1137cff7d78b2c2af",
     "base_pr": 8,
-    "adfd_status": "THERMAL_TO_NATIVE_YEE_PULLBACK_VALIDATED_COMBINED_MAXWELL_PENDING",
+    "adfd_status": "COMBINED_PHYSICAL_RHO_ADFD_SMOKE_VALIDATED_FULL_LATENT_PENDING",
     "preserved_upstream": "4 um CPU-TFSF full-latent certificate remains unchanged"
   },
   "design": {
@@ -155,6 +155,6 @@
   "external_inputs": [],
   "execution": {
     "enabled": false,
-    "reason": "production CUDA thermal/PTE, fixed-Q thermal-material AD-FD, and exact thermal-to-native-Yee pullback passed; Gaussian combined Maxwell AD-FD and design-window selection remain"
+    "reason": "one adjoint-aligned h=0.005 combined physical-rho Maxwell/CUDA-thermal AD-FD smoke passed; broader directional evidence, gray-law sensitivity, full latent/filter/projection AD-FD, and design-window selection remain"
   }
 }

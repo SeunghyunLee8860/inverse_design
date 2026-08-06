@@ -660,5 +660,140 @@
       "size_bytes": 71887910,
       "sha256": "bcce54b1f34e7621905d773b7a3af639d9fcd909ad3dede3801d9e1ca051225f"
     }
+  },
+  "production_combined_physical_rho_adfd_smoke": {
+    "status": "VALIDATED_PRODUCTION_COMBINED_PHYSICAL_RHO_ADFD_SMOKE",
+    "raw_artifacts_committed_to_git": false,
+    "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v6_mesh_anchor_20260806",
+    "artifacts": [
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v6_mesh_anchor_20260806/production_combined_adfd_smoke_result.json",
+        "size_bytes": 23379,
+        "sha256": "6da8496c474cb023139d22df12644704c628289b35b12a6c43a376b53bacc901"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v6_mesh_anchor_20260806/production_combined_adfd_smoke.npz",
+        "size_bytes": 146248504,
+        "sha256": "fd855f2c01d08f6d049750adc5efc3fd555a3590332b46567bf2389517554adf"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v6_mesh_anchor_20260806/production_combined_adjoint_template.fsp",
+        "size_bytes": 497002430,
+        "sha256": "44a098188a01409f917b8b2a311aac35cb7a7b505d229202ee60848ece70811c"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v6_mesh_anchor_20260806/production_combined_adjoint_gpu.fsp",
+        "size_bytes": 747794499,
+        "sha256": "ddb597cf03907bd13f5671c2832b846624656dbf4b58eef3ad39849a1a55a1dd"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_20260806/base_nonuniform.fsp",
+        "size_bytes": 305193352,
+        "sha256": "4e67cdb7d508e4fc1572894473a06e9fddc9fd5c2c99ec628c3330b574d2f124"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v6_mesh_anchor_20260806/base_nonuniform_native_q.npz",
+        "size_bytes": 75651141,
+        "sha256": "9168845c6e329526918e10f34c8334da322f60f0d9627ee0fb3d3393972d8a3d"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v6_mesh_anchor_20260806/adjoint_aligned_h0.005_plus.fsp",
+        "size_bytes": 305193616,
+        "sha256": "76118405d2be9c372941f9a625e475e959567aa3c437f388c08b940410590f7a"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v6_mesh_anchor_20260806/adjoint_aligned_h0.005_plus_native_q.npz",
+        "size_bytes": 75649835,
+        "sha256": "fba8ff540badecf2649f2ec956a8e5230f93ae4563aa24d362bba821ddbb60de"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v6_mesh_anchor_20260806/adjoint_aligned_h0.005_minus.fsp",
+        "size_bytes": 305193638,
+        "sha256": "5ecd3cbf885c0fcd19659482130d276786dfde5acf76a0a008b3516a99e8179b"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v6_mesh_anchor_20260806/adjoint_aligned_h0.005_minus_native_q.npz",
+        "size_bytes": 75653628,
+        "sha256": "5bb0ebc4264318c174e3ba8ebf4f241219f0f4f5ef9f7de5f18af6d78fb3ac98"
+      }
+    ],
+    "mesh_audits": {
+      "pre_fix": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_adjoint_template_mesh_audit_v7_20260806/production_adjoint_template_mesh_audit.json",
+          "size_bytes": 4915,
+          "sha256": "763e19179cbb60611d2121939098650ba0d5ffaa56116acc37f265d67fc4da8f"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_adjoint_template_mesh_audit_v7_20260806/production_adjoint_template_source_and_mesh.npz",
+          "size_bytes": 10349,
+          "sha256": "3f65883e69ae4b3c5580340184ea60446831f4ae042cd9f138e2075cf1bc3c7e"
+        }
+      ],
+      "fixed": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_adjoint_template_mesh_audit_v9_20260806/production_adjoint_template_mesh_audit.json",
+          "size_bytes": 5032,
+          "sha256": "ff2ce0aa6f855d520ea5c7fc376da52d03f133f1c639f6451c921d55c2abc107"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_adjoint_template_mesh_audit_v9_20260806/production_adjoint_template_source_and_mesh.npz",
+          "size_bytes": 10588,
+          "sha256": "6c3fa8ee77498c243f23c0a0e6ed6af1a0917b558e30b0d157980dffb7a82a96"
+        }
+      ]
+    },
+    "preserved_failed_attempts": [
+      {
+        "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_20260806",
+        "status": "FAILED_PRODUCTION_COMBINED_PHYSICAL_RHO_ADFD_SMOKE",
+        "error": "RuntimeError: forward E/index x coordinates differ",
+        "result": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_20260806/production_combined_adfd_smoke_result.json",
+          "size_bytes": 987,
+          "sha256": "fa38d5cb58a584d84db5d0ab7fd6978f9bdb5d6d22afe30324786a612add11cd"
+        }
+      },
+      {
+        "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v2_20260806",
+        "status": "FAILED_PRODUCTION_COMBINED_PHYSICAL_RHO_ADFD_SMOKE",
+        "error": "RuntimeError: GPU-only run failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'in run: \"/home/seunghyun/lumerical_r12/opt/lumerical/v261/bin/fdtd-engine\" -gpu -t 8 -gpu \"/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v2_20260806/production_combined_adjoint_gpu.fsp\"\\n\\naigpu1123(process 0): The program terminated due to an error: Source profile of \\'field region run002_component_yee_adjoint_region_adjoint_x\\' does not align with mesh.\\naigpu1123(process 0): Error: there was an unknown parallel error. The error code is 10, the process number is 0' | localhost: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Computer: LumApiError: 'in run: could not match resource name provided or the resource may not be active.'",
+        "result": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v2_20260806/production_combined_adfd_smoke_result.json",
+          "size_bytes": 3112,
+          "sha256": "665440e542b0c060cb24d3f3efa8fe9437aa278e4dd1d2dfb4e3c525928eda6b"
+        }
+      },
+      {
+        "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v3_20260806",
+        "status": "FAILED_PRODUCTION_COMBINED_PHYSICAL_RHO_ADFD_SMOKE",
+        "error": "RuntimeError: GPU-only run failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'in run: \"/home/seunghyun/lumerical_r12/opt/lumerical/v261/bin/fdtd-engine\" -gpu -t 8 -gpu \"/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v3_20260806/production_combined_adjoint_gpu.fsp\"\\n\\naigpu1123(process 0): The program terminated due to an error: field region run002_component_yee_adjoint_region imported source profile dataset dimensions (309 x 309 x 51) do not match the field region dimensions (309 x 309 x 50).\\naigpu1123(process 0): Error: there was an unknown parallel error. The error code is 10, the process number is 0' | localhost: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Computer: LumApiError: 'in run: could not match resource name provided or the resource may not be active.'",
+        "result": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v3_20260806/production_combined_adfd_smoke_result.json",
+          "size_bytes": 3231,
+          "sha256": "a9d75e340bb9baaed432181140790fb645b71a74e96a7a1e875182a0958f3c98"
+        }
+      },
+      {
+        "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v4_20260806",
+        "status": "FAILED_PRODUCTION_COMBINED_PHYSICAL_RHO_ADFD_SMOKE",
+        "error": "RuntimeError: GPU-only run failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'in run: \"/home/seunghyun/lumerical_r12/opt/lumerical/v261/bin/fdtd-engine\" -gpu -t 8 -gpu \"/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v4_20260806/production_combined_adjoint_gpu.fsp\"\\n\\naigpu1123(process 0): The program terminated due to an error: Source profile of \\'field region run002_component_yee_adjoint_region\\' does not align with mesh.\\naigpu1123(process 0): Error: there was an unknown parallel error. The error code is 10, the process number is 0' | localhost: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Computer: LumApiError: 'in run: could not match resource name provided or the resource may not be active.'",
+        "result": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v4_20260806/production_combined_adfd_smoke_result.json",
+          "size_bytes": 3093,
+          "sha256": "b7614e014e8c8c8f2eef2f5ccca2aef78bbb521537e7dc88107440e88eb89147"
+        }
+      },
+      {
+        "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v5_20260806",
+        "status": "FAILED_PRODUCTION_COMBINED_PHYSICAL_RHO_ADFD_SMOKE",
+        "error": "RuntimeError: GPU-only run failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'in run: \"/home/seunghyun/lumerical_r12/opt/lumerical/v261/bin/fdtd-engine\" -gpu -t 8 -gpu \"/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v5_20260806/production_combined_adjoint_gpu.fsp\"\\n\\naigpu1123(process 0): The program terminated due to an error: Source profile of \\'field region run002_component_yee_adjoint_region\\' does not align with mesh.\\naigpu1123(process 0): Error: there was an unknown parallel error. The error code is 10, the process number is 0' | localhost: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Computer: LumApiError: 'in run: could not match resource name provided or the resource may not be active.'",
+        "result": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_combined_adfd_smoke_v5_20260806/production_combined_adfd_smoke_result.json",
+          "size_bytes": 3092,
+          "sha256": "b58dfe2c1e0d9e1d5cb81f7fcd36214703479268f04b1af9e1e37a5606dc8eef"
+        }
+      }
+    ]
   }
 }

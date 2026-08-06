@@ -6,8 +6,9 @@ GPU forward gates, the 201×201 production component-Yee Jacobian, and small
 literal-FVM CUDA forward/adjoint control are recorded here. The literal
 material-intersection Q attribution is also recorded without nearest-material
 relocation or global rescaling, together with its exact 3D thermal-grid
-deposition. None is a
-production PTE gradient or optimization result. The
+deposition. The first production combined physical-rho PTE gradient smoke is
+now recorded separately; it is one direction and one FD step, not a full
+latent or optimization certificate. The
 analytic setup audit is produced in memory by `run_optimization.py
 --setup-audit`.
 

@@ -1,12 +1,13 @@
 # Run 002 — 10 µm Gaussian current maximization
 
-Status: `PRODUCTION_THERMAL_TO_NATIVE_YEE_PULLBACK_VALIDATED`. A homogeneous-air
+Status: `PRODUCTION_COMBINED_PHYSICAL_RHO_ADFD_SMOKE_VALIDATED`. A homogeneous-air
 source-only Maxwell gate, small CUDA thermal forward/adjoint controls,
 uniform rho=0/0.5/1 scalar-vs-`importnk2` complex-material controls, and a
 matched-volume rho=0.5 production-candidate GPU forward have run. The exact
 material-attributed Q has also passed the full production 3D CUDA thermal/PTE
 forward and implicit-adjoint controls for four interface-G scenarios. No
-combined finite-difference or optimization solve has started.
+optimization solve has started. One nonuniform physical-density combined
+Maxwell/CUDA-thermal directional AD-FD smoke has completed and passed.
 
 This is a new physical contract, not a continuation that silently reuses the
 4 µm CPU-TFSF certificate.  The requested source is a scalar Gaussian at
@@ -136,3 +137,15 @@ random dot-test error of `4.097e-15`. Its Cauchy-normalized objective identity
 error is `5.104e-14`; the raw relative metric is retained only as a near-null
 diagnostic for the centered rho=0.5 control. No Maxwell solve, gradient
 rescaling, design-window selection, or optimization occurred in this gate.
+
+The first full-chain physical-density smoke now also passes. At the exact
+nonuniform 201×201 baseline, the adjoint-aligned `h=0.005` derivative is
+`8.502570281382e-20 A`, while centered FD gives `8.548619467411e-20 A`, a
+`0.538674%` relative error below the 1% smoke gate. The initial source-mode
+attempts were kept as failures: deleting or disabling the forward Gaussian
+changed v261's auto-nonuniform mesh by as much as 87.5 nm. Retaining that
+source enabled with amplitude exactly zero during the adjoint preserves the
+mesh without adding illumination; the final source/mesh mismatch is at
+roundoff and the forward/adjoint field-coordinate mismatch is zero. This is
+one direction and one step only, not a multi-direction, gray-law, latent, or
+optimization certificate.

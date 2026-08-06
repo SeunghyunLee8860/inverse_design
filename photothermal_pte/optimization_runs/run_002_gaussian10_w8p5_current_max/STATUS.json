@@ -1,7 +1,7 @@
 {
   "run_id": "run_002_gaussian10_w8p5_current_max",
-  "status": "PRODUCTION_THERMAL_TO_NATIVE_YEE_PULLBACK_VALIDATED",
-  "last_updated_utc": "2026-08-06T09:10:00+00:00",
+  "status": "PRODUCTION_COMBINED_PHYSICAL_RHO_ADFD_SMOKE_VALIDATED",
+  "last_updated_utc": "2026-08-06T09:41:24+00:00",
   "optimization_started": false,
-  "message": "Production CUDA thermal/PTE, fixed-Maxwell-Q thermal-material AD-FD, and the exact thermal-to-native component-Yee pullback have passed. The pullback uses the transpose of the same material-intersection deposition as the forward source; the worst Qx/Qy/Qz transpose dot error is 4.097e-15, the Cauchy-normalized objective identity error is 5.104e-14, and no gradient rescaling was used. The centered rho=0.5 current remains an explicitly near-null diagnostic. Combined Maxwell AD-FD and design-window selection still block optimization."
+  "message": "One production nonuniform physical-rho combined Maxwell/CUDA-thermal AD-FD smoke passed in the adjoint-aligned direction at h=0.005 with 0.538674% relative error. Forward/adjoint auto-nonuniform mesh parity was restored by retaining the forward Gaussian source enabled at exactly zero amplitude during the adjoint; the maximum source-to-mesh mismatch is 6.776e-21 m and no coordinate exceeds the 2e-18 m tolerance. No empirical normalization, gradient rescaling, CPU FDTD fallback, or optimization iteration was used. Broader directional evidence, gray-law sensitivity, full latent/filter/projection AD-FD, and design-window selection still block optimization."
 }

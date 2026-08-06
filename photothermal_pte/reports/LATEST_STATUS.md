@@ -1963,3 +1963,23 @@ adjoint, gradient, and optimization were not run.
   correction.
 - Validation: 137 offline tests passed.
 - Report: `paper_ir_device_a_nine_position_two_interface/`.
+
+# Run 002 production combined physical-rho AD–FD smoke — 2026-08-06
+
+- Status: `VALIDATED_PRODUCTION_COMBINED_PHYSICAL_RHO_ADFD_SMOKE`.
+- Scope: one nonuniform 201×201 physical-density baseline, one
+  adjoint-aligned direction, centered FD at `h=0.005`; this is not yet a
+  full-latent or optimization certificate.
+- Adjoint derivative: `8.502570281382e-20 A`; centered FD:
+  `8.548619467411e-20 A`; relative error: `0.538674%` (<1%).
+- Worst optical closure: `4.474819e-5`; Q mapping error: `0`; thermal
+  residual: `8.612592e-11`; energy balance: `2.823629e-13`.
+- v261 auto-mesh parity was fixed without interpolation or gradient scaling:
+  the forward Gaussian source remains enabled at exactly zero amplitude in
+  the adjoint. Maximum source/mesh mismatch is `6.776264e-21 m`, and the
+  forward/adjoint field-coordinate mismatch is zero.
+- Five earlier source-layout failures remain immutable diagnostics. No CPU
+  FDTD fallback, empirical normalization, Q rescaling, or optimization was
+  used. Optimization iterations remain zero.
+- Report:
+  `optimization_runs/run_002_gaussian10_w8p5_current_max/results/PRODUCTION_COMBINED_ADFD_SMOKE_REPORT.md`.
