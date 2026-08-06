@@ -230,3 +230,11 @@ closure is `4.6535e-6`; CUDA thermal residual and energy-balance errors are
 Accepted iteration 4 reaches `1.843496571665e-20 A`, improving by `7.2508%`
 from iteration 3 and by `36.4323%` from the initial state. Optical closure,
 CUDA thermal residual, and energy balance remain within their frozen gates.
+
+Accepted iteration 5 completes the configured nominal beta=2 pilot at
+`1.969176887292e-20 A` (`1.424570626449e-7 A/W`), `6.8175%` above iteration 4
+and `45.7335%` above the initial state. Every actual nonlinear evaluation
+improved monotonically and passed the frozen optical/thermal gates. The result
+remains a gray grown/grown +I, uniform-45-degree weighting-surrogate design;
+binary continuation, exact DRC, opposite-sign/interface robustness, and full
+electrode validation are the next independent gates.

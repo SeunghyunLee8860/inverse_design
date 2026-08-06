@@ -1,7 +1,7 @@
 {
   "run_id": "run_002_gaussian10_w8p5_current_max",
-  "status": "RUNNING_NOMINAL_MMA_PILOT",
-  "last_updated_utc": "2026-08-06T23:07:15.842887+00:00",
+  "status": "COMPLETED_NOMINAL_BETA2_MMA_PILOT",
+  "last_updated_utc": "2026-08-06T23:21:03.189679+00:00",
   "optimization_started": true,
-  "message": "Nominal beta=2 MMA iteration 4 accepted; last improvement=7.251%, total=36.432%. Exact binary DRC and robust interface scenarios remain."
+  "message": "Five nominal beta=2 restartable MMA iterations accepted; total actual objective improvement=45.734%. This is a continuous gray-design pilot, not a fabrication-ready result. Binary continuation, exact DRC, opposite-sign, robust interface scenarios, and full electrodes remain."
 }
