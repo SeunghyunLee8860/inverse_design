@@ -1,6 +1,6 @@
 # Run 002 — 10 µm Gaussian current maximization
 
-Status: `PRODUCTION_DESIGN_WINDOW_SELECTED`. A homogeneous-air
+Status: `PRODUCTION_FINITE_FILTER_PROJECTION_VALIDATED`. A homogeneous-air
 source-only Maxwell gate, small CUDA thermal forward/adjoint controls,
 uniform rho=0/0.5/1 scalar-vs-`importnk2` complex-material controls, and a
 matched-volume rho=0.5 production-candidate GPU forward have run. The exact
@@ -158,3 +158,12 @@ it retains `90.8872968%`, while 18.4×18.4 µm retains `89.4652232%` and fails.
 The resulting production density grid is 373×373 at 50 nm. This was offline
 selection from the SHA-pinned combined gradient; it launched no solver and no
 optimizer.
+
+The frozen 373×373 production grid now also has a solver-free finite mapping
+certificate. A 500 nm conic filter uses zero padding and explicit edge-row
+normalization; its exact transpose reverses that normalization order. Opposite
+edge wrap and constant-preservation errors are zero, the worst JVP/VJP error is
+`1.290e-15`, and the worst finest-step mapping FD error across five directions
+and beta=2–32 is `8.706e-6`. The preserved first diagnostic failed only because
+it incorrectly gated on the coarsest FD truncation error. This does not certify
+exact-binary DRC or full latent Maxwell/thermal AD-FD.

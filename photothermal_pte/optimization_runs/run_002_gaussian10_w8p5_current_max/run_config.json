@@ -23,6 +23,7 @@
     },
     "production_node_spacing_nm": 50.0,
     "filter_radius_nm": 500.0,
+    "finite_filter_projection_status": "VALIDATED_PRODUCTION_FINITE_FILTER_PROJECTION",
     "design_height_um": 1.0,
     "design_height_sensitivity_um": [0.6, 1.0, 1.5],
     "material_endpoints": {
@@ -125,7 +126,7 @@
   },
   "optimizer": {
     "algorithm": "NLopt_LD_MMA",
-    "driver_status": "BLOCKED_BY_FILTER_GRAY_LAW_AND_FULL_LATENT_ADFD",
+    "driver_status": "BLOCKED_BY_GRAY_LAW_BROADER_COMBINED_EXACT_DRC_AND_FULL_LATENT_ADFD",
     "initial_FOM_strategy": [
       "two_signed_objective_runs",
       "fixed_objective_nondimensionalization",
@@ -162,6 +163,6 @@
   "external_inputs": [],
   "execution": {
     "enabled": false,
-    "reason": "the combined physical-rho smoke and one-time centered 18.6 um window selection passed; finite nonperiodic filter/projection certification, broader combined directions, gray-law sensitivity, and full latent AD-FD remain"
+    "reason": "the combined physical-rho smoke, centered 18.6 um window selection, and finite nonperiodic filter/projection mapping passed; broader combined directions, gray-law sensitivity, exact-binary DRC fixtures, and full latent AD-FD remain"
   }
 }

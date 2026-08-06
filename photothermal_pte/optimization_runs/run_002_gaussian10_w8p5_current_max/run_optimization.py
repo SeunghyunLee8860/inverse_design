@@ -45,8 +45,9 @@ def main() -> int:
         "exact thermal-to-native-Yee pullback controls passed; one "
         "production combined physical-rho Maxwell/CUDA-thermal AD-FD smoke "
         "also passed, and the centered 18.6 um production window is frozen. "
-        "Finite nonperiodic filter/projection certification, broader "
-        "directions, gray-law sensitivity, and full-latent AD-FD still "
+        "Finite nonperiodic filter/projection mapping also passed. Broader "
+        "directions, gray-law sensitivity, exact-binary DRC fixtures, and "
+        "full-latent AD-FD still "
         "block execution"
     )
     return 0

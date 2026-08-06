@@ -1998,3 +1998,19 @@ adjoint, gradient, and optimization were not run.
   solves, and zero optimization iterations.
 - Report:
   `optimization_runs/run_002_gaussian10_w8p5_current_max/results/PRODUCTION_DESIGN_WINDOW_SELECTION_REPORT.md`.
+
+# Run 002 finite production filter/projection — 2026-08-06
+
+- Status: `VALIDATED_PRODUCTION_FINITE_FILTER_PROJECTION`.
+- Grid: 373×373 nodes at 50 nm over the frozen centered 18.6 µm window;
+  conic radius 500 nm, projection eta=0.5, beta=2,4,8,16,32.
+- Zero-padded finite filter: constant-preservation error `0`, opposite-edge
+  wrap `0`; exact transpose order is `C D^-1`, not the forward `D^-1 C`.
+- Worst five-direction JVP/VJP error: `1.290259e-15` (<1e-12).
+- All 25 mapping-only centered-FD trajectories decrease under h→h/2; worst
+  error at h=2.5e-4 is `8.706075e-6` (<1e-5).
+- The first all-step gate failure is preserved as a diagnostic; no gradient or
+  FD result was rescaled. No Maxwell, thermal, or optimization solve ran.
+- This is not an exact-binary DRC or full latent AD-FD certificate.
+- Report:
+  `optimization_runs/run_002_gaussian10_w8p5_current_max/results/PRODUCTION_FINITE_FILTER_PROJECTION_REPORT.md`.

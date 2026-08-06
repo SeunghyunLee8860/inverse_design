@@ -8,7 +8,9 @@ component-Yee absorption grids has also passed. One production nonuniform
 physical-density combined Maxwell/thermal AD-FD smoke has passed at h=0.005
 with 0.538674% relative error. The one-time coarse-gradient selection has now
 frozen a centered 18.6×18.6 µm production window. Broader directional evidence,
-gray-law sensitivity, and full-latent pullbacks still block optimizer execution.
+gray-law sensitivity, exact-binary DRC fixtures, and full-latent pullbacks still
+block optimizer execution. The finite nonperiodic filter/projection JVP and VJP
+are now certified on the selected 373×373 window.
 
 ## Physical layout contract
 
@@ -124,7 +126,7 @@ pair rather than repeated ±FD solves.
    Maxwell/thermal AD-FD smoke and add a small independent-direction check;
 2. preserve the selected centered 18.6 µm window and its immutable gradient
    provenance;
-3. certify gray-law sensitivity plus the finite nonperiodic
-   filter/projection JVP/VJP and exact-binary DRC fixtures on that window;
+3. preserve the validated finite nonperiodic filter/projection JVP/VJP and
+   certify gray-law sensitivity plus exact-binary DRC fixtures on that window;
 4. pass full latent/filter/projection AD-FD without gradient rescaling;
 5. only then enable a short nominal signed-objective MMA pilot.

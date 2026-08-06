@@ -817,5 +817,37 @@
       "size_bytes": 146248504,
       "sha256": "fd855f2c01d08f6d049750adc5efc3fd555a3590332b46567bf2389517554adf"
     }
+  },
+  "production_finite_filter_projection": {
+    "status": "VALIDATED_PRODUCTION_FINITE_FILTER_PROJECTION",
+    "raw_artifacts_committed_to_git": false,
+    "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_finite_filter_projection_v2_20260806",
+    "artifacts": [
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_finite_filter_projection_v2_20260806/production_finite_filter_projection_result.json",
+        "size_bytes": 28186,
+        "sha256": "d4318789b3180750eafc709f97996c5388238b711da9591e91f213fd41afee09"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_finite_filter_projection_v2_20260806/production_finite_filter_projection.npz",
+        "size_bytes": 5133486,
+        "sha256": "778cd1736cf5319689f912c7c3785c2c76570a8e5d299113a5ecb4c9b303788d"
+      }
+    ],
+    "preserved_failed_diagnostic": {
+      "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_finite_filter_projection_20260806",
+      "artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_finite_filter_projection_20260806/production_finite_filter_projection_result.json",
+          "size_bytes": 27681,
+          "sha256": "5c3b44bb86c2ed9ec7003ed522beee0949607d27deed8d0ae83ac85c160a33f9"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_finite_filter_projection_20260806/production_finite_filter_projection.npz",
+          "size_bytes": 5133486,
+          "sha256": "778cd1736cf5319689f912c7c3785c2c76570a8e5d299113a5ecb4c9b303788d"
+        }
+      ]
+    }
   }
 }

@@ -1,7 +1,7 @@
 {
   "run_id": "run_002_gaussian10_w8p5_current_max",
-  "status": "PRODUCTION_DESIGN_WINDOW_SELECTED",
-  "last_updated_utc": "2026-08-06T17:03:32+00:00",
+  "status": "PRODUCTION_FINITE_FILTER_PROJECTION_VALIDATED",
+  "last_updated_utc": "2026-08-06T17:13:26+00:00",
   "optimization_started": false,
-  "message": "The immutable combined physical-rho gradient selected a centered 18.6 um x 18.6 um production window. It retains 90.8872968% of the absolute combined-gradient L1 norm; the immediately smaller centered 18.4 um control retains 89.4652232% and fails the 90% gate, while every predeclared small strip/control also fails. The frozen 50 nm nodal grid is 373 x 373. No Maxwell solve, thermal solve, empirical normalization, gradient rescaling, CPU FDTD fallback, or optimization iteration was used. Finite nonperiodic filter/projection certification, gray-law sensitivity, broader combined directions, and full latent AD-FD still block optimization."
+  "message": "The frozen centered 18.6 um, 373 x 373 production grid now has a validated finite nonperiodic 500 nm conic filter and tanh projection. Constant preservation and opposite-edge wrap errors are exactly zero, worst JVP/VJP Cauchy-normalized error is 1.290e-15, and all 25 beta/direction mapping-only centered-FD trajectories converge under h-to-h/2 with worst finest-step relative error 8.706e-6. The first overly strict all-step gate remains a failed diagnostic; no value was rescaled. No Maxwell solve, thermal solve, CPU FDTD fallback, or optimization iteration was used. Gray-law sensitivity, broader combined directions, exact-binary DRC fixtures, and full latent AD-FD still block optimization."
 }
