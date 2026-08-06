@@ -56,3 +56,26 @@ def test_inverse_fieldregion_collocation_retains_outer_native_source() -> None:
         )
     assert metadata["empirical_normalization"] is False
     assert metadata["gradient_rescaling"] is False
+
+
+def test_inverse_fieldregion_collocation_accepts_exact_solver_mesh_extension() -> None:
+    grid = {
+        "x": np.array([-1.0, 0.0, 1.0]),
+        "y": np.array([-1.0, 0.0, 1.0]),
+        "z": np.array([-1.0, 0.0, 1.0]),
+        "f": np.array([1.0]),
+        "delta_x": np.full(3, 0.25),
+        "delta_y": np.full(3, 0.25),
+        "delta_z": np.full(3, 0.25),
+    }
+    profile = np.ones((3, 3, 3, 1, 3), np.complex128)
+    extension = {"x": 1.5, "y": 1.75, "z": 2.0}
+    _, extended, metadata = invert_fieldregion_linear_collocation(
+        grid,
+        profile,
+        positive_extension_coordinate_m=extension,
+    )
+    for axis in "xyz":
+        assert extended[axis][-1] == extension[axis]
+        assert metadata["components"][axis]["reconstruction_max_abs_error"] < 1e-14
+    assert metadata["positive_extension_coordinates_from_solver_mesh"] is True

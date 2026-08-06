@@ -47,6 +47,7 @@ from photothermal_pte.finite_inverse_design.run_v261_large_background_mixed_opti
     component_volumes,
     fieldregion_profile,
     import_named_fieldregion_profile,
+    invert_fieldregion_linear_collocation,
     monitor_electric,
 )
 from photothermal_pte.finite_inverse_design.yee_material_jacobian import (  # noqa: E402
@@ -69,12 +70,17 @@ from map_production_q_to_thermal_grid import (  # noqa: E402
     thermal_edges,
 )
 import run_complex_material_control as material_control  # noqa: E402
+from run_production_candidate_forward import add_fieldregion  # noqa: E402
 from validate_production_thermal_material_adfd import (  # noqa: E402
     boundary_energy,
     build_state,
     nodal_to_cell,
     nodal_to_cell_transpose,
     thermal_cell_gradient,
+)
+from selected_thermal_density_mapping import (  # noqa: E402
+    selected_nodal_to_thermal_cell,
+    selected_nodal_to_thermal_cell_transpose,
 )
 
 
@@ -111,12 +117,46 @@ def checked(path: Path, expected: str, label: str) -> Path:
     return value
 
 
-def load_operator(directory: Path) -> tuple[SparseYeeMaterialJacobian, np.ndarray, dict]:
+def contract_configuration(name: str) -> dict[str, object]:
+    if name == "selected_production":
+        return {
+            "operator_status": "VALIDATED_SELECTED_PRODUCTION_COMPLEX_COMPONENT_YEE_JACOBIAN",
+            "imported_object": geometry.SELECTED_DESIGN_OBJECT,
+            "nodes": geometry.design_nodes(
+                geometry.SELECTED_DESIGN_BOUNDS,
+                geometry.SELECTED_DESIGN_SHAPE,
+            ),
+            "design_half_span_m": 9.3e-6,
+            "density_forward": selected_nodal_to_thermal_cell,
+            "density_transpose": selected_nodal_to_thermal_cell_transpose,
+            "nodal_shape": (373, 373),
+            "thermal_cell_shape": (186, 186),
+        }
+    if name == "coarse_production":
+        return {
+            "operator_status": "VALIDATED_PRODUCTION_COMPLEX_COMPONENT_YEE_JACOBIAN",
+            "imported_object": geometry.DESIGN_OBJECT,
+            "nodes": geometry.design_nodes(),
+            "design_half_span_m": 10.0e-6,
+            "density_forward": nodal_to_cell,
+            "density_transpose": nodal_to_cell_transpose,
+            "nodal_shape": (201, 201),
+            "thermal_cell_shape": (200, 200),
+        }
+    raise ValueError(f"unknown production contract {name!r}")
+
+
+def load_operator(
+    directory: Path, expected_status: str
+) -> tuple[SparseYeeMaterialJacobian, np.ndarray, dict]:
     root = directory.expanduser().resolve()
     result_path = root / "component_yee_jacobian_result.json"
     result = json.loads(result_path.read_text())
-    if result.get("status") != "VALIDATED_PRODUCTION_COMPLEX_COMPONENT_YEE_JACOBIAN":
-        raise RuntimeError("production component-Yee Jacobian is not validated")
+    if result.get("status") != expected_status:
+        raise RuntimeError(
+            "component-Yee Jacobian status mismatch: "
+            f"expected {expected_status}, got {result.get('status')}"
+        )
     coordinate_path = Path(result["artifacts"]["coordinates_and_density"]["path"])
     checked(
         coordinate_path,
@@ -222,6 +262,8 @@ def run_forward(
     rho: np.ndarray,
     role: str,
     output: Path,
+    imported_object: str,
+    nodes: tuple[np.ndarray, np.ndarray, np.ndarray],
     completed_project: Path | None = None,
 ) -> dict:
     project = (
@@ -236,9 +278,10 @@ def run_forward(
         set_density(
             fdtd,
             rho,
-            imported_object=geometry.DESIGN_OBJECT,
-            nodes=geometry.design_nodes(),
+            imported_object=imported_object,
+            nodes=nodes,
         )
+        add_fieldregion(fdtd)
         fdtd.setnamed(FIELD_REGION, "source mode", False)
         fdtd.setnamed(audit.SOURCE_NAME, "enabled", True)
         resources = runtime.configure_session_resources(fdtd)
@@ -308,6 +351,12 @@ def run_forward(
     p_q = float(q["P_Q_W"])
     closure = relative(p_q, p_six)
     q_min = min(float(np.min(arrays[f"Q{c}_W_m3"])) for c in "xyz")
+    log_audit = audit.log_audit(project.parent)
+    auto_shutoff = log_audit.get("final_auto_shutoff")
+    if auto_shutoff is None or float(auto_shutoff) >= 1.0e-5:
+        raise RuntimeError(
+            f"forward auto-shutoff gate failed for {role}: {auto_shutoff}"
+        )
     if not all(np.all(np.isfinite(arrays[f"Q{c}_W_m3"])) for c in "xyz"):
         raise RuntimeError("native Q contains NaN or Inf")
     if q_min < 0.0:
@@ -326,6 +375,8 @@ def run_forward(
         "coordinate_mismatch_m": coordinate_mismatch,
         "resources": resources,
         "resource_used": resource_used,
+        "solver_mode": "GPU",
+        "log_audit": log_audit,
         "wall_s": wall,
         "reused_completed": completed_project is not None,
         "project": {
@@ -341,9 +392,11 @@ def run_forward(
     }
 
 
-def map_q(q: dict) -> tuple[dict[str, np.ndarray], dict]:
+def map_q(
+    q: dict, *, design_half_span_m: float
+) -> tuple[dict[str, np.ndarray], dict]:
     edges = thermal_edges()
-    masks = material_masks(edges)
+    masks = material_masks(edges, design_half_span_m=design_half_span_m)
     shape = tuple(axis.size - 1 for axis in edges)
     sources = {name: np.zeros(shape, float) for name in MATERIALS}
     attributed = 0.0
@@ -388,8 +441,14 @@ def map_q(q: dict) -> tuple[dict[str, np.ndarray], dict]:
     }
 
 
-def solve_base_thermal(data: dict, rho: np.ndarray, cuda_device: int):
-    state = build_state(data, SCENARIO, nodal_to_cell(rho))
+def solve_base_thermal(
+    data: dict,
+    rho: np.ndarray,
+    cuda_device: int,
+    density_forward,
+    density_transpose,
+):
+    state = build_state(data, SCENARIO, density_forward(rho))
     pair = solve_forward_adjoint_cuda(
         state.system.matrix_W_K,
         state.source_power_W,
@@ -403,7 +462,7 @@ def solve_base_thermal(data: dict, rho: np.ndarray, cuda_device: int):
         state, pair.forward.solution, pair.adjoint.solution
     )
     nodal_parts = {
-        name: nodal_to_cell_transpose(value) for name, value in cell_parts.items()
+        name: density_transpose(value) for name, value in cell_parts.items()
     }
     target_active = np.asarray(
         state.system.source_volume_operator_m3.T @ pair.adjoint.solution
@@ -470,9 +529,28 @@ def prepare_solver_aligned_source(
     shifted source-object grids is rejected by v261 as not mesh-aligned; that
     failed diagnostic is preserved outside this retry.
     """
-    profile, scale = fieldregion_profile(native_source)
-    source_grid = {key: np.array(value, copy=True) for key, value in grid.items()}
     fdtd.load(str(base_project))
+    solver_mesh = {}
+    positive_extension = {}
+    for axis in "xyz":
+        raw_mesh = fdtd.getresult("FDTD", axis)
+        if isinstance(raw_mesh, dict):
+            raw_mesh = raw_mesh[axis]
+        mesh = np.asarray(raw_mesh, float).reshape(-1)
+        if mesh.size < 3 or np.any(np.diff(mesh) <= 0.0):
+            raise RuntimeError(f"invalid completed-forward {axis} mesh")
+        base_axis = np.asarray(grid[axis], float)
+        after = mesh[mesh > base_axis[-1] + 2.0e-18]
+        if after.size == 0:
+            raise RuntimeError(f"no solver mesh plane after FieldRegion {axis}")
+        solver_mesh[axis] = mesh
+        positive_extension[axis] = float(after[0])
+    native_profile, scale = fieldregion_profile(native_source)
+    profile, source_grid, collocation = invert_fieldregion_linear_collocation(
+        grid,
+        native_profile,
+        positive_extension_coordinate_m=positive_extension,
+    )
     fdtd.switchtolayout()
     if int(fdtd.getnamednumber(audit.SOURCE_NAME)) != 1:
         raise RuntimeError("expected exactly one forward Gaussian source")
@@ -512,10 +590,12 @@ def prepare_solver_aligned_source(
     fdtd.save(str(template))
     return scale, amplitude, {
         "method": (
-            "one solver-mesh-aligned FieldRegion vector source using the "
-            "exact recorded forward-E dataset coordinates; v261 applies "
-            "component Yee staggering internally"
+            "one common-grid FieldRegion vector source obtained by exact "
+            "backward inversion of v261's component-wise linear placement "
+            "onto the native Ex/Ey/Ez Yee coordinates"
         ),
+        "component_collocation": collocation,
+        "solver_mesh_positive_extension_m": positive_extension,
         "source_profile_roundtrip_max_abs_error": roundtrip,
         "coordinate_bounds_m": {
             axis: [float(source_grid[axis][0]), float(source_grid[axis][-1])]
@@ -528,10 +608,10 @@ def prepare_solver_aligned_source(
                 for axis in "xyz"
             },
             "reason": (
-                "runsetup audit proved every recorded FieldRegion coordinate "
-                "is a native mesh plane; z has one recorded mesh plane beyond "
-                "each nominal bound, so source bounds are snapped to the "
-                "complete recorded coordinate range"
+                "one positive-axis common-grid cell is added so the exact "
+                "component-wise common-to-native interpolation inverse keeps "
+                "the last native target sample; the exterior common sample "
+                "is zero"
             ),
             "nonzero_source_deleted": False,
             "forward_Gaussian_source_object_preserved_as_mesh_anchor": True,
@@ -553,6 +633,114 @@ def prepare_solver_aligned_source(
     }
 
 
+def prepare_common_grid_source(
+    fdtd,
+    audit,
+    *,
+    base_project: Path,
+    grid: dict[str, np.ndarray],
+    native_source: np.ndarray,
+    template: Path,
+) -> tuple[float, float, dict]:
+    """Import the official common-grid FieldRegion profile.
+
+    Component staggering is handled by FieldRegion itself.  The forward
+    Gaussian stays enabled with zero amplitude because disabling it changes
+    the auto-nonuniform mesh in v261.
+    """
+    profile, scale = fieldregion_profile(native_source)
+    fdtd.load(str(base_project))
+    fdtd.switchtolayout()
+    original_amplitude = float(fdtd.getnamed(audit.SOURCE_NAME, "amplitude"))
+    fdtd.setnamed(audit.SOURCE_NAME, "amplitude", 0.0)
+    fdtd.setnamed(audit.SOURCE_NAME, "enabled", True)
+    for axis in "xyz":
+        fdtd.setnamed(FIELD_REGION, f"{axis} min", float(grid[axis][0]))
+        fdtd.setnamed(FIELD_REGION, f"{axis} max", float(grid[axis][-1]))
+    fdtd.setnamed(FIELD_REGION, "source mode", True)
+    try:
+        fdtd.setnamed(FIELD_REGION, "nuttall window pulse", False)
+    except Exception:
+        pass
+    roundtrip = import_named_fieldregion_profile(
+        fdtd, FIELD_REGION, grid, profile
+    )
+    base_amplitude = float(fdtd.getnamed(FIELD_REGION, "base amplitude"))
+    fdtd.save(str(template))
+    return scale, base_amplitude, {
+        "method": (
+            "official common-grid FieldRegion vector profile; component "
+            "staggering is handled by the solver"
+        ),
+        "component_collocation": {
+            "method": "official common-grid FieldRegion placement",
+            "components": {},
+        },
+        "source_profile_roundtrip_max_abs_error": roundtrip,
+        "coordinate_bounds_m": {
+            axis: [float(grid[axis][0]), float(grid[axis][-1])]
+            for axis in "xyz"
+        },
+        "profile_scale": scale,
+        "fieldregion_base_amplitude": base_amplitude,
+        "template": {
+            "path": str(template),
+            "size_bytes": template.stat().st_size,
+            "sha256": sha256(template),
+        },
+        "forward_Gaussian_source_object_preserved_as_mesh_anchor": True,
+        "forward_Gaussian_source_original_amplitude": original_amplitude,
+        "forward_Gaussian_source_enabled_in_adjoint": True,
+        "forward_Gaussian_source_adjoint_amplitude": 0.0,
+        "empirical_normalization": False,
+        "gradient_rescaling": False,
+    }
+
+
+def reconstruct_fieldregion_only_cw(
+    electric_first: np.ndarray,
+    electric_average: np.ndarray,
+) -> tuple[np.ndarray, dict[str, float | bool | str]]:
+    """Remove the mesh-anchor Gaussian spectrum from a two-source CW field."""
+    first_over_average = np.vdot(electric_average, electric_first) / np.vdot(
+        electric_average, electric_average
+    )
+    residual = float(
+        np.linalg.norm(
+            electric_first - first_over_average * electric_average
+        )
+        / max(float(np.linalg.norm(electric_first)), np.finfo(float).tiny)
+    )
+    fieldregion_over_first = 2.0 * first_over_average - 1.0
+    if abs(fieldregion_over_first) <= np.finfo(float).tiny:
+        raise RuntimeError("invalid FieldRegion-only CW source-spectrum ratio")
+    electric = electric_first / fieldregion_over_first
+    return electric, {
+        "method": (
+            "FieldRegion-only CW field reconstructed from official cwnorm(1) "
+            "and cwnorm(2) states; the zero-amplitude forward Gaussian remains "
+            "active only to preserve the forward mesh"
+        ),
+        "first_over_average_real": float(np.real(first_over_average)),
+        "first_over_average_imag": float(np.imag(first_over_average)),
+        "fieldregion_over_first_source_spectrum_real": float(
+            np.real(fieldregion_over_first)
+        ),
+        "fieldregion_over_first_source_spectrum_imag": float(
+            np.imag(fieldregion_over_first)
+        ),
+        "fieldregion_only_field_multiplier_real": float(
+            np.real(1.0 / fieldregion_over_first)
+        ),
+        "fieldregion_only_field_multiplier_imag": float(
+            np.imag(1.0 / fieldregion_over_first)
+        ),
+        "two_normalization_state_spatial_residual": residual,
+        "uses_finite_difference_fit": False,
+        "empirical_gradient_rescaling": False,
+    }
+
+
 def run_adjoint(
     fdtd,
     audit,
@@ -564,9 +752,11 @@ def run_adjoint(
     fdtd.load(str(template))
     if int(fdtd.getnamednumber(audit.SOURCE_NAME)) != 1:
         raise RuntimeError("adjoint template lost forward mesh-anchor source")
-    if not bool(fdtd.getnamed(audit.SOURCE_NAME, "enabled")):
-        raise RuntimeError("forward mesh-anchor source is disabled in adjoint")
-    if float(fdtd.getnamed(audit.SOURCE_NAME, "amplitude")) != 0.0:
+    forward_source_enabled = bool(fdtd.getnamed(audit.SOURCE_NAME, "enabled"))
+    if (
+        forward_source_enabled
+        and float(fdtd.getnamed(audit.SOURCE_NAME, "amplitude")) != 0.0
+    ):
         raise RuntimeError("forward mesh-anchor source has nonzero amplitude")
     resources = runtime.configure_session_resources(fdtd)
     fdtd.save(str(project))
@@ -574,12 +764,45 @@ def run_adjoint(
     resource_used = audit.strict_gpu_run(fdtd, "run002_combined_adjoint")
     wall = time.monotonic() - started
     fdtd.save(str(project))
-    electric, grid = monitor_electric(fdtd, PABS_FIELD)
+    log_audit = audit.log_audit(project.parent)
+    auto_shutoff = log_audit.get("final_auto_shutoff")
+    if auto_shutoff is None or float(auto_shutoff) >= 1.0e-5:
+        raise RuntimeError(f"adjoint auto-shutoff gate failed: {auto_shutoff}")
+    fdtd.cwnorm(1)
+    electric_first, grid = monitor_electric(fdtd, PABS_FIELD)
+    fdtd.cwnorm(2)
+    electric_average, average_grid = monitor_electric(fdtd, PABS_FIELD)
+    grid_mismatch = max(
+        float(
+            np.max(
+                np.abs(
+                    np.asarray(grid[key]) - np.asarray(average_grid[key])
+                )
+            )
+        )
+        for key in ("x", "y", "z", "delta_x", "delta_y", "delta_z")
+    )
+    electric, normalization = reconstruct_fieldregion_only_cw(
+        electric_first, electric_average
+    )
+    normalization_residual = float(
+        normalization["two_normalization_state_spatial_residual"]
+    )
+    if grid_mismatch >= 2.0e-18 or normalization_residual >= 1.0e-12:
+        raise RuntimeError(
+            "FieldRegion-only CW reconstruction failed: "
+            f"grid={grid_mismatch:.3e}, residual={normalization_residual:.3e}"
+        )
+    normalization["grid_mismatch_m"] = grid_mismatch
     return {
         "electric": electric,
         "grid": grid,
         "resources": resources,
         "resource_used": resource_used,
+        "solver_mode": "GPU",
+        "forward_source_enabled_in_adjoint": forward_source_enabled,
+        "named_source_normalization": normalization,
+        "log_audit": log_audit,
         "wall_s": wall,
         "project": {
             "path": str(project),
@@ -655,6 +878,11 @@ def main() -> int:
     parser.add_argument("--base-fsp", required=True, type=Path)
     parser.add_argument("--base-sha256", required=True)
     parser.add_argument("--jacobian-dir", required=True, type=Path)
+    parser.add_argument(
+        "--contract",
+        choices=("coarse_production", "selected_production"),
+        default="coarse_production",
+    )
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--gpu-device", default="GPU 4")
     parser.add_argument("--cuda-device", type=int, default=4)
@@ -667,8 +895,15 @@ def main() -> int:
     parser.add_argument("--resume-base-sha256")
     parser.add_argument("--prepare-adjoint-template-only", action="store_true")
     args = parser.parse_args()
+    config = contract_configuration(args.contract)
     base_fsp = checked(args.base_fsp, args.base_sha256, "base production FSP")
-    operator, rho, operator_meta = load_operator(args.jacobian_dir)
+    operator, rho, operator_meta = load_operator(
+        args.jacobian_dir, str(config["operator_status"])
+    )
+    if tuple(rho.shape) != tuple(config["nodal_shape"]):
+        raise RuntimeError(
+            f"operator density shape {rho.shape} != contract {config['nodal_shape']}"
+        )
     resume_base = None
     if args.resume_base_fsp is not None:
         if not args.resume_base_sha256:
@@ -685,6 +920,7 @@ def main() -> int:
                     "status": "PASSED_PRODUCTION_COMBINED_ADFD_ARTIFACT_AUDIT",
                     "base_FSP": {"path": str(base_fsp), "sha256": sha256(base_fsp)},
                     "operator": operator_meta,
+                    "contract": args.contract,
                     "rho_shape": list(rho.shape),
                     "rho_range": [float(np.min(rho)), float(np.max(rho))],
                     "Maxwell_solves": 0,
@@ -723,11 +959,21 @@ def main() -> int:
             rho=rho,
             role="base_nonuniform",
             output=output,
+            imported_object=str(config["imported_object"]),
+            nodes=config["nodes"],
             completed_project=resume_base,
         )
-        base_data, base_mapping = map_q(base["q"])
+        base_data, base_mapping = map_q(
+            base["q"], design_half_span_m=float(config["design_half_span_m"])
+        )
         state, pair, objective, thermal_parts, target_sensitivity = (
-            solve_base_thermal(base_data, rho, args.cuda_device)
+            solve_base_thermal(
+                base_data,
+                rho,
+                args.cuda_device,
+                config["density_forward"],
+                config["density_transpose"],
+            )
         )
         pulled, pullback_records = pullback_q(
             base["q"], base_data, target_sensitivity
@@ -743,7 +989,7 @@ def main() -> int:
                 * base["electric"][..., 0, index]
             )
         template = output / "production_combined_adjoint_template.fsp"
-        profile_scale, base_amplitude, source_meta = prepare_solver_aligned_source(
+        profile_scale, base_amplitude, source_meta = prepare_common_grid_source(
             fdtd,
             audit,
             base_project=Path(base["project"]["path"]),
@@ -769,7 +1015,9 @@ def main() -> int:
                 "source": source_meta,
                 "profile_scale": profile_scale,
                 "base_amplitude": base_amplitude,
-                "Maxwell_timestepping_solves_this_invocation": 0,
+                "Maxwell_timestepping_solves_this_invocation": (
+                    0 if base["reused_completed"] else 1
+                ),
                 "thermal_forward_solves": 1,
                 "thermal_adjoint_solves": 1,
                 "optimization_iterations": 0,
@@ -816,10 +1064,17 @@ def main() -> int:
                 rho=local_rho,
                 role=f"adjoint_aligned_h{args.step:g}_{label}",
                 output=output,
+                imported_object=str(config["imported_object"]),
+                nodes=config["nodes"],
             )
-            local_data, mapping = map_q(forward["q"])
+            local_data, mapping = map_q(
+                forward["q"],
+                design_half_span_m=float(config["design_half_span_m"]),
+            )
             local_state = build_state(
-                local_data, SCENARIO, nodal_to_cell(local_rho)
+                local_data,
+                SCENARIO,
+                config["density_forward"](local_rho),
             )
             linear = PersistentCudaCSR(
                 local_state.system.matrix_W_K, cuda_device=args.cuda_device
@@ -871,6 +1126,12 @@ def main() -> int:
         worst_pullback = max(
             row["transpose_dot_error"] for row in pullback_records.values()
         )
+        worst_auto_shutoff = max(
+            float(base["log_audit"]["final_auto_shutoff"]),
+            float(adjoint["log_audit"]["final_auto_shutoff"]),
+            float(pair_records["plus"]["forward"]["log_audit"]["final_auto_shutoff"]),
+            float(pair_records["minus"]["forward"]["log_audit"]["final_auto_shutoff"]),
+        )
         passed = bool(
             adfd_error < 0.01
             and operator_meta["fresh_transpose_dot_error"] < 1.0e-12
@@ -879,6 +1140,7 @@ def main() -> int:
             and worst_mapping < 0.005
             and worst_residual < 1.0e-8
             and worst_energy < 0.01
+            and worst_auto_shutoff < 1.0e-5
             and optical_meta["forward_adjoint_coordinate_mismatch_m"] < 2.0e-18
         )
         raw = output / "production_combined_adfd_smoke.npz"
@@ -906,9 +1168,10 @@ def main() -> int:
             "passed": passed,
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "scope": (
-                "one nonuniform production physical-rho baseline; one "
+                f"{args.contract}; one nonuniform production physical-rho baseline; one "
                 "adjoint-aligned centered-FD direction at h=0.005"
             ),
+            "contract": args.contract,
             "base_FSP": {"path": str(base_fsp), "sha256": sha256(base_fsp)},
             "operator": operator_meta,
             "scenario": SCENARIO,
@@ -954,6 +1217,7 @@ def main() -> int:
                 "worst_Q_mapping_error": worst_mapping,
                 "worst_thermal_residual": worst_residual,
                 "worst_thermal_energy_balance": worst_energy,
+                "worst_forward_auto_shutoff": worst_auto_shutoff,
                 "forward_adjoint_coordinate_mismatch_m": optical_meta[
                     "forward_adjoint_coordinate_mismatch_m"
                 ],

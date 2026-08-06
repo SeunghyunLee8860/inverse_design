@@ -1,13 +1,15 @@
 # Run 002 — 10 µm Gaussian current maximization
 
-Status: `SELECTED_THERMAL_GRAY_LAW_ADFD_VALIDATED`. A homogeneous-air
+Status: `VALIDATED_SELECTED_OPTICAL_GRADIENT_ADFD`. A homogeneous-air
 source-only Maxwell gate, small CUDA thermal forward/adjoint controls,
 uniform rho=0/0.5/1 scalar-vs-`importnk2` complex-material controls, and a
 matched-volume rho=0.5 production-candidate GPU forward have run. The exact
 material-attributed Q has also passed the full production 3D CUDA thermal/PTE
 forward and implicit-adjoint controls for four interface-G scenarios. No
-optimization solve has started. One nonuniform physical-density combined
-Maxwell/CUDA-thermal directional AD-FD smoke has completed and passed.
+optimization solve has started. The selected `373×373` physical-density
+optical gradient now passes one directional AD-FD smoke at `h=0.005`; its
+corrected one-direction combined Maxwell/CUDA-thermal derivative also passes.
+This is not yet the full latent AD-FD certificate.
 
 This is a new physical contract, not a continuation that silently reuses the
 4 µm CPU-TFSF certificate.  The requested source is a scalar Gaussian at

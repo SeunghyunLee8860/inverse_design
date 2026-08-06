@@ -361,7 +361,10 @@ def fieldregion_profile(
 
 
 def invert_fieldregion_linear_collocation(
-    grid: dict[str, np.ndarray], profile: np.ndarray
+    grid: dict[str, np.ndarray],
+    profile: np.ndarray,
+    *,
+    positive_extension_coordinate_m: dict[str, float] | None = None,
 ) -> tuple[np.ndarray, dict[str, np.ndarray], dict[str, object]]:
     """Solve the component-axis common-grid interpolation exactly.
 
@@ -392,8 +395,17 @@ def invert_fieldregion_linear_collocation(
     }
     for axis in "xyz":
         base = np.asarray(grid[axis], float)
+        extension = (
+            float(positive_extension_coordinate_m[axis])
+            if positive_extension_coordinate_m is not None
+            else float(base[-1] + (base[-1] - base[-2]))
+        )
+        if not extension > base[-1]:
+            raise RuntimeError(
+                f"{axis} positive extension {extension} does not exceed {base[-1]}"
+            )
         extended_grid[axis] = np.append(
-            base, base[-1] + (base[-1] - base[-2])
+            base, extension
         )
     extended_shape = tuple(
         extended_grid[axis].size for axis in "xyz"
@@ -484,6 +496,9 @@ def invert_fieldregion_linear_collocation(
         "components": records,
         "empirical_normalization": False,
         "gradient_rescaling": False,
+        "positive_extension_coordinates_from_solver_mesh": (
+            positive_extension_coordinate_m is not None
+        ),
     }
 
 

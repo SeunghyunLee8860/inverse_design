@@ -1,5 +1,28 @@
 # Latest photothermal validation status
 
+## Run 002 selected-grid optical-gradient AD–FD
+
+- Status: `VALIDATED_SELECTED_OPTICAL_GRADIENT_ADFD` for one selected
+  `373×373` physical-density direction at `h=0.005`; optimization remains
+  unstarted.
+- The previously preserved optical failure (`5.326339%`) was traced to CW
+  source normalization, not to the component-specific density-to-Yee
+  material Jacobian. The zero-amplitude forward Gaussian remained enabled as
+  an immutable auto-mesh anchor, so `cwnorm(1)` selected its spectrum instead
+  of the active FieldRegion spectrum.
+- Reconstructing the FieldRegion-only CW field from the same monitor data at
+  `cwnorm(1)` and `cwnorm(2)` gives a spatial residual of `2.526e-16`. This
+  uses no FD-fitted scale, empirical normalization, or gradient rescaling.
+- Scalar absorbed-power, spatially weighted optical-PTE, and corrected
+  one-direction combined AD–FD relative errors are respectively
+  `2.786e-6`, `2.955e-5`, and `2.820e-5`, all below the `1%` gate.
+- Broader selected-grid directions/steps, coupled optical gray-law
+  sensitivity, exact-binary DRC, and full latent/filter/projection AD–FD
+  remain required before optimization.
+- Report, JSON, CSV, plot, and raw-artifact provenance:
+  `optimization_runs/run_002_gaussian10_w8p5_current_max/results/` and
+  `optimization_runs/run_002_gaussian10_w8p5_current_max/manifests/RAW_ARTIFACT_MANIFEST.json`.
+
 ## Fixed Device-A Lumerical coordinate convention
 
 - Every published Device-A geometry and cross-case map now uses one fixed

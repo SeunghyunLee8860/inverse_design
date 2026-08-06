@@ -915,8 +915,8 @@
       "sha256": "dd9ec1b65dc039e5109149e82e11c593c8b7e1c3e7118417c374704c479adab8"
     }
   },
-  "current_promoted_status": "VALIDATED_SELECTED_THERMAL_GRAY_LAW_ADFD",
-  "current_promoted_at_utc": "2026-08-06T17:31:06.893129+00:00",
+  "current_promoted_status": "VALIDATED_SELECTED_OPTICAL_GRADIENT_ADFD",
+  "current_promoted_at_utc": "2026-08-06T20:12:17.919226+00:00",
   "selected_production_thermal_mapping": {
     "status": "VALIDATED_SELECTED_PRODUCTION_THERMAL_MAPPING",
     "raw_artifacts_committed_to_git": false,
@@ -1004,6 +1004,40 @@
           "sha256": "d7f5893b788ef6e2927a37dc9878ab676fe7c465735f84137c19b393d982394d"
         }
       }
+    }
+  },
+  "selected_optical_gradient_adfd": {
+    "status": "VALIDATED_SELECTED_OPTICAL_GRADIENT_ADFD",
+    "raw_artifacts_committed_to_git": false,
+    "optical_diagnostic": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_physical_rho_smoke_20260806/selected_optical_gradient_named_source_normalization.json",
+      "size_bytes": 5248,
+      "sha256": "08eacc93bbe4f7bf706489fabf059f4821e5a5bbedf8194ec83305fd94bc4932"
+    },
+    "corrected_gradient_NPZ": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_physical_rho_smoke_20260806/selected_optical_gradient_named_source_normalization.npz",
+      "size_bytes": 5256747,
+      "sha256": "30fd96920acbceced4ea0a353c9d6e0e0869dd7f641cd9815ef39d83897a9f0d"
+    },
+    "scalar_decomposition": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_scalar_pq_adjoint_common_grid_20260806/selected_scalar_pq_fd_decomposition.json",
+      "size_bytes": 6410,
+      "sha256": "e5de75dfab426a34d419df20284b41937ce4f64105c3928187c06d473d5afea8"
+    },
+    "combined_decomposition": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_physical_rho_smoke_20260806/selected_combined_failure_decomposition.json",
+      "size_bytes": 2718,
+      "sha256": "0cc1a686a889fa1cf59abf7b062c2d79ce58052677399004143daf5a5e10a940"
+    },
+    "adjoint_FSP": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_physical_rho_smoke_20260806/production_combined_adjoint_gpu.fsp",
+      "size_bytes": 1905760590,
+      "sha256": "4f966286b1760fd2695be22ba7d405b704582356fbe9c6402ccca7536e8fd03a"
+    },
+    "base_FSP": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_adjoint_template_v2_20260806/base_nonuniform.fsp",
+      "size_bytes": 784520147,
+      "sha256": "4df9fcc8e5d8ac40687a58308413ae08c6bec77cd11bd58dd21307fb5c12f6f3"
     }
   }
 }

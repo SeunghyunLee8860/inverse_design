@@ -30,5 +30,13 @@ The
 analytic setup audit is produced in memory by `run_optimization.py
 --setup-audit`.
 
+The selected-grid optical-gradient certificate is published in
+`SELECTED_OPTICAL_GRADIENT_ADFD_REPORT.md`. It preserves the earlier `5.326%`
+failure as a diagnostic and records the corrected scalar-PQ, spatially
+weighted optical-PTE, and one-direction combined AD-FD errors. The correction
+uses the FieldRegion-only CW spectrum reconstructed from the two official
+normalization states; it does not fit finite differences or rescale a
+gradient. Broader directions and full latent AD-FD remain pending.
+
 All referenced raw FSP/NPZ/sparse-matrix paths, byte sizes, and SHA-256 values
 are recorded in the manifest. Raw solver artifacts remain outside Git.
