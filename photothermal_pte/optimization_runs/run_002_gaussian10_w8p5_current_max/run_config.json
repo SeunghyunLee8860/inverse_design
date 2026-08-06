@@ -129,7 +129,7 @@
   },
   "optimizer": {
     "algorithm": "NLopt_LD_MMA",
-    "driver_status": "NOMINAL_BETA2_MMA_PILOT_ITERATION_001_ACCEPTED",
+    "driver_status": "NOMINAL_BETA2_MMA_PILOT_ITERATION_002_ACCEPTED",
     "initial_FOM_strategy": [
       "two_signed_objective_runs",
       "fixed_objective_nondimensionalization",
@@ -139,7 +139,7 @@
       "best_feasible_checkpoint"
     ],
     "maximum_iterations": 5,
-    "accepted_iterations": 1,
+    "accepted_iterations": 2,
     "current_beta": 2.0,
     "fixed_objective_scale_W_per_A": 1000000000000.0,
     "initial_latent_move_limit": 0.02,
@@ -170,6 +170,6 @@
   "external_inputs": [],
   "execution": {
     "enabled": true,
-    "reason": "five-direction physical-rho and two-direction full latent/filter/projection AD-FD passed; nominal beta=2 MMA iteration 1 improved the actual GPU-Maxwell/CUDA-thermal objective by 8.993%. Exact binary DRC and robust four-interface evaluation remain before fabrication promotion"
+    "reason": "five-direction physical-rho and two-direction full latent/filter/projection AD-FD passed; nominal beta=2 MMA iterations 1 and 2 improved the actual GPU-Maxwell/CUDA-thermal objective by 18.062% total. Exact binary DRC and robust four-interface evaluation remain before fabrication promotion"
   }
 }

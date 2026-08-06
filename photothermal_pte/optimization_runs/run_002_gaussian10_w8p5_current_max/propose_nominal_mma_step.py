@@ -34,12 +34,15 @@ def main() -> int:
     parser.add_argument("--preparation-raw", type=Path, required=True)
     parser.add_argument("--preparation-raw-sha256", required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--iteration", type=int, default=1)
     parser.add_argument("--initial-step", type=float, default=0.02)
     parser.add_argument("--fixed-objective-scale-W-per-A", type=float, default=1.0e8)
     args = parser.parse_args()
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
         raise RuntimeError(f"refusing non-empty output directory: {output}")
+    if args.iteration < 1:
+        raise ValueError("iteration must be positive")
     output.mkdir(parents=True, exist_ok=True)
     prep_path = args.preparation_result.expanduser().resolve()
     prep = json.loads(prep_path.read_text())
@@ -84,7 +87,8 @@ def main() -> int:
     rho1 = mapping.physical(candidate, beta)
     if np.min(candidate) < 0.0 or np.max(candidate) > 1.0:
         raise RuntimeError("MMA candidate violates bounds")
-    proposal_path = output / "nominal_mma_iteration_001_proposal.npz"
+    tag = f"{args.iteration:03d}"
+    proposal_path = output / f"nominal_mma_iteration_{tag}_proposal.npz"
     np.savez_compressed(
         proposal_path,
         latent= candidate,
@@ -95,7 +99,7 @@ def main() -> int:
         certified_gradient_latent_A=gradient_A,
     )
     result = {
-        "status": "PROPOSED_NOMINAL_MMA_ITERATION_001",
+        "status": f"PROPOSED_NOMINAL_MMA_ITERATION_{tag}",
         "passed": True,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "algorithm": "NLopt_LD_MMA",
@@ -131,13 +135,13 @@ def main() -> int:
         "actual_candidate_objective": "not evaluated by this proposal step",
         "inputs": {"preparation_result": artifact(prep_path), "preparation_NPZ": artifact(raw_path)},
         "raw_artifact": artifact(proposal_path),
-        "optimizer_iteration_proposed": 1,
-        "optimizer_iteration_evaluated": 0,
+        "optimizer_iteration_proposed": args.iteration,
+        "optimizer_iteration_evaluated": args.iteration - 1,
         "Maxwell_solves": 0,
         "thermal_solves": 0,
         "gradient_rescaling": False,
     }
-    result_path = output / "nominal_mma_iteration_001_proposal_result.json"
+    result_path = output / f"nominal_mma_iteration_{tag}_proposal_result.json"
     result_path.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result, indent=2))
     return 0

@@ -1,14 +1,14 @@
 {
   "status": "RUNNING_NOMINAL_MMA_PILOT",
-  "generated_at_utc": "2026-08-06T22:17:26.459915+00:00",
+  "generated_at_utc": "2026-08-06T22:34:01.913330+00:00",
   "optimization_started": true,
-  "accepted_iterations": 1,
+  "accepted_iterations": 2,
   "current_beta": 2.0,
   "scenario": "grown_grown nominal",
   "signed_objective": "+I_PTE/P_incident",
   "baseline_objective_A": 1.351217541491766e-20,
   "iteration_001_objective_A": 1.472735412128942e-20,
-  "relative_improvement": 0.08993212928764839,
+  "relative_improvement": 0.18062397446213913,
   "fixed_nondimensionalization": {
     "formula": "1e+12 W/A * I_PTE / P_incident",
     "scale_W_per_A": 1000000000000.0,
@@ -76,12 +76,37 @@
       "gradient_optical_physical_L2_A": 6.449712048640017e-22,
       "gradient_thermal_physical_L2_A": 5.445675967067382e-23,
       "max_abs_latent_step": 0.0070493285244960235
+    },
+    {
+      "iteration": 2,
+      "accepted": true,
+      "beta": 2.0,
+      "objective_A": 1.5952798241989692e-20,
+      "objective_A_per_incident_W": 1.1540805669550781e-07,
+      "scaled_FOM": 115408.0566955078,
+      "relative_improvement_from_iteration0": 0.18062397446213913,
+      "P_Q_W": 7.147371806317635e-14,
+      "P_six_W": 7.147407343400112e-14,
+      "optical_closure": 4.97202422780426e-06,
+      "thermal_residual": 9.590889995824063e-11,
+      "thermal_energy_balance": 1.0575777686897565e-12,
+      "latent_min": 0.3613474076147207,
+      "latent_max": 0.631271646269064,
+      "physical_density_min": 0.33643602604291195,
+      "physical_density_max": 0.6546379412736327,
+      "physical_density_mean": 0.4983039500400544,
+      "gray_fraction_0p05_0p95": 1.0,
+      "gradient_latent_L2_A": 8.896308877818913e-22,
+      "gradient_physical_L2_A": 6.947601803554206e-22,
+      "gradient_optical_physical_L2_A": 6.510581962875183e-22,
+      "gradient_thermal_physical_L2_A": 5.45791674156323e-23,
+      "max_abs_latent_step": 0.007101846318292082
     }
   ],
   "checkpoint": {
-    "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/checkpoints/iteration_001_accepted_state.npz",
-    "size_bytes": 460266,
-    "sha256": "ea7304c747dbbe88c78c136457a372fe974b9d26cf635f8bcdc151d3a9d8b3d1"
+    "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/checkpoints/iteration_002_accepted_state.npz",
+    "size_bytes": 461514,
+    "sha256": "8a2da15a430ff19992c19f9d6afee7c56a317d91eca573885c31274691fe6617"
   },
   "raw_artifacts": {
     "baseline_result": {
@@ -113,12 +138,37 @@
       "path": "/home/seunghyun/tairte4/raw_artifacts/run002_nominal_mma_iteration_001_evaluation_20260806/selected_full_latent_adjoint_preparation.npz",
       "size_bytes": 7264508,
       "sha256": "dc8297fbc32d95d87bdc9bcd0f135b751f25b3c01efcd6d63b7c985f31594968"
+    },
+    "iteration_002": {
+      "proposal_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_nominal_mma_iteration_002_proposal_20260806/nominal_mma_iteration_002_proposal_result.json",
+        "size_bytes": 2744,
+        "sha256": "6939d6df469a1e0b2e6dfbd330429a689d54dadaec5e7f8e00d8c2696d356b20"
+      },
+      "proposal_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_nominal_mma_iteration_002_proposal_20260806/nominal_mma_iteration_002_proposal.npz",
+        "size_bytes": 6127712,
+        "sha256": "46add062cd60750b5d0bb5f8ff8cf7ff8d879eded057cce4c12ab785a8b11a65"
+      },
+      "evaluation_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_nominal_mma_iteration_002_evaluation_20260806/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10575,
+        "sha256": "b6fcb8baecc7eba09a5c9d3f0bbafc044a51ba0021e7c97d5b8068a35e203542"
+      },
+      "evaluation_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_nominal_mma_iteration_002_evaluation_20260806/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7268544,
+        "sha256": "9245a0167587932f1ff2d237f989b607e67f96de29b2bcbfd89cb537c0289206"
+      }
     }
   },
   "warnings": [
     "continuous beta=2 nominal pilot; not a final binary design",
+    "restartable one-step LD_MMA proposals; internal MMA asymptote history is not persisted between checkpoints",
     "uniform-45-degree weighting surrogate; not a full electrode simulation",
     "grown/grown is one named interface scenario, not a final experiment prediction",
     "exact binary DRC and robust four-interface evaluation remain"
-  ]
+  ],
+  "current_objective_A": 1.5952798241989692e-20,
+  "last_iteration_relative_improvement": 0.08320870881544211
 }

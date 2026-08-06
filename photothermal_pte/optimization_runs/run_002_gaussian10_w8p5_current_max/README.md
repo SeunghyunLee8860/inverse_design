@@ -212,3 +212,12 @@ not a per-iteration scale. This is still a continuous grown/grown,
 uniform-45-degree weighting-surrogate pilot. Exact binary DRC, the four named
 interface scenarios, and full-electrode validation remain before final design
 promotion.
+
+Accepted iteration 2 increases the objective again to
+`1.595279824199e-20 A`: `8.3209%` above iteration 1 and `18.0624%` above the
+initial state. The fixed objective scale and beta remain unchanged.
+
+For server-safe restartability, every accepted update is a one-step NLopt
+`LD_MMA` proposal recomputed from the latest certified gradient. NLopt's
+internal asymptote history is not serialized between checkpoints; this pilot
+must therefore not be described as a single uninterrupted stateful MMA run.

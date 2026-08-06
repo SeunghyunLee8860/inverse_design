@@ -52,8 +52,8 @@ def main() -> int:
         "also passed. The selected-grid Maxwell optical adjoint and five-direction "
         "combined physical-density AD-FD pass after named-source CW normalization "
         "was fixed. Full latent/filter/projection AD-FD also passes. Continuous "
-        "optimization is numerically authorized and nominal beta=2 MMA iteration 1 "
-        "has been accepted with an append-only checkpoint; "
+        "optimization is numerically authorized and nominal beta=2 restartable MMA "
+        "iterations 1 and 2 have been accepted with SHA-pinned append-only checkpoints; "
         "exact-binary DRC fixtures remain required before final fabrication promotion"
     )
     return 0
