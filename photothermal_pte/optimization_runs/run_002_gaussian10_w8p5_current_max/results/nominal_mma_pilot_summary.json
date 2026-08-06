@@ -1,14 +1,14 @@
 {
   "status": "RUNNING_NOMINAL_MMA_PILOT",
-  "generated_at_utc": "2026-08-06T22:52:18.057361+00:00",
+  "generated_at_utc": "2026-08-06T23:07:15.842887+00:00",
   "optimization_started": true,
-  "accepted_iterations": 3,
+  "accepted_iterations": 4,
   "current_beta": 2.0,
   "scenario": "grown_grown nominal",
   "signed_objective": "+I_PTE/P_incident",
   "baseline_objective_A": 1.351217541491766e-20,
   "iteration_001_objective_A": 1.472735412128942e-20,
-  "relative_improvement": 0.27208581179629515,
+  "relative_improvement": 0.3643225572912238,
   "fixed_nondimensionalization": {
     "formula": "1e+12 W/A * I_PTE / P_incident",
     "scale_W_per_A": 1000000000000.0,
@@ -126,12 +126,37 @@
       "gradient_optical_physical_L2_A": 6.57432109742304e-22,
       "gradient_thermal_physical_L2_A": 5.471078138573635e-23,
       "max_abs_latent_step": 0.007152619313949782
+    },
+    {
+      "iteration": 4,
+      "accepted": true,
+      "beta": 2.0,
+      "objective_A": 1.8434965716648066e-20,
+      "objective_A_per_incident_W": 1.3336491418832783e-07,
+      "scaled_FOM": 133364.91418832785,
+      "relative_improvement_from_iteration0": 0.3643225572912238,
+      "P_Q_W": 7.126956064039212e-14,
+      "P_six_W": 7.126986835476013e-14,
+      "optical_closure": 4.3175941687228825e-06,
+      "thermal_residual": 9.8428175593009e-11,
+      "thermal_energy_balance": 1.136399863370644e-13,
+      "latent_min": 0.3508018754516784,
+      "latent_max": 0.6343916991448801,
+      "physical_density_min": 0.32365073658390103,
+      "physical_density_max": 0.6604901617980834,
+      "physical_density_mean": 0.4964421203904526,
+      "gray_fraction_0p05_0p95": 1.0,
+      "gradient_latent_L2_A": 9.006476526785396e-22,
+      "gradient_physical_L2_A": 7.079238204335595e-22,
+      "gradient_optical_physical_L2_A": 6.640721332483201e-22,
+      "gradient_thermal_physical_L2_A": 5.485201559149405e-23,
+      "max_abs_latent_step": 0.007201093859222851
     }
   ],
   "checkpoint": {
-    "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/checkpoints/iteration_003_accepted_state.npz",
-    "size_bytes": 462473,
-    "sha256": "3167d8487f7056996a7a547075863e8af859491b622c1bcf5d4b79cac313da5f"
+    "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/checkpoints/iteration_004_accepted_state.npz",
+    "size_bytes": 463519,
+    "sha256": "5b4937037c0b44fecca2438ad08630816629f7d79a28b256dbe06780281180fa"
   },
   "raw_artifacts": {
     "baseline_result": {
@@ -207,6 +232,28 @@
         "size_bytes": 7272452,
         "sha256": "32f507d0e8b6404aadaf304f935fef2e70247ce40bdb1c092619cf0569a8ac38"
       }
+    },
+    "iteration_004": {
+      "proposal_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_nominal_mma_iteration_004_proposal_20260806/nominal_mma_iteration_004_proposal_result.json",
+        "size_bytes": 2759,
+        "sha256": "7bcc0455b5c7cb38cf067c6ad2d9b206c6ad0ceee27cef141afef81b47c665ab"
+      },
+      "proposal_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_nominal_mma_iteration_004_proposal_20260806/nominal_mma_iteration_004_proposal.npz",
+        "size_bytes": 6137316,
+        "sha256": "7917050afef643e32a4f063f938e7a87390b91b4712e8868987ec9dd9def5b78"
+      },
+      "evaluation_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_nominal_mma_iteration_004_evaluation_20260806/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10542,
+        "sha256": "0cf1378db7a13399096546c4e9f6245a77aecb9f6be2a85c60c4f813207332ae"
+      },
+      "evaluation_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_nominal_mma_iteration_004_evaluation_20260806/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7274582,
+        "sha256": "4b58d662457ea2ea20bda0e6195672162e82e03acc7276a00f39a22ca68e5ef5"
+      }
     }
   },
   "warnings": [
@@ -216,6 +263,6 @@
     "grown/grown is one named interface scenario, not a final experiment prediction",
     "exact binary DRC and robust four-interface evaluation remain"
   ],
-  "current_objective_A": 1.7188646631819474e-20,
-  "last_iteration_relative_improvement": 0.0774690666228624
+  "current_objective_A": 1.8434965716648066e-20,
+  "last_iteration_relative_improvement": 0.07250827313660733
 }

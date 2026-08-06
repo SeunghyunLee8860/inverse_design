@@ -226,3 +226,7 @@ Accepted iteration 3 reaches `1.718864663182e-20 A`, improving by `7.7469%`
 from iteration 2 and by `27.2086%` from the initial state. Its GPU-only optical
 closure is `4.6535e-6`; CUDA thermal residual and energy-balance errors are
 `9.8883e-11` and `1.2735e-12`, respectively.
+
+Accepted iteration 4 reaches `1.843496571665e-20 A`, improving by `7.2508%`
+from iteration 3 and by `36.4323%` from the initial state. Optical closure,
+CUDA thermal residual, and energy balance remain within their frozen gates.
