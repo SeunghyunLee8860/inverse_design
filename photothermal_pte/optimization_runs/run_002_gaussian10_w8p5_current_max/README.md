@@ -1,6 +1,6 @@
 # Run 002 — 10 µm Gaussian current maximization
 
-Status: `PRODUCTION_FIXED_Q_THERMAL_MATERIAL_ADFD_VALIDATED`. A homogeneous-air
+Status: `PRODUCTION_THERMAL_TO_NATIVE_YEE_PULLBACK_VALIDATED`. A homogeneous-air
 source-only Maxwell gate, small CUDA thermal forward/adjoint controls,
 uniform rho=0/0.5/1 scalar-vs-`importnk2` complex-material controls, and a
 matched-volume rho=0.5 production-candidate GPU forward have run. The exact
@@ -127,3 +127,12 @@ endpoint the directional AD-FD error falls from `3.563e-5` at `h=0.01` to
 This check includes the rho-dependent gray bulk kappa and TaIrTe4/design
 interface G, but freezes Maxwell Q to isolate the thermal branch. It therefore
 does not replace the pending combined Maxwell/thermal AD-FD.
+
+The thermal objective derivative has now also been pulled back through the
+exact conservative material-intersection deposition to the native component
+`Qx`, `Qy`, and `Qz` Yee grids. The memory-bounded transpose uses the same
+one-dimensional overlap operators as the forward deposition and has a worst
+random dot-test error of `4.097e-15`. Its Cauchy-normalized objective identity
+error is `5.104e-14`; the raw relative metric is retained only as a near-null
+diagnostic for the centered rho=0.5 control. No Maxwell solve, gradient
+rescaling, design-window selection, or optimization occurred in this gate.

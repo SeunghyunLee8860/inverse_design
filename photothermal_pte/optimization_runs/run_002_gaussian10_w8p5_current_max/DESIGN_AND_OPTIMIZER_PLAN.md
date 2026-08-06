@@ -3,8 +3,10 @@
 This document remains the reviewed optimization plan. Source-only, production
 forward, component-Yee mapping, literal material-Q attribution, exact 3D
 thermal deposition, production CUDA thermal/PTE, and fixed-Q thermal-material
-AD-FD gates have passed. Combined Maxwell/thermal AD-FD and the one-time
-coarse-gradient window selection still block optimizer execution.
+AD-FD gates have passed. The exact thermal-adjoint pullback to native
+component-Yee absorption grids has also passed. Combined Maxwell/thermal AD-FD
+and the one-time coarse-gradient window selection still block optimizer
+execution.
 
 ## Physical layout contract
 
@@ -114,12 +116,10 @@ pair rather than repeated ±FD solves.
 
 ## Remaining fail-closed sequence
 
-1. build the thermal-adjoint pullback from material-resolved thermal Q to the
-   component-specific native Yee absorption grids;
-2. run one representative Gaussian combined physical-density Maxwell/thermal
+1. run one representative Gaussian combined physical-density Maxwell/thermal
    AD-FD smoke without gradient rescaling;
-3. use the validated physical gradient on the coarse canvas to select and
+2. use the validated physical gradient on the coarse canvas to select and
    freeze the smallest reviewed asymmetric design window;
-4. certify the finite nonperiodic filter/projection JVP/VJP and exact-binary
+3. certify the finite nonperiodic filter/projection JVP/VJP and exact-binary
    DRC fixtures on that window;
-5. only then enable a short nominal signed-objective MMA pilot.
+4. only then enable a short nominal signed-objective MMA pilot.

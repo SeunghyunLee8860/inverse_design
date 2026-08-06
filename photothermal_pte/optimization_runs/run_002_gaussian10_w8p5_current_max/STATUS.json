@@ -1,7 +1,7 @@
 {
   "run_id": "run_002_gaussian10_w8p5_current_max",
-  "status": "PRODUCTION_FIXED_Q_THERMAL_MATERIAL_ADFD_VALIDATED",
+  "status": "PRODUCTION_THERMAL_TO_NATIVE_YEE_PULLBACK_VALIDATED",
   "last_updated_utc": "2026-08-06T09:10:00+00:00",
   "optimization_started": false,
-  "message": "All four production CUDA thermal/PTE scenarios passed, followed by fixed-Maxwell-Q thermal-material AD-FD at the grown/grown and evaporated/evaporated interface endpoints. The 201x201 coarse nodal-to-200x200 thermal-cell mapping has worst transpose error 1.811e-15. Thermal-material directional errors are 2.229e-6 (grown/grown, h=0.0025) and 1.119e-5 (evaporated/evaporated, h=0.005). The original grown/grown fail JSON is immutable and preserved; its failure was only an obsolete over-strict mapping-FD classification. Combined Maxwell AD-FD and design-window selection still block optimization."
+  "message": "Production CUDA thermal/PTE, fixed-Maxwell-Q thermal-material AD-FD, and the exact thermal-to-native component-Yee pullback have passed. The pullback uses the transpose of the same material-intersection deposition as the forward source; the worst Qx/Qy/Qz transpose dot error is 4.097e-15, the Cauchy-normalized objective identity error is 5.104e-14, and no gradient rescaling was used. The centered rho=0.5 current remains an explicitly near-null diagnostic. Combined Maxwell AD-FD and design-window selection still block optimization."
 }

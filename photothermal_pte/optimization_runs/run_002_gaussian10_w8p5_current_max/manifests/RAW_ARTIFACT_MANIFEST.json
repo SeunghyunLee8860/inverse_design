@@ -638,5 +638,27 @@
       }
     },
     "preserved_raw_failure": true
+  },
+  "production_thermal_to_native_yee_pullback": {
+    "status": "VALIDATED_PRODUCTION_THERMAL_PTE_TO_NATIVE_YEE_PULLBACK",
+    "raw_artifacts_committed_to_git": false,
+    "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_thermal_to_native_yee_pullback_grown_grown_20260806",
+    "artifacts": [
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_thermal_to_native_yee_pullback_grown_grown_20260806/production_thermal_to_native_yee_pullback_result.json",
+        "size_bytes": 5756,
+        "sha256": "624292ca0edcaa9939fc9f46e45c7486f9e343e84f6aee9e31f65f4242a9be80"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_thermal_to_native_yee_pullback_grown_grown_20260806/thermal_to_native_yee_pullback_grown_grown.npz",
+        "size_bytes": 200861979,
+        "sha256": "8ba9ee2cb62e84937a7a97e64768cc7e4567525aadffe3c2313038758d71c79c"
+      }
+    ],
+    "native_Q": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_rho05_forward_v2_immutable_20260806/production_candidate_native_q.npz",
+      "size_bytes": 71887910,
+      "sha256": "bcce54b1f34e7621905d773b7a3af639d9fcd909ad3dede3801d9e1ca051225f"
+    }
   }
 }

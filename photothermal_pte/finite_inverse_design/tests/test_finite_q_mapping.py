@@ -10,6 +10,7 @@ from photothermal_pte.finite_inverse_design.finite_q_mapping import (
     nodal_control_volume_edges,
     project_remap_to_nearest_material_support,
     project_remap_to_material_support_along_axis,
+    transpose_material_intersection_density_separable,
 )
 
 
@@ -188,6 +189,15 @@ def test_material_intersection_remap_does_not_force_cut_cell_power_into_material
     assert separable == pytest.approx(target, rel=2e-13, abs=1e-14)
     assert np.sum(overlap * source) == pytest.approx(2.5)
     assert audit["relative_power_error"] < 2e-13
+    separable_transpose = transpose_material_intersection_density_separable(
+        target_density_sensitivity=sensitivity,
+        source_edges_m=source_edges,
+        target_edges_m=target_edges,
+        target_material_support_mask=support,
+    )
+    assert separable_transpose == pytest.approx(
+        remap.transpose(sensitivity), rel=2e-13, abs=1e-14
+    )
 
 
 def test_nodal_edges_match_trapezoid_length_and_nonzero_box() -> None:

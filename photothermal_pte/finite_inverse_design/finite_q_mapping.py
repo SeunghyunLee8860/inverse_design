@@ -466,6 +466,63 @@ def apply_material_intersection_density_separable(
     }
 
 
+def transpose_material_intersection_density_separable(
+    *,
+    target_density_sensitivity: np.ndarray,
+    source_edges_m: tuple[np.ndarray, np.ndarray, np.ndarray],
+    target_edges_m: tuple[np.ndarray, np.ndarray, np.ndarray],
+    target_material_support_mask: np.ndarray,
+) -> np.ndarray:
+    """Apply the exact transpose of the memory-bounded intersection map.
+
+    The forward map returns target *density*, so the transpose first divides
+    the target-density sensitivity by target-cell volume, applies the literal
+    material support, and then contracts the three Cartesian overlap
+    operators in reverse order.  It does not construct a full 3-D Kronecker
+    matrix and does not renormalize uncovered source cells.
+    """
+
+    source_edges = tuple(
+        np.asarray(axis, float).reshape(-1) for axis in source_edges_m
+    )
+    target_edges = tuple(
+        np.asarray(axis, float).reshape(-1) for axis in target_edges_m
+    )
+    source_shape = tuple(axis.size - 1 for axis in source_edges)
+    target_shape = tuple(axis.size - 1 for axis in target_edges)
+    sensitivity = np.asarray(target_density_sensitivity, float)
+    support = np.asarray(target_material_support_mask, bool)
+    if sensitivity.shape != target_shape:
+        raise ValueError(
+            f"target sensitivity shape {sensitivity.shape} != {target_shape}"
+        )
+    if support.shape != target_shape:
+        raise ValueError(f"support shape {support.shape} != {target_shape}")
+    if np.any(~np.isfinite(sensitivity)):
+        raise ValueError("target sensitivity must be finite")
+
+    ox, oy, oz = (
+        _overlap_1d(target_axis, source_axis)
+        for target_axis, source_axis in zip(target_edges, source_edges)
+    )
+    weighted_target = np.where(
+        support,
+        sensitivity / _volumes(target_edges),
+        0.0,
+    )
+    source_sensitivity = np.zeros(source_shape, float)
+    for source_z in range(source_shape[2]):
+        weights_z = np.asarray(oz.getcol(source_z).toarray()).reshape(-1)
+        if not np.any(weights_z):
+            continue
+        target_xy = np.tensordot(weighted_target, weights_z, axes=(2, 0))
+        source_x_target_y = ox.T @ target_xy
+        source_sensitivity[:, :, source_z] = (
+            oy.T @ source_x_target_y.T
+        ).T
+    return source_sensitivity
+
+
 def project_remap_to_material_support_along_axis(
     remap: ConservativeEmbeddingRemap,
     *,
