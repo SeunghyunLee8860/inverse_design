@@ -221,3 +221,8 @@ For server-safe restartability, every accepted update is a one-step NLopt
 `LD_MMA` proposal recomputed from the latest certified gradient. NLopt's
 internal asymptote history is not serialized between checkpoints; this pilot
 must therefore not be described as a single uninterrupted stateful MMA run.
+
+Accepted iteration 3 reaches `1.718864663182e-20 A`, improving by `7.7469%`
+from iteration 2 and by `27.2086%` from the initial state. Its GPU-only optical
+closure is `4.6535e-6`; CUDA thermal residual and energy-balance errors are
+`9.8883e-11` and `1.2735e-12`, respectively.
