@@ -64,3 +64,10 @@ rho=0.5 and rho=1 component-grid spatial-Q NRMSE values are at roundoff level,
 and their matched-volume six-face closure errors are below 0.016%.  See
 `results/COMPLEX_MATERIAL_EQUIVALENCE_REPORT.md`.  This does not certify the
 nonuniform density-to-component-Yee Jacobian; optimization remains disabled.
+
+A subsequent isolated-control smoke test constructed explicit sparse
+component operators for a nonuniform 101×101 complex density.  Its worst
+mapping-only centered-FD error is `1.34e-9`, its worst JVP/VJP dot error is
+`7.32e-15`, and its E/index coordinate mismatch is `8.48e-22 m`.  This proves
+the construction method but is deliberately not promoted as the final
+production-geometry Jacobian.

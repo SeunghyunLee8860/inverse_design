@@ -346,5 +346,37 @@
         }
       ]
     }
-  ]
+  ],
+  "nonuniform_complex_component_yee_jacobian_smoke": {
+    "status": "VALIDATED_NONUNIFORM_COMPLEX_COMPONENT_YEE_JACOBIAN_SMOKE",
+    "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_nonuniform_complex_yee_jacobian_smoke_20260806",
+    "Maxwell_solves": 0,
+    "artifacts": [
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_nonuniform_complex_yee_jacobian_smoke_20260806/J_x.npz",
+        "size_bytes": 1685391,
+        "sha256": "44e7c2c12c1f77dc2ca399dc6bdd43f9ee3c4ec7a153e58238db96760af03cd9"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_nonuniform_complex_yee_jacobian_smoke_20260806/J_y.npz",
+        "size_bytes": 1671134,
+        "sha256": "cf5b8809ae2fa999810704690abc77ccc34f02d2a19cffcfce1b86250c16bc88"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_nonuniform_complex_yee_jacobian_smoke_20260806/J_z.npz",
+        "size_bytes": 808057,
+        "sha256": "e75786bc0fae07ebf57cb1ff93a19a9f06a8fdeba44f2dd1693388753528daa6"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_nonuniform_complex_yee_jacobian_smoke_20260806/component_yee_coordinates_and_density.npz",
+        "size_bytes": 83279,
+        "sha256": "014a35b4dc806fca2ca08a62cbba9c5f9d0108c6d61cb1b8db79d94f80a690d6"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_nonuniform_complex_yee_jacobian_smoke_20260806/component_yee_jacobian_result.json",
+        "size_bytes": 6790,
+        "sha256": "dfdcc08875d343021b52d6baf4288399e03af16f731e71b11ec7f9d6897b5b34"
+      }
+    ]
+  }
 }
