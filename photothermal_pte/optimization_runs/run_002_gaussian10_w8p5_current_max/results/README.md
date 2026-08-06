@@ -15,6 +15,10 @@ or optimizer. The
 finite production filter/projection certificate validates the 373×373 mapping
 and exact transpose without a solver; exact-binary DRC and full latent AD-FD
 remain pending. The
+selected production optical-chain certificate records the actual 18.6 µm,
+373×373 GPU forward and component-specific density-to-Yee Jacobians. It does
+not promote the earlier 201×201 thermal/combined smoke to the selected grid.
+The
 analytic setup audit is produced in memory by `run_optimization.py
 --setup-audit`.
 

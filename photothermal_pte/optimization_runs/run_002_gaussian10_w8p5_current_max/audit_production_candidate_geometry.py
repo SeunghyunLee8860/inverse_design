@@ -40,6 +40,14 @@ SIO2_MATERIAL = "run002_Kitamura_SiO2_10um"
 SI_MATERIAL = "run002_Palik_Si_10um"
 DESIGN_OBJECT = "run002_coarse_design_import"
 DESIGN_BOUNDS = {"x": (-10e-6, 10e-6), "y": (-10e-6, 10e-6), "z": (0.0, 1e-6)}
+SELECTED_DESIGN_OBJECT = "run002_selected_18p6um_design_import"
+SELECTED_DESIGN_BOUNDS = {
+    "x": (-9.3e-6, 9.3e-6),
+    "y": (-9.3e-6, 9.3e-6),
+    "z": (0.0, 1e-6),
+}
+COARSE_DESIGN_SHAPE = (201, 201, 21)
+SELECTED_DESIGN_SHAPE = (373, 373, 21)
 Q_BOUNDS = {
     "x": (-20e-6, 20e-6),
     "y": (-20e-6, 20e-6),
@@ -153,27 +161,37 @@ def add_rect(fdtd: object, name: str, material: str, bounds: dict[str, tuple[flo
         item[f"{axis} min"], item[f"{axis} max"] = bounds[axis]
 
 
-def design_nodes() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def design_nodes(
+    bounds: dict[str, tuple[float, float]] = DESIGN_BOUNDS,
+    shape: tuple[int, int, int] = COARSE_DESIGN_SHAPE,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     return (
-        np.linspace(*DESIGN_BOUNDS["x"], 201),
-        np.linspace(*DESIGN_BOUNDS["y"], 201),
-        np.linspace(*DESIGN_BOUNDS["z"], 21),
+        np.linspace(*bounds["x"], shape[0]),
+        np.linspace(*bounds["y"], shape[1]),
+        np.linspace(*bounds["z"], shape[2]),
     )
 
 
-def add_design(fdtd: object, rho: float = 0.5) -> dict[str, object]:
-    x, y, z = design_nodes()
+def add_design(
+    fdtd: object,
+    rho: float = 0.5,
+    *,
+    object_name: str = DESIGN_OBJECT,
+    bounds: dict[str, tuple[float, float]] = DESIGN_BOUNDS,
+    node_shape: tuple[int, int, int] = COARSE_DESIGN_SHAPE,
+) -> dict[str, object]:
+    x, y, z = design_nodes(bounds, node_shape)
     epsilon_sio2 = complex(
         silica_10um()["epsilon_real"], silica_10um()["epsilon_imag"]
     )
     epsilon = 1.0 + rho * (epsilon_sio2 - 1.0)
     index = complex(np.sqrt(epsilon))
     values = np.full((x.size, y.size, z.size), index, complex)
-    fdtd.addimport({"name": DESIGN_OBJECT, "x": 0.0, "y": 0.0, "z": 0.0})
+    fdtd.addimport({"name": object_name, "x": 0.0, "y": 0.0, "z": 0.0})
     if int(fdtd.importnk2(values, x, y, z)) != 1:
         raise RuntimeError("production-candidate importnk2 failed")
     return {
-        "name": DESIGN_OBJECT,
+        "name": object_name,
         "rho": rho,
         "node_shape": list(values.shape),
         "node_spacing_m": {
@@ -181,7 +199,7 @@ def add_design(fdtd: object, rho: float = 0.5) -> dict[str, object]:
             "y": float(y[1] - y[0]),
             "z": float(z[1] - z[0]),
         },
-        "bounds_m": {axis: list(values) for axis, values in DESIGN_BOUNDS.items()},
+        "bounds_m": {axis: list(values) for axis, values in bounds.items()},
         "epsilon": complex_json(epsilon),
         "index": complex_json(index),
     }
@@ -239,7 +257,17 @@ def named_bounds(fdtd: object, name: str) -> dict[str, list[float]]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument(
+        "--design-contract",
+        choices=("coarse_20um_201", "selected_18p6um_373"),
+        default="coarse_20um_201",
+    )
     args = parser.parse_args()
+    selected = args.design_contract == "selected_18p6um_373"
+    design_object = SELECTED_DESIGN_OBJECT if selected else DESIGN_OBJECT
+    design_bounds = SELECTED_DESIGN_BOUNDS if selected else DESIGN_BOUNDS
+    design_shape = SELECTED_DESIGN_SHAPE if selected else COARSE_DESIGN_SHAPE
+    design_xy_step = 50e-9 if selected else 100e-9
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
         raise RuntimeError(f"refusing non-empty output directory: {output}")
@@ -311,13 +339,23 @@ def main() -> int:
             TAIRTE4_MATERIAL,
             {"x": (-30e-6, 30e-6), "y": (-30e-6, 30e-6), "z": (-0.100e-6, 0.0)},
         )
-        design = add_design(fdtd)
+        design = add_design(
+            fdtd,
+            object_name=design_object,
+            bounds=design_bounds,
+            node_shape=design_shape,
+        )
+        margin = 0.1e-6
         add_mesh(
             fdtd,
-            "run002_coarse_design_xy_mesh",
-            {"x": (-10.1e-6, 10.1e-6), "y": (-10.1e-6, 10.1e-6), "z": (0.0, 1.0e-6)},
-            x=100e-9,
-            y=100e-9,
+            "run002_selected_design_xy_mesh" if selected else "run002_coarse_design_xy_mesh",
+            {
+                "x": (design_bounds["x"][0] - margin, design_bounds["x"][1] + margin),
+                "y": (design_bounds["y"][0] - margin, design_bounds["y"][1] + margin),
+                "z": design_bounds["z"],
+            },
+            x=design_xy_step,
+            y=design_xy_step,
             z=50e-9,
         )
         add_mesh(
@@ -345,7 +383,7 @@ def main() -> int:
                 "run002_Si_substrate",
                 "run002_bottom_SiO2",
                 "run002_extended_TaIrTe4",
-                DESIGN_OBJECT,
+                design_object,
                 PABS_FIELD,
                 PABS_INDEX,
             )
@@ -367,12 +405,12 @@ def main() -> int:
             and abs(geometry["run002_bottom_SiO2"]["z"][1] + 0.100e-6) < 2e-18
             and abs(geometry["run002_extended_TaIrTe4"]["z"][0] + 0.100e-6) < 2e-18
             and geometry["run002_extended_TaIrTe4"]["z"][1] == 0.0
-            and geometry[DESIGN_OBJECT]["z"][0] == 0.0
+            and geometry[design_object]["z"][0] == 0.0
         )
         passed = bool(
-            design["node_shape"] == [201, 201, 21]
-            and minimum["x"] <= 100e-9 + 1e-18
-            and minimum["y"] <= 100e-9 + 1e-18
+            design["node_shape"] == list(design_shape)
+            and minimum["x"] <= design_xy_step + 1e-18
+            and minimum["y"] <= design_xy_step + 1e-18
             and minimum["z"] <= 10e-9 + 1e-18
             and geometry["run002_extended_TaIrTe4"]["x"] == [-30e-6, 30e-6]
             and geometry["run002_extended_TaIrTe4"]["y"] == [-30e-6, 30e-6]
@@ -383,6 +421,7 @@ def main() -> int:
             "status": "VALIDATED_RUN002_PRODUCTION_CANDIDATE_RUNSETUP" if passed else "FAILED_RUN002_PRODUCTION_CANDIDATE_RUNSETUP",
             "passed": passed,
             "scope": "runsetup/geometry/mesh/material audit only; no field solve",
+            "design_contract": args.design_contract,
             "source_contract": source_contract,
             "materials": {"TaIrTe4": tairte4, **substrate},
             "design": design,

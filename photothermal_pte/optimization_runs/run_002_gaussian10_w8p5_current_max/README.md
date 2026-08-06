@@ -1,6 +1,6 @@
 # Run 002 — 10 µm Gaussian current maximization
 
-Status: `PRODUCTION_FINITE_FILTER_PROJECTION_VALIDATED`. A homogeneous-air
+Status: `SELECTED_PRODUCTION_OPTICAL_CHAIN_VALIDATED`. A homogeneous-air
 source-only Maxwell gate, small CUDA thermal forward/adjoint controls,
 uniform rho=0/0.5/1 scalar-vs-`importnk2` complex-material controls, and a
 matched-volume rho=0.5 production-candidate GPU forward have run. The exact
@@ -167,3 +167,13 @@ edge wrap and constant-preservation errors are zero, the worst JVP/VJP error is
 and beta=2–32 is `8.706e-6`. The preserved first diagnostic failed only because
 it incorrectly gated on the coarsest FD truncation error. This does not certify
 exact-binary DRC or full latent Maxwell/thermal AD-FD.
+
+The selected optical environment has now been rebuilt at the actual
+18.6×18.6 µm, 373×373-node contract. Its GPU-only rho=0.5 forward completed in
+230.229 s with `P_Q=7.219486641789115e-14 W`, six-face closure `6.422e-6`, and
+auto-shutoff `8.280e-8`. Component-specific `J_c=d epsilon_Yee,c/d rho` was
+then constructed on the same selected support without per-pixel Maxwell
+solves. Its worst mapping-only FD error is `1.337e-9`, worst JVP/VJP error is
+`1.659e-14`, and no active Jacobian row lies outside the exact support. This
+does not yet certify the selected-grid thermal gray law, Maxwell adjoint, or
+full latent chain.

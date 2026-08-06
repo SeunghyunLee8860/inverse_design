@@ -20,3 +20,7 @@ window. It is an offline window-selection certificate, not an optimizer plot.
 `production_finite_filter_projection.png` shows the latent, finite filtered,
 and projected fields, a boundary impulse with no opposite-edge wrap, the
 mapping-only FD step sweep, and JVP/VJP dot errors.
+
+`selected_production_optical_chain.png` summarizes the realized selected-grid
+mesh, native component absorbed powers, and component-J mapping/transpose
+errors from the actual 18.6 µm, 373×373 optical environment.

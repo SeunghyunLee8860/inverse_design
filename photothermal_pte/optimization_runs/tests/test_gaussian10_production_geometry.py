@@ -32,6 +32,20 @@ def test_coarse_design_canvas_nodes_and_bounds() -> None:
     assert np.isclose(z[1] - z[0], 50e-9, rtol=0.0, atol=1e-18)
 
 
+def test_selected_production_nodes_match_frozen_window() -> None:
+    module = load_module()
+    x, y, z = module.design_nodes(
+        module.SELECTED_DESIGN_BOUNDS,
+        module.SELECTED_DESIGN_SHAPE,
+    )
+    assert (x.size, y.size, z.size) == (373, 373, 21)
+    assert np.allclose(x[[0, -1]], [-9.3e-6, 9.3e-6], rtol=0.0, atol=1e-18)
+    assert np.allclose(y[[0, -1]], [-9.3e-6, 9.3e-6], rtol=0.0, atol=1e-18)
+    assert np.isclose(x[1] - x[0], 50e-9, rtol=0.0, atol=1e-18)
+    assert np.isclose(y[1] - y[0], 50e-9, rtol=0.0, atol=1e-18)
+    assert np.isclose(z[1] - z[0], 50e-9, rtol=0.0, atol=1e-18)
+
+
 def test_tairte4_axis_mapping_is_complex_and_passive_at_10um() -> None:
     module = load_module()
     epsilon = module.material_epsilon()

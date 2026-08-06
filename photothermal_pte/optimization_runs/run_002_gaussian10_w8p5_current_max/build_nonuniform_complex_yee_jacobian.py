@@ -246,12 +246,26 @@ def main() -> int:
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument(
         "--geometry",
-        choices=("isolated", "production"),
+        choices=("isolated", "production", "selected_production"),
         default="isolated",
         help="Select the imported-object/nodal-coordinate contract.",
     )
     args = parser.parse_args()
-    if args.geometry == "production":
+    if args.geometry == "selected_production":
+        imported_object = production_geometry.SELECTED_DESIGN_OBJECT
+        nodes = production_geometry.design_nodes(
+            production_geometry.SELECTED_DESIGN_BOUNDS,
+            production_geometry.SELECTED_DESIGN_SHAPE,
+        )
+        half_span_m = 9.3e-6
+        maximum_local_distance_m = PRODUCTION_MAX_LOCAL_DISTANCE_M
+        validated_status = "VALIDATED_SELECTED_PRODUCTION_COMPLEX_COMPONENT_YEE_JACOBIAN"
+        failed_status = "FAILED_SELECTED_PRODUCTION_COMPLEX_COMPONENT_YEE_JACOBIAN"
+        scope = (
+            "10 um selected 18.6x18.6x1 um imported complex-SiO2 candidate; "
+            "layout-only J_c=d epsilon_Yee,c/d rho on 373x373 nodes"
+        )
+    elif args.geometry == "production":
         imported_object = production_geometry.DESIGN_OBJECT
         nodes = production_geometry.design_nodes()
         half_span_m = 10.0e-6

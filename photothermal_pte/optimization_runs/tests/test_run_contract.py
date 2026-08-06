@@ -68,7 +68,7 @@ class OptimizationRunContractTest(unittest.TestCase):
         self.assertTrue(result.valid)
         self.assertEqual(
             result.status,
-            "PRODUCTION_FINITE_FILTER_PROJECTION_VALIDATED",
+            "SELECTED_PRODUCTION_OPTICAL_CHAIN_VALIDATED",
         )
 
     def test_gaussian10_lossless_sio2_fails_closed(self) -> None:

@@ -10,7 +10,10 @@ with 0.538674% relative error. The one-time coarse-gradient selection has now
 frozen a centered 18.6×18.6 µm production window. Broader directional evidence,
 gray-law sensitivity, exact-binary DRC fixtures, and full-latent pullbacks still
 block optimizer execution. The finite nonperiodic filter/projection JVP and VJP
-are now certified on the selected 373×373 window.
+are now certified on the selected 373×373 window. The same selected support
+also has a completed GPU rho=0.5 forward and component-specific density-to-Yee
+Jacobian certificate; it is no longer relying on the earlier 201×201 optical
+layout for future full-latent work.
 
 ## Physical layout contract
 
@@ -122,11 +125,12 @@ pair rather than repeated ±FD solves.
 
 ## Remaining fail-closed sequence
 
-1. preserve the completed representative Gaussian combined physical-density
-   Maxwell/thermal AD-FD smoke and add a small independent-direction check;
-2. preserve the selected centered 18.6 µm window and its immutable gradient
-   provenance;
-3. preserve the validated finite nonperiodic filter/projection JVP/VJP and
-   certify gray-law sensitivity plus exact-binary DRC fixtures on that window;
-4. pass full latent/filter/projection AD-FD without gradient rescaling;
+1. preserve the completed representative coarse Gaussian combined
+   physical-density Maxwell/thermal AD-FD smoke;
+2. preserve the selected centered 18.6 µm window, its immutable gradient
+   provenance, selected-support GPU forward, and component-Yee Jacobians;
+3. certify the 373-node-to-186-cell thermal mapping and gray-law sensitivity
+   on that exact window, then add a small independent combined direction;
+4. certify exact-binary DRC fixtures and pass full
+   latent/filter/projection AD-FD without gradient rescaling;
 5. only then enable a short nominal signed-objective MMA pilot.
