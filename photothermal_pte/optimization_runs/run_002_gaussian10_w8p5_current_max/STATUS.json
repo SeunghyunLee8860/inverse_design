@@ -1,7 +1,7 @@
 {
   "run_id": "run_002_gaussian10_w8p5_current_max",
-  "status": "VALIDATED_SELECTED_OPTICAL_GRADIENT_ADFD",
-  "last_updated_utc": "2026-08-06T20:12:17.919226+00:00",
+  "status": "VALIDATED_SELECTED_MULTIDIRECTION_COMBINED_PHYSICAL_RHO_ADFD",
+  "last_updated_utc": "2026-08-06T21:04:12.375168+00:00",
   "optimization_started": false,
-  "message": "Selected-grid optical AD-FD is validated after reconstructing the FieldRegion-only CW adjoint from official cwnorm(1)/cwnorm(2) states. Optical error=2.955e-05, corrected one-direction combined error=2.820e-05, scalar P_Q error=2.786e-06. No empirical rescaling was used. Broader combined directions, coupled optical gray-law sensitivity, exact-binary DRC, and full latent AD-FD still block optimization."
+  "message": "Five combined physical-density AD-FD directions pass at h=0.005; worst directional error=2.045e-03, worst normalized error=2.820e-05. Full latent/filter/projection AD-FD still blocks optimization."
 }

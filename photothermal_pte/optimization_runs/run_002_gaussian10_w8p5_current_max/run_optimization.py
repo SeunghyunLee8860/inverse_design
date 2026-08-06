@@ -49,11 +49,10 @@ def main() -> int:
         "GPU forward, its 373 x 373 component-Yee Jacobians, exact "
         "373-node-to-186-cell density map, and conservative 3D Q deposition "
         "also passed. Selected-grid fixed-Q thermal p=1,2,3 gray-law AD-FD "
-        "also passed. The selected-grid Maxwell optical adjoint passes one "
-        "physical-density direction after named-source CW normalization was fixed. "
-        "Broader combined directions, coupled optical gray-law sensitivity, "
-        "exact-binary DRC fixtures, and full-latent AD-FD still "
-        "block execution"
+        "also passed. The selected-grid Maxwell optical adjoint and five-direction "
+        "combined physical-density AD-FD pass after named-source CW normalization "
+        "was fixed. Full latent/filter/projection AD-FD still blocks execution; "
+        "exact-binary DRC fixtures remain required before final fabrication promotion"
     )
     return 0
 
