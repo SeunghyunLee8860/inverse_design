@@ -493,5 +493,21 @@
         "sha256": "1bd0289f9422bb4db801d955860e1b317b32e6c923b706309630ecd94fe9afbd"
       }
     ]
+  },
+  "production_3d_thermal_q_deposition": {
+    "status": "VALIDATED_PRODUCTION_3D_THERMAL_Q_DEPOSITION",
+    "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_3d_thermal_q_deposition_20260806",
+    "artifacts": [
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_3d_thermal_q_deposition_20260806/production_thermal_grid_material_q.npz",
+        "size_bytes": 66392496,
+        "sha256": "93bd834d02e576ec6efaca67cbb8bbed6ed827f02c566593a1349647d91342c6"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_3d_thermal_q_deposition_20260806/production_thermal_q_deposition_result.json",
+        "size_bytes": 5753,
+        "sha256": "229941ccdd7915a47c01fbe72b499c4f058871d4992a32129a2de7122fba8bae"
+      }
+    ]
   }
 }

@@ -1,7 +1,7 @@
 {
   "run_id": "run_002_gaussian10_w8p5_current_max",
-  "status": "PRODUCTION_MATERIAL_Q_ATTRIBUTION_VALIDATED",
-  "last_updated_utc": "2026-08-06T07:23:00+00:00",
+  "status": "PRODUCTION_3D_THERMAL_Q_DEPOSITION_VALIDATED",
+  "last_updated_utc": "2026-08-06T07:31:00+00:00",
   "optimization_started": false,
-  "message": "The rho=0.5 production forward, 201x201 component-Yee Jacobians, and literal material-intersection Q attribution passed. Physical thermal materials receive 98.7936% of full P_Q without nearest-material relocation or rescaling; artificial extended-background Q is 0.0103% and the reported air/cut-cell remainder is 1.1961%. The actual 3D conservative thermal-grid remap, CUDA thermal/PTE solve, Gaussian Maxwell/PTE AD-FD, and window selection still block optimization."
+  "message": "The rho=0.5 native component-Q has been deposited on the actual 362x362x91, 64um thermal grid by literal material intersection. Mapped power 7.20892118277057e-14 W equals the attributed physical-material power with zero total error and no nonzero cells outside their material. CUDA thermal/PTE forward-adjoint, Gaussian combined AD-FD, and design-window selection still block optimization."
 }

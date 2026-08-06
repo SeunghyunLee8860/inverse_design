@@ -78,6 +78,13 @@
     "G_tairte4_air_W_m2K": 1.0,
     "G_sio2_si_W_m2K": 1100000000.0,
     "h_exposed_W_m2K": 10.0,
+    "boundary_conditions": {
+      "x_min_x_max_y_min_y_max": "Dirichlet_T_bath_at_far_64um_domain",
+      "z_min": "Dirichlet_T_bath_at_bottom_of_20um_Si",
+      "z_max": "Robin_h_exposed_to_T_bath",
+      "periodic_axes": [],
+      "internal_interfaces_are_not_external_boundaries": true
+    },
     "interface_scenarios": [
       {"bottom": "thermally_grown", "design": "thermally_grown", "G_bottom_W_m2K": 7370000.0, "G_design_W_m2K": 7370000.0},
       {"bottom": "thermally_grown", "design": "evaporated", "G_bottom_W_m2K": 7370000.0, "G_design_W_m2K": 73700.0},

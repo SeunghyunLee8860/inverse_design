@@ -1,6 +1,6 @@
 # Run 002 — 10 µm Gaussian current maximization
 
-Status: `PRODUCTION_MATERIAL_Q_ATTRIBUTION_VALIDATED`. A homogeneous-air
+Status: `PRODUCTION_3D_THERMAL_Q_DEPOSITION_VALIDATED`. A homogeneous-air
 source-only Maxwell gate, small CUDA thermal forward/adjoint controls,
 uniform rho=0/0.5/1 scalar-vs-`importnk2` complex-material controls, and a
 matched-volume rho=0.5 production-candidate GPU forward have run.  No
@@ -96,3 +96,11 @@ long-TaIrTe4 background contributes `0.010320%`, while the `1.196124%`
 air/interface cut-cell remainder is reported rather than forced into a nearby
 material.  No Q rescaling was used.  The next gate is deposition of those
 material-attributed contributions onto the actual 3D thermal grid.
+
+That deposition now passes on the `362×362×91` thermal grid: mapped power is
+`7.20892118277057e-14 W`, exactly equal to the material-attributed input at
+reported precision, and no nonzero source lies outside its own material. The
+frozen thermal boundaries are far-x/y and bottom Dirichlet at 300 K, plus a
+top exposed Robin boundary with `h=10 W/(m² K)`; internal interfaces remain
+explicit resistances, not external boundaries. Temperature/PTE has not yet
+been solved.

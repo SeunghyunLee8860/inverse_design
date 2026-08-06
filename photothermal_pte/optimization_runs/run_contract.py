@@ -30,6 +30,7 @@ ALLOWED_STATUS = {
     "PRODUCTION_CANDIDATE_FORWARD_VALIDATED",
     "PRODUCTION_COMPONENT_YEE_MAPPING_VALIDATED",
     "PRODUCTION_MATERIAL_Q_ATTRIBUTION_VALIDATED",
+    "PRODUCTION_3D_THERMAL_Q_DEPOSITION_VALIDATED",
     "RUNNING",
     "COMPLETED",
     "FAILED",
@@ -204,6 +205,15 @@ def _validate_physics_v2(config: dict[str, Any]) -> None:
         raise ValidationError("bottom/design interface scenario matrix is incomplete")
     if thermal.get("linear_solver_device") != "cuda_only":
         raise ValidationError("production thermal forward/adjoint must be CUDA-only")
+    boundaries = _require(thermal, "boundary_conditions", dict)
+    if boundaries.get("x_min_x_max_y_min_y_max") != "Dirichlet_T_bath_at_far_64um_domain":
+        raise ValidationError("far lateral thermal boundary contract changed")
+    if boundaries.get("z_min") != "Dirichlet_T_bath_at_bottom_of_20um_Si":
+        raise ValidationError("bottom thermal boundary contract changed")
+    if boundaries.get("z_max") != "Robin_h_exposed_to_T_bath":
+        raise ValidationError("top thermal boundary contract changed")
+    if boundaries.get("periodic_axes") != []:
+        raise ValidationError("thermal periodic boundaries are forbidden")
 
     objective = _require(config, "objective", dict)
     if objective.get("type") != "signed_uniform_45deg_pte_current_per_incident_power":

@@ -5,7 +5,8 @@ nonuniform component-Yee Jacobian smoke, production-candidate geometry and
 GPU forward gates, the 201×201 production component-Yee Jacobian, and small
 literal-FVM CUDA forward/adjoint control are recorded here. The literal
 material-intersection Q attribution is also recorded without nearest-material
-relocation or global rescaling. None is a
+relocation or global rescaling, together with its exact 3D thermal-grid
+deposition. None is a
 production PTE gradient or optimization result. The
 analytic setup audit is produced in memory by `run_optimization.py
 --setup-audit`.
