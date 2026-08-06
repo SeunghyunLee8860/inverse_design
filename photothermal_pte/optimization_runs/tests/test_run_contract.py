@@ -68,7 +68,7 @@ class OptimizationRunContractTest(unittest.TestCase):
         self.assertTrue(result.valid)
         self.assertEqual(
             result.status,
-            "UNIFORM_COMPLEX_MATERIAL_EQUIVALENCE_VALIDATED",
+            "PRODUCTION_CANDIDATE_FORWARD_VALIDATED",
         )
 
     def test_gaussian10_lossless_sio2_fails_closed(self) -> None:

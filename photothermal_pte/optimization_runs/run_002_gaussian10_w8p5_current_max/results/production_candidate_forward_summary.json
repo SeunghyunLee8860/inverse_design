@@ -1,0 +1,185 @@
+{
+  "status": "VALIDATED_RUN002_PRODUCTION_CANDIDATE_FORWARD",
+  "passed": true,
+  "scope": "rho=0.5 coarse production-candidate GPU forward; no thermal/PTE/adjoint/optimization",
+  "input_project": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_runsetup_v2_matched_volume_20260806/production_candidate_runsetup.fsp",
+    "size_bytes": 14123038,
+    "sha256": "9678c490f67e4abc5a99aa37acccdd2e310e86fd246cee62daed918a8f7d884e"
+  },
+  "output_project": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_rho05_forward_v2_immutable_20260806/production_candidate_forward.fsp",
+    "size_bytes": 264951607,
+    "sha256": "80ba8d95463764ec29dc6242885084864ceae21a9511843d534a2f7ee91fd2e2"
+  },
+  "native_Q_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_rho05_forward_v2_immutable_20260806/production_candidate_native_q.npz",
+    "size_bytes": 71887910,
+    "sha256": "bcce54b1f34e7621905d773b7a3af639d9fcd909ad3dede3801d9e1ca051225f"
+  },
+  "resources": {
+    "1": {
+      "active": "1",
+      "device type": "CPU",
+      "processes": "1",
+      "threads": "8",
+      "solver extra command line options": ""
+    },
+    "2": {
+      "active": "1",
+      "device type": "GPU 3",
+      "processes": "1",
+      "threads": "8",
+      "solver extra command line options": "-gpu"
+    }
+  },
+  "GPU_resource_used": "Local Host",
+  "solver_wall_time_s": 122.15039984509349,
+  "source_power_W": 1.3822261103022194e-13,
+  "P_Q_W": 7.296954820427281e-14,
+  "P_six_W": 7.296652586385535e-14,
+  "six_face_closure_relative": 4.141920145921432e-05,
+  "face_power": {
+    "run002_production_flux_x_min": {
+      "signed_axis_power_W": -2.6619335603457414e-18,
+      "outward_power_W": 2.6619335603457414e-18
+    },
+    "run002_production_flux_x_max": {
+      "signed_axis_power_W": 2.66193379578391e-18,
+      "outward_power_W": 2.66193379578391e-18
+    },
+    "run002_production_flux_y_min": {
+      "signed_axis_power_W": -1.5014658295754627e-19,
+      "outward_power_W": 1.5014658295754627e-19
+    },
+    "run002_production_flux_y_max": {
+      "signed_axis_power_W": 1.5014656601493305e-19,
+      "outward_power_W": 1.5014656601493305e-19
+    },
+    "run002_production_flux_z_min": {
+      "signed_axis_power_W": -5.631078170610685e-14,
+      "outward_power_W": 5.631078170610685e-14
+    },
+    "run002_production_flux_z_max": {
+      "signed_axis_power_W": -1.2928293173046731e-13,
+      "outward_power_W": -1.2928293173046731e-13
+    }
+  },
+  "Q_component_power_W": {
+    "x": 7.244527560955643e-14,
+    "y": 9.958403884717358e-18,
+    "z": 5.143141908316731e-16
+  },
+  "Q_minimum_W_m3": 0.0,
+  "Q_maximum_W_m3": 2682.503325729894,
+  "Q_all_finite": true,
+  "Q_clipping_smoothing_gain_or_rescaling": false,
+  "log_audit": {
+    "logs": [
+      "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_rho05_forward_v2_immutable_20260806/production_candidate_forward_p0.log"
+    ],
+    "final_auto_shutoff": 7.81123e-08,
+    "logged_grid": {
+      "shape_xyz": [
+        492,
+        492,
+        151
+      ],
+      "grid_points": 36551664
+    },
+    "precise_GPU_memory_GiB": 1.148,
+    "simulation_completed_successfully": true
+  },
+  "thermal_solve": false,
+  "adjoint_solve": false,
+  "optimization_run": false,
+  "component_spatial_metrics": {
+    "x": {
+      "native_shape": [
+        311,
+        311,
+        52
+      ],
+      "coordinate_bounds_m": {
+        "x": [
+          -1.9970149253731323e-05,
+          2.0029850746268664e-05
+        ],
+        "y": [
+          -2e-05,
+          2.000000000000002e-05
+        ],
+        "z": [
+          -1.328888888888887e-06,
+          1.29105374305678e-06
+        ]
+      },
+      "hotspot_m": [
+        -4.999999999998962e-08,
+        1.037615360386518e-20,
+        -1.000000000000002e-08
+      ],
+      "Q_maximum_W_m3": 2682.503325729894,
+      "all_finite": true,
+      "negative_count": 0
+    },
+    "y": {
+      "native_shape": [
+        311,
+        311,
+        52
+      ],
+      "coordinate_bounds_m": {
+        "x": [
+          -2e-05,
+          2.000000000000002e-05
+        ],
+        "y": [
+          -1.9970149253731323e-05,
+          2.0029850746268664e-05
+        ],
+        "z": [
+          -1.328888888888887e-06,
+          1.29105374305678e-06
+        ]
+      },
+      "hotspot_m": [
+        9.90000000000002e-06,
+        9.950000000000022e-06,
+        -1.000000000000002e-08
+      ],
+      "Q_maximum_W_m3": 0.9855857765343334,
+      "all_finite": true,
+      "negative_count": 0
+    },
+    "z": {
+      "native_shape": [
+        311,
+        311,
+        52
+      ],
+      "coordinate_bounds_m": {
+        "x": [
+          -2e-05,
+          2.000000000000002e-05
+        ],
+        "y": [
+          -2e-05,
+          2.000000000000002e-05
+        ],
+        "z": [
+          -1.2411111111111092e-06,
+          1.3630240012491914e-06
+        ]
+      },
+      "hotspot_m": [
+        -1e-05,
+        1.037615360386518e-20,
+        1.664526907557124e-08
+      ],
+      "Q_maximum_W_m3": 21.84832047382446,
+      "all_finite": true,
+      "negative_count": 0
+    }
+  }
+}

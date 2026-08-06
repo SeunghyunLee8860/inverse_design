@@ -1,9 +1,10 @@
 # Run 002 — 10 µm Gaussian current maximization
 
-Status: `UNIFORM_COMPLEX_MATERIAL_EQUIVALENCE_VALIDATED`. A homogeneous-air
-source-only Maxwell gate, small CUDA thermal forward/adjoint controls, and
-uniform rho=0/0.5/1 scalar-vs-`importnk2` complex-material controls have run.
-No nonuniform material Jacobian, production thermal, PTE, combined
+Status: `PRODUCTION_CANDIDATE_FORWARD_VALIDATED`. A homogeneous-air
+source-only Maxwell gate, small CUDA thermal forward/adjoint controls,
+uniform rho=0/0.5/1 scalar-vs-`importnk2` complex-material controls, and a
+matched-volume rho=0.5 production-candidate GPU forward have run.  No
+production-geometry component-Yee Jacobian, production thermal, PTE, combined
 finite-difference, or optimization solve has started.
 
 This is a new physical contract, not a continuation that silently reuses the
@@ -71,3 +72,11 @@ mapping-only centered-FD error is `1.34e-9`, its worst JVP/VJP dot error is
 `7.32e-15`, and its E/index coordinate mismatch is `8.48e-22 m`.  This proves
 the construction method but is deliberately not promoted as the final
 production-geometry Jacobian.
+
+The matched-volume coarse production candidate uses a 48×48 µm six-PML FDTD
+domain, a 20×20×1 µm rho=0.5 design canvas, and a long TaIrTe4 optical
+background.  Its GPU forward produced `P_Q=7.296954820427281e-14 W` and
+`P_six=7.296652586385535e-14 W`, with `0.004142%` closure and
+`7.81123e-8` final auto-shutoff.  The immutable FSP and native component-Q NPZ
+are SHA-pinned in the raw-artifact manifest.  This validates only the forward
+gate; it does not authorize optimization.

@@ -378,5 +378,77 @@
         "sha256": "dfdcc08875d343021b52d6baf4288399e03af16f731e71b11ec7f9d6897b5b34"
       }
     ]
+  },
+  "production_candidate_geometry_runsetup": {
+    "status": "VALIDATED_RUN002_PRODUCTION_CANDIDATE_RUNSETUP",
+    "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_runsetup_v2_matched_volume_20260806",
+    "artifacts": [
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_runsetup_v2_matched_volume_20260806/production_candidate_geometry_audit.json",
+        "size_bytes": 7058,
+        "sha256": "1a54d3bcbd87ad4e9a54e5f05445cd6e51272eb9337fc0ede410bd2b2838e321"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_runsetup_v2_matched_volume_20260806/production_candidate_runsetup.fsp",
+        "size_bytes": 14123038,
+        "sha256": "9678c490f67e4abc5a99aa37acccdd2e310e86fd246cee62daed918a8f7d884e"
+      }
+    ],
+    "diagnostic_mismatched_control_volume": {
+      "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_runsetup_20260806",
+      "artifacts": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_runsetup_20260806/production_candidate_geometry_audit.json",
+          "size_bytes": 6856,
+          "sha256": "9ca476f97afa41b839e1fd0aa9697b584d60e866badf5c390d43edfbc94a3ae1"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_runsetup_20260806/production_candidate_runsetup.fsp",
+          "size_bytes": 14123038,
+          "sha256": "cbd319c520faf2d58b84a3f5cda486a7a72d47d052e762a07a9d08b06aa60cb9"
+        }
+      ]
+    }
+  },
+  "production_candidate_rho05_forward": {
+    "status": "VALIDATED_RUN002_PRODUCTION_CANDIDATE_FORWARD",
+    "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_rho05_forward_v2_immutable_20260806",
+    "artifacts": [
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_rho05_forward_v2_immutable_20260806/production_candidate_forward.fsp",
+        "size_bytes": 264951607,
+        "sha256": "80ba8d95463764ec29dc6242885084864ceae21a9511843d534a2f7ee91fd2e2"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_rho05_forward_v2_immutable_20260806/production_candidate_forward_p0.log",
+        "size_bytes": 5438,
+        "sha256": "2a9273e9b74598f890e9f27cebeda064da30ecfee5ebffb1007b15ca04fa5830"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_rho05_forward_v2_immutable_20260806/production_candidate_forward_result.json",
+        "size_bytes": 3319,
+        "sha256": "6f4c0b1d5612a7cfcb6b3033b0243c5a8d53847da81e1026e3c4ee340adf6861"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_rho05_forward_v2_immutable_20260806/production_candidate_native_q.npz",
+        "size_bytes": 71887910,
+        "sha256": "bcce54b1f34e7621905d773b7a3af639d9fcd909ad3dede3801d9e1ca051225f"
+      }
+    ],
+    "superseded_diagnostic": {
+      "reason": "result JSON hashed the FSP before a final save; the embedded SHA therefore does not match the resulting file",
+      "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_rho05_forward_20260806",
+      "embedded_output_project": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_rho05_forward_20260806/production_candidate_forward.fsp",
+        "size_bytes": 264951607,
+        "sha256": "c3aa83e3c70acb39def0778e4407c82d8ec56c0919915b4bfd13036939caf8f2"
+      },
+      "actual_output_project": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_rho05_forward_20260806/production_candidate_forward.fsp",
+        "size_bytes": 305193638,
+        "sha256": "86932801e83c61016ee320ccd5bc815ca807518280f886332e7f927733967829"
+      },
+      "promoted": false
+    }
   }
 }
