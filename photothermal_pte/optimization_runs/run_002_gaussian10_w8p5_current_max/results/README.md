@@ -23,6 +23,10 @@ selected production thermal-mapping certificate records exact bilinear
 373-node-to-186-cell density transfer, its transpose, selected-support literal
 material-Q attribution, and conservative deposition to the explicit 3D grid.
 The
+selected thermal gray-law report validates the fixed-Q thermal material
+derivative for p=1,2,3 and the evaporated endpoint using CUDA-only linear
+solves. It explicitly does not certify the optical epsilon gray-law branch.
+The
 analytic setup audit is produced in memory by `run_optimization.py
 --setup-audit`.
 

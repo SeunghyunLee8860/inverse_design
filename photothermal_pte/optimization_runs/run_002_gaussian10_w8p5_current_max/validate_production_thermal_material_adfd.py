@@ -36,6 +36,10 @@ from run_production_cuda_thermal_pte import (  # noqa: E402
     face_before,
     material_specific_exposed,
 )
+from selected_thermal_density_mapping import (  # noqa: E402
+    selected_nodal_to_thermal_cell,
+    selected_nodal_to_thermal_cell_transpose,
+)
 
 
 K_AIR = 0.026
@@ -108,9 +112,16 @@ class State:
     widths: tuple[np.ndarray, np.ndarray, np.ndarray]
     top_face: int
     top_delta_G: float
+    gray_exponent: float
+    dphi_drho_cell: np.ndarray
 
 
-def build_state(data: np.lib.npyio.NpzFile, scenario: str, rho_cell: np.ndarray) -> State:
+def build_state(
+    data: np.lib.npyio.NpzFile,
+    scenario: str,
+    rho_cell: np.ndarray,
+    gray_exponent: float = 1.0,
+) -> State:
     edges = tuple(np.asarray(data[f"{axis}_edges_m"], float) for axis in "xyz")
     widths = tuple(np.diff(edge) for edge in edges)
     shape = tuple(width.size for width in widths)
@@ -140,7 +151,9 @@ def build_state(data: np.lib.npyio.NpzFile, scenario: str, rho_cell: np.ndarray)
     kappa[masks["Si"]] = 145.0
     kappa[masks["bottom_SiO2"]] = K_SIO2
     kappa[masks["physical_TaIrTe4"]] = [14.4, 3.8, 1.0]
-    design_k = K_AIR + rho_cell * (K_SIO2 - K_AIR)
+    phi = rho_cell**gray_exponent
+    dphi_drho = gray_exponent * rho_cell ** (gray_exponent - 1.0)
+    design_k = K_AIR + phi * (K_SIO2 - K_AIR)
     for z_index in selected_z:
         for component in range(3):
             kappa[selected_x[:, None], selected_y[None, :], z_index, component] = design_k
@@ -162,7 +175,7 @@ def build_state(data: np.lib.npyio.NpzFile, scenario: str, rho_cell: np.ndarray)
     connected = masks["physical_TaIrTe4"][:, :, top_face] & masks["design_effective_SiO2"][:, :, top_face + 1]
     top_g = np.ones((shape[0], shape[1]), float)
     delta_g = SCENARIOS[scenario][1] - 1.0
-    top_g[np.ix_(selected_x, selected_y)] = 1.0 + rho_cell * delta_g
+    top_g[np.ix_(selected_x, selected_y)] = 1.0 + phi * delta_g
     rz[:, :, top_face][connected] = 1.0 / top_g[connected]
 
     system = assemble_steady_diagonal_kappa(
@@ -216,6 +229,8 @@ def build_state(data: np.lib.npyio.NpzFile, scenario: str, rho_cell: np.ndarray)
         widths=widths,
         top_face=top_face,
         top_delta_G=delta_g,
+        gray_exponent=gray_exponent,
+        dphi_drho_cell=dphi_drho,
     )
 
 
@@ -227,6 +242,7 @@ def thermal_cell_gradient(state: State, theta_active: np.ndarray, adjoint_active
     bulk = np.zeros(int(np.max(state.rho_id)) + 1, float)
     interface = np.zeros_like(bulk)
     dk = K_SIO2 - K_AIR
+    dphi_flat = state.dphi_drho_cell.reshape(-1)
     widths = state.widths
 
     for axis in range(3):
@@ -263,8 +279,12 @@ def thermal_cell_gradient(state: State, theta_active: np.ndarray, adjoint_active
         common = -(left_l - right_l) * (left_t - right_t)
         left_selected = valid & (left_id >= 0)
         right_selected = valid & (right_id >= 0)
-        left_dg = area / total_r**2 * 0.5 * left_d / left_k**2 * dk
-        right_dg = area / total_r**2 * 0.5 * right_d / right_k**2 * dk
+        left_dk = np.zeros_like(left_k)
+        right_dk = np.zeros_like(right_k)
+        left_dk[left_selected] = dk * dphi_flat[left_id[left_selected]]
+        right_dk[right_selected] = dk * dphi_flat[right_id[right_selected]]
+        left_dg = area / total_r**2 * 0.5 * left_d / left_k**2 * left_dk
+        right_dg = area / total_r**2 * 0.5 * right_d / right_k**2 * right_dk
         np.add.at(bulk, left_id[left_selected], (common * left_dg)[left_selected])
         np.add.at(bulk, right_id[right_selected], (common * right_dg)[right_selected])
 
@@ -276,12 +296,14 @@ def thermal_cell_gradient(state: State, theta_active: np.ndarray, adjoint_active
     upper_k = state.kappa[:, :, top + 1, 2]
     rho = np.zeros(upper_id.shape, float)
     rho[selected] = state.rho_cell.reshape(-1)[upper_id[selected]]
-    g = 1.0 + rho * state.top_delta_G
+    phi = rho**state.gray_exponent
+    dphi = state.gray_exponent * rho ** (state.gray_exponent - 1.0)
+    g = 1.0 + phi * state.top_delta_G
     resistance = np.zeros_like(g)
     resistance[selected] = 1.0 / g[selected]
     total_r = 0.5 * widths[2][top] / lower_k + resistance + 0.5 * widths[2][top + 1] / upper_k
     dresistance = np.zeros_like(g)
-    dresistance[selected] = -state.top_delta_G / g[selected] ** 2
+    dresistance[selected] = -state.top_delta_G * dphi[selected] / g[selected] ** 2
     dg = -area / total_r**2 * dresistance
     common = -(adjoint[:, :, top] - adjoint[:, :, top + 1]) * (theta[:, :, top] - theta[:, :, top + 1])
     np.add.at(interface, upper_id[selected], (common * dg)[selected])
@@ -302,6 +324,12 @@ def main() -> int:
     parser.add_argument("--scenario", choices=SCENARIOS, default="grown_grown")
     parser.add_argument("--steps", default="0.01,0.005,0.0025")
     parser.add_argument("--direction", default="smooth_asymmetric")
+    parser.add_argument(
+        "--density-contract",
+        choices=("coarse_201_to_200", "selected_373_to_186"),
+        default="coarse_201_to_200",
+    )
+    parser.add_argument("--gray-exponent", type=float, choices=(1.0, 2.0, 3.0), default=1.0)
     parser.add_argument("--cuda-device", type=int, default=4)
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
@@ -316,7 +344,16 @@ def main() -> int:
     design_mask = np.asarray(data["mask_design_effective_SiO2"], bool)
     nx = int(np.count_nonzero(np.any(design_mask, axis=(1, 2))))
     ny = int(np.count_nonzero(np.any(design_mask, axis=(0, 2))))
-    nodal_shape = (nx + 1, ny + 1)
+    if args.density_contract == "selected_373_to_186":
+        if (nx, ny) != (186, 186):
+            raise RuntimeError(f"selected thermal design shape {(nx, ny)} != (186, 186)")
+        nodal_shape = (373, 373)
+        density_forward = selected_nodal_to_thermal_cell
+        density_transpose = selected_nodal_to_thermal_cell_transpose
+    else:
+        nodal_shape = (nx + 1, ny + 1)
+        density_forward = nodal_to_cell
+        density_transpose = nodal_to_cell_transpose
     base, direction_set = base_density_and_directions(nodal_shape)
     if args.direction not in direction_set:
         raise RuntimeError(f"unknown direction {args.direction!r}")
@@ -326,18 +363,18 @@ def main() -> int:
     mapping_rows = []
     for name, probe in direction_set.items():
         dual = rng.normal(size=(nx, ny))
-        left = float(np.sum(nodal_to_cell(probe) * dual))
-        right = float(np.sum(probe * nodal_to_cell_transpose(dual)))
+        left = float(np.sum(density_forward(probe) * dual))
+        right = float(np.sum(probe * density_transpose(dual)))
         # The map is exactly linear.  Use the same O(1e-3) physical-density
         # scale as the solver AD-FD checks so subtraction roundoff is not
         # mistaken for a transpose failure.
         step = 2.5e-3
-        fd = float(np.sum(dual * (nodal_to_cell(base + step * probe) - nodal_to_cell(base - step * probe))) / (2 * step))
+        fd = float(np.sum(dual * (density_forward(base + step * probe) - density_forward(base - step * probe))) / (2 * step))
         mapping_rows.append({"direction": name, "dot_error": relative(left, right), "FD_error": relative(left, fd)})
 
-    rho_cell = nodal_to_cell(base)
+    rho_cell = density_forward(base)
     started = perf_counter()
-    state = build_state(data, args.scenario, rho_cell)
+    state = build_state(data, args.scenario, rho_cell, args.gray_exponent)
     assembly_seconds = perf_counter() - started
     pair = solve_forward_adjoint_cuda(
         state.system.matrix_W_K,
@@ -349,7 +386,7 @@ def main() -> int:
     )
     objective = float(np.dot(state.c_A_K, pair.forward.solution))
     cell_gradient_parts = thermal_cell_gradient(state, pair.forward.solution, pair.adjoint.solution)
-    nodal_gradient_parts = {name: nodal_to_cell_transpose(value) for name, value in cell_gradient_parts.items()}
+    nodal_gradient_parts = {name: density_transpose(value) for name, value in cell_gradient_parts.items()}
     adjoint_directional = float(np.sum(nodal_gradient_parts["total"] * direction))
     steps = [float(value) for value in args.steps.split(",")]
     fd_rows = []
@@ -362,7 +399,12 @@ def main() -> int:
             density = base + sign * step * direction
             if np.min(density) <= 0.0 or np.max(density) >= 1.0:
                 raise RuntimeError("FD density would clip")
-            local_state = build_state(data, args.scenario, nodal_to_cell(density))
+            local_state = build_state(
+                data,
+                args.scenario,
+                density_forward(density),
+                args.gray_exponent,
+            )
             operator = PersistentCudaCSR(local_state.system.matrix_W_K, cuda_device=args.cuda_device)
             solved = operator.solve(local_state.source_power_W, relative_tolerance=1e-10, max_iterations=30000)
             objectives.append(float(np.dot(local_state.c_A_K, solved.solution)))
@@ -406,10 +448,21 @@ def main() -> int:
         adjoint_active=pair.adjoint.solution,
     )
     result = {
-        "status": "VALIDATED_PRODUCTION_FIXED_Q_THERMAL_MATERIAL_ADFD" if passed else "FAILED_PRODUCTION_FIXED_Q_THERMAL_MATERIAL_ADFD",
+        "status": (
+            "VALIDATED_SELECTED_FIXED_Q_THERMAL_GRAY_ADFD"
+            if passed and args.density_contract == "selected_373_to_186"
+            else "VALIDATED_PRODUCTION_FIXED_Q_THERMAL_MATERIAL_ADFD"
+            if passed
+            else "FAILED_SELECTED_FIXED_Q_THERMAL_GRAY_ADFD"
+            if args.density_contract == "selected_373_to_186"
+            else "FAILED_PRODUCTION_FIXED_Q_THERMAL_MATERIAL_ADFD"
+        ),
         "passed": passed,
         "scenario": args.scenario,
-        "scope": "fixed Maxwell Q; rho-dependent bulk kappa and TaIrTe4/design interface G only",
+        "scope": "fixed Maxwell Q; phi_p(rho)=rho^p applied consistently to bulk kappa and TaIrTe4/design interface G",
+        "density_contract": args.density_contract,
+        "gray_exponent": args.gray_exponent,
+        "gray_interpretation": "named numerical relaxation, not a measured mixture law or confidence interval",
         "nodal_shape": list(nodal_shape),
         "thermal_cell_shape": [nx, ny],
         "mapping_checks": mapping_rows,

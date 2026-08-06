@@ -1,7 +1,7 @@
 {
   "run_id": "run_002_gaussian10_w8p5_current_max",
-  "status": "SELECTED_PRODUCTION_THERMAL_MAPPING_VALIDATED",
-  "last_updated_utc": "2026-08-06T17:44:12+00:00",
+  "status": "SELECTED_THERMAL_GRAY_LAW_ADFD_VALIDATED",
+  "last_updated_utc": "2026-08-06T18:13:36+00:00",
   "optimization_started": false,
-  "message": "The selected 373-node optical density now maps exactly to the 186 x 186, 100 nm thermal cells by bilinear area integration. Constant and opposite-edge-wrap errors are zero, integral error is 4.483e-16, worst transpose error is 3.786e-16, and worst mapping FD error is 1.730e-13. The selected GPU Q artifact was partitioned by literal material overlap on the exact +/-9.3 um support and deposited conservatively on the 362 x 362 x 91 explicit 3D thermal grid. Total deposition error is 3.539e-16, worst component/material error is 9.190e-16, and no source cell lies outside its material. No Q was relocated or rescaled. Thermal gray-law solver AD-FD, the Maxwell adjoint, broader combined directions, exact-binary DRC fixtures, and full latent AD-FD still block optimization."
+  "message": "Selected-grid fixed-Q thermal gray-law AD-FD is validated for p=1,2,3 on grown/grown interfaces and for the p=1 evaporated/evaporated endpoint. Finest-step errors are 2.290e-6, 2.079e-6, 1.451e-6, and 2.707e-6, with h-to-h/2 convergence. Worst residual is 9.996e-11, worst energy-balance error is 8.809e-12, and all linear solves used CUDA float64 without CPU fallback. Gray-law choice is material: p=2/p=3 rotate the fixed-Q thermal gradient by 5.363/9.800 degrees versus p=1. This isolates only the thermal branch; coupled optical gray-law sensitivity, the selected-grid Maxwell adjoint and combined directions, exact-binary DRC fixtures, and full latent AD-FD still block optimization."
 }

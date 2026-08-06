@@ -28,3 +28,7 @@ errors from the actual 18.6 µm, 373×373 optical environment.
 `selected_production_thermal_mapping.png` shows the exact 373-node-to-186-cell
 mapping tests, literal material-attributed power, and conservative 3D
 deposition errors for the selected support.
+
+`selected_thermal_gray_law_adfd.png` shows the selected-grid CUDA thermal
+AD–FD step trajectories, fixed-Q p=1,2,3 objective/gradient sensitivity, and
+the corresponding thermal-gradient maps.

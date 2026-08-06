@@ -1,0 +1,533 @@
+{
+  "status": "VALIDATED_SELECTED_THERMAL_GRAY_LAW_ADFD",
+  "passed": true,
+  "scope": "fixed selected rho=0.5 Maxwell Q; selected 373-node thermal material branch only",
+  "gray_law": {
+    "definition": "phi_p(rho)=rho^p applied to bulk kappa and TaIrTe4/design interface G",
+    "exponents": [
+      1,
+      2,
+      3
+    ],
+    "interpretation": "named numerical relaxations, not measured mixture laws or a confidence interval",
+    "optical_epsilon_gray_law_included": false,
+    "reason": "this checkpoint intentionally isolates the fixed-Q thermal branch"
+  },
+  "comparisons": {
+    "p1": {
+      "objective_A": 4.156353333526422e-22,
+      "gradient_total_L2_A": 5.390303258645674e-23,
+      "gradient_bulk_k_L2_A": 5.241426395439225e-23,
+      "gradient_interface_G_L2_A": 8.087425103847868e-24,
+      "gradient_angle_from_p1_deg": 0.0,
+      "best_FD_relative_error": 2.2897522696911798e-06
+    },
+    "p2": {
+      "objective_A": 6.272064593210615e-22,
+      "gradient_total_L2_A": 8.293029796697923e-23,
+      "gradient_bulk_k_L2_A": 7.959234376026021e-23,
+      "gradient_interface_G_L2_A": 1.553601632846054e-23,
+      "gradient_angle_from_p1_deg": 5.36257573375343,
+      "best_FD_relative_error": 2.0791239560574655e-06,
+      "objective_relative_change_from_p1": 0.5090306549778184,
+      "gradient_norm_relative_change_from_p1": 0.5385089481554635
+    },
+    "p3": {
+      "objective_A": 7.621369146410211e-22,
+      "gradient_total_L2_A": 1.0306545521746865e-22,
+      "gradient_bulk_k_L2_A": 9.719777264886547e-23,
+      "gradient_interface_G_L2_A": 2.4135619055510958e-23,
+      "gradient_angle_from_p1_deg": 9.799690712827323,
+      "best_FD_relative_error": 1.4507760477387116e-06,
+      "objective_relative_change_from_p1": 0.8336672883255395,
+      "gradient_norm_relative_change_from_p1": 0.9120530009542372
+    }
+  },
+  "cases": {
+    "p1_grown_grown": {
+      "status": "VALIDATED_SELECTED_FIXED_Q_THERMAL_GRAY_ADFD",
+      "passed": true,
+      "scenario": "grown_grown",
+      "scope": "fixed Maxwell Q; phi_p(rho)=rho^p applied consistently to bulk kappa and TaIrTe4/design interface G",
+      "density_contract": "selected_373_to_186",
+      "gray_exponent": 1.0,
+      "gray_interpretation": "named numerical relaxation, not a measured mixture law or confidence interval",
+      "nodal_shape": [
+        373,
+        373
+      ],
+      "thermal_cell_shape": [
+        186,
+        186
+      ],
+      "mapping_checks": [
+        {
+          "direction": "uniform",
+          "dot_error": 4.2684376827438616e-16,
+          "FD_error": 1.9207969572347378e-14
+        },
+        {
+          "direction": "smooth_asymmetric",
+          "dot_error": 0.0,
+          "FD_error": 6.554818559113522e-14
+        },
+        {
+          "direction": "central_localized",
+          "dot_error": 6.170866249265558e-16,
+          "FD_error": 1.0552181286242991e-13
+        },
+        {
+          "direction": "design_edge_localized",
+          "dot_error": 2.9686586935562714e-16,
+          "FD_error": 1.9563460790532008e-13
+        },
+        {
+          "direction": "fixed_seed_random",
+          "dot_error": 5.66363205335764e-16,
+          "FD_error": 1.0930809862979049e-13
+        }
+      ],
+      "mapping_worst_dot_error": 6.170866249265558e-16,
+      "mapping_worst_FD_error": 1.9563460790532008e-13,
+      "mapping_gates": {
+        "transpose_error_max": 1e-12,
+        "linear_mapping_FD_error_max": 1e-08
+      },
+      "base_density_range": [
+        0.45497424134944114,
+        0.5450257586505589
+      ],
+      "direction": "smooth_asymmetric",
+      "objective_A": 4.156353333526422e-22,
+      "adjoint_directional_A": 8.111564728172077e-21,
+      "gradient_norms": {
+        "bulk_k": 5.241426395439225e-23,
+        "interface_G": 8.087425103847868e-24,
+        "total": 5.390303258645674e-23
+      },
+      "assembly_seconds": 51.223258938640356,
+      "forward": {
+        "iterations": 1775,
+        "residual": 7.75714678366795e-11,
+        "seconds": 6.703959781676531
+      },
+      "adjoint": {
+        "iterations": 1650,
+        "residual": 7.394912902094182e-11,
+        "seconds": 5.991509474813938
+      },
+      "energy_balance_error": 4.822333560005415e-13,
+      "FD_step_sweep": [
+        {
+          "step": 0.01,
+          "adjoint_directional_A": 8.111564728172077e-21,
+          "finite_difference_directional_A": 8.111863013796418e-21,
+          "relative_error": 3.677153125410331e-05,
+          "plus_objective_A": 4.967973646806076e-22,
+          "minus_objective_A": 3.3456010440467925e-22,
+          "worst_forward_residual": 8.44961542790519e-11,
+          "worst_energy_balance_error": 3.8861814670722537e-13,
+          "forward_solve_seconds": [
+            6.436492398381233,
+            6.433010961860418
+          ],
+          "clipping": false
+        },
+        {
+          "step": 0.005,
+          "adjoint_directional_A": 8.111564728172077e-21,
+          "finite_difference_directional_A": 8.111639236741358e-21,
+          "relative_error": 9.18538992012576e-06,
+          "plus_objective_A": 4.562043779012508e-22,
+          "minus_objective_A": 3.7508798553383725e-22,
+          "worst_forward_residual": 8.098796408902775e-11,
+          "worst_energy_balance_error": 5.119637060218593e-13,
+          "forward_solve_seconds": [
+            6.438723497092724,
+            6.4329020865261555
+          ],
+          "clipping": false
+        },
+        {
+          "step": 0.0025,
+          "adjoint_directional_A": 8.111564728172077e-21,
+          "finite_difference_directional_A": 8.111583301688353e-21,
+          "relative_error": 2.2897522696911798e-06,
+          "plus_objective_A": 4.35917003576755e-22,
+          "minus_objective_A": 3.953590870683132e-22,
+          "worst_forward_residual": 7.9298122619637e-11,
+          "worst_energy_balance_error": 5.020535893480867e-13,
+          "forward_solve_seconds": [
+            6.434334821999073,
+            6.431498169898987
+          ],
+          "clipping": false
+        }
+      ],
+      "best_FD_relative_error": 2.2897522696911798e-06,
+      "raw_artifact": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_thermal_gray_p1_grown_grown_20260806/thermal_material_adfd_grown_grown.npz",
+        "size_bytes": 150744274,
+        "sha256": "607a18ed103b63bce28b33b0e1f3f18befb40785035e885b3d7ec6ad675d0db9"
+      },
+      "CPU_linear_solve_fallback": false,
+      "Q_clipping_smoothing_gain_or_rescaling": false,
+      "optimization_iterations": 0
+    },
+    "p2_grown_grown": {
+      "status": "VALIDATED_SELECTED_FIXED_Q_THERMAL_GRAY_ADFD",
+      "passed": true,
+      "scenario": "grown_grown",
+      "scope": "fixed Maxwell Q; phi_p(rho)=rho^p applied consistently to bulk kappa and TaIrTe4/design interface G",
+      "density_contract": "selected_373_to_186",
+      "gray_exponent": 2.0,
+      "gray_interpretation": "named numerical relaxation, not a measured mixture law or confidence interval",
+      "nodal_shape": [
+        373,
+        373
+      ],
+      "thermal_cell_shape": [
+        186,
+        186
+      ],
+      "mapping_checks": [
+        {
+          "direction": "uniform",
+          "dot_error": 4.2684376827438616e-16,
+          "FD_error": 1.9207969572347378e-14
+        },
+        {
+          "direction": "smooth_asymmetric",
+          "dot_error": 0.0,
+          "FD_error": 6.554818559113522e-14
+        },
+        {
+          "direction": "central_localized",
+          "dot_error": 6.170866249265558e-16,
+          "FD_error": 1.0552181286242991e-13
+        },
+        {
+          "direction": "design_edge_localized",
+          "dot_error": 2.9686586935562714e-16,
+          "FD_error": 1.9563460790532008e-13
+        },
+        {
+          "direction": "fixed_seed_random",
+          "dot_error": 5.66363205335764e-16,
+          "FD_error": 1.0930809862979049e-13
+        }
+      ],
+      "mapping_worst_dot_error": 6.170866249265558e-16,
+      "mapping_worst_FD_error": 1.9563460790532008e-13,
+      "mapping_gates": {
+        "transpose_error_max": 1e-12,
+        "linear_mapping_FD_error_max": 1e-08
+      },
+      "base_density_range": [
+        0.45497424134944114,
+        0.5450257586505589
+      ],
+      "direction": "smooth_asymmetric",
+      "objective_A": 6.272064593210615e-22,
+      "adjoint_directional_A": 1.2089808661878754e-20,
+      "gradient_norms": {
+        "bulk_k": 7.959234376026021e-23,
+        "interface_G": 1.553601632846054e-23,
+        "total": 8.293029796697923e-23
+      },
+      "assembly_seconds": 53.813913218677044,
+      "forward": {
+        "iterations": 1775,
+        "residual": 8.907129713199068e-11,
+        "seconds": 6.699852608144283
+      },
+      "adjoint": {
+        "iterations": 1650,
+        "residual": 7.170919581932732e-11,
+        "seconds": 5.99277651309967
+      },
+      "energy_balance_error": 4.909577980008449e-12,
+      "FD_step_sweep": [
+        {
+          "step": 0.005,
+          "adjoint_directional_A": 1.2089808661878754e-20,
+          "finite_difference_directional_A": 1.2089909063686278e-20,
+          "relative_error": 8.304595757906733e-06,
+          "plus_objective_A": 6.876712866097677e-22,
+          "minus_objective_A": 5.667721959729049e-22,
+          "worst_forward_residual": 9.328147567790773e-11,
+          "worst_energy_balance_error": 4.981957225000824e-12,
+          "forward_solve_seconds": [
+            6.436554566025734,
+            6.442691583186388
+          ],
+          "clipping": false
+        },
+        {
+          "step": 0.0025,
+          "adjoint_directional_A": 1.2089808661878754e-20,
+          "finite_difference_directional_A": 1.2089833798141829e-20,
+          "relative_error": 2.0791239560574655e-06,
+          "plus_objective_A": 6.574348642413245e-22,
+          "minus_objective_A": 5.969856952506153e-22,
+          "worst_forward_residual": 9.117201368992013e-11,
+          "worst_energy_balance_error": 4.949041480334365e-12,
+          "forward_solve_seconds": [
+            6.4344084821641445,
+            6.435683693736792
+          ],
+          "clipping": false
+        }
+      ],
+      "best_FD_relative_error": 2.0791239560574655e-06,
+      "raw_artifact": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_thermal_gray_p2_grown_grown_20260806/thermal_material_adfd_grown_grown.npz",
+        "size_bytes": 150749242,
+        "sha256": "5da6f3f8da3b883991c13a93a79fa1650f40ef2d3ec943fac26f888f3ef1cb2f"
+      },
+      "CPU_linear_solve_fallback": false,
+      "Q_clipping_smoothing_gain_or_rescaling": false,
+      "optimization_iterations": 0
+    },
+    "p3_grown_grown": {
+      "status": "VALIDATED_SELECTED_FIXED_Q_THERMAL_GRAY_ADFD",
+      "passed": true,
+      "scenario": "grown_grown",
+      "scope": "fixed Maxwell Q; phi_p(rho)=rho^p applied consistently to bulk kappa and TaIrTe4/design interface G",
+      "density_contract": "selected_373_to_186",
+      "gray_exponent": 3.0,
+      "gray_interpretation": "named numerical relaxation, not a measured mixture law or confidence interval",
+      "nodal_shape": [
+        373,
+        373
+      ],
+      "thermal_cell_shape": [
+        186,
+        186
+      ],
+      "mapping_checks": [
+        {
+          "direction": "uniform",
+          "dot_error": 4.2684376827438616e-16,
+          "FD_error": 1.9207969572347378e-14
+        },
+        {
+          "direction": "smooth_asymmetric",
+          "dot_error": 0.0,
+          "FD_error": 6.554818559113522e-14
+        },
+        {
+          "direction": "central_localized",
+          "dot_error": 6.170866249265558e-16,
+          "FD_error": 1.0552181286242991e-13
+        },
+        {
+          "direction": "design_edge_localized",
+          "dot_error": 2.9686586935562714e-16,
+          "FD_error": 1.9563460790532008e-13
+        },
+        {
+          "direction": "fixed_seed_random",
+          "dot_error": 5.66363205335764e-16,
+          "FD_error": 1.0930809862979049e-13
+        }
+      ],
+      "mapping_worst_dot_error": 6.170866249265558e-16,
+      "mapping_worst_FD_error": 1.9563460790532008e-13,
+      "mapping_gates": {
+        "transpose_error_max": 1e-12,
+        "linear_mapping_FD_error_max": 1e-08
+      },
+      "base_density_range": [
+        0.45497424134944114,
+        0.5450257586505589
+      ],
+      "direction": "smooth_asymmetric",
+      "objective_A": 7.621369146410211e-22,
+      "adjoint_directional_A": 1.452308504235926e-20,
+      "gradient_norms": {
+        "bulk_k": 9.719777264886547e-23,
+        "interface_G": 2.4135619055510958e-23,
+        "total": 1.0306545521746865e-22
+      },
+      "assembly_seconds": 51.71610038354993,
+      "forward": {
+        "iterations": 1775,
+        "residual": 8.763812938741893e-11,
+        "seconds": 6.695573173463345
+      },
+      "adjoint": {
+        "iterations": 1650,
+        "residual": 6.65214779050441e-11,
+        "seconds": 5.9891412332654
+      },
+      "energy_balance_error": 8.564110469831268e-12,
+      "FD_step_sweep": [
+        {
+          "step": 0.005,
+          "adjoint_directional_A": 1.452308504235926e-20,
+          "finite_difference_directional_A": 1.452316730380068e-20,
+          "relative_error": 5.664152984085329e-06,
+          "plus_objective_A": 8.347671698888722e-22,
+          "minus_objective_A": 6.895354968508654e-22,
+          "worst_forward_residual": 9.142950640525243e-11,
+          "worst_energy_balance_error": 8.808501025661268e-12,
+          "forward_solve_seconds": [
+            6.4354993514716625,
+            6.438687909394503
+          ],
+          "clipping": false
+        },
+        {
+          "step": 0.0025,
+          "adjoint_directional_A": 1.452308504235926e-20,
+          "finite_difference_directional_A": 1.4523106112133745e-20,
+          "relative_error": 1.4507760477387116e-06,
+          "plus_objective_A": 7.984482850086627e-22,
+          "minus_objective_A": 7.25832754447994e-22,
+          "worst_forward_residual": 8.950460195542776e-11,
+          "worst_energy_balance_error": 8.692234121113614e-12,
+          "forward_solve_seconds": [
+            6.4342633709311485,
+            6.430664159357548
+          ],
+          "clipping": false
+        }
+      ],
+      "best_FD_relative_error": 1.4507760477387116e-06,
+      "raw_artifact": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_thermal_gray_p3_grown_grown_20260806/thermal_material_adfd_grown_grown.npz",
+        "size_bytes": 150785195,
+        "sha256": "64447f9f89b47a8b8ee0ba8925a7ff2ca024258f7b5512885f512bac63bdc819"
+      },
+      "CPU_linear_solve_fallback": false,
+      "Q_clipping_smoothing_gain_or_rescaling": false,
+      "optimization_iterations": 0
+    },
+    "p1_evaporated_evaporated": {
+      "status": "VALIDATED_SELECTED_FIXED_Q_THERMAL_GRAY_ADFD",
+      "passed": true,
+      "scenario": "evaporated_evaporated",
+      "scope": "fixed Maxwell Q; phi_p(rho)=rho^p applied consistently to bulk kappa and TaIrTe4/design interface G",
+      "density_contract": "selected_373_to_186",
+      "gray_exponent": 1.0,
+      "gray_interpretation": "named numerical relaxation, not a measured mixture law or confidence interval",
+      "nodal_shape": [
+        373,
+        373
+      ],
+      "thermal_cell_shape": [
+        186,
+        186
+      ],
+      "mapping_checks": [
+        {
+          "direction": "uniform",
+          "dot_error": 4.2684376827438616e-16,
+          "FD_error": 1.9207969572347378e-14
+        },
+        {
+          "direction": "smooth_asymmetric",
+          "dot_error": 0.0,
+          "FD_error": 6.554818559113522e-14
+        },
+        {
+          "direction": "central_localized",
+          "dot_error": 6.170866249265558e-16,
+          "FD_error": 1.0552181286242991e-13
+        },
+        {
+          "direction": "design_edge_localized",
+          "dot_error": 2.9686586935562714e-16,
+          "FD_error": 1.9563460790532008e-13
+        },
+        {
+          "direction": "fixed_seed_random",
+          "dot_error": 5.66363205335764e-16,
+          "FD_error": 1.0930809862979049e-13
+        }
+      ],
+      "mapping_worst_dot_error": 6.170866249265558e-16,
+      "mapping_worst_FD_error": 1.9563460790532008e-13,
+      "mapping_gates": {
+        "transpose_error_max": 1e-12,
+        "linear_mapping_FD_error_max": 1e-08
+      },
+      "base_density_range": [
+        0.45497424134944114,
+        0.5450257586505589
+      ],
+      "direction": "smooth_asymmetric",
+      "objective_A": 1.2749961262017228e-18,
+      "adjoint_directional_A": 2.2329069988338542e-17,
+      "gradient_norms": {
+        "bulk_k": 4.58632207377746e-20,
+        "interface_G": 1.1452588777330406e-19,
+        "total": 1.356321542659172e-19
+      },
+      "assembly_seconds": 54.09655249491334,
+      "forward": {
+        "iterations": 2250,
+        "residual": 5.753862018814285e-11,
+        "seconds": 8.428426500409842
+      },
+      "adjoint": {
+        "iterations": 2250,
+        "residual": 9.503881923558294e-11,
+        "seconds": 8.175092734396458
+      },
+      "energy_balance_error": 4.940724060983163e-12,
+      "FD_step_sweep": [
+        {
+          "step": 0.005,
+          "adjoint_directional_A": 2.2329069988338542e-17,
+          "finite_difference_directional_A": 2.2329311735031015e-17,
+          "relative_error": 1.0826428299336971e-05,
+          "plus_objective_A": 1.386681016310313e-18,
+          "minus_objective_A": 1.1633878989600028e-18,
+          "worst_forward_residual": 9.936590901714856e-11,
+          "worst_energy_balance_error": 5.6912384326522626e-12,
+          "forward_solve_seconds": [
+            8.155918527394533,
+            8.057827096432447
+          ],
+          "clipping": false
+        },
+        {
+          "step": 0.0025,
+          "adjoint_directional_A": 2.2329069988338542e-17,
+          "finite_difference_directional_A": 2.2329130425204083e-17,
+          "relative_error": 2.706637669720364e-06,
+          "plus_objective_A": 1.3308285348415285e-18,
+          "minus_objective_A": 1.2191828827155081e-18,
+          "worst_forward_residual": 9.99597705966245e-11,
+          "worst_energy_balance_error": 1.7848827994941144e-12,
+          "forward_solve_seconds": [
+            8.064409539103508,
+            8.059799764305353
+          ],
+          "clipping": false
+        }
+      ],
+      "best_FD_relative_error": 2.706637669720364e-06,
+      "raw_artifact": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_thermal_gray_p1_evaporated_evaporated_20260806/thermal_material_adfd_evaporated_evaporated.npz",
+        "size_bytes": 152034069,
+        "sha256": "d7f5893b788ef6e2927a37dc9878ab676fe7c465735f84137c19b393d982394d"
+      },
+      "CPU_linear_solve_fallback": false,
+      "Q_clipping_smoothing_gain_or_rescaling": false,
+      "optimization_iterations": 0
+    }
+  },
+  "gates": {
+    "worst_all_step_FD_relative_error_diagnostic": 3.677153125410331e-05,
+    "worst_finest_step_FD_relative_error": 2.706637669720364e-06,
+    "worst_linear_residual": 9.99597705966245e-11,
+    "worst_energy_balance_error": 8.808501025661268e-12,
+    "worst_mapping_transpose_error": 6.170866249265558e-16
+  },
+  "Maxwell_solves": 0,
+  "thermal_linear_solves": "CUDA float64 only",
+  "optimization_iterations": 0
+}

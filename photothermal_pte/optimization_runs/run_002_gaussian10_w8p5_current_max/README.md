@@ -1,6 +1,6 @@
 # Run 002 — 10 µm Gaussian current maximization
 
-Status: `SELECTED_PRODUCTION_THERMAL_MAPPING_VALIDATED`. A homogeneous-air
+Status: `SELECTED_THERMAL_GRAY_LAW_ADFD_VALIDATED`. A homogeneous-air
 source-only Maxwell gate, small CUDA thermal forward/adjoint controls,
 uniform rho=0/0.5/1 scalar-vs-`importnk2` complex-material controls, and a
 matched-volume rho=0.5 production-candidate GPU forward have run. The exact
@@ -187,3 +187,12 @@ air/interface remainder is reported rather than moved. Conservative 3D
 deposition has total power error `3.539e-16`, worst component/material error
 `9.190e-16`, and zero source cells outside their material. Thermal gray-law
 solver AD-FD remains the next gate.
+
+The selected fixed-Q thermal branch now passes gray-law AD-FD. For
+`phi_p(rho)=rho^p`, grown/grown p=1,2,3 finest-step errors are
+`2.290e-6`, `2.079e-6`, and `1.451e-6`; the selected
+evaporated/evaporated p=1 endpoint gives `2.707e-6`. All thermal linear solves
+used CUDA float64 without CPU fallback. Relative to p=1, p=2 and p=3 rotate
+the thermal gradient by 5.363° and 9.800°, so p is an explicit material-model
+choice. This fixed-Q checkpoint does not include the optical epsilon gray law
+and is not a coupled or full-latent certificate.

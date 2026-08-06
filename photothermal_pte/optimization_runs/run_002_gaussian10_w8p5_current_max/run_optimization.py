@@ -48,7 +48,8 @@ def main() -> int:
         "Finite nonperiodic filter/projection mapping, the selected-grid "
         "GPU forward, its 373 x 373 component-Yee Jacobians, exact "
         "373-node-to-186-cell density map, and conservative 3D Q deposition "
-        "also passed. Selected-grid thermal gray-law solver AD-FD, the Maxwell adjoint, broader "
+        "also passed. Selected-grid fixed-Q thermal p=1,2,3 gray-law AD-FD "
+        "also passed. Coupled optical gray-law sensitivity, the Maxwell adjoint, broader "
         "directions, exact-binary DRC fixtures, and full-latent AD-FD still "
         "block execution"
     )
