@@ -106,3 +106,15 @@ def test_only_explicit_hpc_checkout_errors_are_retryable() -> None:
         "passed": True,
         "error": "Unable to checkout the requested HPC license",
     })
+
+
+def test_filter_projection_vjp_is_finite_at_closed_box_bounds() -> None:
+    mapping = ProductionDensityMapping(shape=(41, 39), spacing_m=50e-9, radius_m=500e-9)
+    latent = np.zeros(mapping.shape)
+    latent[:, mapping.shape[1] // 2:] = 1.0
+    rho = mapping.physical(latent, beta=2.0)
+    gradient = mapping.vjp(latent, np.ones(mapping.shape), beta=2.0)
+    assert np.all(np.isfinite(rho))
+    assert np.all(np.isfinite(gradient))
+    assert np.min(rho) >= 0.0 and np.max(rho) <= 1.0
+    assert np.linalg.norm(gradient) > 0.0

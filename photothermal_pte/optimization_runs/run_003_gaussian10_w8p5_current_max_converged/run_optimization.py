@@ -142,6 +142,7 @@ def evaluate(latent_npz: Path, output: Path, beta: float, gpu: str) -> tuple[Pat
             "--output-dir", str(output), "--gpu-device", f"GPU {gpu}",
             "--cuda-device", "0", "--beta", str(beta),
             "--incident-power-W", INCIDENT_POWER,
+            "--allow-closed-unit-interval-latent",
         ], f"evaluate_{output.name}", env=environment, allow_failure=True)
         if returncode == 0:
             payload = json.loads(result.read_text())

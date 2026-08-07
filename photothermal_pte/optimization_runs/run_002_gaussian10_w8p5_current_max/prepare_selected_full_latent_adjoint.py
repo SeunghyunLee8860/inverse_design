@@ -67,6 +67,11 @@ def main() -> int:
     parser.add_argument("--cuda-device", type=int, default=0)
     parser.add_argument("--beta", type=float, default=2.0)
     parser.add_argument("--incident-power-W", type=float, default=1.3822950233084244e-13)
+    parser.add_argument(
+        "--allow-closed-unit-interval-latent",
+        action="store_true",
+        help="Allow optimizer box-bound latent values exactly at 0 or 1; values outside [0,1] remain invalid.",
+    )
     args = parser.parse_args()
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
@@ -84,8 +89,15 @@ def main() -> int:
         latent_data = np.load(latent_path)
         latent = np.asarray(latent_data["latent"], float)
         mapping = ProductionDensityMapping()
-        if latent.shape != mapping.shape or np.min(latent) <= 0.0 or np.max(latent) >= 1.0:
-            raise RuntimeError("latent baseline is not a strict interior 373x373 field")
+        finite = bool(np.all(np.isfinite(latent)))
+        if args.allow_closed_unit_interval_latent:
+            domain_valid = finite and np.min(latent) >= 0.0 and np.max(latent) <= 1.0
+            latent_domain_contract = "closed unit interval [0,1] for box-constrained optimization"
+        else:
+            domain_valid = finite and np.min(latent) > 0.0 and np.max(latent) < 1.0
+            latent_domain_contract = "strict interior (0,1) for AD-FD certification"
+        if latent.shape != mapping.shape or not domain_valid:
+            raise RuntimeError(f"latent baseline violates {latent_domain_contract}")
         rho = mapping.physical(latent, args.beta)
         if "rho_reconstructed" in latent_data:
             reconstruction_error = float(np.max(np.abs(rho - latent_data["rho_reconstructed"])))
@@ -193,6 +205,7 @@ def main() -> int:
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "scope": "selected 373x373 latent -> finite conic filter -> beta=2 projection -> optical/thermal/PTE",
             "beta": args.beta,
+            "latent_domain_contract": latent_domain_contract,
             "latent_range": [float(np.min(latent)), float(np.max(latent))],
             "physical_density_range": [float(np.min(rho)), float(np.max(rho))],
             "objective_A": objective,
