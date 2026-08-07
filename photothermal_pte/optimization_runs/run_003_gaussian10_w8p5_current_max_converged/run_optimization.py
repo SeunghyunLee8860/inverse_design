@@ -181,7 +181,12 @@ def propose(
         if sha256(raw_path) != payload["raw_artifact"]["sha256"]:
             raise RuntimeError("existing proposal SHA mismatch")
         return result_path, raw_path, candidate_state_path
-    output.mkdir(parents=True, exist_ok=False)
+    # A supervisor interruption can occur after the directory is created but
+    # before proposal_result.json is committed.  That directory is not an
+    # accepted checkpoint.  Re-enter it and deterministically overwrite the
+    # proposal payload; completed proposals are still validated and returned
+    # by the SHA-checked branch above.
+    output.mkdir(parents=True, exist_ok=True)
     current_payload = json.loads(current_result.read_text())
     current_data = np.load(current_raw)
     latent = np.asarray(current_data["latent"], float)
