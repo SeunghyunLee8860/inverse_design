@@ -50,7 +50,7 @@ higher beta.
 
 ## Beta promotion
 
-Beta follows `2, 4, 8, 16, 32, 64, 128, 256, 512` only after a stage has at
+Beta follows `2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096` only after a stage has at
 least eight accepted updates (ten at beta=2), satisfies both fixed
 inequalities, and the last four accepted updates simultaneously satisfy:
 
