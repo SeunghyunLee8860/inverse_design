@@ -1,7 +1,7 @@
 {
   "run_id": "run_002_gaussian10_w8p5_current_max",
-  "status": "COMPLETED_NOMINAL_BETA2_MMA_PILOT",
-  "last_updated_utc": "2026-08-06T23:21:03.189679+00:00",
+  "status": "RUNNING_BETA_CONTINUATION_WITH_500NM_SOLID_VOID_CONSTRAINTS",
+  "last_updated_utc": "2026-08-07T00:21:43.327224+00:00",
   "optimization_started": true,
-  "message": "Five nominal beta=2 restartable MMA iterations accepted; total actual objective improvement=45.734%. This is a continuous gray-design pilot, not a fabrication-ready result. Binary continuation, exact DRC, opposite-sign, robust interface scenarios, and full electrodes remain."
+  "message": "Beta=4 continuation state g=5, stage=0 recorded; FOM=2.232245e-07 A/W, grayness=0.903359. Fully binary and exact 500 nm DRC promotion remain pending."
 }

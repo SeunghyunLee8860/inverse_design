@@ -1,0 +1,112 @@
+{
+  "status": "RUNNING_BETA_CONTINUATION_WITH_500NM_SOLID_VOID_CONSTRAINTS",
+  "contract": {
+    "beta_schedule": [
+      4,
+      8,
+      16,
+      32,
+      64,
+      128
+    ],
+    "minimum_solid_feature_nm": 500.0,
+    "minimum_void_feature_nm": 500.0,
+    "finite_nonperiodic_filter_radius_nm": 500.0,
+    "no_periodic_wrap": true,
+    "exact_binary_audit_is_not_repair": true,
+    "final_gates": {
+      "gray_fraction_0p01_0p99_max": 0.001,
+      "binarization_metric_max": 0.001,
+      "solid_bad_cell_count": 0,
+      "void_bad_cell_count": 0
+    },
+    "promotion": "requires final thresholded-binary Maxwell/CUDA-thermal reevaluation"
+  },
+  "history": [
+    {
+      "evaluation_index": 0,
+      "global_iteration": 5,
+      "stage_iteration": 0,
+      "role": "stage_baseline",
+      "beta": 4.0,
+      "objective_A": 3.0856209493249904e-20,
+      "objective_A_per_W": 2.2322448517102935e-07,
+      "rho_mean": 0.4936252932615211,
+      "gray_fraction_0p01_0p99": 1.0,
+      "gray_fraction_0p05_0p95": 1.0,
+      "binarization_metric": 0.9033591761173221,
+      "smooth_solid_constraint": 0.02742475486047701,
+      "smooth_void_constraint": 0.02689528449030906,
+      "solid_bad_fraction": 0.00076907043103882,
+      "void_bad_fraction": 0.0,
+      "solid_exact_pass": false,
+      "void_exact_pass": true,
+      "optical_closure": 1.6357989204242036e-06,
+      "thermal_residual": 8.126589708917409e-11,
+      "thermal_energy_balance": 3.220281125942099e-12
+    }
+  ],
+  "raw_artifacts": {
+    "continuation_b004_i000_g005": {
+      "evaluation_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_beta_continuation_beta004_baseline_20260807/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10599,
+        "sha256": "8a4acaf19481bdf0be3ac10078458a1f26dc3e7b57a2f8f64510f28290bd8e8d"
+      },
+      "evaluation_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_beta_continuation_beta004_baseline_20260807/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 6779982,
+        "sha256": "07f30ff47bb10b466a4a67ccb347508bf20434134890df6f02e4c66bf736dfc3"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/checkpoints/continuation_b004_i000_g005_accepted_state.npz",
+        "size_bytes": 464433,
+        "sha256": "dbf2e9b159bb61307f60ea507ea12867a1133eb9e3802309927116bf35e1a3dd"
+      }
+    }
+  },
+  "generated_at_utc": "2026-08-07T00:21:43.327224+00:00",
+  "current_beta": 4.0,
+  "current_global_iteration": 5,
+  "current_stage_iteration": 0,
+  "current_metrics": {
+    "beta": 4.0,
+    "latent_min": 0.34536170959472656,
+    "latent_max": 0.6359452605247498,
+    "filtered_min": 0.35697231459342604,
+    "filtered_max": 0.6277152824360779,
+    "rho_min": 0.23190200113948622,
+    "rho_max": 0.7440883889742702,
+    "rho_mean": 0.4936252932615211,
+    "gray_fraction_0p01_0p99": 1.0,
+    "gray_fraction_0p05_0p95": 1.0,
+    "binarization_metric_mean_4rho1mrho": 0.9033591761173221,
+    "smooth_solid_constraint": 0.02742475486047701,
+    "smooth_void_constraint": 0.02689528449030906,
+    "exact_binary_audit": {
+      "minimum_feature_nm": 500.0,
+      "opening_radius_nm": 250.0,
+      "opening_radius_pixels": 5,
+      "footprint_pixel_count": 81,
+      "solid_fraction": 0.4984510777767396,
+      "solid_bad_cell_count": 107,
+      "void_bad_cell_count": 0,
+      "solid_bad_fraction_all_cells": 0.00076907043103882,
+      "void_bad_fraction_all_cells": 0.0,
+      "solid_pass": false,
+      "void_pass": true
+    },
+    "objective_A": 3.0856209493249904e-20,
+    "objective_A_per_W": 2.2322448517102935e-07,
+    "P_Q_W": 6.998822004326158e-14,
+    "P_six_W": 6.998833453010365e-14,
+    "optical_closure": 1.6357989204242036e-06,
+    "thermal_residual": 8.126589708917409e-11,
+    "thermal_energy_balance": 3.220281125942099e-12
+  },
+  "current_checkpoint": {
+    "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/checkpoints/continuation_b004_i000_g005_accepted_state.npz",
+    "size_bytes": 464433,
+    "sha256": "dbf2e9b159bb61307f60ea507ea12867a1133eb9e3802309927116bf35e1a3dd"
+  }
+}

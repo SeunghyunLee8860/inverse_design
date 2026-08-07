@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
+import re
 
 import matplotlib
 
@@ -262,6 +263,48 @@ def main() -> int:
         "`RUNNING` is intentional: fully binary promotion requires the final grayness gates, "
         "zero exact solid/void violations, and a fresh thresholded-binary Maxwell/CUDA-thermal reevaluation.\n"
     )
+    status_path = run / "STATUS.json"
+    status = json.loads(status_path.read_text())
+    status.update({
+        "status": STATUS,
+        "last_updated_utc": summary["generated_at_utc"],
+        "optimization_started": True,
+        "message": (
+            f"Beta={beta:g} continuation state g={args.global_iteration}, "
+            f"stage={args.stage_iteration} recorded; FOM={metrics['objective_A_per_W']:.6e} A/W, "
+            f"grayness={metrics['binarization_metric_mean_4rho1mrho']:.6g}. "
+            "Fully binary and exact 500 nm DRC promotion remain pending."
+        ),
+    })
+    status_path.write_text(json.dumps(status, indent=2) + "\n")
+    config_path = run / "run_config.json"
+    config_text = config_path.read_text()
+    updated_config, replacements = re.subn(
+        r'("driver_status"\s*:\s*")[^"]+("\s*)',
+        rf'\g<1>{STATUS}\g<2>',
+        config_text,
+        count=1,
+    )
+    if replacements != 1:
+        raise RuntimeError("run_config driver_status was not uniquely replaceable")
+    config_path.write_text(updated_config)
+    manifest_path = run / "manifests" / "RAW_ARTIFACT_MANIFEST.json"
+    manifest = json.loads(manifest_path.read_text())
+    continuation = manifest.setdefault("beta_continuation", {
+        "status": STATUS,
+        "raw_artifacts_are_gitignored": True,
+        "minimum_solid_feature_nm": 500.0,
+        "minimum_void_feature_nm": 500.0,
+        "records": {},
+    })
+    continuation["status"] = STATUS
+    continuation["records"][tag] = raw_entry
+    # A running continuation is active work, not a promoted physical result.
+    # Preserve the immutable beta=2 promotion until every final binary gate
+    # and the thresholded-binary solver reevaluation have passed.
+    manifest["active_work_status"] = STATUS
+    manifest["active_work_updated_at_utc"] = summary["generated_at_utc"]
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
     print(json.dumps({
         "status": STATUS,
         "tag": tag,

@@ -69,7 +69,7 @@ class OptimizationRunContractTest(unittest.TestCase):
         self.assertTrue(result.valid)
         self.assertEqual(
             result.status,
-            "COMPLETED_NOMINAL_BETA2_MMA_PILOT",
+            "RUNNING_BETA_CONTINUATION_WITH_500NM_SOLID_VOID_CONSTRAINTS",
         )
 
     def test_selected_optical_gradient_status_is_allowed(self) -> None:

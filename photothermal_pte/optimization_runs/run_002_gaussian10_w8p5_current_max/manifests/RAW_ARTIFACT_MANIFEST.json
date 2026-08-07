@@ -1299,5 +1299,32 @@
         "sha256": "92ddefbc87f6bbb0fc4f6ca45be77d57e8236144d484aeca357e63885c062426"
       }
     }
-  }
+  },
+  "beta_continuation": {
+    "status": "RUNNING_BETA_CONTINUATION_WITH_500NM_SOLID_VOID_CONSTRAINTS",
+    "raw_artifacts_are_gitignored": true,
+    "minimum_solid_feature_nm": 500.0,
+    "minimum_void_feature_nm": 500.0,
+    "records": {
+      "continuation_b004_i000_g005": {
+        "evaluation_result": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_beta_continuation_beta004_baseline_20260807/selected_full_latent_adjoint_preparation_result.json",
+          "size_bytes": 10599,
+          "sha256": "8a4acaf19481bdf0be3ac10078458a1f26dc3e7b57a2f8f64510f28290bd8e8d"
+        },
+        "evaluation_NPZ": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_beta_continuation_beta004_baseline_20260807/selected_full_latent_adjoint_preparation.npz",
+          "size_bytes": 6779982,
+          "sha256": "07f30ff47bb10b466a4a67ccb347508bf20434134890df6f02e4c66bf736dfc3"
+        },
+        "checkpoint": {
+          "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/checkpoints/continuation_b004_i000_g005_accepted_state.npz",
+          "size_bytes": 464433,
+          "sha256": "dbf2e9b159bb61307f60ea507ea12867a1133eb9e3802309927116bf35e1a3dd"
+        }
+      }
+    }
+  },
+  "active_work_status": "RUNNING_BETA_CONTINUATION_WITH_500NM_SOLID_VOID_CONSTRAINTS",
+  "active_work_updated_at_utc": "2026-08-07T00:21:43.327224+00:00"
 }
