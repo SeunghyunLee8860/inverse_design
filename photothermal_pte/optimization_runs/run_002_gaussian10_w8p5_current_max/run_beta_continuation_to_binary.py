@@ -175,7 +175,7 @@ def propose_and_accept(
         proposal_result = proposal_dir / "beta_continuation_proposal_result.json"
         proposal_raw = proposal_dir / "beta_continuation_proposal.npz"
         if not proposal_result.exists():
-            execute([
+            proposal_returncode = execute([
                 str(PYTHON), str(HERE / "propose_beta_continuation_step.py"),
                 "--evaluation-result", str(current_result),
                 "--evaluation-raw", str(current_raw),
@@ -184,7 +184,16 @@ def propose_and_accept(
                 "--global-iteration", str(global_iteration),
                 "--move", str(move),
                 "--constraint-reduction", "0.01",
-            ], f"propose_beta_{beta:g}_g{global_iteration}_retry{retry}")
+            ], f"propose_beta_{beta:g}_g{global_iteration}_retry{retry}", allow_failure=True)
+            if proposal_returncode:
+                emit(
+                    "proposal_rejected_before_solver",
+                    beta=beta,
+                    global_iteration=global_iteration,
+                    retry=retry,
+                    move=move,
+                )
+                continue
         candidate_result, candidate_raw = evaluate(proposal_raw, evaluation_dir, beta, gpu)
         accepted_state = STATE_ROOT / f"mma_state_accepted_g{global_iteration:03d}.npz"
         acceptance = evaluation_dir / "beta_continuation_acceptance.json"
