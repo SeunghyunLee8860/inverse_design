@@ -1,6 +1,6 @@
 {
   "status": "RUNNING_CONVERGENCE_BASED_CONSTRAINED_BETA_CONTINUATION",
-  "generated_at_utc": "2026-08-07T09:54:12.991506+00:00",
+  "generated_at_utc": "2026-08-07T10:07:31.564035+00:00",
   "raw_artifacts_are_gitignored": true,
   "base_FSP": {
     "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_production_geometry_runsetup_v2_20260806/production_candidate_runsetup.fsp",
@@ -955,6 +955,38 @@
         "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s029_g029_accepted_mma_state.npz",
         "size_bytes": 1478391,
         "sha256": "f69f94f44fd6af4336f3bd33d2c8d8ff507751d52b5497eced7a1102360e73d7"
+      }
+    },
+    "run003_b002_s030_g030_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s030_g030_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10835,
+        "sha256": "61e5552e0d1100e2ddcc0215ff477bf5a99d7c6c8b2bb2b92b93b09065f1b438"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s030_g030_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5465810,
+        "sha256": "ea19e21f935d0208f620ff4de574da001f0bdcc49dae2dab7f75bf3307c6f324"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s030_g030_accepted_mma.npz",
+        "size_bytes": 118584,
+        "sha256": "5789bbad7521e56b228e50ee7f359fdbf209dc239a4c94539f4e4e1e996da374"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s030_g030_retry0_proposal/proposal_result.json",
+        "size_bytes": 3178,
+        "sha256": "9fc9cb18b4f803703e1745165e594260608adb9d55b592d216b1c9a590d0bf7e"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s030_g030_retry0_proposal/proposal.npz",
+        "size_bytes": 2628061,
+        "sha256": "66d43b883a895399e213198773cc319ef4e821d56ba3bb8832d69563213f144b"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s030_g030_accepted_mma_state.npz",
+        "size_bytes": 1216727,
+        "sha256": "71130c90c79e9624cd09361af645b24cb008f2a85d55e7a3e0b745867471478a"
       }
     }
   }
