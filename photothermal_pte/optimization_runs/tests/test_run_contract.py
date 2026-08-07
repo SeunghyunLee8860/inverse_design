@@ -90,6 +90,14 @@ class OptimizationRunContractTest(unittest.TestCase):
     def test_running_nominal_mma_status_is_allowed(self) -> None:
         self.assertIn("RUNNING_NOMINAL_MMA_PILOT", ALLOWED_STATUS)
         self.assertIn("COMPLETED_NOMINAL_BETA2_MMA_PILOT", ALLOWED_STATUS)
+        self.assertIn(
+            "RUNNING_BETA_CONTINUATION_WITH_500NM_SOLID_VOID_CONSTRAINTS",
+            ALLOWED_STATUS,
+        )
+        self.assertIn(
+            "COMPLETED_FULLY_BINARIZED_500NM_CONSTRAINED_OPTIMIZATION",
+            ALLOWED_STATUS,
+        )
 
     def test_gaussian10_lossless_sio2_fails_closed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

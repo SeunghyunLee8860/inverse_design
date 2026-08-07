@@ -1,15 +1,17 @@
 # Run 002 — 10 µm Gaussian current maximization
 
-Status: `VALIDATED_SELECTED_OPTICAL_GRADIENT_ADFD`. A homogeneous-air
-source-only Maxwell gate, small CUDA thermal forward/adjoint controls,
-uniform rho=0/0.5/1 scalar-vs-`importnk2` complex-material controls, and a
-matched-volume rho=0.5 production-candidate GPU forward have run. The exact
-material-attributed Q has also passed the full production 3D CUDA thermal/PTE
-forward and implicit-adjoint controls for four interface-G scenarios. No
-optimization solve has started. The selected `373×373` physical-density
-optical gradient now passes one directional AD-FD smoke at `h=0.005`; its
-corrected one-direction combined Maxwell/CUDA-thermal derivative also passes.
-This is not yet the full latent AD-FD certificate.
+The continuous beta=2 pilot is now followed by a stateful constrained-MMA beta
+continuation. See [BETA_CONTINUATION_CONTRACT.md](BETA_CONTINUATION_CONTRACT.md)
+for the 500 nm solid/void definition, beta schedule, per-iteration figures, and
+fail-closed binary promotion gates.
+
+The full latent AD--FD gate and five beta=2 nominal MMA iterations are complete;
+the latter improved the evaluated PTE objective by 45.73%. The current state is
+`RUNNING_BETA_CONTINUATION_WITH_500NM_SOLID_VOID_CONSTRAINTS`. This remains a
+nominal grown/grown, +I, uniform-45-degree-weighting optimization; named
+interface robustness, full electrodes, and the final thresholded-binary
+Maxwell/thermal reevaluation are separate gates and have not been silently
+promoted.
 
 This is a new physical contract, not a continuation that silently reuses the
 4 µm CPU-TFSF certificate.  The requested source is a scalar Gaussian at
