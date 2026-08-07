@@ -2,6 +2,40 @@
 
 작성: 2026-07-24, 코드리뷰 반영 갱신 2026-07-25. 명세 "TaIrTe4 500 nm 이진 설계: 전체 수정 명세"(0~18)에 대응.
 
+## 스테이지 스케줄링 재작업 (2026-08-07) — 저-beta 탐색 부족 / 제약 과지배 / 미이진화
+실런 관찰 3건(β=2가 topology를 못 찾고 넘어감; 제약이 저-beta FOM 상승을 막음; 종료 시 gray 잔존)에 대응.
+`pytest inverse_design/tests/` = **94 passed** (신규 `test_stage_scheduling.py` 14개 포함).
+
+- **스테이지별 예산**: `--beta-schedule`가 `beta[:maxeval[:min_evals]]`를 지원.
+  기본 `2:40:12,4:16,8:16,16:12,32:10,64:10` — β=2에 큰 예산 + 높은 최소평가수(조기진급은 진짜
+  plateau일 때만). 총 상한 104 evals (구 72). 평문 `2,4,8`은 기존처럼 `MAXEVAL` fallback.
+- **constraint warm-up**: `VC_CONSTRAINT_START_BETA`(기본 8) 미만 스테이지는 길이척도 제약을
+  MMA에 **걸지 않음**(순수 FOM 상승; gray 필드의 Zhou penalty는 의미가 약하고 FOM만 저해).
+  g_solid/g_void는 매 eval 계산·기록되고 best-feasible 갱신은 여전히 실제 g<=0을 요구 →
+  DRC/finalize 불변식 무변. warm-up 스테이지는 **절대 abort하지 않음**
+  (`warmup_converged`/`maxeval_warmup`로 진급; `adaptive_stage/v2-constraint-warmup`).
+- **binarization polish**: 사다리 종료 후 nominal 밀도의 gray fraction(노드가 (0.02,0.98)에
+  있는 비율)이 `VC_GRAY_TOL`(기본 0.05) 초과이면 β를 2배씩 올리는 짧은 제약-활성 스테이지를
+  `VC_BETA_CAP`(기본 256)까지 자동 추가(`VC_POLISH_MAXEVAL`=8). 매 eval `gray_fraction`을
+  history에 기록하고 stop.json에 `final_gray_fraction`/`binarization_converged` 기록.
+  (exact-binary projection + DRC + exact FOM 이 최종 판정이라는 원칙은 그대로.)
+- 스케줄/warm-up/polish 파라미터 전부 contract에 들어가 config_hash에 반영 → **이전 attempt로의
+  resume은 거부됨**(의도된 동작; 새 attempt로 시작).
+
+### 같은 라운드 추가 (runtime-opt 워크스트림에서 이식 + 시각화)
+- **`opt.set_xtol_rel(0.0)`**: nlopt 자체 xtol이 한 번의 미소 스텝 후 스테이지를 조기 종료시켜
+  min_evals/feasibility 게이팅을 우회하던 것 차단 — 스테이지 종료 권한은 adaptive controller 단독.
+- **`--rho-init`(`VC_RHO_INIT`, 기본 1e-2)**: CCSA inner penalty warm start. nlopt 기본
+  rho_init=1.0은 **매 스테이지 첫 ~5 eval을 step RMS 4.45e-6→6.5e-4로 낭비**(실측, eval당
+  ~15분 FDTD) → 1e-2면 eval 2-3부터 실질 이동. set 후 get_param으로 수락 검증, contract에
+  `nlopt_rho_init` 기록.
+- **iteration별 시각화** (`iteration_plots.py`, runtime-opt에서 이식): 매 objective eval마다
+  `<run_root>/plots/design_it####_beta<b>.png`(nominal 밀도 + exact-binary 프리뷰 + rho 히스토그램)
+  와 rolling `plots/progress.png`(Fx/Fy/F_sum, g_solid/void+feasible 음영, binarization/rails,
+  latent step RMS; β-스테이지 경계 표시) 갱신. history.jsonl에도 `binarization`, `frac_rails`,
+  `latent_step_rms`, `gray_fraction` 등 기록. 플롯 실패는 run을 죽이지 않음(try/except).
+  테스트: `test_iteration_plots.py` 4개 + 소스 가드 2개 (`pytest` = **100 passed**).
+
 ## Lumerical full-chain AD/FD 실측 인증 완료 (2026-07-25, GPU) — P0-8 CLOSED
 새 매핑 + solver-safe affine 층 + mapping VJP + FieldRegion adjoint(+ Yee 정합·주기소스 right-inverse·
 27-color rho→eps 측정 Jacobian) **전 경로**를 실제 FDTD로 검증. broadband 소스(3–6µm), 4µm 분석.
