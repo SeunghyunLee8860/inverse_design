@@ -19,6 +19,8 @@ import subprocess
 import sys
 import time
 
+import numpy as np
+
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[2]
@@ -314,18 +316,73 @@ def main() -> int:
     else:
         raise RuntimeError("projected binary gate did not pass through beta=4096")
 
-    # The thresholded-binary forward validation is a separate executable gate;
-    # leave an explicit ready marker rather than falsely promoting here.
+    # Extract the exact binary field only after the projected design itself has
+    # passed grayness and exact morphology gates, then rerun the actual solvers.
+    binary_dir = RAW_ROOT / f"run002_final_binary_g{global_iteration:03d}_beta{int(beta):04d}_20260807"
+    binary_dir.mkdir(parents=True, exist_ok=True)
+    binary_npz = binary_dir / "thresholded_binary_density.npz"
+    if not binary_npz.exists():
+        projected = np.load(current_raw)
+        rho_binary = (np.asarray(projected["rho"], float) >= 0.5).astype(np.uint8)
+        np.savez_compressed(
+            binary_npz,
+            rho_binary=rho_binary,
+            source_beta=np.asarray(beta),
+            source_global_iteration=np.asarray(global_iteration),
+        )
+    final_output = RAW_ROOT / f"run002_final_binary_solver_evaluation_g{global_iteration:03d}_20260807"
+    final_result = final_output / "thresholded_binary_evaluation_result.json"
+    final_raw = final_output / "thresholded_binary_evaluation.npz"
+    if not final_result.exists():
+        environment = dict(os.environ)
+        environment["CUDA_VISIBLE_DEVICES"] = args.gpu
+        execute([
+            str(PYTHON), str(HERE / "evaluate_thresholded_binary.py"),
+            "--base-fsp", str(BASE_FSP),
+            "--base-sha256", BASE_SHA,
+            "--binary-npz", str(binary_npz),
+            "--output-dir", str(final_output),
+            "--gpu-device", f"GPU {args.gpu}",
+            "--cuda-device", "0",
+            "--incident-power-W", INCIDENT_POWER,
+        ], "evaluate_thresholded_binary", env=environment)
+    wait_for_result(final_result)
+    execute([
+        str(PYTHON), str(HERE / "finalize_binary_optimization.py"),
+        "--evaluation-result", str(final_result),
+        "--evaluation-raw", str(final_raw),
+        "--projected-source-raw", str(current_raw),
+        "--run-directory", str(HERE),
+        "--beta", str(beta),
+        "--global-iteration", str(global_iteration),
+    ], "finalize_thresholded_binary")
+    final_tracked = [
+        HERE / "STATUS.json",
+        HERE / "run_config.json",
+        HERE / "manifests/RAW_ARTIFACT_MANIFEST.json",
+        HERE / "results/BETA_CONTINUATION_REPORT.md",
+        HERE / "results/beta_continuation_summary.json",
+        HERE / "plots/final_thresholded_binary_solver_validation.png",
+    ]
+    execute(["git", "add", *map(str, final_tracked)], "git_add_final_binary")
+    if subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=REPOSITORY).returncode:
+        execute(
+            ["git", "commit", "-m", "Validate final binary PTE inverse design"],
+            "git_commit_final_binary",
+        )
+        execute(["git", "push", "origin", "HEAD"], "git_push_final_binary", allow_failure=True)
     save_state(
-        status="READY_FOR_THRESHOLDED_BINARY_SOLVER_REEVALUATION",
+        status="COMPLETED_FULLY_BINARIZED_500NM_CONSTRAINED_OPTIMIZATION",
         beta=beta,
         global_iteration=global_iteration,
         current_result=str(current_result),
         current_raw=str(current_raw),
         current_mma_state=str(current_state),
         projected_binary_gate=True,
+        thresholded_binary_result=str(final_result),
+        thresholded_binary_raw=str(final_raw),
     )
-    emit("driver_finished_continuation", beta=beta, global_iteration=global_iteration)
+    emit("driver_finished_binary_validation", beta=beta, global_iteration=global_iteration)
     return 0
 
 
