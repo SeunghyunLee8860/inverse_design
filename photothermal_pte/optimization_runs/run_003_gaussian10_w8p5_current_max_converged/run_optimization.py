@@ -369,7 +369,21 @@ def main() -> int:
                 candidate_result, candidate_raw = evaluate(proposal_raw, evaluation_output, beta, args.gpu)
                 accepted_state = RUN_RAW / f"b{beta_integer:04d}_s{next_stage_iteration:03d}_g{global_iteration:03d}_accepted_mma_state.npz"
                 decision = accept_candidate(current_result, current_raw, proposal_result, proposal_raw, candidate_state, candidate_result, candidate_raw, accepted_state)
-                emit("candidate_decision", beta=beta, global_iteration=global_iteration, stage_iteration=next_stage_iteration, retry=retry, **{key: value for key, value in decision.items() if key not in {"proposal", "candidate_evaluation"}})
+                duplicate_context = {
+                    "beta", "global_iteration", "stage_iteration", "retry",
+                    "proposal", "candidate_evaluation", "generated_at_utc",
+                }
+                emit(
+                    "candidate_decision",
+                    beta=beta,
+                    global_iteration=global_iteration,
+                    stage_iteration=next_stage_iteration,
+                    retry=retry,
+                    **{
+                        key: value for key, value in decision.items()
+                        if key not in duplicate_context
+                    },
+                )
                 if decision["accepted"]:
                     out = record(candidate_result, candidate_raw, global_iteration, next_stage_iteration, "accepted_mma", proposal_result, proposal_raw, accepted_state)
                     checkpoint_git(out["tag"], [Path(path) for path in out["plots"]])
