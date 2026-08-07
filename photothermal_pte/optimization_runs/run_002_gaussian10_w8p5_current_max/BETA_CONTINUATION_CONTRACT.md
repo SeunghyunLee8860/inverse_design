@@ -1,5 +1,15 @@
 # Beta-continuation optimization contract
 
+> **Stopped methodology diagnostic (2026-08-07).** The implementation below
+> did not satisfy its own promotion language.  The supervisor executed only
+> one nominal update per beta (two accepted beta=4 updates happened before the
+> automated supervisor), while the beta=2 objective was still increasing by
+> several percent per iteration.  It also replaced fixed inequality limits by
+> a new 1% tighter cap at every proposal.  The beta=8 record is therefore a
+> reprojected diagnostic baseline, not a converged beta=8 optimization stage.
+> No binary design was promoted.  The corrected optimization restarts as Run
+> 003 from the original beta=2 state.
+
 This stage continues the five accepted beta=2 nominal iterations. It does not
 replace the validated AD--FD certificates or reinterpret the gray pilot as a
 fabrication-ready result.

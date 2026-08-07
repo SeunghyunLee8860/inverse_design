@@ -1,7 +1,7 @@
 {
   "run_id": "run_002_gaussian10_w8p5_current_max",
-  "status": "RUNNING_BETA_CONTINUATION_WITH_500NM_SOLID_VOID_CONSTRAINTS",
-  "last_updated_utc": "2026-08-07T01:04:12.432329+00:00",
+  "status": "STOPPED_INVALID_ONE_STEP_PER_BETA_CONTINUATION_METHOD",
+  "last_updated_utc": "2026-08-07T01:20:00+00:00",
   "optimization_started": true,
-  "message": "Beta=8 continuation state g=7, stage=0 recorded; FOM=5.533488e-07 A/W, grayness=0.58876. Fully binary and exact 500 nm DRC promotion remain pending."
+  "message": "Fail-closed diagnostic only. The beta=2 pilot was still improving, beta=4 received only two accepted updates, and beta=8 was only a reprojected baseline. The supervisor incorrectly attempted one accepted MMA step per beta and used iteration-relative constraint caps. No fully binary or fabrication-ready result was produced. Run 003 restarts from the original beta=2 initial state with fixed stage inequalities and convergence-based beta promotion."
 }

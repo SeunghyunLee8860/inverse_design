@@ -203,7 +203,7 @@
   },
   "optimizer": {
     "algorithm": "NLopt_LD_MMA",
-    "driver_status": "RUNNING_BETA_CONTINUATION_WITH_500NM_SOLID_VOID_CONSTRAINTS",
+    "driver_status": "STOPPED_INVALID_ONE_STEP_PER_BETA_CONTINUATION_METHOD",
     "initial_FOM_strategy": [
       "two_signed_objective_runs",
       "fixed_objective_nondimensionalization",
@@ -246,5 +246,5 @@
     "enabled": true,
     "reason": "five-direction physical-rho and two-direction full latent/filter/projection AD-FD passed; five nominal beta=2 restartable MMA iterations improved the actual GPU-Maxwell/CUDA-thermal objective by 45.734% total. This closes only the continuous gray-design pilot. Exact binary DRC, opposite-sign, robust four-interface evaluation, and full electrodes remain before fabrication promotion"
   },
-  "driver_status": "RUNNING_BETA_CONTINUATION_WITH_500NM_SOLID_VOID_CONSTRAINTS"
+  "driver_status": "STOPPED_INVALID_ONE_STEP_PER_BETA_CONTINUATION_METHOD"
 }
