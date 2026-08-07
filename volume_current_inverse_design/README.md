@@ -28,6 +28,11 @@ coherent FOM을 최대화하고 **500 nm 최소 feature/gap**을 실제로 강�
 3. **NLopt MMA** 제약 최적화
 4. **solver-safe affine 층** — rho가 0/1 rail에 닿아도 안전 → beta 데드락 제거
 
+스테이지 스케줄(2026-08-07 재작업): `beta[:maxeval[:min_evals]]` 스테이지별 예산
+(기본 `2:40:12,...` — **β=2에서 topology를 충분히 탐색**), β<8 은 제약 없는 **warm-up**
+(순수 FOM 상승), 사다리 후 gray>5%면 β-doubling **binarization polish** 자동 추가.
+노브: `VC_CONSTRAINT_START_BETA`, `VC_GRAY_TOL`, `VC_BETA_CAP`, `VC_POLISH_MAXEVAL`.
+
 **최종 판정자 = 독립 DRC** (`geometry_drc.py`): **opposing-boundary(local linewidth)** 측정 —
 사각형 corner를 linewidth로 오판하지 않고(큰 island는 PASS), 얇은 bar/finger/ring/대각/seam은
 정확히 잡음. all-solid/all-void 같은 trivial phase는 FAIL.

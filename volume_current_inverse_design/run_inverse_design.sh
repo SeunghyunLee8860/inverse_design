@@ -8,13 +8,25 @@
 # Env overrides: GPU="GPU 3", PY=/path/to/python, OUT=runs/foo, RESUME=1,
 #                FDTD_THREADS=16, VC_LUMERICAL_ROOT=/path/to/lumerical/v261
 #
-# Adaptive beta continuation (fixed ladder, adaptive per-stage eval count):
-#   BETA_SCHEDULE=2,4,8,16,32,64   MAXEVAL=12   MIN_EVALS_PER_STAGE=3
+# Adaptive beta continuation (fixed ladder, PER-STAGE eval budgets):
+#   BETA_SCHEDULE="2:40:12,4:16,8:16,16:12,32:10,64:10"   beta[:maxeval[:min]]
+#     -> beta=2 carries the big budget: the topology is FOUND there and the
+#        stage only advances early on a genuine feasible/quiet plateau.
+#   MAXEVAL=12 (fallback for plain entries)   MIN_EVALS_PER_STAGE=3
 #   VC_CONV_WINDOW=3  VC_OBJ_REL_TOL=5e-3
 #   VC_LATENT_RMS_TOL=1e-3  VC_LATENT_MAX_TOL=1e-2
-# A stage advances early only when the objective plateaus while constraint-
-# feasible with a quiet latent; an infeasible plateau or an all-infeasible
-# maxeval stage ABORTS the run (exit 7).  See inverse_design/adaptive_stage.py.
+# Constraint warm-up: stages with beta < VC_CONSTRAINT_START_BETA (default 8)
+# run WITHOUT the length-scale constraints (pure FOM ascent); the constraints
+# join the MMA problem from that beta on.  g_solid/g_void are still logged and
+# best-feasible/DRC gates are unchanged.
+# Binarization polish: after the ladder, while the nominal density has more
+# than VC_GRAY_TOL (default 0.05) gray nodes, short beta-doubling stages are
+# appended up to VC_BETA_CAP (default 256), VC_POLISH_MAXEVAL (default 8)
+# evals each -- so the run cannot end visibly gray without it being recorded.
+# A stage advances early only when the objective plateaus with a quiet latent
+# (feasible, for constrained stages); an infeasible plateau or an
+# all-infeasible maxeval CONSTRAINED stage ABORTS the run (exit 7).
+# See inverse_design/adaptive_stage.py.
 #
 # FAILURE PROPAGATION (review P0-3): optimizer or DRC/FDTD failure aborts with a
 # nonzero exit; a stale final_design.npz from a previous attempt is deleted
@@ -86,7 +98,8 @@ rm -f "$OUT/final_design.npz" 2>/dev/null || true   # never finalise a prior att
 # BETA_SCHEDULE / MAXEVAL exist so the pre-production smoke can run the REAL
 # entrypoint with a short schedule instead of a separate near-copy of it.
 $PY inverse_design/run_constrained_inverse_design.py --output "$OUT" \
-    --mfs-um 0.5 --mgs-um 0.5 --beta-schedule "${BETA_SCHEDULE:-2,4,8,16,32,64}" \
+    --mfs-um 0.5 --mgs-um 0.5 \
+    --beta-schedule "${BETA_SCHEDULE:-2:40:12,4:16,8:16,16:12,32:10,64:10}" \
     --maxeval-per-stage "${MAXEVAL:-12}" --rho-step 0.001 --gpu "$GPU" ${RESUME:+--resume}
 
 if [ ! -f "$OUT/final_design.npz" ]; then

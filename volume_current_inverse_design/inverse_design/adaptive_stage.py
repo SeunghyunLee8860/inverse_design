@@ -4,26 +4,37 @@ Decides, after every objective evaluation, whether the current beta stage
 should CONTINUE, ADVANCE to the next beta early, or ABORT the whole run.
 Keeping this FDTD-free lets the policy be regression-tested without Lumerical.
 
-Policy (fixed ladder 2,4,8,16,32,64 stays; only the per-stage eval count is
-adaptive):
+Policy (the beta ladder stays fixed; per-stage eval budgets come from the
+schedule spec and only the stop DECISION is adaptive):
 
-  early advance (all must hold):
-    * evaluations >= min_evals_per_stage and >= convergence_window
-    * relative span of the last `convergence_window` objectives
-      < objective_rel_tol            (plateau; also bounds improvement)
-    * g_solid <= 0 AND g_void <= 0 for every eval in the window
-    * consecutive latent changes in the window are quiet:
-      max RMS < latent_rms_tol AND max |Delta| < latent_max_tol
-    -> reason "adaptive_converged_feasible"
+  constrained stage (constraints_active=True, the default):
 
-  plateau while INFEASIBLE is NOT convergence:
-    -> reason "stage_stalled_infeasible"; the run must ABORT (advancing beta
-       from an infeasible stall would just harden an infeasible design).
+    early advance (all must hold):
+      * evaluations >= min_evals_per_stage and >= convergence_window
+      * relative span of the last `convergence_window` objectives
+        < objective_rel_tol            (plateau; also bounds improvement)
+      * g_solid <= 0 AND g_void <= 0 for every eval in the window
+      * consecutive latent changes in the window are quiet:
+        max RMS < latent_rms_tol AND max |Delta| < latent_max_tol
+      -> reason "adaptive_converged_feasible"
 
-  max_evals_per_stage reached:
-    * stage saw at least one constraint-feasible eval -> advance,
-      reason "maxeval_feasible"
-    * otherwise -> ABORT, reason "maxeval_infeasible"
+    plateau while INFEASIBLE is NOT convergence:
+      -> reason "stage_stalled_infeasible"; the run must ABORT (advancing beta
+         from an infeasible stall would just harden an infeasible design).
+
+    max_evals_per_stage reached:
+      * stage saw at least one constraint-feasible eval -> advance,
+        reason "maxeval_feasible"
+      * otherwise -> ABORT, reason "maxeval_infeasible"
+
+  warm-up stage (constraints_active=False -- the runner did NOT hand the
+  length-scale constraints to the optimiser, so g_solid/g_void are recorded
+  but NOT enforced; a low-beta stage exists to let the FOM find a topology):
+
+    * plateau + quiet latent -> advance, reason "warmup_converged"
+      (feasibility is NOT required: nothing was asked of the constraints)
+    * max_evals_per_stage reached -> advance, reason "maxeval_warmup"
+    * a warm-up stage NEVER aborts the run.
 
 The runner realises a stop via nlopt's force_stop(); the resulting
 nlopt.ForcedStop is INTENTIONAL whenever ``stop_reason`` is set and must never
@@ -43,11 +54,14 @@ REASON_CONVERGED = "adaptive_converged_feasible"
 REASON_STALLED_INFEASIBLE = "stage_stalled_infeasible"
 REASON_MAXEVAL_FEASIBLE = "maxeval_feasible"
 REASON_MAXEVAL_INFEASIBLE = "maxeval_infeasible"
-ADVANCE_REASONS = (REASON_CONVERGED, REASON_MAXEVAL_FEASIBLE)
+REASON_WARMUP_CONVERGED = "warmup_converged"
+REASON_MAXEVAL_WARMUP = "maxeval_warmup"
+ADVANCE_REASONS = (REASON_CONVERGED, REASON_MAXEVAL_FEASIBLE,
+                   REASON_WARMUP_CONVERGED, REASON_MAXEVAL_WARMUP)
 ABORT_REASONS = (REASON_STALLED_INFEASIBLE, REASON_MAXEVAL_INFEASIBLE)
 CONTINUE = "continue"
 
-POLICY_VERSION = "adaptive_stage/v1"
+POLICY_VERSION = "adaptive_stage/v2-constraint-warmup"
 
 
 @dataclass(frozen=True)
@@ -88,9 +102,11 @@ class AdaptiveConfig:
 class StageController:
     """Per-beta-stage decision maker; feed one record per objective eval."""
 
-    def __init__(self, config: AdaptiveConfig, beta: float):
+    def __init__(self, config: AdaptiveConfig, beta: float,
+                 constraints_active: bool = True):
         self.config = config.validate()
         self.beta = float(beta)
+        self.constraints_active = bool(constraints_active)
         self.objectives: list[float] = []
         self.g_solid: list[float] = []
         self.g_void: list[float] = []
@@ -113,10 +129,13 @@ class StageController:
         cfg = self.config
         n = len(self.objectives)
         if n >= cfg.max_evals_per_stage:
-            self.stop_reason = (
-                REASON_MAXEVAL_FEASIBLE if self.stage_saw_feasible
-                else REASON_MAXEVAL_INFEASIBLE
-            )
+            if not self.constraints_active:
+                self.stop_reason = REASON_MAXEVAL_WARMUP
+            else:
+                self.stop_reason = (
+                    REASON_MAXEVAL_FEASIBLE if self.stage_saw_feasible
+                    else REASON_MAXEVAL_INFEASIBLE
+                )
             return self.stop_reason
         if n < cfg.min_evals_per_stage or n < cfg.convergence_window:
             return CONTINUE
@@ -128,10 +147,15 @@ class StageController:
             and metrics["latent_max_change"] < cfg.latent_max_tol
         )
         if plateau and quiet:
-            self.stop_reason = (
-                REASON_CONVERGED if metrics["window_feasible"]
-                else REASON_STALLED_INFEASIBLE
-            )
+            if not self.constraints_active:
+                # Unenforced constraints cannot make a plateau "infeasible":
+                # a converged warm-up stage simply hands over to the next beta.
+                self.stop_reason = REASON_WARMUP_CONVERGED
+            else:
+                self.stop_reason = (
+                    REASON_CONVERGED if metrics["window_feasible"]
+                    else REASON_STALLED_INFEASIBLE
+                )
             return self.stop_reason
         return CONTINUE
 
@@ -185,6 +209,7 @@ class StageController:
             "evaluations": self.evaluations,
             "stop_reason": stop_reason or self.stop_reason,
             "stage_saw_feasible": self.stage_saw_feasible,
+            "constraints_active": self.constraints_active,
             "adaptive_config": self.config.to_dict(),
             **metrics,
         }
