@@ -1,19 +1,19 @@
 {
   "run_id": "run_003_gaussian10_w8p5_current_max_converged",
   "status": "RUNNING_CONVERGENCE_BASED_CONSTRAINED_BETA_CONTINUATION",
-  "last_updated_utc": "2026-08-07T07:53:09.063911+00:00",
+  "last_updated_utc": "2026-08-07T08:08:34.847474+00:00",
   "beta": 2.0,
-  "global_iteration": 20,
-  "stage_iteration": 20,
+  "global_iteration": 21,
+  "stage_iteration": 21,
   "stage_convergence": {
     "converged": false,
     "reason": "recent FOM/density changes have not plateaued",
-    "maximum_relative_fom_change": 0.05511182708614222,
-    "maximum_rho_rms_change": 0.01813813482265101,
-    "maximum_rho_max_change": 0.026257204784364663
+    "maximum_relative_fom_change": 0.050233091131109034,
+    "maximum_rho_rms_change": 0.017452541333203977,
+    "maximum_rho_max_change": 0.0262572047839848
   },
-  "FOM_A_per_W": 7.370867139237449e-07,
+  "FOM_A_per_W": 7.65427119532149e-07,
   "constraints_feasible": true,
-  "exact_500nm_solid_bad_cells": 39,
-  "exact_500nm_void_bad_cells": 12
+  "exact_500nm_solid_bad_cells": 40,
+  "exact_500nm_void_bad_cells": 8
 }
