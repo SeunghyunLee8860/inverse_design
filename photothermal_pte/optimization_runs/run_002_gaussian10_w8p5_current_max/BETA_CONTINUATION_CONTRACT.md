@@ -11,8 +11,9 @@ fabrication-ready result.
 - Design variables: the existing 373 x 373 latent nodal field on a 50 nm grid.
 - Density map: finite, nonperiodic 500 nm conic filter followed by a tanh
   projection.
-- Planned beta schedule: 4, 8, 16, 32, 64, and 128. A stage is not promoted
-  merely because its nominal beta was reached.
+- Planned beta schedule: 4, 8, 16, 32, 64, and 128, followed by powers of two
+  up to 4096 only when the strict projected-binary gate remains open. A stage
+  is not promoted merely because its nominal beta was reached.
 - Objective scaling is fixed for the full run. There is no empirical gradient
   normalization or per-iteration rescaling.
 - Each candidate is evaluated with one GPU Maxwell forward solve, one GPU
