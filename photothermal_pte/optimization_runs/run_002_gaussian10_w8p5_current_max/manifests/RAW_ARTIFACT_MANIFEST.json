@@ -1386,9 +1386,26 @@
           "size_bytes": 2036869,
           "sha256": "42da746073fb133101a225abce881512d6dd6ce01e03b57a495d04150f0eba32"
         }
+      },
+      "continuation_b008_i000_g007": {
+        "evaluation_result": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_beta008_baseline_g007_20260807/selected_full_latent_adjoint_preparation_result.json",
+          "size_bytes": 10550,
+          "sha256": "6700988758777b627546aca5ad732053a396853da33944214e5f3ee9a4f466ef"
+        },
+        "evaluation_NPZ": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_beta008_baseline_g007_20260807/selected_full_latent_adjoint_preparation.npz",
+          "size_bytes": 6803660,
+          "sha256": "45c9e09be893ac56fc71366cf94f9ea32969e476f67616a1b624f257bb7dc1fe"
+        },
+        "checkpoint": {
+          "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/checkpoints/continuation_b008_i000_g007_accepted_state.npz",
+          "size_bytes": 468109,
+          "sha256": "96daf22f8a3c6ba99fcd3598c32df8370d1374c9a300cdadbe83306a7e3e78b8"
+        }
       }
     }
   },
   "active_work_status": "RUNNING_BETA_CONTINUATION_WITH_500NM_SOLID_VOID_CONSTRAINTS",
-  "active_work_updated_at_utc": "2026-08-07T00:50:40.781480+00:00"
+  "active_work_updated_at_utc": "2026-08-07T01:04:12.432329+00:00"
 }
