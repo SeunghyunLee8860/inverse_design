@@ -203,7 +203,7 @@
   },
   "optimizer": {
     "algorithm": "NLopt_LD_MMA",
-    "driver_status": "COMPLETED_NOMINAL_BETA2_MMA_PILOT",
+    "driver_status": "RUNNING_BETA_CONTINUATION_WITH_500NM_SOLID_VOID_CONSTRAINTS",
     "initial_FOM_strategy": [
       "two_signed_objective_runs",
       "fixed_objective_nondimensionalization",

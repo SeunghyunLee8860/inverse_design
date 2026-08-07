@@ -1322,9 +1322,41 @@
           "size_bytes": 464433,
           "sha256": "dbf2e9b159bb61307f60ea507ea12867a1133eb9e3802309927116bf35e1a3dd"
         }
+      },
+      "continuation_b004_i001_g006": {
+        "evaluation_result": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_beta004_iteration006_evaluation_20260807/selected_full_latent_adjoint_preparation_result.json",
+          "size_bytes": 10588,
+          "sha256": "60efbd2ed1c8f2edca946a20b9b7d74d29e65707686325de44bc91cf6bb28009"
+        },
+        "evaluation_NPZ": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_beta004_iteration006_evaluation_20260807/selected_full_latent_adjoint_preparation.npz",
+          "size_bytes": 6790599,
+          "sha256": "2cbf6df910e96cd301be9c62612de319595407c69b04f6cae4d9414a8d824349"
+        },
+        "checkpoint": {
+          "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/checkpoints/continuation_b004_i001_g006_accepted_state.npz",
+          "size_bytes": 466288,
+          "sha256": "cc466d17d5ce2d8c710a973b9a00dad5727f91ae00966292e9b592fdf654472d"
+        },
+        "proposal_result": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_beta004_iteration006_proposal_20260807/beta_continuation_proposal_result.json",
+          "size_bytes": 3980,
+          "sha256": "e754fb43f5c61c59020eff367f2ec28ea89dcbe29a6207a5496316f488119c76"
+        },
+        "proposal_NPZ": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_beta004_iteration006_proposal_20260807/beta_continuation_proposal.npz",
+          "size_bytes": 5155934,
+          "sha256": "e3d990adcec960d7aaa47a5f2c1651aefd96a0ef3f73581d7b3c4d85623b4d5d"
+        },
+        "mma_state": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/run002_beta_continuation_state_20260807/mma_state_accepted_g006.npz",
+          "size_bytes": 2017355,
+          "sha256": "8f45a2c4e5486a57cf5d65803cd316a3c7c80d8bfee799902bbeded2dfb765fa"
+        }
       }
     }
   },
   "active_work_status": "RUNNING_BETA_CONTINUATION_WITH_500NM_SOLID_VOID_CONSTRAINTS",
-  "active_work_updated_at_utc": "2026-08-07T00:21:43.327224+00:00"
+  "active_work_updated_at_utc": "2026-08-07T00:36:04.904560+00:00"
 }

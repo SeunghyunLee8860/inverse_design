@@ -96,6 +96,30 @@ def main() -> int:
     )
     candidate = candidate_flat.reshape(latent.shape)
     candidate_metrics, candidate_arrays = design_metrics(candidate, beta, mapping)
+    current_exact = metrics["exact_binary_audit"]
+    candidate_exact = candidate_metrics["exact_binary_audit"]
+    current_bad = int(current_exact["solid_bad_cell_count"]) + int(current_exact["void_bad_cell_count"])
+    candidate_bad = int(candidate_exact["solid_bad_cell_count"]) + int(candidate_exact["void_bad_cell_count"])
+    drc_backtracking_alpha = 1.0
+    if candidate_bad > current_bad:
+        # Exact morphology is nondifferentiable and is not inserted into the
+        # MMA Jacobian.  A deterministic line search prevents an accepted
+        # proposal from increasing its total exact violation count; it does
+        # not repair or threshold the continuous design.
+        for alpha in (0.875, 0.75, 0.625, 0.5, 0.375, 0.25, 0.125):
+            trial = latent + alpha * (candidate - latent)
+            trial_metrics, trial_arrays = design_metrics(trial, beta, mapping)
+            trial_exact = trial_metrics["exact_binary_audit"]
+            trial_bad = int(trial_exact["solid_bad_cell_count"]) + int(trial_exact["void_bad_cell_count"])
+            if trial_bad <= current_bad:
+                candidate = trial
+                candidate_metrics = trial_metrics
+                candidate_arrays = trial_arrays
+                candidate_bad = trial_bad
+                drc_backtracking_alpha = alpha
+                break
+        else:
+            raise RuntimeError("no non-worsening exact-DRC proposal found within the MMA direction")
     proposal = output / "beta_continuation_proposal.npz"
     np.savez_compressed(
         proposal,
@@ -137,6 +161,14 @@ def main() -> int:
         "constraint_caps": caps.tolist(),
         "constraint_normalized_values": constraint_values.tolist(),
         "candidate_offline_metrics": candidate_metrics,
+        "exact_DRC_backtracking": {
+            "applied": drc_backtracking_alpha < 1.0,
+            "alpha": drc_backtracking_alpha,
+            "current_total_bad_cells": current_bad,
+            "candidate_total_bad_cells": candidate_bad,
+            "continuous_line_search_only": True,
+            "posthoc_binary_repair": False,
+        },
         "mma_diagnostics": diagnostics,
         "inputs": {
             "evaluation_result": artifact(result_path),
