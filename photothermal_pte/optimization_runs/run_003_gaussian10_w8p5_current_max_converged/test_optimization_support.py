@@ -10,6 +10,7 @@ from optimization_support import (
     exact_binary_audit,
     stage_caps,
     stage_convergence,
+    transient_license_failure,
 )
 
 
@@ -90,3 +91,18 @@ def test_metrics_use_entire_373_by_373_design() -> None:
     latent = np.full(mapping.shape, 0.5)
     metrics, _ = design_metrics(latent, 2.0, mapping)
     assert metrics["exact_binary_audit"]["design_pixel_count"] == 373 * 373
+
+
+def test_only_explicit_hpc_checkout_errors_are_retryable() -> None:
+    assert transient_license_failure({
+        "passed": False,
+        "error": "Unable to checkout the requested HPC license. This operation requires 9 licenses for feature FDTD_Solutions_engine.",
+    })
+    assert not transient_license_failure({
+        "passed": False,
+        "error": "thermal residual exceeded its gate",
+    })
+    assert not transient_license_failure({
+        "passed": True,
+        "error": "Unable to checkout the requested HPC license",
+    })

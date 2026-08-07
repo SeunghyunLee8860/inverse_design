@@ -12,6 +12,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import time
 
 import matplotlib
 matplotlib.use("Agg")
@@ -28,6 +29,7 @@ from optimization_support import (
     save_mma_state,
     stage_caps,
     stage_convergence,
+    transient_license_failure,
 )
 from record_state import artifact, record, sha256
 
@@ -59,6 +61,8 @@ INCIDENT_POWER = "1.3822950233084244e-13"
 OBJECTIVE_SCALE = 1.0e8
 BETA_SCHEDULE = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096]
 MOVE_RETRIES = (0.02, 0.01, 0.005, 0.0025, 0.00125)
+LICENSE_RETRY_LIMIT = 120
+LICENSE_RETRY_DELAY_S = 30
 
 
 def emit(event: str, **values) -> None:
@@ -78,6 +82,24 @@ def execute(command: list[str], label: str, env=None, allow_failure=False) -> in
     return completed.returncode
 
 
+def archive_transient_license_failure(output: Path, attempt: int) -> Path:
+    """Preserve a failed solver directory before a clean deterministic retry."""
+
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+    archive = output.with_name(
+        f"{output.name}_failed_license_attempt{attempt:03d}_{stamp}"
+    )
+    output.rename(archive)
+    emit(
+        "transient_license_failure_archived",
+        evaluation=str(output),
+        archive=str(archive),
+        retry_attempt=attempt,
+        retry_delay_s=LICENSE_RETRY_DELAY_S,
+    )
+    return archive
+
+
 def verify_inputs() -> None:
     expected = (
         (BASE_FSP, BASE_SHA), (INITIAL_RESULT, INITIAL_RESULT_SHA),
@@ -91,28 +113,50 @@ def verify_inputs() -> None:
 
 
 def evaluate(latent_npz: Path, output: Path, beta: float, gpu: str) -> tuple[Path, Path]:
-    result = output / "selected_full_latent_adjoint_preparation_result.json"
-    raw = output / "selected_full_latent_adjoint_preparation.npz"
-    if result.exists():
-        payload = json.loads(result.read_text())
-        if not payload.get("passed") or sha256(raw) != payload["raw_artifact"]["sha256"]:
-            raise RuntimeError(f"existing solver result is invalid: {result}")
-        return result, raw
-    output.mkdir(parents=True, exist_ok=True)
+    retry_attempt = 0
     environment = dict(os.environ)
     environment["CUDA_VISIBLE_DEVICES"] = gpu
-    execute([
-        str(PYTHON), str(RUN002 / "prepare_selected_full_latent_adjoint.py"),
-        "--base-fsp", str(BASE_FSP), "--base-sha256", BASE_SHA,
-        "--jacobian-dir", str(JACOBIAN), "--latent-npz", str(latent_npz),
-        "--output-dir", str(output), "--gpu-device", f"GPU {gpu}",
-        "--cuda-device", "0", "--beta", str(beta),
-        "--incident-power-W", INCIDENT_POWER,
-    ], f"evaluate_{output.name}", env=environment)
-    payload = json.loads(result.read_text())
-    if not payload.get("passed") or sha256(raw) != payload["raw_artifact"]["sha256"]:
-        raise RuntimeError(f"new solver result failed: {result}")
-    return result, raw
+    while True:
+        result = output / "selected_full_latent_adjoint_preparation_result.json"
+        raw = output / "selected_full_latent_adjoint_preparation.npz"
+        if result.exists():
+            payload = json.loads(result.read_text())
+            if payload.get("passed"):
+                if not raw.exists() or sha256(raw) != payload["raw_artifact"]["sha256"]:
+                    raise RuntimeError(f"existing solver result SHA mismatch: {result}")
+                return result, raw
+            if not transient_license_failure(payload):
+                raise RuntimeError(f"existing solver result is invalid: {result}")
+            if retry_attempt >= LICENSE_RETRY_LIMIT:
+                raise RuntimeError(f"transient license retry limit reached: {result}")
+            archive_transient_license_failure(output, retry_attempt)
+            retry_attempt += 1
+            if retry_attempt > 1:
+                time.sleep(LICENSE_RETRY_DELAY_S)
+
+        output.mkdir(parents=True, exist_ok=True)
+        returncode = execute([
+            str(PYTHON), str(RUN002 / "prepare_selected_full_latent_adjoint.py"),
+            "--base-fsp", str(BASE_FSP), "--base-sha256", BASE_SHA,
+            "--jacobian-dir", str(JACOBIAN), "--latent-npz", str(latent_npz),
+            "--output-dir", str(output), "--gpu-device", f"GPU {gpu}",
+            "--cuda-device", "0", "--beta", str(beta),
+            "--incident-power-W", INCIDENT_POWER,
+        ], f"evaluate_{output.name}", env=environment, allow_failure=True)
+        if returncode == 0:
+            payload = json.loads(result.read_text())
+            if not payload.get("passed") or not raw.exists() or sha256(raw) != payload["raw_artifact"]["sha256"]:
+                raise RuntimeError(f"new solver result failed: {result}")
+            return result, raw
+        if not result.exists():
+            raise RuntimeError(
+                f"evaluate_{output.name} failed without a diagnostic result"
+            )
+        payload = json.loads(result.read_text())
+        if not transient_license_failure(payload):
+            raise RuntimeError(
+                f"evaluate_{output.name} failed with non-license error"
+            )
 
 
 def summary() -> dict:

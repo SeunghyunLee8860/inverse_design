@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import json
 from pathlib import Path
 import sys
 
@@ -188,6 +189,19 @@ def projected_binary_gate(metrics: dict[str, object]) -> bool:
     )
 
 
+def transient_license_failure(payload: dict[str, object]) -> bool:
+    """Recognize only the explicit external HPC-license checkout failure."""
+
+    if payload.get("passed"):
+        return False
+    message = json.dumps(payload, default=str).lower()
+    signatures = (
+        "unable to checkout the requested hpc license",
+        "requires 9 licenses for feature fdtd_solutions_engine",
+    )
+    return any(signature in message for signature in signatures)
+
+
 def normalized_violation(values: np.ndarray, caps: np.ndarray) -> float:
     return float(np.linalg.norm(np.maximum(np.asarray(values) / caps - 1.0, 0.0)))
 
@@ -266,4 +280,5 @@ __all__ = [
     "initialize_mma_state", "load_mma_state", "mma_step",
     "projected_binary_gate", "save_mma_state", "stage_caps",
     "stage_convergence",
+    "transient_license_failure",
 ]
