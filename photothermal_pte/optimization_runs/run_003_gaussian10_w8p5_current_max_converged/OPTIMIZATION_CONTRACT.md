@@ -58,9 +58,16 @@ inequalities, and the last four accepted updates simultaneously satisfy:
 - physical-density RMS change below 0.25%;
 - physical-density maximum change below 1.5%.
 
-A nominal iteration count alone never promotes beta.  A 40-update safety limit
-stops fail-closed for diagnosis rather than silently promoting a nonconverged
-stage.
+A nominal iteration count alone never promotes beta.  The original 40-update
+safety limit stopped beta=2 fail-closed at accepted iteration 40 (checkpoint
+`28adda9`): the FOM plateau passed, while the density RMS/maximum gates failed
+because thousands of latent variables remained at the 0.02 MMA move ceiling.
+That diagnostic is immutable.  Recovery keeps every convergence gate fixed
+and monotonically halves the move ceiling only when constraints are feasible,
+four solver-backed updates pass the FOM plateau, and density has not plateaued.
+At least four accepted updates are required at each new ceiling before another
+reduction.  An 80-update safety limit now stops fail-closed rather than
+silently promoting a nonconverged stage.
 
 ## Candidate acceptance
 

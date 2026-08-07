@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
 from optimization_support import (
+    adaptive_move_ceiling,
     candidate_acceptance,
     constraint_values_and_gradients,
     design_metrics,
@@ -60,7 +61,9 @@ INITIAL_RAW_SHA = "d3617baf54d54e735feba9d85c439ee77bcdf5ddaeec47e12c812bf036b2c
 INCIDENT_POWER = "1.3822950233084244e-13"
 OBJECTIVE_SCALE = 1.0e8
 BETA_SCHEDULE = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096]
-MOVE_RETRIES = (0.02, 0.01, 0.005, 0.0025, 0.00125)
+MAXIMUM_ACCEPTED_UPDATES_PER_BETA = 80
+MOVE_RETRY_COUNT = 5
+MINIMUM_MMA_MOVE = 0.00125
 LICENSE_RETRY_LIMIT = 120
 LICENSE_RETRY_DELAY_S = 30
 
@@ -189,6 +192,24 @@ def already_recorded(beta: float, stage_iteration: int, role: str) -> bool:
         and row["role"] == role
         for row in summary().get("history", [])
     )
+
+
+def accepted_move_provenance(
+    summary_data: dict[str, object], beta: float
+) -> list[float]:
+    moves: list[float] = []
+    for row in summary_data.get("history", []):
+        if float(row["beta"]) != float(beta) or row["role"] != "accepted_mma":
+            continue
+        entry = summary_data["raw_artifacts"][row["tag"]]
+        proposal = entry.get("proposal_result")
+        if proposal is None:
+            raise RuntimeError(f"accepted update lacks proposal provenance: {row['tag']}")
+        payload = json.loads(Path(proposal["path"]).read_text())
+        if sha256(Path(proposal["path"])) != proposal["sha256"]:
+            raise RuntimeError(f"accepted proposal SHA mismatch: {row['tag']}")
+        moves.append(float(payload["move"]))
+    return moves
 
 
 def checkpoint_git(tag: str, extra: list[Path] | None = None) -> None:
@@ -414,12 +435,31 @@ def main() -> int:
             if convergence.converged:
                 emit("stage_converged", beta=beta, global_iteration=global_iteration, diagnostics=convergence.__dict__)
                 break
-            if stage_iteration >= 40:
-                raise RuntimeError(f"beta={beta:g} reached 40 accepted updates without convergence")
+            if stage_iteration >= MAXIMUM_ACCEPTED_UPDATES_PER_BETA:
+                raise RuntimeError(
+                    f"beta={beta:g} reached {MAXIMUM_ACCEPTED_UPDATES_PER_BETA} "
+                    "accepted updates without convergence"
+                )
+            summary_data = summary()
+            accepted_moves = accepted_move_provenance(summary_data, beta)
+            move_ceiling = adaptive_move_ceiling(history, beta, accepted_moves)
+            move_retries = tuple(
+                max(MINIMUM_MMA_MOVE / 16.0, move_ceiling / (2.0 ** retry))
+                for retry in range(MOVE_RETRY_COUNT)
+            )
+            emit(
+                "adaptive_move_selected",
+                beta=beta,
+                stage_iteration=stage_iteration,
+                accepted_move_min=min(accepted_moves) if accepted_moves else None,
+                move_ceiling=move_ceiling,
+                move_retries=list(move_retries),
+                convergence_diagnostics=convergence.__dict__,
+            )
             global_iteration += 1
             next_stage_iteration = stage_iteration + 1
             accepted = False
-            for retry, move in enumerate(MOVE_RETRIES):
+            for retry, move in enumerate(move_retries):
                 proposal_result, proposal_raw, candidate_state = propose(
                     current_result, current_raw, state_path, beta,
                     global_iteration, next_stage_iteration, retry, move,
@@ -438,6 +478,7 @@ def main() -> int:
                     global_iteration=global_iteration,
                     stage_iteration=next_stage_iteration,
                     retry=retry,
+                    move=move,
                     **{
                         key: value for key, value in decision.items()
                         if key not in duplicate_context

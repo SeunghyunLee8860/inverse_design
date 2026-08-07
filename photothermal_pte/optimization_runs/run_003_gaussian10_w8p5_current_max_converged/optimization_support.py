@@ -33,6 +33,9 @@ ETA_ERODED = 0.75
 ETA_DILATED = 0.25
 ZHOU_DECAY_M2 = 1.0e-10
 PNORM = 8.0
+DEFAULT_MMA_MOVE = 0.02
+MINIMUM_MMA_MOVE = 0.00125
+MOVE_PLATEAU_WINDOW = 4
 
 
 def disk_structuring_element(radius_pixels: int) -> np.ndarray:
@@ -274,8 +277,56 @@ def stage_convergence(history: list[dict[str, object]], beta: float) -> StageCon
     )
 
 
+def adaptive_move_ceiling(
+    history: list[dict[str, object]],
+    beta: float,
+    accepted_moves: list[float],
+) -> float:
+    """Return a monotone MMA move ceiling without weakening convergence gates.
+
+    A move reduction is permitted only after four accepted updates at the
+    current (smallest previously accepted) move have established an FOM
+    plateau while the physical-density plateau still fails.  The ceiling can
+    therefore only decrease, and each new ceiling receives four genuine
+    solver evaluations before another reduction is considered.
+    """
+
+    accepted = [
+        row for row in history
+        if float(row["beta"]) == float(beta) and row["role"] == "accepted_mma"
+    ]
+    if len(accepted_moves) != len(accepted):
+        raise ValueError("accepted move provenance does not match accepted history")
+    if not accepted:
+        return DEFAULT_MMA_MOVE
+    ceiling = min([DEFAULT_MMA_MOVE, *map(float, accepted_moves)])
+    if ceiling <= MINIMUM_MMA_MOVE * (1.0 + 1.0e-12):
+        return MINIMUM_MMA_MOVE
+    tail_at_ceiling = 0
+    for move in reversed(accepted_moves):
+        if np.isclose(float(move), ceiling, rtol=0.0, atol=1.0e-15):
+            tail_at_ceiling += 1
+        else:
+            break
+    if tail_at_ceiling < MOVE_PLATEAU_WINDOW:
+        return ceiling
+    recent = accepted[-MOVE_PLATEAU_WINDOW:]
+    if not bool(recent[-1]["constraints_feasible"]):
+        return ceiling
+    fom_plateau = max(
+        abs(float(row["relative_fom_change"])) for row in recent
+    ) < 0.005
+    density_plateau = (
+        max(float(row["rho_rms_change"]) for row in recent) < 0.0025
+        and max(float(row["rho_max_change"]) for row in recent) < 0.015
+    )
+    if fom_plateau and not density_plateau:
+        return max(MINIMUM_MMA_MOVE, ceiling / 2.0)
+    return ceiling
+
+
 __all__ = [
-    "MMAState", "ProductionDensityMapping", "candidate_acceptance",
+    "MMAState", "ProductionDensityMapping", "adaptive_move_ceiling", "candidate_acceptance",
     "constraint_values_and_gradients", "design_metrics", "exact_binary_audit",
     "initialize_mma_state", "load_mma_state", "mma_step",
     "projected_binary_gate", "save_mma_state", "stage_caps",

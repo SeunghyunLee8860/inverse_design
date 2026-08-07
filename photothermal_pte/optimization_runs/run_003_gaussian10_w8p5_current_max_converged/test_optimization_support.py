@@ -4,6 +4,7 @@ import numpy as np
 
 from optimization_support import (
     ProductionDensityMapping,
+    adaptive_move_ceiling,
     candidate_acceptance,
     constraint_values_and_gradients,
     design_metrics,
@@ -84,6 +85,24 @@ def test_stage_requires_recent_plateau_and_minimum_updates() -> None:
     assert stage_convergence(history, 4.0).converged
     history[-1]["relative_fom_change"] = 0.01
     assert not stage_convergence(history, 4.0).converged
+
+
+def test_adaptive_move_reduces_only_after_four_solver_backed_plateau_updates() -> None:
+    history = []
+    for _ in range(8):
+        history.append({
+            "beta": 4.0,
+            "role": "accepted_mma",
+            "constraints_feasible": True,
+            "relative_fom_change": 0.001,
+            "rho_rms_change": 0.004,
+            "rho_max_change": 0.025,
+        })
+    assert adaptive_move_ceiling(history, 4.0, [0.02] * 8) == 0.01
+    assert adaptive_move_ceiling(history, 4.0, [0.02] * 7 + [0.01]) == 0.01
+    assert adaptive_move_ceiling(history, 4.0, [0.02] * 4 + [0.01] * 4) == 0.005
+    history[-1]["relative_fom_change"] = 0.01
+    assert adaptive_move_ceiling(history, 4.0, [0.02] * 8) == 0.02
 
 
 def test_metrics_use_entire_373_by_373_design() -> None:

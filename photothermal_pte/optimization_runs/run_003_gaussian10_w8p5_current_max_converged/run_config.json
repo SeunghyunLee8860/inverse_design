@@ -14,7 +14,14 @@
   "beta_schedule": [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096],
   "minimum_accepted_updates_beta2": 10,
   "minimum_accepted_updates_other_beta": 8,
-  "maximum_accepted_updates_per_beta": 40,
+  "maximum_accepted_updates_per_beta": 80,
+  "adaptive_mma_move": {
+    "initial_ceiling": 0.02,
+    "minimum_ceiling": 0.00125,
+    "reduction_factor": 0.5,
+    "minimum_accepted_updates_at_each_ceiling": 4,
+    "trigger": "fixed constraints feasible; four-update FOM plateau passes; density plateau fails"
+  },
   "stage_convergence_window": 4,
   "stage_fom_relative_change_max": 0.005,
   "stage_rho_rms_change_max": 0.0025,
