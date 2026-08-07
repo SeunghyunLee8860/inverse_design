@@ -37,7 +37,16 @@ REPOSITORY = HERE.parents[2]
 RUN002 = HERE.parent / "run_002_gaussian10_w8p5_current_max"
 PYTHON = Path("/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python")
 RAW_ROOT = Path("/home/seunghyun/tairte4/raw_artifacts")
-RUN_RAW = RAW_ROOT / "run003_converged_constrained_20260807"
+# Keep the original location as the reproducible default, but allow a resumed
+# supervisor to place only future multi-GB solver artifacts on a roomier local
+# filesystem.  Accepted checkpoints already recorded in the published summary
+# retain their immutable absolute paths and are loaded from those paths.
+RUN_RAW = Path(
+    os.environ.get(
+        "RUN003_RAW_ROOT",
+        str(RAW_ROOT / "run003_converged_constrained_20260807"),
+    )
+).expanduser().resolve()
 EVENTS = RUN_RAW / "driver_events.jsonl"
 BASE_FSP = RAW_ROOT / "run002_selected_production_geometry_runsetup_v2_20260806/production_candidate_runsetup.fsp"
 BASE_SHA = "a86644647b8bf03ec1b83c34d0cf18b6b1c5316342d845ccbdccf60df3d8f904"
