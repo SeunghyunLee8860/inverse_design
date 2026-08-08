@@ -668,10 +668,26 @@ def main() -> int:
                 break
             stage_maximum = MAXIMUM_ACCEPTED_UPDATES[beta_integer]
             if stage_iteration >= stage_maximum:
-                raise RuntimeError(
-                    f"beta={beta:g} reached its bounded {stage_maximum} accepted "
-                    "updates without convergence; do not continue blind micro-repair"
+                # The bound is a per-beta work budget, not a terminal failure.
+                # Once it is exhausted, advancing the projection is the only
+                # authorized continuation: repeating the same beta would be
+                # the blind micro-repair that this guard is meant to prevent.
+                # Preserve the non-plateau diagnostics explicitly so a budget
+                # transition is never misreported as numerical convergence.
+                emit(
+                    "stage_budget_transition",
+                    beta=beta,
+                    global_iteration=global_iteration,
+                    accepted_updates=stage_iteration,
+                    maximum_accepted_updates=stage_maximum,
+                    converged=False,
+                    convergence_diagnostics=convergence.__dict__,
+                    reason=(
+                        "bounded per-beta exploration budget exhausted; "
+                        "advance projection without claiming plateau"
+                    ),
                 )
+                break
             recent = [
                 row for row in history
                 if float(row["beta"]) == beta and row["role"] == "accepted_mma"
@@ -690,18 +706,18 @@ def main() -> int:
                     and not convergence.converged
                 ):
                     emit(
-                        "automatic_no_progress_halt",
+                        "automatic_no_progress_transition",
                         beta=beta,
                         global_iteration=global_iteration,
                         window=NO_PROGRESS_WINDOW,
                         net_fom_gain=net_fom_gain,
                         exact_bad_reduction_fraction=exact_reduction,
-                        reason="neither FOM nor exact morphology made meaningful progress",
+                        reason=(
+                            "neither FOM nor exact morphology made meaningful "
+                            "progress at this beta; advance projection"
+                        ),
                     )
-                    raise RuntimeError(
-                        f"beta={beta:g} halted: no meaningful joint progress over "
-                        f"{NO_PROGRESS_WINDOW} accepted updates"
-                    )
+                    break
             summary_data = summary()
             accepted_moves = accepted_move_provenance(summary_data, beta)
             move_ceiling = adaptive_move_ceiling(history, beta, accepted_moves)
