@@ -17,6 +17,23 @@
         0.8499999999999999
       ],
       "source": "single_stage_start_reprojection"
+    },
+    "8": {
+      "beta": 8.0,
+      "incoming_values": [
+        0.0004146047373274355,
+        9.357091733983377e-05
+      ],
+      "caps": [
+        0.0004711417469629949,
+        0.00010633058788617474
+      ],
+      "target_occupancy": 0.88,
+      "actual_occupancy": [
+        0.88,
+        0.88
+      ],
+      "source": "single_stage_start_reprojection"
     }
   }
 }
