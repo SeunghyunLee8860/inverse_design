@@ -1,7 +1,19 @@
 {
   "run_id": "run_004_joint_disk_constrained_current_max",
-  "status": "READY_FOR_OFFLINE_AND_GPU_PILOT",
-  "optimization_process_running": false,
-  "accepted_updates": 0,
-  "restart_from_run003_g095": false
+  "status": "RUNNING_JOINT_FOM_DISK_CONSTRAINED_CONTINUATION",
+  "last_updated_utc": "2026-08-08T03:57:52.069772+00:00",
+  "beta": 2.0,
+  "global_iteration": 0,
+  "stage_iteration": 0,
+  "stage_convergence": {
+    "converged": false,
+    "reason": "need at least 8 accepted updates",
+    "maximum_relative_fom_change": Infinity,
+    "maximum_rho_rms_change": Infinity,
+    "maximum_rho_max_change": Infinity
+  },
+  "FOM_A_per_W": 9.775174754356877e-08,
+  "constraints_feasible": true,
+  "exact_500nm_solid_bad_cells": 158,
+  "exact_500nm_void_bad_cells": 0
 }
