@@ -18,7 +18,7 @@ from optimization_support import design_metrics, stage_convergence
 
 
 HERE = Path(__file__).resolve().parent
-STATUS = "RUNNING_RUN005_LOWBETA_TOPOLOGY_ONE_POINT_PILOT"
+STATUS = "RUNNING_RUN005_BOUNDED_BETA2_TOPOLOGY_PILOT"
 
 
 def sha256(path: Path) -> str:
@@ -289,7 +289,7 @@ def record(
         f"Exact 500 nm bad cells: solid `{exact['solid_bad_cell_count']}`, void "
         f"`{exact['void_bad_cell_count']}`. Stage convergence: `{convergence.converged}` "
         f"({convergence.reason}).\n\n"
-        "This bounded run performs one move=0.01 GPU-backed beta=2 update only. "
+        "This bounded run stops at the configured total accepted-update target. "
         "It does not promote beta or authorize full continuation.\n"
     )
     (results / "OPTIMIZATION_REPORT.md").write_text(report)

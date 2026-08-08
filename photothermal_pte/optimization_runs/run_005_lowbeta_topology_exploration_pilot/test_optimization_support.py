@@ -15,6 +15,7 @@ from optimization_support import (
     mma_effective_constraint_caps,
     stage_caps,
     stage_convergence,
+    smooth_feasibility_move_retries,
     transient_license_failure,
     two_consecutive_subthreshold_moves,
 )
@@ -72,10 +73,16 @@ def test_exact_audit_reports_kernel_and_domain_counts_separately() -> None:
     assert audit["void_pass"]
 
 
-def test_only_beta2_cap_is_approved_for_the_one_point_pilot() -> None:
-    assert np.array_equal(stage_caps(2), [1.26e-3, 5.00e-5])
+def test_only_beta2_cap_is_approved_for_the_bounded_pilot() -> None:
+    assert np.array_equal(stage_caps(2), [1.00e-3, 4.50e-5])
     with pytest.raises(RuntimeError, match="later-beta caps require"):
         stage_caps(4)
+
+
+def test_smooth_move_retries_never_enter_microrepair_regime() -> None:
+    assert smooth_feasibility_move_retries(0.01) == (0.01, 0.005, 0.0025)
+    assert smooth_feasibility_move_retries(0.005) == (0.005, 0.0025)
+    assert smooth_feasibility_move_retries(0.0025) == (0.0025,)
 
 
 def test_acceptance_balances_fom_and_fixed_constraint_feasibility() -> None:

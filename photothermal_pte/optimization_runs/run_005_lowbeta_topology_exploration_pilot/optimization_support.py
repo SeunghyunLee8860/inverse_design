@@ -36,7 +36,7 @@ ZHOU_DECAY_M2 = 1.0e-10
 PNORM = 8.0
 LEGACY_CONSTRAINT_CONTRACT = "legacy_zhou_p8_v1"
 DISK_CONSTRAINT_CONTRACT = "soft_disk_opening_500nm_from_iteration_zero_v5"
-MMA_CAP_CONTRACT = "run005_beta2_calibrated_topology_pilot_v1"
+MMA_CAP_CONTRACT = "run005_beta2_g001_reprojected_pilot_v2"
 DISK_CONSTRAINT_START_BETA = 2.0
 DISK_RECOVERY_START_GLOBAL_ITERATION = -1
 DISK_SHARPEN_GAMMA = 64.0
@@ -264,13 +264,33 @@ def constraint_values_and_gradients(
 def stage_caps(beta: float) -> np.ndarray:
     if not np.isclose(float(beta), 2.0, rtol=0.0, atol=1.0e-12):
         raise RuntimeError(
-            "Run 005 is a beta=2 one-point pilot; later-beta caps require "
+            "Run 005 is a bounded beta=2 pilot; later-beta caps require "
             "checkpoint reprojection and explicit calibration before use"
         )
-    # Original-state C/cap ratios: 0.9462 (solid), 0.5127 (void).
-    # This pilot cap leaves topology-search room and is not a later-beta
-    # production schedule.
-    return np.asarray((1.26e-3, 5.00e-5), float)
+    # Reprojected accepted-g001 C/cap ratios: 0.9048 (solid), 0.8482 (void).
+    # These caps remain fixed for the bounded beta=2 extension pilot.
+    return np.asarray((1.00e-3, 4.50e-5), float)
+
+
+def smooth_feasibility_move_retries(move_ceiling: float) -> tuple[float, ...]:
+    """Bounded low-beta move trials used only before an expensive solve.
+
+    A smaller move can be considered when the offline smooth constraints reject
+    a proposal.  The sequence never goes below 0.0025 and must not be reused
+    after a solver-backed FOM rejection.
+    """
+
+    ceiling = float(move_ceiling)
+    if not np.isfinite(ceiling) or ceiling <= 0.0:
+        raise ValueError("move ceiling must be finite and positive")
+    retries: list[float] = []
+    trial = ceiling
+    while trial >= MINIMUM_MMA_MOVE * (1.0 - 1.0e-12):
+        retries.append(max(MINIMUM_MMA_MOVE, trial))
+        if np.isclose(retries[-1], MINIMUM_MMA_MOVE, rtol=0.0, atol=1.0e-15):
+            break
+        trial /= 2.0
+    return tuple(retries)
 
 
 def mma_effective_constraint_caps(
@@ -564,6 +584,7 @@ __all__ = [
     "initialize_mma_state", "load_mma_state", "mma_step",
     "mma_effective_constraint_caps",
     "projected_binary_gate", "save_mma_state", "stage_caps",
+    "smooth_feasibility_move_retries",
     "stage_convergence", "transient_license_failure",
     "two_consecutive_subthreshold_moves",
 ]

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run 005: fail-closed beta=2 topology-exploration one-point pilot."""
+"""Run 005: fail-closed bounded beta=2 topology-exploration pilot."""
 
 from __future__ import annotations
 
@@ -35,6 +35,7 @@ from optimization_support import (
     save_mma_state,
     stage_caps,
     stage_convergence,
+    smooth_feasibility_move_retries,
     transient_license_failure,
     two_consecutive_subthreshold_moves,
 )
@@ -480,13 +481,12 @@ def main() -> int:
         "--pilot-accepted-updates",
         type=int,
         default=0,
-        help="must be 1 for this deliberately bounded one-point pilot",
+        help="total accepted beta=2 updates at which the bounded pilot pauses (1-5)",
     )
     args = parser.parse_args()
-    if args.pilot_accepted_updates != 1:
+    if not 1 <= args.pilot_accepted_updates <= 5:
         raise ValueError(
-            "Run 005 authorizes exactly one accepted GPU update; use "
-            "--pilot-accepted-updates 1"
+            "Run 005 authorizes a bounded total of 1-5 accepted beta=2 updates"
         )
     os.environ["RUN005_CONSTRAINT_TORCH_DEVICE"] = args.constraint_device
     verify_inputs()
@@ -498,9 +498,6 @@ def main() -> int:
     )
     current_result, current_raw = INITIAL_RESULT, INITIAL_RAW
     global_iteration = 0
-    accepted_at_driver_start = sum(
-        row.get("role") == "accepted_mma" for row in summary().get("history", [])
-    )
     if not already_recorded(2.0, 0, "stage_baseline"):
         out = record(current_result, current_raw, 0, 0, "stage_baseline")
         initialize_summary_provenance()
@@ -528,12 +525,13 @@ def main() -> int:
             state_path = Path(entry["mma_state"]["path"])
             global_iteration = int(last["global_iteration"])
             current_latent = np.asarray(np.load(current_raw)["latent"], float)
-        if stage_iteration >= 1:
+        if stage_iteration >= args.pilot_accepted_updates:
             emit(
                 "pilot_already_complete",
                 beta=beta,
                 global_iteration=global_iteration,
                 accepted_updates=stage_iteration,
+                target_accepted_updates=args.pilot_accepted_updates,
             )
             return 0
         initial_values, _, _ = constraint_values_and_gradients(
@@ -551,10 +549,7 @@ def main() -> int:
             occupancy_in_recommended_interval=[
                 bool(0.8 <= value <= 0.95) for value in cap_occupancy
             ],
-            note=(
-                "the wider void envelope is pilot-only topology-search room; "
-                "it is not promoted as a later-beta cap schedule"
-            ),
+            note="g001-reprojected fixed cap for the bounded beta=2 pilot",
         )
         recovery_rows = [
             row for row in accepted_rows
@@ -623,15 +618,7 @@ def main() -> int:
             summary_data = summary()
             accepted_moves = accepted_move_provenance(summary_data, beta)
             move_ceiling = adaptive_move_ceiling(history, beta, accepted_moves)
-            if not np.isclose(move_ceiling, 0.01, rtol=0.0, atol=1.0e-15):
-                raise RuntimeError(
-                    "Run 005 one-point contract requires first move=0.01; "
-                    f"got {move_ceiling}"
-                )
-            # No line-search retries are allowed in this one-point experiment.
-            # If move=0.01 fails an offline or solver-backed gate, the pilot
-            # stops instead of shrinking into exact-cell micro-repair.
-            move_retries = (move_ceiling,)
+            move_retries = smooth_feasibility_move_retries(move_ceiling)
             emit(
                 "adaptive_move_selected",
                 beta=beta,
@@ -819,20 +806,56 @@ def main() -> int:
                             "two consecutive accepted moves below 0.0025; "
                             "cap recalibration is required"
                         )
-                    newly_accepted = sum(
-                        row.get("role") == "accepted_mma"
-                        for row in summary().get("history", [])
-                    ) - accepted_at_driver_start
+                    accepted_history = [
+                        row for row in summary().get("history", [])
+                        if row.get("role") == "accepted_mma"
+                        and float(row["beta"]) == beta
+                    ]
+                    if len(accepted_history) >= 3:
+                        recent_three = accepted_history[-3:]
+                        recent_net_fom = (
+                            float(recent_three[-1]["objective_A_per_W"])
+                            / float(recent_three[0]["objective_A_per_W"]) - 1.0
+                        )
+                        if recent_net_fom < 0.002:
+                            pause_status = "PAUSED_RUN005_RECENT_FOM_STAGNATION"
+                            summary_path = HERE / "results/optimization_summary.json"
+                            paused_summary = json.loads(summary_path.read_text())
+                            paused_summary.update({
+                                "status": pause_status,
+                                "pilot_total_accepted_updates": stage_iteration,
+                                "recent_three_net_FOM_change": recent_net_fom,
+                                "pilot_paused_at_utc": datetime.now(timezone.utc).isoformat(),
+                            })
+                            summary_path.write_text(json.dumps(paused_summary, indent=2) + "\n")
+                            (HERE / "STATUS.json").write_text(json.dumps({
+                                "run_id": HERE.name,
+                                "status": pause_status,
+                                "optimization_process_running": False,
+                                "beta": beta,
+                                "global_iteration": global_iteration,
+                                "stage_iteration": stage_iteration,
+                                "recent_three_net_FOM_change": recent_net_fom,
+                                "current_metrics": paused_summary["current_metrics"],
+                            }, indent=2) + "\n")
+                            emit(
+                                "pilot_fom_stagnation_pause",
+                                beta=beta,
+                                global_iteration=global_iteration,
+                                stage_iteration=stage_iteration,
+                                recent_three_net_FOM_change=recent_net_fom,
+                            )
+                            checkpoint_git("fom_stagnation_pause")
+                            return 0
                     if (
-                        args.pilot_accepted_updates
-                        and newly_accepted >= args.pilot_accepted_updates
+                        stage_iteration >= args.pilot_accepted_updates
                     ):
-                        pause_status = "PAUSED_AFTER_RUN005_ONE_POINT_GPU_PILOT"
+                        pause_status = "PAUSED_AFTER_RUN005_BOUNDED_BETA2_GPU_PILOT"
                         summary_path = HERE / "results/optimization_summary.json"
                         paused_summary = json.loads(summary_path.read_text())
                         paused_summary.update({
                             "status": pause_status,
-                            "pilot_newly_accepted_updates": newly_accepted,
+                            "pilot_total_accepted_updates": stage_iteration,
                             "pilot_paused_at_utc": datetime.now(timezone.utc).isoformat(),
                         })
                         summary_path.write_text(json.dumps(paused_summary, indent=2) + "\n")
@@ -843,7 +866,7 @@ def main() -> int:
                             "beta": beta,
                             "global_iteration": global_iteration,
                             "stage_iteration": stage_iteration,
-                            "pilot_newly_accepted_updates": newly_accepted,
+                            "pilot_total_accepted_updates": stage_iteration,
                             "current_metrics": paused_summary["current_metrics"],
                         }, indent=2) + "\n")
                         emit(
@@ -851,11 +874,15 @@ def main() -> int:
                             beta=beta,
                             global_iteration=global_iteration,
                             stage_iteration=stage_iteration,
-                            newly_accepted_updates=newly_accepted,
+                            total_accepted_updates=stage_iteration,
                         )
                         checkpoint_git("gpu_pilot_pause")
                         return 0
                     break
+                raise RuntimeError(
+                    "solver-backed candidate failed the FOM/physics acceptance "
+                    "gate; pilot paused without a smaller-move GPU retry"
+                )
             if not accepted:
                 raise RuntimeError(f"all candidate move retries rejected at beta={beta:g}, global iteration={global_iteration}")
         current_metrics = summary()["current_metrics"]
@@ -865,7 +892,7 @@ def main() -> int:
             emit("driver_finished", beta=beta, global_iteration=global_iteration)
             return 0
     raise RuntimeError(
-        "Run 005 one-point pilot ended without its required accepted update"
+        "Run 005 bounded pilot ended without reaching its accepted-update target"
     )
 
 

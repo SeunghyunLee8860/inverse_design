@@ -1,11 +1,12 @@
 {
   "run_id": "run_005_lowbeta_topology_exploration_pilot",
-  "status": "PAUSED_AFTER_RUN005_ONE_POINT_GPU_PILOT",
+  "status": "READY_FOR_RUN005_BOUNDED_BETA2_EXTENSION_PILOT",
   "optimization_process_running": false,
   "beta": 2.0,
   "global_iteration": 1,
   "stage_iteration": 1,
-  "pilot_newly_accepted_updates": 1,
+  "pilot_total_accepted_updates": 1,
+  "pilot_target_total_accepted_updates": 5,
   "current_metrics": {
     "beta": 2.0,
     "constraint_contract": "soft_disk_opening_500nm_from_iteration_zero_v5",

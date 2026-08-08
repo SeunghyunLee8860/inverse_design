@@ -44,3 +44,26 @@ audited. At beta >= 32 the exact total nonincrease veto is restored, and the
 final binary design must have exactly zero solid and void bad cells. Two
 consecutive accepted moves below 0.0025 require an automatic halt and cap
 recalibration.
+
+## Approved bounded extension after g001
+
+The one-point checkpoint passed with FOM `+19.4826487%` and exact total
+`158 -> 46`. The next execution remains at beta=2 and is bounded at five total
+accepted updates, including g001. Reprojecting g001 gives the fixed extension
+caps:
+
+| phase | g001 value | extension cap | value/cap |
+|---|---:|---:|---:|
+| solid | 9.047577468e-4 | 1.00e-3 | 0.9048 |
+| void | 3.816872717e-5 | 4.50e-5 | 0.8482 |
+
+Both occupancies lie inside the approved 0.8--0.95 interval. These caps remain
+fixed for the extension and are not changed to rescue a candidate. The only
+offline smooth-feasibility move trials are 0.01, 0.005, and 0.0025. No move
+below 0.0025 is permitted. If a solver-backed candidate fails the physics or
+99.8% FOM-retention gate, the pilot pauses without another GPU evaluation.
+
+After at least three accepted beta=2 points exist, a recent-three net FOM gain
+below 0.2% also pauses the pilot. Exact DRC remains diagnostic below beta=32,
+apart from the existing catastrophic-growth guard. Reaching five total points
+always pauses for review and still does not promote beta.
