@@ -420,19 +420,24 @@
     "size_bytes": 7257875,
     "sha256": "d3617baf54d54e735feba9d85c439ee77bcdf5ddaeec47e12c812bf036b2c87e"
   },
-  "pilot_newly_accepted_updates": 3,
+  "pilot_newly_accepted_updates": 5,
   "pilot_paused_at_utc": "2026-08-08T06:27:24.693648+00:00",
-  "promoted_status": "READY_TO_RESUME_BOUNDED_BETA2_FROM_G003",
+  "promoted_status": "PAUSED_FOR_REVIEW_AFTER_FIVE_HEALTHY_BETA2_UPDATES",
   "one_point_decision": "HEALTHY_JOINT_TOPOLOGY_FOM_STEP_REVIEW_BEFORE_3_TO_5_UPDATE_PILOT",
   "one_point_audit": "results/RUN005_ONE_POINT_PILOT_AUDIT.md",
   "pilot_total_accepted_updates": 5,
   "g002_relative_FOM_gain": 0.1643197689257716,
   "g003_relative_FOM_gain": 0.1421743200264836,
-  "cumulative_FOM_gain_from_baseline": 0.588947,
+  "g004_relative_FOM_gain": 0.1253364182596015,
+  "g005_relative_FOM_gain": 0.11207699689638842,
+  "cumulative_FOM_gain_from_baseline": 0.988505221587,
   "g004_old_cap_prescreen": "ALL_MOVES_0P01_0P005_0P0025_REJECTED_WITH_ZERO_SOLVER_RUNS",
   "active_cap_epoch": "fixed_beta2_topology_exploration_v4",
   "next_fixed_constraint_caps": {
     "solid": 0.001,
     "void": 0.0001
-  }
+  },
+  "bounded_beta2_pilot_decision": "HEALTHY_FOM_AND_TOPOLOGY_EXPLORATION_REQUIRES_BETA4_REPROJECTION_AUDIT",
+  "bounded_beta2_pilot_audit": "results/RUN005_BOUNDED_BETA2_PILOT_AUDIT.md",
+  "beta4_authorized": false
 }

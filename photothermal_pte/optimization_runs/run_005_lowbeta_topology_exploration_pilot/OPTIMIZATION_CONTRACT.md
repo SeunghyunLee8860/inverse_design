@@ -111,3 +111,17 @@ not a production cap schedule. They prevent the optimizer from spending the
 last two pilot points only repairing a moving cap. This envelope cannot change
 again before the five-point audit. Any beta=4 continuation must reproject the
 accepted beta=2 checkpoint and establish a new, explicitly reviewed cap epoch.
+
+## Bounded beta=2 outcome
+
+The five-point target completed with all accepted moves equal to 0.01. Actual
+FOM gains per update were `+19.4826%`, `+16.4320%`, `+14.2174%`, `+12.5336%`,
+and `+11.2077%`; cumulative gain was `+98.8505%`. The final smooth constraints
+remain feasible, and no solver-backed rejection, micro-move retry, CPU FDTD,
+CPU thermal fallback, empirical normalization, or gradient rescaling occurred.
+
+The pilot is now paused. Beta=4 remains unauthorized until a solver-free
+reprojection audit records the projected density change, both constraint
+values, exact DRC, and the new fixed cap proposal. The final binary requirement
+remains zero solid and zero void bad cells; this gray beta=2 checkpoint is not a
+finished inverse-designed structure.

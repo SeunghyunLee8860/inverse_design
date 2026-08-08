@@ -2,26 +2,22 @@
 
 ## Run 005 bounded low-beta topology-exploration pilot
 
-- Status: `PAUSED_AFTER_RUN005_ONE_POINT_GPU_PILOT` at beta=2 after exactly
-  one accepted `move=0.01` update. No smaller-move retry, beta promotion, or
-  full continuation ran.
-- Fresh GPU Maxwell/CUDA thermal-PTE FOM increased from
-  `9.775174754357e-8` to `1.167963771133e-7 A/W` (`+19.4826487%`).
-- Both smooth 500 nm phase constraints remain feasible. Solid decreased by
-  `24.1087%`; void increased by `48.8971%` but uses only `76.3375%` of the
-  explicit pilot cap.
-- Exact bad cells were diagnostic only at low beta and decreased from
-  `158/0` to `44/2` (total `158 -> 46`). They were not used as a monotone
-  acceptance veto.
-- Optical closure, Q mapping/pullback, thermal residual, energy balance, and
-  forward/adjoint auto-shutoff gates all pass. The end-to-end evaluation took
-  `739.768 s`; forward and adjoint FDTD solver times were `195.097 s` and
-  `284.822 s` on GPU 2.
-- This is one healthy joint topology/FOM point, not convergence. The next gate
-  is a separately reviewed 3--5 accepted-update beta=2 pilot. Every later beta
-  cap requires checkpoint reprojection and calibration; beta>=32 restores the
-  exact-total nonincrease veto, and the final binary gate remains zero bad
-  solid/void cells.
+- Status: `PAUSED_AFTER_RUN005_BOUNDED_BETA2_GPU_PILOT` after five accepted
+  `move=0.01` updates. No beta promotion or full continuation ran.
+- GPU Maxwell/CUDA thermal-PTE FOM increased monotonically from
+  `9.775174754357e-8` to `1.943798604096e-7 A/W` (`+98.8505%`). Per-update
+  gains were `+19.48%, +16.43%, +14.22%, +12.53%, +11.21%`.
+- Final smooth 500 nm solid/void values are `5.082822e-4` / `8.089554e-5`,
+  feasible under the fixed `1.0e-3` / `1.0e-4` beta=2 exploration envelope.
+  Exact bad cells are diagnostic `42/6`; gray fraction remains `1.0` and the
+  binarization metric is `0.9317`, so this is not a final binary structure.
+- The final point passes optical closure `3.04e-7`, Q-map transpose
+  `8.61e-16`, thermal residual `9.51e-11`, energy balance `1.10e-12`, and
+  forward/adjoint auto-shutoff below `1e-7`. No CPU fallback, empirical
+  normalization, or gradient rescaling was used.
+- The next gate is a solver-free g005-to-beta4 reprojection and cap audit.
+  Beta=4 remains unauthorized until that audit is reviewed; the final binary
+  gate remains zero bad solid/void cells.
 - Code, audit, plots, summary, and raw-artifact provenance:
   `optimization_runs/run_005_lowbeta_topology_exploration_pilot/`.
 

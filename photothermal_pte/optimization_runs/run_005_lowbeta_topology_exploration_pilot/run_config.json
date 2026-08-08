@@ -1,6 +1,6 @@
 {
   "run_id": "run_005_lowbeta_topology_exploration_pilot",
-  "status": "READY_TO_RESUME_RUN005_FROM_ACCEPTED_G003",
+  "status": "PAUSED_AFTER_RUN005_BOUNDED_BETA2_GPU_PILOT",
   "restart_from": "immutable original beta=2 latent density; not Run 003 or Run 004",
   "objective": "+I_PTE/P_incident",
   "design_shape": [373, 373],

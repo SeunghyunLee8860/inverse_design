@@ -43,6 +43,22 @@ constraints remained feasible. This is evidence for healthy low-beta topology
 motion, not evidence that beta=2 or the complete constrained optimization has
 converged.
 
+## Five-point beta=2 result
+
+The bounded pilot completed five accepted `move=0.01` updates and then stopped
+automatically. The solver-backed FOM rose monotonically from
+`9.775174754357e-8` to `1.943798604096e-7 A/W`, a cumulative `+98.8505%`.
+The final smooth solid/void values are `5.082822e-4` and `8.089554e-5`, both
+inside the fixed `1.0e-3` / `1.0e-4` envelope. Exact 500 nm bad cells are still
+`42/6`; at beta=2 they remain diagnostic, not a claim of final manufacturable
+geometry. The density is also deliberately gray (`gray fraction=1.0`,
+`binarization metric=0.9317`).
+
+This demonstrates useful low-beta exploration without constraint-only
+micro-repair. It does not authorize beta=4 automatically. The next checkpoint
+must reproject g005 at beta=4, quantify the projection shock in FOM and both
+constraints, and approve a new fixed beta=4 cap before another GPU solve.
+
 ```bash
 CUDA_VISIBLE_DEVICES=2 /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
   run_optimization.py --gpu 2 --constraint-device cuda:0 \
