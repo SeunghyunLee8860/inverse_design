@@ -2,11 +2,11 @@
 
 Status: `RUNNING_RUN005_FULL_BINARY_BETA_CONTINUATION`
 
-Current stage: beta=32, accepted stage iteration=3, global iteration=39.
+Current stage: beta=64, accepted stage iteration=0, global iteration=40.
 
 Constraint contract: `soft_disk_opening_500nm_from_iteration_zero_v5`.
 
-Actual FOM: `8.724505257878e-07 A/W`. Fixed-cap solid/void constraints: `3.956390e-04` / `1.327462e-04` with caps `3.837575e-04` / `1.278726e-04`.
+Actual FOM: `8.701295014638e-07 A/W`. Fixed-cap solid/void constraints: `3.904421e-04` / `1.329077e-04` with caps `3.395149e-04` / `1.155719e-04`.
 
 Exact 500 nm bad cells: solid `31`, void `7`. Stage convergence: `False` (need at least 6 accepted updates).
 
