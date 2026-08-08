@@ -160,7 +160,7 @@ bad-cell count also cannot increase. Two consecutive accepted minimum moves of
 At the final optimized stage (`beta=128`), if every bounded smooth-MMA
 candidate fails the solver-free prescreen while exact violations remain, the
 driver may invoke the versioned sequential contract
-`sequential_exact_drc_active_set_filter_vjp_v1`. The current exact bad-solid
+`sequential_exact_drc_active_set_filter_vjp_v2`. The current exact bad-solid
 and bad-void masks define only a frozen local physical-density surrogate. Its
 cotangent is propagated through the same certified projection and finite-conic
 filter VJP to propose bounded latent-variable steps. A proposal is eligible for
@@ -172,6 +172,15 @@ This path never assigns thresholded pixels and never applies binary opening or
 closing to the design. It is therefore a solver-backed continuous restoration
 epoch, not post-hoc geometry repair. Failure to reach exact zero inside the
 12-update beta=128 budget remains terminal and fail closed.
+
+If every bounded one-step active-set direction stalls on the discontinuous
+audit, v2 may solve one continuous filtered-sign feasibility subproblem on the
+same selected CUDA device. The idempotent exact audit supplies target signs
+only; the returned variable is still a continuous latent field obtained by
+conic-filter differentiation. The target binary is never assigned to the
+design. This subproblem is bounded by `|delta latent| <= 0.5`, must reach exact
+`0/0`, must satisfy or improve the smooth gate, and must pass a 0.2% linearized
+FOM-loss prescreen before the mandatory fresh GPU/CUDA physics evaluation.
 
 Once exact solid and void bad-cell counts both reach zero, beta 256 through
 8192 are projection-only sharpening checkpoints with no redundant forward or

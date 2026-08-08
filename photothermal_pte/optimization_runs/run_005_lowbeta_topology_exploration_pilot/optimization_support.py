@@ -50,7 +50,7 @@ LOW_BETA_CATASTROPHIC_EXACT_GROWTH_ABSOLUTE = 25
 SMALL_MOVE_HALT_THRESHOLD = 0.0025
 DEFAULT_STAGE_CAPS_PATH = HERE / "stage_caps.json"
 EXACT_ACTIVE_SET_RESTORATION_CONTRACT = (
-    "sequential_exact_drc_active_set_filter_vjp_v1"
+    "sequential_exact_drc_active_set_filter_vjp_v2"
 )
 EXACT_ACTIVE_SET_PHASE_WEIGHTS = (
     0.0, 0.05, 0.10, 0.20, 0.25, 0.33, 0.50, 0.75,
@@ -633,6 +633,170 @@ def exact_active_set_restoration_candidate(
         "no bounded exact-active-set candidate reduced both exact DRC and "
         "the smooth fixed-cap violation"
     )
+
+
+def exact_sign_feasibility_restoration_candidate(
+    latent: np.ndarray,
+    beta: float,
+    objective_gradient_A: np.ndarray,
+    current_objective_A: float,
+    mapping: ProductionDensityMapping | None = None,
+) -> tuple[np.ndarray, dict[str, object]]:
+    """Solve the exact audit's local sign constraints on the selected GPU.
+
+    This fallback is used only when the one-step active-set directions cannot
+    strictly decrease exact and smooth metrics together.  The idempotent exact
+    opening supplies a target *sign* for the filtered field.  A continuous
+    latent array is then optimized on the configured CUDA device so that
+    ``H x`` lies on the requested side of 0.5 with a small margin.  The target
+    binary is never returned or assigned to the design.
+    """
+
+    mapping = mapping or ProductionDensityMapping()
+    latent = np.asarray(latent, dtype=float)
+    objective_gradient_A = np.asarray(objective_gradient_A, dtype=float)
+    if latent.shape != mapping.shape or objective_gradient_A.shape != latent.shape:
+        raise ValueError("latent/objective gradient shape does not match mapping")
+    objective = float(current_objective_A)
+    if not np.isfinite(objective) or objective <= 0.0:
+        raise ValueError("current objective must be finite and positive")
+
+    current_metrics, current_arrays = design_metrics(latent, beta, mapping)
+    binary = np.asarray(current_arrays["binary"], dtype=bool)
+    target = (
+        (binary & ~np.asarray(current_arrays["bad_solid"], dtype=bool))
+        | np.asarray(current_arrays["bad_void"], dtype=bool)
+    )
+    target_audit = exact_binary_audit(target.astype(float), mapping.spacing_m)
+    if (
+        target_audit["solid_bad_cell_count"] != 0
+        or target_audit["void_bad_cell_count"] != 0
+    ):
+        raise RuntimeError(
+            "one exact opening/void-fill target is not idempotent; refusing "
+            "an unbounded morphology-repair sequence"
+        )
+
+    device = _constraint_device()
+    if device.type != "cuda":
+        raise RuntimeError("exact sign-feasibility restoration requires CUDA")
+    lower_np = np.maximum(0.0, latent - 0.50)
+    upper_np = np.minimum(1.0, latent + 0.50)
+    value = torch.tensor(latent, dtype=torch.float64, device=device)
+    lower = torch.tensor(lower_np, dtype=torch.float64, device=device)
+    upper = torch.tensor(upper_np, dtype=torch.float64, device=device)
+    sign = torch.tensor(
+        2.0 * target.astype(float) - 1.0,
+        dtype=torch.float64,
+        device=device,
+    )
+    kernel = torch.tensor(
+        mapping.kernel,
+        dtype=torch.float64,
+        device=device,
+    )[None, None, :, :]
+    normalization = torch.tensor(
+        mapping.normalization,
+        dtype=torch.float64,
+        device=device,
+    )
+    padding = (mapping.kernel.shape[0] // 2, mapping.kernel.shape[1] // 2)
+    margin = 2.0e-3
+    step = 1.0e-2
+    maximum_iterations = 1000
+    audit_interval = 10
+    iterations = 0
+    mismatch = int(binary.size)
+    final_audit: dict[str, object] | None = None
+    for iterations in range(1, maximum_iterations + 1):
+        value.requires_grad_(True)
+        filtered = torch.nn.functional.conv2d(
+            value[None, None, :, :], kernel, padding=padding
+        )[0, 0] / normalization
+        violation = torch.relu(margin - sign * (filtered - 0.5))
+        loss = 0.5 * torch.sum(violation * violation)
+        gradient = torch.autograd.grad(loss, value)[0]
+        maximum = torch.max(torch.abs(gradient))
+        if not bool(torch.isfinite(maximum)) or float(maximum.detach().cpu()) <= 0.0:
+            raise RuntimeError("exact sign-feasibility gradient vanished")
+        with torch.no_grad():
+            value = torch.clamp(value - step * gradient / maximum, lower, upper)
+        if iterations % audit_interval:
+            continue
+        candidate = value.detach().cpu().numpy()
+        filtered_np = mapping.filtered(candidate)
+        mismatch = int(np.count_nonzero((filtered_np >= 0.5) != target))
+        final_audit = exact_binary_audit(
+            mapping.physical(candidate, beta), mapping.spacing_m
+        )
+        if (
+            mismatch == 0
+            and final_audit["solid_bad_cell_count"] == 0
+            and final_audit["void_bad_cell_count"] == 0
+        ):
+            break
+    else:
+        raise RuntimeError(
+            "CUDA exact sign-feasibility solve did not reach the target "
+            f"within {maximum_iterations} iterations"
+        )
+
+    candidate = value.detach().cpu().numpy()
+    candidate_metrics, _ = design_metrics(candidate, beta, mapping)
+    current_values = np.asarray(
+        [current_metrics["solid_constraint"], current_metrics["void_constraint"]]
+    )
+    candidate_values = np.asarray([
+        candidate_metrics["solid_constraint"],
+        candidate_metrics["void_constraint"],
+    ])
+    caps = stage_caps(beta)
+    current_violation = normalized_violation(current_values, caps)
+    candidate_violation = normalized_violation(candidate_values, caps)
+    if not (
+        candidate_violation <= current_violation * (1.0 - 0.01)
+        or bool(candidate_metrics["constraints_feasible"])
+    ):
+        raise RuntimeError(
+            "exact sign-feasibility candidate did not improve the smooth gate"
+        )
+    delta = candidate - latent
+    predicted_delta = float(np.sum(objective_gradient_A * delta))
+    predicted_ratio = predicted_delta / objective
+    if predicted_ratio < -2.0e-3:
+        raise RuntimeError(
+            "exact sign-feasibility candidate exceeds the 0.2% linearized "
+            "FOM-loss guard"
+        )
+    diagnostics = {
+        "contract": EXACT_ACTIVE_SET_RESTORATION_CONTRACT,
+        "submethod": "cuda_filtered_sign_feasibility_projection",
+        "posthoc_binary_repair": False,
+        "target_binary_was_assigned_to_design": False,
+        "target_changed_cell_count": int(np.count_nonzero(target != binary)),
+        "iterations": int(iterations),
+        "filtered_sign_margin": margin,
+        "normalized_gradient_step": step,
+        "latent_trust_bound": 0.50,
+        "final_target_sign_mismatch_count": mismatch,
+        "current_exact_bad_total": int(
+            current_metrics["exact_binary_audit"]["solid_bad_cell_count"]
+            + current_metrics["exact_binary_audit"]["void_bad_cell_count"]
+        ),
+        "selected_exact_bad_total": 0,
+        "exact_solid_bad_cells": 0,
+        "exact_void_bad_cells": 0,
+        "current_smooth_values": current_values.tolist(),
+        "candidate_smooth_values": candidate_values.tolist(),
+        "current_normalized_violation": float(current_violation),
+        "candidate_normalized_violation": float(candidate_violation),
+        "predicted_objective_delta_A": predicted_delta,
+        "predicted_objective_relative_change": predicted_ratio,
+        "latent_rms_change": float(np.sqrt(np.mean(delta * delta))),
+        "latent_max_change": float(np.max(np.abs(delta))),
+        "candidate_metrics": candidate_metrics,
+    }
+    return candidate, diagnostics
 
 
 def projected_binary_gate(metrics: dict[str, object]) -> bool:

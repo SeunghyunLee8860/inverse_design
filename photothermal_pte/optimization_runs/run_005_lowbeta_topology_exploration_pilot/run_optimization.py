@@ -31,6 +31,7 @@ from optimization_support import (
     constraint_values_and_gradients,
     design_metrics,
     exact_active_set_restoration_candidate,
+    exact_sign_feasibility_restoration_candidate,
     initialize_mma_state,
     low_beta_morphology_limited_transition,
     mma_effective_constraint_caps,
@@ -457,9 +458,19 @@ def propose_exact_active_set_restoration(
     current_data = np.load(current_raw)
     latent = np.asarray(current_data["latent"], dtype=float)
     gradient_A = np.asarray(current_data["gradient_latent_A"], dtype=float)
-    candidate, diagnostics = exact_active_set_restoration_candidate(
-        latent, beta, gradient_A
-    )
+    try:
+        candidate, diagnostics = exact_active_set_restoration_candidate(
+            latent, beta, gradient_A
+        )
+        diagnostics["submethod"] = "bounded_one_step_active_set_VJP"
+    except RuntimeError as active_set_error:
+        candidate, diagnostics = exact_sign_feasibility_restoration_candidate(
+            latent,
+            beta,
+            gradient_A,
+            float(current_payload["objective_A"]),
+        )
+        diagnostics["active_set_fallback_reason"] = str(active_set_error)
     candidate_metrics, candidate_arrays = design_metrics(candidate, beta)
     current_metrics, current_arrays = design_metrics(latent, beta)
     np.savez_compressed(
@@ -483,8 +494,8 @@ def propose_exact_active_set_restoration(
         "global_iteration": global_iteration,
         "stage_iteration": stage_iteration,
         "retry": 0,
-        "move": diagnostics["move"],
-        "void_weight": diagnostics["void_weight"],
+        "move": diagnostics.get("move", diagnostics.get("normalized_gradient_step")),
+        "void_weight": diagnostics.get("void_weight"),
         "proposal_method": "differentiable_exact_DRC_active_set_filter_VJP",
         "restoration_contract": EXACT_ACTIVE_SET_RESTORATION_CONTRACT,
         "fixed_constraint_caps": stage_caps(beta).tolist(),
