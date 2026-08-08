@@ -55,6 +55,23 @@ opening, repair, clipping, or objective/gradient rescaling is applied to an
 accepted design.  The MMA state and the eight-update convergence count reset at
 the recovery checkpoint because the constraint functions changed.
 
+If a continuous MMA step improves the smooth constraints but crosses
+`rho=0.5` at a cell that increases the exact bad-cell total, the fail-closed
+line search subdivides the move down to `0.00125/256`.  The ordinary adaptive
+MMA move floor remains `0.00125`; these smaller values are threshold-event
+line-search trials only.  The exact nonincrease gate is not relaxed.
+
+The beta-32 recovery exposed a second failure mode: once one phase was already
+below its stage cap, the two-constraint MMA subproblem could spend that slack
+by creating new violations in that phase while reducing the other.  Proposal
+subproblems from this checkpoint therefore use phase-preserving effective caps
+
+`min(fixed stage cap, current phase value)`.
+
+The fixed stage caps, convergence criteria, and exact zero-violation final gate
+are unchanged.  The effective cap changes only the local MMA proposal direction
+and prevents an already-better solid or void phase from being traded away.
+
 An offline centered-FD test at the preserved beta=32 checkpoint gave relative
 gradient errors below `1e-7`.  A diagnostic descent of maximum latent move 0.02
 reduced exact bad cells from `385/521` to `371/415`; this diagnostic density was

@@ -36,6 +36,7 @@ ZHOU_DECAY_M2 = 1.0e-10
 PNORM = 8.0
 LEGACY_CONSTRAINT_CONTRACT = "legacy_zhou_p8_v1"
 DISK_CONSTRAINT_CONTRACT = "soft_disk_opening_500nm_v3_exact_nonincrease"
+MMA_CAP_CONTRACT = "phase_preserving_effective_caps_v1"
 DISK_CONSTRAINT_START_BETA = 32.0
 DISK_RECOVERY_START_GLOBAL_ITERATION = 85
 DISK_SHARPEN_GAMMA = 64.0
@@ -43,6 +44,8 @@ DISK_SOFT_EXTREMA_TAU = 1.0e-3
 DEFAULT_MMA_MOVE = 0.02
 MINIMUM_MMA_MOVE = 0.00125
 MOVE_PLATEAU_WINDOW = 4
+EXACT_LINE_SEARCH_RETRY_COUNT = 9
+EXACT_LINE_SEARCH_SUBDIVISOR = 256.0
 
 
 def disk_structuring_element(radius_pixels: int) -> np.ndarray:
@@ -281,6 +284,32 @@ def stage_caps(beta: float) -> np.ndarray:
     else:
         value = 0.00005
     return np.asarray([value, value], float)
+
+
+def mma_effective_constraint_caps(
+    values: np.ndarray,
+    beta: float,
+) -> np.ndarray:
+    """Keep an already-better phase from funding violation in the other.
+
+    The published stage caps remain the feasibility and continuation gates.
+    From the disk-constraint recovery onward, MMA receives the tighter of the
+    stage cap and each phase's current smooth-opening value.  This produces a
+    phase-preserving proposal direction while the independent exact audit
+    remains the fail-closed acceptance gate.
+    """
+
+    current = np.asarray(values, dtype=float)
+    caps = stage_caps(beta)
+    if current.shape != caps.shape or not np.all(np.isfinite(current)):
+        raise ValueError("constraint values must be a finite solid/void pair")
+    if np.any(current <= 0.0):
+        raise ValueError("constraint values must be positive")
+    return (
+        np.minimum(caps, current)
+        if float(beta) >= DISK_CONSTRAINT_START_BETA
+        else caps
+    )
 
 
 def design_metrics(
@@ -523,12 +552,33 @@ def adaptive_move_ceiling(
     return ceiling
 
 
+def exact_safe_move_retries(move_ceiling: float) -> tuple[float, ...]:
+    """Subdivide an MMA move to resolve discrete exact-DRC threshold events.
+
+    ``MINIMUM_MMA_MOVE`` remains the smallest adaptive optimization ceiling.
+    The smaller values returned here are only fail-closed line-search trials
+    used after a proposed step crosses rho=0.5 and increases the exact binary
+    bad-cell count.  They do not weaken the exact acceptance gate.
+    """
+
+    ceiling = float(move_ceiling)
+    if not np.isfinite(ceiling) or ceiling <= 0.0:
+        raise ValueError("move ceiling must be finite and positive")
+    floor = MINIMUM_MMA_MOVE / EXACT_LINE_SEARCH_SUBDIVISOR
+    return tuple(
+        max(floor, ceiling / (2.0 ** retry))
+        for retry in range(EXACT_LINE_SEARCH_RETRY_COUNT)
+    )
+
+
 __all__ = [
     "DISK_CONSTRAINT_START_BETA", "DISK_RECOVERY_START_GLOBAL_ITERATION",
     "MMAState", "ProductionDensityMapping", "adaptive_move_ceiling", "candidate_acceptance",
     "constraint_contract", "constraint_values_and_gradients",
     "disk_constraint_values_and_gradients", "design_metrics", "exact_binary_audit",
+    "exact_safe_move_retries",
     "initialize_mma_state", "load_mma_state", "mma_step",
+    "mma_effective_constraint_caps",
     "projected_binary_gate", "save_mma_state", "stage_caps",
     "stage_convergence",
     "transient_license_failure",

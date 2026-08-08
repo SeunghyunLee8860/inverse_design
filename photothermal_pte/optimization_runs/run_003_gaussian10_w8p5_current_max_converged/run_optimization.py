@@ -27,7 +27,9 @@ from optimization_support import (
     constraint_contract,
     constraint_values_and_gradients,
     design_metrics,
+    exact_safe_move_retries,
     initialize_mma_state,
+    mma_effective_constraint_caps,
     mma_step,
     projected_binary_gate,
     save_mma_state,
@@ -36,6 +38,7 @@ from optimization_support import (
     transient_license_failure,
 )
 from record_state import artifact, record, sha256
+from optimization_support import MMA_CAP_CONTRACT
 
 
 HERE = Path(__file__).resolve().parent
@@ -65,8 +68,6 @@ INCIDENT_POWER = "1.3822950233084244e-13"
 OBJECTIVE_SCALE = 1.0e8
 BETA_SCHEDULE = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096]
 MAXIMUM_ACCEPTED_UPDATES_PER_BETA = 80
-MOVE_RETRY_COUNT = 5
-MINIMUM_MMA_MOVE = 0.00125
 LICENSE_RETRY_LIMIT = 120
 LICENSE_RETRY_DELAY_S = 30
 
@@ -274,9 +275,22 @@ def propose(
     candidate_state_path = output / "mma_state_candidate.npz"
     if result_path.exists():
         payload = json.loads(result_path.read_text())
-        if sha256(raw_path) != payload["raw_artifact"]["sha256"]:
-            raise RuntimeError("existing proposal SHA mismatch")
-        return result_path, raw_path, candidate_state_path
+        if payload.get("mma_cap_contract") == MMA_CAP_CONTRACT:
+            if sha256(raw_path) != payload["raw_artifact"]["sha256"]:
+                raise RuntimeError("existing proposal SHA mismatch")
+            return result_path, raw_path, candidate_state_path
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+        archive = output.with_name(
+            f"{output.name}_stale_mma_cap_contract_{stamp}"
+        )
+        output.rename(archive)
+        emit(
+            "stale_proposal_contract_archived",
+            proposal=str(output),
+            archive=str(archive),
+            previous_contract=payload.get("mma_cap_contract"),
+            required_contract=MMA_CAP_CONTRACT,
+        )
     # A supervisor interruption can occur after the directory is created but
     # before proposal_result.json is committed.  That directory is not an
     # accepted checkpoint.  Re-enter it and deterministically overwrite the
@@ -288,9 +302,10 @@ def propose(
     latent = np.asarray(current_data["latent"], float)
     gradient_A = np.asarray(current_data["gradient_latent_A"], float)
     values, gradients, _ = constraint_values_and_gradients(latent, beta)
-    caps = stage_caps(beta)
-    fval = values / caps - 1.0
-    dfdx = gradients.reshape(2, -1) / caps[:, None]
+    fixed_caps = stage_caps(beta)
+    effective_caps = mma_effective_constraint_caps(values, beta)
+    fval = values / effective_caps - 1.0
+    dfdx = gradients.reshape(2, -1) / effective_caps[:, None]
     from optimization_support import load_mma_state
     state = load_mma_state(state_path)
     objective_gradient = -OBJECTIVE_SCALE * gradient_A.ravel() / float(current_payload["incident_power_W"])
@@ -302,7 +317,8 @@ def propose(
     np.savez_compressed(
         raw_path, latent=candidate, latent_previous=latent,
         rho=candidate_arrays["rho"], rho_previous=design_metrics(latent, beta)[1]["rho"],
-        gradient_latent_A=gradient_A, constraint_values=values, constraint_caps=caps,
+        gradient_latent_A=gradient_A, constraint_values=values,
+        constraint_caps=effective_caps,
     )
     save_mma_state(candidate_state_path, candidate_state)
     payload = {
@@ -311,7 +327,10 @@ def propose(
         "beta": beta, "global_iteration": global_iteration,
         "stage_iteration": stage_iteration, "retry": retry, "move": move,
         "objective_scale_W_per_A": OBJECTIVE_SCALE,
-        "fixed_constraint_caps": caps.tolist(), "constraint_current": values.tolist(),
+        "fixed_constraint_caps": fixed_caps.tolist(),
+        "mma_effective_constraint_caps": effective_caps.tolist(),
+        "mma_cap_contract": MMA_CAP_CONTRACT,
+        "constraint_current": values.tolist(),
         "constraint_contract": constraint_contract(beta),
         "candidate_offline_metrics": candidate_metrics,
         "mma_diagnostics": diagnostics,
@@ -527,10 +546,7 @@ def main() -> int:
             summary_data = summary()
             accepted_moves = accepted_move_provenance(summary_data, beta)
             move_ceiling = adaptive_move_ceiling(history, beta, accepted_moves)
-            move_retries = tuple(
-                max(MINIMUM_MMA_MOVE / 16.0, move_ceiling / (2.0 ** retry))
-                for retry in range(MOVE_RETRY_COUNT)
-            )
+            move_retries = exact_safe_move_retries(move_ceiling)
             emit(
                 "adaptive_move_selected",
                 beta=beta,

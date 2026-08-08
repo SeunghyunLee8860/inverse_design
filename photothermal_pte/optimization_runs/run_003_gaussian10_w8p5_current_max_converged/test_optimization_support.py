@@ -9,10 +9,36 @@ from optimization_support import (
     constraint_values_and_gradients,
     design_metrics,
     exact_binary_audit,
+    exact_safe_move_retries,
+    mma_effective_constraint_caps,
     stage_caps,
     stage_convergence,
     transient_license_failure,
 )
+
+
+def test_exact_safe_move_retries_resolve_threshold_events_without_changing_ceiling():
+    retries = exact_safe_move_retries(0.00125)
+    assert len(retries) == 9
+    assert retries[0] == 0.00125
+    assert retries[-1] == 0.00125 / 256.0
+    assert all(a > b for a, b in zip(retries, retries[1:]))
+
+
+def test_phase_preserving_effective_caps_keep_better_disk_phase():
+    values = np.asarray([9.5e-4, 2.034e-3])
+    np.testing.assert_allclose(
+        mma_effective_constraint_caps(values, 32.0),
+        [9.5e-4, 2.0e-3],
+        rtol=0.0,
+        atol=0.0,
+    )
+    np.testing.assert_allclose(
+        mma_effective_constraint_caps(values, 16.0),
+        [8.0e-3, 8.0e-3],
+        rtol=0.0,
+        atol=0.0,
+    )
 
 
 def test_constraint_jvp_matches_centered_fd() -> None:
