@@ -8,6 +8,10 @@ waist 8.5 um, 18.6 x 18.6 um finite nonperiodic design window, 373 x 373 nodal
 density at 50 nm spacing, 1 um design height, signed `+I_PTE/P_incident`, GPU
 Maxwell forward/adjoint, and CUDA float64 thermal/PTE forward/adjoint. No CPU
 fallback, density repair, clipping, or empirical gradient scaling is allowed.
+The supervisor enforces a single-physical-GPU contract: `--gpu N` sets
+`CUDA_VISIBLE_DEVICES=N` before PyTorch creates a CUDA tensor, so the
+morphology/thermal `cuda:0` and Lumerical `GPU N` both use physical GPU `N`.
+Using a second physical GPU for constraints is prohibited.
 
 ## Bounded beta=2 experiment
 

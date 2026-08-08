@@ -177,6 +177,30 @@ def solver_diagnostic_text(output: Path) -> str:
     return "\n".join(chunks)
 
 
+def configure_single_physical_gpu(gpu: str, constraint_device: str) -> None:
+    """Pin both Lumerical and PyTorch work to one physical GPU.
+
+    PyTorch's ``cuda:0`` is a logical index.  Without an explicit visibility
+    mask it means physical GPU 0 even when Lumerical is independently sent to
+    physical GPU 2.  Set the mask before the first CUDA tensor is created so
+    logical ``cuda:0`` and the requested Lumerical GPU identify one device.
+    """
+
+    if constraint_device != "cuda:0":
+        raise RuntimeError(
+            "GPU-only Run005 requires --constraint-device cuda:0 under a "
+            "single-device CUDA_VISIBLE_DEVICES mask"
+        )
+    existing = os.environ.get("CUDA_VISIBLE_DEVICES")
+    if existing not in (None, "", gpu):
+        raise RuntimeError(
+            "CUDA_VISIBLE_DEVICES conflicts with --gpu: "
+            f"{existing!r} != {gpu!r}"
+        )
+    os.environ["CUDA_VISIBLE_DEVICES"] = gpu
+    os.environ["RUN005_CONSTRAINT_TORCH_DEVICE"] = constraint_device
+
+
 def verify_inputs() -> None:
     expected = (
         (BASE_FSP, BASE_SHA), (INITIAL_RESULT, INITIAL_RESULT_SHA),
@@ -529,12 +553,14 @@ def main() -> int:
     parser.add_argument("--gpu", default="0")
     parser.add_argument("--constraint-device", default="cuda:0")
     args = parser.parse_args()
-    os.environ["RUN005_CONSTRAINT_TORCH_DEVICE"] = args.constraint_device
+    configure_single_physical_gpu(args.gpu, args.constraint_device)
     verify_inputs()
     emit(
         "driver_started",
         gpu=args.gpu,
         constraint_device=args.constraint_device,
+        cuda_visible_devices=os.environ["CUDA_VISIBLE_DEVICES"],
+        single_physical_gpu=True,
         method="plateau-gated beta continuation to exact binary 500 nm design",
     )
     current_result, current_raw = INITIAL_RESULT, INITIAL_RAW
