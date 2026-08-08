@@ -1,13 +1,7 @@
 {
   "status": "RUNNING_CONVERGENCE_BASED_CONSTRAINED_BETA_CONTINUATION",
-  "generated_at_utc": "2026-08-08T00:24:20.088392+00:00",
+  "generated_at_utc": "2026-08-08T00:56:59.429965+00:00",
   "raw_artifacts_are_gitignored": true,
-  "constraint_recovery_validation": {
-    "path": "results/disk_constraint_recovery/disk_constraint_recovery_validation.json",
-    "size_bytes": 2989,
-    "sha256": "cb9aafef4ab30cab07c237d69dfa530e1450e525b01db4faf795b1745f3cb01e",
-    "passed": true
-  },
   "base_FSP": {
     "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_production_geometry_runsetup_v2_20260806/production_candidate_runsetup.fsp",
     "size_bytes": 47301353,
@@ -16,6 +10,16 @@
   "material_Jacobian": {
     "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_production_complex_yee_jacobian_20260806",
     "sha256_contract": "directory recorded by Run 002 component-Jacobian manifest"
+  },
+  "constraint_recovery_validation": {
+    "status": "VALIDATED_OFFLINE_EXACT_DISK_CONSTRAINT_RECOVERY",
+    "passed": true,
+    "preserved_checkpoint_sha256": "f36b5d1121b090e18fb44d48efa87e60863f02278e84d81bc5c609c6e11998bf",
+    "report": "results/disk_constraint_recovery/DISK_CONSTRAINT_RECOVERY_REPORT.md",
+    "json": "results/disk_constraint_recovery/disk_constraint_recovery_validation.json",
+    "fields_plot": "results/disk_constraint_recovery/disk_constraint_recovery_fields.png",
+    "descent_plot": "results/disk_constraint_recovery/disk_constraint_recovery_descent.png",
+    "offline_diagnostic_density_was_not_accepted": true
   },
   "records": {
     "run003_b002_s000_g000_stage_baseline": {
@@ -2821,6 +2825,38 @@
         "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s002_g085_accepted_mma_state.npz",
         "size_bytes": 594892,
         "sha256": "87a1f56e07950c122d843648e823d5a5996b9dd226841a952d1bebc10c66a535"
+      }
+    },
+    "run003_b032_s003_g086_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s003_g086_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10826,
+        "sha256": "eb4f75ec5599dead71e70b78d00ae1d8916c6902c2cc18c1d38b383dd83ac141"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s003_g086_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5027503,
+        "sha256": "06a45f891fe27c8c2171b62b817e446d5c6ea9d7df432865177c24e74758d7fd"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b032_s003_g086_accepted_mma.npz",
+        "size_bytes": 82124,
+        "sha256": "25c84e0d74eb32c2056f8c9111355a13b22ca803b631f61f6fe63a4fcec2302f"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s003_g086_retry0_proposal/proposal_result.json",
+        "size_bytes": 3345,
+        "sha256": "054009a70e46af200a2e2d21ead3236f7b35c4eb21a3a3d6016c50d6df83e16b"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s003_g086_retry0_proposal/proposal.npz",
+        "size_bytes": 1846214,
+        "sha256": "a66689ace3634b3594a0b9e6810d6ffd3bde4bb90426ece6b94b98cd6bb0b948"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s003_g086_accepted_mma_state.npz",
+        "size_bytes": 603935,
+        "sha256": "b934a925662596f7cb15a2585421f43dc68e19ed5661c6c3b4409e5a79570b92"
       }
     }
   }
