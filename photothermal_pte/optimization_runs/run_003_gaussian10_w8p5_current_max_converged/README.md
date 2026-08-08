@@ -10,10 +10,11 @@ solver logs live below `/home/seunghyun/tairte4/raw_artifacts/run003_*` and are
 never committed.  This directory contains the restartable driver, tests,
 per-iteration figures, compact checkpoints, reports, and SHA provenance.
 
-Run on one licensed GPU with:
+Run Maxwell, CUDA thermal/PTE, and the differentiable disk constraint on one
+licensed GPU with (example physical GPU 2):
 
 ```bash
-/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python run_optimization.py --gpu 0
+CUDA_VISIBLE_DEVICES=2 /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python run_optimization.py --gpu 2 --constraint-device cuda:0
 ```
 
 CPU FDTD and CPU thermal fallbacks are prohibited.

@@ -26,10 +26,32 @@ beta=8 record is a reprojected diagnostic baseline, not a converged stage.
 - stateful Svanberg MMA with exact latent bounds `0 <= x <= 1`;
 - MMA asymptotes persist inside a beta stage and reset whenever beta changes;
 - fixed objective nondimensionalization `1e8 * I_PTE/P_incident`;
-- differentiable Zhou solid/void fields aggregated by a p=8 power mean so a
-  local narrow feature is not diluted by the 373 x 373 domain average;
+- immutable beta=2--16 checkpoints used differentiable Zhou solid/void fields
+  aggregated by a p=8 power mean;
 - exact thresholded 500 nm solid/void morphology is audited at every accepted
   point but never edits the continuous candidate.
+
+## Fail-closed 500 nm constraint recovery
+
+At beta=16 the legacy Zhou values reached their fixed cap while the exact disk
+opening audit worsened from `323/407` to `360/501` solid/void bad cells.  The
+first two beta=32 updates then ended at `385/521`.  Those solver-backed results
+remain immutable diagnostics, but they prove that the legacy surrogate is not
+sufficiently aligned with the final exact gate.
+
+Starting after beta=32 global iteration 85, future candidates therefore use
+`soft_disk_opening_500nm_v2`.  It applies a smooth threshold about rho=0.5 and
+a differentiable log-sum-exp opening with the same five-pixel-radius Euclidean
+disk and phase-specific border values as the exact audit.  Its physical-density
+cotangent is propagated through the existing filter/projection VJP.  No binary
+opening, repair, clipping, or objective/gradient rescaling is applied to an
+accepted design.  The MMA state and the eight-update convergence count reset at
+the recovery checkpoint because the constraint functions changed.
+
+An offline centered-FD test at the preserved beta=32 checkpoint gave relative
+gradient errors below `1e-7`.  A diagnostic descent of maximum latent move 0.02
+reduced exact bad cells from `385/521` to `371/415`; this diagnostic density was
+not accepted as an optimization checkpoint.
 
 The solid and void constraints are genuine fixed inequalities within each
 stage.  They are not recomputed from the previous iteration:
@@ -41,9 +63,14 @@ stage.  They are not recomputed from the previous iteration:
 | 8 | 0.020 | 0.020 |
 | 16 | 0.008 | 0.008 |
 | 32 | 0.002 | 0.002 |
-| >=64 | 0.0001 | 0.0001 |
+| 64 | 0.001 | 0.001 |
+| 128 | 0.0005 | 0.0005 |
+| 256 | 0.00025 | 0.00025 |
+| 512 | 0.0001 | 0.0001 |
+| >=1024 | 0.00005 | 0.00005 |
 
-These values were frozen before Run 003.  For scale, the original beta=2
+The beta=2--32 legacy values were frozen before Run 003.  The beta>=64 disk
+caps above belong to the fail-closed recovery contract.  For scale, the original beta=2
 initial state is about 0.0373/0.0373, while independently generated valid
 half-plane and 1 um stripe fixtures are around `1e-5` at beta=2 and smaller at
 higher beta.

@@ -2,6 +2,12 @@
   "status": "RUNNING_CONVERGENCE_BASED_CONSTRAINED_BETA_CONTINUATION",
   "generated_at_utc": "2026-08-08T00:24:20.088392+00:00",
   "raw_artifacts_are_gitignored": true,
+  "constraint_recovery_validation": {
+    "path": "results/disk_constraint_recovery/disk_constraint_recovery_validation.json",
+    "size_bytes": 2989,
+    "sha256": "cb9aafef4ab30cab07c237d69dfa530e1450e525b01db4faf795b1745f3cb01e",
+    "passed": true
+  },
   "base_FSP": {
     "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_production_geometry_runsetup_v2_20260806/production_candidate_runsetup.fsp",
     "size_bytes": 47301353,

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import json
+import os
 from pathlib import Path
 import sys
 
@@ -33,6 +34,12 @@ ETA_ERODED = 0.75
 ETA_DILATED = 0.25
 ZHOU_DECAY_M2 = 1.0e-10
 PNORM = 8.0
+LEGACY_CONSTRAINT_CONTRACT = "legacy_zhou_p8_v1"
+DISK_CONSTRAINT_CONTRACT = "soft_disk_opening_500nm_v2"
+DISK_CONSTRAINT_START_BETA = 32.0
+DISK_RECOVERY_START_GLOBAL_ITERATION = 85
+DISK_SHARPEN_GAMMA = 64.0
+DISK_SOFT_EXTREMA_TAU = 1.0e-3
 DEFAULT_MMA_MOVE = 0.02
 MINIMUM_MMA_MOVE = 0.00125
 MOVE_PLATEAU_WINDOW = 4
@@ -78,7 +85,7 @@ def _projection(filtered: torch.Tensor, beta: float, eta: float) -> torch.Tensor
     ) / denominator
 
 
-def constraint_values_and_gradients(
+def legacy_zhou_constraint_values_and_gradients(
     latent: np.ndarray,
     beta: float,
     mapping: ProductionDensityMapping | None = None,
@@ -113,6 +120,145 @@ def constraint_values_and_gradients(
     return np.asarray(values), np.stack(gradients), local
 
 
+def _disk_offsets(radius_pixels: int) -> tuple[tuple[int, int], ...]:
+    return tuple(
+        (di, dj)
+        for di in range(-radius_pixels, radius_pixels + 1)
+        for dj in range(-radius_pixels, radius_pixels + 1)
+        if di * di + dj * dj <= radius_pixels * radius_pixels
+    )
+
+
+def _constraint_device() -> torch.device:
+    requested = os.environ.get("RUN003_CONSTRAINT_TORCH_DEVICE", "cpu")
+    device = torch.device(requested)
+    if device.type == "cuda" and not torch.cuda.is_available():
+        raise RuntimeError(
+            f"requested morphology-constraint device {requested!r} is unavailable"
+        )
+    return device
+
+
+def _shifted_disk_stack(
+    value: torch.Tensor,
+    offsets: tuple[tuple[int, int], ...],
+    radius_pixels: int,
+    border_value: float,
+) -> torch.Tensor:
+    padded = torch.nn.functional.pad(
+        value,
+        (radius_pixels, radius_pixels, radius_pixels, radius_pixels),
+        value=float(border_value),
+    )
+    height, width = value.shape
+    return torch.stack(
+        tuple(
+            padded[
+                radius_pixels + di : radius_pixels + di + height,
+                radius_pixels + dj : radius_pixels + dj + width,
+            ]
+            for di, dj in offsets
+        ),
+        dim=0,
+    )
+
+
+def _soft_disk_opening(
+    value: torch.Tensor,
+    offsets: tuple[tuple[int, int], ...],
+    radius_pixels: int,
+    border_value: float,
+) -> torch.Tensor:
+    """Differentiable opening with the exact audit's disk and border policy."""
+
+    log_count = float(np.log(len(offsets)))
+    erosion_stack = _shifted_disk_stack(
+        value, offsets, radius_pixels, border_value
+    )
+    eroded = -DISK_SOFT_EXTREMA_TAU * (
+        torch.logsumexp(-erosion_stack / DISK_SOFT_EXTREMA_TAU, dim=0)
+        - log_count
+    )
+    dilation_stack = _shifted_disk_stack(
+        eroded, offsets, radius_pixels, border_value
+    )
+    return DISK_SOFT_EXTREMA_TAU * (
+        torch.logsumexp(dilation_stack / DISK_SOFT_EXTREMA_TAU, dim=0)
+        - log_count
+    )
+
+
+def disk_constraint_values_and_gradients(
+    latent: np.ndarray,
+    beta: float,
+    mapping: ProductionDensityMapping | None = None,
+) -> tuple[np.ndarray, np.ndarray, dict[str, np.ndarray]]:
+    """Return solid/void penalties aligned with the exact 500 nm disk audit.
+
+    The projected density is smoothly sharpened about the exact audit threshold
+    before applying a log-sum-exp approximation of the same disk opening used
+    by :func:`exact_binary_audit`.  Its positive opening residual tracks the
+    exact bad-cell masks; the exact nondifferentiable audit remains the final
+    zero-violation gate because the smooth extrema have a small finite floor.
+    The physical-density cotangent is propagated through the certified finite
+    conic filter/projection transpose; no post-hoc morphology edits the design.
+    """
+
+    mapping = mapping or ProductionDensityMapping()
+    latent = np.asarray(latent, dtype=float)
+    rho_np = mapping.physical(latent, float(beta))
+    radius_pixels = int(
+        np.ceil(MORPHOLOGY_RADIUS_M / mapping.spacing_m - 1.0e-12)
+    )
+    offsets = _disk_offsets(radius_pixels)
+    rho = torch.tensor(
+        rho_np,
+        dtype=torch.float64,
+        device=_constraint_device(),
+        requires_grad=True,
+    )
+    sharpened = torch.sigmoid(DISK_SHARPEN_GAMMA * (rho - 0.5))
+    values: list[float] = []
+    gradients: list[np.ndarray] = []
+    local: dict[str, np.ndarray] = {}
+    for index, (name, phase, border_value) in enumerate(
+        (
+            ("solid", sharpened, 0.0),
+            ("void", 1.0 - sharpened, 1.0),
+        )
+    ):
+        opened = _soft_disk_opening(
+            phase, offsets, radius_pixels, border_value
+        )
+        residual = torch.relu(phase - opened)
+        aggregate = torch.mean(residual)
+        gradient_rho = torch.autograd.grad(
+            aggregate, rho, retain_graph=index == 0
+        )[0].detach().cpu().numpy()
+        values.append(float(aggregate.detach().cpu()))
+        gradients.append(mapping.vjp(latent, gradient_rho, float(beta)))
+        local[f"{name}_penalty_field"] = residual.detach().cpu().numpy()
+    return np.asarray(values), np.stack(gradients), local
+
+
+def constraint_contract(beta: float) -> str:
+    return (
+        DISK_CONSTRAINT_CONTRACT
+        if float(beta) >= DISK_CONSTRAINT_START_BETA
+        else LEGACY_CONSTRAINT_CONTRACT
+    )
+
+
+def constraint_values_and_gradients(
+    latent: np.ndarray,
+    beta: float,
+    mapping: ProductionDensityMapping | None = None,
+) -> tuple[np.ndarray, np.ndarray, dict[str, np.ndarray]]:
+    if constraint_contract(beta) == DISK_CONSTRAINT_CONTRACT:
+        return disk_constraint_values_and_gradients(latent, beta, mapping)
+    return legacy_zhou_constraint_values_and_gradients(latent, beta, mapping)
+
+
 def stage_caps(beta: float) -> np.ndarray:
     if beta <= 2.0:
         value = 0.040
@@ -124,8 +270,16 @@ def stage_caps(beta: float) -> np.ndarray:
         value = 0.008
     elif beta <= 32.0:
         value = 0.002
-    else:
+    elif beta <= 64.0:
+        value = 0.001
+    elif beta <= 128.0:
+        value = 0.0005
+    elif beta <= 256.0:
+        value = 0.00025
+    elif beta <= 512.0:
         value = 0.0001
+    else:
+        value = 0.00005
     return np.asarray([value, value], float)
 
 
@@ -146,6 +300,7 @@ def design_metrics(
     normalized = constraints / caps
     metrics: dict[str, object] = {
         "beta": float(beta),
+        "constraint_contract": constraint_contract(beta),
         "latent_min": float(np.min(latent)),
         "latent_max": float(np.max(latent)),
         "filtered_min": float(np.min(filtered)),
@@ -258,6 +413,11 @@ def stage_convergence(history: list[dict[str, object]], beta: float) -> StageCon
     accepted = [
         row for row in history
         if float(row["beta"]) == float(beta) and row["role"] == "accepted_mma"
+        and not (
+            float(beta) == DISK_CONSTRAINT_START_BETA
+            and int(row.get("global_iteration", -1))
+            <= DISK_RECOVERY_START_GLOBAL_ITERATION
+        )
     ]
     minimum = 10 if beta <= 2.0 else 8
     window = 4
@@ -294,6 +454,11 @@ def adaptive_move_ceiling(
     accepted = [
         row for row in history
         if float(row["beta"]) == float(beta) and row["role"] == "accepted_mma"
+        and not (
+            float(beta) == DISK_CONSTRAINT_START_BETA
+            and int(row.get("global_iteration", -1))
+            <= DISK_RECOVERY_START_GLOBAL_ITERATION
+        )
     ]
     if len(accepted_moves) != len(accepted):
         raise ValueError("accepted move provenance does not match accepted history")
@@ -326,8 +491,10 @@ def adaptive_move_ceiling(
 
 
 __all__ = [
+    "DISK_CONSTRAINT_START_BETA", "DISK_RECOVERY_START_GLOBAL_ITERATION",
     "MMAState", "ProductionDensityMapping", "adaptive_move_ceiling", "candidate_acceptance",
-    "constraint_values_and_gradients", "design_metrics", "exact_binary_audit",
+    "constraint_contract", "constraint_values_and_gradients",
+    "disk_constraint_values_and_gradients", "design_metrics", "exact_binary_audit",
     "initialize_mma_state", "load_mma_state", "mma_step",
     "projected_binary_gate", "save_mma_state", "stage_caps",
     "stage_convergence",

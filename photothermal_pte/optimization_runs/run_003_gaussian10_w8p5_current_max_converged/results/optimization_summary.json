@@ -2,6 +2,16 @@
   "status": "RUNNING_CONVERGENCE_BASED_CONSTRAINED_BETA_CONTINUATION",
   "generated_at_utc": "2026-08-08T00:24:20.088392+00:00",
   "method": "fixed stage inequalities plus convergence-based beta continuation",
+  "constraint_recovery_validation": {
+    "status": "VALIDATED_OFFLINE_EXACT_DISK_CONSTRAINT_RECOVERY",
+    "passed": true,
+    "preserved_checkpoint_sha256": "f36b5d1121b090e18fb44d48efa87e60863f02278e84d81bc5c609c6e11998bf",
+    "report": "results/disk_constraint_recovery/DISK_CONSTRAINT_RECOVERY_REPORT.md",
+    "json": "results/disk_constraint_recovery/disk_constraint_recovery_validation.json",
+    "fields_plot": "results/disk_constraint_recovery/disk_constraint_recovery_fields.png",
+    "descent_plot": "results/disk_constraint_recovery/disk_constraint_recovery_descent.png",
+    "offline_diagnostic_density_was_not_accepted": true
+  },
   "history": [
     {
       "evaluation_index": 0,

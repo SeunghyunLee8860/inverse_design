@@ -20,8 +20,11 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
 from optimization_support import (
+    DISK_CONSTRAINT_START_BETA,
+    DISK_RECOVERY_START_GLOBAL_ITERATION,
     adaptive_move_ceiling,
     candidate_acceptance,
+    constraint_contract,
     constraint_values_and_gradients,
     design_metrics,
     initialize_mma_state,
@@ -201,6 +204,12 @@ def accepted_move_provenance(
     for row in summary_data.get("history", []):
         if float(row["beta"]) != float(beta) or row["role"] != "accepted_mma":
             continue
+        if (
+            float(beta) == DISK_CONSTRAINT_START_BETA
+            and int(row.get("global_iteration", -1))
+            <= DISK_RECOVERY_START_GLOBAL_ITERATION
+        ):
+            continue
         entry = summary_data["raw_artifacts"][row["tag"]]
         proposal = entry.get("proposal_result")
         if proposal is None:
@@ -282,6 +291,7 @@ def propose(
         "stage_iteration": stage_iteration, "retry": retry, "move": move,
         "objective_scale_W_per_A": OBJECTIVE_SCALE,
         "fixed_constraint_caps": caps.tolist(), "constraint_current": values.tolist(),
+        "constraint_contract": constraint_contract(beta),
         "candidate_offline_metrics": candidate_metrics,
         "mma_diagnostics": diagnostics,
         "raw_artifact": artifact(raw_path), "candidate_state": artifact(candidate_state_path),
@@ -318,6 +328,7 @@ def accept_candidate(
         "beta": beta, "physics_pass": bool(candidate_payload.get("passed")),
         "proposal": artifact(proposal_result), "candidate_evaluation": artifact(candidate_result),
         "fixed_constraint_caps": stage_caps(beta).tolist(),
+        "constraint_contract": constraint_contract(beta),
         "current_constraints": current_values.tolist(), "candidate_constraints": candidate_values.tolist(),
         "exact_DRC_used_as_hard_step_veto": False,
     })
@@ -398,9 +409,16 @@ def finalize(current_raw: Path, beta: float, global_iteration: int, gpu: str) ->
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--gpu", default="0")
+    parser.add_argument("--constraint-device", default="cuda:0")
     args = parser.parse_args()
+    os.environ["RUN003_CONSTRAINT_TORCH_DEVICE"] = args.constraint_device
     verify_inputs()
-    emit("driver_started", gpu=args.gpu, method="convergence-based fixed-inequality continuation")
+    emit(
+        "driver_started",
+        gpu=args.gpu,
+        constraint_device=args.constraint_device,
+        method="convergence-based fixed-inequality continuation",
+    )
     current_result, current_raw = INITIAL_RESULT, INITIAL_RAW
     global_iteration = 0
     if not already_recorded(2.0, 0, "stage_baseline"):
@@ -429,6 +447,30 @@ def main() -> int:
             current_raw = Path(entry["evaluation_NPZ"]["path"])
             state_path = Path(entry["mma_state"]["path"])
             global_iteration = int(last["global_iteration"])
+            current_latent = np.asarray(np.load(current_raw)["latent"], float)
+        recovery_rows = [
+            row for row in accepted_rows
+            if not (
+                beta == DISK_CONSTRAINT_START_BETA
+                and int(row.get("global_iteration", -1))
+                <= DISK_RECOVERY_START_GLOBAL_ITERATION
+            )
+        ]
+        if beta == DISK_CONSTRAINT_START_BETA and not recovery_rows:
+            state_path = RUN_RAW / (
+                f"b{beta_integer:04d}_disk_constraint_recovery_"
+                f"g{global_iteration:03d}_mma_state.npz"
+            )
+            if not state_path.exists():
+                save_mma_state(state_path, initialize_mma_state(current_latent))
+            emit(
+                "constraint_contract_recovery",
+                beta=beta,
+                global_iteration=global_iteration,
+                preserved_legacy_accepted_updates=len(accepted_rows),
+                new_constraint_contract=constraint_contract(beta),
+                mma_state_reset=str(state_path),
+            )
         while True:
             history = summary()["history"]
             convergence = stage_convergence(history, beta)

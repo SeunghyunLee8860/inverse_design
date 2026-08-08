@@ -31,6 +31,22 @@ def test_constraint_jvp_matches_centered_fd() -> None:
     assert np.all(values > 0.0)
 
 
+def test_disk_constraint_jvp_matches_centered_fd() -> None:
+    mapping = ProductionDensityMapping(shape=(31, 29), spacing_m=50e-9, radius_m=500e-9)
+    rng = np.random.default_rng(320085)
+    latent = np.clip(0.5 + 0.08 * rng.standard_normal(mapping.shape), 0.2, 0.8)
+    direction = rng.standard_normal(mapping.shape)
+    direction /= np.linalg.norm(direction)
+    values, gradients, _ = constraint_values_and_gradients(latent, 32.0, mapping)
+    step = 5.0e-5
+    plus, _, _ = constraint_values_and_gradients(latent + step * direction, 32.0, mapping)
+    minus, _, _ = constraint_values_and_gradients(latent - step * direction, 32.0, mapping)
+    fd = (plus - minus) / (2.0 * step)
+    ad = gradients.reshape(2, -1) @ direction.ravel()
+    np.testing.assert_allclose(ad, fd, rtol=2e-5, atol=1e-9)
+    assert np.all(values > 0.0)
+
+
 def test_exact_audit_reports_kernel_and_domain_counts_separately() -> None:
     rho = np.zeros((21, 23))
     audit = exact_binary_audit(rho, 50e-9)
@@ -45,8 +61,11 @@ def test_fixed_caps_do_not_depend_on_current_design() -> None:
     assert np.array_equal(stage_caps(8), [0.02, 0.02])
     assert np.array_equal(stage_caps(16), [0.008, 0.008])
     assert np.array_equal(stage_caps(32), [0.002, 0.002])
-    assert np.array_equal(stage_caps(64), [0.0001, 0.0001])
+    assert np.array_equal(stage_caps(64), [0.001, 0.001])
+    assert np.array_equal(stage_caps(128), [0.0005, 0.0005])
+    assert np.array_equal(stage_caps(256), [0.00025, 0.00025])
     assert np.array_equal(stage_caps(512), [0.0001, 0.0001])
+    assert np.array_equal(stage_caps(1024), [0.00005, 0.00005])
 
 
 def test_acceptance_balances_fom_and_fixed_constraint_feasibility() -> None:
@@ -85,6 +104,32 @@ def test_stage_requires_recent_plateau_and_minimum_updates() -> None:
     assert stage_convergence(history, 4.0).converged
     history[-1]["relative_fom_change"] = 0.01
     assert not stage_convergence(history, 4.0).converged
+
+
+def test_beta32_recovery_does_not_count_legacy_constraint_updates() -> None:
+    history = []
+    for global_iteration in range(78, 86):
+        history.append({
+            "beta": 32.0,
+            "global_iteration": global_iteration,
+            "role": "accepted_mma",
+            "constraints_feasible": True,
+            "relative_fom_change": 0.0,
+            "rho_rms_change": 0.0,
+            "rho_max_change": 0.0,
+        })
+    assert not stage_convergence(history, 32.0).converged
+    for global_iteration in range(86, 94):
+        history.append({
+            "beta": 32.0,
+            "global_iteration": global_iteration,
+            "role": "accepted_mma",
+            "constraints_feasible": True,
+            "relative_fom_change": 0.001,
+            "rho_rms_change": 0.001,
+            "rho_max_change": 0.01,
+        })
+    assert stage_convergence(history, 32.0).converged
 
 
 def test_adaptive_move_reduces_only_after_four_solver_backed_plateau_updates() -> None:

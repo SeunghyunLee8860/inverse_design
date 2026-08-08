@@ -26,14 +26,28 @@
   "stage_fom_relative_change_max": 0.005,
   "stage_rho_rms_change_max": 0.0025,
   "stage_rho_max_change_max": 0.015,
-  "constraint_pnorm": 8.0,
+  "constraint_contract": {
+    "beta_2_to_16": "legacy_zhou_p8_v1 (immutable historical checkpoints)",
+    "beta_32_plus": "soft_disk_opening_500nm_v2",
+    "recovery_checkpoint": "beta=32, global_iteration=85",
+    "disk_radius_nm": 250.0,
+    "disk_radius_pixels": 5,
+    "density_sharpen_gamma": 64.0,
+    "soft_extrema_tau": 0.001,
+    "exact_DRC_posthoc_repair": false
+  },
+  "legacy_constraint_pnorm": 8.0,
   "constraint_caps": {
     "2": [0.04, 0.04],
     "4": [0.03, 0.03],
     "8": [0.02, 0.02],
     "16": [0.008, 0.008],
     "32": [0.002, 0.002],
-    "64+": [0.0001, 0.0001]
+    "64": [0.001, 0.001],
+    "128": [0.0005, 0.0005],
+    "256": [0.00025, 0.00025],
+    "512": [0.0001, 0.0001],
+    "1024+": [0.00005, 0.00005]
   },
   "cpu_fdtd_fallback": false,
   "cpu_thermal_fallback": false,

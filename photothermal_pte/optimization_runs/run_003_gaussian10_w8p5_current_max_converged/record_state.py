@@ -59,8 +59,8 @@ def save_design_plots(tag: str, metrics: dict, arrays: dict, data) -> list[Path]
         (arrays["binary"], "thresholded audit", "gray", 0, 1),
         (arrays["bad_solid"], "exact solid violations", "Reds", 0, 1),
         (arrays["bad_void"], "exact void violations", "Blues", 0, 1),
-        (arrays["solid_penalty_field"], "p=8 solid penalty field", "magma", None, None),
-        (arrays["void_penalty_field"], "p=8 void penalty field", "magma", None, None),
+        (arrays["solid_penalty_field"], f"solid penalty: {metrics['constraint_contract']}", "magma", None, None),
+        (arrays["void_penalty_field"], f"void penalty: {metrics['constraint_contract']}", "magma", None, None),
         (np.asarray(data["gradient_optical_A"]), "optical physical gradient", "coolwarm", None, None),
         (np.asarray(data["gradient_thermal_A"]), "thermal physical gradient", "coolwarm", None, None),
     )
@@ -177,6 +177,8 @@ def record(
     })
     summary = load_summary()
     history = summary["history"]
+    for previous_row in history:
+        previous_row.setdefault("constraint_contract", "legacy_zhou_p8_v1")
     previous = history[-1] if history else None
     if previous is None or float(previous["beta"]) != beta:
         relative_fom_change = 0.0
@@ -207,6 +209,7 @@ def record(
         "evaluation_index": len(history), "tag": tag,
         "global_iteration": global_iteration, "stage_iteration": stage_iteration,
         "role": role, "beta": beta,
+        "constraint_contract": metrics["constraint_contract"],
         "objective_A": metrics["objective_A"], "objective_A_per_W": metrics["objective_A_per_W"],
         "relative_fom_change": relative_fom_change,
         "rho_mean": metrics["rho_mean"], "rho_rms_change": rho_rms_change,
@@ -261,6 +264,7 @@ def record(
         "raw_artifacts_are_gitignored": True,
         "base_FSP": summary.get("base_FSP"),
         "material_Jacobian": summary.get("material_Jacobian"),
+        "constraint_recovery_validation": summary.get("constraint_recovery_validation"),
         "records": summary["raw_artifacts"],
     }
     manifest_dir = HERE / "manifests"
@@ -271,6 +275,7 @@ def record(
         f"Status: `{STATUS}`\n\n"
         f"Current stage: beta={beta:g}, accepted stage iteration={stage_iteration}, "
         f"global iteration={global_iteration}.\n\n"
+        f"Constraint contract: `{metrics['constraint_contract']}`.\n\n"
         f"Actual FOM: `{metrics['objective_A_per_W']:.12e} A/W`. Fixed-cap solid/void "
         f"constraints: `{metrics['solid_constraint']:.6e}` / `{metrics['void_constraint']:.6e}` "
         f"with cap `{metrics['solid_constraint_cap']:.6e}`.\n\n"
@@ -282,4 +287,3 @@ def record(
     )
     (results / "OPTIMIZATION_REPORT.md").write_text(report)
     return {"tag": tag, "metrics": metrics, "convergence": convergence.__dict__, "plots": [str(p) for p in generated_plots]}
-

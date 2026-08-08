@@ -1,7 +1,7 @@
 {
   "run_id": "run_003_gaussian10_w8p5_current_max_converged",
-  "status": "RUNNING_CONVERGENCE_BASED_CONSTRAINED_BETA_CONTINUATION",
-  "last_updated_utc": "2026-08-08T00:24:20.088392+00:00",
+  "status": "READY_TO_RESUME_WITH_EXACT_DISK_CONSTRAINT_RECOVERY",
+  "last_updated_utc": "2026-08-08T00:40:23.792122+00:00",
   "beta": 32.0,
   "global_iteration": 85,
   "stage_iteration": 2,
@@ -15,5 +15,13 @@
   "FOM_A_per_W": 8.844503519053766e-07,
   "constraints_feasible": false,
   "exact_500nm_solid_bad_cells": 385,
-  "exact_500nm_void_bad_cells": 521
+  "exact_500nm_void_bad_cells": 521,
+  "constraint_recovery": {
+    "contract": "soft_disk_opening_500nm_v2",
+    "validated": true,
+    "maximum_FD_relative_error": 9.001600685497216e-08,
+    "offline_move_0p02_exact_bad_cells": [371, 415],
+    "offline_density_accepted": false,
+    "legacy_supervisor_stopped_after_commit": "736042c"
+  }
 }
