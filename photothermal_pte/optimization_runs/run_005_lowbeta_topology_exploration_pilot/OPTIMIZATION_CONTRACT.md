@@ -202,3 +202,8 @@ guard passes.  This avoids another cap epoch and prevents sub-0.0025
 micro-repair.  At beta 32 and above the tolerance returns to 0.5% and exact
 total bad cells must be nonincreasing.  The final binary gate remains exact
 solid/void bad cells `0/0`; the trust band cannot certify the final design.
+
+If the low-beta catastrophic guard rejects a proposal, the remaining move in
+the fixed `(0.01, 0.005, 0.0025)` schedule may still be prescreened.  Rejected
+proposals use zero Maxwell/thermal solves.  No move below `0.0025` is generated;
+if the minimum move also fails, the driver stops for a strategy review.

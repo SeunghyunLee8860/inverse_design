@@ -797,11 +797,27 @@ def main() -> int:
                         catastrophic_guard_triggered=catastrophic,
                     )
                     if catastrophic:
-                        raise RuntimeError(
-                            "low-beta exact bad-cell count exceeded the "
-                            "catastrophic diagnostic guard; pilot halted "
-                            "without a smaller-move repair retry"
+                        emit(
+                            "candidate_prescreen_rejected",
+                            beta=beta,
+                            global_iteration=global_iteration,
+                            stage_iteration=next_stage_iteration,
+                            retry=retry,
+                            move=move,
+                            reason=(
+                                "low-beta exact bad-cell count exceeded the "
+                                "catastrophic diagnostic guard"
+                            ),
+                            current_exact_bad_total=current_exact_total,
+                            candidate_exact_bad_total=candidate_exact_total,
+                            catastrophic_limit=catastrophic_limit,
+                            Maxwell_solves=0,
+                            thermal_solves=0,
                         )
+                        # The retry schedule is bounded below by 0.0025.  A
+                        # smaller authorized topology step may be prescreened,
+                        # but no sub-threshold micro-repair is ever generated.
+                        continue
                 if (
                     beta >= EXACT_DRC_GATE_START_BETA
                     and candidate_exact_total > current_exact_total
