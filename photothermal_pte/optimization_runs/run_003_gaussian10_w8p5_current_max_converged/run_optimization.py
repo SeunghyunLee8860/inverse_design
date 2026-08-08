@@ -296,7 +296,11 @@ def propose(
         "mma_diagnostics": diagnostics,
         "raw_artifact": artifact(raw_path), "candidate_state": artifact(candidate_state_path),
         "current_evaluation_result": artifact(current_result), "current_evaluation_NPZ": artifact(current_raw),
-        "exact_DRC_is_audit_only": True, "posthoc_binary_repair": False,
+        "exact_DRC_used_as_gradient": False,
+        "exact_DRC_used_as_hard_step_veto": bool(
+            beta >= DISK_CONSTRAINT_START_BETA
+        ),
+        "posthoc_binary_repair": False,
     }
     result_path.write_text(json.dumps(payload, indent=2) + "\n")
     return result_path, raw_path, candidate_state_path
