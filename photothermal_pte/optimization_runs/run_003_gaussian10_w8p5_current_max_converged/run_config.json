@@ -28,13 +28,16 @@
   "stage_rho_max_change_max": 0.015,
   "constraint_contract": {
     "beta_2_to_16": "legacy_zhou_p8_v1 (immutable historical checkpoints)",
-    "beta_32_plus": "soft_disk_opening_500nm_v2",
+    "beta_32_recovery_g86_g87": "soft_disk_opening_500nm_v2",
+    "beta_32_plus_after_g87": "soft_disk_opening_500nm_v3_exact_nonincrease",
     "recovery_checkpoint": "beta=32, global_iteration=85",
     "disk_radius_nm": 250.0,
     "disk_radius_pixels": 5,
     "density_sharpen_gamma": 64.0,
     "soft_extrema_tau": 0.001,
-    "exact_DRC_posthoc_repair": false
+    "exact_DRC_posthoc_repair": false,
+    "exact_DRC_step_gate": "candidate solid+void bad-cell total must not exceed current accepted total",
+    "exact_DRC_prescreen_before_Maxwell": true
   },
   "legacy_constraint_pnorm": 8.0,
   "constraint_caps": {

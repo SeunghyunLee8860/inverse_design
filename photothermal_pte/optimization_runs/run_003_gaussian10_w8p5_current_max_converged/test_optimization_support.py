@@ -78,6 +78,35 @@ def test_acceptance_balances_fom_and_fixed_constraint_feasibility() -> None:
     assert not candidate_acceptance(1.0, 0.90, infeasible, [0.055, 0.04], caps)["accepted"]
 
 
+def test_exact_bad_cell_total_is_a_fail_closed_step_gate() -> None:
+    caps = np.array([0.002, 0.002])
+    current = np.array([0.000956, 0.003050])
+    candidate = np.array([0.002101, 0.002820])
+    # Smooth violation improves, but the exact total worsens 530 -> 630.
+    without_exact = candidate_acceptance(1.0, 1.0, current, candidate, caps)
+    assert without_exact["accepted"]
+    with_exact = candidate_acceptance(
+        1.0, 1.0, current, candidate, caps,
+        current_exact_bad_counts=np.array([105, 425]),
+        candidate_exact_bad_counts=np.array([254, 376]),
+    )
+    assert not with_exact["accepted"]
+    assert with_exact["exact_DRC_gate_enabled"]
+    assert not with_exact["exact_total_nonincreasing"]
+
+
+def test_exact_gate_allows_topology_tradeoff_when_total_does_not_increase() -> None:
+    caps = np.array([0.002, 0.002])
+    decision = candidate_acceptance(
+        1.0, 1.0,
+        np.array([0.0010, 0.0030]), np.array([0.0011, 0.0028]), caps,
+        current_exact_bad_counts=np.array([105, 425]),
+        candidate_exact_bad_counts=np.array([120, 400]),
+    )
+    assert decision["accepted"]
+    assert decision["candidate_exact_bad_total"] == 520
+
+
 def test_stage_never_converges_after_one_update() -> None:
     row = {
         "beta": 4.0,

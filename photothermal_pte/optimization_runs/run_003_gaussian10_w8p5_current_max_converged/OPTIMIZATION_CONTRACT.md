@@ -28,8 +28,10 @@ beta=8 record is a reprojected diagnostic baseline, not a converged stage.
 - fixed objective nondimensionalization `1e8 * I_PTE/P_incident`;
 - immutable beta=2--16 checkpoints used differentiable Zhou solid/void fields
   aggregated by a p=8 power mean;
-- exact thresholded 500 nm solid/void morphology is audited at every accepted
-  point but never edits the continuous candidate.
+- exact thresholded 500 nm solid/void morphology is audited at every proposal
+  and accepted point but never edits the continuous candidate;
+- from beta=32 onward, a proposal whose total exact solid-plus-void bad-cell
+  count exceeds the current accepted count is rejected before Maxwell solves.
 
 ## Fail-closed 500 nm constraint recovery
 
@@ -39,8 +41,13 @@ first two beta=32 updates then ended at `385/521`.  Those solver-backed results
 remain immutable diagnostics, but they prove that the legacy surrogate is not
 sufficiently aligned with the final exact gate.
 
-Starting after beta=32 global iteration 85, future candidates therefore use
-`soft_disk_opening_500nm_v2`.  It applies a smooth threshold about rho=0.5 and
+Starting after beta=32 global iteration 85, future candidates therefore use a
+smooth disk-opening constraint.  The initial recovery checkpoints at global
+iterations 86--87 are recorded as `soft_disk_opening_500nm_v2`.  Subsequent
+steps use `soft_disk_opening_500nm_v3_exact_nonincrease`, which adds a
+fail-closed exact-DRC acceptance gate after a proposed step exposed that the
+smooth metric alone could improve while the exact bad-cell total worsened.
+The differentiable part applies a smooth threshold about rho=0.5 and
 a differentiable log-sum-exp opening with the same five-pixel-radius Euclidean
 disk and phase-specific border values as the exact audit.  Its physical-density
 cotangent is propagated through the existing filter/projection VJP.  No binary
@@ -52,6 +59,13 @@ An offline centered-FD test at the preserved beta=32 checkpoint gave relative
 gradient errors below `1e-7`.  A diagnostic descent of maximum latent move 0.02
 reduced exact bad cells from `385/521` to `371/415`; this diagnostic density was
 not accepted as an optimization checkpoint.
+
+The exact audit remains nondifferentiable and is not substituted for the MMA
+gradient.  It is instead a monotone acceptance guard: the sum of exact solid
+and void bad cells may not increase within a beta stage.  This permits a
+topology-changing trade between phases while the two separately constrained
+smooth fields guide both phases toward zero.  The final promotion gate remains
+strictly `solid=0` and `void=0`; the monotone guard is not itself a pass.
 
 The solid and void constraints are genuine fixed inequalities within each
 stage.  They are not recomputed from the previous iteration:

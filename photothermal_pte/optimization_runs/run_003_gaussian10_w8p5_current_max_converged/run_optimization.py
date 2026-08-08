@@ -317,11 +317,28 @@ def accept_candidate(
     proposed_latent = np.asarray(np.load(proposal_raw)["latent"], float)
     if not np.array_equal(candidate_latent, proposed_latent):
         raise RuntimeError("evaluated latent does not equal proposed latent")
-    current_values = constraint_values_and_gradients(current_latent, beta)[0]
-    candidate_values = constraint_values_and_gradients(candidate_latent, beta)[0]
+    current_metrics, _ = design_metrics(current_latent, beta)
+    candidate_metrics, _ = design_metrics(candidate_latent, beta)
+    current_values = np.asarray([
+        current_metrics["solid_constraint"], current_metrics["void_constraint"]
+    ], float)
+    candidate_values = np.asarray([
+        candidate_metrics["solid_constraint"], candidate_metrics["void_constraint"]
+    ], float)
+    current_exact = current_metrics["exact_binary_audit"]
+    candidate_exact = candidate_metrics["exact_binary_audit"]
+    exact_gate = beta >= DISK_CONSTRAINT_START_BETA
     decision = candidate_acceptance(
         float(current_payload["objective_A"]), float(candidate_payload["objective_A"]),
         current_values, candidate_values, stage_caps(beta),
+        np.asarray([
+            current_exact["solid_bad_cell_count"],
+            current_exact["void_bad_cell_count"],
+        ]) if exact_gate else None,
+        np.asarray([
+            candidate_exact["solid_bad_cell_count"],
+            candidate_exact["void_bad_cell_count"],
+        ]) if exact_gate else None,
     )
     decision.update({
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -330,7 +347,7 @@ def accept_candidate(
         "fixed_constraint_caps": stage_caps(beta).tolist(),
         "constraint_contract": constraint_contract(beta),
         "current_constraints": current_values.tolist(), "candidate_constraints": candidate_values.tolist(),
-        "exact_DRC_used_as_hard_step_veto": False,
+        "exact_DRC_used_as_hard_step_veto": bool(exact_gate),
     })
     decision["accepted"] = bool(decision["accepted"] and candidate_payload.get("passed"))
     acceptance_path = candidate_result.parent / "acceptance.json"
@@ -506,6 +523,46 @@ def main() -> int:
                     current_result, current_raw, state_path, beta,
                     global_iteration, next_stage_iteration, retry, move,
                 )
+                proposal_payload = json.loads(proposal_result.read_text())
+                candidate_exact = proposal_payload["candidate_offline_metrics"]["exact_binary_audit"]
+                current_metrics, _ = design_metrics(
+                    np.asarray(np.load(current_raw)["latent"], float), beta
+                )
+                current_exact = current_metrics["exact_binary_audit"]
+                current_exact_total = int(
+                    current_exact["solid_bad_cell_count"]
+                    + current_exact["void_bad_cell_count"]
+                )
+                candidate_exact_total = int(
+                    candidate_exact["solid_bad_cell_count"]
+                    + candidate_exact["void_bad_cell_count"]
+                )
+                if (
+                    beta >= DISK_CONSTRAINT_START_BETA
+                    and candidate_exact_total > current_exact_total
+                ):
+                    emit(
+                        "candidate_prescreen_rejected",
+                        beta=beta,
+                        global_iteration=global_iteration,
+                        stage_iteration=next_stage_iteration,
+                        retry=retry,
+                        move=move,
+                        reason="exact 500 nm total bad-cell count increased",
+                        current_exact_bad_counts=[
+                            current_exact["solid_bad_cell_count"],
+                            current_exact["void_bad_cell_count"],
+                        ],
+                        candidate_exact_bad_counts=[
+                            candidate_exact["solid_bad_cell_count"],
+                            candidate_exact["void_bad_cell_count"],
+                        ],
+                        current_exact_bad_total=current_exact_total,
+                        candidate_exact_bad_total=candidate_exact_total,
+                        Maxwell_solves=0,
+                        thermal_solves=0,
+                    )
+                    continue
                 evaluation_output = RUN_RAW / f"b{beta_integer:04d}_s{next_stage_iteration:03d}_g{global_iteration:03d}_retry{retry}_evaluation"
                 candidate_result, candidate_raw = evaluate(proposal_raw, evaluation_output, beta, args.gpu)
                 accepted_state = RUN_RAW / f"b{beta_integer:04d}_s{next_stage_iteration:03d}_g{global_iteration:03d}_accepted_mma_state.npz"

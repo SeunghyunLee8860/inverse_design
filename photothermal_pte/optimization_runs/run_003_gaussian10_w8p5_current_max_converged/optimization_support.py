@@ -35,7 +35,7 @@ ETA_DILATED = 0.25
 ZHOU_DECAY_M2 = 1.0e-10
 PNORM = 8.0
 LEGACY_CONSTRAINT_CONTRACT = "legacy_zhou_p8_v1"
-DISK_CONSTRAINT_CONTRACT = "soft_disk_opening_500nm_v2"
+DISK_CONSTRAINT_CONTRACT = "soft_disk_opening_500nm_v3_exact_nonincrease"
 DISK_CONSTRAINT_START_BETA = 32.0
 DISK_RECOVERY_START_GLOBAL_ITERATION = 85
 DISK_SHARPEN_GAMMA = 64.0
@@ -370,6 +370,8 @@ def candidate_acceptance(
     current_constraints: np.ndarray,
     candidate_constraints: np.ndarray,
     caps: np.ndarray,
+    current_exact_bad_counts: np.ndarray | None = None,
+    candidate_exact_bad_counts: np.ndarray | None = None,
 ) -> dict[str, object]:
     current_v = normalized_violation(current_constraints, caps)
     candidate_v = normalized_violation(candidate_constraints, caps)
@@ -386,6 +388,27 @@ def candidate_acceptance(
             and objective_ratio >= 0.95
         )
         reason = "reduce fixed-cap violation while limiting actual FOM loss"
+    exact_gate_enabled = (
+        current_exact_bad_counts is not None
+        and candidate_exact_bad_counts is not None
+    )
+    current_exact = (
+        np.asarray(current_exact_bad_counts, dtype=int)
+        if current_exact_bad_counts is not None else np.asarray([], dtype=int)
+    )
+    candidate_exact = (
+        np.asarray(candidate_exact_bad_counts, dtype=int)
+        if candidate_exact_bad_counts is not None else np.asarray([], dtype=int)
+    )
+    if exact_gate_enabled:
+        if current_exact.shape != (2,) or candidate_exact.shape != (2,):
+            raise ValueError("exact bad-cell counts must be [solid, void]")
+        exact_total_nonincreasing = bool(
+            np.sum(candidate_exact) <= np.sum(current_exact)
+        )
+        accepted = bool(accepted and exact_total_nonincreasing)
+    else:
+        exact_total_nonincreasing = True
     return {
         "accepted": bool(accepted),
         "reason": reason,
@@ -397,6 +420,12 @@ def candidate_acceptance(
             (current_v - candidate_v) / max(current_v, 1.0e-300)
         ) if current_v > 0.0 else 0.0,
         "objective_ratio": objective_ratio,
+        "exact_DRC_gate_enabled": bool(exact_gate_enabled),
+        "current_exact_bad_counts": current_exact.tolist(),
+        "candidate_exact_bad_counts": candidate_exact.tolist(),
+        "current_exact_bad_total": int(np.sum(current_exact)),
+        "candidate_exact_bad_total": int(np.sum(candidate_exact)),
+        "exact_total_nonincreasing": bool(exact_total_nonincreasing),
     }
 
 
