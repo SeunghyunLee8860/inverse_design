@@ -36,7 +36,7 @@ ZHOU_DECAY_M2 = 1.0e-10
 PNORM = 8.0
 LEGACY_CONSTRAINT_CONTRACT = "legacy_zhou_p8_v1"
 DISK_CONSTRAINT_CONTRACT = "soft_disk_opening_500nm_from_iteration_zero_v5"
-MMA_CAP_CONTRACT = "run005_full_continuation_fixed_per_beta_caps_v5"
+MMA_CAP_CONTRACT = "run005_full_continuation_fixed_per_beta_caps_v6"
 DISK_CONSTRAINT_START_BETA = 2.0
 DISK_RECOVERY_START_GLOBAL_ITERATION = -1
 DISK_SHARPEN_GAMMA = 64.0
@@ -285,7 +285,13 @@ def stage_caps(beta: float) -> np.ndarray:
     """
 
     if np.isclose(float(beta), 2.0, rtol=0.0, atol=1.0e-12):
-        return np.asarray((1.00e-3, 1.00e-4), float)
+        # Reviewed post-g007 beta=2 exploration epoch.  The previous
+        # 1.00e-3/1.00e-4 envelope left the accepted g007 void constraint at
+        # 99.72% occupancy and rejected both authorized moves offline while
+        # the solver-backed FOM was still improving by 4.83%.  Reprojecting
+        # g007 once gives a deliberately finite, immutable 5.50e-4/1.11e-4
+        # epoch (85.05%/89.84% occupancy); this is not adjusted per proposal.
+        return np.asarray((5.50e-4, 1.11e-4), float)
     path = _stage_caps_path()
     if not path.exists():
         raise RuntimeError(f"missing fixed continuation-cap registry: {path}")

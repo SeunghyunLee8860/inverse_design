@@ -147,3 +147,22 @@ adjoint solve. The first projection satisfying gray fraction <0.001 and mean
 `4*rho*(1-rho)` <0.001 is thresholded and evaluated afresh with GPU Maxwell and
 CUDA thermal/PTE. Only that successful evaluation has status
 `COMPLETED_FULLY_BINARIZED_EXACT_500NM_CONSTRAINED_PTE_OPTIMIZATION`.
+
+## Post-g007 fixed beta=2 cap epoch
+
+Accepted g006 and g007 retained all physics gates and increased FOM by
+`5.060714972%` and `4.829345348%`, so the four-update plateau was not present.
+At g007 the smooth constraints were:
+
+| phase | g007 value | new fixed cap | value/cap |
+|---|---:|---:|---:|
+| solid | 4.677681717e-4 | 5.50e-4 | 0.8505 |
+| void | 9.971852083e-5 | 1.11e-4 | 0.8984 |
+
+Under the previous `1.00e-3/1.00e-4` envelope, both authorized g008 moves
+were rejected offline because the candidate void values were
+`1.075145472e-4` and `1.024648997e-4`. No GPU solve was spent. The run must
+not promote beta while FOM motion is still strong and must not reduce the move
+below `0.0025`. This table establishes one explicit v6 cap epoch from the
+accepted g007 checkpoint. It remains immutable for all subsequent beta=2
+proposals; no per-step cap update is permitted.

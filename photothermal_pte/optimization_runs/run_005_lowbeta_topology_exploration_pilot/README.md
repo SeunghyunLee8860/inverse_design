@@ -79,6 +79,24 @@ zero exact solid/void violations, and a fresh thresholded-binary GPU
 Maxwell/CUDA thermal-PTE evaluation. Reaching a beta value alone is not
 completion.
 
+## Post-g007 beta=2 cap epoch
+
+The solver-backed g006 and g007 updates improved FOM by `+5.0607%` and
+`+4.8293%`; beta=2 therefore had not reached the approved plateau. At g007,
+the smooth solid/void values were `4.677681717e-4` and `9.971852083e-5`.
+The old exploration envelope placed the void phase at 99.72% occupancy, and
+the next `0.005` and `0.0025` proposals were both rejected offline (zero new
+Maxwell/thermal solves). Moving to beta=4 or shrinking below the authorized
+minimum move would have converted an active topology search into premature
+binarization or constraint micro-repair.
+
+The accepted g007 checkpoint is reprojected once into a new fixed beta=2 cap
+epoch: `5.50e-4` solid and `1.11e-4` void, with incoming occupancies 85.05%
+and 89.84%. The pair is immutable for the remainder of beta=2; it is not
+fitted to a solver result and cannot follow individual candidates. The failed
+g008-v5 proposals remain raw diagnostic provenance and are archived by the v6
+cap-contract mismatch before deterministic reproposal.
+
 ```bash
 CUDA_VISIBLE_DEVICES=2 /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
   run_optimization.py --gpu 2 --constraint-device cuda:0

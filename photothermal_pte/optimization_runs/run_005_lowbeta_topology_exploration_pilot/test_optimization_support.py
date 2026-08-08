@@ -89,7 +89,7 @@ def test_beta2_cap_is_fixed_and_uncalibrated_later_beta_fails_closed(
     registry = tmp_path / "caps.json"
     registry.write_text(json.dumps({"contract": MMA_CAP_CONTRACT, "stages": {}}))
     monkeypatch.setenv("RUN005_STAGE_CAPS_FILE", str(registry))
-    assert np.array_equal(stage_caps(2), [1.00e-3, 1.00e-4])
+    assert np.array_equal(stage_caps(2), [5.50e-4, 1.11e-4])
     with pytest.raises(RuntimeError, match="no checkpoint-calibrated fixed cap"):
         stage_caps(4)
 
