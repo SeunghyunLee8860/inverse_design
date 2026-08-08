@@ -1,5 +1,5 @@
 {
-  "status": "RUNNING_RUN005_BOUNDED_BETA2_TOPOLOGY_PILOT",
+  "status": "PAUSED_AFTER_RUN005_BOUNDED_BETA2_GPU_PILOT",
   "generated_at_utc": "2026-08-08T06:27:21.114250+00:00",
   "method": "beta=2 topology exploration inside smooth 500 nm caps",
   "history": [
@@ -421,11 +421,11 @@
     "sha256": "d3617baf54d54e735feba9d85c439ee77bcdf5ddaeec47e12c812bf036b2c87e"
   },
   "pilot_newly_accepted_updates": 3,
-  "pilot_paused_at_utc": "2026-08-08T04:48:06.572595+00:00",
+  "pilot_paused_at_utc": "2026-08-08T06:27:24.693648+00:00",
   "promoted_status": "READY_TO_RESUME_BOUNDED_BETA2_FROM_G003",
   "one_point_decision": "HEALTHY_JOINT_TOPOLOGY_FOM_STEP_REVIEW_BEFORE_3_TO_5_UPDATE_PILOT",
   "one_point_audit": "results/RUN005_ONE_POINT_PILOT_AUDIT.md",
-  "pilot_total_accepted_updates": 3,
+  "pilot_total_accepted_updates": 5,
   "g002_relative_FOM_gain": 0.1643197689257716,
   "g003_relative_FOM_gain": 0.1421743200264836,
   "cumulative_FOM_gain_from_baseline": 0.588947,
