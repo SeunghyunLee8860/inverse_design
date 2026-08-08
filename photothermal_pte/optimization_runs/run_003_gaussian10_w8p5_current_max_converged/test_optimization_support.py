@@ -191,6 +191,14 @@ def test_only_explicit_hpc_checkout_errors_are_retryable() -> None:
         "passed": False,
         "error": "Unable to checkout the requested HPC license. This operation requires 9 licenses for feature FDTD_Solutions_engine.",
     })
+    assert transient_license_failure({
+        "passed": False,
+        "error": (
+            "Failed to start messaging, check licenses. Failed to set up "
+            "Ansys license sharing. ANSYSLI exited or could not read server "
+            "port; Could not bind socket on port 43903. Address already in use."
+        ),
+    })
     assert not transient_license_failure({
         "passed": False,
         "error": "thermal residual exceeded its gate",

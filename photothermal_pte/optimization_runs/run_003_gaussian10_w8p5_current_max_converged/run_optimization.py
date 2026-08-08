@@ -137,8 +137,7 @@ def evaluate(latent_npz: Path, output: Path, beta: float, gpu: str) -> tuple[Pat
                 raise RuntimeError(f"transient license retry limit reached: {result}")
             archive_transient_license_failure(output, retry_attempt)
             retry_attempt += 1
-            if retry_attempt > 1:
-                time.sleep(LICENSE_RETRY_DELAY_S)
+            time.sleep(LICENSE_RETRY_DELAY_S)
 
         output.mkdir(parents=True, exist_ok=True)
         returncode = execute([

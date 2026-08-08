@@ -348,7 +348,7 @@ def projected_binary_gate(metrics: dict[str, object]) -> bool:
 
 
 def transient_license_failure(payload: dict[str, object]) -> bool:
-    """Recognize only the explicit external HPC-license checkout failure."""
+    """Recognize explicit external license checkout/startup failures only."""
 
     if payload.get("passed"):
         return False
@@ -356,6 +356,10 @@ def transient_license_failure(payload: dict[str, object]) -> bool:
     signatures = (
         "unable to checkout the requested hpc license",
         "requires 9 licenses for feature fdtd_solutions_engine",
+        "failed to start messaging, check licenses",
+        "failed to set up ansys license sharing",
+        "ansysli exited or could not read server port",
+        "could not bind socket on port",
     )
     return any(signature in message for signature in signatures)
 
