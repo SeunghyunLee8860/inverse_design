@@ -86,6 +86,23 @@
         1.15
       ],
       "source": "single_stage_start_reprojection_cleanup_tightening"
+    },
+    "128": {
+      "beta": 128.0,
+      "incoming_values": [
+        0.000370851591595518,
+        0.00012306917874751818
+      ],
+      "caps": [
+        0.000309042992996265,
+        0.00010255764895626515
+      ],
+      "target_occupancy": 1.2,
+      "actual_occupancy": [
+        1.2,
+        1.2
+      ],
+      "source": "single_stage_start_reprojection_cleanup_tightening"
     }
   }
 }
