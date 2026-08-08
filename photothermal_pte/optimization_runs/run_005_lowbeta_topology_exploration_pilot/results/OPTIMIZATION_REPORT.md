@@ -23,3 +23,25 @@ Status: `COMPLETED_FULLY_BINARIZED_EXACT_500NM_CONSTRAINED_PTE_OPTIMIZATION`
 - Solver path: fresh GPU Maxwell plus CUDA thermal/PTE; no CPU solver fallback
 
 The small binary loss above is measured by a fresh solver evaluation, not inferred from a linearized gradient.
+
+## Final binary field visualization
+
+The final density is displayed with the explicit convention `1 = SiO2 design
+material` and `0 = air/void`.  Read-only postprocessing of the immutable final
+binary artifact publishes the volumetric/depth-integrated Q, temperature rise,
+strict-centered temperature gradients, local PTE contribution, and the
+full-footprint integrated current.  No Maxwell, thermal, adjoint, or
+optimization solve was rerun.
+
+- [field report](FINAL_BINARY_FIELDS_REPORT.md)
+- [machine-readable field summary](final_binary_fields_summary.json)
+- [field metrics CSV](final_binary_field_metrics.csv)
+- [binary structure](../plots/final_binary_structure_1_material_0_void.png)
+- [Q, temperature, gradient, and current](../plots/final_binary_Q_temperature_gradient_current.png)
+- [Q and temperature cross sections](../plots/final_binary_Q_temperature_cross_sections.png)
+- [PTE current decomposition](../plots/final_binary_pte_current_breakdown.png)
+
+The stored scalar current is reproduced to `4.0133e-16` relative error.  The
+displayed gradient/current maps are NaN wherever any one of `-x,+x,-y,+y`
+TaIrTe4 neighbours is unavailable; the reported total current remains the
+validated full-footprint boundary-aware operator.

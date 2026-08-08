@@ -1567,5 +1567,51 @@
       "size_bytes": 169161620,
       "sha256": "6b39b55e4c20228226604424bb849d0955ad7bf4ddd97d4f8723017181130e60"
     }
+  },
+  "final_binary_field_visualization": {
+    "status": "PUBLISHED_FINAL_BINARY_Q_T_GRADIENT_CURRENT_FIELDS_WITH_AXIS_AUDIT",
+    "source_evaluation": {
+      "path": "/data/seunghyun/tairte4/raw_artifacts/run005_lowbeta_topology_pilot_20260808/final_binary_g046_b2048/solver_evaluation/thresholded_binary_evaluation.npz",
+      "size_bytes": 250833333,
+      "sha256": "9288c9b530aba088132464e9b81d63aa4d4918ae959fcb8142a4a225363cf6bb"
+    },
+    "derived_fields": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run005_final_binary_derived_fields_20260808/final_binary_derived_fields.npz",
+      "size_bytes": 7334020,
+      "sha256": "5aa63c710349dbb9893f006e0e766c3ce081c4de3e6968afb0c98234150cbaa1"
+    },
+    "summary": {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_005_lowbeta_topology_exploration_pilot/results/final_binary_fields_summary.json",
+      "size_bytes": 4824,
+      "sha256": "93445c14009562a638704cf6f37811dd52b000f042ee26e0bf52ad0107da241f"
+    },
+    "CSV": {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_005_lowbeta_topology_exploration_pilot/results/final_binary_field_metrics.csv",
+      "size_bytes": 476,
+      "sha256": "28a272deea44b0974886ca0316653fb5afea81577f181abeee01f7258fb71503"
+    },
+    "plots": {
+      "structure": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_005_lowbeta_topology_exploration_pilot/plots/final_binary_structure_1_material_0_void.png",
+        "size_bytes": 84736,
+        "sha256": "4452443e4660a2fde2ece0af5cdd2d86c5320a9e2ddfdd9100a50a76856a7fac"
+      },
+      "all_fields": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_005_lowbeta_topology_exploration_pilot/plots/final_binary_Q_temperature_gradient_current.png",
+        "size_bytes": 511495,
+        "sha256": "35b71a99dd33e64b458e705ba49447d0d520313e9e7a3014875d568aa5aab6f1"
+      },
+      "cross_sections": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_005_lowbeta_topology_exploration_pilot/plots/final_binary_Q_temperature_cross_sections.png",
+        "size_bytes": 292060,
+        "sha256": "c09c4e3ba4d5a5b11630cdd15e14bdf2c52bdcb7a4bab924926a305be90cd2fc"
+      },
+      "current_breakdown": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_005_lowbeta_topology_exploration_pilot/plots/final_binary_pte_current_breakdown.png",
+        "size_bytes": 205645,
+        "sha256": "08ec30a53c4956859ec21f35bcbd5f3b9ed85ec52f86e8c6e25f158331e2ad7a"
+      }
+    },
+    "new_solver_runs": 0
   }
 }
