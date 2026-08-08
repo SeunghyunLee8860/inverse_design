@@ -610,6 +610,70 @@ def main() -> int:
                     global_iteration, next_stage_iteration, retry, move,
                 )
                 proposal_payload = json.loads(proposal_result.read_text())
+                current_values = np.asarray(
+                    proposal_payload["constraint_current"], dtype=float
+                )
+                candidate_values = np.asarray([
+                    proposal_payload["candidate_offline_metrics"]["solid_constraint"],
+                    proposal_payload["candidate_offline_metrics"]["void_constraint"],
+                ], dtype=float)
+                fixed_caps = np.asarray(
+                    proposal_payload["fixed_constraint_caps"], dtype=float
+                )
+                effective_caps = np.asarray(
+                    proposal_payload["mma_effective_constraint_caps"], dtype=float
+                )
+                current_fixed_violation = float(np.linalg.norm(
+                    np.maximum(current_values / fixed_caps - 1.0, 0.0)
+                ))
+                candidate_fixed_violation = float(np.linalg.norm(
+                    np.maximum(candidate_values / fixed_caps - 1.0, 0.0)
+                ))
+                current_fixed_feasible = current_fixed_violation <= 5.0e-3
+                candidate_fixed_feasible = candidate_fixed_violation <= 5.0e-3
+                effective_cap_feasible = bool(np.all(
+                    candidate_values <= effective_caps * (1.0 + 5.0e-3)
+                ))
+                if current_fixed_feasible:
+                    smooth_prescreen_pass = bool(
+                        candidate_fixed_feasible and effective_cap_feasible
+                    )
+                    smooth_reason = (
+                        "candidate must remain fixed-cap feasible and respect "
+                        "the one-percent phase trust caps"
+                    )
+                else:
+                    violation_reduction = (
+                        (current_fixed_violation - candidate_fixed_violation)
+                        / max(current_fixed_violation, 1.0e-300)
+                    )
+                    smooth_prescreen_pass = bool(
+                        candidate_fixed_feasible or violation_reduction >= 0.01
+                    )
+                    smooth_reason = (
+                        "infeasible candidate must reduce normalized smooth "
+                        "violation by at least one percent"
+                    )
+                if not smooth_prescreen_pass:
+                    emit(
+                        "candidate_prescreen_rejected",
+                        beta=beta,
+                        global_iteration=global_iteration,
+                        stage_iteration=next_stage_iteration,
+                        retry=retry,
+                        move=move,
+                        reason=smooth_reason,
+                        current_constraints=current_values.tolist(),
+                        candidate_constraints=candidate_values.tolist(),
+                        fixed_caps=fixed_caps.tolist(),
+                        effective_caps=effective_caps.tolist(),
+                        current_fixed_violation=current_fixed_violation,
+                        candidate_fixed_violation=candidate_fixed_violation,
+                        effective_cap_feasible=effective_cap_feasible,
+                        Maxwell_solves=0,
+                        thermal_solves=0,
+                    )
+                    continue
                 candidate_exact = proposal_payload["candidate_offline_metrics"]["exact_binary_audit"]
                 current_metrics, _ = design_metrics(
                     np.asarray(np.load(current_raw)["latent"], float), beta
