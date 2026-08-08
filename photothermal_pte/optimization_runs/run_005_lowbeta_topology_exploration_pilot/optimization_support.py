@@ -516,12 +516,19 @@ def candidate_acceptance(
     caps: np.ndarray,
     current_exact_bad_counts: np.ndarray | None = None,
     candidate_exact_bad_counts: np.ndarray | None = None,
+    smooth_trust_relative: float = 5.0e-3,
 ) -> dict[str, object]:
     current_v = normalized_violation(current_constraints, caps)
     candidate_v = normalized_violation(candidate_constraints, caps)
     objective_ratio = float(candidate_objective / current_objective)
-    current_feasible = current_v <= 5.0e-3
-    candidate_feasible = candidate_v <= 5.0e-3
+    if smooth_trust_relative < 0.0:
+        raise ValueError("smooth_trust_relative must be nonnegative")
+    current_feasible = bool(np.all(
+        np.asarray(current_constraints) <= np.asarray(caps) * (1.0 + smooth_trust_relative)
+    ))
+    candidate_feasible = bool(np.all(
+        np.asarray(candidate_constraints) <= np.asarray(caps) * (1.0 + smooth_trust_relative)
+    ))
     accepted = candidate_feasible and objective_ratio >= FEASIBLE_FOM_RETENTION
     reason = (
         "satisfy both smooth caps and limit actual FOM loss to 0.2%; "
@@ -555,6 +562,7 @@ def candidate_acceptance(
         "candidate_feasible": bool(candidate_feasible),
         "current_normalized_violation": current_v,
         "candidate_normalized_violation": candidate_v,
+        "smooth_trust_relative": float(smooth_trust_relative),
         "relative_violation_reduction": float(
             (current_v - candidate_v) / max(current_v, 1.0e-300)
         ) if current_v > 0.0 else 0.0,

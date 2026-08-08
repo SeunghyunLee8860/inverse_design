@@ -81,6 +81,13 @@ MAXIMUM_ACCEPTED_UPDATES = {
 }
 REPROJECTION_ONLY_BETA = 256
 EXACT_DRC_GATE_START_BETA = 32.0
+# Below beta=32 the smooth disk-opening constraints guide topology search, but
+# a hard cap at roundoff-level feasibility can reject every useful MMA step
+# when the current iterate sits on the cap. Keep the calibrated cap immutable
+# and permit only a bounded ten-percent filter/trust band. This is not a cap
+# reset: candidates outside the band are rejected before any Maxwell solve.
+LOW_BETA_SMOOTH_TRUST_RELATIVE = 0.10
+STRICT_SMOOTH_TRUST_RELATIVE = 5.0e-3
 NO_PROGRESS_WINDOW = 6
 MINIMUM_WINDOW_FOM_GAIN = 0.002
 MINIMUM_WINDOW_EXACT_REDUCTION_FRACTION = 0.02
@@ -397,6 +404,10 @@ def accept_candidate(
     current_exact = current_metrics["exact_binary_audit"]
     candidate_exact = candidate_metrics["exact_binary_audit"]
     exact_gate = beta >= EXACT_DRC_GATE_START_BETA
+    smooth_trust_relative = (
+        STRICT_SMOOTH_TRUST_RELATIVE if exact_gate
+        else LOW_BETA_SMOOTH_TRUST_RELATIVE
+    )
     decision = candidate_acceptance(
         float(current_payload["objective_A"]), float(candidate_payload["objective_A"]),
         current_values, candidate_values, stage_caps(beta),
@@ -408,6 +419,7 @@ def accept_candidate(
             candidate_exact["solid_bad_cell_count"],
             candidate_exact["void_bad_cell_count"],
         ]) if exact_gate else None,
+        smooth_trust_relative=smooth_trust_relative,
     )
     decision.update({
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -696,8 +708,17 @@ def main() -> int:
                 candidate_fixed_violation = float(np.linalg.norm(
                     np.maximum(candidate_values / fixed_caps - 1.0, 0.0)
                 ))
-                current_fixed_feasible = current_fixed_violation <= 5.0e-3
-                candidate_fixed_feasible = candidate_fixed_violation <= 5.0e-3
+                smooth_trust_relative = (
+                    STRICT_SMOOTH_TRUST_RELATIVE
+                    if beta >= EXACT_DRC_GATE_START_BETA
+                    else LOW_BETA_SMOOTH_TRUST_RELATIVE
+                )
+                current_fixed_feasible = bool(np.all(
+                    current_values <= fixed_caps * (1.0 + smooth_trust_relative)
+                ))
+                candidate_fixed_feasible = bool(np.all(
+                    candidate_values <= fixed_caps * (1.0 + smooth_trust_relative)
+                ))
                 effective_cap_feasible = bool(np.all(
                     candidate_values <= effective_caps * (1.0 + 5.0e-3)
                 ))
@@ -710,8 +731,8 @@ def main() -> int:
                         )
                     )
                     smooth_reason = (
-                        "candidate must remain fixed-cap feasible; from beta=32 "
-                        "it must also respect one-percent phase trust caps"
+                        "candidate must remain inside the fixed-cap trust band; "
+                        "from beta=32 it must also respect strict phase trust caps"
                     )
                 else:
                     violation_reduction = (
@@ -740,6 +761,7 @@ def main() -> int:
                         effective_caps=effective_caps.tolist(),
                         current_fixed_violation=current_fixed_violation,
                         candidate_fixed_violation=candidate_fixed_violation,
+                        smooth_trust_relative=smooth_trust_relative,
                         effective_cap_feasible=effective_cap_feasible,
                         Maxwell_solves=0,
                         thermal_solves=0,

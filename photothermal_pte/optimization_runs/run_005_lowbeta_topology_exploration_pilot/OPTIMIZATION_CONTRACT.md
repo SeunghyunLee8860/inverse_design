@@ -187,3 +187,18 @@ MMA state is reinitialized from g009 and the move ceiling is restored to
 This is the last allowed beta=2 cap change: the pair remains fixed for the
 remaining bounded beta=2 budget.  Beta promotion still requires the approved
 FOM/density plateau rather than a cap-induced small move.
+
+After g011, the FOM was still rising by `+8.1625%` and exact bad cells improved
+from `44/8` at g010 to `40/8`, but the void smooth value reached 99.82% of the
+fixed cap.  All g012 trial moves were then rejected by the former 0.5% numerical
+feasibility tolerance before Maxwell, including the minimum authorized move.
+This is a cap-linearization stall, not an objective plateau.
+
+The final cap pair above remains unchanged.  For beta below 32 it is now used
+with a bounded 10% filter/trust band: a candidate outside 1.10 times either cap
+is rejected before Maxwell, while one inside the band may be accepted only if
+the real GPU-evaluated FOM retains at least 99.8% and the catastrophic exact-DRC
+guard passes.  This avoids another cap epoch and prevents sub-0.0025
+micro-repair.  At beta 32 and above the tolerance returns to 0.5% and exact
+total bad cells must be nonincreasing.  The final binary gate remains exact
+solid/void bad cells `0/0`; the trust band cannot certify the final design.

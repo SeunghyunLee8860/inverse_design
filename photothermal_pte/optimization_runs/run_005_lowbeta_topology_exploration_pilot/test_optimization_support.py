@@ -112,6 +112,21 @@ def test_acceptance_balances_fom_and_fixed_constraint_feasibility() -> None:
     assert not candidate_acceptance(1.0, 1.10, infeasible, [0.055, 0.04], caps)["accepted"]
 
 
+def test_candidate_acceptance_allows_bounded_low_beta_smooth_trust_band() -> None:
+    caps = np.asarray([6.0e-4, 2.0e-4])
+    current = np.asarray([4.206909813e-4, 1.996396749e-4])
+    within_band = np.asarray([4.174228610e-4, 2.104169098e-4])
+    outside_band = np.asarray([4.160333453e-4, 2.337971396e-4])
+    assert candidate_acceptance(
+        1.0, 1.01, current, within_band, caps,
+        smooth_trust_relative=0.10,
+    )["accepted"]
+    assert not candidate_acceptance(
+        1.0, 1.20, current, outside_band, caps,
+        smooth_trust_relative=0.10,
+    )["accepted"]
+
+
 def test_low_beta_exact_guard_is_only_catastrophic() -> None:
     assert catastrophic_exact_growth(158, 200) == (False, 237)
     assert catastrophic_exact_growth(158, 237) == (False, 237)
