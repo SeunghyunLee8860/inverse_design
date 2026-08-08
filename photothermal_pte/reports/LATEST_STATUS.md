@@ -1,5 +1,30 @@
 # Latest photothermal validation status
 
+## Run 005 bounded low-beta topology-exploration pilot
+
+- Status: `PAUSED_AFTER_RUN005_ONE_POINT_GPU_PILOT` at beta=2 after exactly
+  one accepted `move=0.01` update. No smaller-move retry, beta promotion, or
+  full continuation ran.
+- Fresh GPU Maxwell/CUDA thermal-PTE FOM increased from
+  `9.775174754357e-8` to `1.167963771133e-7 A/W` (`+19.4826487%`).
+- Both smooth 500 nm phase constraints remain feasible. Solid decreased by
+  `24.1087%`; void increased by `48.8971%` but uses only `76.3375%` of the
+  explicit pilot cap.
+- Exact bad cells were diagnostic only at low beta and decreased from
+  `158/0` to `44/2` (total `158 -> 46`). They were not used as a monotone
+  acceptance veto.
+- Optical closure, Q mapping/pullback, thermal residual, energy balance, and
+  forward/adjoint auto-shutoff gates all pass. The end-to-end evaluation took
+  `739.768 s`; forward and adjoint FDTD solver times were `195.097 s` and
+  `284.822 s` on GPU 2.
+- This is one healthy joint topology/FOM point, not convergence. The next gate
+  is a separately reviewed 3--5 accepted-update beta=2 pilot. Every later beta
+  cap requires checkpoint reprojection and calibration; beta>=32 restores the
+  exact-total nonincrease veto, and the final binary gate remains zero bad
+  solid/void cells.
+- Code, audit, plots, summary, and raw-artifact provenance:
+  `optimization_runs/run_005_lowbeta_topology_exploration_pilot/`.
+
 ## Run 002 selected-grid optical-gradient AD–FD
 
 - Status: `VALIDATED_SELECTED_OPTICAL_GRADIENT_ADFD` for one selected
