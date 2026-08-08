@@ -21,7 +21,7 @@ import numpy as np  # noqa: E402
 
 from optimization_support import (
     DISK_CONSTRAINT_START_BETA,
-    DISK_RECOVERY_START_GLOBAL_ITERATION,
+    MMA_TOPOLOGY_RESET_GLOBAL_ITERATION,
     adaptive_move_ceiling,
     calibrate_stage_caps,
     candidate_acceptance,
@@ -253,7 +253,7 @@ def accepted_move_provenance(
         if (
             float(beta) == DISK_CONSTRAINT_START_BETA
             and int(row.get("global_iteration", -1))
-            <= DISK_RECOVERY_START_GLOBAL_ITERATION
+            <= MMA_TOPOLOGY_RESET_GLOBAL_ITERATION
         ):
             continue
         entry = summary_data["raw_artifacts"][row["tag"]]
@@ -595,7 +595,7 @@ def main() -> int:
             if not (
                 beta == DISK_CONSTRAINT_START_BETA
                 and int(row.get("global_iteration", -1))
-                <= DISK_RECOVERY_START_GLOBAL_ITERATION
+                <= MMA_TOPOLOGY_RESET_GLOBAL_ITERATION
             )
         ]
         if beta == DISK_CONSTRAINT_START_BETA and not recovery_rows:

@@ -36,9 +36,9 @@ ZHOU_DECAY_M2 = 1.0e-10
 PNORM = 8.0
 LEGACY_CONSTRAINT_CONTRACT = "legacy_zhou_p8_v1"
 DISK_CONSTRAINT_CONTRACT = "soft_disk_opening_500nm_from_iteration_zero_v5"
-MMA_CAP_CONTRACT = "run005_full_continuation_fixed_per_beta_caps_v6"
+MMA_CAP_CONTRACT = "run005_full_continuation_fixed_per_beta_caps_v7"
 DISK_CONSTRAINT_START_BETA = 2.0
-DISK_RECOVERY_START_GLOBAL_ITERATION = -1
+MMA_TOPOLOGY_RESET_GLOBAL_ITERATION = 9
 DISK_SHARPEN_GAMMA = 64.0
 DISK_SOFT_EXTREMA_TAU = 1.0e-3
 DEFAULT_MMA_MOVE = 0.01
@@ -285,13 +285,14 @@ def stage_caps(beta: float) -> np.ndarray:
     """
 
     if np.isclose(float(beta), 2.0, rtol=0.0, atol=1.0e-12):
-        # Reviewed post-g007 beta=2 exploration epoch.  The previous
-        # 1.00e-3/1.00e-4 envelope left the accepted g007 void constraint at
-        # 99.72% occupancy and rejected both authorized moves offline while
-        # the solver-backed FOM was still improving by 4.83%.  Reprojecting
-        # g007 once gives a deliberately finite, immutable 5.50e-4/1.11e-4
-        # epoch (85.05%/89.84% occupancy); this is not adjusted per proposal.
-        return np.asarray((5.50e-4, 1.11e-4), float)
+        # Final beta=2 topology-search epoch, reviewed after g009.  Two
+        # consecutive 0.0025 moves still improved the solver-backed FOM by
+        # 2.31% and 2.26%, proving that the stage had not plateaued; the old
+        # void cap was dictating the move.  This deliberately loose pair is
+        # immutable for the remaining bounded beta=2 budget and is not
+        # recalibrated per proposal.  Later beta stages restore phase-wise
+        # nonincrease and exact-DRC cleanup gates.
+        return np.asarray((6.00e-4, 2.00e-4), float)
     path = _stage_caps_path()
     if not path.exists():
         raise RuntimeError(f"missing fixed continuation-cap registry: {path}")
@@ -580,11 +581,6 @@ def stage_convergence(history: list[dict[str, object]], beta: float) -> StageCon
     accepted = [
         row for row in history
         if float(row["beta"]) == float(beta) and row["role"] == "accepted_mma"
-        and not (
-            float(beta) == DISK_CONSTRAINT_START_BETA
-            and int(row.get("global_iteration", -1))
-            <= DISK_RECOVERY_START_GLOBAL_ITERATION
-        )
     ]
     minimum = 8 if beta <= 2.0 else 6
     window = 4
@@ -624,7 +620,7 @@ def adaptive_move_ceiling(
         and not (
             float(beta) == DISK_CONSTRAINT_START_BETA
             and int(row.get("global_iteration", -1))
-            <= DISK_RECOVERY_START_GLOBAL_ITERATION
+            <= MMA_TOPOLOGY_RESET_GLOBAL_ITERATION
         )
     ]
     if len(accepted_moves) != len(accepted):
@@ -658,7 +654,7 @@ def adaptive_move_ceiling(
 
 
 __all__ = [
-    "DISK_CONSTRAINT_START_BETA", "DISK_RECOVERY_START_GLOBAL_ITERATION",
+    "DISK_CONSTRAINT_START_BETA", "MMA_TOPOLOGY_RESET_GLOBAL_ITERATION",
     "MMAState", "ProductionDensityMapping", "adaptive_move_ceiling", "candidate_acceptance",
     "calibrate_stage_caps", "constraint_contract", "constraint_values_and_gradients",
     "disk_constraint_values_and_gradients", "design_metrics", "exact_binary_audit",

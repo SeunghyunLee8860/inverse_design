@@ -97,6 +97,23 @@ fitted to a solver result and cannot follow individual candidates. The failed
 g008-v5 proposals remain raw diagnostic provenance and are archived by the v6
 cap-contract mismatch before deterministic reproposal.
 
+## Final beta=2 topology-search epoch after g009
+
+The v6 epoch accepted g008 and g009 at the minimum move `0.0025`.  Their
+solver-backed FOM gains were still `+2.3077%` and `+2.2582%`, so treating the
+two small moves as an optical/PTE plateau would be false.  They occurred
+because the void constraint reached the fixed envelope, not because the
+objective or density stopped moving.  The anti-microrepair guard therefore
+stopped exactly as intended after g009.
+
+The accepted g009 checkpoint starts one final bounded beta=2 topology-search
+epoch with caps `6.00e-4` solid and `2.00e-4` void.  Incoming occupancies are
+75.46% and 55.74%.  MMA asymptote memory is reset at g009 and the move ceiling
+returns to `0.01`; pre-g009 minimum moves do not throttle this new epoch.  This
+pair is immutable through the remaining beta=2 budget and cannot be loosened
+again.  Exact DRC remains diagnostic at beta=2, while all later stages retain
+phase-wise nonincrease and the final zero-bad-cell requirement.
+
 ```bash
 CUDA_VISIBLE_DEVICES=2 /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
   run_optimization.py --gpu 2 --constraint-device cuda:0

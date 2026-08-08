@@ -7,6 +7,7 @@ import pytest
 from optimization_support import (
     ProductionDensityMapping,
     MMA_CAP_CONTRACT,
+    MMA_TOPOLOGY_RESET_GLOBAL_ITERATION,
     adaptive_move_ceiling,
     candidate_acceptance,
     catastrophic_exact_growth,
@@ -89,7 +90,7 @@ def test_beta2_cap_is_fixed_and_uncalibrated_later_beta_fails_closed(
     registry = tmp_path / "caps.json"
     registry.write_text(json.dumps({"contract": MMA_CAP_CONTRACT, "stages": {}}))
     monkeypatch.setenv("RUN005_STAGE_CAPS_FILE", str(registry))
-    assert np.array_equal(stage_caps(2), [5.50e-4, 1.11e-4])
+    assert np.array_equal(stage_caps(2), [6.00e-4, 2.00e-4])
     with pytest.raises(RuntimeError, match="no checkpoint-calibrated fixed cap"):
         stage_caps(4)
 
@@ -204,6 +205,25 @@ def test_adaptive_move_reduces_only_after_four_solver_backed_plateau_updates() -
     assert adaptive_move_ceiling(history, 4.0, [0.01] * 4 + [0.005] * 4) == 0.0025
     history[-1]["relative_fom_change"] = 0.01
     assert adaptive_move_ceiling(history, 4.0, [0.01] * 8) == 0.01
+
+
+def test_g009_reset_restores_move_without_erasing_beta2_plateau_history() -> None:
+    pre_reset = [
+        {
+            "beta": 2.0,
+            "role": "accepted_mma",
+            "global_iteration": index,
+            "constraints_feasible": True,
+            "relative_fom_change": 0.001,
+            "rho_rms_change": 0.001,
+            "rho_max_change": 0.005,
+        }
+        for index in range(1, MMA_TOPOLOGY_RESET_GLOBAL_ITERATION + 1)
+    ]
+    # The move controller sees a fresh epoch, while the physical plateau audit
+    # still sees the genuine solver-backed beta=2 history.
+    assert adaptive_move_ceiling(pre_reset, 2.0, []) == 0.01
+    assert stage_convergence(pre_reset, 2.0).converged
 
 
 def test_metrics_use_entire_373_by_373_design() -> None:

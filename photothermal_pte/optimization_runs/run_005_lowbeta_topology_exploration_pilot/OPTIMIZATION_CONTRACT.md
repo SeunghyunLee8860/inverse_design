@@ -166,3 +166,24 @@ not promote beta while FOM motion is still strong and must not reduce the move
 below `0.0025`. This table establishes one explicit v6 cap epoch from the
 accepted g007 checkpoint. It remains immutable for all subsequent beta=2
 proposals; no per-step cap update is permitted.
+
+## Final g009 topology-search epoch and MMA reset
+
+The v6 g008/g009 solver-backed gains were `+2.307650024%` and
+`+2.258164402%`, despite both accepted moves being `0.0025`.  The repeated
+minimum-move halt therefore diagnoses a cap-controlled step size, not a true
+FOM/density plateau.  Exact bad cells changed `45 -> 52`; this remains a
+low-beta diagnostic and is not accepted as the final morphology.
+
+The immutable g009 checkpoint establishes the final beta=2 cap epoch:
+
+| phase | g009 value | final beta=2 cap | value/cap |
+|---|---:|---:|---:|
+| solid | 4.527493073e-4 | 6.00e-4 | 0.7546 |
+| void | 1.114861694e-4 | 2.00e-4 | 0.5574 |
+
+MMA state is reinitialized from g009 and the move ceiling is restored to
+`0.01`.  Accepted-move provenance before g009 cannot throttle the new epoch.
+This is the last allowed beta=2 cap change: the pair remains fixed for the
+remaining bounded beta=2 budget.  Beta promotion still requires the approved
+FOM/density plateau rather than a cap-induced small move.
