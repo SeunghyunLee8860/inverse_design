@@ -36,7 +36,7 @@ ZHOU_DECAY_M2 = 1.0e-10
 PNORM = 8.0
 LEGACY_CONSTRAINT_CONTRACT = "legacy_zhou_p8_v1"
 DISK_CONSTRAINT_CONTRACT = "soft_disk_opening_500nm_from_iteration_zero_v5"
-MMA_CAP_CONTRACT = "run005_full_continuation_fixed_per_beta_caps_v7"
+MMA_CAP_CONTRACT = "run005_full_continuation_fixed_per_beta_caps_v8"
 DISK_CONSTRAINT_START_BETA = 2.0
 MMA_TOPOLOGY_RESET_GLOBAL_ITERATION = 9
 DISK_SHARPEN_GAMMA = 64.0
@@ -312,11 +312,12 @@ def calibrate_stage_caps(
     latent: np.ndarray,
     beta: float,
     target_occupancy: float,
+    mapping: ProductionDensityMapping | None = None,
 ) -> tuple[np.ndarray, dict[str, object]]:
     """Persist one cap epoch from the incoming checkpoint, never per step."""
 
     if float(beta) <= 2.0:
-        values, _, _ = constraint_values_and_gradients(latent, beta)
+        values, _, _ = constraint_values_and_gradients(latent, beta, mapping)
         caps = stage_caps(beta)
         return caps, {
             "beta": float(beta),
@@ -327,8 +328,8 @@ def calibrate_stage_caps(
             "source": "reviewed_beta2_fixed_envelope",
         }
     occupancy = float(target_occupancy)
-    if not 0.5 <= occupancy < 1.0:
-        raise ValueError("target cap occupancy must be in [0.5, 1)")
+    if not 0.5 <= occupancy <= 1.5:
+        raise ValueError("target cap occupancy must be in [0.5, 1.5]")
     path = _stage_caps_path()
     payload = json.loads(path.read_text()) if path.exists() else {
         "contract": MMA_CAP_CONTRACT,
@@ -340,7 +341,7 @@ def calibrate_stage_caps(
     existing = payload.setdefault("stages", {}).get(key)
     if existing is not None:
         return stage_caps(beta), existing
-    values, _, _ = constraint_values_and_gradients(latent, beta)
+    values, _, _ = constraint_values_and_gradients(latent, beta, mapping)
     caps = np.maximum(values / occupancy, 1.0e-12)
     entry = {
         "beta": float(beta),
@@ -348,7 +349,11 @@ def calibrate_stage_caps(
         "caps": caps.tolist(),
         "target_occupancy": occupancy,
         "actual_occupancy": (values / caps).tolist(),
-        "source": "single_stage_start_reprojection",
+        "source": (
+            "single_stage_start_reprojection_cleanup_tightening"
+            if occupancy > 1.0
+            else "single_stage_start_reprojection_exploration_envelope"
+        ),
     }
     payload["stages"][key] = entry
     path.write_text(json.dumps(payload, indent=2) + "\n")
@@ -529,10 +534,17 @@ def candidate_acceptance(
     candidate_feasible = bool(np.all(
         np.asarray(candidate_constraints) <= np.asarray(caps) * (1.0 + smooth_trust_relative)
     ))
-    accepted = candidate_feasible and objective_ratio >= FEASIBLE_FOM_RETENTION
+    restoration = bool(
+        current_v > 0.0
+        and candidate_v <= current_v * (1.0 - 0.01)
+    )
+    accepted = bool(
+        (candidate_feasible or restoration)
+        and objective_ratio >= FEASIBLE_FOM_RETENTION
+    )
     reason = (
-        "satisfy both smooth caps and limit actual FOM loss to 0.2%; "
-        "low-beta exact DRC is diagnostic only"
+        "satisfy the smooth caps, or reduce an incoming infeasible smooth "
+        "violation by at least 1%, while limiting actual FOM loss to 0.2%"
     )
     exact_gate_enabled = (
         current_exact_bad_counts is not None
@@ -560,6 +572,7 @@ def candidate_acceptance(
         "reason": reason,
         "current_feasible": bool(current_feasible),
         "candidate_feasible": bool(candidate_feasible),
+        "smooth_restoration_step": bool(restoration),
         "current_normalized_violation": current_v,
         "candidate_normalized_violation": candidate_v,
         "smooth_trust_relative": float(smooth_trust_relative),

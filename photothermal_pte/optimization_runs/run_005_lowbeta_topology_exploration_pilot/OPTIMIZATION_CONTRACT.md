@@ -42,8 +42,8 @@ genuine FOM/topology movement rather than constraint-only repair. Before every
 later beta, the same checkpoint must be reprojected and its smooth-cap occupancy
 audited. At beta >= 32 the exact total nonincrease veto is restored, and the
 final binary design must have exactly zero solid and void bad cells. Two
-consecutive accepted moves below 0.0025 require an automatic halt and cap
-recalibration.
+consecutive accepted minimum moves terminate only the current beta stage and
+advance projection; they never authorize a looser cap or repeated micro-repair.
 
 ## Approved bounded extension after g001
 
@@ -131,15 +131,21 @@ finished inverse-designed structure.
 The immutable g005 checkpoint is the restart. Beta=2 must first satisfy the
 existing four-update FOM/density plateau and may use at most 16 total accepted
 updates. Later optimized-stage budgets are 10, 10, 8, 6, 6, and 4 accepted
-updates for beta 4, 8, 16, 32, 64, and 128 respectively. Exhausting a budget is
-a fail-closed strategy checkpoint, not permission to continue constraint-only
-micro-repair and not a completed optimization.
+updates for beta 4, 8, 16, 32, 64, and 128 respectively. Exhausting a budget
+ends that beta stage without claiming plateau and advances projection; it is
+not permission to continue constraint-only micro-repair and is not a completed
+optimization.
 
 For every beta after 2, the incoming checkpoint is reprojected once and a
 solid/void cap pair is persisted in `stage_caps.json`. The pair is immutable
 inside that stage. From beta=4 the MMA subproblem may not use slack in one phase
-to worsen the other; from beta=32 the exact total bad-cell count also cannot
-increase. Two consecutive accepted minimum moves of 0.0025 stop the stage.
+to worsen the other. At beta 32, 64, and 128 the incoming constraint occupancy
+targets are 1.10, 1.15, and 1.20 respectively, so these stages perform bounded
+morphology restoration rather than silently granting fresh slack. A candidate
+starting above the cap must reduce normalized smooth violation by at least 1%
+and retain at least 99.8% of the solver-backed FOM. From beta=32 the exact total
+bad-cell count also cannot increase. Two consecutive accepted minimum moves of
+0.0025 advance projection instead of relaxing a cap.
 
 Once exact solid and void bad-cell counts both reach zero, beta 256 through
 8192 are projection-only sharpening checkpoints with no redundant forward or

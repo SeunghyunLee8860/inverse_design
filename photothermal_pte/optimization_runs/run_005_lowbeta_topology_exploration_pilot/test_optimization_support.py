@@ -9,6 +9,7 @@ from optimization_support import (
     MMA_CAP_CONTRACT,
     MMA_TOPOLOGY_RESET_GLOBAL_ITERATION,
     adaptive_move_ceiling,
+    calibrate_stage_caps,
     candidate_acceptance,
     catastrophic_exact_growth,
     constraint_contract,
@@ -110,7 +111,32 @@ def test_acceptance_balances_fom_and_fixed_constraint_feasibility() -> None:
     assert candidate_acceptance(1.0, 0.998, feasible, feasible, caps)["accepted"]
     assert not candidate_acceptance(1.0, 0.9979, feasible, feasible, caps)["accepted"]
     infeasible = np.array([0.06, 0.04])
-    assert not candidate_acceptance(1.0, 1.10, infeasible, [0.055, 0.04], caps)["accepted"]
+    restoration = candidate_acceptance(
+        1.0, 1.10, infeasible, np.array([0.055, 0.04]), caps
+    )
+    assert restoration["accepted"]
+    assert restoration["smooth_restoration_step"]
+    assert not candidate_acceptance(
+        1.0, 1.10, infeasible, np.array([0.0599, 0.04]), caps
+    )["accepted"]
+
+
+def test_high_beta_cap_calibration_can_create_bounded_cleanup_target(
+    tmp_path, monkeypatch
+) -> None:
+    registry = tmp_path / "caps.json"
+    registry.write_text(json.dumps({"contract": MMA_CAP_CONTRACT, "stages": {}}))
+    monkeypatch.setenv("RUN005_STAGE_CAPS_FILE", str(registry))
+    mapping = ProductionDensityMapping(
+        shape=(41, 39), spacing_m=50e-9, radius_m=500e-9
+    )
+    latent = np.full(mapping.shape, 0.5)
+    caps, audit = calibrate_stage_caps(latent, 32.0, 1.10, mapping)
+    incoming = np.asarray(audit["incoming_values"])
+    positive = incoming > 1.0e-12
+    assert np.any(positive)
+    np.testing.assert_allclose(incoming[positive] / caps[positive], 1.10)
+    assert "cleanup_tightening" in audit["source"]
 
 
 def test_candidate_acceptance_allows_bounded_low_beta_smooth_trust_band() -> None:

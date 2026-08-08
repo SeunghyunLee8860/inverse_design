@@ -98,9 +98,13 @@ STAGE_CAP_TARGET_OCCUPANCY = {
     4: 0.85,
     8: 0.88,
     16: 0.90,
-    32: 0.93,
-    64: 0.95,
-    128: 0.95,
+    # Above beta=16 the task changes from topology exploration to bounded
+    # morphology restoration.  Occupancy > 1 deliberately makes the incoming
+    # checkpoint infeasible by a controlled amount; accepted steps must reduce
+    # that violation while exact thresholded DRC is nonincreasing.
+    32: 1.10,
+    64: 1.15,
+    128: 1.20,
 }
 
 
@@ -591,15 +595,24 @@ def main() -> int:
             current_latent, beta
         )
         cap_occupancy = initial_values / initial_caps
+        occupancy_interval = (
+            [target_occupancy, target_occupancy]
+            if target_occupancy > 1.0 else [0.8, 0.95]
+        )
         emit(
             "stage_cap_reprojection_audit",
             beta=beta,
             initial_constraints=initial_values.tolist(),
             caps=initial_caps.tolist(),
             cap_occupancy=cap_occupancy.tolist(),
-            recommended_occupancy_interval=[0.8, 0.95],
+            recommended_occupancy_interval=occupancy_interval,
             occupancy_in_recommended_interval=[
-                bool(0.8 <= value <= 0.95) for value in cap_occupancy
+                bool(
+                    occupancy_interval[0] - 1.0e-12
+                    <= value
+                    <= occupancy_interval[1] + 1.0e-12
+                )
+                for value in cap_occupancy
             ],
             note="one checkpoint-calibrated cap epoch; immutable within this beta stage",
         )
@@ -635,6 +648,24 @@ def main() -> int:
             accepted_moves_for_transition = accepted_move_provenance(
                 summary(), beta
             )
+            if two_consecutive_subthreshold_moves(
+                accepted_moves_for_transition
+            ):
+                emit(
+                    "stage_minimum_move_transition",
+                    beta=beta,
+                    global_iteration=global_iteration,
+                    accepted_updates=len(accepted_moves_for_transition),
+                    last_two_moves=accepted_moves_for_transition[-2:],
+                    converged=False,
+                    convergence_diagnostics=convergence.__dict__,
+                    reason=(
+                        "two consecutive minimum authorized moves indicate "
+                        "a morphology-limited stage; advance projection "
+                        "instead of repeating micro-repair or relaxing caps"
+                    ),
+                )
+                break
             if low_beta_morphology_limited_transition(
                 history, beta, accepted_moves_for_transition
             ):
@@ -734,6 +765,7 @@ def main() -> int:
             global_iteration += 1
             next_stage_iteration = stage_iteration + 1
             accepted = False
+            advance_stage = False
             for retry, move in enumerate(move_retries):
                 proposal_result, proposal_raw, candidate_state = propose(
                     current_result, current_raw, state_path, beta,
@@ -924,17 +956,19 @@ def main() -> int:
                     updated_moves = accepted_move_provenance(summary(), beta)
                     if two_consecutive_subthreshold_moves(updated_moves):
                         emit(
-                            "automatic_repeated_small_move_halt",
+                            "stage_minimum_move_transition",
                             beta=beta,
                             global_iteration=global_iteration,
                             accepted_moves=updated_moves[-2:],
                             threshold=0.0025,
-                            reason="two consecutive accepted moves were below 0.0025",
+                            converged=False,
+                            reason=(
+                                "two consecutive accepted minimum moves; "
+                                "advance projection instead of cap relaxation "
+                                "or repeated micro-repair"
+                            ),
                         )
-                        raise RuntimeError(
-                            "two consecutive accepted moves below 0.0025; "
-                            "cap recalibration is required"
-                        )
+                        advance_stage = True
                     break
                 raise RuntimeError(
                     "solver-backed candidate failed the FOM/physics acceptance "
@@ -942,6 +976,8 @@ def main() -> int:
                 )
             if not accepted:
                 raise RuntimeError(f"all candidate move retries rejected at beta={beta:g}, global iteration={global_iteration}")
+            if advance_stage:
+                break
         current_metrics = summary()["current_metrics"]
         if beta >= 64.0 and projected_binary_gate(current_metrics):
             emit("projected_binary_gate_passed", beta=beta, global_iteration=global_iteration)

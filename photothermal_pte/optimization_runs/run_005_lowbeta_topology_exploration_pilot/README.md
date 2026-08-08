@@ -71,8 +71,10 @@ solid and void violations are both zero.
 Each beta after 2 receives one cap calibrated from its incoming checkpoint;
 the cap cannot change inside that stage. Exact thresholded morphology is a hard
 nonincrease gate from beta=32. Budget exhaustion or two consecutive minimum
-moves stops for strategy correction instead of launching dozens of micro-repair
-iterations.
+moves advances to the next projection stage instead of launching dozens of
+micro-repair iterations or loosening a cap. Beta 32/64/128 use deliberately
+tight incoming cap occupancies of 1.10/1.15/1.20 and accept an infeasible
+restoration step only when normalized smooth violation falls by at least 1%.
 
 Completion requires gray fraction and mean `4*rho*(1-rho)` both below `0.001`,
 zero exact solid/void violations, and a fresh thresholded-binary GPU
