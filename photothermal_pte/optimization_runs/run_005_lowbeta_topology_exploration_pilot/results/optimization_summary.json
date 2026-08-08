@@ -1,5 +1,5 @@
 {
-  "status": "RUNNING_RUN005_LOWBETA_TOPOLOGY_ONE_POINT_PILOT",
+  "status": "PAUSED_AFTER_RUN005_ONE_POINT_GPU_PILOT",
   "generated_at_utc": "2026-08-08T04:48:02.671456+00:00",
   "method": "beta=2 topology exploration inside smooth 500 nm caps",
   "history": [
@@ -183,5 +183,7 @@
     "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_full_latent_adjoint_preparation_20260806/selected_full_latent_adjoint_preparation.npz",
     "size_bytes": 7257875,
     "sha256": "d3617baf54d54e735feba9d85c439ee77bcdf5ddaeec47e12c812bf036b2c87e"
-  }
+  },
+  "pilot_newly_accepted_updates": 1,
+  "pilot_paused_at_utc": "2026-08-08T04:48:06.572595+00:00"
 }
