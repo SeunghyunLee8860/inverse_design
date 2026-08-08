@@ -106,6 +106,25 @@ def archive_transient_license_failure(output: Path, attempt: int) -> Path:
     return archive
 
 
+def archive_incomplete_evaluation(output: Path) -> Path:
+    """Preserve an orphaned solver directory before restarting its evaluation.
+
+    A detached solver can be terminated externally before it writes the compact
+    diagnostic JSON.  Reusing that directory would mix two solver attempts and
+    overwrite the partial FSP/log provenance.
+    """
+
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+    archive = output.with_name(f"{output.name}_incomplete_{stamp}")
+    output.rename(archive)
+    emit(
+        "incomplete_evaluation_archived",
+        evaluation=str(output),
+        archive=str(archive),
+    )
+    return archive
+
+
 def verify_inputs() -> None:
     expected = (
         (BASE_FSP, BASE_SHA), (INITIAL_RESULT, INITIAL_RESULT_SHA),
@@ -138,6 +157,9 @@ def evaluate(latent_npz: Path, output: Path, beta: float, gpu: str) -> tuple[Pat
             archive_transient_license_failure(output, retry_attempt)
             retry_attempt += 1
             time.sleep(LICENSE_RETRY_DELAY_S)
+
+        if output.exists() and any(output.iterdir()) and not result.exists():
+            archive_incomplete_evaluation(output)
 
         output.mkdir(parents=True, exist_ok=True)
         returncode = execute([
