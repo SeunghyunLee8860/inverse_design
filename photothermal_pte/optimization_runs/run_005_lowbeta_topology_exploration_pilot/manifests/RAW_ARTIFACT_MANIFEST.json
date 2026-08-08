@@ -1,6 +1,6 @@
 {
   "status": "RUNNING_RUN005_FULL_BINARY_BETA_CONTINUATION",
-  "generated_at_utc": "2026-08-08T08:10:53.753958+00:00",
+  "generated_at_utc": "2026-08-08T08:23:59.823149+00:00",
   "raw_artifacts_are_gitignored": true,
   "base_FSP": {
     "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_production_geometry_runsetup_v2_20260806/production_candidate_runsetup.fsp",
@@ -348,6 +348,38 @@
         "path": "/data/seunghyun/tairte4/raw_artifacts/run005_lowbeta_topology_pilot_20260808/b0002_s010_g010_accepted_mma_state.npz",
         "size_bytes": 4046787,
         "sha256": "1a9e15b71cbd7baebf842057bedb73535010e0a48aad6fde9dcdec697cc8813b"
+      }
+    },
+    "run005_b002_s011_g011_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run005_lowbeta_topology_pilot_20260808/b0002_s011_g011_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10763,
+        "sha256": "9e1ac942382a0f6f7e3c778fa7b2689ed39922db9a3b5526cf69c564db6fc261"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run005_lowbeta_topology_pilot_20260808/b0002_s011_g011_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7278156,
+        "sha256": "e90aaa6248fc31fffdc65b5bd9a00d3736c4a11b071b70fc50eb250852ef4d3a"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_005_lowbeta_topology_exploration_pilot/checkpoints/run005_b002_s011_g011_accepted_mma.npz",
+        "size_bytes": 465602,
+        "sha256": "f888ce94ef90ad1456b804ecebc195f5e766a31b894a15d3ca81a57267afc2b4"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run005_lowbeta_topology_pilot_20260808/b0002_s011_g011_retry0_proposal/proposal_result.json",
+        "size_bytes": 3617,
+        "sha256": "304c20649c05f17b075a77d9a6fb5cf09540cb3ac9d3b985c43310bcc8d7f1ea"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run005_lowbeta_topology_pilot_20260808/b0002_s011_g011_retry0_proposal/proposal.npz",
+        "size_bytes": 5124042,
+        "sha256": "ec8f52b6aba33619c761c1f240b640f95362a78ea0507b5c747345e34b05ab5b"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run005_lowbeta_topology_pilot_20260808/b0002_s011_g011_accepted_mma_state.npz",
+        "size_bytes": 4047521,
+        "sha256": "ee895bdf343e0324bf18822a37449f2a9f12754d1e77224c865d38e83e91b6d2"
       }
     }
   }
