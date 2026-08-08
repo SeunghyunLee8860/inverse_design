@@ -1,13 +1,10 @@
 {
   "run_id": "run_005_lowbeta_topology_exploration_pilot",
-  "status": "READY_TO_RESUME_RUN005_FROM_ACCEPTED_G002",
-  "last_updated_utc": "2026-08-08T05:40:16.484716+00:00",
+  "status": "RUNNING_RUN005_BOUNDED_BETA2_TOPOLOGY_PILOT",
+  "last_updated_utc": "2026-08-08T05:56:07.409668+00:00",
   "beta": 2.0,
-  "global_iteration": 2,
-  "stage_iteration": 2,
-  "optimization_process_running": false,
-  "pause_reason": "old void cap saturated; all g003 moves were rejected offline with zero Maxwell solves",
-  "next_cap_epoch": "g002_reprojected_v3",
+  "global_iteration": 3,
+  "stage_iteration": 3,
   "stage_convergence": {
     "converged": false,
     "reason": "need at least 8 accepted updates",
@@ -15,8 +12,8 @@
     "maximum_rho_rms_change": Infinity,
     "maximum_rho_max_change": Infinity
   },
-  "FOM_A_per_W": 1.3598833081194455e-07,
+  "FOM_A_per_W": 1.5532237927666927e-07,
   "constraints_feasible": true,
-  "exact_500nm_solid_bad_cells": 43,
-  "exact_500nm_void_bad_cells": 2
+  "exact_500nm_solid_bad_cells": 40,
+  "exact_500nm_void_bad_cells": 6
 }
