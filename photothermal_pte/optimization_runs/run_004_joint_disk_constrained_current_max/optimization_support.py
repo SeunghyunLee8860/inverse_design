@@ -36,7 +36,7 @@ ZHOU_DECAY_M2 = 1.0e-10
 PNORM = 8.0
 LEGACY_CONSTRAINT_CONTRACT = "legacy_zhou_p8_v1"
 DISK_CONSTRAINT_CONTRACT = "soft_disk_opening_500nm_from_iteration_zero_v4"
-MMA_CAP_CONTRACT = "one_percent_phase_trust_caps_v2"
+MMA_CAP_CONTRACT = "fixed_early_caps_then_phase_trust_v3"
 DISK_CONSTRAINT_START_BETA = 2.0
 DISK_RECOVERY_START_GLOBAL_ITERATION = -1
 DISK_SHARPEN_GAMMA = 64.0
@@ -301,6 +301,8 @@ def mma_effective_constraint_caps(
         raise ValueError("constraint values must be a finite solid/void pair")
     if np.any(current <= 0.0):
         raise ValueError("constraint values must be positive")
+    if float(beta) < 32.0:
+        return caps
     local_trust = np.maximum(current * 1.01, current + 1.0e-7)
     return np.minimum(caps, local_trust)
 

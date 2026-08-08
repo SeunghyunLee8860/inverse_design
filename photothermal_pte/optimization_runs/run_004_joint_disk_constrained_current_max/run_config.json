@@ -17,6 +17,7 @@
   "minimum_window_fom_gain": 0.002,
   "minimum_window_exact_bad_cell_reduction_fraction": 0.02,
   "exact_step_veto_start_beta": 32,
+  "phase_trust_cap_start_beta": 32,
   "initial_gpu_pilot_accepted_updates": 3,
   "cpu_fdtd_fallback": false,
   "cpu_thermal_fallback": false,

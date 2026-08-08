@@ -29,6 +29,12 @@ def test_exact_safe_move_retries_resolve_threshold_events_without_changing_ceili
 def test_effective_caps_allow_only_one_percent_or_absolute_floor_slack():
     values = np.asarray([1.0e-4, 5.0e-6])
     np.testing.assert_allclose(
+        mma_effective_constraint_caps(values, 2.0),
+        stage_caps(2.0),
+        rtol=0.0,
+        atol=0.0,
+    )
+    np.testing.assert_allclose(
         mma_effective_constraint_caps(values, 32.0),
         [1.01e-4, 5.1e-6],
         rtol=1e-14,

@@ -12,6 +12,8 @@ The correction is confined to the optimization policy:
 - each stage is limited to 20 accepted updates;
 - an automatic six-update no-progress gate stops the run if neither FOM nor
   exact morphology improves meaningfully;
+- beta=2--16 uses the close fixed stage caps without a zero-slack phase lock;
+  the one-percent phase-preserving trust cap starts at beta=32;
 - exact thresholded morphology is audited throughout, but its discontinuous
   per-step veto starts only at beta=32 so early topology changes are not frozen;
 - no post-hoc repair, empirical gradient scaling, CPU FDTD, or CPU thermal

@@ -37,8 +37,10 @@ Fixed stage caps are:
 | 512 | 1.50e-5 | 1.50e-6 |
 
 The beta=2 caps are close to the original-state disk metrics rather than the
-Run 003 loose 0.04/0.04 caps. For a local MMA approximation, each phase receives
-at most 1% relative or 1e-7 absolute slack and can never exceed its fixed cap.
+Run 003 loose 0.04/0.04 caps. At beta=2--16 MMA uses these fixed caps directly,
+so topology can change anywhere inside the already narrow feasible envelope.
+From beta=32, each phase receives at most 1% relative or 1e-7 absolute local
+slack and can never exceed its fixed cap.
 
 ## Continuation and anti-waste gates
 

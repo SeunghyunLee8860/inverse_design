@@ -636,11 +636,15 @@ def main() -> int:
                 ))
                 if current_fixed_feasible:
                     smooth_prescreen_pass = bool(
-                        candidate_fixed_feasible and effective_cap_feasible
+                        candidate_fixed_feasible
+                        and (
+                            beta < EXACT_DRC_GATE_START_BETA
+                            or effective_cap_feasible
+                        )
                     )
                     smooth_reason = (
-                        "candidate must remain fixed-cap feasible and respect "
-                        "the one-percent phase trust caps"
+                        "candidate must remain fixed-cap feasible; from beta=32 "
+                        "it must also respect one-percent phase trust caps"
                     )
                 else:
                     violation_reduction = (
