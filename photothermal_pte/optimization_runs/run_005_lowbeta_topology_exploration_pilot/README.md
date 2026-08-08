@@ -20,6 +20,11 @@ The next 3--5 accepted-update pilot requires a separate review of this point.
 Every later beta cap must first be calibrated by reprojecting the accepted
 checkpoint; Run 005 cannot silently continue to beta=4.
 
+The one-point run passed and then paused: FOM increased by 19.4826%, smooth
+solid/void constraints remained feasible, and diagnostic exact bad cells fell
+from 158 to 46. This is evidence for a healthy first topology step, not evidence
+that beta=2 or the complete constrained optimization has converged.
+
 ```bash
 CUDA_VISIBLE_DEVICES=2 /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
   run_optimization.py --gpu 2 --constraint-device cuda:0 \

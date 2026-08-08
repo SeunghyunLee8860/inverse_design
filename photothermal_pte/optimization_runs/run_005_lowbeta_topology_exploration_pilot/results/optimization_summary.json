@@ -185,5 +185,8 @@
     "sha256": "d3617baf54d54e735feba9d85c439ee77bcdf5ddaeec47e12c812bf036b2c87e"
   },
   "pilot_newly_accepted_updates": 1,
-  "pilot_paused_at_utc": "2026-08-08T04:48:06.572595+00:00"
+  "pilot_paused_at_utc": "2026-08-08T04:48:06.572595+00:00",
+  "promoted_status": "PAUSED_AFTER_RUN005_ONE_POINT_GPU_PILOT",
+  "one_point_decision": "HEALTHY_JOINT_TOPOLOGY_FOM_STEP_REVIEW_BEFORE_3_TO_5_UPDATE_PILOT",
+  "one_point_audit": "results/RUN005_ONE_POINT_PILOT_AUDIT.md"
 }
