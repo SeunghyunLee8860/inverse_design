@@ -45,3 +45,26 @@ The stored scalar current is reproduced to `4.0133e-16` relative error.  The
 displayed gradient/current maps are NaN wherever any one of `-x,+x,-y,+y`
 TaIrTe4 neighbours is unavailable; the reported total current remains the
 validated full-footprint boundary-aware operator.
+
+## Final binary orthogonal-polarization evaluation
+
+The original final-binary forward used source-x polarization.  The frozen
+optical metadata is `x=b, y=a`, so that result is `E || b`.  A separate
+source-y (`90 deg`) GPU Maxwell plus CUDA thermal/PTE evaluation was completed
+for `E || a` using the identical exact-binary structure, geometry, mesh,
+incident power, conservative remap, and thermal operator.  No polarization
+matching or heat-source rescaling was used.
+
+- [two-polarization report](FINAL_BINARY_POLARIZATION_COMPARISON_REPORT.md)
+- [machine-readable comparison](final_binary_polarization_comparison_summary.json)
+- [comparison CSV](final_binary_polarization_comparison_metrics.csv)
+- [common-scale Q/T/gradient/current maps](../plots/final_binary_both_polarizations_Q_T_gradient_current.png)
+- [scalar and component metrics](../plots/final_binary_both_polarizations_metrics.png)
+
+Both numerical pipelines pass their optical and thermal gates.  The current
+ratio from the existing operator is `I(E||a)/I(E||b) = 1.682352`.  Physical
+crystallographic interpretation remains blocked by
+`UNRESOLVED_AXIS_METADATA_MISMATCH_XB_YA_VS_THERMAL_PTE_XA_YB`: optical
+metadata maps solver x/y to b/a, whereas the immutable thermal/PTE operator
+uses a coefficients on solver x and b coefficients on solver y.  No silent
+axis or coefficient swap was made.

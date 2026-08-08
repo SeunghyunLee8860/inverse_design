@@ -265,6 +265,7 @@ def run_forward(
     imported_object: str,
     nodes: tuple[np.ndarray, np.ndarray, np.ndarray],
     completed_project: Path | None = None,
+    polarization_angle_deg: float | None = None,
 ) -> dict:
     project = (
         completed_project.resolve()
@@ -275,6 +276,12 @@ def run_forward(
     if completed_project is None:
         fdtd.load(str(base_fsp))
         fdtd.switchtolayout()
+        if polarization_angle_deg is not None:
+            fdtd.setnamed(
+                audit.SOURCE_NAME,
+                "polarization angle",
+                float(polarization_angle_deg),
+            )
         set_density(
             fdtd,
             rho,
@@ -294,6 +301,23 @@ def run_forward(
         resources = {"reuse_completed_FSP": True}
         resource_used = "REUSED_COMPLETED_GPU_FORWARD"
         wall = 0.0
+    actual_polarization_angle_deg = float(
+        fdtd.getnamed(audit.SOURCE_NAME, "polarization angle")
+    )
+    if (
+        polarization_angle_deg is not None
+        and not np.isclose(
+            actual_polarization_angle_deg,
+            float(polarization_angle_deg),
+            rtol=0.0,
+            atol=1.0e-12,
+        )
+    ):
+        raise RuntimeError(
+            "source polarization readback mismatch: "
+            f"requested {polarization_angle_deg}, got "
+            f"{actual_polarization_angle_deg}"
+        )
     fdtd.runanalysis(PABS_GROUP)
     if completed_project is None:
         fdtd.save(str(project))
@@ -371,6 +395,7 @@ def run_forward(
         "P_six_W": p_six,
         "closure": closure,
         "source_power_W": source_power,
+        "source_polarization_angle_deg": actual_polarization_angle_deg,
         "faces": faces,
         "coordinate_mismatch_m": coordinate_mismatch,
         "resources": resources,
