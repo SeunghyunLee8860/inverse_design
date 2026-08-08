@@ -327,9 +327,11 @@ def accepted_move_provenance(
 def checkpoint_git(tag: str, extra: list[Path] | None = None) -> None:
     tracked = [
         HERE / "STATUS.json", HERE / "run_config.json", HERE / "OPTIMIZATION_CONTRACT.md",
+        HERE / "run_optimization.py",
         HERE / "results/OPTIMIZATION_REPORT.md", HERE / "results/optimization_summary.json",
         HERE / "results/optimization_history.csv", HERE / "plots/iteration_fom_beta_constraints_drc.png",
         HERE / "manifests/RAW_ARTIFACT_MANIFEST.json",
+        HERE / "results/final_binary_validation.csv",
         HERE / "stage_caps.json",
     ]
     if extra:
@@ -630,20 +632,104 @@ def finalize(current_raw: Path, beta: float, global_iteration: int, gpu: str) ->
     summary_path = HERE / "results/optimization_summary.json"
     summary_data = json.loads(summary_path.read_text())
     status = "COMPLETED_FULLY_BINARIZED_EXACT_500NM_CONSTRAINED_PTE_OPTIMIZATION"
-    summary_data.update({"status": status, "final_beta": beta, "final_global_iteration": global_iteration, "final_binary_result": payload, "final_binary_result_artifact": artifact(result), "final_binary_NPZ": artifact(raw), "final_binary_source": artifact(binary_npz), "final_plot": str(final_plot)})
+    prethreshold_fom = float(
+        summary_data.get("current_metrics", {}).get("objective_A_per_W", np.nan)
+    )
+    binary_fom = float(payload["objective_A_per_incident_W"])
+    binary_fom_change = (
+        binary_fom / prethreshold_fom - 1.0
+        if np.isfinite(prethreshold_fom) and prethreshold_fom != 0.0
+        else np.nan
+    )
+    final_metrics = dict(metrics)
+    final_metrics.update({
+        "objective_A": float(payload["objective_A"]),
+        "objective_A_per_W": binary_fom,
+        "P_Q_W": float(payload["base_forward"]["P_Q_W"]),
+        "P_six_W": float(payload["base_forward"]["P_six_W"]),
+        "optical_closure": float(payload["base_forward"]["closure"]),
+        "thermal_residual": float(payload["gates"]["thermal_residual"]),
+        "thermal_energy_balance": float(payload["gates"]["thermal_energy_balance"]),
+        "density_values": [0.0, 1.0],
+        "fresh_binary_solver_validation": True,
+    })
+    summary_data.update({
+        "status": status,
+        "promoted_status": status,
+        "current_beta": beta,
+        "current_global_iteration": global_iteration,
+        "current_stage_iteration": 0,
+        "current_metrics": final_metrics,
+        "current_stage_convergence": {
+            "converged": True,
+            "reason": "fully binary, exact 500 nm audit clean, fresh GPU/CUDA validation passed",
+        },
+        "final_beta": beta,
+        "final_global_iteration": global_iteration,
+        "prethreshold_continuous_FOM_A_per_W": prethreshold_fom,
+        "binary_FOM_relative_change_from_prethreshold": binary_fom_change,
+        "final_projected_metrics": metrics,
+        "final_binary_result": payload,
+        "final_binary_result_artifact": artifact(result),
+        "final_binary_NPZ": artifact(raw),
+        "final_binary_source": artifact(binary_npz),
+        "final_plot": str(final_plot),
+    })
     summary_path.write_text(json.dumps(summary_data, indent=2) + "\n")
     (HERE / "STATUS.json").write_text(json.dumps({"run_id": HERE.name, "status": status, "completed_at_utc": datetime.now(timezone.utc).isoformat(), "final_beta": beta, "final_global_iteration": global_iteration, "final_FOM_A_per_W": payload["objective_A_per_incident_W"], "exact_binary_audit": payload["exact_binary_audit"]}, indent=2) + "\n")
     manifest_path = HERE / "manifests/RAW_ARTIFACT_MANIFEST.json"
     manifest = json.loads(manifest_path.read_text())
-    manifest.update({"status": status, "final_thresholded_binary": {"source": artifact(binary_npz), "evaluation_result": artifact(result), "evaluation_NPZ": artifact(raw)}})
+    manifest.update({
+        "status": status,
+        "final_thresholded_binary": {
+            "source": artifact(binary_npz),
+            "evaluation_result": artifact(result),
+            "evaluation_NPZ": artifact(raw),
+            "FSP": payload["base_forward"]["project"],
+            "native_Q": payload["base_forward"]["native_Q"],
+        },
+    })
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
+    final_csv = HERE / "results/final_binary_validation.csv"
+    final_csv.write_text(
+        "status,beta,global_iteration,prethreshold_FOM_A_per_W,binary_FOM_A_per_W,"
+        "binary_FOM_relative_change,gray_fraction,binarization_metric,solid_bad_cells,"
+        "void_bad_cells,P_Q_W,P_six_W,optical_closure,thermal_residual,"
+        "thermal_energy_balance\n"
+        f"{status},{beta:g},{global_iteration},{prethreshold_fom:.15e},"
+        f"{binary_fom:.15e},{binary_fom_change:.15e},"
+        f"{metrics['gray_fraction_0p01_0p99']:.15e},"
+        f"{metrics['binarization_metric_mean_4rho1mrho']:.15e},"
+        f"{payload['exact_binary_audit']['solid_bad_cell_count']},"
+        f"{payload['exact_binary_audit']['void_bad_cell_count']},"
+        f"{payload['base_forward']['P_Q_W']:.15e},"
+        f"{payload['base_forward']['P_six_W']:.15e},"
+        f"{payload['base_forward']['closure']:.15e},"
+        f"{payload['gates']['thermal_residual']:.15e},"
+        f"{payload['gates']['thermal_energy_balance']:.15e}\n"
+    )
     (HERE / "results/OPTIMIZATION_REPORT.md").write_text(
         "# Run 005 fully binary PTE optimization\n\n"
-        f"Status: `{status}`\n\nFinal beta: `{beta:g}`; global iteration: `{global_iteration}`.\n\n"
-        f"Fresh thresholded-binary GPU Maxwell/CUDA thermal-PTE FOM: `{payload['objective_A_per_incident_W']:.12e} A/W`.\n\n"
-        f"Exact solid/void bad cells: `{payload['exact_binary_audit']['solid_bad_cell_count']}` / `{payload['exact_binary_audit']['void_bad_cell_count']}`. No post-hoc binary repair was used.\n"
+        f"Status: `{status}`\n\n"
+        "## Final design\n\n"
+        f"- Final beta: `{beta:g}`; global iteration: `{global_iteration}`\n"
+        f"- Gray fraction (0.01 < rho < 0.99): `{metrics['gray_fraction_0p01_0p99']:.6e}`\n"
+        f"- Mean `4*rho*(1-rho)`: `{metrics['binarization_metric_mean_4rho1mrho']:.6e}`\n"
+        f"- Exact 500 nm solid/void bad cells: `{payload['exact_binary_audit']['solid_bad_cell_count']}` / `{payload['exact_binary_audit']['void_bad_cell_count']}`\n"
+        "- Final evaluated density contains exactly `0` and `1`\n"
+        "- No post-hoc binary repair was used\n\n"
+        "## Fresh binary physics validation\n\n"
+        f"- Pre-threshold continuous FOM: `{prethreshold_fom:.12e} A/W`\n"
+        f"- Thresholded-binary FOM: `{binary_fom:.12e} A/W`\n"
+        f"- Binary FOM change: `{100.0 * binary_fom_change:.6f}%`\n"
+        f"- P_Q / P_six: `{payload['base_forward']['P_Q_W']:.12e}` / `{payload['base_forward']['P_six_W']:.12e} W`\n"
+        f"- Six-face closure: `{payload['base_forward']['closure']:.6e}`\n"
+        f"- Thermal residual: `{payload['gates']['thermal_residual']:.6e}`\n"
+        f"- Thermal energy balance: `{payload['gates']['thermal_energy_balance']:.6e}`\n"
+        "- Solver path: fresh GPU Maxwell plus CUDA thermal/PTE; no CPU solver fallback\n\n"
+        "The small binary loss above is measured by a fresh solver evaluation, not inferred from a linearized gradient.\n"
     )
-    checkpoint_git("final_binary_validation", [final_plot])
+    checkpoint_git("final_binary_metadata_audit", [final_plot, final_csv])
 
 
 def main() -> int:

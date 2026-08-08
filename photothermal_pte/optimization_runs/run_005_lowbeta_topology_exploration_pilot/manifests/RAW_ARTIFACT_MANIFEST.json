@@ -1556,6 +1556,16 @@
       "path": "/data/seunghyun/tairte4/raw_artifacts/run005_lowbeta_topology_pilot_20260808/final_binary_g046_b2048/solver_evaluation/thresholded_binary_evaluation.npz",
       "size_bytes": 250833333,
       "sha256": "9288c9b530aba088132464e9b81d63aa4d4918ae959fcb8142a4a225363cf6bb"
+    },
+    "FSP": {
+      "path": "/data/seunghyun/tairte4/raw_artifacts/run005_lowbeta_topology_pilot_20260808/final_binary_g046_b2048/solver_evaluation/thresholded_binary_final.fsp",
+      "size_bytes": 784521161,
+      "sha256": "ec52cf9a7040d989c5ee0f1c55e737605150aaa1cee998a178d45081f3e0f667"
+    },
+    "native_Q": {
+      "path": "/data/seunghyun/tairte4/raw_artifacts/run005_lowbeta_topology_pilot_20260808/final_binary_g046_b2048/solver_evaluation/thresholded_binary_final_native_q.npz",
+      "size_bytes": 169161620,
+      "sha256": "6b39b55e4c20228226604424bb849d0955ad7bf4ddd97d4f8723017181130e60"
     }
   }
 }
