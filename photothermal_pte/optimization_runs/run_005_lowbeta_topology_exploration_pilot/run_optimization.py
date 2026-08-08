@@ -162,6 +162,21 @@ def archive_incomplete_evaluation(output: Path) -> Path:
     return archive
 
 
+def solver_diagnostic_text(output: Path) -> str:
+    """Return bounded engine-log text used only for license classification."""
+
+    if not output.exists():
+        return ""
+    chunks: list[str] = []
+    for path in sorted(output.glob("*_p0.log")):
+        try:
+            text = path.read_text(errors="replace")
+        except OSError:
+            continue
+        chunks.append(text[-65536:])
+    return "\n".join(chunks)
+
+
 def verify_inputs() -> None:
     expected = (
         (BASE_FSP, BASE_SHA), (INITIAL_RESULT, INITIAL_RESULT_SHA),
@@ -187,7 +202,7 @@ def evaluate(latent_npz: Path, output: Path, beta: float, gpu: str) -> tuple[Pat
                 if not raw.exists() or sha256(raw) != payload["raw_artifact"]["sha256"]:
                     raise RuntimeError(f"existing solver result SHA mismatch: {result}")
                 return result, raw
-            if not transient_license_failure(payload):
+            if not transient_license_failure(payload, solver_diagnostic_text(output)):
                 raise RuntimeError(f"existing solver result is invalid: {result}")
             if retry_attempt >= LICENSE_RETRY_LIMIT:
                 raise RuntimeError(f"transient license retry limit reached: {result}")
@@ -218,7 +233,7 @@ def evaluate(latent_npz: Path, output: Path, beta: float, gpu: str) -> tuple[Pat
                 f"evaluate_{output.name} failed without a diagnostic result"
             )
         payload = json.loads(result.read_text())
-        if not transient_license_failure(payload):
+        if not transient_license_failure(payload, solver_diagnostic_text(output)):
             raise RuntimeError(
                 f"evaluate_{output.name} failed with non-license error"
             )

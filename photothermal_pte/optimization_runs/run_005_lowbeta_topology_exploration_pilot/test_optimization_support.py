@@ -306,6 +306,17 @@ def test_only_explicit_hpc_checkout_errors_are_retryable() -> None:
             "port; Could not bind socket on port 43903. Address already in use."
         ),
     })
+    assert transient_license_failure(
+        {
+            "passed": False,
+            "error": "could not match resource name provided or the resource may not be active",
+        },
+        "Licensed number of users already reached.\nFlexNet Licensing error:-4,132",
+    )
+    assert not transient_license_failure({
+        "passed": False,
+        "error": "could not match resource name provided or the resource may not be active",
+    })
     assert not transient_license_failure({
         "passed": False,
         "error": "thermal residual exceeded its gate",

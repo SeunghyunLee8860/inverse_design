@@ -492,15 +492,26 @@ def projected_binary_gate(metrics: dict[str, object]) -> bool:
     )
 
 
-def transient_license_failure(payload: dict[str, object]) -> bool:
-    """Recognize explicit external license checkout/startup failures only."""
+def transient_license_failure(
+    payload: dict[str, object], diagnostic_text: str = ""
+) -> bool:
+    """Recognize explicit external license checkout/startup failures only.
+
+    Lumerical sometimes replaces the concrete FlexNet failure in its compact
+    JSON-facing exception with a generic resource-name error.  The concrete
+    checkout failure remains in the engine ``*_p0.log``.  Callers may supply
+    that solver-log text here; generic resource errors alone remain
+    non-retryable.
+    """
 
     if payload.get("passed"):
         return False
-    message = json.dumps(payload, default=str).lower()
+    message = (json.dumps(payload, default=str) + "\n" + diagnostic_text).lower()
     signatures = (
         "unable to checkout the requested hpc license",
         "requires 9 licenses for feature fdtd_solutions_engine",
+        "licensed number of users already reached",
+        "flexnet licensing error:-4,132",
         "failed to start messaging, check licenses",
         "failed to set up ansys license sharing",
         "ansysli exited or could not read server port",
