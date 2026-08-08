@@ -1,5 +1,44 @@
 {
-  "status": "READY_FOR_ONE_POINT_GPU_PILOT",
+  "status": "RUNNING_RUN005_LOWBETA_TOPOLOGY_ONE_POINT_PILOT",
+  "generated_at_utc": "2026-08-08T04:35:32.858485+00:00",
   "raw_artifacts_are_gitignored": true,
-  "records": {}
+  "base_FSP": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_production_geometry_runsetup_v2_20260806/production_candidate_runsetup.fsp",
+    "size_bytes": 47301353,
+    "sha256": "a86644647b8bf03ec1b83c34d0cf18b6b1c5316342d845ccbdccf60df3d8f904"
+  },
+  "material_Jacobian": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_production_complex_yee_jacobian_20260806",
+    "sha256_contract": "directory recorded by Run 002 component-Jacobian manifest"
+  },
+  "constraint_recovery_validation": null,
+  "records": {
+    "run005_b002_s000_g000_stage_baseline": {
+      "evaluation_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_full_latent_adjoint_preparation_20260806/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10603,
+        "sha256": "8fb48e9487c28fea9bebb771c49b5b10144e154b6b1c51d0e90d72155c0c54e4"
+      },
+      "evaluation_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_full_latent_adjoint_preparation_20260806/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7257875,
+        "sha256": "d3617baf54d54e735feba9d85c439ee77bcdf5ddaeec47e12c812bf036b2c87e"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_005_lowbeta_topology_exploration_pilot/checkpoints/run005_b002_s000_g000_stage_baseline.npz",
+        "size_bytes": 458511,
+        "sha256": "69492b078eb48ce83c1b9e89742d3821940d2cabf5c7c7c6787a61de980e051c"
+      }
+    }
+  },
+  "original_beta2_initial_result": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_full_latent_adjoint_preparation_20260806/selected_full_latent_adjoint_preparation_result.json",
+    "size_bytes": 10603,
+    "sha256": "8fb48e9487c28fea9bebb771c49b5b10144e154b6b1c51d0e90d72155c0c54e4"
+  },
+  "original_beta2_initial_NPZ": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_full_latent_adjoint_preparation_20260806/selected_full_latent_adjoint_preparation.npz",
+    "size_bytes": 7257875,
+    "sha256": "d3617baf54d54e735feba9d85c439ee77bcdf5ddaeec47e12c812bf036b2c87e"
+  }
 }
