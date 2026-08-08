@@ -1,6 +1,6 @@
 {
   "run_id": "run_004_joint_disk_constrained_current_max",
-  "status": "RUNNING_JOINT_FOM_DISK_CONSTRAINED_CONTINUATION",
+  "status": "PAUSED_AFTER_ONE_POINT_JOINT_PROGRESS_AUDIT",
   "last_updated_utc": "2026-08-08T04:13:55.410633+00:00",
   "beta": 2.0,
   "global_iteration": 1,
@@ -15,5 +15,8 @@
   "FOM_A_per_W": 1.024991877949617e-07,
   "constraints_feasible": true,
   "exact_500nm_solid_bad_cells": 96,
-  "exact_500nm_void_bad_cells": 1
+  "exact_500nm_void_bad_cells": 1,
+  "optimization_process_running": false,
+  "second_candidate_status": "interrupted_before_completion_and_not_accepted",
+  "pause_reason": "the next fixed-void-cap-feasible proposal required move=0.0003125, indicating imminent micro-step constraint repair"
 }

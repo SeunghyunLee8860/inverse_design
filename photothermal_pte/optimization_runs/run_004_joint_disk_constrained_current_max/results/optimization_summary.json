@@ -1,7 +1,11 @@
 {
-  "status": "RUNNING_JOINT_FOM_DISK_CONSTRAINED_CONTINUATION",
+  "status": "PAUSED_AFTER_ONE_POINT_JOINT_PROGRESS_AUDIT",
   "generated_at_utc": "2026-08-08T04:13:55.410633+00:00",
   "method": "joint FOM plus 500 nm disk constraints from the first iteration",
+  "optimization_process_running": false,
+  "accepted_pilot_updates": 1,
+  "interrupted_unaccepted_global_iteration": 2,
+  "pause_reason": "next feasible proposal required move=0.0003125 because the beta=2 void cap was nearly saturated",
   "history": [
     {
       "evaluation_index": 0,
