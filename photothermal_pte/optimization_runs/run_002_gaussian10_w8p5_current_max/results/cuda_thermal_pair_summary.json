@@ -1,0 +1,31 @@
+{
+  "status": "VALIDATED_SMALL_LITERAL_FVM_CUDA_FORWARD_ADJOINT_PAIR",
+  "scope": "8x8x8 anisotropic control only; not production thermal scaling",
+  "cuda_device_index": 4,
+  "shape_xyz": [
+    8,
+    8,
+    8
+  ],
+  "active_unknowns": 512,
+  "kappa_W_mK": [
+    14.4,
+    3.8,
+    1.0
+  ],
+  "forward": {
+    "iterations": 75,
+    "explicit_relative_residual": 1.5523719523785765e-14,
+    "solve_seconds": 0.09500177577137947,
+    "reliable_restarts": 0
+  },
+  "implicit_adjoint": {
+    "iterations": 100,
+    "explicit_relative_residual": 1.6866244358994132e-13,
+    "solve_seconds": 0.020775292068719864,
+    "reliable_restarts": 0
+  },
+  "forward_adjoint_reciprocity_relative_error": 9.412623045515304e-16,
+  "autograd_through_iterations": false,
+  "CPU_linear_solve_fallback": false
+}

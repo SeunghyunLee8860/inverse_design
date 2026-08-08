@@ -1,0 +1,156 @@
+{
+  "status": "VALIDATED_PRODUCTION_MATERIAL_INTERSECTION_Q_ATTRIBUTION",
+  "scope": "offline literal native-dual-cell/material-volume intersection; no relocation or solve",
+  "input": {
+    "forward_result": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_rho05_forward_v2_immutable_20260806/production_candidate_forward_result.json",
+    "native_Q": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_rho05_forward_v2_immutable_20260806/production_candidate_native_q.npz",
+    "native_Q_size_bytes": 71887910,
+    "native_Q_sha256": "bcce54b1f34e7621905d773b7a3af639d9fcd909ad3dede3801d9e1ca051225f"
+  },
+  "geometry_m": {
+    "physical_flake_xy": [
+      -1.6e-05,
+      1.6e-05
+    ],
+    "design_xy": [
+      -1e-05,
+      1e-05
+    ],
+    "z_interfaces": [
+      -3.85e-07,
+      -1e-07,
+      0.0,
+      1e-06
+    ]
+  },
+  "component_records": {
+    "x": {
+      "native_shape": [
+        311,
+        311,
+        52
+      ],
+      "dual_cell_bounds_m": {
+        "x": [
+          -1.9970149253731323e-05,
+          2.0029850746268664e-05
+        ],
+        "y": [
+          -2e-05,
+          2.000000000000002e-05
+        ],
+        "z": [
+          -1.328888888888887e-06,
+          1.29105374305678e-06
+        ]
+      },
+      "full_native_power_W": 7.244527560955641e-14,
+      "material_intersection_power_W": {
+        "Si": 4.76457564063641e-16,
+        "bottom_SiO2": 6.400152857320224e-15,
+        "physical_TaIrTe4": 2.8181038494185728e-14,
+        "design_effective_SiO2": 3.6514972947625323e-14,
+        "artificial_extended_TaIrTe4_outside_physical_flake": 7.297335909679318e-18,
+        "air_or_nonmaterial_intersection": 8.653564104518171e-16
+      },
+      "partition_identity_error_W": 0.0,
+      "negative_Q_count": 0,
+      "all_finite": true
+    },
+    "y": {
+      "native_shape": [
+        311,
+        311,
+        52
+      ],
+      "dual_cell_bounds_m": {
+        "x": [
+          -2e-05,
+          2.000000000000002e-05
+        ],
+        "y": [
+          -1.9970149253731323e-05,
+          2.0029850746268664e-05
+        ],
+        "z": [
+          -1.328888888888887e-06,
+          1.29105374305678e-06
+        ]
+      },
+      "full_native_power_W": 9.958403884717358e-18,
+      "material_intersection_power_W": {
+        "Si": 8.539023373200355e-21,
+        "bottom_SiO2": 2.523906146449416e-19,
+        "physical_TaIrTe4": 5.410938182427096e-18,
+        "design_effective_SiO2": 3.9282350540613746e-18,
+        "artificial_extended_TaIrTe4_outside_physical_flake": 1.5616488403912493e-19,
+        "air_or_nonmaterial_intersection": 2.0213612617162037e-19
+      },
+      "partition_identity_error_W": 0.0,
+      "negative_Q_count": 0,
+      "all_finite": true
+    },
+    "z": {
+      "native_shape": [
+        311,
+        311,
+        52
+      ],
+      "dual_cell_bounds_m": {
+        "x": [
+          -2e-05,
+          2.000000000000002e-05
+        ],
+        "y": [
+          -2e-05,
+          2.000000000000002e-05
+        ],
+        "z": [
+          -1.2411111111111092e-06,
+          1.3630240012491914e-06
+        ]
+      },
+      "full_native_power_W": 5.143141908316731e-16,
+      "material_intersection_power_W": {
+        "Si": 2.992201349796385e-18,
+        "bottom_SiO2": 5.796604483195035e-17,
+        "physical_TaIrTe4": 2.9793215958242715e-17,
+        "design_effective_SiO2": 4.1623839949628216e-16,
+        "artificial_extended_TaIrTe4_outside_physical_flake": 7.683572633052294e-20,
+        "air_or_nonmaterial_intersection": 7.24749346907098e-18
+      },
+      "partition_identity_error_W": 0.0,
+      "negative_Q_count": 0,
+      "all_finite": true
+    }
+  },
+  "power_W": {
+    "forward_P_Q": 7.296954820427281e-14,
+    "native_reintegrated": 7.29695482042728e-14,
+    "physical_thermal_source": 7.20892118277057e-14,
+    "Si": 4.794583044368106e-16,
+    "bottom_SiO2": 6.458371292766819e-15,
+    "physical_TaIrTe4": 2.8216242648326398e-14,
+    "design_effective_SiO2": 3.6935139582175665e-14,
+    "artificial_extended_TaIrTe4_outside_physical_flake": 7.530336520048967e-18,
+    "air_or_nonmaterial_intersection": 8.728060400470597e-16
+  },
+  "relative": {
+    "native_reintegration_error": 1.729731757171152e-16,
+    "partition_identity_error": 0.0,
+    "physical_thermal_source_fraction_of_full_P_Q": 0.9879355649276781,
+    "artificial_background_fraction_of_full_P_Q": 0.00010319834376620163,
+    "air_or_nonmaterial_fraction_of_full_P_Q": 0.011961236728555646
+  },
+  "method": {
+    "cut_cell_rule": "Q_cell times literal material-intersection volume",
+    "full_cell_power_forced_into_material": false,
+    "nearest_material_relocation": false,
+    "clipping_smoothing_gain_or_rescaling": false,
+    "Maxwell_solves": 0,
+    "thermal_solves": 0,
+    "adjoint_solves": 0,
+    "optimization_iterations": 0
+  },
+  "passed": true
+}

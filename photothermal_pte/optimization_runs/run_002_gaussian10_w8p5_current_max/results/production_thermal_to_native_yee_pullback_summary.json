@@ -1,0 +1,146 @@
+{
+  "status": "VALIDATED_PRODUCTION_THERMAL_PTE_TO_NATIVE_YEE_PULLBACK",
+  "passed": true,
+  "scenario": "grown_grown",
+  "scope": "uniform rho=0.5 fixed production thermal/PTE adjoint through exact material-intersection Q deposition transpose",
+  "objective_A": 3.019347781363923e-26,
+  "reciprocal_A": 3.018949369943564e-26,
+  "native_pullback_actual_Q_objective_A": 3.0189493696189164e-26,
+  "raw_near_null_objective_identity_relative_error": 0.0001319529162774291,
+  "Cauchy_normalized_objective_identity_error": 5.103599199625273e-14,
+  "raw_near_null_reciprocity_relative_error": 0.0001319528087549819,
+  "Cauchy_normalized_reciprocity_error": 1.0083090977709506e-15,
+  "component_records": {
+    "x": {
+      "shape": [
+        311,
+        311,
+        52
+      ],
+      "transpose_dot_error": 4.096795249702762e-15,
+      "actual_Q_objective_contribution_A": 3.039095272752336e-26,
+      "sensitivity_all_finite": true,
+      "weight_all_finite": true,
+      "material_forward_mapping_audit": {
+        "Si": {
+          "material_attributed_source_power_W": 3.0098725647836272e-18,
+          "target_integrated_power_W": 3.0098725647836276e-18,
+          "relative_power_error": 1.2797418514798062e-16
+        },
+        "bottom_SiO2": {
+          "material_attributed_source_power_W": -1.0540691702082298e-18,
+          "target_integrated_power_W": -1.0540691702082298e-18,
+          "relative_power_error": 0.0
+        },
+        "physical_TaIrTe4": {
+          "material_attributed_source_power_W": 2.0196703815130334e-19,
+          "target_integrated_power_W": 2.019670381513033e-19,
+          "relative_power_error": 2.383965673329858e-16
+        },
+        "design_effective_SiO2": {
+          "material_attributed_source_power_W": -1.5236983795807648e-19,
+          "target_integrated_power_W": -1.523698379580762e-19,
+          "relative_power_error": 1.8959755784315486e-15
+        }
+      }
+    },
+    "y": {
+      "shape": [
+        311,
+        311,
+        52
+      ],
+      "transpose_dot_error": 0.0,
+      "actual_Q_objective_contribution_A": -1.9971743244571344e-28,
+      "sensitivity_all_finite": true,
+      "weight_all_finite": true,
+      "material_forward_mapping_audit": {
+        "Si": {
+          "material_attributed_source_power_W": -2.794280115165806e-19,
+          "target_integrated_power_W": -2.7942801151658097e-19,
+          "relative_power_error": 1.3784802274720807e-15
+        },
+        "bottom_SiO2": {
+          "material_attributed_source_power_W": -8.303569078072887e-20,
+          "target_integrated_power_W": -8.303569078072878e-20,
+          "relative_power_error": 1.1597000797362008e-15
+        },
+        "physical_TaIrTe4": {
+          "material_attributed_source_power_W": -5.330842195759001e-20,
+          "target_integrated_power_W": -5.3308421957590044e-20,
+          "relative_power_error": 6.774011522229874e-16
+        },
+        "design_effective_SiO2": {
+          "material_attributed_source_power_W": 1.9964448081020253e-19,
+          "target_integrated_power_W": 1.9964448081020248e-19,
+          "relative_power_error": 2.4116994576701744e-16
+        }
+      }
+    },
+    "z": {
+      "shape": [
+        311,
+        311,
+        52
+      ],
+      "transpose_dot_error": 1.7683882694509317e-16,
+      "actual_Q_objective_contribution_A": -1.7415988884833797e-30,
+      "sensitivity_all_finite": true,
+      "weight_all_finite": true,
+      "material_forward_mapping_audit": {
+        "Si": {
+          "material_attributed_source_power_W": -1.1447092419281205e-18,
+          "target_integrated_power_W": -1.14470924192812e-18,
+          "relative_power_error": 5.047386376849495e-16
+        },
+        "bottom_SiO2": {
+          "material_attributed_source_power_W": -2.0070993304896826e-19,
+          "target_integrated_power_W": -2.0070993304896836e-19,
+          "relative_power_error": 4.797794297299069e-16
+        },
+        "physical_TaIrTe4": {
+          "material_attributed_source_power_W": -9.212867215378594e-20,
+          "target_integrated_power_W": -9.21286721537859e-20,
+          "relative_power_error": 5.226195871933262e-16
+        },
+        "design_effective_SiO2": {
+          "material_attributed_source_power_W": 3.5939404389900017e-19,
+          "target_integrated_power_W": 3.593940438990005e-19,
+          "relative_power_error": 9.377944514920324e-16
+        }
+      }
+    }
+  },
+  "worst_transpose_dot_error": 4.096795249702762e-15,
+  "forward": {
+    "iterations": 1625,
+    "residual": 8.217297379581453e-11,
+    "seconds": 6.263164516538382
+  },
+  "adjoint": {
+    "iterations": 1400,
+    "residual": 9.217972178579664e-11,
+    "seconds": 5.137340564280748
+  },
+  "energy_balance_error": 9.699735767109149e-13,
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_thermal_to_native_yee_pullback_grown_grown_20260806/thermal_to_native_yee_pullback_grown_grown.npz",
+    "size_bytes": 200861979,
+    "sha256": "8ba9ee2cb62e84937a7a97e64768cc7e4567525aadffe3c2313038758d71c79c"
+  },
+  "inputs": {
+    "mapped_Q": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_3d_thermal_q_deposition_20260806/production_thermal_grid_material_q.npz",
+      "sha256": "93bd834d02e576ec6efaca67cbb8bbed6ed827f02c566593a1349647d91342c6"
+    },
+    "native_Q": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_rho05_forward_v2_immutable_20260806/production_candidate_native_q.npz",
+      "sha256": "bcce54b1f34e7621905d773b7a3af639d9fcd909ad3dede3801d9e1ca051225f"
+    }
+  },
+  "full_3D_Kronecker_operator_materialized": false,
+  "empirical_normalization_or_gradient_rescaling": false,
+  "CPU_linear_solve_fallback": false,
+  "Maxwell_solves": 0,
+  "optimization_iterations": 0
+}

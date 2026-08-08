@@ -1,0 +1,330 @@
+{
+  "status": "VALIDATED_RUN002_PRODUCTION_CANDIDATE_RUNSETUP",
+  "passed": true,
+  "scope": "runsetup/geometry/mesh/material audit only; no field solve",
+  "source_contract": {
+    "source": {
+      "name": "run002_gaussian10_w8p5_source",
+      "model": "Run-002 calibrated scalar Gaussian at 10 um; single-frequency FOM contract",
+      "wavelength_m": 1e-05,
+      "numerical_pulse_band_m": [
+        8.5e-06,
+        1.2142857142857142e-05
+      ],
+      "target_realized_waist_radius_m": 8.5e-06,
+      "Lumerical_source_object_waist_radius_m": 8.36043075475035e-06,
+      "source_object_waist_calibration": {
+        "method": "one_step_from_run002_homogeneous_air_source_only_measurement",
+        "input_source_object_waist_m": 8.36043075475035e-06,
+        "measured_target_plane_effective_waist_m": 8.506397119765702e-06,
+        "source_only_field_NPZ_sha256": "d95e5cd2758c2d0cfba52a00da955619f65af2ca31befc4479d2730ae96006f6",
+        "legacy_11um_12um_calibration_reused": false,
+        "Q_clipping_smoothing_gain_or_rescaling": false
+      },
+      "source_z_m": 5e-06,
+      "focus_z_m": 0.0,
+      "distance_from_waist_requested_m": -5e-06,
+      "source_span_m": 4e-05,
+      "polarization": "x"
+    },
+    "domain": {
+      "x_bounds_m": [
+        -2.4e-05,
+        2.4e-05
+      ],
+      "y_bounds_m": [
+        -2.4e-05,
+        2.4e-05
+      ],
+      "z_bounds_m": [
+        -8e-06,
+        8e-06
+      ],
+      "six_boundaries": "PML",
+      "PML_layers": 24,
+      "periodic_or_Bloch": false,
+      "materials": []
+    },
+    "mesh_contract": {
+      "global_mesh": "auto non-uniform",
+      "mesh_refinement": "conformal variant 1",
+      "mesh_accuracy": 3,
+      "uniform_global_fine_mesh": false,
+      "source_only_local_overrides": [],
+      "material_successor_local_fine_regions": [
+        "TaIrTe4",
+        "illuminated straight edge",
+        "Q extraction region"
+      ],
+      "TaIrTe4_z_resolution": "separate local z override"
+    },
+    "Q_processing": {
+      "clipping": false,
+      "smoothing": false,
+      "gain": false,
+      "rescaling": false
+    },
+    "monitors": {
+      "source_plane": 4.5e-06,
+      "flake_target_plane": 0.0,
+      "downstream_plane": -5e-06
+    }
+  },
+  "materials": {
+    "TaIrTe4": {
+      "name": "run002_TaIrTe4_paper_abc",
+      "axis_mapping": "x=b, y=a, z=c=b closure",
+      "epsilon_at_10um": {
+        "x": [
+          13.778527727027518,
+          23.688463190816908
+        ],
+        "y": [
+          -39.87819057091918,
+          187.50005695474056
+        ],
+        "z": [
+          13.778527727027518,
+          23.688463190816908
+        ]
+      },
+      "out_of_plane_limit": "epsilon_c=epsilon_b is the explicit paper-consistent 3D closure; not an independently measured c-axis property"
+    },
+    "SiO2": {
+      "material": "run002_Kitamura_SiO2_10um",
+      "n_at_10um": [
+        2.7352020978104523,
+        0.36376996242453913
+      ],
+      "epsilon_at_10um": [
+        7.349001930304349,
+        1.9899687286880576
+      ],
+      "provenance": "Kitamura-2007 closure already frozen in Run 002"
+    },
+    "Si": {
+      "material": "run002_Palik_Si_10um",
+      "n_at_10um": [
+        3.4214999999999995,
+        6.759999999999991e-05
+      ],
+      "provenance": "installed Lumerical v261 Palik database readback at 10 um"
+    }
+  },
+  "design": {
+    "name": "run002_coarse_design_import",
+    "rho": 0.5,
+    "node_shape": [
+      201,
+      201,
+      21
+    ],
+    "node_spacing_m": {
+      "x": 1.0000000000000074e-07,
+      "y": 1.0000000000000074e-07,
+      "z": 5e-08
+    },
+    "bounds_m": {
+      "x": [
+        -1e-05,
+        1e-05
+      ],
+      "y": [
+        -1e-05,
+        1e-05
+      ],
+      "z": [
+        0.0,
+        1e-06
+      ]
+    },
+    "epsilon": [
+      4.174500965152175,
+      0.9949843643440288
+    ],
+    "index": [
+      2.0574183304868465,
+      0.24180409730008234
+    ]
+  },
+  "geometry_readback_m": {
+    "FDTD": {
+      "x": [
+        -2.4e-05,
+        2.4e-05
+      ],
+      "y": [
+        -2.4e-05,
+        2.4e-05
+      ],
+      "z": [
+        -8e-06,
+        8e-06
+      ]
+    },
+    "run002_gaussian10_w8p5_source": {
+      "x": [
+        -2e-05,
+        2e-05
+      ],
+      "y": [
+        -2e-05,
+        2e-05
+      ],
+      "z": [
+        5e-06,
+        5e-06
+      ]
+    },
+    "run002_Si_substrate": {
+      "x": [
+        -3e-05,
+        3e-05
+      ],
+      "y": [
+        -3e-05,
+        3e-05
+      ],
+      "z": [
+        -8e-06,
+        -3.850000000000001e-07
+      ]
+    },
+    "run002_bottom_SiO2": {
+      "x": [
+        -3e-05,
+        3e-05
+      ],
+      "y": [
+        -3e-05,
+        3e-05
+      ],
+      "z": [
+        -3.85e-07,
+        -1e-07
+      ]
+    },
+    "run002_extended_TaIrTe4": {
+      "x": [
+        -3e-05,
+        3e-05
+      ],
+      "y": [
+        -3e-05,
+        3e-05
+      ],
+      "z": [
+        -1e-07,
+        0.0
+      ]
+    },
+    "run002_coarse_design_import": {
+      "x": [
+        -1e-05,
+        1e-05
+      ],
+      "y": [
+        -1e-05,
+        1e-05
+      ],
+      "z": [
+        0.0,
+        1e-06
+      ]
+    },
+    "finite_device_pabs::field": {
+      "x": [
+        -2e-05,
+        2e-05
+      ],
+      "y": [
+        -2e-05,
+        2e-05
+      ],
+      "z": [
+        -1.25e-06,
+        1.25e-06
+      ]
+    },
+    "finite_device_pabs::index": {
+      "x": [
+        -2e-05,
+        2e-05
+      ],
+      "y": [
+        -2e-05,
+        2e-05
+      ],
+      "z": [
+        -1.25e-06,
+        1.25e-06
+      ]
+    }
+  },
+  "Q_control_volume_m": {
+    "x": [
+      -2e-05,
+      2e-05
+    ],
+    "y": [
+      -2e-05,
+      2e-05
+    ],
+    "z": [
+      -1.25e-06,
+      1.25e-06
+    ]
+  },
+  "pabs_field_index_bounds_match_Q_control_volume": true,
+  "layer_interfaces_exactly_contiguous": true,
+  "flux_monitor_signs": {
+    "run002_production_flux_x_min": -1.0,
+    "run002_production_flux_x_max": 1.0,
+    "run002_production_flux_y_min": -1.0,
+    "run002_production_flux_y_max": 1.0,
+    "run002_production_flux_z_min": -1.0,
+    "run002_production_flux_z_max": 1.0
+  },
+  "mesh_readback": {
+    "available": true,
+    "shape_xyz": [
+      445,
+      445,
+      104
+    ],
+    "grid_points": 20594600,
+    "bounds_m": {
+      "x": [
+        -2.4e-05,
+        2.4e-05
+      ],
+      "y": [
+        -2.4e-05,
+        2.4e-05
+      ],
+      "z": [
+        -8e-06,
+        8e-06
+      ]
+    },
+    "minimum_step_m": {
+      "x": 5.970149253727337e-08,
+      "y": 5.970149253727337e-08,
+      "z": 9.999999999998395e-09
+    },
+    "maximum_step_m": {
+      "x": 1.9800000000000048e-07,
+      "y": 1.9800000000000048e-07,
+      "z": 5.833333333333347e-07
+    }
+  },
+  "project": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_runsetup_v2_matched_volume_20260806/production_candidate_runsetup.fsp",
+    "size_bytes": 14123038,
+    "sha256": "9678c490f67e4abc5a99aa37acccdd2e310e86fd246cee62daed918a8f7d884e"
+  },
+  "Maxwell_solve": false,
+  "thermal_solve": false,
+  "adjoint_solve": false,
+  "optimization_run": false
+}

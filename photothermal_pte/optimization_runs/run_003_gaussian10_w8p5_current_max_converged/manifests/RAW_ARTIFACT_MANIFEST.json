@@ -1,0 +1,3151 @@
+{
+  "status": "RUNNING_CONVERGENCE_BASED_CONSTRAINED_BETA_CONTINUATION",
+  "generated_at_utc": "2026-08-08T03:18:03.719985+00:00",
+  "raw_artifacts_are_gitignored": true,
+  "base_FSP": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_production_geometry_runsetup_v2_20260806/production_candidate_runsetup.fsp",
+    "size_bytes": 47301353,
+    "sha256": "a86644647b8bf03ec1b83c34d0cf18b6b1c5316342d845ccbdccf60df3d8f904"
+  },
+  "material_Jacobian": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_production_complex_yee_jacobian_20260806",
+    "sha256_contract": "directory recorded by Run 002 component-Jacobian manifest"
+  },
+  "constraint_recovery_validation": {
+    "status": "VALIDATED_OFFLINE_EXACT_DISK_CONSTRAINT_RECOVERY",
+    "passed": true,
+    "preserved_checkpoint_sha256": "f36b5d1121b090e18fb44d48efa87e60863f02278e84d81bc5c609c6e11998bf",
+    "report": "results/disk_constraint_recovery/DISK_CONSTRAINT_RECOVERY_REPORT.md",
+    "json": "results/disk_constraint_recovery/disk_constraint_recovery_validation.json",
+    "fields_plot": "results/disk_constraint_recovery/disk_constraint_recovery_fields.png",
+    "descent_plot": "results/disk_constraint_recovery/disk_constraint_recovery_descent.png",
+    "offline_diagnostic_density_was_not_accepted": true
+  },
+  "records": {
+    "run003_b002_s000_g000_stage_baseline": {
+      "evaluation_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_full_latent_adjoint_preparation_20260806/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10603,
+        "sha256": "8fb48e9487c28fea9bebb771c49b5b10144e154b6b1c51d0e90d72155c0c54e4"
+      },
+      "evaluation_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_full_latent_adjoint_preparation_20260806/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7257875,
+        "sha256": "d3617baf54d54e735feba9d85c439ee77bcdf5ddaeec47e12c812bf036b2c87e"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s000_g000_stage_baseline.npz",
+        "size_bytes": 458511,
+        "sha256": "69492b078eb48ce83c1b9e89742d3821940d2cabf5c7c7c6787a61de980e051c"
+      }
+    },
+    "run003_b002_s001_g001_accepted_mma": {
+      "evaluation_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s001_g001_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10739,
+        "sha256": "f76d70b662464729608f634e2af0eb0582c3fa0c0f848eab00f2634271bcd6d2"
+      },
+      "evaluation_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s001_g001_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7268128,
+        "sha256": "6769be699fb0fcb67909ce4f98cd253d4ce047dee7cb7e3b76bc6923a135658b"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s001_g001_accepted_mma.npz",
+        "size_bytes": 462037,
+        "sha256": "0696eba50688168edd53838d044b5dc4c47338615a83c721d994552eeb2e4666"
+      },
+      "proposal_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s001_g001_retry0_proposal/proposal_result.json",
+        "size_bytes": 3207,
+        "sha256": "07014495953f14c1704b38c6503d4bdd3a0ee34970b16266ce1d69a9ec760f9a"
+      },
+      "proposal_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s001_g001_retry0_proposal/proposal.npz",
+        "size_bytes": 5112044,
+        "sha256": "7a2555ef3ce0ef7b51a9c4054f88ecfc38f62d2b265ebb4a1cbb6f378814e7d3"
+      },
+      "mma_state": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s001_g001_accepted_mma_state.npz",
+        "size_bytes": 4033333,
+        "sha256": "a5771bc127a4f01dc4db2514a380bbd5660bebe959dd6a2a550493f852457a13"
+      }
+    },
+    "run003_b002_s002_g002_accepted_mma": {
+      "evaluation_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s002_g002_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10629,
+        "sha256": "05623d2dbc0fa6cb4f66818be6644cf8fc53b83a35aa5b5f9c39d1d62e22ae46"
+      },
+      "evaluation_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s002_g002_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7273119,
+        "sha256": "bcdbb788671cd5f1eb9de5b84186cb1bc5405aad2a9b45af801548e41b395e5e"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s002_g002_accepted_mma.npz",
+        "size_bytes": 464237,
+        "sha256": "ad9ce05d5de2f79fa16bd27573a2ffcdae57d4409da48f0a231912b6d974313a"
+      },
+      "proposal_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s002_g002_retry0_proposal/proposal_result.json",
+        "size_bytes": 3250,
+        "sha256": "54b98efd67c705abf82923f527bd880d27531a567b20f7f218a0ec5eaf3d15b9"
+      },
+      "proposal_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s002_g002_retry0_proposal/proposal.npz",
+        "size_bytes": 5119864,
+        "sha256": "4022b14bc62cd3fb296086ef99533fe0f785db8b15d5d48c484aadaa9c7710f3"
+      },
+      "mma_state": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s002_g002_accepted_mma_state.npz",
+        "size_bytes": 4039725,
+        "sha256": "b76b11492f67fd353dd363a6bc6204e5496981f8a3f60899628635373af3299e"
+      }
+    },
+    "run003_b002_s003_g003_accepted_mma": {
+      "evaluation_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s003_g003_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10654,
+        "sha256": "cefbab32d763457efbbcd4de05dcec5aa8dd5d1d086676da27762397513f4654"
+      },
+      "evaluation_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s003_g003_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7281039,
+        "sha256": "580c9f3113c6e03ae94a2437171242f6f440c4770ad9721ab4182dfba4236e78"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s003_g003_accepted_mma.npz",
+        "size_bytes": 466291,
+        "sha256": "3fc559eeaab7d862b17ff7772a337703b94670f99017821e328155fc0b34fbdc"
+      },
+      "proposal_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s003_g003_retry0_proposal/proposal_result.json",
+        "size_bytes": 3261,
+        "sha256": "852cf7879c4b70e46ec71037627c96aad9ddc04e86d86d4fa0762afc1fad72b5"
+      },
+      "proposal_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s003_g003_retry0_proposal/proposal.npz",
+        "size_bytes": 5126556,
+        "sha256": "8ea810e948291dc98a739763b2b39aaa96b8038c655bba508ab9cdb51546b93d"
+      },
+      "mma_state": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s003_g003_accepted_mma_state.npz",
+        "size_bytes": 4037478,
+        "sha256": "81d6ebebd5d85f3381436381fd8b444f28d26235d99f2e0e5eed5c1bab06f75c"
+      }
+    },
+    "run003_b002_s004_g004_accepted_mma": {
+      "evaluation_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s004_g004_retry1_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10718,
+        "sha256": "0fd65002db4c9568d10568f73083c32effc0ad3a56488e880d42b51a424cd6aa"
+      },
+      "evaluation_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s004_g004_retry1_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7284442,
+        "sha256": "ff931f0fa0268eee84a725fed6475c1974f052d4c985999e476cfbc2d26f9a9b"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s004_g004_accepted_mma.npz",
+        "size_bytes": 467907,
+        "sha256": "44573fce1840cd1698bf3894cfef6660113aeceda9ca0834942341a604e3f8ca"
+      },
+      "proposal_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s004_g004_retry1_proposal/proposal_result.json",
+        "size_bytes": 3274,
+        "sha256": "8b005e8746fda2e75ae46c8682eba0bc4e8323adc2a2bbbea06bf8c016578169"
+      },
+      "proposal_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s004_g004_retry1_proposal/proposal.npz",
+        "size_bytes": 5133116,
+        "sha256": "adfea9eb22d941e2fbe7eddcf430ce45e58369406ca6d4f71f3740bbec39e02d"
+      },
+      "mma_state": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s004_g004_accepted_mma_state.npz",
+        "size_bytes": 4045891,
+        "sha256": "a90ca3d161d3f9a5313dd424e802cd1997ae3d05d536ee0ed903895a33c5d3d6"
+      }
+    },
+    "run003_b002_s005_g005_accepted_mma": {
+      "evaluation_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s005_g005_retry1_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10704,
+        "sha256": "9b098d0b2e32693fc691399b0f080957b1962d71729d634d4cd0ca9d663a932e"
+      },
+      "evaluation_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s005_g005_retry1_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7287780,
+        "sha256": "221fcd888991e44de2ba136ea2c6e75ed5d0a50ea1f0aa77cf50925aa3aa011f"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s005_g005_accepted_mma.npz",
+        "size_bytes": 468725,
+        "sha256": "2b174e8fd720e1bb67e6cdc127a003c24a30e592a1148f0131dd687c056b8c80"
+      },
+      "proposal_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s005_g005_retry1_proposal/proposal_result.json",
+        "size_bytes": 3268,
+        "sha256": "cc6b953d6cab53876cd81fd977f12989ca29c0b149fda90137a94cdfac9025be"
+      },
+      "proposal_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s005_g005_retry1_proposal/proposal.npz",
+        "size_bytes": 5136750,
+        "sha256": "3b3ac3e135cd6ed2e1a492d6752085b82763a8fd4a724118869d8e554feb2367"
+      },
+      "mma_state": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s005_g005_accepted_mma_state.npz",
+        "size_bytes": 4053409,
+        "sha256": "fc749757d25136facbf25e61dfacab4b0684b7c4dd62021b781ff66d13281b01"
+      }
+    },
+    "run003_b002_s006_g006_accepted_mma": {
+      "evaluation_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s006_g006_retry1_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10645,
+        "sha256": "78f03470664fe950557ee05216972fb3e9ec21228c886c95cba8713eddcddddc"
+      },
+      "evaluation_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s006_g006_retry1_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7291089,
+        "sha256": "c490c37357860f813feb7ae137468008a626bd32711ea14285aa13acf3030b81"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s006_g006_accepted_mma.npz",
+        "size_bytes": 469510,
+        "sha256": "639927e58fbd38a8c4f6191276054bd7e8983d380d69c6853ed3aee57bd5910d"
+      },
+      "proposal_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s006_g006_retry1_proposal/proposal_result.json",
+        "size_bytes": 3269,
+        "sha256": "ebd467449d53bc1d62afae4884ad49ae4173eccd801f773065cf8fc674e7fc5b"
+      },
+      "proposal_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s006_g006_retry1_proposal/proposal.npz",
+        "size_bytes": 5140561,
+        "sha256": "83eb2072db058d46d990237c5bc59bc98beb2c632577d8c882e550b1c1c20610"
+      },
+      "mma_state": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s006_g006_accepted_mma_state.npz",
+        "size_bytes": 4058734,
+        "sha256": "a55a49f47b0cded79d7e0ea9a5ad01d641399d7faebebaba103a213b8868952a"
+      }
+    },
+    "run003_b002_s007_g007_accepted_mma": {
+      "evaluation_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s007_g007_retry1_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10704,
+        "sha256": "deff664f60cdf433ce04973e4dcdc86fddaebff7aadf27db74b41106eea7cade"
+      },
+      "evaluation_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s007_g007_retry1_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7293296,
+        "sha256": "802f0af191fead65adcb1a432df43f146c035b5270d1718a45d5b4d51b5b9a49"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s007_g007_accepted_mma.npz",
+        "size_bytes": 470544,
+        "sha256": "81eaeada3e52b750d079c8cf5071788139438d7a2eedf8fc162d5943a362fa9e"
+      },
+      "proposal_result": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s007_g007_retry1_proposal/proposal_result.json",
+        "size_bytes": 3264,
+        "sha256": "cc82b24e96fed4bc2eb20bb04c48a3c8b2b42948ceca73dfff88ea6bd358cd55"
+      },
+      "proposal_NPZ": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s007_g007_retry1_proposal/proposal.npz",
+        "size_bytes": 5144220,
+        "sha256": "5a98ce11101539c0cb4e0f3ba999866c3c407a021cb4b2c2e23982a086be5a20"
+      },
+      "mma_state": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s007_g007_accepted_mma_state.npz",
+        "size_bytes": 4062324,
+        "sha256": "30291f83c75e2d9bd875af3d8363d523223162e013ccb227a4726bffc21d72b6"
+      }
+    },
+    "run003_b002_s008_g008_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s008_g008_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10682,
+        "sha256": "a5f69b7f64123391fb927f92bcc3f32a69c5c6198c47876a4fa6a58614e63af3"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s008_g008_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7299899,
+        "sha256": "63057224fcb39926f268c851f068f88cd52a8141d306273f8ba36fd762c90425"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s008_g008_accepted_mma.npz",
+        "size_bytes": 471942,
+        "sha256": "177e216e6043e8fe497728577597ff43bea83e4ba4982c19f828e89b7a022ba9"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s008_g008_retry0_proposal/proposal_result.json",
+        "size_bytes": 3274,
+        "sha256": "05ee247b7595944e7754a65a3c842becd10039ef3e4391d2640da92435ee5a6f"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s008_g008_retry0_proposal/proposal.npz",
+        "size_bytes": 5149860,
+        "sha256": "ecbc86fe95570dcdbfaba134ad05f112d8c84f4fc3e55a411c529dfef112ebb9"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s008_g008_accepted_mma_state.npz",
+        "size_bytes": 4059082,
+        "sha256": "e5a939a0497cfb9c9df1d429bae4214abada1dd2177af585c227c84903c76817"
+      }
+    },
+    "run003_b002_s009_g009_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s009_g009_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10688,
+        "sha256": "0a5265d2a050aa6427c1853026f18aa0191311c727247537319148b1541d910c"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s009_g009_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7305140,
+        "sha256": "993a4a21ca8196e248a4667f7750440399a94d42d4db65ff32763dc05f412fb8"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s009_g009_accepted_mma.npz",
+        "size_bytes": 472649,
+        "sha256": "3c1b97feb79ede70a43da1128e9d8ca4e3b7e7220e2adc74e99e9f7cd6304710"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s009_g009_retry0_proposal/proposal_result.json",
+        "size_bytes": 3273,
+        "sha256": "ba96c903010dd15ceb7af69882e604b3d44564cbbe44c271baddf43b6bd6d872"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s009_g009_retry0_proposal/proposal.npz",
+        "size_bytes": 5157220,
+        "sha256": "d6a5c504862c7e5c976232686c39fc4ba9ff225bdd36dcddc9d82e56d8b81c37"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s009_g009_accepted_mma_state.npz",
+        "size_bytes": 4055118,
+        "sha256": "3d8bc52a6280dd7534cab1d42b49150c019b7ae1f071ed5f15c95eb3cd000bcc"
+      }
+    },
+    "run003_b002_s010_g010_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s010_g010_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10627,
+        "sha256": "d4180a013a81100075c33799c58addc8b962142a20643e8650ace3aa83747669"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s010_g010_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7308823,
+        "sha256": "334751878eba35e911522354c1e470d0e09e821f305100809d6c4a76ffa4a490"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s010_g010_accepted_mma.npz",
+        "size_bytes": 473074,
+        "sha256": "f8569876ad3101c238c8ec6b3c22721972cf5aefd9da64bb0612ba2b78ef5d5a"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s010_g010_retry0_proposal/proposal_result.json",
+        "size_bytes": 3274,
+        "sha256": "187db2c5e0b476a4429a4884fff53866871904fe5eb8369f4fa54e5e9f1308cd"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s010_g010_retry0_proposal/proposal.npz",
+        "size_bytes": 5162358,
+        "sha256": "b44c80328a96f34a201f634de4e89077932642cefce31070f7cc526db6f7f2cc"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s010_g010_accepted_mma_state.npz",
+        "size_bytes": 4060765,
+        "sha256": "efa22a97a380b47cdae5cb1bd912e1ec810a5551eb96f8581cee4a06f01bf569"
+      }
+    },
+    "run003_b002_s011_g011_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s011_g011_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10687,
+        "sha256": "5e8b049987d2fc6675d47eef42f935aa059dbbfd5ec2e71508bdcc76ed207fb2"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s011_g011_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7311682,
+        "sha256": "975a851f0a02dc4a50199584361699bad29db5e93eb3af53a46deb516629b2db"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s011_g011_accepted_mma.npz",
+        "size_bytes": 473197,
+        "sha256": "3e0f90a7e063c2a4e121f4ae6d1f84b947b05cd82437d11edd81ba81c3a6f58e"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s011_g011_retry0_proposal/proposal_result.json",
+        "size_bytes": 3242,
+        "sha256": "7340b048baea252179766a8e171d3478bf1568ff148aca67859f1d3963002a8d"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s011_g011_retry0_proposal/proposal.npz",
+        "size_bytes": 5165310,
+        "sha256": "78a48dafc4804ffac23e3828b1dbec419c765647b0655e97b0b72c5d5cfa053d"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s011_g011_accepted_mma_state.npz",
+        "size_bytes": 4057963,
+        "sha256": "0f9df3bd0e1a62c0f62cadc4bf49bf3b5bdc6bd44c91e152bda39c03d1e2d221"
+      }
+    },
+    "run003_b002_s012_g012_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s012_g012_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10627,
+        "sha256": "42fa794c8d426a58a5c00720ffe4d9dae324d2875a341cba500b513176163915"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s012_g012_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7314967,
+        "sha256": "13d4909f347c8d42666db5071f12bd1a8b103e6d0481e2c27a2ab9839022f736"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s012_g012_accepted_mma.npz",
+        "size_bytes": 473090,
+        "sha256": "75c45af6eb4ce84cb5fbe699778163973a216dc1cf407ba959930d9dfeb138b8"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s012_g012_retry0_proposal/proposal_result.json",
+        "size_bytes": 3238,
+        "sha256": "8f7f22413601115841ad8c652032fe8379356c3494c96d18c112abad617e5dff"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s012_g012_retry0_proposal/proposal.npz",
+        "size_bytes": 5168253,
+        "sha256": "c7c63c325813bd5df96f97befc69e5596663b6d4818dca2257b0f28a671a4e1a"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s012_g012_accepted_mma_state.npz",
+        "size_bytes": 4053243,
+        "sha256": "65fc0a7da220d1fce34dcc5c64dc6bfcfeb86720c8da86e9b22228277c0a2106"
+      }
+    },
+    "run003_b002_s013_g013_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s013_g013_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10710,
+        "sha256": "6ed702d3db09fd92ee58502468bd0c067f8d900c1b5ce2d4554d999e4ba4ace6"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s013_g013_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7317683,
+        "sha256": "a8a253c2363bd4663a08c27952336edc5e7c3654f4ae02c87daf57b0d95c9bd2"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s013_g013_accepted_mma.npz",
+        "size_bytes": 472869,
+        "sha256": "c228add1f78ec1d184f683bc368f88bd818d848efe8a1b22968d898070633aee"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s013_g013_retry0_proposal/proposal_result.json",
+        "size_bytes": 3238,
+        "sha256": "db614105ac9bbb13ea77c6f7cd6b5df65ef598f45d30a167cd1e26a114ac2079"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s013_g013_retry0_proposal/proposal.npz",
+        "size_bytes": 5170989,
+        "sha256": "13c7b2f7a59c59f58e60329de8104cb21af79670f46dc8079df72d6ede7344bd"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s013_g013_accepted_mma_state.npz",
+        "size_bytes": 4045630,
+        "sha256": "e31ab6e1479ea24850cb7d252325ba693b6316364cd984dd65fb595d9b86866d"
+      }
+    },
+    "run003_b002_s014_g014_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s014_g014_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10668,
+        "sha256": "f99c2008553dfa0bea8b913a8292a57a533fbb28a305be1a7b62f63977271468"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s014_g014_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7320290,
+        "sha256": "64e42b65607181b83083faf78c7806222d3b1a9aca8d8b824786f172d776cd9a"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s014_g014_accepted_mma.npz",
+        "size_bytes": 473658,
+        "sha256": "9858df60540b8d58ad97388347624be0ee3fce6c06a66d460188189c939759bf"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s014_g014_retry0_proposal/proposal_result.json",
+        "size_bytes": 3236,
+        "sha256": "06fb20c536d53ffb38f06a4c62c6fb929502032c3e3a1fdc23ec4873c62410ca"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s014_g014_retry0_proposal/proposal.npz",
+        "size_bytes": 5173370,
+        "sha256": "82df5412ec9f137d0bbe4f765fefd797e8937e545e24817b5d6b56fff7a07b93"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s014_g014_accepted_mma_state.npz",
+        "size_bytes": 4034283,
+        "sha256": "c8bdbe9eb6e1bebd7a4c7c693ee0b53f3f586d5e93d9c0e4f4e32c61d5b34fc0"
+      }
+    },
+    "run003_b002_s015_g015_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s015_g015_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10709,
+        "sha256": "9f70f33372dd52547d39b46cede89cdfe9cfd2cb8ae6def2ecb070354b9e99de"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s015_g015_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7321982,
+        "sha256": "e6cf197a07fd63d9c2a4271e2da8d056152f499b181b047a53876fa8fbb48118"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s015_g015_accepted_mma.npz",
+        "size_bytes": 474799,
+        "sha256": "753d4fe3bf845ed47cfad9bbd6d32508bd852e9513d79d6971d73a3db026a9ce"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s015_g015_retry0_proposal/proposal_result.json",
+        "size_bytes": 3235,
+        "sha256": "a192391e0cf6e81256f6784349150922c6f6e7da5e1deacb0f5badb25301ef85"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s015_g015_retry0_proposal/proposal.npz",
+        "size_bytes": 5175719,
+        "sha256": "c46e3887de24c082067624459d788f2d7cdbc32ddf4ef8dc316daa159f0aca7f"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s015_g015_accepted_mma_state.npz",
+        "size_bytes": 4025710,
+        "sha256": "68186bb92d376f72cfa0c8772825b12a9beffcd47074a323150d475b6bdc6163"
+      }
+    },
+    "run003_b002_s016_g016_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s016_g016_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10677,
+        "sha256": "ecd8f714b8004d6f0d3cd00d124551d5ac1778f5a2b46a2893b5d86932b1beb5"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s016_g016_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7325023,
+        "sha256": "577d3db90d80f093608851c56e684f9d873e3a29ad94c6c8d801460515d0beab"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s016_g016_accepted_mma.npz",
+        "size_bytes": 477002,
+        "sha256": "de6d5b04c21b1293a0c6dc9a49213ecbee976fbbbc131d5b1a8d24c4920e3ab3"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s016_g016_retry0_proposal/proposal_result.json",
+        "size_bytes": 3233,
+        "sha256": "26ae1674375652f2a2d1ae0dc26f90b8f5204ccc8e1e390db091c8c9cdfc69e7"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s016_g016_retry0_proposal/proposal.npz",
+        "size_bytes": 5177485,
+        "sha256": "ad62b17e04bb74202863d9d04e5102fc92047d46027be98fcb472506e611e49b"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s016_g016_accepted_mma_state.npz",
+        "size_bytes": 4026078,
+        "sha256": "45ab41154915e35b95c675b0e9b1fc52816360b2504f5ebb1868dd78b1aade7e"
+      }
+    },
+    "run003_b002_s017_g017_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s017_g017_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10738,
+        "sha256": "934c93f78573ce1d76a2dbbbd9de3535c619ebdbc705242bb7530059913ab21d"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s017_g017_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7328034,
+        "sha256": "32c1756472f18c9c373ac7e5a9254f7108230a8b337a76974853c7642887af54"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s017_g017_accepted_mma.npz",
+        "size_bytes": 478904,
+        "sha256": "aee53403092339eb767a10d42c83d64f1bb8e2d2ff69d9ceb122cbac43f902a4"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s017_g017_retry0_proposal/proposal_result.json",
+        "size_bytes": 3233,
+        "sha256": "d12e97618a5f0e5b34db71e40a079e0e6e419b394318d5aeca4bbc1cced9e676"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s017_g017_retry0_proposal/proposal.npz",
+        "size_bytes": 5180434,
+        "sha256": "c475e7d7c898ca5dba7e5b9aa563ba39c6fbd3417c13ec810ae04d1a3b410d48"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s017_g017_accepted_mma_state.npz",
+        "size_bytes": 4017329,
+        "sha256": "5a725d4bd322ec87b7c3c2a5f7a69fb3a2675dc8845692bb0b13328c1011e27c"
+      }
+    },
+    "run003_b002_s018_g018_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s018_g018_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10730,
+        "sha256": "337fb8d6b85f46d2d01730c315e0b1c8d20983a47ce60d60659459679cc10a82"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s018_g018_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7331200,
+        "sha256": "843aa95a990e75f39b7a560a9c2d5a540e76fdae7db9a1d44bfcd19b99e46a1a"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s018_g018_accepted_mma.npz",
+        "size_bytes": 480232,
+        "sha256": "1b52715cfdcae9ee7086ccc05a643bf1753dc4cf8df65dcdd306f9543f53a2ba"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s018_g018_retry0_proposal/proposal_result.json",
+        "size_bytes": 3254,
+        "sha256": "81cb733cd609d025b7e7dce218701b5c1ada8f1eadcfe23462b1feb932308090"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s018_g018_retry0_proposal/proposal.npz",
+        "size_bytes": 5183522,
+        "sha256": "48fb045edb05afedc8aca8a8fa6c35dec0b1908143d53ec4cf6e66f60e598827"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s018_g018_accepted_mma_state.npz",
+        "size_bytes": 4001789,
+        "sha256": "b6a75bbe7fa1734a0328b86bc9ba4abc5d2a02e5058f3b880ec3d0e48d9e9791"
+      }
+    },
+    "run003_b002_s019_g019_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s019_g019_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10710,
+        "sha256": "a3c649138798a75cf11f47b981457cc636c528d7eccfa1a80f7254ea24a7bb91"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s019_g019_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7334465,
+        "sha256": "8b19142920ada484145945eef260e0f589a084084b711e5a39d1844e5f62726e"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s019_g019_accepted_mma.npz",
+        "size_bytes": 481345,
+        "sha256": "8e3e71b36ee3878f1e7b7a06b42d2bc26406267dbec9e3706e9e30aae8fa56ce"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s019_g019_retry0_proposal/proposal_result.json",
+        "size_bytes": 3256,
+        "sha256": "e85059a4438d98fe8abae989c8ea8d88fa0000a56bf3ef414a841f25effe3fbb"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s019_g019_retry0_proposal/proposal.npz",
+        "size_bytes": 5186410,
+        "sha256": "b9353c1bb117a7c89b1b782241a60160a94b75afa95519d4515e140a3a36076a"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s019_g019_accepted_mma_state.npz",
+        "size_bytes": 3999476,
+        "sha256": "f3da949687a8275d5bc56cadd2951375856cc5caaa762b0df5f1a65ef609c702"
+      }
+    },
+    "run003_b002_s020_g020_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s020_g020_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10703,
+        "sha256": "33196bc0c88da8a6933c07e7e90f946361b3c46fc4659469121007c319f3b045"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s020_g020_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7338510,
+        "sha256": "60fc09a2de550c3417bc7cb9c60eeb5c30b66cdc2c1b7296f6259631f3aa69f8"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s020_g020_accepted_mma.npz",
+        "size_bytes": 484618,
+        "sha256": "fda7dd5b3b61073bce0d516620bd52515211f03589572067afb23abb4b7293fb"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s020_g020_retry0_proposal/proposal_result.json",
+        "size_bytes": 3257,
+        "sha256": "2ec9f3b634e952d5a6a79f659b126fc9fa6b4c0fc7e007c3652d281c71cb750b"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s020_g020_retry0_proposal/proposal.npz",
+        "size_bytes": 5189724,
+        "sha256": "3f2a5de022c16accf6f2265dde300aef9bddf6c30e7ee4ca9772658628531b2a"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s020_g020_accepted_mma_state.npz",
+        "size_bytes": 3993881,
+        "sha256": "c4f0a55bd262de58d2471d95f2441283096f0e8ce385789c8738ef64e574ba62"
+      }
+    },
+    "run003_b002_s021_g021_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s021_g021_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10855,
+        "sha256": "1aaee318c97e3606d74e48b908c8de7ba871197e0b4e6193a7768ae849e95aa1"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s021_g021_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7340379,
+        "sha256": "be6fbd861f4d458656ae309e158721a6bf6f63d5360ce578a6feee792c0dce76"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s021_g021_accepted_mma.npz",
+        "size_bytes": 486303,
+        "sha256": "a59e2d38392ed4a4d3dc33d29ef1110c7a34375ba1223a44e0577e4ccc6282de"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s021_g021_retry0_proposal/proposal_result.json",
+        "size_bytes": 3243,
+        "sha256": "b6a36f6b587ae267922513c0735e018adb58175256294d1471bcd47b07a62e07"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s021_g021_retry0_proposal/proposal.npz",
+        "size_bytes": 5190677,
+        "sha256": "ffc7c1e88df1f92c8206e7b800e2f803f54b7c11e56cad64329a3f15ebd75e93"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s021_g021_accepted_mma_state.npz",
+        "size_bytes": 3992443,
+        "sha256": "ecb448151d1fac6193e169f7fb84a80d437808b80fef37acb9e9f6cad58af699"
+      }
+    },
+    "run003_b002_s022_g022_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s022_g022_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10866,
+        "sha256": "0eff8c6b906aba24cbac0296b93a373c3125c553813e11feb441539ac8ff6e68"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s022_g022_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7238511,
+        "sha256": "4e973290282ab0411d11fdecbbcea46a625f9ac4f93b2b69d2ba0dca5fd8e022"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s022_g022_accepted_mma.npz",
+        "size_bytes": 456900,
+        "sha256": "933d61c1c228891f7100c14520e653a238dfbf079a1806242f01ba75b8df11cf"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s022_g022_retry0_proposal/proposal_result.json",
+        "size_bytes": 3177,
+        "sha256": "38f94a6c6f23cf9c9a5a892ed437788c53d0c54c1a1aded655b609d34e090b1b"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s022_g022_retry0_proposal/proposal.npz",
+        "size_bytes": 5105757,
+        "sha256": "b571b574402e9de28bc8af577b37c69611f0ef7739348296b9d283694a1c7749"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s022_g022_accepted_mma_state.npz",
+        "size_bytes": 3983787,
+        "sha256": "39f3bac5bb7a0068fd2b7c1c5fc247261c7b059a8fcfa482acf8a9aeb17e5b77"
+      }
+    },
+    "run003_b002_s023_g023_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s023_g023_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10726,
+        "sha256": "f4328e2e1b7d67979bee105dcaa7a1880c18be771946eef83426c50e705baafc"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s023_g023_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7105752,
+        "sha256": "dd0d75879d91ce62ea142c7ae2ae5cfb30ac22ca8688ad2039aa322269560a4b"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s023_g023_accepted_mma.npz",
+        "size_bytes": 424121,
+        "sha256": "2f52ec4f080f9fe1b3a3625cb9cda6ac87649a7c028d4ac058cd0d13c22b0236"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s023_g023_retry0_proposal/proposal_result.json",
+        "size_bytes": 3176,
+        "sha256": "2a71db83b85bc7c88b0fce961951c55094852309ee16fe1c91ed3459c2391cde"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s023_g023_retry0_proposal/proposal.npz",
+        "size_bytes": 4918509,
+        "sha256": "88bd7323c9f0e5a1e7fe1e979e2c9b1263f4e394c2bb2b4a2177ccc745b67bfd"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s023_g023_accepted_mma_state.npz",
+        "size_bytes": 3796063,
+        "sha256": "af95fe3c0ab3b3d6ae2884796819b3782f4c3ac469ea5264fdeb924e87090ba5"
+      }
+    },
+    "run003_b002_s024_g024_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s024_g024_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10750,
+        "sha256": "ad6853ea625e9639e5ecbbd77494f7aec515ff3f685ccf05ecc0c27ccb3933b2"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s024_g024_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 6908204,
+        "sha256": "9189a031379a4d5063e12f0d8f4a5571e0bf2c70e7a9af7316023ad3d0f79582"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s024_g024_accepted_mma.npz",
+        "size_bytes": 381177,
+        "sha256": "d01250923025ca7ca0c3333792f5d78c10aabad0964e6259da8c9694a7cc6696"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s024_g024_retry0_proposal/proposal_result.json",
+        "size_bytes": 3173,
+        "sha256": "35ba43b2ac403b58a660211bf2f09c4ba18856db1b93e45ab6fe90632eff7a73"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s024_g024_retry0_proposal/proposal.npz",
+        "size_bytes": 4668390,
+        "sha256": "b75a49fea806dd5167acc707cb450f2d40ed3494f3e7097ec77b3cdbcb2ffdb7"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s024_g024_accepted_mma_state.npz",
+        "size_bytes": 3517656,
+        "sha256": "b68c13214a65b770a0500de425ecdec813025a0ebbdebe339f178a00d6790aa4"
+      }
+    },
+    "run003_b002_s025_g025_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s025_g025_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10745,
+        "sha256": "0498bba49660dbf90ee5c135f4c47f2aaf951ef47b3350f3d3e0f1c5e65ab1c9"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s025_g025_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 6639162,
+        "sha256": "245a6d0b3532b11eded6d30bd9a8c39426f8beefee9da79fadcc8bca402fb9d8"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s025_g025_accepted_mma.npz",
+        "size_bytes": 327861,
+        "sha256": "a20a15c7efa6da305a711cc757192fd7e52fec7a2e7037234cbeccd6a0464baa"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s025_g025_retry0_proposal/proposal_result.json",
+        "size_bytes": 3172,
+        "sha256": "990ac5b23ea8ce697ecba428b10ad04602404399c72a6d4754824f8bc219e3dc"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s025_g025_retry0_proposal/proposal.npz",
+        "size_bytes": 4327789,
+        "sha256": "d333f732d81d8bf91729cfdd372380bf0104480863b959e7735f20a24e44169a"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s025_g025_accepted_mma_state.npz",
+        "size_bytes": 3178177,
+        "sha256": "745c681e600f06e8d5a1b46655cd81119bc10a258665a4c376d0558ae18c01fb"
+      }
+    },
+    "run003_b002_s026_g026_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s026_g026_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10762,
+        "sha256": "7995c88aeaf718c52efab512df40474021aa623a4c067b535b6d5977c61ea54c"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s026_g026_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 6302275,
+        "sha256": "c3366436cb5a750a9299d2fcd47d7e880ebfa3006767f7eaa3030a0e812f3f5a"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s026_g026_accepted_mma.npz",
+        "size_bytes": 264105,
+        "sha256": "cbc5e851999e8202b728eaef4d62745d3c93e6a2cad6bd62f6e674076bf3f50e"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s026_g026_retry0_proposal/proposal_result.json",
+        "size_bytes": 3178,
+        "sha256": "c2abf9546861aca1e683f1d955cd7cea1cb63281ad496ef904b1ef7dd411eae9"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s026_g026_retry0_proposal/proposal.npz",
+        "size_bytes": 3896486,
+        "sha256": "3d6331e95b0131a1fa8ba5e3bfd411d3e8b9dd8a482d69ff0a58f433198577ff"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s026_g026_accepted_mma_state.npz",
+        "size_bytes": 2750767,
+        "sha256": "4e9c56f06bf751d02cff5bdc42b30860e31c79656f15ef864a7a1c705e3ef03b"
+      }
+    },
+    "run003_b002_s027_g027_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s027_g027_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10768,
+        "sha256": "1a862f212e18f3102089c2818cc9b335945b5bef36b640fc56e263646f96a76c"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s027_g027_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 6054480,
+        "sha256": "5e9d0498079bd0c58adf9010ed89915f0bc8c00b23525e55202fc4cde8159e9c"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s027_g027_accepted_mma.npz",
+        "size_bytes": 215457,
+        "sha256": "f5bb8546d9b3439cd8d8cad15d4fe3100a4321717f9ee275c284fc7c588da0f6"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s027_g027_retry0_proposal/proposal_result.json",
+        "size_bytes": 3179,
+        "sha256": "95bae6ddf7cae3026ac9320099bf90b41286869acb842ff86917e88eac381ae8"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s027_g027_retry0_proposal/proposal.npz",
+        "size_bytes": 3483789,
+        "sha256": "24d8d6bfd8c0a16142baed5a243cf577723d216d0c9fb5c2171f597b558b5578"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s027_g027_accepted_mma_state.npz",
+        "size_bytes": 2246082,
+        "sha256": "958e08b8641bbee5ab4cad9bfa6365101219c27658c94b38580d370ef5940493"
+      }
+    },
+    "run003_b002_s028_g028_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s028_g028_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10740,
+        "sha256": "e5b00e0b3fa4946baf4170ff1f74c00de7a0ba8f92407a79f6d2f2c66b26ebe1"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s028_g028_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5833680,
+        "sha256": "2249c4460dd8273566b0057f0856f7d14ec5289a736d63821332454b2f0cf182"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s028_g028_accepted_mma.npz",
+        "size_bytes": 173704,
+        "sha256": "938b50473425a033f6211a07e5ad980c24ea3b5321b444c6b8fbdfa521728d2a"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s028_g028_retry0_proposal/proposal_result.json",
+        "size_bytes": 3177,
+        "sha256": "e23f5d81741814e8a3a9efbfbca70afe4ddd402d243f603cf61fa498ba26fbc8"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s028_g028_retry0_proposal/proposal.npz",
+        "size_bytes": 3156660,
+        "sha256": "1bd045bced3c2d73c5d7df8a814a27ca02531ff26f89f4d5aec96aab93993ea6"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s028_g028_accepted_mma_state.npz",
+        "size_bytes": 1823383,
+        "sha256": "a2a8fb39225b3326ae48a612e7f73dd29f697b5d51f59aeaa0eed3a1ddc38f4d"
+      }
+    },
+    "run003_b002_s029_g029_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s029_g029_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10701,
+        "sha256": "4ae28a789d96b9af517d9171d48ebe928d3eb59420aa3bcf91f8b2c78d9c3573"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s029_g029_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5627821,
+        "sha256": "1fd50000b1b93469a3994398f67608add3118016985e313e7aa82573226e6252"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s029_g029_accepted_mma.npz",
+        "size_bytes": 143392,
+        "sha256": "d95927cf6a596ae8dc91decad0db07c72f5dfe7313579c626b0df3854e587234"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s029_g029_retry0_proposal/proposal_result.json",
+        "size_bytes": 3176,
+        "sha256": "b6af8ff33ba5ec7609b5b3ee976c598d36f7856f61b751d7221ab7e0d853562e"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s029_g029_retry0_proposal/proposal.npz",
+        "size_bytes": 2870227,
+        "sha256": "27d969d25cd2f18431bdabb4c1ac540cc138b7e21eafaa17ce3d0783a3ec4c1d"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s029_g029_accepted_mma_state.npz",
+        "size_bytes": 1478391,
+        "sha256": "f69f94f44fd6af4336f3bd33d2c8d8ff507751d52b5497eced7a1102360e73d7"
+      }
+    },
+    "run003_b002_s030_g030_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s030_g030_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10835,
+        "sha256": "61e5552e0d1100e2ddcc0215ff477bf5a99d7c6c8b2bb2b92b93b09065f1b438"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s030_g030_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5465810,
+        "sha256": "ea19e21f935d0208f620ff4de574da001f0bdcc49dae2dab7f75bf3307c6f324"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s030_g030_accepted_mma.npz",
+        "size_bytes": 118584,
+        "sha256": "5789bbad7521e56b228e50ee7f359fdbf209dc239a4c94539f4e4e1e996da374"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s030_g030_retry0_proposal/proposal_result.json",
+        "size_bytes": 3178,
+        "sha256": "9fc9cb18b4f803703e1745165e594260608adb9d55b592d216b1c9a590d0bf7e"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s030_g030_retry0_proposal/proposal.npz",
+        "size_bytes": 2628061,
+        "sha256": "66d43b883a895399e213198773cc319ef4e821d56ba3bb8832d69563213f144b"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s030_g030_accepted_mma_state.npz",
+        "size_bytes": 1216727,
+        "sha256": "71130c90c79e9624cd09361af645b24cb008f2a85d55e7a3e0b745867471478a"
+      }
+    },
+    "run003_b002_s031_g031_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s031_g031_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10665,
+        "sha256": "2d1930daaddf67cf617d0e030f86f95490dc98735fd79d72451e3157ae6757e1"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s031_g031_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5324803,
+        "sha256": "fa0ce2756134d36245befd941d10472968444bdf13d7d1fdb481ea6ab944a6a9"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s031_g031_accepted_mma.npz",
+        "size_bytes": 101186,
+        "sha256": "7fd20ba029bed7d0da110970cc48a597fd14099e426ff133e4107b38352f0483"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s031_g031_retry0_proposal/proposal_result.json",
+        "size_bytes": 3180,
+        "sha256": "7257d429039edbe20c71d2b278faa031b99acb1790626f844179995c83914882"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s031_g031_retry0_proposal/proposal.npz",
+        "size_bytes": 2432508,
+        "sha256": "479203f00f2231ba9b84efb96c0eb88b20f3484b6ee9ee506b02b171962e7cf5"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s031_g031_accepted_mma_state.npz",
+        "size_bytes": 1011874,
+        "sha256": "17e8f87740f77156cdd46d460ff32739cc803ca1e78e5880adde039d585a335b"
+      }
+    },
+    "run003_b002_s032_g032_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s032_g032_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10689,
+        "sha256": "8742aeae4ce3ca0ff94424a62f5733cd8d0758d337083fd33f0bf4e836c2536d"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s032_g032_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5170661,
+        "sha256": "a4fb49c5b55d5da8f4ac686845ee020edca5dc06946ccefc43f3c2c0d811687a"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s032_g032_accepted_mma.npz",
+        "size_bytes": 89107,
+        "sha256": "b8c95e624d642497d0f71ef55fc665a6481e90b7ad1c61dba773ce3858c31705"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s032_g032_retry0_proposal/proposal_result.json",
+        "size_bytes": 3178,
+        "sha256": "8e3b85696e116a7ab1b4c031f459e65541a1902a7d3d9e4ad3bdaba748e29f77"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s032_g032_retry0_proposal/proposal.npz",
+        "size_bytes": 2253670,
+        "sha256": "ccc37907668b5a3b7acc8994f9afd033f08240a7ee536d7729a4742c42700349"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s032_g032_accepted_mma_state.npz",
+        "size_bytes": 861499,
+        "sha256": "7861456bbbd0b836a9d86677e53b567d1b79d5a08b65294ae0b8a4e188642e81"
+      }
+    },
+    "run003_b002_s033_g033_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s033_g033_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10744,
+        "sha256": "f3c6997bca8fabef6c533dc1509736b5555892e05126788a8d211c4e3bccdd57"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s033_g033_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5099353,
+        "sha256": "91653606863e412fc37fa39855df6566dc84b99825b91e219e2b6b55b8bd429b"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s033_g033_accepted_mma.npz",
+        "size_bytes": 81840,
+        "sha256": "68c9a9d388f155e2eee37fdcd7a375a0c4a00f56dcdbcacdf97d86fbf2247cd0"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s033_g033_retry0_proposal/proposal_result.json",
+        "size_bytes": 3178,
+        "sha256": "27fe0d24983654a3a249f4b385c8cf285fecf6555e1cadffd55b43c154d264ad"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s033_g033_retry0_proposal/proposal.npz",
+        "size_bytes": 2119428,
+        "sha256": "55b4e701a2c3cf6fd4256eda5d7cfe3fc272c8211ccec082f47f47da194c4890"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s033_g033_accepted_mma_state.npz",
+        "size_bytes": 757937,
+        "sha256": "a70fe9092f7957fbea707f0dbc447009dc9c86c727c94b70d4ed06eadf4f6a62"
+      }
+    },
+    "run003_b002_s034_g034_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s034_g034_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10727,
+        "sha256": "43760a46f173a64a51f78c11612a5f9a9b6109e0d76c7d6b18a7763cfe91e6ce"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s034_g034_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5068808,
+        "sha256": "3b845ca601cf83db84682172675f2f269e3084c0a969479549c9a542e9b741ea"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s034_g034_accepted_mma.npz",
+        "size_bytes": 79623,
+        "sha256": "7254f3605849eef792d1c0ba679801da9a88dafd443e9fea72f53608bff3abee"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s034_g034_retry0_proposal/proposal_result.json",
+        "size_bytes": 3178,
+        "sha256": "e25ddad9f7d2df939d7e0bf798fa86a3ecedaee5860a5c486e7f19a300feda52"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s034_g034_retry0_proposal/proposal.npz",
+        "size_bytes": 2057437,
+        "sha256": "06b35bbf9af11c309c0aa00aaf42005898ee2161ef62c35122147176402c28a2"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s034_g034_accepted_mma_state.npz",
+        "size_bytes": 693662,
+        "sha256": "351d30c71771457bb2e7d98dda6247a2d3e735f7229420bea9d01e2fba8c0a04"
+      }
+    },
+    "run003_b002_s035_g035_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s035_g035_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10700,
+        "sha256": "b1cb23d4fb706660625d441f7296161cfcaaeb2fb1ac36a63f5b0c07257bf781"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s035_g035_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5042117,
+        "sha256": "46e03518168ab424d99587eeb6b8d9c7c7c4f25dec5bd4ea5759e3882ddc9374"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s035_g035_accepted_mma.npz",
+        "size_bytes": 75642,
+        "sha256": "5f68e3be10c1da7c08611c2e1dee169f34dc84e0f00f318bae9dc78a938c591e"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s035_g035_retry0_proposal/proposal_result.json",
+        "size_bytes": 3178,
+        "sha256": "8a1a598454417dfb5f46f6a3773dbda4540d19b7583a862d44d3544d61f9d044"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s035_g035_retry0_proposal/proposal.npz",
+        "size_bytes": 2022580,
+        "sha256": "f09ffb27ddc1bb5a04af5178aa2d95681068ea68f4f9c437f3ff18ab41d1dcd9"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s035_g035_accepted_mma_state.npz",
+        "size_bytes": 666605,
+        "sha256": "3d478c7ec4048cd50651adc67fef4d35a4b7b8ed5086a2b389eecadf07057ca6"
+      }
+    },
+    "run003_b002_s036_g036_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s036_g036_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10785,
+        "sha256": "955b4668c95fd42c159f6b8493461d23d180d519a302cf98957793f2cc4805e5"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s036_g036_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5031734,
+        "sha256": "b2b50e30aa39ce52d926bb9d20db178af4a1f6ae9572a13fd48d16f410598f7e"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s036_g036_accepted_mma.npz",
+        "size_bytes": 73756,
+        "sha256": "47e8e1ad08bea576013e28dfe0e07f628f84a26314feb0d862a32f987ae192e0"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s036_g036_retry0_proposal/proposal_result.json",
+        "size_bytes": 3179,
+        "sha256": "50c1019852e5504e8fc0fec1a40572b5fba0aa278fe86dd6c13b1e03627ee413"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s036_g036_retry0_proposal/proposal.npz",
+        "size_bytes": 1997867,
+        "sha256": "d45aca8d4d22de9bb005323db5a156631b0b920a96a6c83a47aa106c7fa97628"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s036_g036_accepted_mma_state.npz",
+        "size_bytes": 640409,
+        "sha256": "adefcc2bd3abac1c27dad25c04af681ac2a25f70b8b58f879d88518c67caae3c"
+      }
+    },
+    "run003_b002_s037_g037_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s037_g037_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10742,
+        "sha256": "6311865f36cedc36617ba455c60d485e5f429de8ae634cb0dee5f70f239d2c73"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s037_g037_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5021507,
+        "sha256": "eeac1c5e44757077f6c24a12a86d08df88bfa32dbd6ee9279fb3613c2a7b7fdf"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s037_g037_accepted_mma.npz",
+        "size_bytes": 71426,
+        "sha256": "36f45f58f2cdcae6db0e2802e847138db5b8c798c2cd6fbdbcc8571418c08bfd"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s037_g037_retry0_proposal/proposal_result.json",
+        "size_bytes": 3180,
+        "sha256": "b3f3194921ed4a9f89cdd74a1b838958d1db9a1de0adde7220aa75c35fa99ce3"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s037_g037_retry0_proposal/proposal.npz",
+        "size_bytes": 1983201,
+        "sha256": "f754e8e5d9d45e813a20c4073a0efbd1106ae3ebe7d9e76882a399203e06549c"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s037_g037_accepted_mma_state.npz",
+        "size_bytes": 621981,
+        "sha256": "3d16c2d519777e9ad664b25eac7fa0506411d66fe8d144627e016cffe882b932"
+      }
+    },
+    "run003_b002_s038_g038_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s038_g038_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10731,
+        "sha256": "55343a258bc18495df5447ffdb514bc5792700c1201dc0c2593ab99194c79751"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s038_g038_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5014369,
+        "sha256": "713cb827d3f14d91e5cf7d55ea29cb23f738a9d572d642820e7c9658f3c50d76"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s038_g038_accepted_mma.npz",
+        "size_bytes": 69996,
+        "sha256": "3a91485666396e07844aca3686372cd106e7d34fdd736f5ea7800fd8ef0a27c3"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s038_g038_retry0_proposal/proposal_result.json",
+        "size_bytes": 3180,
+        "sha256": "41fa1012ae4f814c374512bc45f1f0a5b935bfaffc14b61e445f0baebc39e1da"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s038_g038_retry0_proposal/proposal.npz",
+        "size_bytes": 1970351,
+        "sha256": "ce8822022b81c1d1ac1fa8cb474ce86c530544350cb2d4f4a7b0683c427b2154"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s038_g038_accepted_mma_state.npz",
+        "size_bytes": 604844,
+        "sha256": "fc7fc213fc72623579e8e2b2b1ab8ab5aa66bd8772376e8f31cdfe2c8705d843"
+      }
+    },
+    "run003_b002_s039_g039_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s039_g039_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10731,
+        "sha256": "414993c31254e82c560fa9b2b367bda02e5b0bd1326ac3b9533240ae2c43b0ae"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s039_g039_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5005152,
+        "sha256": "b9a2a822329e0a6e71f1ce9bc1e374327b4b69eb91529eff9d2bc15c7d5d2928"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s039_g039_accepted_mma.npz",
+        "size_bytes": 67696,
+        "sha256": "37485b1794a56b7d69f001e02f9d2facdb1352e776cb2cd712dced25e041aad5"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s039_g039_retry0_proposal/proposal_result.json",
+        "size_bytes": 3176,
+        "sha256": "33d4c4e4f788298bacccb0b4e8130a038ec83bf36dc141238f6956bbe7305cc5"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s039_g039_retry0_proposal/proposal.npz",
+        "size_bytes": 1958077,
+        "sha256": "4d9f2cbed666e71dee2bf1f916ac5426599cf92e7405fcae61e157d908e97474"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s039_g039_accepted_mma_state.npz",
+        "size_bytes": 590795,
+        "sha256": "1a8bc5ce90627cfd72bd154fe3c072eb512a2a6fed175aea394d1fcf3b5f47c2"
+      }
+    },
+    "run003_b002_s040_g040_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s040_g040_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10783,
+        "sha256": "b8789161c48565bbc309f4cd1558cf2fd416aa76a8fcb3a4f307b55bbce50270"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s040_g040_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4999516,
+        "sha256": "f18aec15a341dd05823c57f87f920d0b9680494a4e615addd584527ac96ea358"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s040_g040_accepted_mma.npz",
+        "size_bytes": 66605,
+        "sha256": "57a061c2748e2c8fce57f6144e727927b4b836cfc6f0ae4f4b43b5d7059b5c06"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s040_g040_retry0_proposal/proposal_result.json",
+        "size_bytes": 3179,
+        "sha256": "93d8812941eb6eec9e7cd4bd9cb641f82ab053819ea35f4dd03349a47dbe64ed"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s040_g040_retry0_proposal/proposal.npz",
+        "size_bytes": 1946381,
+        "sha256": "d67a351636026bfedbc061c99a51c299a0852d4ef1abd6b2a98b6944fbbe88b4"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s040_g040_accepted_mma_state.npz",
+        "size_bytes": 575021,
+        "sha256": "b7e7e54b070599733a30f5b3a144dc9811c38e1194d164bde6fb827bead84cd5"
+      }
+    },
+    "run003_b002_s041_g041_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s041_g041_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10710,
+        "sha256": "c3e06b4e74d66d0c276ec02d9bd417d891e325e68a831f9fa86f8345a6a8f07d"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s041_g041_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4996153,
+        "sha256": "2468da8aceffe2d8ab32cf5052f015b4aa538418c8626db70d1b62c2d282d7b1"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s041_g041_accepted_mma.npz",
+        "size_bytes": 65852,
+        "sha256": "736519677c0afc42546c4e4f249e2208ab99d233d00804e1da06876d9b6da512"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s041_g041_retry0_proposal/proposal_result.json",
+        "size_bytes": 3178,
+        "sha256": "d41e1926ee1bfd36ae15b2cbe4b57d981c5cc11955d3445a6784386d2f31a80f"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s041_g041_retry0_proposal/proposal.npz",
+        "size_bytes": 1939732,
+        "sha256": "cafc20880d8a40125e775d6f48665256d6b679c5e27a57d38b766cb006b185db"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s041_g041_accepted_mma_state.npz",
+        "size_bytes": 563216,
+        "sha256": "632b98fdecc7d2b2150ef29765e8594cc067f9d01b9887dc6c38e7cc07232bb2"
+      }
+    },
+    "run003_b002_s042_g042_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s042_g042_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10783,
+        "sha256": "a621512df116b5b5b54e0fe907b72467c77ec4157194b2c7b32570e8d1a02375"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s042_g042_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4991221,
+        "sha256": "acc0d3eb5837926ce3a4fd9a8857b32fa8f78a2979a562c345ceadc50ec3b91d"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s042_g042_accepted_mma.npz",
+        "size_bytes": 64584,
+        "sha256": "7df82feaf1392eb728283a4d0605a8385410255d788ce49d4f2f52fd85a77ceb"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s042_g042_retry0_proposal/proposal_result.json",
+        "size_bytes": 3182,
+        "sha256": "5f50b757ab84e72f5d1c2319ad8667cd0e3708c6e9c30cb8e110de7d41a2a1c8"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s042_g042_retry0_proposal/proposal.npz",
+        "size_bytes": 1933407,
+        "sha256": "c18baa1a21c06a205d6f0c1c770690865490912db07ecce50e2a5d561f1388ac"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s042_g042_accepted_mma_state.npz",
+        "size_bytes": 555935,
+        "sha256": "0564ebcbd00fb643dd5bd832fd10a89c646507e8766653b0f283205769815bff"
+      }
+    },
+    "run003_b002_s043_g043_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s043_g043_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10705,
+        "sha256": "00320a419e5b3377a6d9e4b85db9b32bdd3a91e4cab7dfb78f801afc40bebd1b"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s043_g043_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4988301,
+        "sha256": "58139f95e027b85c8cd21647d9aa0189207d5eca70e8e00137596b3b6bbd450c"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s043_g043_accepted_mma.npz",
+        "size_bytes": 64041,
+        "sha256": "3dd25e149c6327fedfeec0cccdccd518704398c3f09b5aef2691cddc1d2427a6"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s043_g043_retry0_proposal/proposal_result.json",
+        "size_bytes": 3179,
+        "sha256": "cdc23d9d47ef2df9a88d2faab7135f92dee50a8366bdbcc2f7236a3aa834ac8a"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s043_g043_retry0_proposal/proposal.npz",
+        "size_bytes": 1927786,
+        "sha256": "005898cb5b2199dab6924f31dd6bd25378f9db96a484017a88a88f9c1ffe496d"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s043_g043_accepted_mma_state.npz",
+        "size_bytes": 547554,
+        "sha256": "7e1f0efb369c91dfe27b717fb6845579eec3a9568feebdbf9f51af328a944b58"
+      }
+    },
+    "run003_b002_s044_g044_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s044_g044_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10723,
+        "sha256": "2fa34ed84ae7ecc20ff048661c4cc41e223c7aab5b33e508b35e7f4242d4f0dd"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s044_g044_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4984463,
+        "sha256": "0ed27850c353b065fae07e5c6cd14472d4534e6f6ede4232f2f418627e87efeb"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b002_s044_g044_accepted_mma.npz",
+        "size_bytes": 63157,
+        "sha256": "dfdbc882404269c8aa94b3f94d55f05d42b499994edb104d105d144d3ae37436"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s044_g044_retry0_proposal/proposal_result.json",
+        "size_bytes": 3180,
+        "sha256": "fd386909eb7c83a4c7713470f8b83e5778b3f84c11ae65947d6fa180d23e7019"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s044_g044_retry0_proposal/proposal.npz",
+        "size_bytes": 1922597,
+        "sha256": "388e690caf11c5189552e72434ae76561b746f54c23d0e99159556719e1c4317"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0002_s044_g044_accepted_mma_state.npz",
+        "size_bytes": 541637,
+        "sha256": "8d37b35077a509d0256cd221e5f54d8808100c3327f2f4f635c86797f796b965"
+      }
+    },
+    "run003_b004_s000_g044_stage_baseline": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_baseline_g044/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10690,
+        "sha256": "0a51d62f6c8187c02782bda2814dd446200f31937a5d444fd6896664e155d016"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_baseline_g044/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4982931,
+        "sha256": "e7dda2d3e63c73260dd145d2f2faa6e07e0f524291137d7a81eabba455c74ce4"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b004_s000_g044_stage_baseline.npz",
+        "size_bytes": 63157,
+        "sha256": "c29e10e56e3a7516e5ed99371aec59c5a8e10f140f8a5b2fdea04bb83a4bf83c"
+      }
+    },
+    "run003_b004_s001_g045_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s001_g045_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10706,
+        "sha256": "06fd28ecae8a22e41420a2f218674c33f807c2184f16d481cbeb8a87d7b6dd2e"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s001_g045_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5007336,
+        "sha256": "469d7ffdec022fca607049db20ef290b13912b8ee4e264fb289b52fff262739a"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b004_s001_g045_accepted_mma.npz",
+        "size_bytes": 63779,
+        "sha256": "979426f5ce83dad29ae514b18e437d2958f31ee8090ca33b5f80bd630cb76722"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s001_g045_retry0_proposal/proposal_result.json",
+        "size_bytes": 3148,
+        "sha256": "73646bcefcc7755707051db976d64012440d886bdcc95cd53806653f3f094184"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s001_g045_retry0_proposal/proposal.npz",
+        "size_bytes": 1929401,
+        "sha256": "3c7567f69962f54ef7d2446efa10a18c3795f0640e6e580160d3a94f019b3be0"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s001_g045_accepted_mma_state.npz",
+        "size_bytes": 503733,
+        "sha256": "c89c35fa65c6747430991503a0bf557adeca56902052dba01bad6f8e28e171c8"
+      }
+    },
+    "run003_b004_s002_g046_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s002_g046_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10840,
+        "sha256": "999ecaff14555c642865ba543fb4f438eab2d8ee03db8885a402d03fcc5652e6"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s002_g046_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5005253,
+        "sha256": "6a8eacd27fdb0d8d62ae519e939b6d112e10d9a103c95527f95ad7be80e14330"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b004_s002_g046_accepted_mma.npz",
+        "size_bytes": 63602,
+        "sha256": "76bf9b0755eb8a57763aa618abd263ebf10baaf2af75b76bda98a0da9a2e4cd6"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s002_g046_retry0_proposal/proposal_result.json",
+        "size_bytes": 3177,
+        "sha256": "2508137a70ea8b109e46e7ea038aec6a34ab08839f660b03cd5cc2475810a389"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s002_g046_retry0_proposal/proposal.npz",
+        "size_bytes": 1940636,
+        "sha256": "1f40565251065cd323905aa11de4e57c2de175624965e18041338c4c0a09f6dd"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s002_g046_accepted_mma_state.npz",
+        "size_bytes": 506192,
+        "sha256": "465ead1dad38501ec3bcc04d9815f93e12b19a24df8012597e6bb72c5c91400b"
+      }
+    },
+    "run003_b004_s003_g047_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s003_g047_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10739,
+        "sha256": "76307c31d0d0cfff16d8d2933da514930f898684abb99a2526032374b3154de9"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s003_g047_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5003265,
+        "sha256": "fd1af5aca4dcd12cbccb9b0106b1c9a3507a6384098fe31f4e180aaed01d2db5"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b004_s003_g047_accepted_mma.npz",
+        "size_bytes": 63279,
+        "sha256": "cd84bad848ea7ec9f1a0825ef71d39018141f662ca4fab4f9c1da4bad2eba772"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s003_g047_retry0_proposal/proposal_result.json",
+        "size_bytes": 3178,
+        "sha256": "9c0890ce49e3d26666f06bdd2dbad67b765e77e21e52c2eb63380ca6f8bf1f09"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s003_g047_retry0_proposal/proposal.npz",
+        "size_bytes": 1937780,
+        "sha256": "bf9a2448043ac898842493eb0a8a67eefb91107739ed204f899ae4a3e916502e"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s003_g047_accepted_mma_state.npz",
+        "size_bytes": 507214,
+        "sha256": "a043269934d34808160e5506884dc10e81a37d33ebeb91c360d5b1a2205114fe"
+      }
+    },
+    "run003_b004_s004_g048_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s004_g048_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10684,
+        "sha256": "8545e5c2a44b9b8f59f280084d12ed0faa2c835df08fc1c804196a239e9f8f13"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s004_g048_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4998365,
+        "sha256": "d04f5a6cd01c3aa0d1346f535dc07f106481bcc34d1013fe717c14e95219cd58"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b004_s004_g048_accepted_mma.npz",
+        "size_bytes": 62545,
+        "sha256": "6f9d1daf825b536069b16f254563215d5327f5aae42145204708cc8fa14eb781"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s004_g048_retry0_proposal/proposal_result.json",
+        "size_bytes": 3178,
+        "sha256": "3b707ab9d7473f4e82372dee7bcf3bc7c506895eade4a18dfffcd731dd32e41d"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s004_g048_retry0_proposal/proposal.npz",
+        "size_bytes": 1932926,
+        "sha256": "1fd39e275e0a5b5d07268cd2ac093dae078221f9fcbc4c21e533715011dfa24c"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s004_g048_accepted_mma_state.npz",
+        "size_bytes": 505272,
+        "sha256": "43ec794129bc329545d4306e499106fb6e4e84925b4f4b4bbf38366cb749e6ff"
+      }
+    },
+    "run003_b004_s005_g049_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s005_g049_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10729,
+        "sha256": "4fa0fb0efeba64d55c135c261245ac272c604dc22823a5dd673676adc1fb07bb"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s005_g049_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4995964,
+        "sha256": "9b06dd1f49a3fdf7fda05c4df7001ae9d059ec6c2081de97588a80b3aed05d4f"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b004_s005_g049_accepted_mma.npz",
+        "size_bytes": 61972,
+        "sha256": "4d996c9324e0af17233eb7a226f5f5460d0dcd5d7e67660afda774eb05a87c18"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s005_g049_retry0_proposal/proposal_result.json",
+        "size_bytes": 3177,
+        "sha256": "5377546c52c846641ee1c301e7581ed845989410def4a9df4bb74f2f038a4c52"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s005_g049_retry0_proposal/proposal.npz",
+        "size_bytes": 1927789,
+        "sha256": "e00537bab1ba0da950cdcc813aaca374bdb2f7c257cb2b8c102a3e4de7c8590c"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s005_g049_accepted_mma_state.npz",
+        "size_bytes": 501119,
+        "sha256": "e7056c8ef9cfe5a4f478a41ba966671035fbc836c0ad4fcbd15f0e50941288a0"
+      }
+    },
+    "run003_b004_s006_g050_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s006_g050_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10699,
+        "sha256": "9c36a613ae85018ffc900561752087192eb7443bafa7fd88df5825217ac753ed"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s006_g050_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4993733,
+        "sha256": "d2b15c00c077a659dd3969ccded5f5261071fe276e2a6484a8e1558a978c88d4"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b004_s006_g050_accepted_mma.npz",
+        "size_bytes": 61463,
+        "sha256": "3b19a0e98372173170f5ce97d115e067e04ec4ff4b620b4dc80aca021b853664"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s006_g050_retry0_proposal/proposal_result.json",
+        "size_bytes": 3175,
+        "sha256": "7bf934941487507f01c0faf11383e93cc02f607cda3f1dddbc381273a83cb945"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s006_g050_retry0_proposal/proposal.npz",
+        "size_bytes": 1924455,
+        "sha256": "35a59ca7b8eeb291615508938ae4b8b25e69e4d3714306bb7f774e32691f01c3"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s006_g050_accepted_mma_state.npz",
+        "size_bytes": 497220,
+        "sha256": "68cfe6a2e1e71591c8c9ce99c79e085dc2a95d06f57c221cfc5c774975ce790c"
+      }
+    },
+    "run003_b004_s007_g051_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s007_g051_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10682,
+        "sha256": "ea43031558a1329dfca6a0476bc8f55adc25b93da723823556503ad5342f59dc"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s007_g051_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4990947,
+        "sha256": "6b84a606cd2edf6960831500086be1b98e9b193fbe34df2932b33a8572c51067"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b004_s007_g051_accepted_mma.npz",
+        "size_bytes": 61117,
+        "sha256": "a4f016e037e49c95e02434bab4c5c2ad64179855267e44dfe1fb3e0a584572ea"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s007_g051_retry0_proposal/proposal_result.json",
+        "size_bytes": 3178,
+        "sha256": "58f251d5f4f56669b587b02bd7b33666282e1f5cfbc1cd7d9b341ba3c22c5e91"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s007_g051_retry0_proposal/proposal.npz",
+        "size_bytes": 1920794,
+        "sha256": "21c1498118db94fa6ea94003f5b1ce1ff695b61b85b8b02032454665c8a2f492"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s007_g051_accepted_mma_state.npz",
+        "size_bytes": 493475,
+        "sha256": "a5f3456821db68575949ee4ee2ff90583fc7de4ce071c50a1a1115b145187c78"
+      }
+    },
+    "run003_b004_s008_g052_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s008_g052_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10662,
+        "sha256": "1f9a644bfad17459d1be7eb7215b63cf3a90ff19feb47e6603c33bef0e703727"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s008_g052_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4986392,
+        "sha256": "462023d9826c65060c9801336b904178bee4e297bd068fbe323235b54317a16a"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b004_s008_g052_accepted_mma.npz",
+        "size_bytes": 60447,
+        "sha256": "e763335f5f44d01ca6c7b229ea8547a698d0d5bdc101d1f35d26fd72729325cc"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s008_g052_retry0_proposal/proposal_result.json",
+        "size_bytes": 3179,
+        "sha256": "4a8989d5e3ce2a6984e85292ab27ccfb608d35f89e4645d56ff906df2a44f227"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s008_g052_retry0_proposal/proposal.npz",
+        "size_bytes": 1916001,
+        "sha256": "cd3db80b0bad58cd1a3261dc259917abf41e41e869eda1c3d455c7d8ed6f5f66"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s008_g052_accepted_mma_state.npz",
+        "size_bytes": 490673,
+        "sha256": "9d98274be1925e57e06fa27881a0ede500eb4c6a4df369e5db27eafb7f809a2c"
+      }
+    },
+    "run003_b004_s009_g053_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s009_g053_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10743,
+        "sha256": "44c892dc6f3df8705182efcd4cfff458af35f503c11fc3f1dc83a750085bd885"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s009_g053_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4984315,
+        "sha256": "a5d325581d021307cd1d36e43b3b196781f5e5f107edf292d156360f82080a0b"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b004_s009_g053_accepted_mma.npz",
+        "size_bytes": 59977,
+        "sha256": "15ef1af3a239b68ed0b51e5f4df360ac13e94a388277caa62fb5679dc394366f"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s009_g053_retry0_proposal/proposal_result.json",
+        "size_bytes": 3182,
+        "sha256": "ec8f0513248d34c491ac08bc795ad0300a489b474f874563b4cb5dd0aefe286e"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s009_g053_retry0_proposal/proposal.npz",
+        "size_bytes": 1911624,
+        "sha256": "2429705d7c5b08433516187ec9af782990e38e908173fdcc8db92fe6a09d68c9"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s009_g053_accepted_mma_state.npz",
+        "size_bytes": 486851,
+        "sha256": "0235c2874e2f308d120b95cd5a355782c4f80aa516d5c90f308b846cb5bc5e26"
+      }
+    },
+    "run003_b004_s010_g054_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s010_g054_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10741,
+        "sha256": "ed13481ca7581db4ee72ef518ed9641829256b22a1b46fc67384c2d237ed8626"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s010_g054_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4982493,
+        "sha256": "19b8e91835568c8b6f13eed654e72cb8a45f13e6a50e893f8e7c9e8838437cd5"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b004_s010_g054_accepted_mma.npz",
+        "size_bytes": 59559,
+        "sha256": "0ba69d4ee468774277820a5c9c902d121bc4a58e88b775c1c05a546004a408e6"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s010_g054_retry0_proposal/proposal_result.json",
+        "size_bytes": 3185,
+        "sha256": "ab339abf732eb8af40037fa48c4352c7e55d81389bfc7f17c37f9051d103bead"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s010_g054_retry0_proposal/proposal.npz",
+        "size_bytes": 1908825,
+        "sha256": "fef4063340c44bd49ca3eac4bad8f752272c085f721a2652b979dd6d3f09a56e"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s010_g054_accepted_mma_state.npz",
+        "size_bytes": 483974,
+        "sha256": "731aea4d94122f108d2c1d0d970cbd9d1630cc400400dcb2c9a329a078198a84"
+      }
+    },
+    "run003_b004_s011_g055_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s011_g055_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10756,
+        "sha256": "e85a76508e299ffbb12faaec0853cd5b431b2709e0951a01f397c3f918f45b91"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s011_g055_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4981155,
+        "sha256": "cb2a65d7bb2381fe9bcda3a8a5db3f3f9823579bf645f6876f6d9e2ab08348ed"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b004_s011_g055_accepted_mma.npz",
+        "size_bytes": 59185,
+        "sha256": "de52ecc75e0975580f2fdc3094db63fea75ee3bfe4014cd6e795051c8cb5a390"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s011_g055_retry0_proposal/proposal_result.json",
+        "size_bytes": 3183,
+        "sha256": "0f7aa445647fb769e3d4475ddaef6afea0b2d75b4b67d6a7c20133d75669cee7"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s011_g055_retry0_proposal/proposal.npz",
+        "size_bytes": 1906421,
+        "sha256": "6ba5d723e9a18d6f744022454af6d49af9b7737f60378c2b5c9f0bd3f341ae63"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s011_g055_accepted_mma_state.npz",
+        "size_bytes": 481833,
+        "sha256": "e9880f23208dcd1602826f6971317c2a89963ddc1efec6380996de524dc5e1f3"
+      }
+    },
+    "run003_b004_s012_g056_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s012_g056_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10733,
+        "sha256": "c976d443c8b8124edae776647a5c4cde1b254056e0de83bca4ebfaa0750118ad"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s012_g056_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4979010,
+        "sha256": "cd8189b9d9280d8e8acd276f4160ff90fc01d1183cd8a112e37456b431fd547d"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b004_s012_g056_accepted_mma.npz",
+        "size_bytes": 58704,
+        "sha256": "b71a2d6fd9b21f29bfe84591371321e250edafef700061a2343b45b4aef552a2"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s012_g056_retry0_proposal/proposal_result.json",
+        "size_bytes": 3183,
+        "sha256": "277d103f322e490f8ab83e8d1b9f3858e9c96742af1dd558d962f08d053cb38e"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s012_g056_retry0_proposal/proposal.npz",
+        "size_bytes": 1904026,
+        "sha256": "42080246fdd81f0108c84379f13d1c36f19b0b0617dcad92f926b05429ef37ec"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0004_s012_g056_accepted_mma_state.npz",
+        "size_bytes": 478786,
+        "sha256": "9789602f779ed36ae6a2959cc9ddcf0ed436044a64467e7f52454d054e3e3b5f"
+      }
+    },
+    "run003_b008_s000_g056_stage_baseline": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_baseline_g056/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10720,
+        "sha256": "3f4ffcb6c23cff8ad96cec6090298708b0678ec5d9d8343f71cfa91f1597c8ef"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_baseline_g056/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4975273,
+        "sha256": "5d666e087bae643226ce39616175045269b9d59b337c4c1ff208f3af1ca3b3c9"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s000_g056_stage_baseline.npz",
+        "size_bytes": 58704,
+        "sha256": "7210a2cf023d3b6704474d64d1cb40ef912ec493c1e4ab846af4ae9c17a6fa46"
+      }
+    },
+    "run003_b008_s001_g057_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s001_g057_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10726,
+        "sha256": "f3d3fe198bd027b4e9bd3a56eda2fc93cebef1c97bbebc3ea080a16921ccf401"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s001_g057_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5032181,
+        "sha256": "8f856bdd24b93b2644b87c3c59cce652caa297d336ffa0374fd3143459cebf80"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s001_g057_accepted_mma.npz",
+        "size_bytes": 61668,
+        "sha256": "24db4f8d93d02b2a300f647b255630f5bfaa90d25dc9666089c31d170b994d4e"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s001_g057_retry0_proposal/proposal_result.json",
+        "size_bytes": 3149,
+        "sha256": "7a8aa604216cf8ee48c3c0a622f1f021a1733b11ef8b740d5515a408ded50621"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s001_g057_retry0_proposal/proposal.npz",
+        "size_bytes": 1924203,
+        "sha256": "2324238abe7f9e1cd211de5ec4b0ad5e552b6ff502aab7723f0df01c4921d49d"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s001_g057_accepted_mma_state.npz",
+        "size_bytes": 462848,
+        "sha256": "1b80e9b907290a83b97e45af1ff2af3343abd8bdaf28aeec27c8d2c4ff1c309b"
+      }
+    },
+    "run003_b008_s002_g058_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s002_g058_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10752,
+        "sha256": "73e636d946d00b2548378242d1d9e029b7cce4a8292ccaf4aa406bb6fa9a137f"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s002_g058_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5032686,
+        "sha256": "7205b164f0718c0e4449ad39f42a848e82ab06cdc119fcd39f60707e922ba7ff"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s002_g058_accepted_mma.npz",
+        "size_bytes": 61882,
+        "sha256": "57f2c2d56036c7fdb64d1785b5030d8a059f3cf5649297f6c894bb5de4b22d8f"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s002_g058_retry0_proposal/proposal_result.json",
+        "size_bytes": 3177,
+        "sha256": "690f5535dc4ab3b17e42a8ff8232f163b275a64457d2c147c71d05fe303eaaeb"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s002_g058_retry0_proposal/proposal.npz",
+        "size_bytes": 1954918,
+        "sha256": "08a1663d3c80ae0b205a0f56fd924f57f177c5c1a9aed554d4d7c546f06ba7f9"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s002_g058_accepted_mma_state.npz",
+        "size_bytes": 477271,
+        "sha256": "4837bbdefcaa5ccd0d703e2d80a45959c2b153771a45c4d670f8cbed905a922f"
+      }
+    },
+    "run003_b008_s003_g059_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s003_g059_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10692,
+        "sha256": "00e7f9179d436d5b8021f9dfee6558ec850bfd3d68c3a555f770a30b8e63a923"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s003_g059_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5034573,
+        "sha256": "f4367fa87c457ebd4d7a80af49ba9894dc12eb69491567f1ae7e3754e94d0557"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s003_g059_accepted_mma.npz",
+        "size_bytes": 61986,
+        "sha256": "e5960be409857ac063a1934028bcadcb8a0063fe348d1c9b61f4270979f26622"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s003_g059_retry0_proposal/proposal_result.json",
+        "size_bytes": 3178,
+        "sha256": "314ee3ff556d0280dc8a97809a06f90a09c94b06b5b9cadb583852e15d73ccc1"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s003_g059_retry0_proposal/proposal.npz",
+        "size_bytes": 1956382,
+        "sha256": "d481c2596074523f697ab008e93f0b642f7e176ff3f1613a675d022ec686ed08"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s003_g059_accepted_mma_state.npz",
+        "size_bytes": 484311,
+        "sha256": "63bf1785016238c723486e51c8ff39e5e0b888e31857a99de92d210d4eae8f0d"
+      }
+    },
+    "run003_b008_s004_g060_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s004_g060_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10718,
+        "sha256": "ede949bbd15805217a753b45b1cea9dbde0f8ee6075ab656e35344dd0963a08c"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s004_g060_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5031660,
+        "sha256": "63aebbe5ee3936fd26fab32caffc3535474ee22f426294526d847058acbe9fb3"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s004_g060_accepted_mma.npz",
+        "size_bytes": 61510,
+        "sha256": "1a91ad4358aa2c012ada13b8c96a4f666f165859cd478cca7aa4ac504230d9fe"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s004_g060_retry0_proposal/proposal_result.json",
+        "size_bytes": 3177,
+        "sha256": "979d5405ba1b7f031a055361999aaeca538a707fe1f96127986e9231086ca36f"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s004_g060_retry0_proposal/proposal.npz",
+        "size_bytes": 1955632,
+        "sha256": "d0f92b30633577ae07963625ec6661b0f6284fb7d34b07a9fdf8bd189444560f"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s004_g060_accepted_mma_state.npz",
+        "size_bytes": 486683,
+        "sha256": "3229d3d17277a0e7da92ebab336c56b3e81d41d548b106eb3b9c87a609499556"
+      }
+    },
+    "run003_b008_s005_g061_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s005_g061_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10747,
+        "sha256": "723d60e506951e22585fa99ef8cf7d85ef6ca644df4bf5a371037a63faa23783"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s005_g061_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5031249,
+        "sha256": "b4f83871a9ea4939540d69e03c6d3a33288db0d889ba71dfc96f15f5da6ea79b"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s005_g061_accepted_mma.npz",
+        "size_bytes": 61707,
+        "sha256": "7df006c8f39af2f0623f8cf828250242f95d3ec4c93671012b28f874acb5c506"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s005_g061_retry0_proposal/proposal_result.json",
+        "size_bytes": 3181,
+        "sha256": "c7d5ad7c89bb2c90f6a0976735dc7a94ac8a0f038c9e440b8884fdc1361694d7"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s005_g061_retry0_proposal/proposal.npz",
+        "size_bytes": 1953331,
+        "sha256": "23428a5103348540b528cfb1773acfdc23d33e4483076eb3cadb6fb0c45647e3"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s005_g061_accepted_mma_state.npz",
+        "size_bytes": 486039,
+        "sha256": "0e7194aeee60845d73c418b6e78ce122ce634fa3efd87d9263a075e3fa464fd7"
+      }
+    },
+    "run003_b008_s006_g062_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s006_g062_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10798,
+        "sha256": "7d39cb1d3fb88dd145f49a4815c30fa846362368c52ea5eff06efae71dc1ef0b"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s006_g062_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5030995,
+        "sha256": "192d0bc8ab9e77e35f72158c1f6aef0ead8fe5403072516d2958c823c0245fb1"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s006_g062_accepted_mma.npz",
+        "size_bytes": 61682,
+        "sha256": "eb39bae1233139e20931cfa5c35d308ffe2375b6954178a33d9e2285c70efb8d"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s006_g062_retry0_proposal/proposal_result.json",
+        "size_bytes": 3178,
+        "sha256": "d1618cc14782d8defbf70bc52ae0a045fa87e74c06a1863544d717e21721b349"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s006_g062_retry0_proposal/proposal.npz",
+        "size_bytes": 1953048,
+        "sha256": "258e5731022329c22fd6e159c08bd8cdaeac3aee7a6595c16a11a94db3f13ee3"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s006_g062_accepted_mma_state.npz",
+        "size_bytes": 487503,
+        "sha256": "4aed01af31d3d58cdcf66306dcd0633a9cb759caabf72c7728d45123c0594539"
+      }
+    },
+    "run003_b008_s007_g063_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s007_g063_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10756,
+        "sha256": "133da1438d8dba7e562ac10388befb18e482ce0ced4ca91bebddaea56a102a4d"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s007_g063_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5030455,
+        "sha256": "91f0e28434e01830afe881431dc2a132ac53bdc5496003042e716fc2118c7736"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s007_g063_accepted_mma.npz",
+        "size_bytes": 61669,
+        "sha256": "dbba4440f9d552e635336527cd142e79a34b39943b1ee996bad2d1a64b8adce5"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s007_g063_retry0_proposal/proposal_result.json",
+        "size_bytes": 3179,
+        "sha256": "12beb8dc6ea9c276821442b443d46efffb4dc4a350499bf410fea39be56f82f2"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s007_g063_retry0_proposal/proposal.npz",
+        "size_bytes": 1952320,
+        "sha256": "98526dd063c34d1e12446418378730e2a6271129f9c57e63a0763dbedaa73017"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s007_g063_accepted_mma_state.npz",
+        "size_bytes": 488685,
+        "sha256": "06e16c2de1299932a25e2d5967640d1532dcba8f3d763910e54c38e955f7cfe3"
+      }
+    },
+    "run003_b008_s008_g064_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s008_g064_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10714,
+        "sha256": "53305c6df1baa6a1042e90b5dfe249f9f560e8a5cf93030c018a06dec8a3b75c"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s008_g064_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5026787,
+        "sha256": "6b11921661a4a4a3dec7b9b80578a905d95409ccc2eb1f3e4006f7068e0e370a"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s008_g064_accepted_mma.npz",
+        "size_bytes": 61327,
+        "sha256": "4628df0b03bdcff3944fd97dba1f23e5dff36ddef725b477013b510fa7050d2b"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s008_g064_retry0_proposal/proposal_result.json",
+        "size_bytes": 3180,
+        "sha256": "0195752b63ac938b170a210aaac095bbfde11915960918bffcadba5697af0271"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s008_g064_retry0_proposal/proposal.npz",
+        "size_bytes": 1950080,
+        "sha256": "18c064a90576c2925846dc64acf7ed37d462d7e89f089143958cafd25523d68f"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s008_g064_accepted_mma_state.npz",
+        "size_bytes": 489236,
+        "sha256": "4d03416e24401a523e60afffe1049cc90d32b36758909d7a99c268e347bf96be"
+      }
+    },
+    "run003_b008_s009_g065_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s009_g065_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10795,
+        "sha256": "3d8511f61a82d2d69660c2685313942fd33bc2d1a782d41398d119e086492b8c"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s009_g065_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5027830,
+        "sha256": "f540bf6f9af7465ac50cf91fcafdf33f0b778378dd060199005321c9e1d07f2c"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s009_g065_accepted_mma.npz",
+        "size_bytes": 61713,
+        "sha256": "20dea1710bba8ee1e6fa59a0a2b55ba462e9f8a804faaa9193472ea4efcdabef"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s009_g065_retry0_proposal/proposal_result.json",
+        "size_bytes": 3183,
+        "sha256": "c4f0f20455e5a7109fa45f7af2c6455d3961f076c60233240ff83026901661bb"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s009_g065_retry0_proposal/proposal.npz",
+        "size_bytes": 1948586,
+        "sha256": "5f4936077a158a441e912a27e8bd2f41403b8457b144471a61000c26ccfbc969"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s009_g065_accepted_mma_state.npz",
+        "size_bytes": 488809,
+        "sha256": "4c3a85ce0efa8583664172fa77634f230f84bc43bcd5e566777a2ae745f736c7"
+      }
+    },
+    "run003_b008_s010_g066_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s010_g066_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10780,
+        "sha256": "e21386d7680db22160876dc234097715e9475c353f012f7b11303de641763fa8"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s010_g066_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5026611,
+        "sha256": "fcb52efefc86791980c13f9f235e165b53f4aa521db792c7673f750e53ce1910"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s010_g066_accepted_mma.npz",
+        "size_bytes": 61627,
+        "sha256": "38ffe1a5d4e5975806c6a3275e3103592c55610c51fe5599f8787d93afac383a"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s010_g066_retry0_proposal/proposal_result.json",
+        "size_bytes": 3179,
+        "sha256": "3df56e29fa69ccaed35203825b2c750ded783b1e0a4a142794bc57421dec766b"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s010_g066_retry0_proposal/proposal.npz",
+        "size_bytes": 1948724,
+        "sha256": "0e27a80e7766f4f4345047253dde7eda19a05ae84b0417db941b995908b035c7"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s010_g066_accepted_mma_state.npz",
+        "size_bytes": 490142,
+        "sha256": "700adf4ca29303f8b5c5fd151dd3fe3b8d2bd880b21ecce38e32db03d4482c50"
+      }
+    },
+    "run003_b008_s011_g067_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s011_g067_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10730,
+        "sha256": "7045d4770c3e5e71c55d7d14216db7925703b599643d632e01c278c8c7520121"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s011_g067_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5026085,
+        "sha256": "cf14d2aa39ed0935fe47ceeab7d79e3f039f71e01abbb2a8bc53b69b9c0fff73"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s011_g067_accepted_mma.npz",
+        "size_bytes": 61596,
+        "sha256": "2f966f5aa8147dce86363f350cf1ec2e3dd97f39e3c6a8313b87ff9131f34c74"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s011_g067_retry0_proposal/proposal_result.json",
+        "size_bytes": 3180,
+        "sha256": "c864e93a8c427655bf2daefeee9ca1ec6bec3a6c222c3a6adf80eb8a204cc6f9"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s011_g067_retry0_proposal/proposal.npz",
+        "size_bytes": 1947727,
+        "sha256": "4ab04146eaa89c3bfcff52779b1d2bae1f2f23dc9015b72a568133d07b5ee208"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s011_g067_accepted_mma_state.npz",
+        "size_bytes": 491577,
+        "sha256": "446c14fffb0140b04947bbb2c983e0e71411806d80e4381041a5c59ae5f1dedc"
+      }
+    },
+    "run003_b008_s012_g068_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s012_g068_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10791,
+        "sha256": "be1b78b5841d14ceb12aa2ba5ddd3cbe5ed65ddf519b67be215c05acb2b50532"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s012_g068_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5025757,
+        "sha256": "75fcc62b2d4de37d64c93d1dadf7cbe4abb0d8598044db361b731b279c2bcc3b"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s012_g068_accepted_mma.npz",
+        "size_bytes": 61580,
+        "sha256": "dc0d566e340d7a1dd3ef196dd66920053e8221d02a431b22670006a86044ec56"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s012_g068_retry0_proposal/proposal_result.json",
+        "size_bytes": 3180,
+        "sha256": "385ecceb8ccee8ccb91f421ae49a15107b5ecc6128a69d5cbfff4abfeac998b4"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s012_g068_retry0_proposal/proposal.npz",
+        "size_bytes": 1947217,
+        "sha256": "a28cdc77956a2caed4ed7bb0d5ed248ed828c4418a3f351b5a22f6c45d25f97c"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s012_g068_accepted_mma_state.npz",
+        "size_bytes": 491750,
+        "sha256": "3222d6512f010a6e7d6d223e37f0c3907f5bd0a506289a3c08a3b9dfab74c948"
+      }
+    },
+    "run003_b008_s013_g069_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s013_g069_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10804,
+        "sha256": "8f2c47851a47c44abdb2e2a10aa387f3a68dc694de16f6594a1ec4b021367649"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s013_g069_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5025991,
+        "sha256": "08a37424c9fb7929b43be2e580abbfabeccf36fe5677f7761d05a5f4461aa3c6"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s013_g069_accepted_mma.npz",
+        "size_bytes": 61833,
+        "sha256": "59c61c63e7a7e3b301a8bd11c6ae51d6b1483a2fdf3dd43c7f16d7122fcd4a60"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s013_g069_retry0_proposal/proposal_result.json",
+        "size_bytes": 3182,
+        "sha256": "ce8f74111cbdabe77f2cb157c85b7f58688cc4666d24da25fec74e481b252a7d"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s013_g069_retry0_proposal/proposal.npz",
+        "size_bytes": 1947098,
+        "sha256": "a7bad546fb680050a9ab1bac4db4f4bc38c78569f3be0496f1099380d60fec2b"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s013_g069_accepted_mma_state.npz",
+        "size_bytes": 491739,
+        "sha256": "1581b47d90b883e20e86911e010bd24ad383d2c1973e26890ff0effe72c18764"
+      }
+    },
+    "run003_b008_s014_g070_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s014_g070_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10742,
+        "sha256": "087c80b8fa245be399f5a2299cace33e8ddae8949cc2b3a160ab7515477e996f"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s014_g070_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5026436,
+        "sha256": "71bc4700e35ef977780ad556e0ff3b78da43adcf24dc425e25297ccebfde94ea"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s014_g070_accepted_mma.npz",
+        "size_bytes": 62040,
+        "sha256": "ce7b882ade5c47d08717bdba70d78a5d0de5a06588a7b770545af9a914e21743"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s014_g070_retry0_proposal/proposal_result.json",
+        "size_bytes": 3185,
+        "sha256": "28eb5007d6aef19e64b547ca7d9e06636bd254c2a86cd5fcc092099a9e39eb4c"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s014_g070_retry0_proposal/proposal.npz",
+        "size_bytes": 1947982,
+        "sha256": "bbbd136c27163f12b5e9b282667a619e188939a5b53c0b2b593fd01f37964013"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s014_g070_accepted_mma_state.npz",
+        "size_bytes": 492256,
+        "sha256": "0adbf758143d00d1ad7b82dc3f0ed4de342c05d0235e74800e24119ab5d0cda2"
+      }
+    },
+    "run003_b008_s015_g071_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s015_g071_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10783,
+        "sha256": "d5e93a992d743d4092e8da2d1a37b73c2aeeca7008d255326dd46126ce7f091f"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s015_g071_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5026363,
+        "sha256": "8205ba8e60efaf3ea1c4cd1fb1d0ac43e285a6624ca2563ee7a8ca156c69e8e2"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s015_g071_accepted_mma.npz",
+        "size_bytes": 62137,
+        "sha256": "0f46dd4d9e2cd97e052d53ebed1cab777f2886133ec767477aed26bd7b5720d1"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s015_g071_retry0_proposal/proposal_result.json",
+        "size_bytes": 3185,
+        "sha256": "9999235050059c2f8d4f5e5764da06537bea8ee535351fa26ceb0ac3958f0edd"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s015_g071_retry0_proposal/proposal.npz",
+        "size_bytes": 1948435,
+        "sha256": "2a8d919e92bceebeb0f8546200f8fdf5d39f1d2d5e44e0b4d6bded4275cf6c2c"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s015_g071_accepted_mma_state.npz",
+        "size_bytes": 493780,
+        "sha256": "0118ae075a9058c23174fbd2e29e6631e5a1e9215a9a4f2d6fa048f06012bd84"
+      }
+    },
+    "run003_b008_s016_g072_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s016_g072_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10758,
+        "sha256": "caab33d43db7346f6aef901a35ab93eb7c2a7fa02170d8281e621b2036f778a8"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s016_g072_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5025741,
+        "sha256": "de1bb3613818b2500cf1923c127860e13c3c77c7511e094efcf516f80eee85d7"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b008_s016_g072_accepted_mma.npz",
+        "size_bytes": 62068,
+        "sha256": "dfedf8a1e9ee3a73bac73de8090156d074ad77efec98adaae45c5a7d490d3928"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s016_g072_retry0_proposal/proposal_result.json",
+        "size_bytes": 3182,
+        "sha256": "83be69f14216d84e413f96df78546de97e68c024aa89bb3a392e0bfccc344411"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s016_g072_retry0_proposal/proposal.npz",
+        "size_bytes": 1948109,
+        "sha256": "7291e738f1f2e4022765bb6b91ed9343d09281d61b1c05906b396d07f1bcc73b"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0008_s016_g072_accepted_mma_state.npz",
+        "size_bytes": 494817,
+        "sha256": "fb952366f54276610b0c7843a50aaed84bd1b8bcae6c0f27414f13004fd53a21"
+      }
+    },
+    "run003_b016_s000_g072_stage_baseline": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_baseline_g072/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10726,
+        "sha256": "7e7f8e25b25c0567a8a1de404a75e0e9bdd29d9217e3c3a89890befe7e2d9005"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_baseline_g072/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5011266,
+        "sha256": "0848a552391fada22bfcc04bd12585a4cc6c0c6160df33a8ab2059ec6c52aac3"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b016_s000_g072_stage_baseline.npz",
+        "size_bytes": 62067,
+        "sha256": "cf887b16b0b308d40dd8afb726d444a9c9e8fa833258b7b4738fa60381c641a9"
+      }
+    },
+    "run003_b016_s001_g073_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s001_g073_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10705,
+        "sha256": "13cc5b4e1c37032b56c8d44ef056f56803299ed40422f35b9c8b22f58add5445"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s001_g073_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5019265,
+        "sha256": "f52f52c09f560312248b3452b1586e704d1c6cc74f5deb84d564ed73daed0f00"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b016_s001_g073_accepted_mma.npz",
+        "size_bytes": 64131,
+        "sha256": "83599c9500eeff6f4ae1fc544aaf7bc1c3f9e257befd0a97288d263e0530cb41"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s001_g073_retry0_proposal/proposal_result.json",
+        "size_bytes": 3156,
+        "sha256": "d1cdbdbb2fd10721859376c71276cc51c3152770164ce690ef9cba7a9e3a85b4"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s001_g073_retry0_proposal/proposal.npz",
+        "size_bytes": 1924813,
+        "sha256": "07249a7d8114e2ba1f69f203f85028cab67e76be0c249e7877946fb92fb4c72f"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s001_g073_accepted_mma_state.npz",
+        "size_bytes": 480297,
+        "sha256": "5d801ae23ee190dfde832989cbd19c2c45bad5cd6ae6468e8b3f07fc616bfa2b"
+      }
+    },
+    "run003_b016_s002_g074_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s002_g074_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10809,
+        "sha256": "7ee965c164d6b728cfe0f20a6fb93fbaeb9142cbb30817421b56b09e7d5d6d04"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s002_g074_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5073845,
+        "sha256": "33cc95743f3601166dc5b10c43d8b700cccf2bf3f0fcc05e3d112ce62c9e77f5"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b016_s002_g074_accepted_mma.npz",
+        "size_bytes": 71401,
+        "sha256": "fd4a587b559966253e60634cfe16e9cbfd4bc1e8e17808382d22af1a526e36aa"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s002_g074_retry0_proposal/proposal_result.json",
+        "size_bytes": 3225,
+        "sha256": "5995c5a0a89db518ca2ffee94d79058f5e1f19906a326efdc67a14af027c7fa3"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s002_g074_retry0_proposal/proposal.npz",
+        "size_bytes": 1965470,
+        "sha256": "faa7879869884c7f6494d68470e0503b7dfca4cd5a2259fa824dd5056856fd0d"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s002_g074_accepted_mma_state.npz",
+        "size_bytes": 500393,
+        "sha256": "763207d036124d3cf0e53a5bb1b32bd874e99c27f74d36a54821fe8b100e0103"
+      }
+    },
+    "run003_b016_s003_g075_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s003_g075_retry1_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10770,
+        "sha256": "95c71a56fc78628da6407c24839860e0ed4d674ea485b6f7ff131661f4201ab7"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s003_g075_retry1_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5078268,
+        "sha256": "0a6841b2c6b178a7f4108dc9cd3ac9cedfe1555c0cb28b54f5e5dc94fdf895f0"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b016_s003_g075_accepted_mma.npz",
+        "size_bytes": 72847,
+        "sha256": "2a4bcdae8be2430884e575c80bd10cb122aeb396f040f6976e8d7d28971e895d"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s003_g075_retry1_proposal/proposal_result.json",
+        "size_bytes": 3185,
+        "sha256": "d465cc916bcca9e9e05164f838cb78f4badb31640010f330c1a36d9f24207e62"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s003_g075_retry1_proposal/proposal.npz",
+        "size_bytes": 2002355,
+        "sha256": "d9f168e0eb96a3d647d55c1acf489a1f34e6fe1f02874f7cda7f55ed5c79d8a0"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s003_g075_accepted_mma_state.npz",
+        "size_bytes": 550317,
+        "sha256": "d35b7e2a8664af5e47ace7d5501c5ad125e5c7e4d112f1454fa7063b7e90f6d7"
+      }
+    },
+    "run003_b016_s004_g076_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s004_g076_retry1_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10688,
+        "sha256": "c788a96c6f133ba4d0e6688683fb0cfb3a035c695ce4a09a9f294a1f0d6fc6fb"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s004_g076_retry1_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5087393,
+        "sha256": "b69b711562a92cbe2e8a9b70f9ae27931b319b9f6e4e6604a7758537caa15ae6"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b016_s004_g076_accepted_mma.npz",
+        "size_bytes": 73838,
+        "sha256": "92061f95ed1989799cfdddd6cd800aff85e98d3c625271db04deb22394524c58"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s004_g076_retry1_proposal/proposal_result.json",
+        "size_bytes": 3230,
+        "sha256": "f9e3c4317d9dc4eca01927486da38dec966fa0715619199c6e99a9df9d2bdbe7"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s004_g076_retry1_proposal/proposal.npz",
+        "size_bytes": 2011150,
+        "sha256": "711a0aecb069c533e12a9153f7ac90d9da29c614b6dc30bafdf0669e0079d8a0"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s004_g076_accepted_mma_state.npz",
+        "size_bytes": 577003,
+        "sha256": "ade2185745104a75f8f8250f0f5c11d1782cc3748548f97dd7a595524ad150b3"
+      }
+    },
+    "run003_b016_s005_g077_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s005_g077_retry1_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10747,
+        "sha256": "eb12d5e56029fcaba3f0d124dd43a0c2e3b9a867cfac30cfe0711766cba5b5b0"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s005_g077_retry1_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5088599,
+        "sha256": "67637c5b7778b0434217e5dfeac340eff0dadc4ffdd8bc3333060236d843d2af"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b016_s005_g077_accepted_mma.npz",
+        "size_bytes": 74276,
+        "sha256": "4855a03d0b7c9e95313141ab769d336fc1e6bf5ab1f8d80a678e4fc12e2d18c4"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s005_g077_retry1_proposal/proposal_result.json",
+        "size_bytes": 3233,
+        "sha256": "3b6f606b88bffa15edeb1e2078c14604e7852d170f74a949ef295bd456f0332c"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s005_g077_retry1_proposal/proposal.npz",
+        "size_bytes": 2016873,
+        "sha256": "ce3657a818d9db63e7e7535c11dbf07a685c9c4a753feea1280ea4c61688ebc9"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s005_g077_accepted_mma_state.npz",
+        "size_bytes": 588059,
+        "sha256": "f7173b9f66e8994a280c1399c217306a70f83161a11a5db205845c9cf1dcbb5e"
+      }
+    },
+    "run003_b016_s006_g078_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s006_g078_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10775,
+        "sha256": "d01e8862a1d7155bba1a75200dbbb62913a966ed71d55623a120c9e5151400d4"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s006_g078_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5088698,
+        "sha256": "36e59649fb9606a7eb8f5b18b6ec2499f183f326b722bffcac76c85edb103c9b"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b016_s006_g078_accepted_mma.npz",
+        "size_bytes": 74291,
+        "sha256": "e0482242e149d7c45cecdea6d78390eb68e29a87ea27d3bf4b5e2610f6f3a90d"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s006_g078_retry0_proposal/proposal_result.json",
+        "size_bytes": 3230,
+        "sha256": "be362125100d920a7e2eb0cebbb68c1213cfb662f9533d2bd9cae4af1df49e87"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s006_g078_retry0_proposal/proposal.npz",
+        "size_bytes": 2017885,
+        "sha256": "3c9605c9f5ce12b41040b1830694e3cf091c09f6a5b7335ec2dc38417e62a5f2"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s006_g078_accepted_mma_state.npz",
+        "size_bytes": 594040,
+        "sha256": "1ed9103e46785072a054daadf1aad9228b7d7192909d3b4c095fd22edb5fd989"
+      }
+    },
+    "run003_b016_s007_g079_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s007_g079_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10765,
+        "sha256": "6fb0e2161cbba771c0e70188153283675af12ce23b4db0838600a6f1513d2447"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s007_g079_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5088686,
+        "sha256": "e0a992286d687966dc5cfa317a112676006d5b875d817bc31acc114df85055ad"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b016_s007_g079_accepted_mma.npz",
+        "size_bytes": 74527,
+        "sha256": "f69ced1b0565d75f70c628b8938abf212d9917fa3f33d80ae75d7c349262c4b1"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s007_g079_retry0_proposal/proposal_result.json",
+        "size_bytes": 3234,
+        "sha256": "008abda27a5466e42173a70ab48770659236a767267b2657031c374897161c59"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s007_g079_retry0_proposal/proposal.npz",
+        "size_bytes": 2018348,
+        "sha256": "2cc849a520c20092d6b939c3293aa3deed06025beb8ec6d01f47943acbc9bfde"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s007_g079_accepted_mma_state.npz",
+        "size_bytes": 596953,
+        "sha256": "9d40467b41c2b2b41189847656764308fa54b40c9105eccfee15b8534359e71b"
+      }
+    },
+    "run003_b016_s008_g080_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s008_g080_retry1_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10744,
+        "sha256": "78fd737fcd9c684438dd37438c8d3910f6ccf91cce09d181ab576e7db4a9889c"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s008_g080_retry1_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5089306,
+        "sha256": "4f36b02413a7d995a442b1430717cfc36edfb581b4caa8a3a979e0cc43e13e71"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b016_s008_g080_accepted_mma.npz",
+        "size_bytes": 74634,
+        "sha256": "f0b904644737cfc9b9097ebe3be21dc7145e96709be056e11d0daf8460ba3793"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s008_g080_retry1_proposal/proposal_result.json",
+        "size_bytes": 3236,
+        "sha256": "6bce601aba70bf137c1917e75162aa1e25b8ca2d2fc2fe8fc5dc75c750a4283f"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s008_g080_retry1_proposal/proposal.npz",
+        "size_bytes": 2018868,
+        "sha256": "d79477ae5c846a6f6025557855f4d04cecd5f989a47cbfb8ad7682cc93bc5068"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s008_g080_accepted_mma_state.npz",
+        "size_bytes": 599131,
+        "sha256": "5f26967194b3ddc6590e815ecf81a18d14c81761fc68d049334695a6d0197987"
+      }
+    },
+    "run003_b016_s009_g081_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s009_g081_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10796,
+        "sha256": "e0ceabe0020f046d6078a5c9979240db184f3634fd5b104814106aefdaf314e4"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s009_g081_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5089147,
+        "sha256": "b3d1a48d0426608922f34f3bf7809c10d57c03ddd60a9a9931f735c9b36f9d4b"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b016_s009_g081_accepted_mma.npz",
+        "size_bytes": 74581,
+        "sha256": "cdabde7850c525e2e98a2ca8b797cf339d5af5f0e669c389d6f489ddc9b95d63"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s009_g081_retry0_proposal/proposal_result.json",
+        "size_bytes": 3238,
+        "sha256": "069da6da224974364155988c8bbf2b2fd37a685b3c6db41f0020ffd1136924b3"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s009_g081_retry0_proposal/proposal.npz",
+        "size_bytes": 2019064,
+        "sha256": "fdc8aa324c0ad900be9bf35f1e7025d56fcb929a3448c7691a6363a42f8af455"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s009_g081_accepted_mma_state.npz",
+        "size_bytes": 601171,
+        "sha256": "4a6d82185ed3cfa4926f7dd6a5daf2af031c0f446bcac7ab01342e50b0036fdf"
+      }
+    },
+    "run003_b016_s010_g082_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s010_g082_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10748,
+        "sha256": "1fbaecbe776efb5e09a775858919f21b15a101303d13cebfacf32ca02d86d53b"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s010_g082_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5088953,
+        "sha256": "3a886fed8a9b5235de1ce961b07cd48ca202984ca7d9d5841490f0cae7b9a97f"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b016_s010_g082_accepted_mma.npz",
+        "size_bytes": 74660,
+        "sha256": "a2b2ab29f1f9936a075de88ab0bd7de1014458685dde42ab1c5753bae9c848fb"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s010_g082_retry0_proposal/proposal_result.json",
+        "size_bytes": 3237,
+        "sha256": "9d8cae595b0e082012ad7ccbb431446244815d9d33949388f047e3f2319611aa"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s010_g082_retry0_proposal/proposal.npz",
+        "size_bytes": 2019054,
+        "sha256": "5bebebaf048d61293590f56a6848c501d4b374607527f0858086cdd435688c1e"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s010_g082_accepted_mma_state.npz",
+        "size_bytes": 601913,
+        "sha256": "b265606bef4bf3b519efa8a28f1f5f31be2429784972da0d4400e32d7d71ba1f"
+      }
+    },
+    "run003_b016_s011_g083_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s011_g083_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10777,
+        "sha256": "6c7ef5605ccab879ef3d051c67295e83989168811b480da1f5e8967a67da6cfe"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s011_g083_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5089135,
+        "sha256": "79f62c57779bd1ec47e32f50ff07f895c5f32134e8b76e1945104ea28a2fd85d"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b016_s011_g083_accepted_mma.npz",
+        "size_bytes": 74598,
+        "sha256": "70a06185c59460c3cf903f3679f2768205707030bf0969051e41b01bc920fea2"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s011_g083_retry0_proposal/proposal_result.json",
+        "size_bytes": 3235,
+        "sha256": "a3276c50b6624b816cb879981bd1033e3ff8a61815e979bfe10c948a63e8b8ef"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s011_g083_retry0_proposal/proposal.npz",
+        "size_bytes": 2018971,
+        "sha256": "b78647f564e859589046291cd33eebf14c48d133eeeec518ef5d8d00317de0cd"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0016_s011_g083_accepted_mma_state.npz",
+        "size_bytes": 602601,
+        "sha256": "f8d33d922c693a45855b528dbec16ada2eb6a594959224fd483cd4defde2c778"
+      }
+    },
+    "run003_b032_s000_g083_stage_baseline": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_baseline_g083/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10728,
+        "sha256": "7f12858c4a316392c9bd5e8dedf60aedeaee9af0bfa26399ddc1a1e481c80ea2"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_baseline_g083/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4995267,
+        "sha256": "eab63c9e7434457b2cd35122e4567095210c9cfaff047387cc788128e411500f"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b032_s000_g083_stage_baseline.npz",
+        "size_bytes": 74597,
+        "sha256": "6801c427d69fa4616ac210bc9b672629b9efd2095540bfa6ac8c0cc063f07c96"
+      }
+    },
+    "run003_b032_s001_g084_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s001_g084_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10757,
+        "sha256": "a27a5e7b00ea8f4782ca6b2ce71a7f3b3b6823f02a5ad300469760891f606f09"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s001_g084_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4997531,
+        "sha256": "e52ab62ed3277983ef96f5766c655e4acc4fa8da704be2742b46428585290640"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b032_s001_g084_accepted_mma.npz",
+        "size_bytes": 75268,
+        "sha256": "3073fb1e3ceadeea9917c58993b26a57e3d07598dfa2af856066c8ef365e090b"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s001_g084_retry0_proposal/proposal_result.json",
+        "size_bytes": 3156,
+        "sha256": "fd25a99d1bfe81c7f623ee7269be28bb0b4d522491c15a9838e5786ffd8f865d"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s001_g084_retry0_proposal/proposal.npz",
+        "size_bytes": 1825507,
+        "sha256": "b2535acb8d2a3a9c49402af04d05b7c0b47ddae0122bfbaaeed1120bb6dc2370"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s001_g084_accepted_mma_state.npz",
+        "size_bytes": 589889,
+        "sha256": "51e5e9e090274b5e69dbc2bc4a524d6e2e5c1b4d69553b0bf75d65416684cc4e"
+      }
+    },
+    "run003_b032_s002_g085_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s002_g085_retry1_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10775,
+        "sha256": "8b647ea9a147a8c919647186a3ba8bc0944a707c4dd9c37f8b7063bbdda23523"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s002_g085_retry1_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4999040,
+        "sha256": "1b68a99c188cc5fe6cc482cd7c16200858e32ce4492879ccd4c5b96dd57d5e25"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b032_s002_g085_accepted_mma.npz",
+        "size_bytes": 76091,
+        "sha256": "f36b5d1121b090e18fb44d48efa87e60863f02278e84d81bc5c609c6e11998bf"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s002_g085_retry1_proposal/proposal_result.json",
+        "size_bytes": 3186,
+        "sha256": "5e9d014520cbb4fd9531a84328c1901447ea757a623f105d346aeb693afd007d"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s002_g085_retry1_proposal/proposal.npz",
+        "size_bytes": 1828450,
+        "sha256": "2ef326f0fa060c8fa93d50e54a07fd92587c4bd5df6db9b68515c845fe410405"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s002_g085_accepted_mma_state.npz",
+        "size_bytes": 594892,
+        "sha256": "87a1f56e07950c122d843648e823d5a5996b9dd226841a952d1bebc10c66a535"
+      }
+    },
+    "run003_b032_s003_g086_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s003_g086_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10826,
+        "sha256": "eb4f75ec5599dead71e70b78d00ae1d8916c6902c2cc18c1d38b383dd83ac141"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s003_g086_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5027503,
+        "sha256": "06a45f891fe27c8c2171b62b817e446d5c6ea9d7df432865177c24e74758d7fd"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b032_s003_g086_accepted_mma.npz",
+        "size_bytes": 82124,
+        "sha256": "25c84e0d74eb32c2056f8c9111355a13b22ca803b631f61f6fe63a4fcec2302f"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s003_g086_retry0_proposal/proposal_result.json",
+        "size_bytes": 3345,
+        "sha256": "054009a70e46af200a2e2d21ead3236f7b35c4eb21a3a3d6016c50d6df83e16b"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s003_g086_retry0_proposal/proposal.npz",
+        "size_bytes": 1846214,
+        "sha256": "a66689ace3634b3594a0b9e6810d6ffd3bde4bb90426ece6b94b98cd6bb0b948"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s003_g086_accepted_mma_state.npz",
+        "size_bytes": 603935,
+        "sha256": "b934a925662596f7cb15a2585421f43dc68e19ed5661c6c3b4409e5a79570b92"
+      }
+    },
+    "run003_b032_s004_g087_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s004_g087_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10683,
+        "sha256": "ec04f63b8436c8d3df53c3178af622a1f9d261905e1b80d62c74b74d493a59fd"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s004_g087_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5079086,
+        "sha256": "6f852d38bd325c21aeb76d42492e799308bd81e303374182e86b0ef7deadf914"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b032_s004_g087_accepted_mma.npz",
+        "size_bytes": 95286,
+        "sha256": "88f35cbf04ba7c1f4a1129a94aebcb03f7c69788e46ff3f3761a2f1ad4825470"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s004_g087_retry0_proposal/proposal_result.json",
+        "size_bytes": 3319,
+        "sha256": "146a89fc241d0aae3877c7677c3f545960151927e89a7d7317f25ea628c55676"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s004_g087_retry0_proposal/proposal.npz",
+        "size_bytes": 1894791,
+        "sha256": "4644dfa919436376aa68d75605b6f0c979b2ad72f26214bb37339dc109e49a83"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s004_g087_accepted_mma_state.npz",
+        "size_bytes": 640866,
+        "sha256": "48fce8ee84ed38bddfe441b8ffd0e1711b02c3d9fd800544508931295256816d"
+      }
+    },
+    "run003_b032_s005_g088_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s005_g088_retry2_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10776,
+        "sha256": "c71aecbacf00f769c1e07b81e3e7fe1f69e4172592a5a5c0d8689dc90d1e6459"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s005_g088_retry2_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5093990,
+        "sha256": "6383b946a0136a9ca5eca6eeb11fb58d5fccd506d76f7cab1b039a60176384a3"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b032_s005_g088_accepted_mma.npz",
+        "size_bytes": 100920,
+        "sha256": "2a1356b043f92237c7ad7394d82ae5806404284583f68c6733148463f82ffc33"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s005_g088_retry2_proposal/proposal_result.json",
+        "size_bytes": 3358,
+        "sha256": "4e017d65e8d8070c84b3748efcfe5fdfb40747d286f0ed37390f2f76259bd145"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s005_g088_retry2_proposal/proposal.npz",
+        "size_bytes": 1939112,
+        "sha256": "04c01e936d607d67781863ed5183e7ba801d05552f2194ff172f9bf53fad32b9"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s005_g088_accepted_mma_state.npz",
+        "size_bytes": 736073,
+        "sha256": "b47cec1988895eb4d2f8ae4e3638e2660b65b94f7468a31297bf28ddd6c31808"
+      }
+    },
+    "run003_b032_s006_g089_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s006_g089_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10685,
+        "sha256": "d31441bab1c42e79315dab75a69e5eed937e31663a251052d17f07c081b319ed"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s006_g089_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5098341,
+        "sha256": "2c1e2e461502ca8f23389c4c5ae36082407636d1ab0f914d73e17c30464e090f"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b032_s006_g089_accepted_mma.npz",
+        "size_bytes": 102729,
+        "sha256": "e974bf6a3d18af7e44175510d62f7edab803e3b454db6bef4b43ed04d2deb172"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s006_g089_retry0_proposal/proposal_result.json",
+        "size_bytes": 3408,
+        "sha256": "6d72ef032db9e1407c05ef051b4f91c951f556ad9a880443f410e689863c5f0a"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s006_g089_retry0_proposal/proposal.npz",
+        "size_bytes": 1955585,
+        "sha256": "af434d630475a62db5e473f4dfa01b510852525c3b4023f644fc3f650c841913"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s006_g089_accepted_mma_state.npz",
+        "size_bytes": 801455,
+        "sha256": "3205b6cdec88a8027a962a8b64f19f0153273185c3f2c7508b80bb98f587c661"
+      }
+    },
+    "run003_b032_s007_g090_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s007_g090_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10722,
+        "sha256": "a202d765e41d8eb03e46d1fb8218b74e3dd04f231f49bcac1fbf968a10d6dc71"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s007_g090_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5102892,
+        "sha256": "690f39fef49f56c20802b2a845714fe5a128d7eff04e42b60c740084667d346e"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b032_s007_g090_accepted_mma.npz",
+        "size_bytes": 104476,
+        "sha256": "934f35677efe6f636efa064a4898238f694d321816368a8ac5fe59750062caa5"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s007_g090_retry0_proposal/proposal_result.json",
+        "size_bytes": 3369,
+        "sha256": "761bb0e8ef712fd2e2a5044d6f0b57aa3ac2800d82ca6a1a548e03d003edfaa0"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s007_g090_retry0_proposal/proposal.npz",
+        "size_bytes": 1963609,
+        "sha256": "f75e439ceba9f0252d4a09a5c5af70a36355e730627eea8c64d742d786cf2f35"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s007_g090_accepted_mma_state.npz",
+        "size_bytes": 828357,
+        "sha256": "0da8a4f94d19950c990cc0f8ec98c0ab84109954252f6c56dd4be098f5ce6af3"
+      }
+    },
+    "run003_b032_s008_g091_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s008_g091_retry1_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10820,
+        "sha256": "ab0ff0233aaada68fddfe45da4e992d3ecef2eab8668a89c46d31c735792198c"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s008_g091_retry1_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5107370,
+        "sha256": "2c877d15cda6a03046e0acb255f8a084056bd49604e66cc799bc3d533e52a9df"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b032_s008_g091_accepted_mma.npz",
+        "size_bytes": 106003,
+        "sha256": "52b7a173e91b1894aad36d53e80142ecee8da33fb3c84a590d94795db1813084"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s008_g091_retry1_proposal/proposal_result.json",
+        "size_bytes": 3376,
+        "sha256": "0c8667688d933d221ed274fcee6476940dee51bf539d36094c94edf4bff47cd3"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s008_g091_retry1_proposal/proposal.npz",
+        "size_bytes": 1970428,
+        "sha256": "b17b6dddc6240bc450a421a3a65de9fbefa3865152a678fb773b666b1b2badc4"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s008_g091_accepted_mma_state.npz",
+        "size_bytes": 846303,
+        "sha256": "bff3f72ff5be5d6b931c223aadf031b1687d66692ca68715f91f8080167471c5"
+      }
+    },
+    "run003_b032_s009_g092_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s009_g092_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10731,
+        "sha256": "ab4106e1d31ebec72637fe961258a96cc9213f6d6a7de443bac8ebed49fb6bcf"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s009_g092_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5090572,
+        "sha256": "39f3c4cd0ec9af037550a3b400dc850fb31018dd49dbf1c9e6f14dc714e41510"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b032_s009_g092_accepted_mma.npz",
+        "size_bytes": 99795,
+        "sha256": "f6bdee7ad70ea1954d0a0609c5b5fa3c25feae9881ae410bb8f65f15c78d4b5d"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s009_g092_retry0_proposal/proposal_result.json",
+        "size_bytes": 3409,
+        "sha256": "b3b6c2033c787199c948d751b814975f0f02998e70bb3d34cc5a192e3d622811"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s009_g092_retry0_proposal/proposal.npz",
+        "size_bytes": 1962305,
+        "sha256": "5481e430d0a04212525d1b7157efabc81c5be41cd2fa1479ee92cdb98d149ed9"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s009_g092_accepted_mma_state.npz",
+        "size_bytes": 859955,
+        "sha256": "ceb7f00131a89ba48aa35383353b08da1abd7ebb3e321a51198df13a7c055809"
+      }
+    },
+    "run003_b032_s010_g093_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s010_g093_retry3_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10700,
+        "sha256": "c497e2e0e2b4077bfb4bf539eb76ef8febfc71d24b9e1f8e865875095f765bf7"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s010_g093_retry3_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5112892,
+        "sha256": "c27686843872229e741a102f696f92fbfbe3d825134baeef1c81b0919f61c6c1"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b032_s010_g093_accepted_mma.npz",
+        "size_bytes": 106573,
+        "sha256": "393e85294f916996732f97dd13e2ca9713077f707796c6e6219049ef7f4da855"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s010_g093_retry3_proposal/proposal_result.json",
+        "size_bytes": 3383,
+        "sha256": "bddc2a2885ab4d65405842497ecbd05933cea34a70a3f3020fce93110e78e383"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s010_g093_retry3_proposal/proposal.npz",
+        "size_bytes": 1965301,
+        "sha256": "6dd4a9fdde15a6fcafe324680c9e5a3f99e1703215e760e7a0be786b2225255c"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s010_g093_accepted_mma_state.npz",
+        "size_bytes": 845699,
+        "sha256": "c9f4e0ca3ba9553f22ef97930a3b5d09fc43ea45144a5a81b14ec22d85695977"
+      }
+    },
+    "run003_b032_s011_g094_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s011_g094_retry4_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10773,
+        "sha256": "385d6f2a98110a12e7867d305a46d1ec0f151abe141853b53c62db2f4c63e5ae"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s011_g094_retry4_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5114801,
+        "sha256": "d5140cafec78e09d7fd3a66ae1114cd4e4964bcf0b7a03b428774ba2e47bab88"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b032_s011_g094_accepted_mma.npz",
+        "size_bytes": 107272,
+        "sha256": "266c932825c93b698afdea57b4fdc21db171da36587ed0ce5cc0abd6b2ca5ec2"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s011_g094_retry4_proposal/proposal_result.json",
+        "size_bytes": 3426,
+        "sha256": "d2e034b63a1833551f80a0cb3c250b0923f18abbfc2206cbdcebe27b344decb0"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s011_g094_retry4_proposal/proposal.npz",
+        "size_bytes": 1981396,
+        "sha256": "6865befccb7b80670ebe7eac006338cd6672fd91dda471695010f78223dc3ffa"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s011_g094_accepted_mma_state.npz",
+        "size_bytes": 866822,
+        "sha256": "53c12114830fd468ff97a8023b79c63d183805bb5e0c4ff39da584049c5b2be2"
+      }
+    },
+    "run003_b032_s012_g095_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s012_g095_retry1_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 10700,
+        "sha256": "837f186bd0e7ef38824223071f68faf390aec1a3fbd8f8715f5b5c7c17312aea"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s012_g095_retry1_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 5122028,
+        "sha256": "353c09ecb1141574f59b00d3ef1b0fa07812d2387586b86e755d007099b805c7"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_003_gaussian10_w8p5_current_max_converged/checkpoints/run003_b032_s012_g095_accepted_mma.npz",
+        "size_bytes": 108503,
+        "sha256": "6053c4dad537f276b4b622bdd41764cdc4da4c8484b0b1442df5428f96b85f23"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s012_g095_retry1_proposal/proposal_result.json",
+        "size_bytes": 3540,
+        "sha256": "69dbcf169beb3ac8e4df13ab7fd99cc68dc03bfd9a9bb4ce2c4c416601ecb006"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s012_g095_retry1_proposal/proposal.npz",
+        "size_bytes": 1987251,
+        "sha256": "18dc56f888c609d285dedf76a6a3016f224c767c0c847d2fca830935029cec1d"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run003_converged_constrained_20260807/b0032_s012_g095_accepted_mma_state.npz",
+        "size_bytes": 885140,
+        "sha256": "b834d0d76552998625041bbe495b59cb4fd19c419a1cca8f144772175852dbc9"
+      }
+    }
+  }
+}
