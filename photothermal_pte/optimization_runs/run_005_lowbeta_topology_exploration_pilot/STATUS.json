@@ -1,19 +1,21 @@
 {
   "run_id": "run_005_lowbeta_topology_exploration_pilot",
-  "status": "RUNNING_RUN005_FULL_BINARY_BETA_CONTINUATION",
-  "last_updated_utc": "2026-08-08T21:27:46.275892+00:00",
-  "beta": 128.0,
-  "global_iteration": 45,
-  "stage_iteration": 3,
-  "stage_convergence": {
-    "converged": false,
-    "reason": "need at least 6 accepted updates",
-    "maximum_relative_fom_change": Infinity,
-    "maximum_rho_rms_change": Infinity,
-    "maximum_rho_max_change": Infinity
-  },
-  "FOM_A_per_W": 8.688574877724762e-07,
-  "constraints_feasible": true,
-  "exact_500nm_solid_bad_cells": 0,
-  "exact_500nm_void_bad_cells": 0
+  "status": "COMPLETED_FULLY_BINARIZED_EXACT_500NM_CONSTRAINED_PTE_OPTIMIZATION",
+  "completed_at_utc": "2026-08-08T21:34:41.721242+00:00",
+  "final_beta": 2048.0,
+  "final_global_iteration": 46,
+  "final_FOM_A_per_W": 8.679256315189473e-07,
+  "exact_binary_audit": {
+    "minimum_feature_nm": 500.0,
+    "opening_radius_nm": 250.0,
+    "opening_radius_pixels": 5,
+    "footprint_pixel_count": 81,
+    "solid_fraction": 0.4167283600112126,
+    "solid_bad_cell_count": 0,
+    "void_bad_cell_count": 0,
+    "solid_bad_fraction_all_cells": 0.0,
+    "void_bad_fraction_all_cells": 0.0,
+    "solid_pass": true,
+    "void_pass": true
+  }
 }

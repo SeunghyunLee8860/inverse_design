@@ -1,5 +1,5 @@
 {
-  "status": "RUNNING_RUN005_FULL_BINARY_BETA_CONTINUATION",
+  "status": "COMPLETED_FULLY_BINARIZED_EXACT_500NM_CONSTRAINED_PTE_OPTIMIZATION",
   "generated_at_utc": "2026-08-08T21:27:46.275892+00:00",
   "raw_artifacts_are_gitignored": true,
   "base_FSP": {
@@ -1539,6 +1539,23 @@
         "size_bytes": 4082237,
         "sha256": "5ba54a6f99139714e441ff6072fa9426be3af87e0648c41ebef9b866cc01a241"
       }
+    }
+  },
+  "final_thresholded_binary": {
+    "source": {
+      "path": "/data/seunghyun/tairte4/raw_artifacts/run005_lowbeta_topology_pilot_20260808/final_binary_g046_b2048/thresholded_binary_density.npz",
+      "size_bytes": 1933,
+      "sha256": "82e4f332f5699e327d56002f8bee288baa0e40fca9692c97c5aae921338fc67f"
+    },
+    "evaluation_result": {
+      "path": "/data/seunghyun/tairte4/raw_artifacts/run005_lowbeta_topology_pilot_20260808/final_binary_g046_b2048/solver_evaluation/thresholded_binary_evaluation_result.json",
+      "size_bytes": 7798,
+      "sha256": "a40269cca9a2b652b7efad8f5608933f94e8febc8969234574d71db2ca263b68"
+    },
+    "evaluation_NPZ": {
+      "path": "/data/seunghyun/tairte4/raw_artifacts/run005_lowbeta_topology_pilot_20260808/final_binary_g046_b2048/solver_evaluation/thresholded_binary_evaluation.npz",
+      "size_bytes": 250833333,
+      "sha256": "9288c9b530aba088132464e9b81d63aa4d4918ae959fcb8142a4a225363cf6bb"
     }
   }
 }

@@ -103,6 +103,74 @@
         1.2
       ],
       "source": "single_stage_start_reprojection_cleanup_tightening"
+    },
+    "256": {
+      "beta": 256.0,
+      "incoming_values": [
+        0.00015520176839917203,
+        8.938186708920502e-05
+      ],
+      "caps": [
+        0.00016337028252544426,
+        9.408617588337371e-05
+      ],
+      "target_occupancy": 0.95,
+      "actual_occupancy": [
+        0.95,
+        0.95
+      ],
+      "source": "single_stage_start_reprojection_exploration_envelope"
+    },
+    "512": {
+      "beta": 512.0,
+      "incoming_values": [
+        0.0001532380379625476,
+        8.937210130022327e-05
+      ],
+      "caps": [
+        0.00016130319785531325,
+        9.407589610549818e-05
+      ],
+      "target_occupancy": 0.95,
+      "actual_occupancy": [
+        0.95,
+        0.95
+      ],
+      "source": "single_stage_start_reprojection_exploration_envelope"
+    },
+    "1024": {
+      "beta": 1024.0,
+      "incoming_values": [
+        0.000151172999370242,
+        8.937232822941097e-05
+      ],
+      "caps": [
+        0.00015912947302130739,
+        9.407613497832734e-05
+      ],
+      "target_occupancy": 0.95,
+      "actual_occupancy": [
+        0.95,
+        0.95
+      ],
+      "source": "single_stage_start_reprojection_exploration_envelope"
+    },
+    "2048": {
+      "beta": 2048.0,
+      "incoming_values": [
+        0.00015055209984976152,
+        8.937232825645207e-05
+      ],
+      "caps": [
+        0.00015847589457869635,
+        9.407613500679166e-05
+      ],
+      "target_occupancy": 0.95,
+      "actual_occupancy": [
+        0.95,
+        0.95
+      ],
+      "source": "single_stage_start_reprojection_exploration_envelope"
     }
   }
 }
