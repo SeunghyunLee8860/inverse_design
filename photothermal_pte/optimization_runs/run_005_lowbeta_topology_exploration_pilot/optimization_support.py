@@ -49,6 +49,17 @@ LOW_BETA_CATASTROPHIC_EXACT_GROWTH_FACTOR = 1.50
 LOW_BETA_CATASTROPHIC_EXACT_GROWTH_ABSOLUTE = 25
 SMALL_MOVE_HALT_THRESHOLD = 0.0025
 DEFAULT_STAGE_CAPS_PATH = HERE / "stage_caps.json"
+EXACT_ACTIVE_SET_RESTORATION_CONTRACT = (
+    "sequential_exact_drc_active_set_filter_vjp_v1"
+)
+EXACT_ACTIVE_SET_PHASE_WEIGHTS = (
+    0.0, 0.05, 0.10, 0.20, 0.25, 0.33, 0.50, 0.75,
+    1.0, 1.5, 2.0, 3.0, 4.0, 8.0,
+)
+EXACT_ACTIVE_SET_MOVES = (
+    0.20, 0.15, 0.10, 0.075, 0.05, 0.04, 0.03,
+    0.025, 0.02, 0.015, 0.01, 0.0075, 0.005, 0.0025,
+)
 
 
 def disk_structuring_element(radius_pixels: int) -> np.ndarray:
@@ -482,6 +493,148 @@ def design_metrics(
     return metrics, arrays
 
 
+def exact_active_set_restoration_candidate(
+    latent: np.ndarray,
+    beta: float,
+    objective_gradient_A: np.ndarray,
+    mapping: ProductionDensityMapping | None = None,
+) -> tuple[np.ndarray, dict[str, object]]:
+    """Choose a bounded differentiable exact-DRC restoration candidate.
+
+    The exact opening audit supplies a *frozen active set* only.  Bad solid
+    cells contribute ``+rho`` and bad void cells contribute ``-w*rho`` to a
+    local sequential surrogate.  Its physical-density cotangent is propagated
+    through the certified projection/filter VJP.  No binary opening, closing,
+    threshold assignment, or per-pixel repair is applied to the returned
+    latent design.
+
+    Candidate selection is solver-free and fail closed: it requires a strict
+    decrease in exact bad-cell total and at least a one-percent decrease in the
+    fixed-cap smooth violation.  Among the smallest exact totals, the stored
+    Maxwell/thermal adjoint selects the best predicted objective change.
+    A fresh solver evaluation remains mandatory before acceptance.
+    """
+
+    mapping = mapping or ProductionDensityMapping()
+    latent = np.asarray(latent, dtype=float)
+    objective_gradient_A = np.asarray(objective_gradient_A, dtype=float)
+    if latent.shape != mapping.shape or objective_gradient_A.shape != latent.shape:
+        raise ValueError("latent/objective gradient shape does not match mapping")
+    if not np.all(np.isfinite(objective_gradient_A)):
+        raise ValueError("objective gradient contains NaN or Inf")
+
+    current_metrics, current_arrays = design_metrics(latent, beta, mapping)
+    current_exact = current_metrics["exact_binary_audit"]
+    current_total = int(
+        current_exact["solid_bad_cell_count"]
+        + current_exact["void_bad_cell_count"]
+    )
+    if current_total == 0:
+        raise RuntimeError("exact active-set restoration requested with zero violations")
+    caps = stage_caps(beta)
+    current_values = np.asarray(
+        [current_metrics["solid_constraint"], current_metrics["void_constraint"]],
+        dtype=float,
+    )
+    current_violation = normalized_violation(current_values, caps)
+    bad_solid = np.asarray(current_arrays["bad_solid"], dtype=float)
+    bad_void = np.asarray(current_arrays["bad_void"], dtype=float)
+
+    # First screen every bounded candidate with only the exact audit.  The
+    # relatively expensive differentiable disk constraint is evaluated only
+    # for exact-count levels that may be admissible.
+    by_total: dict[int, list[dict[str, object]]] = {}
+    for void_weight in EXACT_ACTIVE_SET_PHASE_WEIGHTS:
+        physical_cotangent = bad_solid - float(void_weight) * bad_void
+        gradient = mapping.vjp(latent, physical_cotangent, beta)
+        maximum = float(np.max(np.abs(gradient)))
+        if not np.isfinite(maximum) or maximum <= 0.0:
+            continue
+        direction = gradient / maximum
+        for move in EXACT_ACTIVE_SET_MOVES:
+            candidate = np.clip(latent - float(move) * direction, 0.0, 1.0)
+            candidate_rho = mapping.physical(candidate, beta)
+            audit = exact_binary_audit(candidate_rho, mapping.spacing_m)
+            total = int(
+                audit["solid_bad_cell_count"] + audit["void_bad_cell_count"]
+            )
+            if total >= current_total:
+                continue
+            delta = candidate - latent
+            by_total.setdefault(total, []).append({
+                "candidate": candidate,
+                "void_weight": float(void_weight),
+                "move": float(move),
+                "predicted_objective_delta_A": float(
+                    np.sum(objective_gradient_A * delta)
+                ),
+                "exact_solid_bad_cells": int(audit["solid_bad_cell_count"]),
+                "exact_void_bad_cells": int(audit["void_bad_cell_count"]),
+                "latent_rms_change": float(np.sqrt(np.mean(delta * delta))),
+                "latent_max_change": float(np.max(np.abs(delta))),
+            })
+
+    for exact_total in sorted(by_total):
+        admissible: list[tuple[dict[str, object], dict[str, object]]] = []
+        for candidate_record in by_total[exact_total]:
+            metrics, _ = design_metrics(
+                np.asarray(candidate_record["candidate"], dtype=float), beta, mapping
+            )
+            values = np.asarray(
+                [metrics["solid_constraint"], metrics["void_constraint"]],
+                dtype=float,
+            )
+            violation = normalized_violation(values, caps)
+            if not (
+                violation <= current_violation * (1.0 - 0.01)
+                or bool(metrics["constraints_feasible"])
+            ):
+                continue
+            candidate_record = dict(candidate_record)
+            candidate_record.update({
+                "candidate_smooth_values": values.tolist(),
+                "candidate_normalized_violation": float(violation),
+                "candidate_metrics": metrics,
+            })
+            admissible.append((candidate_record, metrics))
+        if not admissible:
+            continue
+        admissible.sort(
+            key=lambda item: (
+                -float(item[0]["predicted_objective_delta_A"]),
+                float(item[0]["candidate_normalized_violation"]),
+                float(item[0]["move"]),
+                float(item[0]["void_weight"]),
+            )
+        )
+        selected, _ = admissible[0]
+        candidate = np.asarray(selected.pop("candidate"), dtype=float)
+        diagnostics = {
+            "contract": EXACT_ACTIVE_SET_RESTORATION_CONTRACT,
+            "posthoc_binary_repair": False,
+            "current_exact_solid_bad_cells": int(
+                current_exact["solid_bad_cell_count"]
+            ),
+            "current_exact_void_bad_cells": int(
+                current_exact["void_bad_cell_count"]
+            ),
+            "current_exact_bad_total": current_total,
+            "current_smooth_values": current_values.tolist(),
+            "current_normalized_violation": float(current_violation),
+            "screened_exact_reducing_candidate_count": int(
+                sum(len(values) for values in by_total.values())
+            ),
+            "selected_exact_bad_total": int(exact_total),
+            **selected,
+        }
+        return candidate, diagnostics
+
+    raise RuntimeError(
+        "no bounded exact-active-set candidate reduced both exact DRC and "
+        "the smooth fixed-cap violation"
+    )
+
+
 def projected_binary_gate(metrics: dict[str, object]) -> bool:
     exact = metrics["exact_binary_audit"]
     return bool(
@@ -612,13 +765,25 @@ class StageConvergence:
 def stage_convergence(history: list[dict[str, object]], beta: float) -> StageConvergence:
     accepted = [
         row for row in history
-        if float(row["beta"]) == float(beta) and row["role"] == "accepted_mma"
+        if float(row["beta"]) == float(beta)
+        and row["role"] in ("accepted_mma", "accepted_drc_restoration")
     ]
     minimum = 8 if beta <= 2.0 else 6
     window = 4
     if len(accepted) < minimum or len(accepted) < window:
         return StageConvergence(False, f"need at least {minimum} accepted updates", np.inf, np.inf, np.inf)
     recent = accepted[-window:]
+    if float(beta) >= 128.0 and (
+        int(recent[-1].get("solid_bad_cells", 0))
+        + int(recent[-1].get("void_bad_cells", 0))
+    ) != 0:
+        return StageConvergence(
+            False,
+            "exact 500 nm violations remain in the final restoration epoch",
+            np.inf,
+            np.inf,
+            np.inf,
+        )
     if not bool(recent[-1]["constraints_feasible"]):
         return StageConvergence(False, "fixed solid/void inequalities are not feasible", np.inf, np.inf, np.inf)
     rel = [abs(float(row["relative_fom_change"])) for row in recent]

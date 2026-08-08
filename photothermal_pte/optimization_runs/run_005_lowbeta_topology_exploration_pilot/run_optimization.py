@@ -21,6 +21,7 @@ import numpy as np  # noqa: E402
 
 from optimization_support import (
     DISK_CONSTRAINT_START_BETA,
+    EXACT_ACTIVE_SET_RESTORATION_CONTRACT,
     MMA_TOPOLOGY_RESET_GLOBAL_ITERATION,
     adaptive_move_ceiling,
     calibrate_stage_caps,
@@ -29,6 +30,7 @@ from optimization_support import (
     constraint_contract,
     constraint_values_and_gradients,
     design_metrics,
+    exact_active_set_restoration_candidate,
     initialize_mma_state,
     low_beta_morphology_limited_transition,
     mma_effective_constraint_caps,
@@ -78,7 +80,10 @@ MAXIMUM_ACCEPTED_UPDATES = {
     16: 8,
     32: 6,
     64: 6,
-    128: 4,
+    # β=128 owns the final bounded exact-DRC restoration epoch.  The larger
+    # ceiling is only a fail-closed budget; exact-active-set updates must each
+    # strictly reduce the violation count and pass a fresh GPU/CUDA solve.
+    128: 12,
 }
 REPROJECTION_ONLY_BETA = 256
 EXACT_DRC_GATE_START_BETA = 32.0
@@ -422,6 +427,88 @@ def propose(
     return result_path, raw_path, candidate_state_path
 
 
+def propose_exact_active_set_restoration(
+    current_result: Path,
+    current_raw: Path,
+    state_path: Path,
+    beta: float,
+    global_iteration: int,
+    stage_iteration: int,
+) -> tuple[Path, Path, Path]:
+    """Build one sequential exact-DRC candidate without binary repair."""
+
+    output = RUN_RAW / (
+        f"b{int(beta):04d}_s{stage_iteration:03d}_g{global_iteration:03d}_"
+        "exact_active_set_proposal"
+    )
+    result_path = output / "proposal_result.json"
+    raw_path = output / "proposal.npz"
+    candidate_state_path = output / "mma_state_passthrough.npz"
+    if result_path.exists():
+        payload = json.loads(result_path.read_text())
+        if payload.get("restoration_contract") != EXACT_ACTIVE_SET_RESTORATION_CONTRACT:
+            raise RuntimeError("existing exact-restoration proposal contract mismatch")
+        if sha256(raw_path) != payload["raw_artifact"]["sha256"]:
+            raise RuntimeError("existing exact-restoration proposal SHA mismatch")
+        return result_path, raw_path, candidate_state_path
+
+    output.mkdir(parents=True, exist_ok=True)
+    current_payload = json.loads(current_result.read_text())
+    current_data = np.load(current_raw)
+    latent = np.asarray(current_data["latent"], dtype=float)
+    gradient_A = np.asarray(current_data["gradient_latent_A"], dtype=float)
+    candidate, diagnostics = exact_active_set_restoration_candidate(
+        latent, beta, gradient_A
+    )
+    candidate_metrics, candidate_arrays = design_metrics(candidate, beta)
+    current_metrics, current_arrays = design_metrics(latent, beta)
+    np.savez_compressed(
+        raw_path,
+        latent=candidate,
+        latent_previous=latent,
+        rho=candidate_arrays["rho"],
+        rho_previous=current_arrays["rho"],
+        gradient_latent_A=gradient_A,
+        constraint_values=np.asarray(
+            [current_metrics["solid_constraint"], current_metrics["void_constraint"]]
+        ),
+        constraint_caps=stage_caps(beta),
+    )
+    shutil.copy2(state_path, candidate_state_path)
+    payload = {
+        "status": "PROPOSED_RUN005_EXACT_DRC_ACTIVE_SET_RESTORATION",
+        "passed": True,
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "beta": beta,
+        "global_iteration": global_iteration,
+        "stage_iteration": stage_iteration,
+        "retry": 0,
+        "move": diagnostics["move"],
+        "void_weight": diagnostics["void_weight"],
+        "proposal_method": "differentiable_exact_DRC_active_set_filter_VJP",
+        "restoration_contract": EXACT_ACTIVE_SET_RESTORATION_CONTRACT,
+        "fixed_constraint_caps": stage_caps(beta).tolist(),
+        "mma_effective_constraint_caps": stage_caps(beta).tolist(),
+        "mma_cap_contract": MMA_CAP_CONTRACT,
+        "constraint_current": [
+            current_metrics["solid_constraint"], current_metrics["void_constraint"]
+        ],
+        "constraint_contract": constraint_contract(beta),
+        "candidate_offline_metrics": candidate_metrics,
+        "restoration_diagnostics": diagnostics,
+        "raw_artifact": artifact(raw_path),
+        "candidate_state": artifact(candidate_state_path),
+        "current_evaluation_result": artifact(current_result),
+        "current_evaluation_NPZ": artifact(current_raw),
+        "exact_DRC_used_as_gradient": True,
+        "exact_DRC_used_as_hard_step_veto": True,
+        "posthoc_binary_repair": False,
+        "objective_gradient_source": current_payload.get("raw_artifact"),
+    }
+    result_path.write_text(json.dumps(payload, indent=2) + "\n")
+    return result_path, raw_path, candidate_state_path
+
+
 def accept_candidate(
     current_result: Path, current_raw: Path,
     proposal_result: Path, proposal_raw: Path, candidate_state: Path,
@@ -622,7 +709,11 @@ def main() -> int:
         state_path = RUN_RAW / f"b{beta_integer:04d}_mma_state_stage_start.npz"
         if not state_path.exists():
             save_mma_state(state_path, initialize_mma_state(current_latent))
-        accepted_rows = [row for row in summary()["history"] if float(row["beta"]) == beta and row["role"] == "accepted_mma"]
+        accepted_rows = [
+            row for row in summary()["history"]
+            if float(row["beta"]) == beta
+            and row["role"] in ("accepted_mma", "accepted_drc_restoration")
+        ]
         stage_iteration = len(accepted_rows)
         if accepted_rows:
             last = accepted_rows[-1]
@@ -1015,6 +1106,121 @@ def main() -> int:
                     "solver-backed candidate failed the FOM/physics acceptance "
                     "gate; continuation stopped without a smaller-move GPU retry"
                 )
+            if not accepted and beta == 128.0:
+                # The smooth MMA approximation can become locally opposed to
+                # the exact thresholded disk audit at the last optimization
+                # beta.  Use a bounded sequential active-set surrogate only
+                # after every authorized MMA proposal failed offline.  It
+                # changes latent variables through the certified filter VJP;
+                # it never edits the binary array and still requires a fresh
+                # Maxwell + thermal/PTE solve before acceptance.
+                current_metrics, _ = design_metrics(
+                    np.asarray(np.load(current_raw)["latent"], float), beta
+                )
+                current_exact = current_metrics["exact_binary_audit"]
+                current_exact_total = int(
+                    current_exact["solid_bad_cell_count"]
+                    + current_exact["void_bad_cell_count"]
+                )
+                if current_exact_total > 0:
+                    proposal_result, proposal_raw, candidate_state = (
+                        propose_exact_active_set_restoration(
+                            current_result,
+                            current_raw,
+                            state_path,
+                            beta,
+                            global_iteration,
+                            next_stage_iteration,
+                        )
+                    )
+                    proposal_payload = json.loads(proposal_result.read_text())
+                    candidate_exact = proposal_payload[
+                        "candidate_offline_metrics"
+                    ]["exact_binary_audit"]
+                    candidate_exact_total = int(
+                        candidate_exact["solid_bad_cell_count"]
+                        + candidate_exact["void_bad_cell_count"]
+                    )
+                    if candidate_exact_total >= current_exact_total:
+                        raise RuntimeError(
+                            "exact-active-set proposal did not strictly reduce "
+                            "the exact 500 nm violation total"
+                        )
+                    emit(
+                        "exact_active_set_candidate_selected",
+                        beta=beta,
+                        global_iteration=global_iteration,
+                        stage_iteration=next_stage_iteration,
+                        current_exact_bad_total=current_exact_total,
+                        candidate_exact_bad_total=candidate_exact_total,
+                        restoration_diagnostics=proposal_payload[
+                            "restoration_diagnostics"
+                        ],
+                        posthoc_binary_repair=False,
+                        Maxwell_solves=0,
+                        thermal_solves=0,
+                    )
+                    evaluation_output = RUN_RAW / (
+                        f"b{beta_integer:04d}_s{next_stage_iteration:03d}_"
+                        f"g{global_iteration:03d}_exact_active_set_evaluation"
+                    )
+                    candidate_result, candidate_raw = evaluate(
+                        proposal_raw, evaluation_output, beta, args.gpu
+                    )
+                    accepted_state = RUN_RAW / (
+                        f"b{beta_integer:04d}_s{next_stage_iteration:03d}_"
+                        f"g{global_iteration:03d}_accepted_drc_restoration_state.npz"
+                    )
+                    decision = accept_candidate(
+                        current_result,
+                        current_raw,
+                        proposal_result,
+                        proposal_raw,
+                        candidate_state,
+                        candidate_result,
+                        candidate_raw,
+                        accepted_state,
+                    )
+                    emit(
+                        "exact_active_set_candidate_decision",
+                        beta=beta,
+                        global_iteration=global_iteration,
+                        stage_iteration=next_stage_iteration,
+                        move=proposal_payload["move"],
+                        void_weight=proposal_payload["void_weight"],
+                        **{
+                            key: value for key, value in decision.items()
+                            if key not in {
+                                "beta", "global_iteration", "stage_iteration",
+                                "retry", "proposal", "candidate_evaluation",
+                                "generated_at_utc",
+                            }
+                        },
+                    )
+                    if not decision["accepted"]:
+                        raise RuntimeError(
+                            "solver-backed exact-active-set restoration failed "
+                            "the FOM/physics acceptance gate"
+                        )
+                    out = record(
+                        candidate_result,
+                        candidate_raw,
+                        global_iteration,
+                        next_stage_iteration,
+                        "accepted_drc_restoration",
+                        proposal_result,
+                        proposal_raw,
+                        accepted_state,
+                    )
+                    checkpoint_git(
+                        out["tag"], [Path(path) for path in out["plots"]]
+                    )
+                    current_result, current_raw, state_path = (
+                        candidate_result, candidate_raw, accepted_state
+                    )
+                    stage_iteration = next_stage_iteration
+                    accepted = True
+
             if not accepted:
                 if beta >= EXACT_DRC_GATE_START_BETA:
                     # At high beta the bounded retry set may contain no step

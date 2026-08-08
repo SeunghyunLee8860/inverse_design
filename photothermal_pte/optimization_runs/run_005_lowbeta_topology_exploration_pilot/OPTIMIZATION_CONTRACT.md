@@ -140,7 +140,7 @@ finished inverse-designed structure.
 
 The immutable g005 checkpoint is the restart. Beta=2 must first satisfy the
 existing four-update FOM/density plateau and may use at most 16 total accepted
-updates. Later optimized-stage budgets are 10, 10, 8, 6, 6, and 4 accepted
+updates. Later optimized-stage budgets are 10, 10, 8, 6, 6, and 12 accepted
 updates for beta 4, 8, 16, 32, 64, and 128 respectively. Exhausting a budget
 ends that beta stage without claiming plateau and advances projection; it is
 not permission to continue constraint-only micro-repair and is not a completed
@@ -156,6 +156,22 @@ starting above the cap must reduce normalized smooth violation by at least 1%
 and retain at least 99.8% of the solver-backed FOM. From beta=32 the exact total
 bad-cell count also cannot increase. Two consecutive accepted minimum moves of
 0.0025 advance projection instead of relaxing a cap.
+
+At the final optimized stage (`beta=128`), if every bounded smooth-MMA
+candidate fails the solver-free prescreen while exact violations remain, the
+driver may invoke the versioned sequential contract
+`sequential_exact_drc_active_set_filter_vjp_v1`. The current exact bad-solid
+and bad-void masks define only a frozen local physical-density surrogate. Its
+cotangent is propagated through the same certified projection and finite-conic
+filter VJP to propose bounded latent-variable steps. A proposal is eligible for
+one fresh GPU Maxwell plus CUDA thermal/PTE evaluation only if it strictly
+reduces the exact bad-cell total and reduces fixed-cap smooth violation by at
+least 1%. Actual per-step FOM retention remains at least 99.8%.
+
+This path never assigns thresholded pixels and never applies binary opening or
+closing to the design. It is therefore a solver-backed continuous restoration
+epoch, not post-hoc geometry repair. Failure to reach exact zero inside the
+12-update beta=128 budget remains terminal and fail closed.
 
 Once exact solid and void bad-cell counts both reach zero, beta 256 through
 8192 are projection-only sharpening checkpoints with no redundant forward or

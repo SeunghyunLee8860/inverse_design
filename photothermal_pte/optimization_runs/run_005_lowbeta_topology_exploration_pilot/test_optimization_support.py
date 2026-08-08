@@ -226,6 +226,26 @@ def test_stage_requires_recent_plateau_and_minimum_updates() -> None:
     assert not stage_convergence(history, 4.0).converged
 
 
+def test_beta128_restoration_role_cannot_plateau_with_exact_violations() -> None:
+    history = []
+    for _ in range(6):
+        history.append({
+            "beta": 128.0,
+            "role": "accepted_drc_restoration",
+            "constraints_feasible": True,
+            "relative_fom_change": 0.001,
+            "rho_rms_change": 0.001,
+            "rho_max_change": 0.010,
+            "solid_bad_cells": 1,
+            "void_bad_cells": 0,
+        })
+    result = stage_convergence(history, 128.0)
+    assert not result.converged
+    assert "exact 500 nm violations remain" in result.reason
+    history[-1]["solid_bad_cells"] = 0
+    assert stage_convergence(history, 128.0).converged
+
+
 def test_disk_constraint_is_active_from_beta2() -> None:
     assert "disk_opening_500nm_from_iteration_zero" in constraint_contract(2.0)
     assert constraint_contract(2.0) == constraint_contract(32.0)
