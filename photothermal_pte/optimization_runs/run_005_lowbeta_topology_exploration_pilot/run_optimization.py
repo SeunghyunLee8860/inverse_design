@@ -30,6 +30,7 @@ from optimization_support import (
     constraint_values_and_gradients,
     design_metrics,
     initialize_mma_state,
+    low_beta_morphology_limited_transition,
     mma_effective_constraint_caps,
     mma_step,
     projected_binary_gate,
@@ -630,6 +631,40 @@ def main() -> int:
             convergence = stage_convergence(history, beta)
             if convergence.converged:
                 emit("stage_converged", beta=beta, global_iteration=global_iteration, diagnostics=convergence.__dict__)
+                break
+            accepted_moves_for_transition = accepted_move_provenance(
+                summary(), beta
+            )
+            if low_beta_morphology_limited_transition(
+                history, beta, accepted_moves_for_transition
+            ):
+                recent_beta_rows = [
+                    row for row in history
+                    if float(row["beta"]) == beta
+                    and row["role"] == "accepted_mma"
+                ]
+                emit(
+                    "stage_morphology_limited_transition",
+                    beta=beta,
+                    global_iteration=global_iteration,
+                    accepted_updates=len(recent_beta_rows),
+                    last_two_moves=accepted_moves_for_transition[-2:],
+                    previous_exact_bad_total=(
+                        int(recent_beta_rows[-2]["solid_bad_cells"])
+                        + int(recent_beta_rows[-2]["void_bad_cells"])
+                    ),
+                    latest_exact_bad_total=(
+                        int(recent_beta_rows[-1]["solid_bad_cells"])
+                        + int(recent_beta_rows[-1]["void_bad_cells"])
+                    ),
+                    latest_relative_fom_change=float(
+                        recent_beta_rows[-1]["relative_fom_change"]
+                    ),
+                    reason=(
+                        "minimum authorized beta2 move worsened exact morphology; "
+                        "advance projection instead of repeating micro-repair"
+                    ),
+                )
                 break
             stage_maximum = MAXIMUM_ACCEPTED_UPDATES[beta_integer]
             if stage_iteration >= stage_maximum:

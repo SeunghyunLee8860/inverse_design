@@ -207,3 +207,14 @@ If the low-beta catastrophic guard rejects a proposal, the remaining move in
 the fixed `(0.01, 0.005, 0.0025)` schedule may still be prescreened.  Rejected
 proposals use zero Maxwell/thermal solves.  No move below `0.0025` is generated;
 if the minimum move also fails, the driver stops for a strategy review.
+
+The solver-backed g012 and g013 diagnostics established the bounded beta=2
+exit condition.  g012 at move `0.005` improved FOM by `+3.7797%` and reduced
+exact bad cells `48 -> 42`.  g013 required the minimum move `0.0025`, improved
+FOM by `+1.8219%`, but worsened exact bad cells `42 -> 51`; the following
+minimum-move proposal predicted `51 -> 131` and was rejected before Maxwell.
+This is a morphology-limited stage, not a FOM plateau.  Beta=2 therefore ends
+at immutable g013 and advances to beta=4 rather than repeating minimum-step
+constraint repair.  This alternate transition is permitted only at beta=2,
+only after the post-reset accepted sequence has contracted from at most 0.005
+to 0.0025, and only when the solver-backed minimum step worsens exact DRC.

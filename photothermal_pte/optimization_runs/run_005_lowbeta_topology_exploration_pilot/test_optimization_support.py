@@ -15,6 +15,7 @@ from optimization_support import (
     constraint_values_and_gradients,
     design_metrics,
     exact_binary_audit,
+    low_beta_morphology_limited_transition,
     mma_effective_constraint_caps,
     stage_caps,
     stage_convergence,
@@ -239,6 +240,25 @@ def test_g009_reset_restores_move_without_erasing_beta2_plateau_history() -> Non
     # still sees the genuine solver-backed beta=2 history.
     assert adaptive_move_ceiling(pre_reset, 2.0, []) == 0.01
     assert stage_convergence(pre_reset, 2.0).converged
+
+
+def test_beta2_morphology_limited_transition_requires_minimum_move_worsening() -> None:
+    history = [
+        {
+            "beta": 2.0,
+            "role": "accepted_mma",
+            "global_iteration": index,
+            "solid_bad_cells": solid,
+            "void_bad_cells": void,
+        }
+        for index, solid, void in (
+            (10, 44, 8), (11, 40, 8), (12, 36, 6), (13, 43, 8)
+        )
+    ]
+    moves = [0.01, 0.01, 0.005, 0.0025]
+    assert low_beta_morphology_limited_transition(history, 2.0, moves)
+    history[-1]["solid_bad_cells"] = 30
+    assert not low_beta_morphology_limited_transition(history, 2.0, moves)
 
 
 def test_metrics_use_entire_373_by_373_design() -> None:

@@ -608,6 +608,39 @@ def stage_convergence(history: list[dict[str, object]], beta: float) -> StageCon
     )
 
 
+def low_beta_morphology_limited_transition(
+    history: list[dict[str, object]],
+    beta: float,
+    accepted_moves: list[float],
+) -> bool:
+    """End beta=2 when its minimum safe step worsens exact morphology."""
+
+    if float(beta) != 2.0:
+        return False
+    accepted = [
+        row for row in history
+        if float(row["beta"]) == 2.0 and row["role"] == "accepted_mma"
+        and int(row.get("global_iteration", -1))
+        > MMA_TOPOLOGY_RESET_GLOBAL_ITERATION
+    ]
+    if len(accepted) < 4 or len(accepted_moves) != len(accepted):
+        return False
+    previous_move, latest_move = map(float, accepted_moves[-2:])
+    previous_exact = (
+        int(accepted[-2]["solid_bad_cells"])
+        + int(accepted[-2]["void_bad_cells"])
+    )
+    latest_exact = (
+        int(accepted[-1]["solid_bad_cells"])
+        + int(accepted[-1]["void_bad_cells"])
+    )
+    return bool(
+        previous_move <= 0.005 + 1.0e-15
+        and latest_move <= MINIMUM_MMA_MOVE + 1.0e-15
+        and latest_exact > previous_exact
+    )
+
+
 def adaptive_move_ceiling(
     history: list[dict[str, object]],
     beta: float,
@@ -671,6 +704,7 @@ __all__ = [
     "mma_effective_constraint_caps",
     "projected_binary_gate", "save_mma_state", "stage_caps",
     "smooth_feasibility_move_retries",
-    "stage_convergence", "transient_license_failure",
+    "stage_convergence", "low_beta_morphology_limited_transition",
+    "transient_license_failure",
     "two_consecutive_subthreshold_moves",
 ]
