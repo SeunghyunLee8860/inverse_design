@@ -36,7 +36,7 @@ ZHOU_DECAY_M2 = 1.0e-10
 PNORM = 8.0
 LEGACY_CONSTRAINT_CONTRACT = "legacy_zhou_p8_v1"
 DISK_CONSTRAINT_CONTRACT = "soft_disk_opening_500nm_from_iteration_zero_v5"
-MMA_CAP_CONTRACT = "run005_beta2_fixed_exploration_envelope_v4"
+MMA_CAP_CONTRACT = "run005_full_continuation_fixed_per_beta_caps_v5"
 DISK_CONSTRAINT_START_BETA = 2.0
 DISK_RECOVERY_START_GLOBAL_ITERATION = -1
 DISK_SHARPEN_GAMMA = 64.0
@@ -48,6 +48,7 @@ FEASIBLE_FOM_RETENTION = 0.998
 LOW_BETA_CATASTROPHIC_EXACT_GROWTH_FACTOR = 1.50
 LOW_BETA_CATASTROPHIC_EXACT_GROWTH_ABSOLUTE = 25
 SMALL_MOVE_HALT_THRESHOLD = 0.0025
+DEFAULT_STAGE_CAPS_PATH = HERE / "stage_caps.json"
 
 
 def disk_structuring_element(radius_pixels: int) -> np.ndarray:
@@ -261,16 +262,90 @@ def constraint_values_and_gradients(
     return legacy_zhou_constraint_values_and_gradients(latent, beta, mapping)
 
 
+def _stage_caps_path() -> Path:
+    return Path(
+        os.environ.get("RUN005_STAGE_CAPS_FILE", str(DEFAULT_STAGE_CAPS_PATH))
+    ).expanduser().resolve()
+
+
+def _beta_key(beta: float) -> str:
+    value = float(beta)
+    if not value.is_integer():
+        raise ValueError("continuation beta must be an integer")
+    return str(int(value))
+
+
 def stage_caps(beta: float) -> np.ndarray:
-    if not np.isclose(float(beta), 2.0, rtol=0.0, atol=1.0e-12):
+    """Return the immutable solid/void cap for one beta stage.
+
+    Beta=2 keeps the reviewed Run005 exploration envelope.  Every later stage
+    is calibrated exactly once from its incoming checkpoint and persisted in
+    ``stage_caps.json``.  Missing entries fail closed; a candidate can never
+    silently move its own cap.
+    """
+
+    if np.isclose(float(beta), 2.0, rtol=0.0, atol=1.0e-12):
+        return np.asarray((1.00e-3, 1.00e-4), float)
+    path = _stage_caps_path()
+    if not path.exists():
+        raise RuntimeError(f"missing fixed continuation-cap registry: {path}")
+    payload = json.loads(path.read_text())
+    entry = payload.get("stages", {}).get(_beta_key(beta))
+    if entry is None:
         raise RuntimeError(
-            "Run 005 is a bounded beta=2 pilot; later-beta caps require "
-            "checkpoint reprojection and explicit calibration before use"
+            f"beta={float(beta):g} has no checkpoint-calibrated fixed cap"
         )
-    # Final fixed beta=2 exploration envelope.  It deliberately stays loose
-    # for the remaining bounded topology-search points; beta>=4 requires a
-    # fresh checkpoint reprojection and a new approved cap contract.
-    return np.asarray((1.00e-3, 1.00e-4), float)
+    caps = np.asarray(entry["caps"], dtype=float)
+    if caps.shape != (2,) or not np.all(np.isfinite(caps)) or np.any(caps <= 0):
+        raise RuntimeError(f"invalid fixed caps for beta={float(beta):g}")
+    return caps
+
+
+def calibrate_stage_caps(
+    latent: np.ndarray,
+    beta: float,
+    target_occupancy: float,
+) -> tuple[np.ndarray, dict[str, object]]:
+    """Persist one cap epoch from the incoming checkpoint, never per step."""
+
+    if float(beta) <= 2.0:
+        values, _, _ = constraint_values_and_gradients(latent, beta)
+        caps = stage_caps(beta)
+        return caps, {
+            "beta": float(beta),
+            "incoming_values": values.tolist(),
+            "caps": caps.tolist(),
+            "target_occupancy": None,
+            "actual_occupancy": (values / caps).tolist(),
+            "source": "reviewed_beta2_fixed_envelope",
+        }
+    occupancy = float(target_occupancy)
+    if not 0.5 <= occupancy < 1.0:
+        raise ValueError("target cap occupancy must be in [0.5, 1)")
+    path = _stage_caps_path()
+    payload = json.loads(path.read_text()) if path.exists() else {
+        "contract": MMA_CAP_CONTRACT,
+        "stages": {},
+    }
+    if payload.get("contract") != MMA_CAP_CONTRACT:
+        raise RuntimeError("stage-cap registry contract mismatch")
+    key = _beta_key(beta)
+    existing = payload.setdefault("stages", {}).get(key)
+    if existing is not None:
+        return stage_caps(beta), existing
+    values, _, _ = constraint_values_and_gradients(latent, beta)
+    caps = np.maximum(values / occupancy, 1.0e-12)
+    entry = {
+        "beta": float(beta),
+        "incoming_values": values.tolist(),
+        "caps": caps.tolist(),
+        "target_occupancy": occupancy,
+        "actual_occupancy": (values / caps).tolist(),
+        "source": "single_stage_start_reprojection",
+    }
+    payload["stages"][key] = entry
+    path.write_text(json.dumps(payload, indent=2) + "\n")
+    return caps, entry
 
 
 def smooth_feasibility_move_retries(move_ceiling: float) -> tuple[float, ...]:
@@ -298,7 +373,7 @@ def mma_effective_constraint_caps(
     values: np.ndarray,
     beta: float,
 ) -> np.ndarray:
-    """Use only the explicitly calibrated beta=2 pilot caps."""
+    """Use fixed stage caps and preserve each phase from beta=4 onward."""
 
     current = np.asarray(values, dtype=float)
     caps = stage_caps(beta)
@@ -306,7 +381,7 @@ def mma_effective_constraint_caps(
         raise ValueError("constraint values must be a finite solid/void pair")
     if np.any(current <= 0.0):
         raise ValueError("constraint values must be positive")
-    return caps
+    return np.minimum(caps, current) if float(beta) >= 4.0 else caps
 
 
 def catastrophic_exact_growth(
@@ -336,8 +411,8 @@ def two_consecutive_subthreshold_moves(accepted_moves: list[float]) -> bool:
 
     return bool(
         len(accepted_moves) >= 2
-        and float(accepted_moves[-1]) < SMALL_MOVE_HALT_THRESHOLD
-        and float(accepted_moves[-2]) < SMALL_MOVE_HALT_THRESHOLD
+        and float(accepted_moves[-1]) <= SMALL_MOVE_HALT_THRESHOLD
+        and float(accepted_moves[-2]) <= SMALL_MOVE_HALT_THRESHOLD
     )
 
 
@@ -579,7 +654,7 @@ def adaptive_move_ceiling(
 __all__ = [
     "DISK_CONSTRAINT_START_BETA", "DISK_RECOVERY_START_GLOBAL_ITERATION",
     "MMAState", "ProductionDensityMapping", "adaptive_move_ceiling", "candidate_acceptance",
-    "constraint_contract", "constraint_values_and_gradients",
+    "calibrate_stage_caps", "constraint_contract", "constraint_values_and_gradients",
     "disk_constraint_values_and_gradients", "design_metrics", "exact_binary_audit",
     "catastrophic_exact_growth",
     "initialize_mma_state", "load_mma_state", "mma_step",

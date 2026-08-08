@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run 005: fail-closed bounded beta=2 topology-exploration pilot."""
+"""Run 005: full fail-closed beta continuation to an exact binary design."""
 
 from __future__ import annotations
 
@@ -23,6 +23,7 @@ from optimization_support import (
     DISK_CONSTRAINT_START_BETA,
     DISK_RECOVERY_START_GLOBAL_ITERATION,
     adaptive_move_ceiling,
+    calibrate_stage_caps,
     candidate_acceptance,
     catastrophic_exact_growth,
     constraint_contract,
@@ -68,14 +69,31 @@ INITIAL_RAW = RAW_ROOT / "run002_selected_full_latent_adjoint_preparation_202608
 INITIAL_RAW_SHA = "d3617baf54d54e735feba9d85c439ee77bcdf5ddaeec47e12c812bf036b2c87e"
 INCIDENT_POWER = "1.3822950233084244e-13"
 OBJECTIVE_SCALE = 1.0e8
-BETA_SCHEDULE = [2]
-MAXIMUM_ACCEPTED_UPDATES_PER_BETA = 20
+BETA_SCHEDULE = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192]
+MAXIMUM_ACCEPTED_UPDATES = {
+    2: 16,
+    4: 10,
+    8: 10,
+    16: 8,
+    32: 6,
+    64: 6,
+    128: 4,
+}
+REPROJECTION_ONLY_BETA = 256
 EXACT_DRC_GATE_START_BETA = 32.0
 NO_PROGRESS_WINDOW = 6
 MINIMUM_WINDOW_FOM_GAIN = 0.002
 MINIMUM_WINDOW_EXACT_REDUCTION_FRACTION = 0.02
 LICENSE_RETRY_LIMIT = 120
 LICENSE_RETRY_DELAY_S = 30
+STAGE_CAP_TARGET_OCCUPANCY = {
+    4: 0.85,
+    8: 0.88,
+    16: 0.90,
+    32: 0.93,
+    64: 0.95,
+    128: 0.95,
+}
 
 
 def emit(event: str, **values) -> None:
@@ -255,6 +273,7 @@ def checkpoint_git(tag: str, extra: list[Path] | None = None) -> None:
         HERE / "results/OPTIMIZATION_REPORT.md", HERE / "results/optimization_summary.json",
         HERE / "results/optimization_history.csv", HERE / "plots/iteration_fom_beta_constraints_drc.png",
         HERE / "manifests/RAW_ARTIFACT_MANIFEST.json",
+        HERE / "stage_caps.json",
     ]
     if extra:
         tracked.extend(extra)
@@ -465,7 +484,7 @@ def finalize(current_raw: Path, beta: float, global_iteration: int, gpu: str) ->
     manifest.update({"status": status, "final_thresholded_binary": {"source": artifact(binary_npz), "evaluation_result": artifact(result), "evaluation_NPZ": artifact(raw)}})
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
     (HERE / "results/OPTIMIZATION_REPORT.md").write_text(
-        "# Run 005 low-beta topology-exploration pilot\n\n"
+        "# Run 005 fully binary PTE optimization\n\n"
         f"Status: `{status}`\n\nFinal beta: `{beta:g}`; global iteration: `{global_iteration}`.\n\n"
         f"Fresh thresholded-binary GPU Maxwell/CUDA thermal-PTE FOM: `{payload['objective_A_per_incident_W']:.12e} A/W`.\n\n"
         f"Exact solid/void bad cells: `{payload['exact_binary_audit']['solid_bad_cell_count']}` / `{payload['exact_binary_audit']['void_bad_cell_count']}`. No post-hoc binary repair was used.\n"
@@ -477,24 +496,14 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--gpu", default="0")
     parser.add_argument("--constraint-device", default="cuda:0")
-    parser.add_argument(
-        "--pilot-accepted-updates",
-        type=int,
-        default=0,
-        help="total accepted beta=2 updates at which the bounded pilot pauses (1-5)",
-    )
     args = parser.parse_args()
-    if not 1 <= args.pilot_accepted_updates <= 5:
-        raise ValueError(
-            "Run 005 authorizes a bounded total of 1-5 accepted beta=2 updates"
-        )
     os.environ["RUN005_CONSTRAINT_TORCH_DEVICE"] = args.constraint_device
     verify_inputs()
     emit(
         "driver_started",
         gpu=args.gpu,
         constraint_device=args.constraint_device,
-        method="beta=2 topology exploration with smooth 500 nm constraints",
+        method="plateau-gated beta continuation to exact binary 500 nm design",
     )
     current_result, current_raw = INITIAL_RESULT, INITIAL_RAW
     global_iteration = 0
@@ -505,6 +514,46 @@ def main() -> int:
 
     for beta_integer in BETA_SCHEDULE:
         beta = float(beta_integer)
+        current_latent = np.asarray(np.load(current_raw)["latent"], float)
+        target_occupancy = STAGE_CAP_TARGET_OCCUPANCY.get(beta_integer, 0.95)
+        initial_caps, cap_audit = calibrate_stage_caps(
+            current_latent, beta, target_occupancy
+        )
+        emit(
+            "stage_cap_reprojection_audit",
+            **cap_audit,
+            immutable_within_stage=True,
+        )
+        if beta_integer >= REPROJECTION_ONLY_BETA:
+            current_metrics, _ = design_metrics(current_latent, beta)
+            exact = current_metrics["exact_binary_audit"]
+            exact_total = int(
+                exact["solid_bad_cell_count"] + exact["void_bad_cell_count"]
+            )
+            emit(
+                "high_beta_solver_free_reprojection",
+                beta=beta,
+                gray_fraction=current_metrics["gray_fraction_0p01_0p99"],
+                binarization_metric=current_metrics[
+                    "binarization_metric_mean_4rho1mrho"
+                ],
+                exact_bad_total=exact_total,
+            )
+            if exact_total != 0:
+                raise RuntimeError(
+                    "exact 500 nm violations survived beta=128; do not spend "
+                    "high-beta iterations on gradient-starved micro-repair"
+                )
+            if projected_binary_gate(current_metrics):
+                emit(
+                    "projected_binary_gate_passed",
+                    beta=beta,
+                    global_iteration=global_iteration,
+                )
+                finalize(current_raw, beta, global_iteration, args.gpu)
+                emit("driver_finished", beta=beta, global_iteration=global_iteration)
+                return 0
+            continue
         if beta != 2.0:
             baseline_output = RUN_RAW / f"b{beta_integer:04d}_baseline_g{global_iteration:03d}"
             current_result, current_raw = evaluate(current_raw, baseline_output, beta, args.gpu)
@@ -525,19 +574,9 @@ def main() -> int:
             state_path = Path(entry["mma_state"]["path"])
             global_iteration = int(last["global_iteration"])
             current_latent = np.asarray(np.load(current_raw)["latent"], float)
-        if stage_iteration >= args.pilot_accepted_updates:
-            emit(
-                "pilot_already_complete",
-                beta=beta,
-                global_iteration=global_iteration,
-                accepted_updates=stage_iteration,
-                target_accepted_updates=args.pilot_accepted_updates,
-            )
-            return 0
         initial_values, _, _ = constraint_values_and_gradients(
             current_latent, beta
         )
-        initial_caps = stage_caps(beta)
         cap_occupancy = initial_values / initial_caps
         emit(
             "stage_cap_reprojection_audit",
@@ -549,7 +588,7 @@ def main() -> int:
             occupancy_in_recommended_interval=[
                 bool(0.8 <= value <= 0.95) for value in cap_occupancy
             ],
-            note="fixed loose topology-exploration envelope for remaining beta=2 pilot",
+            note="one checkpoint-calibrated cap epoch; immutable within this beta stage",
         )
         recovery_rows = [
             row for row in accepted_rows
@@ -580,10 +619,11 @@ def main() -> int:
             if convergence.converged:
                 emit("stage_converged", beta=beta, global_iteration=global_iteration, diagnostics=convergence.__dict__)
                 break
-            if stage_iteration >= MAXIMUM_ACCEPTED_UPDATES_PER_BETA:
+            stage_maximum = MAXIMUM_ACCEPTED_UPDATES[beta_integer]
+            if stage_iteration >= stage_maximum:
                 raise RuntimeError(
-                    f"beta={beta:g} reached {MAXIMUM_ACCEPTED_UPDATES_PER_BETA} "
-                    "accepted updates without convergence"
+                    f"beta={beta:g} reached its bounded {stage_maximum} accepted "
+                    "updates without convergence; do not continue blind micro-repair"
                 )
             recent = [
                 row for row in history
@@ -806,82 +846,10 @@ def main() -> int:
                             "two consecutive accepted moves below 0.0025; "
                             "cap recalibration is required"
                         )
-                    accepted_history = [
-                        row for row in summary().get("history", [])
-                        if row.get("role") == "accepted_mma"
-                        and float(row["beta"]) == beta
-                    ]
-                    if len(accepted_history) >= 3:
-                        recent_three = accepted_history[-3:]
-                        recent_net_fom = (
-                            float(recent_three[-1]["objective_A_per_W"])
-                            / float(recent_three[0]["objective_A_per_W"]) - 1.0
-                        )
-                        if recent_net_fom < 0.002:
-                            pause_status = "PAUSED_RUN005_RECENT_FOM_STAGNATION"
-                            summary_path = HERE / "results/optimization_summary.json"
-                            paused_summary = json.loads(summary_path.read_text())
-                            paused_summary.update({
-                                "status": pause_status,
-                                "pilot_total_accepted_updates": stage_iteration,
-                                "recent_three_net_FOM_change": recent_net_fom,
-                                "pilot_paused_at_utc": datetime.now(timezone.utc).isoformat(),
-                            })
-                            summary_path.write_text(json.dumps(paused_summary, indent=2) + "\n")
-                            (HERE / "STATUS.json").write_text(json.dumps({
-                                "run_id": HERE.name,
-                                "status": pause_status,
-                                "optimization_process_running": False,
-                                "beta": beta,
-                                "global_iteration": global_iteration,
-                                "stage_iteration": stage_iteration,
-                                "recent_three_net_FOM_change": recent_net_fom,
-                                "current_metrics": paused_summary["current_metrics"],
-                            }, indent=2) + "\n")
-                            emit(
-                                "pilot_fom_stagnation_pause",
-                                beta=beta,
-                                global_iteration=global_iteration,
-                                stage_iteration=stage_iteration,
-                                recent_three_net_FOM_change=recent_net_fom,
-                            )
-                            checkpoint_git("fom_stagnation_pause")
-                            return 0
-                    if (
-                        stage_iteration >= args.pilot_accepted_updates
-                    ):
-                        pause_status = "PAUSED_AFTER_RUN005_BOUNDED_BETA2_GPU_PILOT"
-                        summary_path = HERE / "results/optimization_summary.json"
-                        paused_summary = json.loads(summary_path.read_text())
-                        paused_summary.update({
-                            "status": pause_status,
-                            "pilot_total_accepted_updates": stage_iteration,
-                            "pilot_paused_at_utc": datetime.now(timezone.utc).isoformat(),
-                        })
-                        summary_path.write_text(json.dumps(paused_summary, indent=2) + "\n")
-                        (HERE / "STATUS.json").write_text(json.dumps({
-                            "run_id": HERE.name,
-                            "status": pause_status,
-                            "optimization_process_running": False,
-                            "beta": beta,
-                            "global_iteration": global_iteration,
-                            "stage_iteration": stage_iteration,
-                            "pilot_total_accepted_updates": stage_iteration,
-                            "current_metrics": paused_summary["current_metrics"],
-                        }, indent=2) + "\n")
-                        emit(
-                            "pilot_pause",
-                            beta=beta,
-                            global_iteration=global_iteration,
-                            stage_iteration=stage_iteration,
-                            total_accepted_updates=stage_iteration,
-                        )
-                        checkpoint_git("gpu_pilot_pause")
-                        return 0
                     break
                 raise RuntimeError(
                     "solver-backed candidate failed the FOM/physics acceptance "
-                    "gate; pilot paused without a smaller-move GPU retry"
+                    "gate; continuation stopped without a smaller-move GPU retry"
                 )
             if not accepted:
                 raise RuntimeError(f"all candidate move retries rejected at beta={beta:g}, global iteration={global_iteration}")
@@ -891,9 +859,7 @@ def main() -> int:
             finalize(current_raw, beta, global_iteration, args.gpu)
             emit("driver_finished", beta=beta, global_iteration=global_iteration)
             return 0
-    raise RuntimeError(
-        "Run 005 bounded pilot ended without reaching its accepted-update target"
-    )
+    raise RuntimeError("full beta schedule ended before the projected-binary gate")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 {
   "run_id": "run_005_lowbeta_topology_exploration_pilot",
-  "status": "PAUSED_AFTER_RUN005_BOUNDED_BETA2_GPU_PILOT",
+  "status": "PREPARED_FULL_BINARY_BETA_CONTINUATION_FROM_G005",
   "restart_from": "immutable original beta=2 latent density; not Run 003 or Run 004",
   "objective": "+I_PTE/P_incident",
   "design_shape": [373, 373],
@@ -9,13 +9,22 @@
   "minimum_solid_nm": 500.0,
   "minimum_void_nm": 500.0,
   "constraint_contract": "soft_disk_opening_500nm_from_iteration_zero_v5",
-  "authorized_beta_schedule": [2],
-  "authorized_total_accepted_updates": 5,
+  "authorized_beta_schedule": [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192],
+  "maximum_accepted_updates_per_optimized_beta": {
+    "2": 16,
+    "4": 10,
+    "8": 10,
+    "16": 8,
+    "32": 6,
+    "64": 6,
+    "128": 4
+  },
+  "reprojection_only_beta_start": 256,
   "authorized_offline_move_trials": [0.01, 0.005, 0.0025],
   "minimum_move": 0.0025,
   "beta2_solid_cap": 0.001,
   "beta2_void_cap": 0.0001,
-  "cap_epoch": "fixed_beta2_topology_exploration_v4",
+  "cap_epoch": "one_immutable_checkpoint_calibrated_cap_per_beta_v5",
   "feasible_fom_retention": 0.998,
   "exact_step_veto_start_beta_for_future_runs": 32,
   "low_beta_exact_mode": "diagnostic_only_with_catastrophic_guard",
@@ -24,6 +33,13 @@
   "two_consecutive_small_move_halt_threshold": 0.0025,
   "cpu_fdtd_fallback": false,
   "cpu_thermal_fallback": false,
+  "final_projected_binary_gate": {
+    "gray_fraction_0p01_0p99_max": 0.001,
+    "mean_4rho1mrho_max": 0.001,
+    "exact_solid_bad_cells": 0,
+    "exact_void_bad_cells": 0,
+    "fresh_thresholded_binary_solver_evaluation": true
+  },
   "posthoc_binary_repair": false,
   "empirical_gradient_rescaling": false
 }

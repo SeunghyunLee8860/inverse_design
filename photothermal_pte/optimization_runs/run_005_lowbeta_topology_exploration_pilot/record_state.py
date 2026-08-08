@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Append one Run 005 pilot state and regenerate progress artifacts."""
+"""Append one Run 005 full-continuation state and regenerate artifacts."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from optimization_support import design_metrics, stage_convergence
 
 
 HERE = Path(__file__).resolve().parent
-STATUS = "RUNNING_RUN005_BOUNDED_BETA2_TOPOLOGY_PILOT"
+STATUS = "RUNNING_RUN005_FULL_BINARY_BETA_CONTINUATION"
 
 
 def sha256(path: Path) -> str:
@@ -41,7 +41,7 @@ def load_summary() -> dict[str, object]:
     return {
         "status": STATUS,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "method": "beta=2 topology exploration inside smooth 500 nm caps",
+        "method": "plateau-gated beta continuation with smooth and exact 500 nm gates",
         "history": [],
         "raw_artifacts": {},
     }
@@ -277,7 +277,7 @@ def record(
     manifest_dir.mkdir(parents=True, exist_ok=True)
     (manifest_dir / "RAW_ARTIFACT_MANIFEST.json").write_text(json.dumps(manifest, indent=2) + "\n")
     report = (
-        "# Run 005 low-beta topology-exploration pilot\n\n"
+        "# Run 005 fully binary PTE optimization continuation\n\n"
         f"Status: `{STATUS}`\n\n"
         f"Current stage: beta={beta:g}, accepted stage iteration={stage_iteration}, "
         f"global iteration={global_iteration}.\n\n"
@@ -289,8 +289,9 @@ def record(
         f"Exact 500 nm bad cells: solid `{exact['solid_bad_cell_count']}`, void "
         f"`{exact['void_bad_cell_count']}`. Stage convergence: `{convergence.converged}` "
         f"({convergence.reason}).\n\n"
-        "This bounded run stops at the configured total accepted-update target. "
-        "It does not promote beta or authorize full continuation.\n"
+        "Beta advances only after the stage FOM/density plateau. The run is not "
+        "complete until the projected-binary and exact 500 nm gates pass and a "
+        "fresh thresholded-binary GPU/CUDA evaluation succeeds.\n"
     )
     (results / "OPTIMIZATION_REPORT.md").write_text(report)
     return {"tag": tag, "metrics": metrics, "convergence": convergence.__dict__, "plots": [str(p) for p in generated_plots]}

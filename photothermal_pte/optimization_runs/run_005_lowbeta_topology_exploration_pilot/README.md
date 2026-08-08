@@ -59,8 +59,27 @@ micro-repair. It does not authorize beta=4 automatically. The next checkpoint
 must reproject g005 at beta=4, quantify the projection shock in FOM and both
 constraints, and approve a new fixed beta=4 cap before another GPU solve.
 
+## Full continuation from g005
+
+The full continuation keeps g005 immutable and first resumes beta=2 until the
+real four-update FOM/density plateau passes. It does not promote beta merely
+because the five-point pilot ended. Optimized stages are `2, 4, 8, 16, 32, 64,
+128`, each with a bounded update budget. Beta values `256` through `8192` are
+solver-free projection sharpening only and are reached only after exact 500 nm
+solid and void violations are both zero.
+
+Each beta after 2 receives one cap calibrated from its incoming checkpoint;
+the cap cannot change inside that stage. Exact thresholded morphology is a hard
+nonincrease gate from beta=32. Budget exhaustion or two consecutive minimum
+moves stops for strategy correction instead of launching dozens of micro-repair
+iterations.
+
+Completion requires gray fraction and mean `4*rho*(1-rho)` both below `0.001`,
+zero exact solid/void violations, and a fresh thresholded-binary GPU
+Maxwell/CUDA thermal-PTE evaluation. Reaching a beta value alone is not
+completion.
+
 ```bash
 CUDA_VISIBLE_DEVICES=2 /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
-  run_optimization.py --gpu 2 --constraint-device cuda:0 \
-  --pilot-accepted-updates 5
+  run_optimization.py --gpu 2 --constraint-device cuda:0
 ```

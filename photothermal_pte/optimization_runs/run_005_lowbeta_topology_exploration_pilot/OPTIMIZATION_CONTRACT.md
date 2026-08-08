@@ -125,3 +125,25 @@ reprojection audit records the projected density change, both constraint
 values, exact DRC, and the new fixed cap proposal. The final binary requirement
 remains zero solid and zero void bad cells; this gray beta=2 checkpoint is not a
 finished inverse-designed structure.
+
+## Approved full-binary continuation
+
+The immutable g005 checkpoint is the restart. Beta=2 must first satisfy the
+existing four-update FOM/density plateau and may use at most 16 total accepted
+updates. Later optimized-stage budgets are 10, 10, 8, 6, 6, and 4 accepted
+updates for beta 4, 8, 16, 32, 64, and 128 respectively. Exhausting a budget is
+a fail-closed strategy checkpoint, not permission to continue constraint-only
+micro-repair and not a completed optimization.
+
+For every beta after 2, the incoming checkpoint is reprojected once and a
+solid/void cap pair is persisted in `stage_caps.json`. The pair is immutable
+inside that stage. From beta=4 the MMA subproblem may not use slack in one phase
+to worsen the other; from beta=32 the exact total bad-cell count also cannot
+increase. Two consecutive accepted minimum moves of 0.0025 stop the stage.
+
+Once exact solid and void bad-cell counts both reach zero, beta 256 through
+8192 are projection-only sharpening checkpoints with no redundant forward or
+adjoint solve. The first projection satisfying gray fraction <0.001 and mean
+`4*rho*(1-rho)` <0.001 is thresholded and evaluated afresh with GPU Maxwell and
+CUDA thermal/PTE. Only that successful evaluation has status
+`COMPLETED_FULLY_BINARIZED_EXACT_500NM_CONSTRAINED_PTE_OPTIMIZATION`.

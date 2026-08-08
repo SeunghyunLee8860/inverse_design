@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import json
 import numpy as np
 import pytest
 
 from optimization_support import (
     ProductionDensityMapping,
+    MMA_CAP_CONTRACT,
     adaptive_move_ceiling,
     candidate_acceptance,
     catastrophic_exact_growth,
@@ -21,7 +23,13 @@ from optimization_support import (
 )
 
 
-def test_effective_caps_use_only_calibrated_beta2_pilot_envelope():
+def test_effective_caps_preserve_each_phase_after_beta2(tmp_path, monkeypatch):
+    registry = tmp_path / "caps.json"
+    registry.write_text(json.dumps({
+        "contract": MMA_CAP_CONTRACT,
+        "stages": {"32": {"caps": [2.0e-4, 2.0e-5]}},
+    }))
+    monkeypatch.setenv("RUN005_STAGE_CAPS_FILE", str(registry))
     values = np.asarray([1.0e-4, 5.0e-6])
     np.testing.assert_allclose(
         mma_effective_constraint_caps(values, 2.0),
@@ -29,8 +37,10 @@ def test_effective_caps_use_only_calibrated_beta2_pilot_envelope():
         rtol=0.0,
         atol=0.0,
     )
-    with pytest.raises(RuntimeError, match="later-beta caps require"):
-        mma_effective_constraint_caps(values, 32.0)
+    np.testing.assert_allclose(
+        mma_effective_constraint_caps(values, 32.0), values,
+        rtol=0.0, atol=0.0,
+    )
 
 
 def test_constraint_jvp_matches_centered_fd() -> None:
@@ -73,9 +83,14 @@ def test_exact_audit_reports_kernel_and_domain_counts_separately() -> None:
     assert audit["void_pass"]
 
 
-def test_only_beta2_cap_is_approved_for_the_bounded_pilot() -> None:
+def test_beta2_cap_is_fixed_and_uncalibrated_later_beta_fails_closed(
+    tmp_path, monkeypatch
+) -> None:
+    registry = tmp_path / "caps.json"
+    registry.write_text(json.dumps({"contract": MMA_CAP_CONTRACT, "stages": {}}))
+    monkeypatch.setenv("RUN005_STAGE_CAPS_FILE", str(registry))
     assert np.array_equal(stage_caps(2), [1.00e-3, 1.00e-4])
-    with pytest.raises(RuntimeError, match="later-beta caps require"):
+    with pytest.raises(RuntimeError, match="no checkpoint-calibrated fixed cap"):
         stage_caps(4)
 
 
@@ -104,9 +119,10 @@ def test_low_beta_exact_guard_is_only_catastrophic() -> None:
     assert catastrophic_exact_growth(0, 26) == (True, 25)
 
 
-def test_two_consecutive_small_moves_halt_but_equal_threshold_does_not() -> None:
+def test_two_consecutive_minimum_moves_halt() -> None:
     assert not two_consecutive_subthreshold_moves([0.01, 0.0025])
-    assert not two_consecutive_subthreshold_moves([0.001, 0.0025])
+    assert two_consecutive_subthreshold_moves([0.001, 0.0025])
+    assert two_consecutive_subthreshold_moves([0.0025, 0.0025])
     assert two_consecutive_subthreshold_moves([0.01, 0.002, 0.001])
 
 
