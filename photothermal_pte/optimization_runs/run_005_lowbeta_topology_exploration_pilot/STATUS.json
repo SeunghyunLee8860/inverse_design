@@ -1,10 +1,10 @@
 {
   "run_id": "run_005_lowbeta_topology_exploration_pilot",
   "status": "RUNNING_RUN005_FULL_BINARY_BETA_CONTINUATION",
-  "last_updated_utc": "2026-08-08T09:41:36.440977+00:00",
+  "last_updated_utc": "2026-08-08T09:54:39.984265+00:00",
   "beta": 4.0,
-  "global_iteration": 15,
-  "stage_iteration": 2,
+  "global_iteration": 16,
+  "stage_iteration": 3,
   "stage_convergence": {
     "converged": false,
     "reason": "need at least 6 accepted updates",
@@ -12,8 +12,8 @@
     "maximum_rho_rms_change": Infinity,
     "maximum_rho_max_change": Infinity
   },
-  "FOM_A_per_W": 4.460869800931988e-07,
+  "FOM_A_per_W": 4.589408176039798e-07,
   "constraints_feasible": true,
-  "exact_500nm_solid_bad_cells": 42,
-  "exact_500nm_void_bad_cells": 21
+  "exact_500nm_solid_bad_cells": 44,
+  "exact_500nm_void_bad_cells": 48
 }
