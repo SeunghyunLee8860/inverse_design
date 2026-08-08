@@ -36,7 +36,7 @@ ZHOU_DECAY_M2 = 1.0e-10
 PNORM = 8.0
 LEGACY_CONSTRAINT_CONTRACT = "legacy_zhou_p8_v1"
 DISK_CONSTRAINT_CONTRACT = "soft_disk_opening_500nm_from_iteration_zero_v5"
-MMA_CAP_CONTRACT = "run005_beta2_g001_reprojected_pilot_v2"
+MMA_CAP_CONTRACT = "run005_beta2_g002_reprojected_pilot_v3"
 DISK_CONSTRAINT_START_BETA = 2.0
 DISK_RECOVERY_START_GLOBAL_ITERATION = -1
 DISK_SHARPEN_GAMMA = 64.0
@@ -267,9 +267,9 @@ def stage_caps(beta: float) -> np.ndarray:
             "Run 005 is a bounded beta=2 pilot; later-beta caps require "
             "checkpoint reprojection and explicit calibration before use"
         )
-    # Reprojected accepted-g001 C/cap ratios: 0.9048 (solid), 0.8482 (void).
-    # These caps remain fixed for the bounded beta=2 extension pilot.
-    return np.asarray((1.00e-3, 4.50e-5), float)
+    # Reprojected accepted-g002 C/cap ratios: 0.8990 (solid), 0.8458 (void).
+    # These caps remain fixed for the remaining bounded beta=2 pilot.
+    return np.asarray((8.20e-4, 5.30e-5), float)
 
 
 def smooth_feasibility_move_retries(move_ceiling: float) -> tuple[float, ...]:

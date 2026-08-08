@@ -25,6 +25,12 @@ of launching a smaller GPU retry. Every later beta cap must first be calibrated
 by reprojecting the accepted checkpoint; Run 005 cannot silently continue to
 beta=4.
 
+Accepted g002 added another 16.43% FOM gain. Because it consumed 99.62% of the
+first extension void cap, all next moves were rejected offline and the process
+stopped before another Maxwell solve. The remaining pilot resumes from g002
+with a second fixed reprojected epoch: `8.2e-4` solid and `5.3e-5` void,
+corresponding to current occupancies 0.899/0.846.
+
 The one-point run passed and then paused: FOM increased by 19.4826%, smooth
 solid/void constraints remained feasible, and diagnostic exact bad cells fell
 from 158 to 46. This is evidence for a healthy first topology step, not evidence

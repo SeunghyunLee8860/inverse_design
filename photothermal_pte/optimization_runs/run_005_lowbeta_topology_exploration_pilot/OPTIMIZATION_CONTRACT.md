@@ -67,3 +67,24 @@ After at least three accepted beta=2 points exist, a recent-three net FOM gain
 below 0.2% also pauses the pilot. Exact DRC remains diagnostic below beta=32,
 apart from the existing catastrophic-growth guard. Reaching five total points
 always pauses for review and still does not promote beta.
+
+## Second cap epoch after accepted g002
+
+Accepted g002 increased FOM by another `16.4319769%`, giving
+`1.359883308119e-7 A/W`, while exact bad cells changed `44/2 -> 43/2`.
+Its void value reached 99.62% of the g001-reprojected cap. The following g003
+proposals at moves 0.01, 0.005, and 0.0025 all failed that old smooth cap and
+were rejected offline with zero Maxwell and zero thermal solves. No micro-move
+below 0.0025 was attempted.
+
+To continue low-beta topology exploration rather than repair the old cap, g002
+is reprojected into a new fixed epoch:
+
+| phase | g002 value | new fixed cap | value/cap |
+|---|---:|---:|---:|
+| solid | 7.371437373e-4 | 8.20e-4 | 0.8990 |
+| void | 4.482910852e-5 | 5.30e-5 | 0.8458 |
+
+This recalibration uses the accepted checkpoint values, not an FD-fitted or
+solver-fitted objective correction. The bounded five-point target and all
+anti-microrepair/FOM gates remain unchanged.

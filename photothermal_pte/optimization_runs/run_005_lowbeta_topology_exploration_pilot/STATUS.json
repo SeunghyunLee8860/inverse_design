@@ -1,10 +1,13 @@
 {
   "run_id": "run_005_lowbeta_topology_exploration_pilot",
-  "status": "RUNNING_RUN005_BOUNDED_BETA2_TOPOLOGY_PILOT",
+  "status": "READY_TO_RESUME_RUN005_FROM_ACCEPTED_G002",
   "last_updated_utc": "2026-08-08T05:40:16.484716+00:00",
   "beta": 2.0,
   "global_iteration": 2,
   "stage_iteration": 2,
+  "optimization_process_running": false,
+  "pause_reason": "old void cap saturated; all g003 moves were rejected offline with zero Maxwell solves",
+  "next_cap_epoch": "g002_reprojected_v3",
   "stage_convergence": {
     "converged": false,
     "reason": "need at least 8 accepted updates",
