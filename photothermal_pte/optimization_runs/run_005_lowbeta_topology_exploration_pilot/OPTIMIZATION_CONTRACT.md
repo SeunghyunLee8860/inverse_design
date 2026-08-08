@@ -13,6 +13,12 @@ The supervisor enforces a single-physical-GPU contract: `--gpu N` sets
 morphology/thermal `cuda:0` and Lumerical `GPU N` both use physical GPU `N`.
 Using a second physical GPU for constraints is prohibited.
 
+From beta 32 onward, if every authorized move in the bounded retry set fails
+the solver-free smooth-restoration or exact-DRC gate, the stage advances to the
+next beta without claiming convergence. It may not relax the cap or generate a
+move below 0.0025 merely to repair a few cells. Any exact violations that
+survive beta 128 still fail closed before solver-free high-beta sharpening.
+
 ## Bounded beta=2 experiment
 
 The initial density is the immutable original beta=2 state with SHA-256

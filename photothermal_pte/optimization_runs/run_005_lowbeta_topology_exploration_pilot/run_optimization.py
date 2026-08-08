@@ -1016,7 +1016,40 @@ def main() -> int:
                     "gate; continuation stopped without a smaller-move GPU retry"
                 )
             if not accepted:
-                raise RuntimeError(f"all candidate move retries rejected at beta={beta:g}, global iteration={global_iteration}")
+                if beta >= EXACT_DRC_GATE_START_BETA:
+                    # At high beta the bounded retry set may contain no step
+                    # that simultaneously improves the smooth restoration
+                    # metric and keeps exact DRC nonincreasing.  Repeating a
+                    # smaller, unauthorized micro-step would recreate the
+                    # stalled repair loop this continuation is designed to
+                    # avoid.  Preserve the unresolved exact count and obtain
+                    # a fresh projected gradient at the next beta instead.
+                    current_exact = summary()["current_metrics"][
+                        "exact_binary_audit"
+                    ]
+                    emit(
+                        "stage_no_admissible_move_transition",
+                        beta=beta,
+                        global_iteration=global_iteration,
+                        stage_iteration=stage_iteration,
+                        attempted_moves=move_retries,
+                        exact_bad_counts=[
+                            current_exact["solid_bad_cell_count"],
+                            current_exact["void_bad_cell_count"],
+                        ],
+                        converged=False,
+                        reason=(
+                            "all authorized candidates failed solver-free "
+                            "smooth/exact gates; advance projection for a "
+                            "fresh gradient without cap relaxation or "
+                            "sub-threshold micro-repair"
+                        ),
+                    )
+                    break
+                raise RuntimeError(
+                    f"all candidate move retries rejected at beta={beta:g}, "
+                    f"global iteration={global_iteration}"
+                )
             if advance_stage:
                 break
         current_metrics = summary()["current_metrics"]
