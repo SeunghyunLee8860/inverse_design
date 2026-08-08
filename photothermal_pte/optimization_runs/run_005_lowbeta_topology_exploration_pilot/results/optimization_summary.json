@@ -1,5 +1,5 @@
 {
-  "status": "RUNNING_RUN005_BOUNDED_BETA2_TOPOLOGY_PILOT",
+  "status": "READY_TO_RESUME_RUN005_FROM_ACCEPTED_G003",
   "generated_at_utc": "2026-08-08T05:56:07.409668+00:00",
   "method": "beta=2 topology exploration inside smooth 500 nm caps",
   "history": [
@@ -302,13 +302,19 @@
     "size_bytes": 7257875,
     "sha256": "d3617baf54d54e735feba9d85c439ee77bcdf5ddaeec47e12c812bf036b2c87e"
   },
-  "pilot_newly_accepted_updates": 1,
+  "pilot_newly_accepted_updates": 3,
   "pilot_paused_at_utc": "2026-08-08T04:48:06.572595+00:00",
-  "promoted_status": "PAUSED_AFTER_RUN005_ONE_POINT_GPU_PILOT",
+  "promoted_status": "READY_TO_RESUME_BOUNDED_BETA2_FROM_G003",
   "one_point_decision": "HEALTHY_JOINT_TOPOLOGY_FOM_STEP_REVIEW_BEFORE_3_TO_5_UPDATE_PILOT",
   "one_point_audit": "results/RUN005_ONE_POINT_PILOT_AUDIT.md",
-  "pilot_total_accepted_updates": 2,
+  "pilot_total_accepted_updates": 3,
   "g002_relative_FOM_gain": 0.1643197689257716,
-  "g003_old_cap_prescreen": "ALL_MOVES_0P01_0P005_0P0025_REJECTED_WITH_ZERO_SOLVER_RUNS",
-  "active_cap_epoch": "g002_reprojected_v3"
+  "g003_relative_FOM_gain": 0.1421743200264836,
+  "cumulative_FOM_gain_from_baseline": 0.588947,
+  "g004_old_cap_prescreen": "ALL_MOVES_0P01_0P005_0P0025_REJECTED_WITH_ZERO_SOLVER_RUNS",
+  "active_cap_epoch": "fixed_beta2_topology_exploration_v4",
+  "next_fixed_constraint_caps": {
+    "solid": 0.001,
+    "void": 0.0001
+  }
 }

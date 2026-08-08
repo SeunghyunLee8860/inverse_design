@@ -74,7 +74,7 @@ def test_exact_audit_reports_kernel_and_domain_counts_separately() -> None:
 
 
 def test_only_beta2_cap_is_approved_for_the_bounded_pilot() -> None:
-    assert np.array_equal(stage_caps(2), [8.20e-4, 5.30e-5])
+    assert np.array_equal(stage_caps(2), [1.00e-3, 1.00e-4])
     with pytest.raises(RuntimeError, match="later-beta caps require"):
         stage_caps(4)
 

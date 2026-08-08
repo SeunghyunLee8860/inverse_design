@@ -1,10 +1,13 @@
 {
   "run_id": "run_005_lowbeta_topology_exploration_pilot",
-  "status": "RUNNING_RUN005_BOUNDED_BETA2_TOPOLOGY_PILOT",
+  "status": "READY_TO_RESUME_RUN005_FROM_ACCEPTED_G003",
   "last_updated_utc": "2026-08-08T05:56:07.409668+00:00",
   "beta": 2.0,
   "global_iteration": 3,
   "stage_iteration": 3,
+  "optimization_process_running": false,
+  "pause_reason": "g003 accepted with +14.22% FOM; old cap blocked every g004 move offline",
+  "next_cap_epoch": "fixed_beta2_topology_exploration_v4",
   "stage_convergence": {
     "converged": false,
     "reason": "need at least 8 accepted updates",

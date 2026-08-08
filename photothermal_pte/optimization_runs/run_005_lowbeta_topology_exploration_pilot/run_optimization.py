@@ -549,7 +549,7 @@ def main() -> int:
             occupancy_in_recommended_interval=[
                 bool(0.8 <= value <= 0.95) for value in cap_occupancy
             ],
-            note="g001-reprojected fixed cap for the bounded beta=2 pilot",
+            note="fixed loose topology-exploration envelope for remaining beta=2 pilot",
         )
         recovery_rows = [
             row for row in accepted_rows

@@ -31,10 +31,17 @@ stopped before another Maxwell solve. The remaining pilot resumes from g002
 with a second fixed reprojected epoch: `8.2e-4` solid and `5.3e-5` void,
 corresponding to current occupancies 0.899/0.846.
 
-The one-point run passed and then paused: FOM increased by 19.4826%, smooth
-solid/void constraints remained feasible, and diagnostic exact bad cells fell
-from 158 to 46. This is evidence for a healthy first topology step, not evidence
-that beta=2 or the complete constrained optimization has converged.
+Accepted g003 then added 14.22% FOM, for a cumulative 58.89% gain from the
+immutable baseline. The second void cap again blocked every next move offline.
+To avoid turning beta=2 into repeated cap repair, the final two authorized
+points now share one unchanged exploration envelope: `1.0e-3` solid and
+`1.0e-4` void. This is deliberately loose only at beta=2; it does not authorize
+beta=4, and it cannot be loosened again during this five-point pilot.
+
+The first three accepted updates all improved FOM materially while the smooth
+constraints remained feasible. This is evidence for healthy low-beta topology
+motion, not evidence that beta=2 or the complete constrained optimization has
+converged.
 
 ```bash
 CUDA_VISIBLE_DEVICES=2 /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \

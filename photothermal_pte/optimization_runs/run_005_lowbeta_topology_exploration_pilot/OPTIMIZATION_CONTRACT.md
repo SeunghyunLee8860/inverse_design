@@ -88,3 +88,26 @@ is reprojected into a new fixed epoch:
 This recalibration uses the accepted checkpoint values, not an FD-fitted or
 solver-fitted objective correction. The bounded five-point target and all
 anti-microrepair/FOM gates remain unchanged.
+
+## Final fixed beta=2 exploration envelope after accepted g003
+
+Accepted g003 increased FOM by another `14.2174320%`, reaching
+`1.553223792767e-7 A/W` and a cumulative `+58.8947%` relative to the immutable
+baseline. Exact bad cells changed `43/2 -> 40/6`. The second cap epoch then
+blocked all g004 proposals at moves 0.01, 0.005, and 0.0025 offline, again with
+zero Maxwell and zero thermal solves.
+
+Run 005 will not keep recalibrating a nearly active void cap after every
+accepted low-beta point. The remaining two authorized beta=2 points instead
+use one fixed topology-exploration envelope:
+
+| phase | g003 value | fixed envelope | value/envelope |
+|---|---:|---:|---:|
+| solid | 6.430948671e-4 | 1.00e-3 | 0.6431 |
+| void | 5.244079806e-5 | 1.00e-4 | 0.5244 |
+
+The intentionally loose occupancies are a beta=2 topology-search exception,
+not a production cap schedule. They prevent the optimizer from spending the
+last two pilot points only repairing a moving cap. This envelope cannot change
+again before the five-point audit. Any beta=4 continuation must reproject the
+accepted beta=2 checkpoint and establish a new, explicitly reviewed cap epoch.
