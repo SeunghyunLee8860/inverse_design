@@ -1,6 +1,6 @@
 {
   "status": "RUNNING_CORRECTED_EA_OBJECTIVE_FIRST_CONSTRAINED_OPTIMIZATION",
-  "generated_at_utc": "2026-08-09T04:51:07.510246+00:00",
+  "generated_at_utc": "2026-08-09T05:03:37.975789+00:00",
   "method": "plateau-gated beta continuation with smooth and exact 500 nm gates",
   "history": [
     {
@@ -29,6 +29,33 @@
       "optical_closure": 2.9910558014990857e-05,
       "thermal_residual": 9.359315446527764e-11,
       "thermal_energy_balance": 1.9274724578285794e-12
+    },
+    {
+      "evaluation_index": 1,
+      "tag": "run008_Ea_b002_s001_g001_accepted_mma",
+      "global_iteration": 1,
+      "stage_iteration": 1,
+      "role": "accepted_mma",
+      "beta": 2.0,
+      "constraint_contract": "soft_disk_opening_500nm_from_iteration_zero_v5",
+      "objective_A": 5.026464356395223e-20,
+      "objective_A_per_W": 3.6363180591974783e-07,
+      "relative_fom_change": 0.16441257572877288,
+      "rho_mean": 0.4995585933631081,
+      "rho_rms_change": 0.012636521448904783,
+      "rho_max_change": 0.013129915194018904,
+      "gray_fraction_0p01_0p99": 1.0,
+      "binarization_metric": 0.9645210632971755,
+      "solid_constraint": 0.0009244644063328489,
+      "void_constraint": 3.265484210825129e-05,
+      "solid_constraint_cap": 0.0014902195929630477,
+      "void_constraint_cap": 3.204287552213128e-05,
+      "constraints_feasible": false,
+      "solid_bad_cells": 41,
+      "void_bad_cells": 0,
+      "optical_closure": 3.0397548004256167e-05,
+      "thermal_residual": 9.921265084260239e-11,
+      "thermal_energy_balance": 2.3544328388636385e-12
     }
   ],
   "raw_artifacts": {
@@ -48,56 +75,88 @@
         "size_bytes": 458511,
         "sha256": "954a8bfe271cb44f6a4dede892fde6e0f5bc3b53bdb38dfdd3091dbde6a61375"
       }
+    },
+    "run008_Ea_b002_s001_g001_accepted_mma": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run008_corrected_Ea_objective_first_20260809/b0002_s001_g001_retry0_evaluation/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 11553,
+        "sha256": "dc76e0581678d6b9afbc298bfa286a3cf836dca03002a4399179d527e4ef7a56"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run008_corrected_Ea_objective_first_20260809/b0002_s001_g001_retry0_evaluation/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7272563,
+        "sha256": "611e54ffc528e209dde22d7bfb644b8927fa55703ecb760842c34f2e340ea239"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_008_corrected_Ea_objective_first_constrained/checkpoints/run008_Ea_b002_s001_g001_accepted_mma.npz",
+        "size_bytes": 461780,
+        "sha256": "3e48b6ebcf8551092f4d0b30e18b1533e4b6538456093f4c91f984d769c529af"
+      },
+      "proposal_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run008_corrected_Ea_objective_first_20260809/b0002_s001_g001_retry0_proposal/proposal_result.json",
+        "size_bytes": 3615,
+        "sha256": "c6328fa34b5ef9ecc6adb430f3437575e2e46cf87623a11052147fbc26929c42"
+      },
+      "proposal_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run008_corrected_Ea_objective_first_20260809/b0002_s001_g001_retry0_proposal/proposal.npz",
+        "size_bytes": 5111825,
+        "sha256": "500ebd9553efb2b3fc902c37a15eedaf5164f9fbb4ad05baabf70fdf1675a0fb"
+      },
+      "mma_state": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run008_corrected_Ea_objective_first_20260809/b0002_s001_g001_accepted_mma_state.npz",
+        "size_bytes": 4033333,
+        "sha256": "a5771bc127a4f01dc4db2514a380bbd5660bebe959dd6a2a550493f852457a13"
+      }
     }
   },
   "current_beta": 2.0,
-  "current_global_iteration": 0,
-  "current_stage_iteration": 0,
+  "current_global_iteration": 1,
+  "current_stage_iteration": 1,
   "current_metrics": {
     "beta": 2.0,
     "constraint_contract": "soft_disk_opening_500nm_from_iteration_zero_v5",
-    "latent_min": 0.37153160622256376,
-    "latent_max": 0.6279991966391614,
-    "filtered_min": 0.3827234540511303,
-    "filtered_max": 0.6172782853056294,
-    "rho_min": 0.34877486338893415,
-    "rho_max": 0.6512272992691218,
-    "rho_mean": 0.5000000006153631,
+    "latent_min": 0.36153160622256375,
+    "latent_max": 0.6379991966391614,
+    "filtered_min": 0.3727234540511302,
+    "filtered_max": 0.6272782853056299,
+    "rho_min": 0.3363998479402544,
+    "rho_max": 0.6636022940739742,
+    "rho_mean": 0.4995585933631081,
     "gray_fraction_0p01_0p99": 1.0,
     "gray_fraction_0p05_0p95": 1.0,
-    "binarization_metric_mean_4rho1mrho": 0.9712101531063608,
-    "solid_constraint": 0.0011921756743704381,
-    "void_constraint": 2.563430041770502e-05,
+    "binarization_metric_mean_4rho1mrho": 0.9645210632971755,
+    "solid_constraint": 0.0009244644063328489,
+    "void_constraint": 3.265484210825129e-05,
     "solid_constraint_cap": 0.0014902195929630477,
     "void_constraint_cap": 3.204287552213128e-05,
-    "maximum_normalized_constraint": 0.8,
-    "constraints_feasible": true,
+    "maximum_normalized_constraint": 1.019098366677402,
+    "constraints_feasible": false,
     "exact_binary_audit": {
       "minimum_feature_nm": 500.0,
       "opening_radius_nm": 250.0,
       "opening_radius_pixels": 5,
       "structuring_element_pixel_count": 81,
       "design_pixel_count": 139129,
-      "solid_fraction": 0.49999640621293906,
-      "solid_bad_cell_count": 158,
+      "solid_fraction": 0.49979515413752706,
+      "solid_bad_cell_count": 41,
       "void_bad_cell_count": 0,
-      "solid_bad_fraction_all_cells": 0.0011356367112535849,
+      "solid_bad_fraction_all_cells": 0.0002946905389961834,
       "void_bad_fraction_all_cells": 0.0,
       "solid_pass": false,
       "void_pass": true
     },
-    "objective_A": 4.316738294628346e-20,
-    "objective_A_per_W": 3.122877693863457e-07,
-    "P_Q_W": 1.0193641989893698e-13,
-    "P_six_W": 1.0193946896533748e-13,
-    "optical_closure": 2.9910558014990857e-05,
-    "thermal_residual": 9.359315446527764e-11,
-    "thermal_energy_balance": 1.9274724578285794e-12
+    "objective_A": 5.026464356395223e-20,
+    "objective_A_per_W": 3.6363180591974783e-07,
+    "P_Q_W": 1.0163191444382718e-13,
+    "P_six_W": 1.016350038987371e-13,
+    "optical_closure": 3.0397548004256167e-05,
+    "thermal_residual": 9.921265084260239e-11,
+    "thermal_energy_balance": 2.3544328388636385e-12
   },
   "current_checkpoint": {
-    "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_008_corrected_Ea_objective_first_constrained/checkpoints/run008_Ea_b002_s000_g000_stage_baseline.npz",
-    "size_bytes": 458511,
-    "sha256": "954a8bfe271cb44f6a4dede892fde6e0f5bc3b53bdb38dfdd3091dbde6a61375"
+    "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_008_corrected_Ea_objective_first_constrained/checkpoints/run008_Ea_b002_s001_g001_accepted_mma.npz",
+    "size_bytes": 461780,
+    "sha256": "3e48b6ebcf8551092f4d0b30e18b1533e4b6538456093f4c91f984d769c529af"
   },
   "current_stage_convergence": {
     "converged": false,
