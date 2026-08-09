@@ -298,6 +298,12 @@ def stage_caps(beta: float) -> np.ndarray:
     """
 
     if np.isclose(float(beta), 2.0, rtol=0.0, atol=1.0e-12):
+        configured = os.environ.get("PTE_OPTIMIZATION_BETA2_CAPS_JSON")
+        if configured:
+            caps = np.asarray(json.loads(configured), dtype=float)
+            if caps.shape != (2,) or not np.all(np.isfinite(caps)) or np.any(caps <= 0):
+                raise RuntimeError("PTE_OPTIMIZATION_BETA2_CAPS_JSON must contain two positive finite values")
+            return caps
         # Final beta=2 topology-search epoch, reviewed after g009.  Two
         # consecutive 0.0025 moves still improved the solver-backed FOM by
         # 2.31% and 2.26%, proving that the stage had not plateaued; the old
@@ -406,7 +412,10 @@ def mma_effective_constraint_caps(
         raise ValueError("constraint values must be a finite solid/void pair")
     if np.any(current <= 0.0):
         raise ValueError("constraint values must be positive")
-    return np.minimum(caps, current) if float(beta) >= 4.0 else caps
+    nonincrease_start = float(
+        os.environ.get("PTE_OPTIMIZATION_PHASEWISE_NONINCREASE_START_BETA", "4")
+    )
+    return np.minimum(caps, current) if float(beta) >= nonincrease_start else caps
 
 
 def catastrophic_exact_growth(

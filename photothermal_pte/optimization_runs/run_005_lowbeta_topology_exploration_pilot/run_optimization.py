@@ -94,7 +94,7 @@ OBJECTIVE_SIGN = os.environ.get("PTE_OPTIMIZATION_OBJECTIVE_SIGN", "1")
 INCIDENT_POWER = "1.3822950233084244e-13"
 OBJECTIVE_SCALE = 1.0e8
 BETA_SCHEDULE = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192]
-MAXIMUM_ACCEPTED_UPDATES = {
+_DEFAULT_MAXIMUM_ACCEPTED_UPDATES = {
     2: 16,
     4: 10,
     8: 10,
@@ -106,6 +106,21 @@ MAXIMUM_ACCEPTED_UPDATES = {
     # strictly reduce the violation count and pass a fresh GPU/CUDA solve.
     128: 12,
 }
+MAXIMUM_ACCEPTED_UPDATES = {
+    int(key): int(value) for key, value in json.loads(
+        os.environ.get(
+            "PTE_OPTIMIZATION_STAGE_MAX_UPDATES_JSON",
+            json.dumps(_DEFAULT_MAXIMUM_ACCEPTED_UPDATES),
+        )
+    ).items()
+}
+STAGE_BUDGET_POLICY = os.environ.get(
+    "PTE_OPTIMIZATION_STAGE_BUDGET_POLICY", "advance"
+)
+if STAGE_BUDGET_POLICY not in {"advance", "fail_closed"}:
+    raise RuntimeError(
+        "PTE_OPTIMIZATION_STAGE_BUDGET_POLICY must be 'advance' or 'fail_closed'"
+    )
 REPROJECTION_ONLY_BETA = 256
 EXACT_DRC_GATE_START_BETA = 32.0
 # Below beta=32 the smooth disk-opening constraints guide topology search, but
@@ -120,7 +135,7 @@ MINIMUM_WINDOW_FOM_GAIN = 0.002
 MINIMUM_WINDOW_EXACT_REDUCTION_FRACTION = 0.02
 LICENSE_RETRY_LIMIT = 120
 LICENSE_RETRY_DELAY_S = 30
-STAGE_CAP_TARGET_OCCUPANCY = {
+_DEFAULT_STAGE_CAP_TARGET_OCCUPANCY = {
     4: 0.85,
     8: 0.88,
     16: 0.90,
@@ -131,6 +146,14 @@ STAGE_CAP_TARGET_OCCUPANCY = {
     32: 1.10,
     64: 1.15,
     128: 1.20,
+}
+STAGE_CAP_TARGET_OCCUPANCY = {
+    int(key): float(value) for key, value in json.loads(
+        os.environ.get(
+            "PTE_OPTIMIZATION_STAGE_CAP_TARGET_OCCUPANCY_JSON",
+            json.dumps(_DEFAULT_STAGE_CAP_TARGET_OCCUPANCY),
+        )
+    ).items()
 }
 
 
@@ -969,6 +992,11 @@ def main() -> int:
                 break
             stage_maximum = MAXIMUM_ACCEPTED_UPDATES[beta_integer]
             if stage_iteration >= stage_maximum:
+                if STAGE_BUDGET_POLICY == "fail_closed":
+                    raise RuntimeError(
+                        f"beta={beta:g} exhausted {stage_maximum} accepted updates "
+                        "without satisfying the registered FOM/density plateau gates"
+                    )
                 # The bound is a per-beta work budget, not a terminal failure.
                 # Once it is exhausted, advancing the projection is the only
                 # authorized continuation: repeating the same beta would be
