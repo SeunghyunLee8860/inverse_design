@@ -179,6 +179,21 @@ def test_candidate_acceptance_allows_bounded_low_beta_smooth_trust_band() -> Non
     )["accepted"]
 
 
+def test_candidate_acceptance_handles_near_zero_sign_crossing() -> None:
+    caps = np.asarray([0.002, 0.002])
+    constraints = np.asarray([0.0004, 0.00004])
+    decision = candidate_acceptance(
+        -1.7796994378e-26,
+        7.5266660403e-21,
+        constraints,
+        constraints,
+        caps,
+        smooth_trust_relative=0.10,
+    )
+    assert decision["accepted"]
+    assert decision["objective_relative_improvement"] > 0.0
+
+
 def test_low_beta_exact_guard_is_only_catastrophic() -> None:
     assert catastrophic_exact_growth(158, 200) == (False, 237)
     assert catastrophic_exact_growth(158, 237) == (False, 237)

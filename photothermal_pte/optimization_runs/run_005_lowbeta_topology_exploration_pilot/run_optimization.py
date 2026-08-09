@@ -38,6 +38,7 @@ from optimization_support import (
     mma_step,
     projected_binary_gate,
     save_mma_state,
+    signed_relative_improvement,
     stage_caps,
     stage_convergence,
     smooth_feasibility_move_retries,
@@ -1034,9 +1035,9 @@ def main() -> int:
                 if float(row["beta"]) == beta and row["role"] == "accepted_mma"
             ][-NO_PROGRESS_WINDOW:]
             if len(recent) == NO_PROGRESS_WINDOW:
-                net_fom_gain = (
-                    float(recent[-1]["objective_A_per_W"])
-                    / float(recent[0]["objective_A_per_W"]) - 1.0
+                net_fom_gain = signed_relative_improvement(
+                    float(recent[0]["objective_A_per_W"]),
+                    float(recent[-1]["objective_A_per_W"]),
                 )
                 exact_first = int(recent[0]["solid_bad_cells"]) + int(recent[0]["void_bad_cells"])
                 exact_last = int(recent[-1]["solid_bad_cells"]) + int(recent[-1]["void_bad_cells"])

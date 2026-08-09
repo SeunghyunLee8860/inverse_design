@@ -861,6 +861,17 @@ def normalized_violation(values: np.ndarray, caps: np.ndarray) -> float:
     return float(np.linalg.norm(np.maximum(np.asarray(values) / caps - 1.0, 0.0)))
 
 
+def signed_relative_improvement(current: float, candidate: float) -> float:
+    """Maximization improvement with stable meaning through zero crossings."""
+
+    current = float(current)
+    candidate = float(candidate)
+    scale = max(abs(current), abs(candidate))
+    if scale == 0.0:
+        return 0.0
+    return float((candidate - current) / scale)
+
+
 def candidate_acceptance(
     current_objective: float,
     candidate_objective: float,
@@ -873,7 +884,14 @@ def candidate_acceptance(
 ) -> dict[str, object]:
     current_v = normalized_violation(current_constraints, caps)
     candidate_v = normalized_violation(candidate_constraints, caps)
-    objective_ratio = float(candidate_objective / current_objective)
+    objective_ratio = (
+        float(candidate_objective / current_objective)
+        if current_objective != 0.0 else np.nan
+    )
+    objective_relative_improvement = signed_relative_improvement(
+        current_objective, candidate_objective
+    )
+    maximum_relative_loss = 1.0 - FEASIBLE_FOM_RETENTION
     if smooth_trust_relative < 0.0:
         raise ValueError("smooth_trust_relative must be nonnegative")
     current_feasible = bool(np.all(
@@ -888,7 +906,7 @@ def candidate_acceptance(
     )
     accepted = bool(
         (candidate_feasible or restoration)
-        and objective_ratio >= FEASIBLE_FOM_RETENTION
+        and objective_relative_improvement >= -maximum_relative_loss - 1.0e-15
     )
     reason = (
         "satisfy the smooth caps, or reduce an incoming infeasible smooth "
@@ -928,6 +946,8 @@ def candidate_acceptance(
             (current_v - candidate_v) / max(current_v, 1.0e-300)
         ) if current_v > 0.0 else 0.0,
         "objective_ratio": objective_ratio,
+        "objective_relative_improvement": objective_relative_improvement,
+        "maximum_relative_objective_loss": maximum_relative_loss,
         "exact_DRC_gate_enabled": bool(exact_gate_enabled),
         "current_exact_bad_counts": current_exact.tolist(),
         "candidate_exact_bad_counts": candidate_exact.tolist(),
@@ -1078,7 +1098,7 @@ __all__ = [
     "catastrophic_exact_growth",
     "initialize_mma_state", "load_mma_state", "mma_step",
     "mma_effective_constraint_caps",
-    "projected_binary_gate", "save_mma_state", "stage_caps",
+    "projected_binary_gate", "save_mma_state", "signed_relative_improvement", "stage_caps",
     "smooth_feasibility_move_retries",
     "stage_convergence", "low_beta_morphology_limited_transition",
     "transient_license_failure",

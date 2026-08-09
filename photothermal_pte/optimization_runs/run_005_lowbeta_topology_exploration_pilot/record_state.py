@@ -15,7 +15,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
-from optimization_support import design_metrics, stage_convergence
+from optimization_support import (
+    design_metrics,
+    signed_relative_improvement,
+    stage_convergence,
+)
 
 
 HERE = Path(
@@ -199,9 +203,10 @@ def record(
         previous_raw = Path(summary["raw_artifacts"][previous["tag"]]["evaluation_NPZ"]["path"])
         previous_rho = design_metrics(np.asarray(np.load(previous_raw)["latent"], float), beta)[1]["rho"]
         delta = arrays["rho"] - previous_rho
-        relative_fom_change = (
-            metrics["objective_A_per_W"] - float(previous["objective_A_per_W"])
-        ) / float(previous["objective_A_per_W"])
+        relative_fom_change = signed_relative_improvement(
+            float(previous["objective_A_per_W"]),
+            metrics["objective_A_per_W"],
+        )
         rho_rms_change = float(np.sqrt(np.mean(delta * delta)))
         rho_max_change = float(np.max(np.abs(delta)))
     tag = f"{RUN_TAG_PREFIX}_b{int(beta):03d}_s{stage_iteration:03d}_g{global_iteration:03d}_{role}"
