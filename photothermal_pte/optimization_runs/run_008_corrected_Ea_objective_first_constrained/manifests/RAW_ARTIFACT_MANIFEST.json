@@ -1,0 +1,44 @@
+{
+  "status": "RUNNING_CORRECTED_EA_OBJECTIVE_FIRST_CONSTRAINED_OPTIMIZATION",
+  "generated_at_utc": "2026-08-09T04:51:07.510246+00:00",
+  "raw_artifacts_are_gitignored": true,
+  "base_FSP": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_production_geometry_runsetup_v2_20260806/production_candidate_runsetup.fsp",
+    "size_bytes": 47301353,
+    "sha256": "a86644647b8bf03ec1b83c34d0cf18b6b1c5316342d845ccbdccf60df3d8f904"
+  },
+  "material_Jacobian": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_production_complex_yee_jacobian_20260806",
+    "sha256_contract": "directory recorded by Run 002 component-Jacobian manifest"
+  },
+  "constraint_recovery_validation": null,
+  "records": {
+    "run008_Ea_b002_s000_g000_stage_baseline": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run006_corrected_Ea_magnitude_initial_20260809/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 12159,
+        "sha256": "317ea871743b804b213eaa71b76fa33c08c9302fd144b41ccc4b8cad9d57dbd3"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run006_corrected_Ea_magnitude_initial_20260809/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 7268710,
+        "sha256": "a398687c45cb379fff7ed183b5769450220307ea410dfbe426a12f2938bf4ab6"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_008_corrected_Ea_objective_first_constrained/checkpoints/run008_Ea_b002_s000_g000_stage_baseline.npz",
+        "size_bytes": 458511,
+        "sha256": "954a8bfe271cb44f6a4dede892fde6e0f5bc3b53bdb38dfdd3091dbde6a61375"
+      }
+    }
+  },
+  "original_beta2_initial_result": {
+    "path": "/data/seunghyun/tairte4/raw_artifacts/run006_corrected_Ea_magnitude_initial_20260809/selected_full_latent_adjoint_preparation_result.json",
+    "size_bytes": 12159,
+    "sha256": "317ea871743b804b213eaa71b76fa33c08c9302fd144b41ccc4b8cad9d57dbd3"
+  },
+  "original_beta2_initial_NPZ": {
+    "path": "/data/seunghyun/tairte4/raw_artifacts/run006_corrected_Ea_magnitude_initial_20260809/selected_full_latent_adjoint_preparation.npz",
+    "size_bytes": 7268710,
+    "sha256": "a398687c45cb379fff7ed183b5769450220307ea410dfbe426a12f2938bf4ab6"
+  }
+}
