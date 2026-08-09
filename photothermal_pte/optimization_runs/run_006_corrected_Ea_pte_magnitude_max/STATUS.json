@@ -1,19 +1,19 @@
 {
   "run_id": "run_006_corrected_Ea_pte_magnitude_max",
   "status": "RUNNING_CORRECTED_EA_PTE_MAGNITUDE_OPTIMIZATION",
-  "last_updated_utc": "2026-08-09T03:37:50.756628+00:00",
+  "last_updated_utc": "2026-08-09T03:50:51.348127+00:00",
   "beta": 2.0,
-  "global_iteration": 10,
-  "stage_iteration": 10,
+  "global_iteration": 11,
+  "stage_iteration": 11,
   "stage_convergence": {
     "converged": false,
     "reason": "recent FOM/density changes have not plateaued",
-    "maximum_relative_fom_change": 0.07685562540088306,
-    "maximum_rho_rms_change": 0.012176135234329418,
-    "maximum_rho_max_change": 0.01312991519377349
+    "maximum_relative_fom_change": 0.06999400121440484,
+    "maximum_rho_rms_change": 0.012071025826602296,
+    "maximum_rho_max_change": 0.013129915184533103
   },
-  "FOM_A_per_W": 7.923495005589419e-07,
+  "FOM_A_per_W": 8.357445667104631e-07,
   "constraints_feasible": true,
-  "exact_500nm_solid_bad_cells": 39,
-  "exact_500nm_void_bad_cells": 2
+  "exact_500nm_solid_bad_cells": 40,
+  "exact_500nm_void_bad_cells": 3
 }
