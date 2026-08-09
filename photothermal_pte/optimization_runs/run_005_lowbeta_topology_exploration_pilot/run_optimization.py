@@ -121,6 +121,12 @@ if STAGE_BUDGET_POLICY not in {"advance", "fail_closed"}:
     raise RuntimeError(
         "PTE_OPTIMIZATION_STAGE_BUDGET_POLICY must be 'advance' or 'fail_closed'"
     )
+ALLOW_MINIMUM_MOVE_TRANSITION = os.environ.get(
+    "PTE_OPTIMIZATION_ALLOW_MINIMUM_MOVE_TRANSITION", "1"
+) == "1"
+ALLOW_LOW_BETA_MORPHOLOGY_TRANSITION = os.environ.get(
+    "PTE_OPTIMIZATION_ALLOW_LOW_BETA_MORPHOLOGY_TRANSITION", "1"
+) == "1"
 REPROJECTION_ONLY_BETA = 256
 EXACT_DRC_GATE_START_BETA = 32.0
 # Below beta=32 the smooth disk-opening constraints guide topology search, but
@@ -941,8 +947,11 @@ def main() -> int:
             accepted_moves_for_transition = accepted_move_provenance(
                 summary(), beta
             )
-            if two_consecutive_subthreshold_moves(
-                accepted_moves_for_transition
+            if (
+                ALLOW_MINIMUM_MOVE_TRANSITION
+                and two_consecutive_subthreshold_moves(
+                    accepted_moves_for_transition
+                )
             ):
                 emit(
                     "stage_minimum_move_transition",
@@ -959,8 +968,11 @@ def main() -> int:
                     ),
                 )
                 break
-            if low_beta_morphology_limited_transition(
-                history, beta, accepted_moves_for_transition
+            if (
+                ALLOW_LOW_BETA_MORPHOLOGY_TRANSITION
+                and low_beta_morphology_limited_transition(
+                    history, beta, accepted_moves_for_transition
+                )
             ):
                 recent_beta_rows = [
                     row for row in history
@@ -1252,7 +1264,10 @@ def main() -> int:
                     stage_iteration = next_stage_iteration
                     accepted = True
                     updated_moves = accepted_move_provenance(summary(), beta)
-                    if two_consecutive_subthreshold_moves(updated_moves):
+                    if (
+                        ALLOW_MINIMUM_MOVE_TRANSITION
+                        and two_consecutive_subthreshold_moves(updated_moves)
+                    ):
                         emit(
                             "stage_minimum_move_transition",
                             beta=beta,

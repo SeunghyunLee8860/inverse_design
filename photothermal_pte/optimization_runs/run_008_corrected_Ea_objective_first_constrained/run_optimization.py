@@ -31,6 +31,10 @@ os.environ.update({
     # is only a fail-closed watchdog and never authorizes an early beta jump.
     "PTE_OPTIMIZATION_STAGE_MAX_UPDATES_JSON": "{\"2\":40,\"4\":32,\"8\":24,\"16\":20,\"32\":10,\"64\":8,\"128\":12}",
     "PTE_OPTIMIZATION_STAGE_BUDGET_POLICY": "fail_closed",
+    # Do not let the legacy move-size or thresholded-pixel heuristics advance
+    # low beta while the solver-backed FOM is still improving.
+    "PTE_OPTIMIZATION_ALLOW_MINIMUM_MOVE_TRANSITION": "0",
+    "PTE_OPTIMIZATION_ALLOW_LOW_BETA_MORPHOLOGY_TRANSITION": "0",
     # Preserve topology freedom at beta 2/4. Begin phase-wise nonincrease at 8,
     # then retain the existing exact nonincrease gate from beta 32.
     "PTE_OPTIMIZATION_PHASEWISE_NONINCREASE_START_BETA": "8",
