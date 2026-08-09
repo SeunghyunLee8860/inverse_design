@@ -1,10 +1,10 @@
 {
   "run_id": "run_008_corrected_Ea_objective_first_constrained",
   "status": "RUNNING_CORRECTED_EA_OBJECTIVE_FIRST_CONSTRAINED_OPTIMIZATION",
-  "last_updated_utc": "2026-08-09T06:31:41.621080+00:00",
+  "last_updated_utc": "2026-08-09T06:44:08.547304+00:00",
   "beta": 2.0,
-  "global_iteration": 8,
-  "stage_iteration": 8,
+  "global_iteration": 9,
+  "stage_iteration": 9,
   "stage_convergence": {
     "converged": false,
     "reason": "fixed solid/void inequalities are not feasible",
@@ -12,8 +12,8 @@
     "maximum_rho_rms_change": Infinity,
     "maximum_rho_max_change": Infinity
   },
-  "FOM_A_per_W": 5.381908609867476e-07,
+  "FOM_A_per_W": 5.623804520733279e-07,
   "constraints_feasible": false,
-  "exact_500nm_solid_bad_cells": 36,
-  "exact_500nm_void_bad_cells": 1
+  "exact_500nm_solid_bad_cells": 39,
+  "exact_500nm_void_bad_cells": 3
 }
