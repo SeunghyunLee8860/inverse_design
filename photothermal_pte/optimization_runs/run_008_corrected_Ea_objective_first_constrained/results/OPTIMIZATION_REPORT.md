@@ -2,11 +2,11 @@
 
 Status: `RUNNING_CORRECTED_EA_OBJECTIVE_FIRST_CONSTRAINED_OPTIMIZATION`
 
-Current stage: beta=2, accepted stage iteration=3, global iteration=3.
+Current stage: beta=2, accepted stage iteration=4, global iteration=4.
 
 Constraint contract: `soft_disk_opening_500nm_from_iteration_zero_v5`.
 
-Actual FOM: `4.017466253954e-07 A/W`. Fixed-cap solid/void constraints: `7.518716e-04` / `3.409189e-05` with caps `1.490220e-03` / `3.204288e-05`.
+Actual FOM: `4.143688160801e-07 A/W`. Fixed-cap solid/void constraints: `7.000851e-04` / `3.306410e-05` with caps `1.490220e-03` / `3.204288e-05`.
 
 Exact 500 nm bad cells: solid `40`, void `1`. Stage convergence: `False` (need at least 8 accepted updates).
 
