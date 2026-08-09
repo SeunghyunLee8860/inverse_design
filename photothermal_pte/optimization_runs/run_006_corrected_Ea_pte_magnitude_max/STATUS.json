@@ -1,10 +1,10 @@
 {
   "run_id": "run_006_corrected_Ea_pte_magnitude_max",
   "status": "RUNNING_CORRECTED_EA_PTE_MAGNITUDE_OPTIMIZATION",
-  "last_updated_utc": "2026-08-09T01:31:28.588506+00:00",
+  "last_updated_utc": "2026-08-09T01:56:12.892791+00:00",
   "beta": 2.0,
-  "global_iteration": 1,
-  "stage_iteration": 1,
+  "global_iteration": 2,
+  "stage_iteration": 2,
   "stage_convergence": {
     "converged": false,
     "reason": "need at least 8 accepted updates",
@@ -12,8 +12,8 @@
     "maximum_rho_rms_change": Infinity,
     "maximum_rho_max_change": Infinity
   },
-  "FOM_A_per_W": 3.636278564557545e-07,
-  "constraints_feasible": false,
-  "exact_500nm_solid_bad_cells": 24,
-  "exact_500nm_void_bad_cells": 0
+  "FOM_A_per_W": 4.1436894648159664e-07,
+  "constraints_feasible": true,
+  "exact_500nm_solid_bad_cells": 32,
+  "exact_500nm_void_bad_cells": 2
 }
