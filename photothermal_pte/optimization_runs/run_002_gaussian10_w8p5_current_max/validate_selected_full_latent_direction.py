@@ -23,6 +23,7 @@ for path in (HERE, REPOSITORY):
         sys.path.insert(0, str(path))
 
 from photothermal_pte.optimization_runs.cuda_thermal_adjoint import PersistentCudaCSR  # noqa: E402
+from photothermal_pte.optimization_runs.axis_contract import get_axis_contract  # noqa: E402
 from production_density_mapping import ProductionDensityMapping  # noqa: E402
 from run_production_combined_adfd_smoke import (  # noqa: E402
     SCENARIO,
@@ -99,6 +100,22 @@ def main() -> int:
         latent = np.asarray(raw["latent"], float)
         gradient_latent = np.asarray(raw["gradient_latent_A"], float)
         beta = float(prep["beta"])
+        objective_sign = float(prep.get("objective_sign", 1.0))
+        if objective_sign not in (-1.0, 1.0):
+            raise RuntimeError("preparation objective sign is not exact +/-1")
+        axis_name = prep.get("axis_contract", {}).get(
+            "name", "legacy_lumerical_x_a_y_b"
+        )
+        axis_contract = get_axis_contract(axis_name)
+        polarization = prep.get("polarization", {})
+        polarization_label = polarization.get("label")
+        polarization_angle_deg = polarization.get("requested_angle_deg")
+        if axis_name != "legacy_lumerical_x_a_y_b":
+            if polarization_label is None or polarization_angle_deg is None:
+                raise RuntimeError("corrected preparation lacks polarization metadata")
+            axis_contract.validate_polarization(
+                polarization_label, polarization_angle_deg
+            )
         if latent.shape != gradient_latent.shape:
             raise RuntimeError("latent/gradient shape mismatch")
         if args.direction == "adjoint_aligned":
@@ -132,20 +149,28 @@ def main() -> int:
                 output=output,
                 imported_object=str(config["imported_object"]),
                 nodes=config["nodes"],
+                polarization_angle_deg=polarization_angle_deg,
             )
             result["Maxwell_forward_solves"] = int(result["Maxwell_forward_solves"]) + 1
             data, q_mapping = map_q(forward["q"], design_half_span_m=float(config["design_half_span_m"]))
-            state = build_state(data, SCENARIO, config["density_forward"](local_rho))
+            state = build_state(
+                data,
+                SCENARIO,
+                config["density_forward"](local_rho),
+                axis_contract=axis_contract,
+            )
             solve = PersistentCudaCSR(state.system.matrix_W_K, cuda_device=args.cuda_device).solve(
                 state.source_power_W,
                 relative_tolerance=1.0e-10,
                 max_iterations=30000,
             )
             result["thermal_forward_solves"] = int(result["thermal_forward_solves"]) + 1
-            objective = float(np.dot(state.c_A_K, solve.solution))
+            signed_current = float(np.dot(state.c_A_K, solve.solution))
+            objective = objective_sign * signed_current
             objectives[label] = objective
             pair[label] = {
                 "objective_A": objective,
+                "signed_current_A": signed_current,
                 "objective_A_per_incident_W": objective / float(prep["incident_power_W"]),
                 "latent_range": [float(np.min(local_latent)), float(np.max(local_latent))],
                 "physical_density_range": [float(np.min(local_rho)), float(np.max(local_rho))],
@@ -190,6 +215,9 @@ def main() -> int:
             "passed": passed,
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "beta": beta,
+            "objective_sign": objective_sign,
+            "axis_contract": prep.get("axis_contract"),
+            "polarization": polarization,
             "adjoint_directional_A": ad,
             "finite_difference_directional_A": fd,
             "relative_error": relative_error,

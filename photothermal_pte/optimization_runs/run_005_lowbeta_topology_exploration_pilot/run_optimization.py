@@ -48,9 +48,10 @@ from record_state import artifact, record, sha256
 from optimization_support import MMA_CAP_CONTRACT
 
 
-HERE = Path(__file__).resolve().parent
-REPOSITORY = HERE.parents[2]
-RUN002 = HERE.parent / "run_002_gaussian10_w8p5_current_max"
+SCRIPT_HERE = Path(__file__).resolve().parent
+HERE = Path(os.environ.get("PTE_OPTIMIZATION_RUN_DIR", SCRIPT_HERE)).expanduser().resolve()
+REPOSITORY = SCRIPT_HERE.parents[2]
+RUN002 = SCRIPT_HERE.parent / "run_002_gaussian10_w8p5_current_max"
 PYTHON = Path("/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python")
 RAW_ROOT = Path("/home/seunghyun/tairte4/raw_artifacts")
 # Keep the original location as the reproducible default, but allow a resumed
@@ -59,18 +60,37 @@ RAW_ROOT = Path("/home/seunghyun/tairte4/raw_artifacts")
 # retain their immutable absolute paths and are loaded from those paths.
 RUN_RAW = Path(
     os.environ.get(
+        "PTE_OPTIMIZATION_RAW_ROOT",
+        os.environ.get(
         "RUN005_RAW_ROOT",
         "/data/seunghyun/tairte4/raw_artifacts/run005_lowbeta_topology_pilot_20260808",
+        ),
     )
 ).expanduser().resolve()
 EVENTS = RUN_RAW / "driver_events.jsonl"
 BASE_FSP = RAW_ROOT / "run002_selected_production_geometry_runsetup_v2_20260806/production_candidate_runsetup.fsp"
 BASE_SHA = "a86644647b8bf03ec1b83c34d0cf18b6b1c5316342d845ccbdccf60df3d8f904"
 JACOBIAN = RAW_ROOT / "run002_selected_production_complex_yee_jacobian_20260806"
-INITIAL_RESULT = RAW_ROOT / "run002_selected_full_latent_adjoint_preparation_20260806/selected_full_latent_adjoint_preparation_result.json"
-INITIAL_RESULT_SHA = "8fb48e9487c28fea9bebb771c49b5b10144e154b6b1c51d0e90d72155c0c54e4"
-INITIAL_RAW = RAW_ROOT / "run002_selected_full_latent_adjoint_preparation_20260806/selected_full_latent_adjoint_preparation.npz"
-INITIAL_RAW_SHA = "d3617baf54d54e735feba9d85c439ee77bcdf5ddaeec47e12c812bf036b2c87e"
+INITIAL_RESULT = Path(os.environ.get(
+    "PTE_OPTIMIZATION_INITIAL_RESULT",
+    RAW_ROOT / "run002_selected_full_latent_adjoint_preparation_20260806/selected_full_latent_adjoint_preparation_result.json",
+)).expanduser().resolve()
+INITIAL_RESULT_SHA = os.environ.get(
+    "PTE_OPTIMIZATION_INITIAL_RESULT_SHA",
+    "8fb48e9487c28fea9bebb771c49b5b10144e154b6b1c51d0e90d72155c0c54e4",
+)
+INITIAL_RAW = Path(os.environ.get(
+    "PTE_OPTIMIZATION_INITIAL_RAW",
+    RAW_ROOT / "run002_selected_full_latent_adjoint_preparation_20260806/selected_full_latent_adjoint_preparation.npz",
+)).expanduser().resolve()
+INITIAL_RAW_SHA = os.environ.get(
+    "PTE_OPTIMIZATION_INITIAL_RAW_SHA",
+    "d3617baf54d54e735feba9d85c439ee77bcdf5ddaeec47e12c812bf036b2c87e",
+)
+AXIS_CONTRACT = os.environ.get("PTE_OPTIMIZATION_AXIS_CONTRACT", "legacy_lumerical_x_a_y_b")
+POLARIZATION_LABEL = os.environ.get("PTE_OPTIMIZATION_POLARIZATION_LABEL")
+POLARIZATION_ANGLE_DEG = os.environ.get("PTE_OPTIMIZATION_POLARIZATION_ANGLE_DEG")
+OBJECTIVE_SIGN = os.environ.get("PTE_OPTIMIZATION_OBJECTIVE_SIGN", "1")
 INCIDENT_POWER = "1.3822950233084244e-13"
 OBJECTIVE_SCALE = 1.0e8
 BETA_SCHEDULE = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192]
@@ -129,6 +149,19 @@ def execute(command: list[str], label: str, env=None, allow_failure=False) -> in
     if completed.returncode and not allow_failure:
         raise RuntimeError(f"{label} failed with return code {completed.returncode}")
     return completed.returncode
+
+
+def axis_cli() -> list[str]:
+    if POLARIZATION_LABEL is None and POLARIZATION_ANGLE_DEG is None:
+        return []
+    if POLARIZATION_LABEL is None or POLARIZATION_ANGLE_DEG is None:
+        raise RuntimeError("polarization label and angle must be provided together")
+    return [
+        "--axis-contract", AXIS_CONTRACT,
+        "--polarization-label", POLARIZATION_LABEL,
+        "--polarization-angle-deg", POLARIZATION_ANGLE_DEG,
+        "--objective-sign", OBJECTIVE_SIGN,
+    ]
 
 
 def archive_transient_license_failure(output: Path, attempt: int) -> Path:
@@ -244,7 +277,7 @@ def evaluate(latent_npz: Path, output: Path, beta: float, gpu: str) -> tuple[Pat
             archive_incomplete_evaluation(output)
 
         output.mkdir(parents=True, exist_ok=True)
-        returncode = execute([
+        command = [
             str(PYTHON), str(RUN002 / "prepare_selected_full_latent_adjoint.py"),
             "--base-fsp", str(BASE_FSP), "--base-sha256", BASE_SHA,
             "--jacobian-dir", str(JACOBIAN), "--latent-npz", str(latent_npz),
@@ -252,7 +285,10 @@ def evaluate(latent_npz: Path, output: Path, beta: float, gpu: str) -> tuple[Pat
             "--cuda-device", "0", "--beta", str(beta),
             "--incident-power-W", INCIDENT_POWER,
             "--allow-closed-unit-interval-latent",
-        ], f"evaluate_{output.name}", env=environment, allow_failure=True)
+        ] + axis_cli()
+        returncode = execute(
+            command, f"evaluate_{output.name}", env=environment, allow_failure=True
+        )
         if returncode == 0:
             payload = json.loads(result.read_text())
             if not payload.get("passed") or not raw.exists() or sha256(raw) != payload["raw_artifact"]["sha256"]:
@@ -599,13 +635,14 @@ def finalize(current_raw: Path, beta: float, global_iteration: int, gpu: str) ->
     if not result.exists():
         environment = dict(os.environ)
         environment["CUDA_VISIBLE_DEVICES"] = gpu
-        execute([
+        command = [
             str(PYTHON), str(RUN002 / "evaluate_thresholded_binary.py"),
             "--base-fsp", str(BASE_FSP), "--base-sha256", BASE_SHA,
             "--binary-npz", str(binary_npz), "--output-dir", str(output),
             "--gpu-device", f"GPU {gpu}", "--cuda-device", "0",
             "--incident-power-W", INCIDENT_POWER,
-        ], "evaluate_final_thresholded_binary", env=environment)
+        ] + axis_cli()
+        execute(command, "evaluate_final_thresholded_binary", env=environment)
     payload = json.loads(result.read_text())
     if not payload.get("passed") or payload.get("status") != "VALIDATED_THRESHOLDED_BINARY_GPU_MAXWELL_CUDA_THERMAL":
         raise RuntimeError("final binary GPU/CUDA evaluation failed")
@@ -737,6 +774,10 @@ def main() -> int:
     parser.add_argument("--gpu", default="0")
     parser.add_argument("--constraint-device", default="cuda:0")
     args = parser.parse_args()
+    if AXIS_CONTRACT != "legacy_lumerical_x_a_y_b" and (
+        not POLARIZATION_LABEL or POLARIZATION_ANGLE_DEG is None
+    ):
+        raise RuntimeError("corrected optimization requires explicit polarization metadata")
     configure_single_physical_gpu(args.gpu, args.constraint_device)
     verify_inputs()
     emit(

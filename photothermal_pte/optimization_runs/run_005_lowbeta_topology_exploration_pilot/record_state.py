@@ -7,6 +7,7 @@ import csv
 from datetime import datetime, timezone
 import hashlib
 import json
+import os
 from pathlib import Path
 
 import matplotlib
@@ -17,8 +18,13 @@ import numpy as np  # noqa: E402
 from optimization_support import design_metrics, stage_convergence
 
 
-HERE = Path(__file__).resolve().parent
-STATUS = "RUNNING_RUN005_FULL_BINARY_BETA_CONTINUATION"
+HERE = Path(
+    os.environ.get("PTE_OPTIMIZATION_RUN_DIR", Path(__file__).resolve().parent)
+).expanduser().resolve()
+RUN_TAG_PREFIX = os.environ.get("PTE_OPTIMIZATION_TAG_PREFIX", "run005")
+STATUS = os.environ.get(
+    "PTE_OPTIMIZATION_RUNNING_STATUS", "RUNNING_RUN005_FULL_BINARY_BETA_CONTINUATION"
+)
 
 
 def sha256(path: Path) -> str:
@@ -198,7 +204,7 @@ def record(
         ) / float(previous["objective_A_per_W"])
         rho_rms_change = float(np.sqrt(np.mean(delta * delta)))
         rho_max_change = float(np.max(np.abs(delta)))
-    tag = f"run005_b{int(beta):03d}_s{stage_iteration:03d}_g{global_iteration:03d}_{role}"
+    tag = f"{RUN_TAG_PREFIX}_b{int(beta):03d}_s{stage_iteration:03d}_g{global_iteration:03d}_{role}"
     generated_plots = save_design_plots(tag, metrics, arrays, data)
     checkpoint_dir = HERE / "checkpoints"
     checkpoint_dir.mkdir(parents=True, exist_ok=True)

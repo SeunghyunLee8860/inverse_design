@@ -22,6 +22,7 @@ for path in (HERE, REPOSITORY):
         sys.path.insert(0, str(path))
 
 from beta_continuation_support import exact_binary_audit  # noqa: E402
+from photothermal_pte.optimization_runs.axis_contract import get_axis_contract  # noqa: E402
 from run_production_combined_adfd_smoke import (  # noqa: E402
     boundary_energy,
     compact_forward,
@@ -60,6 +61,8 @@ def main() -> int:
     parser.add_argument("--incident-power-W", type=float, default=1.3822950233084244e-13)
     parser.add_argument("--polarization-angle-deg", type=float, default=None)
     parser.add_argument("--polarization-label", default=None)
+    parser.add_argument("--axis-contract", default="legacy_lumerical_x_a_y_b")
+    parser.add_argument("--objective-sign", type=float, choices=(-1.0, 1.0), default=1.0)
     parser.add_argument(
         "--completed-fsp",
         type=Path,
@@ -97,6 +100,14 @@ def main() -> int:
         if not exact["solid_pass"] or not exact["void_pass"]:
             raise RuntimeError("exact 500 nm solid/void DRC did not pass")
         config = contract_configuration("selected_production")
+        axis_contract = get_axis_contract(args.axis_contract)
+        if args.polarization_label is None or args.polarization_angle_deg is None:
+            if args.axis_contract != "legacy_lumerical_x_a_y_b":
+                raise RuntimeError("corrected runs require explicit polarization label and angle")
+        else:
+            axis_contract.validate_polarization(
+                args.polarization_label, args.polarization_angle_deg
+            )
         fdtd, session_audit, runtime = open_fdtd(args.gpu_device)
         forward = run_forward(
             fdtd,
@@ -131,13 +142,15 @@ def main() -> int:
         thermal_data, mapping = map_q(
             forward["q"], design_half_span_m=float(config["design_half_span_m"])
         )
-        state, pair, objective, _, _ = solve_base_thermal(
+        state, pair, signed_current, _, _ = solve_base_thermal(
             thermal_data,
             rho,
             args.cuda_device,
             config["density_forward"],
             config["density_transpose"],
+            axis_contract=axis_contract,
         )
+        objective = args.objective_sign * signed_current
         residual = max(
             pair.forward.explicit_relative_residual,
             pair.adjoint.explicit_relative_residual,
@@ -169,12 +182,21 @@ def main() -> int:
             "passed": passed,
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "objective_A": objective,
+            "signed_current_A": signed_current,
+            "objective_sign": args.objective_sign,
             "objective_A_per_incident_W": objective / args.incident_power_W,
             "incident_power_W": args.incident_power_W,
             "polarization": {
                 "label": args.polarization_label or "legacy_default",
                 "requested_angle_deg": args.polarization_angle_deg,
                 "readback_angle_deg": forward["source_polarization_angle_deg"],
+            },
+            "axis_contract": {
+                "name": axis_contract.name,
+                "crystal_axis_by_solver_axis": axis_contract.crystal_axis_by_solver_axis,
+                "kappa_xyz_W_mK": axis_contract.kappa_xyz_W_mK,
+                "sigma_xy_S_m": axis_contract.sigma_xy_S_m,
+                "seebeck_xy_V_K": axis_contract.seebeck_xy_V_K,
             },
             "binary_density_values": np.unique(rho).tolist(),
             "exact_binary_audit": {

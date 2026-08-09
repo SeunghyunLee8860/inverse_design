@@ -57,6 +57,10 @@ from photothermal_pte.optimization_runs.cuda_thermal_adjoint import (  # noqa: E
     PersistentCudaCSR,
     solve_forward_adjoint_cuda,
 )
+from photothermal_pte.optimization_runs.axis_contract import (  # noqa: E402
+    LEGACY_X_A_Y_B,
+    AxisContract,
+)
 
 import audit_production_candidate_geometry as geometry  # noqa: E402
 from build_nonuniform_complex_yee_jacobian import (  # noqa: E402
@@ -472,8 +476,14 @@ def solve_base_thermal(
     cuda_device: int,
     density_forward,
     density_transpose,
+    axis_contract: AxisContract = LEGACY_X_A_Y_B,
 ):
-    state = build_state(data, SCENARIO, density_forward(rho))
+    state = build_state(
+        data,
+        SCENARIO,
+        density_forward(rho),
+        axis_contract=axis_contract,
+    )
     pair = solve_forward_adjoint_cuda(
         state.system.matrix_W_K,
         state.source_power_W,

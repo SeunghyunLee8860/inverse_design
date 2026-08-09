@@ -22,6 +22,7 @@ for path in (HERE, REPOSITORY):
         sys.path.insert(0, str(path))
 
 from photothermal_pte.finite_inverse_design.native_yee_q import EPS0  # noqa: E402
+from photothermal_pte.optimization_runs.axis_contract import get_axis_contract  # noqa: E402
 from run_production_combined_adfd_smoke import (  # noqa: E402
     FREQUENCY_HZ,
     boundary_energy,
@@ -67,6 +68,10 @@ def main() -> int:
     parser.add_argument("--cuda-device", type=int, default=0)
     parser.add_argument("--beta", type=float, default=2.0)
     parser.add_argument("--incident-power-W", type=float, default=1.3822950233084244e-13)
+    parser.add_argument("--axis-contract", default="legacy_lumerical_x_a_y_b")
+    parser.add_argument("--polarization-label", default=None)
+    parser.add_argument("--polarization-angle-deg", type=float, default=None)
+    parser.add_argument("--objective-sign", type=float, choices=(-1.0, 1.0), default=1.0)
     parser.add_argument(
         "--allow-closed-unit-interval-latent",
         action="store_true",
@@ -113,6 +118,14 @@ def main() -> int:
         if operator_rho.shape != rho.shape:
             raise RuntimeError("component-J and latent density shapes differ")
         config = contract_configuration("selected_production")
+        axis_contract = get_axis_contract(args.axis_contract)
+        if args.polarization_label is None or args.polarization_angle_deg is None:
+            if args.axis_contract != "legacy_lumerical_x_a_y_b":
+                raise RuntimeError("corrected runs require explicit polarization label and angle")
+        else:
+            axis_contract.validate_polarization(
+                args.polarization_label, args.polarization_angle_deg
+            )
         fdtd, audit, runtime = open_fdtd(args.gpu_device)
         base = run_forward(
             fdtd,
@@ -124,17 +137,25 @@ def main() -> int:
             output=output,
             imported_object=str(config["imported_object"]),
             nodes=config["nodes"],
+            polarization_angle_deg=args.polarization_angle_deg,
         )
         base_data, base_mapping = map_q(
             base["q"], design_half_span_m=float(config["design_half_span_m"])
         )
-        state, pair, objective, thermal_parts, target_sensitivity = solve_base_thermal(
+        state, pair, signed_current, thermal_parts, target_sensitivity = solve_base_thermal(
             base_data,
             rho,
             args.cuda_device,
             config["density_forward"],
             config["density_transpose"],
+            axis_contract=axis_contract,
         )
+        objective = args.objective_sign * signed_current
+        thermal_parts = {
+            name: args.objective_sign * np.asarray(value, float)
+            for name, value in thermal_parts.items()
+        }
+        target_sensitivity = args.objective_sign * target_sensitivity
         pulled, pullback_records = pullback_q(base["q"], base_data, target_sensitivity)
         native_source = np.zeros_like(base["electric"], complex)
         for index, component in enumerate("xyz"):
@@ -205,10 +226,26 @@ def main() -> int:
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "scope": "selected 373x373 latent -> finite conic filter -> beta=2 projection -> optical/thermal/PTE",
             "beta": args.beta,
+            "axis_contract": {
+                "name": axis_contract.name,
+                "crystal_axis_by_solver_axis": axis_contract.crystal_axis_by_solver_axis,
+                "epsilon_axis_by_solver_axis": axis_contract.epsilon_axis_by_solver_axis,
+                "kappa_xyz_W_mK": axis_contract.kappa_xyz_W_mK,
+                "sigma_xy_S_m": axis_contract.sigma_xy_S_m,
+                "seebeck_xy_V_K": axis_contract.seebeck_xy_V_K,
+            },
+            "polarization": {
+                "label": args.polarization_label,
+                "requested_angle_deg": args.polarization_angle_deg,
+                "readback_angle_deg": base["source_polarization_angle_deg"],
+            },
             "latent_domain_contract": latent_domain_contract,
             "latent_range": [float(np.min(latent)), float(np.max(latent))],
             "physical_density_range": [float(np.min(rho)), float(np.max(rho))],
             "objective_A": objective,
+            "signed_current_A": signed_current,
+            "objective_sign": args.objective_sign,
+            "objective_definition": "objective_sign * signed_current_A / incident power",
             "incident_power_W": args.incident_power_W,
             "gradient_norms_A": {
                 "physical": float(np.linalg.norm(gradient_physical)),

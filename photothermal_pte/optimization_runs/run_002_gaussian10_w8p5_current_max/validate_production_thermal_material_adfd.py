@@ -30,6 +30,10 @@ from photothermal_pte.optimization_runs.cuda_thermal_adjoint import (  # noqa: E
 from photothermal_pte.thermal_adjoint.local_pte_functional import (  # noqa: E402
     build_local_pte_functional,
 )
+from photothermal_pte.optimization_runs.axis_contract import (  # noqa: E402
+    LEGACY_X_A_Y_B,
+    AxisContract,
+)
 from run_production_cuda_thermal_pte import (  # noqa: E402
     SCENARIOS,
     T_BATH,
@@ -114,6 +118,7 @@ class State:
     top_delta_G: float
     gray_exponent: float
     dphi_drho_cell: np.ndarray
+    axis_contract: AxisContract
 
 
 def build_state(
@@ -121,6 +126,7 @@ def build_state(
     scenario: str,
     rho_cell: np.ndarray,
     gray_exponent: float = 1.0,
+    axis_contract: AxisContract = LEGACY_X_A_Y_B,
 ) -> State:
     edges = tuple(np.asarray(data[f"{axis}_edges_m"], float) for axis in "xyz")
     widths = tuple(np.diff(edge) for edge in edges)
@@ -150,7 +156,7 @@ def build_state(
     kappa = np.full((*shape, 3), K_AIR, float)
     kappa[masks["Si"]] = 145.0
     kappa[masks["bottom_SiO2"]] = K_SIO2
-    kappa[masks["physical_TaIrTe4"]] = [14.4, 3.8, 1.0]
+    kappa[masks["physical_TaIrTe4"]] = axis_contract.kappa_xyz_W_mK
     phi = rho_cell**gray_exponent
     dphi_drho = gray_exponent * rho_cell ** (gray_exponent - 1.0)
     design_k = K_AIR + phi * (K_SIO2 - K_AIR)
@@ -201,6 +207,10 @@ def build_state(
         active_mask=active,
         active_ids=system.active_ids,
         fom_mask=masks["physical_TaIrTe4"],
+        sigma_a_S_m=axis_contract.sigma_xy_S_m[0],
+        sigma_b_S_m=axis_contract.sigma_xy_S_m[1],
+        seebeck_a_V_K=axis_contract.seebeck_xy_V_K[0],
+        seebeck_b_V_K=axis_contract.seebeck_xy_V_K[1],
     )
     wx = wy = 1.0 / 64.0e-6
     c = -(
@@ -231,6 +241,7 @@ def build_state(
         top_delta_G=delta_g,
         gray_exponent=gray_exponent,
         dphi_drho_cell=dphi_drho,
+        axis_contract=axis_contract,
     )
 
 

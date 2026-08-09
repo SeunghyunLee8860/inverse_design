@@ -13,7 +13,9 @@ from scipy import ndimage
 import torch
 
 
-HERE = Path(__file__).resolve().parent
+HERE = Path(
+    os.environ.get("PTE_OPTIMIZATION_RUN_DIR", Path(__file__).resolve().parent)
+).expanduser().resolve()
 RUN002 = HERE.parent / "run_002_gaussian10_w8p5_current_max"
 if str(RUN002) not in sys.path:
     sys.path.insert(0, str(RUN002))
@@ -36,7 +38,7 @@ ZHOU_DECAY_M2 = 1.0e-10
 PNORM = 8.0
 LEGACY_CONSTRAINT_CONTRACT = "legacy_zhou_p8_v1"
 DISK_CONSTRAINT_CONTRACT = "soft_disk_opening_500nm_from_iteration_zero_v5"
-MMA_CAP_CONTRACT = "run005_full_continuation_fixed_per_beta_caps_v8"
+MMA_CAP_CONTRACT = "full_continuation_fixed_per_beta_caps_v8"
 DISK_CONSTRAINT_START_BETA = 2.0
 MMA_TOPOLOGY_RESET_GLOBAL_ITERATION = 9
 DISK_SHARPEN_GAMMA = 64.0
