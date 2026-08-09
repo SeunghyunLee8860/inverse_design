@@ -57,7 +57,10 @@ def main() -> int:
     emit("supervisor_started", gpu=0, sequence=["Ea_ADFD", "Eb_ADFD", "Run006_Ea", "Run007_Eb"])
     ea = wait_for_passed(EA_ADFD / "selected_full_latent_direction_adfd_result.json")
     emit("Ea_ADFD_passed", relative_error=ea["relative_error"])
-    if not (EB_ADFD / "selected_full_latent_direction_adfd_result.json").exists():
+    eb_result = EB_ADFD / "selected_full_latent_direction_adfd_result.json"
+    if EB_ADFD.exists() and any(EB_ADFD.iterdir()) and not eb_result.exists():
+        emit("Eb_ADFD_external_attempt_detected", directory=str(EB_ADFD))
+    elif not eb_result.exists():
         run([
             PYTHON, str(RUN002 / "validate_selected_full_latent_direction.py"),
             "--preparation-result", "/data/seunghyun/tairte4/raw_artifacts/run007_corrected_Eb_magnitude_initial_20260809/selected_full_latent_adjoint_preparation_result.json",
@@ -68,7 +71,7 @@ def main() -> int:
             "--gpu-device", "GPU 0", "--cuda-device", "0",
             "--output-dir", str(EB_ADFD),
         ], "Eb_combined_ADFD")
-    eb = wait_for_passed(EB_ADFD / "selected_full_latent_direction_adfd_result.json")
+    eb = wait_for_passed(eb_result)
     emit("Eb_ADFD_passed", relative_error=eb["relative_error"])
     run([PYTHON, "photothermal_pte/optimization_runs/run_006_corrected_Ea_pte_magnitude_max/run_optimization.py", "--gpu", "0", "--constraint-device", "cuda:0"], "Run006_Ea_full_binary")
     run([PYTHON, "photothermal_pte/optimization_runs/run_007_corrected_Eb_pte_magnitude_max/run_optimization.py", "--gpu", "0", "--constraint-device", "cuda:0"], "Run007_Eb_full_binary")
