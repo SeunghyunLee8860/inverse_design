@@ -46,6 +46,31 @@ def test_effective_caps_preserve_each_phase_after_beta2(tmp_path, monkeypatch):
     )
 
 
+def test_effective_caps_accept_exact_zero_uniform_phase(tmp_path, monkeypatch):
+    registry = tmp_path / "caps.json"
+    registry.write_text(json.dumps({
+        "contract": MMA_CAP_CONTRACT,
+        "stages": {"32": {"caps": [2.0e-4, 2.0e-5]}},
+    }))
+    monkeypatch.setenv("RUN005_STAGE_CAPS_FILE", str(registry))
+    monkeypatch.setenv("PTE_OPTIMIZATION_BETA2_CAPS_JSON", "[0.002, 0.002]")
+    values = np.asarray([2.654641016045472e-4, 0.0])
+    np.testing.assert_allclose(
+        mma_effective_constraint_caps(values, 2.0),
+        [0.002, 0.002],
+        rtol=0.0,
+        atol=0.0,
+    )
+    np.testing.assert_allclose(
+        mma_effective_constraint_caps(values, 32.0),
+        [2.0e-4, 1.0e-12],
+        rtol=0.0,
+        atol=0.0,
+    )
+    with pytest.raises(ValueError, match="nonnegative"):
+        mma_effective_constraint_caps(np.asarray([1.0e-4, -1.0e-12]), 32.0)
+
+
 def test_constraint_jvp_matches_centered_fd() -> None:
     mapping = ProductionDensityMapping(shape=(41, 39), spacing_m=50e-9, radius_m=500e-9)
     rng = np.random.default_rng(20260807)

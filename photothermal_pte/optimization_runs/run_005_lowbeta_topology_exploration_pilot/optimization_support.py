@@ -413,12 +413,18 @@ def mma_effective_constraint_caps(
     caps = stage_caps(beta)
     if current.shape != caps.shape or not np.all(np.isfinite(current)):
         raise ValueError("constraint values must be a finite solid/void pair")
-    if np.any(current <= 0.0):
-        raise ValueError("constraint values must be positive")
+    if np.any(current < 0.0):
+        raise ValueError("constraint values must be nonnegative")
     nonincrease_start = float(
         os.environ.get("PTE_OPTIMIZATION_PHASEWISE_NONINCREASE_START_BETA", "4")
     )
-    return np.minimum(caps, current) if float(beta) >= nonincrease_start else caps
+    if float(beta) < nonincrease_start:
+        return caps
+    # A uniform or exactly opened phase can have an identically zero smooth
+    # violation.  Zero is a valid constraint value, not an invalid optimizer
+    # state.  MMA still needs a positive normalization denominator, so retain
+    # the zero phase with a numerical cap floor instead of rejecting the run.
+    return np.minimum(caps, np.maximum(current, 1.0e-12))
 
 
 def catastrophic_exact_growth(
