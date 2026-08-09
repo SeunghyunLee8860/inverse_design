@@ -1,0 +1,44 @@
+{
+  "status": "RUNNING_EXACT_UNIFORM_EA_OBJECTIVE_FIRST_OPTIMIZATION",
+  "generated_at_utc": "2026-08-09T20:52:18.535459+00:00",
+  "raw_artifacts_are_gitignored": true,
+  "base_FSP": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_production_geometry_runsetup_v2_20260806/production_candidate_runsetup.fsp",
+    "size_bytes": 47301353,
+    "sha256": "a86644647b8bf03ec1b83c34d0cf18b6b1c5316342d845ccbdccf60df3d8f904"
+  },
+  "material_Jacobian": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_production_complex_yee_jacobian_20260806",
+    "sha256_contract": "directory recorded by Run 002 component-Jacobian manifest"
+  },
+  "constraint_recovery_validation": null,
+  "records": {
+    "run009_Ea_uniform_b002_s000_g000_stage_baseline": {
+      "evaluation_result": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run009_uniform_Ea_initial_20260809/solver_baseline/selected_full_latent_adjoint_preparation_result.json",
+        "size_bytes": 11333,
+        "sha256": "882bcb46ed1cd608f8feff459e92e8fb687743f727a9d761e6ae07efe9d4562b"
+      },
+      "evaluation_NPZ": {
+        "path": "/data/seunghyun/tairte4/raw_artifacts/run009_uniform_Ea_initial_20260809/solver_baseline/selected_full_latent_adjoint_preparation.npz",
+        "size_bytes": 4244588,
+        "sha256": "6ac18c17c31158a53bcd7a7880642a4dcc84dd5a2e6181ecc41ba62bf3235fd8"
+      },
+      "checkpoint": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_009_uniform_Ea_from_scratch/checkpoints/run009_Ea_uniform_b002_s000_g000_stage_baseline.npz",
+        "size_bytes": 1572,
+        "sha256": "4877b9e14403cb2028f9565ce72f15b8414fb419c4191581e83516a932cc98be"
+      }
+    }
+  },
+  "original_beta2_initial_result": {
+    "path": "/data/seunghyun/tairte4/raw_artifacts/run009_uniform_Ea_initial_20260809/solver_baseline/selected_full_latent_adjoint_preparation_result.json",
+    "size_bytes": 11333,
+    "sha256": "882bcb46ed1cd608f8feff459e92e8fb687743f727a9d761e6ae07efe9d4562b"
+  },
+  "original_beta2_initial_NPZ": {
+    "path": "/data/seunghyun/tairte4/raw_artifacts/run009_uniform_Ea_initial_20260809/solver_baseline/selected_full_latent_adjoint_preparation.npz",
+    "size_bytes": 4244588,
+    "sha256": "6ac18c17c31158a53bcd7a7880642a4dcc84dd5a2e6181ecc41ba62bf3235fd8"
+  }
+}
