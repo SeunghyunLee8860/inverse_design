@@ -6,6 +6,7 @@
 - Beta 2 starts smooth-constraint feasible with 20% cap slack.
 - Beta 2 and 4 prioritize FOM/topology exploration; exact 500 nm counts are diagnostic.
 - Legacy minimum-move and low-beta exact-pixel heuristics cannot advance beta while the solver-backed objective is still improving.
+- At beta 2/4, smooth constraints bound accepted candidates but do not prevent a measured FOM/density plateau transition; strict phase feasibility begins at beta 8.
 - Phase-wise morphology nonincrease begins at beta 8; exact-count nonincrease begins at beta 32.
 - A beta stage advances only after the registered four-update FOM/density plateau gates pass.
 - Stage budgets are fail-closed watchdogs, not authority to force an unconverged beta transition.

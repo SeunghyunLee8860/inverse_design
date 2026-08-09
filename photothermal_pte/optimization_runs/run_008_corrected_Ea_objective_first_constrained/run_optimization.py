@@ -35,6 +35,9 @@ os.environ.update({
     # low beta while the solver-backed FOM is still improving.
     "PTE_OPTIMIZATION_ALLOW_MINIMUM_MOVE_TRANSITION": "0",
     "PTE_OPTIMIZATION_ALLOW_LOW_BETA_MORPHOLOGY_TRANSITION": "0",
+    # At beta 2/4, constraints remain bounded candidate guards but cannot hold
+    # the stage after the objective and density have genuinely plateaued.
+    "PTE_OPTIMIZATION_SMOOTH_FEASIBILITY_GATE_START_BETA": "8",
     # Preserve topology freedom at beta 2/4. Begin phase-wise nonincrease at 8,
     # then retain the existing exact nonincrease gate from beta 32.
     "PTE_OPTIMIZATION_PHASEWISE_NONINCREASE_START_BETA": "8",

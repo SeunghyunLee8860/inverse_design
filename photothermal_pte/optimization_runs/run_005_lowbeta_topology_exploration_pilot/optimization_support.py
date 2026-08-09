@@ -50,6 +50,9 @@ FEASIBLE_FOM_RETENTION = 0.998
 LOW_BETA_CATASTROPHIC_EXACT_GROWTH_FACTOR = 1.50
 LOW_BETA_CATASTROPHIC_EXACT_GROWTH_ABSOLUTE = 25
 SMALL_MOVE_HALT_THRESHOLD = 0.0025
+SMOOTH_FEASIBILITY_GATE_START_BETA = float(
+    os.environ.get("PTE_OPTIMIZATION_SMOOTH_FEASIBILITY_GATE_START_BETA", "2")
+)
 DEFAULT_STAGE_CAPS_PATH = HERE / "stage_caps.json"
 EXACT_ACTIVE_SET_RESTORATION_CONTRACT = (
     "sequential_exact_drc_active_set_filter_vjp_v2"
@@ -959,7 +962,10 @@ def stage_convergence(history: list[dict[str, object]], beta: float) -> StageCon
             np.inf,
             np.inf,
         )
-    if not bool(recent[-1]["constraints_feasible"]):
+    if (
+        float(beta) >= SMOOTH_FEASIBILITY_GATE_START_BETA
+        and not bool(recent[-1]["constraints_feasible"])
+    ):
         return StageConvergence(False, "fixed solid/void inequalities are not feasible", np.inf, np.inf, np.inf)
     rel = [abs(float(row["relative_fom_change"])) for row in recent]
     rms = [float(row["rho_rms_change"]) for row in recent]
