@@ -1,0 +1,43 @@
+{
+  "role": "nlopt_evaluation",
+  "algorithm": "NLopt LD_AUGLAG + LD_LBFGS",
+  "nlopt_version": "2.11.0",
+  "evaluation_id": 7,
+  "global_update": 7,
+  "stage_update": 7,
+  "beta": 1.0,
+  "objective_A": 1.058531215707019e-17,
+  "objective_at_reference_power_A": 2.1813182511852173e-08,
+  "objective_scaled_minimize": -2.181318251185217,
+  "fixed_source_power_W": 1.3830232993859658e-13,
+  "source_power_relative_change": 0.0,
+  "terminal_conductance_S": 0.010723783498221619,
+  "minimum_terminal_conductance_S": 0.00491,
+  "constraint_names": [
+    "minimum_terminal_conductance"
+  ],
+  "constraint_values": [
+    -1.1840699589046064
+  ],
+  "maximum_constraint_value": -1.1840699589046064,
+  "morphology_caps": [
+    Infinity,
+    Infinity
+  ],
+  "gray_fraction_0p01_0p99": 0.9982659317520283,
+  "binarization": 0.7815311845985128,
+  "exact_bad_cells": 20,
+  "rho_mean": 0.5002021732079287,
+  "latent_range": [
+    0.0,
+    1.0
+  ],
+  "maximum_absolute_step_from_previous_evaluation": 6.040985626876161e-05,
+  "rms_step_from_previous_evaluation": 2.1193386153066153e-05,
+  "manual_move_limit": null,
+  "used_adam": false,
+  "gradient_direction_normalization": false,
+  "post_update_hard_clipping": false,
+  "symmetry_constraint": false,
+  "volume_constraint": false
+}
