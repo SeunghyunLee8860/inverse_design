@@ -1,9 +1,9 @@
 {
   "schema": "auglag-lbfgs-dual-supervisor-v1",
-  "generated_at_utc": "2026-08-10T20:47:21.120211+00:00",
+  "generated_at_utc": "2026-08-10T21:00:31.683985+00:00",
   "status": "RUNNING_AUGLAG_LBFGS",
   "gpu": 1,
-  "run": "Run024",
+  "run": "Run026",
   "polarization": "Ea",
   "command": [
     "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python",
@@ -12,9 +12,9 @@
     "--polarization",
     "Ea",
     "--raw-root",
-    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run024_auglag_lbfgs_Ea_20260810",
+    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run026_auglag_lbfgs_Ea_20260810",
     "--published-dir",
-    "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/run_024_auglag_lbfgs_contact_anchored_Ea_current_max",
+    "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/run_026_auglag_lbfgs_contact_anchored_Ea_current_max",
     "--gpu",
     "1",
     "--base-fsp",
