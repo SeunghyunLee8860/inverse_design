@@ -548,17 +548,20 @@ def main() -> int:
             **objective_power_fields(result, candidate_objective),
         })
         history_path.write_text(json.dumps(history, indent=2) + "\n")
-        publish_plot(
-            published,
-            history,
-            candidate_rho,
-            candidate_gradient,
-            candidate_summary,
-            evaluation_id=evaluation_id,
-            accepted=accepted,
-            label="candidate",
-        )
         if accepted:
+            # Iteration figures are the accepted optimization trajectory.
+            # Rejected line-search candidates retain complete JSON/raw solver
+            # provenance but do not clutter the design/FOM figure sequence.
+            publish_plot(
+                published,
+                history,
+                candidate_rho,
+                candidate_gradient,
+                candidate_summary,
+                evaluation_id=evaluation_id,
+                accepted=True,
+                label="accepted",
+            )
             latent = candidate
             objective = candidate_objective
             gradient_physical = candidate_gradient
