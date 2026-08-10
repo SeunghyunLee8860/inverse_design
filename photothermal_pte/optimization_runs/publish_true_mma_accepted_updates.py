@@ -20,10 +20,13 @@ DIRECTORIES = (
     REPOSITORY / "photothermal_pte/optimization_runs/run_019_nlopt_mma_contact_anchored_Eb_current_max",
     REPOSITORY / "photothermal_pte/optimization_runs/run_020_nlopt_mma_contact_anchored_Ea_current_max",
     REPOSITORY / "photothermal_pte/optimization_runs/run_021_nlopt_mma_contact_anchored_Eb_current_max",
+    REPOSITORY / "photothermal_pte/optimization_runs/run_022_verified_mma_contact_anchored_Ea_current_max",
+    REPOSITORY / "photothermal_pte/optimization_runs/run_023_verified_mma_contact_anchored_Eb_current_max",
 )
 STATUSES = (
     REPOSITORY / "photothermal_pte/optimization_runs/TRUE_MMA_DUAL_RUN_STATUS.json",
     REPOSITORY / "photothermal_pte/optimization_runs/NLOPT_MMA_DUAL_RUN_STATUS.json",
+    REPOSITORY / "photothermal_pte/optimization_runs/VERIFIED_MMA_DUAL_RUN_STATUS.json",
 )
 
 

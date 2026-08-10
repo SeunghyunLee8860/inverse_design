@@ -4,6 +4,8 @@ from pathlib import Path
 import numpy as np
 
 from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_optimization import (
+    BINARIZATION_CONTINUATION_TARGET,
+    MOVE_LIMIT,
     REFERENCE_INCIDENT_POWER_W,
     canonical_constraints,
     equivalent_current,
@@ -100,7 +102,33 @@ def test_stage_does_not_advance_before_measured_minimum() -> None:
             "maximum_constraint_value": -1.0,
             "exact_bad_cells": 0,
             "gray_fraction_0p01_0p99": 1.0,
+            "binarization": 1.0,
         }
-        for _ in range(7)
+        for _ in range(5)
     ]
     assert stage_convergence(history, 1.0)["converged"] is False
+
+
+def test_low_beta_advances_from_measured_sharpness_after_minimum() -> None:
+    history = [
+        {
+            "role": "accepted_mma",
+            "beta": 1.0,
+            "objective_at_reference_power_A": (index + 1) * 1e-9,
+            "mma_maximum_absolute_step": MOVE_LIMIT[1.0],
+            "maximum_constraint_value": -1.0,
+            "exact_bad_cells": 100,
+            "gray_fraction_0p01_0p99": 1.0,
+            "binarization": BINARIZATION_CONTINUATION_TARGET[1.0] - 1e-3,
+        }
+        for index in range(6)
+    ]
+    result = stage_convergence(history, 1.0)
+    assert result["converged"] is True
+    assert result["reason"] == "continuation_sharpness"
+
+
+def test_low_beta_move_bound_prevents_run020_half_range_jump() -> None:
+    betas = tuple(MOVE_LIMIT)
+    assert MOVE_LIMIT[1.0] <= 0.025
+    assert all(MOVE_LIMIT[a] >= MOVE_LIMIT[b] for a, b in zip(betas, betas[1:]))

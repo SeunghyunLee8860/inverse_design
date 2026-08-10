@@ -50,29 +50,51 @@ MORPHOLOGY_TARGET_CAP = {
     128.0: 1.0e-4,
 }
 MOVE_LIMIT = {
-    1.0: 0.05,
-    2.0: 0.05,
-    4.0: 0.04,
-    8.0: 0.04,
-    16.0: 0.03,
-    32.0: 0.02,
-    64.0: 0.015,
-    128.0: 0.01,
+    # MMA trust-region bounds, not fixed update sizes. Run020 showed that
+    # unbounded LD_MMA expanded a 1.4e-4 trial step to 0.5 at beta=1.
+    1.0: 0.025,
+    2.0: 0.020,
+    4.0: 0.018,
+    8.0: 0.015,
+    16.0: 0.012,
+    32.0: 0.010,
+    64.0: 0.008,
+    128.0: 0.006,
 }
 MINIMUM_STAGE_UPDATES = {
-    1.0: 8,
-    2.0: 6,
-    4.0: 6,
+    1.0: 6,
+    2.0: 5,
+    4.0: 5,
     8.0: 5,
     16.0: 5,
     32.0: 5,
     64.0: 5,
-    128.0: 6,
+    128.0: 8,
 }
 PLATEAU_WINDOW = 4
-PLATEAU_RELATIVE_CHANGE = 5.0e-3
+PLATEAU_RELATIVE_CHANGE = 2.0e-3
 STATIONARY_MAX_STEP = 1.5e-3
-MAXIMUM_STAGE_UPDATES = 30
+MAXIMUM_STAGE_UPDATES = {
+    1.0: 16,
+    2.0: 14,
+    4.0: 14,
+    8.0: 16,
+    16.0: 18,
+    32.0: 20,
+    64.0: 24,
+    128.0: 40,
+}
+BINARIZATION_CONTINUATION_TARGET = {
+    1.0: 0.86,
+    2.0: 0.68,
+    4.0: 0.46,
+    8.0: 0.28,
+    16.0: 0.14,
+    32.0: 0.060,
+    64.0: 0.020,
+    128.0: 0.005,
+}
+PILOT_ACCEPTED_UPDATES = 4
 
 
 def sha256(path: Path) -> str:
@@ -243,7 +265,12 @@ def stage_convergence(history: list[dict[str, object]], beta: float) -> dict[str
     ))
     plateau = bool(np.max(pair_changes) < PLATEAU_RELATIVE_CHANGE)
     stationary = bool(float(rows[-1]["mma_maximum_absolute_step"]) < STATIONARY_MAX_STEP)
-    feasible = bool(float(rows[-1]["maximum_constraint_value"]) <= 2.0e-2)
+    feasible = bool(float(rows[-1]["maximum_constraint_value"]) <= 1.0e-3)
+    sharpness = float(rows[-1]["binarization"])
+    continuation_sharpness = bool(
+        beta < BETA_SCHEDULE[-1]
+        and sharpness <= BINARIZATION_CONTINUATION_TARGET[beta]
+    )
     final_geometry = bool(
         beta < BETA_SCHEDULE[-1]
         or (
@@ -251,17 +278,24 @@ def stage_convergence(history: list[dict[str, object]], beta: float) -> dict[str
             and float(rows[-1]["gray_fraction_0p01_0p99"]) < 0.01
         )
     )
-    converged = bool(feasible and final_geometry and (plateau or stationary))
+    converged = bool(
+        feasible
+        and final_geometry
+        and (plateau or stationary or continuation_sharpness)
+    )
     return {
         "converged": converged,
         "reason": (
             "objective_plateau" if converged and plateau
             else "mma_stationarity" if converged and stationary
+            else "continuation_sharpness" if converged and continuation_sharpness
             else "constraints_or_final_geometry_unresolved"
         ),
         "count": len(rows),
         "recent_max_relative_objective_change": float(np.max(pair_changes)),
         "latest_maximum_absolute_step": float(rows[-1]["mma_maximum_absolute_step"]),
+        "latest_binarization": sharpness,
+        "continuation_binarization_target": BINARIZATION_CONTINUATION_TARGET[beta],
         "canonical_constraints_feasible": feasible,
         "final_geometry_gate": final_geometry,
     }
@@ -757,9 +791,9 @@ def main() -> int:
                 return 0
             continue
 
-        if stage_updates >= MAXIMUM_STAGE_UPDATES:
+        if stage_updates >= MAXIMUM_STAGE_UPDATES[beta]:
             raise RuntimeError(
-                f"beta={beta:g} reached {MAXIMUM_STAGE_UPDATES} true-MMA updates "
+                f"beta={beta:g} reached {MAXIMUM_STAGE_UPDATES[beta]} true-MMA updates "
                 "without the measured convergence gate; refusing arbitrary promotion"
             )
 
@@ -894,6 +928,33 @@ def main() -> int:
             maximum_constraint_value=row["maximum_constraint_value"],
             mma_maximum_absolute_step=row["mma_maximum_absolute_step"],
         )
+        if beta == BETA_SCHEDULE[0] and stage_updates == PILOT_ACCEPTED_UPDATES:
+            pilot_passed = bool(
+                row["mma_maximum_absolute_step"] <= MOVE_LIMIT[beta] + 1.0e-12
+                and row["gray_fraction_0p01_0p99"] > 0.95
+                and row["maximum_constraint_value"] <= 1.0e-3
+                and np.isfinite(row["objective_at_reference_power_A"])
+            )
+            pilot = {
+                "passed": pilot_passed,
+                "status": (
+                    "VALIDATED_LOW_BETA_MMA_PILOT"
+                    if pilot_passed
+                    else "FAILED_LOW_BETA_MMA_PILOT"
+                ),
+                "beta": beta,
+                "accepted_updates": stage_updates,
+                "maximum_absolute_step": row["mma_maximum_absolute_step"],
+                "move_bound": MOVE_LIMIT[beta],
+                "gray_fraction_0p01_0p99": row["gray_fraction_0p01_0p99"],
+                "binarization": row["binarization"],
+                "maximum_constraint_value": row["maximum_constraint_value"],
+                "objective_at_reference_power_A": row["objective_at_reference_power_A"],
+            }
+            write_json(published / "LOW_BETA_PILOT_GATE.json", pilot)
+            emit(events, "low_beta_pilot_gate", **pilot)
+            if not pilot_passed:
+                raise RuntimeError("low-beta MMA pilot failed closed")
         if args.max_new_evaluations and new_evaluations >= args.max_new_evaluations:
             emit(events, "pilot_limit_reached", new_evaluations=new_evaluations)
             return 0
