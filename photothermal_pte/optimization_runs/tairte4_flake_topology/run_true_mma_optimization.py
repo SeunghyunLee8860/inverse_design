@@ -25,11 +25,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
-from photothermal_pte.optimization_runs.tairte4_flake_topology.mma import (
-    MMAState,
-    initialize_mma_state,
-    mma_step,
-)
 from photothermal_pte.optimization_runs.tairte4_flake_topology.optimization_support import (
     MAPPING,
     exact_binary_audit,
@@ -286,7 +281,7 @@ def save_driver_state(
     global_update: int,
     evaluation_counter: int,
     morphology_caps: np.ndarray,
-    mma_state: MMAState,
+    mma_state: object,
 ) -> None:
     np.savez_compressed(
         path,
@@ -310,6 +305,8 @@ def save_driver_state(
 
 
 def load_driver_state(path: Path) -> dict[str, object]:
+    from photothermal_pte.optimization_runs.tairte4_flake_topology.mma import MMAState
+
     with np.load(path) as data:
         return {
             "latent": np.asarray(data["latent"], dtype=float),
@@ -347,7 +344,7 @@ def publish_plot(
 ) -> Path:
     rows = [
         row for row in history
-        if row.get("role") in {"uniform_initial", "accepted_mma"}
+        if row.get("role") in {"uniform_initial", "accepted_mma", "nlopt_evaluation"}
     ]
     indices = [int(row["global_update"]) for row in rows]
     fig, axes = plt.subplots(2, 3, figsize=(17, 9), constrained_layout=True)
@@ -386,7 +383,7 @@ def publish_plot(
     currents = [1e9 * float(row["objective_at_reference_power_A"]) for row in rows]
     axes[1, 0].plot(indices, currents, "o-", linewidth=2, label="signed PTE current")
     axes[1, 0].set_title("FOM history")
-    axes[1, 0].set_xlabel("accepted true-MMA update")
+    axes[1, 0].set_xlabel("optimizer evaluation/update")
     axes[1, 0].set_ylabel("I at fixed 285 uW (nA)")
     axes[1, 0].grid(alpha=0.25)
     if rows:
@@ -413,8 +410,9 @@ def publish_plot(
     axes[1, 2].set_ylabel("exact bad design nodes")
     constraint_axis.set_ylabel("max canonical g(x), feasible <=0")
     last = history[-1]
+    algorithm = str(last.get("algorithm", "initial design"))
     fig.suptitle(
-        f"{label}; evaluation={evaluation_id}; true MMA; beta={last['beta']:g}; "
+        f"{label}; evaluation={evaluation_id}; {algorithm}; beta={last['beta']:g}; "
         f"I(285uW)={1e9*last['objective_at_reference_power_A']:.4g} nA; "
         f"gray={summary['gray_fraction_0p01_0p99']:.4f}; "
         f"bad={summary['exact']['total_bad_cell_count']}"
@@ -445,6 +443,11 @@ def record_manifest_entry(result: dict[str, object]) -> dict[str, object]:
 
 
 def main() -> int:
+    from photothermal_pte.optimization_runs.tairte4_flake_topology.mma import (
+        initialize_mma_state,
+        mma_step,
+    )
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--polarization", choices=("Ea", "Eb"), required=True)
     parser.add_argument("--raw-root", required=True, type=Path)

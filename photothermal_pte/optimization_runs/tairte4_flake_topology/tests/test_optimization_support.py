@@ -1,5 +1,6 @@
 import numpy as np
 
+from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
 from photothermal_pte.optimization_runs.tairte4_flake_topology.optimization_support import (
     MAPPING,
     exact_binary_audit,
@@ -17,11 +18,16 @@ def test_mapping_preserves_uniform_density_and_transpose():
     assert abs(left - right) / max(abs(left), abs(right)) < 1e-12
 
 
-def test_exact_audit_treats_outside_as_fixed_solid_frame():
+def test_exact_audit_uses_geometry_specific_outside_phase():
     solid = np.ones(MAPPING.shape)
     audit, _ = exact_binary_audit(solid)
     assert audit["passed"]
-    assert audit["outside_design_phase"] == "fixed_solid_TaIrTe4_frame"
+    expected = (
+        "fixed_solid_at_top_bottom_and_void_at_left_right"
+        if CONTRACT.geometry_mode == "contact_anchored"
+        else "fixed_solid_TaIrTe4_frame"
+    )
+    assert audit["outside_design_phase"] == expected
     assert audit["opening_radius_nm"] == 250.0
     assert audit["opening_radius_pixels"] == 2
     assert audit["realized_discrete_opening_max_center_offset_nm"] == 200.0

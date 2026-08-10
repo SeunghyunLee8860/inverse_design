@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Commit/push only small Run016/017 reports and accepted-iteration plots."""
+"""Commit/push only small MMA reports and evaluated-iteration plots."""
 
 from __future__ import annotations
 
@@ -16,8 +16,13 @@ DIRECTORIES = (
     REPOSITORY / "photothermal_pte/optimization_runs/run_016_true_mma_contact_anchored_Ea_current_max",
     REPOSITORY / "photothermal_pte/optimization_runs/run_017_true_mma_contact_anchored_Eb_current_max",
     REPOSITORY / "photothermal_pte/optimization_runs/true_mma_preflight",
+    REPOSITORY / "photothermal_pte/optimization_runs/run_018_nlopt_mma_contact_anchored_Ea_current_max",
+    REPOSITORY / "photothermal_pte/optimization_runs/run_019_nlopt_mma_contact_anchored_Eb_current_max",
 )
-STATUS = REPOSITORY / "photothermal_pte/optimization_runs/TRUE_MMA_DUAL_RUN_STATUS.json"
+STATUSES = (
+    REPOSITORY / "photothermal_pte/optimization_runs/TRUE_MMA_DUAL_RUN_STATUS.json",
+    REPOSITORY / "photothermal_pte/optimization_runs/NLOPT_MMA_DUAL_RUN_STATUS.json",
+)
 
 
 def git(*arguments: str, check: bool = True) -> subprocess.CompletedProcess[str]:
@@ -32,8 +37,9 @@ def git(*arguments: str, check: bool = True) -> subprocess.CompletedProcess[str]
 
 def publish() -> None:
     paths = [str(path.relative_to(REPOSITORY)) for path in DIRECTORIES if path.exists()]
-    if STATUS.exists():
-        paths.append(str(STATUS.relative_to(REPOSITORY)))
+    for status in STATUSES:
+        if status.exists():
+            paths.append(str(status.relative_to(REPOSITORY)))
     if not paths:
         return
     git("add", "--", *paths)
@@ -46,10 +52,10 @@ def publish() -> None:
         git("restore", "--staged", "--", *forbidden)
         raise RuntimeError(f"refusing raw artifact publication: {forbidden}")
     latest = 0
-    for directory in DIRECTORIES[:2]:
-        for path in directory.glob("iteration_*.json"):
+    for directory in DIRECTORIES:
+        for path in list(directory.glob("iteration_*.json")) + list(directory.glob("evaluation_*.json")):
             latest = max(latest, int(path.stem.split("_")[-1]))
-    git("commit", "-m", f"Update true-MMA accepted iteration {latest}")
+    git("commit", "-m", f"Update MMA evaluated iteration {latest}")
     git("push", "origin", BRANCH)
     print(json.dumps({"published_accepted_iteration": latest}), flush=True)
 
