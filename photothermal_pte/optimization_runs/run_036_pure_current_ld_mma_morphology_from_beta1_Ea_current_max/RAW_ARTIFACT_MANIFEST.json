@@ -1,0 +1,79 @@
+{
+  "schema": "pure-terminal-current-nlopt-ld-mma-raw-artifact-manifest-v1",
+  "raw_artifacts_committed_to_git": false,
+  "optimizer": {
+    "library": "NLopt",
+    "version": "2.11.0",
+    "algorithm": "LD_MMA",
+    "manual_move_limit": null,
+    "custom_mma_update_used": false,
+    "objective": "signed full-flake terminal PTE current",
+    "terminal_conductance_constraint": false,
+    "terminal_conductance_role": "diagnostic_only",
+    "symmetry_constraint": false,
+    "volume_constraint": false
+  },
+  "base_FSP": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_uniform_rho0p5_Ea_forward_retry_20260810/tairte4_flake_forward_Ea.fsp",
+    "size_bytes": 159871532,
+    "sha256": "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83"
+  },
+  "component_Yee_Jacobian": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_component_yee_jacobian_retry_20260810",
+    "certificate": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_component_yee_jacobian_retry_20260810/component_yee_jacobian_result.json",
+    "certificate_sha256": "9222716ca4b67dd611da27bbb6bb72849a77882e1d9b9c1206d89a8305ff407d"
+  },
+  "evaluations": {
+    "0001": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0001_beta1_pure_current_ld_mma/objective_gradient_result.json",
+        "size_bytes": 11095,
+        "sha256": "e7854678f57ecf8db64f05cb40f0a5abe3cee070cafc97bddad107dd3601adff"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0001_beta1_pure_current_ld_mma/objective_gradient.npz",
+        "size_bytes": 2169148,
+        "sha256": "6f5ca5e9486c9030bb7d9f047bd36744ee798cfbe2a661913559eb913771fcd6"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0001_beta1_pure_current_ld_mma/forward_Ea.fsp",
+        "size_bytes": 180903815,
+        "sha256": "57ee79e06fe91899e80868e72579b506c7c51cbf03378f07ca438f0b94e5df20"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0001_beta1_pure_current_ld_mma_latent.npz",
+        "size_bytes": 809,
+        "sha256": "b6b8d6a7dbb6daf1e799b09c0b41715368383b981d311179871b6f37e19c5685"
+      }
+    }
+  },
+  "active_constraints": {
+    "beta_1_and_above": [
+      "500nm_solid_opening",
+      "500nm_void_opening"
+    ]
+  },
+  "mma_scale_policy": {
+    "kind": "projection-Jacobian-scaled-native-LD_MMA-initialization",
+    "target_initial_physical_density_step": 0.025,
+    "base_rho_init_at_beta1": 10.0,
+    "fixed_per_iteration_move_limit": null,
+    "note": "LD_MMA, not this driver, adapts all later asymptotes."
+  },
+  "beta_promotion_policy": {
+    "NLopt_numerical_stop_alone_is_sufficient": false,
+    "required_full_physics_objective_changes": 3,
+    "relative_plateau_gate": 0.002,
+    "active_constraints_must_be_feasible": true
+  },
+  "optimizer_code_provenance": {
+    "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/PURE_CURRENT_LD_MMA_CODE_MANIFEST.json",
+    "sha256": "115d0de4b23733d0a07c3b41609c0912963b4cd556e42dbf4a960bb97913ee95",
+    "source_sha256": {
+      "photothermal_pte/optimization_runs/tairte4_flake_topology/run_pure_current_ld_mma_optimization.py": "d554fc7c44a8a2aa9befcc14440e8d08bdba69166aa1cc0d16ff8ca8936cf58a",
+      "photothermal_pte/optimization_runs/tairte4_flake_topology/run_nlopt_mma_optimization.py": "f38a696d5972751e8696bbfc0705a034142fee5ece6dfae8ab0538e0141665a3",
+      "photothermal_pte/optimization_runs/tairte4_flake_topology/run_true_mma_optimization.py": "abf8de366c1b0ab14958f0be6a099d6264ed0289cc8109119607f214eb7121c5",
+      "photothermal_pte/optimization_runs/run_pure_current_ld_mma_dual_supervisor.py": "dbe2751de7875af2aba6e77d3d7697665104b7f6e1656af853c4fca278c010d6"
+    }
+  }
+}
