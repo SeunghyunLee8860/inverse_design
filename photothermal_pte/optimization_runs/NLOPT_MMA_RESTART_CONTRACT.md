@@ -1,6 +1,6 @@
 # NLopt LD_MMA restart contract
 
-Status: `READY_FOR_FRESH_NLOPT_LD_MMA_RUN018_RUN019`
+Status: `READY_FOR_FRESH_NLOPT_LD_MMA_RUN020_RUN021`
 
 Run016 is preserved as a diagnostic custom-MMA checkpoint.  It is not an
 input or resume state for the fresh optimization.
@@ -15,7 +15,7 @@ input or resume state for the fresh optimization.
 - Gradient direction normalization: none
 - Post-update clipping: none
 - Variable bounds: latent density in `[0,1]`
-- Stopping tolerances: `ftol_rel=1e-3`, `xtol_rel=1e-3`
+- Stopping tolerances: `ftol_rel=1e-3`, `xtol_rel=1e-7`
 - Fail-closed stage ceiling: 40 full-physics evaluations
 
 NLopt receives the minimization form of the signed-current objective and its
@@ -47,6 +47,10 @@ Existing Ea and Eb combined AD-FD certificates remain the preflight evidence.
 Every saved PNG/JSON is labelled as an NLopt full-physics evaluation.  NLopt
 does not expose an internal accepted-iterate flag, so trial evaluations are
 not falsely described as accepted updates.
+
+Run018 is an immutable diagnostic demonstrating that `xtol_rel=1e-3` was too
+loose: it promoted beta after the first O(1e-4) NLopt step.  Production uses a
+fresh raw root and the corrected tolerance; it does not resume Run018.
 
 ## Offline checks
 

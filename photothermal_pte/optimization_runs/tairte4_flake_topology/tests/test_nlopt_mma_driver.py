@@ -63,3 +63,4 @@ def test_production_nlopt_driver_has_no_custom_update_or_move_limit() -> None:
     assert "MOVE_LIMIT" not in text
     assert "move_limit=MOVE_LIMIT" not in text
     assert '"manual_move_limit": None' in text
+    assert "NLOPT_XTOL_REL = 1.0e-7" in text

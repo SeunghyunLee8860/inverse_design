@@ -49,7 +49,11 @@ HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[2]
 MAXIMUM_STAGE_EVALUATIONS = 40
 NLOPT_FTOL_REL = 1.0e-3
-NLOPT_XTOL_REL = 1.0e-3
+# The first LD_MMA asymptote step from uniform rho can be O(1e-4).  A loose
+# 1e-3 relative-x tolerance incorrectly promoted beta after that single trial.
+# Keep x-tolerance far below that initialization scale; objective plateau and
+# the strict constraints remain the practical stage stopping conditions.
+NLOPT_XTOL_REL = 1.0e-7
 NLOPT_CONSTRAINT_TOL = 1.0e-6
 
 

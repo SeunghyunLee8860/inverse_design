@@ -18,6 +18,8 @@ DIRECTORIES = (
     REPOSITORY / "photothermal_pte/optimization_runs/true_mma_preflight",
     REPOSITORY / "photothermal_pte/optimization_runs/run_018_nlopt_mma_contact_anchored_Ea_current_max",
     REPOSITORY / "photothermal_pte/optimization_runs/run_019_nlopt_mma_contact_anchored_Eb_current_max",
+    REPOSITORY / "photothermal_pte/optimization_runs/run_020_nlopt_mma_contact_anchored_Ea_current_max",
+    REPOSITORY / "photothermal_pte/optimization_runs/run_021_nlopt_mma_contact_anchored_Eb_current_max",
 )
 STATUSES = (
     REPOSITORY / "photothermal_pte/optimization_runs/TRUE_MMA_DUAL_RUN_STATUS.json",
