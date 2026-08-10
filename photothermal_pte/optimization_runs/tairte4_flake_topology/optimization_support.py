@@ -56,10 +56,18 @@ def exact_binary_audit(rho: np.ndarray) -> tuple[dict[str, object], dict[str, np
         "minimum_feature_nm": 500.0,
         "opening_radius_nm": 250.0,
         "opening_radius_pixels": int((structure.shape[0] - 1) // 2),
+        "realized_discrete_opening_max_offset_nm": float(radius * SPACING_M * 1.0e9),
+        "realized_discrete_opening_nominal_diameter_nm": float(2 * radius * SPACING_M * 1.0e9),
+        "discretization_note": (
+            "requested 500 nm diameter implies a 250 nm radius, but ceil(250/100)=3 "
+            "grid offsets realizes a conservative 300 nm maximum offset / 600 nm "
+            "nominal center-to-center diameter on this nodal audit"
+        ),
         "outside_design_phase": outside_phase,
         "solid_bad_cell_count": int(np.count_nonzero(bad_solid)),
         "void_bad_cell_count": int(np.count_nonzero(bad_void)),
         "total_bad_cell_count": int(np.count_nonzero(bad_solid) + np.count_nonzero(bad_void)),
+        "counted_entity": "design nodes (legacy field names retain *_cell_count)",
         "solid_fraction": float(np.mean(binary)),
         "passed": bool(not np.any(bad_solid) and not np.any(bad_void)),
     }, {"binary": binary, "bad_solid": bad_solid, "bad_void": bad_void}

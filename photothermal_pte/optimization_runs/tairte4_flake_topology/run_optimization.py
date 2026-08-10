@@ -159,24 +159,48 @@ def publish_plot(
         plotted_objective = [
             1.0e9 * row["objective_at_reference_power_A"] for row in accepted_rows
         ]
-        objective_ylabel = "equivalent current at 285 uW (nA)"
-        objective_title = "accepted iteration vs 285 uW-equivalent PTE current"
+        objective_ylabel = "FOM: signed full-flake PTE current at 285 uW (nA)"
+        objective_title = "FOM history (maximize signed full-flake PTE current)"
     else:
         plotted_objective = [row["objective_A"] for row in accepted_rows]
-        objective_ylabel = "raw current at simulated source power (A)"
-        objective_title = "accepted iteration vs raw signed PTE current"
-    axes[1, 0].plot(iteration, plotted_objective, marker="o")
+        objective_ylabel = "FOM: raw signed full-flake PTE current (A)"
+        objective_title = "FOM history (maximize signed full-flake PTE current)"
+    fom_line = axes[1, 0].plot(
+        iteration,
+        plotted_objective,
+        marker="o",
+        linewidth=2.0,
+        color="tab:blue",
+        label="FOM: signed PTE current",
+    )[0]
     axes[1, 0].set_title(objective_title)
     axes[1, 0].set_xlabel("accepted update")
     axes[1, 0].set_ylabel(objective_ylabel)
     conductance_axis = axes[1, 0].twinx()
-    conductance_axis.plot(
+    conductance_line = conductance_axis.plot(
         iteration,
         [row["terminal_conductance_S"] / row["minimum_terminal_conductance_S"] for row in accepted_rows],
-        color="tab:green", marker="s", alpha=0.65,
-    )
+        color="tab:green", marker="s", alpha=0.65, label="Gterminal / Gmin",
+    )[0]
     conductance_axis.axhline(1.0, color="tab:green", linestyle="--", linewidth=0.8)
     conductance_axis.set_ylabel("Gterminal / Gmin", color="tab:green")
+    if plotted_objective:
+        latest_fom = float(plotted_objective[-1])
+        best_fom = float(np.max(plotted_objective))
+        axes[1, 0].annotate(
+            f"latest={latest_fom:.4g}\nbest={best_fom:.4g}",
+            xy=(iteration[-1], latest_fom),
+            xytext=(-8, -28),
+            textcoords="offset points",
+            ha="right",
+            va="top",
+            bbox={"boxstyle": "round", "facecolor": "white", "alpha": 0.85},
+        )
+    axes[1, 0].legend(
+        [fom_line, conductance_line],
+        [fom_line.get_label(), conductance_line.get_label()],
+        loc="lower right",
+    )
     axes[1, 1].plot(iteration, [row["gray_fraction"] for row in accepted_rows], marker="o", label="gray fraction")
     axes[1, 1].plot(iteration, [row.get("binarization", np.nan) for row in accepted_rows], marker="s", label="4rho(1-rho)")
     beta_axis = axes[1, 1].twinx()
@@ -187,9 +211,9 @@ def publish_plot(
     axes[1, 2].semilogy(iteration, [max(row.get("smooth_constraint", np.nan), 1e-12) for row in accepted_rows], marker="o", label="smooth solid+void")
     bad_axis = axes[1, 2].twinx()
     bad_axis.plot(iteration, [row["exact_bad_cells"] for row in accepted_rows], color="tab:red", marker="s", label="exact bad cells")
-    axes[1, 2].set_title("500 nm constraints")
+    axes[1, 2].set_title("feature audit: 500 nm requested; ~600 nm discrete opening")
     axes[1, 2].set_ylabel("smooth residual")
-    bad_axis.set_ylabel("bad cells")
+    bad_axis.set_ylabel("bad design nodes")
     objective = float(history[-1]["objective_A"])
     reference_text = ""
     if "objective_at_reference_power_A" in history[-1]:
@@ -200,7 +224,7 @@ def publish_plot(
         f"evaluation={evaluation_id}, {label}, accepted={accepted}; "
         f"beta={summary['beta']:g}, raw I={objective:.5e} A{reference_text}, "
         f"gray={summary['gray_fraction_0p01_0p99']:.3f}, "
-        f"bad={summary['exact']['total_bad_cell_count']}"
+        f"bad discrete-opening nodes={summary['exact']['total_bad_cell_count']}"
     )
     destination = published / f"evaluation_{evaluation_id:04d}_{label}.png"
     fig.savefig(destination, dpi=140)

@@ -16,6 +16,8 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.thermal import bu
 
 
 HERE = Path(__file__).resolve().parent
+RUN_LABEL = "Run012 E∥a"
+POLARIZATION_LABEL = "E∥a"
 FINALIZATION = Path(
     "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/"
     "run012_Ea_exact_binary_finalization_20260810/binary_finalization_result.json"
@@ -70,7 +72,7 @@ def main() -> int:
         y = -10.0 + exempt_xy[:, 1] * 0.1
         axes[0, 0].scatter(x, y, marker="x", color="red", s=30, label="port-boundary exemption")
         axes[0, 0].legend(loc="lower right", fontsize=8)
-    axes[0, 0].set_title("Exact-binary E∥a design (black = TaIrTe₄)")
+    axes[0, 0].set_title(f"Exact-binary {POLARIZATION_LABEL} design (black = TaIrTe₄)")
     axes[0, 0].set_xlabel("Lumerical x = b (µm)")
     axes[0, 0].set_ylabel("Lumerical y = a (µm)")
 
@@ -112,7 +114,8 @@ def main() -> int:
         "\n".join(
             [
                 "FINAL EXACT-BINARY GATES",
-                f"internal 500 nm violations: {finalization['interior_bad_cell_count']}",
+                f"interior discrete-opening bad nodes: {finalization['interior_bad_cell_count']}",
+                "feature request: 500 nm; realized nodal opening: ~600 nm",
                 f"enumerated port-boundary exemptions: {finalization['port_boundary_exemption_count']}",
                 f"objective @ 285 µW: {objective['equivalent_objective_at_285uW_A'] * 1e9:.3f} nA",
                 f"optical closure: {objective['gates']['optical_closure'] * 100:.5f}%",
@@ -131,27 +134,33 @@ def main() -> int:
     plt.close(fig)
 
     published = {
-        "schema": "run012-final-exact-binary-published-v1",
-        "status": "VALIDATED_RUN012_EA_EXACT_BINARY_WITH_ENUMERATED_PORT_BOUNDARY_EXEMPTIONS",
+        "schema": "contact-anchored-final-exact-binary-published-v1",
+        "status": f"VALIDATED_{RUN_LABEL.replace(' ', '_').upper()}_EXACT_BINARY_WITH_ENUMERATED_PORT_BOUNDARY_EXEMPTIONS",
         "passed": True,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "finalization": finalization,
         "objective": objective,
         "numerical_convergence_and_physical_gate": "passed",
         "global_morphology_claim": "not passed: 9 explicitly enumerated outermost port-boundary cells",
-        "interior_500nm_claim": "passed: zero interior bad cells",
+        "interior_feature_claim": (
+            "passed: zero interior bad nodes under the conservative ~600 nm "
+            "discrete opening; this is not an exact 500 nm certificate"
+        ),
     }
     status_path = HERE / "FINAL_BINARY_STATUS.json"
     status_path.write_text(json.dumps(published, indent=2) + "\n")
 
     report_path = HERE / "FINAL_BINARY_REPORT.md"
     report_path.write_text(
-        "# Run012 E∥a exact-binary certificate\n\n"
+        f"# {RUN_LABEL} exact-binary certificate\n\n"
         "The continuation reached β=64, but that continuous checkpoint was not called final: "
         "it retained 2.84% gray nodes and 89 global morphology violations. One deterministic, "
         "simultaneous active-set repair changed 89/48,441 nodes (0.184%) and produced an exact "
         "0/1 candidate.\n\n"
-        "The exact 500 nm audit has **zero interior violations**. The unchanged global audit "
+        "The requested feature size was 500 nm, but the 100 nm nodal grid rounds the "
+        "250 nm opening radius up to three offsets. The realized discrete audit is therefore "
+        "a conservative 300 nm maximum offset / roughly 600 nm nominal diameter, not an "
+        "exact 500 nm certificate. It has **zero interior bad nodes**. The unchanged global audit "
         "reports nine violations, all explicitly enumerated at the outermost nodes where the "
         "fixed top/bottom TaIrTe4 contact phase terminates against exterior left/right void. "
         "They are treated as port-boundary exemptions, not silently counted as a global pass.\n\n"
@@ -164,7 +173,7 @@ def main() -> int:
         "objective/gradient rescaling was used. Raw NPZ/FSP files remain outside Git.\n"
     )
     manifest = {
-        "schema": "run012-final-binary-raw-manifest-v1",
+        "schema": "contact-anchored-final-binary-raw-manifest-v1",
         "artifacts": {
             "finalization_result": record(FINALIZATION),
             "binary_candidate": record(candidate),

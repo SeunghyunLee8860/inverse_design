@@ -36,6 +36,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--rho-npz", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument("--candidate-name", default="exact_binary_candidate.npz")
     args = parser.parse_args()
 
     if CONTRACT.geometry_mode != "contact_anchored":
@@ -65,7 +66,7 @@ def main() -> int:
     interior_bad = bad & ~outer_boundary
     port_boundary_bad = bad & outer_boundary
 
-    candidate_path = output / "run012_Ea_exact_binary_candidate.npz"
+    candidate_path = output / args.candidate_name
     np.savez_compressed(
         candidate_path,
         rho=repaired.astype(np.float64),
@@ -101,6 +102,11 @@ def main() -> int:
         "changed_node_count": int(np.count_nonzero(repaired != binary)),
         "changed_node_fraction": float(np.mean(repaired != binary)),
         "interior_bad_cell_count": int(np.count_nonzero(interior_bad)),
+        "counted_entity": "design nodes (legacy field name retains *_cell_count)",
+        "requested_minimum_feature_nm": 500.0,
+        "realized_discrete_opening_nominal_diameter_nm": final[
+            "realized_discrete_opening_nominal_diameter_nm"
+        ],
         "port_boundary_exemption_count": int(np.count_nonzero(port_boundary_bad)),
         "port_boundary_exemption_indices": np.argwhere(port_boundary_bad).tolist(),
         "exemption_definition": (
@@ -108,8 +114,10 @@ def main() -> int:
             "TaIrTe4 contact phase terminates against left/right exterior void"
         ),
         "claim_limit": (
-            "global morphology audit is reported unchanged; only the interior "
-            "500 nm gate passes after explicitly enumerated port-boundary exemptions"
+            "global morphology audit is reported unchanged; only the conservative "
+            "discrete-opening interior gate passes after explicitly enumerated "
+            "port-boundary exemptions; this 100 nm grid realizes about 600 nm, "
+            "not an exact 500 nm diameter"
         ),
         "candidate": {
             "path": str(candidate_path),

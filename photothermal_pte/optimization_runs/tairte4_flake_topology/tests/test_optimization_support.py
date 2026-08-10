@@ -22,3 +22,8 @@ def test_exact_audit_treats_outside_as_fixed_solid_frame():
     audit, _ = exact_binary_audit(solid)
     assert audit["passed"]
     assert audit["outside_design_phase"] == "fixed_solid_TaIrTe4_frame"
+    assert audit["opening_radius_nm"] == 250.0
+    assert audit["opening_radius_pixels"] == 3
+    assert audit["realized_discrete_opening_max_offset_nm"] == 300.0
+    assert audit["realized_discrete_opening_nominal_diameter_nm"] == 600.0
+    assert audit["counted_entity"].startswith("design nodes")
