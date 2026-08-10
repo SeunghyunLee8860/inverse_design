@@ -198,5 +198,45 @@
     "post_update_hard_clipping": false,
     "symmetry_constraint": false,
     "volume_constraint": false
+  },
+  {
+    "role": "nlopt_evaluation",
+    "algorithm": "NLopt LD_MMA (pure terminal current; no connectivity constraint)",
+    "nlopt_version": "2.11.0",
+    "evaluation_id": 6,
+    "global_update": 6,
+    "stage_update": 6,
+    "beta": 1.0,
+    "objective_A": 2.5188152684827166e-17,
+    "objective_at_reference_power_A": 5.190529702835018e-08,
+    "objective_scaled_minimize": -5.1905297028350175,
+    "fixed_source_power_W": 1.3830232993859658e-13,
+    "source_power_relative_change": 0.0,
+    "terminal_conductance_S": 0.016278832659570322,
+    "minimum_terminal_conductance_S": null,
+    "constraint_names": [],
+    "constraint_values": [],
+    "maximum_constraint_value": null,
+    "terminal_conductance_constraint_enabled": false,
+    "morphology_caps": [
+      Infinity,
+      Infinity
+    ],
+    "gray_fraction_0p01_0p99": 0.4459239074337854,
+    "binarization": 0.21631375320298685,
+    "exact_bad_cells": 18,
+    "rho_mean": 0.5962098683983407,
+    "latent_range": [
+      0.0,
+      1.0
+    ],
+    "maximum_absolute_step_from_previous_evaluation": 0.5010034195419883,
+    "rms_step_from_previous_evaluation": 0.3541222056888292,
+    "manual_move_limit": null,
+    "used_adam": false,
+    "gradient_direction_normalization": false,
+    "post_update_hard_clipping": false,
+    "symmetry_constraint": false,
+    "volume_constraint": false
   }
 ]
