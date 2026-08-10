@@ -37,6 +37,36 @@
       "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_weighting_electrical_adfd_corrected_gate_gpu5_20260810/tairte4_weighting_electrical_adfd.npz",
       "size_bytes": 1846328,
       "sha256": "0c5e8ab8e2c3f5e41add2b6ff2a42b5621e49d1733b2b6c5f9aed7c859325dd0"
+    },
+    {
+      "role": "combined_physical_rho_ADFD_result",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_combined_adfd_Ea_gpu5_20260810/tairte4_flake_combined_adfd.json",
+      "size_bytes": 18729,
+      "sha256": "cb169fb684dbe51e68b05d1333228a3c0d33a6c9e46c84be250c8a740e7f1485"
+    },
+    {
+      "role": "combined_physical_rho_ADFD_arrays",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_combined_adfd_Ea_gpu5_20260810/tairte4_flake_combined_adfd.npz",
+      "size_bytes": 55625704,
+      "sha256": "d940368e1a48f5cf6027626e9de58d8a565069f0dd5614511ded6c9364b659dc"
+    },
+    {
+      "role": "combined_spatial_Maxwell_adjoint_FSP",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_combined_adfd_Ea_gpu5_20260810/tairte4_flake_adjoint_gpu.fsp",
+      "size_bytes": 400319959,
+      "sha256": "0663758ac7a64e0efe004694f3d411b8e334a52b7ee4d9939235f4d4cad441e4"
+    },
+    {
+      "role": "combined_ADFD_plus_FSP",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_combined_adfd_Ea_gpu5_20260810/adjoint_aligned_plus.fsp",
+      "size_bytes": 169014306,
+      "sha256": "9bec51d6c64fa0538a4ac47c95bf8815c4a4c385874acda12303f2e1b1d1ed54"
+    },
+    {
+      "role": "combined_ADFD_minus_FSP",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_combined_adfd_Ea_gpu5_20260810/adjoint_aligned_minus.fsp",
+      "size_bytes": 169014328,
+      "sha256": "bdf20df4dfc372c65a9d615095b1153d5b935ee0df0c0edc0c54031eddb52346"
     }
   ]
 }

@@ -41,6 +41,9 @@ from photothermal_pte.finite_inverse_design.yee_material_jacobian import (  # no
 from photothermal_pte.optimization_runs.gaussian10_contract import (  # noqa: E402
     silica_10um,
 )
+from photothermal_pte.optimization_runs.tairte4_flake_topology import (  # noqa: E402
+    optical as tairte4_flake_optical,
+)
 
 import run_complex_material_control as material_control  # noqa: E402
 import audit_production_candidate_geometry as production_geometry  # noqa: E402
@@ -172,6 +175,27 @@ def set_density(
         raise RuntimeError("importnk2 returned failure")
 
 
+def set_tairte4_flake_density(
+    fdtd: object,
+    rho: np.ndarray,
+    *,
+    imported_object: str,
+    nodes: tuple[np.ndarray, np.ndarray, np.ndarray],
+) -> None:
+    if int(fdtd.getnamednumber(imported_object)) != 1:
+        raise RuntimeError(f"expected exactly one {imported_object!r}")
+    expected_nodes = tairte4_flake_optical.design_nodes()
+    if any(
+        np.max(np.abs(np.asarray(left) - np.asarray(right))) > 1e-18
+        for left, right in zip(nodes, expected_nodes)
+    ):
+        raise RuntimeError("TaIrTe4 design-node contract mismatch")
+    index, _ = tairte4_flake_optical.anisotropic_index(rho)
+    fdtd.select(imported_object)
+    if int(fdtd.importnk2(index, *nodes)) != 1:
+        raise RuntimeError("anisotropic TaIrTe4 importnk2 returned failure")
+
+
 def index_detail(fdtd: object) -> dict[str, np.ndarray]:
     dataset = fdtd.getresult(PABS_INDEX, "index_detail")
     frequency = np.asarray(dataset["f"], float).reshape(-1)
@@ -246,12 +270,24 @@ def main() -> int:
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument(
         "--geometry",
-        choices=("isolated", "production", "selected_production"),
+        choices=("isolated", "production", "selected_production", "tairte4_flake"),
         default="isolated",
         help="Select the imported-object/nodal-coordinate contract.",
     )
     args = parser.parse_args()
-    if args.geometry == "selected_production":
+    if args.geometry == "tairte4_flake":
+        imported_object = tairte4_flake_optical.DESIGN_OBJECT
+        nodes = tairte4_flake_optical.design_nodes()
+        half_span_m = 0.5 * tairte4_flake_optical.CONTRACT.design_span_m
+        maximum_local_distance_m = PRODUCTION_MAX_LOCAL_DISTANCE_M
+        validated_status = "VALIDATED_TAIRTE4_FLAKE_COMPLEX_COMPONENT_YEE_JACOBIAN"
+        failed_status = "FAILED_TAIRTE4_FLAKE_COMPLEX_COMPONENT_YEE_JACOBIAN"
+        scope = (
+            "10 um 16x16x0.1 um anisotropic TaIrTe4-to-air design; "
+            "layout-only J_c=d epsilon_Yee,c/d rho on 161x161 nodes"
+        )
+        density_setter = set_tairte4_flake_density
+    elif args.geometry == "selected_production":
         imported_object = production_geometry.SELECTED_DESIGN_OBJECT
         nodes = production_geometry.design_nodes(
             production_geometry.SELECTED_DESIGN_BOUNDS,
@@ -265,6 +301,7 @@ def main() -> int:
             "10 um selected 18.6x18.6x1 um imported complex-SiO2 candidate; "
             "layout-only J_c=d epsilon_Yee,c/d rho on 373x373 nodes"
         )
+        density_setter = set_density
     elif args.geometry == "production":
         imported_object = production_geometry.DESIGN_OBJECT
         nodes = production_geometry.design_nodes()
@@ -276,6 +313,7 @@ def main() -> int:
             "10 um production 20x20x1 um imported complex-SiO2 candidate; "
             "layout-only J_c=d epsilon_Yee,c/d rho on 201x201 nodes"
         )
+        density_setter = set_density
     else:
         imported_object = ISOLATED_IMPORTED_OBJECT
         nodes = material_control.imported_nodes()
@@ -288,6 +326,7 @@ def main() -> int:
             "layout-only J_c=d epsilon_Yee,c/d rho on 101x101 nodes; "
             "not the final production geometry"
         )
+        density_setter = set_density
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
         raise FileExistsError(f"refusing non-empty output directory: {output}")
@@ -311,8 +350,12 @@ def main() -> int:
         _, field_grid = monitor_electric(fdtd, PABS_FIELD)
         completed_detail = index_detail(fdtd)
         fdtd.switchtolayout()
-        baseline = baseline_density(nodes, half_span_m)
-        set_density(fdtd, baseline, imported_object=imported_object, nodes=nodes)
+        baseline = (
+            np.full((nodes[0].size, nodes[1].size), 0.5, dtype=np.float64)
+            if args.geometry == "tairte4_flake"
+            else baseline_density(nodes, half_span_m)
+        )
+        density_setter(fdtd, baseline, imported_object=imported_object, nodes=nodes)
         layout_detail = index_detail(fdtd)
         x_nodes, y_nodes, z_nodes = nodes
         shapes = {
@@ -330,7 +373,7 @@ def main() -> int:
                 mask[color_x::COLOR_PERIOD, color_y::COLOR_PERIOD] = 1.0
                 pair = {}
                 for sign, label in ((1.0, "plus"), (-1.0, "minus")):
-                    set_density(
+                    density_setter(
                         fdtd,
                         baseline + sign * BUILD_STEP * mask,
                         imported_object=imported_object,
@@ -368,7 +411,7 @@ def main() -> int:
                     column_parts[component].append(node_x * y_nodes.size + node_y)
                     value_parts[component].append(flat[rows])
 
-        set_density(fdtd, baseline, imported_object=imported_object, nodes=nodes)
+        density_setter(fdtd, baseline, imported_object=imported_object, nodes=nodes)
         baseline_detail = index_detail(fdtd)
         matrices = {}
         for component in "xyz":
@@ -401,7 +444,7 @@ def main() -> int:
         for name, direction in directions(nodes, half_span_m).items():
             pair = {}
             for sign, label in ((1.0, "plus"), (-1.0, "minus")):
-                set_density(
+                density_setter(
                     fdtd,
                     baseline + sign * CHECK_STEP * direction,
                     imported_object=imported_object,
@@ -443,7 +486,7 @@ def main() -> int:
                     / max(abs(left), abs(right), np.finfo(float).tiny)
                 ),
             }
-        set_density(fdtd, baseline, imported_object=imported_object, nodes=nodes)
+        density_setter(fdtd, baseline, imported_object=imported_object, nodes=nodes)
 
         coordinate_audit = {"components": {}}
         maximum_coordinate_mismatch = 0.0
@@ -562,10 +605,18 @@ def main() -> int:
             "density_range": [float(np.min(baseline)), float(np.max(baseline))],
             "density_sha256": array_sha256(baseline),
             "density_to_solver_chain": (
-                "rho -> epsilon=1+rho*(epsilon_SiO2(10um)-1) -> passive sqrt -> "
-                "importnk2 -> v261 component index_detail -> epsilon_Yee,c=index_c^2"
+                "rho -> component epsilon_c=1+rho*(epsilon_TaIrTe4,c-1) -> passive sqrt -> importnk2 -> v261 component index_detail -> epsilon_Yee,c=index_c^2"
+                if args.geometry == "tairte4_flake"
+                else "rho -> epsilon=1+rho*(epsilon_SiO2(10um)-1) -> passive sqrt -> importnk2 -> v261 component index_detail -> epsilon_Yee,c=index_c^2"
             ),
-            "epsilon_SiO2": [epsilon_sio2().real, epsilon_sio2().imag],
+            "epsilon_endpoints": (
+                {
+                    component: [value.real, value.imag]
+                    for component, value in tairte4_flake_optical.material_epsilon().items()
+                }
+                if args.geometry == "tairte4_flake"
+                else {"SiO2": [epsilon_sio2().real, epsilon_sio2().imag]}
+            ),
             "construction": {
                 "color_period": COLOR_PERIOD,
                 "color_count": COLOR_PERIOD**2,
