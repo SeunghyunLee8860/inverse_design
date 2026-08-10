@@ -1,0 +1,57 @@
+{
+  "schema": "nlopt-ld-mma-contact-anchored-raw-artifact-manifest-v1",
+  "raw_artifacts_committed_to_git": false,
+  "optimizer": {
+    "library": "NLopt",
+    "version": "2.11.0",
+    "algorithm": "LD_MMA",
+    "manual_move_limit": null,
+    "custom_mma_update_used": false
+  },
+  "base_FSP": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_uniform_rho0p5_Ea_forward_retry_20260810/tairte4_flake_forward_Ea.fsp",
+    "size_bytes": 159871532,
+    "sha256": "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83"
+  },
+  "component_Yee_Jacobian": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_component_yee_jacobian_retry_20260810",
+    "certificate": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_component_yee_jacobian_retry_20260810/component_yee_jacobian_result.json",
+    "certificate_sha256": "9222716ca4b67dd611da27bbb6bb72849a77882e1d9b9c1206d89a8305ff407d"
+  },
+  "evaluations": {
+    "0001": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run020_nlopt_mma_Ea_20260810/evaluation_0001_beta1_nlopt_mma/objective_gradient_result.json",
+        "size_bytes": 10799,
+        "sha256": "dc94ffdb7c3cac5fb0e9b3bf2024868a9a34b55ac9cf5c4cfe6a272ed3df00b4"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run020_nlopt_mma_Ea_20260810/evaluation_0001_beta1_nlopt_mma/objective_gradient.npz",
+        "size_bytes": 2169148,
+        "sha256": "6f5ca5e9486c9030bb7d9f047bd36744ee798cfbe2a661913559eb913771fcd6"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run020_nlopt_mma_Ea_20260810/evaluation_0001_beta1_nlopt_mma/forward_Ea.fsp",
+        "size_bytes": 180903815,
+        "sha256": "426edb41a3ad40c2825a6c0b4911144806999a22b65468e4cd94b8d4ba3176ef"
+      }
+    },
+    "0002": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run020_nlopt_mma_Ea_20260810/evaluation_0002_beta1_nlopt_mma/objective_gradient_result.json",
+        "size_bytes": 10806,
+        "sha256": "556bd2cfbb8c6a04392925483fe7ff4e794cf38dcba53d7ebb5ec4bec5b2e2ef"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run020_nlopt_mma_Ea_20260810/evaluation_0002_beta1_nlopt_mma/objective_gradient.npz",
+        "size_bytes": 2490220,
+        "sha256": "795d7eb59df101393797f06108345c3921c954f1cf52feebb64961123ff3e8ab"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run020_nlopt_mma_Ea_20260810/evaluation_0002_beta1_nlopt_mma/forward_Ea.fsp",
+        "size_bytes": 180903815,
+        "sha256": "7a2c061f7fe00357390ba9a76fee6e09488063577e1ecc21f8c9f3d9b99e22ff"
+      }
+    }
+  }
+}
