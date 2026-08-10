@@ -126,12 +126,6 @@ def publish_plot(
         rho.T, origin="lower", extent=extent, vmin=0, vmax=1,
         cmap="gray_r", interpolation="nearest",
     )
-    axes[0, 0].contour(
-        np.linspace(extent[0], extent[1], rho.shape[0]),
-        np.linspace(extent[2], extent[3], rho.shape[1]),
-        rho.T,
-        levels=[0.5], colors=["tab:red"], linewidths=0.6,
-    )
     axes[0, 0].set_title("physical density: black=TaIrTe4 (1), white=void (0)")
     axes[0, 0].set_xlabel("Lumerical x=b (um)")
     axes[0, 0].set_ylabel("Lumerical y=a (um)")

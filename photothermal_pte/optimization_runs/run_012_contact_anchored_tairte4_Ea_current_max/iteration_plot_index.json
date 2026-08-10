@@ -1,0 +1,139 @@
+{
+  "schema": "tairte4-iteration-plot-index-v1",
+  "red_density_contour_present": false,
+  "density_rendering": "gray_r: black=rho_1_TaIrTe4, white=rho_0_void",
+  "evaluation_count": 13,
+  "latest_evaluation_id": 13,
+  "plots": [
+    {
+      "evaluation_id": 1,
+      "label": "initial",
+      "accepted": true,
+      "accepted_update_index": 0,
+      "beta": 2.0,
+      "objective_A": 1.1825659299559706e-23,
+      "plot": "evaluation_0001_initial.png",
+      "plot_sha256": "d3985217375805fa248ba57bcfbd258b701bc6281b55649c050f8b6e7a6e0e8c"
+    },
+    {
+      "evaluation_id": 2,
+      "label": "candidate",
+      "accepted": true,
+      "accepted_update_index": 1,
+      "beta": 2.0,
+      "objective_A": 1.184748962244235e-18,
+      "plot": "evaluation_0002_candidate.png",
+      "plot_sha256": "519e4b844f278b8b9f31fbf1095b285789ff52def4a2d2cfc0ef437a36301cf8"
+    },
+    {
+      "evaluation_id": 3,
+      "label": "candidate",
+      "accepted": true,
+      "accepted_update_index": 2,
+      "beta": 2.0,
+      "objective_A": 2.3950065636088067e-18,
+      "plot": "evaluation_0003_candidate.png",
+      "plot_sha256": "1dc6b9a02f785673ff6b35c3ba14525de02afb3ca5ea4b988ad1fa0e3098d4df"
+    },
+    {
+      "evaluation_id": 4,
+      "label": "candidate",
+      "accepted": true,
+      "accepted_update_index": 3,
+      "beta": 2.0,
+      "objective_A": 3.6389366734782135e-18,
+      "plot": "evaluation_0004_candidate.png",
+      "plot_sha256": "7ae247215fd33466107c637d161c9fc4291323106ed7a9d0a905dc1e437aadb6"
+    },
+    {
+      "evaluation_id": 5,
+      "label": "candidate",
+      "accepted": true,
+      "accepted_update_index": 4,
+      "beta": 2.0,
+      "objective_A": 4.909834260208918e-18,
+      "plot": "evaluation_0005_candidate.png",
+      "plot_sha256": "398433bcb6f66650ee3d5d9dd19a6fd106016849a55ba0eced068a3eed64e8df"
+    },
+    {
+      "evaluation_id": 6,
+      "label": "candidate",
+      "accepted": true,
+      "accepted_update_index": 5,
+      "beta": 2.0,
+      "objective_A": 6.19824146778075e-18,
+      "plot": "evaluation_0006_candidate.png",
+      "plot_sha256": "cb654f5b220b97e234f9d3794f4cd89c24ce578dbe2eab02526c32614cd82596"
+    },
+    {
+      "evaluation_id": 7,
+      "label": "candidate",
+      "accepted": true,
+      "accepted_update_index": 6,
+      "beta": 2.0,
+      "objective_A": 7.494747733180848e-18,
+      "plot": "evaluation_0007_candidate.png",
+      "plot_sha256": "80efbda567ae729dd1470bae04491f9fb64f10c4127c868252f81bd882d6d08f"
+    },
+    {
+      "evaluation_id": 8,
+      "label": "candidate",
+      "accepted": true,
+      "accepted_update_index": 7,
+      "beta": 2.0,
+      "objective_A": 8.79000961620035e-18,
+      "plot": "evaluation_0008_candidate.png",
+      "plot_sha256": "54b12952ad9c9a3ae762949af01af9563d3e7b35340c55eea122000257f42a7a"
+    },
+    {
+      "evaluation_id": 9,
+      "label": "candidate",
+      "accepted": true,
+      "accepted_update_index": 8,
+      "beta": 2.0,
+      "objective_A": 1.0070599162811035e-17,
+      "plot": "evaluation_0009_candidate.png",
+      "plot_sha256": "11c174f56a2f35b1ea56ead961ab7168969b7230e617bf0d02a69f9d6afff0a9"
+    },
+    {
+      "evaluation_id": 10,
+      "label": "reprojection",
+      "accepted": true,
+      "accepted_update_index": 8,
+      "beta": 4.0,
+      "objective_A": 1.4422070845904835e-17,
+      "plot": "evaluation_0010_reprojection.png",
+      "plot_sha256": "f9f625c27fa19b4ea08f12e3e2b47b8c9900d5c7a1b47ba1995f288097340311"
+    },
+    {
+      "evaluation_id": 11,
+      "label": "candidate",
+      "accepted": true,
+      "accepted_update_index": 9,
+      "beta": 4.0,
+      "objective_A": 1.5948484387553693e-17,
+      "plot": "evaluation_0011_candidate.png",
+      "plot_sha256": "5bbfe0428095672ed3f18d9d0ffad82508901e040f8fa3939e1a1477f90997e0"
+    },
+    {
+      "evaluation_id": 12,
+      "label": "candidate",
+      "accepted": true,
+      "accepted_update_index": 10,
+      "beta": 4.0,
+      "objective_A": 1.7404817581370825e-17,
+      "plot": "evaluation_0012_candidate.png",
+      "plot_sha256": "b9222c12de52f9114b0a25d94df5807ca4474f907ec00df561d22da12ad07231"
+    },
+    {
+      "evaluation_id": 13,
+      "label": "candidate",
+      "accepted": true,
+      "accepted_update_index": 11,
+      "beta": 4.0,
+      "objective_A": 1.8781344018795382e-17,
+      "plot": "evaluation_0013_candidate.png",
+      "plot_sha256": "9b256275e5fd20eb65dd677bcdbbb4333a4340118b76431bcbfccc07d6863d5d"
+    }
+  ]
+}
