@@ -131,5 +131,58 @@
     "post_update_hard_clipping": false,
     "symmetry_constraint": false,
     "volume_constraint": false
+  },
+  {
+    "role": "accepted_mma",
+    "algorithm": "persistent_separable_method_of_moving_asymptotes",
+    "evaluation_id": 4,
+    "global_update": 3,
+    "stage_update": 3,
+    "beta": 1.0,
+    "objective_A": 8.01432426081123e-18,
+    "objective_at_reference_power_A": 1.6515140528328676e-08,
+    "fixed_source_power_W": 1.3830232993859658e-13,
+    "source_power_relative_change": 0.0,
+    "terminal_conductance_S": 0.013403320187115928,
+    "minimum_terminal_conductance_S": 0.00491,
+    "constraint_names": [
+      "minimum_terminal_conductance"
+    ],
+    "constraint_values": [
+      -1.7298004454411258
+    ],
+    "maximum_constraint_value": -1.7298004454411258,
+    "morphology_caps": [
+      Infinity,
+      Infinity
+    ],
+    "gray_fraction_0p01_0p99": 1.0,
+    "binarization": 0.9069246719667444,
+    "exact_bad_cells": 24,
+    "rho_mean": 0.5134260867960295,
+    "mma_maximum_absolute_step": 0.050000000000000044,
+    "mma_rms_step": 0.04990189637533558,
+    "mma_diagnostics": {
+      "algorithm": "persistent_separable_method_of_moving_asymptotes",
+      "dual_success": true,
+      "dual_iterations": 0,
+      "dual_variables": [
+        0.0
+      ],
+      "approximated_constraint_values": [
+        -1.6851397608948
+      ],
+      "maximum_absolute_step": 0.050000000000000044,
+      "rms_step": 0.04990189637533558,
+      "move_limit_is_bound_not_learning_rate": 0.05,
+      "used_adam": false,
+      "gradient_direction_normalization": false,
+      "hard_clip_after_update": false
+    },
+    "used_adam": false,
+    "gradient_direction_normalization": false,
+    "post_update_hard_clipping": false,
+    "symmetry_constraint": false,
+    "volume_constraint": false
   }
 ]
