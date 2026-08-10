@@ -1,22 +1,22 @@
 {
   "beta": 1.0,
   "latent_range": [
-    0.4889993048967172,
-    0.5109766277875201
+    0.4521528544117856,
+    0.5474986658912142
   ],
   "filtered_range": [
-    0.48909330412612295,
-    0.5108802238947779
+    0.4524266657349897,
+    0.5471024987055669
   ],
   "rho_range": [
-    0.488199677018312,
-    0.5117716843155321
+    0.44856555712700125,
+    0.5509261496485972
   ],
-  "rho_mean": 0.5000053169903699,
+  "rho_mean": 0.5006509112419552,
   "gray_fraction_0p01_0p99": 1.0,
-  "binarization_mean_4rho1mrho": 0.9998543760336328,
-  "smooth_solid_constraint": 0.00021184960252444902,
-  "smooth_void_constraint": 0.00022681978349049293,
+  "binarization_mean_4rho1mrho": 0.9956044468145729,
+  "smooth_solid_constraint": 0.0003302316109455169,
+  "smooth_void_constraint": 0.00038898675867048783,
   "exact": {
     "minimum_feature_nm": 500.0,
     "opening_radius_nm": 250.0,
@@ -25,11 +25,11 @@
     "realized_discrete_opening_pixel_support_diameter_nm": 500.0,
     "discretization_note": "requested 500 nm pixel-support diameter is represented by five 100 nm samples (two centre offsets plus two half-cell extents)",
     "outside_design_phase": "fixed_solid_at_top_bottom_and_void_at_left_right",
-    "solid_bad_cell_count": 5,
-    "void_bad_cell_count": 18,
-    "total_bad_cell_count": 23,
+    "solid_bad_cell_count": 6,
+    "void_bad_cell_count": 16,
+    "total_bad_cell_count": 22,
     "counted_entity": "design nodes (legacy field names retain *_cell_count)",
-    "solid_fraction": 0.5043248487851201,
+    "solid_fraction": 0.5223054850230177,
     "passed": false
   }
 }
