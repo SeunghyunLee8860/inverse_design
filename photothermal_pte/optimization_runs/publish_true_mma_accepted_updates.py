@@ -61,7 +61,7 @@ def publish() -> None:
         raise RuntimeError(f"refusing raw artifact publication: {forbidden}")
     git("commit", "-m", "Update MMA optimization artifacts")
     git("push", "origin", BRANCH)
-    print(json.dumps({"published_accepted_iteration": latest}), flush=True)
+    print(json.dumps({"published_files": names}), flush=True)
 
 
 def main() -> int:
