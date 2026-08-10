@@ -14,6 +14,9 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.optimization_supp
 from photothermal_pte.optimization_runs.tairte4_flake_topology.validate_combined_adfd import (
     polarization_angle,
 )
+from photothermal_pte.optimization_runs.audit_true_mma_preflight import (
+    optimizer_contract_passed,
+)
 
 
 def test_polarization_axis_contract() -> None:
@@ -46,6 +49,16 @@ def test_final_result_is_explicitly_machine_passed() -> None:
     source = Path(__file__).parents[1] / "run_true_mma_optimization.py"
     text = source.read_text()
     assert '"passed": True' in text
+
+
+def test_intentionally_absent_constraints_pass_optimizer_audit() -> None:
+    assert optimizer_contract_passed({
+        "true_mma_module_present": True,
+        "historical_adam_state_absent": True,
+        "gradient_direction_normalization_absent": True,
+        "symmetry_constraint": False,
+        "volume_constraint": False,
+    })
 
 
 def test_fixed_incident_power_scaling_is_constant() -> None:

@@ -1,8 +1,8 @@
 {
   "schema": "run016-017-code-and-physics-preflight-v1",
-  "generated_at_utc": "2026-08-10T19:01:37.268527+00:00",
-  "status": "BLOCKED_RUN016_RUN017_TRUE_MMA_PREFLIGHT",
-  "passed": false,
+  "generated_at_utc": "2026-08-10T19:03:00.553793+00:00",
+  "status": "VALIDATED_RUN016_RUN017_TRUE_MMA_PREFLIGHT",
+  "passed": true,
   "branch_expected": "agent/restart-true-mma-pte-optimization",
   "axis_contract": "Lumerical x=b, y=a, z=c",
   "geometry": {
@@ -253,8 +253,8 @@
       "sha256": "3e77ba98061238e6de22971b7230bedb57af81eac475031ed1edebc9f56274cc"
     },
     "photothermal_pte/optimization_runs/tairte4_flake_topology/tests/test_true_mma_driver.py": {
-      "size_bytes": 3185,
-      "sha256": "aba52aa7a3cdc2415e3c26e00742aeb5f16cbb4044c94bb436cef3f89733c342"
+      "size_bytes": 3632,
+      "sha256": "18c99ee6747762eee1f688553a7abba43221a1909528eca712099faf70291f67"
     },
     "photothermal_pte/optimization_runs/tairte4_flake_topology/tests/test_thermal.py": {
       "size_bytes": 1839,

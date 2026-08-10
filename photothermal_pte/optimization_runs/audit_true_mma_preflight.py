@@ -75,6 +75,17 @@ def json_gate(path: Path, expected_status: str) -> dict[str, object]:
     }
 
 
+def optimizer_contract_passed(record: dict[str, object]) -> bool:
+    """Evaluate positive and intentionally-false optimizer contract fields."""
+    return bool(
+        record["true_mma_module_present"]
+        and record["historical_adam_state_absent"]
+        and record["gradient_direction_normalization_absent"]
+        and record["symmetry_constraint"] is False
+        and record["volume_constraint"] is False
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", required=True, type=Path)
@@ -148,9 +159,7 @@ def main() -> int:
         "low_beta_morphology_inequality": "diagnostic only before beta=8",
         "move_semantics": "MMA trust-region upper bound, not a learning rate",
     }
-    required = required and all(
-        value for key, value in optimizer_audit.items() if isinstance(value, bool)
-    )
+    required = required and optimizer_contract_passed(optimizer_audit)
     result = {
         "schema": "run016-017-code-and-physics-preflight-v1",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
