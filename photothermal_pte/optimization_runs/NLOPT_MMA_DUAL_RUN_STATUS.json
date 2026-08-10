@@ -1,12 +1,13 @@
 {
   "schema": "nlopt-ld-mma-dual-supervisor-v1",
-  "generated_at_utc": "2026-08-10T19:41:37.556505+00:00",
-  "status": "RUNNING_NLOPT_LD_MMA",
+  "generated_at_utc": "2026-08-10T20:08:00+00:00",
+  "status": "STOPPED_DIAGNOSTIC_NLOPT_STEP_EXPANSION",
   "gpu": 1,
   "algorithm": "NLopt LD_MMA",
   "manual_move_limit": null,
   "run": "Run020",
   "polarization": "Ea",
+  "reason": "At beta=1, NLopt LD_MMA expanded the maximum latent step from 1.41e-4 to 4.996e-1 by evaluation 6, reaching latent bounds 0 and 1 before low-beta topology exploration was complete. Raw evaluations 1-6 are preserved; evaluation 7 was interrupted and is not a valid result.",
   "command": [
     "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python",
     "-m",
