@@ -58,6 +58,8 @@ REPOSITORY = HERE.parents[2]
 CODE_MANIFEST = REPOSITORY / "photothermal_pte/optimization_runs/PURE_CURRENT_LD_MMA_CODE_MANIFEST.json"
 TARGET_INITIAL_PHYSICAL_DENSITY_STEP = 0.025
 BASE_RHO_INIT_AT_BETA1 = 10.0
+STAGE_PLATEAU_WINDOW = 3
+STAGE_PLATEAU_RELATIVE_CHANGE = 2.0e-3
 
 
 def midpoint_projection_derivative(beta: float) -> float:
@@ -130,6 +132,55 @@ def feasible_stage_morphology_caps(values: np.ndarray, beta: float) -> np.ndarra
     return np.maximum(MORPHOLOGY_TARGET_CAP[beta], np.asarray(values, dtype=float))
 
 
+def physical_stage_readiness(
+    history: list[dict[str, object]], beta: float, constraint_tolerance: float
+) -> dict[str, object]:
+    """Decide whether a numerical NLopt stop is physically ready for beta change.
+
+    NLopt FTOL/XTOL reports only a numerical stopping condition.  A beta
+    transition additionally requires a measured objective plateau over the
+    last three full-physics changes and feasible active morphology constraints.
+    No fixed minimum update count is imposed: four data points are the minimum
+    needed to form the three measured changes in this test.
+    """
+    rows = [row for row in history if float(row["beta"]) == beta]
+    if len(rows) < STAGE_PLATEAU_WINDOW + 1:
+        return {
+            "ready": False,
+            "reason": "insufficient_full_physics_evaluations_for_plateau",
+            "full_physics_evaluations": len(rows),
+        }
+    recent = rows[-(STAGE_PLATEAU_WINDOW + 1):]
+    objective = np.asarray(
+        [row["objective_at_reference_power_A"] for row in recent], dtype=float
+    )
+    denominator = np.maximum(
+        np.maximum(np.abs(objective[:-1]), np.abs(objective[1:])), 1.0e-18
+    )
+    relative_changes = np.abs(np.diff(objective)) / denominator
+    constraint_values = [
+        float(row["maximum_constraint_value"])
+        for row in recent
+        if row["maximum_constraint_value"] is not None
+    ]
+    feasible = not constraint_values or max(constraint_values) <= constraint_tolerance
+    plateau = bool(np.max(relative_changes) <= STAGE_PLATEAU_RELATIVE_CHANGE)
+    return {
+        "ready": bool(plateau and feasible),
+        "reason": (
+            "physical_objective_plateau_and_constraints_feasible"
+            if plateau and feasible
+            else "objective_not_plateaued" if not plateau
+            else "active_constraints_infeasible"
+        ),
+        "full_physics_evaluations": len(rows),
+        "relative_changes_last_three": relative_changes.tolist(),
+        "maximum_relative_change_last_three": float(np.max(relative_changes)),
+        "plateau_relative_change_gate": STAGE_PLATEAU_RELATIVE_CHANGE,
+        "active_constraints_feasible": feasible,
+    }
+
+
 def pure_current_manifest(
     base_fsp: Path,
     base_sha256: str,
@@ -159,6 +210,12 @@ def pure_current_manifest(
         "base_rho_init_at_beta1": BASE_RHO_INIT_AT_BETA1,
         "fixed_per_iteration_move_limit": None,
         "note": "LD_MMA, not this driver, adapts all later asymptotes.",
+    }
+    manifest["beta_promotion_policy"] = {
+        "NLopt_numerical_stop_alone_is_sufficient": False,
+        "required_full_physics_objective_changes": STAGE_PLATEAU_WINDOW,
+        "relative_plateau_gate": STAGE_PLATEAU_RELATIVE_CHANGE,
+        "active_constraints_must_be_feasible": True,
     }
     manifest["optimizer_code_provenance"] = code_provenance
     return manifest
@@ -279,12 +336,16 @@ def main() -> int:
             and float(np.max(final_point.constraint_values)) > NLOPT_CONSTRAINT_TOL
         ):
             raise RuntimeError("NLopt stage returned an infeasible 500-nm morphology")
-        if result_code == nlopt.MAXEVAL_REACHED:
-            raise RuntimeError(
-                "NLopt stage hit maxeval without convergence; refusing beta promotion"
-            )
         if result_code < 0:
             raise RuntimeError(f"NLopt LD_MMA failed with result code {result_code}")
+        readiness = physical_stage_readiness(
+            history, beta, NLOPT_CONSTRAINT_TOL
+        )
+        if not readiness["ready"]:
+            raise RuntimeError(
+                "NLopt numerical termination is not a physically ready beta transition: "
+                f"{readiness['reason']}"
+            )
         latent = optimum
         fixed_source_power = evaluator.fixed_source_power_W
         evaluation_counter = evaluator.evaluation_counter
@@ -304,6 +365,7 @@ def main() -> int:
             }.get(result_code, str(result_code)),
             "full_physics_evaluations": evaluator.stage_full_physics_evaluations,
             "terminal_conductance_constraint": False,
+            "physical_stage_readiness": readiness,
         }
         write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
         emit(
@@ -312,6 +374,7 @@ def main() -> int:
             beta=beta,
             result_code=result_code,
             evaluations=evaluator.stage_full_physics_evaluations,
+            physical_stage_readiness=readiness,
             final_terminal_conductance_S=float(
                 final_point.result["terminal_conductance_S"]
             ),

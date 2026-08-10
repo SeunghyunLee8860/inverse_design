@@ -92,6 +92,14 @@ The pure-current driver now uses `max(target, current)`, making the first point
 of each morphology stage feasible. Every JSON/PNG is labelled a
 `full_physics_evaluation`, not an MMA outer iteration.
 
+An NLopt `FTOL_REACHED`, `XTOL_REACHED`, or `MAXEVAL_REACHED` result is no
+longer equated with beta readiness. Before a stage can advance, the last four
+full-physics points must show three relative objective changes below 0.2% and
+all active morphology inequalities must be feasible. Four points are not an
+arbitrary minimum-update schedule: they are the minimum number required to
+measure those three consecutive changes. A stage that is still improving is
+reported fail-closed instead of being silently promoted.
+
 Finally, the driver checks `PURE_CURRENT_LD_MMA_CODE_MANIFEST.json` before a
 GPU session opens. It fail-closes if the audited pure driver, shared LD_MMA
 callback, shared constraint code, or paired supervisor no longer match their

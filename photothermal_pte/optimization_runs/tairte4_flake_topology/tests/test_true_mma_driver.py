@@ -123,6 +123,27 @@ def test_pure_current_mma_uses_projection_scaled_native_initialization() -> None
     )
 
 
+def test_pure_current_beta_promotion_requires_physical_plateau() -> None:
+    from photothermal_pte.optimization_runs.tairte4_flake_topology.run_pure_current_ld_mma_optimization import (
+        physical_stage_readiness,
+    )
+
+    base = {
+        "beta": 1.0,
+        "maximum_constraint_value": None,
+    }
+    not_flat = [
+        {**base, "objective_at_reference_power_A": value}
+        for value in (1.0e-9, 1.01e-9, 1.02e-9, 1.03e-9)
+    ]
+    assert physical_stage_readiness(not_flat, 1.0, 1.0e-6)["ready"] is False
+    flat = [
+        {**base, "objective_at_reference_power_A": value}
+        for value in (1.0e-9, 1.001e-9, 1.002e-9, 1.003e-9)
+    ]
+    assert physical_stage_readiness(flat, 1.0, 1.0e-6)["ready"] is True
+
+
 def test_morphology_caps_are_fixed_gentle_stage_tightening() -> None:
     values = np.asarray([4.0e-3, 1.0e-4])
     caps = stage_morphology_caps(values, 8.0)
