@@ -1,0 +1,218 @@
+{
+  "schema": "run012-final-exact-binary-published-v1",
+  "status": "VALIDATED_RUN012_EA_EXACT_BINARY_WITH_ENUMERATED_PORT_BOUNDARY_EXEMPTIONS",
+  "passed": true,
+  "generated_at_utc": "2026-08-10T11:21:54.587705+00:00",
+  "finalization": {
+    "schema": "contact-anchored-exact-binary-finalization-v1",
+    "status": "CANDIDATE_EXACT_BINARY_INTERNAL_500NM_PASS_WITH_PORT_BOUNDARY_EXEMPTIONS",
+    "passed": true,
+    "generated_at_utc": "2026-08-10T11:15:56.148358+00:00",
+    "geometry": "contact_anchored",
+    "repair": "one simultaneous thresholded active-set morphology repair",
+    "source": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_Ea_pilot_20260810/evaluation_0036_beta64_rho.npz",
+      "size_bytes": 106436,
+      "sha256": "969e21e7e80f9c91391401d80325dbeaeb23cc49da503ef54399010ca5c76480"
+    },
+    "source_global_audit": {
+      "minimum_feature_nm": 500.0,
+      "opening_radius_nm": 250.0,
+      "opening_radius_pixels": 3,
+      "outside_design_phase": "fixed_solid_at_top_bottom_and_void_at_left_right",
+      "solid_bad_cell_count": 59,
+      "void_bad_cell_count": 30,
+      "total_bad_cell_count": 89,
+      "solid_fraction": 0.5953015007947813,
+      "passed": false
+    },
+    "candidate_global_audit": {
+      "minimum_feature_nm": 500.0,
+      "opening_radius_nm": 250.0,
+      "opening_radius_pixels": 3,
+      "outside_design_phase": "fixed_solid_at_top_bottom_and_void_at_left_right",
+      "solid_bad_cell_count": 7,
+      "void_bad_cell_count": 2,
+      "total_bad_cell_count": 9,
+      "solid_fraction": 0.5947028343758386,
+      "passed": false
+    },
+    "changed_node_count": 89,
+    "changed_node_fraction": 0.0018372865960653165,
+    "interior_bad_cell_count": 0,
+    "port_boundary_exemption_count": 9,
+    "port_boundary_exemption_indices": [
+      [
+        0,
+        98
+      ],
+      [
+        63,
+        0
+      ],
+      [
+        67,
+        200
+      ],
+      [
+        68,
+        200
+      ],
+      [
+        172,
+        200
+      ],
+      [
+        173,
+        200
+      ],
+      [
+        177,
+        0
+      ],
+      [
+        240,
+        98
+      ],
+      [
+        240,
+        99
+      ]
+    ],
+    "exemption_definition": "only exact outermost design-grid nodes where fixed top/bottom TaIrTe4 contact phase terminates against left/right exterior void",
+    "claim_limit": "global morphology audit is reported unchanged; only the interior 500 nm gate passes after explicitly enumerated port-boundary exemptions",
+    "candidate": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_Ea_exact_binary_finalization_20260810/run012_Ea_exact_binary_candidate.npz",
+      "size_bytes": 4838,
+      "sha256": "d2fb9773a0e4c621804c9e65b6d41acb41525a254624b45c40f19850e902f620"
+    }
+  },
+  "objective": {
+    "schema": "contact-anchored-exact-binary-objective-v1",
+    "status": "VALIDATED_EXACT_BINARY_GPU_MAXWELL_CUDA_THERMAL_ELECTRICAL_OBJECTIVE",
+    "passed": true,
+    "generated_at_utc": "2026-08-10T11:18:23.803204+00:00",
+    "polarization": "Ea",
+    "polarization_angle_deg": 90.0,
+    "axis_contract": "Lumerical x=b, y=a, z=c",
+    "objective_A": 3.441122211448235e-17,
+    "reference_continuous_objective_A": 3.574639648003385e-17,
+    "relative_objective_change_from_continuous": -0.03735129962812522,
+    "equivalent_objective_at_285uW_A": 7.09113021232662e-08,
+    "responsivity_A_W": 0.00024881158639742534,
+    "terminal_conductance_S": 0.015556028769910494,
+    "rho_values": [
+      0.0,
+      1.0
+    ],
+    "forward": {
+      "P_Q_W": 2.5844589382542282e-14,
+      "P_six_W": 2.583144819529197e-14,
+      "closure": 0.0005084695700055303,
+      "source_power_W": 1.3830232993859658e-13,
+      "faces": {
+        "run010_flux_x_min": {
+          "signed_axis_power_W": -1.5978699977269977e-17,
+          "outward_power_W": 1.5978699977269977e-17
+        },
+        "run010_flux_x_max": {
+          "signed_axis_power_W": 1.582124193833464e-17,
+          "outward_power_W": 1.582124193833464e-17
+        },
+        "run010_flux_y_min": {
+          "signed_axis_power_W": -2.1489064843400033e-17,
+          "outward_power_W": 2.1489064843400033e-17
+        },
+        "run010_flux_y_max": {
+          "signed_axis_power_W": 6.487891468096626e-17,
+          "outward_power_W": 6.487891468096626e-17
+        },
+        "run010_flux_z_min": {
+          "signed_axis_power_W": -2.9611212838575515e-14,
+          "outward_power_W": 2.9611212838575515e-14
+        },
+        "run010_flux_z_max": {
+          "signed_axis_power_W": -5.556082895530746e-14,
+          "outward_power_W": -5.556082895530746e-14
+        }
+      },
+      "coordinate_mismatch_m": 5.082197683525802e-21,
+      "resources": {
+        "1": {
+          "active": "1",
+          "device type": "CPU",
+          "processes": "1",
+          "threads": "8",
+          "solver extra command line options": ""
+        },
+        "2": {
+          "active": "1",
+          "device type": "GPU 5",
+          "processes": "1",
+          "threads": "8",
+          "solver extra command line options": "-gpu"
+        }
+      },
+      "resource_used": "Local Host",
+      "wall_s": 45.43361983075738,
+      "polarization_angle_deg": 90.0,
+      "project": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_Ea_exact_binary_objective_20260810/exact_binary_forward_Ea.fsp",
+        "size_bytes": 180904725,
+        "sha256": "fbeda236843e2cb91841a0e77439d95c294f62c968178fcdd154a9de9e729707"
+      },
+      "log_audit": {
+        "logs": [
+          "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_Ea_exact_binary_objective_20260810/exact_binary_forward_Ea_p0.log"
+        ],
+        "final_auto_shutoff": 8.96134e-08,
+        "logged_grid": {
+          "shape_xyz": [
+            338,
+            338,
+            106
+          ],
+          "grid_points": 12109864
+        },
+        "precise_GPU_memory_GiB": 0.423,
+        "simulation_completed_successfully": true
+      }
+    },
+    "gates": {
+      "optical_closure": 0.0005084695700055303,
+      "Q_mapping_error": 1.2530787138682703e-16,
+      "thermal_forward_residual": 6.961034573017236e-11,
+      "thermal_energy_balance": 2.2606793076897464e-12,
+      "electrical_weighting_residual": 9.931062256991581e-11
+    },
+    "inputs": {
+      "base_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_uniform_rho0p5_Ea_forward_retry_20260810/tairte4_flake_forward_Ea.fsp",
+        "size_bytes": 159871532,
+        "sha256": "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83"
+      },
+      "binary_density": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_Ea_exact_binary_finalization_20260810/run012_Ea_exact_binary_candidate.npz",
+        "size_bytes": 4838,
+        "sha256": "d2fb9773a0e4c621804c9e65b6d41acb41525a254624b45c40f19850e902f620"
+      }
+    },
+    "raw_artifact": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_Ea_exact_binary_objective_20260810/binary_objective_fields.npz",
+      "size_bytes": 8931673,
+      "sha256": "e2b77f04ecfb462f23dce18b503e99d0457057f752fae451d1a707fe0c06d256"
+    },
+    "Maxwell_solves": {
+      "forward": 1,
+      "adjoint": 0
+    },
+    "posthoc_objective_or_gradient_rescaling": false,
+    "Q_clipping_smoothing_gain_or_rescaling": false,
+    "CPU_FDTD_fallback": false,
+    "CPU_thermal_linear_solve_fallback": false,
+    "wall_s": 62.782558400183916
+  },
+  "numerical_convergence_and_physical_gate": "passed",
+  "global_morphology_claim": "not passed: 9 explicitly enumerated outermost port-boundary cells",
+  "interior_500nm_claim": "passed: zero interior bad cells"
+}

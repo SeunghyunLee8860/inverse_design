@@ -37,6 +37,14 @@ JACOBIAN = Path(
     "run012_component_yee_jacobian_retry_20260810"
 )
 STATUS_PATH = RUN013_PUBLISHED / "AUTO_CHAIN_STATUS.json"
+RUN012_BINARY_FINALIZATION = Path(
+    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/"
+    "run012_Ea_exact_binary_finalization_20260810/binary_finalization_result.json"
+)
+RUN012_BINARY_OBJECTIVE = Path(
+    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/"
+    "run012_Ea_exact_binary_objective_20260810/binary_objective_result.json"
+)
 GPU_INDEX = 5
 
 
@@ -82,6 +90,15 @@ def has_event(path: Path, expected: str) -> bool:
     return False
 
 
+def passed_json(path: Path) -> bool:
+    if not path.is_file():
+        return False
+    try:
+        return bool(json.loads(path.read_text()).get("passed"))
+    except (OSError, json.JSONDecodeError):
+        return False
+
+
 def main() -> int:
     run012_events = RUN012_RAW / "events.jsonl"
     run013_events = RUN013_RAW / "events.jsonl"
@@ -89,8 +106,18 @@ def main() -> int:
         write_status("RUN013_ALREADY_COMPLETE")
         return 0
 
-    write_status("WAITING_FOR_RUN012_NORMAL_COMPLETION")
+    write_status("WAITING_FOR_RUN012_NORMAL_COMPLETION_AND_EXACT_BINARY_GATE")
     while not has_event(run012_events, "continuous_continuation_complete"):
+        time.sleep(20.0)
+    while not (
+        passed_json(RUN012_BINARY_FINALIZATION)
+        and passed_json(RUN012_BINARY_OBJECTIVE)
+    ):
+        write_status(
+            "WAITING_FOR_RUN012_EXACT_BINARY_GATE",
+            binary_finalization=str(RUN012_BINARY_FINALIZATION),
+            binary_objective=str(RUN012_BINARY_OBJECTIVE),
+        )
         time.sleep(20.0)
 
     if not BASE_FSP.is_file():
@@ -125,6 +152,8 @@ def main() -> int:
     write_status(
         "RUN013_LAUNCHING",
         run012_completion_event="continuous_continuation_complete",
+        run012_binary_finalization=str(RUN012_BINARY_FINALIZATION),
+        run012_binary_objective=str(RUN012_BINARY_OBJECTIVE),
         base_fsp=str(BASE_FSP),
         base_fsp_sha256=actual_sha,
         component_yee_jacobian=str(jacobian_result),
