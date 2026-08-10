@@ -2,8 +2,8 @@
   "schema": "tairte4-iteration-plot-index-v1",
   "red_density_contour_present": false,
   "density_rendering": "gray_r: black=rho_1_TaIrTe4, white=rho_0_void",
-  "evaluation_count": 19,
-  "latest_evaluation_id": 19,
+  "evaluation_count": 20,
+  "latest_evaluation_id": 20,
   "plots": [
     {
       "evaluation_id": 1,
@@ -194,6 +194,16 @@
       "objective_A": 2.8836075216459434e-17,
       "plot": "evaluation_0019_candidate.png",
       "plot_sha256": "8719f9271baf056c670bc7fc675224513828471c559427d4ea5d1c61e64c893c"
+    },
+    {
+      "evaluation_id": 20,
+      "label": "candidate",
+      "accepted": true,
+      "accepted_update_index": 17,
+      "beta": 8.0,
+      "objective_A": 2.95237620166755e-17,
+      "plot": "evaluation_0020_candidate.png",
+      "plot_sha256": "4db5cdd546523a699c7fca16257350fe5635626ab9e3b752d72235faa00d13d6"
     }
   ]
 }
