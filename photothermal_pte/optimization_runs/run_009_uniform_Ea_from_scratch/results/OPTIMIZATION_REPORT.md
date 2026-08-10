@@ -2,12 +2,12 @@
 
 Status: `RUNNING_EXACT_UNIFORM_EA_OBJECTIVE_FIRST_OPTIMIZATION`
 
-Current stage: beta=2, accepted stage iteration=14, global iteration=14.
+Current stage: beta=2, accepted stage iteration=15, global iteration=15.
 
 Constraint contract: `soft_disk_opening_500nm_from_iteration_zero_v5`.
 
-Actual FOM: `7.225194815093e-07 A/W`. Fixed-cap solid/void constraints: `3.801964e-04` / `4.365752e-05` with caps `2.000000e-03` / `2.000000e-03`.
+Actual FOM: `7.684157763620e-07 A/W`. Fixed-cap solid/void constraints: `3.799583e-04` / `4.435432e-05` with caps `2.000000e-03` / `2.000000e-03`.
 
-Exact 500 nm bad cells: solid `39`, void `3`. Stage convergence: `False` (recent FOM/density changes have not plateaued).
+Exact 500 nm bad cells: solid `38`, void `2`. Stage convergence: `False` (recent FOM/density changes have not plateaued).
 
 Beta advances only after the stage FOM/density plateau. The run is not complete until the projected-binary and exact 500 nm gates pass and a fresh thresholded-binary GPU/CUDA evaluation succeeds.
