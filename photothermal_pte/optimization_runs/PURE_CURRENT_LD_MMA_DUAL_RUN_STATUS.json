@@ -1,8 +1,8 @@
 {
   "schema": "pure-terminal-current-nlopt-ld-mma-dual-supervisor-v1",
-  "generated_at_utc": "2026-08-10T23:04:38.448786+00:00",
-  "status": "BLOCKED_PURE_CURRENT_NLOPT_LD_MMA_RUN",
-  "gpu": 1,
+  "generated_at_utc": "2026-08-10T23:29:19.410479+00:00",
+  "status": "RUNNING_PURE_CURRENT_NLOPT_LD_MMA",
+  "gpu": 0,
   "algorithm": "NLopt LD_MMA",
   "objective": "signed full-flake terminal PTE current",
   "top_bottom_weighting_boundaries": {
@@ -12,7 +12,27 @@
   "terminal_conductance_constraint": false,
   "terminal_conductance_role": "diagnostic_only",
   "manual_move_limit": null,
-  "run": "Run034",
+  "run": "Run036",
   "polarization": "Ea",
-  "returncode": 1
+  "command": [
+    "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python",
+    "-m",
+    "photothermal_pte.optimization_runs.tairte4_flake_topology.run_pure_current_ld_mma_optimization",
+    "--polarization",
+    "Ea",
+    "--raw-root",
+    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810",
+    "--published-dir",
+    "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/run_036_pure_current_ld_mma_morphology_from_beta1_Ea_current_max",
+    "--gpu",
+    "0",
+    "--base-fsp",
+    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_uniform_rho0p5_Ea_forward_retry_20260810/tairte4_flake_forward_Ea.fsp",
+    "--base-sha256",
+    "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83",
+    "--jacobian-dir",
+    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_component_yee_jacobian_retry_20260810",
+    "--constraint-device",
+    "cuda:0"
+  ]
 }
