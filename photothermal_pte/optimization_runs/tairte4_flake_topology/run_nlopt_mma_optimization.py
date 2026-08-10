@@ -106,6 +106,8 @@ class StageEvaluator:
         evaluation_counter: int,
         global_evaluation: int,
         constraint_device: str,
+        algorithm_label: str = "NLopt LD_MMA",
+        output_slug: str = "nlopt_mma",
     ) -> None:
         self.beta = beta
         self.polarization = polarization
@@ -124,6 +126,8 @@ class StageEvaluator:
         self.evaluation_counter = evaluation_counter
         self.global_evaluation = global_evaluation
         self.constraint_device = constraint_device
+        self.algorithm_label = algorithm_label
+        self.output_slug = output_slug
         self.last: Point | None = None
         self.stage_full_physics_evaluations = 0
 
@@ -137,7 +141,7 @@ class StageEvaluator:
         self.evaluation_counter += 1
         self.global_evaluation += 1
         output = self.raw_root / (
-            f"evaluation_{self.evaluation_counter:04d}_beta{self.beta:g}_nlopt_mma"
+            f"evaluation_{self.evaluation_counter:04d}_beta{self.beta:g}_{self.output_slug}"
         )
         result, gradient_physical, gradient_conductance = evaluate(
             rho,
@@ -193,7 +197,7 @@ class StageEvaluator:
         step = x - previous_x
         row = {
             "role": "nlopt_evaluation",
-            "algorithm": "NLopt LD_MMA",
+            "algorithm": self.algorithm_label,
             "nlopt_version": nlopt.__version__,
             "evaluation_id": self.evaluation_counter,
             "global_update": self.global_evaluation,
@@ -240,7 +244,7 @@ class StageEvaluator:
             gradient_physical,
             summary,
             evaluation_id=self.evaluation_counter,
-            label="nlopt_mma_evaluation",
+            label=f"{self.output_slug}_evaluation",
         )
         emit(
             self.events,
