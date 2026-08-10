@@ -1,0 +1,12 @@
+{
+  "schema": "tairte4-ea-to-eb-auto-chain-v1",
+  "generated_at_utc": "2026-08-10T13:01:41.485308+00:00",
+  "status": "RUN013_COMPLETE",
+  "run012_raw": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_Ea_pilot_20260810",
+  "run013_raw": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run013_Eb_optimization_20260810",
+  "run013_published": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_013_contact_anchored_tairte4_Eb_current_max",
+  "GPU_index": 5,
+  "Eb_start_density": "independent uniform rho=0.5; no Ea warm start",
+  "source_axis_contract": "Lumerical x=b, y=a; Eb polarization angle=0 deg",
+  "returncode": 0
+}

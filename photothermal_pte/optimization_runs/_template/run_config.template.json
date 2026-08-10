@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "run_id": "RUN_ID",
+  "description": "FILL_ME",
+  "created_at_utc": "FILL_ME",
+  "source": {
+    "repository": "SeunghyunLee8860/inverse_design",
+    "git_commit": "FILL_ME",
+    "base_pr": 7,
+    "adfd_status": "VALIDATED_FULL_LATENT_COMBINED_PTE_ADFD_WITH_USER_ACCEPTED_FD_NOISE",
+    "preserved_exception": "physical-rho near-null strict h-to-h/2 plateau miss remains diagnostic"
+  },
+  "design": {
+    "latent_shape": [81, 81],
+    "bounds_um": {"x": [-1.0, 1.0], "y": [-1.0, 1.0]},
+    "node_spacing_nm": 25.0,
+    "design_height_nm": 600.0,
+    "material_endpoints": {"rho_0": "air_n1", "rho_1": "SiO2_n1.38"},
+    "filter_radius_nm": 500.0,
+    "periodic_wrap": false,
+    "projection_eta": 0.5,
+    "projection_beta_schedule": [2.0, 4.0, 8.0]
+  },
+  "optical": {
+    "illumination": "normal_incidence_cpu_tfsf",
+    "source_band_um": [3.0, 6.0],
+    "analysis_wavelength_um": 4.0,
+    "incident_intensity_W_m2": 1.0,
+    "boundary": "six_pml",
+    "pml_layers": 24,
+    "periodic": false,
+    "conformal_variant": 1,
+    "accuracy": 5,
+    "flake_dz_nm": 5.0
+  },
+  "thermal": {
+    "T_bath_K": 300.0,
+    "tairte4_kappa_W_mK": [14.4, 3.8, 1.0],
+    "sio2_kappa_W_mK": 1.38,
+    "si_kappa_W_mK": 145.0,
+    "air_kappa_W_mK": 0.026,
+    "G_tairte4_air_W_m2K": 1.0,
+    "G_tairte4_bottom_sio2_W_m2K": 7370000.0,
+    "G_tairte4_design_sio2_W_m2K": 73700.0,
+    "G_sio2_si_W_m2K": 1100000000.0,
+    "h_exposed_W_m2K": 10.0,
+    "gray_law_exponent": 1.0,
+    "named_flake_scenarios_um": [4.0, 6.0]
+  },
+  "pte": {
+    "sigma_a_S_m": 491000.0,
+    "sigma_b_S_m": 110000.0,
+    "Seebeck_a_V_K": -0.000006,
+    "Seebeck_b_V_K": 0.000027,
+    "weighting_model": "uniform_45_degree_surrogate"
+  },
+  "objective": {
+    "type": "uniform_45deg_pte_current_A",
+    "sense": "maximize",
+    "primary_thermal_scenario_um": 4.0,
+    "secondary_robustness_scenario_um": 6.0
+  },
+  "optimizer": {
+    "driver_status": "NOT_YET_IMPLEMENTED_REQUIRES_REVIEW",
+    "algorithm": "FILL_ME",
+    "maximum_iterations": 0,
+    "volume_fraction_constraint": "FILL_ME",
+    "line_search": "FILL_ME",
+    "checkpoint_every_accepted_iterations": 1
+  },
+  "gates": {
+    "optical_closure_relative_max": 0.005,
+    "Q_mapping_relative_max": 0.005,
+    "thermal_energy_balance_relative_max": 0.01,
+    "linear_residual_relative_max": 1e-08,
+    "mapping_transpose_relative_max": 1e-12
+  },
+  "prohibitions": {
+    "q_clipping": false,
+    "q_smoothing": false,
+    "q_gain": false,
+    "q_rescaling": false,
+    "periodic_tiling": false,
+    "gradient_rescaling": false
+  },
+  "repository_inputs": [],
+  "external_inputs": [],
+  "execution": {
+    "enabled": false,
+    "reason": "Iterative optimizer driver and update rule require separate review"
+  }
+}

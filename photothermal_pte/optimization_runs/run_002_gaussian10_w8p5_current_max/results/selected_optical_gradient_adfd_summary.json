@@ -1,0 +1,86 @@
+{
+  "status": "VALIDATED_SELECTED_OPTICAL_GRADIENT_ADFD",
+  "passed": true,
+  "generated_at_utc": "2026-08-06T20:12:17.919226+00:00",
+  "scope": "one selected 373x373 nonuniform physical-density direction at h=0.005; optical gradient plus corrected one-direction combined smoke",
+  "optimizer_started": false,
+  "new_Maxwell_solves_for_final_correction": 0,
+  "empirical_normalization": false,
+  "gradient_rescaling": false,
+  "root_cause": "the zero-amplitude forward Gaussian remained active as a mesh anchor, so default cwnorm(1) normalized the FieldRegion adjoint monitor to the wrong active source spectrum",
+  "correction": {
+    "method": "FieldRegion-only CW adjoint reconstructed from official cwnorm(1) and cwnorm(2) states while the zero-amplitude forward Gaussian remains enabled solely as a mesh anchor",
+    "first_over_average_real": 1.1473463272070992,
+    "first_over_average_imag": 0.055215637190155466,
+    "fieldregion_over_first_source_spectrum_real": 1.2946926544141983,
+    "fieldregion_over_first_source_spectrum_imag": 0.11043127438031093,
+    "fieldregion_only_field_multiplier_real": 0.7668053464747457,
+    "fieldregion_only_field_multiplier_imag": -0.06540493708999713,
+    "two_normalization_state_spatial_residual": 2.5258646920576535e-16,
+    "uses_finite_difference_fit": false,
+    "empirical_gradient_rescaling": false
+  },
+  "directional_derivatives_A": {
+    "optical_indirect": 2.4025716985961345e-20,
+    "optical_direct": 5.77610717085447e-20,
+    "optical_AD": 8.178678869450605e-20,
+    "optical_FD": 8.178920529520442e-20,
+    "thermal_material_AD_reused": 3.666784498221631e-21,
+    "combined_AD_recomputed": 8.545357319272768e-20,
+    "combined_FD_reused": 8.545598286817864e-20
+  },
+  "gates": {
+    "scalar_P_Q_AD_FD_relative_error": 2.785593472143315e-06,
+    "optical_AD_FD_relative_error": 2.9546694941607635e-05,
+    "combined_AD_FD_relative_error": 2.8197855434889026e-05,
+    "limit": 0.01,
+    "coordinate_mismatch_m": 0.0,
+    "normalization_spatial_residual": 2.5258646920576535e-16,
+    "normalization_residual_limit": 1e-12,
+    "mapping_transpose_error": 0.0
+  },
+  "diagnostic_errors": {
+    "original_first_source_CW": 0.05326339162654821,
+    "exact_inverse_first_source_CW": 0.03208284171239694,
+    "multiplier_common_first_source_CW": 0.251269,
+    "FieldRegion_only_CW": 2.9546694941607635e-05
+  },
+  "remaining_before_optimization": [
+    "selected-grid broader combined physical-rho directions and FD steps",
+    "coupled optical gray-law sensitivity",
+    "exact-binary DRC fixtures",
+    "full latent/filter/projection AD-FD"
+  ],
+  "raw_artifacts": {
+    "optical_diagnostic": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_physical_rho_smoke_20260806/selected_optical_gradient_named_source_normalization.json",
+      "size_bytes": 5248,
+      "sha256": "08eacc93bbe4f7bf706489fabf059f4821e5a5bbedf8194ec83305fd94bc4932"
+    },
+    "corrected_gradient_NPZ": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_physical_rho_smoke_20260806/selected_optical_gradient_named_source_normalization.npz",
+      "size_bytes": 5256747,
+      "sha256": "30fd96920acbceced4ea0a353c9d6e0e0869dd7f641cd9815ef39d83897a9f0d"
+    },
+    "scalar_decomposition": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_scalar_pq_adjoint_common_grid_20260806/selected_scalar_pq_fd_decomposition.json",
+      "size_bytes": 6410,
+      "sha256": "e5de75dfab426a34d419df20284b41937ce4f64105c3928187c06d473d5afea8"
+    },
+    "combined_decomposition": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_physical_rho_smoke_20260806/selected_combined_failure_decomposition.json",
+      "size_bytes": 2718,
+      "sha256": "0cc1a686a889fa1cf59abf7b062c2d79ce58052677399004143daf5a5e10a940"
+    },
+    "adjoint_FSP": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_physical_rho_smoke_20260806/production_combined_adjoint_gpu.fsp",
+      "size_bytes": 1905760590,
+      "sha256": "4f966286b1760fd2695be22ba7d405b704582356fbe9c6402ccca7536e8fd03a"
+    },
+    "base_FSP": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_selected_combined_adjoint_template_v2_20260806/base_nonuniform.fsp",
+      "size_bytes": 784520147,
+      "sha256": "4df9fcc8e5d8ac40687a58308413ae08c6bec77cd11bd58dd21307fb5c12f6f3"
+    }
+  }
+}

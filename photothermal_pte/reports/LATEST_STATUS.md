@@ -1,5 +1,49 @@
 # Latest photothermal validation status
 
+## Run 005 bounded low-beta topology-exploration pilot
+
+- Status: `PAUSED_AFTER_RUN005_BOUNDED_BETA2_GPU_PILOT` after five accepted
+  `move=0.01` updates. No beta promotion or full continuation ran.
+- GPU Maxwell/CUDA thermal-PTE FOM increased monotonically from
+  `9.775174754357e-8` to `1.943798604096e-7 A/W` (`+98.8505%`). Per-update
+  gains were `+19.48%, +16.43%, +14.22%, +12.53%, +11.21%`.
+- Final smooth 500 nm solid/void values are `5.082822e-4` / `8.089554e-5`,
+  feasible under the fixed `1.0e-3` / `1.0e-4` beta=2 exploration envelope.
+  Exact bad cells are diagnostic `42/6`; gray fraction remains `1.0` and the
+  binarization metric is `0.9317`, so this is not a final binary structure.
+- The final point passes optical closure `3.04e-7`, Q-map transpose
+  `8.61e-16`, thermal residual `9.51e-11`, energy balance `1.10e-12`, and
+  forward/adjoint auto-shutoff below `1e-7`. No CPU fallback, empirical
+  normalization, or gradient rescaling was used.
+- The next gate is a solver-free g005-to-beta4 reprojection and cap audit.
+  Beta=4 remains unauthorized until that audit is reviewed; the final binary
+  gate remains zero bad solid/void cells.
+- Code, audit, plots, summary, and raw-artifact provenance:
+  `optimization_runs/run_005_lowbeta_topology_exploration_pilot/`.
+
+## Run 002 selected-grid optical-gradient AD–FD
+
+- Status: `VALIDATED_SELECTED_OPTICAL_GRADIENT_ADFD` for one selected
+  `373×373` physical-density direction at `h=0.005`; optimization remains
+  unstarted.
+- The previously preserved optical failure (`5.326339%`) was traced to CW
+  source normalization, not to the component-specific density-to-Yee
+  material Jacobian. The zero-amplitude forward Gaussian remained enabled as
+  an immutable auto-mesh anchor, so `cwnorm(1)` selected its spectrum instead
+  of the active FieldRegion spectrum.
+- Reconstructing the FieldRegion-only CW field from the same monitor data at
+  `cwnorm(1)` and `cwnorm(2)` gives a spatial residual of `2.526e-16`. This
+  uses no FD-fitted scale, empirical normalization, or gradient rescaling.
+- Scalar absorbed-power, spatially weighted optical-PTE, and corrected
+  one-direction combined AD–FD relative errors are respectively
+  `2.786e-6`, `2.955e-5`, and `2.820e-5`, all below the `1%` gate.
+- Broader selected-grid directions/steps, coupled optical gray-law
+  sensitivity, exact-binary DRC, and full latent/filter/projection AD–FD
+  remain required before optimization.
+- Report, JSON, CSV, plot, and raw-artifact provenance:
+  `optimization_runs/run_002_gaussian10_w8p5_current_max/results/` and
+  `optimization_runs/run_002_gaussian10_w8p5_current_max/manifests/RAW_ARTIFACT_MANIFEST.json`.
+
 ## Fixed Device-A Lumerical coordinate convention
 
 - Every published Device-A geometry and cross-case map now uses one fixed
@@ -1963,3 +2007,54 @@ adjoint, gradient, and optimization were not run.
   correction.
 - Validation: 137 offline tests passed.
 - Report: `paper_ir_device_a_nine_position_two_interface/`.
+
+# Run 002 production combined physical-rho AD–FD smoke — 2026-08-06
+
+- Status: `VALIDATED_PRODUCTION_COMBINED_PHYSICAL_RHO_ADFD_SMOKE`.
+- Scope: one nonuniform 201×201 physical-density baseline, one
+  adjoint-aligned direction, centered FD at `h=0.005`; this is not yet a
+  full-latent or optimization certificate.
+- Adjoint derivative: `8.502570281382e-20 A`; centered FD:
+  `8.548619467411e-20 A`; relative error: `0.538674%` (<1%).
+- Worst optical closure: `4.474819e-5`; Q mapping error: `0`; thermal
+  residual: `8.612592e-11`; energy balance: `2.823629e-13`.
+- v261 auto-mesh parity was fixed without interpolation or gradient scaling:
+  the forward Gaussian source remains enabled at exactly zero amplitude in
+  the adjoint. Maximum source/mesh mismatch is `6.776264e-21 m`, and the
+  forward/adjoint field-coordinate mismatch is zero.
+- Five earlier source-layout failures remain immutable diagnostics. No CPU
+  FDTD fallback, empirical normalization, Q rescaling, or optimization was
+  used. Optimization iterations remain zero.
+- Report:
+  `optimization_runs/run_002_gaussian10_w8p5_current_max/results/PRODUCTION_COMBINED_ADFD_SMOKE_REPORT.md`.
+
+# Run 002 production design-window selection — 2026-08-06
+
+- Status: `VALIDATED_PRODUCTION_DESIGN_WINDOW_SELECTION`.
+- The centered 18.6×18.6 µm window retains `90.8872968%` of the immutable
+  combined physical-density gradient absolute L1 norm and passes the 90% gate.
+- The immediately smaller centered 18.4×18.4 µm control retains
+  `89.4652232%` and fails; every original 12×6 µm strip and the centered
+  10×10 µm control also fails.
+- Production variables are frozen to a 373×373 nonperiodic 50 nm nodal grid
+  over x,y=[-9.3,9.3] µm.
+- This was SHA-pinned offline analysis: zero Maxwell solves, zero thermal
+  solves, and zero optimization iterations.
+- Report:
+  `optimization_runs/run_002_gaussian10_w8p5_current_max/results/PRODUCTION_DESIGN_WINDOW_SELECTION_REPORT.md`.
+
+# Run 002 finite production filter/projection — 2026-08-06
+
+- Status: `VALIDATED_PRODUCTION_FINITE_FILTER_PROJECTION`.
+- Grid: 373×373 nodes at 50 nm over the frozen centered 18.6 µm window;
+  conic radius 500 nm, projection eta=0.5, beta=2,4,8,16,32.
+- Zero-padded finite filter: constant-preservation error `0`, opposite-edge
+  wrap `0`; exact transpose order is `C D^-1`, not the forward `D^-1 C`.
+- Worst five-direction JVP/VJP error: `1.290259e-15` (<1e-12).
+- All 25 mapping-only centered-FD trajectories decrease under h→h/2; worst
+  error at h=2.5e-4 is `8.706075e-6` (<1e-5).
+- The first all-step gate failure is preserved as a diagnostic; no gradient or
+  FD result was rescaled. No Maxwell, thermal, or optimization solve ran.
+- This is not an exact-binary DRC or full latent AD-FD certificate.
+- Report:
+  `optimization_runs/run_002_gaussian10_w8p5_current_max/results/PRODUCTION_FINITE_FILTER_PROJECTION_REPORT.md`.

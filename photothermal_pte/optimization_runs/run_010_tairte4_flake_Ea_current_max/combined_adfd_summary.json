@@ -1,0 +1,38 @@
+{
+  "status": "VALIDATED_TAIRTE4_FLAKE_COMBINED_PHYSICAL_RHO_ADFD",
+  "passed": true,
+  "polarization": "E_parallel_a",
+  "axis_contract": "Lumerical x=b, y=a, z=c",
+  "uniform_physical_density": 0.5,
+  "finite_difference_step": 0.005,
+  "base_objective_A": 1.6839781996252786e-23,
+  "adjoint_directional_derivative_A": 1.476549080518608e-17,
+  "finite_difference_directional_derivative_A": 1.4765448192982172e-17,
+  "relative_AD_FD_error": 2.8859321013381127e-06,
+  "gradient_norms_A": {
+    "total": 2.2448073203882794e-19,
+    "optical": 4.221923253689185e-21,
+    "thermal": 2.6219781128615654e-21,
+    "electrical": 2.260859310363507e-19
+  },
+  "gates": {
+    "component_Yee_transpose_error": 4.0690354775739665e-16,
+    "maximum_forward_adjoint_coordinate_mismatch_m": 0.0,
+    "worst_optical_closure": 6.6639821836900205e-06,
+    "worst_Q_mapping_error": 1.996136635108691e-16,
+    "worst_thermal_residual": 7.088660010105286e-11,
+    "worst_thermal_energy_balance": 1.4943069197124585e-12,
+    "worst_Maxwell_auto_shutoff": 9.11927e-08
+  },
+  "maxwell_solves": {
+    "completed_forward_reused": 1,
+    "new_forward": 2,
+    "new_adjoint": 1
+  },
+  "optimization_iterations": 0,
+  "empirical_normalization": false,
+  "gradient_rescaling": false,
+  "Q_clipping_smoothing_gain_or_rescaling": false,
+  "CPU_FDTD_fallback": false,
+  "CPU_thermal_linear_solve_fallback": false
+}

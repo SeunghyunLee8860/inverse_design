@@ -1,0 +1,46 @@
+{
+  "raw_artifacts_are_not_committed": true,
+  "artifacts": [
+    {
+      "role": "runsetup_audit_json",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_runsetup_20260810/tairte4_flake_optical_runsetup_audit.json",
+      "sha256": "ec866656b156dc20ea246ad4f0d2b2e2e25ba84ba62adbe1562a4698cbbb6c2c"
+    },
+    {
+      "role": "uniform_Ea_completed_FSP",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_uniform_rho0p5_Ea_forward_retry_20260810/tairte4_flake_forward_Ea.fsp",
+      "size_bytes": 159871532,
+      "sha256": "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83"
+    },
+    {
+      "role": "uniform_Ea_native_Q",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_uniform_rho0p5_Ea_forward_retry_20260810/tairte4_flake_native_Q_Ea.npz",
+      "size_bytes": 35398259,
+      "sha256": "08c14abecb9a1ac9f51b13f311a26670d332a9585762ca48b69c8f6fc7c9c8de"
+    },
+    {
+      "role": "component_Yee_Jacobian_certificate",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_component_yee_jacobian_retry_20260810/component_yee_jacobian_result.json",
+      "sha256": "9222716ca4b67dd611da27bbb6bb72849a77882e1d9b9c1206d89a8305ff407d"
+    },
+    {
+      "role": "electrical_ADFD_certificate",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_electrical_adfd_20260810/tairte4_weighting_electrical_adfd.json",
+      "sha256": "8ad131c27d59180fb1238065bfe680fa9aa16db6110bba8d2c104fee44556bc5"
+    },
+    {
+      "role": "thermal_ADFD_certificate",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_thermal_adfd_20260810/tairte4_flake_fixed_Q_thermal_adfd.json",
+      "sha256": "3b94180153aa89b7f0a2c1f2004169a1ebaf79bf02051b4bc78a332e3e4d03c3"
+    },
+    {
+      "role": "combined_ADFD_certificate",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_combined_adfd_Ea_20260810/tairte4_flake_combined_adfd.json",
+      "sha256": "b34a57922e5bb7063ebf2713b2468b7d2c3efb0278f6286f845cc998a896f5e0"
+    },
+    {
+      "role": "live_pilot_root",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_Ea_pilot_20260810"
+    }
+  ]
+}

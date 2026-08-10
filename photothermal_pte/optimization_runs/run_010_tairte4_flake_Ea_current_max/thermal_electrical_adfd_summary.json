@@ -1,0 +1,29 @@
+{
+  "status": "VALIDATED_TAIRTE4_FLAKE_THERMAL_AND_ELECTRICAL_SUBGRADIENTS",
+  "passed": true,
+  "fixed_Q_thermal": {
+    "unknowns": 2334948,
+    "matrix_nnz": 16168012,
+    "native_Q_W": 3.2542426064518054e-14,
+    "material_attributed_Q_W": 3.161552775313838e-14,
+    "material_attributed_fraction": 0.9715172338552135,
+    "mapping_error": 0.0,
+    "finest_step_relative_errors": {
+      "smooth_asymmetric": 6.497874459762599e-06,
+      "central_localized": 5.467808328578135e-06,
+      "design_edge_localized": 5.653737293997224e-06,
+      "fixed_seed_random": 3.78370386972608e-06
+    },
+    "worst_residual": 9.898089330930817e-11,
+    "worst_energy_balance": 1.514667500237528e-12
+  },
+  "electrical_weighting": {
+    "shape": [241, 241],
+    "finest_step_relative_error": 3.7906584775981908e-06,
+    "error_decreases_with_step": true,
+    "weighting_residual": 6.892886699625635e-11,
+    "adjoint_residual": 8.145646602677282e-11
+  },
+  "combined_Maxwell_thermal_electrical_ADFD": false,
+  "optimization_started": false
+}

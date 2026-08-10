@@ -1,0 +1,176 @@
+{
+  "status": "VALIDATED_PRODUCTION_CUDA_THERMAL_PTE_SCENARIOS",
+  "passed": true,
+  "scope": "rho=0.5 production 3D CUDA thermal forward/implicit-adjoint controls; no Maxwell adjoint, AD-FD, design-window selection, or optimization",
+  "mapped_Q": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_3d_thermal_q_deposition_20260806/production_thermal_grid_material_q.npz",
+    "size_bytes": 66392496,
+    "sha256": "93bd834d02e576ec6efaca67cbb8bbed6ed827f02c566593a1349647d91342c6"
+  },
+  "incident_power_W": 1.3822261103022194e-13,
+  "thermal_operator": {
+    "grid_shape_xyz": [
+      362,
+      362,
+      91
+    ],
+    "active_unknowns": 9989548,
+    "linear_solve_device": "CUDA-only float64",
+    "CPU_linear_solve_fallback": false,
+    "external_boundaries": "far x/y and Si bottom Dirichlet at 300 K; every exposed solid/air face uses material-specific Robin conductance",
+    "weighting_field_m_inv": [
+      15625.0,
+      15625.0
+    ],
+    "weighting_model": "uniform 45-degree surrogate, not full electrodes"
+  },
+  "gates": {
+    "linear_residual_max": 1e-08,
+    "thermal_energy_balance_max": 0.01,
+    "Cauchy_normalized_reciprocity_max": 1e-08,
+    "observed_worst": {
+      "forward_residual": 9.812582490739528e-11,
+      "adjoint_residual": 9.771477522207909e-11,
+      "energy_balance_error": 1.3035639477772157e-11,
+      "reciprocity_Cauchy_normalized_error": 1.0083090977709506e-15
+    }
+  },
+  "near_null_interpretation": {
+    "rho05_baseline_is_center_symmetric": true,
+    "PTE_current_is_a_null_control_not_an_optimization_performance_claim": true,
+    "raw_near_null_relative_error_is_diagnostic_only": true,
+    "empirical_normalization_or_gradient_rescaling": false
+  },
+  "cases": [
+    {
+      "scenario": "grown_grown",
+      "bottom_interface": "grown",
+      "design_interface": "grown",
+      "source_power_W": 7.20892118277057e-14,
+      "incident_power_W": 1.3822261103022194e-13,
+      "Tmax_all_materials_rise_K": 5.903873095560687e-10,
+      "Tmax_TaIrTe4_rise_K": 2.433861063354516e-10,
+      "Tavg_TaIrTe4_rise_K": 3.1131913580767346e-11,
+      "PTE_current_A": 3.019347781363923e-26,
+      "PTE_current_A_per_W_incident": 2.1844094528815928e-13,
+      "forward_iterations": 1625,
+      "forward_residual": 8.217297379581453e-11,
+      "forward_seconds": 6.264515865594149,
+      "adjoint_iterations": 1400,
+      "adjoint_residual": 9.217972178579664e-11,
+      "adjoint_seconds": 5.1458895690739155,
+      "energy_balance_error": 9.699735767109149e-13,
+      "reciprocity_raw_near_null_relative_error": 0.0001319528087549819,
+      "reciprocity_Cauchy_normalized_error": 1.0083090977709506e-15,
+      "PTE_signal_Cauchy_scale_fraction": 7.641437172006253e-12,
+      "lateral_boundary_power_fraction": 0.3417691939975613,
+      "bottom_boundary_power_fraction": 0.6582198787645587,
+      "exposed_surface_power_fraction": 1.0927236910161845e-05,
+      "temperature_artifact_path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_grown_grown_v3_20260806/thermal_pte_grown_grown.npz",
+      "temperature_artifact_size_bytes": 73554643,
+      "temperature_artifact_sha256": "7b67826bdf719f5febf4b2f636f2a8a33c33c7c1aa58c02e6a0aa14425fdd54c"
+    },
+    {
+      "scenario": "grown_evaporated",
+      "bottom_interface": "grown",
+      "design_interface": "evaporated",
+      "source_power_W": 7.20892118277057e-14,
+      "incident_power_W": 1.3822261103022194e-13,
+      "Tmax_all_materials_rise_K": 4.643457194023028e-09,
+      "Tmax_TaIrTe4_rise_K": 1.8388991779147466e-10,
+      "Tavg_TaIrTe4_rise_K": 3.1060437103596863e-11,
+      "PTE_current_A": 3.0181417062548496e-26,
+      "PTE_current_A_per_W_incident": 2.1835368929580866e-13,
+      "forward_iterations": 1775,
+      "forward_residual": 9.423408574312037e-11,
+      "forward_seconds": 6.809823002666235,
+      "adjoint_iterations": 1625,
+      "adjoint_residual": 7.607026304329898e-11,
+      "adjoint_seconds": 5.970802564173937,
+      "energy_balance_error": 1.6652380303425111e-12,
+      "reciprocity_raw_near_null_relative_error": 0.00016036998813864363,
+      "reciprocity_Cauchy_normalized_error": 9.342387406751978e-17,
+      "PTE_signal_Cauchy_scale_fraction": 5.82458680493195e-13,
+      "lateral_boundary_power_fraction": 0.3466554439157069,
+      "bottom_boundary_power_fraction": 0.653175650586707,
+      "exposed_surface_power_fraction": 0.00016890549925138108,
+      "temperature_artifact_path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_grown_evaporated_20260806/thermal_pte_grown_evaporated.npz",
+      "temperature_artifact_size_bytes": 73687540,
+      "temperature_artifact_sha256": "20ee6ec9b6a812aa023c6b8f3476f540b895cc1be2c9d48e9d39fec262ab130a"
+    },
+    {
+      "scenario": "evaporated_grown",
+      "bottom_interface": "evaporated",
+      "design_interface": "grown",
+      "source_power_W": 7.20892118277057e-14,
+      "incident_power_W": 1.3822261103022194e-13,
+      "Tmax_all_materials_rise_K": 3.7234360785130647e-09,
+      "Tmax_TaIrTe4_rise_K": 3.495033955390952e-09,
+      "Tavg_TaIrTe4_rise_K": 8.85330553050612e-10,
+      "PTE_current_A": 1.1801420771864557e-26,
+      "PTE_current_A_per_W_incident": 8.537981364918807e-14,
+      "forward_iterations": 1800,
+      "forward_residual": 9.24837407232457e-11,
+      "forward_seconds": 6.913040094077587,
+      "adjoint_iterations": 1775,
+      "adjoint_residual": 9.771477522207909e-11,
+      "adjoint_seconds": 6.525348521769047,
+      "energy_balance_error": 2.677757379461504e-12,
+      "reciprocity_raw_near_null_relative_error": 0.00027878649475268494,
+      "reciprocity_Cauchy_normalized_error": 8.120262813359655e-17,
+      "PTE_signal_Cauchy_scale_fraction": 2.912717425771734e-13,
+      "lateral_boundary_power_fraction": 0.3633145005029974,
+      "bottom_boundary_power_fraction": 0.6365702234223134,
+      "exposed_surface_power_fraction": 0.0001152760773669607,
+      "temperature_artifact_path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_evaporated_grown_20260806/thermal_pte_evaporated_grown.npz",
+      "temperature_artifact_size_bytes": 74035117,
+      "temperature_artifact_sha256": "5374e22faf08e30a7c04dd42aa711b20faa9bb9b1ec980a6a0508a7e026b6305"
+    },
+    {
+      "scenario": "evaporated_evaporated",
+      "bottom_interface": "evaporated",
+      "design_interface": "evaporated",
+      "source_power_W": 7.20892118277057e-14,
+      "incident_power_W": 1.3822261103022194e-13,
+      "Tmax_all_materials_rise_K": 6.735633003980037e-09,
+      "Tmax_TaIrTe4_rise_K": 3.2272515396490445e-09,
+      "Tavg_TaIrTe4_rise_K": 8.85158591665648e-10,
+      "PTE_current_A": 1.2498897071596372e-26,
+      "PTE_current_A_per_W_incident": 9.042584985508288e-14,
+      "forward_iterations": 2000,
+      "forward_residual": 9.812582490739528e-11,
+      "forward_seconds": 7.558476813137531,
+      "adjoint_iterations": 1900,
+      "adjoint_residual": 8.112789995701363e-11,
+      "adjoint_seconds": 6.989531479775906,
+      "energy_balance_error": 1.3035639477772157e-11,
+      "reciprocity_raw_near_null_relative_error": 0.0005575208911091387,
+      "reciprocity_Cauchy_normalized_error": 8.278502093159827e-17,
+      "PTE_signal_Cauchy_scale_fraction": 1.4840496180933472e-13,
+      "lateral_boundary_power_fraction": 0.36410949764984424,
+      "bottom_boundary_power_fraction": 0.6356120548632205,
+      "exposed_surface_power_fraction": 0.00027844747389957163,
+      "temperature_artifact_path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_evaporated_evaporated_20260806/thermal_pte_evaporated_evaporated.npz",
+      "temperature_artifact_size_bytes": 73982636,
+      "temperature_artifact_sha256": "4d2e2dd440bb99c22f19158374a56ac23ad127ee427e223836053e8a9bbba95f"
+    }
+  ],
+  "preserved_failed_diagnostic": {
+    "role": "preserved_near_null_relative_metric_failure",
+    "reason": "The raw relative difference divided by two nearly-zero PTE currents; no empirical normalization or gradient rescaling was introduced.",
+    "raw_directory": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_grown_grown_20260806",
+    "artifacts": [
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_grown_grown_20260806/production_cuda_thermal_pte_result.json",
+        "size_bytes": 1460,
+        "sha256": "c626cb7925b87913f139d5def6ba6a2b4a0b9e617608bc45c70136fb84bc2661"
+      },
+      {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_cuda_thermal_pte_grown_grown_20260806/thermal_pte_grown_grown.npz",
+        "size_bytes": 73554643,
+        "sha256": "7b67826bdf719f5febf4b2f636f2a8a33c33c7c1aa58c02e6a0aa14425fdd54c"
+      }
+    ]
+  },
+  "optimization_iterations": 0
+}

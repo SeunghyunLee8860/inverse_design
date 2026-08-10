@@ -1,0 +1,217 @@
+{
+  "status": "VALIDATED_PRODUCTION_COMPLEX_COMPONENT_YEE_JACOBIAN",
+  "passed": true,
+  "generated_at_utc": "2026-08-06T07:15:14.826564+00:00",
+  "scope": "10 um production 20x20x1 um imported complex-SiO2 candidate; layout-only J_c=d epsilon_Yee,c/d rho on 201x201 nodes",
+  "geometry": "production",
+  "imported_object": "run002_coarse_design_import",
+  "base_FSP": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_candidate_rho05_forward_v2_immutable_20260806/production_candidate_forward.fsp",
+    "size_bytes": 264951607,
+    "sha256": "80ba8d95463764ec29dc6242885084864ceae21a9511843d534a2f7ee91fd2e2"
+  },
+  "density_shape": [
+    201,
+    201
+  ],
+  "density_range": [
+    0.3487835632080152,
+    0.6512164367919847
+  ],
+  "density_sha256": "8655f1a89a6eafb84406ab6430831ccb4fb200657a16783ab97579512edff60c",
+  "density_to_solver_chain": "rho -> epsilon=1+rho*(epsilon_SiO2(10um)-1) -> passive sqrt -> importnk2 -> v261 component index_detail -> epsilon_Yee,c=index_c^2",
+  "epsilon_SiO2": [
+    7.3490019303043495,
+    1.9899687286880576
+  ],
+  "construction": {
+    "color_period": 5,
+    "color_count": 25,
+    "build_step": 0.0001,
+    "check_step": 1e-05,
+    "layout_index_detail_evaluations": 63,
+    "Maxwell_solves": 0,
+    "per_pixel_Maxwell_solves": false,
+    "empirical_normalization": false,
+    "gradient_rescaling": false
+  },
+  "coordinate_audit": {
+    "components": {
+      "x": {
+        "shape": [
+          311,
+          311,
+          52
+        ],
+        "coordinate_bounds_m": {
+          "x": [
+            -1.9970149253731323e-05,
+            2.0029850746268667e-05
+          ],
+          "y": [
+            -2e-05,
+            2.0000000000000022e-05
+          ],
+          "z": [
+            -1.328888888888887e-06,
+            1.2910537430567798e-06
+          ]
+        },
+        "staggering_offset_axis": "x",
+        "maximum_field_index_coordinate_mismatch_m": 6.776263578034403e-21,
+        "maximum_local_assignment_distance_m": 5.000000000001985e-08,
+        "J_shape": [
+          5029492,
+          40401
+        ],
+        "J_nnz": 1929600,
+        "maximum_J_nonzeros_per_Yee_sample": 2,
+        "active_J_row_count": 964800,
+        "exact_design_support_intersection": {
+          "Yee_sample_count": 964800,
+          "active_J_rows_inside": 964800,
+          "active_J_rows_outside": 0
+        }
+      },
+      "y": {
+        "shape": [
+          311,
+          311,
+          52
+        ],
+        "coordinate_bounds_m": {
+          "x": [
+            -2e-05,
+            2.0000000000000022e-05
+          ],
+          "y": [
+            -1.9970149253731323e-05,
+            2.0029850746268667e-05
+          ],
+          "z": [
+            -1.328888888888887e-06,
+            1.2910537430567798e-06
+          ]
+        },
+        "staggering_offset_axis": "y",
+        "maximum_field_index_coordinate_mismatch_m": 6.776263578034403e-21,
+        "maximum_local_assignment_distance_m": 5.000000000001985e-08,
+        "J_shape": [
+          5029492,
+          40401
+        ],
+        "J_nnz": 1929600,
+        "maximum_J_nonzeros_per_Yee_sample": 2,
+        "active_J_row_count": 964800,
+        "exact_design_support_intersection": {
+          "Yee_sample_count": 964800,
+          "active_J_rows_inside": 964800,
+          "active_J_rows_outside": 0
+        }
+      },
+      "z": {
+        "shape": [
+          311,
+          311,
+          52
+        ],
+        "coordinate_bounds_m": {
+          "x": [
+            -2e-05,
+            2.0000000000000022e-05
+          ],
+          "y": [
+            -2e-05,
+            2.0000000000000022e-05
+          ],
+          "z": [
+            -1.2411111111111092e-06,
+            1.3630240012491912e-06
+          ]
+        },
+        "staggering_offset_axis": "z",
+        "maximum_field_index_coordinate_mismatch_m": 6.776263578034403e-21,
+        "maximum_local_assignment_distance_m": 2.874925156281326e-20,
+        "J_shape": [
+          5029492,
+          40401
+        ],
+        "J_nnz": 929223,
+        "maximum_J_nonzeros_per_Yee_sample": 1,
+        "active_J_row_count": 929223,
+        "exact_design_support_intersection": {
+          "Yee_sample_count": 929223,
+          "active_J_rows_inside": 929223,
+          "active_J_rows_outside": 0
+        }
+      }
+    }
+  },
+  "maximum_coordinate_mismatch_m": 6.776263578034403e-21,
+  "baseline_layout_roundtrip_epsilon_max_abs_error": 0.0,
+  "directions": {
+    "uniform": {
+      "direction_sha256": "ab196fbc178d87c8543b8d97c7cce668aac905755c709afafd23b7d96191198b",
+      "mapping_only_centered_FD_step": 1e-05,
+      "mapping_only_FD_relative_error": 1.3370026953914617e-09,
+      "JVP_VJP_dot_relative_error": 2.912541522235752e-16
+    },
+    "smooth_asymmetric": {
+      "direction_sha256": "14cec8a06f169ad7df7b64d6a2b80b33b2ed38516142da4555f98262e2091f33",
+      "mapping_only_centered_FD_step": 1e-05,
+      "mapping_only_FD_relative_error": 1.1999068533381824e-09,
+      "JVP_VJP_dot_relative_error": 5.34347716162339e-15
+    },
+    "central_localized": {
+      "direction_sha256": "8dd8f217787dec11da913907da80f81abeaf0a99cf5a57b5cc8fd079af859d38",
+      "mapping_only_centered_FD_step": 1e-05,
+      "mapping_only_FD_relative_error": 1.2394284478102511e-09,
+      "JVP_VJP_dot_relative_error": 7.333850656903734e-16
+    },
+    "design_edge_localized": {
+      "direction_sha256": "c3f46684b3abe0f2899c71e881d4474f68ff85db6d50fa1f68794344fa1089a0",
+      "mapping_only_centered_FD_step": 1e-05,
+      "mapping_only_FD_relative_error": 8.215347362439361e-10,
+      "JVP_VJP_dot_relative_error": 1.0436540646222951e-15
+    },
+    "fixed_seed_random": {
+      "direction_sha256": "ce2acc3653420802892c65bc6e3a919d7f5b178ed0a8b544a03452ba2b72f0ee",
+      "mapping_only_centered_FD_step": 1e-05,
+      "mapping_only_FD_relative_error": 1.163419830168884e-09,
+      "JVP_VJP_dot_relative_error": 5.543527015017791e-16
+    }
+  },
+  "gates": {
+    "worst_mapping_only_FD_relative_error": 1.3370026953914617e-09,
+    "mapping_only_FD_limit": 1e-07,
+    "worst_JVP_VJP_dot_relative_error": 5.34347716162339e-15,
+    "dot_limit": 1e-12,
+    "coordinate_mismatch_limit_m": 2e-18,
+    "maximum_local_assignment_distance_limit_m": 1.75e-07
+  },
+  "artifacts": {
+    "component_J": {
+      "x": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_complex_yee_jacobian_v2_licensed_20260806/J_x.npz",
+        "size_bytes": 5050555,
+        "sha256": "dc7d051212801e54ff5fa6243aec1728e3a13462ad1d7b363422d5c95b981ed6"
+      },
+      "y": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_complex_yee_jacobian_v2_licensed_20260806/J_y.npz",
+        "size_bytes": 5046713,
+        "sha256": "c3d1cdffa0271dc89aff79ee82d647f8d06bf137778a6a231e9076b383f6121d"
+      },
+      "z": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_complex_yee_jacobian_v2_licensed_20260806/J_z.npz",
+        "size_bytes": 1853908,
+        "sha256": "dc5e408bc17041ca59c0e52c8394faddf4380f963eccccb22d5d53032fcee501"
+      }
+    },
+    "coordinates_and_density": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/run002_production_complex_yee_jacobian_v2_licensed_20260806/component_yee_coordinates_and_density.npz",
+      "size_bytes": 310870,
+      "sha256": "77677f1a0fd9bc4f5883017475db12713be325e61ddcd34a6369b30d65fae1d3"
+    }
+  },
+  "optimization_run": false
+}

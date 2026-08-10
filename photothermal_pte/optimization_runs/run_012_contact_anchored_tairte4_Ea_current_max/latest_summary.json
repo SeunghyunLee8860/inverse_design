@@ -1,0 +1,31 @@
+{
+  "beta": 64.0,
+  "latent_range": [
+    0.05000012590267977,
+    0.9513227707412005
+  ],
+  "filtered_range": [
+    0.07943386225307773,
+    0.9090216798149169
+  ],
+  "rho_range": [
+    0.0,
+    1.0
+  ],
+  "rho_mean": 0.5955326029541057,
+  "gray_fraction_0p01_0p99": 0.028385045725728204,
+  "binarization_mean_4rho1mrho": 0.012479816576852772,
+  "smooth_solid_constraint": 0.0013822101561161743,
+  "smooth_void_constraint": 0.0007438497709593114,
+  "exact": {
+    "minimum_feature_nm": 500.0,
+    "opening_radius_nm": 250.0,
+    "opening_radius_pixels": 3,
+    "outside_design_phase": "fixed_solid_at_top_bottom_and_void_at_left_right",
+    "solid_bad_cell_count": 59,
+    "void_bad_cell_count": 30,
+    "total_bad_cell_count": 89,
+    "solid_fraction": 0.5953015007947813,
+    "passed": false
+  }
+}

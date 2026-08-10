@@ -1,0 +1,61 @@
+{
+  "status": "VALIDATED_GAUSSIAN10_W8P5_SOURCE_ONLY",
+  "scope": "homogeneous-air GPU source-only; no material, Q, thermal, PTE, adjoint, or optimization",
+  "wavelength_um": 10.0,
+  "target_realized_waist_um": 8.5,
+  "source_object_waist_um": 8.36043075475035,
+  "target_plane": {
+    "fitted_waist_x_um": 8.49159212134273,
+    "fitted_waist_y_um": 8.521227930542256,
+    "fitted_effective_waist_um": 8.506397119765703,
+    "Gaussian_fit_NRMSE": 0.000903943819106157,
+    "ellipticity": 0.003483938478058739,
+    "beam_center_error_um": 4.825791855344431e-09,
+    "downward_power_over_sourcepower": 1.0015081693938201,
+    "incident_power_closure_relative": 0.0015081693938201468,
+    "boundary_max_intensity_over_peak": 1.75704948885401e-05,
+    "longitudinal_Ez_E2_fraction": 0.03804702910518937
+  },
+  "source_object_profile": {
+    "fitted_effective_waist_um": 8.574424687932,
+    "square_captured_fraction": 0.9999922652752099,
+    "boundary_max_intensity_over_peak": 2.335398228930722e-05
+  },
+  "solver": {
+    "version": "8.35.4522",
+    "GPU_resource_used": "Local Host",
+    "wall_time_s": 3.457502905279398,
+    "final_auto_shutoff": 5.38555e-10,
+    "precise_GPU_memory_GiB": 0.054,
+    "logged_grid": {
+      "shape_xyz": [
+        128,
+        128,
+        75
+      ],
+      "grid_points": 1228800
+    },
+    "CPU_FDTD_fallback": false
+  },
+  "acceptance": {
+    "requested_vs_realized_fitted_waist_x_lt_0p5_percent": true,
+    "requested_vs_realized_fitted_waist_y_lt_0p5_percent": true,
+    "Gaussian_fit_NRMSE_lt_0p5_percent": true,
+    "xy_ellipticity_lt_0p5_percent": true,
+    "beam_center_error_lt_one_optical_cell": true,
+    "square_captured_fraction_ge_99p9_percent": true,
+    "source_boundary_max_le_1e_minus_3": true,
+    "source_boundary_mean_le_1e_minus_4": true,
+    "incident_power_closure_lt_0p5_percent": true,
+    "actual_mesh_readback_available": true,
+    "GPU_memory_readback_available": true,
+    "no_NaN_or_Inf": true,
+    "no_CPU_fallback": true,
+    "auto_shutoff_le_1e_minus_5": true
+  },
+  "raw_field_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/run002_gaussian10_w8p5_source_only_calibrated_4ps_20260806/paper_ir_source_only_fields.npz",
+    "size_bytes": 1352086,
+    "sha256": "d95e5cd2758c2d0cfba52a00da955619f65af2ca31befc4479d2730ae96006f6"
+  }
+}

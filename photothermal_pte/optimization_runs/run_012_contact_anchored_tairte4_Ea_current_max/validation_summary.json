@@ -1,0 +1,40 @@
+{
+  "status": "VALIDATED_CONTACT_ANCHORED_EA_PILOT_READY_FOR_CONTINUATION",
+  "geometry_mode": "contact_anchored",
+  "axis_contract": "Lumerical x=b, y=a, z=c",
+  "design_node_shape": [241, 201],
+  "design_span_um": [24.0, 20.0],
+  "fixed_contact_strip_depth_um": 2.0,
+  "material_volume_constraint": false,
+  "symmetry_constraint": false,
+  "minimum_feature_nm": 500.0,
+  "connectivity": {
+    "type": "differentiable terminal-conductance safeguard",
+    "fraction_of_fully_solid": 0.10,
+    "minimum_S": 0.00491,
+    "pilot_candidate_S": 0.01395355517796047
+  },
+  "gates": {
+    "optical_closure_relative": 3.842474524305756e-05,
+    "auto_shutoff": 9.35837e-08,
+    "mapping_fd_relative": 2.4873014123775505e-09,
+    "mapping_transpose_relative": 2.2085526025237166e-15,
+    "electrical_adfd_relative": 7.046983035020349e-07,
+    "thermal_adfd_worst_fine_relative": 1.0272018100336774e-05,
+    "combined_adfd_relative": 1.3824775109623567e-05,
+    "thermal_residual": 9.920186376065972e-11,
+    "thermal_energy_balance": 1.0582946292549716e-12
+  },
+  "pilot": {
+    "initial_objective_A": 1.1825659299559706e-23,
+    "first_candidate_objective_A": 1.184748962244235e-18,
+    "initial_evaluation_wall_s": 175.61922991648316,
+    "candidate_evaluation_wall_s": 160.18096106126904,
+    "accepted": true
+  },
+  "plot_contract": {
+    "one_png_per_solver_evaluation": true,
+    "rho_1_TaIrTe4": "black",
+    "rho_0_void": "white"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "run_id": "run_005_lowbeta_topology_exploration_pilot",
+  "status": "COMPLETED_FULLY_BINARIZED_EXACT_500NM_CONSTRAINED_PTE_OPTIMIZATION",
+  "completed_at_utc": "2026-08-08T21:39:28.316476+00:00",
+  "final_beta": 2048.0,
+  "final_global_iteration": 46,
+  "final_FOM_A_per_W": 8.679256315189473e-07,
+  "exact_binary_audit": {
+    "minimum_feature_nm": 500.0,
+    "opening_radius_nm": 250.0,
+    "opening_radius_pixels": 5,
+    "footprint_pixel_count": 81,
+    "solid_fraction": 0.4167283600112126,
+    "solid_bad_cell_count": 0,
+    "void_bad_cell_count": 0,
+    "solid_bad_fraction_all_cells": 0.0,
+    "void_bad_fraction_all_cells": 0.0,
+    "solid_pass": true,
+    "void_pass": true
+  }
+}
