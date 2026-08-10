@@ -172,7 +172,18 @@ def native_arrays(q: dict) -> dict[str, np.ndarray]:
     return result
 
 
-def run_forward(fdtd, audit, runtime, *, template: Path, rho: np.ndarray, role: str, output: Path, reuse: bool = False) -> dict:
+def run_forward(
+    fdtd,
+    audit,
+    runtime,
+    *,
+    template: Path,
+    rho: np.ndarray,
+    role: str,
+    output: Path,
+    reuse: bool = False,
+    polarization_angle_deg: float | None = None,
+) -> dict:
     project = template if reuse else output / f"{role}.fsp"
     if reuse:
         fdtd.load(str(template))
@@ -183,6 +194,12 @@ def run_forward(fdtd, audit, runtime, *, template: Path, rho: np.ndarray, role: 
         fdtd.load(str(template))
         fdtd.switchtolayout()
         set_density(fdtd, rho)
+        if polarization_angle_deg is not None:
+            fdtd.setnamed(
+                optical.SOURCE_NAME,
+                "polarization angle",
+                float(polarization_angle_deg),
+            )
         fdtd.setnamed(optical.SOURCE_NAME, "enabled", True)
         fdtd.setnamed(optical.SOURCE_NAME, "amplitude", 1.0)
         fdtd.setnamed(FIELD_REGION, "source mode", False)
@@ -192,6 +209,14 @@ def run_forward(fdtd, audit, runtime, *, template: Path, rho: np.ndarray, role: 
         resource_used = audit.strict_gpu_run(fdtd, f"run010_combined_{role}")
         wall = time.monotonic() - started
         fdtd.save(str(project))
+    actual_polarization = float(fdtd.getnamed(optical.SOURCE_NAME, "polarization angle"))
+    if polarization_angle_deg is not None and not np.isclose(
+        actual_polarization,
+        float(polarization_angle_deg),
+        rtol=0.0,
+        atol=1.0e-12,
+    ):
+        raise RuntimeError("source polarization readback mismatch")
     fdtd.runanalysis(legacy_combined.PABS_GROUP)
     if not reuse:
         fdtd.save(str(project))
@@ -214,6 +239,7 @@ def run_forward(fdtd, audit, runtime, *, template: Path, rho: np.ndarray, role: 
     electric, grid = monitor_electric(fdtd, optical.PABS_FIELD)
     detail = jacobian_builder.index_detail(fdtd)
     epsilon = np.stack([detail[f"epsilon_{c}"] for c in "xyz"], axis=-1)[..., None, :]
+    index = np.stack([detail[f"index_{c}"] for c in "xyz"], axis=-1)[..., None, :]
     if electric.shape != epsilon.shape:
         raise RuntimeError("forward E/index component shape mismatch")
     mismatch = 0.0
@@ -233,6 +259,7 @@ def run_forward(fdtd, audit, runtime, *, template: Path, rho: np.ndarray, role: 
         "q": q,
         "electric": electric,
         "epsilon": epsilon,
+        "index": index,
         "grid": grid,
         "P_Q_W": p_q,
         "P_six_W": p_six,
@@ -243,6 +270,7 @@ def run_forward(fdtd, audit, runtime, *, template: Path, rho: np.ndarray, role: 
         "resources": resources,
         "resource_used": resource_used,
         "wall_s": wall,
+        "polarization_angle_deg": actual_polarization,
         "project": {"path": str(project), "size_bytes": project.stat().st_size, "sha256": sha256(project)},
         "log_audit": log,
     }
@@ -356,7 +384,7 @@ def pullback_q(forward: dict, coupled: dict) -> tuple[dict[str, np.ndarray], dic
 
 
 def compact_forward(value: dict) -> dict:
-    return {key: item for key, item in value.items() if key not in {"q", "electric", "epsilon", "grid"}}
+    return {key: item for key, item in value.items() if key not in {"q", "electric", "epsilon", "index", "grid"}}
 
 
 def main() -> int:

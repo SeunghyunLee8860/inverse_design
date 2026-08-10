@@ -67,6 +67,30 @@
       "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_combined_adfd_Ea_gpu5_20260810/adjoint_aligned_minus.fsp",
       "size_bytes": 169014328,
       "sha256": "bdf20df4dfc372c65a9d615095b1153d5b935ee0df0c0edc0c54031eddb52346"
+    },
+    {
+      "role": "current_density_local_Yee_J_certificate",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_yee_jacobian_current_density_retry3_20260810/result.json",
+      "size_bytes": 3582,
+      "sha256": "0f1d9784f68df45c364c550d7d7f658ef65e8276469c7a33c7f4169d102371e1"
+    },
+    {
+      "role": "optimization_state_after_first_accepted_update",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_Ea_optimization_20260810/optimization_state.npz",
+      "size_bytes": 700688,
+      "sha256": "01b4f9e9eb9e59e916da81ec7ebc69e3a832244c9e8d9875441cd627355debe6"
+    },
+    {
+      "role": "optimization_history_after_first_accepted_update",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_Ea_optimization_20260810/history.json",
+      "size_bytes": 757,
+      "sha256": "bcc74b1989dceee14935a1520fa89834977680ceaa3404b0f8ebb88a26da4afb"
+    },
+    {
+      "role": "first_accepted_objective_gradient_arrays",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_Ea_optimization_20260810/evaluation_0001_beta2/objective_gradient.npz",
+      "size_bytes": 1341765,
+      "sha256": "5ada179358a90ddc37b73ad541487c68b0eab7155a45981d1ddbcf775d129ed2"
     }
   ]
 }

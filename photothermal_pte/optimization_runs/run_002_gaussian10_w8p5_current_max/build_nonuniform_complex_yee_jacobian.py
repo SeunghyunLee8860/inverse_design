@@ -19,6 +19,7 @@ import traceback
 
 import numpy as np
 from scipy import sparse
+from scipy.spatial import cKDTree
 
 
 HERE = Path(__file__).resolve().parent
@@ -212,7 +213,8 @@ def index_detail(fdtd: object) -> dict[str, np.ndarray]:
             raise RuntimeError(
                 f"index_{component} shape {raw.shape} != {(*shape, frequency.size)}"
             )
-        result[f"epsilon_{component}"] = raw[..., frequency_index] ** 2
+        result[f"index_{component}"] = raw[..., frequency_index]
+        result[f"epsilon_{component}"] = result[f"index_{component}"] ** 2
     result["frequency_hz"] = np.asarray([frequency[frequency_index]], float)
     return result
 
@@ -261,6 +263,144 @@ def open_fdtd() -> tuple[object, object]:
     )()
     lumapi = helper.load_lumapi(installation)
     return lumapi.FDTD(hide=True, serverArgs={"platform": "offscreen"}), audit
+
+
+def build_tairte4_local_epsilon_operator(
+    fdtd: object,
+    rho: np.ndarray,
+    *,
+    step: float = BUILD_STEP,
+    color_period: int = COLOR_PERIOD,
+) -> tuple[SparseYeeMaterialJacobian, dict[str, object]]:
+    """Build the exact local component-epsilon Jacobian at ``rho``.
+
+    This is a layout-only colored finite-difference of Lumerical's own
+    ``importnk2 -> index_detail`` map.  It performs no Maxwell solve.  The
+    Centered differences are used away from endpoints. Exact one-sided
+    differences are used at 0/1 without clipping or moving the baseline.
+    """
+
+    value = np.asarray(rho, dtype=np.float64)
+    nodes = tairte4_flake_optical.design_nodes()
+    if value.shape != (nodes[0].size, nodes[1].size):
+        raise ValueError("TaIrTe4 local-J density shape mismatch")
+    if not np.all(np.isfinite(value)) or np.any(value < 0.0) or np.any(value > 1.0):
+        raise ValueError("local-J density is outside the unit interval")
+    if color_period < 3:
+        raise ValueError("local-J color period is too small")
+    set_tairte4_flake_density(
+        fdtd,
+        value,
+        imported_object=tairte4_flake_optical.DESIGN_OBJECT,
+        nodes=nodes,
+    )
+    baseline = index_detail(fdtd)
+    shapes = {c: baseline[f"epsilon_{c}"].shape for c in "xyz"}
+    row_parts = {c: [] for c in "xyz"}
+    column_parts = {c: [] for c in "xyz"}
+    value_parts = {c: [] for c in "xyz"}
+    maximum_assignment_distance = {c: 0.0 for c in "xyz"}
+    evaluation_count = 1
+
+    def append_response(component: str, derivative: np.ndarray, active_nodes: np.ndarray) -> None:
+        flat = derivative.reshape(-1)
+        rows = np.flatnonzero(np.abs(flat) > NONZERO_THRESHOLD)
+        if rows.size == 0:
+            return
+        node_indices = np.argwhere(active_nodes)
+        if node_indices.size == 0:
+            raise RuntimeError("nonzero local-J response has no active perturbation node")
+        tree = cKDTree(
+            np.column_stack((nodes[0][node_indices[:, 0]], nodes[1][node_indices[:, 1]]))
+        )
+        ix, iy, _ = np.unravel_index(rows, shapes[component])
+        coordinates = component_coordinates(baseline, component)
+        distance, nearest = tree.query(
+            np.column_stack((coordinates[0][ix], coordinates[1][iy])), k=1
+        )
+        maximum_assignment_distance[component] = max(
+            maximum_assignment_distance[component], float(np.max(distance))
+        )
+        if np.any(distance > PRODUCTION_MAX_LOCAL_DISTANCE_M):
+            raise RuntimeError(f"{component} local-J response is nonlocal")
+        selected = node_indices[np.asarray(nearest, dtype=int)]
+        row_parts[component].append(rows)
+        column_parts[component].append(selected[:, 0] * nodes[1].size + selected[:, 1])
+        value_parts[component].append(flat[rows])
+
+    for color_x in range(color_period):
+        for color_y in range(color_period):
+            color = np.zeros_like(value, dtype=bool)
+            color[color_x::color_period, color_y::color_period] = True
+            centered = color & (value >= step) & (value <= 1.0 - step)
+            lower = color & (value < step)
+            upper = color & (value > 1.0 - step)
+            responses: list[tuple[str, np.ndarray, np.ndarray]] = []
+            if np.any(centered):
+                pair = {}
+                for sign, label in ((1.0, "plus"), (-1.0, "minus")):
+                    set_tairte4_flake_density(
+                        fdtd,
+                        value + sign * step * centered,
+                        imported_object=tairte4_flake_optical.DESIGN_OBJECT,
+                        nodes=nodes,
+                    )
+                    pair[label] = index_detail(fdtd)
+                    evaluation_count += 1
+                for component in "xyz":
+                    responses.append((
+                        component,
+                        (pair["plus"][f"epsilon_{component}"] - pair["minus"][f"epsilon_{component}"]) / (2.0 * step),
+                        centered,
+                    ))
+            for endpoint_mask, sign in ((lower, 1.0), (upper, -1.0)):
+                if not np.any(endpoint_mask):
+                    continue
+                set_tairte4_flake_density(
+                    fdtd,
+                    value + sign * step * endpoint_mask,
+                    imported_object=tairte4_flake_optical.DESIGN_OBJECT,
+                    nodes=nodes,
+                )
+                endpoint = index_detail(fdtd)
+                evaluation_count += 1
+                for component in "xyz":
+                    derivative = (
+                        endpoint[f"epsilon_{component}"] - baseline[f"epsilon_{component}"]
+                    ) / (sign * step)
+                    responses.append((component, derivative, endpoint_mask))
+            for component, derivative, active_nodes in responses:
+                append_response(component, derivative, active_nodes)
+    set_tairte4_flake_density(
+        fdtd,
+        value,
+        imported_object=tairte4_flake_optical.DESIGN_OBJECT,
+        nodes=nodes,
+    )
+    matrices = {}
+    for component in "xyz":
+        matrix = sparse.csr_matrix(
+            (
+                np.concatenate(value_parts[component]),
+                (np.concatenate(row_parts[component]), np.concatenate(column_parts[component])),
+            ),
+            shape=(int(np.prod(shapes[component])), value.size),
+        )
+        matrix.sum_duplicates()
+        matrices[component] = matrix
+    operator = SparseYeeMaterialJacobian(
+        density_shape=value.shape,
+        component_shapes=shapes,
+        matrices=matrices,
+    )
+    return operator, {
+        "method": "current-density layout-only colored centered FD of v261 importnk2-to-index_detail",
+        "step": float(step),
+        "color_period": int(color_period),
+        "layout_index_detail_evaluations": int(evaluation_count + 1),
+        "maximum_assignment_distance_m": maximum_assignment_distance,
+        "Maxwell_solves": 0,
+    }
 
 
 def main() -> int:
