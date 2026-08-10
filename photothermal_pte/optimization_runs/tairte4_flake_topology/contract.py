@@ -22,10 +22,10 @@ class TaIrTe4FlakeContract:
     flake_thickness_m: float = 100.0e-9
     design_step_m: float = 100.0e-9
     flake_dz_m: float = 10.0e-9
-    optical_lateral_span_m: float = 36.0e-6
+    optical_lateral_span_m: float = 40.0e-6
     optical_z_min_m: float = -4.0e-6
     optical_z_max_m: float = 4.0e-6
-    source_span_m: float = 32.0e-6
+    source_span_m: float = 34.0e-6
     source_z_m: float = 2.0e-6
     focus_z_m: float = 0.0
     pml_layers: int = 24
@@ -93,6 +93,8 @@ class TaIrTe4FlakeContract:
             raise ValueError("finite flake must not touch transverse PML")
         if not 0.0 < self.source_span_m < self.optical_lateral_span_m:
             raise ValueError("source must be finite and remain inside the FDTD span")
+        if 0.5 * (self.optical_lateral_span_m - self.source_span_m) < 2.0e-6:
+            raise ValueError("source-to-transverse-PML clearance must be at least 2 um")
         if not self.optical_z_min_m < self.focus_z_m < self.source_z_m < self.optical_z_max_m:
             raise ValueError("invalid focus/source/z-PML ordering")
         if abs(self.design_intervals * self.design_step_m - self.design_span_m) > 1e-18:
