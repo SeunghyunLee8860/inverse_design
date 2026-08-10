@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run fresh Run024 Ea and Run025 Eb with AUGLAG/L-BFGS on GPU 1."""
+"""Run fresh Run026 Ea and Run027 Eb with AUGLAG/L-BFGS on GPU 1."""
 
 from __future__ import annotations
 
@@ -20,12 +20,12 @@ GPU = int(os.environ.get("TAIRTE4_AUGLAG_GPU", "1"))
 STATUS = REPOSITORY / "photothermal_pte/optimization_runs/AUGLAG_LBFGS_DUAL_RUN_STATUS.json"
 RUNS = (
     (
-        "Run024", "Ea", PARENT / "run024_auglag_lbfgs_Ea_20260810",
-        REPOSITORY / "photothermal_pte/optimization_runs/run_024_auglag_lbfgs_contact_anchored_Ea_current_max",
+        "Run026", "Ea", PARENT / "run026_auglag_lbfgs_Ea_20260810",
+        REPOSITORY / "photothermal_pte/optimization_runs/run_026_auglag_lbfgs_contact_anchored_Ea_current_max",
     ),
     (
-        "Run025", "Eb", PARENT / "run025_auglag_lbfgs_Eb_20260810",
-        REPOSITORY / "photothermal_pte/optimization_runs/run_025_auglag_lbfgs_contact_anchored_Eb_current_max",
+        "Run027", "Eb", PARENT / "run027_auglag_lbfgs_Eb_20260810",
+        REPOSITORY / "photothermal_pte/optimization_runs/run_027_auglag_lbfgs_contact_anchored_Eb_current_max",
     ),
 )
 

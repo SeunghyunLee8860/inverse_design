@@ -140,6 +140,10 @@ class StageEvaluator:
         rho = MAPPING.physical(x, self.beta)
         self.evaluation_counter += 1
         self.global_evaluation += 1
+        latent_path = self.raw_root / (
+            f"evaluation_{self.evaluation_counter:04d}_beta{self.beta:g}_{self.output_slug}_latent.npz"
+        )
+        np.savez_compressed(latent_path, latent=x)
         output = self.raw_root / (
             f"evaluation_{self.evaluation_counter:04d}_beta{self.beta:g}_{self.output_slug}"
         )
@@ -231,7 +235,13 @@ class StageEvaluator:
             "volume_constraint": False,
         }
         self.history.append(row)
-        self.manifest["evaluations"][f"{self.evaluation_counter:04d}"] = record_manifest_entry(result)
+        artifact_entry = record_manifest_entry(result)
+        artifact_entry["latent_design"] = {
+            "path": str(latent_path),
+            "size_bytes": latent_path.stat().st_size,
+            "sha256": sha256(latent_path),
+        }
+        self.manifest["evaluations"][f"{self.evaluation_counter:04d}"] = artifact_entry
         write_json(self.raw_root / "history.json", self.history)
         write_json(self.published / "optimization_history.json", self.history)
         write_json(self.published / "RAW_ARTIFACT_MANIFEST.json", self.manifest)

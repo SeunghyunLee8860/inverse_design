@@ -44,3 +44,11 @@ def test_production_driver_has_no_custom_move_or_mma_update() -> None:
     assert "MOVE_LIMIT" not in text
     assert "set_initial_step" not in text
     assert '"manual_move_limit": None' in text
+
+
+def test_full_physics_evaluator_persists_latent_design() -> None:
+    source = Path(__file__).parents[1] / "run_nlopt_mma_optimization.py"
+    text = source.read_text()
+    assert "_latent.npz" in text
+    assert 'np.savez_compressed(latent_path, latent=x)' in text
+    assert 'artifact_entry["latent_design"]' in text
