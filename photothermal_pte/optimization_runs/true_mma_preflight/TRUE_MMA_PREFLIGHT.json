@@ -1,6 +1,6 @@
 {
   "schema": "run016-017-code-and-physics-preflight-v1",
-  "generated_at_utc": "2026-08-10T18:52:39.132321+00:00",
+  "generated_at_utc": "2026-08-10T19:01:37.268527+00:00",
   "status": "BLOCKED_RUN016_RUN017_TRUE_MMA_PREFLIGHT",
   "passed": false,
   "branch_expected": "agent/restart-true-mma-pte-optimization",
@@ -116,21 +116,27 @@
     },
     "contact_anchored_domain": {
       "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run016_017_true_mma_preflight_20260810/domain_comparison/tairte4_flake_40um_48um_domain_comparison.json",
-      "exists": false,
-      "passed": false,
-      "expected_status": "VALIDATED_TAIRTE4_FLAKE_40UM_OPTICAL_DOMAIN"
+      "exists": true,
+      "sha256": "52121b8587868ba3237eab69b0ade921e91870102199c317e575c0cc2354b85a",
+      "reported_status": "VALIDATED_TAIRTE4_FLAKE_40UM_OPTICAL_DOMAIN",
+      "expected_status": "VALIDATED_TAIRTE4_FLAKE_40UM_OPTICAL_DOMAIN",
+      "passed": true
     },
     "contact_anchored_mesh": {
       "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run016_017_true_mma_preflight_20260810/mesh_comparison/tairte4_flake_100nm_50nm_mesh_comparison.json",
-      "exists": false,
-      "passed": false,
-      "expected_status": "VALIDATED_TAIRTE4_FLAKE_100NM_OPTICAL_MESH"
+      "exists": true,
+      "sha256": "9673346d2811090ff0acca7033458b6883e9cdeb0723311f2d04eb7ca477b480",
+      "reported_status": "VALIDATED_TAIRTE4_FLAKE_100NM_OPTICAL_MESH",
+      "expected_status": "VALIDATED_TAIRTE4_FLAKE_100NM_OPTICAL_MESH",
+      "passed": true
     },
     "combined_Eb_adfd": {
       "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run016_017_true_mma_preflight_20260810/combined_Eb/tairte4_flake_combined_adfd.json",
-      "exists": false,
-      "passed": false,
-      "expected_status": "VALIDATED_TAIRTE4_FLAKE_COMBINED_PHYSICAL_RHO_ADFD"
+      "exists": true,
+      "sha256": "3060d84b8f11508b2c72a510883968345c7a6e1fe0f25d24b4c3801bd0a134ed",
+      "reported_status": "VALIDATED_TAIRTE4_FLAKE_COMBINED_PHYSICAL_RHO_ADFD",
+      "expected_status": "VALIDATED_TAIRTE4_FLAKE_COMBINED_PHYSICAL_RHO_ADFD",
+      "passed": true
     }
   },
   "dependency_manifest": {

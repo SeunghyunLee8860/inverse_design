@@ -1,26 +1,8 @@
 {
   "schema": "true-mma-dual-supervisor-v1",
-  "generated_at_utc": "2026-08-10T18:57:54.280816+00:00",
-  "status": "RUNNING_COMMAND",
+  "generated_at_utc": "2026-08-10T19:01:37.277237+00:00",
+  "status": "BLOCKED_COMMAND_FAILED",
   "gpu": 1,
-  "label": "combined_Eb_ADFD",
-  "command": [
-    "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python",
-    "-m",
-    "photothermal_pte.optimization_runs.tairte4_flake_topology.validate_combined_adfd",
-    "--base-fsp",
-    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_uniform_rho0p5_Ea_forward_retry_20260810/tairte4_flake_forward_Ea.fsp",
-    "--base-sha256",
-    "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83",
-    "--jacobian-dir",
-    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_component_yee_jacobian_retry_20260810",
-    "--output-dir",
-    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run016_017_true_mma_preflight_20260810/combined_Eb",
-    "--gpu-device",
-    "GPU 1",
-    "--cuda-device",
-    "0",
-    "--polarization",
-    "Eb"
-  ]
+  "label": "close_true_mma_preflight",
+  "returncode": 2
 }
