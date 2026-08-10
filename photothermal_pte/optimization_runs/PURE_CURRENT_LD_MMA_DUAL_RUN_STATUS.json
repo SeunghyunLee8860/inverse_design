@@ -1,7 +1,7 @@
 {
   "schema": "pure-terminal-current-nlopt-ld-mma-dual-supervisor-v1",
-  "generated_at_utc": "2026-08-10T21:44:20.047502+00:00",
-  "status": "RUNNING_PURE_CURRENT_NLOPT_LD_MMA",
+  "generated_at_utc": "2026-08-10T22:18:05+00:00",
+  "status": "STOPPED_UNCALIBRATED_LD_MMA_DIAGNOSTIC",
   "gpu": 1,
   "algorithm": "NLopt LD_MMA",
   "objective": "signed full-flake terminal PTE current",
@@ -14,6 +14,8 @@
   "manual_move_limit": null,
   "run": "Run030",
   "polarization": "Ea",
+  "completed_full_physics_evaluations": 12,
+  "stop_reason": "Default LD_MMA curvature/initial-step settings reproduced rapid bound saturation; no beta promotion or Eb run was allowed.",
   "command": [
     "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python",
     "-m",
