@@ -7,6 +7,7 @@ import argparse
 import fcntl
 import json
 from pathlib import Path
+import re
 import subprocess
 import time
 
@@ -19,7 +20,13 @@ def run(command: list[str], *, cwd: Path, check: bool = True) -> subprocess.Comp
     return subprocess.run(command, cwd=cwd, check=check, text=True)
 
 
-def publish(repo: Path, relative_published: Path, branch: str, evaluation_id: int) -> bool:
+def publish(
+    repo: Path,
+    relative_published: Path,
+    branch: str,
+    evaluation_id: int,
+    run_label: str,
+) -> bool:
     run(["git", "add", "--", str(relative_published)], cwd=repo)
     changed = run(
         ["git", "diff", "--cached", "--quiet", "--", str(relative_published)],
@@ -29,7 +36,7 @@ def publish(repo: Path, relative_published: Path, branch: str, evaluation_id: in
     if not changed:
         return False
     run(
-        ["git", "commit", "-m", f"Update Run012 plots through evaluation {evaluation_id}"],
+        ["git", "commit", "-m", f"Update {run_label} plots through evaluation {evaluation_id}"],
         cwd=repo,
     )
     run(["git", "push", "origin", branch], cwd=repo)
@@ -42,6 +49,7 @@ def main() -> int:
     parser.add_argument("--raw-root", required=True, type=Path)
     parser.add_argument("--published-dir", required=True, type=Path)
     parser.add_argument("--branch", required=True)
+    parser.add_argument("--run-label")
     parser.add_argument("--poll-seconds", type=float, default=20.0)
     parser.add_argument("--once", action="store_true")
     args = parser.parse_args()
@@ -50,7 +58,9 @@ def main() -> int:
     raw_root = args.raw_root.resolve()
     published = args.published_dir.resolve()
     relative_published = published.relative_to(repo)
-    lock_path = Path("/tmp/tairte4_run012_plot_publisher.lock")
+    run_label = args.run_label or published.name
+    safe_label = re.sub(r"[^A-Za-z0-9_.-]+", "_", run_label)
+    lock_path = Path(f"/tmp/tairte4_{safe_label}_plot_publisher.lock")
     with lock_path.open("w") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         last_seen = -1
@@ -62,7 +72,7 @@ def main() -> int:
                     time.sleep(2.0)
                     payload = regenerate(raw_root, published)
                     latest = int(payload["latest_evaluation_id"] or 0)
-                    publish(repo, relative_published, args.branch, latest)
+                    publish(repo, relative_published, args.branch, latest, run_label)
                     last_seen = complete
             except (json.JSONDecodeError, FileNotFoundError):
                 pass
