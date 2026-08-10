@@ -40,6 +40,21 @@ SIGMA_A_S_M = 4.91e5
 FULL_SOLID_TERMINAL_CONDUCTANCE_S = (
     SIGMA_A_S_M * 100.0e-9 * 24.0e-6 / 24.0e-6
 )
+REFERENCE_INCIDENT_POWER_W = 285.0e-6
+
+
+def objective_power_fields(result: dict, objective_A: float) -> dict:
+    source_power_W = float(result["forward"]["source_power_W"])
+    if source_power_W <= 0.0:
+        raise ValueError(f"non-positive simulated source power: {source_power_W}")
+    return {
+        "simulated_source_power_W": source_power_W,
+        "reference_incident_power_W": REFERENCE_INCIDENT_POWER_W,
+        "objective_at_reference_power_A": (
+            float(objective_A) * REFERENCE_INCIDENT_POWER_W / source_power_W
+        ),
+        "responsivity_A_W": float(objective_A) / source_power_W,
+    }
 
 
 def emit(path: Path, event: str, **values) -> None:
@@ -137,10 +152,23 @@ def publish_plot(
     fig.colorbar(grad_image, ax=axes[0, 2])
     accepted_rows = [row for row in history if row.get("accepted")]
     iteration = [row.get("accepted_update_index", row["global_iteration"]) for row in accepted_rows]
-    axes[1, 0].plot(iteration, [row["objective_A"] for row in accepted_rows], marker="o")
-    axes[1, 0].set_title("accepted iteration vs signed PTE current")
+    has_reference_current = all(
+        "objective_at_reference_power_A" in row for row in accepted_rows
+    )
+    if has_reference_current:
+        plotted_objective = [
+            1.0e9 * row["objective_at_reference_power_A"] for row in accepted_rows
+        ]
+        objective_ylabel = "equivalent current at 285 uW (nA)"
+        objective_title = "accepted iteration vs 285 uW-equivalent PTE current"
+    else:
+        plotted_objective = [row["objective_A"] for row in accepted_rows]
+        objective_ylabel = "raw current at simulated source power (A)"
+        objective_title = "accepted iteration vs raw signed PTE current"
+    axes[1, 0].plot(iteration, plotted_objective, marker="o")
+    axes[1, 0].set_title(objective_title)
     axes[1, 0].set_xlabel("accepted update")
-    axes[1, 0].set_ylabel("current (A)")
+    axes[1, 0].set_ylabel(objective_ylabel)
     conductance_axis = axes[1, 0].twinx()
     conductance_axis.plot(
         iteration,
@@ -163,9 +191,14 @@ def publish_plot(
     axes[1, 2].set_ylabel("smooth residual")
     bad_axis.set_ylabel("bad cells")
     objective = float(history[-1]["objective_A"])
+    reference_text = ""
+    if "objective_at_reference_power_A" in history[-1]:
+        reference_text = (
+            f", I(285uW)={1.0e9 * history[-1]['objective_at_reference_power_A']:.3f} nA"
+        )
     fig.suptitle(
         f"evaluation={evaluation_id}, {label}, accepted={accepted}; "
-        f"beta={summary['beta']:g}, objective={objective:.5e} A, "
+        f"beta={summary['beta']:g}, raw I={objective:.5e} A{reference_text}, "
         f"gray={summary['gray_fraction_0p01_0p99']:.3f}, "
         f"bad={summary['exact']['total_bad_cell_count']}"
     )
@@ -281,6 +314,7 @@ def main() -> int:
             "accepted_update_index": 0,
             "terminal_conductance_S": terminal_conductance,
             "minimum_terminal_conductance_S": minimum_conductance,
+            **objective_power_fields(result, objective),
         }]
         publish_plot(
             published,
@@ -364,6 +398,7 @@ def main() -> int:
             "minimum_terminal_conductance_S": minimum_conductance,
             "connectivity_feasible": connectivity_feasible,
             "solver_result": str(raw_root / f"evaluation_{evaluation_id:04d}_beta{int(beta)}" / "objective_gradient_result.json"),
+            **objective_power_fields(result, candidate_objective),
         })
         history_path.write_text(json.dumps(history, indent=2) + "\n")
         publish_plot(
@@ -485,6 +520,7 @@ def main() -> int:
                     "solver_result": str(
                         raw_root / f"evaluation_{evaluation_counter:04d}_beta{int(next_beta)}_reprojection" / "objective_gradient_result.json"
                     ),
+                    **objective_power_fields(reprojected_result, objective),
                 })
                 history_path.write_text(json.dumps(history, indent=2) + "\n")
                 publish_plot(

@@ -13,6 +13,7 @@ import time
 import numpy as np
 
 from photothermal_pte.optimization_runs.tairte4_flake_topology.run_optimization import (
+    REFERENCE_INCIDENT_POWER_W,
     publish_plot,
 )
 
@@ -64,7 +65,24 @@ def locate_artifacts(raw_root: Path, row: dict) -> tuple[int, str, Path, Path]:
 
 
 def regenerate(raw_root: Path, published: Path) -> dict:
-    history = read_json_with_retry(raw_root / "history.json")
+    raw_history = read_json_with_retry(raw_root / "history.json")
+    history = [dict(row) for row in raw_history]
+    for row in history:
+        if row.get("initial_uniform"):
+            result_path = raw_root / "evaluation_initial" / "objective_gradient_result.json"
+        else:
+            result_path = Path(row["solver_result"])
+        result = json.loads(result_path.read_text())
+        source_power_W = float(result["forward"]["source_power_W"])
+        objective_A = float(row["objective_A"])
+        row.update({
+            "simulated_source_power_W": source_power_W,
+            "reference_incident_power_W": REFERENCE_INCIDENT_POWER_W,
+            "objective_at_reference_power_A": (
+                objective_A * REFERENCE_INCIDENT_POWER_W / source_power_W
+            ),
+            "responsivity_A_W": objective_A / source_power_W,
+        })
     published.mkdir(parents=True, exist_ok=True)
     index: list[dict] = []
     last_accepted: tuple[int, str, np.ndarray, np.ndarray, dict, int] | None = None
@@ -101,6 +119,13 @@ def regenerate(raw_root: Path, published: Path) -> dict:
             "accepted_update_index": int(row.get("accepted_update_index", row["global_iteration"])),
             "beta": float(row["beta"]),
             "objective_A": float(row["objective_A"]),
+            "simulated_source_power_W": float(row["simulated_source_power_W"]),
+            "reference_incident_power_W": float(row["reference_incident_power_W"]),
+            "objective_at_reference_power_A": float(row["objective_at_reference_power_A"]),
+            "objective_at_reference_power_nA": float(
+                1.0e9 * row["objective_at_reference_power_A"]
+            ),
+            "responsivity_A_W": float(row["responsivity_A_W"]),
             "plot": plot_path.name,
             "plot_sha256": sha256(plot_path),
         }
@@ -125,9 +150,14 @@ def regenerate(raw_root: Path, published: Path) -> dict:
         )
 
     payload = {
-        "schema": "tairte4-iteration-plot-index-v1",
+        "schema": "tairte4-iteration-plot-index-v2",
         "red_density_contour_present": False,
         "density_rendering": "gray_r: black=rho_1_TaIrTe4, white=rho_0_void",
+        "objective_reporting": {
+            "raw_objective": "signed terminal current at each Lumerical simulated source power",
+            "reference_incident_power_W": REFERENCE_INCIDENT_POWER_W,
+            "reference_current": "linear source-power equivalent; no empirical fitting or gradient rescaling",
+        },
         "evaluation_count": len(index),
         "latest_evaluation_id": index[-1]["evaluation_id"] if index else None,
         "plots": index,

@@ -1,7 +1,12 @@
 {
-  "schema": "tairte4-iteration-plot-index-v1",
+  "schema": "tairte4-iteration-plot-index-v2",
   "red_density_contour_present": false,
   "density_rendering": "gray_r: black=rho_1_TaIrTe4, white=rho_0_void",
+  "objective_reporting": {
+    "raw_objective": "signed terminal current at each Lumerical simulated source power",
+    "reference_incident_power_W": 0.000285,
+    "reference_current": "linear source-power equivalent; no empirical fitting or gradient rescaling"
+  },
   "evaluation_count": 27,
   "latest_evaluation_id": 27,
   "plots": [
@@ -12,8 +17,13 @@
       "accepted_update_index": 0,
       "beta": 2.0,
       "objective_A": 1.1825659299559706e-23,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 2.436916935434758e-14,
+      "objective_at_reference_power_nA": 2.436916935434758e-05,
+      "responsivity_A_W": 8.550585738367574e-11,
       "plot": "evaluation_0001_initial.png",
-      "plot_sha256": "d3985217375805fa248ba57bcfbd258b701bc6281b55649c050f8b6e7a6e0e8c"
+      "plot_sha256": "ada2056277adf56feed184f272b23b507e497598c068a42cc416387ab5253153"
     },
     {
       "evaluation_id": 2,
@@ -22,8 +32,13 @@
       "accepted_update_index": 1,
       "beta": 2.0,
       "objective_A": 1.184748962244235e-18,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 2.4414155162065467e-09,
+      "objective_at_reference_power_nA": 2.441415516206547,
+      "responsivity_A_W": 8.566370232303674e-06,
       "plot": "evaluation_0002_candidate.png",
-      "plot_sha256": "519e4b844f278b8b9f31fbf1095b285789ff52def4a2d2cfc0ef437a36301cf8"
+      "plot_sha256": "9de32f9459f46d1b5c5f903d88c147d09308ea430c0272406a6a9e3ad71fc931"
     },
     {
       "evaluation_id": 3,
@@ -32,8 +47,13 @@
       "accepted_update_index": 2,
       "beta": 2.0,
       "objective_A": 2.3950065636088067e-18,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 4.935396756739819e-09,
+      "objective_at_reference_power_nA": 4.935396756739819,
+      "responsivity_A_W": 1.7317181602595856e-05,
       "plot": "evaluation_0003_candidate.png",
-      "plot_sha256": "1dc6b9a02f785673ff6b35c3ba14525de02afb3ca5ea4b988ad1fa0e3098d4df"
+      "plot_sha256": "6f7e04faac7c9c8c843bf5c538dd69590e66f2cffa07664e10a450766e698e80"
     },
     {
       "evaluation_id": 4,
@@ -42,8 +62,13 @@
       "accepted_update_index": 3,
       "beta": 2.0,
       "objective_A": 3.6389366734782135e-18,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 7.498767030184818e-09,
+      "objective_at_reference_power_nA": 7.498767030184818,
+      "responsivity_A_W": 2.631146326380638e-05,
       "plot": "evaluation_0004_candidate.png",
-      "plot_sha256": "7ae247215fd33466107c637d161c9fc4291323106ed7a9d0a905dc1e437aadb6"
+      "plot_sha256": "0b40cfc11733928c7cd663bf6cb1fac855f2cbf8f8903b878c8168dd85205f7b"
     },
     {
       "evaluation_id": 5,
@@ -52,8 +77,13 @@
       "accepted_update_index": 4,
       "beta": 2.0,
       "objective_A": 4.909834260208918e-18,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 1.0117709258989373e-08,
+      "objective_at_reference_power_nA": 10.117709258989374,
+      "responsivity_A_W": 3.550073424206797e-05,
       "plot": "evaluation_0005_candidate.png",
-      "plot_sha256": "398433bcb6f66650ee3d5d9dd19a6fd106016849a55ba0eced068a3eed64e8df"
+      "plot_sha256": "e0def2546d4d44bf482fa6e17f4dc5ff440dbb6a1c55bd82e0a5f6db67b79fe5"
     },
     {
       "evaluation_id": 6,
@@ -62,8 +92,13 @@
       "accepted_update_index": 5,
       "beta": 2.0,
       "objective_A": 6.19824146778075e-18,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 1.2772733612671625e-08,
+      "objective_at_reference_power_nA": 12.772733612671626,
+      "responsivity_A_W": 4.481660916726886e-05,
       "plot": "evaluation_0006_candidate.png",
-      "plot_sha256": "cb654f5b220b97e234f9d3794f4cd89c24ce578dbe2eab02526c32614cd82596"
+      "plot_sha256": "949a738749e0b772f86775176dc961c03add77749af13aa063634207c73ee108"
     },
     {
       "evaluation_id": 7,
@@ -72,8 +107,13 @@
       "accepted_update_index": 6,
       "beta": 2.0,
       "objective_A": 7.494747733180848e-18,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 1.54444477175828e-08,
+      "objective_at_reference_power_nA": 15.4444477175828,
+      "responsivity_A_W": 5.419104462309755e-05,
       "plot": "evaluation_0007_candidate.png",
-      "plot_sha256": "80efbda567ae729dd1470bae04491f9fb64f10c4127c868252f81bd882d6d08f"
+      "plot_sha256": "4a3b2e699714aac2fb5f6c6275c9fb4538c583d6d21cd706c3fa649216deb5b0"
     },
     {
       "evaluation_id": 8,
@@ -82,8 +122,13 @@
       "accepted_update_index": 7,
       "beta": 2.0,
       "objective_A": 8.79000961620035e-18,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 1.8113597520224978e-08,
+      "objective_at_reference_power_nA": 18.113597520224978,
+      "responsivity_A_W": 6.355648252710519e-05,
       "plot": "evaluation_0008_candidate.png",
-      "plot_sha256": "54b12952ad9c9a3ae762949af01af9563d3e7b35340c55eea122000257f42a7a"
+      "plot_sha256": "55ba036c6cb9d3297ae794f834563a4d0adee459192d2b85fcb01d68ba5da6cf"
     },
     {
       "evaluation_id": 9,
@@ -92,8 +137,13 @@
       "accepted_update_index": 8,
       "beta": 2.0,
       "objective_A": 1.0070599162811035e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 2.0752511997993237e-08,
+      "objective_at_reference_power_nA": 20.75251199799324,
+      "responsivity_A_W": 7.28158315719061e-05,
       "plot": "evaluation_0009_candidate.png",
-      "plot_sha256": "11c174f56a2f35b1ea56ead961ab7168969b7230e617bf0d02a69f9d6afff0a9"
+      "plot_sha256": "6146e33a3a215278cbf5744b32608f16b947e1080aa5909f8daf2b8984869614"
     },
     {
       "evaluation_id": 10,
@@ -102,8 +152,13 @@
       "accepted_update_index": 8,
       "beta": 4.0,
       "objective_A": 1.4422070845904835e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 2.971960192505624e-08,
+      "objective_at_reference_power_nA": 29.71960192505624,
+      "responsivity_A_W": 0.00010427930500019733,
       "plot": "evaluation_0010_reprojection.png",
-      "plot_sha256": "f9f625c27fa19b4ea08f12e3e2b47b8c9900d5c7a1b47ba1995f288097340311"
+      "plot_sha256": "01623b645bb0a73c8b44ff5d51bd1ed3f67875adeb6a5d084a747e3d5e2fcc9d"
     },
     {
       "evaluation_id": 11,
@@ -112,8 +167,13 @@
       "accepted_update_index": 9,
       "beta": 4.0,
       "objective_A": 1.5948484387553693e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 3.2865086600282374e-08,
+      "objective_at_reference_power_nA": 32.865086600282375,
+      "responsivity_A_W": 0.00011531609333432412,
       "plot": "evaluation_0011_candidate.png",
-      "plot_sha256": "5bbfe0428095672ed3f18d9d0ffad82508901e040f8fa3939e1a1477f90997e0"
+      "plot_sha256": "02daff2a6c8c9a83a0bf652366194343cc5781d5f0b9e0f87071543ce6a38c6d"
     },
     {
       "evaluation_id": 12,
@@ -122,8 +182,13 @@
       "accepted_update_index": 10,
       "beta": 4.0,
       "objective_A": 1.7404817581370825e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 3.586615650577246e-08,
+      "objective_at_reference_power_nA": 35.86615650577246,
+      "responsivity_A_W": 0.00012584616317814899,
       "plot": "evaluation_0012_candidate.png",
-      "plot_sha256": "b9222c12de52f9114b0a25d94df5807ca4474f907ec00df561d22da12ad07231"
+      "plot_sha256": "a9c22c05a50ee8f6b16be00595f310e04884c80ab8dced524048918813da2c34"
     },
     {
       "evaluation_id": 13,
@@ -132,8 +197,13 @@
       "accepted_update_index": 11,
       "beta": 4.0,
       "objective_A": 1.8781344018795382e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 3.87027684040693e-08,
+      "objective_at_reference_power_nA": 38.7027684040693,
+      "responsivity_A_W": 0.00013579918738269931,
       "plot": "evaluation_0013_candidate.png",
-      "plot_sha256": "9b256275e5fd20eb65dd677bcdbbb4333a4340118b76431bcbfccc07d6863d5d"
+      "plot_sha256": "36d5843eb6f32b8a2bedc47926e4ef1dfcc9dfadbc0f099bc9cd398efdebd921"
     },
     {
       "evaluation_id": 14,
@@ -142,8 +212,13 @@
       "accepted_update_index": 12,
       "beta": 4.0,
       "objective_A": 2.0072810325103808e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 4.136409665111558e-08,
+      "objective_at_reference_power_nA": 41.36409665111558,
+      "responsivity_A_W": 0.0001451371812319845,
       "plot": "evaluation_0014_candidate.png",
-      "plot_sha256": "09048f20b4b86c92b89522ebbfeafe5607171e12bcd4a2193a211dcdfd3a483f"
+      "plot_sha256": "7822106da563b6d622867651986d65f7b5af515fed66f438f6c91556d98242ed"
     },
     {
       "evaluation_id": 15,
@@ -152,8 +227,13 @@
       "accepted_update_index": 13,
       "beta": 4.0,
       "objective_A": 2.1280525004928608e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 4.385283768608502e-08,
+      "objective_at_reference_power_nA": 43.85283768608502,
+      "responsivity_A_W": 0.0001538696059160878,
       "plot": "evaluation_0015_candidate.png",
-      "plot_sha256": "c07320fdb6cffc8dde298e2b83cc966a88d2a2e8539d5e3603b0a222ee139fc1"
+      "plot_sha256": "b8e47665699e2c794a9593780427497e580381bf9c4941f860bf9c287048b20b"
     },
     {
       "evaluation_id": 16,
@@ -162,8 +242,13 @@
       "accepted_update_index": 14,
       "beta": 4.0,
       "objective_A": 2.240930760777492e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 4.6178923168188104e-08,
+      "objective_at_reference_power_nA": 46.178923168188106,
+      "responsivity_A_W": 0.0001620313093620635,
       "plot": "evaluation_0016_candidate.png",
-      "plot_sha256": "1536ca1fc8c429ede27662a5b513422e5b766b50ade1d704442368d045d6f2b7"
+      "plot_sha256": "10d3f523f48b4f27e5500280ce7d86fd58dce09286b6e4c95958b6a111dccd9a"
     },
     {
       "evaluation_id": 17,
@@ -172,8 +257,13 @@
       "accepted_update_index": 14,
       "beta": 8.0,
       "objective_A": 2.7295330076184067e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 5.624756340089318e-08,
+      "objective_at_reference_power_nA": 56.24756340089318,
+      "responsivity_A_W": 0.00019735987158208136,
       "plot": "evaluation_0017_reprojection.png",
-      "plot_sha256": "d6a4a576dd718e8c66b2fb4f3dd7edad16a4bcd34f3cfb5d11c29924232175fc"
+      "plot_sha256": "da35af7acb5d66cee6a7a22d15eb3ab97d0e4f2d782afc02dc8ae532c7e8f8c6"
     },
     {
       "evaluation_id": 18,
@@ -182,8 +272,13 @@
       "accepted_update_index": 15,
       "beta": 8.0,
       "objective_A": 2.809341315533559e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 5.789217544509496e-08,
+      "objective_at_reference_power_nA": 57.89217544509496,
+      "responsivity_A_W": 0.00020313044015822794,
       "plot": "evaluation_0018_candidate.png",
-      "plot_sha256": "672ba99e1bcf19839f717588ceec267449ff5015f4435e414e9ca9f298034bd5"
+      "plot_sha256": "454323c7e3724e9b630392bc838c4ccc55caf6790451be86e81936e90d885beb"
     },
     {
       "evaluation_id": 19,
@@ -192,8 +287,13 @@
       "accepted_update_index": 16,
       "beta": 8.0,
       "objective_A": 2.8836075216459434e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 5.942258124168761e-08,
+      "objective_at_reference_power_nA": 59.42258124168761,
+      "responsivity_A_W": 0.000208500285058553,
       "plot": "evaluation_0019_candidate.png",
-      "plot_sha256": "8719f9271baf056c670bc7fc675224513828471c559427d4ea5d1c61e64c893c"
+      "plot_sha256": "c91b85eaadec13b5ef924c319f4b38784ff837a494f2cbdc5056139518402447"
     },
     {
       "evaluation_id": 20,
@@ -202,8 +302,13 @@
       "accepted_update_index": 17,
       "beta": 8.0,
       "objective_A": 2.95237620166755e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 6.083969936362087e-08,
+      "objective_at_reference_power_nA": 60.839699363620866,
+      "responsivity_A_W": 0.00021347262934603815,
       "plot": "evaluation_0020_candidate.png",
-      "plot_sha256": "4db5cdd546523a699c7fca16257350fe5635626ab9e3b752d72235faa00d13d6"
+      "plot_sha256": "c83e94c35d35fe1500eef743b1abeb110ac4ec3dbb81c48b77302f16144adc93"
     },
     {
       "evaluation_id": 21,
@@ -212,8 +317,13 @@
       "accepted_update_index": 18,
       "beta": 8.0,
       "objective_A": 3.015987093612614e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 6.215053080170237e-08,
+      "objective_at_reference_power_nA": 62.15053080170237,
+      "responsivity_A_W": 0.00021807203790071006,
       "plot": "evaluation_0021_candidate.png",
-      "plot_sha256": "48cc8ad6bd178142f64ea318572deab4d4fedbf8f24cf2988cf4acd6e8158aac"
+      "plot_sha256": "8402bf9de13020dc0b09a29ecef5d1f60de3ea26f1378b8d0519daeeb9516de0"
     },
     {
       "evaluation_id": 22,
@@ -222,8 +332,13 @@
       "accepted_update_index": 19,
       "beta": 8.0,
       "objective_A": 3.0751479745570824e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 6.336966073802804e-08,
+      "objective_at_reference_power_nA": 63.36966073802804,
+      "responsivity_A_W": 0.00022234968680009842,
       "plot": "evaluation_0022_candidate.png",
-      "plot_sha256": "516129755cf9959a007ec7c1ba62e41af746a53591295bd897d1351193d26efa"
+      "plot_sha256": "500edaf77a6528cc727871ad3e54e253fd2748718012133326282ad454356c1f"
     },
     {
       "evaluation_id": 23,
@@ -232,8 +347,13 @@
       "accepted_update_index": 19,
       "beta": 16.0,
       "objective_A": 3.1969404047160773e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 6.587944076926284e-08,
+      "objective_at_reference_power_nA": 65.87944076926284,
+      "responsivity_A_W": 0.00023115593252372927,
       "plot": "evaluation_0023_reprojection.png",
-      "plot_sha256": "881f71901841b10a7b16f89e72fb7cd7efd592615ac21ec5ed65d397362b59b5"
+      "plot_sha256": "9fa1adf5be2ef7c97a5e31eea055e0f0ba131ee1c6f549aef6c87d0ab9b245b7"
     },
     {
       "evaluation_id": 24,
@@ -242,8 +362,13 @@
       "accepted_update_index": 20,
       "beta": 16.0,
       "objective_A": 3.255796169105498e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 6.709228316016342e-08,
+      "objective_at_reference_power_nA": 67.09228316016342,
+      "responsivity_A_W": 0.00023541151986022256,
       "plot": "evaluation_0024_candidate.png",
-      "plot_sha256": "572d733017e091d0f25838c69fa3dbeebd5a067279120a1e9ae5744f8c5c50b0"
+      "plot_sha256": "84e9f7f832abb9773c524619b5b075702b2d825a41023c5e5852a80c6c4f31a4"
     },
     {
       "evaluation_id": 25,
@@ -252,8 +377,13 @@
       "accepted_update_index": 21,
       "beta": 16.0,
       "objective_A": 3.309695227818403e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 6.820298257788097e-08,
+      "objective_at_reference_power_nA": 68.20298257788097,
+      "responsivity_A_W": 0.00023930871079958234,
       "plot": "evaluation_0025_candidate.png",
-      "plot_sha256": "f1aaa7ceaf0535551e627fe83624d9e68419e32a79b490d2f4de87ab654f7c3d"
+      "plot_sha256": "2b57bf28e50be28f299359882a73144890a83036eda1315611149ce0c5652ac6"
     },
     {
       "evaluation_id": 26,
@@ -262,8 +392,13 @@
       "accepted_update_index": 22,
       "beta": 16.0,
       "objective_A": 3.358424222149348e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 6.920714233357599e-08,
+      "objective_at_reference_power_nA": 69.20714233357599,
+      "responsivity_A_W": 0.00024283207836342454,
       "plot": "evaluation_0026_candidate.png",
-      "plot_sha256": "eff97cb4e4cf7a3f88ab00cf1c573ac48e40dfa17efde782b60e03f67737e5eb"
+      "plot_sha256": "596e32f4615bb8e4c86ab9a67be9e428bccd394cbe5bd0236d99500817feeb8e"
     },
     {
       "evaluation_id": 27,
@@ -272,8 +407,13 @@
       "accepted_update_index": 23,
       "beta": 16.0,
       "objective_A": 3.402630491076245e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 7.011810215975963e-08,
+      "objective_at_reference_power_nA": 70.11810215975963,
+      "responsivity_A_W": 0.00024602842863073553,
       "plot": "evaluation_0027_candidate.png",
-      "plot_sha256": "2165888c427e137358eb3f8c73d60e54f9c02034398263b53d5f5d1cbbff3129"
+      "plot_sha256": "922be0b1c782b0070b43416a40cc9e20ac1e74ad28e15f090c09a1d7aa61d7e8"
     }
   ]
 }
