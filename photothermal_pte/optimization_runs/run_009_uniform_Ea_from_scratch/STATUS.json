@@ -1,19 +1,19 @@
 {
   "run_id": "run_009_uniform_Ea_from_scratch",
   "status": "RUNNING_EXACT_UNIFORM_EA_OBJECTIVE_FIRST_OPTIMIZATION",
-  "last_updated_utc": "2026-08-10T03:44:30.608208+00:00",
+  "last_updated_utc": "2026-08-10T03:57:32.247785+00:00",
   "beta": 2.0,
-  "global_iteration": 27,
-  "stage_iteration": 27,
+  "global_iteration": 28,
+  "stage_iteration": 28,
   "stage_convergence": {
     "converged": false,
     "reason": "recent FOM/density changes have not plateaued",
-    "maximum_relative_fom_change": 0.03311663910019907,
-    "maximum_rho_rms_change": 0.010442583681841807,
-    "maximum_rho_max_change": 0.013129915183247576
+    "maximum_relative_fom_change": 0.031332578746362284,
+    "maximum_rho_rms_change": 0.010278509126272721,
+    "maximum_rho_max_change": 0.013129915063465614
   },
-  "FOM_A_per_W": 1.2313915258024333e-06,
+  "FOM_A_per_W": 1.240155428630037e-06,
   "constraints_feasible": true,
-  "exact_500nm_solid_bad_cells": 39,
-  "exact_500nm_void_bad_cells": 0
+  "exact_500nm_solid_bad_cells": 37,
+  "exact_500nm_void_bad_cells": 2
 }
