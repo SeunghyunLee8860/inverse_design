@@ -27,16 +27,16 @@ GPU = int(os.environ.get("TAIRTE4_PURE_CURRENT_LD_MMA_GPU", "5"))
 STATUS = REPOSITORY / "photothermal_pte/optimization_runs/PURE_CURRENT_LD_MMA_DUAL_RUN_STATUS.json"
 RUNS = (
     (
-        "Run030",
+        "Run032",
         "Ea",
-        PARENT / "run030_pure_current_ld_mma_Ea_20260810",
-        REPOSITORY / "photothermal_pte/optimization_runs/run_030_pure_current_ld_mma_contact_anchored_Ea_current_max",
+        PARENT / "run032_pure_current_ld_mma_calibrated_Ea_20260810",
+        REPOSITORY / "photothermal_pte/optimization_runs/run_032_pure_current_ld_mma_calibrated_Ea_current_max",
     ),
     (
-        "Run031",
+        "Run033",
         "Eb",
-        PARENT / "run031_pure_current_ld_mma_Eb_20260810",
-        REPOSITORY / "photothermal_pte/optimization_runs/run_031_pure_current_ld_mma_contact_anchored_Eb_current_max",
+        PARENT / "run033_pure_current_ld_mma_calibrated_Eb_20260810",
+        REPOSITORY / "photothermal_pte/optimization_runs/run_033_pure_current_ld_mma_calibrated_Eb_current_max",
     ),
 )
 
