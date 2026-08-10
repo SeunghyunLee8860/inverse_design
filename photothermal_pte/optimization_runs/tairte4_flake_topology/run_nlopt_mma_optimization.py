@@ -109,6 +109,7 @@ class StageEvaluator:
         algorithm_label: str = "NLopt LD_MMA",
         output_slug: str = "nlopt_mma",
         include_terminal_conductance_constraint: bool = True,
+        optimizer_controls: dict[str, object] | None = None,
     ) -> None:
         self.beta = beta
         self.polarization = polarization
@@ -130,6 +131,7 @@ class StageEvaluator:
         self.algorithm_label = algorithm_label
         self.output_slug = output_slug
         self.include_terminal_conductance_constraint = include_terminal_conductance_constraint
+        self.optimizer_controls = dict(optimizer_controls or {})
         self.last: Point | None = None
         self.stage_full_physics_evaluations = 0
 
@@ -207,8 +209,8 @@ class StageEvaluator:
             "algorithm": self.algorithm_label,
             "nlopt_version": nlopt.__version__,
             "evaluation_id": self.evaluation_counter,
-            "global_update": self.global_evaluation,
-            "stage_update": self.stage_full_physics_evaluations,
+            "global_full_physics_evaluation": self.global_evaluation,
+            "stage_full_physics_evaluation": self.stage_full_physics_evaluations,
             "beta": self.beta,
             "objective_A": objective_A,
             "objective_at_reference_power_A": equivalent_current(
@@ -239,6 +241,7 @@ class StageEvaluator:
             "post_update_hard_clipping": False,
             "symmetry_constraint": False,
             "volume_constraint": False,
+            "optimizer_controls": self.optimizer_controls,
         }
         self.history.append(row)
         artifact_entry = record_manifest_entry(result)
@@ -291,7 +294,15 @@ class StageEvaluator:
             )
 
 
-def make_optimizer(evaluator: StageEvaluator, constraint_count: int) -> nlopt.opt:
+def make_optimizer(
+    evaluator: StageEvaluator,
+    constraint_count: int,
+    *,
+    initial_step: float | None = None,
+    rho_init: float | None = None,
+    always_improve: int | None = None,
+    inner_gradients: int | None = None,
+) -> nlopt.opt:
     variable_count = int(np.prod(MAPPING.shape))
     optimizer = nlopt.opt(nlopt.LD_MMA, variable_count)
     optimizer.set_lower_bounds(np.zeros(variable_count))
@@ -302,6 +313,18 @@ def make_optimizer(evaluator: StageEvaluator, constraint_count: int) -> nlopt.op
             evaluator.constraints,
             np.full(constraint_count, NLOPT_CONSTRAINT_TOL),
         )
+    if initial_step is not None:
+        if initial_step <= 0.0:
+            raise ValueError("LD_MMA initial step must be positive")
+        optimizer.set_initial_step(float(initial_step))
+    if rho_init is not None:
+        if rho_init <= 0.0:
+            raise ValueError("LD_MMA rho_init must be positive")
+        optimizer.set_param("rho_init", float(rho_init))
+    if always_improve is not None:
+        optimizer.set_param("always_improve", int(always_improve))
+    if inner_gradients is not None:
+        optimizer.set_param("inner_gradients", int(inner_gradients))
     optimizer.set_ftol_rel(NLOPT_FTOL_REL)
     optimizer.set_xtol_rel(NLOPT_XTOL_REL)
     optimizer.set_maxeval(MAXIMUM_STAGE_EVALUATIONS)

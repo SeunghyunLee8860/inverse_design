@@ -91,3 +91,17 @@ def test_nlopt_ld_mma_allows_the_unconstrained_low_beta_contract() -> None:
     optimum = optimizer.optimize(np.asarray([0.5, 0.5]))
     assert optimizer.last_optimize_result() > 0
     assert np.allclose(optimum, [0.75, 0.25], atol=1.0e-5)
+
+
+def test_native_ld_mma_scale_controls_reach_nlopt() -> None:
+    optimizer = nlopt.opt(nlopt.LD_MMA, 3)
+    optimizer.set_lower_bounds(np.zeros(3))
+    optimizer.set_upper_bounds(np.ones(3))
+    optimizer.set_initial_step(0.025)
+    optimizer.set_param("rho_init", 10.0)
+    optimizer.set_param("always_improve", 1)
+    optimizer.set_param("inner_gradients", 1)
+    assert np.allclose(optimizer.get_initial_step(np.full(3, 0.5)), 0.025)
+    assert optimizer.get_param("rho_init", -1.0) == 10.0
+    assert optimizer.get_param("always_improve", -1.0) == 1.0
+    assert optimizer.get_param("inner_gradients", -1.0) == 1.0

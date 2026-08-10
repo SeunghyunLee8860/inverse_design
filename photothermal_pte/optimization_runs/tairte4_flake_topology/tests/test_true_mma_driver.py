@@ -104,6 +104,25 @@ def test_low_beta_can_explicitly_disable_the_connectivity_inequality() -> None:
     assert gradients.shape == (0, *MAPPING.shape)
 
 
+def test_pure_current_mma_uses_projection_scaled_native_initialization() -> None:
+    from photothermal_pte.optimization_runs.tairte4_flake_topology.run_pure_current_ld_mma_optimization import (
+        feasible_stage_morphology_caps,
+        stage_mma_controls,
+    )
+
+    beta1 = stage_mma_controls(1.0)
+    beta8 = stage_mma_controls(8.0)
+    assert np.isclose(beta1["initial_step"], 0.025)
+    assert np.isclose(beta1["rho_init"], 10.0)
+    assert beta8["initial_step"] < beta1["initial_step"]
+    assert beta8["rho_init"] > beta1["rho_init"]
+    # The incoming beta=8 point is feasible rather than forcibly tightened.
+    assert np.allclose(
+        feasible_stage_morphology_caps(np.asarray([4.0e-3, 1.0e-4]), 8.0),
+        [4.0e-3, 2.0e-3],
+    )
+
+
 def test_morphology_caps_are_fixed_gentle_stage_tightening() -> None:
     values = np.asarray([4.0e-3, 1.0e-4])
     caps = stage_morphology_caps(values, 8.0)

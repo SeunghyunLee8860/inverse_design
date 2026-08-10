@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from math import tanh
 import os
 from pathlib import Path
 import subprocess
@@ -45,8 +46,8 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_nlopt_mma_opt
 from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_optimization import (
     BETA_SCHEDULE,
     MORPHOLOGY_START_BETA,
+    MORPHOLOGY_TARGET_CAP,
     sha256,
-    stage_morphology_caps,
     verify_file,
     write_json,
 )
@@ -54,9 +55,87 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_opti
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[2]
+CODE_MANIFEST = REPOSITORY / "photothermal_pte/optimization_runs/PURE_CURRENT_LD_MMA_CODE_MANIFEST.json"
+TARGET_INITIAL_PHYSICAL_DENSITY_STEP = 0.025
+BASE_RHO_INIT_AT_BETA1 = 10.0
 
 
-def pure_current_manifest(base_fsp: Path, base_sha256: str, jacobian_dir: Path) -> dict[str, object]:
+def midpoint_projection_derivative(beta: float) -> float:
+    """Return d(projected density)/d(filtered latent) at rho=0.5."""
+    return beta / (2.0 * tanh(0.5 * beta))
+
+
+def verify_optimizer_code_manifest() -> dict[str, object]:
+    """Fail closed if the audited optimizer source bundle has changed."""
+    if not CODE_MANIFEST.is_file():
+        raise RuntimeError("pure-current LD_MMA code-manifest is missing")
+    payload = json.loads(CODE_MANIFEST.read_text())
+    if not payload.get("passed"):
+        raise RuntimeError("pure-current LD_MMA code-manifest is not approved")
+    expected = payload.get("source_sha256")
+    if not isinstance(expected, dict) or not expected:
+        raise RuntimeError("pure-current LD_MMA code-manifest has no source hashes")
+    actual: dict[str, str] = {}
+    for relative, digest in expected.items():
+        path = REPOSITORY / relative
+        if not path.is_file():
+            raise RuntimeError(f"audited optimizer source is missing: {relative}")
+        actual[str(relative)] = sha256(path)
+        if actual[str(relative)] != digest:
+            raise RuntimeError(
+                f"audited optimizer source SHA mismatch: {relative}; regenerate the code manifest"
+            )
+    return {
+        "path": str(CODE_MANIFEST),
+        "sha256": sha256(CODE_MANIFEST),
+        "source_sha256": actual,
+    }
+
+
+def stage_mma_controls(beta: float) -> dict[str, object]:
+    """Stage-specific native LD_MMA scales in projected-physical units.
+
+    These initialize the first trust region and CCSA curvature only. They do
+    not cap later updates: NLopt owns all subsequent asymptote adaptation. The
+    projection derivative supplies the beta-to-beta scaling, so a latent step
+    has the same local physical-density meaning at every beta.
+    """
+    reference = midpoint_projection_derivative(BETA_SCHEDULE[0])
+    ratio = midpoint_projection_derivative(beta) / reference
+    return {
+        "initial_step": TARGET_INITIAL_PHYSICAL_DENSITY_STEP / ratio,
+        "rho_init": BASE_RHO_INIT_AT_BETA1 * ratio * ratio,
+        "always_improve": 1,
+        "inner_gradients": 1,
+        "projection_midpoint_derivative": midpoint_projection_derivative(beta),
+        "projection_derivative_ratio_to_beta1": ratio,
+        "target_initial_physical_density_step": TARGET_INITIAL_PHYSICAL_DENSITY_STEP,
+        "base_rho_init_at_beta1": BASE_RHO_INIT_AT_BETA1,
+        "fixed_per_iteration_move_limit": None,
+    }
+
+
+def feasible_stage_morphology_caps(values: np.ndarray, beta: float) -> np.ndarray:
+    """Enter each morphology stage feasible, without an instantaneous 10% cut.
+
+    The older continuation used max(target, 0.9 * current), deliberately
+    placing a newly reprojected design about 11.1% outside the new cap when
+    its residual exceeded the target.  Here the entry cap is the current
+    residual or the absolute target, whichever is larger.  This guarantees
+    that a beta change, projection change, and newly active constraints are
+    not introduced as one forced-infeasible transition.
+    """
+    if beta < MORPHOLOGY_START_BETA:
+        return np.asarray([np.inf, np.inf])
+    return np.maximum(MORPHOLOGY_TARGET_CAP[beta], np.asarray(values, dtype=float))
+
+
+def pure_current_manifest(
+    base_fsp: Path,
+    base_sha256: str,
+    jacobian_dir: Path,
+    code_provenance: dict[str, object],
+) -> dict[str, object]:
     """Manifest with the no-connectivity optimization contract made explicit."""
     manifest = initial_manifest(base_fsp, base_sha256, jacobian_dir)
     manifest["schema"] = "pure-terminal-current-nlopt-ld-mma-raw-artifact-manifest-v1"
@@ -74,6 +153,14 @@ def pure_current_manifest(base_fsp: Path, base_sha256: str, jacobian_dir: Path) 
         "beta_below_8": [],
         "beta_8_and_above": ["500nm_solid_opening", "500nm_void_opening"],
     }
+    manifest["mma_scale_policy"] = {
+        "kind": "projection-Jacobian-scaled-native-LD_MMA-initialization",
+        "target_initial_physical_density_step": TARGET_INITIAL_PHYSICAL_DENSITY_STEP,
+        "base_rho_init_at_beta1": BASE_RHO_INIT_AT_BETA1,
+        "fixed_per_iteration_move_limit": None,
+        "note": "LD_MMA, not this driver, adapts all later asymptotes.",
+    }
+    manifest["optimizer_code_provenance"] = code_provenance
     return manifest
 
 
@@ -94,6 +181,7 @@ def main() -> int:
     if CONTRACT.geometry_mode != "contact_anchored":
         raise RuntimeError("pure-current LD_MMA requires contact_anchored geometry")
     base_fsp = verify_file(args.base_fsp, args.base_sha256)
+    code_provenance = verify_optimizer_code_manifest()
     jacobian_dir = args.jacobian_dir.expanduser().resolve()
     jacobian_certificate = jacobian_dir / "component_yee_jacobian_result.json"
     if not jacobian_certificate.is_file() or not json.loads(
@@ -113,7 +201,9 @@ def main() -> int:
     events = raw_root / "events.jsonl"
     latent = np.full(MAPPING.shape, 0.5, dtype=np.float64)
     history: list[dict[str, object]] = []
-    manifest = pure_current_manifest(base_fsp, args.base_sha256, jacobian_dir)
+    manifest = pure_current_manifest(
+        base_fsp, args.base_sha256, jacobian_dir, code_provenance
+    )
     fixed_source_power: float | None = None
     evaluation_counter = 0
     global_evaluation = 0
@@ -122,7 +212,7 @@ def main() -> int:
         if args.maximum_beta_stages and beta_index >= args.maximum_beta_stages:
             break
         stage_summary, _ = metrics(latent, beta, device=args.constraint_device)
-        caps = stage_morphology_caps(
+        caps = feasible_stage_morphology_caps(
             np.asarray([
                 stage_summary["smooth_solid_constraint"],
                 stage_summary["smooth_void_constraint"],
@@ -130,6 +220,7 @@ def main() -> int:
             beta,
         )
         constraint_count = 0 if beta < MORPHOLOGY_START_BETA else 2
+        controls = stage_mma_controls(beta)
         evaluator = StageEvaluator(
             beta=beta,
             polarization=args.polarization,
@@ -151,8 +242,16 @@ def main() -> int:
             algorithm_label="NLopt LD_MMA (pure terminal current; no connectivity constraint)",
             output_slug="pure_current_ld_mma",
             include_terminal_conductance_constraint=False,
+            optimizer_controls=controls,
         )
-        optimizer = make_optimizer(evaluator, constraint_count)
+        optimizer = make_optimizer(
+            evaluator,
+            constraint_count,
+            initial_step=float(controls["initial_step"]),
+            rho_init=float(controls["rho_init"]),
+            always_improve=int(controls["always_improve"]),
+            inner_gradients=int(controls["inner_gradients"]),
+        )
         emit(
             events,
             "nlopt_stage_start",
@@ -167,6 +266,7 @@ def main() -> int:
             ),
             nlopt_version=nlopt.__version__,
             manual_move_limit=None,
+            optimizer_controls=controls,
             ftol_rel=NLOPT_FTOL_REL,
             xtol_rel=NLOPT_XTOL_REL,
             maxeval=MAXIMUM_STAGE_EVALUATIONS,

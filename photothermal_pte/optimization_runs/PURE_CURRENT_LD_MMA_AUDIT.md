@@ -64,6 +64,40 @@ void morphology constraints. They are unrelated to electrical connectivity.
 The beta stage does not advance after `MAXEVAL_REACHED`; that condition is
 fail-closed rather than a forced continuation.
 
+## Native-MMA scale and continuation corrections
+
+Run030's uncalibrated diagnostic is preserved and is not promoted. Its first
+five full-physics evaluation points reproduced the rapid Run020 bound-seeking
+trajectory even after removal of the conductance inequality. Therefore the
+conductance constraint is not the cause of that behavior.
+
+The replacement driver explicitly sets the native NLopt parameters at every
+beta stage:
+
+- `initial_step` corresponds to a target initial **physical-density** change
+  of 0.025, divided by the midpoint derivative of the active tanh projection;
+- `rho_init` begins at 10 for beta=1 and scales with the square of that same
+  projection derivative, which is the local chain-rule curvature factor;
+- `always_improve=1` and `inner_gradients=1` are explicit and logged rather
+  than implicit library defaults.
+
+These are initialization parameters, not fixed move limits. LD_MMA retains
+control of every subsequent moving asymptote. The `rho_init` scale is a
+conservative CCSA prior, not a claimed Hessian measurement; no AD-FD check is
+run as part of this optimizer correction.
+
+The former morphology continuation opened beta=8 at
+`max(target, 0.9 * current)`, which can make the incoming point 11.1% infeasible.
+The pure-current driver now uses `max(target, current)`, making the first point
+of each morphology stage feasible. Every JSON/PNG is labelled a
+`full_physics_evaluation`, not an MMA outer iteration.
+
+Finally, the driver checks `PURE_CURRENT_LD_MMA_CODE_MANIFEST.json` before a
+GPU session opens. It fail-closes if the audited pure driver, shared LD_MMA
+callback, shared constraint code, or paired supervisor no longer match their
+recorded SHA-256 values. This closes optimizer-code provenance; it does not
+pretend to replace the separate physical-solver preflight.
+
 ## Reproduction and publication
 
 Run the paired sequence with:
