@@ -1,0 +1,53 @@
+{
+  "role": "accepted_mma",
+  "algorithm": "persistent_separable_method_of_moving_asymptotes",
+  "evaluation_id": 10,
+  "global_update": 9,
+  "stage_update": 9,
+  "beta": 1.0,
+  "objective_A": 2.6985451308611254e-17,
+  "objective_at_reference_power_A": 5.56089953536487e-08,
+  "fixed_source_power_W": 1.3830232993859658e-13,
+  "source_power_relative_change": 0.0,
+  "terminal_conductance_S": 0.01399971875489416,
+  "minimum_terminal_conductance_S": 0.00491,
+  "constraint_names": [
+    "minimum_terminal_conductance"
+  ],
+  "constraint_values": [
+    -1.851266548858281
+  ],
+  "maximum_constraint_value": -1.851266548858281,
+  "morphology_caps": [
+    Infinity,
+    Infinity
+  ],
+  "gray_fraction_0p01_0p99": 1.0,
+  "binarization": 0.2889064055220905,
+  "exact_bad_cells": 32,
+  "rho_mean": 0.5614764997292467,
+  "mma_maximum_absolute_step": 0.050000000000000044,
+  "mma_rms_step": 0.04996466779462421,
+  "mma_diagnostics": {
+    "algorithm": "persistent_separable_method_of_moving_asymptotes",
+    "dual_success": true,
+    "dual_iterations": 0,
+    "dual_variables": [
+      0.0
+    ],
+    "approximated_constraint_values": [
+      -1.8256281328847344
+    ],
+    "maximum_absolute_step": 0.050000000000000044,
+    "rms_step": 0.04996466779462421,
+    "move_limit_is_bound_not_learning_rate": 0.05,
+    "used_adam": false,
+    "gradient_direction_normalization": false,
+    "hard_clip_after_update": false
+  },
+  "used_adam": false,
+  "gradient_direction_normalization": false,
+  "post_update_hard_clipping": false,
+  "symmetry_constraint": false,
+  "volume_constraint": false
+}
