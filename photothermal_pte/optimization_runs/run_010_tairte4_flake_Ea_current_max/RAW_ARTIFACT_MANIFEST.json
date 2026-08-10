@@ -1,0 +1,30 @@
+{
+  "status": "RAW_ARTIFACTS_EXTERNAL_NOT_COMMITTED",
+  "raw_artifacts_committed_to_git": false,
+  "artifacts": [
+    {
+      "role": "uniform_rho0p5_Ea_40um_native_Q",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_uniform_rho0p5_Ea_forward_gpu5_retry2_20260810/tairte4_flake_native_Q_Ea.npz",
+      "size_bytes": 35381187,
+      "sha256": "f72c2e39f5fd8758a303c579d2d86b789ff2c500917a71d5a67f0e63d9056439"
+    },
+    {
+      "role": "uniform_rho0p5_Eb_40um_native_Q",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run011_uniform_rho0p5_Eb_forward_gpu5_20260810/tairte4_flake_native_Q_Eb.npz",
+      "size_bytes": 35346863,
+      "sha256": "98f0710dad199b528e5f14670dcae1e8ce752c77e3ea5cf5a6b1109e36562f55"
+    },
+    {
+      "role": "uniform_rho0p5_Ea_50nm_native_Q",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_uniform_rho0p5_Ea_forward50_gpu5_20260810/tairte4_flake_native_Q_Ea.npz",
+      "size_bytes": 135504456,
+      "sha256": "bb06717402546478353e94f3a3340e403ad4d49432c320d459882aeeae56e634"
+    },
+    {
+      "role": "uniform_rho0p5_Ea_48um_native_Q",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_uniform_rho0p5_Ea_forward_48um_gpu5_20260810/tairte4_flake_native_Q_Ea.npz",
+      "size_bytes": 35383386,
+      "sha256": "f00a09da4eeedb10778a734a74a1ac78b85e24f698d832fa6f7e5d08f9313e49"
+    }
+  ]
+}

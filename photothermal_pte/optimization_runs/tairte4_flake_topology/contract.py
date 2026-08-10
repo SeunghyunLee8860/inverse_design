@@ -135,7 +135,7 @@ class TaIrTe4FlakeContract:
             },
             "required_before_optimization": [
                 "GPU runsetup and realized mesh audit",
-                "36 versus 48 um optical-domain comparison",
+                "40 versus 48 um optical-domain comparison",
                 "100 versus 50 nm representative frozen-density comparison",
                 "rho-dependent electrical weighting AD-FD",
                 "combined optical-thermal-electrical AD-FD",

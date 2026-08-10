@@ -1,0 +1,40 @@
+{
+  "status": "VALIDATED_COMPACT_TAIRTE4_FLAKE_OPTICAL_CONTRACT",
+  "passed": true,
+  "axis_contract": "Lumerical x=b, y=a, z=c",
+  "wavelength_m": 1e-05,
+  "target_waist_m": 8.5e-06,
+  "production_domain_m": 4e-05,
+  "source_span_m": 3.4e-05,
+  "production_interface_xy_step_m": 1e-07,
+  "flake_dz_m": 1e-08,
+  "uniform_rho_0p5": {
+    "E_parallel_a": {
+      "P_Q_W": 3.254242606451805e-14,
+      "P_six_W": 3.2542218153548384e-14,
+      "six_face_closure_relative": 6.388961215935244e-06,
+      "runtime_s": 44.2419298440218
+    },
+    "E_parallel_b": {
+      "P_Q_W": 2.5090716906107908e-14,
+      "P_six_W": 2.508870425888315e-14,
+      "six_face_closure_relative": 8.022125032803387e-05,
+      "runtime_s": 41.91364024206996
+    }
+  },
+  "mesh_100nm_vs_50nm": {
+    "relative_total_power_change": 1.9431849338691908e-05,
+    "lateral_Q_NRMSE": 0.003506079090746945,
+    "equal_power_shape_NRMSE_diagnostic_only": 0.0035060339761093933,
+    "passed": true
+  },
+  "domain_40um_vs_48um": {
+    "relative_total_power_change": 8.939890170602235e-08,
+    "lateral_Q_NRMSE": 3.4731687278263164e-06,
+    "equal_power_shape_NRMSE_diagnostic_only": 3.473556961230049e-06,
+    "passed": true
+  },
+  "thermal_solve": false,
+  "combined_adjoint": false,
+  "optimization_started": false
+}

@@ -53,7 +53,15 @@ def regional_maximum_step(coordinate: np.ndarray, low: float, high: float) -> fl
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument("--interface-xy-nm", type=float, default=100.0)
+    parser.add_argument("--domain-um", type=float, default=40.0)
     args = parser.parse_args()
+    if args.interface_xy_nm <= 0.0:
+        parser.error("--interface-xy-nm must be positive")
+    interface_xy_step_m = args.interface_xy_nm * 1e-9
+    optical_lateral_span_m = args.domain_um * 1e-6
+    if optical_lateral_span_m <= CONTRACT.source_span_m:
+        parser.error("--domain-um must exceed the 34 um source span")
     CONTRACT.validate()
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
@@ -79,7 +87,9 @@ def main() -> int:
         material_control = load_module(RUN002 / "run_complex_material_control.py", "run010_material_control")
         source_wrapper = material_control.load_source_wrapper()
         audit = source_wrapper.source_audit
-        optical.configure_source(audit)
+        optical.configure_source(
+            audit, optical_lateral_span_m=optical_lateral_span_m
+        )
         os.environ["VC_LUMERICAL_ROOT"] = str(audit.APPROVED_ROOT)
         os.environ["LUMERICAL_ROOT"] = str(audit.APPROVED_ROOT)
         os.environ["LUMERICAL_PYTHONPATH"] = str(audit.APPROVED_API)
@@ -115,7 +125,7 @@ def main() -> int:
         geometry_module.SI_MATERIAL = optical.SI_MATERIAL
         tairte4 = geometry_module.add_tairte4_material(fdtd)
         substrate = geometry_module.add_substrate_materials(fdtd)
-        half_domain = 0.5 * CONTRACT.optical_lateral_span_m
+        half_domain = 0.5 * optical_lateral_span_m
         optical.add_rect(
             fdtd,
             "run010_Si_substrate",
@@ -131,7 +141,11 @@ def main() -> int:
         frame_names = optical.add_fixed_frame(fdtd)
         rho = np.full(CONTRACT.design_node_shape, 0.5, dtype=np.float64)
         design = optical.add_design(fdtd, rho)
-        mesh_names = optical.add_mesh_hierarchy(fdtd)
+        mesh_names = optical.add_mesh_hierarchy(
+            fdtd,
+            interface_xy_step_m=interface_xy_step_m,
+            optical_lateral_span_m=optical_lateral_span_m,
+        )
         flux_names = optical.add_absorption_and_flux(fdtd)
         fdtd.setnamed(audit.SOURCE_NAME, "polarization angle", 90.0)
         fdtd.runsetup()
@@ -179,8 +193,8 @@ def main() -> int:
         passed = bool(
             regional["design_max_dx_m"] <= CONTRACT.design_step_m + 2e-12
             and regional["design_max_dy_m"] <= CONTRACT.design_step_m + 2e-12
-            and regional["flake_max_dx_m"] <= CONTRACT.interface_xy_step_m + 2e-12
-            and regional["flake_max_dy_m"] <= CONTRACT.interface_xy_step_m + 2e-12
+            and regional["flake_max_dx_m"] <= interface_xy_step_m + 2e-12
+            and regional["flake_max_dy_m"] <= interface_xy_step_m + 2e-12
             and regional["flake_max_dz_m"] <= CONTRACT.flake_dz_m + 2e-12
             and regional["outer_x_max_step_m"] > 1.5 * CONTRACT.design_step_m
             and regional["outer_y_max_step_m"] > 1.5 * CONTRACT.design_step_m
@@ -194,6 +208,8 @@ def main() -> int:
             "passed": passed,
             "scope": "runsetup/geometry/mesh only; no Maxwell, Q, thermal, electrical, adjoint, or optimization solve",
             "candidate_contract": CONTRACT.audit(),
+            "requested_interface_xy_step_m": interface_xy_step_m,
+            "requested_optical_lateral_span_m": optical_lateral_span_m,
             "source_contract": source,
             "source_readback": source_readback,
             "domain_readback": domain_readback,
