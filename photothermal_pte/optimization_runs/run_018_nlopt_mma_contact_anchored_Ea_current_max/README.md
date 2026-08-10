@@ -1,6 +1,13 @@
-# Run018 — NLopt LD_MMA, E parallel a
+# Run018 — diagnostic NLopt LD_MMA xtol control, E parallel a
 
-Fresh contact-anchored TaIrTe4 topology optimization from exact uniform
+Status: `STOPPED_DIAGNOSTIC_XTOL_1E_MINUS_3_PROMOTED_BETA_TOO_EARLY`
+
+This run is not the production optimization.  It demonstrated that
+`xtol_rel=1e-3` classified the first small NLopt asymptote step as convergence
+after only two full-physics evaluations.  The raw and published results are
+preserved; production restarts cleanly as Run020 with `xtol_rel=1e-7`.
+
+The diagnostic started from exact uniform
 physical density `rho=0.5`.  Lumerical coordinates are `x=b`, `y=a`, `z=c`.
 
 - Optimizer: NLopt 2.11 `LD_MMA`
