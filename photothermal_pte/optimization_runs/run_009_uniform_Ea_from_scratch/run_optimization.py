@@ -75,6 +75,10 @@ os.environ.update({
     "PTE_OPTIMIZATION_STAGE_BUDGET_POLICY": "fail_closed",
     "PTE_OPTIMIZATION_ALLOW_MINIMUM_MOVE_TRANSITION": "0",
     "PTE_OPTIMIZATION_ALLOW_LOW_BETA_MORPHOLOGY_TRANSITION": "0",
+    # Exact thresholded DRC is discontinuous and remains diagnostic at low
+    # beta.  It must not veto objective-led topology exploration before the
+    # documented exact-DRC phase begins at beta=32.
+    "PTE_OPTIMIZATION_LOW_BETA_EXACT_CATASTROPHIC_GUARD": "0",
     "PTE_OPTIMIZATION_SMOOTH_FEASIBILITY_GATE_START_BETA": "8",
     "PTE_OPTIMIZATION_PHASEWISE_NONINCREASE_START_BETA": "8",
     "PTE_OPTIMIZATION_STAGE_CAP_TARGET_OCCUPANCY_JSON": "{\"4\":0.80,\"8\":0.88,\"16\":0.92,\"32\":1.05,\"64\":1.10,\"128\":1.15}",

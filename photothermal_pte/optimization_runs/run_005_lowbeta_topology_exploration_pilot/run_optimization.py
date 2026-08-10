@@ -128,6 +128,9 @@ ALLOW_MINIMUM_MOVE_TRANSITION = os.environ.get(
 ALLOW_LOW_BETA_MORPHOLOGY_TRANSITION = os.environ.get(
     "PTE_OPTIMIZATION_ALLOW_LOW_BETA_MORPHOLOGY_TRANSITION", "1"
 ) == "1"
+LOW_BETA_EXACT_CATASTROPHIC_GUARD = os.environ.get(
+    "PTE_OPTIMIZATION_LOW_BETA_EXACT_CATASTROPHIC_GUARD", "1"
+) == "1"
 REPROJECTION_ONLY_BETA = 256
 EXACT_DRC_GATE_START_BETA = 32.0
 # Below beta=32 the smooth disk-opening constraints guide topology search, but
@@ -1188,9 +1191,10 @@ def main() -> int:
                         candidate_exact_bad_total=candidate_exact_total,
                         catastrophic_limit=catastrophic_limit,
                         exact_used_as_step_veto=False,
+                        catastrophic_guard_enabled=LOW_BETA_EXACT_CATASTROPHIC_GUARD,
                         catastrophic_guard_triggered=catastrophic,
                     )
-                    if catastrophic:
+                    if catastrophic and LOW_BETA_EXACT_CATASTROPHIC_GUARD:
                         emit(
                             "candidate_prescreen_rejected",
                             beta=beta,
