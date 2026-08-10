@@ -1,22 +1,22 @@
 {
   "beta": 2.0,
   "latent_range": [
-    0.44000000079714285,
-    0.5599997696607006
+    0.42000003532867475,
+    0.5799996807340869
   ],
   "filtered_range": [
-    0.440002358461755,
-    0.5599971456040562
+    0.4200057845421257,
+    0.5799938697413788
   ],
   "rho_range": [
-    0.42159692406298793,
-    0.5784024340448127
+    0.39585186208540907,
+    0.604147695400283
   ],
-  "rho_mean": 0.5036517483797136,
+  "rho_mean": 0.5061104731136381,
   "gray_fraction_0p01_0p99": 1.0,
-  "binarization_mean_4rho1mrho": 0.9782521829992027,
-  "smooth_solid_constraint": 0.00033574105491697697,
-  "smooth_void_constraint": 0.000604931514459353,
+  "binarization_mean_4rho1mrho": 0.961982124331802,
+  "smooth_solid_constraint": 0.0002944848652721063,
+  "smooth_void_constraint": 0.0005345238048708289,
   "exact": {
     "minimum_feature_nm": 500.0,
     "opening_radius_nm": 250.0,
@@ -25,7 +25,7 @@
     "solid_bad_cell_count": 10,
     "void_bad_cell_count": 20,
     "total_bad_cell_count": 30,
-    "solid_fraction": 0.5289733903098615,
+    "solid_fraction": 0.5387997770483681,
     "passed": false
   }
 }
