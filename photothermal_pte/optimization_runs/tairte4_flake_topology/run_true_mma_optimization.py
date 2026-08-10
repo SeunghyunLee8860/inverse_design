@@ -406,7 +406,21 @@ def publish_plot(
         row for row in history
         if row.get("role") in {"uniform_initial", "accepted_mma", "nlopt_evaluation"}
     ]
-    indices = [int(row["global_update"]) for row in rows]
+    # Historical custom-MMA rows used ``global_update``.  Native NLopt rows
+    # deliberately distinguish a solver evaluation from an accepted update
+    # and therefore use ``global_full_physics_evaluation``.  A plot is a
+    # reporting path, never an optimizer gate: accept both immutable schemas
+    # so a completed Maxwell/thermal evaluation cannot be discarded merely
+    # because its plot uses the newer honest label.
+    indices = [
+        int(
+            row.get(
+                "global_full_physics_evaluation",
+                row.get("global_update", row["evaluation_id"]),
+            )
+        )
+        for row in rows
+    ]
     fig, axes = plt.subplots(2, 3, figsize=(17, 9), constrained_layout=True)
     extent = (
         1e6 * CONTRACT.design_bounds_m["x"][0],
@@ -464,7 +478,17 @@ def publish_plot(
     beta_axis.set_ylabel("beta")
     axes[1, 2].plot(indices, [row["exact_bad_cells"] for row in rows], "s-", color="tab:red", label="exact bad nodes")
     constraint_axis = axes[1, 2].twinx()
-    constraint_axis.plot(indices, [row["maximum_constraint_value"] for row in rows], "o-", color="tab:blue", label="max g(x)")
+    constraint_axis.plot(
+        indices,
+        [
+            np.nan if row["maximum_constraint_value"] is None
+            else row["maximum_constraint_value"]
+            for row in rows
+        ],
+        "o-",
+        color="tab:blue",
+        label="max g(x)",
+    )
     constraint_axis.axhline(0.0, color="tab:blue", linestyle="--", linewidth=0.8)
     axes[1, 2].set_title("500 nm audit and MMA inequalities")
     axes[1, 2].set_ylabel("exact bad design nodes")

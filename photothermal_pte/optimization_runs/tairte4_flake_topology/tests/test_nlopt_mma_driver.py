@@ -75,6 +75,15 @@ def test_pure_current_driver_uses_ld_mma_without_connectivity_constraint() -> No
     assert "constraint_count = 0 if beta < MORPHOLOGY_START_BETA else 2" in text
 
 
+def test_iteration_plot_supports_native_nlopt_evaluation_schema() -> None:
+    """A completed full-physics evaluation must not fail only while plotting."""
+    source = Path(__file__).parents[1] / "run_true_mma_optimization.py"
+    text = source.read_text()
+    assert '"global_full_physics_evaluation"' in text
+    assert 'row.get("global_update", row["evaluation_id"])' in text
+    assert 'np.nan if row["maximum_constraint_value"] is None' in text
+
+
 def test_nlopt_ld_mma_allows_the_unconstrained_low_beta_contract() -> None:
     optimizer = nlopt.opt(nlopt.LD_MMA, 2)
     optimizer.set_lower_bounds(np.zeros(2))
