@@ -9,11 +9,12 @@ import torch
 from photothermal_pte.optimization_runs.run_002_gaussian10_w8p5_current_max.production_density_mapping import (
     ProductionDensityMapping,
 )
+from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
 
 
-SHAPE = (161, 161)
-SPACING_M = 100.0e-9
-MINIMUM_FEATURE_M = 500.0e-9
+SHAPE = CONTRACT.design_node_shape
+SPACING_M = CONTRACT.design_step_m
+MINIMUM_FEATURE_M = CONTRACT.minimum_feature_m
 OPENING_RADIUS_M = 0.5 * MINIMUM_FEATURE_M
 MAPPING = ProductionDensityMapping(
     shape=SHAPE,
@@ -31,19 +32,31 @@ def disk() -> np.ndarray:
 
 
 def exact_binary_audit(rho: np.ndarray) -> tuple[dict[str, object], dict[str, np.ndarray]]:
-    """Audit both phases with fixed-solid TaIrTe4 outside the design window."""
+    """Audit both phases with the actual material adjoining each design edge."""
 
     binary = np.asarray(rho, dtype=float) >= 0.5
     structure = disk()
-    solid_open = ndimage.binary_opening(binary, structure=structure, border_value=1)
-    void_open = ndimage.binary_opening(~binary, structure=structure, border_value=0)
+    radius = (structure.shape[0] - 1) // 2
+    if CONTRACT.geometry_mode == "contact_anchored":
+        solid_padded = np.zeros((binary.shape[0] + 2 * radius, binary.shape[1] + 2 * radius), dtype=bool)
+        solid_padded[radius:-radius, radius:-radius] = binary
+        solid_padded[:, :radius] = True
+        solid_padded[:, -radius:] = True
+        solid_open = ndimage.binary_opening(solid_padded, structure=structure)[radius:-radius, radius:-radius]
+        void_padded = ~solid_padded
+        void_open = ndimage.binary_opening(void_padded, structure=structure)[radius:-radius, radius:-radius]
+        outside_phase = "fixed_solid_at_top_bottom_and_void_at_left_right"
+    else:
+        solid_open = ndimage.binary_opening(binary, structure=structure, border_value=1)
+        void_open = ndimage.binary_opening(~binary, structure=structure, border_value=0)
+        outside_phase = "fixed_solid_TaIrTe4_frame"
     bad_solid = binary & ~solid_open
     bad_void = (~binary) & ~void_open
     return {
         "minimum_feature_nm": 500.0,
         "opening_radius_nm": 250.0,
         "opening_radius_pixels": int((structure.shape[0] - 1) // 2),
-        "outside_design_phase": "fixed_solid_TaIrTe4_frame",
+        "outside_design_phase": outside_phase,
         "solid_bad_cell_count": int(np.count_nonzero(bad_solid)),
         "void_bad_cell_count": int(np.count_nonzero(bad_void)),
         "total_bad_cell_count": int(np.count_nonzero(bad_solid) + np.count_nonzero(bad_void)),
@@ -69,7 +82,21 @@ def _offsets() -> tuple[tuple[int, int], ...]:
 def _shifted(value: torch.Tensor, border: float) -> torch.Tensor:
     offsets = _offsets()
     radius = max(max(abs(i), abs(j)) for i, j in offsets)
-    padded = torch.nn.functional.pad(value, (radius, radius, radius, radius), value=border)
+    if CONTRACT.geometry_mode == "contact_anchored":
+        # Array axis 0 is Lumerical x and axis 1 is y.  The design meets fixed
+        # TaIrTe4 contacts across the y-min/y-max edges and void across x edges.
+        solid_phase = border == 1.0
+        padded = torch.full(
+            (value.shape[0] + 2 * radius, value.shape[1] + 2 * radius),
+            0.0 if solid_phase else 1.0,
+            dtype=value.dtype,
+            device=value.device,
+        )
+        padded[radius:-radius, radius:-radius] = value
+        padded[:, :radius] = 1.0 if solid_phase else 0.0
+        padded[:, -radius:] = 1.0 if solid_phase else 0.0
+    else:
+        padded = torch.nn.functional.pad(value, (radius, radius, radius, radius), value=border)
     nx, ny = value.shape
     return torch.stack(
         [padded[radius+i:radius+i+nx, radius+j:radius+j+ny] for i, j in offsets]

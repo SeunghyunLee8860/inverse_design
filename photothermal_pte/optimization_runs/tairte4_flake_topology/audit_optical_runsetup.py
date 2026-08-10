@@ -155,10 +155,11 @@ def main() -> int:
         coordinates = mesh.pop("coordinate_arrays")
         np.savez_compressed(mesh_npz, **{f"{axis}_m": coordinates[axis] for axis in "xyz"})
         flake = 0.5 * CONTRACT.flake_span_m
-        design_half = 0.5 * CONTRACT.design_span_m
+        design_x = CONTRACT.design_bounds_m["x"]
+        design_y = CONTRACT.design_bounds_m["y"]
         regional = {
-            "design_max_dx_m": regional_maximum_step(coordinates["x"], -design_half, design_half),
-            "design_max_dy_m": regional_maximum_step(coordinates["y"], -design_half, design_half),
+            "design_max_dx_m": regional_maximum_step(coordinates["x"], *design_x),
+            "design_max_dy_m": regional_maximum_step(coordinates["y"], *design_y),
             "flake_max_dx_m": regional_maximum_step(coordinates["x"], -flake, flake),
             "flake_max_dy_m": regional_maximum_step(coordinates["y"], -flake, flake),
             "flake_max_dz_m": regional_maximum_step(coordinates["z"], -CONTRACT.flake_thickness_m, 0.0),

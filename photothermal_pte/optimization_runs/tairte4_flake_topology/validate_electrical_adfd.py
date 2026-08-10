@@ -110,8 +110,11 @@ def main() -> int:
         CONTRACT.design_step_m,
     )
     xx, yy = np.meshgrid(mesh.x_m, mesh.y_m, indexing="ij")
-    design = (np.abs(xx) <= 0.5 * CONTRACT.design_span_m + 1e-18) & (
-        np.abs(yy) <= 0.5 * CONTRACT.design_span_m + 1e-18
+    xb = CONTRACT.design_bounds_m["x"]
+    yb = CONTRACT.design_bounds_m["y"]
+    design = (
+        (xx >= xb[0] - 1e-18) & (xx <= xb[1] + 1e-18)
+        & (yy >= yb[0] - 1e-18) & (yy <= yb[1] + 1e-18)
     )
     rho = np.ones(mesh.shape)
     rho[design] = 0.52 + 0.06 * np.exp(

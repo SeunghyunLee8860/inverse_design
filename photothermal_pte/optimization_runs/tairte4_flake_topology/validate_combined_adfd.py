@@ -292,8 +292,8 @@ class CachedElectricalCuda:
 
 
 def full_flake_density(rho: np.ndarray) -> np.ndarray:
-    full = np.ones((241, 241), dtype=np.float64)
-    full[40:201, 40:201] = rho
+    full = np.ones(CONTRACT.flake_node_shape, dtype=np.float64)
+    full[CONTRACT.design_node_slices] = rho
     return full
 
 
@@ -340,7 +340,10 @@ def solve_coupled(forward: dict, rho: np.ndarray, cuda_device: int, *, need_adjo
         gradient_thermal = thermal_density_gradient(
             state, thermal_forward.solution, thermal_adjoint.solution
         )
-        gradient_electrical = electrical.gradient_rho_A[40:201, 40:201]
+        gradient_electrical = electrical.gradient_rho_A[CONTRACT.design_node_slices]
+        gradient_terminal_conductance = electrical.gradient_terminal_conductance_S[
+            CONTRACT.design_node_slices
+        ]
         target_active = np.asarray(
             state.system.source_volume_operator_m3.T @ thermal_adjoint.solution
         ).reshape(-1)
@@ -350,6 +353,7 @@ def solve_coupled(forward: dict, rho: np.ndarray, cuda_device: int, *, need_adjo
             thermal_adjoint=thermal_adjoint,
             gradient_thermal=gradient_thermal,
             gradient_electrical=gradient_electrical,
+            gradient_terminal_conductance=gradient_terminal_conductance,
             target_sensitivity=target_sensitivity,
         )
     return result

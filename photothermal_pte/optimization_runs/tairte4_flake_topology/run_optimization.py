@@ -20,6 +20,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.optimization_supp
     MAPPING,
     metrics,
 )
+from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
 
 
 HERE = Path(__file__).resolve().parent
@@ -35,6 +36,10 @@ MIN_UPDATES = {2.0: 5, 4.0: 3, 8.0: 3, 16.0: 3, 32.0: 2, 64.0: 2}
 SAFETY_MAX_UPDATES = {2.0: 8, 4.0: 6, 8.0: 5, 16.0: 4, 32.0: 4, 64.0: 3}
 INITIAL_MOVE = {2.0: 0.020, 4.0: 0.018, 8.0: 0.015, 16.0: 0.012, 32.0: 0.010, 64.0: 0.0075}
 MORPHOLOGY_WEIGHT = {2.0: 0.0, 4.0: 0.05, 8.0: 0.15, 16.0: 0.35, 32.0: 0.70, 64.0: 1.20}
+SIGMA_A_S_M = 4.91e5
+FULL_SOLID_TERMINAL_CONDUCTANCE_S = (
+    SIGMA_A_S_M * 100.0e-9 * 24.0e-6 / 24.0e-6
+)
 
 
 def emit(path: Path, event: str, **values) -> None:
@@ -60,15 +65,19 @@ def evaluate(
     output: Path,
     gpu: int,
     events: Path,
-) -> tuple[dict, np.ndarray]:
+    base_fsp: Path,
+    base_sha: str,
+    jacobian: Path,
+) -> tuple[dict, np.ndarray, np.ndarray]:
     density = output.parent / f"{output.name}_rho.npz"
     save_density(density, rho)
     command = [
         sys.executable,
-        str(EVALUATOR),
-        "--base-fsp", str(BASE_FSP),
-        "--base-sha256", BASE_SHA,
-        "--jacobian-dir", str(JACOBIAN),
+        "-m",
+        "photothermal_pte.optimization_runs.tairte4_flake_topology.evaluate_objective_gradient",
+        "--base-fsp", str(base_fsp),
+        "--base-sha256", base_sha,
+        "--jacobian-dir", str(jacobian),
         "--rho-npz", str(density),
         "--output-dir", str(output),
         "--polarization", polarization,
@@ -86,37 +95,91 @@ def evaluate(
     emit(events, "evaluation_end", output=str(output), returncode=completed.returncode, status=result.get("status"))
     if completed.returncode or not result.get("passed"):
         raise RuntimeError(f"solver evaluation failed closed: {result_path}")
-    raw = np.load(Path(result["raw_artifact"]["path"]))
-    return result, np.asarray(raw["gradient_total_A"], dtype=np.float64)
+    with np.load(Path(result["raw_artifact"]["path"])) as raw:
+        objective_gradient = np.asarray(raw["gradient_total_A"], dtype=np.float64)
+        conductance_gradient = np.asarray(
+            raw["gradient_terminal_conductance_S"], dtype=np.float64
+        )
+    return result, objective_gradient, conductance_gradient
 
 
-def publish_plot(published: Path, history: list[dict], rho: np.ndarray, gradient: np.ndarray, summary: dict) -> None:
+def publish_plot(
+    published: Path,
+    history: list[dict],
+    rho: np.ndarray,
+    gradient: np.ndarray,
+    summary: dict,
+    *,
+    evaluation_id: int,
+    accepted: bool,
+    label: str,
+    publish_latest: bool | None = None,
+) -> None:
     fig, axes = plt.subplots(2, 3, figsize=(17, 9), constrained_layout=True)
-    image = axes[0, 0].imshow(rho.T, origin="lower", extent=(-8, 8, -8, 8), vmin=0, vmax=1, cmap="gray")
-    axes[0, 0].set_title("physical TaIrTe4 density")
+    extent = (
+        1e6 * CONTRACT.design_bounds_m["x"][0],
+        1e6 * CONTRACT.design_bounds_m["x"][1],
+        1e6 * CONTRACT.design_bounds_m["y"][0],
+        1e6 * CONTRACT.design_bounds_m["y"][1],
+    )
+    image = axes[0, 0].imshow(
+        rho.T, origin="lower", extent=extent, vmin=0, vmax=1,
+        cmap="gray_r", interpolation="nearest",
+    )
+    axes[0, 0].contour(
+        np.linspace(extent[0], extent[1], rho.shape[0]),
+        np.linspace(extent[2], extent[3], rho.shape[1]),
+        rho.T,
+        levels=[0.5], colors=["tab:red"], linewidths=0.6,
+    )
+    axes[0, 0].set_title("physical density: black=TaIrTe4 (1), white=void (0)")
     axes[0, 0].set_xlabel("Lumerical x=b (um)")
     axes[0, 0].set_ylabel("Lumerical y=a (um)")
     fig.colorbar(image, ax=axes[0, 0])
     axes[0, 1].hist(rho.ravel(), bins=40, range=(0, 1))
     axes[0, 1].set_title("physical-density histogram")
-    grad_image = axes[0, 2].imshow(gradient.T, origin="lower", extent=(-8, 8, -8, 8), cmap="coolwarm")
+    grad_image = axes[0, 2].imshow(gradient.T, origin="lower", extent=extent, cmap="coolwarm")
     axes[0, 2].set_title("physical objective gradient (A)")
     fig.colorbar(grad_image, ax=axes[0, 2])
-    accepted = [row for row in history if row.get("accepted")]
-    axes[1, 0].plot([row["global_iteration"] for row in accepted], [row["objective_A"] for row in accepted], marker="o")
+    accepted_rows = [row for row in history if row.get("accepted")]
+    iteration = [row.get("accepted_update_index", row["global_iteration"]) for row in accepted_rows]
+    axes[1, 0].plot(iteration, [row["objective_A"] for row in accepted_rows], marker="o")
     axes[1, 0].set_title("accepted iteration vs signed PTE current")
     axes[1, 0].set_xlabel("accepted update")
     axes[1, 0].set_ylabel("current (A)")
-    axes[1, 1].plot([row["global_iteration"] for row in accepted], [row["gray_fraction"] for row in accepted], marker="o")
-    axes[1, 1].set_title("gray fraction (0.01<rho<0.99)")
-    axes[1, 2].plot([row["global_iteration"] for row in accepted], [row["exact_bad_cells"] for row in accepted], marker="o")
-    axes[1, 2].set_title("exact 500 nm bad-cell count")
+    conductance_axis = axes[1, 0].twinx()
+    conductance_axis.plot(
+        iteration,
+        [row["terminal_conductance_S"] / row["minimum_terminal_conductance_S"] for row in accepted_rows],
+        color="tab:green", marker="s", alpha=0.65,
+    )
+    conductance_axis.axhline(1.0, color="tab:green", linestyle="--", linewidth=0.8)
+    conductance_axis.set_ylabel("Gterminal / Gmin", color="tab:green")
+    axes[1, 1].plot(iteration, [row["gray_fraction"] for row in accepted_rows], marker="o", label="gray fraction")
+    axes[1, 1].plot(iteration, [row.get("binarization", np.nan) for row in accepted_rows], marker="s", label="4rho(1-rho)")
+    beta_axis = axes[1, 1].twinx()
+    beta_axis.step(iteration, [row["beta"] for row in accepted_rows], where="post", color="black", alpha=0.5, label="beta")
+    axes[1, 1].set_title("binarization and beta")
+    axes[1, 1].legend(loc="upper left")
+    beta_axis.set_ylabel("beta")
+    axes[1, 2].semilogy(iteration, [max(row.get("smooth_constraint", np.nan), 1e-12) for row in accepted_rows], marker="o", label="smooth solid+void")
+    bad_axis = axes[1, 2].twinx()
+    bad_axis.plot(iteration, [row["exact_bad_cells"] for row in accepted_rows], color="tab:red", marker="s", label="exact bad cells")
+    axes[1, 2].set_title("500 nm constraints")
+    axes[1, 2].set_ylabel("smooth residual")
+    bad_axis.set_ylabel("bad cells")
+    objective = float(history[-1]["objective_A"])
     fig.suptitle(
-        f"beta={summary['beta']:g}, objective={accepted[-1]['objective_A']:.5e} A, "
+        f"evaluation={evaluation_id}, {label}, accepted={accepted}; "
+        f"beta={summary['beta']:g}, objective={objective:.5e} A, "
+        f"gray={summary['gray_fraction_0p01_0p99']:.3f}, "
         f"bad={summary['exact']['total_bad_cell_count']}"
     )
-    fig.savefig(published / "latest_iteration.png", dpi=170)
-    fig.savefig(published / f"iteration_{accepted[-1]['global_iteration']:04d}.png", dpi=140)
+    destination = published / f"evaluation_{evaluation_id:04d}_{label}.png"
+    fig.savefig(destination, dpi=140)
+    write_latest = accepted if publish_latest is None else publish_latest
+    if write_latest:
+        fig.savefig(published / "latest_iteration.png", dpi=170)
     plt.close(fig)
 
 
@@ -130,6 +193,10 @@ def main() -> int:
     parser.add_argument("--raw-root", required=True, type=Path)
     parser.add_argument("--published-dir", required=True, type=Path)
     parser.add_argument("--gpu", type=int, default=5)
+    parser.add_argument("--base-fsp", type=Path, default=BASE_FSP)
+    parser.add_argument("--base-sha256", default=BASE_SHA)
+    parser.add_argument("--jacobian-dir", type=Path, default=JACOBIAN)
+    parser.add_argument("--connectivity-fraction", type=float, default=0.10)
     parser.add_argument("--max-new-evaluations", type=int, default=0, help="0 means no pilot limit")
     args = parser.parse_args()
     raw_root = args.raw_root.expanduser().resolve()
@@ -140,11 +207,18 @@ def main() -> int:
     state_path = raw_root / "optimization_state.npz"
     history_path = raw_root / "history.json"
     new_evaluations = 0
+    base_fsp = args.base_fsp.expanduser().resolve()
+    jacobian = args.jacobian_dir.expanduser().resolve()
+    if not 0.0 < args.connectivity_fraction < 1.0:
+        raise ValueError("connectivity fraction must lie in (0,1)")
+    minimum_conductance = args.connectivity_fraction * FULL_SOLID_TERMINAL_CONDUCTANCE_S
 
     if state_path.is_file():
         state = np.load(state_path)
         latent = np.asarray(state["latent"], float)
         gradient_physical = np.asarray(state["gradient_physical_A"], float)
+        gradient_conductance = np.asarray(state["gradient_terminal_conductance_S"], float)
+        terminal_conductance = float(state["terminal_conductance_S"])
         objective = float(state["objective_A"])
         beta_index = int(state["beta_index"])
         stage_updates = int(state["stage_updates"])
@@ -157,22 +231,37 @@ def main() -> int:
         history = json.loads(history_path.read_text())
         emit(events, "resume", global_iteration=global_iteration, beta=BETA_SCHEDULE[beta_index])
     else:
-        if args.polarization == "Ea":
+        if CONTRACT.geometry_mode == "fixed_frame" and args.polarization == "Ea":
             initial = np.load(INITIAL_COMBINED)
             latent = np.full(MAPPING.shape, 0.5)
             gradient_physical = np.asarray(initial["gradient_total_A"], float)
             objective = float(json.loads(INITIAL_COMBINED_RESULT.read_text())["base_objective_A"])
+            # Run010 predates the differentiable conductance safeguard.
+            rho = MAPPING.physical(latent, BETA_SCHEDULE[0])
+            result, gradient_physical, gradient_conductance = evaluate(
+                rho, polarization=args.polarization,
+                output=raw_root / "evaluation_initial_connectivity",
+                gpu=args.gpu, events=events, base_fsp=base_fsp,
+                base_sha=args.base_sha256, jacobian=jacobian,
+            )
+            objective = float(result["objective_A"])
+            terminal_conductance = float(result["terminal_conductance_S"])
+            new_evaluations += 1
         else:
             latent = np.full(MAPPING.shape, 0.5)
             rho = MAPPING.physical(latent, BETA_SCHEDULE[0])
-            result, gradient_physical = evaluate(
+            result, gradient_physical, gradient_conductance = evaluate(
                 rho,
                 polarization=args.polarization,
                 output=raw_root / "evaluation_initial",
                 gpu=args.gpu,
                 events=events,
+                base_fsp=base_fsp,
+                base_sha=args.base_sha256,
+                jacobian=jacobian,
             )
             objective = float(result["objective_A"])
+            terminal_conductance = float(result["terminal_conductance_S"])
             new_evaluations += 1
         beta_index = 0
         stage_updates = 0
@@ -190,9 +279,25 @@ def main() -> int:
             "beta": BETA_SCHEDULE[0],
             "objective_A": objective,
             "gray_fraction": summary["gray_fraction_0p01_0p99"],
+            "binarization": summary["binarization_mean_4rho1mrho"],
+            "smooth_constraint": summary["smooth_solid_constraint"] + summary["smooth_void_constraint"],
             "exact_bad_cells": summary["exact"]["total_bad_cell_count"],
             "initial_uniform": True,
+            "evaluation_id": evaluation_counter,
+            "accepted_update_index": 0,
+            "terminal_conductance_S": terminal_conductance,
+            "minimum_terminal_conductance_S": minimum_conductance,
         }]
+        publish_plot(
+            published,
+            history,
+            rho,
+            gradient_physical,
+            summary,
+            evaluation_id=evaluation_counter,
+            accepted=True,
+            label="initial",
+        )
 
     while beta_index < len(BETA_SCHEDULE):
         beta = BETA_SCHEDULE[beta_index]
@@ -201,6 +306,14 @@ def main() -> int:
         gradient_latent = MAPPING.vjp(latent, gradient_physical, beta)
         constraint_gradient = np.sum(arrays["constraint_gradients"], axis=0)
         combined = normalized(gradient_latent) - MORPHOLOGY_WEIGHT[beta] * normalized(constraint_gradient)
+        conductance_margin = (
+            terminal_conductance - minimum_conductance
+        ) / FULL_SOLID_TERMINAL_CONDUCTANCE_S
+        if conductance_margin < 0.05:
+            connectivity_weight = min(1.0, max(0.0, (0.05 - conductance_margin) / 0.05))
+            combined += connectivity_weight * normalized(
+                MAPPING.vjp(latent, gradient_conductance, beta)
+            )
         adam_iteration += 1
         first_moment = 0.9 * first_moment + 0.1 * combined
         second_moment = 0.999 * second_moment + 0.001 * combined * combined
@@ -211,15 +324,19 @@ def main() -> int:
         candidate_rho = MAPPING.physical(candidate, beta)
         evaluation_counter += 1
         evaluation_id = evaluation_counter
-        result, candidate_gradient = evaluate(
+        result, candidate_gradient, candidate_conductance_gradient = evaluate(
             candidate_rho,
             polarization=args.polarization,
             output=raw_root / f"evaluation_{evaluation_id:04d}_beta{int(beta)}",
             gpu=args.gpu,
             events=events,
+            base_fsp=base_fsp,
+            base_sha=args.base_sha256,
+            jacobian=jacobian,
         )
         new_evaluations += 1
         candidate_objective = float(result["objective_A"])
+        candidate_conductance = float(result["terminal_conductance_S"])
         candidate_summary, _ = metrics(candidate, beta)
         current_bad = int(summary["exact"]["total_bad_cell_count"])
         candidate_bad = int(candidate_summary["exact"]["total_bad_cell_count"])
@@ -228,10 +345,15 @@ def main() -> int:
             candidate_summary["smooth_solid_constraint"] + candidate_summary["smooth_void_constraint"]
             < summary["smooth_solid_constraint"] + summary["smooth_void_constraint"]
         )
-        accepted = bool(objective_guard if beta <= 8 else (objective_guard or constraint_improved))
+        connectivity_feasible = candidate_conductance >= minimum_conductance
+        accepted = bool(
+            connectivity_feasible
+            and (objective_guard if beta <= 8 else (objective_guard or constraint_improved))
+        )
         history.append({
             "accepted": accepted,
-            "global_iteration": evaluation_id,
+            "global_iteration": global_iteration + (1 if accepted else 0),
+            "evaluation_id": evaluation_id,
             "accepted_update_index": global_iteration + (1 if accepted else 0),
             "stage_update": stage_updates + (1 if accepted else 0),
             "beta": beta,
@@ -239,20 +361,36 @@ def main() -> int:
             "objective_A": candidate_objective,
             "objective_change_A": candidate_objective - objective,
             "gray_fraction": candidate_summary["gray_fraction_0p01_0p99"],
+            "binarization": candidate_summary["binarization_mean_4rho1mrho"],
+            "smooth_constraint": candidate_summary["smooth_solid_constraint"] + candidate_summary["smooth_void_constraint"],
             "exact_bad_cells": candidate_bad,
             "previous_exact_bad_cells": current_bad,
             "smooth_constraint_improved": constraint_improved,
+            "terminal_conductance_S": candidate_conductance,
+            "minimum_terminal_conductance_S": minimum_conductance,
+            "connectivity_feasible": connectivity_feasible,
             "solver_result": str(raw_root / f"evaluation_{evaluation_id:04d}_beta{int(beta)}" / "objective_gradient_result.json"),
         })
         history_path.write_text(json.dumps(history, indent=2) + "\n")
+        publish_plot(
+            published,
+            history,
+            candidate_rho,
+            candidate_gradient,
+            candidate_summary,
+            evaluation_id=evaluation_id,
+            accepted=accepted,
+            label="candidate",
+        )
         if accepted:
             latent = candidate
             objective = candidate_objective
             gradient_physical = candidate_gradient
+            gradient_conductance = candidate_conductance_gradient
+            terminal_conductance = candidate_conductance
             global_iteration += 1
             stage_updates += 1
             move = min(INITIAL_MOVE[beta], move * 1.05)
-            publish_plot(published, history, candidate_rho, candidate_gradient, candidate_summary)
             (published / "latest_summary.json").write_text(json.dumps(candidate_summary, indent=2) + "\n")
         else:
             move *= 0.5
@@ -265,6 +403,8 @@ def main() -> int:
             state_path,
             latent=latent,
             gradient_physical_A=gradient_physical,
+            gradient_terminal_conductance_S=gradient_conductance,
+            terminal_conductance_S=np.asarray(terminal_conductance),
             objective_A=np.asarray(objective),
             beta_index=np.asarray(beta_index),
             stage_updates=np.asarray(stage_updates),
@@ -303,6 +443,8 @@ def main() -> int:
                 state_path,
                 latent=latent,
                 gradient_physical_A=gradient_physical,
+                gradient_terminal_conductance_S=gradient_conductance,
+                terminal_conductance_S=np.asarray(terminal_conductance),
                 objective_A=np.asarray(objective),
                 beta_index=np.asarray(beta_index),
                 stage_updates=np.asarray(stage_updates),
@@ -317,15 +459,19 @@ def main() -> int:
                 next_beta = BETA_SCHEDULE[beta_index]
                 evaluation_counter += 1
                 reprojected_rho = MAPPING.physical(latent, next_beta)
-                reprojected_result, gradient_physical = evaluate(
+                reprojected_result, gradient_physical, gradient_conductance = evaluate(
                     reprojected_rho,
                     polarization=args.polarization,
                     output=raw_root / f"evaluation_{evaluation_counter:04d}_beta{int(next_beta)}_reprojection",
                     gpu=args.gpu,
                     events=events,
+                    base_fsp=base_fsp,
+                    base_sha=args.base_sha256,
+                    jacobian=jacobian,
                 )
                 new_evaluations += 1
                 objective = float(reprojected_result["objective_A"])
+                terminal_conductance = float(reprojected_result["terminal_conductance_S"])
                 reprojected_summary, _ = metrics(latent, next_beta)
                 history.append({
                     "accepted": True,
@@ -337,16 +483,32 @@ def main() -> int:
                     "beta": next_beta,
                     "objective_A": objective,
                     "gray_fraction": reprojected_summary["gray_fraction_0p01_0p99"],
+                    "binarization": reprojected_summary["binarization_mean_4rho1mrho"],
+                    "smooth_constraint": reprojected_summary["smooth_solid_constraint"] + reprojected_summary["smooth_void_constraint"],
                     "exact_bad_cells": reprojected_summary["exact"]["total_bad_cell_count"],
+                    "terminal_conductance_S": terminal_conductance,
+                    "minimum_terminal_conductance_S": minimum_conductance,
                     "solver_result": str(
                         raw_root / f"evaluation_{evaluation_counter:04d}_beta{int(next_beta)}_reprojection" / "objective_gradient_result.json"
                     ),
                 })
                 history_path.write_text(json.dumps(history, indent=2) + "\n")
+                publish_plot(
+                    published,
+                    history,
+                    reprojected_rho,
+                    gradient_physical,
+                    reprojected_summary,
+                    evaluation_id=evaluation_counter,
+                    accepted=True,
+                    label="reprojection",
+                )
                 save_state(
                     state_path,
                     latent=latent,
                     gradient_physical_A=gradient_physical,
+                    gradient_terminal_conductance_S=gradient_conductance,
+                    terminal_conductance_S=np.asarray(terminal_conductance),
                     objective_A=np.asarray(objective),
                     beta_index=np.asarray(beta_index),
                     stage_updates=np.asarray(stage_updates),

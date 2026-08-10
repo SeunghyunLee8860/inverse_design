@@ -47,6 +47,7 @@ class ElectricalResult:
     weighting_residual: float
     adjoint_residual: float
     terminal_conductance_S: float
+    gradient_terminal_conductance_S: Array
 
 
 def build_rectangular_mesh(span_x_m: float, span_y_m: float, step_m: float) -> RectangularTriangularMesh:
@@ -247,6 +248,15 @@ def solve_weighting_and_adjoint(
     terminal_load = np.zeros(node_count, dtype=np.float64)
     terminal_load[fixed] = matrix[fixed] @ psi
     terminal_conductance = float(np.sum(terminal_load[mesh.top_nodes]))
+    terminal_element_derivative = thickness_m * mesh.triangle_area_m2 * np.einsum(
+        "ea,eab,eb->e", grad_psi, dsigma, grad_psi
+    )
+    terminal_gradient = np.zeros(node_count, dtype=np.float64)
+    np.add.at(
+        terminal_gradient,
+        tri.ravel(),
+        np.repeat(terminal_element_derivative[:, None], 3, axis=1).ravel(),
+    )
     return ElectricalResult(
         weighting_potential=psi.reshape(mesh.shape),
         weighting_gradient_element_m_inv=grad_psi,
@@ -256,4 +266,5 @@ def solve_weighting_and_adjoint(
         weighting_residual=weighting_residual,
         adjoint_residual=adjoint_residual,
         terminal_conductance_S=terminal_conductance,
+        gradient_terminal_conductance_S=terminal_gradient.reshape(mesh.shape),
     )

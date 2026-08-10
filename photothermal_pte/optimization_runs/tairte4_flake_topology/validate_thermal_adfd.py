@@ -73,8 +73,8 @@ class CachedCudaSolve:
 
 
 def full_flake_density(design_nodal: np.ndarray) -> np.ndarray:
-    result = np.ones((241, 241), dtype=np.float64)
-    result[40:201, 40:201] = design_nodal
+    result = np.ones(CONTRACT.flake_node_shape, dtype=np.float64)
+    result[CONTRACT.design_node_slices] = design_nodal
     return result
 
 

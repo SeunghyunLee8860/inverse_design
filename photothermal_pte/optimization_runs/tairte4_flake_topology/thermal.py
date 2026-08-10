@@ -96,7 +96,7 @@ def nodal_to_cell(density: np.ndarray) -> np.ndarray:
 
 def nodal_to_cell_transpose(values: np.ndarray) -> np.ndarray:
     cell = np.asarray(values, dtype=np.float64)
-    expected = (CONTRACT.design_intervals, CONTRACT.design_intervals)
+    expected = CONTRACT.design_intervals
     if cell.shape != expected:
         raise ValueError(f"cell values shape {cell.shape} != {expected}")
     result = np.zeros(CONTRACT.design_node_shape, dtype=np.float64)
@@ -150,7 +150,12 @@ def build_state(rho_nodal: np.ndarray, *, gray_exponent: float = 1.0) -> Thermal
     sio2 = (zz >= -0.385e-6) & (zz < -0.100e-6)
     flake_z = (zz >= -0.100e-6) & (zz < 0.0)
     flake_xy = (np.abs(xx) < 12.0e-6) & (np.abs(yy) < 12.0e-6)
-    design_xy = (np.abs(xx) < 8.0e-6) & (np.abs(yy) < 8.0e-6)
+    x_bounds = CONTRACT.design_bounds_m["x"]
+    y_bounds = CONTRACT.design_bounds_m["y"]
+    design_xy = (
+        (xx >= x_bounds[0]) & (xx < x_bounds[1])
+        & (yy >= y_bounds[0]) & (yy < y_bounds[1])
+    )
     fixed_flake = flake_z & flake_xy & ~design_xy
     design_flake = flake_z & design_xy
     air = ~(si | sio2 | fixed_flake | design_flake)
@@ -170,8 +175,8 @@ def build_state(rho_nodal: np.ndarray, *, gray_exponent: float = 1.0) -> Thermal
     material[fixed_flake] = 4
     material[design_flake] = 5
 
-    x_design = np.flatnonzero((centers[0] >= -8.0e-6) & (centers[0] < 8.0e-6))
-    y_design = np.flatnonzero((centers[1] >= -8.0e-6) & (centers[1] < 8.0e-6))
+    x_design = np.flatnonzero((centers[0] >= x_bounds[0]) & (centers[0] < x_bounds[1]))
+    y_design = np.flatnonzero((centers[1] >= y_bounds[0]) & (centers[1] < y_bounds[1]))
     z_flake = np.flatnonzero((centers[2] >= -0.100e-6) & (centers[2] < 0.0))
     if (x_design.size, y_design.size) != rho_cell.shape or z_flake.size != 10:
         raise RuntimeError("thermal design/flake grid does not match 100/10 nm contract")

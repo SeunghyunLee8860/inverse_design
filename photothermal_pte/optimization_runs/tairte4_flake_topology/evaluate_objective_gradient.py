@@ -28,6 +28,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.validate_combined
 
 import build_nonuniform_complex_yee_jacobian as jacobian_builder
 import run_production_combined_adfd_smoke as legacy_combined
+from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
 
 
 def load_rho(path: Path) -> np.ndarray:
@@ -36,8 +37,8 @@ def load_rho(path: Path) -> np.ndarray:
         if "rho" not in data:
             raise RuntimeError("density artifact must contain rho")
         rho = np.asarray(data["rho"], dtype=np.float64)
-    if rho.shape != (161, 161):
-        raise RuntimeError(f"rho shape {rho.shape} != (161, 161)")
+    if rho.shape != CONTRACT.design_node_shape:
+        raise RuntimeError(f"rho shape {rho.shape} != {CONTRACT.design_node_shape}")
     if not np.all(np.isfinite(rho)) or np.any((rho < 0.0) | (rho > 1.0)):
         raise RuntimeError("rho must be finite in [0,1]")
     return rho
@@ -136,6 +137,8 @@ def main() -> int:
             gradient_optical_A=gradient_optical,
             gradient_thermal_A=gradient_thermal,
             gradient_electrical_A=gradient_electrical,
+            terminal_conductance_S=np.asarray(coupled["electrical"].terminal_conductance_S),
+            gradient_terminal_conductance_S=coupled["gradient_terminal_conductance"],
             temperature_K=coupled["temperature"],
         )
         passed = bool(
@@ -163,6 +166,7 @@ def main() -> int:
                 "thermal": float(np.linalg.norm(gradient_thermal)),
                 "electrical": float(np.linalg.norm(gradient_electrical)),
             },
+            "terminal_conductance_S": coupled["electrical"].terminal_conductance_S,
             "current_density_local_Yee_J": local_meta,
             "baseline_operator_provenance": operator_meta,
             "forward": compact_forward(forward),

@@ -16,7 +16,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.thermal import (
 def test_nodal_cell_transpose():
     rng = np.random.default_rng(4)
     node = rng.normal(size=CONTRACT.design_node_shape)
-    cell = rng.normal(size=(CONTRACT.design_intervals, CONTRACT.design_intervals))
+    cell = rng.normal(size=CONTRACT.design_intervals)
     assert np.isclose(np.sum(nodal_to_cell(node) * cell), np.sum(node * nodal_to_cell_transpose(cell)), rtol=1e-13)
 
 

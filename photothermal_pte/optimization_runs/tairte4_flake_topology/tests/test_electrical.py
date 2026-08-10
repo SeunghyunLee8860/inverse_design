@@ -73,6 +73,33 @@ def test_density_gradient_matches_directional_fd() -> None:
     assert abs(ad - fd) / scale < 2.0e-6
 
 
+def test_terminal_conductance_gradient_matches_directional_fd() -> None:
+    mesh = build_rectangular_mesh(0.8e-6, 1.0e-6, 0.1e-6)
+    xx, yy = np.meshgrid(mesh.x_m, mesh.y_m, indexing="ij")
+    rho = 0.48 + 0.09 * np.cos(np.pi * xx / 0.8e-6) * np.cos(np.pi * yy / 1.0e-6)
+    temperature = np.full(mesh.shape, 300.0)
+    rng = np.random.default_rng(29)
+    direction = rng.normal(size=mesh.shape)
+    direction[:, 0] = 0.0
+    direction[:, -1] = 0.0
+    direction /= np.max(np.abs(direction))
+    kwargs = dict(
+        thickness_m=100.0e-9,
+        sigma_xy_S_m=SIGMA,
+        seebeck_xy_V_K=SEEBECK,
+        sigma_void_fraction=1.0e-8,
+        sigma_penalty=2.0,
+        alpha_penalty=2.0,
+    )
+    base = solve_weighting_and_adjoint(mesh, rho, temperature, **kwargs)
+    h = 2.0e-5
+    plus = solve_weighting_and_adjoint(mesh, rho + h * direction, temperature, **kwargs)
+    minus = solve_weighting_and_adjoint(mesh, rho - h * direction, temperature, **kwargs)
+    fd = (plus.terminal_conductance_S - minus.terminal_conductance_S) / (2.0 * h)
+    ad = float(np.sum(base.gradient_terminal_conductance_S * direction))
+    assert abs(ad - fd) / max(abs(ad), abs(fd), 1.0e-30) < 2.0e-6
+
+
 def test_temperature_gradient_matches_directional_fd() -> None:
     mesh = build_rectangular_mesh(0.8e-6, 1.0e-6, 0.1e-6)
     xx, yy = np.meshgrid(mesh.x_m, mesh.y_m, indexing="ij")

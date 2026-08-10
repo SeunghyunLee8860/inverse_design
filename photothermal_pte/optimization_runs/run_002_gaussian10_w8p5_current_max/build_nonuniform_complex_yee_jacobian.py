@@ -418,13 +418,20 @@ def main() -> int:
     if args.geometry == "tairte4_flake":
         imported_object = tairte4_flake_optical.DESIGN_OBJECT
         nodes = tairte4_flake_optical.design_nodes()
-        half_span_m = 0.5 * tairte4_flake_optical.CONTRACT.design_span_m
+        half_span_m = 0.5 * min(
+            tairte4_flake_optical.CONTRACT.design_span_x_m,
+            tairte4_flake_optical.CONTRACT.design_span_y_m,
+        )
         maximum_local_distance_m = PRODUCTION_MAX_LOCAL_DISTANCE_M
         validated_status = "VALIDATED_TAIRTE4_FLAKE_COMPLEX_COMPONENT_YEE_JACOBIAN"
         failed_status = "FAILED_TAIRTE4_FLAKE_COMPLEX_COMPONENT_YEE_JACOBIAN"
+        contract = tairte4_flake_optical.CONTRACT
         scope = (
-            "10 um 16x16x0.1 um anisotropic TaIrTe4-to-air design; "
-            "layout-only J_c=d epsilon_Yee,c/d rho on 161x161 nodes"
+            f"10 um {contract.design_span_x_m * 1e6:g}x"
+            f"{contract.design_span_y_m * 1e6:g}x"
+            f"{contract.flake_thickness_m * 1e6:g} um anisotropic "
+            f"TaIrTe4-to-air {contract.geometry_mode} design; layout-only "
+            f"J_c=d epsilon_Yee,c/d rho on {nodes[0].size}x{nodes[1].size} nodes"
         )
         density_setter = set_tairte4_flake_density
     elif args.geometry == "selected_production":

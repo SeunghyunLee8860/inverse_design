@@ -58,10 +58,10 @@ def passive_sqrt(epsilon: np.ndarray) -> np.ndarray:
 
 
 def design_nodes() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    half = 0.5 * CONTRACT.design_span_m
+    bounds = CONTRACT.design_bounds_m
     return (
-        np.linspace(-half, half, CONTRACT.design_node_shape[0]),
-        np.linspace(-half, half, CONTRACT.design_node_shape[1]),
+        np.linspace(*bounds["x"], CONTRACT.design_node_shape[0]),
+        np.linspace(*bounds["y"], CONTRACT.design_node_shape[1]),
         np.linspace(-CONTRACT.flake_thickness_m, 0.0, int(round(CONTRACT.flake_thickness_m / CONTRACT.flake_dz_m)) + 1),
     )
 
@@ -136,14 +136,21 @@ def add_rect(fdtd: Any, name: str, material: str, bounds: dict[str, tuple[float,
 
 def add_fixed_frame(fdtd: Any) -> list[str]:
     flake = 0.5 * CONTRACT.flake_span_m
-    design = 0.5 * CONTRACT.design_span_m
+    x_design = 0.5 * CONTRACT.design_span_x_m
+    y_design = 0.5 * CONTRACT.design_span_y_m
     z = (-CONTRACT.flake_thickness_m, 0.0)
-    pieces = {
-        "left": {"x": (-flake, -design), "y": (-flake, flake), "z": z},
-        "right": {"x": (design, flake), "y": (-flake, flake), "z": z},
-        "bottom": {"x": (-design, design), "y": (-flake, -design), "z": z},
-        "top": {"x": (-design, design), "y": (design, flake), "z": z},
-    }
+    if CONTRACT.geometry_mode == "contact_anchored":
+        pieces = {
+            "bottom_contact": {"x": (-flake, flake), "y": (-flake, -y_design), "z": z},
+            "top_contact": {"x": (-flake, flake), "y": (y_design, flake), "z": z},
+        }
+    else:
+        pieces = {
+            "left": {"x": (-flake, -x_design), "y": (-flake, flake), "z": z},
+            "right": {"x": (x_design, flake), "y": (-flake, flake), "z": z},
+            "bottom": {"x": (-x_design, x_design), "y": (-flake, -y_design), "z": z},
+            "top": {"x": (-x_design, x_design), "y": (y_design, flake), "z": z},
+        }
     names = []
     for label, bounds in pieces.items():
         name = f"run010_fixed_TaIrTe4_frame_{label}"
