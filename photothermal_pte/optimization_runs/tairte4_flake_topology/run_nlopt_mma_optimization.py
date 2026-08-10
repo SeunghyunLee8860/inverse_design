@@ -100,7 +100,7 @@ class StageEvaluator:
         base_fsp: Path,
         base_sha256: str,
         jacobian_dir: Path,
-        minimum_conductance_S: float,
+        minimum_conductance_S: float | None,
         morphology_caps: np.ndarray,
         fixed_source_power_W: float | None,
         evaluation_counter: int,
@@ -108,6 +108,7 @@ class StageEvaluator:
         constraint_device: str,
         algorithm_label: str = "NLopt LD_MMA",
         output_slug: str = "nlopt_mma",
+        include_terminal_conductance_constraint: bool = True,
     ) -> None:
         self.beta = beta
         self.polarization = polarization
@@ -128,6 +129,7 @@ class StageEvaluator:
         self.constraint_device = constraint_device
         self.algorithm_label = algorithm_label
         self.output_slug = output_slug
+        self.include_terminal_conductance_constraint = include_terminal_conductance_constraint
         self.last: Point | None = None
         self.stage_full_physics_evaluations = 0
 
@@ -183,6 +185,7 @@ class StageEvaluator:
             minimum_terminal_conductance_S=self.minimum_conductance_S,
             morphology_caps=self.morphology_caps,
             device=self.constraint_device,
+            include_terminal_conductance_constraint=self.include_terminal_conductance_constraint,
         )
         point = Point(
             x=x.copy(),
@@ -218,7 +221,10 @@ class StageEvaluator:
             "minimum_terminal_conductance_S": self.minimum_conductance_S,
             "constraint_names": names,
             "constraint_values": fval.tolist(),
-            "maximum_constraint_value": float(np.max(fval)),
+            "maximum_constraint_value": (
+                float(np.max(fval)) if fval.size else None
+            ),
+            "terminal_conductance_constraint_enabled": self.include_terminal_conductance_constraint,
             "morphology_caps": self.morphology_caps.tolist(),
             "gray_fraction_0p01_0p99": summary["gray_fraction_0p01_0p99"],
             "binarization": summary["binarization_mean_4rho1mrho"],
@@ -291,10 +297,11 @@ def make_optimizer(evaluator: StageEvaluator, constraint_count: int) -> nlopt.op
     optimizer.set_lower_bounds(np.zeros(variable_count))
     optimizer.set_upper_bounds(np.ones(variable_count))
     optimizer.set_min_objective(evaluator.objective)
-    optimizer.add_inequality_mconstraint(
-        evaluator.constraints,
-        np.full(constraint_count, NLOPT_CONSTRAINT_TOL),
-    )
+    if constraint_count:
+        optimizer.add_inequality_mconstraint(
+            evaluator.constraints,
+            np.full(constraint_count, NLOPT_CONSTRAINT_TOL),
+        )
     optimizer.set_ftol_rel(NLOPT_FTOL_REL)
     optimizer.set_xtol_rel(NLOPT_XTOL_REL)
     optimizer.set_maxeval(MAXIMUM_STAGE_EVALUATIONS)

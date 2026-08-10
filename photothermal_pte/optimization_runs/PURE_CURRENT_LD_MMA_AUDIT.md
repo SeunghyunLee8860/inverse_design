@@ -1,0 +1,81 @@
+# Pure-terminal-current NLopt LD_MMA audit
+
+## Purpose
+
+Run030/Run031 use the contact-anchored TaIrTe4 device with a top and a bottom
+electrode. They optimize the signed, full-flake terminal PTE current only.
+They deliberately do **not** require a minimum terminal conductance or a
+graph/connectivity constraint.
+
+The finite flake is \(24\times24\,\mu\mathrm m^2\). The design region spans
+the full \(x=b\) width and \(20\,\mu\mathrm m\) in \(y=a\); the remaining
+two \(2\,\mu\mathrm m\)-deep strips are fixed TaIrTe4 terminal-contact
+regions. They define the two electrical electrodes used for the weighting
+potential; they are not a connectivity inequality.
+
+The historical Run020/Run021 `LD_MMA` path is retained unchanged. It imposed
+the additional inequality
+
+\[
+1-G_{\rm terminal}/G_{\rm min}\le 0,
+\qquad G_{\rm min}=0.1G_{\rm full-solid},
+\]
+
+which is an optional numerical guardrail, not a required part of the
+top/bottom-electrode weighting-field physics. It is absent from Run030/Run031.
+
+## Verified electrical contract
+
+The production electrical solver in `tairte4_flake_topology/electrical.py`:
+
+- constructs the finite full-flake mesh in Lumerical coordinates `x=b`, `y=a`;
+- fixes every lower-contact node to \(\psi=0\) and every upper-contact node to
+  \(\psi=1\);
+- solves the weighting potential inside that material-dependent mesh;
+- evaluates the signed **full-flake terminal** PTE current; and
+- differentiates both the direct material term and the implicit
+  weighting-potential response.
+
+The objective/gradient entry point
+`tairte4_flake_topology/evaluate_objective_gradient.py` writes the sum of the
+optical, thermal, and electrical material derivatives. Its reported objective
+is explicitly `signed full-flake terminal PTE current`.
+
+`terminal_conductance_S` and its derivative are still calculated in every
+evaluation. In Run030/Run031 they are stored in history/manifest only; they
+are not passed to `NLopt.add_inequality_mconstraint`.
+
+## Exact optimizer path
+
+`tairte4_flake_topology/run_pure_current_ld_mma_optimization.py` creates
+
+```python
+nlopt.opt(nlopt.LD_MMA, variable_count)
+```
+
+with latent box bounds \(0\le x\le1\) and the analytic adjoint gradient. It
+does not implement a hand-written MMA update, move limit, Adam state,
+gradient-direction normalization, post-update clipping, symmetry constraint,
+volume constraint, or connectivity constraint.
+
+At \(\beta<8\), there are no inequality constraints. From \(\beta=8\), the
+only two active inequalities are the existing differentiable 500-nm solid and
+void morphology constraints. They are unrelated to electrical connectivity.
+The beta stage does not advance after `MAXEVAL_REACHED`; that condition is
+fail-closed rather than a forced continuation.
+
+## Reproduction and publication
+
+Run the paired sequence with:
+
+```bash
+TAIRTE4_PURE_CURRENT_LD_MMA_GPU=<physical GPU index> \
+  /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
+  photothermal_pte/optimization_runs/run_pure_current_ld_mma_dual_supervisor.py
+```
+
+It verifies the immutable base-FSP SHA, passed component-Yee Jacobian
+certificate, and passed optical/thermal/electrical preflight before opening a
+GPU FDTD session. `Ea` runs first; `Eb` starts only after the `Ea` final
+certificate passes. Raw FSP/NPZ remain outside Git; their paths, byte counts,
+and SHA-256 values are emitted to each raw-artifact manifest.

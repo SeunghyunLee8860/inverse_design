@@ -64,3 +64,30 @@ def test_production_nlopt_driver_has_no_custom_update_or_move_limit() -> None:
     assert "move_limit=MOVE_LIMIT" not in text
     assert '"manual_move_limit": None' in text
     assert "NLOPT_XTOL_REL = 1.0e-7" in text
+
+
+def test_pure_current_driver_uses_ld_mma_without_connectivity_constraint() -> None:
+    source = Path(__file__).parents[1] / "run_pure_current_ld_mma_optimization.py"
+    text = source.read_text()
+    assert "NLopt LD_MMA" in text
+    assert "--connectivity-fraction" not in text
+    assert "include_terminal_conductance_constraint=False" in text
+    assert "constraint_count = 0 if beta < MORPHOLOGY_START_BETA else 2" in text
+
+
+def test_nlopt_ld_mma_allows_the_unconstrained_low_beta_contract() -> None:
+    optimizer = nlopt.opt(nlopt.LD_MMA, 2)
+    optimizer.set_lower_bounds(np.zeros(2))
+    optimizer.set_upper_bounds(np.ones(2))
+
+    def objective(x: np.ndarray, gradient: np.ndarray) -> float:
+        if gradient.size:
+            gradient[:] = 2.0 * (x - np.asarray([0.75, 0.25]))
+        return float(np.sum((x - np.asarray([0.75, 0.25])) ** 2))
+
+    optimizer.set_min_objective(objective)
+    optimizer.set_xtol_rel(1.0e-10)
+    optimizer.set_maxeval(100)
+    optimum = optimizer.optimize(np.asarray([0.5, 0.5]))
+    assert optimizer.last_optimize_result() > 0
+    assert np.allclose(optimum, [0.75, 0.25], atol=1.0e-5)

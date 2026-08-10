@@ -1,9 +1,11 @@
 # NLopt LD_MMA reproduction code manifest
 
 This is the complete Python-code index for the historical contact-anchored
-TaIrTe4 PTE `NLopt LD_MMA` optimization (Run020/Run021).  It is retained for
-reproduction and diagnosis; the active Run026/Run027 uses AUGLAG/L-BFGS and
-does **not** import the `LD_MMA` driver.
+TaIrTe4 PTE `NLopt LD_MMA` optimization (Run020/Run021) and the deliberately
+separate pure-terminal-current `LD_MMA` continuation (Run030/Run031).
+Run020/Run021 retain their historical terminal-conductance inequality for
+provenance. Run030/Run031 remove that optional connectivity guardrail and are
+the current production entry point.
 
 ## Entry points
 
@@ -11,15 +13,19 @@ does **not** import the `LD_MMA` driver.
 |---|---|
 | E||a then E||b GPU supervisor | `run_nlopt_mma_dual_supervisor.py` |
 | Actual `nlopt.LD_MMA` callback/update driver | `tairte4_flake_topology/run_nlopt_mma_optimization.py` |
+| Pure-current E||a then E||b GPU supervisor | `run_pure_current_ld_mma_dual_supervisor.py` |
+| Pure-current `nlopt.LD_MMA` driver | `tairte4_flake_topology/run_pure_current_ld_mma_optimization.py` |
+| Pure-current electrical/optimizer audit | `PURE_CURRENT_LD_MMA_AUDIT.md` |
 | Artifact/report publisher | `publish_true_mma_accepted_updates.py` |
 | GPU/physics preflight audit | `audit_true_mma_preflight.py` |
 
-The optimization driver creates the exact NLopt object with
+Both optimization drivers create the exact NLopt object with
 `nlopt.opt(nlopt.LD_MMA, variable_count)`, supplies an analytic objective
-gradient plus vector inequality-constraint Jacobian, and imposes only the
-NLopt box bounds `0 <= latent <= 1`.  There is no custom MMA implementation,
-Adam state, manual move limit, normalized-gradient update, or post-update
-clipping.
+gradient, and impose the NLopt box bounds `0 <= latent <= 1`. The historical
+driver adds its archived conductance inequality. The pure-current driver has
+no inequality at \(\beta<8\), then only the two 500-nm morphology
+inequalities. There is no custom MMA implementation, Adam state, manual move
+limit, normalized-gradient update, or post-update clipping.
 
 ## Full objective and gradient chain
 
@@ -53,9 +59,9 @@ clipping.
 From the repository root, on a licensed v261 GPU-capable host:
 
 ```bash
-TAIRTE4_NLOPT_MMA_GPU=<physical_gpu_index> \
+TAIRTE4_PURE_CURRENT_LD_MMA_GPU=<physical_gpu_index> \
   /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
-  photothermal_pte/optimization_runs/run_nlopt_mma_dual_supervisor.py
+  photothermal_pte/optimization_runs/run_pure_current_ld_mma_dual_supervisor.py
 ```
 
 The supervisor verifies the immutable base FSP SHA-256, the component-Yee

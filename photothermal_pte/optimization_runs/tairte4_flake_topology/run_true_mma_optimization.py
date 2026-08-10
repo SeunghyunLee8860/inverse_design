@@ -221,17 +221,33 @@ def canonical_constraints(
     beta: float,
     terminal_conductance_S: float,
     gradient_terminal_conductance_physical_S: np.ndarray,
-    minimum_terminal_conductance_S: float,
+    minimum_terminal_conductance_S: float | None,
     morphology_caps: np.ndarray,
     device: str,
+    include_terminal_conductance_constraint: bool = True,
 ) -> tuple[list[str], np.ndarray, np.ndarray, dict[str, object], dict[str, object]]:
+    """Return differentiable constraints for a continuation stage.
+
+    ``terminal_conductance_S`` is always evaluated and recorded because it is
+    useful physical diagnostics for a top/bottom-electrode device.  It is only
+    made an optimization constraint when the caller explicitly opts in.  This
+    keeps historical connectivity-constrained runs reproducible while letting
+    the pure-terminal-current LD_MMA driver optimize the stated objective
+    without an arbitrary conductance floor.
+    """
     summary, arrays = metrics(latent, beta, device=device)
-    names = ["minimum_terminal_conductance"]
-    values = [1.0 - terminal_conductance_S / minimum_terminal_conductance_S]
-    gradients = [
-        -MAPPING.vjp(latent, gradient_terminal_conductance_physical_S, beta)
-        / minimum_terminal_conductance_S
-    ]
+    names: list[str] = []
+    values: list[float] = []
+    gradients: list[np.ndarray] = []
+    if include_terminal_conductance_constraint:
+        if minimum_terminal_conductance_S is None or minimum_terminal_conductance_S <= 0.0:
+            raise ValueError("terminal-conductance constraint requires a positive floor")
+        names.append("minimum_terminal_conductance")
+        values.append(1.0 - terminal_conductance_S / minimum_terminal_conductance_S)
+        gradients.append(
+            -MAPPING.vjp(latent, gradient_terminal_conductance_physical_S, beta)
+            / minimum_terminal_conductance_S
+        )
     if beta >= MORPHOLOGY_START_BETA:
         raw_values = np.asarray(
             [summary["smooth_solid_constraint"], summary["smooth_void_constraint"]],
@@ -243,7 +259,17 @@ def canonical_constraints(
         gradients.extend(
             [raw_gradients[index] / morphology_caps[index] for index in range(2)]
         )
-    return names, np.asarray(values), np.stack(gradients), summary, arrays
+    return (
+        names,
+        np.asarray(values, dtype=np.float64),
+        (
+            np.stack(gradients)
+            if gradients
+            else np.empty((0, *MAPPING.shape), dtype=np.float64)
+        ),
+        summary,
+        arrays,
+    )
 
 
 def stage_convergence(history: list[dict[str, object]], beta: float) -> dict[str, object]:

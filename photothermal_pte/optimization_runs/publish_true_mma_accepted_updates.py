@@ -26,12 +26,15 @@ DIRECTORIES = (
     REPOSITORY / "photothermal_pte/optimization_runs/run_025_auglag_lbfgs_contact_anchored_Eb_current_max",
     REPOSITORY / "photothermal_pte/optimization_runs/run_026_auglag_lbfgs_contact_anchored_Ea_current_max",
     REPOSITORY / "photothermal_pte/optimization_runs/run_027_auglag_lbfgs_contact_anchored_Eb_current_max",
+    REPOSITORY / "photothermal_pte/optimization_runs/run_030_pure_current_ld_mma_contact_anchored_Ea_current_max",
+    REPOSITORY / "photothermal_pte/optimization_runs/run_031_pure_current_ld_mma_contact_anchored_Eb_current_max",
 )
 STATUSES = (
     REPOSITORY / "photothermal_pte/optimization_runs/TRUE_MMA_DUAL_RUN_STATUS.json",
     REPOSITORY / "photothermal_pte/optimization_runs/NLOPT_MMA_DUAL_RUN_STATUS.json",
     REPOSITORY / "photothermal_pte/optimization_runs/VERIFIED_MMA_DUAL_RUN_STATUS.json",
     REPOSITORY / "photothermal_pte/optimization_runs/AUGLAG_LBFGS_DUAL_RUN_STATUS.json",
+    REPOSITORY / "photothermal_pte/optimization_runs/PURE_CURRENT_LD_MMA_DUAL_RUN_STATUS.json",
 )
 
 

@@ -86,6 +86,24 @@ def test_low_beta_has_only_connectivity_inequality() -> None:
     assert gradients.shape == (1, *MAPPING.shape)
 
 
+def test_low_beta_can_explicitly_disable_the_connectivity_inequality() -> None:
+    latent = np.full(MAPPING.shape, 0.5)
+    gradient = np.ones(MAPPING.shape)
+    names, values, gradients, _, _ = canonical_constraints(
+        latent=latent,
+        beta=1.0,
+        terminal_conductance_S=2.0,
+        gradient_terminal_conductance_physical_S=gradient,
+        minimum_terminal_conductance_S=None,
+        morphology_caps=np.asarray([np.inf, np.inf]),
+        device="cpu",
+        include_terminal_conductance_constraint=False,
+    )
+    assert names == []
+    assert values.shape == (0,)
+    assert gradients.shape == (0, *MAPPING.shape)
+
+
 def test_morphology_caps_are_fixed_gentle_stage_tightening() -> None:
     values = np.asarray([4.0e-3, 1.0e-4])
     caps = stage_morphology_caps(values, 8.0)
