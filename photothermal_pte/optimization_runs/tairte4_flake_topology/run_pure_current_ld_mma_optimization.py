@@ -6,7 +6,7 @@ historical ``run_nlopt_mma_optimization.py``.  The older driver retains its
 terminal-conductance inequality for provenance.  This driver does *not* use a
 connectivity, conductance, symmetry, volume, hand-written move, Adam, or
 gradient-normalization constraint.  The only active constraints are the
-documented 500-nm solid/void morphology inequalities from beta=8 onward.
+documented 500-nm solid/void morphology inequalities from beta=1 onward.
 
 The electrical solve still uses its physical terminal boundary conditions:
 top electrode weighting potential psi=1 and bottom electrode psi=0.  Terminal
