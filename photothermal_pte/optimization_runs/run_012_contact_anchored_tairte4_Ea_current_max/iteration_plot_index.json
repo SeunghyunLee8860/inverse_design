@@ -7,8 +7,8 @@
     "reference_incident_power_W": 0.000285,
     "reference_current": "linear source-power equivalent; no empirical fitting or gradient rescaling"
   },
-  "evaluation_count": 31,
-  "latest_evaluation_id": 31,
+  "evaluation_count": 32,
+  "latest_evaluation_id": 32,
   "plots": [
     {
       "evaluation_id": 1,
@@ -474,6 +474,21 @@
       "responsivity_A_W": 0.0002558109945218878,
       "plot": "evaluation_0031_candidate.png",
       "plot_sha256": "bc095565f4edf690c0b71e3f2292fb074761799cadc27475dd886d2b3ef9bd31"
+    },
+    {
+      "evaluation_id": 32,
+      "label": "candidate",
+      "accepted": true,
+      "accepted_update_index": 27,
+      "beta": 32.0,
+      "objective_A": 3.55826083824357e-17,
+      "simulated_source_power_W": 1.3830232993859658e-13,
+      "reference_incident_power_W": 0.000285,
+      "objective_at_reference_power_A": 7.332518109779199e-08,
+      "objective_at_reference_power_nA": 73.32518109779198,
+      "responsivity_A_W": 0.0002572813371852351,
+      "plot": "evaluation_0032_candidate.png",
+      "plot_sha256": "cf622d7b084066a736a2725701c153787c4fad1e914cf38457f083f02941db22"
     }
   ]
 }
