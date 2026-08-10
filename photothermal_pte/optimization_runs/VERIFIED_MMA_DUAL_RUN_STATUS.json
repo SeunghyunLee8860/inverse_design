@@ -1,10 +1,11 @@
 {
   "schema": "verified-persistent-mma-dual-supervisor-v1",
   "generated_at_utc": "2026-08-10T20:14:16.654804+00:00",
-  "status": "RUNNING_VERIFIED_MMA",
+  "status": "STOPPED_DIAGNOSTIC_MOVE_BOUND_DOMINATED",
   "gpu": 1,
   "run": "Run022",
   "polarization": "Ea",
+  "reason": "Run022 updates 1-5 all had max latent step 0.025 and RMS latent step 0.02488-0.02498, so nearly the entire design was moving at the trust-region bound. This is not accepted as a healthy MMA trajectory; raw diagnostics are preserved and Run023 was not started.",
   "command": [
     "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python",
     "-m",
