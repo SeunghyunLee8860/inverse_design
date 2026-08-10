@@ -311,18 +311,7 @@ def evaluate(latent_npz: Path, output: Path, beta: float, gpu: str) -> tuple[Pat
             retry_attempt += 1
             time.sleep(LICENSE_RETRY_DELAY_S)
 
-        resume_completed_solves = bool(
-            output.exists()
-            and not result.exists()
-            and (output / "full_latent_base.fsp").is_file()
-            and (output / "selected_full_latent_adjoint_gpu.fsp").is_file()
-        )
-        if (
-            output.exists()
-            and any(output.iterdir())
-            and not result.exists()
-            and not resume_completed_solves
-        ):
+        if output.exists() and any(output.iterdir()) and not result.exists():
             archive_incomplete_evaluation(output)
 
         output.mkdir(parents=True, exist_ok=True)
@@ -335,14 +324,6 @@ def evaluate(latent_npz: Path, output: Path, beta: float, gpu: str) -> tuple[Pat
             "--incident-power-W", INCIDENT_POWER,
             "--allow-closed-unit-interval-latent",
         ] + axis_cli()
-        if resume_completed_solves:
-            command.append("--resume-completed-solves")
-            emit(
-                "resume_completed_maxwell_solves",
-                output=str(output),
-                forward_FSP=str(output / "full_latent_base.fsp"),
-                adjoint_FSP=str(output / "selected_full_latent_adjoint_gpu.fsp"),
-            )
         returncode = execute(
             command, f"evaluate_{output.name}", env=environment, allow_failure=True
         )
