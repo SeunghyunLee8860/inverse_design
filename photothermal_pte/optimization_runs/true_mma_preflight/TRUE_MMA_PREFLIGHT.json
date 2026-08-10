@@ -1,6 +1,6 @@
 {
   "schema": "run016-017-code-and-physics-preflight-v1",
-  "generated_at_utc": "2026-08-10T19:03:39.472582+00:00",
+  "generated_at_utc": "2026-08-10T20:14:16.647317+00:00",
   "status": "VALIDATED_RUN016_RUN017_TRUE_MMA_PREFLIGHT",
   "passed": true,
   "branch_expected": "agent/restart-true-mma-pte-optimization",
@@ -193,16 +193,16 @@
       "sha256": "9c78a8732cb002dac991366f75749df195d966cef0ec29246a3b83eb034458a3"
     },
     "photothermal_pte/optimization_runs/tairte4_flake_topology/run_true_mma_optimization.py": {
-      "size_bytes": 38790,
-      "sha256": "2ea5d2c29c998becbc6f82ff716b9a05ec880405425a59ba1ccbd8474e034961"
+      "size_bytes": 41273,
+      "sha256": "8987668eb1af224b923fa8a1d963fbb862a1cd4a3e0ca3895a9c5aa51a8c9f26"
     },
     "photothermal_pte/optimization_runs/run_true_mma_dual_supervisor.py": {
       "size_bytes": 10002,
       "sha256": "db507a03229bc07441e2c7af7b99af001ded11b08075ff0be4ce5fcb954d0589"
     },
     "photothermal_pte/optimization_runs/publish_true_mma_accepted_updates.py": {
-      "size_bytes": 2473,
-      "sha256": "b2ca22dc705ff8c25a6388e4304f49333fd699e6917f03e173e1af2f75f977dd"
+      "size_bytes": 3367,
+      "sha256": "7f47fb38415fb47fec3b1d650297f3c9107c3cc0b5124fab1edb728abf96cee2"
     },
     "photothermal_pte/optimization_runs/cuda_thermal_adjoint.py": {
       "size_bytes": 9311,
@@ -253,8 +253,8 @@
       "sha256": "3e77ba98061238e6de22971b7230bedb57af81eac475031ed1edebc9f56274cc"
     },
     "photothermal_pte/optimization_runs/tairte4_flake_topology/tests/test_true_mma_driver.py": {
-      "size_bytes": 3632,
-      "sha256": "18c99ee6747762eee1f688553a7abba43221a1909528eca712099faf70291f67"
+      "size_bytes": 4615,
+      "sha256": "4ed2b7e61e39208f9d4c5328c2cb8268970e5298ce074ee28cbb1fe5cd056355"
     },
     "photothermal_pte/optimization_runs/tairte4_flake_topology/tests/test_thermal.py": {
       "size_bytes": 1839,
