@@ -1,0 +1,22 @@
+{
+  "schema": "true-mma-dual-supervisor-v1",
+  "generated_at_utc": "2026-08-10T18:53:26.127285+00:00",
+  "status": "RUNNING_COMMAND",
+  "gpu": 1,
+  "label": "forward_domain48_forward",
+  "command": [
+    "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python",
+    "-m",
+    "photothermal_pte.optimization_runs.tairte4_flake_topology.run_forward_gpu",
+    "--input-project",
+    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run016_017_true_mma_preflight_20260810/domain48_runsetup/tairte4_flake_optical_runsetup.fsp",
+    "--input-sha256",
+    "5decdb8e6891b026ab5a6ca3de27da47119d7b1134718fc64a439d8b5eb17371",
+    "--output-dir",
+    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run016_017_true_mma_preflight_20260810/domain48_forward",
+    "--gpu-device",
+    "GPU 1",
+    "--polarization",
+    "a"
+  ]
+}
