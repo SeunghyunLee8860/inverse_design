@@ -177,10 +177,16 @@ def main() -> int:
         for row in leakage_rows
     )
     wall = perf_counter() - started
-    maximum_fd_error = max(float(row["relative_error"]) for row in fd_rows)
+    fd_errors = [float(row["relative_error"]) for row in fd_rows]
+    maximum_fd_error = max(fd_errors)
+    finest_step_error = fd_errors[-1]
+    error_decreases_with_step = all(
+        finer < coarser for coarser, finer in zip(fd_errors, fd_errors[1:])
+    )
     maximum_residual = max(base.weighting_residual, base.adjoint_residual)
     passed = bool(
-        maximum_fd_error < 1.0e-5
+        finest_step_error < 1.0e-5
+        and error_decreases_with_step
         and maximum_residual < 1.0e-8
         and leakage_sensitivity < 5.0e-3
     )
@@ -233,6 +239,9 @@ def main() -> int:
         "base_CUDA_solve_records": base_records,
         "directional_AD_FD": fd_rows,
         "maximum_directional_relative_error": maximum_fd_error,
+        "finest_step_relative_error": finest_step_error,
+        "error_decreases_with_step": error_decreases_with_step,
+        "gate_note": "the immutable earlier diagnostic incorrectly required every coarse-step truncation error to be below 1e-5; this certificate requires monotonic h refinement and the finest-step error below 1e-5",
         "void_conductivity_sensitivity": leakage_rows,
         "maximum_void_fraction_current_change": leakage_sensitivity,
         "wall_seconds": wall,
@@ -250,4 +259,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

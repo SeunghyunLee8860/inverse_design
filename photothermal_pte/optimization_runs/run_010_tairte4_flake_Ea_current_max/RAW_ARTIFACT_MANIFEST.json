@@ -25,6 +25,18 @@
       "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_uniform_rho0p5_Ea_forward_48um_gpu5_20260810/tairte4_flake_native_Q_Ea.npz",
       "size_bytes": 35383386,
       "sha256": "f00a09da4eeedb10778a734a74a1ac78b85e24f698d832fa6f7e5d08f9313e49"
+    },
+    {
+      "role": "fixed_Q_thermal_ADFD_multidirection",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_fixedQ_thermal_adfd_multidirection_gpu5_20260810/tairte4_flake_fixed_Q_thermal_adfd.npz",
+      "size_bytes": 44632603,
+      "sha256": "89e5c86bac43ff598733749d2ac952cbae53cd4f7499e0f283757e588d197bbb"
+    },
+    {
+      "role": "density_dependent_electrical_weighting_ADFD",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_weighting_electrical_adfd_corrected_gate_gpu5_20260810/tairte4_weighting_electrical_adfd.npz",
+      "size_bytes": 1846328,
+      "sha256": "0c5e8ab8e2c3f5e41add2b6ff2a42b5621e49d1733b2b6c5f9aed7c859325dd0"
     }
   ]
 }
