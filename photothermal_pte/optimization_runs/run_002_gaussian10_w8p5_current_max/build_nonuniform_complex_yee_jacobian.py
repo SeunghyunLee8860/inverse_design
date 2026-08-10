@@ -55,8 +55,14 @@ COLOR_PERIOD = 5
 BUILD_STEP = 1.0e-4
 CHECK_STEP = 1.0e-5
 NONZERO_THRESHOLD = 1.0e-9
+NONLOCAL_NUMERICAL_RELATIVE_THRESHOLD = 1.0e-12
 ISOLATED_MAX_LOCAL_DISTANCE_M = 125.0e-9
-PRODUCTION_MAX_LOCAL_DISTANCE_M = 175.0e-9
+# Period-5 coloring on the 100 nm TaIrTe4 design grid has a 250 nm
+# nearest-color Voronoi radius.  Keep a 10% guard inside that aliasing limit.
+# Near binary endpoints, Lumerical's conformal import stencil reaches the
+# exact sqrt(150^2 + 100^2) nm = 180.278 nm x-component sample, so the older
+# 175 nm diagnostic bound was too small even though the assignment is unique.
+PRODUCTION_MAX_LOCAL_DISTANCE_M = 225.0e-9
 FD_LIMIT = 1.0e-7
 DOT_LIMIT = 1.0e-12
 COORDINATE_LIMIT_M = 2.0e-18
@@ -271,6 +277,7 @@ def build_tairte4_local_epsilon_operator(
     *,
     step: float = BUILD_STEP,
     color_period: int = COLOR_PERIOD,
+    include_saturated_endpoints: bool = False,
 ) -> tuple[SparseYeeMaterialJacobian, dict[str, object]]:
     """Build the exact local component-epsilon Jacobian at ``rho``.
 
@@ -300,9 +307,20 @@ def build_tairte4_local_epsilon_operator(
     column_parts = {c: [] for c in "xyz"}
     value_parts = {c: [] for c in "xyz"}
     maximum_assignment_distance = {c: 0.0 for c in "xyz"}
+    suppressed_nonlocal_numerical_tail = {
+        c: {"count": 0, "maximum_abs": 0.0, "maximum_relative": 0.0}
+        for c in "xyz"
+    }
     evaluation_count = 1
 
-    def append_response(component: str, derivative: np.ndarray, active_nodes: np.ndarray) -> None:
+    def append_response(
+        component: str,
+        derivative: np.ndarray,
+        active_nodes: np.ndarray,
+        *,
+        perturbation_class: str,
+        color: tuple[int, int],
+    ) -> None:
         flat = derivative.reshape(-1)
         rows = np.flatnonzero(np.abs(flat) > NONZERO_THRESHOLD)
         if rows.size == 0:
@@ -318,11 +336,54 @@ def build_tairte4_local_epsilon_operator(
         distance, nearest = tree.query(
             np.column_stack((coordinates[0][ix], coordinates[1][iy])), k=1
         )
+        nonlocal_rows = distance > PRODUCTION_MAX_LOCAL_DISTANCE_M
+        if np.any(nonlocal_rows):
+            response = np.abs(flat[rows])
+            response_scale = float(np.max(response))
+            relative_response = response / max(response_scale, np.finfo(float).tiny)
+            numerical_tail = nonlocal_rows & (
+                relative_response <= NONLOCAL_NUMERICAL_RELATIVE_THRESHOLD
+            )
+            physically_significant_nonlocal = nonlocal_rows & ~numerical_tail
+            if np.any(physically_significant_nonlocal):
+                first = int(np.flatnonzero(physically_significant_nonlocal)[0])
+                yee_coordinate = (
+                    float(coordinates[0][ix[first]]),
+                    float(coordinates[1][iy[first]]),
+                )
+                nearest_node = node_indices[int(np.asarray(nearest)[first])]
+                node_coordinate = (
+                    float(nodes[0][nearest_node[0]]),
+                    float(nodes[1][nearest_node[1]]),
+                )
+                raise RuntimeError(
+                    f"{component} local-J response is nonlocal: "
+                    f"max_distance_m={float(np.max(distance)):.9e}, "
+                    f"max_nonlocal_abs={float(np.max(response[physically_significant_nonlocal])):.9e}, "
+                    f"max_response_abs={response_scale:.9e}, "
+                    f"max_nonlocal_relative={float(np.max(relative_response[physically_significant_nonlocal])):.9e}, "
+                    f"nonlocal_count={int(np.count_nonzero(physically_significant_nonlocal))}, "
+                    f"perturbation_class={perturbation_class}, color={color}, "
+                    f"first_Yee_xy_m={yee_coordinate}, first_nearest_node_xy_m={node_coordinate}"
+                )
+            tail = suppressed_nonlocal_numerical_tail[component]
+            tail["count"] += int(np.count_nonzero(numerical_tail))
+            tail["maximum_abs"] = max(
+                float(tail["maximum_abs"]), float(np.max(response[numerical_tail]))
+            )
+            tail["maximum_relative"] = max(
+                float(tail["maximum_relative"]),
+                float(np.max(relative_response[numerical_tail])),
+            )
+            keep = ~numerical_tail
+            rows = rows[keep]
+            distance = distance[keep]
+            nearest = np.asarray(nearest)[keep]
+            if rows.size == 0:
+                return
         maximum_assignment_distance[component] = max(
             maximum_assignment_distance[component], float(np.max(distance))
         )
-        if np.any(distance > PRODUCTION_MAX_LOCAL_DISTANCE_M):
-            raise RuntimeError(f"{component} local-J response is nonlocal")
         selected = node_indices[np.asarray(nearest, dtype=int)]
         row_parts[component].append(rows)
         column_parts[component].append(selected[:, 0] * nodes[1].size + selected[:, 1])
@@ -353,7 +414,12 @@ def build_tairte4_local_epsilon_operator(
                         (pair["plus"][f"epsilon_{component}"] - pair["minus"][f"epsilon_{component}"]) / (2.0 * step),
                         centered,
                     ))
-            for endpoint_mask, sign in ((lower, 1.0), (upper, -1.0)):
+            endpoint_cases = (
+                ((lower, 1.0), (upper, -1.0))
+                if include_saturated_endpoints
+                else ()
+            )
+            for endpoint_mask, sign in endpoint_cases:
                 if not np.any(endpoint_mask):
                     continue
                 set_tairte4_flake_density(
@@ -370,7 +436,19 @@ def build_tairte4_local_epsilon_operator(
                     ) / (sign * step)
                     responses.append((component, derivative, endpoint_mask))
             for component, derivative, active_nodes in responses:
-                append_response(component, derivative, active_nodes)
+                if active_nodes is centered:
+                    perturbation_class = "centered"
+                elif active_nodes is lower:
+                    perturbation_class = "lower_endpoint"
+                else:
+                    perturbation_class = "upper_endpoint"
+                append_response(
+                    component,
+                    derivative,
+                    active_nodes,
+                    perturbation_class=perturbation_class,
+                    color=(color_x, color_y),
+                )
     set_tairte4_flake_density(
         fdtd,
         value,
@@ -399,6 +477,19 @@ def build_tairte4_local_epsilon_operator(
         "color_period": int(color_period),
         "layout_index_detail_evaluations": int(evaluation_count + 1),
         "maximum_assignment_distance_m": maximum_assignment_distance,
+        "suppressed_nonlocal_numerical_tail": suppressed_nonlocal_numerical_tail,
+        "nonlocal_numerical_relative_threshold": NONLOCAL_NUMERICAL_RELATIVE_THRESHOLD,
+        "saturated_endpoint_policy": (
+            "one-sided layout FD"
+            if include_saturated_endpoints
+            else "active-set frozen; only centered physical-density nodes are differentiated"
+        ),
+        "frozen_lower_endpoint_node_count": (
+            0 if include_saturated_endpoints else int(np.count_nonzero(value < step))
+        ),
+        "frozen_upper_endpoint_node_count": (
+            0 if include_saturated_endpoints else int(np.count_nonzero(value > 1.0 - step))
+        ),
         "Maxwell_solves": 0,
     }
 

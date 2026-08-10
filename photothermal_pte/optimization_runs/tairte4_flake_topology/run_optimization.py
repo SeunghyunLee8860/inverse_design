@@ -214,6 +214,18 @@ def save_state(path: Path, **arrays) -> None:
     np.savez_compressed(path, **arrays)
 
 
+def unused_output_path(path: Path) -> Path:
+    """Preserve failed solver artifacts and select a fresh retry directory."""
+    if not path.exists() or not any(path.iterdir()):
+        return path
+    retry = 1
+    while True:
+        candidate = path.with_name(f"{path.name}_retry_{retry:02d}")
+        if not candidate.exists() or not any(candidate.iterdir()):
+            return candidate
+        retry += 1
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--polarization", choices=("Ea", "Eb"), required=True)
@@ -326,6 +338,93 @@ def main() -> int:
             accepted=True,
             label="initial",
         )
+
+    # A solver failure can happen after the beta index is checkpointed but
+    # before the new-beta objective/gradient is saved.  Never continue with a
+    # stale previous-beta gradient: complete that missing reprojection first.
+    if beta_index < len(BETA_SCHEDULE) and history:
+        last_accepted = next(row for row in reversed(history) if row.get("accepted"))
+        current_beta = BETA_SCHEDULE[beta_index]
+        if not np.isclose(float(last_accepted["beta"]), current_beta):
+            evaluation_counter += 1
+            reprojection_output = unused_output_path(
+                raw_root
+                / f"evaluation_{evaluation_counter:04d}_beta{int(current_beta)}_reprojection"
+            )
+            reprojected_rho = MAPPING.physical(latent, current_beta)
+            emit(
+                events,
+                "recover_missing_stage_reprojection",
+                previous_history_beta=float(last_accepted["beta"]),
+                checkpoint_beta=current_beta,
+                output=str(reprojection_output),
+            )
+            reprojected_result, gradient_physical, gradient_conductance = evaluate(
+                reprojected_rho,
+                polarization=args.polarization,
+                output=reprojection_output,
+                gpu=args.gpu,
+                events=events,
+                base_fsp=base_fsp,
+                base_sha=args.base_sha256,
+                jacobian=jacobian,
+            )
+            new_evaluations += 1
+            objective = float(reprojected_result["objective_A"])
+            terminal_conductance = float(reprojected_result["terminal_conductance_S"])
+            reprojected_summary, _ = metrics(latent, current_beta)
+            history.append({
+                "accepted": True,
+                "stage_reprojection": True,
+                "recovered_after_failed_reprojection": True,
+                "global_iteration": global_iteration,
+                "accepted_update_index": global_iteration,
+                "evaluation_id": evaluation_counter,
+                "stage_update": 0,
+                "beta": current_beta,
+                "objective_A": objective,
+                "gray_fraction": reprojected_summary["gray_fraction_0p01_0p99"],
+                "binarization": reprojected_summary["binarization_mean_4rho1mrho"],
+                "smooth_constraint": reprojected_summary["smooth_solid_constraint"] + reprojected_summary["smooth_void_constraint"],
+                "exact_bad_cells": reprojected_summary["exact"]["total_bad_cell_count"],
+                "terminal_conductance_S": terminal_conductance,
+                "minimum_terminal_conductance_S": minimum_conductance,
+                "solver_result": str(reprojection_output / "objective_gradient_result.json"),
+                **objective_power_fields(reprojected_result, objective),
+            })
+            history_path.write_text(json.dumps(history, indent=2) + "\n")
+            publish_plot(
+                published,
+                history,
+                reprojected_rho,
+                gradient_physical,
+                reprojected_summary,
+                evaluation_id=evaluation_counter,
+                accepted=True,
+                label="reprojection_recovered",
+            )
+            save_state(
+                state_path,
+                latent=latent,
+                gradient_physical_A=gradient_physical,
+                gradient_terminal_conductance_S=gradient_conductance,
+                terminal_conductance_S=np.asarray(terminal_conductance),
+                objective_A=np.asarray(objective),
+                beta_index=np.asarray(beta_index),
+                stage_updates=np.asarray(stage_updates),
+                global_iteration=np.asarray(global_iteration),
+                first_moment=first_moment,
+                second_moment=second_moment,
+                adam_iteration=np.asarray(adam_iteration),
+                move=np.asarray(move),
+                evaluation_counter=np.asarray(evaluation_counter),
+            )
+            emit(
+                events,
+                "stage_reprojection_recovered",
+                beta=current_beta,
+                objective_A=objective,
+            )
 
     while beta_index < len(BETA_SCHEDULE):
         beta = BETA_SCHEDULE[beta_index]

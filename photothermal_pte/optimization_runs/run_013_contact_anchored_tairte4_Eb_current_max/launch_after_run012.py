@@ -132,6 +132,7 @@ def main() -> int:
     )
     environment = dict(os.environ)
     environment["CUDA_VISIBLE_DEVICES"] = str(GPU_INDEX)
+    environment["TAIRTE4_TOPOLOGY_GEOMETRY"] = "contact_anchored"
     completed = subprocess.run(command, cwd=REPOSITORY, env=environment)
     if completed.returncode != 0:
         write_status("RUN013_FAILED", returncode=completed.returncode)
