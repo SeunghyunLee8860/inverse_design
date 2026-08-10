@@ -56,11 +56,7 @@ def publish() -> None:
     if forbidden:
         git("restore", "--staged", "--", *forbidden)
         raise RuntimeError(f"refusing raw artifact publication: {forbidden}")
-    latest = 0
-    for directory in DIRECTORIES:
-        for path in list(directory.glob("iteration_*.json")) + list(directory.glob("evaluation_*.json")):
-            latest = max(latest, int(path.stem.split("_")[-1]))
-    git("commit", "-m", f"Update MMA evaluated iteration {latest}")
+    git("commit", "-m", "Update MMA optimization artifacts")
     git("push", "origin", BRANCH)
     print(json.dumps({"published_accepted_iteration": latest}), flush=True)
 
