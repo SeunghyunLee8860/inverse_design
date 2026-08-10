@@ -79,6 +79,11 @@ os.environ.update({
     # beta.  It must not veto objective-led topology exploration before the
     # documented exact-DRC phase begins at beta=32.
     "PTE_OPTIMIZATION_LOW_BETA_EXACT_CATASTROPHIC_GUARD": "0",
+    # Iteration 26 accepted move=0.01 with +2.97% solver-backed FOM.  The only
+    # reason later moves fell to 0.005/0.0025 was the obsolete low-beta exact
+    # DRC veto.  Recover 0.01; solver-free smooth checks retain 0.005/0.0025 as
+    # bounded fallbacks before any expensive Maxwell solve.
+    "PTE_OPTIMIZATION_BETA2_MOVE_CEILING_OVERRIDE": "0.01",
     "PTE_OPTIMIZATION_SMOOTH_FEASIBILITY_GATE_START_BETA": "8",
     "PTE_OPTIMIZATION_PHASEWISE_NONINCREASE_START_BETA": "8",
     "PTE_OPTIMIZATION_STAGE_CAP_TARGET_OCCUPANCY_JSON": "{\"4\":0.80,\"8\":0.88,\"16\":0.92,\"32\":1.05,\"64\":1.10,\"128\":1.15}",

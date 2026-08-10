@@ -783,8 +783,15 @@ def run_adjoint(
     *,
     template: Path,
     project: Path,
+    completed_project: Path | None = None,
 ) -> dict:
-    fdtd.load(str(template))
+    fdtd.load(
+        str(
+            completed_project.resolve()
+            if completed_project is not None
+            else template
+        )
+    )
     if int(fdtd.getnamednumber(audit.SOURCE_NAME)) != 1:
         raise RuntimeError("adjoint template lost forward mesh-anchor source")
     forward_source_enabled = bool(fdtd.getnamed(audit.SOURCE_NAME, "enabled"))
@@ -793,12 +800,18 @@ def run_adjoint(
         and float(fdtd.getnamed(audit.SOURCE_NAME, "amplitude")) != 0.0
     ):
         raise RuntimeError("forward mesh-anchor source has nonzero amplitude")
-    resources = runtime.configure_session_resources(fdtd)
-    fdtd.save(str(project))
-    started = time.monotonic()
-    resource_used = audit.strict_gpu_run(fdtd, "run002_combined_adjoint")
-    wall = time.monotonic() - started
-    fdtd.save(str(project))
+    if completed_project is None:
+        resources = runtime.configure_session_resources(fdtd)
+        fdtd.save(str(project))
+        started = time.monotonic()
+        resource_used = audit.strict_gpu_run(fdtd, "run002_combined_adjoint")
+        wall = time.monotonic() - started
+        fdtd.save(str(project))
+    else:
+        project = completed_project.resolve()
+        resources = {"reuse_completed_FSP": True}
+        resource_used = "REUSED_COMPLETED_GPU_ADJOINT"
+        wall = 0.0
     log_audit = audit.log_audit(project.parent)
     auto_shutoff = log_audit.get("final_auto_shutoff")
     if auto_shutoff is None or float(auto_shutoff) >= 1.0e-5:

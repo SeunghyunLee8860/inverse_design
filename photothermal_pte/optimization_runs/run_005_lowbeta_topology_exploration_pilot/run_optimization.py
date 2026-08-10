@@ -131,6 +131,11 @@ ALLOW_LOW_BETA_MORPHOLOGY_TRANSITION = os.environ.get(
 LOW_BETA_EXACT_CATASTROPHIC_GUARD = os.environ.get(
     "PTE_OPTIMIZATION_LOW_BETA_EXACT_CATASTROPHIC_GUARD", "1"
 ) == "1"
+BETA2_MOVE_CEILING_OVERRIDE = float(
+    os.environ.get("PTE_OPTIMIZATION_BETA2_MOVE_CEILING_OVERRIDE", "0")
+)
+if BETA2_MOVE_CEILING_OVERRIDE < 0.0:
+    raise RuntimeError("PTE_OPTIMIZATION_BETA2_MOVE_CEILING_OVERRIDE must be nonnegative")
 REPROJECTION_ONLY_BETA = 256
 EXACT_DRC_GATE_START_BETA = 32.0
 # Below beta=32 the smooth disk-opening constraints guide topology search, but
@@ -306,7 +311,18 @@ def evaluate(latent_npz: Path, output: Path, beta: float, gpu: str) -> tuple[Pat
             retry_attempt += 1
             time.sleep(LICENSE_RETRY_DELAY_S)
 
-        if output.exists() and any(output.iterdir()) and not result.exists():
+        resume_completed_solves = bool(
+            output.exists()
+            and not result.exists()
+            and (output / "full_latent_base.fsp").is_file()
+            and (output / "selected_full_latent_adjoint_gpu.fsp").is_file()
+        )
+        if (
+            output.exists()
+            and any(output.iterdir())
+            and not result.exists()
+            and not resume_completed_solves
+        ):
             archive_incomplete_evaluation(output)
 
         output.mkdir(parents=True, exist_ok=True)
@@ -319,6 +335,14 @@ def evaluate(latent_npz: Path, output: Path, beta: float, gpu: str) -> tuple[Pat
             "--incident-power-W", INCIDENT_POWER,
             "--allow-closed-unit-interval-latent",
         ] + axis_cli()
+        if resume_completed_solves:
+            command.append("--resume-completed-solves")
+            emit(
+                "resume_completed_maxwell_solves",
+                output=str(output),
+                forward_FSP=str(output / "full_latent_base.fsp"),
+                adjoint_FSP=str(output / "selected_full_latent_adjoint_gpu.fsp"),
+            )
         returncode = execute(
             command, f"evaluate_{output.name}", env=environment, allow_failure=True
         )
@@ -1066,6 +1090,20 @@ def main() -> int:
             summary_data = summary()
             accepted_moves = accepted_move_provenance(summary_data, beta)
             move_ceiling = adaptive_move_ceiling(history, beta, accepted_moves)
+            if beta == 2.0 and BETA2_MOVE_CEILING_OVERRIDE > 0.0:
+                original_move_ceiling = move_ceiling
+                move_ceiling = BETA2_MOVE_CEILING_OVERRIDE
+                emit(
+                    "beta2_move_ceiling_override",
+                    beta=beta,
+                    original_move_ceiling=original_move_ceiling,
+                    move_ceiling=move_ceiling,
+                    reason=(
+                        "recover the last solver-validated 0.01 topology move; "
+                        "the historical reduction was caused only by the now-"
+                        "disabled low-beta discontinuous exact-DRC veto"
+                    ),
+                )
             move_retries = smooth_feasibility_move_retries(move_ceiling)
             emit(
                 "adaptive_move_selected",

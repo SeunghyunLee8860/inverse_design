@@ -73,15 +73,28 @@ def main() -> int:
     parser.add_argument("--polarization-angle-deg", type=float, default=None)
     parser.add_argument("--objective-sign", type=float, choices=(-1.0, 1.0), default=1.0)
     parser.add_argument(
+        "--resume-completed-solves",
+        action="store_true",
+        help="Reuse completed forward/adjoint FSP files in a partial output directory.",
+    )
+    parser.add_argument(
         "--allow-closed-unit-interval-latent",
         action="store_true",
         help="Allow optimizer box-bound latent values exactly at 0 or 1; values outside [0,1] remain invalid.",
     )
     args = parser.parse_args()
     output = args.output_dir.expanduser().resolve()
-    if output.exists() and any(output.iterdir()):
+    if output.exists() and any(output.iterdir()) and not args.resume_completed_solves:
         raise RuntimeError(f"refusing non-empty output directory: {output}")
     output.mkdir(parents=True, exist_ok=True)
+    completed_forward = output / "full_latent_base.fsp"
+    completed_adjoint = output / "selected_full_latent_adjoint_gpu.fsp"
+    if args.resume_completed_solves and not (
+        completed_forward.is_file() and completed_adjoint.is_file()
+    ):
+        raise RuntimeError(
+            "resume requested without both completed forward and adjoint FSP files"
+        )
     result_path = output / "selected_full_latent_adjoint_preparation_result.json"
     result: dict[str, object] = {"status": "FAILED_SELECTED_FULL_LATENT_ADJOINT_PREPARATION", "passed": False}
     fdtd = None
@@ -138,6 +151,7 @@ def main() -> int:
             imported_object=str(config["imported_object"]),
             nodes=config["nodes"],
             polarization_angle_deg=args.polarization_angle_deg,
+            completed_project=(completed_forward if args.resume_completed_solves else None),
         )
         base_data, base_mapping = map_q(
             base["q"], design_half_span_m=float(config["design_half_span_m"])
@@ -182,6 +196,7 @@ def main() -> int:
             runtime,
             template=template,
             project=output / "selected_full_latent_adjoint_gpu.fsp",
+            completed_project=(completed_adjoint if args.resume_completed_solves else None),
         )
         gradient_optical, optical_meta = optical_gradient(
             operator,
