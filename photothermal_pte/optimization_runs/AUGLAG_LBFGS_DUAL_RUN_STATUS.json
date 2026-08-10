@@ -1,0 +1,29 @@
+{
+  "schema": "auglag-lbfgs-dual-supervisor-v1",
+  "generated_at_utc": "2026-08-10T20:47:21.120211+00:00",
+  "status": "RUNNING_AUGLAG_LBFGS",
+  "gpu": 1,
+  "run": "Run024",
+  "polarization": "Ea",
+  "command": [
+    "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python",
+    "-m",
+    "photothermal_pte.optimization_runs.tairte4_flake_topology.run_auglag_lbfgs_optimization",
+    "--polarization",
+    "Ea",
+    "--raw-root",
+    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run024_auglag_lbfgs_Ea_20260810",
+    "--published-dir",
+    "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/run_024_auglag_lbfgs_contact_anchored_Ea_current_max",
+    "--gpu",
+    "1",
+    "--base-fsp",
+    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_uniform_rho0p5_Ea_forward_retry_20260810/tairte4_flake_forward_Ea.fsp",
+    "--base-sha256",
+    "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83",
+    "--jacobian-dir",
+    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_component_yee_jacobian_retry_20260810",
+    "--constraint-device",
+    "cuda:0"
+  ]
+}
