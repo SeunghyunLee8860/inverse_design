@@ -225,6 +225,7 @@ def canonical_constraints(
     morphology_caps: np.ndarray,
     device: str,
     include_terminal_conductance_constraint: bool = True,
+    morphology_start_beta: float = MORPHOLOGY_START_BETA,
 ) -> tuple[list[str], np.ndarray, np.ndarray, dict[str, object], dict[str, object]]:
     """Return differentiable constraints for a continuation stage.
 
@@ -248,7 +249,7 @@ def canonical_constraints(
             -MAPPING.vjp(latent, gradient_terminal_conductance_physical_S, beta)
             / minimum_terminal_conductance_S
         )
-    if beta >= MORPHOLOGY_START_BETA:
+    if beta >= morphology_start_beta:
         raw_values = np.asarray(
             [summary["smooth_solid_constraint"], summary["smooth_void_constraint"]],
             dtype=np.float64,

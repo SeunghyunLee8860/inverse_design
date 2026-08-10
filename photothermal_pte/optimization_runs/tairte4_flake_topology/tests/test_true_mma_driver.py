@@ -104,6 +104,25 @@ def test_low_beta_can_explicitly_disable_the_connectivity_inequality() -> None:
     assert gradients.shape == (0, *MAPPING.shape)
 
 
+def test_pure_driver_can_activate_500nm_solid_void_constraints_at_beta1() -> None:
+    latent = np.full(MAPPING.shape, 0.5)
+    gradient = np.ones(MAPPING.shape)
+    names, values, gradients, _, _ = canonical_constraints(
+        latent=latent,
+        beta=1.0,
+        terminal_conductance_S=2.0,
+        gradient_terminal_conductance_physical_S=gradient,
+        minimum_terminal_conductance_S=None,
+        morphology_caps=np.asarray([1.0e-2, 1.0e-2]),
+        device="cpu",
+        include_terminal_conductance_constraint=False,
+        morphology_start_beta=1.0,
+    )
+    assert names == ["500nm_solid_opening", "500nm_void_opening"]
+    assert values.shape == (2,)
+    assert gradients.shape == (2, *MAPPING.shape)
+
+
 def test_pure_current_mma_uses_projection_scaled_native_initialization() -> None:
     from photothermal_pte.optimization_runs.tairte4_flake_topology.run_pure_current_ld_mma_optimization import (
         feasible_stage_morphology_caps,
@@ -114,12 +133,17 @@ def test_pure_current_mma_uses_projection_scaled_native_initialization() -> None
     beta8 = stage_mma_controls(8.0)
     assert np.isclose(beta1["initial_step"], 0.025)
     assert np.isclose(beta1["rho_init"], 10.0)
+    assert np.isclose(beta1["xtol_rel"], 1.0e-9)
     assert beta8["initial_step"] < beta1["initial_step"]
     assert beta8["rho_init"] > beta1["rho_init"]
     # The incoming beta=8 point is feasible rather than forcibly tightened.
     assert np.allclose(
         feasible_stage_morphology_caps(np.asarray([4.0e-3, 1.0e-4]), 8.0),
         [4.0e-3, 2.0e-3],
+    )
+    assert np.allclose(
+        feasible_stage_morphology_caps(np.asarray([1.0e-3, 1.0e-4]), 1.0),
+        [8.0e-3, 8.0e-3],
     )
 
 

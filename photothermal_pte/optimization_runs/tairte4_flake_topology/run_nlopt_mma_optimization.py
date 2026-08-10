@@ -109,6 +109,7 @@ class StageEvaluator:
         algorithm_label: str = "NLopt LD_MMA",
         output_slug: str = "nlopt_mma",
         include_terminal_conductance_constraint: bool = True,
+        morphology_start_beta: float = MORPHOLOGY_START_BETA,
         optimizer_controls: dict[str, object] | None = None,
     ) -> None:
         self.beta = beta
@@ -131,6 +132,7 @@ class StageEvaluator:
         self.algorithm_label = algorithm_label
         self.output_slug = output_slug
         self.include_terminal_conductance_constraint = include_terminal_conductance_constraint
+        self.morphology_start_beta = float(morphology_start_beta)
         self.optimizer_controls = dict(optimizer_controls or {})
         self.last: Point | None = None
         self.stage_full_physics_evaluations = 0
@@ -188,6 +190,7 @@ class StageEvaluator:
             morphology_caps=self.morphology_caps,
             device=self.constraint_device,
             include_terminal_conductance_constraint=self.include_terminal_conductance_constraint,
+            morphology_start_beta=self.morphology_start_beta,
         )
         point = Point(
             x=x.copy(),
@@ -302,6 +305,7 @@ def make_optimizer(
     rho_init: float | None = None,
     always_improve: int | None = None,
     inner_gradients: int | None = None,
+    xtol_rel: float | None = None,
 ) -> nlopt.opt:
     variable_count = int(np.prod(MAPPING.shape))
     optimizer = nlopt.opt(nlopt.LD_MMA, variable_count)
@@ -326,7 +330,7 @@ def make_optimizer(
     if inner_gradients is not None:
         optimizer.set_param("inner_gradients", int(inner_gradients))
     optimizer.set_ftol_rel(NLOPT_FTOL_REL)
-    optimizer.set_xtol_rel(NLOPT_XTOL_REL)
+    optimizer.set_xtol_rel(NLOPT_XTOL_REL if xtol_rel is None else float(xtol_rel))
     optimizer.set_maxeval(MAXIMUM_STAGE_EVALUATIONS)
     return optimizer
 

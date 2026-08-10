@@ -72,7 +72,9 @@ def test_pure_current_driver_uses_ld_mma_without_connectivity_constraint() -> No
     assert "NLopt LD_MMA" in text
     assert "--connectivity-fraction" not in text
     assert "include_terminal_conductance_constraint=False" in text
-    assert "constraint_count = 0 if beta < MORPHOLOGY_START_BETA else 2" in text
+    assert "constraint_count = 2" in text
+    assert "PURE_CURRENT_MORPHOLOGY_START_BETA = 1.0" in text
+    assert "PURE_CURRENT_NLOPT_XTOL_REL = 1.0e-9" in text
 
 
 def test_iteration_plot_supports_native_nlopt_evaluation_schema() -> None:

@@ -45,7 +45,6 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_nlopt_mma_opt
 )
 from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_optimization import (
     BETA_SCHEDULE,
-    MORPHOLOGY_START_BETA,
     MORPHOLOGY_TARGET_CAP,
     sha256,
     verify_file,
@@ -58,6 +57,17 @@ REPOSITORY = HERE.parents[2]
 CODE_MANIFEST = REPOSITORY / "photothermal_pte/optimization_runs/PURE_CURRENT_LD_MMA_CODE_MANIFEST.json"
 TARGET_INITIAL_PHYSICAL_DENSITY_STEP = 0.025
 BASE_RHO_INIT_AT_BETA1 = 10.0
+PURE_CURRENT_MORPHOLOGY_START_BETA = 1.0
+PURE_CURRENT_MORPHOLOGY_TARGET_CAP = {
+    1.0: 8.0e-3,
+    2.0: 5.0e-3,
+    4.0: 3.0e-3,
+    **MORPHOLOGY_TARGET_CAP,
+}
+# The calibrated first CCSA trial is physically meaningful but smaller than
+# the shared driver's historical 1e-7 x tolerance.  This is a numerical
+# termination tolerance, not a per-iteration move restriction.
+PURE_CURRENT_NLOPT_XTOL_REL = 1.0e-9
 STAGE_PLATEAU_WINDOW = 3
 STAGE_PLATEAU_RELATIVE_CHANGE = 2.0e-3
 
@@ -114,6 +124,7 @@ def stage_mma_controls(beta: float) -> dict[str, object]:
         "target_initial_physical_density_step": TARGET_INITIAL_PHYSICAL_DENSITY_STEP,
         "base_rho_init_at_beta1": BASE_RHO_INIT_AT_BETA1,
         "fixed_per_iteration_move_limit": None,
+        "xtol_rel": PURE_CURRENT_NLOPT_XTOL_REL,
     }
 
 
@@ -127,9 +138,11 @@ def feasible_stage_morphology_caps(values: np.ndarray, beta: float) -> np.ndarra
     that a beta change, projection change, and newly active constraints are
     not introduced as one forced-infeasible transition.
     """
-    if beta < MORPHOLOGY_START_BETA:
+    if beta < PURE_CURRENT_MORPHOLOGY_START_BETA:
         return np.asarray([np.inf, np.inf])
-    return np.maximum(MORPHOLOGY_TARGET_CAP[beta], np.asarray(values, dtype=float))
+    return np.maximum(
+        PURE_CURRENT_MORPHOLOGY_TARGET_CAP[beta], np.asarray(values, dtype=float)
+    )
 
 
 def physical_stage_readiness(
@@ -201,8 +214,7 @@ def pure_current_manifest(
         "custom_mma_update_used": False,
     })
     manifest["active_constraints"] = {
-        "beta_below_8": [],
-        "beta_8_and_above": ["500nm_solid_opening", "500nm_void_opening"],
+        "beta_1_and_above": ["500nm_solid_opening", "500nm_void_opening"],
     }
     manifest["mma_scale_policy"] = {
         "kind": "projection-Jacobian-scaled-native-LD_MMA-initialization",
@@ -276,7 +288,7 @@ def main() -> int:
             ]),
             beta,
         )
-        constraint_count = 0 if beta < MORPHOLOGY_START_BETA else 2
+        constraint_count = 2
         controls = stage_mma_controls(beta)
         evaluator = StageEvaluator(
             beta=beta,
@@ -299,6 +311,7 @@ def main() -> int:
             algorithm_label="NLopt LD_MMA (pure terminal current; no connectivity constraint)",
             output_slug="pure_current_ld_mma",
             include_terminal_conductance_constraint=False,
+            morphology_start_beta=PURE_CURRENT_MORPHOLOGY_START_BETA,
             optimizer_controls=controls,
         )
         optimizer = make_optimizer(
@@ -308,6 +321,7 @@ def main() -> int:
             rho_init=float(controls["rho_init"]),
             always_improve=int(controls["always_improve"]),
             inner_gradients=int(controls["inner_gradients"]),
+            xtol_rel=float(controls["xtol_rel"]),
         )
         emit(
             events,
@@ -325,7 +339,7 @@ def main() -> int:
             manual_move_limit=None,
             optimizer_controls=controls,
             ftol_rel=NLOPT_FTOL_REL,
-            xtol_rel=NLOPT_XTOL_REL,
+            xtol_rel=controls["xtol_rel"],
             maxeval=MAXIMUM_STAGE_EVALUATIONS,
         )
         optimum = optimizer.optimize(latent.ravel()).reshape(MAPPING.shape)

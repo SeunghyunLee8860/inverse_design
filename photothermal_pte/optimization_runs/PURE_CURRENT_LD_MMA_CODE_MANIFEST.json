@@ -3,9 +3,9 @@
   "passed": true,
   "scope": "optimizer-driver provenance only; physical solver validation remains in TRUE_MMA_PREFLIGHT.json",
   "source_sha256": {
-    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_pure_current_ld_mma_optimization.py": "783f53eca794089a673dd4576f99672a94d6d1dd67388f4ceb84a38482128ab9",
-    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_nlopt_mma_optimization.py": "f256742d63d40f08df6f89ec581906b1cf61736ecb105806c6cdd6b00b9636ea",
-    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_true_mma_optimization.py": "6da0a3dbab1fc6172e4be6d7841b859dc9e67f0b935011fa898954c83bd1a0b0",
-    "photothermal_pte/optimization_runs/run_pure_current_ld_mma_dual_supervisor.py": "5ddcf1f00e3e3c90306ab02f986c386e013f8ff942171facdf7f74b228b619d7"
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_pure_current_ld_mma_optimization.py": "d554fc7c44a8a2aa9befcc14440e8d08bdba69166aa1cc0d16ff8ca8936cf58a",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_nlopt_mma_optimization.py": "f38a696d5972751e8696bbfc0705a034142fee5ece6dfae8ab0538e0141665a3",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_true_mma_optimization.py": "abf8de366c1b0ab14958f0be6a099d6264ed0289cc8109119607f214eb7121c5",
+    "photothermal_pte/optimization_runs/run_pure_current_ld_mma_dual_supervisor.py": "dbe2751de7875af2aba6e77d3d7697665104b7f6e1656af853c4fca278c010d6"
   }
 }
