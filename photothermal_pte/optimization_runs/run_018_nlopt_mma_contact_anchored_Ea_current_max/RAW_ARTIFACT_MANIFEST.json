@@ -35,6 +35,33 @@
         "size_bytes": 180903815,
         "sha256": "c39f276d476b12577a2e7551c21ca02dadd4e5ef700f1dfef9b3205fba74d240"
       }
+    },
+    "0002": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run018_nlopt_mma_Ea_20260810/evaluation_0002_beta1_nlopt_mma/objective_gradient_result.json",
+        "size_bytes": 10809,
+        "sha256": "bf73f4883831b70d6c0f4a10cf58a83ab78f647b10385faedcf70baf093bf22a"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run018_nlopt_mma_Ea_20260810/evaluation_0002_beta1_nlopt_mma/objective_gradient.npz",
+        "size_bytes": 2490220,
+        "sha256": "795d7eb59df101393797f06108345c3921c954f1cf52feebb64961123ff3e8ab"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run018_nlopt_mma_Ea_20260810/evaluation_0002_beta1_nlopt_mma/forward_Ea.fsp",
+        "size_bytes": 180903815,
+        "sha256": "3d15d741e7dcebdd39b84fdfd0cd24593cf6ea4099b5b485f050673b4887dcb1"
+      }
+    }
+  },
+  "stage_checkpoints": {
+    "beta_1": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run018_nlopt_mma_Ea_20260810/beta_1_completed_checkpoint.npz",
+      "size_bytes": 285290,
+      "sha256": "4820a30fb1c2d8ed7db377f8e983d0779717b81dcc8ef73fe3bf4c015e5733a4",
+      "nlopt_result_code": 4,
+      "nlopt_result_name": "XTOL_REACHED",
+      "full_physics_evaluations": 2
     }
   }
 }
