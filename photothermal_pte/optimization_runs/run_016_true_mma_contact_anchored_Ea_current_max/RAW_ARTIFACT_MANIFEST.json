@@ -113,6 +113,23 @@
         "size_bytes": 180903911,
         "sha256": "db76a3e51183674728ca991c249cf199e783fe014ee019b110df26b5feeb143c"
       }
+    },
+    "0007": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run016_true_mma_Ea_20260810/evaluation_0007_beta1_mma/objective_gradient_result.json",
+        "size_bytes": 10776,
+        "sha256": "2ed35e10d0b1e8513a169aeb7192aed4d2fa04ce7e223408289941504d89c0cf"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run016_true_mma_Ea_20260810/evaluation_0007_beta1_mma/objective_gradient.npz",
+        "size_bytes": 2345605,
+        "sha256": "60425e9011e048d9e135401035c8982bbf81cd8612338cabbb080fbcbae3c1e6"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run016_true_mma_Ea_20260810/evaluation_0007_beta1_mma/forward_Ea.fsp",
+        "size_bytes": 180903911,
+        "sha256": "b361f79e6a1ddd096e4d88cb892fa2b830ab50bcc100a48e9356b34727758658"
+      }
     }
   }
 }
