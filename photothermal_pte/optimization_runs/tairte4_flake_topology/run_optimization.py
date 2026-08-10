@@ -31,11 +31,30 @@ JACOBIAN = Path("/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010
 INITIAL_COMBINED = Path("/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_combined_adfd_Ea_gpu5_20260810/tairte4_flake_combined_adfd.npz")
 INITIAL_COMBINED_RESULT = Path("/data/seunghyun/tairte4/artifacts/tairte4_flake_topology/run010_combined_adfd_Ea_gpu5_20260810/tairte4_flake_combined_adfd.json")
 
-BETA_SCHEDULE = (2.0, 4.0, 8.0, 16.0, 32.0, 64.0)
-MIN_UPDATES = {2.0: 5, 4.0: 3, 8.0: 3, 16.0: 3, 32.0: 2, 64.0: 2}
-SAFETY_MAX_UPDATES = {2.0: 8, 4.0: 6, 8.0: 5, 16.0: 4, 32.0: 4, 64.0: 3}
-INITIAL_MOVE = {2.0: 0.020, 4.0: 0.018, 8.0: 0.015, 16.0: 0.012, 32.0: 0.010, 64.0: 0.0075}
-MORPHOLOGY_WEIGHT = {2.0: 0.0, 4.0: 0.05, 8.0: 0.15, 16.0: 0.35, 32.0: 0.70, 64.0: 1.20}
+# Adaptive continuation used by Run014/015.  Run012/013 used only six beta
+# values and forcibly advanced after 8/6/5/4/4/3 accepted updates.  That made
+# the projection, rather than objective convergence, determine the topology.
+BETA_SCHEDULE = (1.0, 2.0, 3.0, 4.0, 6.0, 8.0, 12.0, 16.0, 24.0, 32.0, 48.0, 64.0)
+MIN_UPDATES = {
+    1.0: 6, 2.0: 6, 3.0: 5, 4.0: 5, 6.0: 4, 8.0: 4,
+    12.0: 3, 16.0: 3, 24.0: 3, 32.0: 3, 48.0: 3, 64.0: 4,
+}
+INITIAL_MOVE = {
+    1.0: 0.020, 2.0: 0.020, 3.0: 0.018, 4.0: 0.018,
+    6.0: 0.015, 8.0: 0.015, 12.0: 0.012, 16.0: 0.012,
+    24.0: 0.010, 32.0: 0.010, 48.0: 0.0075, 64.0: 0.0075,
+}
+# Topology exploration is objective-led at low beta.  The manufacturability
+# term is introduced gradually only after the design has acquired structure.
+MORPHOLOGY_WEIGHT = {
+    1.0: 0.0, 2.0: 0.0, 3.0: 0.01, 4.0: 0.025,
+    6.0: 0.05, 8.0: 0.10, 12.0: 0.18, 16.0: 0.28,
+    24.0: 0.45, 32.0: 0.65, 48.0: 0.85, 64.0: 1.0,
+}
+PLATEAU_WINDOW = 4
+PLATEAU_RELATIVE_FOM_CHANGE = 1.5e-3
+MOVE_FLOOR = 1.25e-3
+MOVE_FLOOR_REJECTION_COUNT = 3
 SIGMA_A_S_M = 4.91e5
 FULL_SOLID_TERMINAL_CONDUCTANCE_S = (
     SIGMA_A_S_M * 100.0e-9 * 24.0e-6 / 24.0e-6
@@ -211,7 +230,7 @@ def publish_plot(
     axes[1, 2].semilogy(iteration, [max(row.get("smooth_constraint", np.nan), 1e-12) for row in accepted_rows], marker="o", label="smooth solid+void")
     bad_axis = axes[1, 2].twinx()
     bad_axis.plot(iteration, [row["exact_bad_cells"] for row in accepted_rows], color="tab:red", marker="s", label="exact bad cells")
-    axes[1, 2].set_title("feature audit: 500 nm requested; ~600 nm discrete opening")
+    axes[1, 2].set_title("feature audit: 500 nm pixel-support opening")
     axes[1, 2].set_ylabel("smooth residual")
     bad_axis.set_ylabel("bad design nodes")
     objective = float(history[-1]["objective_A"])
@@ -473,6 +492,8 @@ def main() -> int:
         direction = normalized(mhat / (np.sqrt(vhat) + 1.0e-8))
         candidate = np.clip(latent + move * direction, 0.0, 1.0)
         candidate_rho = MAPPING.physical(candidate, beta)
+        latent_step = candidate - latent
+        physical_step = candidate_rho - rho
         evaluation_counter += 1
         evaluation_id = evaluation_counter
         result, candidate_gradient, candidate_conductance_gradient = evaluate(
@@ -509,6 +530,9 @@ def main() -> int:
             "stage_update": stage_updates + (1 if accepted else 0),
             "beta": beta,
             "move": move,
+            "latent_step_max": float(np.max(np.abs(latent_step))),
+            "latent_step_rms": float(np.sqrt(np.mean(latent_step * latent_step))),
+            "physical_step_rms": float(np.sqrt(np.mean(physical_step * physical_step))),
             "objective_A": candidate_objective,
             "objective_change_A": candidate_objective - objective,
             "gray_fraction": candidate_summary["gray_fraction_0p01_0p99"],
@@ -542,14 +566,14 @@ def main() -> int:
             terminal_conductance = candidate_conductance
             global_iteration += 1
             stage_updates += 1
-            move = min(INITIAL_MOVE[beta], move * 1.05)
+            move = min(INITIAL_MOVE[beta], move * 1.03)
             (published / "latest_summary.json").write_text(json.dumps(candidate_summary, indent=2) + "\n")
         else:
             move *= 0.5
             emit(events, "candidate_rejected", beta=beta, move=move, objective_A=candidate_objective)
-            if move < 0.0025:
+            move = max(move, MOVE_FLOOR)
+            if move <= MOVE_FLOOR:
                 emit(events, "stage_move_floor", beta=beta)
-                stage_updates = SAFETY_MAX_UPDATES[beta]
 
         save_state(
             state_path,
@@ -572,18 +596,41 @@ def main() -> int:
             emit(events, "pilot_limit_reached", new_evaluations=new_evaluations)
             return 0
 
-        accepted_stage = [row for row in history if row.get("accepted") and row.get("beta") == beta and row.get("global_iteration", 0) > 0]
+        accepted_stage = [
+            row for row in history
+            if row.get("accepted") and row.get("beta") == beta
+            and not row.get("stage_reprojection") and row.get("global_iteration", 0) > 0
+        ]
         plateau = False
-        if stage_updates >= MIN_UPDATES[beta] and len(accepted_stage) >= 3:
-            recent = accepted_stage[-3:]
+        if stage_updates >= MIN_UPDATES[beta] and len(accepted_stage) >= PLATEAU_WINDOW + 1:
+            recent = accepted_stage[-(PLATEAU_WINDOW + 1):]
             gains = [
                 abs(recent[i]["objective_A"] - recent[i-1]["objective_A"])
                 / max(abs(recent[i]["objective_A"]), abs(recent[i-1]["objective_A"]), 1.0e-30)
                 for i in range(1, len(recent))
             ]
-            plateau = max(gains) < 2.0e-3
-        if plateau or stage_updates >= SAFETY_MAX_UPDATES[beta]:
-            emit(events, "beta_advance", beta=beta, reason="objective_plateau" if plateau else "bounded_stage_budget")
+            plateau = max(gains) < PLATEAU_RELATIVE_FOM_CHANGE
+        trailing_rejections = 0
+        for row in reversed(history):
+            if row.get("beta") != beta or row.get("stage_reprojection"):
+                continue
+            if row.get("accepted"):
+                break
+            trailing_rejections += 1
+        move_floor_stationary = bool(
+            stage_updates >= MIN_UPDATES[beta]
+            and move <= MOVE_FLOOR
+            and trailing_rejections >= MOVE_FLOOR_REJECTION_COUNT
+        )
+        if plateau or move_floor_stationary:
+            advance_reason = (
+                "measured_objective_plateau" if plateau
+                else "three_rejected_projected_steps_at_move_floor"
+            )
+            emit(
+                events, "beta_advance", beta=beta, reason=advance_reason,
+                stage_updates=stage_updates, trailing_rejections=trailing_rejections,
+            )
             beta_index += 1
             stage_updates = 0
             first_moment.fill(0.0)

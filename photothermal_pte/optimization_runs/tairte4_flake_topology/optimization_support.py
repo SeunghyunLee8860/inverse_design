@@ -19,13 +19,21 @@ OPENING_RADIUS_M = 0.5 * MINIMUM_FEATURE_M
 MAPPING = ProductionDensityMapping(
     shape=SHAPE,
     spacing_m=SPACING_M,
-    radius_m=MINIMUM_FEATURE_M,
+    # The projection filter is a regularizer, not the minimum-feature
+    # certificate.  A 500 nm filter radius over-smoothed the old Run012/013
+    # topology before the morphology audit became active.  Use the physical
+    # feature radius here and certify both phases separately below.
+    radius_m=OPENING_RADIUS_M,
     eta=0.5,
 )
 
 
 def disk() -> np.ndarray:
-    radius = int(np.ceil(OPENING_RADIUS_M / SPACING_M - 1.0e-12))
+    # A design node represents a 100 nm square support.  Two node-centre
+    # offsets plus the two half-cell extents give a 500 nm physical diameter.
+    # ceil(250/100)=3 used by Run012/013 instead produced a conservative
+    # roughly 600--700 nm audit and was stricter than the requested contract.
+    radius = int(np.floor(OPENING_RADIUS_M / SPACING_M + 1.0e-12))
     axis = np.arange(-radius, radius + 1)
     xx, yy = np.meshgrid(axis, axis, indexing="ij")
     return xx * xx + yy * yy <= radius * radius
@@ -56,12 +64,11 @@ def exact_binary_audit(rho: np.ndarray) -> tuple[dict[str, object], dict[str, np
         "minimum_feature_nm": 500.0,
         "opening_radius_nm": 250.0,
         "opening_radius_pixels": int((structure.shape[0] - 1) // 2),
-        "realized_discrete_opening_max_offset_nm": float(radius * SPACING_M * 1.0e9),
-        "realized_discrete_opening_nominal_diameter_nm": float(2 * radius * SPACING_M * 1.0e9),
+        "realized_discrete_opening_max_center_offset_nm": float(radius * SPACING_M * 1.0e9),
+        "realized_discrete_opening_pixel_support_diameter_nm": float((2 * radius + 1) * SPACING_M * 1.0e9),
         "discretization_note": (
-            "requested 500 nm diameter implies a 250 nm radius, but ceil(250/100)=3 "
-            "grid offsets realizes a conservative 300 nm maximum offset / 600 nm "
-            "nominal center-to-center diameter on this nodal audit"
+            "requested 500 nm pixel-support diameter is represented by five "
+            "100 nm samples (two centre offsets plus two half-cell extents)"
         ),
         "outside_design_phase": outside_phase,
         "solid_bad_cell_count": int(np.count_nonzero(bad_solid)),
