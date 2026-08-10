@@ -391,6 +391,15 @@ def compact_forward(value: dict) -> dict:
     return {key: item for key, item in value.items() if key not in {"q", "electric", "epsilon", "index", "grid"}}
 
 
+def polarization_angle(label: str) -> float:
+    """Map the crystal-axis certificate label to Lumerical's source angle."""
+    if label == "Ea":
+        return 90.0  # Lumerical y = crystal a
+    if label == "Eb":
+        return 0.0  # Lumerical x = crystal b
+    raise ValueError(f"unsupported polarization: {label}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base-fsp", required=True, type=Path)
@@ -400,6 +409,7 @@ def main() -> int:
     parser.add_argument("--gpu-device", default="GPU 5")
     parser.add_argument("--cuda-device", type=int, default=0)
     parser.add_argument("--step", type=float, default=0.005)
+    parser.add_argument("--polarization", choices=("Ea", "Eb"), default="Ea")
     args = parser.parse_args()
     base_fsp = checked(args.base_fsp, args.base_sha256)
     operator, rho, operator_meta = load_operator(args.jacobian_dir)
@@ -415,7 +425,18 @@ def main() -> int:
     started = time.monotonic()
     try:
         fdtd, audit, runtime = open_fdtd(args.gpu_device)
-        base = run_forward(fdtd, audit, runtime, template=base_fsp, rho=rho, role="base", output=output, reuse=True)
+        angle = polarization_angle(args.polarization)
+        base = run_forward(
+            fdtd,
+            audit,
+            runtime,
+            template=base_fsp,
+            rho=rho,
+            role=f"base_{args.polarization}",
+            output=output,
+            reuse=args.polarization == "Ea",
+            polarization_angle_deg=angle,
+        )
         coupled = solve_coupled(base, rho, args.cuda_device, need_adjoint=True)
         pulled, pullback_meta = pullback_q(base, coupled)
         native_source = np.zeros_like(base["electric"], dtype=np.complex128)
@@ -460,6 +481,7 @@ def main() -> int:
             local_forward = run_forward(
                 fdtd, audit, runtime, template=base_fsp, rho=local_rho,
                 role=f"adjoint_aligned_{label}", output=output,
+                polarization_angle_deg=angle,
             )
             local = solve_coupled(local_forward, local_rho, args.cuda_device, need_adjoint=False)
             objectives[label] = local["electrical"].current_A
@@ -512,7 +534,13 @@ def main() -> int:
             "status": "VALIDATED_TAIRTE4_FLAKE_COMBINED_PHYSICAL_RHO_ADFD" if passed else "FAILED_TAIRTE4_FLAKE_COMBINED_PHYSICAL_RHO_ADFD",
             "passed": passed,
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-            "scope": "uniform rho=0.5 E||a combined optical-Q, explicit thermal material/interface, and density-dependent electrical weighting gradient",
+            "scope": (
+                f"uniform rho=0.5 {args.polarization} combined optical-Q, "
+                "explicit thermal material/interface, and density-dependent "
+                "electrical weighting gradient"
+            ),
+            "polarization": args.polarization,
+            "polarization_angle_deg": angle,
             "step": args.step,
             "base_objective_A": coupled["electrical"].current_A,
             "AD_directional_A": ad,
@@ -547,7 +575,11 @@ def main() -> int:
                 "worst_auto_shutoff": worst_shutoff,
             },
             "raw_artifact": {"path": str(raw), "size_bytes": raw.stat().st_size, "sha256": sha256(raw)},
-            "Maxwell_solves": {"forward_reused": 1, "forward_new": 2, "adjoint": 1},
+            "Maxwell_solves": {
+                "forward_reused": int(args.polarization == "Ea"),
+                "forward_new": 2 + int(args.polarization == "Eb"),
+                "adjoint": 1,
+            },
             "thermal_solves": {"forward": 3, "adjoint": 1},
             "optimization_iterations": 0,
             "empirical_normalization": False,

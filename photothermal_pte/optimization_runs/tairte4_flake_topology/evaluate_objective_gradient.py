@@ -20,6 +20,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.validate_combined
     compact_forward,
     load_operator,
     open_fdtd,
+    polarization_angle,
     pullback_q,
     run_forward,
     sha256,
@@ -58,7 +59,7 @@ def main() -> int:
     base_fsp = checked(args.base_fsp, args.base_sha256)
     _, _, operator_meta = load_operator(args.jacobian_dir)
     rho = load_rho(args.rho_npz)
-    angle = 90.0 if args.polarization == "Ea" else 0.0
+    angle = polarization_angle(args.polarization)
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
         raise RuntimeError(f"refusing non-empty output directory: {output}")

@@ -137,9 +137,16 @@ def build_state(rho_nodal: np.ndarray, *, gray_exponent: float = 1.0) -> Thermal
         raise ValueError("gray exponent must be positive")
     rho_cell = nodal_to_cell(rho_nodal)
     phi_cell = rho_cell**gray_exponent
-    dphi = gray_exponent * np.where(
-        rho_cell > 0.0, rho_cell ** (gray_exponent - 1.0), 0.0
-    )
+    # d(rho**p)/d(rho) is exactly one at rho=0 when p=1.  The former
+    # ``where(rho > 0, ..., 0)`` silently set that endpoint derivative to
+    # zero, even for the production linear gray law.  Keep the mathematically
+    # exact endpoint and use the limiting zero derivative only for p>1.
+    if np.isclose(gray_exponent, 1.0, rtol=0.0, atol=1.0e-15):
+        dphi = np.ones_like(rho_cell)
+    else:
+        dphi = gray_exponent * np.where(
+            rho_cell > 0.0, rho_cell ** (gray_exponent - 1.0), 0.0
+        )
 
     edges = _piecewise_edges()
     widths = tuple(np.diff(value) for value in edges)

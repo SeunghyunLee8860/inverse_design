@@ -39,3 +39,11 @@ def test_bottom_contact_endpoints_and_axis_mapping():
         - 0.5 * one.widths_m[2][one.bottom_face + 1] / 1.0,
         1.0 / G_TAIRTE4_SIO2_W_M2K,
     )
+
+
+def test_linear_gray_law_has_unit_derivative_at_void_endpoint():
+    state = build_state(np.zeros(CONTRACT.design_node_shape), gray_exponent=1.0)
+    assert np.array_equal(
+        state.dphi_drho_cell,
+        np.ones(CONTRACT.design_intervals),
+    )

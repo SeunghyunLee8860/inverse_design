@@ -20,6 +20,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.validate_combined
     checked,
     compact_forward,
     open_fdtd,
+    polarization_angle,
     run_forward,
     sha256,
     solve_coupled,
@@ -47,7 +48,7 @@ def main() -> int:
     rho = load_rho(rho_path)
     if not np.all((rho == 0.0) | (rho == 1.0)):
         raise RuntimeError("objective-only final evaluation requires exact 0/1 density")
-    angle = 90.0 if args.polarization == "Ea" else 0.0
+    angle = polarization_angle(args.polarization)
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
         raise RuntimeError(f"refusing non-empty output directory: {output}")
