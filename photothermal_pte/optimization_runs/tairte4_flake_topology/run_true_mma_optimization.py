@@ -420,8 +420,13 @@ def publish_plot(
         f"bad={summary['exact']['total_bad_cell_count']}"
     )
     destination = published / f"evaluation_{evaluation_id:04d}_{label}.png"
-    fig.savefig(destination, dpi=150)
-    fig.savefig(published / "latest_iteration.png", dpi=170)
+    destination_temporary = destination.with_name(destination.stem + ".tmp.png")
+    latest = published / "latest_iteration.png"
+    latest_temporary = latest.with_name(latest.stem + ".tmp.png")
+    fig.savefig(destination_temporary, dpi=150, format="png")
+    destination_temporary.replace(destination)
+    fig.savefig(latest_temporary, dpi=170, format="png")
+    latest_temporary.replace(latest)
     plt.close(fig)
     return destination
 

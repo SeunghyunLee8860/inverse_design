@@ -57,7 +57,9 @@ def write_status(status: str, **values: object) -> None:
         "gpu": GPU,
         **values,
     }
-    STATUS.write_text(json.dumps(payload, indent=2) + "\n")
+    temporary = STATUS.with_suffix(STATUS.suffix + ".tmp")
+    temporary.write_text(json.dumps(payload, indent=2) + "\n")
+    temporary.replace(STATUS)
     print(json.dumps(payload), flush=True)
 
 
