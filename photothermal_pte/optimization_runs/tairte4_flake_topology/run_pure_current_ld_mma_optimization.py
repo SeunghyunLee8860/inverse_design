@@ -253,6 +253,23 @@ def main() -> int:
             "NLopt internal state."
         ),
     )
+    parser.add_argument(
+        "--recovery-append",
+        action="store_true",
+        help=(
+            "Append a fresh native-LD_MMA stage to an interrupted published run. "
+            "Existing evaluation history and raw-manifest provenance are retained; "
+            "NLopt's non-serializable internal asymptotes are intentionally reset."
+        ),
+    )
+    parser.add_argument(
+        "--recovery-validation-result",
+        type=Path,
+        help=(
+            "Optional already-passed raw retry result used only as recovery provenance. "
+            "It is not imported as an optimizer evaluation."
+        ),
+    )
     args = parser.parse_args()
 
     CONTRACT.validate()
@@ -269,7 +286,11 @@ def main() -> int:
 
     raw_root = args.raw_root.expanduser().resolve()
     published = args.published_dir.expanduser().resolve()
-    if (raw_root / "stage_checkpoint.npz").exists():
+    if args.recovery_append and args.initial_latent_npz is None:
+        raise RuntimeError("--recovery-append requires --initial-latent-npz")
+    if args.recovery_validation_result is not None and not args.recovery_append:
+        raise RuntimeError("--recovery-validation-result requires --recovery-append")
+    if (raw_root / "stage_checkpoint.npz").exists() and not args.recovery_append:
         raise RuntimeError(
             "NLopt internal asymptotes are not serializable; resume only from a completed "
             "beta-stage checkpoint using a dedicated restart command"
@@ -305,15 +326,77 @@ def main() -> int:
                 "native LD_MMA stage initialized at a fully evaluated physical design."
             ),
         }
-    history: list[dict[str, object]] = []
-    manifest = pure_current_manifest(
-        base_fsp, args.base_sha256, jacobian_dir, code_provenance
-    )
-    manifest["initialization"] = initial_provenance
-    emit(events, "native_ld_mma_initialization", **initial_provenance)
-    fixed_source_power: float | None = None
-    evaluation_counter = 0
-    global_evaluation = 0
+    if args.recovery_append:
+        history_path = published / "optimization_history.json"
+        manifest_path = published / "RAW_ARTIFACT_MANIFEST.json"
+        if not history_path.is_file() or not manifest_path.is_file():
+            raise RuntimeError(
+                "recovery append requires existing published optimization history and manifest"
+            )
+        history = json.loads(history_path.read_text())
+        manifest = json.loads(manifest_path.read_text())
+        if not isinstance(history, list) or not history:
+            raise RuntimeError("recovery append requires a nonempty evaluation history")
+        if not isinstance(manifest, dict) or not isinstance(manifest.get("evaluations"), dict):
+            raise RuntimeError("recovery append requires a valid raw artifact manifest")
+        try:
+            evaluation_counter = max(int(row["evaluation_id"]) for row in history)
+            global_evaluation = max(
+                int(row["global_full_physics_evaluation"]) for row in history
+            )
+            source_powers = np.asarray(
+                [float(row["fixed_source_power_W"]) for row in history], dtype=float
+            )
+        except (KeyError, TypeError, ValueError) as error:
+            raise RuntimeError("existing history cannot establish a recovery contract") from error
+        fixed_source_power = float(source_powers[0])
+        if (
+            not np.all(np.isfinite(source_powers))
+            or np.any(np.abs(source_powers - fixed_source_power) / fixed_source_power >= 0.005)
+        ):
+            raise RuntimeError("existing history violates the fixed-source-power recovery contract")
+        if evaluation_counter != len(history) or global_evaluation != len(history):
+            raise RuntimeError("existing history has non-contiguous evaluation numbering")
+        recovery_validation: dict[str, object] | None = None
+        if args.recovery_validation_result is not None:
+            validation_path = args.recovery_validation_result.expanduser().resolve()
+            if not validation_path.is_file():
+                raise RuntimeError("recovery validation result is missing")
+            validation = json.loads(validation_path.read_text())
+            if not validation.get("passed"):
+                raise RuntimeError("recovery validation result is not passed")
+            recovery_validation = {
+                "path": str(validation_path),
+                "size_bytes": int(validation_path.stat().st_size),
+                "sha256": sha256(validation_path),
+                "status": validation.get("status"),
+                "objective_A": validation.get("objective_A"),
+            }
+        recovery = {
+            "kind": "native_LD_MMA_recovery_append",
+            "prior_evaluations": len(history),
+            "next_published_evaluation_id": evaluation_counter + 1,
+            "initialization": initial_provenance,
+            "reason": (
+                "The previous GPU adjoint engine/resource interruption is retained as raw "
+                "provenance. This fresh native LD_MMA stage intentionally resets un-"
+                "serializable internal asymptotes and re-evaluates the last physical design."
+            ),
+            "recovery_validation_raw_result": recovery_validation,
+            "recovery_driver_code_provenance": code_provenance,
+        }
+        manifest.setdefault("recovery_chain", []).append(recovery)
+        emit(events, "native_ld_mma_recovery_append", **recovery)
+    else:
+        history = []
+        manifest = pure_current_manifest(
+            base_fsp, args.base_sha256, jacobian_dir, code_provenance
+        )
+        manifest["initialization"] = initial_provenance
+        emit(events, "native_ld_mma_initialization", **initial_provenance)
+        fixed_source_power = None
+        evaluation_counter = 0
+        global_evaluation = 0
 
     for beta_index, beta in enumerate(BETA_SCHEDULE):
         if args.maximum_beta_stages and beta_index >= args.maximum_beta_stages:
@@ -347,7 +430,14 @@ def main() -> int:
             global_evaluation=global_evaluation,
             constraint_device=args.constraint_device,
             algorithm_label="NLopt LD_MMA (pure terminal current; no connectivity constraint)",
-            output_slug="pure_current_ld_mma",
+            # Preserve the interrupted raw evaluation_0012 inputs/output unchanged.
+            # The public history still continues at evaluation_0012, while this
+            # fresh physical solve is distinguishable in raw provenance.
+            output_slug=(
+                "pure_current_ld_mma_recovery2"
+                if args.recovery_append
+                else "pure_current_ld_mma"
+            ),
             include_terminal_conductance_constraint=False,
             morphology_start_beta=PURE_CURRENT_MORPHOLOGY_START_BETA,
             optimizer_controls=controls,

@@ -29,17 +29,21 @@ GPU = int(os.environ.get("TAIRTE4_PURE_CURRENT_LD_MMA_GPU", "0"))
 STATUS = REPOSITORY / "photothermal_pte/optimization_runs/PURE_CURRENT_LD_MMA_DUAL_RUN_STATUS.json"
 RUNS = (
     (
-        "Run038",
+        "Run036",
         "Ea",
-        PARENT / "run038_pure_current_ld_mma_warm_restart_Ea_20260811",
-        REPOSITORY / "photothermal_pte/optimization_runs/run_038_pure_current_ld_mma_warm_restart_Ea_current_max",
+        PARENT / "run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810",
+        REPOSITORY / "photothermal_pte/optimization_runs/run_036_pure_current_ld_mma_morphology_from_beta1_Ea_current_max",
         PARENT / "run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0012_beta1_pure_current_ld_mma_latent.npz",
+        True,
+        PARENT / "run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0012_retry1_beta1_pure_current_ld_mma/objective_gradient_result.json",
     ),
     (
-        "Run039",
+        "Run037",
         "Eb",
-        PARENT / "run039_pure_current_ld_mma_morphology_from_beta1_Eb_20260811",
-        REPOSITORY / "photothermal_pte/optimization_runs/run_039_pure_current_ld_mma_morphology_from_beta1_Eb_current_max",
+        PARENT / "run037_pure_current_ld_mma_morphology_from_beta1_Eb_20260811",
+        REPOSITORY / "photothermal_pte/optimization_runs/run_037_pure_current_ld_mma_morphology_from_beta1_Eb_current_max",
+        None,
+        False,
         None,
     ),
 )
@@ -94,14 +98,24 @@ def main() -> int:
         conda_library if not current_library_path
         else f"{conda_library}:{current_library_path}"
     )
-    for label, polarization, raw_root, published, initial_latent in RUNS:
+    for (
+        label,
+        polarization,
+        raw_root,
+        published,
+        initial_latent,
+        recovery_append,
+        recovery_validation,
+    ) in RUNS:
         final = published / "FINAL_RESULT.json"
         if passed(final):
             continue
-        if raw_root.exists() and any(raw_root.iterdir()):
+        if raw_root.exists() and any(raw_root.iterdir()) and not recovery_append:
             raise RuntimeError(
                 f"{label} raw root already contains data; refusing ambiguous overwrite: {raw_root}"
             )
+        if recovery_append and not raw_root.is_dir():
+            raise RuntimeError(f"{label} recovery raw root is missing: {raw_root}")
         raw_root.mkdir(parents=True, exist_ok=True)
         published.mkdir(parents=True, exist_ok=True)
         command = [
@@ -121,11 +135,16 @@ def main() -> int:
             if not initial_latent.is_file():
                 raise RuntimeError(f"{label} warm-start latent is missing: {initial_latent}")
             command.extend(["--initial-latent-npz", str(initial_latent)])
+        if recovery_append:
+            command.append("--recovery-append")
+            if recovery_validation is not None:
+                command.extend(["--recovery-validation-result", str(recovery_validation)])
         write_status(
             "RUNNING_PURE_CURRENT_NLOPT_LD_MMA",
             run=label,
             polarization=polarization,
             native_ld_mma_warm_restart=initial_latent is not None,
+            recovery_append=recovery_append,
             command=command,
         )
         completed = subprocess.run(command, cwd=REPOSITORY, env=environment)
