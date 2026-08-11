@@ -241,6 +241,7 @@ def main() -> int:
             "code_provenance": code_provenance,
         })
     if args.recovery_append:
+        manifest["code_provenance"] = code_provenance
         manifest.setdefault("recovery_chain", []).append(
             {
                 "generated_at_utc": datetime.now(timezone.utc).isoformat(),
