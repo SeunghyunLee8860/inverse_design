@@ -174,29 +174,27 @@ def test_pure_current_lumopt_style_fixed_budget_continuation_contract() -> None:
         PURE_CURRENT_BETA_FACTOR,
         PURE_CURRENT_BETA_SCHEDULE,
         PURE_CURRENT_CONTINUATION_MAX_EVALUATIONS,
+        PURE_CURRENT_MAX_BETA,
         PURE_CURRENT_NLOPT_FTOL_REL,
     )
 
     assert PURE_CURRENT_NLOPT_FTOL_REL == 1.0e-6
     assert PURE_CURRENT_BETA_FACTOR == 2.0
     assert PURE_CURRENT_BETA_SCHEDULE[:3] == (1.0, 2.0, 4.0)
+    assert PURE_CURRENT_MAX_BETA == 128.0
+    assert PURE_CURRENT_BETA_SCHEDULE[-1] == 128.0
     assert PURE_CURRENT_CONTINUATION_MAX_EVALUATIONS == 20
 
 
-def test_pure_current_infeasible_stage_disables_objective_early_stops() -> None:
+def test_pure_current_fixed_budget_disables_early_stops_for_every_stage() -> None:
     from photothermal_pte.optimization_runs.tairte4_flake_topology.run_pure_current_ld_mma_optimization import (
-        PURE_CURRENT_NLOPT_FTOL_REL,
-        PURE_CURRENT_NLOPT_XTOL_REL,
         stage_numerical_tolerances,
     )
 
     infeasible = stage_numerical_tolerances(np.asarray([-0.2, 0.1]))
     assert infeasible == {"ftol_rel": 0.0, "xtol_rel": 0.0}
     feasible = stage_numerical_tolerances(np.asarray([-0.2, -0.1]))
-    assert feasible == {
-        "ftol_rel": PURE_CURRENT_NLOPT_FTOL_REL,
-        "xtol_rel": PURE_CURRENT_NLOPT_XTOL_REL,
-    }
+    assert feasible == {"ftol_rel": 0.0, "xtol_rel": 0.0}
 
 
 def test_pure_current_final_gate_requires_binary_and_exact_500nm_geometry() -> None:

@@ -27,6 +27,9 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.validate_combined
 )
 
 
+MAXIMUM_BINARY_OBJECTIVE_LOSS_FRACTION = 0.01
+
+
 def artifact(path: Path) -> dict[str, object]:
     return {"path": str(path), "size_bytes": path.stat().st_size, "sha256": sha256(path)}
 
@@ -84,6 +87,10 @@ def main() -> int:
             reference_change = (objective - args.reference_objective_A) / abs(
                 args.reference_objective_A
             )
+        objective_preserved = bool(
+            reference_change is None
+            or reference_change >= -MAXIMUM_BINARY_OBJECTIVE_LOSS_FRACTION
+        )
         raw = output / "binary_objective_fields.npz"
         np.savez_compressed(
             raw,
@@ -106,6 +113,7 @@ def main() -> int:
             and coupled["electrical"].weighting_residual < 1e-8
             and np.isfinite(objective)
             and coupled["electrical"].terminal_conductance_S > 0.0
+            and objective_preserved
         )
         result = {
             "schema": "contact-anchored-exact-binary-objective-v1",
@@ -122,6 +130,7 @@ def main() -> int:
             "objective_A": objective,
             "reference_continuous_objective_A": args.reference_objective_A,
             "relative_objective_change_from_continuous": reference_change,
+            "binary_objective_preserved_within_one_percent": objective_preserved,
             "equivalent_objective_at_285uW_A": objective * 285.0e-6 / forward["source_power_W"],
             "responsivity_A_W": objective / forward["source_power_W"],
             "terminal_conductance_S": coupled["electrical"].terminal_conductance_S,
@@ -133,6 +142,7 @@ def main() -> int:
                 "thermal_forward_residual": coupled["thermal_forward"].explicit_relative_residual,
                 "thermal_energy_balance": coupled["energy"],
                 "electrical_weighting_residual": coupled["electrical"].weighting_residual,
+                "maximum_binary_objective_loss_fraction": MAXIMUM_BINARY_OBJECTIVE_LOSS_FRACTION,
             },
             "inputs": {"base_FSP": artifact(base_fsp), "binary_density": artifact(rho_path)},
             "raw_artifact": artifact(raw),

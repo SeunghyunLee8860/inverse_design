@@ -72,23 +72,26 @@ PURE_CURRENT_NLOPT_XTOL_REL = 1.0e-9
 # callback-to-callback objective changes are not used as a beta gate.
 PURE_CURRENT_NLOPT_FTOL_REL = 1.0e-6
 PURE_CURRENT_BETA_FACTOR = 2.0
-PURE_CURRENT_MAX_BETA = 1024.0
+PURE_CURRENT_MAX_BETA = 128.0
 PURE_CURRENT_GRAYSCALE_MAX_EVALUATIONS = MAXIMUM_STAGE_EVALUATIONS
 PURE_CURRENT_CONTINUATION_MAX_EVALUATIONS = 20
 # A fixed-budget continuation block is not itself permission to abandon a
 # beta while either morphology inequality is still infeasible.  Restarting
 # LD_MMA at the returned physical point is an explicit constraint-restoration
 # continuation, not a hidden hand-written density update.
-PURE_CURRENT_MAX_RESTORATION_BLOCKS = 12
+# Constraint-restoration blocks do not have an arbitrary count cutoff.  The
+# physical solver still fails closed on invalid/non-finite results, while a
+# finite but infeasible design remains at the same beta until it is restored.
+PURE_CURRENT_MAX_RESTORATION_BLOCKS = None
 # At the final beta, tighten the smooth surrogate until the *exact* binary
 # opening audit and the gray-fraction gate both pass.  This separates final
 # manufacturability cleanup from ordinary beta promotion.
-PURE_CURRENT_MAX_FINAL_CLEANUP_ROUNDS = 8
+PURE_CURRENT_MIN_FINAL_MORPHOLOGY_CAP = 1.0e-10
 PURE_CURRENT_FINAL_GRAY_FRACTION_LIMIT = 0.01
 
 
 def lumopt_style_beta_schedule() -> tuple[float, ...]:
-    """Return beta=1 followed by user-selected factor-2 continuation to 1024.
+    """Return beta=1 followed by user-selected factor-2 continuation to 128.
 
     Ansys LumOpt separates the initial grayscale phase from fixed-budget
     binarization stages and multiplies beta by a continuation factor.  Keep
@@ -118,9 +121,9 @@ def lumopt_style_beta_promotion_policy() -> dict[str, object]:
         "normal_NLopt_early_stop_promotes_beta": True,
         "active_constraints_must_be_feasible": True,
         "infeasible_block_continues_same_beta": True,
-        "maximum_constraint_restoration_blocks": PURE_CURRENT_MAX_RESTORATION_BLOCKS,
+        "maximum_constraint_restoration_blocks": None,
         "final_exact_cleanup_at_maximum_beta": True,
-        "maximum_final_cleanup_rounds": PURE_CURRENT_MAX_FINAL_CLEANUP_ROUNDS,
+        "minimum_final_morphology_cap": PURE_CURRENT_MIN_FINAL_MORPHOLOGY_CAP,
     }
 
 
@@ -267,18 +270,21 @@ def continuation_stage_completion(
 
 
 def stage_numerical_tolerances(entry_constraint_values: np.ndarray) -> dict[str, float]:
-    """Disable objective-based early stops while entering a stage infeasible.
+    """Use the documented fixed evaluation budget for every continuation block.
 
-    FTOL/XTOL are useful only after the active inequalities are feasible.  If
-    they terminate an infeasible block, the run can repeatedly stop before
-    LD_MMA performs constraint restoration.  A zero NLopt tolerance disables
-    that stop criterion while retaining the fixed MAXEVAL budget.
+    A newly constructed LD_MMA instance begins with conservative curvature,
+    so its first trial steps can be tiny even when the stage has not adapted.
+    FTOL/XTOL previously promoted beta after only two such evaluations.  Zero
+    disables those numerical early stops; MAXEVAL remains the explicit per-
+    beta continuation budget, matching the meaning of LumOpt's continuation
+    iteration budget.  The values are still validated for telemetry.
     """
     values = np.asarray(entry_constraint_values, dtype=float)
-    infeasible = bool(values.size and np.max(values) > NLOPT_CONSTRAINT_TOL)
+    if not np.all(np.isfinite(values)):
+        raise ValueError("entry constraint values must be finite")
     return {
-        "ftol_rel": 0.0 if infeasible else PURE_CURRENT_NLOPT_FTOL_REL,
-        "xtol_rel": 0.0 if infeasible else PURE_CURRENT_NLOPT_XTOL_REL,
+        "ftol_rel": 0.0,
+        "xtol_rel": 0.0,
     }
 
 
@@ -548,6 +554,7 @@ def main() -> int:
             )
         beta_schedule = beta_schedule[int(matches[0]):]
     completed_beta_stages = 0
+    stop_after_stage = False
     for beta in beta_schedule:
         if args.maximum_beta_stages and completed_beta_stages >= args.maximum_beta_stages:
             break
@@ -570,7 +577,10 @@ def main() -> int:
             ])
             caps = fixed_stage_morphology_caps(residuals, beta)
             if np.isclose(beta, beta_schedule[-1]) and final_cleanup_round:
-                caps = caps * (0.5 ** final_cleanup_round)
+                caps = np.maximum(
+                    PURE_CURRENT_MIN_FINAL_MORPHOLOGY_CAP,
+                    caps * (0.5 ** final_cleanup_round),
+                )
             entry_constraint_values = residuals / caps - 1.0
             tolerances = stage_numerical_tolerances(entry_constraint_values)
             block_controls = {
@@ -680,14 +690,8 @@ def main() -> int:
                     beta=beta,
                     maximum_constraint_value=max_constraint,
                     restoration_block=restoration_block,
-                    maximum_restoration_blocks=PURE_CURRENT_MAX_RESTORATION_BLOCKS,
+                    maximum_restoration_blocks=None,
                 )
-                if restoration_block >= PURE_CURRENT_MAX_RESTORATION_BLOCKS:
-                    raise RuntimeError(
-                        "500-nm morphology remained infeasible after explicit "
-                        f"constraint restoration at beta={beta:g}; "
-                        f"maximum_constraint_value={max_constraint:.6g}"
-                    )
                 continue
 
             readiness = continuation_stage_completion(
@@ -700,9 +704,18 @@ def main() -> int:
                     f"{readiness['reason']}"
                 )
 
-            if np.isclose(beta, beta_schedule[-1]):
-                final_gate = continuous_final_gate(MAPPING.physical(latent, beta))
-                if not final_gate["passed"]:
+            final_gate = continuous_final_gate(MAPPING.physical(latent, beta))
+            if final_gate["passed"]:
+                stop_after_stage = True
+            elif np.isclose(beta, beta_schedule[-1]):
+                prior_caps = caps.copy()
+                if np.all(prior_caps <= PURE_CURRENT_MIN_FINAL_MORPHOLOGY_CAP):
+                    raise RuntimeError(
+                        "exact binary/500-nm gate remains infeasible at the "
+                        "documented numerical morphology-cap floor: "
+                        f"{final_gate}"
+                    )
+                else:
                     final_cleanup_round += 1
                     restoration_block = 0
                     emit(
@@ -710,14 +723,9 @@ def main() -> int:
                         "nlopt_final_binary_cleanup_required",
                         beta=beta,
                         final_cleanup_round=final_cleanup_round,
-                        maximum_cleanup_rounds=PURE_CURRENT_MAX_FINAL_CLEANUP_ROUNDS,
+                        minimum_morphology_cap=PURE_CURRENT_MIN_FINAL_MORPHOLOGY_CAP,
                         final_gate=final_gate,
                     )
-                    if final_cleanup_round > PURE_CURRENT_MAX_FINAL_CLEANUP_ROUNDS:
-                        raise RuntimeError(
-                            "final beta exhausted explicit binary/500-nm cleanup "
-                            f"rounds: {final_gate}"
-                        )
                     continue
             break
 
@@ -755,6 +763,8 @@ def main() -> int:
             ),
         )
         completed_beta_stages += 1
+        if stop_after_stage:
+            break
 
     if args.maximum_beta_stages:
         return 0
