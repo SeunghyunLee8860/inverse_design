@@ -4545,5 +4545,66 @@
       "restoration_block": 1,
       "final_cleanup_round": 0
     }
+  },
+  {
+    "role": "nlopt_evaluation",
+    "algorithm": "NLopt LD_MMA (pure terminal current; no connectivity constraint)",
+    "nlopt_version": "2.11.0",
+    "evaluation_id": 78,
+    "global_full_physics_evaluation": 78,
+    "stage_full_physics_evaluation": 8,
+    "beta": 8.0,
+    "objective_A": 2.796234778096398e-17,
+    "objective_at_reference_power_A": 5.762208865977115e-08,
+    "objective_scaled_minimize": -5.762208865977114,
+    "fixed_source_power_W": 1.3830232993859658e-13,
+    "source_power_relative_change": 0.0,
+    "terminal_conductance_S": 0.019357966007105418,
+    "minimum_terminal_conductance_S": null,
+    "constraint_names": [
+      "500nm_solid_opening",
+      "500nm_void_opening"
+    ],
+    "constraint_values": [
+      -0.00829764723004689,
+      -0.1483012833143328
+    ],
+    "maximum_constraint_value": -0.00829764723004689,
+    "terminal_conductance_constraint_enabled": false,
+    "morphology_caps": [
+      0.0020000000000000005,
+      0.0020000000000000005
+    ],
+    "gray_fraction_0p01_0p99": 0.06453211122809191,
+    "binarization": 0.025932008127719144,
+    "exact_bad_cells": 174,
+    "rho_mean": 0.7543079973055458,
+    "latent_range": [
+      0.0,
+      1.0
+    ],
+    "maximum_absolute_step_from_previous_evaluation": 0.01602830456485138,
+    "rms_step_from_previous_evaluation": 0.0004302754434169668,
+    "manual_move_limit": null,
+    "used_adam": false,
+    "gradient_direction_normalization": false,
+    "post_update_hard_clipping": false,
+    "symmetry_constraint": false,
+    "volume_constraint": false,
+    "optimizer_controls": {
+      "initial_step": 0.0067578189050606615,
+      "rho_init": 136.85696934833095,
+      "always_improve": 1,
+      "inner_gradients": 1,
+      "projection_midpoint_derivative": 4.00268460160673,
+      "projection_derivative_ratio_to_beta1": 3.6994184590058334,
+      "target_initial_physical_density_step": 0.025,
+      "base_rho_init_at_beta1": 10.0,
+      "fixed_per_iteration_move_limit": null,
+      "xtol_rel": 0.0,
+      "ftol_rel": 0.0,
+      "restoration_block": 1,
+      "final_cleanup_round": 0
+    }
   }
 ]

@@ -1717,6 +1717,28 @@
         "size_bytes": 116867,
         "sha256": "3350a170587a7b11178df4ad51f7794bcdf048083505a7cb10162deee55c256f"
       }
+    },
+    "0078": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0078_beta8_pure_current_ld_mma_recovery2/objective_gradient_result.json",
+        "size_bytes": 11097,
+        "sha256": "a2065c212401bdb397b785579147b51e5ff809bc17196a817ab13ea795040a57"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0078_beta8_pure_current_ld_mma_recovery2/objective_gradient.npz",
+        "size_bytes": 2120522,
+        "sha256": "da83a27582f55003364581c2a8ff186e6702ef463d9b572402c658a61aeeb7ed"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0078_beta8_pure_current_ld_mma_recovery2/forward_Eb.fsp",
+        "size_bytes": 180903623,
+        "sha256": "d5cfe5ad376048b838d8cc0e88cbfacfda4c1501fbb84c15a610e60dd8420662"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0078_beta8_pure_current_ld_mma_recovery2_latent.npz",
+        "size_bytes": 117328,
+        "sha256": "5fc3293df0353d2af2e07aa2f2a346cfbbf30506494ed77ff6ff4f34cf36f25e"
+      }
     }
   },
   "active_constraints": {
