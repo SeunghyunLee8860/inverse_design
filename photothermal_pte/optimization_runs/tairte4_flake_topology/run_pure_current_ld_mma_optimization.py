@@ -399,7 +399,12 @@ def main() -> int:
             base_fsp, args.base_sha256, jacobian_dir, code_provenance
         )
         manifest["initialization"] = initial_provenance
-        emit(events, "native_ld_mma_initialization", **initial_provenance)
+        # ``emit`` reserves its first positional argument for the event-file
+        # path.  Keep a warm-start provenance ``path`` nested rather than
+        # passing it as an event keyword, otherwise a valid warm start fails
+        # before its first FDTD solve with ``multiple values for argument
+        # 'path'``.
+        emit(events, "native_ld_mma_initialization", initialization=initial_provenance)
         fixed_source_power = None
         evaluation_counter = 0
         global_evaluation = 0
