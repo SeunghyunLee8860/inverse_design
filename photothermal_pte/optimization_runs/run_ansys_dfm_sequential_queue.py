@@ -55,6 +55,33 @@ def read_passed(path: Path) -> bool:
         return False
 
 
+def gpu_compute_processes(gpu: int) -> list[dict[str, object]]:
+    completed = subprocess.run(
+        [
+            "nvidia-smi",
+            "-i", str(gpu),
+            "--query-compute-apps=pid,process_name,used_memory",
+            "--format=csv,noheader,nounits",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    processes: list[dict[str, object]] = []
+    for line in completed.stdout.splitlines():
+        fields = [field.strip() for field in line.split(",", maxsplit=2)]
+        if len(fields) != 3 or not fields[0]:
+            continue
+        processes.append(
+            {
+                "pid": int(fields[0]),
+                "process_name": fields[1],
+                "used_memory_MiB": int(fields[2]),
+            }
+        )
+    return processes
+
+
 def status_payload(args: argparse.Namespace, state: str, **extra: object) -> dict[str, object]:
     payload: dict[str, object] = {
         "schema": "ansys-dfm-sequential-polarization-queue-v1",
@@ -118,6 +145,32 @@ def main() -> int:
             return 2
         time.sleep(args.poll_seconds)
         write_json(args.status, status_payload(args, "WAITING_FOR_PREDECESSOR"))
+
+    while True:
+        try:
+            occupants = gpu_compute_processes(args.gpu)
+        except (OSError, subprocess.SubprocessError, ValueError) as error:
+            write_json(
+                args.status,
+                status_payload(
+                    args,
+                    "WAITING_FOR_GPU_AUDIT",
+                    gpu_audit_error=f"{type(error).__name__}: {error}",
+                ),
+            )
+            time.sleep(args.poll_seconds)
+            continue
+        if not occupants:
+            break
+        write_json(
+            args.status,
+            status_payload(
+                args,
+                "WAITING_FOR_GPU_TO_BECOME_IDLE",
+                gpu_compute_processes=occupants,
+            ),
+        )
+        time.sleep(args.poll_seconds)
 
     if args.raw_root.exists() and any(args.raw_root.iterdir()):
         raise RuntimeError(f"refusing non-empty queued raw root: {args.raw_root}")
