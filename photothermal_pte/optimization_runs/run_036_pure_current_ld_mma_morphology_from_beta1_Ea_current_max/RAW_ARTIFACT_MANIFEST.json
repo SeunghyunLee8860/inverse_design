@@ -287,6 +287,116 @@
         "size_bytes": 358000,
         "sha256": "47b126df61cae3cff62922b5fc88688f24cb83c5294b8cfeced25cb125c6a050"
       }
+    },
+    "0013": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0013_beta1_pure_current_ld_mma_recovery2/objective_gradient_result.json",
+        "size_bytes": 11196,
+        "sha256": "a8c37f8ae90945e9c6ea4553650239d53fa7bc781bba7b83361feebb5960f020"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0013_beta1_pure_current_ld_mma_recovery2/objective_gradient.npz",
+        "size_bytes": 2636596,
+        "sha256": "49aba3b3c0b03650f77ae26d5d5405bb8839be60a0270f3ddb283df149406051"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0013_beta1_pure_current_ld_mma_recovery2/forward_Ea.fsp",
+        "size_bytes": 180903815,
+        "sha256": "a9890b9d39946426b40913a324b36bf30e048f0f1dd25e8f59f692adcc14abd1"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0013_beta1_pure_current_ld_mma_recovery2_latent.npz",
+        "size_bytes": 358117,
+        "sha256": "dd2c9279d8d2159a639af400dea390f6604c08faa927ff8bb24897c70dbe19fb"
+      }
+    },
+    "0014": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0014_beta1_pure_current_ld_mma_recovery2/objective_gradient_result.json",
+        "size_bytes": 11190,
+        "sha256": "d452e75763493576fe9c4b6e674886796a105fad85111535773631afd3476f81"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0014_beta1_pure_current_ld_mma_recovery2/objective_gradient.npz",
+        "size_bytes": 2636512,
+        "sha256": "4b1ca4e23f8e25326c7b564caaace2f78e969e71634d6494ce0b95fb200ed793"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0014_beta1_pure_current_ld_mma_recovery2/forward_Ea.fsp",
+        "size_bytes": 180903815,
+        "sha256": "028358eb595e7c2f087d07344e72786de340c50d3ccbd282109ecef6099ad734"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0014_beta1_pure_current_ld_mma_recovery2_latent.npz",
+        "size_bytes": 358206,
+        "sha256": "96e51712a8f5f891eb64ddb3b81784c38f4a9ed6586b6822e2e157c1c87833e7"
+      }
+    },
+    "0015": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0015_beta1_pure_current_ld_mma_recovery2/objective_gradient_result.json",
+        "size_bytes": 11190,
+        "sha256": "ccfcf7a1796a31fbcc160723d3f782bc6b8ce57604e2fc60640de35a20ab4cc0"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0015_beta1_pure_current_ld_mma_recovery2/objective_gradient.npz",
+        "size_bytes": 2636512,
+        "sha256": "4b1ca4e23f8e25326c7b564caaace2f78e969e71634d6494ce0b95fb200ed793"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0015_beta1_pure_current_ld_mma_recovery2/forward_Ea.fsp",
+        "size_bytes": 180903815,
+        "sha256": "45fd283b592c684c6c2c061508a5a4e38f83f03195781d92e0f81f314ec069fa"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0015_beta1_pure_current_ld_mma_recovery2_latent.npz",
+        "size_bytes": 358206,
+        "sha256": "96e51712a8f5f891eb64ddb3b81784c38f4a9ed6586b6822e2e157c1c87833e7"
+      }
+    },
+    "0016": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0016_beta1_pure_current_ld_mma_recovery2/objective_gradient_result.json",
+        "size_bytes": 11178,
+        "sha256": "299dc96f25df37fe070f7fb7d7a60af358a0efb9a55c0595ed1230f95a2d813d"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0016_beta1_pure_current_ld_mma_recovery2/objective_gradient.npz",
+        "size_bytes": 2636655,
+        "sha256": "9a1c6fc266baa795bbda22962ccea12d5dc0fe56bb1fbf2a8e9d92dd9a53780d"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0016_beta1_pure_current_ld_mma_recovery2/forward_Ea.fsp",
+        "size_bytes": 180903815,
+        "sha256": "c8c8a3c7ab5da4084a79fec39061bea389dab38b1b1a796a5b3fabe72a3814ab"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0016_beta1_pure_current_ld_mma_recovery2_latent.npz",
+        "size_bytes": 358078,
+        "sha256": "265d458c00e6d47936c1613dc9d681ca80f9fbc882f9380fabaf9a978c907bf4"
+      }
+    },
+    "0017": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0017_beta1_pure_current_ld_mma_recovery2/objective_gradient_result.json",
+        "size_bytes": 11209,
+        "sha256": "7eb0c3f9d89b3ed272c113c79802ff18fde51c1dd04d6554988419c4529951ff"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0017_beta1_pure_current_ld_mma_recovery2/objective_gradient.npz",
+        "size_bytes": 2636650,
+        "sha256": "1cb19843b30af971ff3dff951e630f269c66e7d3c56c8ab574ae39ad0db6e032"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0017_beta1_pure_current_ld_mma_recovery2/forward_Ea.fsp",
+        "size_bytes": 180903815,
+        "sha256": "99679e92c6ccf4ed590dd7dcedbfb9e601dfaac36ca709dcada98865cd10ae8e"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0017_beta1_pure_current_ld_mma_recovery2_latent.npz",
+        "size_bytes": 358253,
+        "sha256": "e71ae0fc978654941925457f8d00918ef1fe40376ab9b87f122ecd31712883e1"
+      }
     }
   },
   "active_constraints": {
@@ -328,6 +438,36 @@
         "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0012_beta1_pure_current_ld_mma_latent.npz",
         "size_bytes": 358000,
         "sha256": "47b126df61cae3cff62922b5fc88688f24cb83c5294b8cfeced25cb125c6a050",
+        "note": "NLopt internal asymptotes are intentionally reset; this is a fresh native LD_MMA stage initialized at a fully evaluated physical design."
+      },
+      "reason": "The previous GPU adjoint engine/resource interruption is retained as raw provenance. This fresh native LD_MMA stage intentionally resets un-serializable internal asymptotes and re-evaluates the last physical design.",
+      "recovery_validation_raw_result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0012_retry1_beta1_pure_current_ld_mma/objective_gradient_result.json",
+        "size_bytes": 11182,
+        "sha256": "297c6d4637ad8a3d0838b7c9194f8da1daba6f3d201d81f197aba09bfc988ebb",
+        "status": "VALIDATED_TAIRTE4_FLAKE_OBJECTIVE_GRADIENT",
+        "objective_A": 1.413401499770735e-17
+      },
+      "recovery_driver_code_provenance": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/PURE_CURRENT_LD_MMA_CODE_MANIFEST.json",
+        "sha256": "f7b57026f87c509ad3cec387999d87c2abe9b2c1b0162b07a2a6f1081a46db89",
+        "source_sha256": {
+          "photothermal_pte/optimization_runs/tairte4_flake_topology/run_pure_current_ld_mma_optimization.py": "a22c2018bea7bfe7930a99136cf44a23592419d4a0fcbb322618bfb161ee6496",
+          "photothermal_pte/optimization_runs/tairte4_flake_topology/run_nlopt_mma_optimization.py": "f38a696d5972751e8696bbfc0705a034142fee5ece6dfae8ab0538e0141665a3",
+          "photothermal_pte/optimization_runs/tairte4_flake_topology/run_true_mma_optimization.py": "abf8de366c1b0ab14958f0be6a099d6264ed0289cc8109119607f214eb7121c5",
+          "photothermal_pte/optimization_runs/run_pure_current_ld_mma_dual_supervisor.py": "8280db34fc68eda08ea4c95687a1a157892829af555ad1df8556de67560749ce"
+        }
+      }
+    },
+    {
+      "kind": "native_LD_MMA_recovery_append",
+      "prior_evaluations": 14,
+      "next_published_evaluation_id": 15,
+      "initialization": {
+        "kind": "native_LD_MMA_warm_restart",
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0014_beta1_pure_current_ld_mma_recovery2_latent.npz",
+        "size_bytes": 358206,
+        "sha256": "96e51712a8f5f891eb64ddb3b81784c38f4a9ed6586b6822e2e157c1c87833e7",
         "note": "NLopt internal asymptotes are intentionally reset; this is a fresh native LD_MMA stage initialized at a fully evaluated physical design."
       },
       "reason": "The previous GPU adjoint engine/resource interruption is retained as raw provenance. This fresh native LD_MMA stage intentionally resets un-serializable internal asymptotes and re-evaluates the last physical design.",
