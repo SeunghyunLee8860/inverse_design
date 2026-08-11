@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 from datetime import datetime, timezone
+import fcntl
 import hashlib
 import json
 import os
@@ -61,6 +63,31 @@ FREQUENCY_HZ = C0 / CONTRACT.wavelength_m
 FIELD_REGION = "run010_component_yee_adjoint_region"
 SIGMA_XY_S_M = (1.10e5, 4.91e5)
 SEEBECK_XY_V_K = (27.0e-6, -6.0e-6)
+GPU_ENGINE_LOCK = Path(
+    os.environ.get(
+        "LUMERICAL_GPU_ENGINE_LOCK",
+        "/tmp/seunghyun_lumerical_fdtd_gpu_engine.lock",
+    )
+)
+
+
+@contextmanager
+def lumerical_gpu_engine_lock():
+    """Serialize licensed FDTD engine runs while leaving other work parallel."""
+
+    GPU_ENGINE_LOCK.parent.mkdir(parents=True, exist_ok=True)
+    started = time.monotonic()
+    with GPU_ENGINE_LOCK.open("a+") as stream:
+        fcntl.flock(stream.fileno(), fcntl.LOCK_EX)
+        metadata = {
+            "path": str(GPU_ENGINE_LOCK),
+            "wait_s": time.monotonic() - started,
+            "pid": os.getpid(),
+        }
+        try:
+            yield metadata
+        finally:
+            fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
 
 
 def sha256(path: Path) -> str:
@@ -206,7 +233,9 @@ def run_forward(
         resources = runtime.configure_session_resources(fdtd)
         fdtd.save(str(project))
         started = time.monotonic()
-        resource_used = audit.strict_gpu_run(fdtd, f"run010_combined_{role}")
+        with lumerical_gpu_engine_lock() as lock_metadata:
+            resource_used = audit.strict_gpu_run(fdtd, f"run010_combined_{role}")
+        resources["global_gpu_engine_lock"] = lock_metadata
         wall = time.monotonic() - started
         fdtd.save(str(project))
     actual_polarization = float(fdtd.getnamed(optical.SOURCE_NAME, "polarization angle"))

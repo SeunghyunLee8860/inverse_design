@@ -20,6 +20,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.validate_combined
     compact_forward,
     load_operator,
     open_fdtd,
+    lumerical_gpu_engine_lock,
     polarization_angle,
     pullback_q,
     run_forward,
@@ -146,13 +147,15 @@ def main() -> int:
             native_source=native_source,
             template=template,
         )
-        adjoint = legacy_combined.run_adjoint(
-            fdtd,
-            audit,
-            runtime,
-            template=template,
-            project=output / "adjoint_gpu.fsp",
-        )
+        with lumerical_gpu_engine_lock() as adjoint_lock_metadata:
+            adjoint = legacy_combined.run_adjoint(
+                fdtd,
+                audit,
+                runtime,
+                template=template,
+                project=output / "adjoint_gpu.fsp",
+            )
+        adjoint["global_gpu_engine_lock"] = adjoint_lock_metadata
         gradient_optical, optical_meta = legacy_combined.optical_gradient(
             local_operator,
             forward=forward,
