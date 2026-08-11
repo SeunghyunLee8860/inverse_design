@@ -1129,5 +1129,25 @@
         }
       }
     }
-  ]
+  ],
+  "stage_checkpoints": {
+    "beta_2": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/beta_2_completed_checkpoint.npz",
+      "size_bytes": 83515,
+      "sha256": "abb886ffe38849720063ac44eed7e8e0ebcf60efda75bca9e5f9f6372111bf8a",
+      "nlopt_result_code": 4,
+      "nlopt_result_name": "XTOL_REACHED",
+      "full_physics_evaluations": 2,
+      "terminal_conductance_constraint": false,
+      "physical_stage_readiness": {
+        "ready": true,
+        "reason": "normal_nlopt_stop_and_constraints_feasible",
+        "full_physics_evaluations": 2,
+        "maximum_stage_evaluations": 20,
+        "nlopt_result_code": 4,
+        "raw_trial_objective_plateau_used_as_gate": false,
+        "active_constraints_feasible": true
+      }
+    }
+  }
 }
