@@ -12,11 +12,11 @@
     -5.551116372517344e-17,
     1.0
   ],
-  "rho_mean": 0.7535649057305116,
+  "rho_mean": 0.7535649050421829,
   "gray_fraction_0p01_0p99": 0.028694700770008876,
-  "binarization_mean_4rho1mrho": 0.011952740079214501,
-  "smooth_solid_constraint": 0.0019905739798832,
-  "smooth_void_constraint": 0.0016849033532564204,
+  "binarization_mean_4rho1mrho": 0.01195273291784987,
+  "smooth_solid_constraint": 0.0019905297372591452,
+  "smooth_void_constraint": 0.001684783940735166,
   "exact": {
     "minimum_feature_nm": 500.0,
     "opening_radius_nm": 250.0,
