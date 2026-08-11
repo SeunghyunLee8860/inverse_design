@@ -1,6 +1,6 @@
 {
-  "stage_index": 3,
-  "beta": 1.728,
+  "stage_index": 4,
+  "beta": 2.0736,
   "dfm_penalty_weight": 0.0,
   "nlopt_result_code": -5,
   "stage_stop_reason": "adaptive_plateau",
@@ -14,24 +14,24 @@
     "stage_evaluations_observed": 5,
     "reason": "adaptive_plateau",
     "window_evaluation_ids": [
-      60,
-      61,
-      62,
-      63
+      65,
+      66,
+      67,
+      68
     ],
-    "fom_relative_range": 2.6358884437711614e-06,
-    "rms_step_maximum_observed": 9.549943017358834e-08,
+    "fom_relative_range": 4.439311918295828e-06,
+    "rms_step_maximum_observed": 6.029658387864056e-08,
     "gray_absolute_range": 0.0
   },
   "full_physics_evaluations": 5,
-  "raw_current_at_reference_power_A": 8.996541679617625e-08,
-  "smooth_solid_residual": 0.002286121498876722,
-  "smooth_void_residual": 0.002828917038701885,
+  "raw_current_at_reference_power_A": 9.027467311510804e-08,
+  "smooth_solid_residual": 0.00225146880510811,
+  "smooth_void_residual": 0.0027753537487479173,
   "final_geometry_gate": {
     "passed": false,
-    "discreteness": 0.8838634131616602,
-    "binarization_mean_4rho1mrho": 0.11613658683833984,
-    "gray_fraction_0p01_0p99": 0.23525525897483537,
+    "discreteness": 0.889574330942886,
+    "binarization_mean_4rho1mrho": 0.11042566905711403,
+    "gray_fraction_0p01_0p99": 0.23019755991825105,
     "exact_500nm_audit": {
       "minimum_feature_nm": 500.0,
       "opening_radius_nm": 250.0,
@@ -49,8 +49,8 @@
     }
   },
   "checkpoint": {
-    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_ansys_dfm_Ea_20260811/stage_0003_beta1.728.npz",
-    "size_bytes": 179711,
-    "sha256": "616d075f0b46972a952a87474237be6324717f50902dcd7945ee801588ebec7b"
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_ansys_dfm_Ea_20260811/stage_0004_beta2.0736.npz",
+    "size_bytes": 181603,
+    "sha256": "c7a8c95d54da0f403b1f03de461becb1d131fdf0d701131dbe3ea0a8b3d09e01"
   }
 }
