@@ -1,0 +1,58 @@
+{
+  "role": "nlopt_evaluation",
+  "algorithm": "NLopt LD_MMA (pure terminal current; no connectivity constraint)",
+  "nlopt_version": "2.11.0",
+  "evaluation_id": 37,
+  "global_full_physics_evaluation": 37,
+  "stage_full_physics_evaluation": 37,
+  "beta": 1.0,
+  "objective_A": 2.761554533372361e-17,
+  "objective_at_reference_power_A": 5.690743188206258e-08,
+  "objective_scaled_minimize": -5.690743188206258,
+  "fixed_source_power_W": 1.3830232993859658e-13,
+  "source_power_relative_change": 0.0,
+  "terminal_conductance_S": 0.019150661444865914,
+  "minimum_terminal_conductance_S": null,
+  "constraint_names": [
+    "500nm_solid_opening",
+    "500nm_void_opening"
+  ],
+  "constraint_values": [
+    -0.4751304451929057,
+    -0.6540402389589022
+  ],
+  "maximum_constraint_value": -0.4751304451929057,
+  "terminal_conductance_constraint_enabled": false,
+  "morphology_caps": [
+    0.008,
+    0.008
+  ],
+  "gray_fraction_0p01_0p99": 0.20437232922524307,
+  "binarization": 0.09468589489866705,
+  "exact_bad_cells": 360,
+  "rho_mean": 0.7633147909059419,
+  "latent_range": [
+    0.0,
+    1.0
+  ],
+  "maximum_absolute_step_from_previous_evaluation": 0.4724945744309968,
+  "rms_step_from_previous_evaluation": 0.021368094539357157,
+  "manual_move_limit": null,
+  "used_adam": false,
+  "gradient_direction_normalization": false,
+  "post_update_hard_clipping": false,
+  "symmetry_constraint": false,
+  "volume_constraint": false,
+  "optimizer_controls": {
+    "initial_step": 0.025,
+    "rho_init": 10.0,
+    "always_improve": 1,
+    "inner_gradients": 1,
+    "projection_midpoint_derivative": 1.0819767068693265,
+    "projection_derivative_ratio_to_beta1": 1.0,
+    "target_initial_physical_density_step": 0.025,
+    "base_rho_init_at_beta1": 10.0,
+    "fixed_per_iteration_move_limit": null,
+    "xtol_rel": 1e-09
+  }
+}
