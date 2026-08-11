@@ -67,11 +67,9 @@ PURE_CURRENT_MORPHOLOGY_TARGET_CAP = {
 # the shared driver's historical 1e-7 x tolerance.  This is a numerical
 # termination tolerance, not a per-iteration move restriction.
 PURE_CURRENT_NLOPT_XTOL_REL = 1.0e-9
-# The physical beta-transition gate requires three consecutive relative
-# changes below 2e-3.  The shared driver's historical 1e-3 FTOL can terminate
-# native MMA after one small change before those three measurements exist.
-# Keep the native optimizer materially tighter than the physical plateau gate;
-# this is a stopping tolerance, not a move limit or gradient rescaling.
+# Keep NLopt's numerical FTOL tighter than the fixed per-beta continuation
+# budget.  FTOL remains a normal native-optimizer early-stop criterion; raw
+# callback-to-callback objective changes are not used as a beta gate.
 PURE_CURRENT_NLOPT_FTOL_REL = 1.0e-6
 PURE_CURRENT_BETA_FACTOR = 1.2
 PURE_CURRENT_MAX_BETA = 1024.0
@@ -95,6 +93,21 @@ def lumopt_style_beta_schedule() -> tuple[float, ...]:
 
 
 PURE_CURRENT_BETA_SCHEDULE = lumopt_style_beta_schedule()
+
+
+def lumopt_style_beta_promotion_policy() -> dict[str, object]:
+    """Return the single source of truth for initial/recovery manifests."""
+    return {
+        "kind": "Ansys-LumOpt-style fixed-budget continuation",
+        "initial_grayscale_beta": 1.0,
+        "initial_grayscale_max_evaluations": PURE_CURRENT_GRAYSCALE_MAX_EVALUATIONS,
+        "beta_factor": PURE_CURRENT_BETA_FACTOR,
+        "continuation_max_evaluations_per_beta": PURE_CURRENT_CONTINUATION_MAX_EVALUATIONS,
+        "maximum_beta": PURE_CURRENT_MAX_BETA,
+        "raw_trial_objective_plateau_used_as_gate": False,
+        "normal_NLopt_early_stop_promotes_beta": True,
+        "active_constraints_must_be_feasible": True,
+    }
 
 
 def midpoint_projection_derivative(beta: float) -> float:
@@ -245,17 +258,7 @@ def pure_current_manifest(
         "fixed_per_iteration_move_limit": None,
         "note": "LD_MMA, not this driver, adapts all later asymptotes.",
     }
-    manifest["beta_promotion_policy"] = {
-        "kind": "Ansys-LumOpt-style fixed-budget continuation",
-        "initial_grayscale_beta": 1.0,
-        "initial_grayscale_max_evaluations": PURE_CURRENT_GRAYSCALE_MAX_EVALUATIONS,
-        "beta_factor": PURE_CURRENT_BETA_FACTOR,
-        "continuation_max_evaluations_per_beta": PURE_CURRENT_CONTINUATION_MAX_EVALUATIONS,
-        "maximum_beta": PURE_CURRENT_MAX_BETA,
-        "raw_trial_objective_plateau_used_as_gate": False,
-        "normal_NLopt_early_stop_promotes_beta": True,
-        "active_constraints_must_be_feasible": True,
-    }
+    manifest["beta_promotion_policy"] = lumopt_style_beta_promotion_policy()
     manifest["optimizer_code_provenance"] = code_provenance
     return manifest
 
@@ -374,6 +377,18 @@ def main() -> int:
             raise RuntimeError("recovery append requires a nonempty evaluation history")
         if not isinstance(manifest, dict) or not isinstance(manifest.get("evaluations"), dict):
             raise RuntimeError("recovery append requires a valid raw artifact manifest")
+        prior_beta_policy = manifest.get("beta_promotion_policy")
+        replacement_beta_policy = lumopt_style_beta_promotion_policy()
+        if prior_beta_policy != replacement_beta_policy:
+            manifest.setdefault("continuation_policy_revisions", []).append({
+                "reason": (
+                    "Replace the invalid raw-callback plateau veto with the approved "
+                    "Ansys LumOpt-style fixed-budget beta continuation."
+                ),
+                "prior_policy": prior_beta_policy,
+                "replacement_policy": replacement_beta_policy,
+            })
+        manifest["beta_promotion_policy"] = replacement_beta_policy
         try:
             evaluation_counter = max(int(row["evaluation_id"]) for row in history)
             global_evaluation = max(
@@ -411,11 +426,13 @@ def main() -> int:
             "kind": "native_LD_MMA_recovery_append",
             "prior_evaluations": len(history),
             "next_published_evaluation_id": evaluation_counter + 1,
+            "start_beta": args.start_beta,
             "initialization": initial_provenance,
             "reason": (
-                "The previous GPU adjoint engine/resource interruption is retained as raw "
-                "provenance. This fresh native LD_MMA stage intentionally resets un-"
-                "serializable internal asymptotes and re-evaluates the last physical design."
+                "The prior run's original stop record remains immutable in events/history. "
+                "This fresh native LD_MMA stage intentionally resets unserializable internal "
+                "asymptotes, reuses the last fully evaluated design, and starts the approved "
+                "factor-1.2 beta continuation."
             ),
             "recovery_validation_raw_result": recovery_validation,
             "recovery_driver_code_provenance": code_provenance,
