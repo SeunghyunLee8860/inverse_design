@@ -1046,7 +1046,7 @@
     "cases": {
       "adjoint_aligned": {
         "summary": {
-          "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/results/selected_optical_gradient_adfd_summary.json",
+          "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/legacy_v261_optical_support/results/selected_optical_gradient_adfd_summary.json",
           "size_bytes": 4406,
           "sha256": "f79fc692095b7fbfa351081c2301df7387e0b6d34d41fca70129aa00186ad314"
         },
@@ -1195,7 +1195,7 @@
       "sha256": "dc8297fbc32d95d87bdc9bcd0f135b751f25b3c01efcd6d63b7c985f31594968"
     },
     "checkpoint": {
-      "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/checkpoints/iteration_005_accepted_state.npz",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/legacy_v261_optical_support/checkpoints/iteration_005_accepted_state.npz",
       "size_bytes": 464450,
       "sha256": "c6d6ae8777fbe04fdc1264f123983179968fa6286eed1f6b1a8459c98500aaec"
     },
@@ -1318,7 +1318,7 @@
           "sha256": "07f30ff47bb10b466a4a67ccb347508bf20434134890df6f02e4c66bf736dfc3"
         },
         "checkpoint": {
-          "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/checkpoints/continuation_b004_i000_g005_accepted_state.npz",
+          "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/legacy_v261_optical_support/checkpoints/continuation_b004_i000_g005_accepted_state.npz",
           "size_bytes": 464433,
           "sha256": "dbf2e9b159bb61307f60ea507ea12867a1133eb9e3802309927116bf35e1a3dd"
         }
@@ -1335,7 +1335,7 @@
           "sha256": "2cbf6df910e96cd301be9c62612de319595407c69b04f6cae4d9414a8d824349"
         },
         "checkpoint": {
-          "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/checkpoints/continuation_b004_i001_g006_accepted_state.npz",
+          "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/legacy_v261_optical_support/checkpoints/continuation_b004_i001_g006_accepted_state.npz",
           "size_bytes": 466288,
           "sha256": "cc466d17d5ce2d8c710a973b9a00dad5727f91ae00966292e9b592fdf654472d"
         },
@@ -1367,7 +1367,7 @@
           "sha256": "b08682e3c97cb6d8dcf3da835a8d564527ccaba8ae480afd1f86ce2cd8c8b099"
         },
         "checkpoint": {
-          "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/checkpoints/continuation_b004_i002_g007_accepted_state.npz",
+          "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/legacy_v261_optical_support/checkpoints/continuation_b004_i002_g007_accepted_state.npz",
           "size_bytes": 468110,
           "sha256": "256ef50829d6d7818deb14d1594a583509fc4b7adab446abb9be00ef29a3dc23"
         },
@@ -1399,7 +1399,7 @@
           "sha256": "45c9e09be893ac56fc71366cf94f9ea32969e476f67616a1b624f257bb7dc1fe"
         },
         "checkpoint": {
-          "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/checkpoints/continuation_b008_i000_g007_accepted_state.npz",
+          "path": "/home/seunghyun/tairte4/worktrees/pte_optimization_runs/photothermal_pte/optimization_runs/legacy_v261_optical_support/checkpoints/continuation_b008_i000_g007_accepted_state.npz",
           "size_bytes": 468109,
           "sha256": "96daf22f8a3c6ba99fcd3598c32df8370d1374c9a300cdadbe83306a7e3e78b8"
         }

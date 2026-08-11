@@ -13,7 +13,7 @@ class Run002ThermalMaterialMappingTest(unittest.TestCase):
     def setUpClass(cls) -> None:
         run_dir = (
             Path(__file__).resolve().parents[1]
-            / "run_002_gaussian10_w8p5_current_max"
+            / "legacy_v261_optical_support"
         )
         sys.path.insert(0, str(run_dir))
         module_path = run_dir / "validate_production_thermal_material_adfd.py"

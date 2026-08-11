@@ -35,6 +35,23 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import C
 RHO_ROUNDOFF_TOLERANCE = 1.0e-12
 
 
+def discard_regenerable_projects(paths: tuple[Path, ...]) -> list[dict[str, object]]:
+    """Delete successful per-evaluation FSPs after recording provenance."""
+    discarded: list[dict[str, object]] = []
+    for project_path in paths:
+        if not project_path.is_file():
+            continue
+        discarded.append(
+            {
+                "path": str(project_path),
+                "size_bytes": project_path.stat().st_size,
+                "sha256": sha256(project_path),
+            }
+        )
+        project_path.unlink()
+    return discarded
+
+
 def load_rho(path: Path) -> np.ndarray:
     source = path.expanduser().resolve()
     with np.load(source) as data:
@@ -66,6 +83,15 @@ def main() -> int:
     parser.add_argument("--polarization", choices=("Ea", "Eb"), required=True)
     parser.add_argument("--gpu-device", default="GPU 5")
     parser.add_argument("--cuda-device", type=int, default=0)
+    parser.add_argument(
+        "--discard-fsp-after-success",
+        action="store_true",
+        help=(
+            "Remove per-evaluation forward/adjoint/template FSP projects only "
+            "after the validated NPZ and their path/size/SHA provenance have "
+            "been recorded. Intended for long optimization runs."
+        ),
+    )
     args = parser.parse_args()
     base_fsp = checked(args.base_fsp, args.base_sha256)
     _, _, operator_meta = load_operator(args.jacobian_dir)
@@ -206,6 +232,21 @@ def main() -> int:
             "CPU_thermal_linear_solve_fallback": False,
             "wall_s": time.monotonic() - started,
         }
+        if args.discard_fsp_after_success:
+            discarded_projects = discard_regenerable_projects(
+                (
+                    Path(forward["project"]["path"]),
+                    template,
+                    Path(adjoint["project"]["path"]),
+                )
+            )
+            result["large_project_retention"] = {
+                "policy": "discard_regenerable_per_evaluation_fsp_after_success",
+                "retained": False,
+                "discarded_projects": discarded_projects,
+                "objective_gradient_npz_retained": True,
+                "density_and_optimizer_checkpoints_retained": True,
+            }
     except Exception as exc:
         result.update(
             error=f"{type(exc).__name__}: {exc}",

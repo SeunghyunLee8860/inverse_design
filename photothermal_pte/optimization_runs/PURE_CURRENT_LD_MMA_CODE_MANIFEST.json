@@ -4,10 +4,12 @@
   "scope": "optimizer-driver provenance only; physical solver validation remains in TRUE_MMA_PREFLIGHT.json",
   "source_sha256": {
     "photothermal_pte/optimization_runs/tairte4_flake_topology/run_pure_current_ld_mma_optimization.py": "357e96cc26c27dfd925dd6cd1216d512a473481e68d58294f8755844b8ead688",
-    "photothermal_pte/optimization_runs/tairte4_flake_topology/evaluate_objective_gradient.py": "0aa529a2181792e60d19bed0ee1a11415deba98fa296a89d5238b08d6241f6ba",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/evaluate_objective_gradient.py": "f6fe64c3474109dbdd78d31fe27b27581ff9d95aa924323d688eb62c6dba5929",
     "photothermal_pte/optimization_runs/tairte4_flake_topology/evaluate_binary_objective.py": "d942e8c4121abcc2326ff8ffaf59bcb1bf1966ffad54c94ea80a4b380fa757e4",
-    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_nlopt_mma_optimization.py": "f2fc337d0965498c741ed1662321ecb85e0cc76379cbb22e7d5a4da2b7ebe379",
-    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_true_mma_optimization.py": "f56748fe9ad5d872533877072b1ac9739260de91a9731246f1e431cc60546109",
-    "photothermal_pte/optimization_runs/run_pure_current_ld_mma_dual_supervisor.py": "3b250ac16f45a10f184911644cb2a2947676ea8ab9fe07900cb0cd5dd48dacd9"
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_nlopt_mma_optimization.py": "ba34acc00aa0f28179789619dc835f6b3852fb07068859a92b53602b2261a2ac",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_true_mma_optimization.py": "a1cbe06bbda1f50b99d62d60c71e7f50b2c176a78cf56e00b358c5722660a016",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/optimization_support.py": "c48acf7a6b9d66401cb4f070b7150c259ad7a1545829923c98ca21abe97a648c",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_ansys_dfm_ld_mma_optimization.py": "17d251ded3055e9c6e3db7ca01650fcb95ebd772cfbdd794854fa9bac39b1f2f",
+    "photothermal_pte/optimization_runs/run_ansys_dfm_parallel_optimizations.py": "3dc2d6de2558d4b268e8ab01168a63f8694a84d5c87bff05a474d1832680e878"
   }
 }

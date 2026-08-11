@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Hash the full Run016/017 dependency closure and enforce preflight gates."""
+"""Hash the current production-optimizer dependency closure and preflight gates."""
 
 from __future__ import annotations
 
@@ -28,14 +28,15 @@ CODE_PATHS = (
     "photothermal_pte/optimization_runs/tairte4_flake_topology/evaluate_objective_gradient.py",
     "photothermal_pte/optimization_runs/tairte4_flake_topology/evaluate_binary_objective.py",
     "photothermal_pte/optimization_runs/tairte4_flake_topology/validate_combined_adfd.py",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_nlopt_mma_optimization.py",
     "photothermal_pte/optimization_runs/tairte4_flake_topology/run_true_mma_optimization.py",
-    "photothermal_pte/optimization_runs/run_true_mma_dual_supervisor.py",
-    "photothermal_pte/optimization_runs/publish_true_mma_accepted_updates.py",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_ansys_dfm_ld_mma_optimization.py",
+    "photothermal_pte/optimization_runs/run_ansys_dfm_parallel_optimizations.py",
     "photothermal_pte/optimization_runs/cuda_thermal_adjoint.py",
-    "photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/production_density_mapping.py",
-    "photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/build_nonuniform_complex_yee_jacobian.py",
-    "photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/run_complex_material_control.py",
-    "photothermal_pte/optimization_runs/run_002_gaussian10_w8p5_current_max/run_production_combined_adfd_smoke.py",
+    "photothermal_pte/optimization_runs/legacy_v261_optical_support/production_density_mapping.py",
+    "photothermal_pte/optimization_runs/legacy_v261_optical_support/build_nonuniform_complex_yee_jacobian.py",
+    "photothermal_pte/optimization_runs/legacy_v261_optical_support/run_complex_material_control.py",
+    "photothermal_pte/optimization_runs/legacy_v261_optical_support/run_production_combined_adfd_smoke.py",
     "photothermal_pte/finite_inverse_design/finite_q_mapping.py",
     "photothermal_pte/finite_inverse_design/native_yee_q.py",
     "photothermal_pte/finite_inverse_design/yee_material_jacobian.py",

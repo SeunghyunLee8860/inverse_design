@@ -16,7 +16,7 @@ the current production entry point.
 | Pure-current E||a then E||b GPU supervisor | `run_pure_current_ld_mma_dual_supervisor.py` |
 | Pure-current `nlopt.LD_MMA` driver | `tairte4_flake_topology/run_pure_current_ld_mma_optimization.py` |
 | Pure-current electrical/optimizer audit | `PURE_CURRENT_LD_MMA_AUDIT.md` |
-| Artifact/report publisher | `publish_true_mma_accepted_updates.py` |
+| Parallel process/status supervisor | `run_ansys_dfm_parallel_optimizations.py` |
 | GPU/physics preflight audit | `audit_true_mma_preflight.py` |
 
 Both optimization drivers create the exact NLopt object with
@@ -35,7 +35,7 @@ limit, normalized-gradient update, or post-update clipping.
 | FDTD forward + thermal/electrical adjoints + Maxwell adjoint + pullback | `tairte4_flake_topology/evaluate_objective_gradient.py` |
 | Immutable geometry/axis/source/mesh contract | `tairte4_flake_topology/contract.py` |
 | Density filter, projection, 500 nm morphology constraints/audit | `tairte4_flake_topology/optimization_support.py` |
-| Density-to-imported-material and complex-Yee Jacobian mapping | `run_002_gaussian10_w8p5_current_max/production_density_mapping.py` |
+| Density-to-imported-material and complex-Yee Jacobian mapping | `legacy_v261_optical_support/production_density_mapping.py` |
 | Optical project/material/source/monitor construction | `tairte4_flake_topology/optical.py` |
 | Conservative Yee-to-thermal source mapping | `finite_inverse_design/finite_q_mapping.py` |
 | Native component-resolved absorbed-power construction | `finite_inverse_design/native_yee_q.py` |

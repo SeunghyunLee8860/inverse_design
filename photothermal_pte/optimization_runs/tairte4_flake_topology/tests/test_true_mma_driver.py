@@ -1,4 +1,3 @@
-import ast
 from pathlib import Path
 
 import nlopt
@@ -14,7 +13,18 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_opti
     stage_convergence,
     stage_morphology_caps,
 )
-from photothermal_pte.optimization_runs.tairte4_flake_topology.optimization_support import MAPPING
+from photothermal_pte.optimization_runs.tairte4_flake_topology.run_ansys_dfm_ld_mma_optimization import (
+    BETA_FACTOR,
+    DFM_ACTIVATION_BETA,
+    beta_sequence,
+    dfm_penalty_weight,
+)
+from photothermal_pte.optimization_runs.tairte4_flake_topology.optimization_support import (
+    FILTER_RADIUS_M,
+    MINIMUM_FEATURE_M,
+    MAPPING,
+    morphology_values_gradients,
+)
 from photothermal_pte.optimization_runs.tairte4_flake_topology.validate_combined_adfd import (
     polarization_angle,
 )
@@ -37,16 +47,22 @@ def test_driver_has_no_adam_or_normalized_direction_update() -> None:
     assert "normalized(gradient" not in text
 
 
-def test_supervisor_call_arities_match_restart_contract() -> None:
-    source = Path(__file__).parents[2] / "run_true_mma_dual_supervisor.py"
-    tree = ast.parse(source.read_text())
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.Call) or not isinstance(node.func, ast.Name):
-            continue
-        if node.func.id == "run":
-            assert len(node.args) == 3
-        if node.func.id == "run_restartable":
-            assert len(node.args) == 4
+def test_optimizer_discards_only_regenerable_per_evaluation_fsp() -> None:
+    evaluator = Path(__file__).parents[1] / "evaluate_objective_gradient.py"
+    evaluator_text = evaluator.read_text()
+    driver = Path(__file__).parents[1] / "run_true_mma_optimization.py"
+    driver_text = driver.read_text()
+    assert '"--discard-fsp-after-success"' in driver_text
+    assert "discard_regenerable_projects" in evaluator_text
+    assert '"objective_gradient_npz_retained": True' in evaluator_text
+    assert '"density_and_optimizer_checkpoints_retained": True' in evaluator_text
+
+
+def test_new_parallel_supervisor_pins_contact_geometry_and_distinct_gpus() -> None:
+    source = Path(__file__).parents[2] / "run_ansys_dfm_parallel_optimizations.py"
+    text = source.read_text()
+    assert 'env["TAIRTE4_TOPOLOGY_GEOMETRY"] = "contact_anchored"' in text
+    assert "args.gpu_ea == args.gpu_eb" in text
 
 
 def test_final_result_is_explicitly_machine_passed() -> None:
@@ -69,6 +85,43 @@ def test_fixed_incident_power_scaling_is_constant() -> None:
     fixed_source = 2.0e-13
     expected = 3.0e-18 * REFERENCE_INCIDENT_POWER_W / fixed_source
     assert equivalent_current(3.0e-18, fixed_source) == expected
+
+
+def test_filter_radius_is_inside_ansys_minimum_feature_interval() -> None:
+    assert FILTER_RADIUS_M < MINIMUM_FEATURE_M
+    assert MINIMUM_FEATURE_M < 2.0 * FILTER_RADIUS_M
+
+
+def test_binary_like_bad_feature_keeps_nonzero_dfm_gradient() -> None:
+    latent = np.zeros(MAPPING.shape, dtype=float)
+    center = tuple(size // 2 for size in MAPPING.shape)
+    latent[center[0] - 6:center[0] + 7, center[1]] = 1.0
+    values, gradients, _ = morphology_values_gradients(
+        latent, beta=16.0, device="cpu"
+    )
+    assert values[0] > 0.0
+    assert np.linalg.norm(gradients[0]) > 1.0e-8
+    assert np.all(np.isfinite(gradients))
+
+
+def test_ansys_style_beta_and_dfm_penalty_contract() -> None:
+    schedule = beta_sequence()
+    assert schedule[0] == 1.0
+    assert np.allclose(np.asarray(schedule[1:-1]) / np.asarray(schedule[:-2]), BETA_FACTOR)
+    assert schedule[-1] == 128.0
+    assert dfm_penalty_weight(DFM_ACTIVATION_BETA) == 0.0
+    assert dfm_penalty_weight(16.0) == 1600.0
+    assert dfm_penalty_weight(128.0) == 1.0e4
+
+
+def test_ansys_style_driver_has_no_late_hard_constraint_restoration() -> None:
+    source = (
+        Path(__file__).parents[1] / "run_ansys_dfm_ld_mma_optimization.py"
+    ).read_text()
+    assert "morphology_penalty_weight=penalty_weight" in source
+    assert "active_hard_constraints=[]" in source
+    assert "restoration_block" not in source
+    assert "manual_move_limit" in source
 
 
 def test_low_beta_has_only_connectivity_inequality() -> None:

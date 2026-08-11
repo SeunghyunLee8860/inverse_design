@@ -111,6 +111,7 @@ class StageEvaluator:
         include_terminal_conductance_constraint: bool = True,
         morphology_start_beta: float = MORPHOLOGY_START_BETA,
         optimizer_controls: dict[str, object] | None = None,
+        morphology_penalty_weight: float = 0.0,
     ) -> None:
         self.beta = beta
         self.polarization = polarization
@@ -134,6 +135,9 @@ class StageEvaluator:
         self.include_terminal_conductance_constraint = include_terminal_conductance_constraint
         self.morphology_start_beta = float(morphology_start_beta)
         self.optimizer_controls = dict(optimizer_controls or {})
+        self.morphology_penalty_weight = float(morphology_penalty_weight)
+        if self.morphology_penalty_weight < 0.0:
+            raise ValueError("morphology penalty weight must be nonnegative")
         self.last: Point | None = None
         self.stage_full_physics_evaluations = 0
 
@@ -181,7 +185,7 @@ class StageEvaluator:
             / self.fixed_source_power_W
             / OBJECTIVE_SCALE_AT_REFERENCE_POWER_A
         )
-        names, fval, dfdx, summary, _ = canonical_constraints(
+        names, fval, dfdx, summary, arrays = canonical_constraints(
             latent=x,
             beta=self.beta,
             terminal_conductance_S=float(result["terminal_conductance_S"]),
@@ -192,6 +196,15 @@ class StageEvaluator:
             include_terminal_conductance_constraint=self.include_terminal_conductance_constraint,
             morphology_start_beta=self.morphology_start_beta,
         )
+        morphology_penalty = self.morphology_penalty_weight * (
+            summary["smooth_solid_constraint"]
+            + summary["smooth_void_constraint"]
+        )
+        morphology_penalty_gradient = self.morphology_penalty_weight * np.sum(
+            np.asarray(arrays["constraint_gradients"], dtype=np.float64), axis=0
+        )
+        objective_scaled += morphology_penalty
+        objective_gradient += morphology_penalty_gradient
         point = Point(
             x=x.copy(),
             rho=rho,
@@ -220,6 +233,11 @@ class StageEvaluator:
                 objective_A, self.fixed_source_power_W
             ),
             "objective_scaled_minimize": float(objective_scaled),
+            "raw_current_objective_scaled_minimize": float(
+                objective_scaled - morphology_penalty
+            ),
+            "morphology_penalty_weight": self.morphology_penalty_weight,
+            "morphology_penalty_value": float(morphology_penalty),
             "fixed_source_power_W": self.fixed_source_power_W,
             "source_power_relative_change": source_change,
             "terminal_conductance_S": float(result["terminal_conductance_S"]),

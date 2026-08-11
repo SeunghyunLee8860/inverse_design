@@ -201,6 +201,7 @@ def evaluate(
         "--polarization", polarization,
         "--gpu-device", f"GPU {gpu}",
         "--cuda-device", "0",
+        "--discard-fsp-after-success",
     ]
     environment = dict(os.environ)
     environment["CUDA_VISIBLE_DEVICES"] = str(gpu)
@@ -567,9 +568,11 @@ def publish_plot(
     destination_temporary = destination.with_name(destination.stem + ".tmp.png")
     latest = published / "latest_iteration.png"
     latest_temporary = latest.with_name(latest.stem + ".tmp.png")
-    fig.savefig(destination_temporary, dpi=150, format="png")
+    # Hundreds of continuation evaluations are retained.  A compact raster
+    # keeps every iteration auditable without filling the shared root disk.
+    fig.savefig(destination_temporary, dpi=100, format="png")
     destination_temporary.replace(destination)
-    fig.savefig(latest_temporary, dpi=170, format="png")
+    fig.savefig(latest_temporary, dpi=110, format="png")
     latest_temporary.replace(latest)
     plt.close(fig)
     return destination

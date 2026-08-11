@@ -6,7 +6,7 @@ import numpy as np
 from scipy import ndimage
 import torch
 
-from photothermal_pte.optimization_runs.run_002_gaussian10_w8p5_current_max.production_density_mapping import (
+from photothermal_pte.optimization_runs.legacy_v261_optical_support.production_density_mapping import (
     ProductionDensityMapping,
 )
 from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
@@ -16,14 +16,15 @@ SHAPE = CONTRACT.design_node_shape
 SPACING_M = CONTRACT.design_step_m
 MINIMUM_FEATURE_M = CONTRACT.minimum_feature_m
 OPENING_RADIUS_M = 0.5 * MINIMUM_FEATURE_M
+FILTER_RADIUS_M = 0.60 * MINIMUM_FEATURE_M
 MAPPING = ProductionDensityMapping(
     shape=SHAPE,
     spacing_m=SPACING_M,
-    # The projection filter is a regularizer, not the minimum-feature
-    # certificate.  A 500 nm filter radius over-smoothed the old Run012/013
-    # topology before the morphology audit became active.  Use the physical
-    # feature radius here and certify both phases separately below.
-    radius_m=OPENING_RADIUS_M,
+    # Match the documented Ansys topology condition
+    # filter_R < min_feature_size < 2*filter_R.  R=300 nm keeps the filter
+    # milder than the requested 500 nm feature while avoiding the singular
+    # min_feature_size=2*filter_R endpoint used by the previous 250 nm filter.
+    radius_m=FILTER_RADIUS_M,
     eta=0.5,
 )
 
@@ -135,12 +136,11 @@ def morphology_values_gradients(
     latent = np.asarray(latent, dtype=np.float64)
     rho_np = MAPPING.physical(latent, beta)
     rho = torch.tensor(rho_np, dtype=torch.float64, device=device, requires_grad=True)
-    sharpened = torch.sigmoid(64.0 * (rho - 0.5))
     values = []
     gradients = []
     fields = {}
     for index, (name, phase, border) in enumerate(
-        (("solid", sharpened, 1.0), ("void", 1.0 - sharpened, 0.0))
+        (("solid", rho, 1.0), ("void", 1.0 - rho, 0.0))
     ):
         residual = torch.relu(phase - _soft_open(phase, border))
         aggregate = torch.mean(residual)

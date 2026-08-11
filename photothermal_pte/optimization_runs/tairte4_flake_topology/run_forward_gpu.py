@@ -22,7 +22,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology import optical
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[2]
-RUN002 = REPOSITORY / "photothermal_pte" / "optimization_runs" / "run_002_gaussian10_w8p5_current_max"
+RUN002 = REPOSITORY / "photothermal_pte" / "optimization_runs" / "legacy_v261_optical_support"
 STAGE1 = REPOSITORY / "photothermal_pte" / "validation" / "photothermal_stage1"
 FIELD_REGION = "run010_component_yee_adjoint_region"
 C0 = 299792458.0

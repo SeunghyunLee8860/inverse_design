@@ -8,7 +8,7 @@ import numpy as np
 
 SCRIPT = (
     Path(__file__).resolve().parents[1]
-    / "run_002_gaussian10_w8p5_current_max"
+    / "legacy_v261_optical_support"
     / "audit_production_candidate_geometry.py"
 )
 

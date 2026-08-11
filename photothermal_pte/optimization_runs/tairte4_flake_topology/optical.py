@@ -19,7 +19,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import (
 
 
 REPOSITORY = Path(__file__).resolve().parents[3]
-RUN002 = REPOSITORY / "photothermal_pte" / "optimization_runs" / "run_002_gaussian10_w8p5_current_max"
+RUN002 = REPOSITORY / "photothermal_pte" / "optimization_runs" / "legacy_v261_optical_support"
 TAIRTE4_MATERIAL = "run010_TaIrTe4_paper_abc"
 SIO2_MATERIAL = "run010_Kitamura_SiO2_10um"
 SI_MATERIAL = "run010_Palik_Si_10um"

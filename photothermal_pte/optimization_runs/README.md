@@ -76,4 +76,4 @@ previously contain an iterative production optimizer.  This change adds the
 run/provenance layer and a pinned baseline package; it does not silently turn
 the expensive AD--FD validation script into an optimizer.  The first actual
 optimization driver and update rule must be reviewed and committed separately
-before `run_001` changes from `PLANNED`.
+before any new optimization changes from `PLANNED`.
