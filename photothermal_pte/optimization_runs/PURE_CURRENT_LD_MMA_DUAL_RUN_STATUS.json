@@ -1,7 +1,7 @@
 {
   "schema": "pure-terminal-current-nlopt-ld-mma-dual-supervisor-v1",
-  "generated_at_utc": "2026-08-11T08:33:49.466340+00:00",
-  "status": "MONITORING_RUN043_EB",
+  "generated_at_utc": "2026-08-11T11:20:49.543219+00:00",
+  "status": "BLOCKED_RUN043_EB_STOPPED_WITHOUT_FINAL_RESULT",
   "gpu": 0,
   "algorithm": "NLopt LD_MMA",
   "objective": "signed full-flake terminal PTE current",
