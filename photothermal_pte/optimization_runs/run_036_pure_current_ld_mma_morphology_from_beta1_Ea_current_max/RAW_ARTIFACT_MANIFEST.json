@@ -265,6 +265,28 @@
         "size_bytes": 354667,
         "sha256": "b78f33cf60c88916c3b5322ef7d9445fa5ed004a7c989ea8d1b6929dffa96771"
       }
+    },
+    "0012": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0012_beta1_pure_current_ld_mma_recovery2/objective_gradient_result.json",
+        "size_bytes": 11202,
+        "sha256": "3ad4eadc0007768a60578a05fa4d204a5d9210b3b70c868ef891225a688c5535"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0012_beta1_pure_current_ld_mma_recovery2/objective_gradient.npz",
+        "size_bytes": 2636453,
+        "sha256": "9ab9e59147faa32a430ea7d81c0782bd97e6c99b346954fe993574122ec917e9"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0012_beta1_pure_current_ld_mma_recovery2/forward_Ea.fsp",
+        "size_bytes": 180903815,
+        "sha256": "d1f2d3e4b2b78d3335e4fc58da4e161a7bbc058c82fee04c97d2883094b9c56f"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0012_beta1_pure_current_ld_mma_recovery2_latent.npz",
+        "size_bytes": 358000,
+        "sha256": "47b126df61cae3cff62922b5fc88688f24cb83c5294b8cfeced25cb125c6a050"
+      }
     }
   },
   "active_constraints": {
@@ -295,5 +317,37 @@
       "photothermal_pte/optimization_runs/tairte4_flake_topology/run_true_mma_optimization.py": "abf8de366c1b0ab14958f0be6a099d6264ed0289cc8109119607f214eb7121c5",
       "photothermal_pte/optimization_runs/run_pure_current_ld_mma_dual_supervisor.py": "dbe2751de7875af2aba6e77d3d7697665104b7f6e1656af853c4fca278c010d6"
     }
-  }
+  },
+  "recovery_chain": [
+    {
+      "kind": "native_LD_MMA_recovery_append",
+      "prior_evaluations": 11,
+      "next_published_evaluation_id": 12,
+      "initialization": {
+        "kind": "native_LD_MMA_warm_restart",
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0012_beta1_pure_current_ld_mma_latent.npz",
+        "size_bytes": 358000,
+        "sha256": "47b126df61cae3cff62922b5fc88688f24cb83c5294b8cfeced25cb125c6a050",
+        "note": "NLopt internal asymptotes are intentionally reset; this is a fresh native LD_MMA stage initialized at a fully evaluated physical design."
+      },
+      "reason": "The previous GPU adjoint engine/resource interruption is retained as raw provenance. This fresh native LD_MMA stage intentionally resets un-serializable internal asymptotes and re-evaluates the last physical design.",
+      "recovery_validation_raw_result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0012_retry1_beta1_pure_current_ld_mma/objective_gradient_result.json",
+        "size_bytes": 11182,
+        "sha256": "297c6d4637ad8a3d0838b7c9194f8da1daba6f3d201d81f197aba09bfc988ebb",
+        "status": "VALIDATED_TAIRTE4_FLAKE_OBJECTIVE_GRADIENT",
+        "objective_A": 1.413401499770735e-17
+      },
+      "recovery_driver_code_provenance": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/PURE_CURRENT_LD_MMA_CODE_MANIFEST.json",
+        "sha256": "f7b57026f87c509ad3cec387999d87c2abe9b2c1b0162b07a2a6f1081a46db89",
+        "source_sha256": {
+          "photothermal_pte/optimization_runs/tairte4_flake_topology/run_pure_current_ld_mma_optimization.py": "a22c2018bea7bfe7930a99136cf44a23592419d4a0fcbb322618bfb161ee6496",
+          "photothermal_pte/optimization_runs/tairte4_flake_topology/run_nlopt_mma_optimization.py": "f38a696d5972751e8696bbfc0705a034142fee5ece6dfae8ab0538e0141665a3",
+          "photothermal_pte/optimization_runs/tairte4_flake_topology/run_true_mma_optimization.py": "abf8de366c1b0ab14958f0be6a099d6264ed0289cc8109119607f214eb7121c5",
+          "photothermal_pte/optimization_runs/run_pure_current_ld_mma_dual_supervisor.py": "8280db34fc68eda08ea4c95687a1a157892829af555ad1df8556de67560749ce"
+        }
+      }
+    }
+  ]
 }
