@@ -1,7 +1,7 @@
 {
-  "stage_index": 4,
-  "beta": 2.0736,
-  "dfm_penalty_weight": 0.0,
+  "stage_index": 10,
+  "beta": 17.19926784,
+  "dfm_penalty_weight": 184.88425889503645,
   "nlopt_result_code": -5,
   "stage_stop_reason": "adaptive_plateau",
   "adaptive_plateau_diagnostic": {
@@ -14,24 +14,24 @@
     "stage_evaluations_observed": 5,
     "reason": "adaptive_plateau",
     "window_evaluation_ids": [
-      65,
-      66,
-      67,
-      68
+      95,
+      96,
+      97,
+      98
     ],
-    "fom_relative_range": 4.439311918295828e-06,
-    "rms_step_maximum_observed": 6.029658387864056e-08,
+    "fom_relative_range": 2.9303020366927397e-05,
+    "rms_step_maximum_observed": 1.770723274607875e-11,
     "gray_absolute_range": 0.0
   },
   "full_physics_evaluations": 5,
-  "raw_current_at_reference_power_A": 9.027467311510804e-08,
-  "smooth_solid_residual": 0.00225146880510811,
-  "smooth_void_residual": 0.0027753537487479173,
+  "raw_current_at_reference_power_A": 9.306641747899757e-08,
+  "smooth_solid_residual": 0.0016573661773447838,
+  "smooth_void_residual": 0.0021934454912127155,
   "final_geometry_gate": {
     "passed": false,
-    "discreteness": 0.889574330942886,
-    "binarization_mean_4rho1mrho": 0.11042566905711403,
-    "gray_fraction_0p01_0p99": 0.23019755991825105,
+    "discreteness": 0.9837281198832767,
+    "binarization_mean_4rho1mrho": 0.01627188011672328,
+    "gray_fraction_0p01_0p99": 0.04118412088932929,
     "exact_500nm_audit": {
       "minimum_feature_nm": 500.0,
       "opening_radius_nm": 250.0,
@@ -49,8 +49,8 @@
     }
   },
   "checkpoint": {
-    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_ansys_dfm_Ea_20260811/stage_0004_beta2.0736.npz",
-    "size_bytes": 181603,
-    "sha256": "c7a8c95d54da0f403b1f03de461becb1d131fdf0d701131dbe3ea0a8b3d09e01"
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_ansys_dfm_Ea_20260811/stage_0010_beta17.1993.npz",
+    "size_bytes": 227397,
+    "sha256": "dbe50580657cfb86a667624d919a54d9f2ada14f2ed61dcbec754a49288f0b1b"
   }
 }

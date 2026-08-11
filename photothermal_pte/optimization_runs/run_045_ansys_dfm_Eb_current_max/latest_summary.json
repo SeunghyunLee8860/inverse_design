@@ -1,5 +1,5 @@
 {
-  "beta": 2.48832,
+  "beta": 34.39853568,
   "latent_range": [
     0.0,
     1.0
@@ -12,11 +12,11 @@
     0.0,
     1.0
   ],
-  "rho_mean": 0.7485445939473551,
-  "gray_fraction_0p01_0p99": 0.21628372659523956,
-  "binarization_mean_4rho1mrho": 0.08906148677219909,
-  "smooth_solid_constraint": 0.0014324309428563123,
-  "smooth_void_constraint": 0.0012277475056020788,
+  "rho_mean": 0.7410849523991282,
+  "gray_fraction_0p01_0p99": 0.01709295844429306,
+  "binarization_mean_4rho1mrho": 0.007060425397097928,
+  "smooth_solid_constraint": 0.0015770514273327884,
+  "smooth_void_constraint": 0.0006411610910226677,
   "exact": {
     "minimum_feature_nm": 500.0,
     "opening_radius_nm": 250.0,

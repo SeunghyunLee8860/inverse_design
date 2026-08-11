@@ -6,17 +6,21 @@ EB_ROOT="/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_ansys
 
 print_run() {
     local label="$1"
-    local session="$2"
+    local session_prefix="$2"
     local root="$3"
     local history="${root}/history.json"
-    local log="${root}/adaptive_recovery3_tmux.log"
+    local log=""
+    local matched_sessions=""
     local session_state="STOPPED"
     local optimizer_state="STOPPED"
     local active_eval="none"
 
-    if tmux has-session -t "${session}" 2>/dev/null; then
+    matched_sessions="$(tmux list-sessions -F '#S' 2>/dev/null | rg "^${session_prefix}" || true)"
+    if [[ -n "${matched_sessions}" ]]; then
         session_state="RUNNING"
     fi
+
+    log="$(find "${root}" -maxdepth 1 -type f -name '*tmux.log' -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR == 1 {print $2}')"
 
     if pgrep -f "run_ansys_dfm_ld_mma_optimization.*--raw-root ${root}" >/dev/null 2>&1; then
         optimizer_state="RUNNING"
@@ -34,6 +38,9 @@ print_run() {
     fi
 
     echo "${label}: tmux=${session_state}, optimizer=${optimizer_state}, active=${active_eval}"
+    if [[ -n "${matched_sessions}" ]]; then
+        echo "  session=$(printf '%s' "${matched_sessions}" | paste -sd, -)"
+    fi
     if [[ -f "${history}" ]]; then
         jq -r '
             .[-1]
@@ -43,7 +50,7 @@ print_run() {
         echo "  history missing: ${history}"
     fi
 
-    if [[ -f "${log}" ]]; then
+    if [[ -n "${log}" && -f "${log}" ]]; then
         local last_error
         last_error="$(rg 'Traceback|ERROR|license.*(fail|denied|unavailable)' "${log}" | tail -n 1 || true)"
         if [[ -n "${last_error}" ]]; then
@@ -51,11 +58,11 @@ print_run() {
         else
             echo "  last_error=none"
         fi
+        echo "  log=$(basename "${log}")"
         echo "  log_updated=$(date -u -d "@$(stat -c %Y "${log}")" '+%Y-%m-%d %H:%M:%S UTC')"
     fi
 }
 
 echo "PTE optimization live status — $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-print_run "E||a" "tairte4_run044_Ea_adaptive3" "${EA_ROOT}"
-print_run "E||b" "tairte4_run045_Eb_adaptive3" "${EB_ROOT}"
-
+print_run "E||a" "tairte4_run044_Ea_" "${EA_ROOT}"
+print_run "E||b" "tairte4_run045_Eb_" "${EB_ROOT}"
