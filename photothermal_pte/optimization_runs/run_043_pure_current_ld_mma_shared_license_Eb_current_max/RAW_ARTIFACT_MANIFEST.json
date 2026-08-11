@@ -2421,6 +2421,28 @@
         "size_bytes": 118172,
         "sha256": "e08131c4ec48bb0126c075268192a6b65a585b2d35206a18177a839db8fdab7e"
       }
+    },
+    "0110": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0110_beta16_pure_current_ld_mma_recovery2/objective_gradient_result.json",
+        "size_bytes": 11109,
+        "sha256": "20de82e299b89eeb895e064e555036a626781b11846407dcf999d2fcd480c3db"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0110_beta16_pure_current_ld_mma_recovery2/objective_gradient.npz",
+        "size_bytes": 2068754,
+        "sha256": "3b481c0e3c2a484741d7bdc71d4aaf5814f9e21c3bec3deafdbf6076e3ed5f93"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0110_beta16_pure_current_ld_mma_recovery2/forward_Eb.fsp",
+        "size_bytes": 180903671,
+        "sha256": "eeb5947590a0635229ca759693cf54038fa930aec538216e8caaa0829a05e221"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0110_beta16_pure_current_ld_mma_recovery2_latent.npz",
+        "size_bytes": 118255,
+        "sha256": "f2e29441bc2d3bdb705fc029c3fb4d76857f10175ff61482ed8229b725f80893"
+      }
     }
   },
   "active_constraints": {
@@ -2849,6 +2871,19 @@
         "morphology_caps": [
           0.0020000000000000005,
           0.0020000000000000005
+        ]
+      }
+    ],
+    "beta_16": [
+      {
+        "restoration_block": 0,
+        "final_cleanup_round": 0,
+        "nlopt_result_code": 5,
+        "full_physics_evaluations": 20,
+        "maximum_constraint_value": 0.9396570229213237,
+        "morphology_caps": [
+          0.0010000000000000002,
+          0.0010000000000000002
         ]
       }
     ]
