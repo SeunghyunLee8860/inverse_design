@@ -44,7 +44,6 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_nlopt_mma_opt
     make_optimizer,
 )
 from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_optimization import (
-    BETA_SCHEDULE,
     MORPHOLOGY_TARGET_CAP,
     sha256,
     verify_file,
@@ -74,8 +73,28 @@ PURE_CURRENT_NLOPT_XTOL_REL = 1.0e-9
 # Keep the native optimizer materially tighter than the physical plateau gate;
 # this is a stopping tolerance, not a move limit or gradient rescaling.
 PURE_CURRENT_NLOPT_FTOL_REL = 1.0e-6
-STAGE_PLATEAU_WINDOW = 3
-STAGE_PLATEAU_RELATIVE_CHANGE = 2.0e-3
+PURE_CURRENT_BETA_FACTOR = 1.2
+PURE_CURRENT_MAX_BETA = 1024.0
+PURE_CURRENT_GRAYSCALE_MAX_EVALUATIONS = MAXIMUM_STAGE_EVALUATIONS
+PURE_CURRENT_CONTINUATION_MAX_EVALUATIONS = 20
+
+
+def lumopt_style_beta_schedule() -> tuple[float, ...]:
+    """Return beta=1 followed by factor-1.2 continuation through 1024.
+
+    Ansys LumOpt separates the initial grayscale phase from fixed-budget
+    binarization stages and multiplies beta by a continuation factor.  Keep
+    rounded decimal values so command-line recovery can identify a stage
+    reproducibly instead of depending on accumulated binary roundoff.
+    """
+    values = [1.0]
+    while values[-1] < PURE_CURRENT_MAX_BETA:
+        value = min(PURE_CURRENT_MAX_BETA, values[-1] * PURE_CURRENT_BETA_FACTOR)
+        values.append(float(f"{value:.12g}"))
+    return tuple(values)
+
+
+PURE_CURRENT_BETA_SCHEDULE = lumopt_style_beta_schedule()
 
 
 def midpoint_projection_derivative(beta: float) -> float:
@@ -118,7 +137,7 @@ def stage_mma_controls(beta: float) -> dict[str, object]:
     projection derivative supplies the beta-to-beta scaling, so a latent step
     has the same local physical-density meaning at every beta.
     """
-    reference = midpoint_projection_derivative(BETA_SCHEDULE[0])
+    reference = midpoint_projection_derivative(PURE_CURRENT_BETA_SCHEDULE[0])
     ratio = midpoint_projection_derivative(beta) / reference
     return {
         "initial_step": TARGET_INITIAL_PHYSICAL_DENSITY_STEP / ratio,
@@ -134,6 +153,23 @@ def stage_mma_controls(beta: float) -> dict[str, object]:
     }
 
 
+def morphology_target_cap(beta: float) -> float:
+    """Log-interpolate the existing audited caps for factor-1.2 beta stages."""
+    anchors = np.asarray(sorted(PURE_CURRENT_MORPHOLOGY_TARGET_CAP), dtype=float)
+    targets = np.asarray(
+        [PURE_CURRENT_MORPHOLOGY_TARGET_CAP[value] for value in anchors], dtype=float
+    )
+    if beta <= anchors[0]:
+        return float(targets[0])
+    if beta >= anchors[-1]:
+        # Continue the final halving-per-beta-doubling trend without allowing
+        # a zero constraint scale at high beta.
+        return float(max(1.0e-6, targets[-1] * anchors[-1] / beta))
+    return float(
+        np.exp(np.interp(np.log(beta), np.log(anchors), np.log(targets)))
+    )
+
+
 def feasible_stage_morphology_caps(values: np.ndarray, beta: float) -> np.ndarray:
     """Enter each morphology stage feasible, without an instantaneous 10% cut.
 
@@ -146,56 +182,36 @@ def feasible_stage_morphology_caps(values: np.ndarray, beta: float) -> np.ndarra
     """
     if beta < PURE_CURRENT_MORPHOLOGY_START_BETA:
         return np.asarray([np.inf, np.inf])
-    return np.maximum(
-        PURE_CURRENT_MORPHOLOGY_TARGET_CAP[beta], np.asarray(values, dtype=float)
-    )
+    return np.maximum(morphology_target_cap(beta), np.asarray(values, dtype=float))
 
 
-def physical_stage_readiness(
-    history: list[dict[str, object]], beta: float, constraint_tolerance: float
+def continuation_stage_completion(
+    history: list[dict[str, object]], beta: float, constraint_tolerance: float,
+    result_code: int, maximum_evaluations: int,
 ) -> dict[str, object]:
-    """Decide whether a numerical NLopt stop is physically ready for beta change.
+    """Record an official-style fixed-budget/normal-stop beta completion.
 
-    NLopt FTOL/XTOL reports only a numerical stopping condition.  A beta
-    transition additionally requires a measured objective plateau over the
-    last three full-physics changes and feasible active morphology constraints.
-    No fixed minimum update count is imposed: four data points are the minimum
-    needed to form the three measured changes in this test.
+    NLopt callbacks include trial and repeated points, so their raw objective
+    sequence is not an accepted-iterate sequence and must not be used as a
+    physical plateau veto.  A positive NLopt stop with a feasible returned
+    point completes the stage; MAXEVAL is the fixed continuation budget and
+    FTOL/XTOL are documented normal early-stop paths.
     """
     rows = [row for row in history if float(row["beta"]) == beta]
-    if len(rows) < STAGE_PLATEAU_WINDOW + 1:
-        return {
-            "ready": False,
-            "reason": "insufficient_full_physics_evaluations_for_plateau",
-            "full_physics_evaluations": len(rows),
-        }
-    recent = rows[-(STAGE_PLATEAU_WINDOW + 1):]
-    objective = np.asarray(
-        [row["objective_at_reference_power_A"] for row in recent], dtype=float
-    )
-    denominator = np.maximum(
-        np.maximum(np.abs(objective[:-1]), np.abs(objective[1:])), 1.0e-18
-    )
-    relative_changes = np.abs(np.diff(objective)) / denominator
-    constraint_values = [
-        float(row["maximum_constraint_value"])
-        for row in recent
-        if row["maximum_constraint_value"] is not None
-    ]
-    feasible = not constraint_values or max(constraint_values) <= constraint_tolerance
-    plateau = bool(np.max(relative_changes) <= STAGE_PLATEAU_RELATIVE_CHANGE)
+    last_constraint = rows[-1]["maximum_constraint_value"] if rows else None
+    feasible = last_constraint is None or float(last_constraint) <= constraint_tolerance
     return {
-        "ready": bool(plateau and feasible),
+        "ready": bool(result_code > 0 and feasible),
         "reason": (
-            "physical_objective_plateau_and_constraints_feasible"
-            if plateau and feasible
-            else "objective_not_plateaued" if not plateau
-            else "active_constraints_infeasible"
+            "normal_nlopt_stop_and_constraints_feasible"
+            if result_code > 0 and feasible
+            else "active_constraints_infeasible" if not feasible
+            else "nlopt_failure"
         ),
         "full_physics_evaluations": len(rows),
-        "relative_changes_last_three": relative_changes.tolist(),
-        "maximum_relative_change_last_three": float(np.max(relative_changes)),
-        "plateau_relative_change_gate": STAGE_PLATEAU_RELATIVE_CHANGE,
+        "maximum_stage_evaluations": int(maximum_evaluations),
+        "nlopt_result_code": int(result_code),
+        "raw_trial_objective_plateau_used_as_gate": False,
         "active_constraints_feasible": feasible,
     }
 
@@ -230,9 +246,14 @@ def pure_current_manifest(
         "note": "LD_MMA, not this driver, adapts all later asymptotes.",
     }
     manifest["beta_promotion_policy"] = {
-        "NLopt_numerical_stop_alone_is_sufficient": False,
-        "required_full_physics_objective_changes": STAGE_PLATEAU_WINDOW,
-        "relative_plateau_gate": STAGE_PLATEAU_RELATIVE_CHANGE,
+        "kind": "Ansys-LumOpt-style fixed-budget continuation",
+        "initial_grayscale_beta": 1.0,
+        "initial_grayscale_max_evaluations": PURE_CURRENT_GRAYSCALE_MAX_EVALUATIONS,
+        "beta_factor": PURE_CURRENT_BETA_FACTOR,
+        "continuation_max_evaluations_per_beta": PURE_CURRENT_CONTINUATION_MAX_EVALUATIONS,
+        "maximum_beta": PURE_CURRENT_MAX_BETA,
+        "raw_trial_objective_plateau_used_as_gate": False,
+        "normal_NLopt_early_stop_promotes_beta": True,
         "active_constraints_must_be_feasible": True,
     }
     manifest["optimizer_code_provenance"] = code_provenance
@@ -250,6 +271,14 @@ def main() -> int:
     parser.add_argument("--jacobian-dir", required=True, type=Path)
     parser.add_argument("--constraint-device", default="cuda:0")
     parser.add_argument("--maximum-beta-stages", type=int, default=0)
+    parser.add_argument(
+        "--start-beta",
+        type=float,
+        help=(
+            "Explicit first beta for a warm recovery. It must be a member of the "
+            "factor-1.2 continuation schedule."
+        ),
+    )
     parser.add_argument(
         "--initial-latent-npz",
         type=Path,
@@ -409,8 +438,19 @@ def main() -> int:
         evaluation_counter = 0
         global_evaluation = 0
 
-    for beta_index, beta in enumerate(BETA_SCHEDULE):
-        if args.maximum_beta_stages and beta_index >= args.maximum_beta_stages:
+    beta_schedule = PURE_CURRENT_BETA_SCHEDULE
+    if args.start_beta is not None:
+        matches = np.flatnonzero(
+            np.isclose(beta_schedule, args.start_beta, rtol=0.0, atol=1.0e-10)
+        )
+        if matches.size != 1:
+            raise RuntimeError(
+                f"--start-beta {args.start_beta} is not in {beta_schedule}"
+            )
+        beta_schedule = beta_schedule[int(matches[0]):]
+    completed_beta_stages = 0
+    for beta in beta_schedule:
+        if args.maximum_beta_stages and completed_beta_stages >= args.maximum_beta_stages:
             break
         stage_summary, _ = metrics(latent, beta, device=args.constraint_device)
         caps = feasible_stage_morphology_caps(
@@ -422,6 +462,11 @@ def main() -> int:
         )
         constraint_count = 2
         controls = stage_mma_controls(beta)
+        stage_maximum_evaluations = (
+            PURE_CURRENT_GRAYSCALE_MAX_EVALUATIONS
+            if np.isclose(beta, 1.0)
+            else PURE_CURRENT_CONTINUATION_MAX_EVALUATIONS
+        )
         evaluator = StageEvaluator(
             beta=beta,
             polarization=args.polarization,
@@ -462,7 +507,7 @@ def main() -> int:
             inner_gradients=int(controls["inner_gradients"]),
             xtol_rel=float(controls["xtol_rel"]),
             ftol_rel=PURE_CURRENT_NLOPT_FTOL_REL,
-            maxeval=MAXIMUM_STAGE_EVALUATIONS,
+            maxeval=stage_maximum_evaluations,
         )
         emit(
             events,
@@ -481,7 +526,7 @@ def main() -> int:
             optimizer_controls=controls,
             ftol_rel=PURE_CURRENT_NLOPT_FTOL_REL,
             xtol_rel=controls["xtol_rel"],
-            maxeval=MAXIMUM_STAGE_EVALUATIONS,
+            maxeval=stage_maximum_evaluations,
         )
         optimum = optimizer.optimize(latent.ravel()).reshape(MAPPING.shape)
         result_code = optimizer.last_optimize_result()
@@ -493,12 +538,13 @@ def main() -> int:
             raise RuntimeError("NLopt stage returned an infeasible 500-nm morphology")
         if result_code < 0:
             raise RuntimeError(f"NLopt LD_MMA failed with result code {result_code}")
-        readiness = physical_stage_readiness(
-            history, beta, NLOPT_CONSTRAINT_TOL
+        readiness = continuation_stage_completion(
+            history, beta, NLOPT_CONSTRAINT_TOL, result_code,
+            stage_maximum_evaluations,
         )
         if not readiness["ready"]:
             raise RuntimeError(
-                "NLopt numerical termination is not a physically ready beta transition: "
+                "NLopt continuation stage did not return a feasible normal stop: "
                 f"{readiness['reason']}"
             )
         latent = optimum
@@ -534,10 +580,12 @@ def main() -> int:
                 final_point.result["terminal_conductance_S"]
             ),
         )
+        completed_beta_stages += 1
 
     if args.maximum_beta_stages:
         return 0
-    final_rho = MAPPING.physical(latent, BETA_SCHEDULE[-1])
+    final_beta = float(beta)
+    final_rho = MAPPING.physical(latent, final_beta)
     exact, _ = exact_binary_audit(final_rho)
     if exact["total_bad_cell_count"] != 0 or float(
         np.mean((final_rho > 0.01) & (final_rho < 0.99))
@@ -584,7 +632,7 @@ def main() -> int:
         "terminal_conductance_role": "diagnostic_only",
         "manual_move_limit": None,
         "initialization": initial_provenance,
-        "final_beta": BETA_SCHEDULE[-1],
+        "final_beta": final_beta,
         "full_physics_evaluations": global_evaluation,
         "binary_result": final_result,
         "exact_binary_audit": binary_audit,

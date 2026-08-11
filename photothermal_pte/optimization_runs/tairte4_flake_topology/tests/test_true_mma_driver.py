@@ -1,6 +1,7 @@
 import ast
 from pathlib import Path
 
+import nlopt
 import numpy as np
 
 from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_optimization import (
@@ -149,11 +150,16 @@ def test_pure_current_mma_uses_projection_scaled_native_initialization() -> None
 
 def test_pure_current_native_ftol_is_tighter_than_its_physical_plateau_gate() -> None:
     from photothermal_pte.optimization_runs.tairte4_flake_topology.run_pure_current_ld_mma_optimization import (
+        PURE_CURRENT_BETA_FACTOR,
+        PURE_CURRENT_BETA_SCHEDULE,
+        PURE_CURRENT_CONTINUATION_MAX_EVALUATIONS,
         PURE_CURRENT_NLOPT_FTOL_REL,
-        STAGE_PLATEAU_RELATIVE_CHANGE,
     )
 
-    assert PURE_CURRENT_NLOPT_FTOL_REL < STAGE_PLATEAU_RELATIVE_CHANGE
+    assert PURE_CURRENT_NLOPT_FTOL_REL == 1.0e-6
+    assert PURE_CURRENT_BETA_FACTOR == 1.2
+    assert PURE_CURRENT_BETA_SCHEDULE[:3] == (1.0, 1.2, 1.44)
+    assert PURE_CURRENT_CONTINUATION_MAX_EVALUATIONS == 20
 
 
 def test_transient_license_failure_is_narrow_and_fail_closed(tmp_path) -> None:
@@ -176,25 +182,28 @@ def test_transient_license_failure_is_narrow_and_fail_closed(tmp_path) -> None:
     assert markers == []
 
 
-def test_pure_current_beta_promotion_requires_physical_plateau() -> None:
+def test_pure_current_beta_promotion_uses_normal_stop_and_feasibility_not_raw_plateau() -> None:
     from photothermal_pte.optimization_runs.tairte4_flake_topology.run_pure_current_ld_mma_optimization import (
-        physical_stage_readiness,
+        continuation_stage_completion,
     )
 
-    base = {
-        "beta": 1.0,
-        "maximum_constraint_value": None,
-    }
-    not_flat = [
-        {**base, "objective_at_reference_power_A": value}
-        for value in (1.0e-9, 1.01e-9, 1.02e-9, 1.03e-9)
+    trial_history = [
+        {
+            "beta": 1.2,
+            "maximum_constraint_value": -0.1,
+            "objective_at_reference_power_A": value,
+        }
+        for value in (1.0e-9, 1.5e-9, 1.1e-9)
     ]
-    assert physical_stage_readiness(not_flat, 1.0, 1.0e-6)["ready"] is False
-    flat = [
-        {**base, "objective_at_reference_power_A": value}
-        for value in (1.0e-9, 1.001e-9, 1.002e-9, 1.003e-9)
-    ]
-    assert physical_stage_readiness(flat, 1.0, 1.0e-6)["ready"] is True
+    completed = continuation_stage_completion(
+        trial_history, 1.2, 1.0e-6, nlopt.MAXEVAL_REACHED, 20
+    )
+    assert completed["ready"] is True
+    assert completed["raw_trial_objective_plateau_used_as_gate"] is False
+    infeasible = [{**trial_history[-1], "maximum_constraint_value": 0.1}]
+    assert continuation_stage_completion(
+        infeasible, 1.2, 1.0e-6, nlopt.FTOL_REACHED, 20
+    )["ready"] is False
 
 
 def test_morphology_caps_are_fixed_gentle_stage_tightening() -> None:

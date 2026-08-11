@@ -92,13 +92,15 @@ The pure-current driver now uses `max(target, current)`, making the first point
 of each morphology stage feasible. Every JSON/PNG is labelled a
 `full_physics_evaluation`, not an MMA outer iteration.
 
-An NLopt `FTOL_REACHED`, `XTOL_REACHED`, or `MAXEVAL_REACHED` result is no
-longer equated with beta readiness. Before a stage can advance, the last four
-full-physics points must show three relative objective changes below 0.2% and
-all active morphology inequalities must be feasible. Four points are not an
-arbitrary minimum-update schedule: they are the minimum number required to
-measure those three consecutive changes. A stage that is still improving is
-reported fail-closed instead of being silently promoted.
+The continuation now follows the documented Ansys LumOpt pattern: beta=1 is
+the initial grayscale phase, subsequent beta values are multiplied by 1.2,
+and each binarization stage has a fixed budget of 20 full-physics evaluations.
+The beta=1 grayscale budget remains 40 evaluations. A positive NLopt FTOL,
+XTOL, or MAXEVAL stop with a feasible returned design completes the stage.
+The callback history contains trial and repeated CCSA points, not an
+accepted-iterate sequence, so a raw callback-objective plateau is explicitly
+not used as a beta-transition veto. A beta transition may perturb the FOM;
+the next fixed-budget stage re-optimizes the perturbed physical design.
 
 Finally, the driver checks `PURE_CURRENT_LD_MMA_CODE_MANIFEST.json` before a
 GPU session opens. It fail-closes if the audited pure driver, shared LD_MMA
