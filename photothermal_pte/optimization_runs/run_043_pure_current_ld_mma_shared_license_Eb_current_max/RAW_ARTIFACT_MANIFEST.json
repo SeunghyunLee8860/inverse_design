@@ -1541,6 +1541,28 @@
         "size_bytes": 114821,
         "sha256": "7a15c6a17221ad360125f3111b5014fcf7ddf06a34ce85d6f11e87aa18e420f6"
       }
+    },
+    "0070": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0070_beta8_pure_current_ld_mma_recovery2/objective_gradient_result.json",
+        "size_bytes": 11093,
+        "sha256": "0ce28d1a1dc985594ae65c1c877936fe6b66631047e4c3430287e162235d706b"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0070_beta8_pure_current_ld_mma_recovery2/objective_gradient.npz",
+        "size_bytes": 2118434,
+        "sha256": "150c1da175ade3ccad5eb62c196d5b92fbc58035260bb4fb3b37c118988522cd"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0070_beta8_pure_current_ld_mma_recovery2/forward_Eb.fsp",
+        "size_bytes": 180903623,
+        "sha256": "1c7278309618e4abf4b6843d3558a890efdd8819947bd7b01f02835564187666"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0070_beta8_pure_current_ld_mma_recovery2_latent.npz",
+        "size_bytes": 99948,
+        "sha256": "a1edfffcc4a5bed89cd4cf0f1f91edc70d13792ddc83ae7856b55d6487cfdde8"
+      }
     }
   },
   "active_constraints": {
@@ -1921,5 +1943,20 @@
     "final_exact_bad_nodes_required": 0,
     "final_gray_fraction_limit": 0.01,
     "final_cleanup_cap_factor_per_round": 0.5
+  },
+  "stage_restoration_blocks": {
+    "beta_8": [
+      {
+        "restoration_block": 0,
+        "final_cleanup_round": 0,
+        "nlopt_result_code": 5,
+        "full_physics_evaluations": 20,
+        "maximum_constraint_value": 0.007428553432354601,
+        "morphology_caps": [
+          0.0020000000000000005,
+          0.0020000000000000005
+        ]
+      }
+    ]
   }
 }
