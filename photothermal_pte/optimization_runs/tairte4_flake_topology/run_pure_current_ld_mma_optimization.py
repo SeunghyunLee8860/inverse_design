@@ -384,6 +384,14 @@ def main() -> int:
             "It is not imported as an optimizer evaluation."
         ),
     )
+    parser.add_argument(
+        "--output-slug",
+        help=(
+            "Optional provenance suffix for a recovery generation. This prevents "
+            "an incomplete raw evaluation from being overwritten during a clean "
+            "stage-checkpoint handoff."
+        ),
+    )
     args = parser.parse_args()
 
     CONTRACT.validate()
@@ -404,6 +412,15 @@ def main() -> int:
         raise RuntimeError("--recovery-append requires --initial-latent-npz")
     if args.recovery_validation_result is not None and not args.recovery_append:
         raise RuntimeError("--recovery-validation-result requires --recovery-append")
+    output_slug = args.output_slug or (
+        "pure_current_ld_mma_recovery2"
+        if args.recovery_append else "pure_current_ld_mma"
+    )
+    if not output_slug or any(
+        character not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
+        for character in output_slug
+    ):
+        raise ValueError("--output-slug must contain only letters, digits, '_' or '-'")
     if (raw_root / "stage_checkpoint.npz").exists() and not args.recovery_append:
         raise RuntimeError(
             "NLopt internal asymptotes are not serializable; resume only from a completed "
@@ -515,6 +532,7 @@ def main() -> int:
             "prior_evaluations": len(history),
             "next_published_evaluation_id": evaluation_counter + 1,
             "start_beta": args.start_beta,
+            "output_slug": output_slug,
             "initialization": initial_provenance,
             "reason": (
                 "The prior run's original stop record remains immutable in events/history. "
@@ -609,11 +627,7 @@ def main() -> int:
                 global_evaluation=global_evaluation,
                 constraint_device=args.constraint_device,
                 algorithm_label="NLopt LD_MMA (pure terminal current; no connectivity constraint)",
-                output_slug=(
-                    "pure_current_ld_mma_recovery2"
-                    if args.recovery_append
-                    else "pure_current_ld_mma"
-                ),
+                output_slug=output_slug,
                 include_terminal_conductance_constraint=False,
                 morphology_start_beta=PURE_CURRENT_MORPHOLOGY_START_BETA,
                 optimizer_controls=block_controls,

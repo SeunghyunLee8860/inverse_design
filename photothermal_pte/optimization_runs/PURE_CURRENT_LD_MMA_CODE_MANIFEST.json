@@ -3,7 +3,7 @@
   "passed": true,
   "scope": "optimizer-driver provenance only; physical solver validation remains in TRUE_MMA_PREFLIGHT.json",
   "source_sha256": {
-    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_pure_current_ld_mma_optimization.py": "cf3975b7c434b9628f331d219db39ece8020b7424b91e25a25d7f41e13cc2a88",
+    "photothermal_pte/optimization_runs/tairte4_flake_topology/run_pure_current_ld_mma_optimization.py": "357e96cc26c27dfd925dd6cd1216d512a473481e68d58294f8755844b8ead688",
     "photothermal_pte/optimization_runs/tairte4_flake_topology/evaluate_objective_gradient.py": "0aa529a2181792e60d19bed0ee1a11415deba98fa296a89d5238b08d6241f6ba",
     "photothermal_pte/optimization_runs/tairte4_flake_topology/evaluate_binary_objective.py": "d942e8c4121abcc2326ff8ffaf59bcb1bf1966ffad54c94ea80a4b380fa757e4",
     "photothermal_pte/optimization_runs/tairte4_flake_topology/run_nlopt_mma_optimization.py": "f2fc337d0965498c741ed1662321ecb85e0cc76379cbb22e7d5a4da2b7ebe379",
