@@ -1,22 +1,22 @@
 {
   "beta": 1.0,
   "latent_range": [
-    0.30321008035118047,
-    0.696527577547801
+    0.22265163302702795,
+    0.7779350145729871
   ],
   "filtered_range": [
-    0.3033366200514671,
-    0.6955199921194493
+    0.22273609706580022,
+    0.7764838990548673
   ],
   "rho_range": [
-    0.28991627920689994,
-    0.7088929781654376
+    0.2074650117433602,
+    0.7917525701826617
   ],
-  "rho_mean": 0.5168883170619792,
+  "rho_mean": 0.5297453306561106,
   "gray_fraction_0p01_0p99": 1.0,
-  "binarization_mean_4rho1mrho": 0.9172100005755741,
-  "smooth_solid_constraint": 0.00019013260751559138,
-  "smooth_void_constraint": 0.00032706497543513155,
+  "binarization_mean_4rho1mrho": 0.826127387133792,
+  "smooth_solid_constraint": 0.0001725584821418468,
+  "smooth_void_constraint": 0.00030442421428443175,
   "exact": {
     "minimum_feature_nm": 500.0,
     "opening_radius_nm": 250.0,
@@ -29,7 +29,7 @@
     "void_bad_cell_count": 12,
     "total_bad_cell_count": 18,
     "counted_entity": "design nodes (legacy field names retain *_cell_count)",
-    "solid_fraction": 0.579013645465618,
+    "solid_fraction": 0.5920810883342623,
     "passed": false
   }
 }
