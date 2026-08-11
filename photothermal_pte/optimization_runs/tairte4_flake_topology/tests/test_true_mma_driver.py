@@ -8,7 +8,9 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_opti
     BINARIZATION_CONTINUATION_TARGET,
     MOVE_LIMIT,
     REFERENCE_INCIDENT_POWER_W,
+    TRANSIENT_LICENSE_MARKERS,
     canonical_constraints,
+    discard_regenerable_evaluation_solver_files,
     equivalent_current,
     stage_convergence,
     stage_morphology_caps,
@@ -56,6 +58,43 @@ def test_optimizer_discards_only_regenerable_per_evaluation_fsp() -> None:
     assert "discard_regenerable_projects" in evaluator_text
     assert '"objective_gradient_npz_retained": True' in evaluator_text
     assert '"density_and_optimizer_checkpoints_retained": True' in evaluator_text
+
+
+def test_hpc_checkout_failure_is_retryable() -> None:
+    assert "unable to checkout the requested hpc license" in TRANSIENT_LICENSE_MARKERS
+    assert "ansysli exited or could not read server port" in TRANSIENT_LICENSE_MARKERS
+
+
+def test_solver_cleanup_preserves_checkpoints_and_logs(tmp_path: Path) -> None:
+    project = tmp_path / "forward.fsp"
+    engine_output = tmp_path / "forward" / "forward_output.h5"
+    engine_output.parent.mkdir()
+    checkpoint = tmp_path / "objective_gradient.npz"
+    log = tmp_path / "forward_p0.log"
+    project.write_bytes(b"project")
+    engine_output.write_bytes(b"engine")
+    checkpoint.write_bytes(b"checkpoint")
+    log.write_text("log")
+
+    discarded = discard_regenerable_evaluation_solver_files(tmp_path)
+
+    assert {Path(row["path"]).name for row in discarded} == {
+        "forward.fsp",
+        "forward_output.h5",
+    }
+    assert not project.exists()
+    assert not engine_output.exists()
+    assert checkpoint.read_bytes() == b"checkpoint"
+    assert log.read_text() == "log"
+
+
+def test_ansys_driver_supports_audited_warm_restart() -> None:
+    source = (
+        Path(__file__).parents[1] / "run_ansys_dfm_ld_mma_optimization.py"
+    ).read_text()
+    assert '"--initial-latent-npz"' in source
+    assert '"--recovery-append"' in source
+    assert "prior asymptotes are not serializable" in source
 
 
 def test_new_parallel_supervisor_pins_contact_geometry_and_distinct_gpus() -> None:

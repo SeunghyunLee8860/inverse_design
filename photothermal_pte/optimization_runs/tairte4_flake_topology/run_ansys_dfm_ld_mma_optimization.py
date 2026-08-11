@@ -124,6 +124,29 @@ def main() -> int:
     parser.add_argument("--jacobian-dir", required=True, type=Path)
     parser.add_argument("--constraint-device", default="cuda:0")
     parser.add_argument(
+        "--initial-latent-npz",
+        type=Path,
+        help=(
+            "Warm-start density variable containing a 'latent' array. This starts "
+            "a fresh NLopt LD_MMA stage because internal MMA asymptotes are not serializable."
+        ),
+    )
+    parser.add_argument(
+        "--recovery-append",
+        action="store_true",
+        help="Append a warm-restart stage to an interrupted Run044/Run045 history.",
+    )
+    parser.add_argument(
+        "--start-beta",
+        type=float,
+        help="Continuation beta at which the warm restart begins.",
+    )
+    parser.add_argument(
+        "--output-slug",
+        default="ansys_dfm_ld_mma_recovery1",
+        help="Unique raw evaluation suffix used by a recovery generation.",
+    )
+    parser.add_argument(
         "--maximum-stages",
         type=int,
         default=0,
@@ -143,21 +166,58 @@ def main() -> int:
 
     raw_root = args.raw_root.expanduser().resolve()
     published = args.published_dir.expanduser().resolve()
-    if raw_root.exists() and any(raw_root.iterdir()):
-        raise RuntimeError(f"refusing non-empty raw root: {raw_root}")
-    if published.exists() and any(published.iterdir()):
-        raise RuntimeError(f"refusing non-empty published directory: {published}")
+    if args.recovery_append and args.initial_latent_npz is None:
+        raise RuntimeError("--recovery-append requires --initial-latent-npz")
+    if not args.recovery_append:
+        if raw_root.exists() and any(raw_root.iterdir()):
+            raise RuntimeError(f"refusing non-empty raw root: {raw_root}")
+        if published.exists() and any(published.iterdir()):
+            raise RuntimeError(f"refusing non-empty published directory: {published}")
     raw_root.mkdir(parents=True, exist_ok=True)
     published.mkdir(parents=True, exist_ok=True)
     events = raw_root / "events.jsonl"
 
-    latent = np.full(MAPPING.shape, 0.5, dtype=np.float64)
-    history: list[dict[str, object]] = []
-    manifest = initial_manifest(base_fsp, args.base_sha256, jacobian_dir)
-    manifest.update(
-        {
+    initialization: dict[str, object]
+    if args.initial_latent_npz is None:
+        latent = np.full(MAPPING.shape, 0.5, dtype=np.float64)
+        initialization = {"kind": "uniform_latent", "value": 0.5}
+    else:
+        initial_path = args.initial_latent_npz.expanduser().resolve()
+        if not initial_path.is_file():
+            raise RuntimeError(f"initial latent NPZ is missing: {initial_path}")
+        with np.load(initial_path) as loaded:
+            if "latent" not in loaded:
+                raise RuntimeError("initial latent NPZ does not contain 'latent'")
+            latent = np.asarray(loaded["latent"], dtype=np.float64)
+        if latent.shape != MAPPING.shape:
+            raise RuntimeError(f"initial latent shape {latent.shape} != {MAPPING.shape}")
+        if not np.all(np.isfinite(latent)) or np.any(latent < 0.0) or np.any(latent > 1.0):
+            raise RuntimeError("initial latent design is non-finite or outside [0,1]")
+        initialization = {
+            "kind": "native_LD_MMA_warm_restart",
+            "path": str(initial_path),
+            "size_bytes": initial_path.stat().st_size,
+            "sha256": sha256(initial_path),
+            "note": "NLopt internal asymptotes reset at the last fully evaluated design.",
+        }
+
+    if args.recovery_append:
+        history_path = published / "optimization_history.json"
+        manifest_path = published / "RAW_ARTIFACT_MANIFEST.json"
+        if not history_path.is_file() or not manifest_path.is_file():
+            raise RuntimeError("recovery append requires existing history and manifest")
+        history = json.loads(history_path.read_text())
+        manifest = json.loads(manifest_path.read_text())
+        if not isinstance(history, list) or not history:
+            raise RuntimeError("recovery history is missing or empty")
+        if not isinstance(manifest, dict) or not isinstance(manifest.get("evaluations"), dict):
+            raise RuntimeError("recovery manifest is invalid")
+    else:
+        history = []
+        manifest = initial_manifest(base_fsp, args.base_sha256, jacobian_dir)
+        manifest.update({
             "schema": SCHEMA,
-            "initialization": {"kind": "uniform_latent", "value": 0.5},
+            "initialization": initialization,
             "polarization": args.polarization,
             "beta_continuation": {
                 "source": "Ansys v261 LumOpt topology.py/optimization.py",
@@ -179,26 +239,53 @@ def main() -> int:
                 "exact_500nm_bad_nodes": 0,
             },
             "code_provenance": code_provenance,
-        }
-    )
+        })
+    if args.recovery_append:
+        manifest.setdefault("recovery_chain", []).append(
+            {
+                "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+                "initialization": initialization,
+                "start_beta": args.start_beta,
+                "output_slug": args.output_slug,
+                "reason": "transient HPC-license checkout failure or storage exhaustion",
+                "optimizer_state": "fresh NLopt LD_MMA stage; prior asymptotes are not serializable",
+            }
+        )
     write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
     emit(
         events,
-        "ansys_dfm_ld_mma_start",
+        "ansys_dfm_ld_mma_recovery" if args.recovery_append else "ansys_dfm_ld_mma_start",
         schema=SCHEMA,
         polarization=args.polarization,
         gpu=args.gpu,
-        initialization={"kind": "uniform_latent", "value": 0.5},
+        initialization=initialization,
     )
 
-    fixed_source_power: float | None = None
-    evaluation_counter = 0
-    global_evaluation = 0
-    completed_stages = 0
+    if args.recovery_append:
+        evaluation_counter = max(int(row["evaluation_id"]) for row in history)
+        global_evaluation = max(int(row["global_full_physics_evaluation"]) for row in history)
+        source_powers = np.asarray([float(row["fixed_source_power_W"]) for row in history])
+        fixed_source_power = float(source_powers[0])
+        if np.max(np.abs(source_powers - fixed_source_power) / fixed_source_power) >= 0.005:
+            raise RuntimeError("recovery history violates fixed-source-power gate")
+        completed_stages = len(manifest.get("stages", []))
+    else:
+        fixed_source_power = None
+        evaluation_counter = 0
+        global_evaluation = 0
+        completed_stages = 0
     final_point = None
     final_beta = 1.0
     schedule = beta_sequence()
-    schedule_index = 0
+    if args.start_beta is None:
+        start_beta = float(history[-1]["beta"]) if history else 1.0
+    else:
+        start_beta = float(args.start_beta)
+    matches = np.flatnonzero(np.isclose(schedule, start_beta, rtol=0.0, atol=1.0e-10))
+    if matches.size != 1:
+        raise RuntimeError(f"start beta {start_beta} is not in the continuation schedule")
+    schedule_index = int(matches[0])
+    first_recovery_stage = bool(args.recovery_append)
 
     while True:
         if args.maximum_stages and completed_stages >= args.maximum_stages:
@@ -207,9 +294,17 @@ def main() -> int:
         final_beta = beta
         penalty_weight = dfm_penalty_weight(beta)
         controls = stage_controls(beta)
-        stage_budget = (
+        nominal_stage_budget = (
             GRAYSCALE_EVALUATIONS if completed_stages == 0 else CONTINUATION_EVALUATIONS
         )
+        if first_recovery_stage:
+            prior_at_beta = sum(
+                int(np.isclose(float(row["beta"]), beta, rtol=0.0, atol=1.0e-10))
+                for row in history
+            )
+            stage_budget = max(2, nominal_stage_budget - prior_at_beta)
+        else:
+            stage_budget = nominal_stage_budget
         evaluator = StageEvaluator(
             beta=beta,
             polarization=args.polarization,
@@ -229,7 +324,7 @@ def main() -> int:
             global_evaluation=global_evaluation,
             constraint_device=args.constraint_device,
             algorithm_label="NLopt LD_MMA + Ansys-style DFM penalty",
-            output_slug="ansys_dfm_ld_mma",
+            output_slug=args.output_slug if args.recovery_append else "ansys_dfm_ld_mma",
             include_terminal_conductance_constraint=False,
             morphology_start_beta=np.inf,
             optimizer_controls={
@@ -271,6 +366,7 @@ def main() -> int:
         evaluation_counter = evaluator.evaluation_counter
         global_evaluation = evaluator.global_evaluation
         completed_stages += 1
+        first_recovery_stage = False
 
         rho = MAPPING.physical(latent, beta)
         gate = final_geometry_gate(rho)
