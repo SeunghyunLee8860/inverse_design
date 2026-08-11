@@ -2266,18 +2266,43 @@
     },
     "beta_8": {
       "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/beta_8_completed_checkpoint.npz",
-      "size_bytes": 95246,
-      "sha256": "764e0eaa8d34f569d3bc01fe1f684f27c3d806e78de40fee876e2619d1704e9e",
-      "nlopt_result_code": 4,
-      "nlopt_result_name": "XTOL_REACHED",
-      "full_physics_evaluations": 2,
+      "size_bytes": 117050,
+      "sha256": "6fa3152309ca4c86e17abeca47674dd4b1c15ee6e16dc553d7c5e6b2fb42fa9e",
+      "nlopt_result_code": 5,
+      "nlopt_result_name": "5",
+      "full_physics_evaluations": 40,
+      "restoration_blocks": [
+        {
+          "restoration_block": 0,
+          "final_cleanup_round": 0,
+          "nlopt_result_code": 5,
+          "full_physics_evaluations": 20,
+          "maximum_constraint_value": 0.007428553432354601,
+          "morphology_caps": [
+            0.0020000000000000005,
+            0.0020000000000000005
+          ]
+        },
+        {
+          "restoration_block": 1,
+          "final_cleanup_round": 0,
+          "nlopt_result_code": 5,
+          "full_physics_evaluations": 20,
+          "maximum_constraint_value": -0.0008303838876163594,
+          "morphology_caps": [
+            0.0020000000000000005,
+            0.0020000000000000005
+          ]
+        }
+      ],
+      "final_cleanup_rounds": 0,
       "terminal_conductance_constraint": false,
       "physical_stage_readiness": {
         "ready": true,
         "reason": "normal_nlopt_stop_and_constraints_feasible",
-        "full_physics_evaluations": 2,
+        "full_physics_evaluations": 44,
         "maximum_stage_evaluations": 20,
-        "nlopt_result_code": 4,
+        "nlopt_result_code": 5,
         "raw_trial_objective_plateau_used_as_gate": false,
         "active_constraints_feasible": true
       }
@@ -2392,6 +2417,17 @@
         "nlopt_result_code": 5,
         "full_physics_evaluations": 20,
         "maximum_constraint_value": 0.007428553432354601,
+        "morphology_caps": [
+          0.0020000000000000005,
+          0.0020000000000000005
+        ]
+      },
+      {
+        "restoration_block": 1,
+        "final_cleanup_round": 0,
+        "nlopt_result_code": 5,
+        "full_physics_evaluations": 20,
+        "maximum_constraint_value": -0.0008303838876163594,
         "morphology_caps": [
           0.0020000000000000005,
           0.0020000000000000005
