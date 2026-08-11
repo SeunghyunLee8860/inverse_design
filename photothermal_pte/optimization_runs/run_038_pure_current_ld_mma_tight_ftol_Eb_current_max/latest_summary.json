@@ -1,22 +1,22 @@
 {
   "beta": 1.0,
   "latent_range": [
-    0.499996555292678,
-    0.5000034447069113
+    0.49999633443839164,
+    0.5000036655608554
   ],
   "filtered_range": [
-    0.4999965970401957,
-    0.5000034029591033
+    0.4999963788628516,
+    0.5000036211358438
   ],
   "rho_range": [
-    0.4999963180767574,
-    0.5000036819224842
+    0.499996082013953,
+    0.5000039179846355
   ],
-  "rho_mean": 0.500000000000489,
+  "rho_mean": 0.5000000000009215,
   "gray_fraction_0p01_0p99": 1.0,
-  "binarization_mean_4rho1mrho": 0.9999999999894953,
-  "smooth_solid_constraint": 3.409351997731492e-05,
-  "smooth_void_constraint": 4.101555254895322e-05,
+  "binarization_mean_4rho1mrho": 0.9999999999881052,
+  "smooth_solid_constraint": 3.4094526983715017e-05,
+  "smooth_void_constraint": 4.101656070209305e-05,
   "exact": {
     "minimum_feature_nm": 500.0,
     "opening_radius_nm": 250.0,
