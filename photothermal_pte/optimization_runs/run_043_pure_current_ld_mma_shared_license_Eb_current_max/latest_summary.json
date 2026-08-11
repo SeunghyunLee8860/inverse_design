@@ -12,11 +12,11 @@
     -5.551116372517344e-17,
     1.0
   ],
-  "rho_mean": 0.753570486071867,
-  "gray_fraction_0p01_0p99": 0.02859148242191532,
-  "binarization_mean_4rho1mrho": 0.011935171411427107,
-  "smooth_solid_constraint": 0.001959433030558095,
-  "smooth_void_constraint": 0.0015278004347557706,
+  "rho_mean": 0.7535525261927352,
+  "gray_fraction_0p01_0p99": 0.028570838752296608,
+  "binarization_mean_4rho1mrho": 0.011929523874140965,
+  "smooth_solid_constraint": 0.001955695837664088,
+  "smooth_void_constraint": 0.0015221626340538405,
   "exact": {
     "minimum_feature_nm": 500.0,
     "opening_radius_nm": 250.0,
@@ -29,7 +29,7 @@
     "void_bad_cell_count": 70,
     "total_bad_cell_count": 167,
     "counted_entity": "design nodes (legacy field names retain *_cell_count)",
-    "solid_fraction": 0.7531842860386863,
+    "solid_fraction": 0.7531636423690675,
     "passed": false
   }
 }
