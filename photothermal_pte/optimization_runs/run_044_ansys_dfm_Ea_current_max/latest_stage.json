@@ -1,17 +1,37 @@
 {
-  "stage_index": 1,
-  "beta": 1.0,
+  "stage_index": 2,
+  "beta": 1.44,
   "dfm_penalty_weight": 0.0,
-  "nlopt_result_code": 5,
-  "full_physics_evaluations": 10,
-  "raw_current_at_reference_power_A": 8.939778248069228e-08,
-  "smooth_solid_residual": 0.0023464185536513295,
-  "smooth_void_residual": 0.002925760579326624,
+  "nlopt_result_code": -5,
+  "stage_stop_reason": "adaptive_plateau",
+  "adaptive_plateau_diagnostic": {
+    "passed": true,
+    "minimum_evaluations": 5,
+    "window_evaluations": 4,
+    "fom_relative_range_maximum": 0.0001,
+    "rms_step_maximum": 0.0001,
+    "gray_absolute_range_maximum": 0.001,
+    "stage_evaluations_observed": 5,
+    "reason": "adaptive_plateau",
+    "window_evaluation_ids": [
+      55,
+      56,
+      57,
+      58
+    ],
+    "fom_relative_range": 3.80070619091959e-07,
+    "rms_step_maximum_observed": 9.462024671542726e-08,
+    "gray_absolute_range": 0.0
+  },
+  "full_physics_evaluations": 5,
+  "raw_current_at_reference_power_A": 8.972151010649431e-08,
+  "smooth_solid_residual": 0.0023125286288583264,
+  "smooth_void_residual": 0.0028707473916635973,
   "final_geometry_gate": {
     "passed": false,
-    "discreteness": 0.8739023658074103,
-    "binarization_mean_4rho1mrho": 0.12609763419258968,
-    "gray_fraction_0p01_0p99": 0.24233603765405337,
+    "discreteness": 0.8795057750068963,
+    "binarization_mean_4rho1mrho": 0.1204942249931037,
+    "gray_fraction_0p01_0p99": 0.23870275180116018,
     "exact_500nm_audit": {
       "minimum_feature_nm": 500.0,
       "opening_radius_nm": 250.0,
@@ -29,8 +49,8 @@
     }
   },
   "checkpoint": {
-    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_ansys_dfm_Ea_20260811/stage_0001_beta1.npz",
-    "size_bytes": 177204,
-    "sha256": "5906c7c229fcc85fe8e54ef97478b24664909d85d30cef5fb102feabe3b64541"
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_ansys_dfm_Ea_20260811/stage_0002_beta1.44.npz",
+    "size_bytes": 178559,
+    "sha256": "91f3a2e48802d6721493771d9c28046ff307b50941664001a7b4750b177c2f2a"
   }
 }
