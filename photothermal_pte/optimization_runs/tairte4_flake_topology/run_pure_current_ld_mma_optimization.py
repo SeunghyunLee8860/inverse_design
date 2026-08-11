@@ -244,6 +244,15 @@ def main() -> int:
     parser.add_argument("--jacobian-dir", required=True, type=Path)
     parser.add_argument("--constraint-device", default="cuda:0")
     parser.add_argument("--maximum-beta-stages", type=int, default=0)
+    parser.add_argument(
+        "--initial-latent-npz",
+        type=Path,
+        help=(
+            "Explicit native-LD_MMA warm-start point. This starts a fresh NLopt "
+            "stage with new asymptotes; it does not claim to serialize or resume "
+            "NLopt internal state."
+        ),
+    )
     args = parser.parse_args()
 
     CONTRACT.validate()
@@ -268,11 +277,40 @@ def main() -> int:
     raw_root.mkdir(parents=True, exist_ok=True)
     published.mkdir(parents=True, exist_ok=True)
     events = raw_root / "events.jsonl"
-    latent = np.full(MAPPING.shape, 0.5, dtype=np.float64)
+    initial_provenance: dict[str, object]
+    if args.initial_latent_npz is None:
+        latent = np.full(MAPPING.shape, 0.5, dtype=np.float64)
+        initial_provenance = {"kind": "uniform", "value": 0.5}
+    else:
+        initial_path = args.initial_latent_npz.expanduser().resolve()
+        if not initial_path.is_file():
+            raise RuntimeError(f"initial latent NPZ is missing: {initial_path}")
+        with np.load(initial_path) as loaded:
+            if "latent" not in loaded:
+                raise RuntimeError("initial latent NPZ does not contain 'latent'")
+            latent = np.asarray(loaded["latent"], dtype=np.float64)
+        if latent.shape != MAPPING.shape:
+            raise RuntimeError(
+                f"initial latent shape {latent.shape} != expected {MAPPING.shape}"
+            )
+        if not np.all(np.isfinite(latent)) or np.any(latent < 0.0) or np.any(latent > 1.0):
+            raise RuntimeError("initial latent design is non-finite or outside [0,1]")
+        initial_provenance = {
+            "kind": "native_LD_MMA_warm_restart",
+            "path": str(initial_path),
+            "size_bytes": int(initial_path.stat().st_size),
+            "sha256": sha256(initial_path),
+            "note": (
+                "NLopt internal asymptotes are intentionally reset; this is a fresh "
+                "native LD_MMA stage initialized at a fully evaluated physical design."
+            ),
+        }
     history: list[dict[str, object]] = []
     manifest = pure_current_manifest(
         base_fsp, args.base_sha256, jacobian_dir, code_provenance
     )
+    manifest["initialization"] = initial_provenance
+    emit(events, "native_ld_mma_initialization", **initial_provenance)
     fixed_source_power: float | None = None
     evaluation_counter = 0
     global_evaluation = 0
@@ -442,7 +480,7 @@ def main() -> int:
         "terminal_conductance_constraint": False,
         "terminal_conductance_role": "diagnostic_only",
         "manual_move_limit": None,
-        "initial_density": "uniform rho=0.5",
+        "initialization": initial_provenance,
         "final_beta": BETA_SCHEDULE[-1],
         "full_physics_evaluations": global_evaluation,
         "binary_result": final_result,

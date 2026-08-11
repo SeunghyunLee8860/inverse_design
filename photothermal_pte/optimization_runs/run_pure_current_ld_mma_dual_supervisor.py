@@ -23,20 +23,24 @@ BASE_FSP = PARENT / "run012_uniform_rho0p5_Ea_forward_retry_20260810/tairte4_fla
 BASE_SHA256 = "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83"
 JACOBIAN = PARENT / "run012_component_yee_jacobian_retry_20260810"
 PREFLIGHT = REPOSITORY / "photothermal_pte/optimization_runs/true_mma_preflight/TRUE_MMA_PREFLIGHT.json"
-GPU = int(os.environ.get("TAIRTE4_PURE_CURRENT_LD_MMA_GPU", "5"))
+# Preserve the GPU-0 placement used by Run036 unless the caller deliberately
+# overrides it.  A recovery must not silently move to a different device.
+GPU = int(os.environ.get("TAIRTE4_PURE_CURRENT_LD_MMA_GPU", "0"))
 STATUS = REPOSITORY / "photothermal_pte/optimization_runs/PURE_CURRENT_LD_MMA_DUAL_RUN_STATUS.json"
 RUNS = (
     (
-        "Run036",
+        "Run038",
         "Ea",
-        PARENT / "run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810",
-        REPOSITORY / "photothermal_pte/optimization_runs/run_036_pure_current_ld_mma_morphology_from_beta1_Ea_current_max",
+        PARENT / "run038_pure_current_ld_mma_warm_restart_Ea_20260811",
+        REPOSITORY / "photothermal_pte/optimization_runs/run_038_pure_current_ld_mma_warm_restart_Ea_current_max",
+        PARENT / "run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0012_beta1_pure_current_ld_mma_latent.npz",
     ),
     (
-        "Run037",
+        "Run039",
         "Eb",
-        PARENT / "run037_pure_current_ld_mma_morphology_from_beta1_Eb_20260810",
-        REPOSITORY / "photothermal_pte/optimization_runs/run_037_pure_current_ld_mma_morphology_from_beta1_Eb_current_max",
+        PARENT / "run039_pure_current_ld_mma_morphology_from_beta1_Eb_20260811",
+        REPOSITORY / "photothermal_pte/optimization_runs/run_039_pure_current_ld_mma_morphology_from_beta1_Eb_current_max",
+        None,
     ),
 )
 
@@ -90,7 +94,7 @@ def main() -> int:
         conda_library if not current_library_path
         else f"{conda_library}:{current_library_path}"
     )
-    for label, polarization, raw_root, published in RUNS:
+    for label, polarization, raw_root, published, initial_latent in RUNS:
         final = published / "FINAL_RESULT.json"
         if passed(final):
             continue
@@ -113,10 +117,15 @@ def main() -> int:
             "--jacobian-dir", str(JACOBIAN),
             "--constraint-device", "cuda:0",
         ]
+        if initial_latent is not None:
+            if not initial_latent.is_file():
+                raise RuntimeError(f"{label} warm-start latent is missing: {initial_latent}")
+            command.extend(["--initial-latent-npz", str(initial_latent)])
         write_status(
             "RUNNING_PURE_CURRENT_NLOPT_LD_MMA",
             run=label,
             polarization=polarization,
+            native_ld_mma_warm_restart=initial_latent is not None,
             command=command,
         )
         completed = subprocess.run(command, cwd=REPOSITORY, env=environment)
