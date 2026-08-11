@@ -114,7 +114,7 @@ def main() -> int:
         "thermal_energy_balance", "electrical_residual", "objective_gate_passed", "solver_status",
     ]
     with csv_path.open("w", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=scalar_keys)
+        writer = csv.DictWriter(stream, fieldnames=scalar_keys, lineterminator="\n")
         writer.writeheader()
         for row in rows:
             writer.writerow({key: row[key] for key in scalar_keys})
