@@ -1,0 +1,83 @@
+{
+  "schema": "pure-terminal-current-nlopt-ld-mma-raw-artifact-manifest-v1",
+  "raw_artifacts_committed_to_git": false,
+  "optimizer": {
+    "library": "NLopt",
+    "version": "2.11.0",
+    "algorithm": "LD_MMA",
+    "manual_move_limit": null,
+    "custom_mma_update_used": false,
+    "objective": "signed full-flake terminal PTE current",
+    "terminal_conductance_constraint": false,
+    "terminal_conductance_role": "diagnostic_only",
+    "symmetry_constraint": false,
+    "volume_constraint": false
+  },
+  "base_FSP": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_uniform_rho0p5_Ea_forward_retry_20260810/tairte4_flake_forward_Ea.fsp",
+    "size_bytes": 159871532,
+    "sha256": "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83"
+  },
+  "component_Yee_Jacobian": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_component_yee_jacobian_retry_20260810",
+    "certificate": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_component_yee_jacobian_retry_20260810/component_yee_jacobian_result.json",
+    "certificate_sha256": "9222716ca4b67dd611da27bbb6bb72849a77882e1d9b9c1206d89a8305ff407d"
+  },
+  "evaluations": {
+    "0001": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run042_pure_current_ld_mma_guarded_Eb_20260811/evaluation_0001_beta1_pure_current_ld_mma/objective_gradient_result.json",
+        "size_bytes": 10977,
+        "sha256": "4a73bac79bdd4cd7739a26aa83008b01a79357ce18ffda24609b74aef03de3fe"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run042_pure_current_ld_mma_guarded_Eb_20260811/evaluation_0001_beta1_pure_current_ld_mma/objective_gradient.npz",
+        "size_bytes": 2143764,
+        "sha256": "e26255fdee185fa563d8fa23b50900b51ded01513f81e62753b1983f8d50ea40"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run042_pure_current_ld_mma_guarded_Eb_20260811/evaluation_0001_beta1_pure_current_ld_mma/forward_Eb.fsp",
+        "size_bytes": 180902807,
+        "sha256": "ecb8365c5d55826903840d9d230d897c45668709309b45fc7e4c06e1680a8b75"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run042_pure_current_ld_mma_guarded_Eb_20260811/evaluation_0001_beta1_pure_current_ld_mma_latent.npz",
+        "size_bytes": 809,
+        "sha256": "b6b8d6a7dbb6daf1e799b09c0b41715368383b981d311179871b6f37e19c5685"
+      }
+    }
+  },
+  "active_constraints": {
+    "beta_1_and_above": [
+      "500nm_solid_opening",
+      "500nm_void_opening"
+    ]
+  },
+  "mma_scale_policy": {
+    "kind": "projection-Jacobian-scaled-native-LD_MMA-initialization",
+    "target_initial_physical_density_step": 0.025,
+    "base_rho_init_at_beta1": 10.0,
+    "fixed_per_iteration_move_limit": null,
+    "note": "LD_MMA, not this driver, adapts all later asymptotes."
+  },
+  "beta_promotion_policy": {
+    "NLopt_numerical_stop_alone_is_sufficient": false,
+    "required_full_physics_objective_changes": 3,
+    "relative_plateau_gate": 0.002,
+    "active_constraints_must_be_feasible": true
+  },
+  "optimizer_code_provenance": {
+    "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/PURE_CURRENT_LD_MMA_CODE_MANIFEST.json",
+    "sha256": "fe1a82ffa99a7c953969e87ce1816904f5280bd0d9defdab476ea018702ce8ad",
+    "source_sha256": {
+      "photothermal_pte/optimization_runs/tairte4_flake_topology/run_pure_current_ld_mma_optimization.py": "ace3a2c923adbb4be1fd2c630a4d7ff2600d6f5814c4d44cae220e8baa1f40b1",
+      "photothermal_pte/optimization_runs/tairte4_flake_topology/run_nlopt_mma_optimization.py": "f2fc337d0965498c741ed1662321ecb85e0cc76379cbb22e7d5a4da2b7ebe379",
+      "photothermal_pte/optimization_runs/tairte4_flake_topology/run_true_mma_optimization.py": "f56748fe9ad5d872533877072b1ac9739260de91a9731246f1e431cc60546109",
+      "photothermal_pte/optimization_runs/run_pure_current_ld_mma_dual_supervisor.py": "8280db34fc68eda08ea4c95687a1a157892829af555ad1df8556de67560749ce"
+    }
+  },
+  "initialization": {
+    "kind": "uniform",
+    "value": 0.5
+  }
+}
