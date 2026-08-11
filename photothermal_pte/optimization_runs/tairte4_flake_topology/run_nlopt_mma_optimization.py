@@ -306,6 +306,8 @@ def make_optimizer(
     always_improve: int | None = None,
     inner_gradients: int | None = None,
     xtol_rel: float | None = None,
+    ftol_rel: float | None = None,
+    maxeval: int | None = None,
 ) -> nlopt.opt:
     variable_count = int(np.prod(MAPPING.shape))
     optimizer = nlopt.opt(nlopt.LD_MMA, variable_count)
@@ -329,9 +331,9 @@ def make_optimizer(
         optimizer.set_param("always_improve", int(always_improve))
     if inner_gradients is not None:
         optimizer.set_param("inner_gradients", int(inner_gradients))
-    optimizer.set_ftol_rel(NLOPT_FTOL_REL)
+    optimizer.set_ftol_rel(NLOPT_FTOL_REL if ftol_rel is None else float(ftol_rel))
     optimizer.set_xtol_rel(NLOPT_XTOL_REL if xtol_rel is None else float(xtol_rel))
-    optimizer.set_maxeval(MAXIMUM_STAGE_EVALUATIONS)
+    optimizer.set_maxeval(MAXIMUM_STAGE_EVALUATIONS if maxeval is None else int(maxeval))
     return optimizer
 
 

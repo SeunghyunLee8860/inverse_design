@@ -147,6 +147,15 @@ def test_pure_current_mma_uses_projection_scaled_native_initialization() -> None
     )
 
 
+def test_pure_current_native_ftol_is_tighter_than_its_physical_plateau_gate() -> None:
+    from photothermal_pte.optimization_runs.tairte4_flake_topology.run_pure_current_ld_mma_optimization import (
+        PURE_CURRENT_NLOPT_FTOL_REL,
+        STAGE_PLATEAU_RELATIVE_CHANGE,
+    )
+
+    assert PURE_CURRENT_NLOPT_FTOL_REL < STAGE_PLATEAU_RELATIVE_CHANGE
+
+
 def test_pure_current_beta_promotion_requires_physical_plateau() -> None:
     from photothermal_pte.optimization_runs.tairte4_flake_topology.run_pure_current_ld_mma_optimization import (
         physical_stage_readiness,

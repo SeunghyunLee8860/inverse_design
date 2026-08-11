@@ -68,6 +68,12 @@ PURE_CURRENT_MORPHOLOGY_TARGET_CAP = {
 # the shared driver's historical 1e-7 x tolerance.  This is a numerical
 # termination tolerance, not a per-iteration move restriction.
 PURE_CURRENT_NLOPT_XTOL_REL = 1.0e-9
+# The physical beta-transition gate requires three consecutive relative
+# changes below 2e-3.  The shared driver's historical 1e-3 FTOL can terminate
+# native MMA after one small change before those three measurements exist.
+# Keep the native optimizer materially tighter than the physical plateau gate;
+# this is a stopping tolerance, not a move limit or gradient rescaling.
+PURE_CURRENT_NLOPT_FTOL_REL = 1.0e-6
 STAGE_PLATEAU_WINDOW = 3
 STAGE_PLATEAU_RELATIVE_CHANGE = 2.0e-3
 
@@ -450,6 +456,8 @@ def main() -> int:
             always_improve=int(controls["always_improve"]),
             inner_gradients=int(controls["inner_gradients"]),
             xtol_rel=float(controls["xtol_rel"]),
+            ftol_rel=PURE_CURRENT_NLOPT_FTOL_REL,
+            maxeval=MAXIMUM_STAGE_EVALUATIONS,
         )
         emit(
             events,
@@ -466,7 +474,7 @@ def main() -> int:
             nlopt_version=nlopt.__version__,
             manual_move_limit=None,
             optimizer_controls=controls,
-            ftol_rel=NLOPT_FTOL_REL,
+            ftol_rel=PURE_CURRENT_NLOPT_FTOL_REL,
             xtol_rel=controls["xtol_rel"],
             maxeval=MAXIMUM_STAGE_EVALUATIONS,
         )
