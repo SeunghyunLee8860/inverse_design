@@ -75,6 +75,16 @@ PURE_CURRENT_BETA_FACTOR = 2.0
 PURE_CURRENT_MAX_BETA = 1024.0
 PURE_CURRENT_GRAYSCALE_MAX_EVALUATIONS = MAXIMUM_STAGE_EVALUATIONS
 PURE_CURRENT_CONTINUATION_MAX_EVALUATIONS = 20
+# A fixed-budget continuation block is not itself permission to abandon a
+# beta while either morphology inequality is still infeasible.  Restarting
+# LD_MMA at the returned physical point is an explicit constraint-restoration
+# continuation, not a hidden hand-written density update.
+PURE_CURRENT_MAX_RESTORATION_BLOCKS = 12
+# At the final beta, tighten the smooth surrogate until the *exact* binary
+# opening audit and the gray-fraction gate both pass.  This separates final
+# manufacturability cleanup from ordinary beta promotion.
+PURE_CURRENT_MAX_FINAL_CLEANUP_ROUNDS = 8
+PURE_CURRENT_FINAL_GRAY_FRACTION_LIMIT = 0.01
 
 
 def lumopt_style_beta_schedule() -> tuple[float, ...]:
@@ -107,6 +117,10 @@ def lumopt_style_beta_promotion_policy() -> dict[str, object]:
         "raw_trial_objective_plateau_used_as_gate": False,
         "normal_NLopt_early_stop_promotes_beta": True,
         "active_constraints_must_be_feasible": True,
+        "infeasible_block_continues_same_beta": True,
+        "maximum_constraint_restoration_blocks": PURE_CURRENT_MAX_RESTORATION_BLOCKS,
+        "final_exact_cleanup_at_maximum_beta": True,
+        "maximum_final_cleanup_rounds": PURE_CURRENT_MAX_FINAL_CLEANUP_ROUNDS,
     }
 
 
@@ -124,6 +138,8 @@ def fixed_morphology_cap_policy() -> dict[str, object]:
         },
         "beta_may_advance_only_if_smooth_constraints_feasible": True,
         "final_exact_bad_nodes_required": 0,
+        "final_gray_fraction_limit": PURE_CURRENT_FINAL_GRAY_FRACTION_LIMIT,
+        "final_cleanup_cap_factor_per_round": 0.5,
     }
 
 
@@ -247,6 +263,38 @@ def continuation_stage_completion(
         "nlopt_result_code": int(result_code),
         "raw_trial_objective_plateau_used_as_gate": False,
         "active_constraints_feasible": feasible,
+    }
+
+
+def stage_numerical_tolerances(entry_constraint_values: np.ndarray) -> dict[str, float]:
+    """Disable objective-based early stops while entering a stage infeasible.
+
+    FTOL/XTOL are useful only after the active inequalities are feasible.  If
+    they terminate an infeasible block, the run can repeatedly stop before
+    LD_MMA performs constraint restoration.  A zero NLopt tolerance disables
+    that stop criterion while retaining the fixed MAXEVAL budget.
+    """
+    values = np.asarray(entry_constraint_values, dtype=float)
+    infeasible = bool(values.size and np.max(values) > NLOPT_CONSTRAINT_TOL)
+    return {
+        "ftol_rel": 0.0 if infeasible else PURE_CURRENT_NLOPT_FTOL_REL,
+        "xtol_rel": 0.0 if infeasible else PURE_CURRENT_NLOPT_XTOL_REL,
+    }
+
+
+def continuous_final_gate(rho: np.ndarray) -> dict[str, object]:
+    """Return the non-negotiable exact-geometry and gray-density final gate."""
+    exact, _ = exact_binary_audit(rho)
+    gray_fraction = float(np.mean((rho > 0.01) & (rho < 0.99)))
+    return {
+        "passed": bool(
+            exact["total_bad_cell_count"] == 0
+            and gray_fraction < PURE_CURRENT_FINAL_GRAY_FRACTION_LIMIT
+        ),
+        "exact_bad_cell_count": int(exact["total_bad_cell_count"]),
+        "gray_fraction_0p01_0p99": gray_fraction,
+        "gray_fraction_limit": PURE_CURRENT_FINAL_GRAY_FRACTION_LIMIT,
+        "exact_audit": exact,
     }
 
 
@@ -503,14 +551,6 @@ def main() -> int:
     for beta in beta_schedule:
         if args.maximum_beta_stages and completed_beta_stages >= args.maximum_beta_stages:
             break
-        stage_summary, _ = metrics(latent, beta, device=args.constraint_device)
-        caps = fixed_stage_morphology_caps(
-            np.asarray([
-                stage_summary["smooth_solid_constraint"],
-                stage_summary["smooth_void_constraint"],
-            ]),
-            beta,
-        )
         constraint_count = 2
         controls = stage_mma_controls(beta)
         stage_maximum_evaluations = (
@@ -518,90 +558,169 @@ def main() -> int:
             if np.isclose(beta, 1.0)
             else PURE_CURRENT_CONTINUATION_MAX_EVALUATIONS
         )
-        evaluator = StageEvaluator(
-            beta=beta,
-            polarization=args.polarization,
-            gpu=args.gpu,
-            raw_root=raw_root,
-            published=published,
-            events=events,
-            history=history,
-            manifest=manifest,
-            base_fsp=base_fsp,
-            base_sha256=args.base_sha256,
-            jacobian_dir=jacobian_dir,
-            minimum_conductance_S=None,
-            morphology_caps=caps,
-            fixed_source_power_W=fixed_source_power,
-            evaluation_counter=evaluation_counter,
-            global_evaluation=global_evaluation,
-            constraint_device=args.constraint_device,
-            algorithm_label="NLopt LD_MMA (pure terminal current; no connectivity constraint)",
-            # Preserve the interrupted raw evaluation_0012 inputs/output unchanged.
-            # The public history still continues at evaluation_0012, while this
-            # fresh physical solve is distinguishable in raw provenance.
-            output_slug=(
-                "pure_current_ld_mma_recovery2"
-                if args.recovery_append
-                else "pure_current_ld_mma"
-            ),
-            include_terminal_conductance_constraint=False,
-            morphology_start_beta=PURE_CURRENT_MORPHOLOGY_START_BETA,
-            optimizer_controls=controls,
-        )
-        optimizer = make_optimizer(
-            evaluator,
-            constraint_count,
-            initial_step=float(controls["initial_step"]),
-            rho_init=float(controls["rho_init"]),
-            always_improve=int(controls["always_improve"]),
-            inner_gradients=int(controls["inner_gradients"]),
-            xtol_rel=float(controls["xtol_rel"]),
-            ftol_rel=PURE_CURRENT_NLOPT_FTOL_REL,
-            maxeval=stage_maximum_evaluations,
-        )
-        emit(
-            events,
-            "nlopt_stage_start",
-            beta=beta,
-            algorithm="LD_MMA",
-            objective="signed full-flake terminal PTE current",
-            terminal_conductance_constraint=False,
-            active_constraint_count=constraint_count,
-            active_constraints=(
-                [] if not constraint_count
-                else ["500nm_solid_opening", "500nm_void_opening"]
-            ),
-            nlopt_version=nlopt.__version__,
-            manual_move_limit=None,
-            optimizer_controls=controls,
-            ftol_rel=PURE_CURRENT_NLOPT_FTOL_REL,
-            xtol_rel=controls["xtol_rel"],
-            maxeval=stage_maximum_evaluations,
-        )
-        optimum = optimizer.optimize(latent.ravel()).reshape(MAPPING.shape)
-        result_code = optimizer.last_optimize_result()
-        final_point = evaluator.point(optimum.ravel())
-        if (
-            final_point.constraint_values.size
-            and float(np.max(final_point.constraint_values)) > NLOPT_CONSTRAINT_TOL
-        ):
-            raise RuntimeError("NLopt stage returned an infeasible 500-nm morphology")
-        if result_code < 0:
-            raise RuntimeError(f"NLopt LD_MMA failed with result code {result_code}")
-        readiness = continuation_stage_completion(
-            history, beta, NLOPT_CONSTRAINT_TOL, result_code,
-            stage_maximum_evaluations,
-        )
-        if not readiness["ready"]:
-            raise RuntimeError(
-                "NLopt continuation stage did not return a feasible normal stop: "
-                f"{readiness['reason']}"
+        restoration_block = 0
+        final_cleanup_round = 0
+        beta_full_physics_evaluations = 0
+        block_records: list[dict[str, object]] = []
+        while True:
+            stage_summary, _ = metrics(latent, beta, device=args.constraint_device)
+            residuals = np.asarray([
+                stage_summary["smooth_solid_constraint"],
+                stage_summary["smooth_void_constraint"],
+            ])
+            caps = fixed_stage_morphology_caps(residuals, beta)
+            if np.isclose(beta, beta_schedule[-1]) and final_cleanup_round:
+                caps = caps * (0.5 ** final_cleanup_round)
+            entry_constraint_values = residuals / caps - 1.0
+            tolerances = stage_numerical_tolerances(entry_constraint_values)
+            block_controls = {
+                **controls,
+                "xtol_rel": tolerances["xtol_rel"],
+                "ftol_rel": tolerances["ftol_rel"],
+                "restoration_block": restoration_block,
+                "final_cleanup_round": final_cleanup_round,
+            }
+            evaluator = StageEvaluator(
+                beta=beta,
+                polarization=args.polarization,
+                gpu=args.gpu,
+                raw_root=raw_root,
+                published=published,
+                events=events,
+                history=history,
+                manifest=manifest,
+                base_fsp=base_fsp,
+                base_sha256=args.base_sha256,
+                jacobian_dir=jacobian_dir,
+                minimum_conductance_S=None,
+                morphology_caps=caps,
+                fixed_source_power_W=fixed_source_power,
+                evaluation_counter=evaluation_counter,
+                global_evaluation=global_evaluation,
+                constraint_device=args.constraint_device,
+                algorithm_label="NLopt LD_MMA (pure terminal current; no connectivity constraint)",
+                output_slug=(
+                    "pure_current_ld_mma_recovery2"
+                    if args.recovery_append
+                    else "pure_current_ld_mma"
+                ),
+                include_terminal_conductance_constraint=False,
+                morphology_start_beta=PURE_CURRENT_MORPHOLOGY_START_BETA,
+                optimizer_controls=block_controls,
             )
-        latent = optimum
-        fixed_source_power = evaluator.fixed_source_power_W
-        evaluation_counter = evaluator.evaluation_counter
-        global_evaluation = evaluator.global_evaluation
+            optimizer = make_optimizer(
+                evaluator,
+                constraint_count,
+                initial_step=float(controls["initial_step"]),
+                rho_init=float(controls["rho_init"]),
+                always_improve=int(controls["always_improve"]),
+                inner_gradients=int(controls["inner_gradients"]),
+                xtol_rel=tolerances["xtol_rel"],
+                ftol_rel=tolerances["ftol_rel"],
+                maxeval=stage_maximum_evaluations,
+            )
+            emit(
+                events,
+                "nlopt_stage_block_start",
+                beta=beta,
+                algorithm="LD_MMA",
+                objective="signed full-flake terminal PTE current",
+                terminal_conductance_constraint=False,
+                active_constraint_count=constraint_count,
+                active_constraints=["500nm_solid_opening", "500nm_void_opening"],
+                morphology_caps=caps.tolist(),
+                entry_constraint_values=entry_constraint_values.tolist(),
+                restoration_block=restoration_block,
+                final_cleanup_round=final_cleanup_round,
+                nlopt_version=nlopt.__version__,
+                manual_move_limit=None,
+                optimizer_controls=block_controls,
+                ftol_rel=tolerances["ftol_rel"],
+                xtol_rel=tolerances["xtol_rel"],
+                maxeval=stage_maximum_evaluations,
+            )
+            optimum = optimizer.optimize(latent.ravel()).reshape(MAPPING.shape)
+            result_code = optimizer.last_optimize_result()
+            final_point = evaluator.point(optimum.ravel())
+            if result_code < 0:
+                raise RuntimeError(f"NLopt LD_MMA failed with result code {result_code}")
+
+            # Preserve every valid returned physical point before deciding
+            # whether this beta is complete.  An infeasible fixed-budget block
+            # is therefore continued, not discarded or silently treated as a
+            # completed optimization.
+            latent = optimum
+            fixed_source_power = evaluator.fixed_source_power_W
+            evaluation_counter = evaluator.evaluation_counter
+            global_evaluation = evaluator.global_evaluation
+            beta_full_physics_evaluations += evaluator.stage_full_physics_evaluations
+            max_constraint = (
+                float(np.max(final_point.constraint_values))
+                if final_point.constraint_values.size else -np.inf
+            )
+            block_record = {
+                "restoration_block": restoration_block,
+                "final_cleanup_round": final_cleanup_round,
+                "nlopt_result_code": int(result_code),
+                "full_physics_evaluations": evaluator.stage_full_physics_evaluations,
+                "maximum_constraint_value": max_constraint,
+                "morphology_caps": caps.tolist(),
+            }
+            block_records.append(block_record)
+            manifest.setdefault("stage_restoration_blocks", {}).setdefault(
+                f"beta_{beta:g}", []
+            ).append(block_record)
+            write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
+
+            if max_constraint > NLOPT_CONSTRAINT_TOL:
+                restoration_block += 1
+                emit(
+                    events,
+                    "nlopt_constraint_restoration_required",
+                    beta=beta,
+                    maximum_constraint_value=max_constraint,
+                    restoration_block=restoration_block,
+                    maximum_restoration_blocks=PURE_CURRENT_MAX_RESTORATION_BLOCKS,
+                )
+                if restoration_block >= PURE_CURRENT_MAX_RESTORATION_BLOCKS:
+                    raise RuntimeError(
+                        "500-nm morphology remained infeasible after explicit "
+                        f"constraint restoration at beta={beta:g}; "
+                        f"maximum_constraint_value={max_constraint:.6g}"
+                    )
+                continue
+
+            readiness = continuation_stage_completion(
+                history, beta, NLOPT_CONSTRAINT_TOL, result_code,
+                stage_maximum_evaluations,
+            )
+            if not readiness["ready"]:
+                raise RuntimeError(
+                    "NLopt continuation stage did not return a feasible normal stop: "
+                    f"{readiness['reason']}"
+                )
+
+            if np.isclose(beta, beta_schedule[-1]):
+                final_gate = continuous_final_gate(MAPPING.physical(latent, beta))
+                if not final_gate["passed"]:
+                    final_cleanup_round += 1
+                    restoration_block = 0
+                    emit(
+                        events,
+                        "nlopt_final_binary_cleanup_required",
+                        beta=beta,
+                        final_cleanup_round=final_cleanup_round,
+                        maximum_cleanup_rounds=PURE_CURRENT_MAX_FINAL_CLEANUP_ROUNDS,
+                        final_gate=final_gate,
+                    )
+                    if final_cleanup_round > PURE_CURRENT_MAX_FINAL_CLEANUP_ROUNDS:
+                        raise RuntimeError(
+                            "final beta exhausted explicit binary/500-nm cleanup "
+                            f"rounds: {final_gate}"
+                        )
+                    continue
+            break
+
         checkpoint = raw_root / f"beta_{beta:g}_completed_checkpoint.npz"
         np.savez_compressed(checkpoint, latent=latent, beta=np.asarray(beta))
         manifest.setdefault("stage_checkpoints", {})[f"beta_{beta:g}"] = {
@@ -615,7 +734,9 @@ def main() -> int:
                 nlopt.FTOL_REACHED: "FTOL_REACHED",
                 nlopt.XTOL_REACHED: "XTOL_REACHED",
             }.get(result_code, str(result_code)),
-            "full_physics_evaluations": evaluator.stage_full_physics_evaluations,
+            "full_physics_evaluations": beta_full_physics_evaluations,
+            "restoration_blocks": block_records,
+            "final_cleanup_rounds": final_cleanup_round,
             "terminal_conductance_constraint": False,
             "physical_stage_readiness": readiness,
         }
@@ -625,7 +746,9 @@ def main() -> int:
             "nlopt_stage_complete",
             beta=beta,
             result_code=result_code,
-            evaluations=evaluator.stage_full_physics_evaluations,
+            evaluations=beta_full_physics_evaluations,
+            restoration_blocks=len(block_records) - 1,
+            final_cleanup_rounds=final_cleanup_round,
             physical_stage_readiness=readiness,
             final_terminal_conductance_S=float(
                 final_point.result["terminal_conductance_S"]
@@ -637,10 +760,8 @@ def main() -> int:
         return 0
     final_beta = float(beta)
     final_rho = MAPPING.physical(latent, final_beta)
-    exact, _ = exact_binary_audit(final_rho)
-    if exact["total_bad_cell_count"] != 0 or float(
-        np.mean((final_rho > 0.01) & (final_rho < 0.99))
-    ) >= 0.01:
+    final_gate = continuous_final_gate(final_rho)
+    if not final_gate["passed"]:
         raise RuntimeError("final continuous design did not pass binary/500-nm gates")
     binary = (final_rho >= 0.5).astype(np.float64)
     binary_audit, _ = exact_binary_audit(binary)

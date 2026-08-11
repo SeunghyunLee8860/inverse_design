@@ -183,6 +183,35 @@ def test_pure_current_lumopt_style_fixed_budget_continuation_contract() -> None:
     assert PURE_CURRENT_CONTINUATION_MAX_EVALUATIONS == 20
 
 
+def test_pure_current_infeasible_stage_disables_objective_early_stops() -> None:
+    from photothermal_pte.optimization_runs.tairte4_flake_topology.run_pure_current_ld_mma_optimization import (
+        PURE_CURRENT_NLOPT_FTOL_REL,
+        PURE_CURRENT_NLOPT_XTOL_REL,
+        stage_numerical_tolerances,
+    )
+
+    infeasible = stage_numerical_tolerances(np.asarray([-0.2, 0.1]))
+    assert infeasible == {"ftol_rel": 0.0, "xtol_rel": 0.0}
+    feasible = stage_numerical_tolerances(np.asarray([-0.2, -0.1]))
+    assert feasible == {
+        "ftol_rel": PURE_CURRENT_NLOPT_FTOL_REL,
+        "xtol_rel": PURE_CURRENT_NLOPT_XTOL_REL,
+    }
+
+
+def test_pure_current_final_gate_requires_binary_and_exact_500nm_geometry() -> None:
+    from photothermal_pte.optimization_runs.tairte4_flake_topology.run_pure_current_ld_mma_optimization import (
+        continuous_final_gate,
+    )
+
+    full_solid = np.ones(MAPPING.shape)
+    assert continuous_final_gate(full_solid)["passed"] is True
+    gray = np.full(MAPPING.shape, 0.5)
+    result = continuous_final_gate(gray)
+    assert result["passed"] is False
+    assert result["gray_fraction_0p01_0p99"] == 1.0
+
+
 def test_transient_license_failure_is_narrow_and_fail_closed(tmp_path) -> None:
     from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_optimization import (
         transient_license_failure,
