@@ -71,14 +71,14 @@ PURE_CURRENT_NLOPT_XTOL_REL = 1.0e-9
 # budget.  FTOL remains a normal native-optimizer early-stop criterion; raw
 # callback-to-callback objective changes are not used as a beta gate.
 PURE_CURRENT_NLOPT_FTOL_REL = 1.0e-6
-PURE_CURRENT_BETA_FACTOR = 1.2
+PURE_CURRENT_BETA_FACTOR = 2.0
 PURE_CURRENT_MAX_BETA = 1024.0
 PURE_CURRENT_GRAYSCALE_MAX_EVALUATIONS = MAXIMUM_STAGE_EVALUATIONS
 PURE_CURRENT_CONTINUATION_MAX_EVALUATIONS = 20
 
 
 def lumopt_style_beta_schedule() -> tuple[float, ...]:
-    """Return beta=1 followed by factor-1.2 continuation through 1024.
+    """Return beta=1 followed by user-selected factor-2 continuation to 1024.
 
     Ansys LumOpt separates the initial grayscale phase from fixed-budget
     binarization stages and multiplies beta by a continuation factor.  Keep
@@ -167,7 +167,7 @@ def stage_mma_controls(beta: float) -> dict[str, object]:
 
 
 def morphology_target_cap(beta: float) -> float:
-    """Log-interpolate the existing audited caps for factor-1.2 beta stages."""
+    """Log-interpolate the existing audited caps for continuation beta stages."""
     anchors = np.asarray(sorted(PURE_CURRENT_MORPHOLOGY_TARGET_CAP), dtype=float)
     targets = np.asarray(
         [PURE_CURRENT_MORPHOLOGY_TARGET_CAP[value] for value in anchors], dtype=float
@@ -279,7 +279,7 @@ def main() -> int:
         type=float,
         help=(
             "Explicit first beta for a warm recovery. It must be a member of the "
-            "factor-1.2 continuation schedule."
+            "configured beta-continuation schedule."
         ),
     )
     parser.add_argument(
@@ -432,7 +432,7 @@ def main() -> int:
                 "The prior run's original stop record remains immutable in events/history. "
                 "This fresh native LD_MMA stage intentionally resets unserializable internal "
                 "asymptotes, reuses the last fully evaluated design, and starts the approved "
-                "factor-1.2 beta continuation."
+                "user-selected factor-2 beta continuation."
             ),
             "recovery_validation_raw_result": recovery_validation,
             "recovery_driver_code_provenance": code_provenance,

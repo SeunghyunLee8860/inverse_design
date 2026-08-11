@@ -148,7 +148,7 @@ def test_pure_current_mma_uses_projection_scaled_native_initialization() -> None
     )
 
 
-def test_pure_current_native_ftol_is_tighter_than_its_physical_plateau_gate() -> None:
+def test_pure_current_lumopt_style_fixed_budget_continuation_contract() -> None:
     from photothermal_pte.optimization_runs.tairte4_flake_topology.run_pure_current_ld_mma_optimization import (
         PURE_CURRENT_BETA_FACTOR,
         PURE_CURRENT_BETA_SCHEDULE,
@@ -157,8 +157,8 @@ def test_pure_current_native_ftol_is_tighter_than_its_physical_plateau_gate() ->
     )
 
     assert PURE_CURRENT_NLOPT_FTOL_REL == 1.0e-6
-    assert PURE_CURRENT_BETA_FACTOR == 1.2
-    assert PURE_CURRENT_BETA_SCHEDULE[:3] == (1.0, 1.2, 1.44)
+    assert PURE_CURRENT_BETA_FACTOR == 2.0
+    assert PURE_CURRENT_BETA_SCHEDULE[:3] == (1.0, 2.0, 4.0)
     assert PURE_CURRENT_CONTINUATION_MAX_EVALUATIONS == 20
 
 
@@ -189,20 +189,20 @@ def test_pure_current_beta_promotion_uses_normal_stop_and_feasibility_not_raw_pl
 
     trial_history = [
         {
-            "beta": 1.2,
+            "beta": 2.0,
             "maximum_constraint_value": -0.1,
             "objective_at_reference_power_A": value,
         }
         for value in (1.0e-9, 1.5e-9, 1.1e-9)
     ]
     completed = continuation_stage_completion(
-        trial_history, 1.2, 1.0e-6, nlopt.MAXEVAL_REACHED, 20
+        trial_history, 2.0, 1.0e-6, nlopt.MAXEVAL_REACHED, 20
     )
     assert completed["ready"] is True
     assert completed["raw_trial_objective_plateau_used_as_gate"] is False
     infeasible = [{**trial_history[-1], "maximum_constraint_value": 0.1}]
     assert continuation_stage_completion(
-        infeasible, 1.2, 1.0e-6, nlopt.FTOL_REACHED, 20
+        infeasible, 2.0, 1.0e-6, nlopt.FTOL_REACHED, 20
     )["ready"] is False
 
 

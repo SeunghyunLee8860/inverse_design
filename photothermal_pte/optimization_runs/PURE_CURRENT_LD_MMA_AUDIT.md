@@ -92,11 +92,13 @@ The pure-current driver now uses `max(target, current)`, making the first point
 of each morphology stage feasible. Every JSON/PNG is labelled a
 `full_physics_evaluation`, not an MMA outer iteration.
 
-The continuation now follows the documented Ansys LumOpt pattern: beta=1 is
-the initial grayscale phase, subsequent beta values are multiplied by 1.2,
-and each binarization stage has a fixed budget of 20 full-physics evaluations.
-The beta=1 grayscale budget remains 40 evaluations. A positive NLopt FTOL,
-XTOL, or MAXEVAL stop with a feasible returned design completes the stage.
+The continuation follows the documented Ansys LumOpt pattern: beta=1 is the
+initial grayscale phase and each binarization stage has a fixed budget of 20
+full-physics evaluations. The user selected a factor of 2 rather than the
+commonly used/default LumOpt factor 1.2, so the actual schedule is
+`1, 2, 4, ..., 1024`. The beta=1 grayscale budget remains 40 evaluations. A
+positive NLopt FTOL, XTOL, or MAXEVAL stop with a feasible returned design
+completes the stage.
 The callback history contains trial and repeated CCSA points, not an
 accepted-iterate sequence, so a raw callback-objective plateau is explicitly
 not used as a beta-transition veto. A beta transition may perturb the FOM;
