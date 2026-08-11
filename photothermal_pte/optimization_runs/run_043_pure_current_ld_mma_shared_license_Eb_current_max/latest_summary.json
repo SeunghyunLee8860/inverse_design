@@ -12,11 +12,11 @@
     0.0,
     1.0
   ],
-  "rho_mean": 0.7543006977057569,
+  "rho_mean": 0.7543036531625095,
   "gray_fraction_0p01_0p99": 0.06449082388885448,
-  "binarization_mean_4rho1mrho": 0.0259150270401232,
-  "smooth_solid_constraint": 0.0019814217933316353,
-  "smooth_void_constraint": 0.0017026757138186748,
+  "binarization_mean_4rho1mrho": 0.02592593360391744,
+  "smooth_solid_constraint": 0.0019820409641679933,
+  "smooth_void_constraint": 0.0017031732808639158,
   "exact": {
     "minimum_feature_nm": 500.0,
     "opening_radius_nm": 250.0,
@@ -29,7 +29,7 @@
     "void_bad_cell_count": 78,
     "total_bad_cell_count": 174,
     "counted_entity": "design nodes (legacy field names retain *_cell_count)",
-    "solid_fraction": 0.7531636423690675,
+    "solid_fraction": 0.75312235502983,
     "passed": false
   }
 }
