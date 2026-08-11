@@ -636,5 +636,63 @@
       "fixed_per_iteration_move_limit": null,
       "xtol_rel": 1e-09
     }
+  },
+  {
+    "role": "nlopt_evaluation",
+    "algorithm": "NLopt LD_MMA (pure terminal current; no connectivity constraint)",
+    "nlopt_version": "2.11.0",
+    "evaluation_id": 12,
+    "global_full_physics_evaluation": 12,
+    "stage_full_physics_evaluation": 12,
+    "beta": 1.0,
+    "objective_A": 8.754607214929643e-18,
+    "objective_at_reference_power_A": 1.8040643692428792e-08,
+    "objective_scaled_minimize": -1.8040643692428793,
+    "fixed_source_power_W": 1.3830232993859658e-13,
+    "source_power_relative_change": 0.0,
+    "terminal_conductance_S": 0.013135216559393184,
+    "minimum_terminal_conductance_S": null,
+    "constraint_names": [
+      "500nm_solid_opening",
+      "500nm_void_opening"
+    ],
+    "constraint_values": [
+      -0.9784307982089133,
+      -0.9619432551617669
+    ],
+    "maximum_constraint_value": -0.9619432551617669,
+    "terminal_conductance_constraint_enabled": false,
+    "morphology_caps": [
+      0.008,
+      0.008
+    ],
+    "gray_fraction_0p01_0p99": 1.0,
+    "binarization": 0.8261530435949476,
+    "exact_bad_cells": 18,
+    "rho_mean": 0.5297247079382662,
+    "latent_range": [
+      0.22265741089880395,
+      0.7779291610038974
+    ],
+    "maximum_absolute_step_from_previous_evaluation": 0.08929975489630793,
+    "rms_step_from_previous_evaluation": 0.06312113930601868,
+    "manual_move_limit": null,
+    "used_adam": false,
+    "gradient_direction_normalization": false,
+    "post_update_hard_clipping": false,
+    "symmetry_constraint": false,
+    "volume_constraint": false,
+    "optimizer_controls": {
+      "initial_step": 0.025,
+      "rho_init": 10.0,
+      "always_improve": 1,
+      "inner_gradients": 1,
+      "projection_midpoint_derivative": 1.0819767068693265,
+      "projection_derivative_ratio_to_beta1": 1.0,
+      "target_initial_physical_density_step": 0.025,
+      "base_rho_init_at_beta1": 10.0,
+      "fixed_per_iteration_move_limit": null,
+      "xtol_rel": 1e-09
+    }
   }
 ]
