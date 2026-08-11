@@ -1,7 +1,7 @@
 {
-  "stage_index": 10,
-  "beta": 17.19926784,
-  "dfm_penalty_weight": 184.88425889503645,
+  "stage_index": 14,
+  "beta": 128.0,
+  "dfm_penalty_weight": 10000.0,
   "nlopt_result_code": -5,
   "stage_stop_reason": "adaptive_plateau",
   "adaptive_plateau_diagnostic": {
@@ -14,24 +14,24 @@
     "stage_evaluations_observed": 5,
     "reason": "adaptive_plateau",
     "window_evaluation_ids": [
-      95,
-      96,
-      97,
-      98
+      115,
+      116,
+      117,
+      118
     ],
-    "fom_relative_range": 2.9303020366927397e-05,
-    "rms_step_maximum_observed": 1.770723274607875e-11,
+    "fom_relative_range": 3.280592141125485e-07,
+    "rms_step_maximum_observed": 6.546115805583613e-13,
     "gray_absolute_range": 0.0
   },
   "full_physics_evaluations": 5,
-  "raw_current_at_reference_power_A": 9.306641747899757e-08,
-  "smooth_solid_residual": 0.0016573661773447838,
-  "smooth_void_residual": 0.0021934454912127155,
+  "raw_current_at_reference_power_A": 9.175913912880642e-08,
+  "smooth_solid_residual": 0.001498185777337777,
+  "smooth_void_residual": 0.002202982088296684,
   "final_geometry_gate": {
     "passed": false,
-    "discreteness": 0.9837281198832767,
-    "binarization_mean_4rho1mrho": 0.01627188011672328,
-    "gray_fraction_0p01_0p99": 0.04118412088932929,
+    "discreteness": 0.9982284802693746,
+    "binarization_mean_4rho1mrho": 0.0017715197306253788,
+    "gray_fraction_0p01_0p99": 0.004231952271835842,
     "exact_500nm_audit": {
       "minimum_feature_nm": 500.0,
       "opening_radius_nm": 250.0,
@@ -49,8 +49,8 @@
     }
   },
   "checkpoint": {
-    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_ansys_dfm_Ea_20260811/stage_0010_beta17.1993.npz",
-    "size_bytes": 227397,
-    "sha256": "dbe50580657cfb86a667624d919a54d9f2ada14f2ed61dcbec754a49288f0b1b"
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_ansys_dfm_Ea_20260811/stage_0014_beta128.npz",
+    "size_bytes": 128656,
+    "sha256": "89807c9cfae78ef87b8d64f0869bc5845d79058e32905f76f3f3daeaa6d11d26"
   }
 }

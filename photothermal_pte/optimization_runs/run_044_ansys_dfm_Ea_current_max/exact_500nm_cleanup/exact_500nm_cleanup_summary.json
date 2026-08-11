@@ -1,0 +1,132 @@
+{
+  "schema": "exact-500nm-cleanup-gpu-objective-comparison-v1",
+  "run_label": "run044_Ea",
+  "status": "EXACT_500NM_BINARY_CLEANUP_OBJECTIVE_GATE_UNRESOLVED",
+  "selection_rule": "maximum unrescaled GPU forward objective among globally exact-zero candidates",
+  "selected_order": "void_first",
+  "selected": {
+    "order": "void_first",
+    "exact_bad_before": 193,
+    "exact_bad_after": 0,
+    "changed_node_count": 168,
+    "changed_node_fraction": 0.003468136495943519,
+    "solid_fraction": 0.7073553394851468,
+    "objective_A": 4.368076075454504e-17,
+    "reference_continuous_objective_A": 4.4528073608614785e-17,
+    "relative_objective_change": -0.019028733681975833,
+    "equivalent_current_at_285uW_A": 9.001306645066968e-08,
+    "optical_closure": 0.0007072820656387887,
+    "thermal_residual": 8.861225132672545e-11,
+    "thermal_energy_balance": 1.403420053407044e-12,
+    "electrical_residual": 5.711830708076488e-11,
+    "objective_gate_passed": false,
+    "solver_status": "FAILED_EXACT_BINARY_OBJECTIVE_VALIDATION",
+    "candidate_artifact": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_exact_binary_candidate.npz",
+      "size_bytes": 5457,
+      "sha256": "9e309d47d52ea1d5784bcae9623343b877840cd74684efd27f46490aaa75091f"
+    },
+    "objective_result_artifact": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_Ea_gpu_objective_retry2/binary_objective_result.json",
+      "size_bytes": 4777,
+      "sha256": "6564c6dda47cdcf92c170e7ef7780638011e8a36d4af5a4b989ef9114f4f4e5f"
+    },
+    "raw_field_artifact": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_Ea_gpu_objective_retry2/binary_objective_fields.npz",
+      "size_bytes": 9390039,
+      "sha256": "9174cab0e4441807d32d578a4d88995bb346a5a82b94f02b58b85ab04d84fc25"
+    },
+    "raw_project_artifact": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_Ea_gpu_objective_retry2/exact_binary_forward_Ea.fsp",
+      "size_bytes": 180905109,
+      "sha256": "105d43ed872068b43081581310b6c248d3e83301fd526771f1cbbb32b3800407"
+    }
+  },
+  "candidates": [
+    {
+      "order": "solid_first",
+      "exact_bad_before": 193,
+      "exact_bad_after": 0,
+      "changed_node_count": 166,
+      "changed_node_fraction": 0.003426849156706096,
+      "solid_fraction": 0.706777316735823,
+      "objective_A": 4.3661615082695034e-17,
+      "reference_continuous_objective_A": 4.4528073608614785e-17,
+      "relative_objective_change": -0.019458702245590036,
+      "equivalent_current_at_285uW_A": 8.99736129108799e-08,
+      "optical_closure": 0.0007052706615643848,
+      "thermal_residual": 9.036924864613958e-11,
+      "thermal_energy_balance": 1.4154141532703394e-12,
+      "electrical_residual": 6.872697452345035e-11,
+      "objective_gate_passed": false,
+      "solver_status": "FAILED_EXACT_BINARY_OBJECTIVE_VALIDATION",
+      "candidate_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/solid_first_exact_binary_candidate.npz",
+        "size_bytes": 5457,
+        "sha256": "1b294d4433fccc26c016cd6d4ebe7101b806a45254c3a8bb764e8baf7479c20d"
+      },
+      "objective_result_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/solid_first_Ea_gpu_objective/binary_objective_result.json",
+        "size_bytes": 4758,
+        "sha256": "61341f961706a5f699869938e2e9153a05ffd51090e140fdbfdd930a6af0e716"
+      },
+      "raw_field_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/solid_first_Ea_gpu_objective/binary_objective_fields.npz",
+        "size_bytes": 9387741,
+        "sha256": "03d8dd73f4ef898baf286edb528a3d57f42198a69b565bffe19d61aadc7f6851"
+      },
+      "raw_project_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/solid_first_Ea_gpu_objective/exact_binary_forward_Ea.fsp",
+        "size_bytes": 180905109,
+        "sha256": "d1fef1f9a1ccc0c5fc6fb476bff8b25ffe2c2d636b98e2b956737bf3909236a4"
+      }
+    },
+    {
+      "order": "void_first",
+      "exact_bad_before": 193,
+      "exact_bad_after": 0,
+      "changed_node_count": 168,
+      "changed_node_fraction": 0.003468136495943519,
+      "solid_fraction": 0.7073553394851468,
+      "objective_A": 4.368076075454504e-17,
+      "reference_continuous_objective_A": 4.4528073608614785e-17,
+      "relative_objective_change": -0.019028733681975833,
+      "equivalent_current_at_285uW_A": 9.001306645066968e-08,
+      "optical_closure": 0.0007072820656387887,
+      "thermal_residual": 8.861225132672545e-11,
+      "thermal_energy_balance": 1.403420053407044e-12,
+      "electrical_residual": 5.711830708076488e-11,
+      "objective_gate_passed": false,
+      "solver_status": "FAILED_EXACT_BINARY_OBJECTIVE_VALIDATION",
+      "candidate_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_exact_binary_candidate.npz",
+        "size_bytes": 5457,
+        "sha256": "9e309d47d52ea1d5784bcae9623343b877840cd74684efd27f46490aaa75091f"
+      },
+      "objective_result_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_Ea_gpu_objective_retry2/binary_objective_result.json",
+        "size_bytes": 4777,
+        "sha256": "6564c6dda47cdcf92c170e7ef7780638011e8a36d4af5a4b989ef9114f4f4e5f"
+      },
+      "raw_field_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_Ea_gpu_objective_retry2/binary_objective_fields.npz",
+        "size_bytes": 9390039,
+        "sha256": "9174cab0e4441807d32d578a4d88995bb346a5a82b94f02b58b85ab04d84fc25"
+      },
+      "raw_project_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_Ea_gpu_objective_retry2/exact_binary_forward_Ea.fsp",
+        "size_bytes": 180905109,
+        "sha256": "105d43ed872068b43081581310b6c248d3e83301fd526771f1cbbb32b3800407"
+      }
+    }
+  ],
+  "raw_Q_clipping_smoothing_gain_or_rescaling": false,
+  "CPU_FDTD_fallback": false,
+  "CPU_thermal_linear_solve_fallback": false,
+  "connectivity_cleanup_applied": false,
+  "notes": [
+    "The exact audit is a discrete binary 500 nm opening test on the 100 nm design grid.",
+    "The objective was recomputed by one GPU Maxwell forward solve followed by the certified CUDA thermal/electrical path.",
+    "Raw NPZ and FSP artifacts remain outside Git; paths, sizes and SHA-256 values are retained."
+  ]
+}
