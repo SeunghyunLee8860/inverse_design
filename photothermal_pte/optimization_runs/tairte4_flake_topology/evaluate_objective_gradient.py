@@ -32,6 +32,9 @@ import run_production_combined_adfd_smoke as legacy_combined
 from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
 
 
+RHO_ROUNDOFF_TOLERANCE = 1.0e-12
+
+
 def load_rho(path: Path) -> np.ndarray:
     source = path.expanduser().resolve()
     with np.load(source) as data:
@@ -40,9 +43,17 @@ def load_rho(path: Path) -> np.ndarray:
         rho = np.asarray(data["rho"], dtype=np.float64)
     if rho.shape != CONTRACT.design_node_shape:
         raise RuntimeError(f"rho shape {rho.shape} != {CONTRACT.design_node_shape}")
-    if not np.all(np.isfinite(rho)) or np.any((rho < 0.0) | (rho > 1.0)):
+    if not np.all(np.isfinite(rho)):
         raise RuntimeError("rho must be finite in [0,1]")
-    return rho
+    if np.any(rho < -RHO_ROUNDOFF_TOLERANCE) or np.any(
+        rho > 1.0 + RHO_ROUNDOFF_TOLERANCE
+    ):
+        raise RuntimeError("rho must be finite in [0,1]")
+    # The analytical tanh projection can differ from its mathematical [0,1]
+    # range by one floating-point ulp at high beta (observed: -5.55e-17 at
+    # beta=16). Canonicalize only this bounded roundoff; material densities
+    # outside the explicit tolerance still fail closed above.
+    return np.clip(rho, 0.0, 1.0)
 
 
 def main() -> int:

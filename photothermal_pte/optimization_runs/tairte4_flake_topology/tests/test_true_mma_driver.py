@@ -3,6 +3,7 @@ from pathlib import Path
 
 import nlopt
 import numpy as np
+import pytest
 
 from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_optimization import (
     BINARIZATION_CONTINUATION_TARGET,
@@ -126,7 +127,7 @@ def test_pure_driver_can_activate_500nm_solid_void_constraints_at_beta1() -> Non
 
 def test_pure_current_mma_uses_projection_scaled_native_initialization() -> None:
     from photothermal_pte.optimization_runs.tairte4_flake_topology.run_pure_current_ld_mma_optimization import (
-        feasible_stage_morphology_caps,
+        fixed_stage_morphology_caps,
         stage_mma_controls,
     )
 
@@ -137,15 +138,35 @@ def test_pure_current_mma_uses_projection_scaled_native_initialization() -> None
     assert np.isclose(beta1["xtol_rel"], 1.0e-9)
     assert beta8["initial_step"] < beta1["initial_step"]
     assert beta8["rho_init"] > beta1["rho_init"]
-    # The incoming beta=8 point is feasible rather than forcibly tightened.
+    # The cap is the fixed physical target, not the current residual. Starting
+    # infeasible is intentional: LD_MMA must actually reduce the violation.
     assert np.allclose(
-        feasible_stage_morphology_caps(np.asarray([4.0e-3, 1.0e-4]), 8.0),
-        [4.0e-3, 2.0e-3],
+        fixed_stage_morphology_caps(np.asarray([4.0e-3, 1.0e-4]), 8.0),
+        [2.0e-3, 2.0e-3],
     )
     assert np.allclose(
-        feasible_stage_morphology_caps(np.asarray([1.0e-3, 1.0e-4]), 1.0),
+        fixed_stage_morphology_caps(np.asarray([1.0e-3, 1.0e-4]), 1.0),
         [8.0e-3, 8.0e-3],
     )
+
+
+def test_density_loader_canonicalizes_only_machine_roundoff(tmp_path) -> None:
+    from photothermal_pte.optimization_runs.tairte4_flake_topology.evaluate_objective_gradient import (
+        load_rho,
+    )
+
+    rho = np.full(MAPPING.shape, 0.5)
+    rho[0, 0] = -5.551115123125783e-17
+    path = tmp_path / "roundoff.npz"
+    np.savez_compressed(path, rho=rho)
+    loaded = load_rho(path)
+    assert loaded[0, 0] == 0.0
+
+    rho[0, 0] = -1.0e-8
+    path = tmp_path / "physical_violation.npz"
+    np.savez_compressed(path, rho=rho)
+    with pytest.raises(RuntimeError, match=r"rho must be finite in \[0,1\]"):
+        load_rho(path)
 
 
 def test_pure_current_lumopt_style_fixed_budget_continuation_contract() -> None:

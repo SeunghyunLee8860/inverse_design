@@ -110,6 +110,23 @@ def lumopt_style_beta_promotion_policy() -> dict[str, object]:
     }
 
 
+def fixed_morphology_cap_policy() -> dict[str, object]:
+    """Describe the constraint contract independently of run history."""
+    return {
+        "kind": "fixed_absolute_smooth_opening_residual_cap",
+        "minimum_feature_nm": 500.0,
+        "solid_and_void_constraints": True,
+        "stage_entry_may_be_infeasible": True,
+        "current_residual_may_relax_cap": False,
+        "beta_targets": {
+            f"{beta:g}": morphology_target_cap(beta)
+            for beta in PURE_CURRENT_BETA_SCHEDULE
+        },
+        "beta_may_advance_only_if_smooth_constraints_feasible": True,
+        "final_exact_bad_nodes_required": 0,
+    }
+
+
 def midpoint_projection_derivative(beta: float) -> float:
     """Return d(projected density)/d(filtered latent) at rho=0.5."""
     return beta / (2.0 * tanh(0.5 * beta))
@@ -183,19 +200,23 @@ def morphology_target_cap(beta: float) -> float:
     )
 
 
-def feasible_stage_morphology_caps(values: np.ndarray, beta: float) -> np.ndarray:
-    """Enter each morphology stage feasible, without an instantaneous 10% cut.
+def fixed_stage_morphology_caps(values: np.ndarray, beta: float) -> np.ndarray:
+    """Return the absolute 500-nm residual target for one beta stage.
 
-    The older continuation used max(target, 0.9 * current), deliberately
-    placing a newly reprojected design about 11.1% outside the new cap when
-    its residual exceeded the target.  Here the entry cap is the current
-    residual or the absolute target, whichever is larger.  This guarantees
-    that a beta change, projection change, and newly active constraints are
-    not introduced as one forced-infeasible transition.
+    A cap selected as ``max(target, current)`` makes every newly projected
+    design feasible by construction and therefore enforces only
+    non-worsening.  That policy left the exact audit fixed at 360 bad nodes.
+    Native LD_MMA is allowed to enter a stage infeasible and must reduce both
+    residuals to the recorded absolute target before beta can advance.
+    ``values`` is retained for input validation and audit symmetry.
     """
+    values = np.asarray(values, dtype=float)
+    if values.shape != (2,) or not np.all(np.isfinite(values)):
+        raise ValueError("morphology residuals must be two finite values")
     if beta < PURE_CURRENT_MORPHOLOGY_START_BETA:
         return np.asarray([np.inf, np.inf])
-    return np.maximum(morphology_target_cap(beta), np.asarray(values, dtype=float))
+    target = morphology_target_cap(beta)
+    return np.asarray([target, target], dtype=float)
 
 
 def continuation_stage_completion(
@@ -259,6 +280,7 @@ def pure_current_manifest(
         "note": "LD_MMA, not this driver, adapts all later asymptotes.",
     }
     manifest["beta_promotion_policy"] = lumopt_style_beta_promotion_policy()
+    manifest["morphology_cap_policy"] = fixed_morphology_cap_policy()
     manifest["optimizer_code_provenance"] = code_provenance
     return manifest
 
@@ -389,6 +411,18 @@ def main() -> int:
                 "replacement_policy": replacement_beta_policy,
             })
         manifest["beta_promotion_policy"] = replacement_beta_policy
+        prior_morphology_policy = manifest.get("morphology_cap_policy")
+        replacement_morphology_policy = fixed_morphology_cap_policy()
+        if prior_morphology_policy != replacement_morphology_policy:
+            manifest.setdefault("morphology_policy_revisions", []).append({
+                "reason": (
+                    "The prior max(target,current) cap held exact violations at "
+                    "360 nodes; replace it with the fixed absolute beta target."
+                ),
+                "prior_policy": prior_morphology_policy,
+                "replacement_policy": replacement_morphology_policy,
+            })
+        manifest["morphology_cap_policy"] = replacement_morphology_policy
         try:
             evaluation_counter = max(int(row["evaluation_id"]) for row in history)
             global_evaluation = max(
@@ -470,7 +504,7 @@ def main() -> int:
         if args.maximum_beta_stages and completed_beta_stages >= args.maximum_beta_stages:
             break
         stage_summary, _ = metrics(latent, beta, device=args.constraint_device)
-        caps = feasible_stage_morphology_caps(
+        caps = fixed_stage_morphology_caps(
             np.asarray([
                 stage_summary["smooth_solid_constraint"],
                 stage_summary["smooth_void_constraint"],

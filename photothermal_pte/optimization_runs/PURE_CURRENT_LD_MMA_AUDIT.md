@@ -86,11 +86,19 @@ control of every subsequent moving asymptote. The `rho_init` scale is a
 conservative CCSA prior, not a claimed Hessian measurement; no AD-FD check is
 run as part of this optimizer correction.
 
-The former morphology continuation opened beta=8 at
-`max(target, 0.9 * current)`, which can make the incoming point 11.1% infeasible.
-The pure-current driver now uses `max(target, current)`, making the first point
-of each morphology stage feasible. Every JSON/PNG is labelled a
-`full_physics_evaluation`, not an MMA outer iteration.
+The former recovery policy used `max(target, current)` as the morphology cap.
+That made every beta-stage entry feasible by construction, but it only
+prevented the smooth residual from becoming worse; it did not enforce the
+500 nm target. Run043 consequently retained 223 solid and 137 void bad nodes
+through evaluation 48. The corrected recovery uses the fixed absolute target
+for each beta and permits LD_MMA to start infeasible. Beta cannot advance until
+both normalized morphology inequalities are feasible. Every JSON/PNG is
+labelled a `full_physics_evaluation`, not an MMA outer iteration.
+
+At beta=16 the analytical projection produced `rho=-5.55e-17` at 191 nodes.
+This is one-ulp floating-point roundoff, not a negative material density. The
+loader now canonicalizes values within `1e-12` of [0,1], while larger violations
+and all NaN/Inf values still fail closed.
 
 The continuation follows the documented Ansys LumOpt pattern: beta=1 is the
 initial grayscale phase and each binarization stage has a fixed budget of 20
