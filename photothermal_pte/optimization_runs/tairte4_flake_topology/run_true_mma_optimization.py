@@ -129,6 +129,35 @@ def verify_file(path: Path, expected: str) -> Path:
     return resolved
 
 
+TRANSIENT_LICENSE_MARKERS = (
+    "insufficient flexnet publisher license count",
+    "flexnet licensing error: -4",
+    "license number of users already reached",
+    "cannot connect to license server system",
+    "license server machine is down or not responding",
+    "licensed number of users already reached",
+)
+
+
+def transient_license_failure(output: Path) -> tuple[bool, list[str]]:
+    """Identify only retryable FlexNet failures from one solver evaluation."""
+    matched: set[str] = set()
+    if not output.exists():
+        return False, []
+    for path in output.rglob("*"):
+        if not path.is_file() or path.suffix.lower() not in {".log", ".txt", ".json"}:
+            continue
+        try:
+            with path.open("rb") as stream:
+                text = stream.read(2_000_000).decode("utf-8", errors="replace").lower()
+        except OSError:
+            continue
+        for marker in TRANSIENT_LICENSE_MARKERS:
+            if marker in text:
+                matched.add(marker)
+    return bool(matched), sorted(matched)
+
+
 def evaluate(
     rho: np.ndarray,
     *,
@@ -175,21 +204,53 @@ def evaluate(
     ]
     environment = dict(os.environ)
     environment["CUDA_VISIBLE_DEVICES"] = str(gpu)
-    emit(events, "evaluation_start", output=str(output), command=command)
-    completed = subprocess.run(command, cwd=REPOSITORY, env=environment)
-    result_path = output / "objective_gradient_result.json"
-    if not result_path.is_file():
-        raise RuntimeError(f"evaluation produced no result: {output}")
-    result = json.loads(result_path.read_text())
-    emit(
-        events,
-        "evaluation_end",
-        output=str(output),
-        returncode=completed.returncode,
-        status=result.get("status"),
-    )
-    if completed.returncode or not result.get("passed"):
-        raise RuntimeError(f"solver evaluation failed closed: {result_path}")
+    retry_seconds = float(os.environ.get("LUMERICAL_LICENSE_RETRY_SECONDS", "30"))
+    if retry_seconds <= 0.0:
+        raise RuntimeError("LUMERICAL_LICENSE_RETRY_SECONDS must be positive")
+    attempt = 1
+    while True:
+        emit(
+            events,
+            "evaluation_start",
+            output=str(output),
+            command=command,
+            solver_attempt=attempt,
+        )
+        completed = subprocess.run(command, cwd=REPOSITORY, env=environment)
+        result_path = output / "objective_gradient_result.json"
+        result = json.loads(result_path.read_text()) if result_path.is_file() else None
+        emit(
+            events,
+            "evaluation_end",
+            output=str(output),
+            returncode=completed.returncode,
+            status=(result or {}).get("status"),
+            solver_attempt=attempt,
+        )
+        if completed.returncode == 0 and result is not None and result.get("passed"):
+            break
+        retryable, markers = transient_license_failure(output)
+        if not retryable:
+            if result is None:
+                raise RuntimeError(f"evaluation produced no result: {output}")
+            raise RuntimeError(f"solver evaluation failed closed: {result_path}")
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+        archived = output.with_name(
+            f"{output.name}_license_retry_attempt{attempt:04d}_{stamp}"
+        )
+        output.rename(archived)
+        emit(
+            events,
+            "transient_license_failure_waiting",
+            output=str(output),
+            archive=str(archived),
+            solver_attempt=attempt,
+            matched_markers=markers,
+            retry_after_seconds=retry_seconds,
+            optimizer_parent_state_preserved=True,
+        )
+        time.sleep(retry_seconds)
+        attempt += 1
     raw_path = Path(result["raw_artifact"]["path"])
     if sha256(raw_path) != result["raw_artifact"]["sha256"]:
         raise RuntimeError("objective-gradient raw artifact SHA mismatch")

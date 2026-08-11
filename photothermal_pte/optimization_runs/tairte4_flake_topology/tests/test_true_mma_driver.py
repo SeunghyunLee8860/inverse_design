@@ -156,6 +156,26 @@ def test_pure_current_native_ftol_is_tighter_than_its_physical_plateau_gate() ->
     assert PURE_CURRENT_NLOPT_FTOL_REL < STAGE_PLATEAU_RELATIVE_CHANGE
 
 
+def test_transient_license_failure_is_narrow_and_fail_closed(tmp_path) -> None:
+    from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_optimization import (
+        transient_license_failure,
+    )
+
+    output = tmp_path / "evaluation"
+    output.mkdir()
+    (output / "fdtd.log").write_text(
+        "Insufficient FlexNet Publisher license count of lum_fdtd_solve"
+    )
+    retryable, markers = transient_license_failure(output)
+    assert retryable
+    assert "insufficient flexnet publisher license count" in markers
+
+    (output / "fdtd.log").write_text("Maxwell energy-closure gate failed")
+    retryable, markers = transient_license_failure(output)
+    assert not retryable
+    assert markers == []
+
+
 def test_pure_current_beta_promotion_requires_physical_plateau() -> None:
     from photothermal_pte.optimization_runs.tairte4_flake_topology.run_pure_current_ld_mma_optimization import (
         physical_stage_readiness,

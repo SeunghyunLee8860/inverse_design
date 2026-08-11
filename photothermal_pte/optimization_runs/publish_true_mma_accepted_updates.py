@@ -36,6 +36,8 @@ DIRECTORIES = (
     REPOSITORY / "photothermal_pte/optimization_runs/run_037_pure_current_ld_mma_morphology_from_beta1_Eb_current_max",
     REPOSITORY / "photothermal_pte/optimization_runs/run_038_pure_current_ld_mma_tight_ftol_Eb_current_max",
     REPOSITORY / "photothermal_pte/optimization_runs/run_040_pure_current_ld_mma_gpu5_Eb_current_max",
+    REPOSITORY / "photothermal_pte/optimization_runs/run_041_pure_current_ld_mma_reserved_Eb_current_max",
+    REPOSITORY / "photothermal_pte/optimization_runs/run_042_pure_current_ld_mma_guarded_Eb_current_max",
 )
 STATUSES = (
     REPOSITORY / "photothermal_pte/optimization_runs/TRUE_MMA_DUAL_RUN_STATUS.json",
