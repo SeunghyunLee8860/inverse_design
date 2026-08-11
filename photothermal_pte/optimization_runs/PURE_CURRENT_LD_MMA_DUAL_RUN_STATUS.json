@@ -1,7 +1,7 @@
 {
   "schema": "pure-terminal-current-nlopt-ld-mma-dual-supervisor-v1",
-  "generated_at_utc": "2026-08-11T00:28:36.987449+00:00",
-  "status": "RUNNING_PURE_CURRENT_NLOPT_LD_MMA",
+  "generated_at_utc": "2026-08-11T00:40:47.298872+00:00",
+  "status": "BLOCKED_PURE_CURRENT_NLOPT_LD_MMA_RUN",
   "gpu": 0,
   "algorithm": "NLopt LD_MMA",
   "objective": "signed full-flake terminal PTE current",
@@ -14,32 +14,5 @@
   "manual_move_limit": null,
   "run": "Run036",
   "polarization": "Ea",
-  "native_ld_mma_warm_restart": true,
-  "recovery_append": true,
-  "command": [
-    "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python",
-    "-m",
-    "photothermal_pte.optimization_runs.tairte4_flake_topology.run_pure_current_ld_mma_optimization",
-    "--polarization",
-    "Ea",
-    "--raw-root",
-    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810",
-    "--published-dir",
-    "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/run_036_pure_current_ld_mma_morphology_from_beta1_Ea_current_max",
-    "--gpu",
-    "0",
-    "--base-fsp",
-    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_uniform_rho0p5_Ea_forward_retry_20260810/tairte4_flake_forward_Ea.fsp",
-    "--base-sha256",
-    "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83",
-    "--jacobian-dir",
-    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_component_yee_jacobian_retry_20260810",
-    "--constraint-device",
-    "cuda:0",
-    "--initial-latent-npz",
-    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0012_beta1_pure_current_ld_mma_latent.npz",
-    "--recovery-append",
-    "--recovery-validation-result",
-    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run036_pure_current_ld_mma_morphology_from_beta1_Ea_20260810/evaluation_0012_retry1_beta1_pure_current_ld_mma/objective_gradient_result.json"
-  ]
+  "returncode": 1
 }
