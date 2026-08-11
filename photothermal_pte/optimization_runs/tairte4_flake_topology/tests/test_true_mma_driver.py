@@ -149,8 +149,13 @@ def test_ansys_style_beta_and_dfm_penalty_contract() -> None:
     assert schedule[0] == 1.0
     assert np.allclose(np.asarray(schedule[1:-1]) / np.asarray(schedule[:-2]), BETA_FACTOR)
     assert schedule[-1] == 128.0
-    assert dfm_penalty_weight(DFM_ACTIVATION_BETA) == 0.0
-    assert dfm_penalty_weight(16.0) == 1600.0
+    assert beta_sequence(8.5)[:4] == (8.5, 17.0, 34.0, 68.0)
+    assert dfm_penalty_weight(2.0) == 0.0
+    assert dfm_penalty_weight(DFM_ACTIVATION_BETA) == 10.0
+    assert dfm_penalty_weight(8.0) == 40.0
+    assert dfm_penalty_weight(16.0) == 160.0
+    assert dfm_penalty_weight(32.0) == 640.0
+    assert dfm_penalty_weight(64.0) == 2560.0
     assert dfm_penalty_weight(128.0) == 1.0e4
 
 

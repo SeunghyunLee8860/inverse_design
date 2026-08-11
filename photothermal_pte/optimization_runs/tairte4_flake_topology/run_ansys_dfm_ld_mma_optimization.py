@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Ansys-style beta continuation for pure terminal-PTE-current LD_MMA.
+"""Audited beta continuation for pure terminal-PTE-current LD_MMA.
 
-The fabrication term follows the v261 LumOpt continuation contract: a
-grayscale phase at beta=1, beta multiplication by 1.2, a bounded continuation
-budget with an audited plateau exit, and a DFM penalty that activates smoothly
-above beta=12.  Unlike the
+The fabrication term follows the v261 LumOpt continuation pattern: a
+grayscale phase at beta=1, multiplicative beta continuation, a bounded
+continuation budget with an audited plateau exit, and a DFM penalty that grows
+smoothly with projection strength.  This production contract uses a factor of
+two so that a converged beta stage is not repeatedly re-solved.  Unlike the
 superseded fixed-cap driver, this implementation has no late constraint-
 restoration loop.  Raw current and the fabrication penalty remain separately
 auditable at every full-physics evaluation.
@@ -49,12 +50,13 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_opti
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[2]
-SCHEMA = "ansys-v261-style-dfm-pure-current-ld-mma-v2"
-BETA_FACTOR = 1.2
+SCHEMA = "ansys-v261-style-dfm-pure-current-ld-mma-v3"
+BETA_FACTOR = 2.0
 MAXIMUM_BETA = 128.0
 GRAYSCALE_EVALUATIONS = 40
 CONTINUATION_EVALUATIONS = 20
-DFM_ACTIVATION_BETA = 12.0
+DFM_ACTIVATION_BETA = 4.0
+DFM_PENALTY_AT_ACTIVATION = 10.0
 DFM_PENALTY_MAXIMUM = 1.0e4
 FINAL_DISCRETENESS_MINIMUM = 0.99
 FINAL_GRAY_FRACTION_MAXIMUM = 0.01
@@ -144,20 +146,24 @@ class AdaptiveStageEvaluator(StageEvaluator):
         return value
 
 
-def beta_sequence() -> tuple[float, ...]:
-    values = [1.0]
+def beta_sequence(start_beta: float = 1.0) -> tuple[float, ...]:
+    """Return a factor-two continuation beginning at any audited checkpoint."""
+    if not np.isfinite(start_beta) or not 0.0 < start_beta <= MAXIMUM_BETA:
+        raise ValueError("start beta must be finite and in (0, maximum beta]")
+    values = [float(start_beta)]
     while values[-1] < MAXIMUM_BETA:
         values.append(float(f"{min(MAXIMUM_BETA, values[-1] * BETA_FACTOR):.12g}"))
     return tuple(values)
 
 
 def dfm_penalty_weight(beta: float) -> float:
-    """Match the fabrication penalty scaling shipped with Ansys v261 LumOpt."""
-    if beta <= DFM_ACTIVATION_BETA:
+    """Increase minimum-feature pressure gradually with projection strength."""
+    if beta < DFM_ACTIVATION_BETA:
         return 0.0
     return float(
         min(
-            100.0 * (beta - DFM_ACTIVATION_BETA) ** 2,
+            DFM_PENALTY_AT_ACTIVATION
+            * (beta / DFM_ACTIVATION_BETA) ** 2,
             DFM_PENALTY_MAXIMUM,
         )
     )
@@ -312,7 +318,7 @@ def main() -> int:
             "dfm_penalty": {
                 "minimum_feature_nm": 500.0,
                 "activation_beta": DFM_ACTIVATION_BETA,
-                "formula": "min(100*(beta-12)^2,1e4)",
+                "formula": "min(10*(beta/4)^2,1e4)",
                 "maximum": DFM_PENALTY_MAXIMUM,
                 "hard_inequality_restoration_loop": False,
             },
@@ -336,13 +342,26 @@ def main() -> int:
             }
         )
     manifest["schema"] = SCHEMA
-    manifest.setdefault("beta_continuation", {})["adaptive_plateau"] = {
+    manifest.setdefault("beta_continuation", {}).update({
+        "factor": BETA_FACTOR,
+        "maximum_beta": MAXIMUM_BETA,
+    })
+    manifest["beta_continuation"]["adaptive_plateau"] = {
         "enabled": True,
         "minimum_evaluations": PLATEAU_MINIMUM_EVALUATIONS,
         "window_evaluations": PLATEAU_WINDOW_EVALUATIONS,
         "fom_relative_range_maximum": PLATEAU_FOM_RELATIVE_RANGE_MAXIMUM,
         "rms_step_maximum": PLATEAU_RMS_STEP_MAXIMUM,
         "gray_absolute_range_maximum": PLATEAU_GRAY_ABSOLUTE_RANGE_MAXIMUM,
+    }
+    manifest["dfm_penalty"] = {
+        "minimum_feature_nm": 500.0,
+        "activation_beta": DFM_ACTIVATION_BETA,
+        "weight_at_activation": DFM_PENALTY_AT_ACTIVATION,
+        "formula": "min(10*(beta/4)^2,1e4)",
+        "maximum": DFM_PENALTY_MAXIMUM,
+        "hard_inequality_restoration_loop": False,
+        "interpretation": "soft differentiable solid/void feature pressure strengthened with beta",
     }
     write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
     emit(
@@ -369,15 +388,12 @@ def main() -> int:
         completed_stages = 0
     final_point = None
     final_beta = 1.0
-    schedule = beta_sequence()
     if args.start_beta is None:
         start_beta = float(history[-1]["beta"]) if history else 1.0
     else:
         start_beta = float(args.start_beta)
-    matches = np.flatnonzero(np.isclose(schedule, start_beta, rtol=0.0, atol=1.0e-10))
-    if matches.size != 1:
-        raise RuntimeError(f"start beta {start_beta} is not in the continuation schedule")
-    schedule_index = int(matches[0])
+    schedule = beta_sequence(start_beta)
+    schedule_index = 0
     first_recovery_stage = bool(args.recovery_append)
 
     while True:
