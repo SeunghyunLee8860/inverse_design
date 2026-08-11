@@ -1123,6 +1123,28 @@
         "size_bytes": 106358,
         "sha256": "3d00c0e66fc262a1fa0034f9c70386554ddfd1566b91d26fbc372b12dc9c81cf"
       }
+    },
+    "0051": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0051_beta8_pure_current_ld_mma_recovery2/objective_gradient_result.json",
+        "size_bytes": 11091,
+        "sha256": "bc83c5144ebc358586d7e21044f4aeba6480e4ba213a288f57baa29a4d415e2b"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0051_beta8_pure_current_ld_mma_recovery2/objective_gradient.npz",
+        "size_bytes": 2113575,
+        "sha256": "9c1b09157d82f72680d34e1b40f7b14d6f825f38a173201edd68993b710e940e"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0051_beta8_pure_current_ld_mma_recovery2/forward_Eb.fsp",
+        "size_bytes": 180903623,
+        "sha256": "8906c4ae421643675fec7abbd04c115e4bc019cf781d4cb8fe25dc45eeffec23"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0051_beta8_pure_current_ld_mma_recovery2_latent.npz",
+        "size_bytes": 106358,
+        "sha256": "3d00c0e66fc262a1fa0034f9c70386554ddfd1566b91d26fbc372b12dc9c81cf"
+      }
     }
   },
   "active_constraints": {
@@ -1147,7 +1169,11 @@
     "maximum_beta": 1024.0,
     "raw_trial_objective_plateau_used_as_gate": false,
     "normal_NLopt_early_stop_promotes_beta": true,
-    "active_constraints_must_be_feasible": true
+    "active_constraints_must_be_feasible": true,
+    "infeasible_block_continues_same_beta": true,
+    "maximum_constraint_restoration_blocks": 12,
+    "final_exact_cleanup_at_maximum_beta": true,
+    "maximum_final_cleanup_rounds": 8
   },
   "optimizer_code_provenance": {
     "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/PURE_CURRENT_LD_MMA_CODE_MANIFEST.json",
@@ -1207,6 +1233,35 @@
         "raw_trial_objective_plateau_used_as_gate": false,
         "normal_NLopt_early_stop_promotes_beta": true,
         "active_constraints_must_be_feasible": true
+      }
+    },
+    {
+      "reason": "Replace the invalid raw-callback plateau veto with the approved Ansys LumOpt-style fixed-budget beta continuation.",
+      "prior_policy": {
+        "kind": "Ansys-LumOpt-style fixed-budget continuation",
+        "initial_grayscale_beta": 1.0,
+        "initial_grayscale_max_evaluations": 40,
+        "beta_factor": 2.0,
+        "continuation_max_evaluations_per_beta": 20,
+        "maximum_beta": 1024.0,
+        "raw_trial_objective_plateau_used_as_gate": false,
+        "normal_NLopt_early_stop_promotes_beta": true,
+        "active_constraints_must_be_feasible": true
+      },
+      "replacement_policy": {
+        "kind": "Ansys-LumOpt-style fixed-budget continuation",
+        "initial_grayscale_beta": 1.0,
+        "initial_grayscale_max_evaluations": 40,
+        "beta_factor": 2.0,
+        "continuation_max_evaluations_per_beta": 20,
+        "maximum_beta": 1024.0,
+        "raw_trial_objective_plateau_used_as_gate": false,
+        "normal_NLopt_early_stop_promotes_beta": true,
+        "active_constraints_must_be_feasible": true,
+        "infeasible_block_continues_same_beta": true,
+        "maximum_constraint_restoration_blocks": 12,
+        "final_exact_cleanup_at_maximum_beta": true,
+        "maximum_final_cleanup_rounds": 8
       }
     }
   ],
@@ -1280,6 +1335,32 @@
         "sha256": "310e2669225cd97dc6f80bd9111a8703dd206a97f18ff7481054fdcb17155ffc",
         "source_sha256": {
           "photothermal_pte/optimization_runs/tairte4_flake_topology/run_pure_current_ld_mma_optimization.py": "e479b9ac70830da7923e99f28632f78474eb32c90d42b977364c27ca87d93678",
+          "photothermal_pte/optimization_runs/tairte4_flake_topology/evaluate_objective_gradient.py": "0aa529a2181792e60d19bed0ee1a11415deba98fa296a89d5238b08d6241f6ba",
+          "photothermal_pte/optimization_runs/tairte4_flake_topology/run_nlopt_mma_optimization.py": "f2fc337d0965498c741ed1662321ecb85e0cc76379cbb22e7d5a4da2b7ebe379",
+          "photothermal_pte/optimization_runs/tairte4_flake_topology/run_true_mma_optimization.py": "f56748fe9ad5d872533877072b1ac9739260de91a9731246f1e431cc60546109",
+          "photothermal_pte/optimization_runs/run_pure_current_ld_mma_dual_supervisor.py": "8280db34fc68eda08ea4c95687a1a157892829af555ad1df8556de67560749ce"
+        }
+      }
+    },
+    {
+      "kind": "native_LD_MMA_recovery_append",
+      "prior_evaluations": 50,
+      "next_published_evaluation_id": 51,
+      "start_beta": 8.0,
+      "initialization": {
+        "kind": "native_LD_MMA_warm_restart",
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run043_pure_current_ld_mma_shared_license_Eb_20260811/evaluation_0050_beta8_pure_current_ld_mma_recovery2_latent.npz",
+        "size_bytes": 106358,
+        "sha256": "3d00c0e66fc262a1fa0034f9c70386554ddfd1566b91d26fbc372b12dc9c81cf",
+        "note": "NLopt internal asymptotes are intentionally reset; this is a fresh native LD_MMA stage initialized at a fully evaluated physical design."
+      },
+      "reason": "The prior run's original stop record remains immutable in events/history. This fresh native LD_MMA stage intentionally resets unserializable internal asymptotes, reuses the last fully evaluated design, and starts the approved user-selected factor-2 beta continuation.",
+      "recovery_validation_raw_result": null,
+      "recovery_driver_code_provenance": {
+        "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/PURE_CURRENT_LD_MMA_CODE_MANIFEST.json",
+        "sha256": "82b34a61c2d4585d205c03c42c6dfa577b6f1fbfbce0749b77af03de8bf65a6e",
+        "source_sha256": {
+          "photothermal_pte/optimization_runs/tairte4_flake_topology/run_pure_current_ld_mma_optimization.py": "b92dba11f633b047fcfe9ba6dd6941206ae1a36d417e09d3a467dce0b54beae1",
           "photothermal_pte/optimization_runs/tairte4_flake_topology/evaluate_objective_gradient.py": "0aa529a2181792e60d19bed0ee1a11415deba98fa296a89d5238b08d6241f6ba",
           "photothermal_pte/optimization_runs/tairte4_flake_topology/run_nlopt_mma_optimization.py": "f2fc337d0965498c741ed1662321ecb85e0cc76379cbb22e7d5a4da2b7ebe379",
           "photothermal_pte/optimization_runs/tairte4_flake_topology/run_true_mma_optimization.py": "f56748fe9ad5d872533877072b1ac9739260de91a9731246f1e431cc60546109",
@@ -1370,6 +1451,55 @@
         "beta_may_advance_only_if_smooth_constraints_feasible": true,
         "final_exact_bad_nodes_required": 0
       }
+    },
+    {
+      "reason": "The prior max(target,current) cap held exact violations at 360 nodes; replace it with the fixed absolute beta target.",
+      "prior_policy": {
+        "kind": "fixed_absolute_smooth_opening_residual_cap",
+        "minimum_feature_nm": 500.0,
+        "solid_and_void_constraints": true,
+        "stage_entry_may_be_infeasible": true,
+        "current_residual_may_relax_cap": false,
+        "beta_targets": {
+          "1": 0.008,
+          "2": 0.005000000000000002,
+          "4": 0.002999999999999999,
+          "8": 0.0020000000000000005,
+          "16": 0.0010000000000000002,
+          "32": 0.0005000000000000001,
+          "64": 0.00019999999999999985,
+          "128": 0.0001,
+          "256": 5e-05,
+          "512": 2.5e-05,
+          "1024": 1.25e-05
+        },
+        "beta_may_advance_only_if_smooth_constraints_feasible": true,
+        "final_exact_bad_nodes_required": 0
+      },
+      "replacement_policy": {
+        "kind": "fixed_absolute_smooth_opening_residual_cap",
+        "minimum_feature_nm": 500.0,
+        "solid_and_void_constraints": true,
+        "stage_entry_may_be_infeasible": true,
+        "current_residual_may_relax_cap": false,
+        "beta_targets": {
+          "1": 0.008,
+          "2": 0.005000000000000002,
+          "4": 0.002999999999999999,
+          "8": 0.0020000000000000005,
+          "16": 0.0010000000000000002,
+          "32": 0.0005000000000000001,
+          "64": 0.00019999999999999985,
+          "128": 0.0001,
+          "256": 5e-05,
+          "512": 2.5e-05,
+          "1024": 1.25e-05
+        },
+        "beta_may_advance_only_if_smooth_constraints_feasible": true,
+        "final_exact_bad_nodes_required": 0,
+        "final_gray_fraction_limit": 0.01,
+        "final_cleanup_cap_factor_per_round": 0.5
+      }
     }
   ],
   "morphology_cap_policy": {
@@ -1392,6 +1522,8 @@
       "1024": 1.25e-05
     },
     "beta_may_advance_only_if_smooth_constraints_feasible": true,
-    "final_exact_bad_nodes_required": 0
+    "final_exact_bad_nodes_required": 0,
+    "final_gray_fraction_limit": 0.01,
+    "final_cleanup_cap_factor_per_round": 0.5
   }
 }
