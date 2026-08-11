@@ -1,0 +1,86 @@
+{
+  "schema": "pure-terminal-current-nlopt-ld-mma-raw-artifact-manifest-v1",
+  "raw_artifacts_committed_to_git": false,
+  "optimizer": {
+    "library": "NLopt",
+    "version": "2.11.0",
+    "algorithm": "LD_MMA",
+    "manual_move_limit": null,
+    "custom_mma_update_used": false,
+    "objective": "signed full-flake terminal PTE current",
+    "terminal_conductance_constraint": false,
+    "terminal_conductance_role": "diagnostic_only",
+    "symmetry_constraint": false,
+    "volume_constraint": false
+  },
+  "base_FSP": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_uniform_rho0p5_Ea_forward_retry_20260810/tairte4_flake_forward_Ea.fsp",
+    "size_bytes": 159871532,
+    "sha256": "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83"
+  },
+  "component_Yee_Jacobian": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_component_yee_jacobian_retry_20260810",
+    "certificate": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run012_component_yee_jacobian_retry_20260810/component_yee_jacobian_result.json",
+    "certificate_sha256": "9222716ca4b67dd611da27bbb6bb72849a77882e1d9b9c1206d89a8305ff407d"
+  },
+  "evaluations": {
+    "0001": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run040_pure_current_ld_mma_gpu5_Eb_20260811/evaluation_0001_beta1_pure_current_ld_mma/objective_gradient_result.json",
+        "size_bytes": 10954,
+        "sha256": "76ca720fe6b77a322fd219908f0ecab2e56f50cb1fac94bb829c26f20fdcf5d0"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run040_pure_current_ld_mma_gpu5_Eb_20260811/evaluation_0001_beta1_pure_current_ld_mma/objective_gradient.npz",
+        "size_bytes": 2157875,
+        "sha256": "3560aa71cf4d028d7f4d6cde7c071f92ec2139ec5fc28887fc2d7afdbc9f0d51"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run040_pure_current_ld_mma_gpu5_Eb_20260811/evaluation_0001_beta1_pure_current_ld_mma/forward_Eb.fsp",
+        "size_bytes": 180903575,
+        "sha256": "e09825fd376a47845eb630827a1afa7b52ca4847b80bf0f41d4431ca5e02d432"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run040_pure_current_ld_mma_gpu5_Eb_20260811/evaluation_0001_beta1_pure_current_ld_mma_latent.npz",
+        "size_bytes": 95795,
+        "sha256": "0925e421daeb8fd34fa8389d26cd9242def09265e8f3ff8be9b2130d29d7f17b"
+      }
+    }
+  },
+  "active_constraints": {
+    "beta_1_and_above": [
+      "500nm_solid_opening",
+      "500nm_void_opening"
+    ]
+  },
+  "mma_scale_policy": {
+    "kind": "projection-Jacobian-scaled-native-LD_MMA-initialization",
+    "target_initial_physical_density_step": 0.025,
+    "base_rho_init_at_beta1": 10.0,
+    "fixed_per_iteration_move_limit": null,
+    "note": "LD_MMA, not this driver, adapts all later asymptotes."
+  },
+  "beta_promotion_policy": {
+    "NLopt_numerical_stop_alone_is_sufficient": false,
+    "required_full_physics_objective_changes": 3,
+    "relative_plateau_gate": 0.002,
+    "active_constraints_must_be_feasible": true
+  },
+  "optimizer_code_provenance": {
+    "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/PURE_CURRENT_LD_MMA_CODE_MANIFEST.json",
+    "sha256": "a7d0f151211e5dd9abeaba81b91faff84e4266a233ed27f4f07c03fe44b5fce3",
+    "source_sha256": {
+      "photothermal_pte/optimization_runs/tairte4_flake_topology/run_pure_current_ld_mma_optimization.py": "ace3a2c923adbb4be1fd2c630a4d7ff2600d6f5814c4d44cae220e8baa1f40b1",
+      "photothermal_pte/optimization_runs/tairte4_flake_topology/run_nlopt_mma_optimization.py": "f2fc337d0965498c741ed1662321ecb85e0cc76379cbb22e7d5a4da2b7ebe379",
+      "photothermal_pte/optimization_runs/tairte4_flake_topology/run_true_mma_optimization.py": "abf8de366c1b0ab14958f0be6a099d6264ed0289cc8109119607f214eb7121c5",
+      "photothermal_pte/optimization_runs/run_pure_current_ld_mma_dual_supervisor.py": "8280db34fc68eda08ea4c95687a1a157892829af555ad1df8556de67560749ce"
+    }
+  },
+  "initialization": {
+    "kind": "native_LD_MMA_warm_restart",
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run038_pure_current_ld_mma_tight_ftol_Eb_20260811/evaluation_0023_beta1_pure_current_ld_mma_latent.npz",
+    "size_bytes": 95795,
+    "sha256": "0925e421daeb8fd34fa8389d26cd9242def09265e8f3ff8be9b2130d29d7f17b",
+    "note": "NLopt internal asymptotes are intentionally reset; this is a fresh native LD_MMA stage initialized at a fully evaluated physical design."
+  }
+}
