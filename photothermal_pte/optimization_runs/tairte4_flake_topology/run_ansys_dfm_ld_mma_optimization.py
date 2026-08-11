@@ -2,8 +2,9 @@
 """Ansys-style beta continuation for pure terminal-PTE-current LD_MMA.
 
 The fabrication term follows the v261 LumOpt continuation contract: a
-grayscale phase at beta=1, beta multiplication by 1.2, a fixed continuation
-budget, and a DFM penalty that activates smoothly above beta=12.  Unlike the
+grayscale phase at beta=1, beta multiplication by 1.2, a bounded continuation
+budget with an audited plateau exit, and a DFM penalty that activates smoothly
+above beta=12.  Unlike the
 superseded fixed-cap driver, this implementation has no late constraint-
 restoration loop.  Raw current and the fabrication penalty remain separately
 auditable at every full-physics evaluation.
@@ -48,7 +49,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_opti
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[2]
-SCHEMA = "ansys-v261-style-dfm-pure-current-ld-mma-v1"
+SCHEMA = "ansys-v261-style-dfm-pure-current-ld-mma-v2"
 BETA_FACTOR = 1.2
 MAXIMUM_BETA = 128.0
 GRAYSCALE_EVALUATIONS = 40
@@ -59,6 +60,88 @@ FINAL_DISCRETENESS_MINIMUM = 0.99
 FINAL_GRAY_FRACTION_MAXIMUM = 0.01
 TARGET_INITIAL_PHYSICAL_STEP = 0.025
 BASE_RHO_INIT = 10.0
+PLATEAU_MINIMUM_EVALUATIONS = 5
+PLATEAU_WINDOW_EVALUATIONS = 4
+PLATEAU_FOM_RELATIVE_RANGE_MAXIMUM = 1.0e-4
+PLATEAU_RMS_STEP_MAXIMUM = 1.0e-4
+PLATEAU_GRAY_ABSOLUTE_RANGE_MAXIMUM = 1.0e-3
+
+
+class AdaptivePlateauStop(Exception):
+    """Internal signal that advances continuation after an audited plateau."""
+
+
+def adaptive_plateau_diagnostic(
+    stage_rows: list[dict[str, object]],
+) -> dict[str, object]:
+    """Return the deterministic multi-metric continuation plateau audit."""
+    count = len(stage_rows)
+    diagnostic: dict[str, object] = {
+        "passed": False,
+        "minimum_evaluations": PLATEAU_MINIMUM_EVALUATIONS,
+        "window_evaluations": PLATEAU_WINDOW_EVALUATIONS,
+        "fom_relative_range_maximum": PLATEAU_FOM_RELATIVE_RANGE_MAXIMUM,
+        "rms_step_maximum": PLATEAU_RMS_STEP_MAXIMUM,
+        "gray_absolute_range_maximum": PLATEAU_GRAY_ABSOLUTE_RANGE_MAXIMUM,
+        "stage_evaluations_observed": count,
+    }
+    if count < PLATEAU_MINIMUM_EVALUATIONS:
+        diagnostic["reason"] = "minimum_stage_evaluations_not_reached"
+        return diagnostic
+    window = stage_rows[-PLATEAU_WINDOW_EVALUATIONS:]
+    fom = np.asarray(
+        [float(row["objective_at_reference_power_A"]) for row in window],
+        dtype=np.float64,
+    )
+    rms_step = np.asarray(
+        [float(row["rms_step_from_previous_evaluation"]) for row in window],
+        dtype=np.float64,
+    )
+    gray = np.asarray(
+        [float(row["gray_fraction_0p01_0p99"]) for row in window],
+        dtype=np.float64,
+    )
+    fom_scale = max(float(np.max(np.abs(fom))), np.finfo(np.float64).tiny)
+    fom_relative_range = float(np.ptp(fom) / fom_scale)
+    rms_step_maximum = float(np.max(rms_step))
+    gray_absolute_range = float(np.ptp(gray))
+    passed = bool(
+        fom_relative_range < PLATEAU_FOM_RELATIVE_RANGE_MAXIMUM
+        and rms_step_maximum < PLATEAU_RMS_STEP_MAXIMUM
+        and gray_absolute_range < PLATEAU_GRAY_ABSOLUTE_RANGE_MAXIMUM
+    )
+    diagnostic.update(
+        {
+            "passed": passed,
+            "reason": "adaptive_plateau" if passed else "stage_still_moving",
+            "window_evaluation_ids": [int(row["evaluation_id"]) for row in window],
+            "fom_relative_range": fom_relative_range,
+            "rms_step_maximum_observed": rms_step_maximum,
+            "gray_absolute_range": gray_absolute_range,
+        }
+    )
+    return diagnostic
+
+
+class AdaptiveStageEvaluator(StageEvaluator):
+    """Stage evaluator that exits LD_MMA only after a documented plateau."""
+
+    plateau_diagnostic: dict[str, object] | None = None
+
+    def objective(self, vector: np.ndarray, gradient: np.ndarray) -> float:
+        value = super().objective(vector, gradient)
+        stage_rows = self.history[-self.stage_full_physics_evaluations :]
+        diagnostic = adaptive_plateau_diagnostic(stage_rows)
+        if bool(diagnostic["passed"]):
+            self.plateau_diagnostic = diagnostic
+            emit(
+                self.events,
+                "adaptive_continuation_plateau",
+                beta=self.beta,
+                **diagnostic,
+            )
+            raise AdaptivePlateauStop("audited continuation plateau")
+        return value
 
 
 def beta_sequence() -> tuple[float, ...]:
@@ -252,6 +335,15 @@ def main() -> int:
                 "optimizer_state": "fresh NLopt LD_MMA stage; prior asymptotes are not serializable",
             }
         )
+    manifest["schema"] = SCHEMA
+    manifest.setdefault("beta_continuation", {})["adaptive_plateau"] = {
+        "enabled": True,
+        "minimum_evaluations": PLATEAU_MINIMUM_EVALUATIONS,
+        "window_evaluations": PLATEAU_WINDOW_EVALUATIONS,
+        "fom_relative_range_maximum": PLATEAU_FOM_RELATIVE_RANGE_MAXIMUM,
+        "rms_step_maximum": PLATEAU_RMS_STEP_MAXIMUM,
+        "gray_absolute_range_maximum": PLATEAU_GRAY_ABSOLUTE_RANGE_MAXIMUM,
+    }
     write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
     emit(
         events,
@@ -306,7 +398,7 @@ def main() -> int:
             stage_budget = max(2, nominal_stage_budget - prior_at_beta)
         else:
             stage_budget = nominal_stage_budget
-        evaluator = StageEvaluator(
+        evaluator = AdaptiveStageEvaluator(
             beta=beta,
             polarization=args.polarization,
             gpu=args.gpu,
@@ -357,9 +449,16 @@ def main() -> int:
             active_hard_constraints=[],
             manual_move_limit=None,
         )
-        optimum = optimizer.optimize(latent.ravel()).reshape(MAPPING.shape)
+        stage_stop_reason = "nlopt"
+        try:
+            optimum = optimizer.optimize(latent.ravel()).reshape(MAPPING.shape)
+        except AdaptivePlateauStop:
+            if evaluator.last is None:
+                raise RuntimeError("adaptive plateau fired before a completed evaluation")
+            optimum = evaluator.last.x.copy()
+            stage_stop_reason = "adaptive_plateau"
         result_code = optimizer.last_optimize_result()
-        if result_code < 0:
+        if result_code < 0 and stage_stop_reason != "adaptive_plateau":
             raise RuntimeError(f"NLopt LD_MMA failed with result code {result_code}")
         final_point = evaluator.point(optimum.ravel())
         latent = optimum
@@ -379,6 +478,8 @@ def main() -> int:
             "beta": beta,
             "dfm_penalty_weight": penalty_weight,
             "nlopt_result_code": int(result_code),
+            "stage_stop_reason": stage_stop_reason,
+            "adaptive_plateau_diagnostic": evaluator.plateau_diagnostic,
             "full_physics_evaluations": evaluator.stage_full_physics_evaluations,
             "raw_current_at_reference_power_A": history[-1][
                 "objective_at_reference_power_A"

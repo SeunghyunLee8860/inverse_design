@@ -18,6 +18,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_opti
 from photothermal_pte.optimization_runs.tairte4_flake_topology.run_ansys_dfm_ld_mma_optimization import (
     BETA_FACTOR,
     DFM_ACTIVATION_BETA,
+    adaptive_plateau_diagnostic,
     beta_sequence,
     dfm_penalty_weight,
 )
@@ -151,6 +152,54 @@ def test_ansys_style_beta_and_dfm_penalty_contract() -> None:
     assert dfm_penalty_weight(DFM_ACTIVATION_BETA) == 0.0
     assert dfm_penalty_weight(16.0) == 1600.0
     assert dfm_penalty_weight(128.0) == 1.0e4
+
+
+def _plateau_row(
+    evaluation_id: int,
+    *,
+    fom: float = 1.0,
+    rms_step: float = 1.0e-6,
+    gray: float = 0.2,
+) -> dict[str, object]:
+    return {
+        "evaluation_id": evaluation_id,
+        "objective_at_reference_power_A": fom,
+        "rms_step_from_previous_evaluation": rms_step,
+        "gray_fraction_0p01_0p99": gray,
+    }
+
+
+def test_adaptive_plateau_requires_five_stage_evaluations() -> None:
+    rows = [_plateau_row(i) for i in range(1, 5)]
+    result = adaptive_plateau_diagnostic(rows)
+    assert result["passed"] is False
+    assert result["reason"] == "minimum_stage_evaluations_not_reached"
+
+
+def test_adaptive_plateau_detects_joint_fom_design_and_gray_stagnation() -> None:
+    rows = [_plateau_row(i, fom=1.0 + i * 1.0e-7) for i in range(1, 6)]
+    result = adaptive_plateau_diagnostic(rows)
+    assert result["passed"] is True
+    assert result["window_evaluation_ids"] == [2, 3, 4, 5]
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("fom", 1.01),
+        ("rms_step", 2.0e-4),
+        ("gray", 0.21),
+    ],
+)
+def test_adaptive_plateau_rejects_a_meaningfully_moving_metric(
+    field: str, value: float
+) -> None:
+    rows = [_plateau_row(i) for i in range(1, 6)]
+    kwargs = {field: value}
+    rows[-1] = _plateau_row(5, **kwargs)
+    result = adaptive_plateau_diagnostic(rows)
+    assert result["passed"] is False
+    assert result["reason"] == "stage_still_moving"
 
 
 def test_ansys_style_driver_has_no_late_hard_constraint_restoration() -> None:

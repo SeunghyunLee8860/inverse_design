@@ -942,6 +942,72 @@
         "size_bytes": 98555,
         "sha256": "a937589cb6814bfeb30c8c0fa59652475495ed7bbdede33edc84be669db4463e"
       }
+    },
+    "0043": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_ansys_dfm_Eb_20260811/evaluation_0043_beta1.2_ansys_dfm_ld_mma_recovery2/objective_gradient_result.json",
+        "size_bytes": 13169,
+        "sha256": "e8789e27c83125b91ca54fe411670c0f402defbe0a82f2f96c863f7ac7422931"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_ansys_dfm_Eb_20260811/evaluation_0043_beta1.2_ansys_dfm_ld_mma_recovery2/objective_gradient.npz",
+        "size_bytes": 2174766,
+        "sha256": "b1fa676796a8cbf8b5a6f8cd2139cbe9937ddf9a2c8575ba25a35993d4bdf206"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_ansys_dfm_Eb_20260811/evaluation_0043_beta1.2_ansys_dfm_ld_mma_recovery2/forward_Eb.fsp",
+        "size_bytes": 180903623,
+        "sha256": "6213c42690271e0a72e43d4dfc01908d7bc2e2bd1be3467e951827512611f4ef"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_ansys_dfm_Eb_20260811/evaluation_0043_beta1.2_ansys_dfm_ld_mma_recovery2_latent.npz",
+        "size_bytes": 98448,
+        "sha256": "d99cdd678a526f748771ebb1889dc76dd585cf7feeae16356c9a411d72b25a18"
+      }
+    },
+    "0044": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_ansys_dfm_Eb_20260811/evaluation_0044_beta1.2_ansys_dfm_ld_mma_recovery2/objective_gradient_result.json",
+        "size_bytes": 13224,
+        "sha256": "c9221daff920e4041c5d10e72b4c43cf732ac03d63726cc424e77752f0d35a4b"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_ansys_dfm_Eb_20260811/evaluation_0044_beta1.2_ansys_dfm_ld_mma_recovery2/objective_gradient.npz",
+        "size_bytes": 2174560,
+        "sha256": "f4b24f0e3666600169fb647fdd2aefbcaa2960cc0233a7df325db5da10694aa4"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_ansys_dfm_Eb_20260811/evaluation_0044_beta1.2_ansys_dfm_ld_mma_recovery2/forward_Eb.fsp",
+        "size_bytes": 180903623,
+        "sha256": "379a9dda533ce52b6b5469d31b28ec9e91b23b7d9728c792a315d431722fe7fe"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_ansys_dfm_Eb_20260811/evaluation_0044_beta1.2_ansys_dfm_ld_mma_recovery2_latent.npz",
+        "size_bytes": 98292,
+        "sha256": "376d5b6ac79d0b2478331959af962956c0ae6a2b0a90cffe87f2cba3c8e337bb"
+      }
+    },
+    "0045": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_ansys_dfm_Eb_20260811/evaluation_0045_beta1.2_ansys_dfm_ld_mma_recovery2/objective_gradient_result.json",
+        "size_bytes": 13176,
+        "sha256": "dfa5c77f0ebba5a658a00281f778ed8d8195d920122cc228df0f1bb811111b32"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_ansys_dfm_Eb_20260811/evaluation_0045_beta1.2_ansys_dfm_ld_mma_recovery2/objective_gradient.npz",
+        "size_bytes": 2174224,
+        "sha256": "2e2530911fb29eddaa494c95a5fe2ceec0835bb07b7e4e03e1b6bfba87cbfc21"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_ansys_dfm_Eb_20260811/evaluation_0045_beta1.2_ansys_dfm_ld_mma_recovery2/forward_Eb.fsp",
+        "size_bytes": 180903623,
+        "sha256": "90f30f2c7d8f63ccefd56d1ed366c205b3e9a168802f2b7c4b6c150dea79e4ee"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_ansys_dfm_Eb_20260811/evaluation_0045_beta1.2_ansys_dfm_ld_mma_recovery2_latent.npz",
+        "size_bytes": 98177,
+        "sha256": "eca991dea988d188abd4006f2410912011e27fe63b423760fbb3ee9535c0c91d"
+      }
     }
   },
   "initialization": {
