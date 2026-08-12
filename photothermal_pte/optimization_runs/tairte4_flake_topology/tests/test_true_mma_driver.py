@@ -64,6 +64,10 @@ def test_optimizer_discards_only_regenerable_per_evaluation_fsp() -> None:
 def test_hpc_checkout_failure_is_retryable() -> None:
     assert "unable to checkout the requested hpc license" in TRANSIENT_LICENSE_MARKERS
     assert "ansysli exited or could not read server port" in TRANSIENT_LICENSE_MARKERS
+    assert (
+        "could not match resource name provided or the resource may not be active"
+        in TRANSIENT_LICENSE_MARKERS
+    )
 
 
 def test_solver_cleanup_preserves_checkpoints_and_logs(tmp_path: Path) -> None:
@@ -391,6 +395,16 @@ def test_transient_license_failure_is_narrow_and_fail_closed(tmp_path) -> None:
     retryable, markers = transient_license_failure(output)
     assert retryable
     assert "insufficient flexnet publisher license count" in markers
+
+    (output / "fdtd.log").write_text(
+        "could not match resource name provided or the resource may not be active"
+    )
+    retryable, markers = transient_license_failure(output)
+    assert retryable
+    assert (
+        "could not match resource name provided or the resource may not be active"
+        in markers
+    )
 
     (output / "fdtd.log").write_text("Maxwell energy-closure gate failed")
     retryable, markers = transient_license_failure(output)

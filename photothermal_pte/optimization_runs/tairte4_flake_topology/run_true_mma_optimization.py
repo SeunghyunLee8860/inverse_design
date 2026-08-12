@@ -139,6 +139,7 @@ TRANSIENT_LICENSE_MARKERS = (
     "unable to checkout the requested hpc license",
     "this operation requires 9 licenses for feature fdtd_solutions_engine",
     "ansysli exited or could not read server port",
+    "could not match resource name provided or the resource may not be active",
 )
 
 
@@ -168,7 +169,7 @@ def discard_regenerable_evaluation_solver_files(output: Path) -> list[dict[str, 
 
 
 def transient_license_failure(output: Path) -> tuple[bool, list[str]]:
-    """Identify only retryable FlexNet failures from one solver evaluation."""
+    """Identify narrowly retryable license or GPU-resource availability failures."""
     matched: set[str] = set()
     if not output.exists():
         return False, []

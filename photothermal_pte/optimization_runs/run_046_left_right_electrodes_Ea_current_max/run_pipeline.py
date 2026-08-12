@@ -167,6 +167,36 @@ def existing_passed_forward() -> Path | None:
     return None
 
 
+def optimization_recovery_arguments() -> list[str]:
+    """Resume from the last fully evaluated design, never a failed candidate."""
+    history_path = RESULTS / "optimization_history.json"
+    manifest_path = RESULTS / "RAW_ARTIFACT_MANIFEST.json"
+    if not history_path.is_file() or not manifest_path.is_file():
+        return []
+    history = json.loads(history_path.read_text())
+    if not isinstance(history, list) or not history:
+        raise RuntimeError("Run046 recovery history is malformed or empty")
+    last = history[-1]
+    evaluation_id = int(last["evaluation_id"])
+    beta = float(last["beta"])
+    matches = sorted(
+        OPTIMIZATION_ROOT.glob(
+            f"evaluation_{evaluation_id:04d}_beta*_latent.npz"
+        )
+    )
+    if len(matches) != 1:
+        raise RuntimeError(
+            "expected exactly one last-successful latent checkpoint for "
+            f"evaluation {evaluation_id}, found {len(matches)}"
+        )
+    return [
+        "--initial-latent-npz", str(matches[0]),
+        "--recovery-append",
+        "--start-beta", f"{beta:.12g}",
+        "--output-slug", "ansys_dfm_ld_mma_gpu_resource_recovery1",
+    ]
+
+
 def main() -> int:
     LOCK.parent.mkdir(parents=True, exist_ok=True)
     lock_stream = LOCK.open("w")
@@ -248,9 +278,22 @@ def main() -> int:
         "--jacobian-dir", str(JACOBIAN_ROOT),
         "--constraint-device", "cuda:0",
     ]
+    recovery_arguments = optimization_recovery_arguments()
+    if recovery_arguments:
+        command.extend(recovery_arguments)
+        write_state(
+            "optimization_Ea",
+            status="warm_restart_from_last_successful_evaluation",
+            recovery_arguments=recovery_arguments,
+        )
     completed = subprocess.run(command, cwd=REPOSITORY, env=environment())
     final_result = RESULTS / "FINAL_RESULT.json"
     if completed.returncode or not final_result.is_file():
+        write_state(
+            "optimization_Ea",
+            status="failed",
+            returncode=completed.returncode,
+        )
         raise RuntimeError("Run046 optimization did not produce a final result")
     write_state("complete", status="complete", final_result=str(final_result))
     return 0
