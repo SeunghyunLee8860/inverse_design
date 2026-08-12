@@ -384,6 +384,7 @@ def test_pure_current_final_gate_requires_binary_and_exact_500nm_geometry() -> N
 
 def test_transient_license_failure_is_narrow_and_fail_closed(tmp_path) -> None:
     from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_optimization import (
+        TRANSIENT_FIELDREGION_PUTV_MARKER,
         transient_license_failure,
     )
 
@@ -407,6 +408,20 @@ def test_transient_license_failure_is_narrow_and_fail_closed(tmp_path) -> None:
     )
 
     (output / "fdtd.log").write_text("Maxwell energy-closure gate failed")
+    retryable, markers = transient_license_failure(output)
+    assert not retryable
+    assert markers == []
+
+    (output / "result.json").write_text(
+        "LumApiError: Failed to put variable\n"
+        "in import_named_fieldregion_profile\n"
+        'fdtd.putv("ad_Ey", value)\n'
+    )
+    retryable, markers = transient_license_failure(output)
+    assert retryable
+    assert TRANSIENT_FIELDREGION_PUTV_MARKER in markers
+
+    (output / "result.json").write_text("LumApiError: Failed to put variable")
     retryable, markers = transient_license_failure(output)
     assert not retryable
     assert markers == []

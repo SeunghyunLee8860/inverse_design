@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""License-aware fail-closed pipeline for Run 046.
+"""Transient-infrastructure-aware fail-closed pipeline for Run 046.
 
-Only transient FlexNet exhaustion is retried.  Every other failure stops the
-pipeline.  Failed, regenerable FSP files are removed while their JSON/log
+The evaluator retries only explicitly audited FlexNet, GPU-resource, and
+forward-to-adjoint LumAPI IPC failures.  Physical gate failures remain
+fail-closed.  Failed, regenerable FSP files are removed while their JSON/log
 diagnostics are retained.
 """
 
@@ -14,6 +15,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import time
@@ -189,11 +191,19 @@ def optimization_recovery_arguments() -> list[str]:
             "expected exactly one last-successful latent checkpoint for "
             f"evaluation {evaluation_id}, found {len(matches)}"
         )
+    recovery_indices: list[int] = []
+    for path in OPTIMIZATION_ROOT.glob(
+        "evaluation_*_gpu_resource_recovery*_latent.npz"
+    ):
+        match = re.search(r"_gpu_resource_recovery(\d+)_latent\.npz$", path.name)
+        if match:
+            recovery_indices.append(int(match.group(1)))
+    recovery_index = max(recovery_indices, default=0) + 1
     return [
         "--initial-latent-npz", str(matches[0]),
         "--recovery-append",
         "--start-beta", f"{beta:.12g}",
-        "--output-slug", "ansys_dfm_ld_mma_gpu_resource_recovery1",
+        "--output-slug", f"ansys_dfm_ld_mma_gpu_resource_recovery{recovery_index}",
     ]
 
 

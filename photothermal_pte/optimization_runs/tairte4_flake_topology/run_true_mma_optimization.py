@@ -142,6 +142,17 @@ TRANSIENT_LICENSE_MARKERS = (
     "could not match resource name provided or the resource may not be active",
 )
 
+# This is deliberately not part of TRANSIENT_LICENSE_MARKERS: a generic putv
+# failure can indicate a malformed payload and must remain fail-closed.  Only
+# the observed forward-to-adjoint FieldRegion IPC loss is safe to regenerate in
+# a fresh LumAPI session.
+TRANSIENT_FIELDREGION_PUTV_MARKER = "fieldregion adjoint-source putv ipc failure"
+TRANSIENT_FIELDREGION_PUTV_CONTEXT = (
+    "failed to put variable",
+    "import_named_fieldregion_profile",
+    'fdtd.putv("ad_',
+)
+
 
 def discard_regenerable_evaluation_solver_files(output: Path) -> list[dict[str, object]]:
     """Remove per-evaluation projects and engine HDF5 outputs after provenance.
@@ -169,7 +180,7 @@ def discard_regenerable_evaluation_solver_files(output: Path) -> list[dict[str, 
 
 
 def transient_license_failure(output: Path) -> tuple[bool, list[str]]:
-    """Identify narrowly retryable license or GPU-resource availability failures."""
+    """Identify narrowly retryable license, resource, or LumAPI IPC failures."""
     matched: set[str] = set()
     if not output.exists():
         return False, []
@@ -184,6 +195,8 @@ def transient_license_failure(output: Path) -> tuple[bool, list[str]]:
         for marker in TRANSIENT_LICENSE_MARKERS:
             if marker in text:
                 matched.add(marker)
+        if all(marker in text for marker in TRANSIENT_FIELDREGION_PUTV_CONTEXT):
+            matched.add(TRANSIENT_FIELDREGION_PUTV_MARKER)
     return bool(matched), sorted(matched)
 
 
