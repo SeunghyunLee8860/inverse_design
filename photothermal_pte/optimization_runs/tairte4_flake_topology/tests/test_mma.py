@@ -4,6 +4,24 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.mma import (
     initialize_mma_state,
     mma_step,
 )
+from photothermal_pte.optimization_runs.tairte4_flake_topology.run_ansys_dfm_ld_mma_optimization import (
+    EXACT_CLEANUP_MAXIMUM_GRAY_FRACTION,
+    cleanup_objective_preserved,
+)
+
+
+def test_exact_cleanup_is_late_and_failed_objective_is_rejected() -> None:
+    assert EXACT_CLEANUP_MAXIMUM_GRAY_FRACTION == 0.02
+    failed = {
+        "selected": "solid_first",
+        "candidates": {"solid_first": {"result": {"passed": False}}},
+    }
+    passed = {
+        "selected": "void_first",
+        "candidates": {"void_first": {"result": {"passed": True}}},
+    }
+    assert not cleanup_objective_preserved(failed)
+    assert cleanup_objective_preserved(passed)
 
 
 def test_mma_maximizes_linear_objective_under_mean_constraint() -> None:

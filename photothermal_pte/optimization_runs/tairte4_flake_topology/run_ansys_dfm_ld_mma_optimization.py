@@ -53,7 +53,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_opti
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[2]
-SCHEMA = "ansys-v261-style-dfm-pure-current-ld-mma-v3"
+SCHEMA = "ansys-v261-style-dfm-pure-current-ld-mma-v4"
 BETA_FACTOR = 2.0
 MAXIMUM_BETA = 128.0
 GRAYSCALE_EVALUATIONS = 40
@@ -71,7 +71,7 @@ PLATEAU_FOM_RELATIVE_RANGE_MAXIMUM = 1.0e-4
 PLATEAU_RMS_STEP_MAXIMUM = 1.0e-4
 PLATEAU_GRAY_ABSOLUTE_RANGE_MAXIMUM = 1.0e-3
 EXACT_CLEANUP_MINIMUM_BETA = 16.0
-EXACT_CLEANUP_MAXIMUM_GRAY_FRACTION = 0.05
+EXACT_CLEANUP_MAXIMUM_GRAY_FRACTION = 0.02
 CONSTRAINT_PLATEAU_RELATIVE_RANGE_MAXIMUM = 1.0e-2
 CONSTRAINT_PLATEAU_EXACT_ABSOLUTE_RANGE_MINIMUM = 2
 
@@ -245,10 +245,11 @@ def evaluate_exact_cleanup_candidates(
     polarization: str,
     gpu: int,
     reference_objective_A: float,
+    attempt_label: str,
 ) -> dict[str, object]:
     """Force both 500-nm phase audits to zero, then select by fresh physics."""
     thresholded = np.asarray(rho >= 0.5, dtype=bool)
-    cleanup_root = raw_root / "forced_exact_500nm_cleanup"
+    cleanup_root = raw_root / f"forced_exact_500nm_cleanup_{attempt_label}"
     cleanup_root.mkdir(parents=True, exist_ok=True)
     if any(cleanup_root.iterdir()):
         raise RuntimeError("refusing to overwrite a non-empty exact-cleanup directory")
@@ -335,6 +336,13 @@ def evaluate_exact_cleanup_candidates(
         "selected": selected,
         "candidates": candidates,
     }
+
+
+def cleanup_objective_preserved(cleanup: dict[str, object]) -> bool:
+    """Return whether the selected exact candidate passed its fixed 1% gate."""
+    selected = str(cleanup["selected"])
+    candidate = cleanup["candidates"][selected]
+    return bool(candidate["result"].get("passed", False))
 
 
 def main() -> int:
@@ -496,6 +504,9 @@ def main() -> int:
         "maximum_gray_fraction": EXACT_CLEANUP_MAXIMUM_GRAY_FRACTION,
         "requires_fom_plateau": True,
         "requires_smooth_and_exact_constraint_plateau": True,
+        "failed_objective_preservation_action": (
+            "record diagnostic and continue beta continuation"
+        ),
         "candidates": ["solid_first", "void_first"],
         "selection": "fresh unrescaled GPU objective after both exact audits reach zero",
     }
@@ -678,7 +689,7 @@ def main() -> int:
                 exact_bad_cells=exact_bad,
                 plateau_diagnostic=plateau,
             )
-            forced_cleanup = evaluate_exact_cleanup_candidates(
+            cleanup_attempt = evaluate_exact_cleanup_candidates(
                 rho,
                 raw_root=raw_root,
                 base_fsp=base_fsp,
@@ -686,16 +697,36 @@ def main() -> int:
                 polarization=args.polarization,
                 gpu=args.gpu,
                 reference_objective_A=float(final_point.result["objective_A"]),
+                attempt_label=f"stage{completed_stages:04d}_beta{beta:g}",
             )
-            manifest["forced_exact_cleanup"] = forced_cleanup
+            manifest.setdefault("forced_exact_cleanup_attempts", []).append(
+                cleanup_attempt
+            )
             write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
-            write_json(published / "FORCED_EXACT_CLEANUP.json", forced_cleanup)
+            write_json(
+                published
+                / f"FORCED_EXACT_CLEANUP_STAGE_{completed_stages:04d}.json",
+                cleanup_attempt,
+            )
+            if cleanup_objective_preserved(cleanup_attempt):
+                forced_cleanup = cleanup_attempt
+                manifest["forced_exact_cleanup"] = forced_cleanup
+                write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
+                write_json(published / "FORCED_EXACT_CLEANUP.json", forced_cleanup)
+                emit(
+                    events,
+                    "forced_exact_cleanup_complete",
+                    selected=forced_cleanup["selected"],
+                    objective_preservation_passed=True,
+                )
+                break
             emit(
                 events,
-                "forced_exact_cleanup_complete",
-                selected=forced_cleanup["selected"],
+                "forced_exact_cleanup_rejected",
+                selected=cleanup_attempt["selected"],
+                objective_preservation_passed=False,
+                action="continue_beta_continuation",
             )
-            break
         if schedule_index < len(schedule) - 1:
             schedule_index += 1
         # At maximum beta, continue fixed-budget LD_MMA stages with the
