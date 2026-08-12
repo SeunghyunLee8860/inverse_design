@@ -1,0 +1,38 @@
+{
+  "stage_index": 1,
+  "beta": 1.0,
+  "dfm_penalty_weight": 0.0,
+  "nlopt_result_code": 5,
+  "stage_stop_reason": "nlopt",
+  "adaptive_plateau_diagnostic": null,
+  "full_physics_evaluations": 40,
+  "raw_current_at_reference_power_A": 4.2651659946581796e-08,
+  "smooth_solid_residual": 0.003561376705141329,
+  "smooth_void_residual": 0.0034042769706041083,
+  "final_geometry_gate": {
+    "passed": false,
+    "discreteness": 0.8494496136088148,
+    "binarization_mean_4rho1mrho": 0.1505503863911853,
+    "gray_fraction_0p01_0p99": 0.2874218121013191,
+    "exact_500nm_audit": {
+      "minimum_feature_nm": 500.0,
+      "opening_radius_nm": 250.0,
+      "opening_radius_pixels": 2,
+      "realized_discrete_opening_max_center_offset_nm": 200.0,
+      "realized_discrete_opening_pixel_support_diameter_nm": 500.0,
+      "discretization_note": "requested 500 nm pixel-support diameter is represented by five 100 nm samples (two centre offsets plus two half-cell extents)",
+      "outside_design_phase": "fixed_solid_at_left_right_and_void_at_top_bottom",
+      "solid_bad_cell_count": 167,
+      "void_bad_cell_count": 161,
+      "total_bad_cell_count": 328,
+      "counted_entity": "design nodes (legacy field names retain *_cell_count)",
+      "solid_fraction": 0.6918519436014946,
+      "passed": false
+    }
+  },
+  "checkpoint": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/stage_0001_beta1.npz",
+    "size_bytes": 220163,
+    "sha256": "081803f14c3fc8e1a9e5dbd6a7e0645e8f80f8a7afccc1f9121d9dcb852476c0"
+  }
+}
