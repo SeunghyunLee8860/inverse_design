@@ -22,11 +22,10 @@ def test_exact_audit_uses_geometry_specific_outside_phase():
     solid = np.ones(MAPPING.shape)
     audit, _ = exact_binary_audit(solid)
     assert audit["passed"]
-    expected = (
-        "fixed_solid_at_top_bottom_and_void_at_left_right"
-        if CONTRACT.geometry_mode == "contact_anchored"
-        else "fixed_solid_TaIrTe4_frame"
-    )
+    expected = {
+        "contact_anchored": "fixed_solid_at_top_bottom_and_void_at_left_right",
+        "left_right_contact_anchored": "fixed_solid_at_left_right_and_void_at_top_bottom",
+    }.get(CONTRACT.geometry_mode, "fixed_solid_TaIrTe4_frame")
     assert audit["outside_design_phase"] == expected
     assert audit["opening_radius_nm"] == 250.0
     assert audit["opening_radius_pixels"] == 2

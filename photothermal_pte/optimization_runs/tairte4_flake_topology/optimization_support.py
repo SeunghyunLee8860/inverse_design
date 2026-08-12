@@ -46,15 +46,20 @@ def exact_binary_audit(rho: np.ndarray) -> tuple[dict[str, object], dict[str, np
     binary = np.asarray(rho, dtype=float) >= 0.5
     structure = disk()
     radius = (structure.shape[0] - 1) // 2
-    if CONTRACT.geometry_mode == "contact_anchored":
+    if CONTRACT.geometry_mode in {"contact_anchored", "left_right_contact_anchored"}:
         solid_padded = np.zeros((binary.shape[0] + 2 * radius, binary.shape[1] + 2 * radius), dtype=bool)
         solid_padded[radius:-radius, radius:-radius] = binary
-        solid_padded[:, :radius] = True
-        solid_padded[:, -radius:] = True
+        if CONTRACT.contact_axis == "y":
+            solid_padded[:, :radius] = True
+            solid_padded[:, -radius:] = True
+            outside_phase = "fixed_solid_at_top_bottom_and_void_at_left_right"
+        else:
+            solid_padded[:radius, :] = True
+            solid_padded[-radius:, :] = True
+            outside_phase = "fixed_solid_at_left_right_and_void_at_top_bottom"
         solid_open = ndimage.binary_opening(solid_padded, structure=structure)[radius:-radius, radius:-radius]
         void_padded = ~solid_padded
         void_open = ndimage.binary_opening(void_padded, structure=structure)[radius:-radius, radius:-radius]
-        outside_phase = "fixed_solid_at_top_bottom_and_void_at_left_right"
     else:
         solid_open = ndimage.binary_opening(binary, structure=structure, border_value=1)
         void_open = ndimage.binary_opening(~binary, structure=structure, border_value=0)
@@ -98,9 +103,9 @@ def _offsets() -> tuple[tuple[int, int], ...]:
 def _shifted(value: torch.Tensor, border: float) -> torch.Tensor:
     offsets = _offsets()
     radius = max(max(abs(i), abs(j)) for i, j in offsets)
-    if CONTRACT.geometry_mode == "contact_anchored":
-        # Array axis 0 is Lumerical x and axis 1 is y.  The design meets fixed
-        # TaIrTe4 contacts across the y-min/y-max edges and void across x edges.
+    if CONTRACT.geometry_mode in {"contact_anchored", "left_right_contact_anchored"}:
+        # Array axis 0 is Lumerical x and axis 1 is y.  The contact-axis edges
+        # touch fixed TaIrTe4; the orthogonal edges touch void.
         solid_phase = border == 1.0
         padded = torch.full(
             (value.shape[0] + 2 * radius, value.shape[1] + 2 * radius),
@@ -109,8 +114,12 @@ def _shifted(value: torch.Tensor, border: float) -> torch.Tensor:
             device=value.device,
         )
         padded[radius:-radius, radius:-radius] = value
-        padded[:, :radius] = 1.0 if solid_phase else 0.0
-        padded[:, -radius:] = 1.0 if solid_phase else 0.0
+        if CONTRACT.contact_axis == "y":
+            padded[:, :radius] = 1.0 if solid_phase else 0.0
+            padded[:, -radius:] = 1.0 if solid_phase else 0.0
+        else:
+            padded[:radius, :] = 1.0 if solid_phase else 0.0
+            padded[-radius:, :] = 1.0 if solid_phase else 0.0
     else:
         padded = torch.nn.functional.pad(value, (radius, radius, radius, radius), value=border)
     nx, ny = value.shape

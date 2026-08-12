@@ -348,6 +348,7 @@ def solve_coupled(forward: dict, rho: np.ndarray, cuda_device: int, *, need_adjo
         sigma_penalty=CONTRACT.sigma_penalty,
         alpha_penalty=CONTRACT.alpha_penalty,
         linear_solve=CachedElectricalCuda(cuda_device),
+        terminal_axis=CONTRACT.contact_axis,
     )
     energy, boundary = boundary_energy_error(state, thermal_forward.solution, source_power)
     result = {

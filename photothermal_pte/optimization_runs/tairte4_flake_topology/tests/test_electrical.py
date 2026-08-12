@@ -29,6 +29,26 @@ def test_uniform_weighting_is_linear_and_conductance_is_analytic() -> None:
     assert result.adjoint_residual < 1.0e-10
 
 
+def test_left_right_weighting_is_linear_and_conductance_is_analytic() -> None:
+    mesh = build_rectangular_mesh(1.0e-6, 2.0e-6, 0.1e-6)
+    xx, yy = np.meshgrid(mesh.x_m, mesh.y_m, indexing="ij")
+    result = solve_weighting_and_adjoint(
+        mesh,
+        np.ones(mesh.shape),
+        300.0 + 2.0e5 * xx - 1.0e5 * yy,
+        thickness_m=100.0e-9,
+        sigma_xy_S_m=SIGMA,
+        seebeck_xy_V_K=SEEBECK,
+        terminal_axis="x",
+    )
+    expected = (xx - xx.min()) / (xx.max() - xx.min())
+    assert np.max(np.abs(result.weighting_potential - expected)) < 2.0e-12
+    expected_conductance = SIGMA[0] * 100.0e-9 * 2.0e-6 / 1.0e-6
+    assert abs(result.terminal_conductance_S / expected_conductance - 1.0) < 2.0e-12
+    assert result.weighting_residual < 1.0e-11
+    assert result.adjoint_residual < 1.0e-10
+
+
 def test_constant_temperature_has_zero_current() -> None:
     mesh = build_rectangular_mesh(0.8e-6, 1.0e-6, 0.1e-6)
     rho = np.full(mesh.shape, 0.63)

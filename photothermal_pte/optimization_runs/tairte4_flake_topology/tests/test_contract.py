@@ -8,6 +8,10 @@ def test_contract_is_enclosed_and_resolves_feature() -> None:
     if CONTRACT.geometry_mode == "contact_anchored":
         assert np.isclose(CONTRACT.fixed_frame_width_m, 0.0)
         assert CONTRACT.design_node_shape == (241, 201)
+        assert CONTRACT.contact_axis == "y"
+    elif CONTRACT.geometry_mode == "left_right_contact_anchored":
+        assert CONTRACT.design_node_shape == (201, 241)
+        assert CONTRACT.contact_axis == "x"
     else:
         assert np.isclose(CONTRACT.fixed_frame_width_m, 4.0e-6)
         assert CONTRACT.design_node_shape == (161, 161)

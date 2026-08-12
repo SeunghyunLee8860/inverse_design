@@ -165,12 +165,17 @@ def _plateau_row(
     fom: float = 1.0,
     rms_step: float = 1.0e-6,
     gray: float = 0.2,
+    smooth: float = 1.0e-4,
+    exact_bad: int = 10,
 ) -> dict[str, object]:
     return {
         "evaluation_id": evaluation_id,
         "objective_at_reference_power_A": fom,
         "rms_step_from_previous_evaluation": rms_step,
         "gray_fraction_0p01_0p99": gray,
+        "smooth_solid_constraint": 0.5 * smooth,
+        "smooth_void_constraint": 0.5 * smooth,
+        "exact_bad_cells": exact_bad,
     }
 
 
@@ -179,6 +184,23 @@ def test_adaptive_plateau_requires_five_stage_evaluations() -> None:
     result = adaptive_plateau_diagnostic(rows)
     assert result["passed"] is False
     assert result["reason"] == "minimum_stage_evaluations_not_reached"
+
+
+def test_adaptive_plateau_reports_constraint_stagnation() -> None:
+    rows = [_plateau_row(i, exact_bad=20) for i in range(1, 6)]
+    result = adaptive_plateau_diagnostic(rows)
+    assert result["passed"] is True
+    assert result["constraint_plateau"] is True
+
+
+def test_adaptive_plateau_does_not_call_changing_constraints_stagnant() -> None:
+    rows = [
+        _plateau_row(i, smooth=1.0e-4 * (1.0 - 0.1 * i), exact_bad=30 - 4 * i)
+        for i in range(1, 6)
+    ]
+    result = adaptive_plateau_diagnostic(rows)
+    assert result["passed"] is True
+    assert result["constraint_plateau"] is False
 
 
 def test_adaptive_plateau_detects_joint_fom_design_and_gray_stagnation() -> None:

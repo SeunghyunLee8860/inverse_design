@@ -85,8 +85,8 @@ def main() -> int:
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--maximum-iterations", type=int, default=100)
     args = parser.parse_args()
-    if CONTRACT.geometry_mode != "contact_anchored":
-        raise RuntimeError("set TAIRTE4_TOPOLOGY_GEOMETRY=contact_anchored")
+    if CONTRACT.geometry_mode not in {"contact_anchored", "left_right_contact_anchored"}:
+        raise RuntimeError("select a contact-anchored geometry")
     if args.maximum_iterations <= 0:
         raise ValueError("maximum iterations must be positive")
     output = args.output_dir.expanduser().resolve()
@@ -137,7 +137,11 @@ def main() -> int:
         plot_rows.append((order, candidate, changed))
 
     figure, axes = plt.subplots(2, 3, figsize=(15, 9), constrained_layout=True)
-    extent = (-12.0, 12.0, -10.0, 10.0)
+    extent = tuple(
+        value * 1.0e6
+        for axis in ("x", "y")
+        for value in CONTRACT.design_bounds_m[axis]
+    )
     axes[0, 0].imshow(thresholded.T, origin="lower", extent=extent, cmap="gray_r", vmin=0, vmax=1)
     axes[0, 0].set_title("thresholded source")
     source_bad = source_arrays["bad_solid"] | source_arrays["bad_void"]

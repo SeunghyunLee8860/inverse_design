@@ -251,6 +251,8 @@ class StageEvaluator:
             "morphology_caps": self.morphology_caps.tolist(),
             "gray_fraction_0p01_0p99": summary["gray_fraction_0p01_0p99"],
             "binarization": summary["binarization_mean_4rho1mrho"],
+            "smooth_solid_constraint": summary["smooth_solid_constraint"],
+            "smooth_void_constraint": summary["smooth_void_constraint"],
             "exact_bad_cells": summary["exact"]["total_bad_cell_count"],
             "rho_mean": summary["rho_mean"],
             "latent_range": [float(np.min(x)), float(np.max(x))],

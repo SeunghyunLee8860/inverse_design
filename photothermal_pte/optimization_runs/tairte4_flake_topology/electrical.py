@@ -31,6 +31,8 @@ class RectangularTriangularMesh:
     gradients_m_inv: Array
     top_nodes: Array
     bottom_nodes: Array
+    left_nodes: Array
+    right_nodes: Array
 
     @property
     def shape(self) -> tuple[int, int]:
@@ -98,6 +100,8 @@ def build_rectangular_mesh(span_x_m: float, span_y_m: float, step_m: float) -> R
         gradients_m_inv=gradients,
         top_nodes=ids[:, -1].copy(),
         bottom_nodes=ids[:, 0].copy(),
+        left_nodes=ids[0, :].copy(),
+        right_nodes=ids[-1, :].copy(),
     )
 
 
@@ -136,6 +140,7 @@ def solve_weighting_and_adjoint(
     sigma_penalty: float = 2.0,
     alpha_penalty: float = 2.0,
     linear_solve: LinearSolve | None = None,
+    terminal_axis: str = "y",
 ) -> ElectricalResult:
     """Return the PTE current and exact discrete rho/T derivatives.
 
@@ -168,10 +173,16 @@ def solve_weighting_and_adjoint(
     alpha = _element_tensor(alpha_base, alpha_scale)
     matrix = _assemble(mesh, sigma, thickness_m)
 
-    fixed = np.unique(np.concatenate((mesh.bottom_nodes, mesh.top_nodes)))
+    if terminal_axis == "y":
+        low_nodes, high_nodes = mesh.bottom_nodes, mesh.top_nodes
+    elif terminal_axis == "x":
+        low_nodes, high_nodes = mesh.left_nodes, mesh.right_nodes
+    else:
+        raise ValueError("terminal_axis must be 'x' or 'y'")
+    fixed = np.unique(np.concatenate((low_nodes, high_nodes)))
     fixed_values = np.zeros(fixed.size, dtype=np.float64)
-    top_lookup = np.isin(fixed, mesh.top_nodes)
-    fixed_values[top_lookup] = 1.0
+    high_lookup = np.isin(fixed, high_nodes)
+    fixed_values[high_lookup] = 1.0
     free_mask = np.ones(node_count, dtype=bool)
     free_mask[fixed] = False
     free = np.flatnonzero(free_mask)
@@ -247,7 +258,7 @@ def solve_weighting_and_adjoint(
 
     terminal_load = np.zeros(node_count, dtype=np.float64)
     terminal_load[fixed] = matrix[fixed] @ psi
-    terminal_conductance = float(np.sum(terminal_load[mesh.top_nodes]))
+    terminal_conductance = float(np.sum(terminal_load[high_nodes]))
     terminal_element_derivative = thickness_m * mesh.triangle_area_m2 * np.einsum(
         "ea,eab,eb->e", grad_psi, dsigma, grad_psi
     )

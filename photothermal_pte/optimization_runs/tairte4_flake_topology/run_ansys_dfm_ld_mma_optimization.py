@@ -40,6 +40,9 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_pure_current_
     midpoint_projection_derivative,
     verify_optimizer_code_manifest,
 )
+from photothermal_pte.optimization_runs.tairte4_flake_topology.repair_exact_binary_candidates import (
+    active_set_repair,
+)
 from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_optimization import (
     REFERENCE_INCIDENT_POWER_W,
     sha256,
@@ -67,6 +70,10 @@ PLATEAU_WINDOW_EVALUATIONS = 4
 PLATEAU_FOM_RELATIVE_RANGE_MAXIMUM = 1.0e-4
 PLATEAU_RMS_STEP_MAXIMUM = 1.0e-4
 PLATEAU_GRAY_ABSOLUTE_RANGE_MAXIMUM = 1.0e-3
+EXACT_CLEANUP_MINIMUM_BETA = 16.0
+EXACT_CLEANUP_MAXIMUM_GRAY_FRACTION = 0.05
+CONSTRAINT_PLATEAU_RELATIVE_RANGE_MAXIMUM = 1.0e-2
+CONSTRAINT_PLATEAU_EXACT_ABSOLUTE_RANGE_MINIMUM = 2
 
 
 class AdaptivePlateauStop(Exception):
@@ -103,10 +110,33 @@ def adaptive_plateau_diagnostic(
         [float(row["gray_fraction_0p01_0p99"]) for row in window],
         dtype=np.float64,
     )
+    smooth = np.asarray(
+        [
+            float(row.get("smooth_solid_constraint", np.inf))
+            + float(row.get("smooth_void_constraint", np.inf))
+            for row in window
+        ],
+        dtype=np.float64,
+    )
+    exact_bad = np.asarray(
+        [int(row.get("exact_bad_cells", -1)) for row in window], dtype=np.int64
+    )
     fom_scale = max(float(np.max(np.abs(fom))), np.finfo(np.float64).tiny)
     fom_relative_range = float(np.ptp(fom) / fom_scale)
     rms_step_maximum = float(np.max(rms_step))
     gray_absolute_range = float(np.ptp(gray))
+    smooth_scale = max(float(np.max(np.abs(smooth))), np.finfo(np.float64).tiny)
+    smooth_relative_range = float(np.ptp(smooth) / smooth_scale)
+    exact_range = int(np.ptp(exact_bad))
+    exact_range_limit = max(
+        CONSTRAINT_PLATEAU_EXACT_ABSOLUTE_RANGE_MINIMUM,
+        int(np.ceil(0.01 * max(int(np.max(exact_bad)), 1))),
+    )
+    constraint_plateau = bool(
+        np.all(np.isfinite(smooth))
+        and smooth_relative_range < CONSTRAINT_PLATEAU_RELATIVE_RANGE_MAXIMUM
+        and exact_range <= exact_range_limit
+    )
     passed = bool(
         fom_relative_range < PLATEAU_FOM_RELATIVE_RANGE_MAXIMUM
         and rms_step_maximum < PLATEAU_RMS_STEP_MAXIMUM
@@ -120,6 +150,10 @@ def adaptive_plateau_diagnostic(
             "fom_relative_range": fom_relative_range,
             "rms_step_maximum_observed": rms_step_maximum,
             "gray_absolute_range": gray_absolute_range,
+            "smooth_constraint_relative_range": smooth_relative_range,
+            "exact_bad_cell_range": exact_range,
+            "exact_bad_cell_range_limit": exact_range_limit,
+            "constraint_plateau": constraint_plateau,
         }
     )
     return diagnostic
@@ -202,6 +236,85 @@ def final_geometry_gate(rho: np.ndarray) -> dict[str, object]:
     }
 
 
+def evaluate_exact_cleanup_candidates(
+    rho: np.ndarray,
+    *,
+    raw_root: Path,
+    base_fsp: Path,
+    base_sha256: str,
+    polarization: str,
+    gpu: int,
+    reference_objective_A: float,
+) -> dict[str, object]:
+    """Force both 500-nm phase audits to zero, then select by fresh physics."""
+    thresholded = np.asarray(rho >= 0.5, dtype=bool)
+    cleanup_root = raw_root / "forced_exact_500nm_cleanup"
+    cleanup_root.mkdir(parents=True, exist_ok=False)
+    candidates: dict[str, dict[str, object]] = {}
+    for order in ("solid_first", "void_first"):
+        candidate, repair_history, stop_reason = active_set_repair(
+            thresholded, order, 100
+        )
+        audit, _ = exact_binary_audit(candidate.astype(np.float64))
+        if not audit["passed"]:
+            raise RuntimeError(f"{order} exact cleanup did not reach zero violations")
+        density_path = cleanup_root / f"{order}_density.npz"
+        np.savez_compressed(density_path, rho=candidate.astype(np.float64))
+        output = cleanup_root / f"{order}_objective"
+        command = [
+            sys.executable,
+            "-m",
+            "photothermal_pte.optimization_runs.tairte4_flake_topology.evaluate_binary_objective",
+            "--base-fsp", str(base_fsp),
+            "--base-sha256", base_sha256,
+            "--rho-npz", str(density_path),
+            "--output-dir", str(output),
+            "--polarization", polarization,
+            "--gpu-device", f"GPU {gpu}",
+            "--cuda-device", "0",
+            "--reference-objective-A", str(reference_objective_A),
+        ]
+        environment = dict(os.environ)
+        environment["CUDA_VISIBLE_DEVICES"] = str(gpu)
+        completed = subprocess.run(command, cwd=REPOSITORY, env=environment)
+        result_path = output / "binary_objective_result.json"
+        if not result_path.is_file():
+            raise RuntimeError(f"{order} objective result is missing")
+        result = json.loads(result_path.read_text())
+        gates = result.get("gates", {})
+        numerical_pass = bool(
+            float(gates.get("optical_closure", np.inf)) < 0.005
+            and float(gates.get("Q_mapping_error", np.inf)) < 0.005
+            and float(gates.get("thermal_forward_residual", np.inf)) < 1.0e-8
+            and float(gates.get("thermal_energy_balance", np.inf)) < 0.01
+            and float(gates.get("electrical_weighting_residual", np.inf)) < 1.0e-8
+            and np.isfinite(float(result.get("objective_A", np.nan)))
+            and float(result.get("terminal_conductance_S", 0.0)) > 0.0
+        )
+        if completed.returncode not in (0, 1) or not numerical_pass:
+            raise RuntimeError(f"{order} exact candidate failed numerical physics gates")
+        candidates[order] = {
+            "audit": audit,
+            "repair_stop_reason": stop_reason,
+            "repair_history": repair_history,
+            "changed_node_count": int(np.count_nonzero(candidate != thresholded)),
+            "density": {
+                "path": str(density_path),
+                "size_bytes": density_path.stat().st_size,
+                "sha256": sha256(density_path),
+            },
+            "result": result,
+            "numerical_physics_gates_passed": numerical_pass,
+        }
+    selected = max(candidates, key=lambda name: float(candidates[name]["result"]["objective_A"]))
+    return {
+        "trigger": "beta_raised_and_fom_plus_constraints_plateaued",
+        "selection_rule": "highest fresh unrescaled exact-binary terminal current",
+        "selected": selected,
+        "candidates": candidates,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--polarization", choices=("Ea", "Eb"), required=True)
@@ -244,8 +357,8 @@ def main() -> int:
     args = parser.parse_args()
 
     CONTRACT.validate()
-    if CONTRACT.geometry_mode != "contact_anchored":
-        raise RuntimeError("production optimization requires contact_anchored geometry")
+    if CONTRACT.geometry_mode not in {"contact_anchored", "left_right_contact_anchored"}:
+        raise RuntimeError("production optimization requires a contact-anchored geometry")
     code_provenance = verify_optimizer_code_manifest()
     base_fsp = verify_file(args.base_fsp, args.base_sha256)
     jacobian_dir = args.jacobian_dir.expanduser().resolve()
@@ -353,6 +466,16 @@ def main() -> int:
         "fom_relative_range_maximum": PLATEAU_FOM_RELATIVE_RANGE_MAXIMUM,
         "rms_step_maximum": PLATEAU_RMS_STEP_MAXIMUM,
         "gray_absolute_range_maximum": PLATEAU_GRAY_ABSOLUTE_RANGE_MAXIMUM,
+        "constraint_relative_range_maximum": CONSTRAINT_PLATEAU_RELATIVE_RANGE_MAXIMUM,
+    }
+    manifest["forced_exact_cleanup_policy"] = {
+        "enabled": True,
+        "minimum_beta": EXACT_CLEANUP_MINIMUM_BETA,
+        "maximum_gray_fraction": EXACT_CLEANUP_MAXIMUM_GRAY_FRACTION,
+        "requires_fom_plateau": True,
+        "requires_smooth_and_exact_constraint_plateau": True,
+        "candidates": ["solid_first", "void_first"],
+        "selection": "fresh unrescaled GPU objective after both exact audits reach zero",
     }
     manifest["dfm_penalty"] = {
         "minimum_feature_nm": 500.0,
@@ -388,6 +511,7 @@ def main() -> int:
         completed_stages = 0
     final_point = None
     final_beta = 1.0
+    forced_cleanup: dict[str, object] | None = None
     if args.start_beta is None:
         start_beta = float(history[-1]["beta"]) if history else 1.0
     else:
@@ -515,6 +639,41 @@ def main() -> int:
         emit(events, "ansys_dfm_stage_complete", **stage_record)
         if gate["passed"]:
             break
+        plateau = evaluator.plateau_diagnostic or {}
+        exact_bad = int(gate["exact_500nm_audit"]["total_bad_cell_count"])
+        cleanup_ready = bool(
+            beta >= EXACT_CLEANUP_MINIMUM_BETA
+            and float(gate["gray_fraction_0p01_0p99"]) < EXACT_CLEANUP_MAXIMUM_GRAY_FRACTION
+            and exact_bad > 0
+            and bool(plateau.get("passed"))
+            and bool(plateau.get("constraint_plateau"))
+        )
+        if cleanup_ready:
+            emit(
+                events,
+                "forced_exact_cleanup_start",
+                beta=beta,
+                exact_bad_cells=exact_bad,
+                plateau_diagnostic=plateau,
+            )
+            forced_cleanup = evaluate_exact_cleanup_candidates(
+                rho,
+                raw_root=raw_root,
+                base_fsp=base_fsp,
+                base_sha256=args.base_sha256,
+                polarization=args.polarization,
+                gpu=args.gpu,
+                reference_objective_A=float(final_point.result["objective_A"]),
+            )
+            manifest["forced_exact_cleanup"] = forced_cleanup
+            write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
+            write_json(published / "FORCED_EXACT_CLEANUP.json", forced_cleanup)
+            emit(
+                events,
+                "forced_exact_cleanup_complete",
+                selected=forced_cleanup["selected"],
+            )
+            break
         if schedule_index < len(schedule) - 1:
             schedule_index += 1
         # At maximum beta, continue fixed-budget LD_MMA stages with the
@@ -522,39 +681,53 @@ def main() -> int:
 
     assert final_point is not None
     final_rho = MAPPING.physical(latent, final_beta)
-    binary = (final_rho >= 0.5).astype(np.float64)
+    if forced_cleanup is not None:
+        selected = str(forced_cleanup["selected"])
+        selected_row = forced_cleanup["candidates"][selected]
+        with np.load(selected_row["density"]["path"]) as loaded:
+            binary = np.asarray(loaded["rho"], dtype=np.float64)
+        binary_result = selected_row["result"]
+    else:
+        binary = (final_rho >= 0.5).astype(np.float64)
+        binary_result = None
     exact, _ = exact_binary_audit(binary)
     if exact["total_bad_cell_count"] != 0:
         raise RuntimeError("internal error: final thresholded density failed exact 500nm gate")
     binary_path = raw_root / "final_exact_binary_density.npz"
     np.savez_compressed(binary_path, rho=binary)
-    final_output = raw_root / "final_exact_binary_evaluation"
-    command = [
-        sys.executable,
-        "-m",
-        "photothermal_pte.optimization_runs.tairte4_flake_topology.evaluate_binary_objective",
-        "--base-fsp", str(base_fsp),
-        "--base-sha256", args.base_sha256,
-        "--rho-npz", str(binary_path),
-        "--output-dir", str(final_output),
-        "--polarization", args.polarization,
-        "--gpu-device", f"GPU {args.gpu}",
-        "--cuda-device", "0",
-        "--reference-objective-A", str(float(final_point.result["objective_A"])),
-    ]
-    environment = dict(os.environ)
-    environment["CUDA_VISIBLE_DEVICES"] = str(args.gpu)
-    completed = subprocess.run(command, cwd=REPOSITORY, env=environment)
-    result_path = final_output / "binary_objective_result.json"
-    if completed.returncode or not result_path.is_file():
-        raise RuntimeError("fresh exact-binary evaluation failed")
-    binary_result = json.loads(result_path.read_text())
-    if not binary_result.get("passed"):
-        raise RuntimeError("fresh exact-binary result is not passed")
+    if binary_result is None:
+        final_output = raw_root / "final_exact_binary_evaluation"
+        command = [
+            sys.executable,
+            "-m",
+            "photothermal_pte.optimization_runs.tairte4_flake_topology.evaluate_binary_objective",
+            "--base-fsp", str(base_fsp),
+            "--base-sha256", args.base_sha256,
+            "--rho-npz", str(binary_path),
+            "--output-dir", str(final_output),
+            "--polarization", args.polarization,
+            "--gpu-device", f"GPU {args.gpu}",
+            "--cuda-device", "0",
+            "--reference-objective-A", str(float(final_point.result["objective_A"])),
+        ]
+        environment = dict(os.environ)
+        environment["CUDA_VISIBLE_DEVICES"] = str(args.gpu)
+        completed = subprocess.run(command, cwd=REPOSITORY, env=environment)
+        result_path = final_output / "binary_objective_result.json"
+        if completed.returncode or not result_path.is_file():
+            raise RuntimeError("fresh exact-binary evaluation failed")
+        binary_result = json.loads(result_path.read_text())
+        if not binary_result.get("passed"):
+            raise RuntimeError("fresh exact-binary result is not passed")
+    objective_preservation_passed = bool(binary_result.get("passed"))
     final = {
         "schema": SCHEMA,
-        "passed": True,
-        "status": "VALIDATED_ANSYS_STYLE_DFM_LD_MMA_EXACT_BINARY_PTE_OPTIMIZATION",
+        "passed": objective_preservation_passed,
+        "status": (
+            "VALIDATED_ANSYS_STYLE_DFM_LD_MMA_EXACT_BINARY_PTE_OPTIMIZATION"
+            if objective_preservation_passed
+            else "COMPLETED_EXACT_BINARY_WITH_OBJECTIVE_PRESERVATION_GATE_FAILED"
+        ),
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "polarization": args.polarization,
         "algorithm": "NLopt LD_MMA",
@@ -563,13 +736,14 @@ def main() -> int:
         "final_beta": final_beta,
         "full_physics_evaluations": global_evaluation,
         "completed_stages": completed_stages,
-        "final_geometry_gate": final_geometry_gate(final_rho),
+        "final_geometry_gate": final_geometry_gate(binary),
         "binary_result": binary_result,
         "manual_move_limit": None,
         "connectivity_constraint": False,
         "symmetry_constraint": False,
         "volume_constraint": False,
-        "posthoc_morphology_repair": False,
+        "posthoc_morphology_repair": forced_cleanup is not None,
+        "forced_exact_cleanup": forced_cleanup,
     }
     write_json(published / "FINAL_RESULT.json", final)
     emit(events, "ansys_dfm_optimization_complete", **final)

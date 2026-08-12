@@ -144,6 +144,11 @@ def add_fixed_frame(fdtd: Any) -> list[str]:
             "bottom_contact": {"x": (-flake, flake), "y": (-flake, -y_design), "z": z},
             "top_contact": {"x": (-flake, flake), "y": (y_design, flake), "z": z},
         }
+    elif CONTRACT.geometry_mode == "left_right_contact_anchored":
+        pieces = {
+            "left_contact": {"x": (-flake, -x_design), "y": (-flake, flake), "z": z},
+            "right_contact": {"x": (x_design, flake), "y": (-flake, flake), "z": z},
+        }
     else:
         pieces = {
             "left": {"x": (-flake, -x_design), "y": (-flake, flake), "z": z},
