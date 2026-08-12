@@ -17,4 +17,3 @@ from top/bottom to left/right.  The coordinate contract remains Lumerical
 
 Raw FSP/NPZ artifacts remain under `/data/seunghyun/tairte4/artifacts/` and
 are not committed.  `results/` receives per-evaluation JSON and PNG files.
-
