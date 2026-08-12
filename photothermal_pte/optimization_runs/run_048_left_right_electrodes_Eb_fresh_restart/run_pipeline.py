@@ -102,8 +102,10 @@ def main() -> int:
     jacobian_result = JACOBIAN_ROOT / "component_yee_jacobian_result.json"
     if not jacobian_result.is_file() or not json.loads(jacobian_result.read_text()).get("passed"):
         raise RuntimeError("immutable component-Yee Jacobian certificate is unavailable")
-    if OPTIMIZATION_ROOT.exists() or RESULTS.exists():
-        raise RuntimeError("Run048 output already exists; refusing a non-fresh start")
+    if OPTIMIZATION_ROOT.exists() and any(OPTIMIZATION_ROOT.iterdir()):
+        raise RuntimeError("Run048 raw output is non-empty; refusing a non-fresh start")
+    if RESULTS.exists() and any(RESULTS.iterdir()):
+        raise RuntimeError("Run048 published output is non-empty; refusing a non-fresh start")
 
     if ADFD_ROOT.exists():
         if not ADFD_RESULT.is_file() or not json.loads(ADFD_RESULT.read_text()).get("passed"):
@@ -127,8 +129,8 @@ def main() -> int:
     if not ADFD_RESULT.is_file() or not json.loads(ADFD_RESULT.read_text()).get("passed"):
         raise RuntimeError("Run048 Eb combined AD-FD did not pass")
 
-    RESULTS.mkdir(parents=True)
-    OPTIMIZATION_ROOT.mkdir(parents=True)
+    RESULTS.mkdir(parents=True, exist_ok=True)
+    OPTIMIZATION_ROOT.mkdir(parents=True, exist_ok=True)
     run_checked(
         [
             str(PYTHON), "-m",
@@ -153,4 +155,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

@@ -1,12 +1,11 @@
 {
-  "stage": "optimization_Ea",
-  "updated_at_utc": "2026-08-12T09:10:03.403751+00:00",
-  "pid": 3287394,
+  "stage": "exact_cleanup_recovery",
+  "status": "complete",
+  "updated_at_utc": "2026-08-12T09:21:12.337403+00:00",
+  "pid": 424189,
   "gpu": 5,
-  "fresh_restart": true,
-  "initial_density": 0.5,
-  "warm_restart": false,
-  "mma_internal_state_reused": false,
-  "status": "failed",
-  "returncode": 1
+  "checkpoint": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/stage_0006_beta32.npz",
+  "restart_beta": 32.0,
+  "final_status": "COMPLETED_EXACT_BINARY_WITH_OBJECTIVE_PRESERVATION_GATE_FAILED",
+  "passed": false
 }
