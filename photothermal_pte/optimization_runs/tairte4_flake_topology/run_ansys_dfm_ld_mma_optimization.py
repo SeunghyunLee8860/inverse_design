@@ -249,7 +249,9 @@ def evaluate_exact_cleanup_candidates(
     """Force both 500-nm phase audits to zero, then select by fresh physics."""
     thresholded = np.asarray(rho >= 0.5, dtype=bool)
     cleanup_root = raw_root / "forced_exact_500nm_cleanup"
-    cleanup_root.mkdir(parents=True, exist_ok=False)
+    cleanup_root.mkdir(parents=True, exist_ok=True)
+    if any(cleanup_root.iterdir()):
+        raise RuntimeError("refusing to overwrite a non-empty exact-cleanup directory")
     candidates: dict[str, dict[str, object]] = {}
     for order in ("solid_first", "void_first"):
         candidate, repair_history, stop_reason = active_set_repair(
@@ -257,7 +259,17 @@ def evaluate_exact_cleanup_candidates(
         )
         audit, _ = exact_binary_audit(candidate.astype(np.float64))
         if not audit["passed"]:
-            raise RuntimeError(f"{order} exact cleanup did not reach zero violations")
+            candidates[order] = {
+                "audit": audit,
+                "repair_stop_reason": stop_reason,
+                "repair_history": repair_history,
+                "changed_node_count": int(np.count_nonzero(candidate != thresholded)),
+                "density": None,
+                "result": None,
+                "numerical_physics_gates_passed": False,
+                "eligible_for_selection": False,
+            }
+            continue
         density_path = cleanup_root / f"{order}_density.npz"
         np.savez_compressed(density_path, rho=candidate.astype(np.float64))
         output = cleanup_root / f"{order}_objective"
@@ -305,8 +317,18 @@ def evaluate_exact_cleanup_candidates(
             },
             "result": result,
             "numerical_physics_gates_passed": numerical_pass,
+            "eligible_for_selection": True,
         }
-    selected = max(candidates, key=lambda name: float(candidates[name]["result"]["objective_A"]))
+    eligible = [
+        name for name, row in candidates.items()
+        if bool(row.get("eligible_for_selection"))
+    ]
+    if not eligible:
+        raise RuntimeError("no exact-cleanup ordering reached zero 500 nm violations")
+    selected = max(
+        eligible,
+        key=lambda name: float(candidates[name]["result"]["objective_A"]),
+    )
     return {
         "trigger": "beta_raised_and_fom_plus_constraints_plateaued",
         "selection_rule": "highest fresh unrescaled exact-binary terminal current",

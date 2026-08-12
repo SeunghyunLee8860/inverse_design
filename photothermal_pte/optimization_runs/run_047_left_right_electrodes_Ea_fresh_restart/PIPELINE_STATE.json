@@ -1,11 +1,12 @@
 {
   "stage": "optimization_Ea",
-  "updated_at_utc": "2026-08-12T04:43:55.633345+00:00",
+  "updated_at_utc": "2026-08-12T09:10:03.403751+00:00",
   "pid": 3287394,
   "gpu": 5,
   "fresh_restart": true,
   "initial_density": 0.5,
   "warm_restart": false,
   "mma_internal_state_reused": false,
-  "status": "starting_from_uniform_rho0p5"
+  "status": "failed",
+  "returncode": 1
 }

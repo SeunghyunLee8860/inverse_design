@@ -1470,6 +1470,72 @@
         "size_bytes": 143300,
         "sha256": "7dd1669cf113135443a9f1eae9e30d2c5a09f5a373dc959e5cafc11f424939aa"
       }
+    },
+    "0067": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/evaluation_0067_beta32_ansys_dfm_ld_mma/objective_gradient_result.json",
+        "size_bytes": 13172,
+        "sha256": "9a91efa9b9fd1e8e73cf68c930511ff4e412f3bc21a3a32948bc349470a55c69"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/evaluation_0067_beta32_ansys_dfm_ld_mma/objective_gradient.npz",
+        "size_bytes": 2005214,
+        "sha256": "382016872841595a3bfde64ec102e96674e5b4ec9ea94c51d5bd9338f8f3d226"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/evaluation_0067_beta32_ansys_dfm_ld_mma/forward_Ea.fsp",
+        "size_bytes": 180908519,
+        "sha256": "af46a0a6769554997ab212f9fadb55a36d4cc72ec5a584aa600043972479a14a"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/evaluation_0067_beta32_ansys_dfm_ld_mma_latent.npz",
+        "size_bytes": 143314,
+        "sha256": "e065f7fc628769a38f3e02ed509258693cba393dea623c7678c2f41cf7744d15"
+      }
+    },
+    "0068": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/evaluation_0068_beta32_ansys_dfm_ld_mma/objective_gradient_result.json",
+        "size_bytes": 13193,
+        "sha256": "4a86712081562a6e9ec5a5e3f68ab2a126fa1bdc3f7a4c92ad97927aea6142b9"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/evaluation_0068_beta32_ansys_dfm_ld_mma/objective_gradient.npz",
+        "size_bytes": 2005153,
+        "sha256": "1756c3cf9a8ea50812a65678e12eda4a588efd0d7cd31db6582b47d81060ed6b"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/evaluation_0068_beta32_ansys_dfm_ld_mma/forward_Ea.fsp",
+        "size_bytes": 180908519,
+        "sha256": "e8bc6498858ceae27f8a052ec7eb892c3904df60b3be0e54840d5a231e851d49"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/evaluation_0068_beta32_ansys_dfm_ld_mma_latent.npz",
+        "size_bytes": 143309,
+        "sha256": "4ccacf9be1dd326139926a1c123917ad2e93a40f50e6cae6f1bfa4dbf99ddd59"
+      }
+    },
+    "0069": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/evaluation_0069_beta32_ansys_dfm_ld_mma/objective_gradient_result.json",
+        "size_bytes": 13156,
+        "sha256": "b51a56b60662a0c37a27239f2793271aefd27290f38e0f77832c4b6111a244c9"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/evaluation_0069_beta32_ansys_dfm_ld_mma/objective_gradient.npz",
+        "size_bytes": 2005214,
+        "sha256": "d44add4d3ddb6ab6232a93f8fbdc8f16c3504396bbcffa09ae6f7adeb73c5957"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/evaluation_0069_beta32_ansys_dfm_ld_mma/forward_Ea.fsp",
+        "size_bytes": 180908519,
+        "sha256": "4e62b446ec84de762bf577ddc727af8d8bdd3d991684ec0af4bfee0cae1e9b4a"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/evaluation_0069_beta32_ansys_dfm_ld_mma_latent.npz",
+        "size_bytes": 143297,
+        "sha256": "17ab4de895e20551086394b2aa3db8f029eed4c8a5ce487bf5d6480996a3eeec"
+      }
     }
   },
   "initialization": {
@@ -1819,6 +1885,66 @@
         "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/stage_0005_beta16.npz",
         "size_bytes": 284153,
         "sha256": "27686d087345c779e7f5a00dbd38ccedfcc303d47a7af2004fa12274aa3c0b6d"
+      }
+    },
+    {
+      "stage_index": 6,
+      "beta": 32.0,
+      "dfm_penalty_weight": 640.0,
+      "nlopt_result_code": -5,
+      "stage_stop_reason": "adaptive_plateau",
+      "adaptive_plateau_diagnostic": {
+        "passed": true,
+        "minimum_evaluations": 5,
+        "window_evaluations": 4,
+        "fom_relative_range_maximum": 0.0001,
+        "rms_step_maximum": 0.0001,
+        "gray_absolute_range_maximum": 0.001,
+        "stage_evaluations_observed": 9,
+        "reason": "adaptive_plateau",
+        "window_evaluation_ids": [
+          66,
+          67,
+          68,
+          69
+        ],
+        "fom_relative_range": 3.3298348997472466e-07,
+        "rms_step_maximum_observed": 7.617440736654897e-13,
+        "gray_absolute_range": 0.0,
+        "smooth_constraint_relative_range": 6.036356062248073e-12,
+        "exact_bad_cell_range": 0,
+        "exact_bad_cell_range_limit": 4,
+        "constraint_plateau": true
+      },
+      "full_physics_evaluations": 9,
+      "raw_current_at_reference_power_A": 4.8712677188049964e-08,
+      "smooth_solid_residual": 0.0034171714982739573,
+      "smooth_void_residual": 0.0034511925691043184,
+      "final_geometry_gate": {
+        "passed": false,
+        "discreteness": 0.9879643771366807,
+        "binarization_mean_4rho1mrho": 0.012035622863319278,
+        "gray_fraction_0p01_0p99": 0.028199252699159804,
+        "exact_500nm_audit": {
+          "minimum_feature_nm": 500.0,
+          "opening_radius_nm": 250.0,
+          "opening_radius_pixels": 2,
+          "realized_discrete_opening_max_center_offset_nm": 200.0,
+          "realized_discrete_opening_pixel_support_diameter_nm": 500.0,
+          "discretization_note": "requested 500 nm pixel-support diameter is represented by five 100 nm samples (two centre offsets plus two half-cell extents)",
+          "outside_design_phase": "fixed_solid_at_left_right_and_void_at_top_bottom",
+          "solid_bad_cell_count": 167,
+          "void_bad_cell_count": 161,
+          "total_bad_cell_count": 328,
+          "counted_entity": "design nodes (legacy field names retain *_cell_count)",
+          "solid_fraction": 0.6918519436014946,
+          "passed": false
+        }
+      },
+      "checkpoint": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/stage_0006_beta32.npz",
+        "size_bytes": 238428,
+        "sha256": "7e199b2bb798b3815e07f5ca42e043079893853f34e01913044e8a04fde7dd9c"
       }
     }
   ]
