@@ -46,7 +46,18 @@ def run047_failed() -> bool:
     if not RUN047_STATE.is_file():
         return False
     state = json.loads(RUN047_STATE.read_text())
-    return state.get("status") == "failed"
+    return state.get("status") == "failed" and not run047_recovery_active()
+
+
+def run047_recovery_active() -> bool:
+    marker = b"resume_exact_cleanup.py"
+    for command_line in Path("/proc").glob("[0-9]*/cmdline"):
+        try:
+            if marker in command_line.read_bytes():
+                return True
+        except (FileNotFoundError, PermissionError, ProcessLookupError):
+            continue
+    return False
 
 
 def main() -> int:

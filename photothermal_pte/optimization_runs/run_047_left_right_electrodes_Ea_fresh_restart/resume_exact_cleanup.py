@@ -8,7 +8,18 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import subprocess
+
+import numpy as np
+
+from photothermal_pte.optimization_runs.tairte4_flake_topology.optimization_support import (
+    exact_binary_audit,
+)
+from photothermal_pte.optimization_runs.tairte4_flake_topology.run_ansys_dfm_ld_mma_optimization import (
+    REFERENCE_INCIDENT_POWER_W,
+    SCHEMA,
+    evaluate_exact_cleanup_candidates,
+    final_geometry_gate,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -24,6 +35,7 @@ BASE_SHA256 = "6274627f8e84cc61a8b5925472fc131041e7662b06d77141f3b52353d3578aa6"
 JACOBIAN = ROOT / "component_yee_jacobian_v1"
 RESULTS = HERE / "results"
 STATE = HERE / "PIPELINE_STATE.json"
+REFERENCE_EVALUATION = RESULTS / "evaluation_0069.json"
 GPU = int(os.environ.get("RUN047_GPU", "5"))
 
 
@@ -63,22 +75,6 @@ def main() -> int:
     if not cleanup.is_dir() or any(cleanup.iterdir()):
         raise RuntimeError("expected the failed Run047 cleanup directory to be empty")
 
-    command = [
-        str(PYTHON), "-m",
-        "photothermal_pte.optimization_runs.tairte4_flake_topology.run_ansys_dfm_ld_mma_optimization",
-        "--polarization", "Ea",
-        "--raw-root", str(RAW),
-        "--published-dir", str(RESULTS),
-        "--gpu", str(GPU),
-        "--base-fsp", str(BASE_FSP),
-        "--base-sha256", BASE_SHA256,
-        "--jacobian-dir", str(JACOBIAN),
-        "--constraint-device", "cuda:0",
-        "--initial-latent-npz", str(CHECKPOINT),
-        "--recovery-append",
-        "--start-beta", "32",
-        "--output-slug", "ansys_dfm_ld_mma_exact_cleanup_recovery",
-    ]
     env = dict(os.environ)
     inherited = env.get("LD_LIBRARY_PATH", "")
     env["LD_LIBRARY_PATH"] = ":".join(
@@ -95,12 +91,75 @@ def main() -> int:
             "MPLCONFIGDIR": "/tmp/seunghyun_matplotlib_run047_cleanup",
         }
     )
-    write_state("running", command=command)
-    completed = subprocess.run(command, cwd=REPOSITORY, env=env)
-    if completed.returncode or not final.is_file():
-        write_state("failed", returncode=completed.returncode)
-        return 1
-    result = json.loads(final.read_text())
+    os.environ.clear()
+    os.environ.update(env)
+    if not REFERENCE_EVALUATION.is_file():
+        raise RuntimeError("Run047 evaluation 69 publication is missing")
+    reference = json.loads(REFERENCE_EVALUATION.read_text())
+    with np.load(CHECKPOINT) as loaded:
+        rho = np.asarray(loaded["rho"], dtype=np.float64)
+
+    write_state("running", action="direct_exact_cleanup_from_beta32_checkpoint")
+    forced = evaluate_exact_cleanup_candidates(
+        rho,
+        raw_root=RAW,
+        base_fsp=BASE_FSP,
+        base_sha256=BASE_SHA256,
+        polarization="Ea",
+        gpu=GPU,
+        reference_objective_A=float(reference["objective_A"]),
+    )
+    selected = str(forced["selected"])
+    selected_row = forced["candidates"][selected]
+    with np.load(selected_row["density"]["path"]) as loaded:
+        binary = np.asarray(loaded["rho"], dtype=np.float64)
+    exact, _ = exact_binary_audit(binary)
+    if not exact["passed"]:
+        raise RuntimeError("selected Run047 cleanup candidate failed exact 500 nm audit")
+    binary_path = RAW / "final_exact_binary_density.npz"
+    np.savez_compressed(binary_path, rho=binary)
+    binary_result = selected_row["result"]
+    result = {
+        "schema": SCHEMA,
+        "passed": bool(binary_result.get("passed")),
+        "status": (
+            "VALIDATED_ANSYS_STYLE_DFM_LD_MMA_EXACT_BINARY_PTE_OPTIMIZATION"
+            if binary_result.get("passed")
+            else "COMPLETED_EXACT_BINARY_WITH_OBJECTIVE_PRESERVATION_GATE_FAILED"
+        ),
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "polarization": "Ea",
+        "algorithm": "NLopt LD_MMA",
+        "objective": "signed full-flake terminal PTE current",
+        "reference_incident_power_W": REFERENCE_INCIDENT_POWER_W,
+        "final_beta": 32.0,
+        "full_physics_evaluations": 69,
+        "completed_stages": 6,
+        "final_geometry_gate": final_geometry_gate(binary),
+        "binary_result": binary_result,
+        "manual_move_limit": None,
+        "connectivity_constraint": False,
+        "symmetry_constraint": False,
+        "volume_constraint": False,
+        "posthoc_morphology_repair": True,
+        "forced_exact_cleanup": forced,
+        "recovery": {
+            "reason": "solid_first cleanup cycle previously aborted before void_first",
+            "checkpoint": str(CHECKPOINT),
+            "checkpoint_sha256": CHECKPOINT_SHA256,
+            "reference_evaluation": 69,
+            "additional_gradient_evaluations": 0,
+        },
+    }
+    manifest_path = RESULTS / "RAW_ARTIFACT_MANIFEST.json"
+    manifest = json.loads(manifest_path.read_text())
+    manifest["forced_exact_cleanup"] = forced
+    manifest["cleanup_recovery"] = result["recovery"]
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
+    (RESULTS / "FORCED_EXACT_CLEANUP.json").write_text(
+        json.dumps(forced, indent=2) + "\n"
+    )
+    final.write_text(json.dumps(result, indent=2) + "\n")
     write_state("complete", final_status=result.get("status"), passed=result.get("passed"))
     return 0
 
