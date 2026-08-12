@@ -1,0 +1,41 @@
+{
+  "stage": "optimization_Eb_evaporated",
+  "updated_at_utc": "2026-08-12T21:36:29.099934+00:00",
+  "pid": 3925629,
+  "gpu": 0,
+  "polarization": "Eb",
+  "polarization_angle_deg": 0,
+  "axis_contract": "Lumerical x=b, y=a, z=c",
+  "electrical_terminals": {
+    "bottom": 0,
+    "top": 1
+  },
+  "geometry_mode": "contact_anchored",
+  "thermal_interface_scenario": "evaporated",
+  "G_TaIrTe4_SiO2_W_m2K": 73700.0,
+  "fresh_restart": true,
+  "initial_density": 0.5,
+  "warm_restart": false,
+  "mma_internal_state_reused": false,
+  "command": [
+    "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python",
+    "-m",
+    "photothermal_pte.optimization_runs.tairte4_flake_topology.run_ansys_dfm_ld_mma_optimization",
+    "--polarization",
+    "Eb",
+    "--raw-root",
+    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run050_Eb_evaporated_fresh_current_max",
+    "--published-dir",
+    "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/optimization_runs/run_050_top_bottom_evaporated_sio2_Eb_fresh_restart/results",
+    "--gpu",
+    "0",
+    "--base-fsp",
+    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/production_input_uniform_rho0p5_Ea_forward_v1/tairte4_flake_forward_Ea.fsp",
+    "--base-sha256",
+    "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83",
+    "--jacobian-dir",
+    "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/production_input_component_yee_jacobian_v1",
+    "--constraint-device",
+    "cuda:0"
+  ]
+}
