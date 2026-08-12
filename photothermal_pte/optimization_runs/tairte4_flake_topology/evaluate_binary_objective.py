@@ -13,6 +13,9 @@ import traceback
 import numpy as np
 
 from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
+from photothermal_pte.optimization_runs.tairte4_flake_topology.thermal import (
+    thermal_interface_contract,
+)
 from photothermal_pte.optimization_runs.tairte4_flake_topology.evaluate_objective_gradient import (
     load_rho,
 )
@@ -127,6 +130,7 @@ def main() -> int:
             "polarization": args.polarization,
             "polarization_angle_deg": angle,
             "axis_contract": "Lumerical x=b, y=a, z=c",
+            "thermal_interface_contract": thermal_interface_contract(),
             "objective_A": objective,
             "reference_continuous_objective_A": args.reference_objective_A,
             "relative_objective_change_from_continuous": reference_change,

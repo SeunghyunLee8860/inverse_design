@@ -11,6 +11,7 @@ exact by construction.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import os
 from pathlib import Path
 import sys
 
@@ -43,11 +44,49 @@ K_SIO2_W_MK = 1.38
 K_SI_W_MK = 145.0
 # Lumerical x=b, y=a, z=c.
 K_TAIRTE4_XYZ_W_MK = np.asarray((3.8, 14.4, 1.0), dtype=np.float64)
-G_TAIRTE4_SIO2_W_M2K = 7.37e6
+TAIRTE4_SIO2_INTERFACE_CONDUCTANCE_W_M2K = {
+    "thermally_grown": 7.37e6,
+    "evaporated": 7.37e4,
+}
+
+
+def selected_tairte4_sio2_interface() -> tuple[str, float]:
+    """Return the explicitly selected paper-derived interface scenario."""
+
+    scenario = os.environ.get(
+        "TAIRTE4_SIO2_INTERFACE_SCENARIO", "thermally_grown"
+    ).strip()
+    if scenario not in TAIRTE4_SIO2_INTERFACE_CONDUCTANCE_W_M2K:
+        allowed = ", ".join(sorted(TAIRTE4_SIO2_INTERFACE_CONDUCTANCE_W_M2K))
+        raise RuntimeError(
+            f"unknown TAIRTE4_SIO2_INTERFACE_SCENARIO={scenario!r}; "
+            f"expected one of: {allowed}"
+        )
+    return scenario, float(TAIRTE4_SIO2_INTERFACE_CONDUCTANCE_W_M2K[scenario])
+
+
+TAIRTE4_SIO2_INTERFACE_SCENARIO, G_TAIRTE4_SIO2_W_M2K = (
+    selected_tairte4_sio2_interface()
+)
 G_SIO2_SI_W_M2K = 1.1e9
 TOP_AIR_CONVECTION_W_M2K = 10.0
 THERMAL_SI_DEPTH_M = 20.0e-6
 THERMAL_AIR_HEIGHT_M = 2.0e-6
+
+
+def thermal_interface_contract() -> dict[str, object]:
+    """Serializable interface provenance for coupled objective evaluations."""
+
+    return {
+        "model": "explicit_3d_bulk_SiO2_and_Si_with_finite_interfaces",
+        "TaIrTe4_SiO2_scenario": TAIRTE4_SIO2_INTERFACE_SCENARIO,
+        "G_TaIrTe4_SiO2_W_m2K": G_TAIRTE4_SIO2_W_M2K,
+        "G_SiO2_Si_W_m2K": G_SIO2_SI_W_M2K,
+        "interpretation": (
+            "paper-derived interface scenario; bulk SiO2 geometry and "
+            "optical material are unchanged"
+        ),
+    }
 
 
 def _piecewise_edges() -> tuple[np.ndarray, np.ndarray, np.ndarray]:

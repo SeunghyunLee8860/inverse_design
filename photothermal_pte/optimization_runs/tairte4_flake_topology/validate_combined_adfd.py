@@ -41,6 +41,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.thermal import (
     flake_cell_temperature,
     flake_temperature_transpose,
     map_native_q,
+    thermal_interface_contract,
     thermal_density_gradient,
 )
 
@@ -564,6 +565,7 @@ def main() -> int:
             "status": "VALIDATED_TAIRTE4_FLAKE_COMBINED_PHYSICAL_RHO_ADFD" if passed else "FAILED_TAIRTE4_FLAKE_COMBINED_PHYSICAL_RHO_ADFD",
             "passed": passed,
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+            "thermal_interface_contract": thermal_interface_contract(),
             "scope": (
                 f"uniform rho=0.5 {args.polarization} combined optical-Q, "
                 "explicit thermal material/interface, and density-dependent "

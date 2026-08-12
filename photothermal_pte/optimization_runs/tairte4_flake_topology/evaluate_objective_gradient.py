@@ -31,6 +31,9 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.validate_combined
 import build_nonuniform_complex_yee_jacobian as jacobian_builder
 import run_production_combined_adfd_smoke as legacy_combined
 from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
+from photothermal_pte.optimization_runs.tairte4_flake_topology.thermal import (
+    thermal_interface_contract,
+)
 
 
 RHO_ROUNDOFF_TOLERANCE = 1.0e-12
@@ -198,6 +201,7 @@ def main() -> int:
             "polarization": args.polarization,
             "polarization_angle_deg": angle,
             "axis_contract": "Lumerical x=b, y=a, z=c",
+            "thermal_interface_contract": thermal_interface_contract(),
             "objective": "signed full-flake terminal PTE current",
             "objective_A": coupled["electrical"].current_A,
             "rho_range": [float(np.min(rho)), float(np.max(rho))],

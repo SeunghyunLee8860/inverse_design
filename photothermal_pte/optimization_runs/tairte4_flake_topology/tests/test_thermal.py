@@ -5,12 +5,23 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.thermal import (
     G_TAIRTE4_SIO2_W_M2K,
     K_AIR_W_MK,
     K_TAIRTE4_XYZ_W_MK,
+    TAIRTE4_SIO2_INTERFACE_CONDUCTANCE_W_M2K,
+    TAIRTE4_SIO2_INTERFACE_SCENARIO,
     build_state,
     cell_to_node,
     cell_to_node_transpose,
     nodal_to_cell,
     nodal_to_cell_transpose,
 )
+
+
+def test_default_interface_scenario_is_thermally_grown():
+    assert TAIRTE4_SIO2_INTERFACE_SCENARIO == "thermally_grown"
+    assert G_TAIRTE4_SIO2_W_M2K == 7.37e6
+    assert TAIRTE4_SIO2_INTERFACE_CONDUCTANCE_W_M2K == {
+        "thermally_grown": 7.37e6,
+        "evaporated": 7.37e4,
+    }
 
 
 def test_nodal_cell_transpose():
