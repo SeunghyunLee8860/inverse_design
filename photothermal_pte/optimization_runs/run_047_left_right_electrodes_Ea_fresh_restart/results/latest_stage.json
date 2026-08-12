@@ -1,19 +1,41 @@
 {
-  "stage_index": 1,
-  "beta": 1.0,
-  "dfm_penalty_weight": 0.0,
-  "nlopt_result_code": 5,
-  "stage_stop_reason": "nlopt",
-  "adaptive_plateau_diagnostic": null,
-  "full_physics_evaluations": 40,
-  "raw_current_at_reference_power_A": 4.2651659946581796e-08,
-  "smooth_solid_residual": 0.003561376705141329,
-  "smooth_void_residual": 0.0034042769706041083,
+  "stage_index": 4,
+  "beta": 8.0,
+  "dfm_penalty_weight": 40.0,
+  "nlopt_result_code": -5,
+  "stage_stop_reason": "adaptive_plateau",
+  "adaptive_plateau_diagnostic": {
+    "passed": true,
+    "minimum_evaluations": 5,
+    "window_evaluations": 4,
+    "fom_relative_range_maximum": 0.0001,
+    "rms_step_maximum": 0.0001,
+    "gray_absolute_range_maximum": 0.001,
+    "stage_evaluations_observed": 5,
+    "reason": "adaptive_plateau",
+    "window_evaluation_ids": [
+      52,
+      53,
+      54,
+      55
+    ],
+    "fom_relative_range": 2.2009802206526978e-06,
+    "rms_step_maximum_observed": 1.8881635090566817e-08,
+    "gray_absolute_range": 0.0,
+    "smooth_constraint_relative_range": 4.3128947655664713e-07,
+    "exact_bad_cell_range": 0,
+    "exact_bad_cell_range_limit": 4,
+    "constraint_plateau": true
+  },
+  "full_physics_evaluations": 5,
+  "raw_current_at_reference_power_A": 4.7433976242884446e-08,
+  "smooth_solid_residual": 0.003129324362183036,
+  "smooth_void_residual": 0.00323120994406458,
   "final_geometry_gate": {
     "passed": false,
-    "discreteness": 0.8494496136088148,
-    "binarization_mean_4rho1mrho": 0.1505503863911853,
-    "gray_fraction_0p01_0p99": 0.2874218121013191,
+    "discreteness": 0.9506233281017828,
+    "binarization_mean_4rho1mrho": 0.04937667189821715,
+    "gray_fraction_0p01_0p99": 0.11832951425445387,
     "exact_500nm_audit": {
       "minimum_feature_nm": 500.0,
       "opening_radius_nm": 250.0,
@@ -31,8 +53,8 @@
     }
   },
   "checkpoint": {
-    "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/stage_0001_beta1.npz",
-    "size_bytes": 220163,
-    "sha256": "081803f14c3fc8e1a9e5dbd6a7e0645e8f80f8a7afccc1f9121d9dcb852476c0"
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/stage_0004_beta8.npz",
+    "size_bytes": 299893,
+    "sha256": "31f850961585002c802700202a85cf3db4670b8853abb39b74c981f4ab52984e"
   }
 }
