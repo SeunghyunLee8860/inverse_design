@@ -1,0 +1,525 @@
+{
+  "status": "VALIDATED_TAIRTE4_FLAKE_COMBINED_PHYSICAL_RHO_ADFD",
+  "passed": true,
+  "generated_at_utc": "2026-08-12T18:08:04.658446+00:00",
+  "thermal_interface_contract": {
+    "model": "explicit_3d_bulk_SiO2_and_Si_with_finite_interfaces",
+    "TaIrTe4_SiO2_scenario": "evaporated",
+    "G_TaIrTe4_SiO2_W_m2K": 73700.0,
+    "G_SiO2_Si_W_m2K": 1100000000.0,
+    "interpretation": "paper-derived interface scenario; bulk SiO2 geometry and optical material are unchanged"
+  },
+  "scope": "uniform rho=0.5 Ea combined optical-Q, explicit thermal material/interface, and density-dependent electrical weighting gradient",
+  "polarization": "Ea",
+  "polarization_angle_deg": 90.0,
+  "step": 0.005,
+  "base_objective_A": 1.0026619355161826e-23,
+  "AD_directional_A": 3.772867873451883e-17,
+  "FD_directional_A": 3.77287354666916e-17,
+  "combined_AD_FD_relative_error": 1.5036860385232833e-06,
+  "gradient_norms_A": {
+    "total": 3.615209204404526e-19,
+    "optical": 8.904113390387087e-21,
+    "thermal": 1.9804093650437548e-20,
+    "electrical": 3.6571454682115284e-19
+  },
+  "operator": {
+    "result_path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/production_input_component_yee_jacobian_v1/component_yee_jacobian_result.json",
+    "result_sha256": "7262e77368c750e7cdacfa940983ff3d006074698a96247f9587967768d5ca64",
+    "fresh_transpose_error": 1.7227130217300998e-15,
+    "maximum_coordinate_mismatch_m": 5.082197683525802e-21
+  },
+  "base_forward": {
+    "P_Q_W": 3.3162751573647184e-14,
+    "P_six_W": 3.316402589289335e-14,
+    "closure": 3.842474524305756e-05,
+    "source_power_W": 1.3830232993859658e-13,
+    "faces": {
+      "run010_flux_x_min": {
+        "signed_axis_power_W": -1.717782994102884e-17,
+        "outward_power_W": 1.717782994102884e-17
+      },
+      "run010_flux_x_max": {
+        "signed_axis_power_W": 1.7177839068110447e-17,
+        "outward_power_W": 1.7177839068110447e-17
+      },
+      "run010_flux_y_min": {
+        "signed_axis_power_W": -1.1045556641489611e-17,
+        "outward_power_W": 1.1045556641489611e-17
+      },
+      "run010_flux_y_max": {
+        "signed_axis_power_W": 1.104554114066127e-17,
+        "outward_power_W": 1.104554114066127e-17
+      },
+      "run010_flux_z_min": {
+        "signed_axis_power_W": -1.484331223006493e-14,
+        "outward_power_W": 1.484331223006493e-14
+      },
+      "run010_flux_z_max": {
+        "signed_axis_power_W": -4.8063784889749575e-14,
+        "outward_power_W": -4.8063784889749575e-14
+      }
+    },
+    "coordinate_mismatch_m": 5.082197683525802e-21,
+    "resources": {
+      "reuse_completed_FSP": true
+    },
+    "resource_used": "REUSED_COMPLETED_GPU_FORWARD",
+    "wall_s": 0.0,
+    "polarization_angle_deg": 90.0,
+    "project": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/production_input_uniform_rho0p5_Ea_forward_v1/tairte4_flake_forward_Ea.fsp",
+      "size_bytes": 159871532,
+      "sha256": "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83"
+    },
+    "log_audit": {
+      "logs": [
+        "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/production_input_uniform_rho0p5_Ea_forward_v1/tairte4_flake_forward_Ea_p0.log"
+      ],
+      "final_auto_shutoff": 9.35837e-08,
+      "logged_grid": {
+        "shape_xyz": [
+          338,
+          338,
+          106
+        ],
+        "grid_points": 12109864
+      },
+      "precise_GPU_memory_GiB": 0.423,
+      "simulation_completed_successfully": true
+    }
+  },
+  "base_Q_mapping": {
+    "method": "literal optical-dual-cell/thermal-material intersection",
+    "full_cell_power_forced_into_TaIrTe4": false,
+    "nearest_cell_relocation": false,
+    "clipping_smoothing_gain_or_rescaling": false,
+    "native_total_power_W": 3.3162751573647184e-14,
+    "material_attributed_power_W": 3.2231426484484643e-14,
+    "target_power_W": 3.2231426484484643e-14,
+    "relative_mapping_error": 0.0,
+    "material_attributed_fraction_of_native_Q": 0.9719165315008836,
+    "components": {
+      "x": {
+        "native_power_W": 7.96383817262863e-18,
+        "material_attributed_source_power_W": 7.803820845209005e-18,
+        "target_integrated_power_W": 7.803820845209003e-18,
+        "relative_power_error": 1.9743456264192646e-16,
+        "source_cells_with_zero_material_overlap": 1010077
+      },
+      "y": {
+        "native_power_W": 3.3085453159710676e-14,
+        "material_attributed_source_power_W": 3.21552206808366e-14,
+        "target_integrated_power_W": 3.215522068083659e-14,
+        "relative_power_error": 1.9626322283426795e-16,
+        "source_cells_with_zero_material_overlap": 1010077
+      },
+      "z": {
+        "native_power_W": 6.933457576387911e-17,
+        "material_attributed_source_power_W": 6.840198280283579e-17,
+        "target_integrated_power_W": 6.840198280283579e-17,
+        "relative_power_error": 0.0,
+        "source_cells_with_zero_material_overlap": 1010077
+      }
+    }
+  },
+  "base_thermal": {
+    "forward_residual": 5.110538797059121e-11,
+    "adjoint_residual": 5.983061895338829e-11,
+    "energy_balance": 1.2472408489091896e-12
+  },
+  "pullback": {
+    "x": {
+      "shape": [
+        263,
+        263,
+        38
+      ],
+      "finite": true,
+      "probe_inner_product_scale": 6.177207755010444e-23
+    },
+    "y": {
+      "shape": [
+        263,
+        263,
+        38
+      ],
+      "finite": true,
+      "probe_inner_product_scale": 1.431161568252017e-22
+    },
+    "z": {
+      "shape": [
+        263,
+        263,
+        38
+      ],
+      "finite": true,
+      "probe_inner_product_scale": 4.251203744635098e-23
+    }
+  },
+  "adjoint_source": {
+    "method": "official common-grid FieldRegion vector profile; component staggering is handled by the solver",
+    "component_collocation": {
+      "method": "official common-grid FieldRegion placement",
+      "components": {}
+    },
+    "source_profile_roundtrip_max_abs_error": 0.0,
+    "coordinate_bounds_m": {
+      "x": [
+        -1.400000000000001e-05,
+        1.4e-05
+      ],
+      "y": [
+        -1.400000000000001e-05,
+        1.4e-05
+      ],
+      "z": [
+        -1.1709090909090921e-06,
+        1.225057786913213e-06
+      ]
+    },
+    "profile_scale": 1.8123385614442218e-21,
+    "fieldregion_base_amplitude": 8.452201388439507e-29,
+    "template": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/combined_adfd_Ea_evaporated_run049_precheck/tairte4_flake_adjoint_template.fsp",
+      "size_bytes": 278492747,
+      "sha256": "b91c985e6db11c51c738789cbb75b9f52f357ad71074046ea0685e1b944fc421"
+    },
+    "forward_Gaussian_source_object_preserved_as_mesh_anchor": true,
+    "forward_Gaussian_source_original_amplitude": 1.0,
+    "forward_Gaussian_source_enabled_in_adjoint": true,
+    "forward_Gaussian_source_adjoint_amplitude": 0.0,
+    "empirical_normalization": false,
+    "gradient_rescaling": false
+  },
+  "adjoint": {
+    "resources": {
+      "1": {
+        "active": "1",
+        "device type": "CPU",
+        "processes": "1",
+        "threads": "8",
+        "solver extra command line options": ""
+      },
+      "2": {
+        "active": "1",
+        "device type": "GPU 5",
+        "processes": "1",
+        "threads": "8",
+        "solver extra command line options": "-gpu"
+      }
+    },
+    "resource_used": "Local Host",
+    "solver_mode": "GPU",
+    "forward_source_enabled_in_adjoint": true,
+    "named_source_normalization": {
+      "method": "FieldRegion-only CW field reconstructed from official cwnorm(1) and cwnorm(2) states; the zero-amplitude forward Gaussian remains active only to preserve the forward mesh",
+      "first_over_average_real": 1.1473463272070958,
+      "first_over_average_imag": 0.05521563719015652,
+      "fieldregion_over_first_source_spectrum_real": 1.2946926544141917,
+      "fieldregion_over_first_source_spectrum_imag": 0.11043127438031304,
+      "fieldregion_only_field_multiplier_real": 0.7668053464747494,
+      "fieldregion_only_field_multiplier_imag": -0.06540493708999903,
+      "two_normalization_state_spatial_residual": 3.4577322419794716e-15,
+      "uses_finite_difference_fit": false,
+      "empirical_gradient_rescaling": false,
+      "grid_mismatch_m": 0.0
+    },
+    "log_audit": {
+      "logs": [
+        "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/combined_adfd_Ea_evaporated_run049_precheck/tairte4_flake_adjoint_gpu_p0.log"
+      ],
+      "final_auto_shutoff": 9.8324e-08,
+      "logged_grid": {
+        "shape_xyz": [
+          338,
+          338,
+          106
+        ],
+        "grid_points": 12109864
+      },
+      "precise_GPU_memory_GiB": 0.423,
+      "simulation_completed_successfully": true
+    },
+    "wall_s": 48.122229017317295,
+    "project": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/combined_adfd_Ea_evaporated_run049_precheck/tairte4_flake_adjoint_gpu.fsp",
+      "size_bytes": 412209112,
+      "sha256": "55879c65f6f4c068a6bb5397f228dfef05534ed44d7295b4b500d92a543eebdf"
+    }
+  },
+  "optical_gradient": {
+    "forward_adjoint_coordinate_mismatch_m": 0.0,
+    "indirect_gradient_L2_A": 2.984126979124917e-20,
+    "direct_gradient_L2_A": 2.313379968701542e-20
+  },
+  "FD_pair": {
+    "plus": {
+      "objective_A": 1.88653679864533e-19,
+      "forward": {
+        "P_Q_W": 3.316271441866441e-14,
+        "P_six_W": 3.316397891789203e-14,
+        "closure": 3.81286947127236e-05,
+        "source_power_W": 1.3830232993859658e-13,
+        "faces": {
+          "run010_flux_x_min": {
+            "signed_axis_power_W": -1.7177767392879266e-17,
+            "outward_power_W": 1.7177767392879266e-17
+          },
+          "run010_flux_x_max": {
+            "signed_axis_power_W": 1.7177742101369226e-17,
+            "outward_power_W": 1.7177742101369226e-17
+          },
+          "run010_flux_y_min": {
+            "signed_axis_power_W": -1.1027074493203698e-17,
+            "outward_power_W": 1.1027074493203698e-17
+          },
+          "run010_flux_y_max": {
+            "signed_axis_power_W": 1.106566507498252e-17,
+            "outward_power_W": 1.106566507498252e-17
+          },
+          "run010_flux_z_min": {
+            "signed_axis_power_W": -1.484362002826413e-14,
+            "outward_power_W": 1.484362002826413e-14
+          },
+          "run010_flux_z_max": {
+            "signed_axis_power_W": -4.806404719521859e-14,
+            "outward_power_W": -4.806404719521859e-14
+          }
+        },
+        "coordinate_mismatch_m": 5.082197683525802e-21,
+        "resources": {
+          "1": {
+            "active": "1",
+            "device type": "CPU",
+            "processes": "1",
+            "threads": "8",
+            "solver extra command line options": ""
+          },
+          "2": {
+            "active": "1",
+            "device type": "GPU 5",
+            "processes": "1",
+            "threads": "8",
+            "solver extra command line options": "-gpu"
+          },
+          "global_gpu_engine_lock": {
+            "path": "/tmp/seunghyun_lumerical_fdtd_gpu_engine.lock",
+            "wait_s": 6.767362356185913e-05,
+            "pid": 3100531
+          }
+        },
+        "resource_used": "Local Host",
+        "wall_s": 41.938945177942514,
+        "polarization_angle_deg": 90.0,
+        "project": {
+          "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/combined_adfd_Ea_evaporated_run049_precheck/adjoint_aligned_plus.fsp",
+          "size_bytes": 180904035,
+          "sha256": "8dc1951b07db27f24ffcd3bcb6ae619b4767fe7688a07a4776d1f542fb66d731"
+        },
+        "log_audit": {
+          "logs": [
+            "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/combined_adfd_Ea_evaporated_run049_precheck/adjoint_aligned_plus_p0.log",
+            "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/combined_adfd_Ea_evaporated_run049_precheck/tairte4_flake_adjoint_gpu_p0.log"
+          ],
+          "final_auto_shutoff": 9.8324e-08,
+          "logged_grid": {
+            "shape_xyz": [
+              338,
+              338,
+              106
+            ],
+            "grid_points": 12109864
+          },
+          "precise_GPU_memory_GiB": 0.423,
+          "simulation_completed_successfully": true
+        }
+      },
+      "Q_mapping": {
+        "method": "literal optical-dual-cell/thermal-material intersection",
+        "full_cell_power_forced_into_TaIrTe4": false,
+        "nearest_cell_relocation": false,
+        "clipping_smoothing_gain_or_rescaling": false,
+        "native_total_power_W": 3.3162714418664416e-14,
+        "material_attributed_power_W": 3.223139291101861e-14,
+        "target_power_W": 3.223139291101861e-14,
+        "relative_mapping_error": 0.0,
+        "material_attributed_fraction_of_native_Q": 0.9719166080349066,
+        "components": {
+          "x": {
+            "native_power_W": 7.964396193597812e-18,
+            "material_attributed_source_power_W": 7.804367880748358e-18,
+            "target_integrated_power_W": 7.804367880748358e-18,
+            "relative_power_error": 0.0,
+            "source_cells_with_zero_material_overlap": 1010077
+          },
+          "y": {
+            "native_power_W": 3.3085413334364576e-14,
+            "material_attributed_source_power_W": 3.215518445111425e-14,
+            "target_integrated_power_W": 3.2155184451114244e-14,
+            "relative_power_error": 1.9626344396694661e-16,
+            "source_cells_with_zero_material_overlap": 1010077
+          },
+          "z": {
+            "native_power_W": 6.933668810623745e-17,
+            "material_attributed_source_power_W": 6.840409202361293e-17,
+            "target_integrated_power_W": 6.840409202361293e-17,
+            "relative_power_error": 0.0,
+            "source_cells_with_zero_material_overlap": 1010077
+          }
+        }
+      },
+      "thermal_residual": 5.2367535202373706e-11,
+      "energy_balance": 1.2740666652401034e-12
+    },
+    "minus": {
+      "objective_A": -1.88633674802383e-19,
+      "forward": {
+        "P_Q_W": 3.316271358883005e-14,
+        "P_six_W": 3.3163979055390194e-14,
+        "closure": 3.815786272301599e-05,
+        "source_power_W": 1.3830232993859658e-13,
+        "faces": {
+          "run010_flux_x_min": {
+            "signed_axis_power_W": -1.7177743356189092e-17,
+            "outward_power_W": 1.7177743356189092e-17
+          },
+          "run010_flux_x_max": {
+            "signed_axis_power_W": 1.7177762207891458e-17,
+            "outward_power_W": 1.7177762207891458e-17
+          },
+          "run010_flux_y_min": {
+            "signed_axis_power_W": -1.106566706847122e-17,
+            "outward_power_W": 1.106566706847122e-17
+          },
+          "run010_flux_y_max": {
+            "signed_axis_power_W": 1.1027090368574198e-17,
+            "outward_power_W": 1.1027090368574198e-17
+          },
+          "run010_flux_z_min": {
+            "signed_axis_power_W": -1.4843620285974786e-14,
+            "outward_power_W": 1.4843620285974786e-14
+          },
+          "run010_flux_z_max": {
+            "signed_axis_power_W": -4.806404760436611e-14,
+            "outward_power_W": -4.806404760436611e-14
+          }
+        },
+        "coordinate_mismatch_m": 5.082197683525802e-21,
+        "resources": {
+          "1": {
+            "active": "1",
+            "device type": "CPU",
+            "processes": "1",
+            "threads": "8",
+            "solver extra command line options": ""
+          },
+          "2": {
+            "active": "1",
+            "device type": "GPU 5",
+            "processes": "1",
+            "threads": "8",
+            "solver extra command line options": "-gpu"
+          },
+          "global_gpu_engine_lock": {
+            "path": "/tmp/seunghyun_lumerical_fdtd_gpu_engine.lock",
+            "wait_s": 7.431209087371826e-05,
+            "pid": 3100531
+          }
+        },
+        "resource_used": "Local Host",
+        "wall_s": 43.19770649820566,
+        "polarization_angle_deg": 90.0,
+        "project": {
+          "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/combined_adfd_Ea_evaporated_run049_precheck/adjoint_aligned_minus.fsp",
+          "size_bytes": 180904057,
+          "sha256": "23ef85a5a6819a111997d821c07b2cb3bd91a2196f4be7b4574ee9207159cf9f"
+        },
+        "log_audit": {
+          "logs": [
+            "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/combined_adfd_Ea_evaporated_run049_precheck/adjoint_aligned_minus_p0.log",
+            "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/combined_adfd_Ea_evaporated_run049_precheck/adjoint_aligned_plus_p0.log",
+            "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/combined_adfd_Ea_evaporated_run049_precheck/tairte4_flake_adjoint_gpu_p0.log"
+          ],
+          "final_auto_shutoff": 9.8324e-08,
+          "logged_grid": {
+            "shape_xyz": [
+              338,
+              338,
+              106
+            ],
+            "grid_points": 12109864
+          },
+          "precise_GPU_memory_GiB": 0.423,
+          "simulation_completed_successfully": true
+        }
+      },
+      "Q_mapping": {
+        "method": "literal optical-dual-cell/thermal-material intersection",
+        "full_cell_power_forced_into_TaIrTe4": false,
+        "nearest_cell_relocation": false,
+        "clipping_smoothing_gain_or_rescaling": false,
+        "native_total_power_W": 3.316271358883006e-14,
+        "material_attributed_power_W": 3.223139278897039e-14,
+        "target_power_W": 3.2231392788970393e-14,
+        "relative_mapping_error": 1.9579939604495423e-16,
+        "material_attributed_fraction_of_native_Q": 0.971916628675002,
+        "components": {
+          "x": {
+            "native_power_W": 7.964396206617631e-18,
+            "material_attributed_source_power_W": 7.804367894264402e-18,
+            "target_integrated_power_W": 7.804367894264402e-18,
+            "relative_power_error": 0.0,
+            "source_cells_with_zero_material_overlap": 1010077
+          },
+          "y": {
+            "native_power_W": 3.308541250439198e-14,
+            "material_attributed_source_power_W": 3.2155184328884916e-14,
+            "target_integrated_power_W": 3.2155184328884916e-14,
+            "relative_power_error": 0.0,
+            "source_cells_with_zero_material_overlap": 1010077
+          },
+          "z": {
+            "native_power_W": 6.933668823146621e-17,
+            "material_attributed_source_power_W": 6.840409219120525e-17,
+            "target_integrated_power_W": 6.840409219120525e-17,
+            "relative_power_error": 0.0,
+            "source_cells_with_zero_material_overlap": 1010077
+          }
+        }
+      },
+      "thermal_residual": 5.272137968554871e-11,
+      "energy_balance": 1.2728918736882472e-12
+    }
+  },
+  "gates": {
+    "combined_error": 1.5036860385232833e-06,
+    "limit": 0.01,
+    "worst_closure": 3.842474524305756e-05,
+    "worst_mapping": 1.9579939604495423e-16,
+    "worst_residual": 5.983061895338829e-11,
+    "worst_energy": 1.2740666652401034e-12,
+    "worst_auto_shutoff": 9.8324e-08
+  },
+  "raw_artifact": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/combined_adfd_Ea_evaporated_run049_precheck/tairte4_flake_combined_adfd.npz",
+    "size_bytes": 56307370,
+    "sha256": "0751b5049f8ea5e53e4fc4d5d6a37ffbf037b4b29a279280e9139fc7a3c5bd07"
+  },
+  "Maxwell_solves": {
+    "forward_reused": 1,
+    "forward_new": 2,
+    "adjoint": 1
+  },
+  "thermal_solves": {
+    "forward": 3,
+    "adjoint": 1
+  },
+  "optimization_iterations": 0,
+  "empirical_normalization": false,
+  "gradient_rescaling": false,
+  "Q_clipping_smoothing_gain_or_rescaling": false,
+  "CPU_FDTD_fallback": false,
+  "CPU_thermal_linear_solve_fallback": false,
+  "wall_s": 178.72449213638902
+}
