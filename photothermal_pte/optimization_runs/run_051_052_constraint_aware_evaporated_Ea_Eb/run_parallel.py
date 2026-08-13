@@ -21,8 +21,11 @@ JACOBIAN = ARTIFACT_ROOT / "production_input_component_yee_jacobian_v1"
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--gpu-ea", type=int, required=True)
-    parser.add_argument("--gpu-eb", type=int, required=True)
+    # Defaults allow this file to be launched by the site `runres` wrapper,
+    # whose outer `run` CLI accepts only its own -th/-GPU options.  Direct
+    # invocations may still override the pair.
+    parser.add_argument("--gpu-ea", type=int, default=0)
+    parser.add_argument("--gpu-eb", type=int, default=4)
     parser.add_argument("--status", type=Path, default=HERE / "PARALLEL_STATUS.json")
     args = parser.parse_args()
     if args.gpu_ea == args.gpu_eb:
