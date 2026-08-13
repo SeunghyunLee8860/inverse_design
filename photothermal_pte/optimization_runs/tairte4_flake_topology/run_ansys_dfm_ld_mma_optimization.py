@@ -53,9 +53,15 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_opti
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[2]
-SCHEMA = "ansys-v261-style-dfm-pure-current-ld-mma-v4"
+SCHEMA = "ansys-v261-style-dfm-pure-current-ld-mma-v5"
 BETA_FACTOR = 2.0
-MAXIMUM_BETA = 128.0
+# Do not saturate continuation at beta=128.  In production runs an exact
+# 500-nm cleanup can still perturb the terminal-current objective even when the
+# projected density is already visually binary.  Continue the standard
+# factor-two schedule through 256, 512, and 1024, and rely on the existing
+# fresh-GPU objective-preservation gate (<=1% loss) rather than beta alone to
+# promote a final design.
+MAXIMUM_BETA = 1024.0
 GRAYSCALE_EVALUATIONS = 40
 CONTINUATION_EVALUATIONS = 20
 DFM_ACTIVATION_BETA = 4.0
