@@ -390,11 +390,27 @@ def main() -> int:
         default=0,
         help="Offline/smoke limiter only; zero means continue to the final gate.",
     )
+    parser.add_argument(
+        "--hard-morphology-constraints",
+        action="store_true",
+        help=(
+            "Use the solid/void opening residuals as two NLopt LD_MMA "
+            "inequalities instead of adding them to the scalar objective."
+        ),
+    )
+    parser.add_argument(
+        "--hard-cap-relative-slack",
+        type=float,
+        default=0.01,
+        help="Relative slack above each stage's feasible starting residual.",
+    )
     args = parser.parse_args()
 
     CONTRACT.validate()
     if CONTRACT.geometry_mode not in {"contact_anchored", "left_right_contact_anchored"}:
         raise RuntimeError("production optimization requires a contact-anchored geometry")
+    if not 0.0 <= args.hard_cap_relative_slack <= 0.10:
+        raise ValueError("hard morphology cap slack must be in [0, 0.10]")
     code_provenance = verify_optimizer_code_manifest()
     base_fsp = verify_file(args.base_fsp, args.base_sha256)
     jacobian_dir = args.jacobian_dir.expanduser().resolve()
@@ -525,6 +541,19 @@ def main() -> int:
         "hard_inequality_restoration_loop": False,
         "interpretation": "soft differentiable solid/void feature pressure strengthened with beta",
     }
+    if args.hard_morphology_constraints:
+        manifest["dfm_penalty"] = {
+            "minimum_feature_nm": 500.0,
+            "enabled": False,
+            "reason": "solid and void residuals are separate LD_MMA inequalities",
+        }
+        manifest["hard_morphology_constraints"] = {
+            "enabled": True,
+            "names": ["500nm_solid_opening", "500nm_void_opening"],
+            "cap_policy": "fixed within each beta stage at (1+slack)*stage-start residual",
+            "relative_slack": args.hard_cap_relative_slack,
+            "penalty_weight": 0.0,
+        }
     write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
     emit(
         events,
@@ -564,10 +593,35 @@ def main() -> int:
             return 0
         beta = schedule[schedule_index]
         final_beta = beta
-        penalty_weight = dfm_penalty_weight(beta)
+        penalty_weight = (
+            0.0 if args.hard_morphology_constraints else dfm_penalty_weight(beta)
+        )
+        stage_initial_summary, _ = metrics(
+            latent, beta, device=args.constraint_device
+        )
+        stage_initial_residuals = np.asarray(
+            [
+                stage_initial_summary["smooth_solid_constraint"],
+                stage_initial_summary["smooth_void_constraint"],
+            ],
+            dtype=np.float64,
+        )
+        if args.hard_morphology_constraints:
+            morphology_caps = np.maximum(
+                np.finfo(np.float64).eps,
+                (1.0 + args.hard_cap_relative_slack) * stage_initial_residuals,
+            )
+            morphology_start_beta = 0.0
+            hard_constraint_count = 2
+        else:
+            morphology_caps = np.asarray([np.inf, np.inf])
+            morphology_start_beta = np.inf
+            hard_constraint_count = 0
         controls = stage_controls(beta)
         nominal_stage_budget = (
-            GRAYSCALE_EVALUATIONS if completed_stages == 0 else CONTINUATION_EVALUATIONS
+            GRAYSCALE_EVALUATIONS
+            if completed_stages == 0 and np.isclose(beta, 1.0)
+            else CONTINUATION_EVALUATIONS
         )
         if first_recovery_stage:
             prior_at_beta = sum(
@@ -590,7 +644,7 @@ def main() -> int:
             base_sha256=args.base_sha256,
             jacobian_dir=jacobian_dir,
             minimum_conductance_S=None,
-            morphology_caps=np.asarray([np.inf, np.inf]),
+            morphology_caps=morphology_caps,
             fixed_source_power_W=fixed_source_power,
             evaluation_counter=evaluation_counter,
             global_evaluation=global_evaluation,
@@ -598,7 +652,7 @@ def main() -> int:
             algorithm_label="NLopt LD_MMA + Ansys-style DFM penalty",
             output_slug=args.output_slug if args.recovery_append else "ansys_dfm_ld_mma",
             include_terminal_conductance_constraint=False,
-            morphology_start_beta=np.inf,
+            morphology_start_beta=morphology_start_beta,
             optimizer_controls={
                 **controls,
                 "beta_factor": BETA_FACTOR,
@@ -609,7 +663,7 @@ def main() -> int:
         )
         optimizer = make_optimizer(
             evaluator,
-            0,
+            hard_constraint_count,
             initial_step=float(controls["initial_step"]),
             rho_init=float(controls["rho_init"]),
             always_improve=int(controls["always_improve"]),
@@ -625,7 +679,13 @@ def main() -> int:
             stage_index=completed_stages,
             maximum_evaluations=stage_budget,
             dfm_penalty_weight=penalty_weight,
-            active_hard_constraints=[],
+            active_hard_constraints=(
+                ["500nm_solid_opening", "500nm_void_opening"]
+                if args.hard_morphology_constraints
+                else []
+            ),
+            morphology_caps=morphology_caps.tolist(),
+            stage_initial_morphology_residuals=stage_initial_residuals.tolist(),
             manual_move_limit=None,
         )
         stage_stop_reason = "nlopt"
@@ -656,6 +716,9 @@ def main() -> int:
             "stage_index": completed_stages,
             "beta": beta,
             "dfm_penalty_weight": penalty_weight,
+            "hard_morphology_constraints": args.hard_morphology_constraints,
+            "morphology_caps": morphology_caps.tolist(),
+            "stage_initial_morphology_residuals": stage_initial_residuals.tolist(),
             "nlopt_result_code": int(result_code),
             "stage_stop_reason": stage_stop_reason,
             "adaptive_plateau_diagnostic": evaluator.plateau_diagnostic,

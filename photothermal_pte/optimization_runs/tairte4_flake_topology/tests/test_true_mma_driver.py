@@ -234,12 +234,16 @@ def test_adaptive_plateau_rejects_a_meaningfully_moving_metric(
     assert result["reason"] == "stage_still_moving"
 
 
-def test_ansys_style_driver_has_no_late_hard_constraint_restoration() -> None:
+def test_ansys_style_driver_hard_constraints_are_explicit_opt_in() -> None:
     source = (
         Path(__file__).parents[1] / "run_ansys_dfm_ld_mma_optimization.py"
     ).read_text()
     assert "morphology_penalty_weight=penalty_weight" in source
-    assert "active_hard_constraints=[]" in source
+    assert '"--hard-morphology-constraints"' in source
+    assert 'action="store_true"' in source
+    assert "hard_constraint_count = 2" in source
+    assert "hard_constraint_count = 0" in source
+    assert "0.0 if args.hard_morphology_constraints" in source
     assert "restoration_block" not in source
     assert "manual_move_limit" in source
 
