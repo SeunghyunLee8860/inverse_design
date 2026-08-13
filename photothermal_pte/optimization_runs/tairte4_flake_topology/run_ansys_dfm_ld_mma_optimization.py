@@ -565,6 +565,7 @@ def main() -> int:
             "cap_policy": "fixed within each beta stage at (1+slack)*stage-start residual",
             "relative_slack": args.hard_cap_relative_slack,
             "penalty_weight": 0.0,
+            "aggregation": "ks_max",
         }
     write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
     emit(
@@ -602,18 +603,25 @@ def main() -> int:
 
     hard_fixed_caps: np.ndarray | None = None
     if args.hard_morphology_constraints:
-        recorded_caps = manifest.get("hard_morphology_constraints", {}).get(
-            "fixed_caps"
-        )
-        if recorded_caps is None and history:
+        hard_contract = manifest.get("hard_morphology_constraints", {})
+        recorded_caps = hard_contract.get("fixed_caps")
+        recorded_aggregation = hard_contract.get("aggregation")
+        if recorded_aggregation != "ks_max":
+            recorded_caps = None
+        if recorded_caps is None and history and recorded_aggregation == "ks_max":
             for row in history:
+                if row.get("morphology_aggregation") != "ks_max":
+                    continue
                 candidate = np.asarray(row.get("morphology_caps", []), dtype=np.float64)
                 if candidate.shape == (2,) and np.all(np.isfinite(candidate)):
                     recorded_caps = candidate.tolist()
                     break
         if recorded_caps is None:
             initial_summary, _ = metrics(
-                latent, start_beta, device=args.constraint_device
+                latent,
+                start_beta,
+                device=args.constraint_device,
+                morphology_aggregation="ks_max",
             )
             initial_residuals = np.asarray(
                 [
@@ -637,6 +645,7 @@ def main() -> int:
                 "cap_policy": "fixed from the first exact-feasible recovery seed",
                 "fixed_caps": hard_fixed_caps.tolist(),
                 "rho_init": args.hard_rho_init,
+                "aggregation": "ks_max",
             }
         )
         write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
@@ -650,7 +659,12 @@ def main() -> int:
             0.0 if args.hard_morphology_constraints else dfm_penalty_weight(beta)
         )
         stage_initial_summary, _ = metrics(
-            latent, beta, device=args.constraint_device
+            latent,
+            beta,
+            device=args.constraint_device,
+            morphology_aggregation=(
+                "ks_max" if args.hard_morphology_constraints else "mean"
+            ),
         )
         stage_initial_residuals = np.asarray(
             [
@@ -733,6 +747,9 @@ def main() -> int:
                 ),
             },
             morphology_penalty_weight=penalty_weight,
+            morphology_aggregation=(
+                "ks_max" if args.hard_morphology_constraints else "mean"
+            ),
         )
         optimizer = make_optimizer(
             evaluator,
@@ -782,7 +799,14 @@ def main() -> int:
 
         rho = MAPPING.physical(latent, beta)
         gate = final_geometry_gate(rho)
-        summary, _ = metrics(latent, beta, device=args.constraint_device)
+        summary, _ = metrics(
+            latent,
+            beta,
+            device=args.constraint_device,
+            morphology_aggregation=(
+                "ks_max" if args.hard_morphology_constraints else "mean"
+            ),
+        )
         checkpoint = raw_root / f"stage_{completed_stages:04d}_beta{beta:g}.npz"
         np.savez_compressed(checkpoint, latent=latent, rho=rho, beta=np.asarray(beta))
         stage_record = {

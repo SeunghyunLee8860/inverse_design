@@ -69,7 +69,12 @@ def main() -> int:
         manifest = json.loads(manifest_path.read_text())
         if not history:
             raise RuntimeError("recovery history exists but is empty")
-        evaluation_id = int(history[-1]["evaluation_id"])
+        exact_feasible_rows = [
+            row for row in history if int(row.get("exact_bad_cells", -1)) == 0
+        ]
+        if not exact_feasible_rows:
+            raise RuntimeError("recovery history has no exact-feasible checkpoint")
+        evaluation_id = int(exact_feasible_rows[-1]["evaluation_id"])
         entry = manifest["evaluations"][f"{evaluation_id:04d}"]
         initial_latent = Path(entry["latent_design"]["path"])
         if not initial_latent.is_file():
@@ -102,7 +107,7 @@ def main() -> int:
         "8",
         "--hard-morphology-constraints",
         "--hard-cap-relative-slack",
-        "0.01",
+        "0.005",
         "--hard-rho-init",
         "0.01",
         "--output-slug",

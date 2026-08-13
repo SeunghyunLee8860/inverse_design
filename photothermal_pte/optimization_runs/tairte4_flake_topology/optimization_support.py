@@ -139,6 +139,7 @@ def morphology_values_gradients(
     beta: float,
     *,
     device: str = "cuda:0",
+    aggregation: str = "mean",
 ) -> tuple[np.ndarray, np.ndarray, dict[str, np.ndarray]]:
     """Differentiable solid/void opening residuals with the exact border phase."""
 
@@ -152,7 +153,20 @@ def morphology_values_gradients(
         (("solid", rho, 1.0), ("void", 1.0 - rho, 0.0))
     ):
         residual = torch.relu(phase - _soft_open(phase, border))
-        aggregate = torch.mean(residual)
+        if aggregation == "mean":
+            aggregate = torch.mean(residual)
+        elif aggregation == "ks_max":
+            # A log-mean-exp KS aggregate prevents a few local feature defects
+            # from being hidden by improvements over the rest of the design.
+            # The subtraction by log(N) keeps the value independent of the
+            # number of design nodes while retaining a smooth max gradient.
+            ks_alpha = 64.0
+            aggregate = (
+                torch.logsumexp(ks_alpha * residual.reshape(-1), dim=0)
+                - np.log(residual.numel())
+            ) / ks_alpha
+        else:
+            raise ValueError(f"unsupported morphology aggregation: {aggregation}")
         gradient_rho = torch.autograd.grad(aggregate, rho, retain_graph=index == 0)[0]
         values.append(float(aggregate.detach().cpu()))
         gradients.append(MAPPING.vjp(latent, gradient_rho.detach().cpu().numpy(), beta))
@@ -160,12 +174,18 @@ def morphology_values_gradients(
     return np.asarray(values), np.stack(gradients), fields
 
 
-def metrics(latent: np.ndarray, beta: float, *, device: str = "cuda:0") -> tuple[dict, dict]:
+def metrics(
+    latent: np.ndarray,
+    beta: float,
+    *,
+    device: str = "cuda:0",
+    morphology_aggregation: str = "mean",
+) -> tuple[dict, dict]:
     latent = np.asarray(latent, dtype=np.float64)
     filtered = MAPPING.filtered(latent)
     rho = MAPPING.physical(latent, beta)
     constraint_values, constraint_gradients, fields = morphology_values_gradients(
-        latent, beta, device=device
+        latent, beta, device=device, aggregation=morphology_aggregation
     )
     exact, exact_arrays = exact_binary_audit(rho)
     summary = {
@@ -178,6 +198,7 @@ def metrics(latent: np.ndarray, beta: float, *, device: str = "cuda:0") -> tuple
         "binarization_mean_4rho1mrho": float(np.mean(4.0 * rho * (1.0 - rho))),
         "smooth_solid_constraint": float(constraint_values[0]),
         "smooth_void_constraint": float(constraint_values[1]),
+        "morphology_aggregation": morphology_aggregation,
         "exact": exact,
     }
     arrays = {

@@ -112,6 +112,7 @@ class StageEvaluator:
         morphology_start_beta: float = MORPHOLOGY_START_BETA,
         optimizer_controls: dict[str, object] | None = None,
         morphology_penalty_weight: float = 0.0,
+        morphology_aggregation: str = "mean",
     ) -> None:
         self.beta = beta
         self.polarization = polarization
@@ -136,6 +137,7 @@ class StageEvaluator:
         self.morphology_start_beta = float(morphology_start_beta)
         self.optimizer_controls = dict(optimizer_controls or {})
         self.morphology_penalty_weight = float(morphology_penalty_weight)
+        self.morphology_aggregation = morphology_aggregation
         if self.morphology_penalty_weight < 0.0:
             raise ValueError("morphology penalty weight must be nonnegative")
         self.last: Point | None = None
@@ -195,6 +197,7 @@ class StageEvaluator:
             device=self.constraint_device,
             include_terminal_conductance_constraint=self.include_terminal_conductance_constraint,
             morphology_start_beta=self.morphology_start_beta,
+            morphology_aggregation=self.morphology_aggregation,
         )
         morphology_penalty = self.morphology_penalty_weight * (
             summary["smooth_solid_constraint"]
@@ -237,6 +240,7 @@ class StageEvaluator:
                 objective_scaled - morphology_penalty
             ),
             "morphology_penalty_weight": self.morphology_penalty_weight,
+            "morphology_aggregation": self.morphology_aggregation,
             "morphology_penalty_value": float(morphology_penalty),
             "fixed_source_power_W": self.fixed_source_power_W,
             "source_power_relative_change": source_change,

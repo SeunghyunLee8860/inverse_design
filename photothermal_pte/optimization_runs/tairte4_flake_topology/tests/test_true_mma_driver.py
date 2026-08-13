@@ -148,6 +148,21 @@ def test_binary_like_bad_feature_keeps_nonzero_dfm_gradient() -> None:
     assert np.all(np.isfinite(gradients))
 
 
+def test_ks_max_aggregation_exposes_local_bad_feature() -> None:
+    latent = np.zeros(MAPPING.shape, dtype=float)
+    center = tuple(size // 2 for size in MAPPING.shape)
+    latent[center[0] - 6:center[0] + 7, center[1]] = 1.0
+    mean_values, _, _ = morphology_values_gradients(
+        latent, beta=16.0, device="cpu", aggregation="mean"
+    )
+    ks_values, ks_gradients, _ = morphology_values_gradients(
+        latent, beta=16.0, device="cpu", aggregation="ks_max"
+    )
+    assert ks_values[0] > mean_values[0]
+    assert np.linalg.norm(ks_gradients[0]) > 1.0e-8
+    assert np.all(np.isfinite(ks_gradients))
+
+
 def test_ansys_style_beta_and_dfm_penalty_contract() -> None:
     schedule = beta_sequence()
     assert schedule[0] == 1.0
@@ -248,6 +263,8 @@ def test_ansys_style_driver_hard_constraints_are_explicit_opt_in() -> None:
     assert "optimizer_rho_init = float(args.hard_rho_init)" in source
     assert '"fixed_caps": hard_fixed_caps.tolist()' in source
     assert "morphology_caps = hard_fixed_caps.copy()" in source
+    assert 'morphology_aggregation="ks_max"' in source
+    assert 'row.get("morphology_aggregation") != "ks_max"' in source
     assert "rho_init=optimizer_rho_init" in source
     assert '"hard_constraint_ccsa_parameters"' in source
     assert "restoration_block" not in source

@@ -344,6 +344,7 @@ def canonical_constraints(
     device: str,
     include_terminal_conductance_constraint: bool = True,
     morphology_start_beta: float = MORPHOLOGY_START_BETA,
+    morphology_aggregation: str = "mean",
 ) -> tuple[list[str], np.ndarray, np.ndarray, dict[str, object], dict[str, object]]:
     """Return differentiable constraints for a continuation stage.
 
@@ -354,7 +355,12 @@ def canonical_constraints(
     the pure-terminal-current LD_MMA driver optimize the stated objective
     without an arbitrary conductance floor.
     """
-    summary, arrays = metrics(latent, beta, device=device)
+    summary, arrays = metrics(
+        latent,
+        beta,
+        device=device,
+        morphology_aggregation=morphology_aggregation,
+    )
     names: list[str] = []
     values: list[float] = []
     gradients: list[np.ndarray] = []
