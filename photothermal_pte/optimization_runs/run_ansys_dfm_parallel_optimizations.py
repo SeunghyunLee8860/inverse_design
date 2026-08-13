@@ -49,6 +49,7 @@ def command(
         "--base-sha256", base_sha256,
         "--jacobian-dir", str(jacobian_dir),
         "--constraint-device", "cuda:0",
+        "--constraint-aware-continuation",
     ]
 
 

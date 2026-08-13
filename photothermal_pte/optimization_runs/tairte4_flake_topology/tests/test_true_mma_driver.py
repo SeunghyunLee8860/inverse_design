@@ -20,6 +20,9 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_ansys_dfm_ld_
     DFM_ACTIVATION_BETA,
     adaptive_plateau_diagnostic,
     beta_sequence,
+    constraint_aware_dfm_penalty_weight,
+    constraint_aware_exact_target,
+    constraint_aware_promotion_diagnostic,
     dfm_penalty_weight,
 )
 from photothermal_pte.optimization_runs.tairte4_flake_topology.optimization_support import (
@@ -196,7 +199,63 @@ def _plateau_row(
         "smooth_solid_constraint": 0.5 * smooth,
         "smooth_void_constraint": 0.5 * smooth,
         "exact_bad_cells": exact_bad,
+        "maximum_constraint_value": -0.1,
     }
+
+
+def test_constraint_aware_exact_targets_ignore_gray_stages_then_tighten() -> None:
+    assert constraint_aware_exact_target(1.0, 400) is None
+    assert constraint_aware_exact_target(2.0, 400) is None
+    assert constraint_aware_exact_target(4.0, 400) == 300
+    assert constraint_aware_exact_target(8.0, 300) == 150
+    assert constraint_aware_exact_target(16.0, 100) == 25
+    assert constraint_aware_exact_target(32.0, 100) == 0
+    assert constraint_aware_exact_target(64.0, 100) == 0
+
+
+def test_constraint_aware_dfm_pressure_increases_with_beta() -> None:
+    weights = [constraint_aware_dfm_penalty_weight(beta) for beta in (1, 2, 4, 8)]
+    assert weights == sorted(weights)
+    assert weights[0] > 0.0
+
+
+def test_constraint_aware_promotion_rejects_exact_target_miss() -> None:
+    rows = [_plateau_row(i, fom=1.0 + i * 1.0e-7, exact_bad=20) for i in range(1, 6)]
+    diagnostic = constraint_aware_promotion_diagnostic(
+        rows,
+        beta=8.0,
+        exact_bad_target=10,
+        require_hard_feasible=True,
+    )
+    assert diagnostic["objective_design_gray_plateau"] is True
+    assert diagnostic["hard_constraints_feasible"] is True
+    assert diagnostic["exact_target_passed"] is False
+    assert diagnostic["promotion_passed"] is False
+
+
+def test_constraint_aware_promotion_rejects_infeasible_smooth_constraint() -> None:
+    rows = [_plateau_row(i, fom=1.0 + i * 1.0e-7, exact_bad=0) for i in range(1, 6)]
+    rows[-1]["maximum_constraint_value"] = 0.01
+    diagnostic = constraint_aware_promotion_diagnostic(
+        rows,
+        beta=32.0,
+        exact_bad_target=0,
+        require_hard_feasible=True,
+    )
+    assert diagnostic["exact_target_passed"] is True
+    assert diagnostic["hard_constraints_feasible"] is False
+    assert diagnostic["promotion_passed"] is False
+
+
+def test_constraint_aware_promotion_passes_joint_gate() -> None:
+    rows = [_plateau_row(i, fom=1.0 + i * 1.0e-7, exact_bad=0) for i in range(1, 6)]
+    diagnostic = constraint_aware_promotion_diagnostic(
+        rows,
+        beta=32.0,
+        exact_bad_target=0,
+        require_hard_feasible=True,
+    )
+    assert diagnostic["promotion_passed"] is True
 
 
 def test_adaptive_plateau_requires_five_stage_evaluations() -> None:

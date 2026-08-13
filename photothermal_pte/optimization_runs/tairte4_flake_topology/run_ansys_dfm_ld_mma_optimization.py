@@ -81,6 +81,26 @@ EXACT_CLEANUP_MAXIMUM_GRAY_FRACTION = 0.02
 CONSTRAINT_PLATEAU_RELATIVE_RANGE_MAXIMUM = 1.0e-2
 CONSTRAINT_PLATEAU_EXACT_ABSOLUTE_RANGE_MINIMUM = 2
 
+# Constraint-aware continuation is a separate production contract.  The
+# original Ansys-style path remains available for provenance, while new runs
+# may explicitly require fabrication progress before beta promotion.  Exact
+# thresholded counts are deliberately diagnostic-only at beta 1 and 2 because
+# a gray field has no unique binary topology.  From beta 4 onward they become
+# an audited promotion gate, while differentiable KS-opening inequalities
+# provide the actual MMA gradients.
+CONSTRAINT_AWARE_HARD_START_BETA = 4.0
+CONSTRAINT_AWARE_EXACT_REDUCTION = {
+    4.0: 0.75,
+    8.0: 0.50,
+    16.0: 0.25,
+}
+CONSTRAINT_AWARE_EXACT_ZERO_BETA = 32.0
+CONSTRAINT_AWARE_CAP_INITIAL_REDUCTION = 0.05
+CONSTRAINT_AWARE_CAP_REPEAT_REDUCTION = 0.10
+CONSTRAINT_AWARE_CAP_FLOOR = 1.0e-8
+CONSTRAINT_AWARE_DFM_WEIGHT_AT_BETA1 = 0.10
+CONSTRAINT_AWARE_DFM_WEIGHT_MAXIMUM = 1.0e4
+
 
 class AdaptivePlateauStop(Exception):
     """Internal signal that advances continuation after an audited plateau."""
@@ -165,20 +185,153 @@ def adaptive_plateau_diagnostic(
     return diagnostic
 
 
+def constraint_aware_exact_target(beta: float, stage_entry_bad: int) -> int | None:
+    """Return the exact-audit target required before beta promotion.
+
+    The thresholded audit is not used at beta 1 or 2.  At beta 4--16 each
+    continuation stage must remove a documented fraction of the violations
+    present when that beta was entered.  Beta 32 and above require zero.
+    """
+
+    if stage_entry_bad < 0:
+        raise ValueError("stage-entry exact violation count must be nonnegative")
+    if beta < CONSTRAINT_AWARE_HARD_START_BETA:
+        return None
+    if beta >= CONSTRAINT_AWARE_EXACT_ZERO_BETA:
+        return 0
+    factor = CONSTRAINT_AWARE_EXACT_REDUCTION.get(float(beta))
+    if factor is None:
+        # Non-power-of-two warm starts use the next stricter tabulated gate.
+        candidates = sorted(CONSTRAINT_AWARE_EXACT_REDUCTION)
+        factor = next(
+            (CONSTRAINT_AWARE_EXACT_REDUCTION[value] for value in candidates if beta <= value),
+            0.0,
+        )
+    return int(np.floor(float(factor) * stage_entry_bad))
+
+
+def constraint_aware_dfm_penalty_weight(beta: float) -> float:
+    """Gradually strengthen differentiable local-feature pressure with beta."""
+
+    if not np.isfinite(beta) or beta <= 0.0:
+        raise ValueError("beta must be finite and positive")
+    return float(
+        min(
+            CONSTRAINT_AWARE_DFM_WEIGHT_AT_BETA1 * beta * beta,
+            CONSTRAINT_AWARE_DFM_WEIGHT_MAXIMUM,
+        )
+    )
+
+
+def constraint_aware_promotion_diagnostic(
+    stage_rows: list[dict[str, object]],
+    *,
+    beta: float,
+    exact_bad_target: int | None,
+    require_hard_feasible: bool,
+) -> dict[str, object]:
+    """Require objective convergence *and* fabrication progress for promotion."""
+
+    diagnostic = adaptive_plateau_diagnostic(stage_rows)
+    diagnostic["policy"] = "constraint_aware_beta_promotion_v1"
+    diagnostic["beta"] = float(beta)
+    diagnostic["exact_bad_target"] = exact_bad_target
+    if not stage_rows:
+        diagnostic.update(
+            {
+                "hard_constraints_feasible": not require_hard_feasible,
+                "exact_target_passed": exact_bad_target is None,
+                "exact_nonincreasing": True,
+                "promotion_passed": False,
+            }
+        )
+        return diagnostic
+    latest = stage_rows[-1]
+    maximum_constraint = latest.get("maximum_constraint_value")
+    hard_feasible = bool(
+        not require_hard_feasible
+        or (
+            maximum_constraint is not None
+            and np.isfinite(float(maximum_constraint))
+            and float(maximum_constraint) <= 0.0
+        )
+    )
+    latest_bad = int(latest.get("exact_bad_cells", -1))
+    first_bad = int(stage_rows[0].get("exact_bad_cells", latest_bad))
+    exact_passed = bool(
+        exact_bad_target is None
+        or (latest_bad >= 0 and latest_bad <= exact_bad_target)
+    )
+    exact_nonincreasing = bool(
+        exact_bad_target is None
+        or (latest_bad >= 0 and first_bad >= 0 and latest_bad <= first_bad)
+    )
+    promotion_passed = bool(
+        diagnostic.get("passed")
+        and hard_feasible
+        and exact_passed
+        and exact_nonincreasing
+    )
+    diagnostic.update(
+        {
+            "objective_design_gray_plateau": bool(diagnostic.get("passed")),
+            "hard_constraints_feasible": hard_feasible,
+            "latest_exact_bad_cells": latest_bad,
+            "stage_first_exact_bad_cells": first_bad,
+            "exact_target_passed": exact_passed,
+            "exact_nonincreasing": exact_nonincreasing,
+            "promotion_passed": promotion_passed,
+            "reason": (
+                "constraint_aware_promotion_passed"
+                if promotion_passed
+                else "constraint_aware_stage_not_ready"
+            ),
+        }
+    )
+    return diagnostic
+
+
 class AdaptiveStageEvaluator(StageEvaluator):
     """Stage evaluator that exits LD_MMA only after a documented plateau."""
 
     plateau_diagnostic: dict[str, object] | None = None
 
+    def __init__(
+        self,
+        *args: object,
+        constraint_aware_continuation: bool = False,
+        exact_bad_target: int | None = None,
+        require_hard_feasible: bool = False,
+        **kwargs: object,
+    ) -> None:
+        super().__init__(*args, **kwargs)
+        self.constraint_aware_continuation = bool(constraint_aware_continuation)
+        self.exact_bad_target = exact_bad_target
+        self.require_hard_feasible = bool(require_hard_feasible)
+
     def objective(self, vector: np.ndarray, gradient: np.ndarray) -> float:
         value = super().objective(vector, gradient)
         stage_rows = self.history[-self.stage_full_physics_evaluations :]
-        diagnostic = adaptive_plateau_diagnostic(stage_rows)
-        if bool(diagnostic["passed"]):
-            self.plateau_diagnostic = diagnostic
+        if self.constraint_aware_continuation:
+            diagnostic = constraint_aware_promotion_diagnostic(
+                stage_rows,
+                beta=self.beta,
+                exact_bad_target=self.exact_bad_target,
+                require_hard_feasible=self.require_hard_feasible,
+            )
+            stop = bool(diagnostic["promotion_passed"])
+        else:
+            diagnostic = adaptive_plateau_diagnostic(stage_rows)
+            stop = bool(diagnostic["passed"])
+        self.plateau_diagnostic = diagnostic
+        if stop:
             emit(
                 self.events,
-                "adaptive_continuation_plateau",
+                (
+                    "constraint_aware_continuation_promotion"
+                    if self.constraint_aware_continuation
+                    else "adaptive_continuation_plateau"
+                ),
                 beta=self.beta,
                 **diagnostic,
             )
@@ -414,6 +567,15 @@ def main() -> int:
             "the first several near-zero steps after a warm restart."
         ),
     )
+    parser.add_argument(
+        "--constraint-aware-continuation",
+        action="store_true",
+        help=(
+            "Use gradual KS-opening pressure from beta=1, activate explicit "
+            "solid/void inequalities at beta=4, and prohibit beta promotion "
+            "until the stage-specific exact 500-nm audit target is met."
+        ),
+    )
     args = parser.parse_args()
 
     CONTRACT.validate()
@@ -423,6 +585,11 @@ def main() -> int:
         raise ValueError("hard morphology cap slack must be in [0, 0.10]")
     if not np.isfinite(args.hard_rho_init) or args.hard_rho_init <= 0.0:
         raise ValueError("--hard-rho-init must be finite and positive")
+    if args.constraint_aware_continuation and args.hard_morphology_constraints:
+        raise ValueError(
+            "constraint-aware continuation owns the dynamic hard constraints; "
+            "do not combine it with the legacy hard-recovery flag"
+        )
     code_provenance = verify_optimizer_code_manifest()
     base_fsp = verify_file(args.base_fsp, args.base_sha256)
     jacobian_dir = args.jacobian_dir.expanduser().resolve()
@@ -532,6 +699,33 @@ def main() -> int:
         "gray_absolute_range_maximum": PLATEAU_GRAY_ABSOLUTE_RANGE_MAXIMUM,
         "constraint_relative_range_maximum": CONSTRAINT_PLATEAU_RELATIVE_RANGE_MAXIMUM,
     }
+    if args.constraint_aware_continuation:
+        manifest["constraint_aware_continuation"] = {
+            "enabled": True,
+            "policy": "constraint_aware_beta_promotion_v1",
+            "hard_constraint_start_beta": CONSTRAINT_AWARE_HARD_START_BETA,
+            "exact_count_interpretation_beta_1_2": "diagnostic_only_for_gray_fields",
+            "exact_reduction_fraction_by_beta": {
+                str(key): value
+                for key, value in CONSTRAINT_AWARE_EXACT_REDUCTION.items()
+            },
+            "exact_zero_required_from_beta": CONSTRAINT_AWARE_EXACT_ZERO_BETA,
+            "cap_initial_reduction": CONSTRAINT_AWARE_CAP_INITIAL_REDUCTION,
+            "cap_repeat_reduction": CONSTRAINT_AWARE_CAP_REPEAT_REDUCTION,
+            "cap_floor": CONSTRAINT_AWARE_CAP_FLOOR,
+            "promotion_requires": [
+                "objective_design_gray_plateau",
+                "active_KS_constraints_feasible",
+                "exact_bad_count_at_or_below_stage_target",
+                "exact_bad_count_nonincreasing_within_stage",
+            ],
+            "termination_requires": [
+                "promotion_gate",
+                "gray_fraction_below_final_limit",
+                "discreteness_above_final_limit",
+                "exact_bad_count_zero",
+            ],
+        }
     manifest["forced_exact_cleanup_policy"] = {
         "enabled": True,
         "minimum_beta": EXACT_CLEANUP_MINIMUM_BETA,
@@ -565,6 +759,21 @@ def main() -> int:
             "cap_policy": "fixed within each beta stage at (1+slack)*stage-start residual",
             "relative_slack": args.hard_cap_relative_slack,
             "penalty_weight": 0.0,
+            "aggregation": "ks_max",
+        }
+    elif args.constraint_aware_continuation:
+        manifest["dfm_penalty"] = {
+            "minimum_feature_nm": 500.0,
+            "enabled": True,
+            "aggregation": "ks_max",
+            "formula": "min(0.10*beta^2,1e4)",
+            "role": "gradual objective pressure; beta>=4 also uses separate LD_MMA inequalities",
+        }
+        manifest["hard_morphology_constraints"] = {
+            "enabled_from_beta": CONSTRAINT_AWARE_HARD_START_BETA,
+            "names": ["500nm_solid_opening", "500nm_void_opening"],
+            "cap_policy": "stage-entry reduction followed by audited same-beta tightening",
+            "penalty_weight": "separate gradual KS objective pressure remains active",
             "aggregation": "ks_max",
         }
     write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
@@ -650,21 +859,31 @@ def main() -> int:
         )
         write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
 
+    constraint_caps: np.ndarray | None = None
+    constraint_beta: float | None = None
+    constraint_exact_entry: int | None = None
+    constraint_exact_target: int | None = None
+    constraint_stage_attempt = 0
+
     while True:
         if args.maximum_stages and completed_stages >= args.maximum_stages:
             return 0
         beta = schedule[schedule_index]
         final_beta = beta
-        penalty_weight = (
-            0.0 if args.hard_morphology_constraints else dfm_penalty_weight(beta)
+        if args.constraint_aware_continuation:
+            penalty_weight = constraint_aware_dfm_penalty_weight(beta)
+        else:
+            penalty_weight = (
+                0.0 if args.hard_morphology_constraints else dfm_penalty_weight(beta)
+            )
+        use_ks = bool(
+            args.hard_morphology_constraints or args.constraint_aware_continuation
         )
         stage_initial_summary, _ = metrics(
             latent,
             beta,
             device=args.constraint_device,
-            morphology_aggregation=(
-                "ks_max" if args.hard_morphology_constraints else "mean"
-            ),
+            morphology_aggregation="ks_max" if use_ks else "mean",
         )
         stage_initial_residuals = np.asarray(
             [
@@ -674,7 +893,46 @@ def main() -> int:
             dtype=np.float64,
         )
         controls = stage_controls(beta)
-        if args.hard_morphology_constraints:
+        constraint_hard_active = bool(
+            args.constraint_aware_continuation
+            and beta >= CONSTRAINT_AWARE_HARD_START_BETA
+        )
+        if args.constraint_aware_continuation:
+            if constraint_beta is None or not np.isclose(
+                constraint_beta, beta, rtol=0.0, atol=1.0e-12
+            ):
+                constraint_beta = float(beta)
+                constraint_exact_entry = int(
+                    stage_initial_summary["exact"]["total_bad_cell_count"]
+                )
+                constraint_exact_target = constraint_aware_exact_target(
+                    beta, constraint_exact_entry
+                )
+                constraint_stage_attempt = 0
+                constraint_caps = None
+            constraint_stage_attempt += 1
+            if constraint_hard_active and constraint_caps is None:
+                constraint_caps = np.maximum(
+                    CONSTRAINT_AWARE_CAP_FLOOR,
+                    (1.0 - CONSTRAINT_AWARE_CAP_INITIAL_REDUCTION)
+                    * stage_initial_residuals,
+                )
+            if constraint_hard_active:
+                assert constraint_caps is not None
+                morphology_caps = constraint_caps.copy()
+                morphology_start_beta = 0.0
+                hard_constraint_count = 2
+                optimizer_rho_init = float(args.hard_rho_init)
+                optimizer_always_improve = None
+                optimizer_inner_gradients = None
+            else:
+                morphology_caps = np.asarray([np.inf, np.inf])
+                morphology_start_beta = np.inf
+                hard_constraint_count = 0
+                optimizer_rho_init = float(controls["rho_init"])
+                optimizer_always_improve = int(controls["always_improve"])
+                optimizer_inner_gradients = int(controls["inner_gradients"])
+        elif args.hard_morphology_constraints:
             assert hard_fixed_caps is not None
             morphology_caps = hard_fixed_caps.copy()
             morphology_start_beta = 0.0
@@ -721,9 +979,13 @@ def main() -> int:
             global_evaluation=global_evaluation,
             constraint_device=args.constraint_device,
             algorithm_label=(
-                "NLopt LD_MMA + explicit solid/void DFM inequalities"
-                if args.hard_morphology_constraints
-                else "NLopt LD_MMA + Ansys-style DFM penalty"
+                "NLopt LD_MMA + constraint-aware DFM continuation"
+                if args.constraint_aware_continuation
+                else (
+                    "NLopt LD_MMA + explicit solid/void DFM inequalities"
+                    if args.hard_morphology_constraints
+                    else "NLopt LD_MMA + Ansys-style DFM penalty"
+                )
             ),
             output_slug=args.output_slug if args.recovery_append else "ansys_dfm_ld_mma",
             include_terminal_conductance_constraint=False,
@@ -742,14 +1004,18 @@ def main() -> int:
                         "always_improve": "NLopt default",
                         "inner_gradients": "NLopt default",
                     }
-                    if args.hard_morphology_constraints
+                    if args.hard_morphology_constraints or constraint_hard_active
                     else None
                 ),
+                "constraint_aware_continuation": args.constraint_aware_continuation,
+                "constraint_stage_attempt": constraint_stage_attempt,
+                "exact_bad_target": constraint_exact_target,
             },
             morphology_penalty_weight=penalty_weight,
-            morphology_aggregation=(
-                "ks_max" if args.hard_morphology_constraints else "mean"
-            ),
+            morphology_aggregation="ks_max" if use_ks else "mean",
+            constraint_aware_continuation=args.constraint_aware_continuation,
+            exact_bad_target=constraint_exact_target,
+            require_hard_feasible=constraint_hard_active,
         )
         optimizer = make_optimizer(
             evaluator,
@@ -771,11 +1037,15 @@ def main() -> int:
             dfm_penalty_weight=penalty_weight,
             active_hard_constraints=(
                 ["500nm_solid_opening", "500nm_void_opening"]
-                if args.hard_morphology_constraints
+                if args.hard_morphology_constraints or constraint_hard_active
                 else []
             ),
             morphology_caps=morphology_caps.tolist(),
             stage_initial_morphology_residuals=stage_initial_residuals.tolist(),
+            constraint_aware_continuation=args.constraint_aware_continuation,
+            constraint_stage_attempt=constraint_stage_attempt,
+            exact_bad_entry=constraint_exact_entry,
+            exact_bad_target=constraint_exact_target,
             manual_move_limit=None,
         )
         stage_stop_reason = "nlopt"
@@ -804,7 +1074,7 @@ def main() -> int:
             beta,
             device=args.constraint_device,
             morphology_aggregation=(
-                "ks_max" if args.hard_morphology_constraints else "mean"
+                "ks_max" if use_ks else "mean"
             ),
         )
         checkpoint = raw_root / f"stage_{completed_stages:04d}_beta{beta:g}.npz"
@@ -814,6 +1084,10 @@ def main() -> int:
             "beta": beta,
             "dfm_penalty_weight": penalty_weight,
             "hard_morphology_constraints": args.hard_morphology_constraints,
+            "constraint_aware_continuation": args.constraint_aware_continuation,
+            "constraint_stage_attempt": constraint_stage_attempt,
+            "exact_bad_entry": constraint_exact_entry,
+            "exact_bad_target": constraint_exact_target,
             "morphology_caps": morphology_caps.tolist(),
             "stage_initial_morphology_residuals": stage_initial_residuals.tolist(),
             "nlopt_result_code": int(result_code),
@@ -836,11 +1110,24 @@ def main() -> int:
         write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
         write_json(published / "latest_stage.json", stage_record)
         emit(events, "ansys_dfm_stage_complete", **stage_record)
-        if gate["passed"]:
+        promotion = evaluator.plateau_diagnostic or constraint_aware_promotion_diagnostic(
+            history[-evaluator.stage_full_physics_evaluations :],
+            beta=beta,
+            exact_bad_target=constraint_exact_target,
+            require_hard_feasible=constraint_hard_active,
+        )
+        if gate["passed"] and (
+            not args.constraint_aware_continuation
+            or bool(promotion.get("promotion_passed"))
+        ):
             break
-        plateau = evaluator.plateau_diagnostic or {}
+        plateau = promotion if args.constraint_aware_continuation else (
+            evaluator.plateau_diagnostic or {}
+        )
         exact_bad = int(gate["exact_500nm_audit"]["total_bad_cell_count"])
         cleanup_ready = bool(
+            not args.constraint_aware_continuation
+            and
             beta >= EXACT_CLEANUP_MINIMUM_BETA
             and float(gate["gray_fraction_0p01_0p99"]) < EXACT_CLEANUP_MAXIMUM_GRAY_FRACTION
             and exact_bad > 0
@@ -893,7 +1180,42 @@ def main() -> int:
                 objective_preservation_passed=False,
                 action="continue_beta_continuation",
             )
-        if schedule_index < len(schedule) - 1:
+        if args.constraint_aware_continuation:
+            promotion_passed = bool(promotion.get("promotion_passed"))
+            if promotion_passed and schedule_index < len(schedule) - 1:
+                schedule_index += 1
+                constraint_beta = None
+                constraint_caps = None
+                constraint_exact_entry = None
+                constraint_exact_target = None
+                constraint_stage_attempt = 0
+            elif constraint_hard_active:
+                latest_maximum_constraint = history[-1].get("maximum_constraint_value")
+                latest_feasible = bool(
+                    latest_maximum_constraint is not None
+                    and float(latest_maximum_constraint) <= 0.0
+                )
+                exact_missed = bool(
+                    constraint_exact_target is not None
+                    and exact_bad > constraint_exact_target
+                )
+                if latest_feasible and exact_missed:
+                    assert constraint_caps is not None
+                    constraint_caps = np.maximum(
+                        CONSTRAINT_AWARE_CAP_FLOOR,
+                        (1.0 - CONSTRAINT_AWARE_CAP_REPEAT_REDUCTION)
+                        * constraint_caps,
+                    )
+                    emit(
+                        events,
+                        "constraint_aware_caps_tightened",
+                        beta=beta,
+                        stage_attempt=constraint_stage_attempt,
+                        exact_bad_cells=exact_bad,
+                        exact_bad_target=constraint_exact_target,
+                        new_caps=constraint_caps.tolist(),
+                    )
+        elif schedule_index < len(schedule) - 1:
             schedule_index += 1
         # At maximum beta, continue fixed-budget LD_MMA stages with the
         # saturated official DFM penalty until the explicit final gate passes.
