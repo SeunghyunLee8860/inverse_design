@@ -1,6 +1,6 @@
 {
-  "stage_index": 9,
-  "beta": 128.0,
+  "stage_index": 12,
+  "beta": 1024.0,
   "dfm_penalty_weight": 10000.0,
   "nlopt_result_code": -5,
   "stage_stop_reason": "adaptive_plateau",
@@ -14,28 +14,28 @@
     "stage_evaluations_observed": 5,
     "reason": "adaptive_plateau",
     "window_evaluation_ids": [
-      77,
-      78,
-      79,
-      80
+      94,
+      95,
+      96,
+      97
     ],
-    "fom_relative_range": 3.0630392696750473e-07,
-    "rms_step_maximum_observed": 6.911278724709942e-07,
+    "fom_relative_range": 2.454958202466862e-07,
+    "rms_step_maximum_observed": 3.87236281652659e-08,
     "gray_absolute_range": 0.0,
-    "smooth_constraint_relative_range": 8.781971307799342e-05,
+    "smooth_constraint_relative_range": 1.7850251945934842e-05,
     "exact_bad_cell_range": 0,
     "exact_bad_cell_range_limit": 4,
     "constraint_plateau": true
   },
   "full_physics_evaluations": 5,
-  "raw_current_at_reference_power_A": 8.583464957557885e-07,
-  "smooth_solid_residual": 0.001906608421086489,
-  "smooth_void_residual": 0.004981845755128699,
+  "raw_current_at_reference_power_A": 8.547534909540225e-07,
+  "smooth_solid_residual": 0.0019088419739199908,
+  "smooth_void_residual": 0.004978048757983557,
   "final_geometry_gate": {
     "passed": false,
-    "discreteness": 0.997923909868045,
-    "binarization_mean_4rho1mrho": 0.0020760901319550325,
-    "gray_fraction_0p01_0p99": 0.005016411717346876,
+    "discreteness": 0.9997246493847457,
+    "binarization_mean_4rho1mrho": 0.0002753506152543392,
+    "gray_fraction_0p01_0p99": 0.0007018847670361883,
     "exact_500nm_audit": {
       "minimum_feature_nm": 500.0,
       "opening_radius_nm": 250.0,
@@ -53,8 +53,8 @@
     }
   },
   "checkpoint": {
-    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run050_Eb_evaporated_fresh_current_max/stage_0009_beta128.npz",
-    "size_bytes": 177048,
-    "sha256": "7ab627118634b73d3a5feb42fade48b0dc3dc141524092b762ddf2eb81c44199"
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run050_Eb_evaporated_fresh_current_max/stage_0012_beta1024.npz",
+    "size_bytes": 167518,
+    "sha256": "004d5f051ae75ac082f4644a9730d77e2e36434c08cf497557d46e82f94a153e"
   }
 }
