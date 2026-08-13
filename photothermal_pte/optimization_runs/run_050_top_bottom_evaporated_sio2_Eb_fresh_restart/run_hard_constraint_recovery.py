@@ -16,10 +16,10 @@ CONDA_LIBRARY_DIR = PYTHON.parents[1] / "lib"
 ARTIFACT_ROOT = Path("/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored")
 SOURCE_RUN = ARTIFACT_ROOT / "run050_Eb_evaporated_fresh_current_max"
 RECOVERY_ROOT = ARTIFACT_ROOT / "run050_Eb_evaporated_hard_constraint_recovery_v1"
-RAW_ROOT = RECOVERY_ROOT / "optimization"
+RAW_ROOT = RECOVERY_ROOT / "optimization_v2"
 SEED = RECOVERY_ROOT / "exact_feasible_latent_seed_beta8_v2.npz"
 SEED_REPORT = RECOVERY_ROOT / "EXACT_FEASIBLE_LATENT_SEED_REPORT_v2.json"
-PUBLISHED = HERE / "hard_constraint_recovery_v1" / "results"
+PUBLISHED = HERE / "hard_constraint_recovery_v2" / "results"
 BASE_FSP = ARTIFACT_ROOT / (
     "production_input_uniform_rho0p5_Ea_forward_v1/"
     "tairte4_flake_forward_Ea.fsp"
@@ -44,8 +44,8 @@ def environment() -> dict[str, str]:
             "CUDA_VISIBLE_DEVICES": str(GPU),
             "LUMERICAL_LICENSE_RETRY_SECONDS": "30",
             "LUMERICAL_GPU_ENGINE_LOCK": "/tmp/seunghyun_lumerical_fdtd_gpu_engine.lock",
-            "XDG_CONFIG_HOME": "/tmp/seunghyun_lumerical_run050_hard_recovery",
-            "MPLCONFIGDIR": "/tmp/seunghyun_matplotlib_run050_hard_recovery",
+            "XDG_CONFIG_HOME": "/tmp/seunghyun_lumerical_run050_hard_recovery_v2",
+            "MPLCONFIGDIR": "/tmp/seunghyun_matplotlib_run050_hard_recovery_v2",
         }
     )
     return env
@@ -100,6 +100,7 @@ def main() -> int:
                 "start_beta": 8,
                 "hard_constraints": ["500nm_solid_opening", "500nm_void_opening"],
                 "scalar_dfm_penalty_weight": 0.0,
+                "hard_constraint_ccsa_parameters": "NLopt defaults",
                 "gpu": GPU,
                 "command": command,
             },

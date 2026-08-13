@@ -606,6 +606,7 @@ def main() -> int:
             ],
             dtype=np.float64,
         )
+        controls = stage_controls(beta)
         if args.hard_morphology_constraints:
             morphology_caps = np.maximum(
                 np.finfo(np.float64).eps,
@@ -613,11 +614,16 @@ def main() -> int:
             )
             morphology_start_beta = 0.0
             hard_constraint_count = 2
+            optimizer_rho_init = None
+            optimizer_always_improve = None
+            optimizer_inner_gradients = None
         else:
             morphology_caps = np.asarray([np.inf, np.inf])
             morphology_start_beta = np.inf
             hard_constraint_count = 0
-        controls = stage_controls(beta)
+            optimizer_rho_init = float(controls["rho_init"])
+            optimizer_always_improve = int(controls["always_improve"])
+            optimizer_inner_gradients = int(controls["inner_gradients"])
         nominal_stage_budget = (
             GRAYSCALE_EVALUATIONS
             if completed_stages == 0 and np.isclose(beta, 1.0)
@@ -649,7 +655,11 @@ def main() -> int:
             evaluation_counter=evaluation_counter,
             global_evaluation=global_evaluation,
             constraint_device=args.constraint_device,
-            algorithm_label="NLopt LD_MMA + Ansys-style DFM penalty",
+            algorithm_label=(
+                "NLopt LD_MMA + explicit solid/void DFM inequalities"
+                if args.hard_morphology_constraints
+                else "NLopt LD_MMA + Ansys-style DFM penalty"
+            ),
             output_slug=args.output_slug if args.recovery_append else "ansys_dfm_ld_mma",
             include_terminal_conductance_constraint=False,
             morphology_start_beta=morphology_start_beta,
@@ -658,6 +668,12 @@ def main() -> int:
                 "beta_factor": BETA_FACTOR,
                 "stage_budget": stage_budget,
                 "dfm_penalty_weight": penalty_weight,
+                "rho_init": optimizer_rho_init,
+                "always_improve": optimizer_always_improve,
+                "inner_gradients": optimizer_inner_gradients,
+                "hard_constraint_ccsa_parameters": (
+                    "NLopt defaults" if args.hard_morphology_constraints else None
+                ),
             },
             morphology_penalty_weight=penalty_weight,
         )
@@ -665,9 +681,9 @@ def main() -> int:
             evaluator,
             hard_constraint_count,
             initial_step=float(controls["initial_step"]),
-            rho_init=float(controls["rho_init"]),
-            always_improve=int(controls["always_improve"]),
-            inner_gradients=int(controls["inner_gradients"]),
+            rho_init=optimizer_rho_init,
+            always_improve=optimizer_always_improve,
+            inner_gradients=optimizer_inner_gradients,
             xtol_rel=0.0,
             ftol_rel=0.0,
             maxeval=stage_budget,
