@@ -1,5 +1,5 @@
 {
-  "stage_index": 13,
+  "stage_index": 14,
   "beta": 1024.0,
   "dfm_penalty_weight": 10000.0,
   "nlopt_result_code": -5,
@@ -14,27 +14,27 @@
     "stage_evaluations_observed": 5,
     "reason": "adaptive_plateau",
     "window_evaluation_ids": [
-      99,
-      100,
-      101,
-      102
+      104,
+      105,
+      106,
+      107
     ],
-    "fom_relative_range": 1.1172474278635847e-08,
-    "rms_step_maximum_observed": 7.508524585970361e-15,
+    "fom_relative_range": 1.117427994538797e-08,
+    "rms_step_maximum_observed": 7.508152749874381e-16,
     "gray_absolute_range": 0.0,
-    "smooth_constraint_relative_range": 3.2354982700256047e-12,
+    "smooth_constraint_relative_range": 3.2229038820537413e-13,
     "exact_bad_cell_range": 0,
     "exact_bad_cell_range_limit": 4,
     "constraint_plateau": true
   },
   "full_physics_evaluations": 5,
-  "raw_current_at_reference_power_A": 8.54753490950239e-07,
-  "smooth_solid_residual": 0.0019088419739188823,
-  "smooth_void_residual": 0.004978048757982201,
+  "raw_current_at_reference_power_A": 8.547534909463588e-07,
+  "smooth_solid_residual": 0.0019088419739186888,
+  "smooth_void_residual": 0.00497804875798197,
   "final_geometry_gate": {
     "passed": false,
     "discreteness": 0.999724649384746,
-    "binarization_mean_4rho1mrho": 0.00027535061525400676,
+    "binarization_mean_4rho1mrho": 0.0002753506152539401,
     "gray_fraction_0p01_0p99": 0.0007018847670361883,
     "exact_500nm_audit": {
       "minimum_feature_nm": 500.0,
@@ -53,8 +53,8 @@
     }
   },
   "checkpoint": {
-    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run050_Eb_evaporated_fresh_current_max/stage_0013_beta1024.npz",
-    "size_bytes": 167511,
-    "sha256": "a36d6951ffa18f0b4ce8d2ae6cd5e7cca4bbba0d99f6bb7ef57f25dcf215f4d6"
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run050_Eb_evaporated_fresh_current_max/stage_0014_beta1024.npz",
+    "size_bytes": 167515,
+    "sha256": "f926cb58090beb069811937f34ec0ab040f4f657a6a0b05bb1c96b8f73f917c9"
   }
 }
