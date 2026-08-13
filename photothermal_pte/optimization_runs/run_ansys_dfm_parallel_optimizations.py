@@ -87,6 +87,8 @@ def main() -> int:
         stream = log.open("ab", buffering=0)
         env = dict(os.environ)
         env["CUDA_VISIBLE_DEVICES"] = str(gpu)
+        env["XDG_CONFIG_HOME"] = f"/tmp/seunghyun_lumerical_constraint_aware_{polarization}"
+        env["MPLCONFIGDIR"] = f"/tmp/seunghyun_matplotlib_constraint_aware_{polarization}"
         # The contract module is imported when the child interpreter starts.
         # Pin the intended top/bottom-contact geometry explicitly instead of
         # inheriting its fixed-frame default from an interactive shell.
