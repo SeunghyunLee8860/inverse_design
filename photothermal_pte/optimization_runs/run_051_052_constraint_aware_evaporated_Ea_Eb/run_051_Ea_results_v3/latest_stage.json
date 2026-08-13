@@ -1,19 +1,19 @@
 {
-  "stage_index": 3,
-  "beta": 2.0,
-  "dfm_penalty_weight": 4.0,
+  "stage_index": 4,
+  "beta": 4.0,
+  "dfm_penalty_weight": 16.0,
   "hard_morphology_constraints": false,
   "constraint_aware_continuation": true,
   "constraint_stage_attempt": 1,
-  "exact_bad_entry": 107,
-  "exact_bad_target": null,
+  "exact_bad_entry": 94,
+  "exact_bad_target": 70,
   "morphology_caps": [
-    Infinity,
-    Infinity
+    0.00488405107746306,
+    0.07054396952461355
   ],
   "stage_initial_morphology_residuals": [
-    0.006584655148611923,
-    0.1625052799860481
+    0.005141106397329537,
+    0.074256810025909
   ],
   "nlopt_result_code": 5,
   "stage_stop_reason": "nlopt",
@@ -27,38 +27,38 @@
     "stage_evaluations_observed": 20,
     "reason": "constraint_aware_stage_not_ready",
     "window_evaluation_ids": [
-      81,
-      82,
-      83,
-      84
+      106,
+      107,
+      108,
+      109
     ],
-    "fom_relative_range": 0.0005847753074264617,
-    "rms_step_maximum_observed": 0.0121181037457872,
-    "gray_absolute_range": 0.0002064366961870845,
-    "smooth_constraint_relative_range": 0.1726674684608788,
-    "exact_bad_cell_range": 27,
+    "fom_relative_range": 0.0004324239091586098,
+    "rms_step_maximum_observed": 0.0013776017536905492,
+    "gray_absolute_range": 0.00010321834809357,
+    "smooth_constraint_relative_range": 0.1251386657516214,
+    "exact_bad_cell_range": 4,
     "exact_bad_cell_range_limit": 2,
     "constraint_plateau": false,
     "policy": "constraint_aware_beta_promotion_v1",
-    "beta": 2.0,
-    "exact_bad_target": null,
+    "beta": 4.0,
+    "exact_bad_target": 70,
     "objective_design_gray_plateau": false,
     "hard_constraints_feasible": true,
-    "latest_exact_bad_cells": 94,
-    "stage_first_exact_bad_cells": 107,
+    "latest_exact_bad_cells": 57,
+    "stage_first_exact_bad_cells": 94,
     "exact_target_passed": true,
     "exact_nonincreasing": true,
     "promotion_passed": false
   },
-  "full_physics_evaluations": 20,
-  "raw_current_at_reference_power_A": 8.209662049158432e-07,
-  "smooth_solid_residual": 0.0015677224016672209,
-  "smooth_void_residual": 0.030100242483625722,
+  "full_physics_evaluations": 21,
+  "raw_current_at_reference_power_A": 8.275069321192031e-07,
+  "smooth_solid_residual": 0.0008607302935824401,
+  "smooth_void_residual": 0.0071702996932749286,
   "final_geometry_gate": {
     "passed": false,
-    "discreteness": 0.8013808253554151,
-    "binarization_mean_4rho1mrho": 0.19861917464458492,
-    "gray_fraction_0p01_0p99": 0.408187279370781,
+    "discreteness": 0.8723806353888941,
+    "binarization_mean_4rho1mrho": 0.12761936461110596,
+    "gray_fraction_0p01_0p99": 0.37693276356805183,
     "exact_500nm_audit": {
       "minimum_feature_nm": 500.0,
       "opening_radius_nm": 250.0,
@@ -67,17 +67,17 @@
       "realized_discrete_opening_pixel_support_diameter_nm": 500.0,
       "discretization_note": "requested 500 nm pixel-support diameter is represented by five 100 nm samples (two centre offsets plus two half-cell extents)",
       "outside_design_phase": "fixed_solid_at_top_bottom_and_void_at_left_right",
-      "solid_bad_cell_count": 28,
-      "void_bad_cell_count": 66,
-      "total_bad_cell_count": 94,
+      "solid_bad_cell_count": 10,
+      "void_bad_cell_count": 50,
+      "total_bad_cell_count": 60,
       "counted_entity": "design nodes (legacy field names retain *_cell_count)",
-      "solid_fraction": 0.8232695443942115,
+      "solid_fraction": 0.8230011766891683,
       "passed": false
     }
   },
   "checkpoint": {
-    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/stage_0003_beta2.npz",
-    "size_bytes": 304046,
-    "sha256": "1f07602c036d35817afe04f9e9e761396b50fb2fb3bcfc94b8fbd6c31910c661"
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/stage_0004_beta4.npz",
+    "size_bytes": 624934,
+    "sha256": "f1bc13b906badcba2383f1262eb9a65be344bba0561e4c9d9d08305f0f055263"
   }
 }
