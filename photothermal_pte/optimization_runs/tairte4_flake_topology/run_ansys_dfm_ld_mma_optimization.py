@@ -325,6 +325,8 @@ class AdaptiveStageEvaluator(StageEvaluator):
             stop = bool(diagnostic["passed"])
         self.plateau_diagnostic = diagnostic
         if stop:
+            event_payload = dict(diagnostic)
+            event_payload.setdefault("beta", self.beta)
             emit(
                 self.events,
                 (
@@ -332,8 +334,7 @@ class AdaptiveStageEvaluator(StageEvaluator):
                     if self.constraint_aware_continuation
                     else "adaptive_continuation_plateau"
                 ),
-                beta=self.beta,
-                **diagnostic,
+                **event_payload,
             )
             raise AdaptivePlateauStop("audited continuation plateau")
         return value

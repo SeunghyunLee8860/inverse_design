@@ -12,11 +12,11 @@
     0.0,
     1.0
   ],
-  "rho_mean": 0.8043330771668337,
+  "rho_mean": 0.8043330857360589,
   "gray_fraction_0p01_0p99": 0.408187279370781,
-  "binarization_mean_4rho1mrho": 0.1986191627115314,
-  "smooth_solid_constraint": 0.0015676946950568815,
-  "smooth_void_constraint": 0.030091597861668845,
+  "binarization_mean_4rho1mrho": 0.1986190777286686,
+  "smooth_solid_constraint": 0.0015674977639200949,
+  "smooth_void_constraint": 0.030030994529366778,
   "morphology_aggregation": "ks_max",
   "exact": {
     "minimum_feature_nm": 500.0,
