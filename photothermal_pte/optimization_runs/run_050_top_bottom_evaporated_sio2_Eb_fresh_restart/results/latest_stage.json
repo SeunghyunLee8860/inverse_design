@@ -1,0 +1,60 @@
+{
+  "stage_index": 7,
+  "beta": 64.0,
+  "dfm_penalty_weight": 2560.0,
+  "nlopt_result_code": -5,
+  "stage_stop_reason": "adaptive_plateau",
+  "adaptive_plateau_diagnostic": {
+    "passed": true,
+    "minimum_evaluations": 5,
+    "window_evaluations": 4,
+    "fom_relative_range_maximum": 0.0001,
+    "rms_step_maximum": 0.0001,
+    "gray_absolute_range_maximum": 0.001,
+    "stage_evaluations_observed": 5,
+    "reason": "adaptive_plateau",
+    "window_evaluation_ids": [
+      67,
+      68,
+      69,
+      70
+    ],
+    "fom_relative_range": 9.443511559485243e-09,
+    "rms_step_maximum_observed": 2.604305787243058e-11,
+    "gray_absolute_range": 0.0,
+    "smooth_constraint_relative_range": 2.2091396616963036e-09,
+    "exact_bad_cell_range": 0,
+    "exact_bad_cell_range_limit": 4,
+    "constraint_plateau": true
+  },
+  "full_physics_evaluations": 5,
+  "raw_current_at_reference_power_A": 8.630485056767339e-07,
+  "smooth_solid_residual": 0.0019221695219891778,
+  "smooth_void_residual": 0.004998748751807654,
+  "final_geometry_gate": {
+    "passed": false,
+    "discreteness": 0.9957158682803979,
+    "binarization_mean_4rho1mrho": 0.004284131719602037,
+    "gray_fraction_0p01_0p99": 0.010259903800499577,
+    "exact_500nm_audit": {
+      "minimum_feature_nm": 500.0,
+      "opening_radius_nm": 250.0,
+      "opening_radius_pixels": 2,
+      "realized_discrete_opening_max_center_offset_nm": 200.0,
+      "realized_discrete_opening_pixel_support_diameter_nm": 500.0,
+      "discretization_note": "requested 500 nm pixel-support diameter is represented by five 100 nm samples (two centre offsets plus two half-cell extents)",
+      "outside_design_phase": "fixed_solid_at_top_bottom_and_void_at_left_right",
+      "solid_bad_cell_count": 88,
+      "void_bad_cell_count": 238,
+      "total_bad_cell_count": 326,
+      "counted_entity": "design nodes (legacy field names retain *_cell_count)",
+      "solid_fraction": 0.884044507751698,
+      "passed": false
+    }
+  },
+  "checkpoint": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run050_Eb_evaporated_fresh_current_max/stage_0007_beta64.npz",
+    "size_bytes": 190888,
+    "sha256": "991ce0f95b34b25b848b22f23f4bab066ff15088895bf4ffaf10217b7f2f7bb2"
+  }
+}
