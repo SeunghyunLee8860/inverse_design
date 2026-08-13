@@ -24,9 +24,12 @@ def main() -> int:
     if polarization not in {"Ea", "Eb"}:
         raise RuntimeError("CONSTRAINT_AWARE_POLARIZATION must be Ea or Eb")
     gpu = int(os.environ["CONSTRAINT_AWARE_GPU"])
+    generation = os.environ.get("CONSTRAINT_AWARE_GENERATION", "v3")
+    if not generation.startswith("v") or not generation[1:].isdigit():
+        raise RuntimeError("CONSTRAINT_AWARE_GENERATION must look like v3")
     suffix = polarization.lower()
-    raw = ARTIFACT_ROOT / f"run05{1 if polarization == 'Ea' else 2}_constraint_aware_{polarization}_evaporated_v3"
-    published = HERE / f"run_05{1 if polarization == 'Ea' else 2}_{polarization}_results_v3"
+    raw = ARTIFACT_ROOT / f"run05{1 if polarization == 'Ea' else 2}_constraint_aware_{polarization}_evaporated_{generation}"
+    published = HERE / f"run_05{1 if polarization == 'Ea' else 2}_{polarization}_results_{generation}"
     if raw.exists() and any(raw.iterdir()):
         raise RuntimeError(f"fresh raw path is nonempty: {raw}")
     if published.exists() and any(published.iterdir()):
@@ -35,8 +38,8 @@ def main() -> int:
     environment["CUDA_VISIBLE_DEVICES"] = str(gpu)
     environment["TAIRTE4_TOPOLOGY_GEOMETRY"] = "contact_anchored"
     environment["TAIRTE4_SIO2_INTERFACE_SCENARIO"] = "evaporated"
-    environment["XDG_CONFIG_HOME"] = f"/tmp/seunghyun_lumerical_constraint_aware_v3_{suffix}"
-    environment["MPLCONFIGDIR"] = f"/tmp/seunghyun_matplotlib_constraint_aware_v3_{suffix}"
+    environment["XDG_CONFIG_HOME"] = f"/tmp/seunghyun_lumerical_constraint_aware_{generation}_{suffix}"
+    environment["MPLCONFIGDIR"] = f"/tmp/seunghyun_matplotlib_constraint_aware_{generation}_{suffix}"
     command = [
         sys.executable,
         "-u",
