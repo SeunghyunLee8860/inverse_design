@@ -30,3 +30,10 @@ optimizer scaling choice, not an AD/FD gradient rescaling.
 
 Each accepted full-physics evaluation publishes a JSON checkpoint and PNG.
 Raw FSP/NPZ artifacts remain outside Git.
+
+Production launch uses two independent `runres` parents invoking `run_one.py`.
+Each parent owns one physical GPU claim and nine FDTD licenses for the entire
+optimization, including Python-only thermal/electrical intervals. The earlier
+single-supervisor launcher is retained as code provenance but is not used for
+the production v3 runs because it could only advertise one GPU to the site
+scheduler.
