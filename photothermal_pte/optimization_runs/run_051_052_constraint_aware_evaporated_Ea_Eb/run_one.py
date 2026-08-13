@@ -30,10 +30,28 @@ def main() -> int:
     suffix = polarization.lower()
     raw = ARTIFACT_ROOT / f"run05{1 if polarization == 'Ea' else 2}_constraint_aware_{polarization}_evaporated_{generation}"
     published = HERE / f"run_05{1 if polarization == 'Ea' else 2}_{polarization}_results_{generation}"
-    if raw.exists() and any(raw.iterdir()):
-        raise RuntimeError(f"fresh raw path is nonempty: {raw}")
-    if published.exists() and any(published.iterdir()):
-        raise RuntimeError(f"fresh published path is nonempty: {published}")
+    recovery_initial = os.environ.get("CONSTRAINT_AWARE_RECOVERY_INITIAL_LATENT")
+    recovery_beta = os.environ.get("CONSTRAINT_AWARE_RECOVERY_START_BETA")
+    recovery_slug = os.environ.get("CONSTRAINT_AWARE_RECOVERY_OUTPUT_SLUG")
+    recovery = recovery_initial is not None
+    if recovery:
+        if recovery_beta is None or recovery_slug is None:
+            raise RuntimeError(
+                "recovery requires CONSTRAINT_AWARE_RECOVERY_START_BETA and "
+                "CONSTRAINT_AWARE_RECOVERY_OUTPUT_SLUG"
+            )
+        initial = Path(recovery_initial).expanduser().resolve()
+        if not initial.is_file():
+            raise RuntimeError(f"recovery latent checkpoint is missing: {initial}")
+        if not raw.is_dir() or not any(raw.iterdir()):
+            raise RuntimeError(f"recovery raw path is missing or empty: {raw}")
+        if not published.is_dir() or not any(published.iterdir()):
+            raise RuntimeError(f"recovery published path is missing or empty: {published}")
+    else:
+        if raw.exists() and any(raw.iterdir()):
+            raise RuntimeError(f"fresh raw path is nonempty: {raw}")
+        if published.exists() and any(published.iterdir()):
+            raise RuntimeError(f"fresh published path is nonempty: {published}")
     environment = dict(os.environ)
     environment["CUDA_VISIBLE_DEVICES"] = str(gpu)
     environment["TAIRTE4_TOPOLOGY_GEOMETRY"] = "contact_anchored"
@@ -55,6 +73,15 @@ def main() -> int:
         "--constraint-device", "cuda:0",
         "--constraint-aware-continuation",
     ]
+    if recovery:
+        command.extend(
+            [
+                "--initial-latent-npz", str(initial),
+                "--recovery-append",
+                "--start-beta", str(float(recovery_beta)),
+                "--output-slug", recovery_slug,
+            ]
+        )
     return subprocess.run(command, cwd=REPOSITORY, env=environment).returncode
 
 
