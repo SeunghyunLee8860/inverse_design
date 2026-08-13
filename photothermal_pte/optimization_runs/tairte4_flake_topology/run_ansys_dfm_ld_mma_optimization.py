@@ -98,7 +98,7 @@ CONSTRAINT_AWARE_EXACT_ZERO_BETA = 32.0
 CONSTRAINT_AWARE_CAP_INITIAL_REDUCTION = 0.05
 CONSTRAINT_AWARE_CAP_REPEAT_REDUCTION = 0.10
 CONSTRAINT_AWARE_CAP_FLOOR = 1.0e-8
-CONSTRAINT_AWARE_DFM_WEIGHT_AT_BETA1 = 0.10
+CONSTRAINT_AWARE_DFM_WEIGHT_AT_BETA1 = 1.0
 CONSTRAINT_AWARE_DFM_WEIGHT_MAXIMUM = 1.0e4
 
 
@@ -766,7 +766,7 @@ def main() -> int:
             "minimum_feature_nm": 500.0,
             "enabled": True,
             "aggregation": "ks_max",
-            "formula": "min(0.10*beta^2,1e4)",
+            "formula": "min(1.0*beta^2,1e4)",
             "role": "gradual objective pressure; beta>=4 also uses separate LD_MMA inequalities",
         }
         manifest["hard_morphology_constraints"] = {

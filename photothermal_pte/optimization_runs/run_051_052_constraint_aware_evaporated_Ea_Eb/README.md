@@ -22,6 +22,11 @@ The exact thresholded audit remains diagnostic only at beta 1 and 2 because a
 gray density has no unique binary topology. From beta 32 onward zero exact
 violations are mandatory before beta can increase.
 
+The beta-1 KS weight is fixed from an offline gradient-scale audit of the
+uniform Ea checkpoint. A unit KS weight was 0.957% of the physical objective
+gradient L2 norm; therefore weight 1 is used at beta 1 and grows as beta^2
+until explicit hard inequalities take over from beta 4. This is a recorded
+optimizer scaling choice, not an AD/FD gradient rescaling.
+
 Each accepted full-physics evaluation publishes a JSON checkpoint and PNG.
 Raw FSP/NPZ artifacts remain outside Git.
-
