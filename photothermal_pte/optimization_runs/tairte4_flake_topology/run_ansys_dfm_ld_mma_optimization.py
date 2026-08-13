@@ -404,6 +404,16 @@ def main() -> int:
         default=0.01,
         help="Relative slack above each stage's feasible starting residual.",
     )
+    parser.add_argument(
+        "--hard-rho-init",
+        type=float,
+        default=0.01,
+        help=(
+            "NLopt CCSA curvature initialization used only with explicit hard "
+            "morphology inequalities. A smaller positive value avoids relearning "
+            "the first several near-zero steps after a warm restart."
+        ),
+    )
     args = parser.parse_args()
 
     CONTRACT.validate()
@@ -411,6 +421,8 @@ def main() -> int:
         raise RuntimeError("production optimization requires a contact-anchored geometry")
     if not 0.0 <= args.hard_cap_relative_slack <= 0.10:
         raise ValueError("hard morphology cap slack must be in [0, 0.10]")
+    if not np.isfinite(args.hard_rho_init) or args.hard_rho_init <= 0.0:
+        raise ValueError("--hard-rho-init must be finite and positive")
     code_provenance = verify_optimizer_code_manifest()
     base_fsp = verify_file(args.base_fsp, args.base_sha256)
     jacobian_dir = args.jacobian_dir.expanduser().resolve()
@@ -588,6 +600,47 @@ def main() -> int:
     schedule_index = 0
     first_recovery_stage = bool(args.recovery_append)
 
+    hard_fixed_caps: np.ndarray | None = None
+    if args.hard_morphology_constraints:
+        recorded_caps = manifest.get("hard_morphology_constraints", {}).get(
+            "fixed_caps"
+        )
+        if recorded_caps is None and history:
+            for row in history:
+                candidate = np.asarray(row.get("morphology_caps", []), dtype=np.float64)
+                if candidate.shape == (2,) and np.all(np.isfinite(candidate)):
+                    recorded_caps = candidate.tolist()
+                    break
+        if recorded_caps is None:
+            initial_summary, _ = metrics(
+                latent, start_beta, device=args.constraint_device
+            )
+            initial_residuals = np.asarray(
+                [
+                    initial_summary["smooth_solid_constraint"],
+                    initial_summary["smooth_void_constraint"],
+                ],
+                dtype=np.float64,
+            )
+            hard_fixed_caps = np.maximum(
+                np.finfo(np.float64).eps,
+                (1.0 + args.hard_cap_relative_slack) * initial_residuals,
+            )
+        else:
+            hard_fixed_caps = np.asarray(recorded_caps, dtype=np.float64)
+        if hard_fixed_caps.shape != (2,) or not np.all(np.isfinite(hard_fixed_caps)):
+            raise RuntimeError("recorded hard morphology caps are invalid")
+        if np.any(hard_fixed_caps <= 0.0):
+            raise RuntimeError("recorded hard morphology caps must be positive")
+        manifest["hard_morphology_constraints"].update(
+            {
+                "cap_policy": "fixed from the first exact-feasible recovery seed",
+                "fixed_caps": hard_fixed_caps.tolist(),
+                "rho_init": args.hard_rho_init,
+            }
+        )
+        write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
+
     while True:
         if args.maximum_stages and completed_stages >= args.maximum_stages:
             return 0
@@ -608,13 +661,11 @@ def main() -> int:
         )
         controls = stage_controls(beta)
         if args.hard_morphology_constraints:
-            morphology_caps = np.maximum(
-                np.finfo(np.float64).eps,
-                (1.0 + args.hard_cap_relative_slack) * stage_initial_residuals,
-            )
+            assert hard_fixed_caps is not None
+            morphology_caps = hard_fixed_caps.copy()
             morphology_start_beta = 0.0
             hard_constraint_count = 2
-            optimizer_rho_init = None
+            optimizer_rho_init = float(args.hard_rho_init)
             optimizer_always_improve = None
             optimizer_inner_gradients = None
         else:
@@ -672,7 +723,13 @@ def main() -> int:
                 "always_improve": optimizer_always_improve,
                 "inner_gradients": optimizer_inner_gradients,
                 "hard_constraint_ccsa_parameters": (
-                    "NLopt defaults" if args.hard_morphology_constraints else None
+                    {
+                        "rho_init": optimizer_rho_init,
+                        "always_improve": "NLopt default",
+                        "inner_gradients": "NLopt default",
+                    }
+                    if args.hard_morphology_constraints
+                    else None
                 ),
             },
             morphology_penalty_weight=penalty_weight,

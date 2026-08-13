@@ -244,7 +244,10 @@ def test_ansys_style_driver_hard_constraints_are_explicit_opt_in() -> None:
     assert "hard_constraint_count = 2" in source
     assert "hard_constraint_count = 0" in source
     assert "0.0 if args.hard_morphology_constraints" in source
-    assert "optimizer_rho_init = None" in source
+    assert '"--hard-rho-init"' in source
+    assert "optimizer_rho_init = float(args.hard_rho_init)" in source
+    assert '"fixed_caps": hard_fixed_caps.tolist()' in source
+    assert "morphology_caps = hard_fixed_caps.copy()" in source
     assert "rho_init=optimizer_rho_init" in source
     assert '"hard_constraint_ccsa_parameters"' in source
     assert "restoration_block" not in source
