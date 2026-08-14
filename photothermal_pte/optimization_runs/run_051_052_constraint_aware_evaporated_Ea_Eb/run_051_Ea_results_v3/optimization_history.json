@@ -14228,5 +14228,797 @@
       "constraint_stage_attempt": 3,
       "exact_bad_target": 32
     }
+  },
+  {
+    "role": "nlopt_evaluation",
+    "algorithm": "NLopt LD_MMA + constraint-aware DFM continuation",
+    "nlopt_version": "2.11.0",
+    "evaluation_id": 211,
+    "global_full_physics_evaluation": 211,
+    "stage_full_physics_evaluation": 2,
+    "beta": 8.0,
+    "objective_A": 4.1454974656750285e-16,
+    "objective_at_reference_power_A": 8.542638278342312e-07,
+    "objective_scaled_minimize": -84.75345016323796,
+    "raw_current_objective_scaled_minimize": -85.42638278342312,
+    "morphology_penalty_weight": 256.0,
+    "morphology_aggregation": "ks_max",
+    "morphology_penalty_value": 0.6729326201851649,
+    "fixed_source_power_W": 1.3830232993859658e-13,
+    "source_power_relative_change": 0.0,
+    "terminal_conductance_S": 0.019107017928996495,
+    "minimum_terminal_conductance_S": null,
+    "constraint_names": [
+      "500nm_solid_opening",
+      "500nm_void_opening"
+    ],
+    "constraint_values": [
+      0.10444945899137448,
+      0.11217110079627535
+    ],
+    "maximum_constraint_value": 0.11217110079627535,
+    "terminal_conductance_constraint_enabled": false,
+    "morphology_caps": [
+      0.0003904911283562157,
+      0.0019757439575359497
+    ],
+    "gray_fraction_0p01_0p99": 0.3006337606572944,
+    "binarization": 0.08833804117305288,
+    "smooth_solid_constraint": 0.00043127771545395377,
+    "smooth_void_constraint": 0.0021973653321443465,
+    "exact_bad_cells": 78,
+    "rho_mean": 0.8249210077505471,
+    "latent_range": [
+      0.0,
+      1.0
+    ],
+    "maximum_absolute_step_from_previous_evaluation": 0.0028226071633400407,
+    "rms_step_from_previous_evaluation": 5.554489090299723e-05,
+    "manual_move_limit": null,
+    "used_adam": false,
+    "gradient_direction_normalization": false,
+    "post_update_hard_clipping": false,
+    "symmetry_constraint": false,
+    "volume_constraint": false,
+    "optimizer_controls": {
+      "initial_step": 0.0067578189050606615,
+      "rho_init": 0.01,
+      "always_improve": null,
+      "inner_gradients": null,
+      "projection_midpoint_derivative": 4.00268460160673,
+      "projection_derivative_ratio_to_beta1": 3.6994184590058334,
+      "manual_move_limit": null,
+      "beta_factor": 2.0,
+      "stage_budget": 20,
+      "dfm_penalty_weight": 256.0,
+      "hard_constraint_ccsa_parameters": {
+        "rho_init": 0.01,
+        "always_improve": "NLopt default",
+        "inner_gradients": "NLopt default"
+      },
+      "constraint_aware_continuation": true,
+      "constraint_stage_attempt": 3,
+      "exact_bad_target": 32
+    }
+  },
+  {
+    "role": "nlopt_evaluation",
+    "algorithm": "NLopt LD_MMA + constraint-aware DFM continuation",
+    "nlopt_version": "2.11.0",
+    "evaluation_id": 212,
+    "global_full_physics_evaluation": 212,
+    "stage_full_physics_evaluation": 3,
+    "beta": 8.0,
+    "objective_A": 4.1455302384124646e-16,
+    "objective_at_reference_power_A": 8.542705813214454e-07,
+    "objective_scaled_minimize": -84.76818286766012,
+    "raw_current_objective_scaled_minimize": -85.42705813214454,
+    "morphology_penalty_weight": 256.0,
+    "morphology_aggregation": "ks_max",
+    "morphology_penalty_value": 0.658875264484422,
+    "fixed_source_power_W": 1.3830232993859658e-13,
+    "source_power_relative_change": 0.0,
+    "terminal_conductance_S": 0.019106718009169438,
+    "minimum_terminal_conductance_S": null,
+    "constraint_names": [
+      "500nm_solid_opening",
+      "500nm_void_opening"
+    ],
+    "constraint_values": [
+      0.1090314748317498,
+      0.08347265430708783
+    ],
+    "maximum_constraint_value": 0.1090314748317498,
+    "terminal_conductance_constraint_enabled": false,
+    "morphology_caps": [
+      0.0003904911283562157,
+      0.0019757439575359497
+    ],
+    "gray_fraction_0p01_0p99": 0.3006337606572944,
+    "binarization": 0.08833984492281835,
+    "smooth_solid_constraint": 0.000433066951989608,
+    "smooth_void_constraint": 0.0021406645499026655,
+    "exact_bad_cells": 78,
+    "rho_mean": 0.8249210612016123,
+    "latent_range": [
+      0.0,
+      1.0
+    ],
+    "maximum_absolute_step_from_previous_evaluation": 0.001328656009604745,
+    "rms_step_from_previous_evaluation": 3.199862246384431e-05,
+    "manual_move_limit": null,
+    "used_adam": false,
+    "gradient_direction_normalization": false,
+    "post_update_hard_clipping": false,
+    "symmetry_constraint": false,
+    "volume_constraint": false,
+    "optimizer_controls": {
+      "initial_step": 0.0067578189050606615,
+      "rho_init": 0.01,
+      "always_improve": null,
+      "inner_gradients": null,
+      "projection_midpoint_derivative": 4.00268460160673,
+      "projection_derivative_ratio_to_beta1": 3.6994184590058334,
+      "manual_move_limit": null,
+      "beta_factor": 2.0,
+      "stage_budget": 20,
+      "dfm_penalty_weight": 256.0,
+      "hard_constraint_ccsa_parameters": {
+        "rho_init": 0.01,
+        "always_improve": "NLopt default",
+        "inner_gradients": "NLopt default"
+      },
+      "constraint_aware_continuation": true,
+      "constraint_stage_attempt": 3,
+      "exact_bad_target": 32
+    }
+  },
+  {
+    "role": "nlopt_evaluation",
+    "algorithm": "NLopt LD_MMA + constraint-aware DFM continuation",
+    "nlopt_version": "2.11.0",
+    "evaluation_id": 213,
+    "global_full_physics_evaluation": 213,
+    "stage_full_physics_evaluation": 4,
+    "beta": 8.0,
+    "objective_A": 4.145533676596679e-16,
+    "objective_at_reference_power_A": 8.542712898290326e-07,
+    "objective_scaled_minimize": -84.77482372017863,
+    "raw_current_objective_scaled_minimize": -85.42712898290326,
+    "morphology_penalty_weight": 256.0,
+    "morphology_aggregation": "ks_max",
+    "morphology_penalty_value": 0.6523052627246244,
+    "fixed_source_power_W": 1.3830232993859658e-13,
+    "source_power_relative_change": 0.0,
+    "terminal_conductance_S": 0.01910670873895004,
+    "minimum_terminal_conductance_S": null,
+    "constraint_names": [
+      "500nm_solid_opening",
+      "500nm_void_opening"
+    ],
+    "constraint_values": [
+      0.10734236418836951,
+      0.0708169219902639
+    ],
+    "maximum_constraint_value": 0.10734236418836951,
+    "terminal_conductance_constraint_enabled": false,
+    "morphology_caps": [
+      0.0003904911283562157,
+      0.0019757439575359497
+    ],
+    "gray_fraction_0p01_0p99": 0.3006337606572944,
+    "binarization": 0.08833904766191507,
+    "smooth_solid_constraint": 0.00043240736926855594,
+    "smooth_void_constraint": 0.002115660063249508,
+    "exact_bad_cells": 78,
+    "rho_mean": 0.8249209592853511,
+    "latent_range": [
+      0.0,
+      1.0
+    ],
+    "maximum_absolute_step_from_previous_evaluation": 0.0016429096887407013,
+    "rms_step_from_previous_evaluation": 1.765898083043335e-05,
+    "manual_move_limit": null,
+    "used_adam": false,
+    "gradient_direction_normalization": false,
+    "post_update_hard_clipping": false,
+    "symmetry_constraint": false,
+    "volume_constraint": false,
+    "optimizer_controls": {
+      "initial_step": 0.0067578189050606615,
+      "rho_init": 0.01,
+      "always_improve": null,
+      "inner_gradients": null,
+      "projection_midpoint_derivative": 4.00268460160673,
+      "projection_derivative_ratio_to_beta1": 3.6994184590058334,
+      "manual_move_limit": null,
+      "beta_factor": 2.0,
+      "stage_budget": 20,
+      "dfm_penalty_weight": 256.0,
+      "hard_constraint_ccsa_parameters": {
+        "rho_init": 0.01,
+        "always_improve": "NLopt default",
+        "inner_gradients": "NLopt default"
+      },
+      "constraint_aware_continuation": true,
+      "constraint_stage_attempt": 3,
+      "exact_bad_target": 32
+    }
+  },
+  {
+    "role": "nlopt_evaluation",
+    "algorithm": "NLopt LD_MMA + constraint-aware DFM continuation",
+    "nlopt_version": "2.11.0",
+    "evaluation_id": 214,
+    "global_full_physics_evaluation": 214,
+    "stage_full_physics_evaluation": 5,
+    "beta": 8.0,
+    "objective_A": 4.1455196984704745e-16,
+    "objective_at_reference_power_A": 8.542684093526373e-07,
+    "objective_scaled_minimize": -84.77849965019439,
+    "raw_current_objective_scaled_minimize": -85.42684093526373,
+    "morphology_penalty_weight": 256.0,
+    "morphology_aggregation": "ks_max",
+    "morphology_penalty_value": 0.6483412850693355,
+    "fixed_source_power_W": 1.3830232993859658e-13,
+    "source_power_relative_change": 0.0,
+    "terminal_conductance_S": 0.019106731306176593,
+    "minimum_terminal_conductance_S": null,
+    "constraint_names": [
+      "500nm_solid_opening",
+      "500nm_void_opening"
+    ],
+    "constraint_values": [
+      0.10629271898335935,
+      0.06318718306685889
+    ],
+    "maximum_constraint_value": 0.10629271898335935,
+    "terminal_conductance_constraint_enabled": false,
+    "morphology_caps": [
+      0.0003904911283562157,
+      0.0019757439575359497
+    ],
+    "gray_fraction_0p01_0p99": 0.3006337606572944,
+    "binarization": 0.08833869268702951,
+    "smooth_solid_constraint": 0.0004319974921280778,
+    "smooth_void_constraint": 0.002100585652674014,
+    "exact_bad_cells": 78,
+    "rho_mean": 0.8249208916477875,
+    "latent_range": [
+      0.0,
+      1.0
+    ],
+    "maximum_absolute_step_from_previous_evaluation": 0.0006021418255036659,
+    "rms_step_from_previous_evaluation": 9.033195139405755e-06,
+    "manual_move_limit": null,
+    "used_adam": false,
+    "gradient_direction_normalization": false,
+    "post_update_hard_clipping": false,
+    "symmetry_constraint": false,
+    "volume_constraint": false,
+    "optimizer_controls": {
+      "initial_step": 0.0067578189050606615,
+      "rho_init": 0.01,
+      "always_improve": null,
+      "inner_gradients": null,
+      "projection_midpoint_derivative": 4.00268460160673,
+      "projection_derivative_ratio_to_beta1": 3.6994184590058334,
+      "manual_move_limit": null,
+      "beta_factor": 2.0,
+      "stage_budget": 20,
+      "dfm_penalty_weight": 256.0,
+      "hard_constraint_ccsa_parameters": {
+        "rho_init": 0.01,
+        "always_improve": "NLopt default",
+        "inner_gradients": "NLopt default"
+      },
+      "constraint_aware_continuation": true,
+      "constraint_stage_attempt": 3,
+      "exact_bad_target": 32
+    }
+  },
+  {
+    "role": "nlopt_evaluation",
+    "algorithm": "NLopt LD_MMA + constraint-aware DFM continuation",
+    "nlopt_version": "2.11.0",
+    "evaluation_id": 215,
+    "global_full_physics_evaluation": 215,
+    "stage_full_physics_evaluation": 6,
+    "beta": 8.0,
+    "objective_A": 4.145468710434474e-16,
+    "objective_at_reference_power_A": 8.542579022337286e-07,
+    "objective_scaled_minimize": -84.79178298453101,
+    "raw_current_objective_scaled_minimize": -85.42579022337286,
+    "morphology_penalty_weight": 256.0,
+    "morphology_aggregation": "ks_max",
+    "morphology_penalty_value": 0.6340072388418463,
+    "fixed_source_power_W": 1.3830232993859658e-13,
+    "source_power_relative_change": 0.0,
+    "terminal_conductance_S": 0.019106436120807403,
+    "minimum_terminal_conductance_S": null,
+    "constraint_names": [
+      "500nm_solid_opening",
+      "500nm_void_opening"
+    ],
+    "constraint_values": [
+      0.0969789602948965,
+      0.03668808750493713
+    ],
+    "maximum_constraint_value": 0.0969789602948965,
+    "terminal_conductance_constraint_enabled": false,
+    "morphology_caps": [
+      0.0003904911283562157,
+      0.0019757439575359497
+    ],
+    "gray_fraction_0p01_0p99": 0.3006337606572944,
+    "binarization": 0.08833566866369987,
+    "smooth_solid_constraint": 0.00042836055198858247,
+    "smooth_void_constraint": 0.0020482302247373796,
+    "exact_bad_cells": 78,
+    "rho_mean": 0.8249201733165789,
+    "latent_range": [
+      0.0,
+      1.0
+    ],
+    "maximum_absolute_step_from_previous_evaluation": 0.002157407698899383,
+    "rms_step_from_previous_evaluation": 4.4882215382500356e-05,
+    "manual_move_limit": null,
+    "used_adam": false,
+    "gradient_direction_normalization": false,
+    "post_update_hard_clipping": false,
+    "symmetry_constraint": false,
+    "volume_constraint": false,
+    "optimizer_controls": {
+      "initial_step": 0.0067578189050606615,
+      "rho_init": 0.01,
+      "always_improve": null,
+      "inner_gradients": null,
+      "projection_midpoint_derivative": 4.00268460160673,
+      "projection_derivative_ratio_to_beta1": 3.6994184590058334,
+      "manual_move_limit": null,
+      "beta_factor": 2.0,
+      "stage_budget": 20,
+      "dfm_penalty_weight": 256.0,
+      "hard_constraint_ccsa_parameters": {
+        "rho_init": 0.01,
+        "always_improve": "NLopt default",
+        "inner_gradients": "NLopt default"
+      },
+      "constraint_aware_continuation": true,
+      "constraint_stage_attempt": 3,
+      "exact_bad_target": 32
+    }
+  },
+  {
+    "role": "nlopt_evaluation",
+    "algorithm": "NLopt LD_MMA + constraint-aware DFM continuation",
+    "nlopt_version": "2.11.0",
+    "evaluation_id": 216,
+    "global_full_physics_evaluation": 216,
+    "stage_full_physics_evaluation": 7,
+    "beta": 8.0,
+    "objective_A": 4.145038065139942e-16,
+    "objective_at_reference_power_A": 8.541691590368524e-07,
+    "objective_scaled_minimize": -84.80356917899391,
+    "raw_current_objective_scaled_minimize": -85.41691590368524,
+    "morphology_penalty_weight": 256.0,
+    "morphology_aggregation": "ks_max",
+    "morphology_penalty_value": 0.6133467246913185,
+    "fixed_source_power_W": 1.3830232993859658e-13,
+    "source_power_relative_change": 0.0,
+    "terminal_conductance_S": 0.019107004085700464,
+    "minimum_terminal_conductance_S": null,
+    "constraint_names": [
+      "500nm_solid_opening",
+      "500nm_void_opening"
+    ],
+    "constraint_values": [
+      0.0009530657588028291,
+      0.014818921043928901
+    ],
+    "maximum_constraint_value": 0.014818921043928901,
+    "terminal_conductance_constraint_enabled": false,
+    "morphology_caps": [
+      0.0003904911283562157,
+      0.0019757439575359497
+    ],
+    "gray_fraction_0p01_0p99": 0.3006337606572944,
+    "binarization": 0.08827680727949976,
+    "smooth_solid_constraint": 0.00039086329207976833,
+    "smooth_void_constraint": 0.0020050223512456944,
+    "exact_bad_cells": 73,
+    "rho_mean": 0.824915526072878,
+    "latent_range": [
+      0.0,
+      1.0
+    ],
+    "maximum_absolute_step_from_previous_evaluation": 0.007308660797943789,
+    "rms_step_from_previous_evaluation": 0.00042575106899598133,
+    "manual_move_limit": null,
+    "used_adam": false,
+    "gradient_direction_normalization": false,
+    "post_update_hard_clipping": false,
+    "symmetry_constraint": false,
+    "volume_constraint": false,
+    "optimizer_controls": {
+      "initial_step": 0.0067578189050606615,
+      "rho_init": 0.01,
+      "always_improve": null,
+      "inner_gradients": null,
+      "projection_midpoint_derivative": 4.00268460160673,
+      "projection_derivative_ratio_to_beta1": 3.6994184590058334,
+      "manual_move_limit": null,
+      "beta_factor": 2.0,
+      "stage_budget": 20,
+      "dfm_penalty_weight": 256.0,
+      "hard_constraint_ccsa_parameters": {
+        "rho_init": 0.01,
+        "always_improve": "NLopt default",
+        "inner_gradients": "NLopt default"
+      },
+      "constraint_aware_continuation": true,
+      "constraint_stage_attempt": 3,
+      "exact_bad_target": 32
+    }
+  },
+  {
+    "role": "nlopt_evaluation",
+    "algorithm": "NLopt LD_MMA + constraint-aware DFM continuation",
+    "nlopt_version": "2.11.0",
+    "evaluation_id": 217,
+    "global_full_physics_evaluation": 217,
+    "stage_full_physics_evaluation": 8,
+    "beta": 8.0,
+    "objective_A": 4.1474560455273656e-16,
+    "objective_at_reference_power_A": 8.546674329348567e-07,
+    "objective_scaled_minimize": -84.77171714910901,
+    "raw_current_objective_scaled_minimize": -85.46674329348566,
+    "morphology_penalty_weight": 256.0,
+    "morphology_aggregation": "ks_max",
+    "morphology_penalty_value": 0.695026144376655,
+    "fixed_source_power_W": 1.3830232993859658e-13,
+    "source_power_relative_change": 0.0,
+    "terminal_conductance_S": 0.01910282963905577,
+    "minimum_terminal_conductance_S": null,
+    "constraint_names": [
+      "500nm_solid_opening",
+      "500nm_void_opening"
+    ],
+    "constraint_values": [
+      0.008219306798267878,
+      0.1748714568379972
+    ],
+    "maximum_constraint_value": 0.1748714568379972,
+    "terminal_conductance_constraint_enabled": false,
+    "morphology_caps": [
+      0.0003904911283562157,
+      0.0019757439575359497
+    ],
+    "gray_fraction_0p01_0p99": 0.3007782663446254,
+    "binarization": 0.08855034944371498,
+    "smooth_solid_constraint": 0.0003937006947421773,
+    "smooth_void_constraint": 0.0023212451817291313,
+    "exact_bad_cells": 78,
+    "rho_mean": 0.8248424650302987,
+    "latent_range": [
+      0.0,
+      1.0
+    ],
+    "maximum_absolute_step_from_previous_evaluation": 0.008177435690041882,
+    "rms_step_from_previous_evaluation": 0.000410097313125974,
+    "manual_move_limit": null,
+    "used_adam": false,
+    "gradient_direction_normalization": false,
+    "post_update_hard_clipping": false,
+    "symmetry_constraint": false,
+    "volume_constraint": false,
+    "optimizer_controls": {
+      "initial_step": 0.0067578189050606615,
+      "rho_init": 0.01,
+      "always_improve": null,
+      "inner_gradients": null,
+      "projection_midpoint_derivative": 4.00268460160673,
+      "projection_derivative_ratio_to_beta1": 3.6994184590058334,
+      "manual_move_limit": null,
+      "beta_factor": 2.0,
+      "stage_budget": 20,
+      "dfm_penalty_weight": 256.0,
+      "hard_constraint_ccsa_parameters": {
+        "rho_init": 0.01,
+        "always_improve": "NLopt default",
+        "inner_gradients": "NLopt default"
+      },
+      "constraint_aware_continuation": true,
+      "constraint_stage_attempt": 3,
+      "exact_bad_target": 32
+    }
+  },
+  {
+    "role": "nlopt_evaluation",
+    "algorithm": "NLopt LD_MMA + constraint-aware DFM continuation",
+    "nlopt_version": "2.11.0",
+    "evaluation_id": 218,
+    "global_full_physics_evaluation": 218,
+    "stage_full_physics_evaluation": 9,
+    "beta": 8.0,
+    "objective_A": 4.145582740441844e-16,
+    "objective_at_reference_power_A": 8.542814004293953e-07,
+    "objective_scaled_minimize": -84.8118468562873,
+    "raw_current_objective_scaled_minimize": -85.42814004293953,
+    "morphology_penalty_weight": 256.0,
+    "morphology_aggregation": "ks_max",
+    "morphology_penalty_value": 0.6162931866522285,
+    "fixed_source_power_W": 1.3830232993859658e-13,
+    "source_power_relative_change": 0.0,
+    "terminal_conductance_S": 0.019105490205313748,
+    "minimum_terminal_conductance_S": null,
+    "constraint_names": [
+      "500nm_solid_opening",
+      "500nm_void_opening"
+    ],
+    "constraint_values": [
+      -0.0009754118840517023,
+      0.021025530153778504
+    ],
+    "maximum_constraint_value": 0.021025530153778504,
+    "terminal_conductance_constraint_enabled": false,
+    "morphology_caps": [
+      0.0003904911283562157,
+      0.0019757439575359497
+    ],
+    "gray_fraction_0p01_0p99": 0.30065440432691315,
+    "binarization": 0.08833865390734569,
+    "smooth_solid_constraint": 0.0003901102386690003,
+    "smooth_void_constraint": 0.0020172850216912674,
+    "exact_bad_cells": 73,
+    "rho_mean": 0.8248997017180433,
+    "latent_range": [
+      0.0,
+      1.0
+    ],
+    "maximum_absolute_step_from_previous_evaluation": 0.0027800116799844635,
+    "rms_step_from_previous_evaluation": 0.00028323517941517435,
+    "manual_move_limit": null,
+    "used_adam": false,
+    "gradient_direction_normalization": false,
+    "post_update_hard_clipping": false,
+    "symmetry_constraint": false,
+    "volume_constraint": false,
+    "optimizer_controls": {
+      "initial_step": 0.0067578189050606615,
+      "rho_init": 0.01,
+      "always_improve": null,
+      "inner_gradients": null,
+      "projection_midpoint_derivative": 4.00268460160673,
+      "projection_derivative_ratio_to_beta1": 3.6994184590058334,
+      "manual_move_limit": null,
+      "beta_factor": 2.0,
+      "stage_budget": 20,
+      "dfm_penalty_weight": 256.0,
+      "hard_constraint_ccsa_parameters": {
+        "rho_init": 0.01,
+        "always_improve": "NLopt default",
+        "inner_gradients": "NLopt default"
+      },
+      "constraint_aware_continuation": true,
+      "constraint_stage_attempt": 3,
+      "exact_bad_target": 32
+    }
+  },
+  {
+    "role": "nlopt_evaluation",
+    "algorithm": "NLopt LD_MMA + constraint-aware DFM continuation",
+    "nlopt_version": "2.11.0",
+    "evaluation_id": 219,
+    "global_full_physics_evaluation": 219,
+    "stage_full_physics_evaluation": 10,
+    "beta": 8.0,
+    "objective_A": 4.145715011812963e-16,
+    "objective_at_reference_power_A": 8.543086576280163e-07,
+    "objective_scaled_minimize": -84.8770119530177,
+    "raw_current_objective_scaled_minimize": -85.43086576280162,
+    "morphology_penalty_weight": 256.0,
+    "morphology_aggregation": "ks_max",
+    "morphology_penalty_value": 0.5538538097839165,
+    "fixed_source_power_W": 1.3830232993859658e-13,
+    "source_power_relative_change": 0.0,
+    "terminal_conductance_S": 0.01910627354403585,
+    "minimum_terminal_conductance_S": null,
+    "constraint_names": [
+      "500nm_solid_opening",
+      "500nm_void_opening"
+    ],
+    "constraint_values": [
+      -0.0005406613206216937,
+      -0.1025094963353359
+    ],
+    "maximum_constraint_value": -0.0005406613206216937,
+    "terminal_conductance_constraint_enabled": false,
+    "morphology_caps": [
+      0.0003904911283562157,
+      0.0019757439575359497
+    ],
+    "gray_fraction_0p01_0p99": 0.30065440432691315,
+    "binarization": 0.08835575000084729,
+    "smooth_solid_constraint": 0.0003902800049070676,
+    "smooth_void_constraint": 0.0017732114395613563,
+    "exact_bad_cells": 73,
+    "rho_mean": 0.8248955893543798,
+    "latent_range": [
+      0.0,
+      1.0
+    ],
+    "maximum_absolute_step_from_previous_evaluation": 0.0046097604120823865,
+    "rms_step_from_previous_evaluation": 9.765748824016564e-05,
+    "manual_move_limit": null,
+    "used_adam": false,
+    "gradient_direction_normalization": false,
+    "post_update_hard_clipping": false,
+    "symmetry_constraint": false,
+    "volume_constraint": false,
+    "optimizer_controls": {
+      "initial_step": 0.0067578189050606615,
+      "rho_init": 0.01,
+      "always_improve": null,
+      "inner_gradients": null,
+      "projection_midpoint_derivative": 4.00268460160673,
+      "projection_derivative_ratio_to_beta1": 3.6994184590058334,
+      "manual_move_limit": null,
+      "beta_factor": 2.0,
+      "stage_budget": 20,
+      "dfm_penalty_weight": 256.0,
+      "hard_constraint_ccsa_parameters": {
+        "rho_init": 0.01,
+        "always_improve": "NLopt default",
+        "inner_gradients": "NLopt default"
+      },
+      "constraint_aware_continuation": true,
+      "constraint_stage_attempt": 3,
+      "exact_bad_target": 32
+    }
+  },
+  {
+    "role": "nlopt_evaluation",
+    "algorithm": "NLopt LD_MMA + constraint-aware DFM continuation",
+    "nlopt_version": "2.11.0",
+    "evaluation_id": 220,
+    "global_full_physics_evaluation": 220,
+    "stage_full_physics_evaluation": 11,
+    "beta": 8.0,
+    "objective_A": 4.145823485207355e-16,
+    "objective_at_reference_power_A": 8.543310107708849e-07,
+    "objective_scaled_minimize": -84.89282047443132,
+    "raw_current_objective_scaled_minimize": -85.43310107708848,
+    "morphology_penalty_weight": 256.0,
+    "morphology_aggregation": "ks_max",
+    "morphology_penalty_value": 0.5402806026571696,
+    "fixed_source_power_W": 1.3830232993859658e-13,
+    "source_power_relative_change": 0.0,
+    "terminal_conductance_S": 0.019105737796529437,
+    "minimum_terminal_conductance_S": null,
+    "constraint_names": [
+      "500nm_solid_opening",
+      "500nm_void_opening"
+    ],
+    "constraint_values": [
+      -0.0008650486159523796,
+      -0.12928101689402371
+    ],
+    "maximum_constraint_value": -0.0008650486159523796,
+    "terminal_conductance_constraint_enabled": false,
+    "morphology_caps": [
+      0.0003904911283562157,
+      0.0019757439575359497
+    ],
+    "gray_fraction_0p01_0p99": 0.3006750479965319,
+    "binarization": 0.0883678303382933,
+    "smooth_solid_constraint": 0.00039015333454608947,
+    "smooth_void_constraint": 0.0017203177695834793,
+    "exact_bad_cells": 73,
+    "rho_mean": 0.824892332650818,
+    "latent_range": [
+      0.0,
+      1.0
+    ],
+    "maximum_absolute_step_from_previous_evaluation": 0.0025112737605394522,
+    "rms_step_from_previous_evaluation": 4.3096137265508085e-05,
+    "manual_move_limit": null,
+    "used_adam": false,
+    "gradient_direction_normalization": false,
+    "post_update_hard_clipping": false,
+    "symmetry_constraint": false,
+    "volume_constraint": false,
+    "optimizer_controls": {
+      "initial_step": 0.0067578189050606615,
+      "rho_init": 0.01,
+      "always_improve": null,
+      "inner_gradients": null,
+      "projection_midpoint_derivative": 4.00268460160673,
+      "projection_derivative_ratio_to_beta1": 3.6994184590058334,
+      "manual_move_limit": null,
+      "beta_factor": 2.0,
+      "stage_budget": 20,
+      "dfm_penalty_weight": 256.0,
+      "hard_constraint_ccsa_parameters": {
+        "rho_init": 0.01,
+        "always_improve": "NLopt default",
+        "inner_gradients": "NLopt default"
+      },
+      "constraint_aware_continuation": true,
+      "constraint_stage_attempt": 3,
+      "exact_bad_target": 32
+    }
+  },
+  {
+    "role": "nlopt_evaluation",
+    "algorithm": "NLopt LD_MMA + constraint-aware DFM continuation",
+    "nlopt_version": "2.11.0",
+    "evaluation_id": 221,
+    "global_full_physics_evaluation": 221,
+    "stage_full_physics_evaluation": 12,
+    "beta": 8.0,
+    "objective_A": 4.146918514731954e-16,
+    "objective_at_reference_power_A": 8.545566638127743e-07,
+    "objective_scaled_minimize": -84.77827150991013,
+    "raw_current_objective_scaled_minimize": -85.45566638127744,
+    "morphology_penalty_weight": 256.0,
+    "morphology_aggregation": "ks_max",
+    "morphology_penalty_value": 0.6773948713673121,
+    "fixed_source_power_W": 1.3830232993859658e-13,
+    "source_power_relative_change": 0.0,
+    "terminal_conductance_S": 0.019105977146380113,
+    "minimum_terminal_conductance_S": null,
+    "constraint_names": [
+      "500nm_solid_opening",
+      "500nm_void_opening"
+    ],
+    "constraint_values": [
+      -0.003593115362327426,
+      0.14234724544434263
+    ],
+    "maximum_constraint_value": 0.14234724544434263,
+    "terminal_conductance_constraint_enabled": false,
+    "morphology_caps": [
+      0.0003904911283562157,
+      0.0019757439575359497
+    ],
+    "gray_fraction_0p01_0p99": 0.300736979005388,
+    "binarization": 0.08849789284659416,
+    "smooth_solid_constraint": 0.00038908804868406643,
+    "smooth_void_constraint": 0.0022569856675944966,
+    "exact_bad_cells": 73,
+    "rho_mean": 0.8248569295769606,
+    "latent_range": [
+      0.0,
+      1.0
+    ],
+    "maximum_absolute_step_from_previous_evaluation": 0.007657860902593128,
+    "rms_step_from_previous_evaluation": 0.000246772464339091,
+    "manual_move_limit": null,
+    "used_adam": false,
+    "gradient_direction_normalization": false,
+    "post_update_hard_clipping": false,
+    "symmetry_constraint": false,
+    "volume_constraint": false,
+    "optimizer_controls": {
+      "initial_step": 0.0067578189050606615,
+      "rho_init": 0.01,
+      "always_improve": null,
+      "inner_gradients": null,
+      "projection_midpoint_derivative": 4.00268460160673,
+      "projection_derivative_ratio_to_beta1": 3.6994184590058334,
+      "manual_move_limit": null,
+      "beta_factor": 2.0,
+      "stage_budget": 20,
+      "dfm_penalty_weight": 256.0,
+      "hard_constraint_ccsa_parameters": {
+        "rho_init": 0.01,
+        "always_improve": "NLopt default",
+        "inner_gradients": "NLopt default"
+      },
+      "constraint_aware_continuation": true,
+      "constraint_stage_attempt": 3,
+      "exact_bad_target": 32
+    }
   }
 ]
