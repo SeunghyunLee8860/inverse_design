@@ -73,6 +73,8 @@ def main() -> int:
         "--constraint-device", "cuda:0",
         "--constraint-aware-continuation",
     ]
+    if os.environ.get("CONSTRAINT_AWARE_FAST_CONTINUATION", "0") == "1":
+        command.append("--fast-continuation")
     if recovery:
         command.extend(
             [

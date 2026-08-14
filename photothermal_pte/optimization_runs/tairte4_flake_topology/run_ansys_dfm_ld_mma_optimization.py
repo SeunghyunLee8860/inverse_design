@@ -102,6 +102,11 @@ CONSTRAINT_AWARE_DFM_WEIGHT_AT_BETA1 = 1.0
 CONSTRAINT_AWARE_DFM_WEIGHT_MAXIMUM = 1.0e4
 CONSTRAINT_AWARE_DFM_ATTEMPT_FACTOR = 2.0
 CONSTRAINT_AWARE_PROMOTION_STREAK = 3
+FAST_BETA1_EVALUATIONS = 20
+FAST_BETA2_EVALUATIONS = 10
+FAST_BETA4_EVALUATIONS = 8
+FAST_HIGH_BETA_EVALUATIONS = 6
+FAST_CAP_INITIAL_REDUCTION = 0.10
 
 
 class AdaptivePlateauStop(Exception):
@@ -228,6 +233,34 @@ def constraint_aware_dfm_penalty_weight(beta: float, attempt: int = 1) -> float:
             CONSTRAINT_AWARE_DFM_WEIGHT_MAXIMUM,
         )
     )
+
+
+def continuation_stage_budget(beta: float, *, fast: bool) -> int:
+    """Return the audited per-stage evaluation ceiling."""
+
+    if not np.isfinite(beta) or beta <= 0.0:
+        raise ValueError("beta must be finite and positive")
+    if not fast:
+        return GRAYSCALE_EVALUATIONS if np.isclose(beta, 1.0) else CONTINUATION_EVALUATIONS
+    if np.isclose(beta, 1.0):
+        return FAST_BETA1_EVALUATIONS
+    if np.isclose(beta, 2.0):
+        return FAST_BETA2_EVALUATIONS
+    if np.isclose(beta, 4.0):
+        return FAST_BETA4_EVALUATIONS
+    return FAST_HIGH_BETA_EVALUATIONS
+
+
+def constraint_aware_stage_penalty_weight(
+    beta: float,
+    attempt: int,
+    *,
+    fast: bool,
+) -> float:
+    """Start fabrication pressure one doubling earlier in fast high-beta stages."""
+
+    effective_attempt = int(attempt) + int(bool(fast and beta >= 4.0))
+    return constraint_aware_dfm_penalty_weight(beta, effective_attempt)
 
 
 def constraint_aware_next_caps(
@@ -643,6 +676,15 @@ def main() -> int:
             "until the stage-specific exact 500-nm audit target is met."
         ),
     )
+    parser.add_argument(
+        "--fast-continuation",
+        action="store_true",
+        help=(
+            "Use the approved 20/10/8/6 beta-stage ceilings and start beta>=4 "
+            "fabrication pressure one doubling stronger. Requires "
+            "--constraint-aware-continuation."
+        ),
+    )
     args = parser.parse_args()
 
     CONTRACT.validate()
@@ -657,6 +699,8 @@ def main() -> int:
             "constraint-aware continuation owns the dynamic hard constraints; "
             "do not combine it with the legacy hard-recovery flag"
         )
+    if args.fast_continuation and not args.constraint_aware_continuation:
+        raise ValueError("--fast-continuation requires --constraint-aware-continuation")
     code_provenance = verify_optimizer_code_manifest()
     base_fsp = verify_file(args.base_fsp, args.base_sha256)
     jacobian_dir = args.jacobian_dir.expanduser().resolve()
@@ -980,14 +1024,20 @@ def main() -> int:
                 constraint_stage_attempt = 0
                 constraint_caps = None
             constraint_stage_attempt += 1
-            penalty_weight = constraint_aware_dfm_penalty_weight(
-                beta, constraint_stage_attempt
+            penalty_weight = constraint_aware_stage_penalty_weight(
+                beta,
+                constraint_stage_attempt,
+                fast=args.fast_continuation,
             )
             if constraint_hard_active and constraint_caps is None:
+                initial_reduction = (
+                    FAST_CAP_INITIAL_REDUCTION
+                    if args.fast_continuation
+                    else CONSTRAINT_AWARE_CAP_INITIAL_REDUCTION
+                )
                 constraint_caps = np.maximum(
                     CONSTRAINT_AWARE_CAP_FLOOR,
-                    (1.0 - CONSTRAINT_AWARE_CAP_INITIAL_REDUCTION)
-                    * stage_initial_residuals,
+                    (1.0 - initial_reduction) * stage_initial_residuals,
                 )
             if constraint_hard_active:
                 assert constraint_caps is not None
@@ -1019,10 +1069,9 @@ def main() -> int:
             optimizer_rho_init = float(controls["rho_init"])
             optimizer_always_improve = int(controls["always_improve"])
             optimizer_inner_gradients = int(controls["inner_gradients"])
-        nominal_stage_budget = (
-            GRAYSCALE_EVALUATIONS
-            if completed_stages == 0 and np.isclose(beta, 1.0)
-            else CONTINUATION_EVALUATIONS
+        nominal_stage_budget = continuation_stage_budget(
+            beta,
+            fast=args.fast_continuation,
         )
         if first_recovery_stage:
             prior_at_beta = sum(

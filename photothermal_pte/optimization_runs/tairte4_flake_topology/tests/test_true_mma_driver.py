@@ -25,8 +25,23 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_ansys_dfm_ld_
     constraint_aware_next_caps,
     constraint_aware_promotion_diagnostic,
     cleanup_objective_preserved,
+    constraint_aware_stage_penalty_weight,
+    continuation_stage_budget,
     dfm_penalty_weight,
 )
+
+
+def test_fast_continuation_stage_budgets_and_pressure() -> None:
+    assert continuation_stage_budget(1.0, fast=True) == 20
+    assert continuation_stage_budget(2.0, fast=True) == 10
+    assert continuation_stage_budget(4.0, fast=True) == 8
+    assert continuation_stage_budget(8.0, fast=True) == 6
+    assert continuation_stage_budget(64.0, fast=True) == 6
+    assert continuation_stage_budget(1.0, fast=False) == 40
+    assert continuation_stage_budget(4.0, fast=False) == 20
+    assert constraint_aware_stage_penalty_weight(2.0, 1, fast=True) == 4.0
+    assert constraint_aware_stage_penalty_weight(4.0, 1, fast=True) == 32.0
+    assert constraint_aware_stage_penalty_weight(8.0, 1, fast=True) == 128.0
 from photothermal_pte.optimization_runs.tairte4_flake_topology.optimization_support import (
     FILTER_RADIUS_M,
     MINIMUM_FEATURE_M,
