@@ -1,0 +1,72 @@
+{
+  "role": "nlopt_evaluation",
+  "algorithm": "NLopt LD_MMA + constraint-aware DFM continuation",
+  "nlopt_version": "2.11.0",
+  "evaluation_id": 188,
+  "global_full_physics_evaluation": 188,
+  "stage_full_physics_evaluation": 20,
+  "beta": 8.0,
+  "objective_A": 4.180480120902253e-16,
+  "objective_at_reference_power_A": 8.614727134287005e-07,
+  "objective_scaled_minimize": -85.81400108771753,
+  "raw_current_objective_scaled_minimize": -86.14727134287004,
+  "morphology_penalty_weight": 64.0,
+  "morphology_aggregation": "ks_max",
+  "morphology_penalty_value": 0.33327025515251485,
+  "fixed_source_power_W": 1.3830232993859658e-13,
+  "source_power_relative_change": 0.0,
+  "terminal_conductance_S": 0.019069352160894053,
+  "minimum_terminal_conductance_S": null,
+  "constraint_names": [
+    "500nm_solid_opening",
+    "500nm_void_opening"
+  ],
+  "constraint_values": [
+    0.20789297497842307,
+    -0.875003772424789
+  ],
+  "maximum_constraint_value": 0.20789297497842307,
+  "terminal_conductance_constraint_enabled": false,
+  "morphology_caps": [
+    0.0006308557898407563,
+    0.03556380497411523
+  ],
+  "gray_fraction_0p01_0p99": 0.3051960116430297,
+  "binarization": 0.09381604063102837,
+  "smooth_solid_constraint": 0.0007620062767731139,
+  "smooth_void_constraint": 0.004445341459984931,
+  "exact_bad_cells": 79,
+  "rho_mean": 0.8235114251281423,
+  "latent_range": [
+    0.0,
+    1.0
+  ],
+  "maximum_absolute_step_from_previous_evaluation": 0.00800041539646934,
+  "rms_step_from_previous_evaluation": 0.00029355654979118116,
+  "manual_move_limit": null,
+  "used_adam": false,
+  "gradient_direction_normalization": false,
+  "post_update_hard_clipping": false,
+  "symmetry_constraint": false,
+  "volume_constraint": false,
+  "optimizer_controls": {
+    "initial_step": 0.0067578189050606615,
+    "rho_init": 0.01,
+    "always_improve": null,
+    "inner_gradients": null,
+    "projection_midpoint_derivative": 4.00268460160673,
+    "projection_derivative_ratio_to_beta1": 3.6994184590058334,
+    "manual_move_limit": null,
+    "beta_factor": 2.0,
+    "stage_budget": 20,
+    "dfm_penalty_weight": 64.0,
+    "hard_constraint_ccsa_parameters": {
+      "rho_init": 0.01,
+      "always_improve": "NLopt default",
+      "inner_gradients": "NLopt default"
+    },
+    "constraint_aware_continuation": true,
+    "constraint_stage_attempt": 1,
+    "exact_bad_target": 32
+  }
+}

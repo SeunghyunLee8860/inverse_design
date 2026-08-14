@@ -1,19 +1,19 @@
 {
-  "stage_index": 6,
-  "beta": 4.0,
-  "dfm_penalty_weight": 16.0,
+  "stage_index": 8,
+  "beta": 8.0,
+  "dfm_penalty_weight": 128.0,
   "hard_morphology_constraints": false,
   "constraint_aware_continuation": true,
-  "constraint_stage_attempt": 3,
-  "exact_bad_entry": 94,
-  "exact_bad_target": 70,
+  "constraint_stage_attempt": 2,
+  "exact_bad_entry": 65,
+  "exact_bad_target": 32,
   "morphology_caps": [
-    0.004395645969716754,
-    0.0634895725721522
+    0.0004391344727828872,
+    0.0029111825579331064
   ],
   "stage_initial_morphology_residuals": [
-    0.0005133740613266491,
-    0.0034493249882963373
+    0.0004879271919809858,
+    0.0032346472865923404
   ],
   "nlopt_result_code": 5,
   "stage_stop_reason": "nlopt",
@@ -27,38 +27,41 @@
     "stage_evaluations_observed": 20,
     "reason": "constraint_aware_stage_not_ready",
     "window_evaluation_ids": [
-      147,
-      148,
-      149,
-      150
+      206,
+      207,
+      208,
+      209
     ],
-    "fom_relative_range": 0.00018097250254554405,
-    "rms_step_maximum_observed": 0.0018766880534077457,
-    "gray_absolute_range": 0.0002477240354245569,
-    "smooth_constraint_relative_range": 0.22012341477671887,
-    "exact_bad_cell_range": 8,
+    "fom_relative_range": 0.00038664822798914787,
+    "rms_step_maximum_observed": 0.0001544258294087332,
+    "gray_absolute_range": 0.00010321834809351449,
+    "smooth_constraint_relative_range": 0.07609214062502097,
+    "exact_bad_cell_range": 0,
     "exact_bad_cell_range_limit": 2,
     "constraint_plateau": false,
     "policy": "constraint_aware_beta_promotion_v1",
-    "beta": 4.0,
-    "exact_bad_target": 70,
+    "beta": 8.0,
+    "exact_bad_target": 32,
     "objective_design_gray_plateau": false,
     "hard_constraints_feasible": true,
-    "latest_exact_bad_cells": 76,
-    "stage_first_exact_bad_cells": 77,
+    "latest_exact_bad_cells": 78,
+    "stage_first_exact_bad_cells": 70,
     "exact_target_passed": false,
-    "exact_nonincreasing": true,
+    "exact_nonincreasing": false,
+    "exact_feasible_streak": 0,
+    "exact_feasible_streak_required": 3,
+    "exact_feasible_streak_passed": false,
     "promotion_passed": false
   },
   "full_physics_evaluations": 20,
-  "raw_current_at_reference_power_A": 8.485707749243224e-07,
-  "smooth_solid_residual": 0.00044030101861433635,
-  "smooth_void_residual": 0.0031579501401761134,
+  "raw_current_at_reference_power_A": 8.542721474217209e-07,
+  "smooth_solid_residual": 0.0004338790315069063,
+  "smooth_void_residual": 0.002195271063928833,
   "final_geometry_gate": {
     "passed": false,
-    "discreteness": 0.8160669983057451,
-    "binarization_mean_4rho1mrho": 0.18393300169425486,
-    "gray_fraction_0p01_0p99": 0.3943560207262443,
+    "discreteness": 0.9116593086671745,
+    "binarization_mean_4rho1mrho": 0.08834069133282549,
+    "gray_fraction_0p01_0p99": 0.3006337606572944,
     "exact_500nm_audit": {
       "minimum_feature_nm": 500.0,
       "opening_radius_nm": 250.0,
@@ -67,17 +70,17 @@
       "realized_discrete_opening_pixel_support_diameter_nm": 500.0,
       "discretization_note": "requested 500 nm pixel-support diameter is represented by five 100 nm samples (two centre offsets plus two half-cell extents)",
       "outside_design_phase": "fixed_solid_at_top_bottom_and_void_at_left_right",
-      "solid_bad_cell_count": 13,
-      "void_bad_cell_count": 63,
-      "total_bad_cell_count": 76,
+      "solid_bad_cell_count": 18,
+      "void_bad_cell_count": 60,
+      "total_bad_cell_count": 78,
       "counted_entity": "design nodes (legacy field names retain *_cell_count)",
-      "solid_fraction": 0.8310109205012283,
+      "solid_fraction": 0.8319192419644516,
       "passed": false
     }
   },
   "checkpoint": {
-    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/stage_0006_beta4.npz",
-    "size_bytes": 321402,
-    "sha256": "d847784ef268552f06fc8219287920f10fbbad31985a358b1a53ed51e6481c74"
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/stage_0008_beta8.npz",
+    "size_bytes": 368034,
+    "sha256": "09c57d6c2be3da6f0096f0ba30091394a729648934fd4c6db8887e0ddfa4813c"
   }
 }
