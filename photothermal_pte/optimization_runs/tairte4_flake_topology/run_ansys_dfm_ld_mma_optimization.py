@@ -53,7 +53,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_opti
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[2]
-SCHEMA = "ansys-v261-style-dfm-pure-current-ld-mma-v5"
+SCHEMA = "ansys-v261-style-dfm-pure-current-ld-mma-v6"
 BETA_FACTOR = 2.0
 # Do not saturate continuation at beta=128.  In production runs an exact
 # 500-nm cleanup can still perturb the terminal-current objective even when the
@@ -100,6 +100,8 @@ CONSTRAINT_AWARE_CAP_REPEAT_REDUCTION = 0.10
 CONSTRAINT_AWARE_CAP_FLOOR = 1.0e-8
 CONSTRAINT_AWARE_DFM_WEIGHT_AT_BETA1 = 1.0
 CONSTRAINT_AWARE_DFM_WEIGHT_MAXIMUM = 1.0e4
+CONSTRAINT_AWARE_DFM_ATTEMPT_FACTOR = 2.0
+CONSTRAINT_AWARE_PROMOTION_STREAK = 3
 
 
 class AdaptivePlateauStop(Exception):
@@ -210,16 +212,42 @@ def constraint_aware_exact_target(beta: float, stage_entry_bad: int) -> int | No
     return int(np.floor(float(factor) * stage_entry_bad))
 
 
-def constraint_aware_dfm_penalty_weight(beta: float) -> float:
-    """Gradually strengthen differentiable local-feature pressure with beta."""
+def constraint_aware_dfm_penalty_weight(beta: float, attempt: int = 1) -> float:
+    """Strengthen local-feature pressure with both beta and failed attempts."""
 
     if not np.isfinite(beta) or beta <= 0.0:
         raise ValueError("beta must be finite and positive")
+    if int(attempt) != attempt or attempt < 1:
+        raise ValueError("constraint-stage attempt must be a positive integer")
     return float(
         min(
-            CONSTRAINT_AWARE_DFM_WEIGHT_AT_BETA1 * beta * beta,
+            CONSTRAINT_AWARE_DFM_WEIGHT_AT_BETA1
+            * beta
+            * beta
+            * CONSTRAINT_AWARE_DFM_ATTEMPT_FACTOR ** (int(attempt) - 1),
             CONSTRAINT_AWARE_DFM_WEIGHT_MAXIMUM,
         )
+    )
+
+
+def constraint_aware_next_caps(
+    current_caps: np.ndarray,
+    current_residuals: np.ndarray,
+) -> np.ndarray:
+    """Make the next MMA inequalities active without relaxing an existing cap."""
+
+    caps = np.asarray(current_caps, dtype=np.float64)
+    residuals = np.asarray(current_residuals, dtype=np.float64)
+    if caps.shape != (2,) or residuals.shape != (2,):
+        raise ValueError("constraint caps and residuals must each have shape (2,)")
+    if not np.all(np.isfinite(caps)) or not np.all(np.isfinite(residuals)):
+        raise ValueError("constraint caps and residuals must be finite")
+    if np.any(caps <= 0.0) or np.any(residuals < 0.0):
+        raise ValueError("constraint caps must be positive and residuals nonnegative")
+    active_caps = (1.0 - CONSTRAINT_AWARE_CAP_REPEAT_REDUCTION) * residuals
+    return np.maximum(
+        CONSTRAINT_AWARE_CAP_FLOOR,
+        np.minimum(caps, active_caps),
     )
 
 
@@ -266,11 +294,31 @@ def constraint_aware_promotion_diagnostic(
         exact_bad_target is None
         or (latest_bad >= 0 and first_bad >= 0 and latest_bad <= first_bad)
     )
+    exact_streak = 0
+    if exact_bad_target is not None:
+        for row in reversed(stage_rows):
+            row_bad = int(row.get("exact_bad_cells", -1))
+            row_maximum = row.get("maximum_constraint_value")
+            row_feasible = bool(
+                row_maximum is not None
+                and np.isfinite(float(row_maximum))
+                and float(row_maximum) <= 0.0
+            )
+            if row_bad < 0 or row_bad > exact_bad_target or not row_feasible:
+                break
+            exact_streak += 1
+    exact_streak_passed = bool(
+        exact_bad_target is not None
+        and exact_streak >= CONSTRAINT_AWARE_PROMOTION_STREAK
+    )
     promotion_passed = bool(
-        diagnostic.get("passed")
+        (
+            diagnostic.get("passed")
+            if exact_bad_target is None
+            else exact_streak_passed
+        )
         and hard_feasible
         and exact_passed
-        and exact_nonincreasing
     )
     diagnostic.update(
         {
@@ -280,6 +328,9 @@ def constraint_aware_promotion_diagnostic(
             "stage_first_exact_bad_cells": first_bad,
             "exact_target_passed": exact_passed,
             "exact_nonincreasing": exact_nonincreasing,
+            "exact_feasible_streak": exact_streak,
+            "exact_feasible_streak_required": CONSTRAINT_AWARE_PROMOTION_STREAK,
+            "exact_feasible_streak_passed": exact_streak_passed,
             "promotion_passed": promotion_passed,
             "reason": (
                 "constraint_aware_promotion_passed"
@@ -485,7 +536,12 @@ def evaluate_exact_cleanup_candidates(
         if bool(row.get("eligible_for_selection"))
     ]
     if not eligible:
-        raise RuntimeError("no exact-cleanup ordering reached zero 500 nm violations")
+        return {
+            "trigger": "beta_raised_and_fom_plus_constraints_plateaued",
+            "selection_rule": "no eligible exact-binary candidate",
+            "selected": None,
+            "candidates": candidates,
+        }
     selected = max(
         eligible,
         key=lambda name: float(candidates[name]["result"]["objective_A"]),
@@ -499,10 +555,20 @@ def evaluate_exact_cleanup_candidates(
 
 
 def cleanup_objective_preserved(cleanup: dict[str, object]) -> bool:
-    """Return whether the selected exact candidate passed its fixed 1% gate."""
+    """Require a numerically valid exact candidate with no objective decrease."""
+    if cleanup.get("selected") is None:
+        return False
     selected = str(cleanup["selected"])
     candidate = cleanup["candidates"][selected]
-    return bool(candidate["result"].get("passed", False))
+    result = candidate["result"]
+    reference = float(result["reference_continuous_objective_A"])
+    objective = float(result["objective_A"])
+    return bool(
+        candidate.get("numerical_physics_gates_passed", False)
+        and np.isfinite(reference)
+        and np.isfinite(objective)
+        and objective >= reference
+    )
 
 
 def main() -> int:
@@ -715,10 +781,8 @@ def main() -> int:
             "cap_repeat_reduction": CONSTRAINT_AWARE_CAP_REPEAT_REDUCTION,
             "cap_floor": CONSTRAINT_AWARE_CAP_FLOOR,
             "promotion_requires": [
-                "objective_design_gray_plateau",
                 "active_KS_constraints_feasible",
-                "exact_bad_count_at_or_below_stage_target",
-                "exact_bad_count_nonincreasing_within_stage",
+                f"exact_bad_count_at_or_below_stage_target_for_{CONSTRAINT_AWARE_PROMOTION_STREAK}_consecutive_evaluations",
             ],
             "termination_requires": [
                 "promotion_gate",
@@ -729,10 +793,11 @@ def main() -> int:
         }
     manifest["forced_exact_cleanup_policy"] = {
         "enabled": True,
-        "minimum_beta": EXACT_CLEANUP_MINIMUM_BETA,
-        "maximum_gray_fraction": EXACT_CLEANUP_MAXIMUM_GRAY_FRACTION,
-        "requires_fom_plateau": True,
-        "requires_smooth_and_exact_constraint_plateau": True,
+        "constraint_aware_trigger": "before every passed beta promotion gate",
+        "legacy_minimum_beta": EXACT_CLEANUP_MINIMUM_BETA,
+        "legacy_maximum_gray_fraction": EXACT_CLEANUP_MAXIMUM_GRAY_FRACTION,
+        "constraint_aware_requires_fom_plateau": False,
+        "constraint_aware_objective_acceptance": "no decrease from the continuous reference",
         "failed_objective_preservation_action": (
             "record diagnostic and continue beta continuation"
         ),
@@ -743,7 +808,8 @@ def main() -> int:
         "minimum_feature_nm": 500.0,
         "activation_beta": DFM_ACTIVATION_BETA,
         "weight_at_activation": DFM_PENALTY_AT_ACTIVATION,
-        "formula": "min(10*(beta/4)^2,1e4)",
+        "constraint_aware_formula": "min(beta^2 * 2^(failed_attempts), 1e4)",
+        "legacy_formula": "min(10*(beta/4)^2,1e4)",
         "maximum": DFM_PENALTY_MAXIMUM,
         "hard_inequality_restoration_loop": False,
         "interpretation": "soft differentiable solid/void feature pressure strengthened with beta",
@@ -872,7 +938,9 @@ def main() -> int:
         beta = schedule[schedule_index]
         final_beta = beta
         if args.constraint_aware_continuation:
-            penalty_weight = constraint_aware_dfm_penalty_weight(beta)
+            # The attempt-dependent value is assigned after the beta-local
+            # attempt counter is updated below.
+            penalty_weight = 0.0
         else:
             penalty_weight = (
                 0.0 if args.hard_morphology_constraints else dfm_penalty_weight(beta)
@@ -912,6 +980,9 @@ def main() -> int:
                 constraint_stage_attempt = 0
                 constraint_caps = None
             constraint_stage_attempt += 1
+            penalty_weight = constraint_aware_dfm_penalty_weight(
+                beta, constraint_stage_attempt
+            )
             if constraint_hard_active and constraint_caps is None:
                 constraint_caps = np.maximum(
                     CONSTRAINT_AWARE_CAP_FLOOR,
@@ -1126,6 +1197,66 @@ def main() -> int:
             evaluator.plateau_diagnostic or {}
         )
         exact_bad = int(gate["exact_500nm_audit"]["total_bad_cell_count"])
+        constraint_cleanup_ready = bool(
+            args.constraint_aware_continuation
+            and bool(promotion.get("promotion_passed"))
+            and exact_bad > 0
+        )
+        if constraint_cleanup_ready:
+            emit(
+                events,
+                "forced_exact_cleanup_start",
+                beta=beta,
+                exact_bad_cells=exact_bad,
+                trigger="constraint_target_streak_passed_before_beta_promotion",
+                objective_acceptance="no_decrease",
+            )
+            cleanup_attempt = evaluate_exact_cleanup_candidates(
+                rho,
+                raw_root=raw_root,
+                base_fsp=base_fsp,
+                base_sha256=args.base_sha256,
+                polarization=args.polarization,
+                gpu=args.gpu,
+                reference_objective_A=float(final_point.result["objective_A"]),
+                attempt_label=f"constraint_stage{completed_stages:04d}_beta{beta:g}",
+            )
+            cleanup_attempt["trigger"] = (
+                "constraint_target_streak_passed_before_beta_promotion"
+            )
+            cleanup_attempt["objective_acceptance"] = (
+                "selected exact-binary objective must be greater than or equal "
+                "to the continuous reference objective"
+            )
+            manifest.setdefault("forced_exact_cleanup_attempts", []).append(
+                cleanup_attempt
+            )
+            write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
+            write_json(
+                published
+                / f"FORCED_EXACT_CLEANUP_STAGE_{completed_stages:04d}.json",
+                cleanup_attempt,
+            )
+            if cleanup_objective_preserved(cleanup_attempt):
+                forced_cleanup = cleanup_attempt
+                manifest["forced_exact_cleanup"] = forced_cleanup
+                write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
+                write_json(published / "FORCED_EXACT_CLEANUP.json", forced_cleanup)
+                emit(
+                    events,
+                    "forced_exact_cleanup_complete",
+                    selected=forced_cleanup["selected"],
+                    objective_non_decrease_passed=True,
+                    action="terminate_with_exact_binary_design",
+                )
+                break
+            emit(
+                events,
+                "forced_exact_cleanup_rejected",
+                selected=cleanup_attempt["selected"],
+                objective_non_decrease_passed=False,
+                action="continue_to_next_beta",
+            )
         cleanup_ready = bool(
             not args.constraint_aware_continuation
             and
@@ -1202,10 +1333,16 @@ def main() -> int:
                 )
                 if latest_feasible and exact_missed:
                     assert constraint_caps is not None
-                    constraint_caps = np.maximum(
-                        CONSTRAINT_AWARE_CAP_FLOOR,
-                        (1.0 - CONSTRAINT_AWARE_CAP_REPEAT_REDUCTION)
-                        * constraint_caps,
+                    latest_residuals = np.asarray(
+                        [
+                            summary["smooth_solid_constraint"],
+                            summary["smooth_void_constraint"],
+                        ],
+                        dtype=np.float64,
+                    )
+                    constraint_caps = constraint_aware_next_caps(
+                        constraint_caps,
+                        latest_residuals,
                     )
                     emit(
                         events,
@@ -1214,6 +1351,10 @@ def main() -> int:
                         stage_attempt=constraint_stage_attempt,
                         exact_bad_cells=exact_bad,
                         exact_bad_target=constraint_exact_target,
+                        next_stage_penalty_weight=constraint_aware_dfm_penalty_weight(
+                            beta, constraint_stage_attempt + 1
+                        ),
+                        current_residuals=latest_residuals.tolist(),
                         new_caps=constraint_caps.tolist(),
                     )
         elif schedule_index < len(schedule) - 1:

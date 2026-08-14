@@ -22,7 +22,9 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_ansys_dfm_ld_
     beta_sequence,
     constraint_aware_dfm_penalty_weight,
     constraint_aware_exact_target,
+    constraint_aware_next_caps,
     constraint_aware_promotion_diagnostic,
+    cleanup_objective_preserved,
     dfm_penalty_weight,
 )
 from photothermal_pte.optimization_runs.tairte4_flake_topology.optimization_support import (
@@ -219,6 +221,20 @@ def test_constraint_aware_dfm_pressure_increases_with_beta() -> None:
     assert weights[0] > 0.0
 
 
+def test_constraint_aware_dfm_pressure_doubles_after_failed_stage() -> None:
+    assert constraint_aware_dfm_penalty_weight(4.0, 1) == 16.0
+    assert constraint_aware_dfm_penalty_weight(4.0, 2) == 32.0
+    assert constraint_aware_dfm_penalty_weight(4.0, 3) == 64.0
+
+
+def test_constraint_aware_next_caps_activate_at_current_residual() -> None:
+    caps = constraint_aware_next_caps(
+        np.asarray([4.0e-3, 5.0e-2]),
+        np.asarray([4.0e-4, 3.0e-3]),
+    )
+    np.testing.assert_allclose(caps, [3.6e-4, 2.7e-3])
+
+
 def test_constraint_aware_promotion_rejects_exact_target_miss() -> None:
     rows = [_plateau_row(i, fom=1.0 + i * 1.0e-7, exact_bad=20) for i in range(1, 6)]
     diagnostic = constraint_aware_promotion_diagnostic(
@@ -256,6 +272,61 @@ def test_constraint_aware_promotion_passes_joint_gate() -> None:
         require_hard_feasible=True,
     )
     assert diagnostic["promotion_passed"] is True
+
+
+def test_constraint_aware_promotion_does_not_wait_for_plateau_after_streak() -> None:
+    rows = [
+        _plateau_row(
+            i,
+            fom=1.0 + 1.0e-3 * i,
+            rms_step=1.0e-2,
+            exact_bad=10,
+        )
+        for i in range(1, 4)
+    ]
+    diagnostic = constraint_aware_promotion_diagnostic(
+        rows,
+        beta=4.0,
+        exact_bad_target=10,
+        require_hard_feasible=True,
+    )
+    assert diagnostic["objective_design_gray_plateau"] is False
+    assert diagnostic["exact_feasible_streak"] == 3
+    assert diagnostic["promotion_passed"] is True
+
+
+def test_constraint_aware_promotion_rejects_single_noisy_exact_pass() -> None:
+    rows = [
+        _plateau_row(1, exact_bad=12),
+        _plateau_row(2, exact_bad=9),
+    ]
+    diagnostic = constraint_aware_promotion_diagnostic(
+        rows,
+        beta=4.0,
+        exact_bad_target=10,
+        require_hard_feasible=True,
+    )
+    assert diagnostic["exact_target_passed"] is True
+    assert diagnostic["exact_feasible_streak"] == 1
+    assert diagnostic["promotion_passed"] is False
+
+
+def test_exact_cleanup_requires_no_objective_decrease() -> None:
+    cleanup = {
+        "selected": "solid_first",
+        "candidates": {
+            "solid_first": {
+                "numerical_physics_gates_passed": True,
+                "result": {
+                    "reference_continuous_objective_A": 1.0,
+                    "objective_A": 1.0,
+                },
+            }
+        },
+    }
+    assert cleanup_objective_preserved(cleanup) is True
+    cleanup["candidates"]["solid_first"]["result"]["objective_A"] = 0.999999
+    assert cleanup_objective_preserved(cleanup) is False
 
 
 def test_adaptive_plateau_requires_five_stage_evaluations() -> None:
