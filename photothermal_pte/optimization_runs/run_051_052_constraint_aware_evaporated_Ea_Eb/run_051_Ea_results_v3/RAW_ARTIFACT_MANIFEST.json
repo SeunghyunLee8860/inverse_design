@@ -2900,6 +2900,138 @@
         "size_bytes": 149668,
         "sha256": "7bd1bd0e119c88fc928816963560bb3bf90a99419c6c005e2604d5837dd272cf"
       }
+    },
+    "0132": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0132_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/objective_gradient_result.json",
+        "size_bytes": 13749,
+        "sha256": "263b7e322d2ffc6945ef96fc1e7625d144bed28a1c0d7015e8bcb261fd57899e"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0132_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/objective_gradient.npz",
+        "size_bytes": 2258319,
+        "sha256": "09dd781d3987612005d5a8c730344b563c82e6b71668efacc779d01dc96ff20c"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0132_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/forward_Ea.fsp",
+        "size_bytes": 180904199,
+        "sha256": "774f7a63dcae33c4c2cd39617d015561410969a821c26eb6a65d9dc8848551bf"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0132_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1_latent.npz",
+        "size_bytes": 150257,
+        "sha256": "56f4a1f93a5cb4dd451947d90275e7b8b19f4ec4e4a19738a0d1f704af3f8d3b"
+      }
+    },
+    "0133": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0133_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/objective_gradient_result.json",
+        "size_bytes": 13753,
+        "sha256": "ab33234b1d9a9fac1ee74436b0934fe5c8df3bb70772a0b9a4d4695c8eb21391"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0133_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/objective_gradient.npz",
+        "size_bytes": 2257758,
+        "sha256": "def29393e700edff79dd44c2ef4e5ce133a769c4296ac18f589a0e8eb6273cb2"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0133_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/forward_Ea.fsp",
+        "size_bytes": 180904199,
+        "sha256": "53ba4ef244adcdcbbccfe479caf0eb494f53f8eed72a98b37066b8c156ea0bb0"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0133_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1_latent.npz",
+        "size_bytes": 150035,
+        "sha256": "4d0585f5ebdd67a0e23fa60b8c36e2f07f7e659f9451b02d2dabc041e0b11475"
+      }
+    },
+    "0134": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0134_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/objective_gradient_result.json",
+        "size_bytes": 13773,
+        "sha256": "39266b4499f04f3ae779545912b233a776dff9066074f28d1b8be5b04e79447e"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0134_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/objective_gradient.npz",
+        "size_bytes": 2256383,
+        "sha256": "1b10673f315330c84367f2d0523c179aa81f0cc7c1d9e6c1c21f1f96a1ae7f2e"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0134_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/forward_Ea.fsp",
+        "size_bytes": 180904199,
+        "sha256": "026a7e30cc81dcc5518d8f20998bdd92eca58035acd4e4ee156f7a1a67f17b44"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0134_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1_latent.npz",
+        "size_bytes": 149430,
+        "sha256": "2553f1cd32675bff5b1996e4725f3e502fb2f7e16b590e3239d633914995b883"
+      }
+    },
+    "0135": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0135_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/objective_gradient_result.json",
+        "size_bytes": 13796,
+        "sha256": "59bbd219ece3b46f00560de3c9e1f3bce6fe3800cdbf5b2fdf95682af1682e64"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0135_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/objective_gradient.npz",
+        "size_bytes": 2255598,
+        "sha256": "60f46b2cbf952bc043ceb4359b2e8256f5d955d2b024bfe2f3c1a3c7191f195b"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0135_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/forward_Ea.fsp",
+        "size_bytes": 180904199,
+        "sha256": "4015995594839c2f6125af4a37aedf786ee624005b960d4eb2109cb330984861"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0135_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1_latent.npz",
+        "size_bytes": 149035,
+        "sha256": "b95bbc5e22c3fc7bd4764658e171363d5afb88c1a6008a20fd0e250c0483cbe0"
+      }
+    },
+    "0136": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0136_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/objective_gradient_result.json",
+        "size_bytes": 13793,
+        "sha256": "998d1c984c3431c39d6c21c0244133698427e09bd11974432e2b3b1b50b8bf8d"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0136_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/objective_gradient.npz",
+        "size_bytes": 2256104,
+        "sha256": "7eedfe00e5da9d8b6eb05aa2b51bf61dc7c8d81f01ded94d0c1aab67ae9fb2b3"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0136_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/forward_Ea.fsp",
+        "size_bytes": 180904199,
+        "sha256": "02c15caefd0de4dcd25de53942f9c213d570c7b388750021b2525f946c1dfbba"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0136_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1_latent.npz",
+        "size_bytes": 148651,
+        "sha256": "7ade306f0744b246ae3f2c800911c65a28d3df3d02be81bf849016be429ac937"
+      }
+    },
+    "0137": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0137_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/objective_gradient_result.json",
+        "size_bytes": 13781,
+        "sha256": "c9e23f83d531e1a9328bbf101fba8c8e0a2038cbfe505dd246e717115022c4cf"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0137_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/objective_gradient.npz",
+        "size_bytes": 2256219,
+        "sha256": "7eb3f8eac212a3f56cf0c600da75e211683ec0d4c1c214c35fad3ba5205ed7b8"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0137_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1/forward_Ea.fsp",
+        "size_bytes": 180904199,
+        "sha256": "c85a2268f90ac70489639e61ac229d207b561ac3d3ee47c08060024724bf7d88"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run051_constraint_aware_Ea_evaporated_v3/evaluation_0137_beta4_ansys_dfm_ld_mma_recovery_beta4_gpu1_latent.npz",
+        "size_bytes": 148914,
+        "sha256": "0d928f600721ba0d2964ce83d6a3b2cdc6cbc432d11e8e849f96f0e70a9329f4"
+      }
     }
   },
   "initialization": {
