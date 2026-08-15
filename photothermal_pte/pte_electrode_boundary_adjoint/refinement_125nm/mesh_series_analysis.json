@@ -1,0 +1,44 @@
+{
+  "status": "DIRECT_SUCCESSIVE_MESH_NOT_CONVERGED",
+  "created_utc": "2026-08-15T20:17:28.357914+00:00",
+  "direct_mesh_relative_tolerance": 0.01,
+  "maximum_direct_change_250_to_125": 0.05140178248932421,
+  "maximum_targeted_direct_change_125_to_62p5": 0.01867650496364962,
+  "observed_order_range": [
+    1.3882798026599479,
+    1.420278777978522
+  ],
+  "interpretation": "Both nonconverged beam types show a consistent approximately 1.4-order monotone trend. Richardson estimates are diagnostic, not a substitute for the direct 31.25 nm check.",
+  "rows": [
+    {
+      "beam_index": 0,
+      "beam_center_um": [
+        -8.0,
+        -8.0
+      ],
+      "hard_abs_current_250nm_A": 8.29863147844466e-10,
+      "hard_abs_current_125nm_A": 8.725195928658731e-10,
+      "hard_abs_current_62p5nm_A": 8.888152093729142e-10,
+      "observed_order_from_successive_differences": 1.3882798026599479,
+      "richardson_extrapolated_hard_abs_current_A": 8.988887591173704e-10,
+      "estimated_remaining_relative_error_at_62p5nm": 0.011206670060428367,
+      "predicted_hard_abs_current_31p25nm_A": 8.950404613181075e-10,
+      "predicted_relative_change_62p5_to_31p25": 0.007003988995176401
+    },
+    {
+      "beam_index": 1,
+      "beam_center_um": [
+        -8.0,
+        0.0
+      ],
+      "hard_abs_current_250nm_A": 6.778035815833461e-10,
+      "hard_abs_current_125nm_A": 6.968201684938191e-10,
+      "hard_abs_current_62p5nm_A": 7.039255280265853e-10,
+      "observed_order_from_successive_differences": 1.420278777978522,
+      "richardson_extrapolated_hard_abs_current_A": 7.081640613438454e-10,
+      "estimated_remaining_relative_error_at_62p5nm": 0.005985242048596617,
+      "predicted_hard_abs_current_31p25nm_A": 7.065803753095153e-10,
+      "predicted_relative_change_62p5_to_31p25": 0.003771488853902991
+    }
+  ]
+}

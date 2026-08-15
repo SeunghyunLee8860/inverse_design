@@ -46,6 +46,12 @@ and its large saved thermal fields are intentionally not duplicated here.
 - The 0.25 um designs are refined best-found results, but mesh convergence is
   not yet established: the 0.5-to-0.25 um same-geometry current changes by up
   to `13.0%`, dominated by the thermal discretization at corner beams.
+- The next refinement is complete.  At 0.125 um, all nine thermal solves pass,
+  the representative relaxation/adjoint gate passes, and all 48 selective
+  signed SLSQP runs succeed.  None improves the transferred 0.25 um geometry.
+- Direct current convergence is still open: 0.25-to-0.125 um changes are
+  `5.14%` (corner) and `2.81%` (x-edge).  A targeted 62.5 nm solve reduces
+  these to `1.87%` and `1.02%`; the observed order is approximately 1.4.
 
 The workflow is **per beam**: each Gaussian center gets its own fixed thermal
 field and its own independently optimized `(c0,L0,c1,L1)`.  It is not a
@@ -90,6 +96,12 @@ mean-current optimization, and `L0` and `L1` need not be equal.
   four-order, nine-beam production invariance gate.
 - `refinement/final_refinement_summary_250nm.json`: 0.5-to-0.25 um current and
   symmetry-aligned geometry comparison.
+- `refinement_125nm/REFINEMENT_125NM_REPORT_KO.md`: full 0.125 um refinement,
+  selective optimization audit, 62.5 nm targeted pilot, and mesh-series result.
+- `refinement_125nm/final_125nm.{json,png}`: accepted 0.125 um hard currents
+  and proof that the transferred geometries remain the local winners.
+- `refinement_125nm/targeted_62p5nm_pilot.json`: direct corner/x-edge 62.5 nm
+  evidence; thermal solve passes while the successive 1% mesh gate remains open.
 - `audit/audit_current.py`: reproducible audit program.
 - `audit/snapping_sweeps.png`: measured staircase objective/contact behavior.
 
@@ -117,8 +129,10 @@ modify the baseline optimization.
 Do not interpret a smooth Robin optimum as the final physical electrode.  Every
 accepted candidate is ranked by hard-contact `abs(I)`.  The 0.5 um systematic
 search and the 0.25 um transition-width/quadrature gates are complete.  The
-next blocker is a finer thermal-mesh check of the 0.25 um candidates, because
-the corner-beam same-geometry current has not converged from 0.5 to 0.25 um.
+next blocker is a direct 31.25 nm corner/x-edge thermal check or an equivalent
+AMG/adaptive-refinement implementation.  The electrode geometry is locally
+stable through 0.125 um, but the 62.5 nm successive current change is still
+`1.87%` at the corner.
 
 Production will run `+I/I_ref` and `-I/I_ref` as separate dimensionless
 branches.  `I^2` is diagnostic only.  Center variables are unbounded lifted

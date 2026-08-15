@@ -1,0 +1,42 @@
+{
+  "geometry": {
+    "flake_width_um": 24.0,
+    "flake_height_um": 24.0,
+    "flake_thickness_nm": 100.0,
+    "sio2_thickness_nm": 285.0,
+    "si_depth_um": 20.0,
+    "air_height_um": 2.0,
+    "thermal_domain_um": 64.0,
+    "inplane_step_um": 0.0625,
+    "flake_z_step_nm": 10.0
+  },
+  "beam": {
+    "incident_power_W": 1e-6,
+    "heat_conversion_fraction": 1.0,
+    "waist_um": 8.5,
+    "z_profile": "uniform",
+    "centers_um": [
+      [-8.0, -8.0], [-8.0, 0.0], [-8.0, 8.0],
+      [0.0, -8.0], [0.0, 0.0], [0.0, 8.0],
+      [8.0, -8.0], [8.0, 0.0], [8.0, 8.0]
+    ]
+  },
+  "electrodes": {
+    "allowed_side_pairs": "all",
+    "min_contact_length_um": 1.0,
+    "max_contact_fraction": 0.9,
+    "edge_clearance_um": 0.5,
+    "same_side_min_gap_um": 0.5
+  },
+  "optimization": {
+    "metric": "abs_current",
+    "maxiter": 20,
+    "popsize": 6,
+    "seed": 7,
+    "polish": true
+  },
+  "solver": {
+    "relative_tolerance": 5e-11,
+    "max_iterations": 80000
+  }
+}

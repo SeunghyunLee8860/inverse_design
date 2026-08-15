@@ -1,0 +1,137 @@
+{
+  "status": "FAIL",
+  "mesh_convergence_status": "REPRESENTATIVE_REFINEMENT_REQUIRED",
+  "created_utc": "2026-08-15T19:38:10.414028+00:00",
+  "mesh_step_um": 0.125,
+  "representative_indices": [
+    0,
+    1,
+    3,
+    4
+  ],
+  "thermal_cell_shape": [
+    218,
+    218,
+    36
+  ],
+  "electrical_node_shape": [
+    193,
+    193
+  ],
+  "assembly_seconds": 1.3183521144092083,
+  "total_solve_and_evaluation_seconds": 273.11161958426237,
+  "maximum_absolute_relative_current_change": 0.05140178248951821,
+  "config_path": "/home/seunghyun/tairte4/pte_electrode_boundary_adjoint/configs/per_beam_125nm.json",
+  "config_sha256": "a74474eab8d6461b304e358ac0d71ecfad7e9b7f4979ec9c6630eb93b2534a47",
+  "source_250nm_sha256": "17f5323909dad7827a7f7bfe179b5af74c8e6627e4db5f8fd8f8d677974e070b",
+  "fields_path": "/home/seunghyun/tairte4/pte_electrode_boundary_adjoint/refinement_125nm/representative_fields_125nm.npz",
+  "fields_sha256": "469ed7af3f16b37500ee245b3b1406589a17e65d95d2e5c548ccf4c2daa11ad1",
+  "reference_solver_provenance": {
+    "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/validation/photothermal_stage1/anisotropic_heat_fvm.py",
+    "sha256": "fcfbc198cfb1191993fc131772c4411441a903d84968688d40c5801148327100",
+    "checkpoint_5143ecb_blob": "16eb7aca5db3fad59980857157a3af0e3fb5924d",
+    "note": "working solver differs only by removal of optional CG warm-start API"
+  },
+  "beams": [
+    {
+      "beam_index": 0,
+      "beam_center_um": [
+        -8.0,
+        -8.0
+      ],
+      "solve_seconds": 60.25540194287896,
+      "iterations": 1453,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "linear_residual_relative": 1.0612309708157622e-10,
+      "energy_balance_relative_error": 2.386010068469819e-12,
+      "source_power_W": 6.834188690698566e-07,
+      "temperature_min_K": 7.813749787072176e-06,
+      "temperature_max_K": 0.0034270160378078013,
+      "hard_current_250nm_A": 8.29863147844466e-10,
+      "same_geometry_hard_current_125nm_A": 8.725195928660341e-10,
+      "relative_current_change_250_to_125": 0.05140178248951821,
+      "hard_residual_relative": 7.759636869780882e-15,
+      "canonical_scaled": [
+        0.9552446636734858,
+        0.08712295321847396,
+        0.03586093814794501,
+        0.0636929290637775
+      ]
+    },
+    {
+      "beam_index": 1,
+      "beam_center_um": [
+        -8.0,
+        0.0
+      ],
+      "solve_seconds": 57.436993800103664,
+      "iterations": 1372,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "linear_residual_relative": 1.0664110482976104e-10,
+      "energy_balance_relative_error": 5.494933466272958e-13,
+      "source_power_W": 8.227648949198848e-07,
+      "temperature_min_K": 1.4641985477866656e-05,
+      "temperature_max_K": 0.0034444424692658022,
+      "hard_current_250nm_A": 6.778035815833461e-10,
+      "same_geometry_hard_current_125nm_A": 6.96820168493545e-10,
+      "relative_current_change_250_to_125": 0.028056191243156624,
+      "hard_residual_relative": 6.46848241897402e-15,
+      "canonical_scaled": [
+        0.8899866084680449,
+        0.09782030540762521,
+        0.007282418918318413,
+        0.12635464882625527
+      ]
+    },
+    {
+      "beam_index": 3,
+      "beam_center_um": [
+        0.0,
+        -8.0
+      ],
+      "solve_seconds": 73.95394672825933,
+      "iterations": 1372,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "linear_residual_relative": 1.0661415325465498e-10,
+      "energy_balance_relative_error": 9.892167108955554e-13,
+      "source_power_W": 8.227648949198849e-07,
+      "temperature_min_K": 1.4932928983052678e-05,
+      "temperature_max_K": 0.003445234979916172,
+      "hard_current_250nm_A": 8.331454285759136e-10,
+      "same_geometry_hard_current_125nm_A": 8.3492068975585e-10,
+      "relative_current_change_250_to_125": 0.002130793879492104,
+      "hard_residual_relative": 4.99373698023305e-15,
+      "canonical_scaled": [
+        0.1351203601586961,
+        0.07075445141170632,
+        0.28351841919788195,
+        0.215625
+      ]
+    },
+    {
+      "beam_index": 4,
+      "beam_center_um": [
+        0.0,
+        0.0
+      ],
+      "solve_seconds": 79.26932430267334,
+      "iterations": 1116,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "linear_residual_relative": 1.0531142722695529e-10,
+      "energy_balance_relative_error": 4.938416908550227e-14,
+      "source_power_W": 9.905229471259076e-07,
+      "temperature_min_K": 3.66759880232002e-05,
+      "temperature_max_K": 0.003465332257762304,
+      "hard_current_250nm_A": 7.52775219670697e-10,
+      "same_geometry_hard_current_125nm_A": 7.524393657927735e-10,
+      "relative_current_change_250_to_125": -0.0004461542690929487,
+      "hard_residual_relative": 5.626097028299608e-15,
+      "canonical_scaled": [
+        0.106796996172888,
+        0.09370077394511958,
+        0.9348462374260044,
+        0.21562499999999998
+      ]
+    }
+  ]
+}
