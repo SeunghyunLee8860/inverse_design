@@ -1,0 +1,86 @@
+{
+  "stage_index": 62,
+  "beta": 8.0,
+  "dfm_penalty_weight": 10000.0,
+  "hard_morphology_constraints": false,
+  "constraint_aware_continuation": true,
+  "constraint_stage_attempt": 58,
+  "exact_bad_entry": 67,
+  "exact_bad_target": 33,
+  "morphology_caps": [
+    0.00016653922922166275,
+    0.0005967528939185923
+  ],
+  "stage_initial_morphology_residuals": [
+    0.00017096562975102425,
+    0.0005958750602131635
+  ],
+  "nlopt_result_code": 5,
+  "stage_stop_reason": "nlopt",
+  "adaptive_plateau_diagnostic": {
+    "passed": false,
+    "minimum_evaluations": 5,
+    "window_evaluations": 4,
+    "fom_relative_range_maximum": 0.0001,
+    "rms_step_maximum": 0.0001,
+    "gray_absolute_range_maximum": 0.001,
+    "stage_evaluations_observed": 6,
+    "reason": "constraint_aware_stage_not_ready",
+    "window_evaluation_ids": [
+      385,
+      386,
+      387,
+      388
+    ],
+    "fom_relative_range": 1.5550341958826542e-05,
+    "rms_step_maximum_observed": 0.0006558044716927379,
+    "gray_absolute_range": 0.00020643669618711225,
+    "smooth_constraint_relative_range": 0.0019986848432269875,
+    "exact_bad_cell_range": 1,
+    "exact_bad_cell_range_limit": 2,
+    "constraint_plateau": true,
+    "policy": "constraint_aware_beta_promotion_v1",
+    "beta": 8.0,
+    "exact_bad_target": 33,
+    "objective_design_gray_plateau": false,
+    "hard_constraints_feasible": false,
+    "latest_exact_bad_cells": 60,
+    "stage_first_exact_bad_cells": 59,
+    "exact_target_passed": false,
+    "exact_nonincreasing": false,
+    "exact_feasible_streak": 0,
+    "exact_feasible_streak_required": 3,
+    "exact_feasible_streak_passed": false,
+    "promotion_passed": false
+  },
+  "full_physics_evaluations": 7,
+  "raw_current_at_reference_power_A": 8.229578471183361e-07,
+  "smooth_solid_residual": 0.0001697460418223773,
+  "smooth_void_residual": 0.000596001027026033,
+  "final_geometry_gate": {
+    "passed": false,
+    "discreteness": 0.9312545228797635,
+    "binarization_mean_4rho1mrho": 0.06874547712023653,
+    "gray_fraction_0p01_0p99": 0.21704754237113189,
+    "exact_500nm_audit": {
+      "minimum_feature_nm": 500.0,
+      "opening_radius_nm": 250.0,
+      "opening_radius_pixels": 2,
+      "realized_discrete_opening_max_center_offset_nm": 200.0,
+      "realized_discrete_opening_pixel_support_diameter_nm": 500.0,
+      "discretization_note": "requested 500 nm pixel-support diameter is represented by five 100 nm samples (two centre offsets plus two half-cell extents)",
+      "outside_design_phase": "fixed_solid_at_top_bottom_and_void_at_left_right",
+      "solid_bad_cell_count": 1,
+      "void_bad_cell_count": 58,
+      "total_bad_cell_count": 59,
+      "counted_entity": "design nodes (legacy field names retain *_cell_count)",
+      "solid_fraction": 0.8225676596271754,
+      "passed": false
+    }
+  },
+  "checkpoint": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run053_constraint_aware_Ea_evaporated_fast_from_beta4_v1/stage_0062_beta8.npz",
+    "size_bytes": 606043,
+    "sha256": "63c906ee1cccb5ab3682a2678a1a4a3bc69ec70d63bf9d30478eea742ab33030"
+  }
+}
