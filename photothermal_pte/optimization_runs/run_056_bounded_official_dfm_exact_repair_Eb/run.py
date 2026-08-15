@@ -29,6 +29,7 @@ def main() -> int:
             "TAIRTE4_TOPOLOGY_GEOMETRY": "contact_anchored",
             "TAIRTE4_SIO2_INTERFACE_SCENARIO": "evaporated",
             "LUMERICAL_LICENSE_RETRY_SECONDS": "30",
+            "LUMERICAL_GPU_ENGINE_LOCK": f"/tmp/seunghyun_lumerical_run056_gpu{gpu}.lock",
             "XDG_CONFIG_HOME": f"/tmp/seunghyun_lumerical_run056_gpu{gpu}",
             "MPLCONFIGDIR": f"/tmp/seunghyun_matplotlib_run056_gpu{gpu}",
         }

@@ -13,3 +13,4 @@ Parallel E || b counterpart of Run055.
 - official Ansys v261 DFM indicator/gradient activates only for beta > 12
 - independent exact 500 nm solid/void repair and fresh physics evaluation
 - raw artifacts are isolated from Run055
+- a run-local FDTD engine lock permits true GPU-2 execution alongside Run055
