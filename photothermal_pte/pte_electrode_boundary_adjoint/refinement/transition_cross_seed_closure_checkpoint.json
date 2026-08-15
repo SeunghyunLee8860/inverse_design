@@ -1,0 +1,160 @@
+{
+  "identity": {
+    "failed_audit_sha256": "92da92e016ba42081311919a09c4c071eea4cb4889fe91df8e60bc645da8207a",
+    "local_refinement_sha256": "0e3a9deca689a8ea791ca5ec888085c9725748bd23a24bf44e168a15fbb6d135",
+    "fields_sha256": "d3f9c0547ae335738c29f2727d24a3f3fd9ab9ffdf9dbb16cc9cd10112bc9b16",
+    "relaxation_sha256": "242e48668033d22afbbbbeaa6fe07de245efbef376b556e28e7111da54220a9f",
+    "g": 100000000000000.0,
+    "widths": [
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "starts_per_branch": 4,
+    "beam_indices": [
+      0,
+      2,
+      6,
+      8
+    ]
+  },
+  "results": [
+    {
+      "beam_index": 0,
+      "width_um": 0.25,
+      "result": {
+        "transition_width_um": 0.25,
+        "common_seed_best_hard_abs_current_A": 8.29863147844466e-10,
+        "strongest_seed_relaxation_current_relative_error": 0.0012214122157362315,
+        "best": {
+          "source": "common_initial_hard",
+          "hard_current_A": -8.29863147844466e-10,
+          "hard_abs_current_A": 8.29863147844466e-10,
+          "canonical_scaled": [
+            0.9552446636734858,
+            0.08712295321847396,
+            0.03586093814794501,
+            0.0636929290637775
+          ]
+        },
+        "relative_improvement_over_common_seed": 0.0,
+        "all_slsqp_runs_successful": true,
+        "runs": [
+          {
+            "branch_sign": 1,
+            "start_index": 0,
+            "success": true,
+            "iterations": 40,
+            "endpoint_hard_current_A": 5.367607844282286e-10,
+            "endpoint_smooth_current_A": 5.364211834445985e-10,
+            "endpoint_canonical_scaled": [
+              0.7551274865132688,
+              0.21562499999356494,
+              0.25217374537142706,
+              0.21562499999999998
+            ]
+          },
+          {
+            "branch_sign": 1,
+            "start_index": 1,
+            "success": true,
+            "iterations": 14,
+            "endpoint_hard_current_A": 8.294250467703717e-10,
+            "endpoint_smooth_current_A": 8.288495887763838e-10,
+            "endpoint_canonical_scaled": [
+              0.03586041828846915,
+              0.06369081043267845,
+              0.9551319862317301,
+              0.08734938701413285
+            ]
+          },
+          {
+            "branch_sign": 1,
+            "start_index": 2,
+            "success": true,
+            "iterations": 85,
+            "endpoint_hard_current_A": 6.112923911034334e-10,
+            "endpoint_smooth_current_A": 6.110200328103023e-10,
+            "endpoint_canonical_scaled": [
+              0.7423350470457113,
+              0.21562499999999998,
+              0.21851555598806519,
+              0.21562499999999998
+            ]
+          },
+          {
+            "branch_sign": 1,
+            "start_index": 3,
+            "success": true,
+            "iterations": 22,
+            "endpoint_hard_current_A": 8.298631478443638e-10,
+            "endpoint_smooth_current_A": 8.288495428582306e-10,
+            "endpoint_canonical_scaled": [
+              0.03586093814798764,
+              0.06369292906386086,
+              0.9552446636733918,
+              0.08712295321866438
+            ]
+          },
+          {
+            "branch_sign": -1,
+            "start_index": 0,
+            "success": true,
+            "iterations": 14,
+            "endpoint_hard_current_A": -8.294250467704409e-10,
+            "endpoint_smooth_current_A": -8.288495887764526e-10,
+            "endpoint_canonical_scaled": [
+              0.9551319862365871,
+              0.08734938700481584,
+              0.03586041828806784,
+              0.06369081043147902
+            ]
+          },
+          {
+            "branch_sign": -1,
+            "start_index": 1,
+            "success": true,
+            "iterations": 38,
+            "endpoint_hard_current_A": -5.354675215538021e-10,
+            "endpoint_smooth_current_A": -5.351395182366352e-10,
+            "endpoint_canonical_scaled": [
+              0.25217096993169213,
+              0.2156249999570316,
+              0.7600556743054716,
+              0.21562499999373366
+            ]
+          },
+          {
+            "branch_sign": -1,
+            "start_index": 2,
+            "success": true,
+            "iterations": 22,
+            "endpoint_hard_current_A": -8.29863147844466e-10,
+            "endpoint_smooth_current_A": -8.288495428582995e-10,
+            "endpoint_canonical_scaled": [
+              0.9552446636734858,
+              0.08712295321847396,
+              0.03586093814794501,
+              0.0636929290637775
+            ]
+          },
+          {
+            "branch_sign": -1,
+            "start_index": 3,
+            "success": true,
+            "iterations": 147,
+            "endpoint_hard_current_A": -6.115309879543213e-10,
+            "endpoint_smooth_current_A": -6.112881372840978e-10,
+            "endpoint_canonical_scaled": [
+              0.21481693988372755,
+              0.21562499999999998,
+              0.7499985243500122,
+              0.21562499999999998
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

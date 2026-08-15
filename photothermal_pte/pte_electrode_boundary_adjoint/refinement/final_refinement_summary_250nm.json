@@ -1,0 +1,352 @@
+{
+  "status": "REFINED_BUT_NOT_MESH_CONVERGED",
+  "created_utc": "2026-08-15T08:03:18.240514+00:00",
+  "interpretation": "The 0.25 um result is the current best-found refined design. The 0.5-to-0.25 um same-geometry current change is too large to claim mesh convergence; a finer thermal mesh is required for that claim.",
+  "maximum_absolute_same_geometry_mesh_relative_change": 0.12998263238341837,
+  "maximum_optimization_uplift_at_250nm": 0.044020485446170106,
+  "maximum_symmetry_aligned_geometry_parameter_change_um": 19.68050088554653,
+  "beams": [
+    {
+      "beam_index": 0,
+      "beam_center_um": [
+        -8.0,
+        -8.0
+      ],
+      "best_500nm_hard_abs_current_A": 7.213053288924803e-10,
+      "transferred_same_geometry_250nm_hard_abs_current_A": 8.150624942940605e-10,
+      "final_best_250nm_hard_abs_current_A": 8.29863147844466e-10,
+      "same_geometry_mesh_relative_change": 0.1299826323833467,
+      "optimization_uplift_at_250nm_over_transferred": 0.01815891867681212,
+      "total_best_found_relative_change": 0.15050189511100598,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": false,
+        "flip_y_alignment": false,
+        "terminal_alignment": "swapped",
+        "delta_c0_L0_c1_L1_um": [
+          0.14057116477049902,
+          0.8575729090586353,
+          0.006796856914050409,
+          0.9450701834599243
+        ],
+        "maximum_absolute_parameter_change_um": 0.9450701834599243,
+        "l2_parameter_change_um": 1.2838985145427617
+      },
+      "final_250nm_canonical_scaled": [
+        0.9552446636734858,
+        0.08712295321847396,
+        0.03586093814794501,
+        0.0636929290637775
+      ],
+      "final_250nm_physical_um": [
+        91.70348771265465,
+        8.3638035089735,
+        3.442650062202721,
+        6.114521190122641
+      ]
+    },
+    {
+      "beam_index": 1,
+      "beam_center_um": [
+        -8.0,
+        0.0
+      ],
+      "best_500nm_hard_abs_current_A": 6.478091546875384e-10,
+      "transferred_same_geometry_250nm_hard_abs_current_A": 6.492244079805403e-10,
+      "final_best_250nm_hard_abs_current_A": 6.778035815833461e-10,
+      "same_geometry_mesh_relative_change": 0.0021846762781309063,
+      "optimization_uplift_at_250nm_over_transferred": 0.044020485446170106,
+      "total_best_found_relative_change": 0.046301332234607064,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": false,
+        "flip_y_alignment": false,
+        "terminal_alignment": "direct",
+        "delta_c0_L0_c1_L1_um": [
+          -14.756495937152401,
+          -1.2626758790772783,
+          -19.672810733030857,
+          -8.569953712679496
+        ],
+        "maximum_absolute_parameter_change_um": 19.672810733030857,
+        "l2_parameter_change_um": 26.073206774271593
+      },
+      "final_250nm_canonical_scaled": [
+        0.8899866084680449,
+        0.09782030540762521,
+        0.007282418918318413,
+        0.12635464882625527
+      ],
+      "final_250nm_physical_um": [
+        85.43871441293231,
+        9.39074931913202,
+        0.6991122161585677,
+        12.130046287320505
+      ]
+    },
+    {
+      "beam_index": 2,
+      "beam_center_um": [
+        -8.0,
+        8.0
+      ],
+      "best_500nm_hard_abs_current_A": 7.213053288925021e-10,
+      "transferred_same_geometry_250nm_hard_abs_current_A": 8.150624942940901e-10,
+      "final_best_250nm_hard_abs_current_A": 8.298631478444132e-10,
+      "same_geometry_mesh_relative_change": 0.1299826323833535,
+      "optimization_uplift_at_250nm_over_transferred": 0.018158918676710354,
+      "total_best_found_relative_change": 0.15050189511089793,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": false,
+        "flip_y_alignment": false,
+        "terminal_alignment": "direct",
+        "delta_c0_L0_c1_L1_um": [
+          -0.006796856984074395,
+          0.9450701836024102,
+          -0.14057116459848729,
+          0.8575729094003459
+        ],
+        "maximum_absolute_parameter_change_um": 0.9450701836024102,
+        "l2_parameter_change_um": 1.283898514857426
+      },
+      "final_250nm_canonical_scaled": [
+        0.7141390618513256,
+        0.06369292906526174,
+        0.7947553363283064,
+        0.08712295322203345
+      ],
+      "final_250nm_physical_um": [
+        68.55734993772727,
+        6.114521190265127,
+        76.29651228751742,
+        8.363803509315211
+      ]
+    },
+    {
+      "beam_index": 3,
+      "beam_center_um": [
+        0.0,
+        -8.0
+      ],
+      "best_500nm_hard_abs_current_A": 8.209955488721454e-10,
+      "transferred_same_geometry_250nm_hard_abs_current_A": 8.299075316806898e-10,
+      "final_best_250nm_hard_abs_current_A": 8.331454285759136e-10,
+      "same_geometry_mesh_relative_change": 0.010855092723446974,
+      "optimization_uplift_at_250nm_over_transferred": 0.003901515255159316,
+      "total_best_found_relative_change": 0.014798959288462987,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": true,
+        "flip_y_alignment": false,
+        "terminal_alignment": "swapped",
+        "delta_c0_L0_c1_L1_um": [
+          0.06389925573228084,
+          -0.3960958936390857,
+          -0.13414869108731864,
+          0.0
+        ],
+        "maximum_absolute_parameter_change_um": 0.3960958936390857,
+        "l2_parameter_change_um": 0.42304957529978227
+      },
+      "final_250nm_canonical_scaled": [
+        0.1351203601586961,
+        0.07075445141170632,
+        0.28351841919788195,
+        0.215625
+      ],
+      "final_250nm_physical_um": [
+        12.971554575234826,
+        6.792427335523807,
+        27.217768242996666,
+        20.700000000000003
+      ]
+    },
+    {
+      "beam_index": 4,
+      "beam_center_um": [
+        0.0,
+        0.0
+      ],
+      "best_500nm_hard_abs_current_A": 7.441347014608935e-10,
+      "transferred_same_geometry_250nm_hard_abs_current_A": 7.457413939926507e-10,
+      "final_best_250nm_hard_abs_current_A": 7.52775219670697e-10,
+      "same_geometry_mesh_relative_change": 0.002159142059364926,
+      "optimization_uplift_at_250nm_over_transferred": 0.009431990412101998,
+      "total_best_found_relative_change": 0.01161149747866922,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": true,
+        "flip_y_alignment": false,
+        "terminal_alignment": "swapped",
+        "delta_c0_L0_c1_L1_um": [
+          -0.15759550401514488,
+          0.4549160326387951,
+          5.007310960137406,
+          0.03547107498279001
+        ],
+        "maximum_absolute_parameter_change_um": 5.007310960137406,
+        "l2_parameter_change_um": 5.030527426454431
+      },
+      "final_250nm_canonical_scaled": [
+        0.106796996172888,
+        0.09370077394511958,
+        0.9348462374260044,
+        0.21562499999999998
+      ],
+      "final_250nm_physical_um": [
+        10.252511632597248,
+        8.99527429873148,
+        89.74523879289642,
+        20.7
+      ]
+    },
+    {
+      "beam_index": 5,
+      "beam_center_um": [
+        0.0,
+        8.0
+      ],
+      "best_500nm_hard_abs_current_A": 8.209955488721901e-10,
+      "transferred_same_geometry_250nm_hard_abs_current_A": 8.299075316807404e-10,
+      "final_best_250nm_hard_abs_current_A": 8.33145428575915e-10,
+      "same_geometry_mesh_relative_change": 0.010855092723453563,
+      "optimization_uplift_at_250nm_over_transferred": 0.0039015152550997737,
+      "total_best_found_relative_change": 0.014798959288409413,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": true,
+        "flip_y_alignment": false,
+        "terminal_alignment": "swapped",
+        "delta_c0_L0_c1_L1_um": [
+          -0.06393889057906676,
+          -0.3961719817352187,
+          0.13414710028852994,
+          0.0
+        ],
+        "maximum_absolute_parameter_change_um": 0.3961719817352187,
+        "l2_parameter_change_um": 0.42312629953279113
+      },
+      "final_250nm_canonical_scaled": [
+        0.6148796677479607,
+        0.07075450650913087,
+        0.4664815811600618,
+        0.215625
+      ],
+      "final_250nm_physical_um": [
+        59.02844810380422,
+        6.792432624876564,
+        44.78223179136593,
+        20.700000000000003
+      ]
+    },
+    {
+      "beam_index": 6,
+      "beam_center_um": [
+        8.0,
+        -8.0
+      ],
+      "best_500nm_hard_abs_current_A": 7.213053288924692e-10,
+      "transferred_same_geometry_250nm_hard_abs_current_A": 8.150624942940997e-10,
+      "final_best_250nm_hard_abs_current_A": 8.298631478444021e-10,
+      "same_geometry_mesh_relative_change": 0.12998263238341837,
+      "optimization_uplift_at_250nm_over_transferred": 0.01815891867668477,
+      "total_best_found_relative_change": 0.15050189511093504,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": false,
+        "flip_y_alignment": false,
+        "terminal_alignment": "direct",
+        "delta_c0_L0_c1_L1_um": [
+          -0.006796856708465526,
+          0.94507018304105,
+          -0.14057116527686198,
+          0.8575729080536579
+        ],
+        "maximum_absolute_parameter_change_um": 0.94507018304105,
+        "l2_parameter_change_um": 1.2838985136175138
+      },
+      "final_250nm_canonical_scaled": [
+        0.21413906185419654,
+        0.06369292905941423,
+        0.29475533632123974,
+        0.08712295320800545
+      ],
+      "final_250nm_physical_um": [
+        20.55734993800287,
+        6.114521189703767,
+        28.296512286839015,
+        8.363803507968525
+      ]
+    },
+    {
+      "beam_index": 7,
+      "beam_center_um": [
+        8.0,
+        0.0
+      ],
+      "best_500nm_hard_abs_current_A": 6.47809154687549e-10,
+      "transferred_same_geometry_250nm_hard_abs_current_A": 6.49224407980579e-10,
+      "final_best_250nm_hard_abs_current_A": 6.778035815832911e-10,
+      "same_geometry_mesh_relative_change": 0.0021846762781742852,
+      "optimization_uplift_at_250nm_over_transferred": 0.04402048544602319,
+      "total_best_found_relative_change": 0.04630133223450512,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": false,
+        "flip_y_alignment": false,
+        "terminal_alignment": "swapped",
+        "delta_c0_L0_c1_L1_um": [
+          19.68050088554653,
+          -8.58212060248911,
+          14.754037937233376,
+          -1.2708052941370873
+        ],
+        "maximum_absolute_parameter_change_um": 19.68050088554653,
+        "l2_parameter_change_um": 26.082014697691477
+      },
+      "final_250nm_canonical_scaled": [
+        0.24279768683705602,
+        0.12622791039073844,
+        0.3599877873661409,
+        0.09773562400076476
+      ],
+      "final_250nm_physical_um": [
+        23.308577936357377,
+        12.11787939751089,
+        34.55882758714953,
+        9.382619904073417
+      ]
+    },
+    {
+      "beam_index": 8,
+      "beam_center_um": [
+        8.0,
+        8.0
+      ],
+      "best_500nm_hard_abs_current_A": 7.213053288924968e-10,
+      "transferred_same_geometry_250nm_hard_abs_current_A": 8.150624942940825e-10,
+      "final_best_250nm_hard_abs_current_A": 8.29863147844394e-10,
+      "same_geometry_mesh_relative_change": 0.1299826323833513,
+      "optimization_uplift_at_250nm_over_transferred": 0.018158918676696313,
+      "total_best_found_relative_change": 0.1505018951108798,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": false,
+        "flip_y_alignment": false,
+        "terminal_alignment": "direct",
+        "delta_c0_L0_c1_L1_um": [
+          0.006796856737850021,
+          0.9450701831008915,
+          0.14057116520449853,
+          0.8575729081972723
+        ],
+        "maximum_absolute_parameter_change_um": 0.9450701831008915,
+        "l2_parameter_change_um": 1.2838985137497219
+      },
+      "final_250nm_canonical_scaled": [
+        0.5358609381461095,
+        0.06369292906003758,
+        0.45524466367800653,
+        0.08712295320950143
+      ],
+      "final_250nm_physical_um": [
+        51.442650062026516,
+        6.114521189763608,
+        43.70348771308863,
+        8.363803508112138
+      ]
+    }
+  ]
+}

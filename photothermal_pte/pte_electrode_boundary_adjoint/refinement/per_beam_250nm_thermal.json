@@ -1,0 +1,161 @@
+{
+  "status": "PASS",
+  "created_utc": "2026-08-15T06:36:12.809211+00:00",
+  "config_path": "/home/seunghyun/tairte4/pte_electrode_boundary_adjoint/configs/per_beam_250nm.json",
+  "config_sha256": "ee3c5b67588cc29afad792af294f8cc3bea3114898dc187a4c3f9bc8844818a1",
+  "reference_solver_provenance": {
+    "path": "/home/seunghyun/tairte4/pte_inverse_design_adfd/photothermal_pte/validation/photothermal_stage1/anisotropic_heat_fvm.py",
+    "sha256": "fcfbc198cfb1191993fc131772c4411441a903d84968688d40c5801148327100",
+    "checkpoint_5143ecb_blob": "16eb7aca5db3fad59980857157a3af0e3fb5924d",
+    "note": "working solver differs only by removal of optional CG warm-start API"
+  },
+  "thermal_cell_shape": [
+    122,
+    122,
+    36
+  ],
+  "electrical_node_shape": [
+    97,
+    97
+  ],
+  "beam_count": 9,
+  "temperature_fields_path": "/home/seunghyun/tairte4/pte_electrode_boundary_adjoint/refinement/per_beam_250nm_fields.npz",
+  "temperature_fields_sha256": "d3f9c0547ae335738c29f2727d24a3f3fd9ab9ffdf9dbb16cc9cd10112bc9b16",
+  "beams": [
+    {
+      "beam_index": 0,
+      "beam_center_um": [
+        -8.0,
+        -8.0
+      ],
+      "temperature_min_K": 7.839142445553981e-06,
+      "temperature_max_K": 0.003424896710031265,
+      "in_flake_power_fraction": 0.6834188690698567,
+      "source_power_W": 6.834188690698568e-07,
+      "linear_residual_relative": 9.872322157640602e-11,
+      "energy_balance_relative_error": 2.0013296581061694e-12,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 802
+    },
+    {
+      "beam_index": 1,
+      "beam_center_um": [
+        -8.0,
+        0.0
+      ],
+      "temperature_min_K": 1.4691426261809882e-05,
+      "temperature_max_K": 0.0034423261524245217,
+      "in_flake_power_fraction": 0.8227648949198848,
+      "source_power_W": 8.22764894919885e-07,
+      "linear_residual_relative": 9.508928975300978e-11,
+      "energy_balance_relative_error": 2.9486044616560245e-12,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 755
+    },
+    {
+      "beam_index": 2,
+      "beam_center_um": [
+        -8.0,
+        8.0
+      ],
+      "temperature_min_K": 7.839142445553819e-06,
+      "temperature_max_K": 0.0034248967100313334,
+      "in_flake_power_fraction": 0.6834188690698567,
+      "source_power_W": 6.834188690698566e-07,
+      "linear_residual_relative": 9.871659485894454e-11,
+      "energy_balance_relative_error": 1.996836814006071e-12,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 802
+    },
+    {
+      "beam_index": 3,
+      "beam_center_um": [
+        0.0,
+        -8.0
+      ],
+      "temperature_min_K": 1.4982144038078843e-05,
+      "temperature_max_K": 0.003443207779574371,
+      "in_flake_power_fraction": 0.8227648949198848,
+      "source_power_W": 8.227648949198848e-07,
+      "linear_residual_relative": 9.486333469391342e-11,
+      "energy_balance_relative_error": 1.7778104411372579e-12,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 755
+    },
+    {
+      "beam_index": 4,
+      "beam_center_um": [
+        0.0,
+        0.0
+      ],
+      "temperature_min_K": 3.6895785576164685e-05,
+      "temperature_max_K": 0.003463307121610387,
+      "in_flake_power_fraction": 0.9905229471259074,
+      "source_power_W": 9.905229471259076e-07,
+      "linear_residual_relative": 9.534217273749572e-11,
+      "energy_balance_relative_error": 8.401508488706293e-12,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 635
+    },
+    {
+      "beam_index": 5,
+      "beam_center_um": [
+        0.0,
+        8.0
+      ],
+      "temperature_min_K": 1.498214403807867e-05,
+      "temperature_max_K": 0.003443207779574427,
+      "in_flake_power_fraction": 0.8227648949198848,
+      "source_power_W": 8.227648949198849e-07,
+      "linear_residual_relative": 9.492369602141835e-11,
+      "energy_balance_relative_error": 1.7846308503576901e-12,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 755
+    },
+    {
+      "beam_index": 6,
+      "beam_center_um": [
+        8.0,
+        -8.0
+      ],
+      "temperature_min_K": 7.83914244555381e-06,
+      "temperature_max_K": 0.0034248967100312666,
+      "in_flake_power_fraction": 0.6834188690698567,
+      "source_power_W": 6.834188690698568e-07,
+      "linear_residual_relative": 9.87597895757322e-11,
+      "energy_balance_relative_error": 2.0073717587925094e-12,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 802
+    },
+    {
+      "beam_index": 7,
+      "beam_center_um": [
+        8.0,
+        0.0
+      ],
+      "temperature_min_K": 1.4691426261809835e-05,
+      "temperature_max_K": 0.003442326152424518,
+      "in_flake_power_fraction": 0.8227648949198848,
+      "source_power_W": 8.22764894919885e-07,
+      "linear_residual_relative": 9.510772537940346e-11,
+      "energy_balance_relative_error": 2.9425561742341315e-12,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 755
+    },
+    {
+      "beam_index": 8,
+      "beam_center_um": [
+        8.0,
+        8.0
+      ],
+      "temperature_min_K": 7.83914244555382e-06,
+      "temperature_max_K": 0.003424896710031302,
+      "in_flake_power_fraction": 0.6834188690698567,
+      "source_power_W": 6.83418869069857e-07,
+      "linear_residual_relative": 9.873331803163469e-11,
+      "energy_balance_relative_error": 1.996681888347446e-12,
+      "solver": "scipy.sparse.linalg.cg+jacobi",
+      "iterations": 802
+    }
+  ]
+}

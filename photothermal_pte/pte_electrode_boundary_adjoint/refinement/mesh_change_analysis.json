@@ -1,0 +1,287 @@
+{
+  "status": "COMPLETED",
+  "scope": "decompose 0.5-to-0.25 current change into thermal and electrical discretization effects",
+  "temperature_transfer_250_to_500": "exact nested-node downsampling [::2,::2]",
+  "temperature_transfer_500_to_250": "bilinear interpolation",
+  "geometry_alignment": "periodic centers + terminal swap + only beam-preserving x/y reflections",
+  "max_absolute_thermal_change_on_E500": 0.13109742641869504,
+  "max_absolute_electrical_change_with_interpolated_T500": 0.0022795655492200417,
+  "max_absolute_combined_same_geometry_change": 0.12998263238341834,
+  "max_symmetry_aligned_geometry_parameter_change_um": 5.6092429256121505,
+  "plateau_sha256": "5c0adb53d3bef4171385b210258397c9993975e0009d80f4a9f10d209be0e871",
+  "local_refinement_sha256": "0e3a9deca689a8ea791ca5ec888085c9725748bd23a24bf44e168a15fbb6d135",
+  "fields_500_sha256": "129c1b2ee91cbb43e5defd4316f770a446a8953c1d319a5185c4177c87265f24",
+  "fields_250_sha256": "d3f9c0547ae335738c29f2727d24a3f3fd9ab9ffdf9dbb16cc9cd10112bc9b16",
+  "beams": [
+    {
+      "beam_index": 0,
+      "beam_center_um": [
+        -8.0,
+        -8.0
+      ],
+      "currents": {
+        "T500_E500_A": 7.213053288924803e-10,
+        "T250_downsampled_E500_A": 8.158666011723544e-10,
+        "T500_interpolated_E250_A": 7.210263734876399e-10,
+        "T250_E250_A": 8.150624942940605e-10
+      },
+      "relative_thermal_change_on_E500": 0.13109742641866684,
+      "relative_electrical_change_with_interpolated_T500": -0.0003867369249423991,
+      "relative_combined_same_geometry_change": 0.12998263238334662,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": false,
+        "flip_y_alignment": false,
+        "terminal_alignment": "swapped",
+        "delta_c0_L0_c1_L1_um": [
+          0.10727692438736015,
+          0.9653691770372568,
+          0.03661843421093636,
+          0.9635055508413417
+        ],
+        "maximum_absolute_parameter_change_um": 0.9653691770372568,
+        "l2_parameter_change_um": 1.368623338506888
+      },
+      "local_best_250nm_hard_abs_current_A": 8.283733959409547e-10
+    },
+    {
+      "beam_index": 1,
+      "beam_center_um": [
+        -8.0,
+        0.0
+      ],
+      "currents": {
+        "T500_E500_A": 6.478091546875384e-10,
+        "T250_downsampled_E500_A": 6.479616793793472e-10,
+        "T500_interpolated_E250_A": 6.487186866469686e-10,
+        "T250_E250_A": 6.492244079805403e-10
+      },
+      "relative_thermal_change_on_E500": 0.00023544695332744503,
+      "relative_electrical_change_with_interpolated_T500": 0.0014040122045957393,
+      "relative_combined_same_geometry_change": 0.0021846762781310147,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": false,
+        "flip_y_alignment": false,
+        "terminal_alignment": "swapped",
+        "delta_c0_L0_c1_L1_um": [
+          -0.2177094696787805,
+          0.0,
+          0.5759684244289254,
+          -1.5873557882152838
+        ],
+        "maximum_absolute_parameter_change_um": 1.5873557882152838,
+        "l2_parameter_change_um": 1.7025966749372912
+      },
+      "local_best_250nm_hard_abs_current_A": 6.509696776454893e-10
+    },
+    {
+      "beam_index": 2,
+      "beam_center_um": [
+        -8.0,
+        8.0
+      ],
+      "currents": {
+        "T500_E500_A": 7.213053288925021e-10,
+        "T250_downsampled_E500_A": 8.158666011723748e-10,
+        "T500_interpolated_E250_A": 7.210263734876719e-10,
+        "T250_E250_A": 8.150624942940901e-10
+      },
+      "relative_thermal_change_on_E500": 0.13109742641866085,
+      "relative_electrical_change_with_interpolated_T500": -0.00038673692492818823,
+      "relative_combined_same_geometry_change": 0.1299826323833535,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": false,
+        "flip_y_alignment": false,
+        "terminal_alignment": "swapped",
+        "delta_c0_L0_c1_L1_um": [
+          -0.10727692438743475,
+          0.9653691770371303,
+          -0.0366184342109257,
+          0.9635055508414162
+        ],
+        "maximum_absolute_parameter_change_um": 0.9653691770371303,
+        "l2_parameter_change_um": 1.3686233385068567
+      },
+      "local_best_250nm_hard_abs_current_A": 8.28373395940958e-10
+    },
+    {
+      "beam_index": 3,
+      "beam_center_um": [
+        0.0,
+        -8.0
+      ],
+      "currents": {
+        "T500_E500_A": -8.209955488721454e-10,
+        "T250_downsampled_E500_A": -8.269490471432388e-10,
+        "T500_interpolated_E250_A": -8.228670620413879e-10,
+        "T250_E250_A": -8.299075316806898e-10
+      },
+      "relative_thermal_change_on_E500": 0.007251559742646796,
+      "relative_electrical_change_with_interpolated_T500": 0.0022795655491840705,
+      "relative_combined_same_geometry_change": 0.01085509272344698,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": true,
+        "flip_y_alignment": false,
+        "terminal_alignment": "swapped",
+        "delta_c0_L0_c1_L1_um": [
+          0.06389925573228084,
+          -0.3960958936390857,
+          -0.13414869108731864,
+          0.0
+        ],
+        "maximum_absolute_parameter_change_um": 0.3960958936390857,
+        "l2_parameter_change_um": 0.42304957529978227
+      },
+      "local_best_250nm_hard_abs_current_A": 8.331454285759136e-10
+    },
+    {
+      "beam_index": 4,
+      "beam_center_um": [
+        0.0,
+        0.0
+      ],
+      "currents": {
+        "T500_E500_A": -7.441347014608935e-10,
+        "T250_downsampled_E500_A": -7.465808693620545e-10,
+        "T500_interpolated_E250_A": -7.431056563741287e-10,
+        "T250_E250_A": -7.457413939926507e-10
+      },
+      "relative_thermal_change_on_E500": 0.0032872649217388084,
+      "relative_electrical_change_with_interpolated_T500": -0.0013828747466616553,
+      "relative_combined_same_geometry_change": 0.00215914205936496,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": true,
+        "flip_y_alignment": false,
+        "terminal_alignment": "swapped",
+        "delta_c0_L0_c1_L1_um": [
+          -0.03289463387000602,
+          0.7248634011997077,
+          5.6092429256121505,
+          0.03547107498279267
+        ],
+        "maximum_absolute_parameter_change_um": 5.6092429256121505,
+        "l2_parameter_change_um": 5.6560917074448716
+      },
+      "local_best_250nm_hard_abs_current_A": 7.513699195555561e-10
+    },
+    {
+      "beam_index": 5,
+      "beam_center_um": [
+        0.0,
+        8.0
+      ],
+      "currents": {
+        "T500_E500_A": -8.209955488721901e-10,
+        "T250_downsampled_E500_A": -8.269490471432606e-10,
+        "T500_interpolated_E250_A": -8.228670620414621e-10,
+        "T250_E250_A": -8.299075316807404e-10
+      },
+      "relative_thermal_change_on_E500": 0.007251559742618596,
+      "relative_electrical_change_with_interpolated_T500": 0.0022795655492200417,
+      "relative_combined_same_geometry_change": 0.010855092723453641,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": true,
+        "flip_y_alignment": false,
+        "terminal_alignment": "swapped",
+        "delta_c0_L0_c1_L1_um": [
+          -0.06393889057906676,
+          -0.3961719817352187,
+          0.13414710028852994,
+          0.0
+        ],
+        "maximum_absolute_parameter_change_um": 0.3961719817352187,
+        "l2_parameter_change_um": 0.42312629953279113
+      },
+      "local_best_250nm_hard_abs_current_A": 8.33145428575915e-10
+    },
+    {
+      "beam_index": 6,
+      "beam_center_um": [
+        8.0,
+        -8.0
+      ],
+      "currents": {
+        "T500_E500_A": 7.213053288924692e-10,
+        "T250_downsampled_E500_A": 8.158666011723623e-10,
+        "T500_interpolated_E250_A": 7.210263734876618e-10,
+        "T250_E250_A": 8.150624942940997e-10
+      },
+      "relative_thermal_change_on_E500": 0.13109742641869504,
+      "relative_electrical_change_with_interpolated_T500": -0.0003867369248966579,
+      "relative_combined_same_geometry_change": 0.12998263238341834,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": false,
+        "flip_y_alignment": false,
+        "terminal_alignment": "direct",
+        "delta_c0_L0_c1_L1_um": [
+          -0.036618434210893724,
+          0.963505550841215,
+          -0.10727692438727487,
+          0.965369177037538
+        ],
+        "maximum_absolute_parameter_change_um": 0.965369177037538,
+        "l2_parameter_change_um": 1.3686233385069895
+      },
+      "local_best_250nm_hard_abs_current_A": 8.283733959409356e-10
+    },
+    {
+      "beam_index": 7,
+      "beam_center_um": [
+        8.0,
+        0.0
+      ],
+      "currents": {
+        "T500_E500_A": 6.47809154687549e-10,
+        "T250_downsampled_E500_A": 6.47961679379352e-10,
+        "T500_interpolated_E250_A": 6.487186866470131e-10,
+        "T250_E250_A": 6.49224407980579e-10
+      },
+      "relative_thermal_change_on_E500": 0.0002354469533183412,
+      "relative_electrical_change_with_interpolated_T500": 0.0014040122046481418,
+      "relative_combined_same_geometry_change": 0.0021846762781743134,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": false,
+        "flip_y_alignment": false,
+        "terminal_alignment": "direct",
+        "delta_c0_L0_c1_L1_um": [
+          -0.5759684244278809,
+          -1.587355788212562,
+          0.21770946967846072,
+          0.0
+        ],
+        "maximum_absolute_parameter_change_um": 1.587355788212562,
+        "l2_parameter_change_um": 1.7025966749343593
+      },
+      "local_best_250nm_hard_abs_current_A": 6.509696776454614e-10
+    },
+    {
+      "beam_index": 8,
+      "beam_center_um": [
+        8.0,
+        8.0
+      ],
+      "currents": {
+        "T500_E500_A": 7.213053288924968e-10,
+        "T250_downsampled_E500_A": 8.158666011723608e-10,
+        "T500_interpolated_E250_A": 7.210263734876736e-10,
+        "T250_E250_A": 8.150624942940825e-10
+      },
+      "relative_thermal_change_on_E500": 0.13109742641864952,
+      "relative_electrical_change_with_interpolated_T500": -0.0003867369249185293,
+      "relative_combined_same_geometry_change": 0.12998263238335128,
+      "symmetry_aligned_geometry_change": {
+        "flip_x_alignment": false,
+        "flip_y_alignment": false,
+        "terminal_alignment": "direct",
+        "delta_c0_L0_c1_L1_um": [
+          0.03661843421090438,
+          0.9635055508412271,
+          0.10727692438730685,
+          0.9653691770374421
+        ],
+        "maximum_absolute_parameter_change_um": 0.9653691770374421,
+        "l2_parameter_change_um": 1.368623338506933
+      },
+      "local_best_250nm_hard_abs_current_A": 8.283733959409169e-10
+    }
+  ]
+}

@@ -1,0 +1,247 @@
+{
+  "status": "PASS",
+  "scope": "Robin-to-hard convergence only; no optimizer was called",
+  "baseline_root": "/home/seunghyun/tairte4/pte_electrode_optimizer",
+  "config_sha256": "bcf11a99bddaafd8754e9501cf419cbe0a1c255cfb2aa40d772c94fc0708a61a",
+  "temperature_fields_sha256": "129c1b2ee91cbb43e5defd4316f770a446a8953c1d319a5185c4177c87265f24",
+  "beam_index": 4,
+  "beam_center_um": [
+    0.0,
+    0.0
+  ],
+  "mesh_step_um": 0.5,
+  "design_physical_um": [
+    6.1,
+    7.3,
+    58.4,
+    10.7
+  ],
+  "transition_width_um": 0.75,
+  "boundary_quadrature_order": 5,
+  "contact_discretization": "nodal_lumped",
+  "hard_current_A": -2.3502688395134244e-10,
+  "hard_conductance_S": 0.022205891810750847,
+  "hard_contact_0_node_count": 15,
+  "hard_contact_1_node_count": 21,
+  "selected_optimization_g_S_m2": 1000000000000.0,
+  "selected_relaxation": {
+    "g_S_m2": 1000000000000.0,
+    "current_A": -2.3399218129298946e-10,
+    "current_relative_error": 0.004402486392012901,
+    "psi_relative_l2_error": 0.03030202822408137,
+    "psi_absolute_linf_error": 0.15185046605182606,
+    "state_residual_relative": 2.3982851065432796e-15,
+    "adjoint_residual_relative": 6.408236592598778e-14,
+    "psi_min": 0.020734379773532454,
+    "psi_max": 0.9876302936490707,
+    "conductance_S": 0.01989519663339856,
+    "scaled_gradient_l2_A": 8.005219257128354e-09,
+    "scaled_gradient_min_to_max_abs_ratio": 0.06123038907778422
+  },
+  "selected_relaxation_tolerances": {
+    "current_relative_error": 0.01,
+    "psi_relative_l2_error": 0.05,
+    "state_residual_relative": 1e-10
+  },
+  "selected_relaxation_pass": true,
+  "hard_limit_g_S_m2": 1e+18,
+  "hard_limit_result": {
+    "g_S_m2": 1e+18,
+    "current_A": -2.350244691355396e-10,
+    "current_relative_error": 1.0274636510762485e-05,
+    "psi_relative_l2_error": 2.09885240500021e-06,
+    "psi_absolute_linf_error": 1.5729924405252714e-05,
+    "state_residual_relative": 1.8668493413976193e-16,
+    "adjoint_residual_relative": 6.18916114378768e-14,
+    "psi_min": 1.897899617954815e-08,
+    "psi_max": 0.9999999875130429,
+    "conductance_S": 0.022205855115316808,
+    "scaled_gradient_l2_A": 1.5364967846765794e-11,
+    "scaled_gradient_min_to_max_abs_ratio": 0.0003783613265924487
+  },
+  "hard_limit_tolerances": {
+    "current_relative_error": 0.0001,
+    "psi_relative_l2_error": 0.0001,
+    "psi_absolute_linf_error": 0.0001,
+    "state_residual_relative": 1e-10
+  },
+  "hard_limit_pass": true,
+  "consistent_edge_mismatch_diagnostic": [
+    {
+      "g_S_m2": 1000000000000.0,
+      "current_relative_error": 0.0033609577775239917,
+      "psi_relative_l2_error": 0.0284130979235068
+    },
+    {
+      "g_S_m2": 100000000000000.0,
+      "current_relative_error": 0.0524149228780018,
+      "psi_relative_l2_error": 0.007679676153510137
+    },
+    {
+      "g_S_m2": 1e+16,
+      "current_relative_error": 0.17107855046548975,
+      "psi_relative_l2_error": 0.02076271965644393
+    },
+    {
+      "g_S_m2": 1e+18,
+      "current_relative_error": 0.17422348247970307,
+      "psi_relative_l2_error": 0.02218036838434909
+    }
+  ],
+  "evaluations": [
+    {
+      "g_S_m2": 10000000000.0,
+      "current_A": -4.633482390263586e-11,
+      "current_relative_error": 0.8028530901501951,
+      "psi_relative_l2_error": 0.3125521375352758,
+      "psi_absolute_linf_error": 0.5439719394902913,
+      "state_residual_relative": 2.3346010774826174e-13,
+      "adjoint_residual_relative": 7.46219870872828e-14,
+      "psi_min": 0.49140312675863845,
+      "psi_max": 0.6837563626462284,
+      "conductance_S": 0.003262473345378307,
+      "scaled_gradient_l2_A": 1.4262196614021104e-09,
+      "scaled_gradient_min_to_max_abs_ratio": 0.12103746449896792
+    },
+    {
+      "g_S_m2": 100000000000.0,
+      "current_A": -1.7905216267639638e-10,
+      "current_relative_error": 0.2381630574931781,
+      "psi_relative_l2_error": 0.12847560487890491,
+      "psi_absolute_linf_error": 0.3454806916821546,
+      "state_residual_relative": 2.446933431958086e-14,
+      "adjoint_residual_relative": 6.99969698751168e-14,
+      "psi_min": 0.17500777940009826,
+      "psi_max": 0.8943325271906785,
+      "conductance_S": 0.013195831522103643,
+      "scaled_gradient_l2_A": 5.160582519199418e-09,
+      "scaled_gradient_min_to_max_abs_ratio": 0.034788746582013017
+    },
+    {
+      "g_S_m2": 1000000000000.0,
+      "current_A": -2.3399218129298946e-10,
+      "current_relative_error": 0.004402486392012901,
+      "psi_relative_l2_error": 0.03030202822408137,
+      "psi_absolute_linf_error": 0.15185046605182606,
+      "state_residual_relative": 2.3982851065432796e-15,
+      "adjoint_residual_relative": 6.408236592598778e-14,
+      "psi_min": 0.020734379773532454,
+      "psi_max": 0.9876302936490707,
+      "conductance_S": 0.01989519663339856,
+      "scaled_gradient_l2_A": 8.005219257128354e-09,
+      "scaled_gradient_min_to_max_abs_ratio": 0.06123038907778422
+    },
+    {
+      "g_S_m2": 10000000000000.0,
+      "current_A": -2.268046659397833e-10,
+      "current_relative_error": 0.034984159570704235,
+      "psi_relative_l2_error": 0.012200155932916696,
+      "psi_absolute_linf_error": 0.08504373974551022,
+      "state_residual_relative": 3.674054304869117e-16,
+      "adjoint_residual_relative": 6.230569526534088e-14,
+      "psi_min": 0.002037344751199861,
+      "psi_max": 0.9987599899390814,
+      "conductance_S": 0.021658834537877425,
+      "scaled_gradient_l2_A": 7.728435942596041e-09,
+      "scaled_gradient_min_to_max_abs_ratio": 0.038786445495066366
+    },
+    {
+      "g_S_m2": 100000000000000.0,
+      "current_A": -2.268440128952398e-10,
+      "current_relative_error": 0.03481674486990494,
+      "psi_relative_l2_error": 0.007465776830208671,
+      "psi_absolute_linf_error": 0.05594238071647534,
+      "state_residual_relative": 2.7502388387794483e-16,
+      "adjoint_residual_relative": 6.262398538641647e-14,
+      "psi_min": 0.0001995061588966248,
+      "psi_max": 0.9998755713783005,
+      "conductance_S": 0.022047852944922397,
+      "scaled_gradient_l2_A": 1.974983338740497e-08,
+      "scaled_gradient_min_to_max_abs_ratio": 0.0030154790666815424
+    },
+    {
+      "g_S_m2": 1000000000000000.0,
+      "current_A": -2.329932299811709e-10,
+      "current_relative_error": 0.008652856796555149,
+      "psi_relative_l2_error": 0.001775990402081346,
+      "psi_absolute_linf_error": 0.013311540970197154,
+      "state_residual_relative": 2.303076519919651e-16,
+      "adjoint_residual_relative": 5.954110060818294e-14,
+      "psi_min": 1.9239715215337746e-05,
+      "psi_max": 0.9999875230418246,
+      "conductance_S": 0.022174113881078483,
+      "scaled_gradient_l2_A": 1.1013916227516208e-08,
+      "scaled_gradient_min_to_max_abs_ratio": 0.0005397049554548051
+    },
+    {
+      "g_S_m2": 1e+16,
+      "current_A": -2.3478978878820627e-10,
+      "current_relative_error": 0.0010088001812816403,
+      "psi_relative_l2_error": 0.00020616971635437745,
+      "psi_absolute_linf_error": 0.001545163347801989,
+      "state_residual_relative": 1.6319009248808308e-16,
+      "adjoint_residual_relative": 6.433024457112146e-14,
+      "psi_min": 1.9008984069230834e-06,
+      "psi_max": 0.9999987514187368,
+      "conductance_S": 0.02220227226462157,
+      "scaled_gradient_l2_A": 1.4827380885536197e-09,
+      "scaled_gradient_min_to_max_abs_ratio": 0.0003932687027318238
+    },
+    {
+      "g_S_m2": 3e+16,
+      "current_A": -2.3494687339755603e-10,
+      "current_relative_error": 0.00034043149635162536,
+      "psi_relative_l2_error": 6.955236074679782e-05,
+      "psi_absolute_linf_error": 0.0005212645474218956,
+      "state_residual_relative": 2.460990893237927e-16,
+      "adjoint_residual_relative": 6.168798009596171e-14,
+      "psi_min": 6.329636073370775e-07,
+      "psi_max": 0.9999995837807043,
+      "conductance_S": 0.0222046724811662,
+      "scaled_gradient_l2_A": 5.062069605226973e-10,
+      "scaled_gradient_min_to_max_abs_ratio": 0.00038320036800918843
+    },
+    {
+      "g_S_m2": 1e+17,
+      "current_A": -2.3500277632329523e-10,
+      "current_relative_error": 0.00010257391682987468,
+      "psi_relative_l2_error": 2.095419293008394e-05,
+      "psi_absolute_linf_error": 0.00015704210745277994,
+      "state_residual_relative": 1.801085073195307e-16,
+      "adjoint_residual_relative": 6.346472797187086e-14,
+      "psi_min": 1.8981766886947297e-07,
+      "psi_max": 0.9999998751314872,
+      "conductance_S": 0.022205524641321972,
+      "scaled_gradient_l2_A": 1.5314893250888905e-10,
+      "scaled_gradient_min_to_max_abs_ratio": 0.0003797053801616685
+    },
+    {
+      "g_S_m2": 3e+17,
+      "current_A": -2.350188380721631e-10,
+      "current_relative_error": 3.423386739464894e-05,
+      "psi_relative_l2_error": 6.993204189220086e-06,
+      "psi_absolute_linf_error": 5.2410832668824375e-05,
+      "state_residual_relative": 1.8242290790314538e-16,
+      "adjoint_residual_relative": 6.284265234488343e-14,
+      "psi_min": 6.326571793814612e-08,
+      "psi_max": 0.9999999583769017,
+      "conductance_S": 0.022205769317224622,
+      "scaled_gradient_l2_A": 5.1173206322826465e-11,
+      "scaled_gradient_min_to_max_abs_ratio": 0.00037870957055945626
+    },
+    {
+      "g_S_m2": 1e+18,
+      "current_A": -2.350244691355396e-10,
+      "current_relative_error": 1.0274636510762485e-05,
+      "psi_relative_l2_error": 2.09885240500021e-06,
+      "psi_absolute_linf_error": 1.5729924405252714e-05,
+      "state_residual_relative": 1.8668493413976193e-16,
+      "adjoint_residual_relative": 6.18916114378768e-14,
+      "psi_min": 1.897899617954815e-08,
+      "psi_max": 0.9999999875130429,
+      "conductance_S": 0.022205855115316808,
+      "scaled_gradient_l2_A": 1.5364967846765794e-11,
+      "scaled_gradient_min_to_max_abs_ratio": 0.0003783613265924487
+    }
+  ]
+}

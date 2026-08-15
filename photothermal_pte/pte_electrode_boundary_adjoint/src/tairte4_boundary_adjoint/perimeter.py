@@ -41,6 +41,7 @@ class PerimeterDiscretization:
     quadrature_s_m: np.ndarray
     boundary_node_ids: np.ndarray
     boundary_node_s_m: np.ndarray
+    boundary_node_weight_m: np.ndarray
 
     @classmethod
     def from_mesh(cls, mesh, order: int = 5) -> "PerimeterDiscretization":
@@ -104,6 +105,14 @@ class PerimeterDiscretization:
 
         if len(set(boundary_ids)) != len(boundary_ids):
             raise RuntimeError("boundary node list is not unique")
+        boundary_s_array = np.asarray(boundary_s, dtype=float)
+        forward_edge_length = np.mod(
+            np.roll(boundary_s_array, -1) - boundary_s_array,
+            perimeter,
+        )
+        boundary_node_weight = 0.5 * (
+            forward_edge_length + np.roll(forward_edge_length, 1)
+        )
         return cls(
             width_m=width,
             height_m=height,
@@ -113,7 +122,8 @@ class PerimeterDiscretization:
             quadrature_weight_m=np.asarray(weight_q, dtype=float),
             quadrature_s_m=np.asarray(s_q, dtype=float),
             boundary_node_ids=np.asarray(boundary_ids, dtype=np.int64),
-            boundary_node_s_m=np.asarray(boundary_s, dtype=float),
+            boundary_node_s_m=boundary_s_array,
+            boundary_node_weight_m=boundary_node_weight,
         )
 
     def wrap_center(self, center_m: float) -> float:
@@ -142,11 +152,27 @@ class PerimeterDiscretization:
         transition_m: float,
         delta_floor: float = 1e-8,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        return self.mask_values_and_derivatives(
+            self.quadrature_s_m,
+            center_m,
+            length_m,
+            transition_m,
+            delta_floor,
+        )
+
+    def mask_values_and_derivatives(
+        self,
+        s_m: np.ndarray,
+        center_m: float,
+        length_m: float,
+        transition_m: float,
+        delta_floor: float = 1e-8,
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         if not 0.0 < length_m < self.perimeter_m:
             raise ValueError("contact length must lie in (0,P)")
         if transition_m <= 0.0:
             raise ValueError("transition width must be positive")
-        theta = 2.0 * pi * (self.quadrature_s_m - center_m) / self.perimeter_m
+        theta = 2.0 * pi * (np.asarray(s_m, dtype=float) - center_m) / self.perimeter_m
         ell = pi * length_m / self.perimeter_m
         scale = 2.0 * pi * transition_m / self.perimeter_m
         z = np.cos(theta) - np.cos(ell)
