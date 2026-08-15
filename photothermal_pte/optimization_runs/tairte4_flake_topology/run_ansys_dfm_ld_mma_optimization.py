@@ -53,7 +53,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_opti
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[2]
-SCHEMA = "ansys-v261-style-dfm-pure-current-ld-mma-v6"
+SCHEMA = "ansys-v261-style-dfm-pure-current-ld-mma-v7"
 BETA_FACTOR = 2.0
 # Do not saturate continuation at beta=128.  In production runs an exact
 # 500-nm cleanup can still perturb the terminal-current objective even when the
@@ -85,9 +85,9 @@ CONSTRAINT_PLATEAU_EXACT_ABSOLUTE_RANGE_MINIMUM = 2
 # original Ansys-style path remains available for provenance, while new runs
 # may explicitly require fabrication progress before beta promotion.  Exact
 # thresholded counts are deliberately diagnostic-only at beta 1 and 2 because
-# a gray field has no unique binary topology.  From beta 4 onward they become
-# an audited promotion gate, while differentiable KS-opening inequalities
-# provide the actual MMA gradients.
+# a gray field has no unique binary topology.  At beta 4--16 they guide a
+# bounded repair budget; from beta 32 onward exact zero and feasible
+# differentiable KS-opening inequalities become a strict promotion gate.
 CONSTRAINT_AWARE_HARD_START_BETA = 4.0
 CONSTRAINT_AWARE_EXACT_REDUCTION = {
     4.0: 0.75,
@@ -102,6 +102,10 @@ CONSTRAINT_AWARE_DFM_WEIGHT_AT_BETA1 = 1.0
 CONSTRAINT_AWARE_DFM_WEIGHT_MAXIMUM = 1.0e4
 CONSTRAINT_AWARE_DFM_ATTEMPT_FACTOR = 2.0
 CONSTRAINT_AWARE_PROMOTION_STREAK = 3
+# Low-beta projected fields are intentionally gray, so the thresholded exact
+# audit and its KS surrogate cannot justify an unbounded same-beta repair loop.
+# Beta >= 32 keeps the strict exact-zero and hard-feasibility gate.
+CONSTRAINT_AWARE_LOW_BETA_MAX_STAGE_ATTEMPTS = 3
 FAST_BETA1_EVALUATIONS = 20
 FAST_BETA2_EVALUATIONS = 10
 FAST_BETA4_EVALUATIONS = 8
@@ -290,11 +294,15 @@ def constraint_aware_promotion_diagnostic(
     beta: float,
     exact_bad_target: int | None,
     require_hard_feasible: bool,
+    stage_attempt: int = 1,
 ) -> dict[str, object]:
-    """Require objective convergence *and* fabrication progress for promotion."""
+    """Require convergence and bounded, beta-appropriate fabrication progress."""
+
+    if int(stage_attempt) != stage_attempt or stage_attempt < 1:
+        raise ValueError("constraint-stage attempt must be a positive integer")
 
     diagnostic = adaptive_plateau_diagnostic(stage_rows)
-    diagnostic["policy"] = "constraint_aware_beta_promotion_v1"
+    diagnostic["policy"] = "constraint_aware_beta_promotion_v2"
     diagnostic["beta"] = float(beta)
     diagnostic["exact_bad_target"] = exact_bad_target
     if not stage_rows:
@@ -327,6 +335,7 @@ def constraint_aware_promotion_diagnostic(
         exact_bad_target is None
         or (latest_bad >= 0 and first_bad >= 0 and latest_bad <= first_bad)
     )
+    strict_geometry_gate = bool(beta >= CONSTRAINT_AWARE_EXACT_ZERO_BETA)
     exact_streak = 0
     if exact_bad_target is not None:
         for row in reversed(stage_rows):
@@ -337,22 +346,40 @@ def constraint_aware_promotion_diagnostic(
                 and np.isfinite(float(row_maximum))
                 and float(row_maximum) <= 0.0
             )
-            if row_bad < 0 or row_bad > exact_bad_target or not row_feasible:
+            if (
+                row_bad < 0
+                or row_bad > exact_bad_target
+                or (strict_geometry_gate and not row_feasible)
+            ):
                 break
             exact_streak += 1
     exact_streak_passed = bool(
         exact_bad_target is not None
         and exact_streak >= CONSTRAINT_AWARE_PROMOTION_STREAK
     )
-    promotion_passed = bool(
-        (
-            diagnostic.get("passed")
-            if exact_bad_target is None
-            else exact_streak_passed
-        )
-        and hard_feasible
-        and exact_passed
+    retry_budget_exhausted = bool(
+        exact_bad_target is not None
+        and not strict_geometry_gate
+        and stage_attempt >= CONSTRAINT_AWARE_LOW_BETA_MAX_STAGE_ATTEMPTS
     )
+    low_beta_retry_release = bool(retry_budget_exhausted and exact_nonincreasing)
+    plateau_passed = bool(diagnostic.get("passed"))
+    if exact_bad_target is None:
+        promotion_passed = plateau_passed
+    elif strict_geometry_gate:
+        promotion_passed = bool(
+            plateau_passed
+            and hard_feasible
+            and exact_passed
+            and exact_streak_passed
+        )
+    else:
+        # The smooth inequalities remain active in LD_MMA at beta 4--16, but
+        # their last few percent cannot veto continuation indefinitely.
+        promotion_passed = bool(
+            plateau_passed
+            and (exact_streak_passed or low_beta_retry_release)
+        )
     diagnostic.update(
         {
             "objective_design_gray_plateau": bool(diagnostic.get("passed")),
@@ -364,6 +391,15 @@ def constraint_aware_promotion_diagnostic(
             "exact_feasible_streak": exact_streak,
             "exact_feasible_streak_required": CONSTRAINT_AWARE_PROMOTION_STREAK,
             "exact_feasible_streak_passed": exact_streak_passed,
+            "strict_geometry_gate": strict_geometry_gate,
+            "stage_attempt": int(stage_attempt),
+            "low_beta_max_stage_attempts": (
+                None
+                if strict_geometry_gate or exact_bad_target is None
+                else CONSTRAINT_AWARE_LOW_BETA_MAX_STAGE_ATTEMPTS
+            ),
+            "retry_budget_exhausted": retry_budget_exhausted,
+            "low_beta_retry_release": low_beta_retry_release,
             "promotion_passed": promotion_passed,
             "reason": (
                 "constraint_aware_promotion_passed"
@@ -386,12 +422,14 @@ class AdaptiveStageEvaluator(StageEvaluator):
         constraint_aware_continuation: bool = False,
         exact_bad_target: int | None = None,
         require_hard_feasible: bool = False,
+        constraint_stage_attempt: int = 1,
         **kwargs: object,
     ) -> None:
         super().__init__(*args, **kwargs)
         self.constraint_aware_continuation = bool(constraint_aware_continuation)
         self.exact_bad_target = exact_bad_target
         self.require_hard_feasible = bool(require_hard_feasible)
+        self.constraint_stage_attempt = int(constraint_stage_attempt)
 
     def objective(self, vector: np.ndarray, gradient: np.ndarray) -> float:
         value = super().objective(vector, gradient)
@@ -402,6 +440,7 @@ class AdaptiveStageEvaluator(StageEvaluator):
                 beta=self.beta,
                 exact_bad_target=self.exact_bad_target,
                 require_hard_feasible=self.require_hard_feasible,
+                stage_attempt=self.constraint_stage_attempt,
             )
             stop = bool(diagnostic["promotion_passed"])
         else:
@@ -672,8 +711,8 @@ def main() -> int:
         action="store_true",
         help=(
             "Use gradual KS-opening pressure from beta=1, activate explicit "
-            "solid/void inequalities at beta=4, and prohibit beta promotion "
-            "until the stage-specific exact 500-nm audit target is met."
+            "solid/void inequalities at beta=4, use bounded same-beta repair "
+            "at beta 4--16, and require exact-zero geometry from beta 32."
         ),
     )
     parser.add_argument(
@@ -813,7 +852,7 @@ def main() -> int:
     if args.constraint_aware_continuation:
         manifest["constraint_aware_continuation"] = {
             "enabled": True,
-            "policy": "constraint_aware_beta_promotion_v1",
+            "policy": "constraint_aware_beta_promotion_v2",
             "hard_constraint_start_beta": CONSTRAINT_AWARE_HARD_START_BETA,
             "exact_count_interpretation_beta_1_2": "diagnostic_only_for_gray_fields",
             "exact_reduction_fraction_by_beta": {
@@ -825,8 +864,12 @@ def main() -> int:
             "cap_repeat_reduction": CONSTRAINT_AWARE_CAP_REPEAT_REDUCTION,
             "cap_floor": CONSTRAINT_AWARE_CAP_FLOOR,
             "promotion_requires": [
-                "active_KS_constraints_feasible",
-                f"exact_bad_count_at_or_below_stage_target_for_{CONSTRAINT_AWARE_PROMOTION_STREAK}_consecutive_evaluations",
+                "objective_design_gray_plateau",
+                (
+                    "beta_4_16_exact_target_streak_or_bounded_"
+                    f"{CONSTRAINT_AWARE_LOW_BETA_MAX_STAGE_ATTEMPTS}_stage_retry_release"
+                ),
+                "beta_ge_32_active_KS_feasible_and_exact_bad_count_zero",
             ],
             "termination_requires": [
                 "promotion_gate",
@@ -853,6 +896,9 @@ def main() -> int:
         "activation_beta": DFM_ACTIVATION_BETA,
         "weight_at_activation": DFM_PENALTY_AT_ACTIVATION,
         "constraint_aware_formula": "min(beta^2 * 2^(failed_attempts), 1e4)",
+        "low_beta_same_beta_stage_retry_limit": (
+            CONSTRAINT_AWARE_LOW_BETA_MAX_STAGE_ATTEMPTS
+        ),
         "legacy_formula": "min(10*(beta/4)^2,1e4)",
         "maximum": DFM_PENALTY_MAXIMUM,
         "hard_inequality_restoration_loop": False,
@@ -1137,6 +1183,7 @@ def main() -> int:
             constraint_aware_continuation=args.constraint_aware_continuation,
             exact_bad_target=constraint_exact_target,
             require_hard_feasible=constraint_hard_active,
+            constraint_stage_attempt=constraint_stage_attempt,
         )
         optimizer = make_optimizer(
             evaluator,
@@ -1236,6 +1283,7 @@ def main() -> int:
             beta=beta,
             exact_bad_target=constraint_exact_target,
             require_hard_feasible=constraint_hard_active,
+            stage_attempt=constraint_stage_attempt,
         )
         if gate["passed"] and (
             not args.constraint_aware_continuation
@@ -1380,7 +1428,12 @@ def main() -> int:
                     constraint_exact_target is not None
                     and exact_bad > constraint_exact_target
                 )
-                if latest_feasible and exact_missed:
+                if (
+                    latest_feasible
+                    and exact_missed
+                    and constraint_stage_attempt
+                    < CONSTRAINT_AWARE_LOW_BETA_MAX_STAGE_ATTEMPTS
+                ):
                     assert constraint_caps is not None
                     latest_residuals = np.asarray(
                         [

@@ -264,7 +264,7 @@ def test_constraint_aware_promotion_rejects_exact_target_miss() -> None:
     assert diagnostic["promotion_passed"] is False
 
 
-def test_constraint_aware_promotion_rejects_infeasible_smooth_constraint() -> None:
+def test_constraint_aware_strict_promotion_rejects_infeasible_smooth_constraint() -> None:
     rows = [_plateau_row(i, fom=1.0 + i * 1.0e-7, exact_bad=0) for i in range(1, 6)]
     rows[-1]["maximum_constraint_value"] = 0.01
     diagnostic = constraint_aware_promotion_diagnostic(
@@ -289,7 +289,7 @@ def test_constraint_aware_promotion_passes_joint_gate() -> None:
     assert diagnostic["promotion_passed"] is True
 
 
-def test_constraint_aware_promotion_does_not_wait_for_plateau_after_streak() -> None:
+def test_constraint_aware_promotion_waits_for_plateau_after_streak() -> None:
     rows = [
         _plateau_row(
             i,
@@ -307,7 +307,7 @@ def test_constraint_aware_promotion_does_not_wait_for_plateau_after_streak() -> 
     )
     assert diagnostic["objective_design_gray_plateau"] is False
     assert diagnostic["exact_feasible_streak"] == 3
-    assert diagnostic["promotion_passed"] is True
+    assert diagnostic["promotion_passed"] is False
 
 
 def test_constraint_aware_promotion_rejects_single_noisy_exact_pass() -> None:
@@ -324,6 +324,38 @@ def test_constraint_aware_promotion_rejects_single_noisy_exact_pass() -> None:
     assert diagnostic["exact_target_passed"] is True
     assert diagnostic["exact_feasible_streak"] == 1
     assert diagnostic["promotion_passed"] is False
+
+
+def test_constraint_aware_low_beta_target_can_promote_without_smooth_cap() -> None:
+    rows = [_plateau_row(i, exact_bad=10) for i in range(1, 6)]
+    for row in rows:
+        row["maximum_constraint_value"] = 0.025
+    diagnostic = constraint_aware_promotion_diagnostic(
+        rows,
+        beta=4.0,
+        exact_bad_target=10,
+        require_hard_feasible=True,
+        stage_attempt=2,
+    )
+    assert diagnostic["objective_design_gray_plateau"] is True
+    assert diagnostic["hard_constraints_feasible"] is False
+    assert diagnostic["exact_feasible_streak_passed"] is True
+    assert diagnostic["promotion_passed"] is True
+
+
+def test_constraint_aware_low_beta_retry_budget_prevents_infinite_repair() -> None:
+    rows = [_plateau_row(i, exact_bad=12) for i in range(1, 6)]
+    diagnostic = constraint_aware_promotion_diagnostic(
+        rows,
+        beta=8.0,
+        exact_bad_target=6,
+        require_hard_feasible=True,
+        stage_attempt=3,
+    )
+    assert diagnostic["exact_target_passed"] is False
+    assert diagnostic["retry_budget_exhausted"] is True
+    assert diagnostic["exact_nonincreasing"] is True
+    assert diagnostic["promotion_passed"] is True
 
 
 def test_exact_cleanup_requires_no_objective_decrease() -> None:

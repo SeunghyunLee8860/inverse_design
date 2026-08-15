@@ -14,13 +14,15 @@ The physical contract is unchanged from Runs 049/050:
 - NLopt `LD_MMA`; no Adam, manual move limit, normalized gradient direction,
   clipping, or post-update morphology edit.
 
-The new continuation differs from the superseded runs in one important way:
-beta is not promoted by objective stagnation alone. DFM pressure is active from
-beta 1, explicit local KS-opening inequalities start at beta 4, and beta
-promotion additionally requires the stage-specific exact 500 nm audit target.
-The exact thresholded audit remains diagnostic only at beta 1 and 2 because a
-gray density has no unique binary topology. From beta 32 onward zero exact
-violations are mandatory before beta can increase.
+The v7 continuation keeps DFM pressure active from beta 1 and activates local
+KS-opening inequalities at beta 4, but it does not allow a nearly feasible
+low-beta surrogate to cause an unbounded repair loop. At beta 4--16, an exact
+target streak plus an objective/design plateau is the preferred promotion
+path; after at most three same-beta stage attempts, a non-worsening exact audit
+plus the same plateau advances beta. The exact thresholded audit remains
+diagnostic at beta 1 and 2 because a gray field has no unique binary topology.
+From beta 32 onward, feasible KS constraints and zero exact violations are
+strictly mandatory before beta can increase or the run can terminate.
 
 The beta-1 KS weight is fixed from an offline gradient-scale audit of the
 uniform Ea checkpoint. A unit KS weight was 0.957% of the physical objective
