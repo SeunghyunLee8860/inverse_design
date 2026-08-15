@@ -116,3 +116,13 @@ def test_native_ld_mma_scale_controls_reach_nlopt() -> None:
     assert optimizer.get_param("rho_init", -1.0) == 10.0
     assert optimizer.get_param("always_improve", -1.0) == 1.0
     assert optimizer.get_param("inner_gradients", -1.0) == 1.0
+
+
+def test_bounded_official_dfm_driver_prevents_low_beta_endpoint_collapse() -> None:
+    source = Path(__file__).parents[1] / "run_official_dfm_exact_repair_optimization.py"
+    text = source.read_text()
+    assert "STAGE_TRUST_RADIUS" in text
+    assert "1.0: 0.20" in text
+    assert "lower_bounds=stage_lower" in text
+    assert "upper_bounds=stage_upper" in text
+    assert "same_beta_restart_loop" in text

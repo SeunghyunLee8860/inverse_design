@@ -59,6 +59,16 @@ MAXIMUM_EVALUATIONS = {
     64.0: 8,
     128.0: 8,
 }
+STAGE_TRUST_RADIUS = {
+    1.0: 0.20,
+    2.0: 0.20,
+    4.0: 0.15,
+    8.0: 0.12,
+    16.0: 0.10,
+    32.0: 0.08,
+    64.0: 0.06,
+    128.0: 0.05,
+}
 REFERENCE_INCIDENT_POWER_W = 285.0e-6
 
 
@@ -168,6 +178,11 @@ def main() -> int:
     manifest["continuation"] = {
         "beta_schedule": list(BETA_SCHEDULE),
         "maximum_evaluations_per_beta": MAXIMUM_EVALUATIONS,
+        "stage_trust_radius": STAGE_TRUST_RADIUS,
+        "trust_region_interpretation": (
+            "fixed bounds around each beta-stage start; not a fixed "
+            "per-evaluation update or normalized-gradient step"
+        ),
         "same_beta_restart_loop": False,
         "official_dfm": DFM_CONTRACT.audit(),
         "exact_final_gate": "independent 500-nm binary opening audit",
@@ -211,12 +226,17 @@ def main() -> int:
                 "beta_factor": 2.0,
             },
         )
+        trust_radius = STAGE_TRUST_RADIUS[beta]
+        stage_lower = np.maximum(0.0, latent - trust_radius)
+        stage_upper = np.minimum(1.0, latent + trust_radius)
         optimizer = make_optimizer(
             evaluator,
             0,
             xtol_rel=1.0e-8,
             ftol_rel=1.0e-5,
             maxeval=MAXIMUM_EVALUATIONS[beta],
+            lower_bounds=stage_lower,
+            upper_bounds=stage_upper,
         )
         emit(
             events,
@@ -224,6 +244,13 @@ def main() -> int:
             beta=beta,
             maximum_evaluations=MAXIMUM_EVALUATIONS[beta],
             official_dfm_scaling=DFM_CONTRACT.penalty_scaling(beta),
+            stage_trust_radius=trust_radius,
+            stage_latent_lower_range=[
+                float(np.min(stage_lower)), float(np.max(stage_lower))
+            ],
+            stage_latent_upper_range=[
+                float(np.min(stage_upper)), float(np.max(stage_upper))
+            ],
         )
         optimum = optimizer.optimize(latent.ravel()).reshape(MAPPING.shape)
         result_code = optimizer.last_optimize_result()

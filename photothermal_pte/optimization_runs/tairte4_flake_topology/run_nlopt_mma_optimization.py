@@ -255,7 +255,7 @@ class StageEvaluator:
             ),
             "objective_scaled_minimize": float(objective_scaled),
             "raw_current_objective_scaled_minimize": float(
-                objective_scaled - morphology_penalty
+                objective_scaled - morphology_penalty - ansys_dfm_penalty
             ),
             "morphology_penalty_weight": self.morphology_penalty_weight,
             "morphology_aggregation": self.morphology_aggregation,
@@ -353,11 +353,23 @@ def make_optimizer(
     xtol_rel: float | None = None,
     ftol_rel: float | None = None,
     maxeval: int | None = None,
+    lower_bounds: np.ndarray | None = None,
+    upper_bounds: np.ndarray | None = None,
 ) -> nlopt.opt:
     variable_count = int(np.prod(MAPPING.shape))
     optimizer = nlopt.opt(nlopt.LD_MMA, variable_count)
-    optimizer.set_lower_bounds(np.zeros(variable_count))
-    optimizer.set_upper_bounds(np.ones(variable_count))
+    lower = np.zeros(variable_count) if lower_bounds is None else np.asarray(
+        lower_bounds, dtype=np.float64
+    ).reshape(-1)
+    upper = np.ones(variable_count) if upper_bounds is None else np.asarray(
+        upper_bounds, dtype=np.float64
+    ).reshape(-1)
+    if lower.shape != (variable_count,) or upper.shape != (variable_count,):
+        raise ValueError("LD_MMA bound shape does not match the design")
+    if np.any(lower < 0.0) or np.any(upper > 1.0) or np.any(lower >= upper):
+        raise ValueError("LD_MMA bounds must satisfy 0 <= lower < upper <= 1")
+    optimizer.set_lower_bounds(lower)
+    optimizer.set_upper_bounds(upper)
     optimizer.set_min_objective(evaluator.objective)
     if constraint_count:
         optimizer.add_inequality_mconstraint(
