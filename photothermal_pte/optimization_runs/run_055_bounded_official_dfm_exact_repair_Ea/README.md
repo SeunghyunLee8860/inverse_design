@@ -12,4 +12,3 @@ Fresh replacement for the stopped Run054 diagnostic.
 - beta-stage trust region prevents beta-1 endpoint collapse
 - official Ansys v261 DFM indicator/gradient activates only for beta > 12
 - independent exact 500 nm solid/void repair and fresh physics evaluation
-
