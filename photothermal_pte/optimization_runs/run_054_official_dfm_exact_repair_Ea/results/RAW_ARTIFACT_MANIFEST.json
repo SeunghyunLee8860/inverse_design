@@ -40,6 +40,94 @@
         "size_bytes": 809,
         "sha256": "b6b8d6a7dbb6daf1e799b09c0b41715368383b981d311179871b6f37e19c5685"
       }
+    },
+    "0002": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run054_official_dfm_exact_repair_Ea_evaporated_v1/evaluation_0002_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14310,
+        "sha256": "3721d59a4d2fcc7abf16d4a8e0c4040125e4095a5337d27125473da87ab8265e"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run054_official_dfm_exact_repair_Ea_evaporated_v1/evaluation_0002_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2506948,
+        "sha256": "fd95a3195822f7299695edb647a725b98d35066f2e36d3cfe5936b5445e6fb30"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run054_official_dfm_exact_repair_Ea_evaporated_v1/evaluation_0002_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 180903815,
+        "sha256": "bcbd36f48b97f1185fc75e7a343bdefd7f6ebf38a5efa9c27cb5722f460c9667"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run054_official_dfm_exact_repair_Ea_evaporated_v1/evaluation_0002_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 290937,
+        "sha256": "a845512c40f222058f59495ebcea26e3845b28a6b3411fdfa531f6cede88e97f"
+      }
+    },
+    "0003": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run054_official_dfm_exact_repair_Ea_evaporated_v1/evaluation_0003_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14337,
+        "sha256": "a2f91c696fa314a4992a2cda0afa941100192b7bff89b4ca422df1c815c80f9b"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run054_official_dfm_exact_repair_Ea_evaporated_v1/evaluation_0003_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2538291,
+        "sha256": "7994ace183e781c5539ba990f014e1609e7d806235c14a73d1188355b77b775a"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run054_official_dfm_exact_repair_Ea_evaporated_v1/evaluation_0003_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 180903815,
+        "sha256": "04f3a70e5cfc8cf9a77232be6807ec4fb049f3491921f2f7a0654e95ed6eaaa9"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run054_official_dfm_exact_repair_Ea_evaporated_v1/evaluation_0003_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 308324,
+        "sha256": "06e7e35881a58465e6592eb205cc9af10c55c2c259f23ea575d28d750d81310b"
+      }
+    },
+    "0004": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run054_official_dfm_exact_repair_Ea_evaporated_v1/evaluation_0004_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14314,
+        "sha256": "f1de9fbdef7223e25ce28866a423ef0df585f5b71f2feff7543ee5541e648029"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run054_official_dfm_exact_repair_Ea_evaporated_v1/evaluation_0004_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2585506,
+        "sha256": "f65bc459dfc1a66bb570545fc2a66bfb0c18ac9fd6027cb060e81af6919c22d7"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run054_official_dfm_exact_repair_Ea_evaporated_v1/evaluation_0004_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 180903815,
+        "sha256": "8a1543027e6be22136efca2a152dca4effc6c28d8b14d47fa38e6e91c8befcfd"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run054_official_dfm_exact_repair_Ea_evaporated_v1/evaluation_0004_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 332242,
+        "sha256": "03b47da9b06417501525b1ae66ca23b1ce4c377b6ef2b64025f941d2169e6adf"
+      }
+    },
+    "0005": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run054_official_dfm_exact_repair_Ea_evaporated_v1/evaluation_0005_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14330,
+        "sha256": "2de9caf522ee7752816b80b4df5248093140595b46b093cf037db18224c4fa92"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run054_official_dfm_exact_repair_Ea_evaporated_v1/evaluation_0005_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2636528,
+        "sha256": "bd843246a4c476c00cc8e708036414e63eac8423613685adf197404e28b8e50c"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run054_official_dfm_exact_repair_Ea_evaporated_v1/evaluation_0005_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 180903815,
+        "sha256": "6ce4fe9da34f822040ca513b3b1a61e11f8417e2b12558486dc2e39d519e2a3d"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run054_official_dfm_exact_repair_Ea_evaporated_v1/evaluation_0005_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 357041,
+        "sha256": "37e322eadb528d00e4116baa09044407eec791e2a718a3e6184405e6c62953d3"
+      }
     }
   },
   "continuation": {
