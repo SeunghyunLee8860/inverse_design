@@ -31,6 +31,9 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.validate_combined
 import build_nonuniform_complex_yee_jacobian as jacobian_builder
 import run_production_combined_adfd_smoke as legacy_combined
 from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
+from photothermal_pte.optimization_runs.tairte4_flake_topology.ansys_minimum_feature import (
+    evaluate_on_cad as evaluate_ansys_minimum_feature,
+)
 from photothermal_pte.optimization_runs.tairte4_flake_topology.thermal import (
     thermal_interface_contract,
 )
@@ -83,6 +86,8 @@ def main() -> int:
     parser.add_argument("--base-sha256", required=True)
     parser.add_argument("--jacobian-dir", required=True, type=Path)
     parser.add_argument("--rho-npz", required=True, type=Path)
+    parser.add_argument("--latent-npz", type=Path)
+    parser.add_argument("--dfm-beta", type=float)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--polarization", choices=("Ea", "Eb"), required=True)
     parser.add_argument("--gpu-device", default="GPU 5")
@@ -100,6 +105,14 @@ def main() -> int:
     base_fsp = checked(args.base_fsp, args.base_sha256)
     _, _, operator_meta = load_operator(args.jacobian_dir)
     rho = load_rho(args.rho_npz)
+    latent = None
+    if (args.latent_npz is None) != (args.dfm_beta is None):
+        raise RuntimeError("--latent-npz and --dfm-beta must be supplied together")
+    if args.latent_npz is not None:
+        with np.load(args.latent_npz.expanduser().resolve()) as data:
+            latent = np.asarray(data["latent"], dtype=np.float64)
+        if latent.shape != CONTRACT.design_node_shape:
+            raise RuntimeError("latent DFM shape does not match the design contract")
     angle = polarization_angle(args.polarization)
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
@@ -115,6 +128,13 @@ def main() -> int:
     started = time.monotonic()
     try:
         fdtd, audit, runtime = open_fdtd(args.gpu_device)
+        ansys_dfm_indicators = np.zeros(2, dtype=np.float64)
+        ansys_dfm_gradient = np.zeros_like(rho)
+        ansys_dfm = None
+        if latent is not None:
+            ansys_dfm_indicators, ansys_dfm_gradient, ansys_dfm = (
+                evaluate_ansys_minimum_feature(fdtd, latent, float(args.dfm_beta))
+            )
         forward = run_forward(
             fdtd,
             audit,
@@ -184,6 +204,8 @@ def main() -> int:
             terminal_conductance_S=np.asarray(coupled["electrical"].terminal_conductance_S),
             gradient_terminal_conductance_S=coupled["gradient_terminal_conductance"],
             temperature_K=coupled["temperature"],
+            ansys_dfm_indicators=ansys_dfm_indicators,
+            ansys_dfm_gradient_latent=ansys_dfm_gradient,
         )
         passed = bool(
             forward["closure"] < 0.005
@@ -225,6 +247,7 @@ def main() -> int:
             "adjoint_source": source_meta,
             "adjoint": {key: value for key, value in adjoint.items() if key not in {"electric", "grid"}},
             "optical_gradient": optical_meta,
+            "ansys_minimum_feature": ansys_dfm,
             "raw_artifact": {
                 "path": str(raw),
                 "size_bytes": raw.stat().st_size,

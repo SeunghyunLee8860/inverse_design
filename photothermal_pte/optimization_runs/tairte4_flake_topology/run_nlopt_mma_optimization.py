@@ -113,6 +113,7 @@ class StageEvaluator:
         optimizer_controls: dict[str, object] | None = None,
         morphology_penalty_weight: float = 0.0,
         morphology_aggregation: str = "mean",
+        use_official_ansys_dfm: bool = False,
     ) -> None:
         self.beta = beta
         self.polarization = polarization
@@ -138,6 +139,7 @@ class StageEvaluator:
         self.optimizer_controls = dict(optimizer_controls or {})
         self.morphology_penalty_weight = float(morphology_penalty_weight)
         self.morphology_aggregation = morphology_aggregation
+        self.use_official_ansys_dfm = bool(use_official_ansys_dfm)
         if self.morphology_penalty_weight < 0.0:
             raise ValueError("morphology penalty weight must be nonnegative")
         self.last: Point | None = None
@@ -168,6 +170,8 @@ class StageEvaluator:
             base_fsp=self.base_fsp,
             base_sha256=self.base_sha256,
             jacobian_dir=self.jacobian_dir,
+            latent=x if self.use_official_ansys_dfm else None,
+            dfm_beta=self.beta if self.use_official_ansys_dfm else None,
         )
         self.stage_full_physics_evaluations += 1
         source_power = float(result["forward"]["source_power_W"])
@@ -208,6 +212,20 @@ class StageEvaluator:
         )
         objective_scaled += morphology_penalty
         objective_gradient += morphology_penalty_gradient
+        ansys_dfm_penalty = 0.0
+        ansys_dfm_gradient = np.zeros_like(x)
+        ansys_dfm_metadata = result.get("ansys_minimum_feature")
+        if self.use_official_ansys_dfm:
+            raw_path = Path(result["raw_artifact"]["path"])
+            with np.load(raw_path) as raw:
+                indicators = np.asarray(raw["ansys_dfm_indicators"], dtype=np.float64)
+                ansys_dfm_gradient = np.asarray(
+                    raw["ansys_dfm_gradient_latent"], dtype=np.float64
+                )
+            scaling = float((ansys_dfm_metadata or {}).get("penalty_scaling", 0.0))
+            ansys_dfm_penalty = scaling * float(np.sum(indicators))
+            objective_scaled += ansys_dfm_penalty
+            objective_gradient += scaling * ansys_dfm_gradient
         point = Point(
             x=x.copy(),
             rho=rho,
@@ -242,6 +260,9 @@ class StageEvaluator:
             "morphology_penalty_weight": self.morphology_penalty_weight,
             "morphology_aggregation": self.morphology_aggregation,
             "morphology_penalty_value": float(morphology_penalty),
+            "official_ansys_dfm_enabled": self.use_official_ansys_dfm,
+            "official_ansys_dfm_penalty_value": float(ansys_dfm_penalty),
+            "official_ansys_dfm": ansys_dfm_metadata,
             "fixed_source_power_W": self.fixed_source_power_W,
             "source_power_relative_change": source_change,
             "terminal_conductance_S": float(result["terminal_conductance_S"]),

@@ -210,6 +210,8 @@ def evaluate(
     base_fsp: Path,
     base_sha256: str,
     jacobian_dir: Path,
+    latent: np.ndarray | None = None,
+    dfm_beta: float | None = None,
 ) -> tuple[dict[str, object], np.ndarray, np.ndarray]:
     result_path = output / "objective_gradient_result.json"
     if result_path.is_file():
@@ -231,6 +233,11 @@ def evaluate(
         emit(events, "incomplete_evaluation_archived", output=str(output), archive=str(archived))
     density = output.with_name(output.name + "_rho.npz")
     np.savez_compressed(density, rho=np.asarray(rho, dtype=np.float64))
+    if (latent is None) != (dfm_beta is None):
+        raise ValueError("latent and dfm_beta must be supplied together")
+    latent_path = output.with_name(output.name + "_latent_dfm.npz")
+    if latent is not None:
+        np.savez_compressed(latent_path, latent=np.asarray(latent, dtype=np.float64))
     command = [
         sys.executable,
         "-m",
@@ -245,6 +252,10 @@ def evaluate(
         "--cuda-device", "0",
         "--discard-fsp-after-success",
     ]
+    if latent is not None:
+        command.extend(
+            ["--latent-npz", str(latent_path), "--dfm-beta", str(float(dfm_beta))]
+        )
     environment = dict(os.environ)
     environment["CUDA_VISIBLE_DEVICES"] = str(gpu)
     retry_seconds = float(os.environ.get("LUMERICAL_LICENSE_RETRY_SECONDS", "30"))

@@ -40,16 +40,37 @@ def disk() -> np.ndarray:
     return xx * xx + yy * yy <= radius * radius
 
 
-def exact_binary_audit(rho: np.ndarray) -> tuple[dict[str, object], dict[str, np.ndarray]]:
-    """Audit both phases with the actual material adjoining each design edge."""
+def exact_binary_audit(
+    rho: np.ndarray,
+    *,
+    geometry_mode: str | None = None,
+    contact_axis: str | None = None,
+) -> tuple[dict[str, object], dict[str, np.ndarray]]:
+    """Audit both phases with an explicit design-boundary contract.
+
+    Production callers should pass ``geometry_mode`` and ``contact_axis``
+    explicitly.  The defaults retain compatibility with existing reports,
+    while preventing new solver-free cleanup tools from silently auditing a
+    contact-anchored checkpoint as the module's default fixed-frame geometry.
+    """
 
     binary = np.asarray(rho, dtype=float) >= 0.5
     structure = disk()
     radius = (structure.shape[0] - 1) // 2
-    if CONTRACT.geometry_mode in {"contact_anchored", "left_right_contact_anchored"}:
+    selected_geometry = CONTRACT.geometry_mode if geometry_mode is None else str(geometry_mode)
+    selected_axis = CONTRACT.contact_axis if contact_axis is None else str(contact_axis)
+    if selected_geometry not in {
+        "fixed_frame",
+        "contact_anchored",
+        "left_right_contact_anchored",
+    }:
+        raise ValueError(f"unsupported exact-audit geometry mode: {selected_geometry}")
+    if selected_axis not in {"x", "y"}:
+        raise ValueError(f"unsupported exact-audit contact axis: {selected_axis}")
+    if selected_geometry in {"contact_anchored", "left_right_contact_anchored"}:
         solid_padded = np.zeros((binary.shape[0] + 2 * radius, binary.shape[1] + 2 * radius), dtype=bool)
         solid_padded[radius:-radius, radius:-radius] = binary
-        if CONTRACT.contact_axis == "y":
+        if selected_axis == "y":
             solid_padded[:, :radius] = True
             solid_padded[:, -radius:] = True
             outside_phase = "fixed_solid_at_top_bottom_and_void_at_left_right"
@@ -76,6 +97,8 @@ def exact_binary_audit(rho: np.ndarray) -> tuple[dict[str, object], dict[str, np
             "requested 500 nm pixel-support diameter is represented by five "
             "100 nm samples (two centre offsets plus two half-cell extents)"
         ),
+        "geometry_mode": selected_geometry,
+        "contact_axis": selected_axis,
         "outside_design_phase": outside_phase,
         "solid_bad_cell_count": int(np.count_nonzero(bad_solid)),
         "void_bad_cell_count": int(np.count_nonzero(bad_void)),

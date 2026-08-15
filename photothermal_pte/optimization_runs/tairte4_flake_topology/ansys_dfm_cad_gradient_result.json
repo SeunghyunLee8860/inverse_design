@@ -1,0 +1,168 @@
+{
+  "passed": true,
+  "status": "VALIDATED_ANSYS_V261_DFM_CAD_GRADIENT",
+  "generated_at_utc": "2026-08-15T19:38:57.214468+00:00",
+  "beta": 16.0,
+  "indicator_solid": 0.08885963558124609,
+  "indicator_void": 0.08885963558124602,
+  "comparisons": [
+    {
+      "direction": "adjoint_aligned",
+      "step": 0.01,
+      "analytic": 0.0034240860337688547,
+      "central_fd": 0.0034242156653048472,
+      "relative_error": 3.785729307472973e-05
+    },
+    {
+      "direction": "adjoint_aligned",
+      "step": 0.005,
+      "analytic": 0.0034240860337688547,
+      "central_fd": 0.0034242159493338975,
+      "relative_error": 3.794023711269658e-05
+    },
+    {
+      "direction": "adjoint_aligned",
+      "step": 0.001,
+      "analytic": 0.0034240860337688547,
+      "central_fd": 0.0034242160398753607,
+      "relative_error": 3.796667762550209e-05
+    },
+    {
+      "direction": "adjoint_aligned",
+      "step": 0.0005,
+      "analytic": 0.0034240860337688547,
+      "central_fd": 0.0034242160424358126,
+      "relative_error": 3.7967425345449364e-05
+    },
+    {
+      "direction": "adjoint_aligned",
+      "step": 0.0001,
+      "analytic": 0.0034240860337688547,
+      "central_fd": 0.0034242160525110865,
+      "relative_error": 3.7970367593035896e-05
+    },
+    {
+      "direction": "random",
+      "step": 0.01,
+      "analytic": -6.769624852011932e-06,
+      "central_fd": -6.855317630227731e-06,
+      "relative_error": 0.012500190777148932
+    },
+    {
+      "direction": "random",
+      "step": 0.005,
+      "analytic": -6.769624852011932e-06,
+      "central_fd": -6.855318465670557e-06,
+      "relative_error": 0.012500311121613665
+    },
+    {
+      "direction": "random",
+      "step": 0.001,
+      "analytic": -6.769624852011932e-06,
+      "central_fd": -6.855318687715162e-06,
+      "relative_error": 0.012500343106848527
+    },
+    {
+      "direction": "random",
+      "step": 0.0005,
+      "analytic": -6.769624852011932e-06,
+      "central_fd": -6.855315828890873e-06,
+      "relative_error": 0.012499931296791283
+    },
+    {
+      "direction": "random",
+      "step": 0.0001,
+      "analytic": -6.769624852011932e-06,
+      "central_fd": -6.8553144411120925e-06,
+      "relative_error": 0.012499731388872668
+    },
+    {
+      "direction": "asymmetric_local",
+      "step": 0.01,
+      "analytic": 0.0011550138844111262,
+      "central_fd": 0.0011550112451644279,
+      "relative_error": 2.285034607790866e-06
+    },
+    {
+      "direction": "asymmetric_local",
+      "step": 0.005,
+      "analytic": 0.0011550138844111262,
+      "central_fd": 0.0011550123072912033,
+      "relative_error": 1.3654553804284784e-06
+    },
+    {
+      "direction": "asymmetric_local",
+      "step": 0.001,
+      "analytic": 0.0011550138844111262,
+      "central_fd": 0.0011550126474552114,
+      "relative_error": 1.0709446280786113e-06
+    },
+    {
+      "direction": "asymmetric_local",
+      "step": 0.0005,
+      "analytic": 0.0011550138844111262,
+      "central_fd": 0.0011550126596260313,
+      "relative_error": 1.060407248336498e-06
+    },
+    {
+      "direction": "asymmetric_local",
+      "step": 0.0001,
+      "analytic": 0.0011550138844111262,
+      "central_fd": 0.0011550126622489332,
+      "relative_error": 1.058136364902907e-06
+    }
+  ],
+  "best_by_direction": {
+    "adjoint_aligned": {
+      "direction": "adjoint_aligned",
+      "step": 0.01,
+      "analytic": 0.0034240860337688547,
+      "central_fd": 0.0034242156653048472,
+      "relative_error": 3.785729307472973e-05
+    },
+    "random": {
+      "direction": "random",
+      "step": 0.0001,
+      "analytic": -6.769624852011932e-06,
+      "central_fd": -6.8553144411120925e-06,
+      "relative_error": 0.012499731388872668
+    },
+    "asymmetric_local": {
+      "direction": "asymmetric_local",
+      "step": 0.0001,
+      "analytic": 0.0011550138844111262,
+      "central_fd": 0.0011550126622489332,
+      "relative_error": 1.058136364902907e-06
+    }
+  },
+  "maximum_best_relative_error": 0.012499731388872668,
+  "gate": "best central-FD plateau error <2% for every direction",
+  "metadata": {
+    "source": "/opt/lumerical/v261/api/python/lumopt/geometries/topology.py",
+    "implementation": "topoparamstominfeaturesizeindicator and topoparamstominfeaturesizegradient",
+    "contract": {
+      "filter_radius_m": 3e-07,
+      "minimum_feature_m": 5e-07,
+      "eta": 0.5,
+      "dx_m": 1e-07,
+      "dy_m": 1e-07,
+      "activation_beta": 12.0,
+      "penalty_factor": 100.0,
+      "maximum_penalty": 10000.0
+    },
+    "derived": {
+      "delta_eta": 0.4722222222222222,
+      "eta_d": 0.02777777777777779,
+      "eta_e": 0.9722222222222222
+    },
+    "extra_Maxwell_solves": 0,
+    "beta": 16.0,
+    "penalty_scaling": 1600.0,
+    "indicator_solid": 0.08885963558124609,
+    "indicator_void": 0.08885963558124602,
+    "indicator_sum": 0.1777192711624921,
+    "gradient_l2": 0.003424086033768856,
+    "gradient_max_abs": 2.2185012869983452e-05
+  },
+  "Maxwell_solves": 0
+}

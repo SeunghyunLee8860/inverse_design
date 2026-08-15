@@ -23,6 +23,7 @@ import numpy as np
 
 from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
 from photothermal_pte.optimization_runs.tairte4_flake_topology.optimization_support import (
+    disk,
     exact_binary_audit,
 )
 
@@ -39,6 +40,9 @@ def active_set_repair(
     initial: np.ndarray,
     order: str,
     maximum_iterations: int,
+    *,
+    geometry_mode: str | None = None,
+    contact_axis: str | None = None,
 ) -> tuple[np.ndarray, list[dict[str, object]], str]:
     value = np.asarray(initial, dtype=bool).copy()
     history: list[dict[str, object]] = []
@@ -46,7 +50,11 @@ def active_set_repair(
     phases = ("solid", "void") if order == "solid_first" else ("void", "solid")
     stop_reason = "maximum_iterations"
     for iteration in range(maximum_iterations + 1):
-        audit, arrays = exact_binary_audit(value.astype(np.float64))
+        audit, arrays = exact_binary_audit(
+            value.astype(np.float64),
+            geometry_mode=geometry_mode,
+            contact_axis=contact_axis,
+        )
         history.append(
             {
                 "iteration": iteration,
@@ -67,12 +75,227 @@ def active_set_repair(
         if iteration == maximum_iterations:
             break
         for phase in phases:
-            _, arrays = exact_binary_audit(value.astype(np.float64))
+            _, arrays = exact_binary_audit(
+                value.astype(np.float64),
+                geometry_mode=geometry_mode,
+                contact_axis=contact_axis,
+            )
             if phase == "solid":
                 value[arrays["bad_solid"]] = False
             else:
                 value[arrays["bad_void"]] = True
     return value, history, stop_reason
+
+
+def _disk_support_actions(
+    value: np.ndarray,
+    bad_solid: np.ndarray,
+    bad_void: np.ndarray,
+) -> list[np.ndarray]:
+    """Return local remove/fill or grow-to-disk actions for exact defects."""
+
+    structure = disk()
+    radius = (structure.shape[0] - 1) // 2
+    offsets = np.argwhere(structure) - radius
+    shape = value.shape
+    actions: list[np.ndarray] = []
+    for phase, bad in ((True, bad_solid), (False, bad_void)):
+        positions = np.argwhere(bad)
+        if not len(positions):
+            continue
+        # Removing a thin solid or filling a narrow void is one legitimate
+        # repair.  It is intentionally kept alongside the alternative of
+        # growing that phase to a complete 500-nm support disk.
+        removed = value.copy()
+        removed[bad] = not phase
+        actions.append(removed)
+        for point_i, point_j in positions:
+            for centre_i in range(
+                max(0, int(point_i) - radius),
+                min(shape[0], int(point_i) + radius + 1),
+            ):
+                for centre_j in range(
+                    max(0, int(point_j) - radius),
+                    min(shape[1], int(point_j) + radius + 1),
+                ):
+                    grown = value.copy()
+                    for offset_i, offset_j in offsets:
+                        index_i = centre_i + int(offset_i)
+                        index_j = centre_j + int(offset_j)
+                        if 0 <= index_i < shape[0] and 0 <= index_j < shape[1]:
+                            grown[index_i, index_j] = phase
+                    actions.append(grown)
+    return actions
+
+
+def _repair_score(
+    candidate: np.ndarray,
+    source: np.ndarray,
+    audit: dict[str, object],
+    objective_gradient: np.ndarray | None,
+) -> tuple[float, float, int]:
+    delta = candidate.astype(np.float64) - source.astype(np.float64)
+    predicted_change = (
+        0.0
+        if objective_gradient is None
+        else float(np.sum(np.asarray(objective_gradient, dtype=np.float64) * delta))
+    )
+    return (
+        float(audit["total_bad_cell_count"]),
+        -predicted_change,
+        int(np.count_nonzero(delta)),
+    )
+
+
+def gradient_aware_exact_repair(
+    initial: np.ndarray,
+    *,
+    objective_gradient: np.ndarray | None = None,
+    geometry_mode: str,
+    contact_axis: str,
+    beam_width: int = 64,
+    maximum_iterations: int = 32,
+    maximum_candidates: int = 4,
+) -> dict[str, object]:
+    """Find exact-feasible 500-nm candidates without another physics solve.
+
+    The old alternating opening repair can enter a two-state solid/void cycle.
+    This bounded beam search starts from both alternating orderings and adds
+    the missing geometric choice: grow a surviving defect into a complete
+    support disk.  Candidate ordering uses the latest physical objective
+    gradient only as a first-order ranking; every returned geometry must pass
+    the independent exact binary audit.
+    """
+
+    source = np.asarray(initial, dtype=bool)
+    if source.ndim != 2:
+        raise ValueError("exact repair requires a two-dimensional binary design")
+    if objective_gradient is not None:
+        objective_gradient = np.asarray(objective_gradient, dtype=np.float64)
+        if objective_gradient.shape != source.shape or not np.all(
+            np.isfinite(objective_gradient)
+        ):
+            raise ValueError("objective gradient must be finite and match the design")
+    if beam_width <= 0 or maximum_iterations <= 0 or maximum_candidates <= 0:
+        raise ValueError("repair search budgets must be positive")
+
+    source_audit, _ = exact_binary_audit(
+        source.astype(np.float64),
+        geometry_mode=geometry_mode,
+        contact_axis=contact_axis,
+    )
+    seeds: list[tuple[str, np.ndarray, list[dict[str, object]], str]] = [
+        ("unrepaired", source.copy(), [], "source_design")
+    ]
+    for order in ("solid_first", "void_first"):
+        candidate, history, reason = active_set_repair(
+            source,
+            order,
+            maximum_iterations,
+            geometry_mode=geometry_mode,
+            contact_axis=contact_axis,
+        )
+        seeds.append((order, candidate, history, reason))
+
+    visited: set[bytes] = set()
+    beam: list[tuple[np.ndarray, list[dict[str, object]]]] = []
+    for order, candidate, history, reason in seeds:
+        key = np.packbits(candidate, bitorder="little").tobytes()
+        if key in visited:
+            continue
+        visited.add(key)
+        beam.append((candidate, [{"seed_order": order, "seed_stop_reason": reason, "seed_history": history}]))
+
+    feasible: list[tuple[tuple[float, float, int], np.ndarray, list[dict[str, object]], dict[str, object]]] = []
+    explored = 0
+    for search_iteration in range(maximum_iterations + 1):
+        next_states: list[
+            tuple[
+                tuple[float, float, int],
+                np.ndarray,
+                list[dict[str, object]],
+            ]
+        ] = []
+        for candidate, history in beam:
+            audit, arrays = exact_binary_audit(
+                candidate.astype(np.float64),
+                geometry_mode=geometry_mode,
+                contact_axis=contact_axis,
+            )
+            score = _repair_score(candidate, source, audit, objective_gradient)
+            explored += 1
+            if bool(audit["passed"]):
+                feasible.append((score, candidate.copy(), history, audit))
+                continue
+            for action in _disk_support_actions(
+                candidate,
+                arrays["bad_solid"],
+                arrays["bad_void"],
+            ):
+                key = np.packbits(action, bitorder="little").tobytes()
+                if key in visited:
+                    continue
+                visited.add(key)
+                action_audit, _ = exact_binary_audit(
+                    action.astype(np.float64),
+                    geometry_mode=geometry_mode,
+                    contact_axis=contact_axis,
+                )
+                action_score = _repair_score(
+                    action, source, action_audit, objective_gradient
+                )
+                next_states.append(
+                    (
+                        action_score,
+                        action,
+                        history
+                        + [
+                            {
+                                "search_iteration": search_iteration + 1,
+                                "exact_bad_cells": int(
+                                    action_audit["total_bad_cell_count"]
+                                ),
+                                "changed_node_count": int(
+                                    np.count_nonzero(action != source)
+                                ),
+                                "predicted_objective_change_A": -action_score[1],
+                            }
+                        ],
+                    )
+                )
+        if len(feasible) >= maximum_candidates or not next_states:
+            break
+        next_states.sort(key=lambda item: item[0])
+        beam = [(item[1], item[2]) for item in next_states[:beam_width]]
+
+    feasible.sort(key=lambda item: item[0])
+    rows: list[dict[str, object]] = []
+    arrays: list[np.ndarray] = []
+    for rank, (score, candidate, history, audit) in enumerate(
+        feasible[:maximum_candidates]
+    ):
+        rows.append(
+            {
+                "rank": rank,
+                "exact_audit": audit,
+                "changed_node_count": score[2],
+                "changed_node_fraction": float(score[2] / source.size),
+                "predicted_objective_change_A": -score[1],
+                "search_history": history,
+            }
+        )
+        arrays.append(candidate.astype(np.float64))
+    return {
+        "schema": "gradient-aware-exact-500nm-repair-v1",
+        "geometry_mode": geometry_mode,
+        "contact_axis": contact_axis,
+        "source_audit": source_audit,
+        "explored_state_count": explored,
+        "visited_state_count": len(visited),
+        "passed": bool(rows),
+        "candidates": rows,
+        "candidate_arrays": arrays,
+    }
 
 
 def artifact(path: Path) -> dict[str, object]:
