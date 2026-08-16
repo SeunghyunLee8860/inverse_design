@@ -126,3 +126,21 @@ def test_bounded_official_dfm_driver_prevents_low_beta_endpoint_collapse() -> No
     assert "lower_bounds=stage_lower" in text
     assert "upper_bounds=stage_upper" in text
     assert "same_beta_restart_loop" in text
+
+
+def test_bounded_official_dfm_driver_visits_high_beta_and_can_resume() -> None:
+    source = Path(__file__).parents[1] / "run_official_dfm_exact_repair_optimization.py"
+    text = source.read_text()
+    assert 'parser.add_argument("--resume", action="store_true")' in text
+    assert "restore_resume_state" in text
+    assert "if beta <= last_completed_beta" in text
+    assert "if beta >= 16.0 and discreteness > 0.99" not in text
+    assert 'candidate_root = raw_root / f"exact_attempt_beta{final_beta:g}"' in text
+
+
+def test_exact_candidate_selection_does_not_abort_on_objective_only_failure() -> None:
+    source = Path(__file__).parents[1] / "run_official_dfm_exact_repair_optimization.py"
+    text = source.read_text()
+    assert "completed.returncode not in (0, 1)" in text
+    assert 'result.get("binary_objective_preserved_within_one_percent", False)' in text
+    assert '"FAILED_EXACT_BINARY_OBJECTIVE_PRESERVATION"' in text

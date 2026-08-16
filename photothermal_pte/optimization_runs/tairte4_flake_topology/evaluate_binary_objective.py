@@ -108,7 +108,7 @@ def main() -> int:
                 dtype=np.float64,
             ),
         )
-        passed = bool(
+        physical_gates_passed = bool(
             forward["closure"] < 0.005
             and coupled["mapping"]["relative_mapping_error"] < 0.005
             and coupled["thermal_forward"].explicit_relative_residual < 1e-8
@@ -116,8 +116,8 @@ def main() -> int:
             and coupled["electrical"].weighting_residual < 1e-8
             and np.isfinite(objective)
             and coupled["electrical"].terminal_conductance_S > 0.0
-            and objective_preserved
         )
+        passed = bool(physical_gates_passed and objective_preserved)
         result = {
             "schema": "contact-anchored-exact-binary-objective-v1",
             "status": (
@@ -134,6 +134,8 @@ def main() -> int:
             "objective_A": objective,
             "reference_continuous_objective_A": args.reference_objective_A,
             "relative_objective_change_from_continuous": reference_change,
+            "physical_gates_passed": physical_gates_passed,
+            "objective_gate_passed": objective_preserved,
             "binary_objective_preserved_within_one_percent": objective_preserved,
             "equivalent_objective_at_285uW_A": objective * 285.0e-6 / forward["source_power_W"],
             "responsivity_A_W": objective / forward["source_power_W"],

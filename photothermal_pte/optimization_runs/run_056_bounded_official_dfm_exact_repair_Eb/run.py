@@ -56,6 +56,8 @@ def main() -> int:
         "--constraint-device",
         "cuda:0",
     ]
+    if os.environ.get("RUN056_RESUME", "0") == "1":
+        command.append("--resume")
     return subprocess.run(command, cwd=REPOSITORY, env=environment).returncode
 
 

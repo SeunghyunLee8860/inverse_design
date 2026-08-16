@@ -17,6 +17,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+from types import SimpleNamespace
 
 import matplotlib
 matplotlib.use("Agg")
@@ -87,15 +88,16 @@ def evaluate_exact_candidate(
     *,
     rho: np.ndarray,
     rank: int,
-    raw_root: Path,
+    candidate_root: Path,
     polarization: str,
     gpu: int,
     base_fsp: Path,
     base_sha256: str,
     reference_objective_A: float,
 ) -> dict[str, object]:
-    density = raw_root / f"exact_candidate_{rank:02d}.npz"
-    output = raw_root / f"exact_candidate_{rank:02d}_physics"
+    candidate_root.mkdir(parents=True, exist_ok=True)
+    density = candidate_root / f"exact_candidate_{rank:02d}.npz"
+    output = candidate_root / f"exact_candidate_{rank:02d}_physics"
     np.savez_compressed(density, rho=np.asarray(rho, dtype=np.float64))
     command = [
         sys.executable,
@@ -122,11 +124,23 @@ def evaluate_exact_candidate(
     environment["CUDA_VISIBLE_DEVICES"] = str(gpu)
     completed = subprocess.run(command, cwd=REPOSITORY, env=environment)
     result_path = output / "binary_objective_result.json"
-    if completed.returncode or not result_path.is_file():
+    if not result_path.is_file():
         raise RuntimeError(f"exact candidate {rank} physics evaluation failed")
     result = json.loads(result_path.read_text())
-    if not result.get("passed"):
-        raise RuntimeError(f"exact candidate {rank} failed physical gates")
+    physical_gates_passed = bool(
+        result.get(
+            "physical_gates_passed",
+            result.get("forward", {}).get("closure", np.inf) < 0.005
+            and result.get("gates", {}).get("Q_mapping_error", np.inf) < 0.005
+            and result.get("gates", {}).get("thermal_forward_residual", np.inf) < 1e-8
+            and result.get("gates", {}).get("thermal_energy_balance", np.inf) < 0.01
+            and result.get("gates", {}).get("electrical_weighting_residual", np.inf) < 1e-8
+            and np.isfinite(float(result.get("objective_A", np.nan)))
+            and float(result.get("terminal_conductance_S", 0.0)) > 0.0,
+        )
+    )
+    if completed.returncode not in (0, 1) or not physical_gates_passed:
+        raise RuntimeError(f"exact candidate {rank} failed physical solver gates")
     return {
         "rank": rank,
         "density": {
@@ -136,8 +150,67 @@ def evaluate_exact_candidate(
         },
         "result_path": str(result_path),
         "objective_A": float(result["objective_A"]),
+        "physical_gates_passed": physical_gates_passed,
+        "objective_gate_passed": bool(
+            result.get("binary_objective_preserved_within_one_percent", False)
+        ),
         "result": result,
     }
+
+
+def restore_resume_state(
+    raw_root: Path, published: Path
+) -> tuple[list[dict[str, object]], dict[str, object], np.ndarray, float, int, int, float]:
+    """Restore the last completed beta without replaying Maxwell evaluations."""
+
+    history_path = raw_root / "history.json"
+    manifest_path = published / "RAW_ARTIFACT_MANIFEST.json"
+    if not history_path.is_file() or not manifest_path.is_file():
+        raise RuntimeError("resume requires history.json and the published manifest")
+    history = json.loads(history_path.read_text())
+    manifest = json.loads(manifest_path.read_text())
+    completed: list[tuple[float, Path]] = []
+    for beta in BETA_SCHEDULE:
+        path = raw_root / f"beta_{beta:g}_completed.npz"
+        if path.is_file():
+            completed.append((beta, path))
+    if not completed:
+        raise RuntimeError("resume found no completed beta checkpoint")
+    last_beta, checkpoint = completed[-1]
+    with np.load(checkpoint) as data:
+        latent = np.asarray(data["latent"], dtype=np.float64)
+    if latent.shape != MAPPING.shape:
+        raise RuntimeError("resume checkpoint shape disagrees with design mapping")
+    if not history:
+        raise RuntimeError("resume history is empty")
+    fixed_source_power = float(history[0]["fixed_source_power_W"])
+    evaluation_counter = max(int(row["evaluation_id"]) for row in history)
+    global_evaluation = max(
+        int(row["global_full_physics_evaluation"]) for row in history
+    )
+    return (
+        history,
+        manifest,
+        latent,
+        fixed_source_power,
+        evaluation_counter,
+        global_evaluation,
+        last_beta,
+    )
+
+
+def restore_final_point(raw_root: Path, history: list[dict[str, object]]) -> SimpleNamespace:
+    """Restore the latest objective result and physical-density gradient."""
+
+    row = max(history, key=lambda item: int(item["global_full_physics_evaluation"]))
+    evaluation_id = int(row["evaluation_id"])
+    matches = sorted(raw_root.glob(f"evaluation_{evaluation_id:04d}_beta*_official_ansys_dfm"))
+    if len(matches) != 1:
+        raise RuntimeError("resume could not resolve the latest evaluation directory")
+    result = json.loads((matches[0] / "objective_gradient_result.json").read_text())
+    with np.load(matches[0] / "objective_gradient.npz") as data:
+        gradient = np.asarray(data["gradient_total_A"], dtype=np.float64)
+    return SimpleNamespace(result=result, gradient_physical_A=gradient)
 
 
 def main() -> int:
@@ -150,6 +223,7 @@ def main() -> int:
     parser.add_argument("--base-sha256", required=True)
     parser.add_argument("--jacobian-dir", required=True, type=Path)
     parser.add_argument("--constraint-device", default="cuda:0")
+    parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
 
     CONTRACT.validate()
@@ -167,35 +241,55 @@ def main() -> int:
 
     raw_root = args.raw_root.expanduser().resolve()
     published = args.published_dir.expanduser().resolve()
-    if raw_root.exists() and any(raw_root.iterdir()):
+    if raw_root.exists() and any(raw_root.iterdir()) and not args.resume:
         raise RuntimeError("fresh bounded run requires an empty raw directory")
     raw_root.mkdir(parents=True, exist_ok=True)
     published.mkdir(parents=True, exist_ok=True)
     events = raw_root / "events.jsonl"
-    history: list[dict[str, object]] = []
-    manifest = initial_manifest(base_fsp, args.base_sha256, jacobian_dir)
-    manifest["schema"] = "official-ansys-dfm-exact-repair-optimization-v1"
-    manifest["continuation"] = {
-        "beta_schedule": list(BETA_SCHEDULE),
-        "maximum_evaluations_per_beta": MAXIMUM_EVALUATIONS,
-        "stage_trust_radius": STAGE_TRUST_RADIUS,
-        "trust_region_interpretation": (
-            "fixed bounds around each beta-stage start; not a fixed "
-            "per-evaluation update or normalized-gradient step"
-        ),
-        "same_beta_restart_loop": False,
-        "official_dfm": DFM_CONTRACT.audit(),
-        "exact_final_gate": "independent 500-nm binary opening audit",
-    }
-    write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
-
-    latent = np.full(MAPPING.shape, 0.5, dtype=np.float64)
-    fixed_source_power: float | None = None
-    evaluation_counter = 0
-    global_evaluation = 0
-    final_point = None
+    if args.resume:
+        (
+            history,
+            manifest,
+            latent,
+            fixed_source_power,
+            evaluation_counter,
+            global_evaluation,
+            last_completed_beta,
+        ) = restore_resume_state(raw_root, published)
+        final_point = restore_final_point(raw_root, history)
+        emit(
+            events,
+            "bounded_run_resumed",
+            last_completed_beta=last_completed_beta,
+            next_evaluation=evaluation_counter + 1,
+        )
+    else:
+        history = []
+        manifest = initial_manifest(base_fsp, args.base_sha256, jacobian_dir)
+        manifest["schema"] = "official-ansys-dfm-exact-repair-optimization-v1"
+        manifest["continuation"] = {
+            "beta_schedule": list(BETA_SCHEDULE),
+            "maximum_evaluations_per_beta": MAXIMUM_EVALUATIONS,
+            "stage_trust_radius": STAGE_TRUST_RADIUS,
+            "trust_region_interpretation": (
+                "fixed bounds around each beta-stage start; not a fixed "
+                "per-evaluation update or normalized-gradient step"
+            ),
+            "same_beta_restart_loop": False,
+            "official_dfm": DFM_CONTRACT.audit(),
+            "exact_final_gate": "independent 500-nm binary opening audit",
+        }
+        write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
+        latent = np.full(MAPPING.shape, 0.5, dtype=np.float64)
+        fixed_source_power = None
+        evaluation_counter = 0
+        global_evaluation = 0
+        last_completed_beta = 0.0
+        final_point = None
 
     for beta in BETA_SCHEDULE:
+        if beta <= last_completed_beta:
+            continue
         evaluator = StageEvaluator(
             beta=beta,
             polarization=args.polarization,
@@ -282,9 +376,6 @@ def main() -> int:
             discreteness=discreteness,
             evaluations=evaluator.stage_full_physics_evaluations,
         )
-        if beta >= 16.0 and discreteness > 0.99:
-            break
-
     if final_point is None or fixed_source_power is None:
         raise RuntimeError("optimization did not produce a physical evaluation")
 
@@ -307,6 +398,7 @@ def main() -> int:
         raise RuntimeError("bounded exact repair found no 500-nm-feasible candidate")
 
     candidate_results = []
+    candidate_root = raw_root / f"exact_attempt_beta{final_beta:g}"
     for rank, candidate in enumerate(candidate_arrays):
         audit, _ = exact_binary_audit(
             candidate,
@@ -319,7 +411,7 @@ def main() -> int:
             evaluate_exact_candidate(
                 rho=candidate,
                 rank=rank,
-                raw_root=raw_root,
+                candidate_root=candidate_root,
                 polarization=args.polarization,
                 gpu=args.gpu,
                 base_fsp=base_fsp,
@@ -338,9 +430,15 @@ def main() -> int:
         float(final_point.result["objective_A"]), fixed_source_power
     )
     best_reference_A = equivalent_current(float(best["objective_A"]), fixed_source_power)
+    objective_gate_passed = bool(best["objective_gate_passed"])
+    final_passed = bool(best_audit["passed"] and objective_gate_passed)
     final = {
-        "passed": bool(best_audit["passed"]),
-        "status": "VALIDATED_OFFICIAL_DFM_EXACT_BINARY_PTE_OPTIMIZATION",
+        "passed": final_passed,
+        "status": (
+            "VALIDATED_OFFICIAL_DFM_EXACT_BINARY_PTE_OPTIMIZATION"
+            if final_passed
+            else "FAILED_EXACT_BINARY_OBJECTIVE_PRESERVATION"
+        ),
         "polarization": args.polarization,
         "axis_contract": "Lumerical x=b, y=a, z=c",
         "algorithm": "NLopt LD_MMA",
@@ -356,6 +454,7 @@ def main() -> int:
             / max(abs(continuous_reference_A), 1.0e-30)
         ),
         "exact_binary_audit": best_audit,
+        "objective_preservation_gate_passed": objective_gate_passed,
         "chosen_candidate": best,
         "all_exact_candidates": candidate_results,
         "official_ansys_dfm": DFM_CONTRACT.audit(),
