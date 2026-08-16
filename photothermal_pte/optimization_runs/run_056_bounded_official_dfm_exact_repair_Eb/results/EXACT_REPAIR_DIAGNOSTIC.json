@@ -12,15 +12,15 @@
     "geometry_mode": "contact_anchored",
     "contact_axis": "y",
     "outside_design_phase": "fixed_solid_at_top_bottom_and_void_at_left_right",
-    "solid_bad_cell_count": 60,
-    "void_bad_cell_count": 127,
-    "total_bad_cell_count": 187,
+    "solid_bad_cell_count": 54,
+    "void_bad_cell_count": 122,
+    "total_bad_cell_count": 176,
     "counted_entity": "design nodes (legacy field names retain *_cell_count)",
-    "solid_fraction": 0.6448463078796887,
+    "solid_fraction": 0.6454036869593939,
     "passed": false
   },
   "explored_state_count": 195,
-  "visited_state_count": 76320,
+  "visited_state_count": 72251,
   "passed": true,
   "candidates": [
     {
@@ -39,12 +39,12 @@
         "void_bad_cell_count": 0,
         "total_bad_cell_count": 0,
         "counted_entity": "design nodes (legacy field names retain *_cell_count)",
-        "solid_fraction": 0.6475712722693586,
+        "solid_fraction": 0.6480873640098264,
         "passed": true
       },
-      "changed_node_count": 146,
-      "changed_node_fraction": 0.0030139757643318677,
-      "predicted_objective_change_A": 4.63882866550526e-18,
+      "changed_node_count": 138,
+      "changed_node_fraction": 0.0028488264073821762,
+      "predicted_objective_change_A": 7.241440626938146e-18,
       "search_history": [
         {
           "seed_order": "unrepaired",
@@ -53,21 +53,21 @@
         },
         {
           "search_iteration": 1,
-          "exact_bad_cells": 9,
-          "changed_node_count": 127,
-          "predicted_objective_change_A": 2.867421080157382e-18
+          "exact_bad_cells": 6,
+          "changed_node_count": 122,
+          "predicted_objective_change_A": 5.163681568177008e-18
         },
         {
           "search_iteration": 2,
-          "exact_bad_cells": 7,
-          "changed_node_count": 139,
-          "predicted_objective_change_A": 4.582185815425898e-18
+          "exact_bad_cells": 4,
+          "changed_node_count": 134,
+          "predicted_objective_change_A": 7.004829383287609e-18
         },
         {
           "search_iteration": 3,
           "exact_bad_cells": 0,
-          "changed_node_count": 146,
-          "predicted_objective_change_A": 4.63882866550526e-18
+          "changed_node_count": 138,
+          "predicted_objective_change_A": 7.241440626938146e-18
         }
       ]
     },
@@ -87,12 +87,12 @@
         "void_bad_cell_count": 0,
         "total_bad_cell_count": 0,
         "counted_entity": "design nodes (legacy field names retain *_cell_count)",
-        "solid_fraction": 0.6475299849301211,
+        "solid_fraction": 0.6480254330009703,
         "passed": true
       },
-      "changed_node_count": 144,
-      "changed_node_fraction": 0.0029726884250944447,
-      "predicted_objective_change_A": 4.636639908231146e-18,
+      "changed_node_count": 135,
+      "changed_node_fraction": 0.002786895398526042,
+      "predicted_objective_change_A": 7.20292139427891e-18,
       "search_history": [
         {
           "seed_order": "unrepaired",
@@ -101,21 +101,21 @@
         },
         {
           "search_iteration": 1,
-          "exact_bad_cells": 9,
-          "changed_node_count": 127,
-          "predicted_objective_change_A": 2.867421080157382e-18
+          "exact_bad_cells": 6,
+          "changed_node_count": 122,
+          "predicted_objective_change_A": 5.163681568177008e-18
         },
         {
           "search_iteration": 2,
-          "exact_bad_cells": 7,
-          "changed_node_count": 137,
-          "predicted_objective_change_A": 4.579997058151784e-18
+          "exact_bad_cells": 4,
+          "changed_node_count": 131,
+          "predicted_objective_change_A": 6.966310150628372e-18
         },
         {
           "search_iteration": 3,
           "exact_bad_cells": 0,
-          "changed_node_count": 144,
-          "predicted_objective_change_A": 4.636639908231146e-18
+          "changed_node_count": 135,
+          "predicted_objective_change_A": 7.20292139427891e-18
         }
       ]
     },
@@ -135,12 +135,12 @@
         "void_bad_cell_count": 0,
         "total_bad_cell_count": 0,
         "counted_entity": "design nodes (legacy field names retain *_cell_count)",
-        "solid_fraction": 0.6475093412605024,
+        "solid_fraction": 0.6480873640098264,
         "passed": true
       },
-      "changed_node_count": 143,
-      "changed_node_fraction": 0.002952044755475733,
-      "predicted_objective_change_A": 4.2944981398004166e-18,
+      "changed_node_count": 138,
+      "changed_node_fraction": 0.0028488264073821762,
+      "predicted_objective_change_A": 7.192479400939102e-18,
       "search_history": [
         {
           "seed_order": "unrepaired",
@@ -149,21 +149,21 @@
         },
         {
           "search_iteration": 1,
-          "exact_bad_cells": 9,
-          "changed_node_count": 127,
-          "predicted_objective_change_A": 2.867421080157382e-18
+          "exact_bad_cells": 6,
+          "changed_node_count": 122,
+          "predicted_objective_change_A": 5.163681568177008e-18
         },
         {
           "search_iteration": 2,
-          "exact_bad_cells": 7,
-          "changed_node_count": 136,
-          "predicted_objective_change_A": 4.237855289721054e-18
+          "exact_bad_cells": 4,
+          "changed_node_count": 134,
+          "predicted_objective_change_A": 6.955868157288565e-18
         },
         {
           "search_iteration": 3,
           "exact_bad_cells": 0,
-          "changed_node_count": 143,
-          "predicted_objective_change_A": 4.2944981398004166e-18
+          "changed_node_count": 138,
+          "predicted_objective_change_A": 7.192479400939102e-18
         }
       ]
     },
@@ -183,12 +183,12 @@
         "void_bad_cell_count": 0,
         "total_bad_cell_count": 0,
         "counted_entity": "design nodes (legacy field names retain *_cell_count)",
-        "solid_fraction": 0.6475506285997399,
+        "solid_fraction": 0.648046076670589,
         "passed": true
       },
-      "changed_node_count": 145,
-      "changed_node_fraction": 0.002993332094713156,
-      "predicted_objective_change_A": 4.286985813402027e-18,
+      "changed_node_count": 136,
+      "changed_node_fraction": 0.0028075390681447532,
+      "predicted_objective_change_A": 7.170130345350878e-18,
       "search_history": [
         {
           "seed_order": "unrepaired",
@@ -197,21 +197,21 @@
         },
         {
           "search_iteration": 1,
-          "exact_bad_cells": 9,
-          "changed_node_count": 127,
-          "predicted_objective_change_A": 2.867421080157382e-18
+          "exact_bad_cells": 6,
+          "changed_node_count": 122,
+          "predicted_objective_change_A": 5.163681568177008e-18
         },
         {
           "search_iteration": 2,
-          "exact_bad_cells": 7,
-          "changed_node_count": 138,
-          "predicted_objective_change_A": 4.2303429633226644e-18
+          "exact_bad_cells": 4,
+          "changed_node_count": 132,
+          "predicted_objective_change_A": 6.93351910170034e-18
         },
         {
           "search_iteration": 3,
           "exact_bad_cells": 0,
-          "changed_node_count": 145,
-          "predicted_objective_change_A": 4.286985813402027e-18
+          "changed_node_count": 136,
+          "predicted_objective_change_A": 7.170130345350878e-18
         }
       ]
     }
