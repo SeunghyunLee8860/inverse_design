@@ -228,8 +228,16 @@ def main() -> int:
 
     CONTRACT.validate()
     DFM_CONTRACT.validate()
-    if CONTRACT.geometry_mode != "contact_anchored" or CONTRACT.contact_axis != "y":
-        raise RuntimeError("this production run requires top/bottom contact anchoring")
+    supported_contact_geometries = {
+        "contact_anchored": "y",
+        "left_right_contact_anchored": "x",
+    }
+    expected_contact_axis = supported_contact_geometries.get(CONTRACT.geometry_mode)
+    if expected_contact_axis is None or CONTRACT.contact_axis != expected_contact_axis:
+        raise RuntimeError(
+            "this production run requires a supported contact-anchored geometry "
+            "with a consistent terminal axis"
+        )
     if CONTRACT.design_node_shape != MAPPING.shape:
         raise RuntimeError("density mapping and geometry shape disagree")
 

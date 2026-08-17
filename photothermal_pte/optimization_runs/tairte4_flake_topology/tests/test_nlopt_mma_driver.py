@@ -138,6 +138,14 @@ def test_bounded_official_dfm_driver_visits_high_beta_and_can_resume() -> None:
     assert 'candidate_root = raw_root / f"exact_attempt_beta{final_beta:g}"' in text
 
 
+def test_bounded_official_dfm_driver_supports_both_contact_orientations() -> None:
+    source = Path(__file__).parents[1] / "run_official_dfm_exact_repair_optimization.py"
+    text = source.read_text()
+    assert '"contact_anchored": "y"' in text
+    assert '"left_right_contact_anchored": "x"' in text
+    assert "expected_contact_axis" in text
+
+
 def test_exact_candidate_selection_does_not_abort_on_objective_only_failure() -> None:
     source = Path(__file__).parents[1] / "run_official_dfm_exact_repair_optimization.py"
     text = source.read_text()
