@@ -1,0 +1,53 @@
+{
+  "schema": "run044-floating-island-ablation-comparison-v1",
+  "status": "COMPLETED_RUN044_FLOATING_ISLAND_ABLATION",
+  "generated_at_utc": "2026-08-17T22:46:34.699917+00:00",
+  "axis_contract": "Lumerical x=b, y=a, z=c",
+  "unchanged_contract": "Run 044 Ea, top-bottom electrodes, thermally-grown SiO2, identical source/mesh/PML/thermal/electrical operators",
+  "removed_floating_component_count": 6,
+  "removed_solid_nodes": 2431,
+  "removed_fraction_of_original_solid": 0.0709470304975923,
+  "exact_500nm_bad_nodes_after": 0,
+  "original": {
+    "P_Q_raw_W": 2.8784756191150704e-14,
+    "mapped_P_Q_at_285uW_W": 5.7781576878398574e-05,
+    "global_Tmax_at_285uW_K": 0.3898242044233401,
+    "Tmax_on_retained_support_at_285uW_K": 0.2996864601442808,
+    "global_max_strict_gradT_K_m": 186599.89597722545,
+    "max_common_strict_gradT_K_m": 163941.899341049,
+    "terminal_current_at_285uW_A": 9.001306645066968e-08,
+    "terminal_conductance_S": 0.013629412337229077,
+    "closure": 0.0007072820656387887
+  },
+  "islands_removed": {
+    "P_Q_raw_W": 2.4204139422911635e-14,
+    "mapped_P_Q_at_285uW_W": 4.862131063353774e-05,
+    "global_Tmax_at_285uW_K": 0.2992779985670692,
+    "Tmax_on_retained_support_at_285uW_K": 0.2992779985670692,
+    "global_max_strict_gradT_K_m": 163453.94858724068,
+    "max_common_strict_gradT_K_m": 163453.94858724068,
+    "terminal_current_at_285uW_A": 8.280553711299624e-08,
+    "terminal_conductance_S": 0.013629411781737285,
+    "closure": 0.0003721429068192335,
+    "all_physical_gates_passed": true
+  },
+  "relative_change_islands_removed_vs_original": {
+    "P_Q": -0.15913342249003615,
+    "mapped_P_Q_at_285uW": -0.15853264552019117,
+    "global_Tmax": -0.23227445815021733,
+    "Tmax_on_retained_support": -0.0013629630681844403,
+    "global_max_strict_gradT": -0.12404051603978243,
+    "max_common_strict_gradT": -0.0029763639177634916,
+    "terminal_current": -0.08007203422653549,
+    "terminal_conductance": -4.075684099282464e-08
+  },
+  "relative_L2_difference": {
+    "full_3D_mapped_Q": 0.566211510484547,
+    "depth_integrated_Qxy": 0.49788492485485303,
+    "temperature_on_retained_support": 0.06692790292470199,
+    "strict_gradient_on_common_valid_support": 0.1268707021087374,
+    "terminal_current_integrand": 0.11243830946563182
+  },
+  "interpretation": "Floating components have negligible direct electrical collection, but their removal changes Maxwell absorption/scattering and the downstream temperature field; the fresh end-to-end current change therefore measures their net indirect optothermal contribution.",
+  "no_clipping_smoothing_gain_or_rescaling": true
+}
