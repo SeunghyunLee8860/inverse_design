@@ -1,0 +1,436 @@
+{
+  "schema": "final-exact-binary-eight-case-artifact-manifest-v1",
+  "status": "COMPLETED_EXACT_BINARY_EIGHT_CASE_PHYSICS_MATRIX_WITH_OBJECTIVE_PRESERVATION_DIAGNOSTICS",
+  "generated_at_utc": "2026-08-17T20:45:12.126749+00:00",
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/optimization_runs/summarize_final_exact_binary_eight_case.py",
+  "raw_artifacts_not_committed": [
+    {
+      "role": "Run 044 exact-binary scalar result",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_Ea_gpu_objective_retry2/binary_objective_result.json",
+      "size_bytes": 4777,
+      "sha256": "6564c6dda47cdcf92c170e7ef7780638011e8a36d4af5a4b989ef9114f4f4e5f"
+    },
+    {
+      "role": "Run 044 exact-binary Q/T/psi fields",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_Ea_gpu_objective_retry2/binary_objective_fields.npz",
+      "size_bytes": 9390039,
+      "sha256": "9174cab0e4441807d32d578a4d88995bb346a5a82b94f02b58b85ab04d84fc25"
+    },
+    {
+      "role": "Run 044 selected exact-binary density",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_exact_binary_candidate.npz",
+      "size_bytes": 5457,
+      "sha256": "9e309d47d52ea1d5784bcae9623343b877840cd74684efd27f46490aaa75091f"
+    },
+    {
+      "role": "Run 044 raw FSP (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_Ea_gpu_objective_retry2/exact_binary_forward_Ea.fsp",
+      "size_bytes": 180905109,
+      "sha256": "105d43ed872068b43081581310b6c248d3e83301fd526771f1cbbb32b3800407"
+    },
+    {
+      "role": "Run 044 raw Maxwell engine artifact (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_Ea_gpu_objective_retry2/exact_binary_forward_Ea_p0.log",
+      "size_bytes": 6548,
+      "sha256": "71e42ab49fda3ae45ed97e24c81d84c4ad751e48ebed5ab01259351edd558157"
+    },
+    {
+      "role": "Run 045 exact-binary scalar result",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_exact_500nm_cleanup_20260811/void_first_Eb_gpu_objective_retry1/binary_objective_result.json",
+      "size_bytes": 4795,
+      "sha256": "bb2c57aa251cb6b635c6896b26d6e1022c860b9da3bfa79561a90a2de9cf8ede"
+    },
+    {
+      "role": "Run 045 exact-binary Q/T/psi fields",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_exact_500nm_cleanup_20260811/void_first_Eb_gpu_objective_retry1/binary_objective_fields.npz",
+      "size_bytes": 9370058,
+      "sha256": "cc317736abdb88ce9b3308adf3d7f61fa07ddf6abd65da818996794092a6448d"
+    },
+    {
+      "role": "Run 045 selected exact-binary density",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_exact_500nm_cleanup_20260811/void_first_exact_binary_candidate.npz",
+      "size_bytes": 4419,
+      "sha256": "2d87cd272680d061f19278d54e1b5d20efa5bc3465359c76e51fef16f4fca592"
+    },
+    {
+      "role": "Run 045 raw FSP (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_exact_500nm_cleanup_20260811/void_first_Eb_gpu_objective_retry1/exact_binary_forward_Eb.fsp",
+      "size_bytes": 180904005,
+      "sha256": "0624d69e0962699f7fec091b7714de8d5ecba7d6d2a97bb64f50faeb50792457"
+    },
+    {
+      "role": "Run 045 raw Maxwell engine artifact (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_exact_500nm_cleanup_20260811/void_first_Eb_gpu_objective_retry1/exact_binary_forward_Eb_p0.log",
+      "size_bytes": 6299,
+      "sha256": "df6fbc0f5b7072a6fe263d9d6e14123c60373ce74e8da16a79b5704f5be10124"
+    },
+    {
+      "role": "Run 046 exact-binary scalar result",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run046_Ea_current_max/forced_exact_500nm_cleanup/solid_first_objective/binary_objective_result.json",
+      "size_bytes": 4847,
+      "sha256": "98ad732cd1f4a86b1693f1ce20bcc7980fbe1075a6451d5004e05260929df14f"
+    },
+    {
+      "role": "Run 046 exact-binary Q/T/psi fields",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run046_Ea_current_max/forced_exact_500nm_cleanup/solid_first_objective/binary_objective_fields.npz",
+      "size_bytes": 8659618,
+      "sha256": "1c3ad39ab9413ca6feaf5442a16e3686447d162fbd894038846d128b8d66fc37"
+    },
+    {
+      "role": "Run 046 selected exact-binary density",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run046_Ea_current_max/forced_exact_500nm_cleanup/solid_first_density.npz",
+      "size_bytes": 1798,
+      "sha256": "a718e8cc10988a4f84f2498d3b05eefd9897eb3726a088bf722651d0278f96d7"
+    },
+    {
+      "role": "Run 046 raw FSP (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run046_Ea_current_max/forced_exact_500nm_cleanup/solid_first_objective/exact_binary_forward_Ea.fsp",
+      "size_bytes": 180904197,
+      "sha256": "a8768c2735c76e6cf6c7ba6398bc93b172f47263c4ede8193e988432823d7628"
+    },
+    {
+      "role": "Run 046 raw Maxwell engine artifact (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run046_Ea_current_max/forced_exact_500nm_cleanup/solid_first_objective/exact_binary_forward_Ea_p0.log",
+      "size_bytes": 6311,
+      "sha256": "de04c0ac614de4e78b364b6c21a8361050475454b4414aa65ccef5dec1d2b80c"
+    },
+    {
+      "role": "Run 048 exact-binary scalar result",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_Eb_fresh_current_max/forced_exact_500nm_cleanup/solid_first_objective/binary_objective_result.json",
+      "size_bytes": 4867,
+      "sha256": "03cc16f77b36cd224482243c7efba283e4d9e09bb2e2de91a770ff6ad1248806"
+    },
+    {
+      "role": "Run 048 exact-binary Q/T/psi fields",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_Eb_fresh_current_max/forced_exact_500nm_cleanup/solid_first_objective/binary_objective_fields.npz",
+      "size_bytes": 9138329,
+      "sha256": "b9cb1d151de5c7e11ffb99bc27ebea8a1abd6f57f0a741c30cad5259198dca44"
+    },
+    {
+      "role": "Run 048 selected exact-binary density",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_Eb_fresh_current_max/forced_exact_500nm_cleanup/solid_first_density.npz",
+      "size_bytes": 2088,
+      "sha256": "b07dafd6516dc858ed99489eefe053fc42441beb67eb32f506d79067ab6ad85c"
+    },
+    {
+      "role": "Run 048 raw FSP (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_Eb_fresh_current_max/forced_exact_500nm_cleanup/solid_first_objective/exact_binary_forward_Eb.fsp",
+      "size_bytes": 180904149,
+      "sha256": "24e46d63637202d8079af4854c449356c099f3d7ce636ee42b1c1c6858760fb4"
+    },
+    {
+      "role": "Run 048 raw Maxwell engine artifact (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_Eb_fresh_current_max/forced_exact_500nm_cleanup/solid_first_objective/exact_binary_forward_Eb_p0.log",
+      "size_bytes": 6298,
+      "sha256": "f5a2fe06c753c3466589fa6c9ed215fd88fccc82a9b9a8b7c28e025dba4d9bdc"
+    },
+    {
+      "role": "Run 055 exact-binary scalar result",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run055_bounded_official_dfm_exact_repair_Ea_evaporated_v1/exact_attempt_beta128/exact_candidate_01_physics/binary_objective_result.json",
+      "size_bytes": 5317,
+      "sha256": "d54aad0b98de5153c03c4f9dcd8715794c25a1d1fac40969471db5180be3da4f"
+    },
+    {
+      "role": "Run 055 exact-binary Q/T/psi fields",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run055_bounded_official_dfm_exact_repair_Ea_evaporated_v1/exact_attempt_beta128/exact_candidate_01_physics/binary_objective_fields.npz",
+      "size_bytes": 9097721,
+      "sha256": "5be53251c199210bfb57d083e611be33a3251929e5f132bf97e4cf2ce2e39320"
+    },
+    {
+      "role": "Run 055 selected exact-binary density",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run055_bounded_official_dfm_exact_repair_Ea_evaporated_v1/exact_attempt_beta128/exact_candidate_01.npz",
+      "size_bytes": 2269,
+      "sha256": "0980cc4c23f0ccf68bc971912536dec9f38d1314a1a4671d1c2c5d0b3def2fc5"
+    },
+    {
+      "role": "Run 055 raw FSP (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run055_bounded_official_dfm_exact_repair_Ea_evaporated_v1/exact_attempt_beta128/exact_candidate_01_physics/exact_binary_forward_Ea.fsp",
+      "size_bytes": 180904725,
+      "sha256": "e6ab8458f444707ae0bc78282dc184c1ae6cc00ccc6fc78267634570aebd6fbd"
+    },
+    {
+      "role": "Run 055 raw Maxwell engine artifact (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run055_bounded_official_dfm_exact_repair_Ea_evaporated_v1/exact_attempt_beta128/exact_candidate_01_physics/exact_binary_forward_Ea_p0.log",
+      "size_bytes": 6440,
+      "sha256": "0840bd6298137bd05c041e950134a85ad4b11574421f0052662a5753845b5312"
+    },
+    {
+      "role": "Run 056 exact-binary scalar result",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run056_bounded_official_dfm_exact_repair_Eb_evaporated_v1/exact_attempt_beta128/exact_candidate_02_physics/binary_objective_result.json",
+      "size_bytes": 5333,
+      "sha256": "6e4c2fdfb42b391ecae4b96b7ce87e5752b1e59d585d1d2348c08c98c4d2e550"
+    },
+    {
+      "role": "Run 056 exact-binary Q/T/psi fields",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run056_bounded_official_dfm_exact_repair_Eb_evaporated_v1/exact_attempt_beta128/exact_candidate_02_physics/binary_objective_fields.npz",
+      "size_bytes": 9050261,
+      "sha256": "a179ac79ecaec7da6e97a05fa351c1f0941b4a0a78a13c3230c62bb889032da2"
+    },
+    {
+      "role": "Run 056 selected exact-binary density",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run056_bounded_official_dfm_exact_repair_Eb_evaporated_v1/exact_attempt_beta128/exact_candidate_02.npz",
+      "size_bytes": 2144,
+      "sha256": "dfbff9756260204dd164786feb89bea806d0614074ff56aaf5566b4050ae87d9"
+    },
+    {
+      "role": "Run 056 raw FSP (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run056_bounded_official_dfm_exact_repair_Eb_evaporated_v1/exact_attempt_beta128/exact_candidate_02_physics/exact_binary_forward_Eb.fsp",
+      "size_bytes": 180903957,
+      "sha256": "6b87448f1089d2eff586f9c4db42d0ce9ef1dcc6af22136cb171c691adf7ca38"
+    },
+    {
+      "role": "Run 056 raw Maxwell engine artifact (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run056_bounded_official_dfm_exact_repair_Eb_evaporated_v1/exact_attempt_beta128/exact_candidate_02_physics/exact_binary_forward_Eb_p0.log",
+      "size_bytes": 6336,
+      "sha256": "dcdf6e0331332ab2657e041c7c567e35d4b9354dd0e3a618e22a303572c9f6af"
+    },
+    {
+      "role": "Run 057 exact-binary scalar result",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run057_bounded_official_dfm_exact_repair_Ea_evaporated_v1/exact_attempt_beta128/exact_candidate_03_physics/binary_objective_result.json",
+      "size_bytes": 5389,
+      "sha256": "d0ac4f15c6225b53370badbaebcab50887d1b4aad63184b99c2de2a72b4cd240"
+    },
+    {
+      "role": "Run 057 exact-binary Q/T/psi fields",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run057_bounded_official_dfm_exact_repair_Ea_evaporated_v1/exact_attempt_beta128/exact_candidate_03_physics/binary_objective_fields.npz",
+      "size_bytes": 9263384,
+      "sha256": "09a2c7a7ebe014c483c81bdbda37898f828af5873ebd0bf35847ca351d4d3009"
+    },
+    {
+      "role": "Run 057 selected exact-binary density",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run057_bounded_official_dfm_exact_repair_Ea_evaporated_v1/exact_attempt_beta128/exact_candidate_03.npz",
+      "size_bytes": 1983,
+      "sha256": "649a993ba043f69489368117dce1fa7d9851ba9f337474dc6e9ed7a52d15aed6"
+    },
+    {
+      "role": "Run 057 raw FSP (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run057_bounded_official_dfm_exact_repair_Ea_evaporated_v1/exact_attempt_beta128/exact_candidate_03_physics/exact_binary_forward_Ea.fsp",
+      "size_bytes": 180904725,
+      "sha256": "3e366a952a196fb755bc932f56853a2e909dc0b0048b439efa7aefa797432f7a"
+    },
+    {
+      "role": "Run 057 raw Maxwell engine artifact (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run057_bounded_official_dfm_exact_repair_Ea_evaporated_v1/exact_attempt_beta128/exact_candidate_03_physics/exact_binary_forward_Ea_p0.log",
+      "size_bytes": 6471,
+      "sha256": "53013ed272f80e51c892c63a6c1da782dcaa3d7e5893a8e0ffc69d6933b14b2f"
+    },
+    {
+      "role": "Run 058 exact-binary scalar result",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run058_bounded_official_dfm_exact_repair_Eb_evaporated_v1/exact_attempt_beta128/exact_candidate_00_physics/binary_objective_result.json",
+      "size_bytes": 5361,
+      "sha256": "2b3758f56440c0b08e984c8f1047bf11c5ef030274f26b87183a936de90a3624"
+    },
+    {
+      "role": "Run 058 exact-binary Q/T/psi fields",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run058_bounded_official_dfm_exact_repair_Eb_evaporated_v1/exact_attempt_beta128/exact_candidate_00_physics/binary_objective_fields.npz",
+      "size_bytes": 9148921,
+      "sha256": "d395c11604f92c5f36b467d7bdf4a8de606bebc71c5a6521a8e17afacb912d6b"
+    },
+    {
+      "role": "Run 058 selected exact-binary density",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run058_bounded_official_dfm_exact_repair_Eb_evaporated_v1/exact_attempt_beta128/exact_candidate_00.npz",
+      "size_bytes": 1721,
+      "sha256": "af397a7cd50d6b7da1f88b44659d739072267b1b60b55d75e7f156d25db7b884"
+    },
+    {
+      "role": "Run 058 raw FSP (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run058_bounded_official_dfm_exact_repair_Eb_evaporated_v1/exact_attempt_beta128/exact_candidate_00_physics/exact_binary_forward_Eb.fsp",
+      "size_bytes": 180904053,
+      "sha256": "2b440c47c24017486e6fb7e32cef7d835bc367493eb2db28899decec17ec3602"
+    },
+    {
+      "role": "Run 058 raw Maxwell engine artifact (not committed)",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run058_bounded_official_dfm_exact_repair_Eb_evaporated_v1/exact_attempt_beta128/exact_candidate_00_physics/exact_binary_forward_Eb_p0.log",
+      "size_bytes": 6327,
+      "sha256": "00241a2a43eab13b1e64486f2e7cdec29394aa1e9b556c98516bbf450cd7fc82"
+    }
+  ],
+  "published_outputs": [
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/FINAL_EXACT_BINARY_EIGHT_CASE_REPORT.md",
+      "size_bytes": 4901,
+      "sha256": "daa9af2fb243ad0691d700190343db9dfd3ef10802e35641a086f6219c5f3e89"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/final_exact_binary_eight_case_summary.json",
+      "size_bytes": 22180,
+      "sha256": "8ece4599e97b36ce076789145f9a880c54ed0ebd7b79c855d5af3c26692a1dee"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/final_exact_binary_eight_case_metrics.csv",
+      "size_bytes": 7893,
+      "sha256": "5160a554a977e474c0f2a55055dd36f00904413c0af602fd6fddeee2f6023e6d"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run044_thermally_grown_top-bottom_Ea_fields.png",
+      "size_bytes": 555673,
+      "sha256": "590a6e862fcd7730ef8534f605886026ba587028922fb9bebdf099cce1918133"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run044_thermally_grown_top-bottom_Ea_profiles.png",
+      "size_bytes": 243120,
+      "sha256": "22585e94a6b7cb836933a078c5ef5a8e0f3f806dd34feed26efdba65a91fa69e"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run044_thermally_grown_top-bottom_Ea_decomposition.png",
+      "size_bytes": 90253,
+      "sha256": "b89334a3ed89958212defffd50f39e08966a047cd734286d7a949bd861fbe200"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run045_thermally_grown_top-bottom_Eb_fields.png",
+      "size_bytes": 585432,
+      "sha256": "2763a2929f60f3d3ceb48353988f342882c10fb9e2ca23837d2451624383c7c9"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run045_thermally_grown_top-bottom_Eb_profiles.png",
+      "size_bytes": 253510,
+      "sha256": "cca8002e34466dd3ff023175a965a329b286addbc5bd772a2e7cb349918b4424"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run045_thermally_grown_top-bottom_Eb_decomposition.png",
+      "size_bytes": 91949,
+      "sha256": "c37cff4ec84acda84116ba05773b239cb37a67f409a199c4d2dfb60f53e687d4"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run046_thermally_grown_left-right_Ea_fields.png",
+      "size_bytes": 502983,
+      "sha256": "a548b05033e01feefaf2ae6dcbbd6c626342e2cdcd9ba3ce0f7c2a59daffbc27"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run046_thermally_grown_left-right_Ea_profiles.png",
+      "size_bytes": 207183,
+      "sha256": "622edd63593640104ddb17c9b8b80b3b6e3b18ace58ce10b98be2758ac509dd8"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run046_thermally_grown_left-right_Ea_decomposition.png",
+      "size_bytes": 91654,
+      "sha256": "da79dac235f53b1af52370b4fe51b1a899812f451b6e420bc072643087e8e396"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run048_thermally_grown_left-right_Eb_fields.png",
+      "size_bytes": 579243,
+      "sha256": "712b5587e513c278ba5f5db651c88657d221a41cb5af3d9d179631e5fc0062f7"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run048_thermally_grown_left-right_Eb_profiles.png",
+      "size_bytes": 221764,
+      "sha256": "70d118746f325f39d17d75d9e3f3d57766c87ce496f4d79c03b92bf9f5cc037b"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run048_thermally_grown_left-right_Eb_decomposition.png",
+      "size_bytes": 91958,
+      "sha256": "85b4809e9d83892cb909ba96e62cdb10c41049aad9fa3b79a5cc110da8631f66"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run055_evaporated_top-bottom_Ea_fields.png",
+      "size_bytes": 551330,
+      "sha256": "5704061b09d91189e907a53caefc4d87d0a4bc0d7983be25ff0cf522afb0864f"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run055_evaporated_top-bottom_Ea_profiles.png",
+      "size_bytes": 270262,
+      "sha256": "c51d0fced174286183d324c95c5f5e70d792355f071906e10d923d083efabc55"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run055_evaporated_top-bottom_Ea_decomposition.png",
+      "size_bytes": 89866,
+      "sha256": "dfae23bd4fafb6676edd19fb7606a74417f13c4e3b08ec237bd8faf4943d2624"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run056_evaporated_top-bottom_Eb_fields.png",
+      "size_bytes": 533460,
+      "sha256": "2a77a886003e6b8ef33a6cb321c8b5ec76bee6ccfadbf6fd99f6d9b646a164e6"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run056_evaporated_top-bottom_Eb_profiles.png",
+      "size_bytes": 268058,
+      "sha256": "da494d43bd8a52c40719f0833bf9b7f65678182928fce917696fc42b866efb41"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run056_evaporated_top-bottom_Eb_decomposition.png",
+      "size_bytes": 92458,
+      "sha256": "43a65972a67cb6000696557de9868800c22bea0d1e17f739aa273e27b52b4ded"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run057_evaporated_left-right_Ea_fields.png",
+      "size_bytes": 522595,
+      "sha256": "bb6e656874e3bfbec117bf022b714e2f02c3a6883c31117bc3894c507708c3ff"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run057_evaporated_left-right_Ea_profiles.png",
+      "size_bytes": 235553,
+      "sha256": "08177199039eef5fb530f9006c083b074f81a19d3bb37cb7f5489ea7ffb6be9a"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run057_evaporated_left-right_Ea_decomposition.png",
+      "size_bytes": 88033,
+      "sha256": "d9d88df0e3cfb212c68d8360e290d4119f66824215aec4f4fc77e99018f43721"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run058_evaporated_left-right_Eb_fields.png",
+      "size_bytes": 522271,
+      "sha256": "89c097c974a8ded5c9d4d5cb4670526cfb657dbda6da4ef4d45bfbb794f2b463"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run058_evaporated_left-right_Eb_profiles.png",
+      "size_bytes": 224849,
+      "sha256": "0fdc7b76a0f836c2a5e5d063c98ef5a5636a38357f176ea7bf4ce1f4005dc57c"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/run058_evaporated_left-right_Eb_decomposition.png",
+      "size_bytes": 91514,
+      "sha256": "f6de50fca9f97b51f827e3432d266c1e7d419c22fd6fb7e074df0e3f7d4de5e5"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/final_exact_binary_structures.png",
+      "size_bytes": 133895,
+      "sha256": "0f89df811d305c09f4629557a1080d70067f614104e9beb2819447c91510de16"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/final_exact_binary_physics_metrics.png",
+      "size_bytes": 127172,
+      "sha256": "e5e65d7f892089367d7d8cf71c5ced5b899142ced3bf3a4cece8af156664bc3e"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/final_exact_binary_current_components.png",
+      "size_bytes": 80707,
+      "sha256": "9fb1399136f1cd2f354c60462854450ad29a900b44e16e146339abae1fe893ed"
+    },
+    {
+      "role": "published report artifact",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/final_exact_binary_eight_case_matrix/final_exact_binary_pair_comparisons.png",
+      "size_bytes": 80685,
+      "sha256": "7dab7845cbc0b06209740d73359731ceb5c4361e97f2da93de1fcc663c566d11"
+    }
+  ]
+}
