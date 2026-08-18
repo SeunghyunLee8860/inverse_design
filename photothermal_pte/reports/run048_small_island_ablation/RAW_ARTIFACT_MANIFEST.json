@@ -1,0 +1,80 @@
+{
+  "schema": "run048-small-island-ablation-artifact-manifest-v1",
+  "generated_at_utc": "2026-08-18T02:52:41.694861+00:00",
+  "raw_files_committed": false,
+  "generation_command": "TAIRTE4_TOPOLOGY_GEOMETRY=left_right_contact_anchored TAIRTE4_SIO2_INTERFACE_SCENARIO=thermally_grown CUDA_VISIBLE_DEVICES=5 python -m photothermal_pte.optimization_runs.tairte4_flake_topology.evaluate_binary_objective ...",
+  "artifacts": [
+    {
+      "role": "original Run 048 exact density",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_Eb_fresh_current_max/forced_exact_500nm_cleanup/solid_first_density.npz",
+      "size_bytes": 2088,
+      "sha256": "b07dafd6516dc858ed99489eefe053fc42441beb67eb32f506d79067ab6ad85c"
+    },
+    {
+      "role": "original Run 048 result",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_Eb_fresh_current_max/forced_exact_500nm_cleanup/solid_first_objective/binary_objective_result.json",
+      "size_bytes": 4867,
+      "sha256": "03cc16f77b36cd224482243c7efba283e4d9e09bb2e2de91a770ff6ad1248806"
+    },
+    {
+      "role": "original Run 048 fields",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_Eb_fresh_current_max/forced_exact_500nm_cleanup/solid_first_objective/binary_objective_fields.npz",
+      "size_bytes": 9138329,
+      "sha256": "b9cb1d151de5c7e11ffb99bc27ebea8a1abd6f57f0a741c30cad5259198dca44"
+    },
+    {
+      "role": "small-island-removed exact density",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_remove_small_floating_island_20260818/run048_small_island_removed_exact_binary.npz",
+      "size_bytes": 2062,
+      "sha256": "2d49e0e2aff9c03da60e4590236ff8b6f97798884c28b56e90626611e20f7863"
+    },
+    {
+      "role": "small-island transform audit",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_remove_small_floating_island_20260818/small_island_transform_audit.json",
+      "size_bytes": 3184,
+      "sha256": "272ebabfb2c185a9c1ddf9274371718b5f6a8f91065e35e91ff9bbdbe6fc6286"
+    },
+    {
+      "role": "small-island-removed result",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_remove_small_floating_island_20260818/small_island_removed_Eb_gpu_objective/binary_objective_result.json",
+      "size_bytes": 5297,
+      "sha256": "92ee77b4b06826c5a7133a199459cbe68548299c0c9c73cd0d0a29eff54266e6"
+    },
+    {
+      "role": "small-island-removed fields",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_remove_small_floating_island_20260818/small_island_removed_Eb_gpu_objective/binary_objective_fields.npz",
+      "size_bytes": 9133391,
+      "sha256": "aeea5222b6a8adb60a2b26793a5d4d0936899a12cccc3cf00748f9605f38ba1a"
+    },
+    {
+      "role": "small-island-removed raw FSP",
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_remove_small_floating_island_20260818/small_island_removed_Eb_gpu_objective/exact_binary_forward_Eb.fsp",
+      "size_bytes": 180904149,
+      "sha256": "3dc200e6a63252438cd11cf5703dd5e5eb411e5aecb726c32aa194d068599185"
+    },
+    {
+      "role": "geometry and Q comparison plot",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/run048_small_island_ablation/run048_small_island_ablation_geometry_Q.png",
+      "size_bytes": 221313,
+      "sha256": "f2cc4f3eed38a80580d28c9e311020694a33f4d739e871fc7d2b3b7141a315fa"
+    },
+    {
+      "role": "thermal and current comparison plot",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/run048_small_island_ablation/run048_small_island_ablation_thermal_current.png",
+      "size_bytes": 465490,
+      "sha256": "4f2d46444f208ff9c4b36da53730b22f6ef9fcbaff78ba67d9062a9b06eb5ca5"
+    },
+    {
+      "role": "small-island-removed final physical fields plot",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/run048_small_island_ablation/run048_small_island_removed_final_fields.png",
+      "size_bytes": 673191,
+      "sha256": "8e57691f21fd3a1be1a1c775ecd658d473ef5cfb52209ac78830a5bf4bf9743d"
+    },
+    {
+      "role": "scalar ablation comparison plot",
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/run048_small_island_ablation/run048_small_island_ablation_scalar_comparison.png",
+      "size_bytes": 68547,
+      "sha256": "b98221968d69db32c83fe092b150bf098e081bfa71d34d2999b059555fa942d2"
+    }
+  ]
+}
