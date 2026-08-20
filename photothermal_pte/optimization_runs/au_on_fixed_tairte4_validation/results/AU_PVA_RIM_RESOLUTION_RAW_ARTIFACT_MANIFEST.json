@@ -1,5 +1,5 @@
 {
-  "status": "IN_PROGRESS_AU_SMOOTH3D_RIM_REMOVAL_CONTROL",
+  "status": "BLOCKED_AU_MOVING_BOUNDARY_ADJOINT_AFTER_SMOOTH3D_CONTROL",
   "raw_files_committed": false,
   "raw_files": [
     {
@@ -37,6 +37,12 @@
       "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_fixedgrid_sampled2d_sheet_endpoint_forward/case_result.json",
       "size_bytes": 8396,
       "sha256": "8b2889e9bf54bfd3f5d5fd69f617c34790194c58c66d073dcc515f557c463875"
+    },
+    {
+      "role": "au_smooth3d_ellipsoid_boundary_adjoint_result",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_smooth3d_ellipsoid_boundary_adjoint_gpu0/au_smooth3d_ellipsoid_boundary_adjoint_result.json",
+      "size_bytes": 14374,
+      "sha256": "702052ccebbe44cd94a36360d8f8c5031ec44c24160a8467cf57c04f8734b0a8"
     }
   ],
   "generation_commands": [

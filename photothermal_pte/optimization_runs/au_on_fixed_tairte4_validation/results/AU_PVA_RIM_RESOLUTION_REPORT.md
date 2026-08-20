@@ -1,6 +1,6 @@
 # Au PVA boundary-rim diagnosis
 
-Status: `IN_PROGRESS_AU_SMOOTH3D_RIM_REMOVAL_CONTROL`
+Status: `BLOCKED_AU_MOVING_BOUNDARY_ADJOINT_AFTER_SMOOTH3D_CONTROL`
 
 ## Result
 
@@ -35,12 +35,14 @@ rejects the sampled-2D material. No CPU fallback was run. The official GPU
 limitation states that 2-D optical-conductivity materials are unsupported
 except PEC; PEC cannot supply lossy Au absorption.
 
-The fully smooth 3-D control is still running.
+The fully smooth 3-D result is `FAILED_AU_SMOOTH3D_ELLIPSOID_BOUNDARY_ADJOINT` with 121.298438% strong-direction error.
 
-Production Au PTE optimization remains prohibited. Passing a mathematical
-smooth-3-D control would isolate the defect to the non-smooth finite-film rim,
-but a realistic rounded thin-Au endpoint and the direct moving-material `P_Q`
-term would still require separate AD--FD certification. No thermal, electrical,
-PTE, or optimization solve is part of this checkpoint.
+Production Au PTE optimization remains prohibited. The failed smooth-3-D
+control rules out the narrower hypothesis that only the non-smooth finite-film
+rim causes the mismatch. The unresolved defect is the continuous
+moving-boundary derivative of high-contrast lossy Au on the v261 conformal Yee
+discretization. A realistic rounded thin-Au endpoint and the direct
+moving-material `P_Q` term therefore remain uncertified. No thermal,
+electrical, PTE, or optimization solve is part of this checkpoint.
 
 Official GPU limitation: https://optics.ansys.com/hc/en-us/articles/17518942465811-Getting-started-with-running-FDTD-on-GPU

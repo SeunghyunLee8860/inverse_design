@@ -327,11 +327,13 @@ except PEC; PEC cannot supply lossy Au absorption.
 
 {ellipsoid_sentence}
 
-Production Au PTE optimization remains prohibited. Passing a mathematical
-smooth-3-D control would isolate the defect to the non-smooth finite-film rim,
-but a realistic rounded thin-Au endpoint and the direct moving-material `P_Q`
-term would still require separate AD--FD certification. No thermal, electrical,
-PTE, or optimization solve is part of this checkpoint.
+Production Au PTE optimization remains prohibited. The failed smooth-3-D
+control rules out the narrower hypothesis that only the non-smooth finite-film
+rim causes the mismatch. The unresolved defect is the continuous
+moving-boundary derivative of high-contrast lossy Au on the v261 conformal Yee
+discretization. A realistic rounded thin-Au endpoint and the direct
+moving-material `P_Q` term therefore remain uncertified. No thermal,
+electrical, PTE, or optimization solve is part of this checkpoint.
 
 Official GPU limitation: https://optics.ansys.com/hc/en-us/articles/17518942465811-Getting-started-with-running-FDTD-on-GPU
 """

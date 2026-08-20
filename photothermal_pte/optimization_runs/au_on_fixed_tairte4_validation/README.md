@@ -237,6 +237,24 @@ an amplifier diagnostic, not the complete root cause. The remaining blocker
 is the exact high-contrast lossy-Au interface trace on the conformal Yee mesh,
 and no Au optical shape gradient or production optimization is promoted.
 
+A stricter follow-up removes the remaining top/bottom rims as well by replacing
+the extruded film with a fully smooth 3-D ellipsoid. Five independent width
+controls give a `0.2117%` central-FD plateau, but the GPU adjoint still has the
+opposite sign and misses the strong FD by `121.30%`. The last boundary
+quadrature refinement changes by `4.05%`. Thus neither in-plane corners nor
+thin-film rims alone explain the failure. The validated fixed-geometry Au
+material derivative and the failed moving-boundary controls together isolate
+the blocker to the continuous high-contrast lossy-Au boundary derivative on
+the v261 conformal Yee discretization. No empirical sign flip, normalization,
+or gradient rescaling is allowed.
+
+The complete smooth-3-D sequence is reproducible with:
+
+```bash
+python 29_run_smooth3d_ellipsoid_control_sequence.py --gpu-device 'GPU 0'
+python 28_summarize_au_pva_rim_resolution.py
+```
+
 ## Material provenance
 
 - Au optical `n,k`: [Ordal et al., Applied Optics 26, 744–752 (1987)](https://doi.org/10.1364/AO.26.000744).
