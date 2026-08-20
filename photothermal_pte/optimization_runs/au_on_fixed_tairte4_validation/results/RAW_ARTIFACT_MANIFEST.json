@@ -1,5 +1,5 @@
 {
-  "status": "BLOCKED_LUMERICAL_LICENSE_SESSION_STARTUP",
+  "status": "VALIDATED_AU_MATERIAL_READBACK_DENSITY_PATH_NOT_YET_CERTIFIED",
   "FDTD_solve_run": false,
   "GPU_engine_acquired": false,
   "files": [
@@ -25,13 +25,13 @@
     },
     {
       "path": "results/lumerical_au_readback.json",
-      "bytes": 933,
-      "sha256": "db3757044b528d8eebcfe8a8413a55c68758a4f1a70c24815ab36125e61810df"
+      "bytes": 1689,
+      "sha256": "1066eb0cb7dff688e8c42c9489ea8fd9152d7c4199c804cbe0c8bdbb254d0faa"
     },
     {
       "path": "results/AU_VALIDATION_CHECKPOINT.md",
-      "bytes": 1721,
-      "sha256": "156df6bc7ba981d3f89d2bd35a97f5ce6184450d1e697c91ea6d7cfdec87631d"
+      "bytes": 1821,
+      "sha256": "9fd9b155a91606461acc69c6e013a4c98243b7184e946d253c8645e82026cbef"
     }
   ],
   "raw_FSP_or_NPZ_committed": false

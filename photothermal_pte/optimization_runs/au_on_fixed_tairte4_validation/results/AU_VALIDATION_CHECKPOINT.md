@@ -1,6 +1,6 @@
 # Au-on-fixed-TaIrTe4 validation checkpoint
 
-Status: `BLOCKED_LUMERICAL_LICENSE_SESSION_STARTUP`
+Status: `VALIDATED_AU_MATERIAL_READBACK_DENSITY_PATH_NOT_YET_CERTIFIED`
 
 ## What is complete
 
@@ -18,15 +18,17 @@ Au/TaIrTe4 contact properties. The first electrical control will use
 
 ## Lumerical readback
 
-- Status: `BLOCKED_LUMERICAL_LICENSE_SESSION_STARTUP`.
+- Status: `VALIDATED_LUMERICAL_AU_MATERIAL_READBACK`.
 - FDTD solve executed: `False`.
 - GPU engine acquired: `False`.
-- Installation in the retained result: `/opt/lumerical/v261`.
+- Installation in the retained result: `/home/seunghyun/lumerical_r12/opt/lumerical/v261`.
 
-Both the `/opt/lumerical/v261` installation and the user-owned v261
-installation were attempted. Session startup stopped before material import
-because ANSYSLI did not create/read its license-sharing port file. This is not
-a material-fit failure and it is not an optical validation pass.
+The normal-host v261 session opened successfully.  The exact single-frequency
+`(n,k)` endpoint has relative complex-permittivity fit error
+`0.479801%` and passes the
+0.5% gate.  A global fit of the complete 0.667--286 um Ordal table has
+`0.981684%` error at 10 um and
+is retained as a failed diagnostic rather than the production endpoint.
 
 ## What is deliberately not claimed
 

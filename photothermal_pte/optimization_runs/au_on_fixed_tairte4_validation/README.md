@@ -48,11 +48,11 @@ and acquires no GPU engine:
   photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/02_probe_lumerical_au_readback.py
 ```
 
-The retained first attempt is currently fail-closed at
-`BLOCKED_LUMERICAL_LICENSE_SESSION_STARTUP`: both installed v261 API roots
-failed before material import because ANSYSLI did not create/read its shared
-port file.  This is not an Au readback failure, and no GPU solve was launched.
-Regenerate the consolidated report and manifest with:
+The initial sandboxed attempt failed before material import, but the normal
+host session subsequently passed as `VALIDATED_LUMERICAL_AU_MATERIAL_READBACK`.
+The exact 10-um `(n,k)` material passed the complex-epsilon fit gate; the
+global full-table Ordal fit did not and remains diagnostic only. No GPU solve
+was launched. Regenerate the consolidated report and manifest with:
 
 ```bash
 /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \

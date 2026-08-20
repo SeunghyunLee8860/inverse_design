@@ -32,10 +32,27 @@ def main() -> int:
     readback_status = readback["status"]
     if readback_status == "VALIDATED_LUMERICAL_AU_MATERIAL_READBACK":
         overall = "VALIDATED_AU_MATERIAL_READBACK_DENSITY_PATH_NOT_YET_CERTIFIED"
+        production = readback["production_single_frequency_nk"]
+        sampled = readback["full_Ordal_sampled_table_diagnostic_only"]
+        readback_detail = f"""
+The normal-host v261 session opened successfully.  The exact single-frequency
+`(n,k)` endpoint has relative complex-permittivity fit error
+`{100.0 * production['relative_complex_epsilon_error']:.6g}%` and passes the
+0.5% gate.  A global fit of the complete 0.667--286 um Ordal table has
+`{100.0 * sampled['relative_complex_epsilon_error']:.6g}%` error at 10 um and
+is retained as a failed diagnostic rather than the production endpoint.
+"""
     elif readback_status.startswith("BLOCKED_"):
         overall = readback_status
+        readback_detail = """
+Both installed v261 API roots were attempted. Session startup stopped before
+material import because ANSYSLI did not create/read its license-sharing port
+file. This is not a material-fit failure and it is not an optical validation
+pass.
+"""
     else:
         overall = "PENDING_LUMERICAL_AU_MATERIAL_READBACK"
+        readback_detail = "The material readback is not complete."
 
     report = f"""# Au-on-fixed-TaIrTe4 validation checkpoint
 
@@ -62,10 +79,7 @@ Au/TaIrTe4 contact properties. The first electrical control will use
 - GPU engine acquired: `{readback.get('GPU_engine_acquired', False)}`.
 - Installation in the retained result: `{readback.get('lumerical_root', 'not opened')}`.
 
-Both the `/opt/lumerical/v261` installation and the user-owned v261
-installation were attempted. Session startup stopped before material import
-because ANSYSLI did not create/read its license-sharing port file. This is not
-a material-fit failure and it is not an optical validation pass.
+{readback_detail.strip()}
 
 ## What is deliberately not claimed
 
