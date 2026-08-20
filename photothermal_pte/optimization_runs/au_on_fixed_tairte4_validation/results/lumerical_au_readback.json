@@ -1,0 +1,8 @@
+{
+  "status": "BLOCKED_LUMERICAL_LICENSE_SESSION_STARTUP",
+  "FDTD_solve_run": false,
+  "GPU_engine_acquired": false,
+  "lumerical_root": "/opt/lumerical/v261",
+  "error_type": "LumApiError",
+  "error": "\"appOpen error: \\n Failed to start messaging, check licenses...Failed to set up Ansys license sharing. ANSYSLI exited or could not read server port ansyscl.aigpu1123.aigpu1123_seunghyun_261. No such file or directory\\n\\nPlease refer /home/seunghyun/.ansys/ansyscl.aigpu1123.aigpu1123_seunghyun_261.log for more information.\\nterminate called after throwing an instance of 'std::out_of_range'\\n  what():  basic_string::replace: __pos (which is 18446744073709551615) > this->size() (which is 1)\\nANSYSLI exited or could not read server port ansyscl.aigpu1123.aigpu1123_seunghyun_261. No such file or directory\\nPlease refer /home/seunghyun/.ansys/ansyscl.aigpu1123.aigpu1123_seunghyun_261.log for more information.\\n\""
+}
