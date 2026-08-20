@@ -39,6 +39,8 @@ FLUX_BOUNDS = {
 }
 AU_DZ_M = 5e-9
 AU_DXY_M = 100e-9
+EDGE_DXY_M: float | None = None
+EDGE_BAND_M = 0.5e-6
 
 
 def load_legacy():
@@ -82,6 +84,19 @@ def add_local_mesh(fdtd) -> None:
     mesh["dx"] = AU_DXY_M
     mesh["dy"] = AU_DXY_M
     mesh["dz"] = AU_DZ_M
+    if EDGE_DXY_M is not None:
+        for side, edge_x in (("xmin", AU_BOUNDS["x"][0]), ("xmax", AU_BOUNDS["x"][1])):
+            edge_mesh = fdtd.addmesh()
+            edge_mesh["name"] = f"au_{side}_edge_local_mesh"
+            edge_mesh["x min"] = edge_x - EDGE_BAND_M
+            edge_mesh["x max"] = edge_x + EDGE_BAND_M
+            edge_mesh["y min"], edge_mesh["y max"] = FLUX_BOUNDS["y"]
+            edge_mesh["z min"], edge_mesh["z max"] = (0.0, 0.15e-6)
+            edge_mesh["override x mesh"] = True
+            edge_mesh["override y mesh"] = True
+            edge_mesh["override z mesh"] = False
+            edge_mesh["dx"] = EDGE_DXY_M
+            edge_mesh["dy"] = EDGE_DXY_M
 
 
 def component_epsilon_readback(base, fdtd, q: dict[str, object]) -> dict[str, object]:
@@ -144,13 +159,21 @@ def configure(base) -> None:
 
 
 def main() -> int:
-    global AU_DZ_M
+    global AU_DZ_M, EDGE_DXY_M, EDGE_BAND_M
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument("--au-dz-nm", type=float, default=5.0)
+    parser.add_argument("--edge-dxy-nm", type=float)
+    parser.add_argument("--edge-band-um", type=float, default=0.5)
     parsed, remaining = parser.parse_known_args()
     if parsed.au_dz_nm <= 0.0:
         raise ValueError("--au-dz-nm must be positive")
+    if parsed.edge_dxy_nm is not None and parsed.edge_dxy_nm <= 0.0:
+        raise ValueError("--edge-dxy-nm must be positive")
+    if parsed.edge_band_um <= 0.0:
+        raise ValueError("--edge-band-um must be positive")
     AU_DZ_M = parsed.au_dz_nm * 1e-9
+    EDGE_DXY_M = None if parsed.edge_dxy_nm is None else parsed.edge_dxy_nm * 1e-9
+    EDGE_BAND_M = parsed.edge_band_um * 1e-6
     sys.argv = [sys.argv[0], *remaining]
     base = load_legacy()
     configure(base)

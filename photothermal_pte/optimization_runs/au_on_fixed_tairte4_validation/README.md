@@ -127,6 +127,21 @@ Therefore this checkpoint remains fail-closed: the exact-binary Au route is
 retained, but a numerical shape-adjoint is not promoted until an edge-local
 50 nm mesh produces a forward-FD plateau.
 
+Edge-local refinement is controlled independently from the 100 nm interior
+mesh:
+
+```bash
+python 06_run_au_sharp_interface_width_control.py \
+  --au-half-x-um 8.0 --edge-dxy-nm 25 --edge-band-um 0.5 \
+  --output-dir /path/to/raw_case --gpu-device 'GPU 6'
+python 09_summarize_au_sharp_interface_mesh_refinement.py
+```
+
+The 25 nm edge mesh gives a 0.716% difference between `h=0.10` and `0.05 um`,
+so the within-mesh FD-step plateau passes. The `h=0.10 um` derivative still
+changes by about 3.04% from edge-50 to edge-25 nm; mesh-independent shape
+sensitivity and the numerical boundary adjoint therefore remain unvalidated.
+
 ## Material provenance
 
 - Au optical `n,k`: [Ordal et al., Applied Optics 26, 744–752 (1987)](https://doi.org/10.1364/AO.26.000744).
