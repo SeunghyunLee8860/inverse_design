@@ -38,6 +38,7 @@
         "carrier_span_K": null,
         "temperature_model": null,
         "interpolation_direction": null,
+        "dt_stability_factor": 0.99,
         "CPU_FDTD_fallback": false
       },
       "au_span1000_linear": {
@@ -46,6 +47,7 @@
         "carrier_span_K": 1000.0,
         "temperature_model": "linear_sensitivity",
         "interpolation_direction": "air_base_toward_exact_target",
+        "dt_stability_factor": 0.99,
         "CPU_FDTD_fallback": false
       },
       "au_span1000_table": {
@@ -54,6 +56,16 @@
         "carrier_span_K": 1000.0,
         "temperature_model": "nonlinear_table",
         "interpolation_direction": "air_base_toward_exact_target",
+        "dt_stability_factor": 0.99,
+        "CPU_FDTD_fallback": false
+      },
+      "au_span1000_dt0p5_short": {
+        "status": "BLOCKED_COMPLEX_MATERIAL_CONTROL",
+        "diverged": true,
+        "carrier_span_K": 1000.0,
+        "temperature_model": "linear_sensitivity",
+        "interpolation_direction": "air_base_toward_exact_target",
+        "dt_stability_factor": 0.5,
         "CPU_FDTD_fallback": false
       },
       "au_reverse": {
@@ -62,10 +74,11 @@
         "carrier_span_K": null,
         "temperature_model": null,
         "interpolation_direction": "exact_target_base_toward_air",
+        "dt_stability_factor": 0.99,
         "CPU_FDTD_fallback": false
       }
     },
-    "conclusion": "the v261 conformal GPU path honors a moderate complex-index temperature carrier, but every exact-Au endpoint variant diverges, including 1000 K numerical spans and a nonlinear table"
+    "conclusion": "the v261 conformal GPU path honors a moderate complex-index temperature carrier, but every exact-Au endpoint variant diverges, including 1000 K numerical spans, a nonlinear table, and a reduced 0.5 CFL stability factor"
   },
   "smooth3D_boundary_trace": {
     "FD_J_proxy_per_um": -2.665238476049999e-30,

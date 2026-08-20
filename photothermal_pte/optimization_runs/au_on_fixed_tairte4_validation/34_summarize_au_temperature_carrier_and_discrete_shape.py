@@ -36,6 +36,9 @@ PATHS = {
     "au_span1000_table": RAW
     / "temperature_density_au_50nm_rho1_span1000_table_conformal1_gpu0"
     / "case_result.json",
+    "au_span1000_dt0p5_short": RAW
+    / "temperature_density_au_50nm_rho1_span1000_conformal1_dt0p5_short_gpu0"
+    / "case_result.json",
     "au_reverse": RAW
     / "temperature_density_reverse_au_50nm_rho1_conformal1_gpu0"
     / "case_result.json",
@@ -113,9 +116,19 @@ def main() -> int:
             "interpolation_direction": data[name]
             .get("material", {})
             .get("interpolation_direction"),
+            "dt_stability_factor": data[name]
+            .get("built_source_contract", {})
+            .get("mesh_contract", {})
+            .get("dt_stability_factor"),
             "CPU_FDTD_fallback": False,
         }
-        for name in ("au_span1", "au_span1000_linear", "au_span1000_table", "au_reverse")
+        for name in (
+            "au_span1",
+            "au_span1000_linear",
+            "au_span1000_table",
+            "au_span1000_dt0p5_short",
+            "au_reverse",
+        )
     }
     trace_signs = [bool(row["FD_sign_agrees"]) for row in one_sided["traces"]]
     trace_errors = [float(row["FD_relative_error"]) for row in one_sided["traces"]]
@@ -150,7 +163,8 @@ def main() -> int:
             "conclusion": (
                 "the v261 conformal GPU path honors a moderate complex-index "
                 "temperature carrier, but every exact-Au endpoint variant "
-                "diverges, including 1000 K numerical spans and a nonlinear table"
+                "diverges, including 1000 K numerical spans, a nonlinear table, "
+                "and a reduced 0.5 CFL stability factor"
             ),
         },
         "smooth3D_boundary_trace": {
@@ -241,7 +255,8 @@ def main() -> int:
                 "note": (
                     f"span={info['carrier_span_K']} K; "
                     f"model={info['temperature_model']}; "
-                    f"direction={info['interpolation_direction']}"
+                    f"direction={info['interpolation_direction']}; "
+                    f"dt_factor={info['dt_stability_factor']}"
                 ),
             }
         )
@@ -263,6 +278,11 @@ def main() -> int:
         "exact_Au_span1000_table_fsp": PATHS["au_span1000_table"].parent
         / "complex_material_control.fsp",
         "exact_Au_span1000_table_log": PATHS["au_span1000_table"].parent
+        / "complex_material_control_p0.log",
+        "exact_Au_span1000_dt0p5_result": PATHS["au_span1000_dt0p5_short"],
+        "exact_Au_span1000_dt0p5_fsp": PATHS["au_span1000_dt0p5_short"].parent
+        / "complex_material_control.fsp",
+        "exact_Au_span1000_dt0p5_log": PATHS["au_span1000_dt0p5_short"].parent
         / "complex_material_control_p0.log",
         "smooth3D_one_sided_trace_result": PATHS["smooth_one_sided"],
         "smooth3D_discrete_epsilon_result": PATHS["smooth_discrete_epsilon"],
@@ -378,8 +398,9 @@ The same mechanism diverges at the exact 10-um Ordal Au endpoint
 `n+ik=12.1+69.2i`.  The failure remains for a 50-nm film, forward and reverse
 base directions, linear and table models, and carrier spans of 1 K and 1000 K.
 The latter reduces the recorded sensitivities to `dn/dT=0.0111` and
-`dk/dT=0.0692`, so the failure is not cured by coefficient scaling.  CPU FDTD
-fallback was prohibited.
+`dk/dT=0.0692`.  Reducing the FDTD stability factor from 0.99 to 0.5 still
+diverges at approximately `2.49e-13 s`, so neither coefficient scaling nor a
+smaller Courant time step cures the failure.  CPU FDTD fallback was prohibited.
 
 ## Boundary root cause
 

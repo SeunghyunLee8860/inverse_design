@@ -15,8 +15,9 @@ The same mechanism diverges at the exact 10-um Ordal Au endpoint
 `n+ik=12.1+69.2i`.  The failure remains for a 50-nm film, forward and reverse
 base directions, linear and table models, and carrier spans of 1 K and 1000 K.
 The latter reduces the recorded sensitivities to `dn/dT=0.0111` and
-`dk/dT=0.0692`, so the failure is not cured by coefficient scaling.  CPU FDTD
-fallback was prohibited.
+`dk/dT=0.0692`.  Reducing the FDTD stability factor from 0.99 to 0.5 still
+diverges at approximately `2.49e-13 s`, so neither coefficient scaling nor a
+smaller Courant time step cures the failure.  CPU FDTD fallback was prohibited.
 
 ## Boundary root cause
 

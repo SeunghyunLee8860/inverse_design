@@ -261,7 +261,10 @@ temperature.  Conformal variant 1 reproduces a moderate `n=2, k=0.5` endpoint
 on all three component grids with `0.015910%` six-face closure, but every
 exact-Au 50-nm endpoint control diverges.  This remains true for forward and
 reverse base directions, linear and nonlinear-table interpolation, and a
-1000-K numerical carrier span.  PVA ignores the temperature coupling.
+1000-K numerical carrier span.  A separate short control with the FDTD
+stability factor reduced from `0.99` to `0.5` still diverges at the same
+physical-time scale, excluding an overly large Courant step as the remedy.
+PVA ignores the temperature coupling.
 
 On the smooth 3-D ellipsoid, neither Au-inside nor air-outside one-sided field
 traces recover the central-FD sign.  A separate solver-discrete conformal-Yee

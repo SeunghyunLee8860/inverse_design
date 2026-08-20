@@ -77,8 +77,10 @@ thermal solver.  Conformal variant 1 exactly reproduces a moderate complex
 endpoint (`epsilon=3.75+2i`) on the component grids, with `0.015910%`
 six-face closure and `6.23581e-8` auto-shutoff.  The exact 10-um Au endpoint
 diverges for all tested 50-nm-film variants: forward/reverse base direction,
-linear/nonlinear table, and 1-K/1000-K numerical carrier spans.  PVA does not
-apply this material coupling.
+linear/nonlinear table, and 1-K/1000-K numerical carrier spans.  Reducing the
+FDTD stability factor from `0.99` to `0.5` still causes divergence near the
+same physical time (`2.49e-13 s`), so a large Courant step is not the root
+cause.  PVA does not apply this material coupling.
 
 Two independent smooth-3-D checks also fail:
 
