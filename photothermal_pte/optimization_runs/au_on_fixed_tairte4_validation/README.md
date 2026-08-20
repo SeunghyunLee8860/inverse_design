@@ -255,6 +255,34 @@ python 29_run_smooth3d_ellipsoid_control_sequence.py --gpu-device 'GPU 0'
 python 28_summarize_au_pva_rim_resolution.py
 ```
 
+The final v261 GPU diagnosis also tests the documented temperature-grid
+coupling as a **numerical optical carrier** and never as a physical thermal
+temperature.  Conformal variant 1 reproduces a moderate `n=2, k=0.5` endpoint
+on all three component grids with `0.015910%` six-face closure, but every
+exact-Au 50-nm endpoint control diverges.  This remains true for forward and
+reverse base directions, linear and nonlinear-table interpolation, and a
+1000-K numerical carrier span.  PVA ignores the temperature coupling.
+
+On the smooth 3-D ellipsoid, neither Au-inside nor air-outside one-sided field
+traces recover the central-FD sign.  A separate solver-discrete conformal-Yee
+diagonal-epsilon Jacobian is also not step converged and has the wrong sign.
+The resulting promoted status is therefore:
+
+```text
+BLOCKED_AU_TOPOLOGY_OPTICAL_GRADIENT_NO_STABLE_GPU_DIFFERENTIABLE_AU_PATH
+```
+
+Generate the consolidated report, JSON, CSV, plot and raw-artifact manifest:
+
+```bash
+python 34_summarize_au_temperature_carrier_and_discrete_shape.py
+```
+
+Exact scalar Au remains valid for forward simulation, and the previously
+validated fixed-geometry material derivative remains valid.  No Au topology
+optimization is permitted because no tested v261 GPU representation is both
+stable at the exact Au endpoint and differentiable with a validated gradient.
+
 ## Material provenance
 
 - Au optical `n,k`: [Ordal et al., Applied Optics 26, 744–752 (1987)](https://doi.org/10.1364/AO.26.000744).

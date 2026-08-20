@@ -1,0 +1,93 @@
+{
+  "status": "BLOCKED_AU_TOPOLOGY_OPTICAL_GRADIENT_NO_STABLE_GPU_DIFFERENTIABLE_AU_PATH",
+  "raw_files_committed": false,
+  "raw_files": [
+    {
+      "role": "moderate_temperature_carrier_result",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/temperature_density_synthetic_conformal1_base1p5_target_n2_k0p5_gpu0/case_result.json",
+      "size_bytes": 8495,
+      "sha256": "c996707f13a2dd18820d60a816a9c8874b16bcfc10d577f04429e7274a0903b9"
+    },
+    {
+      "role": "moderate_temperature_carrier_fsp",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/temperature_density_synthetic_conformal1_base1p5_target_n2_k0p5_gpu0/complex_material_control.fsp",
+      "size_bytes": 47836362,
+      "sha256": "b194ef5a63b4561ab150e6f61627c728e624bcd7197d401d6e18ea7c7bcaf301"
+    },
+    {
+      "role": "moderate_temperature_carrier_q",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/temperature_density_synthetic_conformal1_base1p5_target_n2_k0p5_gpu0/complex_material_control_q.npz",
+      "size_bytes": 5325513,
+      "sha256": "2ea2782e2b4f2fd4bfaf89cd153e2c492853dc7d8eef64b5a14f846f8017d2f4"
+    },
+    {
+      "role": "real_heat_temperature_dataset",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/real_heat_thermal_dataset.mat",
+      "size_bytes": 1121016,
+      "sha256": "19023c2b62fd95a74144124a486fc54916e1b055d8e0710afec42261d13d1a94"
+    },
+    {
+      "role": "real_heat_conformal_result",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/temperature_density_real_heat_mat_conformal1b_base1p5_target_n2_k0p5_gpu0/case_result.json",
+      "size_bytes": 8522,
+      "sha256": "1dad5231df20b572761a1739727a5c761f087f4008c7039f3b668b64ac784ae7"
+    },
+    {
+      "role": "exact_Au_span1000_linear_result",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/temperature_density_au_50nm_rho1_span1000_conformal1_gpu0/case_result.json",
+      "size_bytes": 6980,
+      "sha256": "891f3126db1fa1acccf89b9cbea756d33e5d532a0d635f2290fea37ba892bb6c"
+    },
+    {
+      "role": "exact_Au_span1000_linear_fsp",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/temperature_density_au_50nm_rho1_span1000_conformal1_gpu0/complex_material_control.fsp",
+      "size_bytes": 162344366,
+      "sha256": "9cf8b7c08c75804fb989cc0709b6078842708e75984a496edf5ae869246d933a"
+    },
+    {
+      "role": "exact_Au_span1000_linear_log",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/temperature_density_au_50nm_rho1_span1000_conformal1_gpu0/complex_material_control_p0.log",
+      "size_bytes": 4845,
+      "sha256": "629dcdf74e598184813d92ed5608502fa73efd1368885849a6db7430a0bf8271"
+    },
+    {
+      "role": "exact_Au_span1000_table_result",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/temperature_density_au_50nm_rho1_span1000_table_conformal1_gpu0/case_result.json",
+      "size_bytes": 7165,
+      "sha256": "d794cbc85ad520b5f15d26ceb16bc80de31f9dc75bafeb9503a152dbece53fe3"
+    },
+    {
+      "role": "exact_Au_span1000_table_fsp",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/temperature_density_au_50nm_rho1_span1000_table_conformal1_gpu0/complex_material_control.fsp",
+      "size_bytes": 162344366,
+      "sha256": "b9c6ea04637d9f55622de7a524c23e44df7ed1c2237d3a5de2fc876ae41f1360"
+    },
+    {
+      "role": "exact_Au_span1000_table_log",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/temperature_density_au_50nm_rho1_span1000_table_conformal1_gpu0/complex_material_control_p0.log",
+      "size_bytes": 4850,
+      "sha256": "a1e3fe3c207396d9c9886edbf01c7484242098cd06d0cdda4f7a9de2ce362e31"
+    },
+    {
+      "role": "smooth3D_one_sided_trace_result",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_smooth3d_ellipsoid_one_sided_traces_v2/au_smooth3d_one_sided_trace_result.json",
+      "size_bytes": 17421,
+      "sha256": "9a4a5b2ce4993f2e65f2865ba9a975e465532a0a092050a483b53fdb82576506"
+    },
+    {
+      "role": "smooth3D_discrete_epsilon_result",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_smooth3d_discrete_epsilon_shape_adjoint_gpu0_v4/au_smooth3d_discrete_epsilon_shape_result.json",
+      "size_bytes": 5031,
+      "sha256": "e8c259298f51df4cf8dd0407f62c0af2f35860d27c267454583dcbb28ac4d6cb"
+    }
+  ],
+  "generation_commands": [
+    "python 31_run_au_temperature_density_endpoint_control.py --rho 1 --carrier-span-k 1000 ...",
+    "python 31_run_au_temperature_density_endpoint_control.py --rho 1 --carrier-span-k 1000 --temperature-table ...",
+    "python 32_analyze_au_smooth3d_one_sided_traces.py --output-dir <raw>",
+    "python 33_validate_au_smooth3d_discrete_epsilon_shape_adjoint.py --output-dir <raw>",
+    "python 34_summarize_au_temperature_carrier_and_discrete_shape.py"
+  ],
+  "CPU_FDTD_fallback": false,
+  "thermal_electrical_PTE_or_optimization_executed": false
+}

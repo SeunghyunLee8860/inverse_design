@@ -4,7 +4,7 @@ Historical material checkpoint status:
 `VALIDATED_AU_MATERIAL_READBACK_DENSITY_PATH_NOT_YET_CERTIFIED`
 
 Current promoted status:
-`BLOCKED_AU_TOPOLOGY_OPTICAL_GRADIENT_UNVALIDATED`
+`BLOCKED_AU_TOPOLOGY_OPTICAL_GRADIENT_NO_STABLE_GPU_DIFFERENTIABLE_AU_PATH`
 
 ## What is complete
 
@@ -68,3 +68,28 @@ details and raw-artifact hashes are published in
 
 No Au/TaIrTe4 thermal, electrical, PTE, adjoint, or optimization result is
 promoted from this failed gradient checkpoint.
+
+## Final GPU-path diagnosis
+
+The documented temperature-grid coupling was tested as a numerical optical
+carrier.  It is not a physical temperature and is never exported to the
+thermal solver.  Conformal variant 1 exactly reproduces a moderate complex
+endpoint (`epsilon=3.75+2i`) on the component grids, with `0.015910%`
+six-face closure and `6.23581e-8` auto-shutoff.  The exact 10-um Au endpoint
+diverges for all tested 50-nm-film variants: forward/reverse base direction,
+linear/nonlinear table, and 1-K/1000-K numerical carrier spans.  PVA does not
+apply this material coupling.
+
+Two independent smooth-3-D checks also fail:
+
+- all field traces from 100 nm inside Au through 100 nm outside Au retain the
+  wrong sign relative to central FD;
+- the component-wise solver-discrete conformal-epsilon Jacobian changes by
+  `68.114%` between geometry steps and also has the wrong sign.
+
+The exact scalar-Au forward model and fixed-geometry material derivative are
+preserved, but no tested v261 GPU path is simultaneously exact-Au stable and
+differentiable.  See
+`AU_TEMPERATURE_CARRIER_AND_SMOOTH3D_DIAGNOSIS_REPORT.md` and its raw-artifact
+manifest.  No empirical sign flip, normalization or gradient rescaling is
+used.

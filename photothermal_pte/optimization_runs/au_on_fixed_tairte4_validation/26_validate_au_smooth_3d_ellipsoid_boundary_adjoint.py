@@ -159,8 +159,14 @@ def smooth_ellipsoid_surface_integral(
     epsilon_au: complex,
     mu_order: int,
     phi_count: int,
+    normal_offset_m: float = 0.0,
 ) -> dict[str, object]:
-    """Endpoint-free tensor quadrature on the exact smooth ellipsoid."""
+    """Endpoint-free tensor quadrature using a matched normal field trace.
+
+    The integration geometry, shape velocity, and surface measure always stay
+    on the exact ellipsoid.  ``normal_offset_m`` moves only the field-sampling
+    locations and is therefore a trace diagnostic, not a changed geometry.
+    """
 
     if mu_order < 2 or phi_count < 8:
         raise ValueError("ellipsoid quadrature is too coarse")
@@ -199,10 +205,12 @@ def smooth_ellipsoid_surface_integral(
     normal_velocity = np.sum(dr_da * normal, axis=-1)
     surface_weight = w_mu[:, None] * w_phi * jacobian
 
-    flat_x = x.reshape(-1)
-    flat_y = y.reshape(-1)
-    flat_z = z.reshape(-1)
     flat_normal = normal.reshape(-1, 3)
+    sample_points = np.stack((x, y, z), axis=-1).reshape(-1, 3)
+    sample_points = sample_points + float(normal_offset_m) * flat_normal
+    flat_x = sample_points[:, 0]
+    flat_y = sample_points[:, 1]
+    flat_z = sample_points[:, 2]
     flat_velocity = normal_velocity.reshape(-1)
     flat_weight = surface_weight.reshape(-1)
     positive = 0.0
@@ -271,6 +279,12 @@ def smooth_ellipsoid_surface_integral(
     total = tangential_total + normal_total
     return {
         "rule": "Gauss-Legendre(mu) x midpoint(phi) exact smooth ellipsoid",
+        "field_trace_normal_offset_m": float(normal_offset_m),
+        "field_trace_side": (
+            "geometric_boundary"
+            if normal_offset_m == 0.0
+            else ("Au_inside" if normal_offset_m < 0.0 else "air_outside")
+        ),
         "mu_order": int(mu_order),
         "phi_count": int(phi_count),
         "sample_count": int(flat_x.size),

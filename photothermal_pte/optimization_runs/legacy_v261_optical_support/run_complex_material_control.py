@@ -291,7 +291,8 @@ def main() -> int:
             8.5e-6,
         )
         fdtd.setnamed("FDTD", "mesh refinement", args.mesh_refinement)
-        fdtd.setnamed("FDTD", "meshing refinement", args.meshing_refinement)
+        if args.mesh_refinement == "precise volume average":
+            fdtd.setnamed("FDTD", "meshing refinement", args.meshing_refinement)
         fdtd.setnamed("FDTD", "dt stability factor", args.dt_stability_factor)
         if args.mesh_wavelength_um is not None:
             mesh_wavelength_m = args.mesh_wavelength_um * 1.0e-6
@@ -305,8 +306,10 @@ def main() -> int:
                 "mesh_refinement": str(
                     fdtd.getnamed("FDTD", "mesh refinement")
                 ),
-                "meshing_refinement": int(
-                    round(float(fdtd.getnamed("FDTD", "meshing refinement")))
+                "meshing_refinement": (
+                    int(round(float(fdtd.getnamed("FDTD", "meshing refinement"))))
+                    if args.mesh_refinement == "precise volume average"
+                    else None
                 ),
                 "dt_stability_factor": float(
                     fdtd.getnamed("FDTD", "dt stability factor")
