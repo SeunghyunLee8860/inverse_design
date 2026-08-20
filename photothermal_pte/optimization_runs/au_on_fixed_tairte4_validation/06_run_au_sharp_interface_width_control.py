@@ -45,8 +45,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument("--au-half-x-um", type=float, required=True)
     parsed, remaining = parser.parse_known_args()
-    if not 8.0 <= parsed.au_half_x_um <= 10.4:
-        raise ValueError("--au-half-x-um must remain within [8.0, 10.4] um")
+    if not 4.0 <= parsed.au_half_x_um <= 10.4:
+        raise ValueError("--au-half-x-um must remain within [4.0, 10.4] um")
 
     base = load_binary_control()
     half_x_m = float(parsed.au_half_x_um) * 1e-6

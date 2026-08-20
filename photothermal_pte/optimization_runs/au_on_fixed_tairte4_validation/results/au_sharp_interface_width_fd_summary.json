@@ -1,0 +1,166 @@
+{
+  "status": "FAILED_SHARP_INTERFACE_FORWARD_FD_PLATEAU_AT_100NM_EDGE_MESH",
+  "scope": "isolated scalar-Au sharp-interface forward controls; no numerical adjoint, thermal, electrical, PTE, or optimization result",
+  "baseline_half_width_um": 8.0,
+  "moved_boundaries": [
+    "x_min",
+    "x_max"
+  ],
+  "fixed_boundaries": [
+    "y_min",
+    "y_max",
+    "z_min",
+    "z_max"
+  ],
+  "gray_Au_air_material_used": false,
+  "Q_clipping_smoothing_gain_or_rescaling": false,
+  "CPU_FDTD_fallback": false,
+  "edge_lateral_mesh_nm": 100.0,
+  "Au_z_mesh_nm": 5.0,
+  "case_gate": {
+    "six_face_closure_relative_lt": 0.005,
+    "auto_shutoff_lt": 1e-05
+  },
+  "plateau_gate": {
+    "successive_central_FD_relative_change_lt": 0.01
+  },
+  "cases": [
+    {
+      "Au_half_x_um": 5.8,
+      "purpose": "strong_direction_closure_failure",
+      "status": "FAILED_COMPLEX_MATERIAL_FORWARD_CONTROL",
+      "passed_case_gate": false,
+      "P_Q_W": 1.413847570051895e-15,
+      "P_six_W": 1.4289138574849535e-15,
+      "six_face_closure_relative": 0.010543873834058073,
+      "auto_shutoff": 9.46952e-08,
+      "solver_wall_time_s": 63.640285074710846
+    },
+    {
+      "Au_half_x_um": 7.8,
+      "purpose": "fd_h0p2_minus",
+      "status": "COMPLETED_COMPLEX_MATERIAL_FORWARD_CONTROL",
+      "passed_case_gate": true,
+      "P_Q_W": 1.5641214080071541e-15,
+      "P_six_W": 1.5694792299207958e-15,
+      "six_face_closure_relative": 0.003413757768500062,
+      "auto_shutoff": 9.88622e-08,
+      "solver_wall_time_s": 68.1290517039597
+    },
+    {
+      "Au_half_x_um": 7.9,
+      "purpose": "fd_h0p1_minus",
+      "status": "COMPLETED_COMPLEX_MATERIAL_FORWARD_CONTROL",
+      "passed_case_gate": true,
+      "P_Q_W": 1.5610195908907902e-15,
+      "P_six_W": 1.5660469084794486e-15,
+      "six_face_closure_relative": 0.0032101960429395207,
+      "auto_shutoff": 9.88132e-08,
+      "solver_wall_time_s": 68.50824028253555
+    },
+    {
+      "Au_half_x_um": 7.95,
+      "purpose": "fd_h0p05_minus",
+      "status": "COMPLETED_COMPLEX_MATERIAL_FORWARD_CONTROL",
+      "passed_case_gate": true,
+      "P_Q_W": 1.5714942895648448e-15,
+      "P_six_W": 1.5763056522128516e-15,
+      "six_face_closure_relative": 0.0030523031121867153,
+      "auto_shutoff": 9.71413e-08,
+      "solver_wall_time_s": 72.6336923353374
+    },
+    {
+      "Au_half_x_um": 8.05,
+      "purpose": "fd_h0p05_plus",
+      "status": "COMPLETED_COMPLEX_MATERIAL_FORWARD_CONTROL",
+      "passed_case_gate": true,
+      "P_Q_W": 1.5670704463680364e-15,
+      "P_six_W": 1.571638656941213e-15,
+      "six_face_closure_relative": 0.0029066544991120467,
+      "auto_shutoff": 9.73452e-08,
+      "solver_wall_time_s": 74.06476837396622
+    },
+    {
+      "Au_half_x_um": 8.1,
+      "purpose": "fd_h0p1_plus",
+      "status": "COMPLETED_COMPLEX_MATERIAL_FORWARD_CONTROL",
+      "passed_case_gate": true,
+      "P_Q_W": 1.5548289034416318e-15,
+      "P_six_W": 1.559514151308912e-15,
+      "six_face_closure_relative": 0.0030042996809921956,
+      "auto_shutoff": 9.51237e-08,
+      "solver_wall_time_s": 70.79592446610332
+    },
+    {
+      "Au_half_x_um": 8.2,
+      "purpose": "fd_h0p2_plus",
+      "status": "COMPLETED_COMPLEX_MATERIAL_FORWARD_CONTROL",
+      "passed_case_gate": true,
+      "P_Q_W": 1.5518840021834299e-15,
+      "P_six_W": 1.5563634897793833e-15,
+      "six_face_closure_relative": 0.002878175712402753,
+      "auto_shutoff": 9.59199e-08,
+      "solver_wall_time_s": 68.96766194328666
+    },
+    {
+      "Au_half_x_um": 9.8,
+      "purpose": "near_null_h0p2_minus",
+      "status": "COMPLETED_COMPLEX_MATERIAL_FORWARD_CONTROL",
+      "passed_case_gate": true,
+      "P_Q_W": 1.5297604892855483e-15,
+      "P_six_W": 1.5319382967229169e-15,
+      "six_face_closure_relative": 0.001421602581531687,
+      "auto_shutoff": 9.88177e-08,
+      "solver_wall_time_s": 65.98619175702333
+    },
+    {
+      "Au_half_x_um": 10.2,
+      "purpose": "near_null_h0p2_plus",
+      "status": "COMPLETED_COMPLEX_MATERIAL_FORWARD_CONTROL",
+      "passed_case_gate": true,
+      "P_Q_W": 1.5296787748181603e-15,
+      "P_six_W": 1.5305934996514884e-15,
+      "six_face_closure_relative": 0.000597627543522401,
+      "auto_shutoff": 9.59389e-08,
+      "solver_wall_time_s": 67.12243070453405
+    }
+  ],
+  "central_FD": [
+    {
+      "h_um": 0.2,
+      "P_Q_minus_W": 1.5641214080071541e-15,
+      "P_Q_plus_W": 1.5518840021834299e-15,
+      "central_FD_W_per_um": -3.0593514559310673e-17,
+      "pair_signal_relative": 0.00782382093939622,
+      "relative_change_from_previous_h": null
+    },
+    {
+      "h_um": 0.1,
+      "P_Q_minus_W": 1.5610195908907902e-15,
+      "P_Q_plus_W": 1.5548289034416318e-15,
+      "central_FD_W_per_um": -3.095343724579195e-17,
+      "pair_signal_relative": 0.003965797409131616,
+      "relative_change_from_previous_h": 0.011627874591866516
+    },
+    {
+      "h_um": 0.05,
+      "P_Q_minus_W": 1.5714942895648448e-15,
+      "P_Q_plus_W": 1.5670704463680364e-15,
+      "central_FD_W_per_um": -4.42384319680841e-17,
+      "pair_signal_relative": 0.002815055216034794,
+      "relative_change_from_previous_h": 0.30030437633677054
+    }
+  ],
+  "plateau_h0p2_to_h0p1_relative": 0.011627874591866516,
+  "plateau_h0p1_to_h0p05_relative": 0.30030437633677054,
+  "failed_strong_direction": {
+    "Au_half_x_um": 5.8,
+    "six_face_closure_relative": 0.010543873834058073,
+    "reason": "closure exceeds 0.5%; +6.2 um counterpart was not run"
+  },
+  "decision": {
+    "forward_FD_plateau_validated": false,
+    "shape_adjoint_AD_FD_permitted_at_current_mesh": false,
+    "next_minimal_gate": "repeat the h=0.1 and h=0.05 controls with an edge-local 50 nm lateral mesh before numerical shape-adjoint comparison"
+  }
+}

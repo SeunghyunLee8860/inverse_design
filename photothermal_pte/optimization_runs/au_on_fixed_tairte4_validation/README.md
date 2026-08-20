@@ -115,6 +115,18 @@ python 07_audit_v261_sharp_interface_adjoint_path.py
 This audit only establishes which boundary formula and polygon contract are
 installed. It intentionally leaves the numerical AD--FD status pending.
 
+Summarize the sharp-interface forward-FD controls:
+
+```bash
+python 08_summarize_au_sharp_interface_width_controls.py
+```
+
+At the current 100 nm lateral edge mesh, the `h=0.20` and `0.10 um` central
+differences agree to about 1.16%, while `h=0.05 um` changes by about 30%.
+Therefore this checkpoint remains fail-closed: the exact-binary Au route is
+retained, but a numerical shape-adjoint is not promoted until an edge-local
+50 nm mesh produces a forward-FD plateau.
+
 ## Material provenance
 
 - Au optical `n,k`: [Ordal et al., Applied Optics 26, 744–752 (1987)](https://doi.org/10.1364/AO.26.000744).
