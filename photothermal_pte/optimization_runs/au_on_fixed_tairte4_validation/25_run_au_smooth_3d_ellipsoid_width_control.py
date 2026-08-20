@@ -26,6 +26,9 @@ if str(REPOSITORY) not in sys.path:
 STAGE04 = HERE / "04_run_au_binary_representation_control.py"
 
 from photothermal_pte.finite_inverse_design.native_yee_q import frequency_slice
+from photothermal_pte.finite_inverse_design.probe_v261_cpu_tfsf_device import (
+    PABS_INDEX,
+)
 
 
 def load_stage04():
@@ -48,6 +51,54 @@ def option_value(arguments: list[str], option: str) -> str | None:
         if value == option and index + 1 < len(arguments):
             return arguments[index + 1]
     return None
+
+
+def ellipsoid_component_readback(
+    _configured_base,
+    fdtd,
+    q,
+    *,
+    a: float,
+    b: float,
+    c: float,
+    center_z: float,
+) -> dict[str, object]:
+    """Read the exact-Au interior on each component-specific Yee grid."""
+
+    spatial_shape = tuple(np.asarray(q["base_coordinates"][axis]).size for axis in "xyz")
+    result = {}
+    for component in "xyz":
+        index = frequency_slice(
+            np.asarray(fdtd.getdata(PABS_INDEX, f"index_{component}", 1)),
+            spatial_shape,
+            int(q["frequency_index_zero_based"]),
+            int(q["frequency_count"]),
+            f"index_{component}",
+        )
+        epsilon = index**2
+        x = np.asarray(q["native_coordinates"][component]["x"], float)
+        y = np.asarray(q["native_coordinates"][component]["y"], float)
+        z = np.asarray(q["native_coordinates"][component]["z"], float)
+        normalized_radius = (
+            (x[:, None, None] / a) ** 2
+            + (y[None, :, None] / b) ** 2
+            + ((z[None, None, :] - center_z) / c) ** 2
+        )
+        interior = normalized_radius <= 0.80**2
+        values = epsilon[interior & np.isfinite(epsilon)]
+        if values.size == 0:
+            raise RuntimeError(f"empty ellipsoid interior readback for {component}")
+        result[component] = {
+            "shape": list(epsilon.shape),
+            "epsilon_interior_median": [
+                float(np.median(values.real)),
+                float(np.median(values.imag)),
+            ],
+            "interior_sample_count": int(values.size),
+            "all_finite": bool(np.all(np.isfinite(epsilon))),
+            "interior_normalized_radius_max": 0.80,
+        }
+    return result
 
 
 def main() -> int:
@@ -139,44 +190,18 @@ def main() -> int:
         mesh["dy"] = dxy
         mesh["dz"] = dz
 
-    def ellipsoid_readback(_configured_base, fdtd, q):
+    def ellipsoid_readback(configured_base, fdtd, q):
         # Stage 04 installs this callback through a compatibility lambda whose
-        # first argument is the configured legacy module.  Keep that argument
-        # explicit even though the ellipsoid readback only needs fdtd and q.
-        spatial_shape = tuple(np.asarray(q["base_coordinates"][axis]).size for axis in "xyz")
-        result = {}
-        for component in "xyz":
-            index = frequency_slice(
-                np.asarray(fdtd.getdata(base.PABS_INDEX, f"index_{component}", 1)),
-                spatial_shape,
-                int(q["frequency_index_zero_based"]),
-                int(q["frequency_count"]),
-                f"index_{component}",
-            )
-            epsilon = index**2
-            x = np.asarray(q["native_coordinates"][component]["x"], float)
-            y = np.asarray(q["native_coordinates"][component]["y"], float)
-            z = np.asarray(q["native_coordinates"][component]["z"], float)
-            normalized_radius = (
-                (x[:, None, None] / a) ** 2
-                + (y[None, :, None] / b) ** 2
-                + ((z[None, None, :] - center_z) / c) ** 2
-            )
-            interior = normalized_radius <= 0.80**2
-            values = epsilon[interior & np.isfinite(epsilon)]
-            if values.size == 0:
-                raise RuntimeError(f"empty ellipsoid interior readback for {component}")
-            result[component] = {
-                "shape": list(epsilon.shape),
-                "epsilon_interior_median": [
-                    float(np.median(values.real)),
-                    float(np.median(values.imag)),
-                ],
-                "interior_sample_count": int(values.size),
-                "all_finite": bool(np.all(np.isfinite(epsilon))),
-                "interior_normalized_radius_max": 0.80,
-            }
-        return result
+        # first argument is the configured legacy module.
+        return ellipsoid_component_readback(
+            configured_base,
+            fdtd,
+            q,
+            a=a,
+            b=b,
+            c=c,
+            center_z=center_z,
+        )
 
     base.load_legacy = load_ellipsoid_legacy
     base.add_local_mesh = add_mesh

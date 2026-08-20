@@ -1,0 +1,53 @@
+{
+  "status": "IN_PROGRESS_AU_SMOOTH3D_RIM_REMOVAL_CONTROL",
+  "raw_files_committed": false,
+  "raw_files": [
+    {
+      "role": "au_fixed_geometry_material_adjoint_result",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_fixedgrid_material_adjoint_control/au_fixed_geometry_material_adjoint_result.json",
+      "size_bytes": 10601,
+      "sha256": "59ea23aedb3b7c6d07828326c0587a628355eb6e139151c34d81ac3e1ee1eb4c"
+    },
+    {
+      "role": "au_sharp_interface_external_field_result",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_fixedgrid_smooth_ellipse_external_field_adjoint_gpu0/au_sharp_interface_external_field_result.json",
+      "size_bytes": 26985,
+      "sha256": "122e91265132ae93da5be3dd06f5d2a0e8e583222e9a75f9dfd02722d1320f92"
+    },
+    {
+      "role": "au_pva_native_yee_geometry_deps_result",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_fixedgrid_native_yee_geometry_deps/au_pva_native_yee_geometry_deps_result.json",
+      "size_bytes": 43999,
+      "sha256": "c1db74b98e4ac3d75226252d9b03753f3c6cacb38fda2bdfff15e5339630e764"
+    },
+    {
+      "role": "au_pva_boundary_one_sided_trace_result",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_fixedgrid_boundary_one_sided_traces/au_pva_boundary_one_sided_trace_result.json",
+      "size_bytes": 118124,
+      "sha256": "1b2ea85b43742033ee012e15df06e7ecc7d3e640b53104f4b5f732ab283f2b09"
+    },
+    {
+      "role": "case_result",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_fixedgrid_sampled2d_sheet_endpoint_runsetup/case_result.json",
+      "size_bytes": 5904,
+      "sha256": "fa5ff2eb900ea9e718ad0ca79cb11abd15f475626680dd4f34edb9bf205f9687"
+    },
+    {
+      "role": "case_result",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_fixedgrid_sampled2d_sheet_endpoint_forward/case_result.json",
+      "size_bytes": 8396,
+      "sha256": "8b2889e9bf54bfd3f5d5fd69f617c34790194c58c66d073dcc515f557c463875"
+    }
+  ],
+  "generation_commands": [
+    "python 21_validate_fixed_geometry_au_material_adjoint.py --output-dir <raw>",
+    "python 22_validate_pva_native_yee_geometry_deps.py --output-dir <raw>",
+    "python 23_analyze_pva_boundary_one_sided_traces.py --output-dir <raw>",
+    "python 24_run_au_sampled_2d_sheet_endpoint.py --output-dir <raw>",
+    "python 25_run_au_smooth_3d_ellipsoid_width_control.py --au-half-x-um <...> --output-dir <raw>",
+    "python 26_validate_au_smooth_3d_ellipsoid_boundary_adjoint.py --output-dir <raw>",
+    "python 28_summarize_au_pva_rim_resolution.py"
+  ],
+  "CPU_FDTD_fallback": false,
+  "thermal_PTE_or_optimization_executed": false
+}

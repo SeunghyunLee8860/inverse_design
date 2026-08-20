@@ -1,0 +1,48 @@
+{
+  "status": "IN_PROGRESS_AU_SMOOTH3D_RIM_REMOVAL_CONTROL",
+  "conclusion": "fixed-geometry material adjoint is validated, while every moving 50-nm-film boundary route remains invalid; a fully smooth 3-D ellipsoid control is still running",
+  "fixed_geometry_material_control": {
+    "status": "VALIDATED_AU_FIXED_GEOMETRY_MATERIAL_ADJOINT",
+    "FD_step_change": 0.0012494187949951688,
+    "AD_step_change": 6.534095086932348e-14,
+    "strong_AD_FD_relative_error": 3.896271501784461e-05,
+    "sign_agrees": true,
+    "interpretation": "FieldRegion source normalization, unconjugated Ef*Ea convention, component Yee pairing, and fixed-domain volume integration pass"
+  },
+  "moving_50nm_film_boundary": {
+    "status": "FAILED_AU_SMOOTH_ELLIPSE_BOUNDARY_KERNEL_ADFD",
+    "FD_step_change": 0.007019691195524841,
+    "strong_AD_FD_relative_error": 1.4279477881043956,
+    "sign_agrees": false,
+    "quadrature_change": 0.005143871301552687
+  },
+  "native_Yee_geometry_depsilon": {
+    "status": "FAILED_AU_PVA_NATIVE_YEE_GEOMETRY_DEPS_ADFD",
+    "maximum_coordinate_mismatch_m": 5.082197683525802e-21,
+    "final_step_change": 0.41708996021130595,
+    "strong_AD_FD_relative_error": 1.01208644661228,
+    "sign_agrees": false
+  },
+  "one_sided_trace_and_rim_decomposition": {
+    "status": "DIAGNOSED_AU_PVA_BOUNDARY_ONE_SIDED_TRACES",
+    "all_sampled_sides_have_correct_sign": false,
+    "geometric_trace_total_J_proxy_per_um": 4.9674255651226794e-30,
+    "central_region_excluding_top_bottom_10nm_J_proxy_per_m": -8.661696783707327e-25,
+    "top_bottom_10nm_rims_J_proxy_per_m": 5.833595243493411e-24,
+    "rim_fraction_of_absolute_total": 1.174369936099755,
+    "interpretation": "the central film-depth contribution has the FD sign, but the top/bottom 10-nm rims dominate and reverse the integral"
+  },
+  "sampled_2D_sheet_GPU_control": {
+    "layout_status": "COMPLETED_COMPLEX_MATERIAL_RUNSETUP_AUDIT",
+    "surface_conductivity_fit_relative_error": 0.00394771186231008,
+    "GPU_status": "BLOCKED_AU_SAMPLED_2D_GPU_UNSUPPORTED",
+    "engine_error": "RuntimeError: GPU-only run failed; CPU fallback prohibited: Local GPU: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Host: LumApiError: 'in run: \"/home/seunghyun/lumerical_r12/opt/lumerical/v261/bin/fdtd-engine\" -gpu -t 8 -gpu \"/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_fixedgrid_sampled2d_sheet_endpoint_forward/complex_material_control.fsp\"\\n\\naigpu1123(process 0): The program terminated due to an error:\\nError: GPU simulation does not support the use of the following materials: Au_Ordal_10um_equivalent_sampled_2D_50nm - sampled 2D material (rho1_scalar_complex_block).\\naigpu1123(process 0): Error: there was an unknown parallel error. The error code is 10, the process number is 0' | localhost: LumApiError: 'in run: could not match resource name provided or the resource may not be active.' | Local Computer: LumApiError: 'in run: could not match resource name provided or the resource may not be active.'",
+    "CPU_fallback_run": false,
+    "official_GPU_limitation": "v261 GPU FDTD supports no 2-D standard optical conductivity material except PEC"
+  },
+  "fully_smooth_3D_control": null,
+  "production_Au_optimization_permitted": false,
+  "empirical_normalization": false,
+  "gradient_rescaling": false,
+  "thermal_PTE_or_optimization_executed": false
+}

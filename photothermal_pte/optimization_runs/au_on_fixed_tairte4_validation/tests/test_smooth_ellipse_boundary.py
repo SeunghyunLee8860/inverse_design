@@ -29,6 +29,10 @@ ELLIPSOID_ADJOINT = load(
     "smooth_3d_ellipsoid_adjoint",
     "26_validate_au_smooth_3d_ellipsoid_boundary_adjoint.py",
 )
+ELLIPSOID_FORWARD = load(
+    "smooth_3d_ellipsoid_forward",
+    "25_run_au_smooth_3d_ellipsoid_width_control.py",
+)
 
 
 def test_ellipse_vertices_are_counter_clockwise_and_have_exact_bounds() -> None:
@@ -138,3 +142,42 @@ def test_smooth_3d_ellipsoid_shape_velocity_recovers_volume_derivative() -> None
     )
     assert numerical > 0.0
     np.testing.assert_allclose(numerical, analytic, rtol=1.0e-12)
+
+
+def test_smooth_3d_ellipsoid_readback_callback_contract() -> None:
+    epsilon = complex(-4642.23, 1674.64)
+    index = np.sqrt(epsilon)
+
+    class FakeFDTD:
+        @staticmethod
+        def getdata(monitor, quantity, option):
+            assert monitor == ELLIPSOID_FORWARD.PABS_INDEX
+            assert quantity in {"index_x", "index_y", "index_z"}
+            assert option == 1
+            return np.full((3, 3, 3), index, complex)
+
+    coordinates = np.asarray([-0.1, 0.0, 0.1])
+    q = {
+        "base_coordinates": {axis: coordinates for axis in "xyz"},
+        "native_coordinates": {
+            component: {axis: coordinates for axis in "xyz"} for component in "xyz"
+        },
+        "frequency_index_zero_based": 0,
+        "frequency_count": 1,
+    }
+    result = ELLIPSOID_FORWARD.ellipsoid_component_readback(
+        object(),
+        FakeFDTD(),
+        q,
+        a=1.0,
+        b=1.0,
+        c=1.0,
+        center_z=0.0,
+    )
+    assert set(result) == {"x", "y", "z"}
+    for component in "xyz":
+        assert result[component]["interior_sample_count"] > 0
+        np.testing.assert_allclose(
+            result[component]["epsilon_interior_median"],
+            [epsilon.real, epsilon.imag],
+        )
