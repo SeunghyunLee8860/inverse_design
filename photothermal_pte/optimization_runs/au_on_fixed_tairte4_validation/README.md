@@ -168,6 +168,23 @@ the divergent uniform-`rho=1` `importnk2` endpoint, this means that neither
 current Au representation permits production Au thermal/electrical/PTE
 optimization yet.
 
+The follow-up fixed-external-field diagnostic removes the explicit moving-Au
+loss term and tests only the field-mediated boundary kernel:
+
+```bash
+python 12_run_au_sharp_interface_external_field_adjoint.py \
+  --output-dir /path/to/raw_case --gpu-device 'GPU 0'
+python 13_summarize_au_sharp_interface_external_field_adjoint.py
+```
+
+The independent `h=0.10` and `0.05 um` central differences agree to 0.154%.
+The GPU adjoint has the correct sign and differs from the strong FD by 6.77%,
+which is a major improvement over the rejected `P_Q` direct trace but still
+fails the 1% gate. The boundary integral itself changes by 38.4% from 401 to
+801 samples per vertical edge. The current published state is therefore
+`BLOCKED_AU_SHARP_INTERFACE_BOUNDARY_QUADRATURE_UNRESOLVED`; this diagnostic
+does not promote an Au optical gradient or permit optimization.
+
 ## Material provenance
 
 - Au optical `n,k`: [Ordal et al., Applied Optics 26, 744–752 (1987)](https://doi.org/10.1364/AO.26.000744).

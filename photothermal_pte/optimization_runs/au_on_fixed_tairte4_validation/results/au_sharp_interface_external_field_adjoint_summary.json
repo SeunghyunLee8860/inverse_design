@@ -1,0 +1,305 @@
+{
+  "status": "BLOCKED_AU_SHARP_INTERFACE_BOUNDARY_QUADRATURE_UNRESOLVED",
+  "diagnostic_status": "FAILED_AU_SHARP_INTERFACE_EXTERNAL_FIELD_BOUNDARY_KERNEL_ADFD",
+  "scope": "fixed external air-field objective for isolated Au boundary-kernel AD-FD; no P_Q, thermal, electrical, PTE, or optimization",
+  "objective": {
+    "definition": "0.5*eps0*sum_c integral_fixed_air_ROI w_fixed(x,y,z)*|E_c|^2 dV",
+    "weight": "two fixed Gaussian x lobes times Gaussian y times compact sin^2 z window",
+    "meaning": "fixed external electric-field-energy proxy; not total EM energy",
+    "units": "J_proxy",
+    "requested_bounds": {
+      "x_lobe_center_abs_m": 8e-06,
+      "x_sigma_m": 1.5e-06,
+      "y_sigma_m": 4e-06,
+      "z_min_m": -4.5e-07,
+      "z_max_m": -1e-07
+    },
+    "component_value_J_proxy": {
+      "x": 1.9411681692259126e-30,
+      "y": 5.672161205888855e-33,
+      "z": 1.8846941834331514e-30
+    },
+    "component_sample_count": {
+      "x": 1190015,
+      "y": 1190015,
+      "z": 952012
+    },
+    "component_realized_bounds_m": {
+      "x": {
+        "x_m": [
+          -1.0449999999999988e-05,
+          1.0550000000000006e-05
+        ],
+        "y_m": [
+          -1.049999999999999e-05,
+          1.05e-05
+        ],
+        "z_m": [
+          -4.351923166317271e-07,
+          -1.048953706583857e-07
+        ]
+      },
+      "y": {
+        "x_m": [
+          -1.049999999999998e-05,
+          1.05e-05
+        ],
+        "y_m": [
+          -1.0487499999999996e-05,
+          1.0512500000000045e-05
+        ],
+        "z_m": [
+          -4.351923166317271e-07,
+          -1.048953706583857e-07
+        ]
+      },
+      "z": {
+        "x_m": [
+          -1.049999999999998e-05,
+          1.05e-05
+        ],
+        "y_m": [
+          -1.049999999999999e-05,
+          1.05e-05
+        ],
+        "z_m": [
+          -3.71262040900811e-07,
+          -1.2805375744728044e-07
+        ]
+      }
+    },
+    "minimum_vertical_clearance_from_Au_m": 1.5e-07,
+    "moving_domain_or_direct_material_term": false
+  },
+  "finite_difference": {
+    "h_0.1_um": {
+      "h_um": 0.1,
+      "minus_case": "sharp_width_7p9_edge25_forward",
+      "plus_case": "sharp_width_8p1_edge25_forward",
+      "minus_objective_J_proxy": 4.136379528817025e-30,
+      "plus_objective_J_proxy": 3.533956864030549e-30,
+      "derivative_J_proxy_per_um": -3.0121133239323773e-30
+    },
+    "h_0.05_um": {
+      "h_um": 0.05,
+      "minus_case": "sharp_width_7p95_edge25_forward",
+      "plus_case": "sharp_width_8p05_edge25_forward",
+      "minus_objective_J_proxy": 3.98321898424023e-30,
+      "plus_objective_J_proxy": 3.68154432441113e-30,
+      "derivative_J_proxy_per_um": -3.016746598290998e-30
+    }
+  },
+  "FD_step_plateau_relative_change": 0.0015358513576332255,
+  "strong_h0p05_step_fraction_of_baseline": 0.03936734208415024,
+  "AD_FD_comparison": {
+    "h_0.1_um": {
+      "FD_J_proxy_per_um": -3.0121133239323773e-30,
+      "AD_J_proxy_per_um": -2.812540252376828e-30,
+      "relative_error": 0.06625682704892469,
+      "sign_agrees": true
+    },
+    "h_0.05_um": {
+      "FD_J_proxy_per_um": -3.016746598290998e-30,
+      "AD_J_proxy_per_um": -2.812540252376828e-30,
+      "relative_error": 0.06769091776878235,
+      "sign_agrees": true
+    }
+  },
+  "boundary_quadrature": [
+    {
+      "n_points_per_edge": 201,
+      "dy_m": 1.0000000000000074e-07,
+      "z_center_m": 7.5e-08,
+      "fixed_depth_m": 5e-08,
+      "faces": {
+        "x_min": {
+          "normal": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "normal_velocity_m_per_m": 1.0,
+          "derivative_J_proxy_per_m": -4.042124114897335e-24
+        },
+        "x_max": {
+          "normal": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "normal_velocity_m_per_m": 1.0,
+          "derivative_J_proxy_per_m": -4.030997827365353e-24
+        }
+      },
+      "total_J_proxy_per_m": -8.073121942262687e-24,
+      "all_finite": true
+    },
+    {
+      "n_points_per_edge": 401,
+      "dy_m": 4.999999999999952e-08,
+      "z_center_m": 7.5e-08,
+      "fixed_depth_m": 5e-08,
+      "faces": {
+        "x_min": {
+          "normal": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "normal_velocity_m_per_m": 1.0,
+          "derivative_J_proxy_per_m": -2.2861400915631194e-24
+        },
+        "x_max": {
+          "normal": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "normal_velocity_m_per_m": 1.0,
+          "derivative_J_proxy_per_m": -2.280944336810769e-24
+        }
+      },
+      "total_J_proxy_per_m": -4.5670844283738884e-24,
+      "all_finite": true
+    },
+    {
+      "n_points_per_edge": 801,
+      "dy_m": 2.5000000000000608e-08,
+      "z_center_m": 7.5e-08,
+      "fixed_depth_m": 5e-08,
+      "faces": {
+        "x_min": {
+          "normal": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "normal_velocity_m_per_m": 1.0,
+          "derivative_J_proxy_per_m": -1.407402692342055e-24
+        },
+        "x_max": {
+          "normal": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "normal_velocity_m_per_m": 1.0,
+          "derivative_J_proxy_per_m": -1.4051375600347735e-24
+        }
+      },
+      "total_J_proxy_per_m": -2.8125402523768283e-24,
+      "all_finite": true
+    }
+  ],
+  "boundary_quadrature_final_relative_change": 0.38417160959333657,
+  "material_readback": {
+    "material_name": "rho1_single_frequency_nk",
+    "requested_epsilon": [
+      -4642.2300000000005,
+      1674.64
+    ],
+    "fitted_epsilon": [
+      -4642.230000000002,
+      1674.6400000000012
+    ],
+    "relative_error": 4.3465394759076644e-16
+  },
+  "source": {
+    "method": "fixed-air-ROI native-Yee FieldRegion vector source",
+    "profile_scale": 2.669607195539751e-34,
+    "fieldregion_base_amplitude": 8.452201388439507e-29,
+    "source_profile_roundtrip_max_abs_error": 0.0,
+    "forward_Gaussian_original_amplitude": 1.0,
+    "forward_Gaussian_adjoint_amplitude": 0.0,
+    "template": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_external_field_adjoint_gpu0/au_external_field_adjoint_template.fsp",
+      "size_bytes": 1211527987,
+      "sha256": "8c07ba40501d941ebc50ece83b2f2d6b8c61c30e127dc038ae36b36a098fdfa6"
+    }
+  },
+  "adjoint": {
+    "resources": {
+      "1": {
+        "active": "1",
+        "device type": "CPU",
+        "processes": "1",
+        "threads": "8",
+        "solver extra command line options": ""
+      },
+      "2": {
+        "active": "1",
+        "device type": "GPU 0",
+        "processes": "1",
+        "threads": "8",
+        "solver extra command line options": "-gpu"
+      }
+    },
+    "resource_used": "Local Host",
+    "solver_mode": "GPU",
+    "forward_source_enabled_in_adjoint": true,
+    "named_source_normalization": {
+      "method": "FieldRegion-only CW field reconstructed from official cwnorm(1) and cwnorm(2) states; the zero-amplitude forward Gaussian remains active only to preserve the forward mesh",
+      "first_over_average_real": 1.1473463272070992,
+      "first_over_average_imag": 0.05521563719016014,
+      "fieldregion_over_first_source_spectrum_real": 1.2946926544141983,
+      "fieldregion_over_first_source_spectrum_imag": 0.11043127438032029,
+      "fieldregion_only_field_multiplier_real": 0.7668053464747447,
+      "fieldregion_only_field_multiplier_imag": -0.06540493709000259,
+      "two_normalization_state_spatial_residual": 1.4761027277906797e-16,
+      "uses_finite_difference_fit": false,
+      "empirical_gradient_rescaling": false,
+      "grid_mismatch_m": 0.0
+    },
+    "log_audit": {
+      "logs": [
+        "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_external_field_adjoint_gpu0/au_external_field_adjoint_gpu_p0.log"
+      ],
+      "final_auto_shutoff": 9.71729e-08,
+      "logged_grid": {
+        "shape_xyz": [
+          384,
+          950,
+          129
+        ],
+        "grid_points": 47059200
+      },
+      "precise_GPU_memory_GiB": 1.454,
+      "simulation_completed_successfully": true
+    },
+    "wall_s": 278.59114215895534,
+    "project": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_external_field_adjoint_gpu0/au_external_field_adjoint_gpu.fsp",
+      "size_bytes": 1844726648,
+      "sha256": "88cd9c2723932735b8a5be435c0628d4cea63428632f9215f49a20d75d2f4b06"
+    }
+  },
+  "gates": {
+    "strong_h0p05_relative_error_lt_1pct": false,
+    "strong_sign_agrees": true,
+    "boundary_quadrature_change_lt_0p5pct": false,
+    "source_roundtrip_exact": true,
+    "coordinate_mismatch_lt_2e_18_m": true,
+    "adjoint_auto_shutoff_lt_1e_5": true
+  },
+  "interpretation": {
+    "validated": [
+      "fixed external objective has no moving-domain or direct material-loss term",
+      "central-FD h=0.10 to 0.05 um plateau",
+      "GPU FieldRegion source exact round trip",
+      "forward/adjoint component-grid coordinate equality",
+      "Au fitted-epsilon readback",
+      "adjoint auto-shutoff",
+      "AD and FD sign agreement"
+    ],
+    "unresolved": [
+      "strong-direction AD-FD error remains above 1 percent",
+      "center-plane boundary quadrature is not converged",
+      "the current three-point quadrature record does not independently prove which edge/corner sample causes the drift"
+    ],
+    "consequence": "the v261 sharp-interface Au boundary kernel is not promoted; the P_Q direct discrete-loss derivative and all Au topology thermal/electrical/PTE optimization remain blocked"
+  },
+  "production_Au_optimization_permitted": false,
+  "empirical_normalization": false,
+  "gradient_rescaling": false,
+  "finite_difference_used_to_fit_AD": false
+}
