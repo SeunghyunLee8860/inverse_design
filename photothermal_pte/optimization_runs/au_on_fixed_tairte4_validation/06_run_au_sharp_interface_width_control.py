@@ -44,13 +44,26 @@ def option_value(arguments: list[str], option: str) -> str | None:
 def main() -> int:
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument("--au-half-x-um", type=float, required=True)
+    parser.add_argument("--au-half-y-um", type=float, default=10.0)
+    parser.add_argument("--flux-padding-um", type=float, default=0.5)
     parsed, remaining = parser.parse_known_args()
     if not 4.0 <= parsed.au_half_x_um <= 10.4:
         raise ValueError("--au-half-x-um must remain within [4.0, 10.4] um")
+    if not 4.0 <= parsed.au_half_y_um <= 20.0:
+        raise ValueError("--au-half-y-um must remain within [4.0, 20.0] um")
+    if not 0.25 <= parsed.flux_padding_um <= 1.0:
+        raise ValueError("--flux-padding-um must remain within [0.25, 1.0] um")
 
     base = load_binary_control()
     half_x_m = float(parsed.au_half_x_um) * 1e-6
+    half_y_m = float(parsed.au_half_y_um) * 1e-6
+    flux_padding_m = float(parsed.flux_padding_um) * 1e-6
     base.AU_BOUNDS["x"] = (-half_x_m, half_x_m)
+    base.AU_BOUNDS["y"] = (-half_y_m, half_y_m)
+    base.FLUX_BOUNDS["y"] = (
+        -half_y_m - flux_padding_m,
+        half_y_m + flux_padding_m,
+    )
 
     if not option_present(remaining, "--rho"):
         remaining.extend(("--rho", "1"))
@@ -77,6 +90,17 @@ def main() -> int:
             "value_um": float(parsed.au_half_x_um),
             "moved_boundaries": ["x_min", "x_max"],
             "fixed_boundaries": ["y_min", "y_max", "z_min", "z_max"],
+        }
+        result["fixed_y_boundary_control"] = {
+            "Au_half_y_m": half_y_m,
+            "Au_half_y_um": float(parsed.au_half_y_um),
+            "flux_padding_m": flux_padding_m,
+            "purpose": (
+                "place fixed sharp y-end corners outside the active "
+                "illumination/adjoint support"
+                if parsed.au_half_y_um > 10.0
+                else "legacy finite-rectangle geometry"
+            ),
         }
         result["gray_Au_air_material_used"] = False
         result_path.write_text(json.dumps(result, indent=2) + "\n")

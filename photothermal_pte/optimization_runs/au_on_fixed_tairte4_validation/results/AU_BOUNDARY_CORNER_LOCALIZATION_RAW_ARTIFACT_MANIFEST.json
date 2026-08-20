@@ -1,0 +1,27 @@
+{
+  "status": "DIAGNOSED_AU_BOUNDARY_QUADRATURE_CORNER_DOMINANCE",
+  "raw_files_committed": false,
+  "generation_command": "python 14_analyze_au_boundary_corner_localization.py",
+  "raw_files": [
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_forward/complex_material_control/complex_material_control_output.h5",
+      "bytes": 271039179,
+      "sha256": "a0095e6a1056673a393787b20be741790335160657cb7898b63195225fa615fc"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_external_field_adjoint_gpu0/au_external_field_adjoint_gpu/au_external_field_adjoint_gpu_output.h5",
+      "bytes": 278439054,
+      "sha256": "cf7b6d5c1de6d1c14893808315c48755a9ba0c227176ff9741c998e81de66049"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_forward/complex_material_control_q.npz",
+      "bytes": 24362164,
+      "sha256": "25d03baeb7f8147757942b7d6aea0d6b9f30cac4bf4ea4322ffb33fa1c0da069"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_external_field_adjoint_gpu0/au_sharp_interface_external_field_result.json",
+      "bytes": 12249,
+      "sha256": "911e00b37f39af4b183f3be462971b7d9793d9eb531e202d727739ce513f0d6c"
+    }
+  ]
+}

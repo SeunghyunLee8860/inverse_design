@@ -185,6 +185,54 @@ fails the 1% gate. The boundary integral itself changes by 38.4% from 401 to
 `BLOCKED_AU_SHARP_INTERFACE_BOUNDARY_QUADRATURE_UNRESOLVED`; this diagnostic
 does not promote an Au optical gradient or permit optimization.
 
+The completed engine HDF5 fields can be inspected without another Maxwell
+solve or license checkout:
+
+```bash
+python 14_analyze_au_boundary_corner_localization.py
+```
+
+This offline localization finds that the two trapezoid endpoints at the sharp
+Au corners (`y=+-10 um`) contribute 83.72% of the tangential-E proxy at 801
+points per vertical face. The combined smooth-face interior over
+`|y|<=9.5 um` changes by only 0.0047% from 201 to 6401 samples. The broad
+vertical-face interior is therefore not the source of the tangential-E drift;
+it is localized to the sharp metal corners sampled as polygon endpoints. This
+does not by itself certify the complete normal-D/tangential-E derivative.
+
+Moving the fixed y ends from `+-10` to `+-18 um` preserves a 0.0802% central-FD
+plateau but does not fix the 3D derivative. The center-z rule still changes by
+5.08%, and direct integration over the full lateral y-z surface changes by
+19.75% and has the wrong sign. This distinguishes two edge classes: the
+in-plane rectangle corners and the top/bottom rims of the extruded metal film.
+
+A separate solver-discrete test remeshes `epsilon_x/y/z` at geometry steps of
+100, 50, 25 and 12.5 nm without a Maxwell solve. The independently read index
+and electric-field coordinates match to `6.78e-21 m`, but the resulting
+derivative changes by 100.43% at the final refinement and misses the strong FD
+by 68.13%. Thus a hidden E/index coordinate shift is not the explanation, and
+conformal-mesh finite differences do not regularize this sharp metal edge.
+
+The controlled remedy is a smooth closed exact-binary scalar-Au ellipse. It is
+represented by 512 counter-clockwise vertices, but the boundary quadrature
+uses endpoint-free Gauss-Legendre nodes and never samples a polygon vertex.
+The x-semi-axis shape velocity is tested independently by recovering the exact
+polygon area derivative. Run the forward controls and one adjoint with:
+
+```bash
+python 16_run_au_smooth_ellipse_width_control.py \
+  --au-half-x-um <7.9|7.95|8.0|8.05|8.1> --au-half-y-um 10 \
+  --output-dir /path/to/raw_case --gpu-device 'GPU 0'
+python 17_run_au_smooth_ellipse_external_field_adjoint.py \
+  --output-dir /path/to/raw_adjoint_case --gpu-device 'GPU 0'
+python 18_summarize_au_boundary_root_cause_and_resolution.py
+```
+
+Even a passing smooth-shape result certifies only the field-mediated fixed-
+external-objective kernel. It does not yet certify the direct moving-Au
+spatial-absorption term required by the thermal/PTE objective, so production
+Au optimization remains fail-closed at this checkpoint.
+
 ## Material provenance
 
 - Au optical `n,k`: [Ordal et al., Applied Optics 26, 744–752 (1987)](https://doi.org/10.1364/AO.26.000744).

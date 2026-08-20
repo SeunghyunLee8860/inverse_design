@@ -65,6 +65,17 @@ from run_production_combined_adfd_smoke import (  # noqa: E402
 
 DEFAULT_RAW = pq.DEFAULT_RAW
 FD_CASES = pq.FD_CASES
+CORNER_FREE_HALF_Y_M = 18.0e-6
+CORNER_FREE_FD_CASES = {
+    0.10: (
+        "corner_free_y18_width_7p9_edge25_forward",
+        "corner_free_y18_width_8p1_edge25_forward",
+    ),
+    0.05: (
+        "corner_free_y18_width_7p95_edge25_forward",
+        "corner_free_y18_width_8p05_edge25_forward",
+    ),
+}
 WAVELENGTH_M = pq.WAVELENGTH_M
 SPEED_OF_LIGHT_M_S = 299792458.0
 AIR_EPSILON = pq.AIR_EPSILON
@@ -206,12 +217,13 @@ def official_center_depth_integral(
     half_width_m: float,
     epsilon_au: complex,
     n_points: int,
+    half_y_m: float = AU_HALF_Y_M,
 ) -> dict[str, object]:
     """Replicate the bundled v261 Polygon 3-D center-plane/depth rule."""
 
     if n_points < 3 or n_points % 2 == 0:
         raise ValueError("n_points must be an odd integer >=3")
-    y = np.linspace(-AU_HALF_Y_M, AU_HALF_Y_M, n_points)
+    y = np.linspace(-half_y_m, half_y_m, n_points)
     z = np.full_like(y, 0.5 * (AU_Z_MIN_M + AU_Z_MAX_M))
     wavelength = np.full_like(y, WAVELENGTH_M)
     total = 0.0
@@ -265,6 +277,90 @@ def official_center_depth_integral(
         "dy_m": float(y[1] - y[0]),
         "z_center_m": float(z[0]),
         "fixed_depth_m": AU_Z_MAX_M - AU_Z_MIN_M,
+        "half_y_m": half_y_m,
+        "faces": faces,
+        "total_J_proxy_per_m": total,
+        "all_finite": all_finite,
+    }
+
+
+def midpoint_surface_integral(
+    forward_fields,
+    adjoint_fields,
+    *,
+    half_width_m: float,
+    half_y_m: float,
+    epsilon_au: complex,
+    dy_m: float,
+    dz_m: float,
+) -> dict[str, object]:
+    """Integrate the complete 3-D moving face without sampling its corners.
+
+    Unlike the bundled extruded-polygon shortcut, this rule integrates both
+    in-plane and film-depth directions. Midpoints avoid assigning a finite
+    trapezoid weight to a mathematically singular sharp-metal vertex.
+    """
+
+    ny = int(round((2.0 * half_y_m) / dy_m))
+    nz = int(round((AU_Z_MAX_M - AU_Z_MIN_M) / dz_m))
+    if ny < 2 or nz < 1:
+        raise ValueError("midpoint surface quadrature is too coarse")
+    dy = 2.0 * half_y_m / ny
+    dz = (AU_Z_MAX_M - AU_Z_MIN_M) / nz
+    y = -half_y_m + (np.arange(ny) + 0.5) * dy
+    z = AU_Z_MIN_M + (np.arange(nz) + 0.5) * dz
+    yy, zz = np.meshgrid(y, z, indexing="ij")
+    wavelength = np.full_like(yy, WAVELENGTH_M)
+    total = 0.0
+    faces: dict[str, object] = {}
+    all_finite = True
+    for label, x, normal_x in (
+        ("x_min", -half_width_m, -1.0),
+        ("x_max", half_width_m, 1.0),
+    ):
+        xx = np.full_like(yy, x)
+        ef = np.asarray(
+            forward_fields.getfield(xx, yy, zz, wavelength), complex
+        )
+        df = np.asarray(
+            forward_fields.getDfield(xx, yy, zz, wavelength), complex
+        )
+        ea = np.asarray(
+            adjoint_fields.getfield(xx, yy, zz, wavelength), complex
+        )
+        da = np.asarray(
+            adjoint_fields.getDfield(xx, yy, zz, wavelength), complex
+        )
+        expected = (*yy.shape, 3)
+        if any(value.shape != expected for value in (ef, df, ea, da)):
+            raise RuntimeError("unexpected midpoint surface field shape")
+        all_finite = all_finite and bool(
+            all(np.all(np.isfinite(value)) for value in (ef, df, ea, da))
+        )
+        tangential = ef[..., 1] * ea[..., 1] + ef[..., 2] * ea[..., 2]
+        normal_d = df[..., 0] * da[..., 0]
+        kernel = (
+            2.0 * EPS0 * (epsilon_au - AIR_EPSILON) * tangential
+            + (1.0 / AIR_EPSILON - 1.0 / epsilon_au)
+            / EPS0
+            * normal_d
+        )
+        value = float(np.sum(np.real(kernel)) * dy * dz)
+        faces[label] = {
+            "normal": [normal_x, 0.0, 0.0],
+            "normal_velocity_m_per_m": 1.0,
+            "derivative_J_proxy_per_m": value,
+        }
+        total += value
+    return {
+        "rule": "two-dimensional midpoint surface quadrature",
+        "ny": ny,
+        "nz": nz,
+        "dy_m": dy,
+        "dz_m": dz,
+        "half_y_m": half_y_m,
+        "y_endpoints_sampled": False,
+        "z_endpoints_sampled": False,
         "faces": faces,
         "total_J_proxy_per_m": total,
         "all_finite": all_finite,
@@ -274,12 +370,27 @@ def official_center_depth_integral(
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--raw-root", type=Path, default=DEFAULT_RAW)
-    parser.add_argument("--baseline-case", default="sharp_width_8p0_edge25_forward")
+    parser.add_argument("--baseline-case")
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--gpu-device", default="GPU 6")
+    parser.add_argument(
+        "--corner-free-control",
+        action="store_true",
+        help=(
+            "use Au y=+-18 um forward controls so the fixed sharp corners "
+            "are outside the active source/adjoint region"
+        ),
+    )
     parser.add_argument("--fd-precheck-only", action="store_true")
     parser.add_argument("--resume-completed-adjoint", action="store_true")
     args = parser.parse_args()
+    fd_cases = CORNER_FREE_FD_CASES if args.corner_free_control else FD_CASES
+    au_half_y_m = CORNER_FREE_HALF_Y_M if args.corner_free_control else AU_HALF_Y_M
+    baseline_case = args.baseline_case or (
+        "corner_free_y18_width_8p0_edge25_forward"
+        if args.corner_free_control
+        else "sharp_width_8p0_edge25_forward"
+    )
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()) and not (
         args.fd_precheck_only or args.resume_completed_adjoint
@@ -303,8 +414,8 @@ def main() -> int:
     try:
         projects: dict[str, Path] = {}
         forward_results: dict[str, dict[str, object]] = {}
-        all_cases = {args.baseline_case}
-        for pair in FD_CASES.values():
+        all_cases = {baseline_case}
+        for pair in fd_cases.values():
             all_cases.update(pair)
         for name in sorted(all_cases):
             projects[name], forward_results[name] = pq.checked_project(
@@ -338,7 +449,7 @@ def main() -> int:
                     "sha256": pq.sha256(projects[name]),
                 },
             }
-            if name == args.baseline_case:
+            if name == baseline_case:
                 baseline_electric = np.array(electric, copy=True)
                 baseline_grid = {
                     key: np.array(value, copy=True) for key, value in grid.items()
@@ -350,7 +461,7 @@ def main() -> int:
             raise RuntimeError("baseline external objective was not captured")
 
         finite_differences = {}
-        for h_um, (minus_name, plus_name) in FD_CASES.items():
+        for h_um, (minus_name, plus_name) in fd_cases.items():
             minus = float(objective_cases[minus_name]["objective_J_proxy"])
             plus = float(objective_cases[plus_name]["objective_J_proxy"])
             derivative = (plus - minus) / (2.0 * h_um)
@@ -367,7 +478,7 @@ def main() -> int:
             finite_differences["h_0.1_um"]["derivative_J_proxy_per_um"],
         )
         baseline_objective = float(
-            objective_cases[args.baseline_case]["objective_J_proxy"]
+            objective_cases[baseline_case]["objective_J_proxy"]
         )
         strong_fd = float(
             finite_differences["h_0.05_um"]["derivative_J_proxy_per_um"]
@@ -385,6 +496,18 @@ def main() -> int:
                     "fixed external air-field objective for isolated Au boundary-"
                     "kernel AD-FD; no P_Q, thermal, electrical, PTE, or optimization"
                 ),
+                "geometry_control": {
+                    "Au_half_y_m": au_half_y_m,
+                    "fixed_sharp_corners_y_m": [-au_half_y_m, au_half_y_m],
+                    "corner_free_active_face": args.corner_free_control,
+                    "purpose": (
+                        "isolate the smooth x-normal face by moving the fixed "
+                        "y-end corners outside the active illumination and "
+                        "adjoint support"
+                        if args.corner_free_control
+                        else "legacy finite sharp-corner rectangle"
+                    ),
+                },
                 "objective": baseline_roi,
                 "objective_cases": objective_cases,
                 "finite_difference": finite_differences,
@@ -414,7 +537,7 @@ def main() -> int:
             raise RuntimeError("fixed external objective FD precheck did not pass")
 
         # Reload the baseline before creating the adjoint template.
-        fdtd.load(str(projects[args.baseline_case]))
+        fdtd.load(str(projects[baseline_case]))
         fdtd.runanalysis(PABS_GROUP)
         forward, grid = monitor_electric(fdtd, PABS_FIELD)
         objective_check, native_source, _ = fixed_air_objective_and_source(
@@ -429,7 +552,7 @@ def main() -> int:
         if epsilon.shape != forward.shape:
             raise RuntimeError("forward E/index component grids do not match")
         epsilon_au, material_name = fitted_au_epsilon(
-            fdtd, str(forward_results[args.baseline_case]["material"]["name"])
+            fdtd, str(forward_results[baseline_case]["material"]["name"])
         )
         epsilon_fit_error = relative(epsilon_au, pq.AU_EPSILON)
 
@@ -519,21 +642,59 @@ def main() -> int:
             profile_scale / base_amplitude
         )
         adjoint_fields = pq.build_nointerp_fields(scaled_adjoint, epsilon, grid)
-        quadratures = [
+        center_depth_quadratures = [
             official_center_depth_integral(
                 forward_fields,
                 adjoint_fields,
                 half_width_m=8.0e-6,
                 epsilon_au=epsilon_au,
                 n_points=n_points,
+                half_y_m=au_half_y_m,
             )
-            for n_points in (201, 401, 801)
+            for n_points in (201, 401, 801, 1601)
         ]
-        selected = quadratures[-1]
+        midpoint_center_depth_quadratures = [
+            midpoint_surface_integral(
+                forward_fields,
+                adjoint_fields,
+                half_width_m=8.0e-6,
+                half_y_m=au_half_y_m,
+                epsilon_au=epsilon_au,
+                dy_m=dy_m,
+                dz_m=AU_Z_MAX_M - AU_Z_MIN_M,
+            )
+            for dy_m in (100e-9, 50e-9, 25e-9, 12.5e-9)
+        ]
+        surface_quadratures = [
+            midpoint_surface_integral(
+                forward_fields,
+                adjoint_fields,
+                half_width_m=8.0e-6,
+                half_y_m=au_half_y_m,
+                epsilon_au=epsilon_au,
+                dy_m=dy_m,
+                dz_m=dz_m,
+            )
+            for dy_m, dz_m in (
+                (100e-9, 10e-9),
+                (50e-9, 5e-9),
+                (25e-9, 2.5e-9),
+                (12.5e-9, 1.25e-9),
+            )
+        ]
+        selected = surface_quadratures[-1]
         ad_per_um = float(selected["total_J_proxy_per_m"]) * 1.0e-6
-        quadrature_change = relative(
-            quadratures[-1]["total_J_proxy_per_m"],
-            quadratures[-2]["total_J_proxy_per_m"],
+        center_depth_change = relative(
+            center_depth_quadratures[-1]["total_J_proxy_per_m"],
+            center_depth_quadratures[-2]["total_J_proxy_per_m"],
+        )
+        midpoint_center_depth_change = relative(
+            midpoint_center_depth_quadratures[-1]["total_J_proxy_per_m"],
+            midpoint_center_depth_quadratures[-2]["total_J_proxy_per_m"],
+        )
+        surface_quadrature_change = relative(
+            surface_quadratures[-1]["total_J_proxy_per_m"],
+            surface_quadratures[-2]["total_J_proxy_per_m"],
         )
         comparisons = {}
         for key, row in finite_differences.items():
@@ -548,10 +709,10 @@ def main() -> int:
         passed = bool(
             strong["relative_error"] < 0.01
             and strong["sign_agrees"]
-            and quadrature_change < 5.0e-3
+            and surface_quadrature_change < 5.0e-3
             and roundtrip == 0.0
             and mismatch < 2.0e-18
-            and all(bool(row["all_finite"]) for row in quadratures)
+            and all(bool(row["all_finite"]) for row in surface_quadratures)
             and float(adjoint["log_audit"]["final_auto_shutoff"]) < 1.0e-5
         )
         result.update(
@@ -582,8 +743,31 @@ def main() -> int:
                         "sha256": pq.sha256(template),
                     },
                 },
-                "boundary_quadrature": quadratures,
-                "boundary_quadrature_final_relative_change": quadrature_change,
+                "boundary_quadrature_method_selected": (
+                    "two-dimensional midpoint integration over the full "
+                    "moving y-z face"
+                ),
+                "official_center_depth_endpoint_quadrature": (
+                    center_depth_quadratures
+                ),
+                "official_center_depth_final_relative_change": (
+                    center_depth_change
+                ),
+                "midpoint_center_depth_quadrature": (
+                    midpoint_center_depth_quadratures
+                ),
+                "midpoint_center_depth_final_relative_change": (
+                    midpoint_center_depth_change
+                ),
+                "full_surface_midpoint_quadrature": surface_quadratures,
+                "full_surface_midpoint_final_relative_change": (
+                    surface_quadrature_change
+                ),
+                # Backward-compatible aliases refer to the selected rule.
+                "boundary_quadrature": surface_quadratures,
+                "boundary_quadrature_final_relative_change": (
+                    surface_quadrature_change
+                ),
                 "AD_FD_comparison": comparisons,
                 "forward_adjoint_maximum_coordinate_mismatch_m": mismatch,
                 "adjoint": {
@@ -597,7 +781,7 @@ def main() -> int:
                     ]
                     < 0.01,
                     "strong_sign_agrees": strong["sign_agrees"],
-                    "boundary_quadrature_change_lt_0p5pct": quadrature_change
+                    "boundary_quadrature_change_lt_0p5pct": surface_quadrature_change
                     < 5.0e-3,
                     "source_roundtrip_exact": roundtrip == 0.0,
                     "coordinate_mismatch_lt_2e_18_m": mismatch < 2.0e-18,
