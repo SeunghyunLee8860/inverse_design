@@ -111,3 +111,11 @@ def test_pva_case_family_is_symmetric_about_eight_microns() -> None:
         "pva5_fixedgrid_smooth_ellipse_a7p95_b18_edge50_forward",
         "pva5_fixedgrid_smooth_ellipse_a8p05_b18_edge50_forward",
     )
+
+
+def test_real_epsilon_shift_keeps_passive_index_branch() -> None:
+    epsilon = complex(-4642.23, 1674.64)
+    shifted, index = ELLIPSE.shifted_complex_index(epsilon, 50.0)
+    assert shifted == epsilon + 50.0
+    assert index.imag > 0.0
+    np.testing.assert_allclose(index**2, shifted)

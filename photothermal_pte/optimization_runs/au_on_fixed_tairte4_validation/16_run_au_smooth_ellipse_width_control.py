@@ -25,6 +25,22 @@ ELLIPSE_HALF_Y_UM = 18.0
 ELLIPSE_VERTICES = 512
 
 
+def shifted_complex_index(
+    epsilon: complex, real_epsilon_shift: float
+) -> tuple[complex, complex]:
+    """Apply a real relative-permittivity perturbation at fixed geometry.
+
+    This is used only by the material-parameter adjoint control.  The default
+    shift is exactly zero, so the existing exact-Au width cases are unchanged.
+    """
+
+    shifted_epsilon = complex(epsilon) + float(real_epsilon_shift)
+    index = complex(np.sqrt(shifted_epsilon))
+    if index.imag < 0.0:
+        index = -index
+    return shifted_epsilon, index
+
+
 def load_binary_control():
     spec = importlib.util.spec_from_file_location("au_ellipse_binary_base", BINARY_CONTROL)
     if spec is None or spec.loader is None:
@@ -67,6 +83,15 @@ def main() -> int:
     parser.add_argument("--au-half-y-um", type=float, default=ELLIPSE_HALF_Y_UM)
     parser.add_argument("--ellipse-vertices", type=int, default=ELLIPSE_VERTICES)
     parser.add_argument("--ellipse-dxy-nm", type=float, default=25.0)
+    parser.add_argument(
+        "--au-epsilon-real-shift",
+        type=float,
+        default=0.0,
+        help=(
+            "diagnostic real-epsilon shift at fixed geometry; zero preserves "
+            "the exact Ordal Au endpoint"
+        ),
+    )
     parser.add_argument(
         "--mesh-half-x-um",
         type=float,
@@ -135,7 +160,10 @@ def main() -> int:
         def add_ellipse_design(fdtd, *, rho: float, representation: str):
             if representation != "scalar" or float(rho) != 1.0:
                 raise ValueError("smooth-ellipse control requires scalar rho=1 Au")
-            epsilon, index = legacy.complex_index(rho)
+            epsilon, _ = legacy.complex_index(rho)
+            epsilon, index = shifted_complex_index(
+                epsilon, parsed.au_epsilon_real_shift
+            )
             name = f"rho{rho:g}_{representation}_complex_block"
             material_name = f"rho{rho:g}_single_frequency_nk"
             material = fdtd.addmaterial("(n,k) Material")
@@ -217,6 +245,16 @@ def main() -> int:
             },
         }
         result["gray_Au_air_material_used"] = False
+        result["material_parameter_control"] = {
+            "parameter": "additive shift of real relative permittivity",
+            "real_epsilon_shift": float(parsed.au_epsilon_real_shift),
+            "geometry_fixed": True,
+            "purpose": (
+                "adjoint source/contraction convention control"
+                if parsed.au_epsilon_real_shift != 0.0
+                else "none; exact Ordal Au endpoint"
+            ),
+        }
         result_path.write_text(json.dumps(result, indent=2) + "\n")
     return return_code
 
