@@ -73,6 +73,23 @@ was launched. Regenerate the consolidated report and manifest with:
 If the density route fails material readback, binary equivalence, or AD-FD,
 the approved fallback is sharp-interface level-set/shape optimization.
 
+The first binary representation control is deliberately smaller than the
+device. It compares a 50-nm finite Au film represented by an exact scalar
+`(n,k)` material and by uniform `importnk2` under the same finite Gaussian,
+six-PML, native-Yee-Q contract. Runsetup is audited before any GPU forward:
+
+```bash
+python 04_run_au_binary_representation_control.py \
+  --output-dir /path/to/raw_case --rho 1 --representation scalar \
+  --gpu-device 'GPU 6' --contract-only
+```
+
+The completed binary checkpoint found that exact scalar Au is stable and
+closes its 20-um control volume, while the identical uniform `rho=1`
+`importnk2` representation diverges. Therefore no gray-density or density
+AD-FD test is promoted. The workflow now follows the approved fallback:
+sharp-interface binary Au with level-set/shape derivatives.
+
 ## Material provenance
 
 - Au optical `n,k`: [Ordal et al., Applied Optics 26, 744–752 (1987)](https://doi.org/10.1364/AO.26.000744).

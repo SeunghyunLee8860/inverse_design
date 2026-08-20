@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import importlib.util
 
 
 HERE = Path(__file__).resolve().parents[1]
@@ -40,3 +41,15 @@ def test_nonlinear_analytic_derivative_matches_centered_fd() -> None:
         - nonlinear_index_path(rho - step).epsilon
     ) / (2.0 * step)
     assert np.allclose(analytic, numerical, rtol=1e-8, atol=1e-6)
+
+
+def test_binary_control_uses_50nm_au_and_nonlinear_index_path() -> None:
+    path = HERE / "04_run_au_binary_representation_control.py"
+    spec = importlib.util.spec_from_file_location("au_binary_test", path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert np.isclose(module.AU_BOUNDS["z"][1] - module.AU_BOUNDS["z"][0], 50e-9)
+    epsilon, index = module.au_complex_index(1.0)
+    assert np.isclose(epsilon, EPSILON_AU_ORDAL_10UM)
+    assert np.isclose(index, N_AU_ORDAL_10UM)

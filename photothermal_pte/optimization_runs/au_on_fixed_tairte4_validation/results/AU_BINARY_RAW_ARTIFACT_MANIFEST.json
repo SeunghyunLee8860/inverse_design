@@ -1,0 +1,96 @@
+{
+  "status": "FAILED_DENSITY_ROUTE_UNIFORM_AU_IMPORTNK2_DIVERGENCE_FALLBACK_SHARP_INTERFACE",
+  "raw_files_committed": false,
+  "raw_files": [
+    {
+      "case": "scalar_10um_dz5",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/binary_rho1_scalar_forward_v2/case_result.json",
+      "bytes": 7247,
+      "sha256": "5233d16eaa52457f038f5735bb7ebd5b1b05f7648a0a4afca8ef07e715e58b34"
+    },
+    {
+      "case": "scalar_10um_dz5",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/binary_rho1_scalar_forward_v2/complex_material_control.fsp",
+      "bytes": 39790730,
+      "sha256": "7dacbd3184ad3d390a40d952dbf33aeeb73e6aa3a05c2cfc55c63ff31f041094"
+    },
+    {
+      "case": "scalar_10um_dz5",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/binary_rho1_scalar_forward_v2/complex_material_control_p0.log",
+      "bytes": 5290,
+      "sha256": "165f00c43cc036006c63282b1d47ccc2289b04a80bd99f385f342552bd366690"
+    },
+    {
+      "case": "scalar_10um_dz5",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/binary_rho1_scalar_forward_v2/complex_material_control_q.npz",
+      "bytes": 1299058,
+      "sha256": "f75f1773c7191d781cbb37a00f128612d56a6dc7cde64a626eb34c8a2f17aef4"
+    },
+    {
+      "case": "scalar_10um_dz2p5",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/binary_rho1_scalar_forward_dz2p5/case_result.json",
+      "bytes": 7270,
+      "sha256": "0754a246e7fceb63e8fb59cb91f30fa2fc7ababcd654e97684fa035ad9a826c6"
+    },
+    {
+      "case": "scalar_10um_dz2p5",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/binary_rho1_scalar_forward_dz2p5/complex_material_control.fsp",
+      "bytes": 63259738,
+      "sha256": "ee3e768f94b0c480bb3006ab89187233b83bb49eada931b8951fac52f3b957f1"
+    },
+    {
+      "case": "scalar_10um_dz2p5",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/binary_rho1_scalar_forward_dz2p5/complex_material_control_p0.log",
+      "bytes": 5297,
+      "sha256": "0556e475d84bc8e16030f8b9370910ebb9a86cbbc93377caf624608fa01b9fcf"
+    },
+    {
+      "case": "scalar_10um_dz2p5",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/binary_rho1_scalar_forward_dz2p5/complex_material_control_q.npz",
+      "bytes": 2499662,
+      "sha256": "6396cdc03aaf17acf0a73ea373dad8e365828733d5eede8b05071926ae97fbab"
+    },
+    {
+      "case": "scalar_20um_dz5",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/binary_rho1_scalar_20um_forward/case_result.json",
+      "bytes": 7274,
+      "sha256": "4e4787068aa50c154c653d31a7b224ec5308b6aa6915c9e02ef6e5cdd4a03b68"
+    },
+    {
+      "case": "scalar_20um_dz5",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/binary_rho1_scalar_20um_forward/complex_material_control.fsp",
+      "bytes": 138752826,
+      "sha256": "dbe6ca171a162243299c14949936520ec72224e91770e4320319bb2a4b536d52"
+    },
+    {
+      "case": "scalar_20um_dz5",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/binary_rho1_scalar_20um_forward/complex_material_control_p0.log",
+      "bytes": 5277,
+      "sha256": "878de56557a8a0901eba73cbcc03b1c6616e62dcdc12be501cc4ccab6f9731be"
+    },
+    {
+      "case": "scalar_20um_dz5",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/binary_rho1_scalar_20um_forward/complex_material_control_q.npz",
+      "bytes": 5952721,
+      "sha256": "1e3756a537a3649478dd5a738fe47daa26c32a07431bc108cc144b6c019eaa90"
+    },
+    {
+      "case": "imported_20um_dz5",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/binary_rho1_imported_20um_forward/case_result.json",
+      "bytes": 5398,
+      "sha256": "a61faa1a5d4690bb0a1e1a39d5e237776567db9ab3a9b7eaecaf2ab48253b516"
+    },
+    {
+      "case": "imported_20um_dz5",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/binary_rho1_imported_20um_forward/complex_material_control.fsp",
+      "bytes": 126977954,
+      "sha256": "c77029e5583ff410b57897197e2da6c2c9eba541ece17d128017285882031171"
+    },
+    {
+      "case": "imported_20um_dz5",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/binary_rho1_imported_20um_forward/complex_material_control_p0.log",
+      "bytes": 4587,
+      "sha256": "c016e4274cce7410ca392cdff0db2fde016f1806c5fbaa169ed62101f813d9da"
+    }
+  ]
+}
