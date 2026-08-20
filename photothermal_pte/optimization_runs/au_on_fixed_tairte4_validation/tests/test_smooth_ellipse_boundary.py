@@ -25,6 +25,10 @@ PVA_ADJOINT = load(
     "pva_smooth_ellipse_adjoint",
     "19_run_au_pva_smooth_ellipse_external_field_adjoint.py",
 )
+ELLIPSOID_ADJOINT = load(
+    "smooth_3d_ellipsoid_adjoint",
+    "26_validate_au_smooth_3d_ellipsoid_boundary_adjoint.py",
+)
 
 
 def test_ellipse_vertices_are_counter_clockwise_and_have_exact_bounds() -> None:
@@ -119,3 +123,18 @@ def test_real_epsilon_shift_keeps_passive_index_branch() -> None:
     assert shifted == epsilon + 50.0
     assert index.imag > 0.0
     np.testing.assert_allclose(index**2, shifted)
+
+
+def test_smooth_3d_ellipsoid_shape_velocity_recovers_volume_derivative() -> None:
+    numerical = ELLIPSOID_ADJOINT.ellipsoid_volume_shape_derivative_quadrature(
+        mu_order=16, phi_count=64
+    )
+    analytic = (
+        4.0
+        * np.pi
+        * ELLIPSOID_ADJOINT.B_M
+        * ELLIPSOID_ADJOINT.C_M
+        / 3.0
+    )
+    assert numerical > 0.0
+    np.testing.assert_allclose(numerical, analytic, rtol=1.0e-12)

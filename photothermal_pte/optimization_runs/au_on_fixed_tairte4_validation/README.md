@@ -228,10 +228,14 @@ python 17_run_au_smooth_ellipse_external_field_adjoint.py \
 python 18_summarize_au_boundary_root_cause_and_resolution.py
 ```
 
-Even a passing smooth-shape result certifies only the field-mediated fixed-
-external-objective kernel. It does not yet certify the direct moving-Au
-spatial-absorption term required by the thermal/PTE objective, so production
-Au optimization remains fail-closed at this checkpoint.
+The completed smooth control does **not** pass. Its independent central FD
+steps agree to `0.3366%`, but the endpoint-free boundary AD has the opposite
+sign and differs from the strong FD by `108.69%`; its final quadrature change
+is `1.325%`. The corresponding total-`P_Q` FD is also too weak and changes by
+`22.62%` between steps. Therefore the original corner-localization result was
+an amplifier diagnostic, not the complete root cause. The remaining blocker
+is the exact high-contrast lossy-Au interface trace on the conformal Yee mesh,
+and no Au optical shape gradient or production optimization is promoted.
 
 ## Material provenance
 

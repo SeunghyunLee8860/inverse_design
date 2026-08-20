@@ -70,6 +70,33 @@ def main() -> int:
     smooth_root = raw / "smooth_ellipse_external_field_adjoint_gpu0"
     smooth_result_path = smooth_root / "au_sharp_interface_external_field_result.json"
     smooth = read(smooth_result_path)
+    forward_case_names = {
+        7.90: "smooth_ellipse_a7p9_b10_edge25_forward",
+        7.95: "smooth_ellipse_a7p95_b10_edge25_forward",
+        8.00: "smooth_ellipse_a8p0_b10_edge25_forward",
+        8.05: "smooth_ellipse_a8p05_b10_edge25_forward",
+        8.10: "smooth_ellipse_a8p1_b10_edge25_forward",
+    }
+    forward_results = {
+        width: read(raw / name / "case_result.json")
+        for width, name in forward_case_names.items()
+    }
+    pq_fd = {
+        h: (
+            float(forward_results[8.0 + h]["P_Q_W"])
+            - float(forward_results[8.0 - h]["P_Q_W"])
+        )
+        / (2.0 * h)
+        for h in (0.10, 0.05)
+    }
+    pq_fd_step_change = abs(pq_fd[0.05] - pq_fd[0.10]) / max(
+        abs(pq_fd[0.05]), abs(pq_fd[0.10]), np.finfo(float).tiny
+    )
+    pq_strong_step_fraction = (
+        abs(pq_fd[0.05])
+        * 0.05
+        / float(forward_results[8.0]["P_Q_W"])
+    )
 
     smooth_passed = bool(smooth.get("passed", False))
     status = (
@@ -81,8 +108,10 @@ def main() -> int:
     summary = {
         "status": status,
         "root_cause": (
-            "sharp extruded-Au boundary singularities make the continuous and "
-            "solver-discrete shape derivatives non-convergent"
+            "the exact high-contrast lossy-Au interface trace on the conformal "
+            "Yee mesh is not a converged discrete shape derivative; sharp "
+            "corners amplify the failure but a smooth in-plane boundary does "
+            "not cure it"
         ),
         "not_root_cause": [
             "PML closure",
@@ -154,6 +183,23 @@ def main() -> int:
                 "boundary_quadrature_final_relative_change"
             ],
             "gates": smooth["gates"],
+            "interpretation": (
+                "the smooth geometry removes the in-plane corner hypothesis, "
+                "but its endpoint-free boundary kernel still has the wrong "
+                "AD sign and fails AD-FD; the exact-interface trace rather "
+                "than corners alone is therefore unresolved"
+            ),
+        },
+        "smooth_total_P_Q_FD_diagnostic": {
+            "h_0p10_W_per_um": pq_fd[0.10],
+            "h_0p05_W_per_um": pq_fd[0.05],
+            "step_relative_change": pq_fd_step_change,
+            "strong_step_fraction_of_baseline": pq_strong_step_fraction,
+            "passed_1pct_plateau": pq_fd_step_change < 0.01,
+            "interpretation": (
+                "diagnostic only; the total-P_Q width derivative is too weak "
+                "and does not have an FD plateau at this radius"
+            ),
         },
         "validated_scope": (
             "field-mediated fixed-external-objective optical shape derivative"
@@ -256,8 +302,8 @@ Status: `{status}`
 ## Conclusion
 
 The failing gate is not a PML, GPU, source-normalization, Yee-coordinate, or
-thermal-boundary problem. It is localized to the sharp boundary of the
-extruded Au geometry. The original rectangular control had a converged central
+thermal-boundary problem. It is localized to the exact high-contrast lossy-Au
+interface on the conformal Yee mesh. The original rectangular control had a converged central
 FD plateau (`{100*legacy['FD_step_plateau_relative_change']:.6f}%`) but its
 continuous boundary quadrature changed by
 `{100*legacy['boundary_quadrature_final_relative_change']:.6f}%` and missed the
@@ -295,12 +341,21 @@ For this control, the FD step change is
 change is `{100*smooth['boundary_quadrature_final_relative_change']:.6f}%`, and
 the strong-direction AD-FD error is
 `{100*smooth['AD_FD_comparison']['h_0.05_um']['relative_error']:.6f}%`.
-The result is `{smooth['status']}`.
+The result is `{smooth['status']}`. The AD sign is opposite to the converged
+FD direction. Thus the smooth control disproves the narrower hypothesis that
+the failure is caused only by in-plane corners. Sharp corners amplify the
+boundary trace, but removing them does not make the continuous interface
+kernel a solver-consistent discrete derivative.
 
-This resolves only the field-mediated fixed-external-objective boundary
-kernel. Production Au PTE optimization is still prohibited because the direct
-moving-Au spatial absorption (`P_Q`) contribution has not passed AD-FD. No
-thermal, electrical, PTE, or optimization solve is included in this report.
+No Au optical shape derivative is promoted by this checkpoint. The same five
+forward solves give total-`P_Q` FD derivatives of
+`{pq_fd[0.10]:.12e}` and `{pq_fd[0.05]:.12e} W/um`; they change by
+`{100*pq_fd_step_change:.6f}%`, while the strong perturbation changes baseline
+`P_Q` by only `{100*pq_strong_step_fraction:.6f}%`. This is not a usable direct-
+absorption derivative certificate. Production Au PTE optimization is still
+prohibited because the direct moving-Au spatial absorption contribution has
+not passed AD-FD. No thermal, electrical, PTE, or optimization solve is
+included in this report.
 """
     report_path = output / "AU_BOUNDARY_ROOT_CAUSE_AND_RESOLUTION_REPORT.md"
     report_path.write_text(report)
@@ -314,14 +369,8 @@ thermal, electrical, PTE, or optimization solve is included in this report.
             / "au_solver_discrete_deps_result.json",
         ),
     ]
-    for case_name in (
-        "smooth_ellipse_a7p9_b10_edge25_forward",
-        "smooth_ellipse_a7p95_b10_edge25_forward",
-        "smooth_ellipse_a8p0_b10_edge25_forward",
-        "smooth_ellipse_a8p05_b10_edge25_forward",
-        "smooth_ellipse_a8p1_b10_edge25_forward",
-    ):
-        case_result = read(raw / case_name / "case_result.json")
+    for width, case_name in forward_case_names.items():
+        case_result = forward_results[width]
         stored_by_path = {
             str(Path(row["path"]).resolve()): row
             for row in case_result["raw_artifacts"]
@@ -352,8 +401,9 @@ thermal, electrical, PTE, or optimization solve is included in this report.
             "python 17_run_au_smooth_ellipse_external_field_adjoint.py --gpu-device 'GPU 0' --output-dir <raw_adjoint_case>",
             "python 18_summarize_au_boundary_root_cause_and_resolution.py",
         ],
-        "new_Maxwell_forward_solves": 4,
-        "reused_baseline_forward_solves": 1,
+        "total_smooth_Maxwell_forward_solves": 5,
+        "new_perturbation_forward_solves": 4,
+        "smooth_baseline_forward_solves": 1,
         "new_Maxwell_adjoint_solves": 1,
         "raw_files": raw_files,
     }

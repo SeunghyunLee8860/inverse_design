@@ -204,7 +204,12 @@ def main() -> int:
         mesh["override z mesh"] = True
         mesh["dx"] = dxy_m
         mesh["dy"] = dxy_m
-        mesh["dz"] = 5.0e-9
+        # ``04_run_au_binary_representation_control.py`` owns the --au-dz-nm
+        # contract and updates this value before the geometry is built.  Do
+        # not silently pin the ellipse override to 5 nm: the Au top/bottom-rim
+        # convergence control must refine the geometry and monitor on the same
+        # requested z mesh.
+        mesh["dz"] = base.AU_DZ_M
 
     base.load_legacy = load_ellipse_legacy
     base.add_local_mesh = add_ellipse_mesh
