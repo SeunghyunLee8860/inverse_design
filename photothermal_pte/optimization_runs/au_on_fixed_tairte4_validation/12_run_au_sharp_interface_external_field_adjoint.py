@@ -249,29 +249,15 @@ def official_center_depth_integral(
             / EPS0
             * np.sum(df_perp * da_perp, axis=-1)
         )
-        real_kernel = np.real(kernel)
-        value = float(np.trapezoid(real_kernel, x=y)) * (
+        value = float(np.trapezoid(np.real(kernel), x=y)) * (
             AU_Z_MAX_M - AU_Z_MIN_M
         )
-        dy = float(y[1] - y[0])
-        endpoint_value = float(
-            0.5 * dy * (real_kernel[0] + real_kernel[-1])
-        ) * (AU_Z_MAX_M - AU_Z_MIN_M)
-        maximum_index = int(np.argmax(np.abs(real_kernel)))
         # Increasing half-width moves both faces along their outward normals;
         # each normal velocity is +1 m/m. normal_x is retained in provenance.
         faces[label] = {
             "normal": [normal_x, 0.0, 0.0],
             "normal_velocity_m_per_m": 1.0,
             "derivative_J_proxy_per_m": value,
-            "endpoint_trapezoid_contribution_J_proxy_per_m": endpoint_value,
-            "interior_contribution_J_proxy_per_m": value - endpoint_value,
-            "maximum_abs_kernel_J_proxy_per_m3": float(
-                np.abs(real_kernel[maximum_index])
-            ),
-            "maximum_abs_kernel_y_m": float(y[maximum_index]),
-            "kernel_at_y_min_J_proxy_per_m3": float(real_kernel[0]),
-            "kernel_at_y_max_J_proxy_per_m3": float(real_kernel[-1]),
         }
         total += value
     return {
@@ -533,7 +519,6 @@ def main() -> int:
             profile_scale / base_amplitude
         )
         adjoint_fields = pq.build_nointerp_fields(scaled_adjoint, epsilon, grid)
-        quadrature_points = (201, 401, 801, 1601, 3201, 6401)
         quadratures = [
             official_center_depth_integral(
                 forward_fields,
@@ -542,7 +527,7 @@ def main() -> int:
                 epsilon_au=epsilon_au,
                 n_points=n_points,
             )
-            for n_points in quadrature_points
+            for n_points in (201, 401, 801)
         ]
         selected = quadratures[-1]
         ad_per_um = float(selected["total_J_proxy_per_m"]) * 1.0e-6
