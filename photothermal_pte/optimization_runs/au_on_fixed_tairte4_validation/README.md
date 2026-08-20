@@ -90,6 +90,31 @@ closes its 20-um control volume, while the identical uniform `rho=1`
 AD-FD test is promoted. The workflow now follows the approved fallback:
 sharp-interface binary Au with level-set/shape derivatives.
 
+The first sharp-interface control moves the two x-normal faces of the exact
+scalar-Au film while keeping the source, mesh, monitors, material and all
+other faces fixed. It is a forward central-FD geometry control, not yet an
+adjoint certificate:
+
+```bash
+python 06_run_au_sharp_interface_width_control.py \
+  --au-half-x-um 10.0 --output-dir /path/to/raw_case \
+  --gpu-device 'GPU 6'
+```
+
+No gray Au/air cell is introduced by this route. The next gate compares a
+mesh-aware central-FD plateau with the bundled v261 polygon boundary
+perturbation adjoint before this representation is allowed into the coupled
+thermal/electrical model.
+
+Audit the exact bundled v261 source path without opening Lumerical:
+
+```bash
+python 07_audit_v261_sharp_interface_adjoint_path.py
+```
+
+This audit only establishes which boundary formula and polygon contract are
+installed. It intentionally leaves the numerical AD--FD status pending.
+
 ## Material provenance
 
 - Au optical `n,k`: [Ordal et al., Applied Optics 26, 744–752 (1987)](https://doi.org/10.1364/AO.26.000744).

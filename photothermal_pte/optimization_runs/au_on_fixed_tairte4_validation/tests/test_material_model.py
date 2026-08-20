@@ -53,3 +53,13 @@ def test_binary_control_uses_50nm_au_and_nonlinear_index_path() -> None:
     epsilon, index = module.au_complex_index(1.0)
     assert np.isclose(epsilon, EPSILON_AU_ORDAL_10UM)
     assert np.isclose(index, N_AU_ORDAL_10UM)
+
+
+def test_sharp_interface_width_wrapper_is_binary_and_symmetric() -> None:
+    path = HERE / "06_run_au_sharp_interface_width_control.py"
+    spec = importlib.util.spec_from_file_location("au_sharp_width_test", path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert module.option_present(["--rho", "1"], "--rho")
+    assert module.option_value(["--representation=scalar"], "--representation") == "scalar"
