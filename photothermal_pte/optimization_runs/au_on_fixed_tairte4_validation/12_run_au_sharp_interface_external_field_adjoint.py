@@ -383,6 +383,14 @@ def main() -> int:
     )
     parser.add_argument("--fd-precheck-only", action="store_true")
     parser.add_argument("--resume-completed-adjoint", action="store_true")
+    parser.add_argument(
+        "--resume-adjoint-dir",
+        type=Path,
+        help=(
+            "directory containing an existing completed template and adjoint "
+            "FSP; permits a new result directory without another Maxwell solve"
+        ),
+    )
     args = parser.parse_args()
     fd_cases = CORNER_FREE_FD_CASES if args.corner_free_control else FD_CASES
     au_half_y_m = CORNER_FREE_HALF_Y_M if args.corner_free_control else AU_HALF_Y_M
@@ -558,8 +566,13 @@ def main() -> int:
 
         profile, profile_scale = fieldregion_profile(native_source)
         original_amplitude = float(fdtd.getnamed(audit.SOURCE_NAME, "amplitude"))
-        template = output / "au_external_field_adjoint_template.fsp"
-        adjoint_project = output / "au_external_field_adjoint_gpu.fsp"
+        resume_dir = (
+            args.resume_adjoint_dir.expanduser().resolve()
+            if args.resume_adjoint_dir is not None
+            else output
+        )
+        template = resume_dir / "au_external_field_adjoint_template.fsp"
+        adjoint_project = resume_dir / "au_external_field_adjoint_gpu.fsp"
         if args.resume_completed_adjoint:
             if not template.is_file() or not adjoint_project.is_file():
                 raise FileNotFoundError("resume requires completed template and adjoint FSP")
@@ -596,7 +609,7 @@ def main() -> int:
                 "resource_used": "REUSED_COMPLETED_GPU_ADJOINT",
                 "solver_mode": "GPU",
                 "named_source_normalization": normalization,
-                "log_audit": audit.log_audit(output),
+                "log_audit": audit.log_audit(resume_dir),
                 "wall_s": 0.0,
                 "project": {
                     "path": str(adjoint_project),

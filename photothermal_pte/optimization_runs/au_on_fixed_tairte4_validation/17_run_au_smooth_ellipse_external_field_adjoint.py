@@ -104,8 +104,12 @@ def ellipse_polygon_boundary_integral(
     half_width_m: float,
     epsilon_au: complex,
     gauss_order_per_edge: int,
+    gauss_order_z: int = 1,
 ) -> dict[str, object]:
-    """Integrate the moving closed lateral boundary without vertex samples."""
+    """Integrate the moving lateral surface without edge or z endpoints."""
+
+    if gauss_order_z < 1:
+        raise ValueError("gauss_order_z must be positive")
 
     quadrature = ellipse_boundary_quadrature(
         half_width_m=half_width_m,
@@ -115,63 +119,121 @@ def ellipse_polygon_boundary_integral(
     normals = quadrature["normals_xyz"]
     normal_velocity = quadrature["normal_velocity_m_per_m"]
     weights = quadrature["arc_weights_m"]
-    x = points[..., 0].reshape(-1)
-    y = points[..., 1].reshape(-1)
-    z = np.full_like(x, 0.5 * (source.AU_Z_MIN_M + source.AU_Z_MAX_M))
+    lateral_x = points[..., 0].reshape(-1)
+    lateral_y = points[..., 1].reshape(-1)
+    lateral_normal = normals.reshape(-1, 3)
+    lateral_velocity = normal_velocity.reshape(-1)
+    lateral_weight = weights.reshape(-1)
+    z_legendre, z_legendre_weight = np.polynomial.legendre.leggauss(
+        gauss_order_z
+    )
+    depth = source.AU_Z_MAX_M - source.AU_Z_MIN_M
+    z_nodes = (
+        0.5 * (source.AU_Z_MIN_M + source.AU_Z_MAX_M)
+        + 0.5 * depth * z_legendre
+    )
+    z_weights = 0.5 * depth * z_legendre_weight
+    x = np.repeat(lateral_x, gauss_order_z)
+    y = np.repeat(lateral_y, gauss_order_z)
+    z = np.tile(z_nodes, lateral_x.size)
     wavelength = np.full_like(x, source.WAVELENGTH_M)
-    normal = normals.reshape(-1, 3)
+    normal = np.repeat(lateral_normal, gauss_order_z, axis=0)
 
-    ef = np.asarray(forward_fields.getfield(x, y, z, wavelength), complex)
-    df = np.asarray(forward_fields.getDfield(x, y, z, wavelength), complex)
-    ea = np.asarray(adjoint_fields.getfield(x, y, z, wavelength), complex)
-    da = np.asarray(adjoint_fields.getDfield(x, y, z, wavelength), complex)
-    expected = (x.size, 3)
-    if any(value.shape != expected for value in (ef, df, ea, da)):
-        raise RuntimeError("unexpected smooth-boundary vector field shape")
-    if not all(np.all(np.isfinite(value)) for value in (ef, df, ea, da)):
-        raise RuntimeError("non-finite smooth-boundary field")
-
-    ef_parallel = ef - np.sum(ef * normal, axis=-1)[:, None] * normal
-    ea_parallel = ea - np.sum(ea * normal, axis=-1)[:, None] * normal
-    df_perp = np.sum(df * normal, axis=-1)[:, None] * normal
-    da_perp = np.sum(da * normal, axis=-1)[:, None] * normal
-    kernel = (
-        2.0
-        * source.EPS0
-        * (epsilon_au - source.AIR_EPSILON)
-        * np.sum(ef_parallel * ea_parallel, axis=-1)
-        + (1.0 / source.AIR_EPSILON - 1.0 / epsilon_au)
-        / source.EPS0
-        * np.sum(df_perp * da_perp, axis=-1)
-    )
-    weighted = (
-        np.real(kernel).reshape(ELLIPSE_VERTICES, gauss_order_per_edge)
-        * normal_velocity
-        * weights
-        * (source.AU_Z_MAX_M - source.AU_Z_MIN_M)
-    )
-    value = float(np.sum(weighted))
+    surface_weights = (
+        lateral_weight[:, None] * z_weights[None, :]
+    ).reshape(-1)
+    surface_velocity = np.repeat(lateral_velocity, gauss_order_z)
+    # The no-interpolation Yee-field evaluator can allocate several large
+    # temporary arrays.  Batch the exact same quadrature to keep the full-z
+    # certificate independent of host-memory limits.
+    batch_size = 8192
+    positive = 0.0
+    negative = 0.0
+    value = 0.0
+    all_finite = True
+    for start in range(0, x.size, batch_size):
+        stop = min(start + batch_size, x.size)
+        selection = slice(start, stop)
+        ef = np.asarray(
+            forward_fields.getfield(
+                x[selection], y[selection], z[selection], wavelength[selection]
+            ),
+            complex,
+        )
+        df = np.asarray(
+            forward_fields.getDfield(
+                x[selection], y[selection], z[selection], wavelength[selection]
+            ),
+            complex,
+        )
+        ea = np.asarray(
+            adjoint_fields.getfield(
+                x[selection], y[selection], z[selection], wavelength[selection]
+            ),
+            complex,
+        )
+        da = np.asarray(
+            adjoint_fields.getDfield(
+                x[selection], y[selection], z[selection], wavelength[selection]
+            ),
+            complex,
+        )
+        expected = (stop - start, 3)
+        if any(array.shape != expected for array in (ef, df, ea, da)):
+            raise RuntimeError("unexpected smooth-boundary vector field shape")
+        finite = all(np.all(np.isfinite(array)) for array in (ef, df, ea, da))
+        all_finite = all_finite and finite
+        if not finite:
+            raise RuntimeError("non-finite smooth-boundary field")
+        local_normal = normal[selection]
+        ef_parallel = ef - np.sum(ef * local_normal, axis=-1)[:, None] * local_normal
+        ea_parallel = ea - np.sum(ea * local_normal, axis=-1)[:, None] * local_normal
+        df_perp = np.sum(df * local_normal, axis=-1)[:, None] * local_normal
+        da_perp = np.sum(da * local_normal, axis=-1)[:, None] * local_normal
+        kernel = (
+            2.0
+            * source.EPS0
+            * (epsilon_au - source.AIR_EPSILON)
+            * np.sum(ef_parallel * ea_parallel, axis=-1)
+            + (1.0 / source.AIR_EPSILON - 1.0 / epsilon_au)
+            / source.EPS0
+            * np.sum(df_perp * da_perp, axis=-1)
+        )
+        weighted = (
+            np.real(kernel)
+            * surface_velocity[selection]
+            * surface_weights[selection]
+        )
+        positive += float(np.sum(weighted[weighted > 0.0]))
+        negative += float(np.sum(weighted[weighted < 0.0]))
+        value += float(np.sum(weighted))
     return {
         "rule": (
-            "endpoint-free Gauss-Legendre integration over every edge of a "
-            "512-vertex CCW ellipse; center-z times fixed 50-nm extrusion depth"
+            "tensor-product endpoint-free Gauss-Legendre integration over "
+            "every edge of a 512-vertex CCW ellipse and the full Au depth"
         ),
         "ellipse_vertex_count": ELLIPSE_VERTICES,
         "gauss_order_per_edge": gauss_order_per_edge,
+        "gauss_order_z": gauss_order_z,
         "sample_count": int(x.size),
         "ellipse_x_semi_axis_m": half_width_m,
         "ellipse_y_semi_axis_m": ELLIPSE_HALF_Y_M,
-        "z_center_m": float(z[0]),
-        "fixed_depth_m": source.AU_Z_MAX_M - source.AU_Z_MIN_M,
+        "z_quadrature_node_bounds_m": [
+            float(np.min(z_nodes)),
+            float(np.max(z_nodes)),
+        ],
+        "fixed_depth_m": depth,
+        "z_endpoints_sampled": False,
+        "interpolation_batch_size": batch_size,
         "polygon_vertices_sampled": False,
         "normal_velocity_range_m_per_m": [
             float(np.min(normal_velocity)),
             float(np.max(normal_velocity)),
         ],
-        "positive_contribution_J_proxy_per_m": float(np.sum(weighted[weighted > 0.0])),
-        "negative_contribution_J_proxy_per_m": float(np.sum(weighted[weighted < 0.0])),
+        "positive_contribution_J_proxy_per_m": positive,
+        "negative_contribution_J_proxy_per_m": negative,
         "total_J_proxy_per_m": value,
-        "all_finite": True,
+        "all_finite": all_finite,
     }
 
 
@@ -192,6 +254,7 @@ def official_ellipse_integral(
         half_width_m=half_width_m,
         epsilon_au=epsilon_au,
         gauss_order_per_edge=order,
+        gauss_order_z=1,
     )
     result["legacy_n_points_argument"] = int(n_points)
     return result
@@ -207,14 +270,18 @@ def midpoint_ellipse_integral(
     dy_m: float,
     dz_m: float,
 ) -> dict[str, object]:
-    del half_y_m, dz_m
-    order = int(round(100.0e-9 / float(dy_m)))
+    del half_y_m
+    edge_order = int(round(100.0e-9 / float(dy_m)))
+    z_order = int(
+        round((source.AU_Z_MAX_M - source.AU_Z_MIN_M) / float(dz_m))
+    )
     return ellipse_polygon_boundary_integral(
         forward_fields,
         adjoint_fields,
         half_width_m=half_width_m,
         epsilon_au=epsilon_au,
-        gauss_order_per_edge=max(1, order),
+        gauss_order_per_edge=max(1, edge_order),
+        gauss_order_z=max(1, z_order),
     )
 
 

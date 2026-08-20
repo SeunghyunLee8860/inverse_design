@@ -67,3 +67,30 @@ def test_quadrature_excludes_polygon_vertices() -> None:
         np.linalg.norm(points[:, None, :] - vertices[None, :, :], axis=-1)
     )
     assert minimum_distance > 0.0
+
+
+def test_full_depth_quadrature_order_tracks_requested_dz() -> None:
+    class ConstantFields:
+        @staticmethod
+        def getfield(x, y, z, wavelength):
+            del y, z, wavelength
+            return np.ones((np.asarray(x).size, 3), complex)
+
+        @staticmethod
+        def getDfield(x, y, z, wavelength):
+            del y, z, wavelength
+            return np.ones((np.asarray(x).size, 3), complex)
+
+    result = ADJOINT.midpoint_ellipse_integral(
+        ConstantFields(),
+        ConstantFields(),
+        half_width_m=8.0e-6,
+        half_y_m=10.0e-6,
+        epsilon_au=complex(-100.0, 10.0),
+        dy_m=25.0e-9,
+        dz_m=5.0e-9,
+    )
+    assert result["gauss_order_per_edge"] == 4
+    assert result["gauss_order_z"] == 10
+    assert result["sample_count"] == 512 * 4 * 10
+    assert result["z_endpoints_sampled"] is False
