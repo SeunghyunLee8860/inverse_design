@@ -19,15 +19,15 @@ import sys
 HERE = Path(__file__).resolve().parent
 STAGE17 = HERE / "17_run_au_smooth_ellipse_external_field_adjoint.py"
 ELLIPSE_HALF_Y_M = 18.0e-6
-BASELINE_CASE = "pva5_smooth_ellipse_a8p0_b18_edge50_forward_retry"
+BASELINE_CASE = "pva5_fixedgrid_smooth_ellipse_a8p0_b18_edge50_forward"
 PVA_FD_CASES = {
     0.10: (
-        "pva5_smooth_ellipse_a7p9_b18_edge50_forward",
-        "pva5_smooth_ellipse_a8p1_b18_edge50_forward",
+        "pva5_fixedgrid_smooth_ellipse_a7p9_b18_edge50_forward",
+        "pva5_fixedgrid_smooth_ellipse_a8p1_b18_edge50_forward",
     ),
     0.05: (
-        "pva5_smooth_ellipse_a7p95_b18_edge50_forward",
-        "pva5_smooth_ellipse_a8p05_b18_edge50_forward",
+        "pva5_fixedgrid_smooth_ellipse_a7p95_b18_edge50_forward",
+        "pva5_fixedgrid_smooth_ellipse_a8p05_b18_edge50_forward",
     ),
 }
 
@@ -65,11 +65,16 @@ def main() -> int:
         "meshing_refinement": 5,
         "local_Au_dx_dy_m": 50.0e-9,
         "local_Au_dz_m": 5.0e-9,
+        "fixed_mesh_and_monitor_bounds_m": {
+            "x": [-8.6e-6, 8.6e-6],
+            "y": [-18.5e-6, 18.5e-6],
+        },
         "mesh_wavelength_m": 10.0e-6,
     }
     result["comparison_to_CV1"] = (
         "same scalar Au, smooth ellipse, source, objective, and shape parameter; "
-        "PVA replaces conformal variant 1 and the local lateral mesh is 50 nm"
+        "PVA replaces conformal variant 1, the local lateral mesh is 50 nm, "
+        "and every FD/AD case uses identical fixed mesh and monitor bounds"
     )
     result["production_Au_optimization_permitted"] = False
     result_path.write_text(json.dumps(result, indent=2, default=str) + "\n")

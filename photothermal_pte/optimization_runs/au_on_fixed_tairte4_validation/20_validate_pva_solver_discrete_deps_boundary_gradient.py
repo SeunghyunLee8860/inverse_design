@@ -19,7 +19,7 @@ import numpy as np
 HERE = Path(__file__).resolve().parent
 STAGE15 = HERE / "15_validate_solver_discrete_deps_boundary_gradient.py"
 STAGE16 = HERE / "16_run_au_smooth_ellipse_width_control.py"
-BASELINE_CASE = "pva5_smooth_ellipse_a8p0_b18_edge50_forward_retry"
+BASELINE_CASE = "pva5_fixedgrid_smooth_ellipse_a8p0_b18_edge50_forward"
 AU_OBJECT = "rho1_scalar_complex_block"
 ELLIPSE_HALF_Y_M = 18.0e-6
 ELLIPSE_VERTICES = 512
@@ -101,6 +101,10 @@ def main() -> int:
             "meshing_refinement": 5,
             "local_Au_dx_dy_m": 50.0e-9,
             "local_Au_dz_m": 5.0e-9,
+            "fixed_mesh_and_monitor_bounds_m": {
+                "x": [-8.6e-6, 8.6e-6],
+                "y": [-18.5e-6, 18.5e-6],
+            },
         }
         result["production_Au_optimization_permitted"] = False
         result_path.write_text(json.dumps(result, indent=2, default=str) + "\n")

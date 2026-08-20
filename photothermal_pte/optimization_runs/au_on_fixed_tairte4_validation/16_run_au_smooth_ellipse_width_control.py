@@ -67,6 +67,22 @@ def main() -> int:
     parser.add_argument("--au-half-y-um", type=float, default=ELLIPSE_HALF_Y_UM)
     parser.add_argument("--ellipse-vertices", type=int, default=ELLIPSE_VERTICES)
     parser.add_argument("--ellipse-dxy-nm", type=float, default=25.0)
+    parser.add_argument(
+        "--mesh-half-x-um",
+        type=float,
+        help=(
+            "fixed x half-span for both the local mesh and field/flux monitors; "
+            "omit only for legacy moving-box diagnostics"
+        ),
+    )
+    parser.add_argument(
+        "--mesh-half-y-um",
+        type=float,
+        help=(
+            "fixed y half-span for both the local mesh and field/flux monitors; "
+            "omit only for legacy moving-box diagnostics"
+        ),
+    )
     parsed, remaining = parser.parse_known_args()
     if not 4.0 <= parsed.au_half_x_um <= 10.0:
         raise ValueError("--au-half-x-um must remain within [4,10] um")
@@ -74,9 +90,26 @@ def main() -> int:
         raise ValueError("--au-half-y-um must remain within [8,20] um")
     if not 12.5 <= parsed.ellipse_dxy_nm <= 100.0:
         raise ValueError("--ellipse-dxy-nm must remain within [12.5,100] nm")
+    if (parsed.mesh_half_x_um is None) != (parsed.mesh_half_y_um is None):
+        raise ValueError("--mesh-half-x-um and --mesh-half-y-um must be paired")
 
     half_x_m = float(parsed.au_half_x_um) * 1.0e-6
     half_y_m = float(parsed.au_half_y_um) * 1.0e-6
+    fixed_mesh_bounds = parsed.mesh_half_x_um is not None
+    mesh_half_x_m = (
+        float(parsed.mesh_half_x_um) * 1.0e-6
+        if fixed_mesh_bounds
+        else half_x_m + 0.5e-6
+    )
+    mesh_half_y_m = (
+        float(parsed.mesh_half_y_um) * 1.0e-6
+        if fixed_mesh_bounds
+        else half_y_m + 0.5e-6
+    )
+    if mesh_half_x_m < half_x_m + 0.49e-6:
+        raise ValueError("fixed mesh x bounds must clear Au by at least 0.49 um")
+    if mesh_half_y_m < half_y_m + 0.49e-6:
+        raise ValueError("fixed mesh y bounds must clear Au by at least 0.49 um")
     vertices = ellipse_vertices(half_x_m, half_y_m, int(parsed.ellipse_vertices))
     dxy_m = float(parsed.ellipse_dxy_nm) * 1.0e-9
     base = load_binary_control()
@@ -88,8 +121,8 @@ def main() -> int:
         "z": (0.05e-6, 0.10e-6),
     }
     base.FLUX_BOUNDS = {
-        "x": (-half_x_m - 0.5e-6, half_x_m + 0.5e-6),
-        "y": (-half_y_m - 0.5e-6, half_y_m + 0.5e-6),
+        "x": (-mesh_half_x_m, mesh_half_x_m),
+        "y": (-mesh_half_y_m, mesh_half_y_m),
         "z": (-0.45e-6, 0.60e-6),
     }
     base.AU_DZ_M = 5.0e-9
@@ -176,6 +209,12 @@ def main() -> int:
             "maximum_vertex_angle_rad": 2.0 * np.pi / parsed.ellipse_vertices,
             "moved_boundary": "complete smooth closed lateral ellipse",
             "fixed_boundaries": ["z_min", "z_max"],
+            "mesh_and_monitor_bounds_move_with_shape": not fixed_mesh_bounds,
+            "mesh_and_monitor_bounds_m": {
+                "x": [-mesh_half_x_m, mesh_half_x_m],
+                "y": [-mesh_half_y_m, mesh_half_y_m],
+                "z": [0.0, 0.15e-6],
+            },
         }
         result["gray_Au_air_material_used"] = False
         result_path.write_text(json.dumps(result, indent=2) + "\n")

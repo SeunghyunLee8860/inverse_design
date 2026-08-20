@@ -102,12 +102,12 @@ def test_full_depth_quadrature_order_tracks_requested_dz() -> None:
 
 def test_pva_case_family_is_symmetric_about_eight_microns() -> None:
     assert PVA_ADJOINT.ELLIPSE_HALF_Y_M == 18.0e-6
-    assert PVA_ADJOINT.BASELINE_CASE.endswith("a8p0_b18_edge50_forward_retry")
+    assert PVA_ADJOINT.BASELINE_CASE.endswith("a8p0_b18_edge50_forward")
     assert PVA_ADJOINT.PVA_FD_CASES[0.10] == (
-        "pva5_smooth_ellipse_a7p9_b18_edge50_forward",
-        "pva5_smooth_ellipse_a8p1_b18_edge50_forward",
+        "pva5_fixedgrid_smooth_ellipse_a7p9_b18_edge50_forward",
+        "pva5_fixedgrid_smooth_ellipse_a8p1_b18_edge50_forward",
     )
     assert PVA_ADJOINT.PVA_FD_CASES[0.05] == (
-        "pva5_smooth_ellipse_a7p95_b18_edge50_forward",
-        "pva5_smooth_ellipse_a8p05_b18_edge50_forward",
+        "pva5_fixedgrid_smooth_ellipse_a7p95_b18_edge50_forward",
+        "pva5_fixedgrid_smooth_ellipse_a8p05_b18_edge50_forward",
     )
