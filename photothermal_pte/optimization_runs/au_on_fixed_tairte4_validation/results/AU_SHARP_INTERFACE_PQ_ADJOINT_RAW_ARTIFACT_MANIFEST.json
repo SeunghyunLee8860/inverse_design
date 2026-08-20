@@ -1,0 +1,50 @@
+{
+  "status": "BLOCKED_AU_TOPOLOGY_OPTICAL_GRADIENT_UNVALIDATED",
+  "raw_files_committed": false,
+  "generation_command": "python 10_run_au_sharp_interface_pq_adjoint.py --output-dir <raw_case> --gpu-device 'GPU 6'",
+  "resume_command_used_for_vectorized_postprocess": "python 10_run_au_sharp_interface_pq_adjoint.py --output-dir <raw_case> --gpu-device 'GPU 6' --resume-completed-adjoint",
+  "raw_files": [
+    {
+      "role": "25nm_baseline_forward_fsp",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_forward/complex_material_control.fsp",
+      "bytes": 734606704,
+      "sha256": "d87e50b56b515b73deddc0a1779414f298642e42cecd147ec1b8646aea0c5c3e"
+    },
+    {
+      "role": "25nm_baseline_forward_npz",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_forward/complex_material_control_q.npz",
+      "bytes": 24362164,
+      "sha256": "25d03baeb7f8147757942b7d6aea0d6b9f30cac4bf4ea4322ffb33fa1c0da069"
+    },
+    {
+      "role": "adjoint_template_fsp",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_pq_adjoint/au_sharp_interface_pq_adjoint_template.fsp",
+      "bytes": 1211527987,
+      "sha256": "5339016dc50e5fdf09421cbdbb140e7f2d0ec6096a933545e9a124a13608ab6b"
+    },
+    {
+      "role": "adjoint_gpu_fsp",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_pq_adjoint/au_sharp_interface_pq_adjoint_gpu.fsp",
+      "bytes": 1844728504,
+      "sha256": "82029637a5478ca713dd1478ec18cf4f5a43a778cee4b06e1573ae2e2ba155a0"
+    },
+    {
+      "role": "adjoint_gpu_h5",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_pq_adjoint/au_sharp_interface_pq_adjoint_gpu/au_sharp_interface_pq_adjoint_gpu_output.h5",
+      "bytes": 272783461,
+      "sha256": "481d15ceb0f449e71f7a75be30ed111d035a70ba5e98ffe75c4e71e4b2dee13e"
+    },
+    {
+      "role": "adjoint_log",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_pq_adjoint/au_sharp_interface_pq_adjoint_gpu_p0.log",
+      "bytes": 5570,
+      "sha256": "b26c6cbe4784c3dcb94411c9dcd48459402682cc4a81a83bca394fd9143dc314"
+    },
+    {
+      "role": "raw_result",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/sharp_width_8p0_edge25_pq_adjoint/au_sharp_interface_pq_adjoint_result.json",
+      "bytes": 6890,
+      "sha256": "2ea46474b7edaba6c8aab192bff8e8428f71828c2f25c34ad1258b0b84cb4c5b"
+    }
+  ]
+}

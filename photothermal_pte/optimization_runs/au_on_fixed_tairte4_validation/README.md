@@ -142,6 +142,32 @@ so the within-mesh FD-step plateau passes. The `h=0.10 um` derivative still
 changes by about 3.04% from edge-50 to edge-25 nm; mesh-independent shape
 sensitivity and the numerical boundary adjoint therefore remain unvalidated.
 
+The next isolated diagnostic evaluates the actual sharp-interface `P_Q`
+shape-adjoint candidate against those independent central differences:
+
+```bash
+python 10_run_au_sharp_interface_pq_adjoint.py \
+  --output-dir /path/to/raw_case --gpu-device 'GPU 6'
+python 11_summarize_au_sharp_interface_pq_adjoint.py
+```
+
+The GPU FieldRegion adjoint source round trip, forward/adjoint component-grid
+coordinates, and surface quadrature pass their numerical gates. The resulting
+continuous boundary candidate does not: the strong `h=0.05 um` FD is
+`-2.904123e-17 W/um`, whereas the candidate AD is `+4.079993e-12 W/um`.
+The sign is wrong and the magnitude ratio is about `1.405e5`. Refining the
+surface quadrature changes the candidate by only `0.435%`, so the discrepancy
+is not repaired by integration refinement.
+
+Status is therefore
+`BLOCKED_AU_TOPOLOGY_OPTICAL_GRADIENT_UNVALIDATED`. The continuous pointwise
+inside-Au loss trace is not a solver-consistent derivative of the discrete
+conformal-Yee `P_Q` objective at the sharp metal edge. It is rejected without
+fitting, normalization, sign changes, or gradient rescaling. Together with
+the divergent uniform-`rho=1` `importnk2` endpoint, this means that neither
+current Au representation permits production Au thermal/electrical/PTE
+optimization yet.
+
 ## Material provenance
 
 - Au optical `n,k`: [Ordal et al., Applied Optics 26, 744–752 (1987)](https://doi.org/10.1364/AO.26.000744).
