@@ -1,0 +1,166 @@
+{
+  "status": "BLOCKED_AU_PRODUCTION_GRADIENT_REQUIRES_DISPERSIVE_DISCRETE_ADJOINT",
+  "raw_artifacts_committed_to_git": false,
+  "artifacts": [
+    {
+      "role": "all_metal_dt0p5",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/temperature_density_au_50nm_rho1_span1000_conformal1_dt0p5_allmetal_short_gpu2/case_result.json",
+      "size_bytes": 7206,
+      "sha256": "8f134c79509194245841e05b69367bb88cb2f1de73b562a2cf4669770b69daf8"
+    },
+    {
+      "role": "pml_dt0p5",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/temperature_density_au_50nm_rho1_span1000_conformal1_dt0p5_short_gpu0/case_result.json",
+      "size_bytes": 6965,
+      "sha256": "b46338cc97f513fd00fc639113b6c41d713804298cbefda22be749a9212c6393"
+    },
+    {
+      "role": "sampled_passive_base",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/temperature_density_reverse_ordal_sampled_passive_rho1_conformal1_short_gpu2/case_result.json",
+      "size_bytes": 7534,
+      "sha256": "1880bc743d7dd2170f16e39fee4a15c7dfc1d7c35310a2af36f1b67b5ce7a5fa"
+    },
+    {
+      "role": "global_cv0_air_base",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/temperature_density_au_50nm_rho1_span1000_conformal0_gpu3/case_result.json",
+      "size_bytes": 7895,
+      "sha256": "9b9ae941767e3030c64bd1b284c47ea09ad3d7d80dbf5b045b0bf089cbdfc8ba"
+    },
+    {
+      "role": "global_cv0_exact_au_base",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/temperature_density_reverse_exact_au_rho1_span1000_conformal0_gpu3/case_result.json",
+      "size_bytes": 7910,
+      "sha256": "0c6f8fb003ef7eb80bb4d05b16dbea5dd80bdea769df446563b242d8d4e682fa"
+    },
+    {
+      "role": "fixed_material_adfd",
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_fixedgrid_material_adjoint_control/au_fixed_geometry_material_adjoint_result.json",
+      "size_bytes": 10601,
+      "sha256": "59ea23aedb3b7c6d07828326c0587a628355eb6e139151c34d81ac3e1ee1eb4c"
+    },
+    {
+      "role": "smooth_boundary_adfd",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_smooth3d_ellipsoid_boundary_adjoint_gpu0/au_smooth3d_ellipsoid_boundary_adjoint_result.json",
+      "size_bytes": 14374,
+      "sha256": "702052ccebbe44cd94a36360d8f8c5031ec44c24160a8467cf57c04f8734b0a8"
+    },
+    {
+      "role": "complex_deps_coarse",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/same_session_complex_deps_checkpointed_gpu4/au_same_session_complex_deps_result.json",
+      "size_bytes": 23922,
+      "sha256": "c757245bd5e7a59873802223091822483b19116c784fd4f062d4879a26fd07f4"
+    },
+    {
+      "role": "complex_deps_subnm",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/same_session_complex_deps_subnm_gpu4/au_same_session_complex_deps_result.json",
+      "size_bytes": 18643,
+      "sha256": "d1b34804ca33373767aaaf07b07832c2f1706e0541c9d8d88d779283f527b1b3"
+    },
+    {
+      "role": "same_step_local_fd_h1nm",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/same_step_local_maxwell_fd_h1nm/au_same_step_local_maxwell_fd_result.json",
+      "size_bytes": 3238,
+      "sha256": "deff31a2731fb1fee0135527d4ff44d1c728bc3cb0964e6be1176b6157fb0f72"
+    },
+    {
+      "role": "same_step_local_fd_h0p5nm",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/same_step_local_maxwell_fd_h0p5nm/au_same_step_local_maxwell_fd_result.json",
+      "size_bytes": 3273,
+      "sha256": "4eedd07bd182d4bcc3be9e1634125dd32bb72cb50175a5bda05ccb825e6a760e"
+    },
+    {
+      "role": "installed_v261_lumopt2_d_eps_calculator",
+      "path": "/home/seunghyun/lumerical_r12/opt/lumerical/v261/api/python/lumopt2/parametrization/d_eps_calculator.py",
+      "size_bytes": 40929,
+      "sha256": "c9b0ad5ddc682effd8c54e6168a539df99520448985ecd561ec5a38c7bbc6b47"
+    },
+    {
+      "role": "installed_v261_legacy_lumopt_geometry",
+      "path": "/home/seunghyun/lumerical_r12/opt/lumerical/v261/api/python/lumopt/geometries/geometry.py",
+      "size_bytes": 38612,
+      "sha256": "1c2f32ca551d74e72d39ecb65579fd674ba37a218b5f0dac12773109d7983073"
+    },
+    {
+      "role": "same_step_h1nm_minus_FSP",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_smooth3d_ellipsoid_a7p999_b18_c1_forward_retry2_gpu4/complex_material_control.fsp",
+      "size_bytes": 1575049416,
+      "sha256": "eaa0df5ca70405fe2d62259c3178fbbaa0dfc9f4b782a2410ca942aa759a2c46",
+      "metadata_source": "completed forward case_result.json"
+    },
+    {
+      "role": "same_step_h1nm_plus_FSP",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_smooth3d_ellipsoid_a8p001_b18_c1_forward_gpu4/complex_material_control.fsp",
+      "size_bytes": 1575049416,
+      "sha256": "d31a9a3999d4223a644d8d2cb649cf18d61cc0ba1b43ad11540c5ba7ccb68929",
+      "metadata_source": "completed forward case_result.json"
+    },
+    {
+      "role": "same_step_h0p5nm_minus_FSP",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_smooth3d_ellipsoid_a7p9995_b18_c1_forward_gpu4/complex_material_control.fsp",
+      "size_bytes": 1575048960,
+      "sha256": "5c03035a853481cc84770d9a4cefa0de9f32f8ccd750557037cc0d4947198b24",
+      "metadata_source": "completed forward case_result.json"
+    },
+    {
+      "role": "same_step_h0p5nm_plus_FSP",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_smooth3d_ellipsoid_a8p0005_b18_c1_forward_gpu4/complex_material_control.fsp",
+      "size_bytes": 1575048840,
+      "sha256": "006cb2b80ff47d58bd1fba9594d16b75f02cc10a8a70ab7339add09297719af8",
+      "metadata_source": "completed forward case_result.json"
+    },
+    {
+      "role": "same_step_h1nm_minus_NPZ",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_smooth3d_ellipsoid_a7p999_b18_c1_forward_retry2_gpu4/complex_material_control_q.npz",
+      "size_bytes": 626330002,
+      "sha256": "00641e47c2142f4227ed4a590df2008f53be69c487030b9a2ff147af29f461e3",
+      "metadata_source": "completed forward case_result.json"
+    },
+    {
+      "role": "same_step_h1nm_plus_NPZ",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_smooth3d_ellipsoid_a8p001_b18_c1_forward_gpu4/complex_material_control_q.npz",
+      "size_bytes": 626314562,
+      "sha256": "cccb8361734ec653a75dbbf2e102f94b82f3dcadf98deb55023dc4a3f32da538",
+      "metadata_source": "completed forward case_result.json"
+    },
+    {
+      "role": "same_step_h0p5nm_minus_NPZ",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_smooth3d_ellipsoid_a7p9995_b18_c1_forward_gpu4/complex_material_control_q.npz",
+      "size_bytes": 626111434,
+      "sha256": "b873e19b0d0e5b3adb22d4f0cb68a51118d8712152e7a13f500370b932c4eed5",
+      "metadata_source": "completed forward case_result.json"
+    },
+    {
+      "role": "same_step_h0p5nm_plus_NPZ",
+      "path": "/data/seunghyun/tairte4/raw_artifacts/au_topology_validation/pva5_smooth3d_ellipsoid_a8p0005_b18_c1_forward_gpu4/complex_material_control_q.npz",
+      "size_bytes": 626038880,
+      "sha256": "4b303fd4de87eab8ecdfb6bcdc2c26b508711f9c23d4db7c2dd628929ded1afd",
+      "metadata_source": "completed forward case_result.json"
+    }
+  ],
+  "generated_outputs": [
+    {
+      "role": "published_summary",
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/au_differentiable_route_resolution_summary.json",
+      "size_bytes": 9886,
+      "sha256": "d035ad9eb9e09f160ce878a0ad6f1a71d2f064f1b30691b7e7b906c7a0a7a04b"
+    },
+    {
+      "role": "step_sweep_csv",
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/au_complex_deps_step_sweep.csv",
+      "size_bytes": 531,
+      "sha256": "3887bd292c7be34d0461537563e302f3d5391bbcadab91f85197f099e74e439a"
+    },
+    {
+      "role": "step_sweep_plot",
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/au_complex_deps_step_sweep.png",
+      "size_bytes": 153224,
+      "sha256": "b2b55def41c90d7c5f4ef80914b6205fb7b5707747e0b23f706b67022c70c945"
+    },
+    {
+      "role": "published_report",
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/AU_DIFFERENTIABLE_ROUTE_RESOLUTION_REPORT.md",
+      "size_bytes": 6528,
+      "sha256": "abc2906e4007edaef1171f8997c9c9ecbe9b6a02636d546fae0cb30579753043"
+    }
+  ]
+}

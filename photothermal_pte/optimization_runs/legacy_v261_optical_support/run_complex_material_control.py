@@ -227,6 +227,16 @@ def main() -> int:
     parser.add_argument("--meshing-refinement", type=int, default=5)
     parser.add_argument("--dt-stability-factor", type=float, default=0.99)
     parser.add_argument(
+        "--boundary-mode",
+        choices=("PML", "Metal"),
+        default="PML",
+        help=(
+            "Boundary-condition diagnostic. Metal on all six faces is the "
+            "official Lumerical discriminator between PML and time-step/"
+            "material divergence; it is not a production optical boundary."
+        ),
+    )
+    parser.add_argument(
         "--mesh-wavelength-um",
         type=float,
         help=(
@@ -290,6 +300,16 @@ def main() -> int:
             8.36043075475035e-6,
             8.5e-6,
         )
+        if args.boundary_mode != "PML":
+            for axis in "xyz":
+                fdtd.setnamed("FDTD", f"{axis} min bc", args.boundary_mode)
+                fdtd.setnamed("FDTD", f"{axis} max bc", args.boundary_mode)
+        built["domain"]["boundary_mode_requested"] = args.boundary_mode
+        built["domain"]["boundary_readback"] = {
+            f"{axis}_{side}": str(fdtd.getnamed("FDTD", f"{axis} {side} bc"))
+            for axis in "xyz"
+            for side in ("min", "max")
+        }
         fdtd.setnamed("FDTD", "mesh refinement", args.mesh_refinement)
         if args.mesh_refinement == "precise volume average":
             fdtd.setnamed("FDTD", "meshing refinement", args.meshing_refinement)

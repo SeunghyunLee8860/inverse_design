@@ -1,0 +1,248 @@
+{
+  "status": "BLOCKED_AU_PRODUCTION_GRADIENT_REQUIRES_DISPERSIVE_DISCRETE_ADJOINT",
+  "production_Au_optimization_permitted": false,
+  "root_cause_resolution": {
+    "PML_is_root_cause": false,
+    "Courant_step_is_root_cause": false,
+    "global_conformal_variant_1_is_only_root_cause": false,
+    "exact_scalar_Au_forward_is_inherently_unstable": false,
+    "temperature_grid_density_carrier_is_usable_for_exact_Au": false,
+    "index_monitor_complex_diagonal_epsilon_is_complete_conformal_operator": false,
+    "demonstrated_cause": "The v261 GPU Index-perturbation/temperature-grid wrapper is unstable at the exact-Au endpoint even for an exact-Au base with zero endpoint perturbation. Independently, the bundled lumopt2 geometry-difference implementation discards Im(epsilon) and its wavelength-remapping helper assumes n >> k approximately 0, so that generic implementation is incompatible with lossy Au. Finally, an equal-step h=1 nm test shows that retaining complex diagonal epsilon is still incomplete for the conformal moving-Au operator: equal-step h=1 and 0.5 nm tests have the correct sign but miss the independently re-solved Maxwell derivatives by 66.98% and 39.20%, while the two Maxwell FDs form a 0.0821% plateau."
+  },
+  "Au_10um": {
+    "n": 12.1,
+    "k": 69.2,
+    "epsilon": [
+      -4642.2300000000005,
+      1674.64
+    ],
+    "epsilon_magnitude": 4935.05,
+    "field_amplitude_e_folding_depth_nm": 22.999269232932857,
+    "intensity_e_folding_depth_nm": 11.499634616466428,
+    "semi_infinite_surface_impedance_ohm": [
+      0.9236860407458485,
+      -5.28256810079444
+    ],
+    "surface_resistance_ohm": 0.9236860407458485,
+    "interpretation": "The previous 50 nm lateral / 25 nm vertical Au control mesh is not an interface-converged production mesh for this loss."
+  },
+  "temperature_grid_carrier_controls": {
+    "all_metal_dt0p5": {
+      "status": "BLOCKED_COMPLEX_MATERIAL_CONTROL",
+      "diverged": true,
+      "boundary_mode": "Metal",
+      "mesh_refinement": "conformal variant 1",
+      "dt_stability_factor": 0.5,
+      "base_material_model": null,
+      "grid_attribute_conformal_control_available": null
+    },
+    "pml_dt0p5": {
+      "status": "BLOCKED_COMPLEX_MATERIAL_CONTROL",
+      "diverged": true,
+      "boundary_mode": null,
+      "mesh_refinement": "conformal variant 1",
+      "dt_stability_factor": 0.5,
+      "base_material_model": null,
+      "grid_attribute_conformal_control_available": null
+    },
+    "sampled_passive_base": {
+      "status": "BLOCKED_COMPLEX_MATERIAL_CONTROL",
+      "diverged": true,
+      "boundary_mode": "PML",
+      "mesh_refinement": "conformal variant 1",
+      "dt_stability_factor": 0.99,
+      "base_material_model": "Ordal_sampled_data_passive_fit",
+      "grid_attribute_conformal_control_available": null
+    },
+    "global_cv0_air_base": {
+      "status": "BLOCKED_COMPLEX_MATERIAL_CONTROL",
+      "diverged": true,
+      "boundary_mode": "PML",
+      "mesh_refinement": "conformal variant 0",
+      "dt_stability_factor": 0.99,
+      "base_material_model": "nondispersive_dielectric",
+      "grid_attribute_conformal_control_available": false
+    },
+    "global_cv0_exact_au_base": {
+      "status": "BLOCKED_COMPLEX_MATERIAL_CONTROL",
+      "diverged": true,
+      "boundary_mode": "PML",
+      "mesh_refinement": "conformal variant 0",
+      "dt_stability_factor": 0.99,
+      "base_material_model": "single_frequency_constant_nk",
+      "grid_attribute_conformal_control_available": false
+    }
+  },
+  "fixed_geometry_material_AD_FD": {
+    "status": "VALIDATED_AU_FIXED_GEOMETRY_MATERIAL_ADJOINT",
+    "AD": -1.9225300474361712e-35,
+    "FD": -1.922604957345216e-35,
+    "relative_error": 3.896271501784461e-05,
+    "passed": true
+  },
+  "moving_boundary": {
+    "coarse_Maxwell_FD_h_nm": 50.0,
+    "coarse_Maxwell_FD": -2.665238476049999e-30,
+    "same_session_complex_dEps_steps_nm": [
+      100.0,
+      50.0,
+      25.0,
+      10.0,
+      5.0,
+      2.5,
+      1.0,
+      0.5,
+      0.25,
+      0.1
+    ],
+    "finest_dEps_step_nm": 0.1,
+    "finest_complex_dEps_AD": -1.6390958715454297e-30,
+    "finest_sign_matches_coarse_Maxwell_FD": true,
+    "finest_relative_error_vs_coarse_Maxwell_FD": 0.38500967689216237,
+    "subnm_tail_change": 0.07637345773537167,
+    "index_field_max_coordinate_mismatch_m": 5.082197683525802e-21,
+    "same_step_h_nm": 0.500000000000167,
+    "same_step_Maxwell_central_FD": -2.91860974059658e-30,
+    "same_step_complex_dEps_AD": -1.774630542260675e-30,
+    "same_step_same_sign": true,
+    "same_step_relative_error": 0.3919603167301392,
+    "same_step_gate_lt_1pct": false,
+    "Maxwell_FD_h1nm": -2.9162158163215083e-30,
+    "Maxwell_FD_h0p5nm": -2.91860974059658e-30,
+    "Maxwell_FD_h1_to_h0p5_relative_change": 0.000820227604182003,
+    "Maxwell_FD_local_plateau_lt_1pct": true,
+    "same_step_controls": {
+      "h1nm": {
+        "AD": -9.629137844567984e-31,
+        "FD": -2.9162158163215083e-30,
+        "relative_error": 0.6698070907278014,
+        "passed": false
+      },
+      "h0p5nm": {
+        "AD": -1.774630542260675e-30,
+        "FD": -2.91860974059658e-30,
+        "relative_error": 0.3919603167301392,
+        "passed": false
+      }
+    },
+    "resolution": "The equal-step control fails. A diagonal volume d-epsilon contraction is not the complete derivative of v261's conformal moving-metal update. The exact-binary Au adjoint route is not promoted."
+  },
+  "v261_lumopt2_source_audit": {
+    "installed_path": "/home/seunghyun/lumerical_r12/opt/lumerical/v261/api/python/lumopt2/parametrization/d_eps_calculator.py",
+    "installed_source": {
+      "path": "/home/seunghyun/lumerical_r12/opt/lumerical/v261/api/python/lumopt2/parametrization/d_eps_calculator.py",
+      "size_bytes": 40929,
+      "sha256": "c9b0ad5ddc682effd8c54e6168a539df99520448985ecd561ec5a38c7bbc6b47",
+      "matches": {
+        "real(D{label}.index_x^2)": [
+          897
+        ],
+        "real(d_eps_ctr_sparse.eps_x.data)": [
+          956
+        ],
+        "eps_real_data = np.where(eps_real_data < 0, 1e-6": [
+          609
+        ],
+        "n>>k~0": [
+          612
+        ]
+      },
+      "all_patterns_found": true
+    },
+    "real_only_index_square_lines": [
+      897,
+      898,
+      899
+    ],
+    "real_only_sparse_difference_lines": [
+      956,
+      957,
+      958
+    ],
+    "consequence": "The generic v261 lumopt2 d_eps route discards the imaginary part of epsilon and is therefore not a valid Au-loss shape Jacobian without an independently validated replacement.",
+    "wavelength_remap_audit": "grab_epsilon_material clips negative real epsilon to 1e-6 and fits a Cauchy refractive-index model documented in the source as n >> k approximately 0. This is also incompatible with Au."
+  },
+  "legacy_lumopt_complex_dEps_source_audit": {
+    "installed_source": {
+      "path": "/home/seunghyun/lumerical_r12/opt/lumerical/v261/api/python/lumopt/geometries/geometry.py",
+      "size_bytes": 38612,
+      "sha256": "1c2f32ca551d74e72d39ecb65579fd674ba37a218b5f0dac12773109d7983073",
+      "matches": {
+        "index_x^2": [
+          92,
+          123,
+          240,
+          263,
+          275,
+          287
+        ],
+        "index_y^2": [
+          92,
+          124,
+          241,
+          264,
+          276,
+          288
+        ],
+        "index_z^2": [
+          92,
+          125,
+          242,
+          265,
+          277,
+          289
+        ],
+        "(eps_data1 - eps_data2) / (2*dx)": [
+          482,
+          487,
+          497
+        ]
+      },
+      "all_patterns_found": true
+    },
+    "interpretation": "The legacy geometry dEps route retains complex index squared. The same-session control reproduces that useful part, but it still requires the equal-step Maxwell FD gate."
+  },
+  "resolution_routes": {
+    "near_term_Lumerical_exact_binary_shape": {
+      "requirements": [
+        "exact scalar dispersive Au only; no gray temperature-grid carrier",
+        "CV0/CV1 and 10/5/2.5 nm Au-interface mesh convergence on a compact control",
+        "same-step local Maxwell FD versus same-session complex dEps",
+        "few bounded spline/level-set parameters, not per-pixel density",
+        "full coupled PTE AD-FD before optimization"
+      ],
+      "current_state": "failed at h=1/0.5 nm (66.98%/39.20% error) despite a 0.0821% Maxwell-FD plateau; not a valid adjoint route"
+    },
+    "immediate_exact_binary_fallback": {
+      "method": "keep Au exact and optimize only a small bounded set of shape parameters with independent Maxwell central differences or a derivative-free trust-region method",
+      "limitations": "valid for a few parameters only; it is not a free-form pixel topology gradient",
+      "required_gates": [
+        "10/5/2.5 nm Au-interface forward mesh convergence",
+        "central-FD step plateau for every active parameter",
+        "exact-binary thermal/electrical/PTE reevaluation"
+      ]
+    },
+    "production_freeform_metal_topology": {
+      "requirements": [
+        "discrete time-domain adjoint",
+        "causal Drude or CCPR auxiliary differential equations",
+        "density interpolation of dispersive pole/residue parameters",
+        "auxiliary-state terms included in the gradient",
+        "binary endpoint cross-validation against exact-scalar Lumerical"
+      ],
+      "current_state": "not implemented in the v261 GPU carrier path"
+    },
+    "optional_surface_impedance_approximation": {
+      "surface_resistance_ohm": 0.9236860407458485,
+      "requirements": [
+        "exact-Au versus surface-impedance forward comparison",
+        "finite-thickness and substrate correction",
+        "surface-loss Q and shape-gradient AD-FD"
+      ],
+      "current_state": "candidate acceleration only; not validated"
+    }
+  },
+  "no_empirical_sign_flip_scale_or_gradient_rescaling": true,
+  "no_thermal_PTE_or_optimization_executed": true
+}

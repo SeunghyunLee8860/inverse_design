@@ -1,0 +1,32 @@
+{
+  "status": "VALIDATED_DISCRETE_PASSIVE_DRUDE_ADJOINT_CONTROL",
+  "generation_command": "python 38_validate_discrete_drude_adjoint_control.py",
+  "artifacts": [
+    {
+      "role": "summary_json",
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/au_discrete_drude_adjoint_summary.json",
+      "size_bytes": 1941,
+      "sha256": "5417bb6f345f20d6038ec1e48ed683d60a5adb29cee359d763625b313b52e4f5"
+    },
+    {
+      "role": "directional_csv",
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/au_discrete_drude_adjoint_directions.csv",
+      "size_bytes": 3954,
+      "sha256": "ae54914d7996fbf812308cdb1dc97038ad508b02138e2c04277045d2f668bc4c"
+    },
+    {
+      "role": "plot",
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/au_discrete_drude_adjoint_fd.png",
+      "size_bytes": 134440,
+      "sha256": "13ca8edd897d0bc35df4b99a440aed04ac98f94cce9faa07c9de2be9b0646f91"
+    },
+    {
+      "role": "report",
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results/AU_DISCRETE_DRUDE_ADJOINT_CONTROL_REPORT.md",
+      "size_bytes": 1432,
+      "sha256": "2236b859fdc0090bb8d4220cba2440efd8e6f745ba15e0412de0614449902d7d"
+    }
+  ],
+  "no_Lumerical_Maxwell_solve": true,
+  "no_thermal_PTE_or_optimization": true
+}

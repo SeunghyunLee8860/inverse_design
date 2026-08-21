@@ -1,0 +1,55 @@
+{
+  "status": "VALIDATED_DISCRETE_PASSIVE_DRUDE_ADJOINT_CONTROL",
+  "scope": "one-dimensional fixed-grid algorithmic control; not a 3-D Lumerical or production PTE result",
+  "target": {
+    "wavelength_m": 1e-05,
+    "n": 12.1,
+    "k": 69.2,
+    "epsilon": [
+      -4642.2300000000005,
+      1674.64
+    ]
+  },
+  "passive_Drude_fit": {
+    "epsilon_inf": 1.0,
+    "omega_p_rad_s": 1.3644725516892122e+16,
+    "gamma_rad_s": 67936291346284.76,
+    "endpoint_readback": [
+      -4642.23,
+      1674.6399999999999
+    ],
+    "endpoint_relative_error": 1.8996477854071472e-16,
+    "passivity": true
+  },
+  "density_interpolation": {
+    "law": "Drude pole strength s(rho)=rho^3",
+    "binary_endpoints_exact": true,
+    "gray_law_status": "numerical causal scenario, not an Au effective medium"
+  },
+  "discrete_control": {
+    "design_cells": 81,
+    "baseline_objective": 1.2044210098228516e-08,
+    "baseline_residual": 3.942946742124106e-14,
+    "maximum_residual": 4.06749390223803e-14,
+    "FD_steps": [
+      0.005,
+      0.0025,
+      0.00125,
+      0.000625
+    ],
+    "directions": [
+      "uniform",
+      "smooth_asymmetric",
+      "central_localized",
+      "design_edge_localized",
+      "fixed_seed_random"
+    ],
+    "finest_step": 0.000625,
+    "maximum_strong_direction_finest_step_relative_error": 4.351339395689772e-06,
+    "maximum_all_direction_gradient_normalized_error": 6.551925326105435e-07,
+    "strong_direction_relative_AD_FD_gate": 1e-05,
+    "all_direction_gradient_normalized_gate": 1e-06,
+    "near_null_rule": "|AD| <= 1e-10 ||gradient||_2 ||direction||_2"
+  },
+  "interpretation": "A passive dispersive metal on a fixed discrete grid has an exact adjoint when both the Maxwell-operator and direct material-loss derivatives are included. Extending this control to production requires the 3-D Yee curl/PML operator and Drude/CCPR auxiliary states; it does not validate v261's moving-conformal-Au d-epsilon."
+}

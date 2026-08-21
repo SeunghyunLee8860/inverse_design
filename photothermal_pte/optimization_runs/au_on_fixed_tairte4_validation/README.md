@@ -1,5 +1,35 @@
 # Au topology validation on a fixed TaIrTe4 flake
 
+## Current promoted route (2026-08-21)
+
+Au is the **nanoantenna/nanocube design material**, not an electrode in this
+workflow.  The v261 moving/conformal Au boundary derivative is retained as a
+failed diagnostic; it is not the production gradient.
+
+The first working free-form-metal checkpoint is now a fixed-grid causal
+dispersive route:
+
+```bash
+env PYTHONPATH=/home/seunghyun/.local/au_fdtdx \\
+  CUDA_VISIBLE_DEVICES=4 XLA_PYTHON_CLIENT_PREALLOCATE=false \\
+  /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \\
+  photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/39_validate_3d_drude_nanostructure_adfd.py
+
+/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \\
+  photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/40_summarize_3d_drude_nanostructure_adfd.py
+```
+
+The 2-D design density is extruded through a fixed Au thickness and scales a
+passive Drude pole as `s(rho)=rho^3`.  At 10 um the Au endpoint is exactly
+`n+ik=12.1+69.2i`.  This is a causal numerical relaxation, not a claim that a
+gray pixel is a fabricated effective medium.  The 3-D GPU Maxwell AD--FD
+control passes five directional tests.  See
+`results/AU_3D_CAUSAL_DRUDE_NANOSTRUCTURE_ADFD_REPORT.md`.
+
+This checkpoint does not yet promote a coupled TaIrTe4 thermal/PTE objective
+or an Au optimization.  The next gate adds fixed anisotropic TaIrTe4 and
+separates Au and TaIrTe4 optical absorption before thermal coupling.
+
 This folder is intentionally separate from the completed TaIrTe4/void
 optimization runs.  It validates a new physical contract:
 
@@ -285,6 +315,95 @@ Exact scalar Au remains valid for forward simulation, and the previously
 validated fixed-geometry material derivative remains valid.  No Au topology
 optimization is permitted because no tested v261 GPU representation is both
 stable at the exact Au endpoint and differentiable with a validated gradient.
+
+### Lossy-metal route audit and same-step control
+
+The failure has since been narrowed further.  It persists with all six
+boundaries changed from PML to Metal, `dt stability factor=0.5`, global
+Conformal Variant 0, a sampled passive Ordal base, and even an exact-Au base
+with a zero endpoint perturbation.  This excludes PML, the ordinary Courant
+step, CV1 alone, and the exact scalar-Au forward material as root causes.  The
+v261 Temperature/Index-perturbation carrier itself is not a stable exact-Au
+topology representation in this control.
+
+The installed v261 `lumopt2/parametrization/d_eps_calculator.py` was also
+audited byte-for-byte.  Its geometry-difference path constructs
+`real(index_c**2)` and later takes the real part of the sparse difference.  Its
+wavelength-remapping helper clips negative real epsilon and fits a Cauchy
+model under the documented source assumption `n>>k~0`.  This is a lossless
+dielectric contract and is not valid for the 10 um Au endpoint
+`epsilon=-4642.23+1674.64i`.  It must not be used silently for this problem.
+
+Use the following no-Maxwell-solve controls to reproduce the source audit and
+complex-epsilon step sweep:
+
+```bash
+python 35_validate_au_same_session_complex_deps.py \
+  --steps-nm 100,50,25,10,5,2.5,1,0.5,0.25,0.1 \
+  --output-dir /path/to/raw
+python 36_summarize_au_differentiable_route_resolution.py
+```
+
+At a 0.1 nm CAD step the same-session complex-epsilon derivative recovers the
+Maxwell-FD sign, but comparison with the older 50 nm FD still differs by
+38.50%.  A final equal-step 1 nm central Maxwell FD is therefore evaluated by:
+
+```bash
+python 37_validate_au_same_step_local_maxwell_fd.py \
+  --minus-dir /path/to/a7.999um \
+  --plus-dir /path/to/a8.001um \
+  --output-dir /path/to/raw
+```
+
+This last script only loads already solved FSP files and performs no Maxwell
+solve.  The completed equal-step control **fails**: at `h=1 nm`, the Maxwell
+central FD is `-2.916216e-30 J/um`, while the same-session complex diagonal
+`d epsilon` contraction is `-9.629138e-31 J/um`.  The sign agrees but the
+relative error is `66.9807%`.  A second exact pair at `h=0.5 nm` gives a
+Maxwell FD of `-2.918610e-30 J/um`, only `0.0821%` from the `h=1 nm` FD, while
+the matching complex `d epsilon` value is `-1.774631e-30 J/um` (`39.1960%`
+error).  Thus the Maxwell local derivative is step-converged, but a diagonal
+volume-permittivity contraction is not the complete derivative of v261's
+conformal moving-Au update, even when the imaginary permittivity, component
+coordinates and parameter step are all matched.
+
+This result closes the generic v261 Au-adjoint route fail-closed.  Three paths
+remain:
+
+1. keep Au fixed and optimize only the TaIrTe4/dielectric design after a full
+   coupled PTE AD--FD check;
+2. optimize a few exact-binary Au shape parameters using independent central
+   Maxwell differences (or a derivative-free trust-region method), after
+   10/5/2.5-nm Au-interface forward-mesh convergence;
+3. implement free-form Au topology in a solver with a discrete dispersive
+   Drude/CCPR-ADE adjoint and auxiliary material-state gradient terms.
+
+No empirical sign flip, normalization, or gradient rescaling is an accepted
+repair.  The current published status is
+`BLOCKED_AU_PRODUCTION_GRADIENT_REQUIRES_DISPERSIVE_DISCRETE_ADJOINT`.
+
+### Discrete dispersive-adjoint repair control
+
+The required mathematical repair is now represented by a separate offline
+control rather than an empirical correction to the failed Lumerical gradient:
+
+```bash
+python 38_validate_discrete_drude_adjoint_control.py
+```
+
+This control fits a passive one-pole Drude model exactly to the frozen 10-um
+Au endpoint, interpolates its pole strength on a fixed discrete grid, and
+includes both the Maxwell-operator and direct material-loss derivatives.  It
+passes five-direction central AD--FD with a maximum strong-direction relative
+error of `4.351e-6` and a maximum linear residual of `4.067e-14`.
+
+Its status is `VALIDATED_DISCRETE_PASSIVE_DRUDE_ADJOINT_CONTROL`, but its scope
+is deliberately one-dimensional and algorithmic.  It proves that the
+dispersive discrete-adjoint repair is numerically sound; it does not promote
+the failed v261 moving-conformal-Au derivative or claim a 3-D production PTE
+result.  Production free-form Au still requires the 3-D Yee/PML and
+Drude/CCPR auxiliary-state extension plus exact-binary Lumerical endpoint
+cross-validation.
 
 ## Material provenance
 

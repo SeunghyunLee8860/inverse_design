@@ -28,6 +28,9 @@ TEMPERATURE_MAT: Path | None = None
 REVERSE_AU_BASE = False
 USE_TEMPERATURE_TABLE = False
 CARRIER_SPAN_K = 1.0
+USE_SAMPLED_ORDAL_BASE = False
+SAMPLED_MAX_COEFFICIENTS = 12
+ENABLE_GRID_ATTRIBUTE_CONFORMAL = True
 
 
 def json_safe(value):
@@ -144,11 +147,53 @@ def add_temperature_density_design(base, fdtd, *, rho: float, representation: st
     expected_epsilon = expected_nk**2
 
     if REVERSE_AU_BASE:
-        base_material_name = "rho_temperature_exact_target_base"
-        base_material_id = fdtd.addmaterial("(n,k) Material")
-        fdtd.setmaterial(base_material_id, "name", base_material_name)
-        fdtd.setmaterial(base_material_name, "Refractive Index", N_AU)
-        fdtd.setmaterial(base_material_name, "Imaginary Refractive Index", K_AU)
+        if USE_SAMPLED_ORDAL_BASE:
+            base_material_name = "rho_temperature_Ordal_sampled_passive_stable_base"
+            base_material_id = fdtd.addmaterial("Sampled data")
+            fdtd.setmaterial(base_material_id, "name", base_material_name)
+            table = np.genfromtxt(
+                HERE / "data" / "au_ordal_1987_nk.csv",
+                delimiter=",",
+                names=True,
+            )
+            wavelength_m = np.asarray(table["wavelength_um"], float) * 1.0e-6
+            sampled_index = np.asarray(table["n"], float) + 1j * np.asarray(
+                table["k"], float
+            )
+            sampled_frequency = 299792458.0 / wavelength_m
+            fdtd.setmaterial(
+                base_material_name,
+                "sampled data",
+                np.column_stack((sampled_frequency, sampled_index**2)),
+            )
+            fdtd.setmaterial(
+                base_material_name,
+                "max coefficients",
+                int(SAMPLED_MAX_COEFFICIENTS),
+            )
+            fdtd.setmaterial(base_material_name, "tolerance", 0.0)
+            fdtd.setmaterial(base_material_name, "make fit passive", True)
+            sampled_stability_error = None
+            try:
+                fdtd.setmaterial(base_material_name, "improve stability", True)
+                sampled_stability_setting = True
+            except Exception as exc:
+                # v261 documents this Material Explorer option but does not
+                # expose it for every project-local Sampled-data material.
+                # Preserve that capability result rather than silently
+                # claiming the stability restriction was active.
+                sampled_stability_setting = False
+                sampled_stability_error = f"{type(exc).__name__}: {exc}"
+            base_model = "Ordal_sampled_data_passive_fit"
+        else:
+            base_material_name = "rho_temperature_exact_target_base"
+            base_material_id = fdtd.addmaterial("(n,k) Material")
+            fdtd.setmaterial(base_material_id, "name", base_material_name)
+            fdtd.setmaterial(base_material_name, "Refractive Index", N_AU)
+            fdtd.setmaterial(base_material_name, "Imaginary Refractive Index", K_AU)
+            base_model = "single_frequency_constant_nk"
+            sampled_stability_setting = None
+            sampled_stability_error = None
         carrier_value = CARRIER_SPAN_K * (1.0 - density)
         dn_dt = (BASE_N - N_AU) / CARRIER_SPAN_K
         dk_dt = -K_AU / CARRIER_SPAN_K
@@ -168,6 +213,9 @@ def add_temperature_density_design(base, fdtd, *, rho: float, representation: st
             f"T_attribute_K = 300 K + {CARRIER_SPAN_K:.17g}*rho K"
         )
         interpolation_direction = "air_base_toward_exact_target"
+        base_model = "nondispersive_dielectric"
+        sampled_stability_setting = None
+        sampled_stability_error = None
 
     material_name = f"rho{density:g}_temperature_attribute_density"
     material_id = fdtd.addmaterial("Index perturbation")
@@ -267,6 +315,37 @@ def add_temperature_density_design(base, fdtd, *, rho: float, representation: st
         except Exception as exc:
             raise RuntimeError(f"temperature-density step failed: {label}: {exc}") from exc
 
+    # Probe rather than assume this capability.  The Ansys grid-attribute page
+    # explicitly says its conformal-toggle tips do not apply to np-density and
+    # Temperature attributes.  The installed v261 Temperature object indeed
+    # lacks that property; recording the complete property list makes the
+    # unavailable route reproducible instead of silently claiming it was used.
+    fdtd.select(attribute_name)
+    attribute_property_names = [
+        line.strip() for line in str(fdtd.get()).splitlines() if line.strip()
+    ]
+    grid_attribute_conformal_control_available = (
+        "enable conformal meshing" in attribute_property_names
+    )
+    grid_attribute_conformal_readback = None
+    if not ENABLE_GRID_ATTRIBUTE_CONFORMAL:
+        if not grid_attribute_conformal_control_available:
+            raise RuntimeError(
+                "v261 temperature grid attribute does not expose the requested "
+                "'enable conformal meshing' property; available properties are "
+                f"{attribute_property_names}. Use global conformal variant 0 as "
+                "the next fail-closed metal-interface control."
+            )
+        fdtd.set("enable conformal meshing", False)
+        grid_attribute_conformal_readback = bool(
+            fdtd.get("enable conformal meshing")
+        )
+        if grid_attribute_conformal_readback:
+            raise RuntimeError(
+                "temperature grid-attribute conformal-meshing disable did not "
+                "survive readback"
+            )
+
     block_name = f"rho{density:g}_temperature_attribute_complex_block"
     block = fdtd.addrect()
     block["name"] = block_name
@@ -294,6 +373,15 @@ def add_temperature_density_design(base, fdtd, *, rho: float, representation: st
         "name": block_name,
         "material_name": material_name,
         "base_material_name": base_material_name,
+        "base_material_model": base_model,
+        "sampled_Ordal_make_fit_passive": (
+            True if USE_SAMPLED_ORDAL_BASE else None
+        ),
+        "sampled_Ordal_improve_stability": sampled_stability_setting,
+        "sampled_Ordal_improve_stability_error": sampled_stability_error,
+        "sampled_Ordal_max_coefficients": (
+            int(SAMPLED_MAX_COEFFICIENTS) if USE_SAMPLED_ORDAL_BASE else None
+        ),
         "representation": "temperature_attribute_density",
         "rho": density,
         "temperature_attribute_name": attribute_name,
@@ -305,6 +393,16 @@ def add_temperature_density_design(base, fdtd, *, rho: float, representation: st
             attribute_origin.tolist() if TEMPERATURE_MAT is None else [0.0, 0.0, 0.0]
         ),
         "temperature_attribute_source": attribute_source,
+        "temperature_attribute_enable_conformal_meshing_requested": bool(
+            ENABLE_GRID_ATTRIBUTE_CONFORMAL
+        ),
+        "temperature_attribute_enable_conformal_meshing_readback": (
+            grid_attribute_conformal_readback
+        ),
+        "temperature_attribute_conformal_control_available": (
+            grid_attribute_conformal_control_available
+        ),
+        "temperature_attribute_property_names": attribute_property_names,
         "temperature_attribute_mat_path": (
             None if TEMPERATURE_MAT is None else str(TEMPERATURE_MAT)
         ),
@@ -328,7 +426,7 @@ def add_temperature_density_design(base, fdtd, *, rho: float, representation: st
 
 
 def main() -> int:
-    global N_AU, K_AU, BASE_N, TEMPERATURE_MAT, REVERSE_AU_BASE, USE_TEMPERATURE_TABLE, CARRIER_SPAN_K
+    global N_AU, K_AU, BASE_N, TEMPERATURE_MAT, REVERSE_AU_BASE, USE_TEMPERATURE_TABLE, CARRIER_SPAN_K, USE_SAMPLED_ORDAL_BASE, SAMPLED_MAX_COEFFICIENTS, ENABLE_GRID_ATTRIBUTE_CONFORMAL
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--rho", type=float, required=True, choices=(0.0, 0.5, 1.0))
@@ -339,6 +437,25 @@ def main() -> int:
     parser.add_argument("--target-k", type=float, default=K_AU)
     parser.add_argument("--base-n", type=float, default=BASE_N)
     parser.add_argument("--reverse-target-base", action="store_true")
+    parser.add_argument(
+        "--sampled-ordal-base",
+        action="store_true",
+        help=(
+            "Use a passive, stability-restricted Sampled-data fit of the "
+            "published Ordal Au table as the reverse-direction base."
+        ),
+    )
+    parser.add_argument("--sampled-max-coefficients", type=int, default=12)
+    parser.add_argument(
+        "--disable-grid-attribute-conformal",
+        action="store_true",
+        help=(
+            "Request a Temperature-attribute conformal toggle only if the "
+            "installed object exposes it. v261 normally fails closed because "
+            "that attribute property is unavailable; this does not change "
+            "the global FDTD mesh-refinement setting."
+        ),
+    )
     parser.add_argument("--temperature-table", action="store_true")
     parser.add_argument(
         "--carrier-span-k",
@@ -355,6 +472,12 @@ def main() -> int:
         default="conformal variant 1",
     )
     parser.add_argument("--dt-stability-factor", type=float, default=0.99)
+    parser.add_argument(
+        "--boundary-mode",
+        choices=("PML", "Metal"),
+        default="PML",
+        help="All-Metal is a divergence-classification control only.",
+    )
     parser.add_argument("--block-half-x-um", type=float, default=5.0)
     parser.add_argument("--block-half-y-um", type=float, default=5.0)
     parser.add_argument("--block-z-min-nm", type=float, default=50.0)
@@ -375,6 +498,15 @@ def main() -> int:
     K_AU = float(args.target_k)
     BASE_N = float(args.base_n)
     REVERSE_AU_BASE = bool(args.reverse_target_base)
+    USE_SAMPLED_ORDAL_BASE = bool(args.sampled_ordal_base)
+    SAMPLED_MAX_COEFFICIENTS = int(args.sampled_max_coefficients)
+    ENABLE_GRID_ATTRIBUTE_CONFORMAL = not bool(
+        args.disable_grid_attribute_conformal
+    )
+    if USE_SAMPLED_ORDAL_BASE and not REVERSE_AU_BASE:
+        parser.error("--sampled-ordal-base requires --reverse-target-base")
+    if SAMPLED_MAX_COEFFICIENTS < 1:
+        parser.error("--sampled-max-coefficients must be positive")
     USE_TEMPERATURE_TABLE = bool(args.temperature_table)
     CARRIER_SPAN_K = float(args.carrier_span_k)
     if not np.isfinite(CARRIER_SPAN_K) or CARRIER_SPAN_K <= 0.0:
@@ -453,6 +585,8 @@ def main() -> int:
         "10.0",
         "--dt-stability-factor",
         str(args.dt_stability_factor),
+        "--boundary-mode",
+        args.boundary_mode,
     ]
     if args.contract_only:
         forwarded.append("--contract-only")
