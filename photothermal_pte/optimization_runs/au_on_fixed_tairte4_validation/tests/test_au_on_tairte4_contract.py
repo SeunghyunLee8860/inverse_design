@@ -95,3 +95,22 @@ def test_component_specific_geometric_partition_has_no_au_tairte4_overlap():
     assert not np.any(tairte4 & au)
     assert np.any(tairte4)
     assert np.any(au)
+
+
+def test_gpu_log_gate_requires_requested_detected_gpu_and_gpu_timing(tmp_path):
+    log = tmp_path / "control_p0.log"
+    log.write_text(
+        "\n".join(
+            (
+                "Configured with CUDA_VISIBLE_DEVICES=4",
+                "Running fsp file: fdtd-engine -gpu -t 8 -gpu -remote case.fsp",
+                "Detected GPU 4: NVIDIA RTX 6000 Ada Generation",
+                "Using datatype: real32",
+                "time to run GPU simulation: 97.2",
+                "Simulation completed successfully",
+            )
+        ),
+        encoding="utf-8",
+    )
+    assert LUMERICAL_MODULE._gpu_log_evidence(tmp_path, "GPU 4")["passed"]
+    assert not LUMERICAL_MODULE._gpu_log_evidence(tmp_path, "GPU 5")["passed"]

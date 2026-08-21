@@ -14,6 +14,7 @@ import argparse
 import importlib.util
 import json
 from pathlib import Path
+import re
 import sys
 
 import numpy as np
@@ -105,7 +106,7 @@ def _inside(coords: dict[str, np.ndarray], bounds: dict[str, tuple[float, float]
 def _readback_and_partition(base, fdtd, q: dict[str, object], *, au_present: bool) -> dict[str, object]:
     spatial_shape = tuple(np.asarray(q["base_coordinates"][axis]).size for axis in "xyz")
     target_ta = _epsilon_at_10um()
-    target_au = complex(base.au_complex_index(1.0)[0])
+    target_au = complex(base.complex_index(1.0)[0])
     result: dict[str, object] = {}
     for component, crystal_axis in zip("xyz", ("b", "a", "c")):
         raw_index = np.asarray(fdtd.getdata(PABS_INDEX, f"index_{component}", 1))
@@ -175,6 +176,49 @@ def _readback_and_partition(base, fdtd, q: dict[str, object], *, au_present: boo
 
 def _option_present(arguments: list[str], option: str) -> bool:
     return any(value == option or value.startswith(f"{option}=") for value in arguments)
+
+
+def _gpu_log_evidence(output_dir: Path, requested_device: str) -> dict[str, object]:
+    """Fail closed unless the solver log proves GPU time stepping."""
+
+    logs = sorted(output_dir.glob("*.log"))
+    text = "\n".join(path.read_text(errors="replace") for path in logs)
+    requested_match = re.search(r"GPU\s+(\d+)", requested_device, re.IGNORECASE)
+    configured_match = re.search(
+        r"Configured with CUDA_VISIBLE_DEVICES=(\d+)", text
+    )
+    detected_match = re.search(r"Detected GPU\s+(\d+):", text)
+    evidence = {
+        "log_paths": [str(path) for path in logs],
+        "requested_gpu_index": (
+            int(requested_match.group(1)) if requested_match else None
+        ),
+        "configured_cuda_visible_devices": (
+            int(configured_match.group(1)) if configured_match else None
+        ),
+        "detected_gpu_index": (
+            int(detected_match.group(1)) if detected_match else None
+        ),
+        "engine_command_contains_gpu_flag": bool(
+            re.search(r"fdtd-engine.*(?:^|\s)-gpu(?:\s|$)", text, re.MULTILINE)
+        ),
+        "gpu_timestep_timing_present": "time to run GPU simulation" in text,
+        "gpu_datatype_present": "Using datatype: real32" in text,
+        "simulation_completed_successfully": (
+            "Simulation completed successfully" in text
+        ),
+    }
+    evidence["passed"] = bool(
+        logs
+        and evidence["requested_gpu_index"] is not None
+        and evidence["configured_cuda_visible_devices"]
+        == evidence["requested_gpu_index"]
+        and evidence["detected_gpu_index"] == evidence["requested_gpu_index"]
+        and evidence["engine_command_contains_gpu_flag"]
+        and evidence["gpu_timestep_timing_present"]
+        and evidence["simulation_completed_successfully"]
+    )
+    return evidence
 
 
 def main() -> int:
@@ -287,6 +331,14 @@ def main() -> int:
         result_path = output_dir / "case_result.json"
         if result_path.is_file():
             result = json.loads(result_path.read_text(encoding="utf-8"))
+            requested_gpu = str(
+                result.get("resources", {}).get("2", {}).get("device type", "")
+            )
+            gpu_evidence = _gpu_log_evidence(output_dir, requested_gpu)
+            result["scope"] = (
+                "exact-binary Au optical nanostructure on a fixed anisotropic "
+                "TaIrTe4 slab; no electrode/thermal/PTE/adjoint/optimization"
+            )
             result["endpoint_crosscheck_contract"] = {
                 "Au_is_nanostructure_not_electrode": True,
                 "Au_endpoint": parsed.au_endpoint,
@@ -295,7 +347,12 @@ def main() -> int:
                 "raw_files_committed": False,
                 "no_gray_or_imported_metal": True,
                 "no_adjoint": True,
+                "GPU_log_evidence": gpu_evidence,
             }
+            if result["status"].startswith("COMPLETED") and not gpu_evidence["passed"]:
+                result["status"] = "BLOCKED_GPU_EXECUTION_NOT_PROVEN"
+                result["passed"] = False
+                code = 1
             result_path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     return code
 

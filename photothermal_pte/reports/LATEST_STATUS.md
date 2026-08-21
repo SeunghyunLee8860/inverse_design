@@ -1,5 +1,36 @@
 # Latest photothermal validation status
 
+## Au nanoantenna/nanocube optical topology route on fixed TaIrTe4
+
+- Au is a designable optical nanostructure material in this route, not an
+  electrode.  Status is
+  `VALIDATED_AU_ON_FIXED_TAIRTE4_OPTICAL_ADFD_CONTROL` for the causal
+  fixed-grid FDTDX/JAX derivative and
+  `VALIDATED_LUMERICAL_AU_TAIRTE4_BINARY_ENDPOINTS` for independent exact
+  v261 endpoints.
+- The full 3-D causal dispersive GPU control separates Au, TaIrTe4, and total
+  absorption.  At the finest central-FD step its maximum strong-direction
+  total-gradient error is `0.014831%`; its multi-direction gradient-L2
+  normalized error is `0.004100%`.
+- The Lumerical cases use fixed anisotropic TaIrTe4 (`x=b`, `y=a`, `z=c=b`
+  closure), exact Au `epsilon=-4642.23+1674.64i`, a 10-um scalar Gaussian
+  with `w0=8.5 um`, six PML boundaries, and identical source/mesh contracts.
+  Au-absent and Au-present six-face closures are `0.003989%` and `0.007511%`;
+  both auto-shutoff values are below `1e-7`.
+- Engine logs prove GPU 4 time stepping.  All native-Yee `Qx/Qy/Qz` arrays
+  are finite and nonnegative; material readback and raw-artifact hashes pass.
+  No clipping, smoothing, gain, rescaling, or interface-power reassignment is
+  used.  Raw FSP/NPZ files remain outside Git with path, size, and SHA-256 in
+  the manifest.
+- This result does not validate Lumerical's failed moving/conformal-metal
+  derivative or gray `importnk2` route.  It does not yet include Au/TaIrTe4
+  thermal contact, electrical collection, PTE, or a production topology
+  optimization.  The compact differentiable control and the 48-um Lumerical
+  endpoint have different geometry/source normalization, so absolute
+  cross-solver power equality is not claimed.
+- Code, reports, JSON, CSV, plot, and manifests:
+  `optimization_runs/au_on_fixed_tairte4_validation/`.
+
 ## Run 005 bounded low-beta topology-exploration pilot
 
 - Status: `PAUSED_AFTER_RUN005_BOUNDED_BETA2_GPU_PILOT` after five accepted

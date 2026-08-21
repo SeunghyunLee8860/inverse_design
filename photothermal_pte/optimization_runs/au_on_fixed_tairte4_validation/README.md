@@ -30,6 +30,22 @@ This checkpoint does not yet promote a coupled TaIrTe4 thermal/PTE objective
 or an Au optimization.  The next gate adds fixed anisotropic TaIrTe4 and
 separates Au and TaIrTe4 optical absorption before thermal coupling.
 
+That fixed-TaIrTe4 optical gate and its independent exact-binary Lumerical
+endpoint cross-check now pass.  The differentiable FDTDX/JAX control keeps Au
+and TaIrTe4 absorption separate and passes five-direction AD--FD.  The v261
+cross-check uses the same finite 10-um Gaussian and mesh for Au-absent and
+exact-Au cases, reads back all three anisotropic TaIrTe4 components and exact
+Au epsilon, proves GPU time stepping from the engine log, and closes native
+Yee `P_Q` against the six-face flux balance.  Raw FSP/NPZ files remain outside
+Git.  See:
+
+- `results/AU_ON_FIXED_TAIRTE4_OPTICAL_ADFD_REPORT.md`
+- `results/LUMERICAL_AU_ON_TAIRTE4_BINARY_ENDPOINTS_REPORT.md`
+
+The exact-binary v261 result does not validate its failed moving/conformal
+metal derivative or gray `importnk2` path.  The promoted differentiable route
+is still the causal fixed-grid dispersive solver.
+
 This folder is intentionally separate from the completed TaIrTe4/void
 optimization runs.  It validates a new physical contract:
 
