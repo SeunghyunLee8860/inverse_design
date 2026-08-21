@@ -1,0 +1,187 @@
+{
+  "status": "VALIDATED_FDTDX_PRODUCTION_DYNAMIC_CHECKPOINT_FREE_PTE_ITERATION",
+  "scope": "48 um substrate-bearing, 8.5 um-waist, 20x20-density E||b dynamic PTE iteration: current Maxwell Q, explicit thermal/electrical/adjoint update, native-Yee source pullback, and checkpoint-free Maxwell adjoint; no optimization",
+  "method": {
+    "forward_solves": 1,
+    "adjoint_solves": 1,
+    "checkpoint_count": 0,
+    "time_history_saved": false,
+    "gradient_config": null,
+    "scenario": "thermally_grown",
+    "empirical_gradient_rescaling": false,
+    "dynamic_PTE_weights_recomputed_from_current_forward": true
+  },
+  "contract": {
+    "wavelength_m": 1e-05,
+    "waist_m": 8.5e-06,
+    "domain_bounds_m_xyz": [
+      [
+        -2.4000000848900527e-05,
+        2.4000000848900527e-05
+      ],
+      [
+        -2.4000000848900527e-05,
+        2.4000000848900527e-05
+      ],
+      [
+        -7.999999979801942e-06,
+        7.999999979801942e-06
+      ]
+    ],
+    "grid_shape_xyz": [
+      288,
+      288,
+      119
+    ],
+    "grid_cells": 9870336,
+    "pml_cells_each_face": 8,
+    "total_periods": 16,
+    "window_periods": 4,
+    "time_steps_total": 21808,
+    "axis_mapping": {
+      "x": "b",
+      "y": "a",
+      "z": "c=b"
+    },
+    "substrate": {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_10um_substrate_material/10um_substrate_material_readback.json",
+      "status": "BLOCKED_LUMERICAL_10UM_SI_PALIK_READBACK",
+      "source_class": "explicit offline diagnostic; Palik readback remains blocked",
+      "Palik_Si_readback_validated": false
+    },
+    "placement": {
+      "au": [
+        [
+          94,
+          194
+        ],
+        [
+          94,
+          194
+        ],
+        [
+          72,
+          74
+        ]
+      ],
+      "tairte4": [
+        [
+          44,
+          244
+        ],
+        [
+          44,
+          244
+        ],
+        [
+          67,
+          72
+        ]
+      ],
+      "sio2": [
+        [
+          8,
+          280
+        ],
+        [
+          8,
+          280
+        ],
+        [
+          48,
+          67
+        ]
+      ],
+      "adjoint": [
+        [
+          8,
+          280
+        ],
+        [
+          8,
+          280
+        ],
+        [
+          48,
+          74
+        ]
+      ]
+    }
+  },
+  "results": {
+    "objective_A": 2.68491425e-18,
+    "checkpointed_reference_objective_A": 2.6849e-18,
+    "objective_relative_error": 5.307460240596164e-06,
+    "window_relative_change": 0.0003816695449398743,
+    "gradient_l2_A": 6.335001061431604e-18,
+    "checkpointed_reference_gradient_l2_A": 6.328594206499118e-18,
+    "gradient_vector_normalized_error": 0.0015708195740821306,
+    "gradient_norm_relative_error": 0.0010123662101619068,
+    "gradient_angle_deg": 0.068781907198037,
+    "field_gradient_l2_A": 1.1417068736081751e-17,
+    "direct_gradient_l2_A": 5.190361281153349e-18
+  },
+  "dynamic_PTE_iteration": {
+    "objective_A": 2.6849143882680403e-18,
+    "weighted_source_contraction_A": 2.6849143894593778e-18,
+    "objective_vs_weighted_contraction_relative_error": 4.4371526822561954e-10,
+    "native_vs_explicit_weighted_contraction_relative_error": 2.869260862764467e-16,
+    "weight_relative_l2_error_vs_frozen_baseline": {
+      "au": 3.020392114194692e-08,
+      "tairte4": 2.4756975136597248e-08,
+      "sio2": 3.5236709550190426e-08
+    },
+    "thermal_direct_gradient_l2_A": 4.149430128200759e-19,
+    "electrical_direct_gradient_l2_A": 1.5146192052898444e-18,
+    "combined_gradient_l2_A": 6.4599441620680185e-18,
+    "thermal_residual": 8.262164870809349e-10,
+    "thermal_adjoint_residual": 6.522693416404395e-10,
+    "thermal_energy_balance": 1.243533449872023e-11,
+    "electrical_residual": 7.802671884424135e-12,
+    "electrical_adjoint_residual": 2.431631877622325e-12,
+    "electrical_terminal_balance": 2.12207014007118e-12
+  },
+  "runtime": {
+    "forward_compile_seconds": 23.386549070477486,
+    "forward_execution_seconds": 174.5347026847303,
+    "adjoint_compile_seconds": 26.611651316285133,
+    "adjoint_execution_seconds": 183.96628635376692,
+    "two_solve_execution_seconds": 358.5009890384972,
+    "two_solve_compile_plus_execution_seconds": 408.49918942525983,
+    "frozen_checkpointed_execution_seconds": 2920.0205346643925,
+    "execution_speedup_vs_checkpointed": 8.145083623049167,
+    "full_pipeline_seconds_from_audit_to_summary": 426.618898476
+  },
+  "provenance": {
+    "weight_path": "/home/seunghyun/tairte4/raw_artifacts/native_yee_thermal_source_adjoint_weights/native_yee_thermal_source_adjoint_weights.npz",
+    "weight_sha256": "67277f2311907a19faecac450df4207ec8772f9dd216460be4349c52c215e744",
+    "reference_path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_spatially_weighted_pte_source_gradient_16period/fdtdx_spatially_weighted_pte_source_gradient_raw.npz",
+    "reference_sha256": "235f3ed60bd04d089d7437da7e72e4658eaa389695dff986b10973532d3037a3",
+    "reference_summary": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_spatially_weighted_pte_source_gradient_16period_gpu3/fdtdx_spatially_weighted_pte_source_gradient_summary.json"
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_dynamic_checkpoint_free_pte_iteration/fdtdx_dynamic_checkpoint_free_pte_iteration_raw.npz",
+    "bytes": 24645,
+    "sha256": "f2edfb4c3e9c4f72edc92dc42eb5ec36d3a4478acd3961f3c957061a3107eb5e",
+    "committed_to_git": false
+  },
+  "gates": {
+    "gpu_only": true,
+    "checkpoint_count_zero": true,
+    "time_history_saved_false": true,
+    "finite": true,
+    "objective_matches_checkpointed_reference_lt_0p5pct": true,
+    "gradient_vector_error_lt_1pct": true,
+    "gradient_norm_error_lt_1pct": true,
+    "gradient_angle_lt_1deg": true,
+    "late_window_change_lt_0p5pct": true,
+    "no_empirical_gradient_rescaling": true,
+    "dynamic_weights_match_frozen_baseline_lt_0p5pct": true,
+    "dynamic_objective_matches_weighted_contraction_lt_0p5pct": true,
+    "dynamic_native_explicit_pullback_lt_1e-6": true,
+    "dynamic_thermal_residual_lt_1e-8": true,
+    "dynamic_electrical_residual_lt_1e-8": true,
+    "dynamic_energy_balance_lt_1pct": true,
+    "dynamic_terminal_balance_lt_1pct": true
+  }
+}

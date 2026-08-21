@@ -1,0 +1,27 @@
+{
+  "status": "VALIDATED_FDTDX_PRODUCTION_CHECKPOINT_FREE_LATENT_PTE_GRADIENT",
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_checkpoint_free_latent_pte_gradient/fdtdx_checkpoint_free_latent_pte_gradient_raw.npz",
+    "bytes": 14441,
+    "sha256": "801aff666d2fb10d4c18749a2a07abdaff31c2622ec9ca485fe8b3513fe3e7ce",
+    "committed_to_git": false
+  },
+  "inputs": {
+    "combined": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_checkpoint_free_combined_pte_gradient/fdtdx_checkpoint_free_combined_pte_gradient_raw.npz",
+      "bytes": 18187,
+      "sha256": "26f91afa347dc090267626268cdd8daf5f2cc72af936fb39aaf6e2e0062414fb"
+    },
+    "mapping": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/au_latent_filter_projection_mapping/au_latent_filter_projection_mapping_raw.npz",
+      "bytes": 10713,
+      "sha256": "3bcd3e42b79668d5e7fa63b1e59b9bb62e972cdd58306345aec77357ba663fe1"
+    },
+    "frozen": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/full_latent_filter_projection_pte_adfd/full_latent_filter_projection_pte_adfd_raw.npz",
+      "bytes": 24445,
+      "sha256": "92f496f9763e537e5b314a0e87450f3236ebc74bd1f65b25a58df13b327fda5b"
+    }
+  },
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python 77_validate_fdtdx_checkpoint_free_latent_pte_gradient.py"
+}

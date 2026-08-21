@@ -771,3 +771,58 @@ This validates the differentiable chain for the stated numerical mapping
 scenario.  The 750-nm radius is not yet a final fabrication/minimum-feature
 contract, and no Au optimization has been run.  That contract and its beta/
 optimizer continuation must be frozen before optimization is authorized.
+
+## Checkpoint-free two-solve production adjoint
+
+The earlier exact reverse-through-time certificate remains the immutable
+reference, but it is not a viable optimization kernel: one Maxwell VJP took
+`2920.02 s` and stored a checkpoint stack.  Stages 74--77 therefore validate a
+different implementation of the same derivative.  It runs one settled-CW
+forward solve and one reciprocal distributed-current adjoint solve, retains
+only their final phasors, and contracts them on component-specific Yee grids.
+It never calls reverse-mode AD through the FDTD time loop.
+
+On the frozen `48 x 48 um`, `288 x 288 x 119`-cell, 16-period `E||b`
+production contract, forward plus adjoint execution is `212.29 s`; the first
+compile plus execution is `259.85 s`.  This is `13.75x` faster than the frozen
+checkpointed VJP.  The checkpoint-free optical gradient agrees with the
+reference to `0.15692%` in vector norm and `0.06873 deg` in direction.
+
+Adding the independently validated thermal/contact and electrical/weighting
+direct terms gives a combined physical-density vector error of `0.15389%`, a
+norm error of `0.10700%`, and an angle of `0.06334 deg`.  Against the five
+existing end-to-end finite-difference directions, the worst strong-direction
+relative error is `0.25806%`; the worst full-gradient-normalized directional
+error is `0.12047%`.  Status:
+`VALIDATED_FDTDX_PRODUCTION_CHECKPOINT_FREE_COMBINED_PTE_GRADIENT_EQUIVALENCE`.
+
+The same replacement also passes through the certified finite conic filter
+and beta-2 tanh projection.  The latent-gradient vector error is `0.13586%`,
+the angle is `0.05003 deg`, and the worst existing latent directional-FD error
+is `0.41182%`.  Status:
+`VALIDATED_FDTDX_PRODUCTION_CHECKPOINT_FREE_LATENT_PTE_GRADIENT`.
+
+These certificates do not freeze the current source-adjoint weights during an
+optimization.  A production iteration must recompute `Q`, the thermal and
+weighting solutions, and `dI/dQ` at its current density before launching the
+reciprocal Maxwell solve.  The inherited substrate provenance also remains
+explicitly blocked as `BLOCKED_LUMERICAL_10UM_SI_PALIK_READBACK`; equivalence
+to the frozen numerical contract is not a paper-material certification.
+
+That dynamic update has now been executed once at production size as well.
+Starting from the current forward phasors, the code builds native-Yee material
+power in memory, conservatively maps it to the explicit thermal grid, solves
+the current thermal/electrical systems and their adjoints, transposes the two
+overlap maps, and launches the reciprocal Maxwell solve with the resulting
+current `dI/dp_Yee`.  It does not read the frozen weights for the actual
+adjoint source; those are used only as a post-run reference.
+
+The regenerated Au/TaIrTe4/SiO2 weights differ from the frozen baseline by at
+most `3.53e-8` relative.  Native-Yee and explicit-grid source-adjoint
+contractions differ by `2.87e-16`, and the PTE objective differs from that
+weighted-Q contraction by `4.44e-10`.  The dynamic combined gradient differs
+from the frozen end-to-end gradient by `0.15399%`, with `0.10707%` norm error
+and `0.06338 deg` angle.  The measured first-run pipeline after runsetup audit
+was `426.62 s`; the two Maxwell solves themselves took `358.50 s`, still
+`8.15x` faster than the frozen checkpointed reverse pass.  Status:
+`VALIDATED_FDTDX_PRODUCTION_DYNAMIC_CHECKPOINT_FREE_PTE_ITERATION`.
