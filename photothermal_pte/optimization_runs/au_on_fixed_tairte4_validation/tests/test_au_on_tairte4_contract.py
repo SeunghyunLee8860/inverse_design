@@ -16,6 +16,13 @@ assert SPEC.loader is not None
 sys.modules[SPEC.name] = MODULE
 SPEC.loader.exec_module(MODULE)
 
+LUMERICAL_MODULE_PATH = Path(__file__).resolve().parents[1] / "43_run_lumerical_au_on_tairte4_binary_endpoint.py"
+LUMERICAL_SPEC = importlib.util.spec_from_file_location("lumerical_au_on_tairte4", LUMERICAL_MODULE_PATH)
+LUMERICAL_MODULE = importlib.util.module_from_spec(LUMERICAL_SPEC)
+assert LUMERICAL_SPEC.loader is not None
+sys.modules[LUMERICAL_SPEC.name] = LUMERICAL_MODULE
+LUMERICAL_SPEC.loader.exec_module(LUMERICAL_MODULE)
+
 
 def _discrete_epsilon(fit: dict[str, float], omega: float, dt: float) -> complex:
     c1, c2, c3 = MODULE._coefficient_triplet(fit, dt)
@@ -64,3 +71,27 @@ def test_baseline_and_directions_are_unclipped_and_normalized():
     }
     for direction in directions.values():
         assert np.isclose(np.linalg.norm(direction), 1.0, rtol=0.0, atol=1e-12)
+
+
+def test_lumerical_binary_geometry_is_face_adjacent_and_axis_consistent():
+    assert LUMERICAL_MODULE.TAIRTE4_BOUNDS["z"][1] == LUMERICAL_MODULE.AU_BOUNDS["z"][0]
+    epsilon = LUMERICAL_MODULE._epsilon_at_10um()
+    assert epsilon["c"] == epsilon["b"]
+    assert epsilon["a"] == MODULE._load_tairte4_epsilon()["a"]
+    assert epsilon["b"] == MODULE._load_tairte4_epsilon()["b"]
+
+
+def test_component_specific_geometric_partition_has_no_au_tairte4_overlap():
+    x = np.linspace(-11e-6, 11e-6, 221)
+    y = np.linspace(-11e-6, 11e-6, 221)
+    z = np.linspace(-0.2e-6, 0.2e-6, 81)
+    coordinates = {"x": x, "y": y, "z": z}
+    tairte4 = LUMERICAL_MODULE._inside(
+        coordinates, LUMERICAL_MODULE.TAIRTE4_BOUNDS, upper_z=False
+    )
+    au = LUMERICAL_MODULE._inside(
+        coordinates, LUMERICAL_MODULE.AU_BOUNDS, upper_z=True
+    )
+    assert not np.any(tairte4 & au)
+    assert np.any(tairte4)
+    assert np.any(au)

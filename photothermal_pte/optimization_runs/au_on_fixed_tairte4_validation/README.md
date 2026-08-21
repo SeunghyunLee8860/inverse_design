@@ -416,6 +416,22 @@ validates the new causal fixed-grid route only.  Exact-binary Lumerical
 endpoint cross-validation, substrate/mesh convergence, thermal/PTE coupling,
 and production optimization remain subsequent fail-closed gates.
 
+The exact-binary endpoint runner is:
+
+```bash
+python 43_run_lumerical_au_on_tairte4_binary_endpoint.py \
+  --au-endpoint 0 --gpu-device "GPU N" --output-dir /raw/path/au0
+python 43_run_lumerical_au_on_tairte4_binary_endpoint.py \
+  --au-endpoint 1 --gpu-device "GPU N" --output-dir /raw/path/au1
+```
+
+It uses exact scalar material endpoints only: a fixed anisotropic TaIrTe4
+slab and an optional exact Au nanostructure block.  It does not invoke
+`importnk2`, gray Au, a moving conformal boundary, or a Lumerical adjoint.
+The raw FSP/NPZ outputs are intentionally external to Git.  A successful run
+requires a free GPU **and** solver license; runsetup alone is not promoted as
+an endpoint validation.
+
 ### Discrete dispersive-adjoint repair control
 
 The required mathematical repair is now represented by a separate offline
