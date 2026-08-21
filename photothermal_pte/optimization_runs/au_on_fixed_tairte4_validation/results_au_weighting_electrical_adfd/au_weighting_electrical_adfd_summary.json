@@ -1,0 +1,157 @@
+{
+  "status": "VALIDATED_FLOATING_AU_WEIGHTING_ELECTRICAL_CONTROL",
+  "scope": "electrical weighting/shunting operator only; fixed temperature, no Maxwell/thermal/optimization",
+  "geometry": {
+    "fixed_TaIrTe4_cells_xy": [
+      40,
+      40
+    ],
+    "fixed_TaIrTe4_span_m": [
+      1.9999999999999998e-05,
+      1.9999999999999998e-05
+    ],
+    "Au_design_cells_xy": [
+      20,
+      20
+    ],
+    "Au_design_span_m": [
+      9.999999999999999e-06,
+      9.999999999999999e-06
+    ],
+    "pixel_m": 5e-07,
+    "terminals": "TaIrTe4 y-min=0, y-max=1; Au is floating"
+  },
+  "materials": {
+    "sigma_TaIrTe4_xy_S_m": [
+      110000.0,
+      491000.0
+    ],
+    "Seebeck_TaIrTe4_xy_V_K": [
+      2.7e-05,
+      -6e-06
+    ],
+    "sigma_Au_bulk_reference_S_m": 41152263.3744856,
+    "S_Au_V_K": 0.0,
+    "Au_note": "bulk reference; not certified 50-nm-film transport"
+  },
+  "gray_law": {
+    "Au_sheet_sigma": "sigma_floor + rho*(sigma_Au-sigma_floor)",
+    "vertical_contact": "A*(G_floor + rho*G_contact)",
+    "sigma_floor_fraction": 1e-08,
+    "contact_floor_fraction": 1e-10,
+    "floor_purpose": "fixed-shape SPD operator for gray AD-FD; reported, not physical air conduction"
+  },
+  "scenarios": {
+    "rho_c_1e-8_numerical_scenario": {
+      "contact_conductance_S_m2": 100000000.0,
+      "contact_resistivity_ohm_m2": 1e-08,
+      "provenance": "numerical scenario, not measured Au/TaIrTe4 contact data",
+      "base_current_A_for_fixed_unit_temperature_field": 3.709612363298731e-10,
+      "gradient_l2_A_per_rho": 1.4918692832161164e-10,
+      "worst_fine_step_ADFD_relative_error": 3.245838531266083e-05,
+      "solver": {
+        "weighting_relative_residual": 3.841137825585804e-12,
+        "adjoint_relative_residual": 2.226682152490021e-12,
+        "weighting_iterations": 270,
+        "adjoint_iterations": 290,
+        "CPU_linear_solve_fallback": false
+      },
+      "audit": {
+        "free_equation_relative_residual": 3.840943621541785e-12,
+        "low_terminal_current_A_per_V": -0.05047226629775618,
+        "high_terminal_current_A_per_V": 0.05047226629775607,
+        "terminal_current_balance": 2.1996694542612864e-15,
+        "psi_min": 0.0,
+        "psi_max": 1.0
+      },
+      "mean_vertical_potential_difference": -2.9530711209702075e-13
+    },
+    "rho_c_1e-10_numerical_scenario": {
+      "contact_conductance_S_m2": 10000000000.0,
+      "contact_resistivity_ohm_m2": 1e-10,
+      "provenance": "numerical scenario, not measured Au/TaIrTe4 contact data",
+      "base_current_A_for_fixed_unit_temperature_field": 2.228655927977561e-08,
+      "gradient_l2_A_per_rho": 6.1835465360779865e-09,
+      "worst_fine_step_ADFD_relative_error": 2.3370587975027412e-07,
+      "solver": {
+        "weighting_relative_residual": 7.0996362672163695e-12,
+        "adjoint_relative_residual": 7.122315974514361e-12,
+        "weighting_iterations": 240,
+        "adjoint_iterations": 250,
+        "CPU_linear_solve_fallback": false
+      },
+      "audit": {
+        "free_equation_relative_residual": 7.09983953124855e-12,
+        "low_terminal_current_A_per_V": -0.057633514914013285,
+        "high_terminal_current_A_per_V": 0.05763351491390793,
+        "terminal_current_balance": 1.8279854404196224e-12,
+        "psi_min": 0.0,
+        "psi_max": 1.0
+      },
+      "mean_vertical_potential_difference": -3.2162911223210244e-13
+    },
+    "rho_c_1e-12_numerical_scenario": {
+      "contact_conductance_S_m2": 1000000000000.0,
+      "contact_resistivity_ohm_m2": 1e-12,
+      "provenance": "numerical scenario, not measured Au/TaIrTe4 contact data",
+      "base_current_A_for_fixed_unit_temperature_field": 2.9184456351846926e-08,
+      "gradient_l2_A_per_rho": 2.6302724938009677e-09,
+      "worst_fine_step_ADFD_relative_error": 1.4406763354549607e-06,
+      "solver": {
+        "weighting_relative_residual": 6.031566795755957e-13,
+        "adjoint_relative_residual": 1.723300161612953e-12,
+        "weighting_iterations": 230,
+        "adjoint_iterations": 230,
+        "CPU_linear_solve_fallback": false
+      },
+      "audit": {
+        "free_equation_relative_residual": 6.032017523305352e-13,
+        "low_terminal_current_A_per_V": -0.07465023934544412,
+        "high_terminal_current_A_per_V": 0.07465023934543003,
+        "terminal_current_balance": 1.8887859618898858e-13,
+        "psi_min": 0.0,
+        "psi_max": 1.0
+      },
+      "mean_vertical_potential_difference": 1.1420031587050517e-15
+    },
+    "near_ideal_rho_c_1e-14_numerical_limit": {
+      "contact_conductance_S_m2": 100000000000000.0,
+      "contact_resistivity_ohm_m2": 1e-14,
+      "provenance": "numerical scenario, not measured Au/TaIrTe4 contact data",
+      "base_current_A_for_fixed_unit_temperature_field": 2.531391206278046e-08,
+      "gradient_l2_A_per_rho": 1.1677590725815975e-09,
+      "worst_fine_step_ADFD_relative_error": 1.3366578857908216e-06,
+      "solver": {
+        "weighting_relative_residual": 4.048794272085482e-12,
+        "adjoint_relative_residual": 8.160306280516759e-12,
+        "weighting_iterations": 390,
+        "adjoint_iterations": 410,
+        "CPU_linear_solve_fallback": false
+      },
+      "audit": {
+        "free_equation_relative_residual": 4.0469702953570415e-12,
+        "low_terminal_current_A_per_V": -0.07616186399828784,
+        "high_terminal_current_A_per_V": 0.07616186399842416,
+        "terminal_current_balance": 1.7898919810967598e-12,
+        "psi_min": 0.0,
+        "psi_max": 1.0
+      },
+      "mean_vertical_potential_difference": -5.1486592766991634e-17
+    }
+  },
+  "gates": {
+    "worst_h0p0025_ADFD_relative_error": 3.245838531266083e-05,
+    "required_ADFD_relative_error": 0.01,
+    "worst_linear_residual": 9.513460404800856e-12,
+    "required_linear_residual": 1e-08,
+    "worst_terminal_current_balance": 2.3336014034563646e-12,
+    "required_terminal_current_balance": 1e-08,
+    "CPU_linear_solve_fallback": false
+  },
+  "limitations": [
+    "No device-specific Au/TaIrTe4 electrical contact resistivity was supplied or identified.",
+    "All contact resistivities are named numerical scenarios, not a confidence interval.",
+    "S_Au=0 isolates weighting-field and shunting effects; metal thermopower remains a later sensitivity.",
+    "This control uses a fixed temperature field and is not a coupled PTE prediction."
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "raw_artifact_committed_to_git": false,
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4_artifacts/au_weighting_electrical_adfd/au_weighting_electrical_adfd_raw.npz",
+    "bytes": 73948,
+    "sha256": "06420c8ba9f47254646b67799f4d27e5efa336d6ae7f282649cbbddf1ecbedf3",
+    "generation_command": "CUDA_VISIBLE_DEVICES=<one GPU> python 54_validate_au_weighting_electrical_adfd.py ..."
+  },
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_weighting_electrical_adfd/au_weighting_electrical_adfd_summary.json",
+      "bytes": 6310,
+      "sha256": "cb2dfa95ae06681cf3fc28f495b92c2a4c5a382071a50fd1dc15cd74d2d6a2ea"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_weighting_electrical_adfd/au_weighting_electrical_adfd_cases.csv",
+      "bytes": 17466,
+      "sha256": "422e0d410ca72548e07365eebe625c961cc00cde50ca47ff4e8e1d2064547d61"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_weighting_electrical_adfd/au_weighting_electrical_fields.png",
+      "bytes": 374893,
+      "sha256": "478965f6ee65eb26f7976b53057b15ddd36cfac59e9dd4f186ce1e7e2d9ce3c4"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_weighting_electrical_adfd/au_weighting_electrical_adfd_validation.png",
+      "bytes": 292517,
+      "sha256": "2dca481aa079389e254bf86035e5f1e7e9ea3e0bde673effabe29d8016f7624c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_au_weighting_electrical_adfd/AU_WEIGHTING_ELECTRICAL_ADFD_REPORT.md",
+      "bytes": 2854,
+      "sha256": "e07449ddd7005b3efef51f39c00e47d1941ca7548972e9200e352ea4d65a81f7"
+    }
+  ]
+}
