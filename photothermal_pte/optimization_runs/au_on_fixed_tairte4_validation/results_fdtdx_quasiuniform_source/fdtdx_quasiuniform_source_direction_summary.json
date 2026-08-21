@@ -1,0 +1,302 @@
+{
+  "status": "VALIDATED_FDTDX_QUASIUNIFORM_SOURCE_DIRECTION_RECIPROCITY",
+  "scope": "source-only GPU numerical control; not production optical/thermal/PTE/optimization",
+  "fdtdx_import_path": "/home/seunghyun/.local/fdtdx_main_src/src/fdtdx/__init__.py",
+  "cuda_visible_devices": "5",
+  "grid_cell_size_m_xyz": [
+    1e-07,
+    1e-07,
+    2.5e-08
+  ],
+  "cases": [
+    {
+      "kind": "uniform",
+      "direction": "+",
+      "mean_downstream_power_W": 5.001978157706663e-15,
+      "rms_downstream_power_W": 6.125406425979514e-15,
+      "last_window_relative_std": 0.7068501710891724,
+      "closed_surface_time_domain_mean_inward_W": -4.0130982780618673e-19,
+      "closed_surface_phasor_inward_W": -8.020343219314156e-19,
+      "closed_surface_phasor_vs_time_relative_error": 0.49963509436881187,
+      "large_closed_surface_time_domain_mean_inward_W": -1.994778514010669e-18,
+      "large_closed_surface_phasor_inward_W": -3.988889906857314e-18,
+      "large_closed_surface_residual_over_downstream_power": 0.0007974624800613213,
+      "time_steps_total": 6788,
+      "steps_per_period": 849,
+      "source_slice": [
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          40
+        ],
+        [
+          39,
+          40
+        ]
+      ],
+      "detector_slice": [
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          40
+        ],
+        [
+          59,
+          60
+        ]
+      ],
+      "closed_surface_slice": [
+        [
+          11,
+          29
+        ],
+        [
+          11,
+          29
+        ],
+        [
+          70,
+          92
+        ]
+      ],
+      "large_closed_surface_slice": [
+        [
+          8,
+          32
+        ],
+        [
+          8,
+          32
+        ],
+        [
+          50,
+          120
+        ]
+      ]
+    },
+    {
+      "kind": "uniform",
+      "direction": "-",
+      "mean_downstream_power_W": 5.002029826716445e-15,
+      "rms_downstream_power_W": 6.125480964878872e-15,
+      "last_window_relative_std": 0.7068544030189514,
+      "closed_surface_time_domain_mean_inward_W": -3.8503440301935236e-19,
+      "closed_surface_phasor_inward_W": -7.703764655277862e-19,
+      "closed_surface_phasor_vs_time_relative_error": 0.5001996812615963,
+      "large_closed_surface_time_domain_mean_inward_W": -1.9744737115143298e-18,
+      "large_closed_surface_phasor_inward_W": -3.946961775968226e-18,
+      "large_closed_surface_residual_over_downstream_power": 0.0007890720193004502,
+      "time_steps_total": 6788,
+      "steps_per_period": 849,
+      "source_slice": [
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          40
+        ],
+        [
+          119,
+          120
+        ]
+      ],
+      "detector_slice": [
+        [
+          0,
+          40
+        ],
+        [
+          0,
+          40
+        ],
+        [
+          99,
+          100
+        ]
+      ],
+      "closed_surface_slice": [
+        [
+          11,
+          29
+        ],
+        [
+          11,
+          29
+        ],
+        [
+          70,
+          92
+        ]
+      ],
+      "large_closed_surface_slice": [
+        [
+          8,
+          32
+        ],
+        [
+          8,
+          32
+        ],
+        [
+          40,
+          110
+        ]
+      ]
+    },
+    {
+      "kind": "gaussian",
+      "direction": "+",
+      "mean_downstream_power_W": 4.0084616618948085e-16,
+      "rms_downstream_power_W": 5.676761872939117e-16,
+      "last_window_relative_std": 1.0027998685836792,
+      "closed_surface_time_domain_mean_inward_W": -1.2450771383804313e-17,
+      "closed_surface_phasor_inward_W": -1.253132305903534e-17,
+      "closed_surface_phasor_vs_time_relative_error": 0.006428026382493346,
+      "large_closed_surface_time_domain_mean_inward_W": -4.7455325272387596e-17,
+      "large_closed_surface_phasor_inward_W": -4.801464495026125e-17,
+      "large_closed_surface_residual_over_downstream_power": 0.11978322109625622,
+      "time_steps_total": 6788,
+      "steps_per_period": 849,
+      "source_slice": [
+        [
+          10,
+          30
+        ],
+        [
+          10,
+          30
+        ],
+        [
+          39,
+          40
+        ]
+      ],
+      "detector_slice": [
+        [
+          10,
+          30
+        ],
+        [
+          10,
+          30
+        ],
+        [
+          59,
+          60
+        ]
+      ],
+      "closed_surface_slice": [
+        [
+          11,
+          29
+        ],
+        [
+          11,
+          29
+        ],
+        [
+          70,
+          92
+        ]
+      ],
+      "large_closed_surface_slice": [
+        [
+          8,
+          32
+        ],
+        [
+          8,
+          32
+        ],
+        [
+          50,
+          120
+        ]
+      ]
+    },
+    {
+      "kind": "gaussian",
+      "direction": "-",
+      "mean_downstream_power_W": 4.095917019605427e-16,
+      "rms_downstream_power_W": 5.838092003237908e-16,
+      "last_window_relative_std": 1.0156803131103516,
+      "closed_surface_time_domain_mean_inward_W": -1.7317241190756898e-17,
+      "closed_surface_phasor_inward_W": -1.7417141447696152e-17,
+      "closed_surface_phasor_vs_time_relative_error": 0.005735743562699753,
+      "large_closed_surface_time_domain_mean_inward_W": -5.2187102778656334e-17,
+      "large_closed_surface_phasor_inward_W": -5.2818565840834415e-17,
+      "large_closed_surface_residual_over_downstream_power": 0.12895418922799026,
+      "time_steps_total": 6788,
+      "steps_per_period": 849,
+      "source_slice": [
+        [
+          10,
+          30
+        ],
+        [
+          10,
+          30
+        ],
+        [
+          119,
+          120
+        ]
+      ],
+      "detector_slice": [
+        [
+          10,
+          30
+        ],
+        [
+          10,
+          30
+        ],
+        [
+          99,
+          100
+        ]
+      ],
+      "closed_surface_slice": [
+        [
+          11,
+          29
+        ],
+        [
+          11,
+          29
+        ],
+        [
+          70,
+          92
+        ]
+      ],
+      "large_closed_surface_slice": [
+        [
+          8,
+          32
+        ],
+        [
+          8,
+          32
+        ],
+        [
+          40,
+          110
+        ]
+      ]
+    }
+  ],
+  "minus_over_plus_power_magnitude_ratio": {
+    "uniform": 1.0000103297151954,
+    "gaussian": 1.0218176859571804
+  },
+  "gate": "each -z/+z downstream-power magnitude ratio within 5% of unity"
+}

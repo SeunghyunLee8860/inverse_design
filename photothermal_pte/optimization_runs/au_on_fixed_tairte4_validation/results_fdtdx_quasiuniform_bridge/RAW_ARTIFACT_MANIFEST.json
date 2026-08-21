@@ -1,0 +1,49 @@
+{
+  "status": "PARTIAL_FDTDX_AU_GRADIENT_VALIDATED_BLOCKED_FINITE_GAUSSIAN_CLOSURE",
+  "raw_fsp_or_npz_committed": false,
+  "fdtdx_source": {
+    "path": "/home/seunghyun/.local/fdtdx_main_src",
+    "commit": "f26f84b70a8cceec9b889553955a868624736bf1",
+    "import_path": "/home/seunghyun/.local/fdtdx_main_src/src/fdtdx/__init__.py",
+    "note": "exact post-release main snapshot; not a numbered release"
+  },
+  "generation_commands": [
+    "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx JAX_PLATFORMS=cuda XLA_PYTHON_CLIENT_PREALLOCATE=false python 45_validate_fdtdx_quasiuniform_au_tairte4_adfd.py --quick --output-dir results_fdtdx_quasiuniform_bridge",
+    "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx JAX_PLATFORMS=cuda XLA_PYTHON_CLIENT_PREALLOCATE=false python 46_validate_fdtdx_quasiuniform_source_direction.py --output-dir results_fdtdx_quasiuniform_source",
+    "python 47_summarize_fdtdx_quasiuniform_au_tairte4.py"
+  ],
+  "files": {
+    "45_validate_fdtdx_quasiuniform_au_tairte4_adfd.py": {
+      "bytes": 34651,
+      "sha256": "e8295bbb71045d5bdb861e423ffff103671f75c01fe079da8a8f9bff9e4c77ae"
+    },
+    "46_validate_fdtdx_quasiuniform_source_direction.py": {
+      "bytes": 9912,
+      "sha256": "2837a61c44550908b5810f2d4bf21ddb58e2190a7af0e2aba1d1bf15ff46fa10"
+    },
+    "47_summarize_fdtdx_quasiuniform_au_tairte4.py": {
+      "bytes": 8093,
+      "sha256": "bbef00fd9713487a86c2f66c74fb4b9739b51c70f1fc058c71aa03f3b9edd889"
+    },
+    "results_fdtdx_quasiuniform_bridge/fdtdx_quasiuniform_au_tairte4_adfd_summary.json": {
+      "bytes": 7664,
+      "sha256": "8c0d5983bfffa0a7f3f2b069c315be9bd31973b6f4aa7cbacc3aa580836f7639"
+    },
+    "results_fdtdx_quasiuniform_bridge/fdtdx_quasiuniform_au_tairte4_adfd_directions.csv": {
+      "bytes": 8394,
+      "sha256": "aecaddb23a3f1be94a48ad7fc2a4448e69b93b09ebbf98aa98d7810ee0ad1c25"
+    },
+    "results_fdtdx_quasiuniform_bridge/fdtdx_quasiuniform_au_tairte4_adfd.png": {
+      "bytes": 268259,
+      "sha256": "a8d5a2e1323b318bdef388dc19e16944b6b30c7ab3aed33bc4198aa103f81f63"
+    },
+    "results_fdtdx_quasiuniform_source/fdtdx_quasiuniform_source_direction_summary.json": {
+      "bytes": 6429,
+      "sha256": "12800c9f6e6718234f157e8ee853995189d34776009a9277bf06d7b5f84e66fa"
+    },
+    "results_fdtdx_quasiuniform_bridge/FDTDX_QUASIUNIFORM_AU_TAIRTE4_VALIDATION_REPORT.md": {
+      "bytes": 3202,
+      "sha256": "219a8fbf942a84a319fa05e1a9a558d4f80cecde6dc8daaa1c8db660873a1587"
+    }
+  }
+}
