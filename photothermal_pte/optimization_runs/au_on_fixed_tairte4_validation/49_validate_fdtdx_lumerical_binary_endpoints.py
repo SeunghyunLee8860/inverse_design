@@ -149,7 +149,13 @@ def _write_diagnostic_outputs(summary: dict[str, object], output_dir: Path) -> N
     plt.close(fig)
 
 
-def run(output_dir: Path, *, audit_only: bool) -> dict[str, object]:
+def run(
+    output_dir: Path,
+    *,
+    audit_only: bool,
+    gradient_smoke: bool = False,
+    gradient_checkpoints: int = 16,
+) -> dict[str, object]:
     import jax
     import jax.numpy as jnp
     import fdtdx
@@ -173,7 +179,11 @@ def run(output_dir: Path, *, audit_only: bool) -> dict[str, object]:
         dtype=jnp.float32,
         courant_factor=0.5,
         backend="gpu",
-        gradient_config=None,
+        gradient_config=(
+            fdtdx.GradientConfig(method="checkpointed", num_checkpoints=gradient_checkpoints)
+            if gradient_smoke
+            else None
+        ),
     )
     dt = config.time_step_duration
     omega = 2.0 * math.pi * stage41.C0_M_PER_S / WAVELENGTH_M
@@ -400,6 +410,8 @@ def run(output_dir: Path, *, audit_only: bool) -> dict[str, object]:
             "time_step_s": config.time_step_duration,
             "total_periods": total_periods,
             "window_periods": window_periods,
+            "gradient_method": "checkpointed" if gradient_smoke else None,
+            "gradient_checkpoints": gradient_checkpoints if gradient_smoke else None,
         },
     }
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -480,6 +492,219 @@ def run(output_dir: Path, *, audit_only: bool) -> dict[str, object]:
         )[0]
         target = out.detector_states["target_field"]["phasor"][0, 0]
         return late_power, previous_power, p_inc, p_closed, target
+
+    if gradient_smoke:
+        from fdtdx.fdtd.fdtd import checkpointed_fdtd
+
+        latent_shape = (20, 20)
+        optical_repeat = (au_slice[0].stop - au_slice[0].start) // latent_shape[0]
+        if optical_repeat != 5 or (au_slice[1].stop - au_slice[1].start) != 5 * latent_shape[1]:
+            raise RuntimeError(f"Unexpected latent-to-Yee layout: Au slice={au_slice}")
+
+        lx = jnp.linspace(-1.0, 1.0, latent_shape[0])[:, None]
+        ly = jnp.linspace(-1.0, 1.0, latent_shape[1])[None, :]
+        rho0 = (0.52 + 0.07 * jnp.cos(0.8 * math.pi * lx) * jnp.cos(0.65 * math.pi * ly) + 0.02 * lx).astype(
+            jnp.float32
+        )
+
+        def optical_strength(rho):
+            # Piecewise-constant 500-nm design pixels on the 100-nm Yee grid;
+            # the two physical 25-nm Au layers share the same z-projected value.
+            upsampled = jnp.repeat(jnp.repeat(rho, optical_repeat, axis=0), optical_repeat, axis=1)
+            return jnp.broadcast_to((upsampled**3)[:, :, None], (100, 100, 2))
+
+        def arrays_for_density(rho):
+            strength = optical_strength(rho)
+            c3 = ta_c3
+            for component in range(3):
+                c3 = c3.at[(0, component, *au_slice)].set(c3_au * strength)
+            return (
+                base.reset()
+                .aset("dispersive_c1", fixed_c1)
+                .aset("dispersive_c2", fixed_c2)
+                .aset("dispersive_c3", c3)
+            )
+
+        def powers_for_density(out, window, rho):
+            e_au = out.detector_states[f"au_{window}"]["phasor"][0, 0]
+            e_ta = out.detector_states[f"tairte4_{window}"]["phasor"][0, 0]
+            strength = optical_strength(rho)
+            p_au_comp = prefactor * epsilon_au.imag * jnp.sum(
+                strength[None, ...] * jnp.abs(e_au) ** 2 * au_volume[None, ...], axis=(1, 2, 3)
+            )
+            p_ta_comp = prefactor * jnp.sum(
+                ta_imag * jnp.abs(e_ta) ** 2 * ta_volume[None, ...], axis=(1, 2, 3)
+            )
+            return jnp.concatenate((p_au_comp, p_ta_comp, jnp.stack((p_au_comp.sum() + p_ta_comp.sum(),))))
+
+        def objective_with_aux(rho):
+            _, out = checkpointed_fdtd(arrays_for_density(rho), placed, config, key, show_progress=False)
+            late_power = powers_for_density(out, "late", rho)
+            previous_power = powers_for_density(out, "previous", rho)
+            p_inc = eta0 * placed["incident_plane"].compute_poynting_flux(
+                out.detector_states["incident_plane"]
+            )[0]
+            p_closed = eta0 * placed["material_flux"].compute_net_flux(
+                out.detector_states["material_flux"]
+            )[0]
+            return late_power[-1], (late_power, previous_power, p_inc, p_closed)
+
+        print(
+            f"[gradient-smoke] compiling checkpointed AD with {gradient_checkpoints} checkpoints",
+            flush=True,
+        )
+        compile_start = time.perf_counter()
+        value_grad = jax.jit(jax.value_and_grad(objective_with_aux, has_aux=True)).lower(rho0).compile()
+        compile_seconds = time.perf_counter() - compile_start
+        print(f"[gradient-smoke] AD compile complete: {compile_seconds:.3f} s", flush=True)
+        ad_start = time.perf_counter()
+        (value_scaled, aux), gradient_scaled = value_grad(rho0)
+        jax.block_until_ready(gradient_scaled)
+        ad_seconds = time.perf_counter() - ad_start
+        print(f"[gradient-smoke] AD execution complete: {ad_seconds:.3f} s", flush=True)
+        late_scaled, previous_scaled, p_inc, p_closed = aux
+        value_w = float(value_scaled) * POWER_SCALE_W
+        gradient_w = np.asarray(gradient_scaled, dtype=np.float64) * POWER_SCALE_W
+        late_w = np.asarray(late_scaled, dtype=np.float64) * POWER_SCALE_W
+        previous_w = np.asarray(previous_scaled, dtype=np.float64) * POWER_SCALE_W
+        grad_l2 = float(np.linalg.norm(gradient_w))
+
+        directions_np = {}
+        x_np = np.linspace(-1.0, 1.0, latent_shape[0])[:, None]
+        y_np = np.linspace(-1.0, 1.0, latent_shape[1])[None, :]
+        smooth = np.sin(0.7 * math.pi * x_np) * np.cos(0.55 * math.pi * y_np) + 0.21 * x_np
+        random = np.random.default_rng(20260821).standard_normal(latent_shape)
+        for name, direction in (("smooth_asymmetric", smooth), ("fixed_seed_random", random)):
+            directions_np[name] = direction / np.linalg.norm(direction)
+
+        def objective_only(rho):
+            return objective_with_aux(rho)[0]
+
+        objective_jit = jax.jit(objective_only).lower(rho0).compile()
+        rows = []
+        fd_start = time.perf_counter()
+        strong_direction_threshold_fraction = 0.05
+        for direction_name, direction_np in directions_np.items():
+            ad_directional = float(np.vdot(gradient_w, direction_np).real)
+            for h in (0.01, 0.005):
+                print(f"[gradient-smoke] FD {direction_name}, h={h:g}", flush=True)
+                direction = jnp.asarray(direction_np, dtype=rho0.dtype)
+                plus = float(objective_jit(rho0 + h * direction)) * POWER_SCALE_W
+                minus = float(objective_jit(rho0 - h * direction)) * POWER_SCALE_W
+                fd_directional = (plus - minus) / (2.0 * h)
+                # A local relative error is well-conditioned only when the
+                # directional derivative is not near-null.  Near-null
+                # directions are still gated by the gradient-L2-normalized
+                # error below; no gradient or FD value is rescaled.
+                strong = (
+                    max(abs(ad_directional), abs(fd_directional))
+                    >= strong_direction_threshold_fraction * grad_l2
+                )
+                rows.append(
+                    {
+                        "direction": direction_name,
+                        "h": h,
+                        "ad_W_per_unit_direction": ad_directional,
+                        "fd_W_per_unit_direction": fd_directional,
+                        "strong_direction": bool(strong),
+                        "strong_relative_error": abs(ad_directional - fd_directional)
+                        / max(abs(fd_directional), 1e-300),
+                        "gradient_l2_normalized_error": abs(ad_directional - fd_directional)
+                        / max(grad_l2, 1e-300),
+                        "power_plus_W": plus,
+                        "power_minus_W": minus,
+                    }
+                )
+                print(
+                    "[gradient-smoke] "
+                    f"AD={ad_directional:.8e} W, FD={fd_directional:.8e} W, "
+                    f"rel={rows[-1]['strong_relative_error']:.6%}",
+                    flush=True,
+                )
+        fd_seconds = time.perf_counter() - fd_start
+
+        finest = [row for row in rows if row["h"] == 0.005]
+        strongest_error = max(
+            (row["strong_relative_error"] for row in finest if row["strong_direction"]), default=0.0
+        )
+        normalized_error = max(row["gradient_l2_normalized_error"] for row in finest)
+        endpoint_reference = json.loads(
+            (output_dir.parent / "results_fdtdx_lumerical_binary_endpoints" / "fdtdx_lumerical_binary_endpoints_summary.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        empty_box = endpoint_reference["cases"]["empty"]["closed_surface_inward_W"]
+        corrected_closed = float(p_closed) - empty_box
+        closure = _relative(value_w, corrected_closed)
+        window_change = _relative(float(late_w[-1]), float(previous_w[-1]))
+        gates = {
+            "gpu_only": True,
+            "finite": bool(np.isfinite(value_w) and np.all(np.isfinite(gradient_w))),
+            "no_density_clipping": True,
+            "late_window_change_lt_0p5pct": window_change < 0.005,
+            "empty_subtracted_Q_flux_closure_lt_0p5pct": closure < 0.005,
+            "finest_strong_direction_error_lt_1pct": strongest_error < 0.01,
+            "finest_gradient_l2_normalized_error_lt_1pct": normalized_error < 0.01,
+        }
+        passed = all(gates.values())
+        result = {
+            "status": (
+                "VALIDATED_FDTDX_PRODUCTION_WIDTH_NONUNIFORM_AU_GRADIENT_SMOKE"
+                if passed
+                else "FAILED_FDTDX_PRODUCTION_WIDTH_NONUNIFORM_AU_GRADIENT_SMOKE"
+            ),
+            "scope": "production-width nonuniform Au optical total-Q AD-FD smoke; no thermal/PTE/electrical/optimization",
+            "audit": audit,
+            "design": {
+                "latent_shape_xy": list(latent_shape),
+                "latent_pitch_m": 500e-9,
+                "yee_shape_xy": [100, 100],
+                "yee_pitch_m": 100e-9,
+                "au_z_cells": 2,
+                "au_thickness_m": 50e-9,
+                "relaxation": "passive Drude coupling strength s(rho)=rho^3",
+                "rho_min": float(jnp.min(rho0)),
+                "rho_max": float(jnp.max(rho0)),
+            },
+            "baseline": {
+                "P_Q_W": value_w,
+                "component_power_W": {
+                    "au_xyz": list(map(float, late_w[:3])),
+                    "tairte4_xyz": list(map(float, late_w[3:6])),
+                },
+                "incident_plane_W": float(p_inc),
+                "closed_surface_inward_W": float(p_closed),
+                "empty_subtracted_closed_surface_W": corrected_closed,
+                "Q_flux_closure_relative": closure,
+                "late_window_relative_change": window_change,
+                "gradient_l2_W": grad_l2,
+            },
+            "directions": rows,
+            "direction_classification": {
+                "strong_threshold_fraction_of_gradient_l2": strong_direction_threshold_fraction,
+                "near_null_metric": "abs(AD-FD)/||gradient||_2",
+                "no_empirical_gradient_rescaling": True,
+            },
+            "runtime": {
+                "compile_seconds": compile_seconds,
+                "ad_seconds": ad_seconds,
+                "four_fd_forward_seconds": fd_seconds,
+            },
+            "gates": gates,
+            "no_clipping_smoothing_gain_or_result_rescaling": True,
+        }
+        output_dir.mkdir(parents=True, exist_ok=True)
+        (output_dir / "fdtdx_production_width_nonuniform_au_gradient_smoke.json").write_text(
+            json.dumps(result, indent=2) + "\n", encoding="utf-8"
+        )
+        with (output_dir / "fdtdx_production_width_nonuniform_au_gradient_smoke.csv").open(
+            "w", newline="", encoding="utf-8"
+        ) as handle:
+            writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
+            writer.writeheader()
+            writer.writerows(rows)
+        print(json.dumps(result, indent=2))
+        return result
 
     start = time.perf_counter()
     solve_jit = jax.jit(solve).lower(jnp.asarray((0.0, 0.0), dtype=jnp.float32)).compile()
@@ -609,6 +834,8 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--audit-only", action="store_true")
     parser.add_argument("--summarize-existing", action="store_true")
+    parser.add_argument("--gradient-smoke", action="store_true")
+    parser.add_argument("--gradient-checkpoints", type=int, default=16)
     args = parser.parse_args()
     if args.summarize_existing:
         summary = json.loads(
@@ -616,7 +843,12 @@ def main() -> int:
         )
         _write_diagnostic_outputs(summary, args.output_dir)
         return 0
-    result = run(args.output_dir, audit_only=args.audit_only)
+    result = run(
+        args.output_dir,
+        audit_only=args.audit_only,
+        gradient_smoke=args.gradient_smoke,
+        gradient_checkpoints=args.gradient_checkpoints,
+    )
     if args.audit_only:
         return 0
     return 0 if result["status"].startswith("VALIDATED") else 2

@@ -46,6 +46,27 @@ The exact-binary v261 result does not validate its failed moving/conformal
 metal derivative or gray `importnk2` path.  The promoted differentiable route
 is still the causal fixed-grid dispersive solver.
 
+The same route now also passes a production-width nonuniform-Au optical
+gradient smoke test.  The calculation uses the 48 um x 48 um rectilinear
+domain, the 8.5-um-waist Gaussian, physical 100-nm TaIrTe4 and 50-nm Au, and a
+20x20 density field at 500-nm pitch mapped to component-native Yee samples.
+The strong smooth directional AD--FD error is 0.095844% at `h=0.005`; the
+fixed-seed near-null direction has only 0.023846% error when normalized by the
+full gradient L2 norm.  Local material Q closes against the empty-subtracted
+six-face flux to 0.001937%.  No clipping, smoothing, gain, endpoint matching,
+or gradient rescaling is used.  See:
+
+- `results_fdtdx_production_gradient_smoke/FDTDX_PRODUCTION_WIDTH_NONUNIFORM_AU_GRADIENT_REPORT.md`
+
+The first four-checkpoint production attempt is retained as a performance
+diagnostic: it did not finish in 60 minutes.  Sixteen checkpoints used 35.8 GB
+on a 49-GB GPU and completed one value+gradient in 506.6 s.  This changes only
+the time--memory tradeoff, not the physical or differentiation contract.
+
+Thermal, electrical, PTE, combined-gradient, and optimization validation are
+still pending.  The next gate is explicit Au/TaIrTe4 thermal coupling and a
+thermal-only AD--FD control.
+
 This folder is intentionally separate from the completed TaIrTe4/void
 optimization runs.  It validates a new physical contract:
 

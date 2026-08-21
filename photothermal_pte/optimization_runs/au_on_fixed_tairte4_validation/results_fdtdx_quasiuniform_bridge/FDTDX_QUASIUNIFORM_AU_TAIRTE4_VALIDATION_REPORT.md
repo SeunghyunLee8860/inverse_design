@@ -1,6 +1,6 @@
 # FDTDX quasi-uniform Au/TaIrTe4 validation
 
-**Status: `VALIDATED_FDTDX_AU_OPTICAL_FORWARD_AND_COMPACT_MATERIAL_GRADIENT`**
+**Status: `VALIDATED_FDTDX_PRODUCTION_WIDTH_AU_OPTICAL_FORWARD_AND_GRADIENT`**
 
 This checkpoint tests whether the post-release FDTDX main branch can represent
 physical 50-nm Au on physical 100-nm TaIrTe4 with a quasi-uniform Cartesian
@@ -71,6 +71,19 @@ boundaries in Lumerical.
    and `0.036439%`.
    These values use FDTDX's documented eta0 field-unit conversion; no fitted
    gain or endpoint rescaling was applied.
+6. The production-width nonuniform-Au material gradient passes.  The 20x20
+   density field is mapped to 100x100 component-native Yee samples and extruded
+   through the physical 50-nm Au thickness.  At the finest FD step, the strong
+   smooth-direction relative error is
+   `0.095844%`; the maximum all-direction
+   gradient-L2-normalized error is
+   `0.023846%`.  Empty-subtracted local-Q/six-face
+   closure is `0.001937%` and
+   the last-window change is
+   `0.171052%`.
+   The fixed-seed random direction is explicitly classified as near-null at
+   the 5% gradient-norm threshold and is not judged by an ill-conditioned local
+   relative error.  No raw AD/FD value or gradient was rescaled.
 
 ## Diagnostic limitation retained from the compact control
 
@@ -100,11 +113,10 @@ cross-solver checkpoint is now closed without an empirical correction.
 
 ## Decision
 
-FDTDX is validated for the production-width forward optical endpoints and for
-compact-grid dispersive Au material AD.  It is therefore the selected route for
-the next Au inverse-design validation.  This status does **not** yet validate a
-production-width spatially varying Au gradient, thermal/PTE coupling, electrode
-transport, or optimization.  The next fail-closed gate is a production-width
-nonuniform-Au directional AD--FD smoke test using the same native-Yee loss
-contract; optimization starts only after that gate and the thermal/electrical
-chain pass.
+FDTDX is validated for the production-width forward optical endpoints and the
+production-width spatially varying dispersive-Au material gradient.  It is the
+selected optical route for the next Au inverse-design validation.  This status
+does **not** yet validate thermal/PTE coupling, electrode transport, combined
+gradients, or optimization.  The next fail-closed gate is explicit
+Au/TaIrTe4 thermal coupling and thermal-only AD--FD; optimization starts only
+after the thermal and electrical chains pass.

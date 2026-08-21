@@ -15,6 +15,7 @@ DEFAULT_BRIDGE = HERE / "results_fdtdx_quasiuniform_bridge"
 DEFAULT_SOURCE = HERE / "results_fdtdx_quasiuniform_source"
 DEFAULT_W8_SOURCE = HERE / "results_fdtdx_w8p5um_source_only"
 DEFAULT_ENDPOINT = HERE / "results_fdtdx_lumerical_binary_endpoints"
+DEFAULT_GRADIENT = HERE / "results_fdtdx_production_gradient_smoke"
 
 
 def sha256(path: Path) -> str:
@@ -35,6 +36,7 @@ def main() -> int:
     parser.add_argument("--source-dir", type=Path, default=DEFAULT_SOURCE)
     parser.add_argument("--w8-source-dir", type=Path, default=DEFAULT_W8_SOURCE)
     parser.add_argument("--endpoint-dir", type=Path, default=DEFAULT_ENDPOINT)
+    parser.add_argument("--gradient-dir", type=Path, default=DEFAULT_GRADIENT)
     args = parser.parse_args()
 
     bridge_json = args.bridge_dir / "fdtdx_quasiuniform_au_tairte4_adfd_summary.json"
@@ -45,12 +47,19 @@ def main() -> int:
     endpoint_csv = args.endpoint_dir / "fdtdx_lumerical_binary_endpoints_cases.csv"
     endpoint_plot = args.endpoint_dir / "fdtdx_lumerical_binary_endpoints.png"
     endpoint_audit = args.endpoint_dir / "fdtdx_lumerical_binary_endpoint_runsetup_audit.json"
+    gradient_json = args.gradient_dir / "fdtdx_production_width_nonuniform_au_gradient_smoke.json"
+    gradient_csv = args.gradient_dir / "fdtdx_production_width_nonuniform_au_gradient_smoke.csv"
+    gradient_plot = args.gradient_dir / "fdtdx_production_width_nonuniform_au_gradient_smoke.png"
+    gradient_report = args.gradient_dir / "FDTDX_PRODUCTION_WIDTH_NONUNIFORM_AU_GRADIENT_REPORT.md"
+    gradient_audit = args.gradient_dir / "fdtdx_lumerical_binary_endpoint_runsetup_audit.json"
+    gradient_performance = args.gradient_dir / "fdtdx_checkpoint_performance_diagnostic.json"
     directions_csv = args.bridge_dir / "fdtdx_quasiuniform_au_tairte4_adfd_directions.csv"
     plot = args.bridge_dir / "fdtdx_quasiuniform_au_tairte4_adfd.png"
     bridge = load_json(bridge_json)
     source = load_json(source_json)
     w8_source = load_json(w8_source_json)
     endpoint = load_json(endpoint_json)
+    gradient = load_json(gradient_json)
 
     with directions_csv.open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
@@ -76,7 +85,15 @@ def main() -> int:
         for direction in ("+", "-")
     }
 
-    status = "VALIDATED_FDTDX_AU_OPTICAL_FORWARD_AND_COMPACT_MATERIAL_GRADIENT"
+    gradient_finest = [row for row in gradient["directions"] if row["h"] == 0.005]
+    gradient_strong_error = max(
+        (row["strong_relative_error"] for row in gradient_finest if row["strong_direction"]),
+        default=0.0,
+    )
+    gradient_normalized_error = max(
+        row["gradient_l2_normalized_error"] for row in gradient_finest
+    )
+    status = "VALIDATED_FDTDX_PRODUCTION_WIDTH_AU_OPTICAL_FORWARD_AND_GRADIENT"
     report_path = args.bridge_dir / "FDTDX_QUASIUNIFORM_AU_TAIRTE4_VALIDATION_REPORT.md"
     report = f"""# FDTDX quasi-uniform Au/TaIrTe4 validation
 
@@ -149,6 +166,19 @@ boundaries in Lumerical.
    and `{100*endpoint['comparisons']['au1']['fdtdx_empty_subtracted_closure_relative']:.6f}%`.
    These values use FDTDX's documented eta0 field-unit conversion; no fitted
    gain or endpoint rescaling was applied.
+6. The production-width nonuniform-Au material gradient passes.  The 20x20
+   density field is mapped to 100x100 component-native Yee samples and extruded
+   through the physical 50-nm Au thickness.  At the finest FD step, the strong
+   smooth-direction relative error is
+   `{100*gradient_strong_error:.6f}%`; the maximum all-direction
+   gradient-L2-normalized error is
+   `{100*gradient_normalized_error:.6f}%`.  Empty-subtracted local-Q/six-face
+   closure is `{100*gradient['baseline']['Q_flux_closure_relative']:.6f}%` and
+   the last-window change is
+   `{100*gradient['baseline']['late_window_relative_change']:.6f}%`.
+   The fixed-seed random direction is explicitly classified as near-null at
+   the 5% gradient-norm threshold and is not judged by an ill-conditioned local
+   relative error.  No raw AD/FD value or gradient was rescaled.
 
 ## Diagnostic limitation retained from the compact control
 
@@ -178,14 +208,13 @@ cross-solver checkpoint is now closed without an empirical correction.
 
 ## Decision
 
-FDTDX is validated for the production-width forward optical endpoints and for
-compact-grid dispersive Au material AD.  It is therefore the selected route for
-the next Au inverse-design validation.  This status does **not** yet validate a
-production-width spatially varying Au gradient, thermal/PTE coupling, electrode
-transport, or optimization.  The next fail-closed gate is a production-width
-nonuniform-Au directional AD--FD smoke test using the same native-Yee loss
-contract; optimization starts only after that gate and the thermal/electrical
-chain pass.
+FDTDX is validated for the production-width forward optical endpoints and the
+production-width spatially varying dispersive-Au material gradient.  It is the
+selected optical route for the next Au inverse-design validation.  This status
+does **not** yet validate thermal/PTE coupling, electrode transport, combined
+gradients, or optimization.  The next fail-closed gate is explicit
+Au/TaIrTe4 thermal coupling and thermal-only AD--FD; optimization starts only
+after the thermal and electrical chains pass.
 """
     report_path.write_text(report, encoding="utf-8")
 
@@ -195,6 +224,7 @@ chain pass.
         Path(__file__).resolve(),
         HERE / "48_validate_fdtdx_w8p5um_source_only.py",
         HERE / "49_validate_fdtdx_lumerical_binary_endpoints.py",
+        HERE / "50_summarize_fdtdx_production_gradient_smoke.py",
         bridge_json,
         directions_csv,
         plot,
@@ -205,6 +235,12 @@ chain pass.
         endpoint_csv,
         endpoint_plot,
         endpoint_audit,
+        gradient_json,
+        gradient_csv,
+        gradient_plot,
+        gradient_report,
+        gradient_audit,
+        gradient_performance,
         report_path,
     ]
     manifest = {
@@ -221,6 +257,8 @@ chain pass.
             "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx JAX_PLATFORMS=cuda XLA_PYTHON_CLIENT_PREALLOCATE=false python 46_validate_fdtdx_quasiuniform_source_direction.py --output-dir results_fdtdx_quasiuniform_source",
             "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx JAX_PLATFORMS=cuda XLA_PYTHON_CLIENT_PREALLOCATE=false python 48_validate_fdtdx_w8p5um_source_only.py --output-dir results_fdtdx_w8p5um_source_only",
             "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx JAX_PLATFORMS=cuda XLA_PYTHON_CLIENT_PREALLOCATE=false python 49_validate_fdtdx_lumerical_binary_endpoints.py --output-dir results_fdtdx_lumerical_binary_endpoints",
+            "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx XLA_PYTHON_CLIENT_PREALLOCATE=false python 49_validate_fdtdx_lumerical_binary_endpoints.py --gradient-smoke --gradient-checkpoints 16 --output-dir results_fdtdx_production_gradient_smoke",
+            "python 50_summarize_fdtdx_production_gradient_smoke.py --result-dir results_fdtdx_production_gradient_smoke",
             "python 47_summarize_fdtdx_quasiuniform_au_tairte4.py",
         ],
         "files": {
