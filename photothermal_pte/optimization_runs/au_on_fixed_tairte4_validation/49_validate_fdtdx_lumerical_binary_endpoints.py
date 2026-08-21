@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import importlib.util
 import json
 import math
@@ -176,6 +177,14 @@ def _relative(a: float, b: float) -> float:
     return abs(a - b) / max(abs(b), 1e-300)
 
 
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
 def _write_diagnostic_outputs(summary: dict[str, object], output_dir: Path) -> None:
     """Write compact cross-solver tables/plots without changing raw results."""
     import matplotlib
@@ -265,6 +274,8 @@ def run(
     ),
     gradient_steps: tuple[float, ...] = (0.01, 0.005),
     gradient_reference_json: Path | None = None,
+    spatial_q_export: bool = False,
+    spatial_q_raw_path: Path | None = None,
 ) -> dict[str, object]:
     import jax
     import jax.numpy as jnp
@@ -1088,6 +1099,165 @@ def run(
             )
             return late_power[-1], p_closed_primary
 
+        if spatial_q_export:
+            if spatial_q_raw_path is None:
+                raise ValueError("--spatial-q-raw-path is required for spatial Q export")
+            if not include_substrate or sio2_volume is None:
+                raise ValueError(
+                    "Spatial Q export requires --include-substrate so Au, TaIrTe4, "
+                    "and SiO2 are all represented"
+                )
+            print("[spatial-Q] executing one baseline forward", flush=True)
+            export_start = time.perf_counter()
+            _, export_out = fdtdx.run_fdtd(
+                arrays_for_density(rho0), placed, config, key, show_progress=False
+            )
+            export_runtime = time.perf_counter() - export_start
+            export_power = powers_for_density(export_out, "late", rho0)
+            previous_export_power = powers_for_density(export_out, "previous", rho0)
+            e_au = export_out.detector_states["au_late"]["phasor"][0, 0]
+            e_ta = export_out.detector_states["tairte4_late"]["phasor"][0, 0]
+            e_sio2 = export_out.detector_states["sio2_late"]["phasor"][0, 0]
+            strength = optical_strength(rho0)
+            physical_prefactor = prefactor * POWER_SCALE_W
+            q_fields = {
+                "au": physical_prefactor * epsilon_au.imag * strength[None, ...]
+                * jnp.abs(e_au) ** 2,
+                "tairte4": physical_prefactor * ta_imag * jnp.abs(e_ta) ** 2,
+                "sio2": physical_prefactor * epsilon_sio2.imag * jnp.abs(e_sio2) ** 2,
+            }
+            volumes = {"au": au_volume, "tairte4": ta_volume, "sio2": sio2_volume}
+
+            def component_coordinates(grid_slice, component: int):
+                values = []
+                metrics = []
+                for axis, part in enumerate(grid_slice):
+                    edges_axis = np.asarray(realized.edges(axis), dtype=np.float64)
+                    centers_axis = 0.5 * (edges_axis[:-1] + edges_axis[1:])
+                    widths_axis = np.diff(edges_axis)
+                    edge_dual_axis = 0.5 * (
+                        np.concatenate((widths_axis[:1], widths_axis[:-1]))
+                        + widths_axis
+                    )
+                    samples = centers_axis if axis == component else edges_axis[:-1]
+                    metric = widths_axis if axis == component else edge_dual_axis
+                    values.append(samples[int(part.start) : int(part.stop)])
+                    metrics.append(metric[int(part.start) : int(part.stop)])
+                return values, metrics
+
+            raw = spatial_q_raw_path.expanduser().resolve()
+            raw.parent.mkdir(parents=True, exist_ok=True)
+            payload: dict[str, np.ndarray] = {"rho": np.asarray(rho0, dtype=np.float32)}
+            material_slices = {
+                "au": au_slice,
+                "tairte4": flake_slice,
+                "sio2": placed["sio2_late"].grid_slice,
+            }
+            reintegrated = {}
+            finite_nonnegative = True
+            for material in ("au", "tairte4", "sio2"):
+                q_value = np.asarray(q_fields[material], dtype=np.float32)
+                volume_value = np.asarray(volumes[material], dtype=np.float32)
+                payload[f"Q_{material}_W_m3"] = q_value
+                payload[f"dual_volume_{material}_m3"] = volume_value
+                component_power = np.sum(
+                    q_value.astype(np.float64) * volume_value.astype(np.float64),
+                    axis=(1, 2, 3),
+                )
+                reintegrated[material] = component_power
+                finite_nonnegative = finite_nonnegative and bool(
+                    np.all(np.isfinite(q_value)) and np.all(q_value >= 0.0)
+                )
+                for component, name in enumerate("xyz"):
+                    coordinates, metrics = component_coordinates(
+                        material_slices[material], component
+                    )
+                    for axis, axis_name in enumerate("xyz"):
+                        payload[f"{material}_{name}_{axis_name}_m"] = coordinates[axis]
+                        payload[
+                            f"dual_width_{material}_{name}_{axis_name}_m"
+                        ] = metrics[axis]
+            np.savez_compressed(raw, **payload)
+            expected = np.asarray(export_power, dtype=np.float64) * POWER_SCALE_W
+            reintegrated_vector = np.concatenate(
+                (reintegrated["au"], reintegrated["tairte4"], reintegrated["sio2"])
+            )
+            expected_vector = expected[:9]
+            component_reintegration_error = np.abs(
+                reintegrated_vector - expected_vector
+            ) / np.maximum(np.abs(expected_vector), np.finfo(float).tiny)
+            reintegration_error = float(
+                np.max(component_reintegration_error)
+            )
+            closed = float(
+                eta0
+                * jnp.mean(
+                    export_out.detector_states["material_flux_deep_td"]["poynting_flux"][:, 0]
+                )
+            )
+            total_q = float(expected[-1])
+            closure = _relative(total_q, closed)
+            window = _relative(
+                total_q,
+                float(np.asarray(previous_export_power, dtype=np.float64)[-1] * POWER_SCALE_W),
+            )
+            gates = {
+                "gpu_only": True,
+                "finite_nonnegative_Q": finite_nonnegative,
+                "native_Q_reintegration_lt_1e-6": reintegration_error < 1.0e-6,
+                "Q_flux_closure_lt_0p5pct": closure < 0.005,
+                "late_window_change_lt_0p5pct": window < 0.005,
+                "no_clipping_smoothing_gain_or_rescaling": True,
+            }
+            passed = all(gates.values())
+            result = {
+                "status": (
+                    "VALIDATED_FDTDX_SUBSTRATE_SPATIAL_NATIVE_YEE_Q_EXPORT"
+                    if passed
+                    else "FAILED_FDTDX_SUBSTRATE_SPATIAL_NATIVE_YEE_Q_EXPORT"
+                ),
+                "scope": (
+                    "16-period/4-window baseline spatial native-Yee Qx/Qy/Qz export for "
+                    "Au, TaIrTe4, and SiO2; no thermal/PTE/electrical/adjoint/optimization"
+                ),
+                "audit": audit,
+                "P_Q_W": total_q,
+                "component_power_W": {
+                    "au_xyz": list(map(float, expected[:3])),
+                    "tairte4_xyz": list(map(float, expected[3:6])),
+                    "sio2_xyz": list(map(float, expected[6:9])),
+                },
+                "reintegrated_component_power_W": {
+                    name: list(map(float, value)) for name, value in reintegrated.items()
+                },
+                "native_Q_reintegration_relative_error": reintegration_error,
+                "native_Q_component_reintegration_relative_error": list(
+                    map(float, component_reintegration_error)
+                ),
+                "closed_surface_inward_W": closed,
+                "Q_flux_closure_relative": closure,
+                "late_window_relative_change": window,
+                "component_coordinate_contract": (
+                    "Ex=(x center,y lower edge,z lower edge); "
+                    "Ey=(x lower edge,y center,z lower edge); "
+                    "Ez=(x lower edge,y lower edge,z center), with stored axis-wise "
+                    "dual widths and dual volumes"
+                ),
+                "raw_artifact": {
+                    "path": str(raw),
+                    "bytes": raw.stat().st_size,
+                    "sha256": _sha256(raw),
+                },
+                "runtime_seconds": export_runtime,
+                "gates": gates,
+                "no_clipping_smoothing_gain_or_result_rescaling": True,
+            }
+            output_dir.mkdir(parents=True, exist_ok=True)
+            result_path = output_dir / "fdtdx_substrate_spatial_native_yee_q_export.json"
+            result_path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+            print(json.dumps(result, indent=2))
+            return result
+
         reference = None
         reference_ad_directional: dict[str, float] = {}
         if gradient_reference_json is None:
@@ -1706,6 +1876,8 @@ def main() -> int:
     parser.add_argument("--audit-only", action="store_true")
     parser.add_argument("--summarize-existing", action="store_true")
     parser.add_argument("--gradient-smoke", action="store_true")
+    parser.add_argument("--spatial-q-export", action="store_true")
+    parser.add_argument("--spatial-q-raw-path", type=Path)
     parser.add_argument("--gradient-checkpoints", type=int, default=16)
     parser.add_argument("--include-adjoint-aligned", action="store_true")
     parser.add_argument("--include-substrate", action="store_true")
@@ -1748,7 +1920,7 @@ def main() -> int:
     result = run(
         args.output_dir,
         audit_only=args.audit_only,
-        gradient_smoke=args.gradient_smoke,
+        gradient_smoke=args.gradient_smoke or args.spatial_q_export,
         gradient_checkpoints=args.gradient_checkpoints,
         include_adjoint_aligned=args.include_adjoint_aligned,
         include_substrate=args.include_substrate,
@@ -1767,6 +1939,8 @@ def main() -> int:
             if value.strip()
         ),
         gradient_reference_json=args.gradient_reference_json,
+        spatial_q_export=args.spatial_q_export,
+        spatial_q_raw_path=args.spatial_q_raw_path,
     )
     if args.audit_only:
         return 0

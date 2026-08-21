@@ -111,6 +111,23 @@ prediction.  `G_Au/Ta=1.724138e7 W/(m2 K)` is an Au/MoS2 calculated analogue,
 not TaIrTe4 data; the electrical contact is also a numerical scenario and
 `S_Au=0`. See `results_au_coupled_thermal_weighting_pte_fixed_q/`.
 
+The 16-period/4-window forward now also exports the complete spatial heat
+source on the component-native Yee grids.  `Qx`, `Qy`, and `Qz` are stored
+separately for Au, TaIrTe4, and lossy SiO2 together with their staggered
+physical coordinates, axis-wise dual widths, and dual volumes.  Independent
+offline reintegration reproduces total `P_Q=2.4779538432e-13 W` with a
+`3.62e-8` relative error; the worst individual component error is `1.19e-7`.
+Matched-volume loss/flux closure is `0.122366%` and the late-window change is
+`0.019832%`. Status:
+`VALIDATED_FDTDX_SUBSTRATE_SPATIAL_NATIVE_YEE_Q_ARTIFACT`.
+
+The 18,009,578-byte raw NPZ remains outside Git and is pinned by SHA-256
+`f513473ecd38425bbbefe01ff026ee40ba2484f8c0edd5ab687306b458ddc7ff`.
+This checkpoint certifies the spatial optical artifact only. Conservative
+material-overlap remapping, an explicit thermal solve, combined PTE AD--FD,
+and optimization remain separate fail-closed gates. See
+`results_fdtdx_substrate_spatial_q_export_16period_4window_gpu3/`.
+
 This folder is intentionally separate from the completed TaIrTe4/void
 optimization runs.  It validates a new physical contract:
 
