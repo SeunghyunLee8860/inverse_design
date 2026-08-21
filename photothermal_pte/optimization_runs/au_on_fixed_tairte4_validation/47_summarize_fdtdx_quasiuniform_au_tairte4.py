@@ -14,6 +14,7 @@ HERE = Path(__file__).resolve().parent
 DEFAULT_BRIDGE = HERE / "results_fdtdx_quasiuniform_bridge"
 DEFAULT_SOURCE = HERE / "results_fdtdx_quasiuniform_source"
 DEFAULT_W8_SOURCE = HERE / "results_fdtdx_w8p5um_source_only"
+DEFAULT_ENDPOINT = HERE / "results_fdtdx_lumerical_binary_endpoints"
 
 
 def sha256(path: Path) -> str:
@@ -33,17 +34,23 @@ def main() -> int:
     parser.add_argument("--bridge-dir", type=Path, default=DEFAULT_BRIDGE)
     parser.add_argument("--source-dir", type=Path, default=DEFAULT_SOURCE)
     parser.add_argument("--w8-source-dir", type=Path, default=DEFAULT_W8_SOURCE)
+    parser.add_argument("--endpoint-dir", type=Path, default=DEFAULT_ENDPOINT)
     args = parser.parse_args()
 
     bridge_json = args.bridge_dir / "fdtdx_quasiuniform_au_tairte4_adfd_summary.json"
     source_json = args.source_dir / "fdtdx_quasiuniform_source_direction_summary.json"
     w8_source_json = args.w8_source_dir / "fdtdx_w8p5um_source_only_summary.json"
     w8_source_plot = args.w8_source_dir / "fdtdx_w8p5um_source_only.png"
+    endpoint_json = args.endpoint_dir / "fdtdx_lumerical_binary_endpoints_summary.json"
+    endpoint_csv = args.endpoint_dir / "fdtdx_lumerical_binary_endpoints_cases.csv"
+    endpoint_plot = args.endpoint_dir / "fdtdx_lumerical_binary_endpoints.png"
+    endpoint_audit = args.endpoint_dir / "fdtdx_lumerical_binary_endpoint_runsetup_audit.json"
     directions_csv = args.bridge_dir / "fdtdx_quasiuniform_au_tairte4_adfd_directions.csv"
     plot = args.bridge_dir / "fdtdx_quasiuniform_au_tairte4_adfd.png"
     bridge = load_json(bridge_json)
     source = load_json(source_json)
     w8_source = load_json(w8_source_json)
+    endpoint = load_json(endpoint_json)
 
     with directions_csv.open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
@@ -69,7 +76,7 @@ def main() -> int:
         for direction in ("+", "-")
     }
 
-    status = "PARTIAL_FDTDX_AU_GRADIENT_AND_W8P5_SOURCE_VALIDATED_PENDING_MATERIAL_CROSSCHECK"
+    status = "VALIDATED_FDTDX_AU_OPTICAL_FORWARD_AND_COMPACT_MATERIAL_GRADIENT"
     report_path = args.bridge_dir / "FDTDX_QUASIUNIFORM_AU_TAIRTE4_VALIDATION_REPORT.md"
     report = f"""# FDTDX quasi-uniform Au/TaIrTe4 validation
 
@@ -127,41 +134,58 @@ boundaries in Lumerical.
    `{100 * w8_source['results']['closed_surface_residual_over_incident_power']:.6f}%`
    of target-plane incident power.  Its GPU execution time after compilation
    was `{w8_source['results']['execution_seconds']:.4f} s` on this source-only grid.
+5. The material-bearing production-width exact-binary cross-check passes.  The
+   absorbed fractions are:
 
-## What failed and remains blocked
+| endpoint | FDTDX | Lumerical | relative difference |
+|---|---:|---:|---:|
+| TaIrTe4 only | {endpoint['comparisons']['au0']['fdtdx_absorbed_fraction']:.8f} | {endpoint['comparisons']['au0']['lumerical_absorbed_fraction']:.8f} | {100*endpoint['comparisons']['au0']['absorbed_fraction_relative_difference']:.6f}% |
+| Au / TaIrTe4 | {endpoint['comparisons']['au1']['fdtdx_absorbed_fraction']:.8f} | {endpoint['comparisons']['au1']['lumerical_absorbed_fraction']:.8f} | {100*endpoint['comparisons']['au1']['absorbed_fraction_relative_difference']:.6f}% |
+
+   The Au-present/Au-absent absorbed-power ratio differs by only
+   `{100*endpoint['endpoint_ratio']['relative_difference']:.6f}%`.  Local
+   native-Yee material loss agrees with the empty-subtracted six-face flux to
+   `{100*endpoint['comparisons']['au0']['fdtdx_empty_subtracted_closure_relative']:.6f}%`
+   and `{100*endpoint['comparisons']['au1']['fdtdx_empty_subtracted_closure_relative']:.6f}%`.
+   These values use FDTDX's documented eta0 field-unit conversion; no fitted
+   gain or endpoint rescaling was applied.
+
+## Diagnostic limitation retained from the compact control
 
 - The last two-window absorbed-power change is
   `{100.0 * bridge['results']['window_relative_change']['total']:.6f}%`, above
   the 0.5% gate in the eight-period quick run.
-- The material-loss versus raw closed-surface flux mismatch is
-  `{100.0 * bridge['results']['closed_surface_raw_closure_relative_error']:.6f}%`.
-- The signed material-minus-empty closed-surface mismatch is
-  `{100.0 * bridge['results']['closed_surface_background_subtracted_closure_relative_error']:.6f}%`.
+- The old compact artifact records apparent local-Q/flux mismatches of
+  `{100.0 * bridge['results']['closed_surface_raw_closure_relative_error']:.6f}%`
+  (raw) and
+  `{100.0 * bridge['results']['closed_surface_background_subtracted_closure_relative_error']:.6f}%`
+  (empty-subtracted).  They are retained for provenance but are **not physical
+  closure results**: that artifact co-located material fields and did not apply
+  the complete FDTDX eta0 field-unit conversion now certified by stage 49.
 - In the independent source-only control, compact-Gaussian closed-box residuals
   are `{gaussian_compact['+']:.4f}%` (`+z`) and
   `{gaussian_compact['-']:.4f}%` (`-z`); enlarging the box gives
   `{gaussian_large['+']:.4f}%` and `{gaussian_large['-']:.4f}%`.
   The corresponding uniform-source large-box residual is only about 0.08%.
 
-Therefore the source direction is not the failure, and the closure problem is
-specific to the deliberately subwavelength compact Gaussian (`w0≈0.594 um` at
-`lambda=10 um`), not the production-width empty-air source.  The unresolved
-item is the full material-bearing production-width cross-solver checkpoint.
-The same-container zero-coupling ADE probe is **not** an
-empirical correction: because every nominal material support has
-`epsilon_inf=1` and all ADE field couplings are zeroed, it is an exact
-empty-air optical control on the identical source/grid/PML layout.  Its flux
-was already in watts; the earlier extra `1e-24` postprocessing factor has been
-removed.  Both raw and background-subtracted closure still fail.
+Therefore the source direction is not the failure.  The compact source remains
+a useful AD--FD control but is not an energy-closure certificate.  The
+production-width source/material calculation supersedes it for forward power:
+it uses native component Yee samples and explicitly converts
+`E_SI=eta0*E_internal`, `H_SI=H_internal`, and
+`S_SI=eta0*S_internal`.  The previously unresolved material-bearing
+cross-solver checkpoint is now closed without an empirical correction.
 
 ## Decision
 
-FDTDX is usable now for algorithmic dispersive-material AD controls and for the
-production-width source-only forward contract.  It is not yet promoted as the
-production Au inverse-design solver.  Before thermal/PTE coupling or
-optimization, the next optical checkpoint is a material-bearing
-production-width FDTDX calculation against the already validated exact-binary
-Lumerical endpoints, using local fine Au/TaIrTe4 mesh and coarse distant air.
+FDTDX is validated for the production-width forward optical endpoints and for
+compact-grid dispersive Au material AD.  It is therefore the selected route for
+the next Au inverse-design validation.  This status does **not** yet validate a
+production-width spatially varying Au gradient, thermal/PTE coupling, electrode
+transport, or optimization.  The next fail-closed gate is a production-width
+nonuniform-Au directional AD--FD smoke test using the same native-Yee loss
+contract; optimization starts only after that gate and the thermal/electrical
+chain pass.
 """
     report_path.write_text(report, encoding="utf-8")
 
@@ -170,12 +194,17 @@ Lumerical endpoints, using local fine Au/TaIrTe4 mesh and coarse distant air.
         HERE / "46_validate_fdtdx_quasiuniform_source_direction.py",
         Path(__file__).resolve(),
         HERE / "48_validate_fdtdx_w8p5um_source_only.py",
+        HERE / "49_validate_fdtdx_lumerical_binary_endpoints.py",
         bridge_json,
         directions_csv,
         plot,
         source_json,
         w8_source_json,
         w8_source_plot,
+        endpoint_json,
+        endpoint_csv,
+        endpoint_plot,
+        endpoint_audit,
         report_path,
     ]
     manifest = {
@@ -191,6 +220,7 @@ Lumerical endpoints, using local fine Au/TaIrTe4 mesh and coarse distant air.
             "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx JAX_PLATFORMS=cuda XLA_PYTHON_CLIENT_PREALLOCATE=false python 45_validate_fdtdx_quasiuniform_au_tairte4_adfd.py --quick --output-dir results_fdtdx_quasiuniform_bridge",
             "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx JAX_PLATFORMS=cuda XLA_PYTHON_CLIENT_PREALLOCATE=false python 46_validate_fdtdx_quasiuniform_source_direction.py --output-dir results_fdtdx_quasiuniform_source",
             "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx JAX_PLATFORMS=cuda XLA_PYTHON_CLIENT_PREALLOCATE=false python 48_validate_fdtdx_w8p5um_source_only.py --output-dir results_fdtdx_w8p5um_source_only",
+            "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx JAX_PLATFORMS=cuda XLA_PYTHON_CLIENT_PREALLOCATE=false python 49_validate_fdtdx_lumerical_binary_endpoints.py --output-dir results_fdtdx_lumerical_binary_endpoints",
             "python 47_summarize_fdtdx_quasiuniform_au_tairte4.py",
         ],
         "files": {

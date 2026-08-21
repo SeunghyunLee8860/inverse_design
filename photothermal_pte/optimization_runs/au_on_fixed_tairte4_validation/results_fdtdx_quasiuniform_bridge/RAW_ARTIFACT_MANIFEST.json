@@ -1,5 +1,5 @@
 {
-  "status": "PARTIAL_FDTDX_AU_GRADIENT_AND_W8P5_SOURCE_VALIDATED_PENDING_MATERIAL_CROSSCHECK",
+  "status": "VALIDATED_FDTDX_AU_OPTICAL_FORWARD_AND_COMPACT_MATERIAL_GRADIENT",
   "raw_fsp_or_npz_committed": false,
   "fdtdx_source": {
     "path": "/home/seunghyun/.local/fdtdx_main_src",
@@ -11,6 +11,7 @@
     "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx JAX_PLATFORMS=cuda XLA_PYTHON_CLIENT_PREALLOCATE=false python 45_validate_fdtdx_quasiuniform_au_tairte4_adfd.py --quick --output-dir results_fdtdx_quasiuniform_bridge",
     "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx JAX_PLATFORMS=cuda XLA_PYTHON_CLIENT_PREALLOCATE=false python 46_validate_fdtdx_quasiuniform_source_direction.py --output-dir results_fdtdx_quasiuniform_source",
     "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx JAX_PLATFORMS=cuda XLA_PYTHON_CLIENT_PREALLOCATE=false python 48_validate_fdtdx_w8p5um_source_only.py --output-dir results_fdtdx_w8p5um_source_only",
+    "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx JAX_PLATFORMS=cuda XLA_PYTHON_CLIENT_PREALLOCATE=false python 49_validate_fdtdx_lumerical_binary_endpoints.py --output-dir results_fdtdx_lumerical_binary_endpoints",
     "python 47_summarize_fdtdx_quasiuniform_au_tairte4.py"
   ],
   "files": {
@@ -23,12 +24,16 @@
       "sha256": "2837a61c44550908b5810f2d4bf21ddb58e2190a7af0e2aba1d1bf15ff46fa10"
     },
     "47_summarize_fdtdx_quasiuniform_au_tairte4.py": {
-      "bytes": 10032,
-      "sha256": "35f172c8b63a681ee8b505a3ce3931680efc5554a092551d89a765fb474b9ee3"
+      "bytes": 12257,
+      "sha256": "ba42a653d63c18a6f7af87d1eae87b94902e0a9f98633c65974a87621966793b"
     },
     "48_validate_fdtdx_w8p5um_source_only.py": {
       "bytes": 13510,
       "sha256": "f4418c8b9c4d122e1fac6c7172c6a34da394610b6d60bc212c58d34567cff0d2"
+    },
+    "49_validate_fdtdx_lumerical_binary_endpoints.py": {
+      "bytes": 25302,
+      "sha256": "728ba15af81420d149f8be866cdefa14d4b214fc863d6e53d38c78ac0b07c5a4"
     },
     "results_fdtdx_quasiuniform_bridge/fdtdx_quasiuniform_au_tairte4_adfd_summary.json": {
       "bytes": 7710,
@@ -54,9 +59,25 @@
       "bytes": 178495,
       "sha256": "e0ae644b512554dff3c8af70d7e0629b46c1b9e443330387dcde0856c7cad486"
     },
+    "results_fdtdx_lumerical_binary_endpoints/fdtdx_lumerical_binary_endpoints_summary.json": {
+      "bytes": 6902,
+      "sha256": "2d5bf066752132be26a46bb1dc960572aafd0a61a2d23d5e69a60a52b46b27de"
+    },
+    "results_fdtdx_lumerical_binary_endpoints/fdtdx_lumerical_binary_endpoints_cases.csv": {
+      "bytes": 376,
+      "sha256": "124ea348575c9e6f6f0958c51ec4e19b080cffda400ec3caa9404cf0051a52d9"
+    },
+    "results_fdtdx_lumerical_binary_endpoints/fdtdx_lumerical_binary_endpoints.png": {
+      "bytes": 92246,
+      "sha256": "56ce90e9b6116a03fde9e44125f099e9686feeb24fc72adcffc14767c588d53e"
+    },
+    "results_fdtdx_lumerical_binary_endpoints/fdtdx_lumerical_binary_endpoint_runsetup_audit.json": {
+      "bytes": 2448,
+      "sha256": "294802c08d9845dc663ed13df43cbc254cb16b2c2be7aa827857296a7adb73b7"
+    },
     "results_fdtdx_quasiuniform_bridge/FDTDX_QUASIUNIFORM_AU_TAIRTE4_VALIDATION_REPORT.md": {
-      "bytes": 4103,
-      "sha256": "7002d5305cbc1f6a8ec5bb64ab6359ca8fd11b70e6ece11b522ecca738fe0324"
+      "bytes": 4782,
+      "sha256": "f69cbb15f36cb53b7104fd4648590fefa59e59e3d769aced066187c7c9fa96df"
     }
   }
 }

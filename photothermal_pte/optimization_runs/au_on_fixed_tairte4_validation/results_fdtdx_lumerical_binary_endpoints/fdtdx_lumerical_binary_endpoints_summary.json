@@ -1,0 +1,299 @@
+{
+  "status": "VALIDATED_FDTDX_LUMERICAL_BINARY_ENDPOINTS",
+  "scope": "material-bearing production-width exact-binary optical endpoint cross-check; no thermal/PTE/adjoint/optimization",
+  "audit": {
+    "status": "FDTDX_LUMERICAL_BINARY_ENDPOINT_RUNSETUP_AUDIT",
+    "software": {
+      "fdtdx_import_path": "/home/seunghyun/.local/fdtdx_main_src/src/fdtdx/__init__.py",
+      "fdtdx_source_commit": "f26f84b70a8cceec9b889553955a868624736bf1",
+      "cuda_visible_devices": "5"
+    },
+    "grid": {
+      "shape_xyz": [
+        288,
+        288,
+        94
+      ],
+      "cell_count": 7796736,
+      "bounds_m_xyz": [
+        [
+          -2.4000000848900527e-05,
+          2.4000000848900527e-05
+        ],
+        [
+          -2.4000000848900527e-05,
+          2.4000000848900527e-05
+        ],
+        [
+          -7.999999979801942e-06,
+          7.999999979801942e-06
+        ]
+      ],
+      "min_spacing_m_xyz": [
+        9.999985195463523e-08,
+        9.999985195463523e-08,
+        2.499999141036824e-08
+      ],
+      "max_spacing_m_xyz": [
+        5.000001692678779e-07,
+        5.000001692678779e-07,
+        2.0000015865662135e-07
+      ],
+      "pml_cells_each_face_xyz": [
+        8,
+        8,
+        8
+      ]
+    },
+    "placement": {
+      "flake_slice": [
+        [
+          44,
+          244
+        ],
+        [
+          44,
+          244
+        ],
+        [
+          43,
+          47
+        ]
+      ],
+      "flake_extent_m": [
+        1.9999999494757503e-05,
+        1.9999999494757503e-05,
+        1.0000000116860974e-07
+      ],
+      "au_slice": [
+        [
+          94,
+          194
+        ],
+        [
+          94,
+          194
+        ],
+        [
+          47,
+          49
+        ]
+      ],
+      "au_extent_m": [
+        9.999999747378752e-06,
+        9.999999747378752e-06,
+        5.000000058430487e-08
+      ],
+      "source_slice": [
+        [
+          8,
+          280
+        ],
+        [
+          8,
+          280
+        ],
+        [
+          58,
+          59
+        ]
+      ],
+      "incident_slice": [
+        [
+          8,
+          280
+        ],
+        [
+          8,
+          280
+        ],
+        [
+          57,
+          58
+        ]
+      ],
+      "target_slice": [
+        [
+          8,
+          280
+        ],
+        [
+          8,
+          280
+        ],
+        [
+          54,
+          55
+        ]
+      ],
+      "closed_surface_slice": [
+        [
+          34,
+          254
+        ],
+        [
+          34,
+          254
+        ],
+        [
+          39,
+          55
+        ]
+      ]
+    },
+    "source": {
+      "wavelength_m": 1e-05,
+      "requested_w0_m": 8.5e-06,
+      "radius_m": 2e-05,
+      "std_relative_to_radius": 0.30052038200428266,
+      "direction": "-z",
+      "polarization": "x=b"
+    },
+    "numerics": {
+      "time_steps_total": 6788,
+      "time_step_s": 3.931088714013624e-17,
+      "total_periods": 8,
+      "window_periods": 2
+    }
+  },
+  "materials": {
+    "au_epsilon": [
+      -4642.2300000000005,
+      1674.64
+    ],
+    "tairte4_epsilon": {
+      "a": [
+        -39.87819057091918,
+        187.50005695474056
+      ],
+      "b": [
+        13.778527727027518,
+        23.688463190816908
+      ],
+      "c": [
+        13.778527727027518,
+        23.688463190816908
+      ]
+    },
+    "axis_mapping": {
+      "x": "b",
+      "y": "a",
+      "z": "c=b closure"
+    },
+    "fdtdx_field_unit_conversion": {
+      "E_SI": "eta0 * E_internal",
+      "H_SI": "H_internal",
+      "S_SI": "eta0 * S_internal",
+      "eta0_ohm": 376.73031346177066
+    },
+    "material_Q_component_coordinates": "native Yee coordinates; exact_interpolation=False",
+    "no_clipping_smoothing_gain_or_rescaling": true
+  },
+  "cases": {
+    "empty": {
+      "strengths_tairte4_au": [
+        0.0,
+        0.0
+      ],
+      "component_power_W": {
+        "au_xyz": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tairte4_xyz": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "P_Q_W": 0.0,
+      "previous_P_Q_W": 0.0,
+      "P_Q_window_relative_change": 0.0,
+      "incident_plane_signed_power_W": 1.8894634121191523e-12,
+      "closed_surface_inward_W": -8.601421056020407e-16
+    },
+    "au0": {
+      "strengths_tairte4_au": [
+        1.0,
+        0.0
+      ],
+      "component_power_W": {
+        "au_xyz": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tairte4_xyz": [
+          8.515703930879999e-13,
+          2.04062256e-16,
+          1.8628900799999998e-16
+        ]
+      },
+      "P_Q_W": 8.519607910399999e-13,
+      "previous_P_Q_W": 8.540917596159999e-13,
+      "P_Q_window_relative_change": 0.0024950112818769073,
+      "incident_plane_signed_power_W": 1.4862308432561644e-12,
+      "closed_surface_inward_W": 8.511674980289652e-13
+    },
+    "au1": {
+      "strengths_tairte4_au": [
+        1.0,
+        1.0
+      ],
+      "component_power_W": {
+        "au_xyz": [
+          1.1962175488e-14,
+          4.4604567999999995e-17,
+          3.3898522499999998e-18
+        ],
+        "tairte4_xyz": [
+          3.9439089664e-13,
+          7.484831743999999e-15,
+          3.4089812479999996e-15
+        ]
+      },
+      "P_Q_W": 4.1729487667199997e-13,
+      "previous_P_Q_W": 4.1776460595199997e-13,
+      "P_Q_window_relative_change": 0.0011243874500320066,
+      "incident_plane_signed_power_W": 6.758564519669663e-13,
+      "closed_surface_inward_W": 4.165868496518177e-13
+    }
+  },
+  "comparisons": {
+    "au0": {
+      "fdtdx_absorbed_fraction": 0.45090092011068483,
+      "lumerical_absorbed_fraction": 0.4476756431552703,
+      "absorbed_fraction_relative_difference": 0.007204495050663009,
+      "fdtdx_raw_closure_relative": 0.0009320057601726154,
+      "fdtdx_empty_subtracted_closure_relative": 7.845883328007287e-05,
+      "fdtdx_empty_subtracted_closed_surface_W": 8.520276401345672e-13
+    },
+    "au1": {
+      "fdtdx_absorbed_fraction": 0.22085364235975202,
+      "lumerical_absorbed_fraction": 0.2194480030575895,
+      "absorbed_fraction_relative_difference": 0.006405341049258265,
+      "fdtdx_raw_closure_relative": 0.00169959042339922,
+      "fdtdx_empty_subtracted_closure_relative": 0.00036439377555307767,
+      "fdtdx_empty_subtracted_closed_surface_W": 4.1744699175741973e-13
+    }
+  },
+  "endpoint_ratio": {
+    "fdtdx_au1_over_au0": 0.48980525989066065,
+    "lumerical_au1_over_au0": 0.490194198439956,
+    "relative_difference": 0.0007934376835407977
+  },
+  "runtime": {
+    "compile_seconds": 9.2886594645679,
+    "three_case_execution_seconds": 70.36764080449939
+  },
+  "gates": {
+    "gpu_only": true,
+    "finite": true,
+    "positive_material_absorption": true,
+    "each_material_window_change_lt_0p5pct": true,
+    "each_absorbed_fraction_cross_solver_difference_lt_5pct": true,
+    "au1_over_au0_ratio_cross_solver_difference_lt_5pct": true,
+    "each_empty_subtracted_closure_lt_1pct": true
+  }
+}

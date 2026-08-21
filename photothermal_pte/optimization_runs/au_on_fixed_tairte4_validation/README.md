@@ -499,13 +499,21 @@ python 46_validate_fdtdx_quasiuniform_source_direction.py
 python 47_summarize_fdtdx_quasiuniform_au_tairte4.py
 ```
 
-The five-direction dispersive-material AD--FD check passes at the 1% level,
-and the independent source-only control verifies `-z/+z` reciprocity.  The
-subwavelength compact Gaussian used by the material-gradient control fails its
-closed-surface flux audit.  A separate production-width `w0=8.5 um` source-only
-control, however, realizes a primary-Ex mean waist of `8.4573 um` and passes
-the 0.5% closed-surface residual gate at `0.3655%`.  The published state is
-`PARTIAL_FDTDX_AU_GRADIENT_AND_W8P5_SOURCE_VALIDATED_PENDING_MATERIAL_CROSSCHECK`.
-This route is not yet the production thermal/PTE optimizer; the next gate is a
-material-bearing production-width comparison against the validated exact-binary
-Lumerical endpoints.
+The five-direction compact dispersive-material AD--FD check passes at the 1%
+level, and the independent source-only control verifies `-z/+z` reciprocity.
+A separate production-width `w0=8.5 um` source-only control realizes a
+primary-Ex mean waist of `8.4573 um` and passes the 0.5% closed-surface residual
+gate at `0.3655%`.
+
+The material-bearing production-width endpoint comparison is now also closed:
+FDTDX and Lumerical absorbed fractions differ by `0.7204%` (TaIrTe4 only) and
+`0.6405%` (Au/TaIrTe4), while the Au-present/Au-absent ratio differs by only
+`0.0793%`.  FDTDX local native-Yee `Q` agrees with empty-subtracted six-face
+power to `0.00785%` and `0.03644%`.  The required unit contract is
+`E_SI=eta0*E_internal`, `H_SI=H_internal`, `S_SI=eta0*S_internal`; no empirical
+gain is used.  The published state is
+`VALIDATED_FDTDX_AU_OPTICAL_FORWARD_AND_COMPACT_MATERIAL_GRADIENT`.
+
+This route is not yet the production thermal/PTE optimizer.  The next gate is
+a production-width nonuniform-Au directional AD--FD smoke test followed by the
+thermal/electrical chain validation.
