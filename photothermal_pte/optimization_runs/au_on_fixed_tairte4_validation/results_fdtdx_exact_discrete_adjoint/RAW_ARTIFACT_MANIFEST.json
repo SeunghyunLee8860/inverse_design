@@ -1,0 +1,60 @@
+{
+  "status": "VALIDATED_FDTDX_DISPERSIVE_EXACT_DISCRETE_ADJOINT",
+  "raw_fsp_or_npz_committed": false,
+  "files": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_production_gradient_adjoint_aligned/fdtdx_production_width_nonuniform_au_gradient_smoke.json",
+      "bytes": 7275,
+      "sha256": "bf68df89697d0b34796c80158c8b2971be264f679f0ea1e5e42ce27ec9f633db",
+      "git_policy": "tracked text/code/plot artifact"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_production_gradient_adjoint_aligned/fdtdx_lumerical_binary_endpoint_runsetup_audit.json",
+      "bytes": 2519,
+      "sha256": "480326119f65852b3ac6e061d2d0cf0e75ce7988206f55531633c1fc33a61a84",
+      "git_policy": "tracked text/code/plot artifact"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_production_gradient_adjoint_aligned/fdtdx_production_width_nonuniform_au_gradient_smoke.csv",
+      "bytes": 1092,
+      "sha256": "cc1ebc2eaf3a7cbe9bf0ccd19ea07f3466b4593745e0db7be8dc87e3af9d477a",
+      "git_policy": "tracked text/code/plot artifact"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/49_validate_fdtdx_lumerical_binary_endpoints.py",
+      "bytes": 37357,
+      "sha256": "86b3037980728ad2585087bc2358796fc211bec3ee3909e70df2cd28807c2444",
+      "git_policy": "tracked text/code/plot artifact"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/51_summarize_fdtdx_exact_discrete_adjoint.py",
+      "bytes": 10881,
+      "sha256": "1657ed6df9af2ca13733d4adfa4838d80928200005432b2a71f4e0b09fb1e665",
+      "git_policy": "tracked text/code/plot artifact"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_exact_discrete_adjoint/fdtdx_exact_discrete_adjoint_directions.csv",
+      "bytes": 1092,
+      "sha256": "cc1ebc2eaf3a7cbe9bf0ccd19ea07f3466b4593745e0db7be8dc87e3af9d477a",
+      "git_policy": "tracked text/code/plot artifact"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_exact_discrete_adjoint/fdtdx_exact_discrete_adjoint_validation.png",
+      "bytes": 132547,
+      "sha256": "eb99eeee182408bcbdcf263fbb6955d566f99e21c476803f78528ded3ef520ab",
+      "git_policy": "tracked text/code/plot artifact"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_exact_discrete_adjoint/fdtdx_exact_discrete_adjoint_summary.json",
+      "bytes": 5696,
+      "sha256": "bddc8547deed10fd887953116acdcc3df1b22d6ac85c911367f104a8949c77db",
+      "git_policy": "tracked text/code/plot artifact"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_exact_discrete_adjoint/FDTDX_DISPERSIVE_EXACT_DISCRETE_ADJOINT_REPORT.md",
+      "bytes": 2193,
+      "sha256": "7263a5962344248a5a2e862e62cbfaca75259c7ea32175e9ac881a00bfaa63a1",
+      "git_policy": "tracked text/code/plot artifact"
+    }
+  ]
+}

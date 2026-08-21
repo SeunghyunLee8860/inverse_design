@@ -155,6 +155,7 @@ def run(
     audit_only: bool,
     gradient_smoke: bool = False,
     gradient_checkpoints: int = 16,
+    include_adjoint_aligned: bool = False,
 ) -> dict[str, object]:
     import jax
     import jax.numpy as jnp
@@ -576,6 +577,12 @@ def run(
         random = np.random.default_rng(20260821).standard_normal(latent_shape)
         for name, direction in (("smooth_asymmetric", smooth), ("fixed_seed_random", random)):
             directions_np[name] = direction / np.linalg.norm(direction)
+        if include_adjoint_aligned:
+            # This direction is formed only after the full reverse-mode solve.
+            # It is the strongest possible local directional check and avoids
+            # any near-null classification ambiguity.  The central FD solves
+            # below remain independent forward simulations.
+            directions_np["adjoint_aligned"] = gradient_w / grad_l2
 
         def objective_only(rho):
             return objective_with_aux(rho)[0]
@@ -688,7 +695,8 @@ def run(
             "runtime": {
                 "compile_seconds": compile_seconds,
                 "ad_seconds": ad_seconds,
-                "four_fd_forward_seconds": fd_seconds,
+                "central_fd_forward_count": 2 * len(directions_np) * 2,
+                "central_fd_forward_seconds": fd_seconds,
             },
             "gates": gates,
             "no_clipping_smoothing_gain_or_result_rescaling": True,
@@ -836,6 +844,7 @@ def main() -> int:
     parser.add_argument("--summarize-existing", action="store_true")
     parser.add_argument("--gradient-smoke", action="store_true")
     parser.add_argument("--gradient-checkpoints", type=int, default=16)
+    parser.add_argument("--include-adjoint-aligned", action="store_true")
     args = parser.parse_args()
     if args.summarize_existing:
         summary = json.loads(
@@ -848,6 +857,7 @@ def main() -> int:
         audit_only=args.audit_only,
         gradient_smoke=args.gradient_smoke,
         gradient_checkpoints=args.gradient_checkpoints,
+        include_adjoint_aligned=args.include_adjoint_aligned,
     )
     if args.audit_only:
         return 0
