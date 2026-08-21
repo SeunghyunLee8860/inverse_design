@@ -686,3 +686,20 @@ volumes. The worst two-stage dot-test error is `6.63e-15`, and the native-Yee
 weighted source contraction matches the explicit thermal-grid contraction to
 `5.48e-16` relative. The resulting unscaled weights have units `A/W`; the
 next solve uses them as the spatial FDTDX objective.
+
+The native-Yee spatially weighted Maxwell source derivative now also passes.
+The thermally-grown source-adjoint weights are contracted directly with the
+Au, TaIrTe4, and SiO2 component-native powers inside the 16-period GPU FDTDX
+solve.  The adjoint-aligned derivative is `6.3285942e-18 A`; central FD at
+`h=0.01` gives `6.3288875e-18 A`, a `0.004634%` relative error.  The matched
+Q/flux closure is `0.123096%`, the late-Q change is `0.019832%`, and the
+weighted-objective late change is `0.038413%`.  No objective or gradient
+rescaling is used.  Status:
+`VALIDATED_FDTDX_NATIVE_YEE_SPATIALLY_WEIGHTED_PTE_SOURCE_GRADIENT`.
+
+This is the Maxwell/source branch only.  It does not yet certify the full PTE
+gradient or authorize Au optimization.  The next fail-closed gate must add
+this source term to the already validated direct thermal/contact and
+electrical/weighting terms, then compare the sum against an end-to-end central
+FD that recomputes Maxwell Q, conservative remap, explicit thermal transport,
+and terminal current for both perturbed densities.

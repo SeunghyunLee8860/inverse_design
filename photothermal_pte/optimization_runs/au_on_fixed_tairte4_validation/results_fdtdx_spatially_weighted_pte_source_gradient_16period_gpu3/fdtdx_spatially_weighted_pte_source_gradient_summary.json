@@ -1,0 +1,78 @@
+{
+  "status": "VALIDATED_FDTDX_NATIVE_YEE_SPATIALLY_WEIGHTED_PTE_SOURCE_GRADIENT",
+  "scope": "native-Yee Maxwell/source derivative contracted with the frozen explicit-thermal source adjoint; excludes direct thermal/electrical density derivatives, full combined AD-FD, and optimization",
+  "source_result_json": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_spatially_weighted_pte_source_gradient_16period_gpu3/fdtdx_spatially_weighted_pte_source_gradient.json",
+  "spatial_weight": {
+    "scenario": "thermally_grown",
+    "summary_json": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_native_yee_thermal_source_adjoint_weights/native_yee_thermal_source_adjoint_weights_summary.json",
+    "raw_npz": "/home/seunghyun/tairte4/raw_artifacts/native_yee_thermal_source_adjoint_weights/native_yee_thermal_source_adjoint_weights.npz",
+    "raw_sha256": "67277f2311907a19faecac450df4207ec8772f9dd216460be4349c52c215e744",
+    "units": "A/W on component-native Yee power cells",
+    "normalization_or_rescaling": false
+  },
+  "baseline": {
+    "weighted_source_objective_A": 2.6849e-18,
+    "previous_weighted_source_objective_A": 2.6859317499999996e-18,
+    "weighted_objective_window_relative_change": 0.0003841311306587549,
+    "P_Q_W": 2.47796105216e-13,
+    "component_power_W": {
+      "au_xyz": [
+        5.4952071168e-14,
+        4.102116e-17,
+        1.2909241999999999e-17
+      ],
+      "tairte4_xyz": [
+        1.47802865664e-13,
+        1.024456704e-15,
+        3.871237888e-15
+      ],
+      "sio2_xyz": [
+        3.601240064e-14,
+        4.8299047999999994e-17,
+        4.0308715519999995e-15
+      ]
+    },
+    "closed_surface_inward_W": 2.474914533295153e-13,
+    "Q_flux_closure_relative": 0.0012309592205557599,
+    "late_Q_window_relative_change": 0.00019831729100690165,
+    "gradient_l2_A": 6.328594206499118e-18
+  },
+  "worst_strong_direction_relative_error": 4.634203102435079e-05,
+  "worst_gradient_l2_normalized_error": 4.634417870771826e-05,
+  "raw_reintegration": {
+    "objective_relative_error": 0.0,
+    "total_Q_relative_error": 0.0,
+    "gradient_norm_relative_error": 0.0,
+    "pullback_checkpoint_weighted_value_relative_error": 9.14485516385146e-06
+  },
+  "runtime": {
+    "compile_seconds": 39.392906062304974,
+    "ad_seconds": 2920.0205346643925,
+    "central_fd_forward_count": 2,
+    "central_fd_forward_seconds": 216.3714057020843
+  },
+  "gates": {
+    "generation_status_validated": true,
+    "generation_gates_all_true": true,
+    "weight_status_and_SHA_chain_validated": true,
+    "gradient_raw_SHA_matches_generation_record": true,
+    "finite_raw_arrays": true,
+    "rho_and_gradient_shape_20x20": true,
+    "raw_objective_matches_result_lt_1e-12": true,
+    "raw_total_Q_matches_result_lt_1e-12": true,
+    "raw_gradient_norm_matches_result_lt_1e-12": true,
+    "base_weighted_value_matches_pullback_checkpoint_lt_1e-4": true,
+    "strong_direction_AD_FD_error_lt_1pct": true,
+    "gradient_L2_normalized_error_lt_1pct": true,
+    "optical_Q_flux_closure_lt_0p5pct": true,
+    "late_Q_and_weighted_objective_change_lt_0p5pct": true,
+    "no_clipping_smoothing_gain_or_gradient_rescaling": true
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_spatially_weighted_pte_source_gradient_16period/fdtdx_spatially_weighted_pte_source_gradient_raw.npz",
+    "bytes": 4965,
+    "sha256": "235f3ed60bd04d089d7437da7e72e4658eaa389695dff986b10973532d3037a3",
+    "committed_to_git": false
+  },
+  "next_gate": "sum the Maxwell source gradient and the already validated direct thermal/electrical gradients, then run end-to-end combined directional AD-FD"
+}

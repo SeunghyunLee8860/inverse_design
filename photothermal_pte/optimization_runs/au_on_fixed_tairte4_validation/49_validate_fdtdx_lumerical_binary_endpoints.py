@@ -276,6 +276,10 @@ def run(
     gradient_reference_json: Path | None = None,
     spatial_q_export: bool = False,
     spatial_q_raw_path: Path | None = None,
+    spatial_q_weight_npz: Path | None = None,
+    spatial_q_weight_summary_json: Path | None = None,
+    spatial_q_weight_scenario: str = "thermally_grown",
+    spatial_weighted_gradient_raw_path: Path | None = None,
 ) -> dict[str, object]:
     import jax
     import jax.numpy as jnp
@@ -996,7 +1000,29 @@ def run(
     if gradient_smoke:
         from fdtdx.fdtd.fdtd import checkpointed_fdtd
 
-        if not gradient_direction_names:
+        weighted_q_objective = spatial_q_weight_npz is not None
+        if weighted_q_objective:
+            if spatial_q_weight_summary_json is None:
+                raise ValueError(
+                    "--spatial-q-weight-summary-json is required with spatial weights"
+                )
+            if spatial_weighted_gradient_raw_path is None:
+                raise ValueError(
+                    "--spatial-weighted-gradient-raw-path is required with spatial weights"
+                )
+            if not include_substrate or spatial_q_export:
+                raise ValueError(
+                    "Spatially weighted Q requires substrate gradient-smoke mode"
+                )
+            if gradient_reference_json is not None:
+                raise ValueError(
+                    "Spatially weighted Q cannot reuse a total-power gradient reference"
+                )
+            if spatial_q_weight_scenario not in ("thermally_grown", "evaporated"):
+                raise ValueError(spatial_q_weight_scenario)
+        elif spatial_q_weight_summary_json is not None or spatial_weighted_gradient_raw_path is not None:
+            raise ValueError("Spatial-weight metadata/raw path supplied without weight NPZ")
+        if not gradient_direction_names and not include_adjoint_aligned:
             raise ValueError("At least one gradient direction is required")
         if not gradient_steps or any(step <= 0.0 for step in gradient_steps):
             raise ValueError(f"Gradient steps must be positive: {gradient_steps}")
@@ -1029,31 +1055,119 @@ def run(
                 .aset("dispersive_c3", c3)
             )
 
-        def powers_for_density(out, window, rho, ta_strength=1.0):
+        spatial_weights = None
+        spatial_weight_summary = None
+        spatial_weight_raw_sha = None
+        if weighted_q_objective:
+            weight_path = spatial_q_weight_npz.expanduser().resolve()
+            weight_summary_path = spatial_q_weight_summary_json.expanduser().resolve()
+            spatial_weight_summary = json.loads(
+                weight_summary_path.read_text(encoding="utf-8")
+            )
+            if (
+                spatial_weight_summary.get("status")
+                != "VALIDATED_NATIVE_YEE_THERMAL_SOURCE_ADJOINT_PULLBACK"
+            ):
+                raise RuntimeError("Fail-closed: native-Yee weight status mismatch")
+            spatial_weight_raw_sha = _sha256(weight_path)
+            if spatial_weight_raw_sha != spatial_weight_summary["raw_artifact"]["sha256"]:
+                raise RuntimeError("Fail-closed: native-Yee weight SHA mismatch")
+            with np.load(weight_path, allow_pickle=False) as weight_raw:
+                spatial_weights = {
+                    material: jnp.asarray(
+                        np.stack(
+                            [
+                                np.asarray(
+                                    weight_raw[
+                                        f"weight_{spatial_q_weight_scenario}_{material}_{component}_A_W"
+                                    ],
+                                    dtype=np.float32,
+                                )
+                                for component in "xyz"
+                            ]
+                        ),
+                        dtype=jnp.float32,
+                    )
+                    for material in ("au", "tairte4", "sio2")
+                }
+            expected_weight_shapes = {
+                "au": tuple(au_volume.shape),
+                "tairte4": tuple(ta_volume.shape),
+                "sio2": tuple(sio2_volume.shape),
+            }
+            actual_weight_shapes = {
+                material: tuple(value.shape)
+                for material, value in spatial_weights.items()
+            }
+            if actual_weight_shapes != expected_weight_shapes:
+                raise RuntimeError(
+                    "Fail-closed native-Yee weight/grid mismatch: "
+                    f"actual={actual_weight_shapes}, expected={expected_weight_shapes}"
+                )
+
+        def q_fields_for_density(out, window, rho, ta_strength=1.0):
             e_au = out.detector_states[f"au_{window}"]["phasor"][0, 0]
             e_ta = out.detector_states[f"tairte4_{window}"]["phasor"][0, 0]
             strength = optical_strength(rho)
-            p_au_comp = prefactor * epsilon_au.imag * jnp.sum(
-                strength[None, ...] * jnp.abs(e_au) ** 2 * au_volume, axis=(1, 2, 3)
+            fields = {
+                "au": prefactor
+                * epsilon_au.imag
+                * strength[None, ...]
+                * jnp.abs(e_au) ** 2,
+                "tairte4": prefactor
+                * ta_strength
+                * ta_imag
+                * jnp.abs(e_ta) ** 2,
+            }
+            if include_substrate:
+                e_sio2 = out.detector_states[f"sio2_{window}"]["phasor"][0, 0]
+                fields["sio2"] = (
+                    prefactor * epsilon_sio2.imag * jnp.abs(e_sio2) ** 2
+                )
+            return fields
+
+        def powers_for_density(out, window, rho, ta_strength=1.0):
+            q_fields = q_fields_for_density(out, window, rho, ta_strength)
+            p_au_comp = jnp.sum(
+                q_fields["au"] * au_volume, axis=(1, 2, 3)
             )
-            p_ta_comp = prefactor * ta_strength * jnp.sum(
-                ta_imag * jnp.abs(e_ta) ** 2 * ta_volume, axis=(1, 2, 3)
+            p_ta_comp = jnp.sum(
+                q_fields["tairte4"] * ta_volume, axis=(1, 2, 3)
             )
             material_components = [p_au_comp, p_ta_comp]
             total = p_au_comp.sum() + p_ta_comp.sum()
             if include_substrate:
-                e_sio2 = out.detector_states[f"sio2_{window}"]["phasor"][0, 0]
-                p_sio2_comp = prefactor * epsilon_sio2.imag * jnp.sum(
-                    jnp.abs(e_sio2) ** 2 * sio2_volume, axis=(1, 2, 3)
+                p_sio2_comp = jnp.sum(
+                    q_fields["sio2"] * sio2_volume, axis=(1, 2, 3)
                 )
                 material_components.append(p_sio2_comp)
                 total = total + p_sio2_comp.sum()
             return jnp.concatenate((*material_components, jnp.stack((total,))))
 
+        def weighted_source_objective(out, window, rho):
+            if spatial_weights is None:
+                return powers_for_density(out, window, rho)[-1]
+            q_fields = q_fields_for_density(out, window, rho)
+            return (
+                jnp.sum(q_fields["au"] * au_volume * spatial_weights["au"])
+                + jnp.sum(
+                    q_fields["tairte4"]
+                    * ta_volume
+                    * spatial_weights["tairte4"]
+                )
+                + jnp.sum(
+                    q_fields["sio2"]
+                    * sio2_volume
+                    * spatial_weights["sio2"]
+                )
+            )
+
         def objective_with_aux(rho):
             _, out = checkpointed_fdtd(arrays_for_density(rho), placed, config, key, show_progress=False)
             late_power = powers_for_density(out, "late", rho)
             previous_power = powers_for_density(out, "previous", rho)
+            late_objective = weighted_source_objective(out, "late", rho)
+            previous_objective = weighted_source_objective(out, "previous", rho)
             p_inc = eta0 * placed["incident_plane"].compute_poynting_flux(
                 out.detector_states["incident_plane"]
             )[0]
@@ -1070,12 +1184,13 @@ def run(
                 if include_substrate
                 else p_closed
             )
-            return late_power[-1], (
+            return late_objective, (
                 late_power,
                 previous_power,
                 p_inc,
                 p_closed,
                 p_closed_primary,
+                previous_objective,
             )
 
         def substrate_reference_aux():
@@ -1278,8 +1393,18 @@ def run(
             jax.block_until_ready(gradient_scaled)
             ad_seconds = time.perf_counter() - ad_start
             print(f"[gradient-smoke] AD execution complete: {ad_seconds:.3f} s", flush=True)
-            late_scaled, previous_scaled, p_inc, p_closed, p_closed_primary = aux
+            (
+                late_scaled,
+                previous_scaled,
+                p_inc,
+                p_closed,
+                p_closed_primary,
+                previous_objective_scaled,
+            ) = aux
             value_w = float(value_scaled) * POWER_SCALE_W
+            previous_objective_w = (
+                float(previous_objective_scaled) * POWER_SCALE_W
+            )
             gradient_w = np.asarray(gradient_scaled, dtype=np.float64) * POWER_SCALE_W
             late_w = np.asarray(late_scaled, dtype=np.float64) * POWER_SCALE_W
             previous_w = np.asarray(previous_scaled, dtype=np.float64) * POWER_SCALE_W
@@ -1329,6 +1454,9 @@ def run(
                 closure_ref.get("substrate_only_closed_surface_W", 0.0)
             )
             gradient_w = np.asarray((grad_l2,), dtype=np.float64)
+            previous_objective_w = value_w / (
+                1.0 - float(baseline["late_window_relative_change"])
+            )
             compile_seconds = 0.0
             ad_seconds = 0.0
             reference_ad_directional = {
@@ -1341,6 +1469,7 @@ def run(
                 flush=True,
             )
 
+        objective_unit = "A" if weighted_q_objective else "W"
         directions_np = {}
         x_np = np.linspace(-1.0, 1.0, latent_shape[0])[:, None]
         y_np = np.linspace(-1.0, 1.0, latent_shape[1])[None, :]
@@ -1411,7 +1540,8 @@ def run(
                 )
                 print(
                     "[gradient-smoke] "
-                    f"AD={ad_directional:.8e} W, FD={fd_directional:.8e} W, "
+                    f"AD={ad_directional:.8e} {objective_unit}, "
+                    f"FD={fd_directional:.8e} {objective_unit}, "
                     f"rel={rows[-1]['strong_relative_error']:.6%}",
                     flush=True,
                 )
@@ -1452,18 +1582,137 @@ def run(
                 "method": "subtract air-only empty-box finite-window residual",
                 "empty_box_W": empty_box,
             }
-        closure = _relative(value_w, corrected_closed)
+        total_q_w = float(late_w[-1])
+        closure = _relative(total_q_w, corrected_closed)
         window_change = _relative(float(late_w[-1]), float(previous_w[-1]))
+        objective_window_change = _relative(value_w, previous_objective_w)
         gates = {
             "gpu_only": True,
             "finite": bool(np.isfinite(value_w) and np.all(np.isfinite(gradient_w))),
             "no_density_clipping": True,
             "late_window_change_lt_0p5pct": window_change < 0.005,
+            "weighted_objective_window_change_lt_0p5pct": (
+                objective_window_change < 0.005
+            ),
             "empty_subtracted_Q_flux_closure_lt_0p5pct": closure < 0.005,
             "finest_strong_direction_error_lt_1pct": strongest_error < 0.01,
             "finest_gradient_l2_normalized_error_lt_1pct": normalized_error < 0.01,
         }
         passed = all(gates.values())
+        if weighted_q_objective:
+            published_rows = [
+                {
+                    "direction": row["direction"],
+                    "h": row["h"],
+                    "AD_A_per_unit_direction": row[
+                        "ad_W_per_unit_direction"
+                    ],
+                    "FD_A_per_unit_direction": row[
+                        "fd_W_per_unit_direction"
+                    ],
+                    "strong_direction": row["strong_direction"],
+                    "strong_relative_error": row["strong_relative_error"],
+                    "gradient_l2_normalized_error": row[
+                        "gradient_l2_normalized_error"
+                    ],
+                    "objective_plus_A": row["power_plus_W"],
+                    "objective_minus_A": row["power_minus_W"],
+                }
+                for row in rows
+            ]
+            raw_gradient_path = spatial_weighted_gradient_raw_path.expanduser().resolve()
+            raw_gradient_path.parent.mkdir(parents=True, exist_ok=True)
+            np.savez_compressed(
+                raw_gradient_path,
+                rho=np.asarray(rho0, dtype=np.float32),
+                gradient_A=np.asarray(gradient_w, dtype=np.float64),
+                weighted_objective_A=np.asarray(value_w, dtype=np.float64),
+                total_P_Q_W=np.asarray(total_q_w, dtype=np.float64),
+            )
+            result = {
+                "status": (
+                    "VALIDATED_FDTDX_NATIVE_YEE_SPATIALLY_WEIGHTED_PTE_SOURCE_GRADIENT"
+                    if passed
+                    else "FAILED_FDTDX_NATIVE_YEE_SPATIALLY_WEIGHTED_PTE_SOURCE_GRADIENT"
+                ),
+                "scope": (
+                    "FDTDX reverse-mode derivative of the native-Yee spatial-Q "
+                    "contraction with a frozen explicit-thermal source adjoint; "
+                    "no thermal/electrical direct density term, full combined AD-FD, "
+                    "or optimization"
+                ),
+                "audit": audit,
+                "spatial_weight": {
+                    "scenario": spatial_q_weight_scenario,
+                    "summary_json": str(spatial_q_weight_summary_json.resolve()),
+                    "raw_npz": str(spatial_q_weight_npz.resolve()),
+                    "raw_sha256": spatial_weight_raw_sha,
+                    "units": "A/W on component-native Yee power cells",
+                    "normalization_or_rescaling": False,
+                },
+                "design": {
+                    "latent_shape_xy": list(latent_shape),
+                    "latent_pitch_m": 500e-9,
+                    "yee_shape_xy": [100, 100],
+                    "yee_pitch_m": 100e-9,
+                    "au_z_cells": 2,
+                    "au_thickness_m": 50e-9,
+                    "relaxation": "passive Drude coupling strength s(rho)=rho^3",
+                    "rho_min": float(jnp.min(rho0)),
+                    "rho_max": float(jnp.max(rho0)),
+                },
+                "baseline": {
+                    "weighted_source_objective_A": value_w,
+                    "previous_weighted_source_objective_A": previous_objective_w,
+                    "weighted_objective_window_relative_change": objective_window_change,
+                    "P_Q_W": total_q_w,
+                    "component_power_W": {
+                        "au_xyz": list(map(float, late_w[:3])),
+                        "tairte4_xyz": list(map(float, late_w[3:6])),
+                        "sio2_xyz": list(map(float, late_w[6:9])),
+                    },
+                    "closed_surface_inward_W": float(p_closed_primary),
+                    "Q_flux_closure_relative": closure,
+                    "late_Q_window_relative_change": window_change,
+                    "gradient_l2_A": grad_l2,
+                },
+                "directions": published_rows,
+                "runtime": {
+                    "compile_seconds": compile_seconds,
+                    "ad_seconds": ad_seconds,
+                    "central_fd_forward_count": 2
+                    * len(directions_np)
+                    * len(gradient_steps),
+                    "central_fd_forward_seconds": fd_seconds,
+                },
+                "gates": gates,
+                "raw_artifact": {
+                    "path": str(raw_gradient_path),
+                    "bytes": raw_gradient_path.stat().st_size,
+                    "sha256": _sha256(raw_gradient_path),
+                    "committed_to_git": False,
+                },
+                "no_clipping_smoothing_gain_or_gradient_rescaling": True,
+                "next_gate": (
+                    "add this optical source gradient to the validated explicit "
+                    "thermal/electrical direct gradient and run full combined AD-FD"
+                ),
+            }
+            output_dir.mkdir(parents=True, exist_ok=True)
+            result_path = output_dir / "fdtdx_spatially_weighted_pte_source_gradient.json"
+            result_path.write_text(
+                json.dumps(result, indent=2) + "\n", encoding="utf-8"
+            )
+            with (
+                output_dir / "fdtdx_spatially_weighted_pte_source_gradient.csv"
+            ).open("w", newline="", encoding="utf-8") as handle:
+                writer = csv.DictWriter(
+                    handle, fieldnames=list(published_rows[0]), lineterminator="\n"
+                )
+                writer.writeheader()
+                writer.writerows(published_rows)
+            print(json.dumps(result, indent=2))
+            return result
         result = {
             "status": (
                 (
@@ -1878,6 +2127,14 @@ def main() -> int:
     parser.add_argument("--gradient-smoke", action="store_true")
     parser.add_argument("--spatial-q-export", action="store_true")
     parser.add_argument("--spatial-q-raw-path", type=Path)
+    parser.add_argument("--spatial-q-weight-npz", type=Path)
+    parser.add_argument("--spatial-q-weight-summary-json", type=Path)
+    parser.add_argument(
+        "--spatial-q-weight-scenario",
+        choices=("thermally_grown", "evaporated"),
+        default="thermally_grown",
+    )
+    parser.add_argument("--spatial-weighted-gradient-raw-path", type=Path)
     parser.add_argument("--gradient-checkpoints", type=int, default=16)
     parser.add_argument("--include-adjoint-aligned", action="store_true")
     parser.add_argument("--include-substrate", action="store_true")
@@ -1941,6 +2198,10 @@ def main() -> int:
         gradient_reference_json=args.gradient_reference_json,
         spatial_q_export=args.spatial_q_export,
         spatial_q_raw_path=args.spatial_q_raw_path,
+        spatial_q_weight_npz=args.spatial_q_weight_npz,
+        spatial_q_weight_summary_json=args.spatial_q_weight_summary_json,
+        spatial_q_weight_scenario=args.spatial_q_weight_scenario,
+        spatial_weighted_gradient_raw_path=args.spatial_weighted_gradient_raw_path,
     )
     if args.audit_only:
         return 0
