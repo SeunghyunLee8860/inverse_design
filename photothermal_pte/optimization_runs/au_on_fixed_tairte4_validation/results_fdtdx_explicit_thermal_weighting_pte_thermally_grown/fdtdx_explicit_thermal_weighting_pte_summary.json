@@ -1,0 +1,137 @@
+{
+  "status": "VALIDATED_FDTDX_EXPLICIT_THERMAL_AU_AWARE_WEIGHTING_PTE_FORWARD",
+  "scope": "one FDTDX Maxwell-Q explicit 3-D Au/TaIrTe4/SiO2/Si thermal forward and Au-aware floating-layer weighting/PTE forward; no combined gradient, AD-FD, or optimization",
+  "scenario": "thermally_grown",
+  "parameters": {
+    "k_air_W_mK": 0.026,
+    "k_SiO2_W_mK": 1.38,
+    "k_Si_W_mK": 145.0,
+    "k_TaIrTe4_xyz_xb_ya_z_W_mK": [
+      3.8,
+      14.4,
+      1.0
+    ],
+    "k_Au_W_mK": 317.0,
+    "G_SiO2_Si_W_m2K": 1100000000.0,
+    "G_TaIrTe4_SiO2_W_m2K": 7370000.0,
+    "G_TaIrTe4_air_W_m2K": 1.0,
+    "G_Au_TaIrTe4_W_m2K": 17241379.310344826,
+    "G_Au_TaIrTe4_provenance": "Au/MoS2 calculated analogue; named numerical scenario, not TaIrTe4 data",
+    "electrical_contact_S_m2": 10000000000.0,
+    "electrical_contact_provenance": "named numerical scenario, not measured Au/TaIrTe4 contact",
+    "S_Au_V_K": 0.0
+  },
+  "geometry": {
+    "thermal_shape": [
+      266,
+      266,
+      33
+    ],
+    "thermal_lateral_bounds_m": [
+      -3.2e-05,
+      3.2e-05,
+      -3.2e-05,
+      3.2e-05
+    ],
+    "thermal_z_bounds_m": [
+      -1.9999999999999998e-05,
+      2e-06
+    ],
+    "TaIrTe4_footprint_m": [
+      2e-05,
+      2e-05
+    ],
+    "TaIrTe4_thickness_m": 1e-07,
+    "Au_design_footprint_m": [
+      1e-05,
+      1e-05
+    ],
+    "Au_thickness_m": 5e-08
+  },
+  "source": {
+    "remap_summary": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_fdtdx_material_overlap_thermal_remap_16period_4window/fdtdx_material_overlap_remap_summary.json",
+    "P_Q_W": 2.4779539329878437e-13,
+    "literal_FDTDX_normalization": true,
+    "scaled_to_experimental_power": false,
+    "mapping": {
+      "au": {
+        "source_power_W": 5.5006024686158763e-14,
+        "mapped_power_W": 5.500602468615876e-14,
+        "relative_error": 1.1473083680879252e-16,
+        "power_outside_material_W": 0.0
+      },
+      "tairte4": {
+        "source_power_W": 1.5269804802077624e-13,
+        "mapped_power_W": 1.5269804802077624e-13,
+        "relative_error": 0.0,
+        "power_outside_material_W": 0.0
+      },
+      "sio2": {
+        "source_power_W": 4.0091320591849323e-14,
+        "mapped_power_W": 4.0091320591849323e-14,
+        "relative_error": 0.0,
+        "power_outside_material_W": 0.0
+      }
+    }
+  },
+  "thermal": {
+    "Tmax_rise_K": 5.577354020816086e-10,
+    "material_temperature": {
+      "au": {
+        "maximum_K": 4.74601182303446e-10,
+        "volume_average_K": 4.2486551938822136e-10
+      },
+      "tairte4": {
+        "maximum_K": 5.577354020816086e-10,
+        "volume_average_K": 2.3839892700511413e-10
+      },
+      "sio2": {
+        "maximum_K": 2.8130960675241266e-10,
+        "volume_average_K": 1.2468513248119259e-11
+      },
+      "si": {
+        "maximum_K": 4.534153128753067e-11,
+        "volume_average_K": 2.9836204562591687e-12
+      }
+    },
+    "linear_residual_relative": 8.261206845622885e-10,
+    "iterations": 2200,
+    "energy_balance_relative": 1.2430896225112153e-11,
+    "boundary_power_out_W": {
+      "x_min": 2.0702582426083287e-14,
+      "x_max": 2.0628387968728534e-14,
+      "y_min": 2.1062442317236768e-14,
+      "y_max": 2.0859911775324414e-14,
+      "z_min": 1.645409727561296e-13,
+      "surface_robin_z_max": 1.096058362107337e-18
+    },
+    "assembly_seconds": 0.569154005497694,
+    "GPU_solve_seconds": 6.105743583291769
+  },
+  "electrical_PTE": {
+    "current_A": 2.6848754389160125e-18,
+    "terminal_axis": "y=a; low y=-10um, high y=+10um",
+    "weighting_residual_relative": 7.802671884424135e-12,
+    "terminal_balance_relative": 2.12207014007118e-12,
+    "psi_min": 0.0,
+    "psi_max": 1.0
+  },
+  "gates": {
+    "input_SHAs_match": true,
+    "material_Q_mapping_lt_1e-12": true,
+    "linear_residual_lt_1e-8": true,
+    "thermal_energy_balance_lt_1pct": true,
+    "electrical_residual_lt_1e-8": true,
+    "electrical_terminal_balance_lt_1pct": true,
+    "finite_temperature_and_weighting": true,
+    "GPU_linear_solve_no_CPU_fallback": true,
+    "no_Q_clipping_smoothing_gain_or_global_rescaling": true
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/fdtdx_explicit_thermal_weighting_pte_thermally_grown/fdtdx_explicit_thermal_weighting_pte_raw.npz",
+    "bytes": 10089714,
+    "sha256": "8889b69aad1cb311dd862343c04d2f9bc515c72d001ffe45e486b58024d0af49",
+    "committed_to_git": false
+  },
+  "next_gate": "differentiate the same Maxwell-Q remap + explicit thermal + Au-aware electrical chain and run combined directional AD-FD"
+}

@@ -638,3 +638,30 @@ preserved small-step failure.  The combined optical/thermal/electrical PTE
 gradient remains pending. See
 `results_fdtdx_substrate_matched_interface_endpoints_32period_gpu3/` and
 `results_fdtdx_substrate_gradient_plateau_gpu3/`.
+
+## Spatial Maxwell-Q to explicit thermal/weighting forward
+
+The 16-period, four-window substrate-bearing endpoint now exports native-Yee
+`Qx`, `Qy`, and `Qz` with component-specific dual coordinates and volumes.
+Independent reintegration differs by `3.62e-8` relative, matched-volume
+closure is `0.12237%`, and Au/TaIrTe4/SiO2 absorb `22.1982%`, `61.6226%`, and
+`16.1792%` of the literal source power.  The external raw artifact is recorded
+by path, byte size, and SHA-256; it is not committed to Git.
+
+The source is then transferred with an exact material-overlap conservative
+operator.  No nearest-cell projection, power deletion, clipping, smoothing,
+gain, or global rescaling is used.  Total power error is zero to printed
+precision and the worst transpose dot error is `5.73e-15`.
+
+The explicit `266x266x33` Au/TaIrTe4/SiO2/Si FVM and Au-aware two-layer
+weighting operator pass their forward gates for both named TaIrTe4/SiO2
+interface scenarios.  Relative to thermally grown `G=7.37e6 W/(m2 K)`, the
+evaporated `G=7.37e4 W/(m2 K)` scenario gives about `16.42x` higher Tmax,
+`28.05x` higher TaIrTe4 volume-average temperature rise, and `12.56x` higher
+literal-normalization PTE current.  This is physical-parameter sensitivity,
+not numerical error or an experimental prediction.
+
+`G_Au/TaIrTe4` remains an explicitly labelled Au/MoS2 analogue and the
+electrical contact remains a numerical scenario.  These forward results do
+not authorize optimization: the next fail-closed gate is combined spatial
+Maxwell-Q, explicit-thermal, and Au-aware electrical directional AD--FD.
