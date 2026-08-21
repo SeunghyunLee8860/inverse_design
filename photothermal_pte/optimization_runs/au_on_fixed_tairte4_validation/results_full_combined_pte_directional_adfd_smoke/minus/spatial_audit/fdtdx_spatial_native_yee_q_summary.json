@@ -1,0 +1,42 @@
+{
+  "status": "VALIDATED_FDTDX_SUBSTRATE_SPATIAL_NATIVE_YEE_Q_ARTIFACT",
+  "scope": "independent SHA, coordinate, dual-width/volume, and Q*dV audit of the 16-period/4-window FDTDX Au/TaIrTe4/SiO2 spatial native-Yee heat source; no optical-to-thermal remap, thermal solve, PTE, adjoint, or optimization",
+  "source_result_json": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/minus/forward/fdtdx_substrate_spatial_native_yee_q_export.json",
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_directional_adfd_smoke/native_yee_q_minus.npz",
+    "bytes": 18011509,
+    "sha256": "43428a07223ec61e18a4a6c5ca87eb7abaea303cc6c63b9d0e4cb4d32df2cd97",
+    "committed_to_git": false
+  },
+  "P_Q_generation_W": 2.477973504e-13,
+  "P_Q_reintegrated_W": 2.477973536898288e-13,
+  "total_Q_reintegration_relative_error": 1.327628711939931e-08,
+  "maximum_component_Q_reintegration_relative_error": 1.466299169465193e-07,
+  "maximum_dual_volume_factorization_relative_error": 5.364075792539231e-08,
+  "maximum_component_coordinate_stagger_m": 2.5000008463393897e-07,
+  "material_power_W": {
+    "au": 5.500718760128322e-14,
+    "tairte4": 1.5269867066251669e-13,
+    "sio2": 4.0091495426028887e-14
+  },
+  "material_fraction_of_total_Q": {
+    "au": 0.22198456433129,
+    "tairte4": 0.6162239765225727,
+    "sio2": 0.16179145914613735
+  },
+  "generation_Q_flux_closure_relative": 0.0012238189372804453,
+  "generation_late_window_relative_change": 0.00019844847928428985,
+  "coordinate_contract": "Ex=(x center,y lower edge,z lower edge); Ey=(x lower edge,y center,z lower edge); Ez=(x lower edge,y lower edge,z center), with stored axis-wise dual widths and dual volumes",
+  "gates": {
+    "raw_SHA_matches_generation_record": true,
+    "finite_nonnegative_Q_and_positive_dual_volume": true,
+    "coordinate_shape_monotonicity_contract": true,
+    "dual_volume_axis_factorization_lt_1e-6": true,
+    "component_Q_reintegration_lt_1e-6": true,
+    "total_Q_reintegration_lt_1e-6": true,
+    "generation_Q_flux_closure_lt_0p5pct": true,
+    "generation_late_window_change_lt_0p5pct": true,
+    "no_clipping_smoothing_gain_or_rescaling": true
+  },
+  "next_gate": "conservative overlap remap of every component-native dual cell into one explicit Au/TaIrTe4/SiO2 thermal grid, followed by power conservation audit"
+}

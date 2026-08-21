@@ -1,0 +1,47 @@
+{
+  "status": "VALIDATED_FDTDX_SPATIAL_Q_CONSERVATIVE_MATERIAL_OVERLAP_REMAP",
+  "input_raw": {
+    "summary": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/minus/spatial_audit/fdtdx_spatial_native_yee_q_summary.json",
+    "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_directional_adfd_smoke/native_yee_q_minus.npz",
+    "bytes": 18011509,
+    "sha256": "43428a07223ec61e18a4a6c5ca87eb7abaea303cc6c63b9d0e4cb4d32df2cd97"
+  },
+  "output_raw": {
+    "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_directional_adfd_smoke/thermal_q_minus.npz",
+    "bytes": 23624821,
+    "sha256": "95f682e85dfc4d6b3348e9e9636509f5c3c5ffe6cf5ffa54d867e900a4e7795a",
+    "committed_to_git": false
+  },
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/minus/spatial_audit/fdtdx_spatial_native_yee_q_summary.json",
+      "bytes": 2454,
+      "sha256": "b146ad4b8b5759fc4c29288667f891e04e0da04088e7b8e8a2a40e16d0927514"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/minus/remap_audit/fdtdx_material_overlap_remap_summary.json",
+      "bytes": 2300,
+      "sha256": "c677248c7b05a14211768f5753003a9d9e3a4444bfd54eaa5193d64a8da77661"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/minus/remap_audit/fdtdx_material_overlap_remap_cases.csv",
+      "bytes": 1265,
+      "sha256": "ae8db8e833cfde66f2032ae7ef704195efae3d1d714ea59ad3986d3068fdfc59"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/minus/remap_audit/fdtdx_material_overlap_thermal_q.png",
+      "bytes": 228133,
+      "sha256": "c214b2018e13e95173adaf17f6779ce1882758db02e23cf021dcb2263e923f9d"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/minus/remap_audit/fdtdx_material_overlap_remap_audit.png",
+      "bytes": 97698,
+      "sha256": "34356b2df4e2a2c5d52d069a15a6a06927ec1df3059a2dbf94c5642be98dcfe8"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/minus/remap_audit/FDTDX_MATERIAL_OVERLAP_THERMAL_REMAP_REPORT.md",
+      "bytes": 1559,
+      "sha256": "6e8f0beaa2f4c9ceb717542b0f27d2558b58bee51cd9c3b593da32730ddc7ec6"
+    }
+  ]
+}

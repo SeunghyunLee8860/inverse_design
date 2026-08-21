@@ -280,6 +280,7 @@ def run(
     spatial_q_weight_summary_json: Path | None = None,
     spatial_q_weight_scenario: str = "thermally_grown",
     spatial_weighted_gradient_raw_path: Path | None = None,
+    density_npz: Path | None = None,
 ) -> dict[str, object]:
     import jax
     import jax.numpy as jnp
@@ -1036,6 +1037,34 @@ def run(
         rho0 = (0.52 + 0.07 * jnp.cos(0.8 * math.pi * lx) * jnp.cos(0.65 * math.pi * ly) + 0.02 * lx).astype(
             jnp.float32
         )
+        density_input = None
+        if density_npz is not None:
+            density_path = density_npz.expanduser().resolve()
+            density_sha = _sha256(density_path)
+            with np.load(density_path, allow_pickle=False) as density_raw:
+                if "rho" not in density_raw:
+                    raise RuntimeError(f"Density NPZ has no 'rho' array: {density_path}")
+                density_value = np.asarray(density_raw["rho"], dtype=np.float32)
+            if density_value.shape != latent_shape:
+                raise RuntimeError(
+                    f"Density shape mismatch: {density_value.shape} != {latent_shape}"
+                )
+            if not np.all(np.isfinite(density_value)):
+                raise RuntimeError("Density contains NaN/Inf")
+            if np.min(density_value) < 0.0 or np.max(density_value) > 1.0:
+                raise RuntimeError(
+                    "Density is outside [0,1]; clipping is forbidden: "
+                    f"[{np.min(density_value)}, {np.max(density_value)}]"
+                )
+            rho0 = jnp.asarray(density_value)
+            density_input = {
+                "path": str(density_path),
+                "bytes": density_path.stat().st_size,
+                "sha256": density_sha,
+                "rho_min": float(np.min(density_value)),
+                "rho_max": float(np.max(density_value)),
+                "clipped": False,
+            }
 
         def optical_strength(rho):
             # Piecewise-constant 500-nm design pixels on the 100-nm Yee grid;
@@ -1336,6 +1365,7 @@ def run(
                     "Au, TaIrTe4, and SiO2; no thermal/PTE/electrical/adjoint/optimization"
                 ),
                 "audit": audit,
+                "density_input": density_input,
                 "P_Q_W": total_q,
                 "component_power_W": {
                     "au_xyz": list(map(float, expected[:3])),
@@ -2135,6 +2165,11 @@ def main() -> int:
         default="thermally_grown",
     )
     parser.add_argument("--spatial-weighted-gradient-raw-path", type=Path)
+    parser.add_argument(
+        "--density-npz",
+        type=Path,
+        help="optional 20x20 physical-density NPZ with key 'rho'; no clipping",
+    )
     parser.add_argument("--gradient-checkpoints", type=int, default=16)
     parser.add_argument("--include-adjoint-aligned", action="store_true")
     parser.add_argument("--include-substrate", action="store_true")
@@ -2202,6 +2237,7 @@ def main() -> int:
         spatial_q_weight_summary_json=args.spatial_q_weight_summary_json,
         spatial_q_weight_scenario=args.spatial_q_weight_scenario,
         spatial_weighted_gradient_raw_path=args.spatial_weighted_gradient_raw_path,
+        density_npz=args.density_npz,
     )
     if args.audit_only:
         return 0

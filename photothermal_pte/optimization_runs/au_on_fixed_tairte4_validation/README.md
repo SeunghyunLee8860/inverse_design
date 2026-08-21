@@ -703,3 +703,23 @@ this source term to the already validated direct thermal/contact and
 electrical/weighting terms, then compare the sum against an end-to-end central
 FD that recomputes Maxwell Q, conservative remap, explicit thermal transport,
 and terminal current for both perturbed densities.
+
+The first end-to-end combined directional smoke now passes as well.  At
+`rho +/- 0.01 d`, where `d` is aligned with the sum of all three gradient
+branches, each perturbation independently recomputes FDTDX native-Yee Q,
+the two conservative material-overlap remaps, the explicit 3-D thermal
+solution, and the Au-aware weighting/current solution.  The chain-rule
+contributions are:
+
+- Maxwell source: `6.1504913e-18 A`
+- direct thermal/contact: `-3.0921740e-19 A`
+- direct electrical/weighting: `6.1176116e-19 A`
+- combined AD: `6.4530351e-18 A`
+- end-to-end central FD: `6.4521531e-18 A`
+
+The combined relative error is `0.013667%`; the worst linear residual is
+`8.25e-10`, while thermal and terminal balances are near roundoff. Status:
+`VALIDATED_FULL_COMBINED_FDTDX_THERMAL_WEIGHTING_PTE_DIRECTIONAL_ADFD`.
+This is still one strongest-direction smoke, not the final multi-direction
+or latent/filter/projection certificate.  It does not yet authorize
+optimization.
