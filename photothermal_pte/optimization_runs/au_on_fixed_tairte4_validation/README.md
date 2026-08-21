@@ -382,6 +382,40 @@ No empirical sign flip, normalization, or gradient rescaling is an accepted
 repair.  The current published status is
 `BLOCKED_AU_PRODUCTION_GRADIENT_REQUIRES_DISPERSIVE_DISCRETE_ADJOINT`.
 
+### Working 3-D fixed-grid dispersive route
+
+The separate fixed-grid route has now passed its first coupled optical gate.
+Here Au is a **nanocube/nanoantenna design material**, not an electrode.  A
+two-dimensional Au density is extruded through a fixed thickness above a
+fixed anisotropic TaIrTe4 slab.  Au and the TaIrTe4 `a/b/c` components use
+passive ADE poles whose finite-time-step harmonic response matches the 10-um
+complex permittivity endpoints.  The solver-axis contract is `x=b, y=a,
+z=c=b closure`.
+
+Run and publish this control with:
+
+```bash
+env PYTHONPATH=/home/seunghyun/.local/au_fdtdx \
+  CUDA_VISIBLE_DEVICES=4 XLA_PYTHON_CLIENT_PREALLOCATE=false \
+  /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
+  41_validate_au_on_fixed_tairte4_optical_adfd.py
+
+/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
+  42_summarize_au_on_fixed_tairte4_optical_adfd.py
+```
+
+The promoted status is
+`VALIDATED_AU_ON_FIXED_TAIRTE4_OPTICAL_ADFD_CONTROL`.  At the finest central
+FD step, the maximum strong-direction total-power error is `0.01483%` and the
+maximum multi-direction gradient-L2-normalized error is `0.00410%`.  Au and
+TaIrTe4 absorbed powers and gradients are stored separately, and
+`g_total=g_Au+g_TaIrTe4` closes to `6.89e-7` relative norm.
+
+This does not unblock a v261 moving/conformal Au topology gradient.  It
+validates the new causal fixed-grid route only.  Exact-binary Lumerical
+endpoint cross-validation, substrate/mesh convergence, thermal/PTE coupling,
+and production optimization remain subsequent fail-closed gates.
+
 ### Discrete dispersive-adjoint repair control
 
 The required mathematical repair is now represented by a separate offline
