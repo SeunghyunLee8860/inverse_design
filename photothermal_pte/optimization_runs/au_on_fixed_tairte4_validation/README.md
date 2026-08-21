@@ -83,6 +83,19 @@ match this objective and gradient direction.  Coupled PTE,
 combined-gradient, and optimization validation remain pending.  See
 `results_fdtdx_substrate_gradient_plateau_gpu3/`.
 
+That shorter-duration screening now passes for 16 total periods with a
+4-period observation window.  Relative to 32/4, total Q, gradient L2 norm,
+and the identical smooth directional derivative change by `0.000503%`,
+`0.002810%`, and `0.000870%`; its internal AD--FD error is `0.007423%`.
+Substrate-only and material-bearing closures are `0.475776%` and `0.123109%`.
+AD execution falls from `5773.955 s` to `2919.009 s` (`1.978x`). Status:
+`VALIDATED_FDTDX_DIAGNOSTIC_16PERIOD4WINDOW_OBJECTIVE_DIRECTIONAL_GRADIENT_EQUIVALENCE`.
+
+The immutable 32-period run did not store the 20x20 gradient vector, so this
+does not certify a full-vector gradient angle.  It promotes the 16/4 contract
+only for the tested objective/norm/direction screening, not for combined PTE
+or optimization. See `results_fdtdx_fast_contract_equivalence_gpu3/`.
+
 This folder is intentionally separate from the completed TaIrTe4/void
 optimization runs.  It validates a new physical contract:
 

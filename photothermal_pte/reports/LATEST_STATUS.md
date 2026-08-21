@@ -49,9 +49,18 @@
   `VALIDATED_FDTDX_DIAGNOSTIC_SUBSTRATE_NONUNIFORM_AU_GRADIENT_STABLE_STEP_PLATEAU`.
 - The strict AD required `5773.955 s` and about 36.2 GB, so it is an accuracy
   reference rather than an approved optimization iteration. The next gate is
-  shorter-period objective/gradient equivalence, followed by the spatially
-  weighted combined optical/thermal/electrical PTE AD--FD. Optimization is
-  still blocked.
+  shorter-period objective/gradient equivalence.
+- The 16-period/4-window candidate passes that diagnostic screening against
+  32/4: total Q, gradient L2 norm, and the same smooth directional AD differ
+  by `0.000503%`, `0.002810%`, and `0.000870%`. Candidate AD--FD error is
+  `0.007423%`; substrate-only/material-bearing closures are `0.475776%` and
+  `0.123109%`. AD time is `2919.009 s`, a `1.978x` speedup. Status:
+  `VALIDATED_FDTDX_DIAGNOSTIC_16PERIOD4WINDOW_OBJECTIVE_DIRECTIONAL_GRADIENT_EQUIVALENCE`.
+- The old 32-period artifact did not retain the 20x20 gradient vector, so a
+  full gradient angle is unavailable and this is not a full production
+  promotion. The next gate is the spatially weighted combined
+  optical/thermal/electrical PTE AD--FD with vector/hash persistence.
+  Optimization remains blocked.
 
 ## Run 005 bounded low-beta topology-exploration pilot
 

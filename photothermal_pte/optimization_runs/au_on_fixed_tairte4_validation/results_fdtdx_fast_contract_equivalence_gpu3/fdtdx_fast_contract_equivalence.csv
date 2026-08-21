@@ -1,0 +1,17 @@
+metric,value,gate
+P_Q_relative_difference,5.025008674743581e-06,
+gradient_l2_relative_difference,2.809808254884607e-05,
+same_direction_AD_relative_difference,8.701869707714817e-06,
+candidate_AD_FD_relative_error,7.422923336341636e-05,
+candidate_Q_flux_closure_relative,0.0012310916210873466,
+candidate_late_window_relative_change,0.0001981850794796282,
+substrate_only_Q_flux_closure_relative,0.004757758618114774,
+AD_runtime_speedup_reference_over_candidate,1.9780534376218304,
+P_Q_difference_lt_0p5pct,,True
+gradient_l2_difference_lt_0p5pct,,True
+same_direction_AD_difference_lt_0p5pct,,True
+candidate_AD_FD_error_lt_1pct,,True
+candidate_Q_flux_closure_lt_0p5pct,,True
+candidate_window_change_lt_0p5pct,,True
+substrate_only_Q_flux_closure_lt_0p5pct,,True
+no_clipping_smoothing_gain_or_gradient_rescaling,,True
