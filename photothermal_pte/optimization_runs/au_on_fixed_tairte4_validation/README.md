@@ -665,3 +665,15 @@ not numerical error or an experimental prediction.
 electrical contact remains a numerical scenario.  These forward results do
 not authorize optimization: the next fail-closed gate is combined spatial
 Maxwell-Q, explicit-thermal, and Au-aware electrical directional AD--FD.
+
+The first derivative subgate is now independently closed by
+`67_validate_explicit_thermal_weighting_fixed_spatial_q_adfd.py`. It holds
+the certified spatial Maxwell source fixed and differentiates the full
+`266x266x33` thermal material/contact operator plus the floating-Au
+electrical/weighting operator. The transpose of both 500-nm-to-100-nm
+lateral averaging and the TaIrTe4 thickness average is included explicitly.
+Across both interface scenarios and five directions at three FD steps, the
+worst strong-direction error is `2.30e-7` and the worst gradient-L2-normalized
+error is `5.68e-8`. A separate thermal-matrix derivative audit differs by at
+most `5.55e-7`. The remaining term is the thermal-source adjoint pulled back
+through the conservative remap to the native-Yee spatial Maxwell Q.
