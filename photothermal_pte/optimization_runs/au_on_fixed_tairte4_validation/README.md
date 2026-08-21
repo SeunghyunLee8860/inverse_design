@@ -677,3 +677,12 @@ worst strong-direction error is `2.30e-7` and the worst gradient-L2-normalized
 error is `5.68e-8`. A separate thermal-matrix derivative audit differs by at
 most `5.55e-7`. The remaining term is the thermal-source adjoint pulled back
 through the conservative remap to the native-Yee spatial Maxwell Q.
+
+That remap transpose is now certified by
+`68_build_native_yee_thermal_source_adjoint_weights.py`. It applies the
+transpose of both material-primal-to-explicit and component-Yee-to-primal
+power maps. Ex, Ey, and Ez retain their own physical coordinates and dual
+volumes. The worst two-stage dot-test error is `6.63e-15`, and the native-Yee
+weighted source contraction matches the explicit thermal-grid contraction to
+`5.48e-16` relative. The resulting unscaled weights have units `A/W`; the
+next solve uses them as the spatial FDTDX objective.
