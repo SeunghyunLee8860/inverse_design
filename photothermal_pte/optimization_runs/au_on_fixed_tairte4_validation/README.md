@@ -737,6 +737,37 @@ conservative-remap, residual, energy-balance, and terminal-balance gates pass.
 Status:
 `VALIDATED_FULL_COMBINED_FDTDX_THERMAL_WEIGHTING_PTE_MULTIDIRECTION_ADFD`.
 
-This closes the physical-density gradient gate.  Latent/filter/projection
-JVP--VJP and end-to-end directional AD--FD remain required before any Au
-optimization is authorized.
+This closes the physical-density gradient gate.  The latent/filter/projection
+gates described below close the remaining derivative chain; they do not by
+themselves select a fabrication contract or start an Au optimization.
+
+## Latent/filter/projection closure
+
+The finite nonperiodic conic-filter and tanh-projection mapping now passes its
+solver-free transpose and finite-difference controls.  For the tested 20x20,
+500-nm-pitch design grid and 750-nm filter-radius numerical scenario, the
+worst JVP--VJP dot-test error is `2.64e-17`, the worst mapping-only FD error is
+`8.72e-7`, opposite-edge wrap is zero, constant preservation is exact, and no
+monotonicity regressions occur.  Status:
+`VALIDATED_AU_LATENT_FILTER_PROJECTION_MAPPING`.
+
+The full latent-chain central AD--FD then recomputes, at every `latent +/-
+0.01 d`, the finite filter, beta-2 projection, substrate-bearing FDTDX native
+Yee Q, exact material-overlap remap, explicit 3-D thermal solve, and Au-aware
+electrical weighting/current solve.  The already certified physical baseline
+is reconstructed from an interior latent field with `9.99e-16` maximum error,
+so no clipping is needed.  Three independent latent directions pass:
+
+- adjoint-aligned relative error: `0.002231%`;
+- smooth-asymmetric relative error: `0.032211%`;
+- fixed-seed-random near-null-safe gradient-norm error: `0.008539%`.
+
+The worst residual is `9.86e-10`; thermal and terminal balances are
+`2.79e-11` and `2.15e-12`.  No Q, density, objective, or gradient rescaling is
+used.  Status:
+`VALIDATED_FULL_LATENT_FILTER_PROJECTION_FDTDX_PTE_ADFD`.
+
+This validates the differentiable chain for the stated numerical mapping
+scenario.  The 750-nm radius is not yet a final fabrication/minimum-feature
+contract, and no Au optimization has been run.  That contract and its beta/
+optimizer continuation must be frozen before optimization is authorized.
