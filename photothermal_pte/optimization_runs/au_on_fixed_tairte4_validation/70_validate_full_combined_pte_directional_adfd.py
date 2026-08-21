@@ -92,6 +92,7 @@ def _evaluate_perturbation(
     raw_root: Path,
     scenario: str,
     cuda_device: int,
+    reuse_existing: bool = False,
 ) -> tuple[dict[str, object], dict[str, object]]:
     case_output = output / label
     forward_output = case_output / "forward"
@@ -102,33 +103,53 @@ def _evaluate_perturbation(
     density_path = raw_root / f"rho_{label}.npz"
     spatial_raw = raw_root / f"native_yee_q_{label}.npz"
     remap_raw = raw_root / f"thermal_q_{label}.npz"
-    np.savez_compressed(density_path, rho=rho.astype(np.float32))
-
-    command = [
-        sys.executable,
-        str(STAGE49),
-        "--output-dir",
-        str(forward_output),
-        "--gradient-smoke",
-        "--spatial-q-export",
-        "--include-substrate",
-        "--matched-substrate-interface-grid",
-        "--substrate-total-periods",
-        "16",
-        "--substrate-window-periods",
-        "4",
-        "--gradient-checkpoints",
-        "16",
-        "--density-npz",
-        str(density_path),
-        "--spatial-q-raw-path",
-        str(spatial_raw),
-    ]
-    start = perf_counter()
-    _run_logged(command, case_output / "01_fdtdx_forward.log")
-    fdtdx_seconds = perf_counter() - start
+    if density_path.exists():
+        with np.load(density_path, allow_pickle=False) as saved_density:
+            saved_rho = np.asarray(saved_density["rho"], dtype=np.float64)
+        if not np.allclose(saved_rho, rho, rtol=0.0, atol=1.0e-7):
+            raise RuntimeError(f"Existing density checkpoint mismatch for {label}")
+    else:
+        np.savez_compressed(density_path, rho=rho.astype(np.float32))
 
     generation_json = forward_output / "fdtdx_substrate_spatial_native_yee_q_export.json"
+    reused_forward = False
+    if reuse_existing and generation_json.exists() and spatial_raw.exists():
+        generation = json.loads(generation_json.read_text(encoding="utf-8"))
+        expected_raw = generation.get("raw_artifact", {})
+        expected_density = generation.get("density_input", {})
+        if generation.get("status") != "VALIDATED_FDTDX_SUBSTRATE_SPATIAL_NATIVE_YEE_Q_EXPORT":
+            raise RuntimeError(f"Existing forward status mismatch for {label}")
+        if _sha256(spatial_raw) != expected_raw.get("sha256"):
+            raise RuntimeError(f"Existing spatial-Q SHA mismatch for {label}")
+        if _sha256(density_path) != expected_density.get("sha256"):
+            raise RuntimeError(f"Existing density SHA mismatch for {label}")
+        fdtdx_seconds = 0.0
+        reused_forward = True
+    else:
+        command = [
+            sys.executable,
+            str(STAGE49),
+            "--output-dir",
+            str(forward_output),
+            "--gradient-smoke",
+            "--spatial-q-export",
+            "--include-substrate",
+            "--matched-substrate-interface-grid",
+            "--substrate-total-periods",
+            "16",
+            "--substrate-window-periods",
+            "4",
+            "--gradient-checkpoints",
+            "16",
+            "--density-npz",
+            str(density_path),
+            "--spatial-q-raw-path",
+            str(spatial_raw),
+        ]
+        start = perf_counter()
+        _run_logged(command, case_output / "01_fdtdx_forward.log")
+        fdtdx_seconds = perf_counter() - start
+
     _run_logged(
         [
             sys.executable,
@@ -215,6 +236,7 @@ def _evaluate_perturbation(
         "electrical_terminal_balance": evaluated["electrical_balance"],
         "mapping": mapping,
         "fdtdx_forward_seconds": fdtdx_seconds,
+        "fdtdx_forward_reused_from_SHA_checkpoint": reused_forward,
         "thermal_electrical_seconds": thermal_seconds,
         "density_artifact": {
             "path": str(density_path),

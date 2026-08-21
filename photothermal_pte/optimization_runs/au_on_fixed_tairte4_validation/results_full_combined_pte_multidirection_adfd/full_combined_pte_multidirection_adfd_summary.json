@@ -1,0 +1,614 @@
+{
+  "status": "VALIDATED_FULL_COMBINED_FDTDX_THERMAL_WEIGHTING_PTE_MULTIDIRECTION_ADFD",
+  "scope": "five-direction physical-density end-to-end AD-FD through FDTDX Maxwell Q, native-Yee conservative remap, explicit 3-D thermal material/contact, and Au-aware electrical weighting/current; no optimization",
+  "scenario": "thermally_grown",
+  "h": 0.01,
+  "gradient_norm_A": 6.4530350582044696e-18,
+  "directions": [
+    {
+      "scenario": "thermally_grown",
+      "direction": "combined_adjoint_aligned",
+      "h": 0.01,
+      "AD_optical_A": 6.1504912947352186e-18,
+      "AD_thermal_A": -3.0921739923602804e-19,
+      "AD_electrical_A": 6.117611627052803e-19,
+      "AD_total_A": 6.453035058204471e-18,
+      "FD_total_A": 6.452153139304581e-18,
+      "strong_relative_error": 0.00013666730335971594,
+      "gradient_l2_normalized_error": 0.00013666730335971597,
+      "objective_plus_A": 2.749426979386044e-18,
+      "objective_minus_A": 2.6203839165999523e-18,
+      "source": "reused_validated_stage70",
+      "direction_strength_vs_gradient_norm": 1.0000000000000002,
+      "midpoint_objective_relative_error": 1.1176958580816696e-05
+    },
+    {
+      "scenario": "thermally_grown",
+      "direction": "smooth_asymmetric",
+      "h": 0.01,
+      "direction_strength_vs_gradient_norm": 0.17397076866702452,
+      "AD_optical_A": -1.0729695128829986e-18,
+      "AD_thermal_A": 3.210565179873822e-20,
+      "AD_electrical_A": -8.177560822682854e-20,
+      "AD_total_A": -1.122639469311089e-18,
+      "FD_total_A": -1.1238247520339577e-18,
+      "strong_relative_error": 0.0010546864364070635,
+      "gradient_l2_normalized_error": 0.00018367833309099465,
+      "midpoint_objective_relative_error": 1.3180205303939948e-05,
+      "objective_plus_A": 2.67367257907159e-18,
+      "objective_minus_A": 2.6961490741122693e-18,
+      "source": "new_end_to_end_forward_pair"
+    },
+    {
+      "scenario": "thermally_grown",
+      "direction": "central_localized",
+      "h": 0.01,
+      "direction_strength_vs_gradient_norm": 0.08627416672111748,
+      "AD_optical_A": 5.578395928044373e-19,
+      "AD_thermal_A": -2.4292655781390347e-20,
+      "AD_electrical_A": 2.3183285445701543e-20,
+      "AD_total_A": 5.567302224687485e-19,
+      "FD_total_A": 5.560443394112679e-19,
+      "strong_relative_error": 0.0012319845946912771,
+      "gradient_l2_normalized_error": 0.0001062884443202436,
+      "midpoint_objective_relative_error": 6.232200739771084e-06,
+      "objective_plus_A": 2.690452615097104e-18,
+      "objective_minus_A": 2.6793317283088785e-18,
+      "source": "new_end_to_end_forward_pair"
+    },
+    {
+      "scenario": "thermally_grown",
+      "direction": "design_edge_localized",
+      "h": 0.01,
+      "direction_strength_vs_gradient_norm": 0.0008452861369859784,
+      "AD_optical_A": -1.9089520543257454e-20,
+      "AD_thermal_A": -4.381130258619469e-20,
+      "AD_electrical_A": 5.74461620532674e-20,
+      "AD_total_A": -5.454661076184744e-21,
+      "FD_total_A": -5.344112513595774e-21,
+      "strong_relative_error": 0.02026680687304831,
+      "gradient_l2_normalized_error": 1.713125089075988e-05,
+      "midpoint_objective_relative_error": 2.799852935331441e-05,
+      "objective_plus_A": 2.684897172459443e-18,
+      "objective_minus_A": 2.685004054709715e-18,
+      "source": "new_end_to_end_forward_pair"
+    },
+    {
+      "scenario": "thermally_grown",
+      "direction": "fixed_seed_random",
+      "h": 0.01,
+      "direction_strength_vs_gradient_norm": 0.12069440626518345,
+      "AD_optical_A": 6.237223966450659e-19,
+      "AD_thermal_A": -1.4358689805074417e-20,
+      "AD_electrical_A": 1.694815281184105e-19,
+      "AD_total_A": 7.78845234958402e-19,
+      "FD_total_A": 7.77936678206764e-19,
+      "strong_relative_error": 0.0011665433783985435,
+      "gradient_l2_normalized_error": 0.00014079526043839344,
+      "midpoint_objective_relative_error": 1.1649045908446012e-05,
+      "objective_plus_A": 2.692686082299669e-18,
+      "objective_minus_A": 2.6771273487355338e-18,
+      "source": "new_end_to_end_forward_pair"
+    }
+  ],
+  "cases": {
+    "adjoint_aligned": {
+      "source": "reused_validated_stage70",
+      "summary_path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/results_full_combined_pte_directional_adfd_smoke/full_combined_pte_directional_adfd_summary.json",
+      "summary_sha256": "9007565338434a5581710dab4186cdfa32acda6e40476fd9908b0d3eef279145",
+      "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_directional_adfd_smoke/full_combined_pte_directional_adfd_raw.npz",
+      "raw_sha256": "47a861e937435158cb2eb54640fb0c0b0166ed60be2c984e2f880383a9a8bd5e"
+    },
+    "smooth_asymmetric": {
+      "row": {
+        "scenario": "thermally_grown",
+        "direction": "smooth_asymmetric",
+        "h": 0.01,
+        "direction_strength_vs_gradient_norm": 0.17397076866702452,
+        "AD_optical_A": -1.0729695128829986e-18,
+        "AD_thermal_A": 3.210565179873822e-20,
+        "AD_electrical_A": -8.177560822682854e-20,
+        "AD_total_A": -1.122639469311089e-18,
+        "FD_total_A": -1.1238247520339577e-18,
+        "strong_relative_error": 0.0010546864364070635,
+        "gradient_l2_normalized_error": 0.00018367833309099465,
+        "midpoint_objective_relative_error": 1.3180205303939948e-05,
+        "objective_plus_A": 2.67367257907159e-18,
+        "objective_minus_A": 2.6961490741122693e-18,
+        "source": "new_end_to_end_forward_pair"
+      },
+      "plus": {
+        "label": "smooth_asymmetric_plus",
+        "objective_A": 2.67367257907159e-18,
+        "P_Q_W": 2.478042551765379e-13,
+        "Tmax_K": 5.576699013051026e-10,
+        "thermal_residual": 9.436482033028038e-10,
+        "thermal_energy_balance": 1.5630969039841793e-11,
+        "electrical_residual": 7.854865436467438e-12,
+        "electrical_terminal_balance": 1.951794736924785e-12,
+        "mapping": {
+          "au": {
+            "source_power_W": 5.500979791814866e-14,
+            "mapped_power_W": 5.500979791814865e-14,
+            "relative_error": 1.1472296719137784e-16,
+            "power_outside_material_W": 0.0
+          },
+          "tairte4": {
+            "source_power_W": 1.5270239716094516e-13,
+            "mapped_power_W": 1.5270239716094516e-13,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          },
+          "sio2": {
+            "source_power_W": 4.0092060097444104e-14,
+            "mapped_power_W": 4.0092060097444104e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          }
+        },
+        "fdtdx_forward_seconds": 0.0,
+        "fdtdx_forward_reused_from_SHA_checkpoint": true,
+        "thermal_electrical_seconds": 9.854648925364017,
+        "density_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/rho_smooth_asymmetric_plus.npz",
+          "bytes": 1638,
+          "sha256": "487e2b578de830edf6d40cb496cd085517b7421c02ba2fcb1464a8e1176798e9",
+          "committed_to_git": false
+        },
+        "spatial_Q_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/native_yee_q_smooth_asymmetric_plus.npz",
+          "bytes": 18010478,
+          "sha256": "5ebfb246c840ec39576defd8322fd340df68d9c984844bf01f40b4f91bc0ad22",
+          "committed_to_git": false
+        },
+        "thermal_Q_artifact": {
+          "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/thermal_q_smooth_asymmetric_plus.npz",
+          "bytes": 23624543,
+          "sha256": "8e68acb807ceccc699a0575f14d4a72457013d82b84d23ccfb6b513fbc02e3ea",
+          "committed_to_git": false
+        }
+      },
+      "minus": {
+        "label": "smooth_asymmetric_minus",
+        "objective_A": 2.6961490741122693e-18,
+        "P_Q_W": 2.4778691278140987e-13,
+        "Tmax_K": 5.578013053204395e-10,
+        "thermal_residual": 7.661912023639136e-10,
+        "thermal_energy_balance": 1.0543354934991777e-11,
+        "electrical_residual": 7.751536375558646e-12,
+        "electrical_terminal_balance": 2.152174715957006e-12,
+        "mapping": {
+          "au": {
+            "source_power_W": 5.5002375607999315e-14,
+            "mapped_power_W": 5.5002375607999315e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          },
+          "tairte4": {
+            "source_power_W": 1.526939151703519e-13,
+            "mapped_power_W": 1.5269391517035189e-13,
+            "relative_error": 1.6532125028629719e-16,
+            "power_outside_material_W": 0.0
+          },
+          "sio2": {
+            "source_power_W": 4.009062200305867e-14,
+            "mapped_power_W": 4.009062200305867e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          }
+        },
+        "fdtdx_forward_seconds": 0.0,
+        "fdtdx_forward_reused_from_SHA_checkpoint": true,
+        "thermal_electrical_seconds": 2.4230342507362366,
+        "density_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/rho_smooth_asymmetric_minus.npz",
+          "bytes": 1633,
+          "sha256": "1b6696e972779438123c5dcea6378f96d975087c7eab91b3ba24a2dbbf655a11",
+          "committed_to_git": false
+        },
+        "spatial_Q_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/native_yee_q_smooth_asymmetric_minus.npz",
+          "bytes": 18010030,
+          "sha256": "3b3ad58a9634082dcd0adead4cd268da489503c23c37c47807922e049fbd3f84",
+          "committed_to_git": false
+        },
+        "thermal_Q_artifact": {
+          "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/thermal_q_smooth_asymmetric_minus.npz",
+          "bytes": 23625546,
+          "sha256": "6c22d1acf6c817b9cc535436295b0d31af6546e76f623331d6fe4c86abb272e5",
+          "committed_to_git": false
+        }
+      }
+    },
+    "central_localized": {
+      "row": {
+        "scenario": "thermally_grown",
+        "direction": "central_localized",
+        "h": 0.01,
+        "direction_strength_vs_gradient_norm": 0.08627416672111748,
+        "AD_optical_A": 5.578395928044373e-19,
+        "AD_thermal_A": -2.4292655781390347e-20,
+        "AD_electrical_A": 2.3183285445701543e-20,
+        "AD_total_A": 5.567302224687485e-19,
+        "FD_total_A": 5.560443394112679e-19,
+        "strong_relative_error": 0.0012319845946912771,
+        "gradient_l2_normalized_error": 0.0001062884443202436,
+        "midpoint_objective_relative_error": 6.232200739771084e-06,
+        "objective_plus_A": 2.690452615097104e-18,
+        "objective_minus_A": 2.6793317283088785e-18,
+        "source": "new_end_to_end_forward_pair"
+      },
+      "plus": {
+        "label": "central_localized_plus",
+        "objective_A": 2.690452615097104e-18,
+        "P_Q_W": 2.4773767868551204e-13,
+        "Tmax_K": 5.576751649868432e-10,
+        "thermal_residual": 8.441489838894819e-10,
+        "thermal_energy_balance": 1.3030904435829265e-11,
+        "electrical_residual": 7.803172846791713e-12,
+        "electrical_terminal_balance": 2.1068896112081114e-12,
+        "mapping": {
+          "au": {
+            "source_power_W": 5.4964407204100236e-14,
+            "mapped_power_W": 5.4964407204100236e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          },
+          "tairte4": {
+            "source_power_W": 1.5268473384962216e-13,
+            "mapped_power_W": 1.526847338496222e-13,
+            "relative_error": 1.6533119147284574e-16,
+            "power_outside_material_W": 0.0
+          },
+          "sio2": {
+            "source_power_W": 4.008853763178965e-14,
+            "mapped_power_W": 4.008853763178965e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          }
+        },
+        "fdtdx_forward_seconds": 0.0,
+        "fdtdx_forward_reused_from_SHA_checkpoint": true,
+        "thermal_electrical_seconds": 2.520582389086485,
+        "density_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/rho_central_localized_plus.npz",
+          "bytes": 1455,
+          "sha256": "60f67a5c85414f53c40176674b2f040f43d2263b979ddedcdf49debadd946d7a",
+          "committed_to_git": false
+        },
+        "spatial_Q_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/native_yee_q_central_localized_plus.npz",
+          "bytes": 18009786,
+          "sha256": "1ebddb8a0b8cb487319aa0be52668274dd1a17cdc3735fd4b697c5f9e1e9b570",
+          "committed_to_git": false
+        },
+        "thermal_Q_artifact": {
+          "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/thermal_q_central_localized_plus.npz",
+          "bytes": 23625119,
+          "sha256": "aa642a23372adb902aa01536494171a117ea8b74c30c3db5c3e24bff593b0573",
+          "committed_to_git": false
+        }
+      },
+      "minus": {
+        "label": "central_localized_minus",
+        "objective_A": 2.6793317283088785e-18,
+        "P_Q_W": 2.4785350359044207e-13,
+        "Tmax_K": 5.577949969535487e-10,
+        "thermal_residual": 8.101058438411317e-10,
+        "thermal_energy_balance": 1.182300066710307e-11,
+        "electrical_residual": 7.801832260727267e-12,
+        "electrical_terminal_balance": 1.981906326426315e-12,
+        "mapping": {
+          "au": {
+            "source_power_W": 5.504781472877822e-14,
+            "mapped_power_W": 5.504781472877822e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          },
+          "tairte4": {
+            "source_power_W": 1.5271153583361388e-13,
+            "mapped_power_W": 1.527115358336139e-13,
+            "relative_error": 1.6530217464760725e-16,
+            "power_outside_material_W": 0.0
+          },
+          "sio2": {
+            "source_power_W": 4.009415302804993e-14,
+            "mapped_power_W": 4.009415302804993e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          }
+        },
+        "fdtdx_forward_seconds": 0.0,
+        "fdtdx_forward_reused_from_SHA_checkpoint": true,
+        "thermal_electrical_seconds": 2.1746843345463276,
+        "density_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/rho_central_localized_minus.npz",
+          "bytes": 1451,
+          "sha256": "020e39e571957b7485974648684f7b0812ee3e4b211ec38b506424184c5c5a9f",
+          "committed_to_git": false
+        },
+        "spatial_Q_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/native_yee_q_central_localized_minus.npz",
+          "bytes": 18010240,
+          "sha256": "98acbb5afc795c8034669ed9108c07f3de766ca2fa0c3d4781e6d0e7808085eb",
+          "committed_to_git": false
+        },
+        "thermal_Q_artifact": {
+          "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/thermal_q_central_localized_minus.npz",
+          "bytes": 23625287,
+          "sha256": "c6a1a3f7cfabe1fca80c7ffe47cc2c3f680a00575b7b54a00a08f99aa5c19e79",
+          "committed_to_git": false
+        }
+      }
+    },
+    "design_edge_localized": {
+      "row": {
+        "scenario": "thermally_grown",
+        "direction": "design_edge_localized",
+        "h": 0.01,
+        "direction_strength_vs_gradient_norm": 0.0008452861369859784,
+        "AD_optical_A": -1.9089520543257454e-20,
+        "AD_thermal_A": -4.381130258619469e-20,
+        "AD_electrical_A": 5.74461620532674e-20,
+        "AD_total_A": -5.454661076184744e-21,
+        "FD_total_A": -5.344112513595774e-21,
+        "strong_relative_error": 0.02026680687304831,
+        "gradient_l2_normalized_error": 1.713125089075988e-05,
+        "midpoint_objective_relative_error": 2.799852935331441e-05,
+        "objective_plus_A": 2.684897172459443e-18,
+        "objective_minus_A": 2.685004054709715e-18,
+        "source": "new_end_to_end_forward_pair"
+      },
+      "plus": {
+        "label": "design_edge_localized_plus",
+        "objective_A": 2.684897172459443e-18,
+        "P_Q_W": 2.4776799203100344e-13,
+        "Tmax_K": 5.577475084671542e-10,
+        "thermal_residual": 8.572421200995826e-10,
+        "thermal_energy_balance": 1.3023400899423778e-11,
+        "electrical_residual": 7.799876556071757e-12,
+        "electrical_terminal_balance": 2.1133904484495715e-12,
+        "mapping": {
+          "au": {
+            "source_power_W": 5.49833327010531e-14,
+            "mapped_power_W": 5.498333270105309e-14,
+            "relative_error": 1.147781869840571e-16,
+            "power_outside_material_W": 0.0
+          },
+          "tairte4": {
+            "source_power_W": 1.5269299026751842e-13,
+            "mapped_power_W": 1.5269299026751842e-13,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          },
+          "sio2": {
+            "source_power_W": 4.0091669062431934e-14,
+            "mapped_power_W": 4.0091669062431934e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          }
+        },
+        "fdtdx_forward_seconds": 0.0,
+        "fdtdx_forward_reused_from_SHA_checkpoint": true,
+        "thermal_electrical_seconds": 3.135425616055727,
+        "density_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/rho_design_edge_localized_plus.npz",
+          "bytes": 1323,
+          "sha256": "cffd8569c302b199c7c3e19c08800c6e5ffe5ebb9ea4340812cb1302a7df1593",
+          "committed_to_git": false
+        },
+        "spatial_Q_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/native_yee_q_design_edge_localized_plus.npz",
+          "bytes": 18010129,
+          "sha256": "9b836753a2f47287eba68527acf0152543ce7b1d865610383584cf8f756ca4ae",
+          "committed_to_git": false
+        },
+        "thermal_Q_artifact": {
+          "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/thermal_q_design_edge_localized_plus.npz",
+          "bytes": 23624505,
+          "sha256": "2d4cd204f4ff470a297c9285b791313a9b0be929851786cec8430c274ebaa641",
+          "committed_to_git": false
+        }
+      },
+      "minus": {
+        "label": "design_edge_localized_minus",
+        "objective_A": 2.685004054709715e-18,
+        "P_Q_W": 2.4782322316719025e-13,
+        "Tmax_K": 5.57722420619378e-10,
+        "thermal_residual": 9.865778566402991e-10,
+        "thermal_energy_balance": 2.9431749556518324e-11,
+        "electrical_residual": 7.811435661819834e-12,
+        "electrical_terminal_balance": 2.1442372194745855e-12,
+        "mapping": {
+          "au": {
+            "source_power_W": 5.5028782797976987e-14,
+            "mapped_power_W": 5.5028782797976987e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          },
+          "tairte4": {
+            "source_power_W": 1.527034225231525e-13,
+            "mapped_power_W": 1.527034225231525e-13,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          },
+          "sio2": {
+            "source_power_W": 4.009101784606074e-14,
+            "mapped_power_W": 4.009101784606074e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          }
+        },
+        "fdtdx_forward_seconds": 0.0,
+        "fdtdx_forward_reused_from_SHA_checkpoint": true,
+        "thermal_electrical_seconds": 2.7464197501540184,
+        "density_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/rho_design_edge_localized_minus.npz",
+          "bytes": 1326,
+          "sha256": "c2cf34c097c0737e8eb06b47a756f9c946ef036ac8bb42278023e00265e800c2",
+          "committed_to_git": false
+        },
+        "spatial_Q_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/native_yee_q_design_edge_localized_minus.npz",
+          "bytes": 18010328,
+          "sha256": "522d9472f93d47bb479b2bcb7d83f0e3e0ea0fc0a88a69000b6ef079c25ffcd4",
+          "committed_to_git": false
+        },
+        "thermal_Q_artifact": {
+          "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/thermal_q_design_edge_localized_minus.npz",
+          "bytes": 23624373,
+          "sha256": "d3c416830e59d1110a0f4d716a75ddbddc2f4180aafa18f5c5b7907eba059d76",
+          "committed_to_git": false
+        }
+      }
+    },
+    "fixed_seed_random": {
+      "row": {
+        "scenario": "thermally_grown",
+        "direction": "fixed_seed_random",
+        "h": 0.01,
+        "direction_strength_vs_gradient_norm": 0.12069440626518345,
+        "AD_optical_A": 6.237223966450659e-19,
+        "AD_thermal_A": -1.4358689805074417e-20,
+        "AD_electrical_A": 1.694815281184105e-19,
+        "AD_total_A": 7.78845234958402e-19,
+        "FD_total_A": 7.77936678206764e-19,
+        "strong_relative_error": 0.0011665433783985435,
+        "gradient_l2_normalized_error": 0.00014079526043839344,
+        "midpoint_objective_relative_error": 1.1649045908446012e-05,
+        "objective_plus_A": 2.692686082299669e-18,
+        "objective_minus_A": 2.6771273487355338e-18,
+        "source": "new_end_to_end_forward_pair"
+      },
+      "plus": {
+        "label": "fixed_seed_random_plus",
+        "objective_A": 2.692686082299669e-18,
+        "P_Q_W": 2.477935666684469e-13,
+        "Tmax_K": 5.577823202869557e-10,
+        "thermal_residual": 8.761538295318022e-10,
+        "thermal_energy_balance": 1.4479456226515518e-11,
+        "electrical_residual": 7.801641842891582e-12,
+        "electrical_terminal_balance": 2.021041708267042e-12,
+        "mapping": {
+          "au": {
+            "source_power_W": 5.5001142452704215e-14,
+            "mapped_power_W": 5.5001142452704215e-14,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          },
+          "tairte4": {
+            "source_power_W": 1.5270086601380035e-13,
+            "mapped_power_W": 1.5270086601380037e-13,
+            "relative_error": 1.6531372497121914e-16,
+            "power_outside_material_W": 0.0
+          },
+          "sio2": {
+            "source_power_W": 4.009155820194227e-14,
+            "mapped_power_W": 4.0091558201942264e-14,
+            "relative_error": 1.574118723442971e-16,
+            "power_outside_material_W": 0.0
+          }
+        },
+        "fdtdx_forward_seconds": 0.0,
+        "fdtdx_forward_reused_from_SHA_checkpoint": true,
+        "thermal_electrical_seconds": 3.2525247372686863,
+        "density_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/rho_fixed_seed_random_plus.npz",
+          "bytes": 1629,
+          "sha256": "0f4ce8d398a27bc2b1c74c1eb89af6118cd14a2ae5f2f3e5577197e0ad4d9d69",
+          "committed_to_git": false
+        },
+        "spatial_Q_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/native_yee_q_fixed_seed_random_plus.npz",
+          "bytes": 18010575,
+          "sha256": "d1a4e5ac940673830eb68d536b7e177546c8d95d06cf6110db7e363e0ae211c8",
+          "committed_to_git": false
+        },
+        "thermal_Q_artifact": {
+          "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/thermal_q_fixed_seed_random_plus.npz",
+          "bytes": 23624690,
+          "sha256": "b588ad50addf197a56c1ad24c659e22d2dd3f2d4d8898c08666ce651bc87be2a",
+          "committed_to_git": false
+        }
+      },
+      "minus": {
+        "label": "fixed_seed_random_minus",
+        "objective_A": 2.6771273487355338e-18,
+        "P_Q_W": 2.477974313363747e-13,
+        "Tmax_K": 5.576879079145127e-10,
+        "thermal_residual": 7.801445283551999e-10,
+        "thermal_energy_balance": 1.0139087915662237e-11,
+        "electrical_residual": 7.816030610957928e-12,
+        "electrical_terminal_balance": 1.9912870401685408e-12,
+        "mapping": {
+          "au": {
+            "source_power_W": 5.501094082462453e-14,
+            "mapped_power_W": 5.5010940824624525e-14,
+            "relative_error": 1.1472058370874387e-16,
+            "power_outside_material_W": 0.0
+          },
+          "tairte4": {
+            "source_power_W": 1.5269537809197044e-13,
+            "mapped_power_W": 1.5269537809197044e-13,
+            "relative_error": 0.0,
+            "power_outside_material_W": 0.0
+          },
+          "sio2": {
+            "source_power_W": 4.0091112419779713e-14,
+            "mapped_power_W": 4.009111241977972e-14,
+            "relative_error": 1.5741362264257095e-16,
+            "power_outside_material_W": 0.0
+          }
+        },
+        "fdtdx_forward_seconds": 277.1317179054022,
+        "fdtdx_forward_reused_from_SHA_checkpoint": false,
+        "thermal_electrical_seconds": 2.943690177053213,
+        "density_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/rho_fixed_seed_random_minus.npz",
+          "bytes": 1631,
+          "sha256": "ff30b71e34794d77c71a57588353036d22bed936f05d20532bb48909866a1580",
+          "committed_to_git": false
+        },
+        "spatial_Q_artifact": {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/native_yee_q_fixed_seed_random_minus.npz",
+          "bytes": 18010640,
+          "sha256": "0fdffd22f43bae659153518f0f410a2ee9ffc1921e58bc278a3f7e9a120079cb",
+          "committed_to_git": false
+        },
+        "thermal_Q_artifact": {
+          "raw_path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/thermal_q_fixed_seed_random_minus.npz",
+          "bytes": 23625126,
+          "sha256": "5995e8c7ee7a6138fff127125d5bbd7b06fc2e8c8eec882d1a0386277e6c380e",
+          "committed_to_git": false
+        }
+      }
+    }
+  },
+  "worst_strong_direction_relative_error": 0.0012319845946912771,
+  "worst_gradient_l2_normalized_error": 0.00018367833309099465,
+  "worst_midpoint_objective_relative_error": 2.799852935331441e-05,
+  "worst_linear_residual": 9.865778566402991e-10,
+  "worst_thermal_energy_balance": 2.9431749556518324e-11,
+  "worst_electrical_terminal_balance": 2.152174715957006e-12,
+  "gates": {
+    "input_status_and_SHA_chain_validated": true,
+    "five_independent_directions_including_adjoint_aligned": true,
+    "all_new_FDs_unclipped": true,
+    "all_spatial_Q_and_remap_subgates_validated": true,
+    "strong_direction_relative_error_lt_1pct": true,
+    "all_direction_gradient_l2_normalized_error_lt_1pct": true,
+    "all_central_midpoint_objective_errors_lt_0p5pct": true,
+    "linear_residual_lt_1e-8": true,
+    "thermal_energy_balance_lt_1pct": true,
+    "electrical_terminal_balance_lt_1pct": true,
+    "GPU_FDTDX_and_GPU_linear_solves_no_CPU_fallback": true,
+    "no_Q_density_or_gradient_clipping_rescaling": true
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/full_combined_pte_multidirection_adfd/full_combined_pte_multidirection_adfd_raw.npz",
+    "bytes": 33527,
+    "sha256": "81d84ed4a0cbea53eb4156ee78e896a9cf6226f385c347218f4ee1b0f59443a6",
+    "committed_to_git": false
+  },
+  "next_gate": "latent/filter/projection JVP-VJP and end-to-end directional AD-FD; optimization remains blocked until that gate passes"
+}

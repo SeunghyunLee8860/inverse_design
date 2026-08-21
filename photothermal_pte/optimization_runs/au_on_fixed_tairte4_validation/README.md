@@ -723,3 +723,20 @@ The combined relative error is `0.013667%`; the worst linear residual is
 This is still one strongest-direction smoke, not the final multi-direction
 or latent/filter/projection certificate.  It does not yet authorize
 optimization.
+
+The independent-direction extension now passes too.  The validated Stage-70
+adjoint-aligned point is reused by exact SHA, while smooth-asymmetric,
+central-localized, design-edge-localized, and fixed-seed-random directions
+each recompute the complete forward chain at `rho +/- 0.01 d`.  Strong
+directions have at most `0.12320%` relative AD--FD error, and the worst
+near-null-safe error normalized by the full gradient norm is `0.01837%`.
+The edge-localized direction is genuinely near-null (`0.0845%` of the full
+gradient norm), so its ordinary `2.03%` relative error is reported but is not
+misclassified as a strong-direction failure.  All optical closure, spatial-Q,
+conservative-remap, residual, energy-balance, and terminal-balance gates pass.
+Status:
+`VALIDATED_FULL_COMBINED_FDTDX_THERMAL_WEIGHTING_PTE_MULTIDIRECTION_ADFD`.
+
+This closes the physical-density gradient gate.  Latent/filter/projection
+JVP--VJP and end-to-end directional AD--FD remain required before any Au
+optimization is authorized.
