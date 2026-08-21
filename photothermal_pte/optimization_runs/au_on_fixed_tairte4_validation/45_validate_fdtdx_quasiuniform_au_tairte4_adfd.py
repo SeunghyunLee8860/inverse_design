@@ -418,11 +418,11 @@ def run_bridge(output_dir: Path, cfg: BridgeConfig, *, forward_only: bool = Fals
     rho0_np = _baseline_density(cfg.design_cells_xyz[0], cfg.design_cells_xyz[1])
     rho0 = jnp.asarray(rho0_np)
 
-    # A zero-coupling ADE probe is retained only as an implementation
-    # diagnostic.  It reuses the material container and therefore is *not* an
-    # independently constructed empty-air simulation.  It must not be used to
-    # repair or promote the closed-surface energy balance.  The pass/fail gate
-    # below consequently uses the raw closed-surface flux.
+    # Run the identical source, detector, grid and PML with every ADE field
+    # coupling set to zero.  EPS_INF is one in both nominal material supports,
+    # so this is an optically exact empty-air control on the same layout.  It
+    # is reported as a signed diagnostic; raw and background-subtracted
+    # closure must both remain visible and no result is rescaled.
     windows_jit = jax.jit(solve_windows).lower(rho0).compile()
     late_scaled, previous_scaled, p_six_scaled, p_net_down_scaled = windows_jit(rho0)
     late_all_w = np.asarray(late_scaled, dtype=np.float64) * POWER_SCALE_W
@@ -449,8 +449,10 @@ def run_bridge(output_dir: Path, cfg: BridgeConfig, *, forward_only: bool = Fals
     empty_c3 = jnp.zeros_like(fixed_c3)
     empty_flux_jit = jax.jit(solve_empty_flux).lower(empty_c3).compile()
     p_six_empty_scaled, p_net_down_empty_scaled = empty_flux_jit(empty_c3)
-    p_six_empty_w = float(p_six_empty_scaled) * POWER_SCALE_W
-    p_net_down_empty_w = float(p_net_down_empty_scaled) * POWER_SCALE_W
+    # Unlike ``solve_windows``, ``solve_empty_flux`` returns native flux in W
+    # and does not divide by POWER_SCALE_W.  Do not scale it a second time.
+    p_six_empty_w = float(p_six_empty_scaled)
+    p_net_down_empty_w = float(p_net_down_empty_scaled)
     p_six_corrected_w = p_six_raw_w - p_six_empty_w
     raw_closure_relative_error = abs(late_all_w[2] - p_six_raw_w) / max(abs(p_six_raw_w), 1e-300)
     closure_relative_error = abs(late_all_w[2] - p_six_corrected_w) / max(
@@ -478,16 +480,16 @@ def run_bridge(output_dir: Path, cfg: BridgeConfig, *, forward_only: bool = Fals
                 zip(("au", "tairte4", "total"), map(float, window_changes[:3]))
             ),
             "closed_surface_inward_raw_W": p_six_raw_w,
-            "closed_surface_inward_same_container_zero_coupling_probe_W": p_six_empty_w,
-            "closed_surface_inward_raw_minus_probe_W": p_six_corrected_w,
+            "closed_surface_inward_empty_air_W": p_six_empty_w,
+            "closed_surface_inward_material_minus_empty_W": p_six_corrected_w,
             "closed_surface_raw_closure_relative_error": raw_closure_relative_error,
-            "closed_surface_raw_minus_probe_closure_relative_error": closure_relative_error,
+            "closed_surface_background_subtracted_closure_relative_error": closure_relative_error,
             "net_down_material_W": p_net_down_w,
-            "net_down_same_container_zero_coupling_probe_W": p_net_down_empty_w,
+            "net_down_empty_air_W": p_net_down_empty_w,
             "note": (
-                "The zero-coupling value reuses the material container and is not an "
-                "independent empty-air validation. Raw closure remains authoritative; "
-                "no Q clipping, gain, smoothing, or result rescaling."
+                "Exact zero-coupling empty-air control on the same source/grid/PML; "
+                "both raw and signed background-subtracted closure are reported. "
+                "No Q clipping, gain, smoothing, or result rescaling."
             ),
         }
         path = output_dir / "fdtdx_quasiuniform_forward_closure_probe.json"
@@ -585,6 +587,7 @@ def run_bridge(output_dir: Path, cfg: BridgeConfig, *, forward_only: bool = Fals
         and max_finest_strong < 0.01
         and max_finest_gradient_normalized < 0.01
         and raw_closure_relative_error < 0.01
+        and closure_relative_error < 0.01
     )
     status = (
         "VALIDATED_FDTDX_QUASIUNIFORM_AU_TAIRTE4_ADFD_BRIDGE"
@@ -718,12 +721,12 @@ def run_bridge(output_dir: Path, cfg: BridgeConfig, *, forward_only: bool = Fals
             "previous_window_powers_W": dict(zip(observable_names, map(float, previous_all_w[:3]))),
             "window_relative_change": dict(zip(observable_names, map(float, window_changes[:3]))),
             "closed_surface_inward_raw_power_W": p_six_raw_w,
-            "closed_surface_inward_same_container_zero_coupling_probe_W": p_six_empty_w,
-            "closed_surface_inward_raw_minus_probe_W": p_six_corrected_w,
+            "closed_surface_inward_empty_air_power_W": p_six_empty_w,
+            "closed_surface_inward_material_minus_empty_power_W": p_six_corrected_w,
             "closed_surface_raw_closure_relative_error": raw_closure_relative_error,
-            "closed_surface_raw_minus_probe_closure_relative_error": closure_relative_error,
+            "closed_surface_background_subtracted_closure_relative_error": closure_relative_error,
             "net_downward_power_above_structure_W": p_net_down_w,
-            "net_downward_same_container_zero_coupling_probe_W": p_net_down_empty_w,
+            "net_downward_empty_air_power_W": p_net_down_empty_w,
             "gradient_l2_W_per_rho": gradient_l2,
             "gradient_sum_relative_error": gradient_sum_error,
             "max_total_strong_relative_error_finest_step": max_finest_strong,
@@ -738,6 +741,7 @@ def run_bridge(output_dir: Path, cfg: BridgeConfig, *, forward_only: bool = Fals
             "physical_50nm_Au_and_100nm_TaIrTe4": True,
             "observable_window_changes_lt_0p5pct": settled,
             "closed_surface_closure_lt_1pct": raw_closure_relative_error < 0.01,
+            "closed_surface_background_subtracted_closure_lt_1pct": closure_relative_error < 0.01,
             "gradient_component_sum_error_lt_1e-6": gradient_sum_error < 1e-6,
             "total_finest_strong_direction_error_lt_1pct": max_finest_strong < 0.01,
             "total_finest_multidirection_gradient_normalized_error_lt_1pct": (

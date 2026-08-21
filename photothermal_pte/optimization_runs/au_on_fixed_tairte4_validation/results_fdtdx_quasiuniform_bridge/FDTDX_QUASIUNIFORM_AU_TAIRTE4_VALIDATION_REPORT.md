@@ -56,6 +56,8 @@ boundaries in Lumerical.
   the 0.5% gate in the eight-period quick run.
 - The material-loss versus raw closed-surface flux mismatch is
   `98.738720%`.
+- The signed material-minus-empty closed-surface mismatch is
+  `98.959501%`.
 - In the independent source-only control, compact-Gaussian closed-box residuals
   are `3.1262%` (`+z`) and
   `4.2523%` (`-z`); enlarging the box gives
@@ -65,7 +67,11 @@ boundaries in Lumerical.
 Therefore the source direction is not the failure.  The unresolved item is the
 finite-Gaussian closed-surface flux/collocation audit in this compact FDTDX
 configuration.  The same-container zero-coupling ADE probe is **not** an
-independent empty-air run and is not used to repair the closure gate.
+empirical correction: because every nominal material support has
+`epsilon_inf=1` and all ADE field couplings are zeroed, it is an exact
+empty-air optical control on the identical source/grid/PML layout.  Its flux
+was already in watts; the earlier extra `1e-24` postprocessing factor has been
+removed.  Both raw and background-subtracted closure still fail.
 
 ## Decision
 
