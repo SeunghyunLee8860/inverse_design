@@ -128,6 +128,21 @@ material-overlap remapping, an explicit thermal solve, combined PTE AD--FD,
 and optimization remain separate fail-closed gates. See
 `results_fdtdx_substrate_spatial_q_export_16period_4window_gpu3/`.
 
+The subsequent material-overlap remap gate now passes. Each native Yee
+component first forms `p=Q*V_dual`; that power is distributed by exact
+separable intersection with the absorbing material's primal thermal cells.
+The map does not use nearest-cell projection and does not delete a boundary
+sample or apply a global gain. Source and target totals are both
+`2.4779539328655175e-13 W`; the worst component conservation error is
+`1.96e-16` and the worst transpose dot-test error is `5.73e-15`. Status:
+`VALIDATED_FDTDX_SPATIAL_Q_CONSERVATIVE_MATERIAL_OVERLAP_REMAP`.
+
+The remapped thermal-Q NPZ is also outside Git: 23,624,266 bytes, SHA-256
+`6ab62c06174cd1a0a2b2b1cd8778dcc30e09a3832c2fa09d9b56397bba278d61`.
+This validates the mapping operator and its transpose, not a temperature or
+PTE result. See
+`results_fdtdx_material_overlap_thermal_remap_16period_4window/`.
+
 This folder is intentionally separate from the completed TaIrTe4/void
 optimization runs.  It validates a new physical contract:
 
