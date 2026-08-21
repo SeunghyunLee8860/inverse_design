@@ -38,9 +38,20 @@
   `VALIDATED_FDTDX_DIAGNOSTIC_SUBSTRATE_BINARY_ENDPOINT_CLOSURE`.
 - This substrate checkpoint is not yet production-certified because the
   installed Lumerical Palik-Si readback remains blocked; the cited lossless
-  10-um Si value is an explicit diagnostic assumption. Substrate-bearing
-  density AD--FD and combined optical/thermal/electrical PTE AD--FD remain
-  pending.
+  10-um Si value is an explicit diagnostic assumption.
+- The 20x20, 500-nm-pitch nonuniform-Au optical-total-Q derivative now passes
+  a stable central-FD step plateau on that same 32-period substrate contract.
+  Strong-direction errors are `0.098122%` (`h=0.02`) and `0.085184%`
+  (`h=0.01`), while those two FD derivatives differ by `0.183150%`.
+  `h=0.005` remains published as a fail-closed `1.004673%` small-step
+  float32-cancellation diagnostic; no gradient rescaling was used.  Baseline
+  closure/window errors are `0.137738%`/`0.014438%`. Status:
+  `VALIDATED_FDTDX_DIAGNOSTIC_SUBSTRATE_NONUNIFORM_AU_GRADIENT_STABLE_STEP_PLATEAU`.
+- The strict AD required `5773.955 s` and about 36.2 GB, so it is an accuracy
+  reference rather than an approved optimization iteration. The next gate is
+  shorter-period objective/gradient equivalence, followed by the spatially
+  weighted combined optical/thermal/electrical PTE AD--FD. Optimization is
+  still blocked.
 
 ## Run 005 bounded low-beta topology-exploration pilot
 

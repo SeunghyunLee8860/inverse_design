@@ -259,6 +259,12 @@ def run(
     matched_substrate_interface_grid: bool = False,
     substrate_total_periods: int | None = None,
     substrate_window_periods: int | None = None,
+    gradient_direction_names: tuple[str, ...] = (
+        "smooth_asymmetric",
+        "fixed_seed_random",
+    ),
+    gradient_steps: tuple[float, ...] = (0.01, 0.005),
+    gradient_reference_json: Path | None = None,
 ) -> dict[str, object]:
     import jax
     import jax.numpy as jnp
@@ -979,6 +985,10 @@ def run(
     if gradient_smoke:
         from fdtdx.fdtd.fdtd import checkpointed_fdtd
 
+        if not gradient_direction_names:
+            raise ValueError("At least one gradient direction is required")
+        if not gradient_steps or any(step <= 0.0 for step in gradient_steps):
+            raise ValueError(f"Gradient steps must be positive: {gradient_steps}")
         latent_shape = (20, 20)
         optical_repeat = (au_slice[0].stop - au_slice[0].start) // latent_shape[0]
         if optical_repeat != 5 or (au_slice[1].stop - au_slice[1].start) != 5 * latent_shape[1]:
@@ -1039,7 +1049,23 @@ def run(
             p_closed = eta0 * placed["material_flux"].compute_net_flux(
                 out.detector_states["material_flux"]
             )[0]
-            return late_power[-1], (late_power, previous_power, p_inc, p_closed)
+            p_closed_primary = (
+                eta0
+                * jnp.mean(
+                    out.detector_states["material_flux_deep_td"]["poynting_flux"][
+                        :, 0
+                    ]
+                )
+                if include_substrate
+                else p_closed
+            )
+            return late_power[-1], (
+                late_power,
+                previous_power,
+                p_inc,
+                p_closed,
+                p_closed_primary,
+            )
 
         def substrate_reference_aux():
             """Return Q and closed flux for the fixed optical substrate alone.
@@ -1057,47 +1083,108 @@ def run(
                 show_progress=False,
             )
             late_power = powers_for_density(out, "late", zero, ta_strength=0.0)
-            p_closed = eta0 * placed["material_flux"].compute_net_flux(
-                out.detector_states["material_flux"]
-            )[0]
-            return late_power[-1], p_closed
-
-        print(
-            f"[gradient-smoke] compiling checkpointed AD with {gradient_checkpoints} checkpoints",
-            flush=True,
-        )
-        compile_start = time.perf_counter()
-        value_grad = jax.jit(jax.value_and_grad(objective_with_aux, has_aux=True)).lower(rho0).compile()
-        compile_seconds = time.perf_counter() - compile_start
-        print(f"[gradient-smoke] AD compile complete: {compile_seconds:.3f} s", flush=True)
-        ad_start = time.perf_counter()
-        (value_scaled, aux), gradient_scaled = value_grad(rho0)
-        jax.block_until_ready(gradient_scaled)
-        ad_seconds = time.perf_counter() - ad_start
-        print(f"[gradient-smoke] AD execution complete: {ad_seconds:.3f} s", flush=True)
-        late_scaled, previous_scaled, p_inc, p_closed = aux
-        value_w = float(value_scaled) * POWER_SCALE_W
-        gradient_w = np.asarray(gradient_scaled, dtype=np.float64) * POWER_SCALE_W
-        late_w = np.asarray(late_scaled, dtype=np.float64) * POWER_SCALE_W
-        previous_w = np.asarray(previous_scaled, dtype=np.float64) * POWER_SCALE_W
-        grad_l2 = float(np.linalg.norm(gradient_w))
-        substrate_reference_q_w = 0.0
-        substrate_reference_closed_w = 0.0
-        if include_substrate:
-            print("[gradient-smoke] computing substrate-only closure reference", flush=True)
-            substrate_reference_jit = jax.jit(substrate_reference_aux).lower().compile()
-            substrate_reference_q_scaled, substrate_reference_closed = substrate_reference_jit()
-            substrate_reference_q_w = (
-                float(substrate_reference_q_scaled) * POWER_SCALE_W
+            p_closed_primary = eta0 * jnp.mean(
+                out.detector_states["material_flux_deep_td"]["poynting_flux"][:, 0]
             )
-            substrate_reference_closed_w = float(substrate_reference_closed)
+            return late_power[-1], p_closed_primary
+
+        reference = None
+        reference_ad_directional: dict[str, float] = {}
+        if gradient_reference_json is None:
+            print(
+                f"[gradient-smoke] compiling checkpointed AD with {gradient_checkpoints} checkpoints",
+                flush=True,
+            )
+            compile_start = time.perf_counter()
+            value_grad = (
+                jax.jit(jax.value_and_grad(objective_with_aux, has_aux=True))
+                .lower(rho0)
+                .compile()
+            )
+            compile_seconds = time.perf_counter() - compile_start
+            print(f"[gradient-smoke] AD compile complete: {compile_seconds:.3f} s", flush=True)
+            ad_start = time.perf_counter()
+            (value_scaled, aux), gradient_scaled = value_grad(rho0)
+            jax.block_until_ready(gradient_scaled)
+            ad_seconds = time.perf_counter() - ad_start
+            print(f"[gradient-smoke] AD execution complete: {ad_seconds:.3f} s", flush=True)
+            late_scaled, previous_scaled, p_inc, p_closed, p_closed_primary = aux
+            value_w = float(value_scaled) * POWER_SCALE_W
+            gradient_w = np.asarray(gradient_scaled, dtype=np.float64) * POWER_SCALE_W
+            late_w = np.asarray(late_scaled, dtype=np.float64) * POWER_SCALE_W
+            previous_w = np.asarray(previous_scaled, dtype=np.float64) * POWER_SCALE_W
+            grad_l2 = float(np.linalg.norm(gradient_w))
+            substrate_reference_q_w = 0.0
+            substrate_reference_closed_w = 0.0
+            if include_substrate:
+                print("[gradient-smoke] computing substrate-only closure reference", flush=True)
+                substrate_reference_jit = jax.jit(substrate_reference_aux).lower().compile()
+                substrate_reference_q_scaled, substrate_reference_closed = substrate_reference_jit()
+                substrate_reference_q_w = (
+                    float(substrate_reference_q_scaled) * POWER_SCALE_W
+                )
+                substrate_reference_closed_w = float(substrate_reference_closed)
+        else:
+            reference = json.loads(Path(gradient_reference_json).read_text(encoding="utf-8"))
+            reference_numerics = reference["audit"]["numerics"]
+            if (
+                reference_numerics["total_periods"] != total_periods
+                or reference_numerics["window_periods"] != window_periods
+                or reference["audit"]["grid"]["shape_xyz"] != list(grid.shape)
+            ):
+                raise RuntimeError("Stored gradient reference does not match the current grid/time contract")
+            if include_adjoint_aligned:
+                raise RuntimeError("Forward-only refinement cannot reconstruct an adjoint-aligned direction")
+            baseline = reference["baseline"]
+            value_w = float(baseline["P_Q_W"])
+            grad_l2 = float(baseline["gradient_l2_W"])
+            component = baseline["component_power_W"]
+            component_vectors = [component["au_xyz"], component["tairte4_xyz"]]
+            if include_substrate:
+                component_vectors.append(component["sio2_xyz"])
+            late_w = np.asarray(
+                [value for vector in component_vectors for value in vector] + [value_w],
+                dtype=np.float64,
+            )
+            previous_w = late_w.copy()
+            previous_w[-1] = value_w / (
+                1.0 - float(baseline["late_window_relative_change"])
+            )
+            p_inc = float(baseline["incident_plane_W"])
+            p_closed = float(baseline["near_phasor_closed_surface_inward_W"])
+            p_closed_primary = float(baseline["closed_surface_inward_W"])
+            closure_ref = baseline["closure_correction"]
+            substrate_reference_q_w = float(closure_ref.get("substrate_only_Q_W", 0.0))
+            substrate_reference_closed_w = float(
+                closure_ref.get("substrate_only_closed_surface_W", 0.0)
+            )
+            gradient_w = np.asarray((grad_l2,), dtype=np.float64)
+            compile_seconds = 0.0
+            ad_seconds = 0.0
+            reference_ad_directional = {
+                row["direction"]: float(row["ad_W_per_unit_direction"])
+                for row in reference["directions"]
+            }
+            print(
+                f"[gradient-smoke] reusing immutable AD reference {gradient_reference_json}; "
+                "running forward FD only",
+                flush=True,
+            )
 
         directions_np = {}
         x_np = np.linspace(-1.0, 1.0, latent_shape[0])[:, None]
         y_np = np.linspace(-1.0, 1.0, latent_shape[1])[None, :]
         smooth = np.sin(0.7 * math.pi * x_np) * np.cos(0.55 * math.pi * y_np) + 0.21 * x_np
         random = np.random.default_rng(20260821).standard_normal(latent_shape)
-        for name, direction in (("smooth_asymmetric", smooth), ("fixed_seed_random", random)):
+        available_directions = {
+            "smooth_asymmetric": smooth,
+            "fixed_seed_random": random,
+        }
+        unknown_directions = set(gradient_direction_names) - set(available_directions)
+        if unknown_directions:
+            raise ValueError(f"Unknown gradient directions: {sorted(unknown_directions)}")
+        for name in gradient_direction_names:
+            direction = available_directions[name]
             directions_np[name] = direction / np.linalg.norm(direction)
         if include_adjoint_aligned:
             # This direction is formed only after the full reverse-mode solve.
@@ -1114,8 +1201,16 @@ def run(
         fd_start = time.perf_counter()
         strong_direction_threshold_fraction = 0.05
         for direction_name, direction_np in directions_np.items():
-            ad_directional = float(np.vdot(gradient_w, direction_np).real)
-            for h in (0.01, 0.005):
+            if reference is not None and direction_name not in reference_ad_directional:
+                raise RuntimeError(
+                    f"Stored AD reference has no direction {direction_name!r}"
+                )
+            ad_directional = (
+                reference_ad_directional[direction_name]
+                if reference is not None
+                else float(np.vdot(gradient_w, direction_np).real)
+            )
+            for h in gradient_steps:
                 print(f"[gradient-smoke] FD {direction_name}, h={h:g}", flush=True)
                 direction = jnp.asarray(direction_np, dtype=rho0.dtype)
                 plus = float(objective_jit(rho0 + h * direction)) * POWER_SCALE_W
@@ -1152,7 +1247,8 @@ def run(
                 )
         fd_seconds = time.perf_counter() - fd_start
 
-        finest = [row for row in rows if row["h"] == 0.005]
+        finest_h = min(gradient_steps)
+        finest = [row for row in rows if row["h"] == finest_h]
         strongest_error = max(
             (row["strong_relative_error"] for row in finest if row["strong_direction"]), default=0.0
         )
@@ -1162,9 +1258,12 @@ def run(
             # With a lossy fixed substrate the substrate-only closed flux is
             # physical, not an empty-space correction.  Poynting closure must
             # therefore compare the full local Q directly with the full box.
-            corrected_closed = float(p_closed)
+            corrected_closed = float(p_closed_primary)
             closure_correction = {
-                "method": "none; direct local-Q versus matched closed-volume flux",
+                "method": (
+                    "none; direct late-window local-Q versus deep-box time-domain "
+                    "matched-volume flux"
+                ),
                 "substrate_only_Q_W": substrate_reference_q_w,
                 "substrate_only_closed_surface_W": substrate_reference_closed_w,
                 "substrate_only_closed_minus_Q_residual_W": numerical_box_residual,
@@ -1237,7 +1336,8 @@ def run(
                     ),
                 },
                 "incident_plane_W": float(p_inc),
-                "closed_surface_inward_W": float(p_closed),
+                "near_phasor_closed_surface_inward_W": float(p_closed),
+                "closed_surface_inward_W": float(p_closed_primary),
                 "empty_subtracted_closed_surface_W": corrected_closed,
                 "closure_correction": closure_correction,
                 "Q_flux_closure_relative": closure,
@@ -1253,7 +1353,7 @@ def run(
             "runtime": {
                 "compile_seconds": compile_seconds,
                 "ad_seconds": ad_seconds,
-                "central_fd_forward_count": 2 * len(directions_np) * 2,
+                "central_fd_forward_count": 2 * len(directions_np) * len(gradient_steps),
                 "central_fd_forward_seconds": fd_seconds,
             },
             "gates": gates,
@@ -1614,6 +1714,21 @@ def main() -> int:
     parser.add_argument("--substrate-total-periods", type=int)
     parser.add_argument("--substrate-window-periods", type=int)
     parser.add_argument(
+        "--gradient-directions",
+        default="smooth_asymmetric,fixed_seed_random",
+        help="comma-separated subset of smooth_asymmetric,fixed_seed_random",
+    )
+    parser.add_argument(
+        "--gradient-steps",
+        default="0.01,0.005",
+        help="comma-separated positive central-FD steps",
+    )
+    parser.add_argument(
+        "--gradient-reference-json",
+        type=Path,
+        help="reuse stored AD directional values and execute forward FD only",
+    )
+    parser.add_argument(
         "--substrate-loss-representation",
         choices=("lorentz", "conductivity"),
         default="conductivity",
@@ -1643,6 +1758,15 @@ def main() -> int:
         matched_substrate_interface_grid=args.matched_substrate_interface_grid,
         substrate_total_periods=args.substrate_total_periods,
         substrate_window_periods=args.substrate_window_periods,
+        gradient_direction_names=tuple(
+            name.strip() for name in args.gradient_directions.split(",") if name.strip()
+        ),
+        gradient_steps=tuple(
+            float(value.strip())
+            for value in args.gradient_steps.split(",")
+            if value.strip()
+        ),
+        gradient_reference_json=args.gradient_reference_json,
     )
     if args.audit_only:
         return 0

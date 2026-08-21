@@ -66,7 +66,22 @@ the time--memory tradeoff, not the physical or differentiation contract.
 Isolated Au/TaIrTe4 thermal/contact and floating-Au electrical/weighting
 AD--FD controls now pass.  The 10-um SiO2/Si optical substrate endpoint also
 passes after correcting component-specific Yee dual-volume integration.
-Coupled PTE, combined-gradient, and optimization validation remain pending.
+The same 32-period substrate-bearing contract now passes a nonuniform-Au
+total-optical-Q gradient smoke on its stable central-FD step plateau.  For one
+strong smooth direction, the AD--FD errors are `0.098122%` at `h=0.02` and
+`0.085184%` at `h=0.01`; the two FD values differ by only `0.183150%`.
+The `h=0.005` error of `1.004673%` is retained as a fail-closed float32
+subtraction/cancellation diagnostic rather than deleted or rescaled.  The
+baseline loss/flux closure is `0.137738%` and the late-window change is
+`0.014438%`.  Status:
+`VALIDATED_FDTDX_DIAGNOSTIC_SUBSTRATE_NONUNIFORM_AU_GRADIENT_STABLE_STEP_PLATEAU`.
+
+The strict value+gradient required `5773.955 s` and about 36.2 GB with 16
+checkpoints.  It is therefore the accuracy reference, not yet an approved
+per-iteration optimization contract.  A shorter-period candidate must first
+match this objective and gradient direction.  Coupled PTE,
+combined-gradient, and optimization validation remain pending.  See
+`results_fdtdx_substrate_gradient_plateau_gpu3/`.
 
 This folder is intentionally separate from the completed TaIrTe4/void
 optimization runs.  It validates a new physical contract:
@@ -557,6 +572,9 @@ closes to `0.4742%` for substrate-only, `0.1101%` for TaIrTe4/substrate, and
 
 This remains a diagnostic material contract because the installed Lumerical
 Palik-Si readback is blocked; Si uses an explicitly cited lossless `n=3.4215`
-value at 10 um. Substrate-bearing optical density AD--FD and the combined
-optical/thermal/electrical PTE gradient remain the next gates. See
-`results_fdtdx_substrate_matched_interface_endpoints_32period_gpu3/`.
+value at 10 um.  A 20x20 nonuniform-Au substrate-bearing optical-Q gradient
+also passes at the stable `h=0.02` and `h=0.01` plateau; `h=0.005` remains a
+preserved small-step failure.  The combined optical/thermal/electrical PTE
+gradient remains pending. See
+`results_fdtdx_substrate_matched_interface_endpoints_32period_gpu3/` and
+`results_fdtdx_substrate_gradient_plateau_gpu3/`.
