@@ -96,6 +96,21 @@ does not certify a full-vector gradient angle.  It promotes the 16/4 contract
 only for the tested objective/norm/direction screening, not for combined PTE
 or optimization. See `results_fdtdx_fast_contract_equivalence_gpu3/`.
 
+The thermal/contact and floating-Au weighting controls are now also joined in
+one fixed-Q coupled PTE operator.  The same 20x20 density changes Au lateral
+thermal conductivity, Au/TaIrTe4 thermal contact area, floating-Au sheet
+conductivity, finite vertical electrical contact, and therefore the weighting
+solution.  At `h=0.0025`, the worst strong-direction AD--FD error is
+`0.000012%` and the worst gradient-L2-normalized error is `0.000004%` over
+five directions.  Maximum linear residual is `7.10e-12`; thermal and terminal
+balances are at roundoff. Status:
+`VALIDATED_COUPLED_AU_THERMAL_WEIGHTING_PTE_FIXED_Q_CONTROL`.
+
+This is deliberately a fixed-Q operator control, not a Maxwell-coupled PTE
+prediction.  `G_Au/Ta=1.724138e7 W/(m2 K)` is an Au/MoS2 calculated analogue,
+not TaIrTe4 data; the electrical contact is also a numerical scenario and
+`S_Au=0`. See `results_au_coupled_thermal_weighting_pte_fixed_q/`.
+
 This folder is intentionally separate from the completed TaIrTe4/void
 optimization runs.  It validates a new physical contract:
 

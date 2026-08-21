@@ -61,6 +61,18 @@
   promotion. The next gate is the spatially weighted combined
   optical/thermal/electrical PTE AD--FD with vector/hash persistence.
   Optimization remains blocked.
+- The previously separate Au thermal/contact and floating-Au
+  electrical/weighting operators now pass a common fixed-Q coupled PTE
+  AD--FD control.  Five directions and three steps were tested; at `h=0.0025`
+  the worst strong error is `0.000012%` and worst gradient-L2-normalized error
+  is `0.000004%`. Maximum residual is `7.10e-12`; thermal/electrical balances
+  are at roundoff. Status:
+  `VALIDATED_COUPLED_AU_THERMAL_WEIGHTING_PTE_FIXED_Q_CONTROL`.
+- This fixed-Q control uses an Au/MoS2 calculated thermal-contact analogue,
+  a numerical electrical-contact scenario, and `S_Au=0`; none is claimed as
+  measured Au/TaIrTe4 data. It excludes the Maxwell gradient. The remaining
+  blocker is therefore the native-Yee spatial-Q pullback and full
+  Maxwell+thermal+electrical directional AD--FD.
 
 ## Run 005 bounded low-beta topology-exploration pilot
 
