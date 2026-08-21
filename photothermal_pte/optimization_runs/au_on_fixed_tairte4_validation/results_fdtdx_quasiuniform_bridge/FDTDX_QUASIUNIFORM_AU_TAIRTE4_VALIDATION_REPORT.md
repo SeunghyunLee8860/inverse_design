@@ -1,6 +1,6 @@
 # FDTDX quasi-uniform Au/TaIrTe4 validation
 
-**Status: `PARTIAL_FDTDX_AU_GRADIENT_VALIDATED_BLOCKED_FINITE_GAUSSIAN_CLOSURE`**
+**Status: `PARTIAL_FDTDX_AU_GRADIENT_AND_W8P5_SOURCE_VALIDATED_PENDING_MATERIAL_CROSSCHECK`**
 
 This checkpoint tests whether the post-release FDTDX main branch can represent
 physical 50-nm Au on physical 100-nm TaIrTe4 with a quasi-uniform Cartesian
@@ -48,6 +48,14 @@ The maximum multi-direction gradient-L2-normalized error is
 This validates reverse-mode differentiation of the fixed-support, dispersive Au
 material relaxation for this compact grid.  It does not validate moving Au
 boundaries in Lumerical.
+4. A separate production-width empty-air source audit passed every gate.  For
+   requested `w0=8.5 um`, primary `Ex` gives a realized mean waist of
+   `8.457306 um`,
+   `3.7055%`
+   ellipticity, and a closed-surface residual of
+   `0.365476%`
+   of target-plane incident power.  Its GPU execution time after compilation
+   was `0.4628 s` on this source-only grid.
 
 ## What failed and remains blocked
 
@@ -64,9 +72,11 @@ boundaries in Lumerical.
   `11.9783%` and `12.8954%`.
   The corresponding uniform-source large-box residual is only about 0.08%.
 
-Therefore the source direction is not the failure.  The unresolved item is the
-finite-Gaussian closed-surface flux/collocation audit in this compact FDTDX
-configuration.  The same-container zero-coupling ADE probe is **not** an
+Therefore the source direction is not the failure, and the closure problem is
+specific to the deliberately subwavelength compact Gaussian (`w0≈0.594 um` at
+`lambda=10 um`), not the production-width empty-air source.  The unresolved
+item is the full material-bearing production-width cross-solver checkpoint.
+The same-container zero-coupling ADE probe is **not** an
 empirical correction: because every nominal material support has
 `epsilon_inf=1` and all ADE field couplings are zeroed, it is an exact
 empty-air optical control on the identical source/grid/PML layout.  Its flux
@@ -75,9 +85,9 @@ removed.  Both raw and background-subtracted closure still fail.
 
 ## Decision
 
-FDTDX is usable now for algorithmic dispersive-material AD controls.  It is not
-yet promoted as the production finite-Gaussian Au inverse-design solver.  Before
-thermal/PTE coupling or optimization, the next optical checkpoint is a
-uniform/periodic or sufficiently wide source cross-solver comparison with
-matched Lumerical endpoints, followed by a finite-Gaussian closure repair that
-passes without empirical normalization.
+FDTDX is usable now for algorithmic dispersive-material AD controls and for the
+production-width source-only forward contract.  It is not yet promoted as the
+production Au inverse-design solver.  Before thermal/PTE coupling or
+optimization, the next optical checkpoint is a material-bearing
+production-width FDTDX calculation against the already validated exact-binary
+Lumerical endpoints, using local fine Au/TaIrTe4 mesh and coarse distant air.

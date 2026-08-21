@@ -501,7 +501,11 @@ python 47_summarize_fdtdx_quasiuniform_au_tairte4.py
 
 The five-direction dispersive-material AD--FD check passes at the 1% level,
 and the independent source-only control verifies `-z/+z` reciprocity.  The
-finite-Gaussian closed-surface flux audit does not pass, however, so the
-published state is
-`PARTIAL_FDTDX_AU_GRADIENT_VALIDATED_BLOCKED_FINITE_GAUSSIAN_CLOSURE`.
-This route is not yet the production 8.5-um-waist thermal/PTE optimizer.
+subwavelength compact Gaussian used by the material-gradient control fails its
+closed-surface flux audit.  A separate production-width `w0=8.5 um` source-only
+control, however, realizes a primary-Ex mean waist of `8.4573 um` and passes
+the 0.5% closed-surface residual gate at `0.3655%`.  The published state is
+`PARTIAL_FDTDX_AU_GRADIENT_AND_W8P5_SOURCE_VALIDATED_PENDING_MATERIAL_CROSSCHECK`.
+This route is not yet the production thermal/PTE optimizer; the next gate is a
+material-bearing production-width comparison against the validated exact-binary
+Lumerical endpoints.

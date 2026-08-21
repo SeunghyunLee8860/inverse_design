@@ -13,6 +13,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 DEFAULT_BRIDGE = HERE / "results_fdtdx_quasiuniform_bridge"
 DEFAULT_SOURCE = HERE / "results_fdtdx_quasiuniform_source"
+DEFAULT_W8_SOURCE = HERE / "results_fdtdx_w8p5um_source_only"
 
 
 def sha256(path: Path) -> str:
@@ -31,14 +32,18 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--bridge-dir", type=Path, default=DEFAULT_BRIDGE)
     parser.add_argument("--source-dir", type=Path, default=DEFAULT_SOURCE)
+    parser.add_argument("--w8-source-dir", type=Path, default=DEFAULT_W8_SOURCE)
     args = parser.parse_args()
 
     bridge_json = args.bridge_dir / "fdtdx_quasiuniform_au_tairte4_adfd_summary.json"
     source_json = args.source_dir / "fdtdx_quasiuniform_source_direction_summary.json"
+    w8_source_json = args.w8_source_dir / "fdtdx_w8p5um_source_only_summary.json"
+    w8_source_plot = args.w8_source_dir / "fdtdx_w8p5um_source_only.png"
     directions_csv = args.bridge_dir / "fdtdx_quasiuniform_au_tairte4_adfd_directions.csv"
     plot = args.bridge_dir / "fdtdx_quasiuniform_au_tairte4_adfd.png"
     bridge = load_json(bridge_json)
     source = load_json(source_json)
+    w8_source = load_json(w8_source_json)
 
     with directions_csv.open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
@@ -64,7 +69,7 @@ def main() -> int:
         for direction in ("+", "-")
     }
 
-    status = "PARTIAL_FDTDX_AU_GRADIENT_VALIDATED_BLOCKED_FINITE_GAUSSIAN_CLOSURE"
+    status = "PARTIAL_FDTDX_AU_GRADIENT_AND_W8P5_SOURCE_VALIDATED_PENDING_MATERIAL_CROSSCHECK"
     report_path = args.bridge_dir / "FDTDX_QUASIUNIFORM_AU_TAIRTE4_VALIDATION_REPORT.md"
     report = f"""# FDTDX quasi-uniform Au/TaIrTe4 validation
 
@@ -114,6 +119,14 @@ The maximum multi-direction gradient-L2-normalized error is
 This validates reverse-mode differentiation of the fixed-support, dispersive Au
 material relaxation for this compact grid.  It does not validate moving Au
 boundaries in Lumerical.
+4. A separate production-width empty-air source audit passed every gate.  For
+   requested `w0=8.5 um`, primary `Ex` gives a realized mean waist of
+   `{1e6 * w8_source['results']['beam_fit_primary_Ex']['mean_w0_m']:.6f} um`,
+   `{100 * w8_source['results']['beam_fit_primary_Ex']['ellipticity']:.4f}%`
+   ellipticity, and a closed-surface residual of
+   `{100 * w8_source['results']['closed_surface_residual_over_incident_power']:.6f}%`
+   of target-plane incident power.  Its GPU execution time after compilation
+   was `{w8_source['results']['execution_seconds']:.4f} s` on this source-only grid.
 
 ## What failed and remains blocked
 
@@ -130,9 +143,11 @@ boundaries in Lumerical.
   `{gaussian_large['+']:.4f}%` and `{gaussian_large['-']:.4f}%`.
   The corresponding uniform-source large-box residual is only about 0.08%.
 
-Therefore the source direction is not the failure.  The unresolved item is the
-finite-Gaussian closed-surface flux/collocation audit in this compact FDTDX
-configuration.  The same-container zero-coupling ADE probe is **not** an
+Therefore the source direction is not the failure, and the closure problem is
+specific to the deliberately subwavelength compact Gaussian (`w0≈0.594 um` at
+`lambda=10 um`), not the production-width empty-air source.  The unresolved
+item is the full material-bearing production-width cross-solver checkpoint.
+The same-container zero-coupling ADE probe is **not** an
 empirical correction: because every nominal material support has
 `epsilon_inf=1` and all ADE field couplings are zeroed, it is an exact
 empty-air optical control on the identical source/grid/PML layout.  Its flux
@@ -141,12 +156,12 @@ removed.  Both raw and background-subtracted closure still fail.
 
 ## Decision
 
-FDTDX is usable now for algorithmic dispersive-material AD controls.  It is not
-yet promoted as the production finite-Gaussian Au inverse-design solver.  Before
-thermal/PTE coupling or optimization, the next optical checkpoint is a
-uniform/periodic or sufficiently wide source cross-solver comparison with
-matched Lumerical endpoints, followed by a finite-Gaussian closure repair that
-passes without empirical normalization.
+FDTDX is usable now for algorithmic dispersive-material AD controls and for the
+production-width source-only forward contract.  It is not yet promoted as the
+production Au inverse-design solver.  Before thermal/PTE coupling or
+optimization, the next optical checkpoint is a material-bearing
+production-width FDTDX calculation against the already validated exact-binary
+Lumerical endpoints, using local fine Au/TaIrTe4 mesh and coarse distant air.
 """
     report_path.write_text(report, encoding="utf-8")
 
@@ -154,10 +169,13 @@ passes without empirical normalization.
         HERE / "45_validate_fdtdx_quasiuniform_au_tairte4_adfd.py",
         HERE / "46_validate_fdtdx_quasiuniform_source_direction.py",
         Path(__file__).resolve(),
+        HERE / "48_validate_fdtdx_w8p5um_source_only.py",
         bridge_json,
         directions_csv,
         plot,
         source_json,
+        w8_source_json,
+        w8_source_plot,
         report_path,
     ]
     manifest = {
@@ -172,6 +190,7 @@ passes without empirical normalization.
         "generation_commands": [
             "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx JAX_PLATFORMS=cuda XLA_PYTHON_CLIENT_PREALLOCATE=false python 45_validate_fdtdx_quasiuniform_au_tairte4_adfd.py --quick --output-dir results_fdtdx_quasiuniform_bridge",
             "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx JAX_PLATFORMS=cuda XLA_PYTHON_CLIENT_PREALLOCATE=false python 46_validate_fdtdx_quasiuniform_source_direction.py --output-dir results_fdtdx_quasiuniform_source",
+            "CUDA_VISIBLE_DEVICES=5 PYTHONPATH=/home/seunghyun/.local/fdtdx_main_src/src:/home/seunghyun/.local/au_fdtdx JAX_PLATFORMS=cuda XLA_PYTHON_CLIENT_PREALLOCATE=false python 48_validate_fdtdx_w8p5um_source_only.py --output-dir results_fdtdx_w8p5um_source_only",
             "python 47_summarize_fdtdx_quasiuniform_au_tairte4.py",
         ],
         "files": {
