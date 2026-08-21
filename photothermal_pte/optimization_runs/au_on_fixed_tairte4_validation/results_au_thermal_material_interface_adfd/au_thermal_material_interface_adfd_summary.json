@@ -1,0 +1,197 @@
+{
+  "status": "VALIDATED_AU_THERMAL_MATERIAL_INTERFACE_CONTROL",
+  "scope": "fixed-Q thermal material/interface operator only; no Maxwell, PTE, electrical, or optimization",
+  "geometry": {
+    "design_cells_xy": [
+      20,
+      20
+    ],
+    "design_pixel_m": [
+      5e-07,
+      5e-07
+    ],
+    "design_span_m": [
+      9.999999999999999e-06,
+      9.999999999999999e-06
+    ],
+    "TaIrTe4_thickness_m": 1e-07,
+    "Au_or_air_layer_thickness_m": 5e-08,
+    "lateral_boundary": "adiabatic control",
+    "bottom_boundary": "paper-reduced thermally-grown-SiO2 Robin to bath",
+    "top_boundary": "ambient Robin"
+  },
+  "materials": {
+    "k_TaIrTe4_xyz_W_mK": [
+      3.8,
+      14.4,
+      1.0
+    ],
+    "k_Au_bulk_reference_W_mK": 317.0,
+    "k_air_W_mK": 0.026,
+    "G_TaIrTe4_air_W_m2K": 1.0,
+    "G_TaIrTe4_thermally_grown_SiO2_W_m2K": 7370000.0,
+    "h_top_air_W_m2K": 10.0,
+    "Au_bulk_note": "reference scenario, not a certified 50-nm-film value"
+  },
+  "gray_law": {
+    "interpretation": "rho is parallel Au-contact area fraction",
+    "phi": "rho^1",
+    "vertical_face_conductance": "A*((1-phi)/R_Ta-air + phi/R_Ta-Au)",
+    "lateral_top_layer": "harmonic half-cell resistance using k_air+phi*(k_Au-k_air)",
+    "clipping_or_rescaling": false
+  },
+  "fixed_Q": {
+    "power_W": 1e-06,
+    "location": "TaIrTe4 only",
+    "optical_gradient_included": false
+  },
+  "scenarios": {
+    "low_numerical_scenario": {
+      "G_Au_Ta_W_m2K": 1000000.0,
+      "provenance": "numerical sensitivity scenario; not confidence interval",
+      "base_objective_K": -0.000856103891296849,
+      "Tmax_Ta_K": 0.013895898077650336,
+      "Tmax_top_design_layer_K": 0.0029701799047479804,
+      "temperature_jump_cell_center_mean_K": -9.972670254357042e-05,
+      "gradient_l2_K_per_rho": 1.5677403960194264e-05,
+      "solver": {
+        "forward_relative_residual": 7.236436664348092e-12,
+        "adjoint_relative_residual": 3.940482440101822e-12,
+        "forward_iterations": 110,
+        "adjoint_iterations": 80,
+        "two_solve_wall_s": 1.3203449472784996,
+        "CPU_linear_solve_fallback": false
+      },
+      "energy_balance": {
+        "source_power_W": 1.0000000000000002e-06,
+        "bottom_power_W": 9.99998043424864e-07,
+        "top_power_W": 1.9565751696568876e-12,
+        "relative_error": 3.345780141654486e-14
+      },
+      "worst_fine_step_ADFD_relative_error": 1.2141051957128032e-07,
+      "interface_series_control": {
+        "q_W_m2": 200000.0,
+        "analytic_interface_jump_K": 0.2,
+        "reconstructed_interface_jump_K": 0.19999999999999998,
+        "absolute_jump_error_K": 2.7755575615628914e-17,
+        "relative_jump_error": 1.3877787807814457e-16,
+        "perfect_contact": false,
+        "note": "independent 1D series-resistance algebra control"
+      }
+    },
+    "Au_MoS2_theory_analogue_not_TaIrTe4_data": {
+      "G_Au_Ta_W_m2K": 17241379.310344826,
+      "provenance": "Au/MoS2 theoretical analogue; not TaIrTe4 data",
+      "base_objective_K": -0.0007182848077893489,
+      "Tmax_Ta_K": 0.010725424399230028,
+      "Tmax_top_design_layer_K": 0.005772143921389621,
+      "temperature_jump_cell_center_mean_K": -4.103858126292693e-05,
+      "gradient_l2_K_per_rho": 2.760361793624399e-05,
+      "solver": {
+        "forward_relative_residual": 1.913389537905949e-12,
+        "adjoint_relative_residual": 1.9631106830405426e-13,
+        "forward_iterations": 100,
+        "adjoint_iterations": 80,
+        "two_solve_wall_s": 0.0410463809967041,
+        "CPU_linear_solve_fallback": false
+      },
+      "energy_balance": {
+        "source_power_W": 1.0000000000000002e-06,
+        "bottom_power_W": 9.999981021127971e-07,
+        "top_power_W": 1.8978871574855807e-12,
+        "relative_error": 4.552802091491864e-14
+      },
+      "worst_fine_step_ADFD_relative_error": 3.699538542298464e-07,
+      "interface_series_control": {
+        "q_W_m2": 200000.0,
+        "analytic_interface_jump_K": 0.011600000000000001,
+        "reconstructed_interface_jump_K": 0.011600000000000003,
+        "absolute_jump_error_K": 1.734723475976807e-18,
+        "relative_jump_error": 1.495451272393799e-16,
+        "perfect_contact": false,
+        "note": "independent 1D series-resistance algebra control"
+      }
+    },
+    "high_numerical_scenario": {
+      "G_Au_Ta_W_m2K": 100000000.0,
+      "provenance": "numerical sensitivity scenario; not confidence interval",
+      "base_objective_K": -0.0006873319372034018,
+      "Tmax_Ta_K": 0.00983128062681701,
+      "Tmax_top_design_layer_K": 0.006461814704214789,
+      "temperature_jump_cell_center_mean_K": -2.686884863552292e-05,
+      "gradient_l2_K_per_rho": 3.170182505189509e-05,
+      "solver": {
+        "forward_relative_residual": 6.83814684277072e-13,
+        "adjoint_relative_residual": 1.5027217541172314e-13,
+        "forward_iterations": 100,
+        "adjoint_iterations": 80,
+        "two_solve_wall_s": 0.03860463574528694,
+        "CPU_linear_solve_fallback": false
+      },
+      "energy_balance": {
+        "source_power_W": 1.0000000000000002e-06,
+        "bottom_power_W": 9.999981162825402e-07,
+        "top_power_W": 1.883717451202032e-12,
+        "relative_error": 8.682087709356577e-15
+      },
+      "worst_fine_step_ADFD_relative_error": 5.500225132597599e-07,
+      "interface_series_control": {
+        "q_W_m2": 200000.0,
+        "analytic_interface_jump_K": 0.002,
+        "reconstructed_interface_jump_K": 0.0020000000000000018,
+        "absolute_jump_error_K": 1.734723475976807e-18,
+        "relative_jump_error": 8.673617379884035e-16,
+        "perfect_contact": false,
+        "note": "independent 1D series-resistance algebra control"
+      }
+    },
+    "perfect_contact_limit": {
+      "G_Au_Ta_W_m2K": "inf",
+      "provenance": "perfect contact numerical limit",
+      "base_objective_K": -0.0006794072964503989,
+      "Tmax_Ta_K": 0.009589830825492024,
+      "Tmax_top_design_layer_K": 0.006641427245336937,
+      "temperature_jump_cell_center_mean_K": -2.325682081811097e-05,
+      "gradient_l2_K_per_rho": 3.330489521824469e-05,
+      "solver": {
+        "forward_relative_residual": 5.485000530355034e-13,
+        "adjoint_relative_residual": 1.8236033372155714e-13,
+        "forward_iterations": 100,
+        "adjoint_iterations": 80,
+        "two_solve_wall_s": 0.04057655856013298,
+        "CPU_linear_solve_fallback": false
+      },
+      "energy_balance": {
+        "source_power_W": 1.0000000000000002e-06,
+        "bottom_power_W": 9.999981198945786e-07,
+        "top_power_W": 1.8801054300999905e-12,
+        "relative_error": 8.470329472543002e-15
+      },
+      "worst_fine_step_ADFD_relative_error": 6.171702413351536e-07,
+      "interface_series_control": {
+        "q_W_m2": 200000.0,
+        "analytic_interface_jump_K": 0.0,
+        "reconstructed_interface_jump_K": 0.0,
+        "absolute_jump_error_K": 0.0,
+        "relative_jump_error": 0.0,
+        "perfect_contact": true,
+        "note": "independent 1D series-resistance algebra control"
+      }
+    }
+  },
+  "gates": {
+    "worst_h0p0025_ADFD_relative_error": 6.171702413351536e-07,
+    "required_ADFD_relative_error": 0.01,
+    "worst_linear_residual": 9.271857071591698e-12,
+    "required_linear_residual": 1e-08,
+    "worst_energy_balance": 4.743384504624081e-14,
+    "required_energy_balance": 0.01,
+    "CPU_linear_solve_fallback": false
+  },
+  "limitations": [
+    "No direct Au/TaIrTe4 thermal-boundary-conductance measurement was identified.",
+    "The Au/MoS2 value is a theoretical analogue, not a TaIrTe4 parameter.",
+    "The current validated optical checkpoint omits SiO2/Si; coupled production remains blocked.",
+    "Electrical shunting, weighting-field changes, PTE, and Au thermopower are not evaluated here."
+  ]
+}
