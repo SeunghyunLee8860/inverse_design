@@ -1,0 +1,29 @@
+{
+  "status": "FAILED_FDTDX_NATIVE_JOULE_FLUX_IDENTITY",
+  "scope": "uniform-grid periodic lossy-slab numerical control only",
+  "software": {
+    "fdtdx_import_path": "/home/seunghyun/.local/fdtdx_main_src/src/fdtdx/__init__.py",
+    "cuda_visible_devices": "2"
+  },
+  "contract": {
+    "wavelength_m": 1e-06,
+    "grid_m": 5e-08,
+    "epsilon_real": 4.0,
+    "sigma_S_m": 300.0,
+    "slab_cells": 4,
+    "slab_thickness_m": 2e-07,
+    "recording_periods": 10
+  },
+  "power_W": {
+    "native_E_Joule": 5.1722300860388825e-15,
+    "closed_phasor_inward": 5.1011403048417236e-15,
+    "closed_time_domain_inward": 5.116379698112249e-15
+  },
+  "relative_errors": {
+    "Joule_vs_phasor": 0.013936056832172286,
+    "Joule_vs_time_domain": 0.010915997486902675,
+    "phasor_vs_time_domain": 0.00297855010177382
+  },
+  "runtime_seconds_including_compile": 1.5432969257235527,
+  "no_empirical_gain_clipping_smoothing_or_rescaling": true
+}

@@ -28,6 +28,11 @@ HERE = Path(__file__).resolve().parent
 STAGE41 = HERE / "41_validate_au_on_fixed_tairte4_optical_adfd.py"
 LUMERICAL_SUMMARY = HERE / "results/lumerical_au_on_tairte4_binary_endpoints_summary.json"
 FDTDX_SOURCE = Path("/home/seunghyun/.local/fdtdx_main_src")
+SUBSTRATE_MATERIAL_JSON = (
+    HERE
+    / "results_10um_substrate_material"
+    / "10um_substrate_material_readback.json"
+)
 WAVELENGTH_M = 10.0e-6
 W0_M = 8.5e-6
 POWER_SCALE_W = 1.0e-24
@@ -60,20 +65,111 @@ def _piecewise_edges(points: tuple[float, ...], widths: tuple[float, ...]) -> np
     return edges
 
 
-def _grid_edges() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def _grid_edges(
+    include_substrate: bool = False,
+    matched_substrate_interface: bool = False,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     lateral = _piecewise_edges(
         (-24e-6, -12e-6, 12e-6, 24e-6),
         (500e-9, 100e-9, 500e-9),
     )
-    vertical = _piecewise_edges(
-        (-8e-6, -0.2e-6, 0.2e-6, 8e-6),
-        (200e-9, 25e-9, 200e-9),
-    )
+    if include_substrate and matched_substrate_interface:
+        # Keep the Yee dual cells at the lossy SiO2 interfaces locally matched.
+        # Ten 15-nm Si cells sit immediately below the 19 x 15-nm oxide cells;
+        # TaIrTe4 uses 5 x 20-nm cells above.  The remote Si/air remain coarse.
+        vertical_parts = [
+            np.linspace(-8e-6, -535e-9, 39, dtype=np.float64),
+            np.linspace(-535e-9, -385e-9, 11, dtype=np.float64)[1:],
+            np.linspace(-385e-9, -100e-9, 20, dtype=np.float64)[1:],
+            np.linspace(-100e-9, 0.0, 6, dtype=np.float64)[1:],
+            np.linspace(0.0, 50e-9, 3, dtype=np.float64)[1:],
+            np.linspace(50e-9, 200e-9, 7, dtype=np.float64)[1:],
+            np.linspace(200e-9, 8e-6, 40, dtype=np.float64)[1:],
+        ]
+        vertical = np.concatenate(vertical_parts)
+    elif include_substrate:
+        # Exact 285-nm oxide without forcing a uniform 5-nm global CFL step:
+        # 39 coarse Si cells, 19 x 15-nm SiO2 cells, 4 x 25-nm TaIrTe4
+        # cells, 2 x 25-nm Au cells, then locally fine and remote air.
+        vertical_parts = [
+            np.linspace(-8e-6, -385e-9, 40, dtype=np.float64),
+            np.linspace(-385e-9, -100e-9, 20, dtype=np.float64)[1:],
+            np.linspace(-100e-9, 0.0, 5, dtype=np.float64)[1:],
+            np.linspace(0.0, 50e-9, 3, dtype=np.float64)[1:],
+            np.linspace(50e-9, 200e-9, 7, dtype=np.float64)[1:],
+            np.linspace(200e-9, 8e-6, 40, dtype=np.float64)[1:],
+        ]
+        vertical = np.concatenate(vertical_parts)
+    else:
+        vertical = _piecewise_edges(
+            (-8e-6, -0.2e-6, 0.2e-6, 8e-6),
+            (200e-9, 25e-9, 200e-9),
+        )
     return lateral, lateral.copy(), vertical
+
+
+def _load_substrate_contract(path: Path) -> tuple[complex, complex, dict[str, object]]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if payload.get("status") == "VALIDATED_10UM_SIO2_SI_MATERIAL_READBACK":
+        sio2 = payload["materials"]["SiO2"]["readback_epsilon"]
+        silicon = payload["materials"]["Si"]["readback_epsilon"]
+        source = "validated Lumerical v261 readback"
+    elif payload.get("status") == "BLOCKED_LUMERICAL_10UM_SI_PALIK_READBACK":
+        contract = payload["offline_diagnostic_contract"]
+        sio2 = contract["SiO2"]["epsilon"]
+        silicon = contract["Si"]["epsilon"]
+        source = "explicit offline diagnostic; Palik readback remains blocked"
+    else:
+        raise RuntimeError(f"Unusable substrate material contract: {payload.get('status')}")
+    epsilon_sio2 = complex(sio2["real"], sio2["imag"])
+    epsilon_si = complex(silicon["real"], silicon["imag"])
+    if epsilon_sio2.imag <= 0.0 or epsilon_si.imag < 0.0:
+        raise RuntimeError("Substrate material passivity check failed")
+    return epsilon_sio2, epsilon_si, {
+        "path": str(path.resolve()),
+        "status": payload["status"],
+        "source_class": source,
+        "Palik_Si_readback_validated": payload["status"]
+        == "VALIDATED_10UM_SIO2_SI_MATERIAL_READBACK",
+    }
 
 
 def _slice_tuple(value: tuple[slice, slice, slice]) -> list[list[int]]:
     return [[int(part.start), int(part.stop)] for part in value]
+
+
+def _electric_yee_dual_volumes(grid, grid_slice: tuple[slice, slice, slice]):
+    """Return component-specific physical dual volumes for Ex/Ey/Ez.
+
+    FDTDX follows the Taflove Yee convention: Ex=(i+1/2,j,k),
+    Ey=(i,j+1/2,k), Ez=(i,j,k+1/2).  A component therefore uses the ordinary
+    cell width along its own axis and the edge-centred dual width
+    ``(d[i-1]+d[i])/2`` along the other two axes.  Cell-centre volumes are only
+    equivalent on a uniform grid and can severely under-count interface loss
+    when a material begins at a coarse-to-fine rectilinear transition.
+    """
+
+    import jax.numpy as jnp
+
+    bounds = tuple((int(part.start), int(part.stop)) for part in grid_slice)
+    widths = [np.asarray(grid.cell_widths(axis), dtype=np.float64) for axis in range(3)]
+    edge_dual = [
+        0.5 * (np.concatenate((axis_width[:1], axis_width[:-1])) + axis_width)
+        for axis_width in widths
+    ]
+    volumes = []
+    for component in range(3):
+        selected = []
+        for axis in range(3):
+            lower, upper = bounds[axis]
+            metric = widths[axis] if axis == component else edge_dual[axis]
+            selected.append(metric[lower:upper])
+        volumes.append(
+            selected[0][:, None, None]
+            * selected[1][None, :, None]
+            * selected[2][None, None, :]
+        )
+    return jnp.asarray(np.stack(volumes), dtype=jnp.float32)
 
 
 def _relative(a: float, b: float) -> float:
@@ -156,6 +252,13 @@ def run(
     gradient_smoke: bool = False,
     gradient_checkpoints: int = 16,
     include_adjoint_aligned: bool = False,
+    include_substrate: bool = False,
+    substrate_empty_only: bool = False,
+    substrate_loss_representation: str = "conductivity",
+    substrate_material_json: Path = SUBSTRATE_MATERIAL_JSON,
+    matched_substrate_interface_grid: bool = False,
+    substrate_total_periods: int | None = None,
+    substrate_window_periods: int | None = None,
 ) -> dict[str, object]:
     import jax
     import jax.numpy as jnp
@@ -169,11 +272,32 @@ def run(
     if not devices or any(device.platform != "gpu" for device in devices):
         raise RuntimeError(f"GPU-only contract violated: {devices}")
     stage41 = _load_stage41()
-    x_edges, y_edges, z_edges = _grid_edges()
+    x_edges, y_edges, z_edges = _grid_edges(
+        include_substrate=include_substrate,
+        matched_substrate_interface=matched_substrate_interface_grid,
+    )
     grid = fdtdx.RectilinearGrid.custom(x_edges=x_edges, y_edges=y_edges, z_edges=z_edges)
     period_s = WAVELENGTH_M / stage41.C0_M_PER_S
-    total_periods = 8
-    window_periods = 2
+    # The high-index/lossy substrate rings down more slowly than the previous
+    # air-only endpoint.  Eight periods left a 0.535% substrate-only window
+    # change and ~0.9% direct Q/box mismatch, so the substrate contract uses
+    # 16 periods fail-closed.  The already validated air-only default remains
+    # unchanged at eight periods.
+    total_periods = (
+        int(substrate_total_periods)
+        if include_substrate and substrate_total_periods is not None
+        else (16 if include_substrate else 8)
+    )
+    window_periods = (
+        int(substrate_window_periods)
+        if include_substrate and substrate_window_periods is not None
+        else 2
+    )
+    if total_periods <= 2 * window_periods:
+        raise ValueError(
+            "total_periods must exceed two analysis windows: "
+            f"total={total_periods}, window={window_periods}"
+        )
     config = fdtdx.SimulationConfig(
         grid=grid,
         time=total_periods * period_s,
@@ -190,12 +314,23 @@ def run(
     omega = 2.0 * math.pi * stage41.C0_M_PER_S / WAVELENGTH_M
     epsilon_au = complex(stage41.AU_N, stage41.AU_K) ** 2
     epsilon_ta = stage41._load_tairte4_epsilon()
+    epsilon_sio2 = None
+    epsilon_si = None
+    substrate_provenance = None
+    if include_substrate:
+        epsilon_sio2, epsilon_si, substrate_provenance = _load_substrate_contract(
+            substrate_material_json
+        )
+        if substrate_loss_representation not in ("lorentz", "conductivity"):
+            raise ValueError(substrate_loss_representation)
     fits = {
         "au": stage41._drude_fit(epsilon_au, omega, dt),
         "a": stage41._drude_fit(epsilon_ta["a"], omega, dt),
         "b": stage41._lorentz_fit(epsilon_ta["b"], omega, dt),
     }
     fits["c"] = dict(fits["b"])
+    if include_substrate and substrate_loss_representation == "lorentz":
+        fits["sio2"] = stage41._lorentz_fit(epsilon_sio2, omega, dt)
     coeff = {name: stage41._coefficient_triplet(fit, dt) for name, fit in fits.items()}
 
     objects: list[object] = []
@@ -236,9 +371,68 @@ def run(
             ),
         )
     )
+    sio2_model = None
+    silicon = None
+    sio2 = None
+    if include_substrate and substrate_loss_representation == "lorentz":
+        sio2_model = fdtdx.DispersionModel(
+            poles=(
+                fdtdx.LorentzPole(
+                    resonance_frequency=fits["sio2"]["omega_0_rad_s"],
+                    damping=fits["sio2"]["gamma_rad_s"],
+                    delta_epsilon=fits["sio2"]["delta_epsilon"],
+                ),
+            )
+        )
+    if include_substrate:
+        substrate_layout = (
+            {
+                "silicon_cells": 48,
+                "sio2_start": 48,
+                "sio2_stop": 67,
+                "tairte4_cells": 5,
+                "near_box_start": 46,
+                "near_box_stop": 80,
+                "deep_box_start": 30,
+                "deep_box_stop": 82,
+            }
+            if matched_substrate_interface_grid
+            else {
+                "silicon_cells": 39,
+                "sio2_start": 39,
+                "sio2_stop": 58,
+                "tairte4_cells": 4,
+                "near_box_start": 37,
+                "near_box_stop": 70,
+                "deep_box_start": 20,
+                "deep_box_stop": 72,
+            }
+        )
+        silicon = fdtdx.UniformMaterialObject(
+            name="fixed_silicon_substrate",
+            partial_grid_shape=(None, None, substrate_layout["silicon_cells"]),
+            material=fdtdx.Material(permittivity=float(epsilon_si.real)),
+        )
+        sio2_sigma = omega * stage41.EPS0_F_PER_M * epsilon_sio2.imag
+        sio2 = fdtdx.UniformMaterialObject(
+            name="fixed_285nm_sio2",
+            partial_grid_shape=(None, None, 19),
+            material=(
+                fdtdx.Material(permittivity=stage41.EPS_INF, dispersion=sio2_model)
+                if substrate_loss_representation == "lorentz"
+                else fdtdx.Material(
+                    permittivity=float(epsilon_sio2.real),
+                    electric_conductivity=float(sio2_sigma),
+                )
+            ),
+        )
     flake = fdtdx.UniformMaterialObject(
         name="fixed_tairte4",
-        partial_grid_shape=(200, 200, 4),
+        partial_grid_shape=(
+            200,
+            200,
+            substrate_layout["tairte4_cells"] if include_substrate else 4,
+        ),
         material=fdtdx.Material(permittivity=stage41.EPS_INF, dispersion=ta_model),
     )
     au = fdtdx.UniformMaterialObject(
@@ -246,15 +440,33 @@ def run(
         partial_grid_shape=(100, 100, 2),
         material=fdtdx.Material(permittivity=stage41.EPS_INF, dispersion=au_model),
     )
-    constraints.extend(
-        [
-            flake.place_at_center(volume, axes=(0, 1)),
-            flake.place_at_center(volume, axes=(2,), margins=(-50e-9,)),
-            au.place_at_center(volume, axes=(0, 1)),
-            au.place_above(flake),
-        ]
-    )
-    objects.extend((flake, au))
+    if include_substrate:
+        constraints.extend(
+            [
+                silicon.place_relative_to(
+                    volume,
+                    axes=(2,),
+                    own_positions=(-1,),
+                    other_positions=(-1,),
+                ),
+                sio2.place_above(silicon),
+                flake.place_at_center(volume, axes=(0, 1)),
+                flake.place_above(sio2),
+                au.place_at_center(volume, axes=(0, 1)),
+                au.place_above(flake),
+            ]
+        )
+        objects.extend((silicon, sio2, flake, au))
+    else:
+        constraints.extend(
+            [
+                flake.place_at_center(volume, axes=(0, 1)),
+                flake.place_at_center(volume, axes=(2,), margins=(-50e-9,)),
+                au.place_at_center(volume, axes=(0, 1)),
+                au.place_above(flake),
+            ]
+        )
+        objects.extend((flake, au))
 
     # A 40-um square aperture has negligible requested-Gaussian intensity at
     # its boundary.  The circular mask radius is 20 um; std is chosen so its
@@ -284,11 +496,23 @@ def run(
         end_time=(total_periods - window_periods) * period_s,
     )
     late = fdtdx.OnOffSwitch(start_time=(total_periods - window_periods) * period_s)
-    for material_name, target in (("au", au), ("tairte4", flake)):
+    detector_targets = [("au", au), ("tairte4", flake)]
+    if include_substrate:
+        # The oxide is laterally infinite in the numerical scene, but the
+        # source aperture and closed control volume both exclude the 8-cell
+        # PML on each side.  Measure exactly that same 272 x 272 footprint so
+        # component Q and six-face power refer to one physical volume.
+        detector_targets.append(("sio2", sio2))
+    for material_name, target in detector_targets:
         for window_name, switch in (("previous", previous), ("late", late)):
+            detector_shape = (
+                (272, 272, 19)
+                if material_name == "sio2"
+                else target.partial_grid_shape
+            )
             detector = fdtdx.PhasorDetector(
                 name=f"{material_name}_{window_name}",
-                partial_grid_shape=target.partial_grid_shape,
+                partial_grid_shape=detector_shape,
                 wave_characters=(wave,),
                 components=("Ex", "Ey", "Ez"),
                 dtype=jnp.complex64,
@@ -301,6 +525,20 @@ def run(
                 plot=False,
             )
             constraints.append(detector.same_position(target))
+            objects.append(detector)
+    if include_substrate:
+        for window_name, switch in (("previous", previous), ("late", late)):
+            detector = fdtdx.PhasorDetector(
+                name=f"sio2_uniform_core_{window_name}",
+                partial_grid_shape=(240, 240, 19),
+                wave_characters=(wave,),
+                components=("Ex", "Ey", "Ez"),
+                dtype=jnp.complex64,
+                switch=switch,
+                exact_interpolation=False,
+                plot=False,
+            )
+            constraints.append(detector.same_position(sio2))
             objects.append(detector)
 
     incident = fdtdx.PhasorPoyntingFluxDetector(
@@ -338,22 +576,132 @@ def run(
     )
     objects.append(target_field)
 
+    closed_shape = (
+        (
+            272,
+            272,
+            substrate_layout["near_box_stop"]
+            - substrate_layout["near_box_start"],
+        )
+        if include_substrate
+        else (220, 220, 16)
+    )
     closed = fdtdx.ClosedSurfacePhasorPoyntingFluxDetector(
         name="material_flux",
-        partial_grid_shape=(220, 220, 16),
+        partial_grid_shape=closed_shape,
         wave_characters=(wave,),
         orientation="inward",
         dtype=jnp.complex64,
         switch=late,
         exact_interpolation=True,
     )
-    constraints.extend(
-        [
-            closed.place_at_center(volume, axes=(0, 1)),
-            closed.place_at_center(volume, axes=(2,), margins=(0.0,)),
-        ]
-    )
+    constraints.append(closed.place_at_center(volume, axes=(0, 1)))
+    if include_substrate:
+        # The matched layout keeps fine Si cells below the oxide; the legacy
+        # abrupt layout is retained only as a reproducible diagnostic option.
+        constraints.append(
+            closed.place_relative_to(
+                volume,
+                axes=(2,),
+                own_positions=(-1,),
+                other_positions=(-1,),
+                margins=(
+                    float(z_edges[substrate_layout["near_box_start"]] - z_edges[0]),
+                ),
+            )
+        )
+    else:
+        constraints.append(closed.place_at_center(volume, axes=(2,), margins=(0.0,)))
     objects.append(closed)
+    if include_substrate:
+        deep_closed = fdtdx.ClosedSurfacePhasorPoyntingFluxDetector(
+            name="material_flux_deep",
+            partial_grid_shape=(
+                272,
+                272,
+                substrate_layout["deep_box_stop"]
+                - substrate_layout["deep_box_start"],
+            ),
+            wave_characters=(wave,),
+            orientation="inward",
+            dtype=jnp.complex64,
+            switch=late,
+            exact_interpolation=True,
+        )
+        td_deep_closed = fdtdx.ClosedSurfacePoyntingFluxDetector(
+            name="material_flux_deep_td",
+            partial_grid_shape=(
+                272,
+                272,
+                substrate_layout["deep_box_stop"]
+                - substrate_layout["deep_box_start"],
+            ),
+            orientation="inward",
+            switch=late,
+        )
+        for detector in (deep_closed, td_deep_closed):
+            constraints.extend(
+                [
+                    detector.place_at_center(volume, axes=(0, 1)),
+                    detector.place_relative_to(
+                        volume,
+                        axes=(2,),
+                        own_positions=(-1,),
+                        other_positions=(-1,),
+                        margins=(
+                            float(
+                                z_edges[substrate_layout["deep_box_start"]]
+                                - z_edges[0]
+                            ),
+                        ),
+                    ),
+                ]
+            )
+            objects.append(detector)
+        uniform_deep_closed = fdtdx.ClosedSurfacePhasorPoyntingFluxDetector(
+            name="material_flux_uniform_core",
+            partial_grid_shape=(
+                240,
+                240,
+                substrate_layout["deep_box_stop"]
+                - substrate_layout["deep_box_start"],
+            ),
+            wave_characters=(wave,),
+            orientation="inward",
+            dtype=jnp.complex64,
+            switch=late,
+            exact_interpolation=True,
+        )
+        uniform_td_deep_closed = fdtdx.ClosedSurfacePoyntingFluxDetector(
+            name="material_flux_uniform_core_td",
+            partial_grid_shape=(
+                240,
+                240,
+                substrate_layout["deep_box_stop"]
+                - substrate_layout["deep_box_start"],
+            ),
+            orientation="inward",
+            switch=late,
+        )
+        for detector in (uniform_deep_closed, uniform_td_deep_closed):
+            constraints.extend(
+                [
+                    detector.place_at_center(volume, axes=(0, 1)),
+                    detector.place_relative_to(
+                        volume,
+                        axes=(2,),
+                        own_positions=(-1,),
+                        other_positions=(-1,),
+                        margins=(
+                            float(
+                                z_edges[substrate_layout["deep_box_start"]]
+                                - z_edges[0]
+                            ),
+                        ),
+                    ),
+                ]
+            )
+            objects.append(detector)
 
     key = jax.random.PRNGKey(20260821)
     placed, base, params, config, _ = fdtdx.place_objects(
@@ -362,6 +710,8 @@ def run(
     base, placed, _ = fdtdx.apply_params(base, placed, params, key)
     flake_slice = placed["fixed_tairte4"].grid_slice
     au_slice = placed["exact_binary_au"].grid_slice
+    silicon_slice = placed["fixed_silicon_substrate"].grid_slice if include_substrate else None
+    sio2_slice = placed["fixed_285nm_sio2"].grid_slice if include_substrate else None
     realized = config.resolved_grid
     if realized is None:
         raise RuntimeError("Missing realized grid")
@@ -375,6 +725,39 @@ def run(
         "target_slice": _slice_tuple(placed["target_field"].grid_slice),
         "closed_surface_slice": _slice_tuple(placed["material_flux"].grid_slice),
     }
+    if include_substrate:
+        placement.update(
+            {
+                "silicon_slice": _slice_tuple(silicon_slice),
+                "silicon_extent_m": list(
+                    realized.slice_extent(
+                        tuple((x[0], x[1]) for x in _slice_tuple(silicon_slice))
+                    )
+                ),
+                "sio2_slice": _slice_tuple(sio2_slice),
+                "sio2_extent_m": list(
+                    realized.slice_extent(
+                        tuple((x[0], x[1]) for x in _slice_tuple(sio2_slice))
+                    )
+                ),
+                "sio2_detector_slice": _slice_tuple(placed["sio2_late"].grid_slice),
+                "deep_closed_surface_slice": _slice_tuple(
+                    placed["material_flux_deep"].grid_slice
+                ),
+                "deep_td_closed_surface_slice": _slice_tuple(
+                    placed["material_flux_deep_td"].grid_slice
+                ),
+                "uniform_core_sio2_detector_slice": _slice_tuple(
+                    placed["sio2_uniform_core_late"].grid_slice
+                ),
+                "uniform_core_closed_surface_slice": _slice_tuple(
+                    placed["material_flux_uniform_core"].grid_slice
+                ),
+                "uniform_core_td_closed_surface_slice": _slice_tuple(
+                    placed["material_flux_uniform_core_td"].grid_slice
+                ),
+            }
+        )
     audit = {
         "status": "FDTDX_LUMERICAL_BINARY_ENDPOINT_RUNSETUP_AUDIT",
         "software": {
@@ -414,6 +797,36 @@ def run(
             "gradient_method": "checkpointed" if gradient_smoke else None,
             "gradient_checkpoints": gradient_checkpoints if gradient_smoke else None,
         },
+        "substrate": {
+            "included": include_substrate,
+            "material_contract": substrate_provenance,
+            "epsilon_sio2": (
+                [epsilon_sio2.real, epsilon_sio2.imag] if include_substrate else None
+            ),
+            "epsilon_si": [epsilon_si.real, epsilon_si.imag] if include_substrate else None,
+            "silicon_loss_model": (
+                "static real epsilon; k=0 diagnostic approximation"
+                if include_substrate
+                else None
+            ),
+            "sio2_loss_representation": (
+                substrate_loss_representation if include_substrate else None
+            ),
+            "sio2_equivalent_conductivity_S_m": (
+                float(omega * stage41.EPS0_F_PER_M * epsilon_sio2.imag)
+                if include_substrate
+                else None
+            ),
+            "Palik_Si_readback_validated": (
+                substrate_provenance["Palik_Si_readback_validated"]
+                if include_substrate
+                else None
+            ),
+            "matched_interface_grid": (
+                matched_substrate_interface_grid if include_substrate else None
+            ),
+            "layout_indices": substrate_layout if include_substrate else None,
+        },
     }
     output_dir.mkdir(parents=True, exist_ok=True)
     audit_path = output_dir / "fdtdx_lumerical_binary_endpoint_runsetup_audit.json"
@@ -429,6 +842,14 @@ def run(
     fixed_c2 = jnp.zeros_like(fixed_c1)
     ta_c3 = jnp.zeros_like(fixed_c1)
     au_c3_template = jnp.zeros_like(fixed_c1)
+    sio2_c3 = jnp.zeros_like(fixed_c1)
+    if include_substrate and substrate_loss_representation == "lorentz":
+        c1_sio2, c2_sio2, c3_sio2 = coeff["sio2"]
+        for component in range(3):
+            index = (0, component, *sio2_slice)
+            fixed_c1 = fixed_c1.at[index].set(c1_sio2)
+            fixed_c2 = fixed_c2.at[index].set(c2_sio2)
+            sio2_c3 = sio2_c3.at[index].set(c3_sio2)
     for component, axis in enumerate(("b", "a", "c")):
         c1, c2, c3 = coeff[axis]
         index = (0, component, *flake_slice)
@@ -444,7 +865,7 @@ def run(
 
     def arrays_for_case(strengths):
         ta_strength, au_strength = strengths[0], strengths[1]
-        c3 = ta_strength * ta_c3 + au_strength * au_c3_template
+        c3 = sio2_c3 + ta_strength * ta_c3 + au_strength * au_c3_template
         return (
             base.reset()
             .aset("dispersive_c1", fixed_c1)
@@ -452,8 +873,20 @@ def run(
             .aset("dispersive_c3", c3)
         )
 
-    au_volume = jnp.asarray(realized.cell_volume(tuple((x[0], x[1]) for x in _slice_tuple(au_slice))))
-    ta_volume = jnp.asarray(realized.cell_volume(tuple((x[0], x[1]) for x in _slice_tuple(flake_slice))))
+    au_volume = _electric_yee_dual_volumes(realized, au_slice)
+    ta_volume = _electric_yee_dual_volumes(realized, flake_slice)
+    sio2_volume = (
+        _electric_yee_dual_volumes(realized, placed["sio2_late"].grid_slice)
+        if include_substrate
+        else None
+    )
+    sio2_uniform_core_volume = (
+        _electric_yee_dual_volumes(
+            realized, placed["sio2_uniform_core_late"].grid_slice
+        )
+        if include_substrate
+        else None
+    )
     # FDTDX evolves eta0-normalized fields: E_internal = E_SI / eta0 while H
     # is in SI units.  Its raw Poynting detector therefore returns S_SI/eta0.
     # Convert the electric phasor to SI before evaluating
@@ -472,12 +905,21 @@ def run(
         e_au = out.detector_states[f"au_{window}"]["phasor"][0, 0]
         e_ta = out.detector_states[f"tairte4_{window}"]["phasor"][0, 0]
         p_au_comp = prefactor * epsilon_au.imag * au_strength * jnp.sum(
-            jnp.abs(e_au) ** 2 * au_volume[None, ...], axis=(1, 2, 3)
+            jnp.abs(e_au) ** 2 * au_volume, axis=(1, 2, 3)
         )
         p_ta_comp = prefactor * ta_strength * jnp.sum(
-            ta_imag * jnp.abs(e_ta) ** 2 * ta_volume[None, ...], axis=(1, 2, 3)
+            ta_imag * jnp.abs(e_ta) ** 2 * ta_volume, axis=(1, 2, 3)
         )
-        return jnp.concatenate((p_au_comp, p_ta_comp, jnp.stack((p_au_comp.sum() + p_ta_comp.sum(),))))
+        material_components = [p_au_comp, p_ta_comp]
+        total = p_au_comp.sum() + p_ta_comp.sum()
+        if include_substrate:
+            e_sio2 = out.detector_states[f"sio2_{window}"]["phasor"][0, 0]
+            p_sio2_comp = prefactor * epsilon_sio2.imag * jnp.sum(
+                jnp.abs(e_sio2) ** 2 * sio2_volume, axis=(1, 2, 3)
+            )
+            material_components.append(p_sio2_comp)
+            total = total + p_sio2_comp.sum()
+        return jnp.concatenate((*material_components, jnp.stack((total,))))
 
     def solve(strengths):
         _, out = fdtdx.run_fdtd(
@@ -491,8 +933,48 @@ def run(
         p_closed = eta0 * placed["material_flux"].compute_net_flux(
             out.detector_states["material_flux"]
         )[0]
+        if include_substrate:
+            p_closed_deep = eta0 * placed["material_flux_deep"].compute_net_flux(
+                out.detector_states["material_flux_deep"]
+            )[0]
+            p_closed_deep_td = eta0 * jnp.mean(
+                out.detector_states["material_flux_deep_td"]["poynting_flux"][:, 0]
+            )
+            e_sio2_uniform = out.detector_states["sio2_uniform_core_late"][
+                "phasor"
+            ][0, 0]
+            p_sio2_uniform = prefactor * epsilon_sio2.imag * jnp.sum(
+                jnp.abs(e_sio2_uniform) ** 2
+                * sio2_uniform_core_volume,
+                axis=(1, 2, 3),
+            )
+            p_closed_uniform = eta0 * placed[
+                "material_flux_uniform_core"
+            ].compute_net_flux(out.detector_states["material_flux_uniform_core"])[0]
+            p_closed_uniform_td = eta0 * jnp.mean(
+                out.detector_states["material_flux_uniform_core_td"][
+                    "poynting_flux"
+                ][:, 0]
+            )
+        else:
+            p_closed_deep = p_closed
+            p_closed_deep_td = p_closed
+            p_sio2_uniform = jnp.zeros((3,), dtype=jnp.float32)
+            p_closed_uniform = p_closed
+            p_closed_uniform_td = p_closed
         target = out.detector_states["target_field"]["phasor"][0, 0]
-        return late_power, previous_power, p_inc, p_closed, target
+        return (
+            late_power,
+            previous_power,
+            p_inc,
+            p_closed,
+            p_closed_deep,
+            p_closed_deep_td,
+            p_sio2_uniform,
+            p_closed_uniform,
+            p_closed_uniform_td,
+            target,
+        )
 
     if gradient_smoke:
         from fdtdx.fdtd.fdtd import checkpointed_fdtd
@@ -514,9 +996,9 @@ def run(
             upsampled = jnp.repeat(jnp.repeat(rho, optical_repeat, axis=0), optical_repeat, axis=1)
             return jnp.broadcast_to((upsampled**3)[:, :, None], (100, 100, 2))
 
-        def arrays_for_density(rho):
+        def arrays_for_density(rho, ta_strength=1.0):
             strength = optical_strength(rho)
-            c3 = ta_c3
+            c3 = sio2_c3 + ta_strength * ta_c3
             for component in range(3):
                 c3 = c3.at[(0, component, *au_slice)].set(c3_au * strength)
             return (
@@ -526,17 +1008,26 @@ def run(
                 .aset("dispersive_c3", c3)
             )
 
-        def powers_for_density(out, window, rho):
+        def powers_for_density(out, window, rho, ta_strength=1.0):
             e_au = out.detector_states[f"au_{window}"]["phasor"][0, 0]
             e_ta = out.detector_states[f"tairte4_{window}"]["phasor"][0, 0]
             strength = optical_strength(rho)
             p_au_comp = prefactor * epsilon_au.imag * jnp.sum(
-                strength[None, ...] * jnp.abs(e_au) ** 2 * au_volume[None, ...], axis=(1, 2, 3)
+                strength[None, ...] * jnp.abs(e_au) ** 2 * au_volume, axis=(1, 2, 3)
             )
-            p_ta_comp = prefactor * jnp.sum(
-                ta_imag * jnp.abs(e_ta) ** 2 * ta_volume[None, ...], axis=(1, 2, 3)
+            p_ta_comp = prefactor * ta_strength * jnp.sum(
+                ta_imag * jnp.abs(e_ta) ** 2 * ta_volume, axis=(1, 2, 3)
             )
-            return jnp.concatenate((p_au_comp, p_ta_comp, jnp.stack((p_au_comp.sum() + p_ta_comp.sum(),))))
+            material_components = [p_au_comp, p_ta_comp]
+            total = p_au_comp.sum() + p_ta_comp.sum()
+            if include_substrate:
+                e_sio2 = out.detector_states[f"sio2_{window}"]["phasor"][0, 0]
+                p_sio2_comp = prefactor * epsilon_sio2.imag * jnp.sum(
+                    jnp.abs(e_sio2) ** 2 * sio2_volume, axis=(1, 2, 3)
+                )
+                material_components.append(p_sio2_comp)
+                total = total + p_sio2_comp.sum()
+            return jnp.concatenate((*material_components, jnp.stack((total,))))
 
         def objective_with_aux(rho):
             _, out = checkpointed_fdtd(arrays_for_density(rho), placed, config, key, show_progress=False)
@@ -549,6 +1040,27 @@ def run(
                 out.detector_states["material_flux"]
             )[0]
             return late_power[-1], (late_power, previous_power, p_inc, p_closed)
+
+        def substrate_reference_aux():
+            """Return Q and closed flux for the fixed optical substrate alone.
+
+            The difference P_closed-P_Q is the finite-window numerical
+            residual.  Subtracting that residual from the full box flux keeps
+            the real SiO2 absorption instead of treating it as background.
+            """
+            zero = jnp.zeros_like(rho0)
+            _, out = checkpointed_fdtd(
+                arrays_for_density(zero, ta_strength=0.0),
+                placed,
+                config,
+                key,
+                show_progress=False,
+            )
+            late_power = powers_for_density(out, "late", zero, ta_strength=0.0)
+            p_closed = eta0 * placed["material_flux"].compute_net_flux(
+                out.detector_states["material_flux"]
+            )[0]
+            return late_power[-1], p_closed
 
         print(
             f"[gradient-smoke] compiling checkpointed AD with {gradient_checkpoints} checkpoints",
@@ -569,6 +1081,16 @@ def run(
         late_w = np.asarray(late_scaled, dtype=np.float64) * POWER_SCALE_W
         previous_w = np.asarray(previous_scaled, dtype=np.float64) * POWER_SCALE_W
         grad_l2 = float(np.linalg.norm(gradient_w))
+        substrate_reference_q_w = 0.0
+        substrate_reference_closed_w = 0.0
+        if include_substrate:
+            print("[gradient-smoke] computing substrate-only closure reference", flush=True)
+            substrate_reference_jit = jax.jit(substrate_reference_aux).lower().compile()
+            substrate_reference_q_scaled, substrate_reference_closed = substrate_reference_jit()
+            substrate_reference_q_w = (
+                float(substrate_reference_q_scaled) * POWER_SCALE_W
+            )
+            substrate_reference_closed_w = float(substrate_reference_closed)
 
         directions_np = {}
         x_np = np.linspace(-1.0, 1.0, latent_shape[0])[:, None]
@@ -635,13 +1157,32 @@ def run(
             (row["strong_relative_error"] for row in finest if row["strong_direction"]), default=0.0
         )
         normalized_error = max(row["gradient_l2_normalized_error"] for row in finest)
-        endpoint_reference = json.loads(
-            (output_dir.parent / "results_fdtdx_lumerical_binary_endpoints" / "fdtdx_lumerical_binary_endpoints_summary.json").read_text(
-                encoding="utf-8"
+        if include_substrate:
+            numerical_box_residual = substrate_reference_closed_w - substrate_reference_q_w
+            # With a lossy fixed substrate the substrate-only closed flux is
+            # physical, not an empty-space correction.  Poynting closure must
+            # therefore compare the full local Q directly with the full box.
+            corrected_closed = float(p_closed)
+            closure_correction = {
+                "method": "none; direct local-Q versus matched closed-volume flux",
+                "substrate_only_Q_W": substrate_reference_q_w,
+                "substrate_only_closed_surface_W": substrate_reference_closed_w,
+                "substrate_only_closed_minus_Q_residual_W": numerical_box_residual,
+            }
+        else:
+            endpoint_reference = json.loads(
+                (
+                    output_dir.parent
+                    / "results_fdtdx_lumerical_binary_endpoints"
+                    / "fdtdx_lumerical_binary_endpoints_summary.json"
+                ).read_text(encoding="utf-8")
             )
-        )
-        empty_box = endpoint_reference["cases"]["empty"]["closed_surface_inward_W"]
-        corrected_closed = float(p_closed) - empty_box
+            empty_box = endpoint_reference["cases"]["empty"]["closed_surface_inward_W"]
+            corrected_closed = float(p_closed) - empty_box
+            closure_correction = {
+                "method": "subtract air-only empty-box finite-window residual",
+                "empty_box_W": empty_box,
+            }
         closure = _relative(value_w, corrected_closed)
         window_change = _relative(float(late_w[-1]), float(previous_w[-1]))
         gates = {
@@ -656,11 +1197,24 @@ def run(
         passed = all(gates.values())
         result = {
             "status": (
-                "VALIDATED_FDTDX_PRODUCTION_WIDTH_NONUNIFORM_AU_GRADIENT_SMOKE"
+                (
+                    "VALIDATED_FDTDX_DIAGNOSTIC_SUBSTRATE_NONUNIFORM_AU_GRADIENT_SMOKE"
+                    if include_substrate
+                    else "VALIDATED_FDTDX_PRODUCTION_WIDTH_NONUNIFORM_AU_GRADIENT_SMOKE"
+                )
                 if passed
-                else "FAILED_FDTDX_PRODUCTION_WIDTH_NONUNIFORM_AU_GRADIENT_SMOKE"
+                else (
+                    "FAILED_FDTDX_DIAGNOSTIC_SUBSTRATE_NONUNIFORM_AU_GRADIENT_SMOKE"
+                    if include_substrate
+                    else "FAILED_FDTDX_PRODUCTION_WIDTH_NONUNIFORM_AU_GRADIENT_SMOKE"
+                )
             ),
-            "scope": "production-width nonuniform Au optical total-Q AD-FD smoke; no thermal/PTE/electrical/optimization",
+            "scope": (
+                "diagnostic SiO2/Si-substrate nonuniform Au optical total-Q AD-FD smoke; "
+                "no thermal/PTE/electrical/optimization; not production while Palik Si readback is blocked"
+                if include_substrate
+                else "production-width nonuniform Au optical total-Q AD-FD smoke; no thermal/PTE/electrical/optimization"
+            ),
             "audit": audit,
             "design": {
                 "latent_shape_xy": list(latent_shape),
@@ -678,10 +1232,14 @@ def run(
                 "component_power_W": {
                     "au_xyz": list(map(float, late_w[:3])),
                     "tairte4_xyz": list(map(float, late_w[3:6])),
+                    "sio2_xyz": (
+                        list(map(float, late_w[6:9])) if include_substrate else None
+                    ),
                 },
                 "incident_plane_W": float(p_inc),
                 "closed_surface_inward_W": float(p_closed),
                 "empty_subtracted_closed_surface_W": corrected_closed,
+                "closure_correction": closure_correction,
                 "Q_flux_closure_relative": closure,
                 "late_window_relative_change": window_change,
                 "gradient_l2_W": grad_l2,
@@ -720,11 +1278,27 @@ def run(
     cases: dict[str, dict[str, object]] = {}
     outputs = {}
     execution_seconds = 0.0
-    for name, strengths in (("empty", (0.0, 0.0)), ("au0", (1.0, 0.0)), ("au1", (1.0, 1.0))):
+    endpoint_cases = (
+        (("empty", (0.0, 0.0)),)
+        if substrate_empty_only
+        else (("empty", (0.0, 0.0)), ("au0", (1.0, 0.0)), ("au1", (1.0, 1.0)))
+    )
+    for name, strengths in endpoint_cases:
         start = time.perf_counter()
         solved = solve_jit(jnp.asarray(strengths, dtype=jnp.float32))
         execution_seconds += time.perf_counter() - start
-        late_scaled, previous_scaled, p_inc, p_closed, target = solved
+        (
+            late_scaled,
+            previous_scaled,
+            p_inc,
+            p_closed,
+            p_closed_deep,
+            p_closed_deep_td,
+            p_sio2_uniform,
+            p_closed_uniform,
+            p_closed_uniform_td,
+            target,
+        ) = solved
         late_w = np.asarray(late_scaled, dtype=np.float64) * POWER_SCALE_W
         previous_w = np.asarray(previous_scaled, dtype=np.float64) * POWER_SCALE_W
         cases[name] = {
@@ -732,16 +1306,205 @@ def run(
             "component_power_W": {
                 "au_xyz": list(map(float, late_w[:3])),
                 "tairte4_xyz": list(map(float, late_w[3:6])),
+                "sio2_xyz": (
+                    list(map(float, late_w[6:9])) if include_substrate else None
+                ),
             },
-            "P_Q_W": float(late_w[6]),
-            "previous_P_Q_W": float(previous_w[6]),
-            "P_Q_window_relative_change": _relative(float(late_w[6]), float(previous_w[6]))
-            if late_w[6] != 0
+            "P_Q_W": float(late_w[-1]),
+            "previous_P_Q_W": float(previous_w[-1]),
+            "P_Q_window_relative_change": _relative(
+                float(late_w[-1]), float(previous_w[-1])
+            )
+            if late_w[-1] != 0
             else 0.0,
             "incident_plane_signed_power_W": float(p_inc),
             "closed_surface_inward_W": float(p_closed),
+            "deep_closed_surface_inward_W": float(p_closed_deep),
+            "deep_time_domain_closed_surface_inward_W": float(p_closed_deep_td),
+            "uniform_core_sio2_component_power_W": list(
+                map(float, np.asarray(p_sio2_uniform) * POWER_SCALE_W)
+            ),
+            "uniform_core_sio2_P_Q_W": float(
+                np.asarray(p_sio2_uniform).sum() * POWER_SCALE_W
+            ),
+            "uniform_core_closed_surface_inward_W": float(p_closed_uniform),
+            "uniform_core_time_domain_closed_surface_inward_W": float(
+                p_closed_uniform_td
+            ),
         }
         outputs[name] = target
+
+    if include_substrate and substrate_empty_only:
+        case = cases["empty"]
+        relative_errors = {
+            "near_phasor_box": _relative(
+                case["P_Q_W"], case["closed_surface_inward_W"]
+            ),
+            "deep_phasor_box": _relative(
+                case["P_Q_W"], case["deep_closed_surface_inward_W"]
+            ),
+            "deep_time_domain_box": _relative(
+                case["P_Q_W"], case["deep_time_domain_closed_surface_inward_W"]
+            ),
+            "deep_phasor_vs_time_domain": _relative(
+                case["deep_closed_surface_inward_W"],
+                case["deep_time_domain_closed_surface_inward_W"],
+            ),
+            "uniform_core_phasor_box": _relative(
+                case["uniform_core_sio2_P_Q_W"],
+                case["uniform_core_closed_surface_inward_W"],
+            ),
+            "uniform_core_time_domain_box": _relative(
+                case["uniform_core_sio2_P_Q_W"],
+                case["uniform_core_time_domain_closed_surface_inward_W"],
+            ),
+            "uniform_core_phasor_vs_time_domain": _relative(
+                case["uniform_core_closed_surface_inward_W"],
+                case["uniform_core_time_domain_closed_surface_inward_W"],
+            ),
+        }
+        gates = {
+            "gpu_only": True,
+            "finite": bool(
+                all(
+                    np.isfinite(case[key])
+                    for key in (
+                        "P_Q_W",
+                        "deep_time_domain_closed_surface_inward_W",
+                        "incident_plane_signed_power_W",
+                    )
+                )
+            ),
+            "positive_total_absorption": case["P_Q_W"] > 0.0,
+            "late_window_change_lt_0p5pct": (
+                case["P_Q_window_relative_change"] < 0.005
+            ),
+            "deep_time_domain_Q_flux_closure_lt_0p5pct": (
+                relative_errors["deep_time_domain_box"] < 0.005
+            ),
+            "no_clipping_smoothing_gain_or_result_rescaling": True,
+        }
+        diagnostic = {
+            "status": (
+                "VALIDATED_FDTDX_SUBSTRATE_ONLY_MATCHED_VOLUME_CLOSURE"
+                if all(gates.values())
+                else "FAILED_FDTDX_SUBSTRATE_ONLY_MATCHED_VOLUME_CLOSURE"
+            ),
+            "scope": "substrate-only flux-surface diagnostic; no TaIrTe4/Au/adjoint/thermal/PTE/electrical/optimization",
+            "audit": audit,
+            "case": case,
+            "closure_contract": {
+                "primary": "late-window material Q versus inward time-domain Poynting flux on the deep matched box",
+                "phasor_boxes": "reported as detector-convergence diagnostics; not substituted for the primary time-domain balance",
+            },
+            "relative_errors": relative_errors,
+            "gates": gates,
+            "runtime": {
+                "compile_seconds": compile_seconds,
+                "one_case_execution_seconds": execution_seconds,
+            },
+            "no_clipping_smoothing_gain_or_result_rescaling": True,
+        }
+        (output_dir / "fdtdx_substrate_only_closure_diagnostic.json").write_text(
+            json.dumps(diagnostic, indent=2) + "\n", encoding="utf-8"
+        )
+        print(json.dumps(diagnostic, indent=2))
+        return diagnostic
+
+    if include_substrate:
+        # The empty case retains the physical SiO2 layer.  Unlike the air-only
+        # endpoint, its closed-box flux is physical and must not be subtracted
+        # from the other cases.  Use direct matched-volume Poynting closure.
+        substrate_only_q = cases["empty"]["P_Q_W"]
+        substrate_only_closed = cases["empty"]["deep_time_domain_closed_surface_inward_W"]
+        numerical_box_residual = substrate_only_closed - substrate_only_q
+        closure: dict[str, dict[str, float]] = {}
+        for name in ("empty", "au0", "au1"):
+            corrected = cases[name]["deep_time_domain_closed_surface_inward_W"]
+            closure[name] = {
+                "deep_time_domain_closed_surface_W": corrected,
+                "Q_flux_closure_relative": _relative(cases[name]["P_Q_W"], corrected),
+                "near_phasor_Q_flux_closure_relative": _relative(
+                    cases[name]["P_Q_W"], cases[name]["closed_surface_inward_W"]
+                ),
+                "deep_phasor_Q_flux_closure_relative": _relative(
+                    cases[name]["P_Q_W"], cases[name]["deep_closed_surface_inward_W"]
+                ),
+            }
+        finite = bool(
+            all(
+                np.isfinite(value)
+                for case in cases.values()
+                for value in (
+                    case["P_Q_W"],
+                    case["incident_plane_signed_power_W"],
+                    case["deep_time_domain_closed_surface_inward_W"],
+                )
+            )
+        )
+        gates = {
+            "gpu_only": True,
+            "finite": finite,
+            "positive_total_absorption": all(
+                cases[name]["P_Q_W"] > 0.0 for name in ("empty", "au0", "au1")
+            ),
+            "each_late_window_change_lt_0p5pct": all(
+                cases[name]["P_Q_window_relative_change"] < 0.005
+                for name in ("empty", "au0", "au1")
+            ),
+            "each_Q_flux_closure_lt_0p5pct": all(
+                closure[name]["Q_flux_closure_relative"] < 0.005
+                for name in ("empty", "au0", "au1")
+            ),
+            "no_clipping_smoothing_gain_or_result_rescaling": True,
+        }
+        passed = all(gates.values())
+        summary = {
+            "status": (
+                "VALIDATED_FDTDX_DIAGNOSTIC_SUBSTRATE_BINARY_ENDPOINT_CLOSURE"
+                if passed
+                else "FAILED_FDTDX_DIAGNOSTIC_SUBSTRATE_BINARY_ENDPOINT_CLOSURE"
+            ),
+            "scope": (
+                "10-um Au/TaIrTe4/285-nm-SiO2/lossless-Si FDTDX diagnostic; "
+                "not production while installed-Lumerical Palik Si readback remains blocked; "
+                "no thermal/PTE/electrical/adjoint/optimization"
+            ),
+            "audit": audit,
+            "materials": {
+                "au_epsilon": [epsilon_au.real, epsilon_au.imag],
+                "tairte4_epsilon": {
+                    name: [value.real, value.imag] for name, value in epsilon_ta.items()
+                },
+                "sio2_epsilon": [epsilon_sio2.real, epsilon_sio2.imag],
+                "si_epsilon": [epsilon_si.real, epsilon_si.imag],
+                "axis_mapping": {"x": "b", "y": "a", "z": "c=b closure"},
+                "material_Q_component_coordinates": (
+                    "native Yee coordinates; exact_interpolation=False; "
+                    "same 272x272 closed-volume footprint for SiO2"
+                ),
+            },
+            "cases": cases,
+            "closure": {
+                "method": (
+                    "direct matched-volume late-window P_Q versus deep-box inward "
+                    "time-domain Poynting flux; no subtraction or rescaling"
+                ),
+                "substrate_only_Q_W": substrate_only_q,
+                "substrate_only_closed_surface_W": substrate_only_closed,
+                "substrate_only_closed_minus_Q_residual_W": numerical_box_residual,
+                "cases": closure,
+            },
+            "runtime": {
+                "compile_seconds": compile_seconds,
+                "three_case_execution_seconds": execution_seconds,
+            },
+            "gates": gates,
+        }
+        summary_path = output_dir / "fdtdx_substrate_binary_endpoints_summary.json"
+        summary_path.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+        print(json.dumps(summary, indent=2))
+        return summary
 
     p_incident = abs(cases["empty"]["incident_plane_signed_power_W"])
     p_empty_box = cases["empty"]["closed_surface_inward_W"]
@@ -845,6 +1608,21 @@ def main() -> int:
     parser.add_argument("--gradient-smoke", action="store_true")
     parser.add_argument("--gradient-checkpoints", type=int, default=16)
     parser.add_argument("--include-adjoint-aligned", action="store_true")
+    parser.add_argument("--include-substrate", action="store_true")
+    parser.add_argument("--matched-substrate-interface-grid", action="store_true")
+    parser.add_argument("--substrate-empty-only", action="store_true")
+    parser.add_argument("--substrate-total-periods", type=int)
+    parser.add_argument("--substrate-window-periods", type=int)
+    parser.add_argument(
+        "--substrate-loss-representation",
+        choices=("lorentz", "conductivity"),
+        default="conductivity",
+    )
+    parser.add_argument(
+        "--substrate-material-json",
+        type=Path,
+        default=SUBSTRATE_MATERIAL_JSON,
+    )
     args = parser.parse_args()
     if args.summarize_existing:
         summary = json.loads(
@@ -858,6 +1636,13 @@ def main() -> int:
         gradient_smoke=args.gradient_smoke,
         gradient_checkpoints=args.gradient_checkpoints,
         include_adjoint_aligned=args.include_adjoint_aligned,
+        include_substrate=args.include_substrate,
+        substrate_empty_only=args.substrate_empty_only,
+        substrate_loss_representation=args.substrate_loss_representation,
+        substrate_material_json=args.substrate_material_json,
+        matched_substrate_interface_grid=args.matched_substrate_interface_grid,
+        substrate_total_periods=args.substrate_total_periods,
+        substrate_window_periods=args.substrate_window_periods,
     )
     if args.audit_only:
         return 0

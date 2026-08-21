@@ -30,6 +30,17 @@
   cross-solver power equality is not claimed.
 - Code, reports, JSON, CSV, plot, and manifests:
   `optimization_runs/au_on_fixed_tairte4_validation/`.
+- The explicit 10-um `Au/TaIrTe4/285-nm-SiO2/lossless-Si` FDTDX diagnostic
+  now passes component-specific native-Yee loss/flux bookkeeping on a matched
+  Si/SiO2 interface grid. Deep-box time-domain closures are `0.4742%`
+  (substrate), `0.1101%` (TaIrTe4), and `0.1678%` (Au/TaIrTe4); late-window
+  changes are below `0.016%`. Status:
+  `VALIDATED_FDTDX_DIAGNOSTIC_SUBSTRATE_BINARY_ENDPOINT_CLOSURE`.
+- This substrate checkpoint is not yet production-certified because the
+  installed Lumerical Palik-Si readback remains blocked; the cited lossless
+  10-um Si value is an explicit diagnostic assumption. Substrate-bearing
+  density AD--FD and combined optical/thermal/electrical PTE AD--FD remain
+  pending.
 
 ## Run 005 bounded low-beta topology-exploration pilot
 

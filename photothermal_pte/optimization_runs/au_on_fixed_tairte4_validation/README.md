@@ -63,9 +63,10 @@ diagnostic: it did not finish in 60 minutes.  Sixteen checkpoints used 35.8 GB
 on a 49-GB GPU and completed one value+gradient in 506.6 s.  This changes only
 the time--memory tradeoff, not the physical or differentiation contract.
 
-Thermal, electrical, PTE, combined-gradient, and optimization validation are
-still pending.  The next gate is explicit Au/TaIrTe4 thermal coupling and a
-thermal-only AD--FD control.
+Isolated Au/TaIrTe4 thermal/contact and floating-Au electrical/weighting
+AD--FD controls now pass.  The 10-um SiO2/Si optical substrate endpoint also
+passes after correcting component-specific Yee dual-volume integration.
+Coupled PTE, combined-gradient, and optimization validation remain pending.
 
 This folder is intentionally separate from the completed TaIrTe4/void
 optimization runs.  It validates a new physical contract:
@@ -538,3 +539,24 @@ gain is used.  The published state is
 This route is not yet the production thermal/PTE optimizer.  The next gate is
 a production-width nonuniform-Au directional AD--FD smoke test followed by the
 thermal/electrical chain validation.
+
+## 10-um substrate/Yee-volume endpoint checkpoint
+
+The 285-nm SiO2/lossless-Si diagnostic exposed a component-grid integration
+error that the earlier air-only control could not reveal. `Ex` and `Ey` live
+on z-edge dual volumes; using the cell-centered z width for every component
+over-counted oxide absorption beside a coarse-Si/fine-SiO2 transition. The
+corrected code uses component-specific dual volumes and a matched 15-nm
+Si/SiO2 interface grid.
+
+At 32 periods, direct material loss versus deep-box time-domain Poynting flux
+closes to `0.4742%` for substrate-only, `0.1101%` for TaIrTe4/substrate, and
+`0.1678%` for Au/TaIrTe4/substrate. All late-window changes are below
+`0.016%`. The endpoint state is
+`VALIDATED_FDTDX_DIAGNOSTIC_SUBSTRATE_BINARY_ENDPOINT_CLOSURE`.
+
+This remains a diagnostic material contract because the installed Lumerical
+Palik-Si readback is blocked; Si uses an explicitly cited lossless `n=3.4215`
+value at 10 um. Substrate-bearing optical density AD--FD and the combined
+optical/thermal/electrical PTE gradient remain the next gates. See
+`results_fdtdx_substrate_matched_interface_endpoints_32period_gpu3/`.
