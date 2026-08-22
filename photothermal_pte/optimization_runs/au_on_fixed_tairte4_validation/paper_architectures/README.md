@@ -154,3 +154,17 @@ endpoint seam as a diagnostic while publishing a display-only periodic
 canonical cell and 3x3 tiling. It also separates the paper's periodic optical
 screening problem from the finite all-PML Maxwell plus thermal/electrical PTE
 device that is required for terminal-current inverse design.
+
+## Broadband resonance first, finite Gaussian device second
+
+`17_run_v261_t2024_periodic_broadband_rta.py` is the fast periodic resonance
+screen. It removes the heavy 3-D Q analysis group and records flux-derived
+`R`, `T`, and `A=1-R-T` from 3--8 um for one polarization and either the top-T
+or matched-bare geometry. Run the four `T_Ea`, `T_Eb`, `bare_Ea`, and
+`bare_Eb` cases, then publish them with
+`18_summarize_t2024_periodic_broadband_rta.py`.
+
+This spectrum is not a finite-device or PTE calculation. After a physical
+resonance is selected, only that wavelength is rerun with component-resolved
+volumetric Q and closure. A separate finite array then places multiple T
+resonators inside an all-PML domain and illuminates them with a Gaussian beam.
