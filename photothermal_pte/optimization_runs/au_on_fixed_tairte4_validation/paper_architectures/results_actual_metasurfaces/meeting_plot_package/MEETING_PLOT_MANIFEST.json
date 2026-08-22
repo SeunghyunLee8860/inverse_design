@@ -1,0 +1,176 @@
+{
+  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/11_publish_meeting_plot_package.py",
+  "published_artifacts": [
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/README.md",
+      "size_bytes": 739,
+      "sha256": "b1ba3e886c43f1c2b8af86ad993dbb90debc595302f12051a1158089ae1cd7f1"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Ea/00_case_overview.png",
+      "size_bytes": 260271,
+      "sha256": "ee02f10c5d35ce81d25ec85434b67e52a64a553efdea0ec926bb05096e1386aa"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Ea/01_structure_and_source.png",
+      "size_bytes": 61514,
+      "sha256": "57f45ad9eb2de53a1a2ae020e560b0764d786a74dcf578aeac71ac80cccb3be0"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Ea/02_Qx_depth_integrated.png",
+      "size_bytes": 73508,
+      "sha256": "a51d6e15ed54498691b41b75026bed2fa5dddea9d5b9ac7e65dc9b4e73a81041"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Ea/03_Qy_depth_integrated.png",
+      "size_bytes": 81518,
+      "sha256": "68fdf2cca06816bc79b32ce7e41b07f23a96b1f599c37c0c3ebbe7b3b36f5be2"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Ea/04_Qz_depth_integrated.png",
+      "size_bytes": 71497,
+      "sha256": "30c996ed944938292bbfdb9f47e063d143122bc8716f1da19dca9cece47e9742"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Ea/05_Qtotal_conservative_common_grid.png",
+      "size_bytes": 86119,
+      "sha256": "38c6fe2a4b88fba566477cc7363dbd72ca351496bf0aaf049f3d206ad9c68f3d"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Ea/06_power_and_material_breakdown.png",
+      "size_bytes": 112029,
+      "sha256": "acfd53d377106da763c14b1a78504085252cd59b5a1b2b9cc0e91686fd25a481"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Ea/case_metrics.json",
+      "size_bytes": 1061,
+      "sha256": "97b0762dedb3959b8cf01c4849f457840a8bbe84f0a913754b2c7fff3e7b7ac3"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Eb/00_case_overview.png",
+      "size_bytes": 277738,
+      "sha256": "0ce689a6846f34787e1cc4ca0c2032c40807d4cca467c8732e87b59369366819"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Eb/01_structure_and_source.png",
+      "size_bytes": 61340,
+      "sha256": "22d0aca9d23a92c4213a33496802a1504c37ce5fc60c9e5224492f1ee57d9df7"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Eb/02_Qx_depth_integrated.png",
+      "size_bytes": 89808,
+      "sha256": "5f7dbeac1862bea03f7f25741a000a92405b365f11a2e370b2d6ff52ba513925"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Eb/03_Qy_depth_integrated.png",
+      "size_bytes": 84779,
+      "sha256": "8590ac224facdee5987347b846a768b5e445910590f510c477d7982367db22c6"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Eb/04_Qz_depth_integrated.png",
+      "size_bytes": 74292,
+      "sha256": "c6dfd0d58a1f307eca964fb723eec236959f41109acfb242606a9b968a2ae267"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Eb/05_Qtotal_conservative_common_grid.png",
+      "size_bytes": 84685,
+      "sha256": "0e1297ea454df2c4b42ba4aa6497d6aa7261f72b530acee2caf51266434b6609"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Eb/06_power_and_material_breakdown.png",
+      "size_bytes": 112755,
+      "sha256": "310fd612c157379f2cc8795492ee101e5c4beaae6ec23549e319664915cff8cb"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Eb/case_metrics.json",
+      "size_bytes": 1041,
+      "sha256": "9219eb9a722b8eb4b6150ee295dc3803441de79b2b46a877726f61c320adb96e"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Ea/00_case_overview.png",
+      "size_bytes": 334425,
+      "sha256": "8ca951336f543fdc9a2b1b9f9d742f86c82451dc0dfb53e6ccd41673c27c17fa"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Ea/01_structure_and_source.png",
+      "size_bytes": 65329,
+      "sha256": "93c9f3613ed113422968d782070a186fc3ff4bf820d93e55f16c6a3740bd2173"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Ea/02_Qx_depth_integrated.png",
+      "size_bytes": 133887,
+      "sha256": "85610709a71c2aa25efc95e560d271dfbed802a8eb64304b196df9dd7bcf4dab"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Ea/03_Qy_depth_integrated.png",
+      "size_bytes": 63267,
+      "sha256": "bce3e07a082d6563d7d013f7f37b1e53b96a82801a6fa88fc7386e154a11e40b"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Ea/04_Qz_depth_integrated.png",
+      "size_bytes": 128839,
+      "sha256": "4a6007193874c6059b9f0d5b8b64ae882e2fe305468c74bcc360a975ced8e24a"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Ea/05_Qtotal_conservative_common_grid.png",
+      "size_bytes": 64618,
+      "sha256": "d150c7dede511ea3357a09690af5ae01415dd5571e38c0e63c9e16bd7956cd0f"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Ea/06_power_and_material_breakdown.png",
+      "size_bytes": 113571,
+      "sha256": "4e6f4375f6b77d15fd280f4cb54c886b9ce5b9be62ca06cfc8c5344ad7d906e1"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Ea/case_metrics.json",
+      "size_bytes": 1072,
+      "sha256": "3e98efd015c6969604b4f097965fe7e2343d41b35f6aadd2c50ad33b6141d467"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Eb/00_case_overview.png",
+      "size_bytes": 213952,
+      "sha256": "5a0614e6fb707924575aebd94e4e647f82f093e885bc3e990fc7a123d2cf1187"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Eb/01_structure_and_source.png",
+      "size_bytes": 65110,
+      "sha256": "ba51af3e1c7e939a4ecb69f6145e8b231426e7832a585f027fef4b46329ba50e"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Eb/02_Qx_depth_integrated.png",
+      "size_bytes": 62422,
+      "sha256": "12b929b42f879ba0972250056bea38971bb744e959f16bc7006e3c48fc105a31"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Eb/03_Qy_depth_integrated.png",
+      "size_bytes": 66685,
+      "sha256": "8887106a017b6897159a1b65b979a69d303168065858fcce9c45f72516d280a0"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Eb/04_Qz_depth_integrated.png",
+      "size_bytes": 66751,
+      "sha256": "b19be4fd0925bdb3865f46d1c184d80f57e4dbdfc7bec2caa44de44ba08ae665"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Eb/05_Qtotal_conservative_common_grid.png",
+      "size_bytes": 63960,
+      "sha256": "e29ed04d8223ea4e0dfb299a1caea5e5a9712518cba0f537a7700cde820ad0c2"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Eb/06_power_and_material_breakdown.png",
+      "size_bytes": 113451,
+      "sha256": "88d09d1c09d604c7df0998f5037a7bb02ef80bd3a66c18b66af6d19abdd0bdf0"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Eb/case_metrics.json",
+      "size_bytes": 1036,
+      "sha256": "ce2919b1e04fe927d13a04f8f14ad68c6447acfc53a728cb682fecea47292aa1"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/meeting_plot_package.json",
+      "size_bytes": 2036,
+      "sha256": "c2964febb5e5c1f9a5418223074e018f68fbeabe34cfa0a57edea084889774ea"
+    }
+  ],
+  "raw_artifacts_committed": false
+}

@@ -1,0 +1,58 @@
+{
+  "status": "PUBLISHED_T2024_MEETING_PLOT_PACKAGE",
+  "coordinate_contract": "Lumerical x=TaIrTe4 b, y=TaIrTe4 a; Q components first remapped from their own Yee coordinate before Qtotal",
+  "cases": {
+    "T_Eb": {
+      "folder": "results_actual_metasurfaces/meeting_plot_package/T_Eb",
+      "common_grid_power_error": 0.0,
+      "figures": [
+        "00_case_overview.png",
+        "01_structure_and_source.png",
+        "02_Qx_depth_integrated.png",
+        "03_Qy_depth_integrated.png",
+        "04_Qz_depth_integrated.png",
+        "05_Qtotal_conservative_common_grid.png",
+        "06_power_and_material_breakdown.png"
+      ]
+    },
+    "T_Ea": {
+      "folder": "results_actual_metasurfaces/meeting_plot_package/T_Ea",
+      "common_grid_power_error": 1.317643580684176e-16,
+      "figures": [
+        "00_case_overview.png",
+        "01_structure_and_source.png",
+        "02_Qx_depth_integrated.png",
+        "03_Qy_depth_integrated.png",
+        "04_Qz_depth_integrated.png",
+        "05_Qtotal_conservative_common_grid.png",
+        "06_power_and_material_breakdown.png"
+      ]
+    },
+    "bare_Eb": {
+      "folder": "results_actual_metasurfaces/meeting_plot_package/bare_Eb",
+      "common_grid_power_error": 1.2854283030705617e-16,
+      "figures": [
+        "00_case_overview.png",
+        "01_structure_and_source.png",
+        "02_Qx_depth_integrated.png",
+        "03_Qy_depth_integrated.png",
+        "04_Qz_depth_integrated.png",
+        "05_Qtotal_conservative_common_grid.png",
+        "06_power_and_material_breakdown.png"
+      ]
+    },
+    "bare_Ea": {
+      "folder": "results_actual_metasurfaces/meeting_plot_package/bare_Ea",
+      "common_grid_power_error": 1.2457418376263758e-16,
+      "figures": [
+        "00_case_overview.png",
+        "01_structure_and_source.png",
+        "02_Qx_depth_integrated.png",
+        "03_Qy_depth_integrated.png",
+        "04_Qz_depth_integrated.png",
+        "05_Qtotal_conservative_common_grid.png",
+        "06_power_and_material_breakdown.png"
+      ]
+    }
+  }
+}

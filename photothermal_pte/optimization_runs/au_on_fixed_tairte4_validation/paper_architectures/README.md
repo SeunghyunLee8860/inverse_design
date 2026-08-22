@@ -97,3 +97,7 @@ fail-closed because the PDFs do not disclose a unique polygon/junction CAD.
 The inverse-T contribution is isolated with matched no-top-T controls using
 the same solver entry point plus `--omit-top-t-control`. Publish the four-case
 comparison with `10_summarize_t2024_top_t_enhancement.py`.
+
+For presentations, run `11_publish_meeting_plot_package.py`. It creates one
+folder per case with separate structure, Qx, Qy, Qz, conservative common-grid
+Qtotal, power breakdown, overview, and machine-readable metrics.
