@@ -345,8 +345,19 @@ def build_tairte4_local_epsilon_operator(
         )
         ix, iy, _ = np.unravel_index(rows, shapes[component])
         coordinates = component_coordinates(baseline, component)
+        sample_x = coordinates[0][ix]
+        sample_y = coordinates[1][iy]
+        if (
+            tairte4_flake_optical.CONTRACT.geometry_mode
+            == "diagonal_45_contact_anchored"
+        ):
+            sample_u, sample_v = tairte4_flake_optical.CONTRACT.rotated_uv(
+                sample_x, sample_y
+            )
+        else:
+            sample_u, sample_v = sample_x, sample_y
         distance, nearest = tree.query(
-            np.column_stack((coordinates[0][ix], coordinates[1][iy])), k=1
+            np.column_stack((sample_u, sample_v)), k=1
         )
         nonlocal_rows = distance > PRODUCTION_MAX_LOCAL_DISTANCE_M
         if np.any(nonlocal_rows):
@@ -360,8 +371,12 @@ def build_tairte4_local_epsilon_operator(
             if np.any(physically_significant_nonlocal):
                 first = int(np.flatnonzero(physically_significant_nonlocal)[0])
                 yee_coordinate = (
-                    float(coordinates[0][ix[first]]),
-                    float(coordinates[1][iy[first]]),
+                    float(sample_x[first]),
+                    float(sample_y[first]),
+                )
+                design_coordinate = (
+                    float(sample_u[first]),
+                    float(sample_v[first]),
                 )
                 nearest_node = node_indices[int(np.asarray(nearest)[first])]
                 node_coordinate = (
@@ -376,7 +391,9 @@ def build_tairte4_local_epsilon_operator(
                     f"max_nonlocal_relative={float(np.max(relative_response[physically_significant_nonlocal])):.9e}, "
                     f"nonlocal_count={int(np.count_nonzero(physically_significant_nonlocal))}, "
                     f"perturbation_class={perturbation_class}, color={color}, "
-                    f"first_Yee_xy_m={yee_coordinate}, first_nearest_node_xy_m={node_coordinate}"
+                    f"first_Yee_xy_m={yee_coordinate}, "
+                    f"first_Yee_design_uv_m={design_coordinate}, "
+                    f"first_nearest_node_uv_m={node_coordinate}"
                 )
             tail = suppressed_nonlocal_numerical_tail[component]
             tail["count"] += int(np.count_nonzero(numerical_tail))

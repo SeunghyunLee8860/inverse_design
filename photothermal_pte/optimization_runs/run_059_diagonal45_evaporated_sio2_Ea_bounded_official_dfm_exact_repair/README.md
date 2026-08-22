@@ -27,7 +27,7 @@ to the fixed TaIrTe4 crystal axes.
 
 Raw solver artifacts are written under
 `/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/`.
-Published checkpoints and the final report are written to `results_v3/`.
+Published checkpoints and the final report are written to `results_v4/`.
 
 Material provenance is unchanged from the explicit-Au response study:
 Au optical constants are the 10 um Ordal et al. values
