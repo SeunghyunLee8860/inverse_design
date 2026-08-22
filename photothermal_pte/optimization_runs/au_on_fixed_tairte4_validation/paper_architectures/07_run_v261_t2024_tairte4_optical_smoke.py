@@ -75,6 +75,23 @@ TOP_MONITOR = "T2024_flux_top"
 BOTTOM_MONITOR = "T2024_flux_bottom"
 
 
+def configure_wavelength(wavelength_um: float) -> None:
+    """Select one certified-Q wavelength without changing the geometry."""
+
+    global WAVELENGTH_M, FREQUENCY_HZ
+    if not 4.0 <= wavelength_um <= 12.0:
+        raise ValueError("selected-Q wavelength must lie inside the 4-12 um screen")
+    WAVELENGTH_M = float(wavelength_um) * 1.0e-6
+    FREQUENCY_HZ = C0 / WAVELENGTH_M
+
+
+def source_window_m() -> tuple[float, float]:
+    # Preserve the immutable historical 4.75-um smoke contract exactly.
+    if abs(WAVELENGTH_M - 4.75e-6) < 1.0e-15:
+        return 4.5e-6, 5.0e-6
+    return max(4.0e-6, 0.95 * WAVELENGTH_M), min(12.0e-6, 1.05 * WAVELENGTH_M)
+
+
 def common_field_slices(fdtd: object, q: dict[str, object]) -> dict[str, np.ndarray]:
     """Collocate complex E on three compact physical cross sections.
 
@@ -358,8 +375,9 @@ def setup(
     source["y max"] = 0.5 * PERIOD_Y_M
     source["z"] = SOURCE_Z_M
     source["override global source settings"] = True
-    source["wavelength start"] = 4.5e-6
-    source["wavelength stop"] = 5.0e-6
+    wavelength_start_m, wavelength_stop_m = source_window_m()
+    source["wavelength start"] = wavelength_start_m
+    source["wavelength stop"] = wavelength_stop_m
 
     fdtd.setglobalmonitor("use source limits", False)
     fdtd.setglobalmonitor("use wavelength spacing", True)
@@ -454,6 +472,8 @@ def setup(
             "type": "normal-incidence Bloch/Periodic plane wave",
             "polarization": polarization,
             "wavelength_m": WAVELENGTH_M,
+            "wavelength_start_m": wavelength_start_m,
+            "wavelength_stop_m": wavelength_stop_m,
             "z_m": SOURCE_Z_M,
         },
         "top_Au_T_present": include_top_t,
@@ -553,6 +573,12 @@ def main() -> int:
     parser.add_argument("--polarization", choices=("x_b", "y_a"), default="x_b")
     parser.add_argument("--duration-ps", type=float, default=1.0)
     parser.add_argument(
+        "--wavelength-um",
+        type=float,
+        default=4.75,
+        help="Single Q/closure wavelength selected from the prior 4-12 um R/T/A screen.",
+    )
+    parser.add_argument(
         "--substrate-mode",
         choices=(
             "sio2_si_reduced_285nm",
@@ -573,6 +599,7 @@ def main() -> int:
         help="Remove only the top inverse-T while retaining the matched mirror/spacer/TaIrTe4 stack.",
     )
     args = parser.parse_args()
+    configure_wavelength(args.wavelength_um)
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
         raise RuntimeError(f"refusing to overwrite non-empty output: {output}")
