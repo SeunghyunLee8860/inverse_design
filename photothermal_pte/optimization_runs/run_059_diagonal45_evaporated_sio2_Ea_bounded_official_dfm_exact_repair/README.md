@@ -20,4 +20,4 @@ degree axis.
 
 Raw solver artifacts are written under
 `/data/seunghyun/tairte4/artifacts/tairte4_diagonal_45_contact_anchored/`.
-Published checkpoints and the final report are written to `results/`.
+Published checkpoints and the final report are written to `results_v2/`.

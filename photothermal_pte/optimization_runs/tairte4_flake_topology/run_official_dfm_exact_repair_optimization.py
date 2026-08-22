@@ -71,6 +71,7 @@ STAGE_TRUST_RADIUS = {
     128.0: 0.05,
 }
 REFERENCE_INCIDENT_POWER_W = 285.0e-6
+LOCKED_LATENT_LOWER_BOUND = 1.0 - 1.0e-12
 
 
 def emit(path: Path, event: str, **values: object) -> None:
@@ -334,7 +335,10 @@ def main() -> int:
         trust_radius = STAGE_TRUST_RADIUS[beta]
         stage_lower = np.maximum(0.0, latent - trust_radius)
         stage_upper = np.minimum(1.0, latent + trust_radius)
-        stage_lower[CONTRACT.fixed_design_solid_mask] = 1.0
+        # NLopt rejects exactly equal lower/upper bounds. The solver-facing
+        # density is still canonicalized to exactly one at every locked node;
+        # this tiny latent-only interval is never passed to a physics model.
+        stage_lower[CONTRACT.fixed_design_solid_mask] = LOCKED_LATENT_LOWER_BOUND
         stage_upper[CONTRACT.fixed_design_solid_mask] = 1.0
         optimizer = make_optimizer(
             evaluator,
