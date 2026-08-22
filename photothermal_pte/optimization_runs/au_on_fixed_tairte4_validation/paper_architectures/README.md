@@ -176,3 +176,16 @@ does not disclose junction overlap/gap CAD, this remains a named reconstructed
 scenario. `20_summarize_z2022_m2_periodic_broadband_rta.py` compares LH/RH and
 the explicit CP+/CP- source-phase definitions without prematurely renaming
 them LCP/RCP.
+
+`22_audit_finite_t_array_gaussian_contract.py` separates the wavelength sweep
+from the later Gaussian-device size.  Its current cost audit compares a
+`w0=4 um` smoke (187 inverse-T elements) with the established `w0=8.5 um`
+scenario (805 elements).  Both are finite, six-PML Maxwell candidates; neither
+uses periodic boundaries.  The larger beam is not launched until v261
+`runsetup` records the realized mesh and GPU-memory requirement.  The audit is
+offline and must not be called an FDTD, thermal, or PTE result.
+
+`21_run_periodic_screening_queue.py` waits for an unclaimed licensed GPU and
+runs the four T spectra followed by the four reconstructed-Z spectra.  It does
+not kill, pre-empt, or attach to another user's solver.  A failed case stops the
+queue fail-closed instead of silently advancing.
