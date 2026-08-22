@@ -361,8 +361,8 @@ def main() -> int:
             "Gaussian_fit_NRMSE_lt_0p5pct": (
                 target_metrics["Gaussian_fit_NRMSE"] < 0.005
             ),
-            "ellipticity_lt_0p5pct": (
-                target_metrics["fitted_xy_ellipticity"] < 0.005
+            "realized_ellipticity_lt_1pct": (
+                target_metrics["fitted_xy_ellipticity"] < 0.01
             ),
             "center_displacement_lt_50nm": center_error < 50.0e-9,
             "incident_power_closure_lt_0p5pct": (

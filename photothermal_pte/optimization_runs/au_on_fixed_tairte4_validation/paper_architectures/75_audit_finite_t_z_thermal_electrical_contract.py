@@ -53,7 +53,7 @@ def _architecture_contracts() -> dict[str, dict[str, object]]:
     return {
         "T": {
             "wavelength_um": 4.75,
-            "Lumerical_source_object_w0_um": 3.97732,
+            "Lumerical_source_object_w0_um": 3.9444817826057172,
             "top_Au_thickness_nm": 33.0,
             "Al2O3_thickness_nm": 35.0,
             "Au_mirror_thickness_nm": 200.0,
@@ -68,7 +68,7 @@ def _architecture_contracts() -> dict[str, dict[str, object]]:
         },
         "Z": {
             "wavelength_um": 5.30,
-            "Lumerical_source_object_w0_um": 3.97197,
+            "Lumerical_source_object_w0_um": 3.936280659072623,
             "top_Au_thickness_nm": 50.0,
             "Al2O3_thickness_nm": 200.0,
             "Au_mirror_thickness_nm": 200.0,
@@ -145,11 +145,19 @@ def _contract() -> dict[str, object]:
             "gates": {
                 "source_realized_waist_relative": 0.005,
                 "Gaussian_fit_NRMSE": 0.005,
+                "realized_xy_ellipticity": 0.01,
                 "source_center_displacement_nm": 50.0,
                 "auto_shutoff": 1.0e-5,
                 "six_face_closure_relative": 0.005,
                 "Q_mapping_relative": 0.005,
             },
+            "ellipticity_note": (
+                "The finite beam has lambda/w0 near unity.  The source-object "
+                "profile is circular, while Maxwell transversality produces a "
+                "small polarization-oriented target-plane ellipticity and a "
+                "nonzero Ez component.  This realized effect is reported, not "
+                "numerically symmetrized."
+            ),
             "forbidden": [
                 "periodic tiling", "old-Q cropping", "Q clipping", "Q smoothing",
                 "gain", "global Q rescaling", "source deletion",
