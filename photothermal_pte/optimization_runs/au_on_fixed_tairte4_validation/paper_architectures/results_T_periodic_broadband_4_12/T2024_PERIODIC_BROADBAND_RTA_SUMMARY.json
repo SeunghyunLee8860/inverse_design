@@ -1,0 +1,46 @@
+{
+  "status": "VALIDATED_T2024_PERIODIC_BROADBAND_RTA_SCREENING",
+  "scope": "periodic flux-derived spectrum only; selected resonances still require single-frequency volumetric-Q closure",
+  "wavelength_bounds_um": [
+    3.999999999999999,
+    12.0
+  ],
+  "wavelength_points": 321,
+  "case_metrics": {
+    "T_Ea": {
+      "peak_wavelength_um": 3.999999999999999,
+      "peak_total_absorption": 0.19859786745462582,
+      "runtime_s": 37.794063068926334,
+      "final_auto_shutoff": 9.69525e-07
+    },
+    "T_Eb": {
+      "peak_wavelength_um": 3.999999999999999,
+      "peak_total_absorption": 0.3105141071653115,
+      "runtime_s": 32.679211903363466,
+      "final_auto_shutoff": 9.61112e-07
+    },
+    "bare_Ea": {
+      "peak_wavelength_um": 3.999999999999999,
+      "peak_total_absorption": 0.20899598255372007,
+      "runtime_s": 30.333036974072456,
+      "final_auto_shutoff": 2.60844e-07
+    },
+    "bare_Eb": {
+      "peak_wavelength_um": 3.999999999999999,
+      "peak_total_absorption": 0.3092393638661708,
+      "runtime_s": 27.09674572944641,
+      "final_auto_shutoff": 2.476e-07
+    }
+  },
+  "T_minus_bare_enhancement": {
+    "Ea": {
+      "max_delta_A": 0.00936127627740467,
+      "wavelength_um": 12.0
+    },
+    "Eb": {
+      "max_delta_A": 0.056919580915392856,
+      "wavelength_um": 11.825000000000003
+    }
+  },
+  "maximum_abs_selectivity": 0.4396527494535304
+}
