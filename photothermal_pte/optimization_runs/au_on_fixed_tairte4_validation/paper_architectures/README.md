@@ -159,7 +159,7 @@ device that is required for terminal-current inverse design.
 
 `17_run_v261_t2024_periodic_broadband_rta.py` is the fast periodic resonance
 screen. It removes the heavy 3-D Q analysis group and records flux-derived
-`R`, `T`, and `A=1-R-T` from 3--8 um for one polarization and either the top-T
+`R`, `T`, and `A=1-R-T` from 4--12 um for one polarization and either the top-T
 or matched-bare geometry. Run the four `T_Ea`, `T_Eb`, `bare_Ea`, and
 `bare_Eb` cases, then publish them with
 `18_summarize_t2024_periodic_broadband_rta.py`.

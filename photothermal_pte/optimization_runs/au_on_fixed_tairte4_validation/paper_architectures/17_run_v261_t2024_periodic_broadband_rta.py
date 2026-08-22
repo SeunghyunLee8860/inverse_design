@@ -31,9 +31,9 @@ from photothermal_pte.validation.paper_ir_sanity import (  # noqa: E402
 
 
 C0 = 299_792_458.0
-WAVELENGTH_MIN_M = 3.0e-6
-WAVELENGTH_MAX_M = 8.0e-6
-WAVELENGTH_POINTS = 251
+WAVELENGTH_MIN_M = 4.0e-6
+WAVELENGTH_MAX_M = 12.0e-6
+WAVELENGTH_POINTS = 321
 
 
 def load_base():

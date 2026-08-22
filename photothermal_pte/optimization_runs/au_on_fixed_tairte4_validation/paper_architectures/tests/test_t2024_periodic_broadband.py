@@ -33,6 +33,6 @@ def test_signed_flux_conversion() -> None:
 
 def test_broadband_contract_covers_published_t_and_z_mir_range() -> None:
     module = load_module()
-    assert module.WAVELENGTH_MIN_M <= 4.5e-6
-    assert module.WAVELENGTH_MAX_M >= 8.0e-6
-    assert module.WAVELENGTH_POINTS >= 201
+    assert module.WAVELENGTH_MIN_M == 4.0e-6
+    assert module.WAVELENGTH_MAX_M == 12.0e-6
+    assert module.WAVELENGTH_POINTS >= 321
