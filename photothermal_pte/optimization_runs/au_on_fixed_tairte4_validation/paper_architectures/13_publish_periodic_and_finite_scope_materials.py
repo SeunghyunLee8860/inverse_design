@@ -160,42 +160,80 @@ def periodic_structure_figure(path: Path, vertices: np.ndarray) -> None:
 
 
 def finite_scope_figure(path: Path) -> None:
-    fig, axes = plt.subplots(1, 2, figsize=(14.5, 5.8), constrained_layout=True)
+    fig, axes = plt.subplots(1, 3, figsize=(19.0, 5.8), constrained_layout=True)
+    pml_color = "#7a2c91"
+    vertices = np.array([[-0.62,-0.35],[0.62,-0.35],[0.62,-0.25],[0.10,-0.25],[0.10,0.35],[-0.10,0.35],[-0.10,-0.25],[-0.62,-0.25]])
 
+    # Optical top view: the sheet and all planar underlayers continue through
+    # the lateral PML; only the top inverse-T is a finite scatterer.
     ax = axes[0]
     ax.add_patch(Rectangle(
-        (-1.22, -0.90), 2.44, 1.80,
-        facecolor="#e5f3f8", edgecolor="#88adbb", lw=1.2,
-        label="optical background (air)", zorder=0,
+        (-1.30, -0.98), 2.60, 1.96,
+        facecolor="#d9a3a3", edgecolor="#8d2020", lw=1.2,
+        label="TaIrTe4 sheet (continues through PML)", zorder=0,
     ))
-    ax.add_patch(Rectangle((-1.0, -0.72), 2.0, 1.44, facecolor="#d04b4b", alpha=0.28, edgecolor="#8d2020", lw=2, label="finite TaIrTe4 flake"))
-    vertices = np.array([[-0.62,-0.35],[0.62,-0.35],[0.62,-0.25],[0.10,-0.25],[0.10,0.35],[-0.10,0.35],[-0.10,-0.25],[-0.62,-0.25]])
-    ax.fill(vertices[:,0], vertices[:,1], color="#f4bf42", edgecolor="#8a5a00", lw=2, label="one Au inverse-T")
-    ax.annotate("", xy=(0, 0.46), xytext=(0, 0.72),
-                arrowprops={"arrowstyle": "->", "lw": 3, "color": "#2867b2"})
-    ax.text(-0.95, 0.82,
-            "normal incidence; finite-source contract TBD\n"
-            "Gaussian or TFSF only after size audit (not to scale)",
-            ha="left", va="center", color="#2867b2", fontsize=8.0,
-            weight="bold")
-    pml_color = "#7a2c91"
+    ax.fill(vertices[:,0], vertices[:,1], color="#f4bf42",
+            edgecolor="#8a5a00", lw=2, label="one finite Au inverse-T")
     ax.add_patch(Rectangle((-1.30, -0.98), 0.12, 1.96, facecolor=pml_color,
-                           alpha=0.90, label="x/y PML (numerical absorber)", zorder=5))
+                           alpha=0.75, label="x/y PML (not a material edge)", zorder=5))
     ax.add_patch(Rectangle((1.18, -0.98), 0.12, 1.96, facecolor=pml_color,
-                           alpha=0.90, zorder=5))
+                           alpha=0.75, zorder=5))
     ax.add_patch(Rectangle((-1.30, -0.98), 2.60, 0.12, facecolor=pml_color,
-                           alpha=0.90, zorder=5))
+                           alpha=0.75, zorder=5))
     ax.add_patch(Rectangle((-1.30, 0.86), 2.60, 0.12, facecolor=pml_color,
-                           alpha=0.90, zorder=5))
-    ax.text(0, -0.83, "top view: z-PML is above/below the page (not shown)",
-            ha="center", va="center", fontsize=8, color=pml_color,
+                           alpha=0.75, zorder=5))
+    ax.text(0, 0.76, "finite source contract TBD\n(size audit required)",
+            ha="center", va="center", color="#2867b2", fontsize=8,
+            weight="bold")
+    ax.annotate("", xy=(0, 0.43), xytext=(0, 0.68),
+                arrowprops={"arrowstyle": "->", "lw": 3, "color": "#2867b2"})
+    ax.text(0, -0.81, "TaIrTe4/Al2O3/Au mirror do not end at lateral PML",
+            ha="center", va="center", fontsize=7.7, color="#5f1c70",
             weight="bold")
     ax.set_xlim(-1.3,1.3); ax.set_ylim(-0.98,0.98); ax.set_aspect("equal")
-    ax.set_title("Required finite Maxwell certificate")
+    ax.set_title("A. optical top view: isolate one Au T")
     ax.set_xlabel("x=b (finite; x-PML)"); ax.set_ylabel("y=a (finite; y-PML)")
-    ax.legend(fontsize=8, loc="upper right")
+    ax.legend(fontsize=7.4, loc="upper right")
 
+    # Optical cross-section: all planar layers enter the PML without a
+    # termination; the finite T ends well before the PML.
     ax = axes[1]
+    ax.add_patch(Rectangle((-1.30, -0.98), 2.60, 1.96,
+                           facecolor="#e5f3f8", edgecolor="none",
+                           label="air"))
+    ax.add_patch(Rectangle((-1.30, 0.03), 2.60, 0.11,
+                           facecolor="#d98f8f", edgecolor="#8d2020",
+                           label="TaIrTe4 100 nm"))
+    ax.add_patch(Rectangle((-1.30, -0.06), 2.60, 0.09,
+                           facecolor="#8bd3dd", edgecolor="#257985",
+                           label="Al2O3 35 nm"))
+    ax.add_patch(Rectangle((-1.30, -0.37), 2.60, 0.31,
+                           facecolor="#c79800", edgecolor="#745800",
+                           label="Au mirror 200 nm"))
+    ax.add_patch(Rectangle((-0.42, 0.14), 0.84, 0.08,
+                           facecolor="#f4bf42", edgecolor="#8a5a00",
+                           lw=1.5, label="finite Au T 33 nm"))
+    ax.add_patch(Rectangle((-1.30, -0.98), 0.12, 1.96,
+                           facecolor=pml_color, alpha=0.65,
+                           label="x/z PML", zorder=5))
+    ax.add_patch(Rectangle((1.18, -0.98), 0.12, 1.96,
+                           facecolor=pml_color, alpha=0.65, zorder=5))
+    ax.add_patch(Rectangle((-1.30, -0.98), 2.60, 0.12,
+                           facecolor=pml_color, alpha=0.65, zorder=5))
+    ax.add_patch(Rectangle((-1.30, 0.86), 2.60, 0.12,
+                           facecolor=pml_color, alpha=0.65, zorder=5))
+    ax.annotate("normal incidence", xy=(0,0.29), xytext=(0,0.70),
+                ha="center", color="#2867b2", fontsize=8, weight="bold",
+                arrowprops={"arrowstyle":"->","lw":2.5,"color":"#2867b2"})
+    ax.text(0, -0.53, "planar layers pass continuously into PML",
+            ha="center", color="#5f1c70", fontsize=8, weight="bold")
+    ax.set_xlim(-1.3,1.3); ax.set_ylim(-0.98,0.98); ax.set_aspect("equal")
+    ax.set_title("B. optical x-z schematic (z not to scale)")
+    ax.set_xlabel("x=b"); ax.set_ylabel("z")
+    ax.legend(fontsize=7.1, loc="upper right")
+
+    # PTE remains a separate finite physical-domain problem.
+    ax = axes[2]
     ax.add_patch(Rectangle(
         (-1.18, -0.90), 2.36, 1.80,
         facecolor="#eeeeee", edgecolor="#777777", lw=1.2,
@@ -208,10 +246,10 @@ def finite_scope_figure(path: Path) -> None:
     ax.text(0.06,0,r"$\mathbf{E}_w=-\nabla\psi$",color="#3c2d90",fontsize=13)
     ax.text(0,-0.93,"Thermal/electrical domains use physical BCs, not optical PML.",ha="center",color="#8d2020",weight="bold")
     ax.set_xlim(-1.3,1.3); ax.set_ylim(-1.02,1.02); ax.set_aspect("equal")
-    ax.set_title("Required finite thermal/electrical certificate")
+    ax.set_title("C. separate finite thermal/electrical certificate")
     ax.set_xlabel("finite device x=b"); ax.set_ylabel("finite device y=a")
     ax.legend(fontsize=8,loc="upper right")
-    fig.suptitle("Periodic absorptance screening and finite-device PTE are different problems")
+    fig.suptitle("Single-Au-T optical resonance and finite-device PTE are separate problems")
     fig.savefig(path,dpi=220)
     plt.close(fig)
 

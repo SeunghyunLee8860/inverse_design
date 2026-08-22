@@ -34,19 +34,27 @@ is not a PTE inverse-design certificate.
 
 ## Required finite-device calculation
 
-The next independent model must contain:
+To isolate the resonance of a single Au T without introducing a flake-air
+lateral edge, the next optical model must contain:
 
-1. a finite TaIrTe4 flake and one finite Au T;
-2. optical PML on all six Maxwell boundaries;
-3. a finite Gaussian or validated TFSF normal-incidence source (not an
+1. one finite Au T on a laterally extended TaIrTe4/Al2O3/Au-mirror stack;
+2. the TaIrTe4 and all planar underlayers continuing through the x/y PML,
+   without terminating at the PML entrance;
+3. optical PML on all six Maxwell boundaries;
+4. a finite Gaussian or validated TFSF normal-incidence source (not an
    infinite plane wave extending directly into lateral PML);
-4. matched source-only and bare-flake controls;
-5. explicit optical closure and domain/PML/mesh convergence;
-6. conservative volumetric-Q transfer into a finite thermal domain;
-7. physical thermal boundary conditions and finite electrode contacts;
-8. an electrical weighting-potential solve with `psi=1/0` at the two
+5. a matched bare multilayer control so the T-induced local `Delta Q` can be
+   separated from area-dependent background absorption;
+6. explicit optical closure and domain/PML/mesh convergence.
+
+This optical-local model does not itself define terminal PTE current.  The
+subsequent finite physical-device model must add:
+
+7. conservative volumetric-Q transfer into a finite thermal domain;
+8. physical thermal boundary conditions and finite electrode contacts;
+9. an electrical weighting-potential solve with `psi=1/0` at the two
    terminals and insulating non-contact flake edges;
-9. the full terminal current integral over the finite TaIrTe4 volume.
+10. the full terminal current integral over the finite TaIrTe4 volume.
 
 The finite source type and size are not yet selected.  A Gaussian is allowed
 only if its realized waist and boundary intensity are measured in a domain
