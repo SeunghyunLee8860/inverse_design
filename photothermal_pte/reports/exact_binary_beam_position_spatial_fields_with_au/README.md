@@ -1,6 +1,6 @@
 # Exact-binary beam-position spatial fields with explicit Au terminals
 
-Generated: 2026-08-22T10:02:03.846210+00:00
+Generated: 2026-08-22T10:11:24.033907+00:00
 
 ## Scope
 
@@ -31,7 +31,7 @@ The physical current field is solved from `J = sigma E - sigma S grad(T)` with b
 
 ## Full 25-position atlases
 
-Each thermal atlas shows temperature and gradient magnitude. Each current atlas shows total local `J` magnitude with dense direction arrows and the signed terminal-current contribution; every beam-position title includes the signed terminal current. Each optical/electrical atlas shows TaIrTe4+Au absorbed-power density and short-circuit potential. The 25-page field book follows the detailed physical-field matrix style used by the final exact-binary report and includes one complete page per beam position. Color limits are shared across all 25 positions within each atlas.
+Each thermal atlas shows temperature and gradient magnitude. Each current atlas shows total local `J` magnitude with dense direction arrows and the signed terminal-current contribution. Each optical/electrical atlas shows TaIrTe4+Au absorbed-power density and short-circuit potential. Every position in every atlas is labeled with the signed terminal current. The 25-page field book and 25-PNG gallery follow the detailed physical-field matrix style used by the final exact-binary report; every page shows signed `I`, positive `I+`, and negative `I-`. Color limits are shared across all 25 positions within each atlas.
 
 | Run | Thermal | Current | Optical/electrical | Detailed PDF | Individual PNGs |
 |---:|:---:|:---:|:---:|:---:|:---:|

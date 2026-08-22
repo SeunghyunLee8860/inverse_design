@@ -254,6 +254,48 @@ def rows_by_grid(rows: list[dict[str, object]]) -> dict[tuple[float, float], dic
     }
 
 
+def coordinate_tag(value: float) -> str:
+    sign = "p" if value >= 0.0 else "m"
+    magnitude = f"{abs(value):g}".replace(".", "p")
+    return f"{sign}{magnitude}"
+
+
+def write_detailed_png_index(
+    png_dir: Path,
+    run: int,
+    rows: list[dict[str, object]],
+) -> None:
+    positions = tuple(float(value) for value in POSITION_SWEEP_UM)
+    lookup = rows_by_grid(rows)
+    lines = [
+        f"# Run {run:03d}: all 25 signed-current position fields",
+        "",
+        "Each thumbnail opens the full-resolution physical-field matrix. "
+        "`I` is the signed terminal current; `I+` and `I-` are the separately "
+        "integrated positive and negative local contributions.",
+        "",
+        "| beam y / beam x | "
+        + " | ".join(f"{x:+g} um" for x in positions)
+        + " |",
+        "|:---:|" + ":---:|" * len(positions),
+    ]
+    for y in reversed(positions):
+        cells = []
+        for x in positions:
+            row = lookup[(x, y)]
+            name = (
+                f"beam_x{coordinate_tag(x)}_y{coordinate_tag(y)}_fields.png"
+            )
+            cells.append(
+                f'<a href="{name}"><img src="{name}" width="250"></a><br>'
+                f'<code>I={float(row["terminal_current_nA"]):+.5g} nA</code><br>'
+                f'<code>I+={float(row["positive_contribution_nA"]):+.5g}</code>, '
+                f'<code>I-={float(row["negative_contribution_nA"]):+.5g} nA</code>'
+            )
+        lines.append(f"| **{y:+g} um** | " + " | ".join(cells) + " |")
+    (png_dir / "README.md").write_text("\n".join(lines) + "\n")
+
+
 def atlas(
     path: Path,
     run: int,
@@ -349,6 +391,8 @@ def atlas(
             if signed_current_titles:
                 title += f"\nI={float(row['terminal_current_nA']):+.3g} nA"
             axes[yi, xi].set_title(title, fontsize=6.5, linespacing=0.95)
+            if signed_current_titles:
+                bottom_ax.set_title(title, fontsize=6.5, linespacing=0.95)
             for ax in (axes[yi, xi], bottom_ax):
                 ax.set_xlim(-12.0, 12.0)
                 ax.set_ylim(-12.0, 12.0)
@@ -358,10 +402,12 @@ def atlas(
         axes[row_index, 0].set_ylabel("y (um)", fontsize=7)
     for ax in axes[-1, :]:
         ax.set_xlabel("x (um)", fontsize=7)
-    fig.subplots_adjust(left=0.07, right=0.90, bottom=0.04, top=0.965, wspace=0.06, hspace=0.18)
+    fig.subplots_adjust(left=0.07, right=0.90, bottom=0.04, top=0.95, wspace=0.06, hspace=0.28)
     fig.text(0.02, 0.73, top_label, rotation=90, va="center", fontsize=11)
     fig.text(0.02, 0.27, bottom_label, rotation=90, va="center", fontsize=11)
-    fig.suptitle(f"Run {run:03d}: all 25 fixed-flake beam positions", fontsize=14)
+    fig.suptitle(
+        f"Run {run:03d}: all 25 fixed-flake beam positions", fontsize=14, y=0.99,
+    )
     if top_image is not None:
         top_bar = fig.colorbar(top_image, ax=axes[:5, :], fraction=0.018, pad=0.012)
         top_bar.set_label(top_label, fontsize=9)
@@ -424,11 +470,6 @@ def detailed_field_book(
     lookup = rows_by_grid(rows)
     positions = tuple(float(value) for value in POSITION_SWEEP_UM)
     png_dir.mkdir(parents=True, exist_ok=True)
-
-    def coordinate_tag(value: float) -> str:
-        sign = "p" if value >= 0.0 else "m"
-        magnitude = f"{abs(value):g}".replace(".", "p")
-        return f"{sign}{magnitude}"
 
     with PdfPages(path) as pdf:
         for y in reversed(positions):
@@ -545,6 +586,7 @@ def detailed_field_book(
                 )
                 fig.savefig(png_dir / png_name, dpi=110)
                 plt.close(fig)
+    write_detailed_png_index(png_dir, run, rows)
 
 
 def scalar_diagnostics(
@@ -666,7 +708,7 @@ The physical current field is solved from `J = sigma E - sigma S grad(T)` with b
 
 ## Full 25-position atlases
 
-Each thermal atlas shows temperature and gradient magnitude. Each current atlas shows total local `J` magnitude with dense direction arrows and the signed terminal-current contribution; every beam-position title includes the signed terminal current. Each optical/electrical atlas shows TaIrTe4+Au absorbed-power density and short-circuit potential. The 25-page field book follows the detailed physical-field matrix style used by the final exact-binary report and includes one complete page per beam position. Color limits are shared across all 25 positions within each atlas.
+Each thermal atlas shows temperature and gradient magnitude. Each current atlas shows total local `J` magnitude with dense direction arrows and the signed terminal-current contribution. Each optical/electrical atlas shows TaIrTe4+Au absorbed-power density and short-circuit potential. Every position in every atlas is labeled with the signed terminal current. The 25-page field book and 25-PNG gallery follow the detailed physical-field matrix style used by the final exact-binary report; every page shows signed `I`, positive `I+`, and negative `I-`. Color limits are shared across all 25 positions within each atlas.
 
 | Run | Thermal | Current | Optical/electrical | Detailed PDF | Individual PNGs |
 |---:|:---:|:---:|:---:|:---:|:---:|
@@ -692,6 +734,11 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input-root", type=Path, required=True)
     parser.add_argument("--report-dir", type=Path, required=True)
+    parser.add_argument(
+        "--reuse-detailed",
+        action="store_true",
+        help="Reuse existing 25-page PDFs/PNGs while refreshing atlases and indexes.",
+    )
     args = parser.parse_args()
     root = args.input_root.expanduser().resolve()
     report = args.report_dir.expanduser().resolve()
@@ -730,6 +777,7 @@ def main() -> int:
             "temperature_rise_nodal_K", "temperature_gradient_magnitude_cell_K_m",
             "Temperature rise (K)", "Temperature-gradient magnitude (K/m)",
             top_cmap="inferno", bottom_cmap="magma",
+            signed_current_titles=True,
         )
         current_limits = atlas(
             report / current_name, run, rows, fields[run],
@@ -748,11 +796,25 @@ def main() -> int:
             "device_absorbed_power_density_W_m2", "short_circuit_potential_nodal_V",
             "TaIrTe4 + Au absorbed power density (W/m2)", "Short-circuit potential (V)",
             top_cmap="plasma", bottom_cmap="RdBu_r", bottom_centered=True,
+            signed_current_titles=True,
         )
-        detailed_field_book(
-            report / detailed_name, report / detailed_png_dir,
-            run, audits[run], fields[run],
-        )
+        if args.reuse_detailed:
+            png_dir = report / detailed_png_dir
+            expected_pngs = {
+                f"beam_x{coordinate_tag(x)}_y{coordinate_tag(y)}_fields.png"
+                for x in POSITION_SWEEP_UM for y in POSITION_SWEEP_UM
+            }
+            actual_pngs = {path.name for path in png_dir.glob("*.png")}
+            if not (report / detailed_name).is_file() or actual_pngs != expected_pngs:
+                raise RuntimeError(
+                    f"Run {run:03d}: existing detailed PDF/PNG set is incomplete"
+                )
+            write_detailed_png_index(png_dir, run, audits[run])
+        else:
+            detailed_field_book(
+                report / detailed_name, report / detailed_png_dir,
+                run, audits[run], fields[run],
+            )
         figure_names[run] = [
             thermal_name, current_name, optical_name, detailed_name,
             detailed_png_dir,

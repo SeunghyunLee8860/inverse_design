@@ -1,6 +1,6 @@
 {
   "schema": "exact-binary-beam-position-spatial-manifest-v1",
-  "generated_at_utc": "2026-08-22T10:02:03.851384+00:00",
+  "generated_at_utc": "2026-08-22T10:11:24.039952+00:00",
   "raw_artifacts": [
     {
       "run": 44,
@@ -1407,8 +1407,8 @@
   "report_artifacts": [
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/README.md",
-      "size_bytes": 7737,
-      "sha256": "e77c897106e39e5fd807307ba21b018c69ab4e439d664f93915799d7e36047f8"
+      "size_bytes": 7780,
+      "sha256": "e060df50a3074301c996a86e3c4d6d5ae9ac2d1f408b1e327d7013392c98aa8f"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/field_dictionary.json",
@@ -1423,7 +1423,7 @@
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/position_fields_summary.json",
       "size_bytes": 10628,
-      "sha256": "0513576a73c1a336e057717c25cc98e88644c6a7601c91896cdcea0444d3a749"
+      "sha256": "a8d877a1c6f82bfe988c716bf0883d6e9f3eba32afeac380caa6c4d446dfe48a"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/position_scalar_diagnostics.png",
@@ -1432,13 +1432,18 @@
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_current_atlas.png",
-      "size_bytes": 2419355,
-      "sha256": "631edb8bd5f62fa667241477c9ba79ee53de619199ebfb6beaadaa386b1be21e"
+      "size_bytes": 2229849,
+      "sha256": "cefb6a96b3d49656b1fb8e1996dfeffc8aff78c60eba96ba5393d9354963bb90"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_optical_electrical_atlas.png",
-      "size_bytes": 888372,
-      "sha256": "11266ef780fae17d650567876c097ff45ce410343ecc4e47fdf123513e6db30d"
+      "size_bytes": 917031,
+      "sha256": "669072ccd0407764c0b80271cfee487e3376b1ca81f6750ef28cfcc65ffd3ee3"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/README.md",
+      "size_bytes": 4742,
+      "sha256": "6416e40f5f9ee8eb633e4fd87868987a0f56a8339f8d423358745330113c8ad5"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xm10_ym10_fields.png",
@@ -1572,18 +1577,23 @@
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_thermal_atlas.png",
-      "size_bytes": 1172079,
-      "sha256": "d97551a2904a403f52f82d98fae47494d79272ddc11f72216946fe9cc0c4e4ea"
+      "size_bytes": 1169404,
+      "sha256": "3de06bae8784862550eb7f596bd407e2c4636db12277ac4e4b6aedf8e427b96a"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_current_atlas.png",
-      "size_bytes": 2310388,
-      "sha256": "19d79ae11bd9a352401ba76bc620b31bc4b758ee714e4c1603c4d2c3921a0efe"
+      "size_bytes": 2139983,
+      "sha256": "d7f0086f3a45ddd54c3ad8756c6f983545f26debfe6e63b3824b142b4e36d8ca"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_optical_electrical_atlas.png",
-      "size_bytes": 823587,
-      "sha256": "3dfabb8b983daebbf098c7ab45fff625cb33fad6bbb4a58fb03f30cc103b4eee"
+      "size_bytes": 862176,
+      "sha256": "d982537241c606970332c2c1d299b54ae4de53a2d1159affcef80745dba2f86d"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/README.md",
+      "size_bytes": 4742,
+      "sha256": "13f73fc0221db31b065dfab52fba4862561f2fe3ba96dbfe78e536c752c17197"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xm10_ym10_fields.png",
@@ -1717,18 +1727,23 @@
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_thermal_atlas.png",
-      "size_bytes": 1115683,
-      "sha256": "89b059838240c36dcad86f954deac90b4bf9e6f8c9896762c0ca76514fa9620e"
+      "size_bytes": 1111764,
+      "sha256": "182d4d0c20c2cfb0e2cee810e21d827b99c3a8efe9628297c0d15382f174c3e1"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_current_atlas.png",
-      "size_bytes": 2421590,
-      "sha256": "8f62a0deeab78f5784332215b8cca05791ee25c9f788b287bc71b351df7c3584"
+      "size_bytes": 2243592,
+      "sha256": "c8a663e5ed38940e7f80455aab3b3a159e0b5db19440410cb0fa18a0db1b6d53"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_optical_electrical_atlas.png",
-      "size_bytes": 653883,
-      "sha256": "027aca809df5d9e8a17dc2261de0c052611852887148dc4b9c1c5f791f1cfb29"
+      "size_bytes": 694442,
+      "sha256": "bf459cabd0d573d762523e06dd2188e6f7d9ffc246be01a0d652f35b7e9780b8"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/README.md",
+      "size_bytes": 4752,
+      "sha256": "aa840aa4a9167f59ef0fb4c866b2ba133de99f02e929666e994b73517a81d550"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xm10_ym10_fields.png",
@@ -1862,18 +1877,23 @@
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_thermal_atlas.png",
-      "size_bytes": 1230663,
-      "sha256": "605b5e43298e138ebcdb2a313447af3c8b73f28350638c08cec4461a081cfd3a"
+      "size_bytes": 1232686,
+      "sha256": "23123f7bc4954c60f5a1c8cf4c4098518a57dbb56047b80d62697b5c4609ca6d"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_current_atlas.png",
-      "size_bytes": 2441231,
-      "sha256": "9cae50340f58f2474c7b3b3c1a979a9f20399319da5fc176d6dcdc7926cd773d"
+      "size_bytes": 2259124,
+      "sha256": "c5450fb07103f8cb5a6df7c6469d1460232038aae9500759cc9bc8c445e51873"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_optical_electrical_atlas.png",
-      "size_bytes": 696998,
-      "sha256": "af9745e2588bf27d00f3a44ac7df96d7358311bf9e407ea23e5238c56af11d34"
+      "size_bytes": 725721,
+      "sha256": "078130f96154266b29f9e6681840e62ab050cf7a10c13f41f4cc27dd8713f797"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/README.md",
+      "size_bytes": 4744,
+      "sha256": "7bbc3c5a013cb898a33f3a0ff972aa6aafce0d74e8dd85082260144874a69572"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xm10_ym10_fields.png",
@@ -2007,18 +2027,23 @@
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_thermal_atlas.png",
-      "size_bytes": 1083727,
-      "sha256": "ba2070bb8f55480108bdde9121ea45b5315cc167d0cf072a6b0aab5fa51d2da2"
+      "size_bytes": 1082693,
+      "sha256": "5a886eadd4e9e63e66e505d36ddfdd35c84bc7c3a9c052bbac63fd4a6a9e61d8"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_current_atlas.png",
-      "size_bytes": 2184027,
-      "sha256": "92b094ccc03150710e8dd5b26e85010a496f6106265db9dc6823520a6c3c5c6d"
+      "size_bytes": 2017184,
+      "sha256": "9d6a5c4137107ad3130c66b0f8a44888af9879095d890aad3d0ccc11d539cfc7"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_optical_electrical_atlas.png",
-      "size_bytes": 706392,
-      "sha256": "fe4d5a4cd5c6d7bbdb9e614258fe39a7e7b6e2522ea3de5dbb899312dbe5718d"
+      "size_bytes": 737583,
+      "sha256": "6937f1dfa7cbcc2a0594c6178530da3c68866106a2bf4df5fe514a7bb9a27b22"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/README.md",
+      "size_bytes": 4744,
+      "sha256": "3c3297489ed1ac9e683ec05ef96d709751e1644b60f980bcad87c48618634122"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xm10_ym10_fields.png",
@@ -2152,18 +2177,23 @@
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_thermal_atlas.png",
-      "size_bytes": 1058208,
-      "sha256": "1c89bf55d2f189047669560b0ea0d723653d2fc71d08a4c8861bcb8743781a4a"
+      "size_bytes": 1046990,
+      "sha256": "e111f64324eb7689ceeecc678ce805a43d613cc3547c85c8b343bad346c60725"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_current_atlas.png",
-      "size_bytes": 2184002,
-      "sha256": "26c35ed93f34778fda8d2cdc53382f14c6339fe46ade985ee57bc3a0fd4e106e"
+      "size_bytes": 2021266,
+      "sha256": "dee0f066d184bcb928e567d8cf95b4e1d060ea678a5bfe093479c350b0f7eed2"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_optical_electrical_atlas.png",
-      "size_bytes": 812625,
-      "sha256": "c75275a7efa0fd6755ce2eb1d1126b3dc777064eec11c009e56fa48ae34223ab"
+      "size_bytes": 848985,
+      "sha256": "7618db756c8a7214df39b6622fd3b2cfedb8b8e83f591b77c9d2091e46f92857"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/README.md",
+      "size_bytes": 4739,
+      "sha256": "fa318735611bda144f51afb120c37a79e058839c09c043dc7b46beffa61c3f2e"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xm10_ym10_fields.png",
@@ -2297,18 +2327,23 @@
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_thermal_atlas.png",
-      "size_bytes": 984580,
-      "sha256": "436dbb80a7a4cd423de7f17322923ff3778cd6abce61e5d86c3c74b19627dbdd"
+      "size_bytes": 979758,
+      "sha256": "a99be184005e7b6cb126ddb11de5657efcfd4e0ae280238e4faf3d4cd85cdf7e"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_current_atlas.png",
-      "size_bytes": 2394263,
-      "sha256": "7731646e62bd8152893b2d84c95a0a07d7379431106ebd8fafc039cce16b1db9"
+      "size_bytes": 2217613,
+      "sha256": "9d78cb120df011de0dcadac216f026bd8843d7ebe476172cd50221bb894ba34d"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_optical_electrical_atlas.png",
-      "size_bytes": 659343,
-      "sha256": "2a4570ae2d3d63cb7c94cc573d236b0b0e7a8d828d5356559030c905ba4b7691"
+      "size_bytes": 688785,
+      "sha256": "3dfd048baefd2b93560ee36c736040fd5dfb9142576623666c5e5d795c90f9eb"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/README.md",
+      "size_bytes": 4745,
+      "sha256": "3d06f214f115da8fb204a627aed5b52afa4fb0abc0d0b1fa725306842631caee"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xm10_ym10_fields.png",
@@ -2442,18 +2477,23 @@
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_thermal_atlas.png",
-      "size_bytes": 1158435,
-      "sha256": "49d89a7bbf43c447fa9df6482eb8a9268d547086a5083bf3659b3917a97d10d4"
+      "size_bytes": 1143969,
+      "sha256": "7929099be9bcdb95319b9d0231a76419838e8d3cfa57d2999e79080f4a8c4ab2"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_current_atlas.png",
-      "size_bytes": 2311971,
-      "sha256": "4e434fc98ec16c5b90ce449532dca93c42321fb15740c951a746610f7ef6c47e"
+      "size_bytes": 2147568,
+      "sha256": "5ffc0368e1a72bb278f0c4bbb49d348ef8150be3c48023e3f9dc3676838f6b03"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_optical_electrical_atlas.png",
-      "size_bytes": 680842,
-      "sha256": "360b9d861b25965d08f500d0b3a65a61e48b4be6af933ed1e8e6754415ba952e"
+      "size_bytes": 708418,
+      "sha256": "61456100d8ffbde120c09abeea90b9b4302dd888dfd991800b363293ed15c271"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/README.md",
+      "size_bytes": 4745,
+      "sha256": "fd96e167a4cd90c6321d8840449c2b9f2d6b044240b4ba21f379d859315cb677"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xm10_ym10_fields.png",
@@ -2587,8 +2627,8 @@
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_thermal_atlas.png",
-      "size_bytes": 1057851,
-      "sha256": "331d14b8dffa250519e918bad9a2577635ce9751b30e2ea9c646290998bb2d8e"
+      "size_bytes": 1049092,
+      "sha256": "213722df9d63bd03cb8d5ec217be0879ff4fa873ad873c7b19a1623dc7eb3f51"
     }
   ]
 }
