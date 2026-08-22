@@ -483,6 +483,11 @@ L/W/P/D but not a unique arm offset/junction CAD, so it remains fail-closed.
 optical heat-source effect. Explicit thermal and electrical solves are the
 next separate gates.
 
+**Was a Gaussian beam used?**  No. All four present 4.75-um cases use a
+normal-incidence Bloch/Periodic plane wave. A Gaussian or TFSF source appears
+only in the proposed finite-device gate; its footprint is not yet fixed and
+must not be inferred from the 1500 nm x 1000 nm unit cell.
+
 ## Suggested slide order
 
 1. `periodic_canonical/00_periodic_structure_3x3.png`: establish that the

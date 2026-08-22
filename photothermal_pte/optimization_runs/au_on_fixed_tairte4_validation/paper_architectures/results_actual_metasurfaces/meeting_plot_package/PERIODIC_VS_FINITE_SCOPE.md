@@ -10,6 +10,11 @@ unit-cell problem:
 - one 1500 nm x 1000 nm cell repeated infinitely;
 - absorbed optical power and TaIrTe4 heat-source shape per cell.
 
+All four published cases (`T_Ea`, `T_Eb`, `bare_Ea`, and `bare_Eb`) use this
+Bloch/Periodic plane wave.  **No Gaussian beam was used in these results.**
+In particular, no physical Gaussian spot was fitted inside the 1500 nm x
+1000 nm unit cell.
+
 The raw pabs monitor stores duplicated/staggered endpoint planes.  A thin
 line at the plotted endpoint is a numerical periodic seam, not a physical
 flake edge.  The raw data and power integrals are preserved.  The
@@ -42,6 +47,14 @@ The next independent model must contain:
 8. an electrical weighting-potential solve with `psi=1/0` at the two
    terminals and insulating non-contact flake edges;
 9. the full terminal current integral over the finite TaIrTe4 volume.
+
+The finite source type and size are not yet selected.  A Gaussian is allowed
+only if its realized waist and boundary intensity are measured in a domain
+large enough that the field is negligible before the lateral PML.  At the
+present wavelength of 4.75 um, its footprint must not be drawn or assumed to
+fit inside the 1500 nm x 1000 nm periodic cell.  A validated TFSF source is the
+alternative when a finite structure under plane-wave illumination is the
+intended experiment.
 
 Optical PML applies only to Maxwell.  Thermal and electrical problems use
 their own physical boundaries; they do not use PML.

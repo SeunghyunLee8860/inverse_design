@@ -166,8 +166,13 @@ def finite_scope_figure(path: Path) -> None:
     ax.add_patch(Rectangle((-1.0, -0.72), 2.0, 1.44, facecolor="#d04b4b", alpha=0.28, edgecolor="#8d2020", lw=2, label="finite TaIrTe4 flake"))
     vertices = np.array([[-0.62,-0.35],[0.62,-0.35],[0.62,-0.25],[0.10,-0.25],[0.10,0.35],[-0.10,0.35],[-0.10,-0.25],[-0.62,-0.25]])
     ax.fill(vertices[:,0], vertices[:,1], color="#f4bf42", edgecolor="#8a5a00", lw=2, label="one Au inverse-T")
-    circle = plt.Circle((0,0), 0.54, fill=False, color="#2867b2", lw=2, ls="--", label="finite Gaussian/TFSF footprint")
-    ax.add_patch(circle)
+    ax.annotate("", xy=(0, 0.46), xytext=(0, 0.72),
+                arrowprops={"arrowstyle": "->", "lw": 3, "color": "#2867b2"})
+    ax.text(-0.95, 0.82,
+            "normal incidence; finite-source contract TBD\n"
+            "Gaussian or TFSF only after size audit (not to scale)",
+            ha="left", va="center", color="#2867b2", fontsize=8.0,
+            weight="bold")
     for coordinate in (-1.22, 1.22):
         ax.axvline(coordinate, color="#7a2c91", lw=4)
         ax.axhline(coordinate*0.75, color="#7a2c91", lw=4)
