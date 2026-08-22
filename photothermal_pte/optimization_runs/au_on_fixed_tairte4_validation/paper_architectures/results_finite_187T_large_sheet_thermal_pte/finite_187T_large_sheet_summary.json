@@ -1,0 +1,121 @@
+{
+  "status": "VALIDATED_LARGE_SHEET_DIAGNOSTIC_THERMAL_WEIGHTING_PTE",
+  "classification": "large finite computational sheet with ideal full-width y-edge contacts; not experimental finite-contact prediction",
+  "axis_mapping": "x=b, y=a, z=c",
+  "input_Q": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_187T_w12_Q_11p825um_Eb/finite_187T_w12_Q.npz",
+    "sha256": "c4dbbdce0038a5b3a0c8529dc867a266245ef6d37672e20245790d8429b08f09"
+  },
+  "geometry": {
+    "lateral_bounds_um": {
+      "x_b": [
+        -27.125,
+        27.25
+      ],
+      "y_a": [
+        -27.125,
+        27.25
+      ]
+    },
+    "stack": "air / finite Au T array / laterally extended TaIrTe4 100nm / Al2O3 35nm / Au mirror 200nm / SiO2 285nm optical closure / Si",
+    "thermal_cells": [
+      434,
+      434,
+      20
+    ],
+    "material_cell_counts": {
+      "air": 923828,
+      "Si": 1318492,
+      "SiO2": 565068,
+      "Au_mirror": 376712,
+      "Au_T": 17952,
+      "Al2O3": 188356,
+      "TaIrTe4": 376712
+    }
+  },
+  "boundaries": {
+    "x_y_sides": "adiabatic",
+    "top": "adiabatic",
+    "Si_bottom": "fixed DeltaT=0"
+  },
+  "thermal_materials_W_mK": {
+    "air": 0.026,
+    "Au": 317.0,
+    "Al2O3_scenario": 1.5,
+    "TaIrTe4_x_b_y_a_z_c": [
+      3.8,
+      14.4,
+      1.0
+    ],
+    "SiO2": 1.4,
+    "Si": 148.0
+  },
+  "interface_model": {
+    "SiO2_Si_G_W_m2K": 1100000000.0,
+    "all_other_interfaces": "perfect-contact diagnostic assumption"
+  },
+  "illumination": {
+    "reported_incident_power_W": 0.000285,
+    "certified_source_power_W": 2.8558620694322075e-13,
+    "linear_scale_factor": 997947355.5481014,
+    "note": "certified linear incident-power scaling; no clipping/smoothing/gain/shape rescaling"
+  },
+  "Q": {
+    "source_component_power_W": {
+      "x": 1.1852308717473118e-14,
+      "y": 4.06747621891771e-15,
+      "z": 5.065606899621017e-15
+    },
+    "target_component_power_W": {
+      "x": 1.1852308717473118e-14,
+      "y": 4.06747621891771e-15,
+      "z": 5.065606899621016e-15
+    },
+    "unit_source_total_W": 2.0985391836011845e-14,
+    "mapped_unit_total_W": 2.0985391836011845e-14,
+    "mapping_relative_error": 0.0,
+    "absorbed_power_at_285uW_W": 2.0942316287888736e-05
+  },
+  "thermal": {
+    "Tmax_K": 0.03109227236479052,
+    "Tavg_flake_K": 0.002861487251650917,
+    "max_gradient_K_m": 30067.970001770333,
+    "linear_residual_relative": 9.432794577147966e-11,
+    "energy_balance_relative_error": 4.583340842692141e-13,
+    "boundary_power_out_W": {
+      "z_min": 2.0942316287879138e-05
+    },
+    "assembly_seconds": 0.7573120892047882,
+    "CUDA_device": 5,
+    "CUDA_PCG_iterations": 3400,
+    "CUDA_solve_seconds": 3.9609239622950554
+  },
+  "electrical": {
+    "contact_0": "full-width y_min, psi=0",
+    "contact_1": "full-width y_max, psi=1",
+    "weighting_potential": "analytic exact solution psi=(y-ymin)/(ymax-ymin) for homogeneous rectangular sheet",
+    "sigma_x_b_y_a_S_m": [
+      110000.0,
+      491000.0
+    ],
+    "Seebeck_x_b_y_a_V_K": [
+      2.7e-05,
+      -6e-06
+    ],
+    "terminal_conductance_S": 0.0491,
+    "short_circuit_current_A": -1.1692994824145105e-12,
+    "open_circuit_voltage_V": 2.381465340966417e-11
+  },
+  "gates": {
+    "Q_mapping_error_lt_0p5pct": true,
+    "thermal_residual_lt_1e_8": true,
+    "thermal_energy_balance_lt_1pct": true,
+    "finite_fields": true
+  },
+  "interpretation": [
+    "All component-specific Yee Q is conservatively remapped; no crop or material masking is applied.",
+    "The electrical collection model is an ideal full-width y-edge contact diagnostic, not measured electrode CAD.",
+    "The near-zero terminal current reflects signed spatial cancellation in this symmetric large-sheet diagnostic.",
+    "The 285 nm SiO2 optical-closure thickness is used, so this is not the paper's physical finite device stack."
+  ]
+}

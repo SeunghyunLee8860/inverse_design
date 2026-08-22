@@ -1,0 +1,50 @@
+{
+  "status": "VALIDATED_LARGE_SHEET_DIAGNOSTIC_THERMAL_WEIGHTING_PTE",
+  "raw_not_committed": true,
+  "generation_commands": [
+    "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python -u 39_run_finite_187t_large_sheet_thermal_pte.py",
+    "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python 40_summarize_finite_187t_large_sheet_thermal_pte.py"
+  ],
+  "artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_187T_w12_large_sheet_thermal_pte/finite_187T_large_sheet_thermal_pte.npz",
+      "size_bytes": 68456782,
+      "sha256": "58ed468afbee34f09f237827a283e413dd6bfc1bf15ac6d29834a62f86a5f2a8"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_187T_w12_large_sheet_thermal_pte/FINITE_187T_LARGE_SHEET_THERMAL_PTE.json",
+      "size_bytes": 3667,
+      "sha256": "d2c115c4edcc8c6e131cd01155e0331f237b62343bf3d0241c043c798937d413"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_187T_large_sheet_thermal_pte/finite_187T_large_sheet_all_fields.png",
+      "size_bytes": 1244733,
+      "sha256": "1552ba402d0eebe1ecaba9b5fa485472057b31147ba2d7a078e8a0a50f552a2d"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_187T_large_sheet_thermal_pte/finite_187T_Q_temperature_cross_sections.png",
+      "size_bytes": 129537,
+      "sha256": "6fc57bb61a08aea9dc7ec2c3e70d22f15a5093b24eefc864d731c9e716de6fe7"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_187T_large_sheet_thermal_pte/finite_187T_signed_central_profiles.png",
+      "size_bytes": 431742,
+      "sha256": "ec591421db9002dcabf717ddf43bcb3f02a9420e56c5b6d40ce49228a82e49d7"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_187T_large_sheet_thermal_pte/finite_187T_large_sheet_summary.json",
+      "size_bytes": 3846,
+      "sha256": "c684b208cbc8df0895c50db2b0ef23bc35316fb649e4c54b6db7faad4b027208"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_187T_large_sheet_thermal_pte/finite_187T_large_sheet_cases.csv",
+      "size_bytes": 262,
+      "sha256": "ac43d34961a4439f8a44ef3da1f459073ac4452c7fc5514a6e945f9cd3d0a797"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_187T_large_sheet_thermal_pte/FINITE_187T_LARGE_SHEET_THERMAL_PTE_REPORT.md",
+      "size_bytes": 1955,
+      "sha256": "1ad935c8ba83151803c0e011fcd10ffbf9551ea4a8c6bb7a404d63d6f217c90d"
+    }
+  ]
+}
