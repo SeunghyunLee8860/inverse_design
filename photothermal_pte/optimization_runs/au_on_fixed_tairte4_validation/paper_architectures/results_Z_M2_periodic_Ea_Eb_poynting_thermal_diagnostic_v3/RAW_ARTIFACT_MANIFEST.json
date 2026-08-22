@@ -1,0 +1,30 @@
+{
+  "status": "DIAGNOSTIC_Z2022_M2_PAIRED_THERMAL_BLOCKED_LOCAL_Q_OSCILLATION",
+  "files": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_Z_M2_periodic_Ea_Eb_poynting_thermal_diagnostic_v3/Z2022_M2_V3_PAIRED_OPTICAL_THERMAL_REPORT.md",
+      "size_bytes": 2213,
+      "sha256": "257370ee090f2c14eaf7c383b49a4ff793871da031ea76797533f2fd8a41f419"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_Z_M2_periodic_Ea_Eb_poynting_thermal_diagnostic_v3/Z2022_M2_V3_PAIRED_OPTICAL_THERMAL_SUMMARY.json",
+      "size_bytes": 2260,
+      "sha256": "afd3df9d974fac802be008906152c8eb9cf68a0d1a9a02ac708b0ff87c3cccd8"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_Z_M2_periodic_Ea_Eb_poynting_thermal_diagnostic_v3/Z2022_M2_V3_EA_EB_THERMAL_CASES.csv",
+      "size_bytes": 742,
+      "sha256": "819a3744b79564351ad71962083ed909b972e6b3b3d5824ca017bd30e1533c69"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_Z_M2_periodic_Ea_Eb_poynting_thermal_diagnostic_v3/Z2022_M2_V3_EA_EB_Q_T_GRADIENTS.png",
+      "size_bytes": 467615,
+      "sha256": "142f262aa07bc016d254310c23f382923d946cecb8e150f2106792290d31a9f0"
+    }
+  ],
+  "raw_npz": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/paper_z2022_m2_v3_ea_eb_poynting_divergence_thermal/Z2022_M2_POYNTING_DIVERGENCE_EA_EB_THERMAL.npz",
+    "size_bytes": 70666530,
+    "sha256": "4d862c4b71893304e3942ce9cb2f333e3b278b061ab372593de54fad28e20e27"
+  }
+}

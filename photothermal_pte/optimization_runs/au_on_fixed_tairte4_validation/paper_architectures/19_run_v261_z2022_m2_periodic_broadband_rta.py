@@ -96,6 +96,7 @@ def setup(
     duration_ps: float,
     geometry_variant: str = "legacy_axis_swapped_v1",
     top_au_edge_mesh_nm: float | None = None,
+    mesh_refinement: str = "conformal variant 1",
 ) -> dict[str, object]:
     geometry_module = load_module("05_actual_metasurface_geometry.py", "z2022_geometry")
     base = load_module("07_run_v261_t2024_tairte4_optical_smoke.py", "z2022_material_helpers")
@@ -124,7 +125,7 @@ def setup(
     solver["z max bc"] = "PML"
     solver["pml layers"] = 24
     solver["mesh type"] = "auto non-uniform"
-    solver["mesh refinement"] = "conformal variant 1"
+    solver["mesh refinement"] = mesh_refinement
     solver["mesh accuracy"] = 3
     solver["simulation time"] = duration_ps * 1e-12
     solver["auto shutoff min"] = 1e-6
@@ -246,6 +247,7 @@ def setup(
         },
         "scope": "periodic flux R/T/A only; no volumetric Q/thermal/PTE",
         "geometry_variant": geometry_variant,
+        "mesh_refinement": mesh_refinement,
         "top_Au_edge_mesh": {
             "requested_nm": top_au_edge_mesh_nm,
             "objects": edge_mesh_objects,

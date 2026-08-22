@@ -130,6 +130,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--cuda-device", type=int, default=5)
     parser.add_argument("--output-dir", type=Path, default=OUTPUT)
+    parser.add_argument("--diagnostic-allow-failed-optical", action="store_true")
     args = parser.parse_args()
     if str(REPOSITORY) not in sys.path:
         sys.path.insert(0, str(REPOSITORY))
@@ -143,7 +144,10 @@ def main() -> int:
     optical: dict[str, dict[str, object]] = {}
     for pol, folder in inputs.items():
         payload = json.loads((folder / "Z2022_M2_selected_Q.json").read_text())
-        if payload.get("status") != "COMPLETED_Z2022_M2_FIGURE_CORRECTED_SELECTED_Q":
+        if (
+            payload.get("status") != "COMPLETED_Z2022_M2_FIGURE_PERIOD_CORRECTED_SELECTED_Q"
+            and not args.diagnostic_allow_failed_optical
+        ):
             raise RuntimeError(f"{pol} optical gate did not pass")
         npz = folder / "Z2022_M2_selected_Q.npz"
         entries = [x for x in payload["raw_artifacts"] if Path(x["path"]).name == npz.name]
@@ -248,14 +252,24 @@ def main() -> int:
     saved.update({"x_m": centers[0], "y_m": centers[1], "z_m": centers[2]})
     npz_path = output / "Z2022_M2_PERIODIC_EA_EB_THERMAL.npz"
     np.savez_compressed(npz_path, **saved)
+    both_optical_passed = all(
+        optical[pol].get("status") == "COMPLETED_Z2022_M2_FIGURE_PERIOD_CORRECTED_SELECTED_Q"
+        for pol in ("Ea", "Eb")
+    )
     gates = {
-        "both_optical_passed": True,
+        "both_optical_passed": both_optical_passed,
         "both_mapping_lt_0p5pct": all(x["Q_mapping_error_relative"] < 0.005 for x in results.values()),
         "both_residual_lt_1e_8": all(x["residual_relative"] < 1.0e-8 for x in results.values()),
         "both_energy_balance_lt_1pct": all(x["energy_balance_relative"] < 0.01 for x in results.values()),
     }
     payload = {
-        "status": "VALIDATED_Z2022_M2_PERIODIC_EA_EB_THERMAL_SCREEN" if all(gates.values()) else "FAILED_Z2022_M2_PERIODIC_EA_EB_THERMAL_GATE",
+        "status": (
+            "VALIDATED_Z2022_M2_PERIODIC_EA_EB_THERMAL_SCREEN"
+            if all(gates.values())
+            else "DIAGNOSTIC_Z2022_M2_PERIODIC_EA_EB_THERMAL_BLOCKED_OPTICAL_CLOSURE"
+            if args.diagnostic_allow_failed_optical and not both_optical_passed
+            else "FAILED_Z2022_M2_PERIODIC_EA_EB_THERMAL_GATE"
+        ),
         "classification": "paired periodic unit-cell thermal screen; not finite-device PTE or paper thermal reproduction",
         "axis_mapping": "x=b, y=a, z=c",
         "incident_normalization": {"intensity_W_m2": TARGET_INCIDENT_INTENSITY_W_M2, "no_polarization_power_matching": True},
@@ -268,6 +282,9 @@ def main() -> int:
             "material_cell_counts": counts,
         },
         "cases": results,
+        "optical_closure_relative": {
+            pol: float(optical[pol]["closure_relative"]) for pol in ("Ea", "Eb")
+        },
         "gates": gates,
         "raw_artifact": {"path": str(npz_path), "size_bytes": npz_path.stat().st_size, "sha256": sha256(npz_path)},
         "scope_exclusions": ["weighting potential", "PTE current", "adjoint", "optimization"],

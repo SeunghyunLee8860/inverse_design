@@ -13,9 +13,9 @@ import numpy as np
 
 DEFAULT_INPUT = Path(
     "/home/seunghyun/tairte4/raw_artifacts/"
-    "paper_z2022_m2_figure_digitized_ea_eb_periodic_thermal"
+    "paper_z2022_m2_figure_period_corrected_ea_eb_periodic_thermal_v3"
 )
-DEFAULT_OUTPUT = Path(__file__).resolve().parent / "results_Z_M2_periodic_Ea_Eb_thermal"
+DEFAULT_OUTPUT = Path(__file__).resolve().parent / "results_Z_M2_periodic_Ea_Eb_thermal_v3"
 
 
 def main() -> int:
@@ -27,8 +27,12 @@ def main() -> int:
     output = args.output_dir.expanduser().resolve()
     output.mkdir(parents=True, exist_ok=True)
     summary = json.loads((source / "Z2022_M2_PERIODIC_EA_EB_THERMAL.json").read_text())
-    if summary["status"] != "VALIDATED_Z2022_M2_PERIODIC_EA_EB_THERMAL_SCREEN":
-        raise RuntimeError("thermal pair is not validated")
+    allowed = {
+        "VALIDATED_Z2022_M2_PERIODIC_EA_EB_THERMAL_SCREEN",
+        "DIAGNOSTIC_Z2022_M2_PERIODIC_EA_EB_THERMAL_BLOCKED_OPTICAL_CLOSURE",
+    }
+    if summary["status"] not in allowed:
+        raise RuntimeError("thermal pair is neither validated nor an allowed diagnostic")
     with np.load(source / "Z2022_M2_PERIODIC_EA_EB_THERMAL.npz", allow_pickle=False) as data:
         arrays = {key: np.asarray(data[key]) for key in data.files}
     x = arrays["x_m"] * 1.0e6
@@ -79,7 +83,11 @@ def main() -> int:
 
 Status: `{summary['status']}`
 
-This is a paired periodic unit-cell thermal screen of the figure-axis-corrected
+Optical closure: Ea = {summary['optical_closure_relative']['Ea']:.3%},
+Eb = {summary['optical_closure_relative']['Eb']:.3%}.  If either exceeds 0.5%,
+the maps below are diagnostic and are not a promoted thermal certificate.
+
+This is a paired periodic unit-cell thermal screen of the figure-period-corrected
 M2 reconstruction. It is **not** a finite-device PTE-current result and it does
 not contain a weighting field because a terminal pair is absent in the periodic
 unit cell.

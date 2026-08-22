@@ -1,0 +1,62 @@
+{
+  "status": "DIAGNOSTIC_Z2022_M2_PAIRED_THERMAL_BLOCKED_LOCAL_Q_OSCILLATION",
+  "classification": "paired identical-operator thermal response to signed conservative Qdiv; not promoted physical thermal result",
+  "axis_mapping": "x=b, y=a, z=c",
+  "incident_intensity_W_m2": 1.0,
+  "thermal_contract": {
+    "lateral_boundary": "periodic x/y",
+    "bottom_boundary": "fixed DeltaT=0 at z=-1 um",
+    "top_boundary": "adiabatic",
+    "internal_contact": "perfect-contact comparative screen",
+    "material_cell_counts": {
+      "air": 408368,
+      "Si": 190944,
+      "SiO2": 403104,
+      "Au_mirror": 424320,
+      "Au_Z": 79600,
+      "Al2O3": 424320,
+      "TaIrTe4": 424320
+    },
+    "same_operator_for_Ea_and_Eb": true
+  },
+  "cases": {
+    "Ea": {
+      "P_Q_W_at_1_W_m2_incident": 2.0558720739823003e-12,
+      "Q_mapping_error_relative": 1.463135398705982e-16,
+      "remapped_negative_to_positive_power": 0.03673130441217047,
+      "Tmin_K_per_W_m2": 1.77999276980944e-11,
+      "Tmax_K_per_W_m2": 1.7416203253597315e-07,
+      "TaIrTe4_Tmax_K_per_W_m2": 8.227866785938859e-08,
+      "max_abs_dT_db_K_m_per_W_m2": 0.06241534563944208,
+      "max_abs_dT_da_K_m_per_W_m2": 0.03661911219042425,
+      "residual_relative": 9.841197675200147e-11,
+      "energy_balance_relative": 1.5035089600359492e-12,
+      "solve_wall_time_s": 2.2766839042305946
+    },
+    "Eb": {
+      "P_Q_W_at_1_W_m2_incident": 7.31620197921141e-12,
+      "Q_mapping_error_relative": 2.3024114978139765e-15,
+      "remapped_negative_to_positive_power": 0.21752502227110254,
+      "Tmin_K_per_W_m2": -1.5827803226846717e-06,
+      "Tmax_K_per_W_m2": 2.77297004867284e-06,
+      "TaIrTe4_Tmax_K_per_W_m2": 4.934334109670144e-07,
+      "max_abs_dT_db_K_m_per_W_m2": 0.8689456568918321,
+      "max_abs_dT_da_K_m_per_W_m2": 0.9880464856241118,
+      "residual_relative": 8.67837224174244e-11,
+      "energy_balance_relative": 2.8989669713886946e-12,
+      "solve_wall_time_s": 1.7599617429077625
+    }
+  },
+  "gates": {
+    "both_mapping_lt_0p5pct": true,
+    "both_residual_lt_1e_8": true,
+    "both_energy_balance_lt_1pct": true,
+    "physical_nonnegative_Q": false
+  },
+  "scope_exclusions": [
+    "weighting potential",
+    "PTE current",
+    "adjoint",
+    "optimization"
+  ]
+}

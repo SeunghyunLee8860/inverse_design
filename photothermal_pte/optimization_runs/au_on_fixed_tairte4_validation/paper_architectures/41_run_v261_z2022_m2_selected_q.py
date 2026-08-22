@@ -97,7 +97,13 @@ def main() -> int:
         help="diagnostic planar-stack control; preserves all other settings",
     )
     parser.add_argument("--top-au-edge-mesh-nm", type=float)
+    parser.add_argument(
+        "--mesh-refinement",
+        choices=("conformal variant 0", "conformal variant 1", "staircase"),
+        default="conformal variant 1",
+    )
     parser.add_argument("--contract-only", action="store_true")
+    parser.add_argument("--record-volume-poynting", action="store_true")
     args = parser.parse_args()
     wavelength_m = args.wavelength_um * 1e-6
     frequency_hz = C0 / wavelength_m
@@ -137,6 +143,7 @@ def main() -> int:
             args.duration_ps,
             geometry_variant=args.geometry_variant,
             top_au_edge_mesh_nm=args.top_au_edge_mesh_nm,
+            mesh_refinement=args.mesh_refinement,
         )
         if args.omit_top_au_control:
             for polygon in contract["geometry"]["polygons"]:
@@ -202,6 +209,26 @@ def main() -> int:
         fdtd.setnamed(PABS_GROUP, "z span", snapped_top - snapped_bottom)
         fdtd.setnamed("Z2022_flux_top", "z", snapped_top)
         fdtd.setnamed("Z2022_flux_bottom", "z", snapped_bottom)
+        if args.record_volume_poynting:
+            monitor = fdtd.addpower()
+            monitor["name"] = "Z2022_volume_poynting"
+            monitor["monitor type"] = "3D"
+            monitor["x"] = 0.0
+            monitor["x span"] = period_x
+            monitor["y"] = 0.0
+            monitor["y span"] = period_y
+            monitor["z"] = 0.5 * (snapped_bottom + snapped_top)
+            monitor["z span"] = snapped_top - snapped_bottom
+            monitor["override global monitor settings"] = True
+            monitor["use source limits"] = False
+            monitor["use wavelength spacing"] = True
+            monitor["wavelength center"] = wavelength_m
+            monitor["wavelength span"] = 0.0
+            monitor["frequency points"] = 1
+            for name in ("output Ex", "output Ey", "output Ez", "output Hx", "output Hy", "output Hz"):
+                monitor[name] = False
+            for name in ("output Px", "output Py", "output Pz"):
+                monitor[name] = True
         fdtd.runsetup()
         mesh_readback = audit.mesh_readback(fdtd)
         mesh = base.mesh_metrics(mesh_readback)
@@ -263,6 +290,8 @@ def main() -> int:
                     "Pabs_and_both_flux_faces_updated_together": True,
                 },
                 "mesh_runsetup": mesh,
+                "mesh_refinement": args.mesh_refinement,
+                "volume_poynting_recorded": args.record_volume_poynting,
                 "solver_version": str(fdtd.version()),
                 "scope": "periodic selected-wavelength volumetric-Q certificate; no thermal/PTE",
                 "top_Au_included": not args.omit_top_au_control,
@@ -305,6 +334,15 @@ def main() -> int:
                     arrays[f"Q{component}_{axis}_m"] = np.asarray(
                         q["native_coordinates"][component][axis], float
                     )
+            if args.record_volume_poynting:
+                for component in "xyz":
+                    arrays[f"P{component}_complex_W_m2"] = np.asarray(
+                        fdtd.getdata("Z2022_volume_poynting", f"P{component}", 1)
+                    ).squeeze()
+                for axis in "xyz":
+                    arrays[f"P_{axis}_m"] = np.asarray(
+                        fdtd.getdata("Z2022_volume_poynting", axis, 1), float
+                    ).reshape(-1)
             np.savez_compressed(npz_path, **arrays)
             closure = abs(p_q - p_flux) / max(abs(p_q), abs(p_flux), np.finfo(float).tiny)
             log = audit.log_audit(output)
