@@ -15,6 +15,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize, TwoSlopeNorm
+from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
 
 from photothermal_pte.optimization_runs.run_exact_binary_beam_position_fields import (
@@ -267,6 +268,7 @@ def atlas(
     bottom_cmap: str,
     bottom_centered: bool = False,
     quiver: bool = False,
+    signed_current_titles: bool = False,
 ) -> dict[str, float]:
     positions = tuple(float(value) for value in POSITION_SWEEP_UM)
     lookup = rows_by_grid(rows)
@@ -319,7 +321,7 @@ def atlas(
             if quiver:
                 jx = np.asarray(item["local_J_total_x_A_m2"], float)
                 jy = np.asarray(item["local_J_total_y_A_m2"], float)
-                stride = 24
+                stride = 8
                 xq = np.asarray(item["electrical_x_cell_m"], float)[::stride] * 1e6
                 yq = np.asarray(item["electrical_y_cell_m"], float)[::stride] * 1e6
                 magnitude = np.hypot(jx[::stride, ::stride], jy[::stride, ::stride])
@@ -333,9 +335,20 @@ def atlas(
                 )
                 axes[yi, xi].quiver(
                     xq, yq, unit_x.T, unit_y.T, color="white",
-                    pivot="mid", scale=16.0, width=0.004,
+                    pivot="mid", angles="xy", scale_units="xy", scale=1.8,
+                    width=0.0022, alpha=0.82,
                 )
-            axes[yi, xi].set_title(f"x={x:g}, y={y:g} um", fontsize=7)
+                rho = np.asarray(item["rho_exact_binary_cell"], float)
+                axes[yi, xi].contour(
+                    np.asarray(item["electrical_x_cell_m"], float) * 1e6,
+                    np.asarray(item["electrical_y_cell_m"], float) * 1e6,
+                    rho.T, levels=(0.5,), colors="cyan", linewidths=0.28,
+                    alpha=0.7,
+                )
+            title = f"x={x:g}, y={y:g} um"
+            if signed_current_titles:
+                title += f"\nI={float(row['terminal_current_nA']):+.3g} nA"
+            axes[yi, xi].set_title(title, fontsize=6.5, linespacing=0.95)
             for ax in (axes[yi, xi], bottom_ax):
                 ax.set_xlim(-12.0, 12.0)
                 ax.set_ylim(-12.0, 12.0)
@@ -365,6 +378,163 @@ def atlas(
     }
 
 
+def field_panel(
+    fig: plt.Figure,
+    ax: plt.Axes,
+    x_um: np.ndarray,
+    y_um: np.ndarray,
+    values: np.ndarray,
+    title: str,
+    *,
+    cmap: str = "magma",
+    centered: bool = False,
+) -> None:
+    values = np.asarray(values, float)
+    finite = values[np.isfinite(values)]
+    norm = None
+    if centered and finite.size:
+        bound = max(
+            abs(float(np.min(finite))),
+            abs(float(np.max(finite))),
+            np.finfo(float).tiny,
+        )
+        norm = TwoSlopeNorm(vmin=-bound, vcenter=0.0, vmax=bound)
+    image = ax.pcolormesh(
+        x_um, y_um, values.T, shading="auto", cmap=cmap, norm=norm,
+        rasterized=True,
+    )
+    ax.set_xlim(-12.0, 12.0)
+    ax.set_ylim(-12.0, 12.0)
+    ax.set_aspect("equal")
+    ax.set_xlabel("x=b (um)", fontsize=7)
+    ax.set_ylabel("y=a (um)", fontsize=7)
+    ax.set_title(title, fontsize=8)
+    ax.tick_params(labelsize=6)
+    colorbar = fig.colorbar(image, ax=ax, fraction=0.046, pad=0.025)
+    colorbar.ax.tick_params(labelsize=6)
+
+
+def detailed_field_book(
+    path: Path,
+    run: int,
+    rows: list[dict[str, object]],
+    fields: dict[str, dict[str, np.ndarray]],
+) -> None:
+    lookup = rows_by_grid(rows)
+    positions = tuple(float(value) for value in POSITION_SWEEP_UM)
+    with PdfPages(path) as pdf:
+        for y in reversed(positions):
+            for x in positions:
+                row = lookup[(x, y)]
+                item = fields[str(row["id"])]
+                node_um = np.asarray(item["electrical_x_node_m"], float) * 1e6
+                cell_um = np.asarray(item["electrical_x_cell_m"], float) * 1e6
+                thermal_x_um = np.asarray(item["thermal_x_cell_m"], float) * 1e6
+                thermal_y_um = np.asarray(item["thermal_y_cell_m"], float) * 1e6
+                rho_node = np.asarray(item["rho_exact_binary_nodal"], float)
+                temperature = np.asarray(item["temperature_rise_nodal_K"], float)
+
+                fig, axes = plt.subplots(
+                    3, 4, figsize=(18.0, 12.5), constrained_layout=True,
+                )
+                field_panel(
+                    fig, axes[0, 0], node_um, node_um, rho_node,
+                    "Exact binary: black=TaIrTe4", cmap="gray_r",
+                )
+                field_panel(
+                    fig, axes[0, 1], thermal_x_um, thermal_y_um,
+                    item["absorbed_power_density_total_W_m2"],
+                    "All-material absorbed Q (W/m2)",
+                )
+                field_panel(
+                    fig, axes[0, 2], thermal_x_um, thermal_y_um,
+                    item["absorbed_power_density_TaIrTe4_W_m2"],
+                    "TaIrTe4 absorbed Q (W/m2)",
+                )
+                field_panel(
+                    fig, axes[0, 3], node_um, node_um,
+                    np.where(rho_node > 0.5, temperature, np.nan),
+                    "TaIrTe4 temperature rise (K)",
+                )
+                field_panel(
+                    fig, axes[1, 0], node_um, node_um,
+                    item["temperature_gradient_strict_x_nodal_K_m"],
+                    "Strict-centered dT/db (K/m)", cmap="coolwarm", centered=True,
+                )
+                field_panel(
+                    fig, axes[1, 1], node_um, node_um,
+                    item["temperature_gradient_strict_y_nodal_K_m"],
+                    "Strict-centered dT/da (K/m)", cmap="coolwarm", centered=True,
+                )
+                field_panel(
+                    fig, axes[1, 2], node_um, node_um,
+                    item["temperature_gradient_strict_magnitude_nodal_K_m"],
+                    "Strict-centered |grad T| (K/m)", cmap="viridis",
+                )
+                field_panel(
+                    fig, axes[1, 3], node_um, node_um,
+                    np.where(
+                        rho_node > 0.5,
+                        np.asarray(item["weighting_potential_nodal"], float),
+                        np.nan,
+                    ),
+                    "Weighting potential psi", cmap="viridis",
+                )
+                field_panel(
+                    fig, axes[2, 0], cell_um, cell_um,
+                    item["terminal_current_contribution_total_A_m2"],
+                    "Terminal-current contribution: total (A/m2)",
+                    cmap="coolwarm", centered=True,
+                )
+                field_panel(
+                    fig, axes[2, 1], cell_um, cell_um,
+                    item["terminal_current_contribution_x_A_m2"],
+                    "Terminal-current contribution: b (A/m2)",
+                    cmap="coolwarm", centered=True,
+                )
+                field_panel(
+                    fig, axes[2, 2], cell_um, cell_um,
+                    item["terminal_current_contribution_y_A_m2"],
+                    "Terminal-current contribution: a (A/m2)",
+                    cmap="coolwarm", centered=True,
+                )
+                j_ax = axes[2, 3]
+                field_panel(
+                    fig, j_ax, cell_um, cell_um,
+                    item["local_J_total_magnitude_A_m2"],
+                    "Local |J| with dense direction field (A/m2)", cmap="cividis",
+                )
+                jx = np.asarray(item["local_J_total_x_A_m2"], float)
+                jy = np.asarray(item["local_J_total_y_A_m2"], float)
+                stride = 6
+                jxs = jx[::stride, ::stride]
+                jys = jy[::stride, ::stride]
+                magnitude = np.hypot(jxs, jys)
+                ux = np.divide(
+                    jxs, magnitude, out=np.zeros_like(magnitude), where=magnitude > 0.0,
+                )
+                uy = np.divide(
+                    jys, magnitude, out=np.zeros_like(magnitude), where=magnitude > 0.0,
+                )
+                arrows = j_ax.quiver(
+                    cell_um[::stride], cell_um[::stride], ux.T, uy.T,
+                    color="white", pivot="mid", angles="xy", scale_units="xy",
+                    scale=2.1, width=0.0018, alpha=0.78,
+                )
+                arrows.set_rasterized(True)
+                positive_nA = float(row["positive_contribution_nA"])
+                negative_nA = float(row["negative_contribution_nA"])
+                current_nA = float(row["terminal_current_nA"])
+                fig.suptitle(
+                    f"Run {run:03d} | beam (x,y)=({x:+g},{y:+g}) um | "
+                    f"I={current_nA:+.5g} nA | I+={positive_nA:+.5g} nA | "
+                    f"I-={negative_nA:+.5g} nA",
+                    fontsize=13,
+                )
+                pdf.savefig(fig, dpi=120)
+                plt.close(fig)
+
+
 def scalar_diagnostics(
     path: Path, audits: dict[int, list[dict[str, object]]]
 ) -> None:
@@ -389,6 +559,15 @@ def scalar_diagnostics(
                 values, origin="lower", extent=(-12.5, 12.5, -12.5, 12.5),
                 cmap=cmap, interpolation="nearest",
             )
+            if row_index == 0:
+                for y_index, y in enumerate(positions):
+                    for x_index, x in enumerate(positions):
+                        normalized = image.norm(values[y_index, x_index])
+                        color = "black" if 0.58 < normalized < 0.95 else "white"
+                        axes[row_index, column].text(
+                            x, y, f"{values[y_index, x_index]:+.2g}",
+                            ha="center", va="center", fontsize=4.2, color=color,
+                        )
             if row_index == 0:
                 axes[row_index, column].set_title(f"Run {run:03d}", fontsize=9)
             if column == 0:
@@ -432,7 +611,10 @@ def report_text(
         )
     galleries = []
     for run in RUNS:
-        labels = ("thermal", "current", "optical/electrical")
+        labels = (
+            "thermal", "current", "optical/electrical",
+            "25-page detailed field book",
+        )
         links = " | ".join(
             f"[{label}]({name})"
             for label, name in zip(labels, figure_names[run])
@@ -464,7 +646,7 @@ The physical current field is solved from `J = sigma E - sigma S grad(T)` with b
 
 ## Full 25-position atlases
 
-Each thermal atlas shows temperature and gradient magnitude. Each current atlas shows total local `J` magnitude with direction arrows and the signed terminal-current contribution. Each optical/electrical atlas shows TaIrTe4+Au absorbed-power density and short-circuit potential. Color limits are shared across all 25 positions within a run.
+Each thermal atlas shows temperature and gradient magnitude. Each current atlas shows total local `J` magnitude with dense direction arrows and the signed terminal-current contribution; every beam-position title includes the signed terminal current. Each optical/electrical atlas shows TaIrTe4+Au absorbed-power density and short-circuit potential. The 25-page field book follows the detailed physical-field matrix style used by the final exact-binary report and includes one complete page per beam position. Color limits are shared across all 25 positions within each atlas.
 
 | Run | Atlases |
 |---:|:---|
@@ -517,6 +699,7 @@ def main() -> int:
         thermal_name = f"run{run:03d}_thermal_atlas.png"
         current_name = f"run{run:03d}_current_atlas.png"
         optical_name = f"run{run:03d}_optical_electrical_atlas.png"
+        detailed_name = f"run{run:03d}_position_detailed_fields.pdf"
         thermal_limits = atlas(
             report / thermal_name, run, rows, fields[run],
             "temperature_rise_nodal_K", "temperature_gradient_magnitude_cell_K_m",
@@ -528,7 +711,7 @@ def main() -> int:
             "local_J_total_magnitude_A_m2", "terminal_current_contribution_total_A_m2",
             "Total local J magnitude (A/m2)", "Terminal-current contribution (A/m2)",
             top_cmap="cividis", bottom_cmap="RdBu_r", bottom_centered=True,
-            quiver=True,
+            quiver=True, signed_current_titles=True,
         )
         for item in fields[run].values():
             item["device_absorbed_power_density_W_m2"] = (
@@ -541,7 +724,12 @@ def main() -> int:
             "TaIrTe4 + Au absorbed power density (W/m2)", "Short-circuit potential (V)",
             top_cmap="plasma", bottom_cmap="RdBu_r", bottom_centered=True,
         )
-        figure_names[run] = [thermal_name, current_name, optical_name]
+        detailed_field_book(
+            report / detailed_name, run, audits[run], fields[run],
+        )
+        figure_names[run] = [
+            thermal_name, current_name, optical_name, detailed_name,
+        ]
         plot_limits[run] = {
             "thermal": thermal_limits,
             "current": current_limits,
@@ -598,7 +786,10 @@ def main() -> int:
         report_text(root, results, audits, figure_names)
     )
 
-    report_files = sorted(path for path in report.iterdir() if path.is_file())
+    report_files = sorted(
+        path for path in report.iterdir()
+        if path.is_file() and path.name != "manifest.json"
+    )
     manifest = {
         "schema": "exact-binary-beam-position-spatial-manifest-v1",
         "generated_at_utc": utc_now(),
