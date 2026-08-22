@@ -1,0 +1,21 @@
+{
+  "status": "VALIDATED_Z2022_M2_RECONSTRUCTED_PERIODIC_BROADBAND_RTA",
+  "scope": "corner-joined figure reconstruction; periodic flux spectrum only",
+  "LCP_RCP_name_assignment": "not promoted; CP+ and CP- are explicit Ex/Ey phase definitions",
+  "case_metrics": {
+    "LH": {
+      "maximum_abs_g": 0.0049146506503928425,
+      "signed_g_at_maximum": -0.0049146506503928425,
+      "wavelength_um": 5.249999999999998,
+      "A_CP_plus": 0.35059571265462003,
+      "A_CP_minus": 0.3523230126398409
+    },
+    "RH": {
+      "maximum_abs_g": 0.004914603899635519,
+      "signed_g_at_maximum": 0.004914603899635519,
+      "wavelength_um": 5.249999999999998,
+      "A_CP_plus": 0.3523230019966873,
+      "A_CP_minus": 0.35059571845435955
+    }
+  }
+}
