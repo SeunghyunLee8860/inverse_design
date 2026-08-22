@@ -18,7 +18,10 @@ from scipy import sparse
 
 
 HERE = Path(__file__).resolve().parent
-RAW = Path("/home/seunghyun/tairte4/raw_artifacts/periodic_T_Z_six_polarization_20260822/selected_Q")
+DEFAULT_RAW = Path(
+    "/home/seunghyun/tairte4/raw_artifacts/"
+    "periodic_T_Z_six_polarization_20260822/selected_Q"
+)
 POLS = (
     "x_b", "y_a", "linear_plus_45", "linear_minus_45", "CP_plus", "CP_minus"
 )
@@ -81,8 +84,18 @@ def main() -> int:
     architecture = os.environ.get("PERIODIC_ARCHITECTURE", "").strip().upper()
     if architecture not in ("T", "Z"):
         raise RuntimeError("set PERIODIC_ARCHITECTURE=T or Z")
-    output = HERE / f"results_periodic_{architecture}_six_polarization_reference_Q"
+    raw = Path(os.environ.get("PERIODIC_Q_RAW_ROOT", str(DEFAULT_RAW)))
+    output_tag = os.environ.get("PERIODIC_Q_OUTPUT_TAG", "").strip()
+    if output_tag and not output_tag.replace("_", "").isalnum():
+        raise RuntimeError("invalid PERIODIC_Q_OUTPUT_TAG")
+    output = HERE / (
+        f"results_periodic_{architecture}_six_polarization_reference_Q"
+        + (f"_{output_tag}" if output_tag else "")
+    )
     output.mkdir(parents=True, exist_ok=True)
+    expected_solver_version = os.environ.get(
+        "PERIODIC_EXPECTED_SOLVER_VERSION", ""
+    ).strip()
     if architecture == "T":
         json_name = "T2024_TaIrTe4_optical_smoke.json"
         npz_name = "T2024_TaIrTe4_native_q.npz"
@@ -98,11 +111,22 @@ def main() -> int:
     loaded: dict[str, dict[str, object]] = {}
     artifacts: list[dict[str, object]] = []
     for polarization in POLS:
-        root = RAW / architecture / polarization
+        root_override = os.environ.get(
+            f"PERIODIC_Q_CASE_{polarization.upper()}_ROOT", ""
+        ).strip()
+        root = Path(root_override) if root_override else raw / architecture / polarization
         metadata_path, npz_path, fsp_path = root / json_name, root / npz_name, root / fsp_name
         metadata = json.loads(metadata_path.read_text())
         if metadata.get("status") != expected or not all(metadata.get("gates", {}).values()):
             raise RuntimeError(f"{architecture}/{polarization} Q gate: {metadata.get('status')}")
+        if (
+            expected_solver_version
+            and str(metadata.get("solver_version")) != expected_solver_version
+        ):
+            raise RuntimeError(
+                f"{architecture}/{polarization} solver build "
+                f"{metadata.get('solver_version')} != {expected_solver_version}"
+            )
         geometry = metadata["contract"]["geometry"] if architecture == "T" else metadata["geometry"]
         px = float(geometry["period_x_nm"]) * 1e-9
         py = float(geometry["period_y_nm"]) * 1e-9
@@ -147,6 +171,8 @@ def main() -> int:
             "Qy_common_W": item["powers"]["y"],
             "Qz_common_W": item["powers"]["z"],
             "auto_shutoff": metadata["log_audit"]["final_auto_shutoff"],
+            "solver_version": metadata.get("solver_version"),
+            "solver_root": metadata.get("solver_root"),
         }
         rows.append(row)
         fig, axes = plt.subplots(1, 4, figsize=(17, 4.2), constrained_layout=True)
@@ -178,6 +204,8 @@ def main() -> int:
         "scope": "periodic optical volumetric Q only; no thermal/weighting/PTE",
         "cases": rows,
         "no_clipping_smoothing_gain_rescaling": True,
+        "solver_versions": sorted({str(row["solver_version"]) for row in rows}),
+        "solver_roots": sorted({str(row["solver_root"]) for row in rows}),
     }
     (output / f"PERIODIC_{architecture}_SIX_POLARIZATION_Q_SUMMARY.json").write_text(
         json.dumps(summary, indent=2) + "\n"

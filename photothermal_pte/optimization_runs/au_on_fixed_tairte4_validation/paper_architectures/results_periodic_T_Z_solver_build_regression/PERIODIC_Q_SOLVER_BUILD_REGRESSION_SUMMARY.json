@@ -1,0 +1,91 @@
+{
+  "status": "VALIDATED_PERIODIC_Q_REQUIRES_V261_R1P2_BUILD_8P35P4522",
+  "scope": "periodic optical flux/local-Q build regression; no thermal/weighting/PTE",
+  "interpretation": "The displayed v261 label hid distinct R1 and R1.2 builds. R1.2 closes T and centered-Z local loss; R1 does not.",
+  "cases": [
+    {
+      "case": "T_R1p2_10nm",
+      "solver_version": "8.35.4522",
+      "mesh_nm": 9.999999999998845,
+      "P_flux_W": 3.8485044659612436e-16,
+      "P_Q_W": 3.8420081153856464e-16,
+      "A_flux": 0.19508130598480325,
+      "A_Q": 0.19475200493666062,
+      "closure_relative": 0.0016880194977179446,
+      "status": "COMPLETED_T2024_TAIRTE4_OPTICAL_SMOKE"
+    },
+    {
+      "case": "T_R1_10nm",
+      "solver_version": "8.35.4413",
+      "mesh_nm": 10.0,
+      "P_flux_W": 1.9837164012701295e-17,
+      "P_Q_W": 4.487387401120156e-16,
+      "A_flux": 0.010055490117941,
+      "A_Q": 0.22746638399745797,
+      "closure_relative": 0.9557935113697795,
+      "status": "FAILED_T2024_TAIRTE4_OPTICAL_SMOKE_GATE"
+    },
+    {
+      "case": "T_R1_25nm",
+      "solver_version": "8.35.4413",
+      "mesh_nm": 25.0,
+      "P_flux_W": 1.9821225780079816e-17,
+      "P_Q_W": 4.4390673536046885e-16,
+      "A_flux": 0.010047411002371857,
+      "A_Q": 0.22501703307219917,
+      "closure_relative": 0.9553482202427404,
+      "status": "FAILED_T2024_TAIRTE4_OPTICAL_SMOKE_GATE"
+    },
+    {
+      "case": "Z_R1_25nm",
+      "solver_version": "8.35.4413",
+      "mesh_nm": 24.999999999993832,
+      "P_flux_W": 2.3058067657221145e-14,
+      "P_Q_W": 1.469119771560354e-13,
+      "A_flux": 0.676071648643622,
+      "A_Q": 4.3075171813137505,
+      "closure_relative": 0.843048415087824,
+      "status": "FAILED_Z2022_M2_SELECTED_Q_GATE"
+    },
+    {
+      "case": "Z_R1p2_25nm",
+      "solver_version": "8.35.4522",
+      "mesh_nm": 24.999999999993832,
+      "P_flux_W": 2.550099994565871e-14,
+      "P_Q_W": 2.546056806511426e-14,
+      "A_flux": 0.7476993879807249,
+      "A_Q": 0.7465139092778342,
+      "closure_relative": 0.0015855017697583673,
+      "status": "COMPLETED_Z2022_M2_CENTERED_EXPANDED_SELECTED_Q"
+    }
+  ],
+  "solver_builds": {
+    "R1": {
+      "root": "/opt/lumerical/v261",
+      "engine_size_bytes": 60094592,
+      "engine_sha256": "c1ecee002fb4882c55b265f80db04130fc165cf7ba548b4d0ffa1f847060bf5f",
+      "engine_mtime": 1769817638.0,
+      "lumapi_size_bytes": 76920,
+      "lumapi_sha256": "c33940aa736aa276d67c9b768213e7f44997201864b9aaf0b4dab734df399fe2",
+      "lumapi_mtime": 1769812710.0
+    },
+    "R1p2": {
+      "root": "/home/seunghyun/lumerical_r12/opt/lumerical/v261",
+      "engine_size_bytes": 61707008,
+      "engine_sha256": "cb1890acefc86ff5fb402da3331750371390d598714c5318dcff99efaec9c3b9",
+      "engine_mtime": 1779332154.0,
+      "lumapi_size_bytes": 76909,
+      "lumapi_sha256": "2ccb74fcc5bc82b0e6f38026fbb7f7294591940262de49993217f2b6917ed84b",
+      "lumapi_mtime": 1779327363.0
+    }
+  },
+  "gates": {
+    "R1p2_T_closure_lt_0p5pct": true,
+    "R1p2_Z_closure_lt_0p5pct": true,
+    "R1_T_controls_fail_closure": true,
+    "R1_Z_fails_closure": true,
+    "R1_10_to_25nm_flux_difference_lt_0p5pct": true
+  },
+  "production_rule": "periodic reference-Q artifacts must use solver version 8.35.4522",
+  "no_clipping_smoothing_gain_or_rescaling": true
+}
