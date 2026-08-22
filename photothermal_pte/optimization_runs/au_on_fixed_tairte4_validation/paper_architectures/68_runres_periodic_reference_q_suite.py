@@ -82,13 +82,15 @@ def main() -> int:
             "--output-dir", str(output), "--gpu-device", gpu_device(),
         ]
         if architecture == "T":
-            command.extend(["--substrate-mode", "sio2_si_reduced_285nm", "--duration-ps", "1.0"])
+            command.extend(["--substrate-mode", "sio2_si_reduced_285nm", "--duration-ps", "1.2"])
         else:
             command.extend(
                 [
                     "--handedness", "LH",
                     "--geometry-variant", "centered_expanded_supercell_v4",
-                    "--duration-ps", "1.5",
+                    # Reuse the broadband convergence bound: several Z
+                    # polarizations did not reach 1e-5 by 2 ps.
+                    "--duration-ps", "4.0",
                 ]
             )
         publish("RUNNING_PERIODIC_REFERENCE_Q_SUITE", command)

@@ -69,7 +69,7 @@ def main() -> int:
         )
         writer.writeheader()
         for architecture in ("T", "Z"):
-            fig, axes = plt.subplots(2, 3, figsize=(16, 8.5), sharex=True, sharey=True, constrained_layout=True)
+            fig, axes = plt.subplots(2, 3, figsize=(16, 9.2), sharex=True, sharey=True)
             for ax, polarization in zip(axes.flat, POLS):
                 arrays = cases[architecture][polarization]["arrays"]
                 wavelength_um = arrays["wavelength_m"] * 1e6
@@ -107,8 +107,10 @@ def main() -> int:
                 ax.set_ylabel("power fraction")
             fig.suptitle(
                 f"{architecture} periodic optical R/T/A — six incident polarization states\n"
-                "normal incidence; no thermal, weighting field, or PTE"
+                "normal incidence; no thermal, weighting field, or PTE",
+                y=0.985,
             )
+            fig.subplots_adjust(left=0.06, right=0.985, bottom=0.075, top=0.88, wspace=0.08, hspace=0.20)
             fig.savefig(OUTPUT / f"{architecture}_six_polarization_RTA.png", dpi=220)
             plt.close(fig)
 
