@@ -62,6 +62,14 @@ def scalar(value: object, name: str) -> float:
     return float(np.real(array[0]))
 
 
+def max_spacing_inside(coordinates: np.ndarray, lower: float, upper: float) -> float:
+    coordinates = np.asarray(coordinates, float).reshape(-1)
+    selected = coordinates[(coordinates >= lower - 1.0e-15) & (coordinates <= upper + 1.0e-15)]
+    if selected.size < 2:
+        raise RuntimeError(f"insufficient mesh coordinates in [{lower}, {upper}]")
+    return float(np.max(np.diff(selected)))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", type=Path, required=True)
@@ -74,11 +82,21 @@ def main() -> int:
     )
     parser.add_argument(
         "--geometry-variant",
-        choices=("legacy_axis_swapped_v1", "figure_axis_corrected_v2"),
+        choices=(
+            "legacy_axis_swapped_v1",
+            "figure_axis_corrected_v2",
+            "figure_period_corrected_v3",
+        ),
         default="legacy_axis_swapped_v1",
     )
     parser.add_argument("--wavelength-um", type=float, default=DEFAULT_WAVELENGTH_UM)
     parser.add_argument("--duration-ps", type=float, default=1.5)
+    parser.add_argument(
+        "--omit-top-au-control",
+        action="store_true",
+        help="diagnostic planar-stack control; preserves all other settings",
+    )
+    parser.add_argument("--top-au-edge-mesh-nm", type=float)
     parser.add_argument("--contract-only", action="store_true")
     args = parser.parse_args()
     wavelength_m = args.wavelength_um * 1e-6
@@ -118,7 +136,12 @@ def main() -> int:
             args.polarization,
             args.duration_ps,
             geometry_variant=args.geometry_variant,
+            top_au_edge_mesh_nm=args.top_au_edge_mesh_nm,
         )
+        if args.omit_top_au_control:
+            for polygon in contract["geometry"]["polygons"]:
+                fdtd.select(str(polygon["name"]))
+                fdtd.delete()
         source_names = (
             ("Z2022_source_linear",)
             if args.polarization in ("x_b", "y_a")
@@ -188,9 +211,32 @@ def main() -> int:
             raise RuntimeError("25-nm selected-Z in-plane mesh was not realized")
         if mesh["max_structure_dz_m"] > 5e-9 + 1e-12:
             raise RuntimeError("5-nm selected-Z structure dz was not realized")
+        edge_mesh_realized: list[dict[str, object]] = []
+        if args.top_au_edge_mesh_nm is not None:
+            coordinates = mesh_readback["coordinate_arrays"]
+            requested_edge = args.top_au_edge_mesh_nm * 1.0e-9
+            for item in contract["top_Au_edge_mesh"]["objects"]:
+                xmin, xmax, ymin, ymax, zmin, zmax = item["bounds_m"]
+                realized = {
+                    "name": item["name"],
+                    "max_dx_m": max_spacing_inside(coordinates["x"], xmin, xmax),
+                    "max_dy_m": max_spacing_inside(coordinates["y"], ymin, ymax),
+                    "max_dz_m": max_spacing_inside(coordinates["z"], zmin, zmax),
+                }
+                if realized["max_dx_m"] > requested_edge + 1.0e-12:
+                    raise RuntimeError(f"edge dx was not realized: {realized}")
+                if realized["max_dy_m"] > requested_edge + 1.0e-12:
+                    raise RuntimeError(f"edge dy was not realized: {realized}")
+                if realized["max_dz_m"] > 5.0e-9 + 1.0e-12:
+                    raise RuntimeError(f"edge dz was not realized: {realized}")
+                edge_mesh_realized.append(realized)
         result.update(
             {
                 "classification": (
+                    "published M2 scalar dimensions plus Fig. 1b-corrected periods/axes; "
+                    "edge-joined figure-constrained reconstruction; not author CAD"
+                    if args.geometry_variant == "figure_period_corrected_v3"
+                    else
                     "published M2 scalar dimensions plus Fig. 1b axis-corrected "
                     "corner-joined reconstruction; not author CAD"
                     if args.geometry_variant == "figure_axis_corrected_v2"
@@ -219,6 +265,9 @@ def main() -> int:
                 "mesh_runsetup": mesh,
                 "solver_version": str(fdtd.version()),
                 "scope": "periodic selected-wavelength volumetric-Q certificate; no thermal/PTE",
+                "top_Au_included": not args.omit_top_au_control,
+                "top_Au_edge_mesh": contract["top_Au_edge_mesh"],
+                "top_Au_edge_mesh_realized": edge_mesh_realized,
             }
         )
         fdtd.save(str(fsp_path))
@@ -278,7 +327,9 @@ def main() -> int:
                     "log_audit": log,
                     "gates": gates,
                     "status": (
-                        "COMPLETED_Z2022_M2_FIGURE_CORRECTED_SELECTED_Q"
+                        "COMPLETED_Z2022_M2_FIGURE_PERIOD_CORRECTED_SELECTED_Q"
+                        if all(gates.values()) and args.geometry_variant == "figure_period_corrected_v3"
+                        else "COMPLETED_Z2022_M2_FIGURE_CORRECTED_SELECTED_Q"
                         if all(gates.values()) and args.geometry_variant == "figure_axis_corrected_v2"
                         else "COMPLETED_Z2022_M2_RECONSTRUCTED_SELECTED_Q"
                         if all(gates.values())

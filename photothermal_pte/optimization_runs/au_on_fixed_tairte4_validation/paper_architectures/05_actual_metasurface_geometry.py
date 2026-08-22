@@ -316,6 +316,90 @@ def z_m2_5300nm_figure_corrected_tairte4_v2(
     return _z_m2_geometry(handedness, width_along_x=True)
 
 
+def z_m2_5300nm_figure_period_corrected_tairte4_v3(
+    handedness: str = "LH",
+) -> MetasurfaceGeometry:
+    """Return the Fig. 1b/Table-S1 M2 reconstruction with corrected periods.
+
+    Fig. 1b labels P1 horizontally and P2 vertically.  The scalar table does
+    not disclose the relative bar offset, so the two rectangles are joined at
+    x=0 and offset in y to span exactly P2.  This is a figure-constrained
+    reconstruction, not the undisclosed author CAD.
+    """
+    if handedness not in ("LH", "RH"):
+        raise ValueError(handedness)
+    m2 = dict(Z_PUBLISHED_DIMENSIONS_NM[1])
+    p1, p2 = float(m2["P1_nm"]), float(m2["P2_nm"])
+    l1, l2 = float(m2["L1_nm"]), float(m2["L2_nm"])
+    w1, w2 = float(m2["W1_nm"]), float(m2["W2_nm"])
+
+    # Figure-constrained LH closure: long/right bar reaches the upper cell
+    # edge; short/left bar reaches the lower edge.  Their y overlap is fixed
+    # by L1 + L2 - P2.  The shared x edge makes one continuous Z-like metal.
+    upper = np.asarray(
+        [(0.0, 0.5 * p2 - l1), (w1, 0.5 * p2 - l1),
+         (w1, 0.5 * p2), (0.0, 0.5 * p2)],
+        float,
+    )
+    lower = np.asarray(
+        [(-w2, -0.5 * p2), (0.0, -0.5 * p2),
+         (0.0, -0.5 * p2 + l2), (-w2, -0.5 * p2 + l2)],
+        float,
+    )
+    if handedness == "RH":
+        upper[:, 0] *= -1.0
+        lower[:, 0] *= -1.0
+        upper = upper[::-1]
+        lower = lower[::-1]
+
+    provenance = (
+        "2022 Fig. 1b and Supplementary Table 1 M2: P1 horizontal, P2 vertical, "
+        "W1/W2 horizontal, L1/L2 vertical; edge-joined y-offset closure digitized "
+        "from the figure because exact author CAD/relative offset is not disclosed"
+    )
+    polygons = tuple(
+        PolygonObject(
+            name=f"Z2022_M2_FIGURE_PERIOD_CORRECTED_V3_{handedness}_{label}",
+            material="Au",
+            vertices_nm=tuple(tuple(float(item) for item in row) for row in vertices),
+            z_min_nm=100.0,
+            z_max_nm=150.0,
+            provenance_kind="published_dimensions+figure_period_corrected_edge_joined_v3",
+            provenance=provenance,
+        )
+        for label, vertices in (("upper_right", upper), ("lower_left", lower))
+    )
+    return MetasurfaceGeometry(
+        key=f"Z2022_M2_5300_{handedness}_FIGURE_PERIOD_CORRECTED_V3",
+        wavelength_nm=float(m2["wavelength_nm"]),
+        period_x_nm=p1,
+        period_y_nm=p2,
+        active_material="TaIrTe4",
+        active_thickness_nm=100.0,
+        axis_mapping={"x": "b", "y": "a", "z": "c=b closure"},
+        polygons=polygons,
+        layers=(
+            {"name": "air", "z_min_nm": 150.0, "z_max_nm": None},
+            {"name": "effective_Au_Z", "z_min_nm": 100.0, "z_max_nm": 150.0},
+            {"name": "TaIrTe4_active_substitution", "z_min_nm": 0.0, "z_max_nm": 100.0},
+            {"name": "Al2O3_spacer", "z_min_nm": -200.0, "z_max_nm": 0.0},
+            {"name": "Au_backplane", "z_min_nm": -400.0, "z_max_nm": -200.0},
+            {"name": "optical_SiO2_reduced", "z_min_nm": -685.0, "z_max_nm": -400.0},
+            {"name": "Si", "z_min_nm": None, "z_max_nm": -685.0},
+        ),
+        boundary_contract={
+            "x_min_x_max": "Periodic", "y_min_y_max": "Periodic",
+            "z_min_z_max": "PML", "illumination": "normal-incidence plane wave",
+        },
+        unresolved=(
+            "exact author CAD and relative two-bar offset are not disclosed",
+            "edge-joined figure-constrained closure is used and explicitly audited",
+            "100-nm TaIrTe4 replaces the paper's original 2-D thermoelectric material",
+            "5-nm Cr adhesion is omitted from the first effective-Au screen",
+        ),
+    )
+
+
 def signed_polygon_area_nm2(vertices: tuple[tuple[float, float], ...]) -> float:
     array = np.asarray(vertices, float)
     return 0.5 * float(

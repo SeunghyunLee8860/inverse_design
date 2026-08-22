@@ -23,9 +23,9 @@ import numpy as np
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[3]
 RAW_ROOT = Path("/home/seunghyun/tairte4/raw_artifacts")
-EA_DIR = RAW_ROOT / "paper_z2022_m2_figure_digitized_Ea_5p3um_v2_matched_cv"
-EB_DIR = RAW_ROOT / "paper_z2022_m2_figure_digitized_Eb_5p3um_v2_matched_cv"
-OUTPUT = RAW_ROOT / "paper_z2022_m2_figure_digitized_ea_eb_periodic_thermal"
+EA_DIR = RAW_ROOT / "paper_z2022_m2_figure_period_corrected_Ea_5p3um_v3"
+EB_DIR = RAW_ROOT / "paper_z2022_m2_figure_period_corrected_Eb_5p3um_v3"
+OUTPUT = RAW_ROOT / "paper_z2022_m2_figure_period_corrected_ea_eb_periodic_thermal_v3"
 TARGET_INCIDENT_INTENSITY_W_M2 = 1.0
 
 
@@ -69,8 +69,8 @@ def thermal_edges(period_x_m: float, period_y_m: float) -> tuple[np.ndarray, ...
             (-0.400, -0.200, 0.010),
             (-0.200, 0.000, 0.010),
             (0.000, 0.100, 0.005),
-            (0.100, 0.130, 0.005),
-            (0.130, 0.250, 0.020),
+            (0.100, 0.150, 0.005),
+            (0.150, 0.250, 0.020),
             (0.250, 0.650, 0.050),
         ]
     )

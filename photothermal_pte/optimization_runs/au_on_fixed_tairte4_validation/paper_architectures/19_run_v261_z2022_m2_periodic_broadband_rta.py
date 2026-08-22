@@ -95,6 +95,7 @@ def setup(
     polarization: str,
     duration_ps: float,
     geometry_variant: str = "legacy_axis_swapped_v1",
+    top_au_edge_mesh_nm: float | None = None,
 ) -> dict[str, object]:
     geometry_module = load_module("05_actual_metasurface_geometry.py", "z2022_geometry")
     base = load_module("07_run_v261_t2024_tairte4_optical_smoke.py", "z2022_material_helpers")
@@ -102,6 +103,8 @@ def setup(
         geometry = geometry_module.z_m2_5300nm_corner_joined_tairte4(handedness)
     elif geometry_variant == "figure_axis_corrected_v2":
         geometry = geometry_module.z_m2_5300nm_figure_corrected_tairte4_v2(handedness)
+    elif geometry_variant == "figure_period_corrected_v3":
+        geometry = geometry_module.z_m2_5300nm_figure_period_corrected_tairte4_v3(handedness)
     else:
         raise ValueError(f"unknown Z geometry variant: {geometry_variant}")
     period_x = geometry.period_x_nm * 1e-9
@@ -170,6 +173,53 @@ def setup(
         polygon["z min"] = item.z_min_nm * 1e-9
         polygon["z max"] = item.z_max_nm * 1e-9
 
+    edge_mesh_objects: list[dict[str, object]] = []
+    if top_au_edge_mesh_nm is not None:
+        requested = float(top_au_edge_mesh_nm) * 1.0e-9
+        if requested <= 0.0 or requested > 25.0e-9:
+            raise ValueError("top-Au edge mesh must be in (0, 25] nm")
+        band_half_width = max(30.0e-9, 3.0 * requested)
+        for item in geometry.polygons:
+            vertices = np.asarray(item.vertices_nm, float) * 1.0e-9
+            xmin, xmax = float(np.min(vertices[:, 0])), float(np.max(vertices[:, 0]))
+            ymin, ymax = float(np.min(vertices[:, 1])), float(np.max(vertices[:, 1]))
+            strips = (
+                ("xmin", xmin - band_half_width, xmin + band_half_width, ymin - band_half_width, ymax + band_half_width),
+                ("xmax", xmax - band_half_width, xmax + band_half_width, ymin - band_half_width, ymax + band_half_width),
+                ("ymin", xmin - band_half_width, xmax + band_half_width, ymin - band_half_width, ymin + band_half_width),
+                ("ymax", xmin - band_half_width, xmax + band_half_width, ymax - band_half_width, ymax + band_half_width),
+            )
+            for label, xmin_box, xmax_box, ymin_box, ymax_box in strips:
+                override = fdtd.addmesh()
+                name = f"{item.name}_{label}_{top_au_edge_mesh_nm:g}nm_mesh"
+                override["name"] = name
+                override["x min"] = max(xmin_box, -0.5 * period_x)
+                override["x max"] = min(xmax_box, 0.5 * period_x)
+                override["y min"] = max(ymin_box, -0.5 * period_y)
+                override["y max"] = min(ymax_box, 0.5 * period_y)
+                override["z min"] = 90.0e-9
+                override["z max"] = 160.0e-9
+                override["override x mesh"] = True
+                override["override y mesh"] = True
+                override["override z mesh"] = True
+                override["dx"] = requested
+                override["dy"] = requested
+                override["dz"] = 5.0e-9
+                edge_mesh_objects.append(
+                    {
+                        "name": name,
+                        "bounds_m": [
+                            max(xmin_box, -0.5 * period_x),
+                            min(xmax_box, 0.5 * period_x),
+                            max(ymin_box, -0.5 * period_y),
+                            min(ymax_box, 0.5 * period_y),
+                            90.0e-9,
+                            160.0e-9,
+                        ],
+                        "dx_dy_dz_m": [requested, requested, 5.0e-9],
+                    }
+                )
+
     mesh = fdtd.addmesh()
     mesh["name"] = "Z2022_local_structure_mesh"
     mesh["x span"] = period_x
@@ -196,6 +246,11 @@ def setup(
         },
         "scope": "periodic flux R/T/A only; no volumetric Q/thermal/PTE",
         "geometry_variant": geometry_variant,
+        "top_Au_edge_mesh": {
+            "requested_nm": top_au_edge_mesh_nm,
+            "objects": edge_mesh_objects,
+            "full_cell_refined": False,
+        },
     }
 
 

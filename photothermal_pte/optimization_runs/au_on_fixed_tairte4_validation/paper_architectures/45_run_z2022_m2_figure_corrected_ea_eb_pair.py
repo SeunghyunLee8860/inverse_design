@@ -13,7 +13,7 @@ import sys
 
 HERE = Path(__file__).resolve().parent
 RAW_ROOT = Path("/home/seunghyun/tairte4/raw_artifacts")
-PAIR_DIR = RAW_ROOT / "paper_z2022_m2_figure_digitized_ea_eb_pair_v2_matched_cv"
+PAIR_DIR = RAW_ROOT / "paper_z2022_m2_figure_period_corrected_ea_eb_pair_v3"
 
 
 def sha256(path: Path) -> str:
@@ -49,7 +49,7 @@ def run_case(runner, polarization: str, output: Path, gpu: str) -> dict[str, obj
             "--gpu-device", gpu,
             "--handedness", "LH",
             "--polarization", polarization,
-            "--geometry-variant", "figure_axis_corrected_v2",
+            "--geometry-variant", "figure_period_corrected_v3",
             "--wavelength-um", "5.3",
             "--duration-ps", "6.0",
         ]
@@ -67,8 +67,8 @@ def main() -> int:
     gpu = os.environ.get("LUMERICAL_SESSION_GPU_DEVICE", "GPU 0")
     runner = load_runner()
     cases = {
-        "Ea": run_case(runner, "y_a", RAW_ROOT / "paper_z2022_m2_figure_digitized_Ea_5p3um_v2_matched_cv", gpu),
-        "Eb": run_case(runner, "x_b", RAW_ROOT / "paper_z2022_m2_figure_digitized_Eb_5p3um_v2_matched_cv", gpu),
+        "Ea": run_case(runner, "y_a", RAW_ROOT / "paper_z2022_m2_figure_period_corrected_Ea_5p3um_v3", gpu),
+        "Eb": run_case(runner, "x_b", RAW_ROOT / "paper_z2022_m2_figure_period_corrected_Eb_5p3um_v3", gpu),
     }
     pair_gates = {
         "both_completed": all(str(item["status"]).startswith("COMPLETED") for item in cases.values()),
@@ -87,7 +87,7 @@ def main() -> int:
             else "FAILED_Z2022_M2_FIGURE_DIGITIZED_EA_EB_PAIR_GATE"
         ),
         "classification": (
-            "paper-dimension, figure-axis-corrected, corner-joined digitized closure; "
+            "paper-dimension, figure-period/axis-corrected, edge-joined digitized closure; "
             "not exact author CAD"
         ),
         "axis_mapping": "Lumerical x=b, y=a, z=c",
