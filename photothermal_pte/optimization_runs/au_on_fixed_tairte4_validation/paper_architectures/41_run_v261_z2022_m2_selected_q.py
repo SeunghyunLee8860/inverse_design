@@ -77,7 +77,10 @@ def main() -> int:
     parser.add_argument("--handedness", choices=("LH", "RH"), default="LH")
     parser.add_argument(
         "--polarization",
-        choices=("x_b", "y_a", "CP_plus", "CP_minus"),
+        choices=(
+            "x_b", "y_a", "linear_plus_45", "linear_minus_45",
+            "CP_plus", "CP_minus",
+        ),
         default="CP_plus",
     )
     parser.add_argument(
@@ -86,6 +89,7 @@ def main() -> int:
             "legacy_axis_swapped_v1",
             "figure_axis_corrected_v2",
             "figure_period_corrected_v3",
+            "centered_expanded_supercell_v4",
         ),
         default="legacy_axis_swapped_v1",
     )
@@ -151,7 +155,9 @@ def main() -> int:
                 fdtd.delete()
         source_names = (
             ("Z2022_source_linear",)
-            if args.polarization in ("x_b", "y_a")
+            if args.polarization in (
+                "x_b", "y_a", "linear_plus_45", "linear_minus_45"
+            )
             else ("Z2022_source_x", "Z2022_source_y")
         )
         source_start = max(4.0e-6, wavelength_m * 0.95)
@@ -264,6 +270,10 @@ def main() -> int:
                     "edge-joined figure-constrained reconstruction; not author CAD"
                     if args.geometry_variant == "figure_period_corrected_v3"
                     else
+                    "project-centered 5.1 x 5.1 um expanded-supercell v4; "
+                    "preserved v3 bar dimensions; not paper lattice or author CAD"
+                    if args.geometry_variant == "centered_expanded_supercell_v4"
+                    else
                     "published M2 scalar dimensions plus Fig. 1b axis-corrected "
                     "corner-joined reconstruction; not author CAD"
                     if args.geometry_variant == "figure_axis_corrected_v2"
@@ -365,7 +375,9 @@ def main() -> int:
                     "log_audit": log,
                     "gates": gates,
                     "status": (
-                        "COMPLETED_Z2022_M2_FIGURE_PERIOD_CORRECTED_SELECTED_Q"
+                        "COMPLETED_Z2022_M2_CENTERED_EXPANDED_SELECTED_Q"
+                        if all(gates.values()) and args.geometry_variant == "centered_expanded_supercell_v4"
+                        else "COMPLETED_Z2022_M2_FIGURE_PERIOD_CORRECTED_SELECTED_Q"
                         if all(gates.values()) and args.geometry_variant == "figure_period_corrected_v3"
                         else "COMPLETED_Z2022_M2_FIGURE_CORRECTED_SELECTED_Q"
                         if all(gates.values()) and args.geometry_variant == "figure_axis_corrected_v2"
