@@ -1,0 +1,105 @@
+{
+  "status": "VALIDATED_T2024_FIGURE_DIGITIZED_TAIRTE4_TWO_POLARIZATION_OPTICAL_SMOKE",
+  "identity_limit": "paper-derived MIR inverse-T scenario with a 100-nm TaIrTe4 active-layer substitution; not exact paper CAD and not graphene experiment reproduction",
+  "polarizations": {
+    "x_b": {
+      "solver_wall_time_s": 37.757827173918486,
+      "source_power_W": 1.972769480157694e-15,
+      "P_Q_pabs_periodic_W": 4.2364297691831026e-16,
+      "P_flux_absorbed_W": 4.242603078517315e-16,
+      "P_Q_native_uncorrected_W": 4.230314555898887e-16,
+      "absorptance_pabs": 0.2147453015566959,
+      "absorptance_flux": 0.21505822759272314,
+      "closure_relative": 0.0014550758626163344,
+      "reflection": 0.7849417720029581,
+      "auto_shutoff": 5.66851e-07,
+      "Q_component_power_native_W": {
+        "x": 2.8697240775254245e-16,
+        "y": 7.81842830275325e-17,
+        "z": 5.787476480981379e-17
+      },
+      "component_fractions": {
+        "x": 0.6783713219443194,
+        "y": 0.1848190766771937,
+        "z": 0.13680960137848697
+      },
+      "material_totals_W": {
+        "TaIrTe4_geometric": 3.7101527374227767e-16,
+        "top_Au_T_geometric": 1.310595405565707e-17,
+        "Au_backplane_geometric": 7.804219192203304e-18,
+        "SiO2_geometric": 9.670929066168847e-27,
+        "Si_geometric": 7.967128602933342e-32,
+        "unassigned_interface_or_other": 3.110600859007973e-17
+      },
+      "gates": {
+        "GPU_completed": true,
+        "auto_shutoff_lt_1e_5": true,
+        "closure_lt_0p5pct": true,
+        "all_Q_arrays_finite": true,
+        "no_negative_Q": true
+      }
+    },
+    "y_a": {
+      "solver_wall_time_s": 26.794123973697424,
+      "source_power_W": 1.972769480157694e-15,
+      "P_Q_pabs_periodic_W": 3.752872469443291e-16,
+      "P_flux_absorbed_W": 3.7643060349842903e-16,
+      "P_Q_native_uncorrected_W": 3.741816550616994e-16,
+      "absorptance_pabs": 0.19023370480890164,
+      "absorptance_flux": 0.19081327407211252,
+      "closure_relative": 0.0030373634435508293,
+      "reflection": 0.8091867258625309,
+      "auto_shutoff": 8.81513e-07,
+      "Q_component_power_native_W": {
+        "x": 5.688151882105844e-18,
+        "y": 3.471194187999642e-16,
+        "z": 2.1374084379629375e-17
+      },
+      "component_fractions": {
+        "x": 0.015201578712264543,
+        "y": 0.9276762078106878,
+        "z": 0.05712221347704758
+      },
+      "material_totals_W": {
+        "TaIrTe4_geometric": 3.38983961728897e-16,
+        "top_Au_T_geometric": 4.3382233969622e-18,
+        "Au_backplane_geometric": 1.2520146187713156e-18,
+        "SiO2_geometric": 1.5632174082999723e-27,
+        "Si_geometric": 1.287105862213668e-32,
+        "unassigned_interface_or_other": 2.960745531550563e-17
+      },
+      "gates": {
+        "GPU_completed": true,
+        "auto_shutoff_lt_1e_5": true,
+        "closure_lt_0p5pct": true,
+        "all_Q_arrays_finite": true,
+        "no_negative_Q": true
+      }
+    }
+  },
+  "raw_power_ratios": {
+    "P_Q_Ea_over_Eb": 0.8858573548752458,
+    "geometric_TaIrTe4_power_Ea_over_Eb": 0.9136657860731876
+  },
+  "unit_power_spatial_shape_metrics_Eb_vs_Ea": {
+    "x": {
+      "equal_component_coordinates": true,
+      "unit_sum_spatial_NRMSE": 0.863270994742504,
+      "spatial_correlation": 0.5300354831427525
+    },
+    "y": {
+      "equal_component_coordinates": true,
+      "unit_sum_spatial_NRMSE": 0.8444612419941698,
+      "spatial_correlation": 0.3347134215312652
+    },
+    "z": {
+      "equal_component_coordinates": true,
+      "unit_sum_spatial_NRMSE": 0.9649336222294425,
+      "spatial_correlation": 0.45571032388040583
+    }
+  },
+  "coordinate_rule": "Qx/Qy/Qz were integrated and plotted on component-specific Yee coordinates; no same-index cross-component sum was formed",
+  "scope": "optical forward only; no thermal, PTE, adjoint or optimization",
+  "substrate_mode": "sio2_si",
+  "Z2022_status": "BLOCKED_EXACT_Z_TOPOLOGY_NOT_PUBLISHED_IN_PDF"
+}

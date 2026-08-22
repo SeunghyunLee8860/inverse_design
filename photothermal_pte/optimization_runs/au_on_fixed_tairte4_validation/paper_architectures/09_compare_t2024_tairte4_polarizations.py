@@ -70,6 +70,8 @@ def material_totals(case: dict) -> dict[str, float]:
         "TaIrTe4_geometric",
         "top_Au_T_geometric",
         "Au_backplane_geometric",
+        "SiO2_geometric",
+        "Si_geometric",
         "unassigned_interface_or_other",
     )
     return {
@@ -167,10 +169,12 @@ def plot_comparison(output: Path, cases: list[dict], summaries: dict) -> Path:
         "TaIrTe4_geometric",
         "top_Au_T_geometric",
         "Au_backplane_geometric",
+        "SiO2_geometric",
+        "Si_geometric",
         "unassigned_interface_or_other",
     ]
-    material_labels = ["TaIrTe4", "top Au T", "Au mirror", "interface/other"]
-    material_colors = ["#c74c4c", "#f6c64e", "#be8f00", "#777777"]
+    material_labels = ["TaIrTe4", "top Au T", "Au mirror", "SiO2", "Si", "interface/other"]
+    material_colors = ["#c74c4c", "#f6c64e", "#be8f00", "#9fd7d0", "#547aa5", "#777777"]
     bottom = np.zeros(2)
     for key, label, color in zip(material_keys, material_labels, material_colors):
         values = np.array([
@@ -202,6 +206,9 @@ def main() -> int:
     cases = [load_case(args.xb_dir.resolve(), helpers), load_case(args.ya_dir.resolve(), helpers)]
     if [case["polarization"] for case in cases] != ["x_b", "y_a"]:
         raise RuntimeError("Expected x_b then y_a cases")
+    substrate_modes = {case["result"]["contract"].get("substrate", {}).get("mode") for case in cases}
+    if len(substrate_modes) != 1:
+        raise RuntimeError(f"Substrate modes differ between polarizations: {substrate_modes}")
 
     per_case = {}
     for case in cases:
@@ -240,6 +247,7 @@ def main() -> int:
         "unit_power_spatial_shape_metrics_Eb_vs_Ea": spatial,
         "coordinate_rule": "Qx/Qy/Qz were integrated and plotted on component-specific Yee coordinates; no same-index cross-component sum was formed",
         "scope": "optical forward only; no thermal, PTE, adjoint or optimization",
+        "substrate_mode": next(iter(substrate_modes)),
         "Z2022_status": "BLOCKED_EXACT_Z_TOPOLOGY_NOT_PUBLISHED_IN_PDF",
     }
     summary_path = output / "T2024_TAIRTE4_TWO_POLARIZATION_SUMMARY.json"

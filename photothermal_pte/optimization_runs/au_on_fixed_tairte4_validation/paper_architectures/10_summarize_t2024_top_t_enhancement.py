@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import importlib.util
 import json
@@ -41,7 +42,17 @@ def load_module(filename: str, name: str):
 
 
 def main() -> int:
-    output = HERE / "results_actual_metasurfaces"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--raw-root", type=Path, default=RAW_ROOT)
+    parser.add_argument("--output-dir", type=Path, default=HERE / "results_actual_metasurfaces")
+    args = parser.parse_args()
+    cases = {
+        "T_Eb": args.raw_root / "T2024_MIR_4750_xb_forward",
+        "T_Ea": args.raw_root / "T2024_MIR_4750_ya_forward",
+        "bare_Eb": args.raw_root / "T2024_MIR_4750_bare_xb_forward",
+        "bare_Ea": args.raw_root / "T2024_MIR_4750_bare_ya_forward",
+    }
+    output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=True)
     comparison = load_module(
         "09_compare_t2024_tairte4_polarizations.py", "t2024_comparison_helpers"
@@ -49,7 +60,7 @@ def main() -> int:
     summary_helpers = comparison.load_summary_helpers()
     loaded = {
         key: comparison.load_case(path, summary_helpers)
-        for key, path in CASES.items()
+        for key, path in cases.items()
     }
     for key in ("T_Eb", "T_Ea"):
         if not loaded[key]["result"]["contract"].get("top_Au_T_present", True):
@@ -57,6 +68,12 @@ def main() -> int:
     for key in ("bare_Eb", "bare_Ea"):
         if loaded[key]["result"]["contract"].get("top_Au_T_present", True):
             raise RuntimeError(f"{key} unexpectedly contains the T")
+    substrate_modes = {
+        case["result"]["contract"].get("substrate", {}).get("mode")
+        for case in loaded.values()
+    }
+    if len(substrate_modes) != 1:
+        raise RuntimeError(f"Matched cases do not share one substrate mode: {substrate_modes}")
 
     records = {}
     for key, case in loaded.items():
@@ -120,6 +137,7 @@ def main() -> int:
             "geometric material partition retains an explicit interface/other residual",
         ],
         "no_clipping_smoothing_gain_rescaling_or_polarization_matching": True,
+        "substrate_mode": next(iter(substrate_modes)),
     }
     summary_path = output / "T2024_TOP_T_MATCHED_BARE_SUMMARY.json"
     summary_path.write_text(json.dumps(summary, indent=2) + "\n")
@@ -133,9 +151,16 @@ def main() -> int:
     axes[0, 0].set_ylabel("raw periodic P_Q (fW/cell)")
     axes[0, 0].set_title("total absorption; no polarization matching")
 
-    material_keys = ["TaIrTe4_geometric", "top_Au_T_geometric", "Au_backplane_geometric", "unassigned_interface_or_other"]
-    material_labels = ["TaIrTe4", "top Au region", "Au mirror", "interface/other"]
-    material_colors = ["#c74c4c", "#f6c64e", "#be8f00", "#777777"]
+    material_keys = [
+        "TaIrTe4_geometric",
+        "top_Au_T_geometric",
+        "Au_backplane_geometric",
+        "SiO2_geometric",
+        "Si_geometric",
+        "unassigned_interface_or_other",
+    ]
+    material_labels = ["TaIrTe4", "top Au region", "Au mirror", "SiO2", "Si", "interface/other"]
+    material_colors = ["#c74c4c", "#f6c64e", "#be8f00", "#9fd7d0", "#547aa5", "#777777"]
     bottom = np.zeros(4)
     for key, label, color in zip(material_keys, material_labels, material_colors):
         values = np.array([records[item]["geometric_material_power_W"][key] for item in order]) * 1e15
@@ -209,7 +234,7 @@ its own identical grid; they are not cross-component sums.
     )
 
     raw_paths = []
-    for raw_dir in CASES.values():
+    for raw_dir in cases.values():
         raw_paths.extend(
             [
                 raw_dir / "T2024_TaIrTe4_optical_smoke.fsp",

@@ -49,13 +49,20 @@ WAVELENGTH_M = 4.75e-6
 FREQUENCY_HZ = C0 / WAVELENGTH_M
 PERIOD_X_M = 1.5e-6
 PERIOD_Y_M = 1.0e-6
-FDTD_Z_MIN_M = -1.0e-6
+FDTD_Z_MIN_AU_TRUNCATED_M = -1.0e-6
+FDTD_Z_MIN_SIO2_SI_M = -2.5e-6
 FDTD_Z_MAX_M = 1.2e-6
 SOURCE_Z_M = 0.8e-6
 TOP_MONITOR_Z_M = 0.45e-6
-BOTTOM_MONITOR_Z_M = -0.65e-6
+BOTTOM_MONITOR_AU_TRUNCATED_Z_M = -0.65e-6
+BOTTOM_MONITOR_SIO2_SI_Z_M = -2.0e-6
+AU_MIRROR_TOP_M = -35.0e-9
+AU_MIRROR_BOTTOM_M = -235.0e-9
+SIO2_THICKNESS_M = 1.5e-6
 AL2O3_N = 1.62 + 0.0j
 AU_MATERIAL = "Au (Gold) - CRC"
+SIO2_MATERIAL = "SiO2 (Glass) - Palik"
+SI_MATERIAL = "Si (Silicon) - Palik"
 TAIRTE4_MATERIAL = "TaIrTe4_100nm_2024T_substitution"
 AL2O3_MATERIAL = "Al2O3_lossless_n1p62_explicit_closure"
 SOURCE_NAME = "T2024_normal_incidence_plane_wave"
@@ -188,6 +195,7 @@ def setup(
     duration_ps: float,
     *,
     include_top_t: bool = True,
+    substrate_mode: str = "sio2_si",
 ) -> dict[str, object]:
     geometry_module = load_local_module(
         "05_actual_metasurface_geometry.py", "paper_actual_metasurface_geometry"
@@ -197,13 +205,24 @@ def setup(
     )
     geometry = geometry_module.inverse_t_mir_4750nm()
 
+    if substrate_mode == "sio2_si":
+        fdtd_z_min_m = FDTD_Z_MIN_SIO2_SI_M
+        bottom_monitor_z_m = BOTTOM_MONITOR_SIO2_SI_Z_M
+        oxide_bottom_m = AU_MIRROR_BOTTOM_M - SIO2_THICKNESS_M
+    elif substrate_mode == "au_truncated":
+        fdtd_z_min_m = FDTD_Z_MIN_AU_TRUNCATED_M
+        bottom_monitor_z_m = BOTTOM_MONITOR_AU_TRUNCATED_Z_M
+        oxide_bottom_m = None
+    else:
+        raise ValueError(f"unsupported substrate mode: {substrate_mode}")
+
     solver = fdtd.addfdtd()
     solver["dimension"] = "3D"
     solver["x min"] = -0.5 * PERIOD_X_M
     solver["x max"] = 0.5 * PERIOD_X_M
     solver["y min"] = -0.5 * PERIOD_Y_M
     solver["y max"] = 0.5 * PERIOD_Y_M
-    solver["z min"] = FDTD_Z_MIN_M
+    solver["z min"] = fdtd_z_min_m
     solver["z max"] = FDTD_Z_MAX_M
     solver["x min bc"] = "Periodic"
     solver["x max bc"] = "Periodic"
@@ -247,14 +266,44 @@ def setup(
     tairte4 = add_tairte4_material(fdtd)
     add_constant_nk(fdtd, AL2O3_MATERIAL, AL2O3_N)
     au_index = complex(np.asarray(fdtd.getindex(AU_MATERIAL, FREQUENCY_HZ)).reshape(-1)[0])
-
-    add_rect(
-        fdtd,
-        "Au_backplane_extended_through_bottom_PML",
-        AU_MATERIAL,
-        FDTD_Z_MIN_M,
-        -35.0e-9,
-    )
+    if substrate_mode == "sio2_si":
+        sio2_index = complex(
+            np.asarray(fdtd.getindex(SIO2_MATERIAL, FREQUENCY_HZ)).reshape(-1)[0]
+        )
+        si_index = complex(
+            np.asarray(fdtd.getindex(SI_MATERIAL, FREQUENCY_HZ)).reshape(-1)[0]
+        )
+        add_rect(
+            fdtd,
+            "paper_Au_mirror_200nm",
+            AU_MATERIAL,
+            AU_MIRROR_BOTTOM_M,
+            AU_MIRROR_TOP_M,
+        )
+        add_rect(
+            fdtd,
+            "paper_thermal_SiO2_1500nm",
+            SIO2_MATERIAL,
+            oxide_bottom_m,
+            AU_MIRROR_BOTTOM_M,
+        )
+        add_rect(
+            fdtd,
+            "paper_intrinsic_Si_substrate",
+            SI_MATERIAL,
+            fdtd_z_min_m,
+            oxide_bottom_m,
+        )
+    else:
+        sio2_index = None
+        si_index = None
+        add_rect(
+            fdtd,
+            "Au_mirror_extended_through_bottom_PML",
+            AU_MATERIAL,
+            fdtd_z_min_m,
+            AU_MIRROR_TOP_M,
+        )
     add_rect(fdtd, "paper_Al2O3_35nm", AL2O3_MATERIAL, -35.0e-9, 0.0)
     add_rect(fdtd, "TaIrTe4_active_100nm", TAIRTE4_MATERIAL, 0.0, 100.0e-9)
 
@@ -288,11 +337,11 @@ def setup(
     pabs["x span"] = PERIOD_X_M
     pabs["y"] = 0.0
     pabs["y span"] = PERIOD_Y_M
-    pabs["z"] = 0.5 * (TOP_MONITOR_Z_M + BOTTOM_MONITOR_Z_M)
-    pabs["z span"] = TOP_MONITOR_Z_M - BOTTOM_MONITOR_Z_M
+    pabs["z"] = 0.5 * (TOP_MONITOR_Z_M + bottom_monitor_z_m)
+    pabs["z span"] = TOP_MONITOR_Z_M - bottom_monitor_z_m
     pabs_contract = backplane_module.enable_pabs_periodic_correction(fdtd)
     add_power_monitor(fdtd, TOP_MONITOR, TOP_MONITOR_Z_M)
-    add_power_monitor(fdtd, BOTTOM_MONITOR, BOTTOM_MONITOR_Z_M)
+    add_power_monitor(fdtd, BOTTOM_MONITOR, bottom_monitor_z_m)
 
     return {
         "geometry": geometry.as_dict(),
@@ -319,6 +368,37 @@ def setup(
                 "n_plus_ik": complex_record(AL2O3_N),
                 "status": "explicit_lossless_optical_closure_not_paper_certified_dataset",
             },
+            "SiO2": {
+                "Lumerical_material": SIO2_MATERIAL if sio2_index is not None else None,
+                "readback_n_plus_ik": complex_record(sio2_index) if sio2_index is not None else None,
+                "thickness_m": SIO2_THICKNESS_M if sio2_index is not None else None,
+                "provenance": "2024 main Methods: 1.5-um thermally grown SiO2",
+            },
+            "Si": {
+                "Lumerical_material": SI_MATERIAL if si_index is not None else None,
+                "readback_n_plus_ik": complex_record(si_index) if si_index is not None else None,
+                "provenance": "2024 main Methods: intrinsic Si substrate",
+            },
+        },
+        "substrate": {
+            "mode": substrate_mode,
+            "domain_z_min_m": fdtd_z_min_m,
+            "bottom_flux_monitor_z_m": bottom_monitor_z_m,
+            "Au_mirror_bounds_m": [
+                AU_MIRROR_BOTTOM_M if substrate_mode == "sio2_si" else fdtd_z_min_m,
+                AU_MIRROR_TOP_M,
+            ],
+            "SiO2_bounds_m": [oxide_bottom_m, AU_MIRROR_BOTTOM_M]
+            if substrate_mode == "sio2_si"
+            else None,
+            "Si_bounds_m": [fdtd_z_min_m, oxide_bottom_m]
+            if substrate_mode == "sio2_si"
+            else None,
+            "paper_identity": (
+                "explicit 1.5-um thermal-SiO2 / intrinsic-Si stack"
+                if substrate_mode == "sio2_si"
+                else "legacy numerical Au-to-bottom-PML closure"
+            ),
         },
         "pabs_contract": pabs_contract,
         "scope": "optical forward smoke only; no thermal/PTE/adjoint/optimization",
@@ -357,6 +437,12 @@ def main() -> int:
     parser.add_argument("--gpu-device", default="GPU 0")
     parser.add_argument("--polarization", choices=("x_b", "y_a"), default="x_b")
     parser.add_argument("--duration-ps", type=float, default=1.0)
+    parser.add_argument(
+        "--substrate-mode",
+        choices=("sio2_si", "au_truncated"),
+        default="sio2_si",
+        help="Use the explicit 2024 SiO2/Si substrate by default; legacy Au truncation is opt-in.",
+    )
     parser.add_argument("--contract-only", action="store_true")
     parser.add_argument(
         "--omit-top-t-control",
@@ -390,6 +476,7 @@ def main() -> int:
             args.polarization,
             args.duration_ps,
             include_top_t=not args.omit_top_t_control,
+            substrate_mode=args.substrate_mode,
         )
         fdtd.setresource("FDTD", 1, "active", 0)
         fdtd.setresource("FDTD", 2, "active", 1)
@@ -454,7 +541,12 @@ def main() -> int:
                     "Q_component_power_native_W": q["component_power_W"],
                     "closure_relative": closure,
                     "reflection": 1.0 + top_signed / source_power,
-                    "transmission_inside_Au_diagnostic": -bottom_signed / source_power,
+                    "transmission_bottom_monitor": -bottom_signed / source_power,
+                    "transmission_inside_Au_diagnostic": (
+                        -bottom_signed / source_power
+                        if args.substrate_mode == "au_truncated"
+                        else None
+                    ),
                     "all_Q_arrays_finite": finite,
                     "negative_Q_cell_count": negative,
                     "log_audit": audit.log_audit(output),

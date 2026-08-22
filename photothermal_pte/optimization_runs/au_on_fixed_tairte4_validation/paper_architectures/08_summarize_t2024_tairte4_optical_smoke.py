@@ -49,6 +49,10 @@ def material_partition(raw: np.lib.npyio.NpzFile, contract: dict) -> tuple[dict,
     vertices_m = np.asarray(
         contract["contract"]["geometry"]["polygons"][0]["vertices_nm"], float
     ) * 1.0e-9
+    substrate = contract["contract"].get("substrate", {})
+    mirror_bounds = substrate.get("Au_mirror_bounds_m", [float("-inf"), -35.0e-9])
+    oxide_bounds = substrate.get("SiO2_bounds_m")
+    si_bounds = substrate.get("Si_bounds_m")
     partition: dict[str, dict[str, float]] = {}
     areal: dict[str, dict[str, np.ndarray]] = {}
     for component in "xyz":
@@ -59,11 +63,23 @@ def material_partition(raw: np.lib.npyio.NpzFile, contract: dict) -> tuple[dict,
         xy_t = polygon_mask(x, y, vertices_m)
         ta = (z >= 0.0) & (z < 100.0e-9)
         top_au = xy_t[:, :, None] & (z[None, None, :] >= 100.0e-9) & (z[None, None, :] <= 133.0e-9)
-        backplane = z <= -35.0e-9
+        mirror = (z >= float(mirror_bounds[0])) & (z < float(mirror_bounds[1]))
+        oxide = (
+            (z >= float(oxide_bounds[0])) & (z < float(oxide_bounds[1]))
+            if oxide_bounds is not None
+            else np.zeros_like(z, dtype=bool)
+        )
+        silicon = (
+            (z >= float(si_bounds[0])) & (z < float(si_bounds[1]))
+            if si_bounds is not None
+            else np.zeros_like(z, dtype=bool)
+        )
         masks = {
             "TaIrTe4_geometric": np.broadcast_to(ta[None, None, :], q.shape),
             "top_Au_T_geometric": top_au,
-            "Au_backplane_geometric": np.broadcast_to(backplane[None, None, :], q.shape),
+            "Au_backplane_geometric": np.broadcast_to(mirror[None, None, :], q.shape),
+            "SiO2_geometric": np.broadcast_to(oxide[None, None, :], q.shape),
+            "Si_geometric": np.broadcast_to(silicon[None, None, :], q.shape),
         }
         total = integrate_xyz(q, x, y, z)
         values = {name: integrate_xyz(q * mask, x, y, z) for name, mask in masks.items()}
@@ -105,10 +121,17 @@ def plot_summary(output: Path, contract: dict, raw: np.lib.npyio.NpzFile, areal:
     axes[1, 0].set_ylabel("y=a (nm)")
     figure.colorbar(image, ax=axes[1, 0], label="W/m$^2$")
 
-    labels = ["TaIrTe4", "top Au T", "Au mirror", "interface/other"]
-    keys = ["TaIrTe4_geometric", "top_Au_T_geometric", "Au_backplane_geometric", "unassigned_interface_or_other"]
+    labels = ["TaIrTe4", "top Au T", "Au mirror", "SiO2", "Si", "interface/other"]
+    keys = [
+        "TaIrTe4_geometric",
+        "top_Au_T_geometric",
+        "Au_backplane_geometric",
+        "SiO2_geometric",
+        "Si_geometric",
+        "unassigned_interface_or_other",
+    ]
     bottom = np.zeros(3)
-    colors = ["#c74c4c", "#f6c64e", "#be8f00", "#777777"]
+    colors = ["#c74c4c", "#f6c64e", "#be8f00", "#9fd7d0", "#547aa5", "#777777"]
     for label, key, color in zip(labels, keys, colors):
         values = np.array([partition[c][key] for c in "xyz"]) * 1.0e15
         axes[1, 1].bar(list("xyz"), values, bottom=bottom, label=label, color=color)

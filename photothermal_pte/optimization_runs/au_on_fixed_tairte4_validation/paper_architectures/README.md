@@ -83,6 +83,16 @@ The T vertices are a figure-digitized approximation to Supplementary Fig. 14,
 not author CAD. Both normal-incidence polarizations have been run on the v261
 GPU solver and pass closure, shutoff, finite-Q, and nonnegative-Q gates.
 
+The production default is now the explicit paper substrate:
+
+`air / Au inverse-T / 100-nm TaIrTe4 / 35-nm Al2O3 / 200-nm Au mirror /
+1.5-um thermally grown SiO2 / intrinsic Si`.
+
+At 4.75 um, SiO2 and Si are read directly from the installed Lumerical v261
+Palik database and their complex-index readbacks are stored in every raw case
+JSON. The legacy `Au-to-bottom-PML` model remains available only through the
+explicit `--substrate-mode au_truncated` diagnostic option.
+
 Publish the paired comparison without rerunning FDTD:
 
 ```bash
@@ -97,6 +107,22 @@ fail-closed because the PDFs do not disclose a unique polygon/junction CAD.
 The inverse-T contribution is isolated with matched no-top-T controls using
 the same solver entry point plus `--omit-top-t-control`. Publish the four-case
 comparison with `10_summarize_t2024_top_t_enhancement.py`.
+
+The explicit-substrate four-case results and direct comparison against the
+legacy optical truncation are in `results_actual_metasurfaces_sio2_si/`.
+Reproduce the offline equivalence check with:
+
+```bash
+/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
+  photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/14_compare_t2024_explicit_substrate.py
+```
+
+This comparison modifies no Q array. Components below a documented `1e-8`
+native-power fraction are reported as numerical zero and are not normalized
+for a spatial-shape metric, because doing so would amplify roundoff. All
+active-component lateral-Q, total-power, and TaIrTe4-power equivalence gates
+pass by a wide margin. Optical equivalence below an opaque Au mirror does not
+remove SiO2 or Si from the later thermal model.
 
 For presentations, run `11_publish_meeting_plot_package.py`. It creates one
 folder per case with separate structure, Qx, Qy, Qz, conservative common-grid

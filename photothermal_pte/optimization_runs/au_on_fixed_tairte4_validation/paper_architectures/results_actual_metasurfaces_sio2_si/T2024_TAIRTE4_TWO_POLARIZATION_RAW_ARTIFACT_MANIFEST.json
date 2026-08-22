@@ -1,0 +1,51 @@
+{
+  "raw_artifacts_not_committed": [
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_xb_forward/T2024_TaIrTe4_optical_smoke.fsp",
+      "size_bytes": 114750396,
+      "sha256": "52d8f05e011279fe12eb34d203faed86b81e5eee16881c4c95717e63fe37739c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_xb_forward/T2024_TaIrTe4_native_q.npz",
+      "size_bytes": 21019420,
+      "sha256": "9c6d4d59f5c546329ea430477d195c1512b7ea3e94a2910732936c89ebee8e46"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_xb_forward/T2024_TaIrTe4_optical_smoke.json",
+      "size_bytes": 8098,
+      "sha256": "9c07ea25c54242bf1a87c4a9879d791865e252eb8af9880a6c2bfe1bc7b496bd"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_ya_forward/T2024_TaIrTe4_optical_smoke.fsp",
+      "size_bytes": 114751716,
+      "sha256": "020659afe2eeb94df900812fd12dacb0ac4f6d4433637ee4d35ec298aadac295"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_ya_forward/T2024_TaIrTe4_native_q.npz",
+      "size_bytes": 33391245,
+      "sha256": "6d6093990d6cc0a9c4d6c1737a147a83317212fc7eb3a9369f0e9784a27be059"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_architectures_sio2_si/T2024_MIR_4750_ya_forward/T2024_TaIrTe4_optical_smoke.json",
+      "size_bytes": 8101,
+      "sha256": "7c1c541e03da80fa8987c54e7962eca2003d02e54aa64ad8b2c39156e95be761"
+    }
+  ],
+  "published_artifacts": [
+    {
+      "path": "results_actual_metasurfaces_sio2_si/T2024_TAIRTE4_TWO_POLARIZATION_SUMMARY.json",
+      "size_bytes": 3957,
+      "sha256": "7958a8e0120ec8afb812b60fc032403ad9b7ff44912854f3af2458760040c6aa"
+    },
+    {
+      "path": "results_actual_metasurfaces_sio2_si/T2024_TAIRTE4_TWO_POLARIZATION_REPORT.md",
+      "size_bytes": 1953,
+      "sha256": "c1a84a4bae06c18cf3077a06c189b6bae16ab644c398eed1e0b75cf8207895f4"
+    },
+    {
+      "path": "results_actual_metasurfaces_sio2_si/T2024_TaIrTe4_polarization_comparison.png",
+      "size_bytes": 391699,
+      "sha256": "dfe7e9ff8b7a0c1ede0c3c020625c4bbbd0c02951b4ee062471088d9acb0ad35"
+    }
+  ]
+}
