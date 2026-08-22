@@ -1,0 +1,21 @@
+architecture,order_top_to_bottom,name,material,thickness_nm,role,provenance_kind,provenance,optical_reference,thermal_reference
+A_DIRECT_AU_TAIRTE4,0,superstrate,air,,illumination half-space,project,current Au validation,True,True
+A_DIRECT_AU_TAIRTE4,1,design,Au,50.0,floating nanoantenna design,project,current Au validation,True,True
+A_DIRECT_AU_TAIRTE4,2,active_2d,TaIrTe4,100.0,PTE flake,project,fixed-flake contract,True,True
+A_DIRECT_AU_TAIRTE4,3,oxide,SiO2,285.0,explicit optical/thermal substrate,project_scenario,current substrate contract,True,True
+A_DIRECT_AU_TAIRTE4,4,substrate,Si,,semi-infinite substrate,project_scenario,current substrate contract,True,True
+B_T_2024_TAIRTE4_SUBSTITUTION,0,superstrate,air,,illumination half-space,paper,2024 Fig. 1b,True,True
+B_T_2024_TAIRTE4_SUBSTITUTION,1,passivation,Al2O3,50.0,top encapsulation; NIR device reference,paper_device_reference,2024 Supplementary Fig. 17; MIR value not fixed,True,True
+B_T_2024_TAIRTE4_SUBSTITUTION,2,inverse_T_resonator,Ti/Au,,floating asymmetric resonator,paper_unresolved_thickness,2024 Fig. 1 and Methods,True,True
+B_T_2024_TAIRTE4_SUBSTITUTION,3,active_2d,TaIrTe4,100.0,graphene replaced only here,tairte4_substitution,project fixed-flake contract,True,True
+B_T_2024_TAIRTE4_SUBSTITUTION,4,cavity_spacer,Al2O3,35.0,MPA spacer/gate dielectric,paper,2024 Supplementary Note 4,True,True
+B_T_2024_TAIRTE4_SUBSTITUTION,5,back_reflector,Au,200.0,opaque mirror/gate; thickness is numerical closure,numerical_closure,paper specifies Au mirror but not this thickness,True,True
+B_T_2024_TAIRTE4_SUBSTITUTION,6,thermal_oxide,SiO2,1500.0,thermally grown oxide around/below buried mirror,paper,2024 Methods,True,True
+B_T_2024_TAIRTE4_SUBSTITUTION,7,substrate,intrinsic Si,,physical wafer and heat sink,paper,2024 Methods,True,True
+B_Z_2022_TAIRTE4_SUBSTITUTION,0,superstrate,air,,illumination half-space,paper,2022 Fig. 1,True,True
+B_Z_2022_TAIRTE4_SUBSTITUTION,1,active_2d,TaIrTe4,100.0,dry-transferred 2D material replacement,tairte4_substitution,2022 fabrication order + project fixed-flake contract,True,True
+B_Z_2022_TAIRTE4_SUBSTITUTION,2,chiral_Z_resonator,Cr/Au,55.0,5-nm Cr + 50-nm Au antenna/electrode topography,paper,2022 Methods,True,True
+B_Z_2022_TAIRTE4_SUBSTITUTION,3,cavity_spacer,Al2O3,,M1-M5 use D=200--270 nm,paper_table,2022 Supplementary Table 1,True,True
+B_Z_2022_TAIRTE4_SUBSTITUTION,4,back_reflector,Au,200.0,opaque backplate,paper,2022 Methods,True,True
+B_Z_2022_TAIRTE4_SUBSTITUTION,5,thermal_oxide,SiO2,285.0,thermally grown oxide,paper,2022 Methods,True,True
+B_Z_2022_TAIRTE4_SUBSTITUTION,6,substrate,heavily p-doped Si,,physical wafer and heat sink,paper,2022 Methods,True,True
