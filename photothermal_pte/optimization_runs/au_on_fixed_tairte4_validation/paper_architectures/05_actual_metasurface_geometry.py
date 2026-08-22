@@ -1,0 +1,219 @@
+#!/usr/bin/env python3
+"""Geometry contracts for the paper-derived TaIrTe4 T/Z controls.
+
+Only the active two-dimensional material is replaced by the project's fixed
+100-nm TaIrTe4 closure.  Published numbers, figure-digitized numbers, and
+numerical closures are deliberately stored as different provenance classes.
+The module contains no solver calls.
+"""
+
+from __future__ import annotations
+
+from dataclasses import asdict, dataclass
+from typing import Any
+
+import numpy as np
+
+from contracts import Z_PUBLISHED_DIMENSIONS_NM
+
+
+@dataclass(frozen=True)
+class PolygonObject:
+    name: str
+    material: str
+    vertices_nm: tuple[tuple[float, float], ...]
+    z_min_nm: float
+    z_max_nm: float
+    provenance_kind: str
+    provenance: str
+
+    def as_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(frozen=True)
+class MetasurfaceGeometry:
+    key: str
+    wavelength_nm: float
+    period_x_nm: float
+    period_y_nm: float
+    active_material: str
+    active_thickness_nm: float
+    axis_mapping: dict[str, str]
+    polygons: tuple[PolygonObject, ...]
+    layers: tuple[dict[str, Any], ...]
+    boundary_contract: dict[str, str]
+    unresolved: tuple[str, ...]
+
+    def as_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+def inverse_t_mir_4750nm() -> MetasurfaceGeometry:
+    """Return the 2024 MIR inverse-T control.
+
+    Supplementary Fig. 14 discloses a 1500 x 1000 nm unit cell and plots the
+    resonator against physical axes.  It does not provide a numeric arm table.
+    The vertices below are digitized from those axes: baseline about 1200 x
+    100 nm, stem about 200 x 600 nm.  These are not promoted to published CAD.
+    """
+
+    baseline_length = 1200.0
+    baseline_width = 100.0
+    stem_width = 200.0
+    stem_length = 600.0
+    y_baseline_center = -300.0
+    y_baseline_top = y_baseline_center + 0.5 * baseline_width
+    y_stem_top = y_baseline_top + stem_length
+    vertices = (
+        (-0.5 * baseline_length, y_baseline_center - 0.5 * baseline_width),
+        (0.5 * baseline_length, y_baseline_center - 0.5 * baseline_width),
+        (0.5 * baseline_length, y_baseline_top),
+        (0.5 * stem_width, y_baseline_top),
+        (0.5 * stem_width, y_stem_top),
+        (-0.5 * stem_width, y_stem_top),
+        (-0.5 * stem_width, y_baseline_top),
+        (-0.5 * baseline_length, y_baseline_top),
+    )
+    return MetasurfaceGeometry(
+        key="T2024_MIR_4750_FIGURE_DIGITIZED_TAIRTE4",
+        wavelength_nm=4750.0,
+        period_x_nm=1500.0,
+        period_y_nm=1000.0,
+        active_material="TaIrTe4",
+        active_thickness_nm=100.0,
+        axis_mapping={"x": "b", "y": "a", "z": "c=b closure"},
+        polygons=(
+            PolygonObject(
+                name="inverse_T_effective_Au",
+                material="Au",
+                vertices_nm=vertices,
+                z_min_nm=100.0,
+                z_max_nm=133.0,
+                provenance_kind="figure_digitized_geometry+paper_thickness",
+                provenance=(
+                    "2024 Supplementary Fig. 14 axes; 33-nm MIR resonator "
+                    "thickness stated in Supplementary Note 7 scenario"
+                ),
+            ),
+        ),
+        layers=(
+            {
+                "name": "air",
+                "z_min_nm": 133.0,
+                "z_max_nm": None,
+                "provenance_kind": "paper",
+            },
+            {
+                "name": "TaIrTe4_active_substitution",
+                "z_min_nm": 0.0,
+                "z_max_nm": 100.0,
+                "provenance_kind": "project_active_material_substitution",
+            },
+            {
+                "name": "Al2O3_spacer",
+                "z_min_nm": -35.0,
+                "z_max_nm": 0.0,
+                "provenance_kind": "paper_fabricated_value",
+            },
+            {
+                "name": "Au_backplane",
+                "z_min_nm": -235.0,
+                "z_max_nm": -35.0,
+                "provenance_kind": "200nm_numerical_opaque_closure",
+            },
+        ),
+        boundary_contract={
+            "x_min_x_max": "Periodic",
+            "y_min_y_max": "Periodic",
+            "z_min_z_max": "PML",
+            "illumination": "normal-incidence plane wave from +z",
+        },
+        unresolved=(
+            "arm numbers are digitized from Fig. S14, not published CAD",
+            "Ti adhesion layer omitted from first optical smoke",
+            "100-nm TaIrTe4 is a deliberate substitution for monolayer graphene",
+            "the paper MIR control omitted top passivation",
+        ),
+    )
+
+
+def z_m5_8um_geometry_topology_audit() -> MetasurfaceGeometry:
+    """Return the 2022 M5 dimensional contract without inventing Z vertices.
+
+    Table S1 gives every scalar dimension, but neither the article nor SI
+    supplies machine-readable polygon vertices or a fixed crossing angle.  A
+    fake Z polygon would therefore be less faithful than a fail-closed audit.
+    The two bounding rectangles visualize the disclosed L/W values only and
+    MUST NOT be sent to Maxwell as the paper Z antenna.
+    """
+
+    m5 = dict(Z_PUBLISHED_DIMENSIONS_NM[-1])
+    diagnostic = (
+        PolygonObject(
+            name="L1_W1_dimension_envelope_NOT_CAD",
+            material="Au",
+            vertices_nm=(
+                (-0.5 * m5["W1_nm"], 0.0),
+                (0.5 * m5["W1_nm"], 0.0),
+                (0.5 * m5["W1_nm"], m5["L1_nm"]),
+                (-0.5 * m5["W1_nm"], m5["L1_nm"]),
+            ),
+            z_min_nm=100.0,
+            z_max_nm=155.0,
+            provenance_kind="dimension_envelope_only",
+            provenance="2022 Supplementary Table 1; not a Z polygon",
+        ),
+        PolygonObject(
+            name="L2_W2_dimension_envelope_NOT_CAD",
+            material="Au",
+            vertices_nm=(
+                (-0.5 * m5["W2_nm"], -m5["L2_nm"]),
+                (0.5 * m5["W2_nm"], -m5["L2_nm"]),
+                (0.5 * m5["W2_nm"], 0.0),
+                (-0.5 * m5["W2_nm"], 0.0),
+            ),
+            z_min_nm=100.0,
+            z_max_nm=155.0,
+            provenance_kind="dimension_envelope_only",
+            provenance="2022 Supplementary Table 1; not a Z polygon",
+        ),
+    )
+    return MetasurfaceGeometry(
+        key="Z2022_M5_8UM_PUBLISHED_DIMENSIONS_TOPOLOGY_BLOCKED",
+        wavelength_nm=m5["wavelength_nm"],
+        period_x_nm=m5["P1_nm"],
+        period_y_nm=m5["P2_nm"],
+        active_material="TaIrTe4",
+        active_thickness_nm=100.0,
+        axis_mapping={"x": "b", "y": "a", "z": "c=b closure"},
+        polygons=diagnostic,
+        layers=(
+            {"name": "TaIrTe4_active_substitution", "thickness_nm": 100.0},
+            {"name": "Cr_Au_Z", "thickness_nm": 55.0},
+            {"name": "Al2O3_spacer", "thickness_nm": m5["Al2O3_D_nm"]},
+            {"name": "Au_backplane", "thickness_nm": 200.0},
+            {"name": "thermal_SiO2", "thickness_nm": 285.0},
+            {"name": "p_doped_Si", "thickness_nm": None},
+        ),
+        boundary_contract={
+            "x_min_x_max": "Periodic",
+            "y_min_y_max": "Periodic",
+            "z_min_z_max": "PML",
+            "illumination": "normal-incidence plane wave",
+        },
+        unresolved=(
+            "exact Z polygon vertices/crossing angle are not disclosed",
+            "TaIrTe4 conformal-versus-bridged topography is unresolved",
+            "dimension envelopes are forbidden as production Maxwell geometry",
+        ),
+    )
+
+
+def signed_polygon_area_nm2(vertices: tuple[tuple[float, float], ...]) -> float:
+    array = np.asarray(vertices, float)
+    return 0.5 * float(
+        np.sum(array[:, 0] * np.roll(array[:, 1], -1))
+        - np.sum(array[:, 1] * np.roll(array[:, 0], -1))
+    )
+

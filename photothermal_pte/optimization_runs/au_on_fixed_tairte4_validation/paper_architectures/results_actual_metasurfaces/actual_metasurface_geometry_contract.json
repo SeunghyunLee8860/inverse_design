@@ -1,0 +1,215 @@
+{
+  "status": "READY_T2024_GEOMETRY_AUDIT_BLOCKED_Z2022_TOPOLOGY",
+  "T2024": {
+    "key": "T2024_MIR_4750_FIGURE_DIGITIZED_TAIRTE4",
+    "wavelength_nm": 4750.0,
+    "period_x_nm": 1500.0,
+    "period_y_nm": 1000.0,
+    "active_material": "TaIrTe4",
+    "active_thickness_nm": 100.0,
+    "axis_mapping": {
+      "x": "b",
+      "y": "a",
+      "z": "c=b closure"
+    },
+    "polygons": [
+      {
+        "name": "inverse_T_effective_Au",
+        "material": "Au",
+        "vertices_nm": [
+          [
+            -600.0,
+            -350.0
+          ],
+          [
+            600.0,
+            -350.0
+          ],
+          [
+            600.0,
+            -250.0
+          ],
+          [
+            100.0,
+            -250.0
+          ],
+          [
+            100.0,
+            350.0
+          ],
+          [
+            -100.0,
+            350.0
+          ],
+          [
+            -100.0,
+            -250.0
+          ],
+          [
+            -600.0,
+            -250.0
+          ]
+        ],
+        "z_min_nm": 100.0,
+        "z_max_nm": 133.0,
+        "provenance_kind": "figure_digitized_geometry+paper_thickness",
+        "provenance": "2024 Supplementary Fig. 14 axes; 33-nm MIR resonator thickness stated in Supplementary Note 7 scenario"
+      }
+    ],
+    "layers": [
+      {
+        "name": "air",
+        "z_min_nm": 133.0,
+        "z_max_nm": null,
+        "provenance_kind": "paper"
+      },
+      {
+        "name": "TaIrTe4_active_substitution",
+        "z_min_nm": 0.0,
+        "z_max_nm": 100.0,
+        "provenance_kind": "project_active_material_substitution"
+      },
+      {
+        "name": "Al2O3_spacer",
+        "z_min_nm": -35.0,
+        "z_max_nm": 0.0,
+        "provenance_kind": "paper_fabricated_value"
+      },
+      {
+        "name": "Au_backplane",
+        "z_min_nm": -235.0,
+        "z_max_nm": -35.0,
+        "provenance_kind": "200nm_numerical_opaque_closure"
+      }
+    ],
+    "boundary_contract": {
+      "x_min_x_max": "Periodic",
+      "y_min_y_max": "Periodic",
+      "z_min_z_max": "PML",
+      "illumination": "normal-incidence plane wave from +z"
+    },
+    "unresolved": [
+      "arm numbers are digitized from Fig. S14, not published CAD",
+      "Ti adhesion layer omitted from first optical smoke",
+      "100-nm TaIrTe4 is a deliberate substitution for monolayer graphene",
+      "the paper MIR control omitted top passivation"
+    ]
+  },
+  "Z2022": {
+    "key": "Z2022_M5_8UM_PUBLISHED_DIMENSIONS_TOPOLOGY_BLOCKED",
+    "wavelength_nm": 8000.0,
+    "period_x_nm": 7600.0,
+    "period_y_nm": 4100.0,
+    "active_material": "TaIrTe4",
+    "active_thickness_nm": 100.0,
+    "axis_mapping": {
+      "x": "b",
+      "y": "a",
+      "z": "c=b closure"
+    },
+    "polygons": [
+      {
+        "name": "L1_W1_dimension_envelope_NOT_CAD",
+        "material": "Au",
+        "vertices_nm": [
+          [
+            -1300.0,
+            0.0
+          ],
+          [
+            1300.0,
+            0.0
+          ],
+          [
+            1300.0,
+            4000.0
+          ],
+          [
+            -1300.0,
+            4000.0
+          ]
+        ],
+        "z_min_nm": 100.0,
+        "z_max_nm": 155.0,
+        "provenance_kind": "dimension_envelope_only",
+        "provenance": "2022 Supplementary Table 1; not a Z polygon"
+      },
+      {
+        "name": "L2_W2_dimension_envelope_NOT_CAD",
+        "material": "Au",
+        "vertices_nm": [
+          [
+            -1050.0,
+            -3000.0
+          ],
+          [
+            1050.0,
+            -3000.0
+          ],
+          [
+            1050.0,
+            0.0
+          ],
+          [
+            -1050.0,
+            0.0
+          ]
+        ],
+        "z_min_nm": 100.0,
+        "z_max_nm": 155.0,
+        "provenance_kind": "dimension_envelope_only",
+        "provenance": "2022 Supplementary Table 1; not a Z polygon"
+      }
+    ],
+    "layers": [
+      {
+        "name": "TaIrTe4_active_substitution",
+        "thickness_nm": 100.0
+      },
+      {
+        "name": "Cr_Au_Z",
+        "thickness_nm": 55.0
+      },
+      {
+        "name": "Al2O3_spacer",
+        "thickness_nm": 270.0
+      },
+      {
+        "name": "Au_backplane",
+        "thickness_nm": 200.0
+      },
+      {
+        "name": "thermal_SiO2",
+        "thickness_nm": 285.0
+      },
+      {
+        "name": "p_doped_Si",
+        "thickness_nm": null
+      }
+    ],
+    "boundary_contract": {
+      "x_min_x_max": "Periodic",
+      "y_min_y_max": "Periodic",
+      "z_min_z_max": "PML",
+      "illumination": "normal-incidence plane wave"
+    },
+    "unresolved": [
+      "exact Z polygon vertices/crossing angle are not disclosed",
+      "TaIrTe4 conformal-versus-bridged topography is unresolved",
+      "dimension envelopes are forbidden as production Maxwell geometry"
+    ]
+  },
+  "polygon_areas_nm2": {
+    "T2024": [
+      240000.0
+    ],
+    "Z2022_dimension_envelopes_only": [
+      10400000.0,
+      6300000.0
+    ]
+  },
+  "decision": {
+    "T2024": "allowed for GPU smoke as a figure-digitized MIR control",
+    "Z2022": "fail closed before Maxwell until exact Z topology is recovered or an explicit approximation is approved"
+  }
+}
