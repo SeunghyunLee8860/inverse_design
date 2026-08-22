@@ -207,3 +207,23 @@ handoff audit without cropping Q.  It records status
 electrode footprints/polarity, and a physical (not merely optical-closure)
 thermal stack are fixed.  A finite-device Maxwell rerun is then required before
 the conservative thermal/electrical solve.
+
+As a deliberately named alternative, `39_run_finite_187t_large_sheet_thermal_pte.py`
+retains the complete certified optical-Q support and solves a **large finite
+computational sheet diagnostic** with ideal full-width y-edge contacts.  Its
+published package in `results_finite_187T_large_sheet_thermal_pte/` contains
+the remapped volumetric Q, temperature, signed b/a gradients, gradient
+magnitude, weighting potential, weighting field, b/a current components, total
+PTE integrand, cross sections, and profiles.  It must not be described as an
+experimental finite-contact prediction.
+
+## Reconstructed Z selected-Q checkpoint
+
+`41_run_v261_z2022_m2_selected_q.py` performs the single-frequency v261 GPU
+Maxwell/Q certificate at 5.25 um for explicit CP+ and CP- phase definitions.
+`43_summarize_z2022_m2_selected_q.py` publishes the raw depth-integrated Q,
+equal-power spatial difference, component powers, closure, auto-shutoff, and
+raw-artifact provenance in `results_Z_M2_selected_Q_5p25um/`.  The result is a
+periodic optical certificate only.  A finite Z array, Gaussian illumination,
+finite thermal geometry, and two electrical contacts must be explicitly fixed
+before temperature, weighting field, or terminal PTE current is evaluated.
