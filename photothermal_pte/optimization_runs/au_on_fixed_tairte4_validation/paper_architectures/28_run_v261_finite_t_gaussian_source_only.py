@@ -28,6 +28,7 @@ from photothermal_pte.validation.paper_ir_sanity import (  # noqa: E402
 WAVELENGTH_M = 11.825e-6
 FREQUENCY_HZ = 299_792_458.0 / WAVELENGTH_M
 W0_M = 4.0e-6
+TARGET_W0_M = 4.0e-6
 DOMAIN_X_M = 28.5e-6
 DOMAIN_Y_M = 29.0e-6
 ARRAY_X_M = 16.5e-6
@@ -119,7 +120,7 @@ def setup(fdtd) -> None:
 
 
 def main() -> int:
-    global W0_M, DOMAIN_X_M, DOMAIN_Y_M, ARRAY_X_M, ARRAY_Y_M, SOURCE_SPAN_M
+    global W0_M, TARGET_W0_M, DOMAIN_X_M, DOMAIN_Y_M, ARRAY_X_M, ARRAY_Y_M, SOURCE_SPAN_M
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--output-dir",
@@ -128,6 +129,12 @@ def main() -> int:
     )
     parser.add_argument("--gpu-device", default="GPU 5")
     parser.add_argument("--w0-um", type=float, default=4.0)
+    parser.add_argument(
+        "--target-w0-um",
+        type=float,
+        default=None,
+        help="Physical target-plane waist; --w0-um is the Lumerical source-object input.",
+    )
     parser.add_argument("--domain-x-um", type=float, default=28.5)
     parser.add_argument("--domain-y-um", type=float, default=29.0)
     parser.add_argument("--array-x-um", type=float, default=16.5)
@@ -135,6 +142,11 @@ def main() -> int:
     parser.add_argument("--source-span-um", type=float, default=16.0)
     args = parser.parse_args()
     W0_M = args.w0_um * 1.0e-6
+    TARGET_W0_M = (
+        args.target_w0_um * 1.0e-6
+        if args.target_w0_um is not None
+        else W0_M
+    )
     DOMAIN_X_M = args.domain_x_um * 1.0e-6
     DOMAIN_Y_M = args.domain_y_um * 1.0e-6
     ARRAY_X_M = args.array_x_um * 1.0e-6
@@ -178,10 +190,12 @@ def main() -> int:
         x = np.asarray(fdtd.getdata(MONITOR_NAME, "x", 1), float).reshape(-1)
         y = np.asarray(fdtd.getdata(MONITOR_NAME, "y", 1), float).reshape(-1)
         fields = {
-            component: np.asarray(fdtd.getdata(MONITOR_NAME, f"E{component}", 1)).squeeze()
-            for component in "xyz"
+            component: np.asarray(fdtd.getdata(MONITOR_NAME, component, 1)).squeeze()
+            for component in ("Ex", "Ey", "Ez", "Hx", "Hy")
         }
-        intensity_proxy = sum(np.abs(fields[c]) ** 2 for c in "xyz")
+        ex_down = 0.5 * (fields["Ex"] - audit.ETA0 * fields["Hy"])
+        ey_down = 0.5 * (fields["Ey"] + audit.ETA0 * fields["Hx"])
+        intensity_proxy = np.abs(ex_down) ** 2 + np.abs(ey_down) ** 2
         if intensity_proxy.shape != (x.size, y.size):
             raise RuntimeError(f"unexpected target-plane shape: {intensity_proxy.shape}, {(x.size, y.size)}")
         fit = audit.fit_gaussian(x, y, intensity_proxy)
@@ -191,14 +205,16 @@ def main() -> int:
             x_m=x,
             y_m=y,
             E2_V2_m2=intensity_proxy,
-            **{f"E{c}": fields[c] for c in "xyz"},
+            Ex_down=ex_down,
+            Ey_down=ey_down,
+            **fields,
         )
         log = audit.log_audit(output)
         gates = {
             "GPU_completed": bool(log["simulation_completed_successfully"]),
             "auto_shutoff_lt_1e_5": log["final_auto_shutoff"] is not None and log["final_auto_shutoff"] < 1.0e-5,
-            "waist_x_within_0p5pct": abs(fit["fitted_waist_x_m"] - W0_M) / W0_M < 0.005,
-            "waist_y_within_0p5pct": abs(fit["fitted_waist_y_m"] - W0_M) / W0_M < 0.005,
+            "waist_x_within_0p5pct": abs(fit["fitted_waist_x_m"] - TARGET_W0_M) / TARGET_W0_M < 0.005,
+            "waist_y_within_0p5pct": abs(fit["fitted_waist_y_m"] - TARGET_W0_M) / TARGET_W0_M < 0.005,
             "Gaussian_fit_NRMSE_lt_0p5pct": fit["Gaussian_fit_NRMSE"] < 0.005,
             "ellipticity_lt_0p5pct": fit["fitted_xy_ellipticity"] < 0.005,
             "center_displacement_lt_50nm": float(np.hypot(fit["fitted_center_x_m"], fit["fitted_center_y_m"])) < 50e-9,
@@ -210,14 +226,24 @@ def main() -> int:
             "solver_version": str(fdtd.version()),
             "GPU_resource_used": resource,
             "solver_wall_time_s": wall_time,
-            "source": {"wavelength_um": 11.825, "requested_w0_um": args.w0_um, "span_um": args.source_span_um, "source_z_um": 0.8, "focus_z_um": 0.05, "polarization": "E||b"},
+            "source": {
+                "wavelength_um": 11.825,
+                "target_realized_w0_um": TARGET_W0_M * 1e6,
+                "Lumerical_source_object_w0_um": W0_M * 1e6,
+                "source_object_calibration_is_power_or_Q_rescaling": False,
+                "span_um": args.source_span_um,
+                "source_z_um": 0.8,
+                "focus_z_um": 0.05,
+                "polarization": "E||b",
+                "field_comparator": "downward transverse E/H decomposition",
+            },
             "domain": {"x_um": args.domain_x_um, "y_um": args.domain_y_um, "z_um": [-1.2, 1.2], "boundaries": "six PML, 24 layers"},
             "mesh_shape": [int(np.asarray(mesh["coordinate_arrays"][a]).size) for a in "xyz"],
             "source_power_W": source_power,
             "target_plane_transmitted_fraction": transmitted_fraction,
             "target_plane_fit": fit,
-            "ideal_square_aperture_boundary_intensity_over_peak": float(np.exp(-2.0 * (0.5 * SOURCE_SPAN_M / W0_M) ** 2)),
-            "ideal_nearest_PML_intensity_over_peak": float(np.exp(-2.0 * (0.5 * DOMAIN_X_M / W0_M) ** 2)),
+            "ideal_square_aperture_boundary_intensity_over_peak": float(np.exp(-2.0 * (0.5 * SOURCE_SPAN_M / TARGET_W0_M) ** 2)),
+            "ideal_nearest_PML_intensity_over_peak": float(np.exp(-2.0 * (0.5 * DOMAIN_X_M / TARGET_W0_M) ** 2)),
             "log_audit": log,
             "gates": gates,
             "raw_artifacts": [
