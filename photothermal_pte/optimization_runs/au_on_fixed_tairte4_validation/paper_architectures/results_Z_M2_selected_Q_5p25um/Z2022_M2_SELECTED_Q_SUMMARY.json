@@ -1,6 +1,7 @@
 {
-  "status": "VALIDATED_Z2022_M2_RECONSTRUCTED_SELECTED_Q_PAIR",
-  "classification": "published M2 scalar dimensions plus explicit corner-joined figure reconstruction; not author CAD",
+  "status": "LEGACY_WRONG_AXIS_Z2022_M2_DIAGNOSTIC",
+  "classification": "legacy axis-swapped corner-joined diagnostic; not Fig. 1b geometry and not author CAD",
+  "correction_notice": "W1/W2 and L1/L2 directions were interchanged; do not use as the paper Z result",
   "wavelength_um": 5.25,
   "handedness": "LH",
   "phase_naming": "CP+ and CP- are explicit Ex/Ey phase definitions; not promoted to LCP/RCP",

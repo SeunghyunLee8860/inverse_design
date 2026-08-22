@@ -67,7 +67,16 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--gpu-device", default=os.environ.get("LUMERICAL_SESSION_GPU_DEVICE", "GPU 0"))
     parser.add_argument("--handedness", choices=("LH", "RH"), default="LH")
-    parser.add_argument("--polarization", choices=("CP_plus", "CP_minus"), default="CP_plus")
+    parser.add_argument(
+        "--polarization",
+        choices=("x_b", "y_a", "CP_plus", "CP_minus"),
+        default="CP_plus",
+    )
+    parser.add_argument(
+        "--geometry-variant",
+        choices=("legacy_axis_swapped_v1", "figure_axis_corrected_v2"),
+        default="legacy_axis_swapped_v1",
+    )
     parser.add_argument("--wavelength-um", type=float, default=DEFAULT_WAVELENGTH_UM)
     parser.add_argument("--duration-ps", type=float, default=1.5)
     parser.add_argument("--contract-only", action="store_true")
@@ -87,19 +96,34 @@ def main() -> int:
         zrun = load_module("19_run_v261_z2022_m2_periodic_broadband_rta.py", "z_selected_setup")
         base = load_module("07_run_v261_t2024_tairte4_optical_smoke.py", "z_selected_helpers")
         backplane = load_module("02_run_v261_backplane_truncation_control.py", "z_selected_pabs")
-        os.environ["VC_LUMERICAL_ROOT"] = str(audit.APPROVED_ROOT)
-        os.environ["LUMERICAL_ROOT"] = str(audit.APPROVED_ROOT)
-        os.environ["LUMERICAL_PYTHONPATH"] = str(audit.APPROVED_API)
+        # `run`/`runres` creates an isolated, licensed Lumerical environment.
+        # Preserve that root instead of replacing it with a user-local install,
+        # because mixing the two roots breaks ANSYSLI license sharing.
+        lumerical_root = Path(os.environ.get("LUMERICAL_ROOT", str(audit.APPROVED_ROOT)))
+        lumerical_api = Path(os.environ.get("LUMERICAL_PYTHONPATH", str(audit.APPROVED_API)))
+        os.environ.setdefault("VC_LUMERICAL_ROOT", str(lumerical_root))
+        os.environ.setdefault("LUMERICAL_ROOT", str(lumerical_root))
+        os.environ.setdefault("LUMERICAL_PYTHONPATH", str(lumerical_api))
         os.environ["LUMERICAL_SESSION_GPU_DEVICE"] = args.gpu_device
         os.environ["CL_GPU_DEVICE"] = args.gpu_device
         os.environ["FDTD_THREADS"] = "8"
-        os.environ["PATH"] = f"{audit.APPROVED_ROOT / 'bin'}:{os.environ.get('PATH', '')}"
-        sys.path.insert(0, str(audit.APPROVED_API))
+        os.environ["PATH"] = f"{lumerical_root / 'bin'}:{os.environ.get('PATH', '')}"
+        sys.path.insert(0, str(lumerical_api))
         import lumapi
 
         fdtd = lumapi.FDTD(hide=True, serverArgs={"platform": "offscreen"})
-        contract = zrun.setup(fdtd, args.handedness, args.polarization, args.duration_ps)
-        source_names = ("Z2022_source_x", "Z2022_source_y")
+        contract = zrun.setup(
+            fdtd,
+            args.handedness,
+            args.polarization,
+            args.duration_ps,
+            geometry_variant=args.geometry_variant,
+        )
+        source_names = (
+            ("Z2022_source_linear",)
+            if args.polarization in ("x_b", "y_a")
+            else ("Z2022_source_x", "Z2022_source_y")
+        )
         source_start = max(4.0e-6, wavelength_m * 0.95)
         source_stop = min(12.0e-6, wavelength_m * 1.05)
         for name in source_names:
@@ -134,7 +158,30 @@ def main() -> int:
         fdtd.setresource("FDTD", 2, "device type", args.gpu_device)
         fdtd.setresource("FDTD", 2, "solver extra command line options", "-gpu")
         fdtd.runsetup()
-        mesh = base.mesh_metrics(audit.mesh_readback(fdtd))
+        initial_mesh_readback = audit.mesh_readback(fdtd)
+        if not initial_mesh_readback.get("available"):
+            raise RuntimeError("native mesh unavailable before control-volume snap")
+        native_z = np.asarray(
+            initial_mesh_readback["coordinate_arrays"]["z"], float
+        ).reshape(-1)
+        snapped_bottom = float(
+            native_z[int(np.argmin(np.abs(native_z - zrun.BOTTOM_MONITOR_Z_M)))]
+        )
+        snapped_top = float(
+            native_z[int(np.argmin(np.abs(native_z - zrun.TOP_MONITOR_Z_M)))]
+        )
+        if not snapped_top > snapped_bottom:
+            raise RuntimeError("invalid snapped Z control-volume bounds")
+        # The two flux faces and the volumetric-loss group must use exactly the
+        # same realized Yee planes.  Leaving the requested analytic positions
+        # to be snapped independently gives a false closure error.
+        fdtd.setnamed(PABS_GROUP, "z", 0.5 * (snapped_bottom + snapped_top))
+        fdtd.setnamed(PABS_GROUP, "z span", snapped_top - snapped_bottom)
+        fdtd.setnamed("Z2022_flux_top", "z", snapped_top)
+        fdtd.setnamed("Z2022_flux_bottom", "z", snapped_bottom)
+        fdtd.runsetup()
+        mesh_readback = audit.mesh_readback(fdtd)
+        mesh = base.mesh_metrics(mesh_readback)
         if not mesh.get("available"):
             raise RuntimeError("native mesh unavailable after runsetup")
         if mesh["min_dx_m"] > 25e-9 + 1e-12 or mesh["min_dy_m"] > 25e-9 + 1e-12:
@@ -143,13 +190,32 @@ def main() -> int:
             raise RuntimeError("5-nm selected-Z structure dz was not realized")
         result.update(
             {
-                "classification": "published M2 scalar dimensions plus explicit corner-joined figure reconstruction; not author CAD",
+                "classification": (
+                    "published M2 scalar dimensions plus Fig. 1b axis-corrected "
+                    "corner-joined reconstruction; not author CAD"
+                    if args.geometry_variant == "figure_axis_corrected_v2"
+                    else "legacy axis-swapped v1 diagnostic; not the Fig. 1b geometry"
+                ),
+                "geometry_variant": args.geometry_variant,
                 "geometry": geometry,
                 "wavelength_um": args.wavelength_um,
                 "handedness": args.handedness,
                 "polarization": args.polarization,
                 "phase_definition": contract["source"],
                 "pabs_contract": pabs_contract,
+                "matched_lossy_control_volume": {
+                    "method": "post-runsetup nearest native z planes",
+                    "requested_z_bounds_m": [
+                        zrun.BOTTOM_MONITOR_Z_M,
+                        zrun.TOP_MONITOR_Z_M,
+                    ],
+                    "realized_z_bounds_m": [snapped_bottom, snapped_top],
+                    "maximum_absolute_shift_m": max(
+                        abs(snapped_bottom - zrun.BOTTOM_MONITOR_Z_M),
+                        abs(snapped_top - zrun.TOP_MONITOR_Z_M),
+                    ),
+                    "Pabs_and_both_flux_faces_updated_together": True,
+                },
                 "mesh_runsetup": mesh,
                 "solver_version": str(fdtd.version()),
                 "scope": "periodic selected-wavelength volumetric-Q certificate; no thermal/PTE",
@@ -211,7 +277,13 @@ def main() -> int:
                     "negative_Q_cell_count": negative,
                     "log_audit": log,
                     "gates": gates,
-                    "status": "COMPLETED_Z2022_M2_RECONSTRUCTED_SELECTED_Q" if all(gates.values()) else "FAILED_Z2022_M2_RECONSTRUCTED_SELECTED_Q_GATE",
+                    "status": (
+                        "COMPLETED_Z2022_M2_FIGURE_CORRECTED_SELECTED_Q"
+                        if all(gates.values()) and args.geometry_variant == "figure_axis_corrected_v2"
+                        else "COMPLETED_Z2022_M2_RECONSTRUCTED_SELECTED_Q"
+                        if all(gates.values())
+                        else "FAILED_Z2022_M2_SELECTED_Q_GATE"
+                    ),
                 }
             )
             fdtd.save(str(fsp_path))

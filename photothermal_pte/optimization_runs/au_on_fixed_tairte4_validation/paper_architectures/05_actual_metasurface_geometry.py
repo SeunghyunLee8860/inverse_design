@@ -210,43 +210,28 @@ def z_m5_8um_geometry_topology_audit() -> MetasurfaceGeometry:
     )
 
 
-def z_m2_5300nm_corner_joined_tairte4(handedness: str = "LH") -> MetasurfaceGeometry:
-    """Return an explicit M2 Z scenario from the published scalar dimensions.
-
-    The two disclosed L/W rectangles fit the disclosed P1/P2 cell only when L
-    is placed along P1 and W along P2.  Their inner corners are joined and the
-    complete molecule is centered in the unit cell.  The paper does not state
-    a nanoscale overlap or gap at that junction, so corner joining is an
-    explicit figure-reconstruction closure rather than author CAD.
-
-    For comparability with the project's T control, the first optical endpoint
-    places effective Au above the fixed planar TaIrTe4 layer.  This is not a
-    claim that a 100-nm flake follows the original dry-transfer topography.
-    """
-
+def _z_m2_geometry(
+    handedness: str,
+    *,
+    width_along_x: bool,
+) -> MetasurfaceGeometry:
     if handedness not in ("LH", "RH"):
         raise ValueError(handedness)
     m2 = dict(Z_PUBLISHED_DIMENSIONS_NM[1])
     l1, l2 = float(m2["L1_nm"]), float(m2["L2_nm"])
     w1, w2 = float(m2["W1_nm"]), float(m2["W2_nm"])
-    join_x = -0.5 * (l1 - l2)
-    join_y = -0.5 * (w1 - w2)
+    x1, x2 = (w1, w2) if width_along_x else (l1, l2)
+    y1, y2 = (l1, l2) if width_along_x else (w1, w2)
+    join_x = -0.5 * (x1 - x2)
+    join_y = -0.5 * (y1 - y2)
     upper = np.asarray(
-        [
-            (join_x, join_y),
-            (join_x + l1, join_y),
-            (join_x + l1, join_y + w1),
-            (join_x, join_y + w1),
-        ],
+        [(join_x, join_y), (join_x + x1, join_y),
+         (join_x + x1, join_y + y1), (join_x, join_y + y1)],
         float,
     )
     lower = np.asarray(
-        [
-            (join_x - l2, join_y - w2),
-            (join_x, join_y - w2),
-            (join_x, join_y),
-            (join_x - l2, join_y),
-        ],
+        [(join_x - x2, join_y - y2), (join_x, join_y - y2),
+         (join_x, join_y), (join_x - x2, join_y)],
         float,
     )
     if handedness == "RH":
@@ -255,27 +240,44 @@ def z_m2_5300nm_corner_joined_tairte4(handedness: str = "LH") -> MetasurfaceGeom
         upper = upper[::-1]
         lower = lower[::-1]
 
+    version = "FIGURE_AXIS_CORRECTED_V2" if width_along_x else "LEGACY_AXIS_SWAPPED_V1"
+    provenance_kind = (
+        "published_dimensions+figure_axis_corrected_corner_join"
+        if width_along_x
+        else "published_dimensions+legacy_axis_swapped_corner_join"
+    )
+    axis_statement = (
+        "W1/W2 horizontal and L1/L2 vertical per Fig. 1b"
+        if width_along_x
+        else "legacy diagnostic with L1/L2 horizontal and W1/W2 vertical"
+    )
     provenance = (
-        "2022 Supplementary Table 1 M2 scalar dimensions; inner corners "
-        "joined per Fig. 1b; junction overlap/gap not disclosed"
+        f"2022 Fig. 1b and Supplementary Table 1 M2 dimensions; {axis_statement}; "
+        "inner corners joined because junction overlap/gap CAD is not disclosed"
     )
     polygons = tuple(
         PolygonObject(
-            name=f"Z2022_M2_{handedness}_{label}",
+            name=f"Z2022_M2_{version}_{handedness}_{label}",
             material="Au",
             vertices_nm=tuple(tuple(float(item) for item in row) for row in vertices),
             z_min_nm=100.0,
             z_max_nm=150.0,
-            provenance_kind="published_dimensions+figure_reconstructed_corner_join",
+            provenance_kind=provenance_kind,
             provenance=provenance,
         )
         for label, vertices in (("upper", upper), ("lower", lower))
     )
+    # Supplementary Fig. 4 shows the long antenna direction on the long-pitch
+    # lattice axis.  Consequently the Fig. 1b-corrected top view has P2 along
+    # horizontal W and P1 along vertical L.  Preserve the old assignment only
+    # for exact reproduction of the already-published v1 diagnostic.
+    period_x_nm = float(m2["P2_nm"] if width_along_x else m2["P1_nm"])
+    period_y_nm = float(m2["P1_nm"] if width_along_x else m2["P2_nm"])
     return MetasurfaceGeometry(
-        key=f"Z2022_M2_5300_{handedness}_CORNER_JOINED_TAIRTE4_SCENARIO",
+        key=f"Z2022_M2_5300_{handedness}_{version}",
         wavelength_nm=float(m2["wavelength_nm"]),
-        period_x_nm=float(m2["P1_nm"]),
-        period_y_nm=float(m2["P2_nm"]),
+        period_x_nm=period_x_nm,
+        period_y_nm=period_y_nm,
         active_material="TaIrTe4",
         active_thickness_nm=100.0,
         axis_mapping={"x": "b", "y": "a", "z": "c=b closure"},
@@ -290,18 +292,28 @@ def z_m2_5300nm_corner_joined_tairte4(handedness: str = "LH") -> MetasurfaceGeom
             {"name": "Si", "z_min_nm": None, "z_max_nm": -685.0},
         ),
         boundary_contract={
-            "x_min_x_max": "Periodic",
-            "y_min_y_max": "Periodic",
-            "z_min_z_max": "PML",
-            "illumination": "normal-incidence plane wave",
+            "x_min_x_max": "Periodic", "y_min_y_max": "Periodic",
+            "z_min_z_max": "PML", "illumination": "normal-incidence plane wave",
         },
         unresolved=(
-            "junction overlap/gap is not disclosed; corner-joined endpoint used",
-            "100-nm TaIrTe4 is a deliberate replacement for the paper's transferred 2-D material",
-            "Au-above-planar-TaIrTe4 is a project optical endpoint, not the original dry-transfer topography",
-            "5-nm Cr adhesion is omitted from the first effective-Au optical screen",
+            "junction overlap/gap is not disclosed; corner-joined figure-digitized closure retained",
+            "100-nm TaIrTe4 replaces the paper's original 2-D thermoelectric material",
+            "Au-above-planar-TaIrTe4 is a project endpoint, not author device CAD",
+            "5-nm Cr adhesion is omitted from the first effective-Au screen",
         ),
     )
+
+
+def z_m2_5300nm_corner_joined_tairte4(handedness: str = "LH") -> MetasurfaceGeometry:
+    """Return the preserved, axis-swapped v1 diagnostic geometry."""
+    return _z_m2_geometry(handedness, width_along_x=False)
+
+
+def z_m2_5300nm_figure_corrected_tairte4_v2(
+    handedness: str = "LH",
+) -> MetasurfaceGeometry:
+    """Return M2 with W along x and L along y, as labelled in Fig. 1b."""
+    return _z_m2_geometry(handedness, width_along_x=True)
 
 
 def signed_polygon_area_nm2(vertices: tuple[tuple[float, float], ...]) -> float:

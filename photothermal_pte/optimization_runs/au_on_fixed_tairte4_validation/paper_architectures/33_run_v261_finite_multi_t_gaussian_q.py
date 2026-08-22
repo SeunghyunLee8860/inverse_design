@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import importlib.util
 import json
@@ -44,7 +45,7 @@ CONTROL_BOUNDS_M = {
     "y": (-27.0e-6, 27.0e-6),
     "z": (-0.85e-6, 0.45e-6),
 }
-RAW = Path(
+DEFAULT_RAW = Path(
     "/home/seunghyun/tairte4/raw_artifacts/"
     "paper_tairte4_finite_187T_w12_Q_11p825um_Eb"
 )
@@ -156,7 +157,19 @@ def face_fluxes(fdtd: object, faces: dict[str, dict[str, object]], source_power:
 
 
 def main() -> int:
-    output = RAW
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--polarization", choices=("Ea", "Eb"), default="Eb")
+    parser.add_argument("--output-dir", type=Path)
+    args = parser.parse_args()
+    polarization_angle_deg = 90.0 if args.polarization == "Ea" else 0.0
+    polarization_label = f"E||{args.polarization[-1].lower()}"
+    output = (
+        args.output_dir.expanduser().resolve()
+        if args.output_dir is not None
+        else DEFAULT_RAW
+        if args.polarization == "Eb"
+        else Path(str(DEFAULT_RAW).replace("_Eb", "_Ea"))
+    )
     if output.exists() and any(output.iterdir()):
         raise RuntimeError(f"refusing to overwrite non-empty output: {output}")
     output.mkdir(parents=True, exist_ok=True)
@@ -174,14 +187,16 @@ def main() -> int:
         if abs(float(source_gate["source"]["Lumerical_source_object_w0_um"]) - SOURCE_OBJECT_W0_UM) > 1e-9:
             raise RuntimeError("source-object calibration mismatch")
 
-        os.environ["VC_LUMERICAL_ROOT"] = str(audit.APPROVED_ROOT)
-        os.environ["LUMERICAL_ROOT"] = str(audit.APPROVED_ROOT)
-        os.environ["LUMERICAL_PYTHONPATH"] = str(audit.APPROVED_API)
+        lumerical_root = Path(os.environ.get("LUMERICAL_ROOT", str(audit.APPROVED_ROOT)))
+        lumerical_api = Path(os.environ.get("LUMERICAL_PYTHONPATH", str(audit.APPROVED_API)))
+        os.environ.setdefault("VC_LUMERICAL_ROOT", str(lumerical_root))
+        os.environ.setdefault("LUMERICAL_ROOT", str(lumerical_root))
+        os.environ.setdefault("LUMERICAL_PYTHONPATH", str(lumerical_api))
         gpu = os.environ.get("LUMERICAL_SESSION_GPU_DEVICE", "GPU 1")
         os.environ["CL_GPU_DEVICE"] = gpu
         os.environ["FDTD_THREADS"] = "8"
-        os.environ["PATH"] = f"{audit.APPROVED_ROOT / 'bin'}:{os.environ.get('PATH', '')}"
-        sys.path.insert(0, str(audit.APPROVED_API))
+        os.environ["PATH"] = f"{lumerical_root / 'bin'}:{os.environ.get('PATH', '')}"
+        sys.path.insert(0, str(lumerical_api))
         import lumapi
 
         runsetup = load_module(HERE / "27_audit_v261_finite_t_gaussian_runsetup.py", "finite_187T_runsetup")
@@ -218,6 +233,11 @@ def main() -> int:
             faces = add_flux_box(fdtd)
             for name in (PABS_FIELD, PABS_INDEX):
                 configure_single_frequency(fdtd, name)
+
+        fdtd.setnamed("finite_T_scalar_Gaussian", "polarization angle", polarization_angle_deg)
+        contract["source"]["polarization"] = (
+            "y_a" if args.polarization == "Ea" else "x_b"
+        )
 
         fdtd.setresource("FDTD", 1, "active", 0)
         fdtd.setresource("FDTD", 2, "active", 1)
@@ -312,14 +332,22 @@ def main() -> int:
         }
         result = {
             "status": "VALIDATED_FINITE_187T_W12_VOLUMETRIC_Q" if all(gates.values()) else "FAILED_FINITE_187T_W12_VOLUMETRIC_Q_GATE",
-            "classification": "finite nonperiodic 187 inverse-T Gaussian Maxwell/Q certificate; not thermal or PTE",
+            "classification": (
+                "finite nonperiodic 187 inverse-T Gaussian Maxwell/Q certificate; "
+                f"{polarization_label}; not thermal or PTE"
+            ),
             "solver_version": str(fdtd.version()),
             "GPU_resource_used": resource,
             "solver_wall_time_s": wall_time,
             "contract": contract,
             "source": {
                 "wavelength_um": 11.825,
-                "polarization": "E||b; Lumerical x=b",
+                "polarization": (
+                    "E||a; Lumerical y=a"
+                    if args.polarization == "Ea"
+                    else "E||b; Lumerical x=b"
+                ),
+                "polarization_angle_deg": polarization_angle_deg,
                 "target_realized_w0_um": TARGET_W0_UM,
                 "Lumerical_source_object_w0_um": SOURCE_OBJECT_W0_UM,
                 "span_um": SOURCE_SPAN_UM,

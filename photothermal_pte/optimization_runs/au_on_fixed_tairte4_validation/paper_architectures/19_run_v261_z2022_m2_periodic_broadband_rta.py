@@ -89,10 +89,21 @@ def add_plane_source(
     source["wavelength stop"] = WAVELENGTH_MAX_M
 
 
-def setup(fdtd: object, handedness: str, polarization: str, duration_ps: float) -> dict[str, object]:
+def setup(
+    fdtd: object,
+    handedness: str,
+    polarization: str,
+    duration_ps: float,
+    geometry_variant: str = "legacy_axis_swapped_v1",
+) -> dict[str, object]:
     geometry_module = load_module("05_actual_metasurface_geometry.py", "z2022_geometry")
     base = load_module("07_run_v261_t2024_tairte4_optical_smoke.py", "z2022_material_helpers")
-    geometry = geometry_module.z_m2_5300nm_corner_joined_tairte4(handedness)
+    if geometry_variant == "legacy_axis_swapped_v1":
+        geometry = geometry_module.z_m2_5300nm_corner_joined_tairte4(handedness)
+    elif geometry_variant == "figure_axis_corrected_v2":
+        geometry = geometry_module.z_m2_5300nm_figure_corrected_tairte4_v2(handedness)
+    else:
+        raise ValueError(f"unknown Z geometry variant: {geometry_variant}")
     period_x = geometry.period_x_nm * 1e-9
     period_y = geometry.period_y_nm * 1e-9
 
@@ -184,6 +195,7 @@ def setup(fdtd: object, handedness: str, polarization: str, duration_ps: float) 
             "LCP_RCP_name_assignment": "not promoted until propagation/time-convention audit",
         },
         "scope": "periodic flux R/T/A only; no volumetric Q/thermal/PTE",
+        "geometry_variant": geometry_variant,
     }
 
 

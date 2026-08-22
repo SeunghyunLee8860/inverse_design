@@ -11,6 +11,7 @@ an experimental finite-contact prediction.
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 from pathlib import Path
@@ -23,21 +24,15 @@ from scipy import sparse
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = HERE.parents[3]
-RAW_Q = Path(
+DEFAULT_RAW_Q = Path(
     "/home/seunghyun/tairte4/raw_artifacts/"
     "paper_tairte4_finite_187T_w12_Q_11p825um_Eb/finite_187T_w12_Q.npz"
 )
-EXPECTED_Q_SHA256 = "c4dbbdce0038a5b3a0c8529dc867a266245ef6d37672e20245790d8429b08f09"
-OUTPUT = Path(
+DEFAULT_OUTPUT = Path(
     "/home/seunghyun/tairte4/raw_artifacts/"
     "paper_tairte4_finite_187T_w12_large_sheet_thermal_pte"
 )
-OUTPUT_NPZ = OUTPUT / "finite_187T_large_sheet_thermal_pte.npz"
-OUTPUT_JSON = OUTPUT / "FINITE_187T_LARGE_SHEET_THERMAL_PTE.json"
-
-SOURCE_POWER_W = 2.8558620694322075e-13
 REPORT_INCIDENT_POWER_W = 285.0e-6
-SOURCE_SCALE = REPORT_INCIDENT_POWER_W / SOURCE_POWER_W
 
 T_VERTICES_UM = np.asarray(
     [
@@ -206,6 +201,22 @@ def build_kappa(x: np.ndarray, y: np.ndarray, z: np.ndarray) -> tuple[np.ndarray
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--q-npz", type=Path, default=DEFAULT_RAW_Q)
+    parser.add_argument("--q-json", type=Path)
+    parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--polarization", choices=("Ea", "Eb"), default="Eb")
+    parser.add_argument("--cuda-device", type=int, default=5)
+    args = parser.parse_args()
+    raw_q = args.q_npz.expanduser().resolve()
+    q_json = (
+        args.q_json.expanduser().resolve()
+        if args.q_json is not None
+        else raw_q.parent / "FINITE_187T_W12_Q.json"
+    )
+    output = args.output_dir.expanduser().resolve()
+    output_npz = output / f"finite_187T_large_sheet_thermal_pte_{args.polarization}.npz"
+    output_json = output / f"FINITE_187T_LARGE_SHEET_THERMAL_PTE_{args.polarization}.json"
     if str(REPOSITORY) not in sys.path:
         sys.path.insert(0, str(REPOSITORY))
     from photothermal_pte.optimization_runs.cuda_thermal_adjoint import PersistentCudaCSR
@@ -213,10 +224,22 @@ def main() -> int:
         assemble_steady_diagonal_kappa,
     )
 
-    OUTPUT.mkdir(parents=True, exist_ok=True)
-    actual_sha = sha256(RAW_Q)
-    if actual_sha != EXPECTED_Q_SHA256:
+    output.mkdir(parents=True, exist_ok=True)
+    optical = json.loads(q_json.read_text())
+    if optical.get("status") != "VALIDATED_FINITE_187T_W12_VOLUMETRIC_Q":
+        raise RuntimeError(f"optical Q is not validated: {optical.get('status')}")
+    expected_polarization = "E||a" if args.polarization == "Ea" else "E||b"
+    if expected_polarization not in str(optical.get("source", {}).get("polarization", "")):
+        raise RuntimeError("requested thermal polarization does not match optical artifact")
+    actual_sha = sha256(raw_q)
+    expected_entries = [
+        item for item in optical.get("raw_artifacts", [])
+        if Path(str(item.get("path", ""))).name == raw_q.name
+    ]
+    if len(expected_entries) != 1 or actual_sha != expected_entries[0].get("sha256"):
         raise RuntimeError(f"Q artifact SHA mismatch: {actual_sha}")
+    source_power_w = float(optical["source_power_W"])
+    source_scale = REPORT_INCIDENT_POWER_W / source_power_w
 
     x_edges = target_lateral_edges()
     y_edges = target_lateral_edges()
@@ -231,7 +254,7 @@ def main() -> int:
     target_component_power: dict[str, float] = {}
     dx, dy, dz = np.diff(x_edges), np.diff(y_edges), np.diff(z_edges)
     target_volume = dx[:, None, None] * dy[None, :, None] * dz[None, None, :]
-    with np.load(RAW_Q, allow_pickle=False) as data:
+    with np.load(raw_q, allow_pickle=False) as data:
         for component in "xyz":
             q = np.asarray(data[f"Q{component}_W_m3"], float)
             source_edges = tuple(
@@ -248,7 +271,7 @@ def main() -> int:
             component_target[component] = mapped
             target_component_power[component] = float(np.sum(mapped * target_volume))
     q_unit = sum(component_target.values())
-    q_report = q_unit * SOURCE_SCALE
+    q_report = q_unit * source_scale
     p_source_unit = float(sum(source_component_power.values()))
     p_target_unit = float(np.sum(q_unit * target_volume))
     mapping_error = abs(p_target_unit - p_source_unit) / p_source_unit
@@ -272,7 +295,7 @@ def main() -> int:
     assembly_seconds = perf_counter() - assembly_started
     source_active = system.active_source(q_report)
     rhs = np.asarray(system.source_volume_operator_m3 @ source_active).reshape(-1) + system.boundary_load_W
-    operator = PersistentCudaCSR(system.matrix_W_K, cuda_device=5)
+    operator = PersistentCudaCSR(system.matrix_W_K, cuda_device=args.cuda_device)
     solved = operator.solve(rhs, relative_tolerance=1.0e-10, max_iterations=30000)
     temperature = system.full_field(solved.solution)
     residual = float(
@@ -320,7 +343,7 @@ def main() -> int:
     integrand_strict = np.where(strict, current_integrand, np.nan)
 
     np.savez_compressed(
-        OUTPUT_NPZ,
+        output_npz,
         x_m=x,
         y_m=y,
         z_m=z,
@@ -355,7 +378,13 @@ def main() -> int:
     payload = {
         "status": "VALIDATED_LARGE_SHEET_DIAGNOSTIC_THERMAL_WEIGHTING_PTE" if all(gates.values()) else "FAILED_LARGE_SHEET_DIAGNOSTIC_GATE",
         "classification": "large finite computational sheet with ideal full-width y-edge contacts; not experimental finite-contact prediction",
-        "input_Q": {"path": str(RAW_Q), "sha256": actual_sha},
+        "input_Q": {
+            "path": str(raw_q),
+            "sha256": actual_sha,
+            "certificate": str(q_json),
+            "certificate_sha256": sha256(q_json),
+            "polarization": args.polarization,
+        },
         "axis_mapping": "x=b, y=a, z=c",
         "geometry": {
             "lateral_bounds_um": {"x_b": [x_edges[0] * 1e6, x_edges[-1] * 1e6], "y_a": [y_edges[0] * 1e6, y_edges[-1] * 1e6]},
@@ -375,8 +404,8 @@ def main() -> int:
         "boundaries": {"x_y_sides": "adiabatic", "top": "adiabatic", "Si_bottom": "fixed DeltaT=0"},
         "illumination": {
             "reported_incident_power_W": REPORT_INCIDENT_POWER_W,
-            "certified_source_power_W": SOURCE_POWER_W,
-            "linear_scale_factor": SOURCE_SCALE,
+            "certified_source_power_W": source_power_w,
+            "linear_scale_factor": source_scale,
             "note": "certified linear incident-power scaling; no clipping/smoothing/gain/shape rescaling",
         },
         "Q": {
@@ -398,7 +427,7 @@ def main() -> int:
             "energy_balance_relative_error": energy_error,
             "boundary_power_out_W": boundary_power,
             "assembly_seconds": assembly_seconds,
-            "CUDA_device": 5,
+            "CUDA_device": args.cuda_device,
             "CUDA_PCG_iterations": solved.iterations,
             "CUDA_solve_seconds": solved.solve_seconds,
         },
@@ -416,9 +445,9 @@ def main() -> int:
         "raw_artifacts": [],
     }
     payload["raw_artifacts"] = [
-        {"path": str(OUTPUT_NPZ), "size_bytes": OUTPUT_NPZ.stat().st_size, "sha256": sha256(OUTPUT_NPZ)}
+        {"path": str(output_npz), "size_bytes": output_npz.stat().st_size, "sha256": sha256(output_npz)}
     ]
-    OUTPUT_JSON.write_text(json.dumps(payload, indent=2) + "\n")
+    output_json.write_text(json.dumps(payload, indent=2) + "\n")
     print(json.dumps(payload, indent=2))
     return 0 if all(gates.values()) else 1
 
