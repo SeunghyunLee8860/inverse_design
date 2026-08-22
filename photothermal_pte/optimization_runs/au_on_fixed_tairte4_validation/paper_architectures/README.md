@@ -34,3 +34,21 @@ Run tests:
 The current checkpoint is offline only. The next numerical gate must compare
 explicit and optically truncated backplane domains before the shortened model
 is used in Maxwell AD--FD or optimization.
+
+The GPU-only discriminator is `02_run_v261_backplane_truncation_control.py`.
+Run a `full` and an `au_truncated` case into raw directories outside Git, then
+compare them with `03_summarize_backplane_truncation_control.py`.  A failed or
+missing run is never interpreted as evidence that the substrate is removable.
+
+The substrate rules are deliberately asymmetric:
+
+- the 2022 paper's published FDTD stack explicitly contains Si, 285-nm
+  thermal SiO2, the 200-nm Au backplate, Al2O3, and the Au antenna.  That is
+  the paper-reference model;
+- the 2024 main Methods state 1.5-um thermal SiO2, whereas Supplementary
+  Fig. 17's RF cross-section states 1.0 um.  These are separate provenance
+  scenarios, not a value to average;
+- omitting everything below an opaque Au backplane is an accelerated optical
+  candidate only.  It must pass the numerical backplane-truncation gate;
+- a one-substrate thermal model is not implied by optical opacity.  It needs
+  a separate explicit-3D versus reduced-impedance thermal comparison.

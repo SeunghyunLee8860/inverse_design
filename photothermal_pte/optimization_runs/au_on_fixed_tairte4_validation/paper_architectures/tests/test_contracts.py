@@ -78,3 +78,9 @@ def test_reduced_thermal_boundary_is_not_promoted() -> None:
     assert thick["status"].startswith("UNVALIDATED")
     assert thick["candidate_Robin_G_W_m2K"] < thin["candidate_Robin_G_W_m2K"]
 
+
+def test_2024_oxide_provenance_disagreement_is_explicit() -> None:
+    contract = architectures()["B_T_2024_TAIRTE4_SUBSTITUTION"]
+    unresolved = " ".join(contract.unresolved)
+    assert "1.5 um" in unresolved
+    assert "1.0 um" in unresolved

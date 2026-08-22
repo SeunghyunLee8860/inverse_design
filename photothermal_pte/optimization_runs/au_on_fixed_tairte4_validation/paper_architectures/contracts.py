@@ -179,6 +179,8 @@ def architectures() -> dict[str, Architecture]:
         unresolved=(
             "exact 10-um inverse-T arm dimensions (not published)",
             "2024 MIR T-resonator thickness and passivation at 10 um",
+            "oxide thickness differs between the main Methods (1.5 um) and "
+            "Supplementary Fig. 17 RF cross-section (1.0 um)",
             "Au/Ti-induced TaIrTe4 Seebeck and conductivity change",
         ),
     )
@@ -288,4 +290,3 @@ def proposed_10um_seed_sweeps() -> dict[str, Any]:
             },
         },
     }
-
