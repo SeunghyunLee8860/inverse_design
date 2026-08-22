@@ -1,0 +1,80 @@
+{
+  "status": "VALIDATED_T_SELECTED_PERIODIC_VOLUMETRIC_Q",
+  "scope": "periodic unit-cell optical Q certificate; not finite Gaussian or PTE",
+  "wavelength_um": 11.825,
+  "polarization": "x_b",
+  "axis_mapping": "Lumerical x=b, y=a, z=c=b closure",
+  "metrics": {
+    "solver_version": "8.35.4522",
+    "solver_wall_time_s": 34.16094367578626,
+    "source_power_W": 1.987547247869934e-15,
+    "P_flux_absorbed_W": 1.7323993379473593e-16,
+    "P_Q_pabs_periodic_W": 1.7297568164030428e-16,
+    "P_Q_native_uncorrected_W": 1.7269763736812712e-16,
+    "Q_component_power_native_W": {
+      "x": 8.907220723435351e-17,
+      "y": 3.688821182973998e-17,
+      "z": 4.6737218304033626e-17
+    },
+    "closure_relative": 0.0015253535870357886,
+    "reflection": 0.9128373253828618,
+    "log_audit": {
+      "logs": [
+        "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_selected_Q_11p825um_Eb/T2024_TaIrTe4_optical_smoke_p0.log"
+      ],
+      "final_auto_shutoff": 8.38557e-08,
+      "logged_grid": {
+        "shape_xyz": [
+          153,
+          103,
+          174
+        ],
+        "grid_points": 2742066
+      },
+      "precise_GPU_memory_GiB": 0.075,
+      "simulation_completed_successfully": true
+    },
+    "gates": {
+      "GPU_completed": true,
+      "auto_shutoff_lt_1e_5": true,
+      "closure_lt_0p5pct": true,
+      "all_Q_arrays_finite": true,
+      "no_negative_Q": true
+    }
+  },
+  "geometric_material_partition_native_W": {
+    "x": {
+      "TaIrTe4_geometric": 6.51244816614148e-17,
+      "top_Au_T_geometric": 9.670065962130692e-18,
+      "Au_backplane_geometric": 5.594732121626424e-18,
+      "SiO2_geometric": 7.291258397760493e-27,
+      "Si_geometric": 1.1936385963467677e-30,
+      "native_component_total": 8.907220723435351e-17,
+      "unassigned_interface_or_other": 8.682927481889137e-18
+    },
+    "y": {
+      "TaIrTe4_geometric": 2.8790573965824273e-17,
+      "top_Au_T_geometric": 6.736924307920517e-19,
+      "Au_backplane_geometric": 2.077797931291589e-20,
+      "SiO2_geometric": 1.8771592587019443e-29,
+      "Si_geometric": 1.5857715386323708e-35,
+      "native_component_total": 3.688821182973998e-17,
+      "unassigned_interface_or_other": 7.40316745379197e-18
+    },
+    "z": {
+      "TaIrTe4_geometric": 4.66689597398461e-17,
+      "top_Au_T_geometric": 4.692404468463032e-20,
+      "Au_backplane_geometric": 1.0518941910609412e-21,
+      "SiO2_geometric": 1.4418797003242042e-28,
+      "Si_geometric": 3.7162462316809206e-30,
+      "native_component_total": 4.6737218304033626e-17,
+      "unassigned_interface_or_other": 2.0282625163928232e-20
+    }
+  },
+  "rules": {
+    "no_Q_clipping_smoothing_gain_rescaling": true,
+    "raw_FSP_NPZ_committed": false,
+    "thermal_PTE_adjoint_optimization_run": false
+  },
+  "next_gate": "finite multi-T Gaussian source-only/runsetup audit before finite Q"
+}

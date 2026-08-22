@@ -1,0 +1,38 @@
+{
+  "raw_artifacts_committed_to_git": false,
+  "generation_command": "runres --reserve-count 9 --reserve-tag tairte4_T_selected_Q_11p825_Eb 25_runres_t_selected_q_driver.py -th 8 -GPU 5",
+  "raw_artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_selected_Q_11p825um_Eb/T2024_TaIrTe4_optical_smoke.fsp",
+      "size_bytes": 104505303,
+      "sha256": "c207687cdf0c5daa51bdfeb93257412a11f5f02eba00c5600c7090d7c233772d"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_selected_Q_11p825um_Eb/T2024_TaIrTe4_native_q.npz",
+      "size_bytes": 20940302,
+      "sha256": "dc49fcc71c6103bbee8f86273b5b34c6e8ade181bb5b14ce34062c98e0e2a3a6"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_T_selected_Q_11p825um_Eb/T2024_TaIrTe4_optical_smoke.json",
+      "size_bytes": 8206,
+      "sha256": "6df264466a5a83c01cbfeee5f3c0afb2ac2013deef2a70a55394705d99734add"
+    }
+  ],
+  "published_artifacts": [
+    {
+      "path": "T_SELECTED_Q_11p825um_Eb.png",
+      "size_bytes": 270712,
+      "sha256": "4b58d75afd57d1a782604a83f50153c6fcb380942d8a61b906e291e481a0441e"
+    },
+    {
+      "path": "T_SELECTED_Q_SUMMARY.json",
+      "size_bytes": 2848,
+      "sha256": "9333a5d27307b5c05e70f6aa8d7a517c3028bf9468d04db7c3068b210fe298e6"
+    },
+    {
+      "path": "T_SELECTED_Q_REPORT.md",
+      "size_bytes": 812,
+      "sha256": "6d48d7c0568b2b208c2200c6aeedc0ed6ad361d6e22778659568757d598aab60"
+    }
+  ]
+}
