@@ -1,6 +1,6 @@
 # Exact-binary beam-position spatial fields with explicit Au terminals
 
-Generated: 2026-08-22T09:17:42.610456+00:00
+Generated: 2026-08-22T10:02:03.846210+00:00
 
 ## Scope
 
@@ -33,16 +33,43 @@ The physical current field is solved from `J = sigma E - sigma S grad(T)` with b
 
 Each thermal atlas shows temperature and gradient magnitude. Each current atlas shows total local `J` magnitude with dense direction arrows and the signed terminal-current contribution; every beam-position title includes the signed terminal current. Each optical/electrical atlas shows TaIrTe4+Au absorbed-power density and short-circuit potential. The 25-page field book follows the detailed physical-field matrix style used by the final exact-binary report and includes one complete page per beam position. Color limits are shared across all 25 positions within each atlas.
 
-| Run | Atlases |
-|---:|:---|
-| 044 | [thermal](run044_thermal_atlas.png) | [current](run044_current_atlas.png) | [optical/electrical](run044_optical_electrical_atlas.png) | [25-page detailed field book](run044_position_detailed_fields.pdf) |
-| 045 | [thermal](run045_thermal_atlas.png) | [current](run045_current_atlas.png) | [optical/electrical](run045_optical_electrical_atlas.png) | [25-page detailed field book](run045_position_detailed_fields.pdf) |
-| 047 | [thermal](run047_thermal_atlas.png) | [current](run047_current_atlas.png) | [optical/electrical](run047_optical_electrical_atlas.png) | [25-page detailed field book](run047_position_detailed_fields.pdf) |
-| 048 | [thermal](run048_thermal_atlas.png) | [current](run048_current_atlas.png) | [optical/electrical](run048_optical_electrical_atlas.png) | [25-page detailed field book](run048_position_detailed_fields.pdf) |
-| 055 | [thermal](run055_thermal_atlas.png) | [current](run055_current_atlas.png) | [optical/electrical](run055_optical_electrical_atlas.png) | [25-page detailed field book](run055_position_detailed_fields.pdf) |
-| 056 | [thermal](run056_thermal_atlas.png) | [current](run056_current_atlas.png) | [optical/electrical](run056_optical_electrical_atlas.png) | [25-page detailed field book](run056_position_detailed_fields.pdf) |
-| 057 | [thermal](run057_thermal_atlas.png) | [current](run057_current_atlas.png) | [optical/electrical](run057_optical_electrical_atlas.png) | [25-page detailed field book](run057_position_detailed_fields.pdf) |
-| 058 | [thermal](run058_thermal_atlas.png) | [current](run058_current_atlas.png) | [optical/electrical](run058_optical_electrical_atlas.png) | [25-page detailed field book](run058_position_detailed_fields.pdf) |
+| Run | Thermal | Current | Optical/electrical | Detailed PDF | Individual PNGs |
+|---:|:---:|:---:|:---:|:---:|:---:|
+| 044 | [thermal](run044_thermal_atlas.png) | [current](run044_current_atlas.png) | [optical/electrical](run044_optical_electrical_atlas.png) | [25-page PDF](run044_position_detailed_fields.pdf) | [25 individual PNGs](run044_position_detailed_fields) |
+| 045 | [thermal](run045_thermal_atlas.png) | [current](run045_current_atlas.png) | [optical/electrical](run045_optical_electrical_atlas.png) | [25-page PDF](run045_position_detailed_fields.pdf) | [25 individual PNGs](run045_position_detailed_fields) |
+| 047 | [thermal](run047_thermal_atlas.png) | [current](run047_current_atlas.png) | [optical/electrical](run047_optical_electrical_atlas.png) | [25-page PDF](run047_position_detailed_fields.pdf) | [25 individual PNGs](run047_position_detailed_fields) |
+| 048 | [thermal](run048_thermal_atlas.png) | [current](run048_current_atlas.png) | [optical/electrical](run048_optical_electrical_atlas.png) | [25-page PDF](run048_position_detailed_fields.pdf) | [25 individual PNGs](run048_position_detailed_fields) |
+| 055 | [thermal](run055_thermal_atlas.png) | [current](run055_current_atlas.png) | [optical/electrical](run055_optical_electrical_atlas.png) | [25-page PDF](run055_position_detailed_fields.pdf) | [25 individual PNGs](run055_position_detailed_fields) |
+| 056 | [thermal](run056_thermal_atlas.png) | [current](run056_current_atlas.png) | [optical/electrical](run056_optical_electrical_atlas.png) | [25-page PDF](run056_position_detailed_fields.pdf) | [25 individual PNGs](run056_position_detailed_fields) |
+| 057 | [thermal](run057_thermal_atlas.png) | [current](run057_current_atlas.png) | [optical/electrical](run057_optical_electrical_atlas.png) | [25-page PDF](run057_position_detailed_fields.pdf) | [25 individual PNGs](run057_position_detailed_fields) |
+| 058 | [thermal](run058_thermal_atlas.png) | [current](run058_current_atlas.png) | [optical/electrical](run058_optical_electrical_atlas.png) | [25-page PDF](run058_position_detailed_fields.pdf) | [25 individual PNGs](run058_position_detailed_fields) |
+
+## Detailed field examples
+
+### Run 044, beam x=0 um, y=0 um
+
+[![Run 044 center-position detailed fields](run044_position_detailed_fields/beam_xp0_yp0_fields.png)](run044_position_detailed_fields/beam_xp0_yp0_fields.png)
+### Run 045, beam x=0 um, y=0 um
+
+[![Run 045 center-position detailed fields](run045_position_detailed_fields/beam_xp0_yp0_fields.png)](run045_position_detailed_fields/beam_xp0_yp0_fields.png)
+### Run 047, beam x=0 um, y=0 um
+
+[![Run 047 center-position detailed fields](run047_position_detailed_fields/beam_xp0_yp0_fields.png)](run047_position_detailed_fields/beam_xp0_yp0_fields.png)
+### Run 048, beam x=0 um, y=0 um
+
+[![Run 048 center-position detailed fields](run048_position_detailed_fields/beam_xp0_yp0_fields.png)](run048_position_detailed_fields/beam_xp0_yp0_fields.png)
+### Run 055, beam x=0 um, y=0 um
+
+[![Run 055 center-position detailed fields](run055_position_detailed_fields/beam_xp0_yp0_fields.png)](run055_position_detailed_fields/beam_xp0_yp0_fields.png)
+### Run 056, beam x=0 um, y=0 um
+
+[![Run 056 center-position detailed fields](run056_position_detailed_fields/beam_xp0_yp0_fields.png)](run056_position_detailed_fields/beam_xp0_yp0_fields.png)
+### Run 057, beam x=0 um, y=0 um
+
+[![Run 057 center-position detailed fields](run057_position_detailed_fields/beam_xp0_yp0_fields.png)](run057_position_detailed_fields/beam_xp0_yp0_fields.png)
+### Run 058, beam x=0 um, y=0 um
+
+[![Run 058 center-position detailed fields](run058_position_detailed_fields/beam_xp0_yp0_fields.png)](run058_position_detailed_fields/beam_xp0_yp0_fields.png)
 
 ## Audit
 

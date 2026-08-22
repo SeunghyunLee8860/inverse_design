@@ -416,12 +416,20 @@ def field_panel(
 
 def detailed_field_book(
     path: Path,
+    png_dir: Path,
     run: int,
     rows: list[dict[str, object]],
     fields: dict[str, dict[str, np.ndarray]],
 ) -> None:
     lookup = rows_by_grid(rows)
     positions = tuple(float(value) for value in POSITION_SWEEP_UM)
+    png_dir.mkdir(parents=True, exist_ok=True)
+
+    def coordinate_tag(value: float) -> str:
+        sign = "p" if value >= 0.0 else "m"
+        magnitude = f"{abs(value):g}".replace(".", "p")
+        return f"{sign}{magnitude}"
+
     with PdfPages(path) as pdf:
         for y in reversed(positions):
             for x in positions:
@@ -532,6 +540,10 @@ def detailed_field_book(
                     fontsize=13,
                 )
                 pdf.savefig(fig, dpi=120)
+                png_name = (
+                    f"beam_x{coordinate_tag(x)}_y{coordinate_tag(y)}_fields.png"
+                )
+                fig.savefig(png_dir / png_name, dpi=110)
                 plt.close(fig)
 
 
@@ -612,14 +624,22 @@ def report_text(
     galleries = []
     for run in RUNS:
         labels = (
-            "thermal", "current", "optical/electrical",
-            "25-page detailed field book",
+            "thermal", "current", "optical/electrical", "25-page PDF",
+            "25 individual PNGs",
         )
         links = " | ".join(
             f"[{label}]({name})"
             for label, name in zip(labels, figure_names[run])
         )
         galleries.append(f"| {run:03d} | {links} |")
+    examples = []
+    for run in RUNS:
+        examples.append(
+            f"### Run {run:03d}, beam x=0 um, y=0 um\n\n"
+            f"[![Run {run:03d} center-position detailed fields]"
+            f"(run{run:03d}_position_detailed_fields/beam_xp0_yp0_fields.png)]"
+            f"(run{run:03d}_position_detailed_fields/beam_xp0_yp0_fields.png)"
+        )
     return f"""# Exact-binary beam-position spatial fields with explicit Au terminals
 
 Generated: {utc_now()}
@@ -648,9 +668,13 @@ The physical current field is solved from `J = sigma E - sigma S grad(T)` with b
 
 Each thermal atlas shows temperature and gradient magnitude. Each current atlas shows total local `J` magnitude with dense direction arrows and the signed terminal-current contribution; every beam-position title includes the signed terminal current. Each optical/electrical atlas shows TaIrTe4+Au absorbed-power density and short-circuit potential. The 25-page field book follows the detailed physical-field matrix style used by the final exact-binary report and includes one complete page per beam position. Color limits are shared across all 25 positions within each atlas.
 
-| Run | Atlases |
-|---:|:---|
+| Run | Thermal | Current | Optical/electrical | Detailed PDF | Individual PNGs |
+|---:|:---:|:---:|:---:|:---:|:---:|
 {chr(10).join(galleries)}
+
+## Detailed field examples
+
+{chr(10).join(examples)}
 
 ## Audit
 
@@ -700,6 +724,7 @@ def main() -> int:
         current_name = f"run{run:03d}_current_atlas.png"
         optical_name = f"run{run:03d}_optical_electrical_atlas.png"
         detailed_name = f"run{run:03d}_position_detailed_fields.pdf"
+        detailed_png_dir = f"run{run:03d}_position_detailed_fields"
         thermal_limits = atlas(
             report / thermal_name, run, rows, fields[run],
             "temperature_rise_nodal_K", "temperature_gradient_magnitude_cell_K_m",
@@ -725,10 +750,12 @@ def main() -> int:
             top_cmap="plasma", bottom_cmap="RdBu_r", bottom_centered=True,
         )
         detailed_field_book(
-            report / detailed_name, run, audits[run], fields[run],
+            report / detailed_name, report / detailed_png_dir,
+            run, audits[run], fields[run],
         )
         figure_names[run] = [
             thermal_name, current_name, optical_name, detailed_name,
+            detailed_png_dir,
         ]
         plot_limits[run] = {
             "thermal": thermal_limits,
@@ -787,7 +814,7 @@ def main() -> int:
     )
 
     report_files = sorted(
-        path for path in report.iterdir()
+        path for path in report.rglob("*")
         if path.is_file() and path.name != "manifest.json"
     )
     manifest = {

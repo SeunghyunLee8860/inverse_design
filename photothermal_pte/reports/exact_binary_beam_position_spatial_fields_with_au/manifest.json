@@ -1,6 +1,6 @@
 {
   "schema": "exact-binary-beam-position-spatial-manifest-v1",
-  "generated_at_utc": "2026-08-22T09:18:14.542403+00:00",
+  "generated_at_utc": "2026-08-22T10:02:03.851384+00:00",
   "raw_artifacts": [
     {
       "run": 44,
@@ -1407,8 +1407,8 @@
   "report_artifacts": [
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/README.md",
-      "size_bytes": 5755,
-      "sha256": "7a0cd066931d12a5c883cc97d2bf4e05f5e9cf0650f8cdbda83b162334c36336"
+      "size_bytes": 7737,
+      "sha256": "e77c897106e39e5fd807307ba21b018c69ab4e439d664f93915799d7e36047f8"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/field_dictionary.json",
@@ -1441,9 +1441,134 @@
       "sha256": "11266ef780fae17d650567876c097ff45ce410343ecc4e47fdf123513e6db30d"
     },
     {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xm10_ym10_fields.png",
+      "size_bytes": 397831,
+      "sha256": "72475d2df1bcc6c01d0b16bcc379eafde4f6da19b607133b8c67177bae574adc"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xm10_ym5_fields.png",
+      "size_bytes": 444046,
+      "sha256": "ce9c7026598eb0459361585ee2e5c656ad7f7e1add3671c7b5c9ee49ce4ade52"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xm10_yp0_fields.png",
+      "size_bytes": 496108,
+      "sha256": "59540caed1422cf949134141e8696ae1a1c2298c90518bdb764ad3fb57d3e725"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xm10_yp10_fields.png",
+      "size_bytes": 370085,
+      "sha256": "7f9a7763f35f1f73ab3579f47d00c19f684b1b1ecf2ac635d006f8d192f9f1e7"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xm10_yp5_fields.png",
+      "size_bytes": 454194,
+      "sha256": "c7012f8bc971785141034d1f73205fd9a824dee58454bb0c1c814b73c7fff45b"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xm5_ym10_fields.png",
+      "size_bytes": 419258,
+      "sha256": "ae6e19cbe4218cca618bb8e8c97cf2cdfd0dfb6bab017ed64450fd02487222ec"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xm5_ym5_fields.png",
+      "size_bytes": 495024,
+      "sha256": "a6c9901e02e4a5dd4dd4b40a68f976965eb24cc20f8cd3df4fde56a278a09bd9"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xm5_yp0_fields.png",
+      "size_bytes": 509298,
+      "sha256": "c817b2239e1b7c3a9b2976c0aba42b3f4231cf58df8207503ad08e5cc58f495e"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xm5_yp10_fields.png",
+      "size_bytes": 415363,
+      "sha256": "5bbb8b7589f5a8d03c9b768359a0a97b56d0a52091c1436b8c61d319e8ff1639"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xm5_yp5_fields.png",
+      "size_bytes": 482344,
+      "sha256": "5bd1ffc966901521d6f8ebe0f8a9d9254f4800d4b612ad88b9a75dc9de804b45"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xp0_ym10_fields.png",
+      "size_bytes": 505640,
+      "sha256": "f66ac595a76029280ddb15a72f3081f6830d266a6820c78a440cb4d5ce1fe70c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xp0_ym5_fields.png",
+      "size_bytes": 545745,
+      "sha256": "2cf9edcb306c4a746f91d87d3f37d2d23124c9b6295a69cf3c6cf298c7a6c95d"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xp0_yp0_fields.png",
+      "size_bytes": 536329,
+      "sha256": "fb222615097caaa85fe78ac2cd3c5ecf690d7d47c547a64ac0dbb076d00e484e"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xp0_yp10_fields.png",
+      "size_bytes": 470211,
+      "sha256": "761a8671c36e0b93fff693a05de991ae2ef40c4ad0377eb2e8bfed795221d589"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xp0_yp5_fields.png",
+      "size_bytes": 508374,
+      "sha256": "ff9d2762dfc6b462bd049eb1c65c03c761dc2e8761ba26cdc68133f46fa05f61"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xp10_ym10_fields.png",
+      "size_bytes": 388582,
+      "sha256": "202ad6346e7f27ed64d52d69a6f633ce01c8756e10b5dbd241cd6094b5ddd0bd"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xp10_ym5_fields.png",
+      "size_bytes": 441230,
+      "sha256": "4cd1a727cbf71617e7c3308ecbba5ed02d667e5a4bd398925fe8ee477de68a95"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xp10_yp0_fields.png",
+      "size_bytes": 489870,
+      "sha256": "07ee05d1e280db14c52effe3872f12a80d08b5905fcc06a52d926195a3ae7c3f"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xp10_yp10_fields.png",
+      "size_bytes": 372185,
+      "sha256": "5568cf2f8003ee734b8c458c4934f90de623f909c0dd1b0e84d151c13d4078df"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xp10_yp5_fields.png",
+      "size_bytes": 448909,
+      "sha256": "5d0ec7d4ca385e540774a7b3044b7ced6fcd655b8afa6c7a6678a67b2eb0786b"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xp5_ym10_fields.png",
+      "size_bytes": 412092,
+      "sha256": "85004bb1180170aa41e7482f673160cf9e8a52c2795fe487311ee1f3e16fccb9"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xp5_ym5_fields.png",
+      "size_bytes": 497720,
+      "sha256": "b0276cfdc7c221e745070f6416890667c338000d1a0f07414c1dda24bd2f0036"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xp5_yp0_fields.png",
+      "size_bytes": 515133,
+      "sha256": "1299e518758d37b5e9e695bc42bc6ffdd7bb2fc063dd7c722c5d51842d45797f"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xp5_yp10_fields.png",
+      "size_bytes": 407370,
+      "sha256": "3bfc92956c918ad9c258e0f69ed112d7ba01fbbb36c397963776fd5b825e9bff"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields/beam_xp5_yp5_fields.png",
+      "size_bytes": 475231,
+      "sha256": "9014b6655acdf35a333b951127521c3575e220df013e337b5f13c2b8fcbcd5d5"
+    },
+    {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_position_detailed_fields.pdf",
       "size_bytes": 8287038,
-      "sha256": "3152c7f3be3f82a524a6205c3a19efd898eee163e02e00376783ced2a29c5d23"
+      "sha256": "4233aa8337d8c1adcc3b7f02d0e4aefdd72205dbe435086a3c9681cbabd64a3b"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run044_thermal_atlas.png",
@@ -1461,9 +1586,134 @@
       "sha256": "3dfabb8b983daebbf098c7ab45fff625cb33fad6bbb4a58fb03f30cc103b4eee"
     },
     {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xm10_ym10_fields.png",
+      "size_bytes": 392846,
+      "sha256": "bc0777207bb9c8d13efcf7d999f9976537f29220ae63259ccf26c492f341cfd3"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xm10_ym5_fields.png",
+      "size_bytes": 431893,
+      "sha256": "f5afc324417e47c77dea33dcdafef7936bd10b3e4377633f0eb868a45f1e87a5"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xm10_yp0_fields.png",
+      "size_bytes": 449198,
+      "sha256": "920602a40a15006888aa3239d2b46841307f2f344322b204e8c5c052fad39a71"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xm10_yp10_fields.png",
+      "size_bytes": 378085,
+      "sha256": "a45a097b38a32b321341d80e2758ca571b9a5fe971bd29532661267b006edd6a"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xm10_yp5_fields.png",
+      "size_bytes": 433947,
+      "sha256": "da583ded79ec9f5e83ce54100f5bfb5dc037ec76336ca9b331571a6cabff8100"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xm5_ym10_fields.png",
+      "size_bytes": 416563,
+      "sha256": "8bbfb1aa5d1d875052c0ac55a62edf1ea9502f14f7cc5fb43f37b2c8844ae488"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xm5_ym5_fields.png",
+      "size_bytes": 476294,
+      "sha256": "4bced377990b9d50d7fccbc74864696857b3cc2f6b4f62e817c0068f8887ffbc"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xm5_yp0_fields.png",
+      "size_bytes": 519172,
+      "sha256": "a10d2496ff9818e3f559bf7c68a8c8ac9c2b624415e6f45d0ca351523c82f5d3"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xm5_yp10_fields.png",
+      "size_bytes": 418806,
+      "sha256": "918a614e004dec22406dde6adfc80db4dcf679270008f8d78e5000dc0711d1c7"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xm5_yp5_fields.png",
+      "size_bytes": 483750,
+      "sha256": "4a0b059f6bf23b34901d848e3ae2e1194b149f8c2c6dc1960da4aa40e07244f8"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xp0_ym10_fields.png",
+      "size_bytes": 414327,
+      "sha256": "73e1ff7ab7dd66f6341bf939f3123c8addb33cceb38e083a8dbf157cc05723a0"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xp0_ym5_fields.png",
+      "size_bytes": 509932,
+      "sha256": "bc6d9ef6359b4203c973bcd55e80d6d0174f777a587d61c61184c6427e888de0"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xp0_yp0_fields.png",
+      "size_bytes": 561110,
+      "sha256": "e89a5feaba59a606509ca89de8f4a83cbc1f1860bb3703e8ec781dada21db147"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xp0_yp10_fields.png",
+      "size_bytes": 462097,
+      "sha256": "ce37fac0183c60e39ae138ee41f49609ed61ca54e8b733be2078e80b681c04c3"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xp0_yp5_fields.png",
+      "size_bytes": 530626,
+      "sha256": "3f62d3980b571ee50519a6d09a091a48e836ba1565f74dd4e7b8576b43500774"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xp10_ym10_fields.png",
+      "size_bytes": 382540,
+      "sha256": "26d2ff6030d08957309b6c41d689e7f6f6bb3eb7be95e965f1b33db35f9983d0"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xp10_ym5_fields.png",
+      "size_bytes": 421343,
+      "sha256": "c6ab66087e94195b4d23978a8d0bd2a1a4589b22200d4f2d7fe135783e4f6ce1"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xp10_yp0_fields.png",
+      "size_bytes": 457562,
+      "sha256": "e88461ba6fde8cc04477b2701de95b17b3fc6e3987016985cb046a10fe4b22ab"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xp10_yp10_fields.png",
+      "size_bytes": 382139,
+      "sha256": "b4c59f949b0cab915b1374df96c4a21f3ea9810f6e1e5fd0b68d4a27d0e06b71"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xp10_yp5_fields.png",
+      "size_bytes": 442364,
+      "sha256": "df03d020b810677f8b4a17b34901f0b61422a6e04a6482484d37e4a69698dff8"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xp5_ym10_fields.png",
+      "size_bytes": 407987,
+      "sha256": "64bfc78861bd321557cc0397d96bea133ff081fda9b9eeb88203b9b12cca175a"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xp5_ym5_fields.png",
+      "size_bytes": 468751,
+      "sha256": "ab85e69d24b139504cc9d126e9817d5db5808b5862f75304e4df208f1dfdc065"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xp5_yp0_fields.png",
+      "size_bytes": 530928,
+      "sha256": "2c96241c86975b3fd158470edf8f94285a97b8065eb4bdb18f68c06aa173ee9d"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xp5_yp10_fields.png",
+      "size_bytes": 411729,
+      "sha256": "3e412c6637a84b010c6182d47cae4871215c0d75ad929b7c0cfd9893e77c8e80"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields/beam_xp5_yp5_fields.png",
+      "size_bytes": 486182,
+      "sha256": "287f0788eae5774c73f0206ada68bef48170f2d4a1606652c5e3e119f934cbed"
+    },
+    {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_position_detailed_fields.pdf",
       "size_bytes": 8021965,
-      "sha256": "e4887ac3f1add1d9be6ce03145588976f35ce310d442f96ecf9399c1aff44de3"
+      "sha256": "61d8e95146c87242549e26d112307014c8c08cded13ca7271fa910fb5c8727d2"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run045_thermal_atlas.png",
@@ -1479,6 +1729,131 @@
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_optical_electrical_atlas.png",
       "size_bytes": 653883,
       "sha256": "027aca809df5d9e8a17dc2261de0c052611852887148dc4b9c1c5f791f1cfb29"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xm10_ym10_fields.png",
+      "size_bytes": 374573,
+      "sha256": "e2d020b345afbf6da8373bed3e6b5afc642a3807edea260ff89489217add35ef"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xm10_ym5_fields.png",
+      "size_bytes": 372431,
+      "sha256": "59ba5b0d8cb6e070915fa8a7b3efb625f8323796a32e89f31f7b4049c5504574"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xm10_yp0_fields.png",
+      "size_bytes": 390868,
+      "sha256": "433aa44b6bd55ad26f783f35b0d8f5e9bca710bee0677a55b32cba048f601966"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xm10_yp10_fields.png",
+      "size_bytes": 377981,
+      "sha256": "a22ecc394052587a076e54bf1dbf0b42c43df2c30938311f8614c585e2bf54f7"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xm10_yp5_fields.png",
+      "size_bytes": 371038,
+      "sha256": "12dfa1e9270fc0bd02dd2b3768e67b60ee05da8f3b796264c2e583111748407c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xm5_ym10_fields.png",
+      "size_bytes": 417489,
+      "sha256": "5e2bec9464cc2299c96bd1d3061c3116f52f7745eecb0801c5dc4f99ffc6857f"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xm5_ym5_fields.png",
+      "size_bytes": 412657,
+      "sha256": "375c0f717651d2bd30267f0209a19a4abc80a25701ffd63bf3bef2ed5ea0e91c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xm5_yp0_fields.png",
+      "size_bytes": 430906,
+      "sha256": "f031fcc0e3fdefcf4294d82b30fac0b54dcf6a4e1f05dde4a166b7404190d089"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xm5_yp10_fields.png",
+      "size_bytes": 415909,
+      "sha256": "bfab6035157236cfaf83db65ed1a7284398e6e8adc4703399dfc36e10b6f7482"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xm5_yp5_fields.png",
+      "size_bytes": 414299,
+      "sha256": "7e3f17d21619f9e97f1efc1a1dd6d77226a2a576f5b93057fc797f00da347f09"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xp0_ym10_fields.png",
+      "size_bytes": 414514,
+      "sha256": "557befc08997a204fb4b66c11afa2edd4f004293db24893539d3007b3cef28e3"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xp0_ym5_fields.png",
+      "size_bytes": 452766,
+      "sha256": "4a81150d21a1b8a15e3bd0080b83708d66f68d54465456f2794c4d3ac2fe3948"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xp0_yp0_fields.png",
+      "size_bytes": 452959,
+      "sha256": "222dad7077ba3f12b91d31c00d165c463e716006c1452ca24c259cb38c7348bd"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xp0_yp10_fields.png",
+      "size_bytes": 412556,
+      "sha256": "5d6b4e8223b40b3934b20c1cb207c06817573c2b1851999c056a5a91c2579b00"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xp0_yp5_fields.png",
+      "size_bytes": 451458,
+      "sha256": "c825bb90edd6fe6709eb64127af7a1c39fa1bd3c82bfb8034285a4827f0b5a84"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xp10_ym10_fields.png",
+      "size_bytes": 343971,
+      "sha256": "e521dfdcac8b41b9ad1df64cc54b7a7491e995427148ba414960f3922bfe20cd"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xp10_ym5_fields.png",
+      "size_bytes": 401308,
+      "sha256": "4031041faedf6d53f3d223d16de44525ab313edef6a836c8a07150dd052d35e9"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xp10_yp0_fields.png",
+      "size_bytes": 464603,
+      "sha256": "b422a2fc935fab08a9a44fe0720edd7f9e6a33706d4f879f362a93b7cd27f9b5"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xp10_yp10_fields.png",
+      "size_bytes": 342348,
+      "sha256": "99c49d11ccc96a0a6292827dc1fc4ec7dfaee12e0c3f562c9ba674e1a1efb6fb"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xp10_yp5_fields.png",
+      "size_bytes": 404915,
+      "sha256": "caf616fa96920065877e3a1df471ccdc1378af68b54ba5a7809780a35dbc8bf9"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xp5_ym10_fields.png",
+      "size_bytes": 382421,
+      "sha256": "e258c9461ec24d4e42642673385cdda92040a584e4903a67b043f5a9bfdea944"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xp5_ym5_fields.png",
+      "size_bytes": 427077,
+      "sha256": "8f7146ed8a4f121b5f519505434315408bb7d86c78fcb58a69272565968c8832"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xp5_yp0_fields.png",
+      "size_bytes": 506167,
+      "sha256": "a4fcd46fbff7a277830287c593f60d32af6cafe1d890c265d7a80b747e0454e8"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xp5_yp10_fields.png",
+      "size_bytes": 383041,
+      "sha256": "db74adf12b3c0fd795e4ad984fe7fb3a1cac5c2879f0aba9ca052160f63cc4f0"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields/beam_xp5_yp5_fields.png",
+      "size_bytes": 429450,
+      "sha256": "3d561140486d969438b5a1bd55ce9855b03015f80c956577360a68080fa247bc"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run047_position_detailed_fields.pdf",
@@ -1501,6 +1876,131 @@
       "sha256": "af9745e2588bf27d00f3a44ac7df96d7358311bf9e407ea23e5238c56af11d34"
     },
     {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xm10_ym10_fields.png",
+      "size_bytes": 312846,
+      "sha256": "7ee4787ffb6d5da89236d7eca3fe5099a720fb2207f4fd92149018d4a6924a40"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xm10_ym5_fields.png",
+      "size_bytes": 375462,
+      "sha256": "1ae4a346774a494f93866ad406f850740a3b0c0f4becb20e2dd5c91933625dd8"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xm10_yp0_fields.png",
+      "size_bytes": 423083,
+      "sha256": "246aada73911c4966f3e266246533cd33ab2b9eeab76e27ced0e4e1b83d6d358"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xm10_yp10_fields.png",
+      "size_bytes": 311869,
+      "sha256": "c32a7c4d1ac98a5fbd082654a622831bb6420647ddd1d16018656297bf5c675a"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xm10_yp5_fields.png",
+      "size_bytes": 374694,
+      "sha256": "8ea4fd152317abc8b625063dd4dcbe83c3cb1cd745d2d86f3e5015d8fdf908d2"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xm5_ym10_fields.png",
+      "size_bytes": 369075,
+      "sha256": "54ef400511c52ba512f4123a91c56cb8bec13e939fa6105eae1e15168f85eb35"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xm5_ym5_fields.png",
+      "size_bytes": 434154,
+      "sha256": "bdc1a8d1659b3cbd74330d1caa63890eab2447071d00d144a0e43062abeec8cc"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xm5_yp0_fields.png",
+      "size_bytes": 505689,
+      "sha256": "f8127e31f11295d4f36d9b12f28951df7d5a62dcca9a9021f707cd3f48cc2df9"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xm5_yp10_fields.png",
+      "size_bytes": 363899,
+      "sha256": "aa9124fd75c84dc7734f2f8cd9c6aa9e45135872764921f85085888278d60254"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xm5_yp5_fields.png",
+      "size_bytes": 430481,
+      "sha256": "e01c992fce357c119e572e6c43245eaf1c2202d2f3ff8880a47d929d96e61529"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xp0_ym10_fields.png",
+      "size_bytes": 407334,
+      "sha256": "60246500fda8f617e21b604d913495c935d197c497e9eb6175ad830669d43499"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xp0_ym5_fields.png",
+      "size_bytes": 487350,
+      "sha256": "9ccbb2f9fcf0a6d7a19577ce3147564fe21042f4563d80446e28f45267a35897"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xp0_yp0_fields.png",
+      "size_bytes": 525236,
+      "sha256": "96147dc7997483e09fe31e891ef8b7c2499541283cff863d02175bb6c3c7967b"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xp0_yp10_fields.png",
+      "size_bytes": 406455,
+      "sha256": "bdf474a3e7d965990ae4e37e86bd395918818e292608d159be1fd5310ef21555"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xp0_yp5_fields.png",
+      "size_bytes": 475882,
+      "sha256": "0d5acf88931f117f82685bb8c3f30d00920b55abf6ffb709b0e47c74bfea537d"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xp10_ym10_fields.png",
+      "size_bytes": 316009,
+      "sha256": "1f0233245f0f7d68b740886c1cfb74106e245041a810a8926796f97d059ee0a6"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xp10_ym5_fields.png",
+      "size_bytes": 365145,
+      "sha256": "cbf6000406b1176187023a172a8d44651a4d4aaad080a52a3111faf9fecd2cdf"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xp10_yp0_fields.png",
+      "size_bytes": 365811,
+      "sha256": "e0d888e08107e2b1986c4b0a301ef46a91cb0d705b0e732b91c8fd5e91b7fa3f"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xp10_yp10_fields.png",
+      "size_bytes": 323100,
+      "sha256": "df8f30051107422a31853357e81ef4354950f63bdf1e643d0f0664a49c3c7f71"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xp10_yp5_fields.png",
+      "size_bytes": 366830,
+      "sha256": "120aca39c2fae3d24e3c19a240cb06cc822dd69255597d8c8964f596708b795d"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xp5_ym10_fields.png",
+      "size_bytes": 386162,
+      "sha256": "b876c2176cfddc11535bfa40276e60b42d51ac086c929a6de9f824cc384029ab"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xp5_ym5_fields.png",
+      "size_bytes": 436946,
+      "sha256": "33b388aee8c0a4c866ad197016a96f0eafec31af47d7a9ba981341a0cc35c75e"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xp5_yp0_fields.png",
+      "size_bytes": 448664,
+      "sha256": "e774c3f82aebc1259c502fb9a5e277fcf6c8751e31557f87e92675f187f8becc"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xp5_yp10_fields.png",
+      "size_bytes": 395103,
+      "sha256": "b8f75474fc530792549d7ac8c8ae435fc3cb861ad53b7dd7e07f105e88537a2c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields/beam_xp5_yp5_fields.png",
+      "size_bytes": 445480,
+      "sha256": "651a612247e0ddab34cda8f4a68f9caa003511c5643929b032a6612e0b6ac587"
+    },
+    {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run048_position_detailed_fields.pdf",
       "size_bytes": 8262214,
       "sha256": "b97c92603cca24a6a60e947ac26ee866d537dcbcaa2a27f61f3f1508601087a2"
@@ -1519,6 +2019,131 @@
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_optical_electrical_atlas.png",
       "size_bytes": 706392,
       "sha256": "fe4d5a4cd5c6d7bbdb9e614258fe39a7e7b6e2522ea3de5dbb899312dbe5718d"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xm10_ym10_fields.png",
+      "size_bytes": 388020,
+      "sha256": "d5869c7b758f355e3c970b23d879f86e1b15b51b033f080fde4b4ccffc1ccf9b"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xm10_ym5_fields.png",
+      "size_bytes": 412678,
+      "sha256": "84e4eb77a48cd46a1a60dbcc555e1f328426212bd31f906fa173be81156e5532"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xm10_yp0_fields.png",
+      "size_bytes": 383915,
+      "sha256": "fb920fb68f10d77521d89aa2a881512d33725744cfad7554a743802d8bc17563"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xm10_yp10_fields.png",
+      "size_bytes": 340750,
+      "sha256": "d8e82758e9ed9fa090927a03d411cd9ab225309da4f2bbcb9e197ae9beac0f72"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xm10_yp5_fields.png",
+      "size_bytes": 377600,
+      "sha256": "5024764f832f44d005f2b799aab014ae1cc55b82b8909a0189316cfd9a5289a8"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xm5_ym10_fields.png",
+      "size_bytes": 388252,
+      "sha256": "8764f12a5fc30226c23eb45723a5ba2119955b1fc2f53edc5be546b660c06bf6"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xm5_ym5_fields.png",
+      "size_bytes": 424985,
+      "sha256": "c767baefc16f28b796521859c2337b8b075c16ddfcb1e40dd78028354362274b"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xm5_yp0_fields.png",
+      "size_bytes": 456132,
+      "sha256": "14c95824215fc06239156874297548795dff964f5b4a8896cbc1a6c61f24f6fd"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xm5_yp10_fields.png",
+      "size_bytes": 370266,
+      "sha256": "af39572bf92e64052a3be4312cbec9d73414c299a60dc30a8d4b49ccd2c9fcae"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xm5_yp5_fields.png",
+      "size_bytes": 421782,
+      "sha256": "14e39764226e2e535a623f97cbbed853f295a0e2a7897dacf17878455f5f762b"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xp0_ym10_fields.png",
+      "size_bytes": 395780,
+      "sha256": "5b981efab64a39289067f39860f603aa80bdfe0279011ab263a868e998c066dd"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xp0_ym5_fields.png",
+      "size_bytes": 463755,
+      "sha256": "f36a8d72a2c8e19c314ee3fe7b9b4864c82ccdbc16149c5f000a7fe81b7006de"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xp0_yp0_fields.png",
+      "size_bytes": 485814,
+      "sha256": "def63df179ff9557b55e18240903a052a08a54009d593f4f344c5a3b53c0fe7b"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xp0_yp10_fields.png",
+      "size_bytes": 421348,
+      "sha256": "cbf1599b42ea3cac42c2cec5b63187dcafcbd0590522e3e7587ba3b781ecc88f"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xp0_yp5_fields.png",
+      "size_bytes": 464239,
+      "sha256": "2c9a3fa4fdaf1ff3e85e0ad2e30887fda22eb5f74137ee606dcf40e9339b18f0"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xp10_ym10_fields.png",
+      "size_bytes": 369483,
+      "sha256": "22a78f83111536eb5d930f2e063c69a9d27865e674985e9876ffee27ac60cd17"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xp10_ym5_fields.png",
+      "size_bytes": 405740,
+      "sha256": "bfea75f76b344a1607ddc6e19916faf92a94ac8faf977f9a5e0dc388e837fd6f"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xp10_yp0_fields.png",
+      "size_bytes": 381397,
+      "sha256": "e9afdf084d1529512b19ddfc25eb7bbe3245f7c2cf20b28f9e7a8254fa1ded42"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xp10_yp10_fields.png",
+      "size_bytes": 353497,
+      "sha256": "01bf163944378aa2ddf627bf2619ed73cc05009e8b2afe8270dacfeb6cbc5edc"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xp10_yp5_fields.png",
+      "size_bytes": 383310,
+      "sha256": "69f70e0a09125953af55fc909cf514bab4534d951ab89c8d31d3f4c1d04a5125"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xp5_ym10_fields.png",
+      "size_bytes": 366968,
+      "sha256": "4c4020924fc9cd3145e50564d1cff6139bbe52a8abc0018778c35d6ebce8c529"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xp5_ym5_fields.png",
+      "size_bytes": 418848,
+      "sha256": "596c96a87272e4ab8bbbb479b546fd993688c08277899870421fde12317fb655"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xp5_yp0_fields.png",
+      "size_bytes": 467204,
+      "sha256": "5a843ddb985d9ce762607e54c81de89733b5e5da4e78a73f2138a4642e250238"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xp5_yp10_fields.png",
+      "size_bytes": 373609,
+      "sha256": "98bcf2a5b413f10b7cccc16678ed8dcdc064f76fc63c0704d3c1af16dbb2f268"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields/beam_xp5_yp5_fields.png",
+      "size_bytes": 415946,
+      "sha256": "068c94d775b485115f1523551f5b1c92a6d54766eadd3d9e811d5b628cb8f23f"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run055_position_detailed_fields.pdf",
@@ -1541,6 +2166,131 @@
       "sha256": "c75275a7efa0fd6755ce2eb1d1126b3dc777064eec11c009e56fa48ae34223ab"
     },
     {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xm10_ym10_fields.png",
+      "size_bytes": 381311,
+      "sha256": "443d40f5700d44764b8fc6fd5103788b16a4c00935018bd0333b0623a9fffb81"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xm10_ym5_fields.png",
+      "size_bytes": 420047,
+      "sha256": "7054b91b48b5197ff902d5d972e17b1605afbd3831a10ddddb829f361f530c6c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xm10_yp0_fields.png",
+      "size_bytes": 393339,
+      "sha256": "fef83ebd28cf8ecfb4398934c282d08b33ceebdc550f4c0360cb816aeaee667f"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xm10_yp10_fields.png",
+      "size_bytes": 354828,
+      "sha256": "b35d8b8a1de4a324668b56115cdf7cbc914f2b11ce570ae9e4e06feebf21f240"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xm10_yp5_fields.png",
+      "size_bytes": 378860,
+      "sha256": "c21c07eb89de8c9cdf9c4d4e40782e1b3cf0778aa113bd14f82e0744fc10b0d8"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xm5_ym10_fields.png",
+      "size_bytes": 390818,
+      "sha256": "67201a3f1f267ebd0d94f7fa4f6ba992c0d1cef3309155f84ccc063dd10e7773"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xm5_ym5_fields.png",
+      "size_bytes": 434849,
+      "sha256": "4ce1a70b50b6899dfc0eb36da907996fce3e083e3ffacdbcce4b6891db12a5f5"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xm5_yp0_fields.png",
+      "size_bytes": 426886,
+      "sha256": "948c9015c785c34ca5956d0e4c7d45924e7820375b78cc8a134080fb33312d03"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xm5_yp10_fields.png",
+      "size_bytes": 379345,
+      "sha256": "007e758c7999a9af8a5da5c70b1dfe91c6e54d716f44798c256a6e993667bd47"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xm5_yp5_fields.png",
+      "size_bytes": 408292,
+      "sha256": "dbe435169bf4f54d233fe571b8b679b0afa3753badcd3512e979b58da47b000e"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xp0_ym10_fields.png",
+      "size_bytes": 400335,
+      "sha256": "8855a2409174b74b1190dbb893cb8c87e87674912642f0d6e3e800c412393a43"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xp0_ym5_fields.png",
+      "size_bytes": 452822,
+      "sha256": "1a1497487da30eb50a54e200e959018f7b87c8417c318f5f2a899149f1f31d06"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xp0_yp0_fields.png",
+      "size_bytes": 469772,
+      "sha256": "7cd3ed4014533149dc935b7d0f0d342ca6eeb9ed47f85f44fef996f0d407f108"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xp0_yp10_fields.png",
+      "size_bytes": 455252,
+      "sha256": "a0ff45a2bac2004e811b8d2e57099fe8891e60713ac41526c24d60e12cfce5ce"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xp0_yp5_fields.png",
+      "size_bytes": 476543,
+      "sha256": "48b50c05410314257a0aa832bb7b1a6a51171420eef571f681fa899b70373840"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xp10_ym10_fields.png",
+      "size_bytes": 375638,
+      "sha256": "c558e3d586c5f01eea95562494a5f5e35283ff2a234968c8ff9cedf058b10a46"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xp10_ym5_fields.png",
+      "size_bytes": 399347,
+      "sha256": "cb57b7d1d1a41e482a0034710eb34630dbf63483d562ec3eb44344aa80cb5f41"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xp10_yp0_fields.png",
+      "size_bytes": 390630,
+      "sha256": "33e7e584d1b63b01e485a0df7927bb94aac8f3f8003d8b26c9c7e0e312ac3305"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xp10_yp10_fields.png",
+      "size_bytes": 362495,
+      "sha256": "16a1299b446f6a949c35cb25e29b47f61fb69bdb9cc7e203499c20da770c47a9"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xp10_yp5_fields.png",
+      "size_bytes": 384324,
+      "sha256": "abbcfe192feaaae6ef6b4c11a40cea2619cd8b8f1e37c9f3cb1601a23fc34a9d"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xp5_ym10_fields.png",
+      "size_bytes": 392347,
+      "sha256": "e63e3550032f38e2dc6fed4e5317b436db7fab9018519e8d1104acfe2f9c8420"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xp5_ym5_fields.png",
+      "size_bytes": 432217,
+      "sha256": "a6f5cb87e0f1fb2ed1985ddc5b05146ef5c41708539313e08516d49fbf0bf519"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xp5_yp0_fields.png",
+      "size_bytes": 437056,
+      "sha256": "1a4f2630bba400c4daa4434d7831c96a96e96e23515cf27d2112a409e76a5627"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xp5_yp10_fields.png",
+      "size_bytes": 385622,
+      "sha256": "0ad48e895350df9bc6b280fa71ce1c9686161049e8b494583c25d192470f2ae8"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields/beam_xp5_yp5_fields.png",
+      "size_bytes": 412215,
+      "sha256": "7b0c21c1552cb05dc24c6ea258f5d4c0dec3774e13dfb996c4c68204422ac931"
+    },
+    {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run056_position_detailed_fields.pdf",
       "size_bytes": 7783744,
       "sha256": "2493f220604a8b7a01719d8db2d739731421e8693a22d24d136cc25d81e75e7e"
@@ -1561,6 +2311,131 @@
       "sha256": "2a4570ae2d3d63cb7c94cc573d236b0b0e7a8d828d5356559030c905ba4b7691"
     },
     {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xm10_ym10_fields.png",
+      "size_bytes": 362152,
+      "sha256": "c367e730091f1346ca8d9e4ab7d2398ddba768276f0847be68debb4003d40daf"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xm10_ym5_fields.png",
+      "size_bytes": 397081,
+      "sha256": "3843c7c8ec59ce8f64facea3919667d117bd7ac487d6d691775c047c807e3a49"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xm10_yp0_fields.png",
+      "size_bytes": 433886,
+      "sha256": "3141d952e3e653b7d63951f1e52b1191160c55de7b08648af62d585130198ee3"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xm10_yp10_fields.png",
+      "size_bytes": 362925,
+      "sha256": "fc2026048f494b60c0fdf42e836c7a7d48692ece25f32746bcc399c01bfa3907"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xm10_yp5_fields.png",
+      "size_bytes": 398961,
+      "sha256": "7081d1b1a35641f7819675712d90a4907f908db35f1afaed6cb6fb6f9051e7fc"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xm5_ym10_fields.png",
+      "size_bytes": 405955,
+      "sha256": "b46c4c5c1cd335a16a73fb5f6fb28d2e4e89f0a9eef9458b5af53812c9ec5986"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xm5_ym5_fields.png",
+      "size_bytes": 452089,
+      "sha256": "202e8b04a7d669847b42b53e549176b81bab9b57285caeaa53b3982aed3c4457"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xm5_yp0_fields.png",
+      "size_bytes": 467674,
+      "sha256": "b501b0bf5641a4563263798fec1dbc25c1183ba30c72159161edcb4e72918612"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xm5_yp10_fields.png",
+      "size_bytes": 395861,
+      "sha256": "2607d6f4568c181303c60d12bd9350b790c0189a57854154a65833947923e71c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xm5_yp5_fields.png",
+      "size_bytes": 442591,
+      "sha256": "b95e9291f64eb3e7e4424475e3840bf3a35162d191be72f95f24f8600bf131ff"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xp0_ym10_fields.png",
+      "size_bytes": 388721,
+      "sha256": "b4a3cef08483ec90b7c71b3755edfea713404f557ab79999e70274c34dc113c4"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xp0_ym5_fields.png",
+      "size_bytes": 435611,
+      "sha256": "d1861c01dd59c3a3151418e9d4e83bbf9a9dfc24b51088cf588d8cf6f26791ab"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xp0_yp0_fields.png",
+      "size_bytes": 457888,
+      "sha256": "6078f300083528d83c553488f8050629094c5b3d51b01d8e8b34f4753b513694"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xp0_yp10_fields.png",
+      "size_bytes": 393303,
+      "sha256": "74a35e7a1d75a76d5b62203ab864ef853373e08e097d5c835463297d65fce849"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xp0_yp5_fields.png",
+      "size_bytes": 441348,
+      "sha256": "65b5cff34ccdbc2e04269bb3ba24ec6c47d121d97547a3a5b88ce3817c04e5e2"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xp10_ym10_fields.png",
+      "size_bytes": 375250,
+      "sha256": "cc332f684f79c78e3a9cd1d7254590c13890e413aa1342104b6a90e9dd16dc9f"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xp10_ym5_fields.png",
+      "size_bytes": 397522,
+      "sha256": "fcc5f1eb915b67b29b42f0241d4c7b6639f0e0f2764ed778f4e3077767f49db5"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xp10_yp0_fields.png",
+      "size_bytes": 406801,
+      "sha256": "7c41b9f92c08935c7ec04b0ab4a1552d257c39d6ab9d6e26e330d6e8587f2006"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xp10_yp10_fields.png",
+      "size_bytes": 377228,
+      "sha256": "ba3f5e4697a1380e99683538a8e797912b219a450e9fdd38d9cf3ed05d00821f"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xp10_yp5_fields.png",
+      "size_bytes": 395897,
+      "sha256": "ce772224f19a77d367ac1d3e3e332be094facae1566f65f211795ae69b6fb580"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xp5_ym10_fields.png",
+      "size_bytes": 389981,
+      "sha256": "bbbdc119fd9122f79562c6cba7a7cf21cda1c1032137371d0fac04725ad2e151"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xp5_ym5_fields.png",
+      "size_bytes": 407070,
+      "sha256": "0536ba72b4aae506d2df949aa86d4072736fa8dc1ffad42beb9b2968536bce31"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xp5_yp0_fields.png",
+      "size_bytes": 438958,
+      "sha256": "ba643b9789a89b64cb6072be45ebe02e75d233ddd6fd88d03d97c339390db537"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xp5_yp10_fields.png",
+      "size_bytes": 400648,
+      "sha256": "4dc2c2788a03ef53c38a4d98d6004e2a1070b179c72efd22b357f4a629e48b1b"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields/beam_xp5_yp5_fields.png",
+      "size_bytes": 416332,
+      "sha256": "195163e35153617573e587d506907a3f768cf9faa7795a9f6105576842220a05"
+    },
+    {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run057_position_detailed_fields.pdf",
       "size_bytes": 8259888,
       "sha256": "c29d145cf497ee251369ca55fdc3e4b8cfae6becbc3a892799c036d6d0206e6e"
@@ -1579,6 +2454,131 @@
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_optical_electrical_atlas.png",
       "size_bytes": 680842,
       "sha256": "360b9d861b25965d08f500d0b3a65a61e48b4be6af933ed1e8e6754415ba952e"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xm10_ym10_fields.png",
+      "size_bytes": 344217,
+      "sha256": "eea6f0345bf8d0b644b2829384c8dc646e679312bd8b25e973ea7ea682a37400"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xm10_ym5_fields.png",
+      "size_bytes": 391672,
+      "sha256": "1b7f93e4282e8e902568e2dd2827a22ec55f713dba11ba683e04cff539f03b7b"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xm10_yp0_fields.png",
+      "size_bytes": 422907,
+      "sha256": "73a3a2aeea3fe61fc8d26082283d3efbdf7d62575f82e0ff8b785823ded3c2c5"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xm10_yp10_fields.png",
+      "size_bytes": 344334,
+      "sha256": "8e79c39e8ba0ddf61bd73efdd215f676aeb04159c50706ca431538a9b3c8dbe9"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xm10_yp5_fields.png",
+      "size_bytes": 395942,
+      "sha256": "716c5ed4fb5f22d441f9efdd462ce22801ae3b65efb63350dd6eeff152bdf33c"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xm5_ym10_fields.png",
+      "size_bytes": 368970,
+      "sha256": "b0b5fa39b6262e207fc490db18bd9bfb3984a2ac41a98cceadc8cce570816582"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xm5_ym5_fields.png",
+      "size_bytes": 454186,
+      "sha256": "e0095db5114f6a9fa7c41bd8c0288d2fd2432463afd53bd9e2185682c276c288"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xm5_yp0_fields.png",
+      "size_bytes": 507065,
+      "sha256": "eb30f61cad80fe393340ba76cb5cd22c0fccb625ea7ffbce228c7373f4b568a2"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xm5_yp10_fields.png",
+      "size_bytes": 365755,
+      "sha256": "c28866b235503a4a4e016155bdbed750c55b015e6bccfbc545615ad0f2b7086a"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xm5_yp5_fields.png",
+      "size_bytes": 443927,
+      "sha256": "f74493941976944c7e325e70b910f4924bdc15d3e1f6722bb59f7c4e9599d3b5"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xp0_ym10_fields.png",
+      "size_bytes": 383318,
+      "sha256": "3c4c038b27d65c465ce60f2c6df11ff2da2142cfb32628fc3773b98f4104959b"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xp0_ym5_fields.png",
+      "size_bytes": 451690,
+      "sha256": "f9b6f42c1499a2cb84af7e36538af9b07e01817941fc05e24648229f5e27a8d4"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xp0_yp0_fields.png",
+      "size_bytes": 467345,
+      "sha256": "1281f4985a5e00855647433e7c8c68e051f3b6ad81147d9f511e4a9c1573a4a2"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xp0_yp10_fields.png",
+      "size_bytes": 386988,
+      "sha256": "5b78c8302c2bb404198f5eeffe47b6318602637e7fa0c68ae28d20df0d6b8b81"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xp0_yp5_fields.png",
+      "size_bytes": 444429,
+      "sha256": "170faa8149c1f3aa06dc3bda2e3e95e52d8ad5cfe069b478e188c311c9bbf591"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xp10_ym10_fields.png",
+      "size_bytes": 377773,
+      "sha256": "577d8f262e385ab637f6c54f5a6d997be99f28954ec218e1005272af7710ddf3"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xp10_ym5_fields.png",
+      "size_bytes": 385646,
+      "sha256": "e3d6dc57e23f178ecbce824c84d89cf5354bc4b10663869e51cceb7c80b4b569"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xp10_yp0_fields.png",
+      "size_bytes": 381014,
+      "sha256": "cf9e3938c89b48aa650044451fadd6affd762e386698433d743f35d034cf1e81"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xp10_yp10_fields.png",
+      "size_bytes": 372025,
+      "sha256": "7f958e90667d09a1079f3da9a31ec3d3745b111c70ea06316055f4b567ef74dc"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xp10_yp5_fields.png",
+      "size_bytes": 383200,
+      "sha256": "89ec68e8d5dfc7246b1a27cbb370771413975463820096df78b8b7a035d49a51"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xp5_ym10_fields.png",
+      "size_bytes": 392268,
+      "sha256": "23f29a397482f1781d769ffce7596663abf01788c78a86a12d1bd25476eabc31"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xp5_ym5_fields.png",
+      "size_bytes": 408956,
+      "sha256": "e88c633ccf9eb97ec3517e32e71131af1a14d3be0922c0324bca25edbc7b1a5a"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xp5_yp0_fields.png",
+      "size_bytes": 433433,
+      "sha256": "d36a483cfd52f0ac390bc9555c8eaec69315af8b691442f33d1d3b1deb67f9d0"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xp5_yp10_fields.png",
+      "size_bytes": 400020,
+      "sha256": "b27ce1936e6bd07a04992965a4b66d4dc0b705c5c6630d9509025d10be8c7e54"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields/beam_xp5_yp5_fields.png",
+      "size_bytes": 418174,
+      "sha256": "15bd89297ca1bb7c598b94bbed23c0551caccd29ea9ad6dcc274e81471a5dc2e"
     },
     {
       "path": "/home/seunghyun/tairte4/worktrees/pte_true_mma/photothermal_pte/reports/exact_binary_beam_position_spatial_fields_with_au/run058_position_detailed_fields.pdf",
