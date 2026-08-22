@@ -1,0 +1,97 @@
+{
+  "status": "VALIDATED_T2024_TOP_T_MATCHED_BARE_OPTICAL_COMPARISON",
+  "records": {
+    "T_Eb": {
+      "top_Au_T_present": true,
+      "polarization": "x_b",
+      "P_Q_periodic_W": 4.2364297860257765e-16,
+      "P_flux_absorbed_W": 4.24260310175034e-16,
+      "P_Q_native_W": 4.230314572900735e-16,
+      "geometric_material_power_W": {
+        "TaIrTe4_geometric": 3.7101527502496274e-16,
+        "top_Au_T_geometric": 1.310595950561865e-17,
+        "Au_backplane_geometric": 7.804214062749985e-18,
+        "unassigned_interface_or_other": 3.1106008696742144e-17
+      },
+      "closure_relative": 0.0014550773608817168,
+      "auto_shutoff": 5.66851e-07,
+      "solver_wall_time_s": 27.476449228823185
+    },
+    "T_Ea": {
+      "top_Au_T_present": true,
+      "polarization": "y_a",
+      "P_Q_periodic_W": 3.752872545512335e-16,
+      "P_flux_absorbed_W": 3.764306064981633e-16,
+      "P_Q_native_W": 3.7418166262163727e-16,
+      "geometric_material_power_W": {
+        "TaIrTe4_geometric": 3.389839685500576e-16,
+        "top_Au_T_geometric": 4.338225441365988e-18,
+        "Au_backplane_geometric": 1.2520136701634758e-18,
+        "unassigned_interface_or_other": 2.9607454960050214e-17
+      },
+      "closure_relative": 0.0030373511802510352,
+      "auto_shutoff": 8.81513e-07,
+      "solver_wall_time_s": 32.62552397698164
+    },
+    "bare_Eb": {
+      "top_Au_T_present": false,
+      "polarization": "x_b",
+      "P_Q_periodic_W": 3.8420077024464245e-16,
+      "P_flux_absorbed_W": 3.8485040660589633e-16,
+      "P_Q_native_W": 3.8355936662152975e-16,
+      "geometric_material_power_W": {
+        "TaIrTe4_geometric": 3.4973324439381066e-16,
+        "top_Au_T_geometric": 2.562008465214692e-18,
+        "Au_backplane_geometric": 1.3213358985787958e-17,
+        "unassigned_interface_or_other": 1.805075477671645e-17
+      },
+      "closure_relative": 0.0016880230606567477,
+      "auto_shutoff": 5.81318e-08,
+      "solver_wall_time_s": 24.812063809484243
+    },
+    "bare_Ea": {
+      "top_Au_T_present": false,
+      "polarization": "y_a",
+      "P_Q_periodic_W": 3.967731033734593e-16,
+      "P_flux_absorbed_W": 3.9777504174177567e-16,
+      "P_Q_native_W": 3.9577868453271364e-16,
+      "geometric_material_power_W": {
+        "TaIrTe4_geometric": 3.69835519974233e-16,
+        "top_Au_T_geometric": 3.549623116379735e-18,
+        "Au_backplane_geometric": 1.6322697618225304e-18,
+        "unassigned_interface_or_other": 2.0761271680278347e-17
+      },
+      "closure_relative": 0.0025188567988808073,
+      "auto_shutoff": 2.86196e-08,
+      "solver_wall_time_s": 25.758507199585438
+    }
+  },
+  "T_enhancement": {
+    "Eb": {
+      "total_P_Q_T_over_bare": 1.1026604093813246,
+      "total_P_Q_relative_change": 0.10266040938132459,
+      "TaIrTe4_power_T_over_bare": 1.060852180832966,
+      "TaIrTe4_power_relative_change": 0.06085218083296606
+    },
+    "Ea": {
+      "total_P_Q_T_over_bare": 0.9458485249137403,
+      "total_P_Q_relative_change": -0.054151475086259726,
+      "TaIrTe4_power_T_over_bare": 0.9165803451590456,
+      "TaIrTe4_power_relative_change": -0.08341965484095437
+    }
+  },
+  "polarization_selectivity": {
+    "bare_PQ_Eb_over_Ea": 0.9683135448902058,
+    "with_T_PQ_Eb_over_Ea": 1.1288498968854344,
+    "bare_TaIrTe4_Eb_over_Ea": 0.9456453626146485,
+    "with_T_TaIrTe4_Eb_over_Ea": 1.0944920982898196
+  },
+  "interpretation": "At 4.75 um the figure-digitized top T enhances the raw E||b absorption but suppresses E||a; the TaIrTe4-only geometric partition is reported separately from Au and interface loss.",
+  "limitations": [
+    "single wavelength only; not a resonance spectrum",
+    "figure-digitized T rather than author CAD",
+    "100-nm TaIrTe4 substitution rather than graphene",
+    "geometric material partition retains an explicit interface/other residual"
+  ],
+  "no_clipping_smoothing_gain_rescaling_or_polarization_matching": true
+}

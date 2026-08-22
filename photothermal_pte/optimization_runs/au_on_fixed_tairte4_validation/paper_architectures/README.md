@@ -93,3 +93,7 @@ Publish the paired comparison without rerunning FDTD:
 See `results_actual_metasurfaces/T2024_TAIRTE4_TWO_POLARIZATION_REPORT.md`.
 The 2022 M5 scalar dimensions are audited, but the Z Maxwell case remains
 fail-closed because the PDFs do not disclose a unique polygon/junction CAD.
+
+The inverse-T contribution is isolated with matched no-top-T controls using
+the same solver entry point plus `--omit-top-t-control`. Publish the four-case
+comparison with `10_summarize_t2024_top_t_enhancement.py`.

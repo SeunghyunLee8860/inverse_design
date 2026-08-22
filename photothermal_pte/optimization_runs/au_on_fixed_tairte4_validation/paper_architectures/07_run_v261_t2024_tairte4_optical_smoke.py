@@ -182,7 +182,13 @@ def add_power_monitor(fdtd: object, name: str, z_m: float) -> None:
     monitor["frequency points"] = 1
 
 
-def setup(fdtd: object, polarization: str, duration_ps: float) -> dict[str, object]:
+def setup(
+    fdtd: object,
+    polarization: str,
+    duration_ps: float,
+    *,
+    include_top_t: bool = True,
+) -> dict[str, object]:
     geometry_module = load_local_module(
         "05_actual_metasurface_geometry.py", "paper_actual_metasurface_geometry"
     )
@@ -253,12 +259,13 @@ def setup(fdtd: object, polarization: str, duration_ps: float) -> dict[str, obje
     add_rect(fdtd, "TaIrTe4_active_100nm", TAIRTE4_MATERIAL, 0.0, 100.0e-9)
 
     polygon_contract = geometry.polygons[0]
-    polygon = fdtd.addpoly()
-    polygon["name"] = polygon_contract.name
-    polygon["material"] = AU_MATERIAL
-    polygon["vertices"] = np.asarray(polygon_contract.vertices_nm, float) * 1.0e-9
-    polygon["z min"] = polygon_contract.z_min_nm * 1.0e-9
-    polygon["z max"] = polygon_contract.z_max_nm * 1.0e-9
+    if include_top_t:
+        polygon = fdtd.addpoly()
+        polygon["name"] = polygon_contract.name
+        polygon["material"] = AU_MATERIAL
+        polygon["vertices"] = np.asarray(polygon_contract.vertices_nm, float) * 1.0e-9
+        polygon["z min"] = polygon_contract.z_min_nm * 1.0e-9
+        polygon["z max"] = polygon_contract.z_max_nm * 1.0e-9
 
     mesh = fdtd.addmesh()
     mesh["name"] = "T2024_local_structure_mesh"
@@ -295,6 +302,12 @@ def setup(fdtd: object, polarization: str, duration_ps: float) -> dict[str, obje
             "wavelength_m": WAVELENGTH_M,
             "z_m": SOURCE_Z_M,
         },
+        "top_Au_T_present": include_top_t,
+        "case_identity": (
+            "paper_derived_inverse_T_TaIrTe4_substitution"
+            if include_top_t
+            else "matched_bare_TaIrTe4_control_without_top_T"
+        ),
         "materials": {
             "TaIrTe4": tairte4,
             "Au": {
@@ -345,6 +358,11 @@ def main() -> int:
     parser.add_argument("--polarization", choices=("x_b", "y_a"), default="x_b")
     parser.add_argument("--duration-ps", type=float, default=1.0)
     parser.add_argument("--contract-only", action="store_true")
+    parser.add_argument(
+        "--omit-top-t-control",
+        action="store_true",
+        help="Remove only the top inverse-T while retaining the matched mirror/spacer/TaIrTe4 stack.",
+    )
     args = parser.parse_args()
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
@@ -367,7 +385,12 @@ def main() -> int:
         import lumapi
 
         fdtd = lumapi.FDTD(hide=True, serverArgs={"platform": "offscreen"})
-        contract = setup(fdtd, args.polarization, args.duration_ps)
+        contract = setup(
+            fdtd,
+            args.polarization,
+            args.duration_ps,
+            include_top_t=not args.omit_top_t_control,
+        )
         fdtd.setresource("FDTD", 1, "active", 0)
         fdtd.setresource("FDTD", 2, "active", 1)
         fdtd.setresource("FDTD", 2, "processes", "1")
