@@ -1,0 +1,65 @@
+{
+  "status": "VALIDATED_Z2022_M2_RECONSTRUCTED_SELECTED_Q_PAIR",
+  "classification": "published M2 scalar dimensions plus explicit corner-joined figure reconstruction; not author CAD",
+  "wavelength_um": 5.25,
+  "handedness": "LH",
+  "phase_naming": "CP+ and CP- are explicit Ex/Ey phase definitions; not promoted to LCP/RCP",
+  "cases": {
+    "LH_CP_plus": {
+      "P_Q_pabs_periodic_W": 6.058561095200515e-15,
+      "P_flux_absorbed_W": 6.078179910482246e-15,
+      "closure_relative": 0.0032277450767617018,
+      "auto_shutoff": 9.87812e-07,
+      "Q_component_power_native_W": {
+        "x": 3.1546111999862486e-15,
+        "y": 2.4265400976667007e-15,
+        "z": 4.580873103893888e-16
+      },
+      "common_component_power_W": {
+        "x": 3.1614778633301935e-15,
+        "y": 2.4583184086387507e-15,
+        "z": 4.580873103893888e-16
+      },
+      "common_grid_power_W": 6.077883582358333e-15,
+      "common_grid_vs_pabs_relative_error": 0.0031892865078351263,
+      "gates": {
+        "GPU_completed": true,
+        "auto_shutoff_lt_1e_5": true,
+        "closure_lt_0p5pct": true,
+        "all_Q_arrays_finite": true,
+        "no_negative_Q": true,
+        "common_grid_vs_pabs_lt_0p5pct": true
+      }
+    },
+    "LH_CP_minus": {
+      "P_Q_pabs_periodic_W": 6.089416295655513e-15,
+      "P_flux_absorbed_W": 6.109042292897636e-15,
+      "closure_relative": 0.0032126144002866566,
+      "auto_shutoff": 9.94945e-07,
+      "Q_component_power_native_W": {
+        "x": 3.139370344695697e-15,
+        "y": 2.4582845474769492e-15,
+        "z": 4.725318423827607e-16
+      },
+      "common_component_power_W": {
+        "x": 3.1462362844982733e-15,
+        "y": 2.4898777298742317e-15,
+        "z": 4.725318423827607e-16
+      },
+      "common_grid_power_W": 6.1086458567552655e-15,
+      "common_grid_vs_pabs_relative_error": 0.003157866068948525,
+      "gates": {
+        "GPU_completed": true,
+        "auto_shutoff_lt_1e_5": true,
+        "closure_lt_0p5pct": true,
+        "all_Q_arrays_finite": true,
+        "no_negative_Q": true,
+        "common_grid_vs_pabs_lt_0p5pct": true
+      }
+    }
+  },
+  "signed_circular_phase_absorption_contrast_g": -0.005079890991272795,
+  "equal_power_spatial_Q_NRMSE": 0.6256532903546531,
+  "equal_power_spatial_Q_correlation": 0.5316736666190147,
+  "scope": "periodic optical Q only; finite Gaussian Z array and thermal/electrical contacts are not yet defined"
+}
