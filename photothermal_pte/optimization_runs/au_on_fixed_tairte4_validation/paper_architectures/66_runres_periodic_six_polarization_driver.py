@@ -58,6 +58,12 @@ def main() -> int:
         runner = HERE / "19_run_v261_z2022_m2_periodic_broadband_rta.py"
         json_name = "Z2022_M2_periodic_broadband_rta.json"
         expected = "COMPLETED_Z2022_M2_PERIODIC_BROADBAND_RTA"
+        # The enlarged Z supercell supports a longer-lived y-polarized response:
+        # 2 ps passed for x_b but stopped at 7.39e-5 for y_a.  Use a longer
+        # upper time bound and retain the same 1e-6 solver auto-shutoff target.
+        z_duration_ps = float(os.environ.get("Z_BROADBAND_DURATION_PS", "4.0"))
+        if z_duration_ps < 2.0:
+            raise RuntimeError("Z_BROADBAND_DURATION_PS must be at least 2 ps")
 
     def publish(state: str, current: list[str] | None = None) -> None:
         status_path.write_text(
@@ -89,7 +95,11 @@ def main() -> int:
         ]
         if architecture == "Z":
             command.extend(
-                ["--handedness", "LH", "--geometry-variant", "centered_expanded_supercell_v4"]
+                [
+                    "--handedness", "LH",
+                    "--geometry-variant", "centered_expanded_supercell_v4",
+                    "--duration-ps", f"{z_duration_ps:g}",
+                ]
             )
         publish("RUNNING_PERIODIC_SIX_POLARIZATION_SUITE", command)
         started = time.monotonic()
