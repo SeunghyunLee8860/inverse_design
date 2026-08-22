@@ -1,0 +1,43 @@
+{
+  "status": "VALIDATED_OPTICAL_SUBSTRATE_INSENSITIVITY_BELOW_AU_BACKPLANE_WITH_Q_CLOSURE_UNRESOLVED",
+  "architecture": "z2022_285nm",
+  "scope": "planar mirror discriminator only; validates or rejects removal of SiO2/Si from the Maxwell domain below the Au backplane; does not validate a reduced thermal substrate or a full T/Z device",
+  "metrics": {
+    "flux_absorbed_power_relative_difference": 5.403998850643184e-05,
+    "P_Q_relative_difference": 6.83276325984762e-05,
+    "flux_absorptance_relative_difference": 5.403998850630087e-05,
+    "reflectance_relative_difference": 5.907216777413547e-07,
+    "reflectance_absolute_difference": 5.843217792955713e-07,
+    "top_field_vector_NRMSE": 3.5932214879957773e-06,
+    "top_field_component_NRMSE": {
+      "x": 3.593221487995778e-06,
+      "y": 0.0,
+      "z": 0.0
+    },
+    "full_transmission": 1.181157991499867e-09,
+    "truncated_transmission": 3.147074212302127e-13,
+    "full_closure_relative": 0.025388176612812802,
+    "truncated_closure_relative": 0.02537425075443141,
+    "full_incident_energy_imbalance": -0.00027505632593782803,
+    "truncated_incident_energy_imbalance": -0.00027492030942843915
+  },
+  "gates": {
+    "flux_absorbed_power_relative_difference_lt_0p5pct": true,
+    "P_Q_relative_difference_lt_0p5pct": true,
+    "flux_absorptance_relative_difference_lt_0p5pct": true,
+    "reflectance_absolute_difference_lt_0p5pct": true,
+    "top_field_vector_NRMSE_lt_0p5pct": true,
+    "full_transmission_lt_1e_6": true,
+    "both_incident_energy_imbalances_lt_0p5pct": true,
+    "no_Q_clipping_smoothing_gain_or_rescaling": true
+  },
+  "strict_Q_closure_gate": {
+    "passed": false,
+    "threshold": 0.005,
+    "interpretation": "Fail-closed diagnostic; the flux/field substrate-insensitivity result does not overwrite it."
+  },
+  "raw_inputs": {
+    "full": "/home/seunghyun/tairte4/raw_artifacts/paper_architecture_backplane/z2022_full_v5_matched",
+    "truncated": "/home/seunghyun/tairte4/raw_artifacts/paper_architecture_backplane/z2022_au_truncated_v1"
+  }
+}

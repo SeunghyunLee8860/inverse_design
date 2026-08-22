@@ -1,0 +1,119 @@
+{
+  "status": "PUBLISHED_PAPER_STACK_SUBSTRATE_DECISION",
+  "active_2D_material_rule": "Only the paper active 2-D material is replaced by fixed 100-nm TaIrTe4 in the architecture contracts.",
+  "Maxwell": {
+    "A_direct_without_Au_backplane": "KEEP_EXPLICIT_SIO2_SI_UNTIL_SEPARATE_ENDPOINT_EQUIVALENCE",
+    "B_T_2024_above_opaque_Au": "AU_TRUNCATION_ALLOWED_FOR_OPTICAL_ACCELERATION_UNDER_VALIDATED_200NM_NUMERICAL_CLOSURE",
+    "B_Z_2022_above_published_200nm_Au": "AU_TRUNCATION_ALLOWED_FOR_OPTICAL_ACCELERATION"
+  },
+  "thermal": {
+    "all_architectures": "KEEP_EXPLICIT_SIO2_SI; OPTICAL OPACITY DOES NOT REMOVE THE THERMAL HEAT PATH",
+    "reduced_boundary_option": "A single effective substrate/Robin impedance is a future candidate only after explicit-3D equivalence."
+  },
+  "paper_provenance": {
+    "2022_supplement": {
+      "path": "/home/seunghyun/tairte4/papers/41467_2022_32309_MOESM1_ESM.pdf",
+      "size_bytes": 2417257,
+      "sha256": "927d41f1d6f62916ba15cdf0eb0ec9a37edf457e0cb7b8133365d1d0f13b342b"
+    },
+    "2024_supplement": {
+      "path": "/home/seunghyun/tairte4/papers/41467_2024_51599_MOESM1_ESM.pdf",
+      "size_bytes": 4283237,
+      "sha256": "72c2c1264c8d53e4fc22b356fbfd1cf99c229a5b7cabd3f8069f516d156cc2fb"
+    }
+  },
+  "important_limits": [
+    "2024 main Methods reports 1.5 um thermal SiO2, while Supplementary Fig. 17 RF cross-section reports 1.0 um; these remain separate scenarios.",
+    "The 2024 publication does not provide a complete 10-um T geometry or an exact MIR back-reflector thickness. The 200-nm Au control is an explicit numerical closure, not a claimed published dimension.",
+    "The 2022 10 W/m2 interface entry is a heat flux, not a thermal boundary conductance G.",
+    "The strict periodic pabs_adv volume-Q versus flux closure is 2.54-2.56% and remains unresolved; no correction, gain, or rescaling was applied."
+  ],
+  "cases": {
+    "2022_Z_285nm_SiO2": {
+      "status": "VALIDATED_OPTICAL_SUBSTRATE_INSENSITIVITY_BELOW_AU_BACKPLANE_WITH_Q_CLOSURE_UNRESOLVED",
+      "architecture": "z2022_285nm",
+      "scope": "planar mirror discriminator only; validates or rejects removal of SiO2/Si from the Maxwell domain below the Au backplane; does not validate a reduced thermal substrate or a full T/Z device",
+      "metrics": {
+        "flux_absorbed_power_relative_difference": 5.403998850643184e-05,
+        "P_Q_relative_difference": 6.83276325984762e-05,
+        "flux_absorptance_relative_difference": 5.403998850630087e-05,
+        "reflectance_relative_difference": 5.907216777413547e-07,
+        "reflectance_absolute_difference": 5.843217792955713e-07,
+        "top_field_vector_NRMSE": 3.5932214879957773e-06,
+        "top_field_component_NRMSE": {
+          "x": 3.593221487995778e-06,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "full_transmission": 1.181157991499867e-09,
+        "truncated_transmission": 3.147074212302127e-13,
+        "full_closure_relative": 0.025388176612812802,
+        "truncated_closure_relative": 0.02537425075443141,
+        "full_incident_energy_imbalance": -0.00027505632593782803,
+        "truncated_incident_energy_imbalance": -0.00027492030942843915
+      },
+      "gates": {
+        "flux_absorbed_power_relative_difference_lt_0p5pct": true,
+        "P_Q_relative_difference_lt_0p5pct": true,
+        "flux_absorptance_relative_difference_lt_0p5pct": true,
+        "reflectance_absolute_difference_lt_0p5pct": true,
+        "top_field_vector_NRMSE_lt_0p5pct": true,
+        "full_transmission_lt_1e_6": true,
+        "both_incident_energy_imbalances_lt_0p5pct": true,
+        "no_Q_clipping_smoothing_gain_or_rescaling": true
+      },
+      "strict_Q_closure_gate": {
+        "passed": false,
+        "threshold": 0.005,
+        "interpretation": "Fail-closed diagnostic; the flux/field substrate-insensitivity result does not overwrite it."
+      },
+      "raw_inputs": {
+        "full": "/home/seunghyun/tairte4/raw_artifacts/paper_architecture_backplane/z2022_full_v5_matched",
+        "truncated": "/home/seunghyun/tairte4/raw_artifacts/paper_architecture_backplane/z2022_au_truncated_v1"
+      }
+    },
+    "2024_T_main_1500nm_SiO2": {
+      "status": "VALIDATED_OPTICAL_SUBSTRATE_INSENSITIVITY_BELOW_AU_BACKPLANE_WITH_Q_CLOSURE_UNRESOLVED",
+      "architecture": "t2024_main_1500nm",
+      "scope": "planar mirror discriminator only; validates or rejects removal of SiO2/Si from the Maxwell domain below the Au backplane; does not validate a reduced thermal substrate or a full T/Z device",
+      "metrics": {
+        "flux_absorbed_power_relative_difference": 1.2585213091229712e-05,
+        "P_Q_relative_difference": 0.0002431281818869789,
+        "flux_absorptance_relative_difference": 1.2585213091130662e-05,
+        "reflectance_relative_difference": 1.3730571642951887e-07,
+        "reflectance_absolute_difference": 1.3581808011586816e-07,
+        "top_field_vector_NRMSE": 3.986828264365925e-06,
+        "top_field_component_NRMSE": {
+          "x": 3.986828264365925e-06,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "full_transmission": 5.382086219938416e-10,
+        "truncated_transmission": 3.147074212302127e-13,
+        "full_closure_relative": 0.02559894669597357,
+        "truncated_closure_relative": 0.02537425075443141,
+        "full_incident_energy_imbalance": -0.00027735131351180886,
+        "truncated_incident_energy_imbalance": -0.00027492030942843915
+      },
+      "gates": {
+        "flux_absorbed_power_relative_difference_lt_0p5pct": true,
+        "P_Q_relative_difference_lt_0p5pct": true,
+        "flux_absorptance_relative_difference_lt_0p5pct": true,
+        "reflectance_absolute_difference_lt_0p5pct": true,
+        "top_field_vector_NRMSE_lt_0p5pct": true,
+        "full_transmission_lt_1e_6": true,
+        "both_incident_energy_imbalances_lt_0p5pct": true,
+        "no_Q_clipping_smoothing_gain_or_rescaling": true
+      },
+      "strict_Q_closure_gate": {
+        "passed": false,
+        "threshold": 0.005,
+        "interpretation": "Fail-closed diagnostic; the flux/field substrate-insensitivity result does not overwrite it."
+      },
+      "raw_inputs": {
+        "full": "/home/seunghyun/tairte4/raw_artifacts/paper_architecture_backplane/t2024_main_full_v1",
+        "truncated": "/home/seunghyun/tairte4/raw_artifacts/paper_architecture_backplane/t2024_main_au_truncated_v1"
+      }
+    }
+  }
+}

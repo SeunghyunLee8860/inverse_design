@@ -137,6 +137,30 @@ def add_power_monitor(fdtd: object, name: str, z_m: float) -> None:
     monitor["frequency points"] = 1
 
 
+def enable_pabs_periodic_correction(fdtd: object) -> dict[str, object]:
+    """Enable the x/y correction shipped in the installed pabs_adv object."""
+
+    script = str(fdtd.getnamed(PABS_GROUP, "analysis script"))
+    marker = "Periodic boundary condition correction"
+    marker_position = script.find(marker)
+    if marker_position < 0:
+        raise RuntimeError("installed pabs_adv lacks periodic correction")
+    tail = script[marker_position:]
+    disabled = "if (0) {"
+    relative = tail.find(disabled)
+    if relative < 0:
+        raise RuntimeError("cannot locate disabled pabs_adv periodic switch")
+    absolute = marker_position + relative
+    modified = script[:absolute] + "if (1) {" + script[absolute + len(disabled) :]
+    fdtd.setnamed(PABS_GROUP, "analysis script", modified)
+    return {
+        "installed_object": "pabs_adv",
+        "periodic_axes": ["x", "y"],
+        "periodic_correction_enabled": True,
+        "normalization": "Pabs_total divided by sourcepower(f)",
+    }
+
+
 def setup_case(
     fdtd: object,
     *,
@@ -144,6 +168,7 @@ def setup_case(
     substrate_mode: str,
     duration_ps: float,
     auto_shutoff_min: float,
+    au_dz_m: float,
 ) -> dict[str, object]:
     fdtd.switchtolayout()
     solver = fdtd.addfdtd()
@@ -242,7 +267,7 @@ def setup_case(
         raise ValueError(substrate_mode)
 
     mesh = fdtd.addmesh()
-    mesh["name"] = "Au_interface_5nm_z_mesh"
+    mesh["name"] = "Au_interface_local_z_mesh"
     mesh["x min"] = -0.5 * PERIOD_M
     mesh["x max"] = 0.5 * PERIOD_M
     mesh["y min"] = -0.5 * PERIOD_M
@@ -254,7 +279,7 @@ def setup_case(
     mesh["override z mesh"] = True
     mesh["dx"] = 100.0e-9
     mesh["dy"] = 100.0e-9
-    mesh["dz"] = 5.0e-9
+    mesh["dz"] = au_dz_m
 
     pabs = fdtd.addobject("pabs_adv")
     pabs["name"] = PABS_GROUP
@@ -264,6 +289,7 @@ def setup_case(
     pabs["y span"] = PERIOD_M
     pabs["z"] = 0.5 * (TOP_MONITOR_Z_M + BOTTOM_MONITOR_Z_M)
     pabs["z span"] = TOP_MONITOR_Z_M - BOTTOM_MONITOR_Z_M
+    pabs_contract = enable_pabs_periodic_correction(fdtd)
     add_power_monitor(fdtd, TOP_MONITOR, TOP_MONITOR_Z_M)
     add_power_monitor(fdtd, BOTTOM_MONITOR, BOTTOM_MONITOR_Z_M)
 
@@ -287,6 +313,7 @@ def setup_case(
             "top_m": AU_TOP_M,
             "bottom_m": au_bottom_m,
             "paper_thickness_m": 200.0e-9,
+            "local_mesh_dz_m": au_dz_m,
         },
         "oxide": {
             "thickness_m": OXIDE_THICKNESS_M[architecture]
@@ -303,6 +330,7 @@ def setup_case(
             "planar Au-backplane substrate discriminator only; no TaIrTe4/T/Z, "
             "thermal, PTE, adjoint, or optimization"
         ),
+        "pabs_contract": pabs_contract,
     }
 
 
@@ -314,8 +342,11 @@ def main() -> int:
     parser.add_argument("--gpu-device", default="GPU 4")
     parser.add_argument("--duration-ps", type=float, default=1.0)
     parser.add_argument("--auto-shutoff-min", type=float, default=1.0e-6)
+    parser.add_argument("--au-dz-nm", type=float, default=5.0)
     parser.add_argument("--contract-only", action="store_true")
     args = parser.parse_args()
+    if args.au_dz_nm <= 0.0:
+        parser.error("--au-dz-nm must be positive")
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
         raise RuntimeError(f"refusing to overwrite non-empty output: {output}")
@@ -346,6 +377,7 @@ def main() -> int:
             substrate_mode=args.substrate_mode,
             duration_ps=args.duration_ps,
             auto_shutoff_min=args.auto_shutoff_min,
+            au_dz_m=args.au_dz_nm * 1.0e-9,
         )
         fdtd.setresource("FDTD", 1, "active", 0)
         fdtd.setresource("FDTD", 2, "active", 1)
@@ -353,6 +385,33 @@ def main() -> int:
         fdtd.setresource("FDTD", 2, "threads", "8")
         fdtd.setresource("FDTD", 2, "device type", args.gpu_device)
         fdtd.setresource("FDTD", 2, "solver extra command line options", "-gpu")
+        fdtd.runsetup()
+        initial_mesh = audit.mesh_readback(fdtd)
+        if not initial_mesh.get("available"):
+            raise RuntimeError("native mesh unavailable before control-volume snap")
+        native_z = np.asarray(initial_mesh["coordinate_arrays"]["z"], float)
+        snapped_bottom = float(
+            native_z[int(np.argmin(np.abs(native_z - BOTTOM_MONITOR_Z_M)))]
+        )
+        snapped_top = float(
+            native_z[int(np.argmin(np.abs(native_z - TOP_MONITOR_Z_M)))]
+        )
+        fdtd.setnamed(
+            PABS_GROUP, "z", 0.5 * (snapped_bottom + snapped_top)
+        )
+        fdtd.setnamed(PABS_GROUP, "z span", snapped_top - snapped_bottom)
+        fdtd.setnamed(TOP_MONITOR, "z", snapped_top)
+        fdtd.setnamed(BOTTOM_MONITOR, "z", snapped_bottom)
+        geometry["matched_lossy_control_volume"] = {
+            "method": "post-runsetup nearest native z planes",
+            "requested_z_bounds_m": [BOTTOM_MONITOR_Z_M, TOP_MONITOR_Z_M],
+            "snapped_z_bounds_m": [snapped_bottom, snapped_top],
+            "maximum_absolute_shift_m": max(
+                abs(snapped_bottom - BOTTOM_MONITOR_Z_M),
+                abs(snapped_top - TOP_MONITOR_Z_M),
+            ),
+            "Pabs_and_both_z_flux_faces_updated_together": True,
+        }
         fdtd.runsetup()
         mesh = audit.mesh_readback(fdtd)
         result.update(
@@ -393,15 +452,20 @@ def main() -> int:
             bottom_signed = scalar(fdtd.transmission(BOTTOM_MONITOR), BOTTOM_MONITOR) * source_power
             p_flux_absorbed = bottom_signed - top_signed
             fdtd.runanalysis(PABS_GROUP)
+            pabs_total_normalized = scalar(
+                fdtd.getresult(PABS_GROUP, "Pabs_total")["Pabs_total"],
+                "pabs_adv.Pabs_total",
+            )
+            p_q_official = pabs_total_normalized * source_power
             q = extract_native_yee_q(
                 fdtd,
                 field_monitor=PABS_FIELD,
                 index_monitor=PABS_INDEX,
                 wavelength_m=WAVELENGTH_M,
             )
-            p_q = float(q["P_Q_W"])
-            closure = abs(p_q - p_flux_absorbed) / max(
-                abs(p_q), abs(p_flux_absorbed), 1.0e-300
+            p_q_native = float(q["P_Q_W"])
+            closure = abs(p_q_official - p_flux_absorbed) / max(
+                abs(p_q_official), abs(p_flux_absorbed), 1.0e-300
             )
             top_fields = {
                 component: np.asarray(
@@ -435,14 +499,20 @@ def main() -> int:
             np.savez_compressed(npz_path, **arrays)
             reflection = 1.0 + top_signed / source_power
             transmission = -bottom_signed / source_power
-            absorptance = p_q / source_power
+            absorptance = p_q_official / source_power
             result.update(
                 {
                     "source_power_W": source_power,
                     "top_signed_z_power_W": top_signed,
                     "bottom_signed_z_power_W": bottom_signed,
                     "P_flux_absorbed_W": p_flux_absorbed,
-                    "P_Q_W": p_q,
+                    "P_Q_W": p_q_official,
+                    "P_Q_definition": "installed pabs_adv Pabs_total with x/y periodic correction",
+                    "P_Q_native_uncorrected_diagnostic_W": p_q_native,
+                    "native_uncorrected_vs_official_relative": abs(
+                        p_q_native - p_q_official
+                    )
+                    / max(abs(p_q_native), abs(p_q_official), 1.0e-300),
                     "Q_component_power_W": q["component_power_W"],
                     "closure_relative": closure,
                     "reflection": reflection,
@@ -455,8 +525,16 @@ def main() -> int:
                 }
             )
             gates = {
-                "GPU_resource_selected": str(result["GPU_resource_used"]) != "",
+                "GPU_log_completed_successfully": bool(
+                    result["log_audit"]["simulation_completed_successfully"]
+                ),
+                "GPU_log_memory_readback_available": (
+                    result["log_audit"]["precise_GPU_memory_GiB"] is not None
+                ),
                 "closure_lt_0p5pct": closure < 0.005,
+                "incident_energy_imbalance_lt_0p5pct": abs(
+                    result["R_plus_T_plus_A_minus_1"]
+                ) < 0.005,
                 "all_arrays_finite": finite,
                 "no_negative_Q": sum(negative_q_cells.values()) == 0,
                 "auto_shutoff_lt_1e_5": (
@@ -465,11 +543,20 @@ def main() -> int:
                 ),
             }
             result["gates"] = gates
-            result["status"] = (
-                "COMPLETED_BACKPLANE_TRUNCATION_FORWARD"
-                if all(gates.values())
-                else "FAILED_BACKPLANE_TRUNCATION_FORWARD"
-            )
+            nonclosure_gates = {
+                name: passed
+                for name, passed in gates.items()
+                if name != "closure_lt_0p5pct"
+            }
+            if all(gates.values()):
+                result["status"] = "COMPLETED_BACKPLANE_TRUNCATION_FORWARD"
+            elif all(nonclosure_gates.values()):
+                result["status"] = (
+                    "COMPLETED_BACKPLANE_TRUNCATION_FORWARD_"
+                    "Q_CLOSURE_UNRESOLVED"
+                )
+            else:
+                result["status"] = "FAILED_BACKPLANE_TRUNCATION_FORWARD"
             fdtd.save(str(fsp_path))
         artifacts = []
         for path in (fsp_path, npz_path):

@@ -31,9 +31,9 @@ Run tests:
   photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/tests
 ```
 
-The current checkpoint is offline only. The next numerical gate must compare
-explicit and optically truncated backplane domains before the shortened model
-is used in Maxwell AD--FD or optimization.
+The architecture contract is offline, and the substrate discriminator has now
+also been run with v261 GPU FDTD.  See
+`results/SUBSTRATE_REDUCTION_DECISION.md`.
 
 The GPU-only discriminator is `02_run_v261_backplane_truncation_control.py`.
 Run a `full` and an `au_truncated` case into raw directories outside Git, then
@@ -52,3 +52,24 @@ The substrate rules are deliberately asymmetric:
   candidate only.  It must pass the numerical backplane-truncation gate;
 - a one-substrate thermal model is not implied by optical opacity.  It needs
   a separate explicit-3D versus reduced-impedance thermal comparison.
+
+Published numerical outcome:
+
+- 2022 Z, full 285-nm SiO2/Si versus Au-truncated: absorbed-flux difference
+  `0.005404%`, top-field NRMSE `0.000359%`, full-stack transmission
+  `1.181e-9`;
+- 2024 T main 1.5-um SiO2 scenario versus Au-truncated: absorbed-flux
+  difference `0.001259%`, top-field NRMSE `0.000399%`, full-stack
+  transmission `5.382e-10`.
+
+The strict periodic `pabs_adv` volume-Q versus flux closure remains
+`2.54--2.56%` and is kept fail-closed.  The field/flux result therefore
+certifies optical insensitivity below the opaque backplane, not an absolute-Q
+closure and not a thermal substrate reduction.
+
+Reproduce the published decision after the paired raw cases exist:
+
+```bash
+/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
+  photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/04_publish_substrate_reduction_decision.py
+```

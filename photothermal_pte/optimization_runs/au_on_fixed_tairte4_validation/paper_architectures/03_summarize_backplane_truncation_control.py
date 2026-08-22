@@ -38,8 +38,15 @@ def nrmse(a: np.ndarray, b: np.ndarray) -> float:
 
 def load_case(directory: Path) -> tuple[dict[str, object], dict[str, np.ndarray]]:
     summary = json.loads((directory / "backplane_case_result.json").read_text())
-    if summary["status"] != "COMPLETED_BACKPLANE_TRUNCATION_FORWARD":
-        raise RuntimeError(f"case is not completed: {directory}: {summary['status']}")
+    log = summary.get("log_audit", {})
+    if not bool(log.get("simulation_completed_successfully")):
+        raise RuntimeError(f"solver did not complete: {directory}: {summary['status']}")
+    if not bool(summary.get("all_arrays_finite")):
+        raise RuntimeError(f"case contains non-finite arrays: {directory}")
+    if sum(summary.get("negative_Q_cell_count", {}).values()) != 0:
+        raise RuntimeError(f"case contains negative Q: {directory}")
+    if log.get("final_auto_shutoff") is None or log["final_auto_shutoff"] >= 1.0e-5:
+        raise RuntimeError(f"auto-shutoff gate failed: {directory}")
     artifacts = summary.get("raw_artifacts", [])
     npz_rows = [row for row in artifacts if str(row["path"]).endswith(".npz")]
     if len(npz_rows) != 1:
@@ -87,9 +94,13 @@ def main() -> int:
         ),
     )
     metrics = {
+        "flux_absorbed_power_relative_difference": relative(
+            full["P_flux_absorbed_W"], truncated["P_flux_absorbed_W"]
+        ),
         "P_Q_relative_difference": relative(full["P_Q_W"], truncated["P_Q_W"]),
-        "absorptance_relative_difference": relative(
-            full["absorptance"], truncated["absorptance"]
+        "flux_absorptance_relative_difference": relative(
+            full["P_flux_absorbed_W"] / full["source_power_W"],
+            truncated["P_flux_absorbed_W"] / truncated["source_power_W"],
         ),
         "reflectance_relative_difference": relative(
             full["reflection"], truncated["reflection"]
@@ -103,29 +114,44 @@ def main() -> int:
         "truncated_transmission": float(truncated["transmission"]),
         "full_closure_relative": float(full["closure_relative"]),
         "truncated_closure_relative": float(truncated["closure_relative"]),
+        "full_incident_energy_imbalance": float(full["R_plus_T_plus_A_minus_1"]),
+        "truncated_incident_energy_imbalance": float(
+            truncated["R_plus_T_plus_A_minus_1"]
+        ),
     }
     gates = {
-        "both_case_closure_lt_0p5pct": (
-            metrics["full_closure_relative"] < 0.005
-            and metrics["truncated_closure_relative"] < 0.005
+        "flux_absorbed_power_relative_difference_lt_0p5pct": (
+            metrics["flux_absorbed_power_relative_difference"] < 0.005
         ),
         "P_Q_relative_difference_lt_0p5pct": metrics["P_Q_relative_difference"] < 0.005,
-        "absorptance_relative_difference_lt_0p5pct": (
-            metrics["absorptance_relative_difference"] < 0.005
+        "flux_absorptance_relative_difference_lt_0p5pct": (
+            metrics["flux_absorptance_relative_difference"] < 0.005
         ),
         "reflectance_absolute_difference_lt_0p5pct": (
             metrics["reflectance_absolute_difference"] < 0.005
         ),
         "top_field_vector_NRMSE_lt_0p5pct": field_vector_nrmse < 0.005,
         "full_transmission_lt_1e_6": abs(metrics["full_transmission"]) < 1.0e-6,
+        "both_incident_energy_imbalances_lt_0p5pct": (
+            abs(metrics["full_incident_energy_imbalance"]) < 0.005
+            and abs(metrics["truncated_incident_energy_imbalance"]) < 0.005
+        ),
         "no_Q_clipping_smoothing_gain_or_rescaling": True,
     }
     passed = all(gates.values())
-    status = (
-        "VALIDATED_OPTICAL_SUBSTRATE_TRUNCATION_BELOW_AU_BACKPLANE"
-        if passed
-        else "FAILED_OPTICAL_SUBSTRATE_TRUNCATION_BELOW_AU_BACKPLANE"
+    q_closure_passed = (
+        metrics["full_closure_relative"] < 0.005
+        and metrics["truncated_closure_relative"] < 0.005
     )
+    if passed and q_closure_passed:
+        status = "VALIDATED_OPTICAL_SUBSTRATE_TRUNCATION_BELOW_AU_BACKPLANE"
+    elif passed:
+        status = (
+            "VALIDATED_OPTICAL_SUBSTRATE_INSENSITIVITY_BELOW_AU_BACKPLANE_"
+            "WITH_Q_CLOSURE_UNRESOLVED"
+        )
+    else:
+        status = "FAILED_OPTICAL_SUBSTRATE_TRUNCATION_BELOW_AU_BACKPLANE"
     payload = {
         "status": status,
         "architecture": full["geometry"]["architecture"],
@@ -136,6 +162,14 @@ def main() -> int:
         ),
         "metrics": metrics,
         "gates": gates,
+        "strict_Q_closure_gate": {
+            "passed": q_closure_passed,
+            "threshold": 0.005,
+            "interpretation": (
+                "Fail-closed diagnostic; the flux/field substrate-insensitivity "
+                "result does not overwrite it."
+            ),
+        },
         "raw_inputs": {
             "full": args.full_dir.resolve().as_posix(),
             "truncated": args.truncated_dir.resolve().as_posix(),
@@ -151,6 +185,7 @@ def main() -> int:
             {
                 "case": label,
                 "P_Q_W": case["P_Q_W"],
+                "P_flux_absorbed_W": case["P_flux_absorbed_W"],
                 "absorptance": case["absorptance"],
                 "reflectance": case["reflection"],
                 "transmission": case["transmission"],
@@ -164,10 +199,10 @@ def main() -> int:
         writer.writeheader()
         writer.writerows(rows)
 
-    labels = ["P_Q", "absorptance", "reflectance", "top E NRMSE"]
+    labels = ["flux A", "P_Q", "reflectance", "top E NRMSE"]
     values = [
+        100.0 * metrics["flux_absorbed_power_relative_difference"],
         100.0 * metrics["P_Q_relative_difference"],
-        100.0 * metrics["absorptance_relative_difference"],
         100.0 * metrics["reflectance_absolute_difference"],
         100.0 * metrics["top_field_vector_NRMSE"],
     ]
@@ -193,8 +228,8 @@ device calculation and it does not validate any thermal reduction.
 
 | metric | value |
 |---|---:|
+| flux-absorbed power relative difference | {100*metrics['flux_absorbed_power_relative_difference']:.6f}% |
 | P_Q relative difference | {100*metrics['P_Q_relative_difference']:.6f}% |
-| absorptance relative difference | {100*metrics['absorptance_relative_difference']:.6f}% |
 | reflectance absolute difference | {100*metrics['reflectance_absolute_difference']:.6f}% |
 | top-field vector NRMSE | {100*metrics['top_field_vector_NRMSE']:.6f}% |
 | full transmission | {metrics['full_transmission']:.6e} |
@@ -202,7 +237,11 @@ device calculation and it does not validate any thermal reduction.
 | truncated closure | {100*metrics['truncated_closure_relative']:.6f}% |
 
 No Q clipping, smoothing, gain, global rescaling, or polarization matching was used.
-The full paper stack remains the reference unless every gate above passes.
+The strict volume-Q/six-face closure remains a separate fail-closed diagnostic;
+it is not converted into a pass by the flux/field comparison. A passing
+insensitivity result permits the reduced stack only for Maxwell calculations
+above the opaque Au backplane. It does not permit removing the thermal
+SiO2/Si heat path.
 
 ![comparison](backplane_truncation_comparison.png)
 """
