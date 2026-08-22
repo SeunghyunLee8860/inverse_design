@@ -1,10 +1,23 @@
 {
-  "generation_command": "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/11_publish_meeting_plot_package.py",
+  "generation_commands": [
+    "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/11_publish_meeting_plot_package.py",
+    "/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/12_publish_detailed_meeting_materials.py"
+  ],
   "published_artifacts": [
     {
+      "path": "results_actual_metasurfaces/meeting_plot_package/00_four_case_scalar_summary.png",
+      "size_bytes": 194320,
+      "sha256": "7bb1b65938cebf000467fc2d61955f355018c8dfc3bc37f046c2cba022525523"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/MEETING_GUIDE.md",
+      "size_bytes": 4483,
+      "sha256": "82f8b13cd7473508581010976ed96e07333a3c384f6b0e74b9e604c382c3aeac"
+    },
+    {
       "path": "results_actual_metasurfaces/meeting_plot_package/README.md",
-      "size_bytes": 739,
-      "sha256": "b1ba3e886c43f1c2b8af86ad993dbb90debc595302f12051a1158089ae1cd7f1"
+      "size_bytes": 1185,
+      "sha256": "bb3fd680e779afd6722703cc3768891c0a96d4cf23860b67c517892c528a5669"
     },
     {
       "path": "results_actual_metasurfaces/meeting_plot_package/T_Ea/00_case_overview.png",
@@ -40,6 +53,31 @@
       "path": "results_actual_metasurfaces/meeting_plot_package/T_Ea/06_power_and_material_breakdown.png",
       "size_bytes": 112029,
       "sha256": "acfd53d377106da763c14b1a78504085252cd59b5a1b2b9cc0e91686fd25a481"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Ea/07_setup_xy_xz_yz.png",
+      "size_bytes": 140652,
+      "sha256": "ed81c6f375796f24a64c389568c8fd755cfba6f18181e1c2719bd3052dd53783"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Ea/08_top_monitor_total_field_components.png",
+      "size_bytes": 147846,
+      "sha256": "381aee856dfa3c7afe43661318228e5502aa6d815005af137d808b177bcdd9b5"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Ea/09_Qtotal_xy_xz_yz_sections.png",
+      "size_bytes": 150880,
+      "sha256": "9197b494b575d9ae05b0fcc95f8fd3108e12b3e9fda535468704dba114947dfa"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Ea/10_Q_component_depth_profiles.png",
+      "size_bytes": 112993,
+      "sha256": "39d61643db1cf35e5b74e65466f313fddde891fc8b9d3dc962f9b50e272788f3"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Ea/11_geometric_material_Q_maps.png",
+      "size_bytes": 169411,
+      "sha256": "61e6f275aafe803ce838963536f88f1735a68f60849cad56325adf4c26a0b4ef"
     },
     {
       "path": "results_actual_metasurfaces/meeting_plot_package/T_Ea/case_metrics.json",
@@ -82,9 +120,39 @@
       "sha256": "310fd612c157379f2cc8795492ee101e5c4beaae6ec23549e319664915cff8cb"
     },
     {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Eb/07_setup_xy_xz_yz.png",
+      "size_bytes": 140380,
+      "sha256": "8378a76b9437c14c80d8b4d576dc494673eae8af6a7fbddc2f8301fcf05d8125"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Eb/08_top_monitor_total_field_components.png",
+      "size_bytes": 153884,
+      "sha256": "f06b2239d9eaa80256884fee7a4a60183bdb7005d65916c7c6a72d3bd6932e52"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Eb/09_Qtotal_xy_xz_yz_sections.png",
+      "size_bytes": 153746,
+      "sha256": "d3fdd3f9ad2764d3dfaefbfb9fb14f0d408442be73255e47b5694c3d487b514b"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Eb/10_Q_component_depth_profiles.png",
+      "size_bytes": 123949,
+      "sha256": "a922143db48660b637359b965c7d6c054e65118566e35731c673951ee5a5eb5a"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/T_Eb/11_geometric_material_Q_maps.png",
+      "size_bytes": 185953,
+      "sha256": "5f642480238a25e2d5ced2631eb32568728af350b8dd4a9ccc4e8f1cea8fdee3"
+    },
+    {
       "path": "results_actual_metasurfaces/meeting_plot_package/T_Eb/case_metrics.json",
       "size_bytes": 1041,
       "sha256": "9219eb9a722b8eb4b6150ee295dc3803441de79b2b46a877726f61c320adb96e"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/all_case_metrics.csv",
+      "size_bytes": 1417,
+      "sha256": "96f444d86850678e7319b2beb30cbfbb0a0e35f97a76a72bf294fc1da5263a1a"
     },
     {
       "path": "results_actual_metasurfaces/meeting_plot_package/bare_Ea/00_case_overview.png",
@@ -120,6 +188,31 @@
       "path": "results_actual_metasurfaces/meeting_plot_package/bare_Ea/06_power_and_material_breakdown.png",
       "size_bytes": 113571,
       "sha256": "4e6f4375f6b77d15fd280f4cb54c886b9ce5b9be62ca06cfc8c5344ad7d906e1"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Ea/07_setup_xy_xz_yz.png",
+      "size_bytes": 134465,
+      "sha256": "c04b2f979f099325a530c659edbecf9f5e0f99d6043ae3995b8c2009d1a001d0"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Ea/08_top_monitor_total_field_components.png",
+      "size_bytes": 144667,
+      "sha256": "443e0caf32c9a6d275e7024c4fe25b22fff75fdfc9de25243b2437f9f72c83e8"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Ea/09_Qtotal_xy_xz_yz_sections.png",
+      "size_bytes": 121832,
+      "sha256": "47a912d4d8238b706b094851cc411e30f721b0d722b40be525eb4c6628f4f27f"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Ea/10_Q_component_depth_profiles.png",
+      "size_bytes": 97689,
+      "sha256": "26e8deb18d51482f364f48c9baa667c889ef90b90abb4973197fd61a0a4172b8"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Ea/11_geometric_material_Q_maps.png",
+      "size_bytes": 123431,
+      "sha256": "c7a49e6d44526db644bc932527be5a275ed47cefb95df54b0aa8d0279135e0f5"
     },
     {
       "path": "results_actual_metasurfaces/meeting_plot_package/bare_Ea/case_metrics.json",
@@ -162,14 +255,64 @@
       "sha256": "88d09d1c09d604c7df0998f5037a7bb02ef80bd3a66c18b66af6d19abdd0bdf0"
     },
     {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Eb/07_setup_xy_xz_yz.png",
+      "size_bytes": 134084,
+      "sha256": "e0b19a824b0c033c4996818b562262fc62730eb4b4d7c959434b77e787a92bdc"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Eb/08_top_monitor_total_field_components.png",
+      "size_bytes": 144525,
+      "sha256": "afe0d07163b1c80f9227e34b35b5624afb4037cd2a73f7c30bc3ef5ff9fd4568"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Eb/09_Qtotal_xy_xz_yz_sections.png",
+      "size_bytes": 128805,
+      "sha256": "c204e0b1b957226ff79a4a70449f1d9a0bbefff91102afb082b0f66d67b3cc9d"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Eb/10_Q_component_depth_profiles.png",
+      "size_bytes": 101528,
+      "sha256": "81f624d5bb84f8e4301a2b48b4d4bc4f2a7fe826240604b85e0044b1f8ed0530"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/bare_Eb/11_geometric_material_Q_maps.png",
+      "size_bytes": 114621,
+      "sha256": "b2586964a4287f57caad1fb388aed8a4378cb05d2263a2fe12c142c4a7a32222"
+    },
+    {
       "path": "results_actual_metasurfaces/meeting_plot_package/bare_Eb/case_metrics.json",
       "size_bytes": 1036,
       "sha256": "ce2919b1e04fe927d13a04f8f14ad68c6447acfc53a728cb682fecea47292aa1"
     },
     {
+      "path": "results_actual_metasurfaces/meeting_plot_package/comparisons/01_Ea_T_vs_bare_Qtotal.png",
+      "size_bytes": 133868,
+      "sha256": "ceeeed5ec583889bcc503e20d06cf5fb8bdf94de94862dae9248f4da5b56ac52"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/comparisons/02_Eb_T_vs_bare_Qtotal.png",
+      "size_bytes": 139071,
+      "sha256": "906e9ed27aeed86494495100f68ef77de8e487a5c76c3c5f6b0457c7f93bc31f"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/comparisons/03_T_Eb_vs_Ea_Qtotal.png",
+      "size_bytes": 148925,
+      "sha256": "9a7c919ad2a55a6bf8e62089b9ce7a64bb043cfa64290435f20240cdf110fcab"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/comparisons/04_Ea_T_vs_bare_center_linecuts.png",
+      "size_bytes": 153873,
+      "sha256": "9b679a375e98bae71d874e7401e516052a25e78fc6843ab2cd95f2cd3823a6af"
+    },
+    {
+      "path": "results_actual_metasurfaces/meeting_plot_package/comparisons/05_Eb_T_vs_bare_center_linecuts.png",
+      "size_bytes": 148766,
+      "sha256": "30e3bcea91f60a55008f43950e7cbd348fd5ffe2438b16789f6294651db730cf"
+    },
+    {
       "path": "results_actual_metasurfaces/meeting_plot_package/meeting_plot_package.json",
-      "size_bytes": 2036,
-      "sha256": "c2964febb5e5c1f9a5418223074e018f68fbeabe34cfa0a57edea084889774ea"
+      "size_bytes": 3229,
+      "sha256": "afbbedde2d2dfb4fecb5ce479b6dc37c14760b41fb53f0af512922eba7f4e053"
     }
   ],
   "raw_artifacts_committed": false

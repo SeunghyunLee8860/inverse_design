@@ -101,3 +101,7 @@ comparison with `10_summarize_t2024_top_t_enhancement.py`.
 For presentations, run `11_publish_meeting_plot_package.py`. It creates one
 folder per case with separate structure, Qx, Qy, Qz, conservative common-grid
 Qtotal, power breakdown, overview, and machine-readable metrics.
+
+`12_publish_detailed_meeting_materials.py` adds xy/xz/yz setup and Q sections,
+top-monitor total fields, absorption-depth profiles, geometric material maps,
+T-vs-bare/polarization comparisons, a CSV table, and a meeting Q&A guide.

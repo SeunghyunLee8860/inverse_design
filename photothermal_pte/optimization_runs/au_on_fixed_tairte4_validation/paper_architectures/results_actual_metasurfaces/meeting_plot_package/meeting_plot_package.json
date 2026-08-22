@@ -1,6 +1,7 @@
 {
-  "status": "PUBLISHED_T2024_MEETING_PLOT_PACKAGE",
-  "coordinate_contract": "Lumerical x=TaIrTe4 b, y=TaIrTe4 a; Q components first remapped from their own Yee coordinate before Qtotal",
+  "status": "PUBLISHED_DETAILED_T2024_MEETING_PACKAGE",
+  "scope": "single-wavelength optical forward only; no thermal/PTE/adjoint claim",
+  "coordinate_contract": "Lumerical x=TaIrTe4 b, y=TaIrTe4 a, z=c with epsilon_c=epsilon_b closure",
   "cases": {
     "T_Eb": {
       "folder": "results_actual_metasurfaces/meeting_plot_package/T_Eb",
@@ -12,7 +13,12 @@
         "03_Qy_depth_integrated.png",
         "04_Qz_depth_integrated.png",
         "05_Qtotal_conservative_common_grid.png",
-        "06_power_and_material_breakdown.png"
+        "06_power_and_material_breakdown.png",
+        "07_setup_xy_xz_yz.png",
+        "08_top_monitor_total_field_components.png",
+        "09_Qtotal_xy_xz_yz_sections.png",
+        "10_Q_component_depth_profiles.png",
+        "11_geometric_material_Q_maps.png"
       ]
     },
     "T_Ea": {
@@ -25,7 +31,12 @@
         "03_Qy_depth_integrated.png",
         "04_Qz_depth_integrated.png",
         "05_Qtotal_conservative_common_grid.png",
-        "06_power_and_material_breakdown.png"
+        "06_power_and_material_breakdown.png",
+        "07_setup_xy_xz_yz.png",
+        "08_top_monitor_total_field_components.png",
+        "09_Qtotal_xy_xz_yz_sections.png",
+        "10_Q_component_depth_profiles.png",
+        "11_geometric_material_Q_maps.png"
       ]
     },
     "bare_Eb": {
@@ -38,7 +49,12 @@
         "03_Qy_depth_integrated.png",
         "04_Qz_depth_integrated.png",
         "05_Qtotal_conservative_common_grid.png",
-        "06_power_and_material_breakdown.png"
+        "06_power_and_material_breakdown.png",
+        "07_setup_xy_xz_yz.png",
+        "08_top_monitor_total_field_components.png",
+        "09_Qtotal_xy_xz_yz_sections.png",
+        "10_Q_component_depth_profiles.png",
+        "11_geometric_material_Q_maps.png"
       ]
     },
     "bare_Ea": {
@@ -51,8 +67,20 @@
         "03_Qy_depth_integrated.png",
         "04_Qz_depth_integrated.png",
         "05_Qtotal_conservative_common_grid.png",
-        "06_power_and_material_breakdown.png"
+        "06_power_and_material_breakdown.png",
+        "07_setup_xy_xz_yz.png",
+        "08_top_monitor_total_field_components.png",
+        "09_Qtotal_xy_xz_yz_sections.png",
+        "10_Q_component_depth_profiles.png",
+        "11_geometric_material_Q_maps.png"
       ]
     }
-  }
+  },
+  "comparisons": [
+    "comparisons/01_Ea_T_vs_bare_Qtotal.png",
+    "comparisons/02_Eb_T_vs_bare_Qtotal.png",
+    "comparisons/03_T_Eb_vs_Ea_Qtotal.png",
+    "comparisons/04_Ea_T_vs_bare_center_linecuts.png",
+    "comparisons/05_Eb_T_vs_bare_center_linecuts.png"
+  ]
 }
