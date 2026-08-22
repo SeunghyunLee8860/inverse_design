@@ -82,5 +82,18 @@
     "comparisons/03_T_Eb_vs_Ea_Qtotal.png",
     "comparisons/04_Ea_T_vs_bare_center_linecuts.png",
     "comparisons/05_Eb_T_vs_bare_center_linecuts.png"
-  ]
+  ],
+  "periodic_scope": {
+    "folder": "results_actual_metasurfaces/meeting_plot_package/periodic_canonical",
+    "raw_seam_policy": "raw endpoint arrays preserved; canonical/tiled maps are display-only and never used for power metrics",
+    "figures": [
+      "periodic_canonical/00_periodic_structure_3x3.png",
+      "periodic_canonical/01_T_Ea_periodic_Qtotal.png",
+      "periodic_canonical/02_T_Eb_periodic_Qtotal.png",
+      "periodic_canonical/03_bare_Ea_periodic_Qtotal.png",
+      "periodic_canonical/04_bare_Eb_periodic_Qtotal.png",
+      "periodic_canonical/05_periodic_vs_finite_device_scope.png"
+    ],
+    "scope_document": "PERIODIC_VS_FINITE_SCOPE.md"
+  }
 }

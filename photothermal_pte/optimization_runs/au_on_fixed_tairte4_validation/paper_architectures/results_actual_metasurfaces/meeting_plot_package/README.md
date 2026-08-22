@@ -16,6 +16,10 @@ component-resolved depth profiles, and geometric material/support maps.
 `comparisons/` contains matched T-versus-bare and E||a-versus-E||b figures.
 Use `MEETING_GUIDE.md` for the slide order, exact wording, limitations, and
 anticipated questions. `all_case_metrics.csv` is the four-case numerical table.
+`periodic_canonical/` shows the raw endpoint seam beside a display-only
+canonical cell and 3x3 periodic tiling. `PERIODIC_VS_FINITE_SCOPE.md` explains
+why this optical unit-cell result cannot be used as a finite terminal-PTE
+certificate and defines the separate all-PML finite-device gate.
 
 The package is a single-wavelength optical-forward result. It is not a thermal,
 PTE, adjoint, or optimized-metal result.

@@ -70,18 +70,26 @@ next separate gates.
 
 ## Suggested slide order
 
-1. `00_four_case_scalar_summary.png`: state the conclusion and the strict
+1. `periodic_canonical/00_periodic_structure_3x3.png`: establish that the
+   paper-derived model is an infinite optical array with no physical lateral
+   endpoint.
+2. `periodic_canonical/01_T_Ea_periodic_Qtotal.png`: distinguish the preserved
+   raw Yee endpoint seam from the display-only physical periodic tiling.
+3. `00_four_case_scalar_summary.png`: state the conclusion and the strict
    optical-only scope.
-2. `T_Ea/07_setup_xy_xz_yz.png`: establish the complete E||a simulation
+4. `T_Ea/07_setup_xy_xz_yz.png`: establish the complete E||a simulation
    contract before showing a result.
-3. `T_Ea/00_case_overview.png`: show that all three loss components were
+5. `T_Ea/00_case_overview.png`: show that all three loss components were
    retained and that Qtotal is conservative.
-4. `comparisons/01_Ea_T_vs_bare_Qtotal.png`: explain that the T suppresses,
+6. `comparisons/01_Ea_T_vs_bare_Qtotal.png`: explain that the T suppresses,
    rather than enhances, E||a absorption at this wavelength.
-5. `T_Ea/09_Qtotal_xy_xz_yz_sections.png` and
+7. `T_Ea/09_Qtotal_xy_xz_yz_sections.png` and
    `T_Ea/10_Q_component_depth_profiles.png`: show the volumetric/depth
    evidence behind the scalar comparison.
-6. `comparisons/03_T_Eb_vs_Ea_Qtotal.png`: close with polarization selectivity.
+8. `comparisons/03_T_Eb_vs_Ea_Qtotal.png`: show polarization selectivity.
+9. `periodic_canonical/05_periodic_vs_finite_device_scope.png`: close by
+   stating that finite-terminal PTE requires a separate all-PML Maxwell and
+   finite thermal/electrical device certificate.
 
 Do not call the top-monitor field a pure incident beam, do not call geometric
 material masks an exact conformal material decomposition, and do not claim a

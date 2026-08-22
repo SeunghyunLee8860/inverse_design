@@ -105,3 +105,9 @@ Qtotal, power breakdown, overview, and machine-readable metrics.
 `12_publish_detailed_meeting_materials.py` adds xy/xz/yz setup and Q sections,
 top-monitor total fields, absorption-depth profiles, geometric material maps,
 T-vs-bare/polarization comparisons, a CSV table, and a meeting Q&A guide.
+
+`13_publish_periodic_and_finite_scope_materials.py` preserves the raw Yee
+endpoint seam as a diagnostic while publishing a display-only periodic
+canonical cell and 3x3 tiling. It also separates the paper's periodic optical
+screening problem from the finite all-PML Maxwell plus thermal/electrical PTE
+device that is required for terminal-current inverse design.
