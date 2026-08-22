@@ -42,6 +42,9 @@ from anisotropic_heat_fvm import (  # noqa: E402
 K_AIR_W_MK = 0.026
 K_SIO2_W_MK = 1.38
 K_SI_W_MK = 145.0
+# Room-temperature bulk value used only when an explicit Au terminal layer is
+# requested by a forward-response calculation.
+K_AU_W_MK = 317.0
 # Lumerical x=b, y=a, z=c.
 K_TAIRTE4_XYZ_W_MK = np.asarray((3.8, 14.4, 1.0), dtype=np.float64)
 TAIRTE4_SIO2_INTERFACE_CONDUCTANCE_W_M2K = {
@@ -165,7 +168,14 @@ class ThermalState:
     bottom_tairte4_path_resistance_m2K_W: float
 
 
-def build_state(rho_nodal: np.ndarray, *, gray_exponent: float = 1.0) -> ThermalState:
+def build_state(
+    rho_nodal: np.ndarray,
+    *,
+    gray_exponent: float = 1.0,
+    au_contact_axis: str | None = None,
+    au_thickness_m: float = 50.0e-9,
+    au_tairte4_interface_conductance_W_m2K: float = 19.89e6,
+) -> ThermalState:
     CONTRACT.validate()
     rho_nodal = np.asarray(rho_nodal, dtype=np.float64)
     if rho_nodal.shape != CONTRACT.design_node_shape:
@@ -174,6 +184,13 @@ def build_state(rho_nodal: np.ndarray, *, gray_exponent: float = 1.0) -> Thermal
         raise ValueError("density must remain in [0,1]")
     if gray_exponent <= 0.0:
         raise ValueError("gray exponent must be positive")
+    if au_contact_axis not in (None, "x", "y"):
+        raise ValueError("au_contact_axis must be None, 'x', or 'y'")
+    if au_contact_axis is not None:
+        if not np.isclose(au_thickness_m, 50.0e-9, rtol=0.0, atol=1.0e-18):
+            raise ValueError("explicit Au model requires the paper's 50 nm thickness")
+        if au_tairte4_interface_conductance_W_m2K <= 0.0:
+            raise ValueError("Au/TaIrTe4 interface conductance must be positive")
     rho_cell = nodal_to_cell(rho_nodal)
     phi_cell = rho_cell**gray_exponent
     # d(rho**p)/d(rho) is exactly one at rho=0 when p=1.  The former
@@ -204,15 +221,35 @@ def build_state(rho_nodal: np.ndarray, *, gray_exponent: float = 1.0) -> Thermal
     )
     fixed_flake = flake_z & flake_xy & ~design_xy
     design_flake = flake_z & design_xy
-    air = ~(si | sio2 | fixed_flake | design_flake)
+    if au_contact_axis == "x":
+        contact_xy = (
+            (np.abs(xx) < 12.0e-6)
+            & (np.abs(yy) < 12.0e-6)
+            & (np.abs(xx) >= 10.0e-6)
+        )
+    elif au_contact_axis == "y":
+        contact_xy = (
+            (np.abs(xx) < 12.0e-6)
+            & (np.abs(yy) < 12.0e-6)
+            & (np.abs(yy) >= 10.0e-6)
+        )
+    else:
+        contact_xy = np.zeros_like(xx, dtype=bool)
+    au = (
+        contact_xy
+        & (zz >= 0.0)
+        & (zz < au_thickness_m)
+    )
+    air = ~(si | sio2 | fixed_flake | design_flake | au)
     masks = {
         "Si": si,
         "SiO2": sio2,
         "air": air,
         "fixed_TaIrTe4": fixed_flake,
         "design_effective": design_flake,
+        "Au_electrodes": au,
         "flake_support": flake_z & flake_xy,
-        "physical_absorbing_support": si | sio2 | (flake_z & flake_xy),
+        "physical_absorbing_support": si | sio2 | (flake_z & flake_xy) | au,
     }
     material = np.zeros(shape, dtype=np.uint8)
     material[air] = 1
@@ -220,6 +257,7 @@ def build_state(rho_nodal: np.ndarray, *, gray_exponent: float = 1.0) -> Thermal
     material[sio2] = 3
     material[fixed_flake] = 4
     material[design_flake] = 5
+    material[au] = 6
 
     x_design = np.flatnonzero((centers[0] >= x_bounds[0]) & (centers[0] < x_bounds[1]))
     y_design = np.flatnonzero((centers[1] >= y_bounds[0]) & (centers[1] < y_bounds[1]))
@@ -231,6 +269,7 @@ def build_state(rho_nodal: np.ndarray, *, gray_exponent: float = 1.0) -> Thermal
     kappa[si] = K_SI_W_MK
     kappa[sio2] = K_SIO2_W_MK
     kappa[fixed_flake] = K_TAIRTE4_XYZ_W_MK
+    kappa[au] = K_AU_W_MK
     effective = K_AIR_W_MK + phi_cell[..., None] * (
         K_TAIRTE4_XYZ_W_MK[None, None, :] - K_AIR_W_MK
     )
@@ -275,6 +314,30 @@ def build_state(rho_nodal: np.ndarray, *, gray_exponent: float = 1.0) -> Thermal
     if np.any(equivalent < -1e-15):
         raise RuntimeError("bottom gray parallel-path relaxation produced negative resistance")
     rz[np.ix_(x_flake, y_flake, [bottom])] = np.maximum(equivalent, 0.0)[:, :, None]
+
+    if au_contact_axis is not None:
+        top_flake_face = _face_before(edges[2], 0.0)
+        x_contact = np.flatnonzero(
+            (centers[0] >= -12.0e-6)
+            & (centers[0] < 12.0e-6)
+            & (
+                (np.abs(centers[0]) >= 10.0e-6)
+                if au_contact_axis == "x"
+                else np.ones_like(centers[0], dtype=bool)
+            )
+        )
+        y_contact = np.flatnonzero(
+            (centers[1] >= -12.0e-6)
+            & (centers[1] < 12.0e-6)
+            & (
+                (np.abs(centers[1]) >= 10.0e-6)
+                if au_contact_axis == "y"
+                else np.ones_like(centers[1], dtype=bool)
+            )
+        )
+        rz[np.ix_(x_contact, y_contact, [top_flake_face])] = (
+            1.0 / au_tairte4_interface_conductance_W_m2K
+        )
 
     system = assemble_steady_diagonal_kappa(
         x_edges_m=edges[0],

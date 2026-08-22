@@ -1,0 +1,2098 @@
+{
+  "schema": "exact-binary-fixed-flake-au-beam-response-manifest-v1",
+  "result_schema": "exact-binary-fixed-flake-au-beam-response-v6",
+  "generated_at_utc": "2026-08-21T23:47:38.504432+00:00",
+  "result_root": "/home/seunghyun/tairte4/artifacts/exact_binary_beam_response_with_au/production",
+  "flake_expanded_for_scan": false,
+  "optimization_rerun": false,
+  "sweep": {
+    "waist_um": [
+      4.25,
+      6.375,
+      8.5,
+      10.625,
+      12.75
+    ],
+    "position_x_y_um": [
+      -10.0,
+      -5.0,
+      0.0,
+      5.0,
+      10.0
+    ],
+    "response_count_per_run": 29
+  },
+  "material_references": {
+    "Au_optical": {
+      "dataset": "Ordal et al. 1987 tabulated Au optical constants",
+      "doi": "https://doi.org/10.1364/AO.26.000744",
+      "data_url": "https://raw.githubusercontent.com/polyanskiy/refractiveindex.info-database/main/database/data/main/Au/nk/Ordal.yml",
+      "wavelength_um": 10.0,
+      "n": 12.1,
+      "k": 69.2
+    },
+    "Au_thermal": {
+      "dataset": "NIST sample-mounting reference table",
+      "url": "https://www.nist.gov/ncnr/neutron-instruments/sample-environment/sample-mounting/reference-tables",
+      "temperature_K": 300.0,
+      "thermal_conductivity_W_mK": 317.0
+    },
+    "Au_interface_surrogate": {
+      "measurement": "as-deposited Au/monolayer-MoS2/sapphire total conductance",
+      "doi": "https://doi.org/10.1002/admi.202000364",
+      "reported_W_m2K": 19890000.0,
+      "use_here": "explicit Au/TaIrTe4 surrogate because no direct Au/TaIrTe4 thermal boundary-conductance measurement was found"
+    }
+  },
+  "runs": {
+    "44": {
+      "result": {
+        "path": "/home/seunghyun/tairte4/artifacts/exact_binary_beam_response_with_au/production/run044/beam_response_result.json",
+        "sha256": "f25678cb5ab8fbdfc821c59cf4f3e6d2581a37ab29ac0a3c8b4c1bf875ca4b6a"
+      },
+      "density": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run044_exact_500nm_cleanup_20260811/void_first_exact_binary_candidate.npz",
+        "sha256": "9e309d47d52ea1d5784bcae9623343b877840cd74684efd27f46490aaa75091f"
+      },
+      "base_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/production_input_uniform_rho0p5_Ea_forward_v1/tairte4_flake_forward_Ea.fsp",
+        "sha256": "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83"
+      },
+      "response_count": 29,
+      "all_gates_passed": true,
+      "geometry": {
+        "flake_bounds_m": {
+          "x": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -1e-07,
+            0.0
+          ]
+        },
+        "design_bounds_readback_m": {
+          "x": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "y": [
+            -1e-05,
+            1e-05
+          ],
+          "z": [
+            -1e-07,
+            0.0
+          ]
+        },
+        "fixed_TaIrTe4_bounds_readback_m": {
+          "run010_fixed_TaIrTe4_frame_bottom_contact": {
+            "x": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "y": [
+              -1.2e-05,
+              -9.999999999999999e-06
+            ],
+            "z": [
+              -1e-07,
+              0.0
+            ]
+          },
+          "run010_fixed_TaIrTe4_frame_top_contact": {
+            "x": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "y": [
+              1.0000000000000003e-05,
+              1.2e-05
+            ],
+            "z": [
+              -1e-07,
+              0.0
+            ]
+          }
+        },
+        "Au_bounds_m": [
+          {
+            "x": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "y": [
+              -1.2e-05,
+              -1e-05
+            ],
+            "z": [
+              0.0,
+              5e-08
+            ]
+          },
+          {
+            "x": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "y": [
+              1e-05,
+              1.2e-05
+            ],
+            "z": [
+              0.0,
+              5e-08
+            ]
+          }
+        ],
+        "flake_geometry_unchanged": true,
+        "design_geometry_unchanged": true,
+        "Au_entirely_inside_original_flake_xy": true,
+        "optical_domain_span_m": 4.8e-05,
+        "response_control_volume": {
+          "requested_bounds_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "pabs_readback_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "field_readback_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "flux_readback_m": {
+            "run010_flux_x_min": {
+              "x": [
+                -1.4e-05,
+                -1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_x_max": {
+              "x": [
+                1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_y_min": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                -1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_y_max": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_z_min": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                -1.25e-06
+              ]
+            },
+            "run010_flux_z_max": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                1.25e-06,
+                1.25e-06
+              ]
+            }
+          }
+        },
+        "illuminated_stack_mesh_bounds_m": {
+          "x": [
+            -1.4e-05,
+            1.4e-05
+          ],
+          "y": [
+            -1.4e-05,
+            1.4e-05
+          ],
+          "z": [
+            -5e-07,
+            1e-07
+          ]
+        },
+        "flake_expanded_for_scan": false
+      }
+    },
+    "45": {
+      "result": {
+        "path": "/home/seunghyun/tairte4/artifacts/exact_binary_beam_response_with_au/production/run045/beam_response_result.json",
+        "sha256": "3ec68ad7f9ef96557fa603c5e4538dcc8067032e13575a87dbb09e5d3127ad2b"
+      },
+      "density": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run045_exact_500nm_cleanup_20260811/void_first_exact_binary_candidate.npz",
+        "sha256": "2d87cd272680d061f19278d54e1b5d20efa5bc3465359c76e51fef16f4fca592"
+      },
+      "base_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/production_input_uniform_rho0p5_Ea_forward_v1/tairte4_flake_forward_Ea.fsp",
+        "sha256": "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83"
+      },
+      "response_count": 29,
+      "all_gates_passed": true,
+      "geometry": {
+        "flake_bounds_m": {
+          "x": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -1e-07,
+            0.0
+          ]
+        },
+        "design_bounds_readback_m": {
+          "x": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "y": [
+            -1e-05,
+            1e-05
+          ],
+          "z": [
+            -1e-07,
+            0.0
+          ]
+        },
+        "fixed_TaIrTe4_bounds_readback_m": {
+          "run010_fixed_TaIrTe4_frame_bottom_contact": {
+            "x": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "y": [
+              -1.2e-05,
+              -9.999999999999999e-06
+            ],
+            "z": [
+              -1e-07,
+              0.0
+            ]
+          },
+          "run010_fixed_TaIrTe4_frame_top_contact": {
+            "x": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "y": [
+              1.0000000000000003e-05,
+              1.2e-05
+            ],
+            "z": [
+              -1e-07,
+              0.0
+            ]
+          }
+        },
+        "Au_bounds_m": [
+          {
+            "x": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "y": [
+              -1.2e-05,
+              -1e-05
+            ],
+            "z": [
+              0.0,
+              5e-08
+            ]
+          },
+          {
+            "x": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "y": [
+              1e-05,
+              1.2e-05
+            ],
+            "z": [
+              0.0,
+              5e-08
+            ]
+          }
+        ],
+        "flake_geometry_unchanged": true,
+        "design_geometry_unchanged": true,
+        "Au_entirely_inside_original_flake_xy": true,
+        "optical_domain_span_m": 4.8e-05,
+        "response_control_volume": {
+          "requested_bounds_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "pabs_readback_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "field_readback_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "flux_readback_m": {
+            "run010_flux_x_min": {
+              "x": [
+                -1.4e-05,
+                -1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_x_max": {
+              "x": [
+                1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_y_min": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                -1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_y_max": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_z_min": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                -1.25e-06
+              ]
+            },
+            "run010_flux_z_max": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                1.25e-06,
+                1.25e-06
+              ]
+            }
+          }
+        },
+        "illuminated_stack_mesh_bounds_m": {
+          "x": [
+            -1.4e-05,
+            1.4e-05
+          ],
+          "y": [
+            -1.4e-05,
+            1.4e-05
+          ],
+          "z": [
+            -5e-07,
+            1e-07
+          ]
+        },
+        "flake_expanded_for_scan": false
+      }
+    },
+    "47": {
+      "result": {
+        "path": "/home/seunghyun/tairte4/artifacts/exact_binary_beam_response_with_au/production/run047/beam_response_result.json",
+        "sha256": "2b2c5b4ddb4dad3f7e15fe1c905435bc58f3a04391d5e6058d7d0574ce822b43"
+      },
+      "density": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run047_Ea_fresh_current_max/forced_exact_500nm_cleanup_lr_contract_v2/void_first_exact_binary_candidate.npz",
+        "sha256": "b202117579b22d3113b5a649e4f56a0f4479016c70587b8ebf61109f1b0a6ef7"
+      },
+      "base_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/uniform_rho0p5_Ea_forward_queued/attempt_0002/tairte4_flake_forward_Ea.fsp",
+        "sha256": "6274627f8e84cc61a8b5925472fc131041e7662b06d77141f3b52353d3578aa6"
+      },
+      "response_count": 29,
+      "all_gates_passed": true,
+      "geometry": {
+        "flake_bounds_m": {
+          "x": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -1e-07,
+            0.0
+          ]
+        },
+        "design_bounds_readback_m": {
+          "x": [
+            -1e-05,
+            1e-05
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -1e-07,
+            0.0
+          ]
+        },
+        "fixed_TaIrTe4_bounds_readback_m": {
+          "run010_fixed_TaIrTe4_frame_left_contact": {
+            "x": [
+              -1.2e-05,
+              -9.999999999999999e-06
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              -1e-07,
+              0.0
+            ]
+          },
+          "run010_fixed_TaIrTe4_frame_right_contact": {
+            "x": [
+              1.0000000000000003e-05,
+              1.2e-05
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              -1e-07,
+              0.0
+            ]
+          }
+        },
+        "Au_bounds_m": [
+          {
+            "x": [
+              -1.2e-05,
+              -1e-05
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              0.0,
+              5e-08
+            ]
+          },
+          {
+            "x": [
+              1e-05,
+              1.2e-05
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              0.0,
+              5e-08
+            ]
+          }
+        ],
+        "flake_geometry_unchanged": true,
+        "design_geometry_unchanged": true,
+        "Au_entirely_inside_original_flake_xy": true,
+        "optical_domain_span_m": 4.8e-05,
+        "response_control_volume": {
+          "requested_bounds_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "pabs_readback_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "field_readback_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "flux_readback_m": {
+            "run010_flux_x_min": {
+              "x": [
+                -1.4e-05,
+                -1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_x_max": {
+              "x": [
+                1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_y_min": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                -1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_y_max": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_z_min": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                -1.25e-06
+              ]
+            },
+            "run010_flux_z_max": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                1.25e-06,
+                1.25e-06
+              ]
+            }
+          }
+        },
+        "illuminated_stack_mesh_bounds_m": {
+          "x": [
+            -1.4e-05,
+            1.4e-05
+          ],
+          "y": [
+            -1.4e-05,
+            1.4e-05
+          ],
+          "z": [
+            -5e-07,
+            1e-07
+          ]
+        },
+        "flake_expanded_for_scan": false
+      }
+    },
+    "48": {
+      "result": {
+        "path": "/home/seunghyun/tairte4/artifacts/exact_binary_beam_response_with_au/production/run048/beam_response_result.json",
+        "sha256": "1fcc7a441f83af14b820fea99f603d3d4ddd3562417b897f677590e284f9fb27"
+      },
+      "density": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run048_Eb_fresh_current_max/forced_exact_500nm_cleanup/solid_first_density.npz",
+        "sha256": "b07dafd6516dc858ed99489eefe053fc42441beb67eb32f506d79067ab6ad85c"
+      },
+      "base_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/uniform_rho0p5_Ea_forward_queued/attempt_0002/tairte4_flake_forward_Ea.fsp",
+        "sha256": "6274627f8e84cc61a8b5925472fc131041e7662b06d77141f3b52353d3578aa6"
+      },
+      "response_count": 29,
+      "all_gates_passed": true,
+      "geometry": {
+        "flake_bounds_m": {
+          "x": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -1e-07,
+            0.0
+          ]
+        },
+        "design_bounds_readback_m": {
+          "x": [
+            -1e-05,
+            1e-05
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -1e-07,
+            0.0
+          ]
+        },
+        "fixed_TaIrTe4_bounds_readback_m": {
+          "run010_fixed_TaIrTe4_frame_left_contact": {
+            "x": [
+              -1.2e-05,
+              -9.999999999999999e-06
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              -1e-07,
+              0.0
+            ]
+          },
+          "run010_fixed_TaIrTe4_frame_right_contact": {
+            "x": [
+              1.0000000000000003e-05,
+              1.2e-05
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              -1e-07,
+              0.0
+            ]
+          }
+        },
+        "Au_bounds_m": [
+          {
+            "x": [
+              -1.2e-05,
+              -1e-05
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              0.0,
+              5e-08
+            ]
+          },
+          {
+            "x": [
+              1e-05,
+              1.2e-05
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              0.0,
+              5e-08
+            ]
+          }
+        ],
+        "flake_geometry_unchanged": true,
+        "design_geometry_unchanged": true,
+        "Au_entirely_inside_original_flake_xy": true,
+        "optical_domain_span_m": 4.8e-05,
+        "response_control_volume": {
+          "requested_bounds_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "pabs_readback_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "field_readback_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "flux_readback_m": {
+            "run010_flux_x_min": {
+              "x": [
+                -1.4e-05,
+                -1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_x_max": {
+              "x": [
+                1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_y_min": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                -1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_y_max": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_z_min": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                -1.25e-06
+              ]
+            },
+            "run010_flux_z_max": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                1.25e-06,
+                1.25e-06
+              ]
+            }
+          }
+        },
+        "illuminated_stack_mesh_bounds_m": {
+          "x": [
+            -1.4e-05,
+            1.4e-05
+          ],
+          "y": [
+            -1.4e-05,
+            1.4e-05
+          ],
+          "z": [
+            -5e-07,
+            1e-07
+          ]
+        },
+        "flake_expanded_for_scan": false
+      }
+    },
+    "55": {
+      "result": {
+        "path": "/home/seunghyun/tairte4/artifacts/exact_binary_beam_response_with_au/production/run055/beam_response_result.json",
+        "sha256": "66a7b03d12e4cb55d3863587ddb9dffbef5cc8deb9dfdbfe7abc2b59ca21796e"
+      },
+      "density": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run055_bounded_official_dfm_exact_repair_Ea_evaporated_v1/exact_attempt_beta128/exact_candidate_01.npz",
+        "sha256": "0980cc4c23f0ccf68bc971912536dec9f38d1314a1a4671d1c2c5d0b3def2fc5"
+      },
+      "base_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/production_input_uniform_rho0p5_Ea_forward_v1/tairte4_flake_forward_Ea.fsp",
+        "sha256": "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83"
+      },
+      "response_count": 29,
+      "all_gates_passed": true,
+      "geometry": {
+        "flake_bounds_m": {
+          "x": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -1e-07,
+            0.0
+          ]
+        },
+        "design_bounds_readback_m": {
+          "x": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "y": [
+            -1e-05,
+            1e-05
+          ],
+          "z": [
+            -1e-07,
+            0.0
+          ]
+        },
+        "fixed_TaIrTe4_bounds_readback_m": {
+          "run010_fixed_TaIrTe4_frame_bottom_contact": {
+            "x": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "y": [
+              -1.2e-05,
+              -9.999999999999999e-06
+            ],
+            "z": [
+              -1e-07,
+              0.0
+            ]
+          },
+          "run010_fixed_TaIrTe4_frame_top_contact": {
+            "x": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "y": [
+              1.0000000000000003e-05,
+              1.2e-05
+            ],
+            "z": [
+              -1e-07,
+              0.0
+            ]
+          }
+        },
+        "Au_bounds_m": [
+          {
+            "x": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "y": [
+              -1.2e-05,
+              -1e-05
+            ],
+            "z": [
+              0.0,
+              5e-08
+            ]
+          },
+          {
+            "x": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "y": [
+              1e-05,
+              1.2e-05
+            ],
+            "z": [
+              0.0,
+              5e-08
+            ]
+          }
+        ],
+        "flake_geometry_unchanged": true,
+        "design_geometry_unchanged": true,
+        "Au_entirely_inside_original_flake_xy": true,
+        "optical_domain_span_m": 4.8e-05,
+        "response_control_volume": {
+          "requested_bounds_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "pabs_readback_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "field_readback_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "flux_readback_m": {
+            "run010_flux_x_min": {
+              "x": [
+                -1.4e-05,
+                -1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_x_max": {
+              "x": [
+                1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_y_min": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                -1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_y_max": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_z_min": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                -1.25e-06
+              ]
+            },
+            "run010_flux_z_max": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                1.25e-06,
+                1.25e-06
+              ]
+            }
+          }
+        },
+        "illuminated_stack_mesh_bounds_m": {
+          "x": [
+            -1.4e-05,
+            1.4e-05
+          ],
+          "y": [
+            -1.4e-05,
+            1.4e-05
+          ],
+          "z": [
+            -5e-07,
+            1e-07
+          ]
+        },
+        "flake_expanded_for_scan": false
+      }
+    },
+    "56": {
+      "result": {
+        "path": "/home/seunghyun/tairte4/artifacts/exact_binary_beam_response_with_au/production/run056/beam_response_result.json",
+        "sha256": "56f90ae87dd3a8d8a2a27233c1330b68734ea0feb52967ffe1723e32d1b496be"
+      },
+      "density": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run056_bounded_official_dfm_exact_repair_Eb_evaporated_v1/exact_attempt_beta128/exact_candidate_02.npz",
+        "sha256": "dfbff9756260204dd164786feb89bea806d0614074ff56aaf5566b4050ae87d9"
+      },
+      "base_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/production_input_uniform_rho0p5_Ea_forward_v1/tairte4_flake_forward_Ea.fsp",
+        "sha256": "454fa83bc918b4db0e25d28f7debf23de38977038bd716c8d7dc539d6b3e3d83"
+      },
+      "response_count": 29,
+      "all_gates_passed": true,
+      "geometry": {
+        "flake_bounds_m": {
+          "x": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -1e-07,
+            0.0
+          ]
+        },
+        "design_bounds_readback_m": {
+          "x": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "y": [
+            -1e-05,
+            1e-05
+          ],
+          "z": [
+            -1e-07,
+            0.0
+          ]
+        },
+        "fixed_TaIrTe4_bounds_readback_m": {
+          "run010_fixed_TaIrTe4_frame_bottom_contact": {
+            "x": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "y": [
+              -1.2e-05,
+              -9.999999999999999e-06
+            ],
+            "z": [
+              -1e-07,
+              0.0
+            ]
+          },
+          "run010_fixed_TaIrTe4_frame_top_contact": {
+            "x": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "y": [
+              1.0000000000000003e-05,
+              1.2e-05
+            ],
+            "z": [
+              -1e-07,
+              0.0
+            ]
+          }
+        },
+        "Au_bounds_m": [
+          {
+            "x": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "y": [
+              -1.2e-05,
+              -1e-05
+            ],
+            "z": [
+              0.0,
+              5e-08
+            ]
+          },
+          {
+            "x": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "y": [
+              1e-05,
+              1.2e-05
+            ],
+            "z": [
+              0.0,
+              5e-08
+            ]
+          }
+        ],
+        "flake_geometry_unchanged": true,
+        "design_geometry_unchanged": true,
+        "Au_entirely_inside_original_flake_xy": true,
+        "optical_domain_span_m": 4.8e-05,
+        "response_control_volume": {
+          "requested_bounds_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "pabs_readback_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "field_readback_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "flux_readback_m": {
+            "run010_flux_x_min": {
+              "x": [
+                -1.4e-05,
+                -1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_x_max": {
+              "x": [
+                1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_y_min": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                -1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_y_max": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_z_min": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                -1.25e-06
+              ]
+            },
+            "run010_flux_z_max": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                1.25e-06,
+                1.25e-06
+              ]
+            }
+          }
+        },
+        "illuminated_stack_mesh_bounds_m": {
+          "x": [
+            -1.4e-05,
+            1.4e-05
+          ],
+          "y": [
+            -1.4e-05,
+            1.4e-05
+          ],
+          "z": [
+            -5e-07,
+            1e-07
+          ]
+        },
+        "flake_expanded_for_scan": false
+      }
+    },
+    "57": {
+      "result": {
+        "path": "/home/seunghyun/tairte4/artifacts/exact_binary_beam_response_with_au/production/run057/beam_response_result.json",
+        "sha256": "9071db622f3d9af68dfa317c677b193655d5310678fcbde4ff935e627dc711fe"
+      },
+      "density": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run057_bounded_official_dfm_exact_repair_Ea_evaporated_v1/exact_attempt_beta128/exact_candidate_03.npz",
+        "sha256": "649a993ba043f69489368117dce1fa7d9851ba9f337474dc6e9ed7a52d15aed6"
+      },
+      "base_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/uniform_rho0p5_Ea_forward_queued/attempt_0002/tairte4_flake_forward_Ea.fsp",
+        "sha256": "6274627f8e84cc61a8b5925472fc131041e7662b06d77141f3b52353d3578aa6"
+      },
+      "response_count": 29,
+      "all_gates_passed": true,
+      "geometry": {
+        "flake_bounds_m": {
+          "x": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -1e-07,
+            0.0
+          ]
+        },
+        "design_bounds_readback_m": {
+          "x": [
+            -1e-05,
+            1e-05
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -1e-07,
+            0.0
+          ]
+        },
+        "fixed_TaIrTe4_bounds_readback_m": {
+          "run010_fixed_TaIrTe4_frame_left_contact": {
+            "x": [
+              -1.2e-05,
+              -9.999999999999999e-06
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              -1e-07,
+              0.0
+            ]
+          },
+          "run010_fixed_TaIrTe4_frame_right_contact": {
+            "x": [
+              1.0000000000000003e-05,
+              1.2e-05
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              -1e-07,
+              0.0
+            ]
+          }
+        },
+        "Au_bounds_m": [
+          {
+            "x": [
+              -1.2e-05,
+              -1e-05
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              0.0,
+              5e-08
+            ]
+          },
+          {
+            "x": [
+              1e-05,
+              1.2e-05
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              0.0,
+              5e-08
+            ]
+          }
+        ],
+        "flake_geometry_unchanged": true,
+        "design_geometry_unchanged": true,
+        "Au_entirely_inside_original_flake_xy": true,
+        "optical_domain_span_m": 4.8e-05,
+        "response_control_volume": {
+          "requested_bounds_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "pabs_readback_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "field_readback_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "flux_readback_m": {
+            "run010_flux_x_min": {
+              "x": [
+                -1.4e-05,
+                -1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_x_max": {
+              "x": [
+                1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_y_min": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                -1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_y_max": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_z_min": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                -1.25e-06
+              ]
+            },
+            "run010_flux_z_max": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                1.25e-06,
+                1.25e-06
+              ]
+            }
+          }
+        },
+        "illuminated_stack_mesh_bounds_m": {
+          "x": [
+            -1.4e-05,
+            1.4e-05
+          ],
+          "y": [
+            -1.4e-05,
+            1.4e-05
+          ],
+          "z": [
+            -5e-07,
+            1e-07
+          ]
+        },
+        "flake_expanded_for_scan": false
+      }
+    },
+    "58": {
+      "result": {
+        "path": "/home/seunghyun/tairte4/artifacts/exact_binary_beam_response_with_au/production/run058/beam_response_result.json",
+        "sha256": "c3299388401f90aa21b1e5fad6cf34f4377e97e1b4e3b05b41f712d21f42a683"
+      },
+      "density": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/run058_bounded_official_dfm_exact_repair_Eb_evaporated_v1/exact_attempt_beta128/exact_candidate_00.npz",
+        "sha256": "af397a7cd50d6b7da1f88b44659d739072267b1b60b55d75e7f156d25db7b884"
+      },
+      "base_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_left_right_contact_anchored/uniform_rho0p5_Ea_forward_queued/attempt_0002/tairte4_flake_forward_Ea.fsp",
+        "sha256": "6274627f8e84cc61a8b5925472fc131041e7662b06d77141f3b52353d3578aa6"
+      },
+      "response_count": 29,
+      "all_gates_passed": true,
+      "geometry": {
+        "flake_bounds_m": {
+          "x": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -1e-07,
+            0.0
+          ]
+        },
+        "design_bounds_readback_m": {
+          "x": [
+            -1e-05,
+            1e-05
+          ],
+          "y": [
+            -1.2e-05,
+            1.2e-05
+          ],
+          "z": [
+            -1e-07,
+            0.0
+          ]
+        },
+        "fixed_TaIrTe4_bounds_readback_m": {
+          "run010_fixed_TaIrTe4_frame_left_contact": {
+            "x": [
+              -1.2e-05,
+              -9.999999999999999e-06
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              -1e-07,
+              0.0
+            ]
+          },
+          "run010_fixed_TaIrTe4_frame_right_contact": {
+            "x": [
+              1.0000000000000003e-05,
+              1.2e-05
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              -1e-07,
+              0.0
+            ]
+          }
+        },
+        "Au_bounds_m": [
+          {
+            "x": [
+              -1.2e-05,
+              -1e-05
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              0.0,
+              5e-08
+            ]
+          },
+          {
+            "x": [
+              1e-05,
+              1.2e-05
+            ],
+            "y": [
+              -1.2e-05,
+              1.2e-05
+            ],
+            "z": [
+              0.0,
+              5e-08
+            ]
+          }
+        ],
+        "flake_geometry_unchanged": true,
+        "design_geometry_unchanged": true,
+        "Au_entirely_inside_original_flake_xy": true,
+        "optical_domain_span_m": 4.8e-05,
+        "response_control_volume": {
+          "requested_bounds_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "pabs_readback_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "field_readback_m": {
+            "x": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "y": [
+              -1.4e-05,
+              1.4e-05
+            ],
+            "z": [
+              -1.25e-06,
+              1.25e-06
+            ]
+          },
+          "flux_readback_m": {
+            "run010_flux_x_min": {
+              "x": [
+                -1.4e-05,
+                -1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_x_max": {
+              "x": [
+                1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_y_min": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                -1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_y_max": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                1.25e-06
+              ]
+            },
+            "run010_flux_z_min": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                -1.25e-06,
+                -1.25e-06
+              ]
+            },
+            "run010_flux_z_max": {
+              "x": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "y": [
+                -1.4e-05,
+                1.4e-05
+              ],
+              "z": [
+                1.25e-06,
+                1.25e-06
+              ]
+            }
+          }
+        },
+        "illuminated_stack_mesh_bounds_m": {
+          "x": [
+            -1.4e-05,
+            1.4e-05
+          ],
+          "y": [
+            -1.4e-05,
+            1.4e-05
+          ],
+          "z": [
+            -5e-07,
+            1e-07
+          ]
+        },
+        "flake_expanded_for_scan": false
+      }
+    }
+  },
+  "products": {
+    "README.md": "ea9abf130959f21dd591b146e6d2d9457721a897df19b555f6d2daeb8b39d986",
+    "beam_response_all.csv": "c1f95dae93d005480de42f4efa983ea334d5bd8e19a490ab84e9bf3a260cff8d",
+    "beam_response_summary.json": "06c84b496174b3fb8688ebfebe9291eb2dd7ea5c68fb617b0a7e0f22e17e388e",
+    "waist_response_matrix.png": "5652046dee4955714b90d9223675a8649b62432e7540d182e6c47709c4d3ea7c",
+    "position_response_matrix.png": "724b749a953b7cc51d8acbd8b4d28bf6ae1b2db55394d7b0fc4430ae1561421b",
+    "position_response_normalized_matrix.png": "a366d94623becbc40f016f0431b8816b93556b42c6330ae91cf7d9f73ca4e556",
+    "fixed_geometry_and_au.png": "afcf32281897e01f63601b4c5bd2cf1b2ecd056ffadd2d43e36af3445b2b5359"
+  }
+}

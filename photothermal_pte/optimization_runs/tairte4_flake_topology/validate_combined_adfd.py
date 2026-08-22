@@ -152,7 +152,7 @@ def load_operator(directory: Path) -> tuple[SparseYeeMaterialJacobian, np.ndarra
     }
 
 
-def open_fdtd(gpu_device: str):
+def open_fdtd(gpu_device: str, *, fdtd_threads: int = 8):
     wrapper = material_control.load_source_wrapper()
     audit = wrapper.source_audit
     optical.configure_source(audit)
@@ -161,7 +161,7 @@ def open_fdtd(gpu_device: str):
     os.environ["LUMERICAL_PYTHONPATH"] = str(audit.APPROVED_API)
     os.environ["LUMERICAL_SESSION_GPU_DEVICE"] = gpu_device
     os.environ["CL_GPU_DEVICE"] = gpu_device
-    os.environ["FDTD_THREADS"] = "8"
+    os.environ["FDTD_THREADS"] = str(fdtd_threads)
     os.environ["PATH"] = f"{audit.APPROVED_ROOT / 'bin'}:{os.environ.get('PATH','')}"
     helper = audit.load_module(audit.API_HELPER, "run010_combined_api")
     installation = type(
@@ -327,14 +327,25 @@ def full_flake_density(rho: np.ndarray) -> np.ndarray:
     return full
 
 
-def solve_coupled(forward: dict, rho: np.ndarray, cuda_device: int, *, need_adjoint: bool):
-    state = build_state(rho)
+def solve_coupled(
+    forward: dict,
+    rho: np.ndarray,
+    cuda_device: int,
+    *,
+    need_adjoint: bool,
+    thermal_state_kwargs: dict | None = None,
+    thermal_relative_tolerance: float = 1e-10,
+    thermal_max_iterations: int = 30000,
+):
+    state = build_state(rho, **(thermal_state_kwargs or {}))
     mapped_q, mapping = map_native_q(native_arrays(forward["q"]), state)
     source_active = state.system.active_source(mapped_q)
     source_power = np.asarray(state.system.source_volume_operator_m3 @ source_active)
     thermal_operator = PersistentCudaCSR(state.system.matrix_W_K, cuda_device=cuda_device)
     thermal_forward = thermal_operator.solve(
-        source_power, relative_tolerance=1e-10, max_iterations=30000
+        source_power,
+        relative_tolerance=thermal_relative_tolerance,
+        max_iterations=thermal_max_iterations,
     )
     nodal_temperature = cell_to_node(flake_cell_temperature(state, thermal_forward.solution))
     mesh = build_rectangular_mesh(CONTRACT.flake_span_m, CONTRACT.flake_span_m, CONTRACT.design_step_m)
@@ -366,7 +377,9 @@ def solve_coupled(forward: dict, rho: np.ndarray, cuda_device: int, *, need_adjo
     if need_adjoint:
         thermal_rhs = flake_temperature_transpose(state, electrical.gradient_temperature_K_inv)
         thermal_adjoint = thermal_operator.solve(
-            thermal_rhs, relative_tolerance=1e-10, max_iterations=30000
+            thermal_rhs,
+            relative_tolerance=thermal_relative_tolerance,
+            max_iterations=thermal_max_iterations,
         )
         gradient_thermal = thermal_density_gradient(
             state, thermal_forward.solution, thermal_adjoint.solution
