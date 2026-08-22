@@ -168,3 +168,11 @@ This spectrum is not a finite-device or PTE calculation. After a physical
 resonance is selected, only that wavelength is rerun with component-resolved
 volumetric Q and closure. A separate finite array then places multiple T
 resonators inside an all-PML domain and illuminates them with a Gaussian beam.
+
+`19_run_v261_z2022_m2_periodic_broadband_rta.py` applies the same 4--12 um
+screen to the paper's published M2 scalar dimensions. The two rectangular
+parts are centered and corner-joined according to Fig. 1b; because the paper
+does not disclose junction overlap/gap CAD, this remains a named reconstructed
+scenario. `20_summarize_z2022_m2_periodic_broadband_rta.py` compares LH/RH and
+the explicit CP+/CP- source-phase definitions without prematurely renaming
+them LCP/RCP.

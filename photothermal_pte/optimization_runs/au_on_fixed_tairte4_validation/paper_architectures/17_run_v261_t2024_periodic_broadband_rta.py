@@ -123,6 +123,21 @@ def main() -> int:
             substrate_mode="sio2_si_reduced_285nm",
         )
         configure_broadband(fdtd, base, args.duration_ps)
+        contract["source"].update(
+            {
+                "wavelength_m": None,
+                "wavelength_bounds_m": [WAVELENGTH_MIN_M, WAVELENGTH_MAX_M],
+                "reference_geometry_wavelength_m": base.WAVELENGTH_M,
+            }
+        )
+        contract["pabs_contract"] = {
+            "present_during_broadband_solve": False,
+            "reason": "heavy 3-D Q analysis group removed; spectrum uses only top/bottom flux monitors",
+        }
+        contract["materials"]["TaIrTe4"]["requested_epsilon_note"] = (
+            "listed x/y/z epsilon is the 4.75-um reference readback only; "
+            "the installed sampled material spans the full 4--12 um solve"
+        )
         fdtd.setresource("FDTD", 1, "active", 0)
         fdtd.setresource("FDTD", 2, "active", 1)
         fdtd.setresource("FDTD", 2, "processes", "1")
