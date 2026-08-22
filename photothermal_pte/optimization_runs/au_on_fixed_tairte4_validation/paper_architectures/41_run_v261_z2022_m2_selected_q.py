@@ -127,11 +127,21 @@ def main() -> int:
         # `run`/`runres` creates an isolated, licensed Lumerical environment.
         # Preserve that root instead of replacing it with a user-local install,
         # because mixing the two roots breaks ANSYSLI license sharing.
-        lumerical_root = Path(os.environ.get("LUMERICAL_ROOT", str(audit.APPROVED_ROOT)))
-        lumerical_api = Path(os.environ.get("LUMERICAL_PYTHONPATH", str(audit.APPROVED_API)))
-        os.environ.setdefault("VC_LUMERICAL_ROOT", str(lumerical_root))
-        os.environ.setdefault("LUMERICAL_ROOT", str(lumerical_root))
-        os.environ.setdefault("LUMERICAL_PYTHONPATH", str(lumerical_api))
+        lumerical_root = Path(
+            os.environ.get(
+                "PERIODIC_LUMERICAL_ROOT",
+                os.environ.get("LUMERICAL_ROOT", str(audit.APPROVED_ROOT)),
+            )
+        )
+        lumerical_api = Path(
+            os.environ.get(
+                "PERIODIC_LUMERICAL_PYTHONPATH",
+                os.environ.get("LUMERICAL_PYTHONPATH", str(audit.APPROVED_API)),
+            )
+        )
+        os.environ["VC_LUMERICAL_ROOT"] = str(lumerical_root)
+        os.environ["LUMERICAL_ROOT"] = str(lumerical_root)
+        os.environ["LUMERICAL_PYTHONPATH"] = str(lumerical_api)
         os.environ["LUMERICAL_SESSION_GPU_DEVICE"] = args.gpu_device
         os.environ["CL_GPU_DEVICE"] = args.gpu_device
         os.environ["FDTD_THREADS"] = "8"
@@ -303,6 +313,8 @@ def main() -> int:
                 "mesh_refinement": args.mesh_refinement,
                 "volume_poynting_recorded": args.record_volume_poynting,
                 "solver_version": str(fdtd.version()),
+                "solver_root": str(lumerical_root),
+                "solver_python_api": str(lumerical_api),
                 "scope": "periodic selected-wavelength volumetric-Q certificate; no thermal/PTE",
                 "top_Au_included": not args.omit_top_au_control,
                 "top_Au_edge_mesh": contract["top_Au_edge_mesh"],

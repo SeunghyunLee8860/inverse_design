@@ -311,6 +311,7 @@ def setup(
     *,
     include_top_t: bool = True,
     substrate_mode: str = "sio2_si_reduced_285nm",
+    lateral_mesh_nm: float = 10.0,
 ) -> dict[str, object]:
     geometry_module = load_local_module(
         "05_actual_metasurface_geometry.py", "paper_actual_metasurface_geometry"
@@ -484,8 +485,8 @@ def setup(
     mesh["override x mesh"] = True
     mesh["override y mesh"] = True
     mesh["override z mesh"] = True
-    mesh["dx"] = 10.0e-9
-    mesh["dy"] = 10.0e-9
+    mesh["dx"] = lateral_mesh_nm * 1.0e-9
+    mesh["dy"] = lateral_mesh_nm * 1.0e-9
     mesh["dz"] = 5.0e-9
 
     pabs = fdtd.addobject("pabs_adv")
@@ -610,7 +611,10 @@ def mesh_metrics(mesh: dict[str, object]) -> dict[str, object]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", type=Path, required=True)
-    parser.add_argument("--gpu-device", default="GPU 0")
+    parser.add_argument(
+        "--gpu-device",
+        default=os.environ.get("LUMERICAL_SESSION_GPU_DEVICE", "GPU 0"),
+    )
     parser.add_argument(
         "--polarization",
         choices=(
@@ -642,11 +646,22 @@ def main() -> int:
     )
     parser.add_argument("--contract-only", action="store_true")
     parser.add_argument(
+        "--lateral-mesh-nm",
+        type=float,
+        default=10.0,
+        help=(
+            "T-cell local dx=dy. The validated production default remains "
+            "10 nm; other values are explicit mesh diagnostics."
+        ),
+    )
+    parser.add_argument(
         "--omit-top-t-control",
         action="store_true",
         help="Remove only the top inverse-T while retaining the matched mirror/spacer/TaIrTe4 stack.",
     )
     args = parser.parse_args()
+    if not 5.0 <= args.lateral_mesh_nm <= 50.0:
+        raise ValueError("--lateral-mesh-nm must be in [5, 50] nm")
     configure_wavelength(args.wavelength_um)
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
@@ -658,14 +673,29 @@ def main() -> int:
     result: dict[str, object] = {"status": "BLOCKED_T2024_TAIRTE4_OPTICAL_SMOKE"}
     fdtd = None
     try:
-        os.environ["VC_LUMERICAL_ROOT"] = str(audit.APPROVED_ROOT)
-        os.environ["LUMERICAL_ROOT"] = str(audit.APPROVED_ROOT)
-        os.environ["LUMERICAL_PYTHONPATH"] = str(audit.APPROVED_API)
+        # Preserve the isolated root exported by run/runres. Mixing that
+        # session with a user-local API breaks the GPU resource enumeration
+        # and can bypass the launcher's held licence reservation.
+        lumerical_root = Path(
+            os.environ.get(
+                "PERIODIC_LUMERICAL_ROOT",
+                os.environ.get("LUMERICAL_ROOT", str(audit.APPROVED_ROOT)),
+            )
+        )
+        lumerical_api = Path(
+            os.environ.get(
+                "PERIODIC_LUMERICAL_PYTHONPATH",
+                os.environ.get("LUMERICAL_PYTHONPATH", str(audit.APPROVED_API)),
+            )
+        )
+        os.environ["VC_LUMERICAL_ROOT"] = str(lumerical_root)
+        os.environ["LUMERICAL_ROOT"] = str(lumerical_root)
+        os.environ["LUMERICAL_PYTHONPATH"] = str(lumerical_api)
         os.environ["LUMERICAL_SESSION_GPU_DEVICE"] = args.gpu_device
         os.environ["CL_GPU_DEVICE"] = args.gpu_device
         os.environ["FDTD_THREADS"] = "8"
-        os.environ["PATH"] = f"{audit.APPROVED_ROOT / 'bin'}:{os.environ.get('PATH', '')}"
-        sys.path.insert(0, str(audit.APPROVED_API))
+        os.environ["PATH"] = f"{lumerical_root / 'bin'}:{os.environ.get('PATH', '')}"
+        sys.path.insert(0, str(lumerical_api))
         import lumapi
 
         fdtd = lumapi.FDTD(hide=True, serverArgs={"platform": "offscreen"})
@@ -675,6 +705,7 @@ def main() -> int:
             args.duration_ps,
             include_top_t=not args.omit_top_t_control,
             substrate_mode=args.substrate_mode,
+            lateral_mesh_nm=args.lateral_mesh_nm,
         )
         fdtd.setresource("FDTD", 1, "active", 0)
         fdtd.setresource("FDTD", 2, "active", 1)
@@ -687,15 +718,24 @@ def main() -> int:
         metrics = mesh_metrics(mesh)
         if not metrics.get("available"):
             raise RuntimeError("native mesh unavailable after runsetup")
-        if metrics["min_dx_m"] > 10.0e-9 + 1.0e-12 or metrics["min_dy_m"] > 10.0e-9 + 1.0e-12:
-            raise RuntimeError("10-nm in-plane structure mesh was not realized")
+        requested_lateral_mesh_m = args.lateral_mesh_nm * 1.0e-9
+        if (
+            metrics["min_dx_m"] > requested_lateral_mesh_m + 1.0e-12
+            or metrics["min_dy_m"] > requested_lateral_mesh_m + 1.0e-12
+        ):
+            raise RuntimeError(
+                f"{args.lateral_mesh_nm:g}-nm in-plane structure mesh was not realized"
+            )
         if metrics["max_structure_dz_m"] > 5.0e-9 + 1.0e-12:
             raise RuntimeError("5-nm structure dz was not realized")
         result.update(
             {
                 "contract": contract,
                 "solver_version": str(fdtd.version()),
+                "solver_root": str(lumerical_root),
+                "solver_python_api": str(lumerical_api),
                 "mesh_runsetup": metrics,
+                "lateral_mesh_nm": args.lateral_mesh_nm,
                 "resource": {
                     prop: str(fdtd.getresource("FDTD", 2, prop))
                     for prop in ("active", "device type", "processes", "threads", "solver extra command line options")
