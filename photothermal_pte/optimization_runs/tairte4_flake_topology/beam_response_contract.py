@@ -182,6 +182,22 @@ def sweep_inputs(smoke: bool = False) -> list[dict[str, float | str]]:
     return [edge_check, *inputs, *(item for item in positions if item is not edge_check)]
 
 
+def position_inputs() -> list[dict[str, float | str]]:
+    """Return all 25 nominal-waist scan points, including the center."""
+
+    return [
+        {
+            "id": f"position_x{x:g}_y{y:g}",
+            "kind": "position",
+            "waist_um": NOMINAL_WAIST_M * 1e6,
+            "x_um": x,
+            "y_um": y,
+        }
+        for x in POSITION_SWEEP_UM
+        for y in POSITION_SWEEP_UM
+    ]
+
+
 def domain_center_m(x_um: float, y_um: float) -> dict[str, float]:
     """Keep the fixed device and translated source clear of transverse PML."""
 

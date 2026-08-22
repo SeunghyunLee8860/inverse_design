@@ -2,6 +2,7 @@ import numpy as np
 
 from photothermal_pte.optimization_runs.tairte4_flake_topology.electrical import (
     build_rectangular_mesh,
+    solve_short_circuit_current_density,
     solve_weighting_and_adjoint,
 )
 
@@ -61,6 +62,38 @@ def test_constant_temperature_has_zero_current() -> None:
         seebeck_xy_V_K=SEEBECK,
     )
     assert abs(result.current_A) < 1.0e-20
+
+
+def test_short_circuit_local_current_matches_weighting_terminal_current() -> None:
+    mesh = build_rectangular_mesh(0.8e-6, 1.0e-6, 0.1e-6)
+    xx, yy = np.meshgrid(mesh.x_m, mesh.y_m, indexing="ij")
+    rho = 0.55 + 0.20 * np.cos(np.pi * xx / 0.8e-6) * np.cos(
+        np.pi * yy / 1.0e-6
+    )
+    temperature = 300.0 + 0.7 * np.exp(
+        -((xx / 0.24e-6) ** 2 + ((yy + 0.12e-6) / 0.31e-6) ** 2)
+    )
+    kwargs = dict(
+        thickness_m=100.0e-9,
+        sigma_xy_S_m=SIGMA,
+        seebeck_xy_V_K=SEEBECK,
+        sigma_void_fraction=1.0e-8,
+        sigma_penalty=2.0,
+        alpha_penalty=2.0,
+    )
+    weighted = solve_weighting_and_adjoint(mesh, rho, temperature, **kwargs)
+    local = solve_short_circuit_current_density(mesh, rho, temperature, **kwargs)
+    relative = abs(local.terminal_current_A - weighted.current_A) / max(
+        abs(weighted.current_A), np.finfo(float).tiny
+    )
+    assert relative < 2.0e-11
+    assert local.continuity_residual < 1.0e-10
+    assert np.max(np.abs(local.potential_V[:, (0, -1)])) == 0.0
+    assert np.allclose(
+        local.total_current_density_element_A_m2,
+        local.conductive_current_density_element_A_m2
+        + local.thermoelectric_current_density_element_A_m2,
+    )
 
 
 def test_density_gradient_matches_directional_fd() -> None:

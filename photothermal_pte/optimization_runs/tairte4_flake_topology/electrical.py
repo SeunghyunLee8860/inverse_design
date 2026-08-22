@@ -52,6 +52,20 @@ class ElectricalResult:
     gradient_terminal_conductance_S: Array
 
 
+@dataclass(frozen=True)
+class ShortCircuitCurrentDensityResult:
+    """Physical in-plane current fields for equal-potential terminals."""
+
+    potential_V: Array
+    temperature_gradient_element_K_m: Array
+    electric_field_element_V_m: Array
+    thermoelectric_current_density_element_A_m2: Array
+    conductive_current_density_element_A_m2: Array
+    total_current_density_element_A_m2: Array
+    terminal_current_A: float
+    continuity_residual: float
+
+
 def build_rectangular_mesh(span_x_m: float, span_y_m: float, step_m: float) -> RectangularTriangularMesh:
     nx = int(round(span_x_m / step_m)) + 1
     ny = int(round(span_y_m / step_m)) + 1
@@ -126,6 +140,107 @@ def _assemble(mesh: RectangularTriangularMesh, tensor: Array, thickness_m: float
 
 def _reference_solve(matrix: sparse.csr_matrix, rhs: Array) -> Array:
     return np.asarray(spla.spsolve(matrix.tocsc(), rhs), dtype=np.float64)
+
+
+def solve_short_circuit_current_density(
+    mesh: RectangularTriangularMesh,
+    rho_nodal: Array,
+    temperature_K: Array,
+    *,
+    thickness_m: float,
+    sigma_xy_S_m: tuple[float, float],
+    seebeck_xy_V_K: tuple[float, float],
+    sigma_void_fraction: float = 1.0e-8,
+    sigma_penalty: float = 2.0,
+    alpha_penalty: float = 2.0,
+    linear_solve: LinearSolve | None = None,
+    terminal_axis: str = "y",
+) -> ShortCircuitCurrentDensityResult:
+    """Solve ``J = sigma E - sigma S grad(T)`` with both terminals at 0 V.
+
+    The side boundaries are insulating natural boundaries.  The returned
+    terminal current is the outward current at the high terminal and follows
+    the same sign convention as :func:`solve_weighting_and_adjoint`.
+    """
+
+    rho = np.asarray(rho_nodal, dtype=np.float64).reshape(-1)
+    temperature = np.asarray(temperature_K, dtype=np.float64).reshape(-1)
+    node_count = mesh.nodes_m.shape[0]
+    if rho.size != node_count or temperature.size != node_count:
+        raise ValueError("rho and temperature must match the electrical mesh")
+    if np.any((rho < 0.0) | (rho > 1.0)) or not np.all(np.isfinite(rho)):
+        raise ValueError("rho must be finite in [0,1]")
+    if not np.all(np.isfinite(temperature)):
+        raise ValueError("temperature must be finite")
+    if not 0.0 < sigma_void_fraction < 1.0:
+        raise ValueError("invalid void-conductivity regularization")
+    solve = _reference_solve if linear_solve is None else linear_solve
+
+    tri = mesh.triangles
+    rho_element = np.mean(rho[tri], axis=1)
+    sigma_scale = sigma_void_fraction + (
+        1.0 - sigma_void_fraction
+    ) * rho_element**sigma_penalty
+    alpha_scale = rho_element**alpha_penalty
+    sigma = _element_tensor(sigma_xy_S_m, sigma_scale)
+    alpha = _element_tensor(
+        (
+            float(sigma_xy_S_m[0]) * float(seebeck_xy_V_K[0]),
+            float(sigma_xy_S_m[1]) * float(seebeck_xy_V_K[1]),
+        ),
+        alpha_scale,
+    )
+    matrix = _assemble(mesh, sigma, thickness_m)
+
+    if terminal_axis == "y":
+        low_nodes, high_nodes = mesh.bottom_nodes, mesh.top_nodes
+    elif terminal_axis == "x":
+        low_nodes, high_nodes = mesh.left_nodes, mesh.right_nodes
+    else:
+        raise ValueError("terminal_axis must be 'x' or 'y'")
+    fixed = np.unique(np.concatenate((low_nodes, high_nodes)))
+    free_mask = np.ones(node_count, dtype=bool)
+    free_mask[fixed] = False
+    free = np.flatnonzero(free_mask)
+
+    grad_temperature = np.einsum(
+        "eai,ei->ea", mesh.gradients_m_inv, temperature[tri]
+    )
+    source_local = thickness_m * mesh.triangle_area_m2[:, None] * np.einsum(
+        "eai,eab,eb->ei", mesh.gradients_m_inv, alpha, grad_temperature
+    )
+    source_load = np.zeros(node_count, dtype=np.float64)
+    np.add.at(source_load, tri.ravel(), source_local.ravel())
+
+    potential = np.zeros(node_count, dtype=np.float64)
+    reduced = matrix[free][:, free].tocsr()
+    potential[free] = solve(reduced, -source_load[free])
+    residual = np.asarray(matrix @ potential + source_load).reshape(-1)
+    continuity_residual = float(
+        np.linalg.norm(residual[free])
+        / max(np.linalg.norm(source_load[free]), np.finfo(float).tiny)
+    )
+
+    grad_potential = np.einsum(
+        "eai,ei->ea", mesh.gradients_m_inv, potential[tri]
+    )
+    electric_field = -grad_potential
+    thermoelectric_current = -np.einsum(
+        "eab,eb->ea", alpha, grad_temperature
+    )
+    conductive_current = np.einsum("eab,eb->ea", sigma, electric_field)
+    total_current = conductive_current + thermoelectric_current
+    terminal_current = float(-np.sum(residual[high_nodes]))
+    return ShortCircuitCurrentDensityResult(
+        potential_V=potential.reshape(mesh.shape),
+        temperature_gradient_element_K_m=grad_temperature,
+        electric_field_element_V_m=electric_field,
+        thermoelectric_current_density_element_A_m2=thermoelectric_current,
+        conductive_current_density_element_A_m2=conductive_current,
+        total_current_density_element_A_m2=total_current,
+        terminal_current_A=terminal_current,
+        continuity_residual=continuity_residual,
+    )
 
 
 def solve_weighting_and_adjoint(

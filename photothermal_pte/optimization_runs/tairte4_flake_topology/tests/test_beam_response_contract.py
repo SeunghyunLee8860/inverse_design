@@ -8,6 +8,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.beam_response_con
     SOURCE_TO_PML_MINIMUM_CLEARANCE_M,
     domain_center_m,
     electrode_bounds_m,
+    position_inputs,
     source_bounds_m,
     sweep_inputs,
 )
@@ -19,6 +20,16 @@ def test_full_sweep_has_29_unique_forward_inputs():
     assert len({item["id"] for item in inputs}) == 29
     assert sum(item["kind"] == "waist" for item in inputs) == 5
     assert sum(item["kind"] == "position" for item in inputs) == 24
+
+
+def test_position_field_sweep_has_complete_5_by_5_grid():
+    inputs = position_inputs()
+    assert len(inputs) == 25
+    assert len({item["id"] for item in inputs}) == 25
+    assert {(item["x_um"], item["y_um"]) for item in inputs} == {
+        (x, y) for x in (-10.0, -5.0, 0.0, 5.0, 10.0)
+        for y in (-10.0, -5.0, 0.0, 5.0, 10.0)
+    }
 
 
 def test_au_terminal_footprints_never_extend_flake():
