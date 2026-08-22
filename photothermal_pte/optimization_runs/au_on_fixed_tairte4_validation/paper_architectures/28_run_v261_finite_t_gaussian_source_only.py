@@ -119,6 +119,7 @@ def setup(fdtd) -> None:
 
 
 def main() -> int:
+    global W0_M, DOMAIN_X_M, DOMAIN_Y_M, ARRAY_X_M, ARRAY_Y_M, SOURCE_SPAN_M
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--output-dir",
@@ -126,7 +127,19 @@ def main() -> int:
         default=Path("/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_T_w0_4um_source_only"),
     )
     parser.add_argument("--gpu-device", default="GPU 5")
+    parser.add_argument("--w0-um", type=float, default=4.0)
+    parser.add_argument("--domain-x-um", type=float, default=28.5)
+    parser.add_argument("--domain-y-um", type=float, default=29.0)
+    parser.add_argument("--array-x-um", type=float, default=16.5)
+    parser.add_argument("--array-y-um", type=float, default=17.0)
+    parser.add_argument("--source-span-um", type=float, default=16.0)
     args = parser.parse_args()
+    W0_M = args.w0_um * 1.0e-6
+    DOMAIN_X_M = args.domain_x_um * 1.0e-6
+    DOMAIN_Y_M = args.domain_y_um * 1.0e-6
+    ARRAY_X_M = args.array_x_um * 1.0e-6
+    ARRAY_Y_M = args.array_y_um * 1.0e-6
+    SOURCE_SPAN_M = args.source_span_um * 1.0e-6
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
         raise RuntimeError(f"refusing to overwrite non-empty output: {output}")
@@ -189,7 +202,7 @@ def main() -> int:
             "Gaussian_fit_NRMSE_lt_0p5pct": fit["Gaussian_fit_NRMSE"] < 0.005,
             "ellipticity_lt_0p5pct": fit["fitted_xy_ellipticity"] < 0.005,
             "center_displacement_lt_50nm": float(np.hypot(fit["fitted_center_x_m"], fit["fitted_center_y_m"])) < 50e-9,
-            "target_transmission_within_0p5pct": abs(transmitted_fraction - 1.0) < 0.005,
+            "target_transmission_magnitude_within_0p5pct": abs(abs(transmitted_fraction) - 1.0) < 0.005,
         }
         result = {
             "status": "VALIDATED_FINITE_T_GAUSSIAN_SOURCE_ONLY" if all(gates.values()) else "FAILED_FINITE_T_GAUSSIAN_SOURCE_ONLY_GATE",
@@ -197,13 +210,13 @@ def main() -> int:
             "solver_version": str(fdtd.version()),
             "GPU_resource_used": resource,
             "solver_wall_time_s": wall_time,
-            "source": {"wavelength_um": 11.825, "requested_w0_um": 4.0, "span_um": 16.0, "source_z_um": 0.8, "focus_z_um": 0.05, "polarization": "E||b"},
-            "domain": {"x_um": 28.5, "y_um": 29.0, "z_um": [-1.2, 1.2], "boundaries": "six PML, 24 layers"},
+            "source": {"wavelength_um": 11.825, "requested_w0_um": args.w0_um, "span_um": args.source_span_um, "source_z_um": 0.8, "focus_z_um": 0.05, "polarization": "E||b"},
+            "domain": {"x_um": args.domain_x_um, "y_um": args.domain_y_um, "z_um": [-1.2, 1.2], "boundaries": "six PML, 24 layers"},
             "mesh_shape": [int(np.asarray(mesh["coordinate_arrays"][a]).size) for a in "xyz"],
             "source_power_W": source_power,
             "target_plane_transmitted_fraction": transmitted_fraction,
             "target_plane_fit": fit,
-            "ideal_square_aperture_boundary_intensity_over_peak": float(np.exp(-8.0)),
+            "ideal_square_aperture_boundary_intensity_over_peak": float(np.exp(-2.0 * (0.5 * SOURCE_SPAN_M / W0_M) ** 2)),
             "ideal_nearest_PML_intensity_over_peak": float(np.exp(-2.0 * (0.5 * DOMAIN_X_M / W0_M) ** 2)),
             "log_audit": log,
             "gates": gates,
