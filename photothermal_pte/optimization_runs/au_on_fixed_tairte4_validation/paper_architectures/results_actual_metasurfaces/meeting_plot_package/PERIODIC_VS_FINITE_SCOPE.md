@@ -56,6 +56,24 @@ subsequent finite physical-device model must add:
    terminals and insulating non-contact flake edges;
 10. the full terminal current integral over the finite TaIrTe4 volume.
 
+## Substrate below the Au mirror
+
+The fabricated 2024 device wafer is intrinsic Si with 1.5 um of thermally
+grown SiO2 before the reflector recess is etched and filled with Au.  A
+physical full-stack schematic must therefore show thermal SiO2 and intrinsic
+Si below the Au mirror; the region below the mirror is not air.
+
+The four existing optical-forward artifacts did **not** include that physical
+substrate.  They extended Au from the nominal backplane surface through the
+bottom PML as an explicit opaque numerical closure.  This is acceptable only
+as an optical-above-an-opaque-mirror control.  It must not be presented as the
+fabricated substrate or reused as a thermal model.  The next physical-stack
+check must terminate the Au mirror, place thermal SiO2 and intrinsic Si below
+it, and put the bottom z-PML inside the continuing Si substrate.  Because the
+Au mirror is optically opaque, the old and physical-substrate optical results
+are expected to be close, but that equivalence still requires a matched
+numerical comparison rather than an assumption.
+
 The finite source type and size are not yet selected.  A Gaussian is allowed
 only if its realized waist and boundary intensity are measured in a domain
 large enough that the field is negligible before the lateral PML.  At the

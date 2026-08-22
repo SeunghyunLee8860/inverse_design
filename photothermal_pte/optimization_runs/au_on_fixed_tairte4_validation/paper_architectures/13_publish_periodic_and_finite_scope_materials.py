@@ -187,7 +187,7 @@ def finite_scope_figure(path: Path) -> None:
             weight="bold")
     ax.annotate("", xy=(0, 0.43), xytext=(0, 0.68),
                 arrowprops={"arrowstyle": "->", "lw": 3, "color": "#2867b2"})
-    ax.text(0, -0.81, "TaIrTe4/Al2O3/Au mirror do not end at lateral PML",
+    ax.text(0, -0.81, "all planar layers continue through the lateral PML",
             ha="center", va="center", fontsize=7.7, color="#5f1c70",
             weight="bold")
     ax.set_xlim(-1.3,1.3); ax.set_ylim(-0.98,0.98); ax.set_aspect("equal")
@@ -201,16 +201,22 @@ def finite_scope_figure(path: Path) -> None:
     ax.add_patch(Rectangle((-1.30, -0.98), 2.60, 1.96,
                            facecolor="#e5f3f8", edgecolor="none",
                            label="air"))
-    ax.add_patch(Rectangle((-1.30, 0.03), 2.60, 0.11,
+    ax.add_patch(Rectangle((-1.30, 0.08), 2.60, 0.09,
                            facecolor="#d98f8f", edgecolor="#8d2020",
                            label="TaIrTe4 100 nm"))
-    ax.add_patch(Rectangle((-1.30, -0.06), 2.60, 0.09,
+    ax.add_patch(Rectangle((-1.30, 0.00), 2.60, 0.08,
                            facecolor="#8bd3dd", edgecolor="#257985",
                            label="Al2O3 35 nm"))
-    ax.add_patch(Rectangle((-1.30, -0.37), 2.60, 0.31,
+    ax.add_patch(Rectangle((-1.30, -0.18), 2.60, 0.18,
                            facecolor="#c79800", edgecolor="#745800",
-                           label="Au mirror 200 nm"))
-    ax.add_patch(Rectangle((-0.42, 0.14), 0.84, 0.08,
+                           label="Au mirror (200 nm numerical closure)"))
+    ax.add_patch(Rectangle((-1.30, -0.55), 2.60, 0.37,
+                           facecolor="#c7dff5", edgecolor="#547da6",
+                           label="thermal SiO2 (paper wafer: 1.5 um pre-recess)"))
+    ax.add_patch(Rectangle((-1.30, -0.86), 2.60, 0.31,
+                           facecolor="#7d8791", edgecolor="#3d464d",
+                           label="intrinsic Si substrate"))
+    ax.add_patch(Rectangle((-0.42, 0.17), 0.84, 0.08,
                            facecolor="#f4bf42", edgecolor="#8a5a00",
                            lw=1.5, label="finite Au T 33 nm"))
     ax.add_patch(Rectangle((-1.30, -0.98), 0.12, 1.96,
@@ -222,10 +228,10 @@ def finite_scope_figure(path: Path) -> None:
                            facecolor=pml_color, alpha=0.65, zorder=5))
     ax.add_patch(Rectangle((-1.30, 0.86), 2.60, 0.12,
                            facecolor=pml_color, alpha=0.65, zorder=5))
-    ax.annotate("normal incidence", xy=(0,0.29), xytext=(0,0.70),
+    ax.annotate("normal incidence", xy=(-0.55,0.29), xytext=(-0.55,0.70),
                 ha="center", color="#2867b2", fontsize=8, weight="bold",
                 arrowprops={"arrowstyle":"->","lw":2.5,"color":"#2867b2"})
-    ax.text(0, -0.53, "planar layers pass continuously into PML",
+    ax.text(0, -0.48, "planar layers pass continuously into lateral PML",
             ha="center", color="#5f1c70", fontsize=8, weight="bold")
     ax.set_xlim(-1.3,1.3); ax.set_ylim(-0.98,0.98); ax.set_aspect("equal")
     ax.set_title("B. optical x-z schematic (z not to scale)")
