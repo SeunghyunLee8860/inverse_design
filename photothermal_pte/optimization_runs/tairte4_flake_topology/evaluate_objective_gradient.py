@@ -104,7 +104,7 @@ def main() -> int:
     args = parser.parse_args()
     base_fsp = checked(args.base_fsp, args.base_sha256)
     _, _, operator_meta = load_operator(args.jacobian_dir)
-    rho = load_rho(args.rho_npz)
+    rho = CONTRACT.apply_fixed_contact_density(load_rho(args.rho_npz))
     latent = None
     if (args.latent_npz is None) != (args.dfm_beta is None):
         raise RuntimeError("--latent-npz and --dfm-beta must be supplied together")
@@ -132,8 +132,12 @@ def main() -> int:
         ansys_dfm_gradient = np.zeros_like(rho)
         ansys_dfm = None
         if latent is not None:
+            latent = CONTRACT.apply_fixed_contact_density(latent)
             ansys_dfm_indicators, ansys_dfm_gradient, ansys_dfm = (
                 evaluate_ansys_minimum_feature(fdtd, latent, float(args.dfm_beta))
+            )
+            ansys_dfm_gradient = CONTRACT.zero_fixed_contact_gradient(
+                ansys_dfm_gradient
             )
         forward = run_forward(
             fdtd,
@@ -187,8 +191,16 @@ def main() -> int:
             profile_scale=profile_scale,
             base_amplitude=base_amplitude,
         )
-        gradient_thermal = coupled["gradient_thermal"]
-        gradient_electrical = coupled["gradient_electrical"]
+        gradient_optical = CONTRACT.zero_fixed_contact_gradient(gradient_optical)
+        gradient_thermal = CONTRACT.zero_fixed_contact_gradient(
+            coupled["gradient_thermal"]
+        )
+        gradient_electrical = CONTRACT.zero_fixed_contact_gradient(
+            coupled["gradient_electrical"]
+        )
+        gradient_terminal_conductance = CONTRACT.zero_fixed_contact_gradient(
+            coupled["gradient_terminal_conductance"]
+        )
         gradient_total = gradient_optical + gradient_thermal + gradient_electrical
         if not np.all(np.isfinite(gradient_total)) or np.max(np.abs(gradient_total)) == 0.0:
             raise RuntimeError("objective gradient is zero or nonfinite")
@@ -202,7 +214,7 @@ def main() -> int:
             gradient_thermal_A=gradient_thermal,
             gradient_electrical_A=gradient_electrical,
             terminal_conductance_S=np.asarray(coupled["electrical"].terminal_conductance_S),
-            gradient_terminal_conductance_S=coupled["gradient_terminal_conductance"],
+            gradient_terminal_conductance_S=gradient_terminal_conductance,
             temperature_K=coupled["temperature"],
             ansys_dfm_indicators=ansys_dfm_indicators,
             ansys_dfm_gradient_latent=ansys_dfm_gradient,

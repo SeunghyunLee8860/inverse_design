@@ -146,12 +146,14 @@ class StageEvaluator:
         self.stage_full_physics_evaluations = 0
 
     def point(self, vector: np.ndarray) -> Point:
-        x = np.asarray(vector, dtype=np.float64).reshape(MAPPING.shape)
+        x = CONTRACT.apply_fixed_contact_density(
+            np.asarray(vector, dtype=np.float64).reshape(MAPPING.shape)
+        )
         if self.last is not None and np.array_equal(x, self.last.x):
             return self.last
         if np.any(x < 0.0) or np.any(x > 1.0) or not np.all(np.isfinite(x)):
             raise RuntimeError("NLopt supplied an invalid latent design")
-        rho = MAPPING.physical(x, self.beta)
+        rho = CONTRACT.apply_fixed_contact_density(MAPPING.physical(x, self.beta))
         self.evaluation_counter += 1
         self.global_evaluation += 1
         latent_path = self.raw_root / (

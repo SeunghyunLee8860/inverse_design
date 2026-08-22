@@ -68,7 +68,9 @@ def design_nodes() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
 
 def anisotropic_index(rho_xy: np.ndarray) -> tuple[np.ndarray, dict[str, object]]:
     x, y, z = design_nodes()
-    rho = np.asarray(rho_xy, dtype=np.float64)
+    rho = CONTRACT.apply_fixed_contact_density(
+        np.asarray(rho_xy, dtype=np.float64)
+    )
     if rho.shape != (x.size, y.size):
         raise ValueError(f"rho shape {rho.shape} != {(x.size, y.size)}")
     if np.any((rho < 0.0) | (rho > 1.0)) or not np.all(np.isfinite(rho)):
@@ -144,7 +146,10 @@ def add_fixed_frame(fdtd: Any) -> list[str]:
             "bottom_contact": {"x": (-flake, flake), "y": (-flake, -y_design), "z": z},
             "top_contact": {"x": (-flake, flake), "y": (y_design, flake), "z": z},
         }
-    elif CONTRACT.geometry_mode == "left_right_contact_anchored":
+    elif CONTRACT.geometry_mode in {
+        "left_right_contact_anchored",
+        "diagonal_45_contact_anchored",
+    }:
         pieces = {
             "left_contact": {"x": (-flake, -x_design), "y": (-flake, flake), "z": z},
             "right_contact": {"x": (x_design, flake), "y": (-flake, flake), "z": z},

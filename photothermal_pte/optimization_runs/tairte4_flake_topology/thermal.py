@@ -177,7 +177,9 @@ def build_state(
     au_tairte4_interface_conductance_W_m2K: float = 19.89e6,
 ) -> ThermalState:
     CONTRACT.validate()
-    rho_nodal = np.asarray(rho_nodal, dtype=np.float64)
+    rho_nodal = CONTRACT.apply_fixed_contact_density(
+        np.asarray(rho_nodal, dtype=np.float64)
+    )
     if rho_nodal.shape != CONTRACT.design_node_shape:
         raise ValueError("invalid design density shape")
     if np.any((rho_nodal < 0.0) | (rho_nodal > 1.0)):

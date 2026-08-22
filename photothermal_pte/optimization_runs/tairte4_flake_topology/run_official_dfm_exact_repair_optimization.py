@@ -231,6 +231,7 @@ def main() -> int:
     supported_contact_geometries = {
         "contact_anchored": "y",
         "left_right_contact_anchored": "x",
+        "diagonal_45_contact_anchored": "diagonal_45",
     }
     expected_contact_axis = supported_contact_geometries.get(CONTRACT.geometry_mode)
     if expected_contact_axis is None or CONTRACT.contact_axis != expected_contact_axis:
@@ -288,7 +289,9 @@ def main() -> int:
             "exact_final_gate": "independent 500-nm binary opening audit",
         }
         write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
-        latent = np.full(MAPPING.shape, 0.5, dtype=np.float64)
+        latent = CONTRACT.apply_fixed_contact_density(
+            np.full(MAPPING.shape, 0.5, dtype=np.float64)
+        )
         fixed_source_power = None
         evaluation_counter = 0
         global_evaluation = 0
@@ -331,6 +334,8 @@ def main() -> int:
         trust_radius = STAGE_TRUST_RADIUS[beta]
         stage_lower = np.maximum(0.0, latent - trust_radius)
         stage_upper = np.minimum(1.0, latent + trust_radius)
+        stage_lower[CONTRACT.fixed_design_solid_mask] = 1.0
+        stage_upper[CONTRACT.fixed_design_solid_mask] = 1.0
         optimizer = make_optimizer(
             evaluator,
             0,
@@ -359,11 +364,11 @@ def main() -> int:
         if result_code < 0:
             raise RuntimeError(f"NLopt LD_MMA failed at beta={beta}: {result_code}")
         final_point = evaluator.point(optimum.ravel())
-        latent = optimum
+        latent = CONTRACT.apply_fixed_contact_density(optimum)
         fixed_source_power = evaluator.fixed_source_power_W
         evaluation_counter = evaluator.evaluation_counter
         global_evaluation = evaluator.global_evaluation
-        rho = MAPPING.physical(latent, beta)
+        rho = CONTRACT.apply_fixed_contact_density(MAPPING.physical(latent, beta))
         discreteness = 1.0 - float(np.mean(4.0 * rho * (1.0 - rho)))
         checkpoint = raw_root / f"beta_{beta:g}_completed.npz"
         np.savez_compressed(checkpoint, latent=latent, rho=rho, beta=np.asarray(beta))
@@ -388,7 +393,9 @@ def main() -> int:
         raise RuntimeError("optimization did not produce a physical evaluation")
 
     final_beta = float(history[-1]["beta"])
-    final_rho = MAPPING.physical(latent, final_beta)
+    final_rho = CONTRACT.apply_fixed_contact_density(
+        MAPPING.physical(latent, final_beta)
+    )
     thresholded = final_rho >= 0.5
     current_gradient_latent = MAPPING.vjp(
         latent, final_point.gradient_physical_A, final_beta

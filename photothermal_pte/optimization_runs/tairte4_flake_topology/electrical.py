@@ -21,6 +21,23 @@ Array = np.ndarray
 LinearSolve = Callable[[sparse.csr_matrix, Array], Array]
 
 
+def _terminal_nodes(
+    mesh: "RectangularTriangularMesh", terminal_axis: str
+) -> tuple[Array, Array]:
+    if terminal_axis == "y":
+        return mesh.bottom_nodes, mesh.top_nodes
+    if terminal_axis == "x":
+        return mesh.left_nodes, mesh.right_nodes
+    if terminal_axis == "diagonal_45":
+        from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import (
+            CONTRACT,
+        )
+
+        low_mask, high_mask = CONTRACT.terminal_node_masks(mesh.nodes_m)
+        return np.flatnonzero(low_mask), np.flatnonzero(high_mask)
+    raise ValueError("terminal_axis must be 'x', 'y', or 'diagonal_45'")
+
+
 @dataclass(frozen=True)
 class RectangularTriangularMesh:
     x_m: Array
@@ -192,12 +209,7 @@ def solve_short_circuit_current_density(
     )
     matrix = _assemble(mesh, sigma, thickness_m)
 
-    if terminal_axis == "y":
-        low_nodes, high_nodes = mesh.bottom_nodes, mesh.top_nodes
-    elif terminal_axis == "x":
-        low_nodes, high_nodes = mesh.left_nodes, mesh.right_nodes
-    else:
-        raise ValueError("terminal_axis must be 'x' or 'y'")
+    low_nodes, high_nodes = _terminal_nodes(mesh, terminal_axis)
     fixed = np.unique(np.concatenate((low_nodes, high_nodes)))
     free_mask = np.ones(node_count, dtype=bool)
     free_mask[fixed] = False
@@ -288,12 +300,7 @@ def solve_weighting_and_adjoint(
     alpha = _element_tensor(alpha_base, alpha_scale)
     matrix = _assemble(mesh, sigma, thickness_m)
 
-    if terminal_axis == "y":
-        low_nodes, high_nodes = mesh.bottom_nodes, mesh.top_nodes
-    elif terminal_axis == "x":
-        low_nodes, high_nodes = mesh.left_nodes, mesh.right_nodes
-    else:
-        raise ValueError("terminal_axis must be 'x' or 'y'")
+    low_nodes, high_nodes = _terminal_nodes(mesh, terminal_axis)
     fixed = np.unique(np.concatenate((low_nodes, high_nodes)))
     fixed_values = np.zeros(fixed.size, dtype=np.float64)
     high_lookup = np.isin(fixed, high_nodes)

@@ -11,6 +11,8 @@ from dataclasses import asdict, dataclass
 from math import erf, exp, sqrt
 import os
 
+import numpy as np
+
 
 @dataclass(frozen=True)
 class TaIrTe4FlakeContract:
@@ -57,9 +59,73 @@ class TaIrTe4FlakeContract:
     @property
     def contact_axis(self) -> str:
         """Electrical terminal axis for the selected finite-flake geometry."""
+        if self.geometry_mode == "diagonal_45_contact_anchored":
+            return "diagonal_45"
         if self.geometry_mode == "left_right_contact_anchored":
             return "x"
         return "y"
+
+    @property
+    def fixed_design_contact_masks(self) -> tuple[np.ndarray, np.ndarray]:
+        """Low/high fixed-solid terminal masks on the design-node grid."""
+
+        shape = self.design_node_shape
+        empty = np.zeros(shape, dtype=bool)
+        if self.geometry_mode != "diagonal_45_contact_anchored":
+            return empty.copy(), empty.copy()
+        x = np.linspace(*self.design_bounds_m["x"], shape[0])
+        y = np.linspace(*self.design_bounds_m["y"], shape[1])
+        xx, yy = np.meshgrid(x, y, indexing="ij")
+        projection = (xx + yy) / sqrt(2.0)
+        corner_projection = self.flake_span_m / sqrt(2.0)
+        tolerance = 1.0e-18
+        low = projection <= -corner_projection + self.fixed_contact_depth_m + tolerance
+        high = projection >= corner_projection - self.fixed_contact_depth_m - tolerance
+        return low, high
+
+    @property
+    def fixed_design_solid_mask(self) -> np.ndarray:
+        low, high = self.fixed_design_contact_masks
+        return low | high
+
+    def apply_fixed_contact_density(self, value: np.ndarray) -> np.ndarray:
+        """Return a copy with diagonal terminal overlap held at solid TaIrTe4."""
+
+        result = np.asarray(value).copy()
+        if result.shape != self.design_node_shape:
+            raise ValueError(
+                f"design value shape {result.shape} != {self.design_node_shape}"
+            )
+        result[self.fixed_design_solid_mask] = 1.0
+        return result
+
+    def zero_fixed_contact_gradient(self, value: np.ndarray) -> np.ndarray:
+        """Return a copy with derivatives of locked terminal nodes set to zero."""
+
+        result = np.asarray(value).copy()
+        if result.shape != self.design_node_shape:
+            raise ValueError(
+                f"design gradient shape {result.shape} != {self.design_node_shape}"
+            )
+        result[self.fixed_design_solid_mask] = 0.0
+        return result
+
+    def terminal_node_masks(self, nodes_m: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+        """Return diagonal low/high equipotential masks on a full-flake mesh."""
+
+        nodes = np.asarray(nodes_m, dtype=np.float64)
+        if nodes.ndim != 2 or nodes.shape[1] != 2:
+            raise ValueError("terminal coordinates must have shape (N, 2)")
+        if self.contact_axis != "diagonal_45":
+            raise ValueError("terminal-node masks are only defined for diagonal contacts")
+        projection = (nodes[:, 0] + nodes[:, 1]) / sqrt(2.0)
+        corner_projection = self.flake_span_m / sqrt(2.0)
+        tolerance = 1.0e-18
+        low = projection <= -corner_projection + self.fixed_contact_depth_m + tolerance
+        high = projection >= corner_projection - self.fixed_contact_depth_m - tolerance
+        if not np.any(low) or not np.any(high) or np.any(low & high):
+            raise RuntimeError("invalid or empty diagonal terminal masks")
+        return low, high
 
     @property
     def design_intervals(self) -> tuple[int, int]:
@@ -136,6 +202,7 @@ class TaIrTe4FlakeContract:
             "fixed_frame",
             "contact_anchored",
             "left_right_contact_anchored",
+            "diagonal_45_contact_anchored",
         }:
             raise ValueError(f"unsupported geometry mode: {self.geometry_mode}")
         if self.design_span_x_m > self.flake_span_m or self.design_span_y_m > self.flake_span_m:
@@ -153,6 +220,10 @@ class TaIrTe4FlakeContract:
             self.design_span_y_m, self.flake_span_m
         ):
             raise ValueError("left/right-contact design must span the full flake height")
+        if self.geometry_mode == "diagonal_45_contact_anchored" and not np_isclose(
+            self.design_span_y_m, self.flake_span_m
+        ):
+            raise ValueError("45-degree-contact design must span the full flake height")
         if self.flake_span_m >= self.optical_lateral_span_m:
             raise ValueError("finite flake must not touch transverse PML")
         if not 0.0 < self.source_span_m < self.optical_lateral_span_m:
@@ -172,8 +243,16 @@ class TaIrTe4FlakeContract:
             raise ValueError("500 nm feature must have at least five design cells")
         if self.geometry_mode == "fixed_frame" and self.fixed_frame_width_m < 2.0 * self.minimum_feature_m:
             raise ValueError("fixed electrical frame is too narrow")
-        if self.geometry_mode in {"contact_anchored", "left_right_contact_anchored"} and self.fixed_contact_depth_m < 2.0 * self.minimum_feature_m:
+        if self.geometry_mode in {
+            "contact_anchored",
+            "left_right_contact_anchored",
+            "diagonal_45_contact_anchored",
+        } and self.fixed_contact_depth_m < 2.0 * self.minimum_feature_m:
             raise ValueError("fixed contact strip is too shallow")
+        if self.geometry_mode == "diagonal_45_contact_anchored":
+            low, high = self.fixed_design_contact_masks
+            if not np.any(low) or not np.any(high) or np.any(low & high):
+                raise ValueError("45-degree fixed contact masks are invalid")
         if not 0.0 < self.sigma_void_fraction < 1.0e-4:
             raise ValueError("void conductivity is a numerical regularization only")
 
@@ -199,9 +278,11 @@ class TaIrTe4FlakeContract:
                 "source": "finite scalar Gaussian",
                 "coordinate_mapping": "Lumerical x=b, y=a, z=c",
                 "design_endpoints": {"rho=0": "air/void", "rho=1": "TaIrTe4"},
-                "fixed_contact_regions": (
-                    "left_right" if self.contact_axis == "x" else "top_bottom"
-                ),
+                "fixed_contact_regions": {
+                    "x": "left_right",
+                    "y": "top_bottom",
+                    "diagonal_45": "southwest_northeast_45_degree",
+                }[self.contact_axis],
                 "symmetry_constraint": False,
                 "Q_clipping_smoothing_gain_or_rescaling": False,
                 "CPU_FDTD_fallback": False,
@@ -234,6 +315,13 @@ def _selected_contract() -> TaIrTe4FlakeContract:
     if mode == "left_right_contact_anchored":
         return TaIrTe4FlakeContract(
             geometry_mode="left_right_contact_anchored",
+            design_span_x_m=20.0e-6,
+            design_span_y_m=24.0e-6,
+            fixed_contact_depth_m=2.0e-6,
+        )
+    if mode == "diagonal_45_contact_anchored":
+        return TaIrTe4FlakeContract(
+            geometry_mode="diagonal_45_contact_anchored",
             design_span_x_m=20.0e-6,
             design_span_y_m=24.0e-6,
             fixed_contact_depth_m=2.0e-6,

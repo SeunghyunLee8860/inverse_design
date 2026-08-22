@@ -29,6 +29,10 @@ def test_exact_audit_uses_geometry_specific_outside_phase():
     expected = {
         "contact_anchored": "fixed_solid_at_top_bottom_and_void_at_left_right",
         "left_right_contact_anchored": "fixed_solid_at_left_right_and_void_at_top_bottom",
+        "diagonal_45_contact_anchored": (
+            "fixed_solid_at_left_right_and_void_at_top_bottom_with_"
+            "locked_southwest_northeast_terminal_overlaps"
+        ),
     }.get(CONTRACT.geometry_mode, "fixed_solid_TaIrTe4_frame")
     assert audit["outside_design_phase"] == expected
     assert audit["opening_radius_nm"] == 250.0
@@ -36,6 +40,19 @@ def test_exact_audit_uses_geometry_specific_outside_phase():
     assert audit["realized_discrete_opening_max_center_offset_nm"] == 200.0
     assert audit["realized_discrete_opening_pixel_support_diameter_nm"] == 500.0
     assert audit["counted_entity"].startswith("design nodes")
+
+
+def test_diagonal_exact_audit_rejects_void_in_locked_contact() -> None:
+    if CONTRACT.geometry_mode != "diagonal_45_contact_anchored":
+        return
+    solid = np.ones(MAPPING.shape)
+    solid[CONTRACT.fixed_design_solid_mask] = 0.0
+    audit, arrays = exact_binary_audit(solid)
+    assert not audit["passed"]
+    assert audit["fixed_contact_violation_count"] > 0
+    assert np.array_equal(
+        arrays["fixed_contact_violation"], CONTRACT.fixed_design_solid_mask
+    )
 
 
 def test_exact_audit_explicit_geometry_overrides_process_default():

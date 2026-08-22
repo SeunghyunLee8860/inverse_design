@@ -1,5 +1,6 @@
 import numpy as np
 
+from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
 from photothermal_pte.optimization_runs.tairte4_flake_topology.electrical import (
     build_rectangular_mesh,
     solve_short_circuit_current_density,
@@ -94,6 +95,36 @@ def test_short_circuit_local_current_matches_weighting_terminal_current() -> Non
         local.conductive_current_density_element_A_m2
         + local.thermoelectric_current_density_element_A_m2,
     )
+
+
+def test_diagonal_terminal_current_matches_local_short_circuit_solution() -> None:
+    if CONTRACT.contact_axis != "diagonal_45":
+        return
+    mesh = build_rectangular_mesh(24.0e-6, 24.0e-6, 0.5e-6)
+    xx, yy = np.meshgrid(mesh.x_m, mesh.y_m, indexing="ij")
+    rho = np.ones(mesh.shape)
+    temperature = 300.0 + np.exp(
+        -((xx / 4.0e-6) ** 2 + ((yy + 2.0e-6) / 5.0e-6) ** 2)
+    )
+    kwargs = dict(
+        thickness_m=100.0e-9,
+        sigma_xy_S_m=SIGMA,
+        seebeck_xy_V_K=SEEBECK,
+        terminal_axis="diagonal_45",
+    )
+    weighted = solve_weighting_and_adjoint(mesh, rho, temperature, **kwargs)
+    local = solve_short_circuit_current_density(mesh, rho, temperature, **kwargs)
+    relative = abs(local.terminal_current_A - weighted.current_A) / max(
+        abs(weighted.current_A), np.finfo(float).tiny
+    )
+    assert relative < 2.0e-10
+    assert local.continuity_residual < 1.0e-9
+    low, high = CONTRACT.terminal_node_masks(mesh.nodes_m)
+    potential = local.potential_V.reshape(-1)
+    assert np.max(np.abs(potential[low | high])) == 0.0
+    weighting = weighted.weighting_potential.reshape(-1)
+    assert np.max(np.abs(weighting[low])) == 0.0
+    assert np.max(np.abs(weighting[high] - 1.0)) == 0.0
 
 
 def test_density_gradient_matches_directional_fd() -> None:

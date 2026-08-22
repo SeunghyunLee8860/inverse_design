@@ -45,6 +45,14 @@ def active_set_repair(
     contact_axis: str | None = None,
 ) -> tuple[np.ndarray, list[dict[str, object]], str]:
     value = np.asarray(initial, dtype=bool).copy()
+    locked_solid = (
+        CONTRACT.fixed_design_solid_mask
+        if geometry_mode == "diagonal_45_contact_anchored"
+        else np.zeros_like(value)
+    )
+    if locked_solid.shape != value.shape:
+        raise ValueError("locked contact mask does not match exact-repair design")
+    value[locked_solid] = True
     history: list[dict[str, object]] = []
     seen: set[bytes] = set()
     phases = ("solid", "void") if order == "solid_first" else ("void", "solid")
@@ -84,6 +92,7 @@ def active_set_repair(
                 value[arrays["bad_solid"]] = False
             else:
                 value[arrays["bad_void"]] = True
+            value[locked_solid] = True
     return value, history, stop_reason
 
 
@@ -178,6 +187,18 @@ def gradient_aware_exact_repair(
             raise ValueError("objective gradient must be finite and match the design")
     if beam_width <= 0 or maximum_iterations <= 0 or maximum_candidates <= 0:
         raise ValueError("repair search budgets must be positive")
+    locked_solid = (
+        CONTRACT.fixed_design_solid_mask
+        if geometry_mode == "diagonal_45_contact_anchored"
+        else np.zeros_like(source)
+    )
+    if locked_solid.shape != source.shape:
+        raise ValueError("locked contact mask does not match exact-repair design")
+    source = source.copy()
+    source[locked_solid] = True
+    if objective_gradient is not None:
+        objective_gradient = np.asarray(objective_gradient).copy()
+        objective_gradient[locked_solid] = 0.0
 
     source_audit, _ = exact_binary_audit(
         source.astype(np.float64),
@@ -232,6 +253,7 @@ def gradient_aware_exact_repair(
                 arrays["bad_solid"],
                 arrays["bad_void"],
             ):
+                action[locked_solid] = True
                 key = np.packbits(action, bitorder="little").tobytes()
                 if key in visited:
                     continue
@@ -308,7 +330,11 @@ def main() -> int:
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--maximum-iterations", type=int, default=100)
     args = parser.parse_args()
-    if CONTRACT.geometry_mode not in {"contact_anchored", "left_right_contact_anchored"}:
+    if CONTRACT.geometry_mode not in {
+        "contact_anchored",
+        "left_right_contact_anchored",
+        "diagonal_45_contact_anchored",
+    }:
         raise RuntimeError("select a contact-anchored geometry")
     if args.maximum_iterations <= 0:
         raise ValueError("maximum iterations must be positive")

@@ -43,7 +43,10 @@ def test_bottom_contact_endpoints_and_axis_mapping():
     zero = build_state(np.zeros(CONTRACT.design_node_shape))
     one = build_state(np.ones(CONTRACT.design_node_shape))
     assert np.allclose(K_TAIRTE4_XYZ_W_MK, (3.8, 14.4, 1.0))
-    assert np.isclose(zero.kappa_W_mK[zero.masks["design_effective"]][0, 0], K_AIR_W_MK)
+    zero_design_kappa = zero.kappa_W_mK[zero.masks["design_effective"]]
+    assert np.any(np.isclose(zero_design_kappa[:, 0], K_AIR_W_MK))
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        assert np.any(np.isclose(zero_design_kappa[:, 0], K_TAIRTE4_XYZ_W_MK[0]))
     assert np.allclose(one.kappa_W_mK[one.masks["design_effective"]][0], K_TAIRTE4_XYZ_W_MK)
     assert np.isclose(
         one.bottom_tairte4_path_resistance_m2K_W

@@ -63,11 +63,16 @@ def exact_binary_audit(
         "fixed_frame",
         "contact_anchored",
         "left_right_contact_anchored",
+        "diagonal_45_contact_anchored",
     }:
         raise ValueError(f"unsupported exact-audit geometry mode: {selected_geometry}")
-    if selected_axis not in {"x", "y"}:
+    if selected_axis not in {"x", "y", "diagonal_45"}:
         raise ValueError(f"unsupported exact-audit contact axis: {selected_axis}")
-    if selected_geometry in {"contact_anchored", "left_right_contact_anchored"}:
+    if selected_geometry in {
+        "contact_anchored",
+        "left_right_contact_anchored",
+        "diagonal_45_contact_anchored",
+    }:
         solid_padded = np.zeros((binary.shape[0] + 2 * radius, binary.shape[1] + 2 * radius), dtype=bool)
         solid_padded[radius:-radius, radius:-radius] = binary
         if selected_axis == "y":
@@ -77,7 +82,12 @@ def exact_binary_audit(
         else:
             solid_padded[:radius, :] = True
             solid_padded[-radius:, :] = True
-            outside_phase = "fixed_solid_at_left_right_and_void_at_top_bottom"
+            outside_phase = (
+                "fixed_solid_at_left_right_and_void_at_top_bottom_with_"
+                "locked_southwest_northeast_terminal_overlaps"
+                if selected_axis == "diagonal_45"
+                else "fixed_solid_at_left_right_and_void_at_top_bottom"
+            )
         solid_open = ndimage.binary_opening(solid_padded, structure=structure)[radius:-radius, radius:-radius]
         void_padded = ~solid_padded
         void_open = ndimage.binary_opening(void_padded, structure=structure)[radius:-radius, radius:-radius]
@@ -87,6 +97,14 @@ def exact_binary_audit(
         outside_phase = "fixed_solid_TaIrTe4_frame"
     bad_solid = binary & ~solid_open
     bad_void = (~binary) & ~void_open
+    contact_violation = np.zeros_like(binary)
+    if selected_geometry == "diagonal_45_contact_anchored":
+        if CONTRACT.geometry_mode != selected_geometry or binary.shape != CONTRACT.design_node_shape:
+            raise ValueError(
+                "diagonal exact audit requires the matching process geometry contract"
+            )
+        contact_violation = CONTRACT.fixed_design_solid_mask & ~binary
+        bad_void |= contact_violation
     return {
         "minimum_feature_nm": 500.0,
         "opening_radius_nm": 250.0,
@@ -102,11 +120,21 @@ def exact_binary_audit(
         "outside_design_phase": outside_phase,
         "solid_bad_cell_count": int(np.count_nonzero(bad_solid)),
         "void_bad_cell_count": int(np.count_nonzero(bad_void)),
+        "fixed_contact_violation_count": int(np.count_nonzero(contact_violation)),
         "total_bad_cell_count": int(np.count_nonzero(bad_solid) + np.count_nonzero(bad_void)),
         "counted_entity": "design nodes (legacy field names retain *_cell_count)",
         "solid_fraction": float(np.mean(binary)),
-        "passed": bool(not np.any(bad_solid) and not np.any(bad_void)),
-    }, {"binary": binary, "bad_solid": bad_solid, "bad_void": bad_void}
+        "passed": bool(
+            not np.any(bad_solid)
+            and not np.any(bad_void)
+            and not np.any(contact_violation)
+        ),
+    }, {
+        "binary": binary,
+        "bad_solid": bad_solid,
+        "bad_void": bad_void,
+        "fixed_contact_violation": contact_violation,
+    }
 
 
 def _projection(filtered: torch.Tensor, beta: float) -> torch.Tensor:
@@ -126,7 +154,11 @@ def _offsets() -> tuple[tuple[int, int], ...]:
 def _shifted(value: torch.Tensor, border: float) -> torch.Tensor:
     offsets = _offsets()
     radius = max(max(abs(i), abs(j)) for i, j in offsets)
-    if CONTRACT.geometry_mode in {"contact_anchored", "left_right_contact_anchored"}:
+    if CONTRACT.geometry_mode in {
+        "contact_anchored",
+        "left_right_contact_anchored",
+        "diagonal_45_contact_anchored",
+    }:
         # Array axis 0 is Lumerical x and axis 1 is y.  The contact-axis edges
         # touch fixed TaIrTe4; the orthogonal edges touch void.
         solid_phase = border == 1.0
