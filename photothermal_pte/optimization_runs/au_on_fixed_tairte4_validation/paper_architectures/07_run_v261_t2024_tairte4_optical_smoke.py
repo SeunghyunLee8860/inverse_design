@@ -23,6 +23,7 @@ import time
 import traceback
 
 import numpy as np
+from scipy.interpolate import RegularGridInterpolator
 
 
 HERE = Path(__file__).resolve().parent
@@ -33,6 +34,7 @@ if str(REPOSITORY) not in sys.path:
 
 from photothermal_pte.finite_inverse_design.native_yee_q import (  # noqa: E402
     extract_native_yee_q,
+    frequency_slice,
 )
 from photothermal_pte.finite_inverse_design.probe_v261_cpu_tfsf_device import (  # noqa: E402
     PABS_FIELD,
@@ -50,15 +52,18 @@ FREQUENCY_HZ = C0 / WAVELENGTH_M
 PERIOD_X_M = 1.5e-6
 PERIOD_Y_M = 1.0e-6
 FDTD_Z_MIN_AU_TRUNCATED_M = -1.0e-6
-FDTD_Z_MIN_SIO2_SI_M = -2.5e-6
+FDTD_Z_MIN_SIO2_SI_REDUCED_M = -1.2e-6
+FDTD_Z_MIN_SIO2_SI_FULL_M = -2.5e-6
 FDTD_Z_MAX_M = 1.2e-6
 SOURCE_Z_M = 0.8e-6
 TOP_MONITOR_Z_M = 0.45e-6
 BOTTOM_MONITOR_AU_TRUNCATED_Z_M = -0.65e-6
-BOTTOM_MONITOR_SIO2_SI_Z_M = -2.0e-6
+BOTTOM_MONITOR_SIO2_SI_REDUCED_Z_M = -0.70e-6
+BOTTOM_MONITOR_SIO2_SI_FULL_Z_M = -2.0e-6
 AU_MIRROR_TOP_M = -35.0e-9
 AU_MIRROR_BOTTOM_M = -235.0e-9
-SIO2_THICKNESS_M = 1.5e-6
+SIO2_REDUCED_THICKNESS_M = 285.0e-9
+SIO2_FULL_THICKNESS_M = 1.5e-6
 AL2O3_N = 1.62 + 0.0j
 AU_MATERIAL = "Au (Gold) - CRC"
 SIO2_MATERIAL = "SiO2 (Glass) - Palik"
@@ -67,7 +72,99 @@ TAIRTE4_MATERIAL = "TaIrTe4_100nm_2024T_substitution"
 AL2O3_MATERIAL = "Al2O3_lossless_n1p62_explicit_closure"
 SOURCE_NAME = "T2024_normal_incidence_plane_wave"
 TOP_MONITOR = "T2024_flux_top"
-BOTTOM_MONITOR = "T2024_flux_bottom_in_Au"
+BOTTOM_MONITOR = "T2024_flux_bottom"
+
+
+def common_field_slices(fdtd: object, q: dict[str, object]) -> dict[str, np.ndarray]:
+    """Collocate complex E on three compact physical cross sections.
+
+    The native Yee components are first paired with their own shifted physical
+    coordinates. Interpolation is restricted to the common coordinate
+    intersection, so no boundary extrapolation or same-index pairing is used.
+    """
+
+    frequency_hz = np.asarray(fdtd.getdata(PABS_FIELD, "f", 1), float).reshape(-1)
+    frequency_index = int(q["frequency_index_zero_based"])
+    base = {
+        axis: np.asarray(q["base_coordinates"][axis], float).reshape(-1)
+        for axis in "xyz"
+    }
+    native = q["native_coordinates"]
+    interpolators: dict[str, RegularGridInterpolator] = {}
+    for component in "xyz":
+        shape = tuple(base[axis].size for axis in "xyz")
+        electric = frequency_slice(
+            np.asarray(fdtd.getdata(PABS_FIELD, f"E{component}", 1)),
+            shape,
+            frequency_index,
+            frequency_hz.size,
+            f"E{component}",
+        )
+        interpolators[component] = RegularGridInterpolator(
+            tuple(np.asarray(native[component][axis], float) for axis in "xyz"),
+            np.asarray(electric, complex),
+            method="linear",
+            bounds_error=True,
+        )
+
+    common_bounds = {
+        axis: (
+            max(float(np.min(native[component][axis])) for component in "xyz"),
+            min(float(np.max(native[component][axis])) for component in "xyz"),
+        )
+        for axis in "xyz"
+    }
+    common = {
+        axis: base[axis][
+            (base[axis] >= common_bounds[axis][0])
+            & (base[axis] <= common_bounds[axis][1])
+        ]
+        for axis in "xyz"
+    }
+    if min(values.size for values in common.values()) < 2:
+        raise RuntimeError(f"empty common Yee intersection: {common_bounds}")
+
+    result: dict[str, np.ndarray] = {}
+
+    def evaluate_plane(
+        label: str,
+        first_axis: str,
+        first: np.ndarray,
+        second_axis: str,
+        second: np.ndarray,
+        fixed_axis: str,
+        fixed_value: float,
+    ) -> None:
+        mesh_first, mesh_second = np.meshgrid(first, second, indexing="ij")
+        coordinates = {
+            first_axis: mesh_first,
+            second_axis: mesh_second,
+            fixed_axis: np.full_like(mesh_first, fixed_value),
+        }
+        points = np.column_stack(
+            tuple(coordinates[axis].reshape(-1) for axis in "xyz")
+        )
+        intensity = np.zeros(mesh_first.shape, float)
+        for component in "xyz":
+            electric = interpolators[component](points).reshape(mesh_first.shape)
+            result[f"field_{label}_E{component}"] = electric
+            intensity += np.abs(electric) ** 2
+        result[f"field_{label}_E2_V2_m2"] = intensity
+        result[f"field_{label}_{first_axis}_m"] = np.asarray(first, float)
+        result[f"field_{label}_{second_axis}_m"] = np.asarray(second, float)
+        result[f"field_{label}_{fixed_axis}_m"] = np.asarray([fixed_value], float)
+
+    z_mid = 50.0e-9
+    if not common_bounds["z"][0] <= z_mid <= common_bounds["z"][1]:
+        raise RuntimeError("TaIrTe4 midplane lies outside common Yee support")
+    near_z = common["z"][(common["z"] >= -0.30e-6) & (common["z"] <= 0.35e-6)]
+    evaluate_plane("xy", "x", common["x"], "y", common["y"], "z", z_mid)
+    evaluate_plane("xz", "x", common["x"], "z", near_z, "y", 0.0)
+    evaluate_plane("yz", "y", common["y"], "z", near_z, "x", 0.0)
+    result["field_common_bounds_m"] = np.asarray(
+        [common_bounds[axis] for axis in "xyz"], float
+    )
+    return result
 
 
 def load_local_module(filename: str, name: str):
@@ -195,7 +292,7 @@ def setup(
     duration_ps: float,
     *,
     include_top_t: bool = True,
-    substrate_mode: str = "sio2_si",
+    substrate_mode: str = "sio2_si_reduced_285nm",
 ) -> dict[str, object]:
     geometry_module = load_local_module(
         "05_actual_metasurface_geometry.py", "paper_actual_metasurface_geometry"
@@ -205,13 +302,20 @@ def setup(
     )
     geometry = geometry_module.inverse_t_mir_4750nm()
 
-    if substrate_mode == "sio2_si":
-        fdtd_z_min_m = FDTD_Z_MIN_SIO2_SI_M
-        bottom_monitor_z_m = BOTTOM_MONITOR_SIO2_SI_Z_M
-        oxide_bottom_m = AU_MIRROR_BOTTOM_M - SIO2_THICKNESS_M
+    if substrate_mode == "sio2_si_reduced_285nm":
+        fdtd_z_min_m = FDTD_Z_MIN_SIO2_SI_REDUCED_M
+        bottom_monitor_z_m = BOTTOM_MONITOR_SIO2_SI_REDUCED_Z_M
+        sio2_thickness_m = SIO2_REDUCED_THICKNESS_M
+        oxide_bottom_m = AU_MIRROR_BOTTOM_M - sio2_thickness_m
+    elif substrate_mode in ("sio2_si", "sio2_si_full_1500nm"):
+        fdtd_z_min_m = FDTD_Z_MIN_SIO2_SI_FULL_M
+        bottom_monitor_z_m = BOTTOM_MONITOR_SIO2_SI_FULL_Z_M
+        sio2_thickness_m = SIO2_FULL_THICKNESS_M
+        oxide_bottom_m = AU_MIRROR_BOTTOM_M - sio2_thickness_m
     elif substrate_mode == "au_truncated":
         fdtd_z_min_m = FDTD_Z_MIN_AU_TRUNCATED_M
         bottom_monitor_z_m = BOTTOM_MONITOR_AU_TRUNCATED_Z_M
+        sio2_thickness_m = None
         oxide_bottom_m = None
     else:
         raise ValueError(f"unsupported substrate mode: {substrate_mode}")
@@ -266,7 +370,8 @@ def setup(
     tairte4 = add_tairte4_material(fdtd)
     add_constant_nk(fdtd, AL2O3_MATERIAL, AL2O3_N)
     au_index = complex(np.asarray(fdtd.getindex(AU_MATERIAL, FREQUENCY_HZ)).reshape(-1)[0])
-    if substrate_mode == "sio2_si":
+    explicit_sio2_si = substrate_mode != "au_truncated"
+    if explicit_sio2_si:
         sio2_index = complex(
             np.asarray(fdtd.getindex(SIO2_MATERIAL, FREQUENCY_HZ)).reshape(-1)[0]
         )
@@ -282,7 +387,7 @@ def setup(
         )
         add_rect(
             fdtd,
-            "paper_thermal_SiO2_1500nm",
+            f"optical_SiO2_{sio2_thickness_m * 1e9:.0f}nm",
             SIO2_MATERIAL,
             oxide_bottom_m,
             AU_MIRROR_BOTTOM_M,
@@ -371,8 +476,13 @@ def setup(
             "SiO2": {
                 "Lumerical_material": SIO2_MATERIAL if sio2_index is not None else None,
                 "readback_n_plus_ik": complex_record(sio2_index) if sio2_index is not None else None,
-                "thickness_m": SIO2_THICKNESS_M if sio2_index is not None else None,
-                "provenance": "2024 main Methods: 1.5-um thermally grown SiO2",
+                "thickness_m": sio2_thickness_m,
+                "provenance": (
+                    "reduced 285-nm optical closure below an opaque 200-nm Au mirror; "
+                    "not the physical 1.5-um oxide thickness"
+                    if substrate_mode == "sio2_si_reduced_285nm"
+                    else "2024 main Methods: 1.5-um thermally grown SiO2"
+                ),
             },
             "Si": {
                 "Lumerical_material": SI_MATERIAL if si_index is not None else None,
@@ -385,18 +495,23 @@ def setup(
             "domain_z_min_m": fdtd_z_min_m,
             "bottom_flux_monitor_z_m": bottom_monitor_z_m,
             "Au_mirror_bounds_m": [
-                AU_MIRROR_BOTTOM_M if substrate_mode == "sio2_si" else fdtd_z_min_m,
+                AU_MIRROR_BOTTOM_M if explicit_sio2_si else fdtd_z_min_m,
                 AU_MIRROR_TOP_M,
             ],
             "SiO2_bounds_m": [oxide_bottom_m, AU_MIRROR_BOTTOM_M]
-            if substrate_mode == "sio2_si"
+            if explicit_sio2_si
             else None,
             "Si_bounds_m": [fdtd_z_min_m, oxide_bottom_m]
-            if substrate_mode == "sio2_si"
+            if explicit_sio2_si
             else None,
             "paper_identity": (
-                "explicit 1.5-um thermal-SiO2 / intrinsic-Si stack"
-                if substrate_mode == "sio2_si"
+                (
+                    "reduced 285-nm optical-SiO2 / intrinsic-Si closure; "
+                    "physical thermal thickness is not implied"
+                    if substrate_mode == "sio2_si_reduced_285nm"
+                    else "explicit 1.5-um thermal-SiO2 / intrinsic-Si stack"
+                )
+                if explicit_sio2_si
                 else "legacy numerical Au-to-bottom-PML closure"
             ),
         },
@@ -439,9 +554,17 @@ def main() -> int:
     parser.add_argument("--duration-ps", type=float, default=1.0)
     parser.add_argument(
         "--substrate-mode",
-        choices=("sio2_si", "au_truncated"),
-        default="sio2_si",
-        help="Use the explicit 2024 SiO2/Si substrate by default; legacy Au truncation is opt-in.",
+        choices=(
+            "sio2_si_reduced_285nm",
+            "sio2_si_full_1500nm",
+            "sio2_si",
+            "au_truncated",
+        ),
+        default="sio2_si_reduced_285nm",
+        help=(
+            "Use the reduced 285-nm optical SiO2/Si closure by default. "
+            "The full physical 1.5-um oxide remains an explicit control."
+        ),
     )
     parser.add_argument("--contract-only", action="store_true")
     parser.add_argument(
@@ -531,6 +654,7 @@ def main() -> int:
                 arrays[f"top_E{component}"] = np.asarray(fdtd.getdata(TOP_MONITOR, f"E{component}", 1)).squeeze()
             arrays["top_x_m"] = np.asarray(fdtd.getdata(TOP_MONITOR, "x", 1), float)
             arrays["top_y_m"] = np.asarray(fdtd.getdata(TOP_MONITOR, "y", 1), float)
+            arrays.update(common_field_slices(fdtd, q))
             np.savez_compressed(npz_path, **arrays)
             result.update(
                 {

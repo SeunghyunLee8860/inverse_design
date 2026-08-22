@@ -83,15 +83,26 @@ The T vertices are a figure-digitized approximation to Supplementary Fig. 14,
 not author CAD. Both normal-incidence polarizations have been run on the v261
 GPU solver and pass closure, shutoff, finite-Q, and nonnegative-Q gates.
 
-The production default is now the explicit paper substrate:
+The physical full-thickness control is:
 
 `air / Au inverse-T / 100-nm TaIrTe4 / 35-nm Al2O3 / 200-nm Au mirror /
 1.5-um thermally grown SiO2 / intrinsic Si`.
 
 At 4.75 um, SiO2 and Si are read directly from the installed Lumerical v261
 Palik database and their complex-index readbacks are stored in every raw case
-JSON. The legacy `Au-to-bottom-PML` model remains available only through the
-explicit `--substrate-mode au_truncated` diagnostic option.
+JSON. A four-case comparison showed that the 200-nm Au mirror makes the full
+1.5-um oxide optically indistinguishable from the old Au truncation: bottom
+transmission is below `1e-9`, and active-region power/field metrics agree far
+inside their gates. Therefore the optical-forward default is the faster
+`--substrate-mode sio2_si_reduced_285nm` closure:
+
+`200-nm Au mirror / 285-nm optical SiO2 buffer / Si to bottom PML`.
+
+This is a numerical **optical** closure, not a claim that the fabricated or
+thermal oxide is 285 nm. The full 1.5-um control remains available as
+`--substrate-mode sio2_si_full_1500nm`; the later thermal model retains its
+physical SiO2/Si geometry. The legacy `Au-to-bottom-PML` model remains only as
+the explicit `--substrate-mode au_truncated` diagnostic.
 
 Publish the paired comparison without rerunning FDTD:
 
@@ -127,6 +138,12 @@ remove SiO2 or Si from the later thermal model.
 For presentations, run `11_publish_meeting_plot_package.py`. It creates one
 folder per case with separate structure, Qx, Qy, Qz, conservative common-grid
 Qtotal, power breakdown, overview, and machine-readable metrics.
+
+`15_publish_reduced_substrate_fields.py` publishes the reduced-stack setup and
+actual collocated Lumerical near fields at the TaIrTe4 midplane and in xz/yz
+cross sections. It also publishes Qx/Qy/Qz/Qtotal maps. Field components are
+paired on their component-specific Yee coordinates before interpolation; they
+are never multiplied or summed by raw array index.
 
 `12_publish_detailed_meeting_materials.py` adds xy/xz/yz setup and Q sections,
 top-monitor total fields, absorption-depth profiles, geometric material maps,

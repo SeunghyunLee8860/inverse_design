@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
 import numpy as np
 
 
@@ -45,13 +46,25 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--raw-root", type=Path, default=RAW_ROOT)
     parser.add_argument("--output-dir", type=Path, default=HERE / "results_actual_metasurfaces")
+    parser.add_argument(
+        "--case-naming",
+        choices=("legacy", "reduced"),
+        default="legacy",
+        help="Select raw-case directory names without changing prior artifact semantics.",
+    )
     args = parser.parse_args()
-    cases = {
-        "T_Eb": args.raw_root / "T2024_MIR_4750_xb_forward",
-        "T_Ea": args.raw_root / "T2024_MIR_4750_ya_forward",
-        "bare_Eb": args.raw_root / "T2024_MIR_4750_bare_xb_forward",
-        "bare_Ea": args.raw_root / "T2024_MIR_4750_bare_ya_forward",
-    }
+    if args.case_naming == "reduced":
+        cases = {
+            key: args.raw_root / f"T2024_MIR_4750_{key}"
+            for key in ("T_Eb", "T_Ea", "bare_Eb", "bare_Ea")
+        }
+    else:
+        cases = {
+            "T_Eb": args.raw_root / "T2024_MIR_4750_xb_forward",
+            "T_Ea": args.raw_root / "T2024_MIR_4750_ya_forward",
+            "bare_Eb": args.raw_root / "T2024_MIR_4750_bare_xb_forward",
+            "bare_Ea": args.raw_root / "T2024_MIR_4750_bare_ya_forward",
+        }
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=True)
     comparison = load_module(
@@ -198,6 +211,45 @@ def main() -> int:
     fig.savefig(plot_path, dpi=220)
     plt.close(fig)
 
+    field_plot_path = output / "T2024_top_T_near_field_difference.png"
+    fig, axes = plt.subplots(2, 3, figsize=(14.5, 8.0), constrained_layout=True)
+    for row, label in enumerate(("Eb", "Ea")):
+        t_raw = loaded[f"T_{label}"]["raw"]
+        bare_raw = loaded[f"bare_{label}"]["raw"]
+        x = np.asarray(t_raw["field_xy_x_m"], float) * 1e9
+        y = np.asarray(t_raw["field_xy_y_m"], float) * 1e9
+        t_field = np.asarray(t_raw["field_xy_E2_V2_m2"], float)
+        bare_field = np.asarray(bare_raw["field_xy_E2_V2_m2"], float)
+        if not np.array_equal(t_field.shape, bare_field.shape):
+            raise RuntimeError(f"{label} T/bare field shapes differ")
+        vmax = max(float(np.max(t_field)), float(np.max(bare_field)))
+        norm = LogNorm(vmin=max(vmax * 1e-5, 1e-30), vmax=vmax)
+        for col, (value, panel) in enumerate(((bare_field, "bare"), (t_field, "with inverse-T"))):
+            image = axes[row, col].pcolormesh(x, y, value.T, shading="auto", cmap="magma", norm=norm)
+            axes[row, col].set_title(rf"$E\parallel {label[-1].lower()}$: {panel} $|E|^2$")
+            axes[row, col].set_aspect("equal")
+            fig.colorbar(image, ax=axes[row, col], label=r"V$^2$/m$^2$")
+        difference = t_field - bare_field
+        difference_scale = float(np.max(np.abs(difference)))
+        image = axes[row, 2].pcolormesh(
+            x,
+            y,
+            difference.T,
+            shading="auto",
+            cmap="coolwarm",
+            vmin=-difference_scale,
+            vmax=difference_scale,
+        )
+        axes[row, 2].set_title(rf"$E\parallel {label[-1].lower()}$: T - bare $|E|^2$")
+        axes[row, 2].set_aspect("equal")
+        fig.colorbar(image, ax=axes[row, 2], label=r"V$^2$/m$^2$")
+        for axis in axes[row]:
+            axis.set_xlabel("x=b (nm)")
+            axis.set_ylabel("y=a (nm)")
+    fig.suptitle("Actual TaIrTe4-midplane near fields: matched T versus bare controls")
+    fig.savefig(field_plot_path, dpi=220)
+    plt.close(fig)
+
     eb = enhancement["Eb"]
     ea = enhancement["Ea"]
     report_path = output / "T2024_TOP_T_MATCHED_BARE_REPORT.md"
@@ -253,7 +305,7 @@ its own identical grid; they are not cross-component sums.
                 "size_bytes": path.stat().st_size,
                 "sha256": sha256(path),
             }
-            for path in (summary_path, report_path, plot_path)
+            for path in (summary_path, report_path, plot_path, field_plot_path)
         ],
     }
     manifest_path = output / "T2024_TOP_T_MATCHED_BARE_RAW_ARTIFACT_MANIFEST.json"
