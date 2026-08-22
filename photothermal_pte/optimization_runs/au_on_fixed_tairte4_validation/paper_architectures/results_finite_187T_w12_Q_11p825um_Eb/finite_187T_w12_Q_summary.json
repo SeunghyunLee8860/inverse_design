@@ -1,0 +1,56 @@
+{
+  "status": "VALIDATED_FINITE_187T_W12_VOLUMETRIC_Q",
+  "source": {
+    "wavelength_um": 11.825,
+    "polarization": "E||b; Lumerical x=b",
+    "target_realized_w0_um": 12.0,
+    "Lumerical_source_object_w0_um": 11.85757138436561,
+    "span_um": 50.0
+  },
+  "array": {
+    "nx": 11,
+    "ny": 17,
+    "count": 187,
+    "span_um": [
+      16.5,
+      17.0
+    ]
+  },
+  "domain": {
+    "x_um": 60.0,
+    "y_um": 60.0,
+    "boundaries": "six PML, 24 layers"
+  },
+  "P_Q_native_W": 2.0985386463466045e-14,
+  "P_Q_pabs_W": 2.0986947726305603e-14,
+  "P_six_face_W": 2.0997932688127327e-14,
+  "six_face_closure_relative": 0.0005974980893417013,
+  "Q_component_power_native_W": {
+    "x": 1.1852305260087046e-14,
+    "y": 4.0674755514304395e-15,
+    "z": 5.0656056519485605e-15
+  },
+  "hotspot": {
+    "x_m": 6.000000000000192e-07,
+    "y_m": -2.499999999999838e-07,
+    "z_m": 9.500000000000027e-08,
+    "Q_W_m3": 61149.540099863065,
+    "classification": "linearly collocated common-grid diagnostic; native Yee power is authoritative"
+  },
+  "gates": {
+    "GPU_completed": true,
+    "auto_shutoff_lt_1e_5": true,
+    "six_face_closure_lt_0p5pct": true,
+    "native_vs_pabs_lt_0p5pct": true,
+    "all_Q_arrays_finite": true,
+    "no_negative_Q": true
+  },
+  "scope_exclusions": [
+    "thermal",
+    "weighting potential",
+    "PTE",
+    "adjoint",
+    "optimization"
+  ],
+  "raw_artifacts_committed_to_git": false
+}

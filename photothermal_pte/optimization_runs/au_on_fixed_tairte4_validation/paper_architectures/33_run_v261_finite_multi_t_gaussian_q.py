@@ -122,6 +122,19 @@ def add_flux_box(fdtd: object) -> dict[str, dict[str, object]]:
     return faces
 
 
+def existing_flux_box() -> dict[str, dict[str, object]]:
+    return {
+        f"{axis}_{side}": {
+            "name": f"finite_187T_flux_{axis}_{side}",
+            "axis": axis,
+            "side": side,
+            "outward_sign": -1.0 if side == "min" else 1.0,
+        }
+        for axis in "xyz"
+        for side in ("min", "max")
+    }
+
+
 def face_fluxes(fdtd: object, faces: dict[str, dict[str, object]], source_power: float) -> dict[str, object]:
     values: dict[str, object] = {}
     net_outward = 0.0
@@ -178,15 +191,33 @@ def main() -> int:
         runsetup.SOURCE_SPAN_UM = SOURCE_SPAN_UM
 
         fdtd = lumapi.FDTD(hide=True, serverArgs={"platform": "offscreen"})
-        contract = runsetup.setup(fdtd)
-        pabs = fdtd.addobject("pabs_adv")
-        pabs["name"] = PABS_GROUP
-        for axis in "xyz":
-            pabs[axis] = 0.5 * sum(CONTROL_BOUNDS_M[axis])
-            pabs[f"{axis} span"] = CONTROL_BOUNDS_M[axis][1] - CONTROL_BOUNDS_M[axis][0]
-        faces = add_flux_box(fdtd)
-        for name in (PABS_FIELD, PABS_INDEX):
-            configure_single_frequency(fdtd, name)
+        layout_fsp = os.environ.get("FINITE_187T_LAYOUT_FSP", "").strip()
+        if layout_fsp:
+            layout_path = Path(layout_fsp).expanduser().resolve()
+            if not layout_path.is_file():
+                raise FileNotFoundError(layout_path)
+            fdtd.load(str(layout_path))
+            contract = {
+                "classification": "loaded immutable finite-187T runsetup checkpoint",
+                "array": {"nx": 11, "ny": 17, "count": 187, "span_um": [16.5, 17.0]},
+                "source": {
+                    "target_realized_w0_um": TARGET_W0_UM,
+                    "Lumerical_source_object_w0_um": SOURCE_OBJECT_W0_UM,
+                },
+                "layout_fsp": str(layout_path),
+                "layout_fsp_sha256": sha256(layout_path),
+            }
+            faces = existing_flux_box()
+        else:
+            contract = runsetup.setup(fdtd)
+            pabs = fdtd.addobject("pabs_adv")
+            pabs["name"] = PABS_GROUP
+            for axis in "xyz":
+                pabs[axis] = 0.5 * sum(CONTROL_BOUNDS_M[axis])
+                pabs[f"{axis} span"] = CONTROL_BOUNDS_M[axis][1] - CONTROL_BOUNDS_M[axis][0]
+            faces = add_flux_box(fdtd)
+            for name in (PABS_FIELD, PABS_INDEX):
+                configure_single_frequency(fdtd, name)
 
         fdtd.setresource("FDTD", 1, "active", 0)
         fdtd.setresource("FDTD", 2, "active", 1)
@@ -194,8 +225,10 @@ def main() -> int:
         fdtd.setresource("FDTD", 2, "threads", "8")
         fdtd.setresource("FDTD", 2, "device type", gpu)
         fdtd.setresource("FDTD", 2, "solver extra command line options", "-gpu")
-        fdtd.runsetup()
         raw_mesh = audit.mesh_readback(fdtd)
+        if not raw_mesh.get("available"):
+            fdtd.runsetup()
+            raw_mesh = audit.mesh_readback(fdtd)
         metrics = runsetup.local_mesh_metrics(raw_mesh)
         pre_gates = {
             "source_gate_validated": True,
@@ -208,9 +241,16 @@ def main() -> int:
         if not all(pre_gates.values()):
             raise RuntimeError(f"pre-run gates failed: {pre_gates}")
         fdtd.save(str(fsp))
+        if layout_fsp:
+            # A checkpoint saved immediately after runsetup can reload in an
+            # Analysis-like state without any field d-cards. Force a genuine
+            # new time-domain solve; otherwise run() may return immediately.
+            fdtd.switchtolayout()
         started = time.monotonic()
         resource = audit.strict_gpu_run(fdtd, "finite_187T_w12_Q")
         wall_time = time.monotonic() - started
+        # Preserve the completed Maxwell fields before any Python extraction.
+        fdtd.save(str(fsp))
         source_power = scalar(fdtd.sourcepower(FREQUENCY_HZ, 2, "finite_T_scalar_Gaussian"), "sourcepower")
         six_face = face_fluxes(fdtd, faces, source_power)
         fdtd.runanalysis(PABS_GROUP)
@@ -220,10 +260,15 @@ def main() -> int:
             index_monitor=PABS_INDEX,
             wavelength_m=WAVELENGTH_M,
         )
+        stage1 = REPOSITORY / "photothermal_pte/validation/photothermal_stage1"
+        if str(stage1) not in sys.path:
+            sys.path.insert(0, str(stage1))
         common_module = load_module(
             REPOSITORY / "photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py",
             "finite_187T_common_q",
         )
+        common_module.PABS_FIELD = PABS_FIELD
+        common_module.PABS_INDEX = PABS_INDEX
         common = common_module.common_grid_component_q(fdtd, FREQUENCY_HZ)
         p_native = float(q["P_Q_W"])
         p_pabs = scalar(fdtd.getresult(PABS_GROUP, "Pabs_total")["Pabs_total"], "Pabs_total") * source_power
