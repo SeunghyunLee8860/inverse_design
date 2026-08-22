@@ -1,0 +1,55 @@
+{
+  "status": "AUDITED_FINITE_T_ARRAY_SIZE_CANDIDATES",
+  "spectral_search_um": [
+    4.0,
+    12.0
+  ],
+  "spectral_search_note": "The 4-12 um wavelength range is independent of the Gaussian-waist scenarios below.",
+  "boundary_contract": "six PML for Maxwell; physical thermal/electrical BCs solved separately",
+  "scenarios": [
+    {
+      "w0_um": 4.0,
+      "wavelength_max_um_for_clearance": 12.0,
+      "nx": 11,
+      "ny": 17,
+      "resonator_count": 187,
+      "array_span_x_um": 16.5,
+      "array_span_y_um": 17.0,
+      "PML_clearance_each_side_um": 6.0,
+      "domain_span_x_um": 28.5,
+      "domain_span_y_um": 29.0,
+      "intensity_at_r_2w0_over_peak": 0.00033546262790251185,
+      "intensity_at_nearest_PML_over_peak": 9.470754871762951e-12,
+      "local_mesh_dx_dy_nm": 50.0,
+      "local_mesh_dz_nm": 5.0,
+      "local_fine_Yee_cell_proxy": 13464000,
+      "memory_status": "requires v261 runsetup readback; cell proxy is not a GPU-memory claim"
+    },
+    {
+      "w0_um": 8.5,
+      "wavelength_max_um_for_clearance": 12.0,
+      "nx": 23,
+      "ny": 35,
+      "resonator_count": 805,
+      "array_span_x_um": 34.5,
+      "array_span_y_um": 35.0,
+      "PML_clearance_each_side_um": 6.0,
+      "domain_span_x_um": 46.5,
+      "domain_span_y_um": 47.0,
+      "intensity_at_r_2w0_over_peak": 0.00033546262790251185,
+      "intensity_at_nearest_PML_over_peak": 3.172207858823702e-07,
+      "local_mesh_dx_dy_nm": 50.0,
+      "local_mesh_dz_nm": 5.0,
+      "local_fine_Yee_cell_proxy": 57960000,
+      "memory_status": "requires v261 runsetup readback; cell proxy is not a GPU-memory claim"
+    }
+  ],
+  "decision": "run w0=4 um finite-array smoke first; promote w0=8.5 um only after v261 runsetup GPU-memory audit and field/Q convergence",
+  "not_executed": [
+    "FDTD",
+    "thermal",
+    "PTE",
+    "adjoint",
+    "optimization"
+  ]
+}
