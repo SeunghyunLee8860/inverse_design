@@ -163,6 +163,11 @@ def finite_scope_figure(path: Path) -> None:
     fig, axes = plt.subplots(1, 2, figsize=(14.5, 5.8), constrained_layout=True)
 
     ax = axes[0]
+    ax.add_patch(Rectangle(
+        (-1.22, -0.90), 2.44, 1.80,
+        facecolor="#e5f3f8", edgecolor="#88adbb", lw=1.2,
+        label="optical background (air)", zorder=0,
+    ))
     ax.add_patch(Rectangle((-1.0, -0.72), 2.0, 1.44, facecolor="#d04b4b", alpha=0.28, edgecolor="#8d2020", lw=2, label="finite TaIrTe4 flake"))
     vertices = np.array([[-0.62,-0.35],[0.62,-0.35],[0.62,-0.25],[0.10,-0.25],[0.10,0.35],[-0.10,0.35],[-0.10,-0.25],[-0.62,-0.25]])
     ax.fill(vertices[:,0], vertices[:,1], color="#f4bf42", edgecolor="#8a5a00", lw=2, label="one Au inverse-T")
@@ -173,15 +178,29 @@ def finite_scope_figure(path: Path) -> None:
             "Gaussian or TFSF only after size audit (not to scale)",
             ha="left", va="center", color="#2867b2", fontsize=8.0,
             weight="bold")
-    for coordinate in (-1.22, 1.22):
-        ax.axvline(coordinate, color="#7a2c91", lw=4)
-        ax.axhline(coordinate*0.75, color="#7a2c91", lw=4)
+    pml_color = "#7a2c91"
+    ax.add_patch(Rectangle((-1.30, -0.98), 0.12, 1.96, facecolor=pml_color,
+                           alpha=0.90, label="x/y PML (numerical absorber)", zorder=5))
+    ax.add_patch(Rectangle((1.18, -0.98), 0.12, 1.96, facecolor=pml_color,
+                           alpha=0.90, zorder=5))
+    ax.add_patch(Rectangle((-1.30, -0.98), 2.60, 0.12, facecolor=pml_color,
+                           alpha=0.90, zorder=5))
+    ax.add_patch(Rectangle((-1.30, 0.86), 2.60, 0.12, facecolor=pml_color,
+                           alpha=0.90, zorder=5))
+    ax.text(0, -0.83, "top view: z-PML is above/below the page (not shown)",
+            ha="center", va="center", fontsize=8, color=pml_color,
+            weight="bold")
     ax.set_xlim(-1.3,1.3); ax.set_ylim(-0.98,0.98); ax.set_aspect("equal")
     ax.set_title("Required finite Maxwell certificate")
     ax.set_xlabel("x=b (finite; x-PML)"); ax.set_ylabel("y=a (finite; y-PML)")
     ax.legend(fontsize=8, loc="upper right")
 
     ax = axes[1]
+    ax.add_patch(Rectangle(
+        (-1.18, -0.90), 2.36, 1.80,
+        facecolor="#eeeeee", edgecolor="#777777", lw=1.2,
+        label="finite thermal/electrical domain",
+    ))
     ax.add_patch(Rectangle((-1.0,-0.72),2.0,1.44,facecolor="#d04b4b",alpha=0.25,edgecolor="#8d2020",lw=2,label="finite conducting flake"))
     ax.add_patch(Rectangle((-1.0,0.58),2.0,0.14,facecolor="#d6a000",label=r"electrode: $\psi=1$"))
     ax.add_patch(Rectangle((-1.0,-0.72),2.0,0.14,facecolor="#7d6200",label=r"electrode: $\psi=0$"))
