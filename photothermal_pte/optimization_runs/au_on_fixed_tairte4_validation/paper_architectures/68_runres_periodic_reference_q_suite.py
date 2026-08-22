@@ -55,6 +55,9 @@ def main() -> int:
         raise RuntimeError(f"invalid PERIODIC_Z_MESH_REFINEMENT: {z_mesh_refinement}")
     z_edge_mesh_nm = os.environ.get("PERIODIC_Z_EDGE_MESH_NM", "").strip()
     z_omit_top_au = os.environ.get("PERIODIC_Z_OMIT_TOP_AU", "0").strip() == "1"
+    z_duration_ps = float(os.environ.get("PERIODIC_Z_DURATION_PS", "4.0"))
+    if not 1.0 <= z_duration_ps <= 20.0:
+        raise RuntimeError("PERIODIC_Z_DURATION_PS must be in [1, 20] ps")
     status_name = os.environ.get(
         "PERIODIC_Q_STATUS_NAME", "RUNRES_Q_SUITE_STATUS.json"
     ).strip()
@@ -93,6 +96,7 @@ def main() -> int:
                     "z_mesh_refinement": z_mesh_refinement if architecture == "Z" else None,
                     "z_edge_mesh_nm": float(z_edge_mesh_nm) if z_edge_mesh_nm else None,
                     "z_omit_top_au": z_omit_top_au if architecture == "Z" else None,
+                    "z_duration_ps": z_duration_ps if architecture == "Z" else None,
                     "current_command": command,
                     "records": records,
                 },
@@ -123,7 +127,7 @@ def main() -> int:
                     "--geometry-variant", "centered_expanded_supercell_v4",
                     # Reuse the broadband convergence bound: several Z
                     # polarizations did not reach 1e-5 by 2 ps.
-                    "--duration-ps", "4.0",
+                    "--duration-ps", f"{z_duration_ps:g}",
                     "--mesh-refinement", z_mesh_refinement,
                 ]
             )
