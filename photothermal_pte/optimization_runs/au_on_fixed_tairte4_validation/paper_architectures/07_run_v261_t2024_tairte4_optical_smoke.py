@@ -71,6 +71,7 @@ SI_MATERIAL = "Si (Silicon) - Palik"
 TAIRTE4_MATERIAL = "TaIrTe4_100nm_2024T_substitution"
 AL2O3_MATERIAL = "Al2O3_lossless_n1p62_explicit_closure"
 SOURCE_NAME = "T2024_normal_incidence_plane_wave"
+SOURCE_SECONDARY_NAME = "T2024_normal_incidence_plane_wave_orthogonal"
 TOP_MONITOR = "T2024_flux_top"
 BOTTOM_MONITOR = "T2024_flux_bottom"
 
@@ -361,23 +362,56 @@ def setup(
     solver["mesh wavelength min"] = WAVELENGTH_M
     solver["mesh wavelength max"] = WAVELENGTH_M
 
-    source = fdtd.addplane()
-    source["name"] = SOURCE_NAME
-    source["injection axis"] = "z"
-    source["direction"] = "backward"
-    source["polarization angle"] = 0.0 if polarization == "x_b" else 90.0
-    source["angle theta"] = 0.0
-    source["angle phi"] = 0.0
-    source["plane wave type"] = "Bloch/Periodic"
-    source["x min"] = -0.5 * PERIOD_X_M
-    source["x max"] = 0.5 * PERIOD_X_M
-    source["y min"] = -0.5 * PERIOD_Y_M
-    source["y max"] = 0.5 * PERIOD_Y_M
-    source["z"] = SOURCE_Z_M
-    source["override global source settings"] = True
     wavelength_start_m, wavelength_stop_m = source_window_m()
-    source["wavelength start"] = wavelength_start_m
-    source["wavelength stop"] = wavelength_stop_m
+    linear_angles = {
+        "x_b": 0.0,
+        "y_a": 90.0,
+        "linear_plus_45": 45.0,
+        "linear_minus_45": 135.0,
+    }
+    source_objects: list[dict[str, float | str]] = []
+
+    def add_source(name: str, angle_deg: float, phase_deg: float, amplitude: float) -> None:
+        source = fdtd.addplane()
+        source["name"] = name
+        source["injection axis"] = "z"
+        source["direction"] = "backward"
+        source["polarization angle"] = angle_deg
+        source["phase"] = phase_deg
+        source["amplitude"] = amplitude
+        source["angle theta"] = 0.0
+        source["angle phi"] = 0.0
+        source["plane wave type"] = "Bloch/Periodic"
+        source["x min"] = -0.5 * PERIOD_X_M
+        source["x max"] = 0.5 * PERIOD_X_M
+        source["y min"] = -0.5 * PERIOD_Y_M
+        source["y max"] = 0.5 * PERIOD_Y_M
+        source["z"] = SOURCE_Z_M
+        source["override global source settings"] = True
+        source["wavelength start"] = wavelength_start_m
+        source["wavelength stop"] = wavelength_stop_m
+        source_objects.append(
+            {
+                "name": name,
+                "polarization_angle_deg": angle_deg,
+                "phase_deg": phase_deg,
+                "amplitude": amplitude,
+            }
+        )
+
+    if polarization in linear_angles:
+        add_source(SOURCE_NAME, linear_angles[polarization], 0.0, 1.0)
+    elif polarization in ("CP_plus", "CP_minus"):
+        amplitude = 1.0 / np.sqrt(2.0)
+        add_source(SOURCE_NAME, 0.0, 0.0, amplitude)
+        add_source(
+            SOURCE_SECONDARY_NAME,
+            90.0,
+            90.0 if polarization == "CP_plus" else -90.0,
+            amplitude,
+        )
+    else:
+        raise ValueError(f"unsupported polarization: {polarization}")
 
     fdtd.setglobalmonitor("use source limits", False)
     fdtd.setglobalmonitor("use wavelength spacing", True)
@@ -475,6 +509,13 @@ def setup(
             "wavelength_start_m": wavelength_start_m,
             "wavelength_stop_m": wavelength_stop_m,
             "z_m": SOURCE_Z_M,
+            "objects": source_objects,
+            "Jones_axis_order": "(Ex along crystal b, Ey along crystal a)",
+            "CP_plus_definition": "Ex phase 0 deg; Ey phase +90 deg",
+            "CP_minus_definition": "Ex phase 0 deg; Ey phase -90 deg",
+            "LCP_RCP_name_assignment": (
+                "not promoted; propagation is -z and handedness convention dependent"
+            ),
         },
         "top_Au_T_present": include_top_t,
         "case_identity": (
@@ -570,7 +611,14 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--gpu-device", default="GPU 0")
-    parser.add_argument("--polarization", choices=("x_b", "y_a"), default="x_b")
+    parser.add_argument(
+        "--polarization",
+        choices=(
+            "x_b", "y_a", "linear_plus_45", "linear_minus_45",
+            "CP_plus", "CP_minus",
+        ),
+        default="x_b",
+    )
     parser.add_argument("--duration-ps", type=float, default=1.0)
     parser.add_argument(
         "--wavelength-um",
@@ -661,7 +709,13 @@ def main() -> int:
             started = time.monotonic()
             result["GPU_resource_used"] = audit.strict_gpu_run(fdtd, "T2024_TaIrTe4_optical_smoke")
             result["solver_wall_time_s"] = time.monotonic() - started
-            source_power = scalar(fdtd.sourcepower(FREQUENCY_HZ, 2, SOURCE_NAME), "sourcepower")
+            source_power = sum(
+                scalar(
+                    fdtd.sourcepower(FREQUENCY_HZ, 2, str(item["name"])),
+                    f"sourcepower:{item['name']}",
+                )
+                for item in contract["source"]["objects"]
+            )
             top_signed = scalar(fdtd.transmission(TOP_MONITOR), TOP_MONITOR) * source_power
             bottom_signed = scalar(fdtd.transmission(BOTTOM_MONITOR), BOTTOM_MONITOR) * source_power
             p_flux = bottom_signed - top_signed

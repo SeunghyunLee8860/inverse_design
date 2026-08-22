@@ -106,6 +106,8 @@ def setup(
         geometry = geometry_module.z_m2_5300nm_figure_corrected_tairte4_v2(handedness)
     elif geometry_variant == "figure_period_corrected_v3":
         geometry = geometry_module.z_m2_5300nm_figure_period_corrected_tairte4_v3(handedness)
+    elif geometry_variant == "centered_expanded_supercell_v4":
+        geometry = geometry_module.z_m2_5300nm_centered_expanded_supercell_v4(handedness)
     else:
         raise ValueError(f"unknown Z geometry variant: {geometry_variant}")
     period_x = geometry.period_x_nm * 1e-9
@@ -133,13 +135,19 @@ def setup(
     solver["mesh wavelength min"] = WAVELENGTH_MIN_M
     solver["mesh wavelength max"] = WAVELENGTH_MAX_M
 
-    if polarization in ("x_b", "y_a"):
+    linear_angles = {
+        "x_b": 0.0,
+        "y_a": 90.0,
+        "linear_plus_45": 45.0,
+        "linear_minus_45": 135.0,
+    }
+    if polarization in linear_angles:
         add_plane_source(
             fdtd,
             "Z2022_source_linear",
             period_x,
             period_y,
-            0.0 if polarization == "x_b" else 90.0,
+            linear_angles[polarization],
             0.0,
             1.0,
         )
@@ -261,7 +269,22 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--gpu-device", default="GPU 0")
     parser.add_argument("--handedness", choices=("LH", "RH"), default="LH")
-    parser.add_argument("--polarization", choices=("x_b", "y_a", "CP_plus", "CP_minus"), default="CP_plus")
+    parser.add_argument(
+        "--polarization",
+        choices=(
+            "x_b", "y_a", "linear_plus_45", "linear_minus_45",
+            "CP_plus", "CP_minus",
+        ),
+        default="CP_plus",
+    )
+    parser.add_argument(
+        "--geometry-variant",
+        choices=(
+            "legacy_axis_swapped_v1", "figure_axis_corrected_v2",
+            "figure_period_corrected_v3", "centered_expanded_supercell_v4",
+        ),
+        default="figure_period_corrected_v3",
+    )
     parser.add_argument("--duration-ps", type=float, default=2.0)
     parser.add_argument("--contract-only", action="store_true")
     args = parser.parse_args()
@@ -288,7 +311,13 @@ def main() -> int:
         import lumapi
 
         fdtd = lumapi.FDTD(hide=True, serverArgs={"platform": "offscreen"})
-        contract = setup(fdtd, args.handedness, args.polarization, args.duration_ps)
+        contract = setup(
+            fdtd,
+            args.handedness,
+            args.polarization,
+            args.duration_ps,
+            geometry_variant=args.geometry_variant,
+        )
         fdtd.setresource("FDTD", 1, "active", 0)
         fdtd.setresource("FDTD", 2, "active", 1)
         fdtd.setresource("FDTD", 2, "processes", "1")

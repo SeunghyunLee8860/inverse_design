@@ -47,13 +47,19 @@ def load_base():
     return module
 
 
-def configure_broadband(fdtd: object, base: object, duration_ps: float) -> None:
+def configure_broadband(
+    fdtd: object,
+    base: object,
+    duration_ps: float,
+    source_names: list[str],
+) -> None:
     """Remove heavy 3-D Q monitors and retain only two spectral flux planes."""
 
     fdtd.select(base.PABS_GROUP)
     fdtd.delete()
-    fdtd.setnamed(base.SOURCE_NAME, "wavelength start", WAVELENGTH_MIN_M)
-    fdtd.setnamed(base.SOURCE_NAME, "wavelength stop", WAVELENGTH_MAX_M)
+    for source_name in source_names:
+        fdtd.setnamed(source_name, "wavelength start", WAVELENGTH_MIN_M)
+        fdtd.setnamed(source_name, "wavelength stop", WAVELENGTH_MAX_M)
     fdtd.setnamed("FDTD", "simulation time", duration_ps * 1.0e-12)
     fdtd.setnamed("FDTD", "mesh wavelength min", WAVELENGTH_MIN_M)
     fdtd.setnamed("FDTD", "mesh wavelength max", WAVELENGTH_MAX_M)
@@ -84,7 +90,14 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--gpu-device", default="GPU 0")
-    parser.add_argument("--polarization", choices=("x_b", "y_a"), default="x_b")
+    parser.add_argument(
+        "--polarization",
+        choices=(
+            "x_b", "y_a", "linear_plus_45", "linear_minus_45",
+            "CP_plus", "CP_minus",
+        ),
+        default="x_b",
+    )
     parser.add_argument("--duration-ps", type=float, default=2.0)
     parser.add_argument("--omit-top-t-control", action="store_true")
     parser.add_argument("--contract-only", action="store_true")
@@ -122,7 +135,12 @@ def main() -> int:
             include_top_t=not args.omit_top_t_control,
             substrate_mode="sio2_si_reduced_285nm",
         )
-        configure_broadband(fdtd, base, args.duration_ps)
+        configure_broadband(
+            fdtd,
+            base,
+            args.duration_ps,
+            [str(item["name"]) for item in contract["source"]["objects"]],
+        )
         contract["source"].update(
             {
                 "wavelength_m": None,

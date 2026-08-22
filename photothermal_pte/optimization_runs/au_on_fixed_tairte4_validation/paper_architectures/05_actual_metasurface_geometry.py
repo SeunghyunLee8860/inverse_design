@@ -400,6 +400,66 @@ def z_m2_5300nm_figure_period_corrected_tairte4_v3(
     )
 
 
+def z_m2_5300nm_centered_expanded_supercell_v4(
+    handedness: str = "LH",
+) -> MetasurfaceGeometry:
+    """Center the v3 M2 reconstruction in a square 5.1-um supercell.
+
+    This project scenario separates one Z element from both periodic seams.
+    The published 5.1 x 2.6 um M2 lattice remains preserved as v3; this v4
+    scenario is not the paper lattice and is not undisclosed author CAD.
+    """
+
+    source = z_m2_5300nm_figure_period_corrected_tairte4_v3(handedness)
+    all_vertices = np.concatenate(
+        [np.asarray(item.vertices_nm, float) for item in source.polygons], axis=0
+    )
+    center = 0.5 * (
+        np.min(all_vertices, axis=0) + np.max(all_vertices, axis=0)
+    )
+    provenance = (
+        "project centered-expanded-supercell scenario derived from the v3 "
+        "figure-constrained M2 reconstruction; original bar dimensions and "
+        "relative placement retained; x/y period deliberately set to 5.1 um; "
+        "not the published M2 lattice and not exact author CAD"
+    )
+    polygons = tuple(
+        PolygonObject(
+            name=item.name.replace(
+                "FIGURE_PERIOD_CORRECTED_V3", "CENTERED_EXPANDED_V4"
+            ),
+            material=item.material,
+            vertices_nm=tuple(
+                tuple(float(value) for value in row)
+                for row in (np.asarray(item.vertices_nm, float) - center)
+            ),
+            z_min_nm=item.z_min_nm,
+            z_max_nm=item.z_max_nm,
+            provenance_kind="project_centered_expanded_supercell_v4",
+            provenance=provenance,
+        )
+        for item in source.polygons
+    )
+    return MetasurfaceGeometry(
+        key=f"Z2022_M2_5300_{handedness}_CENTERED_EXPANDED_SUPERCELL_V4",
+        wavelength_nm=source.wavelength_nm,
+        period_x_nm=5100.0,
+        period_y_nm=5100.0,
+        active_material=source.active_material,
+        active_thickness_nm=source.active_thickness_nm,
+        axis_mapping=dict(source.axis_mapping),
+        polygons=polygons,
+        layers=source.layers,
+        boundary_contract=dict(source.boundary_contract),
+        unresolved=(
+            "expanded square lattice is a project optical scenario, not the paper M2 period",
+            "exact author CAD and relative two-bar offset remain undisclosed",
+            "100-nm TaIrTe4 substitutes for the original 2-D material",
+            "5-nm Cr adhesion remains omitted from the effective-Au screen",
+        ),
+    )
+
+
 def signed_polygon_area_nm2(vertices: tuple[tuple[float, float], ...]) -> float:
     array = np.asarray(vertices, float)
     return 0.5 * float(

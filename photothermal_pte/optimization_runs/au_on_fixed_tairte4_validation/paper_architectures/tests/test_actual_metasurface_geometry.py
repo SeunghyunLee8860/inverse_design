@@ -65,3 +65,20 @@ def test_z_m2_corner_joined_geometry_is_inside_published_cell() -> None:
         assert np.max(vertices[:, 1]) <= 0.5 * geometry.period_y_nm
         total_area = sum(abs(module.signed_polygon_area_nm2(item.vertices_nm)) for item in geometry.polygons)
         assert total_area == 2_300.0 * 1_360.0 + 1_700.0 * 1_100.0
+
+
+def test_z_m2_centered_expanded_v4_has_symmetric_nonzero_margins() -> None:
+    module = load_geometry_module()
+    geometry = module.z_m2_5300nm_centered_expanded_supercell_v4("LH")
+    vertices = np.concatenate(
+        [np.asarray(item.vertices_nm, float) for item in geometry.polygons], axis=0
+    )
+    np.testing.assert_allclose(np.min(vertices, axis=0), [-1230.0, -1300.0])
+    np.testing.assert_allclose(np.max(vertices, axis=0), [1230.0, 1300.0])
+    assert geometry.period_x_nm == geometry.period_y_nm == 5100.0
+    margins = np.asarray([geometry.period_x_nm, geometry.period_y_nm]) / 2 - np.max(
+        np.abs(vertices), axis=0
+    )
+    np.testing.assert_allclose(margins, [1320.0, 1250.0])
+    assert all(margins > 0.0)
+    assert any("not the paper" in item for item in geometry.unresolved)
