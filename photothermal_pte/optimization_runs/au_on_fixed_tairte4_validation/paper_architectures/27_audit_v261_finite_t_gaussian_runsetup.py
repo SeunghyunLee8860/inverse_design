@@ -47,6 +47,7 @@ Z_MIN_UM = -1.2
 Z_MAX_UM = 1.2
 LOCAL_DXY_NM = 50.0
 LOCAL_DZ_NM = 5.0
+OUTER_DXY_NM = 250.0
 
 
 def load_module(filename: str, name: str):
@@ -149,6 +150,20 @@ def setup(fdtd) -> dict[str, object]:
             item["z max"] = polygon.z_max_nm * 1.0e-9
             centers.append([x0, y0])
 
+    outer_mesh = fdtd.addmesh()
+    outer_mesh["name"] = "finite_T_outer_coarse_xy_mesh"
+    outer_mesh["x min"] = -0.5 * DOMAIN_X_UM * 1.0e-6
+    outer_mesh["x max"] = 0.5 * DOMAIN_X_UM * 1.0e-6
+    outer_mesh["y min"] = -0.5 * DOMAIN_Y_UM * 1.0e-6
+    outer_mesh["y max"] = 0.5 * DOMAIN_Y_UM * 1.0e-6
+    outer_mesh["z min"] = -0.30e-6
+    outer_mesh["z max"] = 0.20e-6
+    outer_mesh["override x mesh"] = True
+    outer_mesh["override y mesh"] = True
+    outer_mesh["override z mesh"] = False
+    outer_mesh["dx"] = OUTER_DXY_NM * 1.0e-9
+    outer_mesh["dy"] = OUTER_DXY_NM * 1.0e-9
+
     mesh = fdtd.addmesh()
     mesh["name"] = "finite_T_array_local_mesh"
     mesh["x min"] = -0.5 * ARRAY_X_UM * 1.0e-6
@@ -176,6 +191,7 @@ def setup(fdtd) -> dict[str, object]:
         "stack": ["air", "Au inverse-T array 33nm", "TaIrTe4 100nm", "Al2O3 35nm", "Au mirror 200nm", "SiO2 285nm optical closure", "Si"],
         "lateral_stack_rule": "TaIrTe4/Al2O3/Au-mirror/SiO2/Si extend through lateral PML; only top inverse-T array is finite",
         "local_mesh_requested_nm": {"dx": LOCAL_DXY_NM, "dy": LOCAL_DXY_NM, "dz": LOCAL_DZ_NM},
+        "outer_mesh_requested_nm": {"dx": OUTER_DXY_NM, "dy": OUTER_DXY_NM, "z_override": False},
         "Q_operations": {"clipping": False, "smoothing": False, "gain": False, "rescaling": False, "tiling_after_solve": False},
     }
 
@@ -207,7 +223,7 @@ def main() -> int:
         type=Path,
         default=Path(
             "/home/seunghyun/tairte4/raw_artifacts/"
-            "paper_tairte4_finite_T_w0_4um_runsetup"
+            "paper_tairte4_finite_T_w0_4um_runsetup_coarse_outer"
         ),
     )
     parser.add_argument("--gpu-device", default="GPU 5")
@@ -250,6 +266,11 @@ def main() -> int:
             "local_dx_le_50nm": metrics["local_max_step_m"]["x"] <= 50.0e-9 + 1.0e-12,
             "local_dy_le_50nm": metrics["local_max_step_m"]["y"] <= 50.0e-9 + 1.0e-12,
             "local_dz_le_5nm": metrics["local_max_step_m"]["z"] <= 5.0e-9 + 1.0e-12,
+            "outer_xy_coarsening_realized": (
+                metrics["global_max_step_m"]["x"] >= 200.0e-9
+                and metrics["global_max_step_m"]["y"] >= 200.0e-9
+            ),
+            "yee_cell_estimate_lt_50million": metrics["yee_cell_estimate"] < 50_000_000,
             "source_strictly_inside_domain": SOURCE_SPAN_UM < min(DOMAIN_X_UM, DOMAIN_Y_UM),
         }
         fdtd.save(str(fsp_path))
