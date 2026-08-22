@@ -132,6 +132,12 @@ def _setup(fdtd: Any, key: str, contract: dict[str, Any]) -> dict[str, Any]:
         float(value) * 1.0e-6 for value in architecture["optical_z_bounds_um"]
     ]
     w0_m = float(optical["source"]["physical_target_waist_um"]) * 1.0e-6
+    source_object_w0_m = float(
+        os.environ.get(
+            "FINITE_SOURCE_OBJECT_W0_UM",
+            optical["source"]["physical_target_waist_um"],
+        )
+    ) * 1.0e-6
     source_z_m = float(optical["source"]["source_z_um"]) * 1.0e-6
     waist_z_m = float(optical["source"]["waist_plane_z_um"]) * 1.0e-6
 
@@ -161,7 +167,7 @@ def _setup(fdtd: Any, key: str, contract: dict[str, Any]) -> dict[str, Any]:
     source["source shape"] = "Gaussian"
     source["use scalar approximation"] = True
     source["beam parameters"] = "Waist size and position"
-    source["waist radius w0"] = w0_m
+    source["waist radius w0"] = source_object_w0_m
     source["distance from waist"] = -(source_z_m - waist_z_m)
     source["x min"], source["x max"] = -9.0e-6, 9.0e-6
     source["y min"], source["y max"] = -9.0e-6, 9.0e-6
@@ -191,17 +197,23 @@ def _setup(fdtd: Any, key: str, contract: dict[str, Any]) -> dict[str, Any]:
     flake["dx"], flake["dy"], flake["dz"] = 100.0e-9, 100.0e-9, 5.0e-9
 
     top_bounds = _polygon_bounds(architecture)
-    for index, (x0, x1, y0, y1) in enumerate(top_bounds):
-        local = fdtd.addmesh()
-        local["name"] = f"finite_{key}_top_Au_local_{index:02d}"
-        margin = 100.0e-9
-        local["x min"], local["x max"] = x0 - margin, x1 + margin
-        local["y min"], local["y max"] = y0 - margin, y1 + margin
-        local["z min"], local["z max"] = 75.0e-9, 225.0e-9
-        local["override x mesh"] = True
-        local["override y mesh"] = True
-        local["override z mesh"] = True
-        local["dx"], local["dy"], local["dz"] = 25.0e-9, 25.0e-9, 5.0e-9
+    # A square union keeps the source-only x/y discretization symmetric while
+    # covering every top-Au edge.  The actual Au shape is still the published
+    # T or Z polygon; this object changes only the mesh, not the geometry.
+    fine_half_extent = max(
+        abs(value)
+        for bounds in top_bounds
+        for value in bounds
+    ) + 100.0e-9
+    local = fdtd.addmesh()
+    local["name"] = f"finite_{key}_top_Au_symmetric_local"
+    local["x min"], local["x max"] = -fine_half_extent, fine_half_extent
+    local["y min"], local["y max"] = -fine_half_extent, fine_half_extent
+    local["z min"], local["z max"] = 75.0e-9, 225.0e-9
+    local["override x mesh"] = True
+    local["override y mesh"] = True
+    local["override z mesh"] = True
+    local["dx"], local["dy"], local["dz"] = 25.0e-9, 25.0e-9, 5.0e-9
 
     _add_single_frequency_monitor(fdtd, TARGET_MONITOR, waist_z_m, wavelength_m)
     return {
@@ -219,7 +231,10 @@ def _setup(fdtd: Any, key: str, contract: dict[str, Any]) -> dict[str, Any]:
         },
         "waist_plane_z_m": waist_z_m,
         "requested_w0_m": w0_m,
+        "Lumerical_source_object_w0_m": source_object_w0_m,
+        "source_object_calibration_is_Q_rescaling": False,
         "top_Au_mesh_bounds_m": top_bounds,
+        "top_Au_symmetric_mesh_half_extent_m": fine_half_extent,
     }
 
 
@@ -320,7 +335,10 @@ def main() -> int:
         launcher_run_dir = Path(
             os.environ.get("EIDL_RUN_DIR", str(output))
         ).expanduser().resolve()
-        log = audit.log_audit(launcher_run_dir)
+        # The engine log is written beside the FSP.  The wrapper log is only
+        # finalized after this Python process exits and therefore cannot be
+        # the in-process source for shutoff/memory gates.
+        log = audit.log_audit(output)
 
         np.savez_compressed(
             npz_path,
