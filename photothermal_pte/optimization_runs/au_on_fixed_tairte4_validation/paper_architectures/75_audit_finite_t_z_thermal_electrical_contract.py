@@ -53,6 +53,7 @@ def _architecture_contracts() -> dict[str, dict[str, object]]:
     return {
         "T": {
             "wavelength_um": 4.75,
+            "Lumerical_source_object_w0_um": 3.97732,
             "top_Au_thickness_nm": 33.0,
             "Al2O3_thickness_nm": 35.0,
             "Au_mirror_thickness_nm": 200.0,
@@ -67,6 +68,7 @@ def _architecture_contracts() -> dict[str, dict[str, object]]:
         },
         "Z": {
             "wavelength_um": 5.30,
+            "Lumerical_source_object_w0_um": 3.97197,
             "top_Au_thickness_nm": 50.0,
             "Al2O3_thickness_nm": 200.0,
             "Au_mirror_thickness_nm": 200.0,
@@ -112,7 +114,7 @@ def _contract() -> dict[str, object]:
                 "propagation": "-z; normal incidence",
                 "physical_target_waist_um": w0_um,
                 "source_span_um": [18.0, 18.0],
-                "source_z_um": 1.0,
+                "source_z_um": 0.5,
                 "waist_plane_z_um": 0.10,
                 "polarizations_for_finite_thermal": ["E||a (Ey)", "E||b (Ex)"],
                 "incident_power_normalization": (
@@ -240,7 +242,7 @@ def _draw_xz(ax, arch: dict[str, object], title: str) -> None:
     ax.add_patch(Rectangle((-12, -al), 24, al, fc="#b8dcff", label="Al2O3"))
     ax.add_patch(Rectangle((-10, 0), 20, 0.1, fc="#d96b6b", label="TaIrTe4"))
     ax.add_patch(Rectangle((-0.7, 0.1), 1.4, top, fc="#f7bd3e", label="top Au (section)"))
-    ax.annotate("Gaussian -z", xy=(0, 0.45), xytext=(0, 1.15), ha="center", arrowprops={"arrowstyle": "->", "lw": 2, "color": "#2878b5"}, color="#2878b5")
+    ax.annotate("Gaussian -z", xy=(0, 0.25), xytext=(0, 0.65), ha="center", arrowprops={"arrowstyle": "->", "lw": 2, "color": "#2878b5"}, color="#2878b5")
     ax.axvline(-12, color="#78298e", lw=4)
     ax.axvline(12, color="#78298e", lw=4)
     ax.set(xlim=(-12.5, 12.5), ylim=(z0 - 0.5, 1.5), xlabel="x=b (um)", ylabel="z (um)", title=title)

@@ -135,7 +135,7 @@ def _setup(fdtd: Any, key: str, contract: dict[str, Any]) -> dict[str, Any]:
     source_object_w0_m = float(
         os.environ.get(
             "FINITE_SOURCE_OBJECT_W0_UM",
-            optical["source"]["physical_target_waist_um"],
+            architecture["Lumerical_source_object_w0_um"],
         )
     ) * 1.0e-6
     source_z_m = float(optical["source"]["source_z_um"]) * 1.0e-6

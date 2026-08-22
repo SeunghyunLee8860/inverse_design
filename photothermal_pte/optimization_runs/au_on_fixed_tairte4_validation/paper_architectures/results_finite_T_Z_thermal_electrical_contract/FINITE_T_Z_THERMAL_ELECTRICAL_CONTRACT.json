@@ -9,6 +9,7 @@
   "architectures": {
     "T": {
       "wavelength_um": 4.75,
+      "Lumerical_source_object_w0_um": 3.97732,
       "top_Au_thickness_nm": 33.0,
       "Al2O3_thickness_nm": 35.0,
       "Au_mirror_thickness_nm": 200.0,
@@ -120,6 +121,7 @@
     },
     "Z": {
       "wavelength_um": 5.3,
+      "Lumerical_source_object_w0_um": 3.97197,
       "top_Au_thickness_nm": 50.0,
       "Al2O3_thickness_nm": 200.0,
       "Au_mirror_thickness_nm": 200.0,
@@ -278,7 +280,7 @@
         18.0,
         18.0
       ],
-      "source_z_um": 1.0,
+      "source_z_um": 0.5,
       "waist_plane_z_um": 0.1,
       "polarizations_for_finite_thermal": [
         "E||a (Ey)",
