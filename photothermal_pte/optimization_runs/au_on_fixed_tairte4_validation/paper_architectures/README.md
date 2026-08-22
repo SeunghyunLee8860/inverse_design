@@ -73,3 +73,23 @@ Reproduce the published decision after the paired raw cases exist:
 /home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
   photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/04_publish_substrate_reduction_decision.py
 ```
+
+## Actual inverse-T optical smoke
+
+`05_actual_metasurface_geometry.py` and
+`07_run_v261_t2024_tairte4_optical_smoke.py` implement the 2024 MIR inverse-T
+scenario with only the active 2-D material replaced by fixed 100-nm TaIrTe4.
+The T vertices are a figure-digitized approximation to Supplementary Fig. 14,
+not author CAD. Both normal-incidence polarizations have been run on the v261
+GPU solver and pass closure, shutoff, finite-Q, and nonnegative-Q gates.
+
+Publish the paired comparison without rerunning FDTD:
+
+```bash
+/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python \
+  photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/09_compare_t2024_tairte4_polarizations.py
+```
+
+See `results_actual_metasurfaces/T2024_TAIRTE4_TWO_POLARIZATION_REPORT.md`.
+The 2022 M5 scalar dimensions are audited, but the Z Maxwell case remains
+fail-closed because the PDFs do not disclose a unique polygon/junction CAD.
