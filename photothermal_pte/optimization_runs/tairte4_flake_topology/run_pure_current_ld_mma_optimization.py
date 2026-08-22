@@ -290,6 +290,7 @@ def stage_numerical_tolerances(entry_constraint_values: np.ndarray) -> dict[str,
 
 def continuous_final_gate(rho: np.ndarray) -> dict[str, object]:
     """Return the non-negotiable exact-geometry and gray-density final gate."""
+    rho = CONTRACT.apply_fixed_contact_density(np.asarray(rho, dtype=np.float64))
     exact, _ = exact_binary_audit(rho)
     gray_fraction = float(np.mean((rho > 0.01) & (rho < 0.99)))
     return {

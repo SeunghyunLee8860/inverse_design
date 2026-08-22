@@ -59,9 +59,12 @@ def main() -> int:
     parser.add_argument("--input-sha256", required=True)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--gpu-device", default="GPU 5")
+    parser.add_argument("--fdtd-threads", type=int, default=3)
     parser.add_argument("--polarization", choices=("a", "b"), required=True)
     parser.add_argument("--without-fieldregion", action="store_true")
     args = parser.parse_args()
+    if args.fdtd_threads <= 0:
+        parser.error("--fdtd-threads must be positive")
     CONTRACT.validate()
     source_project = args.input_project.expanduser().resolve()
     output = args.output_dir.expanduser().resolve()
@@ -100,7 +103,7 @@ def main() -> int:
         os.environ["LUMERICAL_PYTHONPATH"] = str(audit.APPROVED_API)
         os.environ["LUMERICAL_SESSION_GPU_DEVICE"] = args.gpu_device
         os.environ["CL_GPU_DEVICE"] = args.gpu_device
-        os.environ["FDTD_THREADS"] = "8"
+        os.environ["FDTD_THREADS"] = str(args.fdtd_threads)
         os.environ["PATH"] = f"{audit.APPROVED_ROOT / 'bin'}:{os.environ.get('PATH','')}"
         helper = audit.load_module(audit.API_HELPER, "run010_forward_api")
         installation = type(
@@ -190,6 +193,22 @@ def main() -> int:
             "passed": passed,
             "scope": "uniform rho=0.5 GPU Maxwell forward only",
             "axis_contract": "Lumerical x=b, y=a, z=c",
+            "device_geometry": (
+                "24 um x 24 um local import primitive rotated +45 degrees; "
+                "two opposite full-edge 2 um terminal strips"
+                if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+                else CONTRACT.geometry_mode
+            ),
+            "Au_electrodes": (
+                {
+                    "objects": list(optical.AU_OBJECT_NAMES),
+                    "thickness_m": optical.AU_THICKNESS_M,
+                    "n_at_10um": optical.AU_INDEX_AT_10UM.real,
+                    "k_at_10um": optical.AU_INDEX_AT_10UM.imag,
+                }
+                if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+                else None
+            ),
             "polarization": f"E_parallel_{args.polarization}",
             "polarization_angle_deg": polarization_angle,
             "input_project": {
@@ -205,6 +224,7 @@ def main() -> int:
                 "sha256": sha256(npz_path),
             },
             "GPU_device_requested": args.gpu_device,
+            "FDTD_host_threads_requested": args.fdtd_threads,
             "GPU_resource_used": resource_used,
             "resources": resources,
             "solver_wall_time_s": wall_time,

@@ -55,9 +55,20 @@ def main() -> int:
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--interface-xy-nm", type=float, default=100.0)
     parser.add_argument("--domain-um", type=float, default=40.0)
+    parser.add_argument("--initial-density", type=float, default=0.5)
+    parser.add_argument("--dt-stability-factor", type=float, default=0.5)
+    parser.add_argument(
+        "--mesh-refinement",
+        choices=("conformal variant 0", "conformal variant 1", "staircase"),
+        default="conformal variant 0",
+    )
     args = parser.parse_args()
     if args.interface_xy_nm <= 0.0:
         parser.error("--interface-xy-nm must be positive")
+    if not 0.0 <= args.initial_density <= 1.0:
+        parser.error("--initial-density must be in [0, 1]")
+    if not 0.0 < args.dt_stability_factor <= 1.0:
+        parser.error("--dt-stability-factor must be in (0, 1]")
     interface_xy_step_m = args.interface_xy_nm * 1e-9
     optical_lateral_span_m = args.domain_um * 1e-6
     if optical_lateral_span_m <= CONTRACT.source_span_m:
@@ -115,6 +126,15 @@ def main() -> int:
             CONTRACT.calibrated_source_object_waist_m,
             CONTRACT.target_waist_m,
         )
+        if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+            # The rotated boundary cuts the Yee grid through the strongly
+            # dispersive anisotropic TaIrTe4 tensor. A conservative Courant
+            # factor is required to prevent immediate time-step divergence;
+            # no material or geometry parameter is altered.
+            fdtd.setnamed(
+                "FDTD", "dt stability factor", args.dt_stability_factor
+            )
+            fdtd.setnamed("FDTD", "mesh refinement", args.mesh_refinement)
         source["source"]["model"] = "compact finite scalar Gaussian; pending source-only revalidation"
 
         # Reuse only the already-audited material constructors, then rename
@@ -139,8 +159,11 @@ def main() -> int:
             {"x": (-half_domain, half_domain), "y": (-half_domain, half_domain), "z": (-0.385e-6, -0.100e-6)},
         )
         frame_names = optical.add_fixed_frame(fdtd)
-        rho = np.full(CONTRACT.design_node_shape, 0.5, dtype=np.float64)
+        rho = np.full(
+            CONTRACT.design_node_shape, args.initial_density, dtype=np.float64
+        )
         design = optical.add_design(fdtd, rho)
+        au_names = optical.add_au_electrodes(fdtd)
         mesh_names = optical.add_mesh_hierarchy(
             fdtd,
             interface_xy_step_m=interface_xy_step_m,
@@ -154,7 +177,7 @@ def main() -> int:
             raise RuntimeError(f"mesh readback failed: {mesh}")
         coordinates = mesh.pop("coordinate_arrays")
         np.savez_compressed(mesh_npz, **{f"{axis}_m": coordinates[axis] for axis in "xyz"})
-        flake = 0.5 * CONTRACT.flake_span_m
+        flake = CONTRACT.flake_bounding_half_span_m
         design_x = CONTRACT.design_bounds_m["x"]
         design_y = CONTRACT.design_bounds_m["y"]
         regional = {
@@ -178,6 +201,21 @@ def main() -> int:
             *mesh_names,
         ]
         bounds = {name: optical.named_bounds(fdtd, name) for name in names}
+        au_geometry = {}
+        au_inside_flake = True
+        for name in au_names:
+            vertices = np.asarray(fdtd.getnamed(name, "vertices"), dtype=float)
+            u, v = CONTRACT.rotated_uv(vertices[:, 0], vertices[:, 1])
+            half = 0.5 * CONTRACT.flake_span_m
+            au_inside_flake &= bool(
+                np.all(np.abs(u) <= half + 2.0e-18)
+                and np.all(np.abs(v) <= half + 2.0e-18)
+            )
+            au_geometry[name] = {
+                "vertices_xy_m": vertices.tolist(),
+                "z_min_m": float(fdtd.getnamed(name, "z min")),
+                "z_max_m": float(fdtd.getnamed(name, "z max")),
+            }
         pabs_bounds_match = all(
             np.allclose(
                 bounds[name][axis],
@@ -190,6 +228,12 @@ def main() -> int:
         )
         source_readback = audit.source_readback(fdtd)
         domain_readback = audit.domain_readback(fdtd)
+        dt_stability_factor = float(
+            fdtd.getnamed("FDTD", "dt stability factor")
+        )
+        design_rotation_deg = float(
+            fdtd.getnamed(optical.DESIGN_OBJECT, "rotation 1")
+        )
         fdtd.save(str(project))
         passed = bool(
             regional["design_max_dx_m"] <= CONTRACT.design_step_m + 2e-12
@@ -200,8 +244,32 @@ def main() -> int:
             and regional["outer_x_max_step_m"] > 1.5 * CONTRACT.design_step_m
             and regional["outer_y_max_step_m"] > 1.5 * CONTRACT.design_step_m
             and pabs_bounds_match
+            and au_inside_flake
+            and (
+                CONTRACT.geometry_mode != "diagonal_45_contact_anchored"
+                or np.isclose(
+                    design_rotation_deg,
+                    optical.ROTATED_DEVICE_ANGLE_DEG,
+                    rtol=0.0,
+                    atol=1.0e-12,
+                )
+            )
             and all(value == "PML" for value in domain_readback["boundaries"].values())
             and int(round(source_readback["polarization angle"])) == 90
+            and (
+                CONTRACT.geometry_mode != "diagonal_45_contact_anchored"
+                or np.isclose(
+                    dt_stability_factor,
+                    args.dt_stability_factor,
+                    rtol=0.0,
+                    atol=1.0e-12,
+                )
+            )
+            and (
+                CONTRACT.geometry_mode != "diagonal_45_contact_anchored"
+                or str(domain_readback["mesh refinement"]).lower()
+                == args.mesh_refinement
+            )
         )
         previous_points = 41146664
         result = {
@@ -211,12 +279,27 @@ def main() -> int:
             "candidate_contract": CONTRACT.audit(),
             "requested_interface_xy_step_m": interface_xy_step_m,
             "requested_optical_lateral_span_m": optical_lateral_span_m,
+            "initial_density": args.initial_density,
+            "requested_mesh_refinement": args.mesh_refinement,
             "source_contract": source,
             "source_readback": source_readback,
             "domain_readback": domain_readback,
-            "materials": {"TaIrTe4": tairte4, **substrate},
+            "dt_stability_factor": dt_stability_factor,
+            "design_primitive_rotation_deg": design_rotation_deg,
+            "materials": {
+                "TaIrTe4": tairte4,
+                **substrate,
+                "Au": {
+                    "name": optical.AU_MATERIAL,
+                    "n_at_10um": optical.AU_INDEX_AT_10UM.real,
+                    "k_at_10um": optical.AU_INDEX_AT_10UM.imag,
+                    "thickness_m": optical.AU_THICKNESS_M,
+                },
+            },
             "design": {key: value for key, value in design.items() if key != "nodes_m"},
             "geometry_bounds_m": bounds,
+            "Au_geometry": au_geometry,
+            "Au_entirely_inside_rotated_flake": au_inside_flake,
             "Q_control_volume_m": {axis: list(values) for axis, values in optical.Q_BOUNDS.items()},
             "pabs_field_index_bounds_match_Q_control_volume": pabs_bounds_match,
             "mesh_readback": mesh,
@@ -224,6 +307,7 @@ def main() -> int:
             "grid_point_ratio_to_Run009_runsetup": float(mesh["grid_points"] / previous_points),
             "rough_runtime_ratio_only_not_a_gate": float(mesh["grid_points"] / previous_points),
             "flux_monitors": flux_names,
+            "Au_electrode_objects": au_names,
             "Maxwell_solve": False,
             "CPU_FDTD_fallback": False,
             "artifacts": {

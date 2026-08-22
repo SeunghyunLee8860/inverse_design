@@ -25,9 +25,19 @@ SIO2_MATERIAL = "run010_Kitamura_SiO2_10um"
 SI_MATERIAL = "run010_Palik_Si_10um"
 DESIGN_OBJECT = "run010_TaIrTe4_void_anisotropic_design"
 SOURCE_NAME = "run010_gaussian10_w8p5_source"
+ROTATED_DEVICE_ANGLE_DEG = 45.0
+AU_MATERIAL = "run059_Au_Ordal_10um"
+AU_INDEX_AT_10UM = complex(12.1, 69.2)
+AU_THICKNESS_M = 50.0e-9
+AU_OBJECT_NAMES = ("run059_Au_low_terminal", "run059_Au_high_terminal")
+Q_HALF_SPAN_XY_M = (
+    18.0e-6
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+    else 14.0e-6
+)
 Q_BOUNDS = {
-    "x": (-14.0e-6, 14.0e-6),
-    "y": (-14.0e-6, 14.0e-6),
+    "x": (-Q_HALF_SPAN_XY_M, Q_HALF_SPAN_XY_M),
+    "y": (-Q_HALF_SPAN_XY_M, Q_HALF_SPAN_XY_M),
     # pabs_adv's child monitors remain centred on z=0.  Use the audited
     # symmetric control volume and match every six-face monitor to it.
     "z": (-1.25e-6, 1.25e-6),
@@ -146,14 +156,13 @@ def add_fixed_frame(fdtd: Any) -> list[str]:
             "bottom_contact": {"x": (-flake, flake), "y": (-flake, -y_design), "z": z},
             "top_contact": {"x": (-flake, flake), "y": (y_design, flake), "z": z},
         }
-    elif CONTRACT.geometry_mode in {
-        "left_right_contact_anchored",
-        "diagonal_45_contact_anchored",
-    }:
+    elif CONTRACT.geometry_mode == "left_right_contact_anchored":
         pieces = {
             "left_contact": {"x": (-flake, -x_design), "y": (-flake, flake), "z": z},
             "right_contact": {"x": (x_design, flake), "y": (-flake, flake), "z": z},
         }
+    elif CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        pieces = {}
     else:
         pieces = {
             "left": {"x": (-flake, -x_design), "y": (-flake, flake), "z": z},
@@ -175,11 +184,60 @@ def add_design(fdtd: Any, rho_xy: np.ndarray) -> dict[str, object]:
     fdtd.addimport({"name": DESIGN_OBJECT, "x": 0.0, "y": 0.0, "z": 0.0})
     if int(fdtd.importnk2(index, x, y, z)) != 1:
         raise RuntimeError("anisotropic importnk2 returned failure")
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        # Lumerical rotations change the primitive geometry but deliberately
+        # leave the anisotropic permittivity tensor in global coordinates.
+        # The diamond therefore rotates while global x=b and y=a remain fixed.
+        fdtd.setnamed(DESIGN_OBJECT, "first axis", "z")
+        fdtd.setnamed(DESIGN_OBJECT, "rotation 1", ROTATED_DEVICE_ANGLE_DEG)
     return {
         "name": DESIGN_OBJECT,
         "nodes_m": {"x": x, "y": y, "z": z},
         **metadata,
     }
+
+
+def _device_rectangle_vertices(
+    u_bounds_m: tuple[float, float], v_bounds_m: tuple[float, float]
+) -> np.ndarray:
+    from photothermal_pte.optimization_runs.tairte4_flake_topology.rotated_device import (
+        device_to_crystal_coordinates,
+    )
+
+    u0, u1 = u_bounds_m
+    v0, v1 = v_bounds_m
+    u = np.asarray((u0, u1, u1, u0), dtype=np.float64)
+    v = np.asarray((v0, v0, v1, v1), dtype=np.float64)
+    x, y = device_to_crystal_coordinates(u, v)
+    return np.column_stack((x, y))
+
+
+def add_au_electrodes(fdtd: Any) -> list[str]:
+    """Add the two 50 nm Au polygons on the rotated terminal strips."""
+
+    if CONTRACT.geometry_mode != "diagonal_45_contact_anchored":
+        return []
+    material = fdtd.addmaterial("(n,k) Material")
+    fdtd.setmaterial(material, "name", AU_MATERIAL)
+    fdtd.setmaterial(AU_MATERIAL, "Refractive Index", AU_INDEX_AT_10UM.real)
+    fdtd.setmaterial(
+        AU_MATERIAL,
+        "Imaginary Refractive Index",
+        AU_INDEX_AT_10UM.imag,
+    )
+    half = 0.5 * CONTRACT.flake_span_m
+    inner = half - CONTRACT.fixed_contact_depth_m
+    strips = ((-half, -inner), (inner, half))
+    for name, u_bounds in zip(AU_OBJECT_NAMES, strips):
+        polygon = fdtd.addpoly()
+        polygon["name"] = name
+        polygon["vertices"] = _device_rectangle_vertices(
+            u_bounds, (-half, half)
+        )
+        polygon["z min"] = 0.0
+        polygon["z max"] = AU_THICKNESS_M
+        polygon["material"] = AU_MATERIAL
+    return list(AU_OBJECT_NAMES)
 
 
 def add_mesh(fdtd: Any, name: str, bounds: dict[str, tuple[float, float]], **steps: float) -> None:
@@ -220,22 +278,40 @@ def add_mesh_hierarchy(
         y=CONTRACT.outer_xy_max_step_m,
     )
     names.append("run010_outer_coarse_xy_mesh")
+    stack_half = (
+        18.0e-6
+        if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        else 14.0e-6
+    )
     add_mesh(
         fdtd,
         "run010_illuminated_stack_xy_mesh",
-        {"x": (-14e-6, 14e-6), "y": (-14e-6, 14e-6), "z": (-0.5e-6, 0.1e-6)},
+        {"x": (-stack_half, stack_half), "y": (-stack_half, stack_half), "z": (-0.5e-6, 0.1e-6)},
         x=250e-9,
         y=250e-9,
     )
     names.append("run010_illuminated_stack_xy_mesh")
-    flake = 0.5 * CONTRACT.flake_span_m + CONTRACT.design_step_m
+    flake = CONTRACT.flake_bounding_half_span_m + CONTRACT.design_step_m
     add_mesh(
         fdtd,
         "run010_flake_xy_z_mesh",
-        {"x": (-flake, flake), "y": (-flake, flake), "z": (-CONTRACT.flake_thickness_m - CONTRACT.flake_dz_m, CONTRACT.flake_dz_m)},
+        {
+            "x": (-flake, flake),
+            "y": (-flake, flake),
+            "z": (
+                -CONTRACT.flake_thickness_m - CONTRACT.flake_dz_m,
+                60.0e-9
+                if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+                else CONTRACT.flake_dz_m,
+            ),
+        },
         x=interface_step,
         y=interface_step,
-        z=CONTRACT.flake_dz_m,
+        z=(
+            5.0e-9
+            if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+            else CONTRACT.flake_dz_m
+        ),
     )
     names.append("run010_flake_xy_z_mesh")
     return names

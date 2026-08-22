@@ -38,6 +38,17 @@ def _terminal_nodes(
     raise ValueError("terminal_axis must be 'x', 'y', or 'diagonal_45'")
 
 
+def _active_domain(
+    mesh: "RectangularTriangularMesh", terminal_axis: str
+) -> tuple[Array, Array]:
+    """Return active FEM elements/nodes for the physical flake support."""
+
+    return (
+        np.ones(mesh.triangles.shape[0], dtype=bool),
+        np.ones(mesh.nodes_m.shape[0], dtype=bool),
+    )
+
+
 @dataclass(frozen=True)
 class RectangularTriangularMesh:
     x_m: Array
@@ -136,6 +147,33 @@ def build_rectangular_mesh(span_x_m: float, span_y_m: float, step_m: float) -> R
     )
 
 
+def build_rotated_device_mesh(
+    span_m: float, step_m: float, angle_deg: float = 45.0
+) -> RectangularTriangularMesh:
+    """Build a square device mesh whose nodes live in fixed crystal coordinates."""
+
+    mesh = build_rectangular_mesh(span_m, span_m, step_m)
+    angle = np.deg2rad(float(angle_deg))
+    rotation = np.asarray(
+        ((np.cos(angle), -np.sin(angle)), (np.sin(angle), np.cos(angle))),
+        dtype=np.float64,
+    )
+    return RectangularTriangularMesh(
+        x_m=mesh.x_m,
+        y_m=mesh.y_m,
+        nodes_m=mesh.nodes_m @ rotation.T,
+        triangles=mesh.triangles,
+        triangle_area_m2=mesh.triangle_area_m2,
+        gradients_m_inv=np.einsum(
+            "ab,ebj->eaj", rotation, mesh.gradients_m_inv
+        ),
+        top_nodes=mesh.top_nodes,
+        bottom_nodes=mesh.bottom_nodes,
+        left_nodes=mesh.left_nodes,
+        right_nodes=mesh.right_nodes,
+    )
+
+
 def _element_tensor(values_xy: tuple[float, float], scale: Array) -> Array:
     output = np.zeros((scale.size, 2, 2), dtype=np.float64)
     output[:, 0, 0] = float(values_xy[0]) * scale
@@ -194,11 +232,14 @@ def solve_short_circuit_current_density(
     solve = _reference_solve if linear_solve is None else linear_solve
 
     tri = mesh.triangles
+    active_elements, active_nodes = _active_domain(mesh, terminal_axis)
     rho_element = np.mean(rho[tri], axis=1)
     sigma_scale = sigma_void_fraction + (
         1.0 - sigma_void_fraction
     ) * rho_element**sigma_penalty
     alpha_scale = rho_element**alpha_penalty
+    sigma_scale[~active_elements] = 0.0
+    alpha_scale[~active_elements] = 0.0
     sigma = _element_tensor(sigma_xy_S_m, sigma_scale)
     alpha = _element_tensor(
         (
@@ -210,8 +251,10 @@ def solve_short_circuit_current_density(
     matrix = _assemble(mesh, sigma, thickness_m)
 
     low_nodes, high_nodes = _terminal_nodes(mesh, terminal_axis)
+    low_nodes = low_nodes[active_nodes[low_nodes]]
+    high_nodes = high_nodes[active_nodes[high_nodes]]
     fixed = np.unique(np.concatenate((low_nodes, high_nodes)))
-    free_mask = np.ones(node_count, dtype=bool)
+    free_mask = active_nodes.copy()
     free_mask[fixed] = False
     free = np.flatnonzero(free_mask)
 
@@ -289,9 +332,12 @@ def solve_weighting_and_adjoint(
     solve = _reference_solve if linear_solve is None else linear_solve
 
     tri = mesh.triangles
+    active_elements, active_nodes = _active_domain(mesh, terminal_axis)
     rho_element = np.mean(rho[tri], axis=1)
     sigma_scale = sigma_void_fraction + (1.0 - sigma_void_fraction) * rho_element**sigma_penalty
     alpha_scale = rho_element**alpha_penalty
+    sigma_scale[~active_elements] = 0.0
+    alpha_scale[~active_elements] = 0.0
     sigma = _element_tensor(sigma_xy_S_m, sigma_scale)
     alpha_base = (
         float(sigma_xy_S_m[0]) * float(seebeck_xy_V_K[0]),
@@ -301,11 +347,13 @@ def solve_weighting_and_adjoint(
     matrix = _assemble(mesh, sigma, thickness_m)
 
     low_nodes, high_nodes = _terminal_nodes(mesh, terminal_axis)
+    low_nodes = low_nodes[active_nodes[low_nodes]]
+    high_nodes = high_nodes[active_nodes[high_nodes]]
     fixed = np.unique(np.concatenate((low_nodes, high_nodes)))
     fixed_values = np.zeros(fixed.size, dtype=np.float64)
     high_lookup = np.isin(fixed, high_nodes)
     fixed_values[high_lookup] = 1.0
-    free_mask = np.ones(node_count, dtype=bool)
+    free_mask = active_nodes.copy()
     free_mask[fixed] = False
     free = np.flatnonzero(free_mask)
     reduced = matrix[free][:, free].tocsr()

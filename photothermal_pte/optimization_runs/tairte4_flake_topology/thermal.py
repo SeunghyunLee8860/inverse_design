@@ -25,6 +25,10 @@ from photothermal_pte.finite_inverse_design.finite_q_mapping import (
 from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import (
     CONTRACT,
 )
+from photothermal_pte.optimization_runs.tairte4_flake_topology.rotated_device import (
+    device_to_crystal_field,
+    device_to_crystal_transpose,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -45,6 +49,7 @@ K_SI_W_MK = 145.0
 # Room-temperature bulk value used only when an explicit Au terminal layer is
 # requested by a forward-response calculation.
 K_AU_W_MK = 317.0
+AU_TAIRTE4_INTERFACE_CONDUCTANCE_W_M2K = 19.89e6
 # Lumerical x=b, y=a, z=c.
 K_TAIRTE4_XYZ_W_MK = np.asarray((3.8, 14.4, 1.0), dtype=np.float64)
 TAIRTE4_SIO2_INTERFACE_CONDUCTANCE_W_M2K = {
@@ -89,15 +94,30 @@ def thermal_interface_contract() -> dict[str, object]:
             "paper-derived interface scenario; bulk SiO2 geometry and "
             "optical material are unchanged"
         ),
+        "rotated_device_Au": {
+            "enabled": CONTRACT.geometry_mode == "diagonal_45_contact_anchored",
+            "thickness_m": 50.0e-9,
+            "thermal_conductivity_W_mK": K_AU_W_MK,
+            "Au_TaIrTe4_interface_conductance_W_m2K": (
+                AU_TAIRTE4_INTERFACE_CONDUCTANCE_W_M2K
+            ),
+        },
     }
 
 
 def _piecewise_edges() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    negative_outer = np.asarray((-32, -28, -24, -20, -16, -14), float) * 1e-6
-    negative_shoulder = np.arange(-14.0, -12.0, 0.25) * 1e-6
-    core = np.arange(-12.0, 12.0 + 0.05, 0.1) * 1e-6
-    positive_shoulder = np.arange(12.25, 14.0 + 0.125, 0.25) * 1e-6
-    positive_outer = np.asarray((16, 20, 24, 28, 32), float) * 1e-6
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        negative_outer = np.asarray((-32, -28, -24, -20, -19), float) * 1e-6
+        negative_shoulder = np.arange(-19.0, -17.0, 0.25) * 1e-6
+        core = np.arange(-17.0, 17.0 + 0.05, 0.1) * 1e-6
+        positive_shoulder = np.arange(17.25, 19.0 + 0.125, 0.25) * 1e-6
+        positive_outer = np.asarray((20, 24, 28, 32), float) * 1e-6
+    else:
+        negative_outer = np.asarray((-32, -28, -24, -20, -16, -14), float) * 1e-6
+        negative_shoulder = np.arange(-14.0, -12.0, 0.25) * 1e-6
+        core = np.arange(-12.0, 12.0 + 0.05, 0.1) * 1e-6
+        positive_shoulder = np.arange(12.25, 14.0 + 0.125, 0.25) * 1e-6
+        positive_outer = np.asarray((16, 20, 24, 28, 32), float) * 1e-6
     lateral = np.unique(
         np.concatenate((negative_outer, negative_shoulder, core, positive_shoulder, positive_outer))
     )
@@ -130,6 +150,8 @@ def nodal_to_cell(density: np.ndarray) -> np.ndarray:
     values = np.asarray(density, dtype=np.float64)
     if values.shape != CONTRACT.design_node_shape:
         raise ValueError(f"density shape {values.shape} != {CONTRACT.design_node_shape}")
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        values = device_to_crystal_field(values)
     return 0.25 * (
         values[:-1, :-1] + values[1:, :-1]
         + values[:-1, 1:] + values[1:, 1:]
@@ -138,14 +160,25 @@ def nodal_to_cell(density: np.ndarray) -> np.ndarray:
 
 def nodal_to_cell_transpose(values: np.ndarray) -> np.ndarray:
     cell = np.asarray(values, dtype=np.float64)
-    expected = CONTRACT.design_intervals
+    expected = (
+        (CONTRACT.crystal_bounding_intervals,) * 2
+        if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        else CONTRACT.design_intervals
+    )
     if cell.shape != expected:
         raise ValueError(f"cell values shape {cell.shape} != {expected}")
-    result = np.zeros(CONTRACT.design_node_shape, dtype=np.float64)
+    node_shape = (
+        CONTRACT.crystal_bounding_node_shape
+        if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        else CONTRACT.design_node_shape
+    )
+    result = np.zeros(node_shape, dtype=np.float64)
     result[:-1, :-1] += 0.25 * cell
     result[1:, :-1] += 0.25 * cell
     result[:-1, 1:] += 0.25 * cell
     result[1:, 1:] += 0.25 * cell
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        return device_to_crystal_transpose(result)
     return result
 
 
@@ -174,7 +207,9 @@ def build_state(
     gray_exponent: float = 1.0,
     au_contact_axis: str | None = None,
     au_thickness_m: float = 50.0e-9,
-    au_tairte4_interface_conductance_W_m2K: float = 19.89e6,
+    au_tairte4_interface_conductance_W_m2K: float = (
+        AU_TAIRTE4_INTERFACE_CONDUCTANCE_W_M2K
+    ),
 ) -> ThermalState:
     CONTRACT.validate()
     rho_nodal = CONTRACT.apply_fixed_contact_density(
@@ -186,8 +221,8 @@ def build_state(
         raise ValueError("density must remain in [0,1]")
     if gray_exponent <= 0.0:
         raise ValueError("gray exponent must be positive")
-    if au_contact_axis not in (None, "x", "y"):
-        raise ValueError("au_contact_axis must be None, 'x', or 'y'")
+    if au_contact_axis not in (None, "x", "y", "diagonal_45"):
+        raise ValueError("invalid au_contact_axis")
     if au_contact_axis is not None:
         if not np.isclose(au_thickness_m, 50.0e-9, rtol=0.0, atol=1.0e-18):
             raise ValueError("explicit Au model requires the paper's 50 nm thickness")
@@ -214,15 +249,20 @@ def build_state(
     si = zz < -0.385e-6
     sio2 = (zz >= -0.385e-6) & (zz < -0.100e-6)
     flake_z = (zz >= -0.100e-6) & (zz < 0.0)
-    flake_xy = (np.abs(xx) < 12.0e-6) & (np.abs(yy) < 12.0e-6)
-    x_bounds = CONTRACT.design_bounds_m["x"]
-    y_bounds = CONTRACT.design_bounds_m["y"]
+    flake_xy = CONTRACT.flake_support_mask(xx, yy)
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        crystal_half = 0.5 * CONTRACT.crystal_bounding_span_m
+        x_bounds = (-crystal_half, crystal_half)
+        y_bounds = (-crystal_half, crystal_half)
+    else:
+        x_bounds = CONTRACT.design_bounds_m["x"]
+        y_bounds = CONTRACT.design_bounds_m["y"]
     design_xy = (
         (xx >= x_bounds[0]) & (xx < x_bounds[1])
         & (yy >= y_bounds[0]) & (yy < y_bounds[1])
     )
     fixed_flake = flake_z & flake_xy & ~design_xy
-    design_flake = flake_z & design_xy
+    design_flake = flake_z & design_xy & flake_xy
     if au_contact_axis == "x":
         contact_xy = (
             (np.abs(xx) < 12.0e-6)
@@ -234,6 +274,13 @@ def build_state(
             (np.abs(xx) < 12.0e-6)
             & (np.abs(yy) < 12.0e-6)
             & (np.abs(yy) >= 10.0e-6)
+        )
+    elif au_contact_axis == "diagonal_45":
+        u, v = CONTRACT.rotated_uv(xx, yy)
+        contact_xy = (
+            (np.abs(u) < 12.0e-6)
+            & (np.abs(v) < 12.0e-6)
+            & (np.abs(u) >= 10.0e-6)
         )
     else:
         contact_xy = np.zeros_like(xx, dtype=bool)
@@ -276,12 +323,22 @@ def build_state(
         K_TAIRTE4_XYZ_W_MK[None, None, :] - K_AIR_W_MK
     )
     for z_index in z_flake:
-        kappa[x_design[:, None], y_design[None, :], z_index, :] = effective
+        plane = kappa[np.ix_(x_design, y_design, [z_index], np.arange(3))][
+            :, :, 0, :
+        ]
+        active_plane = flake_xy[np.ix_(x_design, y_design, [z_index])][:, :, 0]
+        plane[active_plane] = effective[active_plane]
+        kappa[np.ix_(x_design, y_design, [z_index], np.arange(3))] = plane[
+            :, :, None, :
+        ]
 
     rho_id = np.full(shape, -1, dtype=np.int64)
     ids = np.arange(rho_cell.size, dtype=np.int64).reshape(rho_cell.shape)
     for z_index in z_flake:
-        rho_id[np.ix_(x_design, y_design, [z_index])] = ids[:, :, None]
+        active_plane = flake_xy[np.ix_(x_design, y_design, [z_index])][:, :, 0]
+        rho_plane = np.full(rho_cell.shape, -1, dtype=np.int64)
+        rho_plane[active_plane] = ids[active_plane]
+        rho_id[np.ix_(x_design, y_design, [z_index])] = rho_plane[:, :, None]
 
     rx = np.zeros((shape[0] - 1, shape[1], shape[2]), dtype=np.float64)
     ry = np.zeros((shape[0], shape[1] - 1, shape[2]), dtype=np.float64)
@@ -297,15 +354,29 @@ def build_state(
         + 1.0 / G_TAIRTE4_SIO2_W_M2K
         + 0.5 * widths[2][bottom + 1] / K_TAIRTE4_XYZ_W_MK[2]
     )
-    x_flake = np.flatnonzero((centers[0] >= -12.0e-6) & (centers[0] < 12.0e-6))
-    y_flake = np.flatnonzero((centers[1] >= -12.0e-6) & (centers[1] < 12.0e-6))
-    phi_full = np.ones((x_flake.size, y_flake.size), dtype=np.float64)
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        x_flake = x_design
+        y_flake = y_design
+        phi_full = np.zeros((x_flake.size, y_flake.size), dtype=np.float64)
+    else:
+        x_flake = np.flatnonzero(
+            (centers[0] >= -12.0e-6) & (centers[0] < 12.0e-6)
+        )
+        y_flake = np.flatnonzero(
+            (centers[1] >= -12.0e-6) & (centers[1] < 12.0e-6)
+        )
+        phi_full = np.ones((x_flake.size, y_flake.size), dtype=np.float64)
     x_offset = int(np.flatnonzero(x_flake == x_design[0])[0])
     y_offset = int(np.flatnonzero(y_flake == y_design[0])[0])
     phi_full[
         x_offset : x_offset + x_design.size,
         y_offset : y_offset + y_design.size,
     ] = phi_cell
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        cell_x, cell_y = np.meshgrid(
+            centers[0][x_flake], centers[1][y_flake], indexing="ij"
+        )
+        phi_full[~CONTRACT.flake_support_mask(cell_x, cell_y)] = 0.0
     upper_k = kappa[np.ix_(x_flake, y_flake, [bottom + 1], [2])][:, :, 0, 0]
     face_conductance_per_area = (1.0 - phi_full) / air_path + phi_full / tair_path
     equivalent = (
@@ -324,7 +395,7 @@ def build_state(
             & (centers[0] < 12.0e-6)
             & (
                 (np.abs(centers[0]) >= 10.0e-6)
-                if au_contact_axis == "x"
+                if au_contact_axis in {"x", "diagonal_45"}
                 else np.ones_like(centers[0], dtype=bool)
             )
         )
@@ -337,6 +408,23 @@ def build_state(
                 else np.ones_like(centers[1], dtype=bool)
             )
         )
+        if au_contact_axis == "diagonal_45":
+            contact_xx, contact_yy = np.meshgrid(
+                centers[0][x_flake], centers[1][y_flake], indexing="ij"
+            )
+            contact_u, contact_v = CONTRACT.rotated_uv(contact_xx, contact_yy)
+            contact_mask = (
+                (np.abs(contact_u) < 12.0e-6)
+                & (np.abs(contact_v) < 12.0e-6)
+                & (np.abs(contact_u) >= 10.0e-6)
+            )
+            local_resistance = rz[np.ix_(x_flake, y_flake, [top_flake_face])]
+            local_resistance[:, :, 0][contact_mask] = (
+                1.0 / au_tairte4_interface_conductance_W_m2K
+            )
+            rz[np.ix_(x_flake, y_flake, [top_flake_face])] = local_resistance
+            x_contact = np.asarray([], dtype=np.int64)
+            y_contact = np.asarray([], dtype=np.int64)
         rz[np.ix_(x_contact, y_contact, [top_flake_face])] = (
             1.0 / au_tairte4_interface_conductance_W_m2K
         )
@@ -434,8 +522,18 @@ def flake_cell_temperature(state: ThermalState, active_temperature: np.ndarray) 
     x = _centers(state.edges_m[0])
     y = _centers(state.edges_m[1])
     z = _centers(state.edges_m[2])
-    ix = np.flatnonzero((x >= -12e-6) & (x < 12e-6))
-    iy = np.flatnonzero((y >= -12e-6) & (y < 12e-6))
+    x_bounds = (
+        (-0.5 * CONTRACT.crystal_bounding_span_m, 0.5 * CONTRACT.crystal_bounding_span_m)
+        if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        else (-12.0e-6, 12.0e-6)
+    )
+    y_bounds = (
+        (-0.5 * CONTRACT.crystal_bounding_span_m, 0.5 * CONTRACT.crystal_bounding_span_m)
+        if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        else (-12.0e-6, 12.0e-6)
+    )
+    ix = np.flatnonzero((x >= x_bounds[0]) & (x < x_bounds[1]))
+    iy = np.flatnonzero((y >= y_bounds[0]) & (y < y_bounds[1]))
     iz = np.flatnonzero((z >= -0.1e-6) & (z < 0.0))
     weights = state.widths_m[2][iz]
     return np.tensordot(full[np.ix_(ix, iy, iz)], weights / np.sum(weights), axes=(2, 0))
@@ -443,21 +541,37 @@ def flake_cell_temperature(state: ThermalState, active_temperature: np.ndarray) 
 
 def cell_to_node(cell: np.ndarray) -> np.ndarray:
     values = np.asarray(cell, dtype=np.float64)
-    if values.shape != (240, 240):
-        raise ValueError("flake cell temperature must be 240x240")
-    result = np.zeros((241, 241), dtype=np.float64)
+    node_shape = (
+        CONTRACT.crystal_bounding_node_shape
+        if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        else CONTRACT.flake_node_shape
+    )
+    expected = tuple(value - 1 for value in node_shape)
+    if values.shape != expected:
+        raise ValueError(
+            f"flake cell temperature must be {expected}"
+        )
+    result = np.zeros(node_shape, dtype=np.float64)
     weight = np.zeros_like(result)
+    nx, ny = values.shape
     for di in (0, 1):
         for dj in (0, 1):
-            result[di : di + 240, dj : dj + 240] += values
-            weight[di : di + 240, dj : dj + 240] += 1.0
+            result[di : di + nx, dj : dj + ny] += values
+            weight[di : di + nx, dj : dj + ny] += 1.0
     return result / weight
 
 
 def cell_to_node_transpose(node: np.ndarray) -> np.ndarray:
     values = np.asarray(node, dtype=np.float64)
-    if values.shape != (241, 241):
-        raise ValueError("flake nodal sensitivity must be 241x241")
+    node_shape = (
+        CONTRACT.crystal_bounding_node_shape
+        if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        else CONTRACT.flake_node_shape
+    )
+    if values.shape != node_shape:
+        raise ValueError(
+            f"flake nodal sensitivity must be {node_shape}"
+        )
     node_weight = np.ones_like(values)
     node_weight[1:-1, :] *= 2.0
     node_weight[:, 1:-1] *= 2.0
@@ -474,8 +588,18 @@ def flake_temperature_transpose(state: ThermalState, nodal_sensitivity: np.ndarr
     x = _centers(state.edges_m[0])
     y = _centers(state.edges_m[1])
     z = _centers(state.edges_m[2])
-    ix = np.flatnonzero((x >= -12e-6) & (x < 12e-6))
-    iy = np.flatnonzero((y >= -12e-6) & (y < 12e-6))
+    x_bounds = (
+        (-0.5 * CONTRACT.crystal_bounding_span_m, 0.5 * CONTRACT.crystal_bounding_span_m)
+        if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        else (-12.0e-6, 12.0e-6)
+    )
+    y_bounds = (
+        (-0.5 * CONTRACT.crystal_bounding_span_m, 0.5 * CONTRACT.crystal_bounding_span_m)
+        if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        else (-12.0e-6, 12.0e-6)
+    )
+    ix = np.flatnonzero((x >= x_bounds[0]) & (x < x_bounds[1]))
+    iy = np.flatnonzero((y >= y_bounds[0]) & (y < y_bounds[1]))
     iz = np.flatnonzero((z >= -0.1e-6) & (z < 0.0))
     weights = state.widths_m[2][iz]
     for local, z_index in enumerate(iz):

@@ -32,7 +32,12 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology import optical
 from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
 from photothermal_pte.optimization_runs.tairte4_flake_topology.electrical import (
     build_rectangular_mesh,
+    build_rotated_device_mesh,
     solve_weighting_and_adjoint,
+)
+from photothermal_pte.optimization_runs.tairte4_flake_topology.rotated_device import (
+    crystal_to_device_field,
+    crystal_to_device_transpose,
 )
 from photothermal_pte.optimization_runs.tairte4_flake_topology.thermal import (
     boundary_energy_error,
@@ -187,6 +192,17 @@ def set_density(fdtd, rho: np.ndarray) -> None:
         imported_object=optical.DESIGN_OBJECT,
         nodes=optical.design_nodes(),
     )
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        rotation = float(fdtd.getnamed(optical.DESIGN_OBJECT, "rotation 1"))
+        if not np.isclose(
+            rotation,
+            optical.ROTATED_DEVICE_ANGLE_DEG,
+            rtol=0.0,
+            atol=1.0e-12,
+        ):
+            raise RuntimeError("density update changed the rotated-device angle")
+        if any(int(fdtd.getnamednumber(name)) != 1 for name in optical.AU_OBJECT_NAMES):
+            raise RuntimeError("rotated-device Au electrode object is missing")
 
 
 def native_arrays(q: dict) -> dict[str, np.ndarray]:
@@ -322,6 +338,8 @@ class CachedElectricalCuda:
 
 
 def full_flake_density(rho: np.ndarray) -> np.ndarray:
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        return CONTRACT.apply_fixed_contact_density(rho)
     full = np.ones(CONTRACT.flake_node_shape, dtype=np.float64)
     full[CONTRACT.design_node_slices] = CONTRACT.apply_fixed_contact_density(rho)
     return full
@@ -337,7 +355,10 @@ def solve_coupled(
     thermal_relative_tolerance: float = 1e-10,
     thermal_max_iterations: int = 30000,
 ):
-    state = build_state(rho, **(thermal_state_kwargs or {}))
+    state_options = dict(thermal_state_kwargs or {})
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        state_options.setdefault("au_contact_axis", "diagonal_45")
+    state = build_state(rho, **state_options)
     mapped_q, mapping = map_native_q(native_arrays(forward["q"]), state)
     source_active = state.system.active_source(mapped_q)
     source_power = np.asarray(state.system.source_volume_operator_m3 @ source_active)
@@ -347,8 +368,19 @@ def solve_coupled(
         relative_tolerance=thermal_relative_tolerance,
         max_iterations=thermal_max_iterations,
     )
-    nodal_temperature = cell_to_node(flake_cell_temperature(state, thermal_forward.solution))
-    mesh = build_rectangular_mesh(CONTRACT.flake_span_m, CONTRACT.flake_span_m, CONTRACT.design_step_m)
+    crystal_temperature = cell_to_node(
+        flake_cell_temperature(state, thermal_forward.solution)
+    )
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        nodal_temperature = crystal_to_device_field(crystal_temperature)
+        mesh = build_rotated_device_mesh(
+            CONTRACT.flake_span_m, CONTRACT.design_step_m
+        )
+    else:
+        nodal_temperature = crystal_temperature
+        mesh = build_rectangular_mesh(
+            CONTRACT.flake_span_m, CONTRACT.flake_span_m, CONTRACT.design_step_m
+        )
     electrical = solve_weighting_and_adjoint(
         mesh,
         full_flake_density(rho),
@@ -375,7 +407,14 @@ def solve_coupled(
         "boundary": boundary,
     }
     if need_adjoint:
-        thermal_rhs = flake_temperature_transpose(state, electrical.gradient_temperature_K_inv)
+        thermal_temperature_sensitivity = electrical.gradient_temperature_K_inv
+        if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+            thermal_temperature_sensitivity = crystal_to_device_transpose(
+                thermal_temperature_sensitivity
+            )
+        thermal_rhs = flake_temperature_transpose(
+            state, thermal_temperature_sensitivity
+        )
         thermal_adjoint = thermal_operator.solve(
             thermal_rhs,
             relative_tolerance=thermal_relative_tolerance,
@@ -384,11 +423,23 @@ def solve_coupled(
         gradient_thermal = thermal_density_gradient(
             state, thermal_forward.solution, thermal_adjoint.solution
         )
+        electrical_slice = (
+            electrical.gradient_rho_A
+            if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+            else electrical.gradient_rho_A[CONTRACT.design_node_slices]
+        )
+        conductance_slice = (
+            electrical.gradient_terminal_conductance_S
+            if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+            else electrical.gradient_terminal_conductance_S[
+                CONTRACT.design_node_slices
+            ]
+        )
         gradient_electrical = CONTRACT.zero_fixed_contact_gradient(
-            electrical.gradient_rho_A[CONTRACT.design_node_slices]
+            electrical_slice
         )
         gradient_terminal_conductance = CONTRACT.zero_fixed_contact_gradient(
-            electrical.gradient_terminal_conductance_S[CONTRACT.design_node_slices]
+            conductance_slice
         )
         target_active = np.asarray(
             state.system.source_volume_operator_m3.T @ thermal_adjoint.solution
@@ -453,6 +504,7 @@ def main() -> int:
     parser.add_argument("--jacobian-dir", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--gpu-device", default="GPU 5")
+    parser.add_argument("--fdtd-threads", type=int, default=3)
     parser.add_argument("--cuda-device", type=int, default=0)
     parser.add_argument("--step", type=float, default=0.005)
     parser.add_argument("--polarization", choices=("Ea", "Eb"), default="Ea")
@@ -470,7 +522,10 @@ def main() -> int:
     fdtd = None
     started = time.monotonic()
     try:
-        fdtd, audit, runtime = open_fdtd(args.gpu_device)
+        fdtd, audit, runtime = open_fdtd(
+            args.gpu_device,
+            fdtd_threads=args.fdtd_threads,
+        )
         angle = polarization_angle(args.polarization)
         base = run_forward(
             fdtd,

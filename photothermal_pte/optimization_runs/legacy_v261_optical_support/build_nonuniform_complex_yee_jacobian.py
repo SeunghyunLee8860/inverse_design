@@ -201,6 +201,18 @@ def set_tairte4_flake_density(
     fdtd.select(imported_object)
     if int(fdtd.importnk2(index, *nodes)) != 1:
         raise RuntimeError("anisotropic TaIrTe4 importnk2 returned failure")
+    if (
+        tairte4_flake_optical.CONTRACT.geometry_mode
+        == "diagonal_45_contact_anchored"
+    ):
+        rotation = float(fdtd.getnamed(imported_object, "rotation 1"))
+        if not np.isclose(
+            rotation,
+            tairte4_flake_optical.ROTATED_DEVICE_ANGLE_DEG,
+            rtol=0.0,
+            atol=1.0e-12,
+        ):
+            raise RuntimeError("importnk2 update changed the +45-degree primitive")
 
 
 def index_detail(fdtd: object) -> dict[str, np.ndarray]:
@@ -629,11 +641,21 @@ def main() -> int:
                         continue
                     ix, iy, _ = np.unravel_index(rows, shapes[component])
                     coordinates = component_coordinates(layout_detail, component)
+                    sample_x = coordinates[0][ix]
+                    sample_y = coordinates[1][iy]
+                    if (
+                        args.geometry == "tairte4_flake"
+                        and contract.geometry_mode
+                        == "diagonal_45_contact_anchored"
+                    ):
+                        sample_x, sample_y = contract.rotated_uv(
+                            sample_x, sample_y
+                        )
                     node_x, distance_x = nearest_colored_node(
-                        coordinates[0][ix], x_nodes, color_x
+                        sample_x, x_nodes, color_x
                     )
                     node_y, distance_y = nearest_colored_node(
-                        coordinates[1][iy], y_nodes, color_y
+                        sample_y, y_nodes, color_y
                     )
                     distance = np.sqrt(distance_x**2 + distance_y**2)
                     maximum_assignment_distance[component] = max(
@@ -741,19 +763,41 @@ def main() -> int:
             )
             maximum_coordinate_mismatch = max(maximum_coordinate_mismatch, mismatch)
             row_nnz = np.diff(matrices[component].indptr)
-            support_axes = []
-            for axis, coordinate, node_coordinate in zip(
-                "xyz", detail_coordinates, (x_nodes, y_nodes, z_nodes)
+            if (
+                args.geometry == "tairte4_flake"
+                and contract.geometry_mode == "diagonal_45_contact_anchored"
             ):
-                support_axes.append(
-                    (coordinate >= node_coordinate[0] - 2.0e-18)
-                    & (coordinate <= node_coordinate[-1] + 2.0e-18)
+                sample_x, sample_y = np.meshgrid(
+                    detail_coordinates[0], detail_coordinates[1], indexing="ij"
                 )
-            support_intersection = (
-                support_axes[0][:, None, None]
-                & support_axes[1][None, :, None]
-                & support_axes[2][None, None, :]
-            )
+                sample_u, sample_v = contract.rotated_uv(sample_x, sample_y)
+                support_xy = (
+                    (sample_u >= x_nodes[0] - 2.0e-18)
+                    & (sample_u <= x_nodes[-1] + 2.0e-18)
+                    & (sample_v >= y_nodes[0] - 2.0e-18)
+                    & (sample_v <= y_nodes[-1] + 2.0e-18)
+                )
+                support_z = (
+                    (detail_coordinates[2] >= z_nodes[0] - 2.0e-18)
+                    & (detail_coordinates[2] <= z_nodes[-1] + 2.0e-18)
+                )
+                support_intersection = support_xy[:, :, None] & support_z[
+                    None, None, :
+                ]
+            else:
+                support_axes = []
+                for axis, coordinate, node_coordinate in zip(
+                    "xyz", detail_coordinates, (x_nodes, y_nodes, z_nodes)
+                ):
+                    support_axes.append(
+                        (coordinate >= node_coordinate[0] - 2.0e-18)
+                        & (coordinate <= node_coordinate[-1] + 2.0e-18)
+                    )
+                support_intersection = (
+                    support_axes[0][:, None, None]
+                    & support_axes[1][None, :, None]
+                    & support_axes[2][None, None, :]
+                )
             coordinate_audit["components"][component] = {
                 "shape": list(shapes[component]),
                 "coordinate_bounds_m": {

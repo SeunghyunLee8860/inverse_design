@@ -50,9 +50,15 @@ def active_set_repair(
         if geometry_mode == "diagonal_45_contact_anchored"
         else np.zeros_like(value)
     )
+    locked_void = (
+        CONTRACT.fixed_design_void_mask
+        if geometry_mode == "diagonal_45_contact_anchored"
+        else np.zeros_like(value)
+    )
     if locked_solid.shape != value.shape:
         raise ValueError("locked contact mask does not match exact-repair design")
     value[locked_solid] = True
+    value[locked_void] = False
     history: list[dict[str, object]] = []
     seen: set[bytes] = set()
     phases = ("solid", "void") if order == "solid_first" else ("void", "solid")
@@ -93,6 +99,7 @@ def active_set_repair(
             else:
                 value[arrays["bad_void"]] = True
             value[locked_solid] = True
+            value[locked_void] = False
     return value, history, stop_reason
 
 
@@ -192,13 +199,20 @@ def gradient_aware_exact_repair(
         if geometry_mode == "diagonal_45_contact_anchored"
         else np.zeros_like(source)
     )
+    locked_void = (
+        CONTRACT.fixed_design_void_mask
+        if geometry_mode == "diagonal_45_contact_anchored"
+        else np.zeros_like(source)
+    )
     if locked_solid.shape != source.shape:
         raise ValueError("locked contact mask does not match exact-repair design")
     source = source.copy()
     source[locked_solid] = True
+    source[locked_void] = False
     if objective_gradient is not None:
         objective_gradient = np.asarray(objective_gradient).copy()
         objective_gradient[locked_solid] = 0.0
+        objective_gradient[locked_void] = 0.0
 
     source_audit, _ = exact_binary_audit(
         source.astype(np.float64),
@@ -254,6 +268,7 @@ def gradient_aware_exact_repair(
                 arrays["bad_void"],
             ):
                 action[locked_solid] = True
+                action[locked_void] = False
                 key = np.packbits(action, bitorder="little").tobytes()
                 if key in visited:
                     continue
@@ -403,8 +418,12 @@ def main() -> int:
         axes[1, column].imshow(changed.T, origin="lower", extent=extent, cmap="magma", vmin=0, vmax=1)
         axes[1, column].set_title(f"changed nodes={np.count_nonzero(changed)}")
     for axis in axes.ravel():
-        axis.set_xlabel("Lumerical x=b (um)")
-        axis.set_ylabel("Lumerical y=a (um)")
+        if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+            axis.set_xlabel("local device u (um)")
+            axis.set_ylabel("local device v (um)")
+        else:
+            axis.set_xlabel("Lumerical x=b (um)")
+            axis.set_ylabel("Lumerical y=a (um)")
     plot_path = output / "exact_binary_repair_candidates.png"
     figure.savefig(plot_path, dpi=180)
     plt.close(figure)

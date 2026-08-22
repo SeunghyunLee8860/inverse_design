@@ -83,8 +83,7 @@ def exact_binary_audit(
             solid_padded[:radius, :] = True
             solid_padded[-radius:, :] = True
             outside_phase = (
-                "fixed_solid_at_left_right_and_void_at_top_bottom_with_"
-                "locked_southwest_northeast_terminal_overlaps"
+                "fixed_solid_at_rotated_low_high_edges_and_void_at_rotated_sides"
                 if selected_axis == "diagonal_45"
                 else "fixed_solid_at_left_right_and_void_at_top_bottom"
             )
@@ -98,13 +97,16 @@ def exact_binary_audit(
     bad_solid = binary & ~solid_open
     bad_void = (~binary) & ~void_open
     contact_violation = np.zeros_like(binary)
+    outside_flake_violation = np.zeros_like(binary)
     if selected_geometry == "diagonal_45_contact_anchored":
         if CONTRACT.geometry_mode != selected_geometry or binary.shape != CONTRACT.design_node_shape:
             raise ValueError(
                 "diagonal exact audit requires the matching process geometry contract"
             )
         contact_violation = CONTRACT.fixed_design_solid_mask & ~binary
+        outside_flake_violation = CONTRACT.fixed_design_void_mask & binary
         bad_void |= contact_violation
+        bad_solid |= outside_flake_violation
     return {
         "minimum_feature_nm": 500.0,
         "opening_radius_nm": 250.0,
@@ -121,6 +123,9 @@ def exact_binary_audit(
         "solid_bad_cell_count": int(np.count_nonzero(bad_solid)),
         "void_bad_cell_count": int(np.count_nonzero(bad_void)),
         "fixed_contact_violation_count": int(np.count_nonzero(contact_violation)),
+        "outside_flake_solid_violation_count": int(
+            np.count_nonzero(outside_flake_violation)
+        ),
         "total_bad_cell_count": int(np.count_nonzero(bad_solid) + np.count_nonzero(bad_void)),
         "counted_entity": "design nodes (legacy field names retain *_cell_count)",
         "solid_fraction": float(np.mean(binary)),
@@ -128,12 +133,14 @@ def exact_binary_audit(
             not np.any(bad_solid)
             and not np.any(bad_void)
             and not np.any(contact_violation)
+            and not np.any(outside_flake_violation)
         ),
     }, {
         "binary": binary,
         "bad_solid": bad_solid,
         "bad_void": bad_void,
         "fixed_contact_violation": contact_violation,
+        "outside_flake_solid_violation": outside_flake_violation,
     }
 
 
@@ -199,7 +206,7 @@ def morphology_values_gradients(
     """Differentiable solid/void opening residuals with the exact border phase."""
 
     latent = np.asarray(latent, dtype=np.float64)
-    rho_np = MAPPING.physical(latent, beta)
+    rho_np = CONTRACT.apply_fixed_contact_density(MAPPING.physical(latent, beta))
     rho = torch.tensor(rho_np, dtype=torch.float64, device=device, requires_grad=True)
     values = []
     gradients = []
@@ -223,8 +230,11 @@ def morphology_values_gradients(
         else:
             raise ValueError(f"unsupported morphology aggregation: {aggregation}")
         gradient_rho = torch.autograd.grad(aggregate, rho, retain_graph=index == 0)[0]
+        gradient_rho_np = CONTRACT.zero_fixed_contact_gradient(
+            gradient_rho.detach().cpu().numpy()
+        )
         values.append(float(aggregate.detach().cpu()))
-        gradients.append(MAPPING.vjp(latent, gradient_rho.detach().cpu().numpy(), beta))
+        gradients.append(MAPPING.vjp(latent, gradient_rho_np, beta))
         fields[f"{name}_residual"] = residual.detach().cpu().numpy()
     return np.asarray(values), np.stack(gradients), fields
 
@@ -238,7 +248,7 @@ def metrics(
 ) -> tuple[dict, dict]:
     latent = np.asarray(latent, dtype=np.float64)
     filtered = MAPPING.filtered(latent)
-    rho = MAPPING.physical(latent, beta)
+    rho = CONTRACT.apply_fixed_contact_density(MAPPING.physical(latent, beta))
     constraint_values, constraint_gradients, fields = morphology_values_gradients(
         latent, beta, device=device, aggregation=morphology_aggregation
     )

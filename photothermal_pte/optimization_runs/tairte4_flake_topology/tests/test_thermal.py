@@ -28,14 +28,25 @@ def test_default_interface_scenario_is_thermally_grown():
 def test_nodal_cell_transpose():
     rng = np.random.default_rng(4)
     node = rng.normal(size=CONTRACT.design_node_shape)
-    cell = rng.normal(size=CONTRACT.design_intervals)
+    cell_shape = (
+        (CONTRACT.crystal_bounding_intervals,) * 2
+        if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        else CONTRACT.design_intervals
+    )
+    cell = rng.normal(size=cell_shape)
     assert np.isclose(np.sum(nodal_to_cell(node) * cell), np.sum(node * nodal_to_cell_transpose(cell)), rtol=1e-13)
 
 
 def test_temperature_cell_node_transpose():
     rng = np.random.default_rng(5)
-    cell = rng.normal(size=(240, 240))
-    node = rng.normal(size=(241, 241))
+    node_shape = (
+        CONTRACT.crystal_bounding_node_shape
+        if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+        else CONTRACT.flake_node_shape
+    )
+    cell_shape = tuple(value - 1 for value in node_shape)
+    cell = rng.normal(size=cell_shape)
+    node = rng.normal(size=node_shape)
     assert np.isclose(np.sum(cell_to_node(cell) * node), np.sum(cell * cell_to_node_transpose(node)), rtol=1e-13)
 
 
@@ -47,7 +58,10 @@ def test_bottom_contact_endpoints_and_axis_mapping():
     assert np.any(np.isclose(zero_design_kappa[:, 0], K_AIR_W_MK))
     if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
         assert np.any(np.isclose(zero_design_kappa[:, 0], K_TAIRTE4_XYZ_W_MK[0]))
-    assert np.allclose(one.kappa_W_mK[one.masks["design_effective"]][0], K_TAIRTE4_XYZ_W_MK)
+    one_design_kappa = one.kappa_W_mK[one.masks["design_effective"]]
+    assert np.any(
+        np.all(np.isclose(one_design_kappa, K_TAIRTE4_XYZ_W_MK), axis=1)
+    )
     assert np.isclose(
         one.bottom_tairte4_path_resistance_m2K_W
         - 0.5 * one.widths_m[2][one.bottom_face] / 1.38
@@ -60,7 +74,11 @@ def test_linear_gray_law_has_unit_derivative_at_void_endpoint():
     state = build_state(np.zeros(CONTRACT.design_node_shape), gray_exponent=1.0)
     assert np.array_equal(
         state.dphi_drho_cell,
-        np.ones(CONTRACT.design_intervals),
+        np.ones(
+            (CONTRACT.crystal_bounding_intervals,) * 2
+            if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
+            else CONTRACT.design_intervals
+        ),
     )
 
 
@@ -114,3 +132,22 @@ def test_explicit_au_electrodes_follow_terminal_axis_without_expanding_flake():
         ],
         expected_resistance,
     )
+
+
+def test_diagonal_au_stays_on_rotated_flake_terminal_strips():
+    if CONTRACT.geometry_mode != "diagonal_45_contact_anchored":
+        return
+    state = build_state(
+        np.ones(CONTRACT.design_node_shape), au_contact_axis="diagonal_45"
+    )
+    x = 0.5 * (state.edges_m[0][:-1] + state.edges_m[0][1:])
+    y = 0.5 * (state.edges_m[1][:-1] + state.edges_m[1][1:])
+    z = 0.5 * (state.edges_m[2][:-1] + state.edges_m[2][1:])
+    xx, yy, zz = np.meshgrid(x, y, z, indexing="ij")
+    u, v = CONTRACT.rotated_uv(xx, yy)
+    au = state.masks["Au_electrodes"]
+    assert np.any(au)
+    assert np.all(np.abs(u[au]) < 12.0e-6)
+    assert np.all(np.abs(v[au]) < 12.0e-6)
+    assert np.all(np.abs(u[au]) >= 10.0e-6)
+    assert np.all((zz[au] >= 0.0) & (zz[au] < 50.0e-9))

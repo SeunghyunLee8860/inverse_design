@@ -3,6 +3,7 @@ import numpy as np
 from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
 from photothermal_pte.optimization_runs.tairte4_flake_topology.electrical import (
     build_rectangular_mesh,
+    build_rotated_device_mesh,
     solve_short_circuit_current_density,
     solve_weighting_and_adjoint,
 )
@@ -100,8 +101,9 @@ def test_short_circuit_local_current_matches_weighting_terminal_current() -> Non
 def test_diagonal_terminal_current_matches_local_short_circuit_solution() -> None:
     if CONTRACT.contact_axis != "diagonal_45":
         return
-    mesh = build_rectangular_mesh(24.0e-6, 24.0e-6, 0.5e-6)
-    xx, yy = np.meshgrid(mesh.x_m, mesh.y_m, indexing="ij")
+    mesh = build_rotated_device_mesh(24.0e-6, 0.5e-6)
+    xx = mesh.nodes_m[:, 0].reshape(mesh.shape)
+    yy = mesh.nodes_m[:, 1].reshape(mesh.shape)
     rho = np.ones(mesh.shape)
     temperature = 300.0 + np.exp(
         -((xx / 4.0e-6) ** 2 + ((yy + 2.0e-6) / 5.0e-6) ** 2)

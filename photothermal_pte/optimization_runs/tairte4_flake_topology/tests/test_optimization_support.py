@@ -23,15 +23,14 @@ def test_mapping_preserves_uniform_density_and_transpose():
 
 
 def test_exact_audit_uses_geometry_specific_outside_phase():
-    solid = np.ones(MAPPING.shape)
+    solid = CONTRACT.apply_fixed_contact_density(np.ones(MAPPING.shape))
     audit, _ = exact_binary_audit(solid)
     assert audit["passed"]
     expected = {
         "contact_anchored": "fixed_solid_at_top_bottom_and_void_at_left_right",
         "left_right_contact_anchored": "fixed_solid_at_left_right_and_void_at_top_bottom",
         "diagonal_45_contact_anchored": (
-            "fixed_solid_at_left_right_and_void_at_top_bottom_with_"
-            "locked_southwest_northeast_terminal_overlaps"
+            "fixed_solid_at_rotated_low_high_edges_and_void_at_rotated_sides"
         ),
     }.get(CONTRACT.geometry_mode, "fixed_solid_TaIrTe4_frame")
     assert audit["outside_design_phase"] == expected
@@ -45,7 +44,7 @@ def test_exact_audit_uses_geometry_specific_outside_phase():
 def test_diagonal_exact_audit_rejects_void_in_locked_contact() -> None:
     if CONTRACT.geometry_mode != "diagonal_45_contact_anchored":
         return
-    solid = np.ones(MAPPING.shape)
+    solid = CONTRACT.apply_fixed_contact_density(np.ones(MAPPING.shape))
     solid[CONTRACT.fixed_design_solid_mask] = 0.0
     audit, arrays = exact_binary_audit(solid)
     assert not audit["passed"]
@@ -53,6 +52,12 @@ def test_diagonal_exact_audit_rejects_void_in_locked_contact() -> None:
     assert np.array_equal(
         arrays["fixed_contact_violation"], CONTRACT.fixed_design_solid_mask
     )
+
+
+def test_diagonal_exact_audit_rejects_solid_outside_flake() -> None:
+    if CONTRACT.geometry_mode != "diagonal_45_contact_anchored":
+        return
+    assert not np.any(CONTRACT.fixed_design_void_mask)
 
 
 def test_exact_audit_explicit_geometry_overrides_process_default():
