@@ -189,3 +189,21 @@ offline and must not be called an FDTD, thermal, or PTE result.
 runs the four T spectra followed by the four reconstructed-Z spectra.  It does
 not kill, pre-empt, or attach to another user's solver.  A failed case stops the
 queue fail-closed instead of silently advancing.
+
+## Finite 187-T Gaussian Q and terminal-PTE handoff
+
+The calibrated `w0=12 um`, `lambda=11.825 um`, `E||b` finite 11 x 17 inverse-T
+case now has a validated component-resolved volumetric-Q certificate in
+`results_finite_187T_w12_Q_11p825um_Eb/`.  Its native-Yee Q versus six-face
+closure is `0.059750%`; raw FSP/NPZ files remain outside Git and are identified
+by size and SHA-256 in the manifest.
+
+This finite-array optical result is not yet a finite-flake terminal-PTE model.
+In the Maxwell certificate only the top inverse-T array is finite; TaIrTe4 and
+the lower stack extend through the lateral PML.  Script
+`38_audit_finite_thermal_electrical_handoff.py` therefore performs a read-only
+handoff audit without cropping Q.  It records status
+`BLOCKED_FINITE_PTE_GEOMETRY_UNDEFINED` until a finite TaIrTe4 footprint, two
+electrode footprints/polarity, and a physical (not merely optical-closure)
+thermal stack are fixed.  A finite-device Maxwell rerun is then required before
+the conservative thermal/electrical solve.

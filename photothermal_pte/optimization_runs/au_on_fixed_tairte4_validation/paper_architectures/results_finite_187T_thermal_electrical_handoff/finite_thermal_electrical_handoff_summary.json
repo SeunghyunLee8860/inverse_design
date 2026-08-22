@@ -1,0 +1,80 @@
+{
+  "status": "BLOCKED_FINITE_PTE_GEOMETRY_UNDEFINED",
+  "validated_input": {
+    "classification": "finite 11x17 Au inverse-T array on laterally extended TaIrTe4/stack",
+    "npz_path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_187T_w12_Q_11p825um_Eb/finite_187T_w12_Q.npz",
+    "npz_size_bytes": 634969241,
+    "npz_sha256": "c4dbbdce0038a5b3a0c8529dc867a266245ef6d37672e20245790d8429b08f09",
+    "P_Q_component_reintegration_W": {
+      "x": 1.1852308717473118e-14,
+      "y": 4.067476218917708e-15,
+      "z": 5.065606899621016e-15
+    },
+    "P_Q_total_reintegrated_W": 2.098539183601184e-14
+  },
+  "diagnostic_rectangles_are_not_promoted_geometries": [
+    {
+      "scenario": "finite_T_array_footprint",
+      "span_x_um": 16.5,
+      "span_y_um": 17.0,
+      "P_Qx_inside_W": 9.50794409951142e-15,
+      "P_Qy_inside_W": 4.014858935141234e-15,
+      "P_Qz_inside_W": 5.031731033912152e-15,
+      "P_Q_inside_W": 1.8554534068564806e-14,
+      "inside_fraction": 0.884164289785832,
+      "outside_fraction": 0.11583571021416805,
+      "permitted_as_thermal_crop": false
+    },
+    {
+      "scenario": "legacy_top_bottom_24x20",
+      "span_x_um": 24.0,
+      "span_y_um": 20.0,
+      "P_Qx_inside_W": 1.0744199976407717e-14,
+      "P_Qy_inside_W": 4.0652055808493686e-15,
+      "P_Qz_inside_W": 5.049470921022143e-15,
+      "P_Q_inside_W": 1.9858876478279227e-14,
+      "inside_fraction": 0.9463190696396974,
+      "outside_fraction": 0.05368093036030264,
+      "permitted_as_thermal_crop": false
+    },
+    {
+      "scenario": "legacy_left_right_20x24",
+      "span_x_um": 20.0,
+      "span_y_um": 24.0,
+      "P_Qx_inside_W": 1.0756937949253467e-14,
+      "P_Qy_inside_W": 4.065473018765331e-15,
+      "P_Qz_inside_W": 5.043783560445759e-15,
+      "P_Q_inside_W": 1.9866194528464558e-14,
+      "inside_fraction": 0.9466677907997556,
+      "outside_fraction": 0.053332209200244396,
+      "permitted_as_thermal_crop": false
+    },
+    {
+      "scenario": "diagnostic_30x30",
+      "span_x_um": 30.0,
+      "span_y_um": 30.0,
+      "P_Qx_inside_W": 1.1653931787504224e-14,
+      "P_Qy_inside_W": 4.0668622012388875e-15,
+      "P_Qz_inside_W": 5.060549785276191e-15,
+      "P_Q_inside_W": 2.0781343774019303e-14,
+      "inside_fraction": 0.9902766618042184,
+      "outside_fraction": 0.009723338195781639,
+      "permitted_as_thermal_crop": false
+    }
+  ],
+  "reason": "The optical TaIrTe4 and lower stack extend through lateral PML, while terminal PTE requires a finite conducting flake and two specified contacts. Cropping this Q would delete source power and omit finite-flake/contact Maxwell scattering.",
+  "next_required_contract": {
+    "finite_flake_footprint": "undefined",
+    "electrode_footprints_and_polarity": "undefined",
+    "physical_thermal_stack": "must not inherit the 285-nm optical closure without an explicit choice",
+    "required_action": "rerun finite-device Maxwell after geometry is fixed, then conservative material-overlap thermal remap"
+  },
+  "not_run": [
+    "new FDTD",
+    "thermal",
+    "weighting potential",
+    "PTE",
+    "adjoint",
+    "optimization"
+  ]
+}

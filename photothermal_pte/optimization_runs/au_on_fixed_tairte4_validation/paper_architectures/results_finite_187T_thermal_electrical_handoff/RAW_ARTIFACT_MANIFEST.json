@@ -1,0 +1,30 @@
+{
+  "raw_artifacts_committed_to_git": false,
+  "input_raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw_artifacts/paper_tairte4_finite_187T_w12_Q_11p825um_Eb/finite_187T_w12_Q.npz",
+    "size_bytes": 634969241,
+    "sha256": "c4dbbdce0038a5b3a0c8529dc867a266245ef6d37672e20245790d8429b08f09"
+  },
+  "published_artifacts": [
+    {
+      "path": "FINITE_THERMAL_ELECTRICAL_HANDOFF_REPORT.md",
+      "size_bytes": 1395,
+      "sha256": "9d95fa9b7bf8bc03738c283afa2005afdd5043ed0b05319142c2d47493165168"
+    },
+    {
+      "path": "finite_thermal_electrical_handoff_summary.json",
+      "size_bytes": 3120,
+      "sha256": "1de9b9bdb865e18e582f410c59be87dbe4a76bc2dedb99a8e49e5507eb31619b"
+    },
+    {
+      "path": "finite_thermal_electrical_handoff_cases.csv",
+      "size_bytes": 819,
+      "sha256": "7249e9a1f5b716abe6409a73e24d2544fa553fa1018d043414eae0c8ebb7f57b"
+    },
+    {
+      "path": "finite_thermal_electrical_handoff_audit.png",
+      "size_bytes": 522588,
+      "sha256": "4d13310e8caf9ea395bd931b23e395399aeeb1e077f04991eaf573fd21ca018f"
+    }
+  ]
+}
