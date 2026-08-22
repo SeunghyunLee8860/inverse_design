@@ -8,6 +8,8 @@ import numpy as np
 
 
 HERE = Path(__file__).resolve().parents[1]
+if str(HERE) not in sys.path:
+    sys.path.insert(0, str(HERE))
 
 
 def load_geometry_module():
@@ -48,3 +50,18 @@ def test_z_dimension_envelopes_cannot_be_promoted_to_cad() -> None:
     assert "TOPOLOGY_BLOCKED" in geometry.key
     assert all(item.provenance_kind == "dimension_envelope_only" for item in geometry.polygons)
     assert any("forbidden" in item for item in geometry.unresolved)
+
+
+def test_z_m2_corner_joined_geometry_is_inside_published_cell() -> None:
+    module = load_geometry_module()
+    for handedness in ("LH", "RH"):
+        geometry = module.z_m2_5300nm_corner_joined_tairte4(handedness)
+        vertices = np.concatenate(
+            [np.asarray(item.vertices_nm, float) for item in geometry.polygons], axis=0
+        )
+        assert np.min(vertices[:, 0]) >= -0.5 * geometry.period_x_nm
+        assert np.max(vertices[:, 0]) <= 0.5 * geometry.period_x_nm
+        assert np.min(vertices[:, 1]) >= -0.5 * geometry.period_y_nm
+        assert np.max(vertices[:, 1]) <= 0.5 * geometry.period_y_nm
+        total_area = sum(abs(module.signed_polygon_area_nm2(item.vertices_nm)) for item in geometry.polygons)
+        assert total_area == 2_300.0 * 1_360.0 + 1_700.0 * 1_100.0

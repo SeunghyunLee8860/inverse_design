@@ -210,10 +210,103 @@ def z_m5_8um_geometry_topology_audit() -> MetasurfaceGeometry:
     )
 
 
+def z_m2_5300nm_corner_joined_tairte4(handedness: str = "LH") -> MetasurfaceGeometry:
+    """Return an explicit M2 Z scenario from the published scalar dimensions.
+
+    The two disclosed L/W rectangles fit the disclosed P1/P2 cell only when L
+    is placed along P1 and W along P2.  Their inner corners are joined and the
+    complete molecule is centered in the unit cell.  The paper does not state
+    a nanoscale overlap or gap at that junction, so corner joining is an
+    explicit figure-reconstruction closure rather than author CAD.
+
+    For comparability with the project's T control, the first optical endpoint
+    places effective Au above the fixed planar TaIrTe4 layer.  This is not a
+    claim that a 100-nm flake follows the original dry-transfer topography.
+    """
+
+    if handedness not in ("LH", "RH"):
+        raise ValueError(handedness)
+    m2 = dict(Z_PUBLISHED_DIMENSIONS_NM[1])
+    l1, l2 = float(m2["L1_nm"]), float(m2["L2_nm"])
+    w1, w2 = float(m2["W1_nm"]), float(m2["W2_nm"])
+    join_x = -0.5 * (l1 - l2)
+    join_y = -0.5 * (w1 - w2)
+    upper = np.asarray(
+        [
+            (join_x, join_y),
+            (join_x + l1, join_y),
+            (join_x + l1, join_y + w1),
+            (join_x, join_y + w1),
+        ],
+        float,
+    )
+    lower = np.asarray(
+        [
+            (join_x - l2, join_y - w2),
+            (join_x, join_y - w2),
+            (join_x, join_y),
+            (join_x - l2, join_y),
+        ],
+        float,
+    )
+    if handedness == "RH":
+        upper[:, 0] *= -1.0
+        lower[:, 0] *= -1.0
+        upper = upper[::-1]
+        lower = lower[::-1]
+
+    provenance = (
+        "2022 Supplementary Table 1 M2 scalar dimensions; inner corners "
+        "joined per Fig. 1b; junction overlap/gap not disclosed"
+    )
+    polygons = tuple(
+        PolygonObject(
+            name=f"Z2022_M2_{handedness}_{label}",
+            material="Au",
+            vertices_nm=tuple(tuple(float(item) for item in row) for row in vertices),
+            z_min_nm=100.0,
+            z_max_nm=150.0,
+            provenance_kind="published_dimensions+figure_reconstructed_corner_join",
+            provenance=provenance,
+        )
+        for label, vertices in (("upper", upper), ("lower", lower))
+    )
+    return MetasurfaceGeometry(
+        key=f"Z2022_M2_5300_{handedness}_CORNER_JOINED_TAIRTE4_SCENARIO",
+        wavelength_nm=float(m2["wavelength_nm"]),
+        period_x_nm=float(m2["P1_nm"]),
+        period_y_nm=float(m2["P2_nm"]),
+        active_material="TaIrTe4",
+        active_thickness_nm=100.0,
+        axis_mapping={"x": "b", "y": "a", "z": "c=b closure"},
+        polygons=polygons,
+        layers=(
+            {"name": "air", "z_min_nm": 150.0, "z_max_nm": None},
+            {"name": "effective_Au_Z", "z_min_nm": 100.0, "z_max_nm": 150.0},
+            {"name": "TaIrTe4_active_substitution", "z_min_nm": 0.0, "z_max_nm": 100.0},
+            {"name": "Al2O3_spacer", "z_min_nm": -200.0, "z_max_nm": 0.0},
+            {"name": "Au_backplane", "z_min_nm": -400.0, "z_max_nm": -200.0},
+            {"name": "optical_SiO2_reduced", "z_min_nm": -685.0, "z_max_nm": -400.0},
+            {"name": "Si", "z_min_nm": None, "z_max_nm": -685.0},
+        ),
+        boundary_contract={
+            "x_min_x_max": "Periodic",
+            "y_min_y_max": "Periodic",
+            "z_min_z_max": "PML",
+            "illumination": "normal-incidence plane wave",
+        },
+        unresolved=(
+            "junction overlap/gap is not disclosed; corner-joined endpoint used",
+            "100-nm TaIrTe4 is a deliberate replacement for the paper's transferred 2-D material",
+            "Au-above-planar-TaIrTe4 is a project optical endpoint, not the original dry-transfer topography",
+            "5-nm Cr adhesion is omitted from the first effective-Au optical screen",
+        ),
+    )
+
+
 def signed_polygon_area_nm2(vertices: tuple[tuple[float, float], ...]) -> float:
     array = np.asarray(vertices, float)
     return 0.5 * float(
         np.sum(array[:, 0] * np.roll(array[:, 1], -1))
         - np.sum(array[:, 1] * np.roll(array[:, 0], -1))
     )
-
