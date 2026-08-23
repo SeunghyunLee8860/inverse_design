@@ -48,12 +48,15 @@ sample-air boundaries are insulating, and the transverse example uses an
    changes are not evidence for the current shared-linear code. Si, air, PML,
    optical x/y, thermal, and electrical meshes were not certified.
 
-3. **The current FDTDX solve is long-time unstable.** On the factor-8 partial-z
-   diagnostic, spatial Q NRMSE grows from 1.63% at 24 periods to 45.61% at 32
-   and 97.13% at 40; the time-domain closed flux becomes negative. Also,
-   continuous-target and realized float32 discrete-ADE Q differ by 1.11-1.14%.
-   Material-isolation and Courant diagnostics must close both blockers before
-   another mesh conclusion is possible.
+3. **The stable fine-z time contract is not yet certified.** Material isolation
+   traced the factor-8, Courant-0.5 long-time failure to Au dispersion; the
+   substrates-only and TaIrTe4-only cases stayed stationary. At the identical
+   factor-8 grid, Courant 0.25 reduced the Au-only previous/late field NRMSE
+   from 80.79% to 0.112%, so the old failure is a time-step instability rather
+   than evidence of spatial non-convergence. The complete Au+TaIrTe4 32/40
+   period stability and absorption-closure gate must pass before the mesh
+   sweep can resume. Float32 ADE coefficients are now fitted against their
+   realized carrier response with <1e-5 relative complex-permittivity error.
 
 4. **The target physical device is not defined.** The code assumes a square
    16 um flake, 100 nm thickness, no crystal rotation, full left/right edge
@@ -107,6 +110,10 @@ sample-air boundaries are insulating, and the transverse example uses an
 - Robust constraints for `eta=0.35, 0.50, 0.65`, including both signed-current
   constraints and grayness at every projection.
 - Production entry points blocked until hash-linked certificates exist.
+- Production runners now regenerate the mesh selected by the certificate and
+  enforce its grid hash, Courant factor, and time windows. Ea and Eb use
+  separate same-grid source-power calibrations; a passing certificate can no
+  longer silently fall back to the coarse baseline runner.
 - Source calibration bound to exact grid/source/time metadata.
 - Stale validation artifacts rejected by status, material-law, grid, input,
   and SHA checks.

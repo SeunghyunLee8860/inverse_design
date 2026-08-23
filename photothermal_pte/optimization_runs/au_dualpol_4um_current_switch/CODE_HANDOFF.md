@@ -81,9 +81,11 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    (40), with negative late closed flux. Isolate the long-time FDTD instability
    before running any partial or full-domain mesh sweep. See
    `results_4um_time_absorption_closure/TIME_ABSORPTION_CLOSURE_FINDINGS.md`.
-   It also found a 1.11--1.14% continuous-target versus realized float32
-   discrete-ADE Q mismatch. Forward heat and direct-loss gradients now use the
-   realized discrete loss; old gradient/phase tables are explicitly stale.
+   It also found a 1.11--1.14% continuous-target versus then-realized float32
+   discrete-ADE Q mismatch. Forward heat and direct-loss gradients use the
+   realized discrete loss, and the current material builder refits the actual
+   float32 ADE carrier response to <1e-5 complex-permittivity error. Old
+   gradient/phase tables are explicitly stale.
 6. Electrical void cells retain tiny sheet/contact floors to regularize the
    floating Au block.  Quantify floor sensitivity; do not describe the
    electrical `rho=0` endpoint as exactly disconnected until that passes.
@@ -95,7 +97,10 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
 8. Production optimization and exact-binary search are code-blocked until a
    confirmed device contract, full shared-linear mesh certificate, and a
    hash-linked shared-linear multidirection combined AD-FD certificate all
-   pass. There is no runtime bypass. See `PRODUCTION_READINESS.md`.
+   pass. There is no runtime bypass. The certificate must name the selected
+   full-domain-z grid, Courant factor, time windows, and same-grid Ea/Eb source
+   calibration; all three production entry points now consume those exact
+   values and reject a grid-hash mismatch. See `PRODUCTION_READINESS.md`.
 9. The present square flake, full-edge terminals, unrotated x=b/y=a axes,
    100 nm thickness, 285 nm oxide, centered beam, and floating direct-contact
    Au are assumptions. The local 2026 paper explicitly makes the weighting
@@ -146,10 +151,11 @@ location.  `AU_DUALPOL_PYTHON`, `FDTDX_SOURCE_DIR`, and
    illumination in `physical_device_contract.json`.
 2. Treat the existing factor 1/2/4/8 tables as stale historical output, not as
    evidence for the current code or as a converged production mesh.
-3. Isolate the long-time FDTD instability with substrate-only, Au-only,
-   TaIrTe4-only, full-dispersion, and reduced-Courant cases. Use realized
-   discrete-ADE loss for heat generation and revalidate AD-FD. Only after a
-   stable time contract exists, expand z refinement to Si, air, and PML.
+3. Finish `20_validate_4um_stable_time_contract.py`. Isolation already traced
+   the factor-8/Courant-0.5 failure to Au and showed the same grid stable in an
+   Au-only 32-period case at Courant 0.25; full-dispersion 32/40-period
+   stationarity and absorption closure remain the gate. Only after that gate
+   passes, expand z refinement to Si, air, and PML.
 4. Revalidate the new shared linear material-fraction contract with endpoint,
    floor-sensitivity, and AD-FD checks on the selected mesh.
 5. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh

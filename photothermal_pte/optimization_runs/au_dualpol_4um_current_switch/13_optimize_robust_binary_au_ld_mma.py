@@ -54,12 +54,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.robust_con
     scenario_key,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production_readiness import (
+    calibrated_source_scales,
     require_production_readiness,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.paths import raw_path
-from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
-    load_current_source_calibration,
-)
 from photothermal_pte.optimization_runs.legacy_v261_optical_support.production_density_mapping import (
     ProductionDensityMapping,
 )
@@ -74,7 +72,6 @@ INITIAL = Path(
         str(raw_path("optimization_ld_mma", "stage_04_beta_12.npz")),
     )
 )
-CALIBRATION = HERE / "results_fdtdx_4um_source_calibration/fdtdx_4um_source_calibration.json"
 CURRENT_SCALE_A = 1.0e-9
 ETAS = ROBUST_ETAS
 STAGES = (
@@ -161,9 +158,11 @@ class RobustPoint:
 
 
 class RobustEvaluator:
-    def __init__(self, runners, source_scale, cuda_device, beta, gray_cap, history, manifest):
+    def __init__(self, runners, source_scales, cuda_device, beta, gray_cap, history, manifest):
         self.runners = runners
-        self.source_scale = float(source_scale)
+        self.source_scales = {
+            pol: float(source_scales[pol]) for pol in POLARIZATIONS
+        }
         self.cuda_device = int(cuda_device)
         self.beta = float(beta)
         self.gray_cap = float(gray_cap)
@@ -182,8 +181,9 @@ class RobustEvaluator:
             rho = mapping.physical(latent, self.beta)
             densities[eta] = rho
             for pol in POLARIZATIONS:
-                result = combined_gradient(self.runners[pol], rho, self.source_scale, self.cuda_device)
-                p_q, p_six, closure = optical_closure(result, self.runners[pol], self.source_scale)
+                source_scale = self.source_scales[pol]
+                result = combined_gradient(self.runners[pol], rho, source_scale, self.cuda_device)
+                p_q, p_six, closure = optical_closure(result, self.runners[pol], source_scale)
                 gates = physics_gates(result, closure)
                 key = scenario_key(eta, pol)
                 scenarios[key] = {
@@ -353,9 +353,10 @@ def exact_candidates(rho):
     return unique[:6]
 
 
-def forward_binary(runners,rho,scale,cuda_device):
+def forward_binary(runners,rho,source_scales,cuda_device):
     cases={}
     for pol in ("Ea","Eb"):
+        scale=float(source_scales[pol])
         result=evaluate_forward_multiphysics(runners[pol],rho,scale,cuda_device,need_gradient=False)
         p_q,p_six,closure=optical_closure(result,runners[pol],scale)
         gates={
@@ -375,18 +376,19 @@ def main():
     if os.environ.get("CUDA_VISIBLE_DEVICES") is None: raise RuntimeError("GPU required")
     readiness = require_production_readiness()
     cuda_device=int(os.environ.get("THERMAL_CUDA_DEVICE","0")); OUT.mkdir(parents=True,exist_ok=True); RAW.mkdir(parents=True,exist_ok=True)
-    calibration=load_current_source_calibration(CALIBRATION); scale=CONTRACT.reporting_incident_power_W/float(calibration["common_reference_incident_power_W"])
+    source_scales = calibrated_source_scales(
+        readiness, CONTRACT.reporting_incident_power_W
+    )
     finalize_only=os.environ.get("AU_ROBUST_FINALIZE_ONLY","0")=="1"
     resume_high=os.environ.get("AU_ROBUST_RESUME_HIGH_BETA","0")=="1"
     resume_final=RAW/"stage_06_beta_80.npz"
     starting_path=resume_final if (finalize_only or resume_high) else INITIAL
     with np.load(starting_path,allow_pickle=False) as data: latent=np.asarray(data["latent"],dtype=float)
-    # The eroded/dilated material layouts can ring longer than the nominal
-    # beta-continuation layout.  Use a 50% longer observable window while
-    # keeping geometry, source, mesh and all material parameters unchanged.
     runners={
         pol:CompiledOpticalRunner.create(
-            pol,np.full(CONTRACT.design_shape,.5),total_periods=24,window_periods=6
+            pol,
+            np.full(CONTRACT.design_shape,.5),
+            numerical_contract=readiness["selected_numerical_contract"],
         )
         for pol in ("Ea","Eb")
     }
@@ -411,7 +413,7 @@ def main():
             grayness(mapping.physical(latent,beta))
             for mapping in ROBUST_MAPPINGS.values()
         ); gray_cap=max(gray_target,.88*entry_gray)
-        evaluator=RobustEvaluator(runners,scale,cuda_device,beta,gray_cap,history,manifest)
+        evaluator=RobustEvaluator(runners,source_scales,cuda_device,beta,gray_cap,history,manifest)
         entry=evaluator.evaluate(latent); useful=[s["current_A"] if s["pol"]=="Ea" else -s["current_A"] for s in entry.scenarios.values()]
         vector[:-1]=latent.ravel(); vector[-1]=min(useful)/CURRENT_SCALE_A-1e-5
         opt=nlopt.opt(nlopt.LD_MMA,vector.size); opt.set_lower_bounds(np.r_[np.zeros(vector.size-1),-100.]); opt.set_upper_bounds(np.r_[np.ones(vector.size-1),1000.]); opt.set_max_objective(evaluator.objective); opt.add_inequality_mconstraint(evaluator.constraints,np.full(len(current_constraint_keys())+len(gray_constraint_keys()),NLOPT_TOL)); opt.set_initial_step(np.r_[np.full(vector.size-1,.04),.1]); opt.set_ftol_rel(0); opt.set_xtol_rel(0); opt.set_maxeval(maxeval)
@@ -443,7 +445,7 @@ def main():
     if not candidates:
         raise RuntimeError("no exact 500 nm solid/void binary candidate")
     for _,name,rho in candidates:
-        row=forward_binary(runners,rho,scale,cuda_device); row["name"]=name; row["exact_bad_cells"]=0; raw=RAW/f"final_{name}.npz"; np.savez_compressed(raw,physical_density=rho); row["raw"]={"path":str(raw.resolve()),"bytes":raw.stat().st_size,"sha256":sha256(raw)}; binary_rows.append(row); print(f"[binary] {name} Ia={1e9*row['I_a_A']:.5f} Ib={1e9*row['I_b_A']:.5f} min={1e9*row['balanced_utility_A']:.5f}",flush=True)
+        row=forward_binary(runners,rho,source_scales,cuda_device); row["name"]=name; row["exact_bad_cells"]=0; raw=RAW/f"final_{name}.npz"; np.savez_compressed(raw,physical_density=rho); row["raw"]={"path":str(raw.resolve()),"bytes":raw.stat().st_size,"sha256":sha256(raw)}; binary_rows.append(row); print(f"[binary] {name} Ia={1e9*row['I_a_A']:.5f} Ib={1e9*row['I_b_A']:.5f} min={1e9*row['balanced_utility_A']:.5f}",flush=True)
     best=max(binary_rows,key=lambda row:row["balanced_utility_A"]); success=best["I_a_A"]>0 and best["I_b_A"]<0
     final={"status":"VALIDATED_4UM_DUALPOL_AU_CURRENT_SWITCH_EXACT_BINARY" if success else "BLOCKED_ROBUST_PROJECTION_EXACT_BINARY_SIGN","timestamp_utc":datetime.now(timezone.utc).isoformat(),"etas":list(ETAS),"stages":stages,"binary_candidates":binary_rows,"promoted":best if success else None,"best_diagnostic":best,"opposite_sign_gate":success,"exact_500nm_gate":True,"history_evaluations":len(history)}
     write_json(OUT/"FINAL_RESULT.json",final); write_json(OUT/"RAW_ARTIFACT_MANIFEST.json",manifest); return 0 if success else 2

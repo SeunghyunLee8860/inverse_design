@@ -32,11 +32,13 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.robust_con
     grayness_cotangent,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production_readiness import (
+    CURRENT_IMPLEMENTATIONS,
     DEVICE_STATUS,
     GRADIENT_STATUS,
     MESH_STATUS,
     REQUIRED_DEVICE_CONFIRMATIONS,
     REQUIRED_MESH_COVERAGE,
+    calibrated_source_scales,
     readiness_audit,
     sha256,
 )
@@ -258,6 +260,30 @@ def test_production_readiness_requires_hash_linked_complete_certificates(
         "coverage": {name: True for name in REQUIRED_MESH_COVERAGE},
         "device_certificate_sha256": sha256(device_path),
         "source_calibration_sha256": sha256(calibration_path),
+        "implementation_sha256": {
+            name: sha256(path) for name, path in CURRENT_IMPLEMENTATIONS.items()
+        },
+        "selected_numerical_contract": {
+            "optical": {
+                "mesh_mode": FULL_DOMAIN_Z,
+                "mesh_factor": 1,
+                "grid_edges_sha256": grid_edges_sha256(),
+                "courant_factor": 0.25,
+                "total_periods": 40,
+                "window_periods": 4,
+            },
+            "source_calibration": {
+                "grid_edges_sha256": grid_edges_sha256(),
+                "courant_factor": 0.25,
+                "total_periods": 40,
+                "window_periods": 4,
+                "cases": [
+                    {"polarization": "Ea", "incident_power_W": 1.0},
+                    {"polarization": "Eb", "incident_power_W": 1.001},
+                ],
+                "common_reference_incident_power_W": 1.0005,
+            },
+        },
     }
     mesh_path.write_text(json.dumps(mesh), encoding="utf-8")
     gradient = {
@@ -270,9 +296,14 @@ def test_production_readiness_requires_hash_linked_complete_certificates(
         "maximum_normalized_error": 0.009,
     }
     gradient_path.write_text(json.dumps(gradient), encoding="utf-8")
-    assert readiness_audit(
+    passing = readiness_audit(
         mesh_path, gradient_path, device_path, calibration_path
-    )["ready"]
+    )
+    assert passing["ready"]
+    assert calibrated_source_scales(passing, 2.0) == {
+        "Ea": 2.0,
+        "Eb": 2.0 / 1.001,
+    }
     gradient["mesh_certificate_sha256"] = "wrong"
     gradient_path.write_text(json.dumps(gradient), encoding="utf-8")
     result = readiness_audit(

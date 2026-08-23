@@ -14,6 +14,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_
     EPS0_F_PER_M,
     LAYOUT,
     build_model,
+    grid_edges_sha256,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
     au_material_fraction,
@@ -74,6 +75,10 @@ class CompiledOpticalRunner:
     compile_adjoint_s: float
     total_periods: int
     window_periods: int
+    courant_factor: float
+    mesh_mode: str | None
+    mesh_factor: int | None
+    grid_edges_sha256: str
 
     @classmethod
     def create(
@@ -83,13 +88,52 @@ class CompiledOpticalRunner:
         *,
         total_periods: int = 16,
         window_periods: int = 4,
+        numerical_contract: dict[str, object] | None = None,
     ) -> "CompiledOpticalRunner":
-        model = build_model(
-            polarization,
-            include_adjoint_source=True,
-            total_periods=total_periods,
-            window_periods=window_periods,
-        )
+        mesh_mode = None
+        mesh_factor = None
+        courant_factor = 0.5
+        if numerical_contract is None:
+            model = build_model(
+                polarization,
+                include_adjoint_source=True,
+                total_periods=total_periods,
+                window_periods=window_periods,
+                courant_factor=courant_factor,
+            )
+            grid_hash = grid_edges_sha256()
+        else:
+            from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.mesh_variants import (
+                FULL_DOMAIN_Z,
+                edges_sha256,
+                mesh_context,
+                variant_edges,
+            )
+
+            optical = numerical_contract.get("optical")
+            if not isinstance(optical, dict):
+                raise RuntimeError("selected numerical contract has no optical object")
+            mesh_mode = str(optical.get("mesh_mode"))
+            mesh_factor = int(optical["mesh_factor"])
+            total_periods = int(optical["total_periods"])
+            window_periods = int(optical["window_periods"])
+            courant_factor = float(optical["courant_factor"])
+            if mesh_mode != FULL_DOMAIN_Z:
+                raise RuntimeError(
+                    f"production optical mesh must be {FULL_DOMAIN_Z!r}, got {mesh_mode!r}"
+                )
+            edges = variant_edges(mesh_factor, mesh_mode)
+            grid_hash = edges_sha256(edges)
+            if grid_hash != optical.get("grid_edges_sha256"):
+                raise RuntimeError("selected optical grid hash does not match generated grid")
+            with mesh_context(mesh_factor, mesh_mode):
+                model = build_model(
+                    polarization,
+                    include_adjoint_source=True,
+                    total_periods=total_periods,
+                    window_periods=window_periods,
+                    courant_factor=courant_factor,
+                )
         jax = model["jax"]
         jnp = model["jnp"]
         fdtdx = model["fdtdx"]
@@ -205,6 +249,10 @@ class CompiledOpticalRunner:
             compile_adjoint_s=compile_adjoint_s,
             total_periods=total_periods,
             window_periods=window_periods,
+            courant_factor=courant_factor,
+            mesh_mode=mesh_mode,
+            mesh_factor=mesh_factor,
+            grid_edges_sha256=grid_hash,
         )
 
     def run_forward(self, rho: np.ndarray):

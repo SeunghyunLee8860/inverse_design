@@ -58,16 +58,12 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysi
     current_integrand,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production_readiness import (
+    calibrated_source_scales,
     require_production_readiness,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.paths import (
     raw_path,
 )
-from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
-    load_current_source_calibration,
-)
-
-
 HERE = Path(__file__).resolve().parent
 OUT = HERE / os.environ.get(
     "AU_DUALPOL_OUTPUT_NAME", "results_4um_dualpol_au_ld_mma"
@@ -77,11 +73,6 @@ RAW = Path(
         "AU_DUALPOL_RAW_DIR",
         str(raw_path("optimization_ld_mma")),
     )
-)
-CALIBRATION = (
-    HERE
-    / "results_fdtdx_4um_source_calibration"
-    / "fdtdx_4um_source_calibration.json"
 )
 CURRENT_SCALE_A = 1.0e-9
 BETAS = (1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0)
@@ -226,7 +217,7 @@ class DualPolarizationEvaluator:
         self,
         runner_a: CompiledOpticalRunner,
         runner_b: CompiledOpticalRunner,
-        source_scale: float,
+        source_scales: dict[str, float],
         cuda_device: int,
         beta: float,
         dfm_caps: np.ndarray,
@@ -234,7 +225,9 @@ class DualPolarizationEvaluator:
         manifest: dict[str, object],
     ) -> None:
         self.runners = {"Ea": runner_a, "Eb": runner_b}
-        self.source_scale = float(source_scale)
+        self.source_scales = {
+            pol: float(source_scales[pol]) for pol in ("Ea", "Eb")
+        }
         self.cuda_device = int(cuda_device)
         self.beta = float(beta)
         self.dfm_caps = np.asarray(dfm_caps, dtype=np.float64)
@@ -253,11 +246,12 @@ class DualPolarizationEvaluator:
         audit: dict[str, dict[str, object]] = {}
         diagnostics: dict[str, dict[str, object]] = {}
         for pol in ("Ea", "Eb"):
+            source_scale = self.source_scales[pol]
             result = combined_gradient(
-                self.runners[pol], rho, self.source_scale, self.cuda_device
+                self.runners[pol], rho, source_scale, self.cuda_device
             )
             p_q, p_six, closure = optical_closure(
-                result, self.runners[pol], self.source_scale
+                result, self.runners[pol], source_scale
             )
             audit[pol] = audit_physics(result, closure, pol)
             diagnostics[pol] = {
@@ -629,11 +623,12 @@ def evaluate_binary_candidate(
     name: str,
     rho: np.ndarray,
     runners: dict[str, CompiledOpticalRunner],
-    source_scale: float,
+    source_scales: dict[str, float],
     cuda_device: int,
 ) -> dict[str, object]:
     cases: dict[str, object] = {}
     for pol in ("Ea", "Eb"):
+        source_scale = float(source_scales[pol])
         result = evaluate_forward_multiphysics(
             runners[pol], rho, source_scale, cuda_device, need_gradient=False
         )
@@ -737,9 +732,8 @@ def main() -> int:
     cuda_device = int(os.environ.get("THERMAL_CUDA_DEVICE", "0"))
     OUT.mkdir(parents=True, exist_ok=True)
     RAW.mkdir(parents=True, exist_ok=True)
-    calibration = load_current_source_calibration(CALIBRATION)
-    source_scale = CONTRACT.reporting_incident_power_W / float(
-        calibration["common_reference_incident_power_W"]
+    source_scales = calibrated_source_scales(
+        readiness, CONTRACT.reporting_incident_power_W
     )
     resume_path_text = os.environ.get("AU_DUALPOL_RESUME_STAGE_NPZ", "").strip()
     resume_evaluation = int(os.environ.get("AU_DUALPOL_RESUME_EVALUATION", "0"))
@@ -854,7 +848,12 @@ def main() -> int:
         write_json(OUT / "RAW_ARTIFACT_MANIFEST.json", manifest)
     write_json(OUT / "RUN_STATE.json", {"stage": "compiling", "gpu": os.environ["CUDA_VISIBLE_DEVICES"]})
     runners = {
-        pol: CompiledOpticalRunner.create(pol, latent) for pol in ("Ea", "Eb")
+        pol: CompiledOpticalRunner.create(
+            pol,
+            latent,
+            numerical_contract=readiness["selected_numerical_contract"],
+        )
+        for pol in ("Ea", "Eb")
     }
     initial_stage_index = len(stage_rows)
     last_completed_beta = float(stage_rows[-1]["beta"]) if stage_rows else None
@@ -868,7 +867,7 @@ def main() -> int:
         evaluator = DualPolarizationEvaluator(
             runners["Ea"],
             runners["Eb"],
-            source_scale,
+            source_scales,
             cuda_device,
             beta,
             caps,
@@ -1024,7 +1023,7 @@ def main() -> int:
     binary_results = []
     for name, rho in candidates:
         result = evaluate_binary_candidate(
-            name, rho, runners, source_scale, cuda_device
+            name, rho, runners, source_scales, cuda_device
         )
         raw = RAW / f"final_binary_{name}.npz"
         np.savez_compressed(raw, physical_density=rho)

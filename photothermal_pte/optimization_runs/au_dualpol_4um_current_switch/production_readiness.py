@@ -18,6 +18,11 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.objective import (
     PTE_CURRENT_SIGN_CONVENTION,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.mesh_variants import (
+    FULL_DOMAIN_Z,
+    edges_sha256,
+    variant_edges,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -50,6 +55,7 @@ REQUIRED_DEVICE_CONFIRMATIONS = (
     "au_tairte4_thermal_contact_scenario_accepted",
     "au_tairte4_electrical_contact_scenario_accepted",
     "electrical_void_floor_sensitivity_passed",
+    "signed_output_terminal_and_current_convention_confirmed",
 )
 REQUIRED_MESH_COVERAGE = (
     "optical_z_full_domain",
@@ -59,6 +65,11 @@ REQUIRED_MESH_COVERAGE = (
     "thermal_mesh",
     "electrical_mesh",
 )
+CURRENT_IMPLEMENTATIONS = {
+    "fdtdx_4um_model.py": HERE / "fdtdx_4um_model.py",
+    "multiphysics_4um.py": HERE / "multiphysics_4um.py",
+    "combined_4um.py": HERE / "combined_4um.py",
+}
 
 
 def sha256(path: Path) -> str:
@@ -133,8 +144,75 @@ def readiness_audit(
         sha256(calibration_path) if calibration_error is None else None
     )
     mesh_sha256 = None
+    selected_numerical_contract = None
+    selected_source_calibration = None
     if mesh is not None:
         coverage = mesh.get("coverage", {})
+        implementation_sha256 = mesh.get("implementation_sha256", {})
+        selected = mesh.get("selected_numerical_contract")
+        optical = selected.get("optical", {}) if isinstance(selected, dict) else {}
+        selected_calibration = (
+            selected.get("source_calibration", {})
+            if isinstance(selected, dict)
+            else {}
+        )
+        factor = optical.get("mesh_factor") if isinstance(optical, dict) else None
+        try:
+            factor_valid = bool(int(factor) == factor and int(factor) >= 1)
+        except (TypeError, ValueError):
+            factor_valid = False
+        expected_grid_sha = (
+            edges_sha256(variant_edges(int(factor), FULL_DOMAIN_Z))
+            if factor_valid
+            else None
+        )
+        total_periods = optical.get("total_periods") if isinstance(optical, dict) else None
+        window_periods = optical.get("window_periods") if isinstance(optical, dict) else None
+        courant_factor = optical.get("courant_factor") if isinstance(optical, dict) else None
+        try:
+            time_valid = bool(
+                int(total_periods) == total_periods
+                and int(window_periods) == window_periods
+                and int(total_periods) > 2 * int(window_periods) > 0
+                and 0.0 < float(courant_factor) <= 1.0
+            )
+        except (TypeError, ValueError):
+            time_valid = False
+        calibration_cases = (
+            selected_calibration.get("cases", [])
+            if isinstance(selected_calibration, dict)
+            else []
+        )
+        calibration_by_pol = {
+            str(case.get("polarization")): case
+            for case in calibration_cases
+            if isinstance(case, dict)
+        }
+        try:
+            selected_powers = [
+                float(calibration_by_pol[pol]["incident_power_W"])
+                for pol in ("Ea", "Eb")
+            ]
+            selected_common = float(
+                selected_calibration["common_reference_incident_power_W"]
+            )
+            selected_mismatch = abs(selected_powers[0] - selected_powers[1]) / max(
+                selected_powers
+            )
+            selected_calibration_valid = bool(
+                len(calibration_cases) == 2
+                and set(calibration_by_pol) == {"Ea", "Eb"}
+                and all(power > 0.0 for power in selected_powers)
+                and selected_common > 0.0
+                and selected_mismatch < 5.0e-3
+                and selected_calibration.get("grid_edges_sha256")
+                == optical.get("grid_edges_sha256")
+                and selected_calibration.get("courant_factor") == courant_factor
+                and selected_calibration.get("total_periods") == total_periods
+                and selected_calibration.get("window_periods") == window_periods
+            )
+        except (KeyError, TypeError, ValueError, ZeroDivisionError):
+            selected_calibration_valid = False
         mesh_sha256 = sha256(mesh_path)
         checks.update(
             mesh_status=mesh.get("status") == MESH_STATUS,
@@ -158,7 +236,33 @@ def readiness_audit(
                 calibration_sha256 is not None
                 and mesh.get("source_calibration_sha256") == calibration_sha256
             ),
+            mesh_uses_current_implementations=bool(
+                isinstance(implementation_sha256, dict)
+                and all(
+                    implementation_sha256.get(name) == sha256(path)
+                    for name, path in CURRENT_IMPLEMENTATIONS.items()
+                )
+            ),
+            mesh_selected_numerical_contract=isinstance(selected, dict),
+            mesh_selected_optical_full_z=bool(
+                factor_valid
+                and optical.get("mesh_mode") == FULL_DOMAIN_Z
+                and optical.get("grid_edges_sha256") == expected_grid_sha
+            ),
+            mesh_selected_time_contract=time_valid,
+            mesh_selected_source_calibration=selected_calibration_valid,
         )
+        if all(
+            checks[name]
+            for name in (
+                "mesh_selected_numerical_contract",
+                "mesh_selected_optical_full_z",
+                "mesh_selected_time_contract",
+                "mesh_selected_source_calibration",
+            )
+        ):
+            selected_numerical_contract = selected
+            selected_source_calibration = selected_calibration
     else:
         checks.update(
             mesh_status=False,
@@ -168,6 +272,11 @@ def readiness_audit(
             mesh_coverage=False,
             mesh_uses_device_certificate=False,
             mesh_uses_source_calibration=False,
+            mesh_uses_current_implementations=False,
+            mesh_selected_numerical_contract=False,
+            mesh_selected_optical_full_z=False,
+            mesh_selected_time_contract=False,
+            mesh_selected_source_calibration=False,
         )
 
     if gradient is not None:
@@ -221,6 +330,8 @@ def readiness_audit(
         "au_material_fraction": material,
         "absorption_loss_basis": ABSORPTION_LOSS_BASIS,
         "pte_current_sign_convention": PTE_CURRENT_SIGN_CONVENTION,
+        "selected_numerical_contract": selected_numerical_contract,
+        "selected_source_calibration": selected_source_calibration,
     }
 
 
@@ -232,3 +343,30 @@ def require_production_readiness() -> dict[str, object]:
             + json.dumps(result, indent=2)
         )
     return result
+
+
+def calibrated_source_scales(
+    readiness: dict[str, object], target_incident_power_W: float
+) -> dict[str, float]:
+    """Return polarization-specific power scales for the selected optical grid."""
+    if readiness.get("ready") is not True:
+        raise RuntimeError("source scales require a passing production-readiness audit")
+    if not float(target_incident_power_W) > 0.0:
+        raise ValueError("target incident power must be positive")
+    calibration = readiness.get("selected_source_calibration")
+    if not isinstance(calibration, dict):
+        raise RuntimeError("readiness result has no selected source calibration")
+    cases = calibration.get("cases")
+    if not isinstance(cases, list):
+        raise RuntimeError("selected source calibration has no case list")
+    incident_by_pol = {
+        str(case.get("polarization")): float(case["incident_power_W"])
+        for case in cases
+        if isinstance(case, dict)
+    }
+    if set(incident_by_pol) != {"Ea", "Eb"}:
+        raise RuntimeError("selected source calibration must contain only Ea and Eb")
+    return {
+        pol: float(target_incident_power_W) / incident_by_pol[pol]
+        for pol in ("Ea", "Eb")
+    }

@@ -46,16 +46,12 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_f
     audit as material_fraction_audit,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production_readiness import (
+    calibrated_source_scales,
     require_production_readiness,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.paths import (
     raw_path,
 )
-from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
-    load_current_source_calibration,
-)
-
-
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "results_4um_dualpol_au_exact_binary_search"
 RAW = raw_path("exact_binary_search")
@@ -70,7 +66,6 @@ INITIAL = Path(
         ),
     )
 )
-CALIBRATION = HERE / "results_fdtdx_4um_source_calibration/fdtdx_4um_source_calibration.json"
 MAX_STEPS = int(os.environ.get("AU_EXACT_MAX_STEPS", "12"))
 PROPOSALS_PER_STEP = int(os.environ.get("AU_EXACT_PROPOSALS", "6"))
 
@@ -125,9 +120,10 @@ def audit_gates(result, closure: float) -> dict[str, bool]:
     }
 
 
-def evaluate_forward(runners, rho, source_scale, cuda_device, raw_tag=None):
+def evaluate_forward(runners, rho, source_scales, cuda_device, raw_tag=None):
     cases = {}
     for pol in ("Ea", "Eb"):
+        source_scale = float(source_scales[pol])
         result = evaluate_forward_multiphysics(
             runners[pol], rho, source_scale, cuda_device, need_gradient=False
         )
@@ -179,9 +175,10 @@ def evaluate_forward(runners, rho, source_scale, cuda_device, raw_tag=None):
     }
 
 
-def evaluate_gradient(runners, rho, source_scale, cuda_device):
+def evaluate_gradient(runners, rho, source_scales, cuda_device):
     values = {}
     for pol in ("Ea", "Eb"):
+        source_scale = float(source_scales[pol])
         result = combined_gradient(runners[pol], rho, source_scale, cuda_device)
         _, _, closure = optical_closure(result, runners[pol], source_scale)
         gates = audit_gates(result, closure)
@@ -321,8 +318,9 @@ def main() -> int:
     readiness = require_production_readiness()
     cuda_device = int(os.environ.get("THERMAL_CUDA_DEVICE", "0"))
     OUT.mkdir(parents=True, exist_ok=True); RAW.mkdir(parents=True, exist_ok=True)
-    calibration = load_current_source_calibration(CALIBRATION)
-    source_scale = CONTRACT.reporting_incident_power_W / float(calibration["common_reference_incident_power_W"])
+    source_scales = calibrated_source_scales(
+        readiness, CONTRACT.reporting_incident_power_W
+    )
     with np.load(INITIAL, allow_pickle=False) as data:
         binary = np.asarray(data["physical_density"], dtype=float) >= 0.5
     audit = exact_500nm_audit(binary.astype(float))
@@ -330,15 +328,19 @@ def main() -> int:
         raise RuntimeError("initial exact-binary candidate fails 500 nm audit")
     start = time.perf_counter()
     runners = {
-        pol: CompiledOpticalRunner.create(pol, binary.astype(float))
+        pol: CompiledOpticalRunner.create(
+            pol,
+            binary.astype(float),
+            numerical_contract=readiness["selected_numerical_contract"],
+        )
         for pol in ("Ea", "Eb")
     }
     history = []
-    current = evaluate_forward(runners, binary.astype(float), source_scale, cuda_device, raw_tag="accepted_step_00")
+    current = evaluate_forward(runners, binary.astype(float), source_scales, cuda_device, raw_tag="accepted_step_00")
     current.update(step=0, name="initial_threshold_0.50_exact", exact_bad_cells=0)
     history.append(current)
     for step in range(1, MAX_STEPS + 1):
-        gradients = evaluate_gradient(runners, binary.astype(float), source_scale, cuda_device)
+        gradients = evaluate_gradient(runners, binary.astype(float), source_scales, cuda_device)
         ia, ib = gradients["Ea"]["current_A"], gradients["Eb"]["current_A"]
         active = gradients["Ea"]["gradient_A"] if ia <= -ib else -gradients["Eb"]["gradient_A"]
         proposals = propose(binary, active, PROPOSALS_PER_STEP)
@@ -347,7 +349,7 @@ def main() -> int:
             break
         evaluated = []
         for predicted, name, candidate in proposals:
-            result = evaluate_forward(runners, candidate, source_scale, cuda_device)
+            result = evaluate_forward(runners, candidate, source_scales, cuda_device)
             result.update(name=name, predicted_delta_A=predicted)
             evaluated.append((result, candidate))
             print(f"[candidate step={step}] {name}: Ia={1e9*result['I_a_A']:.5f} nA Ib={1e9*result['I_b_A']:.5f} nA min={1e9*result['balanced_utility_A']:.5f} nA", flush=True)
@@ -357,7 +359,7 @@ def main() -> int:
             history[-1]["best_rejected"] = best
             break
         binary = best_binary.astype(bool)
-        current = evaluate_forward(runners, binary.astype(float), source_scale, cuda_device, raw_tag=f"accepted_step_{step:02d}")
+        current = evaluate_forward(runners, binary.astype(float), source_scales, cuda_device, raw_tag=f"accepted_step_{step:02d}")
         current.update(step=step, name=best["name"], predicted_delta_A=best["predicted_delta_A"], exact_bad_cells=0)
         history.append(current)
         plot_step(history, binary.astype(float), active, step)
