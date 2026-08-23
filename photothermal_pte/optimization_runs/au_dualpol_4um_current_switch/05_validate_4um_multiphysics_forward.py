@@ -68,7 +68,7 @@ def run_case(
             "tairte4": np.asarray(raw["volume_tairte4_m3"], dtype=np.float64),
         }
     state = build_thermal_state(rho)
-    source_power, mapping = map_native_q_to_thermal(
+    source_power, mapping, _ = map_native_q_to_thermal(
         state,
         q_fields_W_m3=q_fields,
         dual_volumes_m3=volumes,

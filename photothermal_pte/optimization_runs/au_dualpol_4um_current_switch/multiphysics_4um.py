@@ -237,7 +237,7 @@ def map_native_q_to_thermal(
     dual_volumes_m3: dict[str, np.ndarray],
     material_slices: dict[str, tuple[slice, slice, slice]],
     realized_grid,
-) -> tuple[np.ndarray, dict[str, dict[str, float]]]:
+) -> tuple[np.ndarray, dict[str, dict[str, float]], dict[str, dict[str, object]]]:
     """Conservatively map component-specific material power to explicit cells."""
 
     overlap = _load(OVERLAP_PATH, "au_dualpol_4um_overlap")
@@ -247,6 +247,7 @@ def map_native_q_to_thermal(
 
     source_power = np.zeros(state.system.shape, dtype=np.float64)
     records: dict[str, dict[str, float]] = {}
+    contexts: dict[str, dict[str, object]] = {}
     for material in ("au", "tairte4"):
         mask = state.masks[material]
         indices = (
@@ -273,6 +274,7 @@ def map_native_q_to_thermal(
         )
         primal_total = np.zeros(tuple(len(edge) - 1 for edge in primal_edges))
         native_total = 0.0
+        first_operators: dict[str, tuple[object, object, object]] = {}
         for component, name in enumerate(("x", "y", "z")):
             coordinates, widths = geometry[name]
             operators = tuple(
@@ -281,6 +283,7 @@ def map_native_q_to_thermal(
                 )[0]
                 for axis in range(3)
             )
+            first_operators[name] = operators
             power = (
                 np.asarray(q_fields_W_m3[material][component], dtype=np.float64)
                 * np.asarray(dual_volumes_m3[material][component], dtype=np.float64)
@@ -304,7 +307,34 @@ def map_native_q_to_thermal(
             "relative_error": abs(native_total - mapped_total)
             / max(abs(native_total), np.finfo(float).tiny),
         }
-    return source_power, records
+        contexts[material] = {
+            "indices": indices,
+            "first": first_operators,
+            "second": second,
+        }
+    return source_power, records, contexts
+
+
+def pullback_thermal_source_weights(
+    thermal_adjoint: np.ndarray,
+    mapping_context: dict[str, dict[str, object]],
+) -> dict[str, np.ndarray]:
+    """Transpose the conservative remap to native component Yee power."""
+
+    overlap = _load(OVERLAP_PATH, "au_dualpol_4um_overlap_transpose")
+    result: dict[str, np.ndarray] = {}
+    for material, context in mapping_context.items():
+        explicit = np.asarray(thermal_adjoint, dtype=np.float64)[
+            np.ix_(*context["indices"])
+        ]
+        primal = overlap._transpose(explicit, context["second"])
+        result[material] = np.stack(
+            [
+                overlap._transpose(primal, context["first"][name])
+                for name in ("x", "y", "z")
+            ]
+        )
+    return result
 
 
 def solve_thermal(
@@ -330,6 +360,22 @@ def solve_thermal(
         "iterations": int(result.iterations),
         "boundary_power_W": boundary,
         "energy_balance_relative": balance,
+    }
+
+
+def solve_thermal_adjoint(
+    state: ThermalState, rhs: np.ndarray, cuda_device: int
+) -> tuple[np.ndarray, dict[str, float | int]]:
+    operator = PersistentCudaCSR(state.system.matrix_W_K, cuda_device=cuda_device)
+    result = operator.solve(
+        np.asarray(rhs, dtype=np.float64).reshape(-1),
+        relative_tolerance=1e-9,
+        max_iterations=30000,
+        residual_check_interval=25,
+    )
+    return result.solution.reshape(state.system.shape), {
+        "relative_residual": float(result.explicit_relative_residual),
+        "iterations": int(result.iterations),
     }
 
 
@@ -559,3 +605,238 @@ def current_integrand(temperature_K: np.ndarray, psi: np.ndarray) -> np.ndarray:
                 values[i, j] += 0.5 * contribution / STEP_M**2
                 values[i, j + 1] += 0.5 * contribution / STEP_M**2
     return values
+
+
+def temperature_pullback(psi: np.ndarray) -> np.ndarray:
+    """Return dI/dT for the 160x160 thickness-averaged Ta field."""
+
+    gradient = np.zeros((N_TA, N_TA), dtype=np.float64)
+    for i in range(N_TA):
+        for j in range(N_TA):
+            node = ta_id(i, j)
+            if i + 1 < N_TA:
+                right = ta_id(i + 1, j)
+                scale = (
+                    SIGMA_TA_XY_S_M[0]
+                    * TA_THICKNESS_M
+                    * SEEBECK_TA_XY_V_K[0]
+                )
+                contribution = scale * (psi[right] - psi[node])
+                gradient[i, j] -= contribution
+                gradient[i + 1, j] += contribution
+            if j + 1 < N_TA:
+                right = ta_id(i, j + 1)
+                scale = (
+                    SIGMA_TA_XY_S_M[1]
+                    * TA_THICKNESS_M
+                    * SEEBECK_TA_XY_V_K[1]
+                )
+                contribution = scale * (psi[right] - psi[node])
+                gradient[i, j] -= contribution
+                gradient[i, j + 1] += contribution
+    return gradient
+
+
+def explicit_temperature_pullback(state: ThermalState, psi: np.ndarray) -> np.ndarray:
+    coarse = temperature_pullback(psi)
+    x, y, z = state.centers
+    ix = np.flatnonzero((x >= -8e-6) & (x < 8e-6))
+    iy = np.flatnonzero((y >= -8e-6) & (y < 8e-6))
+    iz = np.flatnonzero((z >= -0.1e-6) & (z < 0.0))
+    z_weight = state.widths[2][iz]
+    z_weight = z_weight / np.sum(z_weight)
+    result = np.zeros(state.system.shape, dtype=np.float64)
+    result[np.ix_(ix, iy, iz)] = coarse[:, :, None] * z_weight[None, None, :]
+    return result
+
+
+def solve_electrical_adjoint(
+    system: ElectricalSystem, cuda_device: int
+) -> tuple[np.ndarray, dict[str, float | int]]:
+    operator = PersistentCudaCSR(system.reduced_matrix_S, cuda_device=cuda_device)
+    result = operator.solve(
+        system.objective_gradient_psi_A[system.free],
+        relative_tolerance=1e-10,
+        max_iterations=30000,
+        residual_check_interval=10,
+    )
+    adjoint = np.zeros(system.full_matrix_S.shape[0], dtype=np.float64)
+    adjoint[system.free] = result.solution
+    return adjoint, {
+        "relative_residual": float(result.explicit_relative_residual),
+        "iterations": int(result.iterations),
+    }
+
+
+def electrical_density_gradient(
+    system: ElectricalSystem, psi: np.ndarray, adjoint: np.ndarray
+) -> np.ndarray:
+    gradient = np.zeros(N_DESIGN * N_DESIGN, dtype=np.float64)
+    for term in system.derivative_terms:
+        gradient[term.rho_index] += -term.dg_drho_S * (
+            adjoint[term.left] - adjoint[term.right]
+        ) * (psi[term.left] - psi[term.right])
+    return gradient.reshape(CONTRACT.design_shape)
+
+
+def _generic_face_dg(
+    state: ThermalState,
+    left: tuple[int, int, int],
+    right: tuple[int, int, int],
+    axis: int,
+    derivative_cell: tuple[int, int, int],
+    dk_drho: float,
+) -> float:
+    widths = state.widths
+    li, lj, lk = left
+    if axis == 0:
+        face_r = state.interface_resistance["x"][li, lj, lk]
+        area = widths[1][lj] * widths[2][lk]
+    elif axis == 1:
+        face_r = state.interface_resistance["y"][li, lj, lk]
+        area = widths[0][li] * widths[2][lk]
+    else:
+        face_r = state.interface_resistance["z"][li, lj, lk]
+        area = widths[0][li] * widths[1][lj]
+    total_r = (
+        0.5 * widths[axis][left[axis]] / state.kappa[left + (axis,)]
+        + face_r
+        + 0.5 * widths[axis][right[axis]] / state.kappa[right + (axis,)]
+    )
+    local_k = state.kappa[derivative_cell + (axis,)]
+    return float(
+        area
+        / total_r**2
+        * 0.5
+        * widths[axis][derivative_cell[axis]]
+        / local_k**2
+        * dk_drho
+    )
+
+
+def thermal_density_gradient(
+    state: ThermalState,
+    temperature: np.ndarray,
+    adjoint: np.ndarray,
+) -> np.ndarray:
+    """Return -lambda^T(dK/drho)T for Au k and Au/Ta contact."""
+
+    ids = np.arange(np.prod(state.system.shape), dtype=np.int64).reshape(
+        state.system.shape
+    )
+    x, y, z = state.centers
+    ix = np.flatnonzero((x >= -4e-6) & (x < 4e-6))
+    iy = np.flatnonzero((y >= -4e-6) & (y < 4e-6))
+    iz = np.flatnonzero((z >= 0.0) & (z < 0.05e-6))
+    result = np.zeros(CONTRACT.design_shape, dtype=np.float64)
+    dk = K_AU_W_MK - K_AIR_W_MK
+    bottom_face = state.faces["TaIrTe4_Au_or_air"]
+    lower_dz = state.widths[2][bottom_face]
+    upper_dz = state.widths[2][bottom_face + 1]
+    r_air = (
+        0.5 * lower_dz / K_TA_XYZ_W_MK[2]
+        + 1.0 / G_TA_AIR_W_M2K
+        + 0.5 * upper_dz / K_AIR_W_MK
+    )
+    r_au = (
+        0.5 * lower_dz / K_TA_XYZ_W_MK[2]
+        + 1.0 / G_AU_TA_W_M2K
+        + 0.5 * upper_dz / K_AU_W_MK
+    )
+
+    def add(ii: int, jj: int, left_id: int, right_id: int, dg: float) -> None:
+        result[ii, jj] += -dg * (
+            adjoint.reshape(-1)[left_id] - adjoint.reshape(-1)[right_id]
+        ) * (
+            temperature.reshape(-1)[left_id] - temperature.reshape(-1)[right_id]
+        )
+
+    for local_i, i in enumerate(ix):
+        for local_j, j in enumerate(iy):
+            for k in iz:
+                cell = (i, j, k)
+                for axis in (0, 1):
+                    lower = list(cell)
+                    lower[axis] -= 1
+                    lower = tuple(lower)
+                    add(
+                        local_i,
+                        local_j,
+                        int(ids[lower]),
+                        int(ids[cell]),
+                        _generic_face_dg(state, lower, cell, axis, cell, dk),
+                    )
+                    upper = list(cell)
+                    upper[axis] += 1
+                    upper = tuple(upper)
+                    add(
+                        local_i,
+                        local_j,
+                        int(ids[cell]),
+                        int(ids[upper]),
+                        _generic_face_dg(state, cell, upper, axis, cell, dk),
+                    )
+                lower = (i, j, k - 1)
+                if k == iz[0]:
+                    area = state.widths[0][i] * state.widths[1][j]
+                    dg = area * (1.0 / r_au - 1.0 / r_air)
+                else:
+                    dg = _generic_face_dg(state, lower, cell, 2, cell, dk)
+                add(local_i, local_j, int(ids[lower]), int(ids[cell]), float(dg))
+                upper = (i, j, k + 1)
+                add(
+                    local_i,
+                    local_j,
+                    int(ids[cell]),
+                    int(ids[upper]),
+                    _generic_face_dg(state, cell, upper, 2, cell, dk),
+                )
+    return result
+
+
+def evaluate_fixed_source(
+    rho: np.ndarray,
+    source_power_W: np.ndarray,
+    cuda_device: int,
+    *,
+    need_gradient: bool,
+) -> dict[str, object]:
+    state = build_thermal_state(rho)
+    temperature, thermal_audit = solve_thermal(state, source_power_W, cuda_device)
+    ta_temperature = tairte4_temperature(state, temperature)
+    electrical = build_electrical_system(rho, ta_temperature)
+    psi, current, electrical_audit = solve_electrical(electrical, cuda_device)
+    result: dict[str, object] = {
+        "objective_A": current,
+        "state": state,
+        "temperature": temperature,
+        "ta_temperature": ta_temperature,
+        "electrical_system": electrical,
+        "weighting": psi,
+        "thermal_audit": thermal_audit,
+        "electrical_audit": electrical_audit,
+    }
+    if need_gradient:
+        electrical_adjoint, electrical_adjoint_audit = solve_electrical_adjoint(
+            electrical, cuda_device
+        )
+        thermal_rhs = explicit_temperature_pullback(state, psi)
+        thermal_adjoint, thermal_adjoint_audit = solve_thermal_adjoint(
+            state, thermal_rhs, cuda_device
+        )
+        gradient_thermal = thermal_density_gradient(
+            state, temperature, thermal_adjoint
+        )
+        gradient_electrical = electrical_density_gradient(
+            electrical, psi, electrical_adjoint
+        )
+        result.update(
+            electrical_adjoint=electrical_adjoint,
+            electrical_adjoint_audit=electrical_adjoint_audit,
+            thermal_adjoint=thermal_adjoint,
+            thermal_adjoint_audit=thermal_adjoint_audit,
+            gradient_thermal_A=gradient_thermal,
+            gradient_electrical_A=gradient_electrical,
+            gradient_direct_A=gradient_thermal + gradient_electrical,
+        )
+    return result

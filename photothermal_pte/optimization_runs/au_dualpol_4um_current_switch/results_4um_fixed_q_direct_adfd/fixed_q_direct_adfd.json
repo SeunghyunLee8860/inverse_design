@@ -1,0 +1,317 @@
+{
+  "status": "VALIDATED_4UM_DUALPOL_FIXED_Q_DIRECT_ADFD",
+  "scope": "fixed optical Q only: Au thermal/contact and electrical/weighting-field density derivatives",
+  "explicitly_excluded": "Maxwell density derivative; certified in the next combined stage",
+  "steps": [
+    0.01,
+    0.005,
+    0.0025
+  ],
+  "no_clipping_rescaling": true,
+  "cases": [
+    {
+      "polarization": "Ea",
+      "status": "VALIDATED_4UM_FIXED_Q_DIRECT_ADFD",
+      "objective_A": 3.1329047728221055e-10,
+      "gradient_norm_A": 1.5825926824148423e-10,
+      "thermal_gradient_norm_A": 1.1043275593509676e-10,
+      "electrical_gradient_norm_A": 1.8204385934109828e-10,
+      "multi_direction_normalized_error": 6.219344065524e-05,
+      "runtime_s": 67.34859490394592,
+      "gates": {
+        "strong_direction_lt_1pct": true,
+        "multi_direction_normalized_lt_1pct": true,
+        "thermal_adjoint_residual_lt_1e-8": true,
+        "electrical_adjoint_residual_lt_1e-8": true,
+        "no_clipping": true,
+        "finite": true
+      },
+      "rows": [
+        {
+          "polarization": "Ea",
+          "direction": "adjoint_aligned",
+          "step": 0.01,
+          "AD_A": 3.2174094982277016e-09,
+          "FD_A": 3.217523279913968e-09,
+          "absolute_error_A": 1.1378168626619964e-13,
+          "relative_error": 3.5363127588385935e-05,
+          "plus_A": 3.4547509498805417e-10,
+          "minus_A": 2.811246293897748e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "adjoint_aligned",
+          "step": 0.005,
+          "AD_A": 3.2174094982277016e-09,
+          "FD_A": 3.2174379395859203e-09,
+          "absolute_error_A": 2.8441358218704e-14,
+          "relative_error": 8.839753478621677e-06,
+          "plus_A": 3.293800110110124e-10,
+          "minus_A": 2.972056316151532e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "adjoint_aligned",
+          "step": 0.0025,
+          "AD_A": 3.2174094982277016e-09,
+          "FD_A": 3.2174166235623113e-09,
+          "absolute_error_A": 7.125334609650323e-15,
+          "relative_error": 2.2146135994539557e-06,
+          "plus_A": 3.213346029093944e-10,
+          "minus_A": 3.052475197915828e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "central_localized",
+          "step": 0.01,
+          "AD_A": -2.5360562063332274e-11,
+          "FD_A": -2.5361345465089018e-11,
+          "absolute_error_A": 7.834017567440781e-16,
+          "relative_error": 3.088959762889805e-05,
+          "plus_A": 3.1303794033250377e-10,
+          "minus_A": 3.1354516724180555e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "central_localized",
+          "step": 0.005,
+          "AD_A": -2.5360562063332274e-11,
+          "FD_A": -2.5360754765166894e-11,
+          "absolute_error_A": 1.9270183462012307e-16,
+          "relative_error": 7.598426640077758e-06,
+          "plus_A": 3.1316394141173215e-10,
+          "minus_A": 3.134175489593838e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "central_localized",
+          "step": 0.0025,
+          "AD_A": -2.5360562063332274e-11,
+          "FD_A": -2.5360606129537574e-11,
+          "absolute_error_A": 4.4066205299806426e-17,
+          "relative_error": 1.7375848619202515e-06,
+          "plus_A": 3.132271415571049e-10,
+          "minus_A": 3.133539445877526e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "asymmetric_smooth",
+          "step": 0.01,
+          "AD_A": 1.2101756970554846e-10,
+          "FD_A": 1.2121767854871464e-10,
+          "absolute_error_A": 2.0010884316618253e-13,
+          "relative_error": 0.0016508222691772084,
+          "plus_A": 3.146447848149994e-10,
+          "minus_A": 3.122204312440251e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "asymmetric_smooth",
+          "step": 0.005,
+          "AD_A": 1.2101756970554846e-10,
+          "FD_A": 1.2106760045141225e-10,
+          "absolute_error_A": 5.0030745863789136e-14,
+          "relative_error": 0.0004132463654788289,
+          "plus_A": 3.139313423458457e-10,
+          "minus_A": 3.1272066634133157e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "asymmetric_smooth",
+          "step": 0.0025,
+          "AD_A": 1.2101756970554846e-10,
+          "FD_A": 1.2103009159399165e-10,
+          "absolute_error_A": 1.2521888443195026e-14,
+          "relative_error": 0.00010346095155575885,
+          "plus_A": 3.1360193419397233e-10,
+          "minus_A": 3.1299678373600237e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "fixed_seed_random",
+          "step": 0.01,
+          "AD_A": 6.869469714580319e-11,
+          "FD_A": 6.869499926613926e-11,
+          "absolute_error_A": 3.0212033607047814e-16,
+          "relative_error": 4.397996059363779e-06,
+          "plus_A": 3.13977118749541e-10,
+          "minus_A": 3.1260321876421823e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "fixed_seed_random",
+          "step": 0.005,
+          "AD_A": 6.869469714580319e-11,
+          "FD_A": 6.869477294965291e-11,
+          "absolute_error_A": 7.580384972294048e-17,
+          "relative_error": 1.1034878851480867e-06,
+          "plus_A": 3.136338729728902e-10,
+          "minus_A": 3.1294692524339365e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "fixed_seed_random",
+          "step": 0.0025,
+          "AD_A": 6.869469714580319e-11,
+          "FD_A": 6.869474884993188e-11,
+          "absolute_error_A": 5.170412869184584e-17,
+          "relative_error": 7.526649352019156e-07,
+          "plus_A": 3.1346219286138194e-10,
+          "minus_A": 3.131187191171323e-10
+        }
+      ]
+    },
+    {
+      "polarization": "Eb",
+      "status": "VALIDATED_4UM_FIXED_Q_DIRECT_ADFD",
+      "objective_A": -1.876685125031658e-10,
+      "gradient_norm_A": 4.0980672661806355e-10,
+      "thermal_gradient_norm_A": 2.7225212376271003e-10,
+      "electrical_gradient_norm_A": 4.641287834493212e-10,
+      "multi_direction_normalized_error": 6.027615907240107e-05,
+      "runtime_s": 64.39659074321389,
+      "gates": {
+        "strong_direction_lt_1pct": true,
+        "multi_direction_normalized_lt_1pct": true,
+        "thermal_adjoint_residual_lt_1e-8": true,
+        "electrical_adjoint_residual_lt_1e-8": true,
+        "no_clipping": true,
+        "finite": true
+      },
+      "rows": [
+        {
+          "polarization": "Eb",
+          "direction": "adjoint_aligned",
+          "step": 0.01,
+          "AD_A": 7.850835996360562e-09,
+          "FD_A": 7.851119789388891e-09,
+          "absolute_error_A": 2.837930283293689e-13,
+          "relative_error": 3.6146821847365874e-05,
+          "plus_A": -1.091281701135648e-10,
+          "minus_A": -2.661505659013426e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "adjoint_aligned",
+          "step": 0.005,
+          "AD_A": 7.850835996360562e-09,
+          "FD_A": 7.850906890001807e-09,
+          "absolute_error_A": 7.089364124534981e-14,
+          "relative_error": 9.029993889703803e-06,
+          "plus_A": -1.4840670030806883e-10,
+          "minus_A": -2.269157692080869e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "adjoint_aligned",
+          "step": 0.0025,
+          "AD_A": 7.850835996360562e-09,
+          "FD_A": 7.850854258473932e-09,
+          "absolute_error_A": 1.826211337022952e-14,
+          "relative_error": 2.3261307329094853e-06,
+          "plus_A": -1.6803955614002648e-10,
+          "minus_A": -2.0729382743239614e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "central_localized",
+          "step": 0.01,
+          "AD_A": 6.9206588319429294e-12,
+          "FD_A": 6.920871576474892e-12,
+          "absolute_error_A": 2.1274453196297895e-16,
+          "relative_error": 3.0739557816118185e-05,
+          "plus_A": -1.8759960730311945e-10,
+          "minus_A": -1.8773802473464894e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "central_localized",
+          "step": 0.005,
+          "AD_A": 6.9206588319429294e-12,
+          "FD_A": 6.920720440888626e-12,
+          "absolute_error_A": 6.160894569661627e-17,
+          "relative_error": 8.90210003753679e-06,
+          "plus_A": -1.8763398778493594e-10,
+          "minus_A": -1.8770319498934483e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "central_localized",
+          "step": 0.0025,
+          "AD_A": 6.9206588319429294e-12,
+          "FD_A": 6.920685071783007e-12,
+          "absolute_error_A": 2.6239840077191063e-17,
+          "relative_error": 3.791509049324618e-06,
+          "plus_A": -1.8765123345908545e-10,
+          "minus_A": -1.8768583688444436e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "asymmetric_smooth",
+          "step": 0.01,
+          "AD_A": 2.9642870210253986e-11,
+          "FD_A": 3.0116105555575667e-11,
+          "absolute_error_A": 4.732353453216808e-13,
+          "relative_error": 0.015713696594945904,
+          "plus_A": -1.8698662419879074e-10,
+          "minus_A": -1.8758894630990225e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "asymmetric_smooth",
+          "step": 0.005,
+          "AD_A": 2.9642870210253986e-11,
+          "FD_A": 2.976101561173044e-11,
+          "absolute_error_A": 1.1814540147645684e-13,
+          "relative_error": 0.003969804089276083,
+          "plus_A": -1.8742453524140604e-10,
+          "minus_A": -1.8772214539752335e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "asymmetric_smooth",
+          "step": 0.0025,
+          "AD_A": 2.9642870210253986e-11,
+          "FD_A": 2.9671900749571785e-11,
+          "absolute_error_A": 2.9030539317799104e-14,
+          "relative_error": 0.0009783848888823903,
+          "plus_A": -1.8757053975466953e-10,
+          "minus_A": -1.877188992584174e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "fixed_seed_random",
+          "step": 0.01,
+          "AD_A": 1.5484538928982367e-10,
+          "FD_A": 1.5484626495077112e-10,
+          "absolute_error_A": 8.75660947444405e-16,
+          "relative_error": 5.6550343511533585e-06,
+          "plus_A": -1.8612423042689364e-10,
+          "minus_A": -1.8922115572590907e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "fixed_seed_random",
+          "step": 0.005,
+          "AD_A": 1.5484538928982367e-10,
+          "FD_A": 1.548455900316307e-10,
+          "absolute_error_A": 2.0074180702924356e-16,
+          "relative_error": 1.2963998973960933e-06,
+          "plus_A": -1.868953264380688e-10,
+          "minus_A": -1.884437823383851e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "fixed_seed_random",
+          "step": 0.0025,
+          "AD_A": 1.5484538928982367e-10,
+          "FD_A": 1.5484482783668454e-10,
+          "absolute_error_A": 5.614531391368725e-16,
+          "relative_error": 3.6259082526736984e-06,
+          "plus_A": -1.8728166523271597e-10,
+          "minus_A": -1.880558893718994e-10
+        }
+      ]
+    }
+  ]
+}
