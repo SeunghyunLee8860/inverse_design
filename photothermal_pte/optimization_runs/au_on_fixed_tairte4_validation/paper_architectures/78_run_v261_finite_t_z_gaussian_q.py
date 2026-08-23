@@ -367,8 +367,11 @@ def main() -> int:
             index_monitor=PABS_INDEX,
             wavelength_m=wavelength_m,
         )
+        stage1 = REPOSITORY / "photothermal_pte/validation/photothermal_stage1"
+        if str(stage1) not in sys.path:
+            sys.path.insert(0, str(stage1))
         common_module = _load(
-            REPOSITORY / "photothermal_pte/validation/photothermal_stage1/27_validate_finite_2um_optical_q.py",
+            stage1 / "27_validate_finite_2um_optical_q.py",
             f"finite_{case_label}_common_q",
         )
         common_module.PABS_FIELD = PABS_FIELD
