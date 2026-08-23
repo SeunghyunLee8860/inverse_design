@@ -88,6 +88,7 @@ def test_hpc_checkout_failure_is_retryable() -> None:
         "could not match resource name provided or the resource may not be active"
         in TRANSIENT_LICENSE_MARKERS
     )
+    assert "failed to start messaging, check licenses" in TRANSIENT_LICENSE_MARKERS
 
 
 def test_solver_cleanup_preserves_checkpoints_and_logs(tmp_path: Path) -> None:
@@ -611,6 +612,13 @@ def test_transient_license_failure_is_narrow_and_fail_closed(tmp_path) -> None:
         "could not match resource name provided or the resource may not be active"
         in markers
     )
+
+    (output / "fdtd.log").write_text(
+        "appOpen error: Failed to start messaging, check licenses"
+    )
+    retryable, markers = transient_license_failure(output)
+    assert retryable
+    assert "failed to start messaging, check licenses" in markers
 
     (output / "fdtd.log").write_text("Maxwell energy-closure gate failed")
     retryable, markers = transient_license_failure(output)

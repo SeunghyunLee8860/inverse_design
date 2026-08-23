@@ -138,6 +138,7 @@ TRANSIENT_LICENSE_MARKERS = (
     "licensed number of users already reached",
     "unable to checkout the requested hpc license",
     "this operation requires 9 licenses for feature fdtd_solutions_engine",
+    "failed to start messaging, check licenses",
     "ansysli exited or could not read server port",
     "could not match resource name provided or the resource may not be active",
 )

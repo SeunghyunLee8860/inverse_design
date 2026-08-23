@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+import json
 import subprocess
 import sys
 
@@ -22,7 +23,16 @@ def main() -> int:
     environment = dict(os.environ)
     for run, launcher in CASES:
         environment[f"RUN{run:03d}_GPU"] = str(gpu)
-        environment[f"RUN{run:03d}_RESUME"] = "1" if resume else "0"
+        published = launcher.parent / "results_v4"
+        final_path = published / "FINAL_RESULT.json"
+        if resume and final_path.is_file():
+            final = json.loads(final_path.read_text())
+            if final.get("passed"):
+                continue
+        has_checkpoint = (published / "RAW_ARTIFACT_MANIFEST.json").is_file()
+        environment[f"RUN{run:03d}_RESUME"] = (
+            "1" if resume and has_checkpoint else "0"
+        )
         completed = subprocess.run(
             [sys.executable, "-u", str(launcher)],
             cwd=HERE.parents[1],

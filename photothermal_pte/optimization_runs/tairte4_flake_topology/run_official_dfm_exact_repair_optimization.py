@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 from types import SimpleNamespace
@@ -162,8 +163,19 @@ def evaluate_exact_candidate(
 
 def restore_resume_state(
     raw_root: Path, published: Path
-) -> tuple[list[dict[str, object]], dict[str, object], np.ndarray, float, int, int, float]:
-    """Restore the last completed beta without replaying Maxwell evaluations."""
+) -> tuple[
+    list[dict[str, object]],
+    dict[str, object],
+    np.ndarray,
+    float,
+    int,
+    int,
+    float,
+    float | None,
+    np.ndarray | None,
+    int,
+]:
+    """Restore a completed beta or the last successful point within a beta."""
 
     history_path = raw_root / "history.json"
     manifest_path = published / "RAW_ARTIFACT_MANIFEST.json"
@@ -171,22 +183,55 @@ def restore_resume_state(
         raise RuntimeError("resume requires history.json and the published manifest")
     history = json.loads(history_path.read_text())
     manifest = json.loads(manifest_path.read_text())
+    if not history:
+        raise RuntimeError("resume history is empty")
     completed: list[tuple[float, Path]] = []
     for beta in BETA_SCHEDULE:
         path = raw_root / f"beta_{beta:g}_completed.npz"
         if path.is_file():
             completed.append((beta, path))
-    if not completed:
-        raise RuntimeError("resume found no completed beta checkpoint")
-    last_beta, checkpoint = completed[-1]
-    with np.load(checkpoint) as data:
-        latent = np.asarray(data["latent"], dtype=np.float64)
+    last_beta = completed[-1][0] if completed else 0.0
+    if completed:
+        with np.load(completed[-1][1]) as data:
+            latent = np.asarray(data["latent"], dtype=np.float64)
+    else:
+        latent = CONTRACT.apply_fixed_contact_density(
+            np.full(MAPPING.shape, 0.5, dtype=np.float64)
+        )
+    latest = max(history, key=lambda row: int(row["global_full_physics_evaluation"]))
+    latest_beta = float(latest["beta"])
+    resume_beta = latest_beta if latest_beta > last_beta else None
+    resume_stage_start = None
+    resumed_stage_evaluations = 0
+    if resume_beta is not None:
+        evaluation_id = int(latest["evaluation_id"])
+        latent_path = raw_root / (
+            f"evaluation_{evaluation_id:04d}_beta{resume_beta:g}_"
+            "official_ansys_dfm_latent.npz"
+        )
+        if not latent_path.is_file():
+            raise RuntimeError("resume is missing the latest successful latent design")
+        with np.load(latent_path) as data:
+            latent = np.asarray(data["latent"], dtype=np.float64)
+        if completed:
+            with np.load(completed[-1][1]) as data:
+                resume_stage_start = np.asarray(data["latent"], dtype=np.float64)
+        else:
+            resume_stage_start = CONTRACT.apply_fixed_contact_density(
+                np.full(MAPPING.shape, 0.5, dtype=np.float64)
+            )
+        resumed_stage_evaluations = sum(
+            np.isclose(float(row["beta"]), resume_beta) for row in history
+        )
     if latent.shape != MAPPING.shape:
         raise RuntimeError("resume checkpoint shape disagrees with design mapping")
-    if not history:
-        raise RuntimeError("resume history is empty")
     fixed_source_power = float(history[0]["fixed_source_power_W"])
-    evaluation_counter = max(int(row["evaluation_id"]) for row in history)
+    evaluation_ids = [int(row["evaluation_id"]) for row in history]
+    for path in raw_root.glob("evaluation_*"):
+        match = re.match(r"evaluation_(\d+)_", path.name)
+        if match:
+            evaluation_ids.append(int(match.group(1)))
+    evaluation_counter = max(evaluation_ids)
     global_evaluation = max(
         int(row["global_full_physics_evaluation"]) for row in history
     )
@@ -198,6 +243,9 @@ def restore_resume_state(
         evaluation_counter,
         global_evaluation,
         last_beta,
+        resume_beta,
+        resume_stage_start,
+        resumed_stage_evaluations,
     )
 
 
@@ -266,12 +314,17 @@ def main() -> int:
             evaluation_counter,
             global_evaluation,
             last_completed_beta,
+            resume_beta,
+            resume_stage_start,
+            resumed_stage_evaluations,
         ) = restore_resume_state(raw_root, published)
         final_point = restore_final_point(raw_root, history)
         emit(
             events,
             "bounded_run_resumed",
             last_completed_beta=last_completed_beta,
+            incomplete_beta=resume_beta,
+            completed_evaluations_in_incomplete_beta=resumed_stage_evaluations,
             next_evaluation=evaluation_counter + 1,
         )
     else:
@@ -298,11 +351,22 @@ def main() -> int:
         evaluation_counter = 0
         global_evaluation = 0
         last_completed_beta = 0.0
+        resume_beta = None
+        resume_stage_start = None
+        resumed_stage_evaluations = 0
         final_point = None
 
     for beta in BETA_SCHEDULE:
         if beta <= last_completed_beta:
             continue
+        stage_resume_count = (
+            resumed_stage_evaluations
+            if resume_beta is not None and np.isclose(beta, resume_beta)
+            else 0
+        )
+        remaining_evaluations = MAXIMUM_EVALUATIONS[beta] - stage_resume_count
+        if remaining_evaluations <= 0:
+            raise RuntimeError("incomplete beta has no remaining evaluation budget")
         evaluator = StageEvaluator(
             beta=beta,
             polarization=args.polarization,
@@ -333,9 +397,15 @@ def main() -> int:
                 "beta_factor": 2.0,
             },
         )
+        evaluator.stage_full_physics_evaluations = stage_resume_count
         trust_radius = STAGE_TRUST_RADIUS[beta]
-        stage_lower = np.maximum(0.0, latent - trust_radius)
-        stage_upper = np.minimum(1.0, latent + trust_radius)
+        stage_center = (
+            resume_stage_start
+            if resume_beta is not None and np.isclose(beta, resume_beta)
+            else latent
+        )
+        stage_lower = np.maximum(0.0, stage_center - trust_radius)
+        stage_upper = np.minimum(1.0, stage_center + trust_radius)
         # NLopt rejects exactly equal lower/upper bounds. The solver-facing
         # density is still canonicalized to exactly one at every locked node;
         # this tiny latent-only interval is never passed to a physics model.
@@ -348,7 +418,7 @@ def main() -> int:
             0,
             xtol_rel=1.0e-8,
             ftol_rel=1.0e-5,
-            maxeval=MAXIMUM_EVALUATIONS[beta],
+            maxeval=remaining_evaluations,
             lower_bounds=stage_lower,
             upper_bounds=stage_upper,
         )
@@ -356,7 +426,9 @@ def main() -> int:
             events,
             "bounded_beta_stage_start",
             beta=beta,
-            maximum_evaluations=MAXIMUM_EVALUATIONS[beta],
+            maximum_evaluations=remaining_evaluations,
+            original_maximum_evaluations=MAXIMUM_EVALUATIONS[beta],
+            resumed_stage_evaluations=stage_resume_count,
             official_dfm_scaling=DFM_CONTRACT.penalty_scaling(beta),
             stage_trust_radius=trust_radius,
             stage_latent_lower_range=[
@@ -388,6 +460,9 @@ def main() -> int:
             "full_physics_evaluations": evaluator.stage_full_physics_evaluations,
         }
         write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
+        resume_beta = None
+        resume_stage_start = None
+        resumed_stage_evaluations = 0
         emit(
             events,
             "bounded_beta_stage_complete",

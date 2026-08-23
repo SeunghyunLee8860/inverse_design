@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 
 import nlopt
 import numpy as np
@@ -138,12 +139,68 @@ def test_bounded_official_dfm_driver_visits_high_beta_and_can_resume() -> None:
     assert 'candidate_root = raw_root / f"exact_attempt_beta{final_beta:g}"' in text
 
 
+def test_bounded_official_dfm_resume_restores_incomplete_beta(tmp_path: Path) -> None:
+    from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import (
+        CONTRACT,
+    )
+    from photothermal_pte.optimization_runs.tairte4_flake_topology.optimization_support import (
+        MAPPING,
+    )
+    from photothermal_pte.optimization_runs.tairte4_flake_topology.run_official_dfm_exact_repair_optimization import (
+        restore_resume_state,
+    )
+
+    raw = tmp_path / "raw"
+    published = tmp_path / "published"
+    raw.mkdir()
+    published.mkdir()
+    history = [
+        {
+            "evaluation_id": evaluation,
+            "global_full_physics_evaluation": evaluation,
+            "beta": 1.0,
+            "fixed_source_power_W": 2.0e-13,
+        }
+        for evaluation in (1, 2)
+    ]
+    (raw / "history.json").write_text(json.dumps(history))
+    (published / "RAW_ARTIFACT_MANIFEST.json").write_text("{}")
+    latest = CONTRACT.apply_fixed_contact_density(
+        np.full(MAPPING.shape, 0.61, dtype=np.float64)
+    )
+    np.savez_compressed(
+        raw / "evaluation_0002_beta1_official_ansys_dfm_latent.npz",
+        latent=latest,
+    )
+    (raw / "evaluation_0003_beta1_official_ansys_dfm").mkdir()
+
+    restored = restore_resume_state(raw, published)
+
+    assert np.array_equal(restored[2], latest)
+    assert restored[4] == 3
+    assert restored[5] == 2
+    assert restored[6] == 0.0
+    assert restored[7] == 1.0
+    assert restored[9] == 2
+    assert np.all(restored[8][~CONTRACT.fixed_design_solid_mask] == 0.5)
+
+
 def test_bounded_official_dfm_driver_supports_both_contact_orientations() -> None:
     source = Path(__file__).parents[1] / "run_official_dfm_exact_repair_optimization.py"
     text = source.read_text()
     assert '"contact_anchored": "y"' in text
     assert '"left_right_contact_anchored": "x"' in text
     assert "expected_contact_axis" in text
+
+
+def test_rotated_sequential_launcher_resumes_only_existing_case() -> None:
+    source = (
+        Path(__file__).parents[2]
+        / "launch_run059_060_diagonal45_sequential.py"
+    ).read_text()
+    assert 'published = launcher.parent / "results_v4"' in source
+    assert 'final_path = published / "FINAL_RESULT.json"' in source
+    assert 'has_checkpoint = (published / "RAW_ARTIFACT_MANIFEST.json").is_file()' in source
 
 
 def test_exact_candidate_selection_does_not_abort_on_objective_only_failure() -> None:
