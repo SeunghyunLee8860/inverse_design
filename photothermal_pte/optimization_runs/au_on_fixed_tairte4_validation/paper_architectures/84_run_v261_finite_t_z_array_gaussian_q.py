@@ -144,8 +144,14 @@ def add_array_geometry(runner, fdtd, architecture, include_top_au, contract, bas
 def main() -> int:
     architecture = os.environ.get("ARRAY_ARCHITECTURE", "T").strip().upper()
     polarization = os.environ.get("ARRAY_POLARIZATION", "Ea").strip()
-    if architecture not in {"T", "Z"} or polarization not in {"Ea", "Eb"}:
-        raise ValueError("ARRAY_ARCHITECTURE=T/Z and ARRAY_POLARIZATION=Ea/Eb are required")
+    allowed_polarizations = {
+        "Ea", "Eb", "linear_plus_45", "linear_minus_45",
+    }
+    if architecture not in {"T", "Z"} or polarization not in allowed_polarizations:
+        raise ValueError(
+            "ARRAY_ARCHITECTURE=T/Z and ARRAY_POLARIZATION in "
+            "Ea/Eb/linear_plus_45/linear_minus_45 are required"
+        )
     label = "T11x15" if architecture == "T" else "Z1x3"
     output = Path(
         os.environ.get("ARRAY_Q_OUTPUT", str(RAW_ROOT / f"{label}_{polarization}_Au_on"))

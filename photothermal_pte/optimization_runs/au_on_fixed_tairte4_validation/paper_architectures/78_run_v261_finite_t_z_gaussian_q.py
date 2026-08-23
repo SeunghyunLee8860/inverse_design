@@ -99,8 +99,11 @@ def _case() -> tuple[str, str, bool]:
     au_token = os.environ.get("FINITE_Q_TOP_AU", "on").strip().lower()
     if architecture not in {"T", "Z"}:
         raise ValueError("FINITE_Q_ARCHITECTURE must be T or Z")
-    if polarization not in {"Ea", "Eb"}:
-        raise ValueError("FINITE_Q_POLARIZATION must be Ea or Eb")
+    if polarization not in {"Ea", "Eb", "linear_plus_45", "linear_minus_45"}:
+        raise ValueError(
+            "FINITE_Q_POLARIZATION must be Ea, Eb, linear_plus_45, or "
+            "linear_minus_45"
+        )
     if au_token not in {"on", "off"}:
         raise ValueError("FINITE_Q_TOP_AU must be on or off")
     return architecture, polarization, au_token == "on"
@@ -300,7 +303,13 @@ def main() -> int:
         wavelength_m = float(geometry["wavelength_m"])
         frequency_hz = C0 / wavelength_m
         source_name = source_module.SOURCE_NAME
-        fdtd.setnamed(source_name, "polarization angle", 90.0 if polarization == "Ea" else 0.0)
+        polarization_angle_deg = {
+            "Eb": 0.0,
+            "Ea": 90.0,
+            "linear_plus_45": 45.0,
+            "linear_minus_45": 135.0,
+        }[polarization]
+        fdtd.setnamed(source_name, "polarization angle", polarization_angle_deg)
         bounds = _control_bounds(architecture)
 
         pabs = fdtd.addobject("pabs_adv")
@@ -429,6 +438,11 @@ def main() -> int:
             "solver_wall_time_s": wall_time,
             "architecture": architecture,
             "polarization": polarization,
+            "polarization_angle_deg": polarization_angle_deg,
+            "polarization_definition": (
+                "Lumerical x=b, y=a; linear_plus_45=(Eb+Ea)/sqrt(2), "
+                "linear_minus_45=(-Eb+Ea)/sqrt(2) under the source-angle convention"
+            ),
             "axis_mapping": {"x": "b", "y": "a", "z": "c=b optical closure"},
             "top_Au_present": include_top_au,
             "source_gate_path": str(SOURCE_SUMMARY),
