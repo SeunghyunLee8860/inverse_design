@@ -358,6 +358,23 @@ class DualPolarizationEvaluator:
             gradient[1, -1] = 1.0
             gradient[2, :-1] = point.smooth_gradients[0].ravel() / self.dfm_caps[0]
             gradient[3, :-1] = point.smooth_gradients[1].ravel() / self.dfm_caps[1]
+        # Record the actual epigraph coordinate and its slack.  NLopt can call
+        # the constraints repeatedly at the same density while updating only
+        # t, so this diagnostic is updated without rerunning Maxwell.
+        if self.history:
+            self.history[-1]["epigraph_t_scaled"] = t
+            self.history[-1]["epigraph_t_A"] = t * CURRENT_SCALE_A
+            self.history[-1]["epigraph_slack_a_A"] = (
+                point.current_a_A - t * CURRENT_SCALE_A
+            )
+            self.history[-1]["epigraph_slack_b_A"] = (
+                -point.current_b_A - t * CURRENT_SCALE_A
+            )
+            write_json(OUT / "optimization_history.json", self.history)
+            write_json(
+                OUT / f"evaluation_{self.history[-1]['evaluation']:04d}.json",
+                self.history[-1],
+            )
 
 
 def plot_evaluation(
@@ -662,9 +679,9 @@ def main() -> int:
         # Otherwise the first cheap t-only steps can trigger a false relative-x
         # stop before any density update is proposed.
         entry_point = evaluator._evaluate(latent)
-        vector[-1] = 0.98 * min(
+        vector[-1] = min(
             entry_point.current_a_A, -entry_point.current_b_A
-        ) / CURRENT_SCALE_A
+        ) / CURRENT_SCALE_A - 1.0e-6
         optimizer = make_optimizer(evaluator)
         write_json(
             OUT / "RUN_STATE.json",
