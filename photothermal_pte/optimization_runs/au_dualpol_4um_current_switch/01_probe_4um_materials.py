@@ -51,13 +51,21 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _interp_complex(path: Path, wavelength_nm: float, real_col: int, imag_col: int) -> complex:
-    values = np.loadtxt(path, delimiter="," if path.suffix == ".csv" else None, comments="#")
-    values = values[np.argsort(values[:, 0])]
-    return complex(
-        np.interp(wavelength_nm, values[:, 0], values[:, real_col]),
-        np.interp(wavelength_nm, values[:, 0], values[:, imag_col]),
-    )
+def _require_interpolation_domain(
+    sample_coordinates: np.ndarray, query: float, label: str
+) -> tuple[float, float]:
+    coordinates = np.asarray(sample_coordinates, dtype=float)
+    if coordinates.ndim != 1 or coordinates.size < 2:
+        raise RuntimeError(f"{label} interpolation table is not one-dimensional")
+    if np.any(~np.isfinite(coordinates)) or np.any(np.diff(coordinates) <= 0.0):
+        raise RuntimeError(f"{label} interpolation coordinates are not finite/strictly increasing")
+    lower, upper = float(coordinates[0]), float(coordinates[-1])
+    if not np.isfinite(query) or not lower <= query <= upper:
+        raise RuntimeError(
+            f"{label} query {query:.9g} is outside tabulated range "
+            f"[{lower:.9g}, {upper:.9g}]"
+        )
+    return lower, upper
 
 
 def main() -> int:
@@ -69,6 +77,9 @@ def main() -> int:
     n_sio2 = complex(np.sqrt(epsilon_sio2))
     ta_table = np.loadtxt(PERMITTIVITY)
     ta_table = ta_table[np.argsort(ta_table[:, 0])]
+    ta_range_nm = _require_interpolation_domain(
+        ta_table[:, 0], wavelength_nm, "TaIrTe4 permittivity"
+    )
     epsilon_ta = {
         axis: complex(
             np.interp(wavelength_nm, ta_table[:, 0], ta_table[:, column]),
@@ -77,9 +88,13 @@ def main() -> int:
         for axis, column in (("a", 1), ("b", 3), ("c", 5))
     }
     ordal = np.genfromtxt(ORDAL, delimiter=",", names=True)
+    ordal_wavelength_um = np.asarray(ordal[ordal.dtype.names[0]], dtype=float)
+    ordal_range_um = _require_interpolation_domain(
+        ordal_wavelength_um, wavelength_m * 1e6, "Ordal Au n,k"
+    )
     n_au = complex(
-        np.interp(wavelength_m * 1e6, ordal[ordal.dtype.names[0]], ordal[ordal.dtype.names[1]]),
-        np.interp(wavelength_m * 1e6, ordal[ordal.dtype.names[0]], ordal[ordal.dtype.names[2]]),
+        np.interp(wavelength_m * 1e6, ordal_wavelength_um, ordal[ordal.dtype.names[1]]),
+        np.interp(wavelength_m * 1e6, ordal_wavelength_um, ordal[ordal.dtype.names[2]]),
     )
     epsilon_au = n_au**2
 
@@ -150,6 +165,13 @@ def main() -> int:
             "Au_passive": True,
             "substrate_loss_nonnegative": True,
             "Lumerical_Si_readback_completed": True,
+            "TaIrTe4_query_inside_tabulated_range": True,
+            "Au_query_inside_tabulated_range": True,
+        },
+        "interpolation_domains": {
+            "TaIrTe4_wavelength_nm": list(ta_range_nm),
+            "Ordal_Au_wavelength_um": list(ordal_range_um),
+            "policy": "out-of-range interpolation is forbidden; no np.interp endpoint clamping",
         },
         "FDTD_solve_run": False,
     }
@@ -174,4 +196,3 @@ electrical, adjoint, or optimization solves.
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

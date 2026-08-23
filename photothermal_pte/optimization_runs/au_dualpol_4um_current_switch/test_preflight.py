@@ -35,6 +35,15 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production
     readiness_audit,
     sha256,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_model import (
+    MAX_IGNORED_SUBSTRATE_EPSILON_IMAG,
+    _lossless_uniform_permittivity,
+    grid_edges_sha256,
+    source_calibration_contract,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
+    require_material_fraction,
+)
 
 
 def test_contract_geometry_and_source_boundary() -> None:
@@ -51,6 +60,28 @@ def test_all_physics_share_linear_au_material_fraction() -> None:
     assert CONTRACT.au_material_fraction_exponent == AU_MATERIAL_FRACTION_EXPONENT
     assert np.array_equal(au_material_fraction(rho), rho)
     assert np.array_equal(d_au_material_fraction_drho(rho), np.ones_like(rho))
+
+
+def test_source_calibration_is_bound_to_exact_grid_and_time_contract() -> None:
+    calibration = source_calibration_contract()
+    assert calibration["grid_edges_sha256"] == grid_edges_sha256()
+    assert calibration["total_periods"] == 16
+    assert calibration["phasor_window_periods"] == 4
+    assert calibration["polarization_vectors"]["Ea"] == [0.0, 1.0, 0.0]
+    assert calibration["polarization_vectors"]["Eb"] == [1.0, 0.0, 0.0]
+
+
+def test_lossy_substrate_cannot_be_silently_replaced_by_real_epsilon() -> None:
+    assert _lossless_uniform_permittivity(2.0 + 0.0j, "test") == 2.0
+    with np.testing.assert_raises(RuntimeError):
+        _lossless_uniform_permittivity(
+            2.0 + 2.0 * MAX_IGNORED_SUBSTRATE_EPSILON_IMAG * 1j, "test"
+        )
+
+
+def test_historical_validation_without_material_law_fails_closed() -> None:
+    with np.testing.assert_raises(RuntimeError):
+        require_material_fraction({"status": "historical"}, "test artifact")
 
 
 def test_robust_contract_includes_nominal_and_all_grayness_constraints() -> None:

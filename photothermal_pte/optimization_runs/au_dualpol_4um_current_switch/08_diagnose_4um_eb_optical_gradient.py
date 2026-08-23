@@ -15,6 +15,21 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.combined_4
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
     CONTRACT,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_model import (
+    MATERIAL_JSON,
+    grid_edges_sha256,
+    source_calibration_contract,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+    audit as material_fraction_audit,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
+    SOURCE_CALIBRATION_STATUS,
+    array_sha256,
+    require_single_visible_gpu,
+    require_status,
+    sha256,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -48,7 +63,11 @@ def relative_error(ad: float, fd: float) -> float:
 
 
 def main() -> None:
+    require_single_visible_gpu()
     calibration = json.loads(CALIBRATION.read_text(encoding="utf-8"))
+    require_status(calibration, SOURCE_CALIBRATION_STATUS, "source calibration")
+    if calibration.get("source_calibration_contract") != source_calibration_contract():
+        raise RuntimeError("source calibration does not match the current grid/source/time contract")
     scale = float(calibration["reporting_incident_power_W"]) / float(
         calibration["common_reference_incident_power_W"]
     )
@@ -127,6 +146,11 @@ def main() -> None:
         "polarization": "Eb",
         "density": 0.5,
         "direction": "normalized combined-gradient aligned",
+        "direction_sha256": array_sha256(direction),
+        "au_material_fraction": material_fraction_audit(),
+        "source_calibration_sha256": sha256(CALIBRATION),
+        "material_contract_sha256": sha256(MATERIAL_JSON),
+        "optical_grid_edges_sha256": grid_edges_sha256(),
         "rows": rows,
         "adjoint_previous_to_late_field_relative": float(
             np.linalg.norm(late - previous) / max(np.linalg.norm(late), 1e-30)

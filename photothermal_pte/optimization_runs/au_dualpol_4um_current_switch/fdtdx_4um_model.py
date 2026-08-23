@@ -9,6 +9,7 @@ only the source polarization between the ``Ea`` and ``Eb`` cases.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 import importlib.util
 import json
 import math
@@ -36,6 +37,7 @@ STAGE41 = (
 )
 EPS0_F_PER_M = 8.8541878128e-12
 C0_M_PER_S = 299_792_458.0
+MAX_IGNORED_SUBSTRATE_EPSILON_IMAG = 1.0e-10
 
 
 @dataclass(frozen=True)
@@ -108,6 +110,54 @@ def grid_edges() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         )
     )
     return lateral, lateral.copy(), vertical
+
+
+def grid_edges_sha256() -> str:
+    """Return a stable identity for the exact rectilinear optical grid."""
+
+    digest = hashlib.sha256()
+    for axis, edges in zip("xyz", grid_edges(), strict=True):
+        value = np.ascontiguousarray(edges, dtype=np.float64)
+        digest.update(axis.encode("ascii"))
+        digest.update(str(value.shape).encode("ascii"))
+        digest.update(value.tobytes())
+    return digest.hexdigest()
+
+
+def source_calibration_contract() -> dict[str, Any]:
+    """Pure contract that makes a source calibration grid/time specific."""
+
+    return {
+        "grid_edges_sha256": grid_edges_sha256(),
+        "wavelength_m": CONTRACT.wavelength_m,
+        "gaussian_waist_m": CONTRACT.gaussian_waist_m,
+        "source_aperture_span_m": CONTRACT.source_aperture_span_m,
+        "polarization_vectors": {
+            polarization: list(polarization_vector(polarization))
+            for polarization in ("Ea", "Eb")
+        },
+        "total_periods": 16,
+        "phasor_window_periods": 4,
+        "courant_factor": 0.5,
+        "dtype": "float32",
+        "detector": "all-air incident_plane below source",
+    }
+
+
+def _lossless_uniform_permittivity(value: complex, label: str) -> float:
+    """Fail instead of silently dropping a material loss unsupported here."""
+
+    if not np.isfinite(value.real) or not np.isfinite(value.imag):
+        raise RuntimeError(f"non-finite {label} permittivity: {value!r}")
+    if value.imag < 0.0:
+        raise RuntimeError(f"active {label} permittivity is unsupported: {value!r}")
+    if value.imag > MAX_IGNORED_SUBSTRATE_EPSILON_IMAG:
+        raise RuntimeError(
+            f"{label} epsilon.imag={value.imag:.6g} exceeds the lossless-uniform "
+            f"implementation tolerance {MAX_IGNORED_SUBSTRATE_EPSILON_IMAG:.6g}; "
+            "add a dispersive substrate model before solving"
+        )
+    return float(value.real)
 
 
 def load_material_contract() -> dict[str, Any]:
@@ -207,6 +257,8 @@ def build_model(
     }
     epsilon_sio2 = _complex(materials["materials"]["SiO2"]["epsilon"])
     epsilon_si = _complex(materials["materials"]["Si"]["epsilon"])
+    epsilon_sio2_real = _lossless_uniform_permittivity(epsilon_sio2, "SiO2")
+    epsilon_si_real = _lossless_uniform_permittivity(epsilon_si, "Si")
     fits = {
         "au": stage41._drude_fit(epsilon_au, omega, dt),
         "a": stage41._drude_fit(epsilon_ta["a"], omega, dt),
@@ -260,14 +312,14 @@ def build_model(
         name="fixed_silicon_substrate",
         partial_grid_shape=(None, None, LAYOUT.silicon_cells),
         material=fdtdx.Material(
-            permittivity=(1.0 if air_only_source_calibration else float(epsilon_si.real))
+            permittivity=(1.0 if air_only_source_calibration else epsilon_si_real)
         ),
     )
     sio2 = fdtdx.UniformMaterialObject(
         name="fixed_285nm_sio2",
         partial_grid_shape=(None, None, LAYOUT.sio2_cells),
         material=fdtdx.Material(
-            permittivity=(1.0 if air_only_source_calibration else float(epsilon_sio2.real))
+            permittivity=(1.0 if air_only_source_calibration else epsilon_sio2_real)
         ),
     )
     flake = fdtdx.UniformMaterialObject(

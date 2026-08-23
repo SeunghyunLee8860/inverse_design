@@ -18,6 +18,10 @@ import numpy as np
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_model import (
     build_model,
+    source_calibration_contract,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
+    require_single_visible_gpu,
 )
 
 
@@ -68,6 +72,7 @@ def run_case(polarization: str) -> dict[str, object]:
 
 
 def main() -> int:
+    require_single_visible_gpu()
     OUT.mkdir(parents=True, exist_ok=True)
     cases = [run_case(pol) for pol in ("Ea", "Eb")]
     powers = [float(case["incident_power_W"]) for case in cases]
@@ -89,6 +94,7 @@ def main() -> int:
             "each physical Q is multiplied by the one common ratio "
             "285uW/P_source-only; no polarization matching or Q rescaling"
         ),
+        "source_calibration_contract": source_calibration_contract(),
     }
     (OUT / "fdtdx_4um_source_calibration.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"

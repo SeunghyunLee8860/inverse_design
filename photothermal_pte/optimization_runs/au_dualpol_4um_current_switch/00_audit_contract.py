@@ -30,7 +30,10 @@ def main() -> int:
     audit["initial_design"] = {
         "type": "uniform latent/physical preflight only",
         "value": 0.5,
-        "note": "production symmetry-breaking policy is selected only after the dual-pol gradient smoke",
+        "note": (
+            "the contract imposes no mirror/rotational symmetry; any production "
+            "initialization must be explicitly recorded and independently seeded"
+        ),
     }
     audit["DFM_audit_definition"] = {
         key: value for key, value in exact.items() if not isinstance(value, np.ndarray)
@@ -95,8 +98,9 @@ def main() -> int:
         "subject to  I_a >= t,  -I_b >= t\n\n"
         "Au is floating: it changes Q, T, and psi,\n"
         "but it is not a terminal electrode.\n\n"
-        "500 nm solid AND void: differentiable constraints\n"
-        "+ exact binary morphology audit; final bad cells = 0"
+        "500 nm solid AND void: exact binary morphology audit\n"
+        "Robust path: filter/projection + per-eta grayness gate\n"
+        "Legacy smooth constraints are not the robust production gate"
     )
     ax.text(0.03, 0.96, text, va="top", fontsize=13, family="monospace")
     fig.suptitle("4 um dual-polarization Au/PTE inverse-design preflight", fontsize=16)
@@ -130,10 +134,12 @@ The patterned Au is electrically floating, not an optical model of the
 measurement electrodes. It must be included in optical absorption, thermal
 spreading/Au-Ta contact, and electrical shunting/weighting-field response.
 
-The 500 nm solid and void requirements are enforced through differentiable
-constraints during continuation and a separate exact thresholded morphology
-audit. Final promotion requires zero exact bad cells. This preflight does not
-claim that the initial uniform rho=0.5 design is manufacturable.
+The robust production path uses a 250 nm-radius density filter, projection,
+per-eta grayness constraints, and a separate exact thresholded morphology
+audit. The legacy smooth solid/void functions remain tested utilities but are
+not the robust optimizer's active constraints. Final promotion requires zero
+exact bad cells. This preflight does not claim that the initial uniform
+rho=0.5 design is manufacturable.
 
 Au/Ta thermal and electrical contact values are explicitly named numerical
 scenarios because direct TaIrTe4/Au values have not been experimentally fixed.

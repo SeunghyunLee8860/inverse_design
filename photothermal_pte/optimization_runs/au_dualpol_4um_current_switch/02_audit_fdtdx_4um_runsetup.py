@@ -19,7 +19,11 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_model import (
     LAYOUT,
+    MAX_IGNORED_SUBSTRATE_EPSILON_IMAG,
     build_model,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+    audit as material_fraction_audit,
 )
 
 
@@ -161,7 +165,11 @@ def main() -> int:
                 name: float(value["fit_relative_error"])
                 for name, value in reference["fits"].items()
             },
-            "gray_Au_law": "passive Drude oscillator strength rho^3; endpoints are void/Au; numerical relaxation only",
+            "au_material_fraction": material_fraction_audit(),
+            "substrate_implementation": (
+                "lossless uniform real epsilon; fail if epsilon.imag exceeds tolerance"
+            ),
+            "maximum_ignored_substrate_epsilon_imag": MAX_IGNORED_SUBSTRATE_EPSILON_IMAG,
         },
         "memory": {
             "placed_base_array_bytes": base_bytes,
@@ -205,6 +213,12 @@ def main() -> int:
             "all_ADE_fit_errors_lt_1e-12": all(
                 value["fit_relative_error"] < 1e-12
                 for value in reference["fits"].values()
+            ),
+            "substrate_loss_below_implemented_tolerance": (
+                0.0 <= reference["epsilon"]["sio2"].imag
+                <= MAX_IGNORED_SUBSTRATE_EPSILON_IMAG
+                and 0.0 <= reference["epsilon"]["silicon"].imag
+                <= MAX_IGNORED_SUBSTRATE_EPSILON_IMAG
             ),
         },
     }
@@ -258,9 +272,11 @@ The source is a normally incident scalar Gaussian with w0=4 um and a 16 um
 square support.  Its requested intensity at the aperture boundary is
 {100*CONTRACT.aperture_boundary_intensity_fraction:.5f}% of the peak.
 
-The production optical gradient remains the already validated checkpoint-free
-harmonic two-solve method.  This audit does not promote the 4 um combined PTE
-gradient; forward convergence and AD-FD still have to pass.
+The production optical-gradient implementation is the checkpoint-free harmonic
+two-solve method. Its historical O3 result is not a validation of the current
+shared-linear Au law. This audit does not promote the 4 um combined PTE
+gradient; full-mesh convergence and a new hash-linked AD-FD certificate still
+have to pass.
 """
     (OUT / "FDTDX_4UM_DUALPOL_RUNSETUP.md").write_text(report, encoding="utf-8")
     print(json.dumps(audit, indent=2), flush=True)

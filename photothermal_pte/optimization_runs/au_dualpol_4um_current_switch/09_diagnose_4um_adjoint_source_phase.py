@@ -14,13 +14,28 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.combined_4
     discrete_au_susceptibility,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+    audit as material_fraction_audit,
     d_au_material_fraction_drho,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_model import (
+    MATERIAL_JSON,
+    grid_edges_sha256,
+    source_calibration_contract,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
     CONTRACT,
 )
 from photothermal_pte.optimization_runs.au_on_fixed_tairte4_validation.fdtdx_two_solve_adjoint import (
     harmonic_material_gradient,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
+    OPTICAL_DECOMPOSITION_STATUS,
+    SOURCE_CALIBRATION_STATUS,
+    array_sha256,
+    require_material_fraction,
+    require_single_visible_gpu,
+    require_status,
+    sha256,
 )
 
 
@@ -40,17 +55,33 @@ EXPONENTS = (-1.0, -0.5, 0.0, 0.5, 1.0)
 
 
 def main() -> None:
+    require_single_visible_gpu()
     calibration = json.loads(CALIBRATION.read_text(encoding="utf-8"))
+    require_status(calibration, SOURCE_CALIBRATION_STATUS, "source calibration")
+    if calibration.get("source_calibration_contract") != source_calibration_contract():
+        raise RuntimeError("source calibration does not match the current grid/source/time contract")
     scale = float(calibration["reporting_incident_power_W"]) / float(
         calibration["common_reference_incident_power_W"]
     )
     reference = json.loads(REFERENCE.read_text(encoding="utf-8"))
+    require_status(reference, OPTICAL_DECOMPOSITION_STATUS, "Eb FD reference")
+    require_material_fraction(reference, "Eb FD reference")
+    if reference.get("source_calibration_sha256") != sha256(CALIBRATION):
+        raise RuntimeError("Eb FD reference is not linked to the current source calibration")
+    if reference.get("material_contract_sha256") != sha256(MATERIAL_JSON):
+        raise RuntimeError("Eb FD reference is not linked to the current material contract")
+    if reference.get("optical_grid_edges_sha256") != grid_edges_sha256():
+        raise RuntimeError("Eb FD reference was generated on a different optical grid")
+    if reference.get("polarization") != "Eb" or float(reference.get("density", -1.0)) != 0.5:
+        raise RuntimeError("Eb FD reference polarization/density contract changed")
     field_fd = float(reference["rows"][-1]["FD"]["field_A"])
     rho = np.full(CONTRACT.design_shape, 0.5, dtype=np.float64)
     runner = CompiledOpticalRunner.create("Eb", rho)
     base = combined_gradient(runner, rho, scale, 0)
     direction = np.asarray(base["gradient_total_A"], dtype=np.float64)
     direction /= np.max(np.abs(direction))
+    if reference.get("direction_sha256") != array_sha256(direction):
+        raise RuntimeError("Eb FD direction is stale or differs from the current combined gradient")
     fields = np.asarray(base["fields"]["au"])
     production_phase = complex(base["adjoint_source_phase_factor"])
     profile = np.asarray(base["adjoint_profile"]) / production_phase
@@ -101,6 +132,11 @@ def main() -> None:
         "polarization": "Eb",
         "omega_dt_rad": theta,
         "rows": rows,
+        "au_material_fraction": material_fraction_audit(),
+        "source_calibration_sha256": sha256(CALIBRATION),
+        "material_contract_sha256": sha256(MATERIAL_JSON),
+        "reference_sha256": sha256(REFERENCE),
+        "optical_grid_edges_sha256": grid_edges_sha256(),
         "best_candidate": min(rows, key=lambda row: row["relative_error"]),
         "no_empirical_amplitude_rescaling": True,
     }
