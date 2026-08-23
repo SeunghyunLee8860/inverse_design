@@ -250,6 +250,30 @@ def exact_candidates(rho):
     rows=[]
     for threshold in np.linspace(.1,.9,17):
         seed=rho>=threshold
+        # Targeted exact repair changes only the cells identified by the
+        # independent opening audit.  Unlike a global close/open it does not
+        # erase already valid, current-carrying topology far from a violation.
+        for void_mode in ("fill", "expand"):
+            binary=seed.copy()
+            for _ in range(24):
+                audit=exact_500nm_audit(binary.astype(float))
+                if audit["solid_pass"] and audit["void_pass"]: break
+                before=binary.copy()
+                binary[audit["bad_solid"]]=False
+                audit=exact_500nm_audit(binary.astype(float))
+                if void_mode=="fill":
+                    binary[audit["bad_void"]]=True
+                else:
+                    binary &= ~ndimage.binary_dilation(
+                        audit["bad_void"],structure=footprint
+                    )
+                if np.array_equal(binary,before): break
+            audit=exact_500nm_audit(binary.astype(float))
+            if audit["solid_pass"] and audit["void_pass"]:
+                score=float(np.mean(np.abs(binary-rho)))
+                rows.append(
+                    (score,f"threshold_{threshold:.2f}_targeted_remove_{void_mode}",binary.astype(float))
+                )
         for name,seq in (("oco",("open","close","open")),("co",("close","open")),("coc",("close","open","close"))):
             binary=seed.copy()
             for op in seq:
@@ -286,7 +310,10 @@ def main():
     if os.environ.get("CUDA_VISIBLE_DEVICES") is None: raise RuntimeError("GPU required")
     cuda_device=int(os.environ.get("THERMAL_CUDA_DEVICE","0")); OUT.mkdir(parents=True,exist_ok=True); RAW.mkdir(parents=True,exist_ok=True)
     calibration=json.loads(CALIBRATION.read_text()); scale=CONTRACT.reporting_incident_power_W/float(calibration["common_reference_incident_power_W"])
-    with np.load(INITIAL,allow_pickle=False) as data: latent=np.asarray(data["latent"],dtype=float)
+    finalize_only=os.environ.get("AU_ROBUST_FINALIZE_ONLY","0")=="1"
+    resume_final=RAW/"stage_06_beta_80.npz"
+    starting_path=resume_final if finalize_only else INITIAL
+    with np.load(starting_path,allow_pickle=False) as data: latent=np.asarray(data["latent"],dtype=float)
     # The eroded/dilated material layouts can ring longer than the nominal
     # beta-continuation layout.  Use a 50% longer observable window while
     # keeping geometry, source, mesh and all material parameters unchanged.
@@ -296,9 +323,15 @@ def main():
         )
         for pol in ("Ea","Eb")
     }
-    history=[]; stages=[]; manifest={"schema":"au-dualpol-robust-projection-v1","raw_artifacts_committed_to_git":False,"etas":list(ETAS),"filter":MAPPING.audit(),"evaluations":{}}
+    if finalize_only:
+        history=json.loads((OUT/"optimization_history.json").read_text())
+        stages=json.loads((OUT/"continuation_stages.json").read_text())
+        manifest=json.loads((OUT/"RAW_ARTIFACT_MANIFEST.json").read_text())
+    else:
+        history=[]; stages=[]; manifest={"schema":"au-dualpol-robust-projection-v1","raw_artifacts_committed_to_git":False,"etas":list(ETAS),"filter":MAPPING.audit(),"evaluations":{}}
     vector=np.concatenate((latent.ravel(),[0.0]))
-    for stage_index,(beta,gray_target,maxeval) in enumerate(STAGES):
+    run_stages=() if finalize_only else STAGES
+    for stage_index,(beta,gray_target,maxeval) in enumerate(run_stages):
         nominal=MAPPING.physical(latent,beta); entry_gray=float(np.mean(4*nominal*(1-nominal))); gray_cap=max(gray_target,.88*entry_gray)
         evaluator=RobustEvaluator(runners,scale,cuda_device,beta,gray_cap,history,manifest)
         entry=evaluator.evaluate(latent); useful=[s["current_A"] if s["pol"]=="Ea" else -s["current_A"] for s in entry.scenarios.values()]
