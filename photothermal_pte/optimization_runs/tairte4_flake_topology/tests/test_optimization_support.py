@@ -41,17 +41,15 @@ def test_exact_audit_uses_geometry_specific_outside_phase():
     assert audit["counted_entity"].startswith("design nodes")
 
 
-def test_diagonal_exact_audit_rejects_void_in_locked_contact() -> None:
+def test_diagonal_exact_audit_has_no_locked_contact_constraint() -> None:
     if CONTRACT.geometry_mode != "diagonal_45_contact_anchored":
         return
     solid = CONTRACT.apply_fixed_contact_density(np.ones(MAPPING.shape))
     solid[CONTRACT.fixed_design_solid_mask] = 0.0
     audit, arrays = exact_binary_audit(solid)
-    assert not audit["passed"]
-    assert audit["fixed_contact_violation_count"] > 0
-    assert np.array_equal(
-        arrays["fixed_contact_violation"], CONTRACT.fixed_design_solid_mask
-    )
+    assert audit["passed"]
+    assert audit["fixed_contact_violation_count"] == 0
+    assert not np.any(arrays["fixed_contact_violation"])
 
 
 def test_diagonal_exact_audit_rejects_solid_outside_flake() -> None:

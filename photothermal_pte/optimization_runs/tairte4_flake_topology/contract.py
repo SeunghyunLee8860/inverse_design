@@ -91,25 +91,11 @@ class TaIrTe4FlakeContract:
 
     @property
     def fixed_design_contact_masks(self) -> tuple[np.ndarray, np.ndarray]:
-        """Low/high fixed-solid terminal masks on the local device grid."""
+        """Return no fixed-solid regions for ideal electrical-only terminals."""
 
         shape = self.design_node_shape
         empty = np.zeros(shape, dtype=bool)
-        if self.geometry_mode != "diagonal_45_contact_anchored":
-            return empty.copy(), empty.copy()
-        x = np.linspace(*self.design_bounds_m["x"], shape[0])
-        y = np.linspace(*self.design_bounds_m["y"], shape[1])
-        edge = 0.5 * self.flake_span_m
-        tolerance = 1.0e-18
-        low = np.broadcast_to(
-            x[:, None] <= -edge + self.fixed_contact_depth_m + tolerance,
-            shape,
-        ).copy()
-        high = np.broadcast_to(
-            x[:, None] >= edge - self.fixed_contact_depth_m - tolerance,
-            shape,
-        ).copy()
-        return low, high
+        return empty.copy(), empty.copy()
 
     @property
     def fixed_design_solid_mask(self) -> np.ndarray:
@@ -306,14 +292,6 @@ class TaIrTe4FlakeContract:
             "diagonal_45_contact_anchored",
         } and self.fixed_contact_depth_m < 2.0 * self.minimum_feature_m:
             raise ValueError("fixed contact strip is too shallow")
-        if self.geometry_mode == "diagonal_45_contact_anchored":
-            low, high = self.fixed_design_contact_masks
-            if (
-                not np.any(low)
-                or not np.any(high)
-                or np.any(low & high)
-            ):
-                raise ValueError("45-degree fixed contact masks are invalid")
         if not 0.0 < self.sigma_void_fraction < 1.0e-4:
             raise ValueError("void conductivity is a numerical regularization only")
 
@@ -338,8 +316,9 @@ class TaIrTe4FlakeContract:
                 "six_boundaries": "PML",
                 "source": "finite scalar Gaussian",
                 "coordinate_mapping": (
-                    "Lumerical global x=b, y=a, z=c; local 24 um device "
-                    "primitive rotated +45 degrees about global z"
+                    "Run58-style Maxwell approximation uses a centered "
+                    "unrotated sheet with x=b, y=a, z=c; thermal and "
+                    "electrical geometry is rotated +45 degrees"
                     if self.geometry_mode == "diagonal_45_contact_anchored"
                     else "Lumerical x=b, y=a, z=c"
                 ),

@@ -14,16 +14,18 @@ REPOSITORY = HERE.parents[2]
 ARTIFACT_ROOT = Path(
     "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored"
 )
-RAW = ARTIFACT_ROOT / "run059_rotated_full_edge_Au_Ea_evaporated_v4"
+RAW = ARTIFACT_ROOT / "run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5"
 BASE_ROOT = Path(
     "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored"
 )
 BASE_FSP = BASE_ROOT / (
-    "base_uniform_forward_Ea_v11_rotated_primitive_au_rho05/"
+    "base_uniform_forward_Ea_v23_run58_layout_ideal_terminal_no_Au_rho05/"
     "tairte4_flake_forward_Ea.fsp"
 )
-BASE_SHA256 = "638024c26ac1e2fe52e140c49ad88c022f729b89da56faa800f905242eb4cf9e"
-JACOBIAN = BASE_ROOT / "component_yee_jacobian_v1"
+BASE_SHA256 = "90f41beb8df62c22177e1387646a734a369a170ce682bc8d6748ce598f0571d7"
+JACOBIAN = BASE_ROOT / (
+    "component_yee_jacobian_v2_run58_optical_ideal_terminal_no_Au"
+)
 
 
 def main() -> int:
@@ -52,7 +54,7 @@ def main() -> int:
         "--raw-root",
         str(RAW),
         "--published-dir",
-        str(HERE / "results_v4"),
+        str(HERE / "results_v5_no_Au"),
         "--base-fsp",
         str(BASE_FSP),
         "--base-sha256",

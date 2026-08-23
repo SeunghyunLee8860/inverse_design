@@ -163,7 +163,7 @@ def main() -> int:
             CONTRACT.design_node_shape, args.initial_density, dtype=np.float64
         )
         design = optical.add_design(fdtd, rho)
-        au_names = optical.add_au_electrodes(fdtd)
+        au_names: list[str] = []
         mesh_names = optical.add_mesh_hierarchy(
             fdtd,
             interface_xy_step_m=interface_xy_step_m,
@@ -177,7 +177,7 @@ def main() -> int:
             raise RuntimeError(f"mesh readback failed: {mesh}")
         coordinates = mesh.pop("coordinate_arrays")
         np.savez_compressed(mesh_npz, **{f"{axis}_m": coordinates[axis] for axis in "xyz"})
-        flake = CONTRACT.flake_bounding_half_span_m
+        flake = 0.5 * CONTRACT.flake_span_m
         design_x = CONTRACT.design_bounds_m["x"]
         design_y = CONTRACT.design_bounds_m["y"]
         regional = {
@@ -249,7 +249,7 @@ def main() -> int:
                 CONTRACT.geometry_mode != "diagonal_45_contact_anchored"
                 or np.isclose(
                     design_rotation_deg,
-                    optical.ROTATED_DEVICE_ANGLE_DEG,
+                    0.0,
                     rtol=0.0,
                     atol=1.0e-12,
                 )
@@ -289,17 +289,13 @@ def main() -> int:
             "materials": {
                 "TaIrTe4": tairte4,
                 **substrate,
-                "Au": {
-                    "name": optical.AU_MATERIAL,
-                    "n_at_10um": optical.AU_INDEX_AT_10UM.real,
-                    "k_at_10um": optical.AU_INDEX_AT_10UM.imag,
-                    "thickness_m": optical.AU_THICKNESS_M,
-                },
+                "Au": None,
             },
             "design": {key: value for key, value in design.items() if key != "nodes_m"},
             "geometry_bounds_m": bounds,
             "Au_geometry": au_geometry,
             "Au_entirely_inside_rotated_flake": au_inside_flake,
+            "electrical_terminals": "not part of optical runsetup; ideal equipotential masks in weighting solve only",
             "Q_control_volume_m": {axis: list(values) for axis, values in optical.Q_BOUNDS.items()},
             "pabs_field_index_bounds_match_Q_control_volume": pabs_bounds_match,
             "mesh_readback": mesh,

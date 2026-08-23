@@ -13,12 +13,21 @@ to the fixed TaIrTe4 crystal axes.
   spacing. It rotates together with the flake.
 - The low and high terminals occupy two opposite full flake edges, with a
   2 um overlap measured normal to each edge.
-- Two explicit 50 nm Au polygons use n=12.1 and k=69.2 at 10 um and remain
-  entirely inside those terminal strips.
-- Terminal-overlap TaIrTe4 nodes are locked to rho=1 in latent continuation,
-  optical/thermal/electrical solves, gradients, official DFM, and exact repair.
-- Lumerical global axes remain x=b, y=a, z=c. Rotating the import primitive
-  does not rotate its anisotropic tensor. This run uses E||a at 90 degrees.
+- As in Run 058, no Au is present in the optical or thermal model. The two
+  terminal strips exist only as ideal equipotential boundary masks in the
+  electrical weighting-field solve.
+- No terminal-overlap nodes are locked to rho=1. The terminals do not alter
+  optical, thermal, DFM, or exact-repair density; they enter only as ideal
+  equipotential masks in the electrical weighting solve.
+- Following the Run 058 approximation requested for this restart, Maxwell
+  uses the centered 24 um square without optical Au, with x=b, y=a, z=c and
+  E||a at 90 degrees. The +45-degree geometry is retained exactly in the
+  thermal and electrical weighting solves. This neglects the small optical
+  orientation response under the circular Gaussian and isotropic substrate.
+- Maxwell uses Run 058's stable material layout: a central 20 x 24 um
+  imported-density region plus 2 um TaIrTe4 rectangles at left and right,
+  giving the same exact 24 x 24 um flake. These rectangles are TaIrTe4, not
+  Au electrodes; thermal/electrical density remains designable over 24 x 24 um.
 - Electrical conductivity, Seebeck coefficient, and thermal conductivity are
   evaluated in the same fixed crystal coordinates on the rotated device.
 - The TaIrTe4/SiO2 interface scenario is `evaporated`, as in Run 057/058.
@@ -27,12 +36,6 @@ to the fixed TaIrTe4 crystal axes.
 
 Raw solver artifacts are written under
 `/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/`.
-Published checkpoints and the final report are written to `results_v4/`.
-
-Material provenance is unchanged from the explicit-Au response study:
-Au optical constants are the 10 um Ordal et al. values
-(https://doi.org/10.1364/AO.26.000744), room-temperature Au thermal
-conductivity is 317 W/m/K, and the explicitly labeled Au/TaIrTe4 interface
-surrogate is 19.89 MW/m2/K from the reported as-deposited Au/MoS2/sapphire
-measurement (https://doi.org/10.1002/admi.202000364). No direct
-Au/TaIrTe4 measurement is claimed.
+Published checkpoints and the final report are written to `results_v5_no_Au/`.
+The prior Au optical constants, Au thermal conductivity, and Au/TaIrTe4
+interface surrogate are not active in this run.

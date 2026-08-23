@@ -198,21 +198,17 @@ def set_tairte4_flake_density(
     ):
         raise RuntimeError("TaIrTe4 design-node contract mismatch")
     index, _ = tairte4_flake_optical.anisotropic_index(rho)
+    import_nodes = tairte4_flake_optical.import_nodes()
     fdtd.select(imported_object)
-    if int(fdtd.importnk2(index, *nodes)) != 1:
+    if int(fdtd.importnk2(index, *import_nodes)) != 1:
         raise RuntimeError("anisotropic TaIrTe4 importnk2 returned failure")
     if (
         tairte4_flake_optical.CONTRACT.geometry_mode
         == "diagonal_45_contact_anchored"
     ):
         rotation = float(fdtd.getnamed(imported_object, "rotation 1"))
-        if not np.isclose(
-            rotation,
-            tairte4_flake_optical.ROTATED_DEVICE_ANGLE_DEG,
-            rtol=0.0,
-            atol=1.0e-12,
-        ):
-            raise RuntimeError("importnk2 update changed the +45-degree primitive")
+        if not np.isclose(rotation, 0.0, rtol=0.0, atol=1.0e-12):
+            raise RuntimeError("Run58-style optical import object must remain unrotated")
 
 
 def index_detail(fdtd: object) -> dict[str, np.ndarray]:
@@ -660,14 +656,6 @@ def main() -> int:
                     coordinates = component_coordinates(layout_detail, component)
                     sample_x = coordinates[0][ix]
                     sample_y = coordinates[1][iy]
-                    if (
-                        args.geometry == "tairte4_flake"
-                        and contract.geometry_mode
-                        == "diagonal_45_contact_anchored"
-                    ):
-                        sample_x, sample_y = contract.rotated_uv(
-                            sample_x, sample_y
-                        )
                     node_x, distance_x = nearest_colored_node(
                         sample_x, x_nodes, color_x
                     )

@@ -50,9 +50,10 @@ def main() -> int:
             Polygon(
                 footprint,
                 closed=True,
-                facecolor="#f47b32",
-                edgecolor="#d85f1f",
-                lw=1.5,
+                facecolor="none",
+                edgecolor="#f47b32",
+                hatch="////",
+                lw=2.0,
             )
         )
 
@@ -72,7 +73,13 @@ def main() -> int:
     axis.text(0.5, arrow + 0.4, "a (fixed)", color="#d62728", fontsize=12)
     axis.text(arrow + 0.4, 0.5, "b (fixed)", color="#2ca02c", fontsize=12)
     axis.text(0.0, 18.5, "24 x 24 um TaIrTe4, rotated +45 deg", ha="center", fontsize=13)
-    axis.text(0.0, -19.2, "50 nm Au on opposite full-edge 2 um strips", ha="center", fontsize=11)
+    axis.text(
+        0.0,
+        -19.2,
+        "Ideal equipotential terminals in weighting solve only (2 um strips)",
+        ha="center",
+        fontsize=10,
+    )
     axis.set_aspect("equal")
     axis.set_xlim(-21.0, 21.0)
     axis.set_ylim(-21.0, 21.0)

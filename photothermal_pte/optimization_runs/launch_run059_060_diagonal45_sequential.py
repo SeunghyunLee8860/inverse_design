@@ -23,7 +23,7 @@ def main() -> int:
     environment = dict(os.environ)
     for run, launcher in CASES:
         environment[f"RUN{run:03d}_GPU"] = str(gpu)
-        published = launcher.parent / "results_v4"
+        published = launcher.parent / "results_v5_no_Au"
         final_path = published / "FINAL_RESULT.json"
         if resume and final_path.is_file():
             final = json.loads(final_path.read_text())

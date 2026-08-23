@@ -198,7 +198,7 @@ def test_rotated_sequential_launcher_resumes_only_existing_case() -> None:
         Path(__file__).parents[2]
         / "launch_run059_060_diagonal45_sequential.py"
     ).read_text()
-    assert 'published = launcher.parent / "results_v4"' in source
+    assert 'published = launcher.parent / "results_v5_no_Au"' in source
     assert 'final_path = published / "FINAL_RESULT.json"' in source
     assert 'has_checkpoint = (published / "RAW_ARTIFACT_MANIFEST.json").is_file()' in source
 

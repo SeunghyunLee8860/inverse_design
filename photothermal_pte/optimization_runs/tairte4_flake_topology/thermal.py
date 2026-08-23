@@ -95,12 +95,8 @@ def thermal_interface_contract() -> dict[str, object]:
             "optical material are unchanged"
         ),
         "rotated_device_Au": {
-            "enabled": CONTRACT.geometry_mode == "diagonal_45_contact_anchored",
-            "thickness_m": 50.0e-9,
-            "thermal_conductivity_W_mK": K_AU_W_MK,
-            "Au_TaIrTe4_interface_conductance_W_m2K": (
-                AU_TAIRTE4_INTERFACE_CONDUCTANCE_W_M2K
-            ),
+            "enabled": False,
+            "model": "absent; ideal terminals exist only in electrical weighting solve",
         },
     }
 

@@ -194,20 +194,17 @@ def main() -> int:
             "scope": "uniform rho=0.5 GPU Maxwell forward only",
             "axis_contract": "Lumerical x=b, y=a, z=c",
             "device_geometry": (
-                "24 um x 24 um local import primitive rotated +45 degrees; "
-                "two opposite full-edge 2 um terminal strips"
+                "Run58-style centered 24 um x 24 um no-Au optical sheet; "
+                "thermal/electrical device rotated +45 degrees with two "
+                "opposite full-edge 2 um ideal electrical terminal strips"
                 if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
                 else CONTRACT.geometry_mode
             ),
-            "Au_electrodes": (
-                {
-                    "objects": list(optical.AU_OBJECT_NAMES),
-                    "thickness_m": optical.AU_THICKNESS_M,
-                    "n_at_10um": optical.AU_INDEX_AT_10UM.real,
-                    "k_at_10um": optical.AU_INDEX_AT_10UM.imag,
-                }
+            "Au_electrodes": None,
+            "electrical_terminals": (
+                "ideal equipotential boundary masks only"
                 if CONTRACT.geometry_mode == "diagonal_45_contact_anchored"
-                else None
+                else CONTRACT.contact_axis
             ),
             "polarization": f"E_parallel_{args.polarization}",
             "polarization_angle_deg": polarization_angle,

@@ -194,15 +194,8 @@ def set_density(fdtd, rho: np.ndarray) -> None:
     )
     if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
         rotation = float(fdtd.getnamed(optical.DESIGN_OBJECT, "rotation 1"))
-        if not np.isclose(
-            rotation,
-            optical.ROTATED_DEVICE_ANGLE_DEG,
-            rtol=0.0,
-            atol=1.0e-12,
-        ):
-            raise RuntimeError("density update changed the rotated-device angle")
-        if any(int(fdtd.getnamednumber(name)) != 1 for name in optical.AU_OBJECT_NAMES):
-            raise RuntimeError("rotated-device Au electrode object is missing")
+        if not np.isclose(rotation, 0.0, rtol=0.0, atol=1.0e-12):
+            raise RuntimeError("global crystal-grid import object became rotated")
 
 
 def native_arrays(q: dict) -> dict[str, np.ndarray]:
@@ -356,8 +349,6 @@ def solve_coupled(
     thermal_max_iterations: int = 30000,
 ):
     state_options = dict(thermal_state_kwargs or {})
-    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
-        state_options.setdefault("au_contact_axis", "diagonal_45")
     state = build_state(rho, **state_options)
     mapped_q, mapping = map_native_q(native_arrays(forward["q"]), state)
     source_active = state.system.active_source(mapped_q)
