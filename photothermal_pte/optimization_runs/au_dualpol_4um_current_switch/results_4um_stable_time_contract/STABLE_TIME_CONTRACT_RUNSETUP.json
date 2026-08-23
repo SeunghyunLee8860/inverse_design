@@ -1,0 +1,161 @@
+{
+  "status": "AUDITED_STABLE_TIME_CONTRACT_NOT_SOLVED",
+  "validation_script_sha256": "9167e8ee75edeac7f90c3efecc80064c15715c473a3283480c76289adcab5e87",
+  "isolation_implementation_sha256": "aec61b48e2fa14dc2487545f33b3914bf7c07d7067c1ad594c3eb12b46edbb46",
+  "optical_model_sha256": "21f1c5c0f856c8e3cd2e08b456a9079eed7c33ecdd210943282ae00c6c32a1a7",
+  "fdtdx_update_sha256": "70a5f3fc95b9d78c255d4a82c2e084f7b538bf9e79f89ce95b25f13da2b216c5",
+  "device_contract_sha256": "3bd5d28db9cedea5bd12ac427dd6e118206ceb0c2ebffc45938e36cf8faa9c30",
+  "checkpoint": {
+    "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/robust_projection_ld_mma/evaluation_0112.npz",
+    "sha256": "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3",
+    "expected_sha256": "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3"
+  },
+  "mesh": {
+    "mode": "partial_material_z",
+    "factor": 8,
+    "grid_edges_sha256": "84bf1cc3927e7990461535b32d87b85d224f4a290faec8d375e954fefeb25cfd",
+    "grid_shape_xyz": [
+      186,
+      186,
+      110
+    ],
+    "yee_cell_count": 3805560,
+    "pml_cells_each_face_xyz": [
+      8,
+      8,
+      8
+    ],
+    "indices": {
+      "source_z_start": 99,
+      "target_z_start": 97,
+      "incident_z_start": 98,
+      "closed_z_start": 12,
+      "closed_z_cells": 85
+    },
+    "segments": {
+      "bottom_pml_si": {
+        "bounds_m": [
+          -3e-06,
+          -1.4e-06
+        ],
+        "cells": 8,
+        "uniform_dz_m": 2.0000000000000002e-07
+      },
+      "resolved_si": {
+        "bounds_m": [
+          -1.4e-06,
+          -3.85e-07
+        ],
+        "cells": 5,
+        "uniform_dz_m": 2.03e-07
+      },
+      "sio2": {
+        "bounds_m": [
+          -3.85e-07,
+          -1e-07
+        ],
+        "cells": 24,
+        "uniform_dz_m": 1.1875e-08
+      },
+      "tairte4": {
+        "bounds_m": [
+          -1e-07,
+          0.0
+        ],
+        "cells": 40,
+        "uniform_dz_m": 2.5e-09
+      },
+      "au": {
+        "bounds_m": [
+          0.0,
+          5e-08
+        ],
+        "cells": 16,
+        "uniform_dz_m": 3.125e-09
+      },
+      "near_air": {
+        "bounds_m": [
+          5e-08,
+          2.5e-07
+        ],
+        "cells": 4,
+        "uniform_dz_m": 5e-08
+      },
+      "middle_air": {
+        "bounds_m": [
+          2.5e-07,
+          7.5e-07
+        ],
+        "cells": 2,
+        "uniform_dz_m": 2.5000000000000004e-07
+      },
+      "source_air": {
+        "bounds_m": [
+          7.5e-07,
+          1.4e-06
+        ],
+        "cells": 3,
+        "uniform_dz_m": 2.1666666666666665e-07
+      },
+      "top_pml_air": {
+        "bounds_m": [
+          1.4e-06,
+          3e-06
+        ],
+        "cells": 8,
+        "uniform_dz_m": 2.0000000000000002e-07
+      }
+    }
+  },
+  "courant_factor": 0.25,
+  "polarization": "Eb",
+  "density_case": "eta_0.35",
+  "cases": [
+    {
+      "name": "au_only_32p",
+      "total_periods": 32,
+      "activation_Au_TaIrTe4": [
+        1.0,
+        0.0
+      ]
+    },
+    {
+      "name": "full_dispersion_32p",
+      "total_periods": 32,
+      "activation_Au_TaIrTe4": [
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "full_dispersion_40p",
+      "total_periods": 40,
+      "activation_Au_TaIrTe4": [
+        1.0,
+        1.0
+      ]
+    }
+  ],
+  "gates": {
+    "complex_E_spatial_NRMSE": 0.005,
+    "volume_integrated_E2_change_relative": 0.005,
+    "closed_td_vs_phasor_relative": 0.005,
+    "Q_vs_closed_phasor_relative": 0.02,
+    "full_32_vs_40_Q_change_relative": 0.005,
+    "material_fit_relative_error": 1e-05
+  },
+  "au_material_fraction": {
+    "law": "shared_linear_projected_density",
+    "exponent": 1.0,
+    "optical_fraction": "au_material_fraction(rho)",
+    "thermal_fraction": "au_material_fraction(rho)",
+    "electrical_fraction": "au_material_fraction(rho)",
+    "gray_density_is_physical_geometry": false,
+    "promotion_requires_exact_binary_density": true
+  },
+  "absorption_loss_basis": "realized_float32_discrete_ADE_susceptibility",
+  "scope": "time/material/absorption validation on a partial-material-z diagnostic grid; not a mesh certificate",
+  "promotion": {
+    "is_mesh_certificate": false
+  }
+}
