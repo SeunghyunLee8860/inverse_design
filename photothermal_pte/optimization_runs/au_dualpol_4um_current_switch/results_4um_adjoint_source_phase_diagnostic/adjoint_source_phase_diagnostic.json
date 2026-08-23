@@ -9,10 +9,10 @@
         0.9998857706874971,
         -0.015114416186874735
       ],
-      "field_AD_A": 2.1248029403438156e-07,
-      "field_FD_A": 2.083888526645781e-07,
-      "relative_error": 0.019633686339206577,
-      "adjoint_execution_seconds": 4.993344061076641
+      "field_AD_A": 1.0259779070963399e-08,
+      "field_FD_A": 1.0207073542177273e-08,
+      "relative_error": 0.00516362780853282,
+      "adjoint_execution_seconds": 38.223507694900036
     },
     {
       "phase_exponent_k_in_exp_i_k_omega_dt": -0.5,
@@ -20,10 +20,10 @@
         0.9999714422641022,
         -0.0075574239163536385
       ],
-      "field_AD_A": 2.1148245257862492e-07,
-      "field_FD_A": 2.083888526645781e-07,
-      "relative_error": 0.014845323415769595,
-      "adjoint_execution_seconds": 4.981834881007671
+      "field_AD_A": 1.0247718242683128e-08,
+      "field_FD_A": 1.0207073542177273e-08,
+      "relative_error": 0.003982013094929182,
+      "adjoint_execution_seconds": 29.72280189022422
     },
     {
       "phase_exponent_k_in_exp_i_k_omega_dt": 0.0,
@@ -31,10 +31,10 @@
         1.0,
         0.0
       ],
-      "field_AD_A": 2.104725220802929e-07,
-      "field_FD_A": 2.083888526645781e-07,
-      "relative_error": 0.009998948547735715,
-      "adjoint_execution_seconds": 5.1429218128323555
+      "field_AD_A": 1.0235073740699782e-08,
+      "field_FD_A": 1.0207073542177273e-08,
+      "relative_error": 0.0027432151249628246,
+      "adjoint_execution_seconds": 53.01780300959945
     },
     {
       "phase_exponent_k_in_exp_i_k_omega_dt": 0.5,
@@ -42,10 +42,10 @@
         0.9999714422641022,
         0.0075574239163536385
       ],
-      "field_AD_A": 2.0945053299101599e-07,
-      "field_FD_A": 2.083888526645781e-07,
-      "relative_error": 0.00509470786398907,
-      "adjoint_execution_seconds": 5.042416024953127
+      "field_AD_A": 1.0221841672532854e-08,
+      "field_FD_A": 1.0207073542177273e-08,
+      "relative_error": 0.0014468525473590778,
+      "adjoint_execution_seconds": 37.72440756857395
     },
     {
       "phase_exponent_k_in_exp_i_k_omega_dt": 1.0,
@@ -53,22 +53,35 @@
         0.9998857706874971,
         0.015114416186874735
       ],
-      "field_AD_A": 2.0841661252470525e-07,
-      "field_FD_A": 2.083888526645781e-07,
-      "relative_error": 0.00013321182861847654,
-      "adjoint_execution_seconds": 5.045936934649944
+      "field_AD_A": 1.0208029526321276e-08,
+      "field_FD_A": 1.0207073542177273e-08,
+      "relative_error": 9.365898462994335e-05,
+      "adjoint_execution_seconds": 30.41168062761426
     }
   ],
+  "au_material_fraction": {
+    "law": "shared_linear_projected_density",
+    "exponent": 1.0,
+    "optical_fraction": "au_material_fraction(rho)",
+    "thermal_fraction": "au_material_fraction(rho)",
+    "electrical_fraction": "au_material_fraction(rho)",
+    "gray_density_is_physical_geometry": false,
+    "promotion_requires_exact_binary_density": true
+  },
+  "source_calibration_sha256": "6f419ca0cc95a683523f2c4215c99bf2676f5bb97d01f7a5123161a2e780a6c7",
+  "material_contract_sha256": "6f698049dbbaa7f770d4595e9ac75ddca66422880dc60fbeac832db631e7747d",
+  "reference_sha256": "fcefc1f8809ff245141a48b58dfce8e33bd26f0b83a9664b15367a34f4a12d2a",
+  "optical_grid_edges_sha256": "c6a12b95e656a88d6d9fcf448e30539f7befaa0a894dc6d44f5de42929949e1c",
   "best_candidate": {
     "phase_exponent_k_in_exp_i_k_omega_dt": 1.0,
     "phase_factor": [
       0.9998857706874971,
       0.015114416186874735
     ],
-    "field_AD_A": 2.0841661252470525e-07,
-    "field_FD_A": 2.083888526645781e-07,
-    "relative_error": 0.00013321182861847654,
-    "adjoint_execution_seconds": 5.045936934649944
+    "field_AD_A": 1.0208029526321276e-08,
+    "field_FD_A": 1.0207073542177273e-08,
+    "relative_error": 9.365898462994335e-05,
+    "adjoint_execution_seconds": 30.41168062761426
   },
   "no_empirical_amplitude_rescaling": true
 }
