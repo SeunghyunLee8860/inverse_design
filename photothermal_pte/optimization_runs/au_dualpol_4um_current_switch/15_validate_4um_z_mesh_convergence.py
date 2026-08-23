@@ -46,10 +46,12 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysi
     map_native_q_to_thermal,
     tairte4_temperature,
 )
-from photothermal_pte.optimization_runs.legacy_v261_optical_support.production_density_mapping import (
-    ProductionDensityMapping,
-)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.paths import raw_path
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.historical_checkpoint import (
+    CHECKPOINT,
+    EXPECTED_CHECKPOINT_SHA256,
+    load_densities,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.mesh_variants import (
     PARTIAL_MATERIAL_Z,
     mesh_context as variant_mesh_context,
@@ -61,10 +63,6 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.mesh_varia
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "results_4um_dualpol_au_z_mesh_convergence"
 RAW = raw_path("z_mesh_convergence")
-CHECKPOINT = raw_path("robust_projection_ld_mma", "evaluation_0112.npz")
-EXPECTED_CHECKPOINT_SHA256 = (
-    "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3"
-)
 TOTAL_PERIODS = 24
 WINDOW_PERIODS = 4
 LEVELS = (1, 2, 4, 8)
@@ -318,41 +316,6 @@ class ForwardRunner:
         )
         closure = abs(p_total - p_six) / max(abs(p_six), np.finfo(float).tiny)
         return output, q, p_components, p_total, p_six, closure, runtime
-
-
-def load_densities() -> dict[str, np.ndarray]:
-    actual_sha256 = sha256(CHECKPOINT)
-    if actual_sha256 != EXPECTED_CHECKPOINT_SHA256:
-        raise RuntimeError(
-            "z-mesh checkpoint provenance failure: expected SHA-256 "
-            f"{EXPECTED_CHECKPOINT_SHA256}, got {actual_sha256}"
-        )
-    with np.load(CHECKPOINT, allow_pickle=False) as checkpoint:
-        latent = np.asarray(checkpoint["latent"], dtype=np.float64)
-        nominal = np.asarray(checkpoint["rho_nominal"], dtype=np.float64)
-    if latent.shape != CONTRACT.design_shape or nominal.shape != CONTRACT.design_shape:
-        raise RuntimeError(
-            "z-mesh checkpoint density shape failure: "
-            f"latent={latent.shape}, nominal={nominal.shape}"
-        )
-    if not np.all(np.isfinite(latent)) or not np.all(np.isfinite(nominal)):
-        raise RuntimeError("z-mesh checkpoint contains non-finite density values")
-    if np.any((latent < 0.0) | (latent > 1.0)) or np.any(
-        (nominal < 0.0) | (nominal > 1.0)
-    ):
-        raise RuntimeError("z-mesh checkpoint density is outside [0, 1]")
-    densities = {"eta_0.50_nominal": nominal}
-    for eta in (0.35, 0.65):
-        mapping = ProductionDensityMapping(
-            shape=CONTRACT.design_shape,
-            spacing_m=CONTRACT.design_pitch_m,
-            radius_m=CONTRACT.filter_radius_m,
-            eta=eta,
-        )
-        densities[f"eta_{eta:.2f}"] = np.asarray(
-            mapping.physical(latent, 256.0), dtype=np.float64
-        )
-    return densities
 
 
 def thermal_volume(state) -> np.ndarray:

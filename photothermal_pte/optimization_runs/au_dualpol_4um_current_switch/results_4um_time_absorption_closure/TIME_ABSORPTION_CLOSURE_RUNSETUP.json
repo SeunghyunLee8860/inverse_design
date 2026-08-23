@@ -1,0 +1,143 @@
+{
+  "status": "AUDITED_TIME_ABSORPTION_CLOSURE_RUNSETUP_NOT_SOLVED",
+  "scope": "historical worst-closure partial-z geometry reinterpreted with shared-linear Au",
+  "mesh": {
+    "mode": "partial_material_z",
+    "factor": 8,
+    "grid_edges_sha256": "84bf1cc3927e7990461535b32d87b85d224f4a290faec8d375e954fefeb25cfd",
+    "grid_shape_xyz": [
+      186,
+      186,
+      110
+    ],
+    "yee_cell_count": 3805560,
+    "pml_cells_each_face_xyz": [
+      8,
+      8,
+      8
+    ],
+    "indices": {
+      "source_z_start": 99,
+      "target_z_start": 97,
+      "incident_z_start": 98,
+      "closed_z_start": 12,
+      "closed_z_cells": 85
+    },
+    "segments": {
+      "bottom_pml_si": {
+        "bounds_m": [
+          -3e-06,
+          -1.4e-06
+        ],
+        "cells": 8,
+        "uniform_dz_m": 2.0000000000000002e-07
+      },
+      "resolved_si": {
+        "bounds_m": [
+          -1.4e-06,
+          -3.85e-07
+        ],
+        "cells": 5,
+        "uniform_dz_m": 2.03e-07
+      },
+      "sio2": {
+        "bounds_m": [
+          -3.85e-07,
+          -1e-07
+        ],
+        "cells": 24,
+        "uniform_dz_m": 1.1875e-08
+      },
+      "tairte4": {
+        "bounds_m": [
+          -1e-07,
+          0.0
+        ],
+        "cells": 40,
+        "uniform_dz_m": 2.5e-09
+      },
+      "au": {
+        "bounds_m": [
+          0.0,
+          5e-08
+        ],
+        "cells": 16,
+        "uniform_dz_m": 3.125e-09
+      },
+      "near_air": {
+        "bounds_m": [
+          5e-08,
+          2.5e-07
+        ],
+        "cells": 4,
+        "uniform_dz_m": 5e-08
+      },
+      "middle_air": {
+        "bounds_m": [
+          2.5e-07,
+          7.5e-07
+        ],
+        "cells": 2,
+        "uniform_dz_m": 2.5000000000000004e-07
+      },
+      "source_air": {
+        "bounds_m": [
+          7.5e-07,
+          1.4e-06
+        ],
+        "cells": 3,
+        "uniform_dz_m": 2.1666666666666665e-07
+      },
+      "top_pml_air": {
+        "bounds_m": [
+          1.4e-06,
+          3e-06
+        ],
+        "cells": 8,
+        "uniform_dz_m": 2.0000000000000002e-07
+      }
+    }
+  },
+  "polarization": "Eb",
+  "density_case": "eta_0.35",
+  "density_min_max_mean": [
+    0.0,
+    1.0,
+    0.7786365059879802
+  ],
+  "checkpoint": {
+    "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/robust_projection_ld_mma/evaluation_0112.npz",
+    "sha256": "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3",
+    "expected_sha256": "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3"
+  },
+  "time_cases": [
+    [
+      24,
+      4
+    ],
+    [
+      32,
+      4
+    ],
+    [
+      40,
+      4
+    ],
+    [
+      40,
+      8
+    ]
+  ],
+  "gate_relative": 0.005,
+  "au_material_fraction": {
+    "law": "shared_linear_projected_density",
+    "exponent": 1.0,
+    "optical_fraction": "au_material_fraction(rho)",
+    "thermal_fraction": "au_material_fraction(rho)",
+    "electrical_fraction": "au_material_fraction(rho)",
+    "gray_density_is_physical_geometry": false,
+    "promotion_requires_exact_binary_density": true
+  },
+  "incident_normalization": "not required for scale-invariant Q/closed-flux and window comparisons; no downstream current is evaluated",
+  "raw_arrays_written": false
+}
