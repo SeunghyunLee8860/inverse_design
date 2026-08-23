@@ -481,8 +481,13 @@ def make_optimizer(evaluator: DualPolarizationEvaluator) -> nlopt.opt:
     optimizer.set_initial_step(
         np.concatenate((np.full(variable_count - 1, 0.05), [0.1]))
     )
-    optimizer.set_ftol_rel(2.0e-4)
-    optimizer.set_xtol_rel(2.0e-4)
+    # Relative-x stopping is ill-scaled for 6400 densities plus one epigraph
+    # scalar: early iterations can move only t and look stationary in the
+    # aggregate x norm.  Each continuation stage therefore uses its audited
+    # full-physics evaluation budget; beta promotion, not an accidental xtol,
+    # controls termination.
+    optimizer.set_ftol_rel(0.0)
+    optimizer.set_xtol_rel(0.0)
     optimizer.set_maxeval(STAGE_MAXEVAL[evaluator.beta])
     return optimizer
 
@@ -653,6 +658,13 @@ def main() -> int:
             history,
             manifest,
         )
+        # Put the epigraph variable on a feasible active scale before LD_MMA.
+        # Otherwise the first cheap t-only steps can trigger a false relative-x
+        # stop before any density update is proposed.
+        entry_point = evaluator._evaluate(latent)
+        vector[-1] = 0.98 * min(
+            entry_point.current_a_A, -entry_point.current_b_A
+        ) / CURRENT_SCALE_A
         optimizer = make_optimizer(evaluator)
         write_json(
             OUT / "RUN_STATE.json",
@@ -674,6 +686,7 @@ def main() -> int:
             "entry_dfm_values": entry_values.tolist(),
             "dfm_caps": caps.tolist(),
             "nlopt_result": int(optimizer.last_optimize_result()),
+            "nlopt_function_evaluations": int(optimizer.get_numevals()),
             "nlopt_max_objective": float(optimizer.last_optimum_value()),
             "stage_runtime_s": time.perf_counter() - start,
             "evaluations_total": len(history),
