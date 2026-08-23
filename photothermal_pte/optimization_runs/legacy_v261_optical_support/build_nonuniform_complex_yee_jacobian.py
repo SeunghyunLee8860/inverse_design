@@ -343,15 +343,11 @@ def build_tairte4_local_epsilon_operator(
         coordinates = component_coordinates(baseline, component)
         sample_x = coordinates[0][ix]
         sample_y = coordinates[1][iy]
-        if (
-            tairte4_flake_optical.CONTRACT.geometry_mode
-            == "diagonal_45_contact_anchored"
-        ):
-            sample_u, sample_v = tairte4_flake_optical.CONTRACT.rotated_uv(
+        sample_u, sample_v = (
+            tairte4_flake_optical.CONTRACT.optical_density_coordinates(
                 sample_x, sample_y
             )
-        else:
-            sample_u, sample_v = sample_x, sample_y
+        )
         distance, nearest = tree.query(
             np.column_stack((sample_u, sample_v)), k=1
         )
@@ -498,6 +494,7 @@ def build_tairte4_local_epsilon_operator(
     )
     return operator, {
         "method": "current-density layout-only colored centered FD of v261 importnk2-to-index_detail",
+        "optical_geometry_contract": tairte4_flake_optical.CONTRACT.optical_geometry_contract,
         "step": float(step),
         "color_period": int(color_period),
         "layout_index_detail_evaluations": int(evaluation_count + 1),

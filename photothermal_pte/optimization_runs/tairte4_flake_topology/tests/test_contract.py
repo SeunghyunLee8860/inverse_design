@@ -71,3 +71,16 @@ def test_diagonal_flake_keeps_crystal_axes_and_original_side_length() -> None:
     y = (u + v) / np.sqrt(2.0)
     assert np.isclose(np.max(np.abs(x)), 12.0e-6 * np.sqrt(2.0))
     assert np.isclose(np.max(np.abs(y)), 12.0e-6 * np.sqrt(2.0))
+
+
+def test_optical_density_coordinates_match_imported_array_indices() -> None:
+    x = np.asarray([-7.3e-6, 0.0, 4.9e-6])
+    y = np.asarray([2.1e-6, -6.4e-6, 11.2e-6])
+    density_x, density_y = CONTRACT.optical_density_coordinates(x, y)
+    assert np.array_equal(density_x, x)
+    assert np.array_equal(density_y, y)
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        rotated_u, rotated_v = CONTRACT.rotated_uv(x, y)
+        assert not np.allclose(density_x, rotated_u, rtol=0.0, atol=1.0e-15)
+        assert not np.allclose(density_y, rotated_v, rtol=0.0, atol=1.0e-15)
+        assert CONTRACT.optical_geometry_contract == "run58_axis_aligned_uv_proxy_no_Au"

@@ -68,6 +68,30 @@ class TaIrTe4FlakeContract:
 
         return (x_m + y_m) / sqrt(2.0), (-x_m + y_m) / sqrt(2.0)
 
+    def optical_density_coordinates(
+        self, x_m: np.ndarray, y_m: np.ndarray
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """Map Yee samples to density-array coordinates for the optical model.
+
+        The diagonal device uses the stable Run58 optical approximation: its
+        local ``(u, v)`` density array is imported on the numerically identical
+        axis-aligned ``(x, y)`` grid.  The physical rotation is applied only by
+        the thermal and electrical solvers, so rotating optical Yee samples a
+        second time would assign them to the wrong density columns.
+        """
+
+        x = np.asarray(x_m, dtype=np.float64)
+        y = np.asarray(y_m, dtype=np.float64)
+        if x.shape != y.shape:
+            raise ValueError("optical density coordinates must have matching shapes")
+        return x, y
+
+    @property
+    def optical_geometry_contract(self) -> str:
+        if self.geometry_mode == "diagonal_45_contact_anchored":
+            return "run58_axis_aligned_uv_proxy_no_Au"
+        return "physical_xy"
+
     def flake_support_mask(self, x_m: np.ndarray, y_m: np.ndarray) -> np.ndarray:
         x = np.asarray(x_m, dtype=np.float64)
         y = np.asarray(y_m, dtype=np.float64)
