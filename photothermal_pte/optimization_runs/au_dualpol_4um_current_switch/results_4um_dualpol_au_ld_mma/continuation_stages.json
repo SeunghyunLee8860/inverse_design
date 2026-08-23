@@ -136,5 +136,40 @@
         "feasible": true
       }
     ]
+  },
+  {
+    "stage_index": 6,
+    "beta": 24.0,
+    "entry_dfm_values": [
+      0.6310262167417943,
+      0.025174713660222208
+    ],
+    "dfm_caps": [
+      0.5805441194024508,
+      0.023160736567404434
+    ],
+    "nlopt_result": 5,
+    "nlopt_function_evaluations": 14,
+    "nlopt_max_objective": 5.390291269863132,
+    "stage_runtime_s": 478.3645252995193,
+    "evaluations_total": 114,
+    "stage_feasible": true,
+    "attempts": [
+      {
+        "attempt": 1,
+        "nlopt_result": 5,
+        "nlopt_function_evaluations": 14,
+        "nlopt_max_objective": 5.390291269863132,
+        "constraint_values": [
+          -0.0288879059348659,
+          -0.013370874390183474,
+          -0.025101283387027773,
+          -0.0003169891217504883
+        ],
+        "I_a_A": 5.4191791757979985e-09,
+        "I_b_A": -5.403662144253316e-09,
+        "feasible": true
+      }
+    ]
   }
 ]
