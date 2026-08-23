@@ -49,6 +49,11 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.dfm import
     physical_disk_footprint,
     smooth_500nm_constraints,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import (
+    N_DESIGN,
+    N_TA,
+    current_integrand,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -537,38 +542,75 @@ def make_optimizer(
 
 
 def repaired_binary_candidates(rho: np.ndarray) -> list[tuple[str, np.ndarray]]:
-    footprint = physical_disk_footprint(
-        0.5 * CONTRACT.minimum_solid_feature_m, CONTRACT.design_pitch_m
+    """Return nearby exact-DFM binary projections in deterministic rank order.
+
+    Alternating one opening and one closing at a fixed 0.5 threshold can enter
+    a two-cycle: repairing a narrow void may create a narrow solid and vice
+    versa.  Promotion must not depend on that arbitrary threshold.  We instead
+    enumerate a small deterministic family of level sets and physical
+    morphology sequences, retain only candidates that independently pass both
+    exact openings, remove duplicates, and rank by L1 distance to the actual
+    continuous physical density.  This is geometry cleanup, not an optimizer
+    update or a global source rescaling.
+    """
+
+    rho_array = np.asarray(rho, dtype=np.float64)
+    candidates: list[tuple[float, float, str, np.ndarray]] = []
+    thresholds = np.linspace(0.05, 0.95, 19)
+    repair_radii_m = (250.0e-9, 350.0e-9, 450.0e-9)
+    sequences = (
+        ("open_close_open", ("open", "close", "open")),
+        ("close_open", ("close", "open")),
+        ("close_open_close", ("close", "open", "close")),
     )
-    seed = np.asarray(rho) >= 0.5
-    candidates: list[tuple[str, np.ndarray]] = []
-    for name, first_phase in (("remove_then_fill", "solid"), ("fill_then_remove", "void")):
-        binary = seed.copy()
-        order = ("solid", "void") if first_phase == "solid" else ("void", "solid")
-        for _ in range(32):
-            before = binary.copy()
-            for phase in order:
-                if phase == "solid":
-                    binary = ndimage.binary_opening(
-                        binary, structure=footprint, border_value=0
-                    )
-                else:
-                    binary = ~ndimage.binary_opening(
-                        ~binary, structure=footprint, border_value=1
-                    )
-            audit = exact_500nm_audit(binary.astype(float))
-            if audit["solid_pass"] and audit["void_pass"]:
+    for threshold in thresholds:
+        seed = rho_array >= float(threshold)
+        for radius_m in repair_radii_m:
+            footprint = physical_disk_footprint(
+                radius_m, CONTRACT.design_pitch_m
+            )
+            for sequence_name, sequence in sequences:
+                binary = seed.copy()
+                for operation in sequence:
+                    if operation == "open":
+                        binary = ndimage.binary_opening(
+                            binary, structure=footprint, border_value=0
+                        )
+                    else:
+                        binary = ~ndimage.binary_opening(
+                            ~binary, structure=footprint, border_value=1
+                        )
+                audit = exact_500nm_audit(binary.astype(float))
+                if not (audit["solid_pass"] and audit["void_pass"]):
+                    continue
+                score = float(np.mean(np.abs(binary.astype(float) - rho_array)))
+                name = (
+                    f"threshold_{threshold:.2f}_radius_{radius_m*1e9:.0f}nm_"
+                    f"{sequence_name}"
+                )
+                candidates.append(
+                    (score, float(threshold), name, binary.astype(np.float64))
+                )
+    unique: list[tuple[float, float, str, np.ndarray]] = []
+    for candidate in sorted(candidates, key=lambda item: (item[0], item[2])):
+        if not any(np.array_equal(candidate[3], item[3]) for item in unique):
+            unique.append(candidate)
+    # Three nearest geometries plus representative threshold-0.25, 0.50 and
+    # 0.80 level sets separate morphology choice from Maxwell/PTE performance.
+    # This avoids both a one-threshold promotion and a costly exhaustive sweep.
+    selected = unique[:3]
+    for target in (0.25, 0.50, 0.80):
+        ranked = sorted(
+            unique,
+            key=lambda item: (abs(item[1] - target), item[0], item[2]),
+        )
+        for candidate in ranked:
+            if not any(
+                np.array_equal(candidate[3], item[3]) for item in selected
+            ):
+                selected.append(candidate)
                 break
-            if np.array_equal(binary, before):
-                break
-        audit = exact_500nm_audit(binary.astype(float))
-        if audit["solid_pass"] and audit["void_pass"]:
-            candidates.append((name, binary.astype(np.float64)))
-    unique: list[tuple[str, np.ndarray]] = []
-    for name, binary in candidates:
-        if not any(np.array_equal(binary, item) for _, item in unique):
-            unique.append((name, binary))
-    return unique
+    return [(name, binary) for _, _, name, binary in selected]
 
 
 def evaluate_binary_candidate(
@@ -609,6 +651,30 @@ def evaluate_binary_candidate(
         }
         if not all(gates.values()):
             raise RuntimeError(f"fail-closed final binary {name} {pol}: {gates}")
+        raw_case = RAW / f"final_binary_{name}_{pol}_fields.npz"
+        weighting = np.asarray(result["weighting"], dtype=np.float64)
+        np.savez_compressed(
+            raw_case,
+            physical_density=np.asarray(rho, dtype=np.float64),
+            q_au_W_m3=np.asarray(result["q_fields_W_m3"]["au"]),
+            q_tairte4_W_m3=np.asarray(result["q_fields_W_m3"]["tairte4"]),
+            dual_volume_au_m3=np.asarray(runners[pol].volumes["au"]),
+            dual_volume_tairte4_m3=np.asarray(
+                runners[pol].volumes["tairte4"]
+            ),
+            ta_temperature_K=np.asarray(result["ta_temperature"]),
+            weighting_tairte4=weighting[: N_TA * N_TA].reshape(N_TA, N_TA),
+            weighting_au=weighting[N_TA * N_TA :].reshape(N_DESIGN, N_DESIGN),
+            current_integrand_A_m2=current_integrand(
+                np.asarray(result["ta_temperature"]), weighting
+            ),
+        )
+        cases[pol]["raw_fields"] = {
+            "path": str(raw_case.resolve()),
+            "bytes": int(raw_case.stat().st_size),
+            "sha256": sha256(raw_case),
+            "committed_to_git": False,
+        }
         del result
         gc.collect()
     ia = float(cases["Ea"]["current_A"])
