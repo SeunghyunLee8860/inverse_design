@@ -1,0 +1,56 @@
+{
+  "status": "VALIDATED_FINITE_T_Z_AU_ON_OFF_EA_EB_VOLUMETRIC_Q",
+  "classification": "finite nonperiodic v261 Gaussian Maxwell/Q checkpoint; raw source power; no thermal/electrical/PTE/adjoint/optimization",
+  "axes": {
+    "x": "b",
+    "y": "a",
+    "z": "c=b optical closure"
+  },
+  "cases": {
+    "T_Ea_Au_on": "VALIDATED_FINITE_T_Ea_Au_on_VOLUMETRIC_Q",
+    "T_Eb_Au_on": "VALIDATED_FINITE_T_Eb_Au_on_VOLUMETRIC_Q",
+    "T_Ea_Au_off": "VALIDATED_FINITE_T_Ea_Au_off_VOLUMETRIC_Q",
+    "T_Eb_Au_off": "VALIDATED_FINITE_T_Eb_Au_off_VOLUMETRIC_Q",
+    "Z_Ea_Au_on": "VALIDATED_FINITE_Z_Ea_Au_on_VOLUMETRIC_Q",
+    "Z_Eb_Au_on": "VALIDATED_FINITE_Z_Eb_Au_on_VOLUMETRIC_Q",
+    "Z_Ea_Au_off": "VALIDATED_FINITE_Z_Ea_Au_off_VOLUMETRIC_Q",
+    "Z_Eb_Au_off": "VALIDATED_FINITE_Z_Eb_Au_off_VOLUMETRIC_Q"
+  },
+  "Au_effect_total_absorption": {
+    "T_Ea": {
+      "P_Q_Au_on_W": 5.985804902678869e-15,
+      "P_Q_Au_off_W": 6.006510452361166e-15,
+      "signed_Au_on_minus_off_W": -2.070554968229683e-17,
+      "signed_Au_effect_relative_to_off": -0.0034471844919802736
+    },
+    "T_Eb": {
+      "P_Q_Au_on_W": 5.935972535601287e-15,
+      "P_Q_Au_off_W": 5.8936506636771044e-15,
+      "signed_Au_on_minus_off_W": 4.2321871924182345e-17,
+      "signed_Au_effect_relative_to_off": 0.00718092644767943
+    },
+    "Z_Ea": {
+      "P_Q_Au_on_W": 6.5535114468603936e-15,
+      "P_Q_Au_off_W": 7.849117267563582e-15,
+      "signed_Au_on_minus_off_W": -1.295605820703188e-15,
+      "signed_Au_effect_relative_to_off": -0.16506388891108423
+    },
+    "Z_Eb": {
+      "P_Q_Au_on_W": 2.016608243488617e-14,
+      "P_Q_Au_off_W": 2.3759495414816436e-14,
+      "signed_Au_on_minus_off_W": -3.593412979930266e-15,
+      "signed_Au_effect_relative_to_off": -0.1512411319008657
+    }
+  },
+  "maximum_six_face_closure_relative": 0.00022146714739908817,
+  "maximum_auto_shutoff": 9.87128e-07,
+  "failed_diagnostic_preserved": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Ea_Au_on",
+  "Q_processing": {
+    "clipping": false,
+    "smoothing": false,
+    "gain": false,
+    "global_rescaling": false,
+    "tiling": false
+  },
+  "next_gate": "component-native material-loss-participation/cut-cell mapping to the same explicit finite 3-D thermal operator"
+}
