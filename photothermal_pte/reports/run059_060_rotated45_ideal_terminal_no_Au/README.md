@@ -1,5 +1,14 @@
 # Run059/060: rotated 45-degree ideal-terminal optimization without Au
 
+> **Deprecated geometry (v5):** these results allowed the optimizer to remove
+> TaIrTe4 beneath the ideal terminal regions. They therefore do not implement
+> the intended Run58-style contact-lock contract and must not be used as the
+> final Run059/060 result. The corrected v6 calculation fixes both 2 um-wide
+> terminal-overlap strips to solid TaIrTe4 and redesigns only the central
+> 20 x 24 um region. See the corrected
+> [`run059_060_rotated45_fixed_TaIrTe4_contact_no_Au`](../run059_060_rotated45_fixed_TaIrTe4_contact_no_Au)
+> report.
+
 ## Model contract
 
 - Device and electrical terminal direction: +45 degrees.

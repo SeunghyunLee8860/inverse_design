@@ -76,7 +76,7 @@ def main() -> int:
     axis.text(
         0.0,
         -19.2,
-        "Ideal equipotential terminals in weighting solve only (2 um strips)",
+        "2 um TaIrTe4 fixed-solid strips; ideal electrodes in electrical solves only",
         ha="center",
         fontsize=10,
     )

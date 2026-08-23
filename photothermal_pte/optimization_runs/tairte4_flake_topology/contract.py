@@ -115,9 +115,22 @@ class TaIrTe4FlakeContract:
 
     @property
     def fixed_design_contact_masks(self) -> tuple[np.ndarray, np.ndarray]:
-        """Return no fixed-solid regions for ideal electrical-only terminals."""
+        """Return TaIrTe4 strips held solid beneath the ideal terminals."""
 
         shape = self.design_node_shape
+        if self.geometry_mode == "diagonal_45_contact_anchored":
+            u = np.linspace(*self.design_bounds_m["x"], shape[0])[:, None]
+            edge = 0.5 * self.flake_span_m
+            tolerance = 1.0e-18
+            low = np.broadcast_to(
+                u <= -edge + self.fixed_contact_depth_m + tolerance, shape
+            ).copy()
+            high = np.broadcast_to(
+                u >= edge - self.fixed_contact_depth_m - tolerance, shape
+            ).copy()
+            if not np.any(low) or not np.any(high) or np.any(low & high):
+                raise RuntimeError("invalid or empty diagonal fixed-contact masks")
+            return low, high
         empty = np.zeros(shape, dtype=bool)
         return empty.copy(), empty.copy()
 

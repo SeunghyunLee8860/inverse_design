@@ -14,7 +14,7 @@ REPOSITORY = HERE.parents[2]
 ARTIFACT_ROOT = Path(
     "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored"
 )
-RAW = ARTIFACT_ROOT / "run060_rotated_ideal_terminal_no_Au_Eb_evaporated_v5"
+RAW = ARTIFACT_ROOT / "run060_rotated_fixed_TaIrTe4_contact_no_Au_Eb_evaporated_v6"
 BASE_ROOT = Path(
     "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored"
 )
@@ -54,7 +54,7 @@ def main() -> int:
         "--raw-root",
         str(RAW),
         "--published-dir",
-        str(HERE / "results_v5_no_Au"),
+        str(HERE / "results_v6_fixed_TaIrTe4_contact_no_Au"),
         "--base-fsp",
         str(BASE_FSP),
         "--base-sha256",

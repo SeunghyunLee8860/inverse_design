@@ -57,7 +57,7 @@ def test_bottom_contact_endpoints_and_axis_mapping():
     zero_design_kappa = zero.kappa_W_mK[zero.masks["design_effective"]]
     assert np.any(np.isclose(zero_design_kappa[:, 0], K_AIR_W_MK))
     if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
-        assert not np.any(
+        assert np.any(
             np.isclose(zero_design_kappa[:, 0], K_TAIRTE4_XYZ_W_MK[0])
         )
     one_design_kappa = one.kappa_W_mK[one.masks["design_effective"]]

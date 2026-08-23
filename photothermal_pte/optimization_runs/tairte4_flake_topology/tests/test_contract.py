@@ -19,7 +19,11 @@ def test_contract_is_enclosed_and_resolves_feature() -> None:
         assert CONTRACT.contact_axis == "diagonal_45"
         low, high = CONTRACT.fixed_design_contact_masks
         outside = CONTRACT.fixed_design_void_mask
-        assert not np.any(low) and not np.any(high)
+        assert np.count_nonzero(low) == 21 * 241
+        assert np.count_nonzero(high) == 21 * 241
+        assert np.all(low[:21, :]) and not np.any(low[21:, :])
+        assert np.all(high[-21:, :]) and not np.any(high[:-21, :])
+        assert not np.any(low & high)
         assert not np.any(outside)
     else:
         assert np.isclose(CONTRACT.fixed_frame_width_m, 4.0e-6)
@@ -34,9 +38,12 @@ def test_diagonal_contact_density_lock_is_exact() -> None:
         return
     value = np.zeros(CONTRACT.design_node_shape)
     locked = CONTRACT.apply_fixed_contact_density(value)
-    assert np.all(locked == 0.0)
+    fixed = CONTRACT.fixed_design_solid_mask
+    assert np.all(locked[fixed] == 1.0)
+    assert np.all(locked[~fixed] == 0.0)
     gradient = CONTRACT.zero_fixed_contact_gradient(np.ones_like(value))
-    assert np.all(gradient == 1.0)
+    assert np.all(gradient[fixed] == 0.0)
+    assert np.all(gradient[~fixed] == 1.0)
 
 
 def test_diagonal_density_maps_to_global_crystal_grid_without_expanding_flake() -> None:
