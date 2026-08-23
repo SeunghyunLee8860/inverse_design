@@ -1,15 +1,15 @@
 {
   "stage": "optimizing",
-  "stage_index": 1,
-  "beta": 2.0,
+  "stage_index": 2,
+  "beta": 4.0,
   "stage_entry_dfm_values": [
-    0.33891806805177405,
-    0.0050047506331679275
+    0.38595909154891456,
+    0.006044801676596305
   ],
   "stage_dfm_caps": [
-    0.3219721646491853,
-    0.005
+    0.3473631823940231,
+    0.005440321508936675
   ],
-  "evaluations_completed": 25,
+  "evaluations_completed": 41,
   "gpu": "0"
 }

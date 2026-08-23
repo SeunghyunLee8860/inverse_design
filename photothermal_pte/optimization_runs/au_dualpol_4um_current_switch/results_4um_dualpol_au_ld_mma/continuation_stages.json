@@ -32,5 +32,22 @@
     "nlopt_max_objective": 2.51736719680648,
     "stage_runtime_s": 521.2219382710755,
     "evaluations_total": 40
+  },
+  {
+    "stage_index": 2,
+    "beta": 4.0,
+    "entry_dfm_values": [
+      0.38595909154891456,
+      0.006044801676596305
+    ],
+    "dfm_caps": [
+      0.3473631823940231,
+      0.005440321508936675
+    ],
+    "nlopt_result": 5,
+    "nlopt_function_evaluations": 14,
+    "nlopt_max_objective": 2.012348909872696,
+    "stage_runtime_s": 449.9328248873353,
+    "evaluations_total": 54
   }
 ]
