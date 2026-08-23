@@ -79,9 +79,13 @@
       2.0,
       4.0,
       8.0,
+      12.0,
       16.0,
+      24.0,
       32.0,
+      48.0,
       64.0,
+      96.0,
       128.0
     ],
     "stage_maxeval": {
@@ -93,6 +97,17 @@
       "32.0": 8,
       "64.0": 8,
       "128.0": 6
+    },
+    "resume": {
+      "checkpoint_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/stage_03_beta_8.npz",
+      "checkpoint_sha256": "74b8920b919e3bc0e92009d761f86a3a64450f62d6b3f3f55194f32db4296079",
+      "resume_evaluation": 66,
+      "completed_betas": [
+        1.0,
+        2.0,
+        4.0,
+        8.0
+      ]
     }
   },
   "evaluations": {
@@ -428,8 +443,88 @@
     },
     "0067": {
       "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0067.npz",
-      "bytes": 343494,
-      "sha256": "6a8148f7a6125dc9ff01af6be7bcfb29b754cd04186a8d72e27db0f23c544395"
+      "bytes": 344109,
+      "sha256": "8a0d1656fd2c544b9af1c261f58022d06179d8b7d1ddd2c40c194be82a4f82aa"
+    },
+    "0068": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0068.npz",
+      "bytes": 344835,
+      "sha256": "62dbee7595372c1b4e103d791e21d0efeb194b7490ce9eed6c1c65bb0cc8d1b3"
+    },
+    "0069": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0069.npz",
+      "bytes": 344781,
+      "sha256": "c1a621284ddfd5dff398d3faa13333b51b21f4549190c84c95a37edddb0d8203"
+    },
+    "0070": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0070.npz",
+      "bytes": 344873,
+      "sha256": "bf5529c892fabd484da6049cd09b4ca755ea279f5decd31aac5e5d089f441abd"
+    },
+    "0071": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0071.npz",
+      "bytes": 344418,
+      "sha256": "8f5562e64e10b41c65eeba579c029993781a9617c074ba986654e7536a41dc0a"
+    },
+    "0072": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0072.npz",
+      "bytes": 344925,
+      "sha256": "edd2bf6c370e9c207f51586d62af2fa37f212cf9c3af1931bf202782e2471a7f"
+    },
+    "0073": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0073.npz",
+      "bytes": 344518,
+      "sha256": "3795fedc665a9ec359896b865abc0af506e79a0cd818dfa3cf940e74bc4cbddf"
+    },
+    "0074": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0074.npz",
+      "bytes": 344611,
+      "sha256": "76c18381a4746b45841ce0821a85bd34d374dfa2016fdb029f7d34e35123732e"
+    },
+    "0075": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0075.npz",
+      "bytes": 344526,
+      "sha256": "bdd1daf742d0c45c4220470e93d6e6cba5eea5ffea2f77fa8dddbf6f08678a88"
+    },
+    "0076": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0076.npz",
+      "bytes": 344630,
+      "sha256": "691ec0d2e6cafe9c2b489cf60369ff35fb3537891872a3dd8f4bb8d68d977bee"
+    },
+    "0077": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0077.npz",
+      "bytes": 345016,
+      "sha256": "09bc2fbf328101cf007c9564d12ccf745346397ea0f56c07071ee7fff660fc2f"
+    },
+    "0078": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0078.npz",
+      "bytes": 345170,
+      "sha256": "8529eed09d60b56194e56556dce0ea87914763d0eae2a20d07fddfc7343154e8"
+    },
+    "0079": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0079.npz",
+      "bytes": 345196,
+      "sha256": "4f0d10d22a2122409f1f16c6df060e9aa829c3650d0fe6ed0e32d2d2a1d6930b"
+    },
+    "0080": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0080.npz",
+      "bytes": 345231,
+      "sha256": "c3b28744c4861b6539d6e304706419ea13b47842735bad03aab4f441bb83e95c"
+    },
+    "0081": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0081.npz",
+      "bytes": 345245,
+      "sha256": "2b2aac6eab21fe5001e39f7209eed7548a7d6757f08b60b6f63799cca8dfd8ee"
+    },
+    "0082": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0082.npz",
+      "bytes": 345094,
+      "sha256": "bc20b4b9f0284ae7df19110fe919e3c3f99fdbca1ae6bacb475c21d4870078c3"
+    },
+    "0083": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0083.npz",
+      "bytes": 345016,
+      "sha256": "09bc2fbf328101cf007c9564d12ccf745346397ea0f56c07071ee7fff660fc2f"
     }
   }
 }

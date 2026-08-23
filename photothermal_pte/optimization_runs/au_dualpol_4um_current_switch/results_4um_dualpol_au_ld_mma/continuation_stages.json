@@ -66,5 +66,40 @@
     "nlopt_max_objective": 2.228044737230363,
     "stage_runtime_s": 384.45940509811044,
     "evaluations_total": 66
+  },
+  {
+    "stage_index": 4,
+    "beta": 12.0,
+    "entry_dfm_values": [
+      0.5695782666004101,
+      0.012295285465693103
+    ],
+    "dfm_caps": [
+      0.5410993532703896,
+      0.011680521192408448
+    ],
+    "nlopt_result": 5,
+    "nlopt_function_evaluations": 16,
+    "nlopt_max_objective": 2.987407807426743,
+    "stage_runtime_s": 549.2596651948988,
+    "evaluations_total": 83,
+    "stage_feasible": true,
+    "attempts": [
+      {
+        "attempt": 1,
+        "nlopt_result": 5,
+        "nlopt_function_evaluations": 16,
+        "nlopt_max_objective": 2.987407807426743,
+        "constraint_values": [
+          -0.275281802468506,
+          -0.017412820680116514,
+          -0.0251564939331812,
+          -0.03041491526111595
+        ],
+        "I_a_A": 3.2626896098952493e-09,
+        "I_b_A": -3.0048206281068595e-09,
+        "feasible": true
+      }
+    ]
   }
 ]
