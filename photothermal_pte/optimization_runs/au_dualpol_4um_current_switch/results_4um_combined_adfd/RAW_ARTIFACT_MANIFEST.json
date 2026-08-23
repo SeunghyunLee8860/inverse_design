@@ -1,0 +1,17 @@
+{
+  "status": "FAILED_4UM_DUALPOL_COMBINED_PHYSICAL_RHO_ADFD",
+  "raw_artifacts_committed": false,
+  "artifacts": [
+    {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/combined_adfd/combined_4um_rho0p5_Ea.npz",
+      "bytes": 19693204,
+      "sha256": "563382e7aaaf51d1ff0f8bcec877b208d7862aaec5440f3f1d16727944cc5a43"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/combined_adfd/combined_4um_rho0p5_Eb.npz",
+      "bytes": 19707163,
+      "sha256": "9a30924a5f513e26837a705727cbda244fe578e62c40556de3f07c7a32bc0a8c"
+    }
+  ],
+  "generation_command": "CUDA_VISIBLE_DEVICES=<gpu> ./run_combined_gpu_python.sh 07_validate_4um_combined_adfd.py"
+}
