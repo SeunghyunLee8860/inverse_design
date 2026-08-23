@@ -307,6 +307,36 @@
         ]
       ]
     },
+    "material_flux_td": {
+      "slice": [
+        [
+          8,
+          178
+        ],
+        [
+          8,
+          178
+        ],
+        [
+          12,
+          27
+        ]
+      ],
+      "bounds_m_xyz": [
+        [
+          -9.000000318337698e-06,
+          9.000000318337698e-06
+        ],
+        [
+          -9.000000318337698e-06,
+          9.000000318337698e-06
+        ],
+        [
+          -5.879999775970646e-07,
+          2.499999993688107e-07
+        ]
+      ]
+    },
     "distributed_adjoint_source": {
       "slice": [
         [
@@ -406,9 +436,9 @@
     "gray_Au_law": "passive Drude oscillator strength rho^3; endpoints are void/Au; numerical relaxation only"
   },
   "memory": {
-    "placed_base_array_bytes": 113097216,
+    "placed_base_array_bytes": 113103864,
     "adjoint_complex_profile_bytes": 6144000,
-    "sum_base_plus_adjoint_GiB": 0.11105203628540039,
+    "sum_base_plus_adjoint_GiB": 0.11105822771787643,
     "note": "lower-bound resident arrays; XLA workspace and detector outputs are additional"
   },
   "numerics": {

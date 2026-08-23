@@ -1,0 +1,142 @@
+{
+  "status": "VALIDATED_FDTDX_4UM_DUALPOL_RHO0P5_FORWARD",
+  "scope": "rho=0.5 optical forward only; no thermal/electrical/adjoint/optimization",
+  "axis_mapping": {
+    "x": "b",
+    "y": "a"
+  },
+  "cases": [
+    {
+      "polarization": "Ea",
+      "status": "VALIDATED_FDTDX_4UM_RHO0P5_FORWARD",
+      "rho": 0.5,
+      "runtime_s": 6.612570878118277,
+      "gpu": "0",
+      "power": {
+        "previous": {
+          "au_W": [
+            2.1686954373329686e-17,
+            4.234577219718708e-14,
+            2.0874575278410402e-17
+          ],
+          "tairte4_W": [
+            1.2016661417527541e-16,
+            1.1790529695147532e-13,
+            6.8743442856384145e-16
+          ],
+          "total_W": 1.6110123172105325e-13
+        },
+        "late": {
+          "au_W": [
+            2.1667013629186536e-17,
+            4.2297140848755786e-14,
+            2.0853186096863063e-17
+          ],
+          "tairte4_W": [
+            1.1950473937418388e-16,
+            1.1782717969197972e-13,
+            6.8747914914319e-16
+          ],
+          "total_W": 1.6097382462897893e-13
+        },
+        "incident_plane_signed_W": 1.608834051224084e-13,
+        "six_face_inward_td_mean_signed_W": 1.6027673979679413e-13,
+        "six_face_inward_phasor_signed_W": 1.59530713834434e-13,
+        "six_face_closure_relative": 0.004349257621964325,
+        "six_face_phasor_closure_relative": 0.009045974658162847,
+        "phasor_Q_power_change_relative": 0.00079085113573138,
+        "phasor_spatial_Q_change_relative": 0.0010682766822858994
+      },
+      "target_total_field_diagnostic": {
+        "center_x_m": -2.432301605206811e-12,
+        "center_y_m": 5.127513875709462e-08,
+        "second_moment_waist_x_m": 4.0790126030625495e-06,
+        "second_moment_waist_y_m": 4.33198720048123e-06
+      },
+      "gates": {
+        "six_face_closure_lt_0p5pct": true,
+        "phasor_Q_power_change_lt_0p5pct": true,
+        "phasor_spatial_Q_change_lt_0p5pct": true,
+        "finite_fields": true,
+        "nonnegative_Q": true
+      },
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/fdtdx_4um_rho0p5_Ea.npz",
+        "bytes": 6751270,
+        "sha256": "1aa512023896fd611f48e61b97abe97174c55def1fc8a2cb3134556adc4a7711"
+      },
+      "prohibitions": {
+        "clipping": false,
+        "smoothing": false,
+        "gain": false,
+        "rescaling": false
+      }
+    },
+    {
+      "polarization": "Eb",
+      "status": "VALIDATED_FDTDX_4UM_RHO0P5_FORWARD",
+      "rho": 0.5,
+      "runtime_s": 6.052778836339712,
+      "gpu": "0",
+      "power": {
+        "previous": {
+          "au_W": [
+            1.0377456107699472e-13,
+            1.3729084776118243e-17,
+            3.048995931877968e-17
+          ],
+          "tairte4_W": [
+            2.8158976400080116e-13,
+            2.1291857913834678e-16,
+            1.9098244822352633e-15
+          ],
+          "total_W": 3.875312871832644e-13
+        },
+        "late": {
+          "au_W": [
+            1.0367545880088854e-13,
+            1.3724534643012759e-17,
+            3.046749584506978e-17
+          ],
+          "tairte4_W": [
+            2.8162965673197416e-13,
+            2.134575197639868e-16,
+            1.908989700067996e-15
+          ],
+          "total_W": 3.8747175478318276e-13
+        },
+        "incident_plane_signed_W": 4.998212130638557e-13,
+        "six_face_inward_td_mean_signed_W": 3.8688724533081364e-13,
+        "six_face_inward_phasor_signed_W": 3.862835073510651e-13,
+        "six_face_closure_relative": 0.001510800522434703,
+        "six_face_phasor_closure_relative": 0.0030761019031489674,
+        "phasor_Q_power_change_relative": 0.00015361959679266422,
+        "phasor_spatial_Q_change_relative": 0.0008055425684114784
+      },
+      "target_total_field_diagnostic": {
+        "center_x_m": 4.965219657031337e-08,
+        "center_y_m": 6.261807530593779e-13,
+        "second_moment_waist_x_m": 4.090086874106534e-06,
+        "second_moment_waist_y_m": 3.8121775355326694e-06
+      },
+      "gates": {
+        "six_face_closure_lt_0p5pct": true,
+        "phasor_Q_power_change_lt_0p5pct": true,
+        "phasor_spatial_Q_change_lt_0p5pct": true,
+        "finite_fields": true,
+        "nonnegative_Q": true
+      },
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/fdtdx_4um_rho0p5_Eb.npz",
+        "bytes": 6747972,
+        "sha256": "2a4db3b25ad909d3b8590f5a9308f49f6ed77d2ce12c59779addd805fd39ac7e"
+      },
+      "prohibitions": {
+        "clipping": false,
+        "smoothing": false,
+        "gain": false,
+        "rescaling": false
+      }
+    }
+  ]
+}

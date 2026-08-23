@@ -377,19 +377,30 @@ def build_model(
         switch=late,
         exact_interpolation=True,
     )
-    constraints.append(
-        real_coordinate_constraint(
-            closed,
-            (0, 1, 2),
-            ("-", "-", "-"),
-            (
-                LAYOUT.pml_cells,
-                LAYOUT.pml_cells,
-                LAYOUT.closed_z_start,
-            ),
-        )
+    closed_td = fdtdx.ClosedSurfacePoyntingFluxDetector(
+        name="material_flux_td",
+        partial_grid_shape=(
+            LAYOUT.non_pml_xy_cells,
+            LAYOUT.non_pml_xy_cells,
+            LAYOUT.closed_z_cells,
+        ),
+        orientation="inward",
+        switch=late,
     )
-    objects.append(closed)
+    for detector in (closed, closed_td):
+        constraints.append(
+            real_coordinate_constraint(
+                detector,
+                (0, 1, 2),
+                ("-", "-", "-"),
+                (
+                    LAYOUT.pml_cells,
+                    LAYOUT.pml_cells,
+                    LAYOUT.closed_z_start,
+                ),
+            )
+        )
+        objects.append(detector)
 
     if include_adjoint_source:
         from photothermal_pte.optimization_runs.au_on_fixed_tairte4_validation.fdtdx_two_solve_adjoint import (
@@ -444,6 +455,7 @@ def build_model(
             "incident_plane",
             "target_field",
             "material_flux",
+            "material_flux_td",
         )
     }
     if include_adjoint_source:
