@@ -1,6 +1,6 @@
 {
   "evaluation": 1,
-  "timestamp_utc": "2026-08-23T09:00:03.139831+00:00",
+  "timestamp_utc": "2026-08-23T09:26:13.591488+00:00",
   "beta": 1.0,
   "I_a_A": 3.125391166173357e-10,
   "I_b_A": -1.8696429415797248e-10,
@@ -34,8 +34,8 @@
       "P_six_W": 2.4606683840453605e-05,
       "closure_relative": 0.004956936530731992,
       "Tmax_K": 0.19182879522166563,
-      "forward_s": 5.248422157019377,
-      "adjoint_s": 5.287004362791777,
+      "forward_s": 5.213770028203726,
+      "adjoint_s": 5.180673688650131,
       "gradient_norm_A": 1.1083223752029865e-09,
       "gradient_optical_norm_A": 1.1084490977994024e-09,
       "gradient_thermal_contact_norm_A": 1.1015430890142013e-10,
@@ -47,8 +47,8 @@
       "P_six_W": 5.939735565659847e-05,
       "closure_relative": 0.0016680170532791107,
       "Tmax_K": 0.46654227150458893,
-      "forward_s": 5.0470025688409805,
-      "adjoint_s": 5.093803081661463,
+      "forward_s": 4.983476359397173,
+      "adjoint_s": 5.095846187323332,
       "gradient_norm_A": 4.125618398244475e-09,
       "gradient_optical_norm_A": 4.169947359387596e-09,
       "gradient_thermal_contact_norm_A": 2.7151940574633704e-10,
@@ -81,5 +81,9 @@
   "manual_move_limit": null,
   "symmetry_constraint": false,
   "volume_fraction_constraint": false,
-  "connectivity_constraint": false
+  "connectivity_constraint": false,
+  "epigraph_t_scaled": 0.18696329415797247,
+  "epigraph_t_A": 1.869632941579725e-10,
+  "epigraph_slack_a_A": 1.2557582245936322e-10,
+  "epigraph_slack_b_A": 9.999999999827292e-16
 }
