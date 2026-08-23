@@ -19,6 +19,14 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_f
     au_material_fraction,
     d_au_material_fraction_drho,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.robust_contract import (
+    ROBUST_ETAS,
+    constraint_labels,
+    current_constraint_keys,
+    gray_constraint_keys,
+    grayness,
+    grayness_cotangent,
+)
 
 
 def test_contract_geometry_and_source_boundary() -> None:
@@ -35,6 +43,26 @@ def test_all_physics_share_linear_au_material_fraction() -> None:
     assert CONTRACT.au_material_fraction_exponent == AU_MATERIAL_FRACTION_EXPONENT
     assert np.array_equal(au_material_fraction(rho), rho)
     assert np.array_equal(d_au_material_fraction_drho(rho), np.ones_like(rho))
+
+
+def test_robust_contract_includes_nominal_and_all_grayness_constraints() -> None:
+    assert ROBUST_ETAS == (0.35, 0.50, 0.65)
+    assert len(current_constraint_keys()) == 6
+    assert len(gray_constraint_keys()) == 3
+    assert len(constraint_labels()) == 9
+    assert "eta_0.50_Ea" in current_constraint_keys()
+    assert "eta_0.50_Eb" in current_constraint_keys()
+    assert "eta_0.50_grayness" in gray_constraint_keys()
+    rng = np.random.default_rng(20260824)
+    rho = 0.1 + 0.8 * rng.random((7, 9))
+    direction = rng.standard_normal(rho.shape)
+    step = 1.0e-6
+    finite_difference = (
+        grayness(rho + step * direction)
+        - grayness(rho - step * direction)
+    ) / (2.0 * step)
+    analytic = float(np.vdot(grayness_cotangent(rho), direction))
+    assert abs(finite_difference - analytic) < 1.0e-9
 
 
 def test_signed_opposite_current_objective() -> None:

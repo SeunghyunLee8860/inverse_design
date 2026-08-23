@@ -28,7 +28,7 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
 7. `objective.py` -- signed current utilities and epigraph objective.
 8. `10_optimize_4um_dualpol_au_ld_mma.py` -- nominal NLopt LD_MMA path.
 9. `13_optimize_robust_binary_au_ld_mma.py` -- eroded/dilated robust
-   continuation path.
+   continuation path.  Read `ROBUST_OBJECTIVE_AUDIT.md` before using it.
 10. `14_diagnose_gray_law_mismatch.py` -- historical gray-material blocker.
 11. `15_validate_4um_z_mesh_convergence.py` -- fail-closed z-mesh gate that
     must be closed before another production optimization.
@@ -75,6 +75,11 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
 6. Electrical void cells retain tiny sheet/contact floors to regularize the
    floating Au block.  Quantify floor sensitivity; do not describe the
    electrical `rho=0` endpoint as exactly disconnected until that passes.
+7. The historical robust optimizer omitted nominal `eta=0.50` from its
+   signed-current epigraph and constrained grayness only at nominal.  The code
+   now includes eta=0.35/0.50/0.65 in both current and grayness constraints,
+   but the corrected robust path has not been run.  Historical robust results
+   remain invalid for promotion.  See `ROBUST_OBJECTIVE_AUDIT.md`.
 
 ## Raw checkpoint dependency
 

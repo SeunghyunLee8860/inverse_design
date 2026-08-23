@@ -2,11 +2,11 @@
 """Robust-projection LD_MMA recovery for a binary dual-polarization Au switch.
 
 The nominal gray design is not promoted: exact binarization reverses the Eb
-current.  This restart optimizes eroded (eta=0.65) and dilated (eta=0.35)
-physical projections simultaneously.  The epigraph is bounded by Ia and -Ib
-for both realizations.  A staged grayness inequality and 500 nm conic filter
-drive a fabrication-scale topology; an exact solid/void audit remains the
-only final authority.
+current.  This restart optimizes dilated (eta=0.35), nominal (eta=0.50), and
+eroded (eta=0.65) physical projections simultaneously.  The epigraph is
+bounded by Ia and -Ib, and grayness is constrained, for all three
+realizations.  A 500 nm conic filter drives a fabrication-scale topology; an
+exact solid/void audit remains the only final authority.
 """
 
 from __future__ import annotations
@@ -42,6 +42,17 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.dfm import
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
     audit as material_fraction_audit,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.robust_contract import (
+    POLARIZATIONS,
+    ROBUST_ETAS,
+    audit as robust_contract_audit,
+    current_constraint_keys,
+    eta_key,
+    gray_constraint_keys,
+    grayness,
+    grayness_cotangent,
+    scenario_key,
+)
 from photothermal_pte.optimization_runs.legacy_v261_optical_support.production_density_mapping import (
     ProductionDensityMapping,
 )
@@ -58,7 +69,7 @@ INITIAL = Path(
 )
 CALIBRATION = HERE / "results_fdtdx_4um_source_calibration/fdtdx_4um_source_calibration.json"
 CURRENT_SCALE_A = 1.0e-9
-ETAS = (0.35, 0.65)
+ETAS = ROBUST_ETAS
 STAGES = (
     (12.0, 0.40, 12),
     (16.0, 0.32, 12),
@@ -136,9 +147,10 @@ def physics_gates(result, closure):
 class RobustPoint:
     latent: np.ndarray
     rho_nominal: np.ndarray
+    densities: dict[float, np.ndarray]
     scenarios: dict[str, dict[str, object]]
-    grayness: float
-    gray_gradient: np.ndarray
+    grayness: dict[float, float]
+    gray_gradients: dict[float, np.ndarray]
 
 
 class RobustEvaluator:
@@ -158,13 +170,15 @@ class RobustEvaluator:
         if self.cached_latent is not None and np.array_equal(latent, self.cached_latent):
             return self.cached_point
         scenarios = {}
+        densities = {}
         for eta, mapping in ROBUST_MAPPINGS.items():
             rho = mapping.physical(latent, self.beta)
-            for pol in ("Ea", "Eb"):
+            densities[eta] = rho
+            for pol in POLARIZATIONS:
                 result = combined_gradient(self.runners[pol], rho, self.source_scale, self.cuda_device)
                 p_q, p_six, closure = optical_closure(result, self.runners[pol], self.source_scale)
                 gates = physics_gates(result, closure)
-                key = f"eta_{eta:.2f}_{pol}"
+                key = scenario_key(eta, pol)
                 scenarios[key] = {
                     "eta": eta,
                     "pol": pol,
@@ -179,11 +193,24 @@ class RobustEvaluator:
                 }
                 del result
                 gc.collect()
-        rho_nominal = MAPPING.physical(latent, self.beta)
-        grayness = float(np.mean(4*rho_nominal*(1-rho_nominal)))
-        gray_cotangent = 4*(1-2*rho_nominal)/rho_nominal.size
-        gray_gradient = MAPPING.vjp(latent, gray_cotangent, self.beta)
-        point = RobustPoint(latent.copy(), rho_nominal, scenarios, grayness, gray_gradient)
+        rho_nominal = densities[0.50]
+        gray_values = {
+            eta: grayness(densities[eta]) for eta in ROBUST_ETAS
+        }
+        gray_gradients = {
+            eta: ROBUST_MAPPINGS[eta].vjp(
+                latent, grayness_cotangent(densities[eta]), self.beta
+            )
+            for eta in ROBUST_ETAS
+        }
+        point = RobustPoint(
+            latent.copy(),
+            rho_nominal,
+            densities,
+            scenarios,
+            gray_values,
+            gray_gradients,
+        )
         self.record(point)
         self.cached_latent = latent.copy(); self.cached_point = point
         return point
@@ -203,20 +230,34 @@ class RobustEvaluator:
             "timestamp_utc": datetime.now(timezone.utc).isoformat(),
             "beta": self.beta,
             "gray_cap": self.gray_cap,
-            "grayness": point.grayness,
-            "gray_constraint": point.grayness/self.gray_cap-1,
+            "grayness": {
+                eta_key(eta): point.grayness[eta] for eta in ROBUST_ETAS
+            },
+            "gray_constraints": {
+                eta_key(eta): point.grayness[eta] / self.gray_cap - 1.0
+                for eta in ROBUST_ETAS
+            },
+            "maximum_grayness": max(point.grayness.values()),
             "robust_min_utility_A": float(min(utilities)),
             "exact_bad_cells": int(exact["solid_bad_cell_count"]+exact["void_bad_cell_count"]),
             "scenarios": summary,
         }
         self.history.append(row)
         raw = RAW/f"evaluation_{evaluation:04d}.npz"
-        np.savez_compressed(raw, latent=point.latent, rho_nominal=point.rho_nominal, gray_gradient=point.gray_gradient)
+        raw_payload = {
+            "latent": point.latent,
+            "rho_nominal": point.rho_nominal,
+        }
+        for eta in ROBUST_ETAS:
+            slug = eta_key(eta).replace(".", "p")
+            raw_payload[f"rho_{slug}"] = point.densities[eta]
+            raw_payload[f"gray_gradient_{slug}"] = point.gray_gradients[eta]
+        np.savez_compressed(raw, **raw_payload)
         self.manifest.setdefault("evaluations", {})[f"{evaluation:04d}"] = {"path":str(raw.resolve()),"bytes":raw.stat().st_size,"sha256":sha256(raw)}
         write_json(OUT/"optimization_history.json",self.history)
         write_json(OUT/"RAW_ARTIFACT_MANIFEST.json",self.manifest)
         plot(self.history, point)
-        print(f"[robust eval {evaluation:04d}] beta={self.beta:g} min={1e9*min(utilities):.5f} nA gray={point.grayness:.4f}/{self.gray_cap:.4f} bad={row['exact_bad_cells']}",flush=True)
+        print(f"[robust eval {evaluation:04d}] beta={self.beta:g} min={1e9*min(utilities):.5f} nA max_gray={max(point.grayness.values()):.4f}/{self.gray_cap:.4f} bad={row['exact_bad_cells']}",flush=True)
 
     def objective(self, vector, gradient):
         if gradient.size:
@@ -225,11 +266,15 @@ class RobustEvaluator:
 
     def constraints(self, values, vector, gradient):
         point = self.evaluate(vector[:-1]); t=float(vector[-1])
-        keys = [f"eta_{eta:.2f}_{pol}" for eta in ETAS for pol in ("Ea","Eb")]
+        keys = current_constraint_keys()
         for index,key in enumerate(keys):
             scenario=point.scenarios[key]
             values[index] = t - scenario["current_A"]/CURRENT_SCALE_A if scenario["pol"]=="Ea" else t + scenario["current_A"]/CURRENT_SCALE_A
-        values[-1] = point.grayness/self.gray_cap-1
+        gray_offset = len(keys)
+        for gray_index, eta in enumerate(ROBUST_ETAS):
+            values[gray_offset + gray_index] = (
+                point.grayness[eta] / self.gray_cap - 1.0
+            )
         if gradient.size:
             gradient[:] = 0
             for index,key in enumerate(keys):
@@ -237,7 +282,10 @@ class RobustEvaluator:
                 sign=-1 if scenario["pol"]=="Ea" else 1
                 gradient[index,:-1]=sign*scenario["gradient_latent_A"].ravel()/CURRENT_SCALE_A
                 gradient[index,-1]=1
-            gradient[-1,:-1]=point.gray_gradient.ravel()/self.gray_cap
+            for gray_index, eta in enumerate(ROBUST_ETAS):
+                gradient[gray_offset + gray_index, :-1] = (
+                    point.gray_gradients[eta].ravel() / self.gray_cap
+                )
 
 
 def plot(history, point):
@@ -246,7 +294,10 @@ def plot(history, point):
     axes[0,1].hist(point.rho_nominal.ravel(),bins=40,range=(0,1)); axes[0,1].set_title("density histogram")
     x=[row["evaluation"] for row in history]
     axes[1,0].plot(x,[1e9*row["robust_min_utility_A"] for row in history],"ko-"); axes[1,0].axhline(0,color="black",lw=.8); axes[1,0].set_title("worst-case min(Ia,-Ib)"); axes[1,0].set_ylabel("nA")
-    axes[1,1].plot(x,[row["grayness"] for row in history],label="grayness"); axes[1,1].plot(x,[row["gray_cap"] for row in history],"k--",label="cap"); axes[1,1].legend(); axes[1,1].set_title("binary continuation")
+    for eta in ROBUST_ETAS:
+        key = eta_key(eta)
+        axes[1,1].plot(x,[row["grayness"][key] for row in history],label=key)
+    axes[1,1].plot(x,[row["gray_cap"] for row in history],"k--",label="cap"); axes[1,1].legend(); axes[1,1].set_title("all-scenario binary continuation")
     for ax in axes.ravel(): ax.grid(alpha=.2)
     fig.suptitle(f"Robust Au recovery; eval={history[-1]['evaluation']}, beta={history[-1]['beta']:g}")
     fig.savefig(OUT/f"evaluation_{history[-1]['evaluation']:04d}.png",dpi=160); fig.savefig(OUT/"latest_iteration.png",dpi=160); plt.close(fig)
@@ -337,23 +388,50 @@ def main():
         manifest=json.loads((OUT/"RAW_ARTIFACT_MANIFEST.json").read_text())
         if manifest.get("au_material_fraction") != material_fraction_audit():
             raise RuntimeError("robust resume uses the historical O3/TE1 law; start a new shared-law run")
+        if manifest.get("robust_contract") != robust_contract_audit():
+            raise RuntimeError("robust resume omits nominal-current or all-scenario grayness constraints")
     else:
-        history=[]; stages=[]; manifest={"schema":"au-dualpol-robust-projection-v2","raw_artifacts_committed_to_git":False,"etas":list(ETAS),"filter":MAPPING.audit(),"au_material_fraction":material_fraction_audit(),"evaluations":{}}
+        history=[]; stages=[]; manifest={"schema":"au-dualpol-robust-projection-v3","raw_artifacts_committed_to_git":False,"etas":list(ETAS),"filter":MAPPING.audit(),"au_material_fraction":material_fraction_audit(),"robust_contract":robust_contract_audit(),"evaluations":{}}
     vector=np.concatenate((latent.ravel(),[0.0]))
     run_stages=() if finalize_only else (STAGES[7:] if resume_high else STAGES)
     stage_offset=7 if resume_high else 0
     for local_stage_index,(beta,gray_target,maxeval) in enumerate(run_stages):
         stage_index=stage_offset+local_stage_index
-        nominal=MAPPING.physical(latent,beta); entry_gray=float(np.mean(4*nominal*(1-nominal))); gray_cap=max(gray_target,.88*entry_gray)
+        entry_gray=max(
+            grayness(mapping.physical(latent,beta))
+            for mapping in ROBUST_MAPPINGS.values()
+        ); gray_cap=max(gray_target,.88*entry_gray)
         evaluator=RobustEvaluator(runners,scale,cuda_device,beta,gray_cap,history,manifest)
         entry=evaluator.evaluate(latent); useful=[s["current_A"] if s["pol"]=="Ea" else -s["current_A"] for s in entry.scenarios.values()]
         vector[:-1]=latent.ravel(); vector[-1]=min(useful)/CURRENT_SCALE_A-1e-5
-        opt=nlopt.opt(nlopt.LD_MMA,vector.size); opt.set_lower_bounds(np.r_[np.zeros(vector.size-1),-100.]); opt.set_upper_bounds(np.r_[np.ones(vector.size-1),1000.]); opt.set_max_objective(evaluator.objective); opt.add_inequality_mconstraint(evaluator.constraints,np.full(2*len(ETAS)+1,NLOPT_TOL)); opt.set_initial_step(np.r_[np.full(vector.size-1,.04),.1]); opt.set_ftol_rel(0); opt.set_xtol_rel(0); opt.set_maxeval(maxeval)
+        opt=nlopt.opt(nlopt.LD_MMA,vector.size); opt.set_lower_bounds(np.r_[np.zeros(vector.size-1),-100.]); opt.set_upper_bounds(np.r_[np.ones(vector.size-1),1000.]); opt.set_max_objective(evaluator.objective); opt.add_inequality_mconstraint(evaluator.constraints,np.full(len(current_constraint_keys())+len(gray_constraint_keys()),NLOPT_TOL)); opt.set_initial_step(np.r_[np.full(vector.size-1,.04),.1]); opt.set_ftol_rel(0); opt.set_xtol_rel(0); opt.set_maxeval(maxeval)
         start=time.perf_counter(); vector=opt.optimize(vector); latent=vector[:-1].reshape(CONTRACT.design_shape); returned=evaluator.evaluate(latent)
-        stage={"stage":stage_index,"beta":beta,"gray_cap":gray_cap,"maxeval":maxeval,"nlopt_result":int(opt.last_optimize_result()),"numevals":int(opt.get_numevals()),"runtime_s":time.perf_counter()-start,"returned_robust_min_A":min(s["current_A"] if s["pol"]=="Ea" else -s["current_A"] for s in returned.scenarios.values())}
+        returned_min = min(s["current_A"] if s["pol"]=="Ea" else -s["current_A"] for s in returned.scenarios.values())
+        constraint_values = np.empty(
+            len(current_constraint_keys()) + len(gray_constraint_keys()),
+            dtype=np.float64,
+        )
+        evaluator.constraints(
+            constraint_values,
+            vector,
+            np.empty((0, 0), dtype=np.float64),
+        )
+        stage_feasible = bool(
+            np.all(np.isfinite(constraint_values))
+            and returned_min > 0.0
+            and float(vector[-1]) > 0.0
+            and float(np.max(constraint_values)) <= 10.0 * NLOPT_TOL
+        )
+        stage={"stage":stage_index,"beta":beta,"gray_cap":gray_cap,"maxeval":maxeval,"nlopt_result":int(opt.last_optimize_result()),"numevals":int(opt.get_numevals()),"runtime_s":time.perf_counter()-start,"returned_robust_min_A":returned_min,"returned_epigraph_scaled":float(vector[-1]),"constraint_values":constraint_values.tolist(),"stage_feasible":stage_feasible}
         stages.append(stage); np.savez_compressed(RAW/f"stage_{stage_index:02d}_beta_{beta:g}.npz",latent=latent,vector=vector,beta=beta,gray_cap=gray_cap); write_json(OUT/"continuation_stages.json",stages); print(f"[stage complete] {stage}",flush=True)
+        if not stage_feasible:
+            raise RuntimeError(
+                f"robust beta={beta:g} returned a non-promotable stage: {stage}"
+            )
     final_beta=STAGES[-1][0] if not finalize_only else float(stages[-1]["beta"])
     nominal=MAPPING.physical(latent,final_beta); candidates=exact_candidates(nominal); binary_rows=[]
+    if not candidates:
+        raise RuntimeError("no exact 500 nm solid/void binary candidate")
     for _,name,rho in candidates:
         row=forward_binary(runners,rho,scale,cuda_device); row["name"]=name; row["exact_bad_cells"]=0; raw=RAW/f"final_{name}.npz"; np.savez_compressed(raw,physical_density=rho); row["raw"]={"path":str(raw.resolve()),"bytes":raw.stat().st_size,"sha256":sha256(raw)}; binary_rows.append(row); print(f"[binary] {name} Ia={1e9*row['I_a_A']:.5f} Ib={1e9*row['I_b_A']:.5f} min={1e9*row['balanced_utility_A']:.5f}",flush=True)
     best=max(binary_rows,key=lambda row:row["balanced_utility_A"]); success=best["I_a_A"]>0 and best["I_b_A"]<0
