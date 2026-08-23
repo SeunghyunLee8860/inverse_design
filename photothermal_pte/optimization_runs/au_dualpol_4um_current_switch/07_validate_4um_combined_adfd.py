@@ -29,8 +29,11 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 
 
 HERE = Path(__file__).resolve().parent
-OUT = HERE / "results_4um_combined_adfd"
-RAW = Path("/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/combined_adfd")
+OUT = HERE / "results_4um_combined_adfd_corrected"
+RAW = Path(
+    "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/"
+    "combined_adfd_corrected"
+)
 CALIBRATION = HERE / "results_fdtdx_4um_source_calibration/fdtdx_4um_source_calibration.json"
 STEPS = (0.01, 0.005, 0.0025)
 

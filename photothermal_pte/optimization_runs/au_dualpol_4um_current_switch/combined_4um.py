@@ -240,6 +240,30 @@ class CompiledOpticalRunner:
         return {"au": e_au, "tairte4": e_ta}, q
 
 
+def discrete_au_susceptibility(runner: CompiledOpticalRunner):
+    """Return the carrier-frequency susceptibility of the stored float32 ADE.
+
+    Density changes the Au oscillator's ``c3`` coefficient, not an abstract
+    continuous-frequency permittivity.  The two are almost identical for this
+    contract, but the exact discrete derivative is used so the certificate
+    tests the same operator that advances the fields.
+    """
+
+    jnp = runner.model["jnp"]
+    c1, c2, c3 = (
+        jnp.asarray(value, dtype=jnp.float32)
+        for value in runner.model["coefficients"]["au"]
+    )
+    theta = jnp.asarray(
+        float(runner.model["omega_rad_s"])
+        * float(runner.model["config"].time_step_duration),
+        dtype=jnp.float32,
+    )
+    z_minus = jnp.exp(-1j * theta)
+    z_plus = jnp.exp(1j * theta)
+    return c3 / (z_minus - c1 - c2 * z_plus)
+
+
 def evaluate_forward_multiphysics(
     runner: CompiledOpticalRunner,
     rho: np.ndarray,
@@ -347,6 +371,17 @@ def combined_gradient(
             wirtinger, runner.model["config"].courant_number
         )
     )
+    # FDTDX applies an impressed electric current in the E update one full
+    # discrete time step after the field residual sampled by the phasor
+    # detector.  The reciprocal harmonic right-hand side therefore carries
+    # exp(+i*omega*dt).  This is the exact leapfrog time-staggering phase, not
+    # an empirical gradient normalization.
+    adjoint_source_phase = np.exp(
+        1j
+        * float(runner.model["omega_rad_s"])
+        * float(runner.model["config"].time_step_duration)
+    )
+    profile = profile * adjoint_source_phase
     adjoint_output, adjoint_s = runner.run_adjoint(rho, profile)
     e_adj_au = adjoint_output.detector_states["au_late"]["phasor"][0, 0]
     d_strength = runner.model["jnp"].broadcast_to(
@@ -354,8 +389,7 @@ def combined_gradient(
         fields["au"].shape[1:],
     )
     d_epsilon = runner.model["jnp"].broadcast_to(
-        d_strength[None]
-        * (complex(runner.model["epsilon"]["au"]) - 1.0),
+        d_strength[None] * discrete_au_susceptibility(runner),
         fields["au"].shape,
     )
     field_voxel = harmonic_material_gradient(
@@ -393,5 +427,9 @@ def combined_gradient(
         gradient_optical_direct_loss_A=gradient_loss,
         gradient_optical_A=gradient_optical,
         gradient_total_A=gradient_total,
+        discrete_au_susceptibility=complex(discrete_au_susceptibility(runner)),
+        target_au_susceptibility=complex(runner.model["epsilon"]["au"]) - 1.0,
+        adjoint_source_phase_factor=complex(adjoint_source_phase),
+        adjoint_source_phase_basis="exact FDTDX one-E-update time staggering",
     )
     return evaluated

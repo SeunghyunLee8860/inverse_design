@@ -1,0 +1,74 @@
+{
+  "status": "DIAGNOSTIC_ONLY_DISCRETE_TIME_STAGGERING",
+  "polarization": "Eb",
+  "omega_dt_rad": 0.015114991716295056,
+  "rows": [
+    {
+      "phase_exponent_k_in_exp_i_k_omega_dt": -1.0,
+      "phase_factor": [
+        0.9998857706874971,
+        -0.015114416186874735
+      ],
+      "field_AD_A": 2.1248029403438156e-07,
+      "field_FD_A": 2.083888526645781e-07,
+      "relative_error": 0.019633686339206577,
+      "adjoint_execution_seconds": 4.993344061076641
+    },
+    {
+      "phase_exponent_k_in_exp_i_k_omega_dt": -0.5,
+      "phase_factor": [
+        0.9999714422641022,
+        -0.0075574239163536385
+      ],
+      "field_AD_A": 2.1148245257862492e-07,
+      "field_FD_A": 2.083888526645781e-07,
+      "relative_error": 0.014845323415769595,
+      "adjoint_execution_seconds": 4.981834881007671
+    },
+    {
+      "phase_exponent_k_in_exp_i_k_omega_dt": 0.0,
+      "phase_factor": [
+        1.0,
+        0.0
+      ],
+      "field_AD_A": 2.104725220802929e-07,
+      "field_FD_A": 2.083888526645781e-07,
+      "relative_error": 0.009998948547735715,
+      "adjoint_execution_seconds": 5.1429218128323555
+    },
+    {
+      "phase_exponent_k_in_exp_i_k_omega_dt": 0.5,
+      "phase_factor": [
+        0.9999714422641022,
+        0.0075574239163536385
+      ],
+      "field_AD_A": 2.0945053299101599e-07,
+      "field_FD_A": 2.083888526645781e-07,
+      "relative_error": 0.00509470786398907,
+      "adjoint_execution_seconds": 5.042416024953127
+    },
+    {
+      "phase_exponent_k_in_exp_i_k_omega_dt": 1.0,
+      "phase_factor": [
+        0.9998857706874971,
+        0.015114416186874735
+      ],
+      "field_AD_A": 2.0841661252470525e-07,
+      "field_FD_A": 2.083888526645781e-07,
+      "relative_error": 0.00013321182861847654,
+      "adjoint_execution_seconds": 5.045936934649944
+    }
+  ],
+  "best_candidate": {
+    "phase_exponent_k_in_exp_i_k_omega_dt": 1.0,
+    "phase_factor": [
+      0.9998857706874971,
+      0.015114416186874735
+    ],
+    "field_AD_A": 2.0841661252470525e-07,
+    "field_FD_A": 2.083888526645781e-07,
+    "relative_error": 0.00013321182861847654,
+    "adjoint_execution_seconds": 5.045936934649944
+  },
+  "no_empirical_amplitude_rescaling": true
+}

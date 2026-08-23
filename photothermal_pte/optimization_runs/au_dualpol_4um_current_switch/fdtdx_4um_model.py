@@ -323,6 +323,19 @@ def build_model(
     late = fdtdx.OnOffSwitch(
         start_time=(total_periods - window_periods) * period_s
     )
+    simulation_end_s = (config.time_steps_total - 1) * dt
+    phasor_windows = {
+        "previous": fdtdx.TukeyWindow(
+            start_time=(total_periods - 2 * window_periods) * period_s,
+            end_time=(total_periods - window_periods) * period_s,
+            alpha=1.0,
+        ),
+        "late": fdtdx.TukeyWindow(
+            start_time=(total_periods - window_periods) * period_s,
+            end_time=simulation_end_s,
+            alpha=1.0,
+        ),
+    }
     for material_name, target in (("au", au), ("tairte4", flake)):
         for window_name, switch in (("previous", previous), ("late", late)):
             detector = fdtdx.PhasorDetector(
@@ -332,6 +345,7 @@ def build_model(
                 components=("Ex", "Ey", "Ez"),
                 dtype=jnp.complex64,
                 switch=switch,
+                apodization=phasor_windows[window_name],
                 exact_interpolation=False,
                 plot=False,
             )
@@ -345,6 +359,7 @@ def build_model(
         direction="-",
         dtype=jnp.complex64,
         switch=late,
+        apodization=phasor_windows["late"],
         exact_interpolation=True,
     )
     target = fdtdx.PhasorDetector(
@@ -354,6 +369,7 @@ def build_model(
         components=("Ex", "Ey", "Ez"),
         dtype=jnp.complex64,
         switch=late,
+        apodization=phasor_windows["late"],
         exact_interpolation=True,
         plot=False,
     )
@@ -380,6 +396,7 @@ def build_model(
         orientation="inward",
         dtype=jnp.complex64,
         switch=late,
+        apodization=phasor_windows["late"],
         exact_interpolation=True,
     )
     closed_td = fdtdx.ClosedSurfacePoyntingFluxDetector(

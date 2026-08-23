@@ -1,0 +1,369 @@
+{
+  "status": "VALIDATED_4UM_DUALPOL_COMBINED_PHYSICAL_RHO_ADFD",
+  "scope": "rho=0.5 full Maxwell redistribution + direct loss + thermal/contact + electrical/weighting-field physical-density gradient",
+  "source_power_scale": 153526254.9150425,
+  "steps": [
+    0.01,
+    0.005,
+    0.0025
+  ],
+  "no_clipping_smoothing_gain_rescaling": true,
+  "cases": [
+    {
+      "polarization": "Ea",
+      "status": "VALIDATED_4UM_COMBINED_PHYSICAL_RHO_ADFD",
+      "objective_A": 3.125391166173357e-10,
+      "objective_nA": 0.31253911661733574,
+      "P_Q_W": 2.4728657610482522e-05,
+      "P_six_W": 2.4606683840453605e-05,
+      "closure_relative": 0.004956936530731992,
+      "gradient_norms_A": {
+        "total": 1.1083223752029865e-09,
+        "optical_total": 1.1084490977994024e-09,
+        "optical_field": 1.5566069423800454e-09,
+        "optical_direct_loss": 4.5039660968529067e-10,
+        "thermal_contact": 1.1015430890142013e-10,
+        "electrical_weighting": 1.8155447832235267e-10
+      },
+      "multi_direction_normalized_error": 0.000165530155351396,
+      "directional_angle_deg": 0.00030135670052372347,
+      "mapping_transpose_relative_error": 6.6166166783983146e-15,
+      "compile_forward_s": 7.730112034827471,
+      "compile_adjoint_s": 7.0944285318255424,
+      "baseline_forward_s": 5.161261606961489,
+      "baseline_adjoint_s": 5.213159039616585,
+      "case_runtime_s": 215.41698950529099,
+      "gates": {
+        "strong_direction_lt_1pct": true,
+        "multi_direction_normalized_lt_1pct": true,
+        "directional_angle_lt_1deg": true,
+        "mapping_transpose_lt_1e-12": true,
+        "optical_closure_lt_0p5pct": true,
+        "thermal_energy_balance_lt_1pct": true,
+        "thermal_residual_lt_1e-8": true,
+        "thermal_adjoint_residual_lt_1e-8": true,
+        "electrical_residual_lt_1e-8": true,
+        "electrical_adjoint_residual_lt_1e-8": true,
+        "finite_nonnegative_Q": true,
+        "no_clipping": true
+      },
+      "rows": [
+        {
+          "polarization": "Ea",
+          "direction": "adjoint_aligned",
+          "step": 0.01,
+          "AD_A": 4.592979352300501e-08,
+          "FD_A": 4.592313313218087e-08,
+          "absolute_error_A": 6.660390824143966e-12,
+          "relative_error": 0.00014503345851802659,
+          "plus_A": 7.722714230723643e-10,
+          "minus_A": -1.461912395712531e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "adjoint_aligned",
+          "step": 0.005,
+          "AD_A": 4.592979352300501e-08,
+          "FD_A": 4.5922271546606795e-08,
+          "absolute_error_A": 7.521976398216683e-12,
+          "relative_error": 0.00016379800355874346,
+          "plus_A": 5.422754148147489e-10,
+          "minus_A": 8.305269934868095e-11
+        },
+        {
+          "polarization": "Ea",
+          "direction": "adjoint_aligned",
+          "step": 0.0025,
+          "AD_A": 4.592979352300501e-08,
+          "FD_A": 4.592219185964342e-08,
+          "absolute_error_A": 7.60166336159274e-12,
+          "relative_error": 0.00016553354824235008,
+          "plus_A": 4.27374829610636e-10,
+          "minus_A": 1.977638703124189e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "central_localized",
+          "step": 0.01,
+          "AD_A": -3.2610344570202393e-10,
+          "FD_A": -3.25964990590137e-10,
+          "absolute_error_A": 1.3845511188693659e-13,
+          "relative_error": 0.000424754546910922,
+          "plus_A": 3.0931804548380295e-10,
+          "minus_A": 3.158373452956057e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "central_localized",
+          "step": 0.005,
+          "AD_A": -3.2610344570202393e-10,
+          "FD_A": -3.2585189930578107e-10,
+          "absolute_error_A": 2.515463962428552e-13,
+          "relative_error": 0.0007719654136703459,
+          "plus_A": 3.1092018184673425e-10,
+          "minus_A": 3.1417870083979206e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "central_localized",
+          "step": 0.0025,
+          "AD_A": -3.2610344570202393e-10,
+          "FD_A": -3.262597655350814e-10,
+          "absolute_error_A": 1.563198330574502e-13,
+          "relative_error": 0.0004791269092009501,
+          "plus_A": 3.1172284957912525e-10,
+          "minus_A": 3.1335414840680065e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "asymmetric_smooth",
+          "step": 0.01,
+          "AD_A": 4.168865190533624e-08,
+          "FD_A": 4.168217098454833e-08,
+          "absolute_error_A": 6.48092078790538e-12,
+          "relative_error": 0.0001554842426587586,
+          "plus_A": 7.286622548847599e-10,
+          "minus_A": -1.0498116480620678e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "asymmetric_smooth",
+          "step": 0.005,
+          "AD_A": 4.168865190533624e-08,
+          "FD_A": 4.16815377548669e-08,
+          "absolute_error_A": 7.1141504693394554e-12,
+          "relative_error": 0.0001706786949938952,
+          "plus_A": 5.2077197121834e-10,
+          "minus_A": 1.0395659366967101e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "asymmetric_smooth",
+          "step": 0.0025,
+          "AD_A": 4.168865190533624e-08,
+          "FD_A": 4.1682098036145146e-08,
+          "absolute_error_A": 6.553869191092031e-12,
+          "relative_error": 0.00015723462829075356,
+          "plus_A": 4.167005246746477e-10,
+          "minus_A": 2.0829003449392197e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "fixed_seed_random",
+          "step": 0.01,
+          "AD_A": 1.8644444760274358e-10,
+          "FD_A": 1.8634071536164252e-10,
+          "absolute_error_A": 1.03732241101061e-13,
+          "relative_error": 0.0005566804919673174,
+          "plus_A": 3.144736602544592e-10,
+          "minus_A": 3.1074684594722633e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "fixed_seed_random",
+          "step": 0.005,
+          "AD_A": 1.8644444760274358e-10,
+          "FD_A": 1.8626344822055997e-10,
+          "absolute_error_A": 1.8099938218361022e-13,
+          "relative_error": 0.0009717385988113115,
+          "plus_A": 3.134858222680669e-10,
+          "minus_A": 3.116231877858613e-10
+        },
+        {
+          "polarization": "Ea",
+          "direction": "fixed_seed_random",
+          "step": 0.0025,
+          "AD_A": 1.8644444760274358e-10,
+          "FD_A": 1.8632381813468403e-10,
+          "absolute_error_A": 1.2062946805954527e-13,
+          "relative_error": 0.000647418399146095,
+          "plus_A": 3.130104599812409e-10,
+          "minus_A": 3.120788408905675e-10
+        }
+      ],
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/combined_adfd_corrected/combined_4um_rho0p5_Ea.npz",
+        "bytes": 19692967,
+        "sha256": "3fc13bc7bf3820680ec9ce0eb18339f46f1a151e1769910a1e46e17fce358707"
+      }
+    },
+    {
+      "polarization": "Eb",
+      "status": "VALIDATED_4UM_COMBINED_PHYSICAL_RHO_ADFD",
+      "objective_A": -1.8696429415797248e-10,
+      "objective_nA": -0.18696429415797247,
+      "P_Q_W": 5.949643145875336e-05,
+      "P_six_W": 5.939735565659847e-05,
+      "closure_relative": 0.0016680170532791107,
+      "gradient_norms_A": {
+        "total": 4.125618398244475e-09,
+        "optical_total": 4.169947359387596e-09,
+        "optical_field": 5.270427817654453e-09,
+        "optical_direct_loss": 1.1053793601525815e-09,
+        "thermal_contact": 2.7151940574633704e-10,
+        "electrical_weighting": 4.627879379024861e-10
+      },
+      "multi_direction_normalized_error": 0.00041745807680485485,
+      "directional_angle_deg": 0.0006393784234458469,
+      "mapping_transpose_relative_error": 5.392079679300962e-15,
+      "compile_forward_s": 8.356955155730247,
+      "compile_adjoint_s": 7.351857215166092,
+      "baseline_forward_s": 4.988352492451668,
+      "baseline_adjoint_s": 5.022015228867531,
+      "case_runtime_s": 206.44435711205006,
+      "gates": {
+        "strong_direction_lt_1pct": true,
+        "multi_direction_normalized_lt_1pct": true,
+        "directional_angle_lt_1deg": true,
+        "mapping_transpose_lt_1e-12": true,
+        "optical_closure_lt_0p5pct": true,
+        "thermal_energy_balance_lt_1pct": true,
+        "thermal_residual_lt_1e-8": true,
+        "thermal_adjoint_residual_lt_1e-8": true,
+        "electrical_residual_lt_1e-8": true,
+        "electrical_adjoint_residual_lt_1e-8": true,
+        "finite_nonnegative_Q": true,
+        "no_clipping": true
+      },
+      "rows": [
+        {
+          "polarization": "Eb",
+          "direction": "adjoint_aligned",
+          "step": 0.01,
+          "AD_A": 1.6356702282371675e-07,
+          "FD_A": 1.6349875369273028e-07,
+          "absolute_error_A": 6.82691309864661e-11,
+          "relative_error": 0.0004175513846103499,
+          "plus_A": 1.4480903691574139e-09,
+          "minus_A": -1.8218847046971916e-09
+        },
+        {
+          "polarization": "Eb",
+          "direction": "adjoint_aligned",
+          "step": 0.005,
+          "AD_A": 1.6356702282371675e-07,
+          "FD_A": 1.6352879697876556e-07,
+          "absolute_error_A": 3.822584495119074e-11,
+          "relative_error": 0.00023375604576944585,
+          "plus_A": 6.306908935281727e-10,
+          "minus_A": -1.004597076259483e-09
+        },
+        {
+          "polarization": "Eb",
+          "direction": "adjoint_aligned",
+          "step": 0.0025,
+          "AD_A": 1.6356702282371675e-07,
+          "FD_A": 1.6353529798485421e-07,
+          "absolute_error_A": 3.1724838862534864e-11,
+          "relative_error": 0.00019399383040518293,
+          "plus_A": 2.2186910753702645e-10,
+          "minus_A": -5.958073823872446e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "central_localized",
+          "step": 0.01,
+          "AD_A": -7.92552117377965e-12,
+          "FD_A": -8.161105311331304e-12,
+          "absolute_error_A": 2.355841375516532e-13,
+          "relative_error": 0.02886669495914431,
+          "plus_A": -1.870422313133577e-10,
+          "minus_A": -1.8687900920713106e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "central_localized",
+          "step": 0.005,
+          "AD_A": -7.92552117377965e-12,
+          "FD_A": -7.902993564005923e-12,
+          "absolute_error_A": 2.252760977372755e-14,
+          "relative_error": 0.002850516021717295,
+          "plus_A": -1.870099322466044e-10,
+          "minus_A": -1.8693090231096435e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "central_localized",
+          "step": 0.0025,
+          "AD_A": -7.92552117377965e-12,
+          "FD_A": -1.0528483146722245e-11,
+          "absolute_error_A": 2.602961972942594e-12,
+          "relative_error": 0.2472304829355172,
+          "plus_A": -1.869956668938876e-10,
+          "minus_A": -1.86943024478154e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "asymmetric_smooth",
+          "step": 0.01,
+          "AD_A": 1.5589452315361874e-07,
+          "FD_A": 1.5582792750860936e-07,
+          "absolute_error_A": 6.659564500937867e-11,
+          "relative_error": 0.0004273665579342273,
+          "plus_A": 1.3649185569728828e-09,
+          "minus_A": -1.7516399931993048e-09
+        },
+        {
+          "polarization": "Eb",
+          "direction": "asymmetric_smooth",
+          "step": 0.005,
+          "AD_A": 1.5589452315361874e-07,
+          "FD_A": 1.558574841260102e-07,
+          "absolute_error_A": 3.703902760853413e-11,
+          "relative_error": 0.00023764676952303562,
+          "plus_A": 5.90714090278937e-10,
+          "minus_A": -9.67860750981165e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "asymmetric_smooth",
+          "step": 0.0025,
+          "AD_A": 1.5589452315361874e-07,
+          "FD_A": 1.558644570876758e-07,
+          "absolute_error_A": 3.0066065942953046e-11,
+          "relative_error": 0.00019289879491923224,
+          "plus_A": 2.022894006345792e-10,
+          "minus_A": -5.770328848037997e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "fixed_seed_random",
+          "step": 0.01,
+          "AD_A": 7.648384031563527e-10,
+          "FD_A": 7.654223290781368e-10,
+          "absolute_error_A": 5.839259217841447e-13,
+          "relative_error": 0.0007628806994530932,
+          "plus_A": -1.7916635996036877e-10,
+          "minus_A": -1.944748065419315e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "fixed_seed_random",
+          "step": 0.005,
+          "AD_A": 7.648384031563527e-10,
+          "FD_A": 7.62175862637664e-10,
+          "absolute_error_A": 2.662540518688682e-12,
+          "relative_error": 0.0034933414310372164,
+          "plus_A": -1.8312321072892284e-10,
+          "minus_A": -1.9074496935529948e-10
+        },
+        {
+          "polarization": "Eb",
+          "direction": "fixed_seed_random",
+          "step": 0.0025,
+          "AD_A": 7.648384031563527e-10,
+          "FD_A": 7.647713574350828e-10,
+          "absolute_error_A": 6.704572126990593e-14,
+          "relative_error": 8.766766775205368e-05,
+          "plus_A": -1.8505437527547187e-10,
+          "minus_A": -1.8887823206264728e-10
+        }
+      ],
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/combined_adfd_corrected/combined_4um_rho0p5_Eb.npz",
+        "bytes": 19707918,
+        "sha256": "1b420d0bd52db97aed84b21210d011136088a1ae9569966661f30e3f07613815"
+      }
+    }
+  ]
+}
