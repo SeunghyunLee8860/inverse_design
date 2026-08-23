@@ -63,6 +63,9 @@ CHECKPOINT = Path(
     "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/"
     "robust_projection_ld_mma/evaluation_0112.npz"
 )
+EXPECTED_CHECKPOINT_SHA256 = (
+    "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3"
+)
 TOTAL_PERIODS = 24
 WINDOW_PERIODS = 4
 LEVELS = (1, 2, 4, 8)
@@ -362,9 +365,26 @@ class ForwardRunner:
 
 
 def load_densities() -> dict[str, np.ndarray]:
-    checkpoint = np.load(CHECKPOINT)
-    latent = np.asarray(checkpoint["latent"], dtype=np.float64)
-    nominal = np.asarray(checkpoint["rho_nominal"], dtype=np.float64)
+    actual_sha256 = sha256(CHECKPOINT)
+    if actual_sha256 != EXPECTED_CHECKPOINT_SHA256:
+        raise RuntimeError(
+            "z-mesh checkpoint provenance failure: expected SHA-256 "
+            f"{EXPECTED_CHECKPOINT_SHA256}, got {actual_sha256}"
+        )
+    with np.load(CHECKPOINT, allow_pickle=False) as checkpoint:
+        latent = np.asarray(checkpoint["latent"], dtype=np.float64)
+        nominal = np.asarray(checkpoint["rho_nominal"], dtype=np.float64)
+    if latent.shape != CONTRACT.design_shape or nominal.shape != CONTRACT.design_shape:
+        raise RuntimeError(
+            "z-mesh checkpoint density shape failure: "
+            f"latent={latent.shape}, nominal={nominal.shape}"
+        )
+    if not np.all(np.isfinite(latent)) or not np.all(np.isfinite(nominal)):
+        raise RuntimeError("z-mesh checkpoint contains non-finite density values")
+    if np.any((latent < 0.0) | (latent > 1.0)) or np.any(
+        (nominal < 0.0) | (nominal > 1.0)
+    ):
+        raise RuntimeError("z-mesh checkpoint density is outside [0, 1]")
     densities = {"eta_0.50_nominal": nominal}
     for eta in (0.35, 0.65):
         mapping = ProductionDensityMapping(
@@ -424,6 +444,8 @@ def main() -> int:
             "path": str(CHECKPOINT.resolve()),
             "bytes": CHECKPOINT.stat().st_size,
             "sha256": sha256(CHECKPOINT),
+            "expected_sha256": EXPECTED_CHECKPOINT_SHA256,
+            "sha256_matches_expected": True,
         },
         "levels": audits,
         "time_contract": {
@@ -784,7 +806,7 @@ def main() -> int:
         "next_gate": (
             "OPTICAL_XY_AND_COMBINED_GRADIENT_CONVERGENCE"
             if status.startswith("VALIDATED_")
-            else "REFINE_Z_BEYOND_FACTOR_4_BEFORE_XY_OR_GRADIENT"
+            else "DIAGNOSE_TIME_AND_ABSORPTION_CLOSURE_THEN_DEFINE_FULL_Z_SWEEP"
         ),
     }
     write_json(OUT / "Z_MESH_CONVERGENCE_SUMMARY.json", summary)
@@ -794,10 +816,10 @@ def main() -> int:
         "",
         f"Status: `{status}`",
         "",
-        "The exact current Au/FDTDX checkpoint had no prior z-mesh convergence certificate. ",
+        "The exact current Au/FDTDX checkpoint had no prior z-mesh convergence certificate.",
         "AD-FD on the baseline grid certifies differentiation of that discrete grid only.",
         "",
-        "The density, x/y mesh, source, material endpoints, and production O3/TE1 gray law are frozen. ",
+        "The density, x/y mesh, source, material endpoints, and production O3/TE1 gray law are frozen.",
         "The gray law remains diagnostic and is not promoted as physical Au.",
         "",
         "| factor | Au dz (nm) | TaIrTe4 dz (nm) | SiO2 dz (nm) | Yee cells |",
@@ -808,6 +830,28 @@ def main() -> int:
             f"| {audit['factor']} | {1e9*audit['au_dz_m']:.3f} | "
             f"{1e9*audit['tairte4_dz_m']:.3f} | {1e9*audit['sio2_dz_m']:.3f} | "
             f"{audit['yee_cell_count']} |"
+        )
+    failed_physics = [row for row in case_rows if not row["physics_gates_pass"]]
+    lines.extend(
+        [
+            "",
+            "## Independent physics-gate failures",
+            "",
+            f"Overall physics gates pass: `{physics_pass}`.  "
+            "The table lists every case that failed before pairwise convergence was considered.",
+            "",
+            "| factor | density | pol | Q/flux closure | mapping | thermal balance | thermal residual | electrical residual |",
+            "|---:|---|---|---:|---:|---:|---:|---:|",
+        ]
+    )
+    for row in failed_physics:
+        lines.append(
+            f"| {row['factor']} | {row['density_case']} | {row['polarization']} | "
+            f"{100*row['closure_relative']:.4f}% | "
+            f"{row['mapping_error_relative']:.3e} | "
+            f"{row['thermal_energy_balance_relative']:.3e} | "
+            f"{row['thermal_residual_relative']:.3e} | "
+            f"{row['electrical_residual_relative']:.3e} |"
         )
     lines.extend(
         [
@@ -831,8 +875,12 @@ def main() -> int:
     lines.extend(
         [
             "",
-            "No Q clipping, smoothing, gain, polarization matching, or closure rescaling is used. ",
+            "No Q clipping, smoothing, gain, polarization matching, or closure rescaling is used.",
             "Each optical mesh is normalized only by its own all-air incident-power calibration.",
+            "This was a partial z sweep: it refined Au, TaIrTe4, and SiO2 only. The Si substrate,",
+            "air regions, and z-PML discretization were fixed, so the failed result is not a",
+            "certificate for the full optical z domain. Time-window stationarity was also not",
+            "measured by this run and must be separated from spatial error before extending it.",
             "",
             f"Next gate: `{summary['next_gate']}`.",
         ]

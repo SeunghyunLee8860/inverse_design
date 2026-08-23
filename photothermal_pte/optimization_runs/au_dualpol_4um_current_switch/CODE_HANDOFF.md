@@ -57,11 +57,18 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
 2. AD-FD validates the derivative of a chosen discrete mesh; it does not
    certify mesh convergence.
 3. The original optical z mesh used only 2 Au cells and 5 TaIrTe4 cells.
-   The z-convergence script therefore checks Au/TaIrTe4/SiO2 refinement
-   factors 1, 2, 4, and 8 with a separate all-air source calibration for
-   every mesh.
+   The completed partial z sweep checked Au/TaIrTe4/SiO2 refinement factors
+   1, 2, 4, and 8 with a separate all-air source calibration for every mesh.
+   It failed: factor 4 -> 8 Q-map NRMSE is 10.7--20.6%, current changes reach
+   20.8%, and four factor-8 cases also fail the 0.5% Q/closed-flux closure
+   gate (0.84--1.96%).
 4. A new optimization must not be promoted until z convergence, then x/y
    convergence and combined-gradient convergence, pass fail-closed gates.
+5. The completed sweep refined only Au, TaIrTe4, and SiO2.  It did not refine
+   the Si substrate, surrounding air, or z PML, and it did not quantify
+   previous-window versus late-window stationarity.  Diagnose temporal/Q
+   closure first, then define a full-domain z sweep; do not call the current
+   result a full z-mesh certificate.
 
 ## Raw checkpoint dependency
 
@@ -94,11 +101,14 @@ used by the project.
 
 ## Next correct sequence
 
-1. Finish and report z-mesh convergence without changing the density or
-   material laws during the sweep.
-2. If z converges, check x/y optical convergence and downstream PTE current.
-3. Certify the combined gradient on the selected production mesh.
-4. Replace or justify the inconsistent gray law and repeat endpoint/AD-FD
-   checks.
-5. Only then restart LD_MMA continuation and finish with an exact binary
+1. Treat the existing factor 1/2/4/8 result as a failed partial-z diagnostic,
+   not as a converged production mesh.
+2. Diagnose time-window stationarity and the factor-8 Q/closed-flux closure
+   failures; then expand z refinement to Si, air, and PML as needed.
+3. Replace the O3/TE1 law with one explicit shared material-fraction contract
+   and repeat endpoint/AD-FD checks on the selected mesh.
+4. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh
+   convergence, and downstream PTE current.
+5. Certify the combined gradient on the selected production mesh.
+6. Only then restart LD_MMA continuation and finish with an exact binary
    500 nm solid/void audit.

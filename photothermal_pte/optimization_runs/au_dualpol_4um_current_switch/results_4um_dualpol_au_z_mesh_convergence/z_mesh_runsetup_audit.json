@@ -1,0 +1,358 @@
+{
+  "status": "VALIDATED_4UM_AU_Z_MESH_RUNSETUP",
+  "scope": "z-only optical refinement; x/y, geometry, source, and material endpoints fixed",
+  "timestamp_utc": "2026-08-23T20:15:57.948683+00:00",
+  "checkpoint": {
+    "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/robust_projection_ld_mma/evaluation_0112.npz",
+    "bytes": 92476,
+    "sha256": "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3"
+  },
+  "levels": [
+    {
+      "factor": 1,
+      "grid_shape": [
+        186,
+        186,
+        40
+      ],
+      "yee_cell_count": 1383840,
+      "x_bounds_m": [
+        -1e-05,
+        1e-05
+      ],
+      "y_bounds_m": [
+        -1e-05,
+        1e-05
+      ],
+      "z_bounds_m": [
+        -3e-06,
+        3e-06
+      ],
+      "central_dx_m": 1e-07,
+      "central_dy_m": 1e-07,
+      "sio2_dz_m": 9.5e-08,
+      "tairte4_dz_m": 2e-08,
+      "au_dz_m": 2.5e-08,
+      "layer_bounds_m": {
+        "fixed_285nm_sio2": [
+          -3.85e-07,
+          -1e-07
+        ],
+        "fixed_tairte4": [
+          -1e-07,
+          0.0
+        ],
+        "au_design": [
+          0.0,
+          5e-08
+        ]
+      },
+      "source_bounds": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          29,
+          30
+        ]
+      ],
+      "incident_monitor_bounds": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          28,
+          29
+        ]
+      ],
+      "closed_monitor_bounds": [
+        [
+          8,
+          178
+        ],
+        [
+          8,
+          178
+        ],
+        [
+          12,
+          27
+        ]
+      ],
+      "min_grid_step_m": 1.9999999999999994e-08,
+      "max_grid_step_m": 2.500000000000001e-07
+    },
+    {
+      "factor": 2,
+      "grid_shape": [
+        186,
+        186,
+        50
+      ],
+      "yee_cell_count": 1729800,
+      "x_bounds_m": [
+        -1e-05,
+        1e-05
+      ],
+      "y_bounds_m": [
+        -1e-05,
+        1e-05
+      ],
+      "z_bounds_m": [
+        -3e-06,
+        3e-06
+      ],
+      "central_dx_m": 1e-07,
+      "central_dy_m": 1e-07,
+      "sio2_dz_m": 4.75e-08,
+      "tairte4_dz_m": 1e-08,
+      "au_dz_m": 1.25e-08,
+      "layer_bounds_m": {
+        "fixed_285nm_sio2": [
+          -3.85e-07,
+          -1e-07
+        ],
+        "fixed_tairte4": [
+          -1e-07,
+          0.0
+        ],
+        "au_design": [
+          0.0,
+          5e-08
+        ]
+      },
+      "source_bounds": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          39,
+          40
+        ]
+      ],
+      "incident_monitor_bounds": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          38,
+          39
+        ]
+      ],
+      "closed_monitor_bounds": [
+        [
+          8,
+          178
+        ],
+        [
+          8,
+          178
+        ],
+        [
+          12,
+          37
+        ]
+      ],
+      "min_grid_step_m": 9.999999999999997e-09,
+      "max_grid_step_m": 2.500000000000001e-07
+    },
+    {
+      "factor": 4,
+      "grid_shape": [
+        186,
+        186,
+        70
+      ],
+      "yee_cell_count": 2421720,
+      "x_bounds_m": [
+        -1e-05,
+        1e-05
+      ],
+      "y_bounds_m": [
+        -1e-05,
+        1e-05
+      ],
+      "z_bounds_m": [
+        -3e-06,
+        3e-06
+      ],
+      "central_dx_m": 1e-07,
+      "central_dy_m": 1e-07,
+      "sio2_dz_m": 2.375e-08,
+      "tairte4_dz_m": 5e-09,
+      "au_dz_m": 6.25e-09,
+      "layer_bounds_m": {
+        "fixed_285nm_sio2": [
+          -3.85e-07,
+          -1e-07
+        ],
+        "fixed_tairte4": [
+          -1e-07,
+          0.0
+        ],
+        "au_design": [
+          0.0,
+          5e-08
+        ]
+      },
+      "source_bounds": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          59,
+          60
+        ]
+      ],
+      "incident_monitor_bounds": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          58,
+          59
+        ]
+      ],
+      "closed_monitor_bounds": [
+        [
+          8,
+          178
+        ],
+        [
+          8,
+          178
+        ],
+        [
+          12,
+          57
+        ]
+      ],
+      "min_grid_step_m": 4.999999999999992e-09,
+      "max_grid_step_m": 2.500000000000001e-07
+    },
+    {
+      "factor": 8,
+      "grid_shape": [
+        186,
+        186,
+        110
+      ],
+      "yee_cell_count": 3805560,
+      "x_bounds_m": [
+        -1e-05,
+        1e-05
+      ],
+      "y_bounds_m": [
+        -1e-05,
+        1e-05
+      ],
+      "z_bounds_m": [
+        -3e-06,
+        3e-06
+      ],
+      "central_dx_m": 1e-07,
+      "central_dy_m": 1e-07,
+      "sio2_dz_m": 1.1875e-08,
+      "tairte4_dz_m": 2.5e-09,
+      "au_dz_m": 3.125e-09,
+      "layer_bounds_m": {
+        "fixed_285nm_sio2": [
+          -3.85e-07,
+          -1e-07
+        ],
+        "fixed_tairte4": [
+          -1e-07,
+          0.0
+        ],
+        "au_design": [
+          0.0,
+          5e-08
+        ]
+      },
+      "source_bounds": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          99,
+          100
+        ]
+      ],
+      "incident_monitor_bounds": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          98,
+          99
+        ]
+      ],
+      "closed_monitor_bounds": [
+        [
+          8,
+          178
+        ],
+        [
+          8,
+          178
+        ],
+        [
+          12,
+          97
+        ]
+      ],
+      "min_grid_step_m": 2.4999999999999893e-09,
+      "max_grid_step_m": 2.500000000000001e-07
+    }
+  ],
+  "time_contract": {
+    "total_periods": 24,
+    "phasor_window_periods": 4
+  },
+  "density_cases": [
+    "eta_0.50_nominal",
+    "eta_0.35",
+    "eta_0.65"
+  ],
+  "gray_law": "production diagnostic only: optical rho^3, thermal/electrical rho^1"
+}
