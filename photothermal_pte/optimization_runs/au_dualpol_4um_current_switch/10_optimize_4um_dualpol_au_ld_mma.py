@@ -1011,19 +1011,29 @@ def main() -> int:
             "sha256": sha256(raw),
         }
         binary_results.append(result)
-    promoted = max(binary_results, key=lambda row: row["balanced_utility_A"])
-    promoted_rho = dict(candidates)[promoted["name"]]
-    final_raw = RAW / "PROMOTED_FINAL_BINARY.npz"
-    np.savez_compressed(final_raw, physical_density=promoted_rho)
+    best_diagnostic = max(
+        binary_results, key=lambda row: row["balanced_utility_A"]
+    )
     opposite_sign_pass = bool(
-        promoted["I_a_A"] > 0.0
-        and promoted["I_b_A"] < 0.0
-        and promoted["balanced_utility_A"] > 0.0
+        best_diagnostic["I_a_A"] > 0.0
+        and best_diagnostic["I_b_A"] < 0.0
+        and best_diagnostic["balanced_utility_A"] > 0.0
     )
     exact_dfm_pass = bool(
-        int(promoted["exact_audit"]["solid_bad_cell_count"]) == 0
-        and int(promoted["exact_audit"]["void_bad_cell_count"]) == 0
+        int(best_diagnostic["exact_audit"]["solid_bad_cell_count"]) == 0
+        and int(best_diagnostic["exact_audit"]["void_bad_cell_count"]) == 0
     )
+    promoted = best_diagnostic if opposite_sign_pass and exact_dfm_pass else None
+    promoted_raw = None
+    if promoted is not None:
+        promoted_rho = dict(candidates)[promoted["name"]]
+        final_raw = RAW / "PROMOTED_FINAL_BINARY.npz"
+        np.savez_compressed(final_raw, physical_density=promoted_rho)
+        promoted_raw = {
+            "path": str(final_raw),
+            "bytes": final_raw.stat().st_size,
+            "sha256": sha256(final_raw),
+        }
     final = {
         "status": (
             "VALIDATED_4UM_DUALPOL_AU_CURRENT_SWITCH_EXACT_BINARY"
@@ -1043,15 +1053,12 @@ def main() -> int:
         },
         "continuous_last": history[-1],
         "binary_candidates": binary_results,
+        "best_diagnostic_candidate": best_diagnostic,
         "promoted": promoted,
         "opposite_current_direction_gate": opposite_sign_pass,
         "exact_500nm_solid_void_gate": exact_dfm_pass,
         "continuous_checkpoint_beta": final_beta,
-        "promoted_raw": {
-            "path": str(final_raw),
-            "bytes": final_raw.stat().st_size,
-            "sha256": sha256(final_raw),
-        },
+        "promoted_raw": promoted_raw,
         "no_clipping_smoothing_gain_or_global_q_rescaling": True,
     }
     write_json(OUT / "FINAL_RESULT.json", final)
@@ -1060,10 +1067,11 @@ def main() -> int:
     write_json(
         OUT / "RUN_STATE.json",
         {
-            "stage": "complete",
+            "stage": "complete" if promoted is not None else "blocked_exact_binary",
             "status": final["status"],
             "evaluations_completed": len(history),
             "promoted": promoted,
+            "best_diagnostic_candidate": best_diagnostic,
         },
     )
     report = [
@@ -1075,7 +1083,9 @@ def main() -> int:
         "on the left terminal and `psi=1` on the right terminal.  Therefore",
         "the two requested illumination states drive opposite internal conventional",
         "current directions.  Both 500 nm solid and void constraints are included",
-        "in LD_MMA and the promoted final geometry is separately exact-audited.",
+        "in LD_MMA and every binary candidate is separately exact-audited.",
+        "A candidate is promoted only when both requested current signs survive",
+        "the exact-binary conversion; otherwise the result remains fail-closed.",
         "",
         "| result | I_a (nA) | I_b (nA) | min(I_a,-I_b) (nA) | exact bad cells |",
         "|---|---:|---:|---:|---:|",
