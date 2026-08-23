@@ -64,11 +64,11 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
 2. AD-FD validates the derivative of a chosen discrete mesh; it does not
    certify mesh convergence.
 3. The original optical z mesh used only 2 Au cells and 5 TaIrTe4 cells.
-   The completed partial z sweep checked Au/TaIrTe4/SiO2 refinement factors
-   1, 2, 4, and 8 with a separate all-air source calibration for every mesh.
-   It failed: factor 4 -> 8 Q-map NRMSE is 10.7--20.6%, current changes reach
-   20.8%, and four factor-8 cases also fail the 0.5% Q/closed-flux closure
-   gate (0.84--1.96%).
+   A historical partial z sweep checked Au/TaIrTe4/SiO2 factors 1, 2, 4, and
+   8, but its tables are now explicitly stale: they use O3/TE1, the old
+   Shockley-Ramo sign, and a cache key bound only to the checkpoint. Do not use
+   its reported Q/current changes for the current shared-linear code. Rerun
+   only after time closure, then perform full-domain z convergence.
 4. A new optimization must not be promoted until z convergence, then x/y
    convergence and combined-gradient convergence, pass fail-closed gates.
 5. The completed sweep refined only Au, TaIrTe4, and SiO2.  It did not refine
@@ -130,8 +130,8 @@ location.  `AU_DUALPOL_PYTHON`, `FDTDX_SOURCE_DIR`, and
 
 1. Confirm the target geometry, contacts, crystal-axis angle, layer stack, and
    illumination in `physical_device_contract.json`.
-2. Treat the existing factor 1/2/4/8 result as a failed partial-z diagnostic,
-   not as a converged production mesh.
+2. Treat the existing factor 1/2/4/8 tables as stale historical output, not as
+   evidence for the current code or as a converged production mesh.
 3. Diagnose time-window stationarity and the factor-8 Q/closed-flux closure
    failures; then expand z refinement to Si, air, and PML as needed.
 4. Revalidate the new shared linear material-fraction contract with endpoint,

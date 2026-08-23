@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Fail-closed z-mesh convergence for the 4 um Au/TaIrTe4 stack.
+"""Fail-closed partial material-z diagnostic for the 4 um Au/TaIrTe4 stack.
 
-The optimized density, x/y grid, source, material endpoints, and historical
-O3/TE1 gray law are frozen.  Only the optical z discretization of SiO2,
-TaIrTe4, and Au is refined.  Every optical mesh receives its own all-air
-incident-power calibration before Q is conservatively mapped to the identical
-explicit thermal/electrical operator.
+The optimized density, x/y grid, source, material endpoints, and shared-linear
+Au law are frozen.  Only the optical z discretization of SiO2, TaIrTe4, and Au
+is refined.  Every optical mesh receives its own all-air incident-power
+calibration before Q is conservatively mapped to the identical explicit
+thermal/electrical operator.
 
-This script diagnoses the current blocked gray checkpoint.  It does not
-promote the gray material law or restart optimization.
+This script diagnoses the current blocked gray checkpoint.  It cannot issue a
+full-domain z certificate and does not restart optimization.
 """
 
 from __future__ import annotations
@@ -58,6 +58,13 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.mesh_varia
     variant_edges,
     variant_layout,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+    audit as material_fraction_audit,
+    au_material_fraction,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production_readiness import (
+    DEVICE_CERTIFICATE,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -70,6 +77,7 @@ POLARIZATIONS = ("Ea", "Eb")
 GATE_POWER = 5.0e-3
 GATE_FIELD = 5.0e-3
 GATE_CURRENT = 5.0e-3
+IMPLEMENTATION_VERSION = "partial-material-z-shared-linear-e2-current-sign-v2"
 
 
 def sha256(path: Path) -> str:
@@ -220,7 +228,7 @@ class ForwardRunner:
         au_c3 = float(model["coefficients"]["au"][2])
 
         def arrays_for_density(density):
-            strength = density**3
+            strength = au_material_fraction(density)
             c3 = model["fixed_c3"]
             for component in range(3):
                 c3 = c3.at[(0, component, *au_slice)].set(
@@ -284,7 +292,10 @@ class ForwardRunner:
         runtime = time.perf_counter() - start
         e_au = np.asarray(output.detector_states["au_late"]["phasor"][0, 0])
         e_ta = np.asarray(output.detector_states["tairte4_late"]["phasor"][0, 0])
-        strength = np.asarray(rho, dtype=np.float64) ** 3
+        strength = np.asarray(
+            au_material_fraction(np.asarray(rho, dtype=np.float64)),
+            dtype=np.float64,
+        )
         q = {
             "au": (
                 source_scale
@@ -355,9 +366,29 @@ def main() -> int:
     for factor in LEVELS:
         audit_model = build_at_mesh(factor, "Ea", air_only=False)
         audits.append(mesh_audit(factor, audit_model))
+    case_contract = {
+        "implementation_version": IMPLEMENTATION_VERSION,
+        "script_sha256": sha256(Path(__file__).resolve()),
+        "device_contract_sha256": sha256(DEVICE_CERTIFICATE),
+        "checkpoint_sha256": sha256(CHECKPOINT),
+        "mesh_mode": PARTIAL_MATERIAL_Z,
+        "time": {
+            "total_periods": TOTAL_PERIODS,
+            "phasor_window_periods": WINDOW_PERIODS,
+        },
+        "au_material_fraction": material_fraction_audit(),
+        "absorption_density_law": "Q proportional to epsilon_imag*abs(E)**2",
+        "current_law": "I=sum(-sigma*S*DeltaT*Deltapsi)",
+    }
+    case_contract_sha256 = hashlib.sha256(
+        json.dumps(case_contract, sort_keys=True).encode("utf-8")
+    ).hexdigest()
     runsetup = {
-        "status": "VALIDATED_4UM_AU_Z_MESH_RUNSETUP",
-        "scope": "z-only optical refinement; x/y, geometry, source, and material endpoints fixed",
+        "status": "AUDITED_PARTIAL_4UM_AU_Z_MESH_RUNSETUP_NOT_SOLVED",
+        "scope": (
+            "partial material-z diagnostic; x/y, Si, air, and PML "
+            "discretization fixed"
+        ),
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "checkpoint": {
             "path": str(CHECKPOINT.resolve()),
@@ -372,7 +403,9 @@ def main() -> int:
             "phasor_window_periods": WINDOW_PERIODS,
         },
         "density_cases": list(densities),
-        "gray_law": "historical diagnostic only: optical rho^3, thermal/electrical rho^1",
+        "case_contract": case_contract,
+        "case_contract_sha256": case_contract_sha256,
+        "promotion": {"is_full_z_mesh_certificate": False},
     }
     write_json(OUT / "z_mesh_runsetup_audit.json", runsetup)
     if args.audit_only:
@@ -391,8 +424,14 @@ def main() -> int:
     prior_path = OUT / "Z_MESH_CONVERGENCE_SUMMARY.json"
     if prior_path.exists():
         prior = json.loads(prior_path.read_text(encoding="utf-8"))
-        prior_checkpoint = prior.get("runsetup", {}).get("checkpoint", {})
-        if prior_checkpoint.get("sha256") == sha256(CHECKPOINT):
+        prior_runsetup = prior.get("runsetup", {})
+        prior_checkpoint = prior_runsetup.get("checkpoint", {})
+        if (
+            prior_checkpoint.get("sha256") == sha256(CHECKPOINT)
+            and prior_runsetup.get("case_contract") == case_contract
+            and prior_runsetup.get("case_contract_sha256")
+            == case_contract_sha256
+        ):
             prior_cases = prior.get("case_results", [])
             prior_sources = prior.get("source_calibration_cases", [])
             for factor in LEVELS:
@@ -498,6 +537,7 @@ def main() -> int:
                     depth_power_W=np.sum(source_power, axis=(0, 1)),
                 )
                 row = {
+                    "case_contract_sha256": case_contract_sha256,
                     "factor": factor,
                     "density_case": density_name,
                     "polarization": polarization,
@@ -620,9 +660,9 @@ def main() -> int:
     physics_pass = all(bool(row["physics_gates_pass"]) for row in case_rows)
     convergence_pass = all(bool(row["comparison_pass"]) for row in final_pair)
     status = (
-        "VALIDATED_4UM_AU_Z_MESH_CONVERGENCE"
+        "DIAGNOSED_PARTIAL_4UM_AU_Z_MESH_CONVERGENCE_PASS"
         if physics_pass and convergence_pass
-        else "BLOCKED_4UM_AU_Z_MESH_CONVERGENCE"
+        else "BLOCKED_PARTIAL_4UM_AU_Z_MESH_CONVERGENCE"
     )
 
     with (OUT / "z_mesh_cases.csv").open("w", newline="", encoding="utf-8") as stream:
@@ -706,8 +746,8 @@ def main() -> int:
     summary = {
         "status": status,
         "scope": (
-            "fixed beta=256 robust checkpoint; historical O3/TE1 law; "
-            "z-only FDTDX refinement with per-mesh all-air source calibration; "
+            "fixed beta=256 robust checkpoint; shared-linear Au law; "
+            "partial material-z FDTDX refinement with per-mesh all-air source calibration; "
             "identical conservative thermal/electrical downstream operator"
         ),
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
@@ -722,11 +762,8 @@ def main() -> int:
             "physics_gates_pass": physics_pass,
             "final_pair_convergence_pass": convergence_pass,
         },
-        "next_gate": (
-            "OPTICAL_XY_AND_COMBINED_GRADIENT_CONVERGENCE"
-            if status.startswith("VALIDATED_")
-            else "DIAGNOSE_TIME_AND_ABSORPTION_CLOSURE_THEN_DEFINE_FULL_Z_SWEEP"
-        ),
+        "promotion": {"is_full_z_mesh_certificate": False},
+        "next_gate": "RUN_FULL_DOMAIN_Z_MESH_CONVERGENCE_AFTER_TIME_CLOSURE",
     }
     write_json(OUT / "Z_MESH_CONVERGENCE_SUMMARY.json", summary)
 
@@ -738,8 +775,8 @@ def main() -> int:
         "The exact current Au/FDTDX checkpoint had no prior z-mesh convergence certificate.",
         "AD-FD on the baseline grid certifies differentiation of that discrete grid only.",
         "",
-        "The density, x/y mesh, source, material endpoints, and historical O3/TE1 gray law are frozen.",
-        "The gray law remains diagnostic and is not promoted as physical Au.",
+        "The density, x/y mesh, source, material endpoints, and shared-linear Au law are frozen.",
+        "This partial refinement is diagnostic and cannot be promoted as a full z certificate.",
         "",
         "| factor | Au dz (nm) | TaIrTe4 dz (nm) | SiO2 dz (nm) | Yee cells |",
         "|---:|---:|---:|---:|---:|",
@@ -808,7 +845,7 @@ def main() -> int:
         "\n".join(lines) + "\n", encoding="utf-8"
     )
     print(json.dumps({"status": status, "final_pair": final_pair}, indent=2), flush=True)
-    return 0 if status.startswith("VALIDATED_") else 2
+    return 0 if status.startswith("DIAGNOSED_") else 2
 
 
 if __name__ == "__main__":

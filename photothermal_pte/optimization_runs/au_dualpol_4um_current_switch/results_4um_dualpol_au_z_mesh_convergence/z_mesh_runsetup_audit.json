@@ -1,11 +1,13 @@
 {
-  "status": "VALIDATED_4UM_AU_Z_MESH_RUNSETUP",
-  "scope": "z-only optical refinement; x/y, geometry, source, and material endpoints fixed",
-  "timestamp_utc": "2026-08-23T20:15:57.948683+00:00",
+  "status": "AUDITED_PARTIAL_4UM_AU_Z_MESH_RUNSETUP_NOT_SOLVED",
+  "scope": "partial material-z diagnostic; x/y, Si, air, and PML discretization fixed",
+  "timestamp_utc": "2026-08-23T22:30:51.429331+00:00",
   "checkpoint": {
     "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/robust_projection_ld_mma/evaluation_0112.npz",
     "bytes": 92476,
-    "sha256": "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3"
+    "sha256": "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3",
+    "expected_sha256": "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3",
+    "sha256_matches_expected": true
   },
   "levels": [
     {
@@ -354,5 +356,30 @@
     "eta_0.35",
     "eta_0.65"
   ],
-  "gray_law": "historical diagnostic only: optical rho^3, thermal/electrical rho^1"
+  "case_contract": {
+    "implementation_version": "partial-material-z-shared-linear-e2-current-sign-v2",
+    "script_sha256": "b4d51efd0213149661f2402a3c41e32b5bf9489450b9aa29723b48be81bafc36",
+    "device_contract_sha256": "2aae4743a373680c5d0811461d6e51c8e93c41387e4d841d9593fc3126833d59",
+    "checkpoint_sha256": "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3",
+    "mesh_mode": "partial_material_z",
+    "time": {
+      "total_periods": 24,
+      "phasor_window_periods": 4
+    },
+    "au_material_fraction": {
+      "law": "shared_linear_projected_density",
+      "exponent": 1.0,
+      "optical_fraction": "au_material_fraction(rho)",
+      "thermal_fraction": "au_material_fraction(rho)",
+      "electrical_fraction": "au_material_fraction(rho)",
+      "gray_density_is_physical_geometry": false,
+      "promotion_requires_exact_binary_density": true
+    },
+    "absorption_density_law": "Q proportional to epsilon_imag*abs(E)**2",
+    "current_law": "I=sum(-sigma*S*DeltaT*Deltapsi)"
+  },
+  "case_contract_sha256": "aec54c43976c82948e7539ca353efc167ffca5c605e0949074cc8aedc7ab4552",
+  "promotion": {
+    "is_full_z_mesh_certificate": false
+  }
 }

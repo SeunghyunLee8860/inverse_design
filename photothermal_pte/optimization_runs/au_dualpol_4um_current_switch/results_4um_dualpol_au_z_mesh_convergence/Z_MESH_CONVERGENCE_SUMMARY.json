@@ -1,6 +1,15 @@
 {
-  "status": "BLOCKED_4UM_AU_Z_MESH_CONVERGENCE",
+  "status": "STALE_HISTORICAL_PARTIAL_Z_NOT_CURRENT_CONTRACT",
   "scope": "fixed beta=256 robust checkpoint; historical O3/TE1 law; z-only FDTDX refinement with per-mesh all-air source calibration; identical conservative thermal/electrical downstream operator",
+  "invalidation": {
+    "do_not_use_as_current_numerical_evidence": true,
+    "reasons": [
+      "historical optical rho^3 and thermal/electrical rho laws do not match the current shared-linear Au law",
+      "historical collected-current sign predates the corrected J_local=-sigma*S*grad(T) implementation",
+      "historical cache provenance checked only the density checkpoint and was not bound to the implementation, material law, device contract, or time contract"
+    ],
+    "replacement": "rerun the hash-bound shared-linear diagnostic only after the time/absorption-closure gate, then run full-domain z convergence"
+  },
   "timestamp_utc": "2026-08-23T20:42:52.328202+00:00",
   "runsetup": {
     "status": "VALIDATED_4UM_AU_Z_MESH_RUNSETUP",

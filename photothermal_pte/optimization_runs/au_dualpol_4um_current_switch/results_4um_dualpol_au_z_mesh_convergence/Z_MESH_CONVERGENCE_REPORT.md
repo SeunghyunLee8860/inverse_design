@@ -1,6 +1,13 @@
 # 4 um Au/TaIrTe4 z-mesh convergence
 
-Status: `BLOCKED_4UM_AU_Z_MESH_CONVERGENCE`
+Status: `STALE_HISTORICAL_PARTIAL_Z_NOT_CURRENT_CONTRACT`
+
+Do not use the numerical tables below as evidence for the current code. They
+were generated with the historical optical-rho^3/thermal-electrical-rho law,
+the pre-correction Shockley-Ramo current sign, and a cache key bound only to
+the density checkpoint. They are retained only as historical evidence. The
+replacement diagnostic is hash-bound to the implementation, shared material
+law, device contract, time contract, and checkpoint.
 
 The exact current Au/FDTDX checkpoint had no prior z-mesh convergence certificate.
 AD-FD on the baseline grid certifies differentiation of that discrete grid only.

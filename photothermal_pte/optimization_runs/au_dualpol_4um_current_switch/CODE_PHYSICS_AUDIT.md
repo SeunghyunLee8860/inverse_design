@@ -35,9 +35,10 @@ sample-air boundaries are insulating, and the transverse example uses an
    full optimization has been rerun under that corrected contract.
 
 2. **No converged mesh exists.** The historical partial-z sweep refined only
-   Au, TaIrTe4, and SiO2. Its final factor-4 to factor-8 pair failed, including
-   remapped-Q NRMSE of 10.7-20.6% and current changes up to 20.8%. Si, air,
-   PML, optical x/y, thermal, and electrical meshes were not certified.
+   Au, TaIrTe4, and SiO2, and its tables are stale because they used O3/TE1,
+   the old current sign, and an under-specified cache key. Its numerical
+   changes are not evidence for the current shared-linear code. Si, air, PML,
+   optical x/y, thermal, and electrical meshes were not certified.
 
 3. **Time error and spatial error are mixed.** The partial-z sweep did not
    compare the previous and late phasor windows. Some fine-grid Q/closed-flux

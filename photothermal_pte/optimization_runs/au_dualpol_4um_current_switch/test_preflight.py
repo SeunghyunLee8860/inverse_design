@@ -240,6 +240,17 @@ def test_default_physical_device_contract_is_deliberately_blocked() -> None:
     assert not all(payload["confirmations"].values())
 
 
+def test_historical_partial_z_results_are_marked_stale() -> None:
+    path = (
+        Path(__file__).resolve().parent
+        / "results_4um_dualpol_au_z_mesh_convergence"
+        / "Z_MESH_CONVERGENCE_SUMMARY.json"
+    )
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert payload["status"] == "STALE_HISTORICAL_PARTIAL_Z_NOT_CURRENT_CONTRACT"
+    assert payload["invalidation"]["do_not_use_as_current_numerical_evidence"]
+
+
 def test_signed_opposite_current_objective() -> None:
     assert useful_currents(3.0e-9, -4.0e-9) == (3.0e-9, 4.0e-9)
     assert np.all(epigraph_constraints(3e-9, -4e-9, 2e-9) <= 0.0)
