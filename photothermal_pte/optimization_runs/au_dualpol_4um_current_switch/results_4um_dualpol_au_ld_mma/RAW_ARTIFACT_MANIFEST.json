@@ -85,7 +85,9 @@
       32.0,
       48.0,
       64.0,
+      80.0,
       96.0,
+      112.0,
       128.0
     ],
     "stage_maxeval": {
@@ -99,14 +101,20 @@
       "128.0": 6
     },
     "resume": {
-      "checkpoint_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/stage_03_beta_8.npz",
-      "checkpoint_sha256": "74b8920b919e3bc0e92009d761f86a3a64450f62d6b3f3f55194f32db4296079",
-      "resume_evaluation": 66,
+      "checkpoint_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/stage_09_beta_64.npz",
+      "checkpoint_sha256": "b26b04aba97a1443d5aa098bf039ad7e80db95aabe7d1379654635de6f3515ce",
+      "resume_evaluation": 153,
       "completed_betas": [
         1.0,
         2.0,
         4.0,
-        8.0
+        8.0,
+        12.0,
+        16.0,
+        24.0,
+        32.0,
+        48.0,
+        64.0
       ]
     }
   },
@@ -878,8 +886,78 @@
     },
     "0154": {
       "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0154.npz",
-      "bytes": 319455,
-      "sha256": "3a4d48ba4f3533f8e471da2e38c0c777eda6e50afd48c95c4f3d6bda4e310b07"
+      "bytes": 326938,
+      "sha256": "12c2fa15b8a561e4974abf06ee5de37e1105d4dbbb91eeaeaefb731272e13fb6"
+    },
+    "0155": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0155.npz",
+      "bytes": 326844,
+      "sha256": "eda834d0d6264806fb8a7b6baa2741ad7377851cc944b9421b0f9c47178e38b0"
+    },
+    "0156": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0156.npz",
+      "bytes": 326896,
+      "sha256": "fb32657f851f25d78eb27c8b8fbd47f679a397154312fe5a30e54d873a0d3a34"
+    },
+    "0157": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0157.npz",
+      "bytes": 326871,
+      "sha256": "40f51b9dc208dd581b7c371672b691c2b87a96833f902b1f0cfc697547f3e871"
+    },
+    "0158": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0158.npz",
+      "bytes": 326833,
+      "sha256": "5952f578171fd9d85e3c9c5a556968411ec693b70688da4a9bbc49fbbffec0ea"
+    },
+    "0159": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0159.npz",
+      "bytes": 326952,
+      "sha256": "c00a164ee3865e175fcaff6f078b0e1af4d15e6224ed0a69b8545f30fe507318"
+    },
+    "0160": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0160.npz",
+      "bytes": 326900,
+      "sha256": "77e4e82f89eb48f82345bc1b24ca3ecf67e7c133b576f8009585eae5700db2eb"
+    },
+    "0161": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0161.npz",
+      "bytes": 327053,
+      "sha256": "de72ba0f7d3fde86223f561e2bb179cef80e3e82fb9e98f3fbe4aa6cf335acc9"
+    },
+    "0162": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0162.npz",
+      "bytes": 326974,
+      "sha256": "ef293bf6abbdd99a511926ac7fd0b8470fd62fbe539a05210b9ffe4c52de7380"
+    },
+    "0163": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0163.npz",
+      "bytes": 326912,
+      "sha256": "7002ace7dd1934946fd6ffebd831919c73423b1761060a5329b9a3a39b330858"
+    },
+    "0164": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0164.npz",
+      "bytes": 326888,
+      "sha256": "e0fed53ad6a18ad65bde200f94e2d514e9d3e322e4d424d8169cefd6d556d6a3"
+    },
+    "0165": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0165.npz",
+      "bytes": 327333,
+      "sha256": "66ab12ff03229ed1f6c4d87ae625cfbd876dc656411b8a606c8fdff72c7e2156"
+    },
+    "0166": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0166.npz",
+      "bytes": 327020,
+      "sha256": "7ce710e857c39aa5f2a08f4e352e9bd8ceb58d877696cf7a53662dec2fbb2745"
+    },
+    "0167": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0167.npz",
+      "bytes": 326971,
+      "sha256": "7ef97b76637127bad95f3e95a840d4f8ec5fc898005ddadc91b5c9d41157bf70"
+    },
+    "0168": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/evaluation_0168.npz",
+      "bytes": 326888,
+      "sha256": "e0fed53ad6a18ad65bde200f94e2d514e9d3e322e4d424d8169cefd6d556d6a3"
     }
   }
 }
