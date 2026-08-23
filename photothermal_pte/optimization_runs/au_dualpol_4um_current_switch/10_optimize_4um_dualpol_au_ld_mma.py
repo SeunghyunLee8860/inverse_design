@@ -76,11 +76,13 @@ STAGE_MAXEVAL = {
     16.0: 16,
     32.0: 14,
     64.0: 12,
-    128.0: 10,
+    128.0: 12,
     12.0: 16,
     24.0: 14,
     48.0: 12,
-    96.0: 10,
+    96.0: 14,
+    80.0: 14,
+    112.0: 12,
 }
 CAP_REDUCTION = {
     1.0: 1.01,
@@ -90,7 +92,7 @@ CAP_REDUCTION = {
     16.0: 0.95,
     32.0: 0.92,
     64.0: 0.90,
-    128.0: 0.85,
+    128.0: 0.95,
     # Adaptive continuation used after the validated beta=8 checkpoint.  A
     # beta change already perturbs both current signs and morphology residuals;
     # imposing a second 20--35% residual jump at the same instant made the
@@ -99,13 +101,16 @@ CAP_REDUCTION = {
     12.0: 0.95,
     24.0: 0.92,
     48.0: 0.90,
-    96.0: 0.88,
+    96.0: 0.95,
+    80.0: 0.95,
+    112.0: 0.95,
 }
 # A smooth opening has a finite soft-min/soft-max boundary layer even for an
 # exact-audit-passing binary pattern.  These floors were measured on exact
 # 500 nm controls; using a smaller number would reject valid large features.
 # The discontinuous final audit remains the zero-violation authority.
 DFM_CAP_FLOOR = np.asarray((1.0e-1, 5.0e-3), dtype=np.float64)
+STAGE_PERFORMANCE_RETENTION = 0.90
 NLOPT_CONSTRAINT_TOL = 2.0e-5
 
 
@@ -641,7 +646,7 @@ def write_history_csv(history: list[dict[str, object]]) -> None:
         "dfm_void_g",
     )
     with (OUT / "optimization_history.csv").open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.DictWriter(stream, fieldnames=fields)
+        writer = csv.DictWriter(stream, fieldnames=fields, lineterminator="\n")
         writer.writeheader()
         for row in history:
             writer.writerow({name: row[name] for name in fields})
@@ -689,7 +694,8 @@ def main() -> int:
             "beta_schedule": list(run_betas),
             "stage_maxeval": {str(key): value for key, value in STAGE_MAXEVAL.items()},
             "stage_feasibility_gate": (
-                "Ia>0, Ib<0, epigraph feasible, and both smooth DFM inequalities <=0"
+                "Ia>0, Ib<0, epigraph feasible, both smooth DFM inequalities <=0, "
+                "and returned min(Ia,-Ib) >= 90% of the prior promoted objective"
             ),
             "maximum_stage_attempts": 3,
         },
@@ -756,6 +762,9 @@ def main() -> int:
     }
     initial_stage_index = len(stage_rows)
     last_completed_beta = float(stage_rows[-1]["beta"]) if stage_rows else None
+    previous_stage_objective = (
+        float(stage_rows[-1]["nlopt_max_objective"]) if stage_rows else None
+    )
     for local_stage_index, beta in enumerate(run_betas):
         stage_index = initial_stage_index + local_stage_index
         latent = vector[:-1].reshape(CONTRACT.design_shape)
@@ -792,7 +801,14 @@ def main() -> int:
         start = time.perf_counter()
         attempts: list[dict[str, object]] = []
         stage_feasible = False
+        stage_performance_retained = False
+        stage_promotable = False
         optimizer: nlopt.opt | None = None
+        performance_floor = (
+            STAGE_PERFORMANCE_RETENTION * previous_stage_objective
+            if previous_stage_objective is not None
+            else -np.inf
+        )
         for attempt in range(3):
             optimizer = make_optimizer(evaluator)
             vector = optimizer.optimize(vector)
@@ -812,6 +828,14 @@ def main() -> int:
                 and returned.current_b_A < 0.0
                 and np.max(constraint_values) <= 10.0 * NLOPT_CONSTRAINT_TOL
             )
+            returned_balanced_nA = min(
+                returned.current_a_A, -returned.current_b_A
+            ) / CURRENT_SCALE_A
+            stage_performance_retained = bool(
+                returned_balanced_nA >= performance_floor
+                and t_scaled >= performance_floor
+            )
+            stage_promotable = stage_feasible and stage_performance_retained
             attempts.append(
                 {
                     "attempt": attempt + 1,
@@ -822,9 +846,13 @@ def main() -> int:
                     "I_a_A": returned.current_a_A,
                     "I_b_A": returned.current_b_A,
                     "feasible": stage_feasible,
+                    "returned_balanced_utility_nA": returned_balanced_nA,
+                    "performance_floor_nA": performance_floor,
+                    "performance_retained": stage_performance_retained,
+                    "promotable": stage_promotable,
                 }
             )
-            if stage_feasible:
+            if stage_promotable:
                 break
             # A continuation stage is never allowed to promote an infeasible
             # density.  Re-anchor t to the actual current bottleneck and let a
@@ -833,15 +861,18 @@ def main() -> int:
                 returned.current_a_A, -returned.current_b_A
             ) / CURRENT_SCALE_A - 1.0e-6
             print(
-                f"[stage] beta={beta:g} attempt={attempt + 1} infeasible; "
-                f"continuing the same stage, constraints={constraint_values.tolist()}",
+                f"[stage] beta={beta:g} attempt={attempt + 1} not promotable; "
+                f"feasible={stage_feasible}, retained={stage_performance_retained}, "
+                f"balanced={returned_balanced_nA:.6f} nA, "
+                f"floor={performance_floor:.6f} nA, "
+                f"constraints={constraint_values.tolist()}",
                 flush=True,
             )
-        if optimizer is None or not stage_feasible:
+        if optimizer is None or not stage_promotable:
             write_json(
                 OUT / "RUN_STATE.json",
                 {
-                    "stage": "blocked_continuation_stage_infeasible",
+                    "stage": "blocked_continuation_stage_not_promotable",
                     "stage_index": stage_index,
                     "beta": beta,
                     "attempts": attempts,
@@ -850,7 +881,7 @@ def main() -> int:
                 },
             )
             raise RuntimeError(
-                f"beta={beta:g} remained infeasible after {len(attempts)} MMA attempts"
+                f"beta={beta:g} remained non-promotable after {len(attempts)} MMA attempts"
             )
         stage = {
             "stage_index": stage_index,
@@ -865,6 +896,9 @@ def main() -> int:
             "stage_runtime_s": time.perf_counter() - start,
             "evaluations_total": len(history),
             "stage_feasible": stage_feasible,
+            "stage_performance_retained": stage_performance_retained,
+            "stage_promotable": stage_promotable,
+            "performance_floor_nA": performance_floor,
             "attempts": attempts,
         }
         stage_rows.append(stage)
@@ -879,6 +913,7 @@ def main() -> int:
         write_history_csv(history)
         print(f"[stage] completed beta={beta:g}: {stage}", flush=True)
         last_completed_beta = beta
+        previous_stage_objective = float(optimizer.last_optimum_value())
 
     final_latent = vector[:-1].reshape(CONTRACT.design_shape)
     final_projected = MAPPING.physical(final_latent, run_betas[-1])
