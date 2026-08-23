@@ -40,12 +40,14 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production
     sha256,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_model import (
+    ABSORPTION_LOSS_BASIS,
     CLOSED_SURFACE_PHASOR_APODIZATION,
     CLOSED_SURFACE_PHASOR_WINDOW,
     LAYOUT,
     MAX_IGNORED_SUBSTRATE_EPSILON_IMAG,
     _lossless_uniform_permittivity,
     grid_edges_sha256,
+    realized_discrete_susceptibility,
     source_calibration_contract,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
@@ -101,6 +103,19 @@ def test_source_calibration_is_bound_to_exact_grid_and_time_contract() -> None:
 def test_closed_surface_phasor_uses_safe_rectangular_window() -> None:
     assert CLOSED_SURFACE_PHASOR_WINDOW == "rectangular_switch_only"
     assert CLOSED_SURFACE_PHASOR_APODIZATION is None
+
+
+def test_heat_uses_realized_float32_ade_loss() -> None:
+    assert ABSORPTION_LOSS_BASIS == (
+        "realized_float32_discrete_ADE_susceptibility"
+    )
+    value = realized_discrete_susceptibility(
+        (1.9996999118283947, -0.9996999118283949, 0.0032755750868792505),
+        2.0 * np.pi * 299_792_458.0 / 4.0e-6,
+        4.166939126386172e-18,
+    )
+    assert np.isclose(value.real, -826.3737182617188, rtol=1e-7)
+    assert np.isclose(value.imag, 125.59490203857422, rtol=1e-7)
 
 
 def test_full_z_mesh_factor_one_is_exact_baseline_and_z_pml_is_independent() -> None:

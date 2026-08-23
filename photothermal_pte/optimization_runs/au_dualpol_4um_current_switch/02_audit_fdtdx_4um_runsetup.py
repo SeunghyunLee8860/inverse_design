@@ -18,6 +18,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
     CONTRACT,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_model import (
+    ABSORPTION_LOSS_BASIS,
     LAYOUT,
     MAX_IGNORED_SUBSTRATE_EPSILON_IMAG,
     build_model,
@@ -168,6 +169,11 @@ def main() -> int:
             "ADE_fit_relative_error": {
                 name: float(value["fit_relative_error"])
                 for name, value in reference["fits"].items()
+            },
+            "absorption_loss_basis": ABSORPTION_LOSS_BASIS,
+            "realized_float32_discrete_susceptibility": {
+                name: [value.real, value.imag]
+                for name, value in reference["discrete_susceptibility"].items()
             },
             "au_material_fraction": material_fraction_audit(),
             "substrate_implementation": (

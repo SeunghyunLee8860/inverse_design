@@ -103,6 +103,11 @@ sample-air boundaries are insulating, and the transverse example uses an
   now `-sigma*S*DeltaT*Deltapsi`, matching `J_local=-sigma*S*grad(T)`.
   Historical signed-current artifacts made before this correction are stale
   and must be recomputed; they cannot be relabeled as physical current.
+- Heat generation and its direct-loss derivative now use the realized float32
+  discrete-ADE susceptibility, not the continuous target epsilon. The time
+  diagnostic measured a 1.11-1.14% target/discrete Q mismatch. Existing
+  optical-gradient/phase tables are marked stale until stability is fixed and
+  AD-FD is reissued on this discrete-loss objective.
 - New shared-linear Eb optical-gradient split: 0.0158% total AD-FD error at
   step 0.0025. This is diagnostic only, on the unconverged baseline mesh.
 - New discrete adjoint phase diagnostic: production `exp(+i omega dt)` is the

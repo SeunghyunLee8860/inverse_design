@@ -81,6 +81,9 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    (40), with negative late closed flux. Isolate the long-time FDTD instability
    before running any partial or full-domain mesh sweep. See
    `results_4um_time_absorption_closure/TIME_ABSORPTION_CLOSURE_FINDINGS.md`.
+   It also found a 1.11--1.14% continuous-target versus realized float32
+   discrete-ADE Q mismatch. Forward heat and direct-loss gradients now use the
+   realized discrete loss; old gradient/phase tables are explicitly stale.
 6. Electrical void cells retain tiny sheet/contact floors to regularize the
    floating Au block.  Quantify floor sensitivity; do not describe the
    electrical `rho=0` endpoint as exactly disconnected until that passes.

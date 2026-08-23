@@ -40,6 +40,7 @@ C0_M_PER_S = 299_792_458.0
 MAX_IGNORED_SUBSTRATE_EPSILON_IMAG = 1.0e-10
 CLOSED_SURFACE_PHASOR_WINDOW = "rectangular_switch_only"
 CLOSED_SURFACE_PHASOR_APODIZATION = None
+ABSORPTION_LOSS_BASIS = "realized_float32_discrete_ADE_susceptibility"
 
 
 @dataclass(frozen=True)
@@ -187,6 +188,20 @@ def _complex(item: dict[str, float]) -> complex:
     return complex(float(item["real"]), float(item["imag"]))
 
 
+def realized_discrete_susceptibility(
+    coefficient_triplet: tuple[float, float, float],
+    omega_rad_s: float,
+    dt_s: float,
+) -> complex:
+    """Carrier-frequency susceptibility of the realized float32 ADE recurrence."""
+
+    c1, c2, c3 = (np.float32(value) for value in coefficient_triplet)
+    theta = np.float32(omega_rad_s * dt_s)
+    z_minus = np.exp(np.complex64(-1j * theta))
+    z_plus = np.exp(np.complex64(1j * theta))
+    return complex(np.complex64(c3) / (z_minus - c1 - c2 * z_plus))
+
+
 def polarization_vector(polarization: str) -> tuple[float, float, float]:
     if polarization == "Ea":
         return (0.0, 1.0, 0.0)
@@ -282,6 +297,10 @@ def build_model(
     coefficients = {
         name: stage41._coefficient_triplet(value, dt)
         for name, value in fits.items()
+    }
+    discrete_susceptibility = {
+        name: realized_discrete_susceptibility(value, omega, dt)
+        for name, value in coefficients.items()
     }
 
     objects: list[object] = []
@@ -595,6 +614,8 @@ def build_model(
         "fixed_c2": fixed_c2,
         "fixed_c3": fixed_c3,
         "coefficients": coefficients,
+        "discrete_susceptibility": discrete_susceptibility,
+        "absorption_loss_basis": ABSORPTION_LOSS_BASIS,
         "fits": fits,
         "epsilon": {
             "au": epsilon_au,

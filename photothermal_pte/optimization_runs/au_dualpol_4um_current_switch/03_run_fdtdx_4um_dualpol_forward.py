@@ -26,6 +26,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
     CONTRACT,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_model import (
+    ABSORPTION_LOSS_BASIS,
     build_model,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
@@ -140,11 +141,11 @@ def run_case(polarization: str) -> tuple[dict[str, object], Path]:
         )
         for material in ("au_design", "fixed_tairte4")
     }
+    au_imag = float(model["discrete_susceptibility"]["au"].imag)
     ta_imag = np.asarray(
         [
-            model["epsilon"]["tairte4"]["b"].imag,
-            model["epsilon"]["tairte4"]["a"].imag,
-            model["epsilon"]["tairte4"]["c"].imag,
+            model["discrete_susceptibility"][axis].imag
+            for axis in ("b", "a", "c")
         ],
         dtype=np.float64,
     )[:, None, None, None]
@@ -155,7 +156,7 @@ def run_case(polarization: str) -> tuple[dict[str, object], Path]:
         e_ta = np.asarray(output.detector_states[f"tairte4_{window}"]["phasor"][0, 0])
         q_au = (
             physical_prefactor
-            * model["epsilon"]["au"].imag
+            * au_imag
             * np.asarray(strength)[None, :, :, None]
             * np.abs(e_au) ** 2
         )
@@ -280,6 +281,11 @@ def run_case(polarization: str) -> tuple[dict[str, object], Path]:
         ),
         "rho": 0.5,
         "au_material_fraction": material_fraction_audit(),
+        "absorption_loss_basis": model["absorption_loss_basis"],
+        "realized_discrete_susceptibility": {
+            name: [value.real, value.imag]
+            for name, value in model["discrete_susceptibility"].items()
+        },
         "runtime_s": runtime_s,
         "gpu": os.environ.get("CUDA_VISIBLE_DEVICES"),
         "power": {
@@ -333,6 +339,7 @@ def main() -> int:
         "scope": "rho=0.5 optical forward only; no thermal/electrical/adjoint/optimization",
         "axis_mapping": {"x": "b", "y": "a"},
         "au_material_fraction": material_fraction_audit(),
+        "absorption_loss_basis": ABSORPTION_LOSS_BASIS,
         "cases": cases,
     }
     (OUT / "fdtdx_4um_dualpol_forward.json").write_text(

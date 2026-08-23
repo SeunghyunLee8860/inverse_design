@@ -1,6 +1,10 @@
 # Eb optical-gradient decomposition diagnostic
 
-Status: `DIAGNOSTIC_ONLY_NOT_AN_OPTIMIZATION_GATE`
+Status: `STALE_DISCRETE_ADE_LOSS_BASIS_REVALIDATION_REQUIRED`
+
+This table predates use of the realized float32 discrete-ADE loss for Q and
+the direct-loss derivative. Reissue it only after the long-time FDTD
+instability is closed.
 
 The fixed baseline thermal-source adjoint weights are held constant while
 the Maxwell field-mediated and explicit Au-loss derivatives are separated.

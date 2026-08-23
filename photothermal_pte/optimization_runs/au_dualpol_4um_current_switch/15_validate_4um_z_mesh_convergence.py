@@ -215,6 +215,7 @@ class ForwardRunner:
     solve: object
     volumes: dict[str, np.ndarray]
     physical_prefactor: float
+    au_imag: float
     ta_imag: np.ndarray
     compile_s: float
 
@@ -257,11 +258,11 @@ class ForwardRunner:
         compile_s = time.perf_counter() - start
         eta0 = float(fdtdx.constants.eta0)
         prefactor = 0.5 * float(model["omega_rad_s"]) * EPS0_F_PER_M * eta0**2
+        au_imag = float(model["discrete_susceptibility"]["au"].imag)
         ta_imag = np.asarray(
             [
-                model["epsilon"]["tairte4"]["b"].imag,
-                model["epsilon"]["tairte4"]["a"].imag,
-                model["epsilon"]["tairte4"]["c"].imag,
+                model["discrete_susceptibility"][axis].imag
+                for axis in ("b", "a", "c")
             ],
             dtype=np.float64,
         )[:, None, None, None]
@@ -280,6 +281,7 @@ class ForwardRunner:
             solve=solve,
             volumes=volumes,
             physical_prefactor=prefactor,
+            au_imag=au_imag,
             ta_imag=ta_imag,
             compile_s=compile_s,
         )
@@ -300,7 +302,7 @@ class ForwardRunner:
             "au": (
                 source_scale
                 * self.physical_prefactor
-                * float(self.model["epsilon"]["au"].imag)
+                * self.au_imag
                 * strength[None, :, :, None]
                 * np.abs(e_au) ** 2
             ),
@@ -377,7 +379,10 @@ def main() -> int:
             "phasor_window_periods": WINDOW_PERIODS,
         },
         "au_material_fraction": material_fraction_audit(),
-        "absorption_density_law": "Q proportional to epsilon_imag*abs(E)**2",
+        "absorption_density_law": (
+            "Q proportional to realized float32 discrete-ADE "
+            "susceptibility.imag*abs(E)**2"
+        ),
         "current_law": "I=sum(-sigma*S*DeltaT*Deltapsi)",
     }
     case_contract_sha256 = hashlib.sha256(

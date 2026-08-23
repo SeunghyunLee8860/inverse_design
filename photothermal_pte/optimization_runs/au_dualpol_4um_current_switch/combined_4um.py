@@ -68,6 +68,7 @@ class CompiledOpticalRunner:
     solve_adjoint: object
     volumes: dict[str, np.ndarray]
     physical_prefactor: float
+    au_imag: float
     ta_imag: np.ndarray
     compile_forward_s: float
     compile_adjoint_s: float
@@ -177,11 +178,11 @@ class CompiledOpticalRunner:
         physical_prefactor = (
             0.5 * float(model["omega_rad_s"]) * EPS0_F_PER_M * eta0**2
         )
+        au_imag = float(model["discrete_susceptibility"]["au"].imag)
         ta_imag = np.asarray(
             [
-                model["epsilon"]["tairte4"]["b"].imag,
-                model["epsilon"]["tairte4"]["a"].imag,
-                model["epsilon"]["tairte4"]["c"].imag,
+                model["discrete_susceptibility"][axis].imag
+                for axis in ("b", "a", "c")
             ],
             dtype=np.float64,
         )[:, None, None, None]
@@ -198,6 +199,7 @@ class CompiledOpticalRunner:
             solve_adjoint=solve_adjoint,
             volumes=volumes,
             physical_prefactor=physical_prefactor,
+            au_imag=au_imag,
             ta_imag=ta_imag,
             compile_forward_s=compile_forward_s,
             compile_adjoint_s=compile_adjoint_s,
@@ -233,7 +235,7 @@ class CompiledOpticalRunner:
         q = {
             "au": source_power_scale
             * self.physical_prefactor
-            * float(self.model["epsilon"]["au"].imag)
+            * self.au_imag
             * strength[None, :, :, None]
             * np.abs(e_au) ** 2,
             "tairte4": source_power_scale
@@ -294,6 +296,10 @@ def evaluate_forward_multiphysics(
     )
     result: dict[str, object] = {
         **evaluated,
+        "absorption_loss_basis": runner.model["absorption_loss_basis"],
+        "realized_discrete_susceptibility": runner.model[
+            "discrete_susceptibility"
+        ],
         "optical_output": output,
         "fields": fields,
         "q_fields_W_m3": q,
@@ -362,7 +368,7 @@ def combined_gradient(
     au_weight = weights["au"]
     coefficient[(slice(None), *au_local)] = (
         runner.physical_prefactor
-        * float(runner.model["epsilon"]["au"].imag)
+        * runner.au_imag
         * au_weight
         * strength[None, :, :, None]
     )
@@ -407,7 +413,7 @@ def combined_gradient(
     field_unscaled = runner.model["jnp"].sum(field_voxel, axis=(0, 3))
     direct_loss_unscaled = (
         runner.physical_prefactor
-        * float(runner.model["epsilon"]["au"].imag)
+        * runner.au_imag
         * runner.model["jnp"].sum(
             runner.model["jnp"].asarray(weights["au"])
             * runner.model["jnp"].asarray(runner.volumes["au"])
