@@ -12,6 +12,12 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_f
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
     load_current_source_calibration,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_model import (
+    ABSORPTION_LOSS_BASIS,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.objective import (
+    PTE_CURRENT_SIGN_CONVENTION,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -133,6 +139,13 @@ def readiness_audit(
         checks.update(
             mesh_status=mesh.get("status") == MESH_STATUS,
             mesh_material_fraction=mesh.get("au_material_fraction") == material,
+            mesh_absorption_loss_basis=(
+                mesh.get("absorption_loss_basis") == ABSORPTION_LOSS_BASIS
+            ),
+            mesh_current_sign_convention=(
+                mesh.get("pte_current_sign_convention")
+                == PTE_CURRENT_SIGN_CONVENTION
+            ),
             mesh_coverage=bool(
                 isinstance(coverage, dict)
                 and all(coverage.get(name) is True for name in REQUIRED_MESH_COVERAGE)
@@ -150,6 +163,8 @@ def readiness_audit(
         checks.update(
             mesh_status=False,
             mesh_material_fraction=False,
+            mesh_absorption_loss_basis=False,
+            mesh_current_sign_convention=False,
             mesh_coverage=False,
             mesh_uses_device_certificate=False,
             mesh_uses_source_calibration=False,
@@ -160,6 +175,13 @@ def readiness_audit(
             gradient_status=gradient.get("status") == GRADIENT_STATUS,
             gradient_material_fraction=(
                 gradient.get("au_material_fraction") == material
+            ),
+            gradient_absorption_loss_basis=(
+                gradient.get("absorption_loss_basis") == ABSORPTION_LOSS_BASIS
+            ),
+            gradient_current_sign_convention=(
+                gradient.get("pte_current_sign_convention")
+                == PTE_CURRENT_SIGN_CONVENTION
             ),
             gradient_uses_mesh_certificate=(
                 mesh_sha256 is not None
@@ -175,6 +197,8 @@ def readiness_audit(
         checks.update(
             gradient_status=False,
             gradient_material_fraction=False,
+            gradient_absorption_loss_basis=False,
+            gradient_current_sign_convention=False,
             gradient_uses_mesh_certificate=False,
             gradient_multidirection_gate=False,
         )
@@ -195,6 +219,8 @@ def readiness_audit(
         "required_mesh_coverage": list(REQUIRED_MESH_COVERAGE),
         "required_device_confirmations": list(REQUIRED_DEVICE_CONFIRMATIONS),
         "au_material_fraction": material,
+        "absorption_loss_basis": ABSORPTION_LOSS_BASIS,
+        "pte_current_sign_convention": PTE_CURRENT_SIGN_CONVENTION,
     }
 
 

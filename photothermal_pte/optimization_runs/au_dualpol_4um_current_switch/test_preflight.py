@@ -12,6 +12,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.dfm import
     smooth_500nm_constraints,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.objective import (
+    PTE_CURRENT_SIGN_CONVENTION,
     epigraph_constraints,
     smooth_minimum,
     useful_currents,
@@ -223,6 +224,8 @@ def test_production_readiness_requires_hash_linked_complete_certificates(
     mesh = {
         "status": MESH_STATUS,
         "au_material_fraction": material,
+        "absorption_loss_basis": ABSORPTION_LOSS_BASIS,
+        "pte_current_sign_convention": PTE_CURRENT_SIGN_CONVENTION,
         "coverage": {name: True for name in REQUIRED_MESH_COVERAGE},
         "device_certificate_sha256": sha256(device_path),
         "source_calibration_sha256": sha256(calibration_path),
@@ -231,6 +234,8 @@ def test_production_readiness_requires_hash_linked_complete_certificates(
     gradient = {
         "status": GRADIENT_STATUS,
         "au_material_fraction": material,
+        "absorption_loss_basis": ABSORPTION_LOSS_BASIS,
+        "pte_current_sign_convention": PTE_CURRENT_SIGN_CONVENTION,
         "mesh_certificate_sha256": sha256(mesh_path),
         "direction_count": 4,
         "maximum_normalized_error": 0.009,

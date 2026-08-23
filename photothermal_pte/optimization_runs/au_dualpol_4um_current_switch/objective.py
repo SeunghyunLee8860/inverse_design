@@ -5,12 +5,17 @@ from __future__ import annotations
 import numpy as np
 
 
+PTE_CURRENT_SIGN_CONVENTION = (
+    "I=integral((-sigma*S*grad(T)).grad(psi))dA; "
+    "psi(x_min)=0, psi(x_max)=1; positive I is conventional current along +x"
+)
+
+
 def useful_currents(current_a_A: float, current_b_A: float) -> tuple[float, float]:
     """Return positive utilities for the requested current directions.
 
-    With psi=0 at x_min and psi=1 at x_max, the implemented reciprocity
-    integral is the current leaving the low/left terminal. Positive I thus
-    corresponds to internal conventional current from right to left.
+    With psi=0 at x_min and psi=1 at x_max, positive ``I=integral(J.grad(psi))``
+    is the +x component of internal conventional current (left to right).
     """
 
     return float(current_a_A), -float(current_b_A)
