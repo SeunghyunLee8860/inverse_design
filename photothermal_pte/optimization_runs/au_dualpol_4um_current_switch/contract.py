@@ -35,7 +35,7 @@ class Contract:
     axis_y: str = "a"
     low_terminal: str = "x_min"
     high_terminal: str = "x_max"
-    positive_current_direction: str = "left_to_right"
+    positive_current_direction: str = "right_to_left_internal_current_or_out_of_left_terminal"
     target_e_parallel_a: str = "right_to_left"
     target_e_parallel_b: str = "left_to_right"
     ta_sio2_thermal_scenario: str = "thermally_grown"
@@ -81,8 +81,8 @@ class Contract:
                 "thermal/electrical shunt, not a measurement electrode"
             ),
             objective=(
-                "maximize t subject to -I(E||a)>=t and +I(E||b)>=t; "
-                "+I is left-to-right"
+                "maximize t subject to +I(E||a)>=t and -I(E||b)>=t; "
+                "+I is right-to-left internal current (out of the left terminal)"
             ),
         )
         return payload

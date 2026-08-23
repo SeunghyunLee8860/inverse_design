@@ -8,11 +8,12 @@ import numpy as np
 def useful_currents(current_a_A: float, current_b_A: float) -> tuple[float, float]:
     """Return positive utilities for the requested current directions.
 
-    The repository sign convention is +I from x_min (left) to x_max (right).
-    Therefore E||a is useful when I_a is negative and E||b when I_b is positive.
+    With psi=0 at x_min and psi=1 at x_max, the implemented reciprocity
+    integral is the current leaving the low/left terminal. Positive I thus
+    corresponds to internal conventional current from right to left.
     """
 
-    return -float(current_a_A), float(current_b_A)
+    return float(current_a_A), -float(current_b_A)
 
 
 def smooth_minimum(
@@ -21,7 +22,7 @@ def smooth_minimum(
     scale_A: float,
     sharpness: float = 12.0,
 ) -> tuple[float, tuple[float, float]]:
-    """Differentiable diagnostic approximation to min(-I_a, I_b).
+    """Differentiable diagnostic approximation to min(I_a, -I_b).
 
     Production MMA uses the exact epigraph inequalities.  This function is
     used only by smoke tests and plots, and returns dF/d(I_a,I_b).
@@ -36,15 +37,14 @@ def smooth_minimum(
     weights = np.exp(shifted - pivot)
     weights /= np.sum(weights)
     result = -scale_A * (pivot + np.log(np.sum(np.exp(shifted - pivot)))) / sharpness
-    # dF/dIa = -dF/dua; dF/dIb = dF/dub.
-    return float(result), (-float(weights[0]), float(weights[1]))
+    # dF/dIa = dF/dua; dF/dIb = -dF/dub.
+    return float(result), (float(weights[0]), -float(weights[1]))
 
 
 def epigraph_constraints(
     current_a_A: float, current_b_A: float, epigraph_A: float
 ) -> np.ndarray:
-    """NLopt convention g<=0 for t-(-Ia) and t-Ib."""
+    """NLopt convention g<=0 for t-Ia and t-(-Ib)."""
 
     ua, ub = useful_currents(current_a_A, current_b_A)
     return np.asarray((epigraph_A - ua, epigraph_A - ub), dtype=np.float64)
-

@@ -1,0 +1,561 @@
+"""Explicit thermal and floating-Au electrical operators for the 4 um design.
+
+Coordinates are fixed to Lumerical x=b and y=a.  The fixed TaIrTe4 flake is
+16 x 16 x 0.1 um, the floating Au design window is 8 x 8 x 0.05 um, and both
+operators use a 100 nm lateral grid over the physical device.  Optical
+electrodes are absent; the electrical readout is represented by psi=0 on the
+left flake boundary and psi=1 on the right flake boundary.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+import importlib.util
+from pathlib import Path
+import sys
+
+import numpy as np
+from scipy import sparse
+
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
+    CONTRACT,
+)
+from photothermal_pte.optimization_runs.au_on_fixed_tairte4_validation.material_model import (
+    AU_BULK_ELECTRICAL_CONDUCTIVITY_S_M,
+)
+from photothermal_pte.optimization_runs.cuda_thermal_adjoint import PersistentCudaCSR
+
+
+HERE = Path(__file__).resolve().parent
+REPOSITORY = HERE.parents[2]
+FVM_PATH = (
+    REPOSITORY
+    / "photothermal_pte/validation/photothermal_stage1/anisotropic_heat_fvm.py"
+)
+OVERLAP_PATH = (
+    HERE.parent
+    / "au_on_fixed_tairte4_validation/64_validate_fdtdx_material_overlap_thermal_remap.py"
+)
+
+STEP_M = CONTRACT.design_pitch_m
+N_TA = int(round(CONTRACT.flake_span_x_m / STEP_M))
+N_DESIGN = CONTRACT.design_shape[0]
+DESIGN_OFFSET = (N_TA - N_DESIGN) // 2
+TA_THICKNESS_M = CONTRACT.flake_thickness_m
+AU_THICKNESS_M = CONTRACT.design_thickness_m
+
+K_AIR_W_MK = 0.026
+K_SIO2_W_MK = 1.38
+K_SI_W_MK = 145.0
+K_TA_XYZ_W_MK = np.asarray((3.8, 14.4, 1.0), dtype=np.float64)
+K_AU_W_MK = 317.0
+G_SIO2_SI_W_M2K = 1.1e9
+G_TA_AIR_W_M2K = CONTRACT.g_ta_air_W_m2K
+G_TA_SIO2_W_M2K = CONTRACT.g_ta_sio2_W_m2K
+G_AU_TA_W_M2K = CONTRACT.g_au_ta_W_m2K
+TOP_AIR_CONVECTION_W_M2K = 10.0
+
+# x=b, y=a.
+SIGMA_TA_XY_S_M = np.asarray((1.10e5, 4.91e5), dtype=np.float64)
+SEEBECK_TA_XY_V_K = np.asarray((27.0e-6, -6.0e-6), dtype=np.float64)
+SIGMA_AU_S_M = float(AU_BULK_ELECTRICAL_CONDUCTIVITY_S_M)
+SIGMA_FLOOR_FRACTION = 1.0e-8
+CONTACT_FLOOR_FRACTION = 1.0e-10
+ELECTRICAL_CONTACT_S_M2 = CONTRACT.electrical_contact_S_m2
+
+
+def _load(path: Path, name: str):
+    spec = importlib.util.spec_from_file_location(name, path)
+    if spec is None or spec.loader is None:
+        raise ImportError(path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def _centers(edges: np.ndarray) -> np.ndarray:
+    return 0.5 * (edges[:-1] + edges[1:])
+
+
+def _face_before(edges: np.ndarray, value: float) -> int:
+    match = np.flatnonzero(np.isclose(edges, value, rtol=0.0, atol=2e-18))
+    if match.size != 1 or match[0] == 0:
+        raise RuntimeError(f"required face {value:.9e} m is absent")
+    return int(match[0] - 1)
+
+
+def thermal_edges() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    negative_outer = np.asarray((-32, -28, -24, -20, -16, -14), float) * 1e-6
+    negative_shoulder = np.arange(-14.0, -12.0, 0.25) * 1e-6
+    core = np.arange(-12.0, 12.0 + 0.05, 0.1) * 1e-6
+    positive_shoulder = np.arange(12.25, 14.0 + 0.125, 0.25) * 1e-6
+    positive_outer = np.asarray((16, 20, 24, 28, 32), float) * 1e-6
+    lateral = np.unique(
+        np.concatenate(
+            (negative_outer, negative_shoulder, core, positive_shoulder, positive_outer)
+        )
+    )
+    z = np.asarray(
+        (
+            -20.0, -12.0, -8.0, -5.0, -3.0, -2.0, -1.25,
+            -0.8, -0.55, -0.385, -0.30, -0.20, -0.10,
+            -0.09, -0.08, -0.07, -0.06, -0.05,
+            -0.04, -0.03, -0.02, -0.01, 0.0,
+            0.01, 0.02, 0.05, 0.10, 0.20, 0.40,
+            0.70, 1.0, 1.25, 1.50, 2.0,
+        ),
+        float,
+    ) * 1e-6
+    return lateral, lateral.copy(), z
+
+
+@dataclass(frozen=True)
+class ThermalState:
+    edges: tuple[np.ndarray, np.ndarray, np.ndarray]
+    widths: tuple[np.ndarray, np.ndarray, np.ndarray]
+    centers: tuple[np.ndarray, np.ndarray, np.ndarray]
+    system: object
+    kappa: np.ndarray
+    masks: dict[str, np.ndarray]
+    interface_resistance: dict[str, np.ndarray]
+    rho: np.ndarray
+    faces: dict[str, int]
+
+
+def build_thermal_state(rho: np.ndarray) -> ThermalState:
+    density = np.asarray(rho, dtype=np.float64)
+    if density.shape != CONTRACT.design_shape or np.any((density < 0) | (density > 1)):
+        raise ValueError("rho must be an 80x80 physical density in [0,1]")
+    fvm = _load(FVM_PATH, "au_dualpol_4um_fvm")
+    edges = thermal_edges()
+    widths = tuple(np.diff(axis) for axis in edges)
+    centers = tuple(_centers(axis) for axis in edges)
+    x, y, z = centers
+    shape = tuple(len(value) for value in centers)
+    x_ta = (x >= -8e-6) & (x < 8e-6)
+    y_ta = (y >= -8e-6) & (y < 8e-6)
+    z_ta = (z >= -0.1e-6) & (z < 0.0)
+    x_au = (x >= -4e-6) & (x < 4e-6)
+    y_au = (y >= -4e-6) & (y < 4e-6)
+    z_au = (z >= 0.0) & (z < 0.05e-6)
+    z_sio2 = (z >= -0.385e-6) & (z < -0.1e-6)
+    z_si = z < -0.385e-6
+    ta = x_ta[:, None, None] & y_ta[None, :, None] & z_ta[None, None, :]
+    au = x_au[:, None, None] & y_au[None, :, None] & z_au[None, None, :]
+    sio2 = np.broadcast_to(z_sio2[None, None, :], shape)
+    si = np.broadcast_to(z_si[None, None, :], shape)
+    ix_au, iy_au, iz_au = map(np.flatnonzero, (x_au, y_au, z_au))
+    if (np.count_nonzero(x_ta), np.count_nonzero(y_ta)) != (N_TA, N_TA):
+        raise RuntimeError("TaIrTe4 thermal footprint is not 160x160")
+    if (ix_au.size, iy_au.size) != CONTRACT.design_shape:
+        raise RuntimeError("Au thermal footprint does not match design density")
+
+    k_au = K_AIR_W_MK + density * (K_AU_W_MK - K_AIR_W_MK)
+    kappa = np.full((*shape, 3), K_AIR_W_MK, dtype=np.float64)
+    kappa[si] = K_SI_W_MK
+    kappa[sio2] = K_SIO2_W_MK
+    kappa[ta] = K_TA_XYZ_W_MK
+    for iz in iz_au:
+        for component in range(3):
+            kappa[np.ix_(ix_au, iy_au, [iz], [component])] = k_au[:, :, None, None]
+
+    rx = np.zeros((shape[0] - 1, shape[1], shape[2]), dtype=np.float64)
+    ry = np.zeros((shape[0], shape[1] - 1, shape[2]), dtype=np.float64)
+    rz = np.zeros((shape[0], shape[1], shape[2] - 1), dtype=np.float64)
+    sio2_si_face = _face_before(edges[2], -0.385e-6)
+    ta_sio2_face = _face_before(edges[2], -0.1e-6)
+    ta_top_face = _face_before(edges[2], 0.0)
+    rz[:, :, sio2_si_face] = 1.0 / G_SIO2_SI_W_M2K
+    rz[np.ix_(np.flatnonzero(x_ta), np.flatnonzero(y_ta), [ta_sio2_face])] = (
+        1.0 / G_TA_SIO2_W_M2K
+    )
+    rz[np.ix_(np.flatnonzero(x_ta), np.flatnonzero(y_ta), [ta_top_face])] = (
+        1.0 / G_TA_AIR_W_M2K
+    )
+
+    lower_dz = widths[2][ta_top_face]
+    upper_dz = widths[2][ta_top_face + 1]
+    r_air = (
+        0.5 * lower_dz / K_TA_XYZ_W_MK[2]
+        + 1.0 / G_TA_AIR_W_M2K
+        + 0.5 * upper_dz / K_AIR_W_MK
+    )
+    r_au = (
+        0.5 * lower_dz / K_TA_XYZ_W_MK[2]
+        + 1.0 / G_AU_TA_W_M2K
+        + 0.5 * upper_dz / K_AU_W_MK
+    )
+    g_area = (1.0 - density) / r_air + density / r_au
+    r_interface = (
+        1.0 / g_area
+        - 0.5 * lower_dz / K_TA_XYZ_W_MK[2]
+        - 0.5 * upper_dz / k_au
+    )
+    if np.min(r_interface) < -1e-15:
+        raise RuntimeError("negative equivalent Au/Ta interface resistance")
+    rz[np.ix_(ix_au, iy_au, [ta_top_face])] = np.maximum(r_interface, 0.0)[:, :, None]
+
+    system = fvm.assemble_steady_diagonal_kappa(
+        x_edges_m=edges[0],
+        y_edges_m=edges[1],
+        z_edges_m=edges[2],
+        kappa_W_mK=kappa,
+        active_mask=np.ones(shape, dtype=bool),
+        interface_resistance_m2K_W={"x": rx, "y": ry, "z": rz},
+        dirichlet_temperature_K={
+            "x_min": 0.0,
+            "x_max": 0.0,
+            "y_min": 0.0,
+            "y_max": 0.0,
+            "z_min": 0.0,
+        },
+        surface_robin_heat_transfer_W_m2K={"z_max": TOP_AIR_CONVECTION_W_M2K},
+        surface_robin_temperature_K={"z_max": 0.0},
+    )
+    return ThermalState(
+        edges=edges,
+        widths=widths,
+        centers=centers,
+        system=system,
+        kappa=kappa,
+        masks={"au": au, "tairte4": ta, "sio2": sio2, "si": si},
+        interface_resistance={"x": rx, "y": ry, "z": rz},
+        rho=density.copy(),
+        faces={
+            "SiO2_Si": sio2_si_face,
+            "TaIrTe4_SiO2": ta_sio2_face,
+            "TaIrTe4_Au_or_air": ta_top_face,
+        },
+    )
+
+
+def map_native_q_to_thermal(
+    state: ThermalState,
+    *,
+    q_fields_W_m3: dict[str, np.ndarray],
+    dual_volumes_m3: dict[str, np.ndarray],
+    material_slices: dict[str, tuple[slice, slice, slice]],
+    realized_grid,
+) -> tuple[np.ndarray, dict[str, dict[str, float]]]:
+    """Conservatively map component-specific material power to explicit cells."""
+
+    overlap = _load(OVERLAP_PATH, "au_dualpol_4um_overlap")
+    from photothermal_pte.optimization_runs.au_on_fixed_tairte4_validation.fdtdx_dynamic_pte import (
+        component_coordinates,
+    )
+
+    source_power = np.zeros(state.system.shape, dtype=np.float64)
+    records: dict[str, dict[str, float]] = {}
+    for material in ("au", "tairte4"):
+        mask = state.masks[material]
+        indices = (
+            np.flatnonzero(np.any(mask, axis=(1, 2))),
+            np.flatnonzero(np.any(mask, axis=(0, 2))),
+            np.flatnonzero(np.any(mask, axis=(0, 1))),
+        )
+        target_edges = tuple(
+            state.edges[axis][index[0] : index[-1] + 2]
+            for axis, index in enumerate(indices)
+        )
+        geometry = {
+            name: component_coordinates(
+                realized_grid, material_slices[material], component
+            )
+            for component, name in enumerate(("x", "y", "z"))
+        }
+        primal_edges = tuple(
+            overlap._primal_edges(
+                geometry[("x", "y", "z")[axis]][0][axis],
+                geometry[("x", "y", "z")[axis]][1][axis],
+            )
+            for axis in range(3)
+        )
+        primal_total = np.zeros(tuple(len(edge) - 1 for edge in primal_edges))
+        native_total = 0.0
+        for component, name in enumerate(("x", "y", "z")):
+            coordinates, widths = geometry[name]
+            operators = tuple(
+                overlap._overlap_operator(
+                    coordinates[axis], widths[axis], primal_edges[axis]
+                )[0]
+                for axis in range(3)
+            )
+            power = (
+                np.asarray(q_fields_W_m3[material][component], dtype=np.float64)
+                * np.asarray(dual_volumes_m3[material][component], dtype=np.float64)
+            )
+            native_total += float(np.sum(power))
+            primal_total += overlap._forward(power, operators)
+        primal_centers = tuple(0.5 * (edge[:-1] + edge[1:]) for edge in primal_edges)
+        primal_widths = tuple(np.diff(edge) for edge in primal_edges)
+        second = tuple(
+            overlap._overlap_operator(
+                primal_centers[axis], primal_widths[axis], target_edges[axis]
+            )[0]
+            for axis in range(3)
+        )
+        mapped = overlap._forward(primal_total, second)
+        source_power[np.ix_(*indices)] += mapped
+        mapped_total = float(np.sum(mapped))
+        records[material] = {
+            "native_power_W": native_total,
+            "mapped_power_W": mapped_total,
+            "relative_error": abs(native_total - mapped_total)
+            / max(abs(native_total), np.finfo(float).tiny),
+        }
+    return source_power, records
+
+
+def solve_thermal(
+    state: ThermalState, source_power_W: np.ndarray, cuda_device: int
+) -> tuple[np.ndarray, dict[str, object]]:
+    rhs = np.asarray(source_power_W, dtype=np.float64).reshape(-1)
+    operator = PersistentCudaCSR(state.system.matrix_W_K, cuda_device=cuda_device)
+    result = operator.solve(
+        rhs,
+        relative_tolerance=1e-9,
+        max_iterations=30000,
+        residual_check_interval=25,
+    )
+    temperature = result.solution.reshape(state.system.shape)
+    boundary = {
+        name: float(np.sum(conductance * result.solution[cell_ids]))
+        for name, (cell_ids, conductance, _) in state.system.boundary_terms.items()
+    }
+    source = float(np.sum(rhs))
+    balance = abs(sum(boundary.values()) - source) / max(abs(source), np.finfo(float).tiny)
+    return temperature, {
+        "relative_residual": float(result.explicit_relative_residual),
+        "iterations": int(result.iterations),
+        "boundary_power_W": boundary,
+        "energy_balance_relative": balance,
+    }
+
+
+def tairte4_temperature(state: ThermalState, temperature: np.ndarray) -> np.ndarray:
+    x, y, z = state.centers
+    ix = np.flatnonzero((x >= -8e-6) & (x < 8e-6))
+    iy = np.flatnonzero((y >= -8e-6) & (y < 8e-6))
+    iz = np.flatnonzero((z >= -0.1e-6) & (z < 0.0))
+    weights = state.widths[2][iz]
+    result = np.tensordot(
+        temperature[np.ix_(ix, iy, iz)], weights / np.sum(weights), axes=(2, 0)
+    )
+    if result.shape != (N_TA, N_TA):
+        raise RuntimeError(f"unexpected Ta temperature shape {result.shape}")
+    return result
+
+
+@dataclass(frozen=True)
+class EdgeDerivative:
+    left: int
+    right: int
+    rho_index: int
+    dg_drho_S: float
+    label: str
+
+
+@dataclass(frozen=True)
+class ElectricalSystem:
+    full_matrix_S: sparse.csr_matrix
+    reduced_matrix_S: sparse.csr_matrix
+    reduced_rhs_A: np.ndarray
+    free: np.ndarray
+    fixed: np.ndarray
+    fixed_values_V: np.ndarray
+    objective_gradient_psi_A: np.ndarray
+    derivative_terms: tuple[EdgeDerivative, ...]
+    rho: np.ndarray
+
+
+def ta_id(i: int, j: int) -> int:
+    return i * N_TA + j
+
+
+def au_id(i: int, j: int) -> int:
+    return N_TA * N_TA + i * N_DESIGN + j
+
+
+def _add_edge(rows, cols, data, left: int, right: int, g: float) -> None:
+    rows.extend((left, right, left, right))
+    cols.extend((left, right, right, left))
+    data.extend((g, g, -g, -g))
+
+
+def electrical_load(temperature_K: np.ndarray) -> np.ndarray:
+    temperature = np.asarray(temperature_K, dtype=np.float64)
+    if temperature.shape != (N_TA, N_TA):
+        raise ValueError("temperature must be 160x160")
+    load = np.zeros(N_TA * N_TA + N_DESIGN * N_DESIGN, dtype=np.float64)
+    for i in range(N_TA):
+        for j in range(N_TA):
+            left = ta_id(i, j)
+            if i + 1 < N_TA:
+                right = ta_id(i + 1, j)
+                value = (
+                    SIGMA_TA_XY_S_M[0]
+                    * TA_THICKNESS_M
+                    * SEEBECK_TA_XY_V_K[0]
+                    * (temperature[i + 1, j] - temperature[i, j])
+                )
+                load[left] -= value
+                load[right] += value
+            if j + 1 < N_TA:
+                right = ta_id(i, j + 1)
+                value = (
+                    SIGMA_TA_XY_S_M[1]
+                    * TA_THICKNESS_M
+                    * SEEBECK_TA_XY_V_K[1]
+                    * (temperature[i, j + 1] - temperature[i, j])
+                )
+                load[left] -= value
+                load[right] += value
+    return load
+
+
+def build_electrical_system(rho: np.ndarray, temperature_K: np.ndarray) -> ElectricalSystem:
+    density = np.asarray(rho, dtype=np.float64)
+    if density.shape != CONTRACT.design_shape or np.any((density < 0) | (density > 1)):
+        raise ValueError("rho must be 80x80 in [0,1]")
+    node_count = N_TA * N_TA + N_DESIGN * N_DESIGN
+    rows: list[int] = []
+    cols: list[int] = []
+    data: list[float] = []
+    derivatives: list[EdgeDerivative] = []
+    for i in range(N_TA):
+        for j in range(N_TA):
+            node = ta_id(i, j)
+            if i + 1 < N_TA:
+                _add_edge(rows, cols, data, node, ta_id(i + 1, j), SIGMA_TA_XY_S_M[0] * TA_THICKNESS_M)
+            if j + 1 < N_TA:
+                _add_edge(rows, cols, data, node, ta_id(i, j + 1), SIGMA_TA_XY_S_M[1] * TA_THICKNESS_M)
+    sigma_floor = SIGMA_AU_S_M * SIGMA_FLOOR_FRACTION
+    sigma = sigma_floor + density * (SIGMA_AU_S_M - sigma_floor)
+    dsigma = SIGMA_AU_S_M - sigma_floor
+    contact_floor = ELECTRICAL_CONTACT_S_M2 * CONTACT_FLOOR_FRACTION
+    for i in range(N_DESIGN):
+        for j in range(N_DESIGN):
+            node = au_id(i, j)
+            for di, dj, label in ((1, 0, "Au_sheet_x"), (0, 1, "Au_sheet_y")):
+                ni, nj = i + di, j + dj
+                if ni >= N_DESIGN or nj >= N_DESIGN:
+                    continue
+                right = au_id(ni, nj)
+                resistance = 0.5 * STEP_M / sigma[i, j] + 0.5 * STEP_M / sigma[ni, nj]
+                g = AU_THICKNESS_M * STEP_M / resistance
+                _add_edge(rows, cols, data, node, right, g)
+                for ii, jj in ((i, j), (ni, nj)):
+                    dg = (
+                        AU_THICKNESS_M
+                        * STEP_M
+                        / resistance**2
+                        * 0.5
+                        * STEP_M
+                        / sigma[ii, jj] ** 2
+                        * dsigma
+                    )
+                    derivatives.append(
+                        EdgeDerivative(node, right, ii * N_DESIGN + jj, dg, label)
+                    )
+            ti, tj = DESIGN_OFFSET + i, DESIGN_OFFSET + j
+            g_contact = STEP_M**2 * (
+                contact_floor + density[i, j] * ELECTRICAL_CONTACT_S_M2
+            )
+            _add_edge(rows, cols, data, ta_id(ti, tj), node, g_contact)
+            derivatives.append(
+                EdgeDerivative(
+                    ta_id(ti, tj),
+                    node,
+                    i * N_DESIGN + j,
+                    STEP_M**2 * ELECTRICAL_CONTACT_S_M2,
+                    "vertical_Au_Ta_contact",
+                )
+            )
+    matrix = sparse.coo_matrix((data, (rows, cols)), shape=(node_count, node_count)).tocsr()
+    matrix.sum_duplicates()
+    # Left x-min terminal psi=0; right x-max terminal psi=1.
+    low = np.asarray([ta_id(0, j) for j in range(N_TA)], dtype=np.int64)
+    high = np.asarray([ta_id(N_TA - 1, j) for j in range(N_TA)], dtype=np.int64)
+    fixed = np.concatenate((low, high))
+    fixed_values = np.concatenate((np.zeros(low.size), np.ones(high.size)))
+    free_mask = np.ones(node_count, dtype=bool)
+    free_mask[fixed] = False
+    free = np.flatnonzero(free_mask)
+    reduced = matrix[free][:, free].tocsr()
+    rhs = -np.asarray(matrix[free][:, fixed] @ fixed_values).reshape(-1)
+    return ElectricalSystem(
+        full_matrix_S=matrix,
+        reduced_matrix_S=reduced,
+        reduced_rhs_A=rhs,
+        free=free,
+        fixed=fixed,
+        fixed_values_V=fixed_values,
+        objective_gradient_psi_A=electrical_load(temperature_K),
+        derivative_terms=tuple(derivatives),
+        rho=density.copy(),
+    )
+
+
+def solve_electrical(
+    system: ElectricalSystem, cuda_device: int
+) -> tuple[np.ndarray, float, dict[str, float | int]]:
+    operator = PersistentCudaCSR(system.reduced_matrix_S, cuda_device=cuda_device)
+    result = operator.solve(
+        system.reduced_rhs_A,
+        relative_tolerance=1e-10,
+        max_iterations=30000,
+        residual_check_interval=10,
+    )
+    psi = np.zeros(system.full_matrix_S.shape[0], dtype=np.float64)
+    psi[system.fixed] = system.fixed_values_V
+    psi[system.free] = result.solution
+    current = float(system.objective_gradient_psi_A @ psi)
+    residual = np.asarray(system.full_matrix_S @ psi).reshape(-1)
+    low = float(np.sum(residual[system.fixed[:N_TA]]))
+    high = float(np.sum(residual[system.fixed[N_TA:]]))
+    balance = abs(low + high) / max(abs(low), abs(high), np.finfo(float).tiny)
+    free_residual = np.linalg.norm(residual[system.free]) / max(
+        np.linalg.norm(system.reduced_rhs_A), np.finfo(float).tiny
+    )
+    return psi, current, {
+        "relative_residual": float(result.explicit_relative_residual),
+        "explicit_free_residual": float(free_residual),
+        "iterations": int(result.iterations),
+        "terminal_balance_relative": float(balance),
+        "low_terminal_A_per_V": low,
+        "high_terminal_A_per_V": high,
+    }
+
+
+def current_integrand(temperature_K: np.ndarray, psi: np.ndarray) -> np.ndarray:
+    """Cell-centred A/m2 map whose area integral is the total PTE current."""
+
+    temperature = np.asarray(temperature_K, dtype=np.float64)
+    values = np.zeros((N_TA, N_TA), dtype=np.float64)
+    for i in range(N_TA):
+        for j in range(N_TA):
+            node = ta_id(i, j)
+            if i + 1 < N_TA:
+                right = ta_id(i + 1, j)
+                contribution = (
+                    SIGMA_TA_XY_S_M[0]
+                    * TA_THICKNESS_M
+                    * SEEBECK_TA_XY_V_K[0]
+                    * (temperature[i + 1, j] - temperature[i, j])
+                    * (psi[right] - psi[node])
+                )
+                values[i, j] += 0.5 * contribution / STEP_M**2
+                values[i + 1, j] += 0.5 * contribution / STEP_M**2
+            if j + 1 < N_TA:
+                right = ta_id(i, j + 1)
+                contribution = (
+                    SIGMA_TA_XY_S_M[1]
+                    * TA_THICKNESS_M
+                    * SEEBECK_TA_XY_V_K[1]
+                    * (temperature[i, j + 1] - temperature[i, j])
+                    * (psi[right] - psi[node])
+                )
+                values[i, j] += 0.5 * contribution / STEP_M**2
+                values[i, j + 1] += 0.5 * contribution / STEP_M**2
+    return values

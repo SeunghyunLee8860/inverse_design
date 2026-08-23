@@ -88,11 +88,11 @@ def main() -> int:
     ax.axis("off")
     text = (
         "Signed detector objective\n\n"
-        "+I : left -> right\n"
-        "E||a target: I_a < 0 (right -> left)\n"
-        "E||b target: I_b > 0 (left -> right)\n\n"
+        "+I : right -> left inside flake; exits left terminal\n"
+        "E||a target: I_a > 0 (right -> left)\n"
+        "E||b target: I_b < 0 (left -> right)\n\n"
         "maximize t\n"
-        "subject to  -I_a >= t,  I_b >= t\n\n"
+        "subject to  I_a >= t,  -I_b >= t\n\n"
         "Au is floating: it changes Q, T, and psi,\n"
         "but it is not a terminal electrode.\n\n"
         "500 nm solid AND void: differentiable constraints\n"
@@ -115,14 +115,15 @@ flake/source-aperture boundary the requested infinite-Gaussian intensity is
 {100*c.flake_boundary_intensity_fraction:.5f}% of its peak.
 
 Lumerical x is crystal b and y is crystal a. The low/high electrical terminal
-boundary conditions are imposed on the fixed flake at x_min/x_max. Positive
-current is left-to-right. Therefore the requested switch is
+boundary conditions are imposed on the fixed flake at x_min/x_max. The
+implemented positive current leaves the left terminal and is right-to-left
+inside the flake. Therefore the requested switch is
 
-- E||a: I_a < 0 (right-to-left),
-- E||b: I_b > 0 (left-to-right).
+- E||a: I_a > 0 (right-to-left),
+- E||b: I_b < 0 (left-to-right).
 
-Production uses an epigraph objective: maximize t subject to -I_a >= t and
-I_b >= t. This prevents one polarization from becoming large while the other
+Production uses an epigraph objective: maximize t subject to I_a >= t and
+-I_b >= t. This prevents one polarization from becoming large while the other
 remains weak.
 
 The patterned Au is electrically floating, not an optical model of the

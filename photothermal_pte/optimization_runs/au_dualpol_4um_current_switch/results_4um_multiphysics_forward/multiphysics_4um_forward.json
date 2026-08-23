@@ -1,0 +1,177 @@
+{
+  "status": "VALIDATED_4UM_DUALPOL_MULTIPHYSICS_RHO0P5_FORWARD",
+  "scope": "rho=0.5 optical Q -> explicit 3D thermal -> floating-Au left/right weighting/PTE forward; no adjoint or optimization",
+  "normalization": {
+    "common_source_only_scale": 154037409.87026086,
+    "incident_power_W": 0.000285,
+    "polarization_matching": false
+  },
+  "geometry": {
+    "wavelength_m": 4e-06,
+    "gaussian_waist_m": 4e-06,
+    "optical_lateral_span_m": 2e-05,
+    "source_aperture_span_m": 1.6e-05,
+    "reporting_incident_power_W": 0.000285,
+    "flake_span_x_m": 1.6e-05,
+    "flake_span_y_m": 1.6e-05,
+    "flake_thickness_m": 1e-07,
+    "design_span_x_m": 8e-06,
+    "design_span_y_m": 8e-06,
+    "design_thickness_m": 5e-08,
+    "design_pitch_m": 1e-07,
+    "minimum_solid_feature_m": 5e-07,
+    "minimum_void_feature_m": 5e-07,
+    "filter_radius_m": 5e-07,
+    "projection_eta": 0.5,
+    "sio2_thickness_m": 2.85e-07,
+    "pml_cells_each_face": 8,
+    "axis_x": "b",
+    "axis_y": "a",
+    "low_terminal": "x_min",
+    "high_terminal": "x_max",
+    "positive_current_direction": "right_to_left_internal_current_or_out_of_left_terminal",
+    "target_e_parallel_a": "right_to_left",
+    "target_e_parallel_b": "left_to_right",
+    "ta_sio2_thermal_scenario": "thermally_grown",
+    "g_ta_sio2_W_m2K": 7370000.0,
+    "g_ta_air_W_m2K": 1.0,
+    "au_ta_thermal_contact_scenario": "numerical_scenario_Rpp_5p8e-8_m2K_W",
+    "g_au_ta_W_m2K": 17241379.310344826,
+    "au_ta_electrical_contact_scenario": "numerical_scenario_rhoc_1e-10_ohm_m2",
+    "electrical_contact_S_m2": 10000000000.0,
+    "design_shape": [
+      80,
+      80
+    ],
+    "source_aperture_boundary_intensity_over_peak": 0.00033546262790251185,
+    "flake_boundary_intensity_over_peak": 0.00033546262790251185,
+    "periodic_boundary": false,
+    "optical_boundaries": "six PML",
+    "optical_electrodes_included": false,
+    "electrical_terminal_model": "Dirichlet weighting potential psi=0 at x_min and psi=1 at x_max on the fixed TaIrTe4 flake",
+    "au_role": "floating patterned nanostructure; optical absorber/scatterer and thermal/electrical shunt, not a measurement electrode",
+    "objective": "maximize t subject to +I(E||a)>=t and -I(E||b)>=t; +I is right-to-left internal current (out of the left terminal)"
+  },
+  "cases": [
+    {
+      "polarization": "Ea",
+      "status": "VALIDATED_4UM_MULTIPHYSICS_FORWARD",
+      "runtime_s": 3.982531476765871,
+      "source_power_W": 2.479599100275752e-05,
+      "mapping": {
+        "au": {
+          "native_power_W": 6.521891722692917e-06,
+          "mapped_power_W": 6.521891722692915e-06,
+          "relative_error": 2.5975069297978373e-16
+        },
+        "tairte4": {
+          "native_power_W": 1.8274099280064602e-05,
+          "mapped_power_W": 1.8274099280064606e-05,
+          "relative_error": 1.8540622643510252e-16
+        }
+      },
+      "Tmax_K": 0.19232617907736918,
+      "TaIrTe4_Tmax_K": 0.185482220354405,
+      "current_A": 3.132904772822033e-10,
+      "current_nA": 0.31329047728220333,
+      "current_sign_convention": "+I is right-to-left internal current (out of left terminal); target is Ia>0 and Ib<0",
+      "current_from_integrand_A": 3.1329047728219065e-10,
+      "current_integrand_consistency_relative": 4.0429582282862925e-14,
+      "thermal": {
+        "relative_residual": 9.47173428656625e-10,
+        "iterations": 1925,
+        "boundary_power_W": {
+          "x_min": 1.980263825392371e-06,
+          "x_max": 1.964967722937242e-06,
+          "y_min": 1.9777194812716278e-06,
+          "y_max": 1.9789497259552622e-06,
+          "z_min": 1.6893901666327223e-05,
+          "surface_robin_z_max": 1.8858000247989036e-10
+        },
+        "energy_balance_relative": 3.5139240837662046e-11
+      },
+      "electrical": {
+        "relative_residual": 4.5445816913036077e-11,
+        "explicit_free_residual": 4.5445218623818783e-11,
+        "iterations": 890,
+        "terminal_balance_relative": 5.366163601631766e-11,
+        "low_terminal_A_per_V": -0.014442441894461276,
+        "high_terminal_A_per_V": 0.014442441893686271
+      },
+      "gates": {
+        "mapping_lt_1e-12": true,
+        "thermal_residual_lt_1e-8": true,
+        "thermal_energy_balance_lt_1pct": true,
+        "electrical_residual_lt_1e-8": true,
+        "electrical_terminal_balance_lt_1pct": true,
+        "current_integrand_consistency_lt_1e-12": true,
+        "finite": true
+      },
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/multiphysics/multiphysics_4um_rho0p5_Ea.npz",
+        "bytes": 19723968,
+        "sha256": "7b1297c1a731cc6b14aa79e1f66891a04d94d200db1ea8debda08afb3aa5a3d1"
+      }
+    },
+    {
+      "polarization": "Eb",
+      "status": "VALIDATED_4UM_MULTIPHYSICS_FORWARD",
+      "runtime_s": 1.7388988621532917,
+      "source_power_W": 5.968514550468634e-05,
+      "mapping": {
+        "au": {
+          "native_power_W": 1.5976706366713108e-05,
+          "mapped_power_W": 1.5976706366713105e-05,
+          "relative_error": 2.1206697496026164e-16
+        },
+        "tairte4": {
+          "native_power_W": 4.370843913797323e-05,
+          "mapped_power_W": 4.3708439137973234e-05,
+          "relative_error": 1.5503330047188274e-16
+        }
+      },
+      "Tmax_K": 0.4678887778356572,
+      "TaIrTe4_Tmax_K": 0.45934037637827907,
+      "current_A": -1.8766851250321336e-10,
+      "current_nA": -0.18766851250321337,
+      "current_sign_convention": "+I is right-to-left internal current (out of left terminal); target is Ia>0 and Ib<0",
+      "current_from_integrand_A": -1.876685125032067e-10,
+      "current_integrand_consistency_relative": 3.55368282071005e-14,
+      "thermal": {
+        "relative_residual": 7.735118955704589e-10,
+        "iterations": 1950,
+        "boundary_power_W": {
+          "x_min": 4.731378660449053e-06,
+          "x_max": 4.737157918434225e-06,
+          "y_min": 4.784909732486168e-06,
+          "y_max": 4.7479817437084936e-06,
+          "z_min": 4.0683260980468386e-05,
+          "surface_robin_z_max": 4.564703002619771e-10
+        },
+        "energy_balance_relative": 1.943954678858384e-11
+      },
+      "electrical": {
+        "relative_residual": 4.5445816913036077e-11,
+        "explicit_free_residual": 4.5445218623818783e-11,
+        "iterations": 890,
+        "terminal_balance_relative": 5.366163601631766e-11,
+        "low_terminal_A_per_V": -0.014442441894461276,
+        "high_terminal_A_per_V": 0.014442441893686271
+      },
+      "gates": {
+        "mapping_lt_1e-12": true,
+        "thermal_residual_lt_1e-8": true,
+        "thermal_energy_balance_lt_1pct": true,
+        "electrical_residual_lt_1e-8": true,
+        "electrical_terminal_balance_lt_1pct": true,
+        "current_integrand_consistency_lt_1e-12": true,
+        "finite": true
+      },
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/multiphysics/multiphysics_4um_rho0p5_Eb.npz",
+        "bytes": 19738239,
+        "sha256": "9482b3ddc84029bd06e9c5ecf50a2271e1e39bf2e169c6e419dcb691def96a0b"
+      }
+    }
+  ]
+}

@@ -10,14 +10,15 @@ flake/source-aperture boundary the requested infinite-Gaussian intensity is
 0.03355% of its peak.
 
 Lumerical x is crystal b and y is crystal a. The low/high electrical terminal
-boundary conditions are imposed on the fixed flake at x_min/x_max. Positive
-current is left-to-right. Therefore the requested switch is
+boundary conditions are imposed on the fixed flake at x_min/x_max. The
+implemented positive current leaves the left terminal and is right-to-left
+inside the flake. Therefore the requested switch is
 
-- E||a: I_a < 0 (right-to-left),
-- E||b: I_b > 0 (left-to-right).
+- E||a: I_a > 0 (right-to-left),
+- E||b: I_b < 0 (left-to-right).
 
-Production uses an epigraph objective: maximize t subject to -I_a >= t and
-I_b >= t. This prevents one polarization from becoming large while the other
+Production uses an epigraph objective: maximize t subject to I_a >= t and
+-I_b >= t. This prevents one polarization from becoming large while the other
 remains weak.
 
 The patterned Au is electrically floating, not an optical model of the
