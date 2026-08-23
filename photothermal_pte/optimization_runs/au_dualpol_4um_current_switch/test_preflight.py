@@ -3,7 +3,11 @@ from __future__ import annotations
 import numpy as np
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import CONTRACT
-from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.dfm import exact_500nm_audit
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.dfm import (
+    MAPPING,
+    exact_500nm_audit,
+    smooth_500nm_constraints,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.objective import (
     epigraph_constraints,
     smooth_minimum,
@@ -42,3 +46,33 @@ def test_exact_solid_void_audit_detects_subminimum_features() -> None:
     assert audit["solid_bad_cell_count"] == 4
     assert audit["void_bad_cell_count"] == 0
     assert not audit["solid_pass"] and audit["void_pass"]
+
+
+def test_finite_density_mapping_has_exact_discrete_transpose() -> None:
+    rng = np.random.default_rng(20260823)
+    latent = 0.2 + 0.6 * rng.random(CONTRACT.design_shape)
+    direction = rng.standard_normal(CONTRACT.design_shape)
+    cotangent = rng.standard_normal(CONTRACT.design_shape)
+    jvp = MAPPING.jvp(latent, direction, beta=3.0)
+    vjp = MAPPING.vjp(latent, cotangent, beta=3.0)
+    left = float(np.vdot(cotangent, jvp))
+    right = float(np.vdot(vjp, direction))
+    assert abs(left - right) / max(abs(left), 1e-30) < 1e-12
+
+
+def test_smooth_solid_void_constraint_directional_derivatives() -> None:
+    rng = np.random.default_rng(14)
+    latent = 0.2 + 0.6 * rng.random(CONTRACT.design_shape)
+    direction = rng.standard_normal(CONTRACT.design_shape)
+    direction /= np.max(np.abs(direction))
+    values, gradients, _ = smooth_500nm_constraints(latent, beta=4.0)
+    step = 2.5e-4
+    plus = smooth_500nm_constraints(latent + step * direction, beta=4.0)[0]
+    minus = smooth_500nm_constraints(latent - step * direction, beta=4.0)[0]
+    finite_difference = (plus - minus) / (2.0 * step)
+    adjoint = gradients.reshape(2, -1) @ direction.ravel()
+    error = np.abs(adjoint - finite_difference) / np.maximum(
+        np.abs(finite_difference), 1e-14
+    )
+    assert np.all(np.isfinite(values))
+    assert np.max(error) < 5e-3
