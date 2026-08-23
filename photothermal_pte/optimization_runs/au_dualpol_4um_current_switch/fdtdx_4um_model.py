@@ -42,7 +42,8 @@ MAX_IGNORED_SUBSTRATE_EPSILON_IMAG = 1.0e-10
 
 @dataclass(frozen=True)
 class GridLayout:
-    pml_cells: int = 8
+    pml_cells_xy: int = 8
+    pml_cells_z: int = 8
     silicon_cells: int = 13
     sio2_cells: int = 3
     tairte4_cells: int = 5
@@ -56,6 +57,12 @@ class GridLayout:
     incident_z_start: int = 28
     closed_z_start: int = 12
     closed_z_cells: int = 15
+
+    @property
+    def pml_cells(self) -> int:
+        """Backward-compatible name for the frozen lateral PML count."""
+
+        return self.pml_cells_xy
 
 
 LAYOUT = GridLayout()
@@ -129,6 +136,11 @@ def source_calibration_contract() -> dict[str, Any]:
 
     return {
         "grid_edges_sha256": grid_edges_sha256(),
+        "pml_cells_each_face_xyz": [
+            LAYOUT.pml_cells_xy,
+            LAYOUT.pml_cells_xy,
+            LAYOUT.pml_cells_z,
+        ],
         "wavelength_m": CONTRACT.wavelength_m,
         "gaussian_waist_m": CONTRACT.gaussian_waist_m,
         "source_aperture_span_m": CONTRACT.source_aperture_span_m,
@@ -280,12 +292,12 @@ def build_model(
     objects.append(volume)
     boundaries, boundary_constraints = fdtdx.boundary_objects_from_config(
         fdtdx.BoundaryConfig(
-            thickness_grid_minx=LAYOUT.pml_cells,
-            thickness_grid_maxx=LAYOUT.pml_cells,
-            thickness_grid_miny=LAYOUT.pml_cells,
-            thickness_grid_maxy=LAYOUT.pml_cells,
-            thickness_grid_minz=LAYOUT.pml_cells,
-            thickness_grid_maxz=LAYOUT.pml_cells,
+            thickness_grid_minx=LAYOUT.pml_cells_xy,
+            thickness_grid_maxx=LAYOUT.pml_cells_xy,
+            thickness_grid_miny=LAYOUT.pml_cells_xy,
+            thickness_grid_maxy=LAYOUT.pml_cells_xy,
+            thickness_grid_minz=LAYOUT.pml_cells_z,
+            thickness_grid_maxz=LAYOUT.pml_cells_z,
         ),
         volume,
     )
@@ -471,8 +483,8 @@ def build_model(
                 (0, 1, 2),
                 ("-", "-", "-"),
                 (
-                    LAYOUT.pml_cells,
-                    LAYOUT.pml_cells,
+                    LAYOUT.pml_cells_xy,
+                    LAYOUT.pml_cells_xy,
                     LAYOUT.closed_z_start,
                 ),
             )

@@ -40,6 +40,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production
     sha256,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_model import (
+    LAYOUT,
     MAX_IGNORED_SUBSTRATE_EPSILON_IMAG,
     _lossless_uniform_permittivity,
     grid_edges_sha256,
@@ -74,6 +75,7 @@ def test_source_calibration_is_bound_to_exact_grid_and_time_contract() -> None:
     assert calibration["phasor_window_periods"] == 4
     assert calibration["polarization_vectors"]["Ea"] == [0.0, 1.0, 0.0]
     assert calibration["polarization_vectors"]["Eb"] == [1.0, 0.0, 0.0]
+    assert LAYOUT.pml_cells_xy == LAYOUT.pml_cells_z == 8
 
 
 def test_lossy_substrate_cannot_be_silently_replaced_by_real_epsilon() -> None:

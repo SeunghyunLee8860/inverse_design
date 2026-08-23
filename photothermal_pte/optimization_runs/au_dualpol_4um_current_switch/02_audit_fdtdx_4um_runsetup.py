@@ -84,9 +84,9 @@ def main() -> int:
     au_bounds = placement["au_design"]["bounds_m_xyz"]
     source_bounds = placement["gaussian_source"]["bounds_m_xyz"]
     pml_inner = [
-        [float(x_edges[LAYOUT.pml_cells]), float(x_edges[-LAYOUT.pml_cells - 1])],
-        [float(y_edges[LAYOUT.pml_cells]), float(y_edges[-LAYOUT.pml_cells - 1])],
-        [float(z_edges[LAYOUT.pml_cells]), float(z_edges[-LAYOUT.pml_cells - 1])],
+        [float(x_edges[LAYOUT.pml_cells_xy]), float(x_edges[-LAYOUT.pml_cells_xy - 1])],
+        [float(y_edges[LAYOUT.pml_cells_xy]), float(y_edges[-LAYOUT.pml_cells_xy - 1])],
+        [float(z_edges[LAYOUT.pml_cells_z]), float(z_edges[-LAYOUT.pml_cells_z - 1])],
     ]
     lateral_gap = pml_inner[0][1] - flake_bounds[0][1]
     cells = int(np.prod(grid.shape))
@@ -129,7 +129,11 @@ def main() -> int:
                 float(np.max(np.diff(y_edges))),
                 float(np.max(np.diff(z_edges))),
             ],
-            "pml_cells_each_face": LAYOUT.pml_cells,
+            "pml_cells_each_face_xyz": [
+                LAYOUT.pml_cells_xy,
+                LAYOUT.pml_cells_xy,
+                LAYOUT.pml_cells_z,
+            ],
             "pml_inner_bounds_m_xyz": pml_inner,
             "flake_to_lateral_pml_gap_m": float(lateral_gap),
         },
