@@ -1,0 +1,432 @@
+{
+  "status": "AUDITED_FDTDX_4UM_DUALPOL_RUNSETUP_NOT_YET_SOLVED",
+  "scope": "realized placement/grid/material-ADE audit only; no Maxwell solve",
+  "axis_mapping": {
+    "x": "b",
+    "y": "a",
+    "z": "c=b closure"
+  },
+  "polarization_vectors": {
+    "Ea": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "Eb": [
+      1.0,
+      0.0,
+      0.0
+    ]
+  },
+  "grid": {
+    "shape_xyz": [
+      186,
+      186,
+      40
+    ],
+    "cell_count": 1383840,
+    "bounds_m_xyz": [
+      [
+        -9.999999747378752e-06,
+        9.999999747378752e-06
+      ],
+      [
+        -9.999999747378752e-06,
+        9.999999747378752e-06
+      ],
+      [
+        -3.000000106112566e-06,
+        3.000000106112566e-06
+      ]
+    ],
+    "min_spacing_m_xyz": [
+      9.999985195463523e-08,
+      9.999985195463523e-08,
+      1.999999810209374e-08
+    ],
+    "max_spacing_m_xyz": [
+      2.0000061340397224e-07,
+      2.0000061340397224e-07,
+      2.500000277905201e-07
+    ],
+    "pml_cells_each_face": 8,
+    "pml_inner_bounds_m_xyz": [
+      [
+        -9.000000318337698e-06,
+        9.000000318337698e-06
+      ],
+      [
+        -9.000000318337698e-06,
+        9.000000318337698e-06
+      ],
+      [
+        -1.3999999737279722e-06,
+        1.3999999737279722e-06
+      ]
+    ],
+    "flake_to_lateral_pml_gap_m": 1.0000003385357559e-06
+  },
+  "placement": {
+    "fixed_silicon_substrate": {
+      "slice": [
+        [
+          0,
+          186
+        ],
+        [
+          0,
+          186
+        ],
+        [
+          0,
+          13
+        ]
+      ],
+      "bounds_m_xyz": [
+        [
+          -9.999999747378752e-06,
+          9.999999747378752e-06
+        ],
+        [
+          -9.999999747378752e-06,
+          9.999999747378752e-06
+        ],
+        [
+          -3.000000106112566e-06,
+          -3.8499999277519237e-07
+        ]
+      ]
+    },
+    "fixed_285nm_sio2": {
+      "slice": [
+        [
+          0,
+          186
+        ],
+        [
+          0,
+          186
+        ],
+        [
+          13,
+          16
+        ]
+      ],
+      "bounds_m_xyz": [
+        [
+          -9.999999747378752e-06,
+          9.999999747378752e-06
+        ],
+        [
+          -9.999999747378752e-06,
+          9.999999747378752e-06
+        ],
+        [
+          -3.8499999277519237e-07,
+          -1.0000000116860974e-07
+        ]
+      ]
+    },
+    "fixed_tairte4": {
+      "slice": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          16,
+          21
+        ]
+      ],
+      "bounds_m_xyz": [
+        [
+          -7.999999979801942e-06,
+          7.999999979801942e-06
+        ],
+        [
+          -7.999999979801942e-06,
+          7.999999979801942e-06
+        ],
+        [
+          -1.0000000116860974e-07,
+          0.0
+        ]
+      ]
+    },
+    "au_design": {
+      "slice": [
+        [
+          53,
+          133
+        ],
+        [
+          53,
+          133
+        ],
+        [
+          21,
+          23
+        ]
+      ],
+      "bounds_m_xyz": [
+        [
+          -3.999999989900971e-06,
+          3.999999989900971e-06
+        ],
+        [
+          -3.999999989900971e-06,
+          3.999999989900971e-06
+        ],
+        [
+          0.0,
+          5.000000058430487e-08
+        ]
+      ]
+    },
+    "gaussian_source": {
+      "slice": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          29,
+          30
+        ]
+      ],
+      "bounds_m_xyz": [
+        [
+          -7.999999979801942e-06,
+          7.999999979801942e-06
+        ],
+        [
+          -7.999999979801942e-06,
+          7.999999979801942e-06
+        ],
+        [
+          7.500000265281415e-07,
+          9.666666755947517e-07
+        ]
+      ]
+    },
+    "incident_plane": {
+      "slice": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          28,
+          29
+        ]
+      ],
+      "bounds_m_xyz": [
+        [
+          -7.999999979801942e-06,
+          7.999999979801942e-06
+        ],
+        [
+          -7.999999979801942e-06,
+          7.999999979801942e-06
+        ],
+        [
+          4.999999987376214e-07,
+          7.500000265281415e-07
+        ]
+      ]
+    },
+    "target_field": {
+      "slice": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          27,
+          28
+        ]
+      ],
+      "bounds_m_xyz": [
+        [
+          -7.999999979801942e-06,
+          7.999999979801942e-06
+        ],
+        [
+          -7.999999979801942e-06,
+          7.999999979801942e-06
+        ],
+        [
+          2.499999993688107e-07,
+          4.999999987376214e-07
+        ]
+      ]
+    },
+    "material_flux": {
+      "slice": [
+        [
+          8,
+          178
+        ],
+        [
+          8,
+          178
+        ],
+        [
+          12,
+          27
+        ]
+      ],
+      "bounds_m_xyz": [
+        [
+          -9.000000318337698e-06,
+          9.000000318337698e-06
+        ],
+        [
+          -9.000000318337698e-06,
+          9.000000318337698e-06
+        ],
+        [
+          -5.879999775970646e-07,
+          2.499999993688107e-07
+        ]
+      ]
+    },
+    "distributed_adjoint_source": {
+      "slice": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          23
+        ]
+      ],
+      "bounds_m_xyz": [
+        [
+          -7.999999979801942e-06,
+          7.999999979801942e-06
+        ],
+        [
+          -7.999999979801942e-06,
+          7.999999979801942e-06
+        ],
+        [
+          -3.8499999277519237e-07,
+          5.000000058430487e-08
+        ]
+      ]
+    }
+  },
+  "layer_thickness_audit": {
+    "coordinate_tolerance_m": 5e-13,
+    "requested_tairte4_m": 1e-07,
+    "realized_tairte4_m": 1.0000000116860974e-07,
+    "tairte4_error_m": 1.1686097468332243e-15,
+    "requested_au_m": 5e-08,
+    "realized_au_m": 5.000000058430487e-08,
+    "au_error_m": 5.843048734166122e-16
+  },
+  "source": {
+    "wavelength_m": 4e-06,
+    "requested_waist_m": 4e-06,
+    "aperture_span_m": 1.6e-05,
+    "aperture_boundary_intensity_over_peak": 0.00033546262790251185,
+    "infinite_gaussian_square_captured_power_fraction": 0.9998733190449377,
+    "normal_incidence": true,
+    "direction": "-z",
+    "source_bounds_m_xyz": [
+      [
+        -7.999999979801942e-06,
+        7.999999979801942e-06
+      ],
+      [
+        -7.999999979801942e-06,
+        7.999999979801942e-06
+      ],
+      [
+        7.500000265281415e-07,
+        9.666666755947517e-07
+      ]
+    ]
+  },
+  "materials": {
+    "epsilon_Au": [
+      -830.3699999999999,
+      127.16000000000001
+    ],
+    "epsilon_TaIrTe4": {
+      "a": [
+        -30.713256371885343,
+        50.848086107787424
+      ],
+      "b": [
+        15.900726644538812,
+        9.289194887622557
+      ],
+      "c": [
+        15.900726644538812,
+        9.289194887622557
+      ]
+    },
+    "epsilon_SiO2": [
+      1.8685272521070964,
+      4.083537041730391e-49
+    ],
+    "epsilon_Si": [
+      11.760784359999999,
+      0.0
+    ],
+    "ADE_fit_relative_error": {
+      "au": 1.3949849418745229e-16,
+      "a": 1.1961198939002462e-16,
+      "b": 1.364165519391143e-16,
+      "c": 1.364165519391143e-16
+    },
+    "gray_Au_law": "passive Drude oscillator strength rho^3; endpoints are void/Au; numerical relaxation only"
+  },
+  "memory": {
+    "placed_base_array_bytes": 113097216,
+    "adjoint_complex_profile_bytes": 6144000,
+    "sum_base_plus_adjoint_GiB": 0.11105203628540039,
+    "note": "lower-bound resident arrays; XLA workspace and detector outputs are additional"
+  },
+  "numerics": {
+    "total_periods": 16,
+    "phasor_window_periods": 4,
+    "time_steps_total": 6651,
+    "time_step_s": 3.209721368562793e-17,
+    "backend": "gpu",
+    "gradient_config": null,
+    "production_gradient_method": "checkpoint-free harmonic forward + reciprocal adjoint two-solve"
+  },
+  "gates": {
+    "same_geometry_for_Ea_Eb": true,
+    "same_grid_for_Ea_Eb": true,
+    "flake_inside_non_PML_with_positive_gap": true,
+    "Au_inside_flake": true,
+    "exact_layer_thicknesses": true,
+    "source_boundary_intensity_lt_0p05pct": true,
+    "all_ADE_fit_errors_lt_1e-12": true
+  }
+}
