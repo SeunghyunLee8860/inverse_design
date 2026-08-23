@@ -1,0 +1,577 @@
+{
+  "status": "VALIDATED_FINITE_T_Z_COMPONENT_MATERIAL_OVERLAP_Q_MAPPING",
+  "method": "component-specific Yee power -> exact rectangular cut-cell volume x Im(epsilon_c) loss participation -> same-material conservative thermal-grid overlap",
+  "loss_participation_is_occupancy": false,
+  "axes": {
+    "x": "b",
+    "y": "a",
+    "z": "c=b optical closure"
+  },
+  "material_database_readback_epsilon": {
+    "T": {
+      "Au": {
+        "real": -1146.959175457364,
+        "imag": 102.68584558184479
+      },
+      "SiO2": {
+        "real": 1.8336893905724556,
+        "imag": 0.005433652006940445
+      },
+      "Si": {
+        "real": 11.74292397842102,
+        "imag": 1.0765166842105272e-06
+      }
+    },
+    "Z": {
+      "Au": {
+        "real": -1408.2262176752547,
+        "imag": 135.9407502917725
+      },
+      "SiO2": {
+        "real": 1.7470187649976519,
+        "imag": 0.012957987310981406
+      },
+      "Si": {
+        "real": 11.733740827735822,
+        "imag": 9.004825094339621e-07
+      }
+    }
+  },
+  "cases": {
+    "T_Ea_Au_on": {
+      "case": "T_Ea_Au_on",
+      "architecture": "T",
+      "polarization": "Ea",
+      "top_Au_present": true,
+      "input_raw_Q_npz": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Ea_Au_on_v2/finite_T_Ea_Au_on_Q.npz",
+        "bytes": 129422380,
+        "sha256": "0406de3199b040d7732d5d8374e5148756bd6b3306b6d58291c943e254041428"
+      },
+      "input_component_power_W": {
+        "x": 9.28508073068363e-18,
+        "y": 5.944747641676176e-15,
+        "z": 3.177218027200945e-17
+      },
+      "mapped_component_power_W": {
+        "x": 9.28508073068363e-18,
+        "y": 5.944747641676176e-15,
+        "z": 3.177218027200945e-17
+      },
+      "input_total_power_W": 5.985804902678869e-15,
+      "mapped_total_power_W": 5.985804902678869e-15,
+      "mapped_power_by_material_W": {
+        "Si": 5.344978117532781e-31,
+        "SiO2": 2.964982170338846e-26,
+        "Au_mirror": 3.12993999099679e-17,
+        "TaIrTe4": 5.947863227487582e-15,
+        "top_Au": 6.642275251669409e-18
+      },
+      "power_conservation_relative_error": 0.0,
+      "positive_power_cells_without_loss_overlap": 0,
+      "positive_power_cells_near_denominator_floor": 0,
+      "thermal_grid_shape": [
+        234,
+        234,
+        82
+      ],
+      "thermal_grid_bounds_m": [
+        [
+          -1.6e-05,
+          1.6e-05
+        ],
+        [
+          -1.6e-05,
+          1.6e-05
+        ],
+        [
+          -2.1734999999999998e-05,
+          2e-06
+        ]
+      ],
+      "raw_mapped_artifact": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_material_Q/T_Ea_Au_on_material_Q_thermal_grid.npz",
+        "bytes": 16633254,
+        "sha256": "d6f55f825191d9564387739e4fc64a49d792ee98fd6e86dcb167faf4ccde7424",
+        "committed_to_git": false
+      },
+      "operations_forbidden_and_absent": [
+        "clipping",
+        "smoothing",
+        "gain",
+        "global_rescaling",
+        "tiling",
+        "full_cell_material_assignment"
+      ]
+    },
+    "T_Eb_Au_on": {
+      "case": "T_Eb_Au_on",
+      "architecture": "T",
+      "polarization": "Eb",
+      "top_Au_present": true,
+      "input_raw_Q_npz": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Eb_Au_on/finite_T_Eb_Au_on_Q.npz",
+        "bytes": 129199093,
+        "sha256": "382e691f0842fefd3c8fe53994643667c1c6cf54b18770510eebfb4ca0ab53dd"
+      },
+      "input_component_power_W": {
+        "x": 5.7729661472479525e-15,
+        "y": 8.139700213796064e-17,
+        "z": 8.160938621537206e-17
+      },
+      "mapped_component_power_W": {
+        "x": 5.772966147247953e-15,
+        "y": 8.139700213796066e-17,
+        "z": 8.160938621537206e-17
+      },
+      "input_total_power_W": 5.935972535601285e-15,
+      "mapped_total_power_W": 5.935972535601286e-15,
+      "mapped_power_by_material_W": {
+        "Si": 4.2747373722598326e-30,
+        "SiO2": 2.3761817227651105e-25,
+        "Au_mirror": 2.510161378188321e-16,
+        "TaIrTe4": 5.669646412358069e-15,
+        "top_Au": 1.5309985186761903e-17
+      },
+      "power_conservation_relative_error": 1.328949722206058e-16,
+      "positive_power_cells_without_loss_overlap": 0,
+      "positive_power_cells_near_denominator_floor": 0,
+      "thermal_grid_shape": [
+        234,
+        234,
+        82
+      ],
+      "thermal_grid_bounds_m": [
+        [
+          -1.6e-05,
+          1.6e-05
+        ],
+        [
+          -1.6e-05,
+          1.6e-05
+        ],
+        [
+          -2.1734999999999998e-05,
+          2e-06
+        ]
+      ],
+      "raw_mapped_artifact": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_material_Q/T_Eb_Au_on_material_Q_thermal_grid.npz",
+        "bytes": 16626938,
+        "sha256": "96f672d73e79b3644c3fa031b25bd006716a47675d0c11a484f164c208589fcd",
+        "committed_to_git": false
+      },
+      "operations_forbidden_and_absent": [
+        "clipping",
+        "smoothing",
+        "gain",
+        "global_rescaling",
+        "tiling",
+        "full_cell_material_assignment"
+      ]
+    },
+    "T_Ea_Au_off": {
+      "case": "T_Ea_Au_off",
+      "architecture": "T",
+      "polarization": "Ea",
+      "top_Au_present": false,
+      "input_raw_Q_npz": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Ea_Au_off/finite_T_Ea_Au_off_Q.npz",
+        "bytes": 129507467,
+        "sha256": "8494e6b41031731e6f83c3ffa9d9ee25be808d799c3405bd38c3416aed4424a0"
+      },
+      "input_component_power_W": {
+        "x": 1.910883619819687e-18,
+        "y": 5.996486098009232e-15,
+        "z": 8.11347073211461e-18
+      },
+      "mapped_component_power_W": {
+        "x": 1.9108836198196873e-18,
+        "y": 5.996486098009231e-15,
+        "z": 8.113470732114612e-18
+      },
+      "input_total_power_W": 6.006510452361166e-15,
+      "mapped_total_power_W": 6.006510452361167e-15,
+      "mapped_power_by_material_W": {
+        "Si": 5.426662770456899e-31,
+        "SiO2": 3.008089545714755e-26,
+        "Au_mirror": 3.167372956712594e-17,
+        "TaIrTe4": 5.974836722763959e-15,
+        "top_Au": 0.0
+      },
+      "power_conservation_relative_error": 1.313343099088273e-16,
+      "positive_power_cells_without_loss_overlap": 0,
+      "positive_power_cells_near_denominator_floor": 0,
+      "thermal_grid_shape": [
+        234,
+        234,
+        82
+      ],
+      "thermal_grid_bounds_m": [
+        [
+          -1.6e-05,
+          1.6e-05
+        ],
+        [
+          -1.6e-05,
+          1.6e-05
+        ],
+        [
+          -2.1734999999999998e-05,
+          2e-06
+        ]
+      ],
+      "raw_mapped_artifact": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_material_Q/T_Ea_Au_off_material_Q_thermal_grid.npz",
+        "bytes": 16616724,
+        "sha256": "84269dc3d68cc19d88643ab4498bd5ccb6d96d3706d6c1955271c18dc92b21d9",
+        "committed_to_git": false
+      },
+      "operations_forbidden_and_absent": [
+        "clipping",
+        "smoothing",
+        "gain",
+        "global_rescaling",
+        "tiling",
+        "full_cell_material_assignment"
+      ]
+    },
+    "T_Eb_Au_off": {
+      "case": "T_Eb_Au_off",
+      "architecture": "T",
+      "polarization": "Eb",
+      "top_Au_present": false,
+      "input_raw_Q_npz": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/T_Eb_Au_off/finite_T_Eb_Au_off_Q.npz",
+        "bytes": 129305804,
+        "sha256": "37ebce3863d284217ae96500d2bcd4c63593b5fe0468f7d209f87007025295e6"
+      },
+      "input_component_power_W": {
+        "x": 5.869456011774206e-15,
+        "y": 1.403087585943309e-18,
+        "z": 2.2791564316954904e-17
+      },
+      "mapped_component_power_W": {
+        "x": 5.869456011774206e-15,
+        "y": 1.4030875859433091e-18,
+        "z": 2.27915643169549e-17
+      },
+      "input_total_power_W": 5.8936506636771044e-15,
+      "mapped_total_power_W": 5.8936506636771044e-15,
+      "mapped_power_by_material_W": {
+        "Si": 4.3991338909821765e-30,
+        "SiO2": 2.441104922589131e-25,
+        "Au_mirror": 2.5733265725518387e-16,
+        "TaIrTe4": 5.636318006177806e-15,
+        "top_Au": 0.0
+      },
+      "power_conservation_relative_error": 0.0,
+      "positive_power_cells_without_loss_overlap": 0,
+      "positive_power_cells_near_denominator_floor": 0,
+      "thermal_grid_shape": [
+        234,
+        234,
+        82
+      ],
+      "thermal_grid_bounds_m": [
+        [
+          -1.6e-05,
+          1.6e-05
+        ],
+        [
+          -1.6e-05,
+          1.6e-05
+        ],
+        [
+          -2.1734999999999998e-05,
+          2e-06
+        ]
+      ],
+      "raw_mapped_artifact": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_material_Q/T_Eb_Au_off_material_Q_thermal_grid.npz",
+        "bytes": 16629250,
+        "sha256": "d65a26d21e206b37c79aa41efea6703108d6dce6358c5f7134086dac026d3d2f",
+        "committed_to_git": false
+      },
+      "operations_forbidden_and_absent": [
+        "clipping",
+        "smoothing",
+        "gain",
+        "global_rescaling",
+        "tiling",
+        "full_cell_material_assignment"
+      ]
+    },
+    "Z_Ea_Au_on": {
+      "case": "Z_Ea_Au_on",
+      "architecture": "Z",
+      "polarization": "Ea",
+      "top_Au_present": true,
+      "input_raw_Q_npz": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/Z_Ea_Au_on/finite_Z_Ea_Au_on_Q.npz",
+        "bytes": 157463139,
+        "sha256": "3d9d2a8eb02fdc0f1e965059a460bed647fa4b0eae84e526b9855ca859f53d4f"
+      },
+      "input_component_power_W": {
+        "x": 7.593795608700202e-17,
+        "y": 6.378733687545331e-15,
+        "z": 9.883980322805937e-17
+      },
+      "mapped_component_power_W": {
+        "x": 7.5937956087002e-17,
+        "y": 6.378733687545332e-15,
+        "z": 9.88398032280594e-17
+      },
+      "input_total_power_W": 6.553511446860393e-15,
+      "mapped_total_power_W": 6.5535114468603936e-15,
+      "mapped_power_by_material_W": {
+        "Si": 2.1866701576509984e-31,
+        "SiO2": 4.070876353155608e-27,
+        "Au_mirror": 9.109189624227938e-18,
+        "TaIrTe4": 6.5056366515971526e-15,
+        "top_Au": 3.8765605634941695e-17
+      },
+      "power_conservation_relative_error": 1.2037224801048199e-16,
+      "positive_power_cells_without_loss_overlap": 0,
+      "positive_power_cells_near_denominator_floor": 0,
+      "thermal_grid_shape": [
+        234,
+        234,
+        73
+      ],
+      "thermal_grid_bounds_m": [
+        [
+          -1.6e-05,
+          1.6e-05
+        ],
+        [
+          -1.6e-05,
+          1.6e-05
+        ],
+        [
+          -2.0685e-05,
+          2e-06
+        ]
+      ],
+      "raw_mapped_artifact": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_material_Q/Z_Ea_Au_on_material_Q_thermal_grid.npz",
+        "bytes": 9507390,
+        "sha256": "69d7258a5f8a001486ef9aed93d3bcfab10b7a49c88ea523a99e4db4820af7ce",
+        "committed_to_git": false
+      },
+      "operations_forbidden_and_absent": [
+        "clipping",
+        "smoothing",
+        "gain",
+        "global_rescaling",
+        "tiling",
+        "full_cell_material_assignment"
+      ]
+    },
+    "Z_Eb_Au_on": {
+      "case": "Z_Eb_Au_on",
+      "architecture": "Z",
+      "polarization": "Eb",
+      "top_Au_present": true,
+      "input_raw_Q_npz": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/Z_Eb_Au_on/finite_Z_Eb_Au_on_Q.npz",
+        "bytes": 157467250,
+        "sha256": "8fd4d3f78ad722d126408bb20a2bd8b93767b8a3399ea3bca992c75279b2baed"
+      },
+      "input_component_power_W": {
+        "x": 1.90736936152184e-14,
+        "y": 6.620874279251627e-16,
+        "z": 4.303013917426077e-16
+      },
+      "mapped_component_power_W": {
+        "x": 1.90736936152184e-14,
+        "y": 6.620874279251626e-16,
+        "z": 4.3030139174260765e-16
+      },
+      "input_total_power_W": 2.016608243488617e-14,
+      "mapped_total_power_W": 2.016608243488617e-14,
+      "mapped_power_by_material_W": {
+        "Si": 5.085902169012751e-30,
+        "SiO2": 7.963945211054618e-26,
+        "Au_mirror": 2.1589118633034507e-16,
+        "TaIrTe4": 1.9866105861432804e-14,
+        "top_Au": 8.408538704337803e-17
+      },
+      "power_conservation_relative_error": 0.0,
+      "positive_power_cells_without_loss_overlap": 0,
+      "positive_power_cells_near_denominator_floor": 0,
+      "thermal_grid_shape": [
+        234,
+        234,
+        73
+      ],
+      "thermal_grid_bounds_m": [
+        [
+          -1.6e-05,
+          1.6e-05
+        ],
+        [
+          -1.6e-05,
+          1.6e-05
+        ],
+        [
+          -2.0685e-05,
+          2e-06
+        ]
+      ],
+      "raw_mapped_artifact": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_material_Q/Z_Eb_Au_on_material_Q_thermal_grid.npz",
+        "bytes": 9535952,
+        "sha256": "540fbbd76b151f547a9222a2170258201c105f9182c95a46773cc04b9e4f5daa",
+        "committed_to_git": false
+      },
+      "operations_forbidden_and_absent": [
+        "clipping",
+        "smoothing",
+        "gain",
+        "global_rescaling",
+        "tiling",
+        "full_cell_material_assignment"
+      ]
+    },
+    "Z_Ea_Au_off": {
+      "case": "Z_Ea_Au_off",
+      "architecture": "Z",
+      "polarization": "Ea",
+      "top_Au_present": false,
+      "input_raw_Q_npz": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/Z_Ea_Au_off/finite_Z_Ea_Au_off_Q.npz",
+        "bytes": 153873537,
+        "sha256": "4111c9499212ebd49650f0d9679709c6f4faa19a454650f7c59657ee023efb05"
+      },
+      "input_component_power_W": {
+        "x": 1.3102947292956549e-17,
+        "y": 7.828947783276191e-15,
+        "z": 7.066536994431471e-18
+      },
+      "mapped_component_power_W": {
+        "x": 1.3102947292956547e-17,
+        "y": 7.828947783276191e-15,
+        "z": 7.066536994431473e-18
+      },
+      "input_total_power_W": 7.84911726756358e-15,
+      "mapped_total_power_W": 7.849117267563582e-15,
+      "mapped_power_by_material_W": {
+        "Si": 1.6607698139312734e-31,
+        "SiO2": 1.2003552544137328e-27,
+        "Au_mirror": 8.754415683543707e-18,
+        "TaIrTe4": 7.840362851878837e-15,
+        "top_Au": 0.0
+      },
+      "power_conservation_relative_error": 2.0100627327380462e-16,
+      "positive_power_cells_without_loss_overlap": 0,
+      "positive_power_cells_near_denominator_floor": 0,
+      "thermal_grid_shape": [
+        234,
+        234,
+        73
+      ],
+      "thermal_grid_bounds_m": [
+        [
+          -1.6e-05,
+          1.6e-05
+        ],
+        [
+          -1.6e-05,
+          1.6e-05
+        ],
+        [
+          -2.0685e-05,
+          2e-06
+        ]
+      ],
+      "raw_mapped_artifact": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_material_Q/Z_Ea_Au_off_material_Q_thermal_grid.npz",
+        "bytes": 9487936,
+        "sha256": "42b36bdcb22f5b88965751dd87ae81b7e1c3fc1d94c3383fed80a5499e3dfc7f",
+        "committed_to_git": false
+      },
+      "operations_forbidden_and_absent": [
+        "clipping",
+        "smoothing",
+        "gain",
+        "global_rescaling",
+        "tiling",
+        "full_cell_material_assignment"
+      ]
+    },
+    "Z_Eb_Au_off": {
+      "case": "Z_Eb_Au_off",
+      "architecture": "Z",
+      "polarization": "Eb",
+      "top_Au_present": false,
+      "input_raw_Q_npz": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_Q/Z_Eb_Au_off/finite_Z_Eb_Au_off_Q.npz",
+        "bytes": 153919413,
+        "sha256": "e0c505812601b6ae9b58e37b1515075e6639c94e4b52fbbb590abacf0dbf8427"
+      },
+      "input_component_power_W": {
+        "x": 2.3742460324392712e-14,
+        "y": 5.146389952749566e-19,
+        "z": 1.6520451428448207e-17
+      },
+      "mapped_component_power_W": {
+        "x": 2.3742460324392712e-14,
+        "y": 5.146389952749566e-19,
+        "z": 1.6520451428448207e-17
+      },
+      "input_total_power_W": 2.3759495414816436e-14,
+      "mapped_total_power_W": 2.3759495414816436e-14,
+      "mapped_power_by_material_W": {
+        "Si": 4.478569952969201e-30,
+        "SiO2": 3.098336521295333e-26,
+        "Au_mirror": 2.394787186379211e-16,
+        "TaIrTe4": 2.352001669614753e-14,
+        "top_Au": 0.0
+      },
+      "power_conservation_relative_error": 0.0,
+      "positive_power_cells_without_loss_overlap": 0,
+      "positive_power_cells_near_denominator_floor": 0,
+      "thermal_grid_shape": [
+        234,
+        234,
+        73
+      ],
+      "thermal_grid_bounds_m": [
+        [
+          -1.6e-05,
+          1.6e-05
+        ],
+        [
+          -1.6e-05,
+          1.6e-05
+        ],
+        [
+          -2.0685e-05,
+          2e-06
+        ]
+      ],
+      "raw_mapped_artifact": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_material_Q/Z_Eb_Au_off_material_Q_thermal_grid.npz",
+        "bytes": 9486956,
+        "sha256": "51b36cc5b72a1f5ce26a06f9617ea94d14bc92ff39f42aba58b171d68ba6edd8",
+        "committed_to_git": false
+      },
+      "operations_forbidden_and_absent": [
+        "clipping",
+        "smoothing",
+        "gain",
+        "global_rescaling",
+        "tiling",
+        "full_cell_material_assignment"
+      ]
+    }
+  },
+  "gates": {
+    "all_power_conservation_lt_1e-12": true,
+    "no_positive_power_cell_without_loss_overlap": true,
+    "no_forbidden_Q_processing": true,
+    "raw_artifacts_outside_Git": true
+  },
+  "next_gate": "explicit finite 3-D thermal solve on the exact mapped cell-power arrays"
+}

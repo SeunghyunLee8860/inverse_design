@@ -1,0 +1,54 @@
+{
+  "status": "VALIDATED_FINITE_T_Z_COMPONENT_MATERIAL_OVERLAP_Q_MAPPING",
+  "raw_files_committed_to_git": false,
+  "artifacts": {
+    "T_Ea_Au_on": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_material_Q/T_Ea_Au_on_material_Q_thermal_grid.npz",
+      "bytes": 16633254,
+      "sha256": "d6f55f825191d9564387739e4fc64a49d792ee98fd6e86dcb167faf4ccde7424",
+      "committed_to_git": false
+    },
+    "T_Eb_Au_on": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_material_Q/T_Eb_Au_on_material_Q_thermal_grid.npz",
+      "bytes": 16626938,
+      "sha256": "96f672d73e79b3644c3fa031b25bd006716a47675d0c11a484f164c208589fcd",
+      "committed_to_git": false
+    },
+    "T_Ea_Au_off": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_material_Q/T_Ea_Au_off_material_Q_thermal_grid.npz",
+      "bytes": 16616724,
+      "sha256": "84269dc3d68cc19d88643ab4498bd5ccb6d96d3706d6c1955271c18dc92b21d9",
+      "committed_to_git": false
+    },
+    "T_Eb_Au_off": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_material_Q/T_Eb_Au_off_material_Q_thermal_grid.npz",
+      "bytes": 16629250,
+      "sha256": "d65a26d21e206b37c79aa41efea6703108d6dce6358c5f7134086dac026d3d2f",
+      "committed_to_git": false
+    },
+    "Z_Ea_Au_on": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_material_Q/Z_Ea_Au_on_material_Q_thermal_grid.npz",
+      "bytes": 9507390,
+      "sha256": "69d7258a5f8a001486ef9aed93d3bcfab10b7a49c88ea523a99e4db4820af7ce",
+      "committed_to_git": false
+    },
+    "Z_Eb_Au_on": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_material_Q/Z_Eb_Au_on_material_Q_thermal_grid.npz",
+      "bytes": 9535952,
+      "sha256": "540fbbd76b151f547a9222a2170258201c105f9182c95a46773cc04b9e4f5daa",
+      "committed_to_git": false
+    },
+    "Z_Ea_Au_off": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_material_Q/Z_Ea_Au_off_material_Q_thermal_grid.npz",
+      "bytes": 9487936,
+      "sha256": "42b36bdcb22f5b88965751dd87ae81b7e1c3fc1d94c3383fed80a5499e3dfc7f",
+      "committed_to_git": false
+    },
+    "Z_Eb_Au_off": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_material_Q/Z_Eb_Au_off_material_Q_thermal_grid.npz",
+      "bytes": 9486956,
+      "sha256": "51b36cc5b72a1f5ce26a06f9617ea94d14bc92ff39f42aba58b171d68ba6edd8",
+      "committed_to_git": false
+    }
+  }
+}
