@@ -6,7 +6,10 @@ This result used historical O3 optical Q with TE1 downstream operators. It is
 not a certificate for the corrected shared-linear production path.
 
 The same source-only incident-power calibration is applied to both polarizations.
-Positive current leaves the left terminal and corresponds to right-to-left internal current.
+This historical result predates the corrected Shockley-Ramo sign and is stale;
+its signed currents must not be interpreted or relabeled. In the current code,
+positive current is internal conventional current along solver +x, from x_min
+to x_max.
 The switching target is Ia>0 and Ib<0; the uniform design already has the requested signs, but is not optimized.
 
 | polarization | P_Q (W) | Tmax (K) | current (nA) | runtime (s) |

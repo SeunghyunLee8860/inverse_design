@@ -465,8 +465,8 @@ def plot_evaluation(
 
     ia = 1e9 * np.asarray([row["utility_a_A"] for row in rows], dtype=float)
     mb = 1e9 * np.asarray([row["utility_b_A"] for row in rows], dtype=float)
-    axes[1, 0].plot(index, ia, label="I_a (right-to-left)")
-    axes[1, 0].plot(index, mb, label="-I_b (left-to-right)")
+    axes[1, 0].plot(index, ia, label="I_a (+x: x_min to x_max)")
+    axes[1, 0].plot(index, mb, label="-I_b (-x: x_max to x_min)")
     axes[1, 0].plot(index, np.minimum(ia, mb), "k-", label="min utility")
     axes[1, 0].set_title("opposite-current epigraph objective")
     axes[1, 0].set_xlabel("full-physics evaluation")
@@ -1071,8 +1071,8 @@ def main() -> int:
         "sign_convention": {
             "psi_left": 0,
             "psi_right": 1,
-            "I_a_target": "positive, internal conventional current right-to-left",
-            "I_b_target": "negative, internal conventional current left-to-right",
+            "I_a_target": "positive, internal conventional current along +x (x_min to x_max)",
+            "I_b_target": "negative, internal conventional current along -x (x_max to x_min)",
         },
         "continuous_last": history[-1],
         "binary_candidates": binary_results,

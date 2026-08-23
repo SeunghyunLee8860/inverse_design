@@ -132,7 +132,10 @@ def run_case(
         "TaIrTe4_Tmax_K": float(np.max(ta_temperature)),
         "current_A": current,
         "current_nA": current * 1e9,
-        "current_sign_convention": "+I is right-to-left internal current (out of left terminal); target is Ia>0 and Ib<0",
+        "current_sign_convention": (
+            "+I is internal conventional current along solver +x, from x_min "
+            "to x_max; target is Ia>0 and Ib<0"
+        ),
         "current_from_integrand_A": integrand_current,
         "current_integrand_consistency_relative": current_consistency,
         "thermal": thermal_audit,
@@ -247,7 +250,7 @@ def main() -> int:
         f"Status: **{status}**",
         "",
         "The same source-only incident-power calibration is applied to both polarizations.",
-        "Positive current leaves the left terminal and corresponds to right-to-left internal current.",
+        "Positive current is internal conventional current along solver +x, from x_min to x_max.",
         "The switching target is Ia>0 and Ib<0; the uniform design already has the requested signs, but is not optimized.",
         "",
         "| polarization | P_Q (W) | Tmax (K) | current (nA) | runtime (s) |",
