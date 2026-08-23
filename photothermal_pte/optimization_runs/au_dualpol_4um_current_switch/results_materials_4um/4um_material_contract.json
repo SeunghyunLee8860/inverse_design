@@ -83,7 +83,20 @@
     "epsilon_c_equals_epsilon_b": true,
     "Au_passive": true,
     "substrate_loss_nonnegative": true,
-    "Lumerical_Si_readback_completed": true
+    "Lumerical_Si_readback_completed": true,
+    "TaIrTe4_query_inside_tabulated_range": true,
+    "Au_query_inside_tabulated_range": true
+  },
+  "interpolation_domains": {
+    "TaIrTe4_wavelength_nm": [
+      1111.1111,
+      20000.0
+    ],
+    "Ordal_Au_wavelength_um": [
+      0.667,
+      286.0
+    ],
+    "policy": "out-of-range interpolation is forbidden; no np.interp endpoint clamping"
   },
   "FDTD_solve_run": false
 }
