@@ -1,0 +1,46 @@
+{
+  "status": "COMPLETE_AU_COURANT_Z_CASE",
+  "runsetup_sha256": "b7d313b29b7b74f966829a22823acc005e4fd249a33add20782d3ddbfe602f45",
+  "case": "partial_f4_cf0p5",
+  "row": {
+    "case": "partial_f4_cf0p5",
+    "mesh_factor": 4,
+    "mesh_mode": "partial_material_z",
+    "courant_factor": 0.5,
+    "time_step_s": 8.318327221205701e-18,
+    "time_steps_total": 51328,
+    "compile_s": 10.230416525155306,
+    "runtime_s": 75.38734022527933,
+    "au_float32_ADE": {
+      "c1": 1.9994009733200073,
+      "c2": -0.9994010329246521,
+      "c3": 0.01305148471146822,
+      "c1_plus_c2": 0.9999999403953552,
+      "discrete_susceptibility_real": -832.4805908203125,
+      "discrete_susceptibility_imag": 127.51913452148438
+    },
+    "field_max_abs": {
+      "previous": {
+        "au": 0.4647316038608551,
+        "tairte4": 0.33676132559776306
+      },
+      "late": {
+        "au": 0.4646698236465454,
+        "tairte4": 0.336760938167572
+      }
+    },
+    "previous_volume_integrated_E2_V2_m": 2.5789411063809104e-21,
+    "late_volume_integrated_E2_V2_m": 2.5789341006523224e-21,
+    "volume_integrated_E2_change_relative": 2.7165135995683774e-06,
+    "complex_E_spatial_NRMSE": 0.00010274595659053349,
+    "P_discrete_ADE_Q_late_W": 1.058259590741772e-13,
+    "P_closed_td_W": 1.0959909222234487e-13,
+    "P_closed_phasor_W": 1.0960166499018346e-13,
+    "closed_td_vs_phasor_relative": 2.347380250853747e-05,
+    "stationarity_gate": {
+      "field_NRMSE_limit": 0.05,
+      "E2_change_limit": 0.1,
+      "failed": false
+    }
+  }
+}
