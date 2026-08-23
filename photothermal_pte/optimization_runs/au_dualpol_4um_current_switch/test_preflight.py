@@ -44,8 +44,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_
     ABSORPTION_LOSS_BASIS,
     CLOSED_SURFACE_PHASOR_APODIZATION,
     CLOSED_SURFACE_PHASOR_WINDOW,
+    FLOAT32_ADE_REFIT_RELATIVE_TOLERANCE,
     LAYOUT,
     MAX_IGNORED_SUBSTRATE_EPSILON_IMAG,
+    _refit_float32_ade,
     _lossless_uniform_permittivity,
     grid_edges_sha256,
     realized_discrete_susceptibility,
@@ -117,6 +119,33 @@ def test_heat_uses_realized_float32_ade_loss() -> None:
     )
     assert np.isclose(value.real, -826.3737182617188, rtol=1e-7)
     assert np.isclose(value.imag, 125.59490203857422, rtol=1e-7)
+
+
+def test_coefficient_aware_float32_drude_refit_hits_complex_target() -> None:
+    target_epsilon = -830.37 + 127.16j
+    omega = 2.0 * np.pi * 299_792_458.0 / 4.0e-6
+    dt = 2.083469563193086e-18
+    seed = {
+        "kind": "Drude",
+        "fit_basis": "test seed",
+        "omega_0_rad_s": 0.0,
+        "gamma_rad_s": 7.202725926974678e13,
+        "coupling_sq_rad2_s2": 1.8867676245978495e32,
+        "omega_p_rad_s": np.sqrt(1.8867676245978495e32),
+        "delta_epsilon": 0.0,
+        "fit_relative_error": 0.0,
+    }
+    fitted = _refit_float32_ade(seed, target_epsilon, omega, dt)
+    coefficients = (
+        fitted["realized_float32_c1"],
+        fitted["realized_float32_c2"],
+        fitted["realized_float32_c3"],
+    )
+    realized = 1.0 + realized_discrete_susceptibility(
+        coefficients, omega, dt
+    )
+    error = abs(realized - target_epsilon) / abs(target_epsilon)
+    assert error < FLOAT32_ADE_REFIT_RELATIVE_TOLERANCE
 
 
 def test_full_z_mesh_factor_one_is_exact_baseline_and_z_pml_is_independent() -> None:

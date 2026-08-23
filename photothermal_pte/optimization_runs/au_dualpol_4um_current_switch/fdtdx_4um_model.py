@@ -41,6 +41,9 @@ MAX_IGNORED_SUBSTRATE_EPSILON_IMAG = 1.0e-10
 CLOSED_SURFACE_PHASOR_WINDOW = "rectangular_switch_only"
 CLOSED_SURFACE_PHASOR_APODIZATION = None
 ABSORPTION_LOSS_BASIS = "realized_float32_discrete_ADE_susceptibility"
+FLOAT32_ADE_REFIT_RELATIVE_TOLERANCE = 1.0e-5
+FLOAT32_ADE_GAMMA_SEARCH_HALF_WIDTH = 0.20
+FLOAT32_ADE_GAMMA_SEARCH_POINTS = 400_001
 
 
 @dataclass(frozen=True)
@@ -202,6 +205,100 @@ def realized_discrete_susceptibility(
     return complex(np.complex64(c3) / (z_minus - c1 - c2 * z_plus))
 
 
+def _refit_float32_ade(
+    initial: dict[str, float],
+    target_epsilon: complex,
+    omega_rad_s: float,
+    dt_s: float,
+) -> dict[str, float]:
+    """Refit damping/coupling to the realized float32 carrier response.
+
+    The analytic one-frequency fit is performed in float64. On a fine grid,
+    evaluating the nearly cancelling ADE denominator after c1/c2/c3 are
+    rounded to float32 can move the realized complex permittivity by about one
+    percent. Search damping locally for the float32 denominator phase, then
+    choose the coupling so rounded c3 matches the target magnitude.
+    """
+
+    target_chi = complex(target_epsilon - 1.0)
+    gamma_seed = float(initial["gamma_rad_s"])
+    omega_0 = float(initial["omega_0_rad_s"])
+    ratios = np.linspace(
+        1.0 - FLOAT32_ADE_GAMMA_SEARCH_HALF_WIDTH,
+        1.0 + FLOAT32_ADE_GAMMA_SEARCH_HALF_WIDTH,
+        FLOAT32_ADE_GAMMA_SEARCH_POINTS,
+        dtype=np.float64,
+    )
+    gamma = gamma_seed * ratios
+    gamma_dt = gamma * dt_s
+    denominator = 1.0 + 0.5 * gamma_dt
+    c1 = np.asarray(
+        (2.0 - omega_0**2 * dt_s**2) / denominator, dtype=np.float32
+    )
+    c2 = np.asarray(
+        -(1.0 - 0.5 * gamma_dt) / denominator, dtype=np.float32
+    )
+    theta = np.float32(omega_rad_s * dt_s)
+    z_minus = np.exp(np.complex64(-1j * theta))
+    z_plus = np.exp(np.complex64(1j * theta))
+    ade_denominator = (
+        z_minus
+        - c1.astype(np.complex64)
+        - c2.astype(np.complex64) * z_plus
+    )
+    required_c3 = np.complex64(target_chi) * ade_denominator
+    phase_score = np.abs(required_c3.imag) / np.maximum(
+        np.abs(required_c3.real), np.finfo(np.float32).tiny
+    )
+    best = int(np.argmin(phase_score))
+    if best in (0, FLOAT32_ADE_GAMMA_SEARCH_POINTS - 1):
+        raise RuntimeError("float32 ADE damping refit hit its search boundary")
+    realized_c3 = np.float32(required_c3[best].real)
+    if not realized_c3 > 0.0:
+        raise RuntimeError("float32 ADE refit requires a positive field coupling")
+    gamma_best = float(gamma[best])
+    coupling_sq = float(realized_c3) * (
+        1.0 + 0.5 * gamma_best * dt_s
+    ) / dt_s**2
+    result = dict(initial)
+    continuous_error = float(result["fit_relative_error"])
+    result["continuous_seed_gamma_rad_s"] = gamma_seed
+    result["continuous_seed_fit_relative_error"] = continuous_error
+    result["gamma_rad_s"] = gamma_best
+    result["coupling_sq_rad2_s2"] = coupling_sq
+    if result["kind"] == "Drude":
+        result["omega_p_rad_s"] = math.sqrt(coupling_sq)
+    elif result["kind"] == "Lorentz":
+        result["delta_epsilon"] = coupling_sq / omega_0**2
+    else:
+        raise RuntimeError(f"unsupported ADE fit kind {result['kind']!r}")
+    coefficients = (
+        (2.0 - omega_0**2 * dt_s**2)
+        / (1.0 + 0.5 * gamma_best * dt_s),
+        -(1.0 - 0.5 * gamma_best * dt_s)
+        / (1.0 + 0.5 * gamma_best * dt_s),
+        coupling_sq * dt_s**2 / (1.0 + 0.5 * gamma_best * dt_s),
+    )
+    realized = realized_discrete_susceptibility(
+        coefficients, omega_rad_s, dt_s
+    )
+    error = abs(realized - target_chi) / abs(target_chi)
+    result["fit_basis"] = (
+        "coefficient-aware realized-float32 one-frequency ADE response"
+    )
+    result["fit_relative_error"] = float(error)
+    result["gamma_adjustment_relative"] = gamma_best / gamma_seed - 1.0
+    result["realized_float32_c1"] = float(np.float32(coefficients[0]))
+    result["realized_float32_c2"] = float(np.float32(coefficients[1]))
+    result["realized_float32_c3"] = float(np.float32(coefficients[2]))
+    if error >= FLOAT32_ADE_REFIT_RELATIVE_TOLERANCE:
+        raise RuntimeError(
+            f"realized float32 ADE refit error {error:.6g} exceeds "
+            f"{FLOAT32_ADE_REFIT_RELATIVE_TOLERANCE:.6g}"
+        )
+    return result
+
+
 def polarization_vector(polarization: str) -> tuple[float, float, float]:
     if polarization == "Ea":
         return (0.0, 1.0, 0.0)
@@ -292,9 +389,24 @@ def build_model(
     epsilon_sio2_real = _lossless_uniform_permittivity(epsilon_sio2, "SiO2")
     epsilon_si_real = _lossless_uniform_permittivity(epsilon_si, "Si")
     fits = {
-        "au": stage41._drude_fit(epsilon_au, omega, dt),
-        "a": stage41._drude_fit(epsilon_ta["a"], omega, dt),
-        "b": stage41._lorentz_fit(epsilon_ta["b"], omega, dt),
+        "au": _refit_float32_ade(
+            stage41._drude_fit(epsilon_au, omega, dt),
+            epsilon_au,
+            omega,
+            dt,
+        ),
+        "a": _refit_float32_ade(
+            stage41._drude_fit(epsilon_ta["a"], omega, dt),
+            epsilon_ta["a"],
+            omega,
+            dt,
+        ),
+        "b": _refit_float32_ade(
+            stage41._lorentz_fit(epsilon_ta["b"], omega, dt),
+            epsilon_ta["b"],
+            omega,
+            dt,
+        ),
     }
     fits["c"] = dict(fits["b"])
     coefficients = {

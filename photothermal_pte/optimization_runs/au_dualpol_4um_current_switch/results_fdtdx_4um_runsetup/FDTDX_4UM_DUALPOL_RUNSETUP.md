@@ -13,6 +13,13 @@ The source is a normally incident scalar Gaussian with w0=4 um and a 16 um
 square support.  Its requested intensity at the aperture boundary is
 0.03355% of the peak.
 
-The production optical gradient remains the already validated checkpoint-free
-harmonic two-solve method.  This audit does not promote the 4 um combined PTE
-gradient; forward convergence and AD-FD still have to pass.
+The carrier-frequency material closure is fitted after float32 coefficient
+rounding. The largest realized complex-susceptibility relative error is
+4.548e-07;
+the seed and adjusted damping plus realized c1/c2/c3 are recorded in JSON.
+
+The production optical-gradient implementation is the checkpoint-free harmonic
+two-solve method. Its historical O3 result is not a validation of the current
+shared-linear Au law. This audit does not promote the 4 um combined PTE
+gradient; full-mesh convergence and a new hash-linked AD-FD certificate still
+have to pass.

@@ -170,6 +170,22 @@ def main() -> int:
                 name: float(value["fit_relative_error"])
                 for name, value in reference["fits"].items()
             },
+            "ADE_fit_metadata": {
+                name: {
+                    key: value[key]
+                    for key in (
+                        "kind",
+                        "fit_basis",
+                        "continuous_seed_gamma_rad_s",
+                        "gamma_rad_s",
+                        "gamma_adjustment_relative",
+                        "realized_float32_c1",
+                        "realized_float32_c2",
+                        "realized_float32_c3",
+                    )
+                }
+                for name, value in reference["fits"].items()
+            },
             "absorption_loss_basis": ABSORPTION_LOSS_BASIS,
             "realized_float32_discrete_susceptibility": {
                 name: [value.real, value.imag]
@@ -220,8 +236,8 @@ def main() -> int:
                 )
             ),
             "source_boundary_intensity_lt_0p05pct": CONTRACT.aperture_boundary_intensity_fraction < 5e-4,
-            "all_ADE_fit_errors_lt_1e-12": all(
-                value["fit_relative_error"] < 1e-12
+            "all_realized_float32_ADE_fit_errors_lt_1e-5": all(
+                value["fit_relative_error"] < 1e-5
                 for value in reference["fits"].values()
             ),
             "substrate_loss_below_implemented_tolerance": (
@@ -281,6 +297,11 @@ design is 8 x 8 x 0.05 um.
 The source is a normally incident scalar Gaussian with w0=4 um and a 16 um
 square support.  Its requested intensity at the aperture boundary is
 {100*CONTRACT.aperture_boundary_intensity_fraction:.5f}% of the peak.
+
+The carrier-frequency material closure is fitted after float32 coefficient
+rounding. The largest realized complex-susceptibility relative error is
+{max(value['fit_relative_error'] for value in reference['fits'].values()):.3e};
+the seed and adjusted damping plus realized c1/c2/c3 are recorded in JSON.
 
 The production optical-gradient implementation is the checkpoint-free harmonic
 two-solve method. Its historical O3 result is not a validation of the current

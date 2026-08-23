@@ -49,7 +49,11 @@
       2.0000061340397224e-07,
       2.500000277905201e-07
     ],
-    "pml_cells_each_face": 8,
+    "pml_cells_each_face_xyz": [
+      8,
+      8,
+      8
+    ],
     "pml_inner_bounds_m_xyz": [
       [
         -9.000000318337698e-06,
@@ -428,12 +432,83 @@
       0.0
     ],
     "ADE_fit_relative_error": {
-      "au": 1.3949849418745229e-16,
-      "a": 1.1961198939002462e-16,
-      "b": 1.364165519391143e-16,
-      "c": 1.364165519391143e-16
+      "au": 4.220413497457663e-07,
+      "a": 4.548199579162034e-07,
+      "b": 1.7383425371003861e-07,
+      "c": 1.7383425371003861e-07
     },
-    "gray_Au_law": "passive Drude oscillator strength rho^3; endpoints are void/Au; numerical relaxation only"
+    "ADE_fit_metadata": {
+      "au": {
+        "kind": "Drude",
+        "fit_basis": "coefficient-aware realized-float32 one-frequency ADE response",
+        "continuous_seed_gamma_rad_s": 72028607485801.67,
+        "gamma_rad_s": 72018883623791.1,
+        "gamma_adjustment_relative": -0.0001349999999998852,
+        "realized_float32_c1": 1.997691035270691,
+        "realized_float32_c2": -0.9976910352706909,
+        "realized_float32_c3": 0.19412854313850403
+      },
+      "a": {
+        "kind": "Drude",
+        "fit_basis": "coefficient-aware realized-float32 one-frequency ADE response",
+        "continuous_seed_gamma_rad_s": 755062011977273.8,
+        "gamma_rad_s": 754656543676842.0,
+        "gamma_adjustment_relative": -0.0005369999999998987,
+        "realized_float32_c1": 1.9760674238204956,
+        "realized_float32_c2": -0.9760674834251404,
+        "realized_float32_c3": 0.025547685101628304
+      },
+      "b": {
+        "kind": "Lorentz",
+        "fit_basis": "coefficient-aware realized-float32 one-frequency ADE response",
+        "continuous_seed_gamma_rad_s": 880748180109817.8,
+        "gamma_rad_s": 880770198814320.5,
+        "gamma_adjustment_relative": 2.4999999999941735e-05,
+        "realized_float32_c1": 1.9712226390838623,
+        "realized_float32_c2": -0.9721237421035767,
+        "realized_float32_c3": 0.013984606601297855
+      },
+      "c": {
+        "kind": "Lorentz",
+        "fit_basis": "coefficient-aware realized-float32 one-frequency ADE response",
+        "continuous_seed_gamma_rad_s": 880748180109817.8,
+        "gamma_rad_s": 880770198814320.5,
+        "gamma_adjustment_relative": 2.4999999999941735e-05,
+        "realized_float32_c1": 1.9712226390838623,
+        "realized_float32_c2": -0.9721237421035767,
+        "realized_float32_c3": 0.013984606601297855
+      }
+    },
+    "absorption_loss_basis": "realized_float32_discrete_ADE_susceptibility",
+    "realized_float32_discrete_susceptibility": {
+      "au": [
+        -831.3699951171875,
+        127.1596450805664
+      ],
+      "a": [
+        -31.713279724121094,
+        50.84807205200195
+      ],
+      "b": [
+        14.900724411010742,
+        9.289196968078613
+      ],
+      "c": [
+        14.900724411010742,
+        9.289196968078613
+      ]
+    },
+    "au_material_fraction": {
+      "law": "shared_linear_projected_density",
+      "exponent": 1.0,
+      "optical_fraction": "au_material_fraction(rho)",
+      "thermal_fraction": "au_material_fraction(rho)",
+      "electrical_fraction": "au_material_fraction(rho)",
+      "gray_density_is_physical_geometry": false,
+      "promotion_requires_exact_binary_density": true
+    },
+    "substrate_implementation": "lossless uniform real epsilon; fail if epsilon.imag exceeds tolerance",
+    "maximum_ignored_substrate_epsilon_imag": 1e-10
   },
   "memory": {
     "placed_base_array_bytes": 113103864,
@@ -457,6 +532,7 @@
     "Au_inside_flake": true,
     "exact_layer_thicknesses": true,
     "source_boundary_intensity_lt_0p05pct": true,
-    "all_ADE_fit_errors_lt_1e-12": true
+    "all_realized_float32_ADE_fit_errors_lt_1e-5": true,
+    "substrate_loss_below_implemented_tolerance": true
   }
 }
