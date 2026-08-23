@@ -1,0 +1,112 @@
+[
+  {
+    "stage": 0,
+    "beta": 12.0,
+    "gray_cap": 0.4,
+    "maxeval": 12,
+    "nlopt_result": 5,
+    "numevals": 12,
+    "runtime_s": 1032.459676798433,
+    "returned_robust_min_A": 1.1005438845850066e-09
+  },
+  {
+    "stage": 1,
+    "beta": 16.0,
+    "gray_cap": 0.32,
+    "maxeval": 12,
+    "nlopt_result": 5,
+    "numevals": 12,
+    "runtime_s": 1030.2128627300262,
+    "returned_robust_min_A": 1.2954086284576697e-09
+  },
+  {
+    "stage": 2,
+    "beta": 24.0,
+    "gray_cap": 0.24,
+    "maxeval": 10,
+    "nlopt_result": 5,
+    "numevals": 10,
+    "runtime_s": 777.2689279280603,
+    "returned_robust_min_A": 1.450912387961403e-09
+  },
+  {
+    "stage": 3,
+    "beta": 32.0,
+    "gray_cap": 0.16,
+    "maxeval": 10,
+    "nlopt_result": 5,
+    "numevals": 10,
+    "runtime_s": 859.6575895100832,
+    "returned_robust_min_A": 1.4635173056325368e-09
+  },
+  {
+    "stage": 4,
+    "beta": 48.0,
+    "gray_cap": 0.1,
+    "maxeval": 10,
+    "nlopt_result": 5,
+    "numevals": 10,
+    "runtime_s": 778.7562466152012,
+    "returned_robust_min_A": 1.5023162851654913e-09
+  },
+  {
+    "stage": 5,
+    "beta": 64.0,
+    "gray_cap": 0.06478170015093498,
+    "maxeval": 10,
+    "nlopt_result": 5,
+    "numevals": 10,
+    "runtime_s": 779.564425393939,
+    "returned_robust_min_A": 1.0378502419859212e-09
+  },
+  {
+    "stage": 6,
+    "beta": 80.0,
+    "gray_cap": 0.041383441772751745,
+    "maxeval": 8,
+    "nlopt_result": 5,
+    "numevals": 8,
+    "runtime_s": 604.1233562640846,
+    "returned_robust_min_A": 9.326663003779515e-10
+  },
+  {
+    "stage": 7,
+    "beta": 96.0,
+    "gray_cap": 0.027061887760142962,
+    "maxeval": 10,
+    "nlopt_result": 5,
+    "numevals": 10,
+    "runtime_s": 876.4687311016023,
+    "returned_robust_min_A": 1.9828529916741163e-09
+  },
+  {
+    "stage": 8,
+    "beta": 128.0,
+    "gray_cap": 0.015288639397647616,
+    "maxeval": 10,
+    "nlopt_result": 5,
+    "numevals": 10,
+    "runtime_s": 786.7352238148451,
+    "returned_robust_min_A": 2.031459199032068e-09
+  },
+  {
+    "stage": 9,
+    "beta": 192.0,
+    "gray_cap": 0.0075,
+    "maxeval": 8,
+    "nlopt_result": 5,
+    "numevals": 8,
+    "runtime_s": 606.0454385206103,
+    "returned_robust_min_A": 1.8505933854096438e-09
+  },
+  {
+    "stage": 10,
+    "beta": 256.0,
+    "gray_cap": 0.003948701426587758,
+    "maxeval": 8,
+    "nlopt_result": 5,
+    "numevals": 8,
+    "runtime_s": 616.2829067185521,
+    "returned_robust_min_A": 1.8815339999030617e-09
+  }
+]

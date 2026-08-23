@@ -1,0 +1,406 @@
+{
+  "status": "BLOCKED_ROBUST_PROJECTION_EXACT_BINARY_SIGN",
+  "timestamp_utc": "2026-08-23T18:08:57.138772+00:00",
+  "etas": [
+    0.35,
+    0.65
+  ],
+  "stages": [
+    {
+      "stage": 0,
+      "beta": 12.0,
+      "gray_cap": 0.4,
+      "maxeval": 12,
+      "nlopt_result": 5,
+      "numevals": 12,
+      "runtime_s": 1032.459676798433,
+      "returned_robust_min_A": 1.1005438845850066e-09
+    },
+    {
+      "stage": 1,
+      "beta": 16.0,
+      "gray_cap": 0.32,
+      "maxeval": 12,
+      "nlopt_result": 5,
+      "numevals": 12,
+      "runtime_s": 1030.2128627300262,
+      "returned_robust_min_A": 1.2954086284576697e-09
+    },
+    {
+      "stage": 2,
+      "beta": 24.0,
+      "gray_cap": 0.24,
+      "maxeval": 10,
+      "nlopt_result": 5,
+      "numevals": 10,
+      "runtime_s": 777.2689279280603,
+      "returned_robust_min_A": 1.450912387961403e-09
+    },
+    {
+      "stage": 3,
+      "beta": 32.0,
+      "gray_cap": 0.16,
+      "maxeval": 10,
+      "nlopt_result": 5,
+      "numevals": 10,
+      "runtime_s": 859.6575895100832,
+      "returned_robust_min_A": 1.4635173056325368e-09
+    },
+    {
+      "stage": 4,
+      "beta": 48.0,
+      "gray_cap": 0.1,
+      "maxeval": 10,
+      "nlopt_result": 5,
+      "numevals": 10,
+      "runtime_s": 778.7562466152012,
+      "returned_robust_min_A": 1.5023162851654913e-09
+    },
+    {
+      "stage": 5,
+      "beta": 64.0,
+      "gray_cap": 0.06478170015093498,
+      "maxeval": 10,
+      "nlopt_result": 5,
+      "numevals": 10,
+      "runtime_s": 779.564425393939,
+      "returned_robust_min_A": 1.0378502419859212e-09
+    },
+    {
+      "stage": 6,
+      "beta": 80.0,
+      "gray_cap": 0.041383441772751745,
+      "maxeval": 8,
+      "nlopt_result": 5,
+      "numevals": 8,
+      "runtime_s": 604.1233562640846,
+      "returned_robust_min_A": 9.326663003779515e-10
+    },
+    {
+      "stage": 7,
+      "beta": 96.0,
+      "gray_cap": 0.027061887760142962,
+      "maxeval": 10,
+      "nlopt_result": 5,
+      "numevals": 10,
+      "runtime_s": 876.4687311016023,
+      "returned_robust_min_A": 1.9828529916741163e-09
+    },
+    {
+      "stage": 8,
+      "beta": 128.0,
+      "gray_cap": 0.015288639397647616,
+      "maxeval": 10,
+      "nlopt_result": 5,
+      "numevals": 10,
+      "runtime_s": 786.7352238148451,
+      "returned_robust_min_A": 2.031459199032068e-09
+    },
+    {
+      "stage": 9,
+      "beta": 192.0,
+      "gray_cap": 0.0075,
+      "maxeval": 8,
+      "nlopt_result": 5,
+      "numevals": 8,
+      "runtime_s": 606.0454385206103,
+      "returned_robust_min_A": 1.8505933854096438e-09
+    },
+    {
+      "stage": 10,
+      "beta": 256.0,
+      "gray_cap": 0.003948701426587758,
+      "maxeval": 8,
+      "nlopt_result": 5,
+      "numevals": 8,
+      "runtime_s": 616.2829067185521,
+      "returned_robust_min_A": 1.8815339999030617e-09
+    }
+  ],
+  "binary_candidates": [
+    {
+      "I_a_A": 6.694353187454794e-09,
+      "I_b_A": 8.830070829580921e-09,
+      "balanced_utility_A": -8.830070829580921e-09,
+      "cases": {
+        "Ea": {
+          "current_A": 6.694353187454794e-09,
+          "P_Q_W": 4.515414847332761e-05,
+          "P_six_W": 4.513246797925289e-05,
+          "closure_relative": 0.0004803746625308208,
+          "Tmax_K": 0.8367173290692496,
+          "gates": {
+            "optical_closure_lt_0p5pct": true,
+            "thermal_energy_balance_lt_1pct": true,
+            "thermal_residual_lt_1e8": true,
+            "electrical_residual_lt_1e8": true
+          }
+        },
+        "Eb": {
+          "current_A": 8.830070829580921e-09,
+          "P_Q_W": 8.432160416702149e-05,
+          "P_six_W": 8.440815448538038e-05,
+          "closure_relative": 0.0010253786365377656,
+          "Tmax_K": 1.3799070849848365,
+          "gates": {
+            "optical_closure_lt_0p5pct": true,
+            "thermal_energy_balance_lt_1pct": true,
+            "thermal_residual_lt_1e8": true,
+            "electrical_residual_lt_1e8": true
+          }
+        }
+      },
+      "name": "threshold_0.35_targeted_remove_fill",
+      "exact_bad_cells": 0,
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/robust_projection_ld_mma/final_threshold_0.35_targeted_remove_fill.npz",
+        "bytes": 620,
+        "sha256": "8354e35e3785fdcf6afef4b19f0630ec4bda062e1e974b01e194944ae9e93158"
+      }
+    },
+    {
+      "I_a_A": 6.674136858865926e-09,
+      "I_b_A": 8.79736680510658e-09,
+      "balanced_utility_A": -8.79736680510658e-09,
+      "cases": {
+        "Ea": {
+          "current_A": 6.674136858865926e-09,
+          "P_Q_W": 4.5179299383097735e-05,
+          "P_six_W": 4.515762163492391e-05,
+          "closure_relative": 0.00048004627766002494,
+          "Tmax_K": 0.836707693884036,
+          "gates": {
+            "optical_closure_lt_0p5pct": true,
+            "thermal_energy_balance_lt_1pct": true,
+            "thermal_residual_lt_1e8": true,
+            "electrical_residual_lt_1e8": true
+          }
+        },
+        "Eb": {
+          "current_A": 8.79736680510658e-09,
+          "P_Q_W": 8.438532730214024e-05,
+          "P_six_W": 8.447177501581645e-05,
+          "closure_relative": 0.0010233917028502216,
+          "Tmax_K": 1.3805240988794987,
+          "gates": {
+            "optical_closure_lt_0p5pct": true,
+            "thermal_energy_balance_lt_1pct": true,
+            "thermal_residual_lt_1e8": true,
+            "electrical_residual_lt_1e8": true
+          }
+        }
+      },
+      "name": "threshold_0.55_targeted_remove_fill",
+      "exact_bad_cells": 0,
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/robust_projection_ld_mma/final_threshold_0.55_targeted_remove_fill.npz",
+        "bytes": 620,
+        "sha256": "ef7f8767da1f5a4c8e94f5029772919cc7b3fe7b367dc36cc67c2c9299c3d783"
+      }
+    },
+    {
+      "I_a_A": 6.705651630898768e-09,
+      "I_b_A": 8.849608470431124e-09,
+      "balanced_utility_A": -8.849608470431124e-09,
+      "cases": {
+        "Ea": {
+          "current_A": 6.705651630898768e-09,
+          "P_Q_W": 4.514835930523233e-05,
+          "P_six_W": 4.512667483055787e-05,
+          "closure_relative": 0.00048052454021667816,
+          "Tmax_K": 0.8366758699270737,
+          "gates": {
+            "optical_closure_lt_0p5pct": true,
+            "thermal_energy_balance_lt_1pct": true,
+            "thermal_residual_lt_1e8": true,
+            "electrical_residual_lt_1e8": true
+          }
+        },
+        "Eb": {
+          "current_A": 8.849608470431124e-09,
+          "P_Q_W": 8.431351600203777e-05,
+          "P_six_W": 8.440006489824916e-05,
+          "closure_relative": 0.0010254600670713712,
+          "Tmax_K": 1.379849086124674,
+          "gates": {
+            "optical_closure_lt_0p5pct": true,
+            "thermal_energy_balance_lt_1pct": true,
+            "thermal_residual_lt_1e8": true,
+            "electrical_residual_lt_1e8": true
+          }
+        }
+      },
+      "name": "threshold_0.25_targeted_remove_fill",
+      "exact_bad_cells": 0,
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/robust_projection_ld_mma/final_threshold_0.25_targeted_remove_fill.npz",
+        "bytes": 620,
+        "sha256": "fa999dea6efb8b2b798e9fc3abefb0c0fc12fee62a9d9f9fd3ba480348f3f60b"
+      }
+    },
+    {
+      "I_a_A": 6.699724079835061e-09,
+      "I_b_A": 8.841070639490442e-09,
+      "balanced_utility_A": -8.841070639490442e-09,
+      "cases": {
+        "Ea": {
+          "current_A": 6.699724079835061e-09,
+          "P_Q_W": 4.513455260123082e-05,
+          "P_six_W": 4.511287476651535e-05,
+          "closure_relative": 0.00048052434759835003,
+          "Tmax_K": 0.8366866945479895,
+          "gates": {
+            "optical_closure_lt_0p5pct": true,
+            "thermal_energy_balance_lt_1pct": true,
+            "thermal_residual_lt_1e8": true,
+            "electrical_residual_lt_1e8": true
+          }
+        },
+        "Eb": {
+          "current_A": 8.841070639490442e-09,
+          "P_Q_W": 8.428010643721988e-05,
+          "P_six_W": 8.436663487845413e-05,
+          "closure_relative": 0.001025623949075504,
+          "Tmax_K": 1.3797940089473562,
+          "gates": {
+            "optical_closure_lt_0p5pct": true,
+            "thermal_energy_balance_lt_1pct": true,
+            "thermal_residual_lt_1e8": true,
+            "electrical_residual_lt_1e8": true
+          }
+        }
+      },
+      "name": "threshold_0.20_targeted_remove_fill",
+      "exact_bad_cells": 0,
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/robust_projection_ld_mma/final_threshold_0.20_targeted_remove_fill.npz",
+        "bytes": 620,
+        "sha256": "d4f4d9238a72c21b6362e9f8be9525f9e0f2236b3d22e054187a0701659c182f"
+      }
+    },
+    {
+      "I_a_A": 6.694718362869698e-09,
+      "I_b_A": 8.819319180539564e-09,
+      "balanced_utility_A": -8.819319180539564e-09,
+      "cases": {
+        "Ea": {
+          "current_A": 6.694718362869698e-09,
+          "P_Q_W": 4.520727058468297e-05,
+          "P_six_W": 4.518558000740499e-05,
+          "closure_relative": 0.0004800331715213101,
+          "Tmax_K": 0.8366321496337413,
+          "gates": {
+            "optical_closure_lt_0p5pct": true,
+            "thermal_energy_balance_lt_1pct": true,
+            "thermal_residual_lt_1e8": true,
+            "electrical_residual_lt_1e8": true
+          }
+        },
+        "Eb": {
+          "current_A": 8.819319180539564e-09,
+          "P_Q_W": 8.442610753077165e-05,
+          "P_six_W": 8.451278022053299e-05,
+          "closure_relative": 0.0010255571942512445,
+          "Tmax_K": 1.380697228507568,
+          "gates": {
+            "optical_closure_lt_0p5pct": true,
+            "thermal_energy_balance_lt_1pct": true,
+            "thermal_residual_lt_1e8": true,
+            "electrical_residual_lt_1e8": true
+          }
+        }
+      },
+      "name": "threshold_0.80_targeted_remove_fill",
+      "exact_bad_cells": 0,
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/robust_projection_ld_mma/final_threshold_0.80_targeted_remove_fill.npz",
+        "bytes": 619,
+        "sha256": "ca2a1939c58782d42875a688e9a0dc0e2a356949792f8ceddebd5c569d8f62c6"
+      }
+    },
+    {
+      "I_a_A": 6.690204924327878e-09,
+      "I_b_A": 8.831888360853e-09,
+      "balanced_utility_A": -8.831888360853e-09,
+      "cases": {
+        "Ea": {
+          "current_A": 6.690204924327878e-09,
+          "P_Q_W": 4.5122598916584735e-05,
+          "P_six_W": 4.510093328664719e-05,
+          "closure_relative": 0.000480380966838245,
+          "Tmax_K": 0.8367264575633755,
+          "gates": {
+            "optical_closure_lt_0p5pct": true,
+            "thermal_energy_balance_lt_1pct": true,
+            "thermal_residual_lt_1e8": true,
+            "electrical_residual_lt_1e8": true
+          }
+        },
+        "Eb": {
+          "current_A": 8.831888360853e-09,
+          "P_Q_W": 8.427010181572079e-05,
+          "P_six_W": 8.435652442549908e-05,
+          "closure_relative": 0.0010244923005880734,
+          "Tmax_K": 1.3796764827957575,
+          "gates": {
+            "optical_closure_lt_0p5pct": true,
+            "thermal_energy_balance_lt_1pct": true,
+            "thermal_residual_lt_1e8": true,
+            "electrical_residual_lt_1e8": true
+          }
+        }
+      },
+      "name": "threshold_0.15_targeted_remove_fill",
+      "exact_bad_cells": 0,
+      "raw": {
+        "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/robust_projection_ld_mma/final_threshold_0.15_targeted_remove_fill.npz",
+        "bytes": 620,
+        "sha256": "af53dd5485e46afc69ac8622f87a287f8a03b575348f2d72ea28575c01a9c5a5"
+      }
+    }
+  ],
+  "promoted": null,
+  "best_diagnostic": {
+    "I_a_A": 6.674136858865926e-09,
+    "I_b_A": 8.79736680510658e-09,
+    "balanced_utility_A": -8.79736680510658e-09,
+    "cases": {
+      "Ea": {
+        "current_A": 6.674136858865926e-09,
+        "P_Q_W": 4.5179299383097735e-05,
+        "P_six_W": 4.515762163492391e-05,
+        "closure_relative": 0.00048004627766002494,
+        "Tmax_K": 0.836707693884036,
+        "gates": {
+          "optical_closure_lt_0p5pct": true,
+          "thermal_energy_balance_lt_1pct": true,
+          "thermal_residual_lt_1e8": true,
+          "electrical_residual_lt_1e8": true
+        }
+      },
+      "Eb": {
+        "current_A": 8.79736680510658e-09,
+        "P_Q_W": 8.438532730214024e-05,
+        "P_six_W": 8.447177501581645e-05,
+        "closure_relative": 0.0010233917028502216,
+        "Tmax_K": 1.3805240988794987,
+        "gates": {
+          "optical_closure_lt_0p5pct": true,
+          "thermal_energy_balance_lt_1pct": true,
+          "thermal_residual_lt_1e8": true,
+          "electrical_residual_lt_1e8": true
+        }
+      }
+    },
+    "name": "threshold_0.55_targeted_remove_fill",
+    "exact_bad_cells": 0,
+    "raw": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/robust_projection_ld_mma/final_threshold_0.55_targeted_remove_fill.npz",
+      "bytes": 620,
+      "sha256": "ef7f8767da1f5a4c8e94f5029772919cc7b3fe7b367dc36cc67c2c9299c3d783"
+    }
+  },
+  "opposite_sign_gate": false,
+  "exact_500nm_gate": true,
+  "history_evaluations": 112
+}
