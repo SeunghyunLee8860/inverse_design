@@ -102,7 +102,9 @@ def main() -> int:
     with (OUT / "fdtdx_4um_source_calibration.csv").open(
         "w", newline="", encoding="utf-8"
     ) as stream:
-        writer = csv.DictWriter(stream, fieldnames=tuple(cases[0]))
+        writer = csv.DictWriter(
+            stream, fieldnames=tuple(cases[0]), lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(cases)
     lines = [

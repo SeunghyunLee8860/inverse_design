@@ -4,15 +4,15 @@
   "cases": [
     {
       "polarization": "Ea",
-      "incident_power_W": 1.8563599008675213e-12,
-      "runtime_s": 12.345480512827635,
+      "incident_power_W": 1.856360117707956e-12,
+      "runtime_s": 44.97876946255565,
       "finite": true,
       "gpu": "0"
     },
     {
       "polarization": "Eb",
-      "incident_power_W": 1.856360117707956e-12,
-      "runtime_s": 11.503941409289837,
+      "incident_power_W": 1.8563599008675213e-12,
+      "runtime_s": 62.318964548408985,
       "finite": true,
       "gpu": "0"
     }
@@ -20,5 +20,28 @@
   "Ea_Eb_incident_power_mismatch_relative": 1.1680946623914402e-07,
   "common_reference_incident_power_W": 1.8563600092877386e-12,
   "reporting_incident_power_W": 0.000285,
-  "normalization_contract": "each physical Q is multiplied by the one common ratio 285uW/P_source-only; no polarization matching or Q rescaling"
+  "normalization_contract": "each physical Q is multiplied by the one common ratio 285uW/P_source-only; no polarization matching or Q rescaling",
+  "source_calibration_contract": {
+    "grid_edges_sha256": "c6a12b95e656a88d6d9fcf448e30539f7befaa0a894dc6d44f5de42929949e1c",
+    "wavelength_m": 4e-06,
+    "gaussian_waist_m": 4e-06,
+    "source_aperture_span_m": 1.6e-05,
+    "polarization_vectors": {
+      "Ea": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "Eb": [
+        1.0,
+        0.0,
+        0.0
+      ]
+    },
+    "total_periods": 16,
+    "phasor_window_periods": 4,
+    "courant_factor": 0.5,
+    "dtype": "float32",
+    "detector": "all-air incident_plane below source"
+  }
 }
