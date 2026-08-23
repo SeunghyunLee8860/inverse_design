@@ -219,6 +219,7 @@ def build_model(
     *,
     total_periods: int = 16,
     window_periods: int = 4,
+    courant_factor: float = 0.5,
     include_adjoint_source: bool = True,
     air_only_source_calibration: bool = False,
 ) -> dict[str, Any]:
@@ -226,6 +227,8 @@ def build_model(
 
     if total_periods <= 2 * window_periods:
         raise ValueError("two disjoint phasor windows must fit in the solve")
+    if not (0.0 < courant_factor <= 1.0):
+        raise ValueError("courant_factor must be in (0, 1]")
     expected = FDTDX_SOURCE / "src"
     if str(expected) not in sys.path:
         sys.path.insert(0, str(expected))
@@ -273,7 +276,7 @@ def build_model(
         grid=grid,
         time=total_periods * period_s,
         dtype=jnp.float32,
-        courant_factor=0.5,
+        courant_factor=courant_factor,
         backend="gpu",
         gradient_config=None,
     )
