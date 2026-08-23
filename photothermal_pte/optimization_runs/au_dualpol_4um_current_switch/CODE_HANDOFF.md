@@ -32,6 +32,8 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
 10. `14_diagnose_gray_law_mismatch.py` -- historical gray-material blocker.
 11. `15_validate_4um_z_mesh_convergence.py` -- fail-closed z-mesh gate that
     must be closed before another production optimization.
+12. `production_readiness.py` and `PRODUCTION_READINESS.md` -- executable
+    certificate chain that currently blocks all production entry points.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -80,6 +82,10 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    now includes eta=0.35/0.50/0.65 in both current and grayness constraints,
    but the corrected robust path has not been run.  Historical robust results
    remain invalid for promotion.  See `ROBUST_OBJECTIVE_AUDIT.md`.
+8. Production optimization and exact-binary search are code-blocked until a
+   full shared-linear mesh certificate and a hash-linked shared-linear
+   multidirection combined AD-FD certificate both pass.  There is no runtime
+   bypass.  See `PRODUCTION_READINESS.md`.
 
 ## Raw checkpoint dependency
 

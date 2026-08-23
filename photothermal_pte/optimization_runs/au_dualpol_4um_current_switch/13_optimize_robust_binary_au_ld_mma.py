@@ -53,6 +53,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.robust_con
     grayness_cotangent,
     scenario_key,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production_readiness import (
+    require_production_readiness,
+)
 from photothermal_pte.optimization_runs.legacy_v261_optical_support.production_density_mapping import (
     ProductionDensityMapping,
 )
@@ -366,6 +369,7 @@ def forward_binary(runners,rho,scale,cuda_device):
 
 def main():
     if os.environ.get("CUDA_VISIBLE_DEVICES") is None: raise RuntimeError("GPU required")
+    readiness = require_production_readiness()
     cuda_device=int(os.environ.get("THERMAL_CUDA_DEVICE","0")); OUT.mkdir(parents=True,exist_ok=True); RAW.mkdir(parents=True,exist_ok=True)
     calibration=json.loads(CALIBRATION.read_text()); scale=CONTRACT.reporting_incident_power_W/float(calibration["common_reference_incident_power_W"])
     finalize_only=os.environ.get("AU_ROBUST_FINALIZE_ONLY","0")=="1"
@@ -390,8 +394,10 @@ def main():
             raise RuntimeError("robust resume uses the historical O3/TE1 law; start a new shared-law run")
         if manifest.get("robust_contract") != robust_contract_audit():
             raise RuntimeError("robust resume omits nominal-current or all-scenario grayness constraints")
+        if manifest.get("production_readiness") != readiness:
+            raise RuntimeError("robust resume is not linked to the current mesh/gradient certificates")
     else:
-        history=[]; stages=[]; manifest={"schema":"au-dualpol-robust-projection-v3","raw_artifacts_committed_to_git":False,"etas":list(ETAS),"filter":MAPPING.audit(),"au_material_fraction":material_fraction_audit(),"robust_contract":robust_contract_audit(),"evaluations":{}}
+        history=[]; stages=[]; manifest={"schema":"au-dualpol-robust-projection-v3","raw_artifacts_committed_to_git":False,"etas":list(ETAS),"filter":MAPPING.audit(),"au_material_fraction":material_fraction_audit(),"robust_contract":robust_contract_audit(),"production_readiness":readiness,"evaluations":{}}
     vector=np.concatenate((latent.ravel(),[0.0]))
     run_stages=() if finalize_only else (STAGES[7:] if resume_high else STAGES)
     stage_offset=7 if resume_high else 0

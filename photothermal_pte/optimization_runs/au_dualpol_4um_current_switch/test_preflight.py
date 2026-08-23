@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import numpy as np
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import CONTRACT
@@ -26,6 +27,13 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.robust_con
     gray_constraint_keys,
     grayness,
     grayness_cotangent,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production_readiness import (
+    GRADIENT_STATUS,
+    MESH_STATUS,
+    REQUIRED_MESH_COVERAGE,
+    readiness_audit,
+    sha256,
 )
 
 
@@ -63,6 +71,42 @@ def test_robust_contract_includes_nominal_and_all_grayness_constraints() -> None
     ) / (2.0 * step)
     analytic = float(np.vdot(grayness_cotangent(rho), direction))
     assert abs(finite_difference - analytic) < 1.0e-9
+
+
+def test_production_readiness_requires_hash_linked_complete_certificates(
+    tmp_path,
+) -> None:
+    mesh_path = tmp_path / "mesh.json"
+    gradient_path = tmp_path / "gradient.json"
+    material = {
+        "law": AU_MATERIAL_FRACTION_LAW,
+        "exponent": AU_MATERIAL_FRACTION_EXPONENT,
+        "optical_fraction": "au_material_fraction(rho)",
+        "thermal_fraction": "au_material_fraction(rho)",
+        "electrical_fraction": "au_material_fraction(rho)",
+        "gray_density_is_physical_geometry": False,
+        "promotion_requires_exact_binary_density": True,
+    }
+    mesh = {
+        "status": MESH_STATUS,
+        "au_material_fraction": material,
+        "coverage": {name: True for name in REQUIRED_MESH_COVERAGE},
+    }
+    mesh_path.write_text(json.dumps(mesh), encoding="utf-8")
+    gradient = {
+        "status": GRADIENT_STATUS,
+        "au_material_fraction": material,
+        "mesh_certificate_sha256": sha256(mesh_path),
+        "direction_count": 4,
+        "maximum_normalized_error": 0.009,
+    }
+    gradient_path.write_text(json.dumps(gradient), encoding="utf-8")
+    assert readiness_audit(mesh_path, gradient_path)["ready"]
+    gradient["mesh_certificate_sha256"] = "wrong"
+    gradient_path.write_text(json.dumps(gradient), encoding="utf-8")
+    result = readiness_audit(mesh_path, gradient_path)
+    assert not result["ready"]
+    assert "gradient_uses_mesh_certificate" in result["failed_checks"]
 
 
 def test_signed_opposite_current_objective() -> None:

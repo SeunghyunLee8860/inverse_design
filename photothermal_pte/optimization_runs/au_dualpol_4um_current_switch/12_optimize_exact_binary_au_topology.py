@@ -45,6 +45,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysi
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
     audit as material_fraction_audit,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production_readiness import (
+    require_production_readiness,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -304,6 +307,7 @@ def plot_step(history, rho, active_gradient, step):
 def main() -> int:
     if os.environ.get("CUDA_VISIBLE_DEVICES") is None:
         raise RuntimeError("GPU-only exact topology search requires CUDA_VISIBLE_DEVICES")
+    readiness = require_production_readiness()
     cuda_device = int(os.environ.get("THERMAL_CUDA_DEVICE", "0"))
     OUT.mkdir(parents=True, exist_ok=True); RAW.mkdir(parents=True, exist_ok=True)
     calibration = json.loads(CALIBRATION.read_text(encoding="utf-8"))
@@ -357,6 +361,7 @@ def main() -> int:
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "contract": CONTRACT.audit(),
         "au_material_fraction": material_fraction_audit(),
+        "production_readiness": readiness,
         "algorithm": "combined-adjoint-guided exact 500 nm disk add/remove; forward-verified acceptance",
         "initial_raw": str(INITIAL),
         "history": history,

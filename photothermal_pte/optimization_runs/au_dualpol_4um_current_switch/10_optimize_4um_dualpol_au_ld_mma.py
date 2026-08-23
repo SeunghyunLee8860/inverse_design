@@ -57,6 +57,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysi
     N_TA,
     current_integrand,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production_readiness import (
+    require_production_readiness,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -724,6 +727,7 @@ def write_history_csv(history: list[dict[str, object]]) -> None:
 def main() -> int:
     if os.environ.get("CUDA_VISIBLE_DEVICES") is None:
         raise RuntimeError("GPU-only optimization requires CUDA_VISIBLE_DEVICES")
+    readiness = require_production_readiness()
     cuda_device = int(os.environ.get("THERMAL_CUDA_DEVICE", "0"))
     OUT.mkdir(parents=True, exist_ok=True)
     RAW.mkdir(parents=True, exist_ok=True)
@@ -758,6 +762,7 @@ def main() -> int:
         "raw_artifacts_committed_to_git": False,
         "contract": CONTRACT.audit(),
         "au_material_fraction": material_fraction_audit(),
+        "production_readiness": readiness,
         "mapping": MAPPING.audit(),
         "optimizer": {
             "library": "NLopt",
@@ -819,6 +824,11 @@ def main() -> int:
             raise RuntimeError(
                 "resume checkpoint uses a different or undocumented Au material "
                 "fraction; start a new run under the shared linear contract"
+            )
+        if manifest.get("production_readiness") != readiness:
+            raise RuntimeError(
+                "resume checkpoint is not linked to the current mesh/gradient "
+                "certificate chain; start a new run"
             )
         manifest["evaluations"] = {
             key: value
