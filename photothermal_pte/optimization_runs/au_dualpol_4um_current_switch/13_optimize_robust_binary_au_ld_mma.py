@@ -64,6 +64,10 @@ STAGES = (
     (48.0, 0.10, 10),
     (64.0, 0.06, 10),
     (80.0, 0.035, 8),
+    (96.0, 0.025, 10),
+    (128.0, 0.015, 10),
+    (192.0, 0.0075, 8),
+    (256.0, 0.0035, 8),
 )
 NLOPT_TOL = 2.0e-5
 
@@ -311,8 +315,9 @@ def main():
     cuda_device=int(os.environ.get("THERMAL_CUDA_DEVICE","0")); OUT.mkdir(parents=True,exist_ok=True); RAW.mkdir(parents=True,exist_ok=True)
     calibration=json.loads(CALIBRATION.read_text()); scale=CONTRACT.reporting_incident_power_W/float(calibration["common_reference_incident_power_W"])
     finalize_only=os.environ.get("AU_ROBUST_FINALIZE_ONLY","0")=="1"
+    resume_high=os.environ.get("AU_ROBUST_RESUME_HIGH_BETA","0")=="1"
     resume_final=RAW/"stage_06_beta_80.npz"
-    starting_path=resume_final if finalize_only else INITIAL
+    starting_path=resume_final if (finalize_only or resume_high) else INITIAL
     with np.load(starting_path,allow_pickle=False) as data: latent=np.asarray(data["latent"],dtype=float)
     # The eroded/dilated material layouts can ring longer than the nominal
     # beta-continuation layout.  Use a 50% longer observable window while
@@ -323,15 +328,17 @@ def main():
         )
         for pol in ("Ea","Eb")
     }
-    if finalize_only:
+    if finalize_only or resume_high:
         history=json.loads((OUT/"optimization_history.json").read_text())
         stages=json.loads((OUT/"continuation_stages.json").read_text())
         manifest=json.loads((OUT/"RAW_ARTIFACT_MANIFEST.json").read_text())
     else:
         history=[]; stages=[]; manifest={"schema":"au-dualpol-robust-projection-v1","raw_artifacts_committed_to_git":False,"etas":list(ETAS),"filter":MAPPING.audit(),"evaluations":{}}
     vector=np.concatenate((latent.ravel(),[0.0]))
-    run_stages=() if finalize_only else STAGES
-    for stage_index,(beta,gray_target,maxeval) in enumerate(run_stages):
+    run_stages=() if finalize_only else (STAGES[7:] if resume_high else STAGES)
+    stage_offset=7 if resume_high else 0
+    for local_stage_index,(beta,gray_target,maxeval) in enumerate(run_stages):
+        stage_index=stage_offset+local_stage_index
         nominal=MAPPING.physical(latent,beta); entry_gray=float(np.mean(4*nominal*(1-nominal))); gray_cap=max(gray_target,.88*entry_gray)
         evaluator=RobustEvaluator(runners,scale,cuda_device,beta,gray_cap,history,manifest)
         entry=evaluator.evaluate(latent); useful=[s["current_A"] if s["pol"]=="Ea" else -s["current_A"] for s in entry.scenarios.values()]
@@ -340,7 +347,8 @@ def main():
         start=time.perf_counter(); vector=opt.optimize(vector); latent=vector[:-1].reshape(CONTRACT.design_shape); returned=evaluator.evaluate(latent)
         stage={"stage":stage_index,"beta":beta,"gray_cap":gray_cap,"maxeval":maxeval,"nlopt_result":int(opt.last_optimize_result()),"numevals":int(opt.get_numevals()),"runtime_s":time.perf_counter()-start,"returned_robust_min_A":min(s["current_A"] if s["pol"]=="Ea" else -s["current_A"] for s in returned.scenarios.values())}
         stages.append(stage); np.savez_compressed(RAW/f"stage_{stage_index:02d}_beta_{beta:g}.npz",latent=latent,vector=vector,beta=beta,gray_cap=gray_cap); write_json(OUT/"continuation_stages.json",stages); print(f"[stage complete] {stage}",flush=True)
-    nominal=MAPPING.physical(latent,STAGES[-1][0]); candidates=exact_candidates(nominal); binary_rows=[]
+    final_beta=STAGES[-1][0] if not finalize_only else float(stages[-1]["beta"])
+    nominal=MAPPING.physical(latent,final_beta); candidates=exact_candidates(nominal); binary_rows=[]
     for _,name,rho in candidates:
         row=forward_binary(runners,rho,scale,cuda_device); row["name"]=name; row["exact_bad_cells"]=0; raw=RAW/f"final_{name}.npz"; np.savez_compressed(raw,physical_density=rho); row["raw"]={"path":str(raw.resolve()),"bytes":raw.stat().st_size,"sha256":sha256(raw)}; binary_rows.append(row); print(f"[binary] {name} Ia={1e9*row['I_a_A']:.5f} Ib={1e9*row['I_b_A']:.5f} min={1e9*row['balanced_utility_A']:.5f}",flush=True)
     best=max(binary_rows,key=lambda row:row["balanced_utility_A"]); success=best["I_a_A"]>0 and best["I_b_A"]<0
