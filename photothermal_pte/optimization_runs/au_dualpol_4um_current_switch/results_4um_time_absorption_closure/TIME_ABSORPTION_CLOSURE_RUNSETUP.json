@@ -143,7 +143,7 @@
   "incident_normalization": "not required for scale-invariant Q/closed-flux and window comparisons; no downstream current is evaluated",
   "closed_surface_phasor_window": "rectangular switch-only window matching the time-domain monitor; the pinned FDTDX closed-surface phasor detector omits Tukey weights",
   "raw_arrays": {
-    "written_outside_git": false,
+    "written_outside_git": true,
     "root": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/time_absorption_closure",
     "purpose": "per-case restart cache for Q-map convergence comparisons"
   }

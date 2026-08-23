@@ -40,10 +40,12 @@ sample-air boundaries are insulating, and the transverse example uses an
    changes are not evidence for the current shared-linear code. Si, air, PML,
    optical x/y, thermal, and electrical meshes were not certified.
 
-3. **Time error and spatial error are mixed.** The partial-z sweep did not
-   compare the previous and late phasor windows. Some fine-grid Q/closed-flux
-   errors reached 0.84-1.96%, so time stationarity and discrete ADE absorption
-   closure must be isolated before another z conclusion is possible.
+3. **The current FDTDX solve is long-time unstable.** On the factor-8 partial-z
+   diagnostic, spatial Q NRMSE grows from 1.63% at 24 periods to 45.61% at 32
+   and 97.13% at 40; the time-domain closed flux becomes negative. Also,
+   continuous-target and realized float32 discrete-ADE Q differ by 1.11-1.14%.
+   Material-isolation and Courant diagnostics must close both blockers before
+   another mesh conclusion is possible.
 
 4. **The target physical device is not defined.** The code assumes a square
    16 um flake, 100 nm thickness, no crystal rotation, full left/right edge

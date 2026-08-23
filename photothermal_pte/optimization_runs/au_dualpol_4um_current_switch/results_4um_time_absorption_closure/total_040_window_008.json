@@ -1,0 +1,54 @@
+{
+  "status": "COMPLETE_TIME_ABSORPTION_CASE",
+  "runsetup_sha256": "51d3d8c3436c0f6a17afbb1ffbb3954c93d8ee067b05778b786c6dd91e2a2166",
+  "time_case": [
+    40,
+    8
+  ],
+  "row": {
+    "total_periods": 40,
+    "window_periods": 8,
+    "time_steps_total": 128080,
+    "dt_s": 4.166939126386172e-18,
+    "compile_s": 12.864031329751015,
+    "forward_s": 308.90155481919646,
+    "P_target_previous_W": 4.2071541632038246e-13,
+    "P_target_late_W": 9.61650815809763e-13,
+    "P_discrete_ADE_late_W": 9.508378293975286e-13,
+    "P_closed_td_W": -4.884706817551081e-10,
+    "P_closed_phasor_W": -3.691488666064638e-12,
+    "target_Q_window_power_change_relative": 1.285751314321813,
+    "target_Q_window_spatial_NRMSE": 0.9889108591979539,
+    "target_Q_vs_discrete_ADE_relative": 0.011372061647027394,
+    "target_Q_vs_closed_td_relative": 1.0019686971024637,
+    "discrete_ADE_Q_vs_closed_td_relative": 1.001946560694249,
+    "target_Q_vs_closed_phasor_relative": 1.2605048810389399,
+    "closed_td_vs_phasor_relative": 131.3234949210474,
+    "all_0p5pct_gates_pass": false,
+    "gates": {
+      "target_Q_window_power_change_relative": false,
+      "target_Q_window_spatial_NRMSE": false,
+      "target_Q_vs_discrete_ADE_relative": false,
+      "target_Q_vs_closed_td_relative": false,
+      "discrete_ADE_Q_vs_closed_td_relative": false,
+      "target_Q_vs_closed_phasor_relative": false,
+      "closed_td_vs_phasor_relative": false
+    },
+    "discrete_susceptibility": {
+      "Au": [
+        -826.3737182617188,
+        125.59490203857422
+      ],
+      "TaIrTe4_imag_bac": [
+        9.182489395141602,
+        51.068851470947266,
+        9.182489395141602
+      ]
+    }
+  },
+  "raw_artifact": {
+    "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/time_absorption_closure/total_040_window_008_51d3d8c3436c0f6a.npz",
+    "sha256": "0d70fa67276861dc0fd5b8110dd96520f9426c088b38e844854813be10788201",
+    "tracked_by_git": false
+  }
+}

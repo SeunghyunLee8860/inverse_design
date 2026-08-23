@@ -76,6 +76,11 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    previous-window versus late-window stationarity.  Diagnose temporal/Q
    closure first, then define a full-domain z sweep; do not call the current
    result a full z-mesh certificate.
+   The replacement time/closure diagnostic is now complete and blocked:
+   spatial Q NRMSE grows from 1.63% (24 periods) to 45.61% (32) and 97.13%
+   (40), with negative late closed flux. Isolate the long-time FDTD instability
+   before running any partial or full-domain mesh sweep. See
+   `results_4um_time_absorption_closure/TIME_ABSORPTION_CLOSURE_FINDINGS.md`.
 6. Electrical void cells retain tiny sheet/contact floors to regularize the
    floating Au block.  Quantify floor sensitivity; do not describe the
    electrical `rho=0` endpoint as exactly disconnected until that passes.
@@ -132,8 +137,10 @@ location.  `AU_DUALPOL_PYTHON`, `FDTDX_SOURCE_DIR`, and
    illumination in `physical_device_contract.json`.
 2. Treat the existing factor 1/2/4/8 tables as stale historical output, not as
    evidence for the current code or as a converged production mesh.
-3. Diagnose time-window stationarity and the factor-8 Q/closed-flux closure
-   failures; then expand z refinement to Si, air, and PML as needed.
+3. Isolate the long-time FDTD instability with substrate-only, Au-only,
+   TaIrTe4-only, full-dispersion, and reduced-Courant cases. Use realized
+   discrete-ADE loss for heat generation and revalidate AD-FD. Only after a
+   stable time contract exists, expand z refinement to Si, air, and PML.
 4. Revalidate the new shared linear material-fraction contract with endpoint,
    floor-sensitivity, and AD-FD checks on the selected mesh.
 5. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh
