@@ -119,7 +119,9 @@ def physics_gates(result, closure):
         "finite_nonnegative_q": all(np.all(np.isfinite(q)) and float(np.min(q)) >= 0 for q in result["q_fields_W_m3"].values()),
     }
     if not all(gates.values()):
-        raise RuntimeError(f"fail-closed robust physics gate: {gates}")
+        raise RuntimeError(
+            f"fail-closed robust physics gate: closure={closure:.9e}, gates={gates}"
+        )
     return gates
 
 
@@ -285,7 +287,15 @@ def main():
     cuda_device=int(os.environ.get("THERMAL_CUDA_DEVICE","0")); OUT.mkdir(parents=True,exist_ok=True); RAW.mkdir(parents=True,exist_ok=True)
     calibration=json.loads(CALIBRATION.read_text()); scale=CONTRACT.reporting_incident_power_W/float(calibration["common_reference_incident_power_W"])
     with np.load(INITIAL,allow_pickle=False) as data: latent=np.asarray(data["latent"],dtype=float)
-    runners={pol:CompiledOpticalRunner.create(pol,np.full(CONTRACT.design_shape,.5)) for pol in ("Ea","Eb")}
+    # The eroded/dilated material layouts can ring longer than the nominal
+    # beta-continuation layout.  Use a 50% longer observable window while
+    # keeping geometry, source, mesh and all material parameters unchanged.
+    runners={
+        pol:CompiledOpticalRunner.create(
+            pol,np.full(CONTRACT.design_shape,.5),total_periods=24,window_periods=6
+        )
+        for pol in ("Ea","Eb")
+    }
     history=[]; stages=[]; manifest={"schema":"au-dualpol-robust-projection-v1","raw_artifacts_committed_to_git":False,"etas":list(ETAS),"filter":MAPPING.audit(),"evaluations":{}}
     vector=np.concatenate((latent.ravel(),[0.0]))
     for stage_index,(beta,gray_target,maxeval) in enumerate(STAGES):
