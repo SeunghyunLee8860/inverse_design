@@ -17,6 +17,7 @@ class Contract:
     gaussian_waist_m: float = 4.0e-6
     optical_lateral_span_m: float = 20.0e-6
     source_aperture_span_m: float = 16.0e-6
+    reporting_incident_power_W: float = 285.0e-6
     flake_span_x_m: float = 16.0e-6
     flake_span_y_m: float = 16.0e-6
     flake_thickness_m: float = 100.0e-9
@@ -88,4 +89,3 @@ class Contract:
 
 
 CONTRACT = Contract()
-

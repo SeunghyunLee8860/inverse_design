@@ -138,6 +138,7 @@ def build_model(
     total_periods: int = 16,
     window_periods: int = 4,
     include_adjoint_source: bool = True,
+    air_only_source_calibration: bool = False,
 ) -> dict[str, Any]:
     """Place the full optical model without running a time-domain solve."""
 
@@ -255,12 +256,16 @@ def build_model(
     silicon = fdtdx.UniformMaterialObject(
         name="fixed_silicon_substrate",
         partial_grid_shape=(None, None, LAYOUT.silicon_cells),
-        material=fdtdx.Material(permittivity=float(epsilon_si.real)),
+        material=fdtdx.Material(
+            permittivity=(1.0 if air_only_source_calibration else float(epsilon_si.real))
+        ),
     )
     sio2 = fdtdx.UniformMaterialObject(
         name="fixed_285nm_sio2",
         partial_grid_shape=(None, None, LAYOUT.sio2_cells),
-        material=fdtdx.Material(permittivity=float(epsilon_sio2.real)),
+        material=fdtdx.Material(
+            permittivity=(1.0 if air_only_source_calibration else float(epsilon_sio2.real))
+        ),
     )
     flake = fdtdx.UniformMaterialObject(
         name="fixed_tairte4",
@@ -473,15 +478,16 @@ def build_model(
     fixed_c3 = jnp.zeros_like(fixed_c1)
     ta_slice = slices["fixed_tairte4"]
     au_slice = slices["au_design"]
-    for component, axis in enumerate(("b", "a", "c")):
-        c1, c2, c3 = coefficients[axis]
-        fixed_c1 = fixed_c1.at[(0, component, *ta_slice)].set(c1)
-        fixed_c2 = fixed_c2.at[(0, component, *ta_slice)].set(c2)
-        fixed_c3 = fixed_c3.at[(0, component, *ta_slice)].set(c3)
-    au_c1, au_c2, _ = coefficients["au"]
-    for component in range(3):
-        fixed_c1 = fixed_c1.at[(0, component, *au_slice)].set(au_c1)
-        fixed_c2 = fixed_c2.at[(0, component, *au_slice)].set(au_c2)
+    if not air_only_source_calibration:
+        for component, axis in enumerate(("b", "a", "c")):
+            c1, c2, c3 = coefficients[axis]
+            fixed_c1 = fixed_c1.at[(0, component, *ta_slice)].set(c1)
+            fixed_c2 = fixed_c2.at[(0, component, *ta_slice)].set(c2)
+            fixed_c3 = fixed_c3.at[(0, component, *ta_slice)].set(c3)
+        au_c1, au_c2, _ = coefficients["au"]
+        for component in range(3):
+            fixed_c1 = fixed_c1.at[(0, component, *au_slice)].set(au_c1)
+            fixed_c2 = fixed_c2.at[(0, component, *au_slice)].set(au_c2)
 
     return {
         "jax": jax,
@@ -506,5 +512,6 @@ def build_model(
         },
         "omega_rad_s": omega,
         "polarization": polarization,
+        "air_only_source_calibration": bool(air_only_source_calibration),
         "placement": {name: _slice(value) for name, value in slices.items()},
     }

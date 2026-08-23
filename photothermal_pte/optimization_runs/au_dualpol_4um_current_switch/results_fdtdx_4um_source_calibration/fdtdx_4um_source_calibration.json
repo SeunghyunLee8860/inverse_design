@@ -1,0 +1,24 @@
+{
+  "status": "VALIDATED_FDTDX_4UM_SOURCE_POWER_CALIBRATION",
+  "scope": "all-air source-only calibration on the identical optical grid",
+  "cases": [
+    {
+      "polarization": "Ea",
+      "incident_power_W": 1.8501998978043277e-12,
+      "runtime_s": 7.05598447099328,
+      "finite": true,
+      "gpu": "0"
+    },
+    {
+      "polarization": "Eb",
+      "incident_power_W": 1.8501998978043277e-12,
+      "runtime_s": 6.455045580863953,
+      "finite": true,
+      "gpu": "0"
+    }
+  ],
+  "Ea_Eb_incident_power_mismatch_relative": 0.0,
+  "common_reference_incident_power_W": 1.8501998978043277e-12,
+  "reporting_incident_power_W": 0.000285,
+  "normalization_contract": "each physical Q is multiplied by the one common ratio 285uW/P_source-only; no polarization matching or Q rescaling"
+}
