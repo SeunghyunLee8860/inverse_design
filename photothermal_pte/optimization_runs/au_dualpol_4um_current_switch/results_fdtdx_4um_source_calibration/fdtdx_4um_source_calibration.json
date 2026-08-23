@@ -4,15 +4,15 @@
   "cases": [
     {
       "polarization": "Ea",
-      "incident_power_W": 1.856360117707956e-12,
-      "runtime_s": 44.97876946255565,
+      "incident_power_W": 1.8563599008675213e-12,
+      "runtime_s": 64.09446711093187,
       "finite": true,
       "gpu": "0"
     },
     {
       "polarization": "Eb",
-      "incident_power_W": 1.8563599008675213e-12,
-      "runtime_s": 62.318964548408985,
+      "incident_power_W": 1.856360117707956e-12,
+      "runtime_s": 48.15961830690503,
       "finite": true,
       "gpu": "0"
     }
@@ -23,6 +23,11 @@
   "normalization_contract": "each physical Q is multiplied by the one common ratio 285uW/P_source-only; no polarization matching or Q rescaling",
   "source_calibration_contract": {
     "grid_edges_sha256": "c6a12b95e656a88d6d9fcf448e30539f7befaa0a894dc6d44f5de42929949e1c",
+    "pml_cells_each_face_xyz": [
+      8,
+      8,
+      8
+    ],
     "wavelength_m": 4e-06,
     "gaussian_waist_m": 4e-06,
     "source_aperture_span_m": 1.6e-05,
