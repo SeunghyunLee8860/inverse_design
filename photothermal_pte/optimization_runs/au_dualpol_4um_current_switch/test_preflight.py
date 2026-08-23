@@ -13,12 +13,28 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.objective 
     smooth_minimum,
     useful_currents,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+    AU_MATERIAL_FRACTION_EXPONENT,
+    AU_MATERIAL_FRACTION_LAW,
+    au_material_fraction,
+    d_au_material_fraction_drho,
+)
 
 
 def test_contract_geometry_and_source_boundary() -> None:
     assert CONTRACT.design_shape == (80, 80)
     assert CONTRACT.axis_x == "b" and CONTRACT.axis_y == "a"
     assert CONTRACT.flake_boundary_intensity_fraction < 5.0e-4
+
+
+def test_all_physics_share_linear_au_material_fraction() -> None:
+    rho = np.asarray((0.0, 0.25, 0.5, 1.0))
+    assert AU_MATERIAL_FRACTION_LAW == "shared_linear_projected_density"
+    assert AU_MATERIAL_FRACTION_EXPONENT == 1.0
+    assert CONTRACT.au_material_fraction_law == AU_MATERIAL_FRACTION_LAW
+    assert CONTRACT.au_material_fraction_exponent == AU_MATERIAL_FRACTION_EXPONENT
+    assert np.array_equal(au_material_fraction(rho), rho)
+    assert np.array_equal(d_au_material_fraction_drho(rho), np.ones_like(rho))
 
 
 def test_signed_opposite_current_objective() -> None:

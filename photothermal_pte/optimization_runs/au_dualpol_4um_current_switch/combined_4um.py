@@ -15,6 +15,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_
     LAYOUT,
     build_model,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+    au_material_fraction,
+    d_au_material_fraction_drho,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import (
     build_thermal_state,
     evaluate_fixed_source,
@@ -92,7 +96,7 @@ class CompiledOpticalRunner:
         au_c3 = float(model["coefficients"]["au"][2])
 
         def arrays_for_density(density):
-            strength = density**3
+            strength = au_material_fraction(density)
             c3 = model["fixed_c3"]
             for component in range(3):
                 c3 = c3.at[(0, component, *au_slice)].set(
@@ -225,7 +229,7 @@ class CompiledOpticalRunner:
     ) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray]]:
         e_au = np.asarray(output.detector_states["au_late"]["phasor"][0, 0])
         e_ta = np.asarray(output.detector_states["tairte4_late"]["phasor"][0, 0])
-        strength = np.asarray(rho, dtype=np.float64) ** 3
+        strength = au_material_fraction(np.asarray(rho, dtype=np.float64))
         q = {
             "au": source_power_scale
             * self.physical_prefactor
@@ -334,7 +338,7 @@ def combined_gradient(
     )
     fields = evaluated["fields"]
     weights = evaluated["native_weights_A_W"]
-    strength = np.asarray(rho, dtype=np.float64) ** 3
+    strength = au_material_fraction(np.asarray(rho, dtype=np.float64))
     adjoint_shape = tuple(
         int(value)
         for value in runner.model["placed"]["distributed_adjoint_source"].grid_shape
@@ -385,7 +389,7 @@ def combined_gradient(
     adjoint_output, adjoint_s = runner.run_adjoint(rho, profile)
     e_adj_au = adjoint_output.detector_states["au_late"]["phasor"][0, 0]
     d_strength = runner.model["jnp"].broadcast_to(
-        runner.model["jnp"].asarray(3.0 * rho**2)[:, :, None],
+        runner.model["jnp"].asarray(d_au_material_fraction_drho(rho))[:, :, None],
         fields["au"].shape[1:],
     )
     d_epsilon = runner.model["jnp"].broadcast_to(

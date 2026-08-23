@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Fail-closed z-mesh convergence for the 4 um Au/TaIrTe4 stack.
 
-The optimized density, x/y grid, source, material endpoints, and production
+The optimized density, x/y grid, source, material endpoints, and historical
 O3/TE1 gray law are frozen.  Only the optical z discretization of SiO2,
 TaIrTe4, and Au is refined.  Every optical mesh receives its own all-air
 incident-power calibration before Q is conservatively mapped to the identical
@@ -453,7 +453,7 @@ def main() -> int:
             "phasor_window_periods": WINDOW_PERIODS,
         },
         "density_cases": list(densities),
-        "gray_law": "production diagnostic only: optical rho^3, thermal/electrical rho^1",
+        "gray_law": "historical diagnostic only: optical rho^3, thermal/electrical rho^1",
     }
     write_json(OUT / "z_mesh_runsetup_audit.json", runsetup)
     if args.audit_only:
@@ -787,7 +787,7 @@ def main() -> int:
     summary = {
         "status": status,
         "scope": (
-            "fixed beta=256 robust checkpoint; production O3/TE1 law; "
+            "fixed beta=256 robust checkpoint; historical O3/TE1 law; "
             "z-only FDTDX refinement with per-mesh all-air source calibration; "
             "identical conservative thermal/electrical downstream operator"
         ),
@@ -819,7 +819,7 @@ def main() -> int:
         "The exact current Au/FDTDX checkpoint had no prior z-mesh convergence certificate.",
         "AD-FD on the baseline grid certifies differentiation of that discrete grid only.",
         "",
-        "The density, x/y mesh, source, material endpoints, and production O3/TE1 gray law are frozen.",
+        "The density, x/y mesh, source, material endpoints, and historical O3/TE1 gray law are frozen.",
         "The gray law remains diagnostic and is not promoted as physical Au.",
         "",
         "| factor | Au dz (nm) | TaIrTe4 dz (nm) | SiO2 dz (nm) | Yee cells |",

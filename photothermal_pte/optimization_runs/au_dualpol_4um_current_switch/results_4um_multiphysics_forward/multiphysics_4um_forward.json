@@ -1,5 +1,6 @@
 {
-  "status": "VALIDATED_4UM_DUALPOL_MULTIPHYSICS_RHO0P5_FORWARD",
+  "status": "HISTORICAL_O3_TE1_FORWARD_REVALIDATION_REQUIRED",
+  "historical_reason": "historical O3 optical Q with TE1 downstream operators",
   "scope": "rho=0.5 optical Q -> explicit 3D thermal -> floating-Au left/right weighting/PTE forward; no adjoint or optimization",
   "normalization": {
     "common_source_only_scale": 154037409.87026086,
@@ -55,7 +56,7 @@
   "cases": [
     {
       "polarization": "Ea",
-      "status": "VALIDATED_4UM_MULTIPHYSICS_FORWARD",
+      "status": "HISTORICAL_O3_TE1_FORWARD_REVALIDATION_REQUIRED",
       "runtime_s": 3.982531476765871,
       "source_power_W": 2.479599100275752e-05,
       "mapping": {
@@ -115,7 +116,7 @@
     },
     {
       "polarization": "Eb",
-      "status": "VALIDATED_4UM_MULTIPHYSICS_FORWARD",
+      "status": "HISTORICAL_O3_TE1_FORWARD_REVALIDATION_REQUIRED",
       "runtime_s": 1.7388988621532917,
       "source_power_W": 5.968514550468634e-05,
       "mapping": {

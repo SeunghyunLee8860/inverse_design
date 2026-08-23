@@ -18,6 +18,9 @@ import numpy as np
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import CONTRACT
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_model import build_model
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+    audit as material_fraction_audit,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import (
     N_TA,
     build_electrical_system,
@@ -150,6 +153,10 @@ def main() -> int:
     forward = json.loads(FORWARD_SUMMARY.read_text(encoding="utf-8"))
     if forward["status"] != "VALIDATED_FDTDX_4UM_DUALPOL_RHO0P5_FORWARD":
         raise RuntimeError("optical rho=0.5 forward checkpoint is not validated")
+    if forward.get("au_material_fraction") != material_fraction_audit():
+        raise RuntimeError(
+            "optical checkpoint uses a different or undocumented Au material fraction"
+        )
     expected_shas = {
         case["polarization"]: case["raw"]["sha256"] for case in forward["cases"]
     }
@@ -177,6 +184,7 @@ def main() -> int:
             "polarization_matching": False,
         },
         "geometry": CONTRACT.audit(),
+        "au_material_fraction": material_fraction_audit(),
         "cases": cases,
     }
     (OUT / "multiphysics_4um_forward.json").write_text(

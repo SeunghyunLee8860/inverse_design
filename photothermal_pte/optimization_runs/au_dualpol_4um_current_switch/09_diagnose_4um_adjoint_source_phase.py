@@ -13,6 +13,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.combined_4
     combined_gradient,
     discrete_au_susceptibility,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+    d_au_material_fraction_drho,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
     CONTRACT,
 )
@@ -53,7 +56,7 @@ def main() -> None:
     profile = np.asarray(base["adjoint_profile"]) / production_phase
     jnp = runner.model["jnp"]
     d_strength = jnp.broadcast_to(
-        jnp.asarray(3.0 * rho**2)[:, :, None], fields.shape[1:]
+        jnp.asarray(d_au_material_fraction_drho(rho))[:, :, None], fields.shape[1:]
     )
     d_epsilon = jnp.broadcast_to(
         d_strength[None] * discrete_au_susceptibility(runner), fields.shape

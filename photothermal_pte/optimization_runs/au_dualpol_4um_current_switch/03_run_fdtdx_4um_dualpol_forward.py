@@ -28,6 +28,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_model import (
     build_model,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+    audit as material_fraction_audit,
+    au_material_fraction,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -102,7 +106,7 @@ def run_case(polarization: str) -> tuple[dict[str, object], Path]:
     jnp = model["jnp"]
     fdtdx = model["fdtdx"]
     rho = jnp.full(CONTRACT.design_shape, 0.5, dtype=jnp.float32)
-    strength = rho**3
+    strength = au_material_fraction(rho)
     c3 = model["fixed_c3"]
     au_slice = model["slices"]["au_design"]
     au_c3 = float(model["coefficients"]["au"][2])
@@ -272,6 +276,7 @@ def run_case(polarization: str) -> tuple[dict[str, object], Path]:
             else "FAILED_FDTDX_4UM_RHO0P5_FORWARD"
         ),
         "rho": 0.5,
+        "au_material_fraction": material_fraction_audit(),
         "runtime_s": runtime_s,
         "gpu": os.environ.get("CUDA_VISIBLE_DEVICES"),
         "power": {
@@ -324,6 +329,7 @@ def main() -> int:
         "status": summary_status,
         "scope": "rho=0.5 optical forward only; no thermal/electrical/adjoint/optimization",
         "axis_mapping": {"x": "b", "y": "a"},
+        "au_material_fraction": material_fraction_audit(),
         "cases": cases,
     }
     (OUT / "fdtdx_4um_dualpol_forward.json").write_text(

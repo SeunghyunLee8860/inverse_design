@@ -20,6 +20,10 @@ from scipy import sparse
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
     CONTRACT,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+    au_material_fraction,
+    d_au_material_fraction_drho,
+)
 from photothermal_pte.optimization_runs.au_on_fixed_tairte4_validation.material_model import (
     AU_BULK_ELECTRICAL_CONDUCTIVITY_S_M,
 )
@@ -120,6 +124,7 @@ class ThermalState:
     masks: dict[str, np.ndarray]
     interface_resistance: dict[str, np.ndarray]
     rho: np.ndarray
+    material_fraction: np.ndarray
     faces: dict[str, int]
 
 
@@ -151,7 +156,8 @@ def build_thermal_state(rho: np.ndarray) -> ThermalState:
     if (ix_au.size, iy_au.size) != CONTRACT.design_shape:
         raise RuntimeError("Au thermal footprint does not match design density")
 
-    k_au = K_AIR_W_MK + density * (K_AU_W_MK - K_AIR_W_MK)
+    fraction = np.asarray(au_material_fraction(density), dtype=np.float64)
+    k_au = K_AIR_W_MK + fraction * (K_AU_W_MK - K_AIR_W_MK)
     kappa = np.full((*shape, 3), K_AIR_W_MK, dtype=np.float64)
     kappa[si] = K_SI_W_MK
     kappa[sio2] = K_SIO2_W_MK
@@ -186,7 +192,7 @@ def build_thermal_state(rho: np.ndarray) -> ThermalState:
         + 1.0 / G_AU_TA_W_M2K
         + 0.5 * upper_dz / K_AU_W_MK
     )
-    g_area = (1.0 - density) / r_air + density / r_au
+    g_area = (1.0 - fraction) / r_air + fraction / r_au
     r_interface = (
         1.0 / g_area
         - 0.5 * lower_dz / K_TA_XYZ_W_MK[2]
@@ -222,6 +228,7 @@ def build_thermal_state(rho: np.ndarray) -> ThermalState:
         masks={"au": au, "tairte4": ta, "sio2": sio2, "si": si},
         interface_resistance={"x": rx, "y": ry, "z": rz},
         rho=density.copy(),
+        material_fraction=fraction.copy(),
         faces={
             "SiO2_Si": sio2_si_face,
             "TaIrTe4_SiO2": ta_sio2_face,
@@ -413,6 +420,7 @@ class ElectricalSystem:
     objective_gradient_psi_A: np.ndarray
     derivative_terms: tuple[EdgeDerivative, ...]
     rho: np.ndarray
+    material_fraction: np.ndarray
 
 
 def ta_id(i: int, j: int) -> int:
@@ -477,8 +485,10 @@ def build_electrical_system(rho: np.ndarray, temperature_K: np.ndarray) -> Elect
             if j + 1 < N_TA:
                 _add_edge(rows, cols, data, node, ta_id(i, j + 1), SIGMA_TA_XY_S_M[1] * TA_THICKNESS_M)
     sigma_floor = SIGMA_AU_S_M * SIGMA_FLOOR_FRACTION
-    sigma = sigma_floor + density * (SIGMA_AU_S_M - sigma_floor)
-    dsigma = SIGMA_AU_S_M - sigma_floor
+    fraction = np.asarray(au_material_fraction(density), dtype=np.float64)
+    d_fraction = np.asarray(d_au_material_fraction_drho(density), dtype=np.float64)
+    sigma = sigma_floor + fraction * (SIGMA_AU_S_M - sigma_floor)
+    dsigma = d_fraction * (SIGMA_AU_S_M - sigma_floor)
     contact_floor = ELECTRICAL_CONTACT_S_M2 * CONTACT_FLOOR_FRACTION
     for i in range(N_DESIGN):
         for j in range(N_DESIGN):
@@ -499,14 +509,16 @@ def build_electrical_system(rho: np.ndarray, temperature_K: np.ndarray) -> Elect
                         * 0.5
                         * STEP_M
                         / sigma[ii, jj] ** 2
-                        * dsigma
+                        * dsigma[ii, jj]
                     )
                     derivatives.append(
                         EdgeDerivative(node, right, ii * N_DESIGN + jj, dg, label)
                     )
             ti, tj = DESIGN_OFFSET + i, DESIGN_OFFSET + j
             g_contact = STEP_M**2 * (
-                contact_floor + density[i, j] * ELECTRICAL_CONTACT_S_M2
+                contact_floor
+                + fraction[i, j]
+                * (ELECTRICAL_CONTACT_S_M2 - contact_floor)
             )
             _add_edge(rows, cols, data, ta_id(ti, tj), node, g_contact)
             derivatives.append(
@@ -514,7 +526,9 @@ def build_electrical_system(rho: np.ndarray, temperature_K: np.ndarray) -> Elect
                     ta_id(ti, tj),
                     node,
                     i * N_DESIGN + j,
-                    STEP_M**2 * ELECTRICAL_CONTACT_S_M2,
+                    STEP_M**2
+                    * (ELECTRICAL_CONTACT_S_M2 - contact_floor)
+                    * d_fraction[i, j],
                     "vertical_Au_Ta_contact",
                 )
             )
@@ -540,6 +554,7 @@ def build_electrical_system(rho: np.ndarray, temperature_K: np.ndarray) -> Elect
         objective_gradient_psi_A=electrical_load(temperature_K),
         derivative_terms=tuple(derivatives),
         rho=density.copy(),
+        material_fraction=fraction.copy(),
     )
 
 
@@ -729,7 +744,9 @@ def thermal_density_gradient(
     iy = np.flatnonzero((y >= -4e-6) & (y < 4e-6))
     iz = np.flatnonzero((z >= 0.0) & (z < 0.05e-6))
     result = np.zeros(CONTRACT.design_shape, dtype=np.float64)
-    dk = K_AU_W_MK - K_AIR_W_MK
+    d_fraction = np.asarray(
+        d_au_material_fraction_drho(state.rho), dtype=np.float64
+    )
     bottom_face = state.faces["TaIrTe4_Au_or_air"]
     lower_dz = state.widths[2][bottom_face]
     upper_dz = state.widths[2][bottom_face + 1]
@@ -764,7 +781,15 @@ def thermal_density_gradient(
                         local_j,
                         int(ids[lower]),
                         int(ids[cell]),
-                        _generic_face_dg(state, lower, cell, axis, cell, dk),
+                        _generic_face_dg(
+                            state,
+                            lower,
+                            cell,
+                            axis,
+                            cell,
+                            d_fraction[local_i, local_j]
+                            * (K_AU_W_MK - K_AIR_W_MK),
+                        ),
                     )
                     upper = list(cell)
                     upper[axis] += 1
@@ -774,14 +799,34 @@ def thermal_density_gradient(
                         local_j,
                         int(ids[cell]),
                         int(ids[upper]),
-                        _generic_face_dg(state, cell, upper, axis, cell, dk),
+                        _generic_face_dg(
+                            state,
+                            cell,
+                            upper,
+                            axis,
+                            cell,
+                            d_fraction[local_i, local_j]
+                            * (K_AU_W_MK - K_AIR_W_MK),
+                        ),
                     )
                 lower = (i, j, k - 1)
                 if k == iz[0]:
                     area = state.widths[0][i] * state.widths[1][j]
-                    dg = area * (1.0 / r_au - 1.0 / r_air)
+                    dg = (
+                        area
+                        * (1.0 / r_au - 1.0 / r_air)
+                        * d_fraction[local_i, local_j]
+                    )
                 else:
-                    dg = _generic_face_dg(state, lower, cell, 2, cell, dk)
+                    dg = _generic_face_dg(
+                        state,
+                        lower,
+                        cell,
+                        2,
+                        cell,
+                        d_fraction[local_i, local_j]
+                        * (K_AU_W_MK - K_AIR_W_MK),
+                    )
                 add(local_i, local_j, int(ids[lower]), int(ids[cell]), float(dg))
                 upper = (i, j, k + 1)
                 add(
@@ -789,7 +834,15 @@ def thermal_density_gradient(
                     local_j,
                     int(ids[cell]),
                     int(ids[upper]),
-                    _generic_face_dg(state, cell, upper, 2, cell, dk),
+                    _generic_face_dg(
+                        state,
+                        cell,
+                        upper,
+                        2,
+                        cell,
+                        d_fraction[local_i, local_j]
+                        * (K_AU_W_MK - K_AIR_W_MK),
+                    ),
                 )
     return result
 

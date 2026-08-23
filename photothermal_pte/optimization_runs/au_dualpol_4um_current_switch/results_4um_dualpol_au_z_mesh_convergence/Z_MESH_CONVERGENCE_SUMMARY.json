@@ -1,6 +1,6 @@
 {
   "status": "BLOCKED_4UM_AU_Z_MESH_CONVERGENCE",
-  "scope": "fixed beta=256 robust checkpoint; production O3/TE1 law; z-only FDTDX refinement with per-mesh all-air source calibration; identical conservative thermal/electrical downstream operator",
+  "scope": "fixed beta=256 robust checkpoint; historical O3/TE1 law; z-only FDTDX refinement with per-mesh all-air source calibration; identical conservative thermal/electrical downstream operator",
   "timestamp_utc": "2026-08-23T20:42:52.328202+00:00",
   "runsetup": {
     "status": "VALIDATED_4UM_AU_Z_MESH_RUNSETUP",
@@ -358,7 +358,7 @@
       "eta_0.35",
       "eta_0.65"
     ],
-    "gray_law": "production diagnostic only: optical rho^3, thermal/electrical rho^1"
+    "gray_law": "historical diagnostic only: optical rho^3, thermal/electrical rho^1"
   },
   "source_calibration_cases": [
     {

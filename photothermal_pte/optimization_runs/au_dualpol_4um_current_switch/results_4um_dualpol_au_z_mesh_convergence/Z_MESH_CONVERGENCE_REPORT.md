@@ -5,7 +5,7 @@ Status: `BLOCKED_4UM_AU_Z_MESH_CONVERGENCE`
 The exact current Au/FDTDX checkpoint had no prior z-mesh convergence certificate.
 AD-FD on the baseline grid certifies differentiation of that discrete grid only.
 
-The density, x/y mesh, source, material endpoints, and production O3/TE1 gray law are frozen.
+The density, x/y mesh, source, material endpoints, and historical O3/TE1 gray law are frozen.
 The gray law remains diagnostic and is not promoted as physical Au.
 
 | factor | Au dz (nm) | TaIrTe4 dz (nm) | SiO2 dz (nm) | Yee cells |

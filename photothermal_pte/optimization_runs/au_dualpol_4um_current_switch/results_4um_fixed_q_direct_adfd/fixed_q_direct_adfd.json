@@ -1,5 +1,6 @@
 {
-  "status": "VALIDATED_4UM_DUALPOL_FIXED_Q_DIRECT_ADFD",
+  "status": "HISTORICAL_TE1_DIRECT_ADFD_REISSUE_REQUIRED",
+  "historical_reason": "TE1 formulas are unchanged but the artifact predates shared-law provenance",
   "scope": "fixed optical Q only: Au thermal/contact and electrical/weighting-field density derivatives",
   "explicitly_excluded": "Maxwell density derivative; certified in the next combined stage",
   "steps": [
@@ -11,7 +12,7 @@
   "cases": [
     {
       "polarization": "Ea",
-      "status": "VALIDATED_4UM_FIXED_Q_DIRECT_ADFD",
+      "status": "HISTORICAL_TE1_DIRECT_ADFD_REISSUE_REQUIRED",
       "objective_A": 3.1329047728221055e-10,
       "gradient_norm_A": 1.5825926824148423e-10,
       "thermal_gradient_norm_A": 1.1043275593509676e-10,
@@ -163,7 +164,7 @@
     },
     {
       "polarization": "Eb",
-      "status": "VALIDATED_4UM_FIXED_Q_DIRECT_ADFD",
+      "status": "HISTORICAL_TE1_DIRECT_ADFD_REISSUE_REQUIRED",
       "objective_A": -1.876685125031658e-10,
       "gradient_norm_A": 4.0980672661806355e-10,
       "thermal_gradient_norm_A": 2.7225212376271003e-10,

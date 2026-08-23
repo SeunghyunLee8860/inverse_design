@@ -1,5 +1,6 @@
 {
-  "status": "VALIDATED_4UM_DUALPOL_COMBINED_PHYSICAL_RHO_ADFD",
+  "status": "HISTORICAL_O3_TE1_COMBINED_ADFD_REVALIDATION_REQUIRED",
+  "historical_reason": "certificate differentiates O3/TE1, not shared-linear production",
   "scope": "rho=0.5 full Maxwell redistribution + direct loss + thermal/contact + electrical/weighting-field physical-density gradient",
   "source_power_scale": 153526254.9150425,
   "steps": [
@@ -11,7 +12,7 @@
   "cases": [
     {
       "polarization": "Ea",
-      "status": "VALIDATED_4UM_COMBINED_PHYSICAL_RHO_ADFD",
+      "status": "HISTORICAL_O3_TE1_COMBINED_ADFD_REVALIDATION_REQUIRED",
       "objective_A": 3.125391166173357e-10,
       "objective_nA": 0.31253911661733574,
       "P_Q_W": 2.4728657610482522e-05,
@@ -189,7 +190,7 @@
     },
     {
       "polarization": "Eb",
-      "status": "VALIDATED_4UM_COMBINED_PHYSICAL_RHO_ADFD",
+      "status": "HISTORICAL_O3_TE1_COMBINED_ADFD_REVALIDATION_REQUIRED",
       "objective_A": -1.8696429415797248e-10,
       "objective_nA": -0.18696429415797247,
       "P_Q_W": 5.949643145875336e-05,

@@ -45,7 +45,8 @@
   },
   "findings": {
     "gray_law_mismatch_confirmed": true,
-    "production_law": "optical rho^3; thermal/electrical rho^1",
+    "historical_law": "optical rho^3; thermal/electrical rho^1",
+    "current_production_law": "shared linear Au fraction; revalidation pending",
     "eta_0p35_production_Ib_nA": -2.0331659604251664,
     "eta_0p35_matched_cubic_Ib_nA": -0.28172867431747384,
     "eta_0p35_abs_Ib_margin_reduction_fraction": 0.8614335082323727,

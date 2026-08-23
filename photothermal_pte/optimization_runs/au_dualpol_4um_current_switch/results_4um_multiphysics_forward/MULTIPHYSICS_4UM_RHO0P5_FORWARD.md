@@ -1,6 +1,9 @@
 # 4 µm dual-polarization multiphysics rho=0.5 forward
 
-Status: **VALIDATED_4UM_DUALPOL_MULTIPHYSICS_RHO0P5_FORWARD**
+Status: **HISTORICAL_O3_TE1_FORWARD_REVALIDATION_REQUIRED**
+
+This result used historical O3 optical Q with TE1 downstream operators. It is
+not a certificate for the corrected shared-linear production path.
 
 The same source-only incident-power calibration is applied to both polarizations.
 Positive current leaves the left terminal and corresponds to right-to-left internal current.

@@ -125,9 +125,10 @@ def main() -> None:
     optical_cache: dict[tuple[str, int, str], dict[str, object]] = {}
     for density_case, rho in densities.items():
         for optical_exponent in (1, 3):
-            # The production runner internally cubes its input.  This transformed
-            # input therefore realizes oscillator strength rho**optical_exponent.
-            rho_runner = rho ** (optical_exponent / 3.0)
+            # The production runner now uses the shared linear material
+            # fraction.  Transform its input explicitly to reproduce the
+            # historical O1/O3 factorial without changing production code.
+            rho_runner = rho**optical_exponent
             for pol, runner in runners.items():
                 start = time.perf_counter()
                 output, forward_s = runner.run_forward(rho_runner)
@@ -313,7 +314,8 @@ def main() -> None:
     nominal_legacy = pair("eta_0.50_nominal", 3, 1)
     findings = {
         "gray_law_mismatch_confirmed": True,
-        "production_law": "optical rho^3; thermal/electrical rho^1",
+        "historical_law": "optical rho^3; thermal/electrical rho^1",
+        "current_production_law": "shared linear Au fraction; revalidation pending",
         "eta_0p35_production_Ib_nA": dilated_legacy["I_b_nA"],
         "eta_0p35_matched_cubic_Ib_nA": dilated_matched_cubic["I_b_nA"],
         "eta_0p35_abs_Ib_margin_reduction_fraction": (
@@ -380,7 +382,7 @@ def main() -> None:
         "",
         "## Findings",
         "",
-        "1. The implemented production relaxation is O3/TE1: optical Drude strength is rho^3, "
+        "1. The historical implemented relaxation was O3/TE1: optical Drude strength is rho^3, "
         "while thermal conductivity/contact and electrical conductivity/contact are linear in rho.",
         "2. The mismatch is functionally large in the dilated eta=0.35 projection. Changing only "
         "TE1 to TE3 changes Ib from "
@@ -390,7 +392,7 @@ def main() -> None:
         f"Ib={dilated_matched_linear['I_b_nA']:+.6f} nA, while O1/TE3 gives "
         f"Ib={dilated_cross['I_b_nA']:+.6f} nA.",
         "4. A separate, more fundamental robust-objective omission is present. The optimizer used "
-        "eta=0.35 and eta=0.65 but did not include nominal eta=0.50. Under the production O3/TE1 "
+        "eta=0.35 and eta=0.65 but did not include nominal eta=0.50. Under the historical O3/TE1 "
         f"law, nominal Ib={nominal_legacy['I_b_nA']:+.6f} nA and fails the requested sign.",
         "5. The grayness constraint was evaluated only on nominal density. Nominal grayness is "
         f"{100*gray_audit['eta_0.50_nominal']['global_grayness_mean_4rho1mrho']:.4f}%, but "
@@ -416,7 +418,7 @@ def main() -> None:
             "The reported 0.395% nominal value is a global grayness metric, not a gray-cell area fraction. "
             "The JSON records gray-cell counts separately for nominal, eta=0.35, and eta=0.65 projections.",
             "",
-            "The production mismatch is O3/TE1. O1/TE1 changes only the optical relaxation; "
+            "The historical mismatch was O3/TE1. O1/TE1 changes only the optical relaxation; "
             "O3/TE3 changes only the thermal/electrical relaxation. O1/TE3 closes the factorial. "
             "All four share identical rho=0 and rho=1 endpoints.",
             "",

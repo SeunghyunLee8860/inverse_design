@@ -1,6 +1,9 @@
 # FDTDX 4 um dual-polarization rho=0.5 forward gate
 
-Status: **VALIDATED_FDTDX_4UM_DUALPOL_RHO0P5_FORWARD**
+Status: **HISTORICAL_O3_OPTICAL_FORWARD_REVALIDATION_REQUIRED**
+
+This result used the historical `rho**3` optical law. It is not a certificate
+for the corrected shared-linear production path.
 
 This checkpoint ran two real Maxwell forward solves on the identical finite six-PML grid.
 It did not solve thermal, weighting, current, adjoint, or optimization problems.

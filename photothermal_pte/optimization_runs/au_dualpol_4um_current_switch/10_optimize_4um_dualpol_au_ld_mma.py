@@ -49,6 +49,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.dfm import
     physical_disk_footprint,
     smooth_500nm_constraints,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+    audit as material_fraction_audit,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import (
     N_DESIGN,
     N_TA,
@@ -754,6 +757,7 @@ def main() -> int:
         "schema": "au-dualpol-4um-ld-mma-raw-manifest-v1",
         "raw_artifacts_committed_to_git": False,
         "contract": CONTRACT.audit(),
+        "au_material_fraction": material_fraction_audit(),
         "mapping": MAPPING.audit(),
         "optimizer": {
             "library": "NLopt",
@@ -811,6 +815,11 @@ def main() -> int:
             if int(row["evaluations_total"]) <= resume_evaluation
         ]
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest.get("au_material_fraction") != material_fraction_audit():
+            raise RuntimeError(
+                "resume checkpoint uses a different or undocumented Au material "
+                "fraction; start a new run under the shared linear contract"
+            )
         manifest["evaluations"] = {
             key: value
             for key, value in manifest.get("evaluations", {}).items()

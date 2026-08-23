@@ -1,5 +1,6 @@
 {
-  "status": "VALIDATED_FDTDX_4UM_DUALPOL_RHO0P5_FORWARD",
+  "status": "HISTORICAL_O3_OPTICAL_FORWARD_REVALIDATION_REQUIRED",
+  "historical_reason": "rho**3 optical law; not a certificate for shared-linear production",
   "scope": "rho=0.5 optical forward only; no thermal/electrical/adjoint/optimization",
   "axis_mapping": {
     "x": "b",
@@ -8,7 +9,7 @@
   "cases": [
     {
       "polarization": "Ea",
-      "status": "VALIDATED_FDTDX_4UM_RHO0P5_FORWARD",
+      "status": "HISTORICAL_O3_OPTICAL_FORWARD_REVALIDATION_REQUIRED",
       "rho": 0.5,
       "runtime_s": 6.612570878118277,
       "gpu": "0",
@@ -74,7 +75,7 @@
     },
     {
       "polarization": "Eb",
-      "status": "VALIDATED_FDTDX_4UM_RHO0P5_FORWARD",
+      "status": "HISTORICAL_O3_OPTICAL_FORWARD_REVALIDATION_REQUIRED",
       "rho": 0.5,
       "runtime_s": 6.052778836339712,
       "gpu": "0",

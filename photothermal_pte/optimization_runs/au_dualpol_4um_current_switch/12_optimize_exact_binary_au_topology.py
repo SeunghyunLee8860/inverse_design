@@ -42,6 +42,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysi
     N_TA,
     current_integrand,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+    audit as material_fraction_audit,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -353,6 +356,7 @@ def main() -> int:
         "status": "VALIDATED_4UM_DUALPOL_AU_CURRENT_SWITCH_EXACT_BINARY" if success else "BLOCKED_EXACT_BINARY_LOCAL_SEARCH_NO_OPPOSITE_SIGN",
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "contract": CONTRACT.audit(),
+        "au_material_fraction": material_fraction_audit(),
         "algorithm": "combined-adjoint-guided exact 500 nm disk add/remove; forward-verified acceptance",
         "initial_raw": str(INITIAL),
         "history": history,

@@ -26,6 +26,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.combined_4
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
     CONTRACT,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+    audit as material_fraction_audit,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -227,6 +230,7 @@ def main() -> int:
         "source_power_scale": scale,
         "steps": STEPS,
         "no_clipping_smoothing_gain_rescaling": True,
+        "au_material_fraction": material_fraction_audit(),
         "cases": cases,
     }
     (OUT / "combined_4um_adfd.json").write_text(

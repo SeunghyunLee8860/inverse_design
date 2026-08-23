@@ -1,6 +1,10 @@
 # Fixed-Q direct AD-FD validation
 
-Status: **VALIDATED_4UM_DUALPOL_FIXED_Q_DIRECT_ADFD**
+Status: **HISTORICAL_TE1_DIRECT_ADFD_REISSUE_REQUIRED**
+
+The direct TE1 derivative formulas are unchanged by the shared-linear
+contract, but this artifact predates material-law provenance and must be
+reissued before promotion.
 
 This certificate freezes Maxwell Q. It validates Au thermal/contact and electrical/weighting-field derivatives only.
 No clipping, empirical normalization, or gradient rescaling is used.

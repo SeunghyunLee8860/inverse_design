@@ -28,6 +28,9 @@ import numpy as np
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
     CONTRACT,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+    audit as material_fraction_audit,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import (
     evaluate_fixed_source,
 )
@@ -83,6 +86,10 @@ def main() -> int:
     forward = json.loads(FORWARD.read_text(encoding="utf-8"))
     if forward["status"] != "VALIDATED_4UM_DUALPOL_MULTIPHYSICS_RHO0P5_FORWARD":
         raise RuntimeError("fail-closed: forward checkpoint is not validated")
+    if forward.get("au_material_fraction") != material_fraction_audit():
+        raise RuntimeError(
+            "fail-closed: forward checkpoint has no matching Au material-fraction contract"
+        )
 
     all_rows: list[dict[str, object]] = []
     cases: list[dict[str, object]] = []
@@ -180,6 +187,7 @@ def main() -> int:
         "explicitly_excluded": "Maxwell density derivative; certified in the next combined stage",
         "steps": STEPS,
         "no_clipping_rescaling": True,
+        "au_material_fraction": material_fraction_audit(),
         "cases": cases,
     }
     (OUT / "fixed_q_direct_adfd.json").write_text(

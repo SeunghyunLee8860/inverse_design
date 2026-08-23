@@ -39,6 +39,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.dfm import
     exact_500nm_audit,
     physical_disk_footprint,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+    audit as material_fraction_audit,
+)
 from photothermal_pte.optimization_runs.legacy_v261_optical_support.production_density_mapping import (
     ProductionDensityMapping,
 )
@@ -332,8 +335,10 @@ def main():
         history=json.loads((OUT/"optimization_history.json").read_text())
         stages=json.loads((OUT/"continuation_stages.json").read_text())
         manifest=json.loads((OUT/"RAW_ARTIFACT_MANIFEST.json").read_text())
+        if manifest.get("au_material_fraction") != material_fraction_audit():
+            raise RuntimeError("robust resume uses the historical O3/TE1 law; start a new shared-law run")
     else:
-        history=[]; stages=[]; manifest={"schema":"au-dualpol-robust-projection-v1","raw_artifacts_committed_to_git":False,"etas":list(ETAS),"filter":MAPPING.audit(),"evaluations":{}}
+        history=[]; stages=[]; manifest={"schema":"au-dualpol-robust-projection-v2","raw_artifacts_committed_to_git":False,"etas":list(ETAS),"filter":MAPPING.audit(),"au_material_fraction":material_fraction_audit(),"evaluations":{}}
     vector=np.concatenate((latent.ravel(),[0.0]))
     run_stages=() if finalize_only else (STAGES[7:] if resume_high else STAGES)
     stage_offset=7 if resume_high else 0

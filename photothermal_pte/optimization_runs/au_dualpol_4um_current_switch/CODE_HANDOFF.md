@@ -23,12 +23,14 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
    thermal, and electrical density gradient.
 5. `dfm.py` -- 500 nm filter, differentiable solid/void constraints, and
    exact binary audit.
-6. `objective.py` -- signed current utilities and epigraph objective.
-7. `10_optimize_4um_dualpol_au_ld_mma.py` -- nominal NLopt LD_MMA path.
-8. `13_optimize_robust_binary_au_ld_mma.py` -- eroded/dilated robust
+6. `material_fraction.py` and `MATERIAL_FRACTION_AUDIT.md` -- the shared
+   linear Au fraction and its fail-closed migration from historical O3/TE1.
+7. `objective.py` -- signed current utilities and epigraph objective.
+8. `10_optimize_4um_dualpol_au_ld_mma.py` -- nominal NLopt LD_MMA path.
+9. `13_optimize_robust_binary_au_ld_mma.py` -- eroded/dilated robust
    continuation path.
-9. `14_diagnose_gray_law_mismatch.py` -- current gray-material blocker.
-10. `15_validate_4um_z_mesh_convergence.py` -- fail-closed z-mesh gate that
+10. `14_diagnose_gray_law_mismatch.py` -- historical gray-material blocker.
+11. `15_validate_4um_z_mesh_convergence.py` -- fail-closed z-mesh gate that
     must be closed before another production optimization.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
@@ -50,10 +52,11 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
 
 ## Important blockers -- do not silently bypass
 
-1. The existing optimization used inconsistent gray laws: optical Au
-   oscillator strength uses `rho**3`, while thermal/electrical Au uses
-   `rho**1`.  The endpoints are exact, but gray cells are not a single
-   physical material.  See `14_diagnose_gray_law_mismatch.py`.
+1. The existing optimization used inconsistent O3/TE1 gray laws.  Production
+   code now uses one shared linear fraction (`f_Au=rho`) in all three physics,
+   but it has not yet received new AD-FD or mesh-convergence certificates.
+   Historical O3/TE1 outputs must not be presented as certificates for the
+   corrected law.  See `MATERIAL_FRACTION_AUDIT.md`.
 2. AD-FD validates the derivative of a chosen discrete mesh; it does not
    certify mesh convergence.
 3. The original optical z mesh used only 2 Au cells and 5 TaIrTe4 cells.
@@ -69,6 +72,9 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    previous-window versus late-window stationarity.  Diagnose temporal/Q
    closure first, then define a full-domain z sweep; do not call the current
    result a full z-mesh certificate.
+6. Electrical void cells retain tiny sheet/contact floors to regularize the
+   floating Au block.  Quantify floor sensitivity; do not describe the
+   electrical `rho=0` endpoint as exactly disconnected until that passes.
 
 ## Raw checkpoint dependency
 
@@ -105,8 +111,8 @@ used by the project.
    not as a converged production mesh.
 2. Diagnose time-window stationarity and the factor-8 Q/closed-flux closure
    failures; then expand z refinement to Si, air, and PML as needed.
-3. Replace the O3/TE1 law with one explicit shared material-fraction contract
-   and repeat endpoint/AD-FD checks on the selected mesh.
+3. Revalidate the new shared linear material-fraction contract with endpoint,
+   floor-sensitivity, and AD-FD checks on the selected mesh.
 4. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh
    convergence, and downstream PTE current.
 5. Certify the combined gradient on the selected production mesh.

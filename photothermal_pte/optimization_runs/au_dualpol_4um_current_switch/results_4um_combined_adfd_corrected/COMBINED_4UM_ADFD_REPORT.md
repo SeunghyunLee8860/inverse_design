@@ -1,6 +1,9 @@
 # Combined 4 um dual-polarization physical-density AD-FD
 
-Status: **VALIDATED_4UM_DUALPOL_COMBINED_PHYSICAL_RHO_ADFD**
+Status: **HISTORICAL_O3_TE1_COMBINED_ADFD_REVALIDATION_REQUIRED**
+
+This gradient certificate differentiated the historical O3/TE1 operator. It
+does not certify the corrected shared-linear production operator.
 
 The gradient includes Maxwell field redistribution, direct Au loss, thermal/contact, and electrical/weighting-field paths.
 No time-history checkpointing, clipping, smoothing, empirical gradient normalization, or rescaling is used.

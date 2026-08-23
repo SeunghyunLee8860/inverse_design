@@ -10,6 +10,11 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 import math
 
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+    AU_MATERIAL_FRACTION_EXPONENT,
+    AU_MATERIAL_FRACTION_LAW,
+)
+
 
 @dataclass(frozen=True)
 class Contract:
@@ -45,6 +50,8 @@ class Contract:
     g_au_ta_W_m2K: float = 1.0 / 5.8e-8
     au_ta_electrical_contact_scenario: str = "numerical_scenario_rhoc_1e-10_ohm_m2"
     electrical_contact_S_m2: float = 1.0e10
+    au_material_fraction_law: str = AU_MATERIAL_FRACTION_LAW
+    au_material_fraction_exponent: float = AU_MATERIAL_FRACTION_EXPONENT
 
     @property
     def design_shape(self) -> tuple[int, int]:
@@ -79,6 +86,11 @@ class Contract:
             au_role=(
                 "floating patterned nanostructure; optical absorber/scatterer and "
                 "thermal/electrical shunt, not a measurement electrode"
+            ),
+            gray_density_role=(
+                "numerical topology relaxation only; optical, thermal, and "
+                "electrical operators share one linear Au material fraction; "
+                "promotion requires an exact-binary geometry"
             ),
             objective=(
                 "maximize t subject to +I(E||a)>=t and -I(E||b)>=t; "
