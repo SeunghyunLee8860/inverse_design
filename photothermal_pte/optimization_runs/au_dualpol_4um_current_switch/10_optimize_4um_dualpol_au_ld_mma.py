@@ -52,9 +52,14 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.dfm import
 
 
 HERE = Path(__file__).resolve().parent
-OUT = HERE / "results_4um_dualpol_au_ld_mma"
+OUT = HERE / os.environ.get(
+    "AU_DUALPOL_OUTPUT_NAME", "results_4um_dualpol_au_ld_mma"
+)
 RAW = Path(
-    "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma"
+    os.environ.get(
+        "AU_DUALPOL_RAW_DIR",
+        "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma",
+    )
 )
 CALIBRATION = (
     HERE
@@ -68,20 +73,33 @@ STAGE_MAXEVAL = {
     2.0: 16,
     4.0: 14,
     8.0: 12,
-    16.0: 10,
-    32.0: 8,
-    64.0: 8,
-    128.0: 6,
+    16.0: 16,
+    32.0: 14,
+    64.0: 12,
+    128.0: 10,
+    12.0: 16,
+    24.0: 14,
+    48.0: 12,
+    96.0: 10,
 }
 CAP_REDUCTION = {
     1.0: 1.01,
     2.0: 0.95,
     4.0: 0.90,
     8.0: 0.85,
-    16.0: 0.80,
-    32.0: 0.75,
-    64.0: 0.70,
-    128.0: 0.65,
+    16.0: 0.95,
+    32.0: 0.92,
+    64.0: 0.90,
+    128.0: 0.85,
+    # Adaptive continuation used after the validated beta=8 checkpoint.  A
+    # beta change already perturbs both current signs and morphology residuals;
+    # imposing a second 20--35% residual jump at the same instant made the
+    # beta=16 entry infeasible.  These reductions are deliberately gradual,
+    # while the exact binary repair below remains the zero-violation authority.
+    12.0: 0.95,
+    24.0: 0.92,
+    48.0: 0.90,
+    96.0: 0.88,
 }
 # A smooth opening has a finite soft-min/soft-max boundary layer even for an
 # exact-audit-passing binary pattern.  These floors were measured on exact
@@ -483,7 +501,9 @@ def stage_caps(latent: np.ndarray, beta: float) -> tuple[np.ndarray, np.ndarray]
     return values, caps
 
 
-def make_optimizer(evaluator: DualPolarizationEvaluator) -> nlopt.opt:
+def make_optimizer(
+    evaluator: DualPolarizationEvaluator, maxeval: int | None = None
+) -> nlopt.opt:
     variable_count = int(np.prod(CONTRACT.design_shape)) + 1
     optimizer = nlopt.opt(nlopt.LD_MMA, variable_count)
     lower = np.concatenate((np.zeros(variable_count - 1), [-100.0]))
@@ -505,7 +525,9 @@ def make_optimizer(evaluator: DualPolarizationEvaluator) -> nlopt.opt:
     # controls termination.
     optimizer.set_ftol_rel(0.0)
     optimizer.set_xtol_rel(0.0)
-    optimizer.set_maxeval(STAGE_MAXEVAL[evaluator.beta])
+    optimizer.set_maxeval(
+        STAGE_MAXEVAL[evaluator.beta] if maxeval is None else int(maxeval)
+    )
     return optimizer
 
 
@@ -637,9 +659,21 @@ def main() -> int:
     source_scale = CONTRACT.reporting_incident_power_W / float(
         calibration["common_reference_incident_power_W"]
     )
+    resume_path_text = os.environ.get("AU_DUALPOL_RESUME_STAGE_NPZ", "").strip()
+    resume_evaluation = int(os.environ.get("AU_DUALPOL_RESUME_EVALUATION", "0"))
+    requested_betas = os.environ.get("AU_DUALPOL_BETAS", "").strip()
+    run_betas = (
+        tuple(float(value) for value in requested_betas.split(",") if value.strip())
+        if requested_betas
+        else BETAS
+    )
+    if not run_betas:
+        raise RuntimeError("empty beta continuation schedule")
+
     latent = np.full(CONTRACT.design_shape, 0.5, dtype=np.float64)
     vector = np.concatenate((latent.ravel(), [0.0]))
     history: list[dict[str, object]] = []
+    stage_rows: list[dict[str, object]] = []
     manifest: dict[str, object] = {
         "schema": "au-dualpol-4um-ld-mma-raw-manifest-v1",
         "raw_artifacts_committed_to_git": False,
@@ -652,17 +686,78 @@ def main() -> int:
             "objective": "maximize t subject to Ia>=t and -Ib>=t",
             "manual_move_limit": None,
             "custom_update": False,
-            "beta_schedule": list(BETAS),
+            "beta_schedule": list(run_betas),
             "stage_maxeval": {str(key): value for key, value in STAGE_MAXEVAL.items()},
+            "stage_feasibility_gate": (
+                "Ia>0, Ib<0, epigraph feasible, and both smooth DFM inequalities <=0"
+            ),
+            "maximum_stage_attempts": 3,
         },
         "evaluations": {},
     }
+    if resume_path_text:
+        resume_path = Path(resume_path_text).resolve()
+        if not resume_path.is_file():
+            raise FileNotFoundError(resume_path)
+        if resume_evaluation <= 0:
+            raise RuntimeError(
+                "AU_DUALPOL_RESUME_EVALUATION must identify the completed checkpoint"
+            )
+        with np.load(resume_path, allow_pickle=False) as checkpoint:
+            vector = np.asarray(checkpoint["vector"], dtype=np.float64)
+        expected = int(np.prod(CONTRACT.design_shape)) + 1
+        if vector.size != expected:
+            raise RuntimeError(
+                f"resume vector has {vector.size} entries; expected {expected}"
+            )
+        latent = vector[:-1].reshape(CONTRACT.design_shape)
+        history_path = OUT / "optimization_history.json"
+        stages_path = OUT / "continuation_stages.json"
+        manifest_path = OUT / "RAW_ARTIFACT_MANIFEST.json"
+        if not (history_path.is_file() and stages_path.is_file() and manifest_path.is_file()):
+            raise RuntimeError("published checkpoint provenance is incomplete")
+        loaded_history = json.loads(history_path.read_text(encoding="utf-8"))
+        history = [
+            row
+            for row in loaded_history
+            if int(row["evaluation"]) <= resume_evaluation
+        ]
+        if len(history) != resume_evaluation:
+            raise RuntimeError(
+                f"resume history contains {len(history)} rows; expected {resume_evaluation}"
+            )
+        loaded_stages = json.loads(stages_path.read_text(encoding="utf-8"))
+        stage_rows = [
+            row
+            for row in loaded_stages
+            if int(row["evaluations_total"]) <= resume_evaluation
+        ]
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["evaluations"] = {
+            key: value
+            for key, value in manifest.get("evaluations", {}).items()
+            if int(key) <= resume_evaluation
+        }
+        completed_betas = [float(row["beta"]) for row in stage_rows]
+        manifest["optimizer"]["beta_schedule"] = completed_betas + list(run_betas)
+        manifest["optimizer"]["resume"] = {
+            "checkpoint_path": str(resume_path),
+            "checkpoint_sha256": sha256(resume_path),
+            "resume_evaluation": resume_evaluation,
+            "completed_betas": completed_betas,
+        }
+        write_history_csv(history)
+        write_json(OUT / "optimization_history.json", history)
+        write_json(OUT / "continuation_stages.json", stage_rows)
+        write_json(OUT / "RAW_ARTIFACT_MANIFEST.json", manifest)
     write_json(OUT / "RUN_STATE.json", {"stage": "compiling", "gpu": os.environ["CUDA_VISIBLE_DEVICES"]})
     runners = {
         pol: CompiledOpticalRunner.create(pol, latent) for pol in ("Ea", "Eb")
     }
-    stage_rows: list[dict[str, object]] = []
-    for stage_index, beta in enumerate(BETAS):
+    initial_stage_index = len(stage_rows)
+    last_completed_beta = float(stage_rows[-1]["beta"]) if stage_rows else None
+    for local_stage_index, beta in enumerate(run_betas):
+        stage_index = initial_stage_index + local_stage_index
         latent = vector[:-1].reshape(CONTRACT.design_shape)
         entry_values, caps = stage_caps(latent, beta)
         evaluator = DualPolarizationEvaluator(
@@ -682,7 +777,6 @@ def main() -> int:
         vector[-1] = min(
             entry_point.current_a_A, -entry_point.current_b_A
         ) / CURRENT_SCALE_A - 1.0e-6
-        optimizer = make_optimizer(evaluator)
         write_json(
             OUT / "RUN_STATE.json",
             {
@@ -696,17 +790,82 @@ def main() -> int:
             },
         )
         start = time.perf_counter()
-        vector = optimizer.optimize(vector)
+        attempts: list[dict[str, object]] = []
+        stage_feasible = False
+        optimizer: nlopt.opt | None = None
+        for attempt in range(3):
+            optimizer = make_optimizer(evaluator)
+            vector = optimizer.optimize(vector)
+            returned = evaluator._evaluate(vector[:-1])
+            t_scaled = float(vector[-1])
+            constraint_values = np.asarray(
+                (
+                    t_scaled - returned.current_a_A / CURRENT_SCALE_A,
+                    t_scaled + returned.current_b_A / CURRENT_SCALE_A,
+                    returned.smooth_values[0] / caps[0] - 1.0,
+                    returned.smooth_values[1] / caps[1] - 1.0,
+                ),
+                dtype=np.float64,
+            )
+            stage_feasible = bool(
+                returned.current_a_A > 0.0
+                and returned.current_b_A < 0.0
+                and np.max(constraint_values) <= 10.0 * NLOPT_CONSTRAINT_TOL
+            )
+            attempts.append(
+                {
+                    "attempt": attempt + 1,
+                    "nlopt_result": int(optimizer.last_optimize_result()),
+                    "nlopt_function_evaluations": int(optimizer.get_numevals()),
+                    "nlopt_max_objective": float(optimizer.last_optimum_value()),
+                    "constraint_values": constraint_values.tolist(),
+                    "I_a_A": returned.current_a_A,
+                    "I_b_A": returned.current_b_A,
+                    "feasible": stage_feasible,
+                }
+            )
+            if stage_feasible:
+                break
+            # A continuation stage is never allowed to promote an infeasible
+            # density.  Re-anchor t to the actual current bottleneck and let a
+            # fresh MMA subproblem continue at the same beta/caps.
+            vector[-1] = min(
+                returned.current_a_A, -returned.current_b_A
+            ) / CURRENT_SCALE_A - 1.0e-6
+            print(
+                f"[stage] beta={beta:g} attempt={attempt + 1} infeasible; "
+                f"continuing the same stage, constraints={constraint_values.tolist()}",
+                flush=True,
+            )
+        if optimizer is None or not stage_feasible:
+            write_json(
+                OUT / "RUN_STATE.json",
+                {
+                    "stage": "blocked_continuation_stage_infeasible",
+                    "stage_index": stage_index,
+                    "beta": beta,
+                    "attempts": attempts,
+                    "evaluations_completed": len(history),
+                    "last_completed_beta": last_completed_beta,
+                },
+            )
+            raise RuntimeError(
+                f"beta={beta:g} remained infeasible after {len(attempts)} MMA attempts"
+            )
         stage = {
             "stage_index": stage_index,
             "beta": beta,
             "entry_dfm_values": entry_values.tolist(),
             "dfm_caps": caps.tolist(),
             "nlopt_result": int(optimizer.last_optimize_result()),
-            "nlopt_function_evaluations": int(optimizer.get_numevals()),
+            "nlopt_function_evaluations": int(
+                sum(int(row["nlopt_function_evaluations"]) for row in attempts)
+            ),
             "nlopt_max_objective": float(optimizer.last_optimum_value()),
             "stage_runtime_s": time.perf_counter() - start,
             "evaluations_total": len(history),
+            "stage_feasible": stage_feasible,
+            "attempts": attempts,
         }
         stage_rows.append(stage)
         np.savez_compressed(
@@ -719,9 +878,10 @@ def main() -> int:
         write_json(OUT / "continuation_stages.json", stage_rows)
         write_history_csv(history)
         print(f"[stage] completed beta={beta:g}: {stage}", flush=True)
+        last_completed_beta = beta
 
     final_latent = vector[:-1].reshape(CONTRACT.design_shape)
-    final_projected = MAPPING.physical(final_latent, BETAS[-1])
+    final_projected = MAPPING.physical(final_latent, run_betas[-1])
     candidates = repaired_binary_candidates(final_projected)
     if not candidates:
         raise RuntimeError("no exact 500 nm solid/void binary repair candidate")
