@@ -1,0 +1,89 @@
+{
+  "status": "VALIDATED_4UM_SINGLE_FREQUENCY_MATERIAL_READBACK",
+  "scope": "material database/readback only; no field solve or optimization",
+  "wavelength_m": 4e-06,
+  "axis_mapping": {
+    "x": "b",
+    "y": "a",
+    "z": "c=b closure"
+  },
+  "materials": {
+    "Au": {
+      "n": {
+        "real": 2.2,
+        "imag": 28.9
+      },
+      "epsilon": {
+        "real": -830.3699999999999,
+        "imag": 127.16000000000001
+      },
+      "source": "Ordal et al. 1987 tabulation",
+      "source_DOI": "10.1364/AO.26.000744"
+    },
+    "TaIrTe4": {
+      "a": {
+        "epsilon": {
+          "real": -30.713256371885343,
+          "imag": 50.848086107787424
+        }
+      },
+      "b": {
+        "epsilon": {
+          "real": 15.900726644538812,
+          "imag": 9.289194887622557
+        }
+      },
+      "c": {
+        "epsilon": {
+          "real": 15.900726644538812,
+          "imag": 9.289194887622557
+        }
+      }
+    },
+    "SiO2": {
+      "n": {
+        "real": 1.3669408370910192,
+        "imag": 1.4936773161377444e-49
+      },
+      "epsilon": {
+        "real": 1.8685272521070964,
+        "imag": 4.083537041730391e-49
+      },
+      "source": "Kitamura et al. 2007 model",
+      "source_DOI": "10.1364/AO.46.008118"
+    },
+    "Si": {
+      "n": {
+        "real": 3.4294,
+        "imag": 0.0
+      },
+      "epsilon": {
+        "real": 11.760784359999999,
+        "imag": 0.0
+      },
+      "source": "installed Lumerical v261 Si (Silicon) - Palik readback"
+    }
+  },
+  "inputs": {
+    "perm_data": {
+      "path": "/home/seunghyun/tairte4/worktrees/au_dualpol_4um/photothermal_pte/bundle/perm_data.txt",
+      "sha256": "d66eb034cb977be9ef843dd0972fcb7628ea28d168ab771f5c3a757bf5e0d499"
+    },
+    "Ordal_table": {
+      "path": "/home/seunghyun/tairte4/worktrees/au_dualpol_4um/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/data/au_ordal_1987_nk.csv",
+      "sha256": "1a15720200262892fe26b5cac1949a1c0040dcbb021f15114a863d27a4515901"
+    },
+    "Kitamura_implementation": {
+      "path": "/home/seunghyun/tairte4/worktrees/au_dualpol_4um/photothermal_pte/validation/paper_ir_sanity/run_lumerical_device_a_ir_q.py",
+      "sha256": "1bd084282b4bb2f9bb0f75c0eaff43d4f1a8d1e45bc3c3ea325a0a5011da0fd7"
+    }
+  },
+  "gates": {
+    "TaIrTe4_all_axes_passive": true,
+    "epsilon_c_equals_epsilon_b": true,
+    "Au_passive": true,
+    "substrate_loss_nonnegative": true,
+    "Lumerical_Si_readback_completed": true
+  },
+  "FDTD_solve_run": false
+}
