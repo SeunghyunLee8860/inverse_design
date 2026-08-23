@@ -1,0 +1,36 @@
+{
+  "status": "COMPLETE_LONG_TIME_ISOLATION_CASE",
+  "runsetup_sha256": "e3268d6a7107de3fd6e5cbb3c9f9dd786a4fc2b86d381b25cd0b4ce5d3e1b4bf",
+  "case": "substrates_only",
+  "row": {
+    "case": "substrates_only",
+    "activation_Au_TaIrTe4": [
+      0.0,
+      0.0
+    ],
+    "runtime_s": 239.4705716818571,
+    "field_max_abs": {
+      "previous": {
+        "au": 0.02307952754199505,
+        "tairte4": 0.02179753966629505
+      },
+      "late": {
+        "au": 0.02307952009141445,
+        "tairte4": 0.02179753966629505
+      }
+    },
+    "previous_volume_integrated_E2_V2_m": 1.7597043270510137e-21,
+    "late_volume_integrated_E2_V2_m": 1.759706894228718e-21,
+    "volume_integrated_E2_change_relative": 1.4588687798591977e-06,
+    "complex_E_spatial_NRMSE": 6.973792692379017e-06,
+    "P_discrete_ADE_Q_late_W": 0.0,
+    "P_closed_td_W": -3.3308901420449484e-17,
+    "P_closed_phasor_W": -5.743853779168081e-17,
+    "closed_td_vs_phasor_relative": 0.4200948927137587,
+    "instability_gate": {
+      "field_NRMSE_limit": 0.05,
+      "E2_change_limit": 0.1,
+      "unstable": false
+    }
+  }
+}
