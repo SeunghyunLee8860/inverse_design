@@ -591,6 +591,7 @@ def test_pure_current_final_gate_requires_binary_and_exact_500nm_geometry() -> N
 def test_transient_license_failure_is_narrow_and_fail_closed(tmp_path) -> None:
     from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_optimization import (
         TRANSIENT_FIELDREGION_PUTV_MARKER,
+        TRANSIENT_GPU_RUN_BROKEN_PIPE_MARKER,
         transient_license_failure,
     )
 
@@ -635,6 +636,19 @@ def test_transient_license_failure_is_narrow_and_fail_closed(tmp_path) -> None:
     assert TRANSIENT_FIELDREGION_PUTV_MARKER in markers
 
     (output / "result.json").write_text("LumApiError: Failed to put variable")
+    retryable, markers = transient_license_failure(output)
+    assert not retryable
+    assert markers == []
+
+    (output / "result.json").write_text(
+        "GPU-only run failed; CPU fallback prohibited: "
+        "Local GPU: BrokenPipeError: [Errno 32] Broken pipe"
+    )
+    retryable, markers = transient_license_failure(output)
+    assert retryable
+    assert TRANSIENT_GPU_RUN_BROKEN_PIPE_MARKER in markers
+
+    (output / "result.json").write_text("BrokenPipeError: [Errno 32] Broken pipe")
     retryable, markers = transient_license_failure(output)
     assert not retryable
     assert markers == []

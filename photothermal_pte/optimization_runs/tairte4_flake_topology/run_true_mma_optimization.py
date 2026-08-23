@@ -153,6 +153,11 @@ TRANSIENT_FIELDREGION_PUTV_CONTEXT = (
     "import_named_fieldregion_profile",
     'fdtd.putv("ad_',
 )
+TRANSIENT_GPU_RUN_BROKEN_PIPE_MARKER = "gpu-only run broken-pipe ipc failure"
+TRANSIENT_GPU_RUN_BROKEN_PIPE_CONTEXT = (
+    "gpu-only run failed; cpu fallback prohibited:",
+    "brokenpipeerror",
+)
 
 
 def discard_regenerable_evaluation_solver_files(output: Path) -> list[dict[str, object]]:
@@ -198,6 +203,8 @@ def transient_license_failure(output: Path) -> tuple[bool, list[str]]:
                 matched.add(marker)
         if all(marker in text for marker in TRANSIENT_FIELDREGION_PUTV_CONTEXT):
             matched.add(TRANSIENT_FIELDREGION_PUTV_MARKER)
+        if all(marker in text for marker in TRANSIENT_GPU_RUN_BROKEN_PIPE_CONTEXT):
+            matched.add(TRANSIENT_GPU_RUN_BROKEN_PIPE_MARKER)
     return bool(matched), sorted(matched)
 
 
