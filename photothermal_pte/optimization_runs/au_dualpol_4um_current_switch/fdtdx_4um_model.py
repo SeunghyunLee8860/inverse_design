@@ -38,6 +38,8 @@ STAGE41 = (
 EPS0_F_PER_M = 8.8541878128e-12
 C0_M_PER_S = 299_792_458.0
 MAX_IGNORED_SUBSTRATE_EPSILON_IMAG = 1.0e-10
+CLOSED_SURFACE_PHASOR_WINDOW = "rectangular_switch_only"
+CLOSED_SURFACE_PHASOR_APODIZATION = None
 
 
 @dataclass(frozen=True)
@@ -463,7 +465,13 @@ def build_model(
         orientation="inward",
         dtype=jnp.complex64,
         switch=late,
-        apodization=phasor_windows["late"],
+        # The pinned FDTDX ClosedSurfacePhasorPoyntingFluxDetector.update()
+        # currently omits the apodization weight although its static phasor
+        # scale still divides by sum(window).  A Hann/Tukey(alpha=1) window
+        # therefore doubles E/H and quadruples flux.  A rectangular window
+        # uses the correctly implemented switch mask and also matches the
+        # time-domain monitor's late-window arithmetic mean.
+        apodization=CLOSED_SURFACE_PHASOR_APODIZATION,
         exact_interpolation=True,
     )
     closed_td = fdtdx.ClosedSurfacePoyntingFluxDetector(
@@ -597,5 +605,6 @@ def build_model(
         "omega_rad_s": omega,
         "polarization": polarization,
         "air_only_source_calibration": bool(air_only_source_calibration),
+        "closed_surface_phasor_window": CLOSED_SURFACE_PHASOR_WINDOW,
         "placement": {name: _slice(value) for name, value in slices.items()},
     }

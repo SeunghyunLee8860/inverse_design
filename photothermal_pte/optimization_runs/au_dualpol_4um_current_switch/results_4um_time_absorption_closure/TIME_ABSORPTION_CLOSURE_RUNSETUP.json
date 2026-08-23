@@ -1,7 +1,7 @@
 {
   "status": "AUDITED_TIME_ABSORPTION_CLOSURE_RUNSETUP_NOT_SOLVED",
   "scope": "historical worst-closure partial-z geometry reinterpreted with shared-linear Au",
-  "diagnostic_script_sha256": "86c1e739863e9d838c84f1d365b944dc1f65ff2b0ecd9d05f94affadd901df43",
+  "diagnostic_script_sha256": "d3d215928c09bc562f8c5c212eb3ff5afa5f4dc225d43d519492d6a2fdcb8464",
   "device_contract_sha256": "2aae4743a373680c5d0811461d6e51c8e93c41387e4d841d9593fc3126833d59",
   "mesh": {
     "mode": "partial_material_z",
@@ -141,6 +141,7 @@
     "promotion_requires_exact_binary_density": true
   },
   "incident_normalization": "not required for scale-invariant Q/closed-flux and window comparisons; no downstream current is evaluated",
+  "closed_surface_phasor_window": "rectangular switch-only window matching the time-domain monitor; the pinned FDTDX closed-surface phasor detector omits Tukey weights",
   "raw_arrays": {
     "written_outside_git": false,
     "root": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/time_absorption_closure",

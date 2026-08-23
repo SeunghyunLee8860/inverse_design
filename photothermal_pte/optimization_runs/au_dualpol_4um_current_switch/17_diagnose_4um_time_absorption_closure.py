@@ -381,6 +381,10 @@ def main() -> int:
             "not required for scale-invariant Q/closed-flux and window comparisons; "
             "no downstream current is evaluated"
         ),
+        "closed_surface_phasor_window": (
+            "rectangular switch-only window matching the time-domain monitor; "
+            "the pinned FDTDX closed-surface phasor detector omits Tukey weights"
+        ),
         "raw_arrays": {
             "written_outside_git": not args.audit_only,
             "root": str(RAW.resolve()),

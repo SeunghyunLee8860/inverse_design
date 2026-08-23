@@ -40,6 +40,8 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production
     sha256,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_model import (
+    CLOSED_SURFACE_PHASOR_APODIZATION,
+    CLOSED_SURFACE_PHASOR_WINDOW,
     LAYOUT,
     MAX_IGNORED_SUBSTRATE_EPSILON_IMAG,
     _lossless_uniform_permittivity,
@@ -82,6 +84,11 @@ def test_source_calibration_is_bound_to_exact_grid_and_time_contract() -> None:
     assert calibration["polarization_vectors"]["Ea"] == [0.0, 1.0, 0.0]
     assert calibration["polarization_vectors"]["Eb"] == [1.0, 0.0, 0.0]
     assert LAYOUT.pml_cells_xy == LAYOUT.pml_cells_z == 8
+
+
+def test_closed_surface_phasor_uses_safe_rectangular_window() -> None:
+    assert CLOSED_SURFACE_PHASOR_WINDOW == "rectangular_switch_only"
+    assert CLOSED_SURFACE_PHASOR_APODIZATION is None
 
 
 def test_full_z_mesh_factor_one_is_exact_baseline_and_z_pml_is_independent() -> None:
