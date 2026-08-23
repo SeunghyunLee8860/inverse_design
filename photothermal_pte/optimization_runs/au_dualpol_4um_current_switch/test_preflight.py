@@ -50,6 +50,12 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation
     load_current_source_calibration,
     require_material_fraction,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.mesh_variants import (
+    FULL_DOMAIN_Z,
+    PARTIAL_MATERIAL_Z,
+    variant_edges,
+    variant_layout,
+)
 
 
 def test_contract_geometry_and_source_boundary() -> None:
@@ -76,6 +82,22 @@ def test_source_calibration_is_bound_to_exact_grid_and_time_contract() -> None:
     assert calibration["polarization_vectors"]["Ea"] == [0.0, 1.0, 0.0]
     assert calibration["polarization_vectors"]["Eb"] == [1.0, 0.0, 0.0]
     assert LAYOUT.pml_cells_xy == LAYOUT.pml_cells_z == 8
+
+
+def test_full_z_mesh_factor_one_is_exact_baseline_and_z_pml_is_independent() -> None:
+    baseline = grid_edges_sha256()
+    factor_one = variant_edges(1, FULL_DOMAIN_Z)
+    from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.mesh_variants import (
+        edges_sha256,
+    )
+
+    assert edges_sha256(factor_one) == baseline
+    full_two = variant_layout(2, FULL_DOMAIN_Z)
+    partial_two = variant_layout(2, PARTIAL_MATERIAL_Z)
+    assert full_two.pml_cells_xy == partial_two.pml_cells_xy == 8
+    assert full_two.pml_cells_z == 16
+    assert partial_two.pml_cells_z == 8
+    assert full_two.source_z_start == 2 * LAYOUT.source_z_start
 
 
 def test_lossy_substrate_cannot_be_silently_replaced_by_real_epsilon() -> None:

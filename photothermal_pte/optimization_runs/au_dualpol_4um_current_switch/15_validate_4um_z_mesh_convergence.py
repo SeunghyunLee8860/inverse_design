@@ -14,9 +14,8 @@ promote the gray material law or restart optimization.
 from __future__ import annotations
 
 import argparse
-from contextlib import contextmanager
 import csv
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -24,7 +23,6 @@ import math
 import os
 from pathlib import Path
 import time
-from typing import Iterator
 
 import matplotlib
 
@@ -52,6 +50,12 @@ from photothermal_pte.optimization_runs.legacy_v261_optical_support.production_d
     ProductionDensityMapping,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.paths import raw_path
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.mesh_variants import (
+    PARTIAL_MATERIAL_Z,
+    mesh_context as variant_mesh_context,
+    variant_edges,
+    variant_layout,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -91,58 +95,15 @@ def segments(parts: tuple[tuple[float, float, int], ...]) -> np.ndarray:
 
 
 def refined_edges(factor: int) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    lateral = segments(
-        (
-            (-10.0e-6, -9.0e-6, 8),
-            (-9.0e-6, -8.0e-6, 5),
-            (-8.0e-6, 8.0e-6, 160),
-            (8.0e-6, 9.0e-6, 5),
-            (9.0e-6, 10.0e-6, 8),
-        )
-    )
-    vertical = segments(
-        (
-            (-3.0e-6, -1.4e-6, 8),
-            (-1.4e-6, -0.385e-6, 5),
-            (-0.385e-6, -0.100e-6, 3 * factor),
-            (-0.100e-6, 0.0, 5 * factor),
-            (0.0, 0.050e-6, 2 * factor),
-            (0.050e-6, 0.250e-6, 4),
-            (0.250e-6, 0.750e-6, 2),
-            (0.750e-6, 1.400e-6, 3),
-            (1.400e-6, 3.000e-6, 8),
-        )
-    )
-    return lateral, lateral.copy(), vertical
+    return variant_edges(factor, PARTIAL_MATERIAL_Z)
 
 
 def refined_layout(factor: int):
-    # Ten baseline material cells are refined; all surrounding grid indices
-    # move by 10*(factor-1).  Physical source/monitor coordinates stay fixed.
-    return replace(
-        optical_model.LAYOUT,
-        sio2_cells=3 * factor,
-        tairte4_cells=5 * factor,
-        au_cells=2 * factor,
-        source_z_start=19 + 10 * factor,
-        target_z_start=17 + 10 * factor,
-        incident_z_start=18 + 10 * factor,
-        closed_z_cells=5 + 10 * factor,
-    )
+    return variant_layout(factor, PARTIAL_MATERIAL_Z)
 
 
-@contextmanager
-def mesh_context(factor: int) -> Iterator[object]:
-    original_layout = optical_model.LAYOUT
-    original_edges = optical_model.grid_edges
-    layout = refined_layout(factor)
-    optical_model.LAYOUT = layout
-    optical_model.grid_edges = lambda: refined_edges(factor)
-    try:
-        yield layout
-    finally:
-        optical_model.LAYOUT = original_layout
-        optical_model.grid_edges = original_edges
+def mesh_context(factor: int):
+    return variant_mesh_context(factor, PARTIAL_MATERIAL_Z)
 
 
 def build_at_mesh(

@@ -1,0 +1,612 @@
+{
+  "status": "AUDITED_SHARED_LINEAR_FULL_Z_MESH_VARIANTS_NOT_SOLVED",
+  "scope": "deterministic grid/layout audit only; no Maxwell, thermal, electrical, adjoint, or optimization solve",
+  "au_material_fraction": {
+    "law": "shared_linear_projected_density",
+    "exponent": 1.0,
+    "optical_fraction": "au_material_fraction(rho)",
+    "thermal_fraction": "au_material_fraction(rho)",
+    "electrical_fraction": "au_material_fraction(rho)",
+    "gray_density_is_physical_geometry": false,
+    "promotion_requires_exact_binary_density": true
+  },
+  "device_contract_sha256": "2aae4743a373680c5d0811461d6e51c8e93c41387e4d841d9593fc3126833d59",
+  "baseline_source_calibration_sha256": "5f8bff03bf3460c030249a7fbd9431921343219d042cff8a96fbcef3c631f838",
+  "factor_one_matches_baseline_exactly": true,
+  "full_domain_variants": [
+    {
+      "mode": "full_domain_z",
+      "factor": 1,
+      "grid_edges_sha256": "c6a12b95e656a88d6d9fcf448e30539f7befaa0a894dc6d44f5de42929949e1c",
+      "grid_shape_xyz": [
+        186,
+        186,
+        40
+      ],
+      "yee_cell_count": 1383840,
+      "pml_cells_each_face_xyz": [
+        8,
+        8,
+        8
+      ],
+      "indices": {
+        "source_z_start": 29,
+        "target_z_start": 27,
+        "incident_z_start": 28,
+        "closed_z_start": 12,
+        "closed_z_cells": 15
+      },
+      "segments": {
+        "bottom_pml_si": {
+          "bounds_m": [
+            -3e-06,
+            -1.4e-06
+          ],
+          "cells": 8,
+          "uniform_dz_m": 2.0000000000000002e-07
+        },
+        "resolved_si": {
+          "bounds_m": [
+            -1.4e-06,
+            -3.85e-07
+          ],
+          "cells": 5,
+          "uniform_dz_m": 2.03e-07
+        },
+        "sio2": {
+          "bounds_m": [
+            -3.85e-07,
+            -1e-07
+          ],
+          "cells": 3,
+          "uniform_dz_m": 9.5e-08
+        },
+        "tairte4": {
+          "bounds_m": [
+            -1e-07,
+            0.0
+          ],
+          "cells": 5,
+          "uniform_dz_m": 2e-08
+        },
+        "au": {
+          "bounds_m": [
+            0.0,
+            5e-08
+          ],
+          "cells": 2,
+          "uniform_dz_m": 2.5e-08
+        },
+        "near_air": {
+          "bounds_m": [
+            5e-08,
+            2.5e-07
+          ],
+          "cells": 4,
+          "uniform_dz_m": 5e-08
+        },
+        "middle_air": {
+          "bounds_m": [
+            2.5e-07,
+            7.5e-07
+          ],
+          "cells": 2,
+          "uniform_dz_m": 2.5000000000000004e-07
+        },
+        "source_air": {
+          "bounds_m": [
+            7.5e-07,
+            1.4e-06
+          ],
+          "cells": 3,
+          "uniform_dz_m": 2.1666666666666665e-07
+        },
+        "top_pml_air": {
+          "bounds_m": [
+            1.4e-06,
+            3e-06
+          ],
+          "cells": 8,
+          "uniform_dz_m": 2.0000000000000002e-07
+        }
+      }
+    },
+    {
+      "mode": "full_domain_z",
+      "factor": 2,
+      "grid_edges_sha256": "7f5caf9fb99480a15e0840d1b2e935abd4299f50089bf3ba31a285207eb37a5e",
+      "grid_shape_xyz": [
+        186,
+        186,
+        80
+      ],
+      "yee_cell_count": 2767680,
+      "pml_cells_each_face_xyz": [
+        8,
+        8,
+        16
+      ],
+      "indices": {
+        "source_z_start": 58,
+        "target_z_start": 54,
+        "incident_z_start": 56,
+        "closed_z_start": 24,
+        "closed_z_cells": 30
+      },
+      "segments": {
+        "bottom_pml_si": {
+          "bounds_m": [
+            -3e-06,
+            -1.4e-06
+          ],
+          "cells": 16,
+          "uniform_dz_m": 1.0000000000000001e-07
+        },
+        "resolved_si": {
+          "bounds_m": [
+            -1.4e-06,
+            -3.85e-07
+          ],
+          "cells": 10,
+          "uniform_dz_m": 1.015e-07
+        },
+        "sio2": {
+          "bounds_m": [
+            -3.85e-07,
+            -1e-07
+          ],
+          "cells": 6,
+          "uniform_dz_m": 4.75e-08
+        },
+        "tairte4": {
+          "bounds_m": [
+            -1e-07,
+            0.0
+          ],
+          "cells": 10,
+          "uniform_dz_m": 1e-08
+        },
+        "au": {
+          "bounds_m": [
+            0.0,
+            5e-08
+          ],
+          "cells": 4,
+          "uniform_dz_m": 1.25e-08
+        },
+        "near_air": {
+          "bounds_m": [
+            5e-08,
+            2.5e-07
+          ],
+          "cells": 8,
+          "uniform_dz_m": 2.5e-08
+        },
+        "middle_air": {
+          "bounds_m": [
+            2.5e-07,
+            7.5e-07
+          ],
+          "cells": 4,
+          "uniform_dz_m": 1.2500000000000002e-07
+        },
+        "source_air": {
+          "bounds_m": [
+            7.5e-07,
+            1.4e-06
+          ],
+          "cells": 6,
+          "uniform_dz_m": 1.0833333333333332e-07
+        },
+        "top_pml_air": {
+          "bounds_m": [
+            1.4e-06,
+            3e-06
+          ],
+          "cells": 16,
+          "uniform_dz_m": 1.0000000000000001e-07
+        }
+      }
+    },
+    {
+      "mode": "full_domain_z",
+      "factor": 4,
+      "grid_edges_sha256": "f49addc4a9e2b779b5559aa43abeea043d1c8c551244d45b771e5f600f37c2cd",
+      "grid_shape_xyz": [
+        186,
+        186,
+        160
+      ],
+      "yee_cell_count": 5535360,
+      "pml_cells_each_face_xyz": [
+        8,
+        8,
+        32
+      ],
+      "indices": {
+        "source_z_start": 116,
+        "target_z_start": 108,
+        "incident_z_start": 112,
+        "closed_z_start": 48,
+        "closed_z_cells": 60
+      },
+      "segments": {
+        "bottom_pml_si": {
+          "bounds_m": [
+            -3e-06,
+            -1.4e-06
+          ],
+          "cells": 32,
+          "uniform_dz_m": 5.0000000000000004e-08
+        },
+        "resolved_si": {
+          "bounds_m": [
+            -1.4e-06,
+            -3.85e-07
+          ],
+          "cells": 20,
+          "uniform_dz_m": 5.075e-08
+        },
+        "sio2": {
+          "bounds_m": [
+            -3.85e-07,
+            -1e-07
+          ],
+          "cells": 12,
+          "uniform_dz_m": 2.375e-08
+        },
+        "tairte4": {
+          "bounds_m": [
+            -1e-07,
+            0.0
+          ],
+          "cells": 20,
+          "uniform_dz_m": 5e-09
+        },
+        "au": {
+          "bounds_m": [
+            0.0,
+            5e-08
+          ],
+          "cells": 8,
+          "uniform_dz_m": 6.25e-09
+        },
+        "near_air": {
+          "bounds_m": [
+            5e-08,
+            2.5e-07
+          ],
+          "cells": 16,
+          "uniform_dz_m": 1.25e-08
+        },
+        "middle_air": {
+          "bounds_m": [
+            2.5e-07,
+            7.5e-07
+          ],
+          "cells": 8,
+          "uniform_dz_m": 6.250000000000001e-08
+        },
+        "source_air": {
+          "bounds_m": [
+            7.5e-07,
+            1.4e-06
+          ],
+          "cells": 12,
+          "uniform_dz_m": 5.416666666666666e-08
+        },
+        "top_pml_air": {
+          "bounds_m": [
+            1.4e-06,
+            3e-06
+          ],
+          "cells": 32,
+          "uniform_dz_m": 5.0000000000000004e-08
+        }
+      }
+    }
+  ],
+  "historical_partial_material_variants": [
+    {
+      "mode": "partial_material_z",
+      "factor": 1,
+      "grid_edges_sha256": "c6a12b95e656a88d6d9fcf448e30539f7befaa0a894dc6d44f5de42929949e1c",
+      "grid_shape_xyz": [
+        186,
+        186,
+        40
+      ],
+      "yee_cell_count": 1383840,
+      "pml_cells_each_face_xyz": [
+        8,
+        8,
+        8
+      ],
+      "indices": {
+        "source_z_start": 29,
+        "target_z_start": 27,
+        "incident_z_start": 28,
+        "closed_z_start": 12,
+        "closed_z_cells": 15
+      },
+      "segments": {
+        "bottom_pml_si": {
+          "bounds_m": [
+            -3e-06,
+            -1.4e-06
+          ],
+          "cells": 8,
+          "uniform_dz_m": 2.0000000000000002e-07
+        },
+        "resolved_si": {
+          "bounds_m": [
+            -1.4e-06,
+            -3.85e-07
+          ],
+          "cells": 5,
+          "uniform_dz_m": 2.03e-07
+        },
+        "sio2": {
+          "bounds_m": [
+            -3.85e-07,
+            -1e-07
+          ],
+          "cells": 3,
+          "uniform_dz_m": 9.5e-08
+        },
+        "tairte4": {
+          "bounds_m": [
+            -1e-07,
+            0.0
+          ],
+          "cells": 5,
+          "uniform_dz_m": 2e-08
+        },
+        "au": {
+          "bounds_m": [
+            0.0,
+            5e-08
+          ],
+          "cells": 2,
+          "uniform_dz_m": 2.5e-08
+        },
+        "near_air": {
+          "bounds_m": [
+            5e-08,
+            2.5e-07
+          ],
+          "cells": 4,
+          "uniform_dz_m": 5e-08
+        },
+        "middle_air": {
+          "bounds_m": [
+            2.5e-07,
+            7.5e-07
+          ],
+          "cells": 2,
+          "uniform_dz_m": 2.5000000000000004e-07
+        },
+        "source_air": {
+          "bounds_m": [
+            7.5e-07,
+            1.4e-06
+          ],
+          "cells": 3,
+          "uniform_dz_m": 2.1666666666666665e-07
+        },
+        "top_pml_air": {
+          "bounds_m": [
+            1.4e-06,
+            3e-06
+          ],
+          "cells": 8,
+          "uniform_dz_m": 2.0000000000000002e-07
+        }
+      }
+    },
+    {
+      "mode": "partial_material_z",
+      "factor": 2,
+      "grid_edges_sha256": "f13649e28c4cef47e48cffcf3e4037978399f7b249e4be177ee90a3df03f40c9",
+      "grid_shape_xyz": [
+        186,
+        186,
+        50
+      ],
+      "yee_cell_count": 1729800,
+      "pml_cells_each_face_xyz": [
+        8,
+        8,
+        8
+      ],
+      "indices": {
+        "source_z_start": 39,
+        "target_z_start": 37,
+        "incident_z_start": 38,
+        "closed_z_start": 12,
+        "closed_z_cells": 25
+      },
+      "segments": {
+        "bottom_pml_si": {
+          "bounds_m": [
+            -3e-06,
+            -1.4e-06
+          ],
+          "cells": 8,
+          "uniform_dz_m": 2.0000000000000002e-07
+        },
+        "resolved_si": {
+          "bounds_m": [
+            -1.4e-06,
+            -3.85e-07
+          ],
+          "cells": 5,
+          "uniform_dz_m": 2.03e-07
+        },
+        "sio2": {
+          "bounds_m": [
+            -3.85e-07,
+            -1e-07
+          ],
+          "cells": 6,
+          "uniform_dz_m": 4.75e-08
+        },
+        "tairte4": {
+          "bounds_m": [
+            -1e-07,
+            0.0
+          ],
+          "cells": 10,
+          "uniform_dz_m": 1e-08
+        },
+        "au": {
+          "bounds_m": [
+            0.0,
+            5e-08
+          ],
+          "cells": 4,
+          "uniform_dz_m": 1.25e-08
+        },
+        "near_air": {
+          "bounds_m": [
+            5e-08,
+            2.5e-07
+          ],
+          "cells": 4,
+          "uniform_dz_m": 5e-08
+        },
+        "middle_air": {
+          "bounds_m": [
+            2.5e-07,
+            7.5e-07
+          ],
+          "cells": 2,
+          "uniform_dz_m": 2.5000000000000004e-07
+        },
+        "source_air": {
+          "bounds_m": [
+            7.5e-07,
+            1.4e-06
+          ],
+          "cells": 3,
+          "uniform_dz_m": 2.1666666666666665e-07
+        },
+        "top_pml_air": {
+          "bounds_m": [
+            1.4e-06,
+            3e-06
+          ],
+          "cells": 8,
+          "uniform_dz_m": 2.0000000000000002e-07
+        }
+      }
+    },
+    {
+      "mode": "partial_material_z",
+      "factor": 4,
+      "grid_edges_sha256": "03251605882c6cbf1e24aa8d75aebe290a040e2416d380e9cd80fc12706219d5",
+      "grid_shape_xyz": [
+        186,
+        186,
+        70
+      ],
+      "yee_cell_count": 2421720,
+      "pml_cells_each_face_xyz": [
+        8,
+        8,
+        8
+      ],
+      "indices": {
+        "source_z_start": 59,
+        "target_z_start": 57,
+        "incident_z_start": 58,
+        "closed_z_start": 12,
+        "closed_z_cells": 45
+      },
+      "segments": {
+        "bottom_pml_si": {
+          "bounds_m": [
+            -3e-06,
+            -1.4e-06
+          ],
+          "cells": 8,
+          "uniform_dz_m": 2.0000000000000002e-07
+        },
+        "resolved_si": {
+          "bounds_m": [
+            -1.4e-06,
+            -3.85e-07
+          ],
+          "cells": 5,
+          "uniform_dz_m": 2.03e-07
+        },
+        "sio2": {
+          "bounds_m": [
+            -3.85e-07,
+            -1e-07
+          ],
+          "cells": 12,
+          "uniform_dz_m": 2.375e-08
+        },
+        "tairte4": {
+          "bounds_m": [
+            -1e-07,
+            0.0
+          ],
+          "cells": 20,
+          "uniform_dz_m": 5e-09
+        },
+        "au": {
+          "bounds_m": [
+            0.0,
+            5e-08
+          ],
+          "cells": 8,
+          "uniform_dz_m": 6.25e-09
+        },
+        "near_air": {
+          "bounds_m": [
+            5e-08,
+            2.5e-07
+          ],
+          "cells": 4,
+          "uniform_dz_m": 5e-08
+        },
+        "middle_air": {
+          "bounds_m": [
+            2.5e-07,
+            7.5e-07
+          ],
+          "cells": 2,
+          "uniform_dz_m": 2.5000000000000004e-07
+        },
+        "source_air": {
+          "bounds_m": [
+            7.5e-07,
+            1.4e-06
+          ],
+          "cells": 3,
+          "uniform_dz_m": 2.1666666666666665e-07
+        },
+        "top_pml_air": {
+          "bounds_m": [
+            1.4e-06,
+            3e-06
+          ],
+          "cells": 8,
+          "uniform_dz_m": 2.0000000000000002e-07
+        }
+      }
+    }
+  ],
+  "required_per_variant_work": [
+    "new all-air source calibration",
+    "previous-vs-late Q stationarity",
+    "target and discrete-ADE Q/closed-flux closure",
+    "conservative remap, temperature, and signed current comparison"
+  ],
+  "promotion": {
+    "is_mesh_certificate": false,
+    "reason": "target device is unconfirmed and no variant field solve was run"
+  }
+}
