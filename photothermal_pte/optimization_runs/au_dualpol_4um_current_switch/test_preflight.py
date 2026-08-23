@@ -58,6 +58,18 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.mesh_varia
     variant_edges,
     variant_layout,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import (
+    N_DESIGN,
+    N_TA,
+    SEEBECK_TA_XY_V_K,
+    SIGMA_TA_XY_S_M,
+    STEP_M,
+    TA_THICKNESS_M,
+    current_integrand,
+    electrical_load,
+    ta_id,
+    temperature_pullback,
+)
 
 
 def test_contract_geometry_and_source_boundary() -> None:
@@ -237,13 +249,27 @@ def test_signed_opposite_current_objective() -> None:
 
 
 def test_weighting_integral_sign_means_right_to_left_internal_current() -> None:
-    # S>0 and T_right>T_left produces physical J=-sigma*S*grad(T) toward
-    # the left. The implemented sigma*S*dT*dpsi contribution is positive.
-    sigma_t_s = 2.0
-    delta_temperature = 3.0
-    delta_psi = 1.0
-    assert sigma_t_s * delta_temperature * delta_psi > 0.0
-    assert -sigma_t_s * delta_temperature < 0.0
+    # Along x=b, S_b>0 and T increasing toward the unit-potential terminal
+    # produces Jloc=-sigma_b*S_b*grad(T), hence a negative collected current.
+    temperature = np.broadcast_to(
+        np.arange(N_TA, dtype=np.float64)[:, None], (N_TA, N_TA)
+    ).copy()
+    psi = np.zeros(N_TA * N_TA + N_DESIGN * N_DESIGN, dtype=np.float64)
+    for i in range(N_TA):
+        psi[[ta_id(i, j) for j in range(N_TA)]] = i / (N_TA - 1)
+    expected = (
+        -SIGMA_TA_XY_S_M[0]
+        * TA_THICKNESS_M
+        * SEEBECK_TA_XY_V_K[0]
+        * N_TA
+    )
+    objective = float(electrical_load(temperature) @ psi)
+    integrated_map = float(np.sum(current_integrand(temperature, psi)) * STEP_M**2)
+    pullback = float(np.vdot(temperature_pullback(psi), temperature))
+    assert expected < 0.0
+    assert np.isclose(objective, expected, rtol=1e-13, atol=0.0)
+    assert np.isclose(integrated_map, expected, rtol=1e-13, atol=0.0)
+    assert np.isclose(pullback, expected, rtol=1e-13, atol=0.0)
 
 
 def test_exact_solid_void_audit_detects_subminimum_features() -> None:

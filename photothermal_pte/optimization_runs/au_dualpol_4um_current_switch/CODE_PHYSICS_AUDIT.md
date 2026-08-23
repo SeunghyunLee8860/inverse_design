@@ -95,6 +95,11 @@ sample-air boundaries are insulating, and the transverse example uses an
   and SHA checks.
 - Material interpolation range checks and a fail-closed substrate-loss check.
 - Portable launchers/raw paths and explicit single-GPU contracts.
+- Correct Shockley-Ramo sign in the electrical objective, current-density map,
+  thermal pullback, and all downstream gradients: the implemented edge term is
+  now `-sigma*S*DeltaT*Deltapsi`, matching `J_local=-sigma*S*grad(T)`.
+  Historical signed-current artifacts made before this correction are stale
+  and must be recomputed; they cannot be relabeled as physical current.
 - New shared-linear Eb optical-gradient split: 0.0158% total AD-FD error at
   step 0.0025. This is diagnostic only, on the unconverged baseline mesh.
 - New discrete adjoint phase diagnostic: production `exp(+i omega dt)` is the

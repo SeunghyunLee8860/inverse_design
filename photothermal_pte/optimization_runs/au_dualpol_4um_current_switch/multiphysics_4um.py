@@ -438,6 +438,8 @@ def _add_edge(rows, cols, data, left: int, right: int, g: float) -> None:
 
 
 def electrical_load(temperature_K: np.ndarray) -> np.ndarray:
+    """Return the Shockley--Ramo objective vector for ``Jloc=-sigma*S*grad(T)``."""
+
     temperature = np.asarray(temperature_K, dtype=np.float64)
     if temperature.shape != (N_TA, N_TA):
         raise ValueError("temperature must be 160x160")
@@ -453,8 +455,8 @@ def electrical_load(temperature_K: np.ndarray) -> np.ndarray:
                     * SEEBECK_TA_XY_V_K[0]
                     * (temperature[i + 1, j] - temperature[i, j])
                 )
-                load[left] -= value
-                load[right] += value
+                load[left] += value
+                load[right] -= value
             if j + 1 < N_TA:
                 right = ta_id(i, j + 1)
                 value = (
@@ -463,8 +465,8 @@ def electrical_load(temperature_K: np.ndarray) -> np.ndarray:
                     * SEEBECK_TA_XY_V_K[1]
                     * (temperature[i, j + 1] - temperature[i, j])
                 )
-                load[left] -= value
-                load[right] += value
+                load[left] += value
+                load[right] -= value
     return load
 
 
@@ -599,7 +601,7 @@ def current_integrand(temperature_K: np.ndarray, psi: np.ndarray) -> np.ndarray:
             node = ta_id(i, j)
             if i + 1 < N_TA:
                 right = ta_id(i + 1, j)
-                contribution = (
+                contribution = -(
                     SIGMA_TA_XY_S_M[0]
                     * TA_THICKNESS_M
                     * SEEBECK_TA_XY_V_K[0]
@@ -610,7 +612,7 @@ def current_integrand(temperature_K: np.ndarray, psi: np.ndarray) -> np.ndarray:
                 values[i + 1, j] += 0.5 * contribution / STEP_M**2
             if j + 1 < N_TA:
                 right = ta_id(i, j + 1)
-                contribution = (
+                contribution = -(
                     SIGMA_TA_XY_S_M[1]
                     * TA_THICKNESS_M
                     * SEEBECK_TA_XY_V_K[1]
@@ -636,7 +638,7 @@ def temperature_pullback(psi: np.ndarray) -> np.ndarray:
                     * TA_THICKNESS_M
                     * SEEBECK_TA_XY_V_K[0]
                 )
-                contribution = scale * (psi[right] - psi[node])
+                contribution = -scale * (psi[right] - psi[node])
                 gradient[i, j] -= contribution
                 gradient[i + 1, j] += contribution
             if j + 1 < N_TA:
@@ -646,7 +648,7 @@ def temperature_pullback(psi: np.ndarray) -> np.ndarray:
                     * TA_THICKNESS_M
                     * SEEBECK_TA_XY_V_K[1]
                 )
-                contribution = scale * (psi[right] - psi[node])
+                contribution = -scale * (psi[right] - psi[node])
                 gradient[i, j] -= contribution
                 gradient[i, j + 1] += contribution
     return gradient
