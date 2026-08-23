@@ -26,6 +26,16 @@
     "plus45_minus_minus45_top_bottom_current_nA": -7.358555716152626e-09,
     "plus45_minus_minus45_left_right_current_nA": -0.23639358718722064
   },
+  "diagonal_mirror_symmetry": {
+    "mirror_axis": "Lumerical x=b",
+    "full_3D_power_direct_relative_L2": 0.5434504115299091,
+    "full_3D_power_x_mirrored_relative_L2": 5.707520940741814e-07,
+    "TaIrTe4_power_x_mirrored_relative_L2": 1.9701457417846136e-07,
+    "temperature_3D_direct_relative_L2": 0.013830690524003179,
+    "temperature_3D_x_mirrored_relative_L2": 4.390352716475822e-08,
+    "left_right_current_integrand_x_mirrored_and_sign_flipped_relative_L2": 1.0412933400133475e-07,
+    "top_bottom_current_integrand_x_mirrored_relative_L2": 7.637459291431186e-08
+  },
   "cases": [
     {
       "case": "T11x15_Ea_Au_on",

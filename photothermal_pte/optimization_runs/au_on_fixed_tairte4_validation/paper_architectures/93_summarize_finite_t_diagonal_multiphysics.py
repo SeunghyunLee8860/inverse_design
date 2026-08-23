@@ -21,6 +21,8 @@ AXIAL_MAPPING = HERE / "results_finite_T_Z_array_material_Q_mapping" / "FINITE_T
 DIAGONAL_MAPPING = HERE / "results_finite_T_diagonal_material_Q_mapping" / "FINITE_T_DIAGONAL_MATERIAL_Q_MAPPING_SUMMARY.json"
 AXIAL_THERMAL = HERE / "results_finite_T_Z_array_thermal_electrical"
 DIAGONAL_THERMAL = HERE / "results_finite_T_diagonal_thermal_electrical"
+RAW_DIAGONAL_MAPPING = Path("/home/seunghyun/tairte4/raw_artifacts/finite_T_diagonal_material_Q")
+RAW_DIAGONAL_THERMAL = Path("/home/seunghyun/tairte4/raw_artifacts/finite_T_diagonal_thermal_electrical")
 OUTPUT = HERE / "results_finite_T_diagonal_multiphysics_summary"
 CASES = (
     "T11x15_Ea_Au_on",
@@ -41,6 +43,59 @@ def sha256(path: Path) -> str:
 def optical_result(case: str) -> tuple[Path, dict]:
     path = next((RAW_OPTICAL / case).glob("FINITE_*_Q.json"))
     return path, json.loads(path.read_text())
+
+
+def relative_l2(reference: np.ndarray, candidate: np.ndarray) -> float:
+    reference = np.asarray(reference, dtype=float)
+    candidate = np.asarray(candidate, dtype=float)
+    valid = np.isfinite(reference) & np.isfinite(candidate)
+    denominator = np.linalg.norm(reference[valid])
+    return float(
+        np.linalg.norm(reference[valid] - candidate[valid])
+        / max(denominator, np.finfo(float).tiny)
+    )
+
+
+def diagonal_mirror_metrics() -> dict[str, float | str]:
+    plus_case = "T11x15_linear_plus_45_Au_on"
+    minus_case = "T11x15_linear_minus_45_Au_on"
+    plus_q_path = RAW_DIAGONAL_MAPPING / f"{plus_case}_material_Q_thermal_grid.npz"
+    minus_q_path = RAW_DIAGONAL_MAPPING / f"{minus_case}_material_Q_thermal_grid.npz"
+    plus_t_path = RAW_DIAGONAL_THERMAL / f"{plus_case}_finite_thermal_electrical.npz"
+    minus_t_path = RAW_DIAGONAL_THERMAL / f"{minus_case}_finite_thermal_electrical.npz"
+    with np.load(plus_q_path) as plus_q, np.load(minus_q_path) as minus_q:
+        q_direct = relative_l2(plus_q["power_total_W"], minus_q["power_total_W"])
+        q_mirror = relative_l2(
+            plus_q["power_total_W"], np.flip(minus_q["power_total_W"], axis=0)
+        )
+        q_ta_mirror = relative_l2(
+            plus_q["power_TaIrTe4_W"], np.flip(minus_q["power_TaIrTe4_W"], axis=0)
+        )
+    with np.load(plus_t_path) as plus_t, np.load(minus_t_path) as minus_t:
+        temperature_direct = relative_l2(
+            plus_t["temperature_3d_K"], minus_t["temperature_3d_K"]
+        )
+        temperature_mirror = relative_l2(
+            plus_t["temperature_3d_K"], np.flip(minus_t["temperature_3d_K"], axis=0)
+        )
+        lr_integrand_mirror_signflip = relative_l2(
+            plus_t["left_right_integrand_total"],
+            -np.flip(minus_t["left_right_integrand_total"], axis=0),
+        )
+        tb_integrand_mirror = relative_l2(
+            plus_t["top_bottom_integrand_total"],
+            np.flip(minus_t["top_bottom_integrand_total"], axis=0),
+        )
+    return {
+        "mirror_axis": "Lumerical x=b",
+        "full_3D_power_direct_relative_L2": q_direct,
+        "full_3D_power_x_mirrored_relative_L2": q_mirror,
+        "TaIrTe4_power_x_mirrored_relative_L2": q_ta_mirror,
+        "temperature_3D_direct_relative_L2": temperature_direct,
+        "temperature_3D_x_mirrored_relative_L2": temperature_mirror,
+        "left_right_current_integrand_x_mirrored_and_sign_flipped_relative_L2": lr_integrand_mirror_signflip,
+        "top_bottom_current_integrand_x_mirrored_relative_L2": tb_integrand_mirror,
+    }
 
 
 def main() -> int:
@@ -124,6 +179,7 @@ def main() -> int:
 
     plus = rows[2]
     minus = rows[3]
+    mirror = diagonal_mirror_metrics()
     gates = {
         "all_optical_closure_lt_0p5pct": max(row["six_face_closure_relative"] for row in rows) < 0.005,
         "all_auto_shutoff_lt_1e-5": max(row["auto_shutoff"] for row in rows) < 1e-5,
@@ -155,6 +211,7 @@ def main() -> int:
             "plus45_minus_minus45_top_bottom_current_nA": plus["top_bottom_current_nA"] - minus["top_bottom_current_nA"],
             "plus45_minus_minus45_left_right_current_nA": plus["left_right_current_nA"] - minus["left_right_current_nA"],
         },
+        "diagonal_mirror_symmetry": mirror,
         "cases": rows,
     }
     (OUTPUT / "FINITE_T_DIAGONAL_MULTIPHYSICS_SUMMARY.json").write_text(json.dumps(summary, indent=2) + "\n")
@@ -178,6 +235,19 @@ def main() -> int:
         [
             "",
             "The +/-45 cases are independent coherent Maxwell solves, not arithmetic averages of Ea/Eb Q.",
+            "",
+            "## Diagonal-polarization mirror audit",
+            "",
+            "The two diagonal sources have equal total absorption to numerical precision, but their spatial fields are mirrored across Lumerical x=b.",
+            "The left-right current integrand acquires an additional sign reversal, whereas the top-bottom integrand does not.",
+            "",
+            f"- full-3D Q direct relative L2: `{mirror['full_3D_power_direct_relative_L2']:.9g}`",
+            f"- full-3D Q after x reflection: `{mirror['full_3D_power_x_mirrored_relative_L2']:.9g}`",
+            f"- TaIrTe4 Q after x reflection: `{mirror['TaIrTe4_power_x_mirrored_relative_L2']:.9g}`",
+            f"- 3D temperature after x reflection: `{mirror['temperature_3D_x_mirrored_relative_L2']:.9g}`",
+            f"- left-right integrand after x reflection and sign flip: `{mirror['left_right_current_integrand_x_mirrored_and_sign_flipped_relative_L2']:.9g}`",
+            f"- top-bottom integrand after x reflection: `{mirror['top_bottom_current_integrand_x_mirrored_relative_L2']:.9g}`",
+            "",
             "Raw NPZ/FSP remain outside Git; no clipping, smoothing, gain, global rescaling, or tiling was used.",
         ]
     )
