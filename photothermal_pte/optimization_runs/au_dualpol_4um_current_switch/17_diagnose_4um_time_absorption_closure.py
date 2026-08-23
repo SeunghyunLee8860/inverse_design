@@ -34,18 +34,119 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.mesh_varia
     mesh_context,
     variant_audit,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.paths import (
+    raw_path,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production_readiness import (
+    DEVICE_CERTIFICATE,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
     require_single_visible_gpu,
+    sha256,
 )
 
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "results_4um_time_absorption_closure"
+RAW = raw_path("time_absorption_closure")
 FACTOR = 8
 POLARIZATION = "Eb"
 DENSITY_CASE = "eta_0.35"
 TIME_CASES = ((24, 4), (32, 4), (40, 4), (40, 8))
 GATE = 5.0e-3
+
+
+def case_name(total_periods: int, window_periods: int) -> str:
+    return f"total_{total_periods:03d}_window_{window_periods:03d}"
+
+
+def load_case_cache(
+    total_periods: int,
+    window_periods: int,
+    runsetup_sha256: str,
+) -> tuple[
+    dict[str, object],
+    dict[str, np.ndarray],
+    dict[str, np.ndarray],
+] | None:
+    manifest_path = OUT / f"{case_name(total_periods, window_periods)}.json"
+    if not manifest_path.exists():
+        return None
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if manifest.get("status") != "COMPLETE_TIME_ABSORPTION_CASE":
+        return None
+    if manifest.get("runsetup_sha256") != runsetup_sha256:
+        return None
+    if manifest.get("time_case") != [total_periods, window_periods]:
+        return None
+    raw = manifest.get("raw_artifact")
+    if not isinstance(raw, dict):
+        return None
+    artifact_path = Path(str(raw.get("path", "")))
+    if not artifact_path.is_file():
+        return None
+    if sha256(artifact_path) != raw.get("sha256"):
+        raise RuntimeError(f"cached time-case artifact hash mismatch: {artifact_path}")
+    with np.load(artifact_path, allow_pickle=False) as archive:
+        expected = {"q_au", "q_tairte4", "volume_au", "volume_tairte4"}
+        if set(archive.files) != expected:
+            raise RuntimeError(
+                f"cached time-case artifact has keys {archive.files}, expected {expected}"
+            )
+        q = {
+            "au": np.asarray(archive["q_au"]),
+            "tairte4": np.asarray(archive["q_tairte4"]),
+        }
+        volumes = {
+            "au": np.asarray(archive["volume_au"]),
+            "tairte4": np.asarray(archive["volume_tairte4"]),
+        }
+    if not all(np.all(np.isfinite(value)) for value in (*q.values(), *volumes.values())):
+        raise RuntimeError(f"cached time-case artifact is non-finite: {artifact_path}")
+    row = manifest.get("row")
+    if not isinstance(row, dict):
+        raise RuntimeError(f"cached time-case row is invalid: {manifest_path}")
+    return row, q, volumes
+
+
+def save_case_cache(
+    total_periods: int,
+    window_periods: int,
+    runsetup_sha256: str,
+    row: dict[str, object],
+    q: dict[str, np.ndarray],
+    volumes: dict[str, np.ndarray],
+) -> None:
+    RAW.mkdir(parents=True, exist_ok=True)
+    stem = case_name(total_periods, window_periods)
+    artifact_path = RAW / f"{stem}_{runsetup_sha256[:16]}.npz"
+    temporary = artifact_path.with_suffix(".npz.tmp")
+    with temporary.open("wb") as stream:
+        np.savez_compressed(
+            stream,
+            q_au=q["au"],
+            q_tairte4=q["tairte4"],
+            volume_au=volumes["au"],
+            volume_tairte4=volumes["tairte4"],
+        )
+    temporary.replace(artifact_path)
+    manifest = {
+        "status": "COMPLETE_TIME_ABSORPTION_CASE",
+        "runsetup_sha256": runsetup_sha256,
+        "time_case": [total_periods, window_periods],
+        "row": row,
+        "raw_artifact": {
+            "path": str(artifact_path.resolve()),
+            "sha256": sha256(artifact_path),
+            "tracked_by_git": False,
+        },
+    }
+    manifest_path = OUT / f"{stem}.json"
+    temporary_manifest = manifest_path.with_suffix(".json.tmp")
+    temporary_manifest.write_text(
+        json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
+    )
+    temporary_manifest.replace(manifest_path)
 
 
 def relative(left: float, right: float) -> float:
@@ -258,6 +359,8 @@ def main() -> int:
     runsetup = {
         "status": "AUDITED_TIME_ABSORPTION_CLOSURE_RUNSETUP_NOT_SOLVED",
         "scope": "historical worst-closure partial-z geometry reinterpreted with shared-linear Au",
+        "diagnostic_script_sha256": sha256(Path(__file__).resolve()),
+        "device_contract_sha256": sha256(DEVICE_CERTIFICATE),
         "mesh": variant_audit(FACTOR, PARTIAL_MATERIAL_Z),
         "polarization": POLARIZATION,
         "density_case": DENSITY_CASE,
@@ -278,16 +381,22 @@ def main() -> int:
             "not required for scale-invariant Q/closed-flux and window comparisons; "
             "no downstream current is evaluated"
         ),
-        "raw_arrays_written": False,
+        "raw_arrays": {
+            "written_outside_git": not args.audit_only,
+            "root": str(RAW.resolve()),
+            "purpose": "per-case restart cache for Q-map convergence comparisons",
+        },
     }
     OUT.mkdir(parents=True, exist_ok=True)
-    (OUT / "TIME_ABSORPTION_CLOSURE_RUNSETUP.json").write_text(
+    runsetup_path = OUT / "TIME_ABSORPTION_CLOSURE_RUNSETUP.json"
+    runsetup_path.write_text(
         json.dumps(runsetup, indent=2) + "\n", encoding="utf-8"
     )
     if args.audit_only:
         print(json.dumps(runsetup, indent=2), flush=True)
         return 0
     require_single_visible_gpu()
+    runsetup_sha = sha256(runsetup_path)
     rows = []
     stored_q = {}
     comparison_volumes = None
@@ -295,7 +404,20 @@ def main() -> int:
         print(
             f"[time] total={total_periods} window={window_periods}", flush=True
         )
-        row, q, volumes = run_case(density, total_periods, window_periods)
+        cached = load_case_cache(total_periods, window_periods, runsetup_sha)
+        if cached is None:
+            row, q, volumes = run_case(density, total_periods, window_periods)
+            save_case_cache(
+                total_periods,
+                window_periods,
+                runsetup_sha,
+                row,
+                q,
+                volumes,
+            )
+        else:
+            print("[time] resuming verified cached case", flush=True)
+            row, q, volumes = cached
         rows.append(row)
         stored_q[(total_periods, window_periods)] = q
         comparison_volumes = volumes
