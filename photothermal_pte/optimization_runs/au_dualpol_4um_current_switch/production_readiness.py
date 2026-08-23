@@ -9,9 +9,18 @@ from pathlib import Path
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
     audit as material_fraction_audit,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
+    load_current_source_calibration,
+)
 
 
 HERE = Path(__file__).resolve().parent
+DEVICE_CERTIFICATE = HERE / "physical_device_contract.json"
+SOURCE_CALIBRATION = (
+    HERE
+    / "results_fdtdx_4um_source_calibration"
+    / "fdtdx_4um_source_calibration.json"
+)
 MESH_CERTIFICATE = (
     HERE
     / "results_4um_shared_linear_mesh_convergence"
@@ -24,6 +33,18 @@ GRADIENT_CERTIFICATE = (
 )
 MESH_STATUS = "VALIDATED_SHARED_LINEAR_FULL_MESH_CONVERGENCE"
 GRADIENT_STATUS = "VALIDATED_SHARED_LINEAR_COMBINED_ADFD"
+DEVICE_STATUS = "VALIDATED_AU_TAIRTE4_PHYSICAL_DEVICE_CONTRACT"
+REQUIRED_DEVICE_CONFIRMATIONS = (
+    "flake_geometry_and_thickness_from_target_device",
+    "crystal_axis_angle_and_solver_mapping_confirmed",
+    "terminal_shapes_and_locations_confirmed",
+    "floating_au_role_and_direct_contact_confirmed",
+    "sio2_and_si_stack_confirmed",
+    "beam_wavelength_power_waist_center_and_incidence_confirmed",
+    "au_tairte4_thermal_contact_scenario_accepted",
+    "au_tairte4_electrical_contact_scenario_accepted",
+    "electrical_void_floor_sensitivity_passed",
+)
 REQUIRED_MESH_COVERAGE = (
     "optical_z_full_domain",
     "optical_xy",
@@ -57,18 +78,54 @@ def _read(path: Path) -> tuple[dict[str, object] | None, str | None]:
 def readiness_audit(
     mesh_path: Path = MESH_CERTIFICATE,
     gradient_path: Path = GRADIENT_CERTIFICATE,
+    device_path: Path = DEVICE_CERTIFICATE,
+    calibration_path: Path = SOURCE_CALIBRATION,
 ) -> dict[str, object]:
     mesh_path = Path(mesh_path)
     gradient_path = Path(gradient_path)
+    device_path = Path(device_path)
+    calibration_path = Path(calibration_path)
+    device, device_error = _read(device_path)
     mesh, mesh_error = _read(mesh_path)
     gradient, gradient_error = _read(gradient_path)
+    try:
+        load_current_source_calibration(calibration_path)
+        calibration_error = None
+    except (OSError, ValueError, KeyError, json.JSONDecodeError, RuntimeError) as error:
+        calibration_error = str(error)
     material = material_fraction_audit()
 
     checks: dict[str, bool] = {
+        "device_certificate_readable": device_error is None,
+        "source_calibration_current": calibration_error is None,
         "mesh_certificate_readable": mesh_error is None,
         "gradient_certificate_readable": gradient_error is None,
     }
-    errors = [error for error in (mesh_error, gradient_error) if error is not None]
+    errors = [
+        error
+        for error in (device_error, calibration_error, mesh_error, gradient_error)
+        if error is not None
+    ]
+    device_sha256 = None
+    if device is not None:
+        confirmations = device.get("confirmations", {})
+        device_sha256 = sha256(device_path)
+        checks.update(
+            device_status=device.get("status") == DEVICE_STATUS,
+            device_confirmations=bool(
+                isinstance(confirmations, dict)
+                and all(
+                    confirmations.get(name) is True
+                    for name in REQUIRED_DEVICE_CONFIRMATIONS
+                )
+            ),
+        )
+    else:
+        checks.update(device_status=False, device_confirmations=False)
+
+    calibration_sha256 = (
+        sha256(calibration_path) if calibration_error is None else None
+    )
     mesh_sha256 = None
     if mesh is not None:
         coverage = mesh.get("coverage", {})
@@ -80,12 +137,22 @@ def readiness_audit(
                 isinstance(coverage, dict)
                 and all(coverage.get(name) is True for name in REQUIRED_MESH_COVERAGE)
             ),
+            mesh_uses_device_certificate=(
+                device_sha256 is not None
+                and mesh.get("device_certificate_sha256") == device_sha256
+            ),
+            mesh_uses_source_calibration=(
+                calibration_sha256 is not None
+                and mesh.get("source_calibration_sha256") == calibration_sha256
+            ),
         )
     else:
         checks.update(
             mesh_status=False,
             mesh_material_fraction=False,
             mesh_coverage=False,
+            mesh_uses_device_certificate=False,
+            mesh_uses_source_calibration=False,
         )
 
     if gradient is not None:
@@ -118,10 +185,15 @@ def readiness_audit(
         "checks": checks,
         "failed_checks": failed,
         "errors": errors,
+        "device_certificate": str(device_path),
+        "device_certificate_sha256": device_sha256,
+        "source_calibration": str(calibration_path),
+        "source_calibration_sha256": calibration_sha256,
         "mesh_certificate": str(mesh_path),
         "mesh_certificate_sha256": mesh_sha256,
         "gradient_certificate": str(gradient_path),
         "required_mesh_coverage": list(REQUIRED_MESH_COVERAGE),
+        "required_device_confirmations": list(REQUIRED_DEVICE_CONFIRMATIONS),
         "au_material_fraction": material,
     }
 

@@ -1,0 +1,39 @@
+{
+  "status": "BLOCKED_DEVICE_GEOMETRY_CONFIRMATION_REQUIRED",
+  "scope": "experimental device geometry, contacts, axes, illumination, and interface scenarios required before mesh certification or production optimization",
+  "current_code_assumptions": {
+    "flake": "16 um x 16 um square, 100 nm thick",
+    "crystal_mapping": "solver x=b, solver y=a, no in-plane rotation",
+    "terminals": "ideal Dirichlet terminals covering the complete x_min and x_max flake edges",
+    "au": "8 um x 8 um centered 50 nm binary floating design, in direct thermal/electrical contact with TaIrTe4",
+    "substrate": "285 nm SiO2 on Si",
+    "illumination": "normal-incidence centered 4 um Gaussian, w0=4 um, 285 uW",
+    "thermal_outer_boundary": "ambient-temperature lateral faces at +/-32 um and substrate bottom at -20 um; top convection 10 W m^-2 K^-1",
+    "electrical_void_regularization": "finite Au sheet/contact conductivity floors remain in nominal void"
+  },
+  "confirmations": {
+    "flake_geometry_and_thickness_from_target_device": false,
+    "crystal_axis_angle_and_solver_mapping_confirmed": false,
+    "terminal_shapes_and_locations_confirmed": false,
+    "floating_au_role_and_direct_contact_confirmed": false,
+    "sio2_and_si_stack_confirmed": false,
+    "beam_wavelength_power_waist_center_and_incidence_confirmed": false,
+    "au_tairte4_thermal_contact_scenario_accepted": false,
+    "au_tairte4_electrical_contact_scenario_accepted": false,
+    "electrical_void_floor_sensitivity_passed": false
+  },
+  "required_user_inputs": [
+    "flake outline or CAD and TaIrTe4 thickness",
+    "a-axis angle in the device coordinate system",
+    "measurement-electrode outlines and which contact is the signed output",
+    "whether patterned Au is electrically touching TaIrTe4 and is floating or terminal-connected",
+    "SiO2 thickness and relevant Si stack",
+    "4 um beam power, waist definition, center, incidence, and polarization convention",
+    "accepted Au-TaIrTe4 thermal/electrical contact ranges or measurements"
+  ],
+  "literature_basis": {
+    "main_paper": "Adv. Funct. Mater. 2026, doi:10.1002/adfm.75986, Eq. (6) and pp. 3-4: collection is geometry-sensitive; transverse example uses a-axis/electrode angle alpha=45 degrees",
+    "supplement": "adfm75986-sup-0001-suppmat-2.pdf, Sec. S5C-D: collecting electrode psi=1, other electrodes psi=0, sample-air boundaries zero flux",
+    "parameter_table": "adfm75986-sup-0001-suppmat-2.pdf, Table S2"
+  }
+}

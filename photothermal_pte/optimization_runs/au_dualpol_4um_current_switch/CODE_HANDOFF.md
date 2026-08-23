@@ -34,11 +34,13 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     must be closed before another production optimization.
 12. `production_readiness.py` and `PRODUCTION_READINESS.md` -- executable
     certificate chain that currently blocks all production entry points.
+13. `CODE_PHYSICS_AUDIT.md` and `physical_device_contract.json` -- full
+    physics audit and the deliberately blocked target-device contract.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
 
-## Current immutable physical contract
+## Current code assumptions -- not yet a confirmed physical device
 
 - wavelength: 4 um
 - scalar Gaussian waist: 4 um
@@ -83,9 +85,15 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    but the corrected robust path has not been run.  Historical robust results
    remain invalid for promotion.  See `ROBUST_OBJECTIVE_AUDIT.md`.
 8. Production optimization and exact-binary search are code-blocked until a
-   full shared-linear mesh certificate and a hash-linked shared-linear
-   multidirection combined AD-FD certificate both pass.  There is no runtime
-   bypass.  See `PRODUCTION_READINESS.md`.
+   confirmed device contract, full shared-linear mesh certificate, and a
+   hash-linked shared-linear multidirection combined AD-FD certificate all
+   pass. There is no runtime bypass. See `PRODUCTION_READINESS.md`.
+9. The present square flake, full-edge terminals, unrotated x=b/y=a axes,
+   100 nm thickness, 285 nm oxide, centered beam, and floating direct-contact
+   Au are assumptions. The local 2026 paper explicitly makes the weighting
+   field device-geometry dependent and its transverse example uses a 45 degree
+   crystal/electrode angle. Confirm the target flake/electrodes/axes/stack and
+   illumination in `physical_device_contract.json` before mesh certification.
 
 ## Raw checkpoint dependency
 
@@ -120,14 +128,16 @@ location.  `AU_DUALPOL_PYTHON`, `FDTDX_SOURCE_DIR`, and
 
 ## Next correct sequence
 
-1. Treat the existing factor 1/2/4/8 result as a failed partial-z diagnostic,
+1. Confirm the target geometry, contacts, crystal-axis angle, layer stack, and
+   illumination in `physical_device_contract.json`.
+2. Treat the existing factor 1/2/4/8 result as a failed partial-z diagnostic,
    not as a converged production mesh.
-2. Diagnose time-window stationarity and the factor-8 Q/closed-flux closure
+3. Diagnose time-window stationarity and the factor-8 Q/closed-flux closure
    failures; then expand z refinement to Si, air, and PML as needed.
-3. Revalidate the new shared linear material-fraction contract with endpoint,
+4. Revalidate the new shared linear material-fraction contract with endpoint,
    floor-sensitivity, and AD-FD checks on the selected mesh.
-4. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh
+5. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh
    convergence, and downstream PTE current.
-5. Certify the combined gradient on the selected production mesh.
-6. Only then restart LD_MMA continuation and finish with an exact binary
+6. Certify the combined gradient on the selected production mesh.
+7. Only then restart LD_MMA continuation and finish with an exact binary
    500 nm solid/void audit.
