@@ -32,11 +32,14 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_f
     audit as material_fraction_audit,
     au_material_fraction,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.paths import (
+    raw_root,
+)
 
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "results_fdtdx_4um_dualpol_forward"
-RAW = Path("/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch")
+RAW = raw_root()
 EPS0_F_PER_M = 8.8541878128e-12
 
 
@@ -336,7 +339,7 @@ def main() -> int:
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"
     )
     with (OUT / "fdtdx_4um_dualpol_forward.csv").open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.writer(stream)
+        writer = csv.writer(stream, lineterminator="\n")
         writer.writerow(
             [
                 "polarization", "status", "runtime_s", "P_Q_W", "P_closed_W",

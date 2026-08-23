@@ -32,11 +32,18 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysi
     tairte4_temperature,
     thermal_edges,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.paths import (
+    raw_root,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
+    load_current_source_calibration,
+    sha256,
+)
 
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "results_4um_multiphysics_forward"
-RAW_OPTICAL = Path("/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch")
+RAW_OPTICAL = raw_root()
 RAW = RAW_OPTICAL / "multiphysics"
 CALIBRATION = HERE / "results_fdtdx_4um_source_calibration/fdtdx_4um_source_calibration.json"
 FORWARD_SUMMARY = HERE / "results_fdtdx_4um_dualpol_forward/fdtdx_4um_dualpol_forward.json"
@@ -144,9 +151,7 @@ def main() -> int:
         raise RuntimeError("GPU-only multiphysics gate requires CUDA_VISIBLE_DEVICES")
     cuda_device = 0
     OUT.mkdir(parents=True, exist_ok=True)
-    calibration = json.loads(CALIBRATION.read_text(encoding="utf-8"))
-    if calibration["status"] != "VALIDATED_FDTDX_4UM_SOURCE_POWER_CALIBRATION":
-        raise RuntimeError("source calibration is not validated")
+    calibration = load_current_source_calibration(CALIBRATION)
     scale = CONTRACT.reporting_incident_power_W / float(
         calibration["common_reference_incident_power_W"]
     )
@@ -185,13 +190,14 @@ def main() -> int:
         },
         "geometry": CONTRACT.audit(),
         "au_material_fraction": material_fraction_audit(),
+        "source_calibration_sha256": sha256(CALIBRATION),
         "cases": cases,
     }
     (OUT / "multiphysics_4um_forward.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"
     )
     with (OUT / "multiphysics_4um_forward.csv").open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.writer(stream)
+        writer = csv.writer(stream, lineterminator="\n")
         writer.writerow(("polarization", "status", "P_Q_W", "Tmax_K", "current_nA", "runtime_s"))
         for case in cases:
             writer.writerow((case["polarization"], case["status"], case["source_power_W"], case["Tmax_K"], case["current_nA"], case["runtime_s"]))

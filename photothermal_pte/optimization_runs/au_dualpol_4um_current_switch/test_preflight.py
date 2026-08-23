@@ -42,6 +42,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_
     source_calibration_contract,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
+    load_current_source_calibration,
     require_material_fraction,
 )
 
@@ -82,6 +83,22 @@ def test_lossy_substrate_cannot_be_silently_replaced_by_real_epsilon() -> None:
 def test_historical_validation_without_material_law_fails_closed() -> None:
     with np.testing.assert_raises(RuntimeError):
         require_material_fraction({"status": "historical"}, "test artifact")
+
+
+def test_source_calibration_loader_rejects_stale_grid_contract(tmp_path) -> None:
+    path = tmp_path / "calibration.json"
+    path.write_text(
+        json.dumps(
+            {
+                "status": "VALIDATED_FDTDX_4UM_SOURCE_POWER_CALIBRATION",
+                "source_calibration_contract": {"grid_edges_sha256": "stale"},
+                "cases": [],
+            }
+        ),
+        encoding="utf-8",
+    )
+    with np.testing.assert_raises(RuntimeError):
+        load_current_source_calibration(path)
 
 
 def test_robust_contract_includes_nominal_and_all_grayness_constraints() -> None:

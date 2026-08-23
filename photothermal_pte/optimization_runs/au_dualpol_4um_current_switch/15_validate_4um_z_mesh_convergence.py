@@ -51,18 +51,13 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysi
 from photothermal_pte.optimization_runs.legacy_v261_optical_support.production_density_mapping import (
     ProductionDensityMapping,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.paths import raw_path
 
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "results_4um_dualpol_au_z_mesh_convergence"
-RAW = Path(
-    "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/"
-    "z_mesh_convergence"
-)
-CHECKPOINT = Path(
-    "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/"
-    "robust_projection_ld_mma/evaluation_0112.npz"
-)
+RAW = raw_path("z_mesh_convergence")
+CHECKPOINT = raw_path("robust_projection_ld_mma", "evaluation_0112.npz")
 EXPECTED_CHECKPOINT_SHA256 = (
     "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3"
 )

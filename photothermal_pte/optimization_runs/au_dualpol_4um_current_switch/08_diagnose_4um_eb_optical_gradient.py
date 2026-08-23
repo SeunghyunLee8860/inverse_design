@@ -18,16 +18,14 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_model import (
     MATERIAL_JSON,
     grid_edges_sha256,
-    source_calibration_contract,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
     audit as material_fraction_audit,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
-    SOURCE_CALIBRATION_STATUS,
     array_sha256,
+    load_current_source_calibration,
     require_single_visible_gpu,
-    require_status,
     sha256,
 )
 
@@ -64,10 +62,7 @@ def relative_error(ad: float, fd: float) -> float:
 
 def main() -> None:
     require_single_visible_gpu()
-    calibration = json.loads(CALIBRATION.read_text(encoding="utf-8"))
-    require_status(calibration, SOURCE_CALIBRATION_STATUS, "source calibration")
-    if calibration.get("source_calibration_contract") != source_calibration_contract():
-        raise RuntimeError("source calibration does not match the current grid/source/time contract")
+    calibration = load_current_source_calibration(CALIBRATION)
     scale = float(calibration["reporting_incident_power_W"]) / float(
         calibration["common_reference_incident_power_W"]
     )

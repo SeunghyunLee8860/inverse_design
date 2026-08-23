@@ -35,14 +35,17 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysi
 from photothermal_pte.optimization_runs.legacy_v261_optical_support.production_density_mapping import (
     ProductionDensityMapping,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.paths import (
+    raw_path,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
+    load_current_source_calibration,
+)
 
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "results_4um_dualpol_au_gray_law_diagnostic"
-INPUT = Path(
-    "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/"
-    "robust_projection_ld_mma/evaluation_0112.npz"
-)
+INPUT = raw_path("robust_projection_ld_mma", "evaluation_0112.npz")
 CALIBRATION = HERE / "results_fdtdx_4um_source_calibration/fdtdx_4um_source_calibration.json"
 
 
@@ -78,7 +81,7 @@ def main() -> None:
         raise FileNotFoundError(INPUT)
     OUT.mkdir(parents=True, exist_ok=True)
     cuda_device = int(os.environ.get("THERMAL_CUDA_DEVICE", "0"))
-    calibration = json.loads(CALIBRATION.read_text(encoding="utf-8"))
+    calibration = load_current_source_calibration(CALIBRATION)
     source_scale = CONTRACT.reporting_incident_power_W / float(
         calibration["common_reference_incident_power_W"]
     )

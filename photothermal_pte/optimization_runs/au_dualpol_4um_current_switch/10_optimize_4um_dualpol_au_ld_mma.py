@@ -60,6 +60,12 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysi
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production_readiness import (
     require_production_readiness,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.paths import (
+    raw_path,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
+    load_current_source_calibration,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -69,7 +75,7 @@ OUT = HERE / os.environ.get(
 RAW = Path(
     os.environ.get(
         "AU_DUALPOL_RAW_DIR",
-        "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma",
+        str(raw_path("optimization_ld_mma")),
     )
 )
 CALIBRATION = (
@@ -731,9 +737,7 @@ def main() -> int:
     cuda_device = int(os.environ.get("THERMAL_CUDA_DEVICE", "0"))
     OUT.mkdir(parents=True, exist_ok=True)
     RAW.mkdir(parents=True, exist_ok=True)
-    calibration = json.loads(CALIBRATION.read_text(encoding="utf-8"))
-    if calibration.get("status") != "VALIDATED_FDTDX_4UM_SOURCE_POWER_CALIBRATION":
-        raise RuntimeError("validated source-power calibration is unavailable")
+    calibration = load_current_source_calibration(CALIBRATION)
     source_scale = CONTRACT.reporting_incident_power_W / float(
         calibration["common_reference_incident_power_W"]
     )

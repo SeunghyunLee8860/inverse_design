@@ -48,16 +48,27 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_f
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production_readiness import (
     require_production_readiness,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.paths import (
+    raw_path,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
+    load_current_source_calibration,
+)
 
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "results_4um_dualpol_au_exact_binary_search"
-RAW = Path(
-    "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/exact_binary_search"
-)
+RAW = raw_path("exact_binary_search")
 INITIAL = Path(
-    "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/"
-    "final_binary_threshold_0.50_radius_450nm_close_open.npz"
+    os.environ.get(
+        "AU_EXACT_INITIAL_NPZ",
+        str(
+            raw_path(
+                "optimization_ld_mma",
+                "final_binary_threshold_0.50_radius_450nm_close_open.npz",
+            )
+        ),
+    )
 )
 CALIBRATION = HERE / "results_fdtdx_4um_source_calibration/fdtdx_4um_source_calibration.json"
 MAX_STEPS = int(os.environ.get("AU_EXACT_MAX_STEPS", "12"))
@@ -310,7 +321,7 @@ def main() -> int:
     readiness = require_production_readiness()
     cuda_device = int(os.environ.get("THERMAL_CUDA_DEVICE", "0"))
     OUT.mkdir(parents=True, exist_ok=True); RAW.mkdir(parents=True, exist_ok=True)
-    calibration = json.loads(CALIBRATION.read_text(encoding="utf-8"))
+    calibration = load_current_source_calibration(CALIBRATION)
     source_scale = CONTRACT.reporting_incident_power_W / float(calibration["common_reference_incident_power_W"])
     with np.load(INITIAL, allow_pickle=False) as data:
         binary = np.asarray(data["physical_density"], dtype=float) >= 0.5

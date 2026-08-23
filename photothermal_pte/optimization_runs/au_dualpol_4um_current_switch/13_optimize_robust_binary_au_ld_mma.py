@@ -56,6 +56,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.robust_con
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production_readiness import (
     require_production_readiness,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.paths import raw_path
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
+    load_current_source_calibration,
+)
 from photothermal_pte.optimization_runs.legacy_v261_optical_support.production_density_mapping import (
     ProductionDensityMapping,
 )
@@ -63,12 +67,12 @@ from photothermal_pte.optimization_runs.legacy_v261_optical_support.production_d
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "results_4um_dualpol_au_robust_projection_ld_mma"
-RAW = Path(
-    "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/robust_projection_ld_mma"
-)
+RAW = raw_path("robust_projection_ld_mma")
 INITIAL = Path(
-    "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/optimization_ld_mma/"
-    "stage_04_beta_12.npz"
+    os.environ.get(
+        "AU_ROBUST_INITIAL_NPZ",
+        str(raw_path("optimization_ld_mma", "stage_04_beta_12.npz")),
+    )
 )
 CALIBRATION = HERE / "results_fdtdx_4um_source_calibration/fdtdx_4um_source_calibration.json"
 CURRENT_SCALE_A = 1.0e-9
@@ -371,7 +375,7 @@ def main():
     if os.environ.get("CUDA_VISIBLE_DEVICES") is None: raise RuntimeError("GPU required")
     readiness = require_production_readiness()
     cuda_device=int(os.environ.get("THERMAL_CUDA_DEVICE","0")); OUT.mkdir(parents=True,exist_ok=True); RAW.mkdir(parents=True,exist_ok=True)
-    calibration=json.loads(CALIBRATION.read_text()); scale=CONTRACT.reporting_incident_power_W/float(calibration["common_reference_incident_power_W"])
+    calibration=load_current_source_calibration(CALIBRATION); scale=CONTRACT.reporting_incident_power_W/float(calibration["common_reference_incident_power_W"])
     finalize_only=os.environ.get("AU_ROBUST_FINALIZE_ONLY","0")=="1"
     resume_high=os.environ.get("AU_ROBUST_RESUME_HIGH_BETA","0")=="1"
     resume_final=RAW/"stage_06_beta_80.npz"

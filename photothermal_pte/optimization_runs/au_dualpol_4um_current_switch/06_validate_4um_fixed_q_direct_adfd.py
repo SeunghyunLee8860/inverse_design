@@ -194,7 +194,9 @@ def main() -> int:
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"
     )
     with (OUT / "fixed_q_direct_adfd.csv").open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.DictWriter(stream, fieldnames=tuple(all_rows[0]))
+        writer = csv.DictWriter(
+            stream, fieldnames=tuple(all_rows[0]), lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(all_rows)
 

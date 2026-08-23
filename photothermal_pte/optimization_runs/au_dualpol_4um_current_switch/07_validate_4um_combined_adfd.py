@@ -29,14 +29,17 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
     audit as material_fraction_audit,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.paths import (
+    raw_path,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
+    load_current_source_calibration,
+)
 
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "results_4um_combined_adfd_corrected"
-RAW = Path(
-    "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/"
-    "combined_adfd_corrected"
-)
+RAW = raw_path("combined_adfd_corrected")
 CALIBRATION = HERE / "results_fdtdx_4um_source_calibration/fdtdx_4um_source_calibration.json"
 STEPS = (0.01, 0.005, 0.0025)
 
@@ -212,9 +215,7 @@ def main() -> int:
     if os.environ.get("CUDA_VISIBLE_DEVICES") is None:
         raise RuntimeError("GPU-only combined gate requires CUDA_VISIBLE_DEVICES")
     OUT.mkdir(parents=True, exist_ok=True)
-    calibration = json.loads(CALIBRATION.read_text(encoding="utf-8"))
-    if calibration["status"] != "VALIDATED_FDTDX_4UM_SOURCE_POWER_CALIBRATION":
-        raise RuntimeError("fail-closed: source calibration not validated")
+    calibration = load_current_source_calibration(CALIBRATION)
     scale = CONTRACT.reporting_incident_power_W / float(
         calibration["common_reference_incident_power_W"]
     )
@@ -238,7 +239,9 @@ def main() -> int:
     )
     rows = [row for case in cases for row in case["rows"]]
     with (OUT / "combined_4um_adfd.csv").open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.DictWriter(stream, fieldnames=tuple(rows[0]))
+        writer = csv.DictWriter(
+            stream, fieldnames=tuple(rows[0]), lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(rows)
 

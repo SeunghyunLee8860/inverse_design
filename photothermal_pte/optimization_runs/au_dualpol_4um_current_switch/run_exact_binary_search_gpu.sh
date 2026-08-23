@@ -3,7 +3,7 @@ set -euo pipefail
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repository="$(git -C "$script_dir" rev-parse --show-toplevel)"
-gpu="${1:-0}"
+gpu="${AU_DUALPOL_GPU:-${1:-0}}"
 cd "$repository"
 export PYTHONPATH="$repository"
 export CUDA_VISIBLE_DEVICES="$gpu"
