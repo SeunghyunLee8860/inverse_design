@@ -666,13 +666,18 @@ def main() -> int:
     )
     resume_path_text = os.environ.get("AU_DUALPOL_RESUME_STAGE_NPZ", "").strip()
     resume_evaluation = int(os.environ.get("AU_DUALPOL_RESUME_EVALUATION", "0"))
+    finalize_only = os.environ.get("AU_DUALPOL_FINALIZE_ONLY", "0") == "1"
     requested_betas = os.environ.get("AU_DUALPOL_BETAS", "").strip()
     run_betas = (
-        tuple(float(value) for value in requested_betas.split(",") if value.strip())
-        if requested_betas
-        else BETAS
+        ()
+        if finalize_only
+        else (
+            tuple(float(value) for value in requested_betas.split(",") if value.strip())
+            if requested_betas
+            else BETAS
+        )
     )
-    if not run_betas:
+    if not run_betas and not finalize_only:
         raise RuntimeError("empty beta continuation schedule")
 
     latent = np.full(CONTRACT.design_shape, 0.5, dtype=np.float64)
@@ -711,6 +716,7 @@ def main() -> int:
             )
         with np.load(resume_path, allow_pickle=False) as checkpoint:
             vector = np.asarray(checkpoint["vector"], dtype=np.float64)
+            resume_beta = float(np.asarray(checkpoint["beta"]).item())
         expected = int(np.prod(CONTRACT.design_shape)) + 1
         if vector.size != expected:
             raise RuntimeError(
@@ -751,6 +757,7 @@ def main() -> int:
             "checkpoint_sha256": sha256(resume_path),
             "resume_evaluation": resume_evaluation,
             "completed_betas": completed_betas,
+            "finalize_only": finalize_only,
         }
         write_history_csv(history)
         write_json(OUT / "optimization_history.json", history)
@@ -916,7 +923,12 @@ def main() -> int:
         previous_stage_objective = float(optimizer.last_optimum_value())
 
     final_latent = vector[:-1].reshape(CONTRACT.design_shape)
-    final_projected = MAPPING.physical(final_latent, run_betas[-1])
+    final_beta = (
+        run_betas[-1]
+        if run_betas
+        else float(stage_rows[-1]["beta"] if stage_rows else resume_beta)
+    )
+    final_projected = MAPPING.physical(final_latent, final_beta)
     candidates = repaired_binary_candidates(final_projected)
     if not candidates:
         raise RuntimeError("no exact 500 nm solid/void binary repair candidate")
@@ -942,11 +954,19 @@ def main() -> int:
         and promoted["I_b_A"] < 0.0
         and promoted["balanced_utility_A"] > 0.0
     )
+    exact_dfm_pass = bool(
+        int(promoted["exact_audit"]["solid_bad_cell_count"]) == 0
+        and int(promoted["exact_audit"]["void_bad_cell_count"]) == 0
+    )
     final = {
         "status": (
             "VALIDATED_4UM_DUALPOL_AU_CURRENT_SWITCH_EXACT_BINARY"
-            if opposite_sign_pass
-            else "FAILED_4UM_DUALPOL_OPPOSITE_CURRENT_DIRECTION"
+            if opposite_sign_pass and exact_dfm_pass
+            else (
+                "FAILED_4UM_DUALPOL_EXACT_500NM_DFM"
+                if opposite_sign_pass
+                else "FAILED_4UM_DUALPOL_OPPOSITE_CURRENT_DIRECTION"
+            )
         ),
         "objective": "maximize min(Ia,-Ib)",
         "sign_convention": {
@@ -959,6 +979,8 @@ def main() -> int:
         "binary_candidates": binary_results,
         "promoted": promoted,
         "opposite_current_direction_gate": opposite_sign_pass,
+        "exact_500nm_solid_void_gate": exact_dfm_pass,
+        "continuous_checkpoint_beta": final_beta,
         "promoted_raw": {
             "path": str(final_raw),
             "bytes": final_raw.stat().st_size,
@@ -1002,7 +1024,7 @@ def main() -> int:
         "\n".join(report) + "\n", encoding="utf-8"
     )
     print(json.dumps(final, indent=2), flush=True)
-    return 0 if opposite_sign_pass else 2
+    return 0 if opposite_sign_pass and exact_dfm_pass else 2
 
 
 if __name__ == "__main__":
