@@ -1,0 +1,1970 @@
+{
+  "schema": "official-ansys-dfm-exact-repair-optimization-v1",
+  "raw_artifacts_committed_to_git": false,
+  "optimizer": {
+    "library": "NLopt",
+    "version": "2.11.0",
+    "algorithm": "LD_MMA",
+    "manual_move_limit": null,
+    "custom_mma_update_used": false
+  },
+  "base_FSP": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/base_uniform_forward_Ea_v23_run58_layout_ideal_terminal_no_Au_rho05/tairte4_flake_forward_Ea.fsp",
+    "size_bytes": 179792716,
+    "sha256": "90f41beb8df62c22177e1387646a734a369a170ce682bc8d6748ce598f0571d7"
+  },
+  "component_Yee_Jacobian": {
+    "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/component_yee_jacobian_v2_run58_optical_ideal_terminal_no_Au",
+    "certificate": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/component_yee_jacobian_v2_run58_optical_ideal_terminal_no_Au/component_yee_jacobian_result.json",
+    "certificate_sha256": "7539a5086d81897b395270e0a9724b5a3b258cf0238370b564ada37653c3ce19"
+  },
+  "evaluations": {
+    "0001": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0001_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14751,
+        "sha256": "e0ff62f302e74807f71189d9cf235668e788ba08b7697f710894fb72d603e934"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0001_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2451023,
+        "sha256": "092a338a6bbe553bad7c210c10ed65c314bdfeac2bd6b2a4de67c3ee1e677246"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0001_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204144999,
+        "sha256": "bdcdcec6a871891e1c05205469766f4a04c31e7d8d9823ddc0cb11c2894fb5a4"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0001_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 921,
+        "sha256": "0e8bc5b8452d1155c6526d2fc244e5a2331335f7e10c97e8e1536339281e876c"
+      }
+    },
+    "0002": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0002_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14818,
+        "sha256": "fd91f47c3047590da67bf79c67c540681e12d8cfb25a1dac4cca3e5073d6e5dd"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0002_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2795109,
+        "sha256": "828c174e4676dd768a99a5ac21da7fc75eb10bde9eb0c32a2b3e7a14f37e3a51"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0002_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204144999,
+        "sha256": "2c730fb3736a1d6bb9077a94eb16933699ca58a67996719cf430e4a7d2e16af9"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0002_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 321314,
+        "sha256": "d65f25146b4715bdd3b42f20de8bf4bc19a797cfa001283182cd1bee899e04ab"
+      }
+    },
+    "0003": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0003_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14778,
+        "sha256": "d730426950f01a0196309805598f80899c755d7f169f30e4df256c1e584621d2"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0003_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2825565,
+        "sha256": "a453cde52243c458e0f5aa23e3b9fae22c2e8dab5ce91d8f57ae208598d0b262"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0003_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204144999,
+        "sha256": "2a482ec32a4536ffbe9036668e871c1792336bedba9e8cfe45d2fa6f7bcbdbf0"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0003_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 350169,
+        "sha256": "6826e06868470e55df08ca6d3418d630a201d75cc648aef4224ade8c64e66648"
+      }
+    },
+    "0004": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0004_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14774,
+        "sha256": "8fe53c7a6a0a7be5d28416320d9c707fd2de08e74bc5bf8c1810057be05dc904"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0004_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2851528,
+        "sha256": "0f9f6e93de6e880170367e0f1d2a6f4ccaf8ce5184a88a726318e44d7b23e093"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0004_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204144999,
+        "sha256": "51659b05e3afa11e8e4f960b548d6eb94157c487fc6e71c84a5c33dca4880944"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0004_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 374412,
+        "sha256": "7fa200a106569891ce1dee029776b70693279620f80267a8750f6683b23b6fa1"
+      }
+    },
+    "0005": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0005_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14773,
+        "sha256": "df98595b5b9a3f18ac5691631c2a3ca35e009b235107396473bbc86e94880f04"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0005_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2885938,
+        "sha256": "6a118d80cacaa8a362513f91052f1fadabe1f9020a19bb421a8afcc9d16d2306"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0005_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204144999,
+        "sha256": "5a81c03f396ed0a3ecb3484373a1076a742c870c28ede5e0bf069534cad73869"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0005_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 404544,
+        "sha256": "15f0fd97dd39f61cd281f66f901dd3ffb9939ede7072250c1b62eee395d83842"
+      }
+    },
+    "0006": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0006_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14755,
+        "sha256": "7eca3981bfd974161b19081476c45c2f36440e8d233f85dce8038ee50dda59f5"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0006_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2855245,
+        "sha256": "e1fa493974bf26a1edbab3c2d0a2a6e17cbda8a145fb451c86aef9c123e5dd8c"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0006_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204144999,
+        "sha256": "62d40bb5305d8c12917c1b5d727eec247b4d16aee88a272594c5ccd002a7fb99"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0006_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 356579,
+        "sha256": "5972d982e8bb9ba7df77a1cf76db825e192cf262aab69648a9216dbc711fb245"
+      }
+    },
+    "0007": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0007_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14802,
+        "sha256": "e5807e22b573504847a49431aba78316d3a5a8f7ba034eb94dbe43efae5a3c27"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0007_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2623928,
+        "sha256": "f6df1148fdd6fc5af917c0a3557a0d973ba1ef37ebe71455b442ba20c4d4a5e3"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0007_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145047,
+        "sha256": "40edccdc99b9045c0227c6331816dcd97e2111daae07f59e65b378ec9c0e584c"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0007_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 100927,
+        "sha256": "96db663f9006c0c9db7314de6e7622998b38da9d11443e49d37b8813853edd69"
+      }
+    },
+    "0008": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0008_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14779,
+        "sha256": "1c2af87a3f5e2dc3bd84aadccc1b2b4c82d12018e4ea50541837cd18b8f91295"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0008_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2621819,
+        "sha256": "25264c29487a1bb91f4b431c3165b0d05b678a7abd4add1056e692df9c9ba48d"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0008_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145143,
+        "sha256": "862d602afc8344692aaa2328e3ea44460c1f40ec3a50a88515780c8f6fc16b64"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0008_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 96232,
+        "sha256": "ea63b6e940a236f30672a284cf0bddf2a4b02d1d192b1d71e04a5af6555eaf3b"
+      }
+    },
+    "0009": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0009_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14768,
+        "sha256": "ebb1c8dedfb7d06574c97d152f7e559944dd46a888b3f845d46c5addbce97303"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0009_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2622605,
+        "sha256": "26c4ff7dfde38603d46e876fcdbc36238189232f0a37f96f02a4dc4f008dd736"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0009_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145143,
+        "sha256": "d935111961be004e582261042ed10a54043b22970f915251bae473c7ca7cf6ca"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0009_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 93537,
+        "sha256": "41d5563e365a30c618bcb0a5cbde2baa87563d4ff85d21cc0f85bee54a7e62ec"
+      }
+    },
+    "0010": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0010_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14820,
+        "sha256": "32a603af4d489d762fd80414854b169c8618cd0214b1f22d0807e61bc5b52600"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0010_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2618351,
+        "sha256": "41e83709fdc81ec515780d26793d4561470d223160873ba762d33213616d5b14"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0010_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145143,
+        "sha256": "9a4890a00104398193e6f8f5eaddb5bca68ba6fe58aa088e2196aa9ca08b5581"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0010_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 85430,
+        "sha256": "790b1a672a31264e0cbe6b23bd8ece6d433935960f467a65dd100bad9ad364f3"
+      }
+    },
+    "0011": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0011_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14760,
+        "sha256": "6faf76b762e34fcf788de6f7c4158a12c3f10eccb994edc504cf374e4faf2927"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0011_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2617057,
+        "sha256": "f75a0abcfe889cb8633aa78c61d7ae63eea1df119b9e18915f4f902bfb10768f"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0011_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145143,
+        "sha256": "866695130a0850bc39f87c646454aef985b021eca8cf0bee73f8693945bfc390"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0011_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 82610,
+        "sha256": "9517a72a3c04e3d2e7e20c4ccc516ec9ac300b917d651f870c6b6683b386409d"
+      }
+    },
+    "0012": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0012_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14805,
+        "sha256": "009020473a43cfc1c6934c7238ae256c645c3db6d476d081fd31f123be0e7192"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0012_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2613749,
+        "sha256": "9cfb6e6b144d29b051e67c57d10f456b2cfa3da3c9b3fcc4c6d34d1db6ba0c62"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0012_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145143,
+        "sha256": "3e2c695b5c08b5cab45d3c28db9f21a6ff644953c4ef2cd44560b1c255ff802f"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0012_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 78104,
+        "sha256": "293115fb889c5e8f678e3031572c6eb790e71b79f51c69b5a76157fa87330541"
+      }
+    },
+    "0013": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0013_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14760,
+        "sha256": "ae649827834e779e61887ed9821f5564976c90a95e51a89b7c84de0a0f7b60cb"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0013_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2611989,
+        "sha256": "15bbe7fb5b0265e77bf1535a7d27d6a029b3e999173df00763e5c292988ec644"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0013_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145191,
+        "sha256": "d2b1b5bc6cdee20c031ba53482ec7e8f6c43ed35de6e1ef87fb30d2d6dde7a0b"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0013_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 73413,
+        "sha256": "b80303bf73153d3d51a4dff3e42982bc740d79db6a735c8cc00232f6eff0d2a8"
+      }
+    },
+    "0014": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0014_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14785,
+        "sha256": "579d3e753e1ecf30795a3f560802d2f3aecf241da0430b087828b9e7e44c0ffb"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0014_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2609645,
+        "sha256": "4e46b0c265ec0355b65fbbd56fcef06b28c13fabb2b0670e952749fc270d9619"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0014_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145191,
+        "sha256": "7e9c18d69936e7589056b6b9750974c33def118138c58e023645634cae05b63c"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0014_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 69707,
+        "sha256": "50a95c9676585f88c140660eca579e3caa48217bab69d516a94c878a1b184d24"
+      }
+    },
+    "0015": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0015_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14798,
+        "sha256": "edb6678c0561e91c52b47af107a17741b8d184aace9c04c87e271e971b5785b5"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0015_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2605507,
+        "sha256": "e5cbf122fd80f3d7217d151111133577821b2e624e298155747b6e836d697e4e"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0015_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145191,
+        "sha256": "fc5561c4b806e1a08afcc2675bde17d3b90b4acddab66195db46d1b686411794"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0015_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 66593,
+        "sha256": "c008bcde227feca6dd6686ebec5ae3d908a540d1f362047c02eede17227a9bc8"
+      }
+    },
+    "0016": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0016_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14798,
+        "sha256": "337405c442c76dd4a62eacdfd2247445188b6938253cd40f25ecfefda414c0fb"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0016_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2601216,
+        "sha256": "f183925b8dae61293dc2d364e92c0b95e78daff9e892fede9fbb1c62b9d2912a"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0016_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145191,
+        "sha256": "cfaf3598d8c14bd91895cf675340a2f46bbf5f734d8b841da23eb4966523ef44"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0016_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 61712,
+        "sha256": "3479bbf171f8564f0f3682d65ecb004f6152f3f3e6df28fcfc93f286d32a41fa"
+      }
+    },
+    "0017": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0017_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14795,
+        "sha256": "47aa6b340e51cf75db9e2fc0fc9faeb57fa4e7df88063458b55f0ab4da404801"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0017_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2595460,
+        "sha256": "754208709e22e25f3d677746f3bf986875a2ebe42ac516729decea273ae4241a"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0017_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145191,
+        "sha256": "d4679d1b0c147cc2b1a34e83b63114a00d29e96e99c09a3afb06fccdc413a08f"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0017_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 57201,
+        "sha256": "62d5a13b4ece25a78f749b7c3c3a176328c97ebfe3144a2be871ff0f72625dea"
+      }
+    },
+    "0018": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0018_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14760,
+        "sha256": "cf47f2af65f620b22827db889f010bd7f88692b7684cfe1e4194d94519a11b00"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0018_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2589108,
+        "sha256": "661ec1f0e9b59dbd70be21c4c96024a9f3ec3ae62c1a049ff64a59e681850cd1"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0018_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145191,
+        "sha256": "fd9ee9a4dae9275cc85b245ac1b566e8419eb48846a221bc9df129c1355ac7dc"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0018_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 53073,
+        "sha256": "453c03b7ddacc28697e91552e8c3f8b5f6328b170007da4f9cbca4e8b0020bb7"
+      }
+    },
+    "0019": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0019_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14794,
+        "sha256": "a72a73e337b1a18568a1f266835d45488b760eb215565d3645d9c129b2e6f0a5"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0019_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2585243,
+        "sha256": "b226d6680f7ba4e1c1abbe931d017456187515b0dc9598e2a905003c2579dacc"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0019_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145191,
+        "sha256": "4224892be7b3fd9c79f20a29f94aff9bd8ee93061271291786b03656532d8c61"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0019_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 49721,
+        "sha256": "9c7c20b03c86d4a4f2e8fbcb2594810a5d30fdcb4ad3a84c083e5371d3dd26f1"
+      }
+    },
+    "0020": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0020_beta1_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14781,
+        "sha256": "1d0a01d45f68055109d127e229d208b666a96f7d7d22c3aff197765fa424e17f"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0020_beta1_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2580762,
+        "sha256": "1fd9a1dbbd886a5ef03398923e924e5820dd836bf24df7b47793c54d0e898e87"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0020_beta1_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145191,
+        "sha256": "63df6845e39487f0c9c1e7db976901f9c15cee0f9f192bedcaa1bb6975e0fe51"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0020_beta1_official_ansys_dfm_latent.npz",
+        "size_bytes": 47631,
+        "sha256": "f43fe39d153440571f5cfadff0ee8a6b906265a7cf9af12860660487e37ea677"
+      }
+    },
+    "0021": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0021_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14796,
+        "sha256": "700ccde5753063805fe994c115fc0ecf5b1e87d175dded8d35d6f4ab0a809f01"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0021_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2582570,
+        "sha256": "77ce865206eec5562757b704ffd51a89677c6c9f63a6ac8dfb2657863cada0c6"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0021_beta2_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145239,
+        "sha256": "4e77f334a40401e63caae588655037f871a5d11f62b4d95ee38fa56980df14ae"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0021_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 47631,
+        "sha256": "f43fe39d153440571f5cfadff0ee8a6b906265a7cf9af12860660487e37ea677"
+      }
+    },
+    "0022": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0022_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14778,
+        "sha256": "0f1284b37858b58928aec3ac9794fa404d912216d2fcf701eb4271286f0f765b"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0022_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2856753,
+        "sha256": "36105b01c07c7d1822a1542024e4dcca4cc912e5c2b4aec34b1431ae55141cfa"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0022_beta2_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145239,
+        "sha256": "ca6b26bff48f982771e87b19bb1119a73798974865977bce8dbbdd004188b807"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0022_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 349836,
+        "sha256": "5d29efb1c587b704533001d40eae06230370d5d590226b474c45406a70f00b1d"
+      }
+    },
+    "0023": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0023_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14793,
+        "sha256": "2508948f6e2b056939b273cd026c98150ba0a283fd41072df417a9513b4d59b1"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0023_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2876968,
+        "sha256": "b08c492b25fa7d00bec86d86f1511e2c7a7e74c1d27d4695d98fdfa135f1ad91"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0023_beta2_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145239,
+        "sha256": "28c320c400e83bcad5b866305c415dfde3a9c7ac22cf4406455143cd359993a4"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0023_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 373737,
+        "sha256": "eabfe76db6003e1420ffc6bdd73be23723ff250668dbd8bc76992a7a2b7db60f"
+      }
+    },
+    "0024": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0024_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14782,
+        "sha256": "d6075a3bf91175b56b3ac876f275350288b68cce78dc3d5d6b1a771f18be0359"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0024_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2898727,
+        "sha256": "51d9f73e1f4590f999a44388529d7cbb0bf8efc1e50dda20cd5ff3ed34f3ef27"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0024_beta2_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145239,
+        "sha256": "610f3fb9275f99ab245447e017893fd0c9c041aab2e70c880627c78742961851"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0024_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 397394,
+        "sha256": "b612f1f5308b039b5202fea52fc9f3f3d2c4cb030a72df57154ae51433387489"
+      }
+    },
+    "0025": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0025_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14810,
+        "sha256": "bf43cb00f7e4e21ed94a11aa6e8c45a575dc0023664a0d8516155302d6437e19"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0025_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2917684,
+        "sha256": "2c66da0c91dcd3a8319aaa723075e8f2a1533bdd0d70772b73fbf8a8eaa87486"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0025_beta2_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145287,
+        "sha256": "b0d63419499bab514897e87d83eb471ce911b47cb3a23bc42875daa600e852e2"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0025_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 420678,
+        "sha256": "8d90f2178612cc1c15c56b97fc3a92ff62f8acd6011708ff2d36fbc3b11f9e13"
+      }
+    },
+    "0026": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0026_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14792,
+        "sha256": "69bc63e51a30859b1a5c06b1521859af47d6709ec697e82fb8bf38217f06e3cb"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0026_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2780196,
+        "sha256": "ca703ec9c95e7a3ec18bc149a4c750568a75456f0f892b47c0cc1423dbf8402d"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0026_beta2_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145479,
+        "sha256": "cd0445e4d00b8c3ac1b0d5d5a35eadb7b3096d76dc4dee2c8ba5232cb502890f"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0026_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 242282,
+        "sha256": "b0363629c8970424e74bacf212d62810cfa8c3e77ebd3b8f6ff80b8021593a43"
+      }
+    },
+    "0027": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0027_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14824,
+        "sha256": "8aa42fe49f7568da7af1fe4ef2d96375fc9e6c565fdd035a8c94b58ec5798682"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0027_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2712733,
+        "sha256": "56094d4109a7c60912007ac6927a665104fcc6299dbac53ac96ef26736324005"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0027_beta2_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145431,
+        "sha256": "46c6f3c8c30c4c6e66634d175000aee7b13658e5faecf4be8ec43b0ceb940e07"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0027_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 136638,
+        "sha256": "0b8d86fe81eb409154567c86c3eee12c4cc81452eaa9d2e4e853d62d5aac7721"
+      }
+    },
+    "0028": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0028_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14778,
+        "sha256": "f86824ebf4b122d8192a3402692ae8eb31ef4799811c688221438c0f0f37dac0"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0028_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2741815,
+        "sha256": "d57e353986ca5184d66a97c2ec78a2448af3fe955b43982ceff5bd2e93d7eb31"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0028_beta2_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145431,
+        "sha256": "438a48cf8062792e1a94f7f1edef51e95111841b58a3fb132908ad075c1dd9cc"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0028_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 178853,
+        "sha256": "de5ac56d6500209469792b14cb936941ba4ab6d9e5f771a36305f7113f7d3b1a"
+      }
+    },
+    "0029": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0029_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14785,
+        "sha256": "e032c15361fdaa1b928983efab13b41da3ccdeca02959e0b17d562f1b5463a18"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0029_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2782297,
+        "sha256": "e8d103fda4e6ea4e5858c7d6517d38fa07387aeea7d9f7be9ac25e9c156a6868"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0029_beta2_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145431,
+        "sha256": "1e9c1df297d4c165f55f9c1d240557d29dc3a9c5ba6eab911c507ad3673c1d81"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0029_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 232532,
+        "sha256": "7a43a3daabfeb4fa092844690488d8a82ae9bad3eb977b7a89b446d66709d7a9"
+      }
+    },
+    "0030": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0030_beta2_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14847,
+        "sha256": "9f195e6268ba61975d7c1f6fea44d84b55979c09b6c34bf577eca9e8ccdf7d06"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0030_beta2_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2764725,
+        "sha256": "4a6ef7f0fef6859e40a5e46f8fb238bd648d42d1336d90f9d1eb794e246a654c"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0030_beta2_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145431,
+        "sha256": "54b41a057a7025faec2a7dbfb0a42b52ed7a140799b9ec46bb6764adba9384b8"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0030_beta2_official_ansys_dfm_latent.npz",
+        "size_bytes": 209592,
+        "sha256": "0d486b07ed47a4ba449ad0046abe1fd93e0060ea246c51e6ac65ae7b024a8638"
+      }
+    },
+    "0031": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0031_beta4_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14794,
+        "sha256": "a17a7e8ac52c284e504b286bc11c551c5ea50864615420753ec1831cd73000b8"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0031_beta4_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2768946,
+        "sha256": "021ed9c85bd16dfe3cb38fc049116f6c0749e2433b8eb3dfaa481e242b2b2263"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0031_beta4_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "35f5c129693692f6432d79fd49a969cd5c70eba7121e3ba7d20bf358b34e767e"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0031_beta4_official_ansys_dfm_latent.npz",
+        "size_bytes": 209592,
+        "sha256": "0d486b07ed47a4ba449ad0046abe1fd93e0060ea246c51e6ac65ae7b024a8638"
+      }
+    },
+    "0032": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0032_beta4_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14784,
+        "sha256": "3dd012e90206c03d1692c38f493a1b4210f4f25236ec152b929ce876ef9640a5"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0032_beta4_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2906178,
+        "sha256": "96e00e0394137c15c068d25a0d7b74303a363bf174636e76f6eda5c12404fa4c"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0032_beta4_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "01160c2771fce7d5a066bb43be0059c75b4d81b61e3b87ea9bead9ab8b4453fe"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0032_beta4_official_ansys_dfm_latent.npz",
+        "size_bytes": 399185,
+        "sha256": "19bf8c75242c68e7059c0b54549dd3ee77785f01ff9b6affde59bedabe638138"
+      }
+    },
+    "0033": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0033_beta4_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14783,
+        "sha256": "2d1cacba1cf8afc18051a688ccf12809209ab011064c37dda9ea9c8107b50c7a"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0033_beta4_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2912973,
+        "sha256": "a40bfdae9ca3839efd90a2b2745fe2632492e88015d587f8bacbdb4f95603132"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0033_beta4_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "5d03ea4bcb86e1ccbbcdca9f7e8a09fd00641b02e91a8652c2d245285c745059"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0033_beta4_official_ansys_dfm_latent.npz",
+        "size_bytes": 409512,
+        "sha256": "8c97f488205f6b21a226f736d253cd4677e849231a71c1189d75c445072f993c"
+      }
+    },
+    "0034": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0034_beta4_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14781,
+        "sha256": "d2d237ef687051ee6b8dd4c902f5807e345e67d86287c7327540d37bc22c4a9c"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0034_beta4_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2922716,
+        "sha256": "d01e46c70ac6eae3904136f7478ce0cbc5b68f4cfa0212abf7fbe789996e200c"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0034_beta4_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "fa392ada3c2b8fdc01528ae519534c1b72f801f7b9430582f34a39ecce0479b1"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0034_beta4_official_ansys_dfm_latent.npz",
+        "size_bytes": 422815,
+        "sha256": "a173bc9f0dcf10e73496fc139e7040b9b0558fef629d9a102691942c34b3fc6f"
+      }
+    },
+    "0035": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0035_beta4_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14742,
+        "sha256": "390b3efdef34f49092562c027381b1ed5b047efdfd8724fd1867a5827227e12e"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0035_beta4_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2824198,
+        "sha256": "5583b9d7395bf5e9c42f4835799bfb2d5c4679fba93d4769a6df7a15fa844901"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0035_beta4_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145527,
+        "sha256": "e57ed80184cd25ae7667390fb62e3b396dda831cdbd2149053a65eba1fbe826e"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0035_beta4_official_ansys_dfm_latent.npz",
+        "size_bytes": 369528,
+        "sha256": "5b011b5726b9ffb833fa32c2c722cb296d2d4b63286782a862136996a361f358"
+      }
+    },
+    "0036": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0036_beta4_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14760,
+        "sha256": "38b78386324273381458aaf4d8daf3f32179e8275bfc3d89dd479d5e540ebc4a"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0036_beta4_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2675614,
+        "sha256": "6738698e534b4bc543102a50c00a74c344ca436b9c788552ab689098669e44d6"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0036_beta4_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145575,
+        "sha256": "54777ba9853f80106be6d17efe02db9804e86bf716ea06db4c3514f7ca02aa8a"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0036_beta4_official_ansys_dfm_latent.npz",
+        "size_bytes": 261304,
+        "sha256": "1975a875a0c49432795206dfbf516fc2cad56815c46619a877991a8b6e76509c"
+      }
+    },
+    "0037": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0037_beta4_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14762,
+        "sha256": "43b101bd01c10b5f8fa4a50d379e2a35b373fe6b9e1b153d77f354f633332fc3"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0037_beta4_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2664710,
+        "sha256": "d3690a7eccef463c6c2d862a7853432e0ed09066967d813ab13086d12a3ca4e3"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0037_beta4_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145575,
+        "sha256": "3743e2446242c736fd89f36d8ebd06d95ce743e3a8c34a8cdb50d690ae7cde26"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0037_beta4_official_ansys_dfm_latent.npz",
+        "size_bytes": 250605,
+        "sha256": "784f7b24c33aed6fb95d61c5416e6423b6c01da8371fe43cb6b629fd9d8ca6a1"
+      }
+    },
+    "0038": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0038_beta4_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14811,
+        "sha256": "23aa3a8ea5e1b2a43e6ef05d416027a009b1a42ee9d15b59af73418447b0acad"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0038_beta4_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2654906,
+        "sha256": "fcfe2e34bed2409022ccba84217fd13e616476625d44303f016ab0dc6b3f6cee"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0038_beta4_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145623,
+        "sha256": "6b52c3aba7eaba806fb369ea21fbfb4e8802c48459d1337cb58438233f74adcc"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0038_beta4_official_ansys_dfm_latent.npz",
+        "size_bytes": 244664,
+        "sha256": "c139366b96fe1ffa209c34c487b7458ae2ceadb8dd9a8d599d5a26d42f81d777"
+      }
+    },
+    "0039": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0039_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14754,
+        "sha256": "513447897d814bf52759197ddf4c345b74ae2cc599fce4c9bb1de5a3305af83c"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0039_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2629587,
+        "sha256": "eea8f9f7c4c45c3a610f097759154b77db7596c94c03cf3a2c75589fc6a5d1e7"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0039_beta8_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145575,
+        "sha256": "01871d53595a52ab24c6582d1accb529ccd5152e108755afcd92a9208280c64f"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0039_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 244664,
+        "sha256": "c139366b96fe1ffa209c34c487b7458ae2ceadb8dd9a8d599d5a26d42f81d777"
+      }
+    },
+    "0040": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0040_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14798,
+        "sha256": "d58cf2c3dc510e9d152e7f13622158af9c6b870ba0812c8831136a74ef2baf9b"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0040_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2645662,
+        "sha256": "ae768debcdcf4fa85ad27af5de437df586cb4348deb85995ebc19a1e1abed040"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0040_beta8_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145575,
+        "sha256": "6c6411cda58b03256d9d16bd9b6dc745e85df7b94d89207bd1925e0ed1846abe"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0040_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 270005,
+        "sha256": "bf808fbc4007225f29a7d590675886e86230ffabab4788503daeaea161ef15f4"
+      }
+    },
+    "0041": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0041_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14778,
+        "sha256": "a65bbc6a5fdbe78e1927eda609a1545686cc2117a7b3de5988ae02e74a19adec"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0041_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2645887,
+        "sha256": "9c69abff4a2e592f82c492a7fb6586698cf406b2c9ab0776e3fb8db32a39c14b"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0041_beta8_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145575,
+        "sha256": "425837bd702d13d392ccf5f7b34a41fd1049f82397a2b0db35530706e86900f4"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0041_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 270490,
+        "sha256": "68f3abac6dc22ccabcb3353041cfc61d8d50645c202f2023dad7841fdc371369"
+      }
+    },
+    "0042": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0042_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14780,
+        "sha256": "f9bd9d3e60fc803da0cdc2cddccc553be59be61a577fe26811c8aeb7abd1de40"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0042_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2646319,
+        "sha256": "a8866ac88c6d2bfde35a78232bf58bada4462ec04f0e79d4146e0a51a915c64e"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0042_beta8_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145575,
+        "sha256": "f5321f13459430c632e1261ee55065ee220284b2a585af26de37bc34e68489ca"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0042_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 271424,
+        "sha256": "4cf3f80b82033039db684aae0a18d6cda8f0037a53b3f7480bdd8b1867863694"
+      }
+    },
+    "0043": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0043_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14780,
+        "sha256": "9c678ebbb7410c1327b987f5d39770f0f466840536347f833493e0edd99d89cc"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0043_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2645947,
+        "sha256": "a43b09f210e7626aeaa6a9ab5005430c3e898778b7a54450f7ee6b495f5b159a"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0043_beta8_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145575,
+        "sha256": "aa708494574c99925b37adffce7f6948c16e63257379140a2739c92f6ffc561a"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0043_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 271216,
+        "sha256": "79552d7678d7e662888a62b879ef9e204494409c25541b1a39c3282b4f131f9c"
+      }
+    },
+    "0044": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0044_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14780,
+        "sha256": "2bc21bdc877bd7e3e9de12358e5653247aeef72077b27316ba595352b252550f"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0044_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2640933,
+        "sha256": "d9f654a334adf2096d2b1fd1c9b77e332581e149df5aa93a4cf8ede97dcd6553"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0044_beta8_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145671,
+        "sha256": "6517c68f52b2bfc98608c96b6bb346c6c5b0647556380d83fa25518d0763250b"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0044_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 258214,
+        "sha256": "ade16d103deebcf8e10c47d8fd0f00c9c70462cf1a965c81134c170eb782eeb6"
+      }
+    },
+    "0045": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0045_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14777,
+        "sha256": "fa0086e6880c7649f75b6e7561afc927e87e0cc28bc19b359bea9f1bb233ff0c"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0045_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2641099,
+        "sha256": "17e863cc2d2ad294c101525b06981ade376ae9ebb04c6b076402bda737e8bc1e"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0045_beta8_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145671,
+        "sha256": "4302ad54f92b4e9767bf493b5e8d662ac9aaccc14648ac3c8508d5e9e8983e2f"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0045_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 256935,
+        "sha256": "d53d8c88a45ad3f5c187ea7a4e6be1e65b54073ed174ae01a9aa9378900de45d"
+      }
+    },
+    "0046": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0046_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14795,
+        "sha256": "fafe7cc44c8d2dca52ed4703a92b37736a498375e46875b85944bec8af6767de"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0046_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2640828,
+        "sha256": "34d0190a85b1ef7e1fe5d4b60b317749d18146f9a7c7e0f758acfb8820b3fc91"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0046_beta8_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145671,
+        "sha256": "da7ed7f6d89c1af82b31e97b7db01cd5f0bfc642be43fc5f6e31d04ec68bac92"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0046_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 256115,
+        "sha256": "71ca8aa4d8d117bf708f33a6b83cfabdac6d8f77b9b006b89620ab73d9cb18fa"
+      }
+    },
+    "0047": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0047_beta8_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14777,
+        "sha256": "83d511556a686349f151628dee702f5ca23282391f692112614c7db452cbe88a"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0047_beta8_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2641099,
+        "sha256": "17e863cc2d2ad294c101525b06981ade376ae9ebb04c6b076402bda737e8bc1e"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0047_beta8_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145671,
+        "sha256": "30b18527ee6f0e3d6b35b1579ce700883ae46cbbb522e1b39d346ca70dec47b7"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0047_beta8_official_ansys_dfm_latent.npz",
+        "size_bytes": 256935,
+        "sha256": "d53d8c88a45ad3f5c187ea7a4e6be1e65b54073ed174ae01a9aa9378900de45d"
+      }
+    },
+    "0048": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0048_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14987,
+        "sha256": "ddddef20f6c76ef8efb13002f8eee70f1fd50757c4dab3475bd73aa97f4bb9c8"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0048_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2893536,
+        "sha256": "07f6afda293463f28a6c140a64dc2bffcbd11c3f8594a663e09853a6ffcc51aa"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0048_beta16_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145671,
+        "sha256": "9016e219d856d7d5d120e506c9bcec9cfd059485afdd10ffce9a9d57c593e730"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0048_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 256935,
+        "sha256": "d53d8c88a45ad3f5c187ea7a4e6be1e65b54073ed174ae01a9aa9378900de45d"
+      }
+    },
+    "0049": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0049_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15023,
+        "sha256": "3483b1c7cc04874ee11cc6650d6a1414d97557b234b8224800118af461c7ebec"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0049_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2899913,
+        "sha256": "e6388fde1019d01147458359b5f7ca0446ce4e95b6a8b87d941c9728ee6f7e36"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0049_beta16_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145671,
+        "sha256": "ef1c1b74e982791869912de96bcd26225f2c60709e03babf9031acf61473f6bd"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0049_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 269129,
+        "sha256": "a45378f6f4534eb13b24bde860e306cd15ed18bb2a1f15ccfcb0c3949c1541b4"
+      }
+    },
+    "0050": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0050_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15022,
+        "sha256": "eba2f5300d3e3984365d1b2ccd31f8cab3e4b6c858eacde86d7b8c451fc9ebe9"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0050_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2899676,
+        "sha256": "32e5bd74010c9d2363c99d9751f036b8d94204d735c0e9bf70e61acf400ff4ef"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0050_beta16_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145671,
+        "sha256": "6a25cbd0d96c23925ca0bf1e3e6a093c9c38b0da952cea8c374f59ab911040b7"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0050_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 269091,
+        "sha256": "842a578fdb0fc487c18d426ce0c30a06f115191ea96b21cea738e080706e1f02"
+      }
+    },
+    "0051": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0051_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15006,
+        "sha256": "542062092c1d75cfcfed3cf42ceee7417750611ccff6221f01236c9bb675c076"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0051_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2894738,
+        "sha256": "42f687855a6fc323d78b460237df2fd64665819e08d06219d096fbd840e8086c"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0051_beta16_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145719,
+        "sha256": "4e494c6679cf0253984ee0db6a0d57508821ccd7252c4c1ac05a58d7d6a4ce5a"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0051_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 267897,
+        "sha256": "ee2ab37c55240d71f9c533f4a9629735bb0c8259fc30995612331d5b86a2b58b"
+      }
+    },
+    "0052": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0052_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14986,
+        "sha256": "b801d8232000ede28afb6e0e70f68277c2e124382400d4dfa3fac5cf3e980fd0"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0052_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2851725,
+        "sha256": "257c71ea90f87079be8e8f341c7cc5efd3828f71fee1b9d50099d6bd3776a25c"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0052_beta16_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145815,
+        "sha256": "0f5f31f70d5b14c1031548b47c607da441e6eda5bc062f1ad6266c2ebfaec0ff"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0052_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 260873,
+        "sha256": "09650ac0f5dc5fdc1d14cc53a8ff7db196bdc2bf6e8a5d8fa0da83e4561ee2d1"
+      }
+    },
+    "0053": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0053_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15015,
+        "sha256": "3d9d74b42891e4113ea7e9287111d1113b522175d39a99a7559e0cb498bd0ca5"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0053_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2824203,
+        "sha256": "1eb908a27b8cfa4ae593c2cd178a422d891ee1699f1a87f411a4831ae45f68cb"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0053_beta16_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145719,
+        "sha256": "780e8e3b9a15b7c84cca0ed8e5203612683666001c0a2b54278b46a82770cf3c"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0053_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 221765,
+        "sha256": "d788c8ad2ace6dcfec27153fd0dcc920bdaf019505c4beb06146ab3a62fcb7be"
+      }
+    },
+    "0054": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0054_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15027,
+        "sha256": "6d0fb5d71088544b3a07b739e0e5c8fd82f4f8e2cec242484b29bea28bf471ea"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0054_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2823926,
+        "sha256": "ff36aa91a86d12cf9d65efe934e038c9b24cbedf517e2fa54fa06aa56c6b37dc"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0054_beta16_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145671,
+        "sha256": "68fd134fede7fe52b08da2bc8ebc7a1ba780729d4012bf6cf1374b204280052e"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0054_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 221472,
+        "sha256": "1550c4546ff0596f40234e650801174ee77b42b89413664d669c65c5721495b7"
+      }
+    },
+    "0055": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0055_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15039,
+        "sha256": "ea6755fc43895ad6b4820d55da2facf3994876571d0a51979e364b3d91f13d0b"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0055_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2819379,
+        "sha256": "8ab5963a155a69bb7826b794fd6709bb47900fd7b5c6cea8a4cf3b742aab7ac8"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0055_beta16_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145719,
+        "sha256": "15742a57b1aa0fab97b6130b54236c97ec67e49f756001bd501e73e354c1ef1f"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0055_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 218867,
+        "sha256": "0c6270d09af71c30d2e2fdfa3751890fcb77e07ff27ace52aeb2631818bb5cef"
+      }
+    },
+    "0056": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0056_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15047,
+        "sha256": "cf38aea3057d5817e09b26daac955d9f2dc18b7b74cdee3058de9f73ceed6861"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0056_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2820114,
+        "sha256": "7864eab4a9cc98d862598813c44358cfe7b04066321613b43ba9a8f568219210"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0056_beta16_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145671,
+        "sha256": "f4aa0a07e7aacc985975a51559fc993a00b0f6e63c3d44df78f3c090856a65d2"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0056_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 219075,
+        "sha256": "8c308a11bcc6b3892d79f762e263d1a771b83b9a7d42ecf2928275d1499086fa"
+      }
+    },
+    "0057": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0057_beta16_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14995,
+        "sha256": "57b4717f76f3d7fddbf299cb6d77e81e9f8264b701d527e00fd0778bcde6a239"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0057_beta16_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2819909,
+        "sha256": "f75fa6c847a13803f4efbbc5e7a5d1b045b4e5dcbbbdabe0689a977f40ca515b"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0057_beta16_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145671,
+        "sha256": "af8e2cb35fcba5189ea0daa1c8f27b7497c7634f5ddc047a2748666a010aa605"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0057_beta16_official_ansys_dfm_latent.npz",
+        "size_bytes": 219014,
+        "sha256": "5eebdb4094bc7c0067e0fefc795edaa417c14e15a0b3a1863d98f4aec4b7a15d"
+      }
+    },
+    "0058": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0058_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15020,
+        "sha256": "8e352e340e1c7cad5589e4c93bc8a9e4fab9b8ef215a6e218bae326097ecb2ac"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0058_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2692489,
+        "sha256": "7b3fc4449335aa13554bbee42318a5364b4e5790dbfe64a8d6ba0be2e1644d38"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0058_beta32_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204150183,
+        "sha256": "eb688bc8b677f1456329ae2b9333cde3d69cd776268d93950600f1bb0b123552"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0058_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 219014,
+        "sha256": "5eebdb4094bc7c0067e0fefc795edaa417c14e15a0b3a1863d98f4aec4b7a15d"
+      }
+    },
+    "0059": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0059_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15004,
+        "sha256": "724e8b58b212740b8dbd40e32d9224b40d0b334bd2c36202980384d2cb32025b"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0059_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2694813,
+        "sha256": "6c620b4e16e0a80873da20ad197507fba417f8c88d3a1d21eb1a1891cb41c551"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0059_beta32_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204150183,
+        "sha256": "5d54644aa1a017dbed727bfe64b2bbf430739b1a03ccfe07ae6730b3104a1edf"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0059_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 229500,
+        "sha256": "f5afa4da29edd0d86952e1a01dbb773ccf33331a21b1afa117e3b79d67f5d88b"
+      }
+    },
+    "0060": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0060_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15041,
+        "sha256": "19046b097abdda5094fbcc389679dcc0babc95b42940db1fea4691ae287a9643"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0060_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2693677,
+        "sha256": "8a188f6f4827f919dc3e907be1068421f1b73c6bfe09d0502019bf4ff3432dc5"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0060_beta32_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204150183,
+        "sha256": "f9f0368f0f883f882307d742a96e48cd57b69322864184325c742567234b8926"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0060_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 230476,
+        "sha256": "e0de2cd852c7510adda12fa4bc35f8abbf9f5121b9492f484388feded02f89d6"
+      }
+    },
+    "0061": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0061_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15036,
+        "sha256": "0c15f784f9c626fff5a408f9cb72371f5bbf3d83ed04d338a0840846a70b66f7"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0061_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2683073,
+        "sha256": "b7d4e35acb97d5d95c10b93bc01821eee8927f1e91ea02bb8c57dc4ce17fdbbb"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0061_beta32_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204150663,
+        "sha256": "66ed455441e810614982ffd2b517bc0d5c363b6ec36b5fb4f8ff8ea1529f17eb"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0061_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 230504,
+        "sha256": "579b705c5c76a631412d8e2da0c6124ea3bd353a282f6d5c0d81d908e57136d5"
+      }
+    },
+    "0062": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0062_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15038,
+        "sha256": "237cbed52d1ec2ed9476f0bf8a4c89bcfbb236b8da5ba60be7930a9a48edbf0b"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0062_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2658536,
+        "sha256": "b457178f5b01df442ec91f6f9e06583bf1054bc134160f49b5a1db76b3fe52c8"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0062_beta32_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204151575,
+        "sha256": "50aac75ef86e62a65e831fb833c214eef0f9bcfa32e162a8875c4a4e10eb6fbe"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0062_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 211921,
+        "sha256": "5fe7451efe363da6c8ed0d0307bd41608464c1188d300de97019db21bf9ec316"
+      }
+    },
+    "0063": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0063_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15026,
+        "sha256": "522624ec3f32a97c63a85dd6bd5d0cf090108f65f95bd51d7858dea94e082140"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0063_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2654915,
+        "sha256": "b1a4aebb8f6ebbc4cf1a20ce2e99f9d657f07b8599c726bb0e75b4917357e5a3"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0063_beta32_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204151575,
+        "sha256": "2ebb302417ecb8c0950e1890314f98f4a63c231145544a7fa3958038ac566e9a"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0063_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 205913,
+        "sha256": "d7350319fe00233929220b09f39c840e2ab523081d5a0febb752bda90c67dd71"
+      }
+    },
+    "0064": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0064_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15001,
+        "sha256": "e8bde01019a26c0c41b38633a2c8abe53abef32d277be9e93ed439f9d97bb8da"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0064_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2654853,
+        "sha256": "b9bb3594017c0b20f616f467d80a6aefbc786d5d18f71c3b0ebb360bd3e1563c"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0064_beta32_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204151575,
+        "sha256": "5c0a1640ef0635975a76f5163559dcc588d0859079d88cce8c945b1b71d1f1fa"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0064_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 205933,
+        "sha256": "0d4318ab619e1fe59262b4d7ca67e94bdced3ad00a9436ce309a689153a1e910"
+      }
+    },
+    "0065": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0065_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15032,
+        "sha256": "2ed51aee2878e60fc89f265b529311e355520128cd3242515c338bd5b60b432c"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0065_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2655021,
+        "sha256": "c972b63e767cf17bf45b46e2e5684e979cbef7843c12974338c903bbd5468c27"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0065_beta32_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204151575,
+        "sha256": "a2b86d4f4ffab99103d3263fac71606560eafcd194b0baeddf682ce522a8619d"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0065_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 205912,
+        "sha256": "63941ca252068f8bdff25d3ad621e41a87d000e51fd9022db8db02af03da5646"
+      }
+    },
+    "0066": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0066_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15041,
+        "sha256": "c4966a656cb5a1f1fc2b40aa13450b3983021a3fa5a9ce2874ca4ef4ff91eca8"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0066_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2654694,
+        "sha256": "0abb1da95d956eb40501ee398ac17b01c60718321d052a7ff0ef5f3bec8ffa2c"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0066_beta32_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204151623,
+        "sha256": "a647074afa54f4ec630b02c2359e935217b4825250601a98eeadc41746d9a530"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0066_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 205506,
+        "sha256": "1ce428cbeb210f51e126b8639405bd61486b493be995c7d902b82464e1335648"
+      }
+    },
+    "0067": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0067_beta32_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15047,
+        "sha256": "1505f5de3fd85de151026f72877ae628f3bd08f3f7e60eef5856a3736661ff5c"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0067_beta32_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2654857,
+        "sha256": "cb883a5cfcb95e61a99909c1e0f7b8f83cdd491e7a99a94a5366987e26cb9b34"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0067_beta32_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204151575,
+        "sha256": "571ab4afde60c1e2be4087f563875b701b3abbea4432eb43377e7c80c32ac763"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0067_beta32_official_ansys_dfm_latent.npz",
+        "size_bytes": 205528,
+        "sha256": "6c2eac515fa131df183529e9ec50d50b717f24de7a11d5601cf54de6bf6e5b84"
+      }
+    },
+    "0068": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0068_beta64_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15040,
+        "sha256": "f61deca4bfdb06f6489b90d1867117fc9512445fb26381d5add00b7fa71d8320"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0068_beta64_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2316269,
+        "sha256": "a4f727c8bdee5cbdf483fa8201228bdf800236ddd000f1d6eb950dd3fff2ff10"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0068_beta64_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145815,
+        "sha256": "9898dd35e56971d5f41f94ddb1a8f833a07d4f297a51ee66ab77f8735b3aba5a"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0068_beta64_official_ansys_dfm_latent.npz",
+        "size_bytes": 205528,
+        "sha256": "6c2eac515fa131df183529e9ec50d50b717f24de7a11d5601cf54de6bf6e5b84"
+      }
+    },
+    "0069": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0069_beta64_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15008,
+        "sha256": "2839f516eace15eea7d9dddad483bbd3a24bda1ced9ab5ff6dd0ad444b345d12"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0069_beta64_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2317417,
+        "sha256": "fad3d1ef4b059f9aea23388abaa5c5289fae715b91d97400e35800db1cb5dea2"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0069_beta64_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145815,
+        "sha256": "fd78feb91a2d1f0f8089e5b82a4100b47406e8f31b04e6bace8d984457d4b99f"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0069_beta64_official_ansys_dfm_latent.npz",
+        "size_bytes": 214514,
+        "sha256": "6065efce2163ded81e663fdb80238af917c1eba3f09f1290a9a5f32474085eb0"
+      }
+    },
+    "0070": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0070_beta64_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15028,
+        "sha256": "da1458f3633e45c4e961b12c4a0e9f4e544a870a663f281f63f2d098937b8372"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0070_beta64_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2315982,
+        "sha256": "19a5e24241381946859e434fbb2ed41dced7110128d3cc48fc1c07f0cbc655ef"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0070_beta64_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145815,
+        "sha256": "8f34a9d363cf164b1c075968af08a03bb66f10b1e1b8620e043821f68ff6aa15"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0070_beta64_official_ansys_dfm_latent.npz",
+        "size_bytes": 215922,
+        "sha256": "f9db4646ed974a95b87c583743cf9603c51909c5700c5de27040ede7e6ab8db0"
+      }
+    },
+    "0071": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0071_beta64_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15048,
+        "sha256": "140928083d006072ca6b6442270317d5f38d7a167cc82a0fd381a4b07218bcd0"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0071_beta64_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2304062,
+        "sha256": "8ef63f2452203c45db8933a1458239c50cf3f3e80874b3524c8acb739cce8729"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0071_beta64_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145671,
+        "sha256": "11dffd897b7084ba73f6e1d0739cc4e09e27712a4ec2eae28440f93eee23dec0"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0071_beta64_official_ansys_dfm_latent.npz",
+        "size_bytes": 216411,
+        "sha256": "bff70cddee268816df699bc789eb6b85d17d83d3209e038bfcae461da4c7851d"
+      }
+    },
+    "0072": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0072_beta64_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15018,
+        "sha256": "914714f6d5458ff610cde6067d1dc5695c2aa0b06a03a39e1a6a8dbdb4245af6"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0072_beta64_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2263729,
+        "sha256": "212cde2dd355aef54fd79b9ba062e2089332e2f44ba94508d684f834dad74751"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0072_beta64_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145623,
+        "sha256": "b902ac18400b363c307c418b671163860430e5efbff9594086520e32d7eb0d4e"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0072_beta64_official_ansys_dfm_latent.npz",
+        "size_bytes": 210836,
+        "sha256": "66928556cd4bbc6cf81424ef2ab148063286685c9a22f203a9b9fdfcbcf46088"
+      }
+    },
+    "0073": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0073_beta64_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15022,
+        "sha256": "b797ea03ff3fdea36fbdad4ef24b4ddc26f7f4815d0659fe43bc410bec738267"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0073_beta64_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2251836,
+        "sha256": "6c4d9a20b0eb11225536670e1086231292ba6813ad99fc62dbc80c0d547be175"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0073_beta64_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145767,
+        "sha256": "4c5c0bb481c0b070715dc23224644d48ac2a978f807707bdc8f4535710eb3a65"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0073_beta64_official_ansys_dfm_latent.npz",
+        "size_bytes": 201287,
+        "sha256": "eec5a4030c83bd4ed0db50e27f3d77bf9829d4e66a01e843032847588d17796a"
+      }
+    },
+    "0074": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0074_beta64_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 14986,
+        "sha256": "78a371b7cfa4bbff562a3c6e746fba2d387b929871b8891043572822a105c9ed"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0074_beta64_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2251994,
+        "sha256": "d8847b23bc65151a320cf8b8fa8fec9b1a0a313c28bde2d746cc7b5714db6683"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0074_beta64_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145671,
+        "sha256": "6c0af9c14e2cfa25b1733e8c325a936c59807ab3ac98cda4602fc7663012953f"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0074_beta64_official_ansys_dfm_latent.npz",
+        "size_bytes": 200593,
+        "sha256": "cc44b029cf24f6778447fb1256e1457163d5d50028484b78bb50d4374c225b4f"
+      }
+    },
+    "0075": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0075_beta64_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15035,
+        "sha256": "0278dd35a367659cc64ab8885980878128f31f54d6f1300cd269b5d24dc2b949"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0075_beta64_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2251917,
+        "sha256": "30eafcda2114a34663eae50d7243a199ed241a67d8f5963b5a3289c83783e5d5"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0075_beta64_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145671,
+        "sha256": "ce3bc6a2f0b8000465f148ab17ada42800e3cee190ffe09cf6f78e6a5cfcb56b"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0075_beta64_official_ansys_dfm_latent.npz",
+        "size_bytes": 201018,
+        "sha256": "9732d8ca7d87e9f26ea64e8f6a0a2c30b1e08f960fed2a6878307c7262ac3cbd"
+      }
+    },
+    "0076": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0076_beta128_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15077,
+        "sha256": "9b4a688b6b13f52d384a3e27a08cf2934f9f4ac9c879452be90c8d52db167860"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0076_beta128_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2188558,
+        "sha256": "f04d2a071e618f9d9b95704c208cd26ed6c843521cd8ad7234ab6afddebfe65f"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0076_beta128_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145623,
+        "sha256": "da2067490bf9b6e5ee2060b5a08caa8eb8fc016c79145f3c80d56519abb0f603"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0076_beta128_official_ansys_dfm_latent.npz",
+        "size_bytes": 201018,
+        "sha256": "9732d8ca7d87e9f26ea64e8f6a0a2c30b1e08f960fed2a6878307c7262ac3cbd"
+      }
+    },
+    "0077": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0077_beta128_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15012,
+        "sha256": "a236fd3e1b0c2945259ce8d1ceaa6284847273fba8d6af3b795f99e9c06edc18"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0077_beta128_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2188524,
+        "sha256": "2e6f2bc2f6620f0ac102055a6df833bec775c9b0045b632a3a306848e59cecb9"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0077_beta128_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145623,
+        "sha256": "3e144768723a685c270f7ddf9755854eee92b318c3d5da1820a6d38423922ddb"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0077_beta128_official_ansys_dfm_latent.npz",
+        "size_bytes": 204416,
+        "sha256": "d06d8f665d679fe692fb29aba06c6ff5f52f461a8d3d6e72eeda182be0b56e39"
+      }
+    },
+    "0078": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0078_beta128_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15074,
+        "sha256": "55e62be365f0ae2a14680cbc2b0d63fe5165652ba22c09e3b447900cc3176beb"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0078_beta128_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2188233,
+        "sha256": "4b8849a65413659eda08762e9117be2d17fa92b3f5ee40c164adaf4de4014c53"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0078_beta128_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145623,
+        "sha256": "5978605b7cf5ff1eb7082899a6b88a05010c99fde20aeff4a0f844eb567c3f6e"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0078_beta128_official_ansys_dfm_latent.npz",
+        "size_bytes": 204664,
+        "sha256": "f4ed183503857f9fd8e3035de6887abba07ae8cfda84999dd86432e090027604"
+      }
+    },
+    "0079": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0079_beta128_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15018,
+        "sha256": "a509ce4ca5a82c700fc682bb683e1aec954178b5e028180f0b3985fb7a052e1e"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0079_beta128_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2186830,
+        "sha256": "0e18171d87fb409a7adb707d3f3224175fd8567fa93ee3fc78b963b2766845ca"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0079_beta128_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145623,
+        "sha256": "1d816d4e356659df790784524b75f8d63de1f72b6326cab71d333a5eaf32651d"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0079_beta128_official_ansys_dfm_latent.npz",
+        "size_bytes": 204543,
+        "sha256": "5e5887789692121afc4c3bf50cb5dac81d01cc047ea4083765dddb15ac94a191"
+      }
+    },
+    "0080": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0080_beta128_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15057,
+        "sha256": "18744b913c0a29f33aaede6fef27d6ccaecf2a3377a85754c696bb4c5f22b5bc"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0080_beta128_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2178725,
+        "sha256": "62ca7560a04ec26205844ccdcdd4319dd1566d0d88b958bfbe8aa37f00b623d9"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0080_beta128_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145623,
+        "sha256": "790bebfa0af8cca92dd5622a01ddb981e0abbe19ace4a2f33d07b5c26bf69240"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0080_beta128_official_ansys_dfm_latent.npz",
+        "size_bytes": 200687,
+        "sha256": "ae7aea71ca93941945fe3efa595a57cbcb0077e19335d7c8fc7ab0dc4eee5609"
+      }
+    },
+    "0081": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0081_beta128_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15038,
+        "sha256": "71dec624868256e7c10fea876de53dc6716c4885934121c3c0c3e0f86dc4f7a2"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0081_beta128_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2153738,
+        "sha256": "18a76e3118fa152165f00d62d297d433c039791ee77beb2828e4975dc14fb8e3"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0081_beta128_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145623,
+        "sha256": "1bf301ee51038f00966528669417ad0f48e6bc1c66be36693df522c0f14c9ce5"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0081_beta128_official_ansys_dfm_latent.npz",
+        "size_bytes": 189047,
+        "sha256": "710bbe69c61c66054b8807cab7e92edf75a45e7a8583dedf4a87e24602f46a0b"
+      }
+    },
+    "0082": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0082_beta128_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15053,
+        "sha256": "9014c532456593ad79ac2baf0f41fa37d5a33178286885f606eaf06975f0e42a"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0082_beta128_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2153813,
+        "sha256": "1a0b9fa9f74f99b6802b5a6b4d893c0e699be966a8b8cfbc59f88ea97d8d7925"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0082_beta128_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145623,
+        "sha256": "5c83a8fa317539dffd1fb0980d750f89783126daaac93266c54afd1f361cff3b"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0082_beta128_official_ansys_dfm_latent.npz",
+        "size_bytes": 188879,
+        "sha256": "cbae6165a398ea7e33a57266aae82ef412134ee01b824785e9fab9db8845fdb6"
+      }
+    },
+    "0083": {
+      "result": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0083_beta128_official_ansys_dfm/objective_gradient_result.json",
+        "size_bytes": 15024,
+        "sha256": "834dd012dd069da3456d8b60f24d12d9a2c92e22f8d250dcfd93b184499f3d4d"
+      },
+      "raw_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0083_beta128_official_ansys_dfm/objective_gradient.npz",
+        "size_bytes": 2153733,
+        "sha256": "81ad160bba61235c2adafcdcd02bef176729dea450832d3e135a62cbef2c2bb0"
+      },
+      "forward_FSP": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0083_beta128_official_ansys_dfm/forward_Ea.fsp",
+        "size_bytes": 204145623,
+        "sha256": "befb52d927499c43b393ec6cc182b3f48f2bf1ee85ec3971c1cff6b21b334253"
+      },
+      "latent_design": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/evaluation_0083_beta128_official_ansys_dfm_latent.npz",
+        "size_bytes": 188776,
+        "sha256": "47169f1593b8888f1256a5e578fdb41544bda935e6c826e343d753f159e3d032"
+      }
+    }
+  },
+  "continuation": {
+    "beta_schedule": [
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      16.0,
+      32.0,
+      64.0,
+      128.0
+    ],
+    "maximum_evaluations_per_beta": {
+      "1.0": 20,
+      "2.0": 10,
+      "4.0": 8,
+      "8.0": 8,
+      "16.0": 10,
+      "32.0": 10,
+      "64.0": 8,
+      "128.0": 8
+    },
+    "stage_trust_radius": {
+      "1.0": 0.2,
+      "2.0": 0.2,
+      "4.0": 0.15,
+      "8.0": 0.12,
+      "16.0": 0.1,
+      "32.0": 0.08,
+      "64.0": 0.06,
+      "128.0": 0.05
+    },
+    "trust_region_interpretation": "fixed bounds around each beta-stage start; not a fixed per-evaluation update or normalized-gradient step",
+    "same_beta_restart_loop": false,
+    "official_dfm": {
+      "source": "/opt/lumerical/v261/api/python/lumopt/geometries/topology.py",
+      "implementation": "topoparamstominfeaturesizeindicator and topoparamstominfeaturesizegradient",
+      "contract": {
+        "filter_radius_m": 3e-07,
+        "minimum_feature_m": 5e-07,
+        "eta": 0.5,
+        "dx_m": 1e-07,
+        "dy_m": 1e-07,
+        "activation_beta": 12.0,
+        "penalty_factor": 100.0,
+        "maximum_penalty": 10000.0
+      },
+      "derived": {
+        "delta_eta": 0.4722222222222222,
+        "eta_d": 0.02777777777777779,
+        "eta_e": 0.9722222222222222
+      },
+      "extra_Maxwell_solves": 0
+    },
+    "exact_final_gate": "independent 500-nm binary opening audit"
+  },
+  "stage_checkpoints": {
+    "beta_1": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/beta_1_completed.npz",
+      "size_bytes": 140601,
+      "sha256": "619e19cdb53b9a7621983f79f408943c750d8c6c904a7572cfa8cb685f377b67",
+      "nlopt_result_code": 5,
+      "discreteness": 0.15365226277422184,
+      "full_physics_evaluations": 20
+    },
+    "beta_2": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/beta_2_completed.npz",
+      "size_bytes": 479442,
+      "sha256": "578177d648bbcf733f5836b3e907edcbd9ee35a86e6bbadbc94fb8ca01b9d15f",
+      "nlopt_result_code": 5,
+      "discreteness": 0.5275800470538383,
+      "full_physics_evaluations": 10
+    },
+    "beta_4": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/beta_4_completed.npz",
+      "size_bytes": 549808,
+      "sha256": "c3c6fe1765a54864e36fb5dc57250737bb75002b09988e2b5233d74ed91d76ee",
+      "nlopt_result_code": 5,
+      "discreteness": 0.7226629890007047,
+      "full_physics_evaluations": 8
+    },
+    "beta_8": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/beta_8_completed.npz",
+      "size_bytes": 565927,
+      "sha256": "592a162cc042b05ee5282fa41d14a57dda6fd1b8e31504af42545c457bdbf9be",
+      "nlopt_result_code": 5,
+      "discreteness": 0.8116584305252588,
+      "full_physics_evaluations": 9
+    },
+    "beta_16": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/beta_16_completed.npz",
+      "size_bytes": 500025,
+      "sha256": "a284d8df2942d77412203a9627f1732e52dc4548fcad7a0bd6f650bd5bbaa4f3",
+      "nlopt_result_code": 5,
+      "discreteness": 0.9606554093177131,
+      "full_physics_evaluations": 10
+    },
+    "beta_32": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/beta_32_completed.npz",
+      "size_bytes": 387902,
+      "sha256": "7c82895a308a9267f7398a316f1412a510c7f5b9d0aacc89e47c188d40c0359c",
+      "nlopt_result_code": 5,
+      "discreteness": 0.9900706937377926,
+      "full_physics_evaluations": 10
+    },
+    "beta_64": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/beta_64_completed.npz",
+      "size_bytes": 245114,
+      "sha256": "1eb557cae98958270d00e5d916016bc0ac72c2aa832785f10800abda7b5247f0",
+      "nlopt_result_code": 5,
+      "discreteness": 0.9962950924451249,
+      "full_physics_evaluations": 8
+    },
+    "beta_128": {
+      "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run059_rotated_ideal_terminal_no_Au_Ea_evaporated_v5/beta_128_completed.npz",
+      "size_bytes": 206811,
+      "sha256": "627511bd6b4b322d0b757a68f998c997b57279182caf8f7b1ceca2f8df9abfd7",
+      "nlopt_result_code": 5,
+      "discreteness": 0.998489610344172,
+      "full_physics_evaluations": 8
+    }
+  }
+}
