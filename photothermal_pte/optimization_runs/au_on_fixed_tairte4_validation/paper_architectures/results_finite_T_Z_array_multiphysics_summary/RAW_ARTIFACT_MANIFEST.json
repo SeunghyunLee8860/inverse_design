@@ -1,0 +1,158 @@
+{
+  "status": "VALIDATED_FINITE_T11X15_Z1X3_MAXWELL_THERMAL_ELECTRICAL_AU_EFFECT_FORWARD",
+  "raw_files_committed_to_git": false,
+  "artifacts": [
+    {
+      "case": "T11x15_Ea_Au_on",
+      "optical_summary": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Q/T11x15_Ea_Au_on/FINITE_T_Ea_Au_on_Q.json",
+        "bytes": 210051,
+        "sha256": "029124555751ded7fbe61aaa7219a928c5e3c56ec6d04d39a60795eedc12048c"
+      },
+      "raw_optical": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Q/T11x15_Ea_Au_on/finite_T_Ea_Au_on.fsp",
+          "size_bytes": 2745926113,
+          "sha256": "a667f2fecbbd80587a93bce91b0aa1a48813a88fffa3bd8107a542efcde0dafa"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Q/T11x15_Ea_Au_on/finite_T_Ea_Au_on_Q.npz",
+          "size_bytes": 949435012,
+          "sha256": "c36ee7390067625a3e1add6608919724ce7b4c424f3cfdf9b80e0270dacdc296"
+        }
+      ],
+      "mapped_Q": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_material_Q/T11x15_Ea_Au_on_material_Q_thermal_grid.npz",
+        "bytes": 17113115,
+        "sha256": "b1d7c2d55d4e74805939469d4bee6a8a1f1a9424b8fc70b9a3c27dc5a76d778c",
+        "committed_to_git": false
+      },
+      "thermal_electrical": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_thermal_electrical/T11x15_Ea_Au_on_finite_thermal_electrical.npz",
+        "bytes": 27204107,
+        "sha256": "4232a0ab241c3296f4c0e08d34b79eb26c832ade9e22116f66dced07fd6c1411",
+        "committed_to_git": false
+      },
+      "Au_effect": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Au_effect_decomposition/T11x15_Ea_Au_on_Au_array_effect_decomposition.npz",
+        "bytes": 474394,
+        "sha256": "8ede784767abcdda8b8971ad8068fdefcaed0b721cddcf4f2f3026820dd0f755",
+        "committed_to_git": false
+      }
+    },
+    {
+      "case": "T11x15_Eb_Au_on",
+      "optical_summary": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Q/T11x15_Eb_Au_on/FINITE_T_Eb_Au_on_Q.json",
+        "bytes": 210045,
+        "sha256": "11152773842667eb73698da7868f06ba2dbfbed1b3fb7c17f1e2cf1cb7f8d006"
+      },
+      "raw_optical": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Q/T11x15_Eb_Au_on/finite_T_Eb_Au_on.fsp",
+          "size_bytes": 2745924889,
+          "sha256": "030361be62de97d5c20d455b875122a37c1df0b54e69714470281a5c13f40b5c"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Q/T11x15_Eb_Au_on/finite_T_Eb_Au_on_Q.npz",
+          "size_bytes": 948524422,
+          "sha256": "21d7e61fdd2db5fbb9b3d3154fe82c3fa5934e52052f6aafa7aec8ce4bd58723"
+        }
+      ],
+      "mapped_Q": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_material_Q/T11x15_Eb_Au_on_material_Q_thermal_grid.npz",
+        "bytes": 17152615,
+        "sha256": "34e79ba23ab2dd555104342db7411a023543bc3a4a7be727e52dd97e1952011b",
+        "committed_to_git": false
+      },
+      "thermal_electrical": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_thermal_electrical/T11x15_Eb_Au_on_finite_thermal_electrical.npz",
+        "bytes": 27231952,
+        "sha256": "fe470380da83241f33f5d0c399c829ef9e6b3625e55ae5dc944a83b6ca7295fe",
+        "committed_to_git": false
+      },
+      "Au_effect": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Au_effect_decomposition/T11x15_Eb_Au_on_Au_array_effect_decomposition.npz",
+        "bytes": 471943,
+        "sha256": "6ea0a10e32f56bca9c9af1fc364231cd38e31eaa68907ca6c795a320e6b10dba",
+        "committed_to_git": false
+      }
+    },
+    {
+      "case": "Z1x3_Ea_Au_on",
+      "optical_summary": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Q/Z1x3_Ea_Au_on/FINITE_Z_Ea_Au_on_Q.json",
+        "bytes": 21292,
+        "sha256": "89d3020f184b559bcfac88708ad425afc6c577fbb7adf825056fa5f1ca58d04f"
+      },
+      "raw_optical": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Q/Z1x3_Ea_Au_on/finite_Z_Ea_Au_on.fsp",
+          "size_bytes": 850608537,
+          "sha256": "fffd1bd9429b3d221cd6bb229d5e0de1390ca0ed268e3f2ac52dc157d1155114"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Q/Z1x3_Ea_Au_on/finite_Z_Ea_Au_on_Q.npz",
+          "size_bytes": 246725504,
+          "sha256": "3f4b57c1690c01f2f81bcc06abd4e1b9ed32e05fed906c65ba6a62c6dae55cb2"
+        }
+      ],
+      "mapped_Q": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_material_Q/Z1x3_Ea_Au_on_material_Q_thermal_grid.npz",
+        "bytes": 9650970,
+        "sha256": "f6e0bf14cea02616e6075fc19fc638f6bc93c62d03d048994e03237a288d309e",
+        "committed_to_git": false
+      },
+      "thermal_electrical": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_thermal_electrical/Z1x3_Ea_Au_on_finite_thermal_electrical.npz",
+        "bytes": 21698674,
+        "sha256": "2710d4ffbba4f10902db16883f52057b8bd8f48f286d68fe78e5cb97f2014858",
+        "committed_to_git": false
+      },
+      "Au_effect": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Au_effect_decomposition/Z1x3_Ea_Au_on_Au_array_effect_decomposition.npz",
+        "bytes": 524899,
+        "sha256": "504ec991fc7c6a907dfde01cde84e05db65e68dfda857dc9841cf1be3f22e7a9",
+        "committed_to_git": false
+      }
+    },
+    {
+      "case": "Z1x3_Eb_Au_on",
+      "optical_summary": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Q/Z1x3_Eb_Au_on/FINITE_Z_Eb_Au_on_Q.json",
+        "bytes": 21297,
+        "sha256": "1a0a2d9f9bcd04fe9ee42b391ab1fe2b9424dabe64e339309904c3fb4c942f66"
+      },
+      "raw_optical": [
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Q/Z1x3_Eb_Au_on/finite_Z_Eb_Au_on.fsp",
+          "size_bytes": 850609281,
+          "sha256": "18d2ccccd3e497e963feeb7772bbdb6b2cd121cc64084912e1542e435a326838"
+        },
+        {
+          "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Q/Z1x3_Eb_Au_on/finite_Z_Eb_Au_on_Q.npz",
+          "size_bytes": 246324638,
+          "sha256": "4e211b061e811714e1934fc81869cf48152d2f49b42fe3cb7a569d23ebf2be5f"
+        }
+      ],
+      "mapped_Q": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_material_Q/Z1x3_Eb_Au_on_material_Q_thermal_grid.npz",
+        "bytes": 9671516,
+        "sha256": "a4d21f637e91968214a71fcf9542565b7817ac70203dbb415a0db668087fef39",
+        "committed_to_git": false
+      },
+      "thermal_electrical": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_thermal_electrical/Z1x3_Eb_Au_on_finite_thermal_electrical.npz",
+        "bytes": 21764833,
+        "sha256": "748c36b006254db7ca5167d57a244e577d3427e152d6a1b380bd23dde05d2677",
+        "committed_to_git": false
+      },
+      "Au_effect": {
+        "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_array_Au_effect_decomposition/Z1x3_Eb_Au_on_Au_array_effect_decomposition.npz",
+        "bytes": 520637,
+        "sha256": "b870d8aea97727c962da0f2714e7ecfa1a7dfd8a7e87ffe5e85767af31bf02cb",
+        "committed_to_git": false
+      }
+    }
+  ]
+}

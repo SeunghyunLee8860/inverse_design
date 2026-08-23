@@ -1,0 +1,249 @@
+{
+  "status": "VALIDATED_FINITE_T11X15_Z1X3_MAXWELL_THERMAL_ELECTRICAL_AU_EFFECT_FORWARD",
+  "classification": "finite-array forward scenario at 285 uW; contact parameters are named numerical scenarios, not an experimental prediction",
+  "geometry": {
+    "T": "11 x 15 finite array",
+    "Z": "1 x 3 finite array along the paper vertical period"
+  },
+  "axes": {
+    "x": "b",
+    "y": "a",
+    "z": "c"
+  },
+  "cases": {
+    "T11x15_Ea_Au_on": {
+      "optical": "VALIDATED_FINITE_T11x15_Ea_VOLUMETRIC_Q",
+      "mapping": "VALIDATED_FINITE_T11X15_Z1X3_COMPONENT_MATERIAL_Q_MAPPING",
+      "thermal_electrical": "VALIDATED_FINITE_T_Z_ARRAY_THERMAL_ELECTRICAL_FORWARD",
+      "Au_effect": "VALIDATED_FINITE_T_Z_ARRAY_AU_EFFECT_DECOMPOSITION"
+    },
+    "T11x15_Eb_Au_on": {
+      "optical": "VALIDATED_FINITE_T11x15_Eb_VOLUMETRIC_Q",
+      "mapping": "VALIDATED_FINITE_T11X15_Z1X3_COMPONENT_MATERIAL_Q_MAPPING",
+      "thermal_electrical": "VALIDATED_FINITE_T_Z_ARRAY_THERMAL_ELECTRICAL_FORWARD",
+      "Au_effect": "VALIDATED_FINITE_T_Z_ARRAY_AU_EFFECT_DECOMPOSITION"
+    },
+    "Z1x3_Ea_Au_on": {
+      "optical": "VALIDATED_FINITE_Z1x3_Ea_VOLUMETRIC_Q",
+      "mapping": "VALIDATED_FINITE_T11X15_Z1X3_COMPONENT_MATERIAL_Q_MAPPING",
+      "thermal_electrical": "VALIDATED_FINITE_T_Z_ARRAY_THERMAL_ELECTRICAL_FORWARD",
+      "Au_effect": "VALIDATED_FINITE_T_Z_ARRAY_AU_EFFECT_DECOMPOSITION"
+    },
+    "Z1x3_Eb_Au_on": {
+      "optical": "VALIDATED_FINITE_Z1x3_Eb_VOLUMETRIC_Q",
+      "mapping": "VALIDATED_FINITE_T11X15_Z1X3_COMPONENT_MATERIAL_Q_MAPPING",
+      "thermal_electrical": "VALIDATED_FINITE_T_Z_ARRAY_THERMAL_ELECTRICAL_FORWARD",
+      "Au_effect": "VALIDATED_FINITE_T_Z_ARRAY_AU_EFFECT_DECOMPOSITION"
+    }
+  },
+  "primary_results": [
+    {
+      "case": "T11x15_Ea_Au_on",
+      "architecture": "T",
+      "polarization": "Ea",
+      "P_Q_raw_W": 5.669997549892368e-15,
+      "P_six_raw_W": 5.670165632705718e-15,
+      "six_face_closure_relative": 2.9643369213262764e-05,
+      "auto_shutoff": 9.63717e-07,
+      "Qx_raw_W": 8.809738996266289e-17,
+      "Qy_raw_W": 5.243834169968113e-15,
+      "Qz_raw_W": 3.3806598996159137e-16,
+      "absorbed_power_at_285uW_W": 5.179358847080645e-05,
+      "TaIrTe4_absorption_fraction": 0.975711354637429,
+      "top_Au_absorption_fraction": 0.02007297626083649,
+      "mirror_Au_absorption_fraction": 0.004215669097920052,
+      "SiO2_absorption_fraction": 3.814471794230588e-12,
+      "Tmax_K": 0.6465733294560053,
+      "TaIrTe4_volume_average_K": 0.14302448909482648,
+      "top_bottom_current_nA": 0.008668231710440665,
+      "left_right_current_nA": -3.2521176537144945e-09,
+      "single_top_bottom_current_nA": 0.0027821265968603023,
+      "single_left_right_current_nA": -3.10859989424162e-08,
+      "bare_top_bottom_current_nA": 1.4086980130367892e-08,
+      "bare_left_right_current_nA": -5.246716555794905e-08,
+      "thermal_energy_balance_relative": 2.345116857218825e-10,
+      "thermal_residual_relative": 8.865008354205228e-10
+    },
+    {
+      "case": "T11x15_Eb_Au_on",
+      "architecture": "T",
+      "polarization": "Eb",
+      "P_Q_raw_W": 6.4882289964515675e-15,
+      "P_six_raw_W": 6.488187829229787e-15,
+      "six_face_closure_relative": 6.344949138989544e-06,
+      "auto_shutoff": 8.48509e-07,
+      "Qx_raw_W": 4.354743353944297e-15,
+      "Qy_raw_W": 1.2250303419446002e-15,
+      "Qz_raw_W": 9.084553005626703e-16,
+      "absorbed_power_at_285uW_W": 5.926787995473389e-05,
+      "TaIrTe4_absorption_fraction": 0.9394505492079658,
+      "top_Au_absorption_fraction": 0.037617026035979356,
+      "mirror_Au_absorption_fraction": 0.022932424735667745,
+      "SiO2_absorption_fraction": 2.038672349451118e-11,
+      "Tmax_K": 0.748648126779842,
+      "TaIrTe4_volume_average_K": 0.1630020166171744,
+      "top_bottom_current_nA": 0.04565383467536466,
+      "left_right_current_nA": 6.473371110143589e-08,
+      "single_top_bottom_current_nA": -0.007540814149562138,
+      "single_left_right_current_nA": 1.0727954919421145e-06,
+      "bare_top_bottom_current_nA": 1.0477683406611163e-08,
+      "bare_left_right_current_nA": 5.092524051196549e-08,
+      "thermal_energy_balance_relative": 2.3289891762370334e-10,
+      "thermal_residual_relative": 8.58823821922977e-10
+    },
+    {
+      "case": "Z1x3_Ea_Au_on",
+      "architecture": "Z",
+      "polarization": "Ea",
+      "P_Q_raw_W": 5.3096185862066085e-15,
+      "P_six_raw_W": 5.309770282652817e-15,
+      "six_face_closure_relative": 2.8569304910296793e-05,
+      "auto_shutoff": 9.80566e-07,
+      "Qx_raw_W": 1.03272496306395e-16,
+      "Qy_raw_W": 5.027951949676581e-15,
+      "Qz_raw_W": 1.7839414022363227e-16,
+      "absorbed_power_at_285uW_W": 4.91349009431171e-05,
+      "TaIrTe4_absorption_fraction": 0.9838163826747889,
+      "top_Au_absorption_fraction": 0.014636904418624088,
+      "mirror_Au_absorption_fraction": 0.0015467129057959957,
+      "SiO2_absorption_fraction": 7.910354873147324e-13,
+      "Tmax_K": 0.4473949102743559,
+      "TaIrTe4_volume_average_K": 0.057003813339568096,
+      "top_bottom_current_nA": 0.5117010045799449,
+      "left_right_current_nA": 0.9168644705977106,
+      "single_top_bottom_current_nA": 0.22174154091583695,
+      "single_left_right_current_nA": 0.3311943132257111,
+      "bare_top_bottom_current_nA": -7.019966206615796e-08,
+      "bare_left_right_current_nA": 7.386786563005704e-08,
+      "thermal_energy_balance_relative": 6.779683650990685e-11,
+      "thermal_residual_relative": 7.643885155256235e-10
+    },
+    {
+      "case": "Z1x3_Eb_Au_on",
+      "architecture": "Z",
+      "polarization": "Eb",
+      "P_Q_raw_W": 1.6556667217744948e-14,
+      "P_six_raw_W": 1.656608023784186e-14,
+      "six_face_closure_relative": 0.0005682104614832626,
+      "auto_shutoff": 7.90558e-07,
+      "Qx_raw_W": 1.4865357564858465e-14,
+      "Qy_raw_W": 8.219229501230682e-16,
+      "Qz_raw_W": 8.693867027634146e-16,
+      "absorbed_power_at_285uW_W": 0.00015321691837415457,
+      "TaIrTe4_absorption_fraction": 0.9793725053159675,
+      "top_Au_absorption_fraction": 0.009035803358407158,
+      "mirror_Au_absorption_fraction": 0.01159169131857567,
+      "SiO2_absorption_fraction": 7.049363323960917e-12,
+      "Tmax_K": 1.5239338765844455,
+      "TaIrTe4_volume_average_K": 0.17576305103355414,
+      "top_bottom_current_nA": 2.546964690296368,
+      "left_right_current_nA": 3.337851502284683,
+      "single_top_bottom_current_nA": 0.4868246051874184,
+      "single_left_right_current_nA": 0.6810907867687955,
+      "bare_top_bottom_current_nA": -1.2249668060461034e-08,
+      "bare_left_right_current_nA": 2.485544357848074e-08,
+      "thermal_energy_balance_relative": 9.262341751785759e-11,
+      "thermal_residual_relative": 9.80668659380885e-10
+    }
+  ],
+  "Au_effect_current_decomposition": [
+    {
+      "case": "T11x15_Ea_Au_on",
+      "orientation": "top_bottom",
+      "electrical_shunt_nA": 0.004005346526935411,
+      "direct_Au_heating_nA": 0.0008306391088454907,
+      "thermal_shunt_nA": -0.006031498103668068,
+      "nonAu_optical_redistribution_nA": 0.009863730091347701,
+      "array_minus_bare_nA": 0.008668217623460536,
+      "telescoping_closure_A": 0.0
+    },
+    {
+      "case": "T11x15_Ea_Au_on",
+      "orientation": "left_right",
+      "electrical_shunt_nA": 1.4321317089181715e-09,
+      "direct_Au_heating_nA": 2.316208254525161e-08,
+      "thermal_shunt_nA": -1.0966812260016325e-10,
+      "nonAu_optical_redistribution_nA": 2.4730501772664938e-08,
+      "array_minus_bare_nA": 4.921504790423456e-08,
+      "telescoping_closure_A": 0.0
+    },
+    {
+      "case": "T11x15_Eb_Au_on",
+      "orientation": "top_bottom",
+      "electrical_shunt_nA": 0.06405780801495001,
+      "direct_Au_heating_nA": -0.02060514945558167,
+      "thermal_shunt_nA": 0.002499109231658303,
+      "nonAu_optical_redistribution_nA": -0.0002979435933453872,
+      "array_minus_bare_nA": 0.045653824197681256,
+      "telescoping_closure_A": 0.0
+    },
+    {
+      "case": "T11x15_Eb_Au_on",
+      "orientation": "left_right",
+      "electrical_shunt_nA": -1.1111817331589601e-08,
+      "direct_Au_heating_nA": 1.545103125595777e-08,
+      "thermal_shunt_nA": -8.27052399558082e-10,
+      "nonAu_optical_redistribution_nA": 1.0296309064660309e-08,
+      "array_minus_bare_nA": 1.3808470589470396e-08,
+      "telescoping_closure_A": 0.0
+    },
+    {
+      "case": "Z1x3_Ea_Au_on",
+      "orientation": "top_bottom",
+      "electrical_shunt_nA": 0.5311695243983914,
+      "direct_Au_heating_nA": 0.0009063982265407314,
+      "thermal_shunt_nA": -0.005935433876187575,
+      "nonAu_optical_redistribution_nA": -0.014439413969137518,
+      "array_minus_bare_nA": 0.5117010747796069,
+      "telescoping_closure_A": 0.0
+    },
+    {
+      "case": "Z1x3_Ea_Au_on",
+      "orientation": "left_right",
+      "electrical_shunt_nA": 1.0404687132740154,
+      "direct_Au_heating_nA": 0.004045203769321763,
+      "thermal_shunt_nA": 0.015745542018301677,
+      "nonAu_optical_redistribution_nA": -0.14339506233179367,
+      "array_minus_bare_nA": 0.916864396729845,
+      "telescoping_closure_A": -1.0339757656912846e-25
+    },
+    {
+      "case": "Z1x3_Eb_Au_on",
+      "orientation": "top_bottom",
+      "electrical_shunt_nA": 2.5682886054569583,
+      "direct_Au_heating_nA": 0.003750903838747103,
+      "thermal_shunt_nA": -0.01967892925242815,
+      "nonAu_optical_redistribution_nA": -0.005395877497240826,
+      "array_minus_bare_nA": 2.546964702546036,
+      "telescoping_closure_A": 0.0
+    },
+    {
+      "case": "Z1x3_Eb_Au_on",
+      "orientation": "left_right",
+      "electrical_shunt_nA": 4.454803269836057,
+      "direct_Au_heating_nA": 0.007685302420442092,
+      "thermal_shunt_nA": 0.0839890550958188,
+      "nonAu_optical_redistribution_nA": -1.2086261499230786,
+      "array_minus_bare_nA": 3.3378514774292394,
+      "telescoping_closure_A": 0.0
+    }
+  ],
+  "gates": {
+    "four_optical_cases_validated": true,
+    "four_thermal_electrical_cases_validated": true,
+    "four_Au_decompositions_validated": true,
+    "optical_closure_lt_0p5pct": true,
+    "auto_shutoff_lt_1e_5": true,
+    "mapping_power_error_lt_1e-12": true,
+    "thermal_energy_balance_lt_1pct": true,
+    "thermal_residual_lt_1e-8": true,
+    "Au_decomposition_telescoping_roundoff": true,
+    "no_Q_clipping_smoothing_gain_rescaling_or_tiling": true
+  },
+  "important_limits": [
+    "top Au is electrically floating with S_Au=0; it is not a terminal",
+    "Au/TaIrTe4 thermal and electrical contact conductances are named numerical scenarios, not measured TaIrTe4 values",
+    "the T geometry is digitized from the 2024 figure and the Z geometry follows published dimensions without exact CAD",
+    "285 uW results use certified linear source-power scaling; raw Q is unchanged"
+  ]
+}
