@@ -1,0 +1,18 @@
+{
+  "status": "VALIDATED_FINITE_T11X15_DIAGONAL_COMPONENT_MATERIAL_Q_MAPPING",
+  "raw_files_committed_to_git": false,
+  "artifacts": {
+    "T11x15_linear_plus_45_Au_on": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_diagonal_material_Q/T11x15_linear_plus_45_Au_on_material_Q_thermal_grid.npz",
+      "bytes": 17172646,
+      "sha256": "d59ac424fc7e78efa90bad5caee67bc6c2b11e6175f116e99f6f9d8cf3a20fb3",
+      "committed_to_git": false
+    },
+    "T11x15_linear_minus_45_Au_on": {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_diagonal_material_Q/T11x15_linear_minus_45_Au_on_material_Q_thermal_grid.npz",
+      "bytes": 17173011,
+      "sha256": "7acf09a82de42ac1d8d4533ed1bbf0a06020feda527d91b70fc43d52c3b89499",
+      "committed_to_git": false
+    }
+  }
+}

@@ -1,0 +1,15 @@
+# Finite T11x15 axial/diagonal polarization Maxwell-to-current report
+
+Status: `VALIDATED_FINITE_T11X15_FOUR_LINEAR_POLARIZATION_MAXWELL_THERMAL_ELECTRICAL`
+
+The electrodes and weighting solves are unchanged between polarizations. Only the coherent linear source angle changes.
+
+| polarization | absorbed power at 285 uW (uW) | Tmax (K) | top-bottom I (nA) | left-right I (nA) | closure |
+|---|---:|---:|---:|---:|---:|
+| E||a | 51.7935885 | 0.646573329 | 0.00866823171 | -3.25211765e-09 | 0.002964% |
+| E||b | 59.26788 | 0.748648127 | 0.0456538347 | 6.47337111e-08 | 0.000634% |
+| +45 deg | 55.5271745 | 0.692928042 | 0.0273616536 | -0.118196822 | 0.010039% |
+| -45 deg | 55.5271757 | 0.692928046 | 0.027361661 | 0.118196765 | 0.010037% |
+
+The +/-45 cases are independent coherent Maxwell solves, not arithmetic averages of Ea/Eb Q.
+Raw NPZ/FSP remain outside Git; no clipping, smoothing, gain, global rescaling, or tiling was used.
