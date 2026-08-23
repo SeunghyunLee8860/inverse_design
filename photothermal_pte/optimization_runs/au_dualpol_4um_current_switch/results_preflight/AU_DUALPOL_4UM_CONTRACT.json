@@ -21,9 +21,9 @@
   "axis_y": "a",
   "low_terminal": "x_min",
   "high_terminal": "x_max",
-  "positive_current_direction": "right_to_left_internal_current_or_out_of_left_terminal",
-  "target_e_parallel_a": "right_to_left",
-  "target_e_parallel_b": "left_to_right",
+  "positive_current_direction": "plus_x_internal_current_from_x_min_to_x_max",
+  "target_e_parallel_a": "plus_x_from_x_min_to_x_max",
+  "target_e_parallel_b": "minus_x_from_x_max_to_x_min",
   "ta_sio2_thermal_scenario": "thermally_grown",
   "g_ta_sio2_W_m2K": 7370000.0,
   "g_ta_air_W_m2K": 1.0,
@@ -31,6 +31,8 @@
   "g_au_ta_W_m2K": 17241379.310344826,
   "au_ta_electrical_contact_scenario": "numerical_scenario_rhoc_1e-10_ohm_m2",
   "electrical_contact_S_m2": 10000000000.0,
+  "au_material_fraction_law": "shared_linear_projected_density",
+  "au_material_fraction_exponent": 1.0,
   "design_shape": [
     80,
     80
@@ -42,11 +44,12 @@
   "optical_electrodes_included": false,
   "electrical_terminal_model": "Dirichlet weighting potential psi=0 at x_min and psi=1 at x_max on the fixed TaIrTe4 flake",
   "au_role": "floating patterned nanostructure; optical absorber/scatterer and thermal/electrical shunt, not a measurement electrode",
-  "objective": "maximize t subject to +I(E||a)>=t and -I(E||b)>=t; +I is right-to-left internal current (out of the left terminal)",
+  "gray_density_role": "numerical topology relaxation only; optical, thermal, and electrical operators share one linear Au material fraction; promotion requires an exact-binary geometry",
+  "objective": "maximize t subject to +I(E||a)>=t and -I(E||b)>=t; +I is conventional current along solver +x, from x_min to x_max",
   "initial_design": {
     "type": "uniform latent/physical preflight only",
     "value": 0.5,
-    "note": "production symmetry-breaking policy is selected only after the dual-pol gradient smoke"
+    "note": "the contract imposes no mirror/rotational symmetry; any production initialization must be explicitly recorded and independently seeded"
   },
   "DFM_audit_definition": {
     "minimum_feature_nm": 500.0,

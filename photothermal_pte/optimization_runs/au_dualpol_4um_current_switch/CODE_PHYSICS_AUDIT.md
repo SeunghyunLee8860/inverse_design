@@ -16,6 +16,14 @@ the current axis convention are internally consistent: solver `x=b`, `y=a`,
 `Sb=+27 uV/K`, `Sa=-6 uV/K`, `sigma_b=1.1e5 S/m`, and
 `sigma_a=4.91e5 S/m`.
 
+With `psi=0` at `x_min` and `psi=1` at `x_max`, positive implemented current
+is the `+x` component of internal conventional current, from `x_min` to
+`x_max`. The epigraph target `Ia>0`, `Ib<0` therefore requests opposite
+directions `x_min -> x_max` and `x_max -> x_min`, respectively. Earlier
+contract prose that called positive current right-to-left was reversed; the
+corrected Shockley-Ramo code and its regression test were already using the
+sign stated here.
+
 The local literature files support those values and the Shockley-Ramo model:
 
 - `papers/Adv Funct Materials - 2026 - Blevins - Large Transverse Thermoelectric Effect in Weyl Semimetal TaIrTe4 Engineered for-2.pdf`, pp. 3-4 and Eq. (6).
@@ -77,6 +85,12 @@ sample-air boundaries are insulating, and the transverse example uses an
 - TaIrTe4 uses `epsilon_c=epsilon_b` because no independent c-axis table is in
   the current contract. This approximation needs explicit acceptance or c-axis
   data if out-of-plane absorption is important.
+- The present electrical network supports only grid-aligned diagonal tensors
+  (`x=b`, `y=a`) and cannot represent an arbitrary crystal/electrode angle or
+  the resulting off-diagonal in-plane transport tensors. If the target device
+  is rotated (the paper's transverse example uses 45 degrees), the rotated
+  optical, thermal, Seebeck, and conductivity tensors must be implemented
+  before device or mesh certification.
 - The optical-to-thermal remap is conservative and has a discrete transpose,
   but conservation alone does not establish field convergence.
 - The current 500 nm production path uses filter/projection, per-projection

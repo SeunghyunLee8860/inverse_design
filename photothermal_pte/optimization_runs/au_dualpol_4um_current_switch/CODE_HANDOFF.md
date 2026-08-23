@@ -102,6 +102,12 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    field device-geometry dependent and its transverse example uses a 45 degree
    crystal/electrode angle. Confirm the target flake/electrodes/axes/stack and
    illumination in `physical_device_contract.json` before mesh certification.
+10. The implemented current sign is `I=integral(J_local.grad(psi)) dA` with
+    `psi(x_min)=0`, `psi(x_max)=1`; positive current is internal conventional
+    current along solver `+x` (`x_min -> x_max`). The target remains `Ia>0`,
+    `Ib<0`. Earlier prose saying positive current was right-to-left was wrong.
+    The current network also does not yet support a rotated crystal/electrode
+    geometry or off-diagonal in-plane transport tensors.
 
 ## Raw checkpoint dependency
 

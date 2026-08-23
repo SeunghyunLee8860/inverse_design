@@ -40,9 +40,9 @@ class Contract:
     axis_y: str = "a"
     low_terminal: str = "x_min"
     high_terminal: str = "x_max"
-    positive_current_direction: str = "right_to_left_internal_current_or_out_of_left_terminal"
-    target_e_parallel_a: str = "right_to_left"
-    target_e_parallel_b: str = "left_to_right"
+    positive_current_direction: str = "plus_x_internal_current_from_x_min_to_x_max"
+    target_e_parallel_a: str = "plus_x_from_x_min_to_x_max"
+    target_e_parallel_b: str = "minus_x_from_x_max_to_x_min"
     ta_sio2_thermal_scenario: str = "thermally_grown"
     g_ta_sio2_W_m2K: float = 7.37e6
     g_ta_air_W_m2K: float = 1.0
@@ -94,7 +94,7 @@ class Contract:
             ),
             objective=(
                 "maximize t subject to +I(E||a)>=t and -I(E||b)>=t; "
-                "+I is right-to-left internal current (out of the left terminal)"
+                "+I is conventional current along solver +x, from x_min to x_max"
             ),
         )
         return payload

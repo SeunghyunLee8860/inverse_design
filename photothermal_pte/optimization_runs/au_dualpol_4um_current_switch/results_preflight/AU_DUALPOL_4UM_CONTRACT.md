@@ -11,11 +11,11 @@ flake/source-aperture boundary the requested infinite-Gaussian intensity is
 
 Lumerical x is crystal b and y is crystal a. The low/high electrical terminal
 boundary conditions are imposed on the fixed flake at x_min/x_max. The
-implemented positive current leaves the left terminal and is right-to-left
-inside the flake. Therefore the requested switch is
+implemented positive current is the +x component of internal conventional
+current, from x_min to x_max. Therefore the requested switch is
 
-- E||a: I_a > 0 (right-to-left),
-- E||b: I_b < 0 (left-to-right).
+- E||a: I_a > 0 (x_min to x_max),
+- E||b: I_b < 0 (x_max to x_min).
 
 Production uses an epigraph objective: maximize t subject to I_a >= t and
 -I_b >= t. This prevents one polarization from becoming large while the other
@@ -25,10 +25,12 @@ The patterned Au is electrically floating, not an optical model of the
 measurement electrodes. It must be included in optical absorption, thermal
 spreading/Au-Ta contact, and electrical shunting/weighting-field response.
 
-The 500 nm solid and void requirements are enforced through differentiable
-constraints during continuation and a separate exact thresholded morphology
-audit. Final promotion requires zero exact bad cells. This preflight does not
-claim that the initial uniform rho=0.5 design is manufacturable.
+The robust production path uses a 250 nm-radius density filter, projection,
+per-eta grayness constraints, and a separate exact thresholded morphology
+audit. The legacy smooth solid/void functions remain tested utilities but are
+not the robust optimizer's active constraints. Final promotion requires zero
+exact bad cells. This preflight does not claim that the initial uniform
+rho=0.5 design is manufacturable.
 
 Au/Ta thermal and electrical contact values are explicitly named numerical
 scenarios because direct TaIrTe4/Au values have not been experimentally fixed.

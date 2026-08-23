@@ -279,7 +279,7 @@ def test_signed_opposite_current_objective() -> None:
     assert derivative[0] > 0.0 and derivative[1] < 0.0
 
 
-def test_weighting_integral_sign_means_right_to_left_internal_current() -> None:
+def test_weighting_integral_sign_means_plus_x_internal_current() -> None:
     # Along x=b, S_b>0 and T increasing toward the unit-potential terminal
     # produces Jloc=-sigma_b*S_b*grad(T), hence a negative collected current.
     temperature = np.broadcast_to(
