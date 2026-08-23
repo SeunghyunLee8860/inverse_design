@@ -22,6 +22,24 @@ Run059 is retained as a completed, physically validated calculation, but it
 must not be labeled a validated final exact-binary optimum because its exact
 cleanup loss exceeds the declared 1% limit.
 
+## Figures
+
+### Run059: E parallel a
+
+![Run059 exact structure, Q, temperature, gradients, weighting field, local J, and signed current contribution](run059_rotated45_no_Au_exact_fields.png)
+
+### Run060: E parallel b
+
+![Run060 exact structure, Q, temperature, gradients, weighting field, local J, and signed current contribution](run060_rotated45_no_Au_exact_fields.png)
+
+### Current comparison
+
+![Continuous and exact current, exact-cleanup loss, positive and negative contributions, and crystal-axis decomposition](run059_060_final_current_comparison.png)
+
+### Optimization convergence
+
+![Current, gray fraction, exact feature violations, and beta through all 83 evaluations](run059_060_optimization_convergence.png)
+
 ## Published artifacts
 
 - Run059: [`results_v5_no_Au`](../../optimization_runs/run_059_diagonal45_evaporated_sio2_Ea_bounded_official_dfm_exact_repair/results_v5_no_Au)
@@ -31,6 +49,10 @@ cleanup loss exceeds the declared 1% limit.
 - `chosen_exact_candidate_density.npz`: selected 241 x 241 binary density.
 - `chosen_exact_candidate_fields.npz`: mapped heat source, nodal temperature,
   weighting potential, and element weighting-field gradient.
+- `run*_rotated45_no_Au_derived_fields.npz`: dense global-axis temperature
+  gradients, short-circuit potential and electric field, thermoelectric,
+  conductive, and total local `J`, and signed terminal-current contribution
+  density with b/a components.
 - `optimization_history.json` and `evaluation_*.json/png`: complete continuation
   history through beta 128.
 
