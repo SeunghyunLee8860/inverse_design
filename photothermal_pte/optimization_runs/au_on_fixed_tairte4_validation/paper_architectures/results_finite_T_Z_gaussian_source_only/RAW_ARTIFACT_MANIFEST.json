@@ -1,0 +1,58 @@
+{
+  "status": "VALIDATED_FINITE_T_Z_GAUSSIAN_SOURCE_ONLY",
+  "raw_not_committed": [
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/T_validated/finite_T_gaussian_source_only.fsp",
+      "size_bytes": 5519340,
+      "sha256": "fe567ecc080328cf6b7dcbff5be194782ce89fc3cef464f2f2cb4cc6f4925628"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/T_validated/finite_T_gaussian_source_only_fields.npz",
+      "size_bytes": 5961145,
+      "sha256": "02bf813c6753ea7350f40bb0a7e8dd6c042bb4447b5ac02b8d45b3d0db380da4"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/T_validated/FINITE_T_GAUSSIAN_SOURCE_ONLY.json",
+      "size_bytes": 6320,
+      "sha256": "fb6d44603abd8ead8a7a4f59fe8aaf2f5d67426a3c8c56b114b5eb470d21fe9f"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/Z_validated/finite_Z_gaussian_source_only.fsp",
+      "size_bytes": 7537628,
+      "sha256": "214a4d4aefa46dbbffe66af71a6fe1e2009c09359060f64a32a4c1b1ed58e630"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/Z_validated/finite_Z_gaussian_source_only_fields.npz",
+      "size_bytes": 8406651,
+      "sha256": "966cea96fd52bb1c04ee52b5a887f247624ac822f6caabd218fa482bc00f300e"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/raw_artifacts/finite_T_Z_source_only/Z_validated/FINITE_Z_GAUSSIAN_SOURCE_ONLY.json",
+      "size_bytes": 6400,
+      "sha256": "b7841b1c76b3bcef14c3002b2899ef7409b538569ee4e5adfe49c81ef95339f8"
+    }
+  ],
+  "published": [
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_T_Z_gaussian_source_only/FINITE_T_Z_GAUSSIAN_SOURCE_ONLY_SUMMARY.json",
+      "size_bytes": 20336,
+      "sha256": "3fbecba88df86db6b65cab1b9e3759132645d73c2970cbf02dd13e5279d5008e"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_T_Z_gaussian_source_only/FINITE_T_Z_GAUSSIAN_SOURCE_ONLY_REPORT.md",
+      "size_bytes": 787,
+      "sha256": "bb2fb478ecc6e2ec4c2db31782610a6a6a8977aea49cad88c077fff88115ad51"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_T_Z_gaussian_source_only/finite_T_Z_source_calibration_history.csv",
+      "size_bytes": 2629,
+      "sha256": "e84e6ab9824b889e211f4a4332782bc82c6e23e5f623107fa1ebf8358eb4841e"
+    },
+    {
+      "path": "/home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/results_finite_T_Z_gaussian_source_only/finite_T_Z_source_only_realized_beams.png",
+      "size_bytes": 233921,
+      "sha256": "d2f4a26cede77b8fe8755b8b483959b194905db3029009b4e0ecbc1b5516ef61"
+    }
+  ],
+  "generation_command": "python /home/seunghyun/tairte4/inverse_design_heat_export/photothermal_pte/optimization_runs/au_on_fixed_tairte4_validation/paper_architectures/77_summarize_v261_finite_t_z_gaussian_source_only.py"
+}
