@@ -12,6 +12,7 @@ from dataclasses import dataclass
 import importlib.util
 import json
 import math
+import os
 from pathlib import Path
 import sys
 from typing import Any
@@ -24,7 +25,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 
 
 HERE = Path(__file__).resolve().parent
-FDTDX_SOURCE = Path("/home/seunghyun/.local/fdtdx_main_src")
+FDTDX_SOURCE = Path(
+    os.environ.get("FDTDX_SOURCE_DIR", "/home/seunghyun/.local/fdtdx_main_src")
+)
 MATERIAL_JSON = HERE / "results_materials_4um/4um_material_contract.json"
 STAGE41 = (
     HERE.parent

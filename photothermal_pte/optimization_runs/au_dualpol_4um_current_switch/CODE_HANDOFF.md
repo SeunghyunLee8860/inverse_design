@@ -114,7 +114,9 @@ CUDA_VISIBLE_DEVICES=<free_gpu> photothermal_pte/optimization_runs/au_dualpol_4u
 ```
 
 `run_combined_gpu_python.sh` selects the checked Python/JAX/PyTorch environment
-used by the project.
+used by the project.  Launchers derive the repository root from their own
+location.  `AU_DUALPOL_PYTHON`, `FDTDX_SOURCE_DIR`, and
+`AU_DUALPOL_RAW_ROOT` override the host defaults when reproducing elsewhere.
 
 ## Next correct sequence
 

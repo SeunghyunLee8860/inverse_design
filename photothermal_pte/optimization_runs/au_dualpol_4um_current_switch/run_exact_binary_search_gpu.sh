@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repository="/home/seunghyun/tairte4/worktrees/au_dualpol_4um"
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+repository="$(git -C "$script_dir" rev-parse --show-toplevel)"
 gpu="${1:-0}"
 cd "$repository"
 export PYTHONPATH="$repository"
