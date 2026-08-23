@@ -3,55 +3,68 @@
   "polarization": "Eb",
   "density": 0.5,
   "direction": "normalized combined-gradient aligned",
+  "direction_sha256": "36ff475d56429b0b200f1ea40d650e113c8cf6657d70dd1586edeb0898dcd906",
+  "au_material_fraction": {
+    "law": "shared_linear_projected_density",
+    "exponent": 1.0,
+    "optical_fraction": "au_material_fraction(rho)",
+    "thermal_fraction": "au_material_fraction(rho)",
+    "electrical_fraction": "au_material_fraction(rho)",
+    "gray_density_is_physical_geometry": false,
+    "promotion_requires_exact_binary_density": true
+  },
+  "source_calibration_sha256": "6f419ca0cc95a683523f2c4215c99bf2676f5bb97d01f7a5123161a2e780a6c7",
+  "material_contract_sha256": "6f698049dbbaa7f770d4595e9ac75ddca66422880dc60fbeac832db631e7747d",
+  "optical_grid_edges_sha256": "c6a12b95e656a88d6d9fcf448e30539f7befaa0a894dc6d44f5de42929949e1c",
   "rows": [
     {
       "step": 0.005,
       "AD": {
-        "field_A": 2.0786614200286358e-07,
-        "explicit_loss_A": -4.333457999056548e-08,
-        "optical_total_A": 1.6453156201229808e-07
+        "field_A": 1.0208029526321276e-08,
+        "explicit_loss_A": -3.5620035536228197e-09,
+        "optical_total_A": 6.646025972698461e-09
       },
       "FD": {
-        "field_A": 2.0783720950990955e-07,
-        "explicit_loss_A": -4.333535247193178e-08,
-        "optical_total_A": 1.644940652721903e-07
+        "field_A": 1.0207670175284394e-08,
+        "explicit_loss_A": -3.562003648642378e-09,
+        "optical_total_A": 6.6452982883200295e-09
       },
       "relative_error": {
-        "field_A": 0.00013920747407194253,
-        "explicit_loss_A": 1.7825662472787286e-05,
-        "optical_total_A": 0.00022795193276874823
+        "field_A": 3.5204021163628444e-05,
+        "explicit_loss_A": 2.6675873400974924e-08,
+        "optical_total_A": 0.00010950364405920606
       },
       "forward_seconds": {
-        "plus": 4.914517559111118,
-        "minus": 4.974540315568447
+        "plus": 54.19192610308528,
+        "minus": 37.43292237445712
       },
-      "decomposition_closure_relative": 4.7368066286028e-05
+      "decomposition_closure_relative": 5.5413362351922745e-05
     },
     {
       "step": 0.0025,
       "AD": {
-        "field_A": 2.0786614200286358e-07,
-        "explicit_loss_A": -4.333457999056548e-08,
-        "optical_total_A": 1.6453156201229808e-07
+        "field_A": 1.0208029526321276e-08,
+        "explicit_loss_A": -3.5620035536228197e-09,
+        "optical_total_A": 6.646025972698461e-09
       },
       "FD": {
-        "field_A": 2.0783672570982088e-07,
-        "explicit_loss_A": -4.333477368171178e-08,
-        "optical_total_A": 1.6450001976915807e-07
+        "field_A": 1.0207073542177273e-08,
+        "explicit_loss_A": -3.5620036486423437e-09,
+        "optical_total_A": 6.644977426063288e-09
       },
       "relative_error": {
-        "field_A": 0.00014153558733297287,
-        "explicit_loss_A": 4.469647118084751e-06,
-        "optical_total_A": 0.0001917461358622693
+        "field_A": 9.365898462994335e-05,
+        "explicit_loss_A": 2.6675863763703913e-08,
+        "optical_total_A": 0.00015779536452006568
       },
       "forward_seconds": {
-        "plus": 5.003522098064423,
-        "minus": 4.99996180459857
+        "plus": 29.23697178065777,
+        "minus": 53.852668300271034
       },
-      "decomposition_closure_relative": 1.1746253609898655e-05
+      "decomposition_closure_relative": 1.3915392891916793e-05
     }
   ],
-  "adjoint_previous_to_late_field_relative": 4.3853302486240864e-05,
+  "adjoint_previous_to_late_field_relative": 0.00011784436355810612,
   "discrete_au_susceptibility": [
     -831.2608032226562,
     127.12670135498047
