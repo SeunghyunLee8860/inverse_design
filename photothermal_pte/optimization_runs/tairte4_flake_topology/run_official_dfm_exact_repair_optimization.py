@@ -220,9 +220,9 @@ def restore_resume_state(
             resume_stage_start = CONTRACT.apply_fixed_contact_density(
                 np.full(MAPPING.shape, 0.5, dtype=np.float64)
             )
-        resumed_stage_evaluations = sum(
-            np.isclose(float(row["beta"]), resume_beta) for row in history
-        )
+        resumed_stage_evaluations = int(sum(
+            bool(np.isclose(float(row["beta"]), resume_beta)) for row in history
+        ))
     if latent.shape != MAPPING.shape:
         raise RuntimeError("resume checkpoint shape disagrees with design mapping")
     fixed_source_power = float(history[0]["fixed_source_power_W"])
