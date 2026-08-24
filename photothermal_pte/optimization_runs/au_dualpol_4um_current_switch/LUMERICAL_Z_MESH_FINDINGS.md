@@ -23,6 +23,7 @@ rescaled in the saved solver result.
 | 2.5 nm | 50 nm | 183 x 183 x 303 | 3.178303778e-14 | 1.033393483e-15 | 0.09120% |
 | 2.5 nm | 25 nm | 183 x 183 x 410 | 3.180049736e-14 | 1.035053925e-15 | 0.09263% |
 | 1.25 nm | 12.5 nm | 183 x 183 x 807 | 3.180486510e-14 | 1.042597023e-15 | 0.09328% |
+| 0.625 nm | 6.25 nm | 183 x 183 x 1600 | 3.180594992e-14 | 1.046347307e-15 | 0.09339% |
 
 The linked 2.5/25 nm all-air source gate passed with a realized effective
 waist of 4.001893 um, Gaussian-fit NRMSE of 0.08537%, and incident-power
@@ -36,6 +37,16 @@ the requested GPU/time/mesh log gates all true. Its matching exact-empty and
 exact-full controls passed Q/flux closure at 0.01523% and 0.09328%,
 respectively. The three runs used the same source-calibration hash
 `ae62968dba0ae59cf84353a2068898d672dc4e445005e67c473343df0e7d0c80`.
+
+The 0.625/6.25 nm source, empty, and full runs also passed every individual
+solver gate. The source realized a 4.001947 um effective waist, 0.08636%
+Gaussian-fit NRMSE, and 0.06170% incident-power closure. The realized maximum
+z steps were 0.625 nm in the stack, 6.240 nm in Si, and 6.249 nm in the upper
+air/PML. Empty and full Q/flux closure were 0.01679% and 0.09339%. All three
+used source-calibration hash
+`b6bbdc7265d6df1e1c904ccfb0c57cb232b1163743d8b9a0124b984b8753c801`.
+The full run took 2001.9 s on the RTX development GPU; its raw FSP and NPZ
+were 1.47 GB and 384 MB and remain outside Git.
 
 ## Pairwise result
 
@@ -51,16 +62,28 @@ plane.
 | linked 5/50 -> 2.5/25 nm | 1.4340% | 1.4372% | 1.0109% | 1.1977% | fail |
 | linked 2.5/25 -> 1.25/12.5 nm, exact empty | 0.4915% | 0.4909% | 0.3418% | 0.6043% | fail |
 | linked 2.5/25 -> 1.25/12.5 nm, exact full | 0.7099% | 0.7105% | 0.5270% | 0.6237% | fail |
+| linked 1.25/12.5 -> 0.625/6.25 nm, exact empty | 0.2413% | 0.2398% | 0.1698% | 0.3003% | pass |
+| linked 1.25/12.5 -> 0.625/6.25 nm, exact full | 0.3550% | 0.3551% | 0.2669% | 0.3176% | pass |
 
 The 5-to-2.5 nm isolated result showed that the thin Au/TaIrTe4/SiO2 stack was
 then the dominant z error, not the 50-to-25 nm bulk/air/PML refinement. The
 subsequent linked 2.5/25-to-1.25/12.5 nm refinement reduced every exact-full
-error substantially, but all four exact-full metrics remain just above the
-0.5% contract. The exact-empty E2 metric also remains above the gate. Neither
-2.5/25 nm nor 1.25/12.5 nm is therefore a z-converged production mesh. Extend
-the linked full-domain axis to 0.625 nm stack and 6.25 nm bulk/air/PML with a
-new matching source-only control. Do not proceed to x/y convergence or
-optimization on the present result.
+error substantially but still failed. The final linked
+1.25/12.5-to-0.625/6.25 nm pair passes every scalar and common endpoint-plane
+metric for both exact-empty and exact-full Ea. This closes that Maxwell
+sub-gate and establishes that the coarser member is within 0.5% of the finer
+reference for these observables. It is not yet a full z-mesh or production
+certificate: native volumetric Q must be conservatively remapped to the common
+thermal grid and temperature/current compared, and the required Eb,
+simple-geometry, final-topology, and B200 controls remain open. Do not begin
+x/y convergence or optimization until those same-axis gates are closed.
+
+The new `27_compare_lumerical_4um_control_pair.py` reproduces the four table
+metrics. It verifies the raw NPZ SHA-256 values; exact case, polarization,
+geometry, GPU UUID, and solver version; all fixed non-z mesh fields; and each
+run's source-calibration and solver gates before comparing anything. The raw
+comparison JSON files are stored beside the corresponding finest empty/full
+artifacts, not in Git.
 
 The coordinate-only material partition is not a material-resolved convergence
 metric. Refining z changes which staggered/interface samples are assigned to a
@@ -75,5 +98,7 @@ The earlier 2 ps / 1e-9 strict-decay diagnostic used the now-rejected Au MCM20
 fit. It proves that longer decay did not repair the MCM20 energy failure, but
 it was not a duration-convergence certificate for MCM6. A matching MCM6
 source-only/empty/full 1 ps versus 2 ps duration/decay comparison has now
-passed by a wide margin. See `LUMERICAL_TIME_CONVERGENCE_FINDINGS.md`. The z
-failure above remains spatial development evidence rather than a transient.
+passed by a wide margin. See `LUMERICAL_TIME_CONVERGENCE_FINDINGS.md`. The
+earlier z failures were therefore spatial rather than transient; the extended
+Maxwell endpoint sub-gate now passes, while its downstream and promotion scope
+remains explicitly open as described above.

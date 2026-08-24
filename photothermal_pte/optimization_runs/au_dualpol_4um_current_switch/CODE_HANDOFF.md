@@ -103,6 +103,13 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     matrices without `fdtd.run`, run independent FD/transpose gates, and save
     raw matrices/coordinates outside Git. The launcher is layout-only and
     deliberately performs no GPU/B200 Maxwell certification.
+22. `lumerical_4um_control_comparison.py` and
+    `27_compare_lumerical_4um_control_pair.py` -- hash-verify two exact-control
+    JSON/NPZ bundles, fail closed on any case/polarization/geometry/GPU/solver
+    or fixed non-z-axis mismatch, apply each run's measured source-only power,
+    and compare normalized Q, flux, complex endpoint field, and E2 with the
+    finer result as denominator. This is explicitly a Maxwell sub-gate, not a
+    volumetric-Q/thermal/current or production certificate.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -345,10 +352,13 @@ Do not copy them into this worktree.
    thin-stack 5-to-2.5-nm refinement fails: source-normalized Q changes
    1.3298%, complex endpoint field changes 0.9850%, and E2 changes 1.1618%.
    The linked 5/50-to-2.5/25-nm pair also fails. Extending the linked pair to
-   1.25/12.5 nm still fails narrowly: exact-full normalized Q, flux, complex
-   field, and E2 change by 0.7099%, 0.7105%, 0.5270%, and 0.6237%. Exact-empty
-   E2 changes by 0.6043%. See `LUMERICAL_Z_MESH_FINDINGS.md`; neither 2.5/25
-   nm nor 1.25/12.5 nm is a converged production mesh.
+   1.25/12.5 nm still fails narrowly. The next linked
+   1.25/12.5-to-0.625/6.25-nm pair passes the exact-full Maxwell sub-gate:
+   normalized Q, flux, complex field, and E2 change by 0.3550%, 0.3551%,
+   0.2669%, and 0.3176%; exact-empty also passes all four metrics. See
+   `LUMERICAL_Z_MESH_FINDINGS.md`. Volumetric-Q remap, temperature/current,
+   Eb, simple-L, final-topology, and B200 z gates remain open, so this is not
+   yet a production mesh certificate.
 10. The prior 2-ps/1e-9 run used rejected MCM20, so the MCM6 duration/decay
     pair was rerun correctly. Exact-full 1 ps versus 2 ps changes were Q
     0.00456%, flux 0.01086%, complex field 0.00184%, and E2 0.00135%; exact
@@ -365,8 +375,10 @@ Do not copy them into this worktree.
    useful negative evidence: its stable final pair failed in all 6/6 cases.
 3. Treat the CV0/CV1/staircase, z, time, and MCM sweeps as RTX development
    evidence only. Use Au MCM6, not 20. The MCM6 duration/decay pair now passes.
-   Extend the failed linked z pair from 1.25/12.5 nm to 0.625/6.25 nm. Do not
-   begin x/y convergence until the z pair passes every 0.5% scalar/field gate.
+   Reproduce the now-passed Ea empty/full Maxwell sub-gate with script 27,
+   then conservatively remap the same pair's native-Yee Q to the common thermal
+   grid and compare temperature and signed current. Do not begin x/y
+   convergence until the remaining Eb/simple-L/downstream z gates pass.
 4. On the actual B200, use `25_run_lumerical_4um_exact_au_control.py` to pass
    source-only Ea/Eb first, then matching ordinary empty/full/simple-L exact
    Au time, Q/flux, linked stack+bulk/air/PML-z, x/y, PML-layer, and domain

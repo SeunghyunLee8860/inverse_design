@@ -245,8 +245,11 @@ source-only/empty/full pair passed: exact-full normalized Q, complex field,
 and E2 changed 0.00456%, 0.00184%, and 0.00135%. See
 `LUMERICAL_TIME_CONVERGENCE_FINDINGS.md`. The linked 1.25/12.5-nm mesh was then
 completed but still failed narrowly: exact-full normalized Q, complex field,
-and E2 changed 0.7099%, 0.5270%, and 0.6237%. The next spatial step is the
-linked 0.625/6.25-nm z mesh; x/y convergence remains blocked.
+and E2 changed 0.7099%, 0.5270%, and 0.6237%. Extending once more to the linked
+0.625/6.25-nm reference passed the exact-full Maxwell sub-gate at 0.3550%,
+0.2669%, and 0.3176%; exact-empty also passed all four scalar/endpoint metrics.
+The same-pair volumetric-Q remap, temperature/current, Eb, simple-L, final
+topology, and B200 gates remain open, so x/y convergence remains blocked.
 
 The concrete forward entry point is
 `25_run_lumerical_4um_exact_au_control.py`. It has an audit-only path that
