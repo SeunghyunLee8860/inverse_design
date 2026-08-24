@@ -125,3 +125,16 @@ compute-process ownership immediately before launch and use two distinct idle
 GPUs concurrently. Never select a GPU carrying another user process. A single
 FDTDX solve remains single-GPU; assigning several GPUs to one solve does not
 make it faster.
+
+
+## Actual JAX kernel evidence
+
+The first isolated fork gate is complete. The clean local FDTDX fork commit is `24d0cb2374bf03b6bfdc528b189c69685b74dfee`. It adds only `src/fdtdx/increment_state.py` and five unit tests; production `update_E`, placement, source, and detector paths remain unchanged. The module/test SHA-256 values are `ad01f797b9807fc1db994f4ff41c022078895f8d272379fbfe9ec9980c36d5eb` / `95815699805ea3b4322cfd435c47199d7cbff160693ed5a371a426ade0d5fa96`. The fork tests are `5 passed`; the existing dispersion/initialization regression subset is `106 passed`.
+
+The reproducible git patch is `fdtdx_patches/0001-feat-dispersion-add-isolated-increment-state-ADE-ker.patch`, SHA-256 `df7c8e6c537d8f1a6f5f33bb24c6fef7bebf8f8c16bbf11b06a13654c6e4cc50`. Project preflight code and tests were pushed at inverse-design commit `4269c80a`; the full project FDTDX-related suite is now `156 passed`.
+
+The fork-bound CPU/JAX report is `/home/seunghyun200/fdtdx_results/l500_full_z_150a7592_20260824/increment_state_jax_24d0cb2/FDTDX_FRESH_INCREMENT_STATE_JAX_PREFLIGHT.json`. File SHA-256 is `3bc7fc444765acf8f869765b14ac053eb1355bb3a17010769ace495b485551cc`; payload SHA-256 is `890e150bb325bb61bea45aa9e08877a63a826809d873632619404e43cbf9bfd7`; preflight-script SHA-256 is `565cce1ce1fb41dd2a36fd9ffb177ad8edac92653e15cee2f72a877e73c4231d`. It audited the exact clean fork commit, forced backend `cpu` with x64 enabled for the reference state, and completed all z8/z16/z32 32-period kernels in `3.61 s` total.
+
+The worst actual-JIT float32 late drift is `1.8913e-6` at z32 Au. The worst float32/float64 late difference is `2.6211e-6` at z16 Au, and the worst carrier error remains `5.3718e-5` at z32 Au. Every axis and level passes. This closes compiler/JIT state precision only. The unit AD-FD test differentiates the isolated kernel coefficient; it is not a checkpointed full-FDTD adjoint certificate.
+
+The next allowed fork change is opt-in full integration: select the representation in `SimulationConfig`, reuse the three coefficient arrays as direct `A/C/B` storage without extra grid memory, place/read back those semantics, route source susceptibility through the stable formula, and connect the diagonal `update_E` correction. CCPR, oriented dispersion, and full-tensor dispersion must fail closed initially. Then run small-domain forward equivalence and checkpointed full-FDTD AD-FD before any production-width GPU solve.

@@ -775,3 +775,8 @@ Do not copy them into this worktree.
 ## 2026-08-25 FDTDX increment-state update
 
 Commit `05d8e9ba` adds a CPU-only cancellation-resistant `(P, delta-P)` ADE candidate. All z8/z16/z32 material-axis scalar gates pass and the FDTDX-related suite is now `152 passed`; optimizer permission remains false. The old one-point CCPR fallback was rejected because passive candidates retained fine-dt cancellation while the better-conditioned candidate was non-passive. See `FDTDX_INCREMENT_STATE_CANDIDATE.md` for equations, hashes, runtime, exact promotion boundaries, and the required small forward/checkpointed-AD-FD sequence. Do not launch another long FDTDX pair yet.
+
+
+## Fork-bound JAX status
+
+Inverse-design commit `4269c80a` exports clean FDTDX fork commit `24d0cb2374bf03b6bfdc528b189c69685b74dfee` as a standard patch and adds the exact CPU/JAX preflight. z8/z16/z32 actual-JIT state gates all pass; the project suite is `156 passed`. This validates the isolated kernel only. Production `update_E`, material placement/source semantics, and checkpointed full-FDTD AD-FD remain the next blockers. See `FDTDX_INCREMENT_STATE_CANDIDATE.md`; no long GPU solve is authorized.
