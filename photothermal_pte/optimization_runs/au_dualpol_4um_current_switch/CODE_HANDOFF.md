@@ -106,7 +106,10 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
 22. `FDTDX_FRESH_DEPENDENCY.md`, `FDTDX_FRESH_ANCHOR_PLACEMENT.md`,
     `FDTDX_FRESH_SOURCE_ONLY.md`, `FDTDX_FRESH_EXACT_BINARY_PILOT.md`, and
     `fdtdx_fresh_exact_binary_matrix.py`, and
-    `fdtdx_fresh_time_settling_certificate.py` -- the separate pinned-FDTDX
+    `fdtdx_fresh_time_settling_certificate.py`,
+    `fdtdx_fresh_courant_certificate.py`,
+    `fdtdx_fresh_full_z_certificate.py`, and
+    `run_fdtdx_fresh_full_z_campaign.sh` -- the separate pinned-FDTDX
     forensic/rebuild track. Its runtime, mesh, six
     PML faces, source pair, placements, exact endpoint material readback, and
     component-Yee-volume energy balance are fail-closed. This track must not
@@ -286,7 +289,7 @@ source-only report, Ea/Eb pair, and material report binds one canonical
 stage is now complete for the exact-binary 375-pixel
 `l_shape_4um_with_500nm_arms` reference. Runs were made at clean commit
 `01a8ad8a`; the independent verifier and its 12 focused tests were committed
-and pushed as `5e376ce1`. All explicit FDTDX regression tests pass: 83
+and pushed as `5e376ce1`. All explicit FDTDX regression tests pass: 85
 `unittest` tests; the separate pytest forensic file is not runnable in the
 locked fresh venv because pytest is intentionally absent.
 
@@ -328,11 +331,32 @@ changed between them and verifies identical runner, source-pair generator,
 material-contract, pinned-FDTDX, and runtime provenance. It does not hide the
 cross-commit origin.
 
-This remains `is_mesh_certificate=false` and `optimizer_start_allowed=false`.
-The next FDTDX action is the exact same L500 reference on the full-domain-z
-resolution ladder at 24 periods and selected Courant 0.25. Generate a distinct
-case and source pair at every spatial level. The later x/y, domain, PML, joint,
-and gap-stress stages remain pending. This FDTDX track must not edit, launch, or
+The time and Courant certificates remain `is_mesh_certificate=false` and
+`optimizer_start_allowed=false`. The first fresh full-domain-z ladder was then
+run at clean commit `150a7592` for z factors 2, 4, and 8, giving grids
+`196 x 196 x 80`, `196 x 196 x 160`, and `196 x 196 x 320`. Raw root:
+`/home/seunghyun200/fdtdx_results/l500_full_z_150a7592_20260824`. The corrected
+clean-commit certificate is
+`full_z_certificate_7b687684/FDTDX_FRESH_FULL_Z_CERTIFICATE.json`, SHA-256
+`319743a29b8dd4869c5d1feedf564850ff10e4c30fb1888fd28eb7ed8764036c`.
+Its raw generator commit is `150a7592`; the corrected verifier commit is
+`7b687684`.
+
+All nonselection gates pass: canonical contracts, distinct source pairs, source
+and material NPZ hash/schema/finite-value checks, exact raw grid coordinates,
+solver-independent placement, repository/runtime/FDTDX provenance, CFL, physical
+end time, binary masks, and conservative common-volume remap. The ladder itself
+is rejected. z2-to-z4 and z4-to-z8 both fail. For z4-to-z8 the worst metrics are
+1.8458 percent total-Q change, 6.8822 percent fixed-probe complex-E NRMSE,
+13.9248 percent conservative spatial-Q NRMSE, and 93.8685 percent exact-Au
+material-field NRMSE, versus limits of 1, 2, 5, and 5 percent. The source change,
+closed-flux consistency, and within-case stationarity pass. No z factor is
+selected.
+
+The next FDTDX action is a finer full-domain-z extension under the same exact
+L500, 24-period, Courant-0.25 contract. Do not proceed to x/y, domain, PML,
+thermal/electrical, or optimization until z convergence closes. Preserve the
+failed z2/z4/z8 comparisons. This FDTDX track must not edit, launch, or
 reinterpret the concurrent Lumerical work.
 
 ## Raw checkpoint dependency

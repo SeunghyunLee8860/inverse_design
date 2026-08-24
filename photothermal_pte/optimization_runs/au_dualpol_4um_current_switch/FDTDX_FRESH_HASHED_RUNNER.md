@@ -1,6 +1,6 @@
 # Hashed numerical-case workflow for fresh FDTDX
 
-Status: **runner contract, L500 time settling, and Courant convergence validated; spatial convergence not run**
+Status: **runner contract, L500 time settling, and Courant convergence validated; first full-domain-z ladder run and rejected**
 
 The fresh source-only and exact-binary material runners are no longer limited
 internally to the anchor mesh, 16 periods, Courant 0.5, and the default CPML.
@@ -130,6 +130,25 @@ successive pairs pass, so Courant 0.25 is selected and 0.1875 is its independent
 confirmation. The verifier also records and constrains the two raw-run commits;
 it does not falsely report that all four levels came from one commit.
 
+## Rejected first full-domain-z chain
+
+`run_fdtdx_fresh_full_z_campaign.sh` completed z factors 2, 4, and 8 at
+24 periods and Courant 0.25 on GPU 7. The raw root is
+`/home/seunghyun200/fdtdx_results/l500_full_z_150a7592_20260824`. The clean
+corrected certificate is
+`full_z_certificate_7b687684/FDTDX_FRESH_FULL_Z_CERTIFICATE.json`, SHA-256
+`319743a29b8dd4869c5d1feedf564850ff10e4c30fb1888fd28eb7ed8764036c`.
+Use the exact contract and source-pair hashes in
+`FDTDX_FRESH_CONVERGENCE_DESIGN.md` when revalidating.
+
+All artifact, exact-grid-coordinate, placement, source/material provenance, CFL,
+end-time, binary-mask, and conservative-remap audits pass. Both z2-to-z4 and
+z4-to-z8 physical comparisons fail. In the finer pair, total Q changes by
+1.846 percent, the fixed tangential probe by 6.882 percent, and conservative
+spatial Q by 13.925 percent; their limits are 1, 2, and 5 percent. No z level is
+selected and optimization remains forbidden. Extend full-domain z before any
+x/y or downstream multiphysics promotion. Raw NPZ files remain external.
+
 ## Convergence rule
 
 The 16-, 24-, and 32-period levels are three different numerical cases.  Each
@@ -139,6 +158,7 @@ must never be copied between levels even when incident powers look similar.
 
 There is no implicit-anchor CLI mode. Both the absolute case path and its file
 SHA-256 are mandatory for source-only and material commands. Completion of
-the time and Courant ladders does not authorize an optimizer, thermal/electrical
-solve, PTE-current claim, or mesh certificate. The next numerical cases are the full-domain-z resolution levels at 24 periods and
-selected Courant 0.25, with a fresh source pair at each level.
+the time and Courant ladders, and execution of a rejected z2/z4/z8 ladder, does
+not authorize an optimizer, thermal/electrical solve, PTE-current claim, or mesh
+certificate. The next numerical case is a finer full-domain-z extension at 24
+periods and selected Courant 0.25, with a fresh source pair at every new level.

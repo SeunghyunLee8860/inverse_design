@@ -1,6 +1,6 @@
 # Fresh FDTDX convergence design for exact-binary Au
 
-Status: **L500 time settling and Courant convergence validated; no spatial-mesh claim and no optimizer permission**
+Status: **L500 time settling and Courant convergence validated; the first full-domain-z ladder is rejected; no spatial-mesh claim and no optimizer permission**
 
 This document defines the next FDTDX work after the four empty/full endpoint
 controls.  It is deliberately independent of the Lumerical work in progress in
@@ -181,6 +181,65 @@ successive pairs both pass every declared gate, establishing the finer
 asymptotic range. The selected Courant factor is therefore **0.25**, confirmed
 by **0.1875**. The next allowed FDTDX action is the exact same L500 reference
 on the full-domain-z resolution ladder at 24 periods and Courant 0.25.
+
+## Rejected first L500 full-domain-z ladder
+
+The first spatial stage was executed on clean raw-run commit `150a7592` at 24
+periods and Courant 0.25. Only the full-domain z factor changed: `z2`, `z4`,
+and `z8` used grids `196 x 196 x 80`, `196 x 196 x 160`, and
+`196 x 196 x 320`. Their Au pitches were 12.5, 6.25, and 3.125 nm;
+TaIrTe4 pitches were 10, 5, and 2.5 nm. Every physical Si, SiO2, TaIrTe4,
+Au, air, source, and PML boundary remained fixed. Raw artifacts are external at
+`/home/seunghyun200/fdtdx_results/l500_full_z_150a7592_20260824`.
+
+The canonical case-file SHA-256 values are:
+
+- z2: `52f43abd1355fbccda4d289acd68d59c53ec5f7679d710cae408a6b2ef12e7d0`
+- z4: `6ecf2ccbd3b4b27b33eb7c9f70d788532197c3a4e66ef1f62eb5c1779454dffe`
+- z8: `1d35f6e603c1983e5ed87a16e752d8e5d2ff971b95278d7e6429b31ba35b17c4`
+
+The matching source-pair SHA-256 values are:
+
+- z2: `bbeb96f07b3da5c1a933e46d3e9f66c4d621cc248f86a2e3830ec68c39f88282`
+- z4: `b59834591bca878d4200b8a3841f524d7584b9bcd06516e935ffa0c464eccf18`
+- z8: `1b3e91c9d444cda6fbfb89cf097cbd85ea8aadb260ba7e05ad80722a62b97d66`
+
+The corrected fail-closed certificate was generated from clean commit
+`7b687684` at
+`full_z_certificate_7b687684/FDTDX_FRESH_FULL_Z_CERTIFICATE.json`; its
+SHA-256 is
+`319743a29b8dd4869c5d1feedf564850ff10e4c30fb1888fd28eb7ed8764036c`.
+The correction applies the exact binary solver mask to the Au field comparison
+so design-window air is excluded, and treats the observed float32 representation
+of an exact 0.90 common-support fraction as numerical roundoff. All source, raw
+NPZ schema/hash/grid-coordinate, placement, material, repository, CFL, end-time,
+mask, conservative-remap, and optimizer-forbidden gates pass. The certificate
+is blocked only by both physical z comparisons.
+
+| Optical metric | Limit | z2 to z4 | z4 to z8 |
+|---|---:|---:|---:|
+| source power relative change | 5e-3 | 2.7183581e-3 | 6.7789117e-4 |
+| Q/closed-flux relative | 2e-2 | 2.3665178e-3 | 5.5250911e-3 |
+| fine-case complex-E stationarity | 5e-3 | 8.9994775e-4 | 1.7502175e-3 |
+| total Q relative change | 1e-2 | **3.7549030e-2 fail** | **1.8457622e-2 fail** |
+| material/Cartesian-component Q max change | 2e-2 | **7.8486582e-1 fail** | **3.7719972e-1 fail** |
+| fixed 8 x 8 um tangential-probe complex-E NRMSE | 2e-2 | **1.3049050e-1 fail** | **6.8821593e-2 fail** |
+| conservative component-Yee Q L2 NRMSE | 5e-2 | **2.6010590e-1 fail** | **1.3924790e-1 fail** |
+| exact-material-region complex-E NRMSE | 5e-2 | **7.8508702e-1 fail** | **9.3868486e-1 fail** |
+
+For z4 to z8, Ea total Q changes by 1.8458 percent while Eb changes by
+0.6405 percent. The exact-Au field NRMSE is 71.58 percent for Ea and 93.87
+percent for Eb; TaIrTe4 is 6.27 and 5.04 percent. Some large Cartesian relative
+changes are attached to components carrying less than 0.05 percent of total Q,
+so those diagnostics must be interpreted with their absolute power fractions.
+That caveat does not rescue the ladder: total Q, fixed probe, conservative
+spatial Q, and exact-Au field gates independently fail.
+
+No z level is selected, `is_mesh_certificate=false`, and
+`optimizer_start_allowed=false`. Do not proceed to x/y convergence, thermal or
+electrical promotion, or optimization. The next FDTDX action is a finer
+full-domain-z extension under the same exact L500, 24-period, Courant-0.25
+contract; failed z2/z4/z8 results must remain visible rather than being relabeled.
 
 ## Comparison and promotion rules
 
