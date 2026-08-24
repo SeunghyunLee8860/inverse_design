@@ -248,11 +248,13 @@ completed but still failed narrowly: exact-full normalized Q, complex field,
 and E2 changed 0.7099%, 0.5270%, and 0.6237%. Extending once more to the linked
 0.625/6.25-nm reference passed the exact-full Maxwell sub-gate at 0.3550%,
 0.2669%, and 0.3176%; exact-empty also passed all four scalar/endpoint metrics.
-The same-pair material-aware conservative-Q/custom-CUDA downstream gate was
-then run and failed: empty/full remapped-Q NRMSE is 0.9730%/1.8576% and
-TaIrTe4 temperature NRMSE is 1.0058%/1.7397%. The fine physical-material
-reconstruction also differs from native total Q by 0.7777%/1.5504%; no closure
-rescaling is allowed. See `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`. Eb,
+The same-pair Ansys-official `pabs_adv` exact-`index_x` material-filter and
+custom-CUDA downstream gate was then run and failed. Empty/full fine-grid
+unassigned absorption is 1.5552%/1.1939%, remapped-Q NRMSE is
+2.4932%/2.3285%, and TaIrTe4 temperature NRMSE is 1.7909%/1.3931%. No missing
+interface power is redistributed and no closure rescaling is allowed. The
+next bounded diagnostic is the MCM6 CV0/CV1/staircase interface axis, not a
+blind 0.3125-nm CV0 extension. See `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`. Eb,
 simple-L, final topology, and B200 gates remain open, so x/y convergence
 remains blocked.
 

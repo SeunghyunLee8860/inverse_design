@@ -111,12 +111,15 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     finer result as denominator. This is explicitly a Maxwell sub-gate, not a
     volumetric-Q/thermal/current or production certificate.
 23. `lumerical_4um_multiphysics_comparison.py` and
-    `28_validate_lumerical_4um_z_multiphysics_pair.py` -- reconstruct
-    physical-material loss from saved native Q/effective epsilon and exact
-    material overlap, conservatively remap it without closure rescaling, and
-    run the existing custom CUDA thermal/electrical solvers. Read
-    `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`: the finest Ea empty/full downstream
-    pair fails despite the Maxwell endpoint sub-gate passing.
+    `28_validate_lumerical_4um_z_multiphysics_pair.py` -- apply Ansys'
+    official `pabs_adv` common-grid `Pabs * exact(index_x material mask)`
+    definition, conservatively remap only identified material power without
+    closure rescaling, and run the custom CUDA thermal/electrical solvers.
+24. `29_extract_lumerical_4um_official_pabs.py` -- SHA-verify a completed FSP
+    and run only its saved `pabs_adv` analysis to create a Pabs/index_x
+    companion NPZ/JSON. It never reruns Maxwell. New exact-control runs save
+    these arrays directly. Read `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`: the
+    finest Ea empty/full official-filter downstream pair still fails.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -363,13 +366,17 @@ Do not copy them into this worktree.
    1.25/12.5-to-0.625/6.25-nm pair passes the exact-full Maxwell sub-gate:
    normalized Q, flux, complex field, and E2 change by 0.3550%, 0.3551%,
    0.2669%, and 0.3176%; exact-empty also passes all four metrics. See
-   `LUMERICAL_Z_MESH_FINDINGS.md`. The subsequent material-aware Q remap and
-   custom CUDA downstream comparison fails: empty/full remapped-Q NRMSE is
-   0.9730%/1.8576%, TaIrTe4 temperature NRMSE is 1.0058%/1.7397%, and the
-   physical-material reconstruction itself misses native Q by 0.7777%/1.5504%
-   even on the fine member. See `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`. Eb,
-   simple-L, final-topology, and B200 z gates also remain open, so this is not
-   a production mesh certificate.
+   `LUMERICAL_Z_MESH_FINDINGS.md`. The Ansys-official multi-material
+   `pabs_adv`/`index_x` filter was then extracted from the saved FSPs without
+   rerunning Maxwell. Unassigned conformal-interface absorption decreases
+   from 3.0869% to 1.5552% for empty and from 2.1728% to 1.1939% for full.
+   Empty/full remapped-Q NRMSE is 2.4932%/2.3285% and TaIrTe4 temperature
+   NRMSE is 1.7909%/1.3931%; both symmetry-current controls also fail the
+   one-ppm cancellation gate. An earlier effective-epsilon/physical-overlap
+   diagnostic gave smaller but still failed errors and is not the selected
+   definition. See `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`. Eb, simple-L,
+   final-topology, and B200 z gates remain open, so this is not a production
+   mesh certificate.
 10. The prior 2-ps/1e-9 run used rejected MCM20, so the MCM6 duration/decay
     pair was rerun correctly. Exact-full 1 ps versus 2 ps changes were Q
     0.00456%, flux 0.01086%, complex field 0.00184%, and E2 0.00135%; exact
@@ -387,11 +394,14 @@ Do not copy them into this worktree.
 3. Treat the CV0/CV1/staircase, z, time, and MCM sweeps as RTX development
    evidence only. Use Au MCM6, not 20. The MCM6 duration/decay pair now passes.
    Reproduce the passed Ea empty/full Maxwell sub-gate with script 27 and the
-   failed downstream gate with script 28. Establish a Lumerical-native
-   material-resolved absorption definition for conformal cut cells or a
-   converged MCM6 interface method; do not hide the 0.78--1.55% fine-grid
-   material-Q reconstruction gap by rescaling. Do not begin x/y convergence
-   until the downstream and remaining Eb/simple-L z gates pass.
+   failed downstream gate with scripts 28/29. The Lumerical-native definition
+   is now the official `pabs_adv` exact-index material filter; it leaves
+   1.19--1.56% of fine-grid absorption unassigned at conformal mixed-index
+   samples. Run the bounded MCM6 CV0/CV1/staircase interface axis at a
+   tractable linked mesh before attempting another factor-two z refinement.
+   Staircase is a tested candidate, not an assumed answer. Do not hide the
+   gap by rescaling, and do not begin x/y convergence until downstream and
+   remaining Eb/simple-L z gates pass.
 4. On the actual B200, use `25_run_lumerical_4um_exact_au_control.py` to pass
    source-only Ea/Eb first, then matching ordinary empty/full/simple-L exact
    Au time, Q/flux, linked stack+bulk/air/PML-z, x/y, PML-layer, and domain

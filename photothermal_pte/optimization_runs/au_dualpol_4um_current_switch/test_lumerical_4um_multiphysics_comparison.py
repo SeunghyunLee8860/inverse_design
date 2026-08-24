@@ -7,6 +7,7 @@ from photothermal_pte.finite_inverse_design.native_yee_q import trapezoid_weight
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_multiphysics_comparison import (
     downstream_metrics,
     map_lumerical_material_q_to_thermal,
+    map_lumerical_official_pabs_to_thermal,
     map_lumerical_q_to_thermal,
     thermal_cell_volumes,
     volume_l2_nrmse,
@@ -61,6 +62,39 @@ def test_material_remap_keeps_loss_out_of_thermal_air() -> None:
         },
     )
     assert np.all(mapped[:, :, 2:] == 0.0)
+    assert audit["relative_conservation_error"] < 1.0e-14
+
+
+def test_official_index_filter_reports_mixed_or_air_absorption_as_unassigned() -> None:
+    lateral = np.asarray((-0.05, 0.05)) * 1.0e-6
+    z = np.asarray((-0.075, -0.025, 0.025)) * 1.0e-6
+    index = np.ones((2, 2, 3), dtype=np.complex128)
+    index[:, :, :2] = 4.0 + 1.0j
+    index[0, 0, 1] = 3.0 + 0.5j  # conformal mixed index: no exact material match
+    raw = {
+        "Pabs_W_m3": np.ones((2, 2, 3)),
+        "Pabs_index_x": index,
+        "Pabs_x_m": lateral,
+        "Pabs_y_m": lateral,
+        "Pabs_z_m": z,
+    }
+    edges = (
+        np.asarray((-0.1, 0.0, 0.1)) * 1.0e-6,
+        np.asarray((-0.1, 0.0, 0.1)) * 1.0e-6,
+        np.asarray((-0.1, -0.05, 0.0, 0.05, 0.1)) * 1.0e-6,
+    )
+    mapped, audit = map_lumerical_official_pabs_to_thermal(
+        raw,
+        edges,
+        1.0,
+        case="empty",
+        material_index_x={"TaIrTe4": 4.0 + 1.0j},
+    )
+    assert np.all(mapped[:, :, 2:] == 0.0)
+    assert audit["material"]["TaIrTe4"]["matched_sample_count"] == 7
+    # Trapezoid endpoint cells carry half the z weight: the mixed middle
+    # sample contributes 1/8 and the four air endpoint samples contribute 1/4.
+    assert audit["unassigned_absorption_relative"] == pytest.approx(3.0 / 8.0)
     assert audit["relative_conservation_error"] < 1.0e-14
 
 

@@ -151,6 +151,19 @@ def _scalar(value: Any, label: str) -> float:
     return result
 
 
+def _single_frequency_cube(
+    value: Any,
+    shape: tuple[int, int, int],
+    label: str,
+) -> np.ndarray:
+    array = np.asarray(value)
+    if array.shape == (*shape, 1):
+        array = array[..., 0]
+    if array.shape != shape:
+        raise RuntimeError(f"{label} shape {array.shape} != {shape}")
+    return array
+
+
 def _normalized_gpu_uuid(value: str) -> str:
     return value.removeprefix("GPU-").strip().lower()
 
@@ -614,6 +627,58 @@ def _material_postprocess(
         fdtd.getresult(PABS_GROUP, "Pabs_total")["Pabs_total"],
         "Pabs_total",
     ) * source_power_w
+    official_pabs = fdtd.getresult(PABS_GROUP, "Pabs")
+    official_index = fdtd.getresult(PABS_INDEX, "index")
+    official_coordinates = {
+        axis: np.asarray(official_pabs[axis], dtype=np.float64).reshape(-1)
+        for axis in "xyz"
+    }
+    official_shape = tuple(official_coordinates[axis].size for axis in "xyz")
+    official_coordinate_difference_m: dict[str, float] = {}
+    for axis in "xyz":
+        index_axis = np.asarray(official_index[axis], dtype=np.float64).reshape(-1)
+        difference = float(
+            np.max(np.abs(index_axis - official_coordinates[axis]))
+        )
+        official_coordinate_difference_m[axis] = difference
+        if difference > 1.0e-18:
+            raise RuntimeError(
+                f"official Pabs/index {axis} coordinates differ by {difference} m"
+            )
+    official_pabs_W_m3 = np.asarray(
+        _single_frequency_cube(
+            official_pabs["Pabs"], official_shape, "official Pabs"
+        ),
+        dtype=np.float64,
+    ) * source_power_w
+    official_index_x = np.asarray(
+        _single_frequency_cube(
+            official_index["index_x"], official_shape, "official index_x"
+        ),
+        dtype=np.complex128,
+    )
+    if not np.all(np.isfinite(official_pabs_W_m3)):
+        raise RuntimeError("official spatial Pabs contains NaN or Inf")
+    if not np.all(np.isfinite(official_index_x)):
+        raise RuntimeError("official index_x contains NaN or Inf")
+    official_negative_power = integrate_xyz(
+        np.where(official_pabs_W_m3 < 0.0, -official_pabs_W_m3, 0.0),
+        official_coordinates["x"],
+        official_coordinates["y"],
+        official_coordinates["z"],
+    )
+    official_spatial_total = integrate_xyz(
+        official_pabs_W_m3,
+        official_coordinates["x"],
+        official_coordinates["y"],
+        official_coordinates["z"],
+    )
+    official_spatial_error = abs(official_spatial_total - p_pabs) / max(
+        abs(p_pabs), np.finfo(float).tiny
+    )
+    official_negative_relative = official_negative_power / max(
+        abs(official_spatial_total), np.finfo(float).tiny
+    )
     p_six = float(six_face["net_inward_power_W"])
     closure = abs(p_native - p_six) / max(
         abs(p_native), abs(p_six), np.finfo(float).tiny
@@ -632,6 +697,14 @@ def _material_postprocess(
         for component in "xyz"
     )
     endpoint_field, arrays = _endpoint_field_postprocess(fdtd)
+    arrays.update(
+        Pabs_W_m3=official_pabs_W_m3,
+        Pabs_index_x=official_index_x,
+        **{
+            f"Pabs_{axis}_m": official_coordinates[axis]
+            for axis in "xyz"
+        },
+    )
     material_power: dict[str, dict[str, float]] = {}
     spatial_shape = tuple(
         np.asarray(q["base_coordinates"][axis]).size for axis in "xyz"
@@ -681,6 +754,12 @@ def _material_postprocess(
         "native_Q_vs_pabs_analysis_lt_0p5pct": (
             native_pabs_error < RELATIVE_GATE
         ),
+        "official_spatial_Pabs_closes_Pabs_total_lt_1e-12": (
+            official_spatial_error < 1.0e-12
+        ),
+        "official_Pabs_negative_interpolation_artifact_lt_1e-12": (
+            official_negative_relative < 1.0e-12
+        ),
         "positive_source_calibration_power": source_incident_power_w > 0.0,
         "endpoint_field_finite": bool(endpoint_field["all_fields_finite"]),
         "coordinate_material_partition_closes_native_Q_or_not_applicable": (
@@ -693,6 +772,16 @@ def _material_postprocess(
         "P_six_face_W_raw": p_six,
         "six_face_closure_relative": closure,
         "native_vs_pabs_relative": native_pabs_error,
+        "official_spatial_Pabs_W_raw": official_spatial_total,
+        "official_spatial_Pabs_vs_total_relative": official_spatial_error,
+        "official_spatial_Pabs_negative_sample_count": int(
+            np.count_nonzero(official_pabs_W_m3 < 0.0)
+        ),
+        "official_spatial_Pabs_negative_magnitude_W": official_negative_power,
+        "official_spatial_Pabs_negative_relative": official_negative_relative,
+        "official_Pabs_vs_index_coordinate_max_abs_difference_m": (
+            official_coordinate_difference_m
+        ),
         "Q_component_power_native_W_raw": q["component_power_W"],
         "coordinate_partition_component_power_W_raw": material_power,
         "coordinate_partition_material_power_W_raw": material_power_total,

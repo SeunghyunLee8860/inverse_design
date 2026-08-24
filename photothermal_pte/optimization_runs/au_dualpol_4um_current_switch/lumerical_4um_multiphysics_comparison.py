@@ -16,6 +16,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 
 COMPONENTS = ("x", "y", "z")
 SYMMETRIC_CURRENT_CANCELLATION_GATE = 1.0e-6
+LUMERICAL_MATERIAL_FILTER_RELATIVE_TOLERANCE = 1.0e-15
 
 
 def _overlap_operator(
@@ -408,6 +409,171 @@ def map_lumerical_material_q_to_thermal(
         "finite_nonnegative": bool(
             np.all(np.isfinite(total)) and np.all(total >= 0.0)
         ),
+        "global_or_local_rescaling": False,
+        "operations_absent": ["clipping", "smoothing", "gain", "tiling"],
+    }
+
+
+def _lumerical_almostequal(
+    values: np.ndarray,
+    reference: complex,
+    relative_tolerance: float = LUMERICAL_MATERIAL_FILTER_RELATIVE_TOLERANCE,
+) -> np.ndarray:
+    """Match the real and imaginary index parts as in Ansys' example script."""
+
+    value = np.asarray(values)
+    reference_value = complex(reference)
+
+    def part_matches(part: np.ndarray, target: float) -> np.ndarray:
+        scale = np.maximum(np.abs(part), abs(target))
+        # Lumerical's official script uses almostequal(..., rel_diff=1e-15).
+        # Preserve an exact zero comparison when both values are zero instead
+        # of adding an undocumented absolute tolerance.
+        return np.abs(part - target) <= relative_tolerance * scale
+
+    return part_matches(np.real(value), reference_value.real) & part_matches(
+        np.imag(value), reference_value.imag
+    )
+
+
+def map_lumerical_official_pabs_to_thermal(
+    raw: Mapping[str, np.ndarray],
+    target_edges_m: tuple[np.ndarray, np.ndarray, np.ndarray],
+    source_scale: float,
+    *,
+    case: str,
+    material_index_x: Mapping[str, complex],
+) -> tuple[np.ndarray, dict[str, Any]]:
+    """Apply the official pabs_adv multi-material filter, then remap.
+
+    Ansys' ``usr_absorption_advanced_material.lsf`` multiplies the common-grid
+    advanced ``Pabs`` result by a material mask obtained by comparing the
+    index monitor's ``index_x`` against ``getfdtdindex(material)``.  This
+    function implements that rule directly on the saved Lumerical arrays.
+    Conformal mixed-index samples are deliberately left unassigned and their
+    absorbed power is reported; it is never redistributed or rescaled.
+    """
+
+    if not np.isfinite(source_scale) or source_scale <= 0.0:
+        raise ValueError("source_scale must be positive and finite")
+    q = np.asarray(raw["Pabs_W_m3"], dtype=np.float64)
+    index_x = np.asarray(raw["Pabs_index_x"])
+    coordinates = tuple(
+        np.asarray(raw[f"Pabs_{axis}_m"], dtype=np.float64)
+        for axis in COMPONENTS
+    )
+    expected_shape = tuple(axis.size for axis in coordinates)
+    if q.shape != expected_shape or index_x.shape != expected_shape:
+        raise RuntimeError(
+            "Pabs/index_x/coordinate shape mismatch: "
+            f"{q.shape}, {index_x.shape}, {expected_shape}"
+        )
+    if not np.all(np.isfinite(q)):
+        raise RuntimeError("official Lumerical Pabs must be finite")
+    if not np.all(np.isfinite(index_x)):
+        raise RuntimeError("official Lumerical index_x must be finite")
+
+    widths = tuple(trapezoid_weights(axis) for axis in coordinates)
+    native_power = (
+        q
+        * widths[0][:, None, None]
+        * widths[1][None, :, None]
+        * widths[2][None, None, :]
+        * source_scale
+    )
+    native_total = float(np.sum(native_power))
+    negative_total = float(-np.sum(native_power[native_power < 0.0]))
+    negative_relative = negative_total / max(
+        abs(native_total), np.finfo(float).tiny
+    )
+    target_shape = tuple(len(edges) - 1 for edges in target_edges_m)
+    total = np.zeros(target_shape, dtype=np.float64)
+    domains = _material_domains(
+        coordinates,
+        widths,
+        case,
+        target_edges_m,
+    )
+    assigned = np.zeros(q.shape, dtype=bool)
+    material_records: dict[str, dict[str, float | int]] = {}
+    filtered_total = 0.0
+    mapped_total = 0.0
+
+    for material, bounds in domains.items():
+        if material not in material_index_x:
+            continue
+        material_mask = _lumerical_almostequal(
+            index_x,
+            material_index_x[material],
+        )
+        if np.any(assigned & material_mask):
+            raise RuntimeError("official material-index masks overlap")
+        assigned |= material_mask
+        source_indices = tuple(
+            np.flatnonzero(np.any(material_mask, axis=tuple(
+                other for other in range(3) if other != axis
+            )))
+            for axis in range(3)
+        )
+        if any(index.size == 0 for index in source_indices):
+            material_records[material] = {
+                "matched_sample_count": 0,
+                "filtered_power_W": 0.0,
+                "mapped_power_W": 0.0,
+            }
+            continue
+        local_mask = material_mask[np.ix_(*source_indices)]
+        source_power = native_power[np.ix_(*source_indices)] * local_mask
+        target = tuple(
+            _target_material_edges(target_edges_m[axis], bounds[axis])
+            for axis in range(3)
+        )
+        target_indices = tuple(item[0] for item in target)
+        target_edges = tuple(item[1] for item in target)
+        operators = tuple(
+            _overlap_operator(
+                coordinates[axis][source_indices[axis]],
+                widths[axis][source_indices[axis]],
+                target_edges[axis],
+                clip_bounds=bounds[axis],
+            )
+            for axis in range(3)
+        )
+        mapped = _forward(source_power, operators)
+        total[np.ix_(*target_indices)] += mapped
+        material_filtered = float(np.sum(source_power))
+        material_mapped = float(np.sum(mapped))
+        filtered_total += material_filtered
+        mapped_total += material_mapped
+        material_records[material] = {
+            "matched_sample_count": int(np.count_nonzero(material_mask)),
+            "filtered_power_W": material_filtered,
+            "mapped_power_W": material_mapped,
+        }
+
+    omission = native_total - filtered_total
+    omission_relative = abs(omission) / max(
+        abs(native_total), np.finfo(float).tiny
+    )
+    remap_error = abs(mapped_total - filtered_total) / max(
+        abs(filtered_total), np.finfo(float).tiny
+    )
+    return total, {
+        "method": "ansys_usr_absorption_advanced_material_index_x_filter_v1",
+        "material_filter_relative_tolerance": (
+            LUMERICAL_MATERIAL_FILTER_RELATIVE_TOLERANCE
+        ),
+        "native_total_power_W": native_total,
+        "negative_absorption_magnitude_W": negative_total,
+        "negative_absorption_relative": negative_relative,
+        "official_material_filtered_power_W": filtered_total,
+        "unassigned_absorption_power_W": omission,
+        "unassigned_absorption_relative": omission_relative,
+        "mapped_total_power_W": mapped_total,
+        "relative_conservation_error": remap_error,
+        "material": material_records,
+        "finite": bool(np.all(np.isfinite(total))),
+        "minimum_mapped_cell_power_W": float(np.min(total)),
         "global_or_local_rescaling": False,
         "operations_absent": ["clipping", "smoothing", "gain", "tiling"],
     }

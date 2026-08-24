@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate Lumerical z-mesh Q remap and custom CUDA thermal/current output."""
+"""Validate official Lumerical Pabs remap and custom CUDA downstream output."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_multiphysics_comparison import (
     downstream_metrics,
-    map_lumerical_material_q_to_thermal,
+    map_lumerical_official_pabs_to_thermal,
     thermal_cell_volumes,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import (
@@ -44,9 +44,33 @@ def _load_json(path: Path) -> dict[str, object]:
     return payload
 
 
+def _validate_pabs_companion(
+    pabs_path: Path,
+    source_result_json: Path,
+) -> None:
+    audit_path = pabs_path.with_suffix(".json")
+    if not audit_path.is_file():
+        raise FileNotFoundError(f"official Pabs companion audit is missing: {audit_path}")
+    audit = _load_json(audit_path)
+    if audit.get("status") != "EXTRACTED_LUMERICAL_OFFICIAL_PABS_INDEX_X":
+        raise RuntimeError("official Pabs companion audit did not pass")
+    output = audit.get("output_npz")
+    source = audit.get("source_result_json")
+    if not isinstance(output, dict) or not isinstance(source, dict):
+        raise RuntimeError("official Pabs companion provenance is incomplete")
+    if Path(output.get("path", "")).resolve() != pabs_path:
+        raise RuntimeError("official Pabs companion path does not match its audit")
+    if output.get("sha256") != sha256(pabs_path):
+        raise RuntimeError("official Pabs companion SHA256 does not match")
+    if Path(source.get("path", "")).resolve() != source_result_json:
+        raise RuntimeError("official Pabs companion source JSON path does not match")
+    if source.get("sha256") != sha256(source_result_json):
+        raise RuntimeError("official Pabs companion source JSON SHA256 does not match")
+
+
 def _run_downstream(
     result: dict[str, object],
-    raw_path: Path,
+    pabs_path: Path,
     rho: np.ndarray,
     cuda_device: int,
     case: str,
@@ -57,26 +81,26 @@ def _run_downstream(
     reporting = float(normalization["target_reporting_incident_power_W"])
     scale = reporting / incident
     fit = result["material_fit_readback"]["materials"]
-    material_loss = {
-        material: {
-            component: float(
-                fit[material]["axes"][component]["finite_dt_epsilon_at_4um"][
-                    "imag"
-                ]
+    material_index_x = {
+        material: complex(
+            np.sqrt(
+                complex(
+                    float(fit[material]["axes"]["x"]["fitted_epsilon_at_4um"]["real"]),
+                    float(fit[material]["axes"]["x"]["fitted_epsilon_at_4um"]["imag"]),
+                )
             )
-            for component in "xyz"
-        }
+        )
         for material in ("Au", "TaIrTe4", "SiO2")
     }
-    with np.load(raw_path, allow_pickle=False) as raw:
-        source_power, mapping = map_lumerical_material_q_to_thermal(
+    with np.load(pabs_path, allow_pickle=False) as raw:
+        source_power, mapping = map_lumerical_official_pabs_to_thermal(
             raw,
             state.edges,
             scale,
             case=case,
-            material_imaginary_epsilon=material_loss,
+            material_index_x=material_index_x,
         )
-    expected_power = float(result["P_Q_native_W_raw"]) * scale
+    expected_power = float(result["P_Q_pabs_W_raw"]) * scale
     native_vs_json = abs(mapping["native_total_power_W"] - expected_power) / max(
         abs(expected_power), np.finfo(float).tiny
     )
@@ -101,9 +125,12 @@ def _run_downstream(
         "mapping_conservation_lt_1e-12": (
             mapping["relative_conservation_error"] < 1.0e-12
         ),
-        "native_Q_matches_json_lt_1e-12": native_vs_json < 1.0e-12,
-        "physical_material_Q_reconstruction_lt_0p5pct": (
-            mapping["native_reconstruction_relative_error"] < 5.0e-3
+        "official_spatial_Pabs_matches_json_lt_1e-12": native_vs_json < 1.0e-12,
+        "official_material_filter_unassigned_absorption_lt_0p5pct": (
+            mapping["unassigned_absorption_relative"] < 5.0e-3
+        ),
+        "official_Pabs_negative_interpolation_artifact_lt_1e-12": (
+            mapping["negative_absorption_relative"] < 1.0e-12
         ),
         "thermal_residual_lt_1e-8": thermal_audit["relative_residual"] < 1.0e-8,
         "thermal_energy_balance_lt_1pct": (
@@ -128,8 +155,12 @@ def _run_downstream(
         "runtime_s": runtime,
         "source_scale_to_reporting_power": scale,
         "source_power_W": float(np.sum(source_power)),
-        "expected_native_Q_at_reporting_power_W": expected_power,
-        "native_Q_vs_json_relative": native_vs_json,
+        "expected_official_Pabs_at_reporting_power_W": expected_power,
+        "official_spatial_Pabs_vs_json_relative": native_vs_json,
+        "official_pabs_npz": {
+            "path": str(pabs_path),
+            "sha256": sha256(pabs_path),
+        },
         "mapping": mapping,
         "Tmax_K": float(np.max(temperature)),
         "TaIrTe4_Tmax_K": float(np.max(ta_temperature)),
@@ -158,8 +189,13 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--coarse-json", required=True, type=Path)
     parser.add_argument("--fine-json", required=True, type=Path)
+    parser.add_argument("--coarse-pabs-npz", type=Path)
+    parser.add_argument("--fine-pabs-npz", type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     args = parser.parse_args()
+    output = args.output_dir.resolve()
+    if output.exists():
+        raise FileExistsError(f"downstream output directory already exists: {output}")
     require_single_visible_gpu()
     comparison = compare_control_pair(args.coarse_json, args.fine_json)
     if not comparison["all_gates_passed"]:
@@ -170,24 +206,68 @@ def main() -> int:
     rho = np.full(CONTRACT.design_shape, 1.0 if case == "full" else 0.0)
     coarse_result = _load_json(args.coarse_json.resolve())
     fine_result = _load_json(args.fine_json.resolve())
+    raw_paths = {
+        "coarse": Path(comparison["artifacts"]["coarse_raw_npz"]),
+        "fine": Path(comparison["artifacts"]["fine_raw_npz"]),
+    }
+    requested_pabs = {
+        "coarse": args.coarse_pabs_npz,
+        "fine": args.fine_pabs_npz,
+    }
+    pabs_paths: dict[str, Path] = {}
+    result_json_paths = {
+        "coarse": args.coarse_json.resolve(),
+        "fine": args.fine_json.resolve(),
+    }
+    for label in ("coarse", "fine"):
+        candidate = (
+            requested_pabs[label].resolve()
+            if requested_pabs[label] is not None
+            else raw_paths[label].resolve()
+        )
+        if not candidate.is_file():
+            raise FileNotFoundError(candidate)
+        with np.load(candidate, allow_pickle=False) as probe:
+            required = {
+                "Pabs_W_m3",
+                "Pabs_index_x",
+                "Pabs_x_m",
+                "Pabs_y_m",
+                "Pabs_z_m",
+            }
+            if not required.issubset(probe.files):
+                raise RuntimeError(
+                    f"{label} Pabs NPZ lacks official arrays; run "
+                    "29_extract_lumerical_4um_official_pabs.py or provide "
+                    f"--{label}-pabs-npz"
+                )
+        if candidate != raw_paths[label].resolve():
+            _validate_pabs_companion(candidate, result_json_paths[label])
+        pabs_paths[label] = candidate
     reporting_values = {
         float(result["reporting_normalization"]["target_reporting_incident_power_W"])
         for result in (coarse_result, fine_result)
     }
     if reporting_values != {CONTRACT.reporting_incident_power_W}:
         raise RuntimeError("result reporting power does not match current contract")
-    print(f"[{case}] coarse Lumerical Q -> custom CUDA thermal/electrical", flush=True)
+    print(
+        f"[{case}] coarse official Lumerical Pabs -> custom CUDA thermal/electrical",
+        flush=True,
+    )
     coarse, coarse_arrays = _run_downstream(
         coarse_result,
-        Path(comparison["artifacts"]["coarse_raw_npz"]),
+        pabs_paths["coarse"],
         rho,
         0,
         case,
     )
-    print(f"[{case}] fine Lumerical Q -> custom CUDA thermal/electrical", flush=True)
+    print(
+        f"[{case}] fine official Lumerical Pabs -> custom CUDA thermal/electrical",
+        flush=True,
+    )
     fine, fine_arrays = _run_downstream(
         fine_result,
-        Path(comparison["artifacts"]["fine_raw_npz"]),
+        pabs_paths["fine"],
         rho,
         0,
         case,
@@ -216,7 +296,6 @@ def main() -> int:
         and fine["all_gates_passed"]
         and all(metric_gates.values())
     )
-    output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=True)
     raw_path = output / f"{case}_z_multiphysics_pair_raw.npz"
     np.savez_compressed(
@@ -225,7 +304,7 @@ def main() -> int:
         **{f"fine_{key}": value for key, value in fine_arrays.items()},
     )
     payload = {
-        "schema": "lumerical-4um-z-multiphysics-pair-v1",
+        "schema": "lumerical-4um-z-multiphysics-pair-v2",
         "status": (
             "PASSED_LUMERICAL_4UM_Z_MULTIPHYSICS_PAIR_DEVELOPMENT"
             if all_passed

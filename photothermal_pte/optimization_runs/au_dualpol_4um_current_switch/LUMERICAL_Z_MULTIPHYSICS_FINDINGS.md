@@ -2,72 +2,90 @@
 
 Date: 2026-08-24. These are RTX 6000 Ada development diagnostics for the
 linked 1.25/12.5-to-0.625/6.25-nm Ea exact-control pair. They are not B200 or
-production evidence. Raw JSON/NPZ inputs and outputs remain outside Git under
+production evidence. Raw FSP/JSON/NPZ inputs and outputs remain outside Git
+under
 `/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_development/`.
 
-## Solver and remap definition
+## Selected Lumerical material-filter definition
 
-Script `28_validate_lumerical_4um_z_multiphysics_pair.py` first calls the
-hash-verifying Maxwell comparator. It then scales each raw Lumerical native
-Yee Q bundle by its own measured source-only incident power to the common
-285-uW reporting power. Thermal and electrical calculations use only the
-repository custom CUDA finite-volume and weighting-potential solvers;
-Lumerical HEAT and CHARGE are not called or licensed.
+The selected diagnostic now follows Ansys' official multi-material advanced
+absorption example, not a home-made effective-epsilon decomposition. Lumerical
+`pabs_adv` first constructs the common-grid spatial `Pabs`. The material filter
+then compares both real and imaginary parts of `index.index_x` against the
+material index returned by `getfdtdindex`, with relative tolerance `1e-15`,
+and multiplies `Pabs` by that exact mask. See Ansys'
+[higher-accuracy absorption method](https://optics.ansys.com/hc/en-us/articles/360034915693-Calculating-absorbed-optical-power-Higher-accuracy)
+and
+[multiple-material example](https://optics.ansys.com/hc/en-us/articles/360034395254-Calculating-absorbed-optical-power-Higher-accuracy-method-with-multiple-materials).
 
-A first, deliberately retained raw diagnostic remapped each entire Yee dual
-cell to every overlapping thermal cell. It conserved total power to about
-1e-15 but spread conformal interface loss into thermal air. That created
-mesh-dependent low-conductivity air hotspots: empty Tmax changed from 4.777 K
-to 2.412 K and full Tmax from 0.112 K to 0.0747 K. This is a remap artifact,
-not an accepted physical result.
+Script `29_extract_lumerical_4um_official_pabs.py` applies only
+`runanalysis("finite_device_pabs")` to a completed, SHA-verified FSP. It does
+not rerun the Maxwell engine. Future calls to
+`25_run_lumerical_4um_exact_au_control.py` save `Pabs_W_m3`, `Pabs_index_x`,
+and their axes directly in the raw NPZ. Script
+`28_validate_lumerical_4um_z_multiphysics_pair.py` verifies the companion
+NPZ/JSON hashes, scales by each run's own source-only incident power to 285 uW,
+maps each exactly identified material only into thermal cells of that material,
+and calls the repository custom CUDA thermal and electrical solvers. Lumerical
+HEAT and CHARGE are never called.
 
-The selected fail-closed diagnostic is material-aware. For each Yee
-component it uses saved `Q/Im(epsilon_effective)` as the positive field-loss
-factor, multiplies by Lumerical's finite-dt fitted material loss and the exact
-dual-cell/physical-material overlap, and conservatively maps that power only
-to thermal cells of the same material. No local or global closure rescaling,
-clipping, smoothing, gain, or tiling is applied. Consequently the difference
-between reconstructed physical-material power and Lumerical native total Q is
-an explicit gate rather than an error hidden by renormalization.
+No missing conformal-interface power is redistributed. No local or global
+rescaling, clipping, smoothing, gain, or tiling is applied. Common-grid Pabs
+contains only roundoff-scale negative interpolation samples: their integrated
+magnitude is at most `6.91e-19` of signed absorption in these four inputs. They
+are preserved, audited, and gated below `1e-12`; they are not clipped.
 
-## Results
+The earlier two diagnostics remain useful negative evidence:
 
-Every individual remap conserves its reconstructed power to better than
-3e-15. Native integration reproduces the source JSON Q to better than 4e-16.
-Both thermal solves pass residual and energy-balance gates; both electrical
-solves pass residual and terminal-balance gates.
+1. Mapping every entire Yee dual cell into all overlapping thermal cells
+   conserved power but leaked interface absorption into low-conductivity air,
+   producing false 2.4--4.8-K hotspots.
+2. Reconstructing material loss as `Q/Im(epsilon_effective)` times physical
+   material loss/overlap removed the air hotspot, but its material-power
+   reconstruction error was 0.78--1.55% even on the fine member. It is no
+   longer the selected definition.
 
-| exact control | coarse material-Q reconstruction error | fine material-Q reconstruction error | remapped Q volume-L2 NRMSE | TaIrTe4 temperature NRMSE | Tmax change | result |
-|---|---:|---:|---:|---:|---:|:---:|
-| empty, Ea | 1.5433% | 0.7777% | 0.9730% | 1.0058% | 0.9993% | fail |
-| full Au, Ea | 2.8468% | 1.5504% | 1.8576% | 1.7397% | 1.1321% | fail |
+## Official-filter results
 
-Material-aware empty Tmax is 1.02946 K on the coarse member and 1.03985 K on
-the fine member. Full-Au Tmax is 0.062581 K and 0.063298 K. These values no
-longer contain the rejected thermal-air hotspot, but their relative changes
-still exceed the 0.5% contract.
+Every selected remap conserves its filtered material power below `1e-15`.
+Official spatial Pabs reproduces `Pabs_total` to `3.77e-16` or better. All
+custom CUDA PDE residual, energy-balance, and terminal-balance gates pass.
 
-Empty and full are mirror-symmetric controls, so their true x-directed
-current is zero. A relative change or sign test on a near-zero number is
-ill-conditioned. The validator instead requires the net current to cancel to
-one part per million of the integrated absolute local-current scale. The
-worst observed cancellation ratio is 2.23e-8, so the symmetry-current gate
-passes. Non-symmetric simple-L and design controls must still use the ordinary
-relative signed-current and sign-preservation gates.
+| exact control | coarse unassigned absorption | fine unassigned absorption | remapped Q volume-L2 NRMSE | TaIrTe4 temperature NRMSE | Tmax change | symmetry-current cancellation | result |
+|---|---:|---:|---:|---:|---:|---:|:---:|
+| empty, Ea | 3.0869% | 1.5552% | 2.4932% | 1.7909% | 1.8115% | 5.36e-5 | fail |
+| full Au, Ea | 2.1728% | 1.1939% | 2.3285% | 1.3931% | 1.7418% | 6.84e-4 | fail |
 
-## Consequence
+Empty Tmax is 1.01220 K on the coarse member and 1.03087 K on the fine
+member. Full-Au Tmax is 0.061825 K and 0.062921 K. The official material mask
+therefore confirms, rather than removes, the downstream z blocker.
+
+Empty and full are mirror-symmetric controls whose physical x-current should
+cancel. The official filtered source fails the one-part-per-million symmetry
+gate because the unassigned conformal-interface Pabs is not symmetric enough
+after filtering. Those small signed currents are diagnostics of an incomplete
+heat-source partition, not valid PTE control currents.
+
+## Consequence and next mesh axis
 
 The 1.25/12.5-to-0.625/6.25-nm pair passes total Q, six-face flux, and common
-endpoint-plane Maxwell metrics, but it does not pass the material-resolved Q
-or downstream thermal gates. The z axis therefore remains blocked and x/y
-convergence or optimization must not start.
+endpoint-plane Maxwell metrics, but it does not pass the official
+material-resolved source, thermal field, Tmax, or symmetry-current gates. The
+z axis remains blocked; x/y convergence and optimization must not start.
 
-The saved effective epsilon and total Q do not uniquely provide exact
-physical-material absorption inside Lumerical conformal cut cells. The
-decreasing reconstruction error with refinement is useful evidence, but
-blindly extending to 0.3125/3.125 nm would approximately double an already
-53.6-million-point grid and would not resolve the definition problem. The
-next task is to establish a Lumerical-native material-resolved absorption
-extraction or an independently converged interface method (including the
-required MCM6 CV0/CV1/staircase axis), then repeat this downstream pair. Do
-not close the gap by rescaling reconstructed material power to native Q.
+The unassigned fraction decreases by roughly a factor of two when z is halved,
+which is consistent with mixed-index interface samples. Blindly extending CV0
+to 0.3125/3.125 nm would approximately double an already 53.6-million-point
+grid and still does not predict a sub-0.5% empty-control omission. Ansys also
+states that CV0 excludes metal interfaces from CMT, CV1 includes them but can
+create metal artifacts, and the correct choice requires convergence testing;
+see
+[mesh refinement selection](https://optics.ansys.com/hc/en-us/articles/360034382614-Selecting-the-best-mesh-refinement-option-in-the-FDTD-simulation-object).
+
+The next bounded experiment is therefore the already-required MCM6
+CV0/CV1/staircase interface axis at a tractable linked mesh, with matching
+source-only calibration and the same official Pabs filter. Staircase is not
+assumed accurate: it is tested because it gives one material per Yee sample
+and hence an unambiguous thermal material assignment. Its Maxwell and
+downstream convergence must still pass independently. Do not close any gap by
+rescaling filtered material power to total Pabs.
