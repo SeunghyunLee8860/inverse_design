@@ -40,6 +40,7 @@ WINDOW_PERIODS = 4
 COURANT_FACTOR = 0.5
 STATIONARITY_LIMIT = 5.0e-3
 POLARIZATION_PURITY_MINIMUM = 0.999
+LONGITUDINAL_FIELD_FRACTION_MAXIMUM = 0.05
 CLOSED_FLUX_FRACTION_LIMIT = 2.0e-2
 BEAM_CENTER_LIMIT_M = 0.10e-6
 BEAM_WAIST_RELATIVE_LIMIT = 0.10
@@ -77,14 +78,23 @@ def polarization_audit(
         dtype=np.float64,
     )
     total = float(np.sum(energy))
-    purity = float(energy[desired] / max(total, np.finfo(float).tiny))
+    transverse_total = float(energy[0] + energy[1])
+    transverse_purity = float(
+        energy[desired] / max(transverse_total, np.finfo(float).tiny)
+    )
+    longitudinal_fraction = float(
+        energy[2] / max(total, np.finfo(float).tiny)
+    )
     return {
         "desired_component": ("Ey" if desired == 1 else "Ex"),
         "component_energy_fraction": {
             name: float(item / max(total, np.finfo(float).tiny))
             for name, item in zip(("Ex", "Ey", "Ez"), energy, strict=True)
         },
-        "purity": purity,
+        "purity_definition": "desired transverse E divided by Ex plus Ey",
+        "transverse_purity": transverse_purity,
+        "longitudinal_fraction_of_total": longitudinal_fraction,
+        "purity": transverse_purity,
     }
 
 
@@ -278,8 +288,12 @@ def evaluate_output(
         "complex_field_stationarity": (
             stationarity["maximum_complex_E_NRMSE"] <= STATIONARITY_LIMIT
         ),
-        "polarization_purity": (
+        "polarization_transverse_purity": (
             polarization_result["purity"] >= POLARIZATION_PURITY_MINIMUM
+        ),
+        "longitudinal_field_fraction": (
+            polarization_result["longitudinal_fraction_of_total"]
+            <= LONGITUDINAL_FIELD_FRACTION_MAXIMUM
         ),
         "closed_phasor_flux_residual": (
             flux["closed_phasor_over_incident_absolute"]
@@ -462,7 +476,9 @@ def main() -> int:
         "maximum_complex_E_NRMSE": result["evaluation"]["stationarity"][
             "maximum_complex_E_NRMSE"
         ],
-        "polarization_purity": result["evaluation"]["polarization"]["purity"],
+        "transverse_polarization_purity": result["evaluation"]["polarization"][
+            "transverse_purity"
+        ],
         "gates": result["evaluation"]["gates"],
         "solve_runtime_s": result["solve_runtime_s"],
         "report": str(Path(args.output_dir).resolve() / JSON_NAME),
