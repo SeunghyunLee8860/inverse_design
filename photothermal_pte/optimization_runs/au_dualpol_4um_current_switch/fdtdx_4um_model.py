@@ -329,10 +329,6 @@ def build_model(
         raise ValueError("two disjoint phasor windows must fit in the solve")
     if not (0.0 < courant_factor <= 1.0):
         raise ValueError("courant_factor must be in (0, 1]")
-    if material_law_contract is not None and air_only_source_calibration:
-        raise ValueError(
-            "candidate two-pole material law cannot be used for air-only calibration"
-        )
     if material_law_contract is not None and include_adjoint_source:
         raise ValueError(
             "candidate two-pole material law is not authorized for adjoint placement"

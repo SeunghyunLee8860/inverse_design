@@ -145,6 +145,11 @@ def _common_source_contract(payload: dict[str, Any]) -> dict[str, Any]:
 def build_pair_certificate(
     ea_report: Path,
     eb_report: Path,
+    *,
+    expected_case_status: str = CASE_STATUS,
+    expected_scope: str = EXPECTED_SCOPE,
+    pair_status: str = PAIR_STATUS,
+    blocked_status: str = BLOCKED_STATUS,
 ) -> dict[str, Any]:
     ea, ea_audit = _case_audit(ea_report, "Ea")
     eb, eb_audit = _case_audit(eb_report, "Eb")
@@ -233,13 +238,13 @@ def build_pair_certificate(
         "expected_polarizations": ea_audit["recorded_polarization"] == "Ea"
         and eb_audit["recorded_polarization"] == "Eb",
         "case_status_and_ready": all(
-            case["status"] == CASE_STATUS
+            case["status"] == expected_case_status
             and case["ready"] is True
             and case["evaluation_ready"] is True
             for case in cases.values()
         ),
         "case_scope_exact": all(
-            case["scope"] == EXPECTED_SCOPE for case in cases.values()
+            case["scope"] == expected_scope for case in cases.values()
         ),
         "numerical_case_contract_identical": numerical_case_identical,
         "numerical_case_contract_canonical": numerical_case_canonical,
@@ -310,7 +315,7 @@ def build_pair_certificate(
         for polarization, power in powers.items()
     }
     return {
-        "status": PAIR_STATUS if ready else BLOCKED_STATUS,
+        "status": pair_status if ready else blocked_status,
         "ready": ready,
         "scope": "dual-polarization all-air source normalization pair",
         "normalization_policy": {
