@@ -243,8 +243,10 @@ The prior strict-duration result used failed MCM20, so MCM6 time convergence
 was rerun before extending z. The matching MCM6 1-ps/1e-7 versus 2-ps/1e-9
 source-only/empty/full pair passed: exact-full normalized Q, complex field,
 and E2 changed 0.00456%, 0.00184%, and 0.00135%. See
-`LUMERICAL_TIME_CONVERGENCE_FINDINGS.md`. The next spatial step is therefore
-the linked 1.25/12.5-nm z mesh.
+`LUMERICAL_TIME_CONVERGENCE_FINDINGS.md`. The linked 1.25/12.5-nm mesh was then
+completed but still failed narrowly: exact-full normalized Q, complex field,
+and E2 changed 0.7099%, 0.5270%, and 0.6237%. The next spatial step is the
+linked 0.625/6.25-nm z mesh; x/y convergence remains blocked.
 
 The concrete forward entry point is
 `25_run_lumerical_4um_exact_au_control.py`. It has an audit-only path that

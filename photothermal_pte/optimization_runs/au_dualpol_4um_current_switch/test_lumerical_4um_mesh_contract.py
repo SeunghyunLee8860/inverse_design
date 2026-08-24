@@ -30,8 +30,12 @@ def test_mesh_contract_is_sequential_and_covers_all_required_axes() -> None:
     ]
     candidates = audit["candidate_axes"]
     assert candidates["optical_full_domain_z_m"][-1] == {
-        "stack_dz_m": 2.5e-9,
-        "bulk_air_pml_dz_m": 25.0e-9,
+        "stack_dz_m": 0.625e-9,
+        "bulk_air_pml_dz_m": 6.25e-9,
+    }
+    assert candidates["optical_full_domain_z_m"][-2] == {
+        "stack_dz_m": 1.25e-9,
+        "bulk_air_pml_dz_m": 12.5e-9,
     }
     assert candidates["optical_xy_flake_dxy_m"][-1] == 25.0e-9
     assert candidates["metal_interface_mesh_refinement"] == list(
