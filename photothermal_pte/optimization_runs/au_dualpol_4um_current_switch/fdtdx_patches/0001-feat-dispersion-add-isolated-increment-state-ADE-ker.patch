@@ -1,0 +1,328 @@
+From 24d0cb2374bf03b6bfdc528b189c69685b74dfee Mon Sep 17 00:00:00 2001
+From: SeunghyunLee8860 <j79sk123@gmail.com>
+Date: Tue, 25 Aug 2026 03:08:24 +0900
+Subject: [PATCH] feat(dispersion): add isolated increment-state ADE kernel
+
+---
+ src/fdtdx/increment_state.py       | 155 +++++++++++++++++++++++++++++
+ tests/unit/test_increment_state.py | 146 +++++++++++++++++++++++++++
+ 2 files changed, 301 insertions(+)
+ create mode 100644 src/fdtdx/increment_state.py
+ create mode 100644 tests/unit/test_increment_state.py
+
+diff --git a/src/fdtdx/increment_state.py b/src/fdtdx/increment_state.py
+new file mode 100644
+index 0000000..400b6df
+--- /dev/null
++++ b/src/fdtdx/increment_state.py
+@@ -0,0 +1,155 @@
++"""Cancellation-resistant Lorentz/Drude state-update candidate.
++
++This module is intentionally isolated from the production FDTD update.  It
++provides host coefficient generation, a discrete susceptibility evaluator, and
++a pure JAX kernel so their numerical and autodiff behavior can be validated
++before array placement or :func:`fdtdx.fdtd.update.update_E` opts into the new
++representation.
++"""
++
++from __future__ import annotations
++
++import jax
++import jax.numpy as jnp
++import numpy as np
++
++from fdtdx.dispersion import Pole
++
++
++def compute_increment_state_coefficients_per_axis(
++    poles: tuple[Pole, ...],
++    dt: float,
++) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
++    r"""Compute cancellation-resistant ``(A, C, B)`` ADE coefficients.
++
++    The state is the polarization ``P`` and its one-step increment
++    ``V[n] = P[n] - P[n-1]``:
++
++    .. math::
++        V^{n+1} &= A V^n - C P^n + B E^n,\\
++        P^{n+1} &= P^n + V^{n+1},
++
++    with ``D = 1 + gamma dt / 2`` and
++
++    .. math::
++        A = \frac{1 - \gamma \Delta t / 2}{D}, \quad
++        C = \frac{\omega_0^2 \Delta t^2}{D}, \quad
++        B = \frac{K \Delta t^2}{D}.
++
++    Eliminating ``V`` gives the classic second-order coefficients
++    ``c1 = 1 + A - C``, ``c2 = -A``, and ``c3 = B``. Storing ``C`` directly
++    avoids losing the small resonance term when ``c1`` is rounded near two.
++
++    CCPR ``dE/dt`` coupling and oriented poles are deliberately rejected. This
++    representation is currently a Lorentz/Drude implementation candidate.
++
++    Args:
++        poles: Axis-aligned Lorentz/Drude poles (may be empty).
++        dt: Simulation time step in seconds.
++
++    Returns:
++        Three float64 arrays ``(A, C, B)`` with shape ``(len(poles), 3)``.
++    """
++    if dt <= 0.0:
++        raise ValueError("dt must be positive")
++    n = len(poles)
++    coeff_a = np.zeros((n, 3), dtype=np.float64)
++    coeff_c = np.zeros((n, 3), dtype=np.float64)
++    coeff_b = np.zeros((n, 3), dtype=np.float64)
++    for index, pole in enumerate(poles):
++        if pole.is_oriented:
++            raise ValueError(
++                f"Pole {index} ({type(pole).__name__}) is oriented; increment-state "
++                "coefficients currently support axis-aligned poles only."
++            )
++        omega_0 = pole.omega_0_axes
++        gamma = pole.gamma_axes
++        coupling_sq = pole.coupling_sq_axes
++        coupling_edot = pole.coupling_edot_axes
++        for axis in range(3):
++            if coupling_edot[axis] != 0.0:
++                raise ValueError(
++                    f"Pole {index} ({type(pole).__name__}) has a dE/dt coupling on "
++                    f"axis {'xyz'[axis]}; increment-state coefficients currently "
++                    "support Lorentz/Drude poles only."
++                )
++            active = coupling_sq[axis] != 0.0
++            omega0_dt = omega_0[axis] * dt
++            if active and omega0_dt >= 2.0:
++                axis_note = "" if pole.is_isotropic else f" on axis {'xyz'[axis]}"
++                raise ValueError(
++                    f"Pole {index} ({type(pole).__name__}) has omega_0 * dt = "
++                    f"{omega0_dt:.4g} >= 2{axis_note}; lower the resonance "
++                    "frequency or reduce the time step."
++                )
++            denominator = 1.0 + 0.5 * gamma[axis] * dt
++            coeff_a[index, axis] = (
++                1.0 - 0.5 * gamma[axis] * dt
++            ) / denominator
++            coeff_c[index, axis] = omega_0[axis] ** 2 * dt**2 / denominator
++            coeff_b[index, axis] = coupling_sq[axis] * dt**2 / denominator
++    return coeff_a, coeff_c, coeff_b
++
++
++def susceptibility_from_increment_coefficients(
++    coeff_a: jax.Array | np.ndarray,
++    coeff_c: jax.Array | np.ndarray,
++    coeff_b: jax.Array | np.ndarray,
++    omega: float,
++    dt: float,
++) -> jax.Array:
++    r"""Evaluate susceptibility of the discrete ``(P, delta-P)`` recurrence.
++
++    Each pole contributes
++
++    .. math::
++        \chi_p = \frac{B z_-}{(z_- - 1)(z_- - A) + C z_-},
++
++    where ``z_- = exp(-i omega dt)``. The leading array axis is summed over
++    poles. All-zero padded pole slots contribute exactly zero.
++    """
++    if dt <= 0.0:
++        raise ValueError("dt must be positive")
++    coeff_a = jnp.asarray(coeff_a)
++    coeff_c = jnp.asarray(coeff_c)
++    coeff_b = jnp.asarray(coeff_b)
++    if not (
++        coeff_a.shape == coeff_c.shape == coeff_b.shape
++        and coeff_a.ndim >= 1
++    ):
++        raise ValueError("A, C, and B must have one identical non-scalar shape")
++    active = (coeff_a != 0.0) | (coeff_c != 0.0) | (coeff_b != 0.0)
++    real_dtype = jnp.result_type(coeff_a, coeff_c, coeff_b)
++    complex_dtype = jnp.complex128 if real_dtype == jnp.float64 else jnp.complex64
++    z_minus = jnp.exp(jnp.asarray(-1j * omega * dt, dtype=complex_dtype))
++    denominator = (z_minus - 1.0) * (z_minus - coeff_a) + coeff_c * z_minus
++    safe_denominator = jnp.where(active, denominator, 1.0 + 0.0j)
++    per_pole = jnp.where(active, coeff_b * z_minus / safe_denominator, 0.0 + 0.0j)
++    return jnp.sum(per_pole, axis=0)
++
++
++def update_dispersive_increment_state(
++    polarization: jax.Array,
++    increment: jax.Array,
++    electric_field: jax.Array,
++    coeff_a: jax.Array,
++    coeff_c: jax.Array,
++    coeff_b: jax.Array,
++) -> tuple[jax.Array, jax.Array]:
++    """Advance cancellation-resistant Lorentz/Drude ``(P, delta-P)`` states.
++
++    Coefficient arrays may include a leading pole axis and either one or three
++    material-component axes; normal JAX broadcasting against ``electric_field``
++    is intentional. The returned increment is the complete polarization change
++    that enters Ampere's law as ``-inv_eps * sum(increment, axis=0)``.
++
++    This helper is pure and JIT/autodiff compatible. Production
++    :func:`fdtdx.fdtd.update.update_E` does not call it yet.
++    """
++    new_increment = (
++        coeff_a * increment
++        - coeff_c * polarization
++        + coeff_b * electric_field
++    )
++    new_polarization = polarization + new_increment
++    return new_polarization, new_increment
+diff --git a/tests/unit/test_increment_state.py b/tests/unit/test_increment_state.py
+new file mode 100644
+index 0000000..4a8f802
+--- /dev/null
++++ b/tests/unit/test_increment_state.py
+@@ -0,0 +1,146 @@
++"""Unit tests for the isolated cancellation-resistant ADE state candidate."""
++
++import jax
++import jax.numpy as jnp
++import numpy as np
++import pytest
++
++from fdtdx.dispersion import CCPRPole, DrudePole, LorentzPole
++from fdtdx.increment_state import (
++    compute_increment_state_coefficients_per_axis,
++    susceptibility_from_increment_coefficients,
++    update_dispersive_increment_state,
++)
++
++
++def test_increment_coefficients_closed_form_and_empty_shape():
++    empty = compute_increment_state_coefficients_per_axis((), 1e-18)
++    assert all(array.shape == (0, 3) for array in empty)
++
++    pole = LorentzPole(
++        resonance_frequency=(2e15, 3e15, 4e15),
++        damping=(1e13, 2e13, 3e13),
++        delta_epsilon=(1.5, 0.5, 2.0),
++    )
++    dt = 2e-18
++    coeff_a, coeff_c, coeff_b = compute_increment_state_coefficients_per_axis((pole,), dt)
++    for axis in range(3):
++        denominator = 1.0 + 0.5 * pole.gamma_axes[axis] * dt
++        assert coeff_a[0, axis] == pytest.approx(
++            (1.0 - 0.5 * pole.gamma_axes[axis] * dt) / denominator
++        )
++        assert coeff_c[0, axis] == pytest.approx(
++            pole.omega_0_axes[axis] ** 2 * dt**2 / denominator
++        )
++        assert coeff_b[0, axis] == pytest.approx(
++            pole.coupling_sq_axes[axis] * dt**2 / denominator
++        )
++
++
++def test_increment_coefficients_reject_ccpr_and_unstable_pole():
++    ccpr = CCPRPole(pole=-1e13 - 2e15j, residue=1e14 + 3e14j)
++    with pytest.raises(ValueError, match="dE/dt coupling"):
++        compute_increment_state_coefficients_per_axis((ccpr,), 1e-18)
++
++    lorentz = LorentzPole(
++        resonance_frequency=3e15,
++        damping=1e13,
++        delta_epsilon=1.0,
++    )
++    with pytest.raises(ValueError, match=r"omega_0 \* dt"):
++        compute_increment_state_coefficients_per_axis((lorentz,), 1e-15)
++
++
++def test_increment_susceptibility_matches_eliminated_second_order():
++    poles = (
++        DrudePole(plasma_frequency=1.37e16, damping=7.2e13),
++        LorentzPole(
++            resonance_frequency=9.4e14,
++            damping=8.8e14,
++            delta_epsilon=3.0,
++        ),
++    )
++    dt = 1.04e-17
++    omega = 4.71e14
++    coeff_a, coeff_c, coeff_b = compute_increment_state_coefficients_per_axis(poles, dt)
++    observed = np.asarray(
++        susceptibility_from_increment_coefficients(
++            coeff_a[:, 0], coeff_c[:, 0], coeff_b[:, 0], omega, dt
++        )
++    )
++    z_minus = np.exp(-1j * omega * dt)
++    z_plus = np.exp(1j * omega * dt)
++    expected = 0.0j
++    for a, c, b in zip(
++        coeff_a[:, 0], coeff_c[:, 0], coeff_b[:, 0], strict=True
++    ):
++        c1 = 1.0 + a - c
++        c2 = -a
++        expected += b / (z_minus - c1 - c2 * z_plus)
++    assert observed == pytest.approx(expected, rel=1e-5)
++
++
++def test_fine_float32_resonance_coefficient_remains_explicit():
++    omega = 4.71e14
++    pole = LorentzPole(
++        resonance_frequency=2.0 * omega,
++        damping=1.87 * omega,
++        delta_epsilon=4.0,
++    )
++    coeff_a, coeff_c, coeff_b = compute_increment_state_coefficients_per_axis((pole,), 1.04e-18)
++    c32 = np.float32(coeff_c[0, 0])
++    assert c32 > 0.0
++    assert c32 == pytest.approx(9.6e-7, rel=0.03)
++    assert np.float32(coeff_a[0, 0]) < 1.0
++    assert np.float32(coeff_b[0, 0]) > 0.0
++
++
++def test_jitted_kernel_matches_scalar_update_and_is_differentiable():
++    polarization = jnp.asarray([[0.2, -0.4]], dtype=jnp.float32)
++    increment = jnp.asarray([[0.01, 0.03]], dtype=jnp.float32)
++    electric_field = jnp.asarray([1.5, -2.0], dtype=jnp.float32)
++    coeff_a = jnp.asarray([[0.98, 0.97]], dtype=jnp.float32)
++    coeff_c = jnp.asarray([[0.002, 0.003]], dtype=jnp.float32)
++    coeff_b = jnp.asarray([[0.04, 0.05]], dtype=jnp.float32)
++
++    kernel = jax.jit(update_dispersive_increment_state)
++    new_p, new_v = kernel(
++        polarization,
++        increment,
++        electric_field,
++        coeff_a,
++        coeff_c,
++        coeff_b,
++    )
++    expected_v = coeff_a * increment - coeff_c * polarization + coeff_b * electric_field
++    assert np.allclose(new_v, expected_v)
++    assert np.allclose(new_p, polarization + expected_v)
++
++    drive = jnp.sin(jnp.arange(256, dtype=jnp.float32) * 0.07)
++
++    def objective(b_value):
++        def step(state, field):
++            p_value, v_value = update_dispersive_increment_state(
++                state[0],
++                state[1],
++                field,
++                jnp.asarray(0.985, dtype=jnp.float32),
++                jnp.asarray(0.0015, dtype=jnp.float32),
++                b_value,
++            )
++            return (p_value, v_value), None
++
++        final, _ = jax.lax.scan(
++            step,
++            (jnp.asarray(0.0, dtype=jnp.float32), jnp.asarray(0.0, dtype=jnp.float32)),
++            drive,
++        )
++        return final[0] ** 2 + 0.25 * final[1] ** 2
++
++    center = jnp.asarray(0.02, dtype=jnp.float32)
++    ad = float(jax.grad(objective)(center))
++    step = 2e-5
++    fd = float((objective(center + step) - objective(center - step)) / (2.0 * step))
++    assert np.isfinite(ad)
++    assert np.isfinite(fd)
++    assert ad == pytest.approx(fd, rel=2e-3, abs=2e-3)
+-- 
+2.43.0
+
