@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import builtins
 import copy
+import importlib.util
+from pathlib import Path
+import sys
 
 import pytest
 
@@ -103,3 +107,28 @@ def test_refinement_and_solver_limits_are_predeclared():
     assert thermal_case.POWER_RTOL <= 5e-12
     assert thermal_case.THERMAL_RESIDUAL_LIMIT <= 2e-8
     assert thermal_case.ENERGY_BALANCE_LIMIT <= 2e-8
+
+
+def test_overlap_numerical_kernel_import_does_not_require_matplotlib(monkeypatch):
+    path = (
+        Path(thermal_case.__file__).resolve().parent.parent
+        / "au_on_fixed_tairte4_validation"
+        / "64_validate_fdtdx_material_overlap_thermal_remap.py"
+    )
+    original_import = builtins.__import__
+
+    def without_matplotlib(name, *args, **kwargs):
+        if name == "matplotlib" or name.startswith("matplotlib."):
+            raise ModuleNotFoundError("matplotlib deliberately unavailable")
+        return original_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", without_matplotlib)
+    spec = importlib.util.spec_from_file_location("overlap_without_plotting", path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.modules.pop(spec.name, None)
+    assert callable(module._overlap_operator)

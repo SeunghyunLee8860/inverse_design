@@ -9,10 +9,6 @@ import hashlib
 import json
 from pathlib import Path
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 from scipy import sparse
 
@@ -116,6 +112,11 @@ def _transpose(
 
 
 def main() -> int:
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--spatial-summary-json", required=True, type=Path)
     parser.add_argument("--raw-spatial-npz", required=True, type=Path)
