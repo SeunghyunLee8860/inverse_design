@@ -143,6 +143,17 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     symmetric exact controls with collocated `Qx/epsilon_x`, `Qy/epsilon_y`,
     and `Qz/epsilon_z`; it restores the one-ppm zero-current gate without Q
     rescaling. Read `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`.
+27. `lumerical_4um_gray_q_coupling.py` and
+    `33_validate_lumerical_4um_gray_q_cuda_pde.py` -- the relaxed-density
+    optical-to-PDE route. It does not compare component epsilon with exact
+    material values, because that would discard absorption in intermediate
+    design samples. It maps every native `Qx/Qy/Qz` array to thermal-cell
+    power by literal Cartesian overlap and applies the exact transpose back
+    to native Q. The completed nonuniform Ea development forward passed this
+    full custom-CUDA downstream chain in 20.79 s with zero new Maxwell solves:
+    power and transpose errors were zero at reported precision and the
+    native-Q/thermal-adjoint contraction error was `1.59e-16`. Its current was
+    `-5.213 nA`; this is an unoptimized test state, not a switching result.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.

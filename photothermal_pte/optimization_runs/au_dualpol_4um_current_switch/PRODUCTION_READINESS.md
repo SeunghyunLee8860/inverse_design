@@ -76,6 +76,15 @@ remains blocked only by this strict volumetric interface-source gate and the
 still-untested cases, not by a zero-current or material-identity defect. A
 0.3125-nm source-only grid passed, but its material run projected about nine
 hours per case and was intentionally stopped.
+The same nonuniform Ea forward has now passed the relaxed-density Q/PDE gate.
+All three native Yee Q components were deposited into thermal-cell power by
+exact overlap without an exact-material equality filter, then differentiated
+through the custom CUDA thermal/electrical forward and adjoint systems. Total
+Q conservation and the remap transpose were zero-error at reported precision;
+the native-Q/thermal-adjoint contraction error was `1.59e-16`. The invocation
+took 20.79 s, ran no new Maxwell solve, and used no Lumerical HEAT/CHARGE
+license. This closes only the gray-Q/PDE connection, not the Maxwell field
+adjoint, combined AD-FD, Eb, mesh, or B200 gates.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine

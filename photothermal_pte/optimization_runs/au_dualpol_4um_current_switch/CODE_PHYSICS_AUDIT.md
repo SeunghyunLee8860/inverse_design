@@ -53,6 +53,12 @@ sample-air boundaries are insulating, and the transverse example uses an
    FSP certificate, but B200 endpoint, resonance, complete AD-FD, and mesh
    gates remain open.
 
+   The nonuniform gray optical-Q connection to the custom CUDA PDEs now also
+   passes. Every native `Qx/Qy/Qz` sample is overlap-deposited without an
+   exact-material equality mask, so relaxed design-layer loss is not
+   discarded; its transpose agrees to machine precision. This does not yet
+   validate the Maxwell field adjoint or the end-to-end density gradient.
+
 2. **No converged mesh exists.** The historical partial-z sweep refined only
    Au, TaIrTe4, and SiO2, and its tables are stale because they used O3/TE1,
    the old current sign, and an under-specified cache key. Its numerical

@@ -208,6 +208,28 @@ The present shared-linear thermal/electrical maps remain provisional until
 their mixture/bound and void-floor sensitivity studies are complete. They are
 not promoted merely because the optical rho-cubed law was removed.
 
+### Nonuniform gray-Q coupling now validated on the RTX development mesh
+
+For a relaxed `n-k` iteration, native Q must not be filtered by equality with
+ordinary fitted Au or air. That filter is useful only for exact-control
+material attribution and would delete absorption in genuine intermediate
+topology samples. The implemented relaxed route is
+
+```text
+(Qx,Qy,Qz on collocated native Yee grids)
+  -> exact nonperiodic dual-cell overlap
+  -> thermal-cell power
+  -> custom CUDA thermal/electrical forward and adjoint
+  -> exact overlap transpose back to (Qx,Qy,Qz).
+```
+
+Script 33 reused the completed nonuniform Ea 5/50-nm staircase forward and
+ran no Maxwell solve. It passed with total-Q conservation error `0`, transpose
+error `0`, and native-Q/thermal-adjoint contraction error `1.59e-16`; the
+invocation took 20.79 s. The raw pullback remains outside Git. It is the input
+to the next distributed-source Lumerical adjoint, not a production
+certificate or permission to start the optimizer.
+
 ## Exact endpoint/final GPU runner
 
 The B200 launcher refuses a non-B200 device. A separate development launcher
