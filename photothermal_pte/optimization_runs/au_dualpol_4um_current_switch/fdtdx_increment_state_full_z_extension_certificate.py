@@ -60,6 +60,7 @@ SUCCESSIVE_PAIRS = (("z8", "z16"),)
 CASE_VERSION = {
     "z8": "fdtdx-increment-state-exact-binary-mesh-case-v1",
     "z16": "fdtdx-increment-state-exact-binary-mesh-case-v2",
+    "z32": "fdtdx-increment-state-exact-binary-mesh-case-v2",
 }
 
 
@@ -145,11 +146,13 @@ def _case_labels(payload: Mapping[str, Any], level: str, polarization: str) -> b
             and payload.get("mesh_level") == 2
             and payload.get("full_z_extension") is None
         )
+    if level not in ("z16", "z32"):
+        raise ValueError("extension level must be z8, z16, or z32")
     return (
         common
         and payload.get("mesh_axis") == "anchor"
         and payload.get("mesh_level") == 0
-        and payload.get("full_z_extension") == "z16"
+        and payload.get("full_z_extension") == level
     )
 
 
@@ -194,7 +197,7 @@ def audit_case(
             == raw_audit.get("actual_sha256")
         )
     runner_current = True
-    if level == "z16":
+    if level in ("z16", "z32"):
         runner_path = Path(provenance.get("runner_path", "")).expanduser()
         runner_current = (
             runner_path.is_absolute()
