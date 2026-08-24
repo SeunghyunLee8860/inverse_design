@@ -38,6 +38,7 @@ from photothermal_pte.finite_inverse_design.run_v261_large_background_mixed_opti
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_adjoint import (  # noqa: E402
     COMPONENTS,
     load_component_yee_jacobian,
+    material_jacobian_reuse_audit,
     native_adjoint_source,
     optical_density_gradient,
     reconstruct_fieldregion_only_cw,
@@ -214,6 +215,11 @@ def _load_and_validate_inputs(args: argparse.Namespace) -> dict[str, Any]:
     forward = json.loads(forward_path.read_text(encoding="utf-8"))
     pde = json.loads(pde_path.read_text(encoding="utf-8"))
     rho = load_projected_density_file(density_path, key=args.density_key)
+    polarization = str(forward.get("polarization"))
+    if polarization not in ("Ea", "Eb"):
+        raise RuntimeError("forward polarization must be Ea or Eb")
+    if pde.get("polarization") != polarization:
+        raise RuntimeError("custom-CUDA PDE polarization differs from forward")
     fsp_record = _matching_artifact(forward, ".fsp")
     raw_record = _matching_artifact(forward, "_raw.npz")
     if forward_fsp != Path(fsp_record["path"]).resolve() or sha256(forward_fsp) != fsp_record["sha256"]:
@@ -244,16 +250,20 @@ def _load_and_validate_inputs(args: argparse.Namespace) -> dict[str, Any]:
         raise RuntimeError("Jacobian source-forward JSON changed")
     source_forward = json.loads(source_forward_result.read_text(encoding="utf-8"))
     source_raw_record = _matching_artifact(source_forward, "_raw.npz")
-    old_new_raw_identical = str(source_raw_record["sha256"]) == sha256(forward_raw)
-    if not old_new_raw_identical:
-        raise RuntimeError("adjoint-ready forward raw state differs from Jacobian source")
     with np.load(forward_raw, allow_pickle=False) as raw:
         raw_binding = validate_raw_against_jacobian(raw, operator_meta)
         epsilon = {
             component: np.asarray(raw[f"epsilon_{component}"], np.complex128)
             for component in COMPONENTS
         }
-    if not raw_binding["passed"]:
+    jacobian_reuse = material_jacobian_reuse_audit(
+        raw_binding,
+        source_raw_sha256=str(source_raw_record["sha256"]),
+        target_raw_sha256=sha256(forward_raw),
+        source_polarization=str(source_forward.get("polarization")),
+        target_polarization=polarization,
+    )
+    if not jacobian_reuse["passed"]:
         raise RuntimeError("adjoint-ready forward Yee state differs from Jacobian")
     with np.load(pde_raw, allow_pickle=False) as pullback:
         if not np.array_equal(np.asarray(pullback["rho_nodal"], float), rho):
@@ -277,16 +287,17 @@ def _load_and_validate_inputs(args: argparse.Namespace) -> dict[str, Any]:
         "rho": rho,
         "binding": binding,
         "raw_binding": raw_binding,
-        "old_new_raw_identical": old_new_raw_identical,
         "operator": operator,
         "operator_meta": operator_meta,
         "epsilon": epsilon,
         "pde": pde,
         "pde_path": pde_path,
         "pde_raw": pde_raw,
+        "polarization": polarization,
         "native_q_sensitivity_raw": native_q_sensitivity_raw,
         "gradient_direct_nodal": gradient_direct_nodal,
         "source_scale": scale,
+        "jacobian_reuse": jacobian_reuse,
     }
 
 
@@ -313,10 +324,11 @@ def main() -> int:
             result = {
                 "status": "PASSED_LUMERICAL_4UM_GRAY_MAXWELL_ADJOINT_ARTIFACT_AUDIT",
                 "passed": True,
+                "polarization": inputs["polarization"],
                 "density_state": density_state_audit(inputs["rho"]),
                 "forward_binding": inputs["binding"],
                 "forward_vs_jacobian": inputs["raw_binding"],
-                "old_vs_adjoint_ready_raw_SHA_identical": inputs["old_new_raw_identical"],
+                "jacobian_reuse": inputs["jacobian_reuse"],
                 "operator": {
                     key: value
                     for key, value in inputs["operator_meta"].items()
@@ -403,7 +415,8 @@ def main() -> int:
             fdtd.save(str(adjoint_fsp))
             solve_started = time.monotonic()
             resource = lumerical_audit.strict_gpu_run(
-                fdtd, "au_dualpol_4um_gray_Ea_maxwell_adjoint"
+                fdtd,
+                f"au_dualpol_4um_gray_{inputs['polarization']}_maxwell_adjoint",
             )
             solver_wall = time.monotonic() - solve_started
             result["Maxwell_adjoint_solves_this_invocation"] = 1
@@ -479,16 +492,17 @@ def main() -> int:
                 "passed": passed,
                 "generated_at_utc": datetime.now(timezone.utc).isoformat(),
                 "scope": (
-                    "one completed nonuniform Ea forward plus custom-CUDA Q pullback "
-                    "through one frozen-grid distributed-source Lumerical adjoint"
+                    f"one completed nonuniform {inputs['polarization']} forward plus "
+                    "custom-CUDA Q pullback through one frozen-grid distributed-source "
+                    "Lumerical adjoint"
                 ),
-                "polarization": inputs["forward"].get("polarization"),
+                "polarization": inputs["polarization"],
                 "density_state": density_state_audit(inputs["rho"]),
                 "current_A": float(inputs["pde"]["current_A"]),
                 "source_scale_to_reporting_power": inputs["source_scale"],
                 "forward_binding": inputs["binding"],
                 "forward_vs_jacobian": inputs["raw_binding"],
-                "old_vs_adjoint_ready_raw_SHA_identical": inputs["old_new_raw_identical"],
+                "jacobian_reuse": inputs["jacobian_reuse"],
                 "operator": {
                     key: value
                     for key, value in inputs["operator_meta"].items()

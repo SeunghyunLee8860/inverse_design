@@ -206,6 +206,14 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     no Lumerical HEAT/CHARGE, FDTDX, empirical rescaling, or optimizer
     iteration was used. This closes one Ea latent direction on the current
     development mesh only.
+32. Scripts 34, 36, and 38 now bind either `Ea` or `Eb` explicitly. The
+    component-Yee material Jacobian may be reused across polarization only
+    when the target forward has the same projected-density state, exact
+    component epsilon hashes and shapes, sub-attometre Yee coordinates, and
+    frequency. The complete raw NPZ is deliberately not an equality gate
+    because its E and Q arrays are polarization-dependent. A solver-free Ea
+    artifact audit and backward-compatible Ea latent comparison pass, and an
+    Eb latent manifest is prepared. No Eb Maxwell/AD-FD result is claimed yet.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -600,7 +608,10 @@ Do not copy them into this worktree.
    adjoint, one independent projected-density centered AD-FD, and one complete
    beta-4 latent centered AD-FD now pass on the 5/50-nm staircase mesh. Extend
    the certificate to additional independent latent directions, Eb, and the
-   signed dual objective without rerunning already hash-bound baselines.
+   signed dual objective without rerunning already hash-bound baselines. The
+   polarization-general runner now permits reuse of the Ea material Jacobian
+   for Eb only after the exact epsilon/grid/frequency binding passes; it does
+   not require the physically different Ea/Eb field and Q arrays to match.
    Repeat the material Jacobian and AD-FD on the ultimately selected
    mesh/B200; do not substitute bundled LumOpt's real/lossless metal path.
 6. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh

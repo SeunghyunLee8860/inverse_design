@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Hash-validate one Ea projected-density or complete latent AD--FD pair."""
+"""Hash-validate one Ea/Eb projected-density or latent AD--FD pair."""
 
 from __future__ import annotations
 
@@ -29,8 +29,38 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation
 )
 
 
-PROJECTED_STATUS = "VALIDATED_LUMERICAL_4UM_EA_PROJECTED_DENSITY_COMBINED_ADFD"
-LATENT_STATUS = "VALIDATED_LUMERICAL_4UM_EA_LATENT_COMBINED_ADFD"
+def _pair_contract(manifest: dict[str, Any]) -> dict[str, str | bool]:
+    """Resolve polarization and design coordinate from a prepared manifest."""
+
+    status = str(manifest.get("status", ""))
+    for polarization in ("Ea", "Eb"):
+        token = polarization.upper()
+        projected = f"PREPARED_LUMERICAL_4UM_{token}_COMBINED_ADFD_PAIR"
+        latent = f"PREPARED_LUMERICAL_4UM_{token}_LATENT_COMBINED_ADFD_PAIR"
+        if status not in (projected, latent):
+            continue
+        recorded_polarization = manifest.get("polarization", polarization)
+        if recorded_polarization != polarization:
+            raise RuntimeError("pair manifest polarization/status mismatch")
+        is_latent = status == latent
+        coordinate = (
+            "latent_81x81_before_filter_projection"
+            if is_latent
+            else "shared_projected_nodal_occupancy"
+        )
+        coordinate_token = "LATENT" if is_latent else "PROJECTED_DENSITY"
+        return {
+            "polarization": polarization,
+            "is_latent": is_latent,
+            "design_coordinate": coordinate,
+            "validated_status": (
+                f"VALIDATED_LUMERICAL_4UM_{token}_{coordinate_token}_COMBINED_ADFD"
+            ),
+            "failed_status": (
+                f"FAILED_LUMERICAL_4UM_{token}_{coordinate_token}_COMBINED_ADFD"
+            ),
+        }
+    raise RuntimeError("unsupported centered-pair manifest status")
 
 
 def _artifact(path: Path) -> dict[str, Any]:
@@ -61,6 +91,7 @@ def _density_sha(record: dict[str, Any]) -> str:
 
 def _validate_case(
     *,
+    polarization: str,
     sign: str,
     density_state: dict[str, Any],
     baseline_forward: dict[str, Any],
@@ -75,8 +106,11 @@ def _validate_case(
         or forward.get("case") != "import_density"
     ):
         raise RuntimeError(f"{sign} Lumerical forward did not pass")
-    if forward.get("polarization") != "Ea" or pde.get("polarization") != "Ea":
-        raise RuntimeError(f"{sign} polarization is not Ea")
+    if (
+        forward.get("polarization") != polarization
+        or pde.get("polarization") != polarization
+    ):
+        raise RuntimeError(f"{sign} polarization is not {polarization}")
     if _density_sha(forward) != expected_density_sha:
         raise RuntimeError(f"{sign} forward density hash differs")
     if (
@@ -124,9 +158,17 @@ def main() -> int:
     if output.exists() and any(output.iterdir()):
         raise RuntimeError(f"refusing non-empty output directory: {output}")
     output.mkdir(parents=True, exist_ok=True)
-    result_path = output / "ea_combined_adfd_result.json"
+    try:
+        _, manifest_preview = _load_record(args.pair_manifest)
+        preview_contract = _pair_contract(manifest_preview)
+        result_name = (
+            f"{str(preview_contract['polarization']).lower()}_combined_adfd_result.json"
+        )
+    except Exception:
+        result_name = "combined_adfd_result.json"
+    result_path = output / result_name
     result: dict[str, Any] = {
-        "status": "FAILED_LUMERICAL_4UM_EA_PROJECTED_DENSITY_COMBINED_ADFD",
+        "status": "FAILED_LUMERICAL_4UM_COMBINED_ADFD_INPUT_AUDIT",
         "passed": False,
         "Maxwell_solves_this_invocation": 0,
         "custom_CUDA_solves_this_invocation": 0,
@@ -141,22 +183,12 @@ def main() -> int:
         plus_pde_path, plus_pde = _load_record(args.plus_pde_result)
         minus_forward_path, minus_forward = _load_record(args.minus_forward_result)
         minus_pde_path, minus_pde = _load_record(args.minus_pde_result)
-        manifest_status = manifest.get("status")
-        if manifest_status == "PREPARED_LUMERICAL_4UM_EA_COMBINED_ADFD_PAIR":
-            design_coordinate = "shared_projected_nodal_occupancy"
-            validated_status = PROJECTED_STATUS
-            failed_status = (
-                "FAILED_LUMERICAL_4UM_EA_PROJECTED_DENSITY_COMBINED_ADFD"
-            )
-        elif (
-            manifest_status
-            == "PREPARED_LUMERICAL_4UM_EA_LATENT_COMBINED_ADFD_PAIR"
-        ):
-            design_coordinate = "latent_81x81_before_filter_projection"
-            validated_status = LATENT_STATUS
-            failed_status = "FAILED_LUMERICAL_4UM_EA_LATENT_COMBINED_ADFD"
-        else:
-            raise RuntimeError("centered-pair manifest did not pass")
+        pair_contract = _pair_contract(manifest)
+        polarization = str(pair_contract["polarization"])
+        is_latent = bool(pair_contract["is_latent"])
+        design_coordinate = str(pair_contract["design_coordinate"])
+        validated_status = str(pair_contract["validated_status"])
+        failed_status = str(pair_contract["failed_status"])
         if manifest.get("passed") is not True:
             raise RuntimeError("centered-pair manifest did not pass")
         if (
@@ -165,7 +197,10 @@ def main() -> int:
             or adjoint.get("passed") is not True
         ):
             raise RuntimeError("adjoint preparation did not pass")
-        if adjoint.get("polarization") != "Ea" or adjoint.get("AD_FD_claimed") is not False:
+        if (
+            adjoint.get("polarization") != polarization
+            or adjoint.get("AD_FD_claimed") is not False
+        ):
             raise RuntimeError("adjoint record has invalid pre-AD-FD state")
         direction_path = _check_manifest_artifact(manifest, "direction")
         baseline_density_path = _check_manifest_artifact(manifest, "baseline_density")
@@ -177,7 +212,7 @@ def main() -> int:
         minus_density = np.load(minus_density_path, allow_pickle=False)
         direction_label = (
             "adfd-latent-direction-v1"
-            if validated_status == LATENT_STATUS
+            if is_latent
             else "adfd-direction-v1"
         )
         if array_sha256(direction, label=direction_label) != manifest["direction_sha256"]:
@@ -204,6 +239,8 @@ def main() -> int:
         if sha256(baseline_forward_path) != adjoint["artifacts"]["forward_result"]["sha256"]:
             raise RuntimeError("baseline forward record changed")
         baseline_forward = json.loads(baseline_forward_path.read_text(encoding="utf-8"))
+        if baseline_forward.get("polarization") != polarization:
+            raise RuntimeError("adjoint forward polarization differs from pair")
         gradient_path = Path(
             adjoint["artifacts"]["gradient_NPZ"]["path"]
         ).resolve()
@@ -215,6 +252,7 @@ def main() -> int:
         if density_state_sha256(gradient_density) != baseline_density_sha:
             raise RuntimeError("gradient NPZ density differs from pair baseline density")
         plus = _validate_case(
+            polarization=polarization,
             sign="plus",
             density_state=manifest["plus_density"],
             baseline_forward=baseline_forward,
@@ -224,6 +262,7 @@ def main() -> int:
             pde=plus_pde,
         )
         minus = _validate_case(
+            polarization=polarization,
             sign="minus",
             density_state=manifest["minus_density"],
             baseline_forward=baseline_forward,
@@ -233,7 +272,7 @@ def main() -> int:
             pde=minus_pde,
         )
         step = float(manifest["step"])
-        if validated_status == LATENT_STATUS:
+        if is_latent:
             if manifest.get("mapping") != NOMINAL_MAPPING.audit():
                 raise RuntimeError("latent pair mapping contract differs")
             latent_path = _check_manifest_artifact(manifest, "latent_baseline")
@@ -285,7 +324,8 @@ def main() -> int:
             pair_plus = latent_plus
             pair_minus = latent_minus
             scope = (
-                "one independent smooth direction of Ea current with respect "
+                f"one independent smooth direction of {polarization} current with "
+                "respect "
                 "to 81x81 latent density before filter/projection"
             )
         else:
@@ -297,7 +337,8 @@ def main() -> int:
             pair_plus = plus_density
             pair_minus = minus_density
             scope = (
-                "one independent smooth direction of Ea current with respect "
+                f"one independent smooth direction of {polarization} current with "
+                "respect "
                 "to shared projected nodal occupancy"
             )
         metrics = centered_adfd_metrics(
@@ -336,6 +377,7 @@ def main() -> int:
             "passed": passed,
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "scope": scope,
+            "polarization": polarization,
             "design_coordinate": design_coordinate,
             "step": step,
             "metrics": metrics,

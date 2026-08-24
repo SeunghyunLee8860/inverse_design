@@ -204,6 +204,41 @@ def validate_raw_against_jacobian(
     }
 
 
+def material_jacobian_reuse_audit(
+    raw_binding: Mapping[str, Any],
+    *,
+    source_raw_sha256: str,
+    target_raw_sha256: str,
+    source_polarization: str,
+    target_polarization: str,
+) -> dict[str, Any]:
+    """Authorize material-J reuse without requiring polarization-dependent E/Q."""
+
+    polarizations_valid = source_polarization in ("Ea", "Eb") and (
+        target_polarization in ("Ea", "Eb")
+    )
+    gates = {
+        "polarizations_are_Ea_or_Eb": polarizations_valid,
+        "target_epsilon_grid_frequency_match_jacobian": bool(
+            raw_binding.get("passed")
+        ),
+    }
+    return {
+        "passed": all(gates.values()),
+        "gates": gates,
+        "basis": (
+            "same projected-density state plus exact epsilon SHA, component-Yee "
+            "shapes, sub-attometre coordinates, and frequency"
+        ),
+        "polarization_dependent_E_and_Q_required_to_match": False,
+        "source_polarization": source_polarization,
+        "target_polarization": target_polarization,
+        "forward_raw_SHA_identical_to_jacobian_source": (
+            source_raw_sha256 == target_raw_sha256
+        ),
+    }
+
+
 def reconstruct_fieldregion_only_cw(
     electric_first: np.ndarray, electric_average: np.ndarray
 ) -> tuple[np.ndarray, dict[str, float | bool | str]]:

@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import importlib.util
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -12,6 +15,47 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
     NOMINAL_MAPPING,
 )
+
+
+_COMPARATOR_PATH = Path(__file__).with_name(
+    "36_compare_lumerical_4um_ea_combined_adfd.py"
+)
+_COMPARATOR_SPEC = importlib.util.spec_from_file_location(
+    "au_dualpol_4um_combined_adfd_comparator_test", _COMPARATOR_PATH
+)
+assert _COMPARATOR_SPEC is not None and _COMPARATOR_SPEC.loader is not None
+_COMPARATOR = importlib.util.module_from_spec(_COMPARATOR_SPEC)
+_COMPARATOR_SPEC.loader.exec_module(_COMPARATOR)
+
+
+def test_pair_contract_binds_ea_and_eb_status_to_polarization() -> None:
+    legacy_ea = _COMPARATOR._pair_contract(
+        {"status": "PREPARED_LUMERICAL_4UM_EA_LATENT_COMBINED_ADFD_PAIR"}
+    )
+    assert legacy_ea["polarization"] == "Ea"
+    assert legacy_ea["is_latent"] is True
+    assert legacy_ea["validated_status"] == (
+        "VALIDATED_LUMERICAL_4UM_EA_LATENT_COMBINED_ADFD"
+    )
+
+    eb = _COMPARATOR._pair_contract(
+        {
+            "status": "PREPARED_LUMERICAL_4UM_EB_LATENT_COMBINED_ADFD_PAIR",
+            "polarization": "Eb",
+        }
+    )
+    assert eb["polarization"] == "Eb"
+    assert eb["validated_status"] == (
+        "VALIDATED_LUMERICAL_4UM_EB_LATENT_COMBINED_ADFD"
+    )
+
+    with pytest.raises(RuntimeError, match="polarization/status mismatch"):
+        _COMPARATOR._pair_contract(
+            {
+                "status": "PREPARED_LUMERICAL_4UM_EB_LATENT_COMBINED_ADFD_PAIR",
+                "polarization": "Ea",
+            }
+        )
 
 
 def test_independent_direction_is_deterministic_smooth_and_normalized() -> None:

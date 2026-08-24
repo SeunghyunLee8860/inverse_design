@@ -100,6 +100,11 @@ error `7.779e-5` (0.00778%). Its filter/projection JVP and VJP contractions
 agree to `1.20e-16`. The four Maxwell solves used about 237 s of solver time,
 not a multi-hour convergence run. This still covers only one Ea direction on
 the RTX development mesh.
+The same adjoint and comparator code now accepts Eb with fail-closed
+polarization binding. Material-Jacobian reuse across Ea/Eb requires identical
+projected density, component epsilon hashes/shapes, Yee coordinates, and
+frequency; it does not incorrectly require equal polarization-dependent E/Q
+arrays. This is code readiness only: no Eb AD-FD certificate exists yet.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine

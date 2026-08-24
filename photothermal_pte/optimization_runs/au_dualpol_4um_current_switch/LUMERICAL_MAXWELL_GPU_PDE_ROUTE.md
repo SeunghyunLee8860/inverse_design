@@ -310,6 +310,15 @@ development mesh. Additional independent directions, Eb, the signed dual
 objective, a selected mesh, and B200 repetition remain mandatory before
 enabling LD_MMA.
 
+The adjoint, pair-preparation, and comparator scripts now support both `Ea`
+and `Eb`. Cross-polarization reuse of the sparse material Jacobian is allowed
+only after the projected state, component epsilon hashes/shapes, Yee
+coordinates, and frequency match. Full raw-NPZ equality is not required:
+the forward E and Q arrays must differ between polarizations and are not part
+of the constitutive Jacobian. This generalization has passed solver-free and
+backward-compatible Ea artifact audits; it does not yet constitute an Eb
+Maxwell or AD-FD result.
+
 ## Exact endpoint/final GPU runner
 
 The B200 launcher refuses a non-B200 device. A separate development launcher

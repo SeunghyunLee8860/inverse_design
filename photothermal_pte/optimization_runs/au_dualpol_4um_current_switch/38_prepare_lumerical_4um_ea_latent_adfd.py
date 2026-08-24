@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare one independent latent centered pair; perform no solver calls."""
+"""Prepare one Ea or Eb latent centered pair; perform no solver calls."""
 
 from __future__ import annotations
 
@@ -50,6 +50,7 @@ def independent_latent_baseline() -> np.ndarray:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--polarization", choices=("Ea", "Eb"), default="Ea")
     parser.add_argument("--beta", type=float, default=4.0)
     parser.add_argument("--step", type=float, default=0.0025)
     parser.add_argument("--output-dir", required=True, type=Path)
@@ -81,10 +82,17 @@ def main() -> int:
         np.save(paths[name], value, allow_pickle=False)
 
     manifest = {
-        "status": "PREPARED_LUMERICAL_4UM_EA_LATENT_COMBINED_ADFD_PAIR",
+        "status": (
+            f"PREPARED_LUMERICAL_4UM_{args.polarization.upper()}_LATENT_"
+            "COMBINED_ADFD_PAIR"
+        ),
         "passed": True,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "scope": "independent smooth 81x81 latent direction; no solver call",
+        "scope": (
+            f"independent smooth 81x81 latent direction for {args.polarization}; "
+            "no solver call"
+        ),
+        "polarization": args.polarization,
         "design_coordinate": "latent_81x81_before_filter_projection",
         "beta": args.beta,
         "step": args.step,

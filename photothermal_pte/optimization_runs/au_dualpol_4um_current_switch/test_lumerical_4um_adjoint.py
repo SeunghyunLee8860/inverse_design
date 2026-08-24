@@ -3,6 +3,7 @@ from __future__ import annotations
 import numpy as np
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_adjoint import (
+    material_jacobian_reuse_audit,
     reconstruct_fieldregion_only_cw,
     validate_raw_against_jacobian,
 )
@@ -78,3 +79,25 @@ def test_raw_jacobian_grid_accepts_only_sub_attometre_api_roundoff() -> None:
     rejected = validate_raw_against_jacobian(raw, metadata)
     assert rejected["passed"] is False
     assert rejected["gates"]["coordinate_arrays_match_lt_2e_18"] is False
+
+
+def test_material_jacobian_reuse_allows_different_ea_eb_field_artifacts() -> None:
+    reuse = material_jacobian_reuse_audit(
+        {"passed": True},
+        source_raw_sha256="ea-fields-and-q",
+        target_raw_sha256="eb-fields-and-q",
+        source_polarization="Ea",
+        target_polarization="Eb",
+    )
+    assert reuse["passed"] is True
+    assert reuse["forward_raw_SHA_identical_to_jacobian_source"] is False
+    assert reuse["polarization_dependent_E_and_Q_required_to_match"] is False
+
+    rejected = material_jacobian_reuse_audit(
+        {"passed": False},
+        source_raw_sha256="ea-fields-and-q",
+        target_raw_sha256="eb-fields-and-q",
+        source_polarization="Ea",
+        target_polarization="Eb",
+    )
+    assert rejected["passed"] is False
