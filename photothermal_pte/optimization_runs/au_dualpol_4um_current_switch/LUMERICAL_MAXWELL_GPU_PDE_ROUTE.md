@@ -167,3 +167,67 @@ one arbitrary exponent. The correction is:
 The present shared-linear thermal/electrical maps remain provisional until
 their mixture/bound and void-floor sensitivity studies are complete. They are
 not promoted merely because the optical rho-cubed law was removed.
+
+## Exact endpoint/final B200 runner
+
+The launcher refuses a non-B200 device. The current session host exposes RTX
+6000 Ada GPUs, so it cannot issue a B200 certificate. The current local
+installation is Lumerical 2026 R1.2. Nothing in the rejected `np density`
+experiment justifies an R1.3 upgrade. Exact version compatibility must be
+decided only by launching the ordinary exact-Au control on the actual B200 and
+recording the engine log.
+
+The concrete forward entry point is
+`25_run_lumerical_4um_exact_au_control.py`. It has an audit-only path that
+does not open Lumerical and a Maxwell path that calls the B200 preflight again
+inside Python. For each numerical contract and polarization, run the all-air
+source control first:
+
+```bash
+LUMERICAL_B200_GPU_INDEX=<physical-index> \
+  ./run_lumerical_b200.sh \
+  ./25_run_lumerical_4um_exact_au_control.py \
+  --case source_only --polarization Ea \
+  --output-dir /path/outside/git/source_only_Ea
+```
+
+Then pass that result JSON to each material control with exactly the same
+mesh/source arguments:
+
+```bash
+LUMERICAL_B200_GPU_INDEX=<physical-index> \
+  ./run_lumerical_b200.sh \
+  ./25_run_lumerical_4um_exact_au_control.py \
+  --case simple_L --polarization Ea \
+  --source-calibration-json /path/outside/git/source_only_Ea/<result>.json \
+  --output-dir /path/outside/git/simple_L_Ea
+```
+
+The material run refuses a source-contract hash mismatch. It also fails
+closed unless all 81-point fitted/finite-dt Au, TaIrTe4, and SiO2 readbacks,
+actual requested x/y/thin-stack/Si-bulk/air/PML mesh limits, native-Yee Q,
+six-face flux, auto-shutoff, and engine-log GPU checks pass. Raw fields and Q
+are never rescaled; 285 uW appears only as a derived scalar report. A
+disjoint coordinate-based material partition is reported for convergence,
+while raw component-specific epsilon arrays are retained so conformal
+interface cells are not misrepresented as pure bulk material.
+
+## Fail-closed sequence before optimization
+
+1. Confirm the experimental flake outline/thickness, contacts, crystal axes,
+   stack, beam, Au role, and interface parameters.
+2. On the actual B200, pass source-only and fixed empty/full/simple exact-Au
+   controls, time closure, native-Yee Q, and six-face energy balance.
+3. Compare imported `rho_bar=0/1` against the matching empty/ordinary-Au
+   endpoints, quantify source-band error, and reject artificial uniform-gray
+   field/Q resonances.
+4. Perform full x/y/z/PML mesh convergence for both polarizations. The z
+   candidates must refine the thin stack and linked Si-bulk/air/PML z limit
+   together; AD-FD alone is not mesh convergence.
+5. Build and validate the nonuniform density-to-component-Yee Jacobian and
+   discrete adjoint, then connect the same canonical density state to custom
+   thermal/electrical maps and pass mesh, contact/floor, current-sign, and
+   combined directional-FD gates.
+6. Only then start LD_MMA filter/projection continuation, optimize
+   `max min(+Ia,-Ib)`, and independently rebuild and reevaluate the final
+   500-nm binary geometry with ordinary dispersive Au for both polarizations.

@@ -70,7 +70,12 @@ def main() -> int:
         blockers.append("actual_B200_preflight")
     if physical_device.get("status") != "VALIDATED_AU_TAIRTE4_PHYSICAL_DEVICE_CONTRACT":
         blockers.append("physical_device_contract")
-    blockers.extend(("Lumerical_material_fit_readback", "forward_runner_not_yet_executed"))
+    blockers.extend(
+        (
+            "Lumerical_material_fit_readback_not_yet_executed_on_B200",
+            "exact_Au_forward_controls_not_yet_executed_on_B200",
+        )
+    )
     payload["blockers"] = blockers
     rendered = json.dumps(payload, indent=2) + "\n"
     if args.output_json is not None:

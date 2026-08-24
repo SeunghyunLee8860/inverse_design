@@ -50,7 +50,9 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     physics audit and the deliberately blocked target-device contract.
 14. `lumerical_4um_mesh_contract.py` and
     `22_audit_lumerical_4um_exact_au_runsetup.py` -- the sequential
-    source/time/z/x-y/PML/domain convergence matrix. Audit-only output is not a
+    source/time/full-domain-z/x-y/PML/domain convergence matrix. The z axis
+    links thin-stack refinement to explicit Si-bulk/air/PML refinement, so it
+    does not repeat the old partial-layer sweep. Audit-only output is not a
     mesh certificate and the actual Maxwell runner remains B200-blocked.
 15. `23_audit_4um_au_density_relaxation.py` -- solver-free exact endpoint,
     passivity, no-rho-cubed, and analytic complex-derivative gate for the new
@@ -59,6 +61,16 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     canonical 81x81 nodal state, 80x80 PDE cell map, state hash, exact
     transpose identity, and centered directional FD. It does not certify the
     Lumerical component-Yee Jacobian.
+17. `lumerical_4um_forward.py` and
+    `25_run_lumerical_4um_exact_au_control.py` -- the actual fail-closed B200
+    source/empty/full/simple-L runner. It records actual mesh coordinates,
+    fitted and finite-dt material readback, native-Yee Q, six-face flux, raw
+    engine-log GPU evidence, canonical exact-Au geometry identity, and a
+    disjoint coordinate-based Au/TaIrTe4/SiO2/Si/air Q partition for
+    convergence comparisons. Raw epsilon remains saved because conformal
+    interface cells cannot be reduced to a single physical material label.
+    Its layout/unit tests pass locally, but no Maxwell result exists because
+    this host has no B200.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -102,6 +114,13 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    3.2--4.8 um guard band around the 3.6--4.4 um source pulse. Its status is
    deliberately `NOT_FIT_READBACK` until the actual Lumerical fitted material
    is read back and compared on the B200 run.
+
+   The new runner enforces this readback at 81 points over 3.6--4.4 um and
+   also checks Lumerical's finite-time-step numerical permittivity. A material
+   run additionally requires a passed all-air source-only JSON with an exact
+   hash match on polarization, source waist input, time, x/y/z meshes, PML,
+   and domain. The 285-uW normalization is applied only to reported scalar
+   absorbed power; field and Q arrays remain raw.
 
    The earlier `np density` carrier claim is retracted. `np density` is a
    semiconductor electron/hole-density attribute, not an Au topology field.
@@ -235,10 +254,13 @@ location.  `AU_DUALPOL_PYTHON`, `FDTDX_SOURCE_DIR`, and
    full-domain-z tables as historical diagnostics, not evidence for Lumerical
    or a production mesh. The completed shared-linear factor-1/2/4 sweep is
    useful negative evidence: its stable final pair failed in all 6/6 cases.
-3. On the actual B200, establish Lumerical empty/imported-full/ordinary-Au
-   4-um endpoint field/absorption/Q parity, quantify the single-frequency
-   carrier's source-band approximation error, then sweep uniform projected
-   density for artificial field/Q resonances for both polarizations.
+3. On the actual B200, use `25_run_lumerical_4um_exact_au_control.py` to pass
+   source-only Ea/Eb first, then matching ordinary empty/full/simple-L exact
+   Au time, Q/flux, linked stack+bulk/air/PML-z, x/y, PML-layer, and domain
+   controls. Add imported-full parity against that ordinary-Au baseline,
+   quantify the single-frequency carrier's source-band error, and sweep
+   uniform projected density for artificial field/Q resonances. Raw output
+   must remain outside the Git worktree.
 4. Build and validate the nonuniform density-to-component-Yee material
    Jacobian and its discrete adjoint; do not substitute bundled LumOpt's
    real/lossless metal path.

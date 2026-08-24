@@ -24,8 +24,9 @@ Production remains blocked until a new hash-linked certificate chain proves:
 
 1. the target device geometry, contacts, crystal axes, stack, illumination,
    Au role, and uncertain interface scenarios;
-2. on the actual B200, empty/imported-full/ordinary dispersive-Au 4-um
-   endpoint field/absorption/Q parity for both polarizations, with the
+2. on the actual B200, source-only plus empty/imported-full/ordinary
+   dispersive-Au 4-um endpoint field/absorption/Q parity for both
+   polarizations, with actual full-domain mesh readback and the
    single-frequency carrier's finite-source-band error reported separately;
 3. a uniform-density field/Q sweep without an optimizer-exploitable gray
    resonance;
@@ -33,8 +34,9 @@ Production remains blocked until a new hash-linked certificate chain proves:
    plus a nonuniform Lumerical component-Yee material Jacobian with centered-FD
    and transpose tests;
 5. full optical/thermal/electrical latent AD-FD for `Ea` and `Eb`;
-6. optical x/y/z/PML, source/time/Q closure, thermal mesh, electrical mesh,
-   contact, and void-floor convergence;
+6. optical x/y/full-domain-z/PML, source/time/Q closure, thermal mesh,
+   electrical mesh, contact, and void-floor convergence; full-domain z must
+   link thin-stack refinement to Si-bulk/air/PML refinement;
 7. an independent final 500-nm exact-binary reevaluation using ordinary
    sampled-data dispersive Au.
 

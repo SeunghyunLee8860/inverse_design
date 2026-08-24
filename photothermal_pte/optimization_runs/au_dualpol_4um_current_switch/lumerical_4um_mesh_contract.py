@@ -11,6 +11,7 @@ class LumericalMeshSpec:
     label: str
     flake_dxy_m: float
     stack_dz_m: float
+    bulk_dz_m: float
     outer_dxy_m: float
     mesh_accuracy: int
     pml_layers: int
@@ -22,21 +23,35 @@ class LumericalMeshSpec:
     conformal_mesh: str = "conformal variant 1"
 
     def validate(self) -> "LumericalMeshSpec":
+        # CLI inputs are commonly expressed in nm/um and multiplied back to
+        # metres.  Keep a sub-attometre allowance for that unit round trip;
+        # it is many orders below every candidate mesh interval.
+        unit_roundoff_m = 1.0e-18
         if not self.label or any(character.isspace() for character in self.label):
             raise ValueError("mesh label must be nonempty and contain no whitespace")
-        for name in ("flake_dxy_m", "stack_dz_m", "outer_dxy_m"):
+        for name in (
+            "flake_dxy_m",
+            "stack_dz_m",
+            "bulk_dz_m",
+            "outer_dxy_m",
+        ):
             value = float(getattr(self, name))
             if not 0.0 < value <= 500.0e-9:
                 raise ValueError(f"invalid {name}: {value}")
         if self.outer_dxy_m < self.flake_dxy_m:
             raise ValueError("outer dxy cannot be finer than the flake override")
+        if self.bulk_dz_m < self.stack_dz_m:
+            raise ValueError("bulk dz cannot be finer than the stack override")
         if not 1 <= int(self.mesh_accuracy) == self.mesh_accuracy <= 8:
             raise ValueError("mesh_accuracy must be an integer in [1,8]")
         if not 4 <= int(self.pml_layers) == self.pml_layers <= 64:
             raise ValueError("pml_layers must be an integer in [4,64]")
-        if self.lateral_span_m < 20.0e-6:
+        if self.lateral_span_m < 20.0e-6 - unit_roundoff_m:
             raise ValueError("lateral span cannot truncate the provisional 20-um domain")
-        if not self.z_min_m <= -3.0e-6 < 0.0 < 3.0e-6 <= self.z_max_m:
+        if not (
+            self.z_min_m <= -3.0e-6 + unit_roundoff_m
+            and 3.0e-6 - unit_roundoff_m <= self.z_max_m
+        ):
             raise ValueError("z domain must contain the complete provisional +/-3 um domain")
         if not self.simulation_time_s > 0.0:
             raise ValueError("simulation time must be positive")
@@ -55,6 +70,7 @@ BASELINE = LumericalMeshSpec(
     label="baseline_xy100_z20_pml8_span20_z6_t1ps",
     flake_dxy_m=100.0e-9,
     stack_dz_m=20.0e-9,
+    bulk_dz_m=200.0e-9,
     outer_dxy_m=200.0e-9,
     mesh_accuracy=3,
     pml_layers=8,
@@ -66,7 +82,12 @@ BASELINE = LumericalMeshSpec(
 ).validate()
 
 TIME_CANDIDATES_S = (1.0e-12, 2.0e-12, 4.0e-12)
-Z_CANDIDATES_M = (20.0e-9, 10.0e-9, 5.0e-9, 2.5e-9)
+FULL_Z_CANDIDATES_M = (
+    (20.0e-9, 200.0e-9),
+    (10.0e-9, 100.0e-9),
+    (5.0e-9, 50.0e-9),
+    (2.5e-9, 25.0e-9),
+)
 XY_CANDIDATES_M = (100.0e-9, 50.0e-9, 25.0e-9)
 PML_LAYER_CANDIDATES = (8, 12, 16)
 LATERAL_SPAN_CANDIDATES_M = (20.0e-6, 24.0e-6, 28.0e-6)
@@ -88,7 +109,10 @@ def candidate_axes() -> dict[str, list[Any]]:
 
     return {
         "time_simulation_s": list(TIME_CANDIDATES_S),
-        "optical_z_stack_dz_m": list(Z_CANDIDATES_M),
+        "optical_full_domain_z_m": [
+            {"stack_dz_m": stack, "bulk_air_pml_dz_m": bulk}
+            for stack, bulk in FULL_Z_CANDIDATES_M
+        ],
         "optical_xy_flake_dxy_m": list(XY_CANDIDATES_M),
         "pml_layers": list(PML_LAYER_CANDIDATES),
         "lateral_span_m": list(LATERAL_SPAN_CANDIDATES_M),
@@ -107,7 +131,7 @@ def convergence_contract_audit() -> dict[str, Any]:
         "axis_order": [
             "source_profile_and_incident_power",
             "time_and_auto_shutoff",
-            "optical_z_stack",
+            "optical_z_full_domain_stack_bulk_air_and_PML",
             "optical_xy_flake_and_Au_edges",
             "PML_layers",
             "lateral_domain_clearance",
@@ -129,6 +153,7 @@ def convergence_contract_audit() -> dict[str, Any]:
             "actual mesh coordinate readback is available",
             "auto-shutoff and duration-pair stationarity pass",
             "native-Yee Q is finite and unclipped",
+            "stack plus Si-bulk/air/PML z-step readback meets the requested full-domain limits",
             "six-face inward flux agrees with volume Q",
             "Lumerical fitted epsilon readback matches sampled targets",
             "canonical exact-Au geometry SHA matches downstream solvers",

@@ -1,0 +1,734 @@
+#!/usr/bin/env python3
+"""Run one fail-closed B200 exact-Au 4-um Lumerical control.
+
+Run ``source_only`` first for each polarization and numerical mesh.  An
+empty/full/simple_L material run refuses to start unless the matching passed
+source-only JSON is supplied.  Raw FSP/NPZ/JSON artifacts are written outside
+the Git worktree and are never overwritten.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import sys
+import time
+import traceback
+from typing import Any
+
+import numpy as np
+
+
+REPOSITORY = Path(__file__).resolve().parents[3]
+if str(REPOSITORY) not in sys.path:
+    sys.path.insert(0, str(REPOSITORY))
+
+from photothermal_pte.finite_inverse_design.native_yee_q import (  # noqa: E402
+    extract_native_yee_q,
+    frequency_slice,
+    integrate_xyz,
+)
+from photothermal_pte.finite_inverse_design.probe_v261_cpu_tfsf_device import (  # noqa: E402
+    PABS_FIELD,
+    PABS_GROUP,
+    PABS_INDEX,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (  # noqa: E402
+    CONTRACT,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_forward import (  # noqa: E402
+    C0_M_S,
+    SOURCE_NAME,
+    TARGET_MONITOR,
+    build_layout,
+    coordinate_material_partition,
+    material_fit_readback,
+    requested_mesh_readback_gates,
+    source_calibration_contract,
+    validate_source_calibration_record,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_mesh_contract import (  # noqa: E402
+    BASELINE,
+    GEOMETRY_CONTROLS,
+    LumericalMeshSpec,
+    POLARIZATIONS,
+    Q_FLUX_GATE,
+    RELATIVE_GATE,
+    SOURCE_PROFILE_GATE,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_exact_au import (  # noqa: E402
+    exact_control_masks,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_maxwell_contract import (  # noqa: E402
+    LUMAPI_PATH,
+    LUMERICAL_ROOT,
+    audit_environment,
+    require_b200,
+)
+from photothermal_pte.validation.paper_ir_sanity import (  # noqa: E402
+    validate_paper_ir_source_only_gpu as lumerical_audit,
+)
+
+
+HERE = Path(__file__).resolve().parent
+PHYSICAL_DEVICE_CONTRACT = HERE / "physical_device_contract.json"
+DEFAULT_RAW_ROOT = Path("/home/seunghyun/tairte4_raw_artifacts")
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _git_commit() -> str:
+    completed = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=REPOSITORY,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    return completed.stdout.strip() if completed.returncode == 0 else "UNKNOWN"
+
+
+def _json_default(value: Any) -> Any:
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, Path):
+        return str(value)
+    raise TypeError(type(value).__name__)
+
+
+def _write_json(path: Path, value: Any) -> None:
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(
+        json.dumps(value, indent=2, default=_json_default) + "\n",
+        encoding="utf-8",
+    )
+    temporary.replace(path)
+
+
+def _artifact(path: Path) -> dict[str, Any]:
+    return {
+        "path": str(path),
+        "size_bytes": path.stat().st_size,
+        "sha256": _sha256(path),
+    }
+
+
+def _scalar(value: Any, label: str) -> float:
+    array = np.asarray(value).reshape(-1)
+    if array.size != 1:
+        raise RuntimeError(f"{label} is not scalar: {array.shape}")
+    result = float(np.real(array[0]))
+    if not np.isfinite(result):
+        raise RuntimeError(f"{label} is not finite")
+    return result
+
+
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--case", required=True, choices=("source_only", *GEOMETRY_CONTROLS)
+    )
+    parser.add_argument("--polarization", required=True, choices=POLARIZATIONS)
+    parser.add_argument("--gpu-index", type=int)
+    parser.add_argument("--output-dir", type=Path)
+    parser.add_argument("--source-calibration-json", type=Path)
+    parser.add_argument("--source-object-w0-um", type=float, default=4.0)
+    parser.add_argument("--mesh-label", default=BASELINE.label)
+    parser.add_argument("--flake-dxy-nm", type=float, default=BASELINE.flake_dxy_m * 1e9)
+    parser.add_argument("--stack-dz-nm", type=float, default=BASELINE.stack_dz_m * 1e9)
+    parser.add_argument("--bulk-dz-nm", type=float, default=BASELINE.bulk_dz_m * 1e9)
+    parser.add_argument("--outer-dxy-nm", type=float, default=BASELINE.outer_dxy_m * 1e9)
+    parser.add_argument("--mesh-accuracy", type=int, default=BASELINE.mesh_accuracy)
+    parser.add_argument("--pml-layers", type=int, default=BASELINE.pml_layers)
+    parser.add_argument("--lateral-span-um", type=float, default=BASELINE.lateral_span_m * 1e6)
+    parser.add_argument("--z-min-um", type=float, default=BASELINE.z_min_m * 1e6)
+    parser.add_argument("--z-max-um", type=float, default=BASELINE.z_max_m * 1e6)
+    parser.add_argument(
+        "--simulation-time-ps",
+        type=float,
+        default=BASELINE.simulation_time_s * 1e12,
+    )
+    parser.add_argument(
+        "--auto-shutoff-min", type=float, default=BASELINE.auto_shutoff_min
+    )
+    parser.add_argument("--threads", type=int, default=8)
+    parser.add_argument("--audit-only", action="store_true")
+    args = parser.parse_args()
+    if not np.isfinite(args.source_object_w0_um) or args.source_object_w0_um <= 0:
+        parser.error("--source-object-w0-um must be finite and positive")
+    if args.threads < 1:
+        parser.error("--threads must be positive")
+    if (
+        args.case != "source_only"
+        and args.source_calibration_json is None
+        and not args.audit_only
+    ):
+        parser.error("material cases require --source-calibration-json")
+    if not args.audit_only and args.gpu_index is None:
+        env_index = os.environ.get("LUMERICAL_B200_GPU_INDEX")
+        if env_index is None:
+            parser.error(
+                "a Maxwell run requires --gpu-index or LUMERICAL_B200_GPU_INDEX"
+            )
+        args.gpu_index = int(env_index)
+    return args
+
+
+def _mesh_spec(args: argparse.Namespace) -> LumericalMeshSpec:
+    return LumericalMeshSpec(
+        label=args.mesh_label,
+        flake_dxy_m=args.flake_dxy_nm * 1e-9,
+        stack_dz_m=args.stack_dz_nm * 1e-9,
+        bulk_dz_m=args.bulk_dz_nm * 1e-9,
+        outer_dxy_m=args.outer_dxy_nm * 1e-9,
+        mesh_accuracy=args.mesh_accuracy,
+        pml_layers=args.pml_layers,
+        lateral_span_m=args.lateral_span_um * 1e-6,
+        z_min_m=args.z_min_um * 1e-6,
+        z_max_m=args.z_max_um * 1e-6,
+        simulation_time_s=args.simulation_time_ps * 1e-12,
+        auto_shutoff_min=args.auto_shutoff_min,
+    ).validate()
+
+
+def _output_paths(
+    args: argparse.Namespace, spec: LumericalMeshSpec
+) -> tuple[Path, Path, Path, Path]:
+    output = args.output_dir
+    if output is None:
+        output = (
+            DEFAULT_RAW_ROOT
+            / "au_dualpol_4um_lumerical"
+            / spec.label
+            / f"{args.case}_{args.polarization}"
+        )
+    output = output.expanduser().resolve()
+    try:
+        output.relative_to(REPOSITORY.resolve())
+    except ValueError:
+        pass
+    else:
+        raise RuntimeError(
+            "raw Lumerical outputs must be outside the Git worktree: "
+            f"{output}"
+        )
+    stem = f"{args.case}_{args.polarization}_{spec.label}"
+    return (
+        output,
+        output / f"{stem}.fsp",
+        output / f"{stem}_raw.npz",
+        output / f"{stem}.json",
+    )
+
+
+def _load_source_record(
+    path: Path | None, expected_contract: dict[str, Any]
+) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+    if path is None:
+        return None, None
+    resolved = path.expanduser().resolve()
+    record = json.loads(resolved.read_text(encoding="utf-8"))
+    validation = validate_source_calibration_record(record, expected_contract)
+    validation["path"] = str(resolved)
+    validation["sha256"] = _sha256(resolved)
+    if not validation["passed"]:
+        raise RuntimeError(f"source calibration gate failed: {validation}")
+    return record, validation
+
+
+def _configure_environment(gpu_index: int, threads: int) -> str:
+    visible = os.environ.get("CUDA_VISIBLE_DEVICES")
+    if visible is not None and visible.strip() != str(gpu_index):
+        raise RuntimeError(
+            "CUDA_VISIBLE_DEVICES does not match the requested physical B200: "
+            f"{visible!r} != {gpu_index}"
+        )
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_index)
+    gpu_device = f"GPU {gpu_index}"
+    os.environ["LUMERICAL_SESSION_GPU_DEVICE"] = gpu_device
+    os.environ["CL_GPU_DEVICE"] = gpu_device
+    os.environ["FDTD_THREADS"] = str(threads)
+    os.environ["VC_LUMERICAL_ROOT"] = str(LUMERICAL_ROOT)
+    os.environ["LUMERICAL_ROOT"] = str(LUMERICAL_ROOT)
+    os.environ["LUMERICAL_PYTHONPATH"] = str(LUMAPI_PATH.parent)
+    os.environ["PATH"] = f"{LUMERICAL_ROOT / 'bin'}:{os.environ.get('PATH', '')}"
+    return gpu_device
+
+
+def _configure_gpu_resource(fdtd: Any, gpu_device: str, threads: int) -> None:
+    fdtd.setresource("FDTD", 1, "active", 0)
+    fdtd.setresource("FDTD", 2, "active", 1)
+    fdtd.setresource("FDTD", 2, "processes", "1")
+    fdtd.setresource("FDTD", 2, "threads", str(threads))
+    fdtd.setresource("FDTD", 2, "device type", gpu_device)
+    fdtd.setresource("FDTD", 2, "solver extra command line options", "-gpu")
+
+
+def _gpu_log_evidence(
+    output: Path, *, requested_gpu_index: int
+) -> dict[str, Any]:
+    logs = sorted(output.glob("*.log"))
+    text = "\n".join(path.read_text(errors="replace") for path in logs)
+    configured = re.findall(
+        r"Configured with CUDA_VISIBLE_DEVICES=(\d+)", text
+    )
+    detected = re.findall(r"Detected GPU\s+(\d+):", text)
+    evidence = {
+        "log_paths": [str(path) for path in logs],
+        "requested_gpu_index": requested_gpu_index,
+        "configured_cuda_visible_devices": (
+            int(configured[-1]) if configured else None
+        ),
+        "detected_gpu_index": int(detected[-1]) if detected else None,
+        "engine_command_contains_gpu_flag": bool(
+            re.search(r"fdtd-engine.*(?:^|\s)-gpu(?:\s|$)", text, re.MULTILINE)
+        ),
+        "gpu_timestep_timing_present": "time to run GPU simulation" in text,
+        "gpu_datatype_present": "Using datatype: real32" in text,
+        "simulation_completed_successfully": (
+            "Simulation completed successfully" in text
+        ),
+    }
+    evidence["passed"] = bool(
+        logs
+        and evidence["configured_cuda_visible_devices"] == requested_gpu_index
+        and evidence["detected_gpu_index"] == requested_gpu_index
+        and evidence["engine_command_contains_gpu_flag"]
+        and evidence["gpu_timestep_timing_present"]
+        and evidence["simulation_completed_successfully"]
+    )
+    return evidence
+
+
+def _face_fluxes(
+    fdtd: Any, faces: dict[str, dict[str, Any]], source_power_w: float
+) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    net_outward = 0.0
+    for key, face in faces.items():
+        normalized = _scalar(fdtd.transmission(face["name"]), face["name"])
+        signed_axis_power = normalized * source_power_w
+        outward = float(face["outward_sign"]) * signed_axis_power
+        result[key] = {
+            "normalized_signed_axis_flux": normalized,
+            "signed_axis_power_W": signed_axis_power,
+            "outward_power_W": outward,
+        }
+        net_outward += outward
+    return {
+        "faces": result,
+        "net_outward_power_W": net_outward,
+        "net_inward_power_W": -net_outward,
+    }
+
+
+def _source_postprocess(
+    fdtd: Any, source_power_w: float
+) -> tuple[dict[str, Any], dict[str, np.ndarray], dict[str, bool]]:
+    fields = lumerical_audit.monitor_fields(fdtd, TARGET_MONITOR)
+    target_metrics, target_arrays = lumerical_audit.plane_metrics(
+        fields, source_power_w
+    )
+    source_result = fdtd.getresult(SOURCE_NAME, "fields")
+    source_metrics, source_arrays = lumerical_audit.source_profile_from_arrays(
+        source_result["x"], source_result["y"], source_result["E"]
+    )
+    target_w0 = CONTRACT.gaussian_waist_m
+    gates = {
+        "realized_waist_x_within_0p5pct": abs(
+            target_metrics["fitted_waist_x_m"] - target_w0
+        )
+        / target_w0
+        < SOURCE_PROFILE_GATE,
+        "realized_waist_y_within_0p5pct": abs(
+            target_metrics["fitted_waist_y_m"] - target_w0
+        )
+        / target_w0
+        < SOURCE_PROFILE_GATE,
+        "Gaussian_fit_NRMSE_lt_0p5pct": (
+            target_metrics["Gaussian_fit_NRMSE"] < SOURCE_PROFILE_GATE
+        ),
+        "realized_ellipticity_lt_1pct": (
+            target_metrics["fitted_xy_ellipticity"] < 1.0e-2
+        ),
+        "center_displacement_lt_50nm": (
+            target_metrics["beam_center_error_m"] < 50.0e-9
+        ),
+        "incident_power_closure_lt_0p5pct": abs(
+            target_metrics["downward_Poynting_power_over_sourcepower"] - 1.0
+        )
+        < RELATIVE_GATE,
+        "all_fields_finite": bool(target_metrics["all_fields_finite"]),
+    }
+    arrays = {
+        **{f"target_{key}": value for key, value in target_arrays.items()},
+        **source_arrays,
+    }
+    return {
+        "target_plane_metrics": target_metrics,
+        "source_object_metrics": source_metrics,
+    }, arrays, gates
+
+
+def _material_postprocess(
+    fdtd: Any,
+    *,
+    flux_faces: dict[str, dict[str, Any]],
+    source_power_w: float,
+    source_incident_power_w: float,
+    au_mask: np.ndarray,
+) -> tuple[dict[str, Any], dict[str, np.ndarray], dict[str, bool]]:
+    six_face = _face_fluxes(fdtd, flux_faces, source_power_w)
+    fdtd.runanalysis(PABS_GROUP)
+    q = extract_native_yee_q(
+        fdtd,
+        field_monitor=PABS_FIELD,
+        index_monitor=PABS_INDEX,
+        wavelength_m=CONTRACT.wavelength_m,
+    )
+    p_native = float(q["P_Q_W"])
+    p_pabs = _scalar(
+        fdtd.getresult(PABS_GROUP, "Pabs_total")["Pabs_total"],
+        "Pabs_total",
+    ) * source_power_w
+    p_six = float(six_face["net_inward_power_W"])
+    closure = abs(p_native - p_six) / max(
+        abs(p_native), abs(p_six), np.finfo(float).tiny
+    )
+    native_pabs_error = abs(p_native - p_pabs) / max(
+        abs(p_native), abs(p_pabs), np.finfo(float).tiny
+    )
+    negative = {
+        component: int(
+            np.count_nonzero(np.asarray(q["Q_components"][component]) < 0.0)
+        )
+        for component in "xyz"
+    }
+    finite = all(
+        np.all(np.isfinite(np.asarray(q["Q_components"][component])))
+        for component in "xyz"
+    )
+    arrays: dict[str, np.ndarray] = {}
+    material_power: dict[str, dict[str, float]] = {}
+    spatial_shape = tuple(
+        np.asarray(q["base_coordinates"][axis]).size for axis in "xyz"
+    )
+    for component in "xyz":
+        arrays[f"Q{component}_W_m3"] = np.asarray(
+            q["Q_components"][component]
+        )
+        for axis in "xyz":
+            arrays[f"Q{component}_{axis}_m"] = np.asarray(
+                q["native_coordinates"][component][axis]
+            )
+        refractive_index = frequency_slice(
+            np.asarray(fdtd.getdata(PABS_INDEX, f"index_{component}", 1)),
+            spatial_shape,
+            int(q["frequency_index_zero_based"]),
+            int(q["frequency_count"]),
+            f"index_{component}",
+        )
+        arrays[f"epsilon_{component}"] = np.asarray(refractive_index) ** 2
+        partitions = coordinate_material_partition(
+            q["native_coordinates"][component], au_mask
+        )
+        for material, partition in partitions.items():
+            material_power.setdefault(material, {})[component] = integrate_xyz(
+                np.asarray(q["Q_components"][component]) * partition,
+                q["native_coordinates"][component]["x"],
+                q["native_coordinates"][component]["y"],
+                q["native_coordinates"][component]["z"],
+            )
+    material_power_total = {
+        material: float(sum(components.values()))
+        for material, components in material_power.items()
+    }
+    partition_closure = abs(sum(material_power_total.values()) - p_native) / max(
+        abs(p_native), np.finfo(float).tiny
+    )
+    reporting_scale = CONTRACT.reporting_incident_power_W / source_incident_power_w
+    gates = {
+        "native_Yee_Q_finite": bool(finite),
+        "native_Yee_Q_nonnegative": sum(negative.values()) == 0,
+        "Q_vs_six_face_flux_lt_2pct": closure < Q_FLUX_GATE,
+        "native_Q_vs_pabs_analysis_lt_0p5pct": (
+            native_pabs_error < RELATIVE_GATE
+        ),
+        "positive_source_calibration_power": source_incident_power_w > 0.0,
+        "coordinate_material_partition_closes_native_Q": (
+            partition_closure < 1.0e-12
+        ),
+    }
+    metrics = {
+        "P_Q_native_W_raw": p_native,
+        "P_Q_pabs_W_raw": p_pabs,
+        "P_six_face_W_raw": p_six,
+        "six_face_closure_relative": closure,
+        "native_vs_pabs_relative": native_pabs_error,
+        "Q_component_power_native_W_raw": q["component_power_W"],
+        "coordinate_partition_component_power_W_raw": material_power,
+        "coordinate_partition_material_power_W_raw": material_power_total,
+        "coordinate_partition_closure_relative": partition_closure,
+        "coordinate_partition_scope": (
+            "deterministic native-sample convergence diagnostic; interface "
+            "cut cells remain represented by the saved raw epsilon arrays"
+        ),
+        "component_hotspots": q["component_hotspots"],
+        "negative_Q_cell_count": negative,
+        "all_Q_arrays_finite": bool(finite),
+        "six_face": six_face,
+        "reporting_normalization": {
+            "source_only_incident_power_W_raw": source_incident_power_w,
+            "target_reporting_incident_power_W": CONTRACT.reporting_incident_power_W,
+            "scalar_reporting_factor": reporting_scale,
+            "P_Q_W_at_reporting_power": p_native * reporting_scale,
+            "only_scalar_reports_scaled": True,
+            "field_or_Q_array_rescaling": False,
+        },
+        "Q_processing": {
+            "clipping": False,
+            "smoothing": False,
+            "gain": False,
+            "global_rescaling": False,
+            "tiling": False,
+        },
+    }
+    return metrics, arrays, gates
+
+
+def main() -> int:
+    args = _parse_args()
+    spec = _mesh_spec(args)
+    source_object_w0_m = args.source_object_w0_um * 1.0e-6
+    source_contract = source_calibration_contract(
+        spec,
+        args.polarization,
+        source_object_w0_m=source_object_w0_m,
+    )
+    audit_payload = {
+        "status": "AUDITED_EXACT_AU_4UM_CONTROL_NOT_RUN",
+        "case": args.case,
+        "polarization": args.polarization,
+        "mesh_spec": spec.audit(),
+        "source_calibration_contract": source_contract,
+        "environment": audit_environment(requested_gpu_index=args.gpu_index),
+        "scope": "audit only; no Maxwell or downstream PDE solve",
+    }
+    if args.audit_only:
+        print(json.dumps(audit_payload, indent=2, default=_json_default))
+        return 0
+
+    assert args.gpu_index is not None
+    preflight = require_b200(requested_gpu_index=args.gpu_index)
+    source_record, source_validation = _load_source_record(
+        args.source_calibration_json, source_contract
+    )
+    output, fsp_path, npz_path, result_path = _output_paths(args, spec)
+    for protected in (fsp_path, npz_path, result_path):
+        if protected.exists():
+            raise RuntimeError(f"refusing to overwrite raw artifact: {protected}")
+    output.mkdir(parents=True, exist_ok=True)
+    result: dict[str, Any] = {
+        "status": "BLOCKED_EXACT_AU_4UM_CONTROL",
+        "case": args.case,
+        "polarization": args.polarization,
+        "git_commit": _git_commit(),
+        "mesh_spec": spec.audit(),
+        "source_calibration_contract": source_contract,
+        "source_calibration_sha256": source_contract[
+            "source_calibration_sha256"
+        ],
+        "source_calibration_validation": source_validation,
+        "B200_preflight": preflight,
+        "physical_device_contract": {
+            "path": str(PHYSICAL_DEVICE_CONTRACT.relative_to(REPOSITORY)),
+            "sha256": _sha256(PHYSICAL_DEVICE_CONTRACT),
+            "status": json.loads(
+                PHYSICAL_DEVICE_CONTRACT.read_text(encoding="utf-8")
+            ).get("status"),
+        },
+        "Q_processing": {
+            "clipping": False,
+            "smoothing": False,
+            "gain": False,
+            "field_or_Q_rescaling": False,
+        },
+    }
+    fdtd = None
+    try:
+        gpu_device = _configure_environment(args.gpu_index, args.threads)
+        sys.path.insert(0, str(LUMAPI_PATH.parent))
+        import lumapi
+
+        fdtd = lumapi.FDTD(hide=True, serverArgs={"platform": "offscreen"})
+        layout = build_layout(
+            fdtd,
+            case=args.case,
+            polarization=args.polarization,
+            spec=spec,
+            source_object_w0_m=source_object_w0_m,
+        )
+        _configure_gpu_resource(fdtd, gpu_device, args.threads)
+        fdtd.runsetup()
+        pre_mesh = lumerical_audit.mesh_readback(fdtd)
+        if not pre_mesh.get("available"):
+            raise RuntimeError(f"pre-run mesh readback unavailable: {pre_mesh}")
+        mesh_gate = requested_mesh_readback_gates(
+            pre_mesh["coordinate_arrays"], spec
+        )
+        if not mesh_gate["all"]:
+            raise RuntimeError(f"requested mesh was not realized: {mesh_gate}")
+        material_readback = None
+        if args.case != "source_only":
+            dt_s = _scalar(fdtd.getnamed("FDTD", "dt"), "FDTD.dt")
+            material_readback = material_fit_readback(fdtd, dt_s=dt_s)
+            if not all(material_readback["gates"].values()):
+                raise RuntimeError(
+                    f"material fit readback failed: {material_readback}"
+                )
+        fdtd.save(str(fsp_path))
+        started = time.monotonic()
+        resource = lumerical_audit.strict_gpu_run(
+            fdtd, f"au_dualpol_4um_{args.case}_{args.polarization}"
+        )
+        wall_time_s = time.monotonic() - started
+        fdtd.save(str(fsp_path))
+        frequency_hz = C0_M_S / CONTRACT.wavelength_m
+        source_power_w = _scalar(
+            fdtd.sourcepower(frequency_hz, 2, SOURCE_NAME), "sourcepower"
+        )
+        post_mesh = lumerical_audit.mesh_readback(fdtd)
+        log = lumerical_audit.log_audit(output)
+        gpu_log = _gpu_log_evidence(
+            output, requested_gpu_index=args.gpu_index
+        )
+        common_gates = {
+            "B200_preflight_passed": preflight["status"].startswith("READY"),
+            "engine_log_proves_requested_GPU": bool(gpu_log["passed"]),
+            "simulation_completed_successfully": bool(
+                log["simulation_completed_successfully"]
+            ),
+            "auto_shutoff_lt_1e_5": (
+                log["final_auto_shutoff"] is not None
+                and log["final_auto_shutoff"] < 1.0e-5
+            ),
+            "pre_run_mesh_readback_passed": bool(mesh_gate["all"]),
+            "post_run_mesh_readback_available": bool(post_mesh.get("available")),
+        }
+        arrays: dict[str, np.ndarray] = {
+            f"pre_mesh_{axis}_m": np.asarray(
+                pre_mesh["coordinate_arrays"][axis]
+            )
+            for axis in "xyz"
+        }
+        if post_mesh.get("available"):
+            arrays.update(
+                {
+                    f"post_mesh_{axis}_m": np.asarray(
+                        post_mesh["coordinate_arrays"][axis]
+                    )
+                    for axis in "xyz"
+                }
+            )
+        if args.case == "source_only":
+            metrics, case_arrays, case_gates = _source_postprocess(
+                fdtd, source_power_w
+            )
+        else:
+            assert source_record is not None and source_validation is not None
+            incident_power = float(source_validation["incident_power_W"])
+            metrics, case_arrays, case_gates = _material_postprocess(
+                fdtd,
+                flux_faces=layout["flux_faces"],
+                source_power_w=source_power_w,
+                source_incident_power_w=incident_power,
+                au_mask=exact_control_masks()[args.case],
+            )
+            case_gates.update(
+                {
+                    "matching_source_calibration_passed": bool(
+                        source_validation["passed"]
+                    ),
+                    "material_fit_readback_passed": bool(
+                        material_readback is not None
+                        and all(material_readback["gates"].values())
+                    ),
+                    "canonical_exact_Au_geometry_hash_present": bool(
+                        layout["geometry"]["exact_au_geometry"][
+                            "geometry_sha256"
+                        ]
+                    ),
+                }
+            )
+        arrays.update(case_arrays)
+        np.savez_compressed(npz_path, **arrays)
+        all_gates = {**common_gates, **case_gates}
+        passed = all(all_gates.values())
+        status = (
+            "PASSED_EXACT_AU_4UM_SOURCE_ONLY_NUMERICAL_GATE"
+            if args.case == "source_only" and passed
+            else (
+                f"PASSED_PROVISIONAL_EXACT_AU_4UM_{args.case}_{args.polarization}_CONTROL"
+                if passed
+                else f"FAILED_EXACT_AU_4UM_{args.case}_{args.polarization}_GATE"
+            )
+        )
+        result.update(
+            {
+                "status": status,
+                "all_gates_passed": passed,
+                "promotion_to_physical_device_result": False,
+                "provisional_device_contract_confirmation_required": True,
+                "solver_version": str(fdtd.version()),
+                "GPU_resource_used": resource,
+                "solver_wall_time_s": wall_time_s,
+                "source_power_W_raw": source_power_w,
+                "layout": layout,
+                "material_fit_readback": material_readback,
+                "mesh_region_readback": mesh_gate,
+                "mesh_readback": {
+                    "pre_run": {
+                        key: value
+                        for key, value in pre_mesh.items()
+                        if key != "coordinate_arrays"
+                    },
+                    "post_run": {
+                        key: value
+                        for key, value in post_mesh.items()
+                        if key != "coordinate_arrays"
+                    },
+                },
+                "log_audit": log,
+                "GPU_log_evidence": gpu_log,
+                "gates": all_gates,
+                **metrics,
+            }
+        )
+        result["raw_artifacts"] = [_artifact(fsp_path), _artifact(npz_path)]
+    except Exception as exc:
+        result["error"] = f"{type(exc).__name__}: {exc}"
+        result["traceback"] = traceback.format_exc()
+    finally:
+        if fdtd is not None:
+            try:
+                fdtd.close()
+            except Exception:
+                pass
+        _write_json(result_path, result)
+    print(json.dumps(result, indent=2, default=_json_default))
+    return 0 if str(result["status"]).startswith("PASSED") else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
