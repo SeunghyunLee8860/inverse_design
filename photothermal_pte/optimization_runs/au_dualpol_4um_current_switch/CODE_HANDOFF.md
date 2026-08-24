@@ -925,3 +925,37 @@ adjoint timing, or other mesh axis yet. Add a z16 canonical 24/4 case, generate
 its own source-only Ea/Eb certificate, run the matching exact-L material pair,
 and certify z8-to-z16. Keep raw output external and keep this FDTDX work
 separate from the concurrently owned Lumerical session.
+
+
+## z16 measured extension: still blocked; z32 is the last practical refinement
+
+Commit `18e84ddb` adds canonical increment-state z16 support without changing
+base z2/z4/z8 case hashes. z16 source and exact-L material pairs both passed on
+idle GPUs 6/7. One polarization takes about `320 s` forward and `355 s` total,
+with about 17.17 GiB GPU memory; the two polarizations run concurrently.
+Source-pair SHA-256 is
+`dffb77b434bd2873f04305583cd7441c3c3de605c47d267f38020e64f54b90ee`.
+Material report SHA-256 values are
+`c6e192d265e2b35dbd9228fa65369c88ee34858b67238c032cef95bedf26841f`
+and `aa96702d36c0653a7dd7c41ac7e0e20f14c9e68a43b3bf2dfe84b0e32934b756`.
+
+The z8-to-z16 certificate is
+`/home/seunghyun200/fdtdx_results/increment_state_z16_extension_certificate_e2fbbd36/FDTDX_INCREMENT_STATE_FULL_Z16_EXTENSION_CERTIFICATE.json`,
+SHA-256 `3e19b422b447f7605d3e40c8d5ada8a79560d0d7580a811ba31c6010a1e3d4fe`.
+All source/material/raw/prior-certificate/provenance audits pass. Total Q and
+conservative 3-D Q now pass at `0.631%` and `3.191%`, but fixed-probe E,
+component Q, and Au-region E still fail at `3.338%`, `4.697%`, and `19.792%`.
+
+Diagnostic SHA-256
+`ded2ff57895608ffe84e0815573c712adf7fa551826d7a5a27322c582dc81f23`
+proves the Au discrepancy is not just one or two interface planes. Complex
+scale/phase alignment still leaves about 13--15% Au residual. The largest
+component-Q change represents `0.6598%` of total absorption, but no gate was
+relaxed.
+
+Measured scaling predicts z32 at about 16--18 minutes and 34 GiB per
+polarization, below the 30-minute per-forward feasibility cutoff. Run z32
+source Ea/Eb first, certify one common source scale, then matching material
+Ea/Eb and a z16-to-z32 comparison. Do not launch projected 50+-minute z64 and
+do not start an optimizer. Lumerical remains independently owned and out of
+scope.

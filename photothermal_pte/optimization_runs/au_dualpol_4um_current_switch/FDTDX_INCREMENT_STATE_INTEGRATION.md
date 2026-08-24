@@ -348,3 +348,56 @@ The next permitted extension is a matching z16 canonical 24/4 source pair and
 exact-L Ea/Eb material pair, followed by z8-to-z16 comparison under the same
 gates. Raw outputs remain external. The independent Lumerical session remains
 out of scope.
+
+
+## z16 extension and interface diagnostic
+
+The increment-state z16 resolver and v2 source/material runners were committed
+at `18e84ddb`. The canonical z16 case has shape `196 x 196 x 640`, 24,586,240
+Yee cells, 153,625 time steps, case-contract SHA-256
+`b831a6de67048fd7b926fa011cea1394c99b99d51bf64e5534587c24cc5f3b63`,
+and Courant `0.5`. Source-only Ea/Eb ran concurrently on verified-idle B200
+GPUs 6/7. Cold forward was `320.179/319.937 s`, total was
+`351.468/351.741 s`, and each process used about 17.17 GiB. Incident powers
+were exactly equal at `1.8837390414888633e-12 W`.
+
+z16 source artifacts under
+`/home/seunghyun200/fdtdx_results/increment_state_source_18e84ddb_z16_t24/`:
+Ea/Eb report SHA-256 `a88cd33bdd9fae2d730238818d887ed3cac13e368f29d9e6846e8f2429ac911f`
+/ `18710d316ad2f9ccd33805f6b75f5db7e153ee44815310f5ab785311f0711913`;
+raw SHA-256 `d00e134892edf5a3b15d712f7c5321f175d423301a1ce46deab2e0a60bba3782`
+/ `9b9b9140c0644433dd7276a277430190d6ea7d689bec6133cfd0be5e20fa9dde`;
+source-pair SHA-256 `dffb77b434bd2873f04305583cd7441c3c3de605c47d267f38020e64f54b90ee`.
+
+Matching exact-L material cases under
+`/home/seunghyun200/fdtdx_results/increment_state_material_18e84ddb_fullz_z16_t24/`
+passed every internal gate. Ea/Eb report SHA-256 values are
+`c6e192d265e2b35dbd9228fa65369c88ee34858b67238c032cef95bedf26841f`
+and `aa96702d36c0653a7dd7c41ac7e0e20f14c9e68a43b3bf2dfe84b0e32934b756`;
+raw SHA-256 values are
+`6bba854619ee19e7c8feee4683a414890e4f07731898131c7876c18199271fa9`
+and `e6d58c7280b2b2f3a05efa0261d635b3ed49f28a71270473a7d4cc8c972b637c`.
+Cold forward was `320.223/320.512 s`, total `354.862/355.046 s`.
+
+The cross-version certificate committed at `e2fbbd36` chains the immutable z8
+certificate to the v2 z16 artifacts. External certificate SHA-256 is
+`3e19b422b447f7605d3e40c8d5ada8a79560d0d7580a811ba31c6010a1e3d4fe`
+under `/home/seunghyun200/fdtdx_results/increment_state_z16_extension_certificate_e2fbbd36/`.
+All artifact/global gates pass, but z8-to-z16 remains blocked: total Q
+`0.6306%` and conservative Q `3.1909%` pass; fixed-probe E `3.3382%`,
+component Q `4.6970%`, and Au-region E `19.7920%` fail their 2%, 2%, and 5%
+limits.
+
+The corrected interface diagnostic at commit `39ebd077` has external SHA-256
+`ded2ff57895608ffe84e0815573c712adf7fa551826d7a5a27322c582dc81f23`.
+It shows that the Au field discrepancy is not confined to one or two boundary
+Yee planes; trimming those planes does not reduce it. Global complex
+scale/phase alignment lowers the Au discrepancy but leaves roughly 13--15%
+residual. The maximum component-Q change carries only `0.6598%` of total
+absorption, but that does not waive the declared gate.
+
+A z32 forward is predicted from measured scaling at about 16--18 minutes and
+about 34 GiB, so z32 source/material validation is still practical and is the
+next allowed fine-grid diagnostic. A z64 forward is projected above 50 minutes
+and must not be launched under the current runtime feasibility rule. No
+optimizer, adjoint timing, non-z axis, or production mesh is authorized.
