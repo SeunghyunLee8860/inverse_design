@@ -100,6 +100,11 @@ sample-air boundaries are insulating, and the transverse example uses an
 - Si and SiO2 are implemented as lossless uniform FDTDX materials. The current
   4 um readback is zero/negligible loss; code now fails if a future material
   contract has non-negligible substrate loss instead of silently discarding it.
+- The existing 4-um material certificate reads only the center-frequency n,k;
+  it is not a Lumerical time-domain dispersion certificate. The exact-Au route
+  now constructs sampled Ordal-Au, anisotropic-TaIrTe4, and Kitamura-SiO2
+  inputs over a guard band, but must still pass Lumerical fitted-material
+  readback across that band before any Maxwell result is promoted.
 - TaIrTe4 uses `epsilon_c=epsilon_b` because no independent c-axis table is in
   the current contract. This approximation needs explicit acceptance or c-axis
   data if out-of-plane absorption is important.

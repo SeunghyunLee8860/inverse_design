@@ -43,8 +43,17 @@ solver. In particular, the following are prohibited:
 
 The Au material object used in Lumerical must remain a frozen dispersive
 material. Only its exact geometry changes. Each evaluation must record the
-SHA-256 of the realized binary mask; all three solvers must report the same
-hash.
+SHA-256 of the canonical realized geometry; all three solvers must report the
+same hash. The geometry hash includes mask values and shape, physical x/y cell
+edges, Au z bounds, and the x=b/y=a mapping. A mask-only hash is merely a
+payload checksum and is not sufficient physical identity.
+
+`lumerical_4um_exact_au.py` constructs sampled Ordal-Au dispersion over a
+3.2--4.8 um guard band around the 3.6--4.4 um numerical source pulse. It also
+constructs sampled anisotropic TaIrTe4 and Kitamura-SiO2 inputs and maps the
+exact mask to deterministic non-overlapping ordinary-Au prisms. These are
+audited inputs, not yet a material-fit certificate: the actual Lumerical
+multi-coefficient fits must be read back across the band on the run host.
 
 This is a physical-geometry rule, not a demand that unlike numerical meshes
 store identical cell arrays. Lumerical conformal-interface tensors and

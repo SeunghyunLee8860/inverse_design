@@ -16,6 +16,10 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
 
 1. `contract.py` -- immutable geometry, source, axes, design pitch, and
    reporting power.
+   `lumerical_maxwell_contract.py` and `lumerical_4um_exact_au.py` define the
+   superseding exact-geometry identity, sampled-dispersive 4-um materials, and
+   deterministic exact-mask-to-Au-prism mapping. The latter is audit/build
+   code only until its Lumerical fit readback and B200 controls pass.
 2. `fdtdx_4um_model.py` -- six-PML FDTDX Maxwell model and material layout.
 3. `multiphysics_4um.py` -- conservative optical-Q remap, explicit 3-D
    thermal solve, electrical weighting solve, and PTE current.
@@ -69,6 +73,13 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    pending same-step validation. FDTDX/JAX results are historical diagnostics
    only. The current host has RTX 6000 Ada GPUs, not B200, so it cannot issue a
    B200 run certificate.
+
+   The older material readback froze only the central 4-um n,k values. That is
+   insufficient for a time-domain claim of dispersive Au. The new Lumerical
+   builder samples Ordal Au, anisotropic TaIrTe4, and Kitamura SiO2 over a
+   3.2--4.8 um guard band around the 3.6--4.4 um source pulse. Its status is
+   deliberately `NOT_FIT_READBACK` until the actual Lumerical fitted material
+   is read back and compared on the B200 run.
 
    The earlier `np density` carrier claim is retracted. `np density` is a
    semiconductor electron/hole-density attribute, not an Au topology field.
