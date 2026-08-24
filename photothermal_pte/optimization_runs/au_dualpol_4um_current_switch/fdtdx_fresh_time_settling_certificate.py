@@ -674,7 +674,7 @@ def _material_case_audit(
                 "total_periods": period,
                 "window_periods": WINDOW_PERIODS,
                 "source_startup_periods": spec.time.source_startup_periods,
-                "courant_factor": COURANT_FACTOR,
+                "courant_factor": spec.time.courant_factor,
             }.items()
         )
         and int(payload["time_contract"].get("time_steps_total", 0)) > 0

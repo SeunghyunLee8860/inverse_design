@@ -17,6 +17,8 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_exac
     mask_material_audit,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
+    FreshCaseSpec,
+    TimeSpec,
     case_contract,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_exact_binary_pilot import (
@@ -295,6 +297,36 @@ class TimeSettlingRawAuditTest(unittest.TestCase):
         audit = self._audit_material()
         self.assertFalse(audit["artifact_ready"])
         self.assertFalse(audit["checks"]["numerical_case_contract_exact"])
+
+    def test_material_case_audit_accepts_exact_nondefault_courant_spec(self) -> None:
+        spec = FreshCaseSpec(
+            mesh=self.spec.mesh,
+            time=TimeSpec(total_periods=24, window_periods=4, courant_factor=0.375),
+        )
+        contract_path = self.root / "contract_c0p375.json"
+        numerical_case = case_contract(spec)
+        contract_path.write_text(json.dumps(numerical_case), encoding="utf-8")
+        contract_sha = sha256(contract_path)
+        payload = json.loads(self.report_path.read_text(encoding="utf-8"))
+        payload["numerical_case_contract"] = numerical_case
+        payload["numerical_case_file_audit"].update(
+            path=str(contract_path),
+            expected_sha256=contract_sha,
+            actual_sha256=contract_sha,
+            case_contract_sha256=numerical_case["case_contract_sha256"],
+        )
+        payload["mesh"] = numerical_case["resolved_mesh"]
+        payload["pml_face_parameters"] = numerical_case["resolved_pml_face_parameters"]
+        payload["time_contract"].update(
+            courant_factor=0.375, time_step_s=0.75e-18, time_steps_total=3200
+        )
+        self.report_path.write_text(json.dumps(payload), encoding="utf-8")
+        _, audit, _ = _material_case_audit(
+            self.report_path, self.root, 24, "Ea", spec, contract_path,
+            contract_sha, self.source_pair_path, self.source_pair_sha,
+        )
+        self.assertTrue(audit["checks"]["time_request_and_courant_exact"])
+        self.assertTrue(audit["artifact_ready"])
 
     def test_missing_pilot_gate_is_rejected(self) -> None:
         def mutate(payload: dict) -> None:

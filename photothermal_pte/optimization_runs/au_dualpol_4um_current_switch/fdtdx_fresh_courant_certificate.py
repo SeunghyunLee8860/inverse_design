@@ -283,6 +283,50 @@ def _all_close(values: list[float], rtol: float) -> bool:
     )
 
 
+def courant_raw_schema_checks(
+    cases: Mapping[str, Mapping[str, Mapping[str, Any]]],
+) -> dict[str, bool]:
+    schemas = [
+        cases[level][polarization]["raw"]["declared_arrays"]
+        for level in LEVELS
+        for polarization in POLARIZATIONS
+    ]
+    non_time = [
+        {name: shape for name, shape in schema.items() if name != "closed_td"}
+        for schema in schemas
+    ]
+    closed_samples = {
+        level: [
+            cases[level][polarization]["raw"]["declared_arrays"].get("closed_td")
+            for polarization in POLARIZATIONS
+        ]
+        for level in LEVELS
+    }
+    shapes_valid = all(
+        isinstance(shape, list)
+        and len(shape) == 2
+        and isinstance(shape[0], int)
+        and shape[0] > 0
+        and shape[1] == 1
+        for values in closed_samples.values()
+        for shape in values
+    )
+    polarization_counts_match = all(
+        values[0] == values[1] for values in closed_samples.values()
+    )
+    scaled_counts = [
+        closed_samples[level][0][0] * COURANT[level] for level in LEVELS
+    ] if shapes_valid and polarization_counts_match else []
+    return {
+        "non_time_raw_array_schema_identical": bool(non_time)
+        and all(value == non_time[0] for value in non_time[1:]),
+        "closed_td_shapes_valid": shapes_valid,
+        "closed_td_polarization_sample_counts_match": polarization_counts_match,
+        "closed_td_sample_count_scales_inverse_with_Courant": bool(scaled_counts)
+        and max(scaled_counts) - min(scaled_counts) <= 1.0,
+    }
+
+
 def build_courant_certificate(
     root: Path,
     contract_sha256s: Mapping[str, str],
@@ -422,6 +466,7 @@ def build_courant_certificate(
         for level in LEVELS
         for polarization in POLARIZATIONS
     )
+    schema_checks = courant_raw_schema_checks(cases)
     gates = {
         "all_canonical_case_contracts_revalidated": all(
             contracts[level]["audit"]["ready"] is True for level in LEVELS
@@ -460,13 +505,7 @@ def build_courant_certificate(
         "Yee_dual_volumes_identical": _nested_arrays_identical(snapshots, "volumes"),
         "exact_L500_masks_identical": _arrays_identical(snapshots, "design_mask")
         and _arrays_identical(snapshots, "solver_mask"),
-        "material_raw_array_schema_identical": len(
-            {
-                json.dumps(case["raw"]["declared_arrays"], sort_keys=True)
-                for case in flat_cases
-            }
-        )
-        == 1,
+        **schema_checks,
         "placement_identical": len(
             {json.dumps(payload["placement"], sort_keys=True) for payload in flat_payloads}
         )

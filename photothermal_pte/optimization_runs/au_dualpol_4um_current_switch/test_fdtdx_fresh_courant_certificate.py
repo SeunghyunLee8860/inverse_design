@@ -9,6 +9,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fres
     LEVELS,
     _level_sha,
     compare_courant_pair,
+    courant_raw_schema_checks,
     courant_selection_gates,
     expected_courant_case,
 )
@@ -118,6 +119,28 @@ class CourantCertificateTest(unittest.TestCase):
         ready["c0p25"]["Eb"] = True
         pairs[("c0p375", "c0p25")] = False
         self.assertFalse(all(courant_selection_gates(ready, pairs).values()))
+
+    def test_closed_td_schema_allows_only_inverse_courant_sample_axis(self) -> None:
+        samples = {"c0p5": 6416, "c0p375": 8554, "c0p25": 12832}
+        cases = {
+            level: {
+                polarization: {
+                    "raw": {
+                        "declared_arrays": {
+                            "target": [3, 160, 160, 1],
+                            "closed_td": [samples[level], 1],
+                        }
+                    }
+                }
+                for polarization in ("Ea", "Eb")
+            }
+            for level in LEVELS
+        }
+        self.assertTrue(all(courant_raw_schema_checks(cases).values()))
+        cases["c0p25"]["Eb"]["raw"]["declared_arrays"]["target"] = [3, 80, 80, 1]
+        self.assertFalse(
+            courant_raw_schema_checks(cases)["non_time_raw_array_schema_identical"]
+        )
 
     def test_hash_parser_is_exact_and_fail_closed(self) -> None:
         values = [f"{level}={'a' * 64}" for level in LEVELS]
