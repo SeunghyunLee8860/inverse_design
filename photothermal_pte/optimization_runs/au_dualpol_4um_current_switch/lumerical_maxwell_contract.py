@@ -36,6 +36,11 @@ LUMAPI_PATH = LUMERICAL_ROOT / "api/python/lumapi.py"
 LEGACY_LUMOPT_TOPOLOGY = LUMERICAL_ROOT / "api/python/lumopt/geometries/topology.py"
 LUMOPT2_TOPOLOGY = LUMERICAL_ROOT / "api/python/lumopt2/parametrization/topology.py"
 LUMOPT2_DEPS = LUMERICAL_ROOT / "api/python/lumopt2/parametrization/d_eps_calculator.py"
+EXPECTED_LUMERICAL_RELEASE = {
+    "MAJORRELEASE": "2026R1",
+    "MINORRELEASE": "2",
+    "BUILDNUMBER": "4522",
+}
 
 
 @dataclass(frozen=True)
@@ -382,6 +387,37 @@ def _fdtd_solve_license_audit() -> dict[str, Any]:
     }
 
 
+def _installation_audit() -> dict[str, Any]:
+    """Fail closed on the API/engine build used by FieldRegion adjoints."""
+
+    version_path = LUMERICAL_ROOT / "VERSION"
+    values: dict[str, str] = {}
+    if version_path.is_file():
+        for line in version_path.read_text(encoding="utf-8").splitlines():
+            key, separator, value = line.partition("=")
+            if separator:
+                values[key.strip()] = value.strip()
+    engine = LUMERICAL_ROOT / "bin/fdtd-engine"
+    release_matches = all(
+        values.get(key) == expected
+        for key, expected in EXPECTED_LUMERICAL_RELEASE.items()
+    )
+    return {
+        "passed": bool(LUMAPI_PATH.is_file() and engine.is_file() and release_matches),
+        "root": str(LUMERICAL_ROOT.resolve()),
+        "version_file": str(version_path),
+        "parsed_version": values,
+        "required_version": EXPECTED_LUMERICAL_RELEASE,
+        "lumapi": str(LUMAPI_PATH),
+        "fdtd_engine": str(engine),
+        "api_and_engine_share_installation_root": bool(
+            LUMAPI_PATH.parent.parent.parent.resolve() == LUMERICAL_ROOT.resolve()
+            and engine.parent.parent.resolve() == LUMERICAL_ROOT.resolve()
+        ),
+        "known_incompatible_installation": "/opt/lumerical/v261 (2026 R1.0 build 4413)",
+    }
+
+
 def _source_audit() -> dict[str, Any]:
     """Prove why bundled generic topology gradients need an Au-specific gate."""
 
@@ -477,10 +513,11 @@ def audit_environment(
     ]
     b200 = [item for item in candidates if "B200" in str(item["name"]).upper()]
     source = _source_audit()
+    installation = _installation_audit()
     density = density_relaxation_audit()
     license_audit = _fdtd_solve_license_audit()
     gates = {
-        "lumapi_v261_present": LUMAPI_PATH.is_file(),
+        "lumerical_R1_2_build_4522_API_engine_pair": bool(installation["passed"]),
         "installed_lumopt_requires_custom_au_route": bool(source.get("passed")),
         "solver_free_au_density_law_passed": bool(
             density["passive_on_uniform_density_sweep"]
@@ -496,7 +533,7 @@ def audit_environment(
         "fdtd_solve_license_tasks_available": bool(license_audit["passed"]),
     }
     required_gate_names = (
-        "lumapi_v261_present",
+        "lumerical_R1_2_build_4522_API_engine_pair",
         "installed_lumopt_requires_custom_au_route",
         "solver_free_au_density_law_passed",
         "requested_gpu_exists",
@@ -526,6 +563,7 @@ def audit_environment(
         "gpu_inventory": inventory,
         "matching_requested_gpu": candidates,
         "matching_b200": b200,
+        "lumerical_installation_audit": installation,
         "installed_source_audit": source,
         "au_density_relaxation": density,
         "fdtd_solve_license_audit": license_audit,

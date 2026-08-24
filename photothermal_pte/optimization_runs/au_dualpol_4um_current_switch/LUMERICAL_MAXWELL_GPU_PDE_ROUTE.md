@@ -234,8 +234,11 @@ certificate or permission to start the optimizer.
 
 The B200 launcher refuses a non-B200 device. A separate development launcher
 accepts an explicitly selected NVIDIA GPU but can never issue a B200
-certificate. The current session host exposes RTX 6000 Ada GPUs. The current local
-installation is Lumerical 2026 R1.2. Nothing in the rejected `np density`
+certificate. The current session host exposes RTX 6000 Ada GPUs. The approved local
+installation is Lumerical 2026 R1.2 build 4522 under
+`/home/seunghyun/lumerical_r12/opt/lumerical/v261`. The system
+`/opt/lumerical/v261` tree is R1.0 build 4413 and is explicitly rejected: its
+FieldRegion `importdataset` call fails before the adjoint solve. Nothing in the rejected `np density`
 experiment justifies an R1.3 upgrade. Exact version compatibility must be
 decided only by launching the ordinary exact-Au control on the actual B200 and
 recording the engine log.

@@ -4,7 +4,10 @@ set -euo pipefail
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repository="$(git -C "$script_dir" rev-parse --show-toplevel)"
 python_bin="${AU_LUMERICAL_PYTHON:-/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python}"
-lumerical_root="${AU_LUMERICAL_ROOT:-/opt/lumerical/v261}"
+# The system /opt tree is 2026 R1.0 build 4413.  Its lumapi/FieldRegion
+# importdataset path is incompatible with this adjoint pipeline.  Keep the
+# Python API, CAD, and fdtd-engine on the audited R1.2 build 4522 tree.
+lumerical_root="${AU_LUMERICAL_ROOT:-/home/seunghyun/lumerical_r12/opt/lumerical/v261}"
 gpu_index="${LUMERICAL_GPU_INDEX:?set LUMERICAL_GPU_INDEX to one physical NVIDIA GPU index}"
 
 if [[ ! -x "$python_bin" ]]; then

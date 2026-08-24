@@ -327,7 +327,7 @@ LUMERICAL_B200_GPU_INDEX=<physical_b200_index> \
   /absolute/local/output/root
 
 LUMERICAL_GPU_INDEX=<free_rtx_index> \
-  AU_LUMERICAL_ROOT=/opt/lumerical/v261 \
+  AU_LUMERICAL_ROOT=/home/seunghyun/lumerical_r12/opt/lumerical/v261 \
   photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_lumerical_development_gpu.sh \
   photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/25_run_lumerical_4um_exact_au_control.py \
   --case source_only --polarization Ea --gpu-index <free_rtx_index> \
@@ -344,6 +344,11 @@ location.  `AU_DUALPOL_PYTHON`, `FDTDX_SOURCE_DIR`, and
 `AU_DUALPOL_RAW_ROOT` override the historical host defaults.
 `AU_LUMERICAL_PYTHON` and `AU_LUMERICAL_ROOT` select the B200 host's Python
 environment and v261 installation without assuming the login user's home.
+The launcher now fails closed unless `VERSION` reports 2026 R1.2 build 4522.
+Do not use `/opt/lumerical/v261`: that tree is R1.0 build 4413 and its
+FieldRegion `importdataset` path reproduced the known `Failed to evaluate
+code` error before an adjoint solve. Python API, CAD, and `fdtd-engine` must
+come from the same R1.2 installation root.
 
 ## 2026-08-24 local RTX development evidence
 
@@ -351,7 +356,8 @@ Raw artifacts are outside Git under
 `/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_development/`.
 Do not copy them into this worktree.
 
-1. Lumerical v261 solver `8.35.4413` opened successfully. GPU logs identify
+1. Historical Lumerical v261 R1.0 solver `8.35.4413` opened successfully for
+   forward-only controls, but is now prohibited for FieldRegion adjoints. GPU logs identify
    physical RTX 6000 Ada GPU 5 and its UUID, contain the `fdtd-engine -gpu`
    command, GPU time-stepping timing, and successful completion.
 2. The original 4.000-um source-object waist produced about 4.044 um at the

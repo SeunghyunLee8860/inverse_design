@@ -72,6 +72,30 @@ def test_source_audit_allows_absent_lumopt2_but_not_partial_install(
     assert partial["error"] == "partial LumOpt2 installation cannot be audited"
 
 
+def test_installation_audit_rejects_the_wrong_minor_build(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = tmp_path / "v261"
+    api = root / "api" / "python" / "lumapi.py"
+    engine = root / "bin" / "fdtd-engine"
+    api.parent.mkdir(parents=True)
+    engine.parent.mkdir(parents=True)
+    api.write_text("# test\n", encoding="utf-8")
+    engine.write_text("test\n", encoding="utf-8")
+    monkeypatch.setattr(maxwell_contract, "LUMERICAL_ROOT", root)
+    monkeypatch.setattr(maxwell_contract, "LUMAPI_PATH", api)
+    (root / "VERSION").write_text(
+        "MAJORRELEASE=2026R1\nMINORRELEASE=0\nBUILDNUMBER=4413\n",
+        encoding="utf-8",
+    )
+    assert maxwell_contract._installation_audit()["passed"] is False
+    (root / "VERSION").write_text(
+        "MAJORRELEASE=2026R1\nMINORRELEASE=2\nBUILDNUMBER=4522\n",
+        encoding="utf-8",
+    )
+    assert maxwell_contract._installation_audit()["passed"] is True
+
+
 def test_development_accelerator_policy_never_issues_b200_promotion(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
