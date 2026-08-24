@@ -60,37 +60,36 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
 0. The user-selected Maxwell solver is Lumerical FDTD, while thermal and
    electrical remain the repository custom CUDA PDE solvers; no Lumerical HEAT
    or CHARGE license is assumed. Read `LUMERICAL_MAXWELL_GPU_PDE_ROUTE.md` and
-   run `21_audit_lumerical_maxwell_preflight.py` first. Continuous topology
-   relaxation is required during optimization, but one filtered/projected
-   `f_Au` must be shared by optical, thermal, and electrical material maps.
-   Exact binary dispersive Au is required for endpoints and final promotion,
-   not before every optimization solve. The Lumerical Au derivative remains
-   blocked pending a same-step AD-FD certificate. FDTDX/JAX results are
-   historical diagnostics only. The current host has RTX 6000 Ada GPUs, not
-   B200, so it cannot issue a B200 run certificate.
+   run `21_audit_lumerical_maxwell_preflight.py` first. Every optical solve
+   must contain ordinary exact binary dispersive-Au geometry. The identical
+   binary geometry/hash must be used by the custom thermal and electrical
+   solvers. Continuous variables may move a shape/level-set boundary, but no
+   gray Au material is authorized in any solver. The Lumerical exact-Au shape
+   derivative or an exact-geometry stochastic/FD estimator remains blocked
+   pending same-step validation. FDTDX/JAX results are historical diagnostics
+   only. The current host has RTX 6000 Ada GPUs, not B200, so it cannot issue a
+   B200 run certificate.
 
-   A concrete Lumerical carrier candidate now exists. Read
-   `LUMERICAL_4UM_AU_NP_DRUDE_ROUTE.md` and run
-   `22_probe_lumerical_4um_au_np_drude.py`. The installed material database
-   reproduces the frozen 4-um Au epsilon with `8.49e-8` relative error using a
-   causal spatial np-density Drude carrier. Installed 2026 R1.2 cannot execute
-   np-density attributes on GPU; official support begins in 2026 R1.3. This is
-   therefore a required B200-installation upgrade plus field/AD-FD gate, not a
-   HEAT/CHARGE-license dependency and not yet an optimization certificate.
+   The earlier `np density` carrier claim is retracted. `np density` is a
+   semiconductor electron/hole-density attribute, not an Au topology field.
+   Its code and tests were removed; read `NP_DENSITY_ROUTE_REJECTED.md`.
+   Lumerical 2026 R1.3 is not required on that basis. Decide version
+   compatibility only from an ordinary exact-Au control on the actual B200.
 
-1. The existing optimization used inconsistent O3/TE1 gray laws.  Production
-   code now uses one shared linear fraction (`f_Au=rho`) in all three physics,
-   but it has not yet received new AD-FD or mesh-convergence certificates.
-   Historical O3/TE1 outputs must not be presented as certificates for the
-   corrected law.  See `MATERIAL_FRACTION_AUDIT.md`.
+1. The existing optimization used inconsistent O3/TE1 gray laws. The later
+   shared-linear fraction was a consistency diagnostic, not an authorized
+   exact-Au production representation. All O3/TE1 and shared-gray outputs are
+   historical and must not be presented as certificates for the new route.
+   Replace the physical path with one exact binary geometry shared by all
+   three solvers. See `MATERIAL_FRACTION_AUDIT.md` only for historical audit.
 2. AD-FD validates the derivative of a chosen discrete mesh; it does not
    certify mesh convergence.
 3. The original optical z mesh used only 2 Au cells and 5 TaIrTe4 cells.
    A historical partial z sweep checked Au/TaIrTe4/SiO2 factors 1, 2, 4, and
    8, but its tables are now explicitly stale: they use O3/TE1, the old
    Shockley-Ramo sign, and a cache key bound only to the checkpoint. Do not use
-   its reported Q/current changes for the current shared-linear code. Rerun
-   only after time closure, then perform full-domain z convergence.
+   its reported Q/current changes for the exact-Au route. Rebuild the
+   convergence path around ordinary dispersive-Au Lumerical geometry.
 4. A new optimization must not be promoted until z convergence, then x/y
    convergence and combined-gradient convergence, pass fail-closed gates.
 5. The completed sweep refined only Au, TaIrTe4, and SiO2.  It did not refine
@@ -120,13 +119,13 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    now includes eta=0.35/0.50/0.65 in both current and grayness constraints,
    but the corrected robust path has not been run.  Historical robust results
    remain invalid for promotion.  See `ROBUST_OBJECTIVE_AUDIT.md`.
-8. Production optimization and exact-binary search are code-blocked until a
-   confirmed device contract, full shared-linear mesh certificate, and a
-   hash-linked shared-linear multidirection combined AD-FD certificate all
-   pass. There is no runtime bypass. The certificate must name the selected
+8. Production optimization is now unconditionally code-blocked because the
+   existing entry points still implement the historical gray/FDTDX path.
+   Legacy shared-linear certificates cannot clear this gate. Replace the path
+   with exact-Au Lumerical geometry and an exact-geometry estimator, then issue
+   new certificates naming the selected
    full-domain-z grid, Courant factor, time windows, and same-grid Ea/Eb source
-   calibration; all three production entry points now consume those exact
-   values and reject a grid-hash mismatch. The combined adjoint also derives
+   calibration. The combined adjoint also derives
    its Au/TaIrTe4 material offsets from the realized placed slices; do not
    reintroduce baseline `LAYOUT` offsets. See `PRODUCTION_READINESS.md`.
 9. The present square flake, full-edge terminals, unrotated x=b/y=a axes,
@@ -177,19 +176,14 @@ location.  `AU_DUALPOL_PYTHON`, `FDTDX_SOURCE_DIR`, and
 
 1. Confirm the target geometry, contacts, crystal-axis angle, layer stack, and
    illumination in `physical_device_contract.json`.
-2. Treat the existing factor 1/2/4/8 tables as stale historical output, not as
-   evidence for the current code or as a converged production mesh.
-3. Use the validated reduced-Courant time/material contract as the starting
-   point for full-domain z refinement. At factor 8 and Courant 0.25, all
-   Au-only/full-dispersion cases passed; the full case changed in Q by only
-   0.000678% from 32 to 40 periods. The selected sweep contract is therefore
-   40 total periods with a 4-period late window and Courant 0.25. This result
-   is still a partial-grid time certificate, not a mesh certificate. See
-   `results_4um_stable_time_contract/STABLE_TIME_CONTRACT_REPORT.md`.
-4. Revalidate the new shared linear material-fraction contract with endpoint,
-   floor-sensitivity, and AD-FD checks on the selected mesh.
+2. Treat the existing FDTDX factor 1/2/4/8 and reduced-Courant tables as stale
+   historical diagnostics, not evidence for Lumerical or a production mesh.
+3. On the actual B200, establish new Lumerical empty/full/simple exact-Au time,
+   Q/flux, x/y/z/PML, and source-calibration controls for both polarizations.
+4. Implement the exact-binary geometry contract and validate the chosen
+   exact-Au shape/level-set or exact-geometry stochastic/FD estimator.
 5. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh
    convergence, and downstream PTE current.
 6. Certify the combined gradient on the selected production mesh.
-7. Only then restart LD_MMA continuation and finish with an exact binary
-   500 nm solid/void audit.
+7. Only then start an optimizer compatible with the certified exact-geometry
+   estimator and finish with an independent 500 nm solid/void audit.

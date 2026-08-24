@@ -4,6 +4,13 @@ Status: **production blocked**. The repository can run numerical diagnostics,
 but the historical topology is not a validated physical design and a new
 optimization must not start yet.
 
+Superseding correction: the shared-linear gray law discussed below is now a
+historical consistency diagnostic, not a production material representation.
+The authorized route requires exact binary dispersive-Au geometry in every
+Lumerical evaluation and the same canonical geometry in custom CUDA thermal
+and electrical solves. See `LUMERICAL_MAXWELL_GPU_PDE_ROUTE.md` and
+`NP_DENSITY_ROUTE_REJECTED.md`.
+
 ## Intended observable
 
 The requested switch is a signed zero-bias current: `Ia > 0` for `E || a` and
@@ -38,14 +45,14 @@ sample-air boundaries are insulating, and the transverse example uses an
 
 1. **Historical O3/TE1 topology is invalid for production.** Optical Au used
    `rho^3` while thermal and electrical Au used `rho`. The robust run also
-   omitted nominal `eta=0.50`; its nominal `Ib` had the wrong sign. Production
-   now uses one shared linear fraction and all three robust projections, but no
-   full optimization has been rerun under that corrected contract.
+   omitted nominal `eta=0.50`; its nominal `Ib` had the wrong sign. The later
+   shared-linear/all-projection correction is diagnostic only and has not been
+   converted to the required exact-Au Lumerical route.
 
 2. **No converged mesh exists.** The historical partial-z sweep refined only
    Au, TaIrTe4, and SiO2, and its tables are stale because they used O3/TE1,
    the old current sign, and an under-specified cache key. Its numerical
-   changes are not evidence for the current shared-linear code. Si, air, PML,
+   changes are not evidence for the exact-Au route. Si, air, PML,
    optical x/y, thermal, and electrical meshes were not certified.
 
 3. **The time/material blocker is closed, but no spatial mesh is certified.**
@@ -104,10 +111,11 @@ sample-air boundaries are insulating, and the transverse example uses an
   compensate for a wrong geometry, material law, contact value, mesh, or time
   window.
 
-## Corrections already pushed
+## Historical gray-path corrections already pushed
 
-- One shared linear Au material fraction in Maxwell, thermal, electrical, and
-  all direct/adjoint derivatives.
+- One shared linear Au material fraction in the legacy Maxwell, thermal,
+  electrical, and direct/adjoint code. This fixed O3/TE1 consistency only; it
+  is now production-blocked and must not be mistaken for exact Au.
 - Robust constraints for `eta=0.35, 0.50, 0.65`, including both signed-current
   constraints and grayness at every projection.
 - Production entry points blocked until hash-linked certificates exist.
@@ -154,6 +162,8 @@ sample-air boundaries are insulating, and the transverse example uses an
 6. Sweep electrical void floors and uncertain Au/TaIrTe4 contacts.
 7. Issue one combined multi-direction AD-FD certificate on the chosen mesh,
    hash-linked to the mesh and device certificates.
-8. Start a new shared-law robust optimization; do not resume O3/TE1 history.
+8. Validate a 4-um exact-Au Lumerical shape/level-set derivative or an
+   exact-geometry stochastic/FD estimator; do not resume either O3/TE1 or the
+   shared-gray LD_MMA history.
 9. Revalidate the final exact-binary design on the finer meshes and parameter
    sensitivity corners before claiming the polarization current switch.

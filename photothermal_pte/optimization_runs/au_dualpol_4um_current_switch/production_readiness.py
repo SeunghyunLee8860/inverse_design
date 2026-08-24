@@ -26,6 +26,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.mesh_varia
 
 
 HERE = Path(__file__).resolve().parent
+EXACT_AU_GEOMETRY_ROUTE_STATUS = "BLOCKED_NOT_IMPLEMENTED_OR_VALIDATED"
 DEVICE_CERTIFICATE = HERE / "physical_device_contract.json"
 SOURCE_CALIBRATION = (
     HERE
@@ -113,6 +114,10 @@ def readiness_audit(
     material = material_fraction_audit()
 
     checks: dict[str, bool] = {
+        # The certificates below describe the historical shared-gray/FDTDX
+        # implementation.  They cannot promote a Lumerical exact-Au run even
+        # if every historical certificate is syntactically complete.
+        "exact_au_lumerical_geometry_route_implemented": False,
         "device_certificate_readable": device_error is None,
         "source_calibration_current": calibration_error is None,
         "mesh_certificate_readable": mesh_error is None,
@@ -327,6 +332,7 @@ def readiness_audit(
         "gradient_certificate": str(gradient_path),
         "required_mesh_coverage": list(REQUIRED_MESH_COVERAGE),
         "required_device_confirmations": list(REQUIRED_DEVICE_CONFIRMATIONS),
+        "exact_au_geometry_route_status": EXACT_AU_GEOMETRY_ROUTE_STATUS,
         "au_material_fraction": material,
         "absorption_loss_basis": ABSORPTION_LOSS_BASIS,
         "pte_current_sign_convention": PTE_CURRENT_SIGN_CONVENTION,

@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.combined_4um import (
     relative_grid_slice,
@@ -104,7 +105,9 @@ def test_adjoint_material_slices_follow_the_realized_mesh() -> None:
     )
 
 
-def test_all_physics_share_linear_au_material_fraction() -> None:
+def test_historical_gray_path_used_one_linear_audit_fraction() -> None:
+    # Historical consistency check only.  The Lumerical production contract
+    # now requires exact binary Au in every physical evaluation.
     rho = np.asarray((0.0, 0.25, 0.5, 1.0))
     assert AU_MATERIAL_FRACTION_LAW == "shared_linear_projected_density"
     assert AU_MATERIAL_FRACTION_EXPONENT == 1.0
@@ -315,14 +318,18 @@ def test_production_readiness_requires_hash_linked_complete_certificates(
         "maximum_normalized_error": 0.009,
     }
     gradient_path.write_text(json.dumps(gradient), encoding="utf-8")
-    passing = readiness_audit(
+    historically_complete = readiness_audit(
         mesh_path, gradient_path, device_path, calibration_path
     )
-    assert passing["ready"]
-    assert calibrated_source_scales(passing, 2.0) == {
-        "Ea": 2.0,
-        "Eb": 2.0 / 1.001,
-    }
+    assert not historically_complete["ready"]
+    assert historically_complete["failed_checks"] == [
+        "exact_au_lumerical_geometry_route_implemented"
+    ]
+    assert historically_complete["exact_au_geometry_route_status"] == (
+        "BLOCKED_NOT_IMPLEMENTED_OR_VALIDATED"
+    )
+    with pytest.raises(RuntimeError, match="passing production-readiness"):
+        calibrated_source_scales(historically_complete, 2.0)
     gradient["mesh_certificate_sha256"] = "wrong"
     gradient_path.write_text(json.dumps(gradient), encoding="utf-8")
     result = readiness_audit(

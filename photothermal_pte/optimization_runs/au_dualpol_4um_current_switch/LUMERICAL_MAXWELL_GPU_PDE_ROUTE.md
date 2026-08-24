@@ -1,109 +1,131 @@
-# Lumerical Maxwell + custom GPU-PDE Au inverse-design route
+# Exact-Au Lumerical Maxwell + custom GPU-PDE inverse-design route
 
-Status: `BLOCKED_PENDING_LUMERICAL_AU_AD_FD_AND_B200`
+Status: `BLOCKED_PENDING_4UM_EXACT_AU_GEOMETRY_ESTIMATOR_AND_B200`
 
-## Corrected solver architecture
+## Solver architecture
 
-The production architecture is the same split already used by the earlier
-TaIrTe4-flake topology optimization:
+The production architecture remains the split already used by the earlier
+TaIrTe4-flake optimization:
 
-- optical forward/adjoint fields and native-Yee absorbed power: Ansys
-  Lumerical FDTD v261, with production runs required on an NVIDIA B200;
+- optical fields and native-Yee absorbed power: Ansys Lumerical FDTD, with
+  production execution required on an NVIDIA B200;
 - steady thermal equation: the repository's custom CUDA finite-volume sparse
   solver;
-- weighting potential, Shockley-Ramo PTE current, and electrical adjoint: the
-  repository's custom CUDA finite-element sparse solver.
+- weighting potential, Shockley-Ramo PTE current, and electrical adjoint:
+  the repository's custom CUDA finite-element sparse solver.
 
-No Lumerical HEAT or CHARGE license is assumed. The phrase "use Lumerical" in
-this route means that Lumerical replaces FDTDX for Maxwell; it does not replace
-the validated custom thermal/electrical PDE implementations.
+No Lumerical HEAT or CHARGE license is assumed or required. "Lumerical-only"
+in this project means no FDTDX/JAX Maxwell surrogate; it does not replace the
+custom thermal or electrical solvers.
 
-The reference implementation of this split is
-`tairte4_flake_topology/evaluate_objective_gradient.py` on branch
-`agent/pte-electrode-boundary-adjoint`: it calls Lumerical for one forward and
-one adjoint Maxwell solve, maps native-Yee Q into the thermal mesh, uses
-`PersistentCudaCSR` for thermal and electrical systems, and sums the optical,
-thermal-material, and electrical-material gradient terms.
+## Exact material rule
 
-## Continuous topology variable versus exact binary Au
-
-Inverse design still needs a differentiable continuous relaxation. The
-correct state sequence is
+Every physical objective evaluation must follow one path:
 
 ```text
-latent x
-  -> one spatial density filter
-  -> one tanh projection with beta continuation
-  -> one shared physical Au fraction f_Au in [0,1]
-  -> optical, thermal, and electrical material maps
-  -> exact 0/1, 500-nm-DFM final mask
-  -> exact dispersive-Au endpoint reevaluation
+continuous shape/level-set parameters p
+  -> geometry construction and 500-nm solid/void DFM enforcement
+  -> exact binary Au mask m in {0,1}
+  -> ordinary exact dispersive-Au geometry in Lumerical FDTD
+  -> native-Yee absorbed power Q
+  -> the identical m and geometry hash in custom thermal/electrical solves
+  -> Ia and Ib
 ```
 
-Therefore gray values are not categorically forbidden during optimization.
-What is forbidden is silently giving different physical design states to the
-three solvers. Each evaluation must record the shape and SHA-256 of the same
-projected `f_Au` array used by all material maps. The old O3/TE1 path violated
-that requirement because Maxwell effectively received `rho**3` while the
-thermal/electrical models received `rho`.
+Continuous optimizer parameters are allowed to move an exact Au/void
+boundary. A continuous Au material fraction is not allowed in any physical
+solver. In particular, the following are prohibited:
 
-The exact-binary condition applies to endpoint controls and final candidate
-promotion. A topology optimizer that binarizes before every field solve would
-remove the useful derivative almost everywhere and reduce the problem to an
-impractical 6400-bit discrete search.
+- gray `importnk` or diluted complex permittivity;
+- `np density` reinterpreted as Au occupancy;
+- optical `rho**3` with thermal/electrical `rho`;
+- independently altered material occupancy or geometry in the three solvers.
 
-## What remains unresolved in Lumerical
+The Au material object used in Lumerical must remain a frozen dispersive
+material. Only its exact geometry changes. Each evaluation must record the
+SHA-256 of the realized binary mask; all three solvers must report the same
+hash.
 
-Lumerical can forward-simulate exact dispersive Au. The unresolved issue is
-how the continuous `f_Au` changes the lossy, negative-real dispersive Au
-response while retaining a correct derivative.
+This is a physical-geometry rule, not a demand that unlike numerical meshes
+store identical cell arrays. Lumerical conformal-interface tensors and
+thermal/electrical cut-cell fractions may represent the boundary on their own
+meshes. They are numerical discretizations of the same hash-identified binary
+geometry, not optimizer-controlled gray Au. Their convergence must be tested.
 
-The installed generic LumOpt topology paths are not accepted without a new
-same-step AD-FD certificate:
+`NP_DENSITY_ROUTE_REJECTED.md` records and retracts the invalid carrier route.
+There is no R1.3 requirement arising from `np density`.
 
-1. legacy `lumopt.TopologyOptimization2D` is based on scalar endpoint
-   permittivities and takes a real `dF/dEps`;
-2. installed `lumopt2.Topology` types its material index as a real float;
-3. installed `lumopt2` takes `real(index**2)`, takes the real part of the
-   sparse epsilon difference, clips negative real epsilon, and fits a
-   lossless Cauchy model under an `n >> k ~ 0` assumption;
-4. these operations are incompatible with treating the 4-um Au endpoint
-   (`epsilon=-830.37+127.16i` in the frozen dataset) as a small dielectric
-   perturbation;
-5. earlier repository controls found that fixed-geometry material
-   differentiation could agree, while moving/conformal Au and some imported
-   density carriers did not agree with independently re-solved finite
-   differences.
+## What inverse design means under this rule
 
-This does **not** prove that Lumerical Au inverse design is impossible. The
-first material-level candidate is now identified: Lumerical's spatial `np
-density` Drude conversion reproduces the 4-um Au endpoint to `8.49e-8`
-relative complex-epsilon error. See `LUMERICAL_4UM_AU_NP_DRUDE_ROUTE.md`.
-However, the installed 2026 R1.2 GPU engine rejects np-density attributes;
-Ansys adds that GPU support in 2026 R1.3. The candidate still needs a B200
-field-stability test and same-step optical AD-FD before its gradient may enter
-optimization. No FDTDX result may substitute for that gate.
+Exact material does not mean that inverse design is impossible. It changes
+the optimization variable and derivative strategy:
 
-## Shared material-map rule
+1. **Preferred: shape or level-set optimization.** A finite set of boundary
+   parameters or a level-set moves the interface while each Lumerical solve
+   still contains only ordinary Au and void. Use a Lumerical forward/adjoint
+   shape derivative only after central AD-FD passes at 4 um on the selected
+   mesh.
+2. **Fallback: exact-geometry finite differences or SPSA.** Central finite
+   differences are viable for a compact shape basis. SPSA needs two
+   perturbed physical evaluations per random direction, independent of the
+   number of parameters, but is noisy and must be averaged and checked
+   against independent coordinate/directional finite differences. Both sides
+   of every perturbation use exact dispersive Au.
+3. **Discrete candidate search.** Pixel flips, BESO-like updates, or a
+   trust-region candidate set may also preserve exact Au, but are expensive
+   and need full candidate reevaluation. They are not an excuse to reuse a
+   gray-material gradient.
 
-`f_Au` must be identical across all physics, but the material properties need
-not be numerically identical functions because they have different units and
-constitutive meanings. Each law must be explicit and differentiated through
-the same `f_Au`:
+Hard-thresholding thousands of independent density pixels and feeding that
+mask to LD_MMA would have zero/undefined derivatives almost everywhere. The
+existing 80 x 80 gray-density LD_MMA path therefore cannot simply be relabeled
+as exact-Au optimization. A new parameterization and validated estimator are
+required.
+
+## Existing evidence and the next AD-FD gate
+
+Lumerical can forward-simulate ordinary dispersive Au. However, earlier
+repository controls at another wavelength found that several moving,
+conformal high-contrast Au shape derivatives failed finite differences,
+including wrong-sign errors. Those failures do not prove that the 4-um case
+is impossible, but they prohibit assuming that a generic LumOpt shape
+gradient is correct.
+
+The next optical experiment is therefore deliberately small:
+
+1. build the confirmed 4-um TaIrTe4 stack with an ordinary dispersive-Au
+   shape described by a compact smooth parameterization;
+2. use identical sources, time windows, conformal settings, and mesh for the
+   forward, adjoint, and independently rebuilt `p+h`/`p-h` projects;
+3. compare the Lumerical shape derivative with central finite differences for
+   multiple parameters, directions, and step sizes;
+4. separately check that each realized geometry is exact binary and that its
+   absorbed power/time closure is stable;
+5. accept the adjoint only if the error converges with step size and retains
+   the correct sign across representative geometries.
+
+If this gate fails, switch to the exact-geometry SPSA/finite-difference route;
+do not return to FDTDX, gray Au, or `np density`.
+
+## Thermal/electrical consistency
+
+The old O3/TE1 defect came from solving different effective devices. The new
+rule removes that ambiguity: thermal and electrical solvers receive the same
+realized 0/1 geometry as Maxwell, then apply their endpoint material
+properties to that geometry. Constitutive quantities have different units,
+but material occupancy does not:
 
 ```text
-Maxwell:     dispersive constitutive carrier M_opt(f_Au)
-thermal:     k(f_Au), interface conductance G(f_Au), heat capacity if transient
-electrical:  sigma(f_Au), and sigma*S(f_Au)
+Maxwell:     m=1 -> dispersive Au; m=0 -> background/underlying stack
+thermal:     m=1 -> Au thermal coefficients and Au interfaces
+electrical:  m=1 -> Au electrical coefficients and contacts/interfaces
 ```
 
-Using `f_Au**3` only in Maxwell and `f_Au` in the other two is prohibited.
-Using one `f_Au` with documented, endpoint-correct constitutive interpolation
-laws is allowed, but the full chain derivative must pass combined AD-FD. The
-currently committed shared-linear law is only a provisional consistency
-baseline; it is not yet a physical or mesh-converged certificate.
+Any numerical void-floor needed to make an electrical system nonsingular is
+a solver regularization, not an Au fraction. It must receive an independent
+sensitivity study and must not alter the geometry hash.
 
-## B200 launch and current-host limitation
+## B200 launch and version status
 
 Maxwell entry points are launched through:
 
@@ -112,24 +134,26 @@ LUMERICAL_B200_GPU_INDEX=<physical-index> \
   ./run_lumerical_b200.sh <python-script> [arguments]
 ```
 
-The launcher verifies that the requested physical GPU is reported as a B200.
-The current host exposes RTX 6000 Ada GPUs, so this session can audit code and
-prepare layouts but cannot honestly produce a B200 execution certificate.
-Thermal/electrical GPU tests on another device are development tests only.
+The launcher refuses a non-B200 device. The current session host exposes RTX
+6000 Ada GPUs, so it cannot issue a B200 certificate. The current local
+installation is Lumerical 2026 R1.2. Nothing in the rejected `np density`
+experiment justifies an R1.3 upgrade. Exact version compatibility must be
+decided only by launching the ordinary exact-Au control on the actual B200 and
+recording the engine log.
 
-## Gates before optimization
+## Fail-closed sequence before optimization
 
-1. Confirm the experimental flake outline/thickness, contact polygons,
-   crystal axes, stack, beam, Au electrical role, and interface parameters.
-2. Reproduce the earlier Lumerical-forward + custom-CUDA-PDE data path for the
-   fixed device before changing the Au design representation.
-3. Install Lumerical 2026 R1.3+ on the B200 host, then establish the tested
-   fixed-grid np-density Drude carrier in a GPU field solve and pass same-step
-   optical AD-FD over several step sizes.
-4. Pass exact empty/full/nonuniform binary endpoint controls in Lumerical.
-5. Connect one filtered/projected `f_Au` to all material maps and pass thermal,
-   electrical, and combined latent-variable AD-FD.
-6. On B200, converge time stationarity, native-Yee Q, six-face energy balance,
-   and the complete x/y/z/PML mesh for both polarizations.
-7. Run LD_MMA continuation, finalize a 500-nm-DFM exact binary mask, and
-   independently reevaluate both polarizations with exact dispersive Au.
+1. Confirm the experimental flake outline/thickness, contacts, crystal axes,
+   stack, beam, Au role, and interface parameters.
+2. On the actual B200, pass fixed empty/full/simple exact-Au Lumerical forward
+   controls, time closure, native-Yee Q, and six-face energy balance.
+3. Perform full x/y/z/PML mesh convergence for both polarizations using exact
+   dispersive Au; AD-FD alone is not mesh convergence.
+4. Implement and validate the compact 4-um exact-Au shape/level-set estimator.
+   If adjoint AD-FD fails, validate an exact-geometry FD/SPSA estimator.
+5. Connect the same binary geometry to custom CUDA thermal/electrical solvers
+   and pass endpoint, mesh, floor-sensitivity, current-sign, and combined
+   directional-FD tests.
+6. Only then start an optimizer compatible with the certified estimator,
+   optimize `max min(+Ia,-Ib)`, and independently reevaluate the final 500-nm
+   DFM geometry for both polarizations.

@@ -128,9 +128,9 @@ def main() -> None:
     optical_cache: dict[tuple[str, int, str], dict[str, object]] = {}
     for density_case, rho in densities.items():
         for optical_exponent in (1, 3):
-            # The production runner now uses the shared linear material
-            # fraction.  Transform its input explicitly to reproduce the
-            # historical O1/O3 factorial without changing production code.
+            # The legacy runner uses the shared linear audit fraction.
+            # Transform its input explicitly to reproduce the historical
+            # O1/O3 factorial without changing that diagnostic code.
             rho_runner = rho**optical_exponent
             for pol, runner in runners.items():
                 start = time.perf_counter()
@@ -318,7 +318,7 @@ def main() -> None:
     findings = {
         "gray_law_mismatch_confirmed": True,
         "historical_law": "optical rho^3; thermal/electrical rho^1",
-        "current_production_law": "shared linear Au fraction; revalidation pending",
+        "legacy_consistency_law": "shared linear Au fraction; not production Au",
         "eta_0p35_production_Ib_nA": dilated_legacy["I_b_nA"],
         "eta_0p35_matched_cubic_Ib_nA": dilated_matched_cubic["I_b_nA"],
         "eta_0p35_abs_Ib_margin_reduction_fraction": (

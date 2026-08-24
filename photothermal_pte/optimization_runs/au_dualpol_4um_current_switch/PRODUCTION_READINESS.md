@@ -1,13 +1,17 @@
 # Production inverse-design readiness
 
-Status: `BLOCKED_DEVICE_AND_NUMERICAL_CERTIFICATES`
+Status: `BLOCKED_EXACT_AU_LUMERICAL_ROUTE_NOT_IMPLEMENTED`
 
-All production entry points (`10`, `12`, and `13`) now call
+All legacy production entry points (`10`, `12`, and `13`) call
 `require_production_readiness()` before creating output directories or
-compiling a Maxwell runner.  There is no environment-variable bypass.
+compiling a Maxwell runner. There is no environment-variable bypass. The
+readiness audit now contains an unconditional
+`exact_au_lumerical_geometry_route_implemented=false` gate, because those
+entry points still implement the historical gray/FDTDX path. They cannot be
+promoted by manufacturing otherwise complete legacy certificates.
 
-The gate requires one confirmed physical-device contract and two new,
-machine-readable numerical certificates:
+The shared-linear certificate chain below is retained only to audit the
+historical implementation; it is no longer sufficient for production:
 
 1. `physical_device_contract.json` must have status
    `VALIDATED_AU_TAIRTE4_PHYSICAL_DEVICE_CONTRACT` and every required geometry,
@@ -33,6 +37,9 @@ apply a separate incident-power scale to each polarization. The old baseline
 defaults remain available only to diagnostic callers that do not request a
 production numerical contract.
 
-The historical partial-z and O3/TE1 AD-FD artifacts intentionally do not
-satisfy this chain.  Optimization remains blocked until both new certificates
-exist and all checks pass.
+The historical partial-z, O3/TE1, shared-linear, and FDTDX artifacts cannot
+satisfy the exact-Au Lumerical route. Optimization remains blocked until the
+legacy entry points are replaced by ordinary dispersive-Au geometry in
+Lumerical, the same binary geometry is connected to the custom CUDA PDE
+solvers, and a new exact-geometry mesh/estimator certificate chain is wired
+into `production_readiness.py`.

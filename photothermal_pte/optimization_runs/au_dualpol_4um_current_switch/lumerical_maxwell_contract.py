@@ -1,9 +1,8 @@
-"""Fail-closed contract for Lumerical Maxwell plus custom GPU PDE solvers.
+"""Fail-closed contract for exact-Au Lumerical plus custom GPU PDE solvers.
 
-The optimizer is allowed to use a continuous relaxation.  One filtered and
-projected Au fraction must be shared by the optical, thermal, and electrical
-material maps.  Exact binary Au is required for endpoint controls and final
-promotion, not for every topology-optimization iteration.
+Optimizer parameters may be continuous, but every physical evaluation must
+realize one exact binary Au geometry.  That same geometry is consumed by the
+optical, thermal, and electrical solvers.
 """
 
 from __future__ import annotations
@@ -29,7 +28,7 @@ LUMOPT2_DEPS = LUMERICAL_ROOT / "api/python/lumopt2/parametrization/d_eps_calcul
 
 @dataclass(frozen=True)
 class LumericalMaxwellContract:
-    policy_version: int = 2
+    policy_version: int = 3
     maxwell_solver: str = "Ansys Lumerical FDTD v261 (2026 R1.2)"
     thermal_solver: str = "repository custom CUDA finite-volume steady heat solver"
     electrical_solver: str = (
@@ -40,19 +39,25 @@ class LumericalMaxwellContract:
     thermal_execution_mode: str = "custom sparse linear solve on CUDA"
     electrical_execution_mode: str = "custom sparse linear solve on CUDA"
     optimization_design_map: str = (
-        "latent x -> one density filter -> one tanh projection -> shared f_Au in [0,1]"
+        "continuous shape/level-set parameters -> 500-nm DFM geometry map -> "
+        "one exact binary Au mask"
     )
     shared_design_field: str = (
-        "one projected Au fraction array f_Au with one shape and SHA-256 is passed "
-        "to all three material maps"
+        "one exact 0/1 Au mask with one shape and SHA-256 is passed to all three "
+        "physical solvers"
     )
-    continuous_relaxation_allowed_during_optimization: bool = True
+    continuous_geometry_parameters_allowed: bool = True
+    gray_au_material_in_maxwell_allowed: bool = False
+    gray_au_material_in_thermal_allowed: bool = False
+    gray_au_material_in_electrical_allowed: bool = False
+    exact_binary_required_for_every_physics_evaluation: bool = True
+    numerical_interface_cut_cells_allowed: bool = True
     different_optical_thermal_electrical_design_fields_allowed: bool = False
     exact_binary_required_for_final_promotion: bool = True
-    exact_dispersive_au_required_at_material_endpoint: bool = True
-    continuous_lumerical_au_carrier_status: str = (
-        "NP_DENSITY_DRUDE_MATERIAL_READBACK_PASSED; "
-        "REQUIRES_LUMERICAL_2026_R1P3_GPU_AND_SAME_STEP_AD_FD"
+    exact_dispersive_au_required_in_every_maxwell_evaluation: bool = True
+    np_density_as_au_topology_variable_allowed: bool = False
+    optical_geometry_gradient_status: str = (
+        "BLOCKED_PENDING_4UM_EXACT_AU_SHAPE_ADFD_OR_VALIDATED_BINARY_ESTIMATOR"
     )
     bundled_lumopt_topology_gradient_allowed_without_au_adfd: bool = False
     fdtdx_allowed: bool = False
@@ -68,34 +73,8 @@ class LumericalMaxwellContract:
 CONTRACT = LumericalMaxwellContract()
 
 
-def canonical_design_fraction(fraction: np.ndarray) -> np.ndarray:
-    """Return the shared continuous Au fraction after strict range checks."""
-
-    value = np.asarray(fraction, dtype=np.float64)
-    if value.ndim != 2 or value.size == 0:
-        raise ValueError("Au design fraction must be a non-empty 2-D array")
-    if not np.all(np.isfinite(value)):
-        raise ValueError("Au design fraction contains a non-finite value")
-    tolerance = 1.0e-12
-    if np.any(value < -tolerance) or np.any(value > 1.0 + tolerance):
-        raise ValueError("Au design fraction must remain in [0,1]")
-    return np.ascontiguousarray(np.clip(value, 0.0, 1.0))
-
-
-def design_fraction_sha256(fraction: np.ndarray) -> str:
-    """Hash the exact shared physical-density array used by all solvers."""
-
-    value = canonical_design_fraction(fraction)
-    digest = hashlib.sha256()
-    digest.update(b"lumerical-shared-au-fraction-v2\0")
-    digest.update(json.dumps(list(value.shape), separators=(",", ":")).encode("ascii"))
-    digest.update(b"\0float64-c\0")
-    digest.update(value.tobytes(order="C"))
-    return digest.hexdigest()
-
-
 def canonical_binary_mask(mask: np.ndarray) -> np.ndarray:
-    """Validate an endpoint/final-promotion mask and return uint8 values."""
+    """Validate the physical Au geometry and return exact uint8 values."""
 
     value = np.asarray(mask)
     if value.ndim != 2 or value.size == 0:
@@ -103,7 +82,7 @@ def canonical_binary_mask(mask: np.ndarray) -> np.ndarray:
     if not np.all(np.isfinite(value)):
         raise ValueError("Au mask contains a non-finite value")
     if not np.all((value == 0) | (value == 1)):
-        raise ValueError("final Au mask must contain only exact 0/1 values")
+        raise ValueError("physical Au mask must contain only exact 0/1 values")
     return np.ascontiguousarray(value, dtype=np.uint8)
 
 
@@ -220,7 +199,9 @@ def audit_environment(*, requested_gpu_index: int | None = None) -> dict[str, An
             "Only FDTD time stepping uses the B200; Lumerical meshing and scripts use CPU.",
             "Thermal and electrical solves remain the repository custom CUDA PDE solvers.",
             "No Lumerical HEAT or CHARGE license is assumed or required.",
-            "Continuous f_Au is allowed during optimization, but its Lumerical Au derivative must pass same-step AD-FD before use.",
+            "Continuous parameters may move a boundary; gray Au material is prohibited.",
+            "Every solver must consume the same hash-identified exact binary Au geometry.",
+            "The exact-Au shape derivative or binary search estimator must pass same-step validation before use.",
             "No Maxwell solve is authorized when the B200 gate is false.",
         ],
     }
