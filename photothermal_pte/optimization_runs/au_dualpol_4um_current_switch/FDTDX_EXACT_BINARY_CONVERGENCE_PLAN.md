@@ -1,6 +1,6 @@
 # Fresh FDTDX exact-binary convergence plan
 
-Status: **ANCHOR_PLACEMENT_VALIDATED_NO_FIELD_SOLVE**
+Status: **SOURCE_ONLY_ANCHOR_PAIR_VALIDATED_EXACT_BINARY_NOT_RUN**
 
 This is the numerical contract for a fresh FDTDX investigation. It does not
 resume the historical topology optimization, does not use the historical

@@ -1,6 +1,6 @@
 # Fresh FDTDX dependency and mesh bridge
 
-Status: **GPU_RUNTIME_AND_ANCHOR_PLACEMENT_VALIDATED_SOURCE_ONLY_NOT_RUN**
+Status: **GPU_RUNTIME_ANCHOR_AND_SOURCE_ONLY_PAIR_VALIDATED**
 
 The fresh exact-binary route pins the official FDTDX repository at:
 
@@ -84,7 +84,8 @@ FDTDX_FRESH_OUTPUT_DIR=/home/seunghyun200/fdtdx_results/fresh_placement_001 \
   ./run_fdtdx_fresh_gpu.sh -m your.module
 ```
 
-The anchor-model placement/readback audit is now recorded in
-`FDTDX_FRESH_ANCHOR_PLACEMENT.md`. The remaining Maxwell blocker before any
-reference sweep is a source-only field solve on the identical contract. No
-optimizer is authorized by the runtime or placement certificates.
+The anchor-model placement/readback audit is recorded in
+`FDTDX_FRESH_ANCHOR_PLACEMENT.md`. Both polarizations of the all-air
+source-only field solve and their one-common-power normalization are recorded
+in `FDTDX_FRESH_SOURCE_ONLY.md`. These are anchor gates, not mesh/time or
+material convergence certificates. No optimizer is authorized by them.
