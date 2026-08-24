@@ -8,7 +8,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_exact_au import (
     AU_MATERIAL,
     MATERIAL_FIT_WAVELENGTH_BAND_M,
+    SIO2_MATERIAL,
     SOURCE_WAVELENGTH_BAND_M,
+    TAIRTE4_MATERIAL,
     add_dispersive_materials,
     add_exact_stack_geometry,
     control_geometry_audits,
@@ -99,7 +101,10 @@ def test_sampled_material_contract_is_dispersive_passive_and_guarded() -> None:
     audit = material_contract_audit()
     assert audit["status"].endswith("NOT_FIT_READBACK")
     assert audit["gates"]["single_frequency_constant_nk_Au_prohibited"] is True
-    assert audit["fit"]["requires_post_run_Lumerical_fit_readback"] is True
+    assert audit["Au_fit"]["requires_post_run_Lumerical_fit_readback"] is True
+    assert audit["default_non_Au_fit"][
+        "requires_post_run_Lumerical_fit_readback"
+    ] is True
 
 
 def test_layout_builder_uses_sampled_materials_and_exact_au_prisms_only() -> None:
@@ -114,3 +119,29 @@ def test_layout_builder_uses_sampled_materials_and_exact_au_prisms_only() -> Non
     assert len(au_rectangles) > 0
     assert geometry["status"] == "PROVISIONAL_UNCONFIRMED_DEVICE_GEOMETRY"
     assert geometry["exact_au_geometry"]["occupied_cell_count"] == 414
+
+
+def test_au_fit_sweep_does_not_change_other_sampled_material_settings() -> None:
+    fdtd = _FakeFdtd()
+    audit = add_dispersive_materials(
+        fdtd,
+        au_max_coefficients=6,
+        au_fit_tolerance=0.125,
+    )
+    assert fdtd.material_properties[(AU_MATERIAL, "max coefficients")] == 6
+    assert fdtd.material_properties[(AU_MATERIAL, "tolerance")] == 0.125
+    assert fdtd.material_properties[(SIO2_MATERIAL, "max coefficients")] == 20
+    assert fdtd.material_properties[(SIO2_MATERIAL, "tolerance")] == 0.0
+    assert fdtd.material_properties[(TAIRTE4_MATERIAL, "max coefficients")] == 20
+    assert fdtd.material_properties[(TAIRTE4_MATERIAL, "tolerance")] == 0.0
+    assert audit["Au_fit"]["max_coefficients"] == 6
+    assert audit["Au_fit"]["tolerance"] == 0.125
+
+
+def test_invalid_au_fit_parameters_fail_closed() -> None:
+    for max_coefficients, tolerance in ((0, 0.0), (21, 0.0), (6, -1.0)):
+        with np.testing.assert_raises(ValueError):
+            material_contract_audit(
+                au_max_coefficients=max_coefficients,
+                au_fit_tolerance=tolerance,
+            )

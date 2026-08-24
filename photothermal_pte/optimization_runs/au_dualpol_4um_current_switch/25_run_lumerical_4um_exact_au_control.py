@@ -75,6 +75,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     SOURCE_PROFILE_GATE,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_exact_au import (  # noqa: E402
+    MATERIAL_FIT_TOLERANCE,
+    MATERIAL_MAX_COEFFICIENTS,
+    au_fit_configuration,
     exact_control_masks,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_maxwell_contract import (  # noqa: E402
@@ -194,6 +197,21 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--outer-dxy-nm", type=float, default=BASELINE.outer_dxy_m * 1e9)
     parser.add_argument("--mesh-accuracy", type=int, default=BASELINE.mesh_accuracy)
     parser.add_argument(
+        "--au-max-coefficients",
+        type=int,
+        default=MATERIAL_MAX_COEFFICIENTS,
+        help=(
+            "Maximum Lumerical multi-coefficient terms for sampled-data Au only. "
+            "TaIrTe4 and SiO2 remain fixed at the audited default."
+        ),
+    )
+    parser.add_argument(
+        "--au-fit-tolerance",
+        type=float,
+        default=MATERIAL_FIT_TOLERANCE,
+        help="Lumerical sampled-data fit tolerance for Au only.",
+    )
+    parser.add_argument(
         "--mesh-refinement",
         choices=MESH_REFINEMENT_CANDIDATES,
         default=BASELINE.conformal_mesh,
@@ -221,6 +239,13 @@ def _parse_args() -> argparse.Namespace:
         parser.error("--source-object-w0-um must be finite and positive")
     if args.threads < 1:
         parser.error("--threads must be positive")
+    try:
+        au_fit_configuration(
+            max_coefficients=args.au_max_coefficients,
+            tolerance=args.au_fit_tolerance,
+        )
+    except ValueError as error:
+        parser.error(str(error))
     if args.case == DENSITY_CONTROL:
         if (args.rho is None) == (args.rho_file is None):
             parser.error(
@@ -817,6 +842,8 @@ def main() -> int:
             spec=spec,
             source_object_w0_m=source_object_w0_m,
             projected_density=projected_density,
+            au_max_coefficients=args.au_max_coefficients,
+            au_fit_tolerance=args.au_fit_tolerance,
         )
         _configure_gpu_resource(fdtd, gpu_device, args.threads)
         fdtd.runsetup()

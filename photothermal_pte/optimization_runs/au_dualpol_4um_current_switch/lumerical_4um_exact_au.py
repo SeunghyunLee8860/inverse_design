@@ -298,8 +298,36 @@ def _complex_record(value: complex) -> dict[str, float]:
     return {"real": float(value.real), "imag": float(value.imag)}
 
 
-def material_contract_audit() -> dict[str, Any]:
+def au_fit_configuration(
+    *,
+    max_coefficients: int = MATERIAL_MAX_COEFFICIENTS,
+    tolerance: float = MATERIAL_FIT_TOLERANCE,
+) -> dict[str, Any]:
+    """Validate and record the independently swept Au fit parameters."""
+
+    if not 1 <= int(max_coefficients) == max_coefficients <= 20:
+        raise ValueError("Au max coefficients must be an integer in [1,20]")
+    if not np.isfinite(tolerance) or tolerance < 0.0:
+        raise ValueError("Au fit tolerance must be finite and nonnegative")
+    return {
+        "max_coefficients": int(max_coefficients),
+        "tolerance": float(tolerance),
+        "make_fit_passive": "Lumerical default true; not disabled",
+        "improve_stability": "Lumerical default true; not disabled",
+        "imaginary_weight": "Lumerical default 1; not overridden",
+    }
+
+
+def material_contract_audit(
+    *,
+    au_max_coefficients: int = MATERIAL_MAX_COEFFICIENTS,
+    au_fit_tolerance: float = MATERIAL_FIT_TOLERANCE,
+) -> dict[str, Any]:
     data = sampled_material_data()
+    au_fit = au_fit_configuration(
+        max_coefficients=au_max_coefficients,
+        tolerance=au_fit_tolerance,
+    )
     target_frequency = C0_M_S / CONTRACT.wavelength_m
     target_index = int(np.argmin(np.abs(data["frequency_hz"] - target_frequency)))
     return {
@@ -308,10 +336,18 @@ def material_contract_audit() -> dict[str, Any]:
         "material_fit_wavelength_band_m": list(MATERIAL_FIT_WAVELENGTH_BAND_M),
         "material_sample_count": MATERIAL_SAMPLE_COUNT,
         "frequency_strictly_increasing": True,
-        "fit": {
+        "default_non_Au_fit": {
             "max_coefficients": MATERIAL_MAX_COEFFICIENTS,
             "tolerance": MATERIAL_FIT_TOLERANCE,
             "requires_post_run_Lumerical_fit_readback": True,
+        },
+        "Au_fit": {
+            **au_fit,
+            "requires_post_run_Lumerical_fit_readback": True,
+            "convergence_role": (
+                "one-axis sampled-data pole-count/tolerance diagnostic; "
+                "not a physical design variable"
+            ),
         },
         "materials": {
             "Au": {
@@ -365,18 +401,43 @@ def material_contract_audit() -> dict[str, Any]:
     }
 
 
-def add_dispersive_materials(fdtd: Any) -> dict[str, Any]:
+def add_dispersive_materials(
+    fdtd: Any,
+    *,
+    au_max_coefficients: int = MATERIAL_MAX_COEFFICIENTS,
+    au_fit_tolerance: float = MATERIAL_FIT_TOLERANCE,
+) -> dict[str, Any]:
     """Install the audited sampled materials into a Lumerical layout session."""
 
     data = sampled_material_data()
+    au_fit = au_fit_configuration(
+        max_coefficients=au_max_coefficients,
+        tolerance=au_fit_tolerance,
+    )
     for name, epsilon in (
         (AU_MATERIAL, data["epsilon_au"]),
         (SIO2_MATERIAL, data["epsilon_sio2"]),
     ):
         material = fdtd.addmaterial("Sampled data")
         fdtd.setmaterial(material, "name", name)
-        fdtd.setmaterial(name, "max coefficients", MATERIAL_MAX_COEFFICIENTS)
-        fdtd.setmaterial(name, "tolerance", MATERIAL_FIT_TOLERANCE)
+        fdtd.setmaterial(
+            name,
+            "max coefficients",
+            (
+                au_fit["max_coefficients"]
+                if name == AU_MATERIAL
+                else MATERIAL_MAX_COEFFICIENTS
+            ),
+        )
+        fdtd.setmaterial(
+            name,
+            "tolerance",
+            (
+                au_fit["tolerance"]
+                if name == AU_MATERIAL
+                else MATERIAL_FIT_TOLERANCE
+            ),
+        )
         fdtd.setmaterial(
             name,
             "sampled data",
@@ -402,7 +463,10 @@ def add_dispersive_materials(fdtd: Any) -> dict[str, Any]:
             )
         ),
     )
-    return material_contract_audit()
+    return material_contract_audit(
+        au_max_coefficients=au_max_coefficients,
+        au_fit_tolerance=au_fit_tolerance,
+    )
 
 
 def _add_rect(
