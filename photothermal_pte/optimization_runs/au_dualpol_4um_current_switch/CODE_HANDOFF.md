@@ -290,8 +290,8 @@ stage is now complete for the exact-binary 375-pixel
 `l_shape_4um_with_500nm_arms` reference. Runs were made at clean commit
 `01a8ad8a`; the independent verifier and its 12 focused tests were committed
 and pushed as `5e376ce1`. That checkpoint had 133 explicit FDTDX `unittest`
-tests. The current suite has **140 passing tests** after the candidate material
-pair verifier was added. The separate pytest forensic file is not runnable in
+tests. The current suite has **143 passing tests** after the candidate material
+pair verifier and 32-period extension coverage were added. The separate pytest forensic file is not runnable in
 the locked fresh venv because pytest is intentionally absent.
 
 External raw root:
@@ -532,6 +532,33 @@ Ea/Eb source pair. The existing 24-period z16 source pair must not be reused
 when time changes. No z8-to-z16 mesh comparison is accepted, and z32 still has
 neither a source nor material pair. Do not compare an old single-pole field
 result to a two-pole result.
+
+The isolated z16 settling extension is now contracted at clean code commit
+`84461793`. It holds the complete `196 x 196 x 640` spatial grid, Courant
+`0.25`, source startup, analysis window, CPML, exact 375-cell binary Au mask,
+and candidate two-pole material axes fixed, changing only total duration from
+24 to 32 periods (`409,666` time steps). Its external bindings are:
+
+- t32 case JSON SHA-256:
+  `6476b57bd577bcba0106e42c85ceb1707256384ff2d6a41824e3a2a3de47ba2f`
+- internal case-contract SHA-256:
+  `0c30a5c68efb3b4a79fbd248db104919a439a539e5eff84e5b10f8bfbd6ab07f`
+- t32 material-law JSON SHA-256:
+  `717f5ed3d24c33ebd4f870b108a4b0c618e87aabc7144991207c18db9e0ced31`
+- internal material-law SHA-256:
+  `d4d140b09e624c5140f72778865fc9df60f8a79c2c0690de2b4d01ebf008cd70`
+- placed solver-array preflight SHA-256:
+  `e0e992e1fdaf4edfcb9f96842759ed1b2410b4f293516bd5067dc15021ab2a1b`
+
+The sorted `material_axes` payload hash is identical for t24 and t32
+(`445b5bf65eae93c5778edc8ee98b7abae4117bebec40937abdcaa494d08bb7aa`).
+The zero-step preflight is `ready=true` with no failed checks and payload hash
+`be6a3c2112ec84b7f4ffa274fa68731b62d2159782ebe6816b4cddcde04f982b`.
+It reads back the full two-pole/three-component solver arrays, TaIrTe4 a/b/c
+axis assignment, ordinary-Au endpoints, exact binary mask, Si/SiO2, PML, mesh,
+and realized time step. This is only permission to run a fresh t32 Ea/Eb
+source pair. It is not a source, material, mesh, PTE-current, or optimizer
+certificate, and the t24 source pair must not be reused.
 
 Do not proceed to x/y, domain, PML, thermal/electrical, or optimization until
 z convergence closes. Preserve the failed z2/z4/z8 comparisons and the z16

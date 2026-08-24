@@ -278,6 +278,28 @@ case with a fresh source pair; changing time invalidates the existing z16
 normalization pair. The z8-to-z16 comparison, adjoint, thermal/electrical, and
 optimizer paths remain disabled throughout.
 
+That isolated 32-period z16 case is now defined by code commit `84461793`.
+The case file SHA-256 is
+`6476b57bd577bcba0106e42c85ceb1707256384ff2d6a41824e3a2a3de47ba2f`
+(internal contract
+`0c30a5c68efb3b4a79fbd248db104919a439a539e5eff84e5b10f8bfbd6ab07f`),
+and the candidate material-law file SHA-256 is
+`717f5ed3d24c33ebd4f870b108a4b0c618e87aabc7144991207c18db9e0ced31`
+(internal contract
+`d4d140b09e624c5140f72778865fc9df60f8a79c2c0690de2b4d01ebf008cd70`).
+It retains the t24 `196 x 196 x 640` grid and exact material axes while changing
+only total duration to 32 periods (`409,666` steps). The t24/t32 sorted
+`material_axes` payload hash is identically
+`445b5bf65eae93c5778edc8ee98b7abae4117bebec40937abdcaa494d08bb7aa`.
+
+The zero-step placed-array preflight is ready with no failed gate. Its file
+SHA-256 is
+`e0e992e1fdaf4edfcb9f96842759ed1b2410b4f293516bd5067dc15021ab2a1b`
+and payload SHA-256 is
+`be6a3c2112ec84b7f4ffa274fa68731b62d2159782ebe6816b4cddcde04f982b`.
+This authorizes only fresh t32 source-only Ea/Eb runs and their pair
+certificate. Material execution remains downstream of that new source pair.
+
 ## Convergence rule
 
 The 16-, 24-, and 32-period levels are three different numerical cases.  Each

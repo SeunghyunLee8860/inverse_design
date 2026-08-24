@@ -416,6 +416,24 @@ Comparing old single-pole z8 directly with a new two-pole field level is
 forbidden. Adjoint, thermal/electrical, current-sign, and optimizer stages
 remain blocked.
 
+The 32-period z16 settling case and zero-step solver-array preflight are now
+complete at code commit `84461793`. The case file/internal hashes are
+`6476b57bd577bcba0106e42c85ceb1707256384ff2d6a41824e3a2a3de47ba2f` /
+`0c30a5c68efb3b4a79fbd248db104919a439a539e5eff84e5b10f8bfbd6ab07f`;
+the material-law file/internal hashes are
+`717f5ed3d24c33ebd4f870b108a4b0c618e87aabc7144991207c18db9e0ced31` /
+`d4d140b09e624c5140f72778865fc9df60f8a79c2c0690de2b4d01ebf008cd70`.
+The grid remains `196 x 196 x 640`; the realized t32 duration is `409,666`
+steps. The t24/t32 material-axis payloads are exactly identical, hash
+`445b5bf65eae93c5778edc8ee98b7abae4117bebec40937abdcaa494d08bb7aa`.
+
+The placed-array preflight file SHA-256 is
+`e0e992e1fdaf4edfcb9f96842759ed1b2410b4f293516bd5067dc15021ab2a1b`;
+it is `ready=true`, has no failed checks, and has internal payload hash
+`be6a3c2112ec84b7f4ffa274fa68731b62d2159782ebe6816b4cddcde04f982b`.
+This closes only the t32 contract/readback gate. A fresh t32 Ea/Eb all-air
+source pair is next; the t24 source pair remains invalid for this case.
+
 ## Comparison and promotion rules
 
 `Q` comparisons must conservatively restrict fine-grid cell-integrated
