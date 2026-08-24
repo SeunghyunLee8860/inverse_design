@@ -1,0 +1,872 @@
+From fc09ce54dc32ea13e27d2af799cdb3771801bf65 Mon Sep 17 00:00:00 2001
+From: SeunghyunLee8860 <j79sk123@gmail.com>
+Date: Tue, 25 Aug 2026 03:41:04 +0900
+Subject: [PATCH] feat(dispersion): integrate opt-in increment-state ADE
+
+---
+ src/fdtdx/config.py                           | 13 +++
+ src/fdtdx/dispersion.py                       | 60 ++++++++++++-
+ src/fdtdx/fdtd/container.py                   | 19 ++--
+ src/fdtdx/fdtd/initialization.py              | 30 ++++++-
+ src/fdtdx/fdtd/update.py                      | 68 ++++++++-------
+ src/fdtdx/increment_state.py                  | 30 +++----
+ src/fdtdx/materials.py                        | 24 ++++-
+ src/fdtdx/objects/detectors/mode.py           |  1 +
+ src/fdtdx/objects/sources/dipole.py           |  1 +
+ .../objects/sources/linear_polarization.py    |  2 +
+ src/fdtdx/objects/sources/mode.py             |  3 +
+ src/fdtdx/objects/sources/tfsf.py             |  3 +
+ src/fdtdx/objects/sources/tfsf_region.py      |  2 +
+ .../fdtd/test_increment_state_fdtd.py         | 87 +++++++++++++++++++
+ tests/simulation/fdtd/test_time_reversal.py   |  3 +-
+ tests/unit/test_increment_state_spectrum.py   | 63 ++++++++++++++
+ 16 files changed, 343 insertions(+), 66 deletions(-)
+ create mode 100644 tests/simulation/fdtd/test_increment_state_fdtd.py
+ create mode 100644 tests/unit/test_increment_state_spectrum.py
+
+diff --git a/src/fdtdx/config.py b/src/fdtdx/config.py
+index 593e3d0..dbe4326 100644
+--- a/src/fdtdx/config.py
++++ b/src/fdtdx/config.py
+@@ -86,6 +86,13 @@ class SimulationConfig(TreeClass):
+     #: False: force real fields (raises error if Bloch boundaries are present).
+     use_complex_fields: bool | None = frozen_field(default=None)
+ 
++    #: Representation used for Lorentz/Drude auxiliary polarization states.
++    #: ``"polarization"`` preserves the classic second-order recurrence.
++    #: ``"increment"`` stores ``(P, delta-P)`` and cancellation-resistant
++    #: ``(A, C, B)`` coefficients; it currently supports only axis-aligned
++    #: Lorentz/Drude poles with diagonal material tensors.
++    dispersive_state_representation: Literal["polarization", "increment"] = frozen_field(default="polarization")
++
+     #: Safety factor for the Courant condition (default: 0.99).
+     courant_factor: float = frozen_field(default=0.99)
+ 
+@@ -117,6 +124,12 @@ class SimulationConfig(TreeClass):
+     def __post_init__(self):
+         from jax import extend
+ 
++        if self.dispersive_state_representation not in ("polarization", "increment"):
++            raise ValueError(
++                "dispersive_state_representation must be 'polarization' or "
++                f"'increment', got {self.dispersive_state_representation!r}"
++            )
++
+         if len(self.symmetry) != 3 or any(s not in (-1, 0, 1) for s in self.symmetry):
+             raise ValueError(
+                 f"config.symmetry must be a length-3 tuple with each entry in {{-1, 0, +1}} "
+diff --git a/src/fdtdx/dispersion.py b/src/fdtdx/dispersion.py
+index 921118c..1b5997f 100644
+--- a/src/fdtdx/dispersion.py
++++ b/src/fdtdx/dispersion.py
+@@ -1073,6 +1073,7 @@ def compute_eps_spectrum_from_coefficients(
+     dt: float,
+     weights: np.ndarray | None = None,
+     c4: jax.Array | np.ndarray | None = None,
++    state_representation: str = "polarization",
+ ) -> np.ndarray:
+     """Spatially-averaged complex permittivity spectrum for a block of cells.
+ 
+@@ -1104,11 +1105,19 @@ def compute_eps_spectrum_from_coefficients(
+         dt: Simulation time step (seconds) used to derive the coefficients.
+         weights: Optional spatial weights with the same shape as the
+             trailing axes of ``c1``. If ``None``, uniform averaging.
++        c4: Optional classic CCPR dE/dt coefficient. Unsupported in increment mode.
++        state_representation: Stored coefficient meaning, ``"polarization"``
++            (classic) or ``"increment"`` (A/C/B).
+ 
+     Returns:
+         Complex numpy array of shape ``(len(omegas),)`` — the volume-averaged
+         :math:`\\varepsilon(\\omega)` at each requested frequency.
+     """
++    if state_representation not in ("polarization", "increment"):
++        raise ValueError(f"state_representation must be 'polarization' or 'increment', got {state_representation!r}")
++    if state_representation == "increment" and c4 is not None:
++        raise ValueError("increment-state spectrum does not support c4 dE/dt coupling.")
++
+     c1_np = np.asarray(c1)
+     c2_np = np.asarray(c2)
+     c3_np = np.asarray(c3)
+@@ -1154,6 +1163,20 @@ def compute_eps_spectrum_from_coefficients(
+     safe_denom = np.where(pole_mask[None, ...], denom, 1.0 + 0.0j)
+     chi_per_pole = np.where(pole_mask[None, ...], numer / safe_denom, 0.0 + 0.0j)
+     chi_per_cell = chi_per_pole.sum(axis=1)  # sum over pole axis → (M, C, *spatial)
++    if state_representation == "increment":
++        # Direct discrete transfer function for A/C/B. Do not reconstruct the
++        # nearly cancelling second-order coefficients in setup precision.
++        increment_mask = (c1_np != 0.0) | (c2_np != 0.0) | (c3_np != 0.0)
++        z_minus = np.exp(-1j * omega_dt)
++        increment_denom = (z_minus - 1.0) * (z_minus - c1_np[None, ...])
++        increment_denom = increment_denom + c2_np[None, ...] * z_minus
++        safe_increment_denom = np.where(increment_mask[None, ...], increment_denom, 1.0 + 0.0j)
++        increment_chi = np.where(
++            increment_mask[None, ...],
++            c3_np[None, ...] * z_minus / safe_increment_denom,
++            0.0 + 0.0j,
++        )
++        chi_per_cell = increment_chi.sum(axis=1)
+     # Average the material-component axis (identity for C = 1), mirroring the
+     # eps_inf reduction above — this scalar spectrum feeds an impedance filter
+     # that has no notion of polarization. For a 9-component coupling only the
+@@ -1251,6 +1274,27 @@ def compute_impedance_corrected_temporal_profile(
+     return filtered[:n].astype(np.float64)
+ 
+ 
++def _susceptibility_from_state_coefficients(
++    c1: jax.Array,
++    c2: jax.Array,
++    c3: jax.Array,
++    omega: float,
++    dt: float,
++    c4: jax.Array | None,
++    state_representation: str,
++) -> jax.Array:
++    """Dispatch discrete susceptibility according to the stored ADE state."""
++    if state_representation == "increment":
++        if c4 is not None:
++            raise ValueError("increment-state susceptibility does not support c4 dE/dt coupling.")
++        from fdtdx.increment_state import susceptibility_from_increment_coefficients
++
++        return susceptibility_from_increment_coefficients(c1, c2, c3, omega=omega, dt=dt)
++    if state_representation != "polarization":
++        raise ValueError(f"state_representation must be 'polarization' or 'increment', got {state_representation!r}")
++    return susceptibility_from_coefficients(c1=c1, c2=c2, c3=c3, omega=omega, dt=dt, c4=c4)
++
++
+ def effective_inv_permittivity(
+     inv_eps: jax.Array,
+     c1: jax.Array | None,
+@@ -1259,6 +1303,7 @@ def effective_inv_permittivity(
+     omega: float,
+     dt: float,
+     c4: jax.Array | None = None,
++    state_representation: str = "polarization",
+ ) -> jax.Array:
+     """Per-cell real inverse permittivity :math:`1/\\text{Re}(\\varepsilon_\\infty + \\chi(\\omega))`.
+ 
+@@ -1279,6 +1324,9 @@ def effective_inv_permittivity(
+         c3: ADE coefficient array of shape ``(num_poles, ...)`` or ``None``.
+         omega: Angular frequency (rad/s) at which to evaluate.
+         dt: Simulation time step (seconds).
++        c4: Optional classic CCPR dE/dt coefficient.
++        state_representation: Stored coefficient meaning, ``"polarization"``
++            (classic) or ``"increment"`` (A/C/B).
+ 
+     Returns:
+         Real-valued ``jax.Array`` with the same shape and dtype as
+@@ -1293,7 +1341,7 @@ def effective_inv_permittivity(
+         # Elementwise 1/inv_eps would divide by the zero off-diagonal entries.
+         eps_mat = jnp.real(_eps_matrix_from_inv(inv_eps_arr))
+         if c1 is not None and c2 is not None and c3 is not None:
+-            chi = susceptibility_from_coefficients(c1=c1, c2=c2, c3=c3, omega=omega, dt=dt, c4=c4)
++            chi = _susceptibility_from_state_coefficients(c1, c2, c3, omega, dt, c4, state_representation)
+             eps_mat = eps_mat + jnp.real(_tensor_from_components(chi))
+         inv_eff = _invert_3x3_matrix_field(eps_mat)
+         return inv_eff.reshape(9, *inv_eff.shape[2:]).astype(inv_eps_arr.dtype)
+@@ -1301,7 +1349,7 @@ def effective_inv_permittivity(
+     if c1 is None or c2 is None or c3 is None:
+         return inv_eps
+ 
+-    chi = susceptibility_from_coefficients(c1=c1, c2=c2, c3=c3, omega=omega, dt=dt, c4=c4)
++    chi = _susceptibility_from_state_coefficients(c1, c2, c3, omega, dt, c4, state_representation)
+     eps_inf = 1.0 / inv_eps_arr
+     eps_eff = eps_inf + jnp.real(chi)
+     return (1.0 / eps_eff).astype(inv_eps_arr.dtype)
+@@ -1317,6 +1365,7 @@ def effective_complex_inv_permittivity(
+     electric_conductivity: jax.Array | None = None,
+     conductivity_spacing: float | None = None,
+     c4: jax.Array | None = None,
++    state_representation: str = "polarization",
+ ) -> jax.Array:
+     r"""Per-cell COMPLEX inverse permittivity :math:`1 / (\varepsilon_\infty + \chi(\omega) + i\sigma/(\varepsilon_0\omega))`.
+ 
+@@ -1349,6 +1398,9 @@ def effective_complex_inv_permittivity(
+         electric_conductivity: Resolution-scaled conductivity array, or ``None``.
+         conductivity_spacing: Scaling factor used to recover the physical
+             conductivity. Required when ``electric_conductivity`` is given.
++        c4: Optional classic CCPR dE/dt coefficient.
++        state_representation: Stored coefficient meaning, ``"polarization"``
++            (classic) or ``"increment"`` (A/C/B).
+ 
+     Returns:
+         Complex ``jax.Array`` broadcasting ``inv_eps`` against the loss terms.
+@@ -1363,7 +1415,7 @@ def effective_complex_inv_permittivity(
+         eps_mat = _eps_matrix_from_inv(inv_eps)
+         eps = jnp.stack([eps_mat[0, 0], eps_mat[1, 1], eps_mat[2, 2]], axis=0).astype(complex_dtype)
+         if c1 is not None and c2 is not None and c3 is not None:
+-            chi = susceptibility_from_coefficients(c1=c1, c2=c2, c3=c3, omega=omega, dt=dt, c4=c4)
++            chi = _susceptibility_from_state_coefficients(c1, c2, c3, omega, dt, c4, state_representation)
+             if chi.shape[0] == 9:
+                 chi = jnp.stack([chi[0], chi[4], chi[8]], axis=0)
+             eps = eps + chi
+@@ -1378,7 +1430,7 @@ def effective_complex_inv_permittivity(
+ 
+     eps = (1.0 / inv_eps).astype(complex_dtype)
+     if c1 is not None and c2 is not None and c3 is not None:
+-        eps = eps + susceptibility_from_coefficients(c1=c1, c2=c2, c3=c3, omega=omega, dt=dt, c4=c4)
++        eps = eps + _susceptibility_from_state_coefficients(c1, c2, c3, omega, dt, c4, state_representation)
+     if electric_conductivity is not None:
+         if conductivity_spacing is None:
+             raise ValueError("conductivity_spacing is required when electric_conductivity is given.")
+diff --git a/src/fdtdx/fdtd/container.py b/src/fdtdx/fdtd/container.py
+index ebc5848..01b4a8d 100644
+--- a/src/fdtdx/fdtd/container.py
++++ b/src/fdtdx/fdtd/container.py
+@@ -380,12 +380,14 @@ class FieldState(TreeClass):
+     #: object's name to a tuple of two arrays (each of shape ``pml.grid_shape``).
+     psi_H: PmlAuxField
+ 
+-    #: Dispersive ADE polarization state at time step ``n``. Shape
+-    #: ``(num_poles, 3, Nx, Ny, Nz)``. ``None`` for non-dispersive simulations.
++    #: First dispersive ADE state, shape ``(num_poles, 3, Nx, Ny, Nz)``.
++    #: Stores ``P[n]`` in both the classic polarization and increment modes.
++    #: ``None`` for non-dispersive simulations.
+     dispersive_P_curr: jax.Array | None = None
+ 
+-    #: Dispersive ADE polarization state at time step ``n-1``. Shape
+-    #: ``(num_poles, 3, Nx, Ny, Nz)``. ``None`` for non-dispersive simulations.
++    #: Second dispersive ADE state with the same shape. Stores ``P[n-1]`` in
++    #: classic polarization mode and ``delta-P[n]`` in increment mode.
++    #: ``None`` for non-dispersive simulations.
+     dispersive_P_prev: jax.Array | None = None
+ 
+ 
+@@ -419,19 +421,22 @@ class ArrayContainer(TreeClass):
+     #: field for magnetic conductivity terms. Defaults to None.
+     magnetic_conductivity: jax.Array | None = None
+ 
+-    #: Per-cell dispersive recurrence coefficient c1. Shape
++    #: First per-cell dispersive coefficient: classic ``c1`` or increment-mode
++    #: ``A``. Shape
+     #: ``(num_poles, num_components, Nx, Ny, Nz)`` with ``num_components`` 1
+     #: (isotropic dispersion, broadcast over the field components) or 3
+     #: (per-axis / diagonally anisotropic dispersion). ``None`` for
+     #: non-dispersive simulations.
+     dispersive_c1: jax.Array | None = None
+ 
+-    #: Per-cell dispersive recurrence coefficient c2. Shape
++    #: Second per-cell dispersive coefficient: classic ``c2`` or increment-mode
++    #: ``C``. Shape
+     #: ``(num_poles, num_components, Nx, Ny, Nz)``, ``num_components in (1, 3)``.
+     #: ``None`` for non-dispersive simulations.
+     dispersive_c2: jax.Array | None = None
+ 
+-    #: Per-cell dispersive field coupling c3. Shape
++    #: Per-cell dispersive field coupling: classic ``c3`` or increment-mode
++    #: ``B``. Shape
+     #: ``(num_poles, num_components, Nx, Ny, Nz)``, ``num_components in (1, 3, 9)``
+     #: — 9 encodes a row-major 3x3 coupling tensor per pole (oriented poles,
+     #: off-diagonal dispersion). ``None`` for non-dispersive simulations.
+diff --git a/src/fdtdx/fdtd/initialization.py b/src/fdtdx/fdtd/initialization.py
+index 7061e11..ddafdc9 100644
+--- a/src/fdtdx/fdtd/initialization.py
++++ b/src/fdtdx/fdtd/initialization.py
+@@ -20,6 +20,7 @@ from fdtdx.core.jax.ste import straight_through_estimator
+ from fdtdx.dispersion import compute_pole_coefficients_tensor
+ from fdtdx.fdtd.container import ArrayContainer, FieldState, ObjectContainer, ParameterContainer
+ from fdtdx.fdtd.symmetry import apply_mode_symmetry, make_symmetry_walls, reduce_resolved_slices
++from fdtdx.increment_state import compute_increment_state_coefficients_per_axis
+ from fdtdx.materials import (
+     Material,
+     compute_allowed_dispersive_coefficients,
+@@ -394,6 +395,7 @@ def apply_params(
+                 max_num_poles=num_dispersive_poles,
+                 num_components=num_disp_components,
+                 coupling_components=num_disp_coupling_components,
++                state_representation=device._config.dispersive_state_representation,
+             )
+             allowed_c1_arr = jnp.asarray(allowed_c1_np, dtype=arrays.dispersive_c1.dtype)
+             allowed_c2_arr = jnp.asarray(allowed_c2_np, dtype=arrays.dispersive_c2.dtype)
+@@ -693,6 +695,20 @@ def _init_arrays(
+         or not (isotropic_permittivity or diagonally_anisotropic_permittivity)
+         or not (isotropic_electric_conductivity or diagonally_anisotropic_electric_conductivity)
+     )
++    if config.dispersive_state_representation == "increment" and num_dispersive_poles > 0:
++        if objects.has_dispersive_edot:
++            raise NotImplementedError(
++                "increment-state ADE currently supports Lorentz/Drude poles only; CCPR dE/dt coupling is unsupported."
++            )
++        if not axis_aligned_dispersion:
++            raise NotImplementedError(
++                "increment-state ADE currently supports axis-aligned poles only; oriented pole coupling is unsupported."
++            )
++        if tensor_dispersion_path:
++            raise NotImplementedError(
++                "increment-state ADE currently requires diagonal permittivity and electric-conductivity tensors."
++            )
++
+     if tensor_dispersion_path:
+         if objects.has_dispersive_edot:
+             raise NotImplementedError(
+@@ -960,7 +976,15 @@ def _init_arrays(
+                 # and drive an ADE update on cells that shouldn't have one.
+                 assert dispersive_c1 is not None and dispersive_c2 is not None and dispersive_c3 is not None
+                 poles = o.material.dispersion.poles if o.material.dispersion is not None else ()
+-                c1_vals, c2_vals, c3_vals, c4_vals = compute_pole_coefficients_tensor(poles, config.time_step_duration)
++                if config.dispersive_state_representation == "increment":
++                    c1_vals, c2_vals, c3_vals = compute_increment_state_coefficients_per_axis(
++                        poles, config.time_step_duration
++                    )
++                    c4_vals = jnp.zeros_like(c3_vals)
++                else:
++                    c1_vals, c2_vals, c3_vals, c4_vals = compute_pole_coefficients_tensor(
++                        poles, config.time_step_duration
++                    )
+                 n = len(poles)
+                 c1_padded = jnp.zeros((num_dispersive_poles, num_disp_components), dtype=config.dtype)
+                 c2_padded = jnp.zeros((num_dispersive_poles, num_disp_components), dtype=config.dtype)
+@@ -974,6 +998,9 @@ def _init_arrays(
+                     # dispersion, so keeping diagonal coupling entries is exact.
+                     if num_disp_coupling_components == 9:
+                         c3_reduced, c4_reduced = c3_vals, c4_vals
++                    elif config.dispersive_state_representation == "increment":
++                        c3_reduced = c3_vals[:, :num_disp_coupling_components]
++                        c4_reduced = c4_vals[:, :num_disp_coupling_components]
+                     else:
+                         diag_entries = (0, 4, 8)[:num_disp_coupling_components]
+                         c3_reduced = c3_vals[:, diag_entries]
+@@ -1117,6 +1144,7 @@ def _init_arrays(
+                     max_num_poles=num_dispersive_poles,
+                     num_components=num_disp_components,
+                     coupling_components=num_disp_coupling_components,
++                    state_representation=config.dispersive_state_representation,
+                 )
+                 # Shape (num_materials, num_poles, num_components) -> index by (Nx, Ny, Nz) ->
+                 # (Nx, Ny, Nz, num_poles, num_components) -> moveaxis -> (num_poles, num_components, Nx, Ny, Nz)
+diff --git a/src/fdtdx/fdtd/update.py b/src/fdtdx/fdtd/update.py
+index 8699a13..c5da0ab 100644
+--- a/src/fdtdx/fdtd/update.py
++++ b/src/fdtdx/fdtd/update.py
+@@ -18,6 +18,7 @@ from fdtdx.fdtd.misc import (
+     compute_anisotropic_update_matrices,
+     compute_anisotropic_update_matrices_reverse,
+ )
++from fdtdx.increment_state import update_dispersive_increment_state
+ from fdtdx.objects.detectors.detector import Detector, DetectorState
+ 
+ 
+@@ -309,10 +310,9 @@ def update_E(
+         # E[i, x, y, z] = factor * E[i, x, y, z] + c * curl[i, x, y, z] * inv_eps[i, x, y, z]
+         E = factor * arrays.fields.E + c * curl * inv_eps
+ 
+-        # Dispersive (ADE) correction. Non-dispersive cells have c3 = 0, so P_hat =
+-        # c1*P_curr + c2*P_prev and (P_curr - P_hat) reduces to a purely historical
+-        # term that is also zero when P_curr and P_prev start at zero — so it's a
+-        # no-op outside dispersive regions. Only active when arrays are allocated.
++        # Dispersive (ADE) correction. In the default "polarization" mode the
++        # arrays retain the classic second-order meaning. The opt-in "increment"
++        # mode reuses P_curr as P, P_prev as delta-P, and c1/c2/c3 as A/C/B.
+         if arrays.fields.dispersive_P_curr is not None:
+             P_curr = arrays.fields.dispersive_P_curr
+             P_prev = arrays.fields.dispersive_P_prev
+@@ -321,36 +321,44 @@ def update_E(
+             disp_c3 = arrays.dispersive_c3
+             disp_c4 = arrays.dispersive_c4
+             assert P_prev is not None and disp_c1 is not None and disp_c2 is not None and disp_c3 is not None
+-            # disp_c* are (num_poles, 1|3, Nx, Ny, Nz) — the component axis is 1
+-            # (isotropic dispersion, broadcast) or 3 (per-axis anisotropic
+-            # dispersion); arrays.fields.E is (3, Nx, Ny, Nz). Right-aligned
+-            # broadcasting produces (num_poles, 3, Nx, Ny, Nz) either way without
+-            # an explicit newaxis — skip the reshape so the HLO stays flat.
+-            # P_hat is the explicit part of the recurrence (independent of E^{n+1}).
+-            P_hat = disp_c1 * P_curr + disp_c2 * P_prev + disp_c3 * arrays.fields.E
+-            delta_hat = jnp.sum(P_curr - P_hat, axis=0)
+-            E = E + inv_eps * delta_hat
+-            if disp_c4 is not None:
+-                # CCPR: the polarization couples to E^{n+1} through c4. Fold the
+-                # per-cell D_kappa = inv_eps*sum(c4) into the implicit divide
+-                # (alongside the conductivity loss factor), then reconstruct the
+-                # full P^{n+1} = P_hat + c4*E^{n+1} once E^{n+1} is known.
+-                divisor = 1 + inv_eps * jnp.sum(disp_c4, axis=0)
+-                if sigma_E is not None:
+-                    divisor = divisor + c * sigma_E * eta0 * inv_eps / 2
+-                E = E / divisor
+-                P_new = P_hat + disp_c4 * E
+-                arrays = arrays.aset("fields->dispersive_P_prev", P_curr)
++
++            if config.dispersive_state_representation == "increment":
++                if disp_c4 is not None:
++                    raise ValueError("increment-state ADE cannot be combined with c4 dE/dt coupling.")
++                P_new, increment_new = update_dispersive_increment_state(
++                    polarization=P_curr,
++                    increment=P_prev,
++                    electric_field=arrays.fields.E,
++                    coeff_a=disp_c1,
++                    coeff_c=disp_c2,
++                    coeff_b=disp_c3,
++                )
++                E = E - inv_eps * jnp.sum(increment_new, axis=0)
+                 arrays = arrays.aset("fields->dispersive_P_curr", P_new)
+-            else:
+-                arrays = arrays.aset("fields->dispersive_P_prev", P_curr)
+-                arrays = arrays.aset("fields->dispersive_P_curr", P_hat)
++                arrays = arrays.aset("fields->dispersive_P_prev", increment_new)
+                 if sigma_E is not None:
+-                    # lossy update formula. Noop for conductivity = 0; see Schneider 3.12
+                     E = E / (1 + c * sigma_E * eta0 * inv_eps / 2)
++            else:
++                # P_hat is the explicit part of the classic recurrence
++                # (independent of E^{n+1}). Coefficients broadcast from one or
++                # three material components to the three electric components.
++                P_hat = disp_c1 * P_curr + disp_c2 * P_prev + disp_c3 * arrays.fields.E
++                delta_hat = jnp.sum(P_curr - P_hat, axis=0)
++                E = E + inv_eps * delta_hat
++                if disp_c4 is not None:
++                    divisor = 1 + inv_eps * jnp.sum(disp_c4, axis=0)
++                    if sigma_E is not None:
++                        divisor = divisor + c * sigma_E * eta0 * inv_eps / 2
++                    E = E / divisor
++                    P_new = P_hat + disp_c4 * E
++                    arrays = arrays.aset("fields->dispersive_P_prev", P_curr)
++                    arrays = arrays.aset("fields->dispersive_P_curr", P_new)
++                else:
++                    arrays = arrays.aset("fields->dispersive_P_prev", P_curr)
++                    arrays = arrays.aset("fields->dispersive_P_curr", P_hat)
++                    if sigma_E is not None:
++                        E = E / (1 + c * sigma_E * eta0 * inv_eps / 2)
+         elif sigma_E is not None:
+-            # update formula for lossy material. Simplifies to Noop for conductivity = 0
+-            # for details see Schneider, chapter 3.12
+             E = E / (1 + c * sigma_E * eta0 * inv_eps / 2)
+ 
+     else:
+diff --git a/src/fdtdx/increment_state.py b/src/fdtdx/increment_state.py
+index 400b6df..2426938 100644
+--- a/src/fdtdx/increment_state.py
++++ b/src/fdtdx/increment_state.py
+@@ -1,10 +1,9 @@
+-"""Cancellation-resistant Lorentz/Drude state-update candidate.
++"""Cancellation-resistant Lorentz/Drude increment-state ADE.
+ 
+-This module is intentionally isolated from the production FDTD update.  It
+-provides host coefficient generation, a discrete susceptibility evaluator, and
+-a pure JAX kernel so their numerical and autodiff behavior can be validated
+-before array placement or :func:`fdtdx.fdtd.update.update_E` opts into the new
+-representation.
++The host coefficient generator, discrete susceptibility evaluator, and pure
++JAX state kernel are used by the opt-in production path selected with
++``SimulationConfig(dispersive_state_representation="increment")``. The classic
++second-order polarization recurrence remains the default.
+ """
+ 
+ from __future__ import annotations
+@@ -83,9 +82,7 @@ def compute_increment_state_coefficients_per_axis(
+                     "frequency or reduce the time step."
+                 )
+             denominator = 1.0 + 0.5 * gamma[axis] * dt
+-            coeff_a[index, axis] = (
+-                1.0 - 0.5 * gamma[axis] * dt
+-            ) / denominator
++            coeff_a[index, axis] = (1.0 - 0.5 * gamma[axis] * dt) / denominator
+             coeff_c[index, axis] = omega_0[axis] ** 2 * dt**2 / denominator
+             coeff_b[index, axis] = coupling_sq[axis] * dt**2 / denominator
+     return coeff_a, coeff_c, coeff_b
+@@ -113,10 +110,7 @@ def susceptibility_from_increment_coefficients(
+     coeff_a = jnp.asarray(coeff_a)
+     coeff_c = jnp.asarray(coeff_c)
+     coeff_b = jnp.asarray(coeff_b)
+-    if not (
+-        coeff_a.shape == coeff_c.shape == coeff_b.shape
+-        and coeff_a.ndim >= 1
+-    ):
++    if not (coeff_a.shape == coeff_c.shape == coeff_b.shape and coeff_a.ndim >= 1):
+         raise ValueError("A, C, and B must have one identical non-scalar shape")
+     active = (coeff_a != 0.0) | (coeff_c != 0.0) | (coeff_b != 0.0)
+     real_dtype = jnp.result_type(coeff_a, coeff_c, coeff_b)
+@@ -143,13 +137,9 @@ def update_dispersive_increment_state(
+     is intentional. The returned increment is the complete polarization change
+     that enters Ampere's law as ``-inv_eps * sum(increment, axis=0)``.
+ 
+-    This helper is pure and JIT/autodiff compatible. Production
+-    :func:`fdtdx.fdtd.update.update_E` does not call it yet.
++    This helper is pure and JIT/autodiff compatible. The opt-in diagonal
++    dispersive branch of :func:`fdtdx.fdtd.update.update_E` calls it directly.
+     """
+-    new_increment = (
+-        coeff_a * increment
+-        - coeff_c * polarization
+-        + coeff_b * electric_field
+-    )
++    new_increment = coeff_a * increment - coeff_c * polarization + coeff_b * electric_field
+     new_polarization = polarization + new_increment
+     return new_polarization, new_increment
+diff --git a/src/fdtdx/materials.py b/src/fdtdx/materials.py
+index 55093ce..8572da0 100644
+--- a/src/fdtdx/materials.py
++++ b/src/fdtdx/materials.py
+@@ -1,6 +1,6 @@
+ import math
+ import warnings
+-from typing import cast
++from typing import Literal, cast
+ 
+ import numpy as np
+ 
+@@ -8,6 +8,7 @@ from fdtdx import constants
+ from fdtdx.core.jax.pytrees import TreeClass, frozen_field
+ from fdtdx.core.wavelength import WaveCharacter
+ from fdtdx.dispersion import DispersionModel, compute_pole_coefficients_tensor
++from fdtdx.increment_state import compute_increment_state_coefficients_per_axis
+ 
+ 
+ def _normalize_material_property(
+@@ -898,12 +899,15 @@ def compute_allowed_dispersive_coefficients(
+     max_num_poles: int,
+     num_components: int,
+     coupling_components: int | None = None,
++    state_representation: Literal["polarization", "increment"] = "polarization",
+ ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+     """Compute per-material discrete-time dispersive recurrence coefficients.
+ 
+     For each material (in the canonical sorted order used elsewhere), returns
+-    the ``c1``, ``c2``, ``c3``, ``c4`` coefficients from
+-    :func:`fdtdx.dispersion.compute_pole_coefficients_tensor`. Materials with
++    the classic ``c1/c2/c3/c4`` coefficients by default. With
++    ``state_representation="increment"``, the first three arrays instead store
++    cancellation-resistant ``A/C/B`` for axis-aligned Lorentz/Drude poles and
++    the fourth stays zero. Materials with
+     fewer poles than ``max_num_poles``, or non-dispersive materials, get
+     zero-padded slots (so the polarization term automatically vanishes on those
+     voxels). ``c4`` is zero for Lorentz/Drude poles and only non-zero for CCPR
+@@ -921,14 +925,21 @@ def compute_allowed_dispersive_coefficients(
+             ``c3``/``c4`` — additionally allows 9 (row-major 3x3 coupling
+             tensor) when any material has oriented poles. Defaults to
+             ``num_components``.
++        state_representation: ``"polarization"`` for classic recurrence
++            coefficients or ``"increment"`` for ``A/C/B``. The increment
++            representation rejects CCPR and oriented pole couplings.
+ 
+     Returns:
+         Four numpy arrays: ``c1``, ``c2`` of shape
+         ``(num_materials, max_num_poles, num_components)`` and ``c3``, ``c4``
+         of shape ``(num_materials, max_num_poles, coupling_components)``.
+     """
++    if state_representation not in ("polarization", "increment"):
++        raise ValueError(f"state_representation must be 'polarization' or 'increment', got {state_representation!r}")
+     if coupling_components is None:
+         coupling_components = num_components
++    if state_representation == "increment" and coupling_components == 9:
++        raise ValueError("increment-state ADE does not support oriented (9-component) pole couplings.")
+     if num_components not in (1, 3):
+         raise ValueError(f"num_components must be 1 or 3, got {num_components}.")
+     if coupling_components not in (1, 3, 9):
+@@ -954,6 +965,13 @@ def compute_allowed_dispersive_coefficients(
+                 "coupling_components < 9 requires axis-aligned dispersion, but a material has oriented poles."
+             )
+         poles = mat.dispersion.poles
++        if state_representation == "increment":
++            coeff_a, coeff_c, coeff_b = compute_increment_state_coefficients_per_axis(poles, dt)
++            n = len(poles)
++            c1[m_idx, :n] = coeff_a[:, :num_components]
++            c2[m_idx, :n] = coeff_c[:, :num_components]
++            c3[m_idx, :n] = coeff_b[:, :coupling_components]
++            continue
+         c1_vals, c2_vals, c3_vals, c4_vals = compute_pole_coefficients_tensor(poles, dt)
+         n = len(poles)
+         # For num_components == 1 the isotropy check above guarantees all three
+diff --git a/src/fdtdx/objects/detectors/mode.py b/src/fdtdx/objects/detectors/mode.py
+index 0a2b160..f807b0d 100644
+--- a/src/fdtdx/objects/detectors/mode.py
++++ b/src/fdtdx/objects/detectors/mode.py
+@@ -360,6 +360,7 @@ class BaseModeOverlapDetector(PhasorDetector, ABC):
+                     c3=c3_slice,
+                     c4=c4_slice,
+                     electric_conductivity=sigma_slice,
++                    state_representation=self._config.dispersive_state_representation,
+                     conductivity_spacing=conductivity_spacing,
+                 )
+             mode_E, mode_H, mode_neff = self._compute_mode_fields(
+diff --git a/src/fdtdx/objects/sources/dipole.py b/src/fdtdx/objects/sources/dipole.py
+index 40ddf6a..65bbaac 100644
+--- a/src/fdtdx/objects/sources/dipole.py
++++ b/src/fdtdx/objects/sources/dipole.py
+@@ -176,6 +176,7 @@ class PointDipoleSource(Source):
+                 omega=2.0 * np.pi * self.wave_character.get_frequency(),
+                 dt=self._config.time_step_duration,
+                 c4=c4_slice,
++                state_representation=self._config.dispersive_state_representation,
+             )
+ 
+         if isinstance(inv_permeabilities, jax.Array) and inv_permeabilities.ndim > 0:
+diff --git a/src/fdtdx/objects/sources/linear_polarization.py b/src/fdtdx/objects/sources/linear_polarization.py
+index f7d22f7..b69dbaa 100644
+--- a/src/fdtdx/objects/sources/linear_polarization.py
++++ b/src/fdtdx/objects/sources/linear_polarization.py
+@@ -207,6 +207,7 @@ class LinearlyPolarizedPlaneSource(TFSFPlaneSource, ABC):
+                 omega=2.0 * np.pi * self.wave_character.get_frequency(),
+                 dt=self._config.time_step_duration,
+                 c4=c4_slice,
++                state_representation=self._config.dispersive_state_representation,
+             )
+ 
+         center, azimuth, elevation = self._get_random_parts(key)
+@@ -347,6 +348,7 @@ class LinearlyPolarizedPlaneSource(TFSFPlaneSource, ABC):
+                 inv_eps_inf_slice=inv_eps_inf_slice,
+                 dtype=self._config.dtype,
+                 c4_slice=c4_slice,
++                state_representation=self._config.dispersive_state_representation,
+             )
+             self = self.aset("_temporal_H_filter", filtered, create_new_ok=True)
+         else:
+diff --git a/src/fdtdx/objects/sources/mode.py b/src/fdtdx/objects/sources/mode.py
+index 3cb1210..3e3aa16 100644
+--- a/src/fdtdx/objects/sources/mode.py
++++ b/src/fdtdx/objects/sources/mode.py
+@@ -142,6 +142,7 @@ class ModePlaneSource(TFSFPlaneSource):
+                 omega=2.0 * np.pi * self.wave_character.get_frequency(),
+                 dt=self._config.time_step_duration,
+                 c4=c4_slice,
++                state_representation=self._config.dispersive_state_representation,
+             )
+ 
+         self = self.aset("_inv_permittivity", inv_permittivity_slice, create_new_ok=True)
+@@ -165,6 +166,7 @@ class ModePlaneSource(TFSFPlaneSource):
+                 c3=c3_slice,
+                 c4=c4_slice,
+                 electric_conductivity=sigma_slice,
++                state_representation=self._config.dispersive_state_representation,
+                 conductivity_spacing=(
+                     None
+                     if sigma_slice is None
+@@ -266,6 +268,7 @@ class ModePlaneSource(TFSFPlaneSource):
+                 inv_eps_inf_slice=inv_eps_inf_slice,
+                 dtype=self._config.dtype,
+                 c4_slice=c4_slice,
++                state_representation=self._config.dispersive_state_representation,
+             )
+             self = self.aset("_temporal_H_filter", filtered, create_new_ok=True)
+         else:
+diff --git a/src/fdtdx/objects/sources/tfsf.py b/src/fdtdx/objects/sources/tfsf.py
+index 6514509..df635fa 100644
+--- a/src/fdtdx/objects/sources/tfsf.py
++++ b/src/fdtdx/objects/sources/tfsf.py
+@@ -29,6 +29,7 @@ def _build_dispersive_H_filter(
+     inv_eps_inf_slice: jax.Array,
+     dtype: jnp.dtype = jnp.float32,
+     c4_slice: jax.Array | None = None,
++    state_representation: str = "polarization",
+ ) -> jax.Array:
+     """Precompute the broadband-corrected H-side temporal profile for a TFSF source.
+ 
+@@ -119,6 +120,7 @@ def _build_dispersive_H_filter(
+         omegas=omegas_rfft,
+         dt=dt,
+         c4=c4_np,
++        state_representation=state_representation,
+     )
+     omega_c = 2.0 * np.pi * wave_character.get_frequency()
+     eps_center_arr = compute_eps_spectrum_from_coefficients(
+@@ -129,6 +131,7 @@ def _build_dispersive_H_filter(
+         omegas=np.array([omega_c], dtype=np.float64),
+         dt=dt,
+         c4=c4_np,
++        state_representation=state_representation,
+     )
+     eps_center = complex(eps_center_arr[0])
+ 
+diff --git a/src/fdtdx/objects/sources/tfsf_region.py b/src/fdtdx/objects/sources/tfsf_region.py
+index 2e23124..37c3fc2 100644
+--- a/src/fdtdx/objects/sources/tfsf_region.py
++++ b/src/fdtdx/objects/sources/tfsf_region.py
+@@ -261,6 +261,7 @@ class TFSFPlaneSourceRegion(TFSFPlaneSource):
+                     omega=omega_c,
+                     dt=config.time_step_duration,
+                     c4=c4_s,
++                    state_representation=config.dispersive_state_representation,
+                 )
+ 
+             impedance = _source_impedance(inv_eps_face, inv_mu_face, e_pol, h_pol)
+@@ -311,6 +312,7 @@ class TFSFPlaneSourceRegion(TFSFPlaneSource):
+                     inv_eps_inf_slice=inv_eps_inf_face,
+                     dtype=config.dtype,
+                     c4_slice=c4_s,
++                    state_representation=config.dispersive_state_representation,
+                 )
+ 
+             normal_axes.append(normal_axis)
+diff --git a/tests/simulation/fdtd/test_increment_state_fdtd.py b/tests/simulation/fdtd/test_increment_state_fdtd.py
+new file mode 100644
+index 0000000..c4a5abb
+--- /dev/null
++++ b/tests/simulation/fdtd/test_increment_state_fdtd.py
+@@ -0,0 +1,87 @@
++"""End-to-end gates for the opt-in increment-state dispersive FDTD path."""
++
++import jax
++import jax.numpy as jnp
++import pytest
++
++import fdtdx
++from fdtdx.config import SimulationConfig
++from fdtdx.core.grid import UniformGrid
++from fdtdx.fdtd.fdtd import checkpointed_fdtd
++from fdtdx.increment_state import compute_increment_state_coefficients_per_axis
++from fdtdx.objects.static_material.static import UniformMaterialObject
++from tests.simulation.fdtd.test_time_reversal import (
++    _build_lossy_dispersive_scene,
++    _coef_fd_check,
++    _make_disp_loss_fn,
++    _passive_ccpr_pole,
++)
++
++
++def test_increment_coefficients_are_placed_as_a_c_b():
++    """The full placement path stores A/C/B, not rounded c1/c2/c3."""
++    objects, arrays, config = _build_lossy_dispersive_scene(state_representation="increment")
++    slab = next(o for o in objects.objects if isinstance(o, UniformMaterialObject) and o.name == "slab")
++    assert slab.material.dispersion is not None
++    coeff_a, coeff_c, coeff_b = compute_increment_state_coefficients_per_axis(
++        slab.material.dispersion.poles, config.time_step_duration
++    )
++
++    xs, ys, zs = slab.grid_slice
++    assert arrays.dispersive_c1 is not None
++    assert arrays.dispersive_c2 is not None
++    assert arrays.dispersive_c3 is not None
++    assert arrays.dispersive_c4 is None
++    assert jnp.allclose(arrays.dispersive_c1[0, 0, xs, ys, zs], coeff_a[0, 0])
++    assert jnp.allclose(arrays.dispersive_c2[0, 0, xs, ys, zs], coeff_c[0, 0])
++    assert jnp.allclose(arrays.dispersive_c3[0, 0, xs, ys, zs], coeff_b[0, 0])
++
++
++def test_checkpointed_increment_b_gradient_matches_finite_difference():
++    """Differentiate a real driven dispersive FDTD run through B and compare FD."""
++    objects, arrays, config = _build_lossy_dispersive_scene(state_representation="increment")
++    coeff_b = arrays.dispersive_c3
++    assert coeff_b is not None
++    loss_fn = _make_disp_loss_fn("c3")
++    ad, fd, rel_err, diff, idx = _coef_fd_check(
++        coeff_b,
++        loss_fn,
++        arrays,
++        objects,
++        config,
++        jax.random.PRNGKey(99),
++        h_scale=1e-2,
++        h_floor=1e-6,
++        fdtd_impl=checkpointed_fdtd,
++    )
++    assert jnp.isfinite(ad) and jnp.isfinite(fd)
++    assert rel_err < 0.1 or diff < 1e-5, (
++        f"increment B AD vs FD mismatch at {idx}: AD={float(ad):.6e}, FD={float(fd):.6e}, rel_err={rel_err:.3e}"
++    )
++
++
++def test_increment_ccpr_is_rejected_during_full_placement():
++    config = SimulationConfig(
++        time=1.0e-14,
++        grid=UniformGrid(spacing=1.0e-7),
++        backend="cpu",
++        dispersive_state_representation="increment",
++    )
++    volume = fdtdx.SimulationVolume(partial_grid_shape=(8, 8, 8))
++    material = fdtdx.Material(
++        permittivity=2.0,
++        dispersion=fdtdx.DispersionModel(poles=(_passive_ccpr_pole(),)),
++    )
++    slab = fdtdx.UniformMaterialObject(
++        name="ccpr",
++        partial_grid_shape=(4, 4, 4),
++        material=material,
++    )
++    constraint = slab.set_grid_coordinates(axes=(0, 1, 2), sides=("-", "-", "-"), coordinates=(2, 2, 2))
++    with pytest.raises(NotImplementedError, match="Lorentz/Drude"):
++        fdtdx.place_objects(
++            object_list=[volume, slab],
++            config=config,
++            constraints=[constraint],
++            key=jax.random.PRNGKey(0),
++        )
+diff --git a/tests/simulation/fdtd/test_time_reversal.py b/tests/simulation/fdtd/test_time_reversal.py
+index 628a388..28b9e8b 100644
+--- a/tests/simulation/fdtd/test_time_reversal.py
++++ b/tests/simulation/fdtd/test_time_reversal.py
+@@ -815,7 +815,7 @@ class TestGradientPMLBlochComplex:
+ # runs through ``checkpointed_fdtd``.
+ 
+ 
+-def _build_lossy_dispersive_scene():
++def _build_lossy_dispersive_scene(state_representation="polarization"):
+     """Periodic-boundary Lorentz slab with nonzero σ_E, driven by a CW dipole.
+ 
+     The dipole is what makes the fields nonzero at all: the FDTD entry points
+@@ -828,6 +828,7 @@ def _build_lossy_dispersive_scene():
+         dtype=jnp.float32,
+         courant_factor=0.99,
+         gradient_config=None,
++        dispersive_state_representation=state_representation,
+     )
+     objects, constraints = [], []
+     volume = fdtdx.SimulationVolume(partial_grid_shape=(_VOLUME_CELLS, _VOLUME_CELLS, _VOLUME_CELLS))
+diff --git a/tests/unit/test_increment_state_spectrum.py b/tests/unit/test_increment_state_spectrum.py
+new file mode 100644
+index 0000000..88ce3cd
+--- /dev/null
++++ b/tests/unit/test_increment_state_spectrum.py
+@@ -0,0 +1,63 @@
++"""Spectrum and configuration gates for opt-in increment-state ADE."""
++
++import numpy as np
++import pytest
++
++from fdtdx.config import SimulationConfig
++from fdtdx.core.grid import UniformGrid
++from fdtdx.dispersion import LorentzPole, compute_eps_spectrum_from_coefficients
++from fdtdx.increment_state import compute_increment_state_coefficients_per_axis
++
++
++def test_increment_epsilon_spectrum_uses_direct_discrete_transfer_function():
++    pole = LorentzPole(
++        resonance_frequency=2.0e14,
++        damping=1.5e13,
++        delta_epsilon=2.25,
++    )
++    dt = 1.0e-16
++    coeff_a, coeff_c, coeff_b = compute_increment_state_coefficients_per_axis((pole,), dt)
++    # Isotropic coefficient tier with one spatial cell.
++    a = coeff_a[:, :1, None, None, None]
++    c = coeff_c[:, :1, None, None, None]
++    b = coeff_b[:, :1, None, None, None]
++    omegas = np.asarray([0.55e14, 1.4e14, 2.6e14])
++
++    actual = compute_eps_spectrum_from_coefficients(
++        c1=a,
++        c2=c,
++        c3=b,
++        inv_eps_inf=np.full((1, 1, 1, 1), 0.5),
++        omegas=omegas,
++        dt=dt,
++        state_representation="increment",
++    )
++    z_minus = np.exp(-1j * omegas[:, None, None, None, None, None] * dt)
++    denominator = (z_minus - 1.0) * (z_minus - a[None, ...]) + c[None, ...] * z_minus
++    expected = 2.0 + (b[None, ...] * z_minus / denominator).sum(axis=(1, 2, 3, 4, 5))
++    np.testing.assert_allclose(actual, expected, rtol=2e-13, atol=2e-13)
++
++
++def test_increment_spectrum_rejects_c4():
++    zeros = np.zeros((1, 1, 1, 1, 1))
++    with pytest.raises(ValueError, match="c4"):
++        compute_eps_spectrum_from_coefficients(
++            c1=zeros,
++            c2=zeros,
++            c3=zeros,
++            c4=zeros,
++            inv_eps_inf=np.ones((1, 1, 1, 1)),
++            omegas=np.asarray([1.0]),
++            dt=1.0,
++            state_representation="increment",
++        )
++
++
++def test_invalid_dispersive_state_representation_is_rejected():
++    with pytest.raises(ValueError, match="dispersive_state_representation"):
++        SimulationConfig(
++            time=1.0e-15,
++            grid=UniformGrid(spacing=1.0e-7),
++            backend="cpu",
++            dispersive_state_representation="unknown",  # type: ignore[arg-type]
++        )
+-- 
+2.43.0
+

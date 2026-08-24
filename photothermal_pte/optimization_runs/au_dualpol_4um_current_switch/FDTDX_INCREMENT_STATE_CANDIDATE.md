@@ -1,9 +1,10 @@
 # FDTDX increment-state ADE candidate
 
-This note records the CPU-only dispersive-state candidate added at commit
-`05d8e9ba`. It does not edit the pinned FDTDX checkout, run a 3-D field solve,
-certify a mesh or adjoint, authorize optimization, or touch the separate
-Lumerical track.
+The first sections record the CPU-only dispersive-state candidate added at
+commit `05d8e9ba`. The candidate has since been promoted into an isolated,
+opt-in FDTDX production path and passed a small checkpointed full-FDTD AD-FD
+gate; see `FDTDX_INCREMENT_STATE_INTEGRATION.md`. Neither stage certifies a
+4-um mesh, authorizes optimization, or touches the separate Lumerical track.
 
 ## Root cause and rejected CCPR route
 
@@ -98,21 +99,24 @@ Every material axis passes at z8, z16, and z32:
 | 16 | `4.664e-5` | `1.852e-6` | `2.611e-6` |
 | 32 | `5.372e-5` | `2.078e-6` | `1.642e-6` |
 
-The FDTDX-related unit-test suite is `152 passed`.
+At the CPU-candidate checkpoint, the FDTDX-related project suite was `152 passed`.
 
 ## Promotion boundary and next work
 
-The result is a solver-free representation candidate only. CPU NumPy scalar
-rounding does not prove the behavior of the actual JAX kernel, compiler fusion,
-3-D Maxwell update, checkpointed reverse mode, or a material-placement
-Jacobian. The required order is:
+At commit `05d8e9ba` this result was a solver-free representation candidate.
+The isolated fork now closes coefficient generation, actual-JIT long-time
+float32 stationarity, production placement/update/source semantics, and one
+small driven Lorentz-`B` checkpointed full-FDTD AD-FD control. The remaining
+promotion order is:
 
-1. implement these exact `A/C/B` state equations in an isolated FDTDX fork;
-2. prove one-cell and small-domain forward equivalence in float64;
-3. prove long-time float32 stationarity in the actual JAX kernel;
-4. pass checkpointed AD-FD controls for both a Drude and Lorentz parameter;
-5. run one short coarse 3-D exact-binary material control;
-6. only then generate new source/material pairs for z8/z16/z32.
+1. add the corresponding small full-FDTD Drude parameter AD-FD control;
+2. define a new exact-binary runner/version and hash all new coefficient and
+   source semantics;
+3. run one short coarse 3-D exact-binary timing/closure control;
+4. only if runtime and closure are practical, generate fresh z8/z16/z32
+   source/material pairs;
+5. keep continuous-density optimization blocked until a fixed-pole gray law
+   and its material-placement Jacobian pass independent AD-FD controls.
 
 The old two-pole artifacts remain negative evidence and cannot be mixed into a
 new-law mesh comparison. A future runner requires a new version, a pinned
@@ -131,10 +135,20 @@ make it faster.
 
 The first isolated fork gate is complete. The clean local FDTDX fork commit is `24d0cb2374bf03b6bfdc528b189c69685b74dfee`. It adds only `src/fdtdx/increment_state.py` and five unit tests; production `update_E`, placement, source, and detector paths remain unchanged. The module/test SHA-256 values are `ad01f797b9807fc1db994f4ff41c022078895f8d272379fbfe9ec9980c36d5eb` / `95815699805ea3b4322cfd435c47199d7cbff160693ed5a371a426ade0d5fa96`. The fork tests are `5 passed`; the existing dispersion/initialization regression subset is `106 passed`.
 
-The reproducible git patch is `fdtdx_patches/0001-feat-dispersion-add-isolated-increment-state-ADE-ker.patch`, SHA-256 `df7c8e6c537d8f1a6f5f33bb24c6fef7bebf8f8c16bbf11b06a13654c6e4cc50`. Project preflight code and tests were pushed at inverse-design commit `4269c80a`; the full project FDTDX-related suite is now `156 passed`.
+The reproducible git patch is `fdtdx_patches/0001-feat-dispersion-add-isolated-increment-state-ADE-ker.patch`, SHA-256 `df7c8e6c537d8f1a6f5f33bb24c6fef7bebf8f8c16bbf11b06a13654c6e4cc50`. Project preflight code and tests were pushed at inverse-design commit `4269c80a`; the project FDTDX-related suite at that isolated-kernel checkpoint was `156 passed`.
 
 The fork-bound CPU/JAX report is `/home/seunghyun200/fdtdx_results/l500_full_z_150a7592_20260824/increment_state_jax_24d0cb2/FDTDX_FRESH_INCREMENT_STATE_JAX_PREFLIGHT.json`. File SHA-256 is `3bc7fc444765acf8f869765b14ac053eb1355bb3a17010769ace495b485551cc`; payload SHA-256 is `890e150bb325bb61bea45aa9e08877a63a826809d873632619404e43cbf9bfd7`; preflight-script SHA-256 is `565cce1ce1fb41dd2a36fd9ffb177ad8edac92653e15cee2f72a877e73c4231d`. It audited the exact clean fork commit, forced backend `cpu` with x64 enabled for the reference state, and completed all z8/z16/z32 32-period kernels in `3.61 s` total.
 
 The worst actual-JIT float32 late drift is `1.8913e-6` at z32 Au. The worst float32/float64 late difference is `2.6211e-6` at z16 Au, and the worst carrier error remains `5.3718e-5` at z32 Au. Every axis and level passes. This closes compiler/JIT state precision only. The unit AD-FD test differentiates the isolated kernel coefficient; it is not a checkpointed full-FDTD adjoint certificate.
 
-The next allowed fork change is opt-in full integration: select the representation in `SimulationConfig`, reuse the three coefficient arrays as direct `A/C/B` storage without extra grid memory, place/read back those semantics, route source susceptibility through the stable formula, and connect the diagonal `update_E` correction. CCPR, oriented dispersion, and full-tensor dispersion must fail closed initially. Then run small-domain forward equivalence and checkpointed full-FDTD AD-FD before any production-width GPU solve.
+That opt-in integration is complete at clean fork commit
+`fc09ce54dc32ea13e27d2af799cdb3771801bf65`. It reuses the existing states and
+coefficient arrays, connects placement/update/source/mode/broadband-spectrum
+semantics, and rejects CCPR, oriented poles, and the dispersive full-tensor
+path. The small driven checkpointed AD-FD symmetric relative error is
+`2.5563e-4`; the complete FDTDX unit suite is `2605 passed, 2 skipped, 1
+xfailed`. The exported patch and exact validation evidence are in
+`FDTDX_INCREMENT_STATE_INTEGRATION.md`. No production-width GPU solve has run.
+The next allowed field launch is a short exact-binary timing/closure control,
+not a gray optimizer; generic continuous `Device` interpolation still changes
+`A/C` with density and remains a material-law blocker.

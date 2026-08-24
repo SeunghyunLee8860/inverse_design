@@ -110,7 +110,11 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     `fdtdx_fresh_courant_certificate.py`,
     `fdtdx_fresh_full_z_certificate.py`, and
     `run_fdtdx_fresh_full_z_campaign.sh` -- the separate pinned-FDTDX
-    forensic/rebuild track. Its runtime, mesh, six
+    forensic/rebuild track. Read `FDTDX_INCREMENT_STATE_CANDIDATE.md`
+    and `FDTDX_INCREMENT_STATE_INTEGRATION.md` for the cancellation-resistant
+    ADE, reproducible two-patch fork, checkpointed AD-FD evidence, runtime
+    boundary, and the remaining continuous-device mixing blocker. Its runtime,
+    mesh, six
     PML faces, source pair, placements, exact endpoint material readback, and
     component-Yee-volume energy balance are fail-closed. This track must not
     edit, launch, or reinterpret the concurrent Lumerical work.
@@ -774,9 +778,26 @@ Do not copy them into this worktree.
 
 ## 2026-08-25 FDTDX increment-state update
 
-Commit `05d8e9ba` adds a CPU-only cancellation-resistant `(P, delta-P)` ADE candidate. All z8/z16/z32 material-axis scalar gates pass and the FDTDX-related suite is now `152 passed`; optimizer permission remains false. The old one-point CCPR fallback was rejected because passive candidates retained fine-dt cancellation while the better-conditioned candidate was non-passive. See `FDTDX_INCREMENT_STATE_CANDIDATE.md` for equations, hashes, runtime, exact promotion boundaries, and the required small forward/checkpointed-AD-FD sequence. Do not launch another long FDTDX pair yet.
+Commit `05d8e9ba` added the CPU-only cancellation-resistant `(P, delta-P)` ADE candidate. At that checkpoint all z8/z16/z32 material-axis scalar gates passed and the FDTDX-related suite was `152 passed`; optimizer permission remained false. The old one-point CCPR fallback was rejected because passive candidates retained fine-dt cancellation while the better-conditioned candidate was non-passive. See `FDTDX_INCREMENT_STATE_CANDIDATE.md` for equations, hashes, runtime, exact promotion boundaries, and the required small forward/checkpointed-AD-FD sequence. Do not launch another long FDTDX pair yet.
 
 
-## Fork-bound JAX status
+## Fork-bound increment-state integration status
 
-Inverse-design commit `4269c80a` exports clean FDTDX fork commit `24d0cb2374bf03b6bfdc528b189c69685b74dfee` as a standard patch and adds the exact CPU/JAX preflight. z8/z16/z32 actual-JIT state gates all pass; the project suite is `156 passed`. This validates the isolated kernel only. Production `update_E`, material placement/source semantics, and checkpointed full-FDTD AD-FD remain the next blockers. See `FDTDX_INCREMENT_STATE_CANDIDATE.md`; no long GPU solve is authorized.
+The clean isolated fork is now at
+`fc09ce54dc32ea13e27d2af799cdb3771801bf65`. Patch `0001` adds the isolated
+kernel; patch `0002` integrates the opt-in state through config, coefficient
+placement, diagonal `update_E`, sources, mode detectors, and broadband
+spectrum reconstruction. CCPR, oriented poles, and dispersive full tensors
+fail closed. The actual-JIT z8/z16/z32 state gates still pass. One small driven
+Lorentz `B` checkpointed full-FDTD AD-FD control passes with symmetric relative
+error `2.5563e-4`; the full fork unit suite is `2605 passed, 2 skipped, 1
+xfailed`; the project-side FDTDX audit suite is `161 passed`. See
+`FDTDX_INCREMENT_STATE_INTEGRATION.md` for hashes and runtimes.
+
+No GPU was used for this integration. Do not launch a long pair or any
+optimizer yet. The next allowed solve is a short coarse exact-binary timing and
+closure control after adding a full-FDTD Drude AD-FD gate and a newly hashed
+runner. Recheck live compute-process ownership immediately before launch and
+run Ea/Eb concurrently only on two distinct idle GPUs. The generic continuous
+`Device` path still interpolates `A/C` with density, so the gray optical law and
+material-placement Jacobian remain blockers.
