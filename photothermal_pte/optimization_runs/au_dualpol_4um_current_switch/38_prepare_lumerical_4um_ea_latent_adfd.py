@@ -15,8 +15,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
     CONTRACT,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_adfd import (
+    SMOOTH_DIRECTION_COEFFICIENTS,
     array_sha256,
     centered_density_pair,
+    smooth_direction_definition,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_density import (
     density_state_audit,
@@ -53,6 +55,12 @@ def main() -> int:
     parser.add_argument("--polarization", choices=("Ea", "Eb"), default="Ea")
     parser.add_argument("--beta", type=float, default=4.0)
     parser.add_argument("--step", type=float, default=0.0025)
+    parser.add_argument(
+        "--direction-index",
+        type=int,
+        choices=range(len(SMOOTH_DIRECTION_COEFFICIENTS)),
+        default=0,
+    )
     parser.add_argument("--output-dir", required=True, type=Path)
     args = parser.parse_args()
     output = args.output_dir.expanduser().resolve()
@@ -63,7 +71,7 @@ def main() -> int:
 
     latent = independent_latent_baseline()
     direction, latent_plus, latent_minus = centered_density_pair(
-        latent, step=args.step
+        latent, step=args.step, direction_index=args.direction_index
     )
     projected = NOMINAL_MAPPING.physical(latent, args.beta)
     projected_plus = NOMINAL_MAPPING.physical(latent_plus, args.beta)
@@ -101,10 +109,9 @@ def main() -> int:
             "0.5+0.16*sin(0.8*pi*x)*cos(0.6*pi*y); x,y are independent "
             "normalized nodal coordinates"
         ),
-        "direction_definition": (
-            "sin(pi*(0.73*x+0.41*y+0.17))*cos(pi*(0.31*x-0.67*y-0.09)); "
-            "x,y are independent normalized nodal coordinates; L_inf normalized"
-        ),
+        "direction_index": args.direction_index,
+        "available_direction_count": len(SMOOTH_DIRECTION_COEFFICIENTS),
+        "direction_definition": smooth_direction_definition(args.direction_index),
         "baseline_and_direction_selected_without_fields_or_gradient": True,
         "latent_baseline_sha256": array_sha256(
             latent, label="adfd-latent-baseline-v1"

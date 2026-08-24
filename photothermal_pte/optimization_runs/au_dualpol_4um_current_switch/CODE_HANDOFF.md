@@ -230,6 +230,13 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     `t-I_Ea<=0`, `t+I_Eb<=0`. The combined balanced-objective AD-FD error is
     `7.779e-5`; the two constraint errors are `7.779e-5` and `1.4748e-4`.
     It used no solver and leaves the optimizer disabled.
+35. `lumerical_4um_adfd.py` and script 38 now expose four deterministic,
+    low-frequency directions. Direction 0 retains semantic SHA
+    `44f111...`; direction 1 has normalized overlap `-0.00720` with it. The
+    second direction passes Ea AD-FD at `7.011e-5` relative error and Eb at
+    `4.093e-5`; the signed objective and both constraints pass too. Its four
+    forward solves totaled 225.7 s and four custom-CUDA evaluations 71.7 s.
+    Ea/Eb now have two independent directions each; indices 2/3 remain.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -296,8 +303,8 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    4-um endpoint parity, quantified source-band error, uniform-density
    resonance sweep, multi-direction latent-variable AD-FD, and
    both-polarization validation. The component-Yee mapping FD/transpose and
-   one complete latent-variable directional AD-FD for each of Ea and Eb now
-   pass on the RTX development mesh. See `MATERIAL_FRACTION_AUDIT.md`.
+   two complete latent-variable directional AD-FD checks for each of Ea and Eb
+   now pass on the RTX development mesh. See `MATERIAL_FRACTION_AUDIT.md`.
 2. AD-FD validates the derivative of a chosen discrete mesh; it does not
    certify mesh convergence.
 3. The original optical z mesh used only 2 Au cells and 5 TaIrTe4 cells.
@@ -355,10 +362,10 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    existing entry points still implement the historical gray/FDTDX path.
    Legacy shared-linear certificates cannot clear this gate. The new
    Lumerical `n-k` density carrier is now connected through component-Yee
-   discrete adjoints for Ea and Eb. One complete latent-variable direction for
-   each polarization now passes centered AD-FD. Production remains blocked
-   until multiple independent directions and the signed dual objective pass
-   on a selected converged mesh. Then issue
+   discrete adjoints for Ea and Eb. Two complete latent-variable directions
+   for each polarization and their signed objective now pass centered AD-FD.
+   Production remains blocked until directions 2/3, the Lumerical evaluation
+   driver, and the selected converged mesh pass. Then issue
    certificates naming the selected full-domain-z grid, Courant factor, time
    windows, and same-grid Ea/Eb source calibration. The combined adjoint also derives
    its Au/TaIrTe4 material offsets from the realized placed slices; do not
@@ -600,6 +607,11 @@ Do not copy them into this worktree.
     `7.779e-5`; the two signed constraint errors were `7.779e-5` and
     `1.4748e-4`. The raw result is outside Git at
     `r12_ea_eb_latent_beta4_signed_objective_v2/signed_dual_objective_result.json`.
+18. Direction index 1 passed the same full chain. Ea AD/FD were
+    `1.966482804e-8`/`1.966344926e-8 A` (error `7.011e-5`); Eb AD/FD were
+    `3.871015880e-8`/`3.870857434e-8 A` (error `4.093e-5`). The signed
+    objective artifact is outside Git at
+    `r12_ea_eb_latent_beta4_dir1_signed_objective_v1/`.
 
 ## Next correct sequence
 
@@ -640,10 +652,10 @@ Do not copy them into this worktree.
    now exist, but no B200 result is committed and this Codex host fails the
    B200 preflight.
 5. The component-Yee builder, hash-bound R1.2 distributed-source adjoints,
-   and one complete beta-4 latent centered AD-FD direction for each of Ea and
+   and two complete beta-4 latent centered AD-FD directions for each of Ea and
    Eb now pass on the 5/50-nm staircase mesh. Their exact signed epigraph also
-   passes in that common direction with no new solve. Extend the certificate
-   to additional independent directions, then build a fail-closed Lumerical
+   passes in both common directions. Complete direction indices 2/3, then
+   build a fail-closed Lumerical
    evaluation driver without rerunning already hash-bound baselines. The
    polarization-general runner now permits reuse of the Ea material Jacobian
    for Eb only after the exact epsilon/grid/frequency binding passes; it does

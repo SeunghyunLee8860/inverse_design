@@ -9,6 +9,14 @@ from typing import Any
 import numpy as np
 
 
+SMOOTH_DIRECTION_COEFFICIENTS = (
+    (0.73, 0.41, 0.17, 0.31, -0.67, -0.09),
+    (0.23, -0.33, 0.04, -0.85, 0.49, 0.04),
+    (0.70, -0.66, 0.10, -0.60, -0.81, -0.25),
+    (0.40, 0.37, 0.12, 0.52, 0.72, 0.19),
+)
+
+
 def array_sha256(value: np.ndarray, *, label: str) -> str:
     array = np.ascontiguousarray(value)
     digest = hashlib.sha256()
@@ -22,29 +30,52 @@ def array_sha256(value: np.ndarray, *, label: str) -> str:
     return digest.hexdigest()
 
 
-def independent_smooth_direction(shape: tuple[int, int]) -> np.ndarray:
-    """Return a fixed low-spatial-frequency direction independent of AD data."""
+def smooth_direction_definition(direction_index: int) -> str:
+    """Return the auditable analytic definition for one direction."""
+
+    if not isinstance(direction_index, (int, np.integer)):
+        raise ValueError("direction index must be an integer")
+    index = int(direction_index)
+    if not 0 <= index < len(SMOOTH_DIRECTION_COEFFICIENTS):
+        raise ValueError(
+            f"direction index must lie in [0,{len(SMOOTH_DIRECTION_COEFFICIENTS) - 1}]"
+        )
+    a, b, c, d, e, f = SMOOTH_DIRECTION_COEFFICIENTS[index]
+    return (
+        f"sin(pi*({a:g}*x{b:+g}*y{c:+g}))*"
+        f"cos(pi*({d:g}*x{e:+g}*y{f:+g})); "
+        "x,y are independent normalized nodal coordinates; L_inf normalized"
+    )
+
+
+def independent_smooth_direction(
+    shape: tuple[int, int], direction_index: int = 0
+) -> np.ndarray:
+    """Return one fixed low-frequency direction independent of all AD data."""
 
     if shape[0] < 2 or shape[1] < 2:
         raise ValueError("AD-FD direction requires at least a 2x2 density grid")
+    # Validate and expose the exact formula through the same coefficient table.
+    smooth_direction_definition(direction_index)
+    a, b, c, d, e, f = SMOOTH_DIRECTION_COEFFICIENTS[int(direction_index)]
     x = np.linspace(-1.0, 1.0, shape[0], dtype=np.float64)[:, None]
     y = np.linspace(-1.0, 1.0, shape[1], dtype=np.float64)[None, :]
-    direction = np.sin(np.pi * (0.73 * x + 0.41 * y + 0.17)) * np.cos(
-        np.pi * (0.31 * x - 0.67 * y - 0.09)
+    direction = np.sin(np.pi * (a * x + b * y + c)) * np.cos(
+        np.pi * (d * x + e * y + f)
     )
     direction /= np.max(np.abs(direction))
     return np.ascontiguousarray(direction)
 
 
 def centered_density_pair(
-    baseline: np.ndarray, *, step: float
+    baseline: np.ndarray, *, step: float, direction_index: int = 0
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     rho = np.asarray(baseline, dtype=np.float64)
     if rho.ndim != 2 or not np.all(np.isfinite(rho)):
         raise ValueError("baseline density must be one finite 2-D array")
     if not np.isfinite(step) or step <= 0.0:
         raise ValueError("centered AD-FD step must be finite and positive")
-    direction = independent_smooth_direction(rho.shape)
+    direction = independent_smooth_direction(rho.shape, direction_index)
     plus = rho + step * direction
     minus = rho - step * direction
     if np.min(plus) < 0.0 or np.max(plus) > 1.0:

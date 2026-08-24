@@ -7,6 +7,8 @@ import numpy as np
 import pytest
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_adfd import (
+    SMOOTH_DIRECTION_COEFFICIENTS,
+    array_sha256,
     centered_adfd_metrics,
     centered_density_pair,
     centered_pair_reconstruction_metrics,
@@ -65,6 +67,27 @@ def test_independent_direction_is_deterministic_smooth_and_normalized() -> None:
     assert np.max(np.abs(first)) == 1.0
     assert np.max(np.abs(np.diff(first, axis=0))) < 0.1
     assert np.max(np.abs(np.diff(first, axis=1))) < 0.1
+    assert array_sha256(first, label="adfd-latent-direction-v1") == (
+        "44f111f4a7669b2e0d42f8bd1978f9489d0a48f8973774d7b361445293b6c280"
+    )
+
+
+def test_smooth_direction_family_is_low_frequency_and_independent() -> None:
+    directions = [
+        independent_smooth_direction((81, 81), index)
+        for index in range(len(SMOOTH_DIRECTION_COEFFICIENTS))
+    ]
+    for direction in directions:
+        assert np.max(np.abs(direction)) == 1.0
+        assert np.max(np.abs(np.diff(direction, axis=0))) < 0.15
+        assert np.max(np.abs(np.diff(direction, axis=1))) < 0.15
+    normalized = [direction.ravel() / np.linalg.norm(direction) for direction in directions]
+    gram = np.asarray([[np.vdot(left, right) for right in normalized] for left in normalized])
+    np.testing.assert_allclose(np.diag(gram), 1.0, rtol=0.0, atol=5.0e-16)
+    off_diagonal = gram - np.diag(np.diag(gram))
+    assert np.max(np.abs(off_diagonal)) < 0.05
+    with pytest.raises(ValueError, match="direction index"):
+        independent_smooth_direction((81, 81), len(directions))
 
 
 def test_centered_density_pair_is_exact_and_feasible() -> None:

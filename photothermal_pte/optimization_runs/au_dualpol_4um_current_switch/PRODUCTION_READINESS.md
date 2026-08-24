@@ -109,19 +109,26 @@ evaluations used about 55 s. The material Jacobian was reused only after the
 projected density, component epsilon hashes/shapes, Yee coordinates, and
 frequency matched; polarization-dependent E/Q arrays were correctly allowed
 to differ. Neither polarization used Lumerical HEAT/CHARGE or an FDTDX Maxwell
-solve. These are one-direction derivative certificates, not a demonstration
+solve. These initial derivative certificates are not a demonstration
 of the required signed switching objective: the unoptimized baseline currents
-are both negative (`Ea=-8.334 nA`, `Eb=-15.591 nA`). Multiple independent
-directions, objective-level tests, mesh selection, and B200 repetition remain
-open.
+are both negative (`Ea=-8.334 nA`, `Eb=-15.591 nA`). The objective-level and
+second-direction extensions follow below.
 The hash-bound Ea/Eb artifacts were then combined by script 39 without any
 new solve. The exact epigraph is `t-I_Ea<=0`, `t+I_Eb<=0`; its latent
 constraint gradients are `-dI_Ea/drho` and `+dI_Eb/drho`. At the common
 baseline, the balanced utility is `-8.334 nA` and Ea is active. The combined
 balanced-objective directional AD-FD error is `7.779e-5`; the two epigraph
-constraint errors are `7.779e-5` and `1.4748e-4`. This closes the
-one-direction objective wiring only. It neither enables the optimizer nor
-changes the fact that switching has not yet been achieved.
+constraint errors are `7.779e-5` and `1.4748e-4`.
+A four-member deterministic smooth direction family was then added while
+preserving the original direction-0 hash. Direction 1 is nearly orthogonal to
+direction 0 and also passes: Ea AD `1.966482804e-8 A`, FD
+`1.966344926e-8 A`, error `7.011e-5`; Eb AD `3.871015880e-8 A`, FD
+`3.870857434e-8 A`, error `4.093e-5`. Its signed balanced-objective and both
+constraint errors pass as well. The four new perturbed Maxwell forwards
+totaled 225.7 s and the four custom-CUDA evaluations 71.7 s. Ea and Eb
+therefore each have two independent directions on this development mesh.
+Direction indices 2/3, the optimizer driver, mesh selection, and B200
+repetition remain open; switching has not yet been achieved.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine

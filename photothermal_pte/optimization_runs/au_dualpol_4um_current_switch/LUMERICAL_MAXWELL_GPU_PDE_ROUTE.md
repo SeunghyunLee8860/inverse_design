@@ -339,9 +339,20 @@ hash-bound certificates in the exact epigraph form `t-I_Ea<=0` and
 balanced-objective one-direction AD-FD error is `7.779e-5`; the two constraint
 errors are `7.779e-5` and `1.4748e-4`. This audit reused the already completed
 plus/minus currents and gradients, so it ran zero Maxwell, custom-CUDA,
-Lumerical HEAT/CHARGE, and FDTDX solves. Additional independent directions,
-an actual Lumerical LD_MMA evaluation driver, a selected mesh, and B200
-repetition remain mandatory before enabling optimization.
+Lumerical HEAT/CHARGE, and FDTDX solves. This first objective audit covers
+direction 0; the next paragraph adds direction 1.
+
+The deterministic direction generator now exposes four fixed smooth analytic
+directions selected without fields or gradients. Direction 0 remains
+byte/semantic-hash compatible with the first certificate; direction 1 has
+normalized overlap only `-0.00720` with it. Direction 1 passed complete latent
+AD-FD for both polarizations: Ea relative error `7.011e-5`, Eb relative error
+`4.093e-5`, with matching nonzero signs. The signed balanced-objective error
+was `7.011e-5`; its Ea/Eb constraint errors were `7.011e-5`/`4.093e-5`.
+The four new Lumerical forwards took 52.22, 50.12, 60.68, and 62.68 s; the
+four custom-CUDA evaluations totaled 71.66 s. Thus each polarization now has
+two independent development-mesh directions. Indices 2/3 remain before the
+planned four-direction gate; no optimizer was run.
 
 ## Exact endpoint/final GPU runner
 

@@ -43,3 +43,6 @@ relative error `7.779e-5`, with constraint errors `7.779e-5` and
 `1.4748e-4`. It performs no solver call and does not enable LD_MMA. The common
 unoptimized point has `I_Ea=-8.334 nA` and `I_Eb=-15.591 nA`, so the requested
 opposite-sign state is not yet present.
+An independent second common direction now also passes: balanced-objective
+error `7.011e-5` and Ea/Eb constraint errors `7.011e-5`/`4.093e-5`.
+Directions 2/3 and a Lumerical evaluation driver remain open.
