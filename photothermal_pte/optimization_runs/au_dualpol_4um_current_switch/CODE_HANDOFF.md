@@ -556,9 +556,31 @@ The zero-step preflight is `ready=true` with no failed checks and payload hash
 `be6a3c2112ec84b7f4ffa274fa68731b62d2159782ebe6816b4cddcde04f982b`.
 It reads back the full two-pole/three-component solver arrays, TaIrTe4 a/b/c
 axis assignment, ordinary-Au endpoints, exact binary mask, Si/SiO2, PML, mesh,
-and realized time step. This is only permission to run a fresh t32 Ea/Eb
-source pair. It is not a source, material, mesh, PTE-current, or optimizer
-certificate, and the t24 source pair must not be reused.
+and realized time step. At that checkpoint it authorized only a fresh t32
+source pair; it was not a source, material, mesh, PTE-current, or optimizer
+certificate.
+
+The fresh t32 all-air source pair was subsequently completed at clean commit
+`1c7cd8ee` under external root
+`two_pole_forward_settling_1c7cd8ee/z16_t32`. Artifact SHA-256 values are:
+
+- Ea source report:
+  `beefc073c1f0403010858502ea42de452308e554f7847d3283173e495e5eef66`
+- Ea source NPZ:
+  `20b54b16d9f9a634a3a97a0a938e8cadc3e1d4f343496500b8160a228d481573`
+- Eb source report:
+  `0d565cfee7c435f46f8891c26dbd296bae04531b88dbe4170bb5af11e0026e9e`
+- Eb source NPZ:
+  `50862803d45551c9d508d939ab77427557aaab5147b1576b5588f6a50911eaa4`
+- source-pair certificate:
+  `278dff85e307042d1b7d004316ac74be010fb40593179b65948bbdc878c4b7bc`
+
+Ea/Eb took `1144.41 s` / `1144.54 s`, passed every source gate, and
+reported maximum complex-field stationarity NRMSE `4.0193e-6` / `4.0165e-6`.
+Both unscaled incident powers are exactly `1.883720176371062e-12 W` at the
+recorded precision, so pair mismatch is `0.0`; common-285-uW scaling is exact.
+This source pair is valid only for this t32 case. The next permitted action is
+t32 material Ea/Eb with this pair, not mesh comparison or optimization.
 
 Do not proceed to x/y, domain, PML, thermal/electrical, or optimization until
 z convergence closes. Preserve the failed z2/z4/z8 comparisons and the z16

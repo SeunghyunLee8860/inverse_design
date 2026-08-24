@@ -431,8 +431,20 @@ The placed-array preflight file SHA-256 is
 `e0e992e1fdaf4edfcb9f96842759ed1b2410b4f293516bd5067dc15021ab2a1b`;
 it is `ready=true`, has no failed checks, and has internal payload hash
 `be6a3c2112ec84b7f4ffa274fa68731b62d2159782ebe6816b4cddcde04f982b`.
-This closes only the t32 contract/readback gate. A fresh t32 Ea/Eb all-air
-source pair is next; the t24 source pair remains invalid for this case.
+This closed only the t32 contract/readback gate; the t24 source pair remained
+invalid for this case. The fresh t32 all-air pair was then completed at clean
+commit `1c7cd8ee`. Ea report/NPZ SHA-256 values are
+`beefc073c1f0403010858502ea42de452308e554f7847d3283173e495e5eef66` /
+`20b54b16d9f9a634a3a97a0a938e8cadc3e1d4f343496500b8160a228d481573`;
+Eb values are
+`0d565cfee7c435f46f8891c26dbd296bae04531b88dbe4170bb5af11e0026e9e` /
+`50862803d45551c9d508d939ab77427557aaab5147b1576b5588f6a50911eaa4`.
+The source-pair certificate SHA-256 is
+`278dff85e307042d1b7d004316ac74be010fb40593179b65948bbdc878c4b7bc`.
+Both source cases pass all gates with identical incident power
+`1.883720176371062e-12 W`, zero pair mismatch, and field stationarity below
+`4.02e-6`. The matching t32 material Ea/Eb pair is now the only next optical
+action; mesh comparison remains blocked until it passes.
 
 ## Comparison and promotion rules
 

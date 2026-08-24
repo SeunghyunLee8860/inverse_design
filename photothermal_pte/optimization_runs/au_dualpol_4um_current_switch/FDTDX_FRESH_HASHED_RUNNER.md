@@ -297,8 +297,20 @@ SHA-256 is
 `e0e992e1fdaf4edfcb9f96842759ed1b2410b4f293516bd5067dc15021ab2a1b`
 and payload SHA-256 is
 `be6a3c2112ec84b7f4ffa274fa68731b62d2159782ebe6816b4cddcde04f982b`.
-This authorizes only fresh t32 source-only Ea/Eb runs and their pair
-certificate. Material execution remains downstream of that new source pair.
+The fresh t32 source-only pair was then completed at clean commit `1c7cd8ee`
+under `two_pole_forward_settling_1c7cd8ee/z16_t32`. Ea report/NPZ SHA-256
+values are
+`beefc073c1f0403010858502ea42de452308e554f7847d3283173e495e5eef66` /
+`20b54b16d9f9a634a3a97a0a938e8cadc3e1d4f343496500b8160a228d481573`;
+Eb values are
+`0d565cfee7c435f46f8891c26dbd296bae04531b88dbe4170bb5af11e0026e9e` /
+`50862803d45551c9d508d939ab77427557aaab5147b1576b5588f6a50911eaa4`.
+The pair-certificate SHA-256 is
+`278dff85e307042d1b7d004316ac74be010fb40593179b65948bbdc878c4b7bc`.
+Both cases pass every source gate. Their incident powers are identically
+`1.883720176371062e-12 W`, pair mismatch is `0.0`, and maximum field
+stationarity is below `4.02e-6`. This authorizes the matching t32 material
+Ea/Eb runs only; no mesh or optimizer promotion follows from source-only data.
 
 ## Convergence rule
 
