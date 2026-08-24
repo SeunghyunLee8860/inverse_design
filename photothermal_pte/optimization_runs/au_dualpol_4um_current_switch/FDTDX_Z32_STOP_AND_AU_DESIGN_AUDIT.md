@@ -1,5 +1,14 @@
 # FDTDX z32 stop certificate and Au-design audit
 
+## Downstream thermal-z diagnostic update
+
+The exact-binary z32 Q artifacts were subsequently frozen to isolate the
+explicit thermal z discretization.  Thermal factors 1/2/4 pass both successive
+tail pairs for Ea and Eb, selecting factor 2 only for that diagnostic.  This
+does not change the failed optical certificate, select a production mesh, or
+allow optimization.  See `FDTDX_FROZEN_Q_THERMAL_Z_CONVERGENCE.md` for byte
+identities, convergence metrics, and measured 6--12 s case runtimes.
+
 ## Decision
 
 The fresh increment-state FDTDX exact-binary optical reference is **not mesh

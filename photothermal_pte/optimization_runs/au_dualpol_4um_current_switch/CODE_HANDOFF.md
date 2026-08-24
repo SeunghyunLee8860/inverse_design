@@ -1,5 +1,16 @@
 # Au dual-polarization PTE inverse-design code handoff
 
+## Latest downstream diagnostic -- thermal z only
+
+The blocked exact-binary FDTDX z32 Q artifacts have now been frozen and used
+to close an independent explicit-thermal z refinement ladder.  Factors 1, 2,
+and 4 pass both successive tail pairs for Ea and Eb; factor 2 (`266 x 266 x
+66`) is selected only for frozen-Q thermal diagnostics.  Read
+`FDTDX_FROZEN_Q_THERMAL_Z_CONVERGENCE.md` first.  Thermal x/y, optical,
+electrical, and the production multiphysics mesh remain unselected, and the
+optimizer remains forbidden.  The concurrent Lumerical session remains
+untouched and out of scope.
+
 ## Current FDTDX endpoint -- read this first
 
 The fresh exact-binary FDTDX z-only ladder ended at z32 without selecting a mesh. The z16-to-z32 certificate is cleanly provenance-bound but fails component-Q and material-region complex-field convergence. Do not run z64, adjoint timing, gray optimization, or any historical FDTDX optimizer. Read `FDTDX_Z32_STOP_AND_AU_DESIGN_AUDIT.md` before following the chronological records below. The independently owned Lumerical session remains out of scope for this FDTDX handoff.
@@ -122,6 +133,13 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     PML faces, source pair, placements, exact endpoint material readback, and
     component-Yee-volume energy balance are fail-closed. This track must not
     edit, launch, or reinterpret the concurrent Lumerical work.
+23. `FDTDX_FROZEN_Q_THERMAL_Z_CONVERGENCE.md`,
+    `fdtdx_frozen_q_thermal_z_case.py`, and
+    `fdtdx_frozen_q_thermal_z_certificate.py` -- diagnostic-only thermal z
+    ladder using byte-bound exact-binary z32 Q.  Both factor1-to-2 and
+    factor2-to-4 pass for Ea/Eb and select factor 2 only for the frozen-Q
+    thermal diagnostic.  They do not select a thermal x/y, optical,
+    electrical, or production mesh and cannot authorize optimization.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.

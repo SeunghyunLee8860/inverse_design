@@ -4,6 +4,11 @@
 
 The later exact-binary z32 campaign is complete and still not converged. No mesh is selected; z64, adjoint timing, gray optimization, and optimizer restart are forbidden. `FDTDX_Z32_STOP_AND_AU_DESIGN_AUDIT.md` is the authoritative current result. Sections below retain the chronological integration evidence and must not be read as current launch instructions.
 
+A later diagnostic froze the certified z32 Q and converged only the explicit
+thermal z discretization at factor 2.  It does not alter this optical endpoint
+or authorize optimization.  Read
+`FDTDX_FROZEN_Q_THERMAL_Z_CONVERGENCE.md` for that downstream result.
+
 ## Scope and boundary
 
 This checkpoint integrates the cancellation-resistant Lorentz/Drude
