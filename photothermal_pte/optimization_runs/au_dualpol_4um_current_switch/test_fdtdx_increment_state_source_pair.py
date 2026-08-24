@@ -12,6 +12,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fres
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch import (
     fdtdx_increment_state_source_only as source_only,
     fdtdx_increment_state_source_pair as source_pair,
+    fdtdx_increment_state_source_pair_validation as pair_validation,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
     ANCHOR_CASE,
@@ -135,3 +136,49 @@ def test_source_wrapper_rejects_busy_gpu_before_cuda_export():
     assert "export JAX_PLATFORMS=cuda" in wrapper
     assert '"$@"' in wrapper
     assert "Lumerical" not in wrapper
+
+
+def test_certificate_revalidates_report_and_raw_bytes(tmp_path):
+    ea, ea_hash = _report(tmp_path, "Ea", 1.000e-12)
+    eb, eb_hash = _report(tmp_path, "Eb", 1.002e-12)
+    pair = source_pair.build_pair(ea, ea_hash, eb, eb_hash)
+    certificate = tmp_path / "pair.json"
+    certificate.write_text(json.dumps(pair), encoding="utf-8")
+    spec = case_for_axis(
+        "full_domain_z",
+        0,
+        time=TimeSpec(total_periods=24, window_periods=4, courant_factor=0.5),
+        pml_alpha_scale=ANCHOR_CASE.pml_alpha_scale,
+        pml_target_reflection=ANCHOR_CASE.pml_target_reflection,
+    )
+
+    _, audit = pair_validation.validate_source_pair(
+        certificate, _sha256(certificate), spec
+    )
+    assert audit["ready"] is True
+
+    ea_raw = Path(pair["cases"]["Ea"]["raw"]["path"])
+    with ea_raw.open("ab") as stream:
+        stream.write(b"tamper")
+    _, tampered = pair_validation.validate_source_pair(
+        certificate, _sha256(certificate), spec
+    )
+    assert tampered["ready"] is False
+    assert "Ea_raw_bytes_match" in tampered["failed_checks"]
+
+
+def test_missing_certificate_fails_closed(tmp_path):
+    spec = case_for_axis(
+        "full_domain_z",
+        0,
+        time=TimeSpec(total_periods=24, window_periods=4, courant_factor=0.5),
+        pml_alpha_scale=ANCHOR_CASE.pml_alpha_scale,
+        pml_target_reflection=ANCHOR_CASE.pml_target_reflection,
+    )
+    payload, audit = pair_validation.validate_source_pair(
+        (tmp_path / "missing.json").resolve(), "0" * 64, spec
+    )
+    assert payload == {}
+    assert audit["ready"] is False
+    assert "certificate_exists" in audit["failed_checks"]
+    assert "Ea_report_bytes_match" in audit["failed_checks"]
