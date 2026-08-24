@@ -1,6 +1,6 @@
 # Hashed numerical-case workflow for fresh FDTDX
 
-Status: **runner contract and L500 time-settling certificate validated; spatial convergence not run**
+Status: **runner contract, L500 time settling, and Courant convergence validated; spatial convergence not run**
 
 The fresh source-only and exact-binary material runners are no longer limited
 internally to the anchor mesh, 16 periods, Courant 0.5, and the default CPML.
@@ -114,6 +114,22 @@ both successive cross-time comparisons. It compares the actual fixed
 `[-4,+4] um` x/y probe at `z=0.250 um`; the larger stored target detector is
 not silently treated as the convergence probe.
 
+## Completed four-level Courant chain
+
+The 24-period Courant chain `[0.5, 0.375, 0.25, 0.1875]` is complete under
+`/home/seunghyun200/fdtdx_results/l500_courant_4d79a439_20260824`. Revalidate
+it with `fdtdx_fresh_courant_certificate.py`, supplying the four case-file and
+four source-pair SHA-256 values recorded in
+`FDTDX_FRESH_CONVERGENCE_DESIGN.md`. The clean-commit certificate is
+`courant_certificate_876cfff3/FDTDX_FRESH_COURANT_CERTIFICATE.json`, SHA-256
+`7fd86bc8582d27002c226b6395a7d803f29ba98deda4abff00e60def9560a869`.
+
+The rejected coarse 0.5-to-0.375 result remains in the certificate: its worst
+material/Cartesian Q-component change is 2.339%, above the 2% gate. Both finer
+successive pairs pass, so Courant 0.25 is selected and 0.1875 is its independent
+confirmation. The verifier also records and constrains the two raw-run commits;
+it does not falsely report that all four levels came from one commit.
+
 ## Convergence rule
 
 The 16-, 24-, and 32-period levels are three different numerical cases.  Each
@@ -122,8 +138,7 @@ The same applies to every Courant, mesh, domain, or PML level.  A source pair
 must never be copied between levels even when incident powers look similar.
 
 There is no implicit-anchor CLI mode. Both the absolute case path and its file
-SHA-256 are mandatory for source-only and material commands. Completion of the
-time ladder does not authorize an optimizer, thermal/electrical solve,
-PTE-current claim, or mesh certificate. The next numerical cases are the
-24-period Courant levels 0.5, 0.375, and 0.25, with a fresh source pair at each
-level.
+SHA-256 are mandatory for source-only and material commands. Completion of
+the time and Courant ladders does not authorize an optimizer, thermal/electrical
+solve, PTE-current claim, or mesh certificate. The next numerical cases are the full-domain-z resolution levels at 24 periods and
+selected Courant 0.25, with a fresh source pair at each level.

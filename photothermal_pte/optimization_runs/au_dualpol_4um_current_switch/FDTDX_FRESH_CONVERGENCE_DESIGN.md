@@ -1,6 +1,6 @@
 # Fresh FDTDX convergence design for exact-binary Au
 
-Status: **L500 time settling validated; no mesh-convergence claim and no optimizer permission**
+Status: **L500 time settling and Courant convergence validated; no spatial-mesh claim and no optimizer permission**
 
 This document defines the next FDTDX work after the four empty/full endpoint
 controls.  It is deliberately independent of the Lumerical work in progress in
@@ -63,8 +63,8 @@ numerical contract.  Per-polarization power rescaling is forbidden.
    startup and phasor windows remain four periods.  This explicitly checks the
    long-time behavior that the endpoint control alone could not establish.
 2. **Time-step convergence.** At the selected settled duration compare Courant
-   factors 0.5, 0.375, and 0.25.  Refit/read back ADE material parameters and
-   regenerate the source pair at every level.
+   factors 0.5, 0.375, 0.25, and 0.1875. Refit/read back ADE material
+   parameters and regenerate the source pair at every level.
 3. **One spatial axis at a time.** Compare two successive pairs on each ladder:
    full-domain z resolution; design-window x/y resolution; outer flake/gap x/y
    resolution; lateral PML x/y resolution; bottom Si buffer; top source-to-PML
@@ -129,13 +129,58 @@ interpolation or conservative remap is necessary; exact common physical cells
 are used.
 
 The selected minimum settled duration is therefore **24 periods**, with
-**32 periods** as the required confirmation. The next allowed FDTDX action is
-the 24-period Courant ladder `[0.5, 0.375, 0.25]`. It must create a new hashed
-case and source pair at every Courant value; optimization remains forbidden.
+**32 periods** as the required confirmation. The completed Courant stage below
+uses that 24-period selection. Optimization remains forbidden.
 
-No further GPU solve should start merely because a later ladder exists. The
-runner and comparison implementation for that ladder must first preserve the
-hashed numerical contract and fixed-physical-coordinate rules.
+## Completed L500 Courant certificate
+
+The second campaign stage is complete at 24 periods on the same fixed
+`196 x 196 x 160` spatial grid. Raw artifacts remain outside Git under
+`/home/seunghyun200/fdtdx_results/l500_courant_4d79a439_20260824`. The
+fail-closed certificate was generated from clean commit `876cfff3` at
+`courant_certificate_876cfff3/FDTDX_FRESH_COURANT_CERTIFICATE.json`; its
+SHA-256 is
+`7fd86bc8582d27002c226b6395a7d803f29ba98deda4abff00e60def9560a869`.
+All top-level and selection gates passed. It is a time-step certificate only:
+`is_mesh_certificate=false` and `optimizer_start_allowed=false`.
+
+The canonical case-file SHA-256 values are:
+
+- Courant 0.5: `7ea87f6ffdf1f9557dfae2fca9c65b710df95feb4da50b43f117dff8e14955d7`
+- Courant 0.375: `9a75f96cc331d500ec9fb9eb63f6cdecef2d737063b06e4021d96cc919a8f5af`
+- Courant 0.25: `6ecf2ccbd3b4b27b33eb7c9f70d788532197c3a4e66ef1f62eb5c1779454dffe`
+- Courant 0.1875: `5f4aac85143bcd624f0a9f13bec90879fad9d45f1fc50ef0d10faea39c56eb60`
+
+The matching source-pair certificate SHA-256 values are:
+
+- Courant 0.5: `6fae7e958d22ae7aea580d9e74d94371bcc93e0934b2173a660136a7929cbd0f`
+- Courant 0.375: `923a6d3814c8c1d4e8ecf00623f06becabc0a7248aa318656f90c9f2b1536863`
+- Courant 0.25: `e4a6898b86db1d6418924c202272719e22a62c75adc71de7d46ea551f08c748b`
+- Courant 0.1875: `f5e7d4239c772f92bee03930d4bd9fe9979b8f2e94266c105759a00a283da26b`
+
+The first three levels were run at clean commit `4d79a439`; the 0.1875
+extension was run at `14624869`. The certificate records this rather than
+claiming one run commit. Its cross-commit audit proves that only the Courant and
+time-settling certificate/test files changed between those commits; the material
+runner hash, source-pair generator hash, material contract, pinned FDTDX source,
+and runtime lock are identical, and source/material commits match per level.
+
+| Optical metric | Limit | 0.5 to 0.375 | 0.375 to 0.25 | 0.25 to 0.1875 |
+|---|---:|---:|---:|---:|
+| source power relative change | 5e-3 | 8.0646341e-7 | 6.9125443e-7 | 1.9585542e-6 |
+| Q/closed-flux relative | 2e-2 | 2.5001969e-3 | 2.5001969e-3 | 2.6334778e-3 |
+| fine-case complex-E stationarity | 5e-3 | 4.5087853e-4 | 8.9994775e-4 | 1.3745917e-3 |
+| total Q relative change | 1e-2 | 2.2341408e-3 | 4.0722149e-4 | 2.0097064e-4 |
+| material/Cartesian-component Q max change | 2e-2 | **2.3390840e-2 fail** | 8.9096488e-4 | 8.0774269e-4 |
+| fixed 8 x 8 um probe complex-E NRMSE | 2e-2 | 6.7899555e-4 | 5.0716420e-4 | 2.4243411e-4 |
+| component-Yee-volume Q L2 NRMSE | 5e-2 | 5.4550187e-3 | 5.4008614e-4 | 8.1493446e-4 |
+
+The coarse 0.5-to-0.375 pair remains explicitly rejected because the worst Au
+Cartesian Q component changed by 2.339%, above the 2% gate. The next two
+successive pairs both pass every declared gate, establishing the finer
+asymptotic range. The selected Courant factor is therefore **0.25**, confirmed
+by **0.1875**. The next allowed FDTDX action is the exact same L500 reference
+on the full-domain-z resolution ladder at 24 periods and Courant 0.25.
 
 ## Comparison and promotion rules
 

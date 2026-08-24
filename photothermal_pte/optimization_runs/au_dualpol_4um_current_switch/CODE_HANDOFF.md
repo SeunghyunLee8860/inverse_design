@@ -276,8 +276,9 @@ top-level gates passed. Its SHA-256 is
 `06e69f15e292ef29b6515282332b01d1e88c8348cfa965a951d3c1c3e98a431b`.
 Read `FDTDX_FRESH_EXACT_BINARY_PILOT.md` for all external hashes and metrics.
 Those endpoint controls did not establish time or mesh convergence. The L500
-time-settling result below closes only the time-duration axis; no spatial-mesh,
-adjoint, thermal/electrical, PTE-current, or optimizer claim is authorized.
+time-settling and Courant results below close only the time-duration and
+time-step axes; no spatial-mesh, adjoint, thermal/electrical, PTE-current, or
+optimizer claim is authorized.
 
 The v2 campaign is specified by `FDTDX_FRESH_CONVERGENCE_DESIGN.md`; every
 source-only report, Ea/Eb pair, and material report binds one canonical
@@ -308,12 +309,31 @@ selected duration is **24 periods** and the confirmation duration is **32
 periods**. This is only a time-settling certificate: `is_mesh_certificate=false`
 and `optimizer_start_allowed=false`.
 
-The next FDTDX action is the exact same L500 reference at 24 periods on the
-Courant ladder `[0.5, 0.375, 0.25]`. Generate and hash a distinct case, new
-Ea/Eb source-only runs, and a new source-pair certificate at every Courant
-value. Do not reuse a source pair and do not start optimization. The later
-spatial/domain/PML ladders and gap-stress recheck remain pending. This FDTDX
-track must not edit, launch, or reinterpret the concurrent Lumerical work.
+The exact same L500 reference was then run at 24 periods on Courant levels
+`[0.5, 0.375, 0.25, 0.1875]`, with a distinct hashed case, Ea/Eb source-only
+run, source-pair certificate, and Ea/Eb material run at every level. Raw root:
+`/home/seunghyun200/fdtdx_results/l500_courant_4d79a439_20260824`. The
+clean-commit certificate is
+`courant_certificate_876cfff3/FDTDX_FRESH_COURANT_CERTIFICATE.json`, SHA-256
+`7fd86bc8582d27002c226b6395a7d803f29ba98deda4abff00e60def9560a869`.
+It was generated at clean commit `876cfff3`; all gates passed.
+
+The 0.5-to-0.375 pair is preserved as a real coarse failure: worst
+material/Cartesian Q-component change was 2.339%, above the 2% gate. The
+0.375-to-0.25 and 0.25-to-0.1875 comparisons both passed, so the selected
+Courant factor is **0.25**, with **0.1875** as confirmation. The first three
+levels came from clean commit `4d79a439`; the 0.1875 extension came from
+`14624869`. The certificate explicitly audits that only certificate/test files
+changed between them and verifies identical runner, source-pair generator,
+material-contract, pinned-FDTDX, and runtime provenance. It does not hide the
+cross-commit origin.
+
+This remains `is_mesh_certificate=false` and `optimizer_start_allowed=false`.
+The next FDTDX action is the exact same L500 reference on the full-domain-z
+resolution ladder at 24 periods and selected Courant 0.25. Generate a distinct
+case and source pair at every spatial level. The later x/y, domain, PML, joint,
+and gap-stress stages remain pending. This FDTDX track must not edit, launch, or
+reinterpret the concurrent Lumerical work.
 
 ## Raw checkpoint dependency
 
