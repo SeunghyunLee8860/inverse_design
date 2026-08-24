@@ -289,9 +289,10 @@ source-only report, Ea/Eb pair, and material report binds one canonical
 stage is now complete for the exact-binary 375-pixel
 `l_shape_4um_with_500nm_arms` reference. Runs were made at clean commit
 `01a8ad8a`; the independent verifier and its 12 focused tests were committed
-and pushed as `5e376ce1`. All explicit FDTDX regression tests pass: 133
-`unittest` tests; the separate pytest forensic file is not runnable in the
-locked fresh venv because pytest is intentionally absent.
+and pushed as `5e376ce1`. That checkpoint had 133 explicit FDTDX `unittest`
+tests. The current suite has **140 passing tests** after the candidate material
+pair verifier was added. The separate pytest forensic file is not runnable in
+the locked fresh venv because pytest is intentionally absent.
 
 External raw root:
 `/home/seunghyun200/fdtdx_results/l500_time_settling_01a8ad8a_20260824`.
@@ -432,7 +433,11 @@ z8 Ea/Eb runs and pair are external under
 - Ea NPZ: `7e586000eb4a5681011062f9fe78e972120a8b0bb9b05c3eda55fd24f326d133`
 - Eb report: `49788884d2ce62660cfba923a123940426211f8394fe98c6103a7058782bf459`
 - Eb NPZ: `93cff39dbeaf200f0db43987c077b700ae1713774c71fc480bc7c982f8e393e1`
-- source-pair certificate: `d5196cc7c715260e5c0436ccc59ca258c22173ae9adc69340405dc5e1e05a582`
+- original `e722ba73` source-pair certificate:
+  `d5196cc7c715260e5c0436ccc59ca258c22173ae9adc69340405dc5e1e05a582`
+- current source-pair certificate regenerated after the `7c527b6d` generator
+  provenance hardening:
+  `28c84ac1b2c21cb6d6db537248f90101ca2add6b37aef49c002da0b7b214fa64`
 
 Both source cases pass every finite-value, stationarity, polarization, beam,
 and closed-flux gate. Ea/Eb incident powers are `1.8834239723e-12` and
@@ -440,12 +445,45 @@ and closed-flux gate. Ea/Eb incident powers are `1.8834239723e-12` and
 `5e-3` gate. The pair reconstructs the exact canonical material law, case-file
 byte hash, model audits, and raw NPZ hashes, and creates only one common scale.
 
-Only the z8 all-air source-pair stage is complete. z16 and z32 source pairs do
-not exist, and no two-pole material field solve exists at any level. The next
-allowed FDTDX change is a distinct forward-only exact-binary material runner
-that accepts only this candidate-pair status and keeps adjoint/optimizer entry
-points disabled. Do not compare any old single-pole field result to a two-pole
-result.
+The current pair, not the original certificate, is the input bound into the z8
+material runs. The candidate-only forward material runner was committed at
+`7c527b6d`; the fail-closed pair verifier and six focused tests were committed
+at `b489bbdc`. External material artifacts are:
+
+- Ea report:
+  `215e8eaf37788623dd4c0f98f9e6661f462b49618867cfd572d8ccf10fb978c8`
+- Ea NPZ:
+  `61ffeec5dd24d2bcc85f5bf83e8bd692af90ec7789a062797b21b6ea216d9cea`
+- Eb report:
+  `b29f9832f601079737f59a2953bcf7332f4eb23948e6a7ddaaceee55a6615c02`
+- Eb NPZ:
+  `54a586db06fa9deaa058bae48d3510e381db3b3824140c571dee56e92fc2b8c4`
+- material-pair certificate:
+  `95113736c93c16e3d78504f8bc2591f25f06d725af21eb855dc02708af83df14`
+
+The certificate lives at
+`two_pole_forward_e722ba73/z8/material_pair_b489bbdc/`
+`FDTDX_FRESH_TWO_POLE_EXACT_BINARY_PAIR.json`. It was generated from a clean
+`b489bbdc` tree and re-hashes both reports and both 101 MiB NPZs. It
+reconstructs the canonical 375-cell L mask, verifies exact binary integer
+readback with `rho_power=null`, recomputes all component-resolved Q integrals
+from Q density and Yee dual volume, revalidates the current source pair, and
+passes all top-level gates.
+
+At the common 285 uW reporting power, Ea total/Au/TaIrTe4 absorption is
+`67.3793/0.8049/66.5744 uW`; Eb is
+`116.4644/1.7476/114.7167 uW`. Eb/Ea total absorption is `1.72849`. Maximum
+complex-field stationarity NRMSE is `1.3853e-3` for Ea and `1.5225e-3` for Eb;
+Q versus closed-flux mismatch remains below `0.52%` for both. These are optical
+heat-source results, **not** a PTE-current magnitude or sign result. The
+certificate records `pte_current_claim_allowed=false` and
+`optimizer_start_allowed=false`.
+
+Only the z8 candidate two-pole source and material pair is complete. z16 and
+z32 source pairs and material solves do not exist. The next allowed FDTDX step
+is a fresh z16 all-air Ea/Eb source pair under its own case/law, followed by
+the same exact-binary material pair. Do not compare an old single-pole field
+result to a two-pole result.
 
 Do not proceed to x/y, domain, PML, thermal/electrical, or optimization until
 z convergence closes. Preserve the failed z2/z4/z8 comparisons and the z16

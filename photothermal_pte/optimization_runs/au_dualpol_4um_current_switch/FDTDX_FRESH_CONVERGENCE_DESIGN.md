@@ -1,6 +1,6 @@
 # Fresh FDTDX convergence design for exact-binary Au
 
-Status: **L500 time settling and Courant convergence validated; the first full-domain-z ladder is rejected; no spatial-mesh claim and no optimizer permission**
+Status: **L500 time settling and Courant convergence validated; the first full-domain-z ladder is rejected; candidate two-pole z8 forward pair validated; no spatial-mesh claim and no optimizer permission**
 
 This document defines the next FDTDX work after the four empty/full endpoint
 controls.  It is deliberately independent of the Lumerical work in progress in
@@ -354,15 +354,34 @@ External z8 artifact SHA-256 values under `two_pole_forward_e722ba73/z8` are:
 | Ea source NPZ | `7e586000eb4a5681011062f9fe78e972120a8b0bb9b05c3eda55fd24f326d133` |
 | Eb source report | `49788884d2ce62660cfba923a123940426211f8394fe98c6103a7058782bf459` |
 | Eb source NPZ | `93cff39dbeaf200f0db43987c077b700ae1713774c71fc480bc7c982f8e393e1` |
-| law-bound source pair | `d5196cc7c715260e5c0436ccc59ca258c22173ae9adc69340405dc5e1e05a582` |
+| original `e722ba73` law-bound source pair | `d5196cc7c715260e5c0436ccc59ca258c22173ae9adc69340405dc5e1e05a582` |
+| current pair after `7c527b6d` generator hardening | `28c84ac1b2c21cb6d6db537248f90101ca2add6b37aef49c002da0b7b214fa64` |
 
-These are all-air source results, not two-pole material-field evidence. z16 and
-z32 still require independent source pairs. The next code stage is a separate
-forward-only exact-binary material runner that accepts only the candidate pair
-status, reruns pre-solve material readback, and keeps adjoint and optimizer
-entry points disabled. Comparing old single-pole z8 directly with any new
-two-pole field level is forbidden, and every downstream convergence stage
-remains blocked.
+The candidate exact-binary material runner was added at `7c527b6d`; it accepts
+only the current candidate source-pair status, reconstructs the case/law, reruns
+placed material readback, and is forward-only. Both z8 polarizations pass. The
+raw report/NPZ SHA-256 values are Ea
+`215e8eaf37788623dd4c0f98f9e6661f462b49618867cfd572d8ccf10fb978c8` /
+`61ffeec5dd24d2bcc85f5bf83e8bd692af90ec7789a062797b21b6ea216d9cea`
+and Eb
+`b29f9832f601079737f59a2953bcf7332f4eb23948e6a7ddaaceee55a6615c02` /
+`54a586db06fa9deaa058bae48d3510e381db3b3824140c571dee56e92fc2b8c4`.
+
+The independent pair verifier at `b489bbdc` reopens both 101 MiB NPZ files,
+reconstructs the canonical 375-cell L mask, rejects gray/rho-power material
+laws, recomputes component-Yee-volume Q, and revalidates every case, law,
+source-pair, implementation, and raw hash. The clean certificate SHA-256 is
+`95113736c93c16e3d78504f8bc2591f25f06d725af21eb855dc02708af83df14`.
+All gates pass. Common-285-uW total absorption is `67.3793 uW` for Ea and
+`116.4644 uW` for Eb; the Eb/Ea ratio is `1.72849`. Maximum field stationarity
+NRMSE is `1.3853e-3` and `1.5225e-3`, and closed-flux Q mismatch is below
+`0.52%`.
+
+This establishes one z8 two-pole optical material pair, not z convergence and
+not PTE current. z16 and z32 still require independent source and material
+pairs. Comparing old single-pole z8 directly with a new two-pole field level is
+forbidden. Adjoint, thermal/electrical, current-sign, and optimizer stages
+remain blocked.
 
 ## Comparison and promotion rules
 

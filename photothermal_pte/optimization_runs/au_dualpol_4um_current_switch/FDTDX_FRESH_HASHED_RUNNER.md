@@ -222,13 +222,33 @@ SHA-256 values are
 the Eb values are
 `49788884d2ce62660cfba923a123940426211f8394fe98c6103a7058782bf459` and
 `93cff39dbeaf200f0db43987c077b700ae1713774c71fc480bc7c982f8e393e1`.
-The law-bound pair SHA-256 is
+The original law-bound pair SHA-256 is
 `d5196cc7c715260e5c0436ccc59ca258c22173ae9adc69340405dc5e1e05a582`.
-All gates pass; the raw incident-power mismatch is `1.1513098e-7`.
+After the pair generator gained current shared-implementation binding at
+`7c527b6d`, it was regenerated as
+`28c84ac1b2c21cb6d6db537248f90101ca2add6b37aef49c002da0b7b214fa64`;
+this current pair is the material-run input. All source gates pass and the raw
+incident-power mismatch is `1.1513098e-7`.
 
-The next blocker is a separate candidate exact-binary material runner and its
-z8 Ea/Eb time/stationarity/field/absorption results. z16 and z32 still need
-their own source pairs. Adjoint and optimizer paths remain disabled throughout.
+The forward-only candidate material runner is
+`fdtdx_fresh_two_pole_exact_binary.py`, committed at `7c527b6d`. z8 Ea and Eb
+both pass exact case/law/source binding, every placed material readback,
+stationarity, nonnegative Q, and time-/phasor-domain closed-flux closure. Their
+report/NPZ SHA-256 values are Ea
+`215e8eaf37788623dd4c0f98f9e6661f462b49618867cfd572d8ccf10fb978c8` /
+`61ffeec5dd24d2bcc85f5bf83e8bd692af90ec7789a062797b21b6ea216d9cea`
+and Eb
+`b29f9832f601079737f59a2953bcf7332f4eb23948e6a7ddaaceee55a6615c02` /
+`54a586db06fa9deaa058bae48d3510e381db3b3824140c571dee56e92fc2b8c4`.
+
+The pair verifier added at `b489bbdc` re-hashes and reloads both raw NPZs and
+recomputes canonical mask and component-Yee-volume Q. Its clean z8 certificate
+SHA-256 is
+`95113736c93c16e3d78504f8bc2591f25f06d725af21eb855dc02708af83df14`.
+Common-285-uW total Q is `67.3793 uW` for Ea and `116.4644 uW` for Eb. This is
+optical heat-source evidence only: the certificate forbids PTE-current and
+optimizer claims. z16 and z32 still need their own source and material pairs;
+adjoint, thermal/electrical, and optimizer paths remain disabled throughout.
 
 ## Convergence rule
 
