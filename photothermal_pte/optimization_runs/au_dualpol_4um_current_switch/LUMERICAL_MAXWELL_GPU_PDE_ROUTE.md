@@ -266,6 +266,36 @@ on the 5/50-nm staircase RTX development mesh. Eb, multiple directions,
 latent filter/projection differentiation, a selected converged mesh, the
 signed dual-polarization objective, and B200 repetition remain open.
 
+### The optimizer carrier is nodal, not the legacy 80x80 cell map
+
+A code audit after the projected-density certificate found a real integration
+gap: the historical FDTDX optimizers and `dfm.MAPPING` use 80x80 cell-centered
+latent variables, whereas Lumerical `importnk2` and the certified material
+Jacobian use 81x81 nodal projected occupancy. Those arrays must not be
+silently reshaped, padded, or resampled.
+
+`lumerical_4um_design_mapping.py` now defines the separate production-intent
+chain
+
+```text
+81x81 bounded latent rho
+  -> finite nonperiodic 500-nm conic filter
+  -> tanh projection on the same 81x81 physical nodes
+  -> one hash-bound projected occupancy for Lumerical
+  -> exact four-node average to 80x80 custom-PDE and DFM cells.
+```
+
+The reverse chain uses the exact cell-average, projection, and finite-filter
+transposes. The DFM opening residual formerly used ReLU and was therefore
+nondifferentiable at the many exactly zero void residuals. It now uses a
+softplus positive part with pointwise approximation excess bounded by
+`positive_tau*log(2)`; the exact thresholded solid/void opening remains the
+final authority. Script 37 passes nodal/cell transpose errors
+`2.99e-16`/`2.58e-15`, nodal/cell centered-FD errors `2.10e-9`/`1.18e-9`,
+and DFM centered-FD error `5.87e-7`, with no solver call. This closes the
+solver-free chain only. A complete latent Lumerical/custom-CUDA centered pair
+is still required before enabling LD_MMA.
+
 ## Exact endpoint/final GPU runner
 
 The B200 launcher refuses a non-B200 device. A separate development launcher

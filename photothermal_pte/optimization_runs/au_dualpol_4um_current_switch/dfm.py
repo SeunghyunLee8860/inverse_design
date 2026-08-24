@@ -27,6 +27,9 @@ MAPPING = ProductionDensityMapping(
     radius_m=CONTRACT.filter_radius_m,
     eta=CONTRACT.projection_eta,
 )
+DEFAULT_OPENING_TAU = 0.02
+DEFAULT_POSITIVE_PART_TAU = 0.01
+DEFAULT_KS_ALPHA = 48.0
 
 
 def physical_disk_footprint(radius_m: float, spacing_m: float) -> np.ndarray:
@@ -45,6 +48,7 @@ def exact_500nm_audit(
     physical_density: np.ndarray,
     spacing_m: float = 100.0e-9,
     minimum_feature_m: float = 500.0e-9,
+    threshold: float = 0.5,
 ) -> dict[str, object]:
     """Audit thresholded Au and void with a physical radius-250 nm opening.
 
@@ -56,7 +60,10 @@ def exact_500nm_audit(
     rho = np.asarray(physical_density, dtype=float)
     if rho.ndim != 2 or not np.all(np.isfinite(rho)):
         raise ValueError("physical density must be a finite 2-D array")
-    binary = rho >= 0.5
+    threshold_value = float(threshold)
+    if not np.isfinite(threshold_value) or not 0.0 < threshold_value < 1.0:
+        raise ValueError("binary threshold must lie strictly inside (0,1)")
+    binary = rho >= threshold_value
     footprint = physical_disk_footprint(0.5 * minimum_feature_m, spacing_m)
     solid_open = ndimage.binary_opening(binary, structure=footprint, border_value=0)
     void_open = ndimage.binary_opening(~binary, structure=footprint, border_value=1)
@@ -66,6 +73,7 @@ def exact_500nm_audit(
         "minimum_feature_nm": minimum_feature_m * 1.0e9,
         "opening_radius_nm": 0.5 * minimum_feature_m * 1.0e9,
         "spacing_nm": spacing_m * 1.0e9,
+        "threshold": threshold_value,
         "footprint_pixel_count": int(np.count_nonzero(footprint)),
         "solid_bad_cell_count": int(np.count_nonzero(bad_solid)),
         "void_bad_cell_count": int(np.count_nonzero(bad_void)),
@@ -122,25 +130,33 @@ def _soft_open(
     return tau * (torch.logsumexp(shifted_eroded / tau, dim=0) - count_log)
 
 
-def smooth_500nm_constraints(
-    latent: np.ndarray,
-    beta: float,
+def smooth_500nm_physical_constraints(
+    physical_density: np.ndarray,
     *,
-    tau: float = 0.02,
-    ks_alpha: float = 48.0,
+    tau: float = DEFAULT_OPENING_TAU,
+    positive_tau: float = DEFAULT_POSITIVE_PART_TAU,
+    ks_alpha: float = DEFAULT_KS_ALPHA,
 ) -> tuple[np.ndarray, np.ndarray, dict[str, np.ndarray]]:
-    """Return differentiable solid/void opening residuals and latent gradients.
+    """Return solid/void opening residuals and physical-cell gradients.
 
     Values are KS aggregates of ``relu(phase - opening(phase))``.  The solid
     phase sees void outside the design window; the void phase sees void
-    outside.  This matches the exact finite-window audit.
+    outside. The positive part is a softplus approximation whose pointwise
+    excess over ``max(0,x)`` is bounded by ``positive_tau*log(2)``. This
+    matches the exact finite-window audit and is independent of the upstream
+    optical density carrier.
     """
 
-    latent_array = np.asarray(latent, dtype=np.float64)
-    if latent_array.shape != CONTRACT.design_shape:
-        raise ValueError(f"latent density must have shape {CONTRACT.design_shape}")
-    rho_np = MAPPING.physical(latent_array, float(beta))
-    rho = torch.tensor(rho_np, dtype=torch.float64, requires_grad=True)
+    rho_array = np.asarray(physical_density, dtype=np.float64)
+    if rho_array.shape != CONTRACT.design_shape or not np.all(
+        np.isfinite(rho_array)
+    ):
+        raise ValueError(
+            f"physical cell density must be finite with shape {CONTRACT.design_shape}"
+        )
+    if tau <= 0.0 or positive_tau <= 0.0 or ks_alpha <= 0.0:
+        raise ValueError("DFM smoothing parameters must be positive")
+    rho = torch.tensor(rho_array, dtype=torch.float64, requires_grad=True)
     values: list[float] = []
     gradients: list[np.ndarray] = []
     fields: dict[str, np.ndarray] = {}
@@ -150,7 +166,10 @@ def smooth_500nm_constraints(
     )
     for index, (name, phase, outside) in enumerate(phases):
         opened = _soft_open(phase, outside_phase=outside, tau=float(tau))
-        residual = torch.relu(phase - opened)
+        raw_residual = phase - opened
+        residual = float(positive_tau) * torch.nn.functional.softplus(
+            raw_residual / float(positive_tau)
+        )
         flattened = residual.reshape(-1)
         aggregate = (
             torch.logsumexp(float(ks_alpha) * flattened, dim=0)
@@ -160,16 +179,40 @@ def smooth_500nm_constraints(
             aggregate, rho, retain_graph=index == 0
         )[0]
         values.append(float(aggregate.detach()))
-        gradients.append(
-            MAPPING.vjp(
-                latent_array,
-                gradient_rho.detach().cpu().numpy(),
-                float(beta),
-            )
-        )
+        gradients.append(gradient_rho.detach().cpu().numpy())
         fields[f"{name}_opening"] = opened.detach().cpu().numpy()
+        fields[f"{name}_raw_residual"] = raw_residual.detach().cpu().numpy()
         fields[f"{name}_residual"] = residual.detach().cpu().numpy()
     return np.asarray(values), np.stack(gradients), fields
+
+
+def smooth_500nm_constraints(
+    latent: np.ndarray,
+    beta: float,
+    *,
+    tau: float = DEFAULT_OPENING_TAU,
+    positive_tau: float = DEFAULT_POSITIVE_PART_TAU,
+    ks_alpha: float = DEFAULT_KS_ALPHA,
+) -> tuple[np.ndarray, np.ndarray, dict[str, np.ndarray]]:
+    """Return legacy 80x80-cell constraint values and latent gradients."""
+
+    latent_array = np.asarray(latent, dtype=np.float64)
+    if latent_array.shape != CONTRACT.design_shape:
+        raise ValueError(f"latent density must have shape {CONTRACT.design_shape}")
+    rho = MAPPING.physical(latent_array, float(beta))
+    values, physical_gradients, fields = smooth_500nm_physical_constraints(
+        rho,
+        tau=tau,
+        positive_tau=positive_tau,
+        ks_alpha=ks_alpha,
+    )
+    latent_gradients = np.stack(
+        [
+            MAPPING.vjp(latent_array, gradient, float(beta))
+            for gradient in physical_gradients
+        ]
+    )
+    return values, latent_gradients, fields
 
 
 def density_metrics(latent: np.ndarray, beta: float) -> dict[str, object]:

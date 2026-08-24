@@ -83,8 +83,18 @@ through the custom CUDA thermal/electrical forward and adjoint systems. Total
 Q conservation and the remap transpose were zero-error at reported precision;
 the native-Q/thermal-adjoint contraction error was `1.59e-16`. The invocation
 took 20.79 s, ran no new Maxwell solve, and used no Lumerical HEAT/CHARGE
-license. This closes only the gray-Q/PDE connection, not the Maxwell field
-adjoint, combined AD-FD, Eb, mesh, or B200 gates.
+license. A subsequent R1.2 FieldRegion adjoint and independent centered
+projected-density pair now pass complete Ea AD-FD with relative error
+`2.207e-5` and equal sign, without empirical scaling. This is one direction
+on the RTX development mesh, not Eb, mesh, or B200 production evidence.
+
+The old optimizer/DFM carrier was also found to be 80x80 cell-centered and
+therefore incompatible with the 81x81 nodal Lumerical state. The new
+`lumerical_4um_design_mapping.py` keeps latent/filter/projected arrays nodal
+and derives 80x80 PDE/DFM cells only through the exact four-node average and
+transpose. Its solver-free filter/projection/cell/DFM directional-FD audit
+passes, including removal of the former ReLU nondifferentiability. Complete
+latent Lumerical/PDE AD-FD remains open.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine

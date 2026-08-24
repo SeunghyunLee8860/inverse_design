@@ -180,6 +180,20 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     certifies one projected-density direction on the current development
     mesh only; it does not certify Eb, latent filter/projection derivatives,
     mesh convergence, or B200 production.
+30. `lumerical_4um_design_mapping.py` and
+    `37_audit_lumerical_4um_latent_design_map.py` -- the Lumerical optimizer's
+    actual design-variable chain. Both latent and projected occupancy are
+    81x81 nodal arrays. The finite 500-nm conic filter, tanh projection, exact
+    81x81-to-80x80 cell average, and every transpose are explicit. The old
+    80x80-cell `dfm.MAPPING` remains historical FDTDX code and is not the new
+    optimizer carrier. DFM opening residuals now operate on the derived
+    physical cells and use a softplus positive part instead of nondifferentiable
+    ReLU; its pointwise approximation excess is bounded by
+    `positive_tau*log(2)`. Script 37 passed filter/projection and cell-chain
+    transpose errors `2.99e-16`/`2.58e-15`, directional-FD errors
+    `2.10e-9`/`1.18e-9`, and maximum DFM directional-FD error `5.87e-7`, with
+    zero solver calls. Final promotion thresholds the four-node cell average
+    and still requires ordinary dispersive-Au binary reevaluation.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -297,15 +311,20 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    signed-current epigraph and constrained grayness only at nominal.  The code
    now includes eta=0.35/0.50/0.65 in both current and grayness constraints,
    but the corrected robust path has not been run.  Historical robust results
-   remain invalid for promotion.  See `ROBUST_OBJECTIVE_AUDIT.md`.
+   remain invalid for promotion. Scripts 10 and 13 also remain 80x80-cell
+   FDTDX optimizers and must not be pointed at the 81x81 Lumerical carrier.
+   The new nodal design map exists, but no Lumerical LD_MMA entry point is
+   enabled yet. See `ROBUST_OBJECTIVE_AUDIT.md`.
 8. Production optimization is now unconditionally code-blocked because the
    existing entry points still implement the historical gray/FDTDX path.
    Legacy shared-linear certificates cannot clear this gate. The new
    Lumerical `n-k` density carrier is now connected through one Ea
    component-Yee discrete adjoint, and one independent projected-density
    directional AD-FD passes. Production remains blocked until this is
-   extended to Ea/Eb, multiple directions and the latent
-   filter/projection chain, on a selected converged mesh. Then issue
+   extended to Ea/Eb and multiple complete latent directions on a selected
+   converged mesh. The 81x81 latent filter/projection/cell/DFM chain now has
+   solver-free FD/transpose validation, but it has not yet been included in a
+   Lumerical centered-forward pair. Then issue
    certificates naming the selected full-domain-z grid, Courant factor, time
    windows, and same-grid Ea/Eb source calibration. The combined adjoint also derives
    its Au/TaIrTe4 material offsets from the realized placed slices; do not
@@ -507,6 +526,15 @@ Do not copy them into this worktree.
     finite-difference fit, Lumerical HEAT/CHARGE solve, or optimizer iteration
     occurred. This closes only one Ea projected-state direction on the RTX
     5/50-nm staircase development mesh.
+14. The optimizer-carrier audit found that the historical DFM mapping was
+    80x80 cell-centered while the Lumerical shared state is 81x81 nodal. A
+    separate nodal latent/filter/projection implementation now maps to the
+    exact Lumerical nodes and derives the 80x80 PDE/DFM cells only through the
+    tested four-node average. It also replaced the DFM residual's ReLU kink
+    with a bounded softplus positive part. The solver-free script-37 audit
+    passed all JVP/VJP, centered-FD, state-hash, no-rho3, and no-`np density`
+    gates in about four seconds. This fixes the discrete chain but is not a
+    complete latent Maxwell/PDE AD-FD certificate.
 
 ## Next correct sequence
 
@@ -548,9 +576,11 @@ Do not copy them into this worktree.
    B200 preflight.
 5. The component-Yee builder, one hash-bound R1.2 Ea distributed-source
    adjoint, and one independent complete projected-density centered AD-FD now
-   pass on the 5/50-nm staircase mesh. Extend the certificate to additional
-   independent directions, the latent filter/projection transpose, Eb, and
-   the signed dual objective without rerunning already hash-bound baselines.
+   pass on the 5/50-nm staircase mesh. The corrected 81x81 latent
+   filter/projection/cell/DFM transpose also passes solver-free. Next run a
+   complete latent centered pair, then extend the certificate to additional
+   independent directions, Eb, and the signed dual objective without
+   rerunning already hash-bound baselines.
    Repeat the material Jacobian and AD-FD on the ultimately selected
    mesh/B200; do not substitute bundled LumOpt's real/lossless metal path.
 6. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh
