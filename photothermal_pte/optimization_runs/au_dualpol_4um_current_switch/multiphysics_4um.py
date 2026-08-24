@@ -110,7 +110,7 @@ def _refine_edges(edges: np.ndarray, factor: int) -> np.ndarray:
 
 
 def thermal_edges(
-    z_refinement_factor: int = 1,
+    z_refinement_factor: int = 1, *, xy_refinement_factor: int = 1
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     negative_outer = np.asarray((-32, -28, -24, -20, -16, -14), float) * 1e-6
     negative_shoulder = np.arange(-14.0, -12.0, 0.25) * 1e-6
@@ -133,7 +133,12 @@ def thermal_edges(
         ),
         float,
     ) * 1e-6
-    return lateral, lateral.copy(), _refine_edges(z, z_refinement_factor)
+    refined_lateral = _refine_edges(lateral, xy_refinement_factor)
+    return (
+        refined_lateral,
+        refined_lateral.copy(),
+        _refine_edges(z, z_refinement_factor),
+    )
 
 
 @dataclass(frozen=True)
@@ -151,13 +156,18 @@ class ThermalState:
 
 
 def build_thermal_state(
-    rho: np.ndarray, *, z_refinement_factor: int = 1
+    rho: np.ndarray,
+    *,
+    z_refinement_factor: int = 1,
+    xy_refinement_factor: int = 1,
 ) -> ThermalState:
     density = np.asarray(rho, dtype=np.float64)
     if density.shape != CONTRACT.design_shape or np.any((density < 0) | (density > 1)):
         raise ValueError("rho must be an 80x80 physical density in [0,1]")
     fvm = _load(FVM_PATH, "au_dualpol_4um_fvm")
-    edges = thermal_edges(z_refinement_factor)
+    edges = thermal_edges(
+        z_refinement_factor, xy_refinement_factor=xy_refinement_factor
+    )
     widths = tuple(np.diff(axis) for axis in edges)
     centers = tuple(_centers(axis) for axis in edges)
     x, y, z = centers
@@ -175,13 +185,27 @@ def build_thermal_state(
     sio2 = np.broadcast_to(z_sio2[None, None, :], shape)
     si = np.broadcast_to(z_si[None, None, :], shape)
     ix_au, iy_au, iz_au = map(np.flatnonzero, (x_au, y_au, z_au))
-    if (np.count_nonzero(x_ta), np.count_nonzero(y_ta)) != (N_TA, N_TA):
-        raise RuntimeError("TaIrTe4 thermal footprint is not 160x160")
-    if (ix_au.size, iy_au.size) != CONTRACT.design_shape:
+    expected_ta = N_TA * xy_refinement_factor
+    expected_design = tuple(
+        value * xy_refinement_factor for value in CONTRACT.design_shape
+    )
+    if (np.count_nonzero(x_ta), np.count_nonzero(y_ta)) != (
+        expected_ta,
+        expected_ta,
+    ):
+        raise RuntimeError(
+            "TaIrTe4 thermal footprint does not match xy refinement"
+        )
+    if (ix_au.size, iy_au.size) != expected_design:
         raise RuntimeError("Au thermal footprint does not match design density")
 
     fraction = np.asarray(au_material_fraction(density), dtype=np.float64)
-    k_au = K_AIR_W_MK + fraction * (K_AU_W_MK - K_AIR_W_MK)
+    refined_fraction = np.repeat(
+        np.repeat(fraction, xy_refinement_factor, axis=0),
+        xy_refinement_factor,
+        axis=1,
+    )
+    k_au = K_AIR_W_MK + refined_fraction * (K_AU_W_MK - K_AIR_W_MK)
     kappa = np.full((*shape, 3), K_AIR_W_MK, dtype=np.float64)
     kappa[si] = K_SI_W_MK
     kappa[sio2] = K_SIO2_W_MK
@@ -216,7 +240,7 @@ def build_thermal_state(
         + 1.0 / G_AU_TA_W_M2K
         + 0.5 * upper_dz / K_AU_W_MK
     )
-    g_area = (1.0 - fraction) / r_air + fraction / r_au
+    g_area = (1.0 - refined_fraction) / r_air + refined_fraction / r_au
     r_interface = (
         1.0 / g_area
         - 0.5 * lower_dz / K_TA_XYZ_W_MK[2]
@@ -419,7 +443,7 @@ def tairte4_temperature(state: ThermalState, temperature: np.ndarray) -> np.ndar
     result = np.tensordot(
         temperature[np.ix_(ix, iy, iz)], weights / np.sum(weights), axes=(2, 0)
     )
-    if result.shape != (N_TA, N_TA):
+    if result.shape != (ix.size, iy.size):
         raise RuntimeError(f"unexpected Ta temperature shape {result.shape}")
     return result
 

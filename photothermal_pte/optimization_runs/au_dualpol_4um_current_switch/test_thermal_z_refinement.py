@@ -70,3 +70,27 @@ def test_build_thermal_state_keeps_default_and_exposes_keyword_only_z_factor():
         signature.parameters["z_refinement_factor"].kind
         is inspect.Parameter.KEYWORD_ONLY
     )
+    assert signature.parameters["xy_refinement_factor"].default == 1
+    assert (
+        signature.parameters["xy_refinement_factor"].kind
+        is inspect.Parameter.KEYWORD_ONLY
+    )
+
+
+@pytest.mark.parametrize("factor", [2, 4])
+def test_xy_refinement_preserves_all_original_faces_and_leaves_z_fixed(factor):
+    coarse = thermal_edges(2, xy_refinement_factor=1)
+    refined = thermal_edges(2, xy_refinement_factor=factor)
+    assert refined[0].size - 1 == factor * (coarse[0].size - 1)
+    assert refined[1].size - 1 == factor * (coarse[1].size - 1)
+    assert np.array_equal(refined[0][::factor], coarse[0])
+    assert np.array_equal(refined[1][::factor], coarse[1])
+    assert np.array_equal(refined[2], coarse[2])
+    assert _count_layer(refined[0], -8e-6, 8e-6) == 160 * factor
+    assert _count_layer(refined[0], -4e-6, 4e-6) == 80 * factor
+
+
+@pytest.mark.parametrize("factor", [0, -1, 1.5, True])
+def test_invalid_xy_refinement_factor_fails_closed(factor):
+    with pytest.raises(ValueError, match="positive integer"):
+        thermal_edges(2, xy_refinement_factor=factor)
