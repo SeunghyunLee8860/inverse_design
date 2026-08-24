@@ -48,15 +48,16 @@ sample-air boundaries are insulating, and the transverse example uses an
    changes are not evidence for the current shared-linear code. Si, air, PML,
    optical x/y, thermal, and electrical meshes were not certified.
 
-3. **The stable fine-z time contract is not yet certified.** Material isolation
-   traced the factor-8, Courant-0.5 long-time failure to Au dispersion; the
-   substrates-only and TaIrTe4-only cases stayed stationary. At the identical
-   factor-8 grid, Courant 0.25 reduced the Au-only previous/late field NRMSE
-   from 80.79% to 0.112%, so the old failure is a time-step instability rather
-   than evidence of spatial non-convergence. The complete Au+TaIrTe4 32/40
-   period stability and absorption-closure gate must pass before the mesh
-   sweep can resume. Float32 ADE coefficients are now fitted against their
-   realized carrier response with <1e-5 relative complex-permittivity error.
+3. **The time/material blocker is closed, but no spatial mesh is certified.**
+   Material isolation traced the factor-8, Courant-0.5 long-time failure to Au
+   dispersion; substrates-only and TaIrTe4-only stayed stationary. At the
+   identical partial factor-8 grid, Courant 0.25 passed Au-only/full-dispersion
+   32/40-period gates. The full case had 0.1878% field NRMSE, 0.00223% late
+   energy change, 0.3567% Q/phasor-flux mismatch, and only 0.000678% Q change
+   from 32 to 40 periods. This establishes the 40-period/Courant-0.25 starting
+   contract for spatial sweeps, not z/x/y convergence. Float32 ADE coefficients
+   are fitted against their realized carrier response with <1e-5 relative
+   complex-permittivity error.
 
 4. **The target physical device is not defined.** The code assumes a square
    16 um flake, 100 nm thickness, no crystal rotation, full left/right edge

@@ -153,11 +153,13 @@ location.  `AU_DUALPOL_PYTHON`, `FDTDX_SOURCE_DIR`, and
    illumination in `physical_device_contract.json`.
 2. Treat the existing factor 1/2/4/8 tables as stale historical output, not as
    evidence for the current code or as a converged production mesh.
-3. Finish `20_validate_4um_stable_time_contract.py`. Isolation already traced
-   the factor-8/Courant-0.5 failure to Au and showed the same grid stable in an
-   Au-only 32-period case at Courant 0.25; full-dispersion 32/40-period
-   stationarity and absorption closure remain the gate. Only after that gate
-   passes, expand z refinement to Si, air, and PML.
+3. Use the validated reduced-Courant time/material contract as the starting
+   point for full-domain z refinement. At factor 8 and Courant 0.25, all
+   Au-only/full-dispersion cases passed; the full case changed in Q by only
+   0.000678% from 32 to 40 periods. The selected sweep contract is therefore
+   40 total periods with a 4-period late window and Courant 0.25. This result
+   is still a partial-grid time certificate, not a mesh certificate. See
+   `results_4um_stable_time_contract/STABLE_TIME_CONTRACT_REPORT.md`.
 4. Revalidate the new shared linear material-fraction contract with endpoint,
    floor-sensitivity, and AD-FD checks on the selected mesh.
 5. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh
