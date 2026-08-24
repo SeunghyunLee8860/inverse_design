@@ -358,8 +358,16 @@ Direction 2 then passed with Ea AD/FD
 `-5.517740350e-8`/`-5.516697265e-8 A` (error `1.890e-4`). Its signed
 balanced-objective and both constraint checks passed. Four forwards totaled
 229.15 s and four custom-CUDA evaluations 72.69 s. Each polarization now has
-three independent directions; only index 3 remains in the planned family.
-No optimizer was run.
+three independent directions.
+
+Direction 3 then passed with Ea AD/FD
+`-7.435606117e-9`/`-7.434900185e-9 A` (error `9.494e-5`) and Eb AD/FD
+`-1.759945920e-8`/`-1.759713187e-8 A` (error `1.322e-4`). Its signed
+balanced-objective and both constraint checks passed. Four forwards totaled
+232.27 s and four custom-CUDA evaluations 75.39 s. Each polarization now has
+all four planned development-mesh directions. No optimizer was run; the
+unoptimized currents remain same-signed, and the next code gate is a
+fail-closed Lumerical evaluation driver.
 
 ## Exact endpoint/final GPU runner
 

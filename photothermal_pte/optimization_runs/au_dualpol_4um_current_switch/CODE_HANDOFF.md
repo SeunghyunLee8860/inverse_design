@@ -241,7 +241,16 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     `-2.440938241e-8`/`-2.440694620e-8 A` (error `9.981e-5`) and Eb AD/FD
     `-5.517740350e-8`/`-5.516697265e-8 A` (error `1.890e-4`). The signed
     objective and constraint gate passes. Its four forwards totaled 229.2 s
-    and four custom-CUDA evaluations 72.7 s. Only direction 3 remains.
+    and four custom-CUDA evaluations 72.7 s.
+37. Direction 3 completes the planned four-direction development-mesh family.
+    Ea AD/FD was `-7.435606117e-9`/`-7.434900185e-9 A` (error
+    `9.494e-5`), and Eb AD/FD was
+    `-1.759945920e-8`/`-1.759713187e-8 A` (error `1.322e-4`). The signed
+    balanced objective and both epigraph constraints pass. Four Lumerical
+    forwards totaled 232.3 s and four custom-CUDA evaluations 75.4 s. No
+    optimizer, Lumerical HEAT/CHARGE, FDTDX Maxwell, mesh sweep, or B200 claim
+    was made. The baseline remains non-switching because both currents are
+    negative.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -308,7 +317,7 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    4-um endpoint parity, quantified source-band error, uniform-density
    resonance sweep, multi-direction latent-variable AD-FD, and
    both-polarization validation. The component-Yee mapping FD/transpose and
-   two complete latent-variable directional AD-FD checks for each of Ea and Eb
+   four complete latent-variable directional AD-FD checks for each of Ea and Eb
    now pass on the RTX development mesh. See `MATERIAL_FRACTION_AUDIT.md`.
 2. AD-FD validates the derivative of a chosen discrete mesh; it does not
    certify mesh convergence.
@@ -367,10 +376,10 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    existing entry points still implement the historical gray/FDTDX path.
    Legacy shared-linear certificates cannot clear this gate. The new
    Lumerical `n-k` density carrier is now connected through component-Yee
-   discrete adjoints for Ea and Eb. Two complete latent-variable directions
+   discrete adjoints for Ea and Eb. All four planned latent-variable directions
    for each polarization and their signed objective now pass centered AD-FD.
-   Production remains blocked until directions 2/3, the Lumerical evaluation
-   driver, and the selected converged mesh pass. Then issue
+   Production remains blocked until the Lumerical evaluation driver and the
+   selected converged mesh pass. Then issue
    certificates naming the selected full-domain-z grid, Courant factor, time
    windows, and same-grid Ea/Eb source calibration. The combined adjoint also derives
    its Au/TaIrTe4 material offsets from the realized placed slices; do not
@@ -660,10 +669,9 @@ Do not copy them into this worktree.
    now exist, but no B200 result is committed and this Codex host fails the
    B200 preflight.
 5. The component-Yee builder, hash-bound R1.2 distributed-source adjoints,
-   and three complete beta-4 latent centered AD-FD directions for each of Ea and
-   Eb now pass on the 5/50-nm staircase mesh. Their exact signed epigraph also
-   passes in all three common directions. Complete direction index 3, then
-   build a fail-closed Lumerical
+   and all four planned beta-4 latent centered AD-FD directions for each of Ea
+   and Eb now pass on the 5/50-nm staircase mesh. Their exact signed epigraph
+   also passes in all four common directions. Next build a fail-closed Lumerical
    evaluation driver without rerunning already hash-bound baselines. The
    polarization-general runner now permits reuse of the Ea material Jacobian
    for Eb only after the exact epsilon/grid/frequency binding passes; it does
