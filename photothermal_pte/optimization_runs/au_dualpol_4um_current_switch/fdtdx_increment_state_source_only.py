@@ -20,10 +20,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
     CONTRACT,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
-    ANCHOR_CASE,
     MESH_AXES,
-    TimeSpec,
-    case_for_axis,
     case_contract,
     realized_time_contract,
 )
@@ -40,9 +37,13 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_incr
     _json_safe_memory_stats,
     _source_audit,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_increment_state_full_z_extension_case import (
+    EXTENSION_Z_FACTORS,
+    resolve_increment_state_case,
+)
 
 
-VERSION = "fdtdx-increment-state-source-only-v1"
+VERSION = "fdtdx-increment-state-source-only-v2"
 STATUS_READY = "VALIDATED_FDTDX_INCREMENT_STATE_SOURCE_ONLY_CASE"
 STATUS_BLOCKED = "BLOCKED_FDTDX_INCREMENT_STATE_SOURCE_ONLY_CASE"
 SCOPE = "all-air source-only on patched increment-state FDTDX"
@@ -107,6 +108,7 @@ def run(
     window_periods: int,
     mesh_axis: str,
     mesh_level: int,
+    full_z_extension: str | None = None,
 ) -> dict[str, Any]:
     started_total = time.perf_counter()
     output_directory = _output_directory(output_directory)
@@ -117,16 +119,12 @@ def run(
     if configured_source != Path(source_audit["path"]):
         raise RuntimeError("FDTDX_SOURCE_DIR does not match --source")
 
-    case_spec = case_for_axis(
+    case_spec = resolve_increment_state_case(
         mesh_axis,
         mesh_level,
-        time=TimeSpec(
-            total_periods=total_periods,
-            window_periods=window_periods,
-            courant_factor=ANCHOR_CASE.time.courant_factor,
-        ),
-        pml_alpha_scale=ANCHOR_CASE.pml_alpha_scale,
-        pml_target_reflection=ANCHOR_CASE.pml_target_reflection,
+        total_periods,
+        window_periods,
+        full_z_extension,
     )
     repository = Path(__file__).resolve().parents[3]
     runner_path = Path(__file__).resolve()
@@ -280,6 +278,7 @@ def main() -> int:
     parser.add_argument("--window-periods", type=int, default=4)
     parser.add_argument("--mesh-axis", choices=("anchor", *MESH_AXES), default="anchor")
     parser.add_argument("--mesh-level", type=int, default=0)
+    parser.add_argument("--full-z-extension", choices=tuple(EXTENSION_Z_FACTORS))
     args = parser.parse_args()
     payload = run(
         args.output_directory,
@@ -289,6 +288,7 @@ def main() -> int:
         args.window_periods,
         args.mesh_axis,
         args.mesh_level,
+        args.full_z_extension,
     )
     return 0 if payload["ready"] else 2
 
