@@ -214,10 +214,21 @@ FDTDX_SOURCE_DIR=/absolute/pinned/fdtdx \
   --output /absolute/new/FDTDX_FRESH_TWO_POLE_SOLVER_ARRAY_zN.json
 ```
 
-The next blocker is not placement. It is a new forward-only, hash-bound
-source/material runner that permits the candidate law while keeping adjoint and
-optimizer paths disabled, followed by same-law z8/z16/z32 source-pair,
-time/stationarity, and field/absorption validation.
+The candidate-bound source/pair runner was committed at `e722ba73`. Its first z8
+Ea/Eb pair is complete under `two_pole_forward_e722ba73/z8`. The Ea report/NPZ
+SHA-256 values are
+`30cbc8b18c5aaaa289994b5bafe2c7b8821983aff31b7f97e7c9647d4b113901` and
+`7e586000eb4a5681011062f9fe78e972120a8b0bb9b05c3eda55fd24f326d133`;
+the Eb values are
+`49788884d2ce62660cfba923a123940426211f8394fe98c6103a7058782bf459` and
+`93cff39dbeaf200f0db43987c077b700ae1713774c71fc480bc7c982f8e393e1`.
+The law-bound pair SHA-256 is
+`d5196cc7c715260e5c0436ccc59ca258c22173ae9adc69340405dc5e1e05a582`.
+All gates pass; the raw incident-power mismatch is `1.1513098e-7`.
+
+The next blocker is a separate candidate exact-binary material runner and its
+z8 Ea/Eb time/stationarity/field/absorption results. z16 and z32 still need
+their own source pairs. Adjoint and optimizer paths remain disabled throughout.
 
 ## Convergence rule
 

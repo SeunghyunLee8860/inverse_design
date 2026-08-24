@@ -289,7 +289,7 @@ source-only report, Ea/Eb pair, and material report binds one canonical
 stage is now complete for the exact-binary 375-pixel
 `l_shape_4um_with_500nm_arms` reference. Runs were made at clean commit
 `01a8ad8a`; the independent verifier and its 12 focused tests were committed
-and pushed as `5e376ce1`. All explicit FDTDX regression tests pass: 130
+and pushed as `5e376ce1`. All explicit FDTDX regression tests pass: 133
 `unittest` tests; the separate pytest forensic file is not runnable in the
 locked fresh venv because pytest is intentionally absent.
 
@@ -421,11 +421,31 @@ worst realized-epsilon relative error is below `3.1e-8` and every axis remains
 passive. These runs execute zero FDTD time steps.
 
 This closes only the placed solver-array blocker. It is not a material, field,
-time, source-pair, or mesh certificate. The next allowed FDTDX change is a
-separate hash-bound forward-validation path for same-law z8/z16/z32 all-air
-source pairs and exact-binary material/time/stationarity runs. It must keep
-adjoint and optimizer entry points disabled, and it must not compare any old
-single-pole field result to a two-pole result.
+time, source-pair, or mesh certificate.
+
+A distinct candidate-bound all-air source/pair path was committed and pushed as
+`e722ba73`; the historical source/pair status and CLI remain separate. The clean
+z8 Ea/Eb runs and pair are external under
+`two_pole_forward_e722ba73/z8`. Artifact SHA-256 values are:
+
+- Ea report: `30cbc8b18c5aaaa289994b5bafe2c7b8821983aff31b7f97e7c9647d4b113901`
+- Ea NPZ: `7e586000eb4a5681011062f9fe78e972120a8b0bb9b05c3eda55fd24f326d133`
+- Eb report: `49788884d2ce62660cfba923a123940426211f8394fe98c6103a7058782bf459`
+- Eb NPZ: `93cff39dbeaf200f0db43987c077b700ae1713774c71fc480bc7c982f8e393e1`
+- source-pair certificate: `d5196cc7c715260e5c0436ccc59ca258c22173ae9adc69340405dc5e1e05a582`
+
+Both source cases pass every finite-value, stationarity, polarization, beam,
+and closed-flux gate. Ea/Eb incident powers are `1.8834239723e-12` and
+`1.8834237555e-12 W`; their relative mismatch is `1.1513098e-7` versus the
+`5e-3` gate. The pair reconstructs the exact canonical material law, case-file
+byte hash, model audits, and raw NPZ hashes, and creates only one common scale.
+
+Only the z8 all-air source-pair stage is complete. z16 and z32 source pairs do
+not exist, and no two-pole material field solve exists at any level. The next
+allowed FDTDX change is a distinct forward-only exact-binary material runner
+that accepts only this candidate-pair status and keeps adjoint/optimizer entry
+points disabled. Do not compare any old single-pole field result to a two-pole
+result.
 
 Do not proceed to x/y, domain, PML, thermal/electrical, or optimization until
 z convergence closes. Preserve the failed z2/z4/z8 comparisons and the z16

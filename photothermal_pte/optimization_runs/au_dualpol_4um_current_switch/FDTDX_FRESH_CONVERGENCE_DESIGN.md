@@ -339,13 +339,30 @@ absent. Au uses exact binary air/Au endpoints on every pole, TaIrTe4 preserves
 readback passes. Every realized epsilon is passive and within `3.1e-8` relative
 error of its original target.
 
-The two-pole results are still not a material, field, time, source-pair, or mesh
-certificate. The next required stage is a separate hash-bound forward-only
-path that reruns all-air Ea/Eb source pairs and exact-binary
-material/time/stationarity cases at z8, z16, and z32 under their respective
-candidate laws. Adjoint and optimizer entry points remain forbidden. Comparing
-old single-pole z8 directly with any new two-pole field level is forbidden, and
-every downstream convergence stage remains blocked.
+A distinct candidate-bound source/pair path was committed at `e722ba73` and
+first exercised at z8. Both all-air polarizations pass every source gate. Ea and
+Eb incident powers are `1.8834239723e-12` and `1.8834237555e-12 W`, giving a
+relative mismatch of `1.1513098e-7` against the `5e-3` limit. The pair uses one
+common power scale and one common field-amplitude scale; polarization-specific
+normalization remains forbidden.
+
+External z8 artifact SHA-256 values under `two_pole_forward_e722ba73/z8` are:
+
+| artifact | SHA-256 |
+|---|---|
+| Ea source report | `30cbc8b18c5aaaa289994b5bafe2c7b8821983aff31b7f97e7c9647d4b113901` |
+| Ea source NPZ | `7e586000eb4a5681011062f9fe78e972120a8b0bb9b05c3eda55fd24f326d133` |
+| Eb source report | `49788884d2ce62660cfba923a123940426211f8394fe98c6103a7058782bf459` |
+| Eb source NPZ | `93cff39dbeaf200f0db43987c077b700ae1713774c71fc480bc7c982f8e393e1` |
+| law-bound source pair | `d5196cc7c715260e5c0436ccc59ca258c22173ae9adc69340405dc5e1e05a582` |
+
+These are all-air source results, not two-pole material-field evidence. z16 and
+z32 still require independent source pairs. The next code stage is a separate
+forward-only exact-binary material runner that accepts only the candidate pair
+status, reruns pre-solve material readback, and keeps adjoint and optimizer
+entry points disabled. Comparing old single-pole z8 directly with any new
+two-pole field level is forbidden, and every downstream convergence stage
+remains blocked.
 
 ## Comparison and promotion rules
 
