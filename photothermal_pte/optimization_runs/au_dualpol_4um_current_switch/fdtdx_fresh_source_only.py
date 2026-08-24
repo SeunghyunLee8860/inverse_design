@@ -180,10 +180,9 @@ def all_air_arrays(model: dict[str, Any]):
     }
 
 
-def evaluate_output(
-    model: dict[str, Any], output: Any, polarization: str
-) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
-    states = output.detector_states
+def extract_detector_fields(states: dict[str, Any]) -> dict[str, np.ndarray]:
+    """Extract the pinned detector schema, including six hollow shell faces."""
+
     fields = {
         "au_previous": np.asarray(states["au_previous"]["phasor"][0, 0]),
         "au_late": np.asarray(states["au_late"]["phasor"][0, 0]),
@@ -193,9 +192,32 @@ def evaluate_output(
         "tairte4_late": np.asarray(states["tairte4_late"]["phasor"][0, 0]),
         "target": np.asarray(states["target_field"]["phasor"][0, 0]),
         "incident_phasor": np.asarray(states["incident_plane"]["phasor"]),
-        "closed_phasor": np.asarray(states["material_flux"]["phasor"]),
         "closed_td": np.asarray(states["material_flux_td"]["poynting_flux"]),
     }
+    closed_state = states["material_flux"]
+    expected_closed_keys = {
+        f"phasor_axis{axis}_{side}"
+        for axis in range(3)
+        for side in ("min", "max")
+    }
+    if set(closed_state) != expected_closed_keys:
+        raise RuntimeError(
+            f"unexpected closed-surface phasor state keys: {sorted(closed_state)}"
+        )
+    fields.update(
+        {
+            f"closed_{name}": np.asarray(closed_state[name])
+            for name in sorted(expected_closed_keys)
+        }
+    )
+    return fields
+
+
+def evaluate_output(
+    model: dict[str, Any], output: Any, polarization: str
+) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
+    states = output.detector_states
+    fields = extract_detector_fields(states)
     finite = all(np.all(np.isfinite(value)) for value in fields.values())
     stationarity = {
         "au_complex_E_NRMSE": weighted_complex_nrmse(
