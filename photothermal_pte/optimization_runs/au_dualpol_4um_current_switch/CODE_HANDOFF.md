@@ -289,7 +289,7 @@ source-only report, Ea/Eb pair, and material report binds one canonical
 stage is now complete for the exact-binary 375-pixel
 `l_shape_4um_with_500nm_arms` reference. Runs were made at clean commit
 `01a8ad8a`; the independent verifier and its 12 focused tests were committed
-and pushed as `5e376ce1`. All explicit FDTDX regression tests pass: 98
+and pushed as `5e376ce1`. All explicit FDTDX regression tests pass: 102
 `unittest` tests; the separate pytest forensic file is not runnable in the
 locked fresh venv because pytest is intentionally absent.
 
@@ -383,6 +383,16 @@ TaIrTe4 b/c, but are not promoted. The algorithm must receive a separate
 material-law hash, exact two-pole readback on every axis, time/stationarity
 validation, and same-law z8/z16/z32 reruns. Old single-pole and new two-pole
 levels are not comparable.
+
+The candidate-law generator was committed at `f959a9ef`. Clean external z8,
+z16, and z32 law-file SHA-256 values are respectively
+`6352e58e0b3b2449f5316948adb3247bfc9c71547cbb2252a8beba69571d67bc`,
+`558eae569446993096081320c1f6e9439ee78ef799c8aeb0b0af8810a72e6fb2`,
+and `302ab4e8991b55d0fb17c2ff5332b156fb29401ac04e026e0394f7e6c1fbcd1d`.
+The new z32 canonical case-file SHA-256 is
+`33398486f542fa0f1c7b063011e61992f7830b7cd36c25c8d6863c553aa3fbf4`;
+its grid is `196 x 196 x 1280`. These law files are still candidate-only and
+have not been applied to a FDTDX solver array or field run.
 
 Do not proceed to x/y, domain, PML, thermal/electrical, or optimization until
 z convergence closes. Preserve the failed z2/z4/z8 comparisons and the z16

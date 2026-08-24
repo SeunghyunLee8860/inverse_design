@@ -170,6 +170,16 @@ candidate-only. Any implementation changes the material law and requires fresh,
 hash-distinct z8, z16, and z32 source/material runs before comparison; old
 single-pole and new two-pole levels must never form a pair.
 
+The canonical candidate-law generator was committed at `f959a9ef`. Its external
+z8/z16/z32 law-file SHA-256 values are
+`6352e58e0b3b2449f5316948adb3247bfc9c71547cbb2252a8beba69571d67bc`,
+`558eae569446993096081320c1f6e9439ee78ef799c8aeb0b0af8810a72e6fb2`, and
+`302ab4e8991b55d0fb17c2ff5332b156fb29401ac04e026e0394f7e6c1fbcd1d`.
+The z32 case-file SHA-256 is
+`33398486f542fa0f1c7b063011e61992f7830b7cd36c25c8d6863c553aa3fbf4`.
+All files remain candidate-only and cannot be passed to historical runners
+until explicit two-pole solver-array readback support is implemented.
+
 ## Convergence rule
 
 The 16-, 24-, and 32-period levels are three different numerical cases.  Each

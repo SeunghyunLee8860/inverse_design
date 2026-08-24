@@ -285,6 +285,23 @@ It proves the first Au exception was not the only pending failure:
 | TaIrTe4 b | 2.5155545e-6 | yes | 2.3850798e-5 | no | 2.1030075e-8 |
 | TaIrTe4 c | 2.5155545e-6 | yes | 2.3850798e-5 | no | 2.1030075e-8 |
 
+The canonical candidate-law generator was then committed at `f959a9ef` and run
+from that clean commit. The z32 case is `196 x 196 x 1280` (49,172,480 Yee
+cells), with case-file SHA-256
+`33398486f542fa0f1c7b063011e61992f7830b7cd36c25c8d6863c553aa3fbf4`
+and internal case SHA-256
+`a10b3a9fa2757d51b51ee0726566feb75c5516a1ed3728dcc423ebc8b14d3125`.
+The external candidate-law files under `two_pole_material_f959a9ef` are:
+
+| z factor | material-law file SHA-256 | internal material-law SHA-256 |
+|---:|---|---|
+| 8 | `6352e58e0b3b2449f5316948adb3247bfc9c71547cbb2252a8beba69571d67bc` | `700be9659c9031a5ed69fd6b9c3eca637b508ebdef8b61d7082c3ac644438ba7` |
+| 16 | `558eae569446993096081320c1f6e9439ee78ef799c8aeb0b0af8810a72e6fb2` | `5fee80f9295483fd5022eafb6bcabaa2e96934a908a45fe4581712c1cb91f7b5` |
+| 32 | `302ab4e8991b55d0fb17c2ff5332b156fb29401ac04e026e0394f7e6c1fbcd1d` | `ee428f0c2ec4402ae397d208e2c6773221f55980579fc160c9c7996d256a2ed4` |
+
+Each file binds the numerical case, original material table, algorithm source,
+and pinned FDTDX update/dispersion hashes. All remain `candidate_only=true`.
+
 The two-pole results are not a material certificate. They only establish a
 numerical candidate with positive oscillator strengths and recurrence roots no
 larger than one for Au and every TaIrTe4 axis at z8, z16, and z32. Before using
