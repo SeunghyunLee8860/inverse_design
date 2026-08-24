@@ -262,9 +262,10 @@ empirical gradient rescaling or finite-difference fit was applied.
 
 This is a real combined AD-FD certificate, but its scope is deliberately
 narrow: one Ea direction with respect to the shared projected 81x81 occupancy
-on the 5/50-nm staircase RTX development mesh. Eb, multiple directions,
-latent filter/projection differentiation, a selected converged mesh, the
-signed dual-polarization objective, and B200 repetition remain open.
+on the 5/50-nm staircase RTX development mesh. The later latent gate below
+extends it through filter/projection for one direction. Eb, multiple
+directions, a selected converged mesh, the signed dual-polarization objective,
+and B200 repetition remain open.
 
 ### The optimizer carrier is nodal, not the legacy 80x80 cell map
 
@@ -293,8 +294,21 @@ softplus positive part with pointwise approximation excess bounded by
 final authority. Script 37 passes nodal/cell transpose errors
 `2.99e-16`/`2.58e-15`, nodal/cell centered-FD errors `2.10e-9`/`1.18e-9`,
 and DFM centered-FD error `5.87e-7`, with no solver call. This closes the
-solver-free chain only. A complete latent Lumerical/custom-CUDA centered pair
-is still required before enabling LD_MMA.
+solver-free chain.
+
+Script 38 then selected a deterministic analytic 81x81 latent baseline and
+independent direction without reading fields or a gradient. At beta 4 and
+`h=0.0025`, the complete Ea latent chain gave AD `-2.766595495e-8 A` and
+centered FD `-2.766380278e-8 A`, equal sign and relative error `7.779e-5`
+(0.00778%). The projected-JVP and latent-VJP contractions agree to
+`1.20e-16`; the plus/minus signal is 1.646% of current magnitude. The four
+baseline/adjoint/plus/minus Maxwell solves used about 237 s of solver time,
+and the three custom-CUDA evaluations used about 60 s. No Lumerical
+HEAT/CHARGE, FDTDX Maxwell solve, empirical gradient scaling, or optimizer
+iteration was used. This closes one Ea latent direction on the RTX 5/50-nm
+development mesh. Additional independent directions, Eb, the signed dual
+objective, a selected mesh, and B200 repetition remain mandatory before
+enabling LD_MMA.
 
 ## Exact endpoint/final GPU runner
 
@@ -310,7 +324,7 @@ decided only by launching the ordinary exact-Au control on the actual B200 and
 recording the engine log.
 
 On 2026-08-24, solver `8.35.4413` passed Ea and Eb all-air source gates on RTX
-GPU 5 after calibrating the source-object waist to `3.956143303046143 um`; the
+GPU 5 after calibrating the source-object waist to `3.956143303046142 um`; the
 realized effective waists were about `4.00077 um`. An ordinary dispersive-Au
 full/Ea baseline run passed material fit, finite-dt material, native-Q,
 `pabs_adv`, mesh-readback, decay, and GPU-log gates but failed Q versus

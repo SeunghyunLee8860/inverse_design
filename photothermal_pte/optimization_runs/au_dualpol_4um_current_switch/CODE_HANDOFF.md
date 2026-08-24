@@ -194,6 +194,18 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     `2.10e-9`/`1.18e-9`, and maximum DFM directional-FD error `5.87e-7`, with
     zero solver calls. Final promotion thresholds the four-node cell average
     and still requires ordinary dispersive-Au binary reevaluation.
+31. `38_prepare_lumerical_4um_ea_latent_adfd.py` and the latent mode of script
+    36 -- the complete optimizer-coordinate gate through the same nodal
+    filter/projection used by the Lumerical carrier. A deterministic analytic
+    81x81 latent state and independent direction were selected without fields
+    or gradients. At beta 4 and `h=0.0025`, the R1.2 RTX Ea chain gave AD
+    `-2.766595495e-8 A` and centered FD `-2.766380278e-8 A`: same sign and
+    relative error `7.779e-5` (0.00778%). The projected-JVP and latent-VJP
+    contractions agree to `1.20e-16`. The four required Maxwell solves
+    (baseline, adjoint, plus, minus) used about 237 s of solver time in total;
+    no Lumerical HEAT/CHARGE, FDTDX, empirical rescaling, or optimizer
+    iteration was used. This closes one Ea latent direction on the current
+    development mesh only.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -260,7 +272,7 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    4-um endpoint parity, quantified source-band error, uniform-density
    resonance sweep, multi-direction latent-variable AD-FD, and
    both-polarization validation. The component-Yee mapping FD/transpose and
-   one complete Ea projected-density directional AD-FD now pass on the RTX
+   one complete Ea latent-variable directional AD-FD now pass on the RTX
    development mesh. See `MATERIAL_FRACTION_AUDIT.md`.
 2. AD-FD validates the derivative of a chosen discrete mesh; it does not
    certify mesh convergence.
@@ -319,12 +331,10 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    existing entry points still implement the historical gray/FDTDX path.
    Legacy shared-linear certificates cannot clear this gate. The new
    Lumerical `n-k` density carrier is now connected through one Ea
-   component-Yee discrete adjoint, and one independent projected-density
-   directional AD-FD passes. Production remains blocked until this is
-   extended to Ea/Eb and multiple complete latent directions on a selected
-   converged mesh. The 81x81 latent filter/projection/cell/DFM chain now has
-   solver-free FD/transpose validation, but it has not yet been included in a
-   Lumerical centered-forward pair. Then issue
+   component-Yee discrete adjoint. One independent projected-density direction
+   and one complete latent-variable direction now pass centered AD-FD.
+   Production remains blocked until this is extended to Ea/Eb and multiple
+   complete latent directions on a selected converged mesh. Then issue
    certificates naming the selected full-domain-z grid, Courant factor, time
    windows, and same-grid Ea/Eb source calibration. The combined adjoint also derives
    its Au/TaIrTe4 material offsets from the realized placed slices; do not
@@ -411,7 +421,7 @@ Do not copy them into this worktree.
    command, GPU time-stepping timing, and successful completion.
 2. The original 4.000-um source-object waist produced about 4.044 um at the
    flake plane and failed the 0.5% waist gate. One-step calibration selected
-   `3.956143303046143 um`. Both Ea and Eb source-only baseline runs then passed;
+   `3.956143303046142 um`. Both Ea and Eb source-only baseline runs then passed;
    their realized effective waists were about 4.00077 um.
 3. Baseline source mesh readback was `183 x 183 x 63`, with flake x/y maximum
    steps 100 nm and thin-stack maximum z step about 19.79 nm.
@@ -514,7 +524,10 @@ Do not copy them into this worktree.
     mesh and monitor-grid differences were exactly zero, source-profile
     round-trip error was zero, and the CW reconstruction residual was
     `1.41e-16`. The resulting total projected-density gradient L2 norm is
-    `9.09e-10 A`.
+    `9.09e-10 A`. The layout-only launcher is now also fail-closed on R1.2
+    build 4522; it can no longer silently fall back to the incompatible R1.0
+    `/opt` tree. The calibrated source-waist decimal was corrected by one ULP
+    so its default metre value exactly reproduces the hash-bound source record.
 13. One independently chosen smooth projected-density direction then passed
     complete centered AD-FD at `h=0.0025`. The `rho+` and `rho-` Lumerical
     forward solves took 54.33 s and 56.00 s; their custom-CUDA
@@ -533,8 +546,17 @@ Do not copy them into this worktree.
     tested four-node average. It also replaced the DFM residual's ReLU kink
     with a bounded softplus positive part. The solver-free script-37 audit
     passed all JVP/VJP, centered-FD, state-hash, no-rho3, and no-`np density`
-    gates in about four seconds. This fixes the discrete chain but is not a
-    complete latent Maxwell/PDE AD-FD certificate.
+    gates in about four seconds.
+15. The complete beta-4 latent Ea chain then passed centered AD-FD at
+    `h=0.0025`. AD was `-2.766595495e-8 A`; FD was
+    `-2.766380278e-8 A`; relative error was `7.779e-5`, with equal sign. The
+    plus/minus signal was 1.646% of the current magnitude, midpoint curvature
+    ratio was `8.807e-4`, and the mapping-chain transpose error was
+    `1.20e-16`. Baseline/adjoint/plus/minus Maxwell solver time totaled about
+    237 s; the three custom-CUDA evaluations totaled about 60 s. This is still
+    only one Ea direction on the RTX 5/50-nm staircase development mesh. The
+    current solver-free comparison is stored outside Git at
+    `r12_ea_latent_beta4_combined_adfd_result_v2/ea_combined_adfd_result.json`.
 
 ## Next correct sequence
 
@@ -575,12 +597,10 @@ Do not copy them into this worktree.
    now exist, but no B200 result is committed and this Codex host fails the
    B200 preflight.
 5. The component-Yee builder, one hash-bound R1.2 Ea distributed-source
-   adjoint, and one independent complete projected-density centered AD-FD now
-   pass on the 5/50-nm staircase mesh. The corrected 81x81 latent
-   filter/projection/cell/DFM transpose also passes solver-free. Next run a
-   complete latent centered pair, then extend the certificate to additional
-   independent directions, Eb, and the signed dual objective without
-   rerunning already hash-bound baselines.
+   adjoint, one independent projected-density centered AD-FD, and one complete
+   beta-4 latent centered AD-FD now pass on the 5/50-nm staircase mesh. Extend
+   the certificate to additional independent latent directions, Eb, and the
+   signed dual objective without rerunning already hash-bound baselines.
    Repeat the material Jacobian and AD-FD on the ultimately selected
    mesh/B200; do not substitute bundled LumOpt's real/lossless metal path.
 6. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh

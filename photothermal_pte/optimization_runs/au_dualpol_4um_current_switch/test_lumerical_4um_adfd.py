@@ -9,6 +9,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     centered_pair_reconstruction_metrics,
     independent_smooth_direction,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
+    NOMINAL_MAPPING,
+)
 
 
 def test_independent_direction_is_deterministic_smooth_and_normalized() -> None:
@@ -69,3 +72,39 @@ def test_centered_metrics_recovers_quadratic_directional_derivative() -> None:
     assert metrics["relative_error"] < 2.0e-11
     assert metrics["same_nonzero_sign"] is True
     assert np.isclose(metrics["centered_midpoint_minus_baseline_A"], curvature * step**2)
+
+
+def test_centered_metrics_accepts_complete_latent_mapping_chain() -> None:
+    rng = np.random.default_rng(20260824)
+    x = np.linspace(-1.0, 1.0, 81)[:, None]
+    y = np.linspace(-1.0, 1.0, 81)[None, :]
+    latent = 0.5 + 0.16 * np.sin(0.8 * np.pi * x) * np.cos(0.6 * np.pi * y)
+    direction = independent_smooth_direction(latent.shape)
+    projected_gradient = rng.standard_normal(latent.shape) * 1.0e-12
+    beta = 4.0
+    latent_gradient = NOMINAL_MAPPING.vjp(latent, projected_gradient, beta)
+    step = 1.0e-4
+
+    def objective(value: np.ndarray) -> float:
+        return float(
+            np.vdot(projected_gradient, NOMINAL_MAPPING.physical(value, beta))
+        )
+
+    metrics = centered_adfd_metrics(
+        gradient=latent_gradient,
+        direction=direction,
+        step=step,
+        baseline_current_A=objective(latent),
+        plus_current_A=objective(latent + step * direction),
+        minus_current_A=objective(latent - step * direction),
+    )
+    projected_contraction = float(
+        np.vdot(
+            projected_gradient,
+            NOMINAL_MAPPING.jvp(latent, direction, beta),
+        )
+    )
+    latent_contraction = float(np.vdot(latent_gradient, direction))
+    assert np.isclose(projected_contraction, latent_contraction, rtol=1.0e-13)
+    assert metrics["relative_error"] < 1.0e-7
+    assert metrics["same_nonzero_sign"] is True

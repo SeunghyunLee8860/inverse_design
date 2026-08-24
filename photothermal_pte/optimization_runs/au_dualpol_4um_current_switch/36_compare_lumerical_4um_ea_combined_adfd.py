@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Hash-validate and compare one Ea projected-density centered AD--FD pair."""
+"""Hash-validate one Ea projected-density or complete latent AD--FD pair."""
 
 from __future__ import annotations
 
@@ -21,17 +21,25 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_density import (
     density_state_sha256,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
+    NOMINAL_MAPPING,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
     sha256,
 )
 
 
-STATUS = "VALIDATED_LUMERICAL_4UM_EA_PROJECTED_DENSITY_COMBINED_ADFD"
+PROJECTED_STATUS = "VALIDATED_LUMERICAL_4UM_EA_PROJECTED_DENSITY_COMBINED_ADFD"
+LATENT_STATUS = "VALIDATED_LUMERICAL_4UM_EA_LATENT_COMBINED_ADFD"
 
 
 def _artifact(path: Path) -> dict[str, Any]:
     value = path.expanduser().resolve()
-    return {"path": str(value), "size_bytes": value.stat().st_size, "sha256": sha256(value)}
+    return {
+        "path": str(value),
+        "size_bytes": value.stat().st_size,
+        "sha256": sha256(value),
+    }
 
 
 def _load_record(path: Path) -> tuple[Path, dict[str, Any]]:
@@ -62,18 +70,27 @@ def _validate_case(
     pde: dict[str, Any],
 ) -> dict[str, Any]:
     expected_density_sha = str(density_state["density_state_sha256"])
-    if forward.get("all_gates_passed") is not True or forward.get("case") != "import_density":
+    if (
+        forward.get("all_gates_passed") is not True
+        or forward.get("case") != "import_density"
+    ):
         raise RuntimeError(f"{sign} Lumerical forward did not pass")
     if forward.get("polarization") != "Ea" or pde.get("polarization") != "Ea":
         raise RuntimeError(f"{sign} polarization is not Ea")
     if _density_sha(forward) != expected_density_sha:
         raise RuntimeError(f"{sign} forward density hash differs")
-    if pde.get("status") != "VALIDATED_LUMERICAL_4UM_GRAY_Q_CUSTOM_CUDA_PDE" or pde.get("passed") is not True:
+    if (
+        pde.get("status") != "VALIDATED_LUMERICAL_4UM_GRAY_Q_CUSTOM_CUDA_PDE"
+        or pde.get("passed") is not True
+    ):
         raise RuntimeError(f"{sign} custom-CUDA PDE result did not pass")
     if pde.get("density_state", {}).get("density_state_sha256") != expected_density_sha:
         raise RuntimeError(f"{sign} PDE density hash differs")
     forward_input = pde.get("inputs", {}).get("forward_result", {})
-    if Path(forward_input.get("path", "")).resolve() != forward_path or sha256(forward_path) != forward_input.get("sha256"):
+    if (
+        Path(forward_input.get("path", "")).resolve() != forward_path
+        or sha256(forward_path) != forward_input.get("sha256")
+    ):
         raise RuntimeError(f"{sign} PDE/forward JSON binding differs")
     for key in ("solver_version", "mesh_spec", "source_calibration_sha256", "accelerator_policy"):
         if forward.get(key) != baseline_forward.get(key):
@@ -124,9 +141,29 @@ def main() -> int:
         plus_pde_path, plus_pde = _load_record(args.plus_pde_result)
         minus_forward_path, minus_forward = _load_record(args.minus_forward_result)
         minus_pde_path, minus_pde = _load_record(args.minus_pde_result)
-        if manifest.get("status") != "PREPARED_LUMERICAL_4UM_EA_COMBINED_ADFD_PAIR" or manifest.get("passed") is not True:
+        manifest_status = manifest.get("status")
+        if manifest_status == "PREPARED_LUMERICAL_4UM_EA_COMBINED_ADFD_PAIR":
+            design_coordinate = "shared_projected_nodal_occupancy"
+            validated_status = PROJECTED_STATUS
+            failed_status = (
+                "FAILED_LUMERICAL_4UM_EA_PROJECTED_DENSITY_COMBINED_ADFD"
+            )
+        elif (
+            manifest_status
+            == "PREPARED_LUMERICAL_4UM_EA_LATENT_COMBINED_ADFD_PAIR"
+        ):
+            design_coordinate = "latent_81x81_before_filter_projection"
+            validated_status = LATENT_STATUS
+            failed_status = "FAILED_LUMERICAL_4UM_EA_LATENT_COMBINED_ADFD"
+        else:
             raise RuntimeError("centered-pair manifest did not pass")
-        if adjoint.get("status") != "COMPLETED_LUMERICAL_4UM_GRAY_MAXWELL_ADJOINT_PREPARATION" or adjoint.get("passed") is not True:
+        if manifest.get("passed") is not True:
+            raise RuntimeError("centered-pair manifest did not pass")
+        if (
+            adjoint.get("status")
+            != "COMPLETED_LUMERICAL_4UM_GRAY_MAXWELL_ADJOINT_PREPARATION"
+            or adjoint.get("passed") is not True
+        ):
             raise RuntimeError("adjoint preparation did not pass")
         if adjoint.get("polarization") != "Ea" or adjoint.get("AD_FD_claimed") is not False:
             raise RuntimeError("adjoint record has invalid pre-AD-FD state")
@@ -138,7 +175,12 @@ def main() -> int:
         baseline_density = np.load(baseline_density_path, allow_pickle=False)
         plus_density = np.load(plus_density_path, allow_pickle=False)
         minus_density = np.load(minus_density_path, allow_pickle=False)
-        if array_sha256(direction, label="adfd-direction-v1") != manifest["direction_sha256"]:
+        direction_label = (
+            "adfd-latent-direction-v1"
+            if validated_status == LATENT_STATUS
+            else "adfd-direction-v1"
+        )
+        if array_sha256(direction, label=direction_label) != manifest["direction_sha256"]:
             raise RuntimeError("direction semantic SHA differs")
         loaded_density_shas = {
             label: density_state_sha256(value)
@@ -156,11 +198,15 @@ def main() -> int:
             "density_state_sha256"
         ):
             raise RuntimeError("pair baseline density differs from adjoint density")
-        baseline_forward_path = Path(adjoint["artifacts"]["forward_result"]["path"]).resolve()
+        baseline_forward_path = Path(
+            adjoint["artifacts"]["forward_result"]["path"]
+        ).resolve()
         if sha256(baseline_forward_path) != adjoint["artifacts"]["forward_result"]["sha256"]:
             raise RuntimeError("baseline forward record changed")
         baseline_forward = json.loads(baseline_forward_path.read_text(encoding="utf-8"))
-        gradient_path = Path(adjoint["artifacts"]["gradient_NPZ"]["path"]).resolve()
+        gradient_path = Path(
+            adjoint["artifacts"]["gradient_NPZ"]["path"]
+        ).resolve()
         if sha256(gradient_path) != adjoint["artifacts"]["gradient_NPZ"]["sha256"]:
             raise RuntimeError("adjoint gradient artifact changed")
         with np.load(gradient_path, allow_pickle=False) as gradient_file:
@@ -187,8 +233,75 @@ def main() -> int:
             pde=minus_pde,
         )
         step = float(manifest["step"])
+        if validated_status == LATENT_STATUS:
+            if manifest.get("mapping") != NOMINAL_MAPPING.audit():
+                raise RuntimeError("latent pair mapping contract differs")
+            latent_path = _check_manifest_artifact(manifest, "latent_baseline")
+            latent_plus_path = _check_manifest_artifact(manifest, "latent_plus")
+            latent_minus_path = _check_manifest_artifact(manifest, "latent_minus")
+            latent = np.load(latent_path, allow_pickle=False)
+            latent_plus = np.load(latent_plus_path, allow_pickle=False)
+            latent_minus = np.load(latent_minus_path, allow_pickle=False)
+            if (
+                array_sha256(latent, label="adfd-latent-baseline-v1")
+                != manifest["latent_baseline_sha256"]
+            ):
+                raise RuntimeError("latent baseline semantic SHA differs")
+            beta = float(manifest["beta"])
+            if not np.array_equal(
+                NOMINAL_MAPPING.physical(latent, beta), baseline_density
+            ):
+                raise RuntimeError("latent baseline does not reproduce projected baseline")
+            if not np.array_equal(
+                NOMINAL_MAPPING.physical(latent_plus, beta), plus_density
+            ):
+                raise RuntimeError("latent plus state does not reproduce projected plus")
+            if not np.array_equal(
+                NOMINAL_MAPPING.physical(latent_minus, beta), minus_density
+            ):
+                raise RuntimeError("latent minus state does not reproduce projected minus")
+            gradient_for_metrics = NOMINAL_MAPPING.vjp(latent, gradient, beta)
+            projected_direction = NOMINAL_MAPPING.jvp(latent, direction, beta)
+            projected_contraction = float(np.vdot(gradient, projected_direction))
+            latent_contraction = float(np.vdot(gradient_for_metrics, direction))
+            chain_scale = max(
+                abs(projected_contraction),
+                abs(latent_contraction),
+                np.finfo(float).tiny,
+            )
+            gradient_chain = {
+                "beta": beta,
+                "projected_gradient_L2_A": float(np.linalg.norm(gradient)),
+                "latent_gradient_L2_A": float(np.linalg.norm(gradient_for_metrics)),
+                "projected_JVP_L2": float(np.linalg.norm(projected_direction)),
+                "projected_gradient_dot_projected_JVP_A": projected_contraction,
+                "latent_gradient_dot_latent_direction_A": latent_contraction,
+                "chain_transpose_relative_error": abs(
+                    projected_contraction - latent_contraction
+                )
+                / chain_scale,
+            }
+            pair_baseline = latent
+            pair_plus = latent_plus
+            pair_minus = latent_minus
+            scope = (
+                "one independent smooth direction of Ea current with respect "
+                "to 81x81 latent density before filter/projection"
+            )
+        else:
+            gradient_for_metrics = gradient
+            gradient_chain = {
+                "projected_gradient_used_directly": True,
+            }
+            pair_baseline = baseline_density
+            pair_plus = plus_density
+            pair_minus = minus_density
+            scope = (
+                "one independent smooth direction of Ea current with respect "
+                "to shared projected nodal occupancy"
+            )
         metrics = centered_adfd_metrics(
-            gradient=gradient,
+            gradient=gradient_for_metrics,
             direction=direction,
             step=step,
             baseline_current_A=float(adjoint["current_A"]),
@@ -196,10 +309,10 @@ def main() -> int:
             minus_current_A=minus["current_A"],
         )
         pair_reconstruction = centered_pair_reconstruction_metrics(
-            baseline=baseline_density,
+            baseline=pair_baseline,
             direction=direction,
-            plus=plus_density,
-            minus=minus_density,
+            plus=pair_plus,
+            minus=pair_minus,
             step=step,
         )
         gates = {
@@ -207,21 +320,33 @@ def main() -> int:
             "centered_pair_reconstruction_within_float64_roundoff": pair_reconstruction[
                 "within_float64_roundoff"
             ],
-            "plus_minus_signal_relative_gt_1e_6": metrics["plus_minus_signal_relative_to_current"] > 1.0e-6,
+            "plus_minus_signal_relative_gt_1e_6": metrics[
+                "plus_minus_signal_relative_to_current"
+            ]
+            > 1.0e-6,
             "AD_and_FD_have_same_nonzero_sign": metrics["same_nonzero_sign"],
-            "one_direction_combined_AD_FD_relative_error_lt_1pct": metrics["relative_error"] < 1.0e-2,
+            "one_direction_combined_AD_FD_relative_error_lt_1pct": metrics[
+                "relative_error"
+            ]
+            < 1.0e-2,
         }
         passed = all(gates.values())
         result = {
-            "status": STATUS if passed else "FAILED_LUMERICAL_4UM_EA_PROJECTED_DENSITY_COMBINED_ADFD",
+            "status": validated_status if passed else failed_status,
             "passed": passed,
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-            "scope": "one independent smooth direction of Ea current with respect to shared projected nodal occupancy",
+            "scope": scope,
+            "design_coordinate": design_coordinate,
             "step": step,
             "metrics": metrics,
+            "gradient_chain": gradient_chain,
             "centered_pair_reconstruction": pair_reconstruction,
             "gates": gates,
-            "baseline": {"current_A": float(adjoint["current_A"]), "adjoint_result": _artifact(adjoint_path), "gradient_NPZ": _artifact(gradient_path)},
+            "baseline": {
+                "current_A": float(adjoint["current_A"]),
+                "adjoint_result": _artifact(adjoint_path),
+                "gradient_NPZ": _artifact(gradient_path),
+            },
             "plus": plus,
             "minus": minus,
             "pair_manifest": _artifact(manifest_path),

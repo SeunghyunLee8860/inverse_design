@@ -139,6 +139,31 @@ def test_source_contract_binds_mesh_polarization_and_calibrated_waist() -> None:
     assert polarization_angle_deg("Eb") == 0.0
 
 
+def test_default_source_waist_reproduces_hash_bound_binary64_value() -> None:
+    assert BASELINE_SOURCE_OBJECT_W0_UM * 1.0e-6 == 3.9561433030461415e-6
+    fine = replace(
+        BASELINE,
+        label="fine_z5_bulk50_xy100_staircase_pml8_span20_z6_t1ps",
+        flake_dxy_m=100.0 * 1.0e-9,
+        stack_dz_m=5.0 * 1.0e-9,
+        bulk_dz_m=50.0 * 1.0e-9,
+        outer_dxy_m=200.0 * 1.0e-9,
+        lateral_span_m=20.0 * 1.0e-6,
+        z_min_m=-3.0 * 1.0e-6,
+        z_max_m=3.0 * 1.0e-6,
+        simulation_time_s=1.0 * 1.0e-12,
+        conformal_mesh="staircase",
+    ).validate()
+    contract = source_calibration_contract(
+        fine,
+        "Ea",
+        source_object_w0_m=BASELINE_SOURCE_OBJECT_W0_UM * 1.0e-6,
+    )
+    assert contract["source_calibration_sha256"] == (
+        "5ded48d0c27d50247c373b0dff8c934d608a4a62c6d6c44828cd81ce160ea00a"
+    )
+
+
 def test_material_run_requires_a_matching_passed_unscaled_source_record() -> None:
     contract = source_calibration_contract(
         BASELINE, "Ea", source_object_w0_m=4.0e-6

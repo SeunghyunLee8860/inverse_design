@@ -81,8 +81,8 @@ class LumericalMaxwellContract:
     optical_rho_power: float | None = None
     np_density_as_au_topology_variable_allowed: bool = False
     continuous_lumerical_au_carrier_status: str = (
-        "SOLVER_FREE_NK_LAW_IMPLEMENTED; "
-        "BLOCKED_PENDING_B200_ENDPOINT_BANDWIDTH_RESONANCE_AND_SAME_STEP_ADFD"
+        "RTX_EA_ONE_LATENT_DIRECTION_ADFD_PASSED; BLOCKED_PENDING_B200_"
+        "ENDPOINT_BANDWIDTH_RESONANCE_EB_MULTI_DIRECTION_ADFD_AND_MESH_GATES"
     )
     bundled_lumopt_topology_gradient_allowed_without_au_adfd: bool = False
     fdtdx_allowed: bool = False

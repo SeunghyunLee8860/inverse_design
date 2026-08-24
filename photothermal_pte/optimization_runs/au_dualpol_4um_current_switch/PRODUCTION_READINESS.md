@@ -93,8 +93,13 @@ therefore incompatible with the 81x81 nodal Lumerical state. The new
 `lumerical_4um_design_mapping.py` keeps latent/filter/projected arrays nodal
 and derives 80x80 PDE/DFM cells only through the exact four-node average and
 transpose. Its solver-free filter/projection/cell/DFM directional-FD audit
-passes, including removal of the former ReLU nondifferentiability. Complete
-latent Lumerical/PDE AD-FD remains open.
+passes, including removal of the former ReLU nondifferentiability. The
+subsequent complete beta-4 latent Ea chain also passes centered AD-FD:
+AD `-2.766595495e-8 A`, FD `-2.766380278e-8 A`, equal sign, and relative
+error `7.779e-5` (0.00778%). Its filter/projection JVP and VJP contractions
+agree to `1.20e-16`. The four Maxwell solves used about 237 s of solver time,
+not a multi-hour convergence run. This still covers only one Ea direction on
+the RTX development mesh.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine

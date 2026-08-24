@@ -94,7 +94,10 @@ BASELINE = LumericalMeshSpec(
 # One-step calibration from the all-air v261 baseline runs on both Ea and Eb.
 # This is the source-object setting; the required realized flake-plane waist
 # remains exactly 4 um and is remeasured for every numerical mesh.
-BASELINE_SOURCE_OBJECT_W0_UM = 3.956143303046143
+# Preserve the exact binary64 source-object value used by the hash-bound
+# calibration records. The former spelling rounded one ULP upward after
+# conversion from micrometres to metres.
+BASELINE_SOURCE_OBJECT_W0_UM = 3.956143303046142
 
 TIME_CANDIDATES_S = (1.0e-12, 2.0e-12, 4.0e-12)
 FULL_Z_CANDIDATES_M = (
