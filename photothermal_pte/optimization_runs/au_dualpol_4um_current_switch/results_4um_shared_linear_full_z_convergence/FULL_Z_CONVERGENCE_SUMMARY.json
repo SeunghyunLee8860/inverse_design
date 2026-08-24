@@ -1,0 +1,1701 @@
+{
+  "status": "BLOCKED_SHARED_LINEAR_FULL_DOMAIN_Z_CONVERGENCE",
+  "scope": "fixed beta=256 robust checkpoint; shared-linear Au law; full-domain-z FDTDX refinement with per-polarization, per-mesh all-air source calibration; identical conservative thermal/electrical downstream operator",
+  "timestamp_utc": "2026-08-24T01:55:04.774036+00:00",
+  "runsetup": {
+    "status": "AUDITED_FULL_DOMAIN_4UM_AU_Z_MESH_RUNSETUP_NOT_SOLVED",
+    "scope": "full optical z refinement including materials, Si, air, and z-PML; x/y and downstream meshes fixed",
+    "timestamp_utc": "2026-08-24T00:39:57.775319+00:00",
+    "checkpoint": {
+      "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/robust_projection_ld_mma/evaluation_0112.npz",
+      "bytes": 92476,
+      "sha256": "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3",
+      "expected_sha256": "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3",
+      "sha256_matches_expected": true
+    },
+    "levels": [
+      {
+        "factor": 1,
+        "grid_shape": [
+          186,
+          186,
+          40
+        ],
+        "yee_cell_count": 1383840,
+        "x_bounds_m": [
+          -1e-05,
+          1e-05
+        ],
+        "y_bounds_m": [
+          -1e-05,
+          1e-05
+        ],
+        "z_bounds_m": [
+          -3e-06,
+          3e-06
+        ],
+        "central_dx_m": 1e-07,
+        "central_dy_m": 1e-07,
+        "sio2_dz_m": 9.5e-08,
+        "tairte4_dz_m": 2e-08,
+        "au_dz_m": 2.5e-08,
+        "layer_bounds_m": {
+          "fixed_285nm_sio2": [
+            -3.85e-07,
+            -1e-07
+          ],
+          "fixed_tairte4": [
+            -1e-07,
+            0.0
+          ],
+          "au_design": [
+            0.0,
+            5e-08
+          ]
+        },
+        "source_bounds": [
+          [
+            13,
+            173
+          ],
+          [
+            13,
+            173
+          ],
+          [
+            29,
+            30
+          ]
+        ],
+        "incident_monitor_bounds": [
+          [
+            13,
+            173
+          ],
+          [
+            13,
+            173
+          ],
+          [
+            28,
+            29
+          ]
+        ],
+        "closed_monitor_bounds": [
+          [
+            8,
+            178
+          ],
+          [
+            8,
+            178
+          ],
+          [
+            12,
+            27
+          ]
+        ],
+        "min_grid_step_m": 1.9999999999999994e-08,
+        "max_grid_step_m": 2.500000000000001e-07,
+        "full_domain_variant": {
+          "mode": "full_domain_z",
+          "factor": 1,
+          "grid_edges_sha256": "c6a12b95e656a88d6d9fcf448e30539f7befaa0a894dc6d44f5de42929949e1c",
+          "grid_shape_xyz": [
+            186,
+            186,
+            40
+          ],
+          "yee_cell_count": 1383840,
+          "pml_cells_each_face_xyz": [
+            8,
+            8,
+            8
+          ],
+          "indices": {
+            "source_z_start": 29,
+            "target_z_start": 27,
+            "incident_z_start": 28,
+            "closed_z_start": 12,
+            "closed_z_cells": 15
+          },
+          "segments": {
+            "bottom_pml_si": {
+              "bounds_m": [
+                -3e-06,
+                -1.4e-06
+              ],
+              "cells": 8,
+              "uniform_dz_m": 2.0000000000000002e-07
+            },
+            "resolved_si": {
+              "bounds_m": [
+                -1.4e-06,
+                -3.85e-07
+              ],
+              "cells": 5,
+              "uniform_dz_m": 2.03e-07
+            },
+            "sio2": {
+              "bounds_m": [
+                -3.85e-07,
+                -1e-07
+              ],
+              "cells": 3,
+              "uniform_dz_m": 9.5e-08
+            },
+            "tairte4": {
+              "bounds_m": [
+                -1e-07,
+                0.0
+              ],
+              "cells": 5,
+              "uniform_dz_m": 2e-08
+            },
+            "au": {
+              "bounds_m": [
+                0.0,
+                5e-08
+              ],
+              "cells": 2,
+              "uniform_dz_m": 2.5e-08
+            },
+            "near_air": {
+              "bounds_m": [
+                5e-08,
+                2.5e-07
+              ],
+              "cells": 4,
+              "uniform_dz_m": 5e-08
+            },
+            "middle_air": {
+              "bounds_m": [
+                2.5e-07,
+                7.5e-07
+              ],
+              "cells": 2,
+              "uniform_dz_m": 2.5000000000000004e-07
+            },
+            "source_air": {
+              "bounds_m": [
+                7.5e-07,
+                1.4e-06
+              ],
+              "cells": 3,
+              "uniform_dz_m": 2.1666666666666665e-07
+            },
+            "top_pml_air": {
+              "bounds_m": [
+                1.4e-06,
+                3e-06
+              ],
+              "cells": 8,
+              "uniform_dz_m": 2.0000000000000002e-07
+            }
+          }
+        }
+      },
+      {
+        "factor": 2,
+        "grid_shape": [
+          186,
+          186,
+          80
+        ],
+        "yee_cell_count": 2767680,
+        "x_bounds_m": [
+          -1e-05,
+          1e-05
+        ],
+        "y_bounds_m": [
+          -1e-05,
+          1e-05
+        ],
+        "z_bounds_m": [
+          -3e-06,
+          3e-06
+        ],
+        "central_dx_m": 1e-07,
+        "central_dy_m": 1e-07,
+        "sio2_dz_m": 4.75e-08,
+        "tairte4_dz_m": 1e-08,
+        "au_dz_m": 1.25e-08,
+        "layer_bounds_m": {
+          "fixed_285nm_sio2": [
+            -3.85e-07,
+            -1e-07
+          ],
+          "fixed_tairte4": [
+            -1e-07,
+            0.0
+          ],
+          "au_design": [
+            0.0,
+            5e-08
+          ]
+        },
+        "source_bounds": [
+          [
+            13,
+            173
+          ],
+          [
+            13,
+            173
+          ],
+          [
+            58,
+            59
+          ]
+        ],
+        "incident_monitor_bounds": [
+          [
+            13,
+            173
+          ],
+          [
+            13,
+            173
+          ],
+          [
+            56,
+            57
+          ]
+        ],
+        "closed_monitor_bounds": [
+          [
+            8,
+            178
+          ],
+          [
+            8,
+            178
+          ],
+          [
+            24,
+            54
+          ]
+        ],
+        "min_grid_step_m": 9.999999999999997e-09,
+        "max_grid_step_m": 2.0000000000000147e-07,
+        "full_domain_variant": {
+          "mode": "full_domain_z",
+          "factor": 2,
+          "grid_edges_sha256": "7f5caf9fb99480a15e0840d1b2e935abd4299f50089bf3ba31a285207eb37a5e",
+          "grid_shape_xyz": [
+            186,
+            186,
+            80
+          ],
+          "yee_cell_count": 2767680,
+          "pml_cells_each_face_xyz": [
+            8,
+            8,
+            16
+          ],
+          "indices": {
+            "source_z_start": 58,
+            "target_z_start": 54,
+            "incident_z_start": 56,
+            "closed_z_start": 24,
+            "closed_z_cells": 30
+          },
+          "segments": {
+            "bottom_pml_si": {
+              "bounds_m": [
+                -3e-06,
+                -1.4e-06
+              ],
+              "cells": 16,
+              "uniform_dz_m": 1.0000000000000001e-07
+            },
+            "resolved_si": {
+              "bounds_m": [
+                -1.4e-06,
+                -3.85e-07
+              ],
+              "cells": 10,
+              "uniform_dz_m": 1.015e-07
+            },
+            "sio2": {
+              "bounds_m": [
+                -3.85e-07,
+                -1e-07
+              ],
+              "cells": 6,
+              "uniform_dz_m": 4.75e-08
+            },
+            "tairte4": {
+              "bounds_m": [
+                -1e-07,
+                0.0
+              ],
+              "cells": 10,
+              "uniform_dz_m": 1e-08
+            },
+            "au": {
+              "bounds_m": [
+                0.0,
+                5e-08
+              ],
+              "cells": 4,
+              "uniform_dz_m": 1.25e-08
+            },
+            "near_air": {
+              "bounds_m": [
+                5e-08,
+                2.5e-07
+              ],
+              "cells": 8,
+              "uniform_dz_m": 2.5e-08
+            },
+            "middle_air": {
+              "bounds_m": [
+                2.5e-07,
+                7.5e-07
+              ],
+              "cells": 4,
+              "uniform_dz_m": 1.2500000000000002e-07
+            },
+            "source_air": {
+              "bounds_m": [
+                7.5e-07,
+                1.4e-06
+              ],
+              "cells": 6,
+              "uniform_dz_m": 1.0833333333333332e-07
+            },
+            "top_pml_air": {
+              "bounds_m": [
+                1.4e-06,
+                3e-06
+              ],
+              "cells": 16,
+              "uniform_dz_m": 1.0000000000000001e-07
+            }
+          }
+        }
+      },
+      {
+        "factor": 4,
+        "grid_shape": [
+          186,
+          186,
+          160
+        ],
+        "yee_cell_count": 5535360,
+        "x_bounds_m": [
+          -1e-05,
+          1e-05
+        ],
+        "y_bounds_m": [
+          -1e-05,
+          1e-05
+        ],
+        "z_bounds_m": [
+          -3e-06,
+          3e-06
+        ],
+        "central_dx_m": 1e-07,
+        "central_dy_m": 1e-07,
+        "sio2_dz_m": 2.375e-08,
+        "tairte4_dz_m": 5e-09,
+        "au_dz_m": 6.25e-09,
+        "layer_bounds_m": {
+          "fixed_285nm_sio2": [
+            -3.85e-07,
+            -1e-07
+          ],
+          "fixed_tairte4": [
+            -1e-07,
+            0.0
+          ],
+          "au_design": [
+            0.0,
+            5e-08
+          ]
+        },
+        "source_bounds": [
+          [
+            13,
+            173
+          ],
+          [
+            13,
+            173
+          ],
+          [
+            116,
+            117
+          ]
+        ],
+        "incident_monitor_bounds": [
+          [
+            13,
+            173
+          ],
+          [
+            13,
+            173
+          ],
+          [
+            112,
+            113
+          ]
+        ],
+        "closed_monitor_bounds": [
+          [
+            8,
+            178
+          ],
+          [
+            8,
+            178
+          ],
+          [
+            48,
+            108
+          ]
+        ],
+        "min_grid_step_m": 4.999999999999992e-09,
+        "max_grid_step_m": 2.0000000000000147e-07,
+        "full_domain_variant": {
+          "mode": "full_domain_z",
+          "factor": 4,
+          "grid_edges_sha256": "f49addc4a9e2b779b5559aa43abeea043d1c8c551244d45b771e5f600f37c2cd",
+          "grid_shape_xyz": [
+            186,
+            186,
+            160
+          ],
+          "yee_cell_count": 5535360,
+          "pml_cells_each_face_xyz": [
+            8,
+            8,
+            32
+          ],
+          "indices": {
+            "source_z_start": 116,
+            "target_z_start": 108,
+            "incident_z_start": 112,
+            "closed_z_start": 48,
+            "closed_z_cells": 60
+          },
+          "segments": {
+            "bottom_pml_si": {
+              "bounds_m": [
+                -3e-06,
+                -1.4e-06
+              ],
+              "cells": 32,
+              "uniform_dz_m": 5.0000000000000004e-08
+            },
+            "resolved_si": {
+              "bounds_m": [
+                -1.4e-06,
+                -3.85e-07
+              ],
+              "cells": 20,
+              "uniform_dz_m": 5.075e-08
+            },
+            "sio2": {
+              "bounds_m": [
+                -3.85e-07,
+                -1e-07
+              ],
+              "cells": 12,
+              "uniform_dz_m": 2.375e-08
+            },
+            "tairte4": {
+              "bounds_m": [
+                -1e-07,
+                0.0
+              ],
+              "cells": 20,
+              "uniform_dz_m": 5e-09
+            },
+            "au": {
+              "bounds_m": [
+                0.0,
+                5e-08
+              ],
+              "cells": 8,
+              "uniform_dz_m": 6.25e-09
+            },
+            "near_air": {
+              "bounds_m": [
+                5e-08,
+                2.5e-07
+              ],
+              "cells": 16,
+              "uniform_dz_m": 1.25e-08
+            },
+            "middle_air": {
+              "bounds_m": [
+                2.5e-07,
+                7.5e-07
+              ],
+              "cells": 8,
+              "uniform_dz_m": 6.250000000000001e-08
+            },
+            "source_air": {
+              "bounds_m": [
+                7.5e-07,
+                1.4e-06
+              ],
+              "cells": 12,
+              "uniform_dz_m": 5.416666666666666e-08
+            },
+            "top_pml_air": {
+              "bounds_m": [
+                1.4e-06,
+                3e-06
+              ],
+              "cells": 32,
+              "uniform_dz_m": 5.0000000000000004e-08
+            }
+          }
+        }
+      }
+    ],
+    "time_contract": {
+      "total_periods": 40,
+      "phasor_window_periods": 4,
+      "courant_factor": 0.25
+    },
+    "stable_time_certificate": {
+      "path": "/home/seunghyun/tairte4/worktrees/au_dualpol_4um/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/results_4um_stable_time_contract/STABLE_TIME_CONTRACT_SUMMARY.json",
+      "sha256": "17cde19d27648bc530734b6070b03cef6c1dad15e6cd60ab1d6bafd4ccf5170b",
+      "status": "VALIDATED_FACTOR8_CF0P25_TIME_MATERIAL_CONTRACT"
+    },
+    "density_cases": [
+      "eta_0.50_nominal",
+      "eta_0.35",
+      "eta_0.65"
+    ],
+    "case_contract": {
+      "implementation_version": "full-domain-z-shared-linear-stable-time-v1",
+      "script_sha256": "cf186d74a0eec76555b75195fc8b233deef6dcc016851ff989e12eec679533cc",
+      "optical_model_sha256": "21f1c5c0f856c8e3cd2e08b456a9079eed7c33ecdd210943282ae00c6c32a1a7",
+      "combined_implementation_sha256": "43a85d8e5468d9ff8372ee13f3b2f7fc8c1668993878807a757bfd154b942191",
+      "multiphysics_implementation_sha256": "dba8804bcb497a923291b763a971fa54e15474ca40a1c37b179004b569e0e958",
+      "device_contract_sha256": "3bd5d28db9cedea5bd12ac427dd6e118206ceb0c2ebffc45938e36cf8faa9c30",
+      "checkpoint_sha256": "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3",
+      "stable_time_certificate_sha256": "17cde19d27648bc530734b6070b03cef6c1dad15e6cd60ab1d6bafd4ccf5170b",
+      "mesh_mode": "full_domain_z",
+      "time": {
+        "total_periods": 40,
+        "phasor_window_periods": 4,
+        "courant_factor": 0.25
+      },
+      "au_material_fraction": {
+        "law": "shared_linear_projected_density",
+        "exponent": 1.0,
+        "optical_fraction": "au_material_fraction(rho)",
+        "thermal_fraction": "au_material_fraction(rho)",
+        "electrical_fraction": "au_material_fraction(rho)",
+        "gray_density_is_physical_geometry": false,
+        "promotion_requires_exact_binary_density": true
+      },
+      "absorption_density_law": "Q proportional to realized float32 discrete-ADE susceptibility.imag*abs(E)**2",
+      "current_law": "I=sum(-sigma*S*DeltaT*Deltapsi)"
+    },
+    "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+    "promotion": {
+      "is_full_z_mesh_certificate": false
+    }
+  },
+  "source_calibration_cases": [
+    {
+      "factor": 1,
+      "polarization": "Ea",
+      "incident_power_W": 1.8564145446570146e-12,
+      "runtime_s": 84.90718231722713,
+      "grid_edges_sha256": "c6a12b95e656a88d6d9fcf448e30539f7befaa0a894dc6d44f5de42929949e1c",
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4
+    },
+    {
+      "factor": 1,
+      "polarization": "Eb",
+      "incident_power_W": 1.8564145446570146e-12,
+      "runtime_s": 37.08374575152993,
+      "grid_edges_sha256": "c6a12b95e656a88d6d9fcf448e30539f7befaa0a894dc6d44f5de42929949e1c",
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4
+    },
+    {
+      "factor": 2,
+      "polarization": "Ea",
+      "incident_power_W": 1.877031733168999e-12,
+      "runtime_s": 119.20129315555096,
+      "grid_edges_sha256": "7f5caf9fb99480a15e0840d1b2e935abd4299f50089bf3ba31a285207eb37a5e",
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4
+    },
+    {
+      "factor": 2,
+      "polarization": "Eb",
+      "incident_power_W": 1.877031733168999e-12,
+      "runtime_s": 117.20087630301714,
+      "grid_edges_sha256": "7f5caf9fb99480a15e0840d1b2e935abd4299f50089bf3ba31a285207eb37a5e",
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4
+    },
+    {
+      "factor": 4,
+      "polarization": "Ea",
+      "incident_power_W": 1.882149817944434e-12,
+      "runtime_s": 474.9904170744121,
+      "grid_edges_sha256": "f49addc4a9e2b779b5559aa43abeea043d1c8c551244d45b771e5f600f37c2cd",
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4
+    },
+    {
+      "factor": 4,
+      "polarization": "Eb",
+      "incident_power_W": 1.882149817944434e-12,
+      "runtime_s": 474.18158784508705,
+      "grid_edges_sha256": "f49addc4a9e2b779b5559aa43abeea043d1c8c551244d45b771e5f600f37c2cd",
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4
+    }
+  ],
+  "case_results": [
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 1,
+      "density_case": "eta_0.50_nominal",
+      "polarization": "Ea",
+      "grid_edges_sha256": "c6a12b95e656a88d6d9fcf448e30539f7befaa0a894dc6d44f5de42929949e1c",
+      "source_incident_power_W": 1.8564145446570146e-12,
+      "source_power_scale": 153521744.8173224,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 95.0,
+      "tairte4_dz_nm": 20.0,
+      "au_dz_nm": 25.0,
+      "yee_cell_count": 1383840,
+      "compile_s": 7.787109635770321,
+      "forward_s": 237.69404987618327,
+      "P_Q_W": 4.4854851420619617e-05,
+      "P_closed_td_W": 4.479882051347743e-05,
+      "P_closed_phasor_W": 4.4763257381654535e-05,
+      "Q_vs_closed_td_relative": 0.001250722820377218,
+      "Q_vs_closed_phasor_relative": 0.0020461879747522655,
+      "closed_td_vs_phasor_relative": 0.0007944714907514257,
+      "complex_E_spatial_NRMSE": 4.596089664438284e-05,
+      "volume_integrated_E2_change_relative": 7.931621089937182e-06,
+      "au_x_W": 3.465713144258901e-08,
+      "au_y_W": 1.0425184873941073e-06,
+      "au_z_W": 2.8498420444245236e-08,
+      "tairte4_x_W": 3.1425633303967883e-07,
+      "tairte4_y_W": 4.288368253129326e-05,
+      "tairte4_z_W": 5.512385170057364e-07,
+      "mapping_error_relative": 1.91519588314915e-16,
+      "Tmax_K": 0.8369330485059743,
+      "current_A": -6.3618450558090235e-09,
+      "current_nA": -6.361845055809024,
+      "thermal_energy_balance_relative": 8.83921983685276e-11,
+      "thermal_residual_relative": 9.915527694620808e-10,
+      "electrical_residual_relative": 7.764770488469235e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f1_eta_0.50_nominal_Ea.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "409e681d74968b4ad8ec7aa623b1988c4210df404a25d806c0f40b996d863731",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 1,
+      "density_case": "eta_0.35",
+      "polarization": "Ea",
+      "grid_edges_sha256": "c6a12b95e656a88d6d9fcf448e30539f7befaa0a894dc6d44f5de42929949e1c",
+      "source_incident_power_W": 1.8564145446570146e-12,
+      "source_power_scale": 153521744.8173224,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 95.0,
+      "tairte4_dz_nm": 20.0,
+      "au_dz_nm": 25.0,
+      "yee_cell_count": 1383840,
+      "compile_s": 7.787109635770321,
+      "forward_s": 24.96885632351041,
+      "P_Q_W": 2.2254021454707166e-05,
+      "P_closed_td_W": 2.2205328636555894e-05,
+      "P_closed_phasor_W": 2.2165772881065586e-05,
+      "Q_vs_closed_td_relative": 0.002192843841595314,
+      "Q_vs_closed_phasor_relative": 0.003981299191103908,
+      "closed_td_vs_phasor_relative": 0.0017845421272946883,
+      "complex_E_spatial_NRMSE": 5.417411870085402e-05,
+      "volume_integrated_E2_change_relative": 2.121070084249581e-06,
+      "au_x_W": 4.2218804855355515e-08,
+      "au_y_W": 2.202587701006173e-06,
+      "au_z_W": 2.5957056181076603e-08,
+      "tairte4_x_W": 2.3507625923041543e-07,
+      "tairte4_y_W": 1.91347914422027e-05,
+      "tairte4_z_W": 6.133901912314484e-07,
+      "mapping_error_relative": 3.3909703885280023e-16,
+      "Tmax_K": 0.5934890646881711,
+      "current_A": -3.3778625020482925e-09,
+      "current_nA": -3.3778625020482926,
+      "thermal_energy_balance_relative": 3.666742488442705e-12,
+      "thermal_residual_relative": 7.016498635738391e-10,
+      "electrical_residual_relative": 8.921363174992803e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f1_eta_0.35_Ea.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "2626b652df3883046e9d5c0ea3ac9b2ff0c93d19f1f048f591791cb2ca7325ba",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 1,
+      "density_case": "eta_0.65",
+      "polarization": "Ea",
+      "grid_edges_sha256": "c6a12b95e656a88d6d9fcf448e30539f7befaa0a894dc6d44f5de42929949e1c",
+      "source_incident_power_W": 1.8564145446570146e-12,
+      "source_power_scale": 153521744.8173224,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 95.0,
+      "tairte4_dz_nm": 20.0,
+      "au_dz_nm": 25.0,
+      "yee_cell_count": 1383840,
+      "compile_s": 7.416940242052078,
+      "forward_s": 24.723411180078983,
+      "P_Q_W": 5.4096208558755733e-05,
+      "P_closed_td_W": 5.403781597826772e-05,
+      "P_closed_phasor_W": 5.400394603730992e-05,
+      "Q_vs_closed_td_relative": 0.0010805873522256588,
+      "Q_vs_closed_phasor_relative": 0.0017084403680810369,
+      "closed_td_vs_phasor_relative": 0.0006271752981605573,
+      "complex_E_spatial_NRMSE": 2.4139508919977748e-05,
+      "volume_integrated_E2_change_relative": 7.868061840224786e-06,
+      "au_x_W": 2.2731012227352055e-08,
+      "au_y_W": 5.957262275238165e-07,
+      "au_z_W": 1.1359669036112084e-08,
+      "tairte4_x_W": 1.550644775543979e-07,
+      "tairte4_y_W": 5.2905436908715664e-05,
+      "tairte4_z_W": 4.058902636983916e-07,
+      "mapping_error_relative": 0.0,
+      "Tmax_K": 0.8615583494299319,
+      "current_A": -2.0861920417323443e-09,
+      "current_nA": -2.0861920417323443,
+      "thermal_energy_balance_relative": 1.2831961045474987e-12,
+      "thermal_residual_relative": 7.526974324710918e-10,
+      "electrical_residual_relative": 9.253609599609297e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f1_eta_0.65_Ea.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "06959622f64ecb3740d88ddbae8d6110ca2bb2bfa4fd5ce2acc21682903ef2d2",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 1,
+      "density_case": "eta_0.50_nominal",
+      "polarization": "Eb",
+      "grid_edges_sha256": "c6a12b95e656a88d6d9fcf448e30539f7befaa0a894dc6d44f5de42929949e1c",
+      "source_incident_power_W": 1.8564145446570146e-12,
+      "source_power_scale": 153521744.8173224,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 95.0,
+      "tairte4_dz_nm": 20.0,
+      "au_dz_nm": 25.0,
+      "yee_cell_count": 1383840,
+      "compile_s": 8.572164721786976,
+      "forward_s": 26.38331000134349,
+      "P_Q_W": 8.41751618291237e-05,
+      "P_closed_td_W": 8.427002974816474e-05,
+      "P_closed_phasor_W": 8.425262631800707e-05,
+      "Q_vs_closed_td_relative": 0.0011257610721694105,
+      "Q_vs_closed_phasor_relative": 0.0009194311473565782,
+      "closed_td_vs_phasor_relative": 0.0002065624647946695,
+      "complex_E_spatial_NRMSE": 2.977800672476729e-05,
+      "volume_integrated_E2_change_relative": 1.038597480779669e-05,
+      "au_x_W": 1.2363096423628625e-06,
+      "au_y_W": 7.323845899880205e-08,
+      "au_z_W": 5.636348523415278e-08,
+      "tairte4_x_W": 7.907603700448823e-05,
+      "tairte4_y_W": 9.762747052535135e-07,
+      "tairte4_z_W": 2.7569385327861396e-06,
+      "mapping_error_relative": 1.6365958049827517e-16,
+      "Tmax_K": 1.3786920220772596,
+      "current_A": -8.307106915416907e-09,
+      "current_nA": -8.307106915416906,
+      "thermal_energy_balance_relative": 6.808048815607906e-12,
+      "thermal_residual_relative": 7.270247054563198e-10,
+      "electrical_residual_relative": 7.764770488469235e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f1_eta_0.50_nominal_Eb.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "f2eb522e151025e41d4924f52dbe547f1120302f143f9e44c6cabf759989f339",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 1,
+      "density_case": "eta_0.35",
+      "polarization": "Eb",
+      "grid_edges_sha256": "c6a12b95e656a88d6d9fcf448e30539f7befaa0a894dc6d44f5de42929949e1c",
+      "source_incident_power_W": 1.8564145446570146e-12,
+      "source_power_scale": 153521744.8173224,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 95.0,
+      "tairte4_dz_nm": 20.0,
+      "au_dz_nm": 25.0,
+      "yee_cell_count": 1383840,
+      "compile_s": 8.572164721786976,
+      "forward_s": 26.50133128091693,
+      "P_Q_W": 4.787670802715105e-05,
+      "P_closed_td_W": 4.7936734904238426e-05,
+      "P_closed_phasor_W": 4.790679328856077e-05,
+      "Q_vs_closed_td_relative": 0.001252210381188691,
+      "Q_vs_closed_phasor_relative": 0.0006279957255436572,
+      "closed_td_vs_phasor_relative": 0.0006249972837319378,
+      "complex_E_spatial_NRMSE": 4.839898090625315e-05,
+      "volume_integrated_E2_change_relative": 7.129766152685084e-06,
+      "au_x_W": 2.9732707074586282e-06,
+      "au_y_W": 1.2124496963435983e-07,
+      "au_z_W": 1.1998307280004156e-07,
+      "tairte4_x_W": 3.9068826409180386e-05,
+      "tairte4_y_W": 1.1410473784002712e-06,
+      "tairte4_z_W": 4.452335489677362e-06,
+      "mapping_error_relative": 1.5172253427877052e-16,
+      "Tmax_K": 0.923617898186158,
+      "current_A": 1.7255030101313565e-10,
+      "current_nA": 0.17255030101313565,
+      "thermal_energy_balance_relative": 6.395701240866662e-11,
+      "thermal_residual_relative": 8.483487296829734e-10,
+      "electrical_residual_relative": 8.921363174992803e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f1_eta_0.35_Eb.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "69df53974485cc202ae00f85d699f7ce77c3c09932459423d2254cf621d7914f",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 1,
+      "density_case": "eta_0.65",
+      "polarization": "Eb",
+      "grid_edges_sha256": "c6a12b95e656a88d6d9fcf448e30539f7befaa0a894dc6d44f5de42929949e1c",
+      "source_incident_power_W": 1.8564145446570146e-12,
+      "source_power_scale": 153521744.8173224,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 95.0,
+      "tairte4_dz_nm": 20.0,
+      "au_dz_nm": 25.0,
+      "yee_cell_count": 1383840,
+      "compile_s": 8.572164721786976,
+      "forward_s": 26.39185882732272,
+      "P_Q_W": 0.00010572640760661282,
+      "P_closed_td_W": 0.0001057971787994334,
+      "P_closed_phasor_W": 0.000105785752057465,
+      "Q_vs_closed_td_relative": 0.0006689327033450629,
+      "Q_vs_closed_phasor_relative": 0.0005609871811465019,
+      "closed_td_vs_phasor_relative": 0.00010801777882335866,
+      "complex_E_spatial_NRMSE": 1.7995374494447205e-05,
+      "volume_integrated_E2_change_relative": 1.0131534379960946e-05,
+      "au_x_W": 8.780070676011654e-07,
+      "au_y_W": 5.883631544690975e-08,
+      "au_z_W": 3.0609464220283374e-08,
+      "tairte4_x_W": 0.0001005214618167864,
+      "tairte4_y_W": 8.465384406279821e-07,
+      "tairte4_z_W": 3.3909545019300805e-06,
+      "mapping_error_relative": 2.18882230189805e-16,
+      "Tmax_K": 1.5864660708267888,
+      "current_A": 1.803427351037037e-09,
+      "current_nA": 1.8034273510370369,
+      "thermal_energy_balance_relative": 1.727778396773927e-11,
+      "thermal_residual_relative": 9.91303711243869e-10,
+      "electrical_residual_relative": 9.253609599609297e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f1_eta_0.65_Eb.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "f0d33afaa4a34b7ec1df2a60607e00fd77dac11fd9ea63f62ffadfd82660e9b9",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 2,
+      "density_case": "eta_0.50_nominal",
+      "polarization": "Ea",
+      "grid_edges_sha256": "7f5caf9fb99480a15e0840d1b2e935abd4299f50089bf3ba31a285207eb37a5e",
+      "source_incident_power_W": 1.877031733168999e-12,
+      "source_power_scale": 151835472.44501483,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 47.5,
+      "tairte4_dz_nm": 10.0,
+      "au_dz_nm": 12.5,
+      "yee_cell_count": 2767680,
+      "compile_s": 9.953940343111753,
+      "forward_s": 99.08450308069587,
+      "P_Q_W": 4.778692934915953e-05,
+      "P_closed_td_W": 4.777370282458357e-05,
+      "P_closed_phasor_W": 4.7749534783877216e-05,
+      "Q_vs_closed_td_relative": 0.0002768578484386278,
+      "Q_vs_closed_phasor_relative": 0.0007831398871542929,
+      "closed_td_vs_phasor_relative": 0.0005061419093556362,
+      "complex_E_spatial_NRMSE": 0.00011090432537644066,
+      "volume_integrated_E2_change_relative": 1.7078308597444452e-06,
+      "au_x_W": 4.574130032896097e-08,
+      "au_y_W": 1.1494909502074028e-06,
+      "au_z_W": 3.403756077130657e-08,
+      "tairte4_x_W": 3.343250405209532e-07,
+      "tairte4_y_W": 4.5765856359889854e-05,
+      "tairte4_z_W": 4.5747813744105197e-07,
+      "mapping_error_relative": 1.722634322145366e-16,
+      "Tmax_K": 0.9061890966855736,
+      "current_A": -6.865332751356555e-09,
+      "current_nA": -6.865332751356554,
+      "thermal_energy_balance_relative": 2.7533618854924e-12,
+      "thermal_residual_relative": 6.871750994240093e-10,
+      "electrical_residual_relative": 7.764770488469235e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f2_eta_0.50_nominal_Ea.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "29058b07708fab2453673634901f30f24461955eb1a05e63e6576e4d2d35f308",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 2,
+      "density_case": "eta_0.35",
+      "polarization": "Ea",
+      "grid_edges_sha256": "7f5caf9fb99480a15e0840d1b2e935abd4299f50089bf3ba31a285207eb37a5e",
+      "source_incident_power_W": 1.877031733168999e-12,
+      "source_power_scale": 151835472.44501483,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 47.5,
+      "tairte4_dz_nm": 10.0,
+      "au_dz_nm": 12.5,
+      "yee_cell_count": 2767680,
+      "compile_s": 9.953940343111753,
+      "forward_s": 98.8202853538096,
+      "P_Q_W": 2.3607175615855353e-05,
+      "P_closed_td_W": 2.3593520562137476e-05,
+      "P_closed_phasor_W": 2.356636823323214e-05,
+      "Q_vs_closed_td_relative": 0.0005787628718619747,
+      "Q_vs_closed_phasor_relative": 0.0017315940334696818,
+      "closed_td_vs_phasor_relative": 0.0011521643316702527,
+      "complex_E_spatial_NRMSE": 0.00012501104096758277,
+      "volume_integrated_E2_change_relative": 1.8006718454005124e-05,
+      "au_x_W": 4.949344113547377e-08,
+      "au_y_W": 2.406710025872771e-06,
+      "au_z_W": 3.5584303228003915e-08,
+      "tairte4_x_W": 2.5302321016678393e-07,
+      "tairte4_y_W": 2.0356081930179668e-05,
+      "tairte4_z_W": 5.062827052726539e-07,
+      "mapping_error_relative": 3.209158944925704e-16,
+      "Tmax_K": 0.6472511735252477,
+      "current_A": -3.6422645754456146e-09,
+      "current_nA": -3.6422645754456147,
+      "thermal_energy_balance_relative": 4.299610160361812e-12,
+      "thermal_residual_relative": 6.747532353908345e-10,
+      "electrical_residual_relative": 8.921363174992803e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f2_eta_0.35_Ea.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "617b9eb9a7024b24edba2d8faf2c0b63aa4d6a00ea657611a652cf666e478dc1",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 2,
+      "density_case": "eta_0.65",
+      "polarization": "Ea",
+      "grid_edges_sha256": "7f5caf9fb99480a15e0840d1b2e935abd4299f50089bf3ba31a285207eb37a5e",
+      "source_incident_power_W": 1.877031733168999e-12,
+      "source_power_scale": 151835472.44501483,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 47.5,
+      "tairte4_dz_nm": 10.0,
+      "au_dz_nm": 12.5,
+      "yee_cell_count": 2767680,
+      "compile_s": 9.953940343111753,
+      "forward_s": 98.72900472208858,
+      "P_Q_W": 5.7656971370672075e-05,
+      "P_closed_td_W": 5.7644323103394936e-05,
+      "P_closed_phasor_W": 5.762141176446695e-05,
+      "Q_vs_closed_td_relative": 0.00021941913090820276,
+      "Q_vs_closed_phasor_relative": 0.0006171248693190731,
+      "closed_td_vs_phasor_relative": 0.000397618493306636,
+      "complex_E_spatial_NRMSE": 6.868213148223404e-05,
+      "volume_integrated_E2_change_relative": 8.334676231670202e-07,
+      "au_x_W": 3.0445109370288226e-08,
+      "au_y_W": 6.511108256221265e-07,
+      "au_z_W": 1.3163305117341032e-08,
+      "tairte4_x_W": 1.623834211636203e-07,
+      "tairte4_y_W": 5.646598720654901e-05,
+      "tairte4_z_W": 3.3388150284969005e-07,
+      "mapping_error_relative": 1.18960598020293e-16,
+      "Tmax_K": 0.9317134137507929,
+      "current_A": -2.3161500964866506e-09,
+      "current_nA": -2.3161500964866506,
+      "thermal_energy_balance_relative": 4.465799318226483e-12,
+      "thermal_residual_relative": 9.441232197468719e-10,
+      "electrical_residual_relative": 9.253609599609297e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f2_eta_0.65_Ea.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "4b3630d974f1b79efda8a39dc4c60256dd779fb9c76f887e9bd7cbd627acbb7c",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 2,
+      "density_case": "eta_0.50_nominal",
+      "polarization": "Eb",
+      "grid_edges_sha256": "7f5caf9fb99480a15e0840d1b2e935abd4299f50089bf3ba31a285207eb37a5e",
+      "source_incident_power_W": 1.877031733168999e-12,
+      "source_power_scale": 151835472.44501483,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 47.5,
+      "tairte4_dz_nm": 10.0,
+      "au_dz_nm": 12.5,
+      "yee_cell_count": 2767680,
+      "compile_s": 10.451183151453733,
+      "forward_s": 100.28750298917294,
+      "P_Q_W": 8.406280561918482e-05,
+      "P_closed_td_W": 8.414346990368531e-05,
+      "P_closed_phasor_W": 8.413283487562358e-05,
+      "Q_vs_closed_td_relative": 0.0009586517479351132,
+      "Q_vs_closed_phasor_relative": 0.0008323653487046713,
+      "closed_td_vs_phasor_relative": 0.000126407580078036,
+      "complex_E_spatial_NRMSE": 7.076176488888008e-05,
+      "volume_integrated_E2_change_relative": 4.709065873276353e-06,
+      "au_x_W": 1.5545932447983738e-06,
+      "au_y_W": 9.74105038207405e-08,
+      "au_z_W": 6.547086608265003e-08,
+      "tairte4_x_W": 7.824353822133674e-05,
+      "tairte4_y_W": 1.331598719086762e-06,
+      "tairte4_z_W": 2.7701940640595488e-06,
+      "mapping_error_relative": 1.2329628339243105e-16,
+      "Tmax_K": 1.372389267248051,
+      "current_A": -7.920062712382784e-09,
+      "current_nA": -7.920062712382784,
+      "thermal_energy_balance_relative": 9.200449759507261e-12,
+      "thermal_residual_relative": 7.850325617018471e-10,
+      "electrical_residual_relative": 7.764770488469235e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f2_eta_0.50_nominal_Eb.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "112f5374a77b4ef0ae070d4287aa6e9d8960dac39dfbc8f9045d703c0f91c60b",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 2,
+      "density_case": "eta_0.35",
+      "polarization": "Eb",
+      "grid_edges_sha256": "7f5caf9fb99480a15e0840d1b2e935abd4299f50089bf3ba31a285207eb37a5e",
+      "source_incident_power_W": 1.877031733168999e-12,
+      "source_power_scale": 151835472.44501483,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 47.5,
+      "tairte4_dz_nm": 10.0,
+      "au_dz_nm": 12.5,
+      "yee_cell_count": 2767680,
+      "compile_s": 10.451183151453733,
+      "forward_s": 100.73317822441459,
+      "P_Q_W": 4.8685850098743595e-05,
+      "P_closed_td_W": 4.876574623662232e-05,
+      "P_closed_phasor_W": 4.874578436162718e-05,
+      "Q_vs_closed_td_relative": 0.0016383659442234229,
+      "Q_vs_closed_phasor_relative": 0.0012295271000042187,
+      "closed_td_vs_phasor_relative": 0.0004095097710819717,
+      "complex_E_spatial_NRMSE": 0.00013772758524035667,
+      "volume_integrated_E2_change_relative": 6.574956971568995e-06,
+      "au_x_W": 3.4999960084533213e-06,
+      "au_y_W": 1.355754221587586e-07,
+      "au_z_W": 2.2810398160391808e-07,
+      "tairte4_x_W": 3.9015547838773754e-05,
+      "tairte4_y_W": 1.5085063156937718e-06,
+      "tairte4_z_W": 4.29812053206007e-06,
+      "mapping_error_relative": 1.5118105324932338e-16,
+      "Tmax_K": 0.9097772910073046,
+      "current_A": 7.365217733942948e-10,
+      "current_nA": 0.7365217733942948,
+      "thermal_energy_balance_relative": 6.548343739542988e-11,
+      "thermal_residual_relative": 8.670922474228502e-10,
+      "electrical_residual_relative": 8.921363174992803e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f2_eta_0.35_Eb.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "d066b2b9b55cd5de5fdd5f37421cdf18bfe4f953c24e870b338884ffe1a30ecc",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 2,
+      "density_case": "eta_0.65",
+      "polarization": "Eb",
+      "grid_edges_sha256": "7f5caf9fb99480a15e0840d1b2e935abd4299f50089bf3ba31a285207eb37a5e",
+      "source_incident_power_W": 1.877031733168999e-12,
+      "source_power_scale": 151835472.44501483,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 47.5,
+      "tairte4_dz_nm": 10.0,
+      "au_dz_nm": 12.5,
+      "yee_cell_count": 2767680,
+      "compile_s": 10.451183151453733,
+      "forward_s": 100.43716303259134,
+      "P_Q_W": 0.00010723202705069177,
+      "P_closed_td_W": 0.00010725410053633807,
+      "P_closed_phasor_W": 0.00010724765653300225,
+      "Q_vs_closed_td_relative": 0.00020580551732678572,
+      "Q_vs_closed_phasor_relative": 0.0001457326231242242,
+      "closed_td_vs_phasor_relative": 6.008526008059611e-05,
+      "complex_E_spatial_NRMSE": 5.998317655591688e-05,
+      "volume_integrated_E2_change_relative": 5.549468069830538e-07,
+      "au_x_W": 1.2469212283807671e-06,
+      "au_y_W": 7.058349783127074e-08,
+      "au_z_W": 5.11332538060654e-08,
+      "tairte4_x_W": 0.00010107984460795864,
+      "tairte4_y_W": 1.2225665969212643e-06,
+      "tairte4_z_W": 3.560977865793762e-06,
+      "mapping_error_relative": 1.547218767162768e-16,
+      "Tmax_K": 2.767385205062342,
+      "current_A": 3.0215548060754853e-09,
+      "current_nA": 3.021554806075485,
+      "thermal_energy_balance_relative": 7.890219868299293e-13,
+      "thermal_residual_relative": 9.941129084833593e-10,
+      "electrical_residual_relative": 9.253609599609297e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f2_eta_0.65_Eb.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "460cf896713bdea26e749ce0f812a23ccef5d676b3708a3f0c7293dd6cbbaae2",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 4,
+      "density_case": "eta_0.50_nominal",
+      "polarization": "Ea",
+      "grid_edges_sha256": "f49addc4a9e2b779b5559aa43abeea043d1c8c551244d45b771e5f600f37c2cd",
+      "source_incident_power_W": 1.882149817944434e-12,
+      "source_power_scale": 151422589.89311442,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 23.75,
+      "tairte4_dz_nm": 5.0,
+      "au_dz_nm": 6.25,
+      "yee_cell_count": 5535360,
+      "compile_s": 14.948057368397713,
+      "forward_s": 418.1023436076939,
+      "P_Q_W": 4.9366503905059845e-05,
+      "P_closed_td_W": 4.924418887767747e-05,
+      "P_closed_phasor_W": 4.924475059071229e-05,
+      "Q_vs_closed_td_relative": 0.002483846930369963,
+      "Q_vs_closed_phasor_relative": 0.002472412041630234,
+      "closed_td_vs_phasor_relative": 1.1406556599133757e-05,
+      "complex_E_spatial_NRMSE": 0.0003006053197124927,
+      "volume_integrated_E2_change_relative": 2.4032594753067606e-05,
+      "au_x_W": 7.430860370843691e-08,
+      "au_y_W": 1.242375539959528e-06,
+      "au_z_W": 3.279323156883921e-08,
+      "tairte4_x_W": 3.5093467769595e-07,
+      "tairte4_y_W": 4.7267602221066885e-05,
+      "tairte4_z_W": 3.9848963106020536e-07,
+      "mapping_error_relative": 1.5691870104633365e-16,
+      "Tmax_K": 0.9445419237500752,
+      "current_A": -7.09992459806686e-09,
+      "current_nA": -7.09992459806686,
+      "thermal_energy_balance_relative": 3.9696864710865005e-13,
+      "thermal_residual_relative": 6.875440887389319e-10,
+      "electrical_residual_relative": 7.764770488469235e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f4_eta_0.50_nominal_Ea.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "9a1aa500bacdfd88abd6d2b51564c9de21b7d9e428dafd79eaa0dd2e18217e7f",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 4,
+      "density_case": "eta_0.35",
+      "polarization": "Ea",
+      "grid_edges_sha256": "f49addc4a9e2b779b5559aa43abeea043d1c8c551244d45b771e5f600f37c2cd",
+      "source_incident_power_W": 1.882149817944434e-12,
+      "source_power_scale": 151422589.89311442,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 23.75,
+      "tairte4_dz_nm": 5.0,
+      "au_dz_nm": 6.25,
+      "yee_cell_count": 5535360,
+      "compile_s": 14.948057368397713,
+      "forward_s": 418.26724629476666,
+      "P_Q_W": 2.4416374000223225e-05,
+      "P_closed_td_W": 2.4344861876490867e-05,
+      "P_closed_phasor_W": 2.43454870087393e-05,
+      "Q_vs_closed_td_relative": 0.002937462701376618,
+      "Q_vs_closed_phasor_relative": 0.0029117097332445395,
+      "closed_td_vs_phasor_relative": 2.567754131221106e-05,
+      "complex_E_spatial_NRMSE": 0.0004065529535868359,
+      "volume_integrated_E2_change_relative": 4.52450573545832e-05,
+      "au_x_W": 6.627662863159221e-08,
+      "au_y_W": 2.5458763324540755e-06,
+      "au_z_W": 4.0009350840780385e-08,
+      "tairte4_x_W": 2.642558618741122e-07,
+      "tairte4_y_W": 2.1056743038540062e-05,
+      "tairte4_z_W": 4.43212787882601e-07,
+      "mapping_error_relative": 0.0,
+      "Tmax_K": 0.6786722122425118,
+      "current_A": -3.84142467582891e-09,
+      "current_nA": -3.8414246758289097,
+      "thermal_energy_balance_relative": 5.248776289157595e-12,
+      "thermal_residual_relative": 6.754689984655349e-10,
+      "electrical_residual_relative": 8.921363174992803e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f4_eta_0.35_Ea.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "f25dca78e7d2e6c27c04b5c24797d724def971c8b4f2736326f9c1a3a11bac49",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 4,
+      "density_case": "eta_0.65",
+      "polarization": "Ea",
+      "grid_edges_sha256": "f49addc4a9e2b779b5559aa43abeea043d1c8c551244d45b771e5f600f37c2cd",
+      "source_incident_power_W": 1.882149817944434e-12,
+      "source_power_scale": 151422589.89311442,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 23.75,
+      "tairte4_dz_nm": 5.0,
+      "au_dz_nm": 6.25,
+      "yee_cell_count": 5535360,
+      "compile_s": 14.948057368397713,
+      "forward_s": 418.4216456897557,
+      "P_Q_W": 5.957016910048026e-05,
+      "P_closed_td_W": 5.942589296570867e-05,
+      "P_closed_phasor_W": 5.942641843919286e-05,
+      "Q_vs_closed_td_relative": 0.002427832844764281,
+      "Q_vs_closed_phasor_relative": 0.0024189689545987807,
+      "closed_td_vs_phasor_relative": 8.842422242352862e-06,
+      "complex_E_spatial_NRMSE": 0.0003022346705835584,
+      "volume_integrated_E2_change_relative": 1.6938033905964073e-06,
+      "au_x_W": 6.053700253959359e-08,
+      "au_y_W": 7.176365391210892e-07,
+      "au_z_W": 1.5616337499018152e-08,
+      "tairte4_x_W": 1.7333792909090873e-07,
+      "tairte4_y_W": 5.831841339316781e-05,
+      "tairte4_z_W": 2.8462789906184635e-07,
+      "mapping_error_relative": 1.33384313892828e-16,
+      "Tmax_K": 0.9705789028086357,
+      "current_A": -2.3872493747243328e-09,
+      "current_nA": -2.3872493747243326,
+      "thermal_energy_balance_relative": 2.5445326455490875e-12,
+      "thermal_residual_relative": 7.781433883324174e-10,
+      "electrical_residual_relative": 9.253609599609297e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f4_eta_0.65_Ea.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "cece437d1e01d8e2cf533daee6acf7103093250a79510bbfe499defb112c38d1",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 4,
+      "density_case": "eta_0.50_nominal",
+      "polarization": "Eb",
+      "grid_edges_sha256": "f49addc4a9e2b779b5559aa43abeea043d1c8c551244d45b771e5f600f37c2cd",
+      "source_incident_power_W": 1.882149817944434e-12,
+      "source_power_scale": 151422589.89311442,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 23.75,
+      "tairte4_dz_nm": 5.0,
+      "au_dz_nm": 6.25,
+      "yee_cell_count": 5535360,
+      "compile_s": 15.355395164340734,
+      "forward_s": 381.23348269984126,
+      "P_Q_W": 8.478993129348835e-05,
+      "P_closed_td_W": 8.503796585892754e-05,
+      "P_closed_phasor_W": 8.503823161563219e-05,
+      "Q_vs_closed_td_relative": 0.0029167509233542005,
+      "Q_vs_closed_phasor_relative": 0.0029198669519156983,
+      "closed_td_vs_phasor_relative": 3.1251438276426276e-06,
+      "complex_E_spatial_NRMSE": 0.000639975174104769,
+      "volume_integrated_E2_change_relative": 1.1940623291414045e-05,
+      "au_x_W": 3.225770228094658e-06,
+      "au_y_W": 1.2509733437640508e-07,
+      "au_z_W": 7.67637286910628e-08,
+      "tairte4_x_W": 7.734300871982413e-05,
+      "tairte4_y_W": 1.460505695381088e-06,
+      "tairte4_z_W": 2.5587855871210074e-06,
+      "mapping_error_relative": 0.0,
+      "Tmax_K": 1.5742883758376394,
+      "current_A": -6.744325968080785e-09,
+      "current_nA": -6.744325968080784,
+      "thermal_energy_balance_relative": 1.7886505252025723e-11,
+      "thermal_residual_relative": 8.889935482611986e-10,
+      "electrical_residual_relative": 7.764770488469235e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f4_eta_0.50_nominal_Eb.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "89eac9c3bf3887e4853aa24101650dc1567a3b70d77cf23a71e8a2741372e773",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 4,
+      "density_case": "eta_0.35",
+      "polarization": "Eb",
+      "grid_edges_sha256": "f49addc4a9e2b779b5559aa43abeea043d1c8c551244d45b771e5f600f37c2cd",
+      "source_incident_power_W": 1.882149817944434e-12,
+      "source_power_scale": 151422589.89311442,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 23.75,
+      "tairte4_dz_nm": 5.0,
+      "au_dz_nm": 6.25,
+      "yee_cell_count": 5535360,
+      "compile_s": 15.355395164340734,
+      "forward_s": 381.1552984789014,
+      "P_Q_W": 4.959194374037628e-05,
+      "P_closed_td_W": 4.973450999775153e-05,
+      "P_closed_phasor_W": 4.973497809194721e-05,
+      "Q_vs_closed_td_relative": 0.0028665459332302065,
+      "Q_vs_closed_phasor_relative": 0.002875930724378713,
+      "closed_td_vs_phasor_relative": 9.41177042073054e-06,
+      "complex_E_spatial_NRMSE": 0.000706285579654608,
+      "volume_integrated_E2_change_relative": 2.3177302026048304e-05,
+      "au_x_W": 4.7299924166011715e-06,
+      "au_y_W": 1.5387986783135272e-07,
+      "au_z_W": 3.3036257467679825e-07,
+      "tairte4_x_W": 3.8706934785271635e-05,
+      "tairte4_y_W": 1.6703550126486614e-06,
+      "tairte4_z_W": 4.000419083346659e-06,
+      "mapping_error_relative": 1.6244625916197944e-16,
+      "Tmax_K": 0.8941735743354665,
+      "current_A": 5.465309099251367e-10,
+      "current_nA": 0.5465309099251368,
+      "thermal_energy_balance_relative": 9.591077397284927e-11,
+      "thermal_residual_relative": 8.979857668303784e-10,
+      "electrical_residual_relative": 8.921363174992803e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f4_eta_0.35_Eb.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "6cbe11bd0c70cd235e942c8a33fee8565be3dab03d680356925353b25616d53b",
+      "physics_gates_pass": true
+    },
+    {
+      "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+      "factor": 4,
+      "density_case": "eta_0.65",
+      "polarization": "Eb",
+      "grid_edges_sha256": "f49addc4a9e2b779b5559aa43abeea043d1c8c551244d45b771e5f600f37c2cd",
+      "source_incident_power_W": 1.882149817944434e-12,
+      "source_power_scale": 151422589.89311442,
+      "courant_factor": 0.25,
+      "total_periods": 40,
+      "window_periods": 4,
+      "sio2_dz_nm": 23.75,
+      "tairte4_dz_nm": 5.0,
+      "au_dz_nm": 6.25,
+      "yee_cell_count": 5535360,
+      "compile_s": 15.355395164340734,
+      "forward_s": 381.4643239341676,
+      "P_Q_W": 0.0001086366133045412,
+      "P_closed_td_W": 0.00010887044729887735,
+      "P_closed_phasor_W": 0.00010887061641678031,
+      "Q_vs_closed_td_relative": 0.002147818807928821,
+      "Q_vs_closed_phasor_relative": 0.002149368855810471,
+      "closed_td_vs_phasor_relative": 1.5533842696000998e-06,
+      "complex_E_spatial_NRMSE": 0.0006252693478986507,
+      "volume_integrated_E2_change_relative": 1.6871696539353713e-05,
+      "au_x_W": 3.0478498957533487e-06,
+      "au_y_W": 9.28966082508263e-08,
+      "au_z_W": 9.326695159235144e-08,
+      "tairte4_x_W": 0.00010079082414996437,
+      "tairte4_y_W": 1.2866437820372338e-06,
+      "tairte4_z_W": 3.325131916943066e-06,
+      "mapping_error_relative": 0.0,
+      "Tmax_K": 3.9619062808632775,
+      "current_A": 4.8472401180005916e-09,
+      "current_nA": 4.847240118000592,
+      "thermal_energy_balance_relative": 1.2218488103323086e-11,
+      "thermal_residual_relative": 8.581557490612653e-10,
+      "electrical_residual_relative": 9.253609599609297e-11,
+      "raw_path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/shared_linear_full_z_convergence/f4_eta_0.65_Eb.npz",
+      "raw_bytes": 18885452,
+      "raw_sha256": "4ecfb164a6ff23bffae3833d02ef5d14eb6d5fe2c21c25998950a6106feb5a16",
+      "physics_gates_pass": true
+    }
+  ],
+  "comparison_results": [
+    {
+      "coarse_factor": 1,
+      "fine_factor": 2,
+      "density_case": "eta_0.50_nominal",
+      "polarization": "Ea",
+      "P_Q_relative_change": 0.061357320264635994,
+      "P_closed_phasor_relative_change": 0.06254045019996735,
+      "remapped_Q_volume_L2_NRMSE": 0.29795214064485587,
+      "Ta_temperature_NRMSE": 0.06726708600492869,
+      "Tmax_relative_change": 0.07642560303683452,
+      "current_relative_change": 0.07333769735313188,
+      "current_sign_preserved": true,
+      "au_x_W_change_over_total": 0.00023194980379225613,
+      "au_y_W_change_over_total": 0.0022385297458995842,
+      "au_z_W_change_over_total": 0.0001159132926618721,
+      "tairte4_x_W_change_over_total": 0.0004199622732534364,
+      "tairte4_y_W_change_over_total": 0.06031301587799731,
+      "tairte4_z_W_change_over_total": 0.001962050728968495,
+      "comparison_pass": false
+    },
+    {
+      "coarse_factor": 1,
+      "fine_factor": 2,
+      "density_case": "eta_0.50_nominal",
+      "polarization": "Eb",
+      "P_Q_relative_change": 0.0013365745898116684,
+      "P_closed_phasor_relative_change": 0.0014238369901665743,
+      "remapped_Q_volume_L2_NRMSE": 0.301111310011121,
+      "Ta_temperature_NRMSE": 0.020533647006193107,
+      "Tmax_relative_change": 0.00459254162038657,
+      "current_relative_change": 0.048868830600165676,
+      "current_sign_preserved": true,
+      "au_x_W_change_over_total": 0.003786259572127255,
+      "au_y_W_change_over_total": 0.0002875474431752954,
+      "au_z_W_change_over_total": 0.00010834019613567074,
+      "tairte4_x_W_change_over_total": 0.00990329524478186,
+      "tairte4_y_W_change_over_total": 0.004226887399439313,
+      "tairte4_z_W_change_over_total": 0.00015768604409253768,
+      "comparison_pass": false
+    },
+    {
+      "coarse_factor": 1,
+      "fine_factor": 2,
+      "density_case": "eta_0.35",
+      "polarization": "Ea",
+      "P_Q_relative_change": 0.057319612611318266,
+      "P_closed_phasor_relative_change": 0.059431955671111925,
+      "remapped_Q_volume_L2_NRMSE": 0.3021954863656574,
+      "Ta_temperature_NRMSE": 0.06496443020531124,
+      "Tmax_relative_change": 0.08306220372573728,
+      "current_relative_change": 0.07259276966857185,
+      "current_sign_preserved": true,
+      "au_x_W_change_over_total": 0.0003081536054331028,
+      "au_y_W_change_over_total": 0.008646622035102872,
+      "au_z_W_change_over_total": 0.0004078102015923217,
+      "tairte4_x_W_change_over_total": 0.0007602328727674964,
+      "tairte4_y_W_change_over_total": 0.051733867187259384,
+      "tairte4_z_W_change_over_total": 0.004537073290836941,
+      "comparison_pass": false
+    },
+    {
+      "coarse_factor": 1,
+      "fine_factor": 2,
+      "density_case": "eta_0.35",
+      "polarization": "Eb",
+      "P_Q_relative_change": 0.0166196558127559,
+      "P_closed_phasor_relative_change": 0.01721156165715256,
+      "remapped_Q_volume_L2_NRMSE": 0.29026824594475215,
+      "Ta_temperature_NRMSE": 0.03613856414227621,
+      "Tmax_relative_change": 0.015213181638694315,
+      "current_relative_change": 0.7657227426992015,
+      "current_sign_preserved": true,
+      "au_x_W_change_over_total": 0.010818858044511909,
+      "au_y_W_change_over_total": 0.0002943453281668917,
+      "au_z_W_change_over_total": 0.002220787119555025,
+      "tairte4_x_W_change_over_total": 0.0010943337807304016,
+      "tairte4_y_W_change_over_total": 0.0075475510142726954,
+      "tairte4_z_W_change_over_total": 0.0031675519130202477,
+      "comparison_pass": false
+    },
+    {
+      "coarse_factor": 1,
+      "fine_factor": 2,
+      "density_case": "eta_0.65",
+      "polarization": "Ea",
+      "P_Q_relative_change": 0.06175771510828206,
+      "P_closed_phasor_relative_change": 0.06277988713542394,
+      "remapped_Q_volume_L2_NRMSE": 0.29755267357128806,
+      "Ta_temperature_NRMSE": 0.06650332972529803,
+      "Tmax_relative_change": 0.07529682763548304,
+      "current_relative_change": 0.09928460815347322,
+      "current_sign_preserved": true,
+      "au_x_W_change_over_total": 0.00013379296483235055,
+      "au_y_W_change_over_total": 0.0009605880569453922,
+      "au_z_W_change_over_total": 3.128218562909792e-05,
+      "tairte4_x_W_change_over_total": 0.00012693943915592618,
+      "tairte4_y_W_change_over_total": 0.06175402927328334,
+      "tairte4_z_W_change_over_total": 0.0012489168115640853,
+      "comparison_pass": false
+    },
+    {
+      "coarse_factor": 1,
+      "fine_factor": 2,
+      "density_case": "eta_0.65",
+      "polarization": "Eb",
+      "P_Q_relative_change": 0.014040762685267522,
+      "P_closed_phasor_relative_change": 0.013631108807374205,
+      "remapped_Q_volume_L2_NRMSE": 0.29833731118761453,
+      "Ta_temperature_NRMSE": 0.029657034157618858,
+      "Tmax_relative_change": 0.4267274147723682,
+      "current_relative_change": 0.40314590772576464,
+      "current_sign_preserved": true,
+      "au_x_W_change_over_total": 0.0034403356061263766,
+      "au_y_W_change_over_total": 0.00010954919633112733,
+      "au_z_W_change_over_total": 0.00019139607960670017,
+      "tairte4_x_W_change_over_total": 0.005207238980088294,
+      "tairte4_y_W_change_over_total": 0.0035066776842288213,
+      "tairte4_z_W_change_over_total": 0.0015855651388862256,
+      "comparison_pass": false
+    },
+    {
+      "coarse_factor": 2,
+      "fine_factor": 4,
+      "density_case": "eta_0.50_nominal",
+      "polarization": "Ea",
+      "P_Q_relative_change": 0.03199688920524133,
+      "P_closed_phasor_relative_change": 0.030362948109175242,
+      "remapped_Q_volume_L2_NRMSE": 0.18333202391921002,
+      "Ta_temperature_NRMSE": 0.0351930888260741,
+      "Tmax_relative_change": 0.040604684768497074,
+      "current_relative_change": 0.03304145607041782,
+      "current_sign_preserved": true,
+      "au_x_W_change_over_total": 0.0005786778710199067,
+      "au_y_W_change_over_total": 0.0018815306413182133,
+      "au_z_W_change_over_total": 2.5205941357735537e-05,
+      "tairte4_x_W_change_over_total": 0.00033645560979849695,
+      "tairte4_y_W_change_over_total": 0.030420340562603808,
+      "tairte4_z_W_change_over_total": 0.0011949095381413176,
+      "comparison_pass": false
+    },
+    {
+      "coarse_factor": 2,
+      "fine_factor": 4,
+      "density_case": "eta_0.50_nominal",
+      "polarization": "Eb",
+      "P_Q_relative_change": 0.008575613439132176,
+      "P_closed_phasor_relative_change": 0.010646937533942955,
+      "remapped_Q_volume_L2_NRMSE": 0.3407150087179627,
+      "Ta_temperature_NRMSE": 0.027289620642730127,
+      "Tmax_relative_change": 0.12824785578573736,
+      "current_relative_change": 0.17432976250947366,
+      "current_sign_preserved": true,
+      "au_x_W_change_over_total": 0.019709615962675352,
+      "au_y_W_change_over_total": 0.00032653441432604224,
+      "au_z_W_change_over_total": 0.0001331863634766271,
+      "tairte4_x_W_change_over_total": 0.010620712716413802,
+      "tairte4_y_W_change_over_total": 0.0015203099510498804,
+      "tairte4_z_W_change_over_total": 0.0024933205359818117,
+      "comparison_pass": false
+    },
+    {
+      "coarse_factor": 2,
+      "fine_factor": 4,
+      "density_case": "eta_0.35",
+      "polarization": "Ea",
+      "P_Q_relative_change": 0.03314162800588135,
+      "P_closed_phasor_relative_change": 0.032002595603344494,
+      "remapped_Q_volume_L2_NRMSE": 0.1834947972450994,
+      "Ta_temperature_NRMSE": 0.03633881122169714,
+      "Tmax_relative_change": 0.046297812331877713,
+      "current_relative_change": 0.05184537435718952,
+      "current_sign_preserved": true,
+      "au_x_W_change_over_total": 0.0006873742798977851,
+      "au_y_W_change_over_total": 0.005699712274231721,
+      "au_z_W_change_over_total": 0.0001812327912709731,
+      "tairte4_x_W_change_over_total": 0.00046004585722784114,
+      "tairte4_y_W_change_over_total": 0.028696362054168603,
+      "tairte4_z_W_change_over_total": 0.00258309925091565,
+      "comparison_pass": false
+    },
+    {
+      "coarse_factor": 2,
+      "fine_factor": 4,
+      "density_case": "eta_0.35",
+      "polarization": "Eb",
+      "P_Q_relative_change": 0.01827098462557276,
+      "P_closed_phasor_relative_change": 0.019889296593059106,
+      "remapped_Q_volume_L2_NRMSE": 0.31209181684553894,
+      "Ta_temperature_NRMSE": 0.03300103838405488,
+      "Tmax_relative_change": 0.017450433696203256,
+      "current_relative_change": 0.34763059146130054,
+      "current_sign_preserved": true,
+      "au_x_W_change_over_total": 0.02480234319080387,
+      "au_y_W_change_over_total": 0.0003691011945089617,
+      "au_z_W_change_over_total": 0.0020620001024405153,
+      "tairte4_x_W_change_over_total": 0.0062230481450327915,
+      "tairte4_y_W_change_over_total": 0.003263608657934438,
+      "tairte4_z_W_change_over_total": 0.006003020375082237,
+      "comparison_pass": false
+    },
+    {
+      "coarse_factor": 2,
+      "fine_factor": 4,
+      "density_case": "eta_0.65",
+      "polarization": "Ea",
+      "P_Q_relative_change": 0.03211670805535388,
+      "P_closed_phasor_relative_change": 0.030373808856962413,
+      "remapped_Q_volume_L2_NRMSE": 0.183110941493656,
+      "Ta_temperature_NRMSE": 0.03503185584736385,
+      "Tmax_relative_change": 0.04004361618140976,
+      "current_relative_change": 0.02978292883452629,
+      "current_sign_preserved": true,
+      "au_x_W_change_over_total": 0.0005051503734788418,
+      "au_y_W_change_over_total": 0.0011167622067137345,
+      "au_z_W_change_over_total": 4.117887222276398e-05,
+      "tairte4_x_W_change_over_total": 0.0001838925101725139,
+      "tairte4_y_W_change_over_total": 0.031096540677838472,
+      "tairte4_z_W_change_over_total": 0.0008268165850723868,
+      "comparison_pass": false
+    },
+    {
+      "coarse_factor": 2,
+      "fine_factor": 4,
+      "density_case": "eta_0.65",
+      "polarization": "Eb",
+      "P_Q_relative_change": 0.012929216137398765,
+      "P_closed_phasor_relative_change": 0.01490723518607644,
+      "remapped_Q_volume_L2_NRMSE": 0.340509632463039,
+      "Ta_temperature_NRMSE": 0.03481448200843936,
+      "Tmax_relative_change": 0.30150159825099543,
+      "current_relative_change": 0.37664428983934306,
+      "current_sign_preserved": true,
+      "au_x_W_change_over_total": 0.01657754796096262,
+      "au_y_W_change_over_total": 0.00020539217618101903,
+      "au_z_W_change_over_total": 0.0003878406782451196,
+      "tairte4_x_W_change_over_total": 0.002660433248080603,
+      "tairte4_y_W_change_over_total": 0.0005898304739705187,
+      "tairte4_z_W_change_over_total": 0.0021709619038799447,
+      "comparison_pass": false
+    }
+  ],
+  "gates": {
+    "power_relative": 0.005,
+    "field_NRMSE": 0.005,
+    "current_relative": 0.005,
+    "physics_gates_pass": true,
+    "final_pair_convergence_pass": false
+  },
+  "selected_optical_z_contract": null,
+  "selected_source_calibration": null,
+  "promotion": {
+    "is_full_z_mesh_certificate": false
+  },
+  "next_gate": "RUN_OPTICAL_XY_CONVERGENCE"
+}

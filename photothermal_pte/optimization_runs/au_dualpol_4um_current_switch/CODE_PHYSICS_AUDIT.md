@@ -54,6 +54,13 @@ sample-air boundaries are insulating, and the transverse example uses an
    the old current sign, and an under-specified cache key. Its numerical
    changes are not evidence for the exact-Au route. Si, air, PML,
    optical x/y, thermal, and electrical meshes were not certified.
+   The replacement full-domain factor-1/2/4 sweep has now also failed: every
+   one of its six final factor-2 to factor-4 comparisons missed the 0.5% gate.
+   Worst changes were 3.314% in total Q, 34.072% in the remapped Q field,
+   3.634% in TaIrTe4 temperature-field NRMSE, 30.150% in Tmax, and 37.664% in
+   PTE current. These are stable spatial-discretization changes, not a temporal
+   instability: all 18 individual material runs passed their independent
+   physics gates.
 
 3. **The time/material blocker is closed, but no spatial mesh is certified.**
    Material isolation traced the factor-8, Courant-0.5 long-time failure to Au
@@ -132,6 +139,12 @@ sample-air boundaries are insulating, and the transverse example uses an
   validated Courant-0.25/40-period contract. It uses independent Ea/Eb source
   calibration per grid and requires every material case to pass time and
   absorption-flux gates before comparing the final 2-to-4 spatial pair.
+- That complete sweep returned
+  `BLOCKED_SHARED_LINEAR_FULL_DOMAIN_Z_CONVERGENCE`: physics gates passed but
+  convergence passed in 0/6 final-pair cases. This closes the question of
+  whether the legacy shared-gray factor-4 grid was adequate; it was not. It
+  does not certify or choose a grid for exact-Au Lumerical. The next optical
+  z/x/y/PML convergence hierarchy belongs to that superseding route.
 - Source calibration bound to exact grid/source/time metadata.
 - Stale validation artifacts rejected by status, material-law, grid, input,
   and SHA checks.

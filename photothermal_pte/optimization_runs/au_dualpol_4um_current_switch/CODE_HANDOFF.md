@@ -111,6 +111,18 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    40 total periods, and a 4-period late window. It recalibrates Ea and Eb
    separately on every grid, rechecks time stationarity and Q/TD/phasor flux
    in every material case, and persists hash-verified per-case progress.
+   That replacement sweep is now complete and **blocked**, not converged. All
+   18 individual runs passed their time/closure/remap/linear-solver physics
+   gates, but all six robust-density/polarization comparisons failed the final
+   factor-2 to factor-4 spatial gate. The worst changes were 3.314% in total Q,
+   34.072% in the remapped Q field, 3.634% in the TaIrTe4 temperature field,
+   30.150% in Tmax, and 37.664% in PTE current. See
+   `results_4um_shared_linear_full_z_convergence/FULL_Z_CONVERGENCE_REPORT.md`.
+   This is decisive evidence that the legacy shared-gray FDTDX grid is not
+   converged, but it does not select a production mesh for the superseding
+   exact-Au Lumerical route. Do not spend more production effort on mixed-gray
+   FDTDX refinement; repeat the convergence hierarchy with ordinary exact-Au
+   geometry in Lumerical on the actual target GPU.
 6. Electrical void cells retain tiny sheet/contact floors to regularize the
    floating Au block.  Quantify floor sensitivity; do not describe the
    electrical `rho=0` endpoint as exactly disconnected until that passes.
@@ -176,8 +188,10 @@ location.  `AU_DUALPOL_PYTHON`, `FDTDX_SOURCE_DIR`, and
 
 1. Confirm the target geometry, contacts, crystal-axis angle, layer stack, and
    illumination in `physical_device_contract.json`.
-2. Treat the existing FDTDX factor 1/2/4/8 and reduced-Courant tables as stale
-   historical diagnostics, not evidence for Lumerical or a production mesh.
+2. Treat all existing FDTDX factor 1/2/4/8, reduced-Courant, and shared-linear
+   full-domain-z tables as historical diagnostics, not evidence for Lumerical
+   or a production mesh. The completed shared-linear factor-1/2/4 sweep is
+   useful negative evidence: its stable final pair failed in all 6/6 cases.
 3. On the actual B200, establish new Lumerical empty/full/simple exact-Au time,
    Q/flux, x/y/z/PML, and source-calibration controls for both polarizations.
 4. Implement the exact-binary geometry contract and validate the chosen
