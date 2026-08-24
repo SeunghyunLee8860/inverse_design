@@ -12,6 +12,8 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     sampled_material_data,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_forward import (
+    DENSITY_CONTROL,
+    ENDPOINT_FIELD_MONITOR,
     PABS_GROUP,
     SOURCE_NAME,
     TARGET_MONITOR,
@@ -37,6 +39,8 @@ class _FakeFdtd:
         self.powers: list[dict[str, object]] = []
         self.objects: list[tuple[str, dict[str, object]]] = []
         self.rectangles: list[dict[str, object]] = []
+        self.imports: list[dict[str, object]] = []
+        self.import_calls: list[tuple[np.ndarray, ...]] = []
         self.material_types: list[str] = []
         self.material_properties: dict[tuple[object, str], object] = {}
         self.named: dict[tuple[str, str], object] = {}
@@ -66,6 +70,14 @@ class _FakeFdtd:
 
     def addrect(self):
         return self._add(self.rectangles)
+
+    def addimport(self, properties):
+        self.imports.append(dict(properties))
+        return self.imports[-1]
+
+    def importnk2(self, *values):
+        self.import_calls.append(tuple(np.asarray(value) for value in values))
+        return 1
 
     def addmaterial(self, material_type: str):
         self.material_types.append(material_type)
@@ -151,9 +163,51 @@ def test_source_only_and_material_layout_share_solver_source_and_mesh() -> None:
     assert material.objects[0][0] == "pabs_adv"
     assert material.objects[0][1]["name"] == PABS_GROUP
     assert len(material_audit["flux_faces"]) == 6
+    assert ENDPOINT_FIELD_MONITOR in [item["name"] for item in material.powers]
     assert material_audit["geometry"]["exact_au_geometry"][
         "geometry_sha256"
     ] == "9d543a428f89fe5ea2f6910d2d98b5f97dc870cd1aac9b928760a6b4656df411"
+
+
+def test_imported_density_uses_same_solver_source_mesh_and_hashes_nodes() -> None:
+    exact = _FakeFdtd()
+    density = _FakeFdtd()
+    exact_audit = build_layout(
+        exact,
+        case="full",
+        polarization="Eb",
+        spec=BASELINE,
+        source_object_w0_m=4.0e-6,
+    )
+    rho = np.full(CONTRACT.design_node_shape, 0.5)
+    density_audit = build_layout(
+        density,
+        case=DENSITY_CONTROL,
+        polarization="Eb",
+        spec=BASELINE,
+        source_object_w0_m=4.0e-6,
+        projected_density=rho,
+    )
+    assert exact.fdtd == density.fdtd
+    assert exact.gaussians == density.gaussians
+    assert exact.meshes == density.meshes
+    assert len(density.imports) == 1
+    assert density.import_calls[0][0].shape == (81, 81, 2)
+    assert density_audit["geometry"]["density_state"]["nodal_shape_xy"] == [81, 81]
+    assert exact_audit["geometry"]["exact_au_geometry"]["mask_shape_xy"] == [80, 80]
+
+
+def test_imported_density_fails_closed_without_exact_nodal_state() -> None:
+    for value in (None, np.zeros((80, 80))):
+        with np.testing.assert_raises(ValueError):
+            build_layout(
+                _FakeFdtd(),
+                case=DENSITY_CONTROL,
+                polarization="Ea",
+                spec=BASELINE,
+                source_object_w0_m=4.0e-6,
+                projected_density=value,
+            )
 
 
 def test_control_volume_is_inside_domain_below_source_and_contains_stack() -> None:

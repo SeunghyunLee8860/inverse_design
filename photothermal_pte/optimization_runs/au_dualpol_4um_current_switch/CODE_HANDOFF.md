@@ -63,14 +63,21 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     Lumerical component-Yee Jacobian.
 17. `lumerical_4um_forward.py` and
     `25_run_lumerical_4um_exact_au_control.py` -- the actual fail-closed B200
-    source/empty/full/simple-L runner. It records actual mesh coordinates,
-    fitted and finite-dt material readback, native-Yee Q, six-face flux, raw
-    engine-log GPU evidence, canonical exact-Au geometry identity, and a
-    disjoint coordinate-based Au/TaIrTe4/SiO2/Si/air Q partition for
-    convergence comparisons. Raw epsilon remains saved because conformal
-    interface cells cannot be reduced to a single physical material label.
-    Its layout/unit tests pass locally, but no Maxwell result exists because
-    this host has no B200.
+    source/exact-empty/full/simple-L/imported-density runner. It records actual
+    mesh coordinates, fitted and finite-dt material readback, native-Yee Q,
+    six-face flux, a fixed air-side endpoint field, raw engine-log GPU
+    evidence, and either the canonical exact-Au geometry or canonical nodal
+    density identity. Exact controls also retain the disjoint coordinate-based
+    Au/TaIrTe4/SiO2/Si/air Q partition; gray density correctly marks that
+    partition not applicable. Raw epsilon remains saved because conformal
+    interface cells cannot be reduced to one physical label. It contains no
+    HEAT/CHARGE or alternative Maxwell solver. No Maxwell result exists here
+    because this Codex host has no B200.
+18. `run_lumerical_4um_endpoint_b200.sh` -- sequential Ea/Eb exact-empty,
+    source-only, imported-rho0, imported-rho1, and exact-full batch. A passed,
+    hash-matching source-only JSON is mandatory before every material case.
+    FSP/NPZ/log outputs belong in the supplied external/local output root and
+    must not be added to Git.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -236,6 +243,11 @@ photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_combined_gp
 photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_combined_gpu_python.sh \
   photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/24_audit_4um_density_state_map.py
 
+LUMERICAL_B200_GPU_INDEX=<physical_b200_index> \
+  AU_LUMERICAL_ROOT=<absolute_v261_install_root> \
+  photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_lumerical_4um_endpoint_b200.sh \
+  /absolute/local/output/root
+
 CUDA_VISIBLE_DEVICES=<free_gpu> photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_z_mesh_convergence_gpu.sh --audit-only
 
 CUDA_VISIBLE_DEVICES=<free_gpu> photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_z_mesh_convergence_gpu.sh
@@ -244,7 +256,9 @@ CUDA_VISIBLE_DEVICES=<free_gpu> photothermal_pte/optimization_runs/au_dualpol_4u
 `run_combined_gpu_python.sh` selects the checked Python/JAX/PyTorch environment
 used by the project.  Launchers derive the repository root from their own
 location.  `AU_DUALPOL_PYTHON`, `FDTDX_SOURCE_DIR`, and
-`AU_DUALPOL_RAW_ROOT` override the host defaults when reproducing elsewhere.
+`AU_DUALPOL_RAW_ROOT` override the historical host defaults.
+`AU_LUMERICAL_PYTHON` and `AU_LUMERICAL_ROOT` select the B200 host's Python
+environment and v261 installation without assuming the login user's home.
 
 ## Next correct sequence
 
@@ -257,10 +271,13 @@ location.  `AU_DUALPOL_PYTHON`, `FDTDX_SOURCE_DIR`, and
 3. On the actual B200, use `25_run_lumerical_4um_exact_au_control.py` to pass
    source-only Ea/Eb first, then matching ordinary empty/full/simple-L exact
    Au time, Q/flux, linked stack+bulk/air/PML-z, x/y, PML-layer, and domain
-   controls. Add imported-full parity against that ordinary-Au baseline,
+   controls. Run imported-rho0/1 parity against the matching ordinary
+   empty/full baselines,
    quantify the single-frequency carrier's source-band error, and sweep
    uniform projected density for artificial field/Q resonances. Raw output
-   must remain outside the Git worktree.
+   must remain outside the Git worktree. The unified runner and endpoint batch
+   now exist, but no B200 result is committed and this Codex host fails the
+   B200 preflight.
 4. Build and validate the nonuniform density-to-component-Yee material
    Jacobian and its discrete adjoint; do not substitute bundled LumOpt's
    real/lossless metal path.

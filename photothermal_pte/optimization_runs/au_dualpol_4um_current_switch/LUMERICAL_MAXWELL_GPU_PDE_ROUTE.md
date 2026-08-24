@@ -102,6 +102,17 @@ prisms. Its sampled inputs still require actual Lumerical MCM fit readback.
 and domain-clearance controls for the exact endpoint/final cases. These files
 do not replace the density carrier or its uniform-rho resonance/AD-FD gates.
 
+`lumerical_4um_forward.py` now assembles the common six-PML scalar-Gaussian
+layout for `source_only`, exact `empty/full/simple_L`, or `import_density`.
+The actual case entry point is `25_run_lumerical_4um_exact_au_control.py`; the
+sequential endpoint batch is `run_lumerical_4um_endpoint_b200.sh`. Each field
+solve fails closed unless the requested physical GPU is identified as an
+NVIDIA B200. It saves native component-Yee Q and a fixed air-side endpoint
+field, and checks all fitted/finite-dt material readbacks plus Q/closed-flux
+closure. A material case requires a passed, hash-matching source-only
+waist/power record. These are provisional-device numerical gates, not a
+production current prediction.
+
 The earlier `np density` proposal remains rejected. It is a semiconductor
 carrier-density attribute, not topology occupancy, and it is unnecessary for
 this route.
@@ -133,8 +144,9 @@ No empirical gradient scaling is allowed.
 1. Empty layer, uniform `rho_bar=0`, uniform `rho_bar=1`, and ordinary
    sampled-data Au controls must pass material readback, time stationarity,
    native-Yee Q, and six-face flux closure.
-2. Imported `rho_bar=1` and ordinary dispersive Au must agree over the actual
-   source/monitor bandwidth, not only at one tabulated wavelength.
+2. Imported `rho_bar=1` and ordinary dispersive Au must pass 4-um
+   field/absorption/Q parity. Their finite-source-band constitutive difference
+   must be quantified separately; it must not be mislabeled broadband parity.
 3. Uniform `rho_bar` from 0 to 1 must be swept to detect artificial field/Q
    peaks and optimizer-favored gray resonances. Passivity of the algebraic
    material law alone is insufficient.

@@ -27,6 +27,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     exact_control_masks,
     sampled_material_data,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_density import (
+    add_density_stack_geometry,
+    canonical_density_nodes,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_mesh_contract import (
     GEOMETRY_CONTROLS,
     LumericalMeshSpec,
@@ -42,6 +46,7 @@ from photothermal_pte.finite_inverse_design.probe_v261_cpu_tfsf_device import (
 C0_M_S = 299_792_458.0
 SOURCE_NAME = "au_dualpol_4um_scalar_Gaussian"
 TARGET_MONITOR = "au_dualpol_4um_source_target_plane"
+ENDPOINT_FIELD_MONITOR = "au_dualpol_4um_endpoint_field_plane"
 SOURCE_Z_M = 0.75e-6
 WAIST_Z_M = 0.0
 SOURCE_PROFILE_Z_M = WAIST_Z_M
@@ -49,6 +54,7 @@ Q_BOX_TOP_M = 0.50e-6
 MONITOR_WAVELENGTH_M = CONTRACT.wavelength_m
 MATERIAL_READBACK_COUNT = 81
 MATERIAL_FIT_RELATIVE_GATE = 5.0e-3
+DENSITY_CONTROL = "import_density"
 
 
 def polarization_angle_deg(polarization: str) -> float:
@@ -259,6 +265,24 @@ def _add_target_monitor(fdtd: Any) -> None:
         pass
 
 
+def _add_endpoint_field_monitor(fdtd: Any) -> None:
+    """Add a fixed air-side field plane for exact/import endpoint parity."""
+
+    monitor = fdtd.addpower()
+    monitor["name"] = ENDPOINT_FIELD_MONITOR
+    monitor["monitor type"] = "2D Z-normal"
+    monitor["x min"] = -0.5 * CONTRACT.design_span_x_m
+    monitor["x max"] = 0.5 * CONTRACT.design_span_x_m
+    monitor["y min"] = -0.5 * CONTRACT.design_span_y_m
+    monitor["y max"] = 0.5 * CONTRACT.design_span_y_m
+    monitor["z"] = CONTRACT.design_thickness_m + 50.0e-9
+    _configure_single_frequency(monitor)
+    try:
+        monitor["spatial interpolation"] = "specified position"
+    except Exception:
+        pass
+
+
 def control_volume_bounds(
     spec: LumericalMeshSpec,
 ) -> dict[str, tuple[float, float]]:
@@ -332,12 +356,19 @@ def build_layout(
     polarization: str,
     spec: LumericalMeshSpec,
     source_object_w0_m: float,
+    projected_density: np.ndarray | None = None,
 ) -> dict[str, Any]:
-    """Build one source-only or exact-stack forward-control layout."""
+    """Build one source-only, exact-stack, or imported-density layout."""
 
     spec.validate()
-    if case not in ("source_only", *GEOMETRY_CONTROLS):
-        raise ValueError(f"unsupported exact-Au control case: {case}")
+    if case not in ("source_only", *GEOMETRY_CONTROLS, DENSITY_CONTROL):
+        raise ValueError(f"unsupported 4-um control case: {case}")
+    if case == DENSITY_CONTROL:
+        if projected_density is None:
+            raise ValueError("import_density requires a projected nodal density")
+        projected_density = canonical_density_nodes(projected_density)
+    elif projected_density is not None:
+        raise ValueError("projected_density is valid only for import_density")
     calibration = source_calibration_contract(
         spec, polarization, source_object_w0_m=source_object_w0_m
     )
@@ -357,22 +388,33 @@ def build_layout(
         }
 
     material_audit = add_dispersive_materials(fdtd)
-    masks = exact_control_masks()
     half_domain = 0.5 * spec.lateral_span_m
-    geometry = add_exact_stack_geometry(
-        fdtd,
-        masks[case],
-        optical_x_bounds_m=(-half_domain, half_domain),
-        optical_y_bounds_m=(-half_domain, half_domain),
-        optical_z_min_m=spec.z_min_m,
-    )
+    if case == DENSITY_CONTROL:
+        assert projected_density is not None
+        geometry = add_density_stack_geometry(
+            fdtd,
+            projected_density,
+            optical_x_bounds_m=(-half_domain, half_domain),
+            optical_y_bounds_m=(-half_domain, half_domain),
+            optical_z_min_m=spec.z_min_m,
+        )
+    else:
+        geometry = add_exact_stack_geometry(
+            fdtd,
+            exact_control_masks()[case],
+            optical_x_bounds_m=(-half_domain, half_domain),
+            optical_y_bounds_m=(-half_domain, half_domain),
+            optical_z_min_m=spec.z_min_m,
+        )
     bounds = control_volume_bounds(spec)
     _add_q_analysis(fdtd, bounds)
     faces = _add_flux_box(fdtd, bounds)
+    _add_endpoint_field_monitor(fdtd)
     return {
         "case": case,
         "classification": (
-            "provisional exact-Au Maxwell/Q control; no thermal, electrical, "
+            "provisional exact-Au or relaxed-density Maxwell/Q control; "
+            "no thermal, electrical, "
             "PTE, adjoint, or optimization solve"
         ),
         "source_calibration_contract": calibration,

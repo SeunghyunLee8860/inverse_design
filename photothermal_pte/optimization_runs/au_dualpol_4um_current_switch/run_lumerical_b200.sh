@@ -4,6 +4,7 @@ set -euo pipefail
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repository="$(git -C "$script_dir" rev-parse --show-toplevel)"
 python_bin="${AU_LUMERICAL_PYTHON:-/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/python}"
+lumerical_root="${AU_LUMERICAL_ROOT:-/home/seunghyun/lumerical_r12/opt/lumerical/v261}"
 gpu_index="${LUMERICAL_B200_GPU_INDEX:?set LUMERICAL_B200_GPU_INDEX to the physical NVIDIA B200 index}"
 
 if [[ ! -x "$python_bin" ]]; then
@@ -11,8 +12,8 @@ if [[ ! -x "$python_bin" ]]; then
   exit 2
 fi
 
-export PYTHONPATH="/home/seunghyun/lumerical_r12/opt/lumerical/v261/api/python:$repository${PYTHONPATH:+:$PYTHONPATH}"
-export VC_LUMERICAL_ROOT="/home/seunghyun/lumerical_r12/opt/lumerical/v261"
+export PYTHONPATH="$lumerical_root/api/python:$repository${PYTHONPATH:+:$PYTHONPATH}"
+export VC_LUMERICAL_ROOT="$lumerical_root"
 export LUMERICAL_ROOT="$VC_LUMERICAL_ROOT"
 
 "$python_bin" \

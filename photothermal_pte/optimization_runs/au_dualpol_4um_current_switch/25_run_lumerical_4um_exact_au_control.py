@@ -43,6 +43,8 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_forward import (  # noqa: E402
     C0_M_S,
+    DENSITY_CONTROL,
+    ENDPOINT_FIELD_MONITOR,
     SOURCE_NAME,
     TARGET_MONITOR,
     build_layout,
@@ -137,8 +139,11 @@ def _scalar(value: Any, label: str) -> float:
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--case", required=True, choices=("source_only", *GEOMETRY_CONTROLS)
+        "--case",
+        required=True,
+        choices=("source_only", *GEOMETRY_CONTROLS, DENSITY_CONTROL),
     )
+    parser.add_argument("--rho", type=float)
     parser.add_argument("--polarization", required=True, choices=POLARIZATIONS)
     parser.add_argument("--gpu-index", type=int)
     parser.add_argument("--output-dir", type=Path)
@@ -169,6 +174,11 @@ def _parse_args() -> argparse.Namespace:
         parser.error("--source-object-w0-um must be finite and positive")
     if args.threads < 1:
         parser.error("--threads must be positive")
+    if args.case == DENSITY_CONTROL:
+        if args.rho is None or not np.isfinite(args.rho) or not 0.0 <= args.rho <= 1.0:
+            parser.error("import_density requires finite --rho in [0,1]")
+    elif args.rho is not None:
+        parser.error("--rho is valid only for import_density")
     if (
         args.case != "source_only"
         and args.source_calibration_json is None
@@ -202,6 +212,13 @@ def _mesh_spec(args: argparse.Namespace) -> LumericalMeshSpec:
     ).validate()
 
 
+def _case_label(args: argparse.Namespace) -> str:
+    if args.case != DENSITY_CONTROL:
+        return str(args.case)
+    token = f"{args.rho:.8f}".rstrip("0").rstrip(".").replace(".", "p")
+    return f"import_rho_{token}"
+
+
 def _output_paths(
     args: argparse.Namespace, spec: LumericalMeshSpec
 ) -> tuple[Path, Path, Path, Path]:
@@ -211,7 +228,7 @@ def _output_paths(
             DEFAULT_RAW_ROOT
             / "au_dualpol_4um_lumerical"
             / spec.label
-            / f"{args.case}_{args.polarization}"
+            / f"{_case_label(args)}_{args.polarization}"
         )
     output = output.expanduser().resolve()
     try:
@@ -223,7 +240,7 @@ def _output_paths(
             "raw Lumerical outputs must be outside the Git worktree: "
             f"{output}"
         )
-    stem = f"{args.case}_{args.polarization}_{spec.label}"
+    stem = f"{_case_label(args)}_{args.polarization}_{spec.label}"
     return (
         output,
         output / f"{stem}.fsp",
@@ -381,13 +398,58 @@ def _source_postprocess(
     }, arrays, gates
 
 
+def _endpoint_field_postprocess(
+    fdtd: Any,
+) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
+    """Read a fixed air-side field plane without impedance assumptions."""
+
+    fields = lumerical_audit.monitor_fields(fdtd, ENDPOINT_FIELD_MONITOR)
+    x = np.asarray(fields["coordinates"]["x"], float).reshape(-1)
+    y = np.asarray(fields["coordinates"]["y"], float).reshape(-1)
+    electric = {
+        axis: np.asarray(fields["electric"][axis]).squeeze() for axis in "xyz"
+    }
+    expected = (x.size, y.size)
+    if any(value.shape != expected for value in electric.values()):
+        raise RuntimeError(
+            "unexpected endpoint-field shapes: "
+            f"{[value.shape for value in electric.values()]} != {expected}"
+        )
+    e2 = np.asarray(sum(np.abs(value) ** 2 for value in electric.values()), float)
+    finite = bool(
+        np.all(np.isfinite(e2))
+        and all(np.all(np.isfinite(value)) for value in electric.values())
+    )
+    metrics = {
+        "shape_xy": list(e2.shape),
+        "z_m": float(np.asarray(fields["coordinates"]["z"]).reshape(-1)[0]),
+        "mean_E2_V2_m2": float(np.mean(e2)),
+        "maximum_E2_V2_m2": float(np.max(e2)),
+        "component_L2": {
+            axis: float(np.linalg.norm(value)) for axis, value in electric.items()
+        },
+        "all_fields_finite": finite,
+        "normalization": "raw common source; no field rescaling",
+    }
+    arrays = {
+        "endpoint_field_x_m": x,
+        "endpoint_field_y_m": y,
+        "endpoint_field_E2_V2_m2": e2,
+        **{
+            f"endpoint_field_E{axis}_V_m": value
+            for axis, value in electric.items()
+        },
+    }
+    return metrics, arrays
+
+
 def _material_postprocess(
     fdtd: Any,
     *,
     flux_faces: dict[str, dict[str, Any]],
     source_power_w: float,
     source_incident_power_w: float,
-    au_mask: np.ndarray,
+    au_mask: np.ndarray | None,
 ) -> tuple[dict[str, Any], dict[str, np.ndarray], dict[str, bool]]:
     six_face = _face_fluxes(fdtd, flux_faces, source_power_w)
     fdtd.runanalysis(PABS_GROUP)
@@ -419,7 +481,7 @@ def _material_postprocess(
         np.all(np.isfinite(np.asarray(q["Q_components"][component])))
         for component in "xyz"
     )
-    arrays: dict[str, np.ndarray] = {}
+    endpoint_field, arrays = _endpoint_field_postprocess(fdtd)
     material_power: dict[str, dict[str, float]] = {}
     spatial_shape = tuple(
         np.asarray(q["base_coordinates"][axis]).size for axis in "xyz"
@@ -440,22 +502,26 @@ def _material_postprocess(
             f"index_{component}",
         )
         arrays[f"epsilon_{component}"] = np.asarray(refractive_index) ** 2
-        partitions = coordinate_material_partition(
-            q["native_coordinates"][component], au_mask
-        )
-        for material, partition in partitions.items():
-            material_power.setdefault(material, {})[component] = integrate_xyz(
-                np.asarray(q["Q_components"][component]) * partition,
-                q["native_coordinates"][component]["x"],
-                q["native_coordinates"][component]["y"],
-                q["native_coordinates"][component]["z"],
+        if au_mask is not None:
+            partitions = coordinate_material_partition(
+                q["native_coordinates"][component], au_mask
             )
+            for material, partition in partitions.items():
+                material_power.setdefault(material, {})[component] = integrate_xyz(
+                    np.asarray(q["Q_components"][component]) * partition,
+                    q["native_coordinates"][component]["x"],
+                    q["native_coordinates"][component]["y"],
+                    q["native_coordinates"][component]["z"],
+                )
     material_power_total = {
         material: float(sum(components.values()))
         for material, components in material_power.items()
     }
-    partition_closure = abs(sum(material_power_total.values()) - p_native) / max(
-        abs(p_native), np.finfo(float).tiny
+    partition_closure = (
+        abs(sum(material_power_total.values()) - p_native)
+        / max(abs(p_native), np.finfo(float).tiny)
+        if au_mask is not None
+        else None
     )
     reporting_scale = CONTRACT.reporting_incident_power_W / source_incident_power_w
     gates = {
@@ -466,8 +532,9 @@ def _material_postprocess(
             native_pabs_error < RELATIVE_GATE
         ),
         "positive_source_calibration_power": source_incident_power_w > 0.0,
-        "coordinate_material_partition_closes_native_Q": (
-            partition_closure < 1.0e-12
+        "endpoint_field_finite": bool(endpoint_field["all_fields_finite"]),
+        "coordinate_material_partition_closes_native_Q_or_not_applicable": (
+            partition_closure is None or partition_closure < 1.0e-12
         ),
     }
     metrics = {
@@ -481,9 +548,12 @@ def _material_postprocess(
         "coordinate_partition_material_power_W_raw": material_power_total,
         "coordinate_partition_closure_relative": partition_closure,
         "coordinate_partition_scope": (
-            "deterministic native-sample convergence diagnostic; interface "
+            "not applicable to gray imported density"
+            if au_mask is None
+            else "deterministic native-sample convergence diagnostic; interface "
             "cut cells remain represented by the saved raw epsilon arrays"
         ),
+        "endpoint_field": endpoint_field,
         "component_hotspots": q["component_hotspots"],
         "negative_Q_cell_count": negative,
         "all_Q_arrays_finite": bool(finite),
@@ -519,6 +589,8 @@ def main() -> int:
     audit_payload = {
         "status": "AUDITED_EXACT_AU_4UM_CONTROL_NOT_RUN",
         "case": args.case,
+        "case_label": _case_label(args),
+        "projected_density": args.rho,
         "polarization": args.polarization,
         "mesh_spec": spec.audit(),
         "source_calibration_contract": source_contract,
@@ -542,6 +614,8 @@ def main() -> int:
     result: dict[str, Any] = {
         "status": "BLOCKED_EXACT_AU_4UM_CONTROL",
         "case": args.case,
+        "case_label": _case_label(args),
+        "projected_density": args.rho,
         "polarization": args.polarization,
         "git_commit": _git_commit(),
         "mesh_spec": spec.audit(),
@@ -578,6 +652,11 @@ def main() -> int:
             polarization=args.polarization,
             spec=spec,
             source_object_w0_m=source_object_w0_m,
+            projected_density=(
+                np.full(CONTRACT.design_node_shape, args.rho)
+                if args.case == DENSITY_CONTROL
+                else None
+            ),
         )
         _configure_gpu_resource(fdtd, gpu_device, args.threads)
         fdtd.runsetup()
@@ -653,24 +732,29 @@ def main() -> int:
                 flux_faces=layout["flux_faces"],
                 source_power_w=source_power_w,
                 source_incident_power_w=incident_power,
-                au_mask=exact_control_masks()[args.case],
+                au_mask=(
+                    None
+                    if args.case == DENSITY_CONTROL
+                    else exact_control_masks()[args.case]
+                ),
             )
             case_gates.update(
-                {
-                    "matching_source_calibration_passed": bool(
-                        source_validation["passed"]
-                    ),
-                    "material_fit_readback_passed": bool(
-                        material_readback is not None
-                        and all(material_readback["gates"].values())
-                    ),
-                    "canonical_exact_Au_geometry_hash_present": bool(
-                        layout["geometry"]["exact_au_geometry"][
-                            "geometry_sha256"
-                        ]
-                    ),
-                }
+                matching_source_calibration_passed=bool(
+                    source_validation["passed"]
+                ),
+                material_fit_readback_passed=bool(
+                    material_readback is not None
+                    and all(material_readback["gates"].values())
+                ),
             )
+            if args.case == DENSITY_CONTROL:
+                case_gates["canonical_density_state_hash_present"] = bool(
+                    layout["geometry"]["density_state"]["density_state_sha256"]
+                )
+            else:
+                case_gates["canonical_exact_Au_geometry_hash_present"] = bool(
+                    layout["geometry"]["exact_au_geometry"]["geometry_sha256"]
+                )
         arrays.update(case_arrays)
         np.savez_compressed(npz_path, **arrays)
         all_gates = {**common_gates, **case_gates}
@@ -679,9 +763,9 @@ def main() -> int:
             "PASSED_EXACT_AU_4UM_SOURCE_ONLY_NUMERICAL_GATE"
             if args.case == "source_only" and passed
             else (
-                f"PASSED_PROVISIONAL_EXACT_AU_4UM_{args.case}_{args.polarization}_CONTROL"
+                f"PASSED_PROVISIONAL_LUMERICAL_4UM_{_case_label(args)}_{args.polarization}_CONTROL"
                 if passed
-                else f"FAILED_EXACT_AU_4UM_{args.case}_{args.polarization}_GATE"
+                else f"FAILED_LUMERICAL_4UM_{_case_label(args)}_{args.polarization}_GATE"
             )
         )
         result.update(

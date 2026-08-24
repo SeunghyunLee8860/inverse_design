@@ -12,6 +12,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -25,7 +26,12 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.au_density
 
 
 HERE = Path(__file__).resolve().parent
-LUMERICAL_ROOT = Path("/home/seunghyun/lumerical_r12/opt/lumerical/v261")
+LUMERICAL_ROOT = Path(
+    os.environ.get(
+        "AU_LUMERICAL_ROOT",
+        "/home/seunghyun/lumerical_r12/opt/lumerical/v261",
+    )
+).expanduser()
 LUMAPI_PATH = LUMERICAL_ROOT / "api/python/lumapi.py"
 LEGACY_LUMOPT_TOPOLOGY = LUMERICAL_ROOT / "api/python/lumopt/geometries/topology.py"
 LUMOPT2_TOPOLOGY = LUMERICAL_ROOT / "api/python/lumopt2/parametrization/topology.py"

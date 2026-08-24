@@ -20,6 +20,13 @@ It has exact background and frozen Ordal-Au endpoints at 4 um, an analytic
 complex derivative, no `rho**3`, and solver-free passivity/FD tests. This is
 implementation progress, not a production certificate.
 
+The unified Lumerical/B200 runner now supports source-only, exact
+empty/full/simple-L, and imported-density controls for both crystal
+polarizations. It has not been executed here: this Codex host fails the
+required B200 inventory gate. Its baseline grid is only the first member of
+the committed convergence matrix. Every material run requires a passed,
+hash-matching 4-um source-only waist/power record.
+
 Production remains blocked until a new hash-linked certificate chain proves:
 
 1. the target device geometry, contacts, crystal axes, stack, illumination,
