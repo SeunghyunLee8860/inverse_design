@@ -4,13 +4,19 @@ import copy
 import json
 import tempfile
 import unittest
+
+import numpy as np
 from pathlib import Path
 
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_anchor_placement import (
+    expected_placement,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
     ANCHOR_CASE,
     FreshCaseSpec,
     TimeSpec,
     case_contract,
+    case_from_contract,
     file_sha256,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_exact_binary_pilot import (
@@ -45,7 +51,7 @@ def _source_report(
         "mesh": numerical_case["resolved_mesh"],
         "time_contract": time_contract,
         "pml_face_parameters": numerical_case["resolved_pml_face_parameters"],
-        "placement": {"gaussian_source": [[1, 2], [1, 2], [3, 4]]},
+        "placement": expected_placement(case_from_contract(numerical_case).mesh),
         "source_contract": {
             "wavelength_m": 4e-6,
             "polarization": polarization,
@@ -108,8 +114,12 @@ class FreshRunnerCaseBindingTest(unittest.TestCase):
             root = Path(temporary)
             ea_raw = root / "ea.npz"
             eb_raw = root / "eb.npz"
-            ea_raw.write_bytes(b"ea")
-            eb_raw.write_bytes(b"eb")
+            np.savez_compressed(
+                ea_raw, target=np.ones((3, 2, 2, 1), dtype=np.complex64)
+            )
+            np.savez_compressed(
+                eb_raw, target=np.ones((3, 2, 2, 1), dtype=np.complex64)
+            )
             anchor = case_contract(ANCHOR_CASE)
             ea = _source_report("Ea", ea_raw, 2e-12, anchor)
             eb = _source_report("Eb", eb_raw, 2e-12, anchor)
@@ -148,7 +158,10 @@ class FreshRunnerCaseBindingTest(unittest.TestCase):
             reports = {polarization: root / f"{polarization}.json" for polarization in ("Ea", "Eb")}
             anchor = case_contract(ANCHOR_CASE)
             for polarization in ("Ea", "Eb"):
-                raws[polarization].write_bytes(polarization.encode("ascii"))
+                np.savez_compressed(
+                    raws[polarization],
+                    target=np.ones((3, 2, 2, 1), dtype=np.complex64),
+                )
                 report = _source_report(polarization, raws[polarization], 2e-12, anchor)
                 reports[polarization].write_text(json.dumps(report), encoding="utf-8")
             pair = build_pair_certificate(reports["Ea"], reports["Eb"])

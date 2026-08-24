@@ -368,6 +368,8 @@ def run(
         ),
         "fdtdx_source": source_audit["actual"],
         "runtime_lock": load_runtime_lock(),
+        "runner_path": str(Path(__file__).resolve()),
+        "runner_sha256": _sha256(Path(__file__).resolve()),
     }
     model = build_model(
         case_spec.mesh,
@@ -395,6 +397,11 @@ def run(
     model["jax"].block_until_ready(marker)
     solve_runtime = time.perf_counter() - started
     evaluation, fields = evaluate_output(model, output, polarization)
+    fields.update(
+        grid_x_edges_m=np.asarray(model["grid"].edges(0)),
+        grid_y_edges_m=np.asarray(model["grid"].edges(1)),
+        grid_z_edges_m=np.asarray(model["grid"].edges(2)),
+    )
 
     raw_path = output_directory / RAW_NAME
     _atomic_npz(raw_path, **fields)

@@ -24,11 +24,15 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_exac
     OPTICAL_PAIR_GATES,
     MeshSpec,
     evaluate_pair,
+    grid_edges as contract_grid_edges,
     reference_mask,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_exact_binary_material import (
     mask_material_audit,
     solver_mask,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_anchor_placement import (
+    expected_placement,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
     FreshCaseSpec,
@@ -395,15 +399,24 @@ def audit_raw_case(
         and np.all((expanded_mask == 0) | (expanded_mask == 1))
     )
     grid_edges = tuple(
-        np.asarray(arrays[f"grid_{axis}_edges_m"], dtype=np.float64)
+        np.asarray(arrays[f"grid_{axis}_edges_m"])
         for axis in ("x", "y", "z")
     )
     expected_grid_shape = tuple(case_contract(spec)["resolved_mesh"]["grid_shape_xyz"])
+    expected_grid_edges = tuple(
+        np.asarray(axis, dtype=np.float64) for axis in contract_grid_edges(spec.mesh)
+    )
     grid_shapes_match_contract = all(
         edges.shape == (expected_grid_shape[index] + 1,)
         for index, edges in enumerate(grid_edges)
     )
     grid_edges_valid = all(_strictly_increasing_finite(item) for item in grid_edges)
+    grid_edges_match_contract = all(
+        np.array_equal(actual, expected.astype(actual.dtype))
+        and float(np.max(np.abs(actual.astype(np.float64) - expected)))
+        <= COORDINATE_ATOL_M
+        for actual, expected in zip(grid_edges, expected_grid_edges, strict=True)
+    )
 
     fields = {
         window: {
@@ -573,6 +586,7 @@ def audit_raw_case(
         "Q_is_finite_nonnegative": bool(finite_nonnegative_q),
         "electric_dual_volumes_are_finite_positive": bool(finite_positive_volumes),
         "grid_edge_shapes_match_contract": grid_shapes_match_contract,
+        "grid_edges_match_contract_coordinates": grid_edges_match_contract,
         "grid_edges_are_finite_strictly_increasing": grid_edges_valid,
         "raw_Q_integrals_match_report": power_matches,
         "raw_stationarity_metrics_match_report": recomputed_metrics_match,
@@ -668,6 +682,8 @@ def _material_case_audit(
             and _all_true(numerical_file.get("checks", {}))
         ),
         "mesh_exact": payload.get("mesh") == expected_contract["resolved_mesh"],
+        "placement_matches_solver_independent_contract": payload.get("placement")
+        == expected_placement(spec.mesh),
         "time_request_and_courant_exact": all(
             payload["time_contract"].get(name) == value
             for name, value in {

@@ -5,8 +5,13 @@ import hashlib
 import json
 import tempfile
 import unittest
+
+import numpy as np
 from pathlib import Path
 
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_anchor_placement import (
+    expected_placement,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
     ANCHOR_CASE,
     case_contract,
@@ -40,7 +45,7 @@ def _payload(polarization: str, raw_path: Path, power: float) -> dict:
         "mesh": numerical_case["resolved_mesh"],
         "time_contract": time_contract,
         "pml_face_parameters": numerical_case["resolved_pml_face_parameters"],
-        "placement": {"gaussian_source": [[1, 2], [1, 2], [3, 4]]},
+        "placement": expected_placement(ANCHOR_CASE.mesh),
         "source_contract": {
             "wavelength_m": 4.0e-6,
             "polarization": polarization,
@@ -83,8 +88,12 @@ class FdtdxFreshSourcePairTest(unittest.TestCase):
         self.root = Path(self.temporary.name)
         self.ea_raw = self.root / "ea.npz"
         self.eb_raw = self.root / "eb.npz"
-        self.ea_raw.write_bytes(b"ea raw")
-        self.eb_raw.write_bytes(b"eb raw")
+        np.savez_compressed(
+            self.ea_raw, target=np.ones((3, 2, 2, 1), dtype=np.complex64)
+        )
+        np.savez_compressed(
+            self.eb_raw, target=np.ones((3, 2, 2, 1), dtype=np.complex64)
+        )
         self.ea_report = self.root / "ea.json"
         self.eb_report = self.root / "eb.json"
 
@@ -143,6 +152,16 @@ class FdtdxFreshSourcePairTest(unittest.TestCase):
         result = build_pair_certificate(self.ea_report, self.eb_report)
         self.assertFalse(result["ready"])
         self.assertIn("raw_sha256_matches", result["failed_gates"])
+
+    def test_declared_raw_shape_mismatch_blocks_pair(self) -> None:
+        ea = _payload("Ea", self.ea_raw, 2.0e-12)
+        eb = _payload("Eb", self.eb_raw, 2.0e-12)
+        ea["raw"]["arrays"]["target"] = [3, 2, 3, 1]
+        eb["raw"]["arrays"]["target"] = [3, 2, 3, 1]
+        self._write(ea, eb)
+        result = build_pair_certificate(self.ea_report, self.eb_report)
+        self.assertFalse(result["ready"])
+        self.assertIn("raw_schema_shapes_and_values_ready", result["failed_gates"])
 
     def test_pml_mismatch_blocks_pair(self) -> None:
         ea = _payload("Ea", self.ea_raw, 2.0e-12)

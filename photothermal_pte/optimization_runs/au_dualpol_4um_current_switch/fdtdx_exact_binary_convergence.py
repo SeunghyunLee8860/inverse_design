@@ -632,8 +632,11 @@ def campaign_contract() -> dict[str, Any]:
             },
             "courant_ladder_after_settling": {
                 "total_periods": "selected_from_settling_ladder",
-                "courant_factors": [0.5, 0.375, 0.25],
-                "two_successive_pair_comparisons_required": True,
+                "courant_factors": [0.5, 0.375, 0.25, 0.1875],
+                "selected_courant_factor": 0.25,
+                "confirmation_courant_factor": 0.1875,
+                "failed_coarse_pair_retained": [0.5, 0.375],
+                "two_successive_passing_pairs_in_fine_range_required": True,
             },
             "material_ADE_refit_and_readback_required_each_level": True,
             "source_pair_required_for_every_unique_numerical_contract": True,

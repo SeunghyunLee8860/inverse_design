@@ -16,6 +16,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_exac
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_exact_binary_material import (
     mask_material_audit,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_anchor_placement import (
+    expected_placement,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
     FreshCaseSpec,
     TimeSpec,
@@ -72,13 +75,8 @@ class TimeSettlingRawAuditTest(unittest.TestCase):
     def tearDown(self) -> None:
         self.temporary.cleanup()
 
-    @staticmethod
-    def _placement() -> dict[str, list[list[int]]]:
-        return {
-            "au_design": [[58, 138], [58, 138], [84, 85]],
-            "fixed_tairte4": [[0, 2], [0, 2], [64, 65]],
-            "target_field": [[58, 138], [58, 138], [108, 109]],
-        }
+    def _placement(self) -> dict[str, list[list[int]]]:
+        return expected_placement(self.spec.mesh)
 
     def _write_valid_case(self) -> dict:
         edges = tuple(
@@ -97,7 +95,16 @@ class TimeSettlingRawAuditTest(unittest.TestCase):
             * 0.25
         )
         q_ta = np.full(ta_volume.shape, 0.5, dtype=np.float64)
-        target = np.ones((3, 80, 80, 1), dtype=np.complex64)
+        target_bounds = placement["target_field"]
+        target = np.ones(
+            (
+                3,
+                target_bounds[0][1] - target_bounds[0][0],
+                target_bounds[1][1] - target_bounds[1][0],
+                target_bounds[2][1] - target_bounds[2][0],
+            ),
+            dtype=np.complex64,
+        )
         arrays = {
             "design_mask": mask,
             "solver_mask": mask.copy(),
@@ -278,6 +285,29 @@ class TimeSettlingRawAuditTest(unittest.TestCase):
         raw, _ = audit_raw_case(payload, self.spec)
         self.assertFalse(raw["ready"])
         self.assertFalse(raw["checks"]["raw_Q_integrals_match_report"])
+
+    def test_shifted_raw_grid_coordinate_blocks_canonical_mesh_identity(self) -> None:
+        with np.load(self.raw_path, allow_pickle=False) as archive:
+            arrays = {name: np.asarray(archive[name]) for name in archive.files}
+        arrays["grid_z_edges_m"] = arrays["grid_z_edges_m"].copy()
+        arrays["grid_z_edges_m"][10] += np.float32(1.0e-10)
+        np.savez_compressed(self.raw_path, **arrays)
+        payload = copy.deepcopy(self.payload)
+        payload["raw"]["sha256"] = sha256(self.raw_path)
+        raw, _ = audit_raw_case(payload, self.spec)
+        self.assertFalse(raw["ready"])
+        self.assertTrue(raw["checks"]["grid_edge_shapes_match_contract"])
+        self.assertFalse(raw["checks"]["grid_edges_match_contract_coordinates"])
+
+    def test_noncanonical_report_placement_blocks_material_identity(self) -> None:
+        self._mutate_report(
+            lambda payload: payload["placement"]["au_design"][2].__setitem__(1, 91)
+        )
+        audit = self._audit_material()
+        self.assertFalse(audit["artifact_ready"])
+        self.assertFalse(
+            audit["checks"]["placement_matches_solver_independent_contract"]
+        )
 
     def test_wrong_reference_or_polarization_blocks_case_identity(self) -> None:
         self._mutate_report(

@@ -121,7 +121,7 @@ class FreshConvergenceV2Test(unittest.TestCase):
         )
         self.assertEqual(
             contract["time_convergence"]["courant_ladder_after_settling"]["courant_factors"],
-            [0.5, 0.375, 0.25],
+            [0.5, 0.375, 0.25, 0.1875],
         )
         self.assertTrue(
             {

@@ -5,11 +5,16 @@ import hashlib
 import json
 import math
 import os
+
+import numpy as np
 import subprocess
 import traceback
 from pathlib import Path
 from typing import Any
 
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_anchor_placement import (
+    expected_placement,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
     case_from_contract,
 )
@@ -46,14 +51,46 @@ def _raw_audit(payload: dict[str, Any]) -> dict[str, Any]:
     resolved = raw_path.resolve()
     exists = resolved.is_file()
     actual_sha256 = sha256(resolved) if exists else None
+    digest_matches = exists and actual_sha256 == raw["sha256"]
+    declared = raw["arrays"]
+    schema_exact = False
+    shapes_exact = False
+    values_finite = False
+    load_error = None
+    if digest_matches:
+        try:
+            with np.load(resolved, allow_pickle=False) as archive:
+                schema_exact = set(archive.files) == set(declared)
+                shapes_exact = schema_exact and all(
+                    list(np.asarray(archive[name]).shape) == shape
+                    for name, shape in declared.items()
+                )
+                values_finite = schema_exact and all(
+                    np.all(np.isfinite(np.asarray(archive[name])))
+                    for name in archive.files
+                )
+        except Exception as error:
+            load_error = repr(error)
+    checks = {
+        "path_is_absolute": is_absolute,
+        "file_exists": exists,
+        "sha256_matches": digest_matches,
+        "array_schema_exact": schema_exact,
+        "declared_shapes_exact": shapes_exact,
+        "all_array_values_finite": bool(values_finite),
+    }
     return {
         "path": str(resolved),
         "path_is_absolute": is_absolute,
         "exists": exists,
         "recorded_sha256": raw["sha256"],
         "actual_sha256": actual_sha256,
-        "sha256_matches": exists and actual_sha256 == raw["sha256"],
-        "arrays": raw["arrays"],
+        "sha256_matches": digest_matches,
+        "arrays": declared,
+        "checks": checks,
+        "failed_checks": [name for name, passed in checks.items() if not passed],
+        "load_error": load_error,
+        "ready": all(checks.values()),
     }
 
 
@@ -178,6 +215,10 @@ def build_pair_certificate(
         == numerical_case["resolved_pml_face_parameters"]
         for report in reports
     )
+    placement_matches_numerical_case = numerical_case_canonical and all(
+        report["placement"] == expected_placement(numerical_case_spec.mesh)
+        for report in reports
+    )
     time_matches_numerical_case = numerical_case_canonical and all(
         all(
             report["time_contract"].get(name) == value
@@ -206,6 +247,7 @@ def build_pair_certificate(
         "mesh_matches_numerical_case": mesh_matches_numerical_case,
         "time_request_matches_numerical_case": time_matches_numerical_case,
         "pml_matches_numerical_case": pml_matches_numerical_case,
+        "placement_matches_numerical_case": placement_matches_numerical_case,
         "case_evaluation_gates_all_true": all(
             case["all_evaluation_gates_true"] for case in cases.values()
         ),
@@ -224,6 +266,9 @@ def build_pair_certificate(
         "raw_files_exist": all(case["raw"]["exists"] for case in cases.values()),
         "raw_sha256_matches": all(
             case["raw"]["sha256_matches"] for case in cases.values()
+        ),
+        "raw_schema_shapes_and_values_ready": all(
+            case["raw"]["ready"] is True for case in cases.values()
         ),
         "mesh_contract_identical": ea["mesh"] == eb["mesh"],
         "time_contract_identical": ea["time_contract"] == eb["time_contract"],
