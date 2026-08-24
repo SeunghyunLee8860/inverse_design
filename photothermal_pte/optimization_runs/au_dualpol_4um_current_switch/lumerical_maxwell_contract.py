@@ -28,7 +28,7 @@ LUMOPT2_DEPS = LUMERICAL_ROOT / "api/python/lumopt2/parametrization/d_eps_calcul
 
 @dataclass(frozen=True)
 class LumericalMaxwellContract:
-    policy_version: int = 3
+    policy_version: int = 4
     maxwell_solver: str = "Ansys Lumerical FDTD v261 (2026 R1.2)"
     thermal_solver: str = "repository custom CUDA finite-volume steady heat solver"
     electrical_solver: str = (
@@ -43,7 +43,8 @@ class LumericalMaxwellContract:
         "one exact binary Au mask"
     )
     shared_design_field: str = (
-        "one exact 0/1 Au mask with one shape and SHA-256 is passed to all three "
+        "one exact 0/1 Au mask plus physical x/y cell edges, z bounds, and axis "
+        "mapping with one canonical geometry SHA-256 is passed to all three "
         "physical solvers"
     )
     continuous_geometry_parameters_allowed: bool = True
@@ -79,6 +80,8 @@ def canonical_binary_mask(mask: np.ndarray) -> np.ndarray:
     value = np.asarray(mask)
     if value.ndim != 2 or value.size == 0:
         raise ValueError("Au mask must be a non-empty 2-D array")
+    if value.dtype.kind not in "biuf":
+        raise ValueError("Au mask must have a numeric or boolean dtype")
     if not np.all(np.isfinite(value)):
         raise ValueError("Au mask contains a non-finite value")
     if not np.all((value == 0) | (value == 1)):
@@ -87,7 +90,12 @@ def canonical_binary_mask(mask: np.ndarray) -> np.ndarray:
 
 
 def binary_mask_sha256(mask: np.ndarray) -> str:
-    """Hash shape, dtype, and values of the physical mask."""
+    """Hash only mask shape and values, not its physical geometry.
+
+    This is useful as a payload checksum.  It is deliberately not accepted as
+    the cross-solver geometry identity because it omits pitch, origin, axes,
+    and Au thickness.  Use :func:`exact_au_geometry_sha256` for that purpose.
+    """
 
     value = canonical_binary_mask(mask)
     digest = hashlib.sha256()
@@ -96,6 +104,143 @@ def binary_mask_sha256(mask: np.ndarray) -> str:
     digest.update(b"\0uint8\0")
     digest.update(value.tobytes(order="C"))
     return digest.hexdigest()
+
+
+def _canonical_edges(
+    values: np.ndarray, expected_size: int, label: str
+) -> np.ndarray:
+    edges = np.asarray(values)
+    if edges.dtype.kind not in "biuf":
+        raise ValueError(f"{label} must have a numeric dtype")
+    edges = np.ascontiguousarray(edges, dtype=np.float64)
+    if edges.ndim != 1 or edges.size != expected_size:
+        raise ValueError(f"{label} must have exactly {expected_size} entries")
+    if not np.all(np.isfinite(edges)) or np.any(np.diff(edges) <= 0.0):
+        raise ValueError(f"{label} must be finite and strictly increasing")
+    return edges
+
+
+def canonical_exact_au_geometry(
+    mask: np.ndarray,
+    *,
+    x_edges_m: np.ndarray,
+    y_edges_m: np.ndarray,
+    z_bounds_m: np.ndarray,
+    axis_x: str,
+    axis_y: str,
+) -> dict[str, Any]:
+    """Validate one grid-aligned exact-Au geometry shared by all solvers.
+
+    ``mask[ix, iy]`` occupies the complete rectangular prism bounded by the
+    matching x/y cell edges and the common Au z bounds.  Solver-specific
+    conformal or cut-cell representations may be derived from this geometry,
+    but they may not reinterpret its orientation, scale, origin, or thickness.
+    """
+
+    value = canonical_binary_mask(mask)
+    x_edges = _canonical_edges(x_edges_m, value.shape[0] + 1, "x_edges_m")
+    y_edges = _canonical_edges(y_edges_m, value.shape[1] + 1, "y_edges_m")
+    z_bounds = _canonical_edges(z_bounds_m, 2, "z_bounds_m")
+    if (axis_x, axis_y) != ("b", "a"):
+        raise ValueError("production coordinate contract requires solver x=b and y=a")
+    return {
+        "schema": "exact-grid-aligned-au-geometry-v1",
+        "mask_index_order": "mask[ix,iy] maps to solver x-cell ix and y-cell iy",
+        "mask": value,
+        "x_edges_m": x_edges,
+        "y_edges_m": y_edges,
+        "z_bounds_m": z_bounds,
+        "axis_mapping": {"x": axis_x, "y": axis_y},
+    }
+
+
+def exact_au_geometry_sha256(
+    mask: np.ndarray,
+    *,
+    x_edges_m: np.ndarray,
+    y_edges_m: np.ndarray,
+    z_bounds_m: np.ndarray,
+    axis_x: str = "b",
+    axis_y: str = "a",
+) -> str:
+    """Hash exact occupancy together with its complete physical placement."""
+
+    geometry = canonical_exact_au_geometry(
+        mask,
+        x_edges_m=x_edges_m,
+        y_edges_m=y_edges_m,
+        z_bounds_m=z_bounds_m,
+        axis_x=axis_x,
+        axis_y=axis_y,
+    )
+    digest = hashlib.sha256()
+    digest.update(b"exact-grid-aligned-au-geometry-v1\0")
+    digest.update(
+        json.dumps(
+            {
+                "mask_shape": list(geometry["mask"].shape),
+                "mask_dtype": "uint8",
+                "mask_index_order": geometry["mask_index_order"],
+                "coordinate_dtype": "float64",
+                "coordinate_units": "m",
+                "axis_mapping": geometry["axis_mapping"],
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("ascii")
+    )
+    for label in ("mask", "x_edges_m", "y_edges_m", "z_bounds_m"):
+        digest.update(b"\0" + label.encode("ascii") + b"\0")
+        digest.update(np.ascontiguousarray(geometry[label]).tobytes(order="C"))
+    return digest.hexdigest()
+
+
+def exact_au_geometry_audit(
+    mask: np.ndarray,
+    *,
+    x_edges_m: np.ndarray,
+    y_edges_m: np.ndarray,
+    z_bounds_m: np.ndarray,
+    axis_x: str = "b",
+    axis_y: str = "a",
+) -> dict[str, Any]:
+    """Return a JSON-safe manifest record without embedding the full mask."""
+
+    geometry = canonical_exact_au_geometry(
+        mask,
+        x_edges_m=x_edges_m,
+        y_edges_m=y_edges_m,
+        z_bounds_m=z_bounds_m,
+        axis_x=axis_x,
+        axis_y=axis_y,
+    )
+    value = geometry["mask"]
+    return {
+        "schema": geometry["schema"],
+        "geometry_sha256": exact_au_geometry_sha256(
+            value,
+            x_edges_m=geometry["x_edges_m"],
+            y_edges_m=geometry["y_edges_m"],
+            z_bounds_m=geometry["z_bounds_m"],
+            axis_x=axis_x,
+            axis_y=axis_y,
+        ),
+        "mask_payload_sha256": binary_mask_sha256(value),
+        "mask_shape_xy": list(value.shape),
+        "occupied_cell_count": int(np.count_nonzero(value)),
+        "occupied_area_fraction": float(np.mean(value)),
+        "x_bounds_m": [
+            float(geometry["x_edges_m"][0]),
+            float(geometry["x_edges_m"][-1]),
+        ],
+        "y_bounds_m": [
+            float(geometry["y_edges_m"][0]),
+            float(geometry["y_edges_m"][-1]),
+        ],
+        "z_bounds_m": [float(item) for item in geometry["z_bounds_m"]],
+        "axis_mapping": geometry["axis_mapping"],
+        "mask_index_order": geometry["mask_index_order"],
+    }
 
 
 def _run_nvidia_smi() -> list[dict[str, Any]]:
