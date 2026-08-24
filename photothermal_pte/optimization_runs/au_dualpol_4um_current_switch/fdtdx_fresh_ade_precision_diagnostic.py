@@ -46,15 +46,30 @@ def file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def load_au_epsilon() -> complex:
+def load_material_epsilon() -> dict[str, complex]:
     payload = json.loads(MATERIAL_CONTRACT.read_text(encoding="utf-8"))
     if payload.get("status") != "VALIDATED_4UM_SINGLE_FREQUENCY_MATERIAL_READBACK":
         raise RuntimeError("4 um material contract is not validated")
-    item = payload["materials"]["Au"]["epsilon"]
-    value = complex(float(item["real"]), float(item["imag"]))
-    if not (value.real < 0.0 and value.imag > 0.0):
-        raise RuntimeError(f"Au epsilon is not passive metal data: {value!r}")
-    return value
+
+    def value(item: dict[str, float]) -> complex:
+        return complex(float(item["real"]), float(item["imag"]))
+
+    result = {"au": value(payload["materials"]["Au"]["epsilon"])}
+    result.update(
+        {
+            axis: value(payload["materials"]["TaIrTe4"][axis]["epsilon"])
+            for axis in ("a", "b", "c")
+        }
+    )
+    if result["b"] != result["c"]:
+        raise RuntimeError("TaIrTe4 b/c material contract changed")
+    if any(item.imag <= 0.0 for item in result.values()):
+        raise RuntimeError(f"material contract contains active data: {result!r}")
+    return result
+
+
+def load_au_epsilon() -> complex:
+    return load_material_epsilon()["au"]
 
 
 def realized_float32_cfl(z_factor: int) -> dict[str, Any]:
@@ -83,16 +98,44 @@ def drude_gamma_seed(target_chi: complex, omega_rad_s: float, dt_s: float) -> fl
     return omega_d_sq * target_chi.imag / ((-target_chi.real) * omega_s)
 
 
+def lorentz_gamma_seed(
+    target_chi: complex,
+    omega_rad_s: float,
+    dt_s: float,
+    *,
+    resonance_ratio: float = 2.0,
+) -> tuple[float, float]:
+    if not (target_chi.real > 0.0 and target_chi.imag > 0.0):
+        raise ValueError("Lorentz target susceptibility must have positive real/loss")
+    theta = omega_rad_s * dt_s
+    omega_d_sq = (2.0 * math.sin(0.5 * theta) / dt_s) ** 2
+    omega_s = math.sin(theta) / dt_s
+    omega_0 = resonance_ratio * omega_rad_s
+    detuning = omega_0**2 - omega_d_sq
+    gamma = (target_chi.imag / target_chi.real) * detuning / omega_s
+    return gamma, omega_0
+
+
 def _coefficient_states(
     target_chi: complex,
     omega_rad_s: float,
     dt_s: float,
     ratios: np.ndarray,
+    *,
+    gamma_seed: float | None = None,
+    omega_0_rad_s: float = 0.0,
 ) -> dict[str, np.ndarray | np.complex64]:
-    seed = drude_gamma_seed(target_chi, omega_rad_s, dt_s)
+    seed = (
+        drude_gamma_seed(target_chi, omega_rad_s, dt_s)
+        if gamma_seed is None
+        else gamma_seed
+    )
     gamma = seed * ratios
     denominator = 1.0 + 0.5 * gamma * dt_s
-    c1 = np.asarray(2.0 / denominator, dtype=np.float32)
+    c1 = np.asarray(
+        (2.0 - omega_0_rad_s**2 * dt_s**2) / denominator,
+        dtype=np.float32,
+    )
     c2 = np.asarray(
         -(1.0 - 0.5 * gamma * dt_s) / denominator,
         dtype=np.float32,
@@ -117,6 +160,7 @@ def _coefficient_states(
     )
     return {
         "gamma_seed": np.asarray(seed, dtype=np.float64),
+        "omega_0_rad_s": np.asarray(omega_0_rad_s, dtype=np.float64),
         "gamma": gamma,
         "c1": c1,
         "c2": c2,
@@ -164,9 +208,18 @@ def single_pole_scan(
     ratio_range: tuple[float, float],
     points: int,
     selection: str,
+    gamma_seed: float | None = None,
+    omega_0_rad_s: float = 0.0,
 ) -> tuple[dict[str, Any], dict[str, np.ndarray | np.complex64], np.ndarray]:
     ratios = np.linspace(*ratio_range, points, dtype=np.float64)
-    states = _coefficient_states(target_chi, omega_rad_s, dt_s, ratios)
+    states = _coefficient_states(
+        target_chi,
+        omega_rad_s,
+        dt_s,
+        ratios,
+        gamma_seed=gamma_seed,
+        omega_0_rad_s=omega_0_rad_s,
+    )
     if selection == "current_phase_score":
         index = int(np.argmin(np.asarray(states["phase_score"])))
     elif selection == "minimum_realized_error":
@@ -187,20 +240,30 @@ def stable_two_drude_candidate(
     dt_s: float,
     states: dict[str, np.ndarray | np.complex64],
     ratios: np.ndarray,
+    *,
+    pole_kind: str = "Drude",
 ) -> dict[str, Any]:
-    """Fit two positive Drude strengths on stable float32 coefficient pairs."""
+    """Fit two positive strengths on stable float32 recurrence pairs."""
+
+    if pole_kind not in ("Drude", "Lorentz"):
+        raise ValueError(f"unsupported pole kind {pole_kind!r}")
 
     c1_all = np.asarray(states["c1"])
     c2_all = np.asarray(states["c2"])
     keys = np.stack((c1_all.view(np.uint32), c2_all.view(np.uint32)), axis=1)
     _, first = np.unique(keys, axis=0, return_index=True)
     indices = np.sort(first)
-    stable = (
-        c1_all[indices].astype(np.float64)
-        + c2_all[indices].astype(np.float64)
-        <= 1.0
+    selected_c1 = c1_all[indices].astype(np.float64)
+    selected_c2 = c2_all[indices].astype(np.float64)
+    discriminant = selected_c1**2 + 4.0 * selected_c2
+    root_offset = np.sqrt(discriminant.astype(np.complex128))
+    root_radius = np.maximum(
+        np.abs(0.5 * (selected_c1 + root_offset)),
+        np.abs(0.5 * (selected_c1 - root_offset)),
     )
+    stable = root_radius <= 1.0 + 4.0 * np.finfo(np.float64).eps
     indices = indices[stable]
+    root_radius = root_radius[stable]
     denominator = np.asarray(states["denominator"])[indices]
     response_per_c3 = np.complex64(1.0) / denominator
     target32 = np.complex64(target_chi)
@@ -245,33 +308,44 @@ def stable_two_drude_candidate(
         return {"found": False, "reason": "no positive two-pole weights found"}
     error, (left, right, weights32, realized) = best
     poles = []
-    seed = float(np.asarray(states["gamma_seed"]))
+    omega_0 = float(np.asarray(states["omega_0_rad_s"]))
     for local_index, weight in zip((left, right), weights32, strict=True):
         source_index = int(indices[local_index])
         gamma = float(np.asarray(states["gamma"])[source_index])
         recurrence_denominator = 1.0 + 0.5 * gamma * dt_s
-        omega_p = math.sqrt(float(weight) * recurrence_denominator / dt_s**2)
+        coupling = math.sqrt(float(weight) * recurrence_denominator / dt_s**2)
         reconstructed_c3 = np.float32(
-            omega_p**2 * dt_s**2 / recurrence_denominator
+            coupling**2 * dt_s**2 / recurrence_denominator
         )
         c1 = c1_all[source_index]
         c2 = c2_all[source_index]
-        poles.append(
-            {
-                "gamma_ratio": float(ratios[source_index]),
-                "gamma_rad_s": gamma,
-                "omega_p_rad_s": omega_p,
-                "c1": float(c1),
-                "c2": float(c2),
-                "c3": float(weight),
-                "reconstructed_float32_c3": float(reconstructed_c3),
-                "c1_plus_c2": float(np.float32(c1) + np.float32(c2)),
-                "positive_strength": bool(weight > 0.0),
-                "dc_root_not_above_one": bool(
-                    float(np.float32(c1) + np.float32(c2)) <= 1.0
-                ),
-            }
-        )
+        pole = {
+            "kind": pole_kind,
+            "gamma_ratio": float(ratios[source_index]),
+            "gamma_rad_s": gamma,
+            "omega_0_rad_s": omega_0,
+            "coupling_rad_s": coupling,
+            "c1": float(c1),
+            "c2": float(c2),
+            "c3": float(weight),
+            "reconstructed_float32_c3": float(reconstructed_c3),
+            "c1_plus_c2": float(np.float32(c1) + np.float32(c2)),
+            "recurrence_root_radius": float(root_radius[local_index]),
+            "positive_strength": bool(weight > 0.0),
+            "recurrence_roots_not_above_one": bool(
+                root_radius[local_index]
+                <= 1.0 + 4.0 * np.finfo(np.float64).eps
+            ),
+            "dc_root_not_above_one": bool(
+                pole_kind != "Drude"
+                or float(np.float32(c1) + np.float32(c2)) <= 1.0
+            ),
+        }
+        if pole_kind == "Drude":
+            pole["omega_p_rad_s"] = coupling
+        else:
+            pole["delta_epsilon"] = coupling**2 / omega_0**2
+        poles.append(pole)
     return {
         "found": True,
         "poles": poles,
@@ -283,11 +357,27 @@ def stable_two_drude_candidate(
     }
 
 
-def analyze_z_factor(z_factor: int, target_epsilon: complex) -> dict[str, Any]:
+def analyze_material_axis(
+    z_factor: int,
+    material_axis: str,
+    target_epsilon: complex,
+) -> dict[str, Any]:
     cfl = realized_float32_cfl(z_factor)
     dt_s = float(cfl["time_step_s"])
     omega = 2.0 * math.pi * C0_M_PER_S / WAVELENGTH_M
     target_chi = target_epsilon - 1.0
+    if target_chi.real < 0.0 and target_chi.imag > 0.0:
+        pole_kind = "Drude"
+        gamma_seed = drude_gamma_seed(target_chi, omega, dt_s)
+        omega_0 = 0.0
+    elif target_chi.real > 0.0 and target_chi.imag > 0.0:
+        pole_kind = "Lorentz"
+        gamma_seed, omega_0 = lorentz_gamma_seed(target_chi, omega, dt_s)
+    else:
+        raise RuntimeError(
+            f"unsupported passive one-frequency target for {material_axis}: "
+            f"{target_epsilon!r}"
+        )
     local, _, _ = single_pole_scan(
         target_chi,
         omega,
@@ -295,6 +385,8 @@ def analyze_z_factor(z_factor: int, target_epsilon: complex) -> dict[str, Any]:
         ratio_range=LOCAL_RATIO_RANGE,
         points=LOCAL_POINTS,
         selection="current_phase_score",
+        gamma_seed=gamma_seed,
+        omega_0_rad_s=omega_0,
     )
     wide, states, ratios = single_pole_scan(
         target_chi,
@@ -303,14 +395,37 @@ def analyze_z_factor(z_factor: int, target_epsilon: complex) -> dict[str, Any]:
         ratio_range=WIDE_RATIO_RANGE,
         points=WIDE_POINTS,
         selection="minimum_realized_error",
+        gamma_seed=gamma_seed,
+        omega_0_rad_s=omega_0,
     )
-    candidate = stable_two_drude_candidate(target_chi, dt_s, states, ratios)
+    candidate = stable_two_drude_candidate(
+        target_chi,
+        dt_s,
+        states,
+        ratios,
+        pole_kind=pole_kind,
+    )
+    return {
+        "material_axis": material_axis,
+        "target_epsilon": [target_epsilon.real, target_epsilon.imag],
+        "pole_kind": pole_kind,
+        "omega_0_rad_s": omega_0,
+        "current_single_pole_refit": local,
+        "wide_single_pole_scan": wide,
+        "stable_two_pole_candidate": candidate,
+    }
+
+
+def analyze_z_factor(z_factor: int, target_epsilon: complex) -> dict[str, Any]:
+    """Backward-compatible Au view used by the first diagnostic/tests."""
+
+    analysis = analyze_material_axis(z_factor, "au", target_epsilon)
     return {
         "z_factor": z_factor,
-        "cfl": cfl,
-        "current_single_drude_refit": local,
-        "wide_single_drude_scan": wide,
-        "stable_two_drude_candidate": candidate,
+        "cfl": realized_float32_cfl(z_factor),
+        "current_single_drude_refit": analysis["current_single_pole_refit"],
+        "wide_single_drude_scan": analysis["wide_single_pole_scan"],
+        "stable_two_drude_candidate": analysis["stable_two_pole_candidate"],
     }
 
 
@@ -367,30 +482,57 @@ def main() -> int:
     if not update.is_file() or not dispersion.is_file():
         raise RuntimeError("--fdtdx-source is not a complete pinned FDTDX tree")
 
-    target_epsilon = load_au_epsilon()
-    levels = [analyze_z_factor(factor, target_epsilon) for factor in Z_FACTORS]
-    by_factor = {int(item["z_factor"]): item for item in levels}
-    z8 = by_factor[8]
-    z16 = by_factor[16]
+    material_epsilon = load_material_epsilon()
+    levels = [
+        analyze_z_factor(factor, material_epsilon["au"])
+        for factor in Z_FACTORS
+    ]
+    material_levels = [
+        {
+            "z_factor": factor,
+            "cfl": realized_float32_cfl(factor),
+            "materials": {
+                name: analyze_material_axis(factor, name, epsilon)
+                for name, epsilon in material_epsilon.items()
+            },
+        }
+        for factor in Z_FACTORS
+    ]
+    by_factor = {int(item["z_factor"]): item for item in material_levels}
+    z8_materials = by_factor[8]["materials"]
+    z16_materials = by_factor[16]["materials"]
+    z32_materials = by_factor[32]["materials"]
     checks = {
-        "z8_current_single_drude_passes": bool(
-            z8["current_single_drude_refit"]["fit_gate_passed"]
+        "z8_all_current_single_poles_pass": all(
+            item["current_single_pole_refit"]["fit_gate_passed"]
+            for item in z8_materials.values()
         ),
-        "z16_current_single_drude_fails": not bool(
-            z16["current_single_drude_refit"]["fit_gate_passed"]
+        "z16_current_Au_single_drude_fails": not bool(
+            z16_materials["au"]["current_single_pole_refit"]["fit_gate_passed"]
         ),
-        "z16_wide_single_drude_still_fails": not bool(
-            z16["wide_single_drude_scan"]["fit_gate_passed"]
+        "z16_current_Ta_a_single_drude_fails": not bool(
+            z16_materials["a"]["current_single_pole_refit"]["fit_gate_passed"]
         ),
-        "z16_stable_two_drude_candidate_exists": bool(
-            z16["stable_two_drude_candidate"].get("fit_gate_passed", False)
+        "z16_current_Ta_b_c_single_lorentz_pass": all(
+            z16_materials[axis]["current_single_pole_refit"]["fit_gate_passed"]
+            for axis in ("b", "c")
+        ),
+        "z32_all_current_single_poles_fail": all(
+            not item["current_single_pole_refit"]["fit_gate_passed"]
+            for item in z32_materials.values()
+        ),
+        "z8_z16_z32_all_stable_two_pole_candidates_pass": all(
+            item["stable_two_pole_candidate"].get("fit_gate_passed", False)
+            for level in material_levels
+            if level["z_factor"] in (8, 16, 32)
+            for item in level["materials"].values()
         ),
         "field_solve_never_started": failure.get("ready") is False,
     }
     ready = all(checks.values())
     payload = {
         "status": (
-            "DIAGNOSED_Z16_SINGLE_POLE_FLOAT32_ADE_BLOCKER"
+            "DIAGNOSED_Z16_FULL_MATERIAL_FLOAT32_ADE_BLOCKER"
             if ready
             else "BLOCKED_INCOMPLETE_Z16_ADE_DIAGNOSIS"
         ),
@@ -398,11 +540,10 @@ def main() -> int:
         "scope": "solver-free carrier ADE precision diagnostic; no FDTD solve",
         "target": {
             "wavelength_m": WAVELENGTH_M,
-            "Au_epsilon": [target_epsilon.real, target_epsilon.imag],
-            "Au_susceptibility": [
-                (target_epsilon - 1.0).real,
-                (target_epsilon - 1.0).imag,
-            ],
+            "material_epsilon": {
+                name: [epsilon.real, epsilon.imag]
+                for name, epsilon in material_epsilon.items()
+            },
             "fit_relative_tolerance": FIT_RELATIVE_TOLERANCE,
         },
         "bound_inputs": {
@@ -426,16 +567,17 @@ def main() -> int:
         },
         "checks": checks,
         "levels": levels,
+        "material_levels": material_levels,
         "inference": {
             "do_not_relax_material_fit_gate": True,
             "do_not_retry_z16_with_current_single_pole_model": True,
-            "two_drude_is_only_a_numerical_candidate": True,
+            "two_pole_representation_is_only_a_numerical_candidate": True,
             "material_law_change_invalidates_direct_old_z8_new_z16_comparison": True,
             "required_next_validation": [
                 "implement candidate behind a separately hashed material-law contract",
-                "prove exact float32 c1/c2/c3 readback for both poles",
+                "prove exact float32 c1/c2/c3 readback for both poles on every material axis",
                 "rerun source-only and time/stationarity gates",
-                "rerun at least z8 and z16 with the identical two-pole law",
+                "rerun z8, z16, and z32 with the identical two-pole algorithm",
                 "do not issue a mesh certificate before a successive same-law pair passes",
             ],
         },

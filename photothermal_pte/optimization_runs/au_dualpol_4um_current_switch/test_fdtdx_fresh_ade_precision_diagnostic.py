@@ -5,8 +5,10 @@ import unittest
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_ade_precision_diagnostic import (
     FIT_RELATIVE_TOLERANCE,
+    analyze_material_axis,
     analyze_z_factor,
     load_au_epsilon,
+    load_material_epsilon,
     realized_float32_cfl,
 )
 
@@ -65,6 +67,53 @@ class FdtdxFreshAdePrecisionDiagnosticTest(unittest.TestCase):
             self.assertTrue(pole["positive_strength"])
             self.assertTrue(pole["dc_root_not_above_one"])
             self.assertEqual(pole["c3"], pole["reconstructed_float32_c3"])
+
+
+class FdtdxFreshFullMaterialAdePrecisionTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.epsilon = load_material_epsilon()
+        cls.z16 = {
+            name: analyze_material_axis(16, name, epsilon)
+            for name, epsilon in cls.epsilon.items()
+        }
+        cls.z32 = {
+            name: analyze_material_axis(32, name, epsilon)
+            for name, epsilon in cls.epsilon.items()
+        }
+
+    def test_z16_has_second_blocker_on_tairte4_a(self) -> None:
+        self.assertFalse(
+            self.z16["au"]["current_single_pole_refit"]["fit_gate_passed"]
+        )
+        self.assertFalse(
+            self.z16["a"]["current_single_pole_refit"]["fit_gate_passed"]
+        )
+        self.assertTrue(
+            self.z16["b"]["current_single_pole_refit"]["fit_gate_passed"]
+        )
+        self.assertEqual(self.z16["b"], self.z16["c"] | {"material_axis": "b"})
+
+    def test_z32_rejects_every_current_single_pole(self) -> None:
+        self.assertTrue(
+            all(
+                not item["current_single_pole_refit"]["fit_gate_passed"]
+                for item in self.z32.values()
+            )
+        )
+
+    def test_two_pole_candidate_covers_every_axis_at_z16_and_z32(self) -> None:
+        for level in (self.z16, self.z32):
+            for item in level.values():
+                candidate = item["stable_two_pole_candidate"]
+                self.assertTrue(candidate["fit_gate_passed"])
+                self.assertTrue(candidate["candidate_only"])
+                for pole in candidate["poles"]:
+                    self.assertTrue(pole["positive_strength"])
+                    self.assertTrue(pole["recurrence_roots_not_above_one"])
+                    self.assertEqual(
+                        pole["c3"], pole["reconstructed_float32_c3"]
+                    )
 
 
 if __name__ == "__main__":
