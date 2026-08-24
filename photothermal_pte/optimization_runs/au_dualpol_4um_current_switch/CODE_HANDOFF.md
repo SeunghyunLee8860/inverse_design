@@ -96,6 +96,13 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     real-design JVP/VJP transpose tests. It performs zero Maxwell solves. The
     solver-free synthetic tests pass; an actual hash-linked Lumerical density
     FSP certificate is still required before adjoint use.
+21. `26_build_lumerical_4um_yee_jacobian.py` and
+    `run_lumerical_layout_python.sh` -- consume a SHA-pinned completed
+    nonuniform `import_density` FSP/result/density triplet, verify the same
+    solver version and native field/index Yee coordinates, build the sparse
+    matrices without `fdtd.run`, run independent FD/transpose gates, and save
+    raw matrices/coordinates outside Git. The launcher is layout-only and
+    deliberately performs no GPU/B200 Maxwell certification.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -308,13 +315,14 @@ Do not copy them into this worktree.
    It is nevertheless **failed**, because six-face flux exceeded native Q by
    30.43%. Moving the closed surface outside all estimated PML cells left the
    discrepancy unchanged, so PML-face placement is not the sole cause.
-5. The linked 5-nm stack-z / 50-nm bulk-z Ea source-only run passed. Its exact
-   full-Au successor did not obtain a numerical result because fewer than 9
-   required solve tasks were free. Reducing CPU threads does not reduce this
-   fixed GPU-solve checkout. Preflight now parses `lmutil` and blocks before
-   launch unless all 9 are free; the post-run log gate catches a checkout race.
-   Rerun this exact case first when licenses are available; do not interpret
-   either license-failed FSP as physics evidence.
+5. The linked 5-nm stack-z / 50-nm bulk-z Ea source-only run passed. After two
+   license-blocked attempts, retry 2 acquired all nine tasks and completed the
+   exact full-Au solve on GPU 5. Its realized grid was `183 x 183 x 212`; all
+   material, mesh, GPU, decay, nonnegative-Q, and native-Q/`pabs_adv` gates
+   passed. Q/flux still failed by 29.239%, versus 30.428% on the 20-nm/200-nm
+   baseline. Fine z therefore does not explain the discrepancy. The next
+   control is exact-empty on this identical mesh/source to measure the
+   background closed-flux residual before changing Q or flux formulas.
 6. The default source-object waist in the unified runner and B200 endpoint
    batch is now the calibrated value. Every non-baseline mesh still reruns and
    revalidates source-only rather than assuming the calibration transfers.
@@ -327,10 +335,11 @@ Do not copy them into this worktree.
    full-domain-z tables as historical diagnostics, not evidence for Lumerical
    or a production mesh. The completed shared-linear factor-1/2/4 sweep is
    useful negative evidence: its stable final pair failed in all 6/6 cases.
-3. On the current RTX host, finish the exact-full Ea linked-z sequence starting
-   with 5-nm stack / 50-nm bulk once nine solve tasks are available. Determine
-   whether the 20-nm Q/flux failure is a z-discretization error before launching
-   broader sweeps. These runs remain development evidence only.
+3. On the current RTX host, run exact-empty Ea on the same passed 5-nm/50-nm
+   source/mesh, then compare empty-to-full increments in native Q and six-face
+   inward flux. The completed full-Au refinement already excludes simple
+   thin-stack z roughness as the 30% closure root. These runs remain
+   development evidence only.
 4. On the actual B200, use `25_run_lumerical_4um_exact_au_control.py` to pass
    source-only Ea/Eb first, then matching ordinary empty/full/simple-L exact
    Au time, Q/flux, linked stack+bulk/air/PML-z, x/y, PML-layer, and domain
@@ -341,9 +350,9 @@ Do not copy them into this worktree.
    must remain outside the Git worktree. The unified runner and endpoint batch
    now exist, but no B200 result is committed and this Codex host fails the
    B200 preflight.
-5. Build and validate the nonuniform density-to-component-Yee material
-   Jacobian and its discrete adjoint; do not substitute bundled LumOpt's
-   real/lossless metal path.
+5. Run the new component-Yee builder on a completed hash-identical nonuniform
+   density FSP, then connect its validated sparse transpose to the discrete
+   adjoint; do not substitute bundled LumOpt's real/lossless metal path.
 6. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh
    convergence, and downstream PTE current.
 7. Certify the combined gradient on the selected production mesh.

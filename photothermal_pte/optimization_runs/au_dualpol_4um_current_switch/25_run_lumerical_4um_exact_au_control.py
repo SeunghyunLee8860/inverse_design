@@ -684,6 +684,7 @@ def _material_postprocess(
             "clipping": False,
             "smoothing": False,
             "gain": False,
+            "field_or_Q_rescaling": False,
             "global_rescaling": False,
             "tiling": False,
         },

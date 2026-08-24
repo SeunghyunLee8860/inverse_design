@@ -8,10 +8,12 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_density import (
     density_nodes,
+    density_state_sha256,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_yee_jacobian import (
     build_colored_material_jacobian,
     transpose_dot_error,
+    validate_completed_density_record,
     validate_index_detail,
     validate_material_jacobian,
 )
@@ -157,3 +159,43 @@ def test_index_detail_rejects_wrong_component_shape_or_frequency() -> None:
     broken_frequency["frequency_hz"] = np.asarray([1.0, 2.0])
     with pytest.raises(ValueError, match="one finite positive frequency"):
         validate_index_detail(broken_frequency)
+
+
+def test_completed_forward_record_is_bound_to_density_and_fsp_hash() -> None:
+    rho = _nonuniform_density()
+    record = {
+        "status": "PASSED_PROVISIONAL_LUMERICAL_4UM_import_density_deadbeef_Ea_"
+        "CONTROL_DEVELOPMENT_GPU_NOT_B200_CERTIFIED",
+        "case": "import_density",
+        "all_gates_passed": True,
+        "accelerator_policy": "development",
+        "solver_version": "8.35.4413",
+        "Q_processing": {
+            "clipping": False,
+            "smoothing": False,
+            "gain": False,
+            "field_or_Q_rescaling": False,
+            "global_rescaling": False,
+            "tiling": False,
+        },
+        "layout": {
+            "geometry": {
+                "density_state": {
+                    "density_state_sha256": density_state_sha256(rho)
+                }
+            }
+        },
+        "raw_artifacts": [
+            {"path": "/external/forward.fsp", "sha256": "fsp-sha"}
+        ],
+    }
+    assert validate_completed_density_record(
+        record, rho, forward_fsp_sha256="fsp-sha"
+    )["passed"]
+    changed = rho.copy()
+    changed[40, 40] += 1.0e-6
+    invalid = validate_completed_density_record(
+        record, changed, forward_fsp_sha256="fsp-sha"
+    )
+    assert invalid["passed"] is False
+    assert invalid["gates"]["density_state_sha_matches"] is False

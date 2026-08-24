@@ -28,7 +28,9 @@ uniform scalar and therefore could not evaluate an optimizer topology. On the
 current RTX host, the explicitly non-promotable Ea/Eb
 source-only gate passed, while exact-full Ea on the 20-nm stack-z baseline
 failed Q/six-face closure by 30.43%. The linked 5-nm/50-nm z source gate passed,
-but its material successor was blocked by temporary shared-license exhaustion.
+and the later exact-full retry completed but still failed closure by 29.239%.
+This rules out simple thin-stack z roughness as the sole cause; exact-empty on
+the identical mesh/source is the next background-flux control.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine

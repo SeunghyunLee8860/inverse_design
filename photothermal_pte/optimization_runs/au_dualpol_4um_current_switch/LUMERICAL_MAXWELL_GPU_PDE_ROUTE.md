@@ -210,11 +210,13 @@ realized effective waists were about `4.00077 um`. An ordinary dispersive-Au
 full/Ea baseline run passed material fit, finite-dt material, native-Q,
 `pabs_adv`, mesh-readback, decay, and GPU-log gates but failed Q versus
 six-face flux closure by 30.43%. A PML-safe closed surface did not change that
-error. A linked 5-nm stack-z / 50-nm bulk-z source run passed, while its
-full-Au successor was license-blocked before a solve because fewer than 9
-FlexNet tasks were free. The dynamic preflight now requires all 9 tasks; fewer
-CPU threads do not reduce this GPU checkout. The fine-z exact-Au case is
-therefore the immediate next diagnostic, not a completed convergence result.
+error. A linked 5-nm stack-z / 50-nm bulk-z source run passed. Its exact-full
+retry 2 then completed on the realized `183 x 183 x 212` grid and passed every
+gate except Q/flux, which remained 29.239%. Thus stack/bulk z refinement alone
+does not explain the discrepancy. The dynamic preflight still requires all 9
+tasks; fewer CPU threads do not reduce this GPU checkout. The next diagnostic
+is the exact-empty case on the identical mesh/source, followed by empty-to-full
+incremental Q/flux comparison.
 
 The concrete forward entry point is
 `25_run_lumerical_4um_exact_au_control.py`. It has an audit-only path that

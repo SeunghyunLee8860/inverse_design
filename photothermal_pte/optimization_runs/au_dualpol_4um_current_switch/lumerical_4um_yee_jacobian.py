@@ -36,6 +36,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     DENSITY_IMPORT_OBJECT,
     canonical_density_nodes,
     density_nodes,
+    density_state_sha256,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_forward import (
+    DENSITY_CONTROL,
 )
 
 
@@ -52,6 +56,61 @@ TRANSPOSE_DOT_RELATIVE_LIMIT = 1.0e-12
 
 IndexDetail = dict[str, np.ndarray]
 DensityEvaluator = Callable[[np.ndarray], IndexDetail]
+
+
+def validate_completed_density_record(
+    record: Mapping[str, Any],
+    projected_density: np.ndarray,
+    *,
+    forward_fsp_sha256: str,
+) -> dict[str, Any]:
+    """Bind a completed import-density result to one FSP and nodal state."""
+
+    rho = canonical_density_nodes(projected_density)
+    expected_density_sha = density_state_sha256(rho)
+    recorded_density_sha = (
+        record.get("layout", {})
+        .get("geometry", {})
+        .get("density_state", {})
+        .get("density_state_sha256")
+    )
+    artifact_matches = [
+        artifact
+        for artifact in record.get("raw_artifacts", [])
+        if str(artifact.get("path", "")).endswith(".fsp")
+        and artifact.get("sha256") == forward_fsp_sha256
+    ]
+    processing = record.get("Q_processing")
+    processing_unmodified = bool(
+        isinstance(processing, Mapping)
+        and processing.get("clipping") is False
+        and processing.get("smoothing") is False
+        and processing.get("gain") is False
+        and processing.get("field_or_Q_rescaling") is False
+        and processing.get("global_rescaling", False) is False
+        and processing.get("tiling", False) is False
+    )
+    gates = {
+        "forward_status_passed": str(record.get("status", "")).startswith(
+            "PASSED_PROVISIONAL_LUMERICAL_4UM_import_"
+        ),
+        "forward_all_gates_passed": record.get("all_gates_passed") is True,
+        "forward_case_is_import_density": record.get("case") == DENSITY_CONTROL,
+        "density_state_sha_matches": recorded_density_sha == expected_density_sha,
+        "forward_FSP_sha_matches_raw_artifact": len(artifact_matches) == 1,
+        "forward_fields_and_Q_were_not_rescaled": processing_unmodified,
+        "accelerator_policy_recorded": record.get("accelerator_policy")
+        in ("development", "b200"),
+        "solver_version_recorded": bool(record.get("solver_version")),
+    }
+    return {
+        "passed": all(gates.values()),
+        "gates": gates,
+        "expected_density_state_sha256": expected_density_sha,
+        "recorded_density_state_sha256": recorded_density_sha,
+        "forward_fsp_sha256": forward_fsp_sha256,
+        "matching_forward_artifacts": artifact_matches,
+    }
 
 
 def _array_sha256(value: np.ndarray) -> str:
