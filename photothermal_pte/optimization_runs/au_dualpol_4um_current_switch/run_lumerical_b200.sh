@@ -16,10 +16,9 @@ export VC_LUMERICAL_ROOT="/home/seunghyun/lumerical_r12/opt/lumerical/v261"
 export LUMERICAL_ROOT="$VC_LUMERICAL_ROOT"
 
 "$python_bin" \
-  "$script_dir/21_audit_lumerical_only_preflight.py" \
+  "$script_dir/21_audit_lumerical_maxwell_preflight.py" \
   --gpu-index "$gpu_index" --require-ready
 
 export CUDA_VISIBLE_DEVICES="$gpu_index"
 export LUMERICAL_SESSION_GPU_DEVICE="GPU $gpu_index"
 exec "$python_bin" "$@"
-

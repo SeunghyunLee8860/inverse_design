@@ -1,8 +1,9 @@
-"""Fail-closed solver contract for the Lumerical-only Au workflow.
+"""Fail-closed contract for Lumerical Maxwell plus custom GPU PDE solvers.
 
-This module has no FDTDX or JAX dependency.  It records the distinction
-between the physical binary Au mask and any optimizer state: only the binary
-mask is allowed to reach Maxwell, thermal, or electrical solvers.
+The optimizer is allowed to use a continuous relaxation.  One filtered and
+projected Au fraction must be shared by the optical, thermal, and electrical
+material maps.  Exact binary Au is required for endpoint controls and final
+promotion, not for every topology-optimization iteration.
 """
 
 from __future__ import annotations
@@ -27,20 +28,30 @@ LUMOPT2_DEPS = LUMERICAL_ROOT / "api/python/lumopt2/parametrization/d_eps_calcul
 
 
 @dataclass(frozen=True)
-class LumericalOnlyContract:
-    policy_version: int = 1
+class LumericalMaxwellContract:
+    policy_version: int = 2
     maxwell_solver: str = "Ansys Lumerical FDTD v261 (2026 R1.2)"
-    thermal_solver: str = "Ansys Lumerical Multiphysics HEAT v261"
-    electrical_solver: str = "Ansys Lumerical Multiphysics CHARGE v261"
+    thermal_solver: str = "repository custom CUDA finite-volume steady heat solver"
+    electrical_solver: str = (
+        "repository custom CUDA weighting-potential finite-element solver"
+    )
     maxwell_accelerator_required: str = "NVIDIA B200"
     maxwell_execution_mode: str = "3D FDTD GPU"
-    thermal_execution_mode: str = "Lumerical HEAT CPU solver"
-    electrical_execution_mode: str = "Lumerical CHARGE CPU solver"
-    au_geometry: str = "exact_binary_mask_extruded_50nm"
-    shared_design_field: str = "one uint8 mask m in {0,1} with one SHA-256"
-    gray_au_allowed_in_any_physics: bool = False
-    importnk_au_allowed: bool = False
-    lumopt_topology_gradient_allowed: bool = False
+    thermal_execution_mode: str = "custom sparse linear solve on CUDA"
+    electrical_execution_mode: str = "custom sparse linear solve on CUDA"
+    optimization_design_map: str = (
+        "latent x -> one density filter -> one tanh projection -> shared f_Au in [0,1]"
+    )
+    shared_design_field: str = (
+        "one projected Au fraction array f_Au with one shape and SHA-256 is passed "
+        "to all three material maps"
+    )
+    continuous_relaxation_allowed_during_optimization: bool = True
+    different_optical_thermal_electrical_design_fields_allowed: bool = False
+    exact_binary_required_for_final_promotion: bool = True
+    exact_dispersive_au_required_at_material_endpoint: bool = True
+    continuous_lumerical_au_carrier_status: str = "BLOCKED_PENDING_SAME_STEP_AD_FD"
+    bundled_lumopt_topology_gradient_allowed_without_au_adfd: bool = False
     fdtdx_allowed: bool = False
     jax_maxwell_allowed: bool = False
     required_polarizations: tuple[str, str] = ("Ea", "Eb")
@@ -51,11 +62,37 @@ class LumericalOnlyContract:
     minimum_void_feature_m: float = 500e-9
 
 
-CONTRACT = LumericalOnlyContract()
+CONTRACT = LumericalMaxwellContract()
+
+
+def canonical_design_fraction(fraction: np.ndarray) -> np.ndarray:
+    """Return the shared continuous Au fraction after strict range checks."""
+
+    value = np.asarray(fraction, dtype=np.float64)
+    if value.ndim != 2 or value.size == 0:
+        raise ValueError("Au design fraction must be a non-empty 2-D array")
+    if not np.all(np.isfinite(value)):
+        raise ValueError("Au design fraction contains a non-finite value")
+    tolerance = 1.0e-12
+    if np.any(value < -tolerance) or np.any(value > 1.0 + tolerance):
+        raise ValueError("Au design fraction must remain in [0,1]")
+    return np.ascontiguousarray(np.clip(value, 0.0, 1.0))
+
+
+def design_fraction_sha256(fraction: np.ndarray) -> str:
+    """Hash the exact shared physical-density array used by all solvers."""
+
+    value = canonical_design_fraction(fraction)
+    digest = hashlib.sha256()
+    digest.update(b"lumerical-shared-au-fraction-v2\0")
+    digest.update(json.dumps(list(value.shape), separators=(",", ":")).encode("ascii"))
+    digest.update(b"\0float64-c\0")
+    digest.update(value.tobytes(order="C"))
+    return digest.hexdigest()
 
 
 def canonical_binary_mask(mask: np.ndarray) -> np.ndarray:
-    """Return a C-contiguous uint8 mask, rejecting every gray value."""
+    """Validate an endpoint/final-promotion mask and return uint8 values."""
 
     value = np.asarray(mask)
     if value.ndim != 2 or value.size == 0:
@@ -63,7 +100,7 @@ def canonical_binary_mask(mask: np.ndarray) -> np.ndarray:
     if not np.all(np.isfinite(value)):
         raise ValueError("Au mask contains a non-finite value")
     if not np.all((value == 0) | (value == 1)):
-        raise ValueError("gray Au is forbidden; every mask value must be exactly 0 or 1")
+        raise ValueError("final Au mask must contain only exact 0/1 values")
     return np.ascontiguousarray(value, dtype=np.uint8)
 
 
@@ -115,7 +152,7 @@ def _run_nvidia_smi() -> list[dict[str, Any]]:
 
 
 def _source_audit() -> dict[str, Any]:
-    """Prove why installed generic topology gradients are excluded for Au."""
+    """Prove why bundled generic topology gradients need an Au-specific gate."""
 
     paths = (LEGACY_LUMOPT_TOPOLOGY, LUMOPT2_TOPOLOGY, LUMOPT2_DEPS)
     missing = [str(path) for path in paths if not path.is_file()]
@@ -147,7 +184,7 @@ def _source_audit() -> dict[str, Any]:
 
 
 def audit_environment(*, requested_gpu_index: int | None = None) -> dict[str, Any]:
-    """Audit installed solver source and require an actual NVIDIA B200."""
+    """Audit the Maxwell environment and require an actual NVIDIA B200."""
 
     inventory = _run_nvidia_smi()
     candidates = [
@@ -160,13 +197,13 @@ def audit_environment(*, requested_gpu_index: int | None = None) -> dict[str, An
     source = _source_audit()
     gates = {
         "lumapi_v261_present": LUMAPI_PATH.is_file(),
-        "installed_lumopt_au_exclusion_evidence_passed": bool(source.get("passed")),
+        "installed_lumopt_requires_custom_au_route": bool(source.get("passed")),
         "requested_gpu_exists": bool(candidates),
         "requested_gpu_is_nvidia_b200": bool(b200),
     }
     return {
         "status": (
-            "READY_FOR_LUMERICAL_B200_LAYOUT_AND_SOLVES"
+            "READY_FOR_LUMERICAL_B200_MAXWELL_DEVELOPMENT"
             if all(gates.values())
             else "BLOCKED_LUMERICAL_B200_PREFLIGHT"
         ),
@@ -178,7 +215,9 @@ def audit_environment(*, requested_gpu_index: int | None = None) -> dict[str, An
         "gates": gates,
         "notes": [
             "Only FDTD time stepping uses the B200; Lumerical meshing and scripts use CPU.",
-            "Lumerical HEAT and CHARGE are CPU solvers in v261.",
+            "Thermal and electrical solves remain the repository custom CUDA PDE solvers.",
+            "No Lumerical HEAT or CHARGE license is assumed or required.",
+            "Continuous f_Au is allowed during optimization, but its Lumerical Au derivative must pass same-step AD-FD before use.",
             "No Maxwell solve is authorized when the B200 gate is false.",
         ],
     }
@@ -186,11 +225,10 @@ def audit_environment(*, requested_gpu_index: int | None = None) -> dict[str, An
 
 def require_b200(*, requested_gpu_index: int | None = None) -> dict[str, Any]:
     result = audit_environment(requested_gpu_index=requested_gpu_index)
-    if result["status"] != "READY_FOR_LUMERICAL_B200_LAYOUT_AND_SOLVES":
+    if result["status"] != "READY_FOR_LUMERICAL_B200_MAXWELL_DEVELOPMENT":
         inventory = result["gpu_inventory"]
         raise RuntimeError(
             "Lumerical B200 preflight failed; refusing Maxwell solve. "
             f"requested_gpu_index={requested_gpu_index}, inventory={inventory}"
         )
     return result
-

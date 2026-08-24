@@ -57,12 +57,17 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
 
 ## Important blockers -- do not silently bypass
 
-0. The user-selected production solver policy is now Lumerical-only. Read
-   `LUMERICAL_ONLY_ROUTE.md` and run `21_audit_lumerical_only_preflight.py`
-   first. New production Maxwell work must use exact-binary Au in Lumerical
-   FDTD on a verified NVIDIA B200; FDTDX/JAX and bundled LumOpt gray-Au
-   gradients are historical diagnostics only. The current host has RTX 6000
-   Ada GPUs, not B200, so it cannot issue a B200 run certificate.
+0. The user-selected Maxwell solver is Lumerical FDTD, while thermal and
+   electrical remain the repository custom CUDA PDE solvers; no Lumerical HEAT
+   or CHARGE license is assumed. Read `LUMERICAL_MAXWELL_GPU_PDE_ROUTE.md` and
+   run `21_audit_lumerical_maxwell_preflight.py` first. Continuous topology
+   relaxation is required during optimization, but one filtered/projected
+   `f_Au` must be shared by optical, thermal, and electrical material maps.
+   Exact binary dispersive Au is required for endpoints and final promotion,
+   not before every optimization solve. The Lumerical Au derivative remains
+   blocked pending a same-step AD-FD certificate. FDTDX/JAX results are
+   historical diagnostics only. The current host has RTX 6000 Ada GPUs, not
+   B200, so it cannot issue a B200 run certificate.
 
 1. The existing optimization used inconsistent O3/TE1 gray laws.  Production
    code now uses one shared linear fraction (`f_Au=rho`) in all three physics,
