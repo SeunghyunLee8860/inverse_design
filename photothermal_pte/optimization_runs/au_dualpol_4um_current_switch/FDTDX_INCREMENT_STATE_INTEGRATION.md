@@ -197,3 +197,20 @@ Do not loosen the gates or call this mesh validated. The next allowed solve is
 a same-mesh 24/32-period time-settling extension on two newly verified-idle
 GPUs. Only after field and spatial-Q stationarity pass may newly generated
 increment-state source controls and spatial mesh convergence begin.
+
+### Canonical time-settling extension
+
+Runner version `fdtdx-increment-state-exact-binary-control-v2` accepts
+`--total-periods` and `--window-periods`, constructs a canonical `TimeSpec` and
+`FreshCaseSpec`, and records the self-hashed realized case. Defaults remain
+16/4. The GPU wrapper preserves its three safety arguments and forwards only
+remaining runner options. Example for the next control:
+
+```bash
+run_fdtdx_increment_state_control_gpu.sh GPU_INDEX Ea /absolute/empty/output \
+  --total-periods 24 --window-periods 4
+```
+
+This extension changes only simulation duration and detector-window timing;
+mesh, material pole parameters, exact mask, source, PML, and gates remain
+unchanged.

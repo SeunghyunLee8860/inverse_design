@@ -31,6 +31,8 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_exac
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
     ANCHOR_CASE,
+    FreshCaseSpec,
+    TimeSpec,
     case_contract,
     realized_time_contract,
 )
@@ -43,7 +45,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fres
 )
 
 
-VERSION = "fdtdx-increment-state-exact-binary-control-v1"
+VERSION = "fdtdx-increment-state-exact-binary-control-v2"
 STATUS_READY = "VALIDATED_FDTDX_INCREMENT_STATE_EXACT_BINARY_CONTROL"
 STATUS_BLOCKED = "BLOCKED_FDTDX_INCREMENT_STATE_EXACT_BINARY_CONTROL"
 EXPECTED_FDTDX_COMMIT = "6cc0e97252ee0b95de5016e8db1a5b414177efa4"
@@ -121,7 +123,10 @@ def _json_safe_memory_stats(device: Any) -> dict[str, int | float | str] | None:
 
 
 def _unnormalized_closure_evaluation(
-    model: dict[str, Any], output: Any, mask: np.ndarray
+    model: dict[str, Any],
+    output: Any,
+    mask: np.ndarray,
+    case_spec: FreshCaseSpec,
 ) -> dict[str, Any]:
     placeholder_source = {
         "comparison": {"mean_unscaled_incident_power_W": 1.0},
@@ -132,7 +137,7 @@ def _unnormalized_closure_evaluation(
         output,
         mask,
         placeholder_source,
-        ANCHOR_CASE.mesh,
+        case_spec.mesh,
     )
     evaluation["scope"] = (
         "unnormalized Q/closed-flux closure only; no source-only calibration"
@@ -157,6 +162,8 @@ def run(
     source: Path,
     polarization: str,
     reference: str,
+    total_periods: int,
+    window_periods: int,
 ) -> dict[str, Any]:
     started_total = time.perf_counter()
     output = _output_directory(output_directory)
@@ -170,21 +177,31 @@ def run(
     repository = Path(__file__).resolve().parents[3]
     runner_path = Path(__file__).resolve()
     mask = np.asarray(reference_mask(reference), dtype=np.uint8)
+    case_spec = FreshCaseSpec(
+        mesh=ANCHOR_CASE.mesh,
+        time=TimeSpec(
+            total_periods=total_periods,
+            window_periods=window_periods,
+            courant_factor=ANCHOR_CASE.time.courant_factor,
+        ),
+        pml_alpha_scale=ANCHOR_CASE.pml_alpha_scale,
+        pml_target_reflection=ANCHOR_CASE.pml_target_reflection,
+    )
     started_build = time.perf_counter()
     model = build_model(
-        ANCHOR_CASE.mesh,
+        case_spec.mesh,
         polarization,
-        total_periods=ANCHOR_CASE.time.total_periods,
-        window_periods=ANCHOR_CASE.time.window_periods,
-        courant_factor=ANCHOR_CASE.time.courant_factor,
-        alpha_scale=ANCHOR_CASE.pml_alpha_scale,
-        target_reflection=ANCHOR_CASE.pml_target_reflection,
+        total_periods=case_spec.time.total_periods,
+        window_periods=case_spec.time.window_periods,
+        courant_factor=case_spec.time.courant_factor,
+        alpha_scale=case_spec.pml_alpha_scale,
+        target_reflection=case_spec.pml_target_reflection,
         include_adjoint_source=False,
         air_only_source_calibration=False,
         dispersive_state_representation="increment",
     )
-    arrays = arrays_for_exact_binary(model, mask, ANCHOR_CASE.mesh)
-    material = material_stack_audit(model, arrays, mask, ANCHOR_CASE.mesh)
+    arrays = arrays_for_exact_binary(model, mask, case_spec.mesh)
+    material = material_stack_audit(model, arrays, mask, case_spec.mesh)
     build_runtime_s = time.perf_counter() - started_build
     if not material["ready"]:
         raise RuntimeError(f"increment-state material readback failed: {material}")
@@ -212,9 +229,7 @@ def run(
     solve_runtime_s = time.perf_counter() - started_solve
 
     started_evaluation = time.perf_counter()
-    evaluation = _unnormalized_closure_evaluation(
-        model, fdtd_output, mask
-    )
+    evaluation = _unnormalized_closure_evaluation(model, fdtd_output, mask, case_spec)
     evaluation_runtime_s = time.perf_counter() - started_evaluation
     device_after = [
         {
@@ -237,9 +252,7 @@ def run(
         == "increment",
         "physical_one_pole_law_selected": model["material_law_mode"]
         == "physical-one-pole-increment-state",
-        "source_normalization_not_claimed": evaluation[
-            "source_normalization_available"
-        ]
+        "source_normalization_not_claimed": evaluation["source_normalization_available"]
         is False,
     }
     ready = (
@@ -263,8 +276,8 @@ def run(
         "polarization": polarization,
         "reference": reference,
         "created_utc": datetime.now(timezone.utc).isoformat(),
-        "case": case_contract(ANCHOR_CASE),
-        "time_contract": realized_time_contract(ANCHOR_CASE, model),
+        "case": case_contract(case_spec),
+        "time_contract": realized_time_contract(case_spec, model),
         "mesh": model["fresh_mesh_audit"],
         "placement": model["placement"],
         "source_contract": model["source_contract"],
@@ -302,14 +315,17 @@ def run(
             sort_keys=True,
             allow_nan=False,
             default=_json_default,
-        ) + "\n",
+        )
+        + "\n",
         encoding="utf-8",
     )
     os.replace(temporary, report)
-    print(json.dumps(
+    print(
+        json.dumps(
             {"report": str(report), **payload["runtime"], "ready": ready},
             default=_json_default,
-        ))
+        )
+    )
     return payload
 
 
@@ -318,13 +334,19 @@ def main() -> int:
     parser.add_argument("--output-directory", type=Path, required=True)
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--polarization", choices=("Ea", "Eb"), required=True)
-    parser.add_argument("--reference", choices=REFERENCE_NAMES, default=DEFAULT_REFERENCE)
+    parser.add_argument(
+        "--reference", choices=REFERENCE_NAMES, default=DEFAULT_REFERENCE
+    )
+    parser.add_argument("--total-periods", type=int, default=16)
+    parser.add_argument("--window-periods", type=int, default=4)
     args = parser.parse_args()
     payload = run(
         args.output_directory,
         args.source,
         args.polarization,
         args.reference,
+        args.total_periods,
+        args.window_periods,
     )
     return 0 if payload["ready"] else 2
 

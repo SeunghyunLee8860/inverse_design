@@ -13,6 +13,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch import (
     fdtdx_4um_model,
     fdtdx_increment_state_exact_binary_control as control,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
+    ANCHOR_CASE,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_increment_state_material import (
     physical_increment_material_data,
 )
@@ -55,10 +58,9 @@ def _coefficient_function(poles, dt):
 
 def _susceptibility_function(coeff_a, coeff_c, coeff_b, omega, dt):
     z_minus = np.exp(-1j * omega * dt)
-    denominator = (
-        (z_minus - 1.0) * (z_minus - np.asarray(coeff_a))
-        + np.asarray(coeff_c) * z_minus
-    )
+    denominator = (z_minus - 1.0) * (z_minus - np.asarray(coeff_a)) + np.asarray(
+        coeff_c
+    ) * z_minus
     return np.sum(np.asarray(coeff_b) * z_minus / denominator)
 
 
@@ -97,10 +99,7 @@ def test_physical_increment_material_data_uses_one_passive_pole(monkeypatch):
     assert result["coefficient_endpoints"]["au"][0][1] == 0.0
     assert result["coefficient_endpoints"]["a"][0][1] == 0.0
     assert result["coefficient_endpoints"]["b"][0][1] > 0.0
-    assert all(
-        fit["fit_relative_error"] < 1.0e-4
-        for fit in result["fits"].values()
-    )
+    assert all(fit["fit_relative_error"] < 1.0e-4 for fit in result["fits"].values())
     report_fragment = {
         "fits": result["fits"],
         "endpoints": result["coefficient_endpoints"],
@@ -114,9 +113,7 @@ def test_physical_increment_material_data_uses_one_passive_pole(monkeypatch):
 
 def test_builder_rejects_unknown_or_two_pole_increment_state_before_import():
     with pytest.raises(ValueError, match="unknown dispersive"):
-        fdtdx_4um_model.build_model(
-            "Ea", dispersive_state_representation="not-a-state"
-        )
+        fdtdx_4um_model.build_model("Ea", dispersive_state_representation="not-a-state")
     with pytest.raises(ValueError, match="two-pole"):
         fdtdx_4um_model.build_model(
             "Ea",
@@ -148,7 +145,7 @@ def test_control_removes_unavailable_source_normalization(monkeypatch):
     )
 
     result = control._unnormalized_closure_evaluation(
-        {}, object(), np.zeros((80, 80), dtype=np.uint8)
+        {}, object(), np.zeros((80, 80), dtype=np.uint8), ANCHOR_CASE
     )
 
     assert result["ready"] is True
@@ -159,9 +156,11 @@ def test_control_removes_unavailable_source_normalization(monkeypatch):
 
 
 def test_gpu_wrapper_rejects_busy_device_before_export():
-    wrapper = Path(control.__file__).with_name(
-        "run_fdtdx_increment_state_control_gpu.sh"
-    ).read_text(encoding="utf-8")
+    wrapper = (
+        Path(control.__file__)
+        .with_name("run_fdtdx_increment_state_control_gpu.sh")
+        .read_text(encoding="utf-8")
+    )
     busy_check = wrapper.index("refusing busy GPU")
     export = wrapper.index("export CUDA_VISIBLE_DEVICES")
     assert busy_check < export
@@ -170,4 +169,6 @@ def test_gpu_wrapper_rejects_busy_device_before_export():
     assert '-v index="$gpu_index"' not in wrapper
     assert "export JAX_PLATFORMS=cuda" in wrapper
     assert "export JAX_PLATFORMS=gpu" not in wrapper
+    assert "shift 3" in wrapper
+    assert '"$@"' in wrapper
     assert "Lumerical" not in wrapper

@@ -840,3 +840,9 @@ stationarity (`1.1339e-2` Ea, `1.7934e-2` Eb versus `5e-3`). Eb spatial-Q
 change is also `5.5919e-3` versus `5e-3`. Do not loosen gates or start mesh
 convergence. Extend the identical control to 24/32 periods first. Lumerical
 remains out of scope and no gray law or optimizer is authorized.
+
+The time-control runner is now v2 and accepts canonical
+`--total-periods/--window-periods`; defaults remain 16/4. For the immediate
+settling check, invoke the safe wrapper with trailing
+`--total-periods 24 --window-periods 4` on each polarization. This changes no
+mesh, material, source, PML, mask, or gate.

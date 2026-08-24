@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ $# -ne 3 ]]; then
-  echo "usage: $0 GPU_INDEX Ea|Eb /absolute/empty/output_directory" >&2
+if [[ $# -lt 3 ]]; then
+  echo "usage: $0 GPU_INDEX Ea|Eb /absolute/empty/output_directory [runner options]" >&2
   exit 2
 fi
 
 gpu_index="$1"
 polarization="$2"
 output_directory="$3"
+shift 3
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repository="$(git -C "$script_dir" rev-parse --show-toplevel)"
 python_bin="${FDTDX_INCREMENT_PYTHON:-/home/seunghyun200/.venvs/fdtdx-fresh-py312/bin/python}"
@@ -69,4 +70,5 @@ exec "$python_bin" -u \
   photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/fdtdx_increment_state_exact_binary_control.py \
   --output-directory "$output_directory" \
   --source "$source_dir" \
-  --polarization "$polarization"
+  --polarization "$polarization" \
+  "$@"
