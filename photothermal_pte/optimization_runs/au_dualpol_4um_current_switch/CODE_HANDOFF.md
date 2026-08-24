@@ -286,9 +286,17 @@ physical-extent axes. Optical gates are explicitly separated from unvalidated
 thermal/current gates. This is contract and test work only: no v2 GPU ladder
 has run and `optimizer_start_allowed` remains false. The immutable v1
 source-pair and four-case matrix remain evidence for their original anchor
-commit; do not silently reinterpret their mesh hash as v2. Generalize the
-runner and create a newly hashed source pair for every unique v2 mesh/time
-contract before launching the primary L-reference time ladder.
+commit; do not silently reinterpret their mesh hash as v2.
+
+The generalized runner is now implemented and unit-tested. Read
+`FDTDX_FRESH_HASHED_RUNNER.md` before running it. Every source-only report,
+Ea/Eb pair certificate, and material report binds the same canonical
+`MeshSpec + time + CPML` request and external case-file SHA-256. A different
+or jointly tampered case, mesh/time/PML mismatch, or reuse of the v1 pair is
+blocked before the material FDTD call. No generalized GPU case has run yet.
+The next FDTDX action is to generate separate 16/24/32-period anchor contracts
+and newly calibrated Ea/Eb source pairs, then run the primary 500 nm L-reference
+time-settling cases one at a time.
 
 ## Raw checkpoint dependency
 

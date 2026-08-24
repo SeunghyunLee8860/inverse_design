@@ -11,6 +11,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_exac
     MeshSpec,
     mesh_audit,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
+    ANCHOR_CASE,
+    case_contract,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_exact_binary_pilot import (
     absorption_power_density,
     combined_weighted_nrmse,
@@ -80,6 +84,9 @@ class FdtdxFreshExactBinaryPilotTest(unittest.TestCase):
                 }
             generator = root / "generator.py"
             generator.write_text("# generator\n", encoding="utf-8")
+            numerical_case = case_contract(ANCHOR_CASE)
+            time_contract = dict(numerical_case["time_spec"])
+            time_contract.update(time_step_s=1e-18, time_steps_total=100)
             certificate = {
                 "status": "VALIDATED_FDTDX_FRESH_SOURCE_ONLY_PAIR",
                 "ready": True,
@@ -95,7 +102,14 @@ class FdtdxFreshExactBinaryPilotTest(unittest.TestCase):
                 },
                 "comparison": {"mean_unscaled_incident_power_W": 2.85e-6},
                 "cases": cases,
-                "source_case_contracts": {"mesh": mesh_audit(MeshSpec())},
+                "source_case_contracts": {
+                    "numerical_case_contract": numerical_case,
+                    "mesh": mesh_audit(MeshSpec()),
+                    "time_contract": time_contract,
+                    "pml_face_parameters": numerical_case[
+                        "resolved_pml_face_parameters"
+                    ],
+                },
                 "provenance": {
                     "certificate_generator_path": str(generator.resolve()),
                     "certificate_generator_sha256": sha256(generator),

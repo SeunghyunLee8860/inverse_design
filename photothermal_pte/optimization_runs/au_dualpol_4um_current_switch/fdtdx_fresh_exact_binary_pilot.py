@@ -33,6 +33,12 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_exac
     readback_exact_binary,
     solver_mask,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
+    ANCHOR_CASE,
+    FreshCaseSpec,
+    case_contract,
+    realized_time_contract,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_mesh import (
     build_model,
 )
@@ -41,10 +47,8 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fres
     weighted_complex_nrmse,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_source_only import (
-    COURANT_FACTOR,
-    TOTAL_PERIODS,
-    WINDOW_PERIODS,
     extract_detector_fields,
+    resolve_case_input,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_source_pair import (
     PAIR_STATUS,
@@ -54,7 +58,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_runt
 )
 
 
-ANCHOR_SPEC = MeshSpec()
+ANCHOR_SPEC = ANCHOR_CASE.mesh
 JSON_NAME = "FDTDX_FRESH_EXACT_BINARY_PILOT.json"
 RAW_NAME = "FDTDX_FRESH_EXACT_BINARY_PILOT_FIELDS.npz"
 STATUS_READY = "VALIDATED_FDTDX_FRESH_EXACT_BINARY_PILOT_CASE"
@@ -172,8 +176,12 @@ def _file_audit(path_value: str, expected_sha256: str) -> dict[str, Any]:
 def validate_source_pair(
     path: Path,
     expected_sha256: str,
+    expected_case: FreshCaseSpec = ANCHOR_CASE,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
-    """Revalidate the certificate and every local artifact it binds."""
+    """Revalidate the certificate, artifacts, and exact numerical case."""
+
+    if not isinstance(expected_case, FreshCaseSpec):
+        raise TypeError("expected_case must be a FreshCaseSpec")
 
     resolved = path.expanduser().resolve()
     normalized_sha = expected_sha256.strip().lower()
@@ -204,6 +212,15 @@ def validate_source_pair(
         payload["comparison"]["mean_unscaled_incident_power_W"],
     )
     certificate_gates = payload["gates"]
+    expected_contract = case_contract(expected_case)
+    source_contracts = payload["source_case_contracts"]
+    expected_time_request = {
+        "total_periods": expected_case.time.total_periods,
+        "window_periods": expected_case.time.window_periods,
+        "source_startup_periods": expected_case.time.source_startup_periods,
+        "courant_factor": expected_case.time.courant_factor,
+    }
+    recorded_time = source_contracts["time_contract"]
     checks = {
         "expected_sha256_is_lowercase_hex": len(normalized_sha)
         == SOURCE_PAIR_SHA256_LENGTH
@@ -222,8 +239,18 @@ def validate_source_pair(
         "normalization_finite_positive": all(
             math.isfinite(float(value)) and float(value) > 0.0 for value in numeric
         ),
-        "anchor_mesh_contract_exact": payload["source_case_contracts"]["mesh"]
-        == mesh_audit(ANCHOR_SPEC),
+        "numerical_case_contract_exact": source_contracts.get(
+            "numerical_case_contract"
+        )
+        == expected_contract,
+        "mesh_contract_exact": source_contracts["mesh"]
+        == mesh_audit(expected_case.mesh),
+        "time_request_exact": all(
+            recorded_time.get(name) == value
+            for name, value in expected_time_request.items()
+        ),
+        "pml_contract_exact": source_contracts["pml_face_parameters"]
+        == expected_contract["resolved_pml_face_parameters"],
         "case_reports_exist_and_match": all(
             item["report"]["path_is_absolute"]
             and item["report"]["sha256_matches"]
@@ -260,10 +287,11 @@ def material_stack_audit(
     model: dict[str, Any],
     arrays: Any,
     mask: Any,
+    spec: MeshSpec = ANCHOR_SPEC,
 ) -> dict[str, Any]:
     """Read back all physical material regions used by the pilot."""
 
-    exact_au = readback_exact_binary(model, arrays, mask, ANCHOR_SPEC)
+    exact_au = readback_exact_binary(model, arrays, mask, spec)
     inv = arrays.inv_permittivities
     checks: dict[str, bool] = {"exact_binary_au_readback": exact_au["ready"]}
     inverse_readback: dict[str, Any] = {}
@@ -363,6 +391,7 @@ def _power_evaluation(
     output: Any,
     mask: np.ndarray,
     source_pair: dict[str, Any],
+    spec: MeshSpec = ANCHOR_SPEC,
 ) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
     states = output.detector_states
     fields = extract_detector_fields(states)
@@ -380,7 +409,7 @@ def _power_evaluation(
         [model["discrete_susceptibility"][axis].imag for axis in ("b", "a", "c")],
         dtype=np.float64,
     )
-    expanded_mask = solver_mask(mask, ANCHOR_SPEC)
+    expanded_mask = solver_mask(mask, spec)
     q: dict[str, dict[str, np.ndarray]] = {"previous": {}, "late": {}}
     for window in ("previous", "late"):
         q[window]["au"] = absorption_power_density(
@@ -590,11 +619,16 @@ def run(
     source_pair_sha256: str,
     reference: str,
     polarization: str,
+    case_spec: FreshCaseSpec = ANCHOR_CASE,
+    case_file_audit: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     output = _output_directory(output_directory)
+    if not isinstance(case_spec, FreshCaseSpec):
+        raise TypeError("case_spec must be a FreshCaseSpec")
+    numerical_case = case_contract(case_spec)
     source_audit = require_source(source)
     source_pair, pair_audit = validate_source_pair(
-        source_pair_path, source_pair_sha256
+        source_pair_path, source_pair_sha256, case_spec
     )
     pair_checks = pair_audit["checks"]
     pair_checks["fdtdx_source_matches_current"] = (
@@ -613,25 +647,20 @@ def run(
         raise RuntimeError(f"source pair revalidation failed: {pair_audit}")
 
     model = build_model(
-        ANCHOR_SPEC,
+        case_spec.mesh,
         polarization,
-        total_periods=TOTAL_PERIODS,
-        window_periods=WINDOW_PERIODS,
-        courant_factor=COURANT_FACTOR,
+        total_periods=case_spec.time.total_periods,
+        window_periods=case_spec.time.window_periods,
+        courant_factor=case_spec.time.courant_factor,
+        alpha_scale=case_spec.pml_alpha_scale,
+        target_reflection=case_spec.pml_target_reflection,
         include_adjoint_source=False,
         air_only_source_calibration=False,
     )
-    current_time = {
-        "total_periods": TOTAL_PERIODS,
-        "window_periods": WINDOW_PERIODS,
-        "source_startup_periods": model["source_contract"][
-            "num_startup_periods"
-        ],
-        "courant_factor": COURANT_FACTOR,
-        "time_step_s": float(model["config"].time_step_duration),
-        "time_steps_total": int(model["config"].time_steps_total),
-    }
+    current_time = realized_time_contract(case_spec, model)
     contract_checks = {
+        "numerical_case_matches_source_pair": numerical_case
+        == source_pair["source_case_contracts"]["numerical_case_contract"],
         "mesh_matches_source_pair": model["fresh_mesh_audit"]
         == source_pair["source_case_contracts"]["mesh"],
         "time_matches_source_pair": current_time
@@ -647,8 +676,8 @@ def run(
         raise RuntimeError(f"pilot/source contract mismatch: {contract_checks}")
 
     mask = np.asarray(reference_mask(reference), dtype=np.uint8)
-    arrays = arrays_for_exact_binary(model, mask, ANCHOR_SPEC)
-    material = material_stack_audit(model, arrays, mask)
+    arrays = arrays_for_exact_binary(model, mask, case_spec.mesh)
+    material = material_stack_audit(model, arrays, mask, case_spec.mesh)
     if not material["ready"]:
         raise RuntimeError(f"material readback failed before FDTD: {material}")
 
@@ -664,7 +693,7 @@ def run(
     model["jax"].block_until_ready(marker)
     solve_runtime = time.perf_counter() - started
     evaluation, raw_arrays = _power_evaluation(
-        model, fdtd_output, mask, source_pair
+        model, fdtd_output, mask, source_pair, case_spec.mesh
     )
 
     raw_path = output / RAW_NAME
@@ -695,6 +724,8 @@ def run(
         "scope": "one fixed exact-binary optical material pilot; no thermal/electrical/adjoint/optimizer",
         "reference": reference,
         "polarization": polarization,
+        "numerical_case_contract": numerical_case,
+        "numerical_case_file_audit": case_file_audit,
         "mesh": model["fresh_mesh_audit"],
         "time_contract": current_time,
         "source_contract": model["source_contract"],
@@ -743,10 +774,15 @@ def main() -> int:
     parser.add_argument("--source-pair-sha256", required=True)
     parser.add_argument("--reference", choices=REFERENCE_NAMES, required=True)
     parser.add_argument("--polarization", choices=("Ea", "Eb"), required=True)
+    parser.add_argument("--case-contract", type=Path, required=True)
+    parser.add_argument("--case-contract-sha256", required=True)
     args = parser.parse_args()
     if args.output_dir is None:
         parser.error("--output-dir or FDTDX_FRESH_OUTPUT_DIR is required")
     try:
+        case_spec, _, case_audit = resolve_case_input(
+            args.case_contract, args.case_contract_sha256
+        )
         result = run(
             args.output_dir,
             args.source,
@@ -754,6 +790,8 @@ def main() -> int:
             args.source_pair_sha256,
             args.reference,
             args.polarization,
+            case_spec,
+            case_audit,
         )
     except Exception as error:
         failure = {
@@ -761,6 +799,12 @@ def main() -> int:
             "ready": False,
             "reference": args.reference,
             "polarization": args.polarization,
+            "case_contract_path": (
+                str(args.case_contract.expanduser().resolve())
+                if args.case_contract is not None
+                else None
+            ),
+            "case_contract_expected_sha256": args.case_contract_sha256,
             "error": repr(error),
             "traceback": traceback.format_exc(),
             "optimizer_start_allowed": False,
@@ -775,6 +819,9 @@ def main() -> int:
         "ready": result["ready"],
         "reference": result["reference"],
         "polarization": result["polarization"],
+        "case_contract_sha256": result["numerical_case_contract"][
+            "case_contract_sha256"
+        ],
         "failed_gates": result["evaluation"]["failed_gates"],
         "maximum_complex_E_NRMSE": result["evaluation"]["field_stationarity"][
             "maximum_complex_E_NRMSE"

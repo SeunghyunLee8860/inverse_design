@@ -7,6 +7,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
+    ANCHOR_CASE,
+    case_contract,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_source_pair import (
     BLOCKED_STATUS,
     PAIR_STATUS,
@@ -20,14 +24,22 @@ def _sha256(path: Path) -> str:
 
 
 def _payload(polarization: str, raw_path: Path, power: float) -> dict:
+    numerical_case = case_contract(ANCHOR_CASE)
+    time_contract = dict(numerical_case["time_spec"])
+    time_contract.update(time_step_s=1e-18, time_steps_total=100)
     return {
         "status": "VALIDATED_FDTDX_FRESH_SOURCE_ONLY_CASE",
         "ready": True,
         "polarization": polarization,
-        "scope": "all-air source-only on validated fresh anchor",
-        "mesh": {"grid_contract_sha256": "mesh"},
-        "time_contract": {"total_periods": 16, "time_steps_total": 100},
-        "pml_face_parameters": {"minx": {"alpha_start": 1.0}},
+        "scope": "all-air source-only for one hashed fresh numerical contract",
+        "numerical_case_contract": numerical_case,
+        "numerical_case_file_audit": {
+            "ready": True,
+            "case_contract_sha256": numerical_case["case_contract_sha256"],
+        },
+        "mesh": numerical_case["resolved_mesh"],
+        "time_contract": time_contract,
+        "pml_face_parameters": numerical_case["resolved_pml_face_parameters"],
         "placement": {"gaussian_source": [[1, 2], [1, 2], [3, 4]]},
         "source_contract": {
             "wavelength_m": 4.0e-6,

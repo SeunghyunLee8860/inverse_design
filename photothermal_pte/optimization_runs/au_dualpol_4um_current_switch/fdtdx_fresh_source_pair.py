@@ -10,12 +10,16 @@ import traceback
 from pathlib import Path
 from typing import Any
 
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
+    case_from_contract,
+)
+
 
 CERTIFICATE_NAME = "FDTDX_FRESH_SOURCE_ONLY_PAIR.json"
 CASE_STATUS = "VALIDATED_FDTDX_FRESH_SOURCE_ONLY_CASE"
 PAIR_STATUS = "VALIDATED_FDTDX_FRESH_SOURCE_ONLY_PAIR"
 BLOCKED_STATUS = "BLOCKED_FDTDX_FRESH_SOURCE_ONLY_PAIR"
-EXPECTED_SCOPE = "all-air source-only on validated fresh anchor"
+EXPECTED_SCOPE = "all-air source-only for one hashed fresh numerical contract"
 POWER_MISMATCH_RELATIVE_LIMIT = 5.0e-3
 
 
@@ -139,6 +143,49 @@ def build_pair_certificate(
         else math.nan
     )
 
+    numerical_case = ea.get("numerical_case_contract")
+    numerical_case_identical = (
+        isinstance(numerical_case, dict)
+        and numerical_case == eb.get("numerical_case_contract")
+    )
+    try:
+        numerical_case_spec = (
+            case_from_contract(numerical_case)
+            if numerical_case_identical
+            else None
+        )
+    except (TypeError, ValueError):
+        numerical_case_spec = None
+    numerical_case_canonical = numerical_case_spec is not None
+    numerical_case_hash = (
+        numerical_case["case_contract_sha256"]
+        if numerical_case_canonical
+        else None
+    )
+    reports = (ea, eb)
+    case_file_audits_ready = numerical_case_canonical and all(
+        isinstance(report.get("numerical_case_file_audit"), dict)
+        and report["numerical_case_file_audit"].get("ready") is True
+        and report["numerical_case_file_audit"].get("case_contract_sha256")
+        == numerical_case_hash
+        for report in reports
+    )
+    mesh_matches_numerical_case = numerical_case_canonical and all(
+        report["mesh"] == numerical_case["resolved_mesh"] for report in reports
+    )
+    pml_matches_numerical_case = numerical_case_canonical and all(
+        report["pml_face_parameters"]
+        == numerical_case["resolved_pml_face_parameters"]
+        for report in reports
+    )
+    time_matches_numerical_case = numerical_case_canonical and all(
+        all(
+            report["time_contract"].get(name) == value
+            for name, value in numerical_case["time_spec"].items()
+        )
+        for report in reports
+    )
+
     gates = {
         "input_reports_are_distinct": ea_audit["report_path"]
         != eb_audit["report_path"],
@@ -153,6 +200,12 @@ def build_pair_certificate(
         "case_scope_exact": all(
             case["scope"] == EXPECTED_SCOPE for case in cases.values()
         ),
+        "numerical_case_contract_identical": numerical_case_identical,
+        "numerical_case_contract_canonical": numerical_case_canonical,
+        "numerical_case_file_audits_ready": case_file_audits_ready,
+        "mesh_matches_numerical_case": mesh_matches_numerical_case,
+        "time_request_matches_numerical_case": time_matches_numerical_case,
+        "pml_matches_numerical_case": pml_matches_numerical_case,
         "case_evaluation_gates_all_true": all(
             case["all_evaluation_gates_true"] for case in cases.values()
         ),
@@ -241,6 +294,7 @@ def build_pair_certificate(
         "gates": gates,
         "failed_gates": [name for name, passed in gates.items() if not passed],
         "source_case_contracts": {
+            "numerical_case_contract": ea["numerical_case_contract"],
             "mesh": ea["mesh"],
             "time_contract": ea["time_contract"],
             "pml_face_parameters": ea["pml_face_parameters"],

@@ -26,6 +26,13 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_exac
     MeshSpec,
     mesh_audit,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
+    ANCHOR_CASE,
+    FreshCaseSpec,
+    case_contract,
+    load_case_contract,
+    realized_time_contract,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_mesh import (
     build_model,
 )
@@ -38,10 +45,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_runt
 )
 
 
-ANCHOR_SPEC = MeshSpec()
-TOTAL_PERIODS = 16
-WINDOW_PERIODS = 4
-COURANT_FACTOR = 0.5
+ANCHOR_SPEC = ANCHOR_CASE.mesh
+TOTAL_PERIODS = ANCHOR_CASE.time.total_periods
+WINDOW_PERIODS = ANCHOR_CASE.time.window_periods
+COURANT_FACTOR = ANCHOR_CASE.time.courant_factor
 STATIONARITY_LIMIT = 5.0e-3
 POLARIZATION_PURITY_MINIMUM = 0.999
 LONGITUDINAL_FIELD_FRACTION_MAXIMUM = 0.05
@@ -345,8 +352,13 @@ def run(
     output_directory: Path,
     source: Path,
     polarization: str,
+    case_spec: FreshCaseSpec = ANCHOR_CASE,
+    case_file_audit: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     output_directory = _output_directory(output_directory)
+    if not isinstance(case_spec, FreshCaseSpec):
+        raise TypeError("case_spec must be a FreshCaseSpec")
+    numerical_case = case_contract(case_spec)
     source_audit = require_source(source)
     repository = Path(__file__).resolve().parents[3]
     provenance = {
@@ -358,11 +370,13 @@ def run(
         "runtime_lock": load_runtime_lock(),
     }
     model = build_model(
-        ANCHOR_SPEC,
+        case_spec.mesh,
         polarization,
-        total_periods=TOTAL_PERIODS,
-        window_periods=WINDOW_PERIODS,
-        courant_factor=COURANT_FACTOR,
+        total_periods=case_spec.time.total_periods,
+        window_periods=case_spec.time.window_periods,
+        courant_factor=case_spec.time.courant_factor,
+        alpha_scale=case_spec.pml_alpha_scale,
+        target_reflection=case_spec.pml_target_reflection,
         include_adjoint_source=False,
         air_only_source_calibration=True,
     )
@@ -392,16 +406,11 @@ def run(
         ),
         "ready": evaluation["ready"],
         "polarization": polarization,
-        "scope": "all-air source-only on validated fresh anchor",
-        "mesh": mesh_audit(ANCHOR_SPEC),
-        "time_contract": {
-            "total_periods": TOTAL_PERIODS,
-            "window_periods": WINDOW_PERIODS,
-            "source_startup_periods": model["source_contract"]["num_startup_periods"],
-            "courant_factor": COURANT_FACTOR,
-            "time_step_s": float(model["config"].time_step_duration),
-            "time_steps_total": int(model["config"].time_steps_total),
-        },
+        "scope": "all-air source-only for one hashed fresh numerical contract",
+        "numerical_case_contract": numerical_case,
+        "numerical_case_file_audit": case_file_audit,
+        "mesh": mesh_audit(case_spec.mesh),
+        "time_contract": realized_time_contract(case_spec, model),
         "source_contract": model["source_contract"],
         "pml_face_parameters": model["pml_face_parameters"],
         "placement": model["placement"],
@@ -421,6 +430,19 @@ def run(
     return payload
 
 
+def resolve_case_input(
+    path: Path | None,
+    expected_sha256: str | None,
+) -> tuple[FreshCaseSpec, dict[str, Any], dict[str, Any]]:
+    """Require an external canonical case file and its byte SHA-256."""
+
+    if path is None or expected_sha256 is None:
+        raise ValueError(
+            "--case-contract and --case-contract-sha256 are both required"
+        )
+    return load_case_contract(path, str(expected_sha256))
+
+
 def main() -> int:
     configured_output = os.environ.get("FDTDX_FRESH_OUTPUT_DIR", "").strip()
     parser = argparse.ArgumentParser()
@@ -431,16 +453,33 @@ def main() -> int:
     )
     parser.add_argument("--source", type=Path, default=configured_source())
     parser.add_argument("--polarization", choices=("Ea", "Eb"), required=True)
+    parser.add_argument("--case-contract", type=Path, required=True)
+    parser.add_argument("--case-contract-sha256", required=True)
     args = parser.parse_args()
     if args.output_dir is None:
         parser.error("--output-dir or FDTDX_FRESH_OUTPUT_DIR is required")
     try:
-        result = run(args.output_dir, args.source, args.polarization)
+        case_spec, _, case_audit = resolve_case_input(
+            args.case_contract, args.case_contract_sha256
+        )
+        result = run(
+            args.output_dir,
+            args.source,
+            args.polarization,
+            case_spec,
+            case_audit,
+        )
     except Exception as error:
         failure = {
             "status": "BLOCKED_FDTDX_FRESH_SOURCE_ONLY_EXCEPTION",
             "ready": False,
             "polarization": args.polarization,
+            "case_contract_path": (
+                str(args.case_contract.expanduser().resolve())
+                if args.case_contract is not None
+                else None
+            ),
+            "case_contract_expected_sha256": args.case_contract_sha256,
             "error": repr(error),
             "traceback": traceback.format_exc(),
         }
@@ -453,6 +492,9 @@ def main() -> int:
         "status": result["status"],
         "ready": result["ready"],
         "polarization": result["polarization"],
+        "case_contract_sha256": result["numerical_case_contract"][
+            "case_contract_sha256"
+        ],
         "incident_power_W": result["evaluation"]["flux"][
             "incident_plane_signed_W"
         ],
