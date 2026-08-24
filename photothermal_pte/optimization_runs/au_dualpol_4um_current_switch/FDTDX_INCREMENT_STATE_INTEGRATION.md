@@ -310,3 +310,41 @@ verified-idle GPU 6/7 pair. All reports and certificates pass.
 - z8 (`196 x 196 x 320`, case `8dc9d5b2717b930b1585cd3a85cb9553dfba642a1290f52d3e5648a8c164193a`): Ea/Eb report hashes `695199ce723103b2f3f8c9332bb3e1bddf640afc17e436943b36b49a3ced6ea4` and `a3d456a47c9364050edc2120de762a663dc8c9c0fa959b460878269b03e94aa5`; pair SHA-256 `ffa8e5706d7dab65622757335e545c8a67dc15c08c420fd661ca5580d7ba3b4d`; mismatch zero; cold forward `101.789/101.407 s`; peak JAX bytes about 7.401 GB.
 
 Roots are `/home/seunghyun200/fdtdx_results/increment_state_source_22d27c4a_z2_t24/` and `..._z8_t24/`; the z4 root was recorded above. These certificates authorize only their exact case hashes. The next runner must rehash and match the appropriate certificate before each material solve.
+
+
+## Increment-state full-z material ladder is not converged
+
+The source-bound runner committed at `74c523fd` evaluated the same exact-binary
+500-nm-arm L reference at z2/z4/z8. Ea and Eb ran concurrently only on
+verified-idle physical B200 GPUs 6/7; GPU 0, which carried an external solver
+process, was not used. Every one of the six material cases passed its internal
+material readback, stationarity, Q/flux closure, source binding, GPU, and
+clean-provenance gates.
+
+External material artifacts:
+
+- z2 root `/home/seunghyun200/fdtdx_results/increment_state_material_74c523fd_fullz_z2_t24/`: Ea/Eb report SHA-256 `a252ec6d7a0a9767ce2d9928725e4ef0bdbd68a53d1d3c9b3fbedf29fd5ccea8` / `014cf2abb2535693c1681e435af4fe45b6ea3cea61f9a6c799dd6080250e455a`; raw SHA-256 `360ff73a1840bd1fe09b1e7caf823e72619aafbbded4a231e9c6a0e53cfbd421` / `06b54bfdb63ab9d6b117bd9643e92ab07564fb836e6e9fb96d1b412da0ab04e3`; total runtime `37.913/38.493 s` and cold forward `15.512/15.521 s`.
+- z4 root `/home/seunghyun200/fdtdx_results/increment_state_material_74c523fd_fullz_z4_t24/`: report SHA-256 `6b080f1d390e4a4dbee7e530685e47910135b7f910c95c39114b06ff3684943e` / `eaad31ca9fa1e355b5ef912399466462416d367fd69d465fb9fc9040c2f31cc8`; raw SHA-256 `3a92380debd24c6bd7a099d20ad5790949b7ccd7e401f5f6cd1e4b42d6a64a9f` / `e1b3e5adb466eb25932ce2466fe4e76a063872ad4db4f32b01702b48d116650f`; total runtime `60.386/60.648 s` and cold forward `36.590/36.605 s`.
+- z8 root `/home/seunghyun200/fdtdx_results/increment_state_material_74c523fd_fullz_z8_t24/`: report SHA-256 `5a1389eb62f676a8081595d9567028ad9bc4713873506cf59c8c66d532f0c540` / `1fd4217d60d349e34027fb36606264b27e571c79b0bf846bddc7a99895034f19`; raw SHA-256 `b79130aebe30ccef12f59c1f41284bb2b1f3c19a73ac0ccf1b5e9793fb226c1b` / `8702488e09ac4c6da306ba666a1ab4907c888b239c5bd31d533402da67b06029`; total runtime `129.888/129.831 s` and cold forward `101.689/101.649 s`.
+
+The fail-closed certificate generator committed at `62137609` rehashed all
+three source pairs, all six reports and NPZ files, recomputed Q integrals and
+common 285-uW normalization from raw arrays, and used component-Yee physical-z
+overlap restriction for the 3-D Q comparison. Certificate:
+`/home/seunghyun200/fdtdx_results/increment_state_full_z_certificate_62137609/FDTDX_INCREMENT_STATE_FULL_DOMAIN_Z_CERTIFICATE.json`,
+SHA-256 `92258e6ef598bcbe403090784e8d22757630cef0322f28605c96abd082e5bcae`.
+All artifact/global checks pass, but both successive mesh pairs fail.
+
+For z4-to-z8, the worst metrics are total-Q change `1.64575e-2` (limit
+`1e-2`), fixed-probe complex-E NRMSE `7.00568e-2` (limit `2e-2`), conservative
+3-D Q NRMSE `1.38791e-1` (limit `5e-2`), component-Q change `3.80702e-1`
+(limit `2e-2`), and material-region complex-E NRMSE `9.38471e-1` (limit
+`5e-2`). Source change, same-run stationarity, Q/flux closure, restriction
+conservation, and all provenance checks pass. This is valid negative evidence:
+the z4 anchor is not a production mesh, and z8 is not yet a converged selection.
+
+Do not start adjoint timing, gray-density optimization, or non-z spatial axes.
+The next permitted extension is a matching z16 canonical 24/4 source pair and
+exact-L Ea/Eb material pair, followed by z8-to-z16 comparison under the same
+gates. Raw outputs remain external. The independent Lumerical session remains
+out of scope.

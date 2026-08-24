@@ -899,3 +899,29 @@ All are ready and bound to canonical 24/4 case hashes. z2/z8 roots are under
 `/home/seunghyun200/fdtdx_results/increment_state_source_22d27c4a_z{2,8}_t24/`.
 Proceed with exact L500 material Ea/Eb cases at each matching source contract;
 never transfer a source certificate across levels.
+
+
+## Increment-state full-z material result: blocked, extend to z16
+
+The clean source-bound material runner is commit `74c523fd`; the fail-closed
+certificate generator is commit `62137609`. The z2/z4/z8 Ea/Eb exact-L500
+material cases all passed internally, with concurrent-pair wall times about
+`38 s`, `61 s`, and `130 s`. This is forward-only timing, not an adjoint or
+optimizer-iteration timing. GPU 6/7 were used only after empty compute-process
+checks; an external process on GPU 0 was left untouched.
+
+Certificate:
+`/home/seunghyun200/fdtdx_results/increment_state_full_z_certificate_62137609/FDTDX_INCREMENT_STATE_FULL_DOMAIN_Z_CERTIFICATE.json`,
+SHA-256 `92258e6ef598bcbe403090784e8d22757630cef0322f28605c96abd082e5bcae`.
+All three source pairs, all six reports/raw NPZs, material laws, raw Q
+integrals, common normalization, runner bytes, and provenance revalidate. Both
+z2-to-z4 and z4-to-z8 comparisons fail. At z4-to-z8 the worst total-Q,
+fixed-probe complex-E, conservative 3-D Q, component-Q, and material-region E
+metrics are `1.646%`, `7.006%`, `13.879%`, `38.070%`, and `93.847%`, versus
+limits of `1%`, `2%`, `5%`, `2%`, and `5%`.
+
+Therefore neither z4 nor z8 may be promoted. Do not start any optimizer,
+adjoint timing, or other mesh axis yet. Add a z16 canonical 24/4 case, generate
+its own source-only Ea/Eb certificate, run the matching exact-L material pair,
+and certify z8-to-z16. Keep raw output external and keep this FDTDX work
+separate from the concurrently owned Lumerical session.
