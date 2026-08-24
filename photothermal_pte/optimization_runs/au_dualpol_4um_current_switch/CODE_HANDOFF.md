@@ -88,6 +88,14 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
 19. `run_lumerical_development_gpu.sh` -- explicit non-B200 development
     launcher. It never issues a B200 certificate and keeps the B200 launcher
     unchanged.
+20. `lumerical_4um_yee_jacobian.py` -- Au-specific, nonperiodic sparse
+    `J_c=d epsilon_Yee,c/d rho_bar` construction. It measures Lumerical's
+    complete `importnk2 -> index_detail` map with 25 layout-only colors,
+    centered interior differences, feasible one-sided 0/1 endpoint
+    differences, locality/roundtrip gates, independent mapping FD, and exact
+    real-design JVP/VJP transpose tests. It performs zero Maxwell solves. The
+    solver-free synthetic tests pass; an actual hash-linked Lumerical density
+    FSP certificate is still required before adjoint use.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.

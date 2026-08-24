@@ -56,3 +56,8 @@ Production remains blocked until a new hash-linked certificate chain proves:
 
 The historical partial-z, O3/TE1, shared-linear, and FDTDX artifacts cannot
 satisfy these gates. They remain diagnostics only.
+
+The Au-specific nonperiodic colored sparse-Jacobian implementation and its
+solver-free synthetic FD/transpose tests now exist. Gate 4 is still open
+because no completed nonuniform density FSP has yet supplied the actual
+Lumerical `index_detail` mesh for that certificate.

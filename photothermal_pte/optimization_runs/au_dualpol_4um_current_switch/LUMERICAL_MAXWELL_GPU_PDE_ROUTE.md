@@ -146,6 +146,14 @@ Use the repository's explicit discrete construction instead:
 
 No empirical gradient scaling is allowed.
 
+The reusable Au-specific implementation now lives in
+`lumerical_4um_yee_jacobian.py`. It is deliberately nonperiodic and therefore
+does not reuse the fencepost ownership assumptions from the older TaIrTe4
+optimizer. Its sparse complex operator and endpoint handling pass synthetic
+local-map FD and transpose tests. This is code validation only: it remains
+blocked from optimizer use until it is built and checked against a completed,
+hash-identical nonuniform `import_density` Lumerical FSP on the selected mesh.
+
 ## Required Au gates on the B200
 
 1. Empty layer, uniform `rho_bar=0`, uniform `rho_bar=1`, and ordinary
