@@ -80,6 +80,13 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
    copied into the external raw NPZ with its physical x/y coordinates. This
    is the first runner path that can carry an actual optimizer topology into
    Lumerical; never reconstruct it from a scalar or an 80x80 PDE cell grid.
+   For an engine-completed exact control whose Python API client was
+   interrupted after submitting the solve, `--recover-completed-fsp` loads
+   the saved FSP and regenerates only NPZ/JSON postprocessing. It fails closed
+   unless the completed engine log, requested GPU UUID, source hash, solver
+   version, and mesh readback all match. That path never calls `runsetup`,
+   `run`, `strict_gpu_run`, or `save`, and it does not accept gray-density or
+   source-only cases.
 18. `run_lumerical_4um_endpoint_b200.sh` -- sequential Ea/Eb exact-empty,
     source-only, imported-rho0, imported-rho1, and exact-full batch. A passed,
     hash-matching source-only JSON is mandatory before every material case.
@@ -402,7 +409,17 @@ Do not copy them into this worktree.
     1.0105--1.3954%. The next 2.5/25-to-1.25/12.5-nm pair also fails:
     empty misses only E2 at 0.6013%, while full changes are
     0.5268--0.6884%. Fixed-mesh symmetry-current controls and all remaining
-    z/polarization/geometry gates stay open. See
+    z/polarization/geometry gates stay open. The next
+    1.25/12.5-to-0.625/6.25-nm staircase pair now passes the Maxwell sub-gate:
+    empty changes are 0.1689--0.2988%, and full changes are
+    0.2668--0.3436%. Its official-Pabs custom-CUDA downstream comparison
+    still fails: empty/full remapped-source L2 NRMSE is 1.5580%/1.6799%, while
+    temperature NRMSE and Tmax changes pass below 0.5%. Material omission is
+    only 0.001019%/0.198992%, so the persistent 53.4/602-ppm zero-current
+    residual is not explained by mixed-index omission alone. The Pabs L2
+    error improves almost exactly first order over three staircase meshes;
+    refine the thin stack with the 6.25-nm bulk limit held fixed before
+    expanding x/y. See
     `LUMERICAL_INTERFACE_METHOD_FINDINGS.md`.
 
 ## Next correct sequence
@@ -424,11 +441,13 @@ Do not copy them into this worktree.
    omission is below 0.5%, while its Maxwell observables agree with CV0 below
    0.5%. The staircase 5/50-to-2.5/25-nm linked refinement is complete and
    fails the Maxwell prerequisite. The matching staircase 1.25/12.5-nm set
-   is also complete; its pair with 2.5/25 nm still fails narrowly. Run the
-   staircase 0.625/6.25-nm source/empty/MCM6-full set next and compare
-   1.25/12.5 to 0.625/6.25 nm. Do not hide any gap by rescaling, and do not
-   begin x/y convergence until downstream and remaining Eb/simple-L z gates
-   pass.
+   is also complete; its pair with 2.5/25 nm still fails narrowly. The
+   staircase 0.625/6.25-nm source/empty/MCM6-full set and comparison are now
+   complete: Maxwell and temperature sub-gates pass, but remapped-Pabs L2 and
+   symmetry-current gates fail. Next isolate thin-stack z refinement with
+   bulk/air/PML held at 6.25 nm, and separately diagnose the zero-current
+   residual. Do not hide any gap by rescaling, and do not begin x/y
+   convergence until downstream and remaining Eb/simple-L z gates pass.
 4. On the actual B200, use `25_run_lumerical_4um_exact_au_control.py` to pass
    source-only Ea/Eb first, then matching ordinary empty/full/simple-L exact
    Au time, Q/flux, linked stack+bulk/air/PML-z, x/y, PML-layer, and domain

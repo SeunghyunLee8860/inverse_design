@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import replace
+import importlib.util
+from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 
@@ -32,6 +35,17 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     BASELINE,
     BASELINE_SOURCE_OBJECT_W0_UM,
 )
+
+
+_RUNNER_PATH = Path(__file__).with_name(
+    "25_run_lumerical_4um_exact_au_control.py"
+)
+_RUNNER_SPEC = importlib.util.spec_from_file_location(
+    "au_dualpol_4um_exact_control_runner_test", _RUNNER_PATH
+)
+assert _RUNNER_SPEC is not None and _RUNNER_SPEC.loader is not None
+_RUNNER = importlib.util.module_from_spec(_RUNNER_SPEC)
+_RUNNER_SPEC.loader.exec_module(_RUNNER)
 
 
 class _FakeFdtd:
@@ -217,6 +231,37 @@ def test_source_only_and_material_layout_share_solver_source_and_mesh() -> None:
     assert material_audit["geometry"]["exact_au_geometry"][
         "geometry_sha256"
     ] == "9d543a428f89fe5ea2f6910d2d98b5f97dc870cd1aac9b928760a6b4656df411"
+
+
+def test_completed_fsp_layout_audit_matches_fresh_exact_layout() -> None:
+    for case in ("empty", "full", "simple_L"):
+        expected = build_layout(
+            _FakeFdtd(),
+            case=case,
+            polarization="Ea",
+            spec=BASELINE,
+            source_object_w0_m=4.0e-6,
+        )
+        args = SimpleNamespace(
+            case=case,
+            au_max_coefficients=6,
+            au_fit_tolerance=0.0,
+        )
+        source_contract = source_calibration_contract(
+            BASELINE, "Ea", source_object_w0_m=4.0e-6
+        )
+        recovered = _RUNNER._exact_layout_audit_without_mutation(
+            args, BASELINE, source_contract
+        )
+        assert recovered == expected
+
+
+def test_completed_run_wall_time_comes_only_from_engine_log(tmp_path) -> None:
+    (tmp_path / "run_p0.log").write_text(
+        "Overall wall time measurements in seconds: 1972.364367\n",
+        encoding="utf-8",
+    )
+    assert _RUNNER._completed_run_wall_time_s(tmp_path) == 1972.364367
 
 
 def test_imported_density_uses_same_solver_source_mesh_and_hashes_nodes() -> None:

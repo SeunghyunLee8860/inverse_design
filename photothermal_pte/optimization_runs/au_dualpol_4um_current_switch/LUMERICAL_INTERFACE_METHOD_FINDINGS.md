@@ -88,8 +88,20 @@ still fails narrowly. Empty Q/flux/complex-E pass at
 0.6877%/0.6884%/0.5268%/0.6232%. The next bounded step is the matching
 staircase 0.625/6.25-nm set and the 1.25/12.5-to-0.625/6.25-nm pair.
 
+That 0.625/6.25-nm set is now complete. The final staircase Maxwell pair
+passes: empty Q/flux/complex-E/E2 changes are
+0.2225%/0.2209%/0.1689%/0.2988%, and full-Au changes are
+0.3436%/0.3431%/0.2668%/0.3173%. Official-filter material omission remains
+below 0.5% at both meshes. The custom-CUDA downstream pair nevertheless fails
+because empty/full remapped-Pabs volume-L2 NRMSE is 1.5580%/1.6799%. The
+corresponding TaIrTe4 temperature and Tmax metrics now pass below 0.5%.
+Three-mesh Pabs evidence is nearly first-order, so staircase is still not a
+final z mesh; see `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`.
+
 Ea symmetry-current cancellation at the fixed 5/50-nm mesh is still only
 about `5.42e-5` (empty) and `5.68e-4` (full), versus the one-ppm diagnostic
-gate, so its cause must remain visible once a staircase Maxwell pair passes.
+gate. The finest linked pair still gives `5.344e-5` and `6.020e-4` even though
+staircase material omission is tiny, so unassigned conformal power alone does
+not explain this residual. Its cause must remain visible and be isolated.
 Eb, simple-L, final topology, x/y, thermal/electrical mesh, and B200
 certification remain open.

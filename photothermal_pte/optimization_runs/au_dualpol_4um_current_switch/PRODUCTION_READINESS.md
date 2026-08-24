@@ -61,6 +61,15 @@ and the next 2.5/25-to-1.25/12.5-nm pair also fails (empty E2 0.6013%;
 full metrics 0.5268--0.6884%). A still finer staircase pair is required
 before any downstream or x/y gate; see
 `LUMERICAL_INTERFACE_METHOD_FINDINGS.md`.
+The staircase 0.625/6.25-nm source/empty/MCM6-full set is now complete. Its
+pair with 1.25/12.5 nm passes every empty/full Maxwell scalar and endpoint
+field gate (maximum change 0.3436%). The official-Pabs custom-CUDA downstream
+pair still fails: empty/full remapped-source L2 NRMSE is 1.5580%/1.6799%,
+although TaIrTe4 temperature NRMSE and Tmax changes now pass below 0.5% and
+material omission is below 0.2%. The three-mesh source error is nearly
+first-order. The 53.4/602-ppm zero-current residual also persists after
+material omission becomes tiny and needs a separate symmetry/tolerance audit.
+Production z convergence therefore remains blocked.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine

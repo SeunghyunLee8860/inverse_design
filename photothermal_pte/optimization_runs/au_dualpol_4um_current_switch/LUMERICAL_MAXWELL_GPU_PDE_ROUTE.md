@@ -258,6 +258,16 @@ blind 0.3125-nm CV0 extension. See `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`. Eb,
 simple-L, final topology, and B200 gates remain open, so x/y convergence
 remains blocked.
 
+That interface axis selected staircase, and the staircase
+1.25/12.5-to-0.625/6.25-nm pair now passes all empty/full Maxwell sub-gates.
+Official material omission is below 0.2% and the temperature metrics pass,
+but remapped-Pabs volume-L2 NRMSE remains 1.5580%/1.6799% for empty/full and
+the symmetry-current diagnostic remains above one ppm. The Pabs error is
+nearly first-order over three meshes and is localized at the z=0 thin-stack
+interface. The next bounded z test refines stack dz while holding the already
+fine 6.25-nm bulk/air/PML limit fixed; it is not permission to start x/y or
+optimization.
+
 The concrete forward entry point is
 `25_run_lumerical_4um_exact_au_control.py`. It has an audit-only path that
 does not open Lumerical and a Maxwell path that calls the selected accelerator

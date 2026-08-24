@@ -68,6 +68,8 @@ plane.
 | staircase linked 5/50 -> 2.5/25 nm, exact full | 1.3921% | 1.3954% | 1.0105% | 1.1966% | fail |
 | staircase linked 2.5/25 -> 1.25/12.5 nm, exact empty | 0.4549% | 0.4542% | 0.3403% | 0.6013% | fail |
 | staircase linked 2.5/25 -> 1.25/12.5 nm, exact full | 0.6877% | 0.6884% | 0.5268% | 0.6232% | fail |
+| staircase linked 1.25/12.5 -> 0.625/6.25 nm, exact empty | 0.2225% | 0.2209% | 0.1689% | 0.2988% | pass |
+| staircase linked 1.25/12.5 -> 0.625/6.25 nm, exact full | 0.3436% | 0.3431% | 0.2668% | 0.3173% | pass |
 
 The 5-to-2.5 nm isolated result showed that the thin Au/TaIrTe4/SiO2 stack was
 then the dominant z error, not the 50-to-25 nm bulk/air/PML refinement. The
@@ -107,6 +109,22 @@ geometry, GPU UUID, and solver version; all fixed non-z mesh fields; and each
 run's source-calibration and solver gates before comparing anything. The raw
 comparison JSON files are stored beside the corresponding finest empty/full
 artifacts, not in Git.
+
+The matching staircase 0.625/6.25-nm source, empty, and MCM6 full set is now
+complete on a realized `183 x 183 x 1600` grid. Every individual solver gate
+passes, and the last two table rows close the staircase Maxwell sub-gate for
+Ea exact-empty/full. The full run reached the `1e-7` decay threshold after
+96,963 iterations; its engine log reports 1972.364 s overall wall time and
+0.09270% native-Q/six-face closure. When the controlling Python API process
+was interrupted after submitting the solve, Lumerical still completed and
+saved the 1.467-GB FSP. The new fail-closed `--recover-completed-fsp` path
+loaded that completed FSP and generated the 512-MB raw NPZ/JSON without
+calling `runsetup`, `run`, the GPU engine, or `save` again.
+
+This Maxwell pass does not close z convergence. The official-Pabs custom-CUDA
+downstream comparison still fails its remapped-source and zero-current gates;
+see `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`. Eb, simple-L, the final topology,
+and B200 also remain untested.
 
 The coordinate-only material partition is not a material-resolved convergence
 metric. Refining z changes which staggered/interface samples are assigned to a

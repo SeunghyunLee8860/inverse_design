@@ -53,6 +53,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     TARGET_MONITOR,
     build_layout,
     coordinate_material_partition,
+    control_volume_bounds,
     material_fit_readback,
     requested_mesh_readback_gates,
     source_calibration_contract,
@@ -78,7 +79,11 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     AU_MATERIAL_MAX_COEFFICIENTS,
     MATERIAL_FIT_TOLERANCE,
     au_fit_configuration,
+    control_geometry_audits,
+    design_edges,
     exact_control_masks,
+    mask_rectangles,
+    material_contract_audit,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_maxwell_contract import (  # noqa: E402
     ACCELERATOR_POLICIES,
@@ -247,6 +252,15 @@ def _parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--threads", type=int, default=8)
     parser.add_argument("--audit-only", action="store_true")
+    parser.add_argument(
+        "--recover-completed-fsp",
+        action="store_true",
+        help=(
+            "Load an already completed exact-control FSP and regenerate only "
+            "the NPZ/JSON postprocessing artifacts. This path never calls "
+            "runsetup(), run(), strict_gpu_run(), or save()."
+        ),
+    )
     args = parser.parse_args()
     if not np.isfinite(args.source_object_w0_um) or args.source_object_w0_um <= 0:
         parser.error("--source-object-w0-um must be finite and positive")
@@ -270,6 +284,12 @@ def _parse_args() -> argparse.Namespace:
             parser.error("--rho must be finite and in [0,1]")
     elif args.rho is not None or args.rho_file is not None:
         parser.error("--rho/--rho-file are valid only for import_density")
+    if args.recover_completed_fsp and args.audit_only:
+        parser.error("--recover-completed-fsp and --audit-only are mutually exclusive")
+    if args.recover_completed_fsp and args.case in ("source_only", DENSITY_CONTROL):
+        parser.error(
+            "--recover-completed-fsp currently accepts only exact material controls"
+        )
     if (
         args.case != "source_only"
         and args.source_calibration_json is None
@@ -489,6 +509,84 @@ def _gpu_log_evidence(
         and evidence["simulation_completed_successfully"]
     )
     return evidence
+
+
+def _completed_run_wall_time_s(output: Path) -> float | None:
+    """Read the solver-reported wall time without estimating from process time."""
+
+    values: list[float] = []
+    for path in sorted(output.glob("*.log")):
+        text = path.read_text(errors="replace")
+        values.extend(
+            float(value)
+            for value in re.findall(
+                r"Overall wall time measurements in seconds:\s*"
+                r"([0-9]+(?:\.[0-9]+)?)",
+                text,
+            )
+        )
+    return values[-1] if values else None
+
+
+def _exact_layout_audit_without_mutation(
+    args: argparse.Namespace,
+    spec: LumericalMeshSpec,
+    source_contract: dict[str, Any],
+) -> dict[str, Any]:
+    """Rebuild deterministic metadata without changing a loaded result session."""
+
+    if args.case not in GEOMETRY_CONTROLS:
+        raise ValueError("completed-FSP recovery requires an exact geometry control")
+    mask = exact_control_masks()[args.case]
+    x_edges, y_edges = design_edges()
+    z_bounds = np.asarray([0.0, CONTRACT.design_thickness_m])
+    bounds = control_volume_bounds(spec)
+    faces = {
+        f"{axis}_{side}": {
+            "name": f"au_dualpol_4um_flux_{axis}_{side}",
+            "axis": axis,
+            "side": side,
+            "outward_sign": -1.0 if side == "min" else 1.0,
+        }
+        for axis in "xyz"
+        for side in ("min", "max")
+    }
+    geometry = {
+        "status": "PROVISIONAL_UNCONFIRMED_DEVICE_GEOMETRY",
+        "exact_au_geometry": control_geometry_audits()[args.case],
+        "Au_rectangle_count": len(
+            mask_rectangles(
+                mask,
+                x_edges_m=x_edges,
+                y_edges_m=y_edges,
+                z_bounds_m=z_bounds,
+            )
+        ),
+        "layers_z_m": {
+            "Si": [spec.z_min_m, -385.0e-9],
+            "SiO2": [-385.0e-9, -100.0e-9],
+            "TaIrTe4": [-100.0e-9, 0.0],
+            "Au": [0.0, CONTRACT.design_thickness_m],
+        },
+        "device_confirmation_required": True,
+    }
+    return {
+        "case": args.case,
+        "classification": (
+            "provisional exact-Au or relaxed-density Maxwell/Q control; "
+            "no thermal, electrical, PTE, adjoint, or optimization solve"
+        ),
+        "source_calibration_contract": source_contract,
+        "material_input_audit": material_contract_audit(
+            au_max_coefficients=args.au_max_coefficients,
+            au_fit_tolerance=args.au_fit_tolerance,
+        ),
+        "geometry": geometry,
+        "control_volume_bounds_m": {
+            axis: list(values) for axis, values in bounds.items()
+        },
+        "flux_faces": faces,
+    }
 
 
 def _face_fluxes(
@@ -864,9 +962,16 @@ def main() -> int:
     output, fsp_path, npz_path, result_path = _output_paths(
         args, spec, projected_density
     )
-    for protected in (fsp_path, npz_path, result_path):
+    protected_paths = (
+        (npz_path, result_path)
+        if args.recover_completed_fsp
+        else (fsp_path, npz_path, result_path)
+    )
+    for protected in protected_paths:
         if protected.exists():
             raise RuntimeError(f"refusing to overwrite raw artifact: {protected}")
+    if args.recover_completed_fsp and not fsp_path.is_file():
+        raise RuntimeError(f"completed FSP does not exist: {fsp_path}")
     output.mkdir(parents=True, exist_ok=True)
     result: dict[str, Any] = {
         "status": "BLOCKED_EXACT_AU_4UM_CONTROL",
@@ -901,6 +1006,11 @@ def main() -> int:
             "gain": False,
             "field_or_Q_rescaling": False,
         },
+        "execution_mode": (
+            "recover_completed_fsp_without_Maxwell_rerun"
+            if args.recover_completed_fsp
+            else "new_Maxwell_run"
+        ),
     }
     fdtd = None
     try:
@@ -908,7 +1018,32 @@ def main() -> int:
         sys.path.insert(0, str(LUMAPI_PATH.parent))
         import lumapi
 
-        fdtd = lumapi.FDTD(hide=True, serverArgs={"platform": "offscreen"})
+        if args.recover_completed_fsp:
+            log = lumerical_audit.log_audit(output)
+            gpu_log = _gpu_log_evidence(
+                output,
+                requested_gpu_index=args.gpu_index,
+                requested_gpu_uuid=requested_gpu_uuid,
+            )
+            if not log["simulation_completed_successfully"]:
+                raise RuntimeError(
+                    "refusing completed-FSP recovery because the engine log "
+                    "does not prove successful completion"
+                )
+            if not gpu_log["passed"]:
+                raise RuntimeError(
+                    "refusing completed-FSP recovery because the engine log "
+                    "does not prove the requested GPU execution"
+                )
+            fdtd = lumapi.FDTD(
+                str(fsp_path),
+                hide=True,
+                serverArgs={"platform": "offscreen"},
+            )
+        else:
+            fdtd = lumapi.FDTD(
+                hide=True, serverArgs={"platform": "offscreen"}
+            )
         solver_version = str(fdtd.version())
         result["solver_version"] = solver_version
         if source_record is not None:
@@ -924,47 +1059,79 @@ def main() -> int:
                     "source calibration solver-version gate failed: "
                     f"{source_validation}"
                 )
-        layout = build_layout(
-            fdtd,
-            case=args.case,
-            polarization=args.polarization,
-            spec=spec,
-            source_object_w0_m=source_object_w0_m,
-            projected_density=projected_density,
-            au_max_coefficients=args.au_max_coefficients,
-            au_fit_tolerance=args.au_fit_tolerance,
-        )
-        _configure_gpu_resource(fdtd, gpu_device, args.threads)
-        fdtd.runsetup()
-        pre_mesh = lumerical_audit.mesh_readback(fdtd)
-        if not pre_mesh.get("available"):
-            raise RuntimeError(f"pre-run mesh readback unavailable: {pre_mesh}")
-        mesh_gate = requested_mesh_readback_gates(
-            pre_mesh["coordinate_arrays"], spec
-        )
-        if not mesh_gate["all"]:
-            raise RuntimeError(f"requested mesh was not realized: {mesh_gate}")
-        material_readback = None
-        if args.case != "source_only":
+        if args.recover_completed_fsp:
+            layout = _exact_layout_audit_without_mutation(
+                args, spec, source_contract
+            )
+            pre_mesh = lumerical_audit.mesh_readback(fdtd)
+            if not pre_mesh.get("available"):
+                raise RuntimeError(
+                    f"completed-FSP mesh readback unavailable: {pre_mesh}"
+                )
+            mesh_gate = requested_mesh_readback_gates(
+                pre_mesh["coordinate_arrays"], spec
+            )
+            if not mesh_gate["all"]:
+                raise RuntimeError(
+                    f"completed FSP does not realize requested mesh: {mesh_gate}"
+                )
             dt_s = _scalar(fdtd.getnamed("FDTD", "dt"), "FDTD.dt")
             material_readback = material_fit_readback(fdtd, dt_s=dt_s)
             if not all(material_readback["gates"].values()):
                 raise RuntimeError(
                     f"material fit readback failed: {material_readback}"
                 )
-        fdtd.save(str(fsp_path))
-        started = time.monotonic()
-        resource = lumerical_audit.strict_gpu_run(
-            fdtd, f"au_dualpol_4um_{args.case}_{args.polarization}"
-        )
-        wall_time_s = time.monotonic() - started
-        fdtd.save(str(fsp_path))
-        log = lumerical_audit.log_audit(output)
-        gpu_log = _gpu_log_evidence(
-            output,
-            requested_gpu_index=args.gpu_index,
-            requested_gpu_uuid=requested_gpu_uuid,
-        )
+            resource = "recovered completed FSP; GPU proven by original engine log"
+            wall_time_s = _completed_run_wall_time_s(output)
+            result["completed_FSP_recovery"] = {
+                "FSP_loaded": str(fsp_path),
+                "original_solver_wall_time_source": "engine log",
+                "Maxwell_run_called": False,
+                "runsetup_called": False,
+                "FSP_save_called": False,
+            }
+        else:
+            layout = build_layout(
+                fdtd,
+                case=args.case,
+                polarization=args.polarization,
+                spec=spec,
+                source_object_w0_m=source_object_w0_m,
+                projected_density=projected_density,
+                au_max_coefficients=args.au_max_coefficients,
+                au_fit_tolerance=args.au_fit_tolerance,
+            )
+            _configure_gpu_resource(fdtd, gpu_device, args.threads)
+            fdtd.runsetup()
+            pre_mesh = lumerical_audit.mesh_readback(fdtd)
+            if not pre_mesh.get("available"):
+                raise RuntimeError(f"pre-run mesh readback unavailable: {pre_mesh}")
+            mesh_gate = requested_mesh_readback_gates(
+                pre_mesh["coordinate_arrays"], spec
+            )
+            if not mesh_gate["all"]:
+                raise RuntimeError(f"requested mesh was not realized: {mesh_gate}")
+            material_readback = None
+            if args.case != "source_only":
+                dt_s = _scalar(fdtd.getnamed("FDTD", "dt"), "FDTD.dt")
+                material_readback = material_fit_readback(fdtd, dt_s=dt_s)
+                if not all(material_readback["gates"].values()):
+                    raise RuntimeError(
+                        f"material fit readback failed: {material_readback}"
+                    )
+            fdtd.save(str(fsp_path))
+            started = time.monotonic()
+            resource = lumerical_audit.strict_gpu_run(
+                fdtd, f"au_dualpol_4um_{args.case}_{args.polarization}"
+            )
+            wall_time_s = time.monotonic() - started
+            fdtd.save(str(fsp_path))
+            log = lumerical_audit.log_audit(output)
+            gpu_log = _gpu_log_evidence(
+                output,
+                requested_gpu_index=args.gpu_index,
+                requested_gpu_uuid=requested_gpu_uuid,
+            )
         result.update(
             {
                 "GPU_resource_used": resource,
@@ -996,6 +1163,10 @@ def main() -> int:
             "pre_run_mesh_readback_passed": bool(mesh_gate["all"]),
             "post_run_mesh_readback_available": bool(post_mesh.get("available")),
         }
+        if args.recover_completed_fsp:
+            common_gates[
+                "completed_FSP_recovered_without_Maxwell_rerun"
+            ] = True
         arrays: dict[str, np.ndarray] = {
             f"pre_mesh_{axis}_m": np.asarray(
                 pre_mesh["coordinate_arrays"][axis]
