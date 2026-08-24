@@ -234,6 +234,14 @@ MCM6 passed closure at `0.08935%` and is now the default. See
 but still has 1.849% complex-field endpoint error versus exact MCM6, so that
 parity gate remains open.
 
+With stable MCM6, the 5/50-nm to 2.5/25-nm linked z pair was rerun on the RTX
+development GPU. Isolating the axes shows that bulk/air/PML 50-to-25-nm
+refinement passes, while thin-stack 5-to-2.5-nm refinement fails the 0.5%
+contract (1.3298% normalized-Q change and 0.9850% complex-field NRMSE). The
+linked pair also fails. `LUMERICAL_Z_MESH_FINDINGS.md` records the full table.
+The prior strict-duration result used failed MCM20, so MCM6 time convergence
+must be rerun before extending z to 1.25/12.5 nm.
+
 The concrete forward entry point is
 `25_run_lumerical_4um_exact_au_control.py`. It has an audit-only path that
 does not open Lumerical and a Maxwell path that calls the selected accelerator

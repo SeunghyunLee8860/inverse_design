@@ -340,6 +340,16 @@ Do not copy them into this worktree.
 8. The default source-object waist in the unified runner and B200 endpoint
    batch is now the calibrated value. Every non-baseline mesh still reruns and
    revalidates source-only rather than assuming the calibration transfers.
+9. MCM6 z refinement is now measured rather than assumed. The isolated
+   bulk/air/PML 50-to-25-nm refinement passes the 0.5% gate, but the isolated
+   thin-stack 5-to-2.5-nm refinement fails: source-normalized Q changes
+   1.3298%, complex endpoint field changes 0.9850%, and E2 changes 1.1618%.
+   The linked 5/50-to-2.5/25-nm pair also fails. See
+   `LUMERICAL_Z_MESH_FINDINGS.md`; 2.5/25 nm is not a converged production
+   mesh.
+10. The prior 2-ps/1e-9 run used rejected MCM20. It cannot certify MCM6 time
+    convergence. Rerun the source-only/empty/full MCM6 duration/decay pair
+    before extending z or beginning x/y convergence.
 
 ## Next correct sequence
 
@@ -349,10 +359,11 @@ Do not copy them into this worktree.
    full-domain-z tables as historical diagnostics, not evidence for Lumerical
    or a production mesh. The completed shared-linear factor-1/2/4 sweep is
    useful negative evidence: its stable final pair failed in all 6/6 cases.
-3. Treat the CV0/CV1/staircase, 5/2.5-nm z, strict-decay, and MCM sweep as RTX
-   development evidence only. Use Au MCM6, not 20. Restart spatial convergence
-   from the passed 5-nm CV0 MCM6 exact-full result; compare it to 2.5-nm MCM6,
-   then refine x/y and the linked bulk/PML axes.
+3. Treat the CV0/CV1/staircase, z, time, and MCM sweeps as RTX development
+   evidence only. Use Au MCM6, not 20. First rerun the MCM6 1-ps versus 2-ps
+   duration/decay axis with matching source-only/empty/full controls. Then
+   extend the failed linked z pair from 2.5/25 nm to 1.25/12.5 nm. Do not begin
+   x/y convergence until the z pair passes every 0.5% scalar/field gate.
 4. On the actual B200, use `25_run_lumerical_4um_exact_au_control.py` to pass
    source-only Ea/Eb first, then matching ordinary empty/full/simple-L exact
    Au time, Q/flux, linked stack+bulk/air/PML-z, x/y, PML-layer, and domain

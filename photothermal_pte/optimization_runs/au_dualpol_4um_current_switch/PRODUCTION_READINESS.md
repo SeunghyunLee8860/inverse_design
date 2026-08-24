@@ -37,6 +37,13 @@ coefficients. The rho=1 imported carrier passes its own closure but still has
 1.849% complex-field endpoint error versus exact MCM6. Exact/import endpoint
 parity and production spatial convergence therefore remain open; see
 `AU_MCM_FIT_FINDINGS.md`.
+The subsequent MCM6 z study passed the isolated bulk/air/PML 50-to-25-nm
+refinement but failed the thin-stack 5-to-2.5-nm refinement: normalized Q,
+complex endpoint field, and E2 changed 1.3298%, 0.9850%, and 1.1618%,
+respectively, against 0.5% gates. The linked 5/50-to-2.5/25-nm pair also
+failed, so 2.5/25 nm is not a converged mesh. The earlier strict 2-ps run used
+rejected MCM20 and cannot close the MCM6 time axis. See
+`LUMERICAL_Z_MESH_FINDINGS.md`.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine
