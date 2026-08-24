@@ -1,0 +1,43 @@
+{
+  "status": "FDTDX_GPU_SMOKE_VALIDATED_PLACEMENT_NOT_YET_VALIDATED",
+  "created_local_date": "2026-08-24",
+  "python_version": [3, 12, 3],
+  "required_packages": {
+    "equinox": "0.13.8",
+    "fdtdx": "0.6.2",
+    "jax": "0.11.1",
+    "jax-cuda13-pjrt": "0.11.1",
+    "jax-cuda13-plugin": "0.11.1",
+    "jaxlib": "0.11.1",
+    "numpy": "2.4.6",
+    "nvidia-cublas": "13.6.1.10",
+    "nvidia-cuda-cccl": "13.3.3.4.1",
+    "nvidia-cuda-crt": "13.3.73",
+    "nvidia-cuda-cupti": "13.3.75",
+    "nvidia-cuda-nvcc": "13.3.73",
+    "nvidia-cuda-nvrtc": "13.3.33",
+    "nvidia-cuda-runtime": "13.3.29",
+    "nvidia-cudnn-cu13": "9.24.0.43",
+    "nvidia-cufft": "12.3.0.29",
+    "nvidia-cusolver": "12.2.6.9",
+    "nvidia-cusparse": "12.8.2.51",
+    "nvidia-nccl-cu13": "2.31.2",
+    "nvidia-nvjitlink": "13.3.33",
+    "nvidia-nvshmem-cu13": "3.7.2",
+    "nvidia-nvvm": "13.3.73",
+    "optax": "0.2.8",
+    "pytreeclass": "0.11.1",
+    "scipy": "1.18.1",
+    "tidy3d": "2.12.0"
+  },
+  "host_observation": {
+    "venv": "/home/seunghyun200/.venvs/fdtdx-fresh-py312",
+    "nvidia_driver": "580.126.20",
+    "gpu_model": "NVIDIA B200",
+    "smoke_physical_gpu_index": 7,
+    "smoke_gpu_uuid": "GPU-b288c55e-827d-e6b4-d05a-4b27eb65477f",
+    "jax_backend": "gpu",
+    "jax_visible_device_count": 1,
+    "smoke_checksum": 66672640.0
+  }
+}

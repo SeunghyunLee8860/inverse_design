@@ -1,6 +1,6 @@
 # Fresh FDTDX dependency and mesh bridge
 
-Status: **PINNED_SOURCE_VALIDATED_RUNTIME_NOT_YET_CERTIFIED**
+Status: **GPU_RUNTIME_VALIDATED_PLACEMENT_NOT_YET_CERTIFIED**
 
 The fresh exact-binary route pins the official FDTDX repository at:
 
@@ -56,18 +56,34 @@ their historical behavior. The fresh bridge always supplies it.
 This prevents the fresh campaign from inheriting FDTDX's locked-source
 `alpha_start` default based on 1.55 um.
 
-## Remaining runtime blocker
+## Runtime preflight
 
-No user-owned FDTDX/JAX/CUDA environment existed at the start of this audit.
-The source checkout is validated, but no package lock, GPU device identity,
-minimal placement, or source-only field solve has yet been certified.
+The user-owned environment is
+`/home/seunghyun200/.venvs/fdtdx-fresh-py312`. The exact Python, JAX, CUDA
+plugin/library, FDTDX, NumPy, SciPy, and solver dependency versions are pinned
+in `fdtdx_runtime_lock.json`. On 2026-08-24, a one-device JAX calculation
+passed on an otherwise idle B200 without memory preallocation.
 
-Do not run a reference sweep until a fresh runtime preflight proves:
+Every fresh GPU command must go through `run_fdtdx_fresh_gpu.sh`. The wrapper:
 
-1. exact Python/JAX/JAXLIB/CUDA/cuDNN/FDTDX package identities;
-2. FDTDX imports only from the locked source path;
-3. one explicitly selected idle GPU is visible;
-4. a tiny GPU JAX calculation succeeds without using the Lumerical GPU;
-5. the anchor model places exact material/source/monitor bounds with explicit
-   PML readback;
-6. raw results use a portable, explicitly configured directory.
+1. requires an explicitly selected physical GPU and a new explicit raw-output
+   directory;
+2. audits the complete locked source checkout before importing it;
+3. rejects a GPU with another compute process, including a Lumerical engine;
+4. rejects package drift and an FDTDX import from site-packages;
+5. exposes exactly one GPU and disables JAX memory preallocation;
+6. runs a small GPU calculation before executing the requested Python entry
+   point.
+
+Example (only after rechecking that the selected GPU is idle):
+
+```bash
+mkdir -p /home/seunghyun200/fdtdx_results/fresh_placement_001
+FDTDX_FRESH_GPU_INDEX=7 \
+FDTDX_FRESH_OUTPUT_DIR=/home/seunghyun200/fdtdx_results/fresh_placement_001 \
+  ./run_fdtdx_fresh_gpu.sh -m your.module
+```
+
+The remaining blockers are the anchor-model placement/readback audit and a
+source-only field solve. No reference sweep or optimizer is authorized by the
+runtime smoke certificate alone.
