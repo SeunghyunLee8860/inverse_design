@@ -9,6 +9,7 @@ import json
 import math
 import os
 from pathlib import Path
+import traceback
 from typing import Any
 
 import numpy as np
@@ -60,7 +61,11 @@ def weighted_error_diagnostic(
     boundary: dict[str, Any] = {}
     trimmed: dict[str, Any] = {}
     for count in (1, 2):
-        indices = np.r_[0:count, left.shape[-1] - count : left.shape[-1]]
+        effective_count = min(count, left.shape[-1])
+        indices = np.r_[
+            0:effective_count,
+            max(0, left.shape[-1] - effective_count) : left.shape[-1],
+        ]
         indices = np.unique(indices)
         boundary[str(count)] = {
             "planes_each_side": count,
@@ -376,6 +381,7 @@ def main() -> int:
             "status": STATUS_BLOCKED,
             "ready": False,
             "error": repr(error),
+            "traceback": traceback.format_exc(),
             "optimizer_start_allowed": False,
             "z32_start_allowed_by_this_diagnostic": False,
         }

@@ -39,3 +39,13 @@ def test_weighted_error_diagnostic_rejects_bad_shape_or_weight():
     bad[0, 0, 0] = -1.0
     with pytest.raises(ValueError):
         weighted_error_diagnostic(field, field, bad)
+
+
+def test_single_plane_probe_boundary_diagnostic_is_valid():
+    coarse = np.ones((2, 2, 1), dtype=np.complex128)
+    fine = coarse * 1.1
+    result = weighted_error_diagnostic(coarse, fine, np.ones(coarse.shape))
+    assert result["complex_E_NRMSE"] > 0.0
+    assert result["boundary_concentration"]["1"]["error_fraction"] == 1.0
+    assert result["boundary_concentration"]["2"]["error_fraction"] == 1.0
+    assert result["trimmed_boundary_complex_E_NRMSE"] == {}
