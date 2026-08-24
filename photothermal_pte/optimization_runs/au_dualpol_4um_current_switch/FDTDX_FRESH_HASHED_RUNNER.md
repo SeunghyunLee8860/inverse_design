@@ -247,8 +247,20 @@ SHA-256 is
 `95113736c93c16e3d78504f8bc2591f25f06d725af21eb855dc02708af83df14`.
 Common-285-uW total Q is `67.3793 uW` for Ea and `116.4644 uW` for Eb. This is
 optical heat-source evidence only: the certificate forbids PTE-current and
-optimizer claims. z16 and z32 still need their own source and material pairs;
-adjoint, thermal/electrical, and optimizer paths remain disabled throughout.
+optimizer claims.
+
+The z16 all-air source pair is now independently complete. Ea report/NPZ hashes
+are `9b6ced4e90c912a4ce00b99803b63645d4e85ec1a10a8f7c90ca6d9747298695` /
+`40a2f60caa2462f71c91a59a699f1e212204a49e654b0f97a6e2391b4bd28632`;
+Eb hashes are
+`3e9d1d07f68c53908e52678fd42ae4068286cece7f3ba4542c7bff6b1465045d` /
+`836a425b661c3aee8ec949cf7569ce4f55a1b2b389766fcb7eac5a86d734dd72`.
+The clean pair certificate SHA-256 is
+`7cfcd8280cf63194aa53f328661613dd942e2b0da0f4045f2b4d2b8f881c7d35`.
+Both source cases pass, the pair mismatch is `0.0`, and no per-polarization
+scale is introduced. z16 material solves and the z8-to-z16 comparison remain
+next; z32 still needs its own source and material pairs. Adjoint,
+thermal/electrical, and optimizer paths remain disabled throughout.
 
 ## Convergence rule
 

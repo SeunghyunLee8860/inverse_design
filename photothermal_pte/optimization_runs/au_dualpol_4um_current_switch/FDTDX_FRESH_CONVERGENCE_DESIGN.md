@@ -1,6 +1,6 @@
 # Fresh FDTDX convergence design for exact-binary Au
 
-Status: **L500 time settling and Courant convergence validated; the first full-domain-z ladder is rejected; candidate two-pole z8 forward pair validated; no spatial-mesh claim and no optimizer permission**
+Status: **L500 time settling and Courant convergence validated; the first full-domain-z ladder is rejected; candidate two-pole z8 forward pair and z16 source pair validated; no spatial-mesh claim and no optimizer permission**
 
 This document defines the next FDTDX work after the four empty/full endpoint
 controls.  It is deliberately independent of the Lumerical work in progress in
@@ -252,7 +252,8 @@ TaIrTe4 cells. The source-only Ea preflight stopped before any field solve with
 `realized float32 ADE refit error 0.000117579 exceeds 1e-05`. The failure JSON
 SHA-256 is
 `0a302d01386faf0967b1626d1646fa082a5a52eb23c8768b3d09bad1e5cb4631`.
-No z16 source pair, material solve, or mesh comparison exists.
+No z16 source pair, material solve, or mesh comparison was created under that
+rejected single-pole extension.
 
 `fdtdx_fresh_ade_precision_diagnostic.py` was committed at `a4cf66d5` and run
 from that clean commit. Its external diagnostic is
@@ -378,7 +379,20 @@ NRMSE is `1.3853e-3` and `1.5225e-3`, and closed-flux Q mismatch is below
 `0.52%`.
 
 This establishes one z8 two-pole optical material pair, not z convergence and
-not PTE current. z16 and z32 still require independent source and material
+not PTE current. The independent z16 source-only pair is also complete under
+`two_pole_forward_e722ba73/z16`: Ea report/NPZ hashes are
+`9b6ced4e90c912a4ce00b99803b63645d4e85ec1a10a8f7c90ca6d9747298695` /
+`40a2f60caa2462f71c91a59a699f1e212204a49e654b0f97a6e2391b4bd28632`,
+and Eb hashes are
+`3e9d1d07f68c53908e52678fd42ae4068286cece7f3ba4542c7bff6b1465045d` /
+`836a425b661c3aee8ec949cf7569ce4f55a1b2b389766fcb7eac5a86d734dd72`.
+The clean pair certificate SHA-256 is
+`7cfcd8280cf63194aa53f328661613dd942e2b0da0f4045f2b4d2b8f881c7d35`.
+Its source-power mismatch is exactly `0.0`; both field-stationarity NRMSE values
+are below `2.98e-6`.
+
+This is only z16 source normalization. z16 material fields and the z8-to-z16
+comparison do not exist yet; z32 still requires independent source and material
 pairs. Comparing old single-pole z8 directly with a new two-pole field level is
 forbidden. Adjoint, thermal/electrical, current-sign, and optimizer stages
 remain blocked.

@@ -360,8 +360,8 @@ SHA-256
 It has a `196 x 196 x 640` grid, 1.5625-nm Au cells, and 1.25-nm TaIrTe4 cells.
 The first source-only Ea preflight failed before any FDTD field solve: the
 single-Drude realized float32 ADE error was `1.17579e-4`, above the frozen
-`1e-5` gate. Preserve that partial directory; there is no z16 source pair or
-material result.
+`1e-5` gate. Preserve that partial directory; under that rejected single-pole
+law, no z16 source pair or material result was created.
 
 The clean-commit diagnostic added and pushed as `a4cf66d5` binds the z16 case,
 failure JSON, material contract, optical model, and pinned FDTDX recurrence.
@@ -479,11 +479,30 @@ heat-source results, **not** a PTE-current magnitude or sign result. The
 certificate records `pte_current_claim_allowed=false` and
 `optimizer_start_allowed=false`.
 
-Only the z8 candidate two-pole source and material pair is complete. z16 and
-z32 source pairs and material solves do not exist. The next allowed FDTDX step
-is a fresh z16 all-air Ea/Eb source pair under its own case/law, followed by
-the same exact-binary material pair. Do not compare an old single-pole field
-result to a two-pole result.
+The z8 candidate two-pole source and material pair is complete. The z16
+all-air source pair was then completed at clean commit `bcbe5ecd` under
+`two_pole_forward_e722ba73/z16`. Artifact SHA-256 values are:
+
+- Ea source report:
+  `9b6ced4e90c912a4ce00b99803b63645d4e85ec1a10a8f7c90ca6d9747298695`
+- Ea source NPZ:
+  `40a2f60caa2462f71c91a59a699f1e212204a49e654b0f97a6e2391b4bd28632`
+- Eb source report:
+  `3e9d1d07f68c53908e52678fd42ae4068286cece7f3ba4542c7bff6b1465045d`
+- Eb source NPZ:
+  `836a425b661c3aee8ec949cf7569ce4f55a1b2b389766fcb7eac5a86d734dd72`
+- source-pair certificate:
+  `7cfcd8280cf63194aa53f328661613dd942e2b0da0f4045f2b4d2b8f881c7d35`
+
+Both source solves use the independent z16 case (`196 x 196 x 640`,
+24,586,240 Yee cells, 307,249 steps) and took `862.79 s` and `864.00 s`.
+Both pass every gate with maximum field-stationarity NRMSE below `2.98e-6`.
+Ea and Eb incident powers are exactly equal at the recorded precision,
+`1.8837208269e-12 W`, so the pair mismatch is `0.0`. This closes only z16
+source normalization. No z16 material solve or z8-to-z16 convergence result
+exists yet. The next step is the z16 exact-binary Ea/Eb material pair. z32
+still has neither a source pair nor a material pair. Do not compare an old
+single-pole field result to a two-pole result.
 
 Do not proceed to x/y, domain, PML, thermal/electrical, or optimization until
 z convergence closes. Preserve the failed z2/z4/z8 comparisons and the z16
