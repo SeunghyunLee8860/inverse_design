@@ -75,12 +75,14 @@ same-step AD-FD certificate:
    density carriers did not agree with independently re-solved finite
    differences.
 
-This does **not** prove that Lumerical Au inverse design is impossible. It
-means the next gate is an Au-specific, fixed-grid differentiable material
-carrier using Lumerical forward/adjoint fields, with exact void and dispersive
-Au endpoints. Its gradient may enter optimization only after central FD over
-multiple step sizes agrees for the same objective and the same discretization.
-No FDTDX result may substitute for that gate.
+This does **not** prove that Lumerical Au inverse design is impossible. The
+first material-level candidate is now identified: Lumerical's spatial `np
+density` Drude conversion reproduces the 4-um Au endpoint to `8.49e-8`
+relative complex-epsilon error. See `LUMERICAL_4UM_AU_NP_DRUDE_ROUTE.md`.
+However, the installed 2026 R1.2 GPU engine rejects np-density attributes;
+Ansys adds that GPU support in 2026 R1.3. The candidate still needs a B200
+field-stability test and same-step optical AD-FD before its gradient may enter
+optimization. No FDTDX result may substitute for that gate.
 
 ## Shared material-map rule
 
@@ -121,8 +123,9 @@ Thermal/electrical GPU tests on another device are development tests only.
    crystal axes, stack, beam, Au electrical role, and interface parameters.
 2. Reproduce the earlier Lumerical-forward + custom-CUDA-PDE data path for the
    fixed device before changing the Au design representation.
-3. Establish a Lumerical fixed-grid continuous Au carrier with exact endpoints
-   and pass same-step optical AD-FD over several step sizes.
+3. Install Lumerical 2026 R1.3+ on the B200 host, then establish the tested
+   fixed-grid np-density Drude carrier in a GPU field solve and pass same-step
+   optical AD-FD over several step sizes.
 4. Pass exact empty/full/nonuniform binary endpoint controls in Lumerical.
 5. Connect one filtered/projected `f_Au` to all material maps and pass thermal,
    electrical, and combined latent-variable AD-FD.

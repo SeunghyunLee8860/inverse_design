@@ -50,7 +50,10 @@ class LumericalMaxwellContract:
     different_optical_thermal_electrical_design_fields_allowed: bool = False
     exact_binary_required_for_final_promotion: bool = True
     exact_dispersive_au_required_at_material_endpoint: bool = True
-    continuous_lumerical_au_carrier_status: str = "BLOCKED_PENDING_SAME_STEP_AD_FD"
+    continuous_lumerical_au_carrier_status: str = (
+        "NP_DENSITY_DRUDE_MATERIAL_READBACK_PASSED; "
+        "REQUIRES_LUMERICAL_2026_R1P3_GPU_AND_SAME_STEP_AD_FD"
+    )
     bundled_lumopt_topology_gradient_allowed_without_au_adfd: bool = False
     fdtdx_allowed: bool = False
     jax_maxwell_allowed: bool = False

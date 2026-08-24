@@ -69,6 +69,15 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    historical diagnostics only. The current host has RTX 6000 Ada GPUs, not
    B200, so it cannot issue a B200 run certificate.
 
+   A concrete Lumerical carrier candidate now exists. Read
+   `LUMERICAL_4UM_AU_NP_DRUDE_ROUTE.md` and run
+   `22_probe_lumerical_4um_au_np_drude.py`. The installed material database
+   reproduces the frozen 4-um Au epsilon with `8.49e-8` relative error using a
+   causal spatial np-density Drude carrier. Installed 2026 R1.2 cannot execute
+   np-density attributes on GPU; official support begins in 2026 R1.3. This is
+   therefore a required B200-installation upgrade plus field/AD-FD gate, not a
+   HEAT/CHARGE-license dependency and not yet an optimization certificate.
+
 1. The existing optimization used inconsistent O3/TE1 gray laws.  Production
    code now uses one shared linear fraction (`f_Au=rho`) in all three physics,
    but it has not yet received new AD-FD or mesh-convergence certificates.
