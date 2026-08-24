@@ -7,8 +7,8 @@ This checkpoint integrates the cancellation-resistant Lorentz/Drude
 second-order polarization recurrence remains the default. No Lumerical file or
 run was edited, launched, or reinterpreted. No GPU was used for this checkpoint.
 
-This closes one small-domain Lorentz forward/checkpointed-adjoint software
-gate; a corresponding full-FDTD Drude parameter control remains required.
+This closes small-domain Lorentz float32 and Drude float64
+forward/checkpointed-adjoint software gates.
 It does **not** certify the 4-um full geometry, any mesh, a gray Au material law,
 the thermal/electrical maps, or optimization readiness.
 
@@ -18,19 +18,25 @@ the thermal/electrical maps, or optimization readiness.
 - isolated kernel commit: `24d0cb2374bf03b6bfdc528b189c69685b74dfee`
 - opt-in production integration commit:
   `fc09ce54dc32ea13e27d2af799cdb3771801bf65`
+- Drude full-FDTD AD-FD test commit:
+  `6cc0e97252ee0b95de5016e8db1a5b414177efa4`
 - fork branch: `codex/increment-state-ade`
 - exported integration patch:
   `fdtdx_patches/0002-feat-dispersion-integrate-opt-in-increment-state-ADE.patch`
 - patch SHA-256:
   `1532e032fbe3656b4397f6c8d94314339f4bd94b0e2583c162c317c106b901cb`
+- exported Drude test patch:
+  `fdtdx_patches/0003-test-dispersion-gate-increment-state-Drude-adjoint.patch`
+- Drude test patch SHA-256:
+  `77016668fb7dc77a7bdfbead26c9ce24b545ea246bb8a3dcc1fbcbe0fd2c3b31`
 - integrated `src/fdtdx/increment_state.py` SHA-256:
   `bd2d11a3a5b10d49d3a9d13c997134f4cf9d7bb451b42a8536d673711890faf3`
 
-A clean checkout reproduces the fork by applying patch `0001`, then `0002`,
-to the pinned base. The project-side
-`test_fdtdx_increment_state_integration_patch.py` pins the second patch bytes,
-commit header, exact 16-file scope, required production markers, and the rule
-that the patch cannot touch Lumerical.
+A clean checkout reproduces the fork by applying patches `0001`, `0002`, and
+`0003` in order to the pinned base. The project-side
+`test_fdtdx_increment_state_integration_patch.py` pins the production patch
+bytes, commit header, exact 16-file scope, required production markers, and the rule that the patch cannot touch Lumerical. It
+separately pins patch `0003` to its test-only two-file scope.
 
 ## What changed in FDTDX
 
@@ -53,13 +59,14 @@ full-tensor material path fail closed in increment mode.
 All commands forced the CPU backend. The dedicated environment was
 `/home/seunghyun200/.venvs/fdtdx-fresh-py312`.
 
-- increment kernel/spectrum/full-FDTD gates: `11 passed in 8.35 s`;
+- increment kernel/spectrum/full-FDTD gates: `12 passed`;
+- four full-FDTD integration tests: `4 passed in 11.73 s`;
 - dispersion/initialization/source/mode plus new gates:
-  `166 passed in 30.27 s` after formatting;
+  `167 passed in 33.66 s` after the Drude gate;
 - complete FDTDX unit suite:
   `2605 passed, 2 skipped, 1 xfailed in 238.63 s`;
 - project-side FDTDX audit suite including the patch gate:
-  `161 passed in 11.91 s`;
+  `164 passed in 11.924 s`;
 - Ruff 0.15.22 on every changed Python file: no remaining errors.
 
 The small driven lossy Lorentz scene ran through actual coefficient placement,
@@ -73,8 +80,16 @@ symmetric relative error = 2.556324618e-04
 absolute difference = 1.145303249e-04
 ```
 
-The test is a full-FDTD checkpointed AD-FD gate, not merely differentiation of
-the isolated one-cell kernel.
+This Lorentz test is a full-FDTD checkpointed AD-FD gate, not merely
+differentiation of the isolated one-cell kernel. A scoped-float64 passive
+Drude `C=0` control also passes:
+
+```text
+AD = -4.862088902297e-05
+FD = -4.862093454809e-05
+symmetric relative error = 4.681640598235e-07
+absolute difference = 4.552512737583e-11
+```
 
 ## Remaining optimizer blocker: continuous dispersive mixing
 

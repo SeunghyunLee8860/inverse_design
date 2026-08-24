@@ -784,20 +784,19 @@ Commit `05d8e9ba` added the CPU-only cancellation-resistant `(P, delta-P)` ADE c
 ## Fork-bound increment-state integration status
 
 The clean isolated fork is now at
-`fc09ce54dc32ea13e27d2af799cdb3771801bf65`. Patch `0001` adds the isolated
+`6cc0e97252ee0b95de5016e8db1a5b414177efa4`. Patch `0001` adds the isolated
 kernel; patch `0002` integrates the opt-in state through config, coefficient
 placement, diagonal `update_E`, sources, mode detectors, and broadband
 spectrum reconstruction. CCPR, oriented poles, and dispersive full tensors
 fail closed. The actual-JIT z8/z16/z32 state gates still pass. One small driven
 Lorentz `B` checkpointed full-FDTD AD-FD control passes with symmetric relative
-error `2.5563e-4`; the full fork unit suite is `2605 passed, 2 skipped, 1
-xfailed`; the project-side FDTDX audit suite is `161 passed`. See
+error `2.5563e-4`. Patch `0003` adds the scoped-float64 Drude `C=0`
+full-FDTD AD-FD gate, which passes at `4.6816e-7`; the full fork unit suite is `2605 passed, 2 skipped, 1 xfailed`; the project-side FDTDX audit suite is `164 passed`. See
 `FDTDX_INCREMENT_STATE_INTEGRATION.md` for hashes and runtimes.
 
 No GPU was used for this integration. Do not launch a long pair or any
 optimizer yet. The next allowed solve is a short coarse exact-binary timing and
-closure control after adding a full-FDTD Drude AD-FD gate and a newly hashed
-runner. Recheck live compute-process ownership immediately before launch and
-run Ea/Eb concurrently only on two distinct idle GPUs. The generic continuous
+closure control after defining a newly hashed runner. Recheck live
+compute-process ownership immediately before launch and run Ea/Eb concurrently only on two distinct idle GPUs. The generic continuous
 `Device` path still interpolates `A/C` with density, so the gray optical law and
 material-placement Jacobian remain blockers.

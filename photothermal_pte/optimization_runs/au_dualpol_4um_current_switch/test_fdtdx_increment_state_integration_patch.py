@@ -33,11 +33,27 @@ EXPECTED_PATHS = {
 }
 
 
+DRUDE_PATCH = (
+    RUN_DIR
+    / "fdtdx_patches/0003-test-dispersion-gate-increment-state-Drude-adjoint.patch"
+)
+EXPECTED_DRUDE_SHA256 = (
+    "77016668fb7dc77a7bdfbead26c9ce24b545ea246bb8a3dcc1fbcbe0fd2c3b31"
+)
+EXPECTED_DRUDE_COMMIT = "6cc0e97252ee0b95de5016e8db1a5b414177efa4"
+EXPECTED_DRUDE_PATHS = {
+    "tests/simulation/fdtd/test_increment_state_fdtd.py",
+    "tests/simulation/fdtd/test_time_reversal.py",
+}
+
+
 class IncrementStateIntegrationPatchTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.payload = PATCH.read_bytes()
         cls.text = cls.payload.decode("utf-8")
+        cls.drude_payload = DRUDE_PATCH.read_bytes()
+        cls.drude_text = cls.drude_payload.decode("utf-8")
 
     def test_patch_hash_is_pinned(self) -> None:
         self.assertEqual(hashlib.sha256(self.payload).hexdigest(), EXPECTED_SHA256)
@@ -68,6 +84,28 @@ class IncrementStateIntegrationPatchTests(unittest.TestCase):
 
     def test_patch_does_not_touch_lumerical(self) -> None:
         self.assertNotIn("lumerical", "\n".join(sorted(EXPECTED_PATHS)).lower())
+
+    def test_drude_patch_hash_and_commit_are_pinned(self) -> None:
+        self.assertEqual(
+            hashlib.sha256(self.drude_payload).hexdigest(), EXPECTED_DRUDE_SHA256
+        )
+        self.assertTrue(self.drude_text.startswith(f"From {EXPECTED_DRUDE_COMMIT} "))
+
+    def test_drude_patch_scope_is_test_only(self) -> None:
+        paths = set(
+            re.findall(
+                r"^diff --git a/(\S+) b/\1$", self.drude_text, flags=re.MULTILINE
+            )
+        )
+        self.assertEqual(paths, EXPECTED_DRUDE_PATHS)
+
+    def test_drude_patch_contains_full_fdtd_ad_fd_gate(self) -> None:
+        self.assertIn(
+            "test_checkpointed_increment_drude_b_gradient_matches_finite_difference",
+            self.drude_text,
+        )
+        self.assertIn("with _x64_enabled():", self.drude_text)
+        self.assertIn("h_scale=1e-4", self.drude_text)
 
 
 if __name__ == "__main__":

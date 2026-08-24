@@ -105,17 +105,16 @@ At the CPU-candidate checkpoint, the FDTDX-related project suite was `152 passed
 
 At commit `05d8e9ba` this result was a solver-free representation candidate.
 The isolated fork now closes coefficient generation, actual-JIT long-time
-float32 stationarity, production placement/update/source semantics, and one
-small driven Lorentz-`B` checkpointed full-FDTD AD-FD control. The remaining
+float32 stationarity, production placement/update/source semantics, and small driven Lorentz-`B`
+and Drude-`B` checkpointed full-FDTD AD-FD controls. The remaining
 promotion order is:
 
-1. add the corresponding small full-FDTD Drude parameter AD-FD control;
-2. define a new exact-binary runner/version and hash all new coefficient and
+1. define a new exact-binary runner/version and hash all new coefficient and
    source semantics;
-3. run one short coarse 3-D exact-binary timing/closure control;
-4. only if runtime and closure are practical, generate fresh z8/z16/z32
+2. run one short coarse 3-D exact-binary timing/closure control;
+3. only if runtime and closure are practical, generate fresh z8/z16/z32
    source/material pairs;
-5. keep continuous-density optimization blocked until a fixed-pole gray law
+4. keep continuous-density optimization blocked until a fixed-pole gray law
    and its material-placement Jacobian pass independent AD-FD controls.
 
 The old two-pole artifacts remain negative evidence and cannot be mixed into a
@@ -141,13 +140,14 @@ The fork-bound CPU/JAX report is `/home/seunghyun200/fdtdx_results/l500_full_z_1
 
 The worst actual-JIT float32 late drift is `1.8913e-6` at z32 Au. The worst float32/float64 late difference is `2.6211e-6` at z16 Au, and the worst carrier error remains `5.3718e-5` at z32 Au. Every axis and level passes. This closes compiler/JIT state precision only. The unit AD-FD test differentiates the isolated kernel coefficient; it is not a checkpointed full-FDTD adjoint certificate.
 
-That opt-in integration is complete at clean fork commit
-`fc09ce54dc32ea13e27d2af799cdb3771801bf65`. It reuses the existing states and
-coefficient arrays, connects placement/update/source/mode/broadband-spectrum
+That opt-in production integration is commit
+`fc09ce54dc32ea13e27d2af799cdb3771801bf65`; the clean fork advances to
+`6cc0e97252ee0b95de5016e8db1a5b414177efa4` with the Drude full-FDTD
+AD-FD gate. It reuses the existing states and coefficient arrays, connects placement/update/source/mode/broadband-spectrum
 semantics, and rejects CCPR, oriented poles, and the dispersive full-tensor
-path. The small driven checkpointed AD-FD symmetric relative error is
-`2.5563e-4`; the complete FDTDX unit suite is `2605 passed, 2 skipped, 1
-xfailed`. The exported patch and exact validation evidence are in
+path. The small driven Lorentz checkpointed AD-FD symmetric relative error is
+`2.5563e-4`; the scoped-float64 Drude `C=0` control is `4.6816e-7`. The
+complete FDTDX unit suite is `2605 passed, 2 skipped, 1 xfailed`. The exported patch and exact validation evidence are in
 `FDTDX_INCREMENT_STATE_INTEGRATION.md`. No production-width GPU solve has run.
 The next allowed field launch is a short exact-binary timing/closure control,
 not a gray optimizer; generic continuous `Device` interpolation still changes

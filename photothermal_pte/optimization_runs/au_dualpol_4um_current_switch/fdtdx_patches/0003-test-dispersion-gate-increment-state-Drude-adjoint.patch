@@ -1,0 +1,107 @@
+From 6cc0e97252ee0b95de5016e8db1a5b414177efa4 Mon Sep 17 00:00:00 2001
+From: SeunghyunLee8860 <j79sk123@gmail.com>
+Date: Tue, 25 Aug 2026 03:54:30 +0900
+Subject: [PATCH] test(dispersion): gate increment-state Drude adjoint
+
+---
+ .../fdtd/test_increment_state_fdtd.py         | 33 +++++++++++++++++++
+ tests/simulation/fdtd/test_time_reversal.py   | 21 ++++++------
+ 2 files changed, 44 insertions(+), 10 deletions(-)
+
+diff --git a/tests/simulation/fdtd/test_increment_state_fdtd.py b/tests/simulation/fdtd/test_increment_state_fdtd.py
+index c4a5abb..b092a6d 100644
+--- a/tests/simulation/fdtd/test_increment_state_fdtd.py
++++ b/tests/simulation/fdtd/test_increment_state_fdtd.py
+@@ -15,6 +15,7 @@ from tests.simulation.fdtd.test_time_reversal import (
+     _coef_fd_check,
+     _make_disp_loss_fn,
+     _passive_ccpr_pole,
++    _x64_enabled,
+ )
+ 
+ 
+@@ -85,3 +86,35 @@ def test_increment_ccpr_is_rejected_during_full_placement():
+             constraints=[constraint],
+             key=jax.random.PRNGKey(0),
+         )
++
++
++def test_checkpointed_increment_drude_b_gradient_matches_finite_difference():
++    """Exercise the Drude C=0 branch through a full checkpointed FDTD AD-FD."""
++    material = fdtdx.Material(
++        permittivity=1.0,
++        dispersion=fdtdx.DispersionModel(
++            poles=(fdtdx.DrudePole(plasma_frequency=1.0e15, damping=2.0e14),),
++        ),
++    )
++    with _x64_enabled():
++        objects, arrays, config = _build_lossy_dispersive_scene(
++            state_representation="increment", material=material, dtype=jnp.float64
++        )
++        coeff_b = arrays.dispersive_c3
++        assert coeff_b is not None
++        ad, fd, rel_err, diff, idx = _coef_fd_check(
++            coeff_b,
++            _make_disp_loss_fn("c3"),
++            arrays,
++            objects,
++            config,
++            jax.random.PRNGKey(99),
++            h_scale=1e-4,
++            h_floor=1e-10,
++            fdtd_impl=checkpointed_fdtd,
++        )
++        assert jnp.isfinite(ad) and jnp.isfinite(fd)
++        assert rel_err < 1e-4 or diff < 1e-9, (
++            f"increment Drude B AD vs FD mismatch at {idx}: AD={float(ad):.6e}, "
++            f"FD={float(fd):.6e}, rel_err={rel_err:.3e}"
++        )
+diff --git a/tests/simulation/fdtd/test_time_reversal.py b/tests/simulation/fdtd/test_time_reversal.py
+index 28b9e8b..14266cd 100644
+--- a/tests/simulation/fdtd/test_time_reversal.py
++++ b/tests/simulation/fdtd/test_time_reversal.py
+@@ -815,8 +815,8 @@ class TestGradientPMLBlochComplex:
+ # runs through ``checkpointed_fdtd``.
+ 
+ 
+-def _build_lossy_dispersive_scene(state_representation="polarization"):
+-    """Periodic-boundary Lorentz slab with nonzero σ_E, driven by a CW dipole.
++def _build_lossy_dispersive_scene(state_representation="polarization", material=None, dtype=jnp.float32):
++    """Periodic-boundary dispersive slab driven by a CW dipole.
+ 
+     The dipole is what makes the fields nonzero at all: the FDTD entry points
+     reset the container, so seeded E/H would be discarded.
+@@ -825,7 +825,7 @@ def _build_lossy_dispersive_scene(state_representation="polarization"):
+         time=_SIM_TIME,
+         grid=UniformGrid(spacing=_RESOLUTION),
+         backend="cpu",
+-        dtype=jnp.float32,
++        dtype=dtype,
+         courant_factor=0.99,
+         gradient_config=None,
+         dispersive_state_representation=state_representation,
+@@ -842,13 +842,14 @@ def _build_lossy_dispersive_scene(state_representation="polarization"):
+     objects.extend(bound_dict.values())
+     constraints.extend(c_list)
+ 
+-    material = fdtdx.Material(
+-        permittivity=2.0,
+-        electric_conductivity=1e2,
+-        dispersion=fdtdx.DispersionModel(
+-            poles=(fdtdx.LorentzPole(resonance_frequency=2e15, damping=1e13, delta_epsilon=1.5),),
+-        ),
+-    )
++    if material is None:
++        material = fdtdx.Material(
++            permittivity=2.0,
++            electric_conductivity=1e2,
++            dispersion=fdtdx.DispersionModel(
++                poles=(fdtdx.LorentzPole(resonance_frequency=2e15, damping=1e13, delta_epsilon=1.5),),
++            ),
++        )
+     slab_cells = _VOLUME_CELLS // 2
+     slab = fdtdx.UniformMaterialObject(
+         name="slab",
+-- 
+2.43.0
+
