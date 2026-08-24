@@ -269,16 +269,30 @@ the rectilinear CFL step. The reproduced z8 step is exactly
 | wide single-Drude realized-error scan (0.01 to 10 gamma seed) | 1.7063374e-6 | 2.2144332e-5 | z16 fail |
 | stable positive-strength two-Drude numerical candidate | 7.2571180e-9 | 7.2571180e-9 | candidate only |
 
-The wide scan shows that merely widening the current damping search does not
+The wide Au scan shows that merely widening the current damping search does not
 close z16, so the 1e-5 gate must not be relaxed and the failed source directory
-must not be overwritten. The two-Drude row is not a material certificate: it
-only proves that two positive oscillator strengths with float32 recurrence
-`c1+c2 <= 1` can represent the Ordal carrier value. Before using it, introduce
-a separately hashed material-law contract, prove exact two-pole coefficient
-readback, pass source/time/stationarity tests, and rerun both z8 and z16 with
-that identical law. Comparing old single-pole z8 directly with new two-pole
-z16 is forbidden. Optimization and every downstream convergence stage remain
-blocked.
+must not be overwritten. A full-tensor follow-up was committed at `ecc33c22`.
+Its clean-commit external JSON is
+`ade_precision_ecc33c22/FDTDX_FRESH_FULL_MATERIAL_ADE_PRECISION_DIAGNOSTIC.json`,
+SHA-256
+`cb15e83073887fc0b7bd328f81b1b5463087024d98277bd740027bd82a412741`.
+It proves the first Au exception was not the only pending failure:
+
+| material axis | z16 current single-pole error | z16 pass | z32 current single-pole error | z32 pass | stable two-pole candidate error |
+|---|---:|:---:|---:|:---:|---:|
+| Au | 1.1757867e-4 | no | 1.1757867e-4 | no | 7.2571180e-9 |
+| TaIrTe4 a | 2.7593129e-5 | no | 4.0745430e-5 | no | 2.1516201e-8 |
+| TaIrTe4 b | 2.5155545e-6 | yes | 2.3850798e-5 | no | 2.1030075e-8 |
+| TaIrTe4 c | 2.5155545e-6 | yes | 2.3850798e-5 | no | 2.1030075e-8 |
+
+The two-pole results are not a material certificate. They only establish a
+numerical candidate with positive oscillator strengths and recurrence roots no
+larger than one for Au and every TaIrTe4 axis at z8, z16, and z32. Before using
+it, introduce a separately hashed material-law contract, prove exact two-pole
+coefficient readback on every axis, pass source/time/stationarity tests, and
+rerun z8, z16, and z32 with the identical algorithm. Comparing old single-pole
+z8 directly with any new two-pole level is forbidden. Optimization and every
+downstream convergence stage remain blocked.
 
 ## Comparison and promotion rules
 

@@ -289,7 +289,7 @@ source-only report, Ea/Eb pair, and material report binds one canonical
 stage is now complete for the exact-binary 375-pixel
 `l_shape_4um_with_500nm_arms` reference. Runs were made at clean commit
 `01a8ad8a`; the independent verifier and its 12 focused tests were committed
-and pushed as `5e376ce1`. All explicit FDTDX regression tests pass: 95
+and pushed as `5e376ce1`. All explicit FDTDX regression tests pass: 98
 `unittest` tests; the separate pytest forensic file is not runnable in the
 locked fresh venv because pytest is intentionally absent.
 
@@ -368,13 +368,21 @@ Its external JSON is
 `/home/seunghyun200/fdtdx_results/l500_full_z_150a7592_20260824/ade_precision_a4cf66d5/FDTDX_FRESH_ADE_PRECISION_DIAGNOSTIC.json`,
 SHA-256
 `bfa98e74b81eae816b888bfbe1b460f94d5cf407f4be4954742c91e2b540911c`.
-The current z16 search gives `1.1757867e-4`; a wide 0.01-to-10 damping scan
-still bottoms out at `2.2144332e-5`. Do not loosen the material gate or rerun
-the unchanged model. A two-positive-Drude candidate reaches `7.2571180e-9`
-while restricting both float32 recurrences to `c1+c2 <= 1`, but is not
-promoted. It must receive a separate material-law hash, exact two-pole
-readback, time/stationarity validation, and same-law z8/z16 reruns. Old
-single-pole z8 and new two-pole z16 are not comparable.
+The current z16 Au search gives `1.1757867e-4`; a wide 0.01-to-10
+damping scan still bottoms out at `2.2144332e-5`. Do not loosen the material
+gate or rerun the unchanged model. The full-tensor follow-up committed at
+`ecc33c22` is external at
+`ade_precision_ecc33c22/FDTDX_FRESH_FULL_MATERIAL_ADE_PRECISION_DIAGNOSTIC.json`,
+SHA-256
+`cb15e83073887fc0b7bd328f81b1b5463087024d98277bd740027bd82a412741`.
+It additionally finds that z16 TaIrTe4 a fails at `2.7593129e-5`; at z32 Au
+and TaIrTe4 a/b/c all fail the current single-pole gate. Stable positive
+two-pole candidates with recurrence roots no larger than one reach
+`7.2571180e-9` for Au, `2.1516201e-8` for TaIrTe4 a, and `2.1030075e-8` for
+TaIrTe4 b/c, but are not promoted. The algorithm must receive a separate
+material-law hash, exact two-pole readback on every axis, time/stationarity
+validation, and same-law z8/z16/z32 reruns. Old single-pole and new two-pole
+levels are not comparable.
 
 Do not proceed to x/y, domain, PML, thermal/electrical, or optimization until
 z convergence closes. Preserve the failed z2/z4/z8 comparisons and the z16

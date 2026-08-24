@@ -158,11 +158,17 @@ or relax the gate. The clean-commit solver-free diagnosis from `a4cf66d5` is
 external at `ade_precision_a4cf66d5/FDTDX_FRESH_ADE_PRECISION_DIAGNOSTIC.json`,
 SHA-256
 `bfa98e74b81eae816b888bfbe1b460f94d5cf407f4be4954742c91e2b540911c`.
-Even a 0.01-to-10-times-seed single-pole scan bottoms out at `2.21443e-5`.
-A stable positive-strength two-Drude carrier fit reaches `7.25712e-9`, but is
-explicitly only a candidate. Any implementation changes the material law and
-therefore requires fresh, hash-distinct z8 and z16 source/material runs before
-comparison; old single-pole z8 and new two-pole z16 must never form a pair.
+Even a 0.01-to-10-times-seed Au single-pole scan bottoms out at
+`2.21443e-5`. The full-tensor follow-up at `ecc33c22` is external at
+`ade_precision_ecc33c22/FDTDX_FRESH_FULL_MATERIAL_ADE_PRECISION_DIAGNOSTIC.json`,
+SHA-256
+`cb15e83073887fc0b7bd328f81b1b5463087024d98277bd740027bd82a412741`.
+It shows z16 TaIrTe4 a also fails (`2.75931e-5`) and every current single-pole
+axis fails at z32. Stable positive-strength two-pole candidates cover all four
+axes at z8/z16/z32 with recurrence roots no larger than one, but remain
+candidate-only. Any implementation changes the material law and requires fresh,
+hash-distinct z8, z16, and z32 source/material runs before comparison; old
+single-pole and new two-pole levels must never form a pair.
 
 ## Convergence rule
 
