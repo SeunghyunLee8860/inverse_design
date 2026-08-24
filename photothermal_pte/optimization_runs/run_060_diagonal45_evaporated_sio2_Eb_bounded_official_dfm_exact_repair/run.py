@@ -29,6 +29,11 @@ JACOBIAN = BASE_ROOT / (
 
 
 def main() -> int:
+    if not os.environ.get("LM_PROJECT"):
+        raise RuntimeError(
+            "Run060 must be launched through runres with a persistent "
+            "nine-license LM_PROJECT reservation"
+        )
     gpu = int(os.environ.get("RUN060_GPU", "0"))
     environment = dict(os.environ)
     environment.update(

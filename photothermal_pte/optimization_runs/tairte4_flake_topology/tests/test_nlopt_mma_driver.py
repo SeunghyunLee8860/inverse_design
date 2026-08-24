@@ -204,6 +204,14 @@ def test_rotated_sequential_launcher_resumes_only_existing_case() -> None:
     )
     assert 'final_path = published / "FINAL_RESULT.json"' in source
     assert 'has_checkpoint = (published / "RAW_ARTIFACT_MANIFEST.json").is_file()' in source
+    assert 'RUNRES = Path("/home/dhkim/bin/runres")' in source
+    assert '"--reserve-count", "9"' in source
+    run060 = (
+        Path(__file__).parents[2]
+        / "run_060_diagonal45_evaporated_sio2_Eb_bounded_official_dfm_exact_repair"
+        / "run.py"
+    ).read_text()
+    assert 'if not os.environ.get("LM_PROJECT")' in run060
 
 
 def test_exact_candidate_selection_does_not_abort_on_objective_only_failure() -> None:
