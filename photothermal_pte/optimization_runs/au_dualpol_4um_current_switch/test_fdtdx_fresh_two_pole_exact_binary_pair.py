@@ -274,6 +274,7 @@ class FdtdxFreshTwoPoleExactBinaryPairTest(unittest.TestCase):
         self.assertEqual(result["failed_gates"], [])
         self.assertFalse(result["optimizer_start_allowed"])
         self.assertFalse(result["pte_current_claim_allowed"])
+        self.assertIn("next separately hashed mesh level after z4", result["next_allowed_step"])
         self.assertEqual(
             result["cases"]["Ea"]["raw"]["derived"]["design_solid_cells"],
             375,
@@ -303,6 +304,7 @@ class FdtdxFreshTwoPoleExactBinaryPairTest(unittest.TestCase):
         result = self._build()
         self.assertFalse(result["ready"])
         self.assertIn("case_exact_binary_gates", result["failed_gates"])
+        self.assertIn("resolve the failed z4 within-case gates", result["next_allowed_step"])
 
     def test_different_material_law_blocks_pair(self) -> None:
         changed = copy.deepcopy(self.law)

@@ -624,6 +624,16 @@ def build_pair_certificate(ea_report: Path, eb_report: Path) -> dict[str, Any]:
         / comparison["Ea"]["unscaled_TaIrTe4_Q_W"],
     }
     ready = all(gates.values())
+    z_factor = int(ea["mesh"]["spec"]["z_factor"])
+    next_allowed_step = (
+        f"build the next separately hashed mesh level after z{z_factor} with "
+        "its own all-air source pair; do not start adjoint, "
+        "thermal/electrical, or optimization"
+        if ready
+        else f"resolve the failed z{z_factor} within-case gates under a "
+        "separately hashed numerical case and source pair before any finer "
+        "mesh, adjoint, thermal/electrical, or optimization step"
+    )
     return {
         "status": PAIR_STATUS if ready else BLOCKED_STATUS,
         "ready": ready,
@@ -668,10 +678,7 @@ def build_pair_certificate(ea_report: Path, eb_report: Path) -> dict[str, Any]:
         "failed_gates": [name for name, passed in gates.items() if not passed],
         "optimizer_start_allowed": False,
         "pte_current_claim_allowed": False,
-        "next_allowed_step": (
-            "build a fresh z16 all-air source pair under its own case/law; "
-            "do not start adjoint, thermal/electrical, or optimization"
-        ),
+        "next_allowed_step": next_allowed_step,
     }
 
 
