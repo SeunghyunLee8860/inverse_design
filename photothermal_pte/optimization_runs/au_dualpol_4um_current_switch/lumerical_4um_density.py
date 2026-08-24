@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -58,6 +59,28 @@ def canonical_density_nodes(projected_density: np.ndarray) -> np.ndarray:
             f"projected density shape {value.shape} != {CONTRACT.design_node_shape}"
         )
     return value
+
+
+def load_projected_density_file(path: Path, *, key: str) -> np.ndarray:
+    """Load one explicit NPY/NPZ nodal state without enabling pickle."""
+
+    resolved = path.expanduser().resolve()
+    if not resolved.is_file():
+        raise FileNotFoundError(resolved)
+    suffix = resolved.suffix.lower()
+    if suffix == ".npy":
+        value = np.load(resolved, allow_pickle=False)
+    elif suffix == ".npz":
+        with np.load(resolved, allow_pickle=False) as archive:
+            if key not in archive.files:
+                raise KeyError(
+                    f"density key {key!r} absent from {resolved}; "
+                    f"available keys: {archive.files}"
+                )
+            value = np.array(archive[key], copy=True)
+    else:
+        raise ValueError("projected density file must have extension .npy or .npz")
+    return canonical_density_nodes(value)
 
 
 def nodal_to_cell_average(projected_density: np.ndarray) -> np.ndarray:

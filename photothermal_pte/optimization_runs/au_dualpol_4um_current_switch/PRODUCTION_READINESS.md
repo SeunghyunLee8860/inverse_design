@@ -22,7 +22,10 @@ implementation progress, not a production certificate.
 
 The unified Lumerical GPU runner now supports source-only, exact
 empty/full/simple-L, and imported-density controls for both crystal
-polarizations. On the current RTX host, the explicitly non-promotable Ea/Eb
+polarizations. Its imported-density path now accepts and hash-binds a
+nonuniform 81x81 projected nodal checkpoint; previously it could only run a
+uniform scalar and therefore could not evaluate an optimizer topology. On the
+current RTX host, the explicitly non-promotable Ea/Eb
 source-only gate passed, while exact-full Ea on the 20-nm stack-z baseline
 failed Q/six-face closure by 30.43%. The linked 5-nm/50-nm z source gate passed,
 but its material successor was blocked by temporary shared-license exhaustion.

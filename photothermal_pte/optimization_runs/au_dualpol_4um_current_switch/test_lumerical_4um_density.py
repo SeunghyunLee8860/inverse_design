@@ -16,6 +16,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     density_nodes,
     density_state_audit,
     density_state_sha256,
+    load_projected_density_file,
     nodal_to_cell_average,
     nodal_to_cell_jvp,
     nodal_to_cell_vjp,
@@ -117,6 +118,42 @@ def test_density_hash_and_audit_bind_shared_nodal_state() -> None:
     assert audit["pde_cell_shape_xy"] == [80, 80]
     assert audit["optical_rho_power"] is None
     assert audit["gray_state_claimed_as_fabricated_material"] is False
+
+
+def test_density_checkpoint_loader_accepts_only_explicit_npy_npz_arrays(
+    tmp_path,
+) -> None:
+    nodes = np.linspace(0.1, 0.9, 81)[:, None] * np.ones((1, 81))
+    npy = tmp_path / "rho.npy"
+    npz = tmp_path / "rho.npz"
+    np.save(npy, nodes)
+    np.savez_compressed(npz, projected_density_nodal=nodes, unrelated=np.ones(2))
+    assert np.array_equal(
+        load_projected_density_file(npy, key="ignored_for_npy"), nodes
+    )
+    assert np.array_equal(
+        load_projected_density_file(npz, key="projected_density_nodal"), nodes
+    )
+    with pytest.raises(KeyError):
+        load_projected_density_file(npz, key="missing")
+    unsupported = tmp_path / "rho.txt"
+    unsupported.write_text("not a density")
+    with pytest.raises(ValueError):
+        load_projected_density_file(unsupported, key="rho")
+
+
+def test_density_checkpoint_loader_rejects_wrong_grid_or_range(tmp_path) -> None:
+    wrong_shape = tmp_path / "wrong.npy"
+    outside = tmp_path / "outside.npz"
+    np.save(wrong_shape, np.zeros(CONTRACT.design_shape))
+    np.savez_compressed(
+        outside,
+        projected_density_nodal=np.full(CONTRACT.design_node_shape, 1.1),
+    )
+    with pytest.raises(ValueError):
+        load_projected_density_file(wrong_shape, key="unused")
+    with pytest.raises(ValueError):
+        load_projected_density_file(outside, key="projected_density_nodal")
 
 
 def test_layout_uses_one_import_object_and_no_exact_au_prisms() -> None:

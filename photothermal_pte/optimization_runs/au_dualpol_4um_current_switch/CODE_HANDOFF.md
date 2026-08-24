@@ -72,8 +72,14 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     partition not applicable. Raw epsilon remains saved because conformal
     interface cells cannot be reduced to one physical label. It contains no
     HEAT/CHARGE or alternative Maxwell solver. Its default accelerator policy
-    remains B200. The explicit `development` policy permits RTX debugging but
-    marks every result non-promotable.
+   remains B200. The explicit `development` policy permits RTX debugging but
+   marks every result non-promotable.
+   `import_density` accepts either a uniform scalar `--rho` control or an
+   explicit nonuniform 81x81 NPY/NPZ `--rho-file`. The file input is
+   validated, SHA-pinned, labeled by the canonical density-state hash, and
+   copied into the external raw NPZ with its physical x/y coordinates. This
+   is the first runner path that can carry an actual optimizer topology into
+   Lumerical; never reconstruct it from a scalar or an 80x80 PDE cell grid.
 18. `run_lumerical_4um_endpoint_b200.sh` -- sequential Ea/Eb exact-empty,
     source-only, imported-rho0, imported-rho1, and exact-full batch. A passed,
     hash-matching source-only JSON is mandatory before every material case.

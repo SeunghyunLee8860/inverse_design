@@ -58,6 +58,11 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     source_calibration_contract,
     validate_source_calibration_record,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_density import (  # noqa: E402
+    density_state_audit,
+    density_nodes,
+    load_projected_density_file,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_mesh_contract import (  # noqa: E402
     BASELINE,
     BASELINE_SOURCE_OBJECT_W0_UM,
@@ -154,6 +159,19 @@ def _parse_args() -> argparse.Namespace:
         choices=("source_only", *GEOMETRY_CONTROLS, DENSITY_CONTROL),
     )
     parser.add_argument("--rho", type=float)
+    parser.add_argument(
+        "--rho-file",
+        type=Path,
+        help=(
+            "NPY or NPZ containing one nonuniform 81x81 projected nodal "
+            "density. This is mutually exclusive with scalar --rho."
+        ),
+    )
+    parser.add_argument(
+        "--rho-key",
+        default="projected_density_nodal",
+        help="NPZ array key used by --rho-file (default: projected_density_nodal).",
+    )
     parser.add_argument("--polarization", required=True, choices=POLARIZATIONS)
     parser.add_argument("--gpu-index", type=int)
     parser.add_argument(
@@ -194,10 +212,16 @@ def _parse_args() -> argparse.Namespace:
     if args.threads < 1:
         parser.error("--threads must be positive")
     if args.case == DENSITY_CONTROL:
-        if args.rho is None or not np.isfinite(args.rho) or not 0.0 <= args.rho <= 1.0:
-            parser.error("import_density requires finite --rho in [0,1]")
-    elif args.rho is not None:
-        parser.error("--rho is valid only for import_density")
+        if (args.rho is None) == (args.rho_file is None):
+            parser.error(
+                "import_density requires exactly one of scalar --rho or --rho-file"
+            )
+        if args.rho is not None and (
+            not np.isfinite(args.rho) or not 0.0 <= args.rho <= 1.0
+        ):
+            parser.error("--rho must be finite and in [0,1]")
+    elif args.rho is not None or args.rho_file is not None:
+        parser.error("--rho/--rho-file are valid only for import_density")
     if (
         args.case != "source_only"
         and args.source_calibration_json is None
@@ -233,15 +257,52 @@ def _mesh_spec(args: argparse.Namespace) -> LumericalMeshSpec:
     ).validate()
 
 
-def _case_label(args: argparse.Namespace) -> str:
+def _projected_density(
+    args: argparse.Namespace,
+) -> tuple[np.ndarray | None, dict[str, Any] | None]:
+    if args.case != DENSITY_CONTROL:
+        return None, None
+    if args.rho_file is None:
+        assert args.rho is not None
+        density = np.full(CONTRACT.design_node_shape, args.rho, dtype=np.float64)
+        provenance: dict[str, Any] = {
+            "kind": "uniform_scalar_cli",
+            "rho": float(args.rho),
+        }
+    else:
+        resolved = args.rho_file.expanduser().resolve()
+        density = load_projected_density_file(resolved, key=args.rho_key)
+        provenance = {
+            "kind": "nonuniform_file",
+            "path": str(resolved),
+            "sha256": _sha256(resolved),
+            "array_key": args.rho_key if resolved.suffix.lower() == ".npz" else None,
+        }
+    provenance["density_state"] = density_state_audit(density)
+    return density, provenance
+
+
+def _case_label(
+    args: argparse.Namespace, projected_density: np.ndarray | None = None
+) -> str:
     if args.case != DENSITY_CONTROL:
         return str(args.case)
+    if projected_density is None:
+        raise ValueError("import-density label requires the projected state")
+    if args.rho_file is not None:
+        state_hash = density_state_audit(projected_density)[
+            "density_state_sha256"
+        ]
+        return f"import_density_{state_hash[:12]}"
+    assert args.rho is not None
     token = f"{args.rho:.8f}".rstrip("0").rstrip(".").replace(".", "p")
     return f"import_rho_{token}"
 
 
 def _output_paths(
-    args: argparse.Namespace, spec: LumericalMeshSpec
+    args: argparse.Namespace,
+    spec: LumericalMeshSpec,
+    projected_density: np.ndarray | None = None,
 ) -> tuple[Path, Path, Path, Path]:
     output = args.output_dir
     if output is None:
@@ -249,7 +310,7 @@ def _output_paths(
             DEFAULT_RAW_ROOT
             / "au_dualpol_4um_lumerical"
             / spec.label
-            / f"{_case_label(args)}_{args.polarization}"
+            / f"{_case_label(args, projected_density)}_{args.polarization}"
         )
     output = output.expanduser().resolve()
     try:
@@ -261,7 +322,10 @@ def _output_paths(
             "raw Lumerical outputs must be outside the Git worktree: "
             f"{output}"
         )
-    stem = f"{_case_label(args)}_{args.polarization}_{spec.label}"
+    stem = (
+        f"{_case_label(args, projected_density)}_"
+        f"{args.polarization}_{spec.label}"
+    )
     return (
         output,
         output / f"{stem}.fsp",
@@ -630,6 +694,7 @@ def _material_postprocess(
 def main() -> int:
     args = _parse_args()
     spec = _mesh_spec(args)
+    projected_density, density_input = _projected_density(args)
     source_object_w0_m = args.source_object_w0_um * 1.0e-6
     source_contract = source_calibration_contract(
         spec,
@@ -639,8 +704,9 @@ def main() -> int:
     audit_payload = {
         "status": "AUDITED_EXACT_AU_4UM_CONTROL_NOT_RUN",
         "case": args.case,
-        "case_label": _case_label(args),
+        "case_label": _case_label(args, projected_density),
         "projected_density": args.rho,
+        "projected_density_input": density_input,
         "polarization": args.polarization,
         "mesh_spec": spec.audit(),
         "source_calibration_contract": source_contract,
@@ -669,7 +735,9 @@ def main() -> int:
         expected_accelerator_policy=args.accelerator_policy,
         expected_gpu_uuid=requested_gpu_uuid,
     )
-    output, fsp_path, npz_path, result_path = _output_paths(args, spec)
+    output, fsp_path, npz_path, result_path = _output_paths(
+        args, spec, projected_density
+    )
     for protected in (fsp_path, npz_path, result_path):
         if protected.exists():
             raise RuntimeError(f"refusing to overwrite raw artifact: {protected}")
@@ -677,8 +745,9 @@ def main() -> int:
     result: dict[str, Any] = {
         "status": "BLOCKED_EXACT_AU_4UM_CONTROL",
         "case": args.case,
-        "case_label": _case_label(args),
+        "case_label": _case_label(args, projected_density),
         "projected_density": args.rho,
+        "projected_density_input": density_input,
         "polarization": args.polarization,
         "git_commit": _git_commit(),
         "mesh_spec": spec.audit(),
@@ -735,11 +804,7 @@ def main() -> int:
             polarization=args.polarization,
             spec=spec,
             source_object_w0_m=source_object_w0_m,
-            projected_density=(
-                np.full(CONTRACT.design_node_shape, args.rho)
-                if args.case == DENSITY_CONTROL
-                else None
-            ),
+            projected_density=projected_density,
         )
         _configure_gpu_resource(fdtd, gpu_device, args.threads)
         fdtd.runsetup()
@@ -809,6 +874,13 @@ def main() -> int:
             )
             for axis in "xyz"
         }
+        if projected_density is not None:
+            density_x, density_y, _ = density_nodes()
+            arrays.update(
+                projected_density_nodal=np.asarray(projected_density),
+                projected_density_x_m=density_x,
+                projected_density_y_m=density_y,
+            )
         if post_mesh.get("available"):
             arrays.update(
                 {
@@ -861,9 +933,9 @@ def main() -> int:
             "PASSED_EXACT_AU_4UM_SOURCE_ONLY_NUMERICAL_GATE"
             if args.case == "source_only" and passed
             else (
-                f"PASSED_PROVISIONAL_LUMERICAL_4UM_{_case_label(args)}_{args.polarization}_CONTROL"
+                f"PASSED_PROVISIONAL_LUMERICAL_4UM_{_case_label(args, projected_density)}_{args.polarization}_CONTROL"
                 if passed
-                else f"FAILED_LUMERICAL_4UM_{_case_label(args)}_{args.polarization}_GATE"
+                else f"FAILED_LUMERICAL_4UM_{_case_label(args, projected_density)}_{args.polarization}_GATE"
             )
         )
         if passed and args.accelerator_policy != "b200":

@@ -104,6 +104,11 @@ do not replace the density carrier or its uniform-rho resonance/AD-FD gates.
 
 `lumerical_4um_forward.py` now assembles the common six-PML scalar-Gaussian
 layout for `source_only`, exact `empty/full/simple_L`, or `import_density`.
+The density runner accepts a uniform scalar only for endpoint/sweep controls;
+an optimizer state enters as an explicit 81x81 NPY/NPZ nodal array. Its file
+SHA and canonical coordinate/material-law state SHA are recorded, and the
+exact array plus x/y coordinates are retained in the external raw NPZ. An
+80x80 thermal/electrical cell field is deliberately rejected as optical input.
 The actual case entry point is `25_run_lumerical_4um_exact_au_control.py`; the
 sequential endpoint batch is `run_lumerical_4um_endpoint_b200.sh`. B200 is the
 default and only promotable policy. An explicit development policy permits a
@@ -205,8 +210,9 @@ therefore the immediate next diagnostic, not a completed convergence result.
 
 The concrete forward entry point is
 `25_run_lumerical_4um_exact_au_control.py`. It has an audit-only path that
-does not open Lumerical and a Maxwell path that calls the B200 preflight again
-inside Python. For each numerical contract and polarization, run the all-air
+does not open Lumerical and a Maxwell path that calls the selected accelerator
+preflight again inside Python. For each numerical contract and polarization,
+run the all-air
 source control first:
 
 ```bash
