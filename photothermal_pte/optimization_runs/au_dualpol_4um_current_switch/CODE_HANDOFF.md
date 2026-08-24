@@ -1,14 +1,17 @@
 # Au dual-polarization PTE inverse-design code handoff
 
-## Latest downstream diagnostic -- thermal x/y/z only
+## Latest downstream diagnostic -- thermal mesh and domain size only
 
-The frozen-Q prototype thermal spatial ladder now passes two successive x/y
-and z tail pairs for Ea and Eb.  The selected diagnostic mesh is x/y factor 2,
-z factor 2 (`532 x 532 x 66`).  Read
-`FDTDX_FROZEN_Q_THERMAL_XY_CONVERGENCE.md` first, then the earlier z document.
-Thermal domain/boundaries, optical, actual-geometry electrical, and the
-production multiphysics mesh remain unselected; optimization remains
-forbidden.  The independently owned Lumerical session remains untouched.
+The frozen-Q prototype thermal mesh and domain-size ladders now pass for Ea
+and Eb.  The selected diagnostic configuration is x/y factor 2, z factor 2,
+lateral half-span 48 um, Si depth 30 um, and top-air height 3 um (`548 x 548
+x 72`).  Axis-isolated tails and the combined `48/30/3` to `64/40/4 um` tail
+all pass.  Read `FDTDX_FROZEN_Q_THERMAL_DOMAIN_CONVERGENCE.md` first.
+
+This does not validate the boundary-condition model or interface parameters.
+Optical, actual-geometry electrical, coupled AD-FD, and the production
+multiphysics mesh remain unselected; optimization remains forbidden.  The
+independently owned Lumerical session remains untouched.
 
 ## Latest downstream diagnostic -- thermal z only
 
@@ -157,6 +160,14 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     Ea/Eb, factor 1 exactly rebounds to the prior z-factor-2 arrays, and x/y
     factor 2 is selected only for frozen-Q prototype diagnostics.  Thermal
     domain/boundaries and every production/coupled gate remain blocked.
+25. `FDTDX_FROZEN_Q_THERMAL_DOMAIN_CONVERGENCE.md`,
+    `fdtdx_frozen_q_thermal_domain_case.py`, and
+    `fdtdx_frozen_q_thermal_domain_certificate.py` -- hold diagnostic x/y and
+    z factors 2 fixed, certify lateral 32/48/64 um, substrate 20/30/40 um,
+    top-air 2/3/4 um, and a combined tail.  The selected diagnostic domain is
+    48/30/3 um.  Boundary-condition/interface uncertainty, optical,
+    actual-geometry electrical, coupled, production, and optimizer gates
+    remain blocked.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.

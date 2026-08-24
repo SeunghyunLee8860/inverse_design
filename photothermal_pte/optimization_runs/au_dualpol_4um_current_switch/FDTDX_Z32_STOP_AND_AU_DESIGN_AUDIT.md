@@ -234,12 +234,12 @@ can provide validated gradients.
 The current thermal/electrical operators are internally useful prototypes,
 not the target device.
 
-- Thermal center pitch is 100 nm.  SiO2 is represented by 85/100/100-nm
-  cells, the 100-nm TaIrTe4 by ten 10-nm cells, and 50-nm Au by 10/10/30-nm
-  cells.  Lateral faces at +/-32 um and the substrate bottom at -20 um are
-  fixed at ambient; the top uses an assumed `10 W m^-2 K^-1` convection.
-  No x/y/z, domain-size, boundary, or interface-conductance convergence
-  certificate exists.
+- The frozen-Q prototype now has diagnostic x/y factor 2, z factor 2,
+  and domain-size convergence.  Its selected diagnostic box has 48-um lateral
+  half-span, 30-um Si depth, and 3-um top-air height.  This does not validate
+  the boundary model: the lateral and substrate-bottom faces remain fixed at
+  ambient, the top still uses an assumed `10 W m^-2 K^-1` convection, and no
+  boundary-model or interface-conductance uncertainty certificate exists.
 - The electrical model has 25,600 TaIrTe4 nodes plus 6,400 Au nodes.  It fixes
   ideal terminals over the complete left/right flake edges and solves 31,680
   free unknowns.  It assumes solver x=b, y=a with no rotation, a centered
@@ -264,8 +264,10 @@ not the target device.
 3. Obtain the actual flake outline/thickness, in-plane a-axis angle, electrode
    and pad polygons, signed output contact, patterned-Au electrical role,
    SiO2/Si stack, beam parameters, and accepted Au-TaIrTe4 contact ranges.
-4. Once an independently validated Maxwell Q field exists, freeze it and
-   build a thermal x/y/z/domain/contact ladder.  Then build the actual-geometry
-   electrical pitch/contact/void-floor ladder.
+4. Preserve the frozen-Q thermal x/y/z and domain-size certificates as
+   prototype diagnostics.  Next quantify boundary-condition and interface-
+   conductance uncertainty without changing Q.  Once actual geometry and an
+   independently validated Maxwell Q exist, repeat the relevant thermal gates
+   and build the electrical pitch/contact/void-floor ladder.
 5. Only after Maxwell, thermal, electrical, and complete coupled AD-FD gates
    pass may a binary Au inverse-design route be considered.
