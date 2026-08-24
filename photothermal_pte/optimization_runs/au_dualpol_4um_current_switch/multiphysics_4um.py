@@ -110,8 +110,25 @@ def _refine_edges(edges: np.ndarray, factor: int) -> np.ndarray:
 
 
 def thermal_edges(
-    z_refinement_factor: int = 1, *, xy_refinement_factor: int = 1
+    z_refinement_factor: int = 1,
+    *,
+    xy_refinement_factor: int = 1,
+    lateral_half_span_um: int = 32,
+    substrate_depth_um: int = 20,
+    top_air_height_um: float = 2.0,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    if lateral_half_span_um not in (32, 48, 64):
+        raise ValueError("thermal lateral half-span must be 32, 48, or 64 um")
+    if substrate_depth_um not in (20, 30, 40):
+        raise ValueError("thermal substrate depth must be 20, 30, or 40 um")
+    if top_air_height_um not in (2.0, 3.0, 4.0):
+        raise ValueError("thermal top-air height must be 2, 3, or 4 um")
+    negative_extension_um = -np.arange(
+        float(lateral_half_span_um), 32.0, -4.0
+    )
+    positive_extension_um = np.arange(
+        36.0, lateral_half_span_um + 2.0, 4.0
+    )
     negative_outer = np.asarray((-32, -28, -24, -20, -16, -14), float) * 1e-6
     negative_shoulder = np.arange(-14.0, -12.0, 0.25) * 1e-6
     core = np.arange(-12.0, 12.0 + 0.05, 0.1) * 1e-6
@@ -119,10 +136,18 @@ def thermal_edges(
     positive_outer = np.asarray((16, 20, 24, 28, 32), float) * 1e-6
     lateral = np.unique(
         np.concatenate(
-            (negative_outer, negative_shoulder, core, positive_shoulder, positive_outer)
+            (
+                negative_extension_um * 1e-6,
+                negative_outer,
+                negative_shoulder,
+                core,
+                positive_shoulder,
+                positive_outer,
+                positive_extension_um * 1e-6,
+            )
         )
     )
-    z = np.asarray(
+    base_z_um = np.asarray(
         (
             -20.0, -12.0, -8.0, -5.0, -3.0, -2.0, -1.25,
             -0.8, -0.55, -0.385, -0.30, -0.20, -0.10,
@@ -132,6 +157,13 @@ def thermal_edges(
             0.70, 1.0, 1.25, 1.50, 2.0,
         ),
         float,
+    )
+    substrate_extension_um = -np.arange(
+        float(substrate_depth_um), 20.0, -10.0
+    )
+    top_extension_um = np.arange(2.5, top_air_height_um + 0.25, 0.5)
+    z = np.concatenate(
+        (substrate_extension_um, base_z_um, top_extension_um)
     ) * 1e-6
     refined_lateral = _refine_edges(lateral, xy_refinement_factor)
     return (
@@ -160,13 +192,20 @@ def build_thermal_state(
     *,
     z_refinement_factor: int = 1,
     xy_refinement_factor: int = 1,
+    lateral_half_span_um: int = 32,
+    substrate_depth_um: int = 20,
+    top_air_height_um: float = 2.0,
 ) -> ThermalState:
     density = np.asarray(rho, dtype=np.float64)
     if density.shape != CONTRACT.design_shape or np.any((density < 0) | (density > 1)):
         raise ValueError("rho must be an 80x80 physical density in [0,1]")
     fvm = _load(FVM_PATH, "au_dualpol_4um_fvm")
     edges = thermal_edges(
-        z_refinement_factor, xy_refinement_factor=xy_refinement_factor
+        z_refinement_factor,
+        xy_refinement_factor=xy_refinement_factor,
+        lateral_half_span_um=lateral_half_span_um,
+        substrate_depth_um=substrate_depth_um,
+        top_air_height_um=top_air_height_um,
     )
     widths = tuple(np.diff(axis) for axis in edges)
     centers = tuple(_centers(axis) for axis in edges)

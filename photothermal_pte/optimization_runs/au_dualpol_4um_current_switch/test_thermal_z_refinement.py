@@ -94,3 +94,46 @@ def test_xy_refinement_preserves_all_original_faces_and_leaves_z_fixed(factor):
 def test_invalid_xy_refinement_factor_fails_closed(factor):
     with pytest.raises(ValueError, match="positive integer"):
         thermal_edges(2, xy_refinement_factor=factor)
+
+
+@pytest.mark.parametrize(
+    ("keyword", "levels", "expected_bounds"),
+    [
+        ("lateral_half_span_um", (32, 48, 64), (-64e-6, 64e-6)),
+        ("substrate_depth_um", (20, 30, 40), (-40e-6, 2e-6)),
+        ("top_air_height_um", (2.0, 3.0, 4.0), (-20e-6, 4e-6)),
+    ],
+)
+def test_domain_ladders_preserve_the_baseline_and_only_extend_outer_faces(
+    keyword, levels, expected_bounds
+):
+    baseline = thermal_edges(2, xy_refinement_factor=2)
+    finest = thermal_edges(2, xy_refinement_factor=2, **{keyword: levels[-1]})
+    if keyword == "lateral_half_span_um":
+        assert np.array_equal(finest[0][16:-16], baseline[0])
+        assert np.array_equal(finest[1][16:-16], baseline[1])
+        assert np.array_equal(finest[2], baseline[2])
+        assert (finest[0][0], finest[0][-1]) == expected_bounds
+    else:
+        assert np.array_equal(finest[0], baseline[0])
+        assert np.array_equal(finest[1], baseline[1])
+        if keyword == "substrate_depth_um":
+            assert np.array_equal(finest[2][4:], baseline[2])
+        else:
+            assert np.array_equal(finest[2][:-8], baseline[2])
+        np.testing.assert_allclose(
+            (finest[2][0], finest[2][-1]), expected_bounds, rtol=0.0, atol=1e-20
+        )
+
+
+@pytest.mark.parametrize(
+    ("keyword", "value", "message"),
+    [
+        ("lateral_half_span_um", 36, "lateral half-span"),
+        ("substrate_depth_um", 25, "substrate depth"),
+        ("top_air_height_um", 2.5, "top-air height"),
+    ],
+)
+def test_undeclared_domain_levels_fail_closed(keyword, value, message):
+    with pytest.raises(ValueError, match=message):
+        thermal_edges(**{keyword: value})
