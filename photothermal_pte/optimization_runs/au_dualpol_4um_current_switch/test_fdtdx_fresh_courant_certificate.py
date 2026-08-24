@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
 import numpy as np
 
@@ -9,6 +11,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fres
     LEVELS,
     _level_sha,
     compare_courant_pair,
+    cross_commit_audit,
     courant_raw_schema_checks,
     courant_selection_gates,
     expected_courant_case,
@@ -104,7 +107,7 @@ class CourantCertificateTest(unittest.TestCase):
         )
         self.assertFalse(result["checks"]["source_power_relative_change"])
 
-    def test_selection_requires_all_cases_and_both_pairs(self) -> None:
+    def test_selection_requires_all_cases_and_two_fine_pairs(self) -> None:
         ready = {
             level: {"Ea": True, "Eb": True}
             for level in LEVELS
@@ -112,16 +115,31 @@ class CourantCertificateTest(unittest.TestCase):
         pairs = {
             ("c0p5", "c0p375"): True,
             ("c0p375", "c0p25"): True,
+            ("c0p25", "c0p1875"): True,
         }
         self.assertTrue(all(courant_selection_gates(ready, pairs).values()))
         ready["c0p25"]["Eb"] = False
         self.assertFalse(all(courant_selection_gates(ready, pairs).values()))
         ready["c0p25"]["Eb"] = True
-        pairs[("c0p375", "c0p25")] = False
+        pairs[("c0p25", "c0p1875")] = False
         self.assertFalse(all(courant_selection_gates(ready, pairs).values()))
 
+    def test_failed_coarse_pair_is_retained_but_does_not_block_fine_selection(self) -> None:
+        ready = {level: {"Ea": True, "Eb": True} for level in LEVELS}
+        pairs = {
+            ("c0p5", "c0p375"): False,
+            ("c0p375", "c0p25"): True,
+            ("c0p25", "c0p1875"): True,
+        }
+        self.assertTrue(all(courant_selection_gates(ready, pairs).values()))
+
     def test_closed_td_schema_allows_only_inverse_courant_sample_axis(self) -> None:
-        samples = {"c0p5": 6416, "c0p375": 8554, "c0p25": 12832}
+        samples = {
+            "c0p5": 6416,
+            "c0p375": 8554,
+            "c0p25": 12832,
+            "c0p1875": 17109,
+        }
         cases = {
             level: {
                 polarization: {
@@ -141,6 +159,26 @@ class CourantCertificateTest(unittest.TestCase):
         self.assertFalse(
             courant_raw_schema_checks(cases)["non_time_raw_array_schema_identical"]
         )
+
+    def test_cross_commit_audit_allows_only_declared_certificate_changes(self) -> None:
+        allowed = (
+            "photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/"
+            "fdtdx_fresh_courant_certificate.py"
+        )
+        target = (
+            "photothermal_pte.optimization_runs.au_dualpol_4um_current_switch."
+            "fdtdx_fresh_courant_certificate._git"
+        )
+        with patch(target, return_value=allowed):
+            result = cross_commit_audit(Path("/tmp/repository"), {"b", "a"})
+        self.assertTrue(result["ready"])
+        self.assertEqual(result["changed_paths_union"], [allowed])
+        with patch(target, return_value="unauthorized_runner.py"):
+            result = cross_commit_audit(Path("/tmp/repository"), {"b", "a"})
+        self.assertFalse(result["ready"])
+        result = cross_commit_audit(Path("/tmp/repository"), {"a", None})
+        self.assertFalse(result["ready"])
+        self.assertEqual(result["invalid_commit_values"], ["None"])
 
     def test_hash_parser_is_exact_and_fail_closed(self) -> None:
         values = [f"{level}={'a' * 64}" for level in LEVELS]

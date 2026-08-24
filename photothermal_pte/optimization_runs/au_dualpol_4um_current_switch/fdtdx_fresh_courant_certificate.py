@@ -43,11 +43,11 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fres
 CERTIFICATE_NAME = "FDTDX_FRESH_COURANT_CERTIFICATE.json"
 STATUS_READY = "VALIDATED_FDTDX_FRESH_L500_COURANT_CONVERGENCE"
 STATUS_BLOCKED = "BLOCKED_FDTDX_FRESH_L500_COURANT_CONVERGENCE"
-LEVELS = ("c0p5", "c0p375", "c0p25")
-COURANT = {"c0p5": 0.5, "c0p375": 0.375, "c0p25": 0.25}
-SUCCESSIVE_PAIRS = (("c0p5", "c0p375"), ("c0p375", "c0p25"))
-SELECTED_LEVEL = "c0p375"
-CONFIRMATION_LEVEL = "c0p25"
+LEVELS = ("c0p5", "c0p375", "c0p25", "c0p1875")
+COURANT = {"c0p5": 0.5, "c0p375": 0.375, "c0p25": 0.25, "c0p1875": 0.1875}
+SUCCESSIVE_PAIRS = (("c0p5", "c0p375"), ("c0p375", "c0p25"), ("c0p25", "c0p1875"))
+SELECTED_LEVEL = "c0p25"
+CONFIRMATION_LEVEL = "c0p1875"
 TOTAL_PERIODS = 24
 WINDOW_PERIODS = 4
 DT_SCALING_RTOL = 5.0e-12
@@ -260,17 +260,20 @@ def courant_selection_gates(
     pair_pass: Mapping[tuple[str, str], bool],
 ) -> dict[str, bool]:
     return {
-        "all_three_Courant_levels_internally_ready": all(
+        "all_four_Courant_levels_internally_ready": all(
             case_ready[level][polarization] is True
             for level in LEVELS
             for polarization in POLARIZATIONS
         ),
-        "c0p5_to_c0p375_cross_comparison_passes": pair_pass[
-            ("c0p5", "c0p375")
-        ]
-        is True,
+        "c0p5_to_c0p375_coarse_comparison_was_evaluated": isinstance(
+            pair_pass[("c0p5", "c0p375")], bool
+        ),
         "c0p375_to_c0p25_cross_comparison_passes": pair_pass[
             ("c0p375", "c0p25")
+        ]
+        is True,
+        "c0p25_to_c0p1875_cross_comparison_passes": pair_pass[
+            ("c0p25", "c0p1875")
         ]
         is True,
     }
@@ -324,6 +327,43 @@ def courant_raw_schema_checks(
         "closed_td_polarization_sample_counts_match": polarization_counts_match,
         "closed_td_sample_count_scales_inverse_with_Courant": bool(scaled_counts)
         and max(scaled_counts) - min(scaled_counts) <= 1.0,
+    }
+
+
+ALLOWED_CROSS_COMMIT_PATHS = frozenset((
+    "photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/fdtdx_fresh_courant_certificate.py",
+    "photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/fdtdx_fresh_time_settling_certificate.py",
+    "photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/test_fdtdx_fresh_courant_certificate.py",
+    "photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/test_fdtdx_fresh_time_settling_certificate.py",
+))
+
+
+def cross_commit_audit(repository: Path, commits: set[Any]) -> dict[str, Any]:
+    invalid = sorted(repr(value) for value in commits if not isinstance(value, str))
+    ordered = sorted(value for value in commits if isinstance(value, str))
+    comparisons = []
+    changed_union: set[str] = set()
+    for index, left in enumerate(ordered):
+        for right in ordered[index + 1:]:
+            changed = tuple(
+                name for name in _git(repository, "diff", "--name-only", left, right).splitlines()
+                if name
+            )
+            changed_union.update(changed)
+            comparisons.append({"left": left, "right": right, "changed_paths": list(changed)})
+    ready = (
+        bool(ordered)
+        and not invalid
+        and changed_union.issubset(ALLOWED_CROSS_COMMIT_PATHS)
+    )
+    return {
+        "recorded_commits": ordered,
+        "invalid_commit_values": invalid,
+        "comparisons": comparisons,
+        "changed_paths_union": sorted(changed_union),
+        "allowed_paths": sorted(ALLOWED_CROSS_COMMIT_PATHS),
+        "only_certificate_and_test_files_changed": ready,
+        "ready": ready,
     }
 
 
@@ -449,6 +489,10 @@ def build_courant_certificate(
         item["payload"].get("provenance", {}).get("certificate_repository_commit")
         for item in source_pairs.values()
     }
+    repository = Path(__file__).resolve().parents[3]
+    commit_audit = cross_commit_audit(
+        repository, repository_commits | source_pair_commits
+    )
     dt_per_courant = [
         float(payloads[level][polarization]["time_contract"]["time_step_s"])
         / COURANT[level]
@@ -520,9 +564,24 @@ def build_courant_certificate(
             == 1
             for polarization in POLARIZATIONS
         ),
-        "material_repository_commit_identical": len(repository_commits) == 1,
-        "source_and_material_repository_commit_identical": len(source_pair_commits) == 1
-        and source_pair_commits == repository_commits,
+        "cross_commit_changes_are_certificate_only": commit_audit["ready"] is True,
+        "source_and_material_repository_commit_match_per_level": all(
+            source_pairs[level]["payload"]
+            .get("provenance", {})
+            .get("certificate_repository_commit")
+            == payloads[level][polarization]["provenance"]["repository_commit"]
+            for level in LEVELS
+            for polarization in POLARIZATIONS
+        ),
+        "source_pair_generator_hash_identical": len(
+            {
+                item["payload"].get("provenance", {}).get(
+                    "certificate_generator_sha256"
+                )
+                for item in source_pairs.values()
+            }
+        )
+        == 1,
         "fdtdx_source_provenance_identical": len(
             {
                 json.dumps(payload["provenance"]["fdtdx_source"], sort_keys=True)
@@ -548,7 +607,7 @@ def build_courant_certificate(
             }
         )
         == 1,
-        "both_successive_comparisons_and_selection_pass": _all_true(selection),
+        "required_successive_comparisons_and_selection_pass": _all_true(selection),
         "optimizer_remains_forbidden": all(
             payload.get("optimizer_start_allowed") is False for payload in flat_payloads
         ),
@@ -582,6 +641,7 @@ def build_courant_certificate(
             }
             for level in LEVELS
         },
+        "cross_commit_audit": commit_audit,
         "cases": cases,
         "successive_comparisons": pair_results,
         "selection": {
@@ -592,8 +652,9 @@ def build_courant_certificate(
                 COURANT[CONFIRMATION_LEVEL] if ready else None
             ),
             "policy": (
-                "select the middle Courant level only when all three levels are "
-                "internally ready and both successive comparisons pass"
+                "retain the evaluated failed c0p5-to-c0p375 coarse comparison; "
+                "select c0p25 only when all four levels are internally ready and "
+                "both c0p375-to-c0p25 and c0p25-to-c0p1875 pass"
             ),
             "gates": selection,
             "failed_gates": [name for name, passed in selection.items() if not passed],

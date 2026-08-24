@@ -94,5 +94,6 @@ run_level() {
 run_level c0p5 0.5
 run_level c0p375 0.375
 run_level c0p25 0.25
+run_level c0p1875 0.1875
 
 echo "FDTDX_FRESH_COURANT_CAMPAIGN_COMPLETE root=$campaign_root"
