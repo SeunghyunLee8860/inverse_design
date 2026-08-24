@@ -120,6 +120,13 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     companion NPZ/JSON. It never reruns Maxwell. New exact-control runs save
     these arrays directly. Read `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`: the
     finest Ea empty/full official-filter downstream pair still fails.
+25. `lumerical_4um_official_downstream.py`,
+    `lumerical_4um_interface_comparison.py`, and
+    `30_validate_lumerical_4um_interface_methods.py` -- reuse the same
+    official material filter and custom CUDA PDE path to hash-compare MCM6
+    CV0, CV1, and staircase at one fixed mesh. Read
+    `LUMERICAL_INTERFACE_METHOD_FINDINGS.md`: staircase is the selected next
+    linked-z development candidate, not a final mesh certificate.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -382,6 +389,16 @@ Do not copy them into this worktree.
     0.00456%, flux 0.01086%, complex field 0.00184%, and E2 0.00135%; exact
     empty also passed. The MCM6 time axis is closed for this RTX Ea control.
     See `LUMERICAL_TIME_CONVERGENCE_FINDINGS.md`.
+11. The bounded 5/50-nm interface triage is complete. CV0 and staircase
+    agree below 0.15% in all tested source-normalized Maxwell metrics for both
+    empty and full controls, but the official exact-index material filter
+    leaves 11.8313%/7.7844% of CV0 empty/full absorption unassigned. CV1
+    differs from staircase by 1.74--3.25% in normalized Q and leaves
+    6.2624%/11.2663% unassigned. Staircase leaves only 0.001012%/0.195399%
+    unassigned. It is therefore selected for the next linked-z development
+    pair, not promoted as converged. Fixed-mesh symmetry-current controls and
+    all remaining z/polarization/geometry gates stay open. See
+    `LUMERICAL_INTERFACE_METHOD_FINDINGS.md`.
 
 ## Next correct sequence
 
@@ -397,10 +414,12 @@ Do not copy them into this worktree.
    failed downstream gate with scripts 28/29. The Lumerical-native definition
    is now the official `pabs_adv` exact-index material filter; it leaves
    1.19--1.56% of fine-grid absorption unassigned at conformal mixed-index
-   samples. Run the bounded MCM6 CV0/CV1/staircase interface axis at a
-   tractable linked mesh before attempting another factor-two z refinement.
-   Staircase is a tested candidate, not an assumed answer. Do not hide the
-   gap by rescaling, and do not begin x/y convergence until downstream and
+   samples. The bounded MCM6 CV0/CV1/staircase axis is now complete and
+   selects staircase only as the next development candidate: its material
+   omission is below 0.5%, while its Maxwell observables agree with CV0 below
+   0.5%. Run a matching staircase 5/50-to-2.5/25-nm linked refinement next;
+   do not treat the fixed-mesh comparison as convergence. Do not hide any gap
+   by rescaling, and do not begin x/y convergence until downstream and
    remaining Eb/simple-L z gates pass.
 4. On the actual B200, use `25_run_lumerical_4um_exact_au_control.py` to pass
    source-only Ea/Eb first, then matching ordinary empty/full/simple-L exact

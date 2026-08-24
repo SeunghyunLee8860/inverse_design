@@ -49,6 +49,13 @@ exact-full, 1 ps/1e-7 versus 2 ps/1e-9 changed normalized Q by 0.00456%, flux
 by 0.01086%, complex endpoint field by 0.00184%, and E2 by 0.00135%; exact
 empty also passed. The RTX Ea time axis is therefore closed, while z remains
 failed. See `LUMERICAL_TIME_CONVERGENCE_FINDINGS.md`.
+The subsequent fixed 5/50-nm interface triage found that CV0 and staircase
+agree below 0.15% in all tested source-normalized Maxwell metrics, but CV0's
+official exact-index material filter leaves 11.8313%/7.7844% of empty/full
+absorption unassigned. CV1 both differs optically and leaves 6.2624%/11.2663%
+unassigned. Staircase reduces omission to 0.001012%/0.195399% and is therefore
+the next linked-z development candidate. This is not a convergence or
+production certificate; see `LUMERICAL_INTERFACE_METHOD_FINDINGS.md`.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine
