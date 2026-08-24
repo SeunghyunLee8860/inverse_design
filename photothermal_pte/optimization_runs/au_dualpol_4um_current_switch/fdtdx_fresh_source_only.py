@@ -29,6 +29,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_exac
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_mesh import (
     build_model,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_metrics import (
+    electric_yee_dual_volumes,
+    weighted_complex_nrmse,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_runtime_preflight import (
     load_runtime_lock,
 )
@@ -47,20 +51,6 @@ BEAM_WAIST_RELATIVE_LIMIT = 0.10
 JSON_NAME = "FDTDX_FRESH_SOURCE_ONLY.json"
 RAW_NAME = "FDTDX_FRESH_SOURCE_ONLY_FIELDS.npz"
 
-
-def weighted_complex_nrmse(
-    late: np.ndarray, previous: np.ndarray, weights: np.ndarray
-) -> float:
-    late_value = np.asarray(late)
-    previous_value = np.asarray(previous)
-    weight = np.asarray(weights, dtype=np.float64)
-    if late_value.shape != previous_value.shape:
-        raise ValueError("late and previous fields must have identical shape")
-    if late_value.ndim != 4 or weight.shape != late_value.shape[1:]:
-        raise ValueError("fields must be (component,x,y,z) with matching 3D weights")
-    numerator = float(np.sum(np.abs(late_value - previous_value) ** 2 * weight[None]))
-    denominator = float(np.sum(np.abs(late_value) ** 2 * weight[None]))
-    return math.sqrt(numerator / max(denominator, np.finfo(float).tiny))
 
 
 def polarization_audit(
@@ -128,17 +118,7 @@ def beam_moments(
 
 
 def _region_volume_weights(model: dict[str, Any], object_name: str) -> np.ndarray:
-    grid = model["grid"]
-    grid_slice = model["slices"][object_name]
-    selected = [
-        np.asarray(grid.cell_widths(axis), dtype=np.float64)[grid_slice[axis]]
-        for axis in range(3)
-    ]
-    return (
-        selected[0][:, None, None]
-        * selected[1][None, :, None]
-        * selected[2][None, None, :]
-    )
+    return electric_yee_dual_volumes(model["grid"], model["slices"][object_name])
 
 
 def _target_coordinates(model: dict[str, Any]):
