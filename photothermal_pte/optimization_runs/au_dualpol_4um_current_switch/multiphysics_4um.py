@@ -89,7 +89,29 @@ def _face_before(edges: np.ndarray, value: float) -> int:
     return int(match[0] - 1)
 
 
-def thermal_edges() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def _refine_edges(edges: np.ndarray, factor: int) -> np.ndarray:
+    if not isinstance(factor, int) or isinstance(factor, bool) or factor < 1:
+        raise ValueError("thermal refinement factor must be a positive integer")
+    value = np.asarray(edges, dtype=np.float64)
+    if (
+        value.ndim != 1
+        or value.size < 2
+        or not np.all(np.isfinite(value))
+        or np.any(np.diff(value) <= 0.0)
+    ):
+        raise ValueError("thermal edges must be finite and strictly increasing")
+    if factor == 1:
+        return value.copy()
+    refined = [
+        np.linspace(value[index], value[index + 1], factor, endpoint=False)
+        for index in range(value.size - 1)
+    ]
+    return np.concatenate((*refined, value[-1:]))
+
+
+def thermal_edges(
+    z_refinement_factor: int = 1,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     negative_outer = np.asarray((-32, -28, -24, -20, -16, -14), float) * 1e-6
     negative_shoulder = np.arange(-14.0, -12.0, 0.25) * 1e-6
     core = np.arange(-12.0, 12.0 + 0.05, 0.1) * 1e-6
@@ -111,7 +133,7 @@ def thermal_edges() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         ),
         float,
     ) * 1e-6
-    return lateral, lateral.copy(), z
+    return lateral, lateral.copy(), _refine_edges(z, z_refinement_factor)
 
 
 @dataclass(frozen=True)
@@ -128,12 +150,14 @@ class ThermalState:
     faces: dict[str, int]
 
 
-def build_thermal_state(rho: np.ndarray) -> ThermalState:
+def build_thermal_state(
+    rho: np.ndarray, *, z_refinement_factor: int = 1
+) -> ThermalState:
     density = np.asarray(rho, dtype=np.float64)
     if density.shape != CONTRACT.design_shape or np.any((density < 0) | (density > 1)):
         raise ValueError("rho must be an 80x80 physical density in [0,1]")
     fvm = _load(FVM_PATH, "au_dualpol_4um_fvm")
-    edges = thermal_edges()
+    edges = thermal_edges(z_refinement_factor)
     widths = tuple(np.diff(axis) for axis in edges)
     centers = tuple(_centers(axis) for axis in edges)
     x, y, z = centers
