@@ -299,3 +299,14 @@ closes source normalization for the anchor case only. Spatially changed meshes
 still require matching newly generated source controls or a rigorously proven
 source-transfer rule; do not silently reuse this certificate on a different
 case hash.
+
+## Full-z source contracts prepared
+
+Mesh-aware source cases at clean project commit `22d27c4a` completed on the
+verified-idle GPU 6/7 pair. All reports and certificates pass.
+
+- z2 (`196 x 196 x 80`, case `7d457ac10933752178ddd09efe7efd51f2672910d01562727a86bebe5c02ddbc`): Ea/Eb report hashes `72507b2da95b0b8a05f0637667d5fb1881edae0e04e2791efbdcfa5f369a7696` and `fdc3ff918503269f86898bf42cc43fa055844d71214bfdc2a270d9af905fd6ea`; pair SHA-256 `c1565e0bee3e79fe0ff0e87a3d891ebe9b419598953e760b68937dd2935cf9b3`; power mismatch `1.15523e-7`; cold forward `15.754/15.616 s`.
+- z4 anchor (`196 x 196 x 160`, case `4a1b16092a693953c075b9848bba3342951233b712e397005dc34312f6e30532`): pair SHA-256 `6beab945b90513e9ce638932abdb25702fb4c97be4897abe6f794639fee98dba`.
+- z8 (`196 x 196 x 320`, case `8dc9d5b2717b930b1585cd3a85cb9553dfba642a1290f52d3e5648a8c164193a`): Ea/Eb report hashes `695199ce723103b2f3f8c9332bb3e1bddf640afc17e436943b36b49a3ced6ea4` and `a3d456a47c9364050edc2120de762a663dc8c9c0fa959b460878269b03e94aa5`; pair SHA-256 `ffa8e5706d7dab65622757335e545c8a67dc15c08c420fd661ca5580d7ba3b4d`; mismatch zero; cold forward `101.789/101.407 s`; peak JAX bytes about 7.401 GB.
+
+Roots are `/home/seunghyun200/fdtdx_results/increment_state_source_22d27c4a_z2_t24/` and `..._z8_t24/`; the z4 root was recorded above. These certificates authorize only their exact case hashes. The next runner must rehash and match the appropriate certificate before each material solve.

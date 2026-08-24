@@ -888,3 +888,14 @@ and `b89671354fb02ed7b8df68c4c529b14ad34bf613f9da4da8a417ac8fe7ee9c16`.
 This certificate is anchor-case-only. A changed mesh needs a matching source
 case or proven transfer; never substitute the historical pair. Proceed to an
 axis-by-axis exact-binary spatial convergence design, not gray optimization.
+
+## Full-z source ladder ready
+
+z2/z4/z8 source-pair certificate hashes are
+`c1565e0bee3e79fe0ff0e87a3d891ebe9b419598953e760b68937dd2935cf9b3`,
+`6beab945b90513e9ce638932abdb25702fb4c97be4897abe6f794639fee98dba`, and
+`ffa8e5706d7dab65622757335e545c8a67dc15c08c420fd661ca5580d7ba3b4d`.
+All are ready and bound to canonical 24/4 case hashes. z2/z8 roots are under
+`/home/seunghyun200/fdtdx_results/increment_state_source_22d27c4a_z{2,8}_t24/`.
+Proceed with exact L500 material Ea/Eb cases at each matching source contract;
+never transfer a source certificate across levels.
