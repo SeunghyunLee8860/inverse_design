@@ -5,6 +5,9 @@ from pathlib import Path
 
 import numpy as np
 
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.combined_4um import (
+    relative_grid_slice,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import CONTRACT
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.dfm import (
     MAPPING,
@@ -83,6 +86,22 @@ def test_contract_geometry_and_source_boundary() -> None:
     assert CONTRACT.design_shape == (80, 80)
     assert CONTRACT.axis_x == "b" and CONTRACT.axis_y == "a"
     assert CONTRACT.flake_boundary_intensity_fraction < 5.0e-4
+
+
+def test_adjoint_material_slices_follow_the_realized_mesh() -> None:
+    container = (slice(13, 173), slice(13, 173), slice(37, 117))
+    tairte4 = (slice(13, 173), slice(13, 173), slice(61, 101))
+    au = (slice(53, 133), slice(53, 133), slice(101, 117))
+    assert relative_grid_slice(tairte4, container) == (
+        slice(0, 160),
+        slice(0, 160),
+        slice(24, 64),
+    )
+    assert relative_grid_slice(au, container) == (
+        slice(40, 120),
+        slice(40, 120),
+        slice(64, 80),
+    )
 
 
 def test_all_physics_share_linear_au_material_fraction() -> None:

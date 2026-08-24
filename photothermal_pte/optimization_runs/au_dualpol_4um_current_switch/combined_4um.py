@@ -12,7 +12,6 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_4um_model import (
     EPS0_F_PER_M,
-    LAYOUT,
     build_model,
     grid_edges_sha256,
 )
@@ -38,6 +37,24 @@ def replace_named(objects, name: str, replacement):
     values = list(result.object_list)
     values[result.index(name)] = replacement
     return result.aset("object_list", values)
+
+
+def relative_grid_slice(
+    child: tuple[slice, slice, slice],
+    container: tuple[slice, slice, slice],
+) -> tuple[slice, slice, slice]:
+    """Express an absolute placed-object slice in its container coordinates."""
+    result = []
+    for child_part, container_part in zip(child, container, strict=True):
+        start = int(child_part.start) - int(container_part.start)
+        stop = int(child_part.stop) - int(container_part.start)
+        container_size = int(container_part.stop) - int(container_part.start)
+        if start < 0 or stop > container_size or stop <= start:
+            raise RuntimeError(
+                f"grid slice {child} is not contained in {container}"
+            )
+        result.append(slice(start, stop))
+    return tuple(result)
 
 
 def electric_yee_dual_volumes(grid, grid_slice: tuple[slice, slice, slice]):
@@ -399,18 +416,17 @@ def combined_gradient(
     )
     e_stack = np.zeros((3, *adjoint_shape), dtype=np.complex64)
     coefficient = np.zeros((3, *adjoint_shape), dtype=np.float32)
-    ta_z = slice(LAYOUT.sio2_cells, LAYOUT.sio2_cells + LAYOUT.tairte4_cells)
-    e_stack[:, :, :, ta_z] = fields["tairte4"]
+    adjoint_slice = runner.model["slices"]["distributed_adjoint_source"]
+    ta_local = relative_grid_slice(
+        runner.model["slices"]["fixed_tairte4"], adjoint_slice
+    )
+    e_stack[(slice(None), *ta_local)] = fields["tairte4"]
     ta_weight = weights["tairte4"]
-    coefficient[:, :, :, ta_z] = runner.physical_prefactor * runner.ta_imag * ta_weight
-    offset = (LAYOUT.flake_xy_cells - LAYOUT.au_xy_cells) // 2
-    au_local = (
-        slice(offset, offset + LAYOUT.au_xy_cells),
-        slice(offset, offset + LAYOUT.au_xy_cells),
-        slice(
-            LAYOUT.sio2_cells + LAYOUT.tairte4_cells,
-            LAYOUT.sio2_cells + LAYOUT.tairte4_cells + LAYOUT.au_cells,
-        ),
+    coefficient[(slice(None), *ta_local)] = (
+        runner.physical_prefactor * runner.ta_imag * ta_weight
+    )
+    au_local = relative_grid_slice(
+        runner.model["slices"]["au_design"], adjoint_slice
     )
     e_stack[(slice(None), *au_local)] = fields["au"]
     au_weight = weights["au"]

@@ -114,6 +114,10 @@ sample-air boundaries are insulating, and the transverse example uses an
   enforce its grid hash, Courant factor, and time windows. Ea and Eb use
   separate same-grid source-power calibrations; a passing certificate can no
   longer silently fall back to the coarse baseline runner.
+- Combined-adjoint material placement now derives TaIrTe4 and Au source slices
+  from each runner's realized placed-object slices. The former implementation
+  used baseline z-cell counts and would have misplaced the adjoint source on a
+  refined-z production grid even when the forward runner used that fine grid.
 - Source calibration bound to exact grid/source/time metadata.
 - Stale validation artifacts rejected by status, material-law, grid, input,
   and SHA checks.

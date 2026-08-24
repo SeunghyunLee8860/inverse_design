@@ -100,7 +100,9 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    pass. There is no runtime bypass. The certificate must name the selected
    full-domain-z grid, Courant factor, time windows, and same-grid Ea/Eb source
    calibration; all three production entry points now consume those exact
-   values and reject a grid-hash mismatch. See `PRODUCTION_READINESS.md`.
+   values and reject a grid-hash mismatch. The combined adjoint also derives
+   its Au/TaIrTe4 material offsets from the realized placed slices; do not
+   reintroduce baseline `LAYOUT` offsets. See `PRODUCTION_READINESS.md`.
 9. The present square flake, full-edge terminals, unrotated x=b/y=a axes,
    100 nm thickness, 285 nm oxide, centered beam, and floating direct-contact
    Au are assumptions. The local 2026 paper explicitly makes the weighting
