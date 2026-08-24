@@ -1,0 +1,25 @@
+{
+  "status": "PINNED_FDTDX_SOURCE_RUNTIME_NOT_YET_CERTIFIED",
+  "repository": "https://github.com/ymahlau/fdtdx.git",
+  "branch": "main",
+  "commit": "f26f84b70a8cceec9b889553955a868624736bf1",
+  "tree": "43687e561d4bd2735f188149b2fc1bc50da82c47",
+  "describe": "v0.6.2-70-gf26f84b",
+  "verified_against_origin_main_utc_date": "2026-08-24",
+  "python_requires": ">=3.11,<3.15",
+  "license": "MIT",
+  "critical_files_sha256": {
+    "pyproject.toml": "a6ce57099dce111b7d7ec40d2ad2b2879865bf26569725b9c86bc9e47f0f4643",
+    "src/fdtdx/dispersion.py": "298be6194ae1809744bfcf1fb0d102349ad05907efdcdd7c89ea1a27b67a32ff",
+    "src/fdtdx/fdtd/update.py": "70a5f3fc95b9d78c255d4a82c2e084f7b538bf9e79f89ce95b25f13da2b216c5",
+    "src/fdtdx/objects/boundaries/initialization.py": "9b024febb9014ec4efe891352c33763b69a62b21b7b1fd06ce6553d53d344032",
+    "src/fdtdx/objects/boundaries/perfectly_matched_layer.py": "4a73a5185d87b0a874426e269d464aa060e776cabd02f563ea8d424d4ddd9cf2",
+    "src/fdtdx/objects/detectors/poynting_flux.py": "29e14f171206334c361dead92d251f6ce4b15a34a45605ff69b85d4241f94888",
+    "src/fdtdx/objects/static_material/static.py": "231097dcca1686862fbae8ce45b1884de456f1f72433be7e8e76898b9911f1d6"
+  },
+  "fresh_route_overrides": {
+    "pml": "all CPML face parameters are explicit and tied to the 4 um carrier",
+    "closed_surface_phasor": "rectangular switch-only window remains required because the locked detector update omits apodization weights",
+    "geometry": "exact-binary piecewise-constant masks only during reference convergence"
+  }
+}

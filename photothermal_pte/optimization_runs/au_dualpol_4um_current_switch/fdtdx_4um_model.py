@@ -319,6 +319,7 @@ def build_model(
     courant_factor: float = 0.5,
     include_adjoint_source: bool = True,
     air_only_source_calibration: bool = False,
+    pml_face_parameters: dict[str, dict[str, float]] | None = None,
 ) -> dict[str, Any]:
     """Place the full optical model without running a time-domain solve."""
 
@@ -426,16 +427,22 @@ def build_model(
         material=fdtdx.Material(permittivity=1.0),
     )
     objects.append(volume)
+    boundary_kwargs: dict[str, Any] = {
+        "thickness_grid_minx": LAYOUT.pml_cells_xy,
+        "thickness_grid_maxx": LAYOUT.pml_cells_xy,
+        "thickness_grid_miny": LAYOUT.pml_cells_xy,
+        "thickness_grid_maxy": LAYOUT.pml_cells_xy,
+        "thickness_grid_minz": LAYOUT.pml_cells_z,
+        "thickness_grid_maxz": LAYOUT.pml_cells_z,
+    }
+    if pml_face_parameters is not None:
+        from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_pml import (
+            boundary_config_kwargs,
+        )
+
+        boundary_kwargs.update(boundary_config_kwargs(pml_face_parameters))
     boundaries, boundary_constraints = fdtdx.boundary_objects_from_config(
-        fdtdx.BoundaryConfig(
-            thickness_grid_minx=LAYOUT.pml_cells_xy,
-            thickness_grid_maxx=LAYOUT.pml_cells_xy,
-            thickness_grid_miny=LAYOUT.pml_cells_xy,
-            thickness_grid_maxy=LAYOUT.pml_cells_xy,
-            thickness_grid_minz=LAYOUT.pml_cells_z,
-            thickness_grid_maxz=LAYOUT.pml_cells_z,
-        ),
-        volume,
+        fdtdx.BoundaryConfig(**boundary_kwargs), volume
     )
     objects.extend(boundaries.values())
     constraints.extend(boundary_constraints)
@@ -742,5 +749,6 @@ def build_model(
         "polarization": polarization,
         "air_only_source_calibration": bool(air_only_source_calibration),
         "closed_surface_phasor_window": CLOSED_SURFACE_PHASOR_WINDOW,
+        "pml_face_parameters": pml_face_parameters,
         "placement": {name: _slice(value) for name, value in slices.items()},
     }
