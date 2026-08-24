@@ -320,8 +320,10 @@ def test_production_readiness_requires_hash_linked_complete_certificates(
         "lumerical_dispersive_density_route_validated"
     ]
     assert historically_complete["lumerical_density_route_status"] == (
-        "RTX_EA_EB_FOUR_LATENT_DIRECTIONS_EACH_ADFD_PASSED; BLOCKED_PENDING_B200_"
-        "ENDPOINT_BANDWIDTH_RESONANCE_OPTIMIZER_AND_MESH_GATES"
+        "RTX_Z5_BULK50_STAIRCASE_EA_EB_FOUR_LATENT_DIRECTIONS_EACH_ADFD_"
+        "PASSED; RTX_Z2P5_BULK50_CV0_EA_EB_ONE_COMMON_LATENT_DIRECTION_EACH_"
+        "ADFD_PASSED; BLOCKED_PENDING_B200_"
+        "ENDPOINT_BANDWIDTH_RESONANCE_OPTIMIZER_AND_REMAINING_MESH_GATES"
     )
     with pytest.raises(RuntimeError, match="passing production-readiness"):
         calibrated_source_scales(historically_complete, 2.0)

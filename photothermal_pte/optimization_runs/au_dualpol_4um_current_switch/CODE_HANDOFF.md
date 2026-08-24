@@ -136,8 +136,9 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     `30_validate_lumerical_4um_interface_methods.py` -- reuse the same
     official material filter and custom CUDA PDE path to hash-compare MCM6
     CV0, CV1, and staircase at one fixed mesh. Read
-    `LUMERICAL_INTERFACE_METHOD_FINDINGS.md`: staircase is the selected next
-    linked-z development candidate, not a final mesh certificate.
+    `LUMERICAL_INTERFACE_METHOD_FINDINGS.md`: staircase was the historical
+    linked-z diagnostic choice, not the current bounded-cost optimizer mesh
+    and not a final mesh certificate.
 26. `32_validate_lumerical_4um_component_yee_z_multiphysics_pair.py` --
     replaces the axis-biased common-grid `index_x` material partition for
     symmetric exact controls with collocated `Qx/epsilon_x`, `Qy/epsilon_y`,
@@ -251,6 +252,31 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     optimizer, Lumerical HEAT/CHARGE, FDTDX Maxwell, mesh sweep, or B200 claim
     was made. The baseline remains non-switching because both currents are
     negative.
+38. At the user's direction, the bounded-cost development/optimization mesh
+    is CV0 `2.5/50 nm`, not staircase: 100-nm in-plane flake mesh, 2.5-nm
+    thin-stack z mesh, 50-nm bulk/air/PML z mesh, 200-nm outer in-plane mesh,
+    mesh accuracy 3, eight PML layers, 20-um lateral span, z = +/-3 um, and a
+    1-ps window. Fresh R1.2 build-4522 source/empty/full controls passed for
+    both Ea and Eb on `183x183x303`. Ea solver times were
+    `37.60/125.00/148.44 s`; Eb times were `34.33/123.40/178.30 s`, totaling
+    10.78 minutes. This is an engineering selection, not a formal convergence
+    certificate.
+39. The complete same-mesh CV0 beta-4 latent AD-FD chain now passes one common
+    direction at `h=0.0025`. The component-Yee material-map FD error is
+    `4.14e-11` worst case and its transpose error is `1.05e-15`. Ea AD/FD are
+    `-2.795034298e-8`/`-2.794796295e-8 A` (error `8.515e-5`); Eb AD/FD are
+    `-5.532360856e-8`/`-5.531639071e-8 A` (error `1.3047e-4`). The exact
+    signed epigraph and both constraints pass. The unoptimized baseline is
+    still non-switching at `I_Ea=-8.70019 nA`, `I_Eb=-16.8637 nA`; no
+    optimizer or B200 promotion was claimed. The older four-direction family
+    remains additional `5/50-nm` staircase evidence. Raw artifacts remain
+    outside Git. The final certificates are in raw directories
+    `r12_ea_latent_beta4_dir0_combined_adfd_result_z2p5_bulk50_cv0_v1`,
+    `r12_eb_latent_beta4_dir0_combined_adfd_result_z2p5_bulk50_cv0_v1`, and
+    `r12_ea_eb_latent_beta4_dir0_signed_objective_z2p5_bulk50_cv0_v1`. Use
+    Jacobian directory `r12_ea_latent_beta4_yee_jacobian_z2p5_bulk50_cv0_v2`;
+    its `v1` predecessor is an intentionally retained blocked license-session
+    record, not a valid operator.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -646,10 +672,11 @@ Do not copy them into this worktree.
    selected material partition because its x-staggered classifier creates a
    false current. The selected development map is native component-Yee Q with
    collocated fitted epsilon; reproduce it with script 32. The bounded MCM6
-   CV0/CV1/staircase axis is now complete and
-   selects staircase only as the next development candidate: its material
-   omission is below 0.5%, while its Maxwell observables agree with CV0 below
-   0.5%. The staircase 5/50-to-2.5/25-nm linked refinement is complete and
+   CV0/CV1/staircase axis is now complete. Staircase was used for the
+   historical linked-z diagnostic because its material omission is below
+   0.5%, while its Maxwell observables agree with CV0 below 0.5%; the user
+   later selected CV0 `2.5/50 nm` for bounded-cost optimization development.
+   The staircase 5/50-to-2.5/25-nm linked refinement is complete and
    fails the Maxwell prerequisite. The matching staircase 1.25/12.5-nm set
    is also complete; its pair with 2.5/25 nm still fails narrowly. The
    staircase 0.625/6.25-nm source/empty/MCM6-full set and comparison are now
@@ -668,16 +695,20 @@ Do not copy them into this worktree.
    must remain outside the Git worktree. The unified runner and endpoint batch
    now exist, but no B200 result is committed and this Codex host fails the
    B200 preflight.
-5. The component-Yee builder, hash-bound R1.2 distributed-source adjoints,
+5. The selected bounded-cost development mesh is CV0 `2.5/50 nm`. Its R1.2
+   source/empty/full controls and one complete common Ea/Eb beta-4 latent
+   AD-FD direction pass. Build the fail-closed evaluation driver without
+   rerunning these hash-bound controls. The component-Yee builder,
+   hash-bound R1.2 distributed-source adjoints,
    and all four planned beta-4 latent centered AD-FD directions for each of Ea
    and Eb now pass on the 5/50-nm staircase mesh. Their exact signed epigraph
-   also passes in all four common directions. Next build a fail-closed Lumerical
-   evaluation driver without rerunning already hash-bound baselines. The
+   also passes in all four common directions. The selected CV0 mesh adds one
+   common direction with Ea/Eb errors `8.515e-5`/`1.3047e-4`. The
    polarization-general runner now permits reuse of the Ea material Jacobian
    for Eb only after the exact epsilon/grid/frequency binding passes; it does
    not require the physically different Ea/Eb field and Q arrays to match.
-   Repeat the material Jacobian and AD-FD on the ultimately selected
-   mesh/B200; do not substitute bundled LumOpt's real/lossless metal path.
+   Repeat the material Jacobian and AD-FD on the B200; do not substitute
+   bundled LumOpt's real/lossless metal path.
 6. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh
    convergence, and downstream PTE current.
 7. Certify the combined gradient on the selected production mesh.

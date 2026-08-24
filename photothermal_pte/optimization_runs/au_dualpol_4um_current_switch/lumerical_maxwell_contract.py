@@ -81,8 +81,10 @@ class LumericalMaxwellContract:
     optical_rho_power: float | None = None
     np_density_as_au_topology_variable_allowed: bool = False
     continuous_lumerical_au_carrier_status: str = (
-        "RTX_EA_EB_FOUR_LATENT_DIRECTIONS_EACH_ADFD_PASSED; BLOCKED_PENDING_B200_"
-        "ENDPOINT_BANDWIDTH_RESONANCE_OPTIMIZER_AND_MESH_GATES"
+        "RTX_Z5_BULK50_STAIRCASE_EA_EB_FOUR_LATENT_DIRECTIONS_EACH_ADFD_"
+        "PASSED; RTX_Z2P5_BULK50_CV0_EA_EB_ONE_COMMON_LATENT_DIRECTION_EACH_"
+        "ADFD_PASSED; BLOCKED_PENDING_B200_"
+        "ENDPOINT_BANDWIDTH_RESONANCE_OPTIMIZER_AND_REMAINING_MESH_GATES"
     )
     bundled_lumopt_topology_gradient_allowed_without_au_adfd: bool = False
     fdtdx_allowed: bool = False

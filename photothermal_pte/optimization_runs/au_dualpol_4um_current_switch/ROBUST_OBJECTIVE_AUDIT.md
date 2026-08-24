@@ -50,5 +50,14 @@ Ea/Eb constraint errors `9.981e-5`/`1.890e-4`.
 Direction 3 also passed with balanced-objective error `9.494e-5` and Ea/Eb
 constraint errors `9.494e-5`/`1.322e-4`. All four planned common directions
 now pass on the RTX development mesh. A fail-closed Lumerical evaluation
-driver, the selected converged mesh, B200 repetition, and actual optimization
+driver, formal mesh-convergence/B200 repetition, and actual optimization
 remain open.
+The user selected CV0 `2.5/50 nm` as the bounded-cost development mesh. One
+complete common beta-4 latent direction now passes on that exact mesh: Ea/Eb
+current AD-FD errors are `8.515e-5`/`1.3047e-4`; the active signed balanced
+objective error is `8.515e-5`, and both constraint errors are below 1%. The
+baseline remains non-switching (`I_Ea=-8.70019 nA`, `I_Eb=-16.8637 nA`), so
+this validates the objective/constraint gradient but is not an optimization
+result. The
+existing four-direction family remains additional evidence for `5/50 nm`
+staircase only.

@@ -50,14 +50,20 @@ sample-air boundaries are insulating, and the transverse example uses an
    shared-linear/all-projection correction is diagnostic only. The selected
    Lumerical `n-k` law is now implemented solver-free. Its nonuniform
    density-to-component-Yee material Jacobian passes an actual RTX development
-   FSP certificate, but B200 endpoint, resonance, complete AD-FD, and mesh
-   gates remain open.
+   FSP certificate. On the user-selected CV0 `2.5/50-nm` engineering mesh,
+   one common beta-4 latent direction for each polarization now also passes
+   complete optical/thermal/electrical AD-FD. B200 endpoint/bandwidth and
+   resonance checks, multi-direction repetition on the selected mesh, formal
+   mesh convergence, final-binary reevaluation, and the optimization itself
+   remain open.
 
    The nonuniform gray optical-Q connection to the custom CUDA PDEs now also
    passes. Every native `Qx/Qy/Qz` sample is overlap-deposited without an
    exact-material equality mask, so relaxed design-layer loss is not
    discarded; its transpose agrees to machine precision. This does not yet
-   validate the Maxwell field adjoint or the end-to-end density gradient.
+   certify production, but the selected-mesh R1.2 FieldRegion adjoint and
+   independent centered latent-density pair do validate the Maxwell field
+   adjoint and end-to-end density gradient for the tested Ea/Eb direction.
 
 2. **No converged mesh exists.** The historical partial-z sweep refined only
    Au, TaIrTe4, and SiO2, and its tables are stale because they used O3/TE1,
@@ -198,9 +204,14 @@ sample-air boundaries are insulating, and the transverse example uses an
    uniform-density resonance sweep, selected-mesh/B200 repetition of the now
    passed RTX component-Yee Jacobian, and multi-direction latent AD-FD for Ea
    and Eb. All four planned common latent directions now pass for both
-   polarizations, and their exact signed epigraph passes in all four, only on
-   the RTX development mesh. The fail-closed Lumerical evaluation driver,
-   selected mesh, and B200 repetition remain. Do not resume either O3/TE1
+   polarizations, and their exact signed epigraph passes in all four on the
+   older RTX `5/50-nm` staircase development mesh. The fail-closed Lumerical
+   evaluation driver and B200 repetition remain. Do not resume either O3/TE1
    or the shared-linear FDTDX LD_MMA history.
+   The user-selected bounded-cost development mesh is CV0 `2.5/50 nm`.
+   Both-polarization R1.2 source/empty/full controls and one common Ea/Eb
+   beta-4 latent direction pass complete AD-FD at `8.515e-5`/`1.3047e-4`
+   relative error. This is still an engineering mesh, not a convergence or
+   B200 certificate.
 9. Revalidate the final exact-binary design on the finer meshes and parameter
    sensitivity corners before claiming the polarization current switch.

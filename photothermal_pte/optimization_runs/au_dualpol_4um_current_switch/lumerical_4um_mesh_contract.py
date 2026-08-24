@@ -124,6 +124,18 @@ def replace_labeled(spec: LumericalMeshSpec, label: str, **updates: Any) -> Lume
     return replace(spec, label=label, **updates).validate()
 
 
+SELECTED_DEVELOPMENT_MESH_STATUS = (
+    "USER_SELECTED_CV0_ENGINEERING_MESH_NOT_A_CONVERGENCE_CERTIFICATE"
+)
+SELECTED_DEVELOPMENT_MESH = replace_labeled(
+    BASELINE,
+    label="fine_z2p5_bulk50_xy100_cv0_pml8_span20_z6_t1ps",
+    stack_dz_m=2.5e-9,
+    bulk_dz_m=50.0e-9,
+    conformal_mesh="conformal variant 0",
+)
+
+
 def candidate_axes() -> dict[str, list[Any]]:
     """Return ordered one-axis-at-a-time candidates, not a Cartesian sweep."""
 
@@ -170,6 +182,17 @@ def convergence_contract_audit() -> dict[str, Any]:
             "selected prior-axis values; a failed finest pair extends that axis"
         ),
         "baseline": BASELINE.audit(),
+        "selected_development_mesh": {
+            "status": SELECTED_DEVELOPMENT_MESH_STATUS,
+            "spec": SELECTED_DEVELOPMENT_MESH.audit(),
+            "purpose": "bounded-cost Lumerical optimization development",
+            "formal_convergence_certificate": False,
+            "same_mesh_adfd_scope": (
+                "one common Ea/Eb beta-4 latent direction passed on RTX"
+            ),
+            "requires_same_mesh_adfd_before_optimizer": False,
+            "requires_finer_final_binary_reevaluation": True,
+        },
         "axis_order": [
             "source_profile_and_incident_power",
             "time_and_auto_shutoff",

@@ -369,6 +369,26 @@ all four planned development-mesh directions. No optimizer was run; the
 unoptimized currents remain same-signed, and the next code gate is a
 fail-closed Lumerical evaluation driver.
 
+For bounded-cost continuation, the user selected CV0 `2.5/50 nm` as the
+development/optimization mesh. Fresh R1.2 build-4522 source-only,
+exact-empty, and exact-full controls passed for both polarizations on a
+realized `183x183x303` grid. Ea took `37.60/125.00/148.44 s` and Eb took
+`34.33/123.40/178.30 s`; the six solves totaled 10.78 minutes. This selection
+does not rename the mesh as converged.
+
+One complete common beta-4 latent direction then passed on this exact CV0
+mesh at `h=0.0025`. The baseline currents were `I_Ea=-8.70019 nA` and
+`I_Eb=-16.8637 nA`. Ea AD/FD were
+`-2.795034298e-8`/`-2.794796295e-8 A` (relative error `8.515e-5`); Eb AD/FD
+were `-5.532360856e-8`/`-5.531639071e-8 A` (relative error `1.3047e-4`).
+The signed balanced objective and both epigraph constraints pass. The
+component-Yee material-map validation independently passed with worst
+directional FD error `4.14e-11` and transpose error `1.05e-15`. This run used
+Lumerical Maxwell plus the repository custom CUDA thermal/electrical solvers;
+Lumerical HEAT/CHARGE and FDTDX Maxwell solve counts were zero. The prior
+four-direction certificates remain additional evidence bound to the older
+`5/50-nm` staircase mesh. No optimization or switching claim was made.
+
 ## Exact endpoint/final GPU runner
 
 The B200 launcher refuses a non-B200 device. A separate development launcher
@@ -428,7 +448,8 @@ blind 0.3125-nm CV0 extension. See `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`. Eb,
 simple-L, final topology, and B200 gates remain open, so x/y convergence
 remains blocked.
 
-That interface axis selected staircase, and the staircase
+That interface axis selected staircase for the historical linked-z
+diagnostic, and the staircase
 1.25/12.5-to-0.625/6.25-nm pair now passes all empty/full Maxwell sub-gates.
 Official material omission is below 0.2% and the temperature metrics pass,
 but remapped-Pabs volume-L2 NRMSE remains 1.5580%/1.6799% for empty/full and

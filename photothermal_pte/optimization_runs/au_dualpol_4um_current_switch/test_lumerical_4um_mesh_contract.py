@@ -9,6 +9,8 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     GEOMETRY_CONTROLS,
     MESH_REFINEMENT_CANDIDATES,
     POLARIZATIONS,
+    SELECTED_DEVELOPMENT_MESH,
+    SELECTED_DEVELOPMENT_MESH_STATUS,
     convergence_contract_audit,
 )
 
@@ -51,6 +53,22 @@ def test_mesh_contract_is_sequential_and_covers_all_required_axes() -> None:
         for item in candidates["pml_layers"]
     ] == [20.0, 21.6, 23.2]
     assert audit["promotion"]["is_mesh_certificate"] is False
+
+
+def test_selected_development_mesh_is_explicitly_nonpromotable() -> None:
+    selected = SELECTED_DEVELOPMENT_MESH
+    assert selected.label == "fine_z2p5_bulk50_xy100_cv0_pml8_span20_z6_t1ps"
+    assert selected.stack_dz_m == 2.5e-9
+    assert selected.bulk_dz_m == 50.0e-9
+    assert selected.conformal_mesh == "conformal variant 0"
+    audit = convergence_contract_audit()["selected_development_mesh"]
+    assert audit["status"] == SELECTED_DEVELOPMENT_MESH_STATUS
+    assert audit["formal_convergence_certificate"] is False
+    assert audit["same_mesh_adfd_scope"] == (
+        "one common Ea/Eb beta-4 latent direction passed on RTX"
+    )
+    assert audit["requires_same_mesh_adfd_before_optimizer"] is False
+    assert audit["requires_finer_final_binary_reevaluation"] is True
 
 
 def test_cli_unit_round_trip_does_not_reject_exact_baseline_bounds() -> None:

@@ -87,8 +87,10 @@ final-topology, and B200 controls also remain open. Do not begin x/y
 convergence or optimization until those same-axis gates are closed.
 
 After the official material filter rejected the CV0 downstream certificate,
-the fixed-mesh interface triage selected staircase as the next development
-candidate. The first staircase linked pair used passed, hash-matched
+the fixed-mesh interface triage selected staircase for the historical
+linked-z diagnostic. This was later superseded as the bounded-cost optimizer
+choice by the user's explicit CV0 `2.5/50-nm` selection. The first staircase
+linked pair used passed, hash-matched
 source-only, exact-empty, and MCM6 exact-full results on 183 x 183 x 212 and
 183 x 183 x 410 grids. It failed all four Maxwell observables for both
 controls as shown above. This does not invalidate the interface choice; it
@@ -135,6 +137,34 @@ named layer; for the isolated stack refinement it changed the reported Au
 partition by about +56% and the air partition by about -98.8% while total
 native Q changed only 1.33%. Use total/component native-Yee Q, saved epsilon,
 conservative Q remapping, and downstream temperature/current for promotion.
+
+## User-selected bounded-cost development mesh
+
+The user selected `2.5 nm` thin-stack and `50 nm` bulk/air/PML z limits with
+the default CV0 interface for subsequent optimization development. This is an
+engineering cost/accuracy selection, not a formal convergence certificate.
+The earlier isolated CV0 axis showed that refining bulk `50 -> 25 nm` at
+fixed 2.5-nm stack changed the four Maxwell observables by only
+`0.0556--0.1087%`, while refining the stack `5 -> 2.5 nm` at fixed 50-nm bulk
+changed them by `0.9850--1.3316%`.
+
+A fresh R1.2 build-4522 CV0 source/empty/full set now passes every
+individual numerical gate for both Ea and Eb on a realized `183 x 183 x 303`
+grid. Ea solver times were `37.60/125.00/148.44 s`; Eb times were
+`34.33/123.40/178.30 s`, for 10.78 minutes total. Empty/full Q-flux closure
+was `0.015001%/0.091201%` for Ea and `0.010115%/0.194997%` for Eb. Each
+polarization used its own hash-bound source calibration. Raw artifacts remain
+outside Git.
+
+The prior `5/50` staircase convergence controls used solver build 4413, so
+the fail-closed pair comparator correctly rejects a direct comparison with
+these build-4522 CV0 results. The older four-direction latent AD-FD
+certificate also belongs to the `5/50` staircase development mesh. A fresh
+same-mesh CV0 component-Yee Jacobian and one complete common Ea/Eb beta-4
+latent direction now pass: material-map FD/transpose errors are
+`4.14e-11`/`1.05e-15`, and end-to-end Ea/Eb AD-FD errors are
+`8.515e-5`/`1.3047e-4`. This validates differentiation of the selected
+discrete mesh; it does not turn the engineering choice into mesh convergence.
 
 ## Time-order resolution
 

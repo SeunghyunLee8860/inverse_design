@@ -135,8 +135,17 @@ Direction 3 also passes: Ea AD/FD
 balanced-objective and both constraint checks pass. The four forwards totaled
 232.3 s and the four custom-CUDA evaluations 75.4 s. Ea and Eb therefore each
 have all four planned independent directions on this development mesh. The
-fail-closed Lumerical evaluation driver, mesh selection, and B200 repetition
+fail-closed Lumerical evaluation driver and B200 repetition
 remain open; no optimizer was run and switching has not yet been achieved.
+The user subsequently selected CV0 `2.5/50 nm` as the bounded-cost
+development/optimization mesh. Fresh R1.2 source/empty/full controls pass for
+both polarizations on `183x183x303`; all six solves total 10.78 minutes. One
+complete common beta-4 latent direction also passes the full same-mesh chain:
+Ea relative error `8.515e-5`, Eb relative error `1.3047e-4`, with a passed
+signed-objective and both-constraint audit. This is explicitly an engineering
+selection, not a convergence certificate. The older four-direction AD-FD
+evidence remains bound to the `5/50-nm` staircase mesh. Final binary
+reevaluation on a finer mesh remains mandatory.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine
