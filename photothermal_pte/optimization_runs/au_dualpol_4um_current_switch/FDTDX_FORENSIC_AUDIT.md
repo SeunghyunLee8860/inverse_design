@@ -407,3 +407,10 @@ Previously corrected but not production-validated:
 These fixes prevent known implementation mistakes. They do not close the
 physical-device, material, mesh, binary-endpoint, or selected-mesh gradient
 gates described above.
+
+
+## Fresh increment-state z32 endpoint after this audit
+
+The later clean-fork campaign carried the exact-binary z ladder through z32 without using a gray law. The final z16-to-z32 comparison still fails the predeclared component-Q and material-region complex-field gates at `2.2751%` and `6.9513%`. All artifacts and provenance revalidate; this is negative numerical evidence, not a setup failure. A z32 forward costs about 18.5 minutes and 33.68 GiB per polarization, making even one nominal two-GPU forward-plus-adjoint optical iteration roughly 37 minutes before coupled PDEs.
+
+The authoritative endpoint, hashes, local-paper review, and updated blocker list are in `FDTDX_Z32_STOP_AND_AU_DESIGN_AUDIT.md`. No FDTDX mesh is selected, z64 is prohibited, and the historical optimizer must not be restarted.

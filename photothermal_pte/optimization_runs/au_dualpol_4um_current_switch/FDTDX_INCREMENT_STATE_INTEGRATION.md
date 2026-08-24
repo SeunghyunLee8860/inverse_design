@@ -1,5 +1,9 @@
 # FDTDX increment-state production-path integration
 
+## Current endpoint
+
+The later exact-binary z32 campaign is complete and still not converged. No mesh is selected; z64, adjoint timing, gray optimization, and optimizer restart are forbidden. `FDTDX_Z32_STOP_AND_AU_DESIGN_AUDIT.md` is the authoritative current result. Sections below retain the chronological integration evidence and must not be read as current launch instructions.
+
 ## Scope and boundary
 
 This checkpoint integrates the cancellation-resistant Lorentz/Drude
@@ -401,3 +405,10 @@ about 34 GiB, so z32 source/material validation is still practical and is the
 next allowed fine-grid diagnostic. A z64 forward is projected above 50 minutes
 and must not be launched under the current runtime feasibility rule. No
 optimizer, adjoint timing, non-z axis, or production mesh is authorized.
+
+
+## z32 measured endpoint
+
+The z32 diagnostic completed on idle GPUs 6/7. Source and material pairs took about 19.2 and 19.3 minutes wall time, respectively, with about 33.68 GiB per GPU. The source-pair SHA-256 is `e926729fe75cf5fa8fcd3a10e24137037963c2f218968262f663d1c62f2d4f6b`. The material report SHA-256 values are `f13c9ee53fd2b8fc5209324439a0a406c8d51ac879c44c5da3b4d316590eedc1` and `ffc23d15c448a2bb7002ae6f27231beef223aec8d38493326d1491536754847d`.
+
+The clean-commit z16-to-z32 certificate SHA-256 is `079a6fbbb78aeab29d5e7460815f22208708a307f02572dc956f244433b9bb97`. Every source/material/raw/prior/provenance audit passes. Total Q (`0.3321%`), fixed-probe E (`1.6796%`), and conservative Q (`1.5708%`) pass, but component Q (`2.2751%`) and material-region E (`6.9513%`) fail their unchanged `2%` and `5%` gates. The z-only ladder is terminated, z64 is forbidden, and neither z16 nor z32 is selected. See `FDTDX_Z32_STOP_AND_AU_DESIGN_AUDIT.md`.

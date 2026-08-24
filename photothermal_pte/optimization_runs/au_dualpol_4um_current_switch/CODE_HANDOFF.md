@@ -1,5 +1,9 @@
 # Au dual-polarization PTE inverse-design code handoff
 
+## Current FDTDX endpoint -- read this first
+
+The fresh exact-binary FDTDX z-only ladder ended at z32 without selecting a mesh. The z16-to-z32 certificate is cleanly provenance-bound but fails component-Q and material-region complex-field convergence. Do not run z64, adjoint timing, gray optimization, or any historical FDTDX optimizer. Read `FDTDX_Z32_STOP_AND_AU_DESIGN_AUDIT.md` before following the chronological records below. The independently owned Lumerical session remains out of scope for this FDTDX handoff.
+
 ## Scope
 
 This directory contains the code path for a 4 um Au topology on a fixed
@@ -959,3 +963,10 @@ source Ea/Eb first, certify one common source scale, then matching material
 Ea/Eb and a z16-to-z32 comparison. Do not launch projected 50+-minute z64 and
 do not start an optimizer. Lumerical remains independently owned and out of
 scope.
+
+
+## z32 endpoint: FDTDX z-only ladder terminated without mesh selection
+
+The predicted z32 source and material pairs completed at commits `36bb0a2a` and `1cebc11e`. Each polarization used about 33.68 GiB and took about 18.5 minutes forward; the parallel pair wall time was about 19.3 minutes. The z16-to-z32 certificate SHA-256 is `079a6fbbb78aeab29d5e7460815f22208708a307f02572dc956f244433b9bb97`. All artifact and provenance audits pass, but component Q (`2.2751%`, limit `2%`) and material-region complex E (`6.9513%`, limit `5%`) fail. No mesh is selected. z64, adjoint timing, gray optimization, and optimizer restart are forbidden.
+
+Read `FDTDX_Z32_STOP_AND_AU_DESIGN_AUDIT.md` for the complete source/material hash ledger, unchanged gate table, measured runtime lower bound, local-paper Au design audit, generic FDTDX gray-law finding, and thermal/electrical blockers. The next session must not resume the historical FDTDX optimizer. The independent Lumerical session remains out of scope.
