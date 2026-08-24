@@ -86,7 +86,7 @@ took 20.79 s, ran no new Maxwell solve, and used no Lumerical HEAT/CHARGE
 license. A subsequent R1.2 FieldRegion adjoint and independent centered
 projected-density pair now pass complete Ea AD-FD with relative error
 `2.207e-5` and equal sign, without empirical scaling. This is one direction
-on the RTX development mesh, not Eb, mesh, or B200 production evidence.
+on the RTX development mesh, not mesh or B200 production evidence.
 
 The old optimizer/DFM carrier was also found to be 80x80 cell-centered and
 therefore incompatible with the 81x81 nodal Lumerical state. The new
@@ -98,13 +98,22 @@ subsequent complete beta-4 latent Ea chain also passes centered AD-FD:
 AD `-2.766595495e-8 A`, FD `-2.766380278e-8 A`, equal sign, and relative
 error `7.779e-5` (0.00778%). Its filter/projection JVP and VJP contractions
 agree to `1.20e-16`. The four Maxwell solves used about 237 s of solver time,
-not a multi-hour convergence run. This still covers only one Ea direction on
-the RTX development mesh.
-The same adjoint and comparator code now accepts Eb with fail-closed
-polarization binding. Material-Jacobian reuse across Ea/Eb requires identical
+not a multi-hour convergence run. This covers one Ea direction on the RTX
+development mesh.
+The same complete beta-4 latent gate now also passes for one Eb direction:
+AD `-5.529878050e-8 A`, FD `-5.529062519e-8 A`, equal sign, and relative
+error `1.4748e-4` (0.01475%). Its filter/projection transpose error is
+`1.20e-16`; the plus/minus signal is 1.758% of current magnitude. The four
+Eb Maxwell solves used about 269 s of solver time and the three custom-CUDA
+evaluations used about 55 s. The material Jacobian was reused only after the
 projected density, component epsilon hashes/shapes, Yee coordinates, and
-frequency; it does not incorrectly require equal polarization-dependent E/Q
-arrays. This is code readiness only: no Eb AD-FD certificate exists yet.
+frequency matched; polarization-dependent E/Q arrays were correctly allowed
+to differ. Neither polarization used Lumerical HEAT/CHARGE or an FDTDX Maxwell
+solve. These are one-direction derivative certificates, not a demonstration
+of the required signed switching objective: the unoptimized baseline currents
+are both negative (`Ea=-8.334 nA`, `Eb=-15.591 nA`). Multiple independent
+directions, objective-level tests, mesh selection, and B200 repetition remain
+open.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine

@@ -212,8 +212,16 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     component epsilon hashes and shapes, sub-attometre Yee coordinates, and
     frequency. The complete raw NPZ is deliberately not an equality gate
     because its E and Q arrays are polarization-dependent. A solver-free Ea
-    artifact audit and backward-compatible Ea latent comparison pass, and an
-    Eb latent manifest is prepared. No Eb Maxwell/AD-FD result is claimed yet.
+    artifact audit and backward-compatible Ea latent comparison pass.
+33. One complete beta-4 latent Eb direction now passes on the same R1.2 RTX
+    development route. At `h=0.0025`, AD was `-5.529878050e-8 A`, centered FD
+    was `-5.529062519e-8 A`, the sign agreed, and relative error was
+    `1.4748e-4` (0.01475%). The mapping-chain transpose error was `1.20e-16`.
+    The cross-polarization material-Jacobian audit passed before reuse. Four
+    Eb Maxwell solves totaled about 269 s and three custom-CUDA evaluations
+    about 55 s; no Lumerical HEAT/CHARGE, FDTDX Maxwell, or optimizer run was
+    used. This closes one Eb derivative direction, not signed switching: the
+    unoptimized Ea/Eb baseline currents are both negative.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -280,8 +288,8 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    4-um endpoint parity, quantified source-band error, uniform-density
    resonance sweep, multi-direction latent-variable AD-FD, and
    both-polarization validation. The component-Yee mapping FD/transpose and
-   one complete Ea latent-variable directional AD-FD now pass on the RTX
-   development mesh. See `MATERIAL_FRACTION_AUDIT.md`.
+   one complete latent-variable directional AD-FD for each of Ea and Eb now
+   pass on the RTX development mesh. See `MATERIAL_FRACTION_AUDIT.md`.
 2. AD-FD validates the derivative of a chosen discrete mesh; it does not
    certify mesh convergence.
 3. The original optical z mesh used only 2 Au cells and 5 TaIrTe4 cells.
@@ -338,11 +346,11 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
 8. Production optimization is now unconditionally code-blocked because the
    existing entry points still implement the historical gray/FDTDX path.
    Legacy shared-linear certificates cannot clear this gate. The new
-   Lumerical `n-k` density carrier is now connected through one Ea
-   component-Yee discrete adjoint. One independent projected-density direction
-   and one complete latent-variable direction now pass centered AD-FD.
-   Production remains blocked until this is extended to Ea/Eb and multiple
-   complete latent directions on a selected converged mesh. Then issue
+   Lumerical `n-k` density carrier is now connected through component-Yee
+   discrete adjoints for Ea and Eb. One complete latent-variable direction for
+   each polarization now passes centered AD-FD. Production remains blocked
+   until multiple independent directions and the signed dual objective pass
+   on a selected converged mesh. Then issue
    certificates naming the selected full-domain-z grid, Courant factor, time
    windows, and same-grid Ea/Eb source calibration. The combined adjoint also derives
    its Au/TaIrTe4 material offsets from the realized placed slices; do not
@@ -565,6 +573,18 @@ Do not copy them into this worktree.
     only one Ea direction on the RTX 5/50-nm staircase development mesh. The
     current solver-free comparison is stored outside Git at
     `r12_ea_latent_beta4_combined_adfd_result_v2/ea_combined_adfd_result.json`.
+16. The complete beta-4 latent Eb chain passed centered AD-FD at the same
+    `h=0.0025`. AD was `-5.529878050e-8 A`; FD was
+    `-5.529062519e-8 A`; relative error was `1.4748e-4`, with equal sign. The
+    plus/minus signal was 1.758% of current magnitude, midpoint curvature
+    ratio was `6.277e-4`, and the mapping-chain transpose error was
+    `1.20e-16`. The source-only solve took 20.69 s; the four
+    baseline/adjoint/plus/minus Maxwell solves totaled 268.68 s and the three
+    custom-CUDA evaluations totaled 54.72 s. The comparison is outside Git at
+    `r12_eb_latent_beta4_combined_adfd_result_v1/eb_combined_adfd_result.json`.
+    The unoptimized baseline currents remain same-sign (`Ea=-8.334 nA`,
+    `Eb=-15.591 nA`), so this is a gradient certificate, not the requested
+    switching device.
 
 ## Next correct sequence
 
@@ -604,11 +624,11 @@ Do not copy them into this worktree.
    must remain outside the Git worktree. The unified runner and endpoint batch
    now exist, but no B200 result is committed and this Codex host fails the
    B200 preflight.
-5. The component-Yee builder, one hash-bound R1.2 Ea distributed-source
-   adjoint, one independent projected-density centered AD-FD, and one complete
-   beta-4 latent centered AD-FD now pass on the 5/50-nm staircase mesh. Extend
-   the certificate to additional independent latent directions, Eb, and the
-   signed dual objective without rerunning already hash-bound baselines. The
+5. The component-Yee builder, hash-bound R1.2 distributed-source adjoints,
+   and one complete beta-4 latent centered AD-FD direction for each of Ea and
+   Eb now pass on the 5/50-nm staircase mesh. Extend the certificate to
+   additional independent latent directions and the signed dual objective
+   without rerunning already hash-bound baselines. The
    polarization-general runner now permits reuse of the Ea material Jacobian
    for Eb only after the exact epsilon/grid/frequency binding passes; it does
    not require the physically different Ea/Eb field and Q arrays to match.

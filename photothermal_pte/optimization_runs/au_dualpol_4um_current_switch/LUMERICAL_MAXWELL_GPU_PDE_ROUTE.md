@@ -263,9 +263,10 @@ empirical gradient rescaling or finite-difference fit was applied.
 This is a real combined AD-FD certificate, but its scope is deliberately
 narrow: one Ea direction with respect to the shared projected 81x81 occupancy
 on the 5/50-nm staircase RTX development mesh. The later latent gate below
-extends it through filter/projection for one direction. Eb, multiple
-directions, a selected converged mesh, the signed dual-polarization objective,
-and B200 repetition remain open.
+extends it through filter/projection for one direction. The Eb latent gate
+below closes one direction for the other polarization. Multiple directions,
+a selected converged mesh, the signed dual-polarization objective, and B200
+repetition remain open.
 
 ### The optimizer carrier is nodal, not the legacy 80x80 cell map
 
@@ -306,18 +307,33 @@ baseline/adjoint/plus/minus Maxwell solves used about 237 s of solver time,
 and the three custom-CUDA evaluations used about 60 s. No Lumerical
 HEAT/CHARGE, FDTDX Maxwell solve, empirical gradient scaling, or optimizer
 iteration was used. This closes one Ea latent direction on the RTX 5/50-nm
-development mesh. Additional independent directions, Eb, the signed dual
-objective, a selected mesh, and B200 repetition remain mandatory before
-enabling LD_MMA.
+development mesh.
 
 The adjoint, pair-preparation, and comparator scripts now support both `Ea`
 and `Eb`. Cross-polarization reuse of the sparse material Jacobian is allowed
 only after the projected state, component epsilon hashes/shapes, Yee
 coordinates, and frequency match. Full raw-NPZ equality is not required:
 the forward E and Q arrays must differ between polarizations and are not part
-of the constitutive Jacobian. This generalization has passed solver-free and
-backward-compatible Ea artifact audits; it does not yet constitute an Eb
-Maxwell or AD-FD result.
+of the constitutive Jacobian. The cross-polarization audit passed with a
+maximum Yee-coordinate difference of `8.47e-22 m` and a fresh transpose error
+of `7.31e-16`.
+
+The complete Eb beta-4 latent gate then passed at `h=0.0025`: AD was
+`-5.529878050e-8 A`, centered FD was `-5.529062519e-8 A`, the sign agreed,
+and relative error was `1.4748e-4` (0.01475%). The mapping-chain transpose
+error was `1.20e-16`, and the plus/minus signal was 1.758% of current
+magnitude. Its source-only solve took 20.69 s. The baseline, adjoint, plus,
+and minus Maxwell solves took 64.65, 77.72, 62.19, and 64.11 s respectively;
+the three custom-CUDA thermal/electrical evaluations totaled about 55 s. No
+Lumerical HEAT/CHARGE, FDTDX Maxwell solve, fit, empirical gradient scaling,
+or optimizer iteration was used.
+
+Ea and Eb therefore each have one complete latent directional certificate on
+this development mesh. This is still not a switching result: their
+unoptimized baseline currents are both negative (`Ea=-8.334 nA`,
+`Eb=-15.591 nA`). Additional independent directions, objective-level signed
+dual-polarization tests, a selected mesh, and B200 repetition remain mandatory
+before enabling LD_MMA.
 
 ## Exact endpoint/final GPU runner
 
