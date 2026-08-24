@@ -161,3 +161,39 @@ At this pre-launch checkpoint the affected tests are `9 passed, 3 subtests`;
 Ruff, Python compilation, shell syntax, and diff checks pass. No GPU has yet
 been used by the new runner. Commit and push this state before launching Ea/Eb.
 Optimization remains forbidden.
+
+## First B200 cold timing and closure result
+
+Commit `c843276d1265a4652355b73ceecda2ce5be6230f` ran the same
+500-nm-arm exact L reference concurrently as Ea on physical B200 GPU 6 and Eb
+on physical B200 GPU 7. GPU 0 was occupied by another user and GPU 1 had a
+new user launch, so neither was touched. The two chosen devices had no compute
+process before either launch and contained only the two project processes
+during the run.
+
+External reports:
+
+- Ea: `/home/seunghyun200/fdtdx_results/increment_state_control_c843276d/Ea/FDTDX_INCREMENT_STATE_EXACT_BINARY_CONTROL.json`, SHA-256 `36b48d9870b4cf46f2b5cc8159d9712e857af7ed6ec2f04a1d84c7fca45d485f`
+- Eb: `/home/seunghyun200/fdtdx_results/increment_state_control_c843276d/Eb/FDTDX_INCREMENT_STATE_EXACT_BINARY_CONTROL.json`, SHA-256 `707bddd2fba704d9a4409139d54e4574b3f5a8c3c8d207e2c182f6c99221ec85`
+
+Ea cold build/array preparation was `21.598 s`, cold compile plus forward was
+`24.652 s`, host evaluation was `1.811 s`, and total was `48.076 s`. Eb was
+`21.147 s`, `24.766 s`, `1.703 s`, and `47.631 s`. Since the cases ran
+concurrently, the pair wall time was about 48 s. Peak JAX bytes-in-use were
+about 3.71 GB per GPU; the allocator pool was about 4.36 GB and live
+`nvidia-smi` process use was about 4.81 GiB. These are forward-only cold
+numbers, not adjoint or full optimization-iteration timings.
+
+Both material stacks, finite/nonnegative Q, total-Q drift, time-domain and
+phasor closed-flux closure, and provenance gates passed. Q versus closed
+phasor differed by only `9.0497e-5` (Ea) and `5.3532e-5` (Eb). The reports are
+nevertheless correctly blocked: Au previous/late complex-field NRMSE was
+`1.1339e-2` for Ea and `1.7934e-2` for Eb, above the `5e-3` gate. Eb Q spatial
+NRMSE was also `5.5919e-3`, slightly above its `5e-3` gate; Ea was
+`1.6996e-3`. TaIrTe4 field NRMSE was already below `8.25e-4`, and total Q
+change was below `9e-5` in both cases.
+
+Do not loosen the gates or call this mesh validated. The next allowed solve is
+a same-mesh 24/32-period time-settling extension on two newly verified-idle
+GPUs. Only after field and spatial-Q stationarity pass may newly generated
+increment-state source controls and spatial mesh convergence begin.

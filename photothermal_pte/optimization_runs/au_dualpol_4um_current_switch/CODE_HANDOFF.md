@@ -821,3 +821,22 @@ not reuse the old source pair and does not claim absolute absorption or an
 Ea/Eb comparison. At this checkpoint no GPU run has occurred; commit/push this
 state before launch, then record measured time and closure in a separate
 commit. The concurrent Lumerical session remains out of scope.
+
+## Increment-state B200 timing result and immediate blocker
+
+At project commit `c843276d1265a4652355b73ceecda2ce5be6230f`, exact-L Ea/Eb
+controls ran concurrently on verified-idle physical B200 GPUs 6/7. Cold
+compile+forward was `24.652 s` (Ea) and `24.766 s` (Eb); total process time was
+`48.076 s` and `47.631 s`, so the parallel pair took about 48 s. Peak JAX
+bytes-in-use were about 3.71 GB per case. This makes the anchor forward
+practical, but it is not an adjoint/full-iteration timing. External report
+hashes are `36b48d9870b4cf46f2b5cc8159d9712e857af7ed6ec2f04a1d84c7fca45d485f`
+(Ea) and `707bddd2fba704d9a4409139d54e4574b3f5a8c3c8d207e2c182f6c99221ec85`
+(Eb), under `/home/seunghyun200/fdtdx_results/increment_state_control_c843276d/`.
+
+Energy closure passed strongly (`9.0497e-5` Ea, `5.3532e-5` Eb Q/phasor
+relative difference), but both reports are blocked by Au complex-field
+stationarity (`1.1339e-2` Ea, `1.7934e-2` Eb versus `5e-3`). Eb spatial-Q
+change is also `5.5919e-3` versus `5e-3`. Do not loosen gates or start mesh
+convergence. Extend the identical control to 24/32 periods first. Lumerical
+remains out of scope and no gray law or optimizer is authorized.
