@@ -222,6 +222,14 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     about 55 s; no Lumerical HEAT/CHARGE, FDTDX Maxwell, or optimizer run was
     used. This closes one Eb derivative direction, not signed switching: the
     unoptimized Ea/Eb baseline currents are both negative.
+34. `lumerical_4um_signed_objective.py` and
+    `39_validate_lumerical_4um_signed_dual_objective.py` -- the first
+    Lumerical-carrier objective-level gate. It hash-loads both passed latent
+    certificates, requires the exact same latent/projected state, beta, step,
+    and direction, pulls both gradients to latent rho, and forms
+    `t-I_Ea<=0`, `t+I_Eb<=0`. The combined balanced-objective AD-FD error is
+    `7.779e-5`; the two constraint errors are `7.779e-5` and `1.4748e-4`.
+    It used no solver and leaves the optimizer disabled.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -585,6 +593,13 @@ Do not copy them into this worktree.
     The unoptimized baseline currents remain same-sign (`Ea=-8.334 nA`,
     `Eb=-15.591 nA`), so this is a gradient certificate, not the requested
     switching device.
+17. Script 39 combined those exact Ea/Eb artifacts into the signed epigraph
+    without a new solve. The common baseline has utilities
+    `I_Ea=-8.334 nA` and `-I_Eb=+15.591 nA`, so Ea is active and balanced
+    utility is still negative. Balanced-objective AD-FD error was
+    `7.779e-5`; the two signed constraint errors were `7.779e-5` and
+    `1.4748e-4`. The raw result is outside Git at
+    `r12_ea_eb_latent_beta4_signed_objective_v2/signed_dual_objective_result.json`.
 
 ## Next correct sequence
 
@@ -626,9 +641,10 @@ Do not copy them into this worktree.
    B200 preflight.
 5. The component-Yee builder, hash-bound R1.2 distributed-source adjoints,
    and one complete beta-4 latent centered AD-FD direction for each of Ea and
-   Eb now pass on the 5/50-nm staircase mesh. Extend the certificate to
-   additional independent latent directions and the signed dual objective
-   without rerunning already hash-bound baselines. The
+   Eb now pass on the 5/50-nm staircase mesh. Their exact signed epigraph also
+   passes in that common direction with no new solve. Extend the certificate
+   to additional independent directions, then build a fail-closed Lumerical
+   evaluation driver without rerunning already hash-bound baselines. The
    polarization-general runner now permits reuse of the Ea material Jacobian
    for Eb only after the exact epsilon/grid/frequency binding passes; it does
    not require the physically different Ea/Eb field and Q arrays to match.

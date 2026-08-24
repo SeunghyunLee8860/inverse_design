@@ -114,6 +114,14 @@ of the required signed switching objective: the unoptimized baseline currents
 are both negative (`Ea=-8.334 nA`, `Eb=-15.591 nA`). Multiple independent
 directions, objective-level tests, mesh selection, and B200 repetition remain
 open.
+The hash-bound Ea/Eb artifacts were then combined by script 39 without any
+new solve. The exact epigraph is `t-I_Ea<=0`, `t+I_Eb<=0`; its latent
+constraint gradients are `-dI_Ea/drho` and `+dI_Eb/drho`. At the common
+baseline, the balanced utility is `-8.334 nA` and Ea is active. The combined
+balanced-objective directional AD-FD error is `7.779e-5`; the two epigraph
+constraint errors are `7.779e-5` and `1.4748e-4`. This closes the
+one-direction objective wiring only. It neither enables the optimizer nor
+changes the fact that switching has not yet been achieved.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine

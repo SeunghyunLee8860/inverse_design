@@ -331,9 +331,17 @@ or optimizer iteration was used.
 Ea and Eb therefore each have one complete latent directional certificate on
 this development mesh. This is still not a switching result: their
 unoptimized baseline currents are both negative (`Ea=-8.334 nA`,
-`Eb=-15.591 nA`). Additional independent directions, objective-level signed
-dual-polarization tests, a selected mesh, and B200 repetition remain mandatory
-before enabling LD_MMA.
+`Eb=-15.591 nA`).
+
+`lumerical_4um_signed_objective.py` and script 39 now combine the two
+hash-bound certificates in the exact epigraph form `t-I_Ea<=0` and
+`t+I_Eb<=0`. At the common beta-4 baseline, Ea is the active utility. The
+balanced-objective one-direction AD-FD error is `7.779e-5`; the two constraint
+errors are `7.779e-5` and `1.4748e-4`. This audit reused the already completed
+plus/minus currents and gradients, so it ran zero Maxwell, custom-CUDA,
+Lumerical HEAT/CHARGE, and FDTDX solves. Additional independent directions,
+an actual Lumerical LD_MMA evaluation driver, a selected mesh, and B200
+repetition remain mandatory before enabling optimization.
 
 ## Exact endpoint/final GPU runner
 

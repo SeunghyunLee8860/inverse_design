@@ -197,7 +197,9 @@ sample-air boundaries are insulating, and the transverse example uses an
    endpoint field/absorption/Q parity, quantified finite-source-band error,
    uniform-density resonance sweep, selected-mesh/B200 repetition of the now
    passed RTX component-Yee Jacobian, and multi-direction latent AD-FD for Ea
-   and Eb. One Ea latent direction now passes only on the RTX development
-   mesh. Do not resume either O3/TE1 or the shared-linear FDTDX LD_MMA history.
+   and Eb. One common latent direction now passes for both polarizations, and
+   their exact signed epigraph passes in that direction, only on the RTX
+   development mesh. Do not resume either O3/TE1 or the shared-linear FDTDX
+   LD_MMA history.
 9. Revalidate the final exact-binary design on the finer meshes and parameter
    sensitivity corners before claiming the polarization current switch.

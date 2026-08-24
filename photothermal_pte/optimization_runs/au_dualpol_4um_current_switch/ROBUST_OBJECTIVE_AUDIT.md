@@ -35,3 +35,11 @@ worst-case current and epigraph are both positive.
 
 No robust optimization may be run until the shared material law, spatial/time
 mesh, and combined-gradient certificates are reissued.
+
+The superseding Lumerical nodal route now has one objective-level development
+certificate. Script 39 combines hash-bound Ea/Eb beta-4 latent AD-FD results
+in the exact epigraph form and passes one common direction: balanced-objective
+relative error `7.779e-5`, with constraint errors `7.779e-5` and
+`1.4748e-4`. It performs no solver call and does not enable LD_MMA. The common
+unoptimized point has `I_Ea=-8.334 nA` and `I_Eb=-15.591 nA`, so the requested
+opposite-sign state is not yet present.
