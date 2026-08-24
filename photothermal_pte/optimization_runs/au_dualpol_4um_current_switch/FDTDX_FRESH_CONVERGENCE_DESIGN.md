@@ -1,6 +1,6 @@
 # Fresh FDTDX convergence design for exact-binary Au
 
-Status: **L500 time settling and Courant convergence validated; the first full-domain-z ladder is rejected; candidate two-pole z8 forward pair and z16 source pair validated; no spatial-mesh claim and no optimizer permission**
+Status: **L500 time settling and Courant convergence validated; the first full-domain-z ladder is rejected; candidate two-pole z8 forward pair validated; z16 24-period material pair rejected on settling; no spatial-mesh claim and no optimizer permission**
 
 This document defines the next FDTDX work after the four empty/full endpoint
 controls.  It is deliberately independent of the Lumerical work in progress in
@@ -372,7 +372,7 @@ The independent pair verifier at `b489bbdc` reopens both 101 MiB NPZ files,
 reconstructs the canonical 375-cell L mask, rejects gray/rho-power material
 laws, recomputes component-Yee-volume Q, and revalidates every case, law,
 source-pair, implementation, and raw hash. The clean certificate SHA-256 is
-`95113736c93c16e3d78504f8bc2591f25f06d725af21eb855dc02708af83df14`.
+`ac71dd8e786ee3ca59d86f233f3d20b980bf3796abbc3a2b30167d9bae78b3d5`.
 All gates pass. Common-285-uW total absorption is `67.3793 uW` for Ea and
 `116.4644 uW` for Eb; the Eb/Ea ratio is `1.72849`. Maximum field stationarity
 NRMSE is `1.3853e-3` and `1.5225e-3`, and closed-flux Q mismatch is below
@@ -391,9 +391,28 @@ The clean pair certificate SHA-256 is
 Its source-power mismatch is exactly `0.0`; both field-stationarity NRMSE values
 are below `2.98e-6`.
 
-This is only z16 source normalization. z16 material fields and the z8-to-z16
-comparison do not exist yet; z32 still requires independent source and material
-pairs. Comparing old single-pole z8 directly with a new two-pole field level is
+The 24-period z16 material Ea/Eb runs were subsequently completed and both are
+blocked before mesh comparison. Ea report/NPZ SHA-256 values are
+`62f30a998513636a6f04b47bc01a04fe03d0350e5bb785660b08d665a45a4bc6` /
+`5c9091fab42e58dd226b010a9cea7a783da4f7e12344cd41f10e24261374eb1e`;
+Eb values are
+`403837ce5de0db120820013a5bbb09ff0146782b61a392c2b62966d8f8da939b` /
+`033247f55ceafb50530c2dad5bdb09751f02a477ed034c59d3d2f7f92fa6566e`.
+The current blocked-pair certificate SHA-256 is
+`b590872c263b70d10e3355d936d41a8a74ef4e502a5957c5716054fa8c4f7b0c`,
+generated at clean `eefae409`.
+
+Ea field stationarity is `1.8074e-2`; Eb is `1.9032e-2`, both above `5e-3`.
+Eb spatial Q stationarity is also `5.2720e-3`, just above `5e-3`. Both closure
+mismatches remain below `0.54%`, all material/source/canonical/raw gates pass,
+and total Q is stable. Component analysis identifies unsettled z-normal field
+rather than the driven in-plane component. This is a 24-period settling
+blocker, not a material or energy-conservation failure.
+
+The next step is a separately hashed longer-time z16 case and its own source
+pair; the existing 24-period pair cannot be reused. No z8-to-z16 comparison is
+accepted, and z32 still requires independent source and material pairs.
+Comparing old single-pole z8 directly with a new two-pole field level is
 forbidden. Adjoint, thermal/electrical, current-sign, and optimizer stages
 remain blocked.
 

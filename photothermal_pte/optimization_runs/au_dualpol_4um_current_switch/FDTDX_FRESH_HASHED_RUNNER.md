@@ -244,7 +244,7 @@ and Eb
 The pair verifier added at `b489bbdc` re-hashes and reloads both raw NPZs and
 recomputes canonical mask and component-Yee-volume Q. Its clean z8 certificate
 SHA-256 is
-`95113736c93c16e3d78504f8bc2591f25f06d725af21eb855dc02708af83df14`.
+`ac71dd8e786ee3ca59d86f233f3d20b980bf3796abbc3a2b30167d9bae78b3d5`.
 Common-285-uW total Q is `67.3793 uW` for Ea and `116.4644 uW` for Eb. This is
 optical heat-source evidence only: the certificate forbids PTE-current and
 optimizer claims.
@@ -258,9 +258,25 @@ Eb hashes are
 The clean pair certificate SHA-256 is
 `7cfcd8280cf63194aa53f328661613dd942e2b0da0f4045f2b4d2b8f881c7d35`.
 Both source cases pass, the pair mismatch is `0.0`, and no per-polarization
-scale is introduced. z16 material solves and the z8-to-z16 comparison remain
-next; z32 still needs its own source and material pairs. Adjoint,
-thermal/electrical, and optimizer paths remain disabled throughout.
+scale is introduced.
+
+The z16 24-period material runs were then completed but both are blocked. Ea
+report/NPZ hashes are
+`62f30a998513636a6f04b47bc01a04fe03d0350e5bb785660b08d665a45a4bc6` /
+`5c9091fab42e58dd226b010a9cea7a783da4f7e12344cd41f10e24261374eb1e`;
+Eb hashes are
+`403837ce5de0db120820013a5bbb09ff0146782b61a392c2b62966d8f8da939b` /
+`033247f55ceafb50530c2dad5bdb09751f02a477ed034c59d3d2f7f92fa6566e`.
+The clean `eefae409` blocked-pair certificate SHA-256 is
+`b590872c263b70d10e3355d936d41a8a74ef4e502a5957c5716054fa8c4f7b0c`.
+Ea/Eb field stationarity is `1.8074e-2` / `1.9032e-2` versus `5e-3`; Eb spatial
+Q stationarity is `5.2720e-3` versus `5e-3`. All material, source-pair, raw-Q,
+and closure gates otherwise pass.
+
+The next required level is not z32. It is a separately hashed longer-time z16
+case with a fresh source pair; changing time invalidates the existing z16
+normalization pair. The z8-to-z16 comparison, adjoint, thermal/electrical, and
+optimizer paths remain disabled throughout.
 
 ## Convergence rule
 

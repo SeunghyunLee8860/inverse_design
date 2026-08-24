@@ -459,12 +459,12 @@ at `b489bbdc`. External material artifacts are:
 - Eb NPZ:
   `54a586db06fa9deaa058bae48d3510e381db3b3824140c571dee56e92fc2b8c4`
 - material-pair certificate:
-  `95113736c93c16e3d78504f8bc2591f25f06d725af21eb855dc02708af83df14`
+  `ac71dd8e786ee3ca59d86f233f3d20b980bf3796abbc3a2b30167d9bae78b3d5`
 
 The certificate lives at
-`two_pole_forward_e722ba73/z8/material_pair_b489bbdc/`
+`two_pole_forward_e722ba73/z8/material_pair_eefae409/`
 `FDTDX_FRESH_TWO_POLE_EXACT_BINARY_PAIR.json`. It was generated from a clean
-`b489bbdc` tree and re-hashes both reports and both 101 MiB NPZs. It
+`eefae409` tree and re-hashes both reports and both 101 MiB NPZs. It
 reconstructs the canonical 375-cell L mask, verifies exact binary integer
 readback with `rho_power=null`, recomputes all component-resolved Q integrals
 from Q density and Yee dual volume, revalidates the current source pair, and
@@ -498,11 +498,40 @@ Both source solves use the independent z16 case (`196 x 196 x 640`,
 24,586,240 Yee cells, 307,249 steps) and took `862.79 s` and `864.00 s`.
 Both pass every gate with maximum field-stationarity NRMSE below `2.98e-6`.
 Ea and Eb incident powers are exactly equal at the recorded precision,
-`1.8837208269e-12 W`, so the pair mismatch is `0.0`. This closes only z16
-source normalization. No z16 material solve or z8-to-z16 convergence result
-exists yet. The next step is the z16 exact-binary Ea/Eb material pair. z32
-still has neither a source pair nor a material pair. Do not compare an old
-single-pole field result to a two-pole result.
+`1.8837208269e-12 W`, so the pair mismatch is `0.0`.
+
+The matching 24-period z16 exact-binary material runs were then completed from
+clean commit `502893da`; both are **blocked before mesh comparison**. Artifact
+SHA-256 values are:
+
+- Ea material report:
+  `62f30a998513636a6f04b47bc01a04fe03d0350e5bb785660b08d665a45a4bc6`
+- Ea material NPZ:
+  `5c9091fab42e58dd226b010a9cea7a783da4f7e12344cd41f10e24261374eb1e`
+- Eb material report:
+  `403837ce5de0db120820013a5bbb09ff0146782b61a392c2b62966d8f8da939b`
+- Eb material NPZ:
+  `033247f55ceafb50530c2dad5bdb09751f02a477ed034c59d3d2f7f92fa6566e`
+- current blocked-pair certificate generated at clean `eefae409`:
+  `b590872c263b70d10e3355d936d41a8a74ef4e502a5957c5716054fa8c4f7b0c`
+
+Ea fails complex-field stationarity: `1.8074e-2` versus the `5e-3` limit. Eb
+fails the same gate at `1.9032e-2` and spatial Q stationarity at `5.2720e-3`
+versus `5e-3`. Material readback, nonnegative Q, total-Q stationarity, and both
+closed-flux closures pass; closure mismatch stays below `0.54%`. Raw component
+analysis shows the driven in-plane component is stable (`0.167%` Ea Ey,
+`0.163%` Eb Ex), while the z-normal field is not (`2.143%` Ea Ez, `2.361%` Eb
+Ez), even after best complex-scale removal. Solid and air portions of the Au
+window both show about `1.8-2.1%` change. This is a real 24-period settling
+blocker, not an ADE/material/energy-conservation failure.
+
+The current blocked certificate re-hashes and recomputes both raw NPZs; only
+`case_status_scope_and_ready` and `case_evaluation_gates` fail. Its corrected
+next step is a separately hashed longer-time z16 numerical case with its own
+Ea/Eb source pair. The existing 24-period z16 source pair must not be reused
+when time changes. No z8-to-z16 mesh comparison is accepted, and z32 still has
+neither a source nor material pair. Do not compare an old single-pole field
+result to a two-pole result.
 
 Do not proceed to x/y, domain, PML, thermal/electrical, or optimization until
 z convergence closes. Preserve the failed z2/z4/z8 comparisons and the z16
