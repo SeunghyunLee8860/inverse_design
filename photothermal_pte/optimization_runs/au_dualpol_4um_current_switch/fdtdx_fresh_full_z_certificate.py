@@ -58,9 +58,9 @@ WINDOW_PERIODS = 4
 COURANT_FACTOR = 0.25
 CFL_DT_RTOL = 5.0e-7
 MINIMUM_COMMON_Z_SUPPORT_FRACTION = 0.90
+COMMON_Z_SUPPORT_NUMERICAL_ATOL = 5.0e-7
 REMAP_CONSERVATION_RTOL = 5.0e-13
 MATERIAL_REGION_COMPLEX_E_NRMSE_LIMIT = 5.0e-2
-
 
 
 def expected_full_z_case(level: str) -> FreshCaseSpec:
@@ -127,6 +127,18 @@ def _material_field_comparison(
     for material, key in placement_key.items():
         coarse_bounds = tuple(coarse_payload["placement"][key][2])
         fine_bounds = tuple(fine_payload["placement"][key][2])
+        weights = np.asarray(coarse["volumes"][material], dtype=np.float64)
+        if material == "au":
+            coarse_mask = np.asarray(coarse["solver_mask"])
+            fine_mask = np.asarray(fine["solver_mask"])
+            if (
+                coarse_mask.shape != weights.shape[1:3]
+                or fine_mask.shape != weights.shape[1:3]
+                or not np.array_equal(coarse_mask, fine_mask)
+                or not np.all((coarse_mask == 0) | (coarse_mask == 1))
+            ):
+                raise ValueError("Au field comparison requires one identical binary mask")
+            weights = weights * coarse_mask[None, :, :, None]
         interpolated = []
         for component in range(3):
             coarse_z = _z_coordinates(
@@ -146,7 +158,7 @@ def _material_field_comparison(
         result[material] = weighted_complex_nrmse(
             fine_on_coarse,
             coarse["fields_late"][material],
-            coarse["volumes"][material],
+            weights,
         )
     return result
 
@@ -258,13 +270,17 @@ def _restrict_component_q_to_coarse_z(
         "coarse_and_fine_xy_areas_match": bool(xy_areas_match),
         "overlap_rows_cover_common_coarse_controls": bool(row_sums_match),
         "common_z_support_fraction_sufficient": support_fraction
-        >= MINIMUM_COMMON_Z_SUPPORT_FRACTION,
+        >= MINIMUM_COMMON_Z_SUPPORT_FRACTION - COMMON_Z_SUPPORT_NUMERICAL_ATOL,
         "fine_restriction_conserves_common_support_power": conservation_error
         <= REMAP_CONSERVATION_RTOL,
     }
     return coarse_value, fine_on_coarse, common_weight, {
         "common_z_bounds_m": [common_lower, common_upper],
         "common_z_support_fraction": support_fraction,
+        "minimum_required_common_z_support_fraction": (
+            MINIMUM_COMMON_Z_SUPPORT_FRACTION
+        ),
+        "common_z_support_numerical_tolerance": COMMON_Z_SUPPORT_NUMERICAL_ATOL,
         "fine_restriction_relative_power_error": conservation_error,
         "checks": checks,
         "ready": all(checks.values()),
@@ -484,7 +500,8 @@ def compare_full_z_pair(
         ),
         "material_field_method": (
             "component-wise complex linear interpolation of the fine Yee field "
-            "onto coarse physical z coordinates; extrapolation forbidden"
+            "onto coarse physical z coordinates; exact-binary Au solver mask "
+            "applied so design-window air is excluded; extrapolation forbidden"
         ),
         "Q_method": (
             "component-Yee power density restricted by exact physical z-control "

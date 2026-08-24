@@ -97,6 +97,7 @@ class FullZCertificateTest(unittest.TestCase):
                         name: value.copy() for name, value in volumes.items()
                     },
                     "power_late": power,
+                    "solver_mask": np.ones((2, 2), dtype=np.uint8),
                 }
                 placement = {
                     "au_design": [[0, 2], [0, 2], list(z_bounds[level])],
@@ -170,6 +171,36 @@ class FullZCertificateTest(unittest.TestCase):
             self.assertTrue(np.array_equal(mapped, np.full(mapped.shape, 7.0)))
             self.assertTrue(np.all(weights > 0.0))
 
+    def test_float32_canonical_tairte4_support_is_not_a_false_failure(self) -> None:
+        coarse_spec = expected_full_z_case("z2")
+        fine_spec = expected_full_z_case("z4")
+        coarse_edges = np.asarray(grid_edges(coarse_spec.mesh)[2], dtype=np.float32)
+        fine_edges = np.asarray(grid_edges(fine_spec.mesh)[2], dtype=np.float32)
+        coarse_bounds = tuple(
+            expected_placement(coarse_spec.mesh)["fixed_tairte4"][2]
+        )
+        fine_bounds = tuple(
+            expected_placement(fine_spec.mesh)["fixed_tairte4"][2]
+        )
+        for component in range(3):
+            coarse_volume = self._volume(coarse_edges, coarse_bounds)[component]
+            fine_volume = self._volume(fine_edges, fine_bounds)[component]
+            _, _, _, audit = _restrict_component_q_to_coarse_z(
+                np.ones_like(coarse_volume),
+                np.ones_like(fine_volume),
+                coarse_volume,
+                fine_volume,
+                coarse_edges,
+                fine_edges,
+                coarse_bounds,
+                fine_bounds,
+                component,
+            )
+            self.assertTrue(audit["ready"])
+            self.assertGreater(
+                audit["common_z_support_fraction"], 0.8999999
+            )
+
     def test_identical_physical_fields_and_q_pass_full_z_pair(self) -> None:
         snapshots, payloads, sources = self._comparison_inputs()
         result = compare_full_z_pair("z2", "z4", snapshots, payloads, sources)
@@ -177,6 +208,22 @@ class FullZCertificateTest(unittest.TestCase):
         self.assertTrue(all(result["checks"].values()))
         self.assertAlmostEqual(
             result["metrics"]["conservative_Q_volume_L2_NRMSE"], 0.0
+        )
+
+    def test_au_field_comparison_excludes_design_window_air(self) -> None:
+        snapshots, payloads, sources = self._comparison_inputs()
+        mask = np.asarray([[1, 0], [0, 0]], dtype=np.uint8)
+        for level in ("z2", "z4"):
+            for polarization in ("Ea", "Eb"):
+                snapshots[level][polarization]["solver_mask"] = mask.copy()
+        snapshots["z4"]["Ea"]["fields_late"]["au"][:, 1:, :, :] *= 100.0
+        snapshots["z4"]["Ea"]["fields_late"]["au"][:, :, 1:, :] *= 100.0
+        result = compare_full_z_pair("z2", "z4", snapshots, payloads, sources)
+        self.assertEqual(
+            result["per_polarization"]["Ea"][
+                "material_region_complex_E_NRMSE_after_fine_to_coarse_z_interpolation"
+            ]["au"],
+            0.0,
         )
 
     def test_material_region_field_change_above_limit_blocks_pair(self) -> None:
