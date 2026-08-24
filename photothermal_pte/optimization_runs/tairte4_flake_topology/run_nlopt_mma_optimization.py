@@ -17,6 +17,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+from typing import Callable
 
 import nlopt
 import numpy as np
@@ -114,6 +115,9 @@ class StageEvaluator:
         morphology_penalty_weight: float = 0.0,
         morphology_aggregation: str = "mean",
         use_official_ansys_dfm: bool = False,
+        physics_evaluator: Callable[
+            ..., tuple[dict[str, object], np.ndarray, np.ndarray]
+        ] = evaluate,
     ) -> None:
         self.beta = beta
         self.polarization = polarization
@@ -140,6 +144,7 @@ class StageEvaluator:
         self.morphology_penalty_weight = float(morphology_penalty_weight)
         self.morphology_aggregation = morphology_aggregation
         self.use_official_ansys_dfm = bool(use_official_ansys_dfm)
+        self.physics_evaluator = physics_evaluator
         if self.morphology_penalty_weight < 0.0:
             raise ValueError("morphology penalty weight must be nonnegative")
         self.last: Point | None = None
@@ -163,7 +168,7 @@ class StageEvaluator:
         output = self.raw_root / (
             f"evaluation_{self.evaluation_counter:04d}_beta{self.beta:g}_{self.output_slug}"
         )
-        result, gradient_physical, gradient_conductance = evaluate(
+        result, gradient_physical, gradient_conductance = self.physics_evaluator(
             rho,
             polarization=self.polarization,
             output=output,
@@ -293,6 +298,13 @@ class StageEvaluator:
             "volume_constraint": False,
             "optimizer_controls": self.optimizer_controls,
         }
+        polarization_objectives = result.get("polarization_objectives_A")
+        if polarization_objectives is not None:
+            row["polarization_objectives_A"] = polarization_objectives
+            row["polarization_objectives_at_reference_power_A"] = {
+                name: equivalent_current(float(value), self.fixed_source_power_W)
+                for name, value in polarization_objectives.items()
+            }
         self.history.append(row)
         artifact_entry = record_manifest_entry(result)
         artifact_entry["latent_design"] = {

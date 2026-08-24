@@ -29,6 +29,10 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.ansys_minimum_fea
     CONTRACT as DFM_CONTRACT,
 )
 from photothermal_pte.optimization_runs.tairte4_flake_topology.contract import CONTRACT
+from photothermal_pte.optimization_runs.tairte4_flake_topology.dual_polarization import (
+    evaluate_dual_exact_candidate,
+    evaluate_dual_polarization,
+)
 from photothermal_pte.optimization_runs.tairte4_flake_topology.optimization_support import (
     MAPPING,
     exact_binary_audit,
@@ -43,6 +47,7 @@ from photothermal_pte.optimization_runs.tairte4_flake_topology.run_nlopt_mma_opt
 )
 from photothermal_pte.optimization_runs.tairte4_flake_topology.run_true_mma_optimization import (
     equivalent_current,
+    evaluate as evaluate_single_polarization,
     sha256,
     verify_file,
     write_json,
@@ -266,6 +271,11 @@ def restore_final_point(raw_root: Path, history: list[dict[str, object]]) -> Sim
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--polarization", choices=("Ea", "Eb"), required=True)
+    parser.add_argument(
+        "--objective-mode",
+        choices=("single", "dual_softmin"),
+        default="single",
+    )
     parser.add_argument("--raw-root", required=True, type=Path)
     parser.add_argument("--published-dir", required=True, type=Path)
     parser.add_argument("--gpu", required=True, type=int)
@@ -275,6 +285,7 @@ def main() -> int:
     parser.add_argument("--constraint-device", default="cuda:0")
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
+    dual_polarization = args.objective_mode == "dual_softmin"
 
     CONTRACT.validate()
     DFM_CONTRACT.validate()
@@ -343,6 +354,16 @@ def main() -> int:
             "official_dfm": DFM_CONTRACT.audit(),
             "exact_final_gate": "independent 500-nm binary opening audit",
         }
+        manifest["objective"] = (
+            {
+                "mode": "dual_softmin",
+                "polarizations": ["Ea", "Eb"],
+                "formula": "-tau*log(mean(exp(-I/tau))), tau=5 nA at 285 uW",
+                "exact_gate": "both polarizations preserve current within 1%",
+            }
+            if dual_polarization
+            else {"mode": "single", "polarization": args.polarization}
+        )
         write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
         latent = CONTRACT.apply_fixed_contact_density(
             np.full(MAPPING.shape, 0.5, dtype=np.float64)
@@ -391,6 +412,11 @@ def main() -> int:
             morphology_start_beta=np.inf,
             morphology_penalty_weight=0.0,
             use_official_ansys_dfm=True,
+            physics_evaluator=(
+                evaluate_dual_polarization
+                if dual_polarization
+                else evaluate_single_polarization
+            ),
             optimizer_controls={
                 "one_stage_per_beta": True,
                 "manual_move_limit": None,
@@ -504,18 +530,36 @@ def main() -> int:
         )
         if not audit["passed"]:
             raise RuntimeError("repair returned a candidate that failed independent audit")
-        candidate_results.append(
-            evaluate_exact_candidate(
-                rho=candidate,
-                rank=rank,
-                candidate_root=candidate_root,
-                polarization=args.polarization,
-                gpu=args.gpu,
-                base_fsp=base_fsp,
-                base_sha256=args.base_sha256,
-                reference_objective_A=float(final_point.result["objective_A"]),
+        if dual_polarization:
+            candidate_results.append(
+                evaluate_dual_exact_candidate(
+                    rho=candidate,
+                    rank=rank,
+                    candidate_root=candidate_root,
+                    gpu=args.gpu,
+                    base_fsp=base_fsp,
+                    base_sha256=args.base_sha256,
+                    reference_objectives_A={
+                        name: float(value)
+                        for name, value in final_point.result[
+                            "polarization_objectives_A"
+                        ].items()
+                    },
+                )
             )
-        )
+        else:
+            candidate_results.append(
+                evaluate_exact_candidate(
+                    rho=candidate,
+                    rank=rank,
+                    candidate_root=candidate_root,
+                    polarization=args.polarization,
+                    gpu=args.gpu,
+                    base_fsp=base_fsp,
+                    base_sha256=args.base_sha256,
+                    reference_objective_A=float(final_point.result["objective_A"]),
+                )
+            )
     best = max(candidate_results, key=lambda row: row["objective_A"])
     best_rho = candidate_arrays[int(best["rank"])]
     best_audit, _ = exact_binary_audit(
@@ -536,7 +580,8 @@ def main() -> int:
             if final_passed
             else "FAILED_EXACT_BINARY_OBJECTIVE_PRESERVATION"
         ),
-        "polarization": args.polarization,
+        "polarization": "Ea+Eb" if dual_polarization else args.polarization,
+        "objective_mode": args.objective_mode,
         "axis_contract": "Lumerical x=b, y=a, z=c",
         "algorithm": "NLopt LD_MMA",
         "initial_density": "uniform latent rho=0.5",
@@ -558,6 +603,18 @@ def main() -> int:
         "same_beta_restart_loop_used": False,
         "empirical_gradient_rescaling": False,
     }
+    if dual_polarization:
+        final["continuous_reference_currents_A"] = {
+            name: equivalent_current(float(value), fixed_source_power)
+            for name, value in final_point.result["polarization_objectives_A"].items()
+        }
+        final["exact_reference_currents_A"] = {
+            name: equivalent_current(float(value), fixed_source_power)
+            for name, value in best["result"]["polarization_objectives_A"].items()
+        }
+        final["per_polarization_objective_preservation_gate_passed"] = best[
+            "result"
+        ]["per_polarization_objective_gate_passed"]
     write_json(published / "FINAL_RESULT.json", final)
     print(json.dumps(final, indent=2), flush=True)
     return 0
