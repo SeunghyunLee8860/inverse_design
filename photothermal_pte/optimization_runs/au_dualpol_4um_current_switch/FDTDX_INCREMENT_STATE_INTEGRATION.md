@@ -214,3 +214,34 @@ run_fdtdx_increment_state_control_gpu.sh GPU_INDEX Ea /absolute/empty/output \
 This extension changes only simulation duration and detector-window timing;
 mesh, material pole parameters, exact mask, source, PML, and gates remain
 unchanged.
+
+## Passed 24-period time-settling control
+
+Commit `a7f2d6b9411a22cb18a2dcec23759a15c1519daa` ran the canonical
+24-period/4-period-window extension concurrently on the same verified-idle
+physical B200 GPUs 6/7. Both reports are
+`VALIDATED_FDTDX_INCREMENT_STATE_EXACT_BINARY_CONTROL`; no 32-period run is
+needed. The shared canonical case SHA-256 is
+`4a1b16092a693953c075b9848bba3342951233b712e397005dc34312f6e30532`.
+
+External reports:
+
+- Ea SHA-256 `858f8d5b7ba42be29e18e0e1276a6da157d2cc21947c947a5a316f1f6baff309`
+- Eb SHA-256 `ce7138c66301d7b16ba4f472a53a5c3e95e2aa9d89251f0714b724ec8e323d41`
+- root: `/home/seunghyun200/fdtdx_results/increment_state_control_a7f2d6b9_t24/`
+
+Ea cold compile+forward was `36.429 s` and total was `59.701 s`; Eb was
+`36.693 s` and `60.029 s`. Concurrent pair wall time was about 60 s. Peak JAX
+bytes-in-use were about 3.716 GB per GPU and the pool remained 4.364 GB.
+
+Au previous/late field NRMSE fell to `1.8580e-4` (Ea) and `2.4892e-4`
+(Eb), versus the `5e-3` gate. TaIrTe4 field NRMSE was at most `1.348e-5`. Q
+spatial NRMSE was `3.2963e-5` and `6.9316e-5`; total-Q change was
+`1.9868e-6` and `5.4228e-6`. Q/closed-phasor differences were
+`1.1508e-4` and `7.0470e-5`. Every material, stationarity, Q, closure, GPU,
+and provenance gate passed.
+
+This closes anchor runtime and time settling only. It does not certify source
+normalization, spatial mesh convergence, adjoint timing, a gray law, or the
+optimizer. The next artifact must be a newly hashed patched-fork 24-period
+source-only Ea/Eb pair; do not reuse the historical second-order pair.

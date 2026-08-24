@@ -846,3 +846,20 @@ The time-control runner is now v2 and accepts canonical
 settling check, invoke the safe wrapper with trailing
 `--total-periods 24 --window-periods 4` on each polarization. This changes no
 mesh, material, source, PML, mask, or gate.
+
+## Passed 24-period increment-state control
+
+The canonical 24/4 extension at commit `a7f2d6b9` passed every gate for both
+polarizations. Shared case hash:
+`4a1b16092a693953c075b9848bba3342951233b712e397005dc34312f6e30532`.
+External report hashes are
+`858f8d5b7ba42be29e18e0e1276a6da157d2cc21947c947a5a316f1f6baff309`
+(Ea) and `ce7138c66301d7b16ba4f472a53a5c3e95e2aa9d89251f0714b724ec8e323d41`
+(Eb), under
+`/home/seunghyun200/fdtdx_results/increment_state_control_a7f2d6b9_t24/`.
+Cold compile+forward was `36.429/36.693 s`; parallel pair total was about 60 s.
+Au field NRMSE is now `1.858e-4/2.489e-4`, and Q/phasor closure is
+`1.151e-4/7.047e-5`. Do not run 32 periods. Next generate a newly hashed
+patched-fork 24-period source-only Ea/Eb pair, then begin spatial convergence.
+Historical source pairs remain forbidden; gray law, adjoint timing, and
+optimizer are still open blockers.
