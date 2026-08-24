@@ -119,6 +119,11 @@ sample-air boundaries are insulating, and the transverse example uses an
   from each runner's realized placed-object slices. The former implementation
   used baseline z-cell counts and would have misplaced the adjoint source on a
   refined-z production grid even when the forward runner used that fine grid.
+- The new z sweep refines all nine vertical segments (Si, SiO2, TaIrTe4, Au,
+  three air regions, and both z-PMLs) together at factors 1/2/4 under the
+  validated Courant-0.25/40-period contract. It uses independent Ea/Eb source
+  calibration per grid and requires every material case to pass time and
+  absorption-flux gates before comparing the final 2-to-4 spatial pair.
 - Source calibration bound to exact grid/source/time metadata.
 - Stale validation artifacts rejected by status, material-law, grid, input,
   and SHA checks.

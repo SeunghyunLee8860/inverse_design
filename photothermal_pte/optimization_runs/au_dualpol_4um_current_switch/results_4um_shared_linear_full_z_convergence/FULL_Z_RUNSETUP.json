@@ -1,0 +1,603 @@
+{
+  "status": "AUDITED_FULL_DOMAIN_4UM_AU_Z_MESH_RUNSETUP_NOT_SOLVED",
+  "scope": "full optical z refinement including materials, Si, air, and z-PML; x/y and downstream meshes fixed",
+  "timestamp_utc": "2026-08-24T00:22:44.609130+00:00",
+  "checkpoint": {
+    "path": "/home/seunghyun/tairte4/raw/au_dualpol_4um_current_switch/robust_projection_ld_mma/evaluation_0112.npz",
+    "bytes": 92476,
+    "sha256": "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3",
+    "expected_sha256": "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3",
+    "sha256_matches_expected": true
+  },
+  "levels": [
+    {
+      "factor": 1,
+      "grid_shape": [
+        186,
+        186,
+        40
+      ],
+      "yee_cell_count": 1383840,
+      "x_bounds_m": [
+        -1e-05,
+        1e-05
+      ],
+      "y_bounds_m": [
+        -1e-05,
+        1e-05
+      ],
+      "z_bounds_m": [
+        -3e-06,
+        3e-06
+      ],
+      "central_dx_m": 1e-07,
+      "central_dy_m": 1e-07,
+      "sio2_dz_m": 9.5e-08,
+      "tairte4_dz_m": 2e-08,
+      "au_dz_m": 2.5e-08,
+      "layer_bounds_m": {
+        "fixed_285nm_sio2": [
+          -3.85e-07,
+          -1e-07
+        ],
+        "fixed_tairte4": [
+          -1e-07,
+          0.0
+        ],
+        "au_design": [
+          0.0,
+          5e-08
+        ]
+      },
+      "source_bounds": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          29,
+          30
+        ]
+      ],
+      "incident_monitor_bounds": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          28,
+          29
+        ]
+      ],
+      "closed_monitor_bounds": [
+        [
+          8,
+          178
+        ],
+        [
+          8,
+          178
+        ],
+        [
+          12,
+          27
+        ]
+      ],
+      "min_grid_step_m": 1.9999999999999994e-08,
+      "max_grid_step_m": 2.500000000000001e-07,
+      "full_domain_variant": {
+        "mode": "full_domain_z",
+        "factor": 1,
+        "grid_edges_sha256": "c6a12b95e656a88d6d9fcf448e30539f7befaa0a894dc6d44f5de42929949e1c",
+        "grid_shape_xyz": [
+          186,
+          186,
+          40
+        ],
+        "yee_cell_count": 1383840,
+        "pml_cells_each_face_xyz": [
+          8,
+          8,
+          8
+        ],
+        "indices": {
+          "source_z_start": 29,
+          "target_z_start": 27,
+          "incident_z_start": 28,
+          "closed_z_start": 12,
+          "closed_z_cells": 15
+        },
+        "segments": {
+          "bottom_pml_si": {
+            "bounds_m": [
+              -3e-06,
+              -1.4e-06
+            ],
+            "cells": 8,
+            "uniform_dz_m": 2.0000000000000002e-07
+          },
+          "resolved_si": {
+            "bounds_m": [
+              -1.4e-06,
+              -3.85e-07
+            ],
+            "cells": 5,
+            "uniform_dz_m": 2.03e-07
+          },
+          "sio2": {
+            "bounds_m": [
+              -3.85e-07,
+              -1e-07
+            ],
+            "cells": 3,
+            "uniform_dz_m": 9.5e-08
+          },
+          "tairte4": {
+            "bounds_m": [
+              -1e-07,
+              0.0
+            ],
+            "cells": 5,
+            "uniform_dz_m": 2e-08
+          },
+          "au": {
+            "bounds_m": [
+              0.0,
+              5e-08
+            ],
+            "cells": 2,
+            "uniform_dz_m": 2.5e-08
+          },
+          "near_air": {
+            "bounds_m": [
+              5e-08,
+              2.5e-07
+            ],
+            "cells": 4,
+            "uniform_dz_m": 5e-08
+          },
+          "middle_air": {
+            "bounds_m": [
+              2.5e-07,
+              7.5e-07
+            ],
+            "cells": 2,
+            "uniform_dz_m": 2.5000000000000004e-07
+          },
+          "source_air": {
+            "bounds_m": [
+              7.5e-07,
+              1.4e-06
+            ],
+            "cells": 3,
+            "uniform_dz_m": 2.1666666666666665e-07
+          },
+          "top_pml_air": {
+            "bounds_m": [
+              1.4e-06,
+              3e-06
+            ],
+            "cells": 8,
+            "uniform_dz_m": 2.0000000000000002e-07
+          }
+        }
+      }
+    },
+    {
+      "factor": 2,
+      "grid_shape": [
+        186,
+        186,
+        80
+      ],
+      "yee_cell_count": 2767680,
+      "x_bounds_m": [
+        -1e-05,
+        1e-05
+      ],
+      "y_bounds_m": [
+        -1e-05,
+        1e-05
+      ],
+      "z_bounds_m": [
+        -3e-06,
+        3e-06
+      ],
+      "central_dx_m": 1e-07,
+      "central_dy_m": 1e-07,
+      "sio2_dz_m": 4.75e-08,
+      "tairte4_dz_m": 1e-08,
+      "au_dz_m": 1.25e-08,
+      "layer_bounds_m": {
+        "fixed_285nm_sio2": [
+          -3.85e-07,
+          -1e-07
+        ],
+        "fixed_tairte4": [
+          -1e-07,
+          0.0
+        ],
+        "au_design": [
+          0.0,
+          5e-08
+        ]
+      },
+      "source_bounds": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          58,
+          59
+        ]
+      ],
+      "incident_monitor_bounds": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          56,
+          57
+        ]
+      ],
+      "closed_monitor_bounds": [
+        [
+          8,
+          178
+        ],
+        [
+          8,
+          178
+        ],
+        [
+          24,
+          54
+        ]
+      ],
+      "min_grid_step_m": 9.999999999999997e-09,
+      "max_grid_step_m": 2.0000000000000147e-07,
+      "full_domain_variant": {
+        "mode": "full_domain_z",
+        "factor": 2,
+        "grid_edges_sha256": "7f5caf9fb99480a15e0840d1b2e935abd4299f50089bf3ba31a285207eb37a5e",
+        "grid_shape_xyz": [
+          186,
+          186,
+          80
+        ],
+        "yee_cell_count": 2767680,
+        "pml_cells_each_face_xyz": [
+          8,
+          8,
+          16
+        ],
+        "indices": {
+          "source_z_start": 58,
+          "target_z_start": 54,
+          "incident_z_start": 56,
+          "closed_z_start": 24,
+          "closed_z_cells": 30
+        },
+        "segments": {
+          "bottom_pml_si": {
+            "bounds_m": [
+              -3e-06,
+              -1.4e-06
+            ],
+            "cells": 16,
+            "uniform_dz_m": 1.0000000000000001e-07
+          },
+          "resolved_si": {
+            "bounds_m": [
+              -1.4e-06,
+              -3.85e-07
+            ],
+            "cells": 10,
+            "uniform_dz_m": 1.015e-07
+          },
+          "sio2": {
+            "bounds_m": [
+              -3.85e-07,
+              -1e-07
+            ],
+            "cells": 6,
+            "uniform_dz_m": 4.75e-08
+          },
+          "tairte4": {
+            "bounds_m": [
+              -1e-07,
+              0.0
+            ],
+            "cells": 10,
+            "uniform_dz_m": 1e-08
+          },
+          "au": {
+            "bounds_m": [
+              0.0,
+              5e-08
+            ],
+            "cells": 4,
+            "uniform_dz_m": 1.25e-08
+          },
+          "near_air": {
+            "bounds_m": [
+              5e-08,
+              2.5e-07
+            ],
+            "cells": 8,
+            "uniform_dz_m": 2.5e-08
+          },
+          "middle_air": {
+            "bounds_m": [
+              2.5e-07,
+              7.5e-07
+            ],
+            "cells": 4,
+            "uniform_dz_m": 1.2500000000000002e-07
+          },
+          "source_air": {
+            "bounds_m": [
+              7.5e-07,
+              1.4e-06
+            ],
+            "cells": 6,
+            "uniform_dz_m": 1.0833333333333332e-07
+          },
+          "top_pml_air": {
+            "bounds_m": [
+              1.4e-06,
+              3e-06
+            ],
+            "cells": 16,
+            "uniform_dz_m": 1.0000000000000001e-07
+          }
+        }
+      }
+    },
+    {
+      "factor": 4,
+      "grid_shape": [
+        186,
+        186,
+        160
+      ],
+      "yee_cell_count": 5535360,
+      "x_bounds_m": [
+        -1e-05,
+        1e-05
+      ],
+      "y_bounds_m": [
+        -1e-05,
+        1e-05
+      ],
+      "z_bounds_m": [
+        -3e-06,
+        3e-06
+      ],
+      "central_dx_m": 1e-07,
+      "central_dy_m": 1e-07,
+      "sio2_dz_m": 2.375e-08,
+      "tairte4_dz_m": 5e-09,
+      "au_dz_m": 6.25e-09,
+      "layer_bounds_m": {
+        "fixed_285nm_sio2": [
+          -3.85e-07,
+          -1e-07
+        ],
+        "fixed_tairte4": [
+          -1e-07,
+          0.0
+        ],
+        "au_design": [
+          0.0,
+          5e-08
+        ]
+      },
+      "source_bounds": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          116,
+          117
+        ]
+      ],
+      "incident_monitor_bounds": [
+        [
+          13,
+          173
+        ],
+        [
+          13,
+          173
+        ],
+        [
+          112,
+          113
+        ]
+      ],
+      "closed_monitor_bounds": [
+        [
+          8,
+          178
+        ],
+        [
+          8,
+          178
+        ],
+        [
+          48,
+          108
+        ]
+      ],
+      "min_grid_step_m": 4.999999999999992e-09,
+      "max_grid_step_m": 2.0000000000000147e-07,
+      "full_domain_variant": {
+        "mode": "full_domain_z",
+        "factor": 4,
+        "grid_edges_sha256": "f49addc4a9e2b779b5559aa43abeea043d1c8c551244d45b771e5f600f37c2cd",
+        "grid_shape_xyz": [
+          186,
+          186,
+          160
+        ],
+        "yee_cell_count": 5535360,
+        "pml_cells_each_face_xyz": [
+          8,
+          8,
+          32
+        ],
+        "indices": {
+          "source_z_start": 116,
+          "target_z_start": 108,
+          "incident_z_start": 112,
+          "closed_z_start": 48,
+          "closed_z_cells": 60
+        },
+        "segments": {
+          "bottom_pml_si": {
+            "bounds_m": [
+              -3e-06,
+              -1.4e-06
+            ],
+            "cells": 32,
+            "uniform_dz_m": 5.0000000000000004e-08
+          },
+          "resolved_si": {
+            "bounds_m": [
+              -1.4e-06,
+              -3.85e-07
+            ],
+            "cells": 20,
+            "uniform_dz_m": 5.075e-08
+          },
+          "sio2": {
+            "bounds_m": [
+              -3.85e-07,
+              -1e-07
+            ],
+            "cells": 12,
+            "uniform_dz_m": 2.375e-08
+          },
+          "tairte4": {
+            "bounds_m": [
+              -1e-07,
+              0.0
+            ],
+            "cells": 20,
+            "uniform_dz_m": 5e-09
+          },
+          "au": {
+            "bounds_m": [
+              0.0,
+              5e-08
+            ],
+            "cells": 8,
+            "uniform_dz_m": 6.25e-09
+          },
+          "near_air": {
+            "bounds_m": [
+              5e-08,
+              2.5e-07
+            ],
+            "cells": 16,
+            "uniform_dz_m": 1.25e-08
+          },
+          "middle_air": {
+            "bounds_m": [
+              2.5e-07,
+              7.5e-07
+            ],
+            "cells": 8,
+            "uniform_dz_m": 6.250000000000001e-08
+          },
+          "source_air": {
+            "bounds_m": [
+              7.5e-07,
+              1.4e-06
+            ],
+            "cells": 12,
+            "uniform_dz_m": 5.416666666666666e-08
+          },
+          "top_pml_air": {
+            "bounds_m": [
+              1.4e-06,
+              3e-06
+            ],
+            "cells": 32,
+            "uniform_dz_m": 5.0000000000000004e-08
+          }
+        }
+      }
+    }
+  ],
+  "time_contract": {
+    "total_periods": 40,
+    "phasor_window_periods": 4,
+    "courant_factor": 0.25
+  },
+  "stable_time_certificate": {
+    "path": "/home/seunghyun/tairte4/worktrees/au_dualpol_4um/photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/results_4um_stable_time_contract/STABLE_TIME_CONTRACT_SUMMARY.json",
+    "sha256": "17cde19d27648bc530734b6070b03cef6c1dad15e6cd60ab1d6bafd4ccf5170b",
+    "status": "VALIDATED_FACTOR8_CF0P25_TIME_MATERIAL_CONTRACT"
+  },
+  "density_cases": [
+    "eta_0.50_nominal",
+    "eta_0.35",
+    "eta_0.65"
+  ],
+  "case_contract": {
+    "implementation_version": "full-domain-z-shared-linear-stable-time-v1",
+    "script_sha256": "cf186d74a0eec76555b75195fc8b233deef6dcc016851ff989e12eec679533cc",
+    "optical_model_sha256": "21f1c5c0f856c8e3cd2e08b456a9079eed7c33ecdd210943282ae00c6c32a1a7",
+    "combined_implementation_sha256": "43a85d8e5468d9ff8372ee13f3b2f7fc8c1668993878807a757bfd154b942191",
+    "multiphysics_implementation_sha256": "dba8804bcb497a923291b763a971fa54e15474ca40a1c37b179004b569e0e958",
+    "device_contract_sha256": "3bd5d28db9cedea5bd12ac427dd6e118206ceb0c2ebffc45938e36cf8faa9c30",
+    "checkpoint_sha256": "ef8b99bec0029588b89f56edc68bd9c747fa9ed0897933def138c787509332e3",
+    "stable_time_certificate_sha256": "17cde19d27648bc530734b6070b03cef6c1dad15e6cd60ab1d6bafd4ccf5170b",
+    "mesh_mode": "full_domain_z",
+    "time": {
+      "total_periods": 40,
+      "phasor_window_periods": 4,
+      "courant_factor": 0.25
+    },
+    "au_material_fraction": {
+      "law": "shared_linear_projected_density",
+      "exponent": 1.0,
+      "optical_fraction": "au_material_fraction(rho)",
+      "thermal_fraction": "au_material_fraction(rho)",
+      "electrical_fraction": "au_material_fraction(rho)",
+      "gray_density_is_physical_geometry": false,
+      "promotion_requires_exact_binary_density": true
+    },
+    "absorption_density_law": "Q proportional to realized float32 discrete-ADE susceptibility.imag*abs(E)**2",
+    "current_law": "I=sum(-sigma*S*DeltaT*Deltapsi)"
+  },
+  "case_contract_sha256": "04d749c9ea831675837a53333c04a6448ed855269dd8672fb9b896a7d429e47d",
+  "promotion": {
+    "is_full_z_mesh_certificate": false
+  }
+}

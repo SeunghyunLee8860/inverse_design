@@ -30,8 +30,9 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
 9. `13_optimize_robust_binary_au_ld_mma.py` -- eroded/dilated robust
    continuation path.  Read `ROBUST_OBJECTIVE_AUDIT.md` before using it.
 10. `14_diagnose_gray_law_mismatch.py` -- historical gray-material blocker.
-11. `15_validate_4um_z_mesh_convergence.py` -- fail-closed z-mesh gate that
-    must be closed before another production optimization.
+11. `15_validate_4um_z_mesh_convergence.py` -- fail-closed full-domain-z gate
+    that refines every Si/material/air/z-PML segment and must be closed before
+    optical x/y convergence or another production optimization.
 12. `production_readiness.py` and `PRODUCTION_READINESS.md` -- executable
     certificate chain that currently blocks all production entry points.
 13. `CODE_PHYSICS_AUDIT.md` and `physical_device_contract.json` -- full
@@ -86,6 +87,10 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    realized discrete loss, and the current material builder refits the actual
    float32 ADE carrier response to <1e-5 complex-permittivity error. Old
    gradient/phase tables are explicitly stale.
+   The replacement full-domain script uses factors 1/2/4, Courant 0.25,
+   40 total periods, and a 4-period late window. It recalibrates Ea and Eb
+   separately on every grid, rechecks time stationarity and Q/TD/phasor flux
+   in every material case, and persists hash-verified per-case progress.
 6. Electrical void cells retain tiny sheet/contact floors to regularize the
    floating Au block.  Quantify floor sensitivity; do not describe the
    electrical `rho=0` endpoint as exactly disconnected until that passes.

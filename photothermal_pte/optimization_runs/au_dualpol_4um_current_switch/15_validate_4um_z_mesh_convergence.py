@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Fail-closed partial material-z diagnostic for the 4 um Au/TaIrTe4 stack.
+"""Fail-closed full-domain optical z convergence for the 4 um stack.
 
 The optimized density, x/y grid, source, material endpoints, and shared-linear
-Au law are frozen.  Only the optical z discretization of SiO2, TaIrTe4, and Au
-is refined.  Every optical mesh receives its own all-air incident-power
-calibration before Q is conservatively mapped to the identical explicit
-thermal/electrical operator.
+Au law are frozen. Every z segment, including Si, air, and both z-PMLs, is
+refined. Every optical mesh and polarization receives its own all-air
+incident-power calibration before Q is conservatively mapped to the identical
+explicit thermal/electrical operator.
 
-This script diagnoses the current blocked gray checkpoint.  It cannot issue a
-full-domain z certificate and does not restart optimization.
+This script validates z convergence only. It cannot certify optical x/y,
+thermal, or electrical meshes and does not restart optimization.
 """
 
 from __future__ import annotations
@@ -53,8 +53,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.historical
     load_densities,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.mesh_variants import (
-    PARTIAL_MATERIAL_Z,
+    FULL_DOMAIN_Z,
     mesh_context as variant_mesh_context,
+    variant_audit,
     variant_edges,
     variant_layout,
 )
@@ -68,16 +69,27 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.production
 
 
 HERE = Path(__file__).resolve().parent
-OUT = HERE / "results_4um_dualpol_au_z_mesh_convergence"
-RAW = raw_path("z_mesh_convergence")
-TOTAL_PERIODS = 24
+OUT = HERE / "results_4um_shared_linear_full_z_convergence"
+RAW = raw_path("shared_linear_full_z_convergence")
+STABLE_TIME_CERTIFICATE = (
+    HERE
+    / "results_4um_stable_time_contract"
+    / "STABLE_TIME_CONTRACT_SUMMARY.json"
+)
+STABLE_TIME_STATUS = "VALIDATED_FACTOR8_CF0P25_TIME_MATERIAL_CONTRACT"
+COMBINED_IMPLEMENTATION = HERE / "combined_4um.py"
+MULTIPHYSICS_IMPLEMENTATION = HERE / "multiphysics_4um.py"
+TOTAL_PERIODS = 40
 WINDOW_PERIODS = 4
-LEVELS = (1, 2, 4, 8)
+COURANT_FACTOR = 0.25
+LEVELS = (1, 2, 4)
 POLARIZATIONS = ("Ea", "Eb")
 GATE_POWER = 5.0e-3
 GATE_FIELD = 5.0e-3
 GATE_CURRENT = 5.0e-3
-IMPLEMENTATION_VERSION = "partial-material-z-shared-linear-e2-current-sign-v2"
+GATE_Q_FLUX = 2.0e-2
+GATE_TD_PHASOR = 5.0e-3
+IMPLEMENTATION_VERSION = "full-domain-z-shared-linear-stable-time-v1"
 
 
 def sha256(path: Path) -> str:
@@ -101,15 +113,15 @@ def segments(parts: tuple[tuple[float, float, int], ...]) -> np.ndarray:
 
 
 def refined_edges(factor: int) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    return variant_edges(factor, PARTIAL_MATERIAL_Z)
+    return variant_edges(factor, FULL_DOMAIN_Z)
 
 
 def refined_layout(factor: int):
-    return variant_layout(factor, PARTIAL_MATERIAL_Z)
+    return variant_layout(factor, FULL_DOMAIN_Z)
 
 
 def mesh_context(factor: int):
-    return variant_mesh_context(factor, PARTIAL_MATERIAL_Z)
+    return variant_mesh_context(factor, FULL_DOMAIN_Z)
 
 
 def build_at_mesh(
@@ -123,6 +135,7 @@ def build_at_mesh(
             polarization,
             total_periods=TOTAL_PERIODS,
             window_periods=WINDOW_PERIODS,
+            courant_factor=COURANT_FACTOR,
             include_adjoint_source=False,
             air_only_source_calibration=air_only,
         )
@@ -131,6 +144,11 @@ def build_at_mesh(
 def mesh_audit(factor: int, model: dict[str, object]) -> dict[str, object]:
     edges = refined_edges(factor)
     widths = tuple(np.diff(value) for value in edges)
+    expected_audit = variant_audit(factor, FULL_DOMAIN_Z)
+    if list(model["grid"].shape) != expected_audit["grid_shape_xyz"]:
+        raise RuntimeError(
+            f"factor {factor} realized grid does not match full-domain variant"
+        )
     slices = model["slices"]
     expected = {
         "fixed_285nm_sio2": 3 * factor,
@@ -174,6 +192,7 @@ def mesh_audit(factor: int, model: dict[str, object]) -> dict[str, object]:
         "closed_monitor_bounds": model["placement"]["material_flux_td"],
         "min_grid_step_m": float(min(np.min(value) for value in widths)),
         "max_grid_step_m": float(max(np.max(value) for value in widths)),
+        "full_domain_variant": expected_audit,
     }
 
 
@@ -292,8 +311,22 @@ class ForwardRunner:
         marker = output.detector_states["au_late"]["phasor"]
         self.model["jax"].block_until_ready(marker)
         runtime = time.perf_counter() - start
-        e_au = np.asarray(output.detector_states["au_late"]["phasor"][0, 0])
-        e_ta = np.asarray(output.detector_states["tairte4_late"]["phasor"][0, 0])
+        late_fields = {
+            "au": np.asarray(output.detector_states["au_late"]["phasor"][0, 0]),
+            "tairte4": np.asarray(
+                output.detector_states["tairte4_late"]["phasor"][0, 0]
+            ),
+        }
+        previous_fields = {
+            "au": np.asarray(
+                output.detector_states["au_previous"]["phasor"][0, 0]
+            ),
+            "tairte4": np.asarray(
+                output.detector_states["tairte4_previous"]["phasor"][0, 0]
+            ),
+        }
+        e_au = late_fields["au"]
+        e_ta = late_fields["tairte4"]
         strength = np.asarray(
             au_material_fraction(np.asarray(rho, dtype=np.float64)),
             dtype=np.float64,
@@ -320,15 +353,55 @@ class ForwardRunner:
         }
         p_total = float(sum(p_components.values()))
         eta0 = float(self.model["fdtdx"].constants.eta0)
-        p_six = source_scale * eta0 * float(
+        p_closed_td = source_scale * eta0 * float(
             np.mean(
                 np.asarray(
                     output.detector_states["material_flux_td"]["poynting_flux"]
                 )[:, 0]
             )
         )
-        closure = abs(p_total - p_six) / max(abs(p_six), np.finfo(float).tiny)
-        return output, q, p_components, p_total, p_six, closure, runtime
+        p_closed_phasor = source_scale * eta0 * float(
+            np.asarray(
+                self.model["placed"]["material_flux"].compute_net_flux(
+                    output.detector_states["material_flux"]
+                )
+            )[0]
+        )
+        late_e2 = 0.0
+        previous_e2 = 0.0
+        difference_e2 = 0.0
+        for material in ("au", "tairte4"):
+            volume = self.volumes[material]
+            late_e2 += float(np.sum(np.abs(late_fields[material]) ** 2 * volume))
+            previous_e2 += float(
+                np.sum(np.abs(previous_fields[material]) ** 2 * volume)
+            )
+            difference_e2 += float(
+                np.sum(
+                    np.abs(late_fields[material] - previous_fields[material]) ** 2
+                    * volume
+                )
+            )
+        stationarity = {
+            "complex_E_spatial_NRMSE": math.sqrt(difference_e2)
+            / max(math.sqrt(late_e2), np.finfo(float).tiny),
+            "volume_integrated_E2_change_relative": relative(
+                late_e2, previous_e2
+            ),
+        }
+        return (
+            output,
+            q,
+            p_components,
+            p_total,
+            p_closed_td,
+            p_closed_phasor,
+            relative(p_total, p_closed_td),
+            relative(p_total, p_closed_phasor),
+            relative(p_closed_td, p_closed_phasor),
+            stationarity,
+            runtime,
+        )
 
 
 def thermal_volume(state) -> np.ndarray:
@@ -359,6 +432,23 @@ def main() -> int:
         raise RuntimeError("GPU required: set CUDA_VISIBLE_DEVICES")
     if not CHECKPOINT.exists():
         raise FileNotFoundError(CHECKPOINT)
+    if not STABLE_TIME_CERTIFICATE.is_file():
+        raise RuntimeError(
+            f"full-z sweep requires stable-time certificate: {STABLE_TIME_CERTIFICATE}"
+        )
+    stable_time = json.loads(STABLE_TIME_CERTIFICATE.read_text(encoding="utf-8"))
+    if stable_time.get("status") != STABLE_TIME_STATUS:
+        raise RuntimeError("stable-time certificate has not passed")
+    stable_runsetup = stable_time.get("runsetup", {})
+    stable_checkpoint = stable_runsetup.get("checkpoint", {})
+    if (
+        stable_runsetup.get("optical_model_sha256")
+        != sha256(Path(optical_model.__file__).resolve())
+        or stable_runsetup.get("device_contract_sha256")
+        != sha256(DEVICE_CERTIFICATE)
+        or stable_checkpoint.get("sha256") != sha256(CHECKPOINT)
+    ):
+        raise RuntimeError("stable-time certificate is stale for current inputs")
     OUT.mkdir(parents=True, exist_ok=True)
     RAW.mkdir(parents=True, exist_ok=True)
     densities = load_densities()
@@ -371,12 +461,17 @@ def main() -> int:
     case_contract = {
         "implementation_version": IMPLEMENTATION_VERSION,
         "script_sha256": sha256(Path(__file__).resolve()),
+        "optical_model_sha256": sha256(Path(optical_model.__file__).resolve()),
+        "combined_implementation_sha256": sha256(COMBINED_IMPLEMENTATION),
+        "multiphysics_implementation_sha256": sha256(MULTIPHYSICS_IMPLEMENTATION),
         "device_contract_sha256": sha256(DEVICE_CERTIFICATE),
         "checkpoint_sha256": sha256(CHECKPOINT),
-        "mesh_mode": PARTIAL_MATERIAL_Z,
+        "stable_time_certificate_sha256": sha256(STABLE_TIME_CERTIFICATE),
+        "mesh_mode": FULL_DOMAIN_Z,
         "time": {
             "total_periods": TOTAL_PERIODS,
             "phasor_window_periods": WINDOW_PERIODS,
+            "courant_factor": COURANT_FACTOR,
         },
         "au_material_fraction": material_fraction_audit(),
         "absorption_density_law": (
@@ -389,10 +484,10 @@ def main() -> int:
         json.dumps(case_contract, sort_keys=True).encode("utf-8")
     ).hexdigest()
     runsetup = {
-        "status": "AUDITED_PARTIAL_4UM_AU_Z_MESH_RUNSETUP_NOT_SOLVED",
+        "status": "AUDITED_FULL_DOMAIN_4UM_AU_Z_MESH_RUNSETUP_NOT_SOLVED",
         "scope": (
-            "partial material-z diagnostic; x/y, Si, air, and PML "
-            "discretization fixed"
+            "full optical z refinement including materials, Si, air, and "
+            "z-PML; x/y and downstream meshes fixed"
         ),
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "checkpoint": {
@@ -406,13 +501,19 @@ def main() -> int:
         "time_contract": {
             "total_periods": TOTAL_PERIODS,
             "phasor_window_periods": WINDOW_PERIODS,
+            "courant_factor": COURANT_FACTOR,
+        },
+        "stable_time_certificate": {
+            "path": str(STABLE_TIME_CERTIFICATE.resolve()),
+            "sha256": sha256(STABLE_TIME_CERTIFICATE),
+            "status": stable_time["status"],
         },
         "density_cases": list(densities),
         "case_contract": case_contract,
         "case_contract_sha256": case_contract_sha256,
         "promotion": {"is_full_z_mesh_certificate": False},
     }
-    write_json(OUT / "z_mesh_runsetup_audit.json", runsetup)
+    write_json(OUT / "FULL_Z_RUNSETUP.json", runsetup)
     if args.audit_only:
         print(json.dumps(runsetup, indent=2), flush=True)
         return 0
@@ -420,86 +521,100 @@ def main() -> int:
     source_rows: list[dict[str, object]] = []
     case_rows: list[dict[str, object]] = []
     stored: dict[tuple[int, str, str], dict[str, object]] = {}
-    incident_reference: dict[int, float] = {}
-    cached_factors: set[int] = set()
+    incident_reference: dict[tuple[int, str], float] = {}
+    cached_sources: set[tuple[int, str]] = set()
+    cached_cases: set[tuple[int, str, str]] = set()
+    progress_path = OUT / "FULL_Z_PROGRESS.json"
 
-    # A failed coarse-to-fine result is still immutable numerical evidence.
-    # Reuse only complete factors whose raw SHA-256 values still match, so a
-    # finer extension never spends GPU time repeating already certified solves.
-    prior_path = OUT / "Z_MESH_CONVERGENCE_SUMMARY.json"
-    if prior_path.exists():
-        prior = json.loads(prior_path.read_text(encoding="utf-8"))
-        prior_runsetup = prior.get("runsetup", {})
-        prior_checkpoint = prior_runsetup.get("checkpoint", {})
-        if (
-            prior_checkpoint.get("sha256") == sha256(CHECKPOINT)
-            and prior_runsetup.get("case_contract") == case_contract
-            and prior_runsetup.get("case_contract_sha256")
-            == case_contract_sha256
-        ):
-            prior_cases = prior.get("case_results", [])
-            prior_sources = prior.get("source_calibration_cases", [])
-            for factor in LEVELS:
-                selected_cases = [
-                    row for row in prior_cases if int(row["factor"]) == factor
-                ]
-                selected_sources = [
-                    row for row in prior_sources if int(row["factor"]) == factor
-                ]
-                expected_cases = len(densities) * len(POLARIZATIONS)
-                valid = (
-                    len(selected_cases) == expected_cases
-                    and len(selected_sources) == len(POLARIZATIONS)
+    def save_progress() -> None:
+        payload = {
+            "status": "IN_PROGRESS_FULL_DOMAIN_Z_CONVERGENCE",
+            "case_contract_sha256": case_contract_sha256,
+            "source_calibration_cases": source_rows,
+            "case_results": case_rows,
+        }
+        temporary = progress_path.with_suffix(".json.tmp")
+        temporary.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        temporary.replace(progress_path)
+
+    if progress_path.is_file():
+        prior = json.loads(progress_path.read_text(encoding="utf-8"))
+        if prior.get("case_contract_sha256") == case_contract_sha256:
+            for row in prior.get("source_calibration_cases", []):
+                key = (int(row["factor"]), str(row["polarization"]))
+                if key in cached_sources or key[0] not in LEVELS or key[1] not in POLARIZATIONS:
+                    raise RuntimeError(f"invalid cached source key {key}")
+                power = float(row["incident_power_W"])
+                if not np.isfinite(power) or power <= 0.0:
+                    raise RuntimeError(f"invalid cached source power for {key}")
+                source_rows.append(row)
+                incident_reference[key] = power
+                cached_sources.add(key)
+            for row in prior.get("case_results", []):
+                key = (
+                    int(row["factor"]),
+                    str(row["density_case"]),
+                    str(row["polarization"]),
                 )
-                if valid:
-                    for row in selected_cases:
-                        raw_path = Path(str(row["raw_path"]))
-                        if (
-                            not raw_path.exists()
-                            or raw_path.stat().st_size != int(row["raw_bytes"])
-                            or sha256(raw_path) != row["raw_sha256"]
-                        ):
-                            valid = False
-                            break
-                if not valid:
-                    continue
-                source_rows.extend(selected_sources)
-                case_rows.extend(selected_cases)
-                incident_reference[factor] = float(
-                    np.mean([float(row["incident_power_W"]) for row in selected_sources])
-                )
-                for row in selected_cases:
-                    raw_path = Path(str(row["raw_path"]))
-                    with np.load(raw_path, allow_pickle=False) as raw:
-                        source_power = np.asarray(raw["source_power_W"], dtype=np.float64)
-                        ta_temperature = np.asarray(
-                            raw["ta_temperature_K"], dtype=np.float64
-                        )
-                    thermal_state = build_thermal_state(densities[str(row["density_case"])])
-                    stored[(factor, str(row["density_case"]), str(row["polarization"]))] = {
-                        "row": row,
-                        "source_power_W": source_power,
-                        "ta_temperature_K": ta_temperature,
-                        "thermal_volume_m3": thermal_volume(thermal_state),
-                    }
-                cached_factors.add(factor)
-                print(f"[resume] reusing complete factor {factor}", flush=True)
+                if (
+                    key in cached_cases
+                    or key[0] not in LEVELS
+                    or key[1] not in densities
+                    or key[2] not in POLARIZATIONS
+                    or row.get("case_contract_sha256") != case_contract_sha256
+                ):
+                    raise RuntimeError(f"invalid cached material-case key {key}")
+                saved_raw_path = Path(str(row["raw_path"]))
+                if (
+                    not saved_raw_path.is_file()
+                    or saved_raw_path.stat().st_size != int(row["raw_bytes"])
+                    or sha256(saved_raw_path) != row["raw_sha256"]
+                ):
+                    raise RuntimeError(f"cached raw artifact failed provenance: {key}")
+                with np.load(saved_raw_path, allow_pickle=False) as raw:
+                    source_power = np.asarray(raw["source_power_W"], dtype=np.float64)
+                    ta_temperature = np.asarray(raw["ta_temperature_K"], dtype=np.float64)
+                thermal_state = build_thermal_state(densities[key[1]])
+                case_rows.append(row)
+                stored[key] = {
+                    "row": row,
+                    "source_power_W": source_power,
+                    "ta_temperature_K": ta_temperature,
+                    "thermal_volume_m3": thermal_volume(thermal_state),
+                }
+                cached_cases.add(key)
+            print(
+                f"[resume] verified {len(cached_sources)} source and "
+                f"{len(cached_cases)} material cases",
+                flush=True,
+            )
 
     for factor in LEVELS:
-        if factor in cached_factors:
-            continue
         source_powers = []
         for polarization in POLARIZATIONS:
+            source_key = (factor, polarization)
+            if source_key in cached_sources:
+                source_powers.append(incident_reference[source_key])
+                print(f"[resume] source f={factor} {polarization}", flush=True)
+                continue
             power, runtime = source_only_power(factor, polarization)
             source_powers.append(power)
-            source_rows.append(
-                {
-                    "factor": factor,
-                    "polarization": polarization,
-                    "incident_power_W": power,
-                    "runtime_s": runtime,
-                }
-            )
+            row = {
+                "factor": factor,
+                "polarization": polarization,
+                "incident_power_W": power,
+                "runtime_s": runtime,
+                "grid_edges_sha256": next(
+                    item for item in audits if item["factor"] == factor
+                )["full_domain_variant"]["grid_edges_sha256"],
+                "courant_factor": COURANT_FACTOR,
+                "total_periods": TOTAL_PERIODS,
+                "window_periods": WINDOW_PERIODS,
+            }
+            source_rows.append(row)
+            incident_reference[source_key] = float(power)
+            cached_sources.add(source_key)
+            save_progress()
             print(
                 f"[source] f={factor} {polarization}: {power:.9e} W, {runtime:.2f} s",
                 flush=True,
@@ -507,16 +622,41 @@ def main() -> int:
         mismatch = abs(source_powers[0] - source_powers[1]) / max(source_powers)
         if mismatch >= GATE_POWER:
             raise RuntimeError(f"source polarization mismatch at factor {factor}: {mismatch}")
-        incident_reference[factor] = float(np.mean(source_powers))
+        for polarization, power in zip(POLARIZATIONS, source_powers, strict=True):
+            incident_reference[(factor, polarization)] = float(power)
 
         for polarization in POLARIZATIONS:
+            pending_density_names = [
+                name
+                for name in densities
+                if (factor, name, polarization) not in cached_cases
+            ]
+            if not pending_density_names:
+                print(f"[resume] all f={factor} {polarization} cases", flush=True)
+                continue
             runner = ForwardRunner.create(factor, polarization)
             audit = next(item for item in audits if item["factor"] == factor)
-            source_scale = CONTRACT.reporting_incident_power_W / incident_reference[factor]
+            source_scale = (
+                CONTRACT.reporting_incident_power_W
+                / incident_reference[(factor, polarization)]
+            )
             for density_name, rho in densities.items():
-                _, q, components, p_q, p_six, closure, runtime = runner.run(
-                    rho, source_scale
-                )
+                case_key = (factor, density_name, polarization)
+                if case_key in cached_cases:
+                    continue
+                (
+                    _,
+                    q,
+                    components,
+                    p_q,
+                    p_closed_td,
+                    p_closed_phasor,
+                    q_td_closure,
+                    q_phasor_closure,
+                    td_phasor_difference,
+                    stationarity,
+                    runtime,
+                ) = runner.run(rho, source_scale)
                 thermal_state = build_thermal_state(rho)
                 source_power, mapping, _ = map_native_q_to_thermal(
                     thermal_state,
@@ -546,6 +686,16 @@ def main() -> int:
                     "factor": factor,
                     "density_case": density_name,
                     "polarization": polarization,
+                    "grid_edges_sha256": audit["full_domain_variant"][
+                        "grid_edges_sha256"
+                    ],
+                    "source_incident_power_W": incident_reference[
+                        (factor, polarization)
+                    ],
+                    "source_power_scale": source_scale,
+                    "courant_factor": COURANT_FACTOR,
+                    "total_periods": TOTAL_PERIODS,
+                    "window_periods": WINDOW_PERIODS,
                     "sio2_dz_nm": 95.0 / factor,
                     "tairte4_dz_nm": 20.0 / factor,
                     "au_dz_nm": 25.0 / factor,
@@ -553,8 +703,12 @@ def main() -> int:
                     "compile_s": runner.compile_s,
                     "forward_s": runtime,
                     "P_Q_W": p_q,
-                    "P_six_W": p_six,
-                    "closure_relative": closure,
+                    "P_closed_td_W": p_closed_td,
+                    "P_closed_phasor_W": p_closed_phasor,
+                    "Q_vs_closed_td_relative": q_td_closure,
+                    "Q_vs_closed_phasor_relative": q_phasor_closure,
+                    "closed_td_vs_phasor_relative": td_phasor_difference,
+                    **stationarity,
                     **components,
                     "mapping_error_relative": float(
                         max(record["relative_error"] for record in mapping.values())
@@ -576,23 +730,31 @@ def main() -> int:
                     "raw_sha256": sha256(raw_path),
                 }
                 row["physics_gates_pass"] = bool(
-                    closure < GATE_POWER
+                    q_td_closure < GATE_Q_FLUX
+                    and q_phasor_closure < GATE_Q_FLUX
+                    and td_phasor_difference < GATE_TD_PHASOR
+                    and stationarity["complex_E_spatial_NRMSE"] < GATE_FIELD
+                    and stationarity["volume_integrated_E2_change_relative"]
+                    < GATE_FIELD
                     and row["mapping_error_relative"] < 5.0e-3
                     and row["thermal_energy_balance_relative"] < 1.0e-2
                     and row["thermal_residual_relative"] < 1.0e-8
                     and row["electrical_residual_relative"] < 1.0e-8
                 )
                 case_rows.append(row)
-                stored[(factor, density_name, polarization)] = {
+                stored[case_key] = {
                     "row": row,
                     "source_power_W": source_power,
                     "ta_temperature_K": ta_temperature,
                     "thermal_volume_m3": thermal_volume(evaluated["state"]),
                     "depth_power_W": np.sum(source_power, axis=(0, 1)),
                 }
+                cached_cases.add(case_key)
+                save_progress()
                 print(
                     f"[case] f={factor} {density_name} {polarization}: "
-                    f"Pq={p_q:.9e} W closure={100*closure:.4f}% "
+                    f"Pq={p_q:.9e} W Q/flux={100*q_phasor_closure:.4f}% "
+                    f"stationarity={100*stationarity['complex_E_spatial_NRMSE']:.4f}% "
                     f"I={row['current_nA']:+.6f} nA",
                     flush=True,
                 )
@@ -618,8 +780,8 @@ def main() -> int:
                     "density_case": density_name,
                     "polarization": polarization,
                     "P_Q_relative_change": relative(lrow["P_Q_W"], rrow["P_Q_W"]),
-                    "P_six_relative_change": relative(
-                        lrow["P_six_W"], rrow["P_six_W"]
+                    "P_closed_phasor_relative_change": relative(
+                        lrow["P_closed_phasor_W"], rrow["P_closed_phasor_W"]
                     ),
                     "remapped_Q_volume_L2_NRMSE": volume_l2(
                         left["source_power_W"],
@@ -646,7 +808,7 @@ def main() -> int:
                 }
                 row["comparison_pass"] = bool(
                     row["P_Q_relative_change"] < GATE_POWER
-                    and row["P_six_relative_change"] < GATE_POWER
+                    and row["P_closed_phasor_relative_change"] < GATE_POWER
                     and row["remapped_Q_volume_L2_NRMSE"] < GATE_FIELD
                     and row["Ta_temperature_NRMSE"] < GATE_FIELD
                     and row["Tmax_relative_change"] < GATE_FIELD
@@ -665,9 +827,9 @@ def main() -> int:
     physics_pass = all(bool(row["physics_gates_pass"]) for row in case_rows)
     convergence_pass = all(bool(row["comparison_pass"]) for row in final_pair)
     status = (
-        "DIAGNOSED_PARTIAL_4UM_AU_Z_MESH_CONVERGENCE_PASS"
+        "VALIDATED_SHARED_LINEAR_FULL_DOMAIN_Z_CONVERGENCE"
         if physics_pass and convergence_pass
-        else "BLOCKED_PARTIAL_4UM_AU_Z_MESH_CONVERGENCE"
+        else "BLOCKED_SHARED_LINEAR_FULL_DOMAIN_Z_CONVERGENCE"
     )
 
     with (OUT / "z_mesh_cases.csv").open("w", newline="", encoding="utf-8") as stream:
@@ -748,11 +910,39 @@ def main() -> int:
     fig.savefig(OUT / "z_mesh_final_pair_metrics.png", dpi=180)
     plt.close(fig)
 
+    selected_source_rows = [
+        row for row in source_rows if int(row["factor"]) == LEVELS[-1]
+    ]
+    selected_source_calibration = (
+        {
+            "grid_edges_sha256": audits[-1]["full_domain_variant"][
+                "grid_edges_sha256"
+            ],
+            "courant_factor": COURANT_FACTOR,
+            "total_periods": TOTAL_PERIODS,
+            "window_periods": WINDOW_PERIODS,
+            "cases": [
+                {
+                    "polarization": row["polarization"],
+                    "incident_power_W": row["incident_power_W"],
+                }
+                for row in selected_source_rows
+            ],
+            "common_reference_incident_power_W": float(
+                np.mean(
+                    [float(row["incident_power_W"]) for row in selected_source_rows]
+                )
+            ),
+        }
+        if physics_pass and convergence_pass
+        else None
+    )
     summary = {
         "status": status,
         "scope": (
             "fixed beta=256 robust checkpoint; shared-linear Au law; "
-            "partial material-z FDTDX refinement with per-mesh all-air source calibration; "
+            "full-domain-z FDTDX refinement with per-polarization, per-mesh "
+            "all-air source calibration; "
             "identical conservative thermal/electrical downstream operator"
         ),
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
@@ -767,10 +957,36 @@ def main() -> int:
             "physics_gates_pass": physics_pass,
             "final_pair_convergence_pass": convergence_pass,
         },
-        "promotion": {"is_full_z_mesh_certificate": False},
-        "next_gate": "RUN_FULL_DOMAIN_Z_MESH_CONVERGENCE_AFTER_TIME_CLOSURE",
+        "selected_optical_z_contract": (
+            {
+                "mesh_mode": FULL_DOMAIN_Z,
+                "mesh_factor": LEVELS[-1],
+                "grid_edges_sha256": audits[-1]["full_domain_variant"][
+                    "grid_edges_sha256"
+                ],
+                "total_periods": TOTAL_PERIODS,
+                "window_periods": WINDOW_PERIODS,
+                "courant_factor": COURANT_FACTOR,
+            }
+            if physics_pass and convergence_pass
+            else None
+        ),
+        "selected_source_calibration": selected_source_calibration,
+        "promotion": {
+            "is_full_z_mesh_certificate": bool(physics_pass and convergence_pass)
+        },
+        "next_gate": "RUN_OPTICAL_XY_CONVERGENCE",
     }
-    write_json(OUT / "Z_MESH_CONVERGENCE_SUMMARY.json", summary)
+    summary_path = OUT / "FULL_Z_CONVERGENCE_SUMMARY.json"
+    write_json(summary_path, summary)
+    completed_progress = {
+        "status": "COMPLETE_FULL_DOMAIN_Z_CONVERGENCE",
+        "case_contract_sha256": case_contract_sha256,
+        "summary_sha256": sha256(summary_path),
+        "source_calibration_cases": source_rows,
+        "case_results": case_rows,
+    }
+    write_json(progress_path, completed_progress)
 
     lines = [
         "# 4 um Au/TaIrTe4 z-mesh convergence",
@@ -781,7 +997,7 @@ def main() -> int:
         "AD-FD on the baseline grid certifies differentiation of that discrete grid only.",
         "",
         "The density, x/y mesh, source, material endpoints, and shared-linear Au law are frozen.",
-        "This partial refinement is diagnostic and cannot be promoted as a full z certificate.",
+        "Every physical z region and both z-PMLs are refined together.",
         "",
         "| factor | Au dz (nm) | TaIrTe4 dz (nm) | SiO2 dz (nm) | Yee cells |",
         "|---:|---:|---:|---:|---:|",
@@ -801,14 +1017,15 @@ def main() -> int:
             f"Overall physics gates pass: `{physics_pass}`.  "
             "The table lists every case that failed before pairwise convergence was considered.",
             "",
-            "| factor | density | pol | Q/flux closure | mapping | thermal balance | thermal residual | electrical residual |",
-            "|---:|---|---|---:|---:|---:|---:|---:|",
+            "| factor | density | pol | Q/phasor | E stationarity | mapping | thermal balance | thermal residual | electrical residual |",
+            "|---:|---|---|---:|---:|---:|---:|---:|---:|",
         ]
     )
     for row in failed_physics:
         lines.append(
             f"| {row['factor']} | {row['density_case']} | {row['polarization']} | "
-            f"{100*row['closure_relative']:.4f}% | "
+            f"{100*row['Q_vs_closed_phasor_relative']:.4f}% | "
+            f"{100*row['complex_E_spatial_NRMSE']:.4f}% | "
             f"{row['mapping_error_relative']:.3e} | "
             f"{row['thermal_energy_balance_relative']:.3e} | "
             f"{row['thermal_residual_relative']:.3e} | "
@@ -837,20 +1054,19 @@ def main() -> int:
         [
             "",
             "No Q clipping, smoothing, gain, polarization matching, or closure rescaling is used.",
-            "Each optical mesh is normalized only by its own all-air incident-power calibration.",
-            "This was a partial z sweep: it refined Au, TaIrTe4, and SiO2 only. The Si substrate,",
-            "air regions, and z-PML discretization were fixed, so the failed result is not a",
-            "certificate for the full optical z domain. Time-window stationarity was also not",
-            "measured by this run and must be separated from spatial error before extending it.",
+            "Each polarization on each optical mesh is normalized only by its own all-air incident-power calibration.",
+            "Every material, Si, air, and z-PML segment is refined. Each material run must also pass",
+            "previous-versus-late field stationarity and Q/TD/phasor closed-flux consistency before",
+            "the final spatial pair is considered.",
             "",
             f"Next gate: `{summary['next_gate']}`.",
         ]
     )
-    (OUT / "Z_MESH_CONVERGENCE_REPORT.md").write_text(
+    (OUT / "FULL_Z_CONVERGENCE_REPORT.md").write_text(
         "\n".join(lines) + "\n", encoding="utf-8"
     )
     print(json.dumps({"status": status, "final_pair": final_pair}, indent=2), flush=True)
-    return 0 if status.startswith("DIAGNOSED_") else 2
+    return 0 if status.startswith("VALIDATED_") else 2
 
 
 if __name__ == "__main__":
