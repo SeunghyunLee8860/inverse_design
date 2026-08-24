@@ -42,7 +42,7 @@ if (( ${#output_entries[@]} != 0 )); then
   exit 2
 fi
 
-gpu_row="$(nvidia-smi --query-gpu=index,uuid,name --format=csv,noheader,nounits | awk -F ', ' -v index="$gpu_index" '$1 == index {print}')"
+gpu_row="$(nvidia-smi --query-gpu=index,uuid,name --format=csv,noheader,nounits | awk -F ', ' -v gpu_id="$gpu_index" '$1 == gpu_id {print}')"
 if [[ -z "$gpu_row" ]]; then
   echo "physical GPU index $gpu_index does not exist" >&2
   exit 2
