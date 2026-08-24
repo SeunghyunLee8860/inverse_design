@@ -241,6 +241,45 @@ electrical promotion, or optimization. The next FDTDX action is a finer
 full-domain-z extension under the same exact L500, 24-period, Courant-0.25
 contract; failed z2/z4/z8 results must remain visible rather than being relabeled.
 
+## Blocked z16 extension: float32 ADE precision
+
+The canonical z16 contract was created at commit `8766b3c6` with file SHA-256
+`74fca414c3c82ce1031f0f688cab0c3a3d252de6ea66e2fceb22ee40c0493e3a`
+and internal canonical SHA-256
+`568617c82617b04b45753650933e44330aaa7a1bcde59822db56dceb94a801c6`.
+It resolves a `196 x 196 x 640` grid, including 1.5625-nm Au and 1.25-nm
+TaIrTe4 cells. The source-only Ea preflight stopped before any field solve with
+`realized float32 ADE refit error 0.000117579 exceeds 1e-05`. The failure JSON
+SHA-256 is
+`0a302d01386faf0967b1626d1646fa082a5a52eb23c8768b3d09bad1e5cb4631`.
+No z16 source pair, material solve, or mesh comparison exists.
+
+`fdtdx_fresh_ade_precision_diagnostic.py` was committed at `a4cf66d5` and run
+from that clean commit. Its external diagnostic is
+`ade_precision_a4cf66d5/FDTDX_FRESH_ADE_PRECISION_DIAGNOSTIC.json` under the
+same raw root; SHA-256
+`bfa98e74b81eae816b888bfbe1b460f94d5cf407f4be4954742c91e2b540911c`.
+It reproduces the JAX-x64-disabled float32 edge realization before computing
+the rectilinear CFL step. The reproduced z8 step is exactly
+`2.083469563193086e-18 s`; z16 is `1.0422198660912219e-18 s`.
+
+| ADE carrier check | z8 relative error | z16 relative error | 1e-5 gate |
+|---|---:|---:|:---:|
+| current single-Drude phase search (0.8 to 1.2 gamma seed) | 1.7063374e-6 | 1.1757867e-4 | z16 fail |
+| wide single-Drude realized-error scan (0.01 to 10 gamma seed) | 1.7063374e-6 | 2.2144332e-5 | z16 fail |
+| stable positive-strength two-Drude numerical candidate | 7.2571180e-9 | 7.2571180e-9 | candidate only |
+
+The wide scan shows that merely widening the current damping search does not
+close z16, so the 1e-5 gate must not be relaxed and the failed source directory
+must not be overwritten. The two-Drude row is not a material certificate: it
+only proves that two positive oscillator strengths with float32 recurrence
+`c1+c2 <= 1` can represent the Ordal carrier value. Before using it, introduce
+a separately hashed material-law contract, prove exact two-pole coefficient
+readback, pass source/time/stationarity tests, and rerun both z8 and z16 with
+that identical law. Comparing old single-pole z8 directly with new two-pole
+z16 is forbidden. Optimization and every downstream convergence stage remain
+blocked.
+
 ## Comparison and promotion rules
 
 `Q` comparisons must conservatively restrict fine-grid cell-integrated

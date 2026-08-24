@@ -149,6 +149,21 @@ spatial Q by 13.925 percent; their limits are 1, 2, and 5 percent. No z level is
 selected and optimization remains forbidden. Extend full-domain z before any
 x/y or downstream multiphysics promotion. Raw NPZ files remain external.
 
+The first z16 extension attempt is also preserved externally. Its canonical
+case-file SHA-256 is
+`74fca414c3c82ce1031f0f688cab0c3a3d252de6ea66e2fceb22ee40c0493e3a`.
+Source-only Ea stopped before the FDTD solve because the single-Drude float32
+carrier refit error was `1.17579e-4`, above `1e-5`. Do not retry that directory
+or relax the gate. The clean-commit solver-free diagnosis from `a4cf66d5` is
+external at `ade_precision_a4cf66d5/FDTDX_FRESH_ADE_PRECISION_DIAGNOSTIC.json`,
+SHA-256
+`bfa98e74b81eae816b888bfbe1b460f94d5cf407f4be4954742c91e2b540911c`.
+Even a 0.01-to-10-times-seed single-pole scan bottoms out at `2.21443e-5`.
+A stable positive-strength two-Drude carrier fit reaches `7.25712e-9`, but is
+explicitly only a candidate. Any implementation changes the material law and
+therefore requires fresh, hash-distinct z8 and z16 source/material runs before
+comparison; old single-pole z8 and new two-pole z16 must never form a pair.
+
 ## Convergence rule
 
 The 16-, 24-, and 32-period levels are three different numerical cases.  Each
@@ -161,4 +176,6 @@ SHA-256 are mandatory for source-only and material commands. Completion of
 the time and Courant ladders, and execution of a rejected z2/z4/z8 ladder, does
 not authorize an optimizer, thermal/electrical solve, PTE-current claim, or mesh
 certificate. The next numerical case is a finer full-domain-z extension at 24
-periods and selected Courant 0.25, with a fresh source pair at every new level.
+periods and selected Courant 0.25 only after a separately contracted material
+representation passes its own readback/time gates, with a fresh source pair at
+every new level.

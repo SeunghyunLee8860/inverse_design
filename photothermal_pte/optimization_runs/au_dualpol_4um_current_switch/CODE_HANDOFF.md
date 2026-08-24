@@ -289,7 +289,7 @@ source-only report, Ea/Eb pair, and material report binds one canonical
 stage is now complete for the exact-binary 375-pixel
 `l_shape_4um_with_500nm_arms` reference. Runs were made at clean commit
 `01a8ad8a`; the independent verifier and its 12 focused tests were committed
-and pushed as `5e376ce1`. All explicit FDTDX regression tests pass: 85
+and pushed as `5e376ce1`. All explicit FDTDX regression tests pass: 95
 `unittest` tests; the separate pytest forensic file is not runnable in the
 locked fresh venv because pytest is intentionally absent.
 
@@ -353,11 +353,33 @@ material-field NRMSE, versus limits of 1, 2, 5, and 5 percent. The source change
 closed-flux consistency, and within-case stationarity pass. No z factor is
 selected.
 
-The next FDTDX action is a finer full-domain-z extension under the same exact
-L500, 24-period, Courant-0.25 contract. Do not proceed to x/y, domain, PML,
-thermal/electrical, or optimization until z convergence closes. Preserve the
-failed z2/z4/z8 comparisons. This FDTDX track must not edit, launch, or
-reinterpret the concurrent Lumerical work.
+The canonical z16 extension case was then created at commit `8766b3c6` (file
+SHA-256
+`74fca414c3c82ce1031f0f688cab0c3a3d252de6ea66e2fceb22ee40c0493e3a`).
+It has a `196 x 196 x 640` grid, 1.5625-nm Au cells, and 1.25-nm TaIrTe4 cells.
+The first source-only Ea preflight failed before any FDTD field solve: the
+single-Drude realized float32 ADE error was `1.17579e-4`, above the frozen
+`1e-5` gate. Preserve that partial directory; there is no z16 source pair or
+material result.
+
+The clean-commit diagnostic added and pushed as `a4cf66d5` binds the z16 case,
+failure JSON, material contract, optical model, and pinned FDTDX recurrence.
+Its external JSON is
+`/home/seunghyun200/fdtdx_results/l500_full_z_150a7592_20260824/ade_precision_a4cf66d5/FDTDX_FRESH_ADE_PRECISION_DIAGNOSTIC.json`,
+SHA-256
+`bfa98e74b81eae816b888bfbe1b460f94d5cf407f4be4954742c91e2b540911c`.
+The current z16 search gives `1.1757867e-4`; a wide 0.01-to-10 damping scan
+still bottoms out at `2.2144332e-5`. Do not loosen the material gate or rerun
+the unchanged model. A two-positive-Drude candidate reaches `7.2571180e-9`
+while restricting both float32 recurrences to `c1+c2 <= 1`, but is not
+promoted. It must receive a separate material-law hash, exact two-pole
+readback, time/stationarity validation, and same-law z8/z16 reruns. Old
+single-pole z8 and new two-pole z16 are not comparable.
+
+Do not proceed to x/y, domain, PML, thermal/electrical, or optimization until
+z convergence closes. Preserve the failed z2/z4/z8 comparisons and the z16
+ADE failure. This FDTDX track must not edit, launch, or reinterpret the
+concurrent Lumerical work.
 
 ## Raw checkpoint dependency
 
