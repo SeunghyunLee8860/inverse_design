@@ -7,7 +7,53 @@ or production evidence. Raw FSP/JSON/NPZ inputs and outputs remain outside Git
 under
 `/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_development/`.
 
-## Selected Lumerical material-filter definition
+## 2026-08-24 component-Yee correction
+
+The common-grid official `pabs_adv/index_x` route below is retained as
+historical diagnostic evidence, but it is no longer the selected downstream
+material partition. The saved common-grid `Pabs` is mirror symmetric to about
+`1e-4` relative, while applying the x-staggered `index_x` mask creates 13,122
+Au-mask and 52,004 TaIrTe4-mask x-mirror mismatches in the finest full-Au
+control. There are no corresponding y-mask mismatches. Thus the persistent
+zero-current residual came from using one x-staggered material classifier for
+all three field components, not from the custom electrical solver.
+
+The replacement preserves the native Yee definition used by the Maxwell Q
+certificate: it pairs `Qx` with collocated `epsilon_x`, `Qy` with
+`epsilon_y`, and `Qz` with `epsilon_z`. Each saved epsilon equals the
+Lumerical fitted frequency-domain material epsilon exactly; it does not equal
+the finite-dt readback at the `1e-15` material tolerance. Each accepted
+dual-cell power is conservatively deposited inside that material's physical
+thermal domain. There is no effective-epsilon reconstruction, redistribution,
+or local/global rescaling.
+
+Script `32_validate_lumerical_4um_component_yee_z_multiphysics_pair.py`
+hash-verifies the original raw NPZs and runs this map followed by the same
+repository custom CUDA thermal/electrical solvers. On the staircase
+1.25/12.5-to-0.625/6.25-nm pair:
+
+| exact control | fine unassigned native Q | remapped Q volume-L2 NRMSE | TaIrTe4 temperature NRMSE | Tmax change | symmetry-current cancellation | result |
+|---|---:|---:|---:|---:|---:|:---:|
+| empty, Ea | 0 | 1.5580% | 0.2144% | 0.1813% | 1.12e-10 | Q-L2 only fails |
+| full Au, Ea | 1.81e-14% | 1.2458% | 0.3489% | 0.2172% | 1.48e-8 | Q-L2 only fails |
+
+All individual material, native-Q/JSON, remap-conservation, PDE residual,
+energy-balance, terminal-balance, finiteness, temperature, Tmax, and one-ppm
+zero-current gates pass. Fine source mirror errors are `6.83e-7` for empty
+and `8.78e-6` for full. The remaining blocker is therefore the deliberately
+strict volumetric-Q L2 mesh gate at the thin interface, not material identity
+or spurious current.
+
+An attempted stack-only 0.3125-nm source control completed and passed on a
+`183 x 183 x 2300` grid in 1274 s. The matching material run predicted roughly
+nine hours per case because the smaller stack cell also halves the stable FDTD
+time step; it was stopped at 3.63% rather than consume the shared GPU. Existing
+three-mesh data already show near-first-order interface-source convergence and
+predict another single halving would still be about 0.6--0.8%, so this run is
+not required before fixing the optimization/adjoint path. Its incomplete raw
+FSP/log remain outside Git and are not evidence.
+
+## Historical official common-grid material-filter diagnostic
 
 The selected diagnostic now follows Ansys' official multi-material advanced
 absorption example, not a home-made effective-epsilon decomposition. Lumerical

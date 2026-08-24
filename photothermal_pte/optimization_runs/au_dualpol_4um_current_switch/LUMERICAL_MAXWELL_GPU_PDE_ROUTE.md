@@ -268,6 +268,18 @@ interface. The next bounded z test refines stack dz while holding the already
 fine 6.25-nm bulk/air/PML limit fixed; it is not permission to start x/y or
 optimization.
 
+That zero-current conclusion has now been corrected. The common-grid
+`pabs_adv` array itself is symmetric, but its single x-staggered `index_x`
+material mask is not an axis-neutral classifier for `Qx/Qy/Qz`. The new
+component-Yee route pairs every native Q component with its own collocated
+fitted epsilon and conservatively maps the accepted power into the physical
+material domain. It leaves effectively zero Q unassigned and reduces
+empty/full symmetric-current cancellation to `1.12e-10`/`1.48e-8`, passing
+the one-ppm gate. The corresponding source L2 errors are 1.5580%/1.2458%, so
+only the thin-interface volumetric-Q gate remains failed. A stack-only
+0.3125-nm source run passed, but a material control projected about nine hours
+and was intentionally stopped at 3.63%; brute-force continuation is deferred.
+
 The concrete forward entry point is
 `25_run_lumerical_4um_exact_au_control.py`. It has an audit-only path that
 does not open Lumerical and a Maxwell path that calls the selected accelerator

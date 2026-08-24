@@ -6,6 +6,7 @@ import pytest
 from photothermal_pte.finite_inverse_design.native_yee_q import trapezoid_weights
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_multiphysics_comparison import (
     downstream_metrics,
+    map_lumerical_component_yee_material_q_to_thermal,
     map_lumerical_material_q_to_thermal,
     map_lumerical_official_pabs_to_thermal,
     map_lumerical_q_to_thermal,
@@ -96,6 +97,89 @@ def test_official_index_filter_reports_mixed_or_air_absorption_as_unassigned() -
     # sample contributes 1/8 and the four air endpoint samples contribute 1/4.
     assert audit["unassigned_absorption_relative"] == pytest.approx(3.0 / 8.0)
     assert audit["relative_conservation_error"] < 1.0e-14
+
+
+def test_component_yee_filter_uses_each_collocated_anisotropic_epsilon() -> None:
+    lateral = np.asarray((-0.05, 0.05)) * 1.0e-6
+    z = np.asarray((-0.075, -0.025, 0.025)) * 1.0e-6
+    raw: dict[str, np.ndarray] = {}
+    targets = {
+        "TaIrTe4": {"x": 4.0 + 1.0j, "y": 5.0 + 2.0j, "z": 6.0 + 3.0j}
+    }
+    for component in "xyz":
+        raw[f"Q{component}_W_m3"] = np.ones((2, 2, 3))
+        epsilon = np.ones((2, 2, 3), dtype=np.complex128)
+        epsilon[:, :, :2] = targets["TaIrTe4"][component]
+        raw[f"epsilon_{component}"] = epsilon
+        for axis, coordinate in zip("xyz", (lateral, lateral, z), strict=True):
+            raw[f"Q{component}_{axis}_m"] = coordinate.copy()
+    # If Qy were incorrectly filtered by epsilon_x, this deliberately corrupt
+    # epsilon_x sample would also remove the corresponding Qy contribution.
+    raw["epsilon_x"][0, 0, 1] = 3.0 + 0.5j
+    edges = (
+        np.asarray((-0.1, 0.0, 0.1)) * 1.0e-6,
+        np.asarray((-0.1, 0.0, 0.1)) * 1.0e-6,
+        np.asarray((-0.1, -0.05, 0.0, 0.05, 0.1)) * 1.0e-6,
+    )
+    mapped, audit = map_lumerical_component_yee_material_q_to_thermal(
+        raw,
+        edges,
+        1.0,
+        case="empty",
+        material_fitted_epsilon=targets,
+    )
+    assert np.all(mapped[:, :, 2:] == 0.0)
+    assert audit["component"]["x"]["material"]["TaIrTe4"][
+        "matched_sample_count"
+    ] == 7
+    assert audit["component"]["y"]["material"]["TaIrTe4"][
+        "matched_sample_count"
+    ] == 8
+    assert audit["component"]["z"]["material"]["TaIrTe4"][
+        "matched_sample_count"
+    ] == 8
+    assert audit["relative_conservation_error"] < 1.0e-14
+    assert audit["global_or_local_rescaling"] is False
+
+
+def test_component_yee_filter_rejects_finite_dt_instead_of_fitted_epsilon() -> None:
+    raw = _raw()
+    lateral = np.asarray((-0.05, 0.05)) * 1.0e-6
+    z = np.asarray((-0.075, -0.025)) * 1.0e-6
+    for component in "xyz":
+        raw[f"epsilon_{component}"] = np.full(
+            (2, 2, 2), 4.0 + 1.0j, dtype=np.complex128
+        )
+        raw[f"Q{component}_x_m"] = lateral.copy()
+        raw[f"Q{component}_y_m"] = lateral.copy()
+        raw[f"Q{component}_z_m"] = z.copy()
+    edges = (
+        np.asarray((-0.1, 0.0, 0.1)) * 1.0e-6,
+        np.asarray((-0.1, 0.0, 0.1)) * 1.0e-6,
+        np.asarray((-0.1, -0.05, 0.0)) * 1.0e-6,
+    )
+    _, exact = map_lumerical_component_yee_material_q_to_thermal(
+        raw,
+        edges,
+        1.0,
+        case="empty",
+        material_fitted_epsilon={
+            "TaIrTe4": {component: 4.0 + 1.0j for component in "xyz"}
+        },
+    )
+    _, perturbed = map_lumerical_component_yee_material_q_to_thermal(
+        raw,
+        edges,
+        1.0,
+        case="empty",
+        material_fitted_epsilon={
+            "TaIrTe4": {
+                component: 4.0 + 1.0j + 1.0e-7 for component in "xyz"
+            }
+        },
+    )
+    assert exact["unassigned_absorption_relative"] == pytest.approx(0.0)
+    assert perturbed["unassigned_absorption_relative"] == pytest.approx(1.0)
 
 
 def test_volume_l2_uses_power_density_and_finer_norm() -> None:

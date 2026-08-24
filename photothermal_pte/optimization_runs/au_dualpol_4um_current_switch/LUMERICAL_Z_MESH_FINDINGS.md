@@ -121,10 +121,13 @@ saved the 1.467-GB FSP. The new fail-closed `--recover-completed-fsp` path
 loaded that completed FSP and generated the 512-MB raw NPZ/JSON without
 calling `runsetup`, `run`, the GPU engine, or `save` again.
 
-This Maxwell pass does not close z convergence. The official-Pabs custom-CUDA
-downstream comparison still fails its remapped-source and zero-current gates;
-see `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`. Eb, simple-L, the final topology,
-and B200 also remain untested.
+This Maxwell pass does not close z convergence. The historical official-Pabs
+custom-CUDA comparison failed remapped-source and zero-current gates, but the
+later axis-neutral component-Yee material map proved that the zero-current
+failure came from the x-staggered `index_x` classifier. Empty/full current,
+temperature, and Tmax now pass; only remapped-source L2 remains failed at
+1.5580%/1.2458%. See `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`. Eb, simple-L,
+the final topology, and B200 also remain untested.
 
 The coordinate-only material partition is not a material-resolved convergence
 metric. Refining z changes which staggered/interface samples are assigned to a

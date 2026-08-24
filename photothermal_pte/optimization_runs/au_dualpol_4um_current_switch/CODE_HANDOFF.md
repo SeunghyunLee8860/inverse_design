@@ -417,9 +417,17 @@ Do not copy them into this worktree.
     temperature NRMSE and Tmax changes pass below 0.5%. Material omission is
     only 0.001019%/0.198992%, so the persistent 53.4/602-ppm zero-current
     residual is not explained by mixed-index omission alone. The Pabs L2
-    error improves almost exactly first order over three staircase meshes;
-    refine the thin stack with the 6.25-nm bulk limit held fixed before
-    expanding x/y. See
+    error improves almost exactly first order over three staircase meshes.
+    The subsequent axis audit showed that the official common-grid
+    `pabs_adv/index_x` filter itself creates an x-staggered material-mask bias.
+    A new component-Yee filter now pairs `Qx/Qy/Qz` with collocated fitted
+    `epsilon_x/epsilon_y/epsilon_z`. On the same pair it leaves effectively
+    zero Q unassigned, conserves Q below `3e-15`, and passes empty/full
+    zero-current at `1.12e-10`/`1.48e-8`. Temperature/Tmax also pass; only
+    empty/full volumetric-Q L2 remains failed at 1.5580%/1.2458%. Script 32
+    reproduces this result. A 0.3125-nm stack-only source control passed, but
+    the matching material run projected nine hours and was stopped at 3.63%;
+    do not restart that brute-force sequence by default. See
     `LUMERICAL_INTERFACE_METHOD_FINDINGS.md`.
 
 ## Next correct sequence
@@ -433,21 +441,23 @@ Do not copy them into this worktree.
 3. Treat the CV0/CV1/staircase, z, time, and MCM sweeps as RTX development
    evidence only. Use Au MCM6, not 20. The MCM6 duration/decay pair now passes.
    Reproduce the passed Ea empty/full Maxwell sub-gate with script 27 and the
-   failed downstream gate with scripts 28/29. The Lumerical-native definition
-   is now the official `pabs_adv` exact-index material filter; it leaves
-   1.19--1.56% of fine-grid absorption unassigned at conformal mixed-index
-   samples. The bounded MCM6 CV0/CV1/staircase axis is now complete and
+   historical downstream gate with scripts 28/29. The official common-grid
+   `pabs_adv/index_x` result is retained as a diagnostic but is not the
+   selected material partition because its x-staggered classifier creates a
+   false current. The selected development map is native component-Yee Q with
+   collocated fitted epsilon; reproduce it with script 32. The bounded MCM6
+   CV0/CV1/staircase axis is now complete and
    selects staircase only as the next development candidate: its material
    omission is below 0.5%, while its Maxwell observables agree with CV0 below
    0.5%. The staircase 5/50-to-2.5/25-nm linked refinement is complete and
    fails the Maxwell prerequisite. The matching staircase 1.25/12.5-nm set
    is also complete; its pair with 2.5/25 nm still fails narrowly. The
    staircase 0.625/6.25-nm source/empty/MCM6-full set and comparison are now
-   complete: Maxwell and temperature sub-gates pass, but remapped-Pabs L2 and
-   symmetry-current gates fail. Next isolate thin-stack z refinement with
-   bulk/air/PML held at 6.25 nm, and separately diagnose the zero-current
-   residual. Do not hide any gap by rescaling, and do not begin x/y
-   convergence until downstream and remaining Eb/simple-L z gates pass.
+   complete: Maxwell, temperature, and symmetry-current sub-gates pass with
+   the component-Yee map, but volumetric-Q L2 remains above 0.5%. Do not spend
+   nine hours per control on the aborted 0.3125-nm brute-force extension.
+   Bound or reformulate that interface-sensitive L2 certificate before the
+   remaining Eb/simple-L and x/y gates. Do not hide any gap by rescaling.
 4. On the actual B200, use `25_run_lumerical_4um_exact_au_control.py` to pass
    source-only Ea/Eb first, then matching ordinary empty/full/simple-L exact
    Au time, Q/flux, linked stack+bulk/air/PML-z, x/y, PML-layer, and domain

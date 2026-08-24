@@ -13,6 +13,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
     CONTRACT,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_multiphysics_comparison import (
+    map_lumerical_component_yee_material_q_to_thermal,
     map_lumerical_official_pabs_to_thermal,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import (
@@ -116,6 +117,147 @@ def material_index_x_from_result(result: dict[str, Any]) -> dict[str, complex]:
         )
         for material in ("Au", "TaIrTe4", "SiO2")
     }
+
+
+def material_fitted_epsilon_from_result(
+    result: dict[str, Any],
+) -> dict[str, dict[str, complex]]:
+    """Return the exact fitted epsilon saved by each component index monitor."""
+
+    fit = result["material_fit_readback"]["materials"]
+    targets: dict[str, dict[str, complex]] = {}
+    for material in ("Au", "TaIrTe4", "SiO2"):
+        if material not in fit:
+            continue
+        targets[material] = {}
+        for component in "xyz":
+            value = fit[material]["axes"][component]["fitted_epsilon_at_4um"]
+            targets[material][component] = complex(
+                float(value["real"]),
+                float(value["imag"]),
+            )
+    return targets
+
+
+def run_component_yee_downstream(
+    result: dict[str, Any],
+    raw_path: Path,
+    rho: np.ndarray,
+    cuda_device: int,
+    case: str,
+) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
+    """Map collocated component-Yee Q and solve the custom CUDA PDEs."""
+
+    state = build_thermal_state(rho)
+    normalization = result["reporting_normalization"]
+    incident = float(normalization["source_only_incident_power_W_raw"])
+    reporting = float(normalization["target_reporting_incident_power_W"])
+    scale = reporting / incident
+    with np.load(raw_path, allow_pickle=False) as raw:
+        source_power, mapping = (
+            map_lumerical_component_yee_material_q_to_thermal(
+                raw,
+                state.edges,
+                scale,
+                case=case,
+                material_fitted_epsilon=material_fitted_epsilon_from_result(
+                    result
+                ),
+            )
+        )
+    expected_power = float(result["P_Q_native_W_raw"]) * scale
+    spatial_vs_json = abs(mapping["native_total_power_W"] - expected_power) / max(
+        abs(expected_power), np.finfo(float).tiny
+    )
+    source_norm = max(float(np.linalg.norm(source_power)), np.finfo(float).tiny)
+    source_mirror = {
+        "x_relative": float(
+            np.linalg.norm(source_power - source_power[::-1, :, :]) / source_norm
+        ),
+        "y_relative": float(
+            np.linalg.norm(source_power - source_power[:, ::-1, :]) / source_norm
+        ),
+    }
+    start = time.perf_counter()
+    temperature, thermal_audit = solve_thermal(state, source_power, cuda_device)
+    ta_temperature = tairte4_temperature(state, temperature)
+    electrical = build_electrical_system(rho, ta_temperature)
+    psi, current, electrical_audit = solve_electrical(electrical, cuda_device)
+    runtime = time.perf_counter() - start
+    integrand = current_integrand(ta_temperature, psi)
+    integrand_current = float(np.sum(integrand) * CONTRACT.design_pitch_m**2)
+    current_absolute_scale = float(
+        np.sum(np.abs(integrand)) * CONTRACT.design_pitch_m**2
+    )
+    current_consistency = abs(integrand_current - current) / max(
+        current_absolute_scale, np.finfo(float).tiny
+    )
+    current_cancellation = abs(current) / max(
+        current_absolute_scale, np.finfo(float).tiny
+    )
+    gates = {
+        "mapping_conservation_lt_1e-12": (
+            mapping["relative_conservation_error"] < 1.0e-12
+        ),
+        "native_spatial_Q_matches_json_lt_1e-12": spatial_vs_json < 1.0e-12,
+        "component_yee_filter_unassigned_absorption_lt_0p5pct": (
+            mapping["unassigned_absorption_relative"] < 5.0e-3
+        ),
+        "component_yee_mapping_finite_nonnegative": bool(
+            mapping["finite_nonnegative"]
+        ),
+        "thermal_residual_lt_1e-8": thermal_audit["relative_residual"] < 1.0e-8,
+        "thermal_energy_balance_lt_1pct": (
+            thermal_audit["energy_balance_relative"] < 1.0e-2
+        ),
+        "electrical_residual_lt_1e-8": (
+            electrical_audit["relative_residual"] < 1.0e-8
+        ),
+        "electrical_terminal_balance_lt_1pct": (
+            electrical_audit["terminal_balance_relative"] < 1.0e-2
+        ),
+        "current_integrand_consistency_lt_1e-12": current_consistency < 1.0e-12,
+        "finite": bool(
+            np.all(np.isfinite(source_power))
+            and np.all(np.isfinite(temperature))
+            and np.all(np.isfinite(ta_temperature))
+            and np.all(np.isfinite(psi))
+            and np.all(np.isfinite(integrand))
+        ),
+    }
+    summary = {
+        "runtime_s": runtime,
+        "source_scale_to_reporting_power": scale,
+        "source_power_W": float(np.sum(source_power)),
+        "expected_native_Q_at_reporting_power_W": expected_power,
+        "native_spatial_Q_vs_json_relative": spatial_vs_json,
+        "native_yee_npz": {
+            "path": str(raw_path),
+            "sha256": sha256(raw_path),
+        },
+        "mapping": mapping,
+        "source_power_mirror_error": source_mirror,
+        "Tmax_K": float(np.max(temperature)),
+        "TaIrTe4_Tmax_K": float(np.max(ta_temperature)),
+        "current_A": current,
+        "current_nA": current * 1.0e9,
+        "current_from_integrand_A": integrand_current,
+        "current_absolute_integrand_scale_A": current_absolute_scale,
+        "current_integrand_consistency_relative": current_consistency,
+        "current_cancellation_relative": current_cancellation,
+        "thermal": thermal_audit,
+        "electrical": electrical_audit,
+        "gates": gates,
+        "all_gates_passed": all(gates.values()),
+    }
+    arrays = {
+        "source_power_W": source_power,
+        "temperature_K": temperature,
+        "TaIrTe4_temperature_K": ta_temperature,
+        "weighting_potential_TaIrTe4": psi[: N_TA * N_TA].reshape(N_TA, N_TA),
+        "current_integrand_A_m2": integrand,
+    }
+    return summary, arrays
 
 
 def run_official_pabs_downstream(

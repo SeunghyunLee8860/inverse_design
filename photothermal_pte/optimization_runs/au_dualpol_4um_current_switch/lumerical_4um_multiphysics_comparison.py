@@ -436,6 +436,207 @@ def _lumerical_almostequal(
     )
 
 
+def map_lumerical_component_yee_material_q_to_thermal(
+    raw: Mapping[str, np.ndarray],
+    target_edges_m: tuple[np.ndarray, np.ndarray, np.ndarray],
+    source_scale: float,
+    *,
+    case: str,
+    material_fitted_epsilon: Mapping[str, Mapping[str, complex]],
+) -> tuple[np.ndarray, dict[str, Any]]:
+    """Filter each native Q component by its collocated fitted epsilon.
+
+    Lumerical stores ``Ex``, ``Ey``, and ``Ez`` on different Yee locations.
+    The native absorption certificate therefore consists of three collocated
+    pairs, ``(Qx, epsilon_x)``, ``(Qy, epsilon_y)``, and ``(Qz, epsilon_z)``.
+    A material sample is accepted only when the saved component epsilon equals
+    that material's fitted frequency-domain epsilon with Lumerical's documented
+    ``almostequal(..., rel_diff=1e-15)`` rule.  Accepted dual-cell power is then
+    conservatively deposited inside the exact physical material domain.
+
+    This intentionally does not use the common-grid advanced ``Pabs`` or its
+    x-staggered ``index_x`` mask.  It also performs no effective-epsilon
+    reconstruction and no closure rescaling.
+    """
+
+    if not np.isfinite(source_scale) or source_scale <= 0.0:
+        raise ValueError("source_scale must be positive and finite")
+    target_shape = tuple(len(edges) - 1 for edges in target_edges_m)
+    total = np.zeros(target_shape, dtype=np.float64)
+    native_total = 0.0
+    filtered_total = 0.0
+    mapped_total = 0.0
+    component_records: dict[str, dict[str, Any]] = {}
+    material_records: dict[str, dict[str, float | int]] = {}
+
+    for component in COMPONENTS:
+        q = np.asarray(raw[f"Q{component}_W_m3"], dtype=np.float64)
+        epsilon = np.asarray(raw[f"epsilon_{component}"])
+        coordinates = tuple(
+            np.asarray(raw[f"Q{component}_{axis}_m"], dtype=np.float64)
+            for axis in COMPONENTS
+        )
+        expected_shape = tuple(axis.size for axis in coordinates)
+        if q.shape != expected_shape or epsilon.shape != expected_shape:
+            raise RuntimeError(
+                f"Q{component}/epsilon_{component}/coordinate shape mismatch: "
+                f"{q.shape}, {epsilon.shape}, {expected_shape}"
+            )
+        if not np.all(np.isfinite(q)) or np.any(q < 0.0):
+            raise RuntimeError(f"Q{component} must be finite and nonnegative")
+        if not np.all(np.isfinite(epsilon)):
+            raise RuntimeError(f"epsilon_{component} must be finite")
+
+        widths = tuple(trapezoid_weights(axis) for axis in coordinates)
+        native_power = (
+            q
+            * widths[0][:, None, None]
+            * widths[1][None, :, None]
+            * widths[2][None, None, :]
+            * source_scale
+        )
+        native_component = float(np.sum(native_power))
+        native_total += native_component
+        assigned = np.zeros(q.shape, dtype=bool)
+        filtered_component = 0.0
+        mapped_component = 0.0
+        component_material: dict[str, dict[str, float | int]] = {}
+        domains = _material_domains(coordinates, widths, case, target_edges_m)
+
+        for material, bounds in domains.items():
+            target_by_component = material_fitted_epsilon.get(material)
+            if target_by_component is None or component not in target_by_component:
+                continue
+            material_mask = _lumerical_almostequal(
+                epsilon,
+                complex(target_by_component[component]),
+            )
+            domain_overlap = tuple(
+                _overlap_widths(coordinates[axis], widths[axis], bounds[axis])
+                > widths[axis] * 1.0e-9
+                for axis in range(3)
+            )
+            material_mask &= (
+                domain_overlap[0][:, None, None]
+                & domain_overlap[1][None, :, None]
+                & domain_overlap[2][None, None, :]
+            )
+            if np.any(assigned & material_mask):
+                raise RuntimeError(
+                    f"component-Yee material masks overlap for Q{component}"
+                )
+            assigned |= material_mask
+            source_indices = tuple(
+                np.flatnonzero(
+                    np.any(
+                        material_mask,
+                        axis=tuple(other for other in range(3) if other != axis),
+                    )
+                )
+                for axis in range(3)
+            )
+            if any(index.size == 0 for index in source_indices):
+                component_material[material] = {
+                    "matched_sample_count": 0,
+                    "filtered_power_W": 0.0,
+                    "mapped_power_W": 0.0,
+                }
+                continue
+
+            local_mask = material_mask[np.ix_(*source_indices)]
+            source_power = native_power[np.ix_(*source_indices)] * local_mask
+            target = tuple(
+                _target_material_edges(target_edges_m[axis], bounds[axis])
+                for axis in range(3)
+            )
+            target_indices = tuple(item[0] for item in target)
+            target_edges = tuple(item[1] for item in target)
+            operators = tuple(
+                _overlap_operator(
+                    coordinates[axis][source_indices[axis]],
+                    widths[axis][source_indices[axis]],
+                    target_edges[axis],
+                    clip_bounds=bounds[axis],
+                )
+                for axis in range(3)
+            )
+            mapped = _forward(source_power, operators)
+            total[np.ix_(*target_indices)] += mapped
+            material_filtered = float(np.sum(source_power))
+            material_mapped = float(np.sum(mapped))
+            filtered_component += material_filtered
+            mapped_component += material_mapped
+            component_material[material] = {
+                "matched_sample_count": int(np.count_nonzero(material_mask)),
+                "filtered_power_W": material_filtered,
+                "mapped_power_W": material_mapped,
+            }
+            aggregate = material_records.setdefault(
+                material,
+                {
+                    "matched_sample_count": 0,
+                    "filtered_power_W": 0.0,
+                    "mapped_power_W": 0.0,
+                },
+            )
+            aggregate["matched_sample_count"] += int(
+                np.count_nonzero(material_mask)
+            )
+            aggregate["filtered_power_W"] += material_filtered
+            aggregate["mapped_power_W"] += material_mapped
+
+        filtered_total += filtered_component
+        mapped_total += mapped_component
+        omission_component = native_component - filtered_component
+        component_records[component] = {
+            "native_power_W": native_component,
+            "filtered_power_W": filtered_component,
+            "unassigned_absorption_power_W": omission_component,
+            "unassigned_absorption_relative": abs(omission_component)
+            / max(abs(native_component), np.finfo(float).tiny),
+            "mapped_power_W": mapped_component,
+            "relative_conservation_error": abs(
+                mapped_component - filtered_component
+            )
+            / max(abs(filtered_component), np.finfo(float).tiny),
+            "material": component_material,
+        }
+
+    omission = native_total - filtered_total
+    omission_relative = abs(omission) / max(
+        abs(native_total), np.finfo(float).tiny
+    )
+    remap_error = abs(mapped_total - filtered_total) / max(
+        abs(filtered_total), np.finfo(float).tiny
+    )
+    return total, {
+        "method": "collocated_component_yee_fitted_epsilon_filter_v1",
+        "material_filter_relative_tolerance": (
+            LUMERICAL_MATERIAL_FILTER_RELATIVE_TOLERANCE
+        ),
+        "epsilon_reference": "Lumerical fitted frequency-domain epsilon at 4 um",
+        "native_total_power_W": native_total,
+        "component_yee_material_filtered_power_W": filtered_total,
+        "unassigned_absorption_power_W": omission,
+        "unassigned_absorption_relative": omission_relative,
+        "mapped_total_power_W": mapped_total,
+        "relative_conservation_error": remap_error,
+        "component": component_records,
+        "material": material_records,
+        "finite_nonnegative": bool(
+            np.all(np.isfinite(total)) and np.all(total >= 0.0)
+        ),
+        "global_or_local_rescaling": False,
+        "operations_absent": [
+            "effective_epsilon_reconstruction",
+            "clipping",
+            "smoothing",
+            "gain",
+            "tiling",
+        ],
+    }
+
+
 def map_lumerical_official_pabs_to_thermal(
     raw: Mapping[str, np.ndarray],
     target_edges_m: tuple[np.ndarray, np.ndarray, np.ndarray],

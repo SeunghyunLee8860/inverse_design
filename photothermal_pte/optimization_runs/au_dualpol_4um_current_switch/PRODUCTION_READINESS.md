@@ -64,12 +64,18 @@ before any downstream or x/y gate; see
 The staircase 0.625/6.25-nm source/empty/MCM6-full set is now complete. Its
 pair with 1.25/12.5 nm passes every empty/full Maxwell scalar and endpoint
 field gate (maximum change 0.3436%). The official-Pabs custom-CUDA downstream
-pair still fails: empty/full remapped-source L2 NRMSE is 1.5580%/1.6799%,
-although TaIrTe4 temperature NRMSE and Tmax changes now pass below 0.5% and
-material omission is below 0.2%. The three-mesh source error is nearly
-first-order. The 53.4/602-ppm zero-current residual also persists after
-material omission becomes tiny and needs a separate symmetry/tolerance audit.
-Production z convergence therefore remains blocked.
+diagnostic revealed an x-direction material-mask bias because `index_x` is
+x-staggered. The replacement component-Yee map pairs `Qx/Qy/Qz` with
+collocated fitted `epsilon_x/epsilon_y/epsilon_z`. It conserves native Q below
+`3e-15`, leaves at most `1.9e-16` relative absorption unassigned, and restores
+the symmetric empty/full current controls to `1.12e-10`/`1.48e-8`, both far
+below one ppm. Temperature and Tmax convergence also pass. Only the empty/full
+remapped-source L2 NRMSE remains failed at 1.5580%/1.2458%; the three-mesh
+source error is nearly first-order. Production z convergence therefore
+remains blocked only by this strict volumetric interface-source gate and the
+still-untested cases, not by a zero-current or material-identity defect. A
+0.3125-nm source-only grid passed, but its material run projected about nine
+hours per case and was intentionally stopped.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine
@@ -90,8 +96,9 @@ Production remains blocked until a new hash-linked certificate chain proves:
    and transpose tests;
 5. full optical/thermal/electrical latent AD-FD for `Ea` and `Eb`;
 6. optical x/y/full-domain-z/PML, source/time/Q closure, thermal mesh,
-   electrical mesh, contact, and void-floor convergence; full-domain z must
-   link thin-stack refinement to Si-bulk/air/PML refinement;
+   electrical mesh, contact, and void-floor convergence; the remaining
+   thin-interface volumetric-Q gate must be bounded without committing to
+   nine-hour-per-control brute-force runs;
 7. an independent final 500-nm exact-binary reevaluation using ordinary
    sampled-data dispersive Au.
 
