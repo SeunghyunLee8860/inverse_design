@@ -1,6 +1,6 @@
 # Fresh FDTDX convergence design for exact-binary Au
 
-Status: **L500 time settling and Courant convergence validated; the first full-domain-z ladder is rejected; candidate two-pole z8 forward pair validated; z16 24-period material pair rejected on settling; no spatial-mesh claim and no optimizer permission**
+Status: **L500 time/Courant controls validated; the full-domain-z ladder and z16 t32 extension are rejected; fine-dt float32 ADE transient precision is the blocker; no spatial-mesh claim and no optimizer permission**
 
 This document defines the next FDTDX work after the four empty/full endpoint
 controls.  It is deliberately independent of the Lumerical work in progress in
@@ -443,8 +443,42 @@ The source-pair certificate SHA-256 is
 `278dff85e307042d1b7d004316ac74be010fb40593179b65948bbdc878c4b7bc`.
 Both source cases pass all gates with identical incident power
 `1.883720176371062e-12 W`, zero pair mismatch, and field stationarity below
-`4.02e-6`. The matching t32 material Ea/Eb pair is now the only next optical
-action; mesh comparison remains blocked until it passes.
+`4.02e-6`.
+
+The matching t32 material runs were completed at clean `b662b07b` and both
+failed. Ea report/NPZ SHA-256 values are
+`337c7d6e07b8fa7da9cd8394a89c524ebbccef0a4bb00d0b0d1d69aecde965c0` /
+`2184cdb2a263f59ce96a2acbe3f4a654461482ef938756def5d30f8c66e42275`;
+Eb values are
+`cdc4f1b1baa55c9153b314d8bfff7f35c851a235be7976f0efcc3bd12ae22317` /
+`3ad02aee9af1214fdf27fc3aa519160945e7bc7d42f387245d7c477047c5be89`.
+The blocked pair certificate SHA-256 is
+`999a28f273c15ef86d43e77112ca877a1c449ea14710a90f561389c94abc757e`.
+Ea field stationarity is `1.6197%`; Eb field and spatial-Q stationarity are
+`2.6502%` and `0.6583%`. All raw/canonical/source/material/closure gates pass.
+The 16--32-period Au-window changes are non-monotonic, so t40/t48 is not a
+valid next action.
+
+The CPU scalar-recurrence gate added at `2edb38d8` reproduces the failure
+without FDTD. z8/t24 passes (certificate
+`48e6780c39f4256eac0ba116460bc937dc62c34069bcf5f7be86e2122e70c4ce`),
+while z16/t32 and z32/t24 fail (certificates
+`426c067f4971edddd2435134d714efe2e20e6b78492c15207d3c8a83e4b3b191` and
+`3397023337a48bc843eb28de38d82860a8567e9581b3c05a16eaae5c367176b4`).
+For z16 Au, float32 window drift is `1.713%`; identical coefficients with a
+float64 state settle to `4.93e-10`, and their late response differs by
+`3.069%`. The cancellation-condition estimate is `1.66e7`. Therefore the
+one-frequency carrier fit/root-radius checks were necessary but insufficient;
+fine-dt repeated float32 ADE updates are the present root blocker.
+
+The measured cost is `260 s/solve` for z8/t24, about `862 s/solve` for
+z16/t24, and about `1145 s/solve` for z16/t32. Independent polarizations may
+run on two separately verified-idle GPUs, but a single solve remains
+single-GPU and forward/adjoint remains sequential. z16/t32 therefore has a
+lower bound near `38 min/optimization iteration` even with two GPUs and is
+validation-only. No finer mesh, longer time, adjoint, thermal/electrical, or
+optimizer step is allowed until the ADE recurrence is reformulated and passes
+the CPU transient gate.
 
 ## Comparison and promotion rules
 

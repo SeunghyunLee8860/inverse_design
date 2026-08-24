@@ -290,8 +290,9 @@ stage is now complete for the exact-binary 375-pixel
 `l_shape_4um_with_500nm_arms` reference. Runs were made at clean commit
 `01a8ad8a`; the independent verifier and its 12 focused tests were committed
 and pushed as `5e376ce1`. That checkpoint had 133 explicit FDTDX `unittest`
-tests. The current suite has **143 passing tests** after the candidate material
-pair verifier and 32-period extension coverage were added. The separate pytest forensic file is not runnable in
+tests. The current suite has **147 passing tests** after the candidate material
+pair verifier, 32-period extension coverage, and long-time ADE precision gate
+were added. The separate pytest forensic file is not runnable in
 the locked fresh venv because pytest is intentionally absent.
 
 External raw root:
@@ -579,8 +580,67 @@ Ea/Eb took `1144.41 s` / `1144.54 s`, passed every source gate, and
 reported maximum complex-field stationarity NRMSE `4.0193e-6` / `4.0165e-6`.
 Both unscaled incident powers are exactly `1.883720176371062e-12 W` at the
 recorded precision, so pair mismatch is `0.0`; common-285-uW scaling is exact.
-This source pair is valid only for this t32 case. The next permitted action is
-t32 material Ea/Eb with this pair, not mesh comparison or optimization.
+This source pair is valid only for this t32 case.
+
+The matching t32 material Ea/Eb runs were completed from clean commit
+`b662b07b` and are both **blocked**. The independent pair verifier was rerun at
+clean `2edb38d8`. Artifact SHA-256 values are:
+
+- Ea material report / NPZ:
+  `337c7d6e07b8fa7da9cd8394a89c524ebbccef0a4bb00d0b0d1d69aecde965c0` /
+  `2184cdb2a263f59ce96a2acbe3f4a654461482ef938756def5d30f8c66e42275`
+- Eb material report / NPZ:
+  `cdc4f1b1baa55c9153b314d8bfff7f35c851a235be7976f0efcc3bd12ae22317` /
+  `3ad02aee9af1214fdf27fc3aa519160945e7bc7d42f387245d7c477047c5be89`
+- blocked material-pair certificate:
+  `999a28f273c15ef86d43e77112ca877a1c449ea14710a90f561389c94abc757e`
+
+Ea still fails field stationarity at `1.6197%`. Eb is worse than t24: field
+stationarity is `2.6502%` and spatial-Q stationarity is `0.6583%`, versus the
+fixed `0.5%` limits. Every raw/canonical/source/material/readback gate passes;
+only case readiness/evaluation fails. Q/closed-flux mismatch stays below
+`0.52%`, and total Q is stable. The consecutive 4-period Au-window changes
+over 16--32 periods are non-monotonic: Ea is
+`1.807% -> 1.910% -> 1.620%`, and Eb is
+`1.903% -> 2.958% -> 2.650%`. The dominant unsettled component remains Au
+`Ez`; best complex-scale removal does not fix it. Therefore a longer t40/t48
+run is not justified, and z32 FDTD remains forbidden.
+
+Commit `2edb38d8` adds `fdtdx_fresh_ade_transient_precision.py` and four tests.
+This CPU-only gate integrates the locked two-pole recurrence under the actual
+four-period linear source ramp in float32 and float64 before any FDTD run. Its
+external certificates are:
+
+- z8/t24: file SHA-256
+  `48e6780c39f4256eac0ba116460bc937dc62c34069bcf5f7be86e2122e70c4ce`,
+  payload `63f491c00084bf56dad0e9a829b9cfa7d4085f3a45d9614318089203a6a8c734`,
+  **validated**
+- z16/t32: file SHA-256
+  `426c067f4971edddd2435134d714efe2e20e6b78492c15207d3c8a83e4b3b191`,
+  payload `3c847d98ee6e9493bb97845418aab7b394c11f81aed28a659df759e37a49daf0`,
+  **blocked**
+- z32/t24: file SHA-256
+  `3397023337a48bc843eb28de38d82860a8567e9581b3c05a16eaae5c367176b4`,
+  payload `77fb8033b54fd15144635e0720da6d28f209a5fab204180b803589257d641f0a`,
+  **blocked**
+
+For z16 Au the scalar float32 late-window drift is `1.713%`, while the same
+locked coefficients with float64 state settle to `4.93e-10`; their late
+responses differ by `3.069%`. The carrier denominator condition estimate is
+`1.66e7`, or about `1.98` times the reciprocal float32 precision budget. z8 Au
+passes (`0.0716%` drift, `0.2269%` float32/float64 difference), while z32 Au
+is catastrophically blocked (`99.78%` late-response difference). This closes
+the root cause as fine-dt float32 ADE recurrence conditioning missed by the
+old one-frequency carrier-fit gate, not insufficient simulation duration.
+
+Measured one-polarization runtimes are `260 s` for z8/t24, `861--863 s` for
+z16/t24, and `1137--1145 s` for z16/t32. A dual-polarization forward pair can
+run concurrently on two verified-idle GPUs, but one FDTDX solve is single-GPU.
+Even with Ea/Eb parallel, z16/t32 forward-plus-adjoint is at least about
+`38 min/iteration`; 100 Maxwell iterations would exceed `63 h` before
+thermal/electrical work. This grid is validation-only and must not be used for
+optimization. Future independent cases must use distinct GPUs only after
+checking compute-process ownership; occupied GPUs are never touched.
 
 Do not proceed to x/y, domain, PML, thermal/electrical, or optimization until
 z convergence closes. Preserve the failed z2/z4/z8 comparisons and the z16

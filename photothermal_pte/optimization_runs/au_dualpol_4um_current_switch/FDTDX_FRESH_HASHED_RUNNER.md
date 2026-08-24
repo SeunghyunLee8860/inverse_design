@@ -312,6 +312,37 @@ Both cases pass every source gate. Their incident powers are identically
 stationarity is below `4.02e-6`. This authorizes the matching t32 material
 Ea/Eb runs only; no mesh or optimizer promotion follows from source-only data.
 
+Those t32 material runs were completed at clean `b662b07b` and rejected. Ea
+report/NPZ SHA-256 values are
+`337c7d6e07b8fa7da9cd8394a89c524ebbccef0a4bb00d0b0d1d69aecde965c0` /
+`2184cdb2a263f59ce96a2acbe3f4a654461482ef938756def5d30f8c66e42275`;
+Eb values are
+`cdc4f1b1baa55c9153b314d8bfff7f35c851a235be7976f0efcc3bd12ae22317` /
+`3ad02aee9af1214fdf27fc3aa519160945e7bc7d42f387245d7c477047c5be89`.
+The blocked pair-certificate SHA-256 is
+`999a28f273c15ef86d43e77112ca877a1c449ea14710a90f561389c94abc757e`.
+Ea field stationarity is `1.6197%`; Eb field/spatial-Q stationarity is
+`2.6502%` / `0.6583%`. All raw, contract, material, normalization, and closure
+gates pass. Consecutive 4-period changes are non-monotonic, so no longer-time
+run is authorized.
+
+The CPU preflight added at `2edb38d8` identifies the missing gate: long-time
+float32 ADE recurrence precision. z8/t24 passes with certificate SHA-256
+`48e6780c39f4256eac0ba116460bc937dc62c34069bcf5f7be86e2122e70c4ce`;
+z16/t32 and z32/t24 fail with SHA-256 values
+`426c067f4971edddd2435134d714efe2e20e6b78492c15207d3c8a83e4b3b191` and
+`3397023337a48bc843eb28de38d82860a8567e9581b3c05a16eaae5c367176b4`.
+For z16 Au, float32 recurrence drift is `1.713%` while the float64-state
+reference settles to `4.93e-10`; the late response differs by `3.069%` and
+the cancellation-condition estimate is `1.66e7`. The old algebraic
+single-carrier fit is insufficient. Replace or reformulate the ADE recurrence
+and pass this CPU gate before any further FDTD.
+
+One z16/t32 polarization costs about `19.1 min`. Two independent polarizations
+must use two owner-checked idle GPUs in parallel, but a forward/adjoint chain
+remains sequential. The projected lower bound is about `38 min/iteration`, so
+this validation grid is forbidden for optimization.
+
 ## Convergence rule
 
 The 16-, 24-, and 32-period levels are three different numerical cases.  Each
@@ -323,7 +354,6 @@ There is no implicit-anchor CLI mode. Both the absolute case path and its file
 SHA-256 are mandatory for source-only and material commands. Completion of
 the time and Courant ladders, and execution of a rejected z2/z4/z8 ladder, does
 not authorize an optimizer, thermal/electrical solve, PTE-current claim, or mesh
-certificate. The next numerical case is a finer full-domain-z extension at 24
-periods and selected Courant 0.25 only after a separately contracted material
-representation passes its own readback/time gates, with a fresh source pair at
-every new level.
+certificate. No finer full-domain-z or longer-time case is now authorized.
+The next step is a numerically better material recurrence that passes the
+CPU transient-precision gate before any new source pair or material solve.
