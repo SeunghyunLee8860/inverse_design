@@ -7,14 +7,19 @@ import fcntl
 import os
 from pathlib import Path
 import subprocess
+import sys
+
+
+HERE = Path(__file__).resolve().parent
+REPOSITORY = HERE.parents[1]
+if str(REPOSITORY) not in sys.path:
+    sys.path.insert(0, str(REPOSITORY))
 
 from photothermal_pte.optimization_runs.launch_run061_062_dual_polarization_sequential import (
     write_state,
 )
 
 
-HERE = Path(__file__).resolve().parent
-REPOSITORY = HERE.parents[1]
 LAUNCHER = HERE / "launch_run061_062_dual_polarization_sequential.py"
 RUNRES = Path("/home/dhkim/bin/runres")
 SITE_RUN = Path("/home/eidl/miniconda3/envs/EIDL-Lumapi/bin/run")
