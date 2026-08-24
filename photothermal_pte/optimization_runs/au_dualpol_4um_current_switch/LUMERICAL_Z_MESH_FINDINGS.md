@@ -73,10 +73,12 @@ error substantially but still failed. The final linked
 metric for both exact-empty and exact-full Ea. This closes that Maxwell
 sub-gate and establishes that the coarser member is within 0.5% of the finer
 reference for these observables. It is not yet a full z-mesh or production
-certificate: native volumetric Q must be conservatively remapped to the common
-thermal grid and temperature/current compared, and the required Eb,
-simple-geometry, final-topology, and B200 controls remain open. Do not begin
-x/y convergence or optimization until those same-axis gates are closed.
+certificate. The subsequent material-aware conservative remap and custom CUDA
+thermal comparison failed: empty/full remapped-Q NRMSE is 0.9730%/1.8576%
+and TaIrTe4 temperature NRMSE is 1.0058%/1.7397%. See
+`LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`. Required Eb, simple-geometry,
+final-topology, and B200 controls also remain open. Do not begin x/y
+convergence or optimization until those same-axis gates are closed.
 
 The new `27_compare_lumerical_4um_control_pair.py` reproduces the four table
 metrics. It verifies the raw NPZ SHA-256 values; exact case, polarization,

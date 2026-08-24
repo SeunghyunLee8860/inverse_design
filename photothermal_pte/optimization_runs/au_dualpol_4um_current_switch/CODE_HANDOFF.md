@@ -110,6 +110,13 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     and compare normalized Q, flux, complex endpoint field, and E2 with the
     finer result as denominator. This is explicitly a Maxwell sub-gate, not a
     volumetric-Q/thermal/current or production certificate.
+23. `lumerical_4um_multiphysics_comparison.py` and
+    `28_validate_lumerical_4um_z_multiphysics_pair.py` -- reconstruct
+    physical-material loss from saved native Q/effective epsilon and exact
+    material overlap, conservatively remap it without closure rescaling, and
+    run the existing custom CUDA thermal/electrical solvers. Read
+    `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`: the finest Ea empty/full downstream
+    pair fails despite the Maxwell endpoint sub-gate passing.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -356,9 +363,13 @@ Do not copy them into this worktree.
    1.25/12.5-to-0.625/6.25-nm pair passes the exact-full Maxwell sub-gate:
    normalized Q, flux, complex field, and E2 change by 0.3550%, 0.3551%,
    0.2669%, and 0.3176%; exact-empty also passes all four metrics. See
-   `LUMERICAL_Z_MESH_FINDINGS.md`. Volumetric-Q remap, temperature/current,
-   Eb, simple-L, final-topology, and B200 z gates remain open, so this is not
-   yet a production mesh certificate.
+   `LUMERICAL_Z_MESH_FINDINGS.md`. The subsequent material-aware Q remap and
+   custom CUDA downstream comparison fails: empty/full remapped-Q NRMSE is
+   0.9730%/1.8576%, TaIrTe4 temperature NRMSE is 1.0058%/1.7397%, and the
+   physical-material reconstruction itself misses native Q by 0.7777%/1.5504%
+   even on the fine member. See `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`. Eb,
+   simple-L, final-topology, and B200 z gates also remain open, so this is not
+   a production mesh certificate.
 10. The prior 2-ps/1e-9 run used rejected MCM20, so the MCM6 duration/decay
     pair was rerun correctly. Exact-full 1 ps versus 2 ps changes were Q
     0.00456%, flux 0.01086%, complex field 0.00184%, and E2 0.00135%; exact
@@ -375,10 +386,12 @@ Do not copy them into this worktree.
    useful negative evidence: its stable final pair failed in all 6/6 cases.
 3. Treat the CV0/CV1/staircase, z, time, and MCM sweeps as RTX development
    evidence only. Use Au MCM6, not 20. The MCM6 duration/decay pair now passes.
-   Reproduce the now-passed Ea empty/full Maxwell sub-gate with script 27,
-   then conservatively remap the same pair's native-Yee Q to the common thermal
-   grid and compare temperature and signed current. Do not begin x/y
-   convergence until the remaining Eb/simple-L/downstream z gates pass.
+   Reproduce the passed Ea empty/full Maxwell sub-gate with script 27 and the
+   failed downstream gate with script 28. Establish a Lumerical-native
+   material-resolved absorption definition for conformal cut cells or a
+   converged MCM6 interface method; do not hide the 0.78--1.55% fine-grid
+   material-Q reconstruction gap by rescaling. Do not begin x/y convergence
+   until the downstream and remaining Eb/simple-L z gates pass.
 4. On the actual B200, use `25_run_lumerical_4um_exact_au_control.py` to pass
    source-only Ea/Eb first, then matching ordinary empty/full/simple-L exact
    Au time, Q/flux, linked stack+bulk/air/PML-z, x/y, PML-layer, and domain
