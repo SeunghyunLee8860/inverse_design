@@ -1,45 +1,40 @@
 # Production inverse-design readiness
 
-Status: `BLOCKED_EXACT_AU_LUMERICAL_ROUTE_NOT_IMPLEMENTED`
+Status: `BLOCKED_LUMERICAL_DISPERSIVE_DENSITY_ROUTE_NOT_VALIDATED`
 
 All legacy production entry points (`10`, `12`, and `13`) call
 `require_production_readiness()` before creating output directories or
 compiling a Maxwell runner. There is no environment-variable bypass. The
-readiness audit now contains an unconditional
-`exact_au_lumerical_geometry_route_implemented=false` gate, because those
-entry points still implement the historical gray/FDTDX path. They cannot be
-promoted by manufacturing otherwise complete legacy certificates.
+readiness audit contains an unconditional
+`lumerical_dispersive_density_route_validated=false` gate because those
+entry points still run the historical FDTDX/shared-linear path.
 
-The shared-linear certificate chain below is retained only to audit the
-historical implementation; it is no longer sufficient for production:
+The selected Lumerical optical constitutive law is now implemented in
+`au_density_relaxation.py`:
 
-1. `physical_device_contract.json` must have status
-   `VALIDATED_AU_TAIRTE4_PHYSICAL_DEVICE_CONTRACT` and every required geometry,
-   contact, axis, stack, illumination, and void-floor confirmation must be
-   true. The committed file is deliberately blocked until target-device data
-   are supplied.
-2. A shared-linear full mesh certificate covering the complete optical z
-   domain, optical x/y, previous-vs-late time-window stationarity,
-   absorption-Q/closed-flux closure, thermal mesh, and electrical mesh. It must
-   record the SHA-256 of the exact physical-device contract and current source
-   calibration, plus the exact Maxwell, multiphysics, and combined-evaluator
-   implementation hashes.
-3. A shared-linear multidirection combined AD-FD certificate that records the
-   SHA-256 of that exact mesh certificate.
+```text
+rho_bar -> n(rho_bar)+i k(rho_bar) -> epsilon=[n+i k]^2
+```
 
-The mesh certificate must also contain a machine-readable
-`selected_numerical_contract`. Its optical section fixes the full-domain-z
-mesh factor and grid-edge hash, Courant factor, total periods, and late-window
-periods. Its source-calibration section contains Ea and Eb incident powers
-measured on that same selected grid/time contract. Production runners consume
-these values directly: they regenerate and hash-check the selected grid and
-apply a separate incident-power scale to each polarization. The old baseline
-defaults remain available only to diagnostic callers that do not request a
-production numerical contract.
+It has exact background and frozen Ordal-Au endpoints at 4 um, an analytic
+complex derivative, no `rho**3`, and solver-free passivity/FD tests. This is
+implementation progress, not a production certificate.
+
+Production remains blocked until a new hash-linked certificate chain proves:
+
+1. the target device geometry, contacts, crystal axes, stack, illumination,
+   Au role, and uncertain interface scenarios;
+2. on the actual B200, empty/imported-full/ordinary dispersive-Au endpoint and
+   source-band parity for both polarizations;
+3. a uniform-density field/Q sweep without an optimizer-exploitable gray
+   resonance;
+4. a nonuniform Lumerical component-Yee material Jacobian with centered-FD and
+   transpose tests;
+5. full optical/thermal/electrical latent AD-FD for `Ea` and `Eb`;
+6. optical x/y/z/PML, source/time/Q closure, thermal mesh, electrical mesh,
+   contact, and void-floor convergence;
+7. an independent final 500-nm exact-binary reevaluation using ordinary
+   sampled-data dispersive Au.
 
 The historical partial-z, O3/TE1, shared-linear, and FDTDX artifacts cannot
-satisfy the exact-Au Lumerical route. Optimization remains blocked until the
-legacy entry points are replaced by ordinary dispersive-Au geometry in
-Lumerical, the same binary geometry is connected to the custom CUDA PDE
-solvers, and a new exact-geometry mesh/estimator certificate chain is wired
-into `production_readiness.py`.
+satisfy these gates. They remain diagnostics only.

@@ -34,26 +34,24 @@ No Lumerical HEAT or CHARGE license is involved. Maxwell remains Lumerical
 FDTD; heat and weighting-potential equations remain the repository's custom
 CUDA solvers.
 
-## Authorized Au representation
+## Authorized topology variable
 
-Every physical evaluation must use:
+Rejecting semiconductor `np density` does not reject density topology. The
+authorized topology field is the repository's own dimensionless projected
+occupancy:
 
 ```text
-continuous shape/level-set optimizer parameters
-  -> geometry and 500-nm DFM mapping
-  -> exact binary Au mask m in {0,1}
-  -> ordinary exact dispersive-Au geometry in Lumerical FDTD
-  -> the identical binary geometry in custom thermal/electrical solvers
+latent rho
+  -> 500-nm filter and tanh projection
+  -> projected occupancy rho_bar in [0,1]
+  -> nonlinear n-k optical relaxation in Lumerical
+  -> documented thermal/electrical constitutive maps of the same rho_bar
+  -> final exact 0/1 mask and ordinary dispersive-Au reevaluation
 ```
 
-Continuous parameters may move an exact material boundary. They may not be
-interpreted as a gray Au fraction, diluted Drude plasma, electron/hole
-density, or different optical/thermal/electrical powers of one density.
-
-The unresolved research problem is therefore the derivative or search method
-for exact-binary geometry. The next gate is a 4-um exact-Au shape/level-set
-AD-FD experiment in Lumerical. If a trustworthy shape derivative cannot be
-certified, use an exact-geometry derivative-free or stochastic estimator
-(for example central finite differences for a compact parameterization or
-SPSA with independent central-FD validation). In all cases, both perturbed
-evaluations contain ordinary binary dispersive Au.
+`rho_bar` is a numerical relaxation and must never be relabeled as electron or
+hole density. The selected optical map is the published Christiansen
+`n-k`-then-square interpolation in `au_density_relaxation.py`, not a diluted
+Drude plasma and not `rho**3`. The unresolved gate is its Au-specific B200
+endpoint/bandwidth parity, resonance sweep, component-Yee Jacobian, and
+combined AD-FD validation. See `LUMERICAL_MAXWELL_GPU_PDE_ROUTE.md`.

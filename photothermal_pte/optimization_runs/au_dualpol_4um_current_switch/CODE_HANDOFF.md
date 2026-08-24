@@ -16,10 +16,12 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
 
 1. `contract.py` -- immutable geometry, source, axes, design pitch, and
    reporting power.
-   `lumerical_maxwell_contract.py` and `lumerical_4um_exact_au.py` define the
-   superseding exact-geometry identity, sampled-dispersive 4-um materials, and
-   deterministic exact-mask-to-Au-prism mapping. The latter is audit/build
-   code only until its Lumerical fit readback and B200 controls pass.
+   `lumerical_maxwell_contract.py` defines both the shared projected-density
+   identity used during optimization and the stronger physical-geometry hash
+   used at exact endpoints/final promotion. `lumerical_4um_exact_au.py` builds
+   sampled-dispersive 4-um materials and deterministic exact-mask Au prisms
+   for those endpoint/final controls; it is not the continuous optimizer
+   carrier and remains audit/build code until B200 fit readback passes.
 2. `fdtdx_4um_model.py` -- six-PML FDTDX Maxwell model and material layout.
 3. `multiphysics_4um.py` -- conservative optical-Q remap, explicit 3-D
    thermal solve, electrical weighting solve, and PTE current.
@@ -27,8 +29,10 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
    thermal, and electrical density gradient.
 5. `dfm.py` -- 500 nm filter, differentiable solid/void constraints, and
    exact binary audit.
-6. `material_fraction.py` and `MATERIAL_FRACTION_AUDIT.md` -- the shared
-   linear Au fraction and its fail-closed migration from historical O3/TE1.
+6. `au_density_relaxation.py`, `material_fraction.py`, and
+   `MATERIAL_FRACTION_AUDIT.md` -- the selected nonlinear `n-k` Lumerical
+   relaxation, the historical shared-linear FDTDX baseline, and the reason
+   optical `rho**3` is removed.
 7. `objective.py` -- signed current utilities and epigraph objective.
 8. `10_optimize_4um_dualpol_au_ld_mma.py` -- nominal NLopt LD_MMA path.
 9. `13_optimize_robust_binary_au_ld_mma.py` -- eroded/dilated robust
@@ -45,6 +49,9 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     `22_audit_lumerical_4um_exact_au_runsetup.py` -- the sequential
     source/time/z/x-y/PML/domain convergence matrix. Audit-only output is not a
     mesh certificate and the actual Maxwell runner remains B200-blocked.
+15. `23_audit_4um_au_density_relaxation.py` -- solver-free exact endpoint,
+    passivity, no-rho-cubed, and analytic complex-derivative gate for the new
+    optical law. It does not replace any B200 field or AD-FD gate.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -68,15 +75,16 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
 0. The user-selected Maxwell solver is Lumerical FDTD, while thermal and
    electrical remain the repository custom CUDA PDE solvers; no Lumerical HEAT
    or CHARGE license is assumed. Read `LUMERICAL_MAXWELL_GPU_PDE_ROUTE.md` and
-   run `21_audit_lumerical_maxwell_preflight.py` first. Every optical solve
-   must contain ordinary exact binary dispersive-Au geometry. The identical
-   binary geometry/hash must be used by the custom thermal and electrical
-   solvers. Continuous variables may move a shape/level-set boundary, but no
-   gray Au material is authorized in any solver. The Lumerical exact-Au shape
-   derivative or an exact-geometry stochastic/FD estimator remains blocked
-   pending same-step validation. FDTDX/JAX results are historical diagnostics
-   only. The current host has RTX 6000 Ada GPUs, not B200, so it cannot issue a
-   B200 run certificate.
+   run `21_audit_lumerical_maxwell_preflight.py` first. The selected method is
+   density topology, not shape/level-set: latent rho -> 500-nm filter -> tanh
+   projection -> one shared projected occupancy. Lumerical optical uses the
+   published nonlinear `n-k` interpolation in `au_density_relaxation.py`; it
+   does not use optical `rho**3`. The identical projected-density hash must be
+   used by the custom thermal and electrical constitutive maps. Final
+   promotion still requires an independent exact-binary ordinary
+   sampled-data dispersive-Au reevaluation. FDTDX/JAX results are historical
+   diagnostics only. The current host has RTX 6000 Ada GPUs, not B200, so it
+   cannot issue a B200 run certificate.
 
    The older material readback froze only the central 4-um n,k values. That is
    insufficient for a time-domain claim of dispersive Au. The new Lumerical
@@ -92,11 +100,12 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    compatibility only from an ordinary exact-Au control on the actual B200.
 
 1. The existing optimization used inconsistent O3/TE1 gray laws. The later
-   shared-linear fraction was a consistency diagnostic, not an authorized
-   exact-Au production representation. All O3/TE1 and shared-gray outputs are
-   historical and must not be presented as certificates for the new route.
-   Replace the physical path with one exact binary geometry shared by all
-   three solvers. See `MATERIAL_FRACTION_AUDIT.md` only for historical audit.
+   shared-linear fraction was a consistency diagnostic, not the selected
+   Lumerical optical law. The replacement `n-k`-then-square relaxation is now
+   implemented and solver-free tested, but it is still blocked pending B200
+   endpoint/bandwidth parity, uniform-density resonance sweep, component-Yee
+   Jacobian FD/transpose tests, and full combined AD-FD. See
+   `MATERIAL_FRACTION_AUDIT.md`.
 2. AD-FD validates the derivative of a chosen discrete mesh; it does not
    certify mesh convergence.
 3. The original optical z mesh used only 2 Au cells and 5 TaIrTe4 cells.
@@ -136,8 +145,9 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    This is decisive evidence that the legacy shared-gray FDTDX grid is not
    converged, but it does not select a production mesh for the superseding
    exact-Au Lumerical route. Do not spend more production effort on mixed-gray
-   FDTDX refinement; repeat the convergence hierarchy with ordinary exact-Au
-   geometry in Lumerical on the actual target GPU.
+   FDTDX refinement; repeat the convergence hierarchy with the validated
+   Lumerical density carrier and finish with ordinary exact-Au binary geometry
+   on the actual target GPU.
 6. Electrical void cells retain tiny sheet/contact floors to regularize the
    floating Au block.  Quantify floor sensitivity; do not describe the
    electrical `rho=0` endpoint as exactly disconnected until that passes.
@@ -148,9 +158,9 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    remain invalid for promotion.  See `ROBUST_OBJECTIVE_AUDIT.md`.
 8. Production optimization is now unconditionally code-blocked because the
    existing entry points still implement the historical gray/FDTDX path.
-   Legacy shared-linear certificates cannot clear this gate. Replace the path
-   with exact-Au Lumerical geometry and an exact-geometry estimator, then issue
-   new certificates naming the selected
+   Legacy shared-linear certificates cannot clear this gate. Connect the new
+   Lumerical `n-k` density carrier to the component-Yee discrete adjoint, then
+   issue new certificates naming the selected
    full-domain-z grid, Courant factor, time windows, and same-grid Ea/Eb source
    calibration. The combined adjoint also derives
    its Au/TaIrTe4 material offsets from the realized placed slices; do not
@@ -186,8 +196,12 @@ receive the checkpoint explicitly rather than inventing or rescaling it.
 From the repository root:
 
 ```bash
-python -m pytest -q \
+photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_combined_gpu_python.sh \
+  -m pytest -q \
   photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/test_preflight.py
+
+photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_combined_gpu_python.sh \
+  photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/23_audit_4um_au_density_relaxation.py
 
 CUDA_VISIBLE_DEVICES=<free_gpu> photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_z_mesh_convergence_gpu.sh --audit-only
 
@@ -207,12 +221,15 @@ location.  `AU_DUALPOL_PYTHON`, `FDTDX_SOURCE_DIR`, and
    full-domain-z tables as historical diagnostics, not evidence for Lumerical
    or a production mesh. The completed shared-linear factor-1/2/4 sweep is
    useful negative evidence: its stable final pair failed in all 6/6 cases.
-3. On the actual B200, establish new Lumerical empty/full/simple exact-Au time,
-   Q/flux, x/y/z/PML, and source-calibration controls for both polarizations.
-4. Implement the exact-binary geometry contract and validate the chosen
-   exact-Au shape/level-set or exact-geometry stochastic/FD estimator.
+3. On the actual B200, establish Lumerical empty/imported-full/ordinary-Au
+   endpoint and bandwidth parity, then sweep uniform projected density for
+   artificial field/Q resonances for both polarizations.
+4. Build and validate the nonuniform density-to-component-Yee material
+   Jacobian and its discrete adjoint; do not substitute bundled LumOpt's
+   real/lossless metal path.
 5. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh
    convergence, and downstream PTE current.
 6. Certify the combined gradient on the selected production mesh.
-7. Only then start an optimizer compatible with the certified exact-geometry
-   estimator and finish with an independent 500 nm solid/void audit.
+7. Only then start LD_MMA filter/projection continuation and finish with an
+   independent 500-nm solid/void audit plus ordinary dispersive-Au binary
+   reevaluation.

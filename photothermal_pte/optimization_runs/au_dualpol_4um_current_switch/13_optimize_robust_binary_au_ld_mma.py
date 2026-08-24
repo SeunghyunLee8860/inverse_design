@@ -398,8 +398,8 @@ def main():
         manifest=json.loads((OUT/"RAW_ARTIFACT_MANIFEST.json").read_text())
         if manifest.get("au_material_fraction") != material_fraction_audit():
             raise RuntimeError(
-                "robust resume uses the historical O3/TE1 law; this legacy gray "
-                "optimizer cannot start an exact-Au run"
+                "robust resume uses a stale material law; start a new run only "
+                "after the Lumerical n-k density route passes its production gates"
             )
         if manifest.get("robust_contract") != robust_contract_audit():
             raise RuntimeError("robust resume omits nominal-current or all-scenario grayness constraints")

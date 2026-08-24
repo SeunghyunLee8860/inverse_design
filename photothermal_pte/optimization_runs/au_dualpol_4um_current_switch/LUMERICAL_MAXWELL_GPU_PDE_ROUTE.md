@@ -1,168 +1,161 @@
-# Exact-Au Lumerical Maxwell + custom GPU-PDE inverse-design route
+# Lumerical density-topology Maxwell + custom GPU-PDE route
 
-Status: `BLOCKED_PENDING_4UM_EXACT_AU_GEOMETRY_ESTIMATOR_AND_B200`
+Status: `SOLVER_FREE_NK_LAW_IMPLEMENTED_BLOCKED_PENDING_B200_GATES`
 
-## Solver architecture
+## Selected architecture
 
-The production architecture remains the split already used by the earlier
-TaIrTe4-flake optimization:
+- Maxwell forward/adjoint and native-Yee absorption: Ansys Lumerical FDTD on
+  NVIDIA B200;
+- steady heat equation: repository custom CUDA finite-volume solver;
+- weighting potential, PTE current, and electrical adjoint: repository custom
+  CUDA solver.
 
-- optical fields and native-Yee absorbed power: Ansys Lumerical FDTD, with
-  production execution required on an NVIDIA B200;
-- steady thermal equation: the repository's custom CUDA finite-volume sparse
-  solver;
-- weighting potential, Shockley-Ramo PTE current, and electrical adjoint:
-  the repository's custom CUDA finite-element sparse solver.
+No Lumerical HEAT or CHARGE license is assumed. FDTDX/JAX is not an allowed
+production Maxwell substitute.
 
-No Lumerical HEAT or CHARGE license is assumed or required. "Lumerical-only"
-in this project means no FDTDX/JAX Maxwell surrogate; it does not replace the
-custom thermal or electrical solvers.
+## The design variable
 
-## Exact material rule
-
-Every physical objective evaluation must follow one path:
+This route uses density topology, not shape/level-set optimization:
 
 ```text
-continuous shape/level-set parameters p
-  -> geometry construction and 500-nm solid/void DFM enforcement
-  -> exact binary Au mask m in {0,1}
-  -> ordinary exact dispersive-Au geometry in Lumerical FDTD
-  -> native-Yee absorbed power Q
-  -> the identical m and geometry hash in custom thermal/electrical solves
-  -> Ia and Ib
+latent rho
+  -> 500-nm spatial filter
+  -> tanh projection with beta continuation
+  -> projected topology occupancy rho_bar in [0,1]
+  -> documented optical, thermal, and electrical constitutive maps
+  -> final thresholded 0/1 mask
+  -> independent ordinary dispersive-Au Lumerical reevaluation
 ```
 
-Continuous optimizer parameters are allowed to move an exact Au/void
-boundary. A continuous Au material fraction is not allowed in any physical
-solver. In particular, the following are prohibited:
+`rho_bar` is not an electron or hole density and is not claimed to be a
+fabricated gray Au alloy. It is the differentiable relaxation of the binary
+topology problem. The identical `rho_bar` array, shape, and SHA-256 must reach
+all three constitutive maps, but the maps need not use the same exponent or
+formula because permittivity, thermal conductivity, and electrical
+conductivity are different physical quantities.
 
-- gray `importnk` or diluted complex permittivity;
-- `np density` reinterpreted as Au occupancy;
-- optical `rho**3` with thermal/electrical `rho`;
-- independently altered material occupancy or geometry in the three solvers.
+## Optical material law: no rho cubed
 
-The Au material object used in Lumerical must remain a frozen dispersive
-material. Only its exact geometry changes. Each evaluation must record the
-SHA-256 of the canonical realized geometry; all three solvers must report the
-same hash. The geometry hash includes mask values and shape, physical x/y cell
-edges, Au z bounds, and the x=b/y=a mapping. A mask-only hash is merely a
-payload checksum and is not sufficient physical identity.
-
-`lumerical_4um_exact_au.py` constructs sampled Ordal-Au dispersion over a
-3.2--4.8 um guard band around the 3.6--4.4 um numerical source pulse. It also
-constructs sampled anisotropic TaIrTe4 and Kitamura-SiO2 inputs and maps the
-exact mask to deterministic non-overlapping ordinary-Au prisms. These are
-audited inputs, not yet a material-fit certificate: the actual Lumerical
-multi-coefficient fits must be read back across the band on the run host.
-
-This is a physical-geometry rule, not a demand that unlike numerical meshes
-store identical cell arrays. Lumerical conformal-interface tensors and
-thermal/electrical cut-cell fractions may represent the boundary on their own
-meshes. They are numerical discretizations of the same hash-identified binary
-geometry, not optimizer-controlled gray Au. Their convergence must be tested.
-
-`NP_DENSITY_ROUTE_REJECTED.md` records and retracts the invalid carrier route.
-There is no R1.3 requirement arising from `np density`.
-
-## What inverse design means under this rule
-
-Exact material does not mean that inverse design is impossible. It changes
-the optimization variable and derivative strategy:
-
-1. **Preferred: shape or level-set optimization.** A finite set of boundary
-   parameters or a level-set moves the interface while each Lumerical solve
-   still contains only ordinary Au and void. Use a Lumerical forward/adjoint
-   shape derivative only after central AD-FD passes at 4 um on the selected
-   mesh.
-2. **Fallback: exact-geometry finite differences or SPSA.** Central finite
-   differences are viable for a compact shape basis. SPSA needs two
-   perturbed physical evaluations per random direction, independent of the
-   number of parameters, but is noisy and must be averaged and checked
-   against independent coordinate/directional finite differences. Both sides
-   of every perturbation use exact dispersive Au.
-3. **Discrete candidate search.** Pixel flips, BESO-like updates, or a
-   trust-region candidate set may also preserve exact Au, but are expensive
-   and need full candidate reevaluation. They are not an excuse to reuse a
-   gray-material gradient.
-
-Hard-thresholding thousands of independent density pixels and feeding that
-mask to LD_MMA would have zero/undefined derivatives almost everywhere. The
-existing 80 x 80 gray-density LD_MMA path therefore cannot simply be relabeled
-as exact-Au optimization. A new parameterization and validated estimator are
-required.
-
-## Existing evidence and the next AD-FD gate
-
-Lumerical can forward-simulate ordinary dispersive Au. However, earlier
-repository controls at another wavelength found that several moving,
-conformal high-contrast Au shape derivatives failed finite differences,
-including wrong-sign errors. Those failures do not prove that the 4-um case
-is impossible, but they prohibit assuming that a generic LumOpt shape
-gradient is correct.
-
-The next optical experiment is therefore deliberately small:
-
-1. build the confirmed 4-um TaIrTe4 stack with an ordinary dispersive-Au
-   shape described by a compact smooth parameterization;
-2. use identical sources, time windows, conformal settings, and mesh for the
-   forward, adjoint, and independently rebuilt `p+h`/`p-h` projects;
-3. compare the Lumerical shape derivative with central finite differences for
-   multiple parameters, directions, and step sizes;
-4. separately check that each realized geometry is exact binary and that its
-   absorbed power/time closure is stable;
-5. accept the adjoint only if the error converges with step size and retains
-   the correct sign across representative geometries.
-
-If this gate fails, switch to the exact-geometry SPSA/finite-difference route;
-do not return to FDTDX, gray Au, or `np density`.
-
-## Thermal/electrical consistency
-
-The old O3/TE1 defect came from solving different effective devices. The new
-rule removes that ambiguity: thermal and electrical solvers receive the same
-realized 0/1 geometry as Maxwell, then apply their endpoint material
-properties to that geometry. Constitutive quantities have different units,
-but material occupancy does not:
+At the 4-um optimization frequency, use the nonlinear metal/dielectric
+interpolation
 
 ```text
-Maxwell:     m=1 -> dispersive Au; m=0 -> background/underlying stack
-thermal:     m=1 -> Au thermal coefficients and Au interfaces
-electrical:  m=1 -> Au electrical coefficients and contacts/interfaces
+n(rho_bar) = n_bg + rho_bar (n_Au - n_bg)
+k(rho_bar) = k_bg + rho_bar (k_Au - k_bg)
+epsilon(rho_bar) = [n(rho_bar) + i k(rho_bar)]^2
 ```
 
-Any numerical void-floor needed to make an electrical system nonsingular is
-a solver regularization, not an Au fraction. It must receive an independent
-sensitivity study and must not alter the geometry hash.
+with the passive `n+i k` convention. The frozen Ordal endpoint is
+`n_Au+i k_Au = 2.2+28.9i`, hence
+`epsilon_Au = -830.37+127.16i` at 4 um. The implementation and analytic
+complex derivative are in `au_density_relaxation.py`.
 
-## B200 launch and version status
+This is the physically motivated nonlinear interpolation proposed for
+metallic topology optimization by Christiansen et al.
+([DOI 10.1016/j.cma.2018.08.034](https://doi.org/10.1016/j.cma.2018.08.034))
+and used in the plasmonic FDTD inverse-design framework of Zeng et al.
+([DOI 10.1021/acsphotonics.1c00260](https://doi.org/10.1021/acsphotonics.1c00260)).
+It avoids assigning an unsupported cubic law to Au oscillator strength.
 
-Maxwell entry points are launched through:
+`rho**3` is not used. Binarization is produced by the filter/projection
+continuation and final discrete audit, not by pretending that a physical Au
+property scales cubically.
 
-```bash
-LUMERICAL_B200_GPU_INDEX=<physical-index> \
-  ./run_lumerical_b200.sh <python-script> [arguments]
-```
+## Lumerical carrier and its limitation
 
-The launcher refuses a non-B200 device. The current session host exposes RTX
-6000 Ada GPUs, so it cannot issue a B200 certificate. The current local
-installation is Lumerical 2026 R1.2. Nothing in the rejected `np density`
-experiment justifies an R1.3 upgrade. Exact version compatibility must be
-decided only by launching the ordinary exact-Au control on the actual B200 and
-recording the engine log.
+The first Lumerical-compatible implementation candidate is a complex
+`importnk2` layer generated from the equation above. The repository already
+has a validated precedent for this implementation pattern in
+`legacy_v261_optical_support`: a nonuniform complex density was mapped through
+the actual Lumerical component-Yee mesh, a sparse material Jacobian was built,
+and a full latent/filter/projection AD-FD gate passed for the earlier TaIrTe4
+optimization.
 
-## Fail-closed sequence before optimization
+That precedent proves the software pattern, not the Au physics. Au adds a
+large negative real permittivity and a possible intermediate-density
+zero-crossing resonance. Therefore the 4-um Au carrier remains blocked until
+the Au-specific gates below pass.
 
-1. Confirm the experimental flake outline/thickness, contacts, crystal axes,
-   stack, beam, Au role, and interface parameters.
-2. On the actual B200, pass fixed empty/full/simple exact-Au Lumerical forward
-   controls, time closure, native-Yee Q, and six-face energy balance.
-3. Perform full x/y/z/PML mesh convergence for both polarizations using exact
-   dispersive Au; AD-FD alone is not mesh convergence.
-4. Implement and validate the compact 4-um exact-Au shape/level-set estimator.
-   If adjoint AD-FD fails, validate an exact-geometry FD/SPSA estimator.
-5. Connect the same binary geometry to custom CUDA thermal/electrical solvers
-   and pass endpoint, mesh, floor-sensitivity, current-sign, and combined
-   directional-FD tests.
-6. Only then start an optimizer compatible with the certified estimator,
-   optimize `max min(+Ia,-Ib)`, and independently reevaluate the final 500-nm
-   DFM geometry for both polarizations.
+`importnk2` supplies a spatial complex index for the single-frequency
+relaxation; it is not being called an exact broadband Au material. A final
+binary candidate must use an ordinary sampled-data dispersive Au material.
+The imported endpoint must first agree with that ordinary material for the
+actual source spectrum. If the source bandwidth is too broad for this
+single-frequency relaxation, production remains blocked until a
+GPU-supported causal spatial-dispersion carrier is demonstrated. A custom
+Flexible Material Plugin is not a B200 solution because Lumerical GPU does
+not support that plugin framework.
+
+The endpoint/final control builder `lumerical_4um_exact_au.py` is retained for
+this distinction. It samples Ordal Au, anisotropic TaIrTe4, and Kitamura SiO2
+over a 3.2--4.8 um guard band around the 3.6--4.4 um source pulse, hashes the
+complete physical 0/1 geometry, and maps it to non-overlapping ordinary-Au
+prisms. Its sampled inputs still require actual Lumerical MCM fit readback.
+`lumerical_4um_mesh_contract.py` defines the sequential source/time/z/x-y/PML
+and domain-clearance controls for the exact endpoint/final cases. These files
+do not replace the density carrier or its uniform-rho resonance/AD-FD gates.
+
+The earlier `np density` proposal remains rejected. It is a semiconductor
+carrier-density attribute, not topology occupancy, and it is unnecessary for
+this route.
+
+## Maxwell derivative
+
+Do not use the bundled LumOpt metal gradient without an independent gate. The
+installed legacy and LumOpt2 topology implementations discard information
+needed for lossy negative-real Au in parts of their material derivative path.
+
+Use the repository's explicit discrete construction instead:
+
+1. update `rho_bar -> n+i k -> importnk2`;
+2. read the realized component-Yee permittivity on the frozen Lumerical mesh;
+3. build `J_c = d epsilon_Yee,c / d rho_bar` by colored centered material-map
+   finite differences without one Maxwell solve per pixel;
+4. verify every JVP/VJP transpose identity;
+5. contract `J_c^T` with the Lumerical forward/adjoint field product;
+6. add direct-loss, thermal-material, and electrical-material derivatives;
+7. pull the result through projection and filter transposes;
+8. compare the complete latent directional derivative with independently
+   rebuilt central finite differences for both polarizations and several
+   steps/directions.
+
+No empirical gradient scaling is allowed.
+
+## Required Au gates on the B200
+
+1. Empty layer, uniform `rho_bar=0`, uniform `rho_bar=1`, and ordinary
+   sampled-data Au controls must pass material readback, time stationarity,
+   native-Yee Q, and six-face flux closure.
+2. Imported `rho_bar=1` and ordinary dispersive Au must agree over the actual
+   source/monitor bandwidth, not only at one tabulated wavelength.
+3. Uniform `rho_bar` from 0 to 1 must be swept to detect artificial field/Q
+   peaks and optimizer-favored gray resonances. Passivity of the algebraic
+   material law alone is insufficient.
+4. The nonuniform density-to-component-Yee map must pass multi-direction
+   centered FD and transpose tests on the exact frozen mesh.
+5. Optical and complete Maxwell/thermal/electrical latent AD-FD must pass for
+   `Ea` and `Eb` before LD_MMA is enabled.
+6. Full x/y/z/PML mesh convergence, source recalibration, and time/Q closure
+   must pass on the same route.
+7. The final 500-nm solid/void mask must be independently rebuilt with
+   ordinary dispersive Au and reevaluated for `Ia>0`, `Ib<0`.
+
+The current host is not a B200, so this checkout can implement and test the
+solver-free constitutive law but cannot issue any of these Maxwell
+certificates.
+
+## Thermal and electrical maps
+
+The historical O3/TE1 defect was that optical used `rho**3` while thermal and
+electrical used `rho`. The correction is not to force every property to share
+one arbitrary exponent. The correction is:
+
+- share exactly one `rho_bar` and its hash;
+- give each physical coefficient an explicit endpoint-correct law;
+- differentiate every law through the same `rho_bar`;
+- pass fixed-Q and combined AD-FD;
+- verify the final exact-binary endpoint independently.
+
+The present shared-linear thermal/electrical maps remain provisional until
+their mixture/bound and void-floor sensitivity studies are complete. They are
+not promoted merely because the optical rho-cubed law was removed.

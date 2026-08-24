@@ -4,11 +4,12 @@ Status: **production blocked**. The repository can run numerical diagnostics,
 but the historical topology is not a validated physical design and a new
 optimization must not start yet.
 
-Superseding correction: the shared-linear gray law discussed below is now a
-historical consistency diagnostic, not a production material representation.
-The authorized route requires exact binary dispersive-Au geometry in every
-Lumerical evaluation and the same canonical geometry in custom CUDA thermal
-and electrical solves. See `LUMERICAL_MAXWELL_GPU_PDE_ROUTE.md` and
+Superseding correction: the shared-linear gray law discussed below is a
+historical FDTDX consistency diagnostic, not the selected Lumerical optical
+law. The authorized route is density topology with one projected occupancy,
+the nonlinear Christiansen `n-k` optical relaxation, documented custom-CUDA
+thermal/electrical maps, and an independent exact-binary ordinary
+dispersive-Au final reevaluation. See `LUMERICAL_MAXWELL_GPU_PDE_ROUTE.md` and
 `NP_DENSITY_ROUTE_REJECTED.md`.
 
 ## Intended observable
@@ -46,8 +47,9 @@ sample-air boundaries are insulating, and the transverse example uses an
 1. **Historical O3/TE1 topology is invalid for production.** Optical Au used
    `rho^3` while thermal and electrical Au used `rho`. The robust run also
    omitted nominal `eta=0.50`; its nominal `Ib` had the wrong sign. The later
-   shared-linear/all-projection correction is diagnostic only and has not been
-   converted to the required exact-Au Lumerical route.
+   shared-linear/all-projection correction is diagnostic only. The selected
+   Lumerical `n-k` law is now implemented solver-free but has not passed its
+   B200 endpoint, resonance, Jacobian, AD-FD, or mesh gates.
 
 2. **No converged mesh exists.** The historical partial-z sweep refined only
    Au, TaIrTe4, and SiO2, and its tables are stale because they used O3/TE1,
@@ -101,10 +103,12 @@ sample-air boundaries are insulating, and the transverse example uses an
   4 um readback is zero/negligible loss; code now fails if a future material
   contract has non-negligible substrate loss instead of silently discarding it.
 - The existing 4-um material certificate reads only the center-frequency n,k;
-  it is not a Lumerical time-domain dispersion certificate. The exact-Au route
-  now constructs sampled Ordal-Au, anisotropic-TaIrTe4, and Kitamura-SiO2
-  inputs over a guard band, but must still pass Lumerical fitted-material
-  readback across that band before any Maxwell result is promoted.
+  it is not a Lumerical time-domain dispersion certificate. The endpoint/final
+  exact-Au control builder now constructs sampled Ordal-Au,
+  anisotropic-TaIrTe4, and Kitamura-SiO2 inputs over a guard band, but must
+  still pass Lumerical fitted-material readback across that band before any
+  Maxwell result is promoted. The continuous optimizer carrier has separate
+  bandwidth, uniform-density resonance, and AD-FD gates.
 - TaIrTe4 uses `epsilon_c=epsilon_b` because no independent c-axis table is in
   the current contract. This approximation needs explicit acceptance or c-axis
   data if out-of-plane absorption is important.
@@ -127,7 +131,8 @@ sample-air boundaries are insulating, and the transverse example uses an
 
 - One shared linear Au material fraction in the legacy Maxwell, thermal,
   electrical, and direct/adjoint code. This fixed O3/TE1 consistency only; it
-  is now production-blocked and must not be mistaken for exact Au.
+  is now production-blocked and must not be mistaken for the selected
+  Lumerical `n-k` density relaxation or final exact Au.
 - Robust constraints for `eta=0.35, 0.50, 0.65`, including both signed-current
   constraints and grayness at every projection.
 - Production entry points blocked until hash-linked certificates exist.
@@ -180,8 +185,9 @@ sample-air boundaries are insulating, and the transverse example uses an
 6. Sweep electrical void floors and uncertain Au/TaIrTe4 contacts.
 7. Issue one combined multi-direction AD-FD certificate on the chosen mesh,
    hash-linked to the mesh and device certificates.
-8. Validate a 4-um exact-Au Lumerical shape/level-set derivative or an
-   exact-geometry stochastic/FD estimator; do not resume either O3/TE1 or the
-   shared-gray LD_MMA history.
+8. Validate the 4-um Lumerical `n-k` density carrier: ordinary-Au endpoint and
+   bandwidth parity, uniform-density resonance sweep, component-Yee Jacobian,
+   and complete latent AD-FD. Do not resume either O3/TE1 or the shared-linear
+   FDTDX LD_MMA history.
 9. Revalidate the final exact-binary design on the finer meshes and parameter
    sensitivity corners before claiming the polarization current switch.

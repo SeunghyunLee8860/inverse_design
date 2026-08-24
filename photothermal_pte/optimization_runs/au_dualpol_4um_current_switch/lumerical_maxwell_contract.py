@@ -1,8 +1,10 @@
-"""Fail-closed contract for exact-Au Lumerical plus custom GPU PDE solvers.
+"""Fail-closed contract for Lumerical density topology plus custom GPU PDEs.
 
-Optimizer parameters may be continuous, but every physical evaluation must
-realize one exact binary Au geometry.  That same geometry is consumed by the
-optical, thermal, and electrical solvers.
+One filtered/projected topology occupancy is shared by the optical, thermal,
+and electrical constitutive maps.  A continuous occupancy is allowed during
+gradient optimization; exact binary dispersive Au is required at endpoint
+controls and final promotion.  The occupancy is neither an ``np density``
+carrier field nor a physical electron/hole density.
 """
 
 from __future__ import annotations
@@ -16,6 +18,10 @@ import subprocess
 from typing import Any
 
 import numpy as np
+
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.au_density_relaxation import (
+    audit as density_relaxation_audit,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -39,26 +45,29 @@ class LumericalMaxwellContract:
     thermal_execution_mode: str = "custom sparse linear solve on CUDA"
     electrical_execution_mode: str = "custom sparse linear solve on CUDA"
     optimization_design_map: str = (
-        "continuous shape/level-set parameters -> 500-nm DFM geometry map -> "
-        "one exact binary Au mask"
+        "latent rho -> 500-nm density filter -> tanh projection with beta "
+        "continuation -> one shared projected topology occupancy"
     )
     shared_design_field: str = (
-        "one exact 0/1 Au mask plus physical x/y cell edges, z bounds, and axis "
-        "mapping with one canonical geometry SHA-256 is passed to all three "
-        "physical solvers"
+        "one projected occupancy array with one shape and SHA-256 is passed to "
+        "all three constitutive maps; the final 0/1 mask additionally uses a "
+        "canonical hash over physical edges, z bounds, and axis mapping"
     )
-    continuous_geometry_parameters_allowed: bool = True
-    gray_au_material_in_maxwell_allowed: bool = False
-    gray_au_material_in_thermal_allowed: bool = False
-    gray_au_material_in_electrical_allowed: bool = False
-    exact_binary_required_for_every_physics_evaluation: bool = True
+    density_topology_required: bool = True
+    shape_or_level_set_required: bool = False
+    continuous_relaxation_allowed_during_optimization: bool = True
+    exact_binary_required_for_every_physics_evaluation: bool = False
     numerical_interface_cut_cells_allowed: bool = True
     different_optical_thermal_electrical_design_fields_allowed: bool = False
     exact_binary_required_for_final_promotion: bool = True
-    exact_dispersive_au_required_in_every_maxwell_evaluation: bool = True
+    exact_dispersive_au_required_at_material_endpoint: bool = True
+    exact_dispersive_au_required_for_final_reevaluation: bool = True
+    optical_relaxation_law: str = "christiansen_nk_then_square_v1"
+    optical_rho_power: float | None = None
     np_density_as_au_topology_variable_allowed: bool = False
-    optical_geometry_gradient_status: str = (
-        "BLOCKED_PENDING_4UM_EXACT_AU_SHAPE_ADFD_OR_VALIDATED_BINARY_ESTIMATOR"
+    continuous_lumerical_au_carrier_status: str = (
+        "SOLVER_FREE_NK_LAW_IMPLEMENTED; "
+        "BLOCKED_PENDING_B200_ENDPOINT_BANDWIDTH_RESONANCE_AND_SAME_STEP_ADFD"
     )
     bundled_lumopt_topology_gradient_allowed_without_au_adfd: bool = False
     fdtdx_allowed: bool = False
@@ -74,8 +83,34 @@ class LumericalMaxwellContract:
 CONTRACT = LumericalMaxwellContract()
 
 
+def canonical_projected_density(density: np.ndarray) -> np.ndarray:
+    """Validate and canonicalize the shared projected topology occupancy."""
+
+    value = np.asarray(density, dtype=np.float64)
+    if value.ndim != 2 or value.size == 0:
+        raise ValueError("projected Au topology density must be a non-empty 2-D array")
+    if not np.all(np.isfinite(value)):
+        raise ValueError("projected Au topology density contains a non-finite value")
+    tolerance = 1.0e-12
+    if np.any(value < -tolerance) or np.any(value > 1.0 + tolerance):
+        raise ValueError("projected Au topology density must remain in [0,1]")
+    return np.ascontiguousarray(np.clip(value, 0.0, 1.0))
+
+
+def projected_density_sha256(density: np.ndarray) -> str:
+    """Hash the exact relaxed design state passed to every constitutive map."""
+
+    value = canonical_projected_density(density)
+    digest = hashlib.sha256()
+    digest.update(b"lumerical-au-projected-topology-density-v4\0")
+    digest.update(json.dumps(list(value.shape), separators=(",", ":")).encode("ascii"))
+    digest.update(b"\0float64-c\0")
+    digest.update(value.tobytes(order="C"))
+    return digest.hexdigest()
+
+
 def canonical_binary_mask(mask: np.ndarray) -> np.ndarray:
-    """Validate the physical Au geometry and return exact uint8 values."""
+    """Validate an endpoint/final-promotion mask and return exact uint8 values."""
 
     value = np.asarray(mask)
     if value.ndim != 2 or value.size == 0:
@@ -85,7 +120,7 @@ def canonical_binary_mask(mask: np.ndarray) -> np.ndarray:
     if not np.all(np.isfinite(value)):
         raise ValueError("Au mask contains a non-finite value")
     if not np.all((value == 0) | (value == 1)):
-        raise ValueError("physical Au mask must contain only exact 0/1 values")
+        raise ValueError("final Au mask must contain only exact 0/1 values")
     return np.ascontiguousarray(value, dtype=np.uint8)
 
 
@@ -322,9 +357,16 @@ def audit_environment(*, requested_gpu_index: int | None = None) -> dict[str, An
     ]
     b200 = [item for item in candidates if "B200" in str(item["name"]).upper()]
     source = _source_audit()
+    density = density_relaxation_audit()
     gates = {
         "lumapi_v261_present": LUMAPI_PATH.is_file(),
         "installed_lumopt_requires_custom_au_route": bool(source.get("passed")),
+        "solver_free_au_density_law_passed": bool(
+            density["passive_on_uniform_density_sweep"]
+            and density["exact_background_endpoint"]
+            and density["exact_au_endpoint"]
+            and not density["rho_cubed_used"]
+        ),
         "requested_gpu_exists": bool(candidates),
         "requested_gpu_is_nvidia_b200": bool(b200),
     }
@@ -339,14 +381,17 @@ def audit_environment(*, requested_gpu_index: int | None = None) -> dict[str, An
         "gpu_inventory": inventory,
         "matching_b200": b200,
         "installed_source_audit": source,
+        "au_density_relaxation": density,
         "gates": gates,
         "notes": [
             "Only FDTD time stepping uses the B200; Lumerical meshing and scripts use CPU.",
             "Thermal and electrical solves remain the repository custom CUDA PDE solvers.",
             "No Lumerical HEAT or CHARGE license is assumed or required.",
-            "Continuous parameters may move a boundary; gray Au material is prohibited.",
-            "Every solver must consume the same hash-identified exact binary Au geometry.",
-            "The exact-Au shape derivative or binary search estimator must pass same-step validation before use.",
+            "Density topology, not shape/level-set optimization, is the selected design method.",
+            "One hash-identified projected occupancy is shared by all constitutive maps.",
+            "The optical law is n-k interpolation followed by epsilon=(n+ik)^2; rho**3 is not used.",
+            "The custom Au density-to-Yee derivative must pass same-step AD-FD before use.",
+            "Final promotion requires independent ordinary dispersive-Au binary reevaluation.",
             "No Maxwell solve is authorized when the B200 gate is false.",
         ],
     }

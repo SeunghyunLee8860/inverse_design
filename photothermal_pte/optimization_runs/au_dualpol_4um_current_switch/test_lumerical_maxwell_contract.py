@@ -9,8 +9,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     CONTRACT,
     binary_mask_sha256,
     canonical_binary_mask,
+    canonical_projected_density,
     exact_au_geometry_audit,
     exact_au_geometry_sha256,
+    projected_density_sha256,
 )
 
 
@@ -20,19 +22,30 @@ def test_contract_preserves_lumerical_plus_custom_gpu_pde_architecture() -> None
     assert payload["maxwell_accelerator_required"] == "NVIDIA B200"
     assert "custom CUDA" in payload["thermal_solver"]
     assert "custom CUDA" in payload["electrical_solver"]
-    assert payload["continuous_geometry_parameters_allowed"] is True
-    assert payload["gray_au_material_in_maxwell_allowed"] is False
-    assert payload["gray_au_material_in_thermal_allowed"] is False
-    assert payload["gray_au_material_in_electrical_allowed"] is False
-    assert payload["exact_binary_required_for_every_physics_evaluation"] is True
+    assert payload["density_topology_required"] is True
+    assert payload["shape_or_level_set_required"] is False
+    assert payload["continuous_relaxation_allowed_during_optimization"] is True
+    assert payload["exact_binary_required_for_every_physics_evaluation"] is False
     assert payload["numerical_interface_cut_cells_allowed"] is True
     assert payload["different_optical_thermal_electrical_design_fields_allowed"] is False
     assert payload["exact_binary_required_for_final_promotion"] is True
-    assert payload["exact_dispersive_au_required_in_every_maxwell_evaluation"] is True
+    assert payload["exact_dispersive_au_required_at_material_endpoint"] is True
+    assert payload["exact_dispersive_au_required_for_final_reevaluation"] is True
+    assert payload["optical_relaxation_law"] == "christiansen_nk_then_square_v1"
+    assert payload["optical_rho_power"] is None
     assert payload["np_density_as_au_topology_variable_allowed"] is False
     assert payload["bundled_lumopt_topology_gradient_allowed_without_au_adfd"] is False
     assert payload["fdtdx_allowed"] is False
     assert payload["jax_maxwell_allowed"] is False
+
+
+def test_projected_density_hash_accepts_gray_and_is_layout_sensitive() -> None:
+    density = np.asarray([[0.0, 0.25, 0.5], [0.75, 1.0, 0.125]])
+    assert np.array_equal(canonical_projected_density(density), density)
+    assert projected_density_sha256(density) != projected_density_sha256(density.T)
+    changed = density.copy()
+    changed[0, 0] = 0.01
+    assert projected_density_sha256(density) != projected_density_sha256(changed)
 
 
 def test_binary_mask_hash_is_shape_and_layout_sensitive() -> None:
@@ -111,3 +124,17 @@ def test_physical_geometry_rejects_bad_coordinate_contract(
 def test_binary_mask_rejects_nonphysical_inputs(bad: np.ndarray) -> None:
     with pytest.raises(ValueError):
         canonical_binary_mask(bad)
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        np.asarray([0.0, 0.5]),
+        np.asarray([[0.0, 1.01]]),
+        np.asarray([[0.0, np.nan]]),
+        np.empty((0, 2)),
+    ],
+)
+def test_projected_density_rejects_bad_inputs(bad: np.ndarray) -> None:
+    with pytest.raises(ValueError):
+        canonical_projected_density(bad)

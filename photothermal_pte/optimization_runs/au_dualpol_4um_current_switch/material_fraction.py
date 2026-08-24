@@ -1,10 +1,11 @@
-"""Single Au material-fraction contract shared by all three physics.
+"""Historical shared-linear FDTDX material-fraction baseline.
 
 ``rho`` is the projected topology variable.  During continuous optimization it
 is only a numerical relaxation; only an exact-binary density is promoted as a
-physical Au/void geometry.  Maxwell, thermal, and electrical operators must
-nevertheless see the same relaxed Au fraction so one subsystem cannot exploit
-a different amount of gray Au from another subsystem.
+physical Au/void geometry.  This module removed the historical O3/TE1 software
+mismatch, but it is not the selected Lumerical optical constitutive law.  The
+Lumerical route uses the same projected ``rho`` with the published nonlinear
+``n-k`` interpolation in ``au_density_relaxation.py``.
 """
 
 from __future__ import annotations
@@ -31,6 +32,7 @@ def d_au_material_fraction_drho(rho):
 
 def audit() -> dict[str, object]:
     return {
+        "scope": "historical_fdtdx_consistency_baseline",
         "law": AU_MATERIAL_FRACTION_LAW,
         "exponent": AU_MATERIAL_FRACTION_EXPONENT,
         "optical_fraction": "au_material_fraction(rho)",
@@ -38,4 +40,6 @@ def audit() -> dict[str, object]:
         "electrical_fraction": "au_material_fraction(rho)",
         "gray_density_is_physical_geometry": False,
         "promotion_requires_exact_binary_density": True,
+        "selected_lumerical_optical_law": "christiansen_nk_then_square_v1",
+        "rho_cubed_used_in_selected_lumerical_optical_law": False,
     }

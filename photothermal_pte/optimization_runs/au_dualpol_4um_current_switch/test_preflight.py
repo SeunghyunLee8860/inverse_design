@@ -26,6 +26,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_f
     AU_MATERIAL_FRACTION_LAW,
     au_material_fraction,
     d_au_material_fraction_drho,
+    audit as material_fraction_audit,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.robust_contract import (
     ROBUST_ETAS,
@@ -106,8 +107,8 @@ def test_adjoint_material_slices_follow_the_realized_mesh() -> None:
 
 
 def test_historical_gray_path_used_one_linear_audit_fraction() -> None:
-    # Historical consistency check only.  The Lumerical production contract
-    # now requires exact binary Au in every physical evaluation.
+    # Historical consistency check only.  The selected Lumerical density law
+    # is the nonlinear n-k interpolation, not this FDTDX baseline.
     rho = np.asarray((0.0, 0.25, 0.5, 1.0))
     assert AU_MATERIAL_FRACTION_LAW == "shared_linear_projected_density"
     assert AU_MATERIAL_FRACTION_EXPONENT == 1.0
@@ -244,15 +245,7 @@ def test_production_readiness_requires_hash_linked_complete_certificates(
     calibration_path = tmp_path / "calibration.json"
     mesh_path = tmp_path / "mesh.json"
     gradient_path = tmp_path / "gradient.json"
-    material = {
-        "law": AU_MATERIAL_FRACTION_LAW,
-        "exponent": AU_MATERIAL_FRACTION_EXPONENT,
-        "optical_fraction": "au_material_fraction(rho)",
-        "thermal_fraction": "au_material_fraction(rho)",
-        "electrical_fraction": "au_material_fraction(rho)",
-        "gray_density_is_physical_geometry": False,
-        "promotion_requires_exact_binary_density": True,
-    }
+    material = material_fraction_audit()
     device = {
         "status": DEVICE_STATUS,
         "confirmations": {
@@ -323,10 +316,11 @@ def test_production_readiness_requires_hash_linked_complete_certificates(
     )
     assert not historically_complete["ready"]
     assert historically_complete["failed_checks"] == [
-        "exact_au_lumerical_geometry_route_implemented"
+        "lumerical_dispersive_density_route_validated"
     ]
-    assert historically_complete["exact_au_geometry_route_status"] == (
-        "BLOCKED_NOT_IMPLEMENTED_OR_VALIDATED"
+    assert historically_complete["lumerical_density_route_status"] == (
+        "SOLVER_FREE_NK_LAW_IMPLEMENTED; "
+        "BLOCKED_PENDING_B200_ENDPOINT_BANDWIDTH_RESONANCE_ADFD_AND_MESH_GATES"
     )
     with pytest.raises(RuntimeError, match="passing production-readiness"):
         calibrated_source_scales(historically_complete, 2.0)

@@ -14,6 +14,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_f
     AU_MATERIAL_FRACTION_EXPONENT,
     AU_MATERIAL_FRACTION_LAW,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.au_density_relaxation import (
+    CONTRACT as AU_DENSITY_RELAXATION,
+)
 
 
 @dataclass(frozen=True)
@@ -52,9 +55,14 @@ class Contract:
     electrical_contact_S_m2: float = 1.0e10
     au_material_fraction_law: str = AU_MATERIAL_FRACTION_LAW
     au_material_fraction_exponent: float = AU_MATERIAL_FRACTION_EXPONENT
-    production_maxwell_route: str = "Lumerical_exact_dispersive_Au_geometry"
-    production_gray_au_allowed: bool = False
-    production_geometry_identity: str = (
+    lumerical_optical_density_law: str = AU_DENSITY_RELAXATION.law
+    lumerical_optical_rho_power: float | None = AU_DENSITY_RELAXATION.optical_rho_power
+    production_maxwell_route: str = (
+        "Lumerical_nk_density_relaxation_then_exact_dispersive_Au_final"
+    )
+    production_continuous_topology_relaxation_allowed: bool = True
+    production_relaxation_is_physical_gray_au: bool = False
+    final_geometry_identity: str = (
         "exact 0/1 mask plus physical x/y edges, z bounds, and x=b/y=a mapping"
     )
 
@@ -93,14 +101,15 @@ class Contract:
                 "thermal/electrical shunt, not a measurement electrode"
             ),
             gray_density_role=(
-                "historical FDTDX consistency diagnostic only; the legacy "
-                "optical, thermal, and electrical operators share one linear "
-                "fraction, but no gray field is authorized for production"
+                "filtered/projected topology occupancy, not carrier density; "
+                "all physics share the same occupancy but use documented "
+                "constitutive maps; Lumerical optical uses n-k interpolation "
+                "then square with no rho**3; final promotion requires an "
+                "exact-binary ordinary dispersive-Au reevaluation"
             ),
-            production_geometry_role=(
-                "every Maxwell/thermal/electrical evaluation consumes one "
-                "hash-identical exact Au geometry; solver cut cells are only "
-                "converged discretizations of that fixed physical boundary"
+            final_geometry_role=(
+                "the promoted 0/1 candidate uses one hash-identical physical "
+                "Au geometry across Maxwell, thermal, and electrical solvers"
             ),
             objective=(
                 "maximize t subject to +I(E||a)>=t and -I(E||b)>=t; "

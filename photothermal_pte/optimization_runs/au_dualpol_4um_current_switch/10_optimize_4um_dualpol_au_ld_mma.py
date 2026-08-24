@@ -821,7 +821,7 @@ def main() -> int:
         if manifest.get("au_material_fraction") != material_fraction_audit():
             raise RuntimeError(
                 "resume checkpoint uses a different or undocumented Au material "
-                "fraction; this legacy gray optimizer cannot start an exact-Au run"
+                "fraction; start a new run under the certified Lumerical density law"
             )
         if manifest.get("production_readiness") != readiness:
             raise RuntimeError(
