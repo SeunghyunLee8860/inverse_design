@@ -146,6 +146,31 @@ class FdtdxFreshTwoPoleMaterialContractTest(unittest.TestCase):
                     self.fdtdx_source,
                 )
 
+    def test_32_period_case_changes_binding_but_not_material_axes(self) -> None:
+        longer = FreshCaseSpec(
+            mesh=MeshSpec(z_factor=16),
+            time=TimeSpec(
+                total_periods=32,
+                window_periods=4,
+                courant_factor=0.25,
+            ),
+        )
+        longer_law = material_law_contract(
+            longer,
+            case_contract(longer),
+            "2" * 64,
+            self.fdtdx_source,
+        )
+        self.assertEqual(
+            longer_law["case_binding"]["time_spec"]["total_periods"],
+            32,
+        )
+        self.assertEqual(longer_law["material_axes"], self.law["material_axes"])
+        self.assertNotEqual(
+            longer_law["material_law_contract_sha256"],
+            self.law["material_law_contract_sha256"],
+        )
+
     def test_unsupported_mesh_or_time_fails_closed(self) -> None:
         unsupported_mesh = FreshCaseSpec(
             mesh=MeshSpec(z_factor=16, design_xy_factor=2),
@@ -160,7 +185,11 @@ class FdtdxFreshTwoPoleMaterialContractTest(unittest.TestCase):
             )
         unsupported_time = FreshCaseSpec(
             mesh=MeshSpec(z_factor=16),
-            time=TimeSpec(total_periods=32, window_periods=4, courant_factor=0.25),
+            time=TimeSpec(
+                total_periods=40,
+                window_periods=4,
+                courant_factor=0.25,
+            ),
         )
         with self.assertRaises(RuntimeError):
             material_law_contract(

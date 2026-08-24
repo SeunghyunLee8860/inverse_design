@@ -46,6 +46,24 @@ class FullZExtensionTest(unittest.TestCase):
             self.assertEqual(cases[level].time.total_periods, 24)
             self.assertEqual(cases[level].time.window_periods, 4)
             self.assertEqual(cases[level].time.courant_factor, 0.25)
+    def test_z16_32_period_case_changes_only_total_duration(self) -> None:
+        base = expected_extension_case("z16")
+        longer = expected_extension_case("z16", 32)
+        self.assertEqual(base.mesh, longer.mesh)
+        self.assertEqual(base.pml_alpha_scale, longer.pml_alpha_scale)
+        self.assertEqual(
+            base.pml_target_reflection, longer.pml_target_reflection
+        )
+        self.assertEqual(base.time.window_periods, longer.time.window_periods)
+        self.assertEqual(base.time.courant_factor, longer.time.courant_factor)
+        self.assertEqual(
+            base.time.source_startup_periods,
+            longer.time.source_startup_periods,
+        )
+        self.assertEqual(base.time.total_periods, 24)
+        self.assertEqual(longer.time.total_periods, 32)
+        with self.assertRaises(ValueError):
+            expected_extension_case("z16", 40)
 
     def test_extension_case_writer_is_canonical_and_no_overwrite(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -63,6 +81,18 @@ class FullZExtensionTest(unittest.TestCase):
             self.assertEqual(result["file_sha256"], file_sha256(output))
             with self.assertRaises(RuntimeError):
                 write_extension_case("z16", output)
+
+    def test_32_period_writer_is_canonical(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory).resolve() / "z16_t32.json"
+            result = write_extension_case("z16", output, 32)
+            spec, payload, audit = load_case_contract(
+                output, result["file_sha256"]
+            )
+            self.assertEqual(spec, expected_extension_case("z16", 32))
+            self.assertEqual(result["total_periods"], 32)
+            self.assertEqual(payload["time_spec"]["total_periods"], 32)
+            self.assertTrue(audit["ready"])
 
 
     @staticmethod

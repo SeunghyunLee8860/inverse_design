@@ -38,6 +38,7 @@ ALGORITHM_IMPLEMENTATION = (
     Path(__file__).resolve().parent / "fdtdx_fresh_ade_precision_diagnostic.py"
 )
 SUPPORTED_Z_FACTORS = (8, 16, 32)
+SUPPORTED_TOTAL_PERIODS = (24, 32)
 AXIS_TO_SOLVER_COMPONENT = {"b": "x", "a": "y", "c": "z"}
 
 
@@ -65,7 +66,9 @@ def _require_supported_case(spec: FreshCaseSpec) -> None:
     checks = {
         "z_factor_supported": spec.mesh.z_factor in SUPPORTED_Z_FACTORS,
         "only_full_domain_z_differs_from_default": spec.mesh == expected_mesh,
-        "total_periods_is_24": spec.time.total_periods == 24,
+        "total_periods_supported": (
+            spec.time.total_periods in SUPPORTED_TOTAL_PERIODS
+        ),
         "window_periods_is_4": spec.time.window_periods == 4,
         "courant_factor_is_0p25": spec.time.courant_factor == 0.25,
     }
