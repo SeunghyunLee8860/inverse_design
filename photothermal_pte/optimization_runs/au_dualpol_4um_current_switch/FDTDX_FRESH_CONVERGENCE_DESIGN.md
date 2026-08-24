@@ -314,14 +314,38 @@ material axes. Clean external preflight file SHA-256 values are:
 This is a pinned coefficient-generator certificate only, not a placed solver
 array, time-domain material, field, or mesh certificate.
 
-The two-pole results are not a material certificate. They only establish a
-numerical candidate with positive oscillator strengths and recurrence roots no
-larger than one for Au and every TaIrTe4 axis at z8, z16, and z32. Before using
-it, introduce a separately hashed material-law contract, prove exact two-pole
-coefficient readback on every axis, pass source/time/stationarity tests, and
-rerun z8, z16, and z32 with the identical algorithm. Comparing old single-pole
-z8 directly with any new two-pole level is forbidden. Optimization and every
-downstream convergence stage remain blocked.
+The candidate law then passed a second, stronger placement gate at clean code
+commit `011e0d36`. `fdtdx_4um_model.build_model` keeps its historical
+single-pole path as the default and accepts the two-pole law only through an
+explicit argument. It recomputes the law self-hash, checks exact dt and target
+epsilon, instantiates the physical poles, reruns pinned FDTDX coefficient
+generation, and requires bit-exact float32 endpoints before object placement.
+The exact-binary material path now fills and reads back every pole rather than
+only pole zero.
+
+External zero-time-step placed-array reports are under
+`two_pole_solver_array_011e0d36` with SHA-256 values:
+
+| z factor | grid | placed-array JSON SHA-256 |
+|---:|---|---|
+| 8 | `196 x 196 x 320` | `126ac0aa053cc31c576700f1527e8a6f9a9d1dbdbda433bf7b38df13f272ec5c` |
+| 16 | `196 x 196 x 640` | `28887e54bf29b51f818b962e0072fb774cb496e9bf19cfcf4c0bf858c9d0465c` |
+| 32 | `196 x 196 x 1280` | `adfa0e0332bc487df31296b7116ea757f501a408f73e77939cf989ec68c74266` |
+
+All reports pass exact case/law/dt/PML/mesh binding. The c1/c2/c3 arrays have
+leading shape `(2,3)` for two poles and three Cartesian components; c4 is
+absent. Au uses exact binary air/Au endpoints on every pole, TaIrTe4 preserves
+`Ex->b`, `Ey->a`, and `Ez->c` on every pole, and Si/SiO2 inverse permittivity
+readback passes. Every realized epsilon is passive and within `3.1e-8` relative
+error of its original target.
+
+The two-pole results are still not a material, field, time, source-pair, or mesh
+certificate. The next required stage is a separate hash-bound forward-only
+path that reruns all-air Ea/Eb source pairs and exact-binary
+material/time/stationarity cases at z8, z16, and z32 under their respective
+candidate laws. Adjoint and optimizer entry points remain forbidden. Comparing
+old single-pole z8 directly with any new two-pole field level is forbidden, and
+every downstream convergence stage remains blocked.
 
 ## Comparison and promotion rules
 

@@ -187,8 +187,37 @@ values are z8
 z16 `aa91d260271982f2bf3c4aba523cda6127a18ab6ddac50514628fbe8f5f59a9f`,
 and z32
 `4f5e3da15bcbc571fd8c9d98bc30ca4be4f5b5ac8b3266efe78a01d93d9202b6`.
-These are coefficient-generator checks only; solver-array placement remains the
-next blocker.
+
+Placed-array support and its zero-time-step preflight were committed at
+`011e0d36`. The historical single-pole builder remains the default; candidate
+use is opt-in, canonical-self-hash checked, and rejected for adjoint placement.
+The external report hashes under `two_pole_solver_array_011e0d36` are z8
+`126ac0aa053cc31c576700f1527e8a6f9a9d1dbdbda433bf7b38df13f272ec5c`,
+z16 `28887e54bf29b51f818b962e0072fb774cb496e9bf19cfcf4c0bf858c9d0465c`,
+and z32
+`adfa0e0332bc487df31296b7116ea757f501a408f73e77939cf989ec68c74266`.
+All three pass exact solver-array, material-axis, binary-Au, case, dt, mesh, and
+PML readback. They execute zero field steps and remain candidate-only.
+
+Reproduce one level in a new absolute output file with:
+
+```bash
+CUDA_VISIBLE_DEVICES=<one_idle_gpu> XLA_PYTHON_CLIENT_PREALLOCATE=false \
+FDTDX_SOURCE_DIR=/absolute/pinned/fdtdx \
+/home/seunghyun200/.venvs/fdtdx-fresh-py312/bin/python -m \
+  photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_two_pole_solver_array_preflight \
+  --case-contract /absolute/case_zN.json \
+  --case-contract-sha256 <case_file_sha256> \
+  --material-law /absolute/two_pole_law_zN.json \
+  --material-law-sha256 <material_law_file_sha256> \
+  --fdtdx-source /absolute/pinned/fdtdx \
+  --output /absolute/new/FDTDX_FRESH_TWO_POLE_SOLVER_ARRAY_zN.json
+```
+
+The next blocker is not placement. It is a new forward-only, hash-bound
+source/material runner that permits the candidate law while keeping adjoint and
+optimizer paths disabled, followed by same-law z8/z16/z32 source-pair,
+time/stationarity, and field/absorption validation.
 
 ## Convergence rule
 

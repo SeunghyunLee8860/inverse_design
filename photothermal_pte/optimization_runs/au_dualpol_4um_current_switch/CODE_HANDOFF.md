@@ -289,7 +289,7 @@ source-only report, Ea/Eb pair, and material report binds one canonical
 stage is now complete for the exact-binary 375-pixel
 `l_shape_4um_with_500nm_arms` reference. Runs were made at clean commit
 `01a8ad8a`; the independent verifier and its 12 focused tests were committed
-and pushed as `5e376ce1`. All explicit FDTDX regression tests pass: 105
+and pushed as `5e376ce1`. All explicit FDTDX regression tests pass: 130
 `unittest` tests; the separate pytest forensic file is not runnable in the
 locked fresh venv because pytest is intentionally absent.
 
@@ -391,8 +391,8 @@ z16, and z32 law-file SHA-256 values are respectively
 and `302ab4e8991b55d0fb17c2ff5332b156fb29401ac04e026e0394f7e6c1fbcd1d`.
 The new z32 canonical case-file SHA-256 is
 `33398486f542fa0f1c7b063011e61992f7830b7cd36c25c8d6863c553aa3fbf4`;
-its grid is `196 x 196 x 1280`. These law files are still candidate-only and
-have not been applied to a FDTDX solver array or field run.
+its grid is `196 x 196 x 1280`. These law files remain candidate-only. They are now
+applied only by the zero-time-step placed-array preflight below; no field run uses them yet.
 
 The pinned coefficient preflight was committed at `7504045c`. Its clean z8,
 z16, and z32 external JSON SHA-256 values are
@@ -400,8 +400,32 @@ z16, and z32 external JSON SHA-256 values are
 `aa91d260271982f2bf3c4aba523cda6127a18ab6ddac50514628fbe8f5f59a9f`, and
 `4f5e3da15bcbc571fd8c9d98bc30ca4be4f5b5ac8b3266efe78a01d93d9202b6`.
 All four axes at all three levels reproduce c1/c2/c3 bit-exactly through
-pinned FDTDX and c4 is exactly zero. This still is not placed-array or field
-evidence.
+pinned FDTDX and c4 is exactly zero.
+
+The opt-in model adapter and placed solver-array preflight were committed and
+pushed as `011e0d36`. The historical single-pole path remains the default; the
+candidate path requires the exact canonical law self-hash and rejects adjoint
+placement. Clean GPU-7 outputs are external under
+`/home/seunghyun200/fdtdx_results/l500_full_z_150a7592_20260824/two_pole_solver_array_011e0d36`:
+
+- z8 JSON SHA-256: `126ac0aa053cc31c576700f1527e8a6f9a9d1dbdbda433bf7b38df13f272ec5c`
+- z16 JSON SHA-256: `28887e54bf29b51f818b962e0072fb774cb496e9bf19cfcf4c0bf858c9d0465c`
+- z32 JSON SHA-256: `adfa0e0332bc487df31296b7116ea757f501a408f73e77939cf989ec68c74266`
+
+All three reports pass. Their actual c1/c2/c3 arrays have shapes
+`(2,3,196,196,320)`, `(2,3,196,196,640)`, and
+`(2,3,196,196,1280)`; c4 is absent. Every Au pole is read back at exact air/Au
+binary endpoints, every TaIrTe4 pole preserves `Ex->b`, `Ey->a`, `Ez->c`, and
+Si/SiO2 inverse permittivity, dt, PML, mesh, case, and law hashes match. The
+worst realized-epsilon relative error is below `3.1e-8` and every axis remains
+passive. These runs execute zero FDTD time steps.
+
+This closes only the placed solver-array blocker. It is not a material, field,
+time, source-pair, or mesh certificate. The next allowed FDTDX change is a
+separate hash-bound forward-validation path for same-law z8/z16/z32 all-air
+source pairs and exact-binary material/time/stationarity runs. It must keep
+adjoint and optimizer entry points disabled, and it must not compare any old
+single-pole field result to a two-pole result.
 
 Do not proceed to x/y, domain, PML, thermal/electrical, or optimization until
 z convergence closes. Preserve the failed z2/z4/z8 comparisons and the z16
