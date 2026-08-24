@@ -43,9 +43,9 @@ occupancy:
 ```text
 latent rho
   -> 500-nm filter and tanh projection
-  -> projected occupancy rho_bar in [0,1]
+  -> 81x81 projected nodal occupancy rho_bar in [0,1]
   -> nonlinear n-k optical relaxation in Lumerical
-  -> documented thermal/electrical constitutive maps of the same rho_bar
+  -> exact four-node cell map into custom thermal/electrical constitutive laws
   -> final exact 0/1 mask and ordinary dispersive-Au reevaluation
 ```
 
@@ -53,5 +53,6 @@ latent rho
 hole density. The selected optical map is the published Christiansen
 `n-k`-then-square interpolation in `au_density_relaxation.py`, not a diluted
 Drude plasma and not `rho**3`. The unresolved gate is its Au-specific B200
-endpoint/bandwidth parity, resonance sweep, component-Yee Jacobian, and
+4-um endpoint parity, quantified source-band error, resonance sweep,
+component-Yee Jacobian, and
 combined AD-FD validation. See `LUMERICAL_MAXWELL_GPU_PDE_ROUTE.md`.

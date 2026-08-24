@@ -86,6 +86,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysi
 
 def test_contract_geometry_and_source_boundary() -> None:
     assert CONTRACT.design_shape == (80, 80)
+    assert CONTRACT.design_node_shape == (81, 81)
     assert CONTRACT.axis_x == "b" and CONTRACT.axis_y == "a"
     assert CONTRACT.flake_boundary_intensity_fraction < 5.0e-4
 

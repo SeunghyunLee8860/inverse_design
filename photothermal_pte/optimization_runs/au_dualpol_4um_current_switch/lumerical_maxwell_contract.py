@@ -49,9 +49,13 @@ class LumericalMaxwellContract:
         "continuation -> one shared projected topology occupancy"
     )
     shared_design_field: str = (
-        "one projected occupancy array with one shape and SHA-256 is passed to "
-        "all three constitutive maps; the final 0/1 mask additionally uses a "
-        "canonical hash over physical edges, z bounds, and axis mapping"
+        "one 81x81 nodal projected occupancy plus physical coordinates and "
+        "SHA-256; every solver input is derived by a tested discrete map; the "
+        "final 0/1 mask uses a separate canonical physical-geometry hash"
+    )
+    projected_density_grid: str = "81x81 nodes over 80x80 100-nm physical cells"
+    custom_pde_density_map: str = (
+        "four-node arithmetic cell average with exact discrete transpose"
     )
     density_topology_required: bool = True
     shape_or_level_set_required: bool = False

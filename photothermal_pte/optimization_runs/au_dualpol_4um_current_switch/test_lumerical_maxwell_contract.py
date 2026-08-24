@@ -25,6 +25,8 @@ def test_contract_preserves_lumerical_plus_custom_gpu_pde_architecture() -> None
     assert payload["density_topology_required"] is True
     assert payload["shape_or_level_set_required"] is False
     assert payload["continuous_relaxation_allowed_during_optimization"] is True
+    assert payload["projected_density_grid"].startswith("81x81 nodes")
+    assert "exact discrete transpose" in payload["custom_pde_density_map"]
     assert payload["exact_binary_required_for_every_physics_evaluation"] is False
     assert payload["numerical_interface_cut_cells_allowed"] is True
     assert payload["different_optical_thermal_electrical_design_fields_allowed"] is False

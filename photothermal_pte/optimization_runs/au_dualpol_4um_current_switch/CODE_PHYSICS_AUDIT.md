@@ -185,9 +185,10 @@ sample-air boundaries are insulating, and the transverse example uses an
 6. Sweep electrical void floors and uncertain Au/TaIrTe4 contacts.
 7. Issue one combined multi-direction AD-FD certificate on the chosen mesh,
    hash-linked to the mesh and device certificates.
-8. Validate the 4-um Lumerical `n-k` density carrier: ordinary-Au endpoint and
-   bandwidth parity, uniform-density resonance sweep, component-Yee Jacobian,
-   and complete latent AD-FD. Do not resume either O3/TE1 or the shared-linear
-   FDTDX LD_MMA history.
+8. Validate the 4-um Lumerical `n-k` density carrier: ordinary-Au 4-um
+   endpoint field/absorption/Q parity, quantified finite-source-band error,
+   uniform-density resonance sweep, component-Yee Jacobian, and complete
+   latent AD-FD. Do not resume either O3/TE1 or the shared-linear FDTDX LD_MMA
+   history.
 9. Revalidate the final exact-binary design on the finer meshes and parameter
    sensitivity corners before claiming the polarization current switch.

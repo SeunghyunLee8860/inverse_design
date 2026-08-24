@@ -22,9 +22,11 @@ the selected Lumerical optical model.
 
 ## Current design-state rule
 
-One filtered/projected topology occupancy `rho_bar` is shared by all physics.
-It is a numerical relaxation, not electron/hole density and not a claim that a
-fabricated cell contains a homogeneous gray Au alloy.
+One 81x81 filtered/projected nodal topology occupancy `rho_bar` is shared by
+all physics. It is a numerical relaxation, not electron/hole density and not
+a claim that a fabricated cell contains a homogeneous gray Au alloy. Lumerical
+uses the nodes directly; thermal/electrical use the exact four-node average on
+the 80x80 physical cells and the exact transpose on the backward pass.
 
 The physical maps are deliberately separated:
 
@@ -35,7 +37,8 @@ rho_bar -> electrical sheet/contact conductivity
 ```
 
 Sharing a topology state does not require unrelated physical coefficients to
-share one exponent.
+share one exponent, nor does it mean solver grids can be resampled without an
+audited discrete forward/transpose pair.
 
 ## Selected optical law
 

@@ -29,10 +29,13 @@ latent rho
 
 `rho_bar` is not an electron or hole density and is not claimed to be a
 fabricated gray Au alloy. It is the differentiable relaxation of the binary
-topology problem. The identical `rho_bar` array, shape, and SHA-256 must reach
-all three constitutive maps, but the maps need not use the same exponent or
-formula because permittivity, thermal conductivity, and electrical
-conductivity are different physical quantities.
+topology problem. The canonical state is 81x81 nodal values over the exact
+80x80 100-nm physical cells. Lumerical consumes those nodes directly;
+thermal/electrical consume the committed four-node cell average and return
+cotangents through its exact transpose. The nodal values, coordinates, axes,
+and optical law share one SHA-256. No subsystem may invent another rho field.
+The constitutive formulas may differ because permittivity, thermal
+conductivity, and electrical conductivity are different physical quantities.
 
 ## Optical material law: no rho cubed
 
@@ -63,8 +66,10 @@ property scales cubically.
 
 ## Lumerical carrier and its limitation
 
-The first Lumerical-compatible implementation candidate is a complex
-`importnk2` layer generated from the equation above. The repository already
+The first Lumerical-compatible implementation candidate is the complex
+`importnk2` layer in `lumerical_4um_density.py`, generated from the equation
+above on all 81x81 physical nodes. The same module supplies the PDE cell map,
+transpose, and cross-solver state hash. The repository already
 has a validated precedent for this implementation pattern in
 `legacy_v261_optical_support`: a nonuniform complex density was mapped through
 the actual Lumerical component-Yee mesh, a sparse material Jacobian was built,
@@ -79,12 +84,14 @@ the Au-specific gates below pass.
 `importnk2` supplies a spatial complex index for the single-frequency
 relaxation; it is not being called an exact broadband Au material. A final
 binary candidate must use an ordinary sampled-data dispersive Au material.
-The imported endpoint must first agree with that ordinary material for the
-actual source spectrum. If the source bandwidth is too broad for this
-single-frequency relaxation, production remains blocked until a
-GPU-supported causal spatial-dispersion carrier is demonstrated. A custom
-Flexible Material Plugin is not a B200 solution because Lumerical GPU does
-not support that plugin framework.
+At rho=1, its 4-um objective-frequency field, absorption, and Q must first
+agree with the ordinary dispersive-Au control. Across the finite source band,
+the difference must be reported as approximation error rather than called
+material parity, and the time-domain solve must pass decay/closure gates. If
+that source-band error changes the objective or gradient beyond tolerance,
+the single-frequency carrier is rejected; it is not repaired by claiming the
+gray relaxation is physical Au. A custom Flexible Material Plugin is not a
+B200 solution because Lumerical GPU does not support that plugin framework.
 
 The endpoint/final control builder `lumerical_4um_exact_au.py` is retained for
 this distinction. It samples Ordal Au, anisotropic TaIrTe4, and Kitamura SiO2
@@ -150,7 +157,8 @@ The historical O3/TE1 defect was that optical used `rho**3` while thermal and
 electrical used `rho`. The correction is not to force every property to share
 one arbitrary exponent. The correction is:
 
-- share exactly one `rho_bar` and its hash;
+- share exactly one canonical nodal `rho_bar`, coordinates, and hash;
+- derive solver grids only through tested forward/transpose maps;
 - give each physical coefficient an explicit endpoint-correct law;
 - differentiate every law through the same `rho_bar`;
 - pass fixed-Q and combined AD-FD;

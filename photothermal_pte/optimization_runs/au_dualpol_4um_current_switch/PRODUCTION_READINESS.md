@@ -24,12 +24,14 @@ Production remains blocked until a new hash-linked certificate chain proves:
 
 1. the target device geometry, contacts, crystal axes, stack, illumination,
    Au role, and uncertain interface scenarios;
-2. on the actual B200, empty/imported-full/ordinary dispersive-Au endpoint and
-   source-band parity for both polarizations;
+2. on the actual B200, empty/imported-full/ordinary dispersive-Au 4-um
+   endpoint field/absorption/Q parity for both polarizations, with the
+   single-frequency carrier's finite-source-band error reported separately;
 3. a uniform-density field/Q sweep without an optimizer-exploitable gray
    resonance;
-4. a nonuniform Lumerical component-Yee material Jacobian with centered-FD and
-   transpose tests;
+4. the 81x81 nodal-density to 80x80 custom-PDE cell map and exact transpose,
+   plus a nonuniform Lumerical component-Yee material Jacobian with centered-FD
+   and transpose tests;
 5. full optical/thermal/electrical latent AD-FD for `Ea` and `Eb`;
 6. optical x/y/z/PML, source/time/Q closure, thermal mesh, electrical mesh,
    contact, and void-floor convergence;

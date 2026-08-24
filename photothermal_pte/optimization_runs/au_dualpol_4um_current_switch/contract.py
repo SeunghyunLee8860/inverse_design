@@ -74,6 +74,13 @@ class Contract:
         )
 
     @property
+    def design_node_shape(self) -> tuple[int, int]:
+        """Nodal density shape spanning all 80x80 physical cell edges."""
+
+        nx, ny = self.design_shape
+        return nx + 1, ny + 1
+
+    @property
     def aperture_boundary_intensity_fraction(self) -> float:
         half = 0.5 * self.source_aperture_span_m
         return math.exp(-2.0 * (half / self.gaussian_waist_m) ** 2)
@@ -87,6 +94,7 @@ class Contract:
         payload = asdict(self)
         payload.update(
             design_shape=list(self.design_shape),
+            design_node_shape=list(self.design_node_shape),
             source_aperture_boundary_intensity_over_peak=self.aperture_boundary_intensity_fraction,
             flake_boundary_intensity_over_peak=self.flake_boundary_intensity_fraction,
             periodic_boundary=False,

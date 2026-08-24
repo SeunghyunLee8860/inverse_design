@@ -181,8 +181,8 @@ def audit(sample_count: int = 1001) -> dict[str, object]:
         "ordal_data": str(ORDAL_AU_DATA),
         "ordal_data_sha256": source_hash,
         "remaining_gates": [
-            "Lumerical B200 imported-index versus ordinary dispersive-Au endpoint parity",
-            "source-band material-fit and passivity audit",
+            "Lumerical B200 imported-index versus ordinary dispersive-Au 4-um endpoint field/absorption/Q parity",
+            "quantified finite-source-band approximation error and time-domain closure",
             "uniform-density field/Q resonance sweep",
             "nonuniform density-to-Yee Jacobian transpose and centered-FD tests",
             "complete optical/thermal/electrical latent-variable AD-FD",

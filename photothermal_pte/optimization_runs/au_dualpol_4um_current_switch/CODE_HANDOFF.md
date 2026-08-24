@@ -33,6 +33,9 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
    `MATERIAL_FRACTION_AUDIT.md` -- the selected nonlinear `n-k` Lumerical
    relaxation, the historical shared-linear FDTDX baseline, and the reason
    optical `rho**3` is removed.
+   `lumerical_4um_density.py` defines the canonical 81x81 nodal projected
+   state, Lumerical `importnk2` map, exact 80x80 four-node PDE cell average,
+   transpose, and physical-coordinate-bound state hash.
 7. `objective.py` -- signed current utilities and epigraph objective.
 8. `10_optimize_4um_dualpol_au_ld_mma.py` -- nominal NLopt LD_MMA path.
 9. `13_optimize_robust_binary_au_ld_mma.py` -- eroded/dilated robust
@@ -52,6 +55,10 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
 15. `23_audit_4um_au_density_relaxation.py` -- solver-free exact endpoint,
     passivity, no-rho-cubed, and analytic complex-derivative gate for the new
     optical law. It does not replace any B200 field or AD-FD gate.
+16. `24_audit_4um_density_state_map.py` -- solver-free certificate for the
+    canonical 81x81 nodal state, 80x80 PDE cell map, state hash, exact
+    transpose identity, and centered directional FD. It does not certify the
+    Lumerical component-Yee Jacobian.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -64,7 +71,9 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
 - source aperture: 16 x 16 um
 - fixed TaIrTe4 flake: 16 x 16 x 0.1 um
 - Au design region: 8 x 8 x 0.05 um
-- design variables: 80 x 80 at 100 nm pitch
+- design topology: 81 x 81 projected nodes spanning 80 x 80 physical cells at
+  100 nm pitch; custom thermal/electrical maps use the exact four-node cell
+  average and its transpose
 - reporting incident power: 285 uW
 - minimum solid and void feature audit: 500 nm
 - no symmetry, volume-fraction, or connectivity constraint
@@ -77,10 +86,11 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    or CHARGE license is assumed. Read `LUMERICAL_MAXWELL_GPU_PDE_ROUTE.md` and
    run `21_audit_lumerical_maxwell_preflight.py` first. The selected method is
    density topology, not shape/level-set: latent rho -> 500-nm filter -> tanh
-   projection -> one shared projected occupancy. Lumerical optical uses the
+   projection -> one shared 81x81 nodal projected occupancy. Lumerical optical uses the
    published nonlinear `n-k` interpolation in `au_density_relaxation.py`; it
-   does not use optical `rho**3`. The identical projected-density hash must be
-   used by the custom thermal and electrical constitutive maps. Final
+   does not use optical `rho**3`. Custom thermal/electrical 80x80 cell fields
+   must be derived from that hash-bound nodal state by the committed average
+   operator; independently optimized/resampled rho fields are prohibited. Final
    promotion still requires an independent exact-binary ordinary
    sampled-data dispersive-Au reevaluation. FDTDX/JAX results are historical
    diagnostics only. The current host has RTX 6000 Ada GPUs, not B200, so it
@@ -103,7 +113,8 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    shared-linear fraction was a consistency diagnostic, not the selected
    Lumerical optical law. The replacement `n-k`-then-square relaxation is now
    implemented and solver-free tested, but it is still blocked pending B200
-   endpoint/bandwidth parity, uniform-density resonance sweep, component-Yee
+   4-um endpoint parity, quantified source-band error, uniform-density
+   resonance sweep, component-Yee
    Jacobian FD/transpose tests, and full combined AD-FD. See
    `MATERIAL_FRACTION_AUDIT.md`.
 2. AD-FD validates the derivative of a chosen discrete mesh; it does not
@@ -203,6 +214,9 @@ photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_combined_gp
 photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_combined_gpu_python.sh \
   photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/23_audit_4um_au_density_relaxation.py
 
+photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_combined_gpu_python.sh \
+  photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/24_audit_4um_density_state_map.py
+
 CUDA_VISIBLE_DEVICES=<free_gpu> photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_z_mesh_convergence_gpu.sh --audit-only
 
 CUDA_VISIBLE_DEVICES=<free_gpu> photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_z_mesh_convergence_gpu.sh
@@ -222,8 +236,9 @@ location.  `AU_DUALPOL_PYTHON`, `FDTDX_SOURCE_DIR`, and
    or a production mesh. The completed shared-linear factor-1/2/4 sweep is
    useful negative evidence: its stable final pair failed in all 6/6 cases.
 3. On the actual B200, establish Lumerical empty/imported-full/ordinary-Au
-   endpoint and bandwidth parity, then sweep uniform projected density for
-   artificial field/Q resonances for both polarizations.
+   4-um endpoint field/absorption/Q parity, quantify the single-frequency
+   carrier's source-band approximation error, then sweep uniform projected
+   density for artificial field/Q resonances for both polarizations.
 4. Build and validate the nonuniform density-to-component-Yee material
    Jacobian and its discrete adjoint; do not substitute bundled LumOpt's
    real/lossless metal path.
