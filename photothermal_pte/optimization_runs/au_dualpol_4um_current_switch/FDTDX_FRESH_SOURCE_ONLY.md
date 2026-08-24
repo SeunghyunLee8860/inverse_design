@@ -31,23 +31,28 @@ they have not passed any mesh or time ladder.
 
 | Metric | Ea | Eb |
 |---|---:|---:|
-| incident power before reporting scale | 1.882146782178351e-12 W | 1.882146782178351e-12 W |
-| previous/late maximum complex-E NRMSE | 6.30951807062889e-6 | 6.326310725189772e-6 |
-| transverse polarization purity | 0.9998024972593894 | 0.9998024972623545 |
-| longitudinal energy fraction | 0.02636889530213477 | 0.02636889563614616 |
-| beam center `(x, y)` | `(5.9953e-15, 4.99463e-8) m` | `(4.99463e-8, 1.4426e-14) m` |
+| incident power before reporting scale | 1.8821465653379166e-12 W | 1.8821465653379166e-12 W |
+| previous/late maximum complex-E NRMSE | 5.8801227255494025e-6 | 5.882027606496750e-6 |
+| transverse polarization purity | 0.9998024972592621 | 0.9998024972583772 |
+| longitudinal energy fraction | 0.026368895323786185 | 0.02636889522792968 |
+| beam center `(x, y)` | `(2.17909e-14, 4.99463e-8) m` | `(4.99463e-8, 2.22190e-14) m` |
 | second-moment waist `(x, y)` | `(3.940488, 4.146653) um` | `(4.146653, 3.940488) um` |
-| maximum waist relative error | 0.03666328843043274 | 0.03666328987889042 |
-| closed phasor flux / incident, absolute | 8.477101738563467e-7 | 8.477101738563467e-7 |
-| closed time-domain flux / incident, absolute | 5.817701524225264e-7 | 5.682406293250666e-7 |
-| Maxwell solve runtime | 27.7933 s | 27.7288 s |
+| maximum waist relative error | 0.03666328628407878 | 0.036663286396297304 |
+| closed phasor flux / incident, absolute | 9.324813316339027e-7 | 9.324813316339027e-7 |
+| closed time-domain flux / incident, absolute | 6.020645613680110e-7 | 5.817702194477492e-7 |
+| Maxwell solve runtime | 27.8232 s | 27.9001 s |
 
 Every per-case gate passed: finite detector state, field stationarity, positive
 incident power, transverse purity, longitudinal fraction, beam center, beam
 waist, closed phasor flux, and closed time-domain flux. The runs used clean
-repository commit `15304d99d601ef15520c1ade8e73ddc4d281d9ac`, clean pinned
+repository commit `5af31f3836a35f8144964c762ec2156c60c1e23b`, clean pinned
 FDTDX commit `f26f84b70a8cceec9b889553955a868624736bf1`, the locked Python/JAX/
 CUDA environment, and otherwise idle physical B200 GPU 7.
+
+The promoted pair additionally serializes and compares every PML face,
+source startup/profile/vector, and integer placement slice. Electric-field
+stationarity uses component-specific Yee dual volumes rather than a primal
+cell-volume approximation.
 
 ## One common power normalization
 
@@ -57,14 +62,14 @@ source repository commit, and raw array schema, and rejects a relative source
 power mismatch above 0.5%. It forbids independent polarization matching.
 
 The clean generator commit is
-`83835cdcb380a9d4f8b67d255d742f5111bd7201`. The measured Ea/Eb power mismatch
+`5af31f3836a35f8144964c762ec2156c60c1e23b`. The measured Ea/Eb power mismatch
 is exactly zero, so the certificate selects:
 
 ```text
-common unscaled incident power = 1.882146782178351e-12 W
+common unscaled incident power = 1.8821465653379166e-12 W
 reporting target power          = 2.85e-4 W
-common power scale              = 151422834.12675598
-common field-amplitude scale    = 12305.398576509255
+common power scale              = 151422851.57204625
+common field-amplitude scale    = 12305.399285356256
 ```
 
 Power-like quantities such as absorption use the common power scale. Complex
@@ -76,29 +81,33 @@ and Eb to hide source imbalance.
 Raw artifacts remain outside Git:
 
 ```text
-/home/seunghyun200/fdtdx_results/source_only_Ea_15304d99_20260824/
+/home/seunghyun200/fdtdx_results/source_only_Ea_5af31f38_20260824/
   FDTDX_FRESH_SOURCE_ONLY.json
-    sha256 31936cd062e753f27bd3e448e3d1263fd96b397c54612aca621b98a2ead2a538
+    sha256 559c30ac0b0f4904b2243d05f97b689fb2a07444a8d90432e15f64ec7511954d
   FDTDX_FRESH_SOURCE_ONLY_FIELDS.npz
-    sha256 8d13da05cb8853c3cfc0896f62ebec49185f9b6a02fbe3cc9c827cb380c53ef4
+    sha256 1f73e47df05bab2602ff6426a77c0e3051466b6f2c1659e3094f877160f50a16
 
-/home/seunghyun200/fdtdx_results/source_only_Eb_15304d99_20260824/
+/home/seunghyun200/fdtdx_results/source_only_Eb_5af31f38_20260824/
   FDTDX_FRESH_SOURCE_ONLY.json
-    sha256 6316dd7c04cecd61eb3e83de7fc5680a20a7051a99759c5a6cce448ad093a45a
+    sha256 70ec4d5d8942293b10da07e5df650d2c6db65eef8e85e7ce446cc35bb324a93b
   FDTDX_FRESH_SOURCE_ONLY_FIELDS.npz
-    sha256 29f8b1e96e8ff9c7360893318a42db00c54d119527bc5e4d2274f3299dcc65d5
+    sha256 5ab3589df2454ac17bfc2aca1907fbcd2b71ba171a0692e1d1434e9880b0fa4e
 
-/home/seunghyun200/fdtdx_results/source_only_pair_83835cdc_20260824/
+/home/seunghyun200/fdtdx_results/source_only_pair_5af31f38_20260824/
   FDTDX_FRESH_SOURCE_ONLY_PAIR.json
-    sha256 d5216dda12e0e1450053ece6bda86ac55f3523d462c3ea0b344fc7fced2cda30
+    sha256 cc86457678ba50becff8ec44408f7f519a8fd3ae44abedc248082eefeee28ee6
 ```
 
-Two earlier Ea directories are deliberately preserved. The `aaade0e9`
+Earlier directories are deliberately preserved. The `aaade0e9`
 attempt completed Maxwell propagation but postprocessing used the wrong
 closed-surface detector-state key and emitted only a failure JSON. The
 `6039587b` attempt preserved valid raw fields but used the incorrect
-desired-transverse-over-total-field purity definition. Neither directory is
-the promoted source pair and neither should be overwritten or deleted.
+desired-transverse-over-total-field purity definition. The `15304d99` pair
+fixed polarization interpretation but used primal instead of component-Yee
+dual-volume weighting for stationarity. The `493d833e` pair fixed that metric
+but did not yet serialize the complete PML/source/placement provenance that
+the final `5af31f38` pair gates. None of the superseded directories should be
+overwritten or deleted.
 
 ## What this does not authorize
 

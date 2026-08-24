@@ -103,6 +103,12 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     matrices without `fdtd.run`, run independent FD/transpose gates, and save
     raw matrices/coordinates outside Git. The launcher is layout-only and
     deliberately performs no GPU/B200 Maxwell certification.
+22. `FDTDX_FRESH_DEPENDENCY.md`, `FDTDX_FRESH_ANCHOR_PLACEMENT.md`,
+    `FDTDX_FRESH_SOURCE_ONLY.md`, and `FDTDX_FRESH_EXACT_BINARY_PILOT.md` --
+    the separate pinned-FDTDX forensic/rebuild track. Its runtime, mesh, six
+    PML faces, source pair, placements, exact endpoint material readback, and
+    component-Yee-volume energy balance are fail-closed. This track must not
+    edit, launch, or reinterpret the concurrent Lumerical work.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -241,6 +247,30 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
     `Ib<0`. Earlier prose saying positive current was right-to-left was wrong.
     The current network also does not yet support a rotated crystal/electrode
     geometry or off-diagonal in-plane transport tensors.
+
+## Parallel fresh FDTDX forensic track
+
+This branch also contains an independent reconstruction of the historical
+FDTDX path so its old failures can be diagnosed from first principles. It is
+not the selected Lumerical production path and it does not authorize changes
+to the concurrent Lumerical session.
+
+The fresh track pins FDTDX commit
+`f26f84b70a8cceec9b889553955a868624736bf1`, a locked Python/JAX/CUDA
+runtime on B200 GPU 7, explicit six-face PML and source contracts, and the
+`196 x 196 x 160` anchor placement. The promoted all-air Ea/Eb source-pair
+certificate SHA-256 is
+`cc86457678ba50becff8ec44408f7f519a8fd3ae44abedc248082eefeee28ee6`;
+it forbids polarization-specific normalization.
+
+At repository commit `08a6f60e`, exact-empty/Ea and exact-full-window/Ea both
+passed material readback, passivity, finite-value, previous/late stationarity,
+nonnegative absorbed-power, TD/phasor agreement, and Q/closed-surface gates.
+The empty Au heat is exactly zero. The full case contains 6,400/6,400 pure-Au
+design pixels, no gray density or rho exponent, and has 0.263% Q/closed-phasor
+error. Read `FDTDX_FRESH_EXACT_BINARY_PILOT.md` for immutable external hashes.
+Eb empty/full controls are still pending. No mesh/time convergence, adjoint,
+thermal/electrical solve, PTE-current claim, or optimizer is authorized.
 
 ## Raw checkpoint dependency
 
