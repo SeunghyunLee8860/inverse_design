@@ -81,10 +81,15 @@ changes were 0.9522%/0.9541%/0.6656%/1.1752%; full-Au changes were
 downstream validator correctly stops before custom PDE comparison when the
 Maxwell sub-gate fails.
 
-The next bounded step is a matching staircase 1.25/12.5-nm source, empty, and
-MCM6 full set, followed by the 2.5/25-to-1.25/12.5-nm pair. Ea
-symmetry-current cancellation at the fixed 5/50-nm mesh is still only about
-`5.42e-5` (empty) and `5.68e-4` (full), versus the one-ppm diagnostic gate,
-so its cause must remain visible once a staircase Maxwell pair passes. Eb,
-simple-L, final topology, x/y, thermal/electrical mesh, and B200 certification
-remain open.
+The matching staircase 1.25/12.5-nm source, empty, and MCM6 full set was also
+completed and every individual run passed. The 2.5/25-to-1.25/12.5-nm pair
+still fails narrowly. Empty Q/flux/complex-E pass at
+0.4549%/0.4542%/0.3403%, but E2 is 0.6013%. Full-Au Q/flux/complex-E/E2 are
+0.6877%/0.6884%/0.5268%/0.6232%. The next bounded step is the matching
+staircase 0.625/6.25-nm set and the 1.25/12.5-to-0.625/6.25-nm pair.
+
+Ea symmetry-current cancellation at the fixed 5/50-nm mesh is still only
+about `5.42e-5` (empty) and `5.68e-4` (full), versus the one-ppm diagnostic
+gate, so its cause must remain visible once a staircase Maxwell pair passes.
+Eb, simple-L, final topology, x/y, thermal/electrical mesh, and B200
+certification remain open.

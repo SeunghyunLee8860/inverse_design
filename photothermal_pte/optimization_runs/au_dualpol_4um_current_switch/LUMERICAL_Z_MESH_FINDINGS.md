@@ -66,6 +66,8 @@ plane.
 | linked 1.25/12.5 -> 0.625/6.25 nm, exact full | 0.3550% | 0.3551% | 0.2669% | 0.3176% | pass |
 | staircase linked 5/50 -> 2.5/25 nm, exact empty | 0.9522% | 0.9541% | 0.6656% | 1.1752% | fail |
 | staircase linked 5/50 -> 2.5/25 nm, exact full | 1.3921% | 1.3954% | 1.0105% | 1.1966% | fail |
+| staircase linked 2.5/25 -> 1.25/12.5 nm, exact empty | 0.4549% | 0.4542% | 0.3403% | 0.6013% | fail |
+| staircase linked 2.5/25 -> 1.25/12.5 nm, exact full | 0.6877% | 0.6884% | 0.5268% | 0.6232% | fail |
 
 The 5-to-2.5 nm isolated result showed that the thin Au/TaIrTe4/SiO2 stack was
 then the dominant z error, not the 50-to-25 nm bulk/air/PML refinement. The
@@ -90,7 +92,14 @@ source-only, exact-empty, and MCM6 exact-full results on 183 x 183 x 212 and
 controls as shown above. This does not invalidate the interface choice; it
 proves that 2.5/25 nm is not yet a converged staircase reference. Because the
 Maxwell prerequisite failed, script 28 did not run downstream PDE comparison.
-The next staircase pair is 2.5/25 to 1.25/12.5 nm.
+
+The next 1.25/12.5-nm staircase source/empty/full set was then completed on a
+183 x 183 x 807 grid. Each individual gate passed, including 0.01523% empty
+and 0.09326% full Q/flux closure. Its pair with 2.5/25 nm nevertheless fails
+as shown above. The empty control misses only the E2 gate, while all four
+full-Au observables remain just above 0.5%. The next staircase pair is
+therefore 1.25/12.5 to 0.625/6.25 nm; downstream comparison remains correctly
+blocked until that Maxwell prerequisite passes.
 
 The new `27_compare_lumerical_4um_control_pair.py` reproduces the four table
 metrics. It verifies the raw NPZ SHA-256 values; exact case, polarization,

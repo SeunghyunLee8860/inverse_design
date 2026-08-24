@@ -399,7 +399,9 @@ Do not copy them into this worktree.
     pair, not promoted as converged. That staircase 5/50-to-2.5/25-nm pair
     has now been run and fails all four Maxwell metrics for both controls:
     empty changes are 0.9522--1.1752%, and full changes are
-    1.0105--1.3954%. Fixed-mesh symmetry-current controls and all remaining
+    1.0105--1.3954%. The next 2.5/25-to-1.25/12.5-nm pair also fails:
+    empty misses only E2 at 0.6013%, while full changes are
+    0.5268--0.6884%. Fixed-mesh symmetry-current controls and all remaining
     z/polarization/geometry gates stay open. See
     `LUMERICAL_INTERFACE_METHOD_FINDINGS.md`.
 
@@ -421,10 +423,12 @@ Do not copy them into this worktree.
    selects staircase only as the next development candidate: its material
    omission is below 0.5%, while its Maxwell observables agree with CV0 below
    0.5%. The staircase 5/50-to-2.5/25-nm linked refinement is complete and
-   fails the Maxwell prerequisite. Run the matching staircase
-   1.25/12.5-nm source/empty/MCM6-full set next and compare 2.5/25 to
-   1.25/12.5 nm. Do not hide any gap by rescaling, and do not begin x/y
-   convergence until downstream and remaining Eb/simple-L z gates pass.
+   fails the Maxwell prerequisite. The matching staircase 1.25/12.5-nm set
+   is also complete; its pair with 2.5/25 nm still fails narrowly. Run the
+   staircase 0.625/6.25-nm source/empty/MCM6-full set next and compare
+   1.25/12.5 to 0.625/6.25 nm. Do not hide any gap by rescaling, and do not
+   begin x/y convergence until downstream and remaining Eb/simple-L z gates
+   pass.
 4. On the actual B200, use `25_run_lumerical_4um_exact_au_control.py` to pass
    source-only Ea/Eb first, then matching ordinary empty/full/simple-L exact
    Au time, Q/flux, linked stack+bulk/air/PML-z, x/y, PML-layer, and domain

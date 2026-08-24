@@ -57,7 +57,9 @@ unassigned. Staircase reduces omission to 0.001012%/0.195399% and is therefore
 the next linked-z development candidate. This is not a convergence or
 production certificate. Its first 5/50-to-2.5/25-nm linked pair has now
 failed every empty/full Maxwell metric (0.6656--1.3954% against a 0.5% gate),
-so a finer staircase pair is required before any downstream or x/y gate; see
+and the next 2.5/25-to-1.25/12.5-nm pair also fails (empty E2 0.6013%;
+full metrics 0.5268--0.6884%). A still finer staircase pair is required
+before any downstream or x/y gate; see
 `LUMERICAL_INTERFACE_METHOD_FINDINGS.md`.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
