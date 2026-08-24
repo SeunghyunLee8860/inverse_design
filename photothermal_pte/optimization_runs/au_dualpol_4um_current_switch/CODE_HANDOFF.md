@@ -874,3 +874,17 @@ proves exact all-air inverse epsilon and zero `A/C/B`; affected tests are
 `18 passed`. Commit/push this state, run Ea/Eb on two newly verified-idle GPUs,
 then build the pair using explicit report byte hashes. Only one arithmetic-mean
 common scale is allowed. Raw NPZ/JSON/certificate files stay outside Git.
+
+## Validated increment-state source pair
+
+At commit `5756f50a`, patched-fork 24/4 all-air Ea/Eb both passed. Their
+incident powers are exactly equal at `1.88214721585922e-12 W`. The common-only
+normalization certificate is
+`/home/seunghyun200/fdtdx_results/increment_state_source_5756f50a_t24/FDTDX_INCREMENT_STATE_SOURCE_PAIR.json`,
+SHA-256 `6beab945b90513e9ce638932abdb25702fb4c97be4897abe6f794639fee98dba`.
+Common power/field scales are `151422799.23618752` and `12305.39715881562`.
+Ea/Eb report hashes are `fe2415e6438cca995285d3c18b63fbea0fade0d7894e47ceac546293129accf4`
+and `b89671354fb02ed7b8df68c4c529b14ad34bf613f9da4da8a417ac8fe7ee9c16`.
+This certificate is anchor-case-only. A changed mesh needs a matching source
+case or proven transfer; never substitute the historical pair. Proceed to an
+axis-by-axis exact-binary spatial convergence design, not gray optimization.

@@ -269,3 +269,33 @@ any GPU with an existing compute process before CUDA export.
 The new/affected source tests are `18 passed`; actual all-air CPU readback also
 passes. No source GPU run or pair certificate exists at this pre-launch
 checkpoint. Commit and push before running the pair.
+
+## Validated 24-period increment-state source pair
+
+At clean project commit `5756f50a15efca918a3318bd22a9c7bcf6c4ded8`, all-air
+Ea/Eb cases ran concurrently on verified-idle physical B200 GPUs 6/7. Both
+source reports passed every material, stationarity, polarization, beam, flux,
+GPU, and provenance gate. Incident power was exactly
+`1.88214721585922e-12 W` in both reports, so relative mismatch is zero.
+Transverse purity is `0.9998025`, longitudinal fraction is `0.026369`, maximum
+waist error is `0.036663`, closed residual is about `1.1e-6`, and maximum field
+NRMSE is about `2.34e-6`. Cold compile+forward was `36.737 s` (Ea) and
+`36.663 s` (Eb); pair wall time was about 61 s.
+
+External artifacts and SHA-256 values:
+
+- Ea report: `fe2415e6438cca995285d3c18b63fbea0fade0d7894e47ceac546293129accf4`
+- Ea raw NPZ: `ef2ed341658202c2854c399159f94fcdcd2786c0658b692f9be84f2e923c4c0e`
+- Eb report: `b89671354fb02ed7b8df68c4c529b14ad34bf613f9da4da8a417ac8fe7ee9c16`
+- Eb raw NPZ: `0b10d9ec58e84a0d32a481a9e923c90d69fb5606917fdea8683c2e16234f625f`
+- pair certificate: `6beab945b90513e9ce638932abdb25702fb4c97be4897abe6f794639fee98dba`
+- root: `/home/seunghyun200/fdtdx_results/increment_state_source_5756f50a_t24/`
+
+The validated certificate uses one arithmetic-mean common scale:
+`common_power_scale=151422799.23618752` and
+`common_field_amplitude_scale=12305.39715881562` for the 285-uW reporting
+target. Every one of its cross-case/raw/hash/provenance gates passes. This
+closes source normalization for the anchor case only. Spatially changed meshes
+still require matching newly generated source controls or a rigorously proven
+source-transfer rule; do not silently reuse this certificate on a different
+case hash.
