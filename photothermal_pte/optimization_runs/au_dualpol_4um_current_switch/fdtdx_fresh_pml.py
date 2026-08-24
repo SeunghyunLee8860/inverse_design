@@ -12,7 +12,6 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_exac
 
 
 PML_FACES = ("minx", "maxx", "miny", "maxy", "minz", "maxz")
-Z_PML_THICKNESS_M = 1.6e-6
 SOLVER_PARAMETER_NAMES = (
     "alpha_start",
     "alpha_end",
@@ -39,7 +38,7 @@ def face_parameters(
             (
                 spec.lateral_pml_thickness_m
                 if face in ("minx", "maxx", "miny", "maxy")
-                else Z_PML_THICKNESS_M
+                else spec.z_pml_thickness_m
             ),
             alpha_scale=alpha_scale,
             target_reflection=target_reflection,

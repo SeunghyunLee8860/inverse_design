@@ -277,6 +277,19 @@ Read `FDTDX_FRESH_EXACT_BINARY_PILOT.md` for all external hashes and metrics.
 No mesh/time convergence, nontrivial topology, adjoint, thermal/electrical
 solve, PTE-current claim, or optimizer is authorized.
 
+The next fresh-FDTDX stage is now specified by
+`FDTDX_FRESH_CONVERGENCE_DESIGN.md` and the fail-closed v2 contract in
+`fdtdx_exact_binary_convergence.py`. It adds a 500 nm-arm asymmetric L
+reference, a separate 500 nm gap-stress reference, time-settling and Courant
+ladders, and independent bottom-Si, top-air, lateral/z-PML resolution and
+physical-extent axes. Optical gates are explicitly separated from unvalidated
+thermal/current gates. This is contract and test work only: no v2 GPU ladder
+has run and `optimizer_start_allowed` remains false. The immutable v1
+source-pair and four-case matrix remain evidence for their original anchor
+commit; do not silently reinterpret their mesh hash as v2. Generalize the
+runner and create a newly hashed source pair for every unique v2 mesh/time
+contract before launching the primary L-reference time ladder.
+
 ## Raw checkpoint dependency
 
 Raw NPZ files are intentionally not committed.  The z-mesh diagnostic uses:

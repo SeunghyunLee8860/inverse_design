@@ -15,7 +15,7 @@ import math
 from typing import Any, Iterable
 
 
-VERSION = "exact-binary-multiaxis-convergence-v1"
+VERSION = "exact-binary-multiaxis-convergence-v2"
 C0_M_PER_S = 299_792_458.0
 EPS0_F_PER_M = 8.854_187_812_8e-12
 ETA0_OHM = 376.730_313_668
@@ -28,18 +28,16 @@ BASE_OUTER_PITCH_M = 100.0e-9
 BASE_PML_PITCH_M = 125.0e-9
 DEFAULT_GAP_M = 1.0e-6
 DEFAULT_PML_THICKNESS_M = 1.0e-6
-
-Z_SEGMENTS = (
-    ("bottom_pml_si", -3.000e-6, -1.400e-6, 8),
-    ("resolved_si", -1.400e-6, -0.385e-6, 5),
-    ("sio2", -0.385e-6, -0.100e-6, 3),
-    ("tairte4", -0.100e-6, 0.000e-6, 5),
-    ("au", 0.000e-6, 0.050e-6, 2),
-    ("near_air", 0.050e-6, 0.250e-6, 4),
-    ("middle_air", 0.250e-6, 0.750e-6, 2),
-    ("source_air", 0.750e-6, 1.400e-6, 3),
-    ("top_pml_air", 1.400e-6, 3.000e-6, 8),
-)
+DEFAULT_BOTTOM_SI_BUFFER_M = 1.015e-6
+DEFAULT_TOP_SOURCE_TO_PML_GAP_M = 0.650e-6
+DEFAULT_Z_PML_THICKNESS_M = 1.600e-6
+BASE_RESOLVED_SI_PITCH_M = DEFAULT_BOTTOM_SI_BUFFER_M / 5
+BASE_SOURCE_AIR_PITCH_M = DEFAULT_TOP_SOURCE_TO_PML_GAP_M / 3
+BASE_Z_PML_PITCH_M = DEFAULT_Z_PML_THICKNESS_M / 8
+SIO2_BOTTOM_M = -0.385e-6
+TAIRTE4_BOTTOM_M = -0.100e-6
+AU_TOP_M = 0.050e-6
+SOURCE_Z_M = 0.750e-6
 
 
 @dataclass(frozen=True)
@@ -52,6 +50,9 @@ class MeshSpec:
     z_factor: int = 4
     lateral_gap_m: float = DEFAULT_GAP_M
     lateral_pml_thickness_m: float = DEFAULT_PML_THICKNESS_M
+    bottom_si_buffer_m: float = DEFAULT_BOTTOM_SI_BUFFER_M
+    top_source_to_pml_gap_m: float = DEFAULT_TOP_SOURCE_TO_PML_GAP_M
+    z_pml_thickness_m: float = DEFAULT_Z_PML_THICKNESS_M
 
     def __post_init__(self) -> None:
         for name in (
@@ -63,13 +64,35 @@ class MeshSpec:
             value = getattr(self, name)
             if not isinstance(value, int) or isinstance(value, bool) or value < 1:
                 raise ValueError(f"{name} must be a positive integer")
-        if self.lateral_gap_m <= 0.0 or self.lateral_pml_thickness_m <= 0.0:
-            raise ValueError("PML thickness and material-to-PML gap must be positive")
+        positive_lengths = (
+            self.lateral_gap_m,
+            self.lateral_pml_thickness_m,
+            self.bottom_si_buffer_m,
+            self.top_source_to_pml_gap_m,
+            self.z_pml_thickness_m,
+        )
+        if any(value <= 0.0 for value in positive_lengths):
+            raise ValueError("all domain-buffer and PML lengths must be positive")
         _integer_cells(self.lateral_gap_m, BASE_OUTER_PITCH_M, "lateral gap")
         _integer_cells(
             self.lateral_pml_thickness_m,
             BASE_PML_PITCH_M,
             "lateral PML",
+        )
+        _integer_cells(
+            self.bottom_si_buffer_m,
+            BASE_RESOLVED_SI_PITCH_M,
+            "bottom Si buffer",
+        )
+        _integer_cells(
+            self.top_source_to_pml_gap_m,
+            BASE_SOURCE_AIR_PITCH_M,
+            "top source-to-PML gap",
+        )
+        _integer_cells(
+            self.z_pml_thickness_m,
+            BASE_Z_PML_PITCH_M,
+            "z PML",
         )
 
 
@@ -163,9 +186,62 @@ def lateral_segments(spec: MeshSpec) -> tuple[Segment, ...]:
 
 
 def vertical_segments(spec: MeshSpec) -> tuple[Segment, ...]:
+    """Return z segments while keeping every material/source edge invariant."""
+
+    bottom_pml_inner = SIO2_BOTTOM_M - spec.bottom_si_buffer_m
+    bottom_outer = bottom_pml_inner - spec.z_pml_thickness_m
+    top_pml_inner = SOURCE_Z_M + spec.top_source_to_pml_gap_m
+    top_outer = top_pml_inner + spec.z_pml_thickness_m
+    values = (
+        (
+            "bottom_pml_si",
+            bottom_outer,
+            bottom_pml_inner,
+            _integer_cells(
+                spec.z_pml_thickness_m, BASE_Z_PML_PITCH_M, "z PML"
+            ),
+            "pml_z",
+        ),
+        (
+            "resolved_si",
+            bottom_pml_inner,
+            SIO2_BOTTOM_M,
+            _integer_cells(
+                spec.bottom_si_buffer_m,
+                BASE_RESOLVED_SI_PITCH_M,
+                "bottom Si buffer",
+            ),
+            "bottom_si_buffer",
+        ),
+        ("sio2", SIO2_BOTTOM_M, TAIRTE4_BOTTOM_M, 3, "physical_stack"),
+        ("tairte4", TAIRTE4_BOTTOM_M, 0.0, 5, "physical_stack"),
+        ("au", 0.0, AU_TOP_M, 2, "physical_stack"),
+        ("near_air", AU_TOP_M, 0.250e-6, 4, "fixed_air"),
+        ("middle_air", 0.250e-6, SOURCE_Z_M, 2, "fixed_air"),
+        (
+            "source_air",
+            SOURCE_Z_M,
+            top_pml_inner,
+            _integer_cells(
+                spec.top_source_to_pml_gap_m,
+                BASE_SOURCE_AIR_PITCH_M,
+                "top source-to-PML gap",
+            ),
+            "top_source_to_pml_gap",
+        ),
+        (
+            "top_pml_air",
+            top_pml_inner,
+            top_outer,
+            _integer_cells(
+                spec.z_pml_thickness_m, BASE_Z_PML_PITCH_M, "z PML"
+            ),
+            "pml_z",
+        ),
+    )
     return tuple(
-        Segment(name, start, stop, base_cells * spec.z_factor, "full_domain_z")
-        for name, start, stop, base_cells in Z_SEGMENTS
+        Segment(name, start, stop, base_cells * spec.z_factor, role)
+        for name, start, stop, base_cells, role in values
     )
 
 
@@ -252,6 +328,9 @@ def mesh_audit(spec: MeshSpec) -> dict[str, Any]:
         "design_solver_pitch_m": DESIGN_PITCH_M / spec.design_xy_factor,
         "outer_solver_pitch_m": BASE_OUTER_PITCH_M / spec.outer_xy_factor,
         "pml_solver_pitch_m": BASE_PML_PITCH_M / spec.pml_xy_factor,
+        "z_pml_solver_pitch_m": BASE_Z_PML_PITCH_M / spec.z_factor,
+        "bottom_si_solver_pitch_m": BASE_RESOLVED_SI_PITCH_M / spec.z_factor,
+        "source_air_solver_pitch_m": BASE_SOURCE_AIR_PITCH_M / spec.z_factor,
         "lateral_segments": [segment.audit() for segment in lateral],
         "vertical_segments": [segment.audit() for segment in vertical],
         "layout": layout(spec),
@@ -260,7 +339,15 @@ def mesh_audit(spec: MeshSpec) -> dict[str, Any]:
             "flake_m": [-FLAKE_HALF_SPAN_M, FLAKE_HALF_SPAN_M],
             "sio2_m": [-0.385e-6, -0.100e-6],
             "tairte4_m": [-0.100e-6, 0.0],
-            "au_m": [0.0, 0.050e-6],
+            "au_m": [0.0, AU_TOP_M],
+            "source_plane_z_m": SOURCE_Z_M,
+        },
+        "domain_extent_axes_m": {
+            "lateral_gap_m": spec.lateral_gap_m,
+            "lateral_pml_thickness_m": spec.lateral_pml_thickness_m,
+            "bottom_si_buffer_m": spec.bottom_si_buffer_m,
+            "top_source_to_pml_gap_m": spec.top_source_to_pml_gap_m,
+            "z_pml_thickness_m": spec.z_pml_thickness_m,
         },
     }
     value["grid_contract_sha256"] = _canonical_sha256(value)
@@ -280,12 +367,28 @@ def axis_levels(axis: str, anchor: MeshSpec) -> tuple[MeshSpec, ...]:
         return tuple(replace(anchor, z_factor=value) for value in (2, 4, 8))
     if axis == "lateral_gap":
         return tuple(
-            replace(anchor, lateral_gap_m=value) for value in (1.0e-6, 2.0e-6, 4.0e-6)
+            replace(anchor, lateral_gap_m=value)
+            for value in (1.0e-6, 2.0e-6, 4.0e-6)
         )
-    if axis == "pml_thickness":
+    if axis == "lateral_pml_thickness":
         return tuple(
             replace(anchor, lateral_pml_thickness_m=value)
             for value in (1.0e-6, 1.5e-6, 2.0e-6)
+        )
+    if axis == "bottom_si_buffer":
+        return tuple(
+            replace(anchor, bottom_si_buffer_m=value)
+            for value in (1.015e-6, 2.030e-6, 3.045e-6)
+        )
+    if axis == "top_source_to_pml_gap":
+        return tuple(
+            replace(anchor, top_source_to_pml_gap_m=value)
+            for value in (0.650e-6, 1.300e-6, 1.950e-6)
+        )
+    if axis == "z_pml_thickness":
+        return tuple(
+            replace(anchor, z_pml_thickness_m=value)
+            for value in (1.600e-6, 2.400e-6, 3.200e-6)
         )
     raise ValueError(f"unknown convergence axis {axis!r}")
 
@@ -333,7 +436,30 @@ REFERENCE_NAMES = (
     "x_bar_4um_by_1um",
     "y_bar_1um_by_4um",
     "l_shape_4um_with_1um_arms",
+    "l_shape_4um_with_500nm_arms",
+    "parallel_bars_4um_by_500nm_with_500nm_gap",
 )
+
+REFERENCE_POLICY = {
+    "empty": {"role": "endpoint_control", "minimum_feature_m": None},
+    "full_design_window": {"role": "endpoint_control", "minimum_feature_m": None},
+    "centered_square_2um": {"role": "legacy_control", "minimum_feature_m": 2.0e-6},
+    "x_bar_4um_by_1um": {"role": "orientation_control", "minimum_feature_m": 1.0e-6},
+    "y_bar_1um_by_4um": {"role": "orientation_control", "minimum_feature_m": 1.0e-6},
+    "l_shape_4um_with_1um_arms": {
+        "role": "legacy_asymmetric_control",
+        "minimum_feature_m": 1.0e-6,
+    },
+    "l_shape_4um_with_500nm_arms": {
+        "role": "primary_spatial_reference",
+        "minimum_feature_m": 500.0e-9,
+    },
+    "parallel_bars_4um_by_500nm_with_500nm_gap": {
+        "role": "minimum_gap_stress",
+        "minimum_feature_m": 500.0e-9,
+        "minimum_gap_m": 500.0e-9,
+    },
+}
 
 
 def reference_mask(name: str) -> tuple[tuple[int, ...], ...]:
@@ -359,6 +485,12 @@ def reference_mask(name: str) -> tuple[tuple[int, ...], ...]:
     elif name == "l_shape_4um_with_1um_arms":
         fill(20, 60, 20, 30)
         fill(20, 30, 20, 60)
+    elif name == "l_shape_4um_with_500nm_arms":
+        fill(20, 60, 20, 25)
+        fill(20, 25, 20, 60)
+    elif name == "parallel_bars_4um_by_500nm_with_500nm_gap":
+        fill(20, 60, 20, 25)
+        fill(20, 60, 30, 35)
     result = tuple(tuple(row) for row in mask)
     _require_binary_mask(result)
     return result
@@ -394,6 +526,7 @@ def mask_audit(name: str) -> dict[str, Any]:
         "binary": True,
         "solid_cells": sum(value for row in mask for value in row),
         "design_pitch_m": DESIGN_PITCH_M,
+        "policy": REFERENCE_POLICY[name],
         "physical_bounds_m": [
             [-DESIGN_HALF_SPAN_M, DESIGN_HALF_SPAN_M],
             [-DESIGN_HALF_SPAN_M, DESIGN_HALF_SPAN_M],
@@ -404,14 +537,16 @@ def mask_audit(name: str) -> dict[str, Any]:
     return payload
 
 
-PAIR_GATES = {
+OPTICAL_PAIR_GATES = {
     "source_power_relative_change": 5.0e-3,
     "q_closed_flux_relative": 2.0e-2,
     "stationarity_complex_E_NRMSE": 5.0e-3,
     "total_Q_relative_change": 1.0e-2,
     "material_component_Q_max_relative_change": 2.0e-2,
-    "complex_E_spatial_NRMSE": 2.0e-2,
-    "remapped_Q_volume_L2_NRMSE": 5.0e-2,
+    "complex_E_fixed_probe_NRMSE": 2.0e-2,
+    "conservative_Q_volume_L2_NRMSE": 5.0e-2,
+}
+DOWNSTREAM_GATES_NOT_ACTIVE = {
     "Ta_temperature_NRMSE": 2.0e-2,
     "Tmax_relative_change": 2.0e-2,
     "current_relative_change": 1.0e-2,
@@ -421,37 +556,13 @@ CURRENT_SIGN_GUARD_A = 0.5e-9
 
 
 def evaluate_pair(record: dict[str, Any]) -> dict[str, Any]:
-    """Evaluate one coarse/fine, one-geometry, one-polarization comparison."""
+    """Evaluate one optical coarse/fine comparison; no current is accepted."""
 
-    scalar_names = tuple(
-        name
-        for name in PAIR_GATES
-        if name not in ("current_relative_change", "current_absolute_change_A")
-    )
     checks = {
-        name: float(record[name]) <= PAIR_GATES[name] for name in scalar_names
+        name: float(record[name]) <= limit
+        for name, limit in OPTICAL_PAIR_GATES.items()
     }
-    coarse_current = float(record["coarse_current_A"])
-    fine_current = float(record["fine_current_A"])
-    current_change = abs(fine_current - coarse_current)
-    current_tolerance = max(
-        PAIR_GATES["current_absolute_change_A"],
-        PAIR_GATES["current_relative_change"] * abs(fine_current),
-    )
-    checks.update(
-        current_change_within_mixed_tolerance=current_change <= current_tolerance,
-        nonzero_current_sign_preserved=(
-            coarse_current * fine_current > 0.0
-            and abs(coarse_current) >= CURRENT_SIGN_GUARD_A
-            and abs(fine_current) >= CURRENT_SIGN_GUARD_A
-        ),
-    )
-    return {
-        "pass": all(checks.values()),
-        "checks": checks,
-        "current_absolute_change_A": current_change,
-        "current_tolerance_A": current_tolerance,
-    }
+    return {"pass": all(checks.values()), "checks": checks}
 
 
 def endpoint_sign_gate(ea_current_A: float, eb_current_A: float) -> dict[str, Any]:
@@ -474,46 +585,123 @@ def campaign_contract() -> dict[str, Any]:
         "design_xy",
         "outer_xy",
         "pml_xy",
+        "bottom_si_buffer",
+        "top_source_to_pml_gap",
         "lateral_gap",
-        "pml_thickness",
+        "lateral_pml_thickness",
+        "z_pml_thickness",
     )
+    alpha_scales = (0.5, 1.0, 2.0)
+    amplitude_skin_depth_m = WAVELENGTH_M / (2.0 * math.pi * 28.9)
     return {
-        "status": "AUDITED_EXACT_BINARY_MULTIAXIS_CONTRACT_NOT_SOLVED",
+        "status": "AUDITED_EXACT_BINARY_MULTIAXIS_CONTRACT_V2_NOT_SOLVED",
         "version": VERSION,
-        "scope": "solver-independent exact-binary geometry and convergence contract",
+        "scope": "solver-independent exact-binary optical convergence contract",
         "historical_optimizer_may_resume": False,
         "gray_density_allowed_in_reference_campaign": False,
+        "independent_optical_thermal_electrical_rho_allowed": False,
         "references": [mask_audit(name) for name in REFERENCE_NAMES],
+        "reference_execution": {
+            "primary_full_ladder": "l_shape_4um_with_500nm_arms",
+            "endpoint_controls": ["empty", "full_design_window"],
+            "orientation_controls": [
+                "x_bar_4um_by_1um",
+                "y_bar_1um_by_4um",
+            ],
+            "minimum_gap_stress": (
+                "parallel_bars_4um_by_500nm_with_500nm_gap"
+            ),
+            "legacy_anchor_and_selected_rechecks": [
+                "centered_square_2um",
+                "l_shape_4um_with_1um_arms",
+            ],
+        },
         "anchor_mesh": mesh_audit(anchor),
         "axis_ladders": {
             axis: [mesh_audit(spec) for spec in axis_levels(axis, anchor)]
             for axis in axes
         },
-        "pml_alpha_scale_sweep": [
-            pml_parameters(anchor.lateral_pml_thickness_m, alpha_scale=value)
-            for value in (0.5, 1.0, 2.0)
-        ],
-        "time_sweep": {
-            "courant_factors": [0.25, 0.125],
-            "total_periods": [40, 60],
-            "phasor_window_periods": 4,
-            "source_recalibration_required_for_every_grid_time_polarization": True,
+        "time_convergence": {
+            "settling_ladder": {
+                "spatial_contract": "anchor",
+                "courant_factor": 0.5,
+                "total_periods": [16, 24, 32],
+                "startup_periods": 4,
+                "phasor_window_periods": 4,
+                "successive_pairs": [[16, 24], [24, 32]],
+            },
+            "courant_ladder_after_settling": {
+                "total_periods": "selected_from_settling_ladder",
+                "courant_factors": [0.5, 0.375, 0.25],
+                "two_successive_pair_comparisons_required": True,
+            },
+            "material_ADE_refit_and_readback_required_each_level": True,
+            "source_pair_required_for_every_unique_numerical_contract": True,
+            "per_polarization_power_rescaling_forbidden": True,
         },
-        "pair_gates": PAIR_GATES,
-        "current_sign_guard_A": CURRENT_SIGN_GUARD_A,
+        "pml_alpha_scale_sweep": {
+            "scales": list(alpha_scales),
+            "lateral_profiles": [
+                pml_parameters(
+                    anchor.lateral_pml_thickness_m,
+                    alpha_scale=value,
+                )
+                for value in alpha_scales
+            ],
+            "z_profiles": [
+                pml_parameters(anchor.z_pml_thickness_m, alpha_scale=value)
+                for value in alpha_scales
+            ],
+        },
+        "comparison_contract": {
+            "complex_E": {
+                "method": "component-wise complex interpolation",
+                "coordinates": "fixed physical Yee-aware probe coordinates",
+                "probe_plane_z_m": 0.250e-6,
+                "probe_xy_bounds_m": [
+                    [-DESIGN_HALF_SPAN_M, DESIGN_HALF_SPAN_M],
+                    [-DESIGN_HALF_SPAN_M, DESIGN_HALF_SPAN_M],
+                ],
+                "array_index_comparison_forbidden": True,
+            },
+            "absorbed_power_density": {
+                "method": "conservative restriction of cell-integrated q",
+                "cell_measure": "component-specific Yee dual volume",
+                "common_physical_control_volumes_required": True,
+                "array_index_comparison_forbidden": True,
+            },
+        },
+        "optical_pair_gates": OPTICAL_PAIR_GATES,
+        "downstream_gates_not_active_in_optical_certificate": (
+            DOWNSTREAM_GATES_NOT_ACTIVE
+        ),
+        "current_sign_guard_A_downstream_only": CURRENT_SIGN_GUARD_A,
+        "locked_Au_scale_context": {
+            "wavelength_m": WAVELENGTH_M,
+            "index_at_4um": [2.2, 28.9],
+            "amplitude_skin_depth_m": amplitude_skin_depth_m,
+            "intensity_1e_depth_m": amplitude_skin_depth_m / 2.0,
+            "anchor_Au_z_step_m": 0.050e-6 / (2 * anchor.z_factor),
+            "is_convergence_evidence": False,
+        },
         "rules": {
             "one_axis_changes_per_ladder": True,
             "two_successive_pair_comparisons_required": True,
             "both_polarizations_required": True,
-            "all_reference_geometries_required_before_candidate": True,
+            "primary_reference_runs_full_ladder": True,
+            "every_reference_on_every_axis_required": False,
+            "staged_reference_rechecks_required_before_candidate": True,
             "joint_selected_mesh_confirmation_required": True,
             "raw_fields_and_complete_solver_tree_provenance_required": True,
             "exact_binary_ordinary_Au_required": True,
+            "thermal_or_current_metrics_may_certify_optical_mesh": False,
         },
         "promotion": {
             "is_mesh_certificate": False,
             "optimizer_start_allowed": False,
-            "requires_physical_device_contract": True,
+            "requires_generalized_hashed_mesh_time_runner": True,
+            "requires_completed_optical_ladders": True,
+            "requires_physical_device_contract_before_PTE_current": True,
             "requires_independent_solver_endpoint_comparison": True,
         },
     }
