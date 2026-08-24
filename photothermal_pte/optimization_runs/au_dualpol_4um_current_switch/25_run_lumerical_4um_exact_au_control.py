@@ -251,6 +251,14 @@ def _parse_args() -> argparse.Namespace:
         "--auto-shutoff-min", type=float, default=BASELINE.auto_shutoff_min
     )
     parser.add_argument("--threads", type=int, default=8)
+    parser.add_argument(
+        "--include-adjoint-field-region",
+        action="store_true",
+        help=(
+            "Add a source-disabled FieldRegion during an import-density "
+            "forward so the frozen FSP can seed a later distributed adjoint."
+        ),
+    )
     parser.add_argument("--audit-only", action="store_true")
     parser.add_argument(
         "--recover-completed-fsp",
@@ -284,6 +292,10 @@ def _parse_args() -> argparse.Namespace:
             parser.error("--rho must be finite and in [0,1]")
     elif args.rho is not None or args.rho_file is not None:
         parser.error("--rho/--rho-file are valid only for import_density")
+    if args.include_adjoint_field_region and args.case != DENSITY_CONTROL:
+        parser.error(
+            "--include-adjoint-field-region is valid only for import_density"
+        )
     if args.recover_completed_fsp and args.audit_only:
         parser.error("--recover-completed-fsp and --audit-only are mutually exclusive")
     if args.recover_completed_fsp and args.case in ("source_only", DENSITY_CONTROL):
@@ -586,6 +598,7 @@ def _exact_layout_audit_without_mutation(
             axis: list(values) for axis, values in bounds.items()
         },
         "flux_faces": faces,
+        "adjoint_field_region": None,
     }
 
 
@@ -939,6 +952,7 @@ def main() -> int:
             accelerator_policy=args.accelerator_policy,
         ),
         "scope": "audit only; no Maxwell or downstream PDE solve",
+        "include_adjoint_field_region": args.include_adjoint_field_region,
     }
     if args.audit_only:
         print(json.dumps(audit_payload, indent=2, default=_json_default))
@@ -1011,6 +1025,7 @@ def main() -> int:
             if args.recover_completed_fsp
             else "new_Maxwell_run"
         ),
+        "include_adjoint_field_region": args.include_adjoint_field_region,
     }
     fdtd = None
     try:
@@ -1098,6 +1113,7 @@ def main() -> int:
                 spec=spec,
                 source_object_w0_m=source_object_w0_m,
                 projected_density=projected_density,
+                include_adjoint_field_region=args.include_adjoint_field_region,
                 au_max_coefficients=args.au_max_coefficients,
                 au_fit_tolerance=args.au_fit_tolerance,
             )

@@ -49,6 +49,7 @@ C0_M_S = 299_792_458.0
 SOURCE_NAME = "au_dualpol_4um_scalar_Gaussian"
 TARGET_MONITOR = "au_dualpol_4um_source_target_plane"
 ENDPOINT_FIELD_MONITOR = "au_dualpol_4um_endpoint_field_plane"
+ADJOINT_FIELD_REGION = "au_dualpol_4um_adjoint_field_region"
 SOURCE_Z_M = 0.75e-6
 WAIST_Z_M = 0.0
 SOURCE_PROFILE_Z_M = WAIST_Z_M
@@ -384,6 +385,37 @@ def _add_q_analysis(fdtd: Any, bounds: dict[str, tuple[float, float]]) -> None:
                 pass
 
 
+def add_adjoint_field_region(
+    fdtd: Any, bounds: dict[str, tuple[float, float]]
+) -> dict[str, Any]:
+    """Add the monitor that later becomes the distributed adjoint source.
+
+    It must be present during the forward run so the zero-amplitude Gaussian
+    can remain an identical mesh anchor when the saved layout is converted to
+    source mode. Merely adding this object after the forward solve would not
+    certify an identical forward/adjoint runsetup.
+    """
+
+    region = fdtd.addfieldregion()
+    region["name"] = ADJOINT_FIELD_REGION
+    region["monitor type"] = "3D"
+    for axis in "xyz":
+        region[f"{axis} min"], region[f"{axis} max"] = bounds[axis]
+    region["source mode"] = False
+    _configure_single_frequency(region)
+    try:
+        region["nuttall window pulse"] = False
+    except Exception:
+        pass
+    return {
+        "name": ADJOINT_FIELD_REGION,
+        "bounds_m": {axis: list(bounds[axis]) for axis in "xyz"},
+        "source_mode_during_forward": False,
+        "frequency_points": 1,
+        "purpose": "frozen-grid distributed Lumerical Maxwell adjoint",
+    }
+
+
 def build_layout(
     fdtd: Any,
     *,
@@ -392,6 +424,7 @@ def build_layout(
     spec: LumericalMeshSpec,
     source_object_w0_m: float,
     projected_density: np.ndarray | None = None,
+    include_adjoint_field_region: bool = False,
     au_max_coefficients: int = AU_MATERIAL_MAX_COEFFICIENTS,
     au_fit_tolerance: float = MATERIAL_FIT_TOLERANCE,
 ) -> dict[str, Any]:
@@ -406,6 +439,10 @@ def build_layout(
         projected_density = canonical_density_nodes(projected_density)
     elif projected_density is not None:
         raise ValueError("projected_density is valid only for import_density")
+    if include_adjoint_field_region and case != DENSITY_CONTROL:
+        raise ValueError(
+            "adjoint FieldRegion is authorized only for import_density forwards"
+        )
     calibration = source_calibration_contract(
         spec, polarization, source_object_w0_m=source_object_w0_m
     )
@@ -451,6 +488,11 @@ def build_layout(
     _add_q_analysis(fdtd, bounds)
     faces = _add_flux_box(fdtd, bounds)
     _add_endpoint_field_monitor(fdtd)
+    adjoint_region = (
+        add_adjoint_field_region(fdtd, bounds)
+        if include_adjoint_field_region
+        else None
+    )
     return {
         "case": case,
         "classification": (
@@ -465,6 +507,7 @@ def build_layout(
             axis: list(values) for axis, values in bounds.items()
         },
         "flux_faces": faces,
+        "adjoint_field_region": adjoint_region,
     }
 
 

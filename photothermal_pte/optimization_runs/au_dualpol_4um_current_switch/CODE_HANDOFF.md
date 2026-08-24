@@ -154,6 +154,19 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     power and transpose errors were zero at reported precision and the
     native-Q/thermal-adjoint contraction error was `1.59e-16`. Its current was
     `-5.213 nA`; this is an unoptimized test state, not a switching result.
+28. `lumerical_4um_adjoint.py` and
+    `34_run_lumerical_4um_gray_maxwell_adjoint.py` -- the first complete
+    relaxed-density Maxwell-gradient preparation on the Lumerical-only route.
+    Script 34 hash-binds the R1.2 forward, native-Q custom-CUDA pullback, and
+    sparse component-Yee material Jacobian; imports one official FieldRegion
+    vector source; preserves the exact forward mesh with a zero-amplitude
+    Gaussian mesh anchor; reconstructs the FieldRegion-only CW field from
+    `cwnorm(1)`/`cwnorm(2)`; and forms indirect plus explicit-loss optical
+    gradients and the direct PDE material gradient. The R1.2 Ea development
+    run passed every preparation gate in 101.32 s, including exact source
+    round trip, zero forward/adjoint grid difference, and a `1.41e-16` CW
+    reconstruction residual. `AD_FD_claimed` remains false: do not use the
+    gradient in LD_MMA until an independent centered-forward pair passes.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -218,8 +231,9 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    Lumerical optical law. The replacement `n-k`-then-square relaxation is now
    implemented and solver-free tested, but it is still blocked pending B200
    4-um endpoint parity, quantified source-band error, uniform-density
-   resonance sweep, component-Yee
-   Jacobian FD/transpose tests, and full combined AD-FD. See
+   resonance sweep, same-step Maxwell/combined AD-FD, and both-polarization
+   validation. The component-Yee mapping FD/transpose and one Ea adjoint
+   preparation now pass, but neither proves the total derivative. See
    `MATERIAL_FRACTION_AUDIT.md`.
 2. AD-FD validates the derivative of a chosen discrete mesh; it does not
    certify mesh convergence.
@@ -273,9 +287,10 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    remain invalid for promotion.  See `ROBUST_OBJECTIVE_AUDIT.md`.
 8. Production optimization is now unconditionally code-blocked because the
    existing entry points still implement the historical gray/FDTDX path.
-   Legacy shared-linear certificates cannot clear this gate. Connect the new
-   Lumerical `n-k` density carrier to the component-Yee discrete adjoint, then
-   issue new certificates naming the selected
+   Legacy shared-linear certificates cannot clear this gate. The new
+   Lumerical `n-k` density carrier is now connected through one Ea
+   component-Yee discrete adjoint, but its total derivative still requires
+   centered AD-FD before optimization. Then issue certificates naming the selected
    full-domain-z grid, Courant factor, time windows, and same-grid Ea/Eb source
    calibration. The combined adjoint also derives
    its Au/TaIrTe4 material offsets from the realized placed slices; do not
@@ -443,7 +458,7 @@ Do not copy them into this worktree.
     temperature NRMSE and Tmax changes pass below 0.5%. Material omission is
     only 0.001019%/0.198992%, so the persistent 53.4/602-ppm zero-current
     residual is not explained by mixed-index omission alone. The Pabs L2
-    error improves almost exactly first order over three staircase meshes.
+   error improves almost exactly first order over three staircase meshes.
     The subsequent axis audit showed that the official common-grid
     `pabs_adv/index_x` filter itself creates an x-staggered material-mask bias.
     A new component-Yee filter now pairs `Qx/Qy/Qz` with collocated fitted
@@ -454,7 +469,18 @@ Do not copy them into this worktree.
     reproduces this result. A 0.3125-nm stack-only source control passed, but
     the matching material run projected nine hours and was stopped at 3.63%;
     do not restart that brute-force sequence by default. See
-    `LUMERICAL_INTERFACE_METHOD_FINDINGS.md`.
+   `LUMERICAL_INTERFACE_METHOD_FINDINGS.md`.
+12. The system R1.0 build 4413 failed FieldRegion `importdataset` before any
+    adjoint solve. After pinning the API/CAD/engine pair to R1.2 build 4522,
+    the matching Ea source-only and nonuniform forward passed in 20.77 s and
+    54.53 s of solver time. The R1.2 forward raw NPZ is byte-identical to the
+    earlier state (`6c528b...a6bb`), so the audited Jacobian and custom-CUDA
+    pullback remain bound to the exact same fields, epsilon, Q, and grid. One
+    R1.2 FieldRegion adjoint then passed in 101.32 s total/80.25 s solver time;
+    mesh and monitor-grid differences were exactly zero, source-profile
+    round-trip error was zero, and the CW reconstruction residual was
+    `1.41e-16`. The resulting total projected-density gradient L2 norm is
+    `9.09e-10 A`, but this is preparation evidence only until centered AD-FD.
 
 ## Next correct sequence
 
@@ -494,10 +520,11 @@ Do not copy them into this worktree.
    must remain outside the Git worktree. The unified runner and endpoint batch
    now exist, but no B200 result is committed and this Codex host fails the
    B200 preflight.
-5. The component-Yee builder has passed on one hash-identical nonuniform RTX
-   development FSP at the 5/50-nm staircase mesh. Next connect that validated
-   sparse transpose to the Lumerical discrete Maxwell adjoint and issue a
-   complete optical/thermal/electrical AD-FD certificate. Repeat the material
+5. The component-Yee builder and one hash-bound R1.2 Ea distributed-source
+   adjoint preparation have passed on the 5/50-nm staircase mesh. Next run one
+   independent centered-forward direction and compare it with the saved total
+   derivative; do not rerun the baseline forward. Only after that passes,
+   extend the same certificate to Eb and the signed dual objective. Repeat the material
    Jacobian on the ultimately selected mesh/B200; do not substitute bundled
    LumOpt's real/lossless metal path.
 6. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh

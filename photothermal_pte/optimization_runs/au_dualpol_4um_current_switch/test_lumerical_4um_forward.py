@@ -17,6 +17,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     sampled_material_data,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_forward import (
+    ADJOINT_FIELD_REGION,
     DENSITY_CONTROL,
     ENDPOINT_FIELD_MONITOR,
     PABS_GROUP,
@@ -57,6 +58,7 @@ class _FakeFdtd:
         self.objects: list[tuple[str, dict[str, object]]] = []
         self.rectangles: list[dict[str, object]] = []
         self.imports: list[dict[str, object]] = []
+        self.fieldregions: list[dict[str, object]] = []
         self.import_calls: list[tuple[np.ndarray, ...]] = []
         self.material_types: list[str] = []
         self.material_properties: dict[tuple[object, str], object] = {}
@@ -79,6 +81,9 @@ class _FakeFdtd:
 
     def addpower(self):
         return self._add(self.powers)
+
+    def addfieldregion(self):
+        return self._add(self.fieldregions)
 
     def addobject(self, object_type: str):
         item: dict[str, object] = {}
@@ -290,6 +295,24 @@ def test_imported_density_uses_same_solver_source_mesh_and_hashes_nodes() -> Non
     assert density.import_calls[0][0].shape == (81, 81, 2)
     assert density_audit["geometry"]["density_state"]["nodal_shape_xy"] == [81, 81]
     assert exact_audit["geometry"]["exact_au_geometry"]["mask_shape_xy"] == [80, 80]
+
+
+def test_imported_density_can_freeze_one_adjoint_field_region() -> None:
+    fdtd = _FakeFdtd()
+    rho = np.full(CONTRACT.design_node_shape, 0.5)
+    audit = build_layout(
+        fdtd,
+        case=DENSITY_CONTROL,
+        polarization="Ea",
+        spec=BASELINE,
+        source_object_w0_m=4.0e-6,
+        projected_density=rho,
+        include_adjoint_field_region=True,
+    )
+    assert len(fdtd.fieldregions) == 1
+    assert fdtd.fieldregions[0]["name"] == ADJOINT_FIELD_REGION
+    assert fdtd.fieldregions[0]["source mode"] is False
+    assert audit["adjoint_field_region"]["name"] == ADJOINT_FIELD_REGION
 
 
 def test_imported_density_fails_closed_without_exact_nodal_state() -> None:

@@ -230,6 +230,26 @@ invocation took 20.79 s. The raw pullback remains outside Git. It is the input
 to the next distributed-source Lumerical adjoint, not a production
 certificate or permission to start the optimizer.
 
+### R1.2 distributed-source Maxwell adjoint prepared, not yet AD--FD certified
+
+The development launcher is now pinned to the compatible 2026 R1.2 build
+4522 API/CAD/engine tree. The system R1.0 build 4413 reproduced the known
+FieldRegion `importdataset` failure before any Maxwell adjoint solve and is
+rejected by preflight. A new R1.2 Ea source-only run passed in 20.77 s, and
+the adjoint-ready nonuniform forward passed in 54.53 s. Its complete raw NPZ
+SHA is byte-identical to the previous validated state (`6c528b...a6bb`).
+
+Script 34 then reused that forward and the script-33 custom-CUDA pullback and
+ran exactly one R1.2 Maxwell adjoint. It passed in 101.32 s total (80.25 s
+solver): FieldRegion profile round-trip error, forward/adjoint solver-mesh
+difference, and forward/adjoint monitor-grid difference were all zero; the
+two-state CW reconstruction residual was `1.41e-16`; and the total projected
+density gradient was finite and nonzero with L2 norm `9.09e-10 A`. No
+Lumerical HEAT/CHARGE solve and no optimizer iteration occurred. This is only
+an adjoint-preparation certificate. `AD_FD_claimed=false` remains mandatory
+until an independent centered-forward direction agrees without empirical
+rescaling.
+
 ## Exact endpoint/final GPU runner
 
 The B200 launcher refuses a non-B200 device. A separate development launcher
