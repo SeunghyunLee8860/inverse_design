@@ -103,6 +103,12 @@ def _output_directory(path: Path) -> Path:
     return resolved
 
 
+def _json_default(value: Any) -> Any:
+    if isinstance(value, np.generic):
+        return value.item()
+    raise TypeError(f"Object of type {type(value).__name__} is not JSON serializable")
+
+
 def _json_safe_memory_stats(device: Any) -> dict[str, int | float | str] | None:
     stats = device.memory_stats()
     if stats is None:
@@ -290,11 +296,20 @@ def run(
     report = output / REPORT_NAME
     temporary = report.with_suffix(".tmp")
     temporary.write_text(
-        json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n",
+        json.dumps(
+            payload,
+            indent=2,
+            sort_keys=True,
+            allow_nan=False,
+            default=_json_default,
+        ) + "\n",
         encoding="utf-8",
     )
     os.replace(temporary, report)
-    print(json.dumps({"report": str(report), **payload["runtime"], "ready": ready}))
+    print(json.dumps(
+            {"report": str(report), **payload["runtime"], "ready": ready},
+            default=_json_default,
+        ))
     return payload
 
 

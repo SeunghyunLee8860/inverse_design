@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import math
 from pathlib import Path
 import sys
@@ -100,6 +101,15 @@ def test_physical_increment_material_data_uses_one_passive_pole(monkeypatch):
         fit["fit_relative_error"] < 1.0e-4
         for fit in result["fits"].values()
     )
+    report_fragment = {
+        "fits": result["fits"],
+        "endpoints": result["coefficient_endpoints"],
+        "numpy_bool": np.bool_(True),
+    }
+    encoded = json.dumps(
+        report_fragment, allow_nan=False, default=control._json_default
+    )
+    assert "physical-one-pole" in encoded
 
 
 def test_builder_rejects_unknown_or_two_pole_increment_state_before_import():
