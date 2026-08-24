@@ -770,3 +770,8 @@ Do not copy them into this worktree.
 8. Only then start LD_MMA filter/projection continuation and finish with an
    independent 500-nm solid/void audit plus ordinary dispersive-Au binary
    reevaluation.
+
+
+## 2026-08-25 FDTDX increment-state update
+
+Commit `05d8e9ba` adds a CPU-only cancellation-resistant `(P, delta-P)` ADE candidate. All z8/z16/z32 material-axis scalar gates pass and the FDTDX-related suite is now `152 passed`; optimizer permission remains false. The old one-point CCPR fallback was rejected because passive candidates retained fine-dt cancellation while the better-conditioned candidate was non-passive. See `FDTDX_INCREMENT_STATE_CANDIDATE.md` for equations, hashes, runtime, exact promotion boundaries, and the required small forward/checkpointed-AD-FD sequence. Do not launch another long FDTDX pair yet.

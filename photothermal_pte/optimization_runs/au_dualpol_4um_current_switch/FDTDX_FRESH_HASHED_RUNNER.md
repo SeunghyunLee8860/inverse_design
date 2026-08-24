@@ -357,3 +357,8 @@ not authorize an optimizer, thermal/electrical solve, PTE-current claim, or mesh
 certificate. No finer full-domain-z or longer-time case is now authorized.
 The next step is a numerically better material recurrence that passes the
 CPU transient-precision gate before any new source pair or material solve.
+
+
+## Increment-state runner boundary
+
+Commit `05d8e9ba` supplies a solver-free `(P, delta-P)` precision candidate only. The current runner remains bound to the rejected old second-order two-pole law. See `FDTDX_INCREMENT_STATE_CANDIDATE.md`; a future runner needs a new version, pinned patched-FDTDX hash, new coefficient/readback contract, small JAX forward and checkpointed AD-FD gates, and fresh source pairs before any 3-D convergence case.

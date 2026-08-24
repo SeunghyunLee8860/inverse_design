@@ -499,3 +499,8 @@ Passing this campaign would permit evaluation of exact-binary candidate
 geometries.  It would still not validate a gray `rho`, `rho^3`, or independently
 interpolated optical/thermal/electrical Au model, and it would not by itself
 authorize restarting the historical optimizer.
+
+
+## Increment-state implementation gate
+
+The solver-free cancellation-resistant `(P, delta-P)` candidate at commit `05d8e9ba` passes z8/z16/z32 CPU precision gates, but it is not yet implemented in FDTDX. See `FDTDX_INCREMENT_STATE_CANDIDATE.md`. The z ladder remains closed until an isolated fork passes actual JAX-kernel forward, long-time float32, and checkpointed AD-FD controls. Old and new material-law results must never be mixed in a mesh comparison.
