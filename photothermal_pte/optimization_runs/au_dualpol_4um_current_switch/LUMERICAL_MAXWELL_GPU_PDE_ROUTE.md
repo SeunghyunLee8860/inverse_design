@@ -240,7 +240,11 @@ refinement passes, while thin-stack 5-to-2.5-nm refinement fails the 0.5%
 contract (1.3298% normalized-Q change and 0.9850% complex-field NRMSE). The
 linked pair also fails. `LUMERICAL_Z_MESH_FINDINGS.md` records the full table.
 The prior strict-duration result used failed MCM20, so MCM6 time convergence
-must be rerun before extending z to 1.25/12.5 nm.
+was rerun before extending z. The matching MCM6 1-ps/1e-7 versus 2-ps/1e-9
+source-only/empty/full pair passed: exact-full normalized Q, complex field,
+and E2 changed 0.00456%, 0.00184%, and 0.00135%. See
+`LUMERICAL_TIME_CONVERGENCE_FINDINGS.md`. The next spatial step is therefore
+the linked 1.25/12.5-nm z mesh.
 
 The concrete forward entry point is
 `25_run_lumerical_4um_exact_au_control.py`. It has an audit-only path that

@@ -44,9 +44,9 @@ plane.
 
 The current dominant z error is the thin Au/TaIrTe4/SiO2 stack, not the
 50-to-25 nm bulk/air/PML refinement. The 2.5/25 nm mesh is not a z-converged
-production mesh because the linked finest pair fails the 0.5% gate. After the
-MCM6 duration/decay axis is independently closed, extend the full-domain z
-axis to 1.25 nm stack and 12.5 nm bulk/air/PML, with a new matching source-only
+production mesh because the linked finest pair fails the 0.5% gate. The MCM6
+duration/decay axis has subsequently passed; extend the full-domain z axis to
+1.25 nm stack and 12.5 nm bulk/air/PML, with a new matching source-only
 control. Do not proceed to x/y convergence or optimization on the present
 2.5/25 nm result.
 
@@ -57,11 +57,11 @@ partition by about +56% and the air partition by about -98.8% while total
 native Q changed only 1.33%. Use total/component native-Yee Q, saved epsilon,
 conservative Q remapping, and downstream temperature/current for promotion.
 
-## Time-order caveat
+## Time-order resolution
 
 The earlier 2 ps / 1e-9 strict-decay diagnostic used the now-rejected Au MCM20
 fit. It proves that longer decay did not repair the MCM20 energy failure, but
-it is not a duration-convergence certificate for MCM6. The correct next run is
-a matching MCM6 source-only/empty/full 1 ps versus 2 ps duration/decay
-comparison. Spatial z evidence above remains a development diagnostic until
-that prior contract axis is closed.
+it was not a duration-convergence certificate for MCM6. A matching MCM6
+source-only/empty/full 1 ps versus 2 ps duration/decay comparison has now
+passed by a wide margin. See `LUMERICAL_TIME_CONVERGENCE_FINDINGS.md`. The z
+failure above remains spatial development evidence rather than a transient.

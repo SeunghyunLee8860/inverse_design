@@ -44,6 +44,11 @@ respectively, against 0.5% gates. The linked 5/50-to-2.5/25-nm pair also
 failed, so 2.5/25 nm is not a converged mesh. The earlier strict 2-ps run used
 rejected MCM20 and cannot close the MCM6 time axis. See
 `LUMERICAL_Z_MESH_FINDINGS.md`.
+The correct MCM6 source-only/empty/full duration pair has now been run. For
+exact-full, 1 ps/1e-7 versus 2 ps/1e-9 changed normalized Q by 0.00456%, flux
+by 0.01086%, complex endpoint field by 0.00184%, and E2 by 0.00135%; exact
+empty also passed. The RTX Ea time axis is therefore closed, while z remains
+failed. See `LUMERICAL_TIME_CONVERGENCE_FINDINGS.md`.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine

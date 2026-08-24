@@ -347,9 +347,11 @@ Do not copy them into this worktree.
    The linked 5/50-to-2.5/25-nm pair also fails. See
    `LUMERICAL_Z_MESH_FINDINGS.md`; 2.5/25 nm is not a converged production
    mesh.
-10. The prior 2-ps/1e-9 run used rejected MCM20. It cannot certify MCM6 time
-    convergence. Rerun the source-only/empty/full MCM6 duration/decay pair
-    before extending z or beginning x/y convergence.
+10. The prior 2-ps/1e-9 run used rejected MCM20, so the MCM6 duration/decay
+    pair was rerun correctly. Exact-full 1 ps versus 2 ps changes were Q
+    0.00456%, flux 0.01086%, complex field 0.00184%, and E2 0.00135%; exact
+    empty also passed. The MCM6 time axis is closed for this RTX Ea control.
+    See `LUMERICAL_TIME_CONVERGENCE_FINDINGS.md`.
 
 ## Next correct sequence
 
@@ -360,9 +362,8 @@ Do not copy them into this worktree.
    or a production mesh. The completed shared-linear factor-1/2/4 sweep is
    useful negative evidence: its stable final pair failed in all 6/6 cases.
 3. Treat the CV0/CV1/staircase, z, time, and MCM sweeps as RTX development
-   evidence only. Use Au MCM6, not 20. First rerun the MCM6 1-ps versus 2-ps
-   duration/decay axis with matching source-only/empty/full controls. Then
-   extend the failed linked z pair from 2.5/25 nm to 1.25/12.5 nm. Do not begin
+   evidence only. Use Au MCM6, not 20. The MCM6 duration/decay pair now passes.
+   Extend the failed linked z pair from 2.5/25 nm to 1.25/12.5 nm. Do not begin
    x/y convergence until the z pair passes every 0.5% scalar/field gate.
 4. On the actual B200, use `25_run_lumerical_4um_exact_au_control.py` to pass
    source-only Ea/Eb first, then matching ordinary empty/full/simple-L exact
