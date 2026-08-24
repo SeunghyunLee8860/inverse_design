@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
-from typing import Any, Iterator
+from typing import Any, Iterator, Mapping
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_exact_binary_convergence import (
     MeshSpec,
@@ -51,6 +51,7 @@ def build_model(
     target_reflection: float = 1.0e-6,
     include_adjoint_source: bool = False,
     air_only_source_calibration: bool = False,
+    material_law_contract: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build a fresh model; an implicit upstream PML is not an option."""
 
@@ -72,6 +73,7 @@ def build_model(
             include_adjoint_source=include_adjoint_source,
             air_only_source_calibration=air_only_source_calibration,
             pml_face_parameters=profiles,
+            material_law_contract=material_law_contract,
         )
     if model.get("pml_face_parameters") != profiles:
         raise RuntimeError("fresh FDTDX model did not preserve explicit PML provenance")

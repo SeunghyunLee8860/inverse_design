@@ -77,8 +77,31 @@ def mask_material_audit(mask: Any, spec: MeshSpec) -> dict[str, Any]:
     }
 
 
+def coefficient_endpoint_matrix(
+    model: dict[str, Any], material: str
+) -> np.ndarray:
+    """Return a finite ``(num_poles, 3)`` c1/c2/c3 endpoint matrix."""
+
+    source = model.get("coefficient_endpoints")
+    raw = (
+        source[material]
+        if source is not None
+        else model["coefficients"][material]
+    )
+    value = np.asarray(raw, dtype=np.float32)
+    if value.ndim == 1:
+        value = value[None, :]
+    if value.ndim != 2 or value.shape[0] < 1 or value.shape[1] != 3:
+        raise RuntimeError(
+            f"invalid ADE endpoint matrix for material {material!r}: {value.shape}"
+        )
+    if not np.all(np.isfinite(value)):
+        raise RuntimeError(f"non-finite ADE endpoint for material {material!r}")
+    return value
+
+
 def arrays_for_exact_binary(model: dict[str, Any], mask: Any, spec: MeshSpec):
-    """Return reset solver arrays with all Au ADE coefficients masked at 0/1."""
+    """Return reset solver arrays with every Au pole masked at exact 0/1."""
 
     expanded = solver_mask(mask, spec)
     au_slice = model["slices"]["au_design"]
@@ -92,14 +115,19 @@ def arrays_for_exact_binary(model: dict[str, Any], mask: Any, spec: MeshSpec):
 
     jnp = model["jnp"]
     binary = jnp.asarray(expanded, dtype=jnp.float32)
-    endpoint_values = tuple(float(value) for value in model["coefficients"]["au"])
+    endpoints = coefficient_endpoint_matrix(model, "au")
     coefficient_arrays = []
-    for name, endpoint in zip(COEFFICIENT_NAMES, endpoint_values, strict=True):
-        coefficient = model[f"fixed_{name.removeprefix('dispersive_')}"]
-        for component in range(3):
-            coefficient = coefficient.at[(0, component, *au_slice)].set(
-                endpoint * binary[:, :, None]
+    for coefficient_index, name in enumerate(COEFFICIENT_NAMES):
+        coefficient = model[f"fixed_{name.removeprefix("dispersive_")}"]
+        if coefficient.shape[:2] != (endpoints.shape[0], 3):
+            raise RuntimeError(
+                f"{name} pole/component shape does not match Au endpoints"
             )
+        for pole_index, endpoint in enumerate(endpoints[:, coefficient_index]):
+            for component in range(3):
+                coefficient = coefficient.at[
+                    (pole_index, component, *au_slice)
+                ].set(float(endpoint) * binary[:, :, None])
         coefficient_arrays.append(coefficient)
 
     arrays = model["base"].reset()
@@ -111,29 +139,44 @@ def arrays_for_exact_binary(model: dict[str, Any], mask: Any, spec: MeshSpec):
 def readback_exact_binary(
     model: dict[str, Any], arrays: Any, mask: Any, spec: MeshSpec
 ) -> dict[str, Any]:
-    """Copy only the Au window to host and prove exact air/Au coefficient values."""
+    """Copy only the Au window and prove every exact air/Au pole endpoint."""
 
     expanded = solver_mask(mask, spec)
+    endpoints = coefficient_endpoint_matrix(model, "au")
     au_slice = model["slices"]["au_design"]
     nz = int(au_slice[2].stop) - int(au_slice[2].start)
-    expected_shape = (3, expanded.shape[0], expanded.shape[1], nz)
-    binary_4d = np.broadcast_to(expanded[None, :, :, None], expected_shape)
+    expected_shape = (
+        endpoints.shape[0],
+        3,
+        expanded.shape[0],
+        expanded.shape[1],
+        nz,
+    )
+    binary_5d = np.broadcast_to(
+        expanded[None, None, :, :, None], expected_shape
+    )
     checks: dict[str, bool] = {}
     coefficients: dict[str, Any] = {}
 
-    for name, endpoint in zip(
-        COEFFICIENT_NAMES, model["coefficients"]["au"], strict=True
-    ):
+    for coefficient_index, name in enumerate(COEFFICIENT_NAMES):
         field = getattr(arrays, name)
-        observed = np.asarray(field[(0, slice(None), *au_slice)])
-        expected = np.asarray(float(endpoint), dtype=observed.dtype) * binary_4d
+        observed = np.asarray(field[(slice(None), slice(None), *au_slice)])
+        endpoint = np.asarray(
+            endpoints[:, coefficient_index], dtype=observed.dtype
+        )
+        expected = endpoint[:, None, None, None, None] * binary_5d
         exact = observed.shape == expected_shape and np.array_equal(observed, expected)
         checks[f"{name}_exact_air_au_endpoints"] = exact
         coefficients[name] = {
-            "endpoint": float(np.asarray(endpoint, dtype=observed.dtype)),
+            "endpoint": float(endpoint[0]) if endpoint.size == 1 else None,
+            "endpoints_by_pole": [float(item) for item in endpoint],
             "observed_shape": list(observed.shape),
             "observed_unique": [float(item) for item in np.unique(observed)],
-            "max_absolute_error": float(np.max(np.abs(observed - expected))),
+            "max_absolute_error": (
+                float(np.max(np.abs(observed - expected)))
+                if observed.shape == expected.shape
+                else None
+            ),
         }
 
     inverse_permittivity = np.asarray(
@@ -146,10 +189,14 @@ def readback_exact_binary(
         np.all((expanded == 0) | (expanded == 1))
     )
     checks["no_gray_material_law"] = MATERIAL_LAW.endswith("endpoints-v1")
+    checks["lorentz_drude_c4_array_absent"] = (
+        getattr(arrays, "dispersive_c4", None) is None
+    )
     audit = mask_material_audit(mask, spec)
     audit.update(
-        au_grid_shape=list(expected_shape[1:]),
+        au_grid_shape=list(expected_shape[2:]),
         au_z_cells=nz,
+        num_dispersive_poles=endpoints.shape[0],
         coefficient_readback=coefficients,
         inverse_permittivity_unique=[
             float(item) for item in np.unique(inverse_permittivity)

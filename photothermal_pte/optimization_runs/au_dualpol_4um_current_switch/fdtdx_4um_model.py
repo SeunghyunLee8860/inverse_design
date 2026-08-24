@@ -16,7 +16,7 @@ import math
 import os
 from pathlib import Path
 import sys
-from typing import Any
+from typing import Any, Mapping
 
 import numpy as np
 
@@ -321,6 +321,7 @@ def build_model(
     include_adjoint_source: bool = True,
     air_only_source_calibration: bool = False,
     pml_face_parameters: dict[str, dict[str, float]] | None = None,
+    material_law_contract: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Place the full optical model without running a time-domain solve."""
 
@@ -328,6 +329,14 @@ def build_model(
         raise ValueError("two disjoint phasor windows must fit in the solve")
     if not (0.0 < courant_factor <= 1.0):
         raise ValueError("courant_factor must be in (0, 1]")
+    if material_law_contract is not None and air_only_source_calibration:
+        raise ValueError(
+            "candidate two-pole material law cannot be used for air-only calibration"
+        )
+    if material_law_contract is not None and include_adjoint_source:
+        raise ValueError(
+            "candidate two-pole material law is not authorized for adjoint placement"
+        )
     expected = FDTDX_SOURCE / "src"
     if str(expected) not in sys.path:
         sys.path.insert(0, str(expected))
@@ -390,35 +399,63 @@ def build_model(
     epsilon_si = _complex(materials["materials"]["Si"]["epsilon"])
     epsilon_sio2_real = _lossless_uniform_permittivity(epsilon_sio2, "SiO2")
     epsilon_si_real = _lossless_uniform_permittivity(epsilon_si, "Si")
-    fits = {
-        "au": _refit_float32_ade(
-            stage41._drude_fit(epsilon_au, omega, dt),
-            epsilon_au,
-            omega,
-            dt,
-        ),
-        "a": _refit_float32_ade(
-            stage41._drude_fit(epsilon_ta["a"], omega, dt),
-            epsilon_ta["a"],
-            omega,
-            dt,
-        ),
-        "b": _refit_float32_ade(
-            stage41._lorentz_fit(epsilon_ta["b"], omega, dt),
-            epsilon_ta["b"],
-            omega,
-            dt,
-        ),
-    }
-    fits["c"] = dict(fits["b"])
-    coefficients = {
-        name: stage41._coefficient_triplet(value, dt)
-        for name, value in fits.items()
-    }
-    discrete_susceptibility = {
-        name: realized_discrete_susceptibility(value, omega, dt)
-        for name, value in coefficients.items()
-    }
+    if material_law_contract is None:
+        fits = {
+            "au": _refit_float32_ade(
+                stage41._drude_fit(epsilon_au, omega, dt),
+                epsilon_au,
+                omega,
+                dt,
+            ),
+            "a": _refit_float32_ade(
+                stage41._drude_fit(epsilon_ta["a"], omega, dt),
+                epsilon_ta["a"],
+                omega,
+                dt,
+            ),
+            "b": _refit_float32_ade(
+                stage41._lorentz_fit(epsilon_ta["b"], omega, dt),
+                epsilon_ta["b"],
+                omega,
+                dt,
+            ),
+        }
+        fits["c"] = dict(fits["b"])
+        coefficients = {
+            name: stage41._coefficient_triplet(value, dt)
+            for name, value in fits.items()
+        }
+        coefficient_endpoints = {
+            name: (tuple(float(item) for item in values),)
+            for name, values in coefficients.items()
+        }
+        discrete_susceptibility = {
+            name: realized_discrete_susceptibility(value, omega, dt)
+            for name, value in coefficients.items()
+        }
+        material_poles = None
+        material_law_mode = "historical-single-pole-refit"
+        material_law_contract_sha256 = None
+    else:
+        from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_candidate_model_material import (
+            candidate_material_data,
+        )
+
+        candidate_data = candidate_material_data(
+            fdtdx,
+            material_law_contract,
+            dt_s=dt,
+            omega_rad_s=omega,
+            epsilon_au=epsilon_au,
+            epsilon_ta=epsilon_ta,
+        )
+        coefficient_endpoints = candidate_data["coefficient_endpoints"]
+        coefficients = dict(coefficient_endpoints)
+        discrete_susceptibility = candidate_data["discrete_susceptibility"]
+        fits = candidate_data["fits"]
+        material_poles = candidate_data["poles"]
+        material_law_mode = "candidate-two-pole-contract"
+        material_law_contract_sha256 = candidate_data["contract_sha256"]
 
     objects: list[object] = []
     constraints: list[object] = []
@@ -448,22 +485,24 @@ def build_model(
     objects.extend(boundaries.values())
     constraints.extend(boundary_constraints)
 
-    au_model = fdtdx.DispersionModel(
-        poles=(
+    if material_poles is None:
+        au_poles = (
             fdtdx.DrudePole(
                 plasma_frequency=fits["au"]["omega_p_rad_s"],
                 damping=fits["au"]["gamma_rad_s"],
             ),
         )
-    )
-    ta_placeholder = fdtdx.DispersionModel(
-        poles=(
+        ta_poles = (
             fdtdx.DrudePole(
                 plasma_frequency=fits["a"]["omega_p_rad_s"],
                 damping=fits["a"]["gamma_rad_s"],
             ),
         )
-    )
+    else:
+        au_poles = material_poles["au"]
+        ta_poles = material_poles["a"]
+    au_model = fdtdx.DispersionModel(poles=au_poles)
+    ta_placeholder = fdtdx.DispersionModel(poles=ta_poles)
     silicon = fdtdx.UniformMaterialObject(
         name="fixed_silicon_substrate",
         partial_grid_shape=(None, None, LAYOUT.silicon_cells),
@@ -711,22 +750,43 @@ def build_model(
     if slices["fixed_285nm_sio2"][2].stop != slices["fixed_tairte4"][2].start:
         raise RuntimeError("TaIrTe4 and SiO2 are not face adjacent")
 
+    num_dispersive_poles = len(coefficient_endpoints["au"])
+    if any(
+        len(value) != num_dispersive_poles
+        for value in coefficient_endpoints.values()
+    ):
+        raise RuntimeError("all material axes must use the same ADE pole count")
+    if (
+        base.dispersive_c1 is None
+        or base.dispersive_c1.shape[0] != num_dispersive_poles
+    ):
+        raise RuntimeError("placed FDTDX material pole dimension does not match the law")
     spatial_shape = base.dispersive_c1.shape[-3:]
-    fixed_c1 = jnp.zeros((1, 3, *spatial_shape), dtype=jnp.float32)
+    fixed_c1 = jnp.zeros(
+        (num_dispersive_poles, 3, *spatial_shape), dtype=jnp.float32
+    )
     fixed_c2 = jnp.zeros_like(fixed_c1)
     fixed_c3 = jnp.zeros_like(fixed_c1)
     ta_slice = slices["fixed_tairte4"]
     au_slice = slices["au_design"]
     if not air_only_source_calibration:
         for component, axis in enumerate(("b", "a", "c")):
-            c1, c2, c3 = coefficients[axis]
-            fixed_c1 = fixed_c1.at[(0, component, *ta_slice)].set(c1)
-            fixed_c2 = fixed_c2.at[(0, component, *ta_slice)].set(c2)
-            fixed_c3 = fixed_c3.at[(0, component, *ta_slice)].set(c3)
-        au_c1, au_c2, _ = coefficients["au"]
-        for component in range(3):
-            fixed_c1 = fixed_c1.at[(0, component, *au_slice)].set(au_c1)
-            fixed_c2 = fixed_c2.at[(0, component, *au_slice)].set(au_c2)
+            for pole_index, (c1, c2, c3) in enumerate(
+                coefficient_endpoints[axis]
+            ):
+                fixed_c1 = fixed_c1.at[(pole_index, component, *ta_slice)].set(c1)
+                fixed_c2 = fixed_c2.at[(pole_index, component, *ta_slice)].set(c2)
+                fixed_c3 = fixed_c3.at[(pole_index, component, *ta_slice)].set(c3)
+        for pole_index, (au_c1, au_c2, _) in enumerate(
+            coefficient_endpoints["au"]
+        ):
+            for component in range(3):
+                fixed_c1 = fixed_c1.at[(pole_index, component, *au_slice)].set(
+                    au_c1
+                )
+                fixed_c2 = fixed_c2.at[(pole_index, component, *au_slice)].set(
+                    au_c2
+                )
 
     return {
         "jax": jax,
@@ -742,6 +802,10 @@ def build_model(
         "fixed_c2": fixed_c2,
         "fixed_c3": fixed_c3,
         "coefficients": coefficients,
+        "coefficient_endpoints": coefficient_endpoints,
+        "num_dispersive_poles": num_dispersive_poles,
+        "material_law_mode": material_law_mode,
+        "material_law_contract_sha256": material_law_contract_sha256,
         "discrete_susceptibility": discrete_susceptibility,
         "absorption_loss_basis": ABSORPTION_LOSS_BASIS,
         "fits": fits,

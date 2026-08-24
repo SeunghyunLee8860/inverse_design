@@ -30,6 +30,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_exac
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_exact_binary_material import (
     arrays_for_exact_binary,
+    coefficient_endpoint_matrix,
     readback_exact_binary,
     solver_mask,
 )
@@ -314,29 +315,35 @@ def material_stack_audit(
 
     ta_slice = model["slices"]["fixed_tairte4"]
     ta_coefficients: dict[str, Any] = {}
-    for array_name, coefficient_index in (
-        ("dispersive_c1", 0),
-        ("dispersive_c2", 1),
-        ("dispersive_c3", 2),
+    for coefficient_index, array_name in enumerate(
+        ("dispersive_c1", "dispersive_c2", "dispersive_c3")
     ):
-        observed = np.asarray(getattr(arrays, array_name)[(0, slice(None), *ta_slice)])
+        observed = np.asarray(
+            getattr(arrays, array_name)[
+                (slice(None), slice(None), *ta_slice)
+            ]
+        )
         component_checks = []
         component_summary = []
         for component, axis in enumerate(("b", "a", "c")):
-            expected = np.asarray(
-                model["coefficients"][axis][coefficient_index],
+            endpoints = np.asarray(
+                coefficient_endpoint_matrix(model, axis)[:, coefficient_index],
                 dtype=observed.dtype,
             )
-            matches = np.array_equal(
-                observed[component], np.full_like(observed[component], expected)
+            expected = np.broadcast_to(
+                endpoints[:, None, None, None], observed[:, component].shape
             )
+            matches = np.array_equal(observed[:, component], expected)
             component_checks.append(matches)
             component_summary.append(
                 {
                     "component": ("Ex", "Ey", "Ez")[component],
                     "crystal_axis": axis,
-                    "expected": float(expected),
-                    "observed_unique": _unique_summary(observed[component]),
+                    "expected": (
+                        float(endpoints[0]) if endpoints.size == 1 else None
+                    ),
+                    "expected_by_pole": [float(item) for item in endpoints],
+                    "observed_unique": _unique_summary(observed[:, component]),
                     "exact": matches,
                 }
             )
@@ -376,8 +383,8 @@ def material_stack_audit(
         "tairte4_coefficient_readback": ta_coefficients,
         "realized_material_response": susceptibility,
         "finite_dt_ADE_coefficients": {
-            name: [float(item) for item in values]
-            for name, values in model["coefficients"].items()
+            name: coefficient_endpoint_matrix(model, name).astype(float).tolist()
+            for name in ("au", "a", "b", "c")
         },
         "finite_dt_ADE_fits": model["fits"],
         "checks": checks,
