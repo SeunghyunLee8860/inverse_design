@@ -101,15 +101,19 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     centered interior differences, feasible one-sided 0/1 endpoint
     differences, locality/roundtrip gates, independent mapping FD, and exact
     real-design JVP/VJP transpose tests. It performs zero Maxwell solves. The
-    solver-free synthetic tests pass; an actual hash-linked Lumerical density
-    FSP certificate is still required before adjoint use.
+    solver-free synthetic tests pass. A hash-linked nonuniform Lumerical RTX
+    development certificate now also passes on the 5/50-nm staircase mesh:
+    worst mapping FD error `3.54e-11`, worst transpose error `3.96e-16`, and
+    zero Maxwell solves. This closes the local material-map derivative only;
+    it is not a full Maxwell or combined AD-FD certificate.
 21. `26_build_lumerical_4um_yee_jacobian.py` and
     `run_lumerical_layout_python.sh` -- consume a SHA-pinned completed
     nonuniform `import_density` FSP/result/density triplet, verify the same
     solver version and native field/index Yee coordinates, build the sparse
     matrices without `fdtd.run`, run independent FD/transpose gates, and save
     raw matrices/coordinates outside Git. The launcher is layout-only and
-    deliberately performs no GPU/B200 Maxwell certification.
+    deliberately performs no GPU/B200 Maxwell certification. New results also
+    record the completed forward solver time and layout-session wall time.
 22. `lumerical_4um_control_comparison.py` and
     `27_compare_lumerical_4um_control_pair.py` -- hash-verify two exact-control
     JSON/NPZ bundles, fail closed on any case/polarization/geometry/GPU/solver
@@ -134,6 +138,11 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     CV0, CV1, and staircase at one fixed mesh. Read
     `LUMERICAL_INTERFACE_METHOD_FINDINGS.md`: staircase is the selected next
     linked-z development candidate, not a final mesh certificate.
+26. `32_validate_lumerical_4um_component_yee_z_multiphysics_pair.py` --
+    replaces the axis-biased common-grid `index_x` material partition for
+    symmetric exact controls with collocated `Qx/epsilon_x`, `Qy/epsilon_y`,
+    and `Qz/epsilon_z`; it restores the one-ppm zero-current gate without Q
+    rescaling. Read `LUMERICAL_Z_MULTIPHYSICS_FINDINGS.md`.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -468,9 +477,12 @@ Do not copy them into this worktree.
    must remain outside the Git worktree. The unified runner and endpoint batch
    now exist, but no B200 result is committed and this Codex host fails the
    B200 preflight.
-5. Run the new component-Yee builder on a completed hash-identical nonuniform
-   density FSP, then connect its validated sparse transpose to the discrete
-   adjoint; do not substitute bundled LumOpt's real/lossless metal path.
+5. The component-Yee builder has passed on one hash-identical nonuniform RTX
+   development FSP at the 5/50-nm staircase mesh. Next connect that validated
+   sparse transpose to the Lumerical discrete Maxwell adjoint and issue a
+   complete optical/thermal/electrical AD-FD certificate. Repeat the material
+   Jacobian on the ultimately selected mesh/B200; do not substitute bundled
+   LumOpt's real/lossless metal path.
 6. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh
    convergence, and downstream PTE current.
 7. Certify the combined gradient on the selected production mesh.

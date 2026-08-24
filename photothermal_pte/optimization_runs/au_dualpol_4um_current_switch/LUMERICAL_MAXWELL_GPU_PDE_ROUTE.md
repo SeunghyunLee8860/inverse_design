@@ -157,9 +157,15 @@ The reusable Au-specific implementation now lives in
 `lumerical_4um_yee_jacobian.py`. It is deliberately nonperiodic and therefore
 does not reuse the fencepost ownership assumptions from the older TaIrTe4
 optimizer. Its sparse complex operator and endpoint handling pass synthetic
-local-map FD and transpose tests. This is code validation only: it remains
-blocked from optimizer use until it is built and checked against a completed,
-hash-identical nonuniform `import_density` Lumerical FSP on the selected mesh.
+local-map FD and transpose tests. It has now also been built and checked
+against a completed, hash-identical nonuniform `import_density` FSP on the
+5/50-nm staircase RTX development mesh. The forward GPU solve took 49.39 s;
+the Jacobian used 52 layout reads and zero Maxwell solves. Its 81x81 density
+range was 0.287--0.711, the realized component grid was 165x165x152, and the
+three sparse matrices contained 150,604/150,762/80,326 nonzeros. Worst
+independent mapping-FD and real-design transpose errors were `3.54e-11` and
+`3.96e-16`. This closes the development material-map derivative, not the
+Maxwell field adjoint, full combined AD-FD, selected-mesh, or B200 gates.
 
 ## Required Au gates on the B200
 

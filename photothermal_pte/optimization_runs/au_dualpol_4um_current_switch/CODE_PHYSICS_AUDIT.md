@@ -48,8 +48,10 @@ sample-air boundaries are insulating, and the transverse example uses an
    `rho^3` while thermal and electrical Au used `rho`. The robust run also
    omitted nominal `eta=0.50`; its nominal `Ib` had the wrong sign. The later
    shared-linear/all-projection correction is diagnostic only. The selected
-   Lumerical `n-k` law is now implemented solver-free but has not passed its
-   B200 endpoint, resonance, Jacobian, AD-FD, or mesh gates.
+   Lumerical `n-k` law is now implemented solver-free. Its nonuniform
+   density-to-component-Yee material Jacobian passes an actual RTX development
+   FSP certificate, but B200 endpoint, resonance, complete AD-FD, and mesh
+   gates remain open.
 
 2. **No converged mesh exists.** The historical partial-z sweep refined only
    Au, TaIrTe4, and SiO2, and its tables are stale because they used O3/TE1,
@@ -187,8 +189,8 @@ sample-air boundaries are insulating, and the transverse example uses an
    hash-linked to the mesh and device certificates.
 8. Validate the 4-um Lumerical `n-k` density carrier: ordinary-Au 4-um
    endpoint field/absorption/Q parity, quantified finite-source-band error,
-   uniform-density resonance sweep, component-Yee Jacobian, and complete
-   latent AD-FD. Do not resume either O3/TE1 or the shared-linear FDTDX LD_MMA
-   history.
+   uniform-density resonance sweep, selected-mesh/B200 repetition of the now
+   passed RTX component-Yee Jacobian, and complete latent AD-FD. Do not resume
+   either O3/TE1 or the shared-linear FDTDX LD_MMA history.
 9. Revalidate the final exact-binary design on the finer meshes and parameter
    sensitivity corners before claiming the polarization current switch.

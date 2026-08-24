@@ -106,6 +106,9 @@ The historical partial-z, O3/TE1, shared-linear, and FDTDX artifacts cannot
 satisfy these gates. They remain diagnostics only.
 
 The Au-specific nonperiodic colored sparse-Jacobian implementation and its
-solver-free synthetic FD/transpose tests now exist. Gate 4 is still open
-because no completed nonuniform density FSP has yet supplied the actual
-Lumerical `index_detail` mesh for that certificate.
+solver-free synthetic FD/transpose tests now exist. A completed hash-linked
+nonuniform density FSP has also supplied an actual 5/50-nm staircase
+Lumerical `index_detail` development mesh: the material map passed with worst
+FD/transpose errors `3.54e-11`/`3.96e-16` and zero Maxwell solves during the
+Jacobian build. Gate 4 remains open for the ultimately selected mesh and B200,
+and this result does not close the Maxwell field or combined AD-FD gates.

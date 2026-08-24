@@ -17,6 +17,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import time
 import traceback
 from typing import Any
 
@@ -247,6 +248,7 @@ def main() -> int:
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "git_commit": _git_commit(),
         "forward_accelerator_policy": forward_record.get("accelerator_policy"),
+        "forward_solver_wall_time_s": forward_record.get("solver_wall_time_s"),
         "B200_promotion_certified": bool(
             forward_record.get("B200_promotion_certified")
         ),
@@ -256,6 +258,7 @@ def main() -> int:
         ),
     }
     fdtd = None
+    layout_session_started = time.perf_counter()
     try:
         _configure_lumapi()
         import lumapi
@@ -350,6 +353,9 @@ def main() -> int:
         result["error"] = f"{type(exc).__name__}: {exc}"
         result["traceback"] = traceback.format_exc()
     finally:
+        result["layout_session_wall_time_s"] = (
+            time.perf_counter() - layout_session_started
+        )
         if fdtd is not None:
             try:
                 fdtd.close()
