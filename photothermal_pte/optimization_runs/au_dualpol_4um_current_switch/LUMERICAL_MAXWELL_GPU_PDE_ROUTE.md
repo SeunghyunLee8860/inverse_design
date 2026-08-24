@@ -230,7 +230,7 @@ invocation took 20.79 s. The raw pullback remains outside Git. It is the input
 to the next distributed-source Lumerical adjoint, not a production
 certificate or permission to start the optimizer.
 
-### R1.2 distributed-source Maxwell adjoint prepared, not yet AD--FD certified
+### R1.2 Ea projected-density Maxwell/PDE AD--FD passed for one direction
 
 The development launcher is now pinned to the compatible 2026 R1.2 build
 4522 API/CAD/engine tree. The system R1.0 build 4413 reproduced the known
@@ -245,10 +245,26 @@ solver): FieldRegion profile round-trip error, forward/adjoint solver-mesh
 difference, and forward/adjoint monitor-grid difference were all zero; the
 two-state CW reconstruction residual was `1.41e-16`; and the total projected
 density gradient was finite and nonzero with L2 norm `9.09e-10 A`. No
-Lumerical HEAT/CHARGE solve and no optimizer iteration occurred. This is only
-an adjoint-preparation certificate. `AD_FD_claimed=false` remains mandatory
-until an independent centered-forward direction agrees without empirical
-rescaling.
+Lumerical HEAT/CHARGE solve and no optimizer iteration occurred. The script-34
+artifact retains `AD_FD_claimed=false`, correctly describing what that single
+invocation did.
+
+Scripts 35 and 36 then selected a deterministic low-frequency coordinate
+direction without reading that gradient and hash-bound a centered
+`h=0.0025` pair. The two R1.2 Lumerical forwards took 54.33 s and 56.00 s;
+the two custom-CUDA thermal/electrical evaluations took 17.60 s and 17.87 s.
+The complete projected-density directional derivative was
+`-1.363032899e-8 A` by AD and `-1.363002816e-8 A` by centered FD. Their signs
+agree and the relative error is `2.207e-5` (0.00221%), far inside the fixed 1%
+gate. The plus/minus signal is 1.30% of current magnitude, and the saved pair
+reconstructs within a tolerance derived from float64 epsilon and `h`. No
+empirical gradient rescaling or finite-difference fit was applied.
+
+This is a real combined AD-FD certificate, but its scope is deliberately
+narrow: one Ea direction with respect to the shared projected 81x81 occupancy
+on the 5/50-nm staircase RTX development mesh. Eb, multiple directions,
+latent filter/projection differentiation, a selected converged mesh, the
+signed dual-polarization objective, and B200 repetition remain open.
 
 ## Exact endpoint/final GPU runner
 
