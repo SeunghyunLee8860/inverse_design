@@ -105,7 +105,8 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     deliberately performs no GPU/B200 Maxwell certification.
 22. `FDTDX_FRESH_DEPENDENCY.md`, `FDTDX_FRESH_ANCHOR_PLACEMENT.md`,
     `FDTDX_FRESH_SOURCE_ONLY.md`, `FDTDX_FRESH_EXACT_BINARY_PILOT.md`, and
-    `fdtdx_fresh_exact_binary_matrix.py` -- the separate pinned-FDTDX
+    `fdtdx_fresh_exact_binary_matrix.py`, and
+    `fdtdx_fresh_time_settling_certificate.py` -- the separate pinned-FDTDX
     forensic/rebuild track. Its runtime, mesh, six
     PML faces, source pair, placements, exact endpoint material readback, and
     component-Yee-volume energy balance are fail-closed. This track must not
@@ -274,29 +275,45 @@ and NPZ files and recomputed component-Yee-volume Au/TaIrTe4 powers; all 32
 top-level gates passed. Its SHA-256 is
 `06e69f15e292ef29b6515282332b01d1e88c8348cfa965a951d3c1c3e98a431b`.
 Read `FDTDX_FRESH_EXACT_BINARY_PILOT.md` for all external hashes and metrics.
-No mesh/time convergence, nontrivial topology, adjoint, thermal/electrical
-solve, PTE-current claim, or optimizer is authorized.
+Those endpoint controls did not establish time or mesh convergence. The L500
+time-settling result below closes only the time-duration axis; no spatial-mesh,
+adjoint, thermal/electrical, PTE-current, or optimizer claim is authorized.
 
-The next fresh-FDTDX stage is now specified by
-`FDTDX_FRESH_CONVERGENCE_DESIGN.md` and the fail-closed v2 contract in
-`fdtdx_exact_binary_convergence.py`. It adds a 500 nm-arm asymmetric L
-reference, a separate 500 nm gap-stress reference, time-settling and Courant
-ladders, and independent bottom-Si, top-air, lateral/z-PML resolution and
-physical-extent axes. Optical gates are explicitly separated from unvalidated
-thermal/current gates. This is contract and test work only: no v2 GPU ladder
-has run and `optimizer_start_allowed` remains false. The immutable v1
-source-pair and four-case matrix remain evidence for their original anchor
-commit; do not silently reinterpret their mesh hash as v2.
+The v2 campaign is specified by `FDTDX_FRESH_CONVERGENCE_DESIGN.md`; every
+source-only report, Ea/Eb pair, and material report binds one canonical
+`MeshSpec + time + CPML` request and external case-file SHA-256. The first GPU
+stage is now complete for the exact-binary 375-pixel
+`l_shape_4um_with_500nm_arms` reference. Runs were made at clean commit
+`01a8ad8a`; the independent verifier and its 12 focused tests were committed
+and pushed as `5e376ce1`. All explicit FDTDX regression tests pass: 83
+`unittest` tests; the separate pytest forensic file is not runnable in the
+locked fresh venv because pytest is intentionally absent.
 
-The generalized runner is now implemented and unit-tested. Read
-`FDTDX_FRESH_HASHED_RUNNER.md` before running it. Every source-only report,
-Ea/Eb pair certificate, and material report binds the same canonical
-`MeshSpec + time + CPML` request and external case-file SHA-256. A different
-or jointly tampered case, mesh/time/PML mismatch, or reuse of the v1 pair is
-blocked before the material FDTD call. No generalized GPU case has run yet.
-The next FDTDX action is to generate separate 16/24/32-period anchor contracts
-and newly calibrated Ea/Eb source pairs, then run the primary 500 nm L-reference
-time-settling cases one at a time.
+External raw root:
+`/home/seunghyun200/fdtdx_results/l500_time_settling_01a8ad8a_20260824`.
+The clean-commit certificate is
+`time_settling_certificate_5e376ce1/FDTDX_FRESH_TIME_SETTLING_CERTIFICATE.json`,
+SHA-256
+`20ab99b8488606475d2ed8d604d1810c9f3953176b68f42ed0689685ed505ab0`.
+It re-hashed all three numerical cases, three source pairs, six material reports
+and six NPZs, reconstructed the exact L500 mask and component-Yee volumes, and
+recomputed raw Au/TaIrTe4 Q and field/Q stationarity. All 21 top-level and five
+selection gates passed.
+
+The 16-period cases remain rejected settling controls: Ea field stationarity was
+`1.1229036e-2`; Eb field stationarity was `1.7813813e-2` and spatial Q change
+was `5.5404220e-3`. Both 24- and 32-period Ea/Eb cases passed their internal
+gates. Both 16-to-24 and 24-to-32 comparisons passed every optical limit. The
+selected duration is **24 periods** and the confirmation duration is **32
+periods**. This is only a time-settling certificate: `is_mesh_certificate=false`
+and `optimizer_start_allowed=false`.
+
+The next FDTDX action is the exact same L500 reference at 24 periods on the
+Courant ladder `[0.5, 0.375, 0.25]`. Generate and hash a distinct case, new
+Ea/Eb source-only runs, and a new source-pair certificate at every Courant
+value. Do not reuse a source pair and do not start optimization. The later
+spatial/domain/PML ladders and gap-stress recheck remain pending. This FDTDX
+track must not edit, launch, or reinterpret the concurrent Lumerical work.
 
 ## Raw checkpoint dependency
 

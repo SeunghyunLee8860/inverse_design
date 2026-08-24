@@ -1,6 +1,6 @@
 # Hashed numerical-case workflow for fresh FDTDX
 
-Status: **runner contract implemented and unit-tested; no convergence case run**
+Status: **runner contract and L500 time-settling certificate validated; spatial convergence not run**
 
 The fresh source-only and exact-binary material runners are no longer limited
 internally to the anchor mesh, 16 periods, Courant 0.5, and the default CPML.
@@ -87,6 +87,33 @@ canonical case before importing/building the FDTD model, then checks the full
 realized mesh, time step/count, all six PML profiles, object placements, source
 vector, finite-dt ADE readback, and exact-binary mask again before the solve.
 
+## Completed 16/24/32-period chain
+
+The complete chain has now run for the exact-binary
+`l_shape_4um_with_500nm_arms` reference on the anchor spatial grid. The source
+and material runs were made at clean repository commit `01a8ad8a`; the
+independent certificate generator was committed and pushed as `5e376ce1`. Raw
+files remain outside Git under
+`/home/seunghyun200/fdtdx_results/l500_time_settling_01a8ad8a_20260824`.
+
+Use `fdtdx_fresh_time_settling_certificate.py` to revalidate the complete
+chain. It requires all six external hashes rather than discovering and trusting
+whatever bytes happen to be present. The generated certificate is
+`time_settling_certificate_5e376ce1/FDTDX_FRESH_TIME_SETTLING_CERTIFICATE.json`,
+SHA-256
+`20ab99b8488606475d2ed8d604d1810c9f3953176b68f42ed0689685ed505ab0`.
+It passed 21/21 top-level gates, selected 24 periods, and confirmed that choice
+with 32 periods. The 16-period level remains preserved as a rejected coarse
+case rather than being relabeled as valid.
+
+The verifier checks canonical case and source-pair SHA bindings, complete gate
+schemas, clean source provenance, exact 375-pixel L500 geometry, zero Au Q
+outside the binary mask, grid edges, independently reconstructed electric-Yee
+dual volumes, raw Q integrals, field/Q stationarity, closed-flux agreement, and
+both successive cross-time comparisons. It compares the actual fixed
+`[-4,+4] um` x/y probe at `z=0.250 um`; the larger stored target detector is
+not silently treated as the convergence probe.
+
 ## Convergence rule
 
 The 16-, 24-, and 32-period levels are three different numerical cases.  Each
@@ -95,6 +122,8 @@ The same applies to every Courant, mesh, domain, or PML level.  A source pair
 must never be copied between levels even when incident powers look similar.
 
 There is no implicit-anchor CLI mode. Both the absolute case path and its file
-SHA-256 are mandatory for source-only and material commands. This workflow does
-not authorize an optimizer, thermal/electrical solve, PTE-current claim, or mesh
-certificate.
+SHA-256 are mandatory for source-only and material commands. Completion of the
+time ladder does not authorize an optimizer, thermal/electrical solve,
+PTE-current claim, or mesh certificate. The next numerical cases are the
+24-period Courant levels 0.5, 0.375, and 0.25, with a fresh source pair at each
+level.
