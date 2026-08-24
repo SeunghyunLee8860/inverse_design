@@ -41,6 +41,10 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     certificate chain that currently blocks all production entry points.
 13. `CODE_PHYSICS_AUDIT.md` and `physical_device_contract.json` -- full
     physics audit and the deliberately blocked target-device contract.
+14. `lumerical_4um_mesh_contract.py` and
+    `22_audit_lumerical_4um_exact_au_runsetup.py` -- the sequential
+    source/time/z/x-y/PML/domain convergence matrix. Audit-only output is not a
+    mesh certificate and the actual Maxwell runner remains B200-blocked.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
