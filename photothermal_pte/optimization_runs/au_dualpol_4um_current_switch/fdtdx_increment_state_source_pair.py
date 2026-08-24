@@ -12,6 +12,9 @@ from pathlib import Path
 import subprocess
 from typing import Any
 
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_anchor_placement import (
+    expected_placement,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
     case_from_contract,
 )
@@ -171,6 +174,26 @@ def build_pair(
         and case_spec.time.total_periods == 24
         and case_spec.time.window_periods == 4
     )
+    reports = (ea, eb)
+    mesh_matches_case = case_spec is not None and all(
+        report.get("mesh") == numerical_case["resolved_mesh"] for report in reports
+    )
+    pml_matches_case = case_spec is not None and all(
+        report.get("pml_face_parameters")
+        == numerical_case["resolved_pml_face_parameters"]
+        for report in reports
+    )
+    placement_matches_case = case_spec is not None and all(
+        report.get("placement") == expected_placement(case_spec.mesh)
+        for report in reports
+    )
+    time_matches_case = case_spec is not None and all(
+        all(
+            report.get("time_contract", {}).get(name) == value
+            for name, value in numerical_case["time_spec"].items()
+        )
+        for report in reports
+    )
     cross_checks = {
         "case_audits_ready": all(audit["ready"] for audit in cases.values()),
         "report_paths_distinct": ea_audit["path"] != eb_audit["path"],
@@ -178,6 +201,10 @@ def build_pair(
         != eb_audit["raw"].get("path"),
         "numerical_case_identical_canonical_24_4": numerical_case_identical
         and case_is_24_4,
+        "mesh_matches_numerical_case": mesh_matches_case,
+        "pml_matches_numerical_case": pml_matches_case,
+        "placement_matches_numerical_case": placement_matches_case,
+        "time_matches_numerical_case": time_matches_case,
         "mesh_identical": ea.get("mesh") == eb.get("mesh"),
         "time_contract_identical": ea.get("time_contract") == eb.get("time_contract"),
         "pml_identical": ea.get("pml_face_parameters") == eb.get("pml_face_parameters"),

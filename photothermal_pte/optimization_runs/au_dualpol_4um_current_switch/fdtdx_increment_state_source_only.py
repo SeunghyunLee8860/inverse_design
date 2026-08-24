@@ -21,8 +21,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
     ANCHOR_CASE,
-    FreshCaseSpec,
+    MESH_AXES,
     TimeSpec,
+    case_for_axis,
     case_contract,
     realized_time_contract,
 )
@@ -104,6 +105,8 @@ def run(
     polarization: str,
     total_periods: int,
     window_periods: int,
+    mesh_axis: str,
+    mesh_level: int,
 ) -> dict[str, Any]:
     started_total = time.perf_counter()
     output_directory = _output_directory(output_directory)
@@ -114,8 +117,9 @@ def run(
     if configured_source != Path(source_audit["path"]):
         raise RuntimeError("FDTDX_SOURCE_DIR does not match --source")
 
-    case_spec = FreshCaseSpec(
-        mesh=ANCHOR_CASE.mesh,
+    case_spec = case_for_axis(
+        mesh_axis,
+        mesh_level,
         time=TimeSpec(
             total_periods=total_periods,
             window_periods=window_periods,
@@ -274,6 +278,8 @@ def main() -> int:
     parser.add_argument("--polarization", choices=("Ea", "Eb"), required=True)
     parser.add_argument("--total-periods", type=int, default=24)
     parser.add_argument("--window-periods", type=int, default=4)
+    parser.add_argument("--mesh-axis", choices=("anchor", *MESH_AXES), default="anchor")
+    parser.add_argument("--mesh-level", type=int, default=0)
     args = parser.parse_args()
     payload = run(
         args.output_directory,
@@ -281,6 +287,8 @@ def main() -> int:
         args.polarization,
         args.total_periods,
         args.window_periods,
+        args.mesh_axis,
+        args.mesh_level,
     )
     return 0 if payload["ready"] else 2
 

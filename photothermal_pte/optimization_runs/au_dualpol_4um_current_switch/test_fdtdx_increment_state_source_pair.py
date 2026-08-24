@@ -6,14 +6,17 @@ from pathlib import Path
 
 import numpy as np
 
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_anchor_placement import (
+    expected_placement,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch import (
     fdtdx_increment_state_source_only as source_only,
     fdtdx_increment_state_source_pair as source_pair,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
     ANCHOR_CASE,
-    FreshCaseSpec,
     TimeSpec,
+    case_for_axis,
     case_contract,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_increment_state_exact_binary_control import (
@@ -28,12 +31,14 @@ def _sha256(path: Path) -> str:
 def _report(tmp_path: Path, polarization: str, power: float) -> tuple[Path, str]:
     raw = tmp_path / f"{polarization}.npz"
     np.savez_compressed(raw, target=np.ones((3, 2, 2, 1), dtype=np.complex64))
-    spec = FreshCaseSpec(
-        mesh=ANCHOR_CASE.mesh,
+    spec = case_for_axis(
+        "full_domain_z",
+        0,
         time=TimeSpec(total_periods=24, window_periods=4, courant_factor=0.5),
         pml_alpha_scale=ANCHOR_CASE.pml_alpha_scale,
         pml_target_reflection=ANCHOR_CASE.pml_target_reflection,
     )
+    contract = case_contract(spec)
     source_contract = {
         "wavelength_m": 4.0e-6,
         "polarization": polarization,
@@ -47,11 +52,15 @@ def _report(tmp_path: Path, polarization: str, power: float) -> tuple[Path, str]
         "ready": True,
         "scope": source_only.SCOPE,
         "polarization": polarization,
-        "numerical_case_contract": case_contract(spec),
-        "mesh": {"same": True},
-        "time_contract": {"total_periods": 24, "window_periods": 4},
-        "pml_face_parameters": {"same": True},
-        "placement": {"same": True},
+        "numerical_case_contract": contract,
+        "mesh": contract["resolved_mesh"],
+        "time_contract": {
+            **contract["time_spec"],
+            "time_step_s": 1.0,
+            "time_steps_total": 1,
+        },
+        "pml_face_parameters": contract["resolved_pml_face_parameters"],
+        "placement": expected_placement(spec.mesh),
         "source_contract": source_contract,
         "all_air_material_readback": {"ready": True},
         "dispersive_state_representation": "increment",
