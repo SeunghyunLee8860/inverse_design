@@ -15,6 +15,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_exac
 
 
 MATERIAL_LAW = "exact-air-or-ordinary-au-ADE-endpoints-v1"
+INCREMENT_MATERIAL_LAW = "exact-air-or-ordinary-au-increment-A-C-B-endpoints-v1"
 COEFFICIENT_NAMES = ("dispersive_c1", "dispersive_c2", "dispersive_c3")
 
 
@@ -193,6 +194,27 @@ def readback_exact_binary(
         getattr(arrays, "dispersive_c4", None) is None
     )
     audit = mask_material_audit(mask, spec)
+    state_representation = model.get(
+        "dispersive_state_representation", "polarization"
+    )
+    if state_representation == "increment":
+        audit["material_law"] = INCREMENT_MATERIAL_LAW
+        audit["air_endpoint"] = {
+            "epsilon_infinity": 1.0,
+            "increment_A": 0.0,
+            "increment_C": 0.0,
+            "increment_B": 0.0,
+        }
+    audit["dispersive_state_representation"] = state_representation
+    audit["coefficient_array_semantics"] = (
+        {"dispersive_c1": "A", "dispersive_c2": "C", "dispersive_c3": "B"}
+        if state_representation == "increment"
+        else {
+            "dispersive_c1": "classic_c1",
+            "dispersive_c2": "classic_c2",
+            "dispersive_c3": "classic_c3",
+        }
+    )
     audit.update(
         au_grid_shape=list(expected_shape[2:]),
         au_z_cells=nz,

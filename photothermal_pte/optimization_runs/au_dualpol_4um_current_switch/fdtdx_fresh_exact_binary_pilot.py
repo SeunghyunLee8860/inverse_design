@@ -295,6 +295,9 @@ def material_stack_audit(
     """Read back all physical material regions used by the pilot."""
 
     exact_au = readback_exact_binary(model, arrays, mask, spec)
+    material_relative_limit = float(
+        model.get("material_relative_readback_limit", MATERIAL_RELATIVE_READBACK_LIMIT)
+    )
     inv = arrays.inv_permittivities
     checks: dict[str, bool] = {"exact_binary_au_readback": exact_au["ready"]}
     inverse_readback: dict[str, Any] = {}
@@ -307,7 +310,7 @@ def material_stack_audit(
         error = float(np.max(np.abs(region.astype(np.float64) - expected)))
         relative = error / abs(expected)
         checks[f"{label}_inverse_permittivity_readback"] = (
-            relative <= MATERIAL_RELATIVE_READBACK_LIMIT
+            relative <= material_relative_limit
         )
         inverse_readback[label] = {
             "expected": expected,
@@ -369,7 +372,7 @@ def material_stack_audit(
         passive = math.isfinite(epsilon.real) and math.isfinite(epsilon.imag) and epsilon.imag > 0.0
         checks[f"{name}_realized_epsilon_passive"] = passive
         checks[f"{name}_realized_epsilon_matches_target"] = (
-            relative_error <= MATERIAL_RELATIVE_READBACK_LIMIT
+            relative_error <= material_relative_limit
         )
         susceptibility[name] = {
             "realized_epsilon": [float(epsilon.real), float(epsilon.imag)],
@@ -379,6 +382,7 @@ def material_stack_audit(
         }
     return {
         "absorption_loss_basis": model["absorption_loss_basis"],
+        "material_relative_readback_limit": material_relative_limit,
         "exact_binary_au": exact_au,
         "inverse_permittivity_readback": inverse_readback,
         "tairte4_inverse_permittivity_unique": _unique_summary(ta_inv),

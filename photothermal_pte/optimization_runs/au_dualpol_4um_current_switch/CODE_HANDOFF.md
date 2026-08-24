@@ -800,3 +800,24 @@ closure control after defining a newly hashed runner. Recheck live
 compute-process ownership immediately before launch and run Ea/Eb concurrently only on two distinct idle GPUs. The generic continuous
 `Device` path still interpolates `A/C` with density, so the gray optical law and
 material-placement Jacobian remain blockers.
+
+## Increment-state exact-binary pre-GPU checkpoint
+
+The newly isolated project builder now selects the patched fork only through
+`dispersive_state_representation="increment"`. It uses one mesh-independent
+passive pole per Au/TaIrTe4 axis, records `A/C/B` semantics explicitly, and
+leaves the historical builder default untouched. CPU placement on the anchor
+grid (`196 x 196 x 160`, `25,664` steps) passes exact Au and complete material
+stack readback. Realized 4-um epsilon errors are at most `1.00931e-5`, all
+passive. The generic gray `Device` interpolation is still unvalidated and no
+optimizer is authorized.
+
+Use `fdtdx_increment_state_exact_binary_control.py` only for the next cold
+forward timing/energy-closure control. The wrapper
+`run_fdtdx_increment_state_control_gpu.sh GPU_INDEX Ea|Eb OUTPUT_DIRECTORY`
+rejects a GPU with any existing compute process. Run Ea and Eb on distinct
+verified-idle devices and keep their JSON output outside Git. The runner does
+not reuse the old source pair and does not claim absolute absorption or an
+Ea/Eb comparison. At this checkpoint no GPU run has occurred; commit/push this
+state before launch, then record measured time and closure in a separate
+commit. The concurrent Lumerical session remains out of scope.

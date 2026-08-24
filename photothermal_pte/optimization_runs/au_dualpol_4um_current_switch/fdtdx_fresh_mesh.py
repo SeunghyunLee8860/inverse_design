@@ -52,6 +52,7 @@ def build_model(
     include_adjoint_source: bool = False,
     air_only_source_calibration: bool = False,
     material_law_contract: Mapping[str, Any] | None = None,
+    dispersive_state_representation: str = "polarization",
 ) -> dict[str, Any]:
     """Build a fresh model; an implicit upstream PML is not an option."""
 
@@ -74,6 +75,7 @@ def build_model(
             air_only_source_calibration=air_only_source_calibration,
             pml_face_parameters=profiles,
             material_law_contract=material_law_contract,
+            dispersive_state_representation=dispersive_state_representation,
         )
     if model.get("pml_face_parameters") != profiles:
         raise RuntimeError("fresh FDTDX model did not preserve explicit PML provenance")

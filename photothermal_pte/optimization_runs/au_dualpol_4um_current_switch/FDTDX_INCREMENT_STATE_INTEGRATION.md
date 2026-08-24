@@ -129,3 +129,35 @@ Promotion remains blocked until those controls establish a practical runtime,
 then source/material closure and z convergence pass on newly generated
 increment-state artifacts. Old second-order source pairs and results cannot be
 mixed into that comparison.
+
+## Project-side exact-binary control runner
+
+The project now has an explicit opt-in model path that passes
+`dispersive_state_representation="increment"` into the patched fork. It uses
+one mesh-independent passive physical pole per material axis and asks FDTDX to
+generate realized float32 `A/C/B`; it never calls the historical per-mesh
+float32 pole refit. The historical builder default remains `polarization`.
+
+On the anchor mesh, CPU-only placement resolves `196 x 196 x 160` cells and
+`25,664` time steps. Exact air/Au endpoint readback and the complete
+Si/SiO2/TaIrTe4/Au material-stack audit pass. Realized epsilon relative errors
+are `8.7825e-6` (Au), `1.00931e-5` (TaIrTe4 a), and `3.18525e-6` (b/c); all
+responses are passive. The increment-state readback contract is `1e-4`; the
+historical refit path retains its `1e-5` contract. This is a numerical
+representation tolerance, not a gray-density law.
+
+`fdtdx_increment_state_exact_binary_control.py` is the newly isolated cold
+runtime/closure runner. It accepts one polarization and uses the 500-nm-arm
+exact L reference by default. It checks the exact material stack, stationarity,
+nonnegative Q, and volume-Q versus closed-flux closure, and records cold
+build/compile/forward timing and visible-device memory statistics. Because no
+new increment-state source-only pair exists yet, it intentionally removes
+absolute absorbed fraction and Ea/Eb amplitude comparison from its gates. Raw
+outputs remain external. `run_fdtdx_increment_state_control_gpu.sh` requires an
+explicit physical GPU and refuses it if `nvidia-smi` reports any existing
+compute process before setting `CUDA_VISIBLE_DEVICES`.
+
+At this pre-launch checkpoint the affected tests are `9 passed, 3 subtests`;
+Ruff, Python compilation, shell syntax, and diff checks pass. No GPU has yet
+been used by the new runner. Commit and push this state before launching Ea/Eb.
+Optimization remains forbidden.

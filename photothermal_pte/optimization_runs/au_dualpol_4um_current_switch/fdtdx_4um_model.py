@@ -322,6 +322,7 @@ def build_model(
     air_only_source_calibration: bool = False,
     pml_face_parameters: dict[str, dict[str, float]] | None = None,
     material_law_contract: Mapping[str, Any] | None = None,
+    dispersive_state_representation: str = "polarization",
 ) -> dict[str, Any]:
     """Place the full optical model without running a time-domain solve."""
 
@@ -333,6 +334,13 @@ def build_model(
         raise ValueError(
             "candidate two-pole material law is not authorized for adjoint placement"
         )
+    if dispersive_state_representation not in ("polarization", "increment"):
+        raise ValueError("unknown dispersive state representation")
+    if (
+        dispersive_state_representation == "increment"
+        and material_law_contract is not None
+    ):
+        raise ValueError("the rejected two-pole law cannot use increment state")
     expected = FDTDX_SOURCE / "src"
     if str(expected) not in sys.path:
         sys.path.insert(0, str(expected))
@@ -383,6 +391,7 @@ def build_model(
         courant_factor=courant_factor,
         backend="gpu",
         gradient_config=None,
+        dispersive_state_representation=dispersive_state_representation,
     )
     dt = float(config.time_step_duration)
     omega = 2.0 * math.pi * C0_M_PER_S / CONTRACT.wavelength_m
@@ -395,7 +404,31 @@ def build_model(
     epsilon_si = _complex(materials["materials"]["Si"]["epsilon"])
     epsilon_sio2_real = _lossless_uniform_permittivity(epsilon_sio2, "SiO2")
     epsilon_si_real = _lossless_uniform_permittivity(epsilon_si, "Si")
-    if material_law_contract is None:
+    absorption_loss_basis = ABSORPTION_LOSS_BASIS
+    if dispersive_state_representation == "increment":
+        from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_increment_state_material import (
+            physical_increment_material_data,
+        )
+
+        increment_data = physical_increment_material_data(
+            fdtdx,
+            dt_s=dt,
+            omega_rad_s=omega,
+            wavelength_m=CONTRACT.wavelength_m,
+            epsilon_au=epsilon_au,
+            epsilon_ta=epsilon_ta,
+        )
+        coefficient_endpoints = increment_data["coefficient_endpoints"]
+        coefficients = dict(coefficient_endpoints)
+        discrete_susceptibility = increment_data["discrete_susceptibility"]
+        fits = increment_data["fits"]
+        material_poles = increment_data["poles"]
+        material_law_mode = "physical-one-pole-increment-state"
+        material_law_contract_sha256 = None
+        absorption_loss_basis = (
+            "realized_float32_discrete_increment_state_susceptibility"
+        )
+    elif material_law_contract is None:
         fits = {
             "au": _refit_float32_ade(
                 stage41._drude_fit(epsilon_au, omega, dt),
@@ -802,8 +835,14 @@ def build_model(
         "num_dispersive_poles": num_dispersive_poles,
         "material_law_mode": material_law_mode,
         "material_law_contract_sha256": material_law_contract_sha256,
+        "dispersive_state_representation": dispersive_state_representation,
         "discrete_susceptibility": discrete_susceptibility,
-        "absorption_loss_basis": ABSORPTION_LOSS_BASIS,
+        "absorption_loss_basis": absorption_loss_basis,
+        "material_relative_readback_limit": (
+            1.0e-4
+            if dispersive_state_representation == "increment"
+            else FLOAT32_ADE_REFIT_RELATIVE_TOLERANCE
+        ),
         "fits": fits,
         "epsilon": {
             "au": epsilon_au,
