@@ -104,8 +104,9 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     raw matrices/coordinates outside Git. The launcher is layout-only and
     deliberately performs no GPU/B200 Maxwell certification.
 22. `FDTDX_FRESH_DEPENDENCY.md`, `FDTDX_FRESH_ANCHOR_PLACEMENT.md`,
-    `FDTDX_FRESH_SOURCE_ONLY.md`, and `FDTDX_FRESH_EXACT_BINARY_PILOT.md` --
-    the separate pinned-FDTDX forensic/rebuild track. Its runtime, mesh, six
+    `FDTDX_FRESH_SOURCE_ONLY.md`, `FDTDX_FRESH_EXACT_BINARY_PILOT.md`, and
+    `fdtdx_fresh_exact_binary_matrix.py` -- the separate pinned-FDTDX
+    forensic/rebuild track. Its runtime, mesh, six
     PML faces, source pair, placements, exact endpoint material readback, and
     component-Yee-volume energy balance are fail-closed. This track must not
     edit, launch, or reinterpret the concurrent Lumerical work.
@@ -263,14 +264,18 @@ certificate SHA-256 is
 `cc86457678ba50becff8ec44408f7f519a8fd3ae44abedc248082eefeee28ee6`;
 it forbids polarization-specific normalization.
 
-At repository commit `08a6f60e`, exact-empty/Ea and exact-full-window/Ea both
-passed material readback, passivity, finite-value, previous/late stationarity,
-nonnegative absorbed-power, TD/phasor agreement, and Q/closed-surface gates.
-The empty Au heat is exactly zero. The full case contains 6,400/6,400 pure-Au
-design pixels, no gray density or rho exponent, and has 0.263% Q/closed-phasor
-error. Read `FDTDX_FRESH_EXACT_BINARY_PILOT.md` for immutable external hashes.
-Eb empty/full controls are still pending. No mesh/time convergence, adjoint,
-thermal/electrical solve, PTE-current claim, or optimizer is authorized.
+The exact-empty/full x Ea/Eb four-case optical control matrix is complete. All
+four cases passed material readback, passivity, finite-value, previous/late
+stationarity, nonnegative absorbed-power, TD/phasor agreement, and
+Q/closed-surface gates. Both empty Au heat values are exactly zero. Both full
+cases contain 6,400/6,400 pure-Au design pixels with no gray density or rho
+exponent. The machine-readable matrix certificate re-hashed the four reports
+and NPZ files and recomputed component-Yee-volume Au/TaIrTe4 powers; all 32
+top-level gates passed. Its SHA-256 is
+`06e69f15e292ef29b6515282332b01d1e88c8348cfa965a951d3c1c3e98a431b`.
+Read `FDTDX_FRESH_EXACT_BINARY_PILOT.md` for all external hashes and metrics.
+No mesh/time convergence, nontrivial topology, adjoint, thermal/electrical
+solve, PTE-current claim, or optimizer is authorized.
 
 ## Raw checkpoint dependency
 
