@@ -55,7 +55,10 @@ official exact-index material filter leaves 11.8313%/7.7844% of empty/full
 absorption unassigned. CV1 both differs optically and leaves 6.2624%/11.2663%
 unassigned. Staircase reduces omission to 0.001012%/0.195399% and is therefore
 the next linked-z development candidate. This is not a convergence or
-production certificate; see `LUMERICAL_INTERFACE_METHOD_FINDINGS.md`.
+production certificate. Its first 5/50-to-2.5/25-nm linked pair has now
+failed every empty/full Maxwell metric (0.6656--1.3954% against a 0.5% gate),
+so a finer staircase pair is required before any downstream or x/y gate; see
+`LUMERICAL_INTERFACE_METHOD_FINDINGS.md`.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine

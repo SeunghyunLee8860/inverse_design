@@ -73,10 +73,18 @@ it simultaneously:
    omission for both empty and full controls.
 
 This is explicitly **not** a final choice of mesh. A matching staircase
-5/50-to-2.5/25-nm linked refinement must rerun source-only, exact-empty, and
-exact-full Lumerical FDTD and pass Maxwell, material-source, temperature,
-Tmax, and current-control gates. Ea symmetry-current cancellation at the
-fixed mesh is still only about `5.42e-5` (empty) and `5.68e-4` (full), versus
-the one-ppm diagnostic gate, so its cause must remain visible during linked
-refinement. Eb, simple-L, final topology, x/y, thermal/electrical mesh, and
-B200 certification remain open.
+5/50-to-2.5/25-nm linked refinement was therefore run with new source-only,
+exact-empty, and exact-full Lumerical FDTD results. Every individual run
+passed, but the pair did not converge. Empty normalized Q/flux/complex-E/E2
+changes were 0.9522%/0.9541%/0.6656%/1.1752%; full-Au changes were
+1.3921%/1.3954%/1.0105%/1.1966%. Every value exceeds the 0.5% gate. The
+downstream validator correctly stops before custom PDE comparison when the
+Maxwell sub-gate fails.
+
+The next bounded step is a matching staircase 1.25/12.5-nm source, empty, and
+MCM6 full set, followed by the 2.5/25-to-1.25/12.5-nm pair. Ea
+symmetry-current cancellation at the fixed 5/50-nm mesh is still only about
+`5.42e-5` (empty) and `5.68e-4` (full), versus the one-ppm diagnostic gate,
+so its cause must remain visible once a staircase Maxwell pair passes. Eb,
+simple-L, final topology, x/y, thermal/electrical mesh, and B200 certification
+remain open.
