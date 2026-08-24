@@ -94,6 +94,13 @@ def _case_audit(
     return payload, audit
 
 
+def _common_source_contract(payload: dict[str, Any]) -> dict[str, Any]:
+    result = dict(payload["source_contract"])
+    result.pop("polarization", None)
+    result.pop("fixed_E_polarization_vector", None)
+    return result
+
+
 def build_pair_certificate(
     ea_report: Path,
     eb_report: Path,
@@ -167,6 +174,17 @@ def build_pair_certificate(
         ),
         "mesh_contract_identical": ea["mesh"] == eb["mesh"],
         "time_contract_identical": ea["time_contract"] == eb["time_contract"],
+        "pml_face_parameters_identical": ea["pml_face_parameters"]
+        == eb["pml_face_parameters"],
+        "placement_identical": ea["placement"] == eb["placement"],
+        "common_source_contract_identical": _common_source_contract(ea)
+        == _common_source_contract(eb),
+        "source_polarization_vectors_exact": ea["source_contract"][
+            "fixed_E_polarization_vector"
+        ]
+        == [0.0, 1.0, 0.0]
+        and eb["source_contract"]["fixed_E_polarization_vector"]
+        == [1.0, 0.0, 0.0],
         "all_air_material_readback_identical": ea["all_air_material_readback"]
         == eb["all_air_material_readback"],
         "raw_array_schema_identical": ea_audit["raw"]["arrays"]
@@ -225,6 +243,13 @@ def build_pair_certificate(
         "source_case_contracts": {
             "mesh": ea["mesh"],
             "time_contract": ea["time_contract"],
+            "pml_face_parameters": ea["pml_face_parameters"],
+            "placement": ea["placement"],
+            "common_source_contract": _common_source_contract(ea),
+            "source_contracts": {
+                "Ea": ea["source_contract"],
+                "Eb": eb["source_contract"],
+            },
             "all_air_material_readback": ea["all_air_material_readback"],
             "fdtdx_source": ea["provenance"]["fdtdx_source"],
             "runtime_lock": ea["provenance"]["runtime_lock"],

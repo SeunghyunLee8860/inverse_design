@@ -44,6 +44,7 @@ ABSORPTION_LOSS_BASIS = "realized_float32_discrete_ADE_susceptibility"
 FLOAT32_ADE_REFIT_RELATIVE_TOLERANCE = 1.0e-5
 FLOAT32_ADE_GAMMA_SEARCH_HALF_WIDTH = 0.20
 FLOAT32_ADE_GAMMA_SEARCH_POINTS = 400_001
+SOURCE_STARTUP_PERIODS = 4
 
 
 @dataclass(frozen=True)
@@ -514,6 +515,11 @@ def build_model(
         radius=source_radius,
         std=CONTRACT.gaussian_waist_m / (math.sqrt(2.0) * source_radius),
         direction="-",
+        temporal_profile=fdtdx.SingleFrequencyProfile(
+            phase_shift=0.0,
+            num_startup_periods=SOURCE_STARTUP_PERIODS,
+        ),
+        static_amplitude_factor=1.0,
     )
     constraints.extend(
         [
@@ -750,5 +756,20 @@ def build_model(
         "air_only_source_calibration": bool(air_only_source_calibration),
         "closed_surface_phasor_window": CLOSED_SURFACE_PHASOR_WINDOW,
         "pml_face_parameters": pml_face_parameters,
+        "source_contract": {
+            "wavelength_m": CONTRACT.wavelength_m,
+            "requested_gaussian_waist_m": CONTRACT.gaussian_waist_m,
+            "source_aperture_span_m": CONTRACT.source_aperture_span_m,
+            "radius_m": source_radius,
+            "std_relative_to_radius": CONTRACT.gaussian_waist_m
+            / (math.sqrt(2.0) * source_radius),
+            "polarization": polarization,
+            "fixed_E_polarization_vector": list(polarization_vector(polarization)),
+            "direction": "-",
+            "temporal_profile": "SingleFrequencyProfile",
+            "phase_shift_rad": 0.0,
+            "num_startup_periods": SOURCE_STARTUP_PERIODS,
+            "static_amplitude_factor": 1.0,
+        },
         "placement": {name: _slice(value) for name, value in slices.items()},
     }

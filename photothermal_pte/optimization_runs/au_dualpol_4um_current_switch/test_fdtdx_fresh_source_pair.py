@@ -27,6 +27,19 @@ def _payload(polarization: str, raw_path: Path, power: float) -> dict:
         "scope": "all-air source-only on validated fresh anchor",
         "mesh": {"grid_contract_sha256": "mesh"},
         "time_contract": {"total_periods": 16, "time_steps_total": 100},
+        "pml_face_parameters": {"minx": {"alpha_start": 1.0}},
+        "placement": {"gaussian_source": [[1, 2], [1, 2], [3, 4]]},
+        "source_contract": {
+            "wavelength_m": 4.0e-6,
+            "polarization": polarization,
+            "fixed_E_polarization_vector": (
+                [0.0, 1.0, 0.0]
+                if polarization == "Ea"
+                else [1.0, 0.0, 0.0]
+            ),
+            "direction": "-",
+            "num_startup_periods": 4,
+        },
         "all_air_material_readback": {"ready": True, "c1_unique": [0.0]},
         "evaluation": {
             "ready": True,
@@ -118,6 +131,24 @@ class FdtdxFreshSourcePairTest(unittest.TestCase):
         result = build_pair_certificate(self.ea_report, self.eb_report)
         self.assertFalse(result["ready"])
         self.assertIn("raw_sha256_matches", result["failed_gates"])
+
+    def test_pml_mismatch_blocks_pair(self) -> None:
+        ea = _payload("Ea", self.ea_raw, 2.0e-12)
+        eb = _payload("Eb", self.eb_raw, 2.0e-12)
+        eb["pml_face_parameters"]["minx"]["alpha_start"] = 2.0
+        self._write(ea, eb)
+        result = build_pair_certificate(self.ea_report, self.eb_report)
+        self.assertFalse(result["ready"])
+        self.assertIn("pml_face_parameters_identical", result["failed_gates"])
+
+    def test_common_source_mismatch_blocks_pair(self) -> None:
+        ea = _payload("Ea", self.ea_raw, 2.0e-12)
+        eb = _payload("Eb", self.eb_raw, 2.0e-12)
+        eb["source_contract"]["direction"] = "+"
+        self._write(ea, eb)
+        result = build_pair_certificate(self.ea_report, self.eb_report)
+        self.assertFalse(result["ready"])
+        self.assertIn("common_source_contract_identical", result["failed_gates"])
 
     def test_mesh_mismatch_blocks_pair(self) -> None:
         ea = _payload("Ea", self.ea_raw, 2.0e-12)
