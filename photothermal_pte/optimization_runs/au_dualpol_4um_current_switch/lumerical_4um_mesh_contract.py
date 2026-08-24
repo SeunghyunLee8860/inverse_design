@@ -6,6 +6,13 @@ from dataclasses import asdict, dataclass, replace
 from typing import Any
 
 
+MESH_REFINEMENT_CANDIDATES = (
+    "conformal variant 0",
+    "conformal variant 1",
+    "staircase",
+)
+
+
 @dataclass(frozen=True)
 class LumericalMeshSpec:
     label: str
@@ -57,8 +64,11 @@ class LumericalMeshSpec:
             raise ValueError("simulation time must be positive")
         if not 0.0 < self.auto_shutoff_min <= 1.0e-5:
             raise ValueError("auto shutoff must lie in (0,1e-5]")
-        if self.conformal_mesh != "conformal variant 1":
-            raise ValueError("only conformal variant 1 is authorized before controls")
+        if self.conformal_mesh not in MESH_REFINEMENT_CANDIDATES:
+            raise ValueError(
+                "mesh refinement must be one of "
+                f"{MESH_REFINEMENT_CANDIDATES}, got {self.conformal_mesh!r}"
+            )
         return self
 
     def audit(self) -> dict[str, Any]:
@@ -123,6 +133,11 @@ def candidate_axes() -> dict[str, list[Any]]:
             for stack, bulk in FULL_Z_CANDIDATES_M
         ],
         "optical_xy_flake_dxy_m": list(XY_CANDIDATES_M),
+        # Au has |epsilon| much larger than air/TaIrTe4 at 4 um. Ansys warns
+        # that CV1 can create metal-interface artifacts in this regime and
+        # requires convergence comparison with the default CV0/staircase
+        # treatment. Hold the already selected spatial grid fixed here.
+        "metal_interface_mesh_refinement": list(MESH_REFINEMENT_CANDIDATES),
         # Hold the non-PML physical interior and flux surface fixed while the
         # absorbing-layer count changes.  Increasing PML layers inside a fixed
         # 20-um domain would otherwise consume the 16-um flake/control box.
@@ -154,6 +169,7 @@ def convergence_contract_audit() -> dict[str, Any]:
             "source_profile_and_incident_power",
             "time_and_auto_shutoff",
             "optical_z_full_domain_stack_bulk_air_and_PML",
+            "metal_interface_mesh_refinement_CV0_CV1_staircase",
             "optical_xy_flake_and_Au_edges",
             "PML_layers",
             "lateral_domain_clearance",
@@ -175,6 +191,7 @@ def convergence_contract_audit() -> dict[str, Any]:
             "actual mesh coordinate readback is available",
             "auto-shutoff and duration-pair stationarity pass",
             "native-Yee Q is finite and unclipped",
+            "CV0/CV1/staircase metal-interface method is explicitly selected and converged",
             "stack plus Si-bulk/air/PML z-step readback meets the requested full-domain limits",
             "six-face inward flux agrees with volume Q",
             "Lumerical fitted epsilon readback matches sampled targets",

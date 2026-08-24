@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 import numpy as np
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
@@ -101,13 +103,19 @@ def test_source_contract_binds_mesh_polarization_and_calibrated_waist() -> None:
     recalibrated = source_calibration_contract(
         BASELINE, "Ea", source_object_w0_m=4.01e-6
     )
+    cv0 = source_calibration_contract(
+        replace(BASELINE, conformal_mesh="conformal variant 0").validate(),
+        "Ea",
+        source_object_w0_m=4.0e-6,
+    )
     assert len(
         {
             ea["source_calibration_sha256"],
             eb["source_calibration_sha256"],
             recalibrated["source_calibration_sha256"],
+            cv0["source_calibration_sha256"],
         }
-    ) == 3
+    ) == 4
     assert polarization_angle_deg("Ea") == 90.0
     assert polarization_angle_deg("Eb") == 0.0
 

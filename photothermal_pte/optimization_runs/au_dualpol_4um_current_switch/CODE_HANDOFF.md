@@ -321,8 +321,13 @@ Do not copy them into this worktree.
    material, mesh, GPU, decay, nonnegative-Q, and native-Q/`pabs_adv` gates
    passed. Q/flux still failed by 29.239%, versus 30.428% on the 20-nm/200-nm
    baseline. Fine z therefore does not explain the discrepancy. The next
-   control is exact-empty on this identical mesh/source to measure the
-   background closed-flux residual before changing Q or flux formulas.
+   exact-empty control on this identical mesh/source then passed with only
+   0.01636% Q/flux error. The blocker is therefore specific to the Au
+   metal-interface discretization/absorption path, not the closed box or
+   TaIrTe4 background. Do not change Q or flux formulas to force agreement.
+   Run CV0 source/empty/full on the same spatial grid, then staircase if
+   needed; Ansys explicitly warns about CV1 artifacts at extreme metal/
+   dielectric permittivity contrast.
 6. The default source-object waist in the unified runner and B200 endpoint
    batch is now the calibrated value. Every non-baseline mesh still reruns and
    revalidates source-only rather than assuming the calibration transfers.
@@ -335,10 +340,11 @@ Do not copy them into this worktree.
    full-domain-z tables as historical diagnostics, not evidence for Lumerical
    or a production mesh. The completed shared-linear factor-1/2/4 sweep is
    useful negative evidence: its stable final pair failed in all 6/6 cases.
-3. On the current RTX host, run exact-empty Ea on the same passed 5-nm/50-nm
-   source/mesh, then compare empty-to-full increments in native Q and six-face
-   inward flux. The completed full-Au refinement already excludes simple
-   thin-stack z roughness as the 30% closure root. These runs remain
+3. On the current RTX host, run CV0 source-only, exact-empty, and exact-full Ea
+   on the same 5-nm/50-nm spatial grid. If full still fails, run the staircase
+   trio before refining to 2.5-nm/25-nm z. The passed CV1 empty control and
+   failed CV1 full control already exclude the closed box, TaIrTe4 background,
+   and simple thin-stack z roughness as the sole root. These runs remain
    development evidence only.
 4. On the actual B200, use `25_run_lumerical_4um_exact_au_control.py` to pass
    source-only Ea/Eb first, then matching ordinary empty/full/simple-L exact

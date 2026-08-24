@@ -68,6 +68,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     BASELINE_SOURCE_OBJECT_W0_UM,
     GEOMETRY_CONTROLS,
     LumericalMeshSpec,
+    MESH_REFINEMENT_CANDIDATES,
     POLARIZATIONS,
     Q_FLUX_GATE,
     RELATIVE_GATE,
@@ -192,6 +193,15 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--bulk-dz-nm", type=float, default=BASELINE.bulk_dz_m * 1e9)
     parser.add_argument("--outer-dxy-nm", type=float, default=BASELINE.outer_dxy_m * 1e9)
     parser.add_argument("--mesh-accuracy", type=int, default=BASELINE.mesh_accuracy)
+    parser.add_argument(
+        "--mesh-refinement",
+        choices=MESH_REFINEMENT_CANDIDATES,
+        default=BASELINE.conformal_mesh,
+        help=(
+            "Lumerical metal-interface mesh method. Au promotion requires "
+            "an explicit CV0/CV1/staircase convergence comparison."
+        ),
+    )
     parser.add_argument("--pml-layers", type=int, default=BASELINE.pml_layers)
     parser.add_argument("--lateral-span-um", type=float, default=BASELINE.lateral_span_m * 1e6)
     parser.add_argument("--z-min-um", type=float, default=BASELINE.z_min_m * 1e6)
@@ -254,6 +264,7 @@ def _mesh_spec(args: argparse.Namespace) -> LumericalMeshSpec:
         z_max_m=args.z_max_um * 1e-6,
         simulation_time_s=args.simulation_time_ps * 1e-12,
         auto_shutoff_min=args.auto_shutoff_min,
+        conformal_mesh=args.mesh_refinement,
     ).validate()
 
 

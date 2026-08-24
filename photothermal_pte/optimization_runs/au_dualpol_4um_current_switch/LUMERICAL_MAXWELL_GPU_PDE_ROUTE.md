@@ -101,6 +101,13 @@ prisms. Its sampled inputs still require actual Lumerical MCM fit readback.
 `lumerical_4um_mesh_contract.py` defines the sequential source/time/z/x-y/PML
 and domain-clearance controls for the exact endpoint/final cases. These files
 do not replace the density carrier or its uniform-rho resonance/AD-FD gates.
+Metal-interface mesh refinement is now a separate CV0/CV1/staircase axis.
+Ansys warns that CV1 can create artifacts when the magnitude of a metal's
+permittivity is much larger than the surrounding dielectric and recommends
+comparison with the default CV0 treatment; that warning directly applies to
+4-um Au (`epsilon` about `-830+127i`). See the official
+[mesh-refinement guidance](https://optics.ansys.com/hc/en-us/articles/360034382614)
+and [FDTD convergence guidance](https://optics.ansys.com/hc/en-us/articles/360034915833-Convergence-testing).
 
 `lumerical_4um_forward.py` now assembles the common six-PML scalar-Gaussian
 layout for `source_only`, exact `empty/full/simple_L`, or `import_density`.
@@ -170,7 +177,8 @@ hash-identical nonuniform `import_density` Lumerical FSP on the selected mesh.
 5. Optical and complete Maxwell/thermal/electrical latent AD-FD must pass for
    `Ea` and `Eb` before LD_MMA is enabled.
 6. Full x/y/z/PML mesh convergence, source recalibration, and time/Q closure
-   must pass on the same route.
+   must pass on the same route. CV0/CV1/staircase is an explicit
+   metal-interface convergence axis, not an implementation preference.
 7. The final 500-nm solid/void mask must be independently rebuilt with
    ordinary dispersive Au and reevaluated for `Ia>0`, `Ib<0`.
 
@@ -216,7 +224,12 @@ gate except Q/flux, which remained 29.239%. Thus stack/bulk z refinement alone
 does not explain the discrepancy. The dynamic preflight still requires all 9
 tasks; fewer CPU threads do not reduce this GPU checkout. The next diagnostic
 is the exact-empty case on the identical mesh/source, followed by empty-to-full
-incremental Q/flux comparison.
+incremental Q/flux comparison. That empty case subsequently passed with
+`0.01636%` closure while full remained at `29.239%`, isolating the blocker to
+the Au metal-interface discretization/absorption path rather than the closed
+box or TaIrTe4 background. The next linked controls are CV0 source/empty/full
+on the same 5-nm/50-nm spatial grid, followed by staircase if CV0 does not
+resolve the discrepancy.
 
 The concrete forward entry point is
 `25_run_lumerical_4um_exact_au_control.py`. It has an audit-only path that
