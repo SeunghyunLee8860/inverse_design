@@ -319,6 +319,32 @@ class FullZCertificateTest(unittest.TestCase):
                 ]
             )
 
+    def test_declared_extension_pair_uses_explicit_factors(self) -> None:
+        snapshots, payloads, sources = self._comparison_inputs()
+        extension_snapshots = {"z8": snapshots["z2"], "z16": snapshots["z4"]}
+        extension_payloads = {"z8": payloads["z2"], "z16": payloads["z4"]}
+        extension_sources = {"z8": sources["z2"], "z16": sources["z4"]}
+        result = compare_full_z_pair(
+            "z8",
+            "z16",
+            extension_snapshots,
+            extension_payloads,
+            extension_sources,
+            z_factors={"z8": 8, "z16": 16},
+            successive_pairs=(("z8", "z16"),),
+        )
+        self.assertTrue(result["pass"])
+        self.assertEqual(result["coarse_z_factor"], 8)
+        self.assertEqual(result["fine_z_factor"], 16)
+        with self.assertRaises(ValueError):
+            compare_full_z_pair(
+                "z8",
+                "z16",
+                extension_snapshots,
+                extension_payloads,
+                extension_sources,
+            )
+
     def test_hash_parser_is_exact_and_fail_closed(self) -> None:
         values = [f"{level}={'a' * 64}" for level in LEVELS]
         self.assertEqual(set(_level_sha(values, "contract")), set(LEVELS))

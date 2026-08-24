@@ -354,8 +354,11 @@ def compare_full_z_pair(
     snapshots: Mapping[str, Mapping[str, Mapping[str, Any] | None]],
     payloads: Mapping[str, Mapping[str, Mapping[str, Any]]],
     source_pairs: Mapping[str, Mapping[str, Any]],
+    *,
+    z_factors: Mapping[str, int] = Z_FACTOR,
+    successive_pairs: tuple[tuple[str, str], ...] = SUCCESSIVE_PAIRS,
 ) -> dict[str, Any]:
-    if (coarse_level, fine_level) not in SUCCESSIVE_PAIRS:
+    if (coarse_level, fine_level) not in successive_pairs:
         raise ValueError("only declared successive full-z pairs may be compared")
     if any(
         snapshots[level][polarization] is None
@@ -489,9 +492,9 @@ def compare_full_z_pair(
     checks = {**evaluated["checks"], **comparison_checks}
     return {
         "coarse_level": coarse_level,
-        "coarse_z_factor": Z_FACTOR[coarse_level],
+        "coarse_z_factor": z_factors[coarse_level],
         "fine_level": fine_level,
-        "fine_z_factor": Z_FACTOR[fine_level],
+        "fine_z_factor": z_factors[fine_level],
         "same_xy_grid_different_z_grid_comparison": True,
         "fixed_probe_method": (
             "exact common physical [-4,+4] um x/y cells at z=0.250 um; "
