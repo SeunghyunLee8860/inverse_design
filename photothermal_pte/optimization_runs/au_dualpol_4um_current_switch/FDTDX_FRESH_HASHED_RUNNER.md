@@ -180,6 +180,16 @@ The z32 case-file SHA-256 is
 All files remain candidate-only and cannot be passed to historical runners
 until explicit two-pole solver-array readback support is implemented.
 
+The pinned coefficient preflight at `7504045c` passed bit-exact c1/c2/c3 and
+zero-c4 readback for every axis at all three levels. External JSON SHA-256
+values are z8
+`1b892395e5d989dcb12a679d0d0c19389d2017cff026326670fd9a074cf0aeb2`,
+z16 `aa91d260271982f2bf3c4aba523cda6127a18ab6ddac50514628fbe8f5f59a9f`,
+and z32
+`4f5e3da15bcbc571fd8c9d98bc30ca4be4f5b5ac8b3266efe78a01d93d9202b6`.
+These are coefficient-generator checks only; solver-array placement remains the
+next blocker.
+
 ## Convergence rule
 
 The 16-, 24-, and 32-period levels are three different numerical cases.  Each

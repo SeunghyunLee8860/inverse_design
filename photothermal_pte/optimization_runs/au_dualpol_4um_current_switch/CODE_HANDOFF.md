@@ -289,7 +289,7 @@ source-only report, Ea/Eb pair, and material report binds one canonical
 stage is now complete for the exact-binary 375-pixel
 `l_shape_4um_with_500nm_arms` reference. Runs were made at clean commit
 `01a8ad8a`; the independent verifier and its 12 focused tests were committed
-and pushed as `5e376ce1`. All explicit FDTDX regression tests pass: 102
+and pushed as `5e376ce1`. All explicit FDTDX regression tests pass: 105
 `unittest` tests; the separate pytest forensic file is not runnable in the
 locked fresh venv because pytest is intentionally absent.
 
@@ -393,6 +393,15 @@ The new z32 canonical case-file SHA-256 is
 `33398486f542fa0f1c7b063011e61992f7830b7cd36c25c8d6863c553aa3fbf4`;
 its grid is `196 x 196 x 1280`. These law files are still candidate-only and
 have not been applied to a FDTDX solver array or field run.
+
+The pinned coefficient preflight was committed at `7504045c`. Its clean z8,
+z16, and z32 external JSON SHA-256 values are
+`1b892395e5d989dcb12a679d0d0c19389d2017cff026326670fd9a074cf0aeb2`,
+`aa91d260271982f2bf3c4aba523cda6127a18ab6ddac50514628fbe8f5f59a9f`, and
+`4f5e3da15bcbc571fd8c9d98bc30ca4be4f5b5ac8b3266efe78a01d93d9202b6`.
+All four axes at all three levels reproduce c1/c2/c3 bit-exactly through
+pinned FDTDX and c4 is exactly zero. This still is not placed-array or field
+evidence.
 
 Do not proceed to x/y, domain, PML, thermal/electrical, or optimization until
 z convergence closes. Preserve the failed z2/z4/z8 comparisons and the z16

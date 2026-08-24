@@ -302,6 +302,18 @@ The external candidate-law files under `two_pole_material_f959a9ef` are:
 Each file binds the numerical case, original material table, algorithm source,
 and pinned FDTDX update/dispersion hashes. All remain `candidate_only=true`.
 
+The pinned-library coefficient preflight was committed at `7504045c`. It
+reconstructed every law, instantiated its physical Drude/Lorentz poles through
+pinned FDTDX, and obtained bit-exact float32 c1/c2/c3 with zero c4 for all four
+material axes. Clean external preflight file SHA-256 values are:
+
+- z8: `1b892395e5d989dcb12a679d0d0c19389d2017cff026326670fd9a074cf0aeb2`
+- z16: `aa91d260271982f2bf3c4aba523cda6127a18ab6ddac50514628fbe8f5f59a9f`
+- z32: `4f5e3da15bcbc571fd8c9d98bc30ca4be4f5b5ac8b3266efe78a01d93d9202b6`
+
+This is a pinned coefficient-generator certificate only, not a placed solver
+array, time-domain material, field, or mesh certificate.
+
 The two-pole results are not a material certificate. They only establish a
 numerical candidate with positive oscillator strengths and recurrence roots no
 larger than one for Au and every TaIrTe4 axis at z8, z16, and z32. Before using
