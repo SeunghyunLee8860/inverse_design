@@ -27,6 +27,8 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fres
     BLOCKED_STATUS,
     PAIR_STATUS,
     build_candidate_pair_certificate,
+    validate_candidate_source_pair,
+    write_candidate_pair_certificate,
 )
 
 
@@ -187,6 +189,51 @@ class FdtdxFreshTwoPoleSourcePairTest(unittest.TestCase):
         self.assertFalse(result["ready"])
         self.assertEqual(result["status"], BLOCKED_STATUS)
         self.assertIn("candidate_material_law_audit_ready", result["failed_gates"])
+
+    def test_written_pair_revalidates_exact_candidate_status_and_law(self) -> None:
+        self._write()
+        law = self.reports["Ea"]["candidate_material_law_contract"]
+        output = self.root / "pair"
+        output.mkdir()
+
+        def clean_git(repository, *arguments):
+            del repository
+            return "candidate-certificate-commit" if arguments == ("rev-parse", "HEAD") else ""
+
+        with patch(
+            "photothermal_pte.optimization_runs.au_dualpol_4um_current_switch."
+            "fdtdx_fresh_two_pole_source_pair.material_law_from_contract",
+            return_value=law,
+        ), patch(
+            "photothermal_pte.optimization_runs.au_dualpol_4um_current_switch."
+            "fdtdx_fresh_two_pole_source_pair._git",
+            side_effect=clean_git,
+        ):
+            written = write_candidate_pair_certificate(
+                self.paths["Ea"], self.paths["Eb"], output
+            )
+        self.assertTrue(written["ready"], written["failed_gates"])
+        pair_path = output / "FDTDX_FRESH_TWO_POLE_SOURCE_ONLY_PAIR.json"
+        payload, audit = validate_candidate_source_pair(
+            pair_path,
+            _sha256(pair_path),
+            ANCHOR_CASE,
+            law,
+            self.reports["Ea"]["candidate_material_law_file_audit"],
+        )
+        self.assertEqual(payload["status"], PAIR_STATUS)
+        self.assertTrue(audit["ready"], audit["failed_checks"])
+        different = copy.deepcopy(law)
+        different["material_law_contract_sha256"] = "8" * 64
+        _, changed_audit = validate_candidate_source_pair(
+            pair_path,
+            _sha256(pair_path),
+            ANCHOR_CASE,
+            different,
+            self.reports["Ea"]["candidate_material_law_file_audit"],
+        )
+        self.assertFalse(changed_audit["ready"])
+        self.assertIn("candidate_material_law_exact", changed_audit["failed_checks"])
 
     def test_candidate_source_model_audit_checks_zero_air_arrays(self) -> None:
         law = _law()

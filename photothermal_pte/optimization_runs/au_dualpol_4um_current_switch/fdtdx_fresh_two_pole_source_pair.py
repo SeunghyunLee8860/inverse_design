@@ -10,7 +10,11 @@ import traceback
 from typing import Any, Mapping
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_case_contract import (
+    FreshCaseSpec,
     case_from_contract,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_exact_binary_pilot import (
+    validate_source_pair,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_fresh_source_pair import (
     _atomic_json,
@@ -130,6 +134,61 @@ def candidate_law_pair_audit(
     }
 
 
+def validate_candidate_source_pair(
+    path: Path,
+    expected_sha256: str,
+    expected_case: FreshCaseSpec,
+    expected_material_law: dict[str, Any],
+    expected_material_law_file_audit: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Revalidate a candidate pair and its exact law before a material solve."""
+
+    payload, audit = validate_source_pair(
+        path,
+        expected_sha256,
+        expected_case,
+        expected_pair_status=PAIR_STATUS,
+    )
+    contracts = payload.get("source_case_contracts", {})
+    recorded_law = contracts.get("candidate_material_law_contract")
+    recorded_file_audit = contracts.get("candidate_material_law_file_audit")
+    candidate_audit = payload.get("candidate_material_law_audit")
+    extra_checks = {
+        "candidate_pair_scope_exact": payload.get("scope")
+        == (
+            "dual-polarization all-air source normalization pair bound to one "
+            "candidate two-pole material law"
+        ),
+        "candidate_pair_optimizer_forbidden": (
+            payload.get("optimizer_start_allowed") is False
+        ),
+        "candidate_material_law_exact": recorded_law == expected_material_law,
+        "candidate_material_law_file_sha256_exact": (
+            isinstance(recorded_file_audit, Mapping)
+            and recorded_file_audit.get("actual_sha256")
+            == expected_material_law_file_audit.get("actual_sha256")
+        ),
+        "candidate_material_law_internal_sha256_exact": (
+            isinstance(recorded_file_audit, Mapping)
+            and recorded_file_audit.get("material_law_contract_sha256")
+            == expected_material_law["material_law_contract_sha256"]
+        ),
+        "candidate_material_law_audit_ready": (
+            isinstance(candidate_audit, Mapping)
+            and candidate_audit.get("ready") is True
+            and candidate_audit.get("failed_checks") == []
+            and bool(candidate_audit.get("checks"))
+            and all(value is True for value in candidate_audit["checks"].values())
+        ),
+    }
+    audit["checks"].update(extra_checks)
+    audit["failed_checks"] = [
+        name for name, passed in audit["checks"].items() if not passed
+    ]
+    audit["ready"] = all(audit["checks"].values())
+    return payload, audit
+
+
 def build_candidate_pair_certificate(
     ea_report: Path, eb_report: Path
 ) -> dict[str, Any]:
@@ -151,6 +210,9 @@ def build_candidate_pair_certificate(
         result["source_case_contracts"]["candidate_material_law_file_audit"] = (
             law_audit["material_law_file_audit"]
         )
+        result["source_case_contracts"][
+            "candidate_source_implementation_sha256"
+        ] = ea["provenance"]["implementation_sha256"]
     result["ready"] = all(result["gates"].values())
     result["status"] = PAIR_STATUS if result["ready"] else BLOCKED_STATUS
     result["failed_gates"] = [

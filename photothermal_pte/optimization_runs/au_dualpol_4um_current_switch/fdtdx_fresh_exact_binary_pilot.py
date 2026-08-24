@@ -178,6 +178,8 @@ def validate_source_pair(
     path: Path,
     expected_sha256: str,
     expected_case: FreshCaseSpec = ANCHOR_CASE,
+    *,
+    expected_pair_status: str = PAIR_STATUS,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     """Revalidate the certificate, artifacts, and exact numerical case."""
 
@@ -228,7 +230,7 @@ def validate_source_pair(
         and all(character in "0123456789abcdef" for character in normalized_sha),
         "certificate_exists": certificate_exists,
         "certificate_sha256_matches": actual_sha == normalized_sha,
-        "certificate_status_and_ready": payload.get("status") == PAIR_STATUS
+        "certificate_status_and_ready": payload.get("status") == expected_pair_status
         and payload.get("ready") is True
         and payload.get("failed_gates") == [],
         "certificate_gates_all_true": bool(certificate_gates)
