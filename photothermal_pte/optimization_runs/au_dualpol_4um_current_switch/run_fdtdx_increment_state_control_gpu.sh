@@ -60,7 +60,7 @@ nvidia-smi -i "$gpu_index" --query-gpu=index,uuid,name,memory.used,memory.total,
 cd "$repository"
 export CUDA_VISIBLE_DEVICES="$gpu_index"
 export FDTDX_SOURCE_DIR="$source_dir"
-export JAX_PLATFORMS=gpu
+export JAX_PLATFORMS=cuda
 export PYTHONDONTWRITEBYTECODE=1
 export PYTHONPATH="$source_dir/src:$repository${PYTHONPATH:+:$PYTHONPATH}"
 export XLA_PYTHON_CLIENT_PREALLOCATE=false

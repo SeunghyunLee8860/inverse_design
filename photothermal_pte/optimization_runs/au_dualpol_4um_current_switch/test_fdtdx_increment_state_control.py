@@ -158,4 +158,6 @@ def test_gpu_wrapper_rejects_busy_device_before_export():
     assert "--query-compute-apps" in wrapper
     assert '-v gpu_id="$gpu_index"' in wrapper
     assert '-v index="$gpu_index"' not in wrapper
+    assert "export JAX_PLATFORMS=cuda" in wrapper
+    assert "export JAX_PLATFORMS=gpu" not in wrapper
     assert "Lumerical" not in wrapper
