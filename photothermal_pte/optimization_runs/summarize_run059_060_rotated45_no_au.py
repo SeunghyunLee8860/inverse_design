@@ -7,6 +7,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import sys
 from typing import Any
 
@@ -46,7 +47,7 @@ REPORT_DIR = (
     REPOSITORY
     / "photothermal_pte"
     / "reports"
-    / "run059_060_rotated45_ideal_terminal_no_Au"
+    / "run059_060_rotated45_fixed_TaIrTe4_contact_no_Au"
 )
 TARGET_POWER_W = 285.0e-6
 STEP_M = 100.0e-9
@@ -55,8 +56,8 @@ SIGMA_XY_S_M = (1.10e5, 4.91e5)
 SEEBECK_XY_V_K = (27.0e-6, -6.0e-6)
 
 RUNS = {
-    59: REPOSITORY / "photothermal_pte/optimization_runs/run_059_diagonal45_evaporated_sio2_Ea_bounded_official_dfm_exact_repair/results_v5_no_Au",
-    60: REPOSITORY / "photothermal_pte/optimization_runs/run_060_diagonal45_evaporated_sio2_Eb_bounded_official_dfm_exact_repair/results_v5_no_Au",
+    59: REPOSITORY / "photothermal_pte/optimization_runs/run_059_diagonal45_evaporated_sio2_Ea_bounded_official_dfm_exact_repair/results_v6_fixed_TaIrTe4_contact_no_Au",
+    60: REPOSITORY / "photothermal_pte/optimization_runs/run_060_diagonal45_evaporated_sio2_Eb_bounded_official_dfm_exact_repair/results_v6_fixed_TaIrTe4_contact_no_Au",
 }
 
 
@@ -66,6 +67,25 @@ def sha256(path: Path) -> str:
         for block in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def chosen_field_path(root: Path, final: dict[str, Any]) -> Path:
+    """Materialize the selected raw field artifact beside the published result."""
+    local = root / "chosen_exact_candidate_fields.npz"
+    artifact = final["chosen_candidate"]["result"]["raw_artifact"]
+    expected_sha256 = str(artifact["sha256"])
+    if local.exists() and sha256(local) == expected_sha256:
+        return local
+
+    source = Path(artifact["path"])
+    if not source.is_file():
+        raise FileNotFoundError(
+            f"selected field artifact is absent from both {local} and {source}"
+        )
+    if sha256(source) != expected_sha256:
+        raise RuntimeError(f"selected field artifact checksum mismatch: {source}")
+    shutil.copy2(source, local)
+    return local
 
 
 def rotated_coordinates(values: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -174,7 +194,7 @@ def load_run(run: int) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
     root = RUNS[run]
     final = json.loads((root / "FINAL_RESULT.json").read_text())
     chosen = final["chosen_candidate"]["result"]
-    with np.load(root / "chosen_exact_candidate_fields.npz") as raw:
+    with np.load(chosen_field_path(root, final)) as raw:
         rho = np.asarray(raw["rho_binary"], dtype=np.float64)
         q = np.asarray(raw["mapped_Q_W_m3"], dtype=np.float64)
         temperature = np.asarray(raw["nodal_temperature_K"], dtype=np.float64)
@@ -356,7 +376,7 @@ def field_figure(metrics: dict[str, Any], data: dict[str, np.ndarray]) -> Path:
     fig, axes = plt.subplots(4, 4, figsize=(22, 21), constrained_layout=True)
     rotated_map(
         axes[0, 0], x_n, y_n, data["rho_binary"],
-        "Exact binary (black=TaIrTe4); contours=ideal terminals",
+        "Exact binary (black=TaIrTe4, fixed under contacts); contours=terminals",
         cmap="gray_r", terminal_masks=terminal_masks,
     )
     rectangular_map(
@@ -517,13 +537,14 @@ def main() -> int:
     outputs.append(convergence_figure(metrics))
     outputs.append(comparison_figure(metrics))
     summary = {
-        "schema": "run059-060-rotated45-no-Au-field-publication-v1",
+        "schema": "run059-060-rotated45-fixed-contact-no-Au-field-publication-v2",
         "model": {
             "geometry": "24 x 24 um device rotated +45 degrees",
             "axis_contract": "global x=b, y=a",
             "optical": "Run58 axis-aligned optical proxy without Au",
             "thermal_interface": "evaporated TaIrTe4/SiO2, G=73700 W/m2/K",
-            "electrodes": "ideal equipotential masks only in electrical solves",
+            "contact_overlap": "2 um fixed-solid TaIrTe4 strips; excluded from topology design",
+            "electrodes": "ideal equipotential masks only in electrical solves; no optical or thermal Au",
             "target_incident_power_W": TARGET_POWER_W,
         },
         "runs": metrics,
