@@ -1,6 +1,6 @@
 # Fresh FDTDX exact-binary convergence plan
 
-Status: **AUDITED_EXACT_BINARY_MULTIAXIS_CONTRACT_NOT_SOLVED**
+Status: **EXACT_BINARY_MATERIAL_BRIDGE_UNIT_VALIDATED_NOT_PLACED**
 
 This is the numerical contract for a fresh FDTDX investigation. It does not
 resume the historical topology optimization, does not use the historical
@@ -69,6 +69,14 @@ They test different failure modes:
 These are verification structures, not candidate devices. Their purpose is to
 identify numerical error before the historical or any newly optimized
 geometry is evaluated.
+
+`fdtdx_exact_binary_material.py` is the only allowed material application for
+these references. It rejects float masks even when their values happen to be
+0.0/1.0, repeats the integer mask without interpolation, and writes all three
+Au ADE recurrence coefficients (`c1`, `c2`, and `c3`) to exact endpoints. An
+air cell has epsilon-infinity 1 and zero Au ADE coefficients; an Au cell has
+epsilon-infinity 1 and the complete locked ordinary-Au ADE coefficient tuple.
+There is no `rho`, density exponent, or gray material in this path.
 
 ## Independent convergence axes
 
@@ -140,9 +148,10 @@ Every solve record must contain:
   and weighting-field/current data in a portable configured raw root;
 - an atomic progress manifest that revalidates every raw hash on resume.
 
-The current repository does not contain the historical raw NPZ files or a
-complete FDTDX source pin. Therefore none of the old summaries can be silently
-reused as a new certificate.
+The current branch now contains full source and runtime locks, but intentionally
+does not contain the historical raw NPZ files. None of the old summaries can be
+silently reused as a new certificate; every fresh raw artifact must be produced
+through the locked runtime and re-hashed.
 
 ## Fail-closed promotion rule
 
