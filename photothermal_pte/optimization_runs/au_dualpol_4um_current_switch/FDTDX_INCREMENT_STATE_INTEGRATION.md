@@ -245,3 +245,27 @@ This closes anchor runtime and time settling only. It does not certify source
 normalization, spatial mesh convergence, adjoint timing, a gray law, or the
 optimizer. The next artifact must be a newly hashed patched-fork 24-period
 source-only Ea/Eb pair; do not reuse the historical second-order pair.
+
+## Increment-state source-only and pair pre-launch
+
+`fdtdx_increment_state_source_only.py` builds the same canonical 24/4 anchor,
+selects the patched increment state, then resets the complete domain to air. A
+CPU placement/readback proves inverse epsilon is exactly one and every stored
+`A/C/B` coefficient is exactly zero on the `196 x 196 x 160`, 38,496-step
+case. It reuses the existing field stationarity, target-plane polarization,
+beam-moment, incident-flux, and closed-flux evaluation math, but uses a new
+status/version/provenance bound to patched commit `6cc0e97`. Detector fields
+and grids are written only to an external NPZ.
+
+`fdtdx_increment_state_source_pair.py` requires absolute Ea/Eb report paths and
+explicit lowercase byte SHA-256 values. It rehashes both reports and raw NPZs,
+checks finite schemas, exact polarizations, canonical identical 24/4 cases,
+identical mesh/PML/placement/source/runtime/FDTDX provenance, clean worktrees,
+and a `5e-3` incident-power mismatch limit. It then computes exactly one common
+power and field-amplitude scale from the arithmetic-mean incident power;
+per-polarization matching remains forbidden. The safe source wrapper rejects
+any GPU with an existing compute process before CUDA export.
+
+The new/affected source tests are `18 passed`; actual all-air CPU readback also
+passes. No source GPU run or pair certificate exists at this pre-launch
+checkpoint. Commit and push before running the pair.

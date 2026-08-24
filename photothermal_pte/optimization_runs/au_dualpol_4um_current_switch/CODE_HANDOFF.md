@@ -863,3 +863,14 @@ Au field NRMSE is now `1.858e-4/2.489e-4`, and Q/phasor closure is
 patched-fork 24-period source-only Ea/Eb pair, then begin spatial convergence.
 Historical source pairs remain forbidden; gray law, adjoint timing, and
 optimizer are still open blockers.
+
+## Increment-state source-pair pre-launch
+
+New files `fdtdx_increment_state_source_only.py`,
+`fdtdx_increment_state_source_pair.py`, and
+`run_fdtdx_increment_state_source_gpu.sh` create the required patched-fork
+24/4 all-air normalization without reusing historical reports. CPU readback
+proves exact all-air inverse epsilon and zero `A/C/B`; affected tests are
+`18 passed`. Commit/push this state, run Ea/Eb on two newly verified-idle GPUs,
+then build the pair using explicit report byte hashes. Only one arithmetic-mean
+common scale is allowed. Raw NPZ/JSON/certificate files stay outside Git.
