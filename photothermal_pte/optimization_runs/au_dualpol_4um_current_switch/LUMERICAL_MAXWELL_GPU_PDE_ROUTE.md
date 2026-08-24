@@ -351,8 +351,15 @@ AD-FD for both polarizations: Ea relative error `7.011e-5`, Eb relative error
 was `7.011e-5`; its Ea/Eb constraint errors were `7.011e-5`/`4.093e-5`.
 The four new Lumerical forwards took 52.22, 50.12, 60.68, and 62.68 s; the
 four custom-CUDA evaluations totaled 71.66 s. Thus each polarization now has
-two independent development-mesh directions. Indices 2/3 remain before the
-planned four-direction gate; no optimizer was run.
+two independent development-mesh directions.
+
+Direction 2 then passed with Ea AD/FD
+`-2.440938241e-8`/`-2.440694620e-8 A` (error `9.981e-5`) and Eb AD/FD
+`-5.517740350e-8`/`-5.516697265e-8 A` (error `1.890e-4`). Its signed
+balanced-objective and both constraint checks passed. Four forwards totaled
+229.15 s and four custom-CUDA evaluations 72.69 s. Each polarization now has
+three independent directions; only index 3 remains in the planned family.
+No optimizer was run.
 
 ## Exact endpoint/final GPU runner
 

@@ -125,10 +125,13 @@ direction 0 and also passes: Ea AD `1.966482804e-8 A`, FD
 `1.966344926e-8 A`, error `7.011e-5`; Eb AD `3.871015880e-8 A`, FD
 `3.870857434e-8 A`, error `4.093e-5`. Its signed balanced-objective and both
 constraint errors pass as well. The four new perturbed Maxwell forwards
-totaled 225.7 s and the four custom-CUDA evaluations 71.7 s. Ea and Eb
-therefore each have two independent directions on this development mesh.
-Direction indices 2/3, the optimizer driver, mesh selection, and B200
-repetition remain open; switching has not yet been achieved.
+totaled 225.7 s and the four custom-CUDA evaluations 71.7 s.
+Direction 2 also passes: Ea error `9.981e-5`, Eb error `1.890e-4`, with
+matching signs and a passed signed-objective/constraint audit. Its four
+Maxwell forwards totaled 229.2 s and its four custom-CUDA evaluations 72.7 s.
+Ea and Eb therefore each have three independent directions on this
+development mesh. Direction index 3, the optimizer driver, mesh selection,
+and B200 repetition remain open; switching has not yet been achieved.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine

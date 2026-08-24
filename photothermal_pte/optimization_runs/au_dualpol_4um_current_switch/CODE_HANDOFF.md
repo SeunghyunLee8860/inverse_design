@@ -236,7 +236,12 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     second direction passes Ea AD-FD at `7.011e-5` relative error and Eb at
     `4.093e-5`; the signed objective and both constraints pass too. Its four
     forward solves totaled 225.7 s and four custom-CUDA evaluations 71.7 s.
-    Ea/Eb now have two independent directions each; indices 2/3 remain.
+    Ea/Eb then had two independent directions each.
+36. Direction 2 also passes: Ea AD/FD
+    `-2.440938241e-8`/`-2.440694620e-8 A` (error `9.981e-5`) and Eb AD/FD
+    `-5.517740350e-8`/`-5.516697265e-8 A` (error `1.890e-4`). The signed
+    objective and constraint gate passes. Its four forwards totaled 229.2 s
+    and four custom-CUDA evaluations 72.7 s. Only direction 3 remains.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -612,6 +617,9 @@ Do not copy them into this worktree.
     `3.871015880e-8`/`3.870857434e-8 A` (error `4.093e-5`). The signed
     objective artifact is outside Git at
     `r12_ea_eb_latent_beta4_dir1_signed_objective_v1/`.
+19. Direction index 2 passed the same chain. Ea/Eb errors were
+    `9.981e-5`/`1.890e-4`. The signed objective artifact is outside Git at
+    `r12_ea_eb_latent_beta4_dir2_signed_objective_v1/`.
 
 ## Next correct sequence
 
@@ -652,9 +660,9 @@ Do not copy them into this worktree.
    now exist, but no B200 result is committed and this Codex host fails the
    B200 preflight.
 5. The component-Yee builder, hash-bound R1.2 distributed-source adjoints,
-   and two complete beta-4 latent centered AD-FD directions for each of Ea and
+   and three complete beta-4 latent centered AD-FD directions for each of Ea and
    Eb now pass on the 5/50-nm staircase mesh. Their exact signed epigraph also
-   passes in both common directions. Complete direction indices 2/3, then
+   passes in all three common directions. Complete direction index 3, then
    build a fail-closed Lumerical
    evaluation driver without rerunning already hash-bound baselines. The
    polarization-general runner now permits reuse of the Ea material Jacobian

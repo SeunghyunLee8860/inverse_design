@@ -46,3 +46,5 @@ opposite-sign state is not yet present.
 An independent second common direction now also passes: balanced-objective
 error `7.011e-5` and Ea/Eb constraint errors `7.011e-5`/`4.093e-5`.
 Directions 2/3 and a Lumerical evaluation driver remain open.
+Direction 2 subsequently passed with balanced-objective error `9.981e-5` and
+Ea/Eb constraint errors `9.981e-5`/`1.890e-4`. Only direction 3 remains.
