@@ -1,5 +1,15 @@
 # Au dual-polarization PTE inverse-design code handoff
 
+## Latest downstream diagnostic -- thermal x/y/z only
+
+The frozen-Q prototype thermal spatial ladder now passes two successive x/y
+and z tail pairs for Ea and Eb.  The selected diagnostic mesh is x/y factor 2,
+z factor 2 (`532 x 532 x 66`).  Read
+`FDTDX_FROZEN_Q_THERMAL_XY_CONVERGENCE.md` first, then the earlier z document.
+Thermal domain/boundaries, optical, actual-geometry electrical, and the
+production multiphysics mesh remain unselected; optimization remains
+forbidden.  The independently owned Lumerical session remains untouched.
+
 ## Latest downstream diagnostic -- thermal z only
 
 The blocked exact-binary FDTDX z32 Q artifacts have now been frozen and used
@@ -140,6 +150,13 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     factor2-to-4 pass for Ea/Eb and select factor 2 only for the frozen-Q
     thermal diagnostic.  They do not select a thermal x/y, optical,
     electrical, or production mesh and cannot authorize optimization.
+24. `FDTDX_FROZEN_Q_THERMAL_XY_CONVERGENCE.md`,
+    `fdtdx_frozen_q_thermal_xy_case.py`, and
+    `fdtdx_frozen_q_thermal_xy_certificate.py` -- hold selected diagnostic z
+    factor 2 fixed and certify x/y factors 1/2/4.  Both tail pairs pass for
+    Ea/Eb, factor 1 exactly rebounds to the prior z-factor-2 arrays, and x/y
+    factor 2 is selected only for frozen-Q prototype diagnostics.  Thermal
+    domain/boundaries and every production/coupled gate remain blocked.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.

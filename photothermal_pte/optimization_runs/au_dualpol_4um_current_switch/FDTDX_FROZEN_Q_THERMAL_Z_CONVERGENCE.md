@@ -1,5 +1,12 @@
 # FDTDX frozen-Q thermal z convergence
 
+## Later x/y result
+
+The downstream x/y ladder now also passes at fixed z factor 2 and selects x/y
+factor 2 (`532 x 532 x 66`) only for the same frozen-Q prototype diagnostic.
+See `FDTDX_FROZEN_Q_THERMAL_XY_CONVERGENCE.md`.  The scope restrictions in
+this document remain unchanged.
+
 ## Decision and strict scope
 
 The explicit thermal solver's z discretization is converged for the frozen

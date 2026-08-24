@@ -9,6 +9,11 @@ does not change the failed optical certificate, select a production mesh, or
 allow optimization.  See `FDTDX_FROZEN_Q_THERMAL_Z_CONVERGENCE.md` for byte
 identities, convergence metrics, and measured 6--12 s case runtimes.
 
+The later x/y ladder also passes at fixed diagnostic z factor 2 and selects
+x/y factor 2 (`532 x 532 x 66`) only for the frozen-Q prototype thermal
+diagnostic.  See `FDTDX_FROZEN_Q_THERMAL_XY_CONVERGENCE.md`.  Neither thermal
+certificate changes the failed optical result or authorizes optimization.
+
 ## Decision
 
 The fresh increment-state FDTDX exact-binary optical reference is **not mesh
