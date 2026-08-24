@@ -7,6 +7,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_exact_au import (
     AU_MATERIAL,
+    AU_MATERIAL_MAX_COEFFICIENTS,
     MATERIAL_FIT_WAVELENGTH_BAND_M,
     SIO2_MATERIAL,
     SOURCE_WAVELENGTH_BAND_M,
@@ -102,6 +103,7 @@ def test_sampled_material_contract_is_dispersive_passive_and_guarded() -> None:
     assert audit["status"].endswith("NOT_FIT_READBACK")
     assert audit["gates"]["single_frequency_constant_nk_Au_prohibited"] is True
     assert audit["Au_fit"]["requires_post_run_Lumerical_fit_readback"] is True
+    assert audit["Au_fit"]["max_coefficients"] == AU_MATERIAL_MAX_COEFFICIENTS == 6
     assert audit["default_non_Au_fit"][
         "requires_post_run_Lumerical_fit_readback"
     ] is True

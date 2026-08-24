@@ -325,10 +325,19 @@ Do not copy them into this worktree.
    0.01636% Q/flux error. The blocker is therefore specific to the Au
    metal-interface discretization/absorption path, not the closed box or
    TaIrTe4 background. Do not change Q or flux formulas to force agreement.
-   Run CV0 source/empty/full on the same spatial grid, then staircase if
-   needed; Ansys explicitly warns about CV1 artifacts at extreme metal/
-   dielectric permittivity contrast.
-6. The default source-object waist in the unified runner and B200 endpoint
+   CV0, CV1, and staircase later all reproduced about 29.1% error, and 2.5 nm
+   z plus a 2 ps/1e-9 decay run did not change it.
+6. The actual blocker was Au sampled-data overfitting. Holding every physical
+   and mesh input fixed while reducing only the Au MCM maximum from 20 to 6
+   changed closure from 29.159% to 0.08935%. MCM4/6/8/12/16 form one stable
+   field/Q plateau; MCM20 selects a different failed branch despite its smaller
+   pointwise n-k readback error. Au now defaults to MCM6. Full evidence is in
+   `AU_MCM_FIT_FINDINGS.md`.
+7. Imported rho=1 closes Q/flux to 0.04374%, but is not yet exact-endpoint
+   parity: its realized Yee epsilon differs from MCM6 and the complex endpoint
+   field NRMSE is 1.849%. Do not promote the imported carrier until this is
+   calibrated and independently checked against exact MCM6.
+8. The default source-object waist in the unified runner and B200 endpoint
    batch is now the calibrated value. Every non-baseline mesh still reruns and
    revalidates source-only rather than assuming the calibration transfers.
 
@@ -340,16 +349,14 @@ Do not copy them into this worktree.
    full-domain-z tables as historical diagnostics, not evidence for Lumerical
    or a production mesh. The completed shared-linear factor-1/2/4 sweep is
    useful negative evidence: its stable final pair failed in all 6/6 cases.
-3. On the current RTX host, run CV0 source-only, exact-empty, and exact-full Ea
-   on the same 5-nm/50-nm spatial grid. If full still fails, run the staircase
-   trio before refining to 2.5-nm/25-nm z. The passed CV1 empty control and
-   failed CV1 full control already exclude the closed box, TaIrTe4 background,
-   and simple thin-stack z roughness as the sole root. These runs remain
-   development evidence only.
+3. Treat the CV0/CV1/staircase, 5/2.5-nm z, strict-decay, and MCM sweep as RTX
+   development evidence only. Use Au MCM6, not 20. Restart spatial convergence
+   from the passed 5-nm CV0 MCM6 exact-full result; compare it to 2.5-nm MCM6,
+   then refine x/y and the linked bulk/PML axes.
 4. On the actual B200, use `25_run_lumerical_4um_exact_au_control.py` to pass
    source-only Ea/Eb first, then matching ordinary empty/full/simple-L exact
    Au time, Q/flux, linked stack+bulk/air/PML-z, x/y, PML-layer, and domain
-   controls. Run imported-rho0/1 parity against the matching ordinary
+   controls with Au MCM6. Run imported-rho0/1 parity against the matching ordinary
    empty/full baselines,
    quantify the single-frequency carrier's source-band error, and sweep
    uniform projected density for artificial field/Q resonances. Raw output

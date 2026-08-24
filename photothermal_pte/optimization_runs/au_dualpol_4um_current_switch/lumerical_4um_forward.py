@@ -17,9 +17,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
     CONTRACT,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_exact_au import (
+    AU_MATERIAL_MAX_COEFFICIENTS,
     AU_MATERIAL,
     MATERIAL_FIT_TOLERANCE,
-    MATERIAL_MAX_COEFFICIENTS,
     SIO2_MATERIAL,
     SOURCE_WAVELENGTH_BAND_M,
     TAIRTE4_MATERIAL,
@@ -392,7 +392,7 @@ def build_layout(
     spec: LumericalMeshSpec,
     source_object_w0_m: float,
     projected_density: np.ndarray | None = None,
-    au_max_coefficients: int = MATERIAL_MAX_COEFFICIENTS,
+    au_max_coefficients: int = AU_MATERIAL_MAX_COEFFICIENTS,
     au_fit_tolerance: float = MATERIAL_FIT_TOLERANCE,
 ) -> dict[str, Any]:
     """Build one source-only, exact-stack, or imported-density layout."""

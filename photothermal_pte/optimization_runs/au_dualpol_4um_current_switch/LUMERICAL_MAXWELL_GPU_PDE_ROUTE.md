@@ -225,11 +225,14 @@ does not explain the discrepancy. The dynamic preflight still requires all 9
 tasks; fewer CPU threads do not reduce this GPU checkout. The next diagnostic
 is the exact-empty case on the identical mesh/source, followed by empty-to-full
 incremental Q/flux comparison. That empty case subsequently passed with
-`0.01636%` closure while full remained at `29.239%`, isolating the blocker to
-the Au metal-interface discretization/absorption path rather than the closed
-box or TaIrTe4 background. The next linked controls are CV0 source/empty/full
-on the same 5-nm/50-nm spatial grid, followed by staircase if CV0 does not
-resolve the discrepancy.
+`0.01636%` closure while full remained at `29.239%`. CV0, CV1, staircase,
+2.5-nm z, and a stricter 2-ps/1e-9 decay run all reproduced the full-Au error.
+The root cause was instead the allowed Au MCM complexity: max 20 selected a
+failed overfit branch, whereas MCM4/6/8/12/16 formed a common field/Q plateau.
+MCM6 passed closure at `0.08935%` and is now the default. See
+`AU_MCM_FIT_FINDINGS.md`. The imported rho=1 carrier separately passes closure
+but still has 1.849% complex-field endpoint error versus exact MCM6, so that
+parity gate remains open.
 
 The concrete forward entry point is
 `25_run_lumerical_4um_exact_au_control.py`. It has an audit-only path that

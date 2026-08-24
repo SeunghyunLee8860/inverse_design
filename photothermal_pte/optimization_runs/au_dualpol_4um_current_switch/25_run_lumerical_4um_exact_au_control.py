@@ -75,8 +75,8 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     SOURCE_PROFILE_GATE,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_exact_au import (  # noqa: E402
+    AU_MATERIAL_MAX_COEFFICIENTS,
     MATERIAL_FIT_TOLERANCE,
-    MATERIAL_MAX_COEFFICIENTS,
     au_fit_configuration,
     exact_control_masks,
 )
@@ -199,7 +199,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--au-max-coefficients",
         type=int,
-        default=MATERIAL_MAX_COEFFICIENTS,
+        default=AU_MATERIAL_MAX_COEFFICIENTS,
         help=(
             "Maximum Lumerical multi-coefficient terms for sampled-data Au only. "
             "TaIrTe4 and SiO2 remain fixed at the audited default."

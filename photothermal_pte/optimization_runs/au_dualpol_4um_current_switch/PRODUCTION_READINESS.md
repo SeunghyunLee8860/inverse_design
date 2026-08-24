@@ -29,11 +29,14 @@ current RTX host, the explicitly non-promotable Ea/Eb
 source-only gate passed, while exact-full Ea on the 20-nm stack-z baseline
 failed Q/six-face closure by 30.43%. The linked 5-nm/50-nm z source gate passed,
 and the later exact-full retry completed but still failed closure by 29.239%.
-This rules out simple thin-stack z roughness as the sole cause; exact-empty on
-the identical mesh/source subsequently passed with 0.01636% closure. The
-blocker is isolated to the Au metal-interface path. CV0/CV1/staircase is now a
-mandatory mesh-method convergence axis, beginning with CV0 controls on the
-same 5-nm/50-nm grid.
+Exact-empty passed with 0.01636%; CV0/CV1/staircase, 2.5-nm z, and strict
+time/decay checks did not fix full Au. The root cause was the Au sampled-data
+MCM20 overfit branch. MCM4/6/8/12/16 form a common stable plateau and MCM6
+passes Q/flux closure at 0.08935%, so Au now defaults to six maximum
+coefficients. The rho=1 imported carrier passes its own closure but still has
+1.849% complex-field endpoint error versus exact MCM6. Exact/import endpoint
+parity and production spatial convergence therefore remain open; see
+`AU_MCM_FIT_FINDINGS.md`.
 None of this satisfies the required B200 inventory gate. Every material run
 requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
 source-only waist/power record. The dynamic preflight also requires all nine

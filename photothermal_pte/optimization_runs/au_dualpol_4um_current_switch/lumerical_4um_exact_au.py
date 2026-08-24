@@ -48,7 +48,12 @@ KITAMURA_IMPLEMENTATION = (
 SOURCE_WAVELENGTH_BAND_M = (3.60e-6, 4.40e-6)
 MATERIAL_FIT_WAVELENGTH_BAND_M = (3.20e-6, 4.80e-6)
 MATERIAL_SAMPLE_COUNT = 161
+# Keep the high ceiling for the smoother non-Au fits, but do not reuse it for
+# Ordal Au.  On v261 the Au 4-um fit has a stable 4--16 coefficient plateau;
+# allowing 20 selects a different overfit branch that passes pointwise n-k
+# readback yet fails closed-surface energy balance by about 29%.
 MATERIAL_MAX_COEFFICIENTS = 20
+AU_MATERIAL_MAX_COEFFICIENTS = 6
 MATERIAL_FIT_TOLERANCE = 0.0
 
 AU_MATERIAL = "Au_Ordal_4um_sampled_dispersive"
@@ -300,7 +305,7 @@ def _complex_record(value: complex) -> dict[str, float]:
 
 def au_fit_configuration(
     *,
-    max_coefficients: int = MATERIAL_MAX_COEFFICIENTS,
+    max_coefficients: int = AU_MATERIAL_MAX_COEFFICIENTS,
     tolerance: float = MATERIAL_FIT_TOLERANCE,
 ) -> dict[str, Any]:
     """Validate and record the independently swept Au fit parameters."""
@@ -320,7 +325,7 @@ def au_fit_configuration(
 
 def material_contract_audit(
     *,
-    au_max_coefficients: int = MATERIAL_MAX_COEFFICIENTS,
+    au_max_coefficients: int = AU_MATERIAL_MAX_COEFFICIENTS,
     au_fit_tolerance: float = MATERIAL_FIT_TOLERANCE,
 ) -> dict[str, Any]:
     data = sampled_material_data()
@@ -404,7 +409,7 @@ def material_contract_audit(
 def add_dispersive_materials(
     fdtd: Any,
     *,
-    au_max_coefficients: int = MATERIAL_MAX_COEFFICIENTS,
+    au_max_coefficients: int = AU_MATERIAL_MAX_COEFFICIENTS,
     au_fit_tolerance: float = MATERIAL_FIT_TOLERANCE,
 ) -> dict[str, Any]:
     """Install the audited sampled materials into a Lumerical layout session."""
