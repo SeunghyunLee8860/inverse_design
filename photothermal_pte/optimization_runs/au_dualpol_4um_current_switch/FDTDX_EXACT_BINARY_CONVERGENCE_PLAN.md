@@ -1,6 +1,6 @@
 # Fresh FDTDX exact-binary convergence plan
 
-Status: **EXACT_BINARY_MATERIAL_BRIDGE_UNIT_VALIDATED_NOT_PLACED**
+Status: **ANCHOR_PLACEMENT_VALIDATED_NO_FIELD_SOLVE**
 
 This is the numerical contract for a fresh FDTDX investigation. It does not
 resume the historical topology optimization, does not use the historical

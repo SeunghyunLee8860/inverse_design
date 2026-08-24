@@ -1,6 +1,6 @@
 # Fresh FDTDX dependency and mesh bridge
 
-Status: **GPU_RUNTIME_VALIDATED_PLACEMENT_NOT_YET_CERTIFIED**
+Status: **GPU_RUNTIME_AND_ANCHOR_PLACEMENT_VALIDATED_SOURCE_ONLY_NOT_RUN**
 
 The fresh exact-binary route pins the official FDTDX repository at:
 
@@ -84,6 +84,7 @@ FDTDX_FRESH_OUTPUT_DIR=/home/seunghyun200/fdtdx_results/fresh_placement_001 \
   ./run_fdtdx_fresh_gpu.sh -m your.module
 ```
 
-The remaining blockers are the anchor-model placement/readback audit and a
-source-only field solve. No reference sweep or optimizer is authorized by the
-runtime smoke certificate alone.
+The anchor-model placement/readback audit is now recorded in
+`FDTDX_FRESH_ANCHOR_PLACEMENT.md`. The remaining Maxwell blocker before any
+reference sweep is a source-only field solve on the identical contract. No
+optimizer is authorized by the runtime or placement certificates.
