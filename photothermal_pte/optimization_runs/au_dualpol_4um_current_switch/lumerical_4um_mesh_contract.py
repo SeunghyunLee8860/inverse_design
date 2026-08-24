@@ -81,6 +81,11 @@ BASELINE = LumericalMeshSpec(
     auto_shutoff_min=1.0e-7,
 ).validate()
 
+# One-step calibration from the all-air v261 baseline runs on both Ea and Eb.
+# This is the source-object setting; the required realized flake-plane waist
+# remains exactly 4 um and is remeasured for every numerical mesh.
+BASELINE_SOURCE_OBJECT_W0_UM = 3.956143303046143
+
 TIME_CANDIDATES_S = (1.0e-12, 2.0e-12, 4.0e-12)
 FULL_Z_CANDIDATES_M = (
     (20.0e-9, 200.0e-9),
@@ -107,6 +112,10 @@ def replace_labeled(spec: LumericalMeshSpec, label: str, **updates: Any) -> Lume
 def candidate_axes() -> dict[str, list[Any]]:
     """Return ordered one-axis-at-a-time candidates, not a Cartesian sweep."""
 
+    baseline_pml_clearance = (
+        BASELINE.pml_layers + 1
+    ) * BASELINE.outer_dxy_m
+    fixed_flux_half_span = 0.5 * BASELINE.lateral_span_m - baseline_pml_clearance
     return {
         "time_simulation_s": list(TIME_CANDIDATES_S),
         "optical_full_domain_z_m": [
@@ -114,7 +123,20 @@ def candidate_axes() -> dict[str, list[Any]]:
             for stack, bulk in FULL_Z_CANDIDATES_M
         ],
         "optical_xy_flake_dxy_m": list(XY_CANDIDATES_M),
-        "pml_layers": list(PML_LAYER_CANDIDATES),
+        # Hold the non-PML physical interior and flux surface fixed while the
+        # absorbing-layer count changes.  Increasing PML layers inside a fixed
+        # 20-um domain would otherwise consume the 16-um flake/control box.
+        "pml_layers": [
+            {
+                "pml_layers": layers,
+                "lateral_span_m": 2.0
+                * (
+                    fixed_flux_half_span
+                    + (layers + 1) * BASELINE.outer_dxy_m
+                ),
+            }
+            for layers in PML_LAYER_CANDIDATES
+        ],
         "lateral_span_m": list(LATERAL_SPAN_CANDIDATES_M),
         "z_domain_bounds_m": [list(item) for item in Z_DOMAIN_CANDIDATES_M],
     }

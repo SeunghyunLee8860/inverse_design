@@ -20,12 +20,16 @@ It has exact background and frozen Ordal-Au endpoints at 4 um, an analytic
 complex derivative, no `rho**3`, and solver-free passivity/FD tests. This is
 implementation progress, not a production certificate.
 
-The unified Lumerical/B200 runner now supports source-only, exact
+The unified Lumerical GPU runner now supports source-only, exact
 empty/full/simple-L, and imported-density controls for both crystal
-polarizations. It has not been executed here: this Codex host fails the
-required B200 inventory gate. Its baseline grid is only the first member of
-the committed convergence matrix. Every material run requires a passed,
-hash-matching 4-um source-only waist/power record.
+polarizations. On the current RTX host, the explicitly non-promotable Ea/Eb
+source-only gate passed, while exact-full Ea on the 20-nm stack-z baseline
+failed Q/six-face closure by 30.43%. The linked 5-nm/50-nm z source gate passed,
+but its material successor was blocked by temporary shared-license exhaustion.
+None of this satisfies the required B200 inventory gate. Every material run
+requires a passed, hash-, accelerator-, GPU-UUID-, and solver-matching 4-um
+source-only waist/power record. The dynamic preflight also requires all nine
+`lum_fdtd_solve` tasks needed by the installed GPU path.
 
 Production remains blocked until a new hash-linked certificate chain proves:
 

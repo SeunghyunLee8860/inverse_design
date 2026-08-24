@@ -1,9 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import asdict
+from pathlib import Path
 
 import numpy as np
 import pytest
+
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch import (
+    lumerical_maxwell_contract as maxwell_contract,
+)
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_maxwell_contract import (
     CONTRACT,
@@ -39,6 +44,102 @@ def test_contract_preserves_lumerical_plus_custom_gpu_pde_architecture() -> None
     assert payload["bundled_lumopt_topology_gradient_allowed_without_au_adfd"] is False
     assert payload["fdtdx_allowed"] is False
     assert payload["jax_maxwell_allowed"] is False
+
+
+def test_source_audit_allows_absent_lumopt2_but_not_partial_install(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    legacy = tmp_path / "lumopt" / "geometries" / "topology.py"
+    legacy.parent.mkdir(parents=True)
+    legacy.write_text(
+        "params.eps_levels=[{0},{1}]\ndF_dEps = real(dF_dEps)\n",
+        encoding="utf-8",
+    )
+    topology2 = tmp_path / "lumopt2" / "parametrization" / "topology.py"
+    deps2 = tmp_path / "lumopt2" / "parametrization" / "d_eps_calculator.py"
+    monkeypatch.setattr(maxwell_contract, "LEGACY_LUMOPT_TOPOLOGY", legacy)
+    monkeypatch.setattr(maxwell_contract, "LUMOPT2_TOPOLOGY", topology2)
+    monkeypatch.setattr(maxwell_contract, "LUMOPT2_DEPS", deps2)
+
+    absent = maxwell_contract._source_audit()
+    assert absent["passed"] is True
+    assert absent["lumopt2_status"] == "NOT_INSTALLED_CUSTOM_AU_ROUTE_REQUIRED"
+
+    topology2.parent.mkdir(parents=True)
+    topology2.write_text("material_index: float\n", encoding="utf-8")
+    partial = maxwell_contract._source_audit()
+    assert partial["passed"] is False
+    assert partial["error"] == "partial LumOpt2 installation cannot be audited"
+
+
+def test_development_accelerator_policy_never_issues_b200_promotion(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        maxwell_contract,
+        "_run_nvidia_smi",
+        lambda: [
+            {
+                "index": 6,
+                "name": "NVIDIA RTX 6000 Ada Generation",
+                "uuid": "GPU-test",
+                "memory_total_MiB": 49140,
+                "compute_capability": "8.9",
+                "driver_version": "test",
+            }
+        ],
+    )
+    monkeypatch.setattr(
+        maxwell_contract,
+        "_source_audit",
+        lambda: {"passed": True},
+    )
+    monkeypatch.setattr(
+        maxwell_contract,
+        "_fdtd_solve_license_audit",
+        lambda: {"passed": True, "tasks_available": 9},
+    )
+    monkeypatch.setattr(maxwell_contract, "LUMAPI_PATH", Path(__file__))
+    development = maxwell_contract.audit_environment(
+        requested_gpu_index=6,
+        accelerator_policy="development",
+    )
+    assert development["status"] == (
+        "READY_FOR_LUMERICAL_DEVELOPMENT_GPU_NOT_B200_CERTIFIED"
+    )
+    assert development["b200_promotion_certified"] is False
+    strict = maxwell_contract.audit_environment(
+        requested_gpu_index=6,
+        accelerator_policy="b200",
+    )
+    assert strict["status"] == "BLOCKED_LUMERICAL_GPU_PREFLIGHT"
+
+
+def test_license_task_exhaustion_blocks_gpu_preflight(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        maxwell_contract,
+        "_run_nvidia_smi",
+        lambda: [{"index": 2, "name": "NVIDIA test", "uuid": "GPU-test"}],
+    )
+    monkeypatch.setattr(maxwell_contract, "_source_audit", lambda: {"passed": True})
+    monkeypatch.setattr(maxwell_contract, "LUMAPI_PATH", Path(__file__))
+    monkeypatch.setattr(
+        maxwell_contract,
+        "_fdtd_solve_license_audit",
+        lambda: {
+            "passed": False,
+            "tasks_available": 8,
+            "tasks_required": 9,
+        },
+    )
+    result = maxwell_contract.audit_environment(
+        requested_gpu_index=2,
+        accelerator_policy="development",
+    )
+    assert result["status"] == "BLOCKED_LUMERICAL_GPU_PREFLIGHT"
+    assert result["gates"]["fdtd_solve_license_tasks_available"] is False
 
 
 def test_projected_density_hash_accepts_gray_and_is_layout_sensitive() -> None:

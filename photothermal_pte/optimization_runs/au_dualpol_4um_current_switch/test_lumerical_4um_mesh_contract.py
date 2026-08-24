@@ -32,7 +32,15 @@ def test_mesh_contract_is_sequential_and_covers_all_required_axes() -> None:
         "bulk_air_pml_dz_m": 25.0e-9,
     }
     assert candidates["optical_xy_flake_dxy_m"][-1] == 25.0e-9
-    assert candidates["pml_layers"] == [8, 12, 16]
+    assert [item["pml_layers"] for item in candidates["pml_layers"]] == [
+        8,
+        12,
+        16,
+    ]
+    assert [
+        round(item["lateral_span_m"] * 1e6, 12)
+        for item in candidates["pml_layers"]
+    ] == [20.0, 21.6, 23.2]
     assert audit["promotion"]["is_mesh_certificate"] is False
 
 

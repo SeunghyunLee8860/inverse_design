@@ -62,7 +62,7 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     transpose identity, and centered directional FD. It does not certify the
     Lumerical component-Yee Jacobian.
 17. `lumerical_4um_forward.py` and
-    `25_run_lumerical_4um_exact_au_control.py` -- the actual fail-closed B200
+    `25_run_lumerical_4um_exact_au_control.py` -- the actual fail-closed GPU
     source/exact-empty/full/simple-L/imported-density runner. It records actual
     mesh coordinates, fitted and finite-dt material readback, native-Yee Q,
     six-face flux, a fixed air-side endpoint field, raw engine-log GPU
@@ -71,13 +71,17 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     Au/TaIrTe4/SiO2/Si/air Q partition; gray density correctly marks that
     partition not applicable. Raw epsilon remains saved because conformal
     interface cells cannot be reduced to one physical label. It contains no
-    HEAT/CHARGE or alternative Maxwell solver. No Maxwell result exists here
-    because this Codex host has no B200.
+    HEAT/CHARGE or alternative Maxwell solver. Its default accelerator policy
+    remains B200. The explicit `development` policy permits RTX debugging but
+    marks every result non-promotable.
 18. `run_lumerical_4um_endpoint_b200.sh` -- sequential Ea/Eb exact-empty,
     source-only, imported-rho0, imported-rho1, and exact-full batch. A passed,
     hash-matching source-only JSON is mandatory before every material case.
     FSP/NPZ/log outputs belong in the supplied external/local output root and
     must not be added to Git.
+19. `run_lumerical_development_gpu.sh` -- explicit non-B200 development
+    launcher. It never issues a B200 certificate and keeps the B200 launcher
+    unchanged.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -113,7 +117,8 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    promotion still requires an independent exact-binary ordinary
    sampled-data dispersive-Au reevaluation. FDTDX/JAX results are historical
    diagnostics only. The current host has RTX 6000 Ada GPUs, not B200, so it
-   cannot issue a B200 run certificate.
+   cannot issue a B200 run certificate. RTX development runs are allowed only
+   through the explicit development policy and must be repeated on B200.
 
    The older material readback froze only the central 4-um n,k values. That is
    insufficient for a time-domain claim of dispersive Au. The new Lumerical
@@ -126,8 +131,9 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    also checks Lumerical's finite-time-step numerical permittivity. A material
    run additionally requires a passed all-air source-only JSON with an exact
    hash match on polarization, source waist input, time, x/y/z meshes, PML,
-   and domain. The 285-uW normalization is applied only to reported scalar
-   absorbed power; field and Q arrays remain raw.
+   and domain. It also requires the same accelerator policy, physical GPU UUID,
+   and Lumerical solver version. The 285-uW normalization is applied only to
+   reported scalar absorbed power; field and Q arrays remain raw.
 
    The earlier `np density` carrier claim is retracted. `np density` is a
    semiconductor electron/hole-density attribute, not an Au topology field.
@@ -248,6 +254,13 @@ LUMERICAL_B200_GPU_INDEX=<physical_b200_index> \
   photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_lumerical_4um_endpoint_b200.sh \
   /absolute/local/output/root
 
+LUMERICAL_GPU_INDEX=<free_rtx_index> \
+  AU_LUMERICAL_ROOT=/opt/lumerical/v261 \
+  photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_lumerical_development_gpu.sh \
+  photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/25_run_lumerical_4um_exact_au_control.py \
+  --case source_only --polarization Ea --gpu-index <free_rtx_index> \
+  --output-dir /absolute/local/output/root
+
 CUDA_VISIBLE_DEVICES=<free_gpu> photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_z_mesh_convergence_gpu.sh --audit-only
 
 CUDA_VISIBLE_DEVICES=<free_gpu> photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_z_mesh_convergence_gpu.sh
@@ -260,6 +273,38 @@ location.  `AU_DUALPOL_PYTHON`, `FDTDX_SOURCE_DIR`, and
 `AU_LUMERICAL_PYTHON` and `AU_LUMERICAL_ROOT` select the B200 host's Python
 environment and v261 installation without assuming the login user's home.
 
+## 2026-08-24 local RTX development evidence
+
+Raw artifacts are outside Git under
+`/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_development/`.
+Do not copy them into this worktree.
+
+1. Lumerical v261 solver `8.35.4413` opened successfully. GPU logs identify
+   physical RTX 6000 Ada GPU 5 and its UUID, contain the `fdtd-engine -gpu`
+   command, GPU time-stepping timing, and successful completion.
+2. The original 4.000-um source-object waist produced about 4.044 um at the
+   flake plane and failed the 0.5% waist gate. One-step calibration selected
+   `3.956143303046143 um`. Both Ea and Eb source-only baseline runs then passed;
+   their realized effective waists were about 4.00077 um.
+3. Baseline source mesh readback was `183 x 183 x 63`, with flake x/y maximum
+   steps 100 nm and thin-stack maximum z step about 19.79 nm.
+4. Ordinary sampled-data dispersive-Au `full/Ea` completed on that baseline.
+   Every fitted and finite-dt material gate passed, native Yee Q was finite and
+   nonnegative, and native Q agreed with `pabs_adv` to floating-point precision.
+   It is nevertheless **failed**, because six-face flux exceeded native Q by
+   30.43%. Moving the closed surface outside all estimated PML cells left the
+   discrepancy unchanged, so PML-face placement is not the sole cause.
+5. The linked 5-nm stack-z / 50-nm bulk-z Ea source-only run passed. Its exact
+   full-Au successor did not obtain a numerical result because fewer than 9
+   required solve tasks were free. Reducing CPU threads does not reduce this
+   fixed GPU-solve checkout. Preflight now parses `lmutil` and blocks before
+   launch unless all 9 are free; the post-run log gate catches a checkout race.
+   Rerun this exact case first when licenses are available; do not interpret
+   either license-failed FSP as physics evidence.
+6. The default source-object waist in the unified runner and B200 endpoint
+   batch is now the calibrated value. Every non-baseline mesh still reruns and
+   revalidates source-only rather than assuming the calibration transfers.
+
 ## Next correct sequence
 
 1. Confirm the target geometry, contacts, crystal-axis angle, layer stack, and
@@ -268,7 +313,11 @@ environment and v261 installation without assuming the login user's home.
    full-domain-z tables as historical diagnostics, not evidence for Lumerical
    or a production mesh. The completed shared-linear factor-1/2/4 sweep is
    useful negative evidence: its stable final pair failed in all 6/6 cases.
-3. On the actual B200, use `25_run_lumerical_4um_exact_au_control.py` to pass
+3. On the current RTX host, finish the exact-full Ea linked-z sequence starting
+   with 5-nm stack / 50-nm bulk once nine solve tasks are available. Determine
+   whether the 20-nm Q/flux failure is a z-discretization error before launching
+   broader sweeps. These runs remain development evidence only.
+4. On the actual B200, use `25_run_lumerical_4um_exact_au_control.py` to pass
    source-only Ea/Eb first, then matching ordinary empty/full/simple-L exact
    Au time, Q/flux, linked stack+bulk/air/PML-z, x/y, PML-layer, and domain
    controls. Run imported-rho0/1 parity against the matching ordinary
@@ -278,12 +327,12 @@ environment and v261 installation without assuming the login user's home.
    must remain outside the Git worktree. The unified runner and endpoint batch
    now exist, but no B200 result is committed and this Codex host fails the
    B200 preflight.
-4. Build and validate the nonuniform density-to-component-Yee material
+5. Build and validate the nonuniform density-to-component-Yee material
    Jacobian and its discrete adjoint; do not substitute bundled LumOpt's
    real/lossless metal path.
-5. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh
+6. Check x/y optical convergence, thermal-mesh convergence, electrical-mesh
    convergence, and downstream PTE current.
-6. Certify the combined gradient on the selected production mesh.
-7. Only then start LD_MMA filter/projection continuation and finish with an
+7. Certify the combined gradient on the selected production mesh.
+8. Only then start LD_MMA filter/projection continuation and finish with an
    independent 500-nm solid/void audit plus ordinary dispersive-Au binary
    reevaluation.

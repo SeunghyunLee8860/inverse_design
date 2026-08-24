@@ -1,6 +1,6 @@
 # Lumerical density-topology Maxwell + custom GPU-PDE route
 
-Status: `SOLVER_FREE_NK_LAW_IMPLEMENTED_BLOCKED_PENDING_B200_GATES`
+Status: `RTX_SOURCE_GATE_PASSED_EXACT_AU_BLOCKED_Q_FLUX_AND_B200`
 
 ## Selected architecture
 
@@ -105,13 +105,15 @@ do not replace the density carrier or its uniform-rho resonance/AD-FD gates.
 `lumerical_4um_forward.py` now assembles the common six-PML scalar-Gaussian
 layout for `source_only`, exact `empty/full/simple_L`, or `import_density`.
 The actual case entry point is `25_run_lumerical_4um_exact_au_control.py`; the
-sequential endpoint batch is `run_lumerical_4um_endpoint_b200.sh`. Each field
-solve fails closed unless the requested physical GPU is identified as an
-NVIDIA B200. It saves native component-Yee Q and a fixed air-side endpoint
+sequential endpoint batch is `run_lumerical_4um_endpoint_b200.sh`. B200 is the
+default and only promotable policy. An explicit development policy permits a
+selected NVIDIA GPU for debugging while marking the result non-promotable. It
+saves native component-Yee Q and a fixed air-side endpoint
 field, and checks all fitted/finite-dt material readbacks plus Q/closed-flux
 closure. A material case requires a passed, hash-matching source-only
-waist/power record. These are provisional-device numerical gates, not a
-production current prediction.
+waist/power record from the same accelerator policy, physical GPU UUID, and
+solver version. These are provisional-device numerical gates, not a production
+current prediction.
 
 The earlier `np density` proposal remains rejected. It is a semiconductor
 carrier-density attribute, not topology occupancy, and it is unnecessary for
@@ -159,9 +161,8 @@ No empirical gradient scaling is allowed.
 7. The final 500-nm solid/void mask must be independently rebuilt with
    ordinary dispersive Au and reevaluated for `Ia>0`, `Ib<0`.
 
-The current host is not a B200, so this checkout can implement and test the
-solver-free constitutive law but cannot issue any of these Maxwell
-certificates.
+The current host is not a B200 and therefore cannot issue any B200 Maxwell
+certificate. It can run explicitly labeled RTX development diagnostics.
 
 ## Thermal and electrical maps
 
@@ -180,14 +181,27 @@ The present shared-linear thermal/electrical maps remain provisional until
 their mixture/bound and void-floor sensitivity studies are complete. They are
 not promoted merely because the optical rho-cubed law was removed.
 
-## Exact endpoint/final B200 runner
+## Exact endpoint/final GPU runner
 
-The launcher refuses a non-B200 device. The current session host exposes RTX
-6000 Ada GPUs, so it cannot issue a B200 certificate. The current local
+The B200 launcher refuses a non-B200 device. A separate development launcher
+accepts an explicitly selected NVIDIA GPU but can never issue a B200
+certificate. The current session host exposes RTX 6000 Ada GPUs. The current local
 installation is Lumerical 2026 R1.2. Nothing in the rejected `np density`
 experiment justifies an R1.3 upgrade. Exact version compatibility must be
 decided only by launching the ordinary exact-Au control on the actual B200 and
 recording the engine log.
+
+On 2026-08-24, solver `8.35.4413` passed Ea and Eb all-air source gates on RTX
+GPU 5 after calibrating the source-object waist to `3.956143303046143 um`; the
+realized effective waists were about `4.00077 um`. An ordinary dispersive-Au
+full/Ea baseline run passed material fit, finite-dt material, native-Q,
+`pabs_adv`, mesh-readback, decay, and GPU-log gates but failed Q versus
+six-face flux closure by 30.43%. A PML-safe closed surface did not change that
+error. A linked 5-nm stack-z / 50-nm bulk-z source run passed, while its
+full-Au successor was license-blocked before a solve because fewer than 9
+FlexNet tasks were free. The dynamic preflight now requires all 9 tasks; fewer
+CPU threads do not reduce this GPU checkout. The fine-z exact-Au case is
+therefore the immediate next diagnostic, not a completed convergence result.
 
 The concrete forward entry point is
 `25_run_lumerical_4um_exact_au_control.py`. It has an audit-only path that
@@ -215,7 +229,8 @@ LUMERICAL_B200_GPU_INDEX=<physical-index> \
   --output-dir /path/outside/git/simple_L_Ea
 ```
 
-The material run refuses a source-contract hash mismatch. It also fails
+The material run refuses a source-contract hash, accelerator policy, physical
+GPU UUID, or solver-version mismatch. It also fails
 closed unless all 81-point fitted/finite-dt Au, TaIrTe4, and SiO2 readbacks,
 actual requested x/y/thin-stack/Si-bulk/air/PML mesh limits, native-Yee Q,
 six-face flux, auto-shutoff, and engine-log GPU checks pass. Raw fields and Q

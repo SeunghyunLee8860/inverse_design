@@ -28,6 +28,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_mesh_contract import (
     BASELINE,
+    BASELINE_SOURCE_OBJECT_W0_UM,
 )
 
 
@@ -133,6 +134,47 @@ def test_material_run_requires_a_matching_passed_unscaled_source_record() -> Non
     assert validate_source_calibration_record(record, contract)["passed"] is False
 
 
+def test_source_record_can_be_bound_to_accelerator_policy_and_gpu() -> None:
+    contract = source_calibration_contract(
+        BASELINE,
+        "Ea",
+        source_object_w0_m=BASELINE_SOURCE_OBJECT_W0_UM * 1.0e-6,
+    )
+    record = {
+        "status": "PASSED_EXACT_AU_4UM_SOURCE_ONLY_NUMERICAL_GATE_"
+        "DEVELOPMENT_GPU_NOT_B200_CERTIFIED",
+        "source_calibration_sha256": contract["source_calibration_sha256"],
+        "polarization": "Ea",
+        "all_gates_passed": True,
+        "accelerator_policy": "development",
+        "B200_promotion_certified": False,
+        "GPU_log_evidence": {"requested_gpu_uuid": "GPU-abc"},
+        "target_plane_metrics": {"downward_Poynting_power_W": 1.0},
+        "Q_processing": {
+            "clipping": False,
+            "smoothing": False,
+            "gain": False,
+            "field_or_Q_rescaling": False,
+        },
+    }
+    valid = validate_source_calibration_record(
+        record,
+        contract,
+        expected_accelerator_policy="development",
+        expected_gpu_uuid="abc",
+    )
+    assert valid["passed"] is True
+    invalid = validate_source_calibration_record(
+        record,
+        contract,
+        expected_accelerator_policy="b200",
+        expected_gpu_uuid="GPU-def",
+    )
+    assert invalid["passed"] is False
+    assert invalid["gates"]["accelerator_policy_matches"] is False
+    assert invalid["gates"]["physical_GPU_UUID_matches"] is False
+
+
 def test_source_only_and_material_layout_share_solver_source_and_mesh() -> None:
     source = _FakeFdtd()
     material = _FakeFdtd()
@@ -212,6 +254,14 @@ def test_imported_density_fails_closed_without_exact_nodal_state() -> None:
 
 def test_control_volume_is_inside_domain_below_source_and_contains_stack() -> None:
     bounds = control_volume_bounds(BASELINE)
+    expected_clearance = (BASELINE.pml_layers + 1) * BASELINE.outer_dxy_m
+    assert np.isclose(
+        bounds["x"][0] - (-0.5 * BASELINE.lateral_span_m), expected_clearance
+    )
+    assert np.isclose(
+        0.5 * BASELINE.lateral_span_m - bounds["x"][1], expected_clearance
+    )
+    assert np.isclose(bounds["z"][0] - BASELINE.z_min_m, expected_clearance)
     assert bounds["x"][0] < -0.5 * CONTRACT.flake_span_x_m
     assert bounds["x"][1] > 0.5 * CONTRACT.flake_span_x_m
     assert bounds["z"][0] > BASELINE.z_min_m

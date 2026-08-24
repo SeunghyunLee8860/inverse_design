@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Run one fail-closed B200 exact-Au 4-um Lumerical control.
+"""Run one fail-closed GPU exact-Au 4-um Lumerical control.
 
 Run ``source_only`` first for each polarization and numerical mesh.  An
 empty/full/simple_L material run refuses to start unless the matching passed
 source-only JSON is supplied.  Raw FSP/NPZ/JSON artifacts are written outside
 the Git worktree and are never overwritten.
+
+The default accelerator policy remains strict B200.  The explicit
+``development`` policy permits debugging on another NVIDIA GPU while marking
+the result as non-promotable and requiring a later B200 rerun.
 """
 
 from __future__ import annotations
@@ -56,6 +60,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_mesh_contract import (  # noqa: E402
     BASELINE,
+    BASELINE_SOURCE_OBJECT_W0_UM,
     GEOMETRY_CONTROLS,
     LumericalMeshSpec,
     POLARIZATIONS,
@@ -67,10 +72,11 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     exact_control_masks,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_maxwell_contract import (  # noqa: E402
+    ACCELERATOR_POLICIES,
     LUMAPI_PATH,
     LUMERICAL_ROOT,
     audit_environment,
-    require_b200,
+    require_lumerical_gpu,
 )
 from photothermal_pte.validation.paper_ir_sanity import (  # noqa: E402
     validate_paper_ir_source_only_gpu as lumerical_audit,
@@ -136,6 +142,10 @@ def _scalar(value: Any, label: str) -> float:
     return result
 
 
+def _normalized_gpu_uuid(value: str) -> str:
+    return value.removeprefix("GPU-").strip().lower()
+
+
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -146,9 +156,18 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--rho", type=float)
     parser.add_argument("--polarization", required=True, choices=POLARIZATIONS)
     parser.add_argument("--gpu-index", type=int)
+    parser.add_argument(
+        "--accelerator-policy",
+        choices=ACCELERATOR_POLICIES,
+        default=os.environ.get("AU_LUMERICAL_ACCELERATOR_POLICY", "b200"),
+    )
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--source-calibration-json", type=Path)
-    parser.add_argument("--source-object-w0-um", type=float, default=4.0)
+    parser.add_argument(
+        "--source-object-w0-um",
+        type=float,
+        default=BASELINE_SOURCE_OBJECT_W0_UM,
+    )
     parser.add_argument("--mesh-label", default=BASELINE.label)
     parser.add_argument("--flake-dxy-nm", type=float, default=BASELINE.flake_dxy_m * 1e9)
     parser.add_argument("--stack-dz-nm", type=float, default=BASELINE.stack_dz_m * 1e9)
@@ -186,10 +205,12 @@ def _parse_args() -> argparse.Namespace:
     ):
         parser.error("material cases require --source-calibration-json")
     if not args.audit_only and args.gpu_index is None:
-        env_index = os.environ.get("LUMERICAL_B200_GPU_INDEX")
+        env_index = os.environ.get("LUMERICAL_GPU_INDEX")
+        if env_index is None and args.accelerator_policy == "b200":
+            env_index = os.environ.get("LUMERICAL_B200_GPU_INDEX")
         if env_index is None:
             parser.error(
-                "a Maxwell run requires --gpu-index or LUMERICAL_B200_GPU_INDEX"
+                "a Maxwell run requires --gpu-index or LUMERICAL_GPU_INDEX"
             )
         args.gpu_index = int(env_index)
     return args
@@ -250,13 +271,22 @@ def _output_paths(
 
 
 def _load_source_record(
-    path: Path | None, expected_contract: dict[str, Any]
+    path: Path | None,
+    expected_contract: dict[str, Any],
+    *,
+    expected_accelerator_policy: str,
+    expected_gpu_uuid: str,
 ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
     if path is None:
         return None, None
     resolved = path.expanduser().resolve()
     record = json.loads(resolved.read_text(encoding="utf-8"))
-    validation = validate_source_calibration_record(record, expected_contract)
+    validation = validate_source_calibration_record(
+        record,
+        expected_contract,
+        expected_accelerator_policy=expected_accelerator_policy,
+        expected_gpu_uuid=expected_gpu_uuid,
+    )
     validation["path"] = str(resolved)
     validation["sha256"] = _sha256(resolved)
     if not validation["passed"]:
@@ -268,7 +298,7 @@ def _configure_environment(gpu_index: int, threads: int) -> str:
     visible = os.environ.get("CUDA_VISIBLE_DEVICES")
     if visible is not None and visible.strip() != str(gpu_index):
         raise RuntimeError(
-            "CUDA_VISIBLE_DEVICES does not match the requested physical B200: "
+            "CUDA_VISIBLE_DEVICES does not match the requested physical GPU: "
             f"{visible!r} != {gpu_index}"
         )
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_index)
@@ -293,7 +323,10 @@ def _configure_gpu_resource(fdtd: Any, gpu_device: str, threads: int) -> None:
 
 
 def _gpu_log_evidence(
-    output: Path, *, requested_gpu_index: int
+    output: Path,
+    *,
+    requested_gpu_index: int,
+    requested_gpu_uuid: str | None,
 ) -> dict[str, Any]:
     logs = sorted(output.glob("*.log"))
     text = "\n".join(path.read_text(errors="replace") for path in logs)
@@ -301,6 +334,15 @@ def _gpu_log_evidence(
         r"Configured with CUDA_VISIBLE_DEVICES=(\d+)", text
     )
     detected = re.findall(r"Detected GPU\s+(\d+):", text)
+    detected_uuid = re.findall(
+        r"Detected GPU\s+\d+:.*?\(UUID:\s*([^)]+)\)", text
+    )
+    expected_uuid = (
+        _normalized_gpu_uuid(requested_gpu_uuid) if requested_gpu_uuid else None
+    )
+    logged_uuid = (
+        _normalized_gpu_uuid(detected_uuid[-1]) if detected_uuid else None
+    )
     evidence = {
         "log_paths": [str(path) for path in logs],
         "requested_gpu_index": requested_gpu_index,
@@ -308,6 +350,11 @@ def _gpu_log_evidence(
             int(configured[-1]) if configured else None
         ),
         "detected_gpu_index": int(detected[-1]) if detected else None,
+        "requested_gpu_uuid": requested_gpu_uuid,
+        "detected_gpu_uuid": detected_uuid[-1] if detected_uuid else None,
+        "detected_gpu_uuid_matches_inventory": bool(
+            expected_uuid is not None and logged_uuid == expected_uuid
+        ),
         "engine_command_contains_gpu_flag": bool(
             re.search(r"fdtd-engine.*(?:^|\s)-gpu(?:\s|$)", text, re.MULTILINE)
         ),
@@ -320,7 +367,10 @@ def _gpu_log_evidence(
     evidence["passed"] = bool(
         logs
         and evidence["configured_cuda_visible_devices"] == requested_gpu_index
-        and evidence["detected_gpu_index"] == requested_gpu_index
+        and (
+            evidence["detected_gpu_index"] == requested_gpu_index
+            or evidence["detected_gpu_uuid_matches_inventory"]
+        )
         and evidence["engine_command_contains_gpu_flag"]
         and evidence["gpu_timestep_timing_present"]
         and evidence["simulation_completed_successfully"]
@@ -594,7 +644,10 @@ def main() -> int:
         "polarization": args.polarization,
         "mesh_spec": spec.audit(),
         "source_calibration_contract": source_contract,
-        "environment": audit_environment(requested_gpu_index=args.gpu_index),
+        "environment": audit_environment(
+            requested_gpu_index=args.gpu_index,
+            accelerator_policy=args.accelerator_policy,
+        ),
         "scope": "audit only; no Maxwell or downstream PDE solve",
     }
     if args.audit_only:
@@ -602,9 +655,19 @@ def main() -> int:
         return 0
 
     assert args.gpu_index is not None
-    preflight = require_b200(requested_gpu_index=args.gpu_index)
+    preflight = require_lumerical_gpu(
+        requested_gpu_index=args.gpu_index,
+        accelerator_policy=args.accelerator_policy,
+    )
+    selected_gpu = preflight["matching_requested_gpu"]
+    if len(selected_gpu) != 1:
+        raise RuntimeError(f"requested GPU inventory is ambiguous: {selected_gpu}")
+    requested_gpu_uuid = str(selected_gpu[0]["uuid"])
     source_record, source_validation = _load_source_record(
-        args.source_calibration_json, source_contract
+        args.source_calibration_json,
+        source_contract,
+        expected_accelerator_policy=args.accelerator_policy,
+        expected_gpu_uuid=requested_gpu_uuid,
     )
     output, fsp_path, npz_path, result_path = _output_paths(args, spec)
     for protected in (fsp_path, npz_path, result_path):
@@ -624,7 +687,12 @@ def main() -> int:
             "source_calibration_sha256"
         ],
         "source_calibration_validation": source_validation,
-        "B200_preflight": preflight,
+        "accelerator_policy": args.accelerator_policy,
+        "accelerator_preflight": preflight,
+        "B200_preflight": (
+            preflight if args.accelerator_policy == "b200" else None
+        ),
+        "B200_promotion_certified": bool(preflight["b200_promotion_certified"]),
         "physical_device_contract": {
             "path": str(PHYSICAL_DEVICE_CONTRACT.relative_to(REPOSITORY)),
             "sha256": _sha256(PHYSICAL_DEVICE_CONTRACT),
@@ -646,6 +714,21 @@ def main() -> int:
         import lumapi
 
         fdtd = lumapi.FDTD(hide=True, serverArgs={"platform": "offscreen"})
+        solver_version = str(fdtd.version())
+        result["solver_version"] = solver_version
+        if source_record is not None:
+            assert source_validation is not None
+            source_validation["gates"]["solver_version_matches"] = (
+                source_record.get("solver_version") == solver_version
+            )
+            source_validation["passed"] = all(
+                source_validation["gates"].values()
+            )
+            if not source_validation["passed"]:
+                raise RuntimeError(
+                    "source calibration solver-version gate failed: "
+                    f"{source_validation}"
+                )
         layout = build_layout(
             fdtd,
             case=args.case,
@@ -683,17 +766,32 @@ def main() -> int:
         )
         wall_time_s = time.monotonic() - started
         fdtd.save(str(fsp_path))
+        log = lumerical_audit.log_audit(output)
+        gpu_log = _gpu_log_evidence(
+            output,
+            requested_gpu_index=args.gpu_index,
+            requested_gpu_uuid=requested_gpu_uuid,
+        )
+        result.update(
+            {
+                "GPU_resource_used": resource,
+                "solver_wall_time_s": wall_time_s,
+                "log_audit": log,
+                "GPU_log_evidence": gpu_log,
+            }
+        )
+        if not log["simulation_completed_successfully"]:
+            raise RuntimeError(
+                "Lumerical solver did not complete successfully; inspect "
+                f"{log['logs']}"
+            )
         frequency_hz = C0_M_S / CONTRACT.wavelength_m
         source_power_w = _scalar(
             fdtd.sourcepower(frequency_hz, 2, SOURCE_NAME), "sourcepower"
         )
         post_mesh = lumerical_audit.mesh_readback(fdtd)
-        log = lumerical_audit.log_audit(output)
-        gpu_log = _gpu_log_evidence(
-            output, requested_gpu_index=args.gpu_index
-        )
         common_gates = {
-            "B200_preflight_passed": preflight["status"].startswith("READY"),
+            "accelerator_preflight_passed": preflight["status"].startswith("READY"),
             "engine_log_proves_requested_GPU": bool(gpu_log["passed"]),
             "simulation_completed_successfully": bool(
                 log["simulation_completed_successfully"]
@@ -768,13 +866,15 @@ def main() -> int:
                 else f"FAILED_LUMERICAL_4UM_{_case_label(args)}_{args.polarization}_GATE"
             )
         )
+        if passed and args.accelerator_policy != "b200":
+            status += "_DEVELOPMENT_GPU_NOT_B200_CERTIFIED"
         result.update(
             {
                 "status": status,
                 "all_gates_passed": passed,
                 "promotion_to_physical_device_result": False,
                 "provisional_device_contract_confirmation_required": True,
-                "solver_version": str(fdtd.version()),
+                "solver_version": solver_version,
                 "GPU_resource_used": resource,
                 "solver_wall_time_s": wall_time_s,
                 "source_power_W_raw": source_power_w,

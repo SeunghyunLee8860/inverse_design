@@ -91,6 +91,8 @@ class LumericalMaxwellContract:
 
 
 CONTRACT = LumericalMaxwellContract()
+ACCELERATOR_POLICIES = ("b200", "development")
+GPU_SOLVE_LICENSE_TASKS_REQUIRED = 9
 
 
 def canonical_projected_density(density: np.ndarray) -> np.ndarray:
@@ -323,40 +325,148 @@ def _run_nvidia_smi() -> list[dict[str, Any]]:
     return result
 
 
+def _fdtd_solve_license_audit() -> dict[str, Any]:
+    lmutil = LUMERICAL_ROOT / "licensingclient/linx64/lmutil"
+    server = os.environ.get("ANSYSLMD_LICENSE_FILE", "1055@localhost")
+    command = [
+        str(lmutil),
+        "lmstat",
+        "-f",
+        "lum_fdtd_solve",
+        "-c",
+        server,
+    ]
+    try:
+        completed = subprocess.run(
+            command,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=20,
+        )
+    except (
+        FileNotFoundError,
+        subprocess.CalledProcessError,
+        subprocess.TimeoutExpired,
+    ) as exc:
+        return {
+            "passed": False,
+            "inventory_error": f"{type(exc).__name__}: {exc}",
+            "lmutil": str(lmutil),
+            "license_server": server,
+            "tasks_required": GPU_SOLVE_LICENSE_TASKS_REQUIRED,
+        }
+    match = re.search(
+        r"Users of lum_fdtd_solve:\s+\(Total of (\d+) licenses issued;\s+"
+        r"Total of (\d+) licenses in use\)",
+        completed.stdout,
+    )
+    if match is None:
+        return {
+            "passed": False,
+            "inventory_error": "could not parse lum_fdtd_solve usage",
+            "lmutil": str(lmutil),
+            "license_server": server,
+            "tasks_required": GPU_SOLVE_LICENSE_TASKS_REQUIRED,
+        }
+    issued, in_use = (int(value) for value in match.groups())
+    available = issued - in_use
+    return {
+        "passed": available >= GPU_SOLVE_LICENSE_TASKS_REQUIRED,
+        "lmutil": str(lmutil),
+        "license_server": server,
+        "tasks_issued": issued,
+        "tasks_in_use": in_use,
+        "tasks_available": available,
+        "tasks_required": GPU_SOLVE_LICENSE_TASKS_REQUIRED,
+    }
+
+
 def _source_audit() -> dict[str, Any]:
     """Prove why bundled generic topology gradients need an Au-specific gate."""
 
-    paths = (LEGACY_LUMOPT_TOPOLOGY, LUMOPT2_TOPOLOGY, LUMOPT2_DEPS)
-    missing = [str(path) for path in paths if not path.is_file()]
-    if missing:
-        return {"passed": False, "missing": missing}
+    if not LEGACY_LUMOPT_TOPOLOGY.is_file():
+        return {
+            "passed": False,
+            "missing_required_legacy_lumopt": [str(LEGACY_LUMOPT_TOPOLOGY)],
+        }
     legacy = LEGACY_LUMOPT_TOPOLOGY.read_text(encoding="utf-8")
-    topology2 = LUMOPT2_TOPOLOGY.read_text(encoding="utf-8")
-    deps2 = LUMOPT2_DEPS.read_text(encoding="utf-8")
-    evidence = {
+    legacy_evidence = {
         "legacy_eps_levels_scalar_format": "params.eps_levels=[{0},{1}]" in legacy,
         "legacy_real_dF_dEps": "dF_dEps = real(dF_dEps)" in legacy,
-        "lumopt2_real_material_index_annotation": bool(
-            re.search(r"material_index:\s*float", topology2)
-        ),
-        "lumopt2_discards_complex_index_in_deps": "real(D{label}.index_x^2)" in deps2,
-        "lumopt2_discards_complex_sparse_difference": (
-            "real(d_eps_ctr_sparse.eps_x.data)" in deps2
-        ),
-        "lumopt2_clips_negative_real_epsilon": (
-            "eps_real_data = np.where(eps_real_data < 0" in deps2
-        ),
-        "lumopt2_lossless_cauchy_assumption": "n>>k~0" in deps2,
     }
+    lumopt2_presence = {
+        "topology": LUMOPT2_TOPOLOGY.is_file(),
+        "d_eps_calculator": LUMOPT2_DEPS.is_file(),
+    }
+    if any(lumopt2_presence.values()) and not all(lumopt2_presence.values()):
+        return {
+            "passed": False,
+            "legacy_evidence": legacy_evidence,
+            "lumopt2_presence": lumopt2_presence,
+            "error": "partial LumOpt2 installation cannot be audited",
+        }
+    lumopt2_evidence: dict[str, bool]
+    if all(lumopt2_presence.values()):
+        topology2 = LUMOPT2_TOPOLOGY.read_text(encoding="utf-8")
+        deps2 = LUMOPT2_DEPS.read_text(encoding="utf-8")
+        lumopt2_evidence = {
+            "real_material_index_annotation": bool(
+                re.search(r"material_index:\s*float", topology2)
+            ),
+            "discards_complex_index_in_deps": (
+                "real(D{label}.index_x^2)" in deps2
+            ),
+            "discards_complex_sparse_difference": (
+                "real(d_eps_ctr_sparse.eps_x.data)" in deps2
+            ),
+            "clips_negative_real_epsilon": (
+                "eps_real_data = np.where(eps_real_data < 0" in deps2
+            ),
+            "lossless_cauchy_assumption": "n>>k~0" in deps2,
+        }
+        lumopt2_status = "INSTALLED_REQUIRES_CUSTOM_AU_ROUTE"
+        lumopt2_passed = all(lumopt2_evidence.values())
+    else:
+        # Some v261 revisions ship legacy LumOpt without LumOpt2.  The exact
+        # forward runner does not import either package, and an absent bundled
+        # gradient cannot be selected accidentally.  This is evidence for the
+        # custom route, not a reason to block an ordinary Lumerical solve.
+        lumopt2_evidence = {}
+        lumopt2_status = "NOT_INSTALLED_CUSTOM_AU_ROUTE_REQUIRED"
+        lumopt2_passed = True
     return {
-        "passed": all(evidence.values()),
-        "evidence": evidence,
-        "files": [str(path) for path in paths],
+        "passed": all(legacy_evidence.values()) and lumopt2_passed,
+        "legacy_evidence": legacy_evidence,
+        "lumopt2_presence": lumopt2_presence,
+        "lumopt2_status": lumopt2_status,
+        "lumopt2_evidence": lumopt2_evidence,
+        "files": {
+            "legacy_lumopt_topology": str(LEGACY_LUMOPT_TOPOLOGY),
+            "lumopt2_topology": str(LUMOPT2_TOPOLOGY),
+            "lumopt2_d_eps_calculator": str(LUMOPT2_DEPS),
+        },
     }
 
 
-def audit_environment(*, requested_gpu_index: int | None = None) -> dict[str, Any]:
-    """Audit the Maxwell environment and require an actual NVIDIA B200."""
+def audit_environment(
+    *,
+    requested_gpu_index: int | None = None,
+    accelerator_policy: str = "b200",
+) -> dict[str, Any]:
+    """Audit one Lumerical GPU without weakening the B200 promotion gate.
+
+    ``b200`` is the default and remains the only policy that can support a
+    target-accelerator certificate.  ``development`` authorizes a numerical
+    run on another explicitly selected NVIDIA GPU, but every resulting record
+    is marked as non-promotable and must be repeated on the B200.
+    """
+
+    if accelerator_policy not in ACCELERATOR_POLICIES:
+        raise ValueError(
+            f"accelerator_policy must be one of {ACCELERATOR_POLICIES}, "
+            f"got {accelerator_policy!r}"
+        )
 
     inventory = _run_nvidia_smi()
     candidates = [
@@ -368,6 +478,7 @@ def audit_environment(*, requested_gpu_index: int | None = None) -> dict[str, An
     b200 = [item for item in candidates if "B200" in str(item["name"]).upper()]
     source = _source_audit()
     density = density_relaxation_audit()
+    license_audit = _fdtd_solve_license_audit()
     gates = {
         "lumapi_v261_present": LUMAPI_PATH.is_file(),
         "installed_lumopt_requires_custom_au_route": bool(source.get("passed")),
@@ -379,22 +490,53 @@ def audit_environment(*, requested_gpu_index: int | None = None) -> dict[str, An
         ),
         "requested_gpu_exists": bool(candidates),
         "requested_gpu_is_nvidia_b200": bool(b200),
-    }
-    return {
-        "status": (
-            "READY_FOR_LUMERICAL_B200_MAXWELL_DEVELOPMENT"
-            if all(gates.values())
-            else "BLOCKED_LUMERICAL_B200_PREFLIGHT"
+        "accelerator_policy_satisfied": bool(
+            b200 if accelerator_policy == "b200" else candidates
         ),
+        "fdtd_solve_license_tasks_available": bool(license_audit["passed"]),
+    }
+    required_gate_names = (
+        "lumapi_v261_present",
+        "installed_lumopt_requires_custom_au_route",
+        "solver_free_au_density_law_passed",
+        "requested_gpu_exists",
+        "accelerator_policy_satisfied",
+        "fdtd_solve_license_tasks_available",
+    )
+    ready = all(gates[name] for name in required_gate_names)
+    b200_certified = bool(
+        ready
+        and accelerator_policy == "b200"
+        and gates["requested_gpu_is_nvidia_b200"]
+    )
+    if ready:
+        status = (
+            "READY_FOR_LUMERICAL_B200_MAXWELL_DEVELOPMENT"
+            if b200_certified
+            else "READY_FOR_LUMERICAL_DEVELOPMENT_GPU_NOT_B200_CERTIFIED"
+        )
+    else:
+        status = "BLOCKED_LUMERICAL_GPU_PREFLIGHT"
+    return {
+        "status": status,
         "contract": asdict(CONTRACT),
+        "accelerator_policy": accelerator_policy,
+        "b200_promotion_certified": b200_certified,
         "requested_gpu_index": requested_gpu_index,
         "gpu_inventory": inventory,
+        "matching_requested_gpu": candidates,
         "matching_b200": b200,
         "installed_source_audit": source,
         "au_density_relaxation": density,
+        "fdtd_solve_license_audit": license_audit,
         "gates": gates,
+        "required_gate_names": list(required_gate_names),
+        "all_required_gates_passed": ready,
         "notes": [
-            "Only FDTD time stepping uses the B200; Lumerical meshing and scripts use CPU.",
+            "Only FDTD time stepping uses the selected GPU; Lumerical meshing and scripts use CPU.",
+            "The installed GPU solve path requires nine free lum_fdtd_solve tasks; availability is dynamic and is rechecked immediately before launch.",
+            "The B200 remains mandatory for target-accelerator promotion.",
+            "A development-policy run on another NVIDIA GPU is numerical evidence only and must be repeated on the B200.",
             "Thermal and electrical solves remain the repository custom CUDA PDE solvers.",
             "No Lumerical HEAT or CHARGE license is assumed or required.",
             "Density topology, not shape/level-set optimization, is the selected design method.",
@@ -402,17 +544,42 @@ def audit_environment(*, requested_gpu_index: int | None = None) -> dict[str, An
             "The optical law is n-k interpolation followed by epsilon=(n+ik)^2; rho**3 is not used.",
             "The custom Au density-to-Yee derivative must pass same-step AD-FD before use.",
             "Final promotion requires independent ordinary dispersive-Au binary reevaluation.",
-            "No Maxwell solve is authorized when the B200 gate is false.",
+            "No Maxwell solve is authorized when the selected accelerator-policy gate is false.",
         ],
     }
 
 
-def require_b200(*, requested_gpu_index: int | None = None) -> dict[str, Any]:
-    result = audit_environment(requested_gpu_index=requested_gpu_index)
-    if result["status"] != "READY_FOR_LUMERICAL_B200_MAXWELL_DEVELOPMENT":
+def require_lumerical_gpu(
+    *,
+    requested_gpu_index: int | None = None,
+    accelerator_policy: str = "b200",
+) -> dict[str, Any]:
+    result = audit_environment(
+        requested_gpu_index=requested_gpu_index,
+        accelerator_policy=accelerator_policy,
+    )
+    if not result["status"].startswith("READY_FOR_LUMERICAL_"):
         inventory = result["gpu_inventory"]
+        failed_gates = [
+            name
+            for name in result["required_gate_names"]
+            if not result["gates"][name]
+        ]
         raise RuntimeError(
-            "Lumerical B200 preflight failed; refusing Maxwell solve. "
-            f"requested_gpu_index={requested_gpu_index}, inventory={inventory}"
+            "Lumerical GPU preflight failed; refusing Maxwell solve. "
+            f"accelerator_policy={accelerator_policy}, "
+            f"requested_gpu_index={requested_gpu_index}, "
+            f"failed_gates={failed_gates}, "
+            f"license={result['fdtd_solve_license_audit']}, "
+            f"inventory={inventory}"
         )
     return result
+
+
+def require_b200(*, requested_gpu_index: int | None = None) -> dict[str, Any]:
+    """Backward-compatible strict B200 gate used by promotion runners."""
+
+    return require_lumerical_gpu(
+        requested_gpu_index=requested_gpu_index,
+        accelerator_policy="b200",
+    )

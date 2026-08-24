@@ -12,7 +12,7 @@ mkdir -p "$output_root"
 runner="$script_dir/run_lumerical_b200.sh"
 case_script="$script_dir/25_run_lumerical_4um_exact_au_control.py"
 gpu_index="${LUMERICAL_B200_GPU_INDEX:?set LUMERICAL_B200_GPU_INDEX to the physical NVIDIA B200 index}"
-source_object_w0_um="${AU4UM_SOURCE_OBJECT_W0_UM:-4.0}"
+source_object_w0_um="${AU4UM_SOURCE_OBJECT_W0_UM:-3.956143303046143}"
 mesh_label="baseline_xy100_z20_pml8_span20_z6_t1ps"
 
 for polarization in Ea Eb; do

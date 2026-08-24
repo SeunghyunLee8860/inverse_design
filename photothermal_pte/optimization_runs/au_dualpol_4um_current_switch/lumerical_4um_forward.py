@@ -119,7 +119,11 @@ def source_calibration_contract(
 
 
 def validate_source_calibration_record(
-    record: dict[str, Any], expected_contract: dict[str, Any]
+    record: dict[str, Any],
+    expected_contract: dict[str, Any],
+    *,
+    expected_accelerator_policy: str | None = None,
+    expected_gpu_uuid: str | None = None,
 ) -> dict[str, Any]:
     """Validate a source-only result before a material run consumes it."""
 
@@ -150,6 +154,22 @@ def validate_source_calibration_record(
             "field_or_Q_rescaling": False,
         },
     }
+    if expected_accelerator_policy is not None:
+        gates["accelerator_policy_matches"] = (
+            record.get("accelerator_policy") == expected_accelerator_policy
+        )
+        gates["B200_promotion_state_matches"] = bool(
+            record.get("B200_promotion_certified")
+        ) == (expected_accelerator_policy == "b200")
+    if expected_gpu_uuid is not None:
+        recorded_uuid = record.get("GPU_log_evidence", {}).get(
+            "requested_gpu_uuid"
+        )
+        gates["physical_GPU_UUID_matches"] = bool(
+            isinstance(recorded_uuid, str)
+            and recorded_uuid.removeprefix("GPU-").lower()
+            == expected_gpu_uuid.removeprefix("GPU-").lower()
+        )
     return {
         "passed": all(gates.values()),
         "gates": gates,
@@ -174,7 +194,9 @@ def _configure_single_frequency(item: Any) -> None:
 
 def _add_solver(fdtd: Any, spec: LumericalMeshSpec) -> None:
     solver = fdtd.addfdtd()
-    solver["name"] = "FDTD"
+    # Lumerical creates an FDTD region with the canonical name ``FDTD``.
+    # Assigning that same name again is not a no-op in v261: the object API
+    # reports the property as inactive and aborts layout construction.
     solver["dimension"] = "3D"
     solver["x"] = 0.0
     solver["x span"] = spec.lateral_span_m
@@ -289,9 +311,20 @@ def control_volume_bounds(
     """Return a closed Q/flux box below the source and inside all six PMLs."""
 
     spec.validate()
-    lateral_clearance = max(0.50e-6, 2.0 * spec.outer_dxy_m)
+    # Power monitors inside a PML do not satisfy an ordinary closed-surface
+    # Poynting balance.  Reserve at least every requested PML cell plus one
+    # ordinary-grid cell.  The old fixed 0.5-um clearance put the baseline
+    # x/y and z-min faces several cells inside its eight-layer PML.
+    lateral_clearance = max(
+        0.50e-6,
+        (spec.pml_layers + 1) * spec.outer_dxy_m,
+    )
+    lower_clearance = max(
+        0.50e-6,
+        (spec.pml_layers + 1) * spec.bulk_dz_m,
+    )
     half = 0.5 * spec.lateral_span_m - lateral_clearance
-    lower = spec.z_min_m + max(0.50e-6, 2.0 * spec.bulk_dz_m)
+    lower = spec.z_min_m + lower_clearance
     if half <= 0.5 * CONTRACT.flake_span_x_m:
         raise ValueError("control volume does not contain the complete flake")
     if not lower < -385.0e-9 < CONTRACT.design_thickness_m < Q_BOX_TOP_M:
