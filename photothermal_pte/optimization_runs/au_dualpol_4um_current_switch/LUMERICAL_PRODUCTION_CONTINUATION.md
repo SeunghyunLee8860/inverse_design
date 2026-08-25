@@ -91,4 +91,7 @@ The external output root contains:
   the passing attempt's `exact_binary_certificate/` only after every
   continuous, optical-lateral, PDE-convergence, and sign gate passes. Failed
   beta-128 exact candidates remain in their own attempt directories and can
-  never overwrite the final mask.
+  never overwrite the final mask. The final mask is written atomically and is
+  immutable; if a process dies between the passed manifest and terminal
+  checkpoint writes, restart verifies the mask/state SHA and strict signs
+  before repairing only the checkpoint.

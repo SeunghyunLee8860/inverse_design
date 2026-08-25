@@ -275,8 +275,10 @@ The latest code now:
 - stores every failed exact candidate below its own beta-128 attempt and
   continues the configured retry policy instead of aborting immediately;
 - prevents runtime-setup errors from writing a stray manifest inside Git.
+- atomically freezes the final mask and can recover a terminal checkpoint only
+  after rechecking the passed manifest's mask/state SHA and strict signs.
 
-The full solver-free regression is `287 passed in 259.22 s`. This is code-path
+The full solver-free regression is `289 passed in 260.24 s`. This is code-path
 validation, not a physical final-mask result.
 
 The documented external process remains immutable `69b2bb40` and therefore

@@ -860,10 +860,11 @@ PDE-only reuse because that wrapper intentionally requires a live solve
 license. Use `run_combined_gpu_python.sh` with one verified-idle physical GPU.
 Do not commit the forward raw NPZ or generated temperature evidence.
 
-The full regression after adding the terminal lateral certificate is
-`287 passed in 259.22 s`. No final-mask Ea/Eb optical/PDE convergence result
-exists on this host yet. The active RTX continuation artifacts live on the
-other host. Retrieve its terminal manifest, final exact mask, two exact
+The full regression after adding the terminal lateral certificate and
+crash-consistent terminal recovery is `289 passed in 260.24 s`. No final-mask
+Ea/Eb optical/PDE convergence result exists on this host yet. The active RTX
+continuation artifacts live on the other host. Retrieve its terminal
+manifest, final exact mask, two exact
 100-nm forwards, and later two exact 50-nm forwards before making any pass
 claim. The synthetic 285-uW sequence reached 12.5 nm but its final
 25/12.5-nm current change was 0.5314%, so it correctly failed. This is a
