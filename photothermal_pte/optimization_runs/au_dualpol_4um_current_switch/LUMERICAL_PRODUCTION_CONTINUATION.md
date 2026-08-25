@@ -3,6 +3,10 @@
 This is the production successor to the two-evaluation beta-4 smoke. The
 entry point is `41_optimize_lumerical_4um_dualpol_continuation.py`; the site
 launcher is `launch_lumerical_continuation_runres_gpu5.sh`.
+On this host the launcher explicitly uses the audited reservation module in
+`worktrees/pte_true_mma/tools/lumerical_runres`; without that override the
+site `/home/dhkim/bin/runres` incorrectly searches the current user's absent
+`~/dhkim_module` and exits before reserving a license.
 
 ## Optimization contract
 
