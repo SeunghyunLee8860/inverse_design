@@ -32,6 +32,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_pari
     MAPPING,
     deterministic_gray_latent,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_parity_dynamic_checkpoint import (
+    checkpoint_carry_audit,
+    dynamic_checkpointed_fdtd,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_parity_microbenchmark import (
     _git_output,
     _write_new_external_json,
@@ -172,18 +176,30 @@ def run_probe(args: argparse.Namespace) -> dict[str, Any]:
     jax.block_until_ready(initial_arrays.fields.E)
     build_seconds = time.perf_counter() - build_started
     memory_after_build = device_memory_stats(device)
+    carry_audit = checkpoint_carry_audit(initial_arrays, jax_module=jax)
+    if carry_audit["status"] != "PASS":
+        raise RuntimeError(f"dynamic checkpoint carry audit failed: {carry_audit}")
     au_slice = model["slices"]["au_design"]
 
     def field_only_loss(latent_density):
         cells = MAPPING.jax_cell_density(latent_density, beta=4.0)
         arrays = arrays_for_density(model, cells)
-        _, output = model["fdtdx"].run_fdtd(
-            arrays=arrays,
-            objects=model["placed"],
-            config=config,
-            key=model["key"],
-            show_progress=False,
-        )
+        if args.loop_implementation == "generic":
+            _, output = model["fdtdx"].run_fdtd(
+                arrays=arrays,
+                objects=model["placed"],
+                config=config,
+                key=model["key"],
+                show_progress=False,
+            )
+        else:
+            _, output = dynamic_checkpointed_fdtd(
+                arrays=arrays,
+                objects=model["placed"],
+                config=config,
+                key=model["key"],
+                record_detectors=True,
+            )
         e_au = output.fields.E[(slice(None),) + au_slice]
         return jnp.mean(jnp.square(e_au))
 
@@ -253,6 +269,8 @@ def run_probe(args: argparse.Namespace) -> dict[str, Any]:
         / model["plan"]["time"]["time_steps_total"]
         * 40.0,
         "checkpoint_method": "checkpointed",
+        "loop_implementation": args.loop_implementation,
+        "checkpoint_carry_audit": carry_audit,
         "checkpoints": args.checkpoints,
         "beta": 4.0,
         "direction": args.direction,
@@ -314,6 +332,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--polarization", choices=("Ea", "Eb"), default="Ea")
     parser.add_argument("--steps", type=int, default=DEFAULT_STEPS)
     parser.add_argument("--checkpoints", type=int, default=DEFAULT_CHECKPOINTS)
+    parser.add_argument(
+        "--loop-implementation", choices=("generic", "dynamic"), default="generic"
+    )
     parser.add_argument("--fd-step", type=float, default=DEFAULT_FD_STEP)
     parser.add_argument(
         "--direction", choices=tuple(latent_directions()), default=DEFAULT_DIRECTION
