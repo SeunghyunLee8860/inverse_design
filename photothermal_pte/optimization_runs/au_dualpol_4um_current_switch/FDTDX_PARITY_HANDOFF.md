@@ -752,9 +752,16 @@ so slice 1,024 is blocked despite feasible memory.  Read
 `FDTDX_REVERSIBLE_LONG_SLICE_REPORT.md`.  Repeating the same horizon with
 slice 512 makes the errors worse at 0.004593/0.007359 and raises peak memory to
 21.37 GB, so shorter resets alone do not solve the bias.  Read
-`FDTDX_REVERSIBLE_ACCUMULATION_REPORT.md`.  The latent depends only on Au-region
-`c3`; next implement and direct-test a design-only compensated regional-c3
-cotangent instead of accumulating every full-grid material cotangent.
+`FDTDX_REVERSIBLE_ACCUMULATION_REPORT.md`.  A design-only VJP then held every
+fixed material array behind stop-gradient, differentiated only the Au-region
+`c3`, and used compensated float32 cotangent accumulation.  It passes the
+small direct-AD scene and the integrated suite passes 235 tests, but the same
+16,384-step exact-grid errors remain 0.00410134/0.00655630; Eb is still
+blocked.  Read `FDTDX_REVERSIBLE_DESIGN_C3_REPORT.md`.  This falsifies the
+full-material-cotangent/naive-accumulation hypothesis.  Next remove algebraic
+E/H/ADE-P/CPML reconstruction from the gradient path and prove a blockwise
+exact-checkpoint VJP against direct unrolled AD on the small scene before any
+production-grid rerun.
 
 ## What completion means
 
@@ -788,11 +795,13 @@ reevaluation.
 > exact-grid latent AD-FD gate passes; read `FDTDX_REVERSIBLE_RUNTIME_REPORT.md`.
 > The 16,384-step slice-1,024 gate fails Eb, and slice 512 makes both errors
 > worse; read `FDTDX_REVERSIBLE_LONG_SLICE_REPORT.md` and
-> `FDTDX_REVERSIBLE_ACCUMULATION_REPORT.md`.  Do not run more GPU slice searches.
-> Next implement a design-specialized VJP with only Au-region `c3` differentiable
-> and compensated regional cotangent accumulation, then prove it against direct
-> AD on small scenes before any exact-grid rerun.  Do not run a full gradient or
-> optimizer.
+> `FDTDX_REVERSIBLE_ACCUMULATION_REPORT.md`.  A design-only compensated regional
+> `c3` VJP also leaves the 0.00410134/0.00655630 errors unchanged; read
+> `FDTDX_REVERSIBLE_DESIGN_C3_REPORT.md`.  Do not run more GPU slice or
+> accumulation searches.  Next remove algebraic time reversal and prove a
+> blockwise exact-checkpoint VJP against direct unrolled AD on the small
+> CPML/ADE/phasor scene.  Do not run a production-grid probe, full gradient, or
+> optimizer before that exact small-scene gate passes.
 > Continue only the fresh FDTDX GPU parity path for the 4-um Ea/Eb Au topology; do not run legacy scripts 10/12/13
 > and do not use optical rho^3 or c3-only linear scaling.  Preserve the canonical
 > 81x81 latent -> 500-nm finite conic filter -> tanh projection -> shared nodal
