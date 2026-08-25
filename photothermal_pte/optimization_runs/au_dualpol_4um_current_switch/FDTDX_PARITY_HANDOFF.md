@@ -462,22 +462,38 @@ On the current host, the runtime gate passes at FDTDX commit
 is accepted only because `direct_url.json` points to the pinned clean source
 and the installed and source package trees have the identical SHA-256
 `c66b34671750258ff71478f9e9530f3abcb07a937591775236b1f7bdea739d58`.
-The full solver-free suite is `140 passed`.
+The grid-contract slice added seven focused tests.  The current full solver-free
+suite, including the ADE certificate below, is `147 passed`.
 
 The requested 2.5-nm z cells dominate CFL: `dt=2.0834738305187266 as`,
 `6,403.9988` steps per 4-um period, and `256,160` steps for 40 periods.
-That is `2,534,563,848,960` cell-steps per forward solve.  For one
-axis-aligned ADE pole, pinned FDTDX allocations give only a persistent-array
-lower bound of `0.918 GiB` and a one-dynamic-checkpoint lower bound of
-`0.476 GiB`; these explicitly exclude XLA temporaries, cotangents, checkpoint
-scheduling, detectors, and CUDA workspace.  Therefore no wall-time or GPU
-peak-memory feasibility claim is made yet.  After selecting the ADE carrier,
-a dry allocation and short timed microbenchmark on a verified-idle permitted
-GPU are mandatory before any 40-period field solve.
+That is `2,534,563,848,960` cell-steps per forward solve.  The analytic
+audit gives a one-pole lower bound, but the selected passive carrier below
+uses three poles: its persistent-array lower bound is `2.024 GiB` and its
+one-dynamic-checkpoint lower bound is `0.918 GiB`; these explicitly exclude
+XLA temporaries, cotangents, checkpoint scheduling, detectors, and CUDA
+workspace.  Therefore no wall-time or GPU peak-memory feasibility claim is
+made yet.  With the ADE carrier now selected, a dry allocation and short timed
+microbenchmark on a verified-idle permitted GPU are mandatory before any
+40-period field solve.
+
+The nonlinear carrier is now implemented in `fdtdx_parity_ade.py` as three
+positive, damped Lorentz bases: one weighted by `rho` and two weighted by
+`rho^2`.  This exactly follows the linear-plus-quadratic decomposition of the
+selected n-k-square susceptibility and is not the old `rho*c3_Au` endpoint
+scaling.  All `c4` values are zero, every recurrence is strictly stable, and
+the pinned FDTDX API reproduces every frozen float32 coefficient exactly.  On
+101 uniform densities the maximum relative complex-epsilon error is
+`1.0813927774623183e-6`; the Au endpoint error is
+`1.3956872401013224e-7`.  The coefficient hash is
+`37a0485e3108aff97a92bcc44b4190f2975bbf5e59b9a6ff4f9144eae2167ced`.
+JAX coefficient JVP equals the analytic JVP, and its largest relative L2 error
+against centered FD is `2.3878186766523868e-5`.
 
 No Maxwell field, CUDA PDE, GPU, optimizer, Lumerical, HEAT, or CHARGE run is
-claimed by this status.  `optimizer_enabled` remains false.  The next gate is
-the nonlinear n-k-to-discrete-ADE carrier and its 101-density/JVP certificate.
+claimed by this status.  `optimizer_enabled` remains false.  Representative
+`rho=0,0.25,0.5,0.75,1` setup/dry-allocation, timed short-forward, and field/Q
+controls are the next gate before source calibration or any full 40-period run.
 
 ## What completion means
 
