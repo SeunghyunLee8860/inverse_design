@@ -325,16 +325,16 @@ def build_thermal_state(
         raise RuntimeError("negative equivalent Au/Ta interface resistance")
     rz[np.ix_(ix_au, iy_au, [ta_top_face])] = np.maximum(r_interface, 0.0)[:, :, None]
 
-    dirichlet_temperature_K = {"z_min": 0.0}
     if far_xy_boundary == "ambient_dirichlet":
-        dirichlet_temperature_K.update(
-            {
-                "x_min": 0.0,
-                "x_max": 0.0,
-                "y_min": 0.0,
-                "y_max": 0.0,
-            }
-        )
+        dirichlet_temperature_K = {
+            "x_min": 0.0,
+            "x_max": 0.0,
+            "y_min": 0.0,
+            "y_max": 0.0,
+            "z_min": 0.0,
+        }
+    else:
+        dirichlet_temperature_K = {"z_min": 0.0}
     top_robin = (
         {"z_max": top_air_convection_W_m2K}
         if top_air_convection_W_m2K > 0.0
