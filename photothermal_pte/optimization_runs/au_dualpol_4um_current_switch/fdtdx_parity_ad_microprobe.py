@@ -36,6 +36,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_pari
     checkpoint_carry_audit,
     dynamic_checkpointed_fdtd,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_parity_gradient_detectors import (
+    PRODUCTION_GRADIENT_DETECTORS,
+    filter_gradient_detectors,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_parity_sparse_ade_checkpoint import (
     sparse_ade_checkpoint_carry_audit,
     sparse_ade_checkpointed_fdtd,
@@ -158,6 +162,22 @@ def run_probe(args: argparse.Namespace) -> dict[str, Any]:
     setup = setup_audit(model)
     if setup["status"] != "PASS":
         raise RuntimeError(f"exact physical setup audit failed: {setup}")
+    if args.detector_profile == "all":
+        keep_detector_names = tuple(model["base"].detector_states)
+    elif args.detector_profile == "production":
+        keep_detector_names = PRODUCTION_GRADIENT_DETECTORS
+    else:
+        keep_detector_names = ()
+    gradient_base, gradient_placed, detector_audit = filter_gradient_detectors(
+        model["base"],
+        model["placed"],
+        keep_names=keep_detector_names,
+        jax_module=jax,
+    )
+    model = dict(model)
+    model["base"] = gradient_base
+    model["placed"] = gradient_placed
+    record_detectors = bool(detector_audit["retained_names"])
     dt_s = float(model["config"].time_step_duration)
     config = (
         model["config"]
@@ -226,7 +246,7 @@ def run_probe(args: argparse.Namespace) -> dict[str, Any]:
                 objects=model["placed"],
                 config=config,
                 key=model["key"],
-                record_detectors=True,
+                record_detectors=record_detectors,
             )
         else:
             _, output = sparse_ade_checkpointed_fdtd(
@@ -235,7 +255,7 @@ def run_probe(args: argparse.Namespace) -> dict[str, Any]:
                 config=config,
                 key=model["key"],
                 regions=sparse_regions,
-                record_detectors=True,
+                record_detectors=record_detectors,
             )
         e_au = output.fields.E[(slice(None),) + au_slice]
         return jnp.mean(jnp.square(e_au))
@@ -307,6 +327,8 @@ def run_probe(args: argparse.Namespace) -> dict[str, Any]:
         * 40.0,
         "checkpoint_method": "checkpointed",
         "loop_implementation": args.loop_implementation,
+        "detector_profile": args.detector_profile,
+        "gradient_detector_audit": detector_audit,
         "checkpoint_carry_audit": carry_audit,
         "sparse_ADE_carry_audit": sparse_carry_audit,
         "sparse_ADE_support_audit": sparse_support_audit,
@@ -375,6 +397,15 @@ def parse_args() -> argparse.Namespace:
         "--loop-implementation",
         choices=("generic", "dynamic", "sparse"),
         default="generic",
+    )
+    parser.add_argument(
+        "--detector-profile",
+        choices=("all", "production", "none"),
+        default="all",
+        help=(
+            "detectors retained in the differentiated loop; production keeps "
+            "only late Au/TaIrTe4 phasors"
+        ),
     )
     parser.add_argument("--fd-step", type=float, default=DEFAULT_FD_STEP)
     parser.add_argument(
