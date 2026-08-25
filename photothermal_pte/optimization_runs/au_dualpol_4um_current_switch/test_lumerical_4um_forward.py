@@ -636,8 +636,10 @@ def _run_fake_adaptive_pde(
     tmp_path,
     monkeypatch,
     currents_by_step_nm: dict[float, float],
+    require_through_nm: float | None = None,
 ) -> tuple[dict[str, object], list[float]]:
     args = _exact_evaluator_args()
+    args.require_pde_through_nm = require_through_nm
     mask = np.zeros(CONTRACT.design_shape, dtype=np.uint8)
     raw_path = tmp_path / "forward_raw.npz"
     np.savez(raw_path, placeholder=np.asarray(0))
@@ -739,3 +741,18 @@ def test_adaptive_pde_exhausts_finest_level_and_fails_closed(
     assert result["passed"] is False
     assert result["selected_PDE_resolution"] == "12p5nm"
     assert result["final_PDE_comparison"] == "25nm_to_12p5nm"
+
+
+def test_adaptive_pde_does_not_stop_before_required_terminal_resolution(
+    tmp_path, monkeypatch
+) -> None:
+    result, executed = _run_fake_adaptive_pde(
+        tmp_path=tmp_path,
+        monkeypatch=monkeypatch,
+        currents_by_step_nm={100.0: 1.001, 50.0: 1.0, 25.0: 0.999},
+        require_through_nm=25.0,
+    )
+    assert executed == [100.0, 50.0, 25.0]
+    assert result["passed"] is True
+    assert result["selected_PDE_resolution"] == "25nm"
+    assert result["required_PDE_refinement_through_m"] == pytest.approx(25.0e-9)

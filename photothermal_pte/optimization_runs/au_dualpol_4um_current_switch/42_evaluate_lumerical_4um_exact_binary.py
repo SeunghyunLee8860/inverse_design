@@ -76,6 +76,15 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--stack-dz-nm", type=float, default=2.5)
     parser.add_argument("--bulk-dz-nm", type=float, default=50.0)
     parser.add_argument("--outer-dxy-nm", type=float, default=200.0)
+    parser.add_argument(
+        "--require-pde-through-nm",
+        type=float,
+        choices=tuple(step * 1.0e9 for step in PDE_STEPS_M),
+        help=(
+            "Do not stop adaptive PDE refinement before this core step. "
+            "Used by the terminal 100/50-nm optical-downstream comparison."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -445,6 +454,11 @@ def _evaluate_polarization(
     arrays_by_label: dict[str, dict[str, np.ndarray]] = {}
     comparisons: dict[str, dict[str, Any]] = {}
     previous_label: str | None = None
+    required_step_m = (
+        None
+        if getattr(args, "require_pde_through_nm", None) is None
+        else float(args.require_pde_through_nm) * 1.0e-9
+    )
     with np.load(raw_path, allow_pickle=False) as raw:
         component_coordinates = component_coordinates_from_raw(raw)
         q = component_q_from_raw(raw)
@@ -475,7 +489,11 @@ def _evaluate_polarization(
                 )
                 comparison_label = f"{previous_label}_to_{label}"
                 comparisons[comparison_label] = comparison
-                if comparison["passed"]:
+                required_reached = bool(
+                    required_step_m is None
+                    or step_m <= required_step_m * (1.0 + 1.0e-12)
+                )
+                if comparison["passed"] and required_reached:
                     break
             previous_label = label
     if not comparisons:
@@ -523,6 +541,7 @@ def _evaluate_polarization(
         "current_nA": selected["current_nA"],
         "reference_PDE_core_step_m": selected["core_step_m"],
         "selected_PDE_resolution": selected_label,
+        "required_PDE_refinement_through_m": required_step_m,
         "mapped_source_power_W_reporting": selected["mapped_source_power_W_reporting"],
         "mapping": selected["mapping"],
         "thermal": selected["thermal"],

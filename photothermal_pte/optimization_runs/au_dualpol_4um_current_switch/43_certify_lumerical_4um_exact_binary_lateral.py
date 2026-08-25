@@ -41,6 +41,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.objective import (
     opposite_current_switching_achieved,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.pde_mesh_convergence_4um import (
+    PDE_RELATIVE_GATE,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -283,14 +286,20 @@ def _load_mask(args: argparse.Namespace) -> np.ndarray:
     return np.ascontiguousarray(mask, dtype=np.uint8)
 
 
-def _fine_pde_command(
+def _pde_command(
     *,
     args: argparse.Namespace,
     mask_path: Path,
     forwards: dict[str, dict[str, dict[str, Any]]],
     output: Path,
+    mesh_name: str,
+    require_through_nm: float | None = None,
 ) -> list[str]:
-    return [
+    if mesh_name not in ("coarse", "fine"):
+        raise ValueError("PDE optical mesh must be coarse or fine")
+    mesh = COARSE_MESH if mesh_name == "coarse" else FINE_MESH
+    audit = mesh.audit()
+    command = [
         sys.executable,
         str(HERE / "42_evaluate_lumerical_4um_exact_binary.py"),
         "--binary-mask-npz",
@@ -306,17 +315,17 @@ def _fine_pde_command(
         "--threads",
         str(args.threads),
         "--ea-forward-result",
-        str(forwards["fine"]["Ea"]["result_path"]),
+        str(forwards[mesh_name]["Ea"]["result_path"]),
         "--ea-raw-npz",
-        str(forwards["fine"]["Ea"]["raw_path"]),
+        str(forwards[mesh_name]["Ea"]["raw_path"]),
         "--eb-forward-result",
-        str(forwards["fine"]["Eb"]["result_path"]),
+        str(forwards[mesh_name]["Eb"]["result_path"]),
         "--eb-raw-npz",
-        str(forwards["fine"]["Eb"]["raw_path"]),
+        str(forwards[mesh_name]["Eb"]["raw_path"]),
         "--mesh-label",
-        FINE_MESH_LABEL,
+        str(audit["label"]),
         "--flake-dxy-nm",
-        "50",
+        str(float(audit["flake_dxy_m"]) * 1.0e9),
         "--outer-dxy-nm",
         "200",
         "--stack-dz-nm",
@@ -324,6 +333,179 @@ def _fine_pde_command(
         "--bulk-dz-nm",
         "50",
     ]
+    if require_through_nm is not None:
+        command.extend(
+            ("--require-pde-through-nm", str(float(require_through_nm)))
+        )
+    return command
+
+
+def _fine_pde_command(
+    *,
+    args: argparse.Namespace,
+    mask_path: Path,
+    forwards: dict[str, dict[str, dict[str, Any]]],
+    output: Path,
+) -> list[str]:
+    return _pde_command(
+        args=args,
+        mask_path=mask_path,
+        forwards=forwards,
+        output=output,
+        mesh_name="fine",
+    )
+
+
+def _run_pde_evaluator(
+    *,
+    command: list[str],
+    output: Path,
+    log_path: Path,
+    label: str,
+) -> tuple[dict[str, Any], dict[str, Any], int]:
+    with log_path.open("w", encoding="utf-8", errors="replace") as stream:
+        completed = subprocess.run(
+            command,
+            cwd=REPOSITORY,
+            stdout=stream,
+            stderr=subprocess.STDOUT,
+            check=False,
+        )
+    result_path = output / "exact_binary_dualpol_result.json"
+    if not result_path.is_file():
+        tail = "\n".join(log_path.read_text(errors="replace").splitlines()[-80:])
+        raise RuntimeError(
+            f"{label} adaptive PDE evaluator produced no result "
+            f"(exit {completed.returncode})\n{tail}"
+        )
+    result = json.loads(result_path.read_text(encoding="utf-8"))
+    return result, _artifact(result_path), completed.returncode
+
+
+def _verified_evidence_path(record: object, *, label: str) -> Path:
+    if not isinstance(record, dict):
+        raise RuntimeError(f"missing {label} PDE evidence artifact")
+    path = Path(str(record.get("path", ""))).expanduser().resolve()
+    if not path.is_file():
+        raise RuntimeError(f"missing {label} PDE evidence file")
+    actual = _artifact(path)
+    if (
+        int(record.get("size_bytes", -1)) != actual["size_bytes"]
+        or str(record.get("sha256", "")) != actual["sha256"]
+    ):
+        raise RuntimeError(f"{label} PDE evidence artifact changed")
+    return path
+
+
+def _relative_change(coarse: float, fine: float) -> float:
+    return abs(float(coarse) - float(fine)) / max(
+        abs(float(fine)), np.finfo(float).tiny
+    )
+
+
+def _same_pde_grid_optical_downstream_comparison(
+    *,
+    coarse_result: dict[str, Any],
+    fine_result: dict[str, Any],
+) -> dict[str, Any]:
+    """Compare 100/50-nm optical Q after mapping both onto one PDE grid."""
+
+    rows: dict[str, dict[str, Any]] = {}
+    for polarization in ("Ea", "Eb"):
+        coarse = coarse_result["polarizations"][polarization]
+        fine = fine_result["polarizations"][polarization]
+        selected = str(fine["selected_PDE_resolution"])
+        if (
+            selected not in coarse["PDE_resolutions"]
+            or selected not in fine["PDE_resolutions"]
+        ):
+            raise RuntimeError(
+                f"{polarization} lacks common PDE resolution {selected}"
+            )
+        coarse_resolution = coarse["PDE_resolutions"][selected]
+        fine_resolution = fine["PDE_resolutions"][selected]
+        if not np.isclose(
+            float(coarse_resolution["core_step_m"]),
+            float(fine_resolution["core_step_m"]),
+            rtol=0.0,
+            atol=1.0e-18,
+        ):
+            raise RuntimeError(
+                f"{polarization} common PDE resolution has different steps"
+            )
+        coarse_evidence = _verified_evidence_path(
+            coarse["PDE_mesh_convergence_evidence"],
+            label=f"coarse/{polarization}",
+        )
+        fine_evidence = _verified_evidence_path(
+            fine["PDE_mesh_convergence_evidence"],
+            label=f"fine/{polarization}",
+        )
+        key = f"ta_temperature_K_{selected}"
+        with np.load(coarse_evidence, allow_pickle=False) as arrays:
+            coarse_temperature = np.asarray(arrays[key], dtype=np.float64)
+        with np.load(fine_evidence, allow_pickle=False) as arrays:
+            fine_temperature = np.asarray(arrays[key], dtype=np.float64)
+        if (
+            coarse_temperature.shape != fine_temperature.shape
+            or coarse_temperature.ndim != 2
+            or not np.all(np.isfinite(coarse_temperature))
+            or not np.all(np.isfinite(fine_temperature))
+        ):
+            raise RuntimeError(
+                f"{polarization} common-grid TaIrTe4 temperature is invalid"
+            )
+        difference = coarse_temperature - fine_temperature
+        metrics = {
+            "current_relative_change": _relative_change(
+                coarse_resolution["current_A"], fine_resolution["current_A"]
+            ),
+            "ta_temperature_field_nrmse": float(
+                np.linalg.norm(difference.ravel())
+                / max(
+                    np.linalg.norm(fine_temperature.ravel()),
+                    np.finfo(float).tiny,
+                )
+            ),
+            "ta_mean_temperature_relative_change": _relative_change(
+                coarse_resolution["ta_mean_temperature_K"],
+                fine_resolution["ta_mean_temperature_K"],
+            ),
+            "peak_temperature_relative_change": _relative_change(
+                coarse_resolution["peak_temperature_K"],
+                fine_resolution["peak_temperature_K"],
+            ),
+        }
+        coarse_current = float(coarse_resolution["current_A"])
+        fine_current = float(fine_resolution["current_A"])
+        gates = {
+            "coarse_and_fine_current_nonzero": coarse_current != 0.0
+            and fine_current != 0.0,
+            "current_sign_preserved": bool(
+                np.signbit(coarse_current) == np.signbit(fine_current)
+            ),
+            **{
+                f"{name}_lt_0p5pct": value < PDE_RELATIVE_GATE
+                for name, value in metrics.items()
+            },
+        }
+        rows[polarization] = {
+            "passed": all(gates.values()),
+            "common_PDE_resolution": selected,
+            "common_PDE_core_step_m": float(
+                fine_resolution["core_step_m"]
+            ),
+            "coarse_optical_mesh_current_A": coarse_current,
+            "fine_optical_mesh_current_A": fine_current,
+            "metrics": metrics,
+            "gates": gates,
+        }
+    return {
+        "method": "xy100_xy50_optical_Q_on_same_custom_PDE_grid_v1",
+        "relative_gate": PDE_RELATIVE_GATE,
+        "polarizations": rows,
+        "passed": all(row["passed"] for row in rows.values()),
+    }
 
 
 def main() -> int:
@@ -334,7 +516,7 @@ def main() -> int:
     output.mkdir(parents=True, exist_ok=True)
     result_path = output / "final_exact_binary_certificate.json"
     result: dict[str, Any] = {
-        "schema": "au-lumerical-exact-binary-lateral-pde-certificate-v1",
+        "schema": "au-lumerical-exact-binary-lateral-pde-certificate-v2",
         "status": "FAILED_LUMERICAL_4UM_EXACT_BINARY_LATERAL_PDE_CERTIFICATE",
         "passed": False,
         "git_commit": _git_commit(),
@@ -398,6 +580,10 @@ def main() -> int:
         fine_pde_result: dict[str, Any] | None = None
         fine_pde_artifact: dict[str, Any] | None = None
         fine_pde_returncode: int | None = None
+        coarse_pde_result: dict[str, Any] | None = None
+        coarse_pde_artifact: dict[str, Any] | None = None
+        coarse_pde_returncode: int | None = None
+        downstream_comparison: dict[str, Any] | None = None
         if optical_passed:
             fine_pde_output = output / "fine_xy50_adaptive_pde"
             command = _fine_pde_command(
@@ -407,33 +593,83 @@ def main() -> int:
                 output=fine_pde_output,
             )
             log_path = output / "fine_xy50_adaptive_pde.log"
-            with log_path.open("w", encoding="utf-8", errors="replace") as stream:
-                completed = subprocess.run(
-                    command,
-                    cwd=REPOSITORY,
-                    stdout=stream,
-                    stderr=subprocess.STDOUT,
-                    check=False,
-                )
-            fine_pde_returncode = completed.returncode
-            fine_pde_path = fine_pde_output / "exact_binary_dualpol_result.json"
-            if not fine_pde_path.is_file():
-                tail = "\n".join(
-                    log_path.read_text(errors="replace").splitlines()[-80:]
-                )
-                raise RuntimeError(
-                    "fine adaptive PDE evaluator produced no result "
-                    f"(exit {completed.returncode})\n{tail}"
-                )
-            fine_pde_result = json.loads(
-                fine_pde_path.read_text(encoding="utf-8")
+            (
+                fine_pde_result,
+                fine_pde_artifact,
+                fine_pde_returncode,
+            ) = _run_pde_evaluator(
+                command=command,
+                output=fine_pde_output,
+                log_path=log_path,
+                label="fine",
             )
-            fine_pde_artifact = _artifact(fine_pde_path)
+            if fine_pde_result.get("error"):
+                raise RuntimeError(
+                    "fine adaptive PDE evaluator execution failed: "
+                    f"{fine_pde_result['error']}"
+                )
 
-        numerical_pde_passed = bool(
+        fine_pde_passed = bool(
             fine_pde_result is not None
             and fine_pde_returncode == 0
             and fine_pde_result.get("passed") is True
+        )
+        if fine_pde_passed:
+            required_through_nm = min(
+                float(
+                    fine_pde_result["polarizations"][polarization][
+                        "reference_PDE_core_step_m"
+                    ]
+                )
+                * 1.0e9
+                for polarization in ("Ea", "Eb")
+            )
+            coarse_pde_output = output / "coarse_xy100_adaptive_pde"
+            coarse_command = _pde_command(
+                args=args,
+                mask_path=args.binary_mask_npz.expanduser().resolve(),
+                forwards=forwards,
+                output=coarse_pde_output,
+                mesh_name="coarse",
+                require_through_nm=required_through_nm,
+            )
+            (
+                coarse_pde_result,
+                coarse_pde_artifact,
+                coarse_pde_returncode,
+            ) = _run_pde_evaluator(
+                command=coarse_command,
+                output=coarse_pde_output,
+                log_path=output / "coarse_xy100_adaptive_pde.log",
+                label="coarse",
+            )
+            if coarse_pde_result.get("error"):
+                raise RuntimeError(
+                    "coarse adaptive PDE evaluator execution failed: "
+                    f"{coarse_pde_result['error']}"
+                )
+            downstream_comparison = (
+                _same_pde_grid_optical_downstream_comparison(
+                    coarse_result=coarse_pde_result,
+                    fine_result=fine_pde_result,
+                )
+            )
+            downstream_path = (
+                output / "xy100_to_xy50_same_pde_grid_comparison.json"
+            )
+            _write_json(downstream_path, downstream_comparison)
+            downstream_comparison["artifact"] = _artifact(
+                downstream_path
+            )
+        coarse_pde_passed = bool(
+            coarse_pde_result is not None
+            and coarse_pde_returncode == 0
+            and coarse_pde_result.get("passed") is True
+        )
+        numerical_pde_passed = bool(fine_pde_passed and coarse_pde_passed)
+        downstream_passed = bool(
+            downstream_comparison is not None
+            and downstream_comparison.get("passed") is True
         )
         currents = (
             fine_pde_result.get("currents_A", {})
@@ -446,7 +682,12 @@ def main() -> int:
                 float(currents["Ea"]), float(currents["Eb"])
             )
         )
-        passed = bool(optical_passed and numerical_pde_passed and switching)
+        passed = bool(
+            optical_passed
+            and numerical_pde_passed
+            and downstream_passed
+            and switching
+        )
         b200_forward_gate = bool(
             all(
                 row["result"].get("B200_promotion_certified") is True
@@ -492,7 +733,13 @@ def main() -> int:
             both_polarizations_optical_xy_converged=optical_passed,
             fine_xy50_adaptive_PDE_result=fine_pde_result,
             fine_xy50_adaptive_PDE_result_artifact=fine_pde_artifact,
-            numerical_PDE_and_sign_gates_passed=numerical_pde_passed,
+            coarse_xy100_adaptive_PDE_result=coarse_pde_result,
+            coarse_xy100_adaptive_PDE_result_artifact=coarse_pde_artifact,
+            both_optical_meshes_adaptive_PDE_and_sign_gates_passed=(
+                numerical_pde_passed
+            ),
+            same_PDE_grid_optical_downstream_comparison=downstream_comparison,
+            both_polarizations_optical_downstream_converged=downstream_passed,
             currents_A=currents,
             currents_nA={
                 key: 1.0e9 * float(value) for key, value in currents.items()

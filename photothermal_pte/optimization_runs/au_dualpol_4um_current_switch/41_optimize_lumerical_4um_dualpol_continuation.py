@@ -631,6 +631,8 @@ def main() -> int:
                         "ordinary_dispersive_Au": True,
                         "optical_xy100_to_xy50_converged_for_Ea_and_Eb": True,
                         "adaptive_custom_PDE_converged_for_Ea_and_Eb": True,
+                        "same_PDE_grid_xy100_to_xy50_current_temperature_"
+                        "converged_for_Ea_and_Eb": True,
                         "B200_promotion_certified": bool(
                             exact_result.get("B200_promotion_certified")
                         ),

@@ -94,7 +94,30 @@ def test_final_certifier_pde_uses_only_fine_exact_forwards(tmp_path) -> None:
     assert options["--ea-raw-npz"].endswith("fine_Ea_raw.npz")
     assert options["--eb-raw-npz"].endswith("fine_Eb_raw.npz")
     assert options["--mesh-label"] == _CERTIFIER.FINE_MESH_LABEL
-    assert options["--flake-dxy-nm"] == "50"
+    assert float(options["--flake-dxy-nm"]) == pytest.approx(50.0)
+
+    coarse = _options(
+        _CERTIFIER._pde_command(
+            args=args,
+            mask_path=args.binary_mask_npz,
+            forwards={
+                **forwards,
+                "coarse": {
+                    polarization: {
+                        "result_path": tmp_path / f"coarse_{polarization}.json",
+                        "raw_path": tmp_path / f"coarse_{polarization}_raw.npz",
+                    }
+                    for polarization in ("Ea", "Eb")
+                },
+            },
+            output=tmp_path / "coarse_pde",
+            mesh_name="coarse",
+            require_through_nm=25.0,
+        )
+    )
+    assert coarse["--mesh-label"] == _CERTIFIER.COARSE_MESH_LABEL
+    assert float(coarse["--flake-dxy-nm"]) == pytest.approx(100.0)
+    assert coarse["--require-pde-through-nm"] == "25.0"
 
 
 def _write_source(
@@ -259,3 +282,67 @@ def test_passed_manifest_recovers_hash_bound_terminal_latent(
     state_path.write_bytes(b"tampered")
     with pytest.raises(RuntimeError, match="stage state artifact changed"):
         driver._completed_manifest_latent(manifest)
+
+
+def _fake_pde_result(
+    tmp_path: Path,
+    *,
+    prefix: str,
+    current_scale: float,
+    temperature_scale: float,
+) -> dict[str, object]:
+    polarizations: dict[str, object] = {}
+    for polarization, sign in (("Ea", 1.0), ("Eb", -1.0)):
+        evidence = tmp_path / f"{prefix}_{polarization}.npz"
+        temperature = np.full((4, 4), temperature_scale)
+        np.savez_compressed(evidence, ta_temperature_K_50nm=temperature)
+        polarizations[polarization] = {
+            "selected_PDE_resolution": "50nm",
+            "reference_PDE_core_step_m": 50.0e-9,
+            "PDE_mesh_convergence_evidence": _CERTIFIER._artifact(evidence),
+            "PDE_resolutions": {
+                "50nm": {
+                    "core_step_m": 50.0e-9,
+                    "current_A": sign * current_scale,
+                    "ta_mean_temperature_K": temperature_scale,
+                    "peak_temperature_K": temperature_scale,
+                }
+            },
+        }
+    return {"polarizations": polarizations}
+
+
+def test_same_pde_grid_optical_downstream_gate_is_fail_closed(tmp_path) -> None:
+    fine = _fake_pde_result(
+        tmp_path,
+        prefix="fine",
+        current_scale=1.0,
+        temperature_scale=1.0,
+    )
+    close = _fake_pde_result(
+        tmp_path,
+        prefix="coarse_close",
+        current_scale=1.001,
+        temperature_scale=1.001,
+    )
+    passed = _CERTIFIER._same_pde_grid_optical_downstream_comparison(
+        coarse_result=close,
+        fine_result=fine,
+    )
+    assert passed["passed"] is True
+
+    far = _fake_pde_result(
+        tmp_path,
+        prefix="coarse_far",
+        current_scale=1.01,
+        temperature_scale=1.01,
+    )
+    failed = _CERTIFIER._same_pde_grid_optical_downstream_comparison(
+        coarse_result=far,
+        fine_result=fine,
+    )
+    assert failed["passed"] is False
+    assert all(
+        row["metrics"]["current_relative_change"] == pytest.approx(0.01)
+        for row in failed["polarizations"].values()
+    )

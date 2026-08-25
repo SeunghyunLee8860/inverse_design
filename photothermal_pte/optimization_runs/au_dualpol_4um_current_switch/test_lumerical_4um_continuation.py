@@ -71,6 +71,7 @@ def test_continuation_contract_requires_optical_lateral_and_pde_convergence() ->
     required = continuation_contract()["final_promotion_requires"]
     assert any("100-to-50-nm optical lateral" in item for item in required)
     assert any("adaptive custom-CUDA PDE convergence" in item for item in required)
+    assert any("current and temperature changes" in item for item in required)
 
 
 def test_linearized_maximin_warm_start_improves_worst_utility_plane() -> None:
