@@ -40,6 +40,7 @@ def test_rectangular_sign_algebra_passes_only_its_declared_scope(
     assert rectangular_report["current_x_A"] < 0.0
     assert rectangular_report["terminal_swapped_current_x_A"] > 0.0
     assert all(rectangular_report["checks"].values())
+    json.dumps(rectangular_report, allow_nan=False)
 
 
 def test_paper_audit_does_not_promote_historical_device_A(tmp_path: Path) -> None:

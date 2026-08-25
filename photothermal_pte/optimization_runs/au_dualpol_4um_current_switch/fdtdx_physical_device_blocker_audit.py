@@ -213,6 +213,7 @@ def rectangular_sign_audit(temperature_gradient_K_m: float = 1.0e5) -> dict[str,
         "terminal_balance_lt_2e_minus_10": solver["terminal_balance_relative"]
         < 2.0e-10,
     }
+    checks = {name: bool(passed) for name, passed in checks.items()}
     return {
         "scope": "implemented rectangular Ta-only thin-sheet diagnostic",
         "wall_seconds": time.perf_counter() - start,
@@ -221,7 +222,7 @@ def rectangular_sign_audit(temperature_gradient_K_m: float = 1.0e5) -> dict[str,
             np.max(np.abs(psi_ta - expected_psi))
         ),
         "current_x_A": current_x,
-        "expected_current_x_A": expected_current_x,
+        "expected_current_x_A": float(expected_current_x),
         "current_y_A": current_y,
         "terminal_swapped_current_x_A": reversed_current_x,
         "mapped_current_x_A": mapped_current_x,
