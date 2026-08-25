@@ -21,6 +21,32 @@ def useful_currents(current_a_A: float, current_b_A: float) -> tuple[float, floa
     return float(current_a_A), -float(current_b_A)
 
 
+def opposite_current_switching_achieved(
+    current_a_A: float, current_b_A: float
+) -> bool:
+    """Return whether both requested strict current directions are present."""
+
+    currents = np.asarray((current_a_A, current_b_A), dtype=np.float64)
+    return bool(
+        np.all(np.isfinite(currents))
+        and float(current_a_A) > 0.0
+        and float(current_b_A) < 0.0
+    )
+
+
+def exact_binary_promotion_passed(
+    numerical_gates_passed: bool,
+    current_a_A: float,
+    current_b_A: float,
+) -> bool:
+    """Require numerical health and the target signs for binary promotion."""
+
+    return bool(
+        numerical_gates_passed
+        and opposite_current_switching_achieved(current_a_A, current_b_A)
+    )
+
+
 def smooth_minimum(
     current_a_A: float,
     current_b_A: float,

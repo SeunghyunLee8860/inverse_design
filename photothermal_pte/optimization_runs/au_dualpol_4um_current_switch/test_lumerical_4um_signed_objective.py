@@ -11,6 +11,8 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.objective import (
     epigraph_constraints,
+    exact_binary_promotion_passed,
+    opposite_current_switching_achieved,
 )
 
 
@@ -109,3 +111,22 @@ def test_signed_dual_point_rejects_invalid_design_arrays(field: str) -> None:
     values[field] = np.zeros((3, 4))
     with pytest.raises(ValueError):
         signed_dual_objective_point(**values)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize(
+    ("current_a", "current_b", "switching"),
+    (
+        (1.0e-9, -2.0e-9, True),
+        (0.0, -2.0e-9, False),
+        (1.0e-9, 0.0, False),
+        (-1.0e-9, -2.0e-9, False),
+        (1.0e-9, 2.0e-9, False),
+        (np.nan, -2.0e-9, False),
+    ),
+)
+def test_exact_binary_promotion_requires_numerics_and_both_strict_signs(
+    current_a: float, current_b: float, switching: bool
+) -> None:
+    assert opposite_current_switching_achieved(current_a, current_b) is switching
+    assert exact_binary_promotion_passed(True, current_a, current_b) is switching
+    assert exact_binary_promotion_passed(False, current_a, current_b) is False

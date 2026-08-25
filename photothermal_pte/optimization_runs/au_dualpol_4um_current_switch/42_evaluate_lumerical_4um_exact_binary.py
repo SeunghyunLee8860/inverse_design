@@ -31,6 +31,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysi
     evaluate_fixed_source,
     thermal_edges,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.objective import (
+    exact_binary_promotion_passed,
+    opposite_current_switching_achieved,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -301,13 +305,19 @@ def main() -> int:
             ),
         }
         currents = {key: row["current_A"] for key, row in rows.items()}
-        switching = bool(currents["Ea"] > 0.0 and currents["Eb"] < 0.0)
+        switching = opposite_current_switching_achieved(
+            currents["Ea"], currents["Eb"]
+        )
         numerical_pass = all(row["passed"] for row in rows.values())
+        promotion_pass = exact_binary_promotion_passed(
+            numerical_pass, currents["Ea"], currents["Eb"]
+        )
         result = {
             "status": "PASSED_LUMERICAL_4UM_EXACT_BINARY_DUALPOL_EVALUATION"
-            if numerical_pass
+            if promotion_pass
             else "FAILED_LUMERICAL_4UM_EXACT_BINARY_DUALPOL_EVALUATION",
-            "passed": numerical_pass,
+            "passed": promotion_pass,
+            "numerical_gates_passed": numerical_pass,
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "material_geometry": (
                 "ordinary dispersive Au rectangles coalesced from the exact 80x80 mask"
