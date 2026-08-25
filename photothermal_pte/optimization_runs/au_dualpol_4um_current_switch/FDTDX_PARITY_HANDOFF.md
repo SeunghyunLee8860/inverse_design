@@ -758,10 +758,18 @@ fixed material array behind stop-gradient, differentiated only the Au-region
 small direct-AD scene and the integrated suite passes 235 tests, but the same
 16,384-step exact-grid errors remain 0.00410134/0.00655630; Eb is still
 blocked.  Read `FDTDX_REVERSIBLE_DESIGN_C3_REPORT.md`.  This falsifies the
-full-material-cotangent/naive-accumulation hypothesis.  Next remove algebraic
-E/H/ADE-P/CPML reconstruction from the gradient path and prove a blockwise
-exact-checkpoint VJP against direct unrolled AD on the small scene before any
-production-grid rerun.
+full-material-cotangent/naive-accumulation hypothesis.  The replacement now
+removes algebraic time reversal entirely: exact full-state and sparse-regional-P
+blockwise VJPs both match direct AD on 24/70-step scenes, and the suite passes
+242 tests.  On the exact grid, the 4,096-step Ea/Eb errors are
+5.4724e-5/3.2817e-5, so the gradient-connectivity blocker closes.  However,
+96 inner checkpoints take 34.466/34.578 seconds and project to 35.93/36.04
+minutes per parallel iteration; 192 checkpoints are slower and peak near
+127.82 GB.  Read `FDTDX_BLOCKWISE_EXACT_REPORT.md`.  Checkpoint-count tuning,
+16,384-step/full-horizon probes, full current gradients, and the optimizer
+remain blocked.  Next prove an offline two-level segmented exact VJP on the
+small scenes and run at most one bounded exact-grid comparison only if its
+static memory audit fits.
 
 ## What completion means
 
@@ -797,11 +805,17 @@ reevaluation.
 > worse; read `FDTDX_REVERSIBLE_LONG_SLICE_REPORT.md` and
 > `FDTDX_REVERSIBLE_ACCUMULATION_REPORT.md`.  A design-only compensated regional
 > `c3` VJP also leaves the 0.00410134/0.00655630 errors unchanged; read
-> `FDTDX_REVERSIBLE_DESIGN_C3_REPORT.md`.  Do not run more GPU slice or
-> accumulation searches.  Next remove algebraic time reversal and prove a
-> blockwise exact-checkpoint VJP against direct unrolled AD on the small
-> CPML/ADE/phasor scene.  Do not run a production-grid probe, full gradient, or
-> optimizer before that exact small-scene gate passes.
+> `FDTDX_REVERSIBLE_DESIGN_C3_REPORT.md`.  The algebraic-reverse-free
+> replacement now passes direct 24/70-step AD and bounded exact-grid Ea/Eb AD-FD,
+> but its 35.93/36.04-minute projection fails the 30-minute runtime gate; 192
+> checkpoints are slower and nearly exhaust the safe XLA memory budget.  Read
+> `FDTDX_BLOCKWISE_EXACT_REPORT.md`.  Do not repeat slice, checkpoint-count, or
+> accumulation searches, and do not run 16,384/full-horizon probes, a full
+> current gradient, or an optimizer.  Next prove an offline two-level segmented
+> exact VJP against direct AD on the small CPML/ADE/phasor scenes.  Permit at
+> most one bounded 4,096-step exact-grid comparison only after its static memory
+> audit fits, and reject it unless the parallel linear projection is below 30
+> minutes.
 > Continue only the fresh FDTDX GPU parity path for the 4-um Ea/Eb Au topology; do not run legacy scripts 10/12/13
 > and do not use optical rho^3 or c3-only linear scaling.  Preserve the canonical
 > 81x81 latent -> 500-nm finite conic filter -> tanh projection -> shared nodal
