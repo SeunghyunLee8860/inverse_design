@@ -37,8 +37,10 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_pari
     _write_npz,
     file_sha256,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_parity_reversible_design_sliced_vjp import (
+    reversible_ade_cpml_phasor_design_sliced_fdtd,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_parity_reversible_sparse_sliced_vjp import (
-    reversible_ade_cpml_phasor_sparse_sliced_fdtd,
     reversible_sparse_slice_checkpoint_audit,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_parity_sparse_ade_support import (
@@ -46,7 +48,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_pari
 )
 
 
-SCHEMA = "fdtdx_4um_parity_reversible_sparse_microprobe_v1"
+SCHEMA = "fdtdx_4um_parity_reversible_design_microprobe_v2"
 DEFAULT_STEPS = 4096
 DEFAULT_SLICE_STEPS = 256
 DEFAULT_FD_STEP = 5.0e-3
@@ -60,7 +62,7 @@ HERE = Path(__file__).resolve().parent
 REVERSIBLE_SOURCE_FILES = (
     HERE / "fdtdx_parity_reversible_ade_step.py",
     HERE / "fdtdx_parity_reversible_cpml.py",
-    HERE / "fdtdx_parity_reversible_sparse_sliced_vjp.py",
+    HERE / "fdtdx_parity_reversible_design_sliced_vjp.py",
 )
 
 
@@ -82,8 +84,17 @@ def reversible_source_audit() -> dict[str, Any]:
         ),
         "sparse_exact_slice_reset_present": (
             "expand(P_curr_regional)"
-            in source["fdtdx_parity_reversible_sparse_sliced_vjp.py"]
-            and "support_audit" in source["fdtdx_parity_reversible_sparse_sliced_vjp.py"]
+            in source["fdtdx_parity_reversible_design_sliced_vjp.py"]
+            and "support_audit"
+            in source["fdtdx_parity_reversible_design_sliced_vjp.py"]
+        ),
+        "only_design_c3_is_differentiable": (
+            "primitive(initial_state, design_c3)"
+            in source["fdtdx_parity_reversible_design_sliced_vjp.py"]
+        ),
+        "design_c3_uses_compensated_sum": (
+            "updated_compensation = (updated - accumulated) - adjusted"
+            in source["fdtdx_parity_reversible_design_sliced_vjp.py"]
         ),
     }
     hashes = {
@@ -250,13 +261,14 @@ def run_probe(args: argparse.Namespace) -> dict[str, Any]:
     def field_only_loss(latent_density):
         cells = MAPPING.jax_cell_density(latent_density, beta=4.0)
         arrays = arrays_for_density(model, cells)
-        _, output = reversible_ade_cpml_phasor_sparse_sliced_fdtd(
+        _, output = reversible_ade_cpml_phasor_design_sliced_fdtd(
             arrays=arrays,
             objects=model["placed"],
             config=config,
             key=model["key"],
             steps_per_slice=args.slice_steps,
             regions=sparse_regions,
+            design_region=au_slice,
             support_audit=support_audit,
         )
         e_au = output.fields.E[(slice(None),) + au_slice]
@@ -341,6 +353,8 @@ def run_probe(args: argparse.Namespace) -> dict[str, Any]:
         "steps": args.steps,
         "slice_steps": args.slice_steps,
         "num_slices": math.ceil(args.steps / args.slice_steps),
+        "adjoint_parameterization": "Au_design_region_c3_only",
+        "design_c3_cotangent_accumulation": "float32_Kahan_compensated",
         "simulated_periods": args.steps / FULL_STEPS * 40.0,
         "detector_profile": "production_Au_and_TaIrTe4_late_phasors",
         "gradient_detector_audit": detector_audit,
