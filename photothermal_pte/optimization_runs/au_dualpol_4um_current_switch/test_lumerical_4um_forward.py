@@ -20,6 +20,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     ADJOINT_FIELD_REGION,
     DENSITY_CONTROL,
     ENDPOINT_FIELD_MONITOR,
+    EXACT_BINARY_CONTROL,
     PABS_GROUP,
     SOURCE_NAME,
     TARGET_MONITOR,
@@ -320,6 +321,41 @@ def test_imported_density_uses_same_solver_source_mesh_and_hashes_nodes() -> Non
     assert density.import_calls[0][0].shape == (81, 81, 2)
     assert density_audit["geometry"]["density_state"]["nodal_shape_xy"] == [81, 81]
     assert exact_audit["geometry"]["exact_au_geometry"]["mask_shape_xy"] == [80, 80]
+
+
+def test_arbitrary_exact_binary_mask_uses_dispersive_Au_rectangles() -> None:
+    fdtd = _FakeFdtd()
+    mask = np.zeros(CONTRACT.design_shape, dtype=np.uint8)
+    mask[20:25, 30:50] = 1
+    audit = build_layout(
+        fdtd,
+        case=EXACT_BINARY_CONTROL,
+        polarization="Ea",
+        spec=BASELINE,
+        source_object_w0_m=4.0e-6,
+        exact_binary_mask=mask,
+    )
+    geometry = audit["geometry"]["exact_au_geometry"]
+    assert geometry["mask_shape_xy"] == [80, 80]
+    assert geometry["occupied_cell_count"] == int(np.sum(mask))
+    assert len(fdtd.imports) == 0
+    assert any(rectangle.get("material") == AU_MATERIAL for rectangle in fdtd.rectangles)
+
+
+def test_exact_binary_mask_fails_closed_on_gray_or_wrong_shape() -> None:
+    for mask in (
+        np.full(CONTRACT.design_shape, 0.5),
+        np.zeros(CONTRACT.design_node_shape),
+    ):
+        with np.testing.assert_raises(ValueError):
+            build_layout(
+                _FakeFdtd(),
+                case=EXACT_BINARY_CONTROL,
+                polarization="Ea",
+                spec=BASELINE,
+                source_object_w0_m=4.0e-6,
+                exact_binary_mask=mask,
+            )
 
 
 def test_imported_density_can_freeze_one_adjoint_field_region() -> None:

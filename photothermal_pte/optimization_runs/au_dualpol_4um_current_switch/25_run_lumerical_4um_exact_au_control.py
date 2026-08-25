@@ -49,6 +49,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     C0_M_S,
     DENSITY_CONTROL,
     ENDPOINT_FIELD_MONITOR,
+    EXACT_BINARY_CONTROL,
     SOURCE_NAME,
     TARGET_MONITOR,
     build_layout,
@@ -178,7 +179,12 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--case",
         required=True,
-        choices=("source_only", *GEOMETRY_CONTROLS, DENSITY_CONTROL),
+        choices=(
+            "source_only",
+            *GEOMETRY_CONTROLS,
+            DENSITY_CONTROL,
+            EXACT_BINARY_CONTROL,
+        ),
     )
     parser.add_argument("--rho", type=float)
     parser.add_argument(
@@ -193,6 +199,16 @@ def _parse_args() -> argparse.Namespace:
         "--rho-key",
         default="projected_density_nodal",
         help="NPZ array key used by --rho-file (default: projected_density_nodal).",
+    )
+    parser.add_argument(
+        "--binary-mask-file",
+        type=Path,
+        help="NPY/NPZ containing the exact 80x80 zero/one Au cell mask.",
+    )
+    parser.add_argument(
+        "--binary-mask-key",
+        default="binary_mask",
+        help="NPZ key used by --binary-mask-file (default: binary_mask).",
     )
     parser.add_argument("--polarization", required=True, choices=POLARIZATIONS)
     parser.add_argument("--gpu-index", type=int)
@@ -290,15 +306,26 @@ def _parse_args() -> argparse.Namespace:
             not np.isfinite(args.rho) or not 0.0 <= args.rho <= 1.0
         ):
             parser.error("--rho must be finite and in [0,1]")
+        if args.binary_mask_file is not None:
+            parser.error("import_density does not accept --binary-mask-file")
     elif args.rho is not None or args.rho_file is not None:
         parser.error("--rho/--rho-file are valid only for import_density")
+    if args.case == EXACT_BINARY_CONTROL:
+        if args.binary_mask_file is None:
+            parser.error("exact_binary requires --binary-mask-file")
+    elif args.binary_mask_file is not None:
+        parser.error("--binary-mask-file is valid only for exact_binary")
     if args.include_adjoint_field_region and args.case != DENSITY_CONTROL:
         parser.error(
             "--include-adjoint-field-region is valid only for import_density"
         )
     if args.recover_completed_fsp and args.audit_only:
         parser.error("--recover-completed-fsp and --audit-only are mutually exclusive")
-    if args.recover_completed_fsp and args.case in ("source_only", DENSITY_CONTROL):
+    if args.recover_completed_fsp and args.case in (
+        "source_only",
+        DENSITY_CONTROL,
+        EXACT_BINARY_CONTROL,
+    ):
         parser.error(
             "--recover-completed-fsp currently accepts only exact material controls"
         )
@@ -363,9 +390,54 @@ def _projected_density(
     return density, provenance
 
 
+def _exact_binary_mask(
+    args: argparse.Namespace,
+) -> tuple[np.ndarray | None, dict[str, Any] | None]:
+    if args.case != EXACT_BINARY_CONTROL:
+        return None, None
+    assert args.binary_mask_file is not None
+    resolved = args.binary_mask_file.expanduser().resolve()
+    if resolved.suffix.lower() == ".npy":
+        mask = np.load(resolved, allow_pickle=False)
+        key: str | None = None
+    elif resolved.suffix.lower() == ".npz":
+        with np.load(resolved, allow_pickle=False) as data:
+            if args.binary_mask_key not in data:
+                raise KeyError(
+                    f"missing binary mask key {args.binary_mask_key!r}: {resolved}"
+                )
+            mask = np.asarray(data[args.binary_mask_key])
+        key = args.binary_mask_key
+    else:
+        raise ValueError("exact binary mask must use NPY or NPZ")
+    if (
+        mask.shape != CONTRACT.design_shape
+        or not np.all(np.isfinite(mask))
+        or not np.all((mask == 0) | (mask == 1))
+    ):
+        raise ValueError("exact binary mask must be finite 80x80 with values 0/1")
+    value = np.asarray(mask, dtype=np.uint8)
+    return value, {
+        "kind": "exact_binary_cell_mask",
+        "path": str(resolved),
+        "sha256": _sha256(resolved),
+        "array_key": key,
+        "solid_cell_count": int(np.sum(value)),
+    }
+
+
 def _case_label(
-    args: argparse.Namespace, projected_density: np.ndarray | None = None
+    args: argparse.Namespace,
+    projected_density: np.ndarray | None = None,
+    exact_binary_mask: np.ndarray | None = None,
 ) -> str:
+    if args.case == EXACT_BINARY_CONTROL:
+        if exact_binary_mask is None:
+            raise ValueError("exact-binary label requires the cell mask")
+        digest = hashlib.sha256(
+            np.ascontiguousarray(exact_binary_mask, dtype=np.uint8).tobytes()
+        ).hexdigest()
+        return f"exact_binary_{digest[:12]}"
     if args.case != DENSITY_CONTROL:
         return str(args.case)
     if projected_density is None:
@@ -384,6 +456,7 @@ def _output_paths(
     args: argparse.Namespace,
     spec: LumericalMeshSpec,
     projected_density: np.ndarray | None = None,
+    exact_binary_mask: np.ndarray | None = None,
 ) -> tuple[Path, Path, Path, Path]:
     output = args.output_dir
     if output is None:
@@ -391,7 +464,7 @@ def _output_paths(
             DEFAULT_RAW_ROOT
             / "au_dualpol_4um_lumerical"
             / spec.label
-            / f"{_case_label(args, projected_density)}_{args.polarization}"
+            / f"{_case_label(args, projected_density, exact_binary_mask)}_{args.polarization}"
         )
     output = output.expanduser().resolve()
     try:
@@ -404,7 +477,7 @@ def _output_paths(
             f"{output}"
         )
     stem = (
-        f"{_case_label(args, projected_density)}_"
+        f"{_case_label(args, projected_density, exact_binary_mask)}_"
         f"{args.polarization}_{spec.label}"
     )
     return (
@@ -932,6 +1005,7 @@ def main() -> int:
     args = _parse_args()
     spec = _mesh_spec(args)
     projected_density, density_input = _projected_density(args)
+    exact_binary_mask, binary_input = _exact_binary_mask(args)
     source_object_w0_m = args.source_object_w0_um * 1.0e-6
     source_contract = source_calibration_contract(
         spec,
@@ -941,9 +1015,10 @@ def main() -> int:
     audit_payload = {
         "status": "AUDITED_EXACT_AU_4UM_CONTROL_NOT_RUN",
         "case": args.case,
-        "case_label": _case_label(args, projected_density),
+        "case_label": _case_label(args, projected_density, exact_binary_mask),
         "projected_density": args.rho,
         "projected_density_input": density_input,
+        "exact_binary_input": binary_input,
         "polarization": args.polarization,
         "mesh_spec": spec.audit(),
         "source_calibration_contract": source_contract,
@@ -974,7 +1049,7 @@ def main() -> int:
         expected_gpu_uuid=requested_gpu_uuid,
     )
     output, fsp_path, npz_path, result_path = _output_paths(
-        args, spec, projected_density
+        args, spec, projected_density, exact_binary_mask
     )
     protected_paths = (
         (npz_path, result_path)
@@ -990,9 +1065,10 @@ def main() -> int:
     result: dict[str, Any] = {
         "status": "BLOCKED_EXACT_AU_4UM_CONTROL",
         "case": args.case,
-        "case_label": _case_label(args, projected_density),
+        "case_label": _case_label(args, projected_density, exact_binary_mask),
         "projected_density": args.rho,
         "projected_density_input": density_input,
+        "exact_binary_input": binary_input,
         "polarization": args.polarization,
         "git_commit": _git_commit(),
         "mesh_spec": spec.audit(),
@@ -1113,6 +1189,7 @@ def main() -> int:
                 spec=spec,
                 source_object_w0_m=source_object_w0_m,
                 projected_density=projected_density,
+                exact_binary_mask=exact_binary_mask,
                 include_adjoint_field_region=args.include_adjoint_field_region,
                 au_max_coefficients=args.au_max_coefficients,
                 au_fit_tolerance=args.au_fit_tolerance,
@@ -1196,6 +1273,13 @@ def main() -> int:
                 projected_density_x_m=density_x,
                 projected_density_y_m=density_y,
             )
+        if exact_binary_mask is not None:
+            x_edges, y_edges = design_edges()
+            arrays.update(
+                exact_binary_cell_mask=np.asarray(exact_binary_mask),
+                exact_binary_x_edges_m=x_edges,
+                exact_binary_y_edges_m=y_edges,
+            )
         if post_mesh.get("available"):
             arrays.update(
                 {
@@ -1220,7 +1304,11 @@ def main() -> int:
                 au_mask=(
                     None
                     if args.case == DENSITY_CONTROL
-                    else exact_control_masks()[args.case]
+                    else (
+                        exact_binary_mask
+                        if args.case == EXACT_BINARY_CONTROL
+                        else exact_control_masks()[args.case]
+                    )
                 ),
             )
             case_gates.update(
@@ -1248,9 +1336,9 @@ def main() -> int:
             "PASSED_EXACT_AU_4UM_SOURCE_ONLY_NUMERICAL_GATE"
             if args.case == "source_only" and passed
             else (
-                f"PASSED_PROVISIONAL_LUMERICAL_4UM_{_case_label(args, projected_density)}_{args.polarization}_CONTROL"
+                f"PASSED_PROVISIONAL_LUMERICAL_4UM_{_case_label(args, projected_density, exact_binary_mask)}_{args.polarization}_CONTROL"
                 if passed
-                else f"FAILED_LUMERICAL_4UM_{_case_label(args, projected_density)}_{args.polarization}_GATE"
+                else f"FAILED_LUMERICAL_4UM_{_case_label(args, projected_density, exact_binary_mask)}_{args.polarization}_GATE"
             )
         )
         if passed and args.accelerator_policy != "b200":

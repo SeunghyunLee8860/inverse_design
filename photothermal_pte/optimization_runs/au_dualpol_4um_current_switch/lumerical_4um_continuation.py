@@ -1,0 +1,348 @@
+"""Production beta continuation and Au-specific fabrication constraints.
+
+The flake-topology reference run used three design inequalities at high beta:
+terminal conductance plus solid/void minimum-feature constraints.  The Au in
+this run is a floating optical/thermal structure, not a measurement terminal,
+so a terminal-conductance floor would be unphysical.  Its three high-beta
+design inequalities are instead minimum Au feature, minimum void/spacing, and
+an explicit grayness cap.
+
+The two epigraph inequalities that define the signed dual-polarization current
+objective are always present and are not counted as fabrication constraints.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Any, Callable
+
+import numpy as np
+
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
+    CONTRACT,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
+    OPTIMIZER_250NM_MAPPING,
+    calibrated_lumerical_250nm_dfm_caps,
+    smooth_lumerical_250nm_constraints,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_optimizer import (
+    CURRENT_SCALE_A,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_signed_objective import (
+    signed_dual_objective_point,
+)
+
+
+BETA_SCHEDULE = (1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0)
+
+# Each attempt includes the point at which NLopt starts.  The later stages get
+# more evaluations because their projection and active constraints are stiffer.
+STAGE_MAXEVAL = {
+    1.0: 5,
+    2.0: 5,
+    4.0: 6,
+    8.0: 6,
+    16.0: 7,
+    32.0: 7,
+    64.0: 8,
+    128.0: 10,
+}
+MAXIMUM_STAGE_ATTEMPTS = {
+    1.0: 1,
+    2.0: 1,
+    4.0: 2,
+    8.0: 2,
+    16.0: 3,
+    32.0: 3,
+    64.0: 4,
+    128.0: 8,
+}
+MOVE_LIMIT = {
+    1.0: 0.025,
+    2.0: 0.020,
+    4.0: 0.018,
+    8.0: 0.015,
+    16.0: 0.012,
+    32.0: 0.010,
+    64.0: 0.008,
+    128.0: 0.006,
+}
+
+# The caps are applied only once their corresponding constraint is active.
+# Intermediate DFM caps are fixed from the reprojected stage baseline and may
+# never relax a previously active cap.  Beta=128 uses the independently
+# calibrated exact-pass binary-reference caps.
+DFM_BASELINE_REDUCTION = {
+    4.0: (0.92, np.inf),
+    8.0: (0.85, 0.98),
+    16.0: (0.72, 0.88),
+    32.0: (0.52, 0.70),
+    64.0: (0.30, 0.45),
+    128.0: (0.0, 0.0),
+}
+GRAYNESS_CAP = {
+    16.0: 0.35,
+    32.0: 0.15,
+    64.0: 0.040,
+    128.0: 0.005,
+}
+
+DESIGN_CONSTRAINT_TOLERANCE = 1.0e-3
+EPIGRAPH_CONSTRAINT_TOLERANCE = 1.0e-6
+
+
+def active_design_constraint_names(beta: float) -> tuple[str, ...]:
+    """Return the gradual 0 -> 1 -> 2 -> 3 fabrication schedule."""
+
+    value = float(beta)
+    if value < 4.0:
+        return ()
+    if value < 8.0:
+        return ("minimum_250nm_Au_feature",)
+    if value < 16.0:
+        return (
+            "minimum_250nm_Au_feature",
+            "minimum_250nm_void_spacing",
+        )
+    return (
+        "minimum_250nm_Au_feature",
+        "minimum_250nm_void_spacing",
+        "grayness_mean_4rho1mrho",
+    )
+
+
+def grayness_value_gradient(
+    latent: np.ndarray, beta: float
+) -> tuple[float, np.ndarray]:
+    """Return mean 4*rho*(1-rho) and its exact latent pullback."""
+
+    value = np.asarray(latent, dtype=np.float64)
+    rho = OPTIMIZER_250NM_MAPPING.physical(value, float(beta))
+    grayness = float(np.mean(4.0 * rho * (1.0 - rho)))
+    gradient_projected = (4.0 - 8.0 * rho) / rho.size
+    gradient_latent = OPTIMIZER_250NM_MAPPING.vjp(
+        value, gradient_projected, float(beta)
+    )
+    return grayness, gradient_latent
+
+
+def stage_design_caps(
+    *,
+    beta: float,
+    baseline_dfm_values: np.ndarray,
+    previous_dfm_caps: np.ndarray | None,
+) -> dict[str, Any]:
+    """Fix monotone fabrication caps for one continuation stage."""
+
+    beta_value = float(beta)
+    baseline = np.asarray(baseline_dfm_values, dtype=np.float64)
+    if baseline.shape != (2,) or not np.all(np.isfinite(baseline)):
+        raise ValueError("baseline DFM values must be a finite length-two vector")
+    calibrated, calibration = calibrated_lumerical_250nm_dfm_caps()
+    prior = (
+        np.full(2, np.inf, dtype=np.float64)
+        if previous_dfm_caps is None
+        else np.asarray(previous_dfm_caps, dtype=np.float64)
+    )
+    if prior.shape != (2,) or np.any(np.isnan(prior)) or np.any(prior <= 0.0):
+        raise ValueError("previous DFM caps must be positive length-two values")
+    active = active_design_constraint_names(beta_value)
+    caps = prior.copy()
+    if active:
+        factors = np.asarray(DFM_BASELINE_REDUCTION[beta_value], dtype=np.float64)
+        proposed = np.maximum(calibrated, factors * baseline)
+        caps[0] = min(caps[0], proposed[0])
+        if len(active) >= 2:
+            caps[1] = min(caps[1], proposed[1])
+    gray_cap = GRAYNESS_CAP.get(beta_value, np.inf)
+    return {
+        "beta": beta_value,
+        "active_names": list(active),
+        "DFM_caps": caps,
+        "grayness_cap": float(gray_cap),
+        "calibrated_final_DFM_caps": calibrated,
+        "DFM_calibration": calibration,
+    }
+
+
+def design_constraint_point(
+    latent: np.ndarray,
+    *,
+    beta: float,
+    dfm_caps: np.ndarray,
+    grayness_cap: float,
+) -> dict[str, Any]:
+    """Evaluate normalized g(x)<=0 fabrication inequalities."""
+
+    active = active_design_constraint_names(beta)
+    dfm_values, dfm_gradients, _ = smooth_lumerical_250nm_constraints(
+        latent, beta
+    )
+    grayness, grayness_gradient = grayness_value_gradient(latent, beta)
+    caps = np.asarray(dfm_caps, dtype=np.float64)
+    values: list[float] = []
+    gradients: list[np.ndarray] = []
+    if len(active) >= 1:
+        values.append(float(dfm_values[0] / caps[0] - 1.0))
+        gradients.append(dfm_gradients[0] / caps[0])
+    if len(active) >= 2:
+        values.append(float(dfm_values[1] / caps[1] - 1.0))
+        gradients.append(dfm_gradients[1] / caps[1])
+    if len(active) >= 3:
+        if not np.isfinite(grayness_cap) or grayness_cap <= 0.0:
+            raise ValueError("active grayness cap must be finite and positive")
+        values.append(float(grayness / grayness_cap - 1.0))
+        gradients.append(grayness_gradient / grayness_cap)
+    return {
+        "names": list(active),
+        "normalized_values": np.asarray(values, dtype=np.float64),
+        "normalized_gradients": (
+            np.stack(gradients)
+            if gradients
+            else np.empty((0, *CONTRACT.design_node_shape), dtype=np.float64)
+        ),
+        "raw_DFM_values": dfm_values,
+        "DFM_caps": caps,
+        "grayness": grayness,
+        "grayness_cap": float(grayness_cap),
+    }
+
+
+@dataclass
+class ContinuationEpigraphProblem:
+    """NLopt callback surface for one fixed-beta production stage."""
+
+    evaluate_physics: Callable[[np.ndarray], dict[str, Any]]
+    beta: float
+    dfm_caps: np.ndarray
+    grayness_cap: float
+
+    def __post_init__(self) -> None:
+        self.beta = float(self.beta)
+        self.dfm_caps = np.asarray(self.dfm_caps, dtype=np.float64)
+        self.callback_history: list[dict[str, Any]] = []
+        self._last_latent: np.ndarray | None = None
+        self._last_point: dict[str, Any] | None = None
+
+    @property
+    def variable_count(self) -> int:
+        return int(np.prod(CONTRACT.design_node_shape)) + 1
+
+    @property
+    def design_constraint_count(self) -> int:
+        return len(active_design_constraint_names(self.beta))
+
+    @property
+    def total_constraint_count(self) -> int:
+        return 2 + self.design_constraint_count
+
+    def point(self, vector: np.ndarray) -> dict[str, Any]:
+        value = np.asarray(vector, dtype=np.float64)
+        if value.shape != (self.variable_count,):
+            raise ValueError("optimizer vector has the wrong shape")
+        latent = value[:-1].reshape(CONTRACT.design_node_shape)
+        if self._last_latent is not None and np.array_equal(latent, self._last_latent):
+            assert self._last_point is not None
+            return {**self._last_point, "epigraph_nA": float(value[-1])}
+        evaluated = self.evaluate_physics(latent)
+        signed = signed_dual_objective_point(
+            latent=latent,
+            beta=self.beta,
+            current_a_A=float(evaluated["currents_A"]["Ea"]),
+            current_b_A=float(evaluated["currents_A"]["Eb"]),
+            gradient_a_projected_A=evaluated["gradient_Ea_projected_A"],
+            gradient_b_projected_A=evaluated["gradient_Eb_projected_A"],
+            epigraph_A=float(value[-1]) * CURRENT_SCALE_A,
+            mapping=OPTIMIZER_250NM_MAPPING,
+        )
+        design = design_constraint_point(
+            latent,
+            beta=self.beta,
+            dfm_caps=self.dfm_caps,
+            grayness_cap=self.grayness_cap,
+        )
+        point = {
+            **evaluated,
+            **signed,
+            "latent": latent,
+            "epigraph_nA": float(value[-1]),
+            "design_constraints": design,
+        }
+        self._last_latent = latent.copy()
+        self._last_point = point
+        self.callback_history.append(
+            {
+                "callback_index": len(self.callback_history),
+                "current_Ea_nA": 1.0e9 * float(point["current_a_A"]),
+                "current_Eb_nA": 1.0e9 * float(point["current_b_A"]),
+                "balanced_utility_nA": 1.0e9
+                * float(point["balanced_utility_A"]),
+                "design_constraint_names": design["names"],
+                "design_constraint_values": design["normalized_values"].tolist(),
+                "raw_DFM_values": design["raw_DFM_values"].tolist(),
+                "grayness": design["grayness"],
+            }
+        )
+        return point
+
+    def objective(self, vector: np.ndarray, gradient: np.ndarray) -> float:
+        if gradient.size:
+            gradient[:] = 0.0
+            gradient[-1] = 1.0
+        return float(vector[-1])
+
+    def constraints(
+        self, result: np.ndarray, vector: np.ndarray, gradient: np.ndarray
+    ) -> None:
+        point = self.point(vector)
+        epigraph = (
+            np.asarray(point["epigraph_constraints_A"], dtype=np.float64)
+            / CURRENT_SCALE_A
+        )
+        design = point["design_constraints"]
+        result[:] = np.concatenate((epigraph, design["normalized_values"]))
+        if gradient.size:
+            gradient[:] = 0.0
+            gradient[:2, :-1] = (
+                np.asarray(
+                    point["constraint_gradients_latent_A"], dtype=np.float64
+                )
+                / CURRENT_SCALE_A
+            ).reshape(2, -1)
+            gradient[:2, -1] = 1.0
+            if self.design_constraint_count:
+                gradient[2:, :-1] = np.asarray(
+                    design["normalized_gradients"], dtype=np.float64
+                ).reshape(self.design_constraint_count, -1)
+
+
+def continuation_contract() -> dict[str, Any]:
+    """Return a serializable audit of the production continuation policy."""
+
+    return {
+        "beta_schedule": list(BETA_SCHEDULE),
+        "stage_maxeval": {str(key): value for key, value in STAGE_MAXEVAL.items()},
+        "maximum_stage_attempts": {
+            str(key): value for key, value in MAXIMUM_STAGE_ATTEMPTS.items()
+        },
+        "move_limit": {str(key): value for key, value in MOVE_LIMIT.items()},
+        "design_constraint_activation": {
+            str(beta): list(active_design_constraint_names(beta))
+            for beta in BETA_SCHEDULE
+        },
+        "grayness_caps": {
+            str(key): value for key, value in GRAYNESS_CAP.items()
+        },
+        "final_grayness_gate": GRAYNESS_CAP[BETA_SCHEDULE[-1]],
+        "initial_density": "exact uniform latent rho=0.5",
+        "floating_Au_terminal_conductance_constraint": False,
+        "objective": "maximize min(I_Ea, -I_Eb) by epigraph LD_MMA",
+        "final_promotion_requires": [
+            "I_Ea > 0 and I_Eb < 0",
+            "continuous grayness <= final cap",
+            "thresholded cell mask exact 250 nm solid/void audit",
+            "fresh ordinary-dispersive exact-binary Au Maxwell/CUDA-PDE evaluation",
+        ],
+        "posthoc_morphology_repair": False,
+    }

@@ -58,6 +58,7 @@ MONITOR_WAVELENGTH_M = CONTRACT.wavelength_m
 MATERIAL_READBACK_COUNT = 81
 MATERIAL_FIT_RELATIVE_GATE = 5.0e-3
 DENSITY_CONTROL = "import_density"
+EXACT_BINARY_CONTROL = "exact_binary"
 
 
 def polarization_angle_deg(polarization: str) -> float:
@@ -424,6 +425,7 @@ def build_layout(
     spec: LumericalMeshSpec,
     source_object_w0_m: float,
     projected_density: np.ndarray | None = None,
+    exact_binary_mask: np.ndarray | None = None,
     include_adjoint_field_region: bool = False,
     au_max_coefficients: int = AU_MATERIAL_MAX_COEFFICIENTS,
     au_fit_tolerance: float = MATERIAL_FIT_TOLERANCE,
@@ -431,14 +433,35 @@ def build_layout(
     """Build one source-only, exact-stack, or imported-density layout."""
 
     spec.validate()
-    if case not in ("source_only", *GEOMETRY_CONTROLS, DENSITY_CONTROL):
+    if case not in (
+        "source_only",
+        *GEOMETRY_CONTROLS,
+        DENSITY_CONTROL,
+        EXACT_BINARY_CONTROL,
+    ):
         raise ValueError(f"unsupported 4-um control case: {case}")
     if case == DENSITY_CONTROL:
         if projected_density is None:
             raise ValueError("import_density requires a projected nodal density")
         projected_density = canonical_density_nodes(projected_density)
+        if exact_binary_mask is not None:
+            raise ValueError("import_density does not accept an exact binary mask")
+    elif case == EXACT_BINARY_CONTROL:
+        if projected_density is not None:
+            raise ValueError("exact_binary does not accept projected density")
+        mask = np.asarray(exact_binary_mask)
+        if (
+            mask.shape != CONTRACT.design_shape
+            or not np.all((mask == 0) | (mask == 1))
+        ):
+            raise ValueError(
+                "exact_binary requires an exact 80x80 zero/one cell mask"
+            )
+        exact_binary_mask = np.asarray(mask, dtype=np.uint8)
     elif projected_density is not None:
         raise ValueError("projected_density is valid only for import_density")
+    elif exact_binary_mask is not None:
+        raise ValueError("exact_binary_mask is valid only for exact_binary")
     if include_adjoint_field_region and case != DENSITY_CONTROL:
         raise ValueError(
             "adjoint FieldRegion is authorized only for import_density forwards"
@@ -477,9 +500,15 @@ def build_layout(
             optical_z_min_m=spec.z_min_m,
         )
     else:
+        mask = (
+            exact_binary_mask
+            if case == EXACT_BINARY_CONTROL
+            else exact_control_masks()[case]
+        )
+        assert mask is not None
         geometry = add_exact_stack_geometry(
             fdtd,
-            exact_control_masks()[case],
+            mask,
             optical_x_bounds_m=(-half_domain, half_domain),
             optical_y_bounds_m=(-half_domain, half_domain),
             optical_z_min_m=spec.z_min_m,

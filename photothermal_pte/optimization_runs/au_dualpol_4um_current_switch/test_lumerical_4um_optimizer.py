@@ -7,6 +7,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_optimizer import (
     CURRENT_SCALE_A,
+    LumericalEvaluationDriver,
     SmokeEpigraphProblem,
     initial_latent_density,
 )
@@ -75,3 +76,28 @@ def test_same_latent_different_epigraph_does_not_repeat_physics() -> None:
     second = problem.point(np.r_[latent.ravel(), -8.5])
     assert calls == 1
     assert second["epigraph_nA"] == -8.5
+
+
+def test_production_retention_prunes_only_declared_heavy_transients(tmp_path) -> None:
+    evaluation = tmp_path / "evaluation"
+    evaluation.mkdir()
+    removable = (
+        evaluation / "forward.fsp",
+        evaluation / "result.h5",
+        evaluation / "forward_raw.npz",
+        evaluation / "gray_q_cuda_pde_pullback.npz",
+    )
+    retained = (
+        evaluation / "evaluation_result.json",
+        evaluation / "signed_projected_gradients.npz",
+        evaluation / "adjoint_gradient.npz",
+        evaluation / "solver.log",
+    )
+    for path in (*removable, *retained):
+        path.write_bytes(b"test")
+    driver = object.__new__(LumericalEvaluationDriver)
+    record = driver._prune_completed_evaluation(evaluation)
+    assert record["pruned_file_count"] == len(removable)
+    assert all(not path.exists() for path in removable)
+    assert all(path.exists() for path in retained)
+    assert (evaluation / "ARTIFACT_RETENTION.json").is_file()

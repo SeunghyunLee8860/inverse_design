@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+repository="$(git -C "$script_dir" rev-parse --show-toplevel)"
+commit="$(git -C "$repository" rev-parse --short=12 HEAD)"
+
+export PATH="/home/eidl/miniconda3/envs/EIDL-Lumapi/bin:${PATH}"
+export LD_LIBRARY_PATH="/home/eidl/miniconda3/envs/EIDL-Lumapi/lib"
+export AU_LUMERICAL_ACCELERATOR_POLICY="development"
+export AU_LUMERICAL_OPT_BETA="1"
+export AU_LUMERICAL_OPT_OUTPUT_ROOT="${AU_LUMERICAL_OPT_OUTPUT_ROOT:-/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_${commit}}"
+export AU_LUMERICAL_EA_SOURCE_CALIBRATION="${AU_LUMERICAL_EA_SOURCE_CALIBRATION:-/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_development/r12_gpu5_source_only_Ea_z2p5_bulk50_cv0_MCM6/source_only_Ea_fine_z2p5_bulk50_xy100_cv0_pml8_span20_z6_t1ps.json}"
+export AU_LUMERICAL_EB_SOURCE_CALIBRATION="${AU_LUMERICAL_EB_SOURCE_CALIBRATION:-/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_development/r12_gpu5_source_only_Eb_z2p5_bulk50_cv0_MCM6/source_only_Eb_fine_z2p5_bulk50_xy100_cv0_pml8_span20_z6_t1ps.json}"
+export FDTD_THREADS="${FDTD_THREADS:-8}"
+
+cd "$repository"
+exec /home/dhkim/bin/runres \
+  --reserve-count 9 \
+  --reserve-wait 1800 \
+  --reserve-tag au4um_lumerical_beta_continuation_gpu5 \
+  photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/41_optimize_lumerical_4um_dualpol_continuation.py \
+  -th "$FDTD_THREADS" -GPU 5

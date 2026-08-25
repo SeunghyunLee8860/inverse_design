@@ -12,6 +12,34 @@ TaIrTe4 flake.  The target is the signed dual-polarization objective
 The coordinate contract is **Lumerical/FDTDX x = crystal b** and
 **y = crystal a**.  Do not swap the polarization labels or coordinate axes.
 
+## Active production continuation -- 2026-08-25
+
+The two-evaluation beta-4 smoke is complete and is not the active production
+entry point. Read `LUMERICAL_PRODUCTION_CONTINUATION.md`, then use
+`41_optimize_lumerical_4um_dualpol_continuation.py` through
+`launch_lumerical_continuation_runres_gpu5.sh`.
+
+The production run starts from exact uniform `rho=0.5`, continues beta through
+`1,2,4,8,16,32,64,128`, and activates zero, one, two, then three Au design
+constraints. At high beta they are 250 nm solid, 250 nm void/spacing, and
+explicit grayness. Do not copy the reference flake optimizer's terminal-
+conductance constraint: this Au is a floating absorber, not a measurement
+electrode. The driver checkpoints every attempt, refuses cross-commit resume,
+and records FOM/current/DFM/grayness in `production_manifest.json`.
+
+Final promotion is fail-closed. Script 42 converts the thresholded cell mask
+to coalesced exact Lumerical rectangles using ordinary sampled dispersive Au,
+then freshly evaluates Ea/Eb Maxwell plus the custom CUDA thermal/electrical
+equations. Both current signs and every binary/250-nm gate must survive. No
+gray `importnk` result is presented as the fabricated device and there is no
+post-hoc morphology repair.
+
+Continuous evaluations use an explicit retention policy because the smoke
+consumed about 5 GB per evaluation. Gradients, density, JSON, commands, logs,
+and small Jacobians remain; completed transient FSP/H5/native-Q/PDE-pullback
+files are removed and listed in `ARTIFACT_RETENTION.json`. The final exact-
+binary forward artifacts are not pruned.
+
 ## Current Lumerical optimizer override -- 2026-08-25
 
 The user changed the active Lumerical optimizer constraint from 500 nm to a

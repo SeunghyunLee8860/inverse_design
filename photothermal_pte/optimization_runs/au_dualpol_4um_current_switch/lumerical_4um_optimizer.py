@@ -81,6 +81,12 @@ def initial_latent_density() -> np.ndarray:
     )
 
 
+def uniform_initial_latent_density() -> np.ndarray:
+    """Return the exact uniform rho=0.5 production-continuation start."""
+
+    return np.full(CONTRACT.design_node_shape, 0.5, dtype=np.float64)
+
+
 def _required_path(name: str) -> Path:
     value = os.environ.get(name)
     if not value:
@@ -168,14 +174,16 @@ class OptimizerRuntime:
     beta: float = 4.0
 
     @classmethod
-    def from_environment(cls) -> "OptimizerRuntime":
+    def from_environment(
+        cls, *, require_smoke_beta: bool = True
+    ) -> "OptimizerRuntime":
         policy = os.environ.get(
             "AU_LUMERICAL_ACCELERATOR_POLICY", "development"
         )
         if policy not in ("development", "b200"):
             raise RuntimeError(f"unsupported accelerator policy: {policy}")
         beta = float(os.environ.get("AU_LUMERICAL_OPT_BETA", "4"))
-        if beta != 4.0:
+        if require_smoke_beta and beta != 4.0:
             raise RuntimeError(
                 "the first smoke run is restricted to the beta-4 AD-FD state"
             )
@@ -269,12 +277,74 @@ class OptimizerRuntime:
 class LumericalEvaluationDriver:
     """Evaluate and cache complete signed-current gradients by latent state."""
 
-    def __init__(self, runtime: OptimizerRuntime):
+    def __init__(
+        self,
+        runtime: OptimizerRuntime,
+        *,
+        prune_heavy_intermediates: bool = False,
+    ):
         self.runtime = runtime
+        self.prune_heavy_intermediates = bool(prune_heavy_intermediates)
         self.evaluations_root = runtime.output_root / "evaluations"
         self.evaluations_root.mkdir(parents=True, exist_ok=True)
         self.history: list[dict[str, Any]] = []
         self._cache: dict[str, dict[str, Any]] = {}
+
+    @staticmethod
+    def _is_prunable_heavy_artifact(path: Path) -> bool:
+        return bool(
+            path.suffix.lower() in {".fsp", ".h5"}
+            or path.name.endswith("_raw.npz")
+            or path.name == "gray_q_cuda_pde_pullback.npz"
+        )
+
+    def _prune_completed_evaluation(
+        self, evaluation_dir: Path
+    ) -> dict[str, Any]:
+        """Remove production-only transients after gradients are persisted.
+
+        JSON, logs, latent/projected density, final gradients, and small
+        Jacobian matrices remain.  The fresh final exact-binary evaluation is
+        run by a different driver and is never pruned by this method.
+        """
+
+        candidates = [
+            path
+            for path in evaluation_dir.rglob("*")
+            if path.is_file() and self._is_prunable_heavy_artifact(path)
+        ]
+        records = [
+            {
+                "path": str(path.resolve()),
+                "size_bytes_before_prune": path.stat().st_size,
+                "reason": "production optimizer transient; gradients and provenance retained",
+            }
+            for path in candidates
+        ]
+        for path in candidates:
+            path.unlink()
+        retention = {
+            "policy": "prune_heavy_continuous_optimizer_intermediates_v1",
+            "pruned_at_utc": datetime.now(timezone.utc).isoformat(),
+            "pruned_file_count": len(records),
+            "pruned_size_bytes": int(
+                sum(row["size_bytes_before_prune"] for row in records)
+            ),
+            "retained": [
+                "evaluation_result.json",
+                "signed_projected_gradients.npz",
+                "latent_density.npy",
+                "projected_density.npz",
+                "JSON and command provenance",
+                "solver logs",
+                "small component-Yee Jacobian matrices",
+                "per-polarization final adjoint gradients",
+            ],
+            "pruned": records,
+            "final_exact_binary_evaluation_exempt": True,
+        }
+        _write_json(evaluation_dir / "ARTIFACT_RETENTION.json", retention)
+        return retention
 
     def _command(self, script: str, *arguments: str, log_path: Path) -> None:
         command = [sys.executable, str(SCRIPT_DIR / script), *map(str, arguments)]
@@ -649,6 +719,11 @@ class LumericalEvaluationDriver:
             not in {"gradient_Ea_projected_A", "gradient_Eb_projected_A"}
         }
         _write_json(evaluation_dir / "evaluation_result.json", persisted)
+        if self.prune_heavy_intermediates:
+            retention = self._prune_completed_evaluation(evaluation_dir)
+            record["artifact_retention"] = retention
+            persisted["artifact_retention"] = retention
+            _write_json(evaluation_dir / "evaluation_result.json", persisted)
         self.history.append(persisted)
         _write_json(self.runtime.output_root / "evaluation_history.json", self.history)
         self._cache[state_hash] = record
