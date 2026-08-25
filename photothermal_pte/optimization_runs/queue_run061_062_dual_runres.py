@@ -40,6 +40,7 @@ def main() -> int:
             "RUN061_062_GPU": str(gpu),
             "RUN061_062_RESUME": "1",
             "MSOPT_RUN_CMD": str(SITE_RUN),
+            "LUM_RESERVE_MODULE_DIR": "/home/dhkim/dhkim_module",
             "EIDL_RUN_BUSY_GPU_UTIL_THRESHOLD": "0",
             "PYTHONUNBUFFERED": "1",
             "PATH": f"{SITE_RUN.parent}:{os.environ.get('PATH', '')}",

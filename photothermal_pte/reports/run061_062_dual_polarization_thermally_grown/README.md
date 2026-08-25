@@ -34,6 +34,30 @@ each polarization's continuous current within 1%.
 
 ## Status
 
-Prepared for the fresh Run061 optimization. Run062 follows automatically.
-Final fields, signed local contributions, dense current-density maps, and the
-two same-device polarization response summaries will be published here.
+### Run061: complete
+
+At the user's request, Run061 was finalized from the completed beta-64
+checkpoint instead of spending the remaining budget at beta 128. The
+thresholded checkpoint had 22 exact-audit violations. Gradient-aware discrete
+repair produced four independently audited candidates with zero violations;
+candidate rank 3 had the largest recomputed dual soft-min current.
+
+| Quantity at 285 uW | Continuous beta 64 | Selected exact binary |
+|---|---:|---:|
+| `E||a` signed current | +53.913103 nA | +53.605863 nA |
+| `E||b` signed current | +53.402246 nA | +53.333744 nA |
+| dual signed soft-min | +53.651153 nA | +53.467953 nA |
+| exact 500 nm bad cells | 22 after thresholding | **0** |
+
+The exact soft-min change is -0.3415%. Both per-polarization 1% preservation
+gates pass. The selected density and independent audit are in
+`run_061_top_bottom_thermally_grown_sio2_dual_polarization/results/` as
+`FINAL_EXACT_BINARY_STRUCTURE.npz`, `FINAL_EXACT_BINARY_STRUCTURE.png`, and
+`FINAL_RESULT.json`.
+
+### Run062: running
+
+The +45-degree diagonal case started automatically under the same nine-license
+`runres` reservation on GPU 3 after Run061 finalization. It retains the full
+beta schedule and will undergo the same exact-zero, two-polarization final
+validation.

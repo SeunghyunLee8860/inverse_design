@@ -60,6 +60,9 @@ def main() -> int:
     ]
     if os.environ.get("RUN061_RESUME", "0") == "1":
         command.append("--resume")
+    finalize_after_beta = os.environ.get("RUN061_FINALIZE_AFTER_BETA")
+    if finalize_after_beta:
+        command.extend(["--finalize-after-beta", finalize_after_beta])
     return subprocess.run(command, cwd=REPOSITORY, env=environment).returncode
 
 

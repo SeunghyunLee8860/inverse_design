@@ -22,6 +22,7 @@ from types import SimpleNamespace
 
 import matplotlib
 matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 import nlopt
 import numpy as np
 
@@ -90,6 +91,68 @@ def emit(path: Path, event: str, **values: object) -> None:
     with path.open("a") as stream:
         stream.write(json.dumps(row) + "\n")
     print(json.dumps(row), flush=True)
+
+
+def publish_exact_binary_structure(
+    published: Path,
+    rho: np.ndarray,
+    audit: dict[str, object],
+) -> dict[str, object]:
+    """Persist the selected fabrication geometry in the Git-tracked results."""
+
+    binary = np.asarray(rho, dtype=np.float64)
+    if not np.all((binary == 0.0) | (binary == 1.0)):
+        raise RuntimeError("published exact structure is not binary")
+    if not audit["passed"] or int(audit["total_bad_cell_count"]) != 0:
+        raise RuntimeError("published exact structure is not globally exact-zero")
+
+    density_path = published / "FINAL_EXACT_BINARY_STRUCTURE.npz"
+    np.savez_compressed(
+        density_path,
+        rho=binary,
+        rho_binary=binary.astype(np.uint8),
+    )
+
+    x_bounds = CONTRACT.design_bounds_m["x"]
+    y_bounds = CONTRACT.design_bounds_m["y"]
+    figure, axis = plt.subplots(figsize=(6.4, 5.8), constrained_layout=True)
+    image = axis.imshow(
+        binary.T,
+        origin="lower",
+        interpolation="nearest",
+        cmap="gray_r",
+        vmin=0.0,
+        vmax=1.0,
+        extent=[
+            x_bounds[0] * 1.0e6,
+            x_bounds[1] * 1.0e6,
+            y_bounds[0] * 1.0e6,
+            y_bounds[1] * 1.0e6,
+        ],
+        aspect="equal",
+    )
+    axis.set_xlabel("x = b (um)")
+    axis.set_ylabel("y = a (um)")
+    axis.set_title("Final exact-binary TaIrTe4 (black), DFM bad cells = 0")
+    colorbar = figure.colorbar(image, ax=axis, shrink=0.86)
+    colorbar.set_ticks([0.0, 1.0], labels=["void", "TaIrTe4"])
+    plot_path = published / "FINAL_EXACT_BINARY_STRUCTURE.png"
+    figure.savefig(plot_path, dpi=190)
+    plt.close(figure)
+
+    return {
+        "density": {
+            "path": str(density_path),
+            "size_bytes": density_path.stat().st_size,
+            "sha256": sha256(density_path),
+        },
+        "plot": {
+            "path": str(plot_path),
+            "size_bytes": plot_path.stat().st_size,
+            "sha256": sha256(plot_path),
+        },
+        "exact_bad_cell_count": 0,
+    }
 
 
 def evaluate_exact_candidate(
@@ -284,8 +347,18 @@ def main() -> int:
     parser.add_argument("--jacobian-dir", required=True, type=Path)
     parser.add_argument("--constraint-device", default="cuda:0")
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument(
+        "--finalize-after-beta",
+        type=float,
+        choices=BETA_SCHEDULE,
+        default=BETA_SCHEDULE[-1],
+        help="Stop continuation after this completed beta and run exact repair.",
+    )
     args = parser.parse_args()
     dual_polarization = args.objective_mode == "dual_softmin"
+    beta_schedule = tuple(
+        beta for beta in BETA_SCHEDULE if beta <= args.finalize_after_beta
+    )
 
     CONTRACT.validate()
     DFM_CONTRACT.validate()
@@ -329,7 +402,39 @@ def main() -> int:
             resume_stage_start,
             resumed_stage_evaluations,
         ) = restore_resume_state(raw_root, published)
-        final_point = restore_final_point(raw_root, history)
+        final_point = restore_final_point(
+            raw_root,
+            [
+                row
+                for row in history
+                if float(row["beta"]) <= args.finalize_after_beta
+            ],
+        )
+        if last_completed_beta < args.finalize_after_beta:
+            raise RuntimeError(
+                "forced finalization requires a completed checkpoint at or above "
+                f"beta={args.finalize_after_beta:g}; latest is beta={last_completed_beta:g}"
+            )
+        if args.finalize_after_beta < BETA_SCHEDULE[-1]:
+            manifest["forced_finalization"] = {
+                "requested": True,
+                "finalize_after_beta": args.finalize_after_beta,
+                "source": "user-requested early exact-binary finalization",
+                "discarded_incomplete_higher_beta_history": sorted(
+                    {
+                        float(row["beta"])
+                        for row in history
+                        if float(row["beta"]) > args.finalize_after_beta
+                    }
+                ),
+            }
+            write_json(published / "RAW_ARTIFACT_MANIFEST.json", manifest)
+            emit(
+                events,
+                "forced_exact_binary_finalization",
+                finalize_after_beta=args.finalize_after_beta,
+                last_completed_beta=last_completed_beta,
+            )
         emit(
             events,
             "bounded_run_resumed",
@@ -377,7 +482,7 @@ def main() -> int:
         resumed_stage_evaluations = 0
         final_point = None
 
-    for beta in BETA_SCHEDULE:
+    for beta in beta_schedule:
         if beta <= last_completed_beta:
             continue
         stage_resume_count = (
@@ -500,7 +605,7 @@ def main() -> int:
     if final_point is None or fixed_source_power is None:
         raise RuntimeError("optimization did not produce a physical evaluation")
 
-    final_beta = float(history[-1]["beta"])
+    final_beta = float(beta_schedule[-1])
     final_rho = CONTRACT.apply_fixed_contact_density(
         MAPPING.physical(latent, final_beta)
     )
@@ -567,6 +672,9 @@ def main() -> int:
         geometry_mode=CONTRACT.geometry_mode,
         contact_axis=CONTRACT.contact_axis,
     )
+    published_exact_structure = publish_exact_binary_structure(
+        published, best_rho, best_audit
+    )
     continuous_reference_A = equivalent_current(
         float(final_point.result["objective_A"]), fixed_source_power
     )
@@ -596,6 +704,7 @@ def main() -> int:
             / max(abs(continuous_reference_A), 1.0e-30)
         ),
         "exact_binary_audit": best_audit,
+        "published_exact_binary_structure": published_exact_structure,
         "objective_preservation_gate_passed": objective_gate_passed,
         "chosen_candidate": best,
         "all_exact_candidates": candidate_results,
