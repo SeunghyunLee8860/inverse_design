@@ -7,6 +7,8 @@
     "run062_optical": "Run58 axis-aligned optical proxy without Au",
     "thermal_interface": "thermally grown TaIrTe4/SiO2, G=7.37e6 W/m2/K",
     "electrodes": "ideal equipotential regions only in electrical solves",
+    "gradient_display": "strict-centered nodal crystal-axis gradient on five-solid-node support; matches exact_binary_beam_position_spatial_fields_with_au figures",
+    "gradient_physics": "FEM triangular-element gradient retained for current evaluation and NPZ data",
     "target_incident_power_W": 0.000285
   },
   "cases": [
@@ -134,43 +136,43 @@
   "published_outputs": [
     {
       "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run061_Ea_exact_fields.png",
-      "size_bytes": 837891,
-      "sha256": "a9ef2d4108e13b2e97f7478e653765f0749df2cdbd68dc78cdee2f5fec04dce5"
+      "size_bytes": 1027896,
+      "sha256": "4d6e61c9e920aa17643b5fb0a4a9488064b18711202cffa6d127394c63bbbe2a"
     },
     {
       "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run061_Ea_derived_fields.npz",
-      "size_bytes": 9493372,
-      "sha256": "a491cab47982d2af470a8bf1420011ad6be81646dfcf8c169b31ea81cb5cc2c3"
+      "size_bytes": 10407624,
+      "sha256": "b33f3503d2c012e304586a6a35f70968fef8214e74cabc5f9270202432100154"
     },
     {
       "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run061_Eb_exact_fields.png",
-      "size_bytes": 816561,
-      "sha256": "90e7c12ed9fc47a17e502e201e6a9b0e3789fc0065ac23833a4ed2f075c437ef"
+      "size_bytes": 1010182,
+      "sha256": "f897316cb18ed697252e18c94f27f51432a1b0e84835b787330f9545dbe0efcf"
     },
     {
       "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run061_Eb_derived_fields.npz",
-      "size_bytes": 9484438,
-      "sha256": "0da0e901818f9b9076eabfdaa13762acc93b85d9299afa3ed6b464b645997776"
+      "size_bytes": 10396944,
+      "sha256": "1b54f8c2a5a52a43d1e9e8d16a454ab49e7212906596ddadf7932980a2a21d77"
     },
     {
       "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run062_Ea_exact_fields.png",
-      "size_bytes": 1342956,
-      "sha256": "64c3e640477040b84101b42f52ce16aff575f822278c0b0074925165904a0a6d"
+      "size_bytes": 1454653,
+      "sha256": "52db15c7d67f5313e24ffc6b6126f8970b86f86a87a64a299d57a6def1830fb4"
     },
     {
       "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run062_Ea_derived_fields.npz",
-      "size_bytes": 9190536,
-      "sha256": "25c3d7a5bd45cce6c178a240a917cfc83180d3c2f3fa4bfd84f76ae4e4942b2b"
+      "size_bytes": 10125825,
+      "sha256": "3629c1ab17a83b349a50d8b8bf64dbd32845c39d6570c60b94d26af3bc8f6039"
     },
     {
       "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run062_Eb_exact_fields.png",
-      "size_bytes": 1431522,
-      "sha256": "28e9f12c1c55af739a5f629559fe2c6fa981107e1a527859ad313ab103808ffb"
+      "size_bytes": 1546085,
+      "sha256": "8f407be65bb4a118b1a4584be7873154ea8cdf977dcc90382f10ab7dd54f25e6"
     },
     {
       "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run062_Eb_derived_fields.npz",
-      "size_bytes": 9178114,
-      "sha256": "a0c56c46ee8aee0b4ea8828834b5f586be70648aca1f43c7fbf1b13023ec13a9"
+      "size_bytes": 10112374,
+      "sha256": "9585694ef3e7e63ec80ceaa95d94aa0eb69f5745bd510715ce2c45e32be1cbcc"
     },
     {
       "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run061_062_optimization_convergence.png",

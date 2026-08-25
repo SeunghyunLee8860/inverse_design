@@ -112,6 +112,39 @@ def element_to_cell(values: np.ndarray, *, sum_triangles: bool = False) -> np.nd
     return combined.reshape(240, 240, *array.shape[1:])
 
 
+def strict_centered_crystal_gradient(
+    run: int,
+    temperature_K: np.ndarray,
+    rho: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Match the solid-only nodal gradient convention of the beam field books."""
+
+    temperature = np.asarray(temperature_K, dtype=np.float64)
+    solid = np.asarray(rho, dtype=np.float64) >= 0.5
+    valid = np.zeros_like(solid)
+    valid[1:-1, 1:-1] = (
+        solid[1:-1, 1:-1]
+        & solid[:-2, 1:-1]
+        & solid[2:, 1:-1]
+        & solid[1:-1, :-2]
+        & solid[1:-1, 2:]
+    )
+    derivative_u = np.full_like(temperature, np.nan)
+    derivative_v = np.full_like(temperature, np.nan)
+    centered_u = (temperature[2:, 1:-1] - temperature[:-2, 1:-1]) / (2.0 * STEP_M)
+    centered_v = (temperature[1:-1, 2:] - temperature[1:-1, :-2]) / (2.0 * STEP_M)
+    interior = valid[1:-1, 1:-1]
+    derivative_u[1:-1, 1:-1][interior] = centered_u[interior]
+    derivative_v[1:-1, 1:-1][interior] = centered_v[interior]
+    if run == 62:
+        derivative_b = (derivative_u - derivative_v) / np.sqrt(2.0)
+        derivative_a = (derivative_u + derivative_v) / np.sqrt(2.0)
+    else:
+        derivative_b = derivative_u
+        derivative_a = derivative_v
+    return derivative_b, derivative_a, np.hypot(derivative_b, derivative_a)
+
+
 def thermal_edges(diagonal: bool) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     if diagonal:
         negative_outer = np.asarray((-32, -28, -24, -20, -19), float) * 1.0e-6
@@ -359,6 +392,9 @@ def load_case(run: int, polarization: str) -> tuple[dict[str, Any], dict[str, np
     x_nodes_m = x_nodes_um * 1.0e-6
     y_nodes_m = y_nodes_um * 1.0e-6
     terminals = contact_masks(run, x_nodes_m, y_nodes_m)
+    strict_grad_b, strict_grad_a, strict_grad_magnitude = (
+        strict_centered_crystal_gradient(run, temperature * scale, rho)
+    )
 
     x_edges, y_edges, z_edges = thermal_edges(diagonal)
     dx, dy, dz = np.diff(x_edges), np.diff(y_edges), np.diff(z_edges)
@@ -380,6 +416,9 @@ def load_case(run: int, polarization: str) -> tuple[dict[str, Any], dict[str, np
         "temperature_gradient_b_cell_K_m": grad_t_cell[:, :, 0],
         "temperature_gradient_a_cell_K_m": grad_t_cell[:, :, 1],
         "temperature_gradient_magnitude_cell_K_m": np.linalg.norm(grad_t_cell, axis=2),
+        "temperature_gradient_strict_b_nodal_K_m": strict_grad_b,
+        "temperature_gradient_strict_a_nodal_K_m": strict_grad_a,
+        "temperature_gradient_strict_magnitude_nodal_K_m": strict_grad_magnitude,
         "weighting_potential": psi,
         "weighting_gradient_b_cell_m_inv": grad_psi_cell[:, :, 0],
         "weighting_gradient_a_cell_m_inv": grad_psi_cell[:, :, 1],
@@ -468,23 +507,26 @@ def field_figure(metrics: dict[str, Any], data: dict[str, np.ndarray]) -> Path:
         "Depth-integrated absorbed Q (W/m2)",
     )
     field_map(
-        axes[0, 2], x_n, y_n, data["temperature_rise_nodal_K"],
-        "Temperature rise at 285 uW (K)", cmap="inferno",
+        axes[0, 2], x_n, y_n,
+        np.where(data["rho_binary"] > 0.5, data["temperature_rise_nodal_K"], np.nan),
+        "TaIrTe4 temperature rise at 285 uW (K)", cmap="inferno",
     )
     field_map(
-        axes[0, 3], x_c, y_c, data["temperature_gradient_magnitude_cell_K_m"],
-        "|grad T| (K/m)", cmap="magma",
+        axes[0, 3], x_n, y_n,
+        data["temperature_gradient_strict_magnitude_nodal_K_m"],
+        "Strict-centered |grad T| (K/m)", cmap="viridis",
     )
     field_map(
-        axes[1, 0], x_c, y_c, data["temperature_gradient_b_cell_K_m"],
-        "dT/db (K/m)", cmap="coolwarm", centered=True,
+        axes[1, 0], x_n, y_n, data["temperature_gradient_strict_b_nodal_K_m"],
+        "Strict-centered dT/db (K/m)", cmap="coolwarm", centered=True,
     )
     field_map(
-        axes[1, 1], x_c, y_c, data["temperature_gradient_a_cell_K_m"],
-        "dT/da (K/m)", cmap="coolwarm", centered=True,
+        axes[1, 1], x_n, y_n, data["temperature_gradient_strict_a_nodal_K_m"],
+        "Strict-centered dT/da (K/m)", cmap="coolwarm", centered=True,
     )
     field_map(
-        axes[1, 2], x_n, y_n, data["weighting_potential"],
+        axes[1, 2], x_n, y_n,
+        np.where(data["rho_binary"] > 0.5, data["weighting_potential"], np.nan),
         "Weighting potential psi", cmap="viridis", terminal_masks=terminals,
     )
     field_map(
@@ -509,8 +551,28 @@ def field_figure(metrics: dict[str, Any], data: dict[str, np.ndarray]) -> Path:
     )
     field_map(
         axes[3, 0], x_c, y_c, data["total_J_magnitude_cell_A_m2"],
-        "Total local |J| (A/m2)", cmap="plasma",
+        "Total local |J| with dense direction field (A/m2)", cmap="cividis",
     )
+    stride = 6
+    j_b = data["total_J_b_cell_A_m2"][::stride, ::stride]
+    j_a = data["total_J_a_cell_A_m2"][::stride, ::stride]
+    j_magnitude = np.hypot(j_b, j_a)
+    unit_b = np.divide(j_b, j_magnitude, out=np.zeros_like(j_b), where=j_magnitude > 0.0)
+    unit_a = np.divide(j_a, j_magnitude, out=np.zeros_like(j_a), where=j_magnitude > 0.0)
+    arrows = axes[3, 0].quiver(
+        x_c[::stride, ::stride].T,
+        y_c[::stride, ::stride].T,
+        unit_b.T,
+        unit_a.T,
+        color="white",
+        pivot="mid",
+        angles="xy",
+        scale_units="xy",
+        scale=2.1,
+        width=0.0018,
+        alpha=0.78,
+    )
+    arrows.set_rasterized(True)
     field_map(
         axes[3, 1], x_c, y_c,
         data["terminal_current_contribution_total_cell_A_m2"] / 1.0e3,
@@ -638,6 +700,13 @@ def main() -> int:
             "run062_optical": "Run58 axis-aligned optical proxy without Au",
             "thermal_interface": "thermally grown TaIrTe4/SiO2, G=7.37e6 W/m2/K",
             "electrodes": "ideal equipotential regions only in electrical solves",
+            "gradient_display": (
+                "strict-centered nodal crystal-axis gradient on five-solid-node support; "
+                "matches exact_binary_beam_position_spatial_fields_with_au figures"
+            ),
+            "gradient_physics": (
+                "FEM triangular-element gradient retained for current evaluation and NPZ data"
+            ),
             "target_incident_power_W": TARGET_POWER_W,
         },
         "cases": metrics,

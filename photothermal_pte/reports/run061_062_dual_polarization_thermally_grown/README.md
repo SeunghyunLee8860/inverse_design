@@ -78,9 +78,13 @@ relabeled as a PASS.
 Each figure contains the exact structure, depth-integrated absorbed `Q`,
 temperature, `|grad T|`, signed `dT/db` and `dT/da`, weighting potential and
 gradient, short-circuit potential and field, signed local `J_b` and `J_a`,
-`|J|`, and signed total/axis-resolved terminal-current contribution. Red and
-blue in the contribution panels therefore show the local positive and negative
-parts of the final signed terminal current.
+`|J|`, and signed total/axis-resolved terminal-current contribution. The
+displayed temperature gradients use the same strict-centered, five-solid-node
+mask as `exact_binary_beam_position_spatial_fields_with_au`; temperature and
+weighting potential are likewise masked to TaIrTe4. The FEM cell gradients
+used by the current calculation remain saved in every derived NPZ. Red and
+blue in the contribution panels show the local positive and negative parts of
+the final signed terminal current.
 
 ### Run061 top-bottom
 
