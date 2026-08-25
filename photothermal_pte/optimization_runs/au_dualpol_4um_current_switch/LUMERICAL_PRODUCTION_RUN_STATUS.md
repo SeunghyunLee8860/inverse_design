@@ -79,10 +79,17 @@ verified-idle physical GPU and solver build:
    comparisons must pass all four 0.5% Maxwell gates, and the fine exact
    result must retain `I_Ea>0`, `I_Eb<0`.
 
-This closes only optical lateral convergence of the final mask. The custom
-thermal/electrical operators still use a 100-nm core grid; their independent
-100-to-50-nm temperature/current mesh convergence remains open and must not be
-hidden by the optical pass.
+At that post-launch snapshot this closed only optical lateral convergence of
+the final mask; the custom thermal/electrical 100-to-50-nm convergence path
+was still open. The later adaptive implementation and script 43 integration
+below close the code path, but the actual final-mask Ea/Eb result remains
+unmeasured.
+
+That paragraph describes the manual recovery path for the older immutable
+run. On commit `e284ea08` and later, script 43 performs the four exact
+100/50-nm forwards, both optical comparisons, and the fine-Q adaptive PDE
+sequence as one fail-closed terminal certificate. Script 42 by itself now
+declares `final_lateral_certificate_claimed=false`.
 
 ## Replacement production run -- 2026-08-25 20:54 UTC
 
@@ -180,8 +187,9 @@ The adjacent-pair metrics were:
 The adaptive gate correctly exhausts 12.5 nm and still fails this synthetic
 case because current remains just above 0.5%. This is a negative-control
 runtime/behavior check, not an Ea/Eb physical result and not evidence that the
-final design is nonconverged. The complete solver-free regression after combining the adaptive PDE and
-continuation symmetry-break changes is `279 passed in 257.30 s`.
+final design is nonconverged. At that adaptive-PDE/symmetry-break commit, the
+complete solver-free regression was `279 passed in 257.30 s`; the later
+terminal-certificate count is recorded below.
 
 If the exact forward/raw artifacts already exist, run no new Maxwell solve:
 
@@ -242,3 +250,47 @@ stages can change solve time. The single evaluation is below 30 minutes, but
 the complete continuation is an overnight-to-multiday production job. The
 initial max-min warm start preserves the beta-1 evaluation budget rather than
 adding another solve.
+
+
+## Terminal lateral-certificate repair -- 2026-08-26
+
+Commit `e284ea08` closes a mismatch between the written handoff and executable
+success condition. Before this commit, script 41 could report a passed
+exact-binary optimization after only one optical Maxwell mesh plus custom-PDE
+convergence; the documented 100-to-50-nm Maxwell comparison was not connected
+to `manifest["passed"]`.
+
+The latest code now:
+
+- requires passed Ea/Eb 100-nm and 50-nm source-only calibrations before the
+  first continuation solve, all on the same GPU UUID, solver build, policy,
+  CV0/2.5/50-nm z contract, 20-um span, 1-ps time, and PML 8;
+- runs four fresh ordinary-dispersive exact-Au forwards per terminal candidate
+  (100/50 nm times Ea/Eb);
+- requires the 0.5% source-normalized Q, flux, complex-E, and E2 gates for both
+  polarizations;
+- maps only the 50-nm optical raw Q through the adaptive
+  100/50/25/12.5-nm custom-PDE convergence sequence;
+- requires the fine-reference signs `I_Ea>0`, `I_Eb<0`;
+- stores every failed exact candidate below its own beta-128 attempt and
+  continues the configured retry policy instead of aborting immediately;
+- prevents runtime-setup errors from writing a stray manifest inside Git.
+
+The full solver-free regression is `287 passed in 259.22 s`. This is code-path
+validation, not a physical final-mask result.
+
+The documented external process remains immutable `69b2bb40` and therefore
+does not contain `ac077e4c` or `e284ea08`. Even if its old manifest says
+`passed=true`, do not treat that as the terminal lateral certificate. First
+retrieve its exact mask and run the latest script 43 with fresh matching
+100/50-nm Ea/Eb source-only calibrations. If the old continuation is stopped
+or made no meaningful progress, launch a new immutable latest-commit run only
+after setting:
+
+- `AU_LUMERICAL_EA_FINAL_XY50_SOURCE_CALIBRATION`;
+- `AU_LUMERICAL_EB_FINAL_XY50_SOURCE_CALIBRATION`.
+
+The 54/188 continuation evaluation counts do not include script 43. Every
+terminal candidate reaching it adds four fresh Maxwell forwards plus the
+fine-Q adaptive PDE sequence, and up to eight beta-128 candidates are allowed.
+No measured certificate wall time exists yet.

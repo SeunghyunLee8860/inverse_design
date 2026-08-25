@@ -46,14 +46,27 @@ Promotion requires all of the following:
 3. mean grayness is no larger than `0.005`;
 4. the thresholded 80x80 cell mask passes the independent exact 250 nm
    solid/void morphology audit;
-5. `42_evaluate_lumerical_4um_exact_binary.py` rebuilds that arbitrary mask
-   as coalesced Lumerical rectangles with the ordinary sampled dispersive Au
-   material and freshly evaluates both polarizations through the custom CUDA
-   thermal/electrical equations;
-6. the exact-binary currents still satisfy `I_Ea>0`, `I_Eb<0`.
+5. `43_certify_lumerical_4um_exact_binary_lateral.py` rebuilds that arbitrary
+   mask as coalesced Lumerical rectangles with the ordinary sampled
+   dispersive Au material and freshly evaluates Ea/Eb at both 100-nm and
+   50-nm flake/design lateral meshes;
+6. for Ea and Eb separately, source-normalized Q, flux, complex E, and E2
+   change by less than 0.5% from 100 to 50 nm;
+7. the 50-nm raw Q passes script 42's adaptive 100/50/25/12.5-nm custom CUDA
+   thermal/electrical convergence gate;
+8. the fine-reference exact-binary currents still satisfy
+   `I_Ea>0`, `I_Eb<0`.
 
 There is no post-hoc morphology repair and the final exact evaluation does
-not use a gray `importnk` material.
+not use a gray `importnk` material. Script 42 alone cannot promote a result
+because it covers only one optical Maxwell mesh.
+
+Before a latest-commit production launch, set
+`AU_LUMERICAL_EA_FINAL_XY50_SOURCE_CALIBRATION` and
+`AU_LUMERICAL_EB_FINAL_XY50_SOURCE_CALIBRATION` to passed 50-nm source-only
+JSONs from the same physical GPU UUID, accelerator policy, and solver build
+as the 100-nm Ea/Eb calibrations. The launcher fails before the first
+optimization solve if either path or any mesh/provenance gate is missing.
 
 ## Storage policy
 
@@ -75,4 +88,7 @@ The external output root contains:
 - `stages/beta_*/stage_result.json`: one attempt's full status;
 - `checkpoints/beta_*_completed.npz`: completed-beta handoff points;
 - `final_exact_binary_cell_mask.npz` and
-  `final_exact_binary_evaluation/` only after every continuous gate passes.
+  the passing attempt's `exact_binary_certificate/` only after every
+  continuous, optical-lateral, PDE-convergence, and sign gate passes. Failed
+  beta-128 exact candidates remain in their own attempt directories and can
+  never overwrite the final mask.

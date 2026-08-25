@@ -29,12 +29,16 @@ conductance constraint: this Au is a floating absorber, not a measurement
 electrode. The driver checkpoints every attempt, refuses cross-commit resume,
 and records FOM/current/DFM/grayness in `production_manifest.json`.
 
-Final promotion is fail-closed. Script 42 converts the thresholded cell mask
+Final promotion is fail-closed. Script 43 converts the thresholded cell mask
 to coalesced exact Lumerical rectangles using ordinary sampled dispersive Au,
-then freshly evaluates Ea/Eb Maxwell plus the custom CUDA thermal/electrical
-equations. Both current signs and every binary/250-nm gate must survive. No
-gray `importnk` result is presented as the fabricated device and there is no
-post-hoc morphology repair.
+runs fresh Ea/Eb Maxwell forwards on both 100-nm and 50-nm flake/design
+lateral meshes, requires all four 0.5% Maxwell comparison gates for both
+polarizations, and then sends the fine-mesh raw Q through script 42's adaptive
+custom CUDA thermal/electrical convergence path. Both current signs and every
+binary/250-nm gate must survive. Script 42 alone is explicitly a
+single-Maxwell-mesh PDE sub-gate and cannot issue the final lateral
+certificate. No gray `importnk` result is presented as the fabricated device
+and there is no post-hoc morphology repair.
 
 Continuous evaluations use an explicit retention policy because the smoke
 consumed about 5 GB per evaluation. Gradients, density, JSON, commands, logs,
@@ -237,8 +241,8 @@ server-verified nine-task project reservation before every Maxwell launch.
 30. `lumerical_4um_design_mapping.py` and
     `37_audit_lumerical_4um_latent_design_map.py` -- the Lumerical optimizer's
     actual design-variable chain. Both latent and projected occupancy are
-    81x81 nodal arrays. The finite 500-nm conic filter, tanh projection, exact
-    81x81-to-80x80 cell average, and every transpose are explicit. The old
+    81x81 nodal arrays. The active finite 250-nm conic filter, tanh projection,
+    exact 81x81-to-80x80 cell average, and every transpose are explicit. The old
     80x80-cell `dfm.MAPPING` remains historical FDTDX code and is not the new
     optimizer carrier. DFM opening residuals now operate on the derived
     physical cells and use a softplus positive part instead of nondifferentiable
@@ -357,6 +361,14 @@ server-verified nine-task project reservation before every Maxwell launch.
     already 96% full. A passed two-evaluation record must be reviewed before
     adding checkpoint/resume, bounded artifact retention, beta continuation,
     or a larger evaluation budget.
+42. `41_optimize_lumerical_4um_dualpol_continuation.py`,
+    `42_evaluate_lumerical_4um_exact_binary.py`, and
+    `43_certify_lumerical_4um_exact_binary_lateral.py` implement the active
+    continuation and terminal gates. Script 42 is one optical-mesh plus
+    adaptive-PDE sub-gate. Only script 43 combines fresh Ea/Eb exact-Au
+    100/50-nm optical forwards, both Maxwell lateral comparisons, fine-Q
+    adaptive PDE convergence, and the strict current signs. Script 41 calls
+    script 43 and cannot issue terminal success by calling script 42 alone.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -373,7 +385,7 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
   100 nm pitch; custom thermal/electrical maps use the exact four-node cell
   average and its transpose
 - reporting incident power: 285 uW
-- minimum solid and void feature audit: 500 nm
+- active Lumerical minimum solid and void feature audit: 250 nm
 - no symmetry, volume-fraction, or connectivity constraint
 - no Q clipping, smoothing, gain, polarization matching, or closure rescaling
 
@@ -383,7 +395,7 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    electrical remain the repository custom CUDA PDE solvers; no Lumerical HEAT
    or CHARGE license is assumed. Read `LUMERICAL_MAXWELL_GPU_PDE_ROUTE.md` and
    run `21_audit_lumerical_maxwell_preflight.py` first. The selected method is
-   density topology, not shape/level-set: latent rho -> 500-nm filter -> tanh
+   density topology, not shape/level-set: latent rho -> 250-nm filter -> tanh
    projection -> one shared 81x81 nodal projected occupancy. Lumerical optical uses the
    published nonlinear `n-k` interpolation in `au_density_relaxation.py`; it
    does not use optical `rho**3`. Custom thermal/electrical 80x80 cell fields
@@ -818,10 +830,10 @@ and its regression test are already pushed to the shared branch before this
 handoff update.
 
 
-## Final exact-binary 50-nm custom-PDE handoff
+## Final exact-binary optical/PDE convergence handoff
 
-The current shared branch now has a fail-closed final-mask custom-PDE
-convergence path:
+The current shared branch now has a fail-closed final-mask optical and
+custom-PDE convergence path:
 
 - `fb7ff239`: supports identical exact-binary geometry on 100/50-nm
   thermal/electrical core grids;
@@ -834,6 +846,13 @@ convergence path:
   `--gpu-index`, and records its UUID/model;
 - `d1ba0fd0`: adaptively extends a failed 100/50-nm pair through 50/25 and
   25/12.5 nm, stops at the first passing adjacent pair, and otherwise fails.
+- `e284ea08`: makes script 43 the only terminal numerical certificate. It
+  runs fresh ordinary-Au Ea/Eb forwards at optical xy=100 and 50 nm, requires
+  both Maxwell lateral comparisons, and evaluates only the fine raw Q through
+  the adaptive PDE sequence. Script 41 cannot report final success without it.
+  A physical exact-certificate failure now consumes an independent beta-128
+  attempt and follows the configured retry policy instead of aborting the
+  continuation immediately.
 
 Read `LUMERICAL_PRODUCTION_RUN_STATUS.md` for the complete reuse command and
 measured timing. Do not call the Lumerical development wrapper for the
@@ -841,8 +860,8 @@ PDE-only reuse because that wrapper intentionally requires a live solve
 license. Use `run_combined_gpu_python.sh` with one verified-idle physical GPU.
 Do not commit the forward raw NPZ or generated temperature evidence.
 
-The full regression after combining the adaptive PDE and continuation
-symmetry-break changes is `279 passed in 257.30 s`. No final-mask Ea/Eb PDE convergence result
+The full regression after adding the terminal lateral certificate is
+`287 passed in 259.22 s`. No final-mask Ea/Eb optical/PDE convergence result
 exists on this host yet. The active RTX continuation artifacts live on the
 other host. Retrieve its terminal manifest, final exact mask, two exact
 100-nm forwards, and later two exact 50-nm forwards before making any pass
@@ -854,6 +873,19 @@ negative control only. The adaptive production evaluator runs through
 device memory while active. Treat that as a resource measurement, not an RTX
 certificate: never colocate it with the active Lumerical production GPU and
 run it only on a verified-idle host/device with sufficient memory.
+
+Latest-commit production launch now requires two additional environment
+variables pointing to passed source-only calibrations generated on the same
+GPU UUID and solver build:
+
+- `AU_LUMERICAL_EA_FINAL_XY50_SOURCE_CALIBRATION`;
+- `AU_LUMERICAL_EB_FINAL_XY50_SOURCE_CALIBRATION`.
+
+Each must use
+`fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps`. The runtime audits all four
+100/50-nm Ea/Eb source JSONs before the first optimization solve. Do not
+invent a path or reuse a 100-nm incident-power calibration for the 50-nm
+forward.
 
 
 ## Continuation symmetry-break code after the active immutable run
@@ -881,3 +913,9 @@ allowed retry. Using the only measured production evaluation (`1089.50 s`)
 gives 16.3425 h and 56.8961 h. Treat these as planning bounds, not guaranteed
 ETAs. One evaluation is about 18.2 minutes, below 30 minutes, but a complete
 run is not a minutes-scale task. The warm start does not add to these counts.
+These 54/188 counts exclude terminal certification. Every beta-128 candidate
+that reaches script 43 adds four fresh exact-binary Lumerical forwards
+(100/50 nm times Ea/Eb) plus the fine-Q adaptive custom-PDE sequence; up to
+eight such candidate attempts are permitted. No measured wall-time is yet
+available for that four-forward certificate, so do not fold in an invented
+ETA.
