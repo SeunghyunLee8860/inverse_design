@@ -33,8 +33,11 @@ Final promotion is fail-closed. Script 43 converts the thresholded cell mask
 to coalesced exact Lumerical rectangles using ordinary sampled dispersive Au,
 runs fresh Ea/Eb Maxwell forwards on both 100-nm and 50-nm flake/design
 lateral meshes, requires all four 0.5% Maxwell comparison gates for both
-polarizations, and then sends the fine-mesh raw Q through script 42's adaptive
-custom CUDA thermal/electrical convergence path. Both current signs and every
+polarizations, and then sends both optical raw-Q bundles through script 42's
+adaptive custom CUDA thermal/electrical convergence path. At the PDE
+resolution selected by the 50-nm optical result, current, TaIrTe4 temperature
+field, mean temperature, and peak temperature must also change by less than
+0.5% between the 100-nm and 50-nm optical meshes. Both current signs and every
 binary/250-nm gate must survive. Script 42 alone is explicitly a
 single-Maxwell-mesh PDE sub-gate and cannot issue the final lateral
 certificate. No gray `importnk` result is presented as the fabricated device
@@ -366,9 +369,10 @@ server-verified nine-task project reservation before every Maxwell launch.
     `43_certify_lumerical_4um_exact_binary_lateral.py` implement the active
     continuation and terminal gates. Script 42 is one optical-mesh plus
     adaptive-PDE sub-gate. Only script 43 combines fresh Ea/Eb exact-Au
-    100/50-nm optical forwards, both Maxwell lateral comparisons, fine-Q
-    adaptive PDE convergence, and the strict current signs. Script 41 calls
-    script 43 and cannot issue terminal success by calling script 42 alone.
+    100/50-nm optical forwards, both Maxwell lateral comparisons, both
+    adaptive PDE sequences, same-grid downstream current/temperature
+    comparison, and the strict current signs. Script 41 calls script 43 and
+    cannot issue terminal success by calling script 42 alone.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -848,11 +852,14 @@ custom-PDE convergence path:
   25/12.5 nm, stops at the first passing adjacent pair, and otherwise fails.
 - `e284ea08`: makes script 43 the only terminal numerical certificate. It
   runs fresh ordinary-Au Ea/Eb forwards at optical xy=100 and 50 nm, requires
-  both Maxwell lateral comparisons, and evaluates only the fine raw Q through
-  the adaptive PDE sequence. Script 41 cannot report final success without it.
-  A physical exact-certificate failure now consumes an independent beta-128
-  attempt and follows the configured retry policy instead of aborting the
-  continuation immediately.
+  both Maxwell lateral comparisons, and connects the fine-Q adaptive PDE
+  sequence to script 41. A physical exact-certificate failure consumes an
+  independent beta-128 attempt instead of aborting immediately;
+- `628a88da`: extends that terminal gate through both optical-Q bundles. The
+  fine result chooses the adaptive PDE reference step; the coarse optical Q is
+  forced through at least that step. Ea and Eb must each keep current, TaIrTe4
+  temperature-field NRMSE, mean temperature, and peak temperature changes
+  below 0.5% on the identical PDE grid.
 
 Read `LUMERICAL_PRODUCTION_RUN_STATUS.md` for the complete reuse command and
 measured timing. Do not call the Lumerical development wrapper for the
@@ -860,13 +867,14 @@ PDE-only reuse because that wrapper intentionally requires a live solve
 license. Use `run_combined_gpu_python.sh` with one verified-idle physical GPU.
 Do not commit the forward raw NPZ or generated temperature evidence.
 
-The full regression after adding the terminal lateral certificate and
-crash-consistent terminal recovery is `289 passed in 260.24 s`. No final-mask
-Ea/Eb optical/PDE convergence result exists on this host yet. The active RTX
+The full regression after adding the full optical-downstream lateral
+certificate and crash-consistent terminal recovery is
+`291 passed in 259.53 s`. No final-mask Ea/Eb optical/PDE convergence result
+exists on this host yet. The active RTX
 continuation artifacts live on the other host. Retrieve its terminal
-manifest, final exact mask, two exact
-100-nm forwards, and later two exact 50-nm forwards before making any pass
-claim. The synthetic 285-uW sequence reached 12.5 nm but its final
+manifest, final exact mask, two exact 100-nm forwards, and later two exact
+50-nm forwards before making any pass claim. The synthetic 285-uW sequence
+reached 12.5 nm but its final
 25/12.5-nm current change was 0.5314%, so it correctly failed. This is a
 negative control only. The adaptive production evaluator runs through
 12.5 nm automatically; do not relax the 0.5% gate. The 12.5-nm solve used
@@ -916,7 +924,8 @@ ETAs. One evaluation is about 18.2 minutes, below 30 minutes, but a complete
 run is not a minutes-scale task. The warm start does not add to these counts.
 These 54/188 counts exclude terminal certification. Every beta-128 candidate
 that reaches script 43 adds four fresh exact-binary Lumerical forwards
-(100/50 nm times Ea/Eb) plus the fine-Q adaptive custom-PDE sequence; up to
-eight such candidate attempts are permitted. No measured wall-time is yet
-available for that four-forward certificate, so do not fold in an invented
-ETA.
+(100/50 nm times Ea/Eb) plus sequential fine-Q and coarse-Q adaptive
+custom-PDE sequences; up to eight such candidate attempts are permitted.
+Their peak memory is not concurrent, but their PDE wall times add. No measured
+wall-time is yet available for that terminal certificate, so do not fold in
+an invented ETA.

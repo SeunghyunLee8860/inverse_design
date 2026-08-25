@@ -86,10 +86,11 @@ below close the code path, but the actual final-mask Ea/Eb result remains
 unmeasured.
 
 That paragraph describes the manual recovery path for the older immutable
-run. On commit `e284ea08` and later, script 43 performs the four exact
-100/50-nm forwards, both optical comparisons, and the fine-Q adaptive PDE
-sequence as one fail-closed terminal certificate. Script 42 by itself now
-declares `final_lateral_certificate_claimed=false`.
+run. Commit `e284ea08` introduced script 43 with the four exact 100/50-nm
+forwards, both optical comparisons, and the fine-Q adaptive PDE sequence.
+Commit `628a88da` additionally runs the coarse optical Q through adaptive PDE
+and compares same-grid current/temperature against the fine optical result.
+Script 42 by itself declares `final_lateral_certificate_claimed=false`.
 
 ## Replacement production run -- 2026-08-25 20:54 UTC
 
@@ -269,30 +270,32 @@ The latest code now:
   (100/50 nm times Ea/Eb);
 - requires the 0.5% source-normalized Q, flux, complex-E, and E2 gates for both
   polarizations;
-- maps only the 50-nm optical raw Q through the adaptive
-  100/50/25/12.5-nm custom-PDE convergence sequence;
+- maps both 50-nm and 100-nm optical raw Q through adaptive
+  100/50/25/12.5-nm custom-PDE convergence and requires same-grid current and
+  temperature changes below 0.5%;
 - requires the fine-reference signs `I_Ea>0`, `I_Eb<0`;
 - stores every failed exact candidate below its own beta-128 attempt and
   continues the configured retry policy instead of aborting immediately;
-- prevents runtime-setup errors from writing a stray manifest inside Git.
+- prevents runtime-setup errors from writing a stray manifest inside Git;
 - atomically freezes the final mask and can recover a terminal checkpoint only
   after rechecking the passed manifest's mask/state SHA and strict signs.
 
-The full solver-free regression is `289 passed in 260.24 s`. This is code-path
+The full solver-free regression is `291 passed in 259.53 s`. This is code-path
 validation, not a physical final-mask result.
 
 The documented external process remains immutable `69b2bb40` and therefore
-does not contain `ac077e4c` or `e284ea08`. Even if its old manifest says
-`passed=true`, do not treat that as the terminal lateral certificate. First
-retrieve its exact mask and run the latest script 43 with fresh matching
-100/50-nm Ea/Eb source-only calibrations. If the old continuation is stopped
-or made no meaningful progress, launch a new immutable latest-commit run only
-after setting:
+does not contain `ac077e4c`, `e284ea08`, or `628a88da`. Even if its old
+manifest says `passed=true`, do not treat that as the terminal lateral
+certificate. First retrieve its exact mask and run the latest script 43 with
+fresh matching 100/50-nm Ea/Eb source-only calibrations. If the old
+continuation is stopped or made no meaningful progress, launch a new
+immutable latest-commit run only after setting:
 
 - `AU_LUMERICAL_EA_FINAL_XY50_SOURCE_CALIBRATION`;
 - `AU_LUMERICAL_EB_FINAL_XY50_SOURCE_CALIBRATION`.
 
 The 54/188 continuation evaluation counts do not include script 43. Every
 terminal candidate reaching it adds four fresh Maxwell forwards plus the
-fine-Q adaptive PDE sequence, and up to eight beta-128 candidates are allowed.
-No measured certificate wall time exists yet.
+sequential fine-Q and coarse-Q adaptive PDE sequences, and up to eight
+beta-128 candidates are allowed. Peak memory is not concurrent, but PDE wall
+times add. No measured certificate wall time exists yet.

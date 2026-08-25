@@ -53,8 +53,13 @@ Promotion requires all of the following:
 6. for Ea and Eb separately, source-normalized Q, flux, complex E, and E2
    change by less than 0.5% from 100 to 50 nm;
 7. the 50-nm raw Q passes script 42's adaptive 100/50/25/12.5-nm custom CUDA
-   thermal/electrical convergence gate;
-8. the fine-reference exact-binary currents still satisfy
+   thermal/electrical convergence gate and selects the reference PDE step;
+8. the 100-nm raw Q also passes adaptive PDE convergence and is forced through
+   at least the fine-selected PDE step;
+9. on that identical PDE grid, Ea and Eb each keep current, TaIrTe4
+   temperature-field NRMSE, mean temperature, and peak-temperature changes
+   below 0.5% from the 100-nm to 50-nm optical mesh;
+10. the fine-reference exact-binary currents still satisfy
    `I_Ea>0`, `I_Eb<0`.
 
 There is no post-hoc morphology repair and the final exact evaluation does
