@@ -1,5 +1,18 @@
 # Au dual-polarization PTE inverse-design code handoff
 
+## Latest FDTDX checkpoint -- z4 tail failed; FDTDX optimization stopped
+
+Read `FDTDX_USER_BALANCED_Z4_STOP.md` first.  The z4 source and exact-binary
+material pairs pass internally on `186 x 186 x 600`, but the byte-bound
+z2-to-z4 tail certificate fails total Q (`1.735%`), component Q (`3.536%`),
+and material-region E (`14.945%`) gates.  No z mesh is selected.  A z4
+forward takes about 290 s plus build/evaluation; measured scaling predicts
+about 15 minutes per z8 forward and around or above 30 minutes for a
+dual-polarization forward-plus-adjoint iteration.  Under the user-specified
+practicality limit, do not run z8 or any FDTDX optimizer.  Preserve this track
+as forensic evidence and leave the independently owned Lumerical work
+untouched.
+
 ## Latest FDTDX checkpoint -- user-balanced z2 comparison failed
 
 Read `FDTDX_USER_BALANCED_Z2_CHECK.md` first.  At commit `2ccc9215`, a
