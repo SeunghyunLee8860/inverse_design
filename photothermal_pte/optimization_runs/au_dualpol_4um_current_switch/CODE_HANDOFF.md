@@ -277,6 +277,15 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     Jacobian directory `r12_ea_latent_beta4_yee_jacobian_z2p5_bulk50_cv0_v2`;
     its `v1` predecessor is an intentionally retained blocked license-session
     record, not a valid operator.
+40. `FDTDX_PARITY_HANDOFF.md` defines the temporary license-free FDTDX
+    candidate-generation route. It does not authorize the legacy 80x80
+    optimizers or the shared-linear/c3-only optical carrier. The new route must
+    preserve the canonical 81x81 nodal filter/projection state, implement the
+    same n-k-then-square target in a differentiable discrete ADE carrier, use
+    the 2.5/50-nm rectilinear resolution contract, pass complete Ea/Eb and
+    signed-objective AD-FD, and run only a two-iteration smoke optimization
+    before review. FDTDX remains non-promotable; final binary CV0/finer
+    Lumerical reevaluation is mandatory.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
