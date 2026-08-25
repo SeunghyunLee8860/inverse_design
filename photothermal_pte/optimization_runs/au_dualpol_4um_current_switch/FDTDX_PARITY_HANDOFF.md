@@ -735,12 +735,14 @@ The alternative reverse audit has now proved the pinned dispersive ADE, six-face
 CPML, and late three-component PhasorDetector `c3` gradient against direct
 unrolled FDTDX on a 24-step real scene.  Exact-primal sliced resets then
 match direct gradients on 24- and 70-step scenes, including a partial final
-slice; the complete CPU suite passes 226 tests.  Read
-`FDTDX_REVERSIBLE_ADJOINT_REPORT.md` and
-`FDTDX_REVERSIBLE_SLICE_REPORT.md` for the exact scope.  This is not yet a
-production gradient: full-domain P makes the current reset payload too large.
-The next task is certified sparse regional-P slice storage, followed by a short
-exact-grid GPU timing probe.
+slice.  Sparse regional-P resets then match the full-slice regional `c3`
+gradient, and an actual exact-grid placement confirms a 356,503,872-byte sparse
+slice payload versus 985,960,704 bytes full; the latest integrated CPU suite
+passes 230 tests.  Read `FDTDX_REVERSIBLE_ADJOINT_REPORT.md`,
+`FDTDX_REVERSIBLE_SLICE_REPORT.md`, and
+`FDTDX_REVERSIBLE_SPARSE_SLICE_REPORT.md` for the exact scope.  This is not yet
+a production gradient.  The next task is a short bounded exact-grid GPU timing
+and stability probe on separately verified-idle UUIDs.
 
 ## What completion means
 
@@ -767,12 +769,13 @@ reevaluation.
 > polarization, so do not repeat checkpoint-count tuning.
 > The dispersive ADE, six-face CPML, and late PhasorDetector small-scene VJP
 > audits are complete; read `FDTDX_REVERSIBLE_ADJOINT_REPORT.md` and do not
-> repeat them.  Sliced exact-primal resets also pass 24/70-step direct-gradient
-> parity; read `FDTDX_REVERSIBLE_SLICE_REPORT.md`.  Do not launch its full-P
-> prototype on the exact grid.  Next integrate the certified disjoint
-> TaIrTe4/Au regional-P checkpoints, prove sparse-versus-full slice gradient
-> parity, and only then run a bounded exact-grid GPU timing and Ea/Eb latent
-> AD-FD probe on freshly verified-idle GPU UUIDs.
+> repeat them.  Sliced exact-primal resets pass 24/70-step direct-gradient
+> parity, and certified TaIrTe4/Au regional-P slice storage matches the full
+> regional `c3` gradient; read `FDTDX_REVERSIBLE_SLICE_REPORT.md` and
+> `FDTDX_REVERSIBLE_SPARSE_SLICE_REPORT.md`.  Next run only a short bounded
+> exact-grid reversible timing/stability probe on freshly verified-idle GPU
+> UUIDs.  Proceed to Ea/Eb latent AD-FD only if its measured projection remains
+> inside the user runtime gate; do not run a full gradient or optimizer.
 > Continue only the fresh FDTDX GPU parity path for the 4-um Ea/Eb Au topology; do not run legacy scripts 10/12/13
 > and do not use optical rho^3 or c3-only linear scaling.  Preserve the canonical
 > 81x81 latent -> 500-nm finite conic filter -> tanh projection -> shared nodal
