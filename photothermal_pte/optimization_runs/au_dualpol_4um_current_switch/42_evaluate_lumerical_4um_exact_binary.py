@@ -55,6 +55,11 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--threads", type=int, default=8)
     parser.add_argument("--ea-source-calibration", required=True, type=Path)
     parser.add_argument("--eb-source-calibration", required=True, type=Path)
+    parser.add_argument("--mesh-label", default=MESH_LABEL)
+    parser.add_argument("--flake-dxy-nm", type=float, default=100.0)
+    parser.add_argument("--stack-dz-nm", type=float, default=2.5)
+    parser.add_argument("--bulk-dz-nm", type=float, default=50.0)
+    parser.add_argument("--outer-dxy-nm", type=float, default=200.0)
     return parser.parse_args()
 
 
@@ -123,15 +128,15 @@ def _forward_command(
         "--source-object-w0-um",
         str(SOURCE_OBJECT_W0_UM),
         "--mesh-label",
-        MESH_LABEL,
+        args.mesh_label,
         "--flake-dxy-nm",
-        "100",
+        str(args.flake_dxy_nm),
         "--stack-dz-nm",
-        "2.5",
+        str(args.stack_dz_nm),
         "--bulk-dz-nm",
-        "50",
+        str(args.bulk_dz_nm),
         "--outer-dxy-nm",
-        "200",
+        str(args.outer_dxy_nm),
         "--mesh-accuracy",
         "3",
         "--au-max-coefficients",

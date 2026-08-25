@@ -49,6 +49,19 @@ assert _RUNNER_SPEC is not None and _RUNNER_SPEC.loader is not None
 _RUNNER = importlib.util.module_from_spec(_RUNNER_SPEC)
 _RUNNER_SPEC.loader.exec_module(_RUNNER)
 
+_EXACT_EVALUATOR_PATH = Path(__file__).with_name(
+    "42_evaluate_lumerical_4um_exact_binary.py"
+)
+_EXACT_EVALUATOR_SPEC = importlib.util.spec_from_file_location(
+    "au_dualpol_4um_exact_binary_evaluator_test", _EXACT_EVALUATOR_PATH
+)
+assert (
+    _EXACT_EVALUATOR_SPEC is not None
+    and _EXACT_EVALUATOR_SPEC.loader is not None
+)
+_EXACT_EVALUATOR = importlib.util.module_from_spec(_EXACT_EVALUATOR_SPEC)
+_EXACT_EVALUATOR_SPEC.loader.exec_module(_EXACT_EVALUATOR)
+
 
 class _FakeFdtd:
     def __init__(self) -> None:
@@ -476,3 +489,30 @@ def test_coordinate_material_partition_is_disjoint_and_tracks_exact_au() -> None
     assert not np.any(empty["Au_coordinate_partition"])
     # Three interior x coordinates times three interior y coordinates at z=25 nm.
     assert np.count_nonzero(full["Au_coordinate_partition"]) == 9
+
+
+def test_exact_binary_evaluator_forwards_lateral_mesh_override() -> None:
+    args = SimpleNamespace(
+        binary_mask_npz=Path("mask.npz"),
+        binary_mask_key="binary_mask",
+        gpu_index=5,
+        accelerator_policy="development",
+        threads=8,
+        mesh_label="fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps",
+        flake_dxy_nm=50.0,
+        stack_dz_nm=2.5,
+        bulk_dz_nm=50.0,
+        outer_dxy_nm=200.0,
+    )
+    command = _EXACT_EVALUATOR._forward_command(
+        args=args,
+        polarization="Ea",
+        source_calibration=Path("source.json"),
+        output=Path("output"),
+    )
+    options = dict(zip(command[2::2], command[3::2], strict=True))
+    assert options["--mesh-label"] == args.mesh_label
+    assert options["--flake-dxy-nm"] == "50.0"
+    assert options["--stack-dz-nm"] == "2.5"
+    assert options["--bulk-dz-nm"] == "50.0"
+    assert options["--outer-dxy-nm"] == "200.0"
