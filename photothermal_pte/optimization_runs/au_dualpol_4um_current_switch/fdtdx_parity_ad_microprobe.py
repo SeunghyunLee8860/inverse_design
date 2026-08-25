@@ -36,6 +36,13 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_pari
     checkpoint_carry_audit,
     dynamic_checkpointed_fdtd,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_parity_sparse_ade_checkpoint import (
+    sparse_ade_checkpoint_carry_audit,
+    sparse_ade_checkpointed_fdtd,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_parity_sparse_ade_support import (
+    sparse_ade_coefficient_support_audit,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_parity_microbenchmark import (
     _git_output,
     _write_new_external_json,
@@ -179,6 +186,27 @@ def run_probe(args: argparse.Namespace) -> dict[str, Any]:
     carry_audit = checkpoint_carry_audit(initial_arrays, jax_module=jax)
     if carry_audit["status"] != "PASS":
         raise RuntimeError(f"dynamic checkpoint carry audit failed: {carry_audit}")
+    sparse_regions = (
+        model["slices"]["fixed_tairte4"],
+        model["slices"]["au_design"],
+    )
+    sparse_carry_audit = None
+    sparse_support_audit = None
+    if args.loop_implementation == "sparse":
+        sparse_carry_audit = sparse_ade_checkpoint_carry_audit(
+            initial_arrays, regions=sparse_regions, jax_module=jax
+        )
+        sparse_support_audit = sparse_ade_coefficient_support_audit(
+            initial_arrays, regions=sparse_regions, jax_module=jax
+        )
+        if (
+            sparse_carry_audit["status"] != "PASS"
+            or sparse_support_audit["status"] != "PASS"
+        ):
+            raise RuntimeError(
+                "sparse ADE prerequisite audit failed: "
+                f"carry={sparse_carry_audit}, support={sparse_support_audit}"
+            )
     au_slice = model["slices"]["au_design"]
 
     def field_only_loss(latent_density):
@@ -192,12 +220,21 @@ def run_probe(args: argparse.Namespace) -> dict[str, Any]:
                 key=model["key"],
                 show_progress=False,
             )
-        else:
+        elif args.loop_implementation == "dynamic":
             _, output = dynamic_checkpointed_fdtd(
                 arrays=arrays,
                 objects=model["placed"],
                 config=config,
                 key=model["key"],
+                record_detectors=True,
+            )
+        else:
+            _, output = sparse_ade_checkpointed_fdtd(
+                arrays=arrays,
+                objects=model["placed"],
+                config=config,
+                key=model["key"],
+                regions=sparse_regions,
                 record_detectors=True,
             )
         e_au = output.fields.E[(slice(None),) + au_slice]
@@ -271,6 +308,8 @@ def run_probe(args: argparse.Namespace) -> dict[str, Any]:
         "checkpoint_method": "checkpointed",
         "loop_implementation": args.loop_implementation,
         "checkpoint_carry_audit": carry_audit,
+        "sparse_ADE_carry_audit": sparse_carry_audit,
+        "sparse_ADE_support_audit": sparse_support_audit,
         "checkpoints": args.checkpoints,
         "beta": 4.0,
         "direction": args.direction,
@@ -333,7 +372,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--steps", type=int, default=DEFAULT_STEPS)
     parser.add_argument("--checkpoints", type=int, default=DEFAULT_CHECKPOINTS)
     parser.add_argument(
-        "--loop-implementation", choices=("generic", "dynamic"), default="generic"
+        "--loop-implementation",
+        choices=("generic", "dynamic", "sparse"),
+        default="generic",
     )
     parser.add_argument("--fd-step", type=float, default=DEFAULT_FD_STEP)
     parser.add_argument(
