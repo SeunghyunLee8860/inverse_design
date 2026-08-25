@@ -726,20 +726,20 @@ from the material JSON.
 
 The empty-Au, nonuniform-gray, and full-Au Maxwell field/Q/closed-flux
 controls are validated for both polarizations.  Exact-grid bounded Ea/Eb
-field-only AD-FD also passes.  The dynamic-only checkpoint loop first removed
-1,108,179,072 immutable bytes from each saved state.  The subsequent sparse
-ADE loop stores P-current/P-previous only on the exact TaIrTe4 and Au support,
-reducing each checkpoint from 1,053,359,492 to 423,902,660 bytes without
-changing the 4,096-step saved values or gradients.  At 32,768 steps and 192
-checkpoints, Ea value-and-grad took 371.197 seconds and passed centered AD-FD
-at 1.9446e-4.  Its deliberately optimistic linear full projection is 48.36
-minutes per polarization; the complete objective will cost more.  A
-256-checkpoint/65,536-step compile OOMed on a single 159.07-GiB allocation.
-Therefore `optimizer_enabled` remains false.  Read `FDTDX_AD_PROBE_REPORT.md`,
-`FDTDX_DYNAMIC_CHECKPOINT_REPORT.md`, and
-`FDTDX_SPARSE_ADE_CHECKPOINT_REPORT.md`.  The next bounded runtime task is to
-remove nondifferentiated validation detectors from the AD object/state carry
-and retest the safe checkpoint budget; it is not a full run.
+field-only AD-FD also passes.  Dynamic and sparse-ADE checkpoint loops remove
+immutable full-grid arrays and store P-state only on exact TaIrTe4/Au support.
+The gradient profile then removes nine nondifferentiated validation detectors,
+retaining only `au_late` and `tairte4_late`.  On 65,536 steps and 256
+checkpoints, production-profile Ea value-and-grad took 670.428 seconds, passed
+centered AD-FD at 1.4082e-3, and used 166,056,417,536 XLA peak bytes.  Its
+optimistic full projection is 43.675 minutes per polarization.  Even the
+no-detector resource lower bound projects to 42.472 minutes; two-polarization
+optical AD alone is at least 87.351 minutes per iteration before Q/PDE work.
+Therefore `optimizer_enabled` remains false and checkpoint tuning is closed.
+Read `FDTDX_AD_PROBE_REPORT.md`, `FDTDX_DYNAMIC_CHECKPOINT_REPORT.md`,
+`FDTDX_SPARSE_ADE_CHECKPOINT_REPORT.md`, and
+`FDTDX_GRADIENT_DETECTOR_REPORT.md`.  The next task is a derivation-backed audit
+of an alternative dispersive reverse/adjoint path, not a full run.
 
 ## What completion means
 
@@ -756,17 +756,17 @@ reevaluation.
 > `photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/FDTDX_PARITY_HANDOFF.md`
 > completely, then read `FDTDX_AD_PROBE_REPORT.md`,
 > `FDTDX_DYNAMIC_CHECKPOINT_REPORT.md`,
-> `FDTDX_SPARSE_ADE_CHECKPOINT_REPORT.md`, and `CODE_HANDOFF.md`.
+> `FDTDX_SPARSE_ADE_CHECKPOINT_REPORT.md`,
+> `FDTDX_GRADIENT_DETECTOR_REPORT.md`, and `CODE_HANDOFF.md`.
 > Lumerical licenses are currently unavailable: do not call Lumerical, HEAT,
 > or CHARGE.  The current checkpointed 40-period gradient is runtime-blocked;
-> do not run it, the 16-forward certificate, or an optimizer.  Immutable
-> material leaves are already outside the checkpoint carry and sparse regional
-> ADE P-state parity is already proved.  Next separate nondifferentiated
-> validation controls from the differentiated objective, retain only the
-> required late-window Au/TaIrTe4 detector states, prove identical bounded
-> fields/latent gradients, and repeat the deeper exact-grid runtime gate.  If
-> the safe result still projects above 30 minutes per polarization, stop
-> checkpoint tuning and derive/validate a different reverse-mode algorithm.
+> do not run it, the 16-forward certificate, or an optimizer.  Immutable arrays,
+> sparse regional ADE P-state, and gradient-detector pruning are complete.  Even
+> the detector-free 65,536-step lower bound projects above 30 minutes per
+> polarization, so do not repeat checkpoint-count tuning.  Next audit the pinned
+> FDTDX reversible/backward equations against the three-pole dispersive ADE
+> recurrence.  Derive and prove any alternative adjoint on a small dispersive
+> scene before repeating bounded exact-grid latent AD-FD and runtime gates.
 > Continue only the fresh FDTDX GPU parity path for the 4-um Ea/Eb Au topology; do not run legacy scripts 10/12/13
 > and do not use optical rho^3 or c3-only linear scaling.  Preserve the canonical
 > 81x81 latent -> 500-nm finite conic filter -> tanh projection -> shared nodal

@@ -102,15 +102,13 @@ run thermal/electrical solves.  Therefore the current full-control-object route
 is `BLOCKED_PRODUCTION_RUNTIME`; do not run the 40-period gradient, complete
 16-forward AD-FD certificate, or optimizer.
 
-The next bounded experiment is to remove detectors that are not mathematical
-inputs to the differentiated objective.  A production gradient needs only the
-late-window Au/TaIrTe4 observables; source and closed-flux controls belong in
-separate nondifferentiated validation forwards.  The change must preserve the
-same forward fields and latent gradient and must be timed again at a horizon
-that exercises the deeper checkpoint schedule.  If the resulting safe
-checkpoint budget still projects above 30 minutes per polarization, further
-checkpoint-count tuning is rejected and an independently derived/tested
-adjoint or other reverse-mode algorithm is required.
+The detector-pruning experiment is complete; read
+`FDTDX_GRADIENT_DETECTOR_REPORT.md`.  Retaining only late Au/TaIrTe4 states
+makes 256 checkpoints fit, but the 65,536-step production-profile result still
+projects to 43.68 minutes per polarization.  Even the detector-free lower bound
+projects to 42.47 minutes.  The 30-minute feasibility gate therefore fails,
+and further checkpoint-count tuning is closed.  An independently derived and
+tested adjoint or other reverse-mode algorithm is required before any full run.
 
 ## External raw artifacts
 
