@@ -1071,3 +1071,41 @@ scope.
 The predicted z32 source and material pairs completed at commits `36bb0a2a` and `1cebc11e`. Each polarization used about 33.68 GiB and took about 18.5 minutes forward; the parallel pair wall time was about 19.3 minutes. The z16-to-z32 certificate SHA-256 is `079a6fbbb78aeab29d5e7460815f22208708a307f02572dc956f244433b9bb97`. All artifact and provenance audits pass, but component Q (`2.2751%`, limit `2%`) and material-region complex E (`6.9513%`, limit `5%`) fail. No mesh is selected. z64, adjoint timing, gray optimization, and optimizer restart are forbidden.
 
 Read `FDTDX_Z32_STOP_AND_AU_DESIGN_AUDIT.md` for the complete source/material hash ledger, unchanged gate table, measured runtime lower bound, local-paper Au design audit, generic FDTDX gray-law finding, and thermal/electrical blockers. The next session must not resume the historical FDTDX optimizer. The independent Lumerical session remains out of scope.
+
+
+## User-balanced z2-to-z4 downstream PTE tail
+
+At commit `101ad8ac`, the stored user-balanced z2 (`2.5 nm` thin-stack) and
+z4 (`1.25 nm`) exact-binary Q fields were byte-revalidated and mapped to one
+identical `548 x 548 x 72` thermal mesh/domain. Each case then used the same
+100-nm floating-Au left/right-flake-edge electrical weighting solve. No
+Maxwell solve or Lumerical operation occurred. The four cases took
+`21.6--23.2 s` each; Ea/Eb were parallelized on GPUs 6/7 only after both were
+verified idle. Existing Lumerical jobs on GPUs 0/1/2/4 were untouched.
+
+The certificate is valid but blocked. Ea passes every predeclared downstream
+gate. Eb passes temperature-field NRMSE (`1.7093%`), gradient-vector NRMSE
+(`1.9140%`), signed-current change (`2.3198%`), current-density NRMSE
+(`1.9319%`), and sign stability, but peak TaIrTe4 temperature changes by
+`2.0781%` versus the fixed `2.0%` limit. Do not relax the limit post hoc.
+Therefore z2 is PTE-current/gradient stable at the few-percent level but is not
+a selected strict optical or production multiphysics mesh.
+
+The current L500 geometry produces the wrong qualitative objective under this
+diagnostic: z2 gives Ea/Eb `+6.11455/+6.36632 nA`, and z4 gives
+`+6.07055/+6.21863 nA`. Both levels are same-sign, not the requested opposite
+sign. These are not actual-electrode predictions; actual contacts/electrodes
+and electrical mesh convergence remain open.
+
+Certificate:
+`/home/seunghyun200/fdtdx_results/user_balanced_pte_tail_certificate_101ad8ac/FDTDX_USER_BALANCED_PTE_TAIL_CERTIFICATE.json`,
+SHA-256 `4c2215734cb394d8b338eba3bbdcc7f21b8f79fbe55b543396d824919e5b1002`.
+Case root:
+`/home/seunghyun200/fdtdx_results/user_balanced_pte_tail_101ad8ac/`.
+Read `FDTDX_USER_BALANCED_PTE_TAIL.md` for the complete metric and artifact
+ledger. Raw JSON/NPZ remains outside Git.
+
+Do not launch z8, an FDTDX adjoint, or an optimizer. The next FDTDX forensic
+task is the paper/code-backed gray-Au constitutive-law audit: replace the
+historical optical/thermal/electrical density-law mismatch with one projected
+geometry and a validated endpoint-consistent law before any AD-FD attempt.
