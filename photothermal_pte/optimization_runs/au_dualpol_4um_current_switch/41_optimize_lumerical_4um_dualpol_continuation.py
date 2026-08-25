@@ -48,6 +48,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     artifact,
     uniform_initial_latent_density,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_maxwell_contract import (
+    binary_mask_sha256,
+)
 
 
 HERE = Path(__file__).resolve().parent
@@ -145,6 +148,21 @@ def _save_checkpoint(
     temporary.replace(path)
 
 
+def _save_final_binary_mask(path: Path, mask: np.ndarray) -> None:
+    value = np.asarray(mask, dtype=np.uint8)
+    if value.shape != CONTRACT.design_shape or not np.all((value == 0) | (value == 1)):
+        raise ValueError("final binary mask must be exact 80x80 zero/one")
+    if path.exists():
+        with np.load(path, allow_pickle=False) as data:
+            existing = np.asarray(data["binary_mask"], dtype=np.uint8)
+        if not np.array_equal(existing, value):
+            raise RuntimeError("refusing to overwrite a different final binary mask")
+        return
+    temporary = path.with_suffix(path.suffix + ".tmp.npz")
+    np.savez_compressed(temporary, binary_mask=value)
+    temporary.replace(path)
+
+
 def _load_checkpoint(path: Path) -> dict[str, Any]:
     with np.load(path, allow_pickle=False) as data:
         schema = str(np.asarray(data["schema"]).item())
@@ -160,6 +178,72 @@ def _load_checkpoint(path: Path) -> dict[str, Any]:
             "dfm_caps": np.asarray(data["dfm_caps"], dtype=np.float64),
             "grayness_cap": float(np.asarray(data["grayness_cap"]).item()),
         }
+
+
+def _verified_artifact(record: object, *, label: str) -> Path:
+    if not isinstance(record, dict):
+        raise RuntimeError(f"completed manifest lacks {label} artifact")
+    path = Path(str(record.get("path", ""))).expanduser().resolve()
+    if not path.is_file():
+        raise RuntimeError(f"completed manifest {label} artifact is absent")
+    actual = artifact(path)
+    if (
+        int(record.get("size_bytes", -1)) != actual["size_bytes"]
+        or str(record.get("sha256", "")) != actual["sha256"]
+    ):
+        raise RuntimeError(f"completed manifest {label} artifact changed")
+    return path
+
+
+def _completed_manifest_latent(manifest: dict[str, Any]) -> np.ndarray | None:
+    """Verify and recover the terminal latent state after an interrupted commit."""
+
+    if manifest.get("passed") is not True:
+        return None
+    if not str(manifest.get("status", "")).startswith(
+        "PASSED_LUMERICAL_4UM_DUALPOL_EXACT_BINARY_AU_"
+    ):
+        raise RuntimeError("passed continuation manifest has an invalid status")
+    final = manifest.get("final")
+    if not isinstance(final, dict):
+        raise RuntimeError("passed continuation manifest lacks final evidence")
+    exact = final.get("exact_binary_evaluation")
+    if not isinstance(exact, dict) or exact.get("passed") is not True:
+        raise RuntimeError("passed continuation manifest lacks a passed certificate")
+    currents = exact.get("currents_A", {})
+    if not (
+        isinstance(currents, dict)
+        and set(currents) == {"Ea", "Eb"}
+        and float(currents["Ea"]) > 0.0
+        and float(currents["Eb"]) < 0.0
+    ):
+        raise RuntimeError("passed continuation manifest lost the strict current signs")
+    binary_path = _verified_artifact(final.get("binary_mask"), label="binary mask")
+    with np.load(binary_path, allow_pickle=False) as arrays:
+        mask = np.asarray(arrays["binary_mask"])
+    if (
+        mask.shape != CONTRACT.design_shape
+        or not np.all((mask == 0) | (mask == 1))
+        or exact.get("binary_mask_payload_sha256")
+        != binary_mask_sha256(mask)
+    ):
+        raise RuntimeError("passed continuation binary-mask payload changed")
+    stage = final.get("continuous_stage")
+    if not isinstance(stage, dict):
+        raise RuntimeError("passed continuation manifest lacks continuous stage")
+    state_path = _verified_artifact(
+        stage.get("state_artifact"), label="stage state"
+    )
+    with np.load(state_path, allow_pickle=False) as arrays:
+        latent = np.asarray(arrays["latent_final"], dtype=np.float64)
+    if (
+        latent.shape != CONTRACT.design_node_shape
+        or not np.all(np.isfinite(latent))
+        or np.min(latent) < 0.0
+        or np.max(latent) > 1.0
+    ):
+        raise RuntimeError("passed continuation terminal latent state is invalid")
+    return latent
 
 
 def _attempt_directory(root: Path, beta: float, attempt: int) -> tuple[Path, int]:
@@ -253,6 +337,16 @@ def main() -> int:
                 raise RuntimeError(
                     "refusing resume under a different Git commit; use the committed run worktree"
                 )
+            completed_latent = _completed_manifest_latent(manifest)
+            if completed_latent is not None:
+                state.update(
+                    latent=completed_latent,
+                    beta_index=len(BETA_SCHEDULE),
+                    attempt=0,
+                )
+                _save_checkpoint(checkpoint_path, **state)
+                print(json.dumps(manifest["final"], indent=2, default=str))
+                return 0
         else:
             output.mkdir(parents=True, exist_ok=True)
             (output / "stages").mkdir()
@@ -523,7 +617,7 @@ def main() -> int:
                 _write_json(manifest_path, manifest)
                 if exact_switching:
                     binary_path = output / "final_exact_binary_cell_mask.npz"
-                    np.savez_compressed(binary_path, binary_mask=binary_mask)
+                    _save_final_binary_mask(binary_path, binary_mask)
                     manifest["status"] = (
                         "PASSED_LUMERICAL_4UM_DUALPOL_EXACT_BINARY_AU_"
                         "LATERAL_PDE_NUMERICAL_CERTIFICATE"
@@ -545,8 +639,8 @@ def main() -> int:
                     state["beta_index"] = len(BETA_SCHEDULE)
                     state["attempt"] = 0
                     state["latent"] = latent_final
-                    _save_checkpoint(checkpoint_path, **state)
                     _write_json(manifest_path, manifest)
+                    _save_checkpoint(checkpoint_path, **state)
                     print(json.dumps(manifest["final"], indent=2, default=str))
                     return 0
 

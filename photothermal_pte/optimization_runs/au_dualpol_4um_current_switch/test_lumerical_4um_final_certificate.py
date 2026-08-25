@@ -3,8 +3,10 @@ from __future__ import annotations
 import importlib.util
 import json
 from pathlib import Path
+import sys
 from types import SimpleNamespace
 
+import numpy as np
 import pytest
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_optimizer import (
@@ -190,3 +192,70 @@ def test_single_mesh_evaluator_explicitly_disclaims_final_certificate() -> None:
     ).read_text(encoding="utf-8")
     assert '"final_lateral_certificate_claimed": False' in source
     assert '"requires_script_43_100_to_50nm_optical_comparison": True' in source
+
+
+def _continuation_script(monkeypatch):
+    monkeypatch.setitem(
+        sys.modules,
+        "nlopt",
+        SimpleNamespace(__version__="test", LD_MMA=1),
+    )
+    path = Path(__file__).with_name(
+        "41_optimize_lumerical_4um_dualpol_continuation.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "au_dualpol_4um_continuation_driver_test", path
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_final_binary_mask_is_atomic_and_immutable(tmp_path, monkeypatch) -> None:
+    driver = _continuation_script(monkeypatch)
+    path = tmp_path / "final_mask.npz"
+    first = np.zeros((80, 80), dtype=np.uint8)
+    driver._save_final_binary_mask(path, first)
+    driver._save_final_binary_mask(path, first.copy())
+    changed = first.copy()
+    changed[0, 0] = 1
+    with pytest.raises(RuntimeError, match="different final binary mask"):
+        driver._save_final_binary_mask(path, changed)
+    assert not path.with_suffix(".npz.tmp.npz").exists()
+
+
+def test_passed_manifest_recovers_hash_bound_terminal_latent(
+    tmp_path, monkeypatch
+) -> None:
+    driver = _continuation_script(monkeypatch)
+    mask_path = tmp_path / "final_mask.npz"
+    mask = np.zeros((80, 80), dtype=np.uint8)
+    driver._save_final_binary_mask(mask_path, mask)
+    state_path = tmp_path / "stage_state.npz"
+    latent = np.full((81, 81), 0.5)
+    np.savez_compressed(state_path, latent_final=latent)
+    manifest = {
+        "status": (
+            "PASSED_LUMERICAL_4UM_DUALPOL_EXACT_BINARY_AU_"
+            "LATERAL_PDE_NUMERICAL_CERTIFICATE"
+        ),
+        "passed": True,
+        "final": {
+            "binary_mask": driver.artifact(mask_path),
+            "exact_binary_evaluation": {
+                "passed": True,
+                "currents_A": {"Ea": 1.0e-9, "Eb": -2.0e-9},
+                "binary_mask_payload_sha256": driver.binary_mask_sha256(mask),
+            },
+            "continuous_stage": {
+                "state_artifact": driver.artifact(state_path),
+            },
+        },
+    }
+    recovered = driver._completed_manifest_latent(manifest)
+    assert np.array_equal(recovered, latent)
+
+    state_path.write_bytes(b"tampered")
+    with pytest.raises(RuntimeError, match="stage state artifact changed"):
+        driver._completed_manifest_latent(manifest)
