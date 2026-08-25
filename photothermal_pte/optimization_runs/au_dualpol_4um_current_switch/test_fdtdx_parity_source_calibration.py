@@ -49,14 +49,16 @@ def test_case_gate_requires_all_independent_controls() -> None:
         "td_phasor_mismatch_relative": 0.001,
         "previous_late_mismatch_relative": 0.001,
         "vacuum_impedance_error_relative": 0.001,
-        "cross_polarization_ratio": 1.0e-8,
+        "source_injection_cross_polarization_ratio": 1.0e-8,
+        "source_injection_longitudinal_ratio": 1.0e-8,
     }
     assert case_gate(metrics) == "PASS_SOURCE_CASE"
     for key in (
         "td_phasor_mismatch_relative",
         "previous_late_mismatch_relative",
         "vacuum_impedance_error_relative",
-        "cross_polarization_ratio",
+        "source_injection_cross_polarization_ratio",
+        "source_injection_longitudinal_ratio",
     ):
         blocked = dict(metrics)
         blocked[key] = math.inf

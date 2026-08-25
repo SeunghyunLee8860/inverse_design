@@ -66,7 +66,9 @@ def case_gate(metrics: dict[str, float | bool]) -> str:
         < MAX_PREVIOUS_LATE_MISMATCH
         and float(metrics["vacuum_impedance_error_relative"])
         < MAX_VACUUM_IMPEDANCE_ERROR
-        and float(metrics["cross_polarization_ratio"])
+        and float(metrics["source_injection_cross_polarization_ratio"])
+        < MAX_CROSS_POLARIZATION_RATIO
+        and float(metrics["source_injection_longitudinal_ratio"])
         < MAX_CROSS_POLARIZATION_RATIO
     )
     return "PASS_SOURCE_CASE" if passed else "BLOCKED"
@@ -173,8 +175,15 @@ def _run_case(args: argparse.Namespace) -> dict[str, object]:
         np.linalg.norm(endpoint[cross_component].ravel())
     )
     longitudinal_endpoint_norm = float(np.linalg.norm(endpoint[2].ravel()))
-    cross_ratio = cross_endpoint_norm / desired_endpoint_norm
-    longitudinal_ratio = longitudinal_endpoint_norm / desired_endpoint_norm
+    endpoint_cross_ratio = cross_endpoint_norm / desired_endpoint_norm
+    endpoint_longitudinal_ratio = longitudinal_endpoint_norm / desired_endpoint_norm
+
+    source_E = np.asarray(model["placed"]["gaussian_source"]._E)
+    source_desired_norm = float(np.linalg.norm(source_E[e_component].ravel()))
+    source_cross_norm = float(np.linalg.norm(source_E[cross_component].ravel()))
+    source_longitudinal_norm = float(np.linalg.norm(source_E[2].ravel()))
+    source_cross_ratio = source_cross_norm / source_desired_norm
+    source_longitudinal_ratio = source_longitudinal_norm / source_desired_norm
 
     late_W = normalized_flux_to_si_W(late_raw)
     previous_W = normalized_flux_to_si_W(previous_raw)
@@ -190,8 +199,10 @@ def _run_case(args: argparse.Namespace) -> dict[str, object]:
                 previous_W,
                 td_W,
                 normalized_impedance,
-                cross_ratio,
-                longitudinal_ratio,
+                endpoint_cross_ratio,
+                endpoint_longitudinal_ratio,
+                source_cross_ratio,
+                source_longitudinal_ratio,
             )
         )
     )
@@ -204,8 +215,13 @@ def _run_case(args: argparse.Namespace) -> dict[str, object]:
         "previous_late_mismatch_relative": relative_mismatch(previous_W, late_W),
         "normalized_vacuum_impedance": normalized_impedance,
         "vacuum_impedance_error_relative": abs(normalized_impedance - 1.0),
-        "cross_polarization_ratio": cross_ratio,
-        "longitudinal_polarization_ratio": longitudinal_ratio,
+        "source_injection_cross_polarization_ratio": source_cross_ratio,
+        "source_injection_longitudinal_ratio": source_longitudinal_ratio,
+        "source_injection_desired_E_l2": source_desired_norm,
+        "source_injection_cross_E_l2": source_cross_norm,
+        "source_injection_longitudinal_E_l2": source_longitudinal_norm,
+        "endpoint_cross_transverse_ratio": endpoint_cross_ratio,
+        "endpoint_longitudinal_ratio": endpoint_longitudinal_ratio,
         "cross_transverse_endpoint_phasor_l2": cross_endpoint_norm,
         "longitudinal_endpoint_phasor_l2": longitudinal_endpoint_norm,
         "desired_endpoint_phasor_l2": desired_endpoint_norm,
