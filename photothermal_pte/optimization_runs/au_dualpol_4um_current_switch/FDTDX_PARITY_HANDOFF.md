@@ -767,9 +767,17 @@ blockwise VJPs both match direct AD on 24/70-step scenes, and the suite passes
 minutes per parallel iteration; 192 checkpoints are slower and peak near
 127.82 GB.  Read `FDTDX_BLOCKWISE_EXACT_REPORT.md`.  Checkpoint-count tuning,
 16,384-step/full-horizon probes, full current gradients, and the optimizer
-remain blocked.  Next prove an offline two-level segmented exact VJP on the
-small scenes and run at most one bounded exact-grid comparison only if its
-static memory audit fits.
+remain blocked.  The authorized offline two-level follow-up also matches direct
+AD on 24/70-step scenes and passes exact-grid Ea/Eb AD-FD at
+5.4235e-5/3.2081e-5, but takes 36.739/36.010 seconds and projects to
+38.295/37.534 minutes.  Its peak is about 111.22 GB.  Read
+`FDTDX_TWO_LEVEL_EXACT_REPORT.md`.  Segment-size, outer-block, checkpoint, and
+reversible-slice searches are closed.  Under the frozen grid and 40-period
+contract, FDTDX inverse-design iterations are infeasible under the user
+30-minute gate; do not build or run the optimizer.  A future route must first
+independently validate a higher-level change such as a shorter steady-state
+horizon or use a different exact solver without relaxing mesh/material/AD-FD
+gates.
 
 ## What completion means
 
@@ -811,22 +819,19 @@ reevaluation.
 > checkpoints are slower and nearly exhaust the safe XLA memory budget.  Read
 > `FDTDX_BLOCKWISE_EXACT_REPORT.md`.  Do not repeat slice, checkpoint-count, or
 > accumulation searches, and do not run 16,384/full-horizon probes, a full
-> current gradient, or an optimizer.  Next prove an offline two-level segmented
-> exact VJP against direct AD on the small CPML/ADE/phasor scenes.  Permit at
-> most one bounded 4,096-step exact-grid comparison only after its static memory
-> audit fits, and reject it unless the parallel linear projection is below 30
-> minutes.
-> Continue only the fresh FDTDX GPU parity path for the 4-um Ea/Eb Au topology; do not run legacy scripts 10/12/13
-> and do not use optical rho^3 or c3-only linear scaling.  Preserve the canonical
-> 81x81 latent -> 500-nm finite conic filter -> tanh projection -> shared nodal
-> occupancy, derive the 80x80 FDTDX/PDE cells only by the exact four-node map,
-> implement the same n-k-then-square target through a stable differentiable
-> discrete ADE carrier, use the 2.5/50-nm rectilinear grid contract, custom CUDA
-> thermal/electrical solvers, and exact epigraph `max min(I_Ea,-I_Eb)`.  Pass
-> uniform material, source, Q/flux, remap-transpose, complete four-direction
-> Ea/Eb latent AD-FD, and signed-objective gates before building a new 81x81
-> LD_MMA driver.  Then run only a two-iteration beta-4 smoke optimization,
-> checkpoint every evaluation outside Git, document exact timings/results, and
-> push each coherent code/document slice to the same branch.  Treat all FDTDX
-> outputs as candidate-generation evidence; final binary Lumerical CV0/finer
-> reevaluation remains mandatory.
+> current gradient, or an optimizer.  The authorized offline two-level exact
+> follow-up also passes AD-FD but projects to 38.295/37.534 minutes and peaks near
+> 111.22 GB; read `FDTDX_TWO_LEVEL_EXACT_REPORT.md`.  All FDTDX reverse-schedule
+> searches are now closed.  Under the frozen grid and 40-period contract, do not
+> build or run an FDTDX optimizer.  A new route requires independent validation
+> of a higher-level premise such as a shorter steady-state horizon or a different
+> exact solver; never relax mesh, material law, polarization, or AD-FD gates to
+> make runtime pass.
+> Preserve the audited fresh FDTDX code and raw hashes, but do not run legacy
+> scripts 10/12/13, rho^3/c3-only linear scaling, any full reverse path, or an
+> optimizer.  Keep the canonical 81x81 latent -> 500-nm finite conic filter ->
+> tanh projection -> shared 80x80 cell map, n-k-then-square ADE law, selected
+> 2.5/50-nm grid, and signed-current objective unchanged.  Coordinate with the
+> separate Lumerical session without editing or invoking its solver path here.
+> Treat all FDTDX outputs as bounded audit evidence only; final binary Lumerical
+> CV0/finer reevaluation remains mandatory.
