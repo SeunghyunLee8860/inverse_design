@@ -267,11 +267,16 @@ def main() -> int:
                 runtime, prune_heavy_intermediates=True
             )
             latent_initial = np.asarray(state["latent"], dtype=np.float64)
-            initial_physics = driver.evaluate(latent_initial)
             initial_dfm, _, _ = smooth_lumerical_250nm_constraints(
                 latent_initial, beta
             )
-            if attempt == 0:
+            # Use the checkpoint logical attempt, not the next free artifact
+            # directory suffix. If a process dies after creating attempt_00
+            # but before finishing its first Maxwell evaluation, the restart
+            # uses attempt_01 while the stage caps are still uninitialized.
+            # Persist those caps before the expensive solve so such a restart
+            # cannot silently disable DFM or grayness constraints.
+            if int(state["attempt"]) == 0:
                 cap_record = stage_design_caps(
                     beta=beta,
                     baseline_dfm_values=initial_dfm,
@@ -282,6 +287,7 @@ def main() -> int:
                 )
                 state["grayness_cap"] = float(cap_record["grayness_cap"])
                 _save_checkpoint(checkpoint_path, **state)
+            initial_physics = driver.evaluate(latent_initial)
             problem = ContinuationEpigraphProblem(
                 driver.evaluate,
                 beta=beta,

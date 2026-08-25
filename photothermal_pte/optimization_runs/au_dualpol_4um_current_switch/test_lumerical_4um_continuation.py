@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
@@ -109,3 +111,17 @@ def test_high_beta_problem_has_two_epigraph_plus_three_design_constraints() -> N
     assert values.shape == (5,)
     assert gradients.shape == (5, vector.size)
     assert np.all(gradients[2:, -1] == 0.0)
+
+
+def test_stage_caps_are_checkpointed_before_first_maxwell_evaluation() -> None:
+    source = Path(__file__).with_name(
+        "41_optimize_lumerical_4um_dualpol_continuation.py"
+    ).read_text(encoding="utf-8")
+    cap_setup = source.index('if int(state["attempt"]) == 0:')
+    checkpoint = source.index(
+        "_save_checkpoint(checkpoint_path, **state)", cap_setup
+    )
+    first_maxwell = source.index(
+        "initial_physics = driver.evaluate(latent_initial)"
+    )
+    assert cap_setup < checkpoint < first_maxwell
