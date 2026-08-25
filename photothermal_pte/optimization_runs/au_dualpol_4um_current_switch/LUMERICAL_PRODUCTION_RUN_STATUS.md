@@ -130,3 +130,66 @@ tmux capture-pane -pt au4um_lum_prod_69b2bb40 -S -120
 jq '{status,latest,stage_count:(.stages|length),error}' \
   /home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_69b2bb409852/production_manifest.json
 ```
+
+
+## Final-mask custom PDE convergence path -- 2026-08-25 21:27 UTC
+
+Commits `fb7ff239`, `b5b18174`, `27cf25fc`, and `36d43542` close the
+*implementation* gap for the custom thermal/electrical lateral-grid check.
+They do not claim that the unavailable final Ea/Eb artifacts have passed it.
+
+- The exact 80x80 binary Au mask is replicated without interpolation to a
+  160x160 design grid for the 50-nm PDE solve. The 16-um TaIrTe4 grid changes
+  from 160x160 to 320x320 while all physical spans, layer thicknesses,
+  conductivities, interface conductances, contacts, and boundary conditions
+  remain fixed.
+- Each polarization uses one unchanged native Lumerical component-Yee raw Q.
+  That Q is exact-overlap remapped independently to the 100-nm and 50-nm
+  thermal grids. No clipping, smoothing, gain, or global rescaling is allowed.
+- The 50-nm current is the reported reference. Promotion requires both PDE
+  resolutions to pass remap/residual/energy/terminal gates, preserve current
+  sign, and keep current change, aligned TaIrTe4 temperature-field NRMSE,
+  mean-temperature change, and peak-temperature change below 0.5%.
+- The result saves hash-bound 100/50-nm TaIrTe4 temperature evidence. A copied
+  raw NPZ is accepted only when its recorded byte size and SHA-256 match.
+  Reused forward JSONs must also match mesh spec, accelerator policy,
+  polarization, canonical binary-mask hash, and unmodified-Q policy.
+- Custom CUDA execution now fails unless `CUDA_VISIBLE_DEVICES` contains
+  exactly one physical index equal to `--gpu-index`; the actual GPU index,
+  UUID, model, and local device 0 mapping are written to the result.
+
+A parallel custom-CUDA smoke used verified-idle B200 GPUs 4 and 7 and the same
+continuous asymmetric 285-uW synthetic heat source. It measured 4.03 s at
+100 nm and 8.60 s at 50 nm. The current changed from 96.8908 nA to 95.2532 nA
+(1.719%), peak temperature changed 0.801%, TaIrTe4 field NRMSE was 0.198%, and
+mean temperature changed 0.041%. The gate correctly failed the current and
+peak metrics. This is a negative-control runtime/behavior check, not an Ea/Eb
+physical result and not evidence that the final design is nonconverged.
+
+The complete solver-free regression after the artifact-reuse and
+single-visible-GPU safety changes is `275 passed in 258.22 s`.
+
+If the exact forward/raw artifacts already exist, run no new Maxwell solve:
+
+```bash
+CUDA_VISIBLE_DEVICES=<verified-free-physical-index> \
+photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_combined_gpu_python.sh \
+  photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/42_evaluate_lumerical_4um_exact_binary.py \
+  --binary-mask-npz /absolute/final_exact_binary_cell_mask.npz \
+  --binary-mask-key binary_mask \
+  --output-dir /absolute/new_pde_convergence_output \
+  --gpu-index <same-physical-index> --accelerator-policy development \
+  --ea-forward-result /absolute/Ea_exact_forward.json \
+  --ea-raw-npz /absolute/Ea_exact_forward_raw.npz \
+  --eb-forward-result /absolute/Eb_exact_forward.json \
+  --eb-raw-npz /absolute/Eb_exact_forward_raw.npz \
+  --mesh-label fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps \
+  --flake-dxy-nm 50 --outer-dxy-nm 200 \
+  --stack-dz-nm 2.5 --bulk-dz-nm 50
+```
+
+This command closes only the custom-PDE 100-to-50-nm check for the particular
+raw Q supplied. Optical x-y convergence still requires the separate 100/50-nm
+Lumerical comparison described above. If the physical final-mask PDE gate
+fails, do not weaken 0.5%; extend the custom PDE axis to 50-to-25 nm and use
+the finest passing pair.

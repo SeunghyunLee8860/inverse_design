@@ -816,3 +816,34 @@ normwise bilinear adjoint identity at the same `1e-12` gate and passed actual
 production data at `1.194e-18` (Ea) and `4.183e-18` (Eb). Commit `69b2bb40`
 and its regression test are already pushed to the shared branch before this
 handoff update.
+
+
+## Final exact-binary 50-nm custom-PDE handoff
+
+The current shared branch now has a fail-closed final-mask custom-PDE
+convergence path:
+
+- `fb7ff239`: supports identical exact-binary geometry on 100/50-nm
+  thermal/electrical core grids;
+- `b5b18174`: maps each unchanged raw component-Yee Q to both grids, uses the
+  50-nm current as reference, and requires all 0.5% current/temperature gates;
+- `27cf25fc`: permits a zero-Maxwell rerun from relocated forward/raw artifacts
+  only after size/SHA-256, mesh, policy, polarization, mask, and Q-processing
+  provenance pass;
+- `36d43542`: exposes exactly one physical CUDA GPU, requires it to equal
+  `--gpu-index`, and records its UUID/model.
+
+Read `LUMERICAL_PRODUCTION_RUN_STATUS.md` for the complete reuse command and
+measured timing. Do not call the Lumerical development wrapper for the
+PDE-only reuse because that wrapper intentionally requires a live solve
+license. Use `run_combined_gpu_python.sh` with one verified-idle physical GPU.
+Do not commit the forward raw NPZ or generated temperature evidence.
+
+The complete local solver-free regression is `275 passed in 258.22 s`.
+No final-mask Ea/Eb PDE convergence result exists on this host yet. The active
+RTX continuation artifacts live on the other host. Retrieve its terminal
+manifest, final exact mask, two exact 100-nm forwards, and later two exact
+50-nm forwards before making any pass claim. The synthetic 285-uW smoke failed
+100-to-50 nm in current and peak temperature; it is a negative control only.
+If the physical raw-Q comparison also fails, extend to 50-to-25 nm rather than
+relaxing the 0.5% gate.
