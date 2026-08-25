@@ -59,6 +59,12 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_user
     case_contract as z_case_contract,
     mesh_audit as z_mesh_audit,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_user_balanced_lateral_refinement import (
+    build_model as build_lateral_model,
+    case_contract as lateral_case_contract,
+    material_spec as lateral_material_spec,
+    mesh_audit as lateral_mesh_audit,
+)
 
 
 VERSION = "fdtdx-user-balanced-exact-binary-v1"
@@ -133,6 +139,7 @@ def run(
     window_periods: int,
     courant_factor: float,
     full_domain_z_factor: int = 1,
+    design_flake_xy_factor: int = 1,
 ) -> dict[str, Any]:
     started_total = time.perf_counter()
     output = _output_directory(output_directory)
@@ -150,14 +157,19 @@ def run(
         window_periods=window_periods,
         courant_factor=courant_factor,
     )
-    if full_domain_z_factor == 1:
+    if design_flake_xy_factor == 1 and full_domain_z_factor == 1:
         numerical_case = balanced_case_contract(time_spec)
         expected_mesh = mesh_audit()
-    elif full_domain_z_factor in (2, 4):
+    elif design_flake_xy_factor == 1 and full_domain_z_factor in (2, 4):
         numerical_case = z_case_contract(time_spec, full_domain_z_factor)
         expected_mesh = z_mesh_audit(full_domain_z_factor)
+    elif design_flake_xy_factor == 2 and full_domain_z_factor == 2:
+        numerical_case = lateral_case_contract(time_spec)
+        expected_mesh = lateral_mesh_audit()
     else:
-        raise ValueError("full_domain_z_factor must be 1, 2, or 4")
+        raise ValueError(
+            "design/flake lateral factor 2 is supported only at z factor 2"
+        )
     source_pair, source_pair_audit = validate_source_pair(
         source_pair_path,
         source_pair_sha256,
@@ -182,10 +194,14 @@ def run(
         "air_only_source_calibration": False,
         "dispersive_state_representation": "increment",
     }
-    if full_domain_z_factor == 1:
+    if design_flake_xy_factor == 2:
+        model = build_lateral_model(polarization, **model_kwargs)
+    elif full_domain_z_factor == 1:
         model = build_model(polarization, **model_kwargs)
     else:
-        model = build_z_model(polarization, factor=full_domain_z_factor, **model_kwargs)
+        model = build_z_model(
+            polarization, factor=full_domain_z_factor, **model_kwargs
+        )
     contract_checks = source_pair_contract_checks(
         source_pair,
         source_audit,
@@ -199,7 +215,11 @@ def run(
             f"material/source numerical contract mismatch: {contract_checks}"
         )
 
-    spec = UserBalancedMeshSpec()
+    spec = (
+        lateral_material_spec()
+        if design_flake_xy_factor == 2
+        else UserBalancedMeshSpec()
+    )
     mask = np.asarray(reference_mask(reference), dtype=np.uint8)
     arrays = arrays_for_exact_binary(model, mask, spec)
     material = material_stack_audit(model, arrays, mask, spec)
@@ -264,6 +284,7 @@ def run(
         "polarization": polarization,
         "reference": reference,
         "full_domain_z_factor": full_domain_z_factor,
+        "design_flake_xy_factor": design_flake_xy_factor,
         "numerical_case_contract": numerical_case,
         "mesh": model["fresh_mesh_audit"],
         "time_contract": realized_time_contract(time_spec, model),
@@ -350,6 +371,9 @@ def main() -> int:
     parser.add_argument(
         "--full-domain-z-factor", type=int, choices=(1, 2, 4), default=1
     )
+    parser.add_argument(
+        "--design-flake-xy-factor", type=int, choices=(1, 2), default=1
+    )
     args = parser.parse_args()
     try:
         payload = run(
@@ -363,6 +387,7 @@ def main() -> int:
             args.window_periods,
             args.courant_factor,
             args.full_domain_z_factor,
+            args.design_flake_xy_factor,
         )
     except Exception as error:
         failure = {

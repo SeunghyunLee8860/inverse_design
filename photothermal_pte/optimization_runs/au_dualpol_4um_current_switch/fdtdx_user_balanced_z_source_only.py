@@ -52,6 +52,11 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_user
     case_contract,
     mesh_audit,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_user_balanced_lateral_refinement import (
+    build_model as build_lateral_model,
+    case_contract as lateral_case_contract,
+    mesh_audit as lateral_mesh_audit,
+)
 
 
 REPORT_NAME = "FDTDX_USER_BALANCED_Z_SOURCE_ONLY.json"
@@ -66,6 +71,7 @@ def run(
     total_periods: int,
     window_periods: int,
     courant_factor: float,
+    lateral_factor: int = 1,
 ) -> dict[str, Any]:
     started_total = time.perf_counter()
     output = _output_directory(output_directory)
@@ -87,16 +93,30 @@ def run(
     if dirty_before:
         raise RuntimeError("repository must be clean before refined source solve")
 
+    if lateral_factor == 1:
+        expected_case = case_contract(time_spec, factor)
+        expected_mesh = mesh_audit(factor)
+    elif lateral_factor == 2 and factor == 2:
+        expected_case = lateral_case_contract(time_spec)
+        expected_mesh = lateral_mesh_audit()
+    else:
+        raise ValueError(
+            "lateral factor 2 is supported only at full-domain z factor 2"
+        )
+
     started_build = time.perf_counter()
-    model = build_model(
-        polarization,
-        factor=factor,
-        total_periods=time_spec.total_periods,
-        window_periods=time_spec.window_periods,
-        courant_factor=time_spec.courant_factor,
-        include_adjoint_source=False,
-        air_only_source_calibration=True,
-        dispersive_state_representation="increment",
+    model_kwargs = {
+        "total_periods": time_spec.total_periods,
+        "window_periods": time_spec.window_periods,
+        "courant_factor": time_spec.courant_factor,
+        "include_adjoint_source": False,
+        "air_only_source_calibration": True,
+        "dispersive_state_representation": "increment",
+    }
+    model = (
+        build_model(polarization, factor=factor, **model_kwargs)
+        if lateral_factor == 1
+        else build_lateral_model(polarization, **model_kwargs)
     )
     arrays, air_audit = all_air_arrays(model)
     build_runtime_s = time.perf_counter() - started_build
@@ -143,7 +163,7 @@ def run(
             model["config"].dispersive_state_representation == "increment"
         ),
         "all_air_readback_ready": air_audit["ready"],
-        "refined_grid_contract_exact": model["fresh_mesh_audit"] == mesh_audit(factor),
+        "refined_grid_contract_exact": model["fresh_mesh_audit"] == expected_mesh,
         "source_evaluation_ready": evaluation["ready"],
         "per_case_scaling_not_applied": True,
     }
@@ -157,7 +177,8 @@ def run(
         "polarization": polarization,
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "full_domain_z_factor": factor,
-        "numerical_case_contract": case_contract(time_spec, factor),
+        "design_flake_xy_factor": lateral_factor,
+        "numerical_case_contract": expected_case,
         "mesh": model["fresh_mesh_audit"],
         "time_contract": realized_time_contract(time_spec, model),
         "source_contract": model["source_contract"],
@@ -219,6 +240,7 @@ def main() -> int:
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--polarization", choices=("Ea", "Eb"), required=True)
     parser.add_argument("--factor", type=int, choices=SUPPORTED_FACTORS, default=2)
+    parser.add_argument("--lateral-factor", type=int, choices=(1, 2), default=1)
     parser.add_argument("--total-periods", type=int, default=24)
     parser.add_argument("--window-periods", type=int, default=4)
     parser.add_argument("--courant-factor", type=float, default=0.5)
@@ -231,6 +253,7 @@ def main() -> int:
         args.total_periods,
         args.window_periods,
         args.courant_factor,
+        args.lateral_factor,
     )
     return 0 if payload["ready"] else 2
 
