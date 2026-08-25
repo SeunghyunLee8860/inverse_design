@@ -18,6 +18,8 @@ The two-evaluation beta-4 smoke is complete and is not the active production
 entry point. Read `LUMERICAL_PRODUCTION_CONTINUATION.md`, then use
 `41_optimize_lumerical_4um_dualpol_continuation.py` through
 `launch_lumerical_continuation_runres_gpu5.sh`.
+The active detached run, tmux name, output root, and safe monitoring commands
+are recorded in `LUMERICAL_PRODUCTION_RUN_STATUS.md`.
 
 The production run starts from exact uniform `rho=0.5`, continues beta through
 `1,2,4,8,16,32,64,128`, and activates zero, one, two, then three Au design
