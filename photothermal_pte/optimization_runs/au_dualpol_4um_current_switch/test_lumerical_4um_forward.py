@@ -610,3 +610,22 @@ def test_reused_dualpol_forward_arguments_are_all_or_none() -> None:
     args.eb_forward_result = Path("eb.json")
     args.eb_raw_npz = Path("eb_raw.npz")
     assert _EXACT_EVALUATOR._reuse_forward_requested(args) is True
+
+
+def test_exact_evaluator_requires_one_matching_visible_physical_gpu() -> None:
+    args = SimpleNamespace(gpu_index=4)
+    assert (
+        _EXACT_EVALUATOR._visible_cuda_device(
+            args, environ={"CUDA_VISIBLE_DEVICES": "4"}
+        )
+        == "4"
+    )
+    for environment in (
+        {},
+        {"CUDA_VISIBLE_DEVICES": ""},
+        {"CUDA_VISIBLE_DEVICES": "4,7"},
+        {"CUDA_VISIBLE_DEVICES": "7"},
+        {"CUDA_VISIBLE_DEVICES": "-1"},
+    ):
+        with pytest.raises(RuntimeError):
+            _EXACT_EVALUATOR._visible_cuda_device(args, environ=environment)

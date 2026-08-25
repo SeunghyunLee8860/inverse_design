@@ -7,6 +7,7 @@ import argparse
 from datetime import datetime, timezone
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -194,6 +195,54 @@ def _reuse_forward_requested(args: argparse.Namespace) -> bool:
             "reused mode requires Ea/Eb forward-result and raw-NPZ arguments"
         )
     return all(value is not None for value in values)
+
+
+def _visible_cuda_device(
+    args: argparse.Namespace, *, environ: dict[str, str] | None = None
+) -> str:
+    environment = os.environ if environ is None else environ
+    devices = [
+        item.strip()
+        for item in environment.get("CUDA_VISIBLE_DEVICES", "").split(",")
+        if item.strip()
+    ]
+    if len(devices) != 1 or devices[0] == "-1":
+        raise RuntimeError(
+            "set CUDA_VISIBLE_DEVICES to exactly one physical GPU for custom PDE solves"
+        )
+    if devices[0] != str(args.gpu_index):
+        raise RuntimeError(
+            "CUDA_VISIBLE_DEVICES must equal the requested physical --gpu-index"
+        )
+    return devices[0]
+
+
+def _cuda_device_audit(args: argparse.Namespace) -> dict[str, Any]:
+    physical = _visible_cuda_device(args)
+    completed = subprocess.run(
+        [
+            "nvidia-smi",
+            f"--id={physical}",
+            "--query-gpu=index,uuid,name",
+            "--format=csv,noheader,nounits",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    rows = [line.strip() for line in completed.stdout.splitlines() if line.strip()]
+    if completed.returncode != 0 or len(rows) != 1:
+        raise RuntimeError("could not prove the single visible custom CUDA GPU")
+    fields = [item.strip() for item in rows[0].split(",", maxsplit=2)]
+    if len(fields) != 3 or fields[0] != physical:
+        raise RuntimeError("nvidia-smi custom CUDA GPU record is inconsistent")
+    return {
+        "CUDA_VISIBLE_DEVICES": physical,
+        "physical_index": int(fields[0]),
+        "uuid": fields[1],
+        "name": fields[2],
+        "local_cuda_device_used": 0,
+    }
 
 
 def _pde_resolution(
@@ -508,6 +557,8 @@ def main() -> int:
         )
         if not bool(exact["solid_pass"] and exact["void_pass"]):
             raise RuntimeError("exact mask failed 250 nm solid/void audit")
+        custom_cuda_device = _cuda_device_audit(args)
+        result["custom_CUDA_device"] = custom_cuda_device
         rows = {
             "Ea": _evaluate_polarization(
                 args=args,
@@ -558,6 +609,7 @@ def main() -> int:
             "Maxwell_solver": "Lumerical FDTD 2026 R1.2 build 4522",
             "Maxwell_forward_mode": result["Maxwell_forward_mode"],
             "Lumerical_Maxwell_solves": result["Lumerical_Maxwell_solves"],
+            "custom_CUDA_device": custom_cuda_device,
             "custom_CUDA_thermal_solves": {"forward": 4, "adjoint": 0},
             "custom_CUDA_electrical_solves": {"forward": 4, "adjoint": 0},
             "Lumerical_HEAT_or_CHARGE_solves": 0,
