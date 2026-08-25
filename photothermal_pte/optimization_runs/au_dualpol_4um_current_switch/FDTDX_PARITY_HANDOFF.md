@@ -696,9 +696,10 @@ total Q, and time-domain closed flux for both polarizations.
 
 Together, the source-only, empty-Au, spatially varying gray-Au, and full-Au
 controls validate the fresh optical forward path at rho=0, throughout a
-strictly interior nonuniform density, and at rho=1.  They do not validate an
-optical gradient, an adjoint/checkpoint schedule, a PDE, a current, or an
-optimizer.
+strictly interior nonuniform density, and at rho=1.  The bounded exact-grid
+Ea/Eb optical reverse-mode connection is also validated by
+`FDTDX_AD_PROBE_REPORT.md`, but the 40-period production gradient, PDE, current,
+and optimizer remain unvalidated.
 
 The nonlinear carrier is now implemented in `fdtdx_parity_ade.py` as three
 positive, damped Lorentz bases: one weighted by `rho` and two weighted by
@@ -723,12 +724,15 @@ both positive-Lorentz recurrences are strictly stable and reproduce exactly
 through the pinned FDTDX API.  SiO2 and Si remain the lossless real readbacks
 from the material JSON.
 
-The empty-Au, nonuniform-gray, and full-Au physical-device Maxwell
-field/Q/closed-flux controls are now validated for both polarizations.  No
-optical AD-FD, CUDA PDE, FDTDX optimizer, Lumerical, HEAT, or CHARGE result is
-claimed by this status, and `optimizer_enabled` remains false.  The next task
-is a fail-closed audit and implementation of the FDTDX optical reverse-mode
-checkpoint path, followed by complete four-direction Ea/Eb latent AD-FD.
+The empty-Au, nonuniform-gray, and full-Au Maxwell field/Q/closed-flux
+controls are validated for both polarizations.  A 4,096-step exact-grid
+field-only AD-FD probe also passed for Ea and Eb, with directional errors below
+`2.5e-5`.  This is not the 40-period absorbed-power gradient certificate.  The
+32-checkpoint path projects optimistically to about 112 minutes per
+polarization and therefore fails the 30-minute production-runtime gate; 64
+checkpoints OOM at a 238.26-GiB allocation.  `optimizer_enabled` remains false.
+Read `FDTDX_AD_PROBE_REPORT.md` and reduce the checkpoint loop carry/gradient
+detector state before another full-grid derivative run.
 
 ## What completion means
 
@@ -743,9 +747,13 @@ reevaluation.
 
 > Checkout the latest `agent/optimize-au-dualpol-4um-pte` commit and read
 > `photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/FDTDX_PARITY_HANDOFF.md`
-> completely, followed by `CODE_HANDOFF.md`.  Lumerical licenses are currently
-> unavailable: do not call Lumerical, HEAT, or CHARGE.  Build a new FDTDX GPU
-> parity path for the 4-um Ea/Eb Au topology; do not run legacy scripts 10/12/13
+> completely, then read `FDTDX_AD_PROBE_REPORT.md` and `CODE_HANDOFF.md`.
+> Lumerical licenses are currently unavailable: do not call Lumerical, HEAT,
+> or CHARGE.  The current checkpointed 40-period gradient is runtime-blocked;
+> do not run it, the 16-forward certificate, or an optimizer.  First separate
+> immutable material arrays and unnecessary control detectors from the
+> checkpoint loop state, then repeat the bounded Ea/Eb AD-FD/runtime gate.
+> Continue only the fresh FDTDX GPU parity path for the 4-um Ea/Eb Au topology; do not run legacy scripts 10/12/13
 > and do not use optical rho^3 or c3-only linear scaling.  Preserve the canonical
 > 81x81 latent -> 500-nm finite conic filter -> tanh projection -> shared nodal
 > occupancy, derive the 80x80 FDTDX/PDE cells only by the exact four-node map,
