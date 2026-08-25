@@ -22,6 +22,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.dfm import
     DEFAULT_OPENING_TAU,
     DEFAULT_POSITIVE_PART_TAU,
     exact_500nm_audit,
+    physical_disk_footprint,
     smooth_500nm_physical_constraints,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_density import (
@@ -31,6 +32,12 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     nodal_to_cell_jvp,
     nodal_to_cell_vjp,
 )
+
+
+LUMERICAL_MINIMUM_SOLID_FEATURE_M = 250.0e-9
+LUMERICAL_MINIMUM_VOID_FEATURE_M = 250.0e-9
+LUMERICAL_FILTER_RADIUS_M = 250.0e-9
+LUMERICAL_DFM_CALIBRATION_MARGIN = 1.0e-4
 
 
 def _projection(value: np.ndarray, *, beta: float, eta: float) -> np.ndarray:
@@ -62,6 +69,8 @@ class LumericalNodalDesignMapping:
     spacing_m: float = CONTRACT.design_pitch_m
     radius_m: float = CONTRACT.filter_radius_m
     eta: float = CONTRACT.projection_eta
+    minimum_solid_feature_m: float = CONTRACT.minimum_solid_feature_m
+    minimum_void_feature_m: float = CONTRACT.minimum_void_feature_m
 
     def __post_init__(self) -> None:
         if self.shape != CONTRACT.design_node_shape:
@@ -155,6 +164,8 @@ class LumericalNodalDesignMapping:
             "downstream_cell_shape_xy": list(CONTRACT.design_shape),
             "spacing_nm": self.spacing_m * 1.0e9,
             "conic_filter_radius_nm": self.radius_m * 1.0e9,
+            "minimum_solid_feature_nm": self.minimum_solid_feature_m * 1.0e9,
+            "minimum_void_feature_nm": self.minimum_void_feature_m * 1.0e9,
             "projection_eta": self.eta,
             "kernel_nonzero_count": int(np.count_nonzero(self.kernel)),
             "constant_preservation_max_abs": constant_error,
@@ -169,10 +180,18 @@ class LumericalNodalDesignMapping:
 
 
 NOMINAL_MAPPING = LumericalNodalDesignMapping()
+OPTIMIZER_250NM_MAPPING = LumericalNodalDesignMapping(
+    radius_m=LUMERICAL_FILTER_RADIUS_M,
+    minimum_solid_feature_m=LUMERICAL_MINIMUM_SOLID_FEATURE_M,
+    minimum_void_feature_m=LUMERICAL_MINIMUM_VOID_FEATURE_M,
+)
 
 
 def projected_cell_density(
-    latent: np.ndarray, beta: float, *, mapping: LumericalNodalDesignMapping = NOMINAL_MAPPING
+    latent: np.ndarray,
+    beta: float,
+    *,
+    mapping: LumericalNodalDesignMapping = OPTIMIZER_250NM_MAPPING,
 ) -> np.ndarray:
     """Return the only allowed custom-PDE/DFM cell density from latent rho."""
 
@@ -184,7 +203,7 @@ def projected_cell_jvp(
     direction: np.ndarray,
     beta: float,
     *,
-    mapping: LumericalNodalDesignMapping = NOMINAL_MAPPING,
+    mapping: LumericalNodalDesignMapping = OPTIMIZER_250NM_MAPPING,
 ) -> np.ndarray:
     return nodal_to_cell_jvp(mapping.jvp(latent, direction, beta))
 
@@ -194,16 +213,16 @@ def projected_cell_vjp(
     cell_cotangent: np.ndarray,
     beta: float,
     *,
-    mapping: LumericalNodalDesignMapping = NOMINAL_MAPPING,
+    mapping: LumericalNodalDesignMapping = OPTIMIZER_250NM_MAPPING,
 ) -> np.ndarray:
     return mapping.vjp(latent, nodal_to_cell_vjp(cell_cotangent), beta)
 
 
-def smooth_lumerical_500nm_constraints(
+def smooth_lumerical_250nm_constraints(
     latent: np.ndarray,
     beta: float,
     *,
-    mapping: LumericalNodalDesignMapping = NOMINAL_MAPPING,
+    mapping: LumericalNodalDesignMapping = OPTIMIZER_250NM_MAPPING,
     tau: float = DEFAULT_OPENING_TAU,
     positive_tau: float = DEFAULT_POSITIVE_PART_TAU,
     ks_alpha: float = DEFAULT_KS_ALPHA,
@@ -214,6 +233,9 @@ def smooth_lumerical_500nm_constraints(
     cells = nodal_to_cell_average(nodes)
     values, cell_gradients, fields = smooth_500nm_physical_constraints(
         cells,
+        spacing_m=CONTRACT.design_pitch_m,
+        minimum_solid_feature_m=LUMERICAL_MINIMUM_SOLID_FEATURE_M,
+        minimum_void_feature_m=LUMERICAL_MINIMUM_VOID_FEATURE_M,
         tau=tau,
         positive_tau=positive_tau,
         ks_alpha=ks_alpha,
@@ -232,6 +254,87 @@ def smooth_lumerical_500nm_constraints(
     return values, latent_gradients, fields
 
 
+def calibrated_lumerical_250nm_dfm_caps() -> tuple[np.ndarray, dict[str, Any]]:
+    """Calibrate smooth caps on exact-pass 250-nm binary reference patterns."""
+
+    nx, ny = CONTRACT.design_shape
+    minimum_feature_cells = int(
+        np.ceil(LUMERICAL_MINIMUM_SOLID_FEATURE_M / CONTRACT.design_pitch_m)
+    )
+    if minimum_feature_cells < 1 or minimum_feature_cells >= min(nx, ny):
+        raise RuntimeError("invalid 250-nm DFM calibration feature width")
+    footprint = physical_disk_footprint(
+        0.5 * LUMERICAL_MINIMUM_SOLID_FEATURE_M,
+        CONTRACT.design_pitch_m,
+    )
+
+    def stadium(length_cells: int, *, vertical: bool, iterations: int = 1) -> np.ndarray:
+        seed = np.zeros(CONTRACT.design_shape, dtype=bool)
+        start = (nx - length_cells) // 2
+        stop = start + length_cells
+        if vertical:
+            seed[start:stop, ny // 2] = True
+        else:
+            seed[nx // 2, start:stop] = True
+        return ndimage.binary_dilation(
+            seed,
+            structure=footprint,
+            iterations=iterations,
+        )
+
+    horizontal = stadium(31, vertical=False)
+    vertical = stadium(31, vertical=True)
+    outer = stadium(31, vertical=False, iterations=4)
+    inner_void = stadium(11, vertical=False)
+    patterns: dict[str, np.ndarray] = {
+        "minimum_disk": stadium(1, vertical=False).astype(np.float64),
+        "horizontal_stadium": horizontal.astype(np.float64),
+        "vertical_stadium": vertical.astype(np.float64),
+        "rounded_ring_with_internal_void": (outer & ~inner_void).astype(np.float64),
+    }
+
+    rows: list[dict[str, Any]] = []
+    values: list[np.ndarray] = []
+    for name, density in patterns.items():
+        exact = exact_500nm_audit(
+            density,
+            spacing_m=CONTRACT.design_pitch_m,
+            minimum_feature_m=LUMERICAL_MINIMUM_SOLID_FEATURE_M,
+        )
+        if not bool(exact["solid_pass"] and exact["void_pass"]):
+            raise RuntimeError(f"250-nm DFM calibration pattern failed exact audit: {name}")
+        smooth, _, _ = smooth_500nm_physical_constraints(
+            density,
+            spacing_m=CONTRACT.design_pitch_m,
+            minimum_solid_feature_m=LUMERICAL_MINIMUM_SOLID_FEATURE_M,
+            minimum_void_feature_m=LUMERICAL_MINIMUM_VOID_FEATURE_M,
+        )
+        values.append(smooth)
+        rows.append(
+            {
+                "name": name,
+                "smooth_values": smooth.tolist(),
+                "exact_solid_pass": True,
+                "exact_void_pass": True,
+            }
+        )
+    reference_max = np.max(np.stack(values), axis=0)
+    caps = reference_max + LUMERICAL_DFM_CALIBRATION_MARGIN
+    return caps, {
+        "schema": "lumerical-250nm-dfm-calibration-v1",
+        "minimum_solid_feature_nm": 250.0,
+        "minimum_void_feature_nm": 250.0,
+        "opening_radius_nm": 125.0,
+        "design_pitch_nm": CONTRACT.design_pitch_m * 1.0e9,
+        "minimum_feature_cells_ceil": minimum_feature_cells,
+        "opening_footprint_pixel_count": int(np.count_nonzero(footprint)),
+        "calibration_margin": LUMERICAL_DFM_CALIBRATION_MARGIN,
+        "reference_max": reference_max.tolist(),
+        "caps": caps.tolist(),
+        "patterns": rows,
+    }
+
+
 def exact_binary_cell_candidate(
     projected_nodes: np.ndarray, *, threshold: float = 0.5
 ) -> tuple[np.ndarray, dict[str, object]]:
@@ -245,13 +348,15 @@ def exact_binary_cell_candidate(
     audit = exact_500nm_audit(
         cells,
         spacing_m=CONTRACT.design_pitch_m,
-        minimum_feature_m=CONTRACT.minimum_solid_feature_m,
+        minimum_feature_m=LUMERICAL_MINIMUM_SOLID_FEATURE_M,
         threshold=threshold_value,
     )
     return mask, {
         **audit,
         "candidate_rule": "threshold four-node cell-average occupancy",
         "threshold": threshold_value,
+        "minimum_solid_feature_nm": LUMERICAL_MINIMUM_SOLID_FEATURE_M * 1.0e9,
+        "minimum_void_feature_nm": LUMERICAL_MINIMUM_VOID_FEATURE_M * 1.0e9,
         "requires_ordinary_dispersive_au_reevaluation": True,
     }
 
@@ -260,12 +365,14 @@ def design_state_audit(
     latent: np.ndarray,
     beta: float,
     *,
-    mapping: LumericalNodalDesignMapping = NOMINAL_MAPPING,
+    mapping: LumericalNodalDesignMapping = OPTIMIZER_250NM_MAPPING,
 ) -> dict[str, Any]:
     projected = mapping.physical(latent, beta)
     return {
         "mapping": mapping.audit(),
         "beta": float(beta),
+        "minimum_solid_feature_nm": LUMERICAL_MINIMUM_SOLID_FEATURE_M * 1.0e9,
+        "minimum_void_feature_nm": LUMERICAL_MINIMUM_VOID_FEATURE_M * 1.0e9,
         "latent_range": [float(np.min(latent)), float(np.max(latent))],
         "shared_projected_density": density_state_audit(projected),
         "projected_cell_range": [

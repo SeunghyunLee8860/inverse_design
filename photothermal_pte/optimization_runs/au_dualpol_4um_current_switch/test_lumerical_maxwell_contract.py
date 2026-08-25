@@ -40,6 +40,9 @@ def test_contract_preserves_lumerical_plus_custom_gpu_pde_architecture() -> None
     assert payload["exact_dispersive_au_required_for_final_reevaluation"] is True
     assert payload["optical_relaxation_law"] == "christiansen_nk_then_square_v1"
     assert payload["optical_rho_power"] is None
+    assert payload["density_filter_radius_m"] == 250e-9
+    assert payload["minimum_solid_feature_m"] == 250e-9
+    assert payload["minimum_void_feature_m"] == 250e-9
     assert payload["np_density_as_au_topology_variable_allowed"] is False
     assert payload["bundled_lumopt_topology_gradient_allowed_without_au_adfd"] is False
     assert payload["fdtdx_allowed"] is False
@@ -226,6 +229,39 @@ Users of lum_fdtd_gui:  (Total of 20 licenses issued;  Total of 4 licenses in us
     assert result["reservation_verified"] is False
     assert result["passed_via"] is None
     assert result["passed"] is False
+
+
+def test_license_audit_retries_consumed_project_reservation_transition(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    project = "PROJECT_seunghyun_au4um_smoke_789"
+    consumed = """
+Users of lum_fdtd_solve:  (Total of 60 licenses issued;  Total of 57 licenses in use)
+Users of lum_fdtd_gui:  (Total of 20 licenses issued;  Total of 4 licenses in use)
+"""
+    restored = f"""
+Users of lum_fdtd_solve:  (Total of 60 licenses issued;  Total of 57 licenses in use)
+    9 RESERVATIONs for PROJECT {project}
+Users of lum_fdtd_gui:  (Total of 20 licenses issued;  Total of 4 licenses in use)
+"""
+    outputs = iter((consumed, restored))
+    monkeypatch.setenv("LM_PROJECT", project)
+    monkeypatch.setenv("AU_LUMERICAL_LICENSE_AUDIT_WAIT_S", "10")
+    monkeypatch.setattr(maxwell_contract.time, "sleep", lambda _: None)
+    monkeypatch.setattr(
+        maxwell_contract.subprocess,
+        "run",
+        lambda *args, **kwargs: maxwell_contract.subprocess.CompletedProcess(
+            args=args[0], returncode=0, stdout=next(outputs), stderr=""
+        ),
+    )
+
+    result = maxwell_contract._fdtd_solve_license_audit()
+
+    assert result["passed"] is True
+    assert result["passed_via"] == "verified_project_reservation"
+    assert result["reservation_tasks_for_project"] == 9
+    assert result["audit_attempts"] == 2
 
 
 def test_projected_density_hash_accepts_gray_and_is_layout_sensitive() -> None:

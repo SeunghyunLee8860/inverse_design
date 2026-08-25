@@ -16,6 +16,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import time
 from typing import Any
 
 import numpy as np
@@ -45,7 +46,7 @@ EXPECTED_LUMERICAL_RELEASE = {
 
 @dataclass(frozen=True)
 class LumericalMaxwellContract:
-    policy_version: int = 4
+    policy_version: int = 5
     maxwell_solver: str = "Ansys Lumerical FDTD v261 (2026 R1.2)"
     thermal_solver: str = "repository custom CUDA finite-volume steady heat solver"
     electrical_solver: str = (
@@ -56,7 +57,7 @@ class LumericalMaxwellContract:
     thermal_execution_mode: str = "custom sparse linear solve on CUDA"
     electrical_execution_mode: str = "custom sparse linear solve on CUDA"
     optimization_design_map: str = (
-        "latent rho -> 500-nm density filter -> tanh projection with beta "
+        "latent rho -> 250-nm density filter -> tanh projection with beta "
         "continuation -> one shared projected topology occupancy"
     )
     shared_design_field: str = (
@@ -93,8 +94,9 @@ class LumericalMaxwellContract:
     objective: str = "maximize min(+I_Ea,-I_Eb)"
     current_sign: str = "positive conventional current along solver +x (x_min to x_max)"
     solver_axes: str = "x=crystal b, y=crystal a, z=repository c=b optical closure"
-    minimum_solid_feature_m: float = 500e-9
-    minimum_void_feature_m: float = 500e-9
+    density_filter_radius_m: float = 250e-9
+    minimum_solid_feature_m: float = 250e-9
+    minimum_void_feature_m: float = 250e-9
 
 
 CONTRACT = LumericalMaxwellContract()
@@ -375,67 +377,86 @@ def _fdtd_solve_license_audit() -> dict[str, Any]:
         "-c",
         server,
     ]
-    try:
-        completed = subprocess.run(
-            command,
-            check=True,
-            capture_output=True,
-            text=True,
-            timeout=20,
+    wait_s = float(os.environ.get("AU_LUMERICAL_LICENSE_AUDIT_WAIT_S", "0"))
+    poll_s = float(os.environ.get("AU_LUMERICAL_LICENSE_AUDIT_POLL_S", "2"))
+    if not np.isfinite(wait_s) or wait_s < 0.0:
+        raise ValueError("AU_LUMERICAL_LICENSE_AUDIT_WAIT_S must be nonnegative")
+    if not np.isfinite(poll_s) or poll_s <= 0.0:
+        raise ValueError("AU_LUMERICAL_LICENSE_AUDIT_POLL_S must be positive")
+    started = time.monotonic()
+    attempts = 0
+    while True:
+        attempts += 1
+        try:
+            completed = subprocess.run(
+                command,
+                check=True,
+                capture_output=True,
+                text=True,
+                timeout=20,
+            )
+        except (
+            FileNotFoundError,
+            subprocess.CalledProcessError,
+            subprocess.TimeoutExpired,
+        ) as exc:
+            return {
+                "passed": False,
+                "inventory_error": f"{type(exc).__name__}: {exc}",
+                "lmutil": str(lmutil),
+                "license_server": server,
+                "LM_PROJECT": project or None,
+                "tasks_required": GPU_SOLVE_LICENSE_TASKS_REQUIRED,
+                "audit_attempts": attempts,
+            }
+        try:
+            issued, in_use, reservations = _parse_fdtd_solve_license_inventory(
+                completed.stdout
+            )
+        except ValueError as exc:
+            return {
+                "passed": False,
+                "inventory_error": str(exc),
+                "lmutil": str(lmutil),
+                "license_server": server,
+                "LM_PROJECT": project or None,
+                "tasks_required": GPU_SOLVE_LICENSE_TASKS_REQUIRED,
+                "audit_attempts": attempts,
+            }
+        available = issued - in_use
+        project_reservation = reservations.get(project, 0) if project else 0
+        global_capacity_passed = available >= GPU_SOLVE_LICENSE_TASKS_REQUIRED
+        project_reservation_passed = (
+            bool(project)
+            and project_reservation >= GPU_SOLVE_LICENSE_TASKS_REQUIRED
         )
-    except (
-        FileNotFoundError,
-        subprocess.CalledProcessError,
-        subprocess.TimeoutExpired,
-    ) as exc:
-        return {
-            "passed": False,
-            "inventory_error": f"{type(exc).__name__}: {exc}",
+        passed = global_capacity_passed or project_reservation_passed
+        elapsed_s = time.monotonic() - started
+        result = {
+            "passed": passed,
+            "passed_via": (
+                "verified_project_reservation"
+                if project_reservation_passed
+                else "global_unreserved_capacity"
+                if global_capacity_passed
+                else None
+            ),
             "lmutil": str(lmutil),
             "license_server": server,
             "LM_PROJECT": project or None,
+            "reservation_verified": project_reservation_passed,
+            "reservation_tasks_for_project": project_reservation,
+            "tasks_issued": issued,
+            "tasks_in_use": in_use,
+            "tasks_available": available,
             "tasks_required": GPU_SOLVE_LICENSE_TASKS_REQUIRED,
+            "audit_attempts": attempts,
+            "audit_wait_elapsed_s": elapsed_s,
+            "audit_wait_limit_s": wait_s,
         }
-    try:
-        issued, in_use, reservations = _parse_fdtd_solve_license_inventory(
-            completed.stdout
-        )
-    except ValueError as exc:
-        return {
-            "passed": False,
-            "inventory_error": str(exc),
-            "lmutil": str(lmutil),
-            "license_server": server,
-            "LM_PROJECT": project or None,
-            "tasks_required": GPU_SOLVE_LICENSE_TASKS_REQUIRED,
-        }
-    available = issued - in_use
-    project_reservation = reservations.get(project, 0) if project else 0
-    global_capacity_passed = available >= GPU_SOLVE_LICENSE_TASKS_REQUIRED
-    project_reservation_passed = (
-        bool(project)
-        and project_reservation >= GPU_SOLVE_LICENSE_TASKS_REQUIRED
-    )
-    passed = global_capacity_passed or project_reservation_passed
-    return {
-        "passed": passed,
-        "passed_via": (
-            "verified_project_reservation"
-            if project_reservation_passed
-            else "global_unreserved_capacity"
-            if global_capacity_passed
-            else None
-        ),
-        "lmutil": str(lmutil),
-        "license_server": server,
-        "LM_PROJECT": project or None,
-        "reservation_verified": project_reservation_passed,
-        "reservation_tasks_for_project": project_reservation,
-        "tasks_issued": issued,
-        "tasks_in_use": in_use,
-        "tasks_available": available,
-        "tasks_required": GPU_SOLVE_LICENSE_TASKS_REQUIRED,
-    }
+        if passed or not project or elapsed_s >= wait_s:
+            return result
+        time.sleep(min(poll_s, max(wait_s - elapsed_s, 0.0)))
 
 
 def _installation_audit() -> dict[str, Any]:

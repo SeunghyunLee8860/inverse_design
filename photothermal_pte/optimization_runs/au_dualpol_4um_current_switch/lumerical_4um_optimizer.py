@@ -10,7 +10,7 @@ pieces in this directory:
 * one frozen-grid distributed-source Lumerical adjoint for each polarization.
 
 The optimizer coordinate is the canonical 81x81 latent nodal density.  The
-single projected nodal state produced by ``NOMINAL_MAPPING`` is passed to
+single projected nodal state produced by ``OPTIMIZER_250NM_MAPPING`` is passed to
 every optical/PDE derivative path.  Lumerical HEAT and CHARGE are never used.
 """
 
@@ -36,8 +36,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     density_state_audit,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
-    NOMINAL_MAPPING,
-    smooth_lumerical_500nm_constraints,
+    OPTIMIZER_250NM_MAPPING,
+    calibrated_lumerical_250nm_dfm_caps,
+    smooth_lumerical_250nm_constraints,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_signed_objective import (
     signed_dual_objective_point,
@@ -527,7 +528,9 @@ class LumericalEvaluationDriver:
             or np.max(latent_value) > 1.0
         ):
             raise ValueError("latent density must be finite inside [0,1]")
-        projected = NOMINAL_MAPPING.physical(latent_value, self.runtime.beta)
+        projected = OPTIMIZER_250NM_MAPPING.physical(
+            latent_value, self.runtime.beta
+        )
         state = density_state_audit(projected)
         state_hash = str(state["density_state_sha256"])
         if state_hash in self._cache:
@@ -693,8 +696,9 @@ class SmokeEpigraphProblem:
             gradient_a_projected_A=evaluated["gradient_Ea_projected_A"],
             gradient_b_projected_A=evaluated["gradient_Eb_projected_A"],
             epigraph_A=float(value[-1]) * CURRENT_SCALE_A,
+            mapping=OPTIMIZER_250NM_MAPPING,
         )
-        dfm_values, dfm_gradients, _ = smooth_lumerical_500nm_constraints(
+        dfm_values, dfm_gradients, _ = smooth_lumerical_250nm_constraints(
             latent, self.beta
         )
         point = {
@@ -752,10 +756,11 @@ class SmokeEpigraphProblem:
 
 def smoke_preflight(runtime: OptimizerRuntime) -> dict[str, Any]:
     latent = initial_latent_density()
-    projected = NOMINAL_MAPPING.physical(latent, runtime.beta)
-    dfm_values, dfm_gradients, _ = smooth_lumerical_500nm_constraints(
+    projected = OPTIMIZER_250NM_MAPPING.physical(latent, runtime.beta)
+    dfm_values, dfm_gradients, _ = smooth_lumerical_250nm_constraints(
         latent, runtime.beta
     )
+    dfm_caps, dfm_calibration = calibrated_lumerical_250nm_dfm_caps()
     gates = {
         "latent_shape_81x81": latent.shape == (81, 81),
         "latent_inside_bounds": bool(np.min(latent) >= 0.0 and np.max(latent) <= 1.0),
@@ -763,6 +768,9 @@ def smoke_preflight(runtime: OptimizerRuntime) -> dict[str, Any]:
         "projected_finite": bool(np.all(np.isfinite(projected))),
         "two_DFM_constraints": dfm_values.shape == (2,)
         and dfm_gradients.shape == (2, 81, 81),
+        "calibrated_250nm_DFM_caps": dfm_caps.shape == (2,)
+        and bool(np.all(np.isfinite(dfm_caps)))
+        and bool(np.all(dfm_caps > 0.0)),
         "maxeval_is_two": SMOKE_MAXEVAL == 2,
         "raw_output_outside_Git": not str(runtime.output_root).startswith(
             str(REPOSITORY.resolve()) + os.sep
@@ -776,6 +784,8 @@ def smoke_preflight(runtime: OptimizerRuntime) -> dict[str, Any]:
         "runtime": runtime.audit(),
         "initial_density_state": density_state_audit(projected),
         "initial_DFM_values": dfm_values.tolist(),
-        "DFM_caps_for_smoke": (dfm_values + 1.0e-4).tolist(),
+        "DFM_caps_for_smoke": dfm_caps.tolist(),
+        "initial_DFM_constraints_satisfied": bool(np.all(dfm_values <= dfm_caps)),
+        "DFM_calibration": dfm_calibration,
         "gates": gates,
     }

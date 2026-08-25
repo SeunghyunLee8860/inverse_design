@@ -18,7 +18,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
     CONTRACT,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
-    NOMINAL_MAPPING,
+    OPTIMIZER_250NM_MAPPING,
     exact_binary_cell_candidate,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_optimizer import (
@@ -141,8 +141,15 @@ def main() -> int:
             "no_FDTDX_Maxwell": True,
         }
         latent_final = vector_final[:-1].reshape(CONTRACT.design_node_shape)
-        projected_final = NOMINAL_MAPPING.physical(latent_final, runtime.beta)
+        projected_final = OPTIMIZER_250NM_MAPPING.physical(
+            latent_final, runtime.beta
+        )
         binary_mask, binary_audit = exact_binary_cell_candidate(projected_final)
+        final_dfm_values = np.asarray(final_point["DFM_values"], np.float64)
+        smooth_dfm_satisfied = bool(np.all(final_dfm_values <= dfm_caps + 1.0e-8))
+        exact_dfm_satisfied = bool(
+            binary_audit["solid_pass"] and binary_audit["void_pass"]
+        )
         final_npz = output / "smoke_final_state.npz"
         np.savez_compressed(
             final_npz,
@@ -197,13 +204,16 @@ def main() -> int:
                     final_point["current_a_A"] > 0.0
                     and final_point["current_b_A"] < 0.0
                 ),
-                "DFM_values": np.asarray(final_point["DFM_values"]).tolist(),
-                "binary_candidate_exact_500nm_audit": {
+                "DFM_values": final_dfm_values.tolist(),
+                "DFM_caps": dfm_caps.tolist(),
+                "smooth_250nm_DFM_constraints_satisfied": smooth_dfm_satisfied,
+                "binary_candidate_exact_250nm_audit": {
                     key: value
                     for key, value in binary_audit.items()
                     if key not in {"binary", "bad_solid", "bad_void"}
                 },
                 "binary_candidate_is_not_promoted": True,
+                "binary_candidate_exact_250nm_DFM_satisfied": exact_dfm_satisfied,
                 "ordinary_dispersive_Au_binary_reevaluation_required": True,
             },
             "smoke_preflight": artifact(output / "smoke_preflight.json"),

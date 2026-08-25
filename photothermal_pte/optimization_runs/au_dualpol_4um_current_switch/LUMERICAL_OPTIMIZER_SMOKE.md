@@ -4,7 +4,7 @@
 
 The enabled entry point is a deliberately bounded development smoke, not a
 production continuation. It uses the canonical 81x81 latent nodal topology,
-the 500-nm conic filter, beta-4 tanh projection, the nonlinear Au
+the 250-nm conic filter, beta-4 tanh projection, the nonlinear Au
 `n-k`-then-square carrier, Lumerical FDTD Maxwell forwards/adjoints, and the
 repository custom CUDA thermal/electrical equations.
 
@@ -12,8 +12,15 @@ NLopt LD_MMA maximizes `t` subject to
 
 - `t - I_Ea <= 0`,
 - `t + I_Eb <= 0`,
-- the smooth 500-nm solid opening residual cap, and
-- the smooth 500-nm void opening residual cap.
+- the calibrated smooth 250-nm solid opening residual cap, and
+- the calibrated smooth 250-nm void opening residual cap.
+
+The 250-nm minimum solid and void widths use a 125-nm-radius disk opening on
+the 100-nm physical cell grid. The smooth caps are calibrated from exact-pass
+binary disks, rounded stadiums, and a rounded ring containing an internal
+void; they are not set relative to the gray initial point. Final promotion
+still requires the independent thresholded exact 250-nm audit and ordinary
+dispersive-Au binary reevaluation.
 
 The target current signs are `I_Ea > 0` and `I_Eb < 0`. The run is hard
 limited to two distinct function evaluations. It does not use FDTDX Maxwell,
@@ -45,7 +52,9 @@ photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_lumerical_4
 ```
 
 `runres` reserves nine `lum_fdtd_solve` tasks for the entire job and waits up
-to six hours by default. Raw FSP/NPZ results stay outside Git. The run fails
+to six hours by default. A child preflight waits up to 120 seconds for the
+server-side project reservation to reappear after a solver checkout is
+released. Raw FSP/NPZ results stay outside Git. The run fails
 closed on a nonempty output directory, source/mesh/GPU mismatch, any forward,
 PDE, Jacobian, or adjoint gate failure, or anything other than exactly two
 unique physics evaluations.

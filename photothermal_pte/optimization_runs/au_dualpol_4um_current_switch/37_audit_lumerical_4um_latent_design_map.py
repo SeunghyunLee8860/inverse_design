@@ -22,12 +22,12 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.dfm import
     DEFAULT_POSITIVE_PART_TAU,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
-    NOMINAL_MAPPING,
+    OPTIMIZER_250NM_MAPPING as NOMINAL_MAPPING,
     design_state_audit,
     projected_cell_density,
     projected_cell_jvp,
     projected_cell_vjp,
-    smooth_lumerical_500nm_constraints,
+    smooth_lumerical_250nm_constraints,
 )
 
 
@@ -79,14 +79,14 @@ def latent_design_map_audit() -> dict[str, object]:
     )
 
     dfm_step = 2.5e-4
-    dfm_values, dfm_gradients, _ = smooth_lumerical_500nm_constraints(
+    dfm_values, dfm_gradients, _ = smooth_lumerical_250nm_constraints(
         latent, beta
     )
     dfm_ad = dfm_gradients.reshape(2, -1) @ direction.ravel()
-    dfm_plus = smooth_lumerical_500nm_constraints(
+    dfm_plus = smooth_lumerical_250nm_constraints(
         latent + dfm_step * direction, beta
     )[0]
-    dfm_minus = smooth_lumerical_500nm_constraints(
+    dfm_minus = smooth_lumerical_250nm_constraints(
         latent - dfm_step * direction, beta
     )[0]
     dfm_fd = (dfm_plus - dfm_minus) / (2.0 * dfm_step)

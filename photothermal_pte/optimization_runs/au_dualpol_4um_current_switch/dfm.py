@@ -98,7 +98,25 @@ def _offsets(
 
 
 def _shift_stack(value: torch.Tensor, border: float) -> torch.Tensor:
-    offsets = _offsets()
+    return _shift_stack_for_feature(
+        value,
+        border,
+        spacing_m=CONTRACT.design_pitch_m,
+        minimum_feature_m=CONTRACT.minimum_solid_feature_m,
+    )
+
+
+def _shift_stack_for_feature(
+    value: torch.Tensor,
+    border: float,
+    *,
+    spacing_m: float,
+    minimum_feature_m: float,
+) -> torch.Tensor:
+    offsets = _offsets(
+        spacing_m=spacing_m,
+        minimum_feature_m=minimum_feature_m,
+    )
     extent = max(max(abs(i), abs(j)) for i, j in offsets)
     padded = torch.nn.functional.pad(
         value, (extent, extent, extent, extent), value=float(border)
@@ -120,19 +138,38 @@ def _soft_open(
     *,
     outside_phase: float,
     tau: float,
+    spacing_m: float = CONTRACT.design_pitch_m,
+    minimum_feature_m: float = CONTRACT.minimum_solid_feature_m,
 ) -> torch.Tensor:
     """Smooth disk opening with the physical phase outside the finite window."""
 
-    count_log = float(np.log(len(_offsets())))
-    shifted = _shift_stack(value, outside_phase)
+    offsets = _offsets(
+        spacing_m=spacing_m,
+        minimum_feature_m=minimum_feature_m,
+    )
+    count_log = float(np.log(len(offsets)))
+    shifted = _shift_stack_for_feature(
+        value,
+        outside_phase,
+        spacing_m=spacing_m,
+        minimum_feature_m=minimum_feature_m,
+    )
     eroded = -tau * (torch.logsumexp(-shifted / tau, dim=0) - count_log)
-    shifted_eroded = _shift_stack(eroded, outside_phase)
+    shifted_eroded = _shift_stack_for_feature(
+        eroded,
+        outside_phase,
+        spacing_m=spacing_m,
+        minimum_feature_m=minimum_feature_m,
+    )
     return tau * (torch.logsumexp(shifted_eroded / tau, dim=0) - count_log)
 
 
 def smooth_500nm_physical_constraints(
     physical_density: np.ndarray,
     *,
+    spacing_m: float = CONTRACT.design_pitch_m,
+    minimum_solid_feature_m: float = CONTRACT.minimum_solid_feature_m,
+    minimum_void_feature_m: float = CONTRACT.minimum_void_feature_m,
     tau: float = DEFAULT_OPENING_TAU,
     positive_tau: float = DEFAULT_POSITIVE_PART_TAU,
     ks_alpha: float = DEFAULT_KS_ALPHA,
@@ -154,18 +191,31 @@ def smooth_500nm_physical_constraints(
         raise ValueError(
             f"physical cell density must be finite with shape {CONTRACT.design_shape}"
         )
-    if tau <= 0.0 or positive_tau <= 0.0 or ks_alpha <= 0.0:
-        raise ValueError("DFM smoothing parameters must be positive")
+    if (
+        spacing_m <= 0.0
+        or minimum_solid_feature_m <= 0.0
+        or minimum_void_feature_m <= 0.0
+        or tau <= 0.0
+        or positive_tau <= 0.0
+        or ks_alpha <= 0.0
+    ):
+        raise ValueError("DFM length scales and smoothing parameters must be positive")
     rho = torch.tensor(rho_array, dtype=torch.float64, requires_grad=True)
     values: list[float] = []
     gradients: list[np.ndarray] = []
     fields: dict[str, np.ndarray] = {}
     phases = (
-        ("solid", rho, 0.0),
-        ("void", 1.0 - rho, 1.0),
+        ("solid", rho, 0.0, minimum_solid_feature_m),
+        ("void", 1.0 - rho, 1.0, minimum_void_feature_m),
     )
-    for index, (name, phase, outside) in enumerate(phases):
-        opened = _soft_open(phase, outside_phase=outside, tau=float(tau))
+    for index, (name, phase, outside, minimum_feature_m) in enumerate(phases):
+        opened = _soft_open(
+            phase,
+            outside_phase=outside,
+            tau=float(tau),
+            spacing_m=float(spacing_m),
+            minimum_feature_m=float(minimum_feature_m),
+        )
         raw_residual = phase - opened
         residual = float(positive_tau) * torch.nn.functional.softplus(
             raw_residual / float(positive_tau)

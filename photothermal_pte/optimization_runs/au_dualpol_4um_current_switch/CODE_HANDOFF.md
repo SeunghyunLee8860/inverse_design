@@ -12,6 +12,29 @@ TaIrTe4 flake.  The target is the signed dual-polarization objective
 The coordinate contract is **Lumerical/FDTDX x = crystal b** and
 **y = crystal a**.  Do not swap the polarization labels or coordinate axes.
 
+## Current Lumerical optimizer override -- 2026-08-25
+
+The user changed the active Lumerical optimizer constraint from 500 nm to a
+250-nm minimum solid width and 250-nm minimum void width. This override is
+limited to the `lumerical_4um_*` optimizer carrier so the concurrently
+developed historical/FDTDX 500-nm paths are not silently reinterpreted.
+The active Lumerical mapping is 81x81 latent rho -> finite nonperiodic 250-nm
+conic filter -> beta-4 projection -> shared 81x81 occupancy. The smooth DFM
+constraint uses a 125-nm-radius disk opening on the 100-nm cell grid and caps
+calibrated from exact-pass binary rounded reference patterns; it no longer
+uses `initial residual + 1e-4` as a purported fabrication cap. Final
+promotion requires a separate thresholded exact 250-nm solid/void audit and
+ordinary dispersive-Au binary reevaluation.
+
+The FOM remains `max min(I_Ea,-I_Eb)`. The first bounded Lumerical attempt
+measured `I_Ea=-8.7002 nA`, `I_Eb=-16.8637 nA`, hence FOM `-8.7002 nA` at
+its initial 500-nm-filter state. It completed both forwards and both custom
+CUDA PDE pairs, then correctly failed before the first adjoint because an
+already checked-out project reservation temporarily disappeared from the
+FlexLM `RESERVATION` line. The launcher now permits a bounded 120-s retry for
+that checkout-to-reservation restoration; it still requires an exact
+server-verified nine-task project reservation before every Maxwell launch.
+
 ## Read these files first
 
 1. `contract.py` -- immutable geometry, source, axes, design pitch, and
@@ -294,7 +317,7 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     distinct 81x81 latent state runs two imported-density Lumerical forwards,
     one layout-only component-Yee Jacobian, two custom-CUDA PDE
     forward/adjoint pairs, and two frozen-grid distributed-source Lumerical
-    adjoints. Ea/Eb current constraints and both smooth 500-nm solid/void
+    adjoints. Ea/Eb current constraints and both calibrated smooth 250-nm solid/void
     constraints use exact latent-coordinate transposes. The driver uses no
     FDTDX Maxwell, Lumerical HEAT, or Lumerical CHARGE solve. Its solver-free
     source/artifact/mapping preflight passes and the new callback tests plus
@@ -744,5 +767,5 @@ Do not copy them into this worktree.
    convergence, and downstream PTE current.
 7. Certify the combined gradient on the selected production mesh.
 8. Only then start LD_MMA filter/projection continuation and finish with an
-   independent 500-nm solid/void audit plus ordinary dispersive-Au binary
+   independent 250-nm solid/void audit plus ordinary dispersive-Au binary
    reevaluation.
