@@ -1,5 +1,20 @@
 # Au dual-polarization PTE inverse-design code handoff
 
+## Latest FDTDX checkpoint -- user-requested balanced baseline passed
+
+Read `FDTDX_USER_BALANCED_BASELINE.md` first.  At commit `ae571336`, the new
+`186 x 186 x 150` mesh realizes 100-nm x/y cells over the full flake/design,
+200-nm outer-air x/y cells, 5-nm Au/TaIrTe4/SiO2 z cells, 50-nm air z cells,
+and the explicitly disclosed 50.75-nm resolved-Si exception.  Its new 24/4
+all-air source pair and exact-binary L500 Au Ea/Eb material forwards all pass.
+The material pair ran concurrently in about 60 s on verified-idle B200 GPUs
+6/7; pre-existing Lumerical processes on GPUs 0/4 were untouched.  This is a
+single-mesh Maxwell baseline, not mesh convergence and not PTE current.  Do
+not start an optimizer.  The next allowed work is a separately hashed,
+source-paired full-domain z refinement around this baseline, followed by x/y
+refinement only if the measured error and runtime justify it.  The independent
+Lumerical session remains untouched and out of scope.
+
 ## Latest downstream diagnostic -- thermal scenarios, physical bounds blocked
 
 The frozen-Q prototype thermal mesh and domain-size ladders now pass for Ea
