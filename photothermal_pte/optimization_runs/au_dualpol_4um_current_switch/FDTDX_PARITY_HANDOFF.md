@@ -658,6 +658,48 @@ and status `PASS_EMPTY_EA_EB_OPTICAL_CONTROLS`.  Direct recomputation from both
 NPZ files again produced Au Q exactly zero and reproduced TaIrTe4 Q and the
 time-domain closed flux exactly.
 
+The deterministic nonuniform-gray physical control also passed at clean commit
+`0962163352bf42f724aa1473160e3569c92a7bdc`.  The beta-4 mapping produced the
+predeclared cell range `0.2013149064..0.8182984845`, so all 6,400 Au cells were
+strictly interior and both rho and rho-squared carriers were active with
+spatially varying weights.  The pointwise maximum target-versus-realized Au
+complex-epsilon mismatch was `5.555620238485794e-7`, below the frozen `1e-5`
+gate.  Ea/Eb forward times were `458.9394 s` and `457.4337 s`.
+
+At the `285 uW` source normalization, target total Q was `24.385373 uW` for Ea
+and `41.557943 uW` for Eb.  The corresponding Au contributions were positive
+at `9.365369 uW` and `18.318443 uW`; TaIrTe4 contributions were
+`15.020004 uW` and `23.239500 uW`.  For Ea/Eb respectively,
+target-versus-discrete total-Q mismatch was `1.688e-6/1.606e-7`,
+time-domain-versus-phasor closed-flux mismatch was `1.717e-4/9.442e-5`,
+discrete Q versus time-domain flux mismatch was `0.63219%/0.03436%`, and
+versus phasor flux was `0.64925%/0.04380%`.  Every strictly-gray,
+nonuniform-density, positive-Au-Q, temporal, material, and energy-closure gate
+passed.
+
+The nonuniform Ea/Eb JSON file hashes are
+`7b8bbd8a6c5568aa9d8a67a252b76836e1666d77602126125a2a739add88ce9f` and
+`74b910b6d6fa151e6fd58cc2f7e0b0e2866a6383b86e38ba496484c846bfc360`;
+raw NPZ hashes are
+`44573c8f8056de1ec4e3e18a7186e21875378d182f14ed5243ad90546105497d` and
+`6efb2844b4c6aa720abeeb7551436621de56a46371286f433b1ddb2c991d8dbb`.
+The external aggregate
+`/home/seunghyun200/fdtdx_parity_raw/density_gray_aggregate_09621633.json`
+has file hash
+`f51fff179141accc50aec8b02988fb8e6240d4098dbad3cbefb20ae5a9e22315`,
+report hash
+`b597bb7915a6ecb79bf6d7c0fef80f0c4780900a42c99fe759633b39b571e3b1`,
+and status `PASS_NONUNIFORM_GRAY_EA_EB_OPTICAL_CONTROLS`.  The saved latent,
+projected-node, and cell arrays exactly equal a fresh mapping regeneration.
+Independent raw-field integration exactly reproduced material-resolved Q,
+total Q, and time-domain closed flux for both polarizations.
+
+Together, the source-only, empty-Au, spatially varying gray-Au, and full-Au
+controls validate the fresh optical forward path at rho=0, throughout a
+strictly interior nonuniform density, and at rho=1.  They do not validate an
+optical gradient, an adjoint/checkpoint schedule, a PDE, a current, or an
+optimizer.
+
 The nonlinear carrier is now implemented in `fdtdx_parity_ade.py` as three
 positive, damped Lorentz bases: one weighted by `rho` and two weighted by
 `rho^2`.  This exactly follows the linear-plus-quadratic decomposition of the
@@ -681,12 +723,12 @@ both positive-Lorentz recurrences are strictly stable and reproduce exactly
 through the pinned FDTDX API.  SiO2 and Si remain the lossless real readbacks
 from the material JSON.
 
-The full-Au and empty-Au physical-device Maxwell field/Q/closed-flux controls
-are now validated for both polarizations.  No nonuniform-gray control, complete
-AD-FD, CUDA PDE, FDTDX optimizer, Lumerical, HEAT, or CHARGE result is claimed
-by this status, and `optimizer_enabled` remains false.  The next gate is the
-deterministic beta-4 nonuniform-gray density that exercises both the rho and
-rho-squared Au carriers.  Only after it passes may optical AD-FD be built.
+The empty-Au, nonuniform-gray, and full-Au physical-device Maxwell
+field/Q/closed-flux controls are now validated for both polarizations.  No
+optical AD-FD, CUDA PDE, FDTDX optimizer, Lumerical, HEAT, or CHARGE result is
+claimed by this status, and `optimizer_enabled` remains false.  The next task
+is a fail-closed audit and implementation of the FDTDX optical reverse-mode
+checkpoint path, followed by complete four-direction Ea/Eb latent AD-FD.
 
 ## What completion means
 
