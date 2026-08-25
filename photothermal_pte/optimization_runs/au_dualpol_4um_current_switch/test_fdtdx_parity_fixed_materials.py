@@ -55,4 +55,4 @@ def test_complete_fixed_material_certificate_and_hash() -> None:
     assert audit["status"] == "PASS"
     assert audit["axis_order_solver_xyz"] == ["b", "a", "c_equals_b"]
     assert all(audit["substrates"]["checks"].values())
-    assert coefficient_hash() == "7aa3f50f5ca3cf1f0d9222d7d5e16a7e82ca9d0a5c55d75a0617a09191148057"
+    assert coefficient_hash() == "fa9a435d79a7d01db22ec695940ebe993e6234b62fe5567fbd55a1664d08ede5"

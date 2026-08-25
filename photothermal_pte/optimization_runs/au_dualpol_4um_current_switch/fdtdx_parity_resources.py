@@ -21,7 +21,7 @@ def resource_audit(
     """Return exact CFL/work counts and transparent float32 memory lower bounds.
 
     The memory figures follow the pinned FDTDX ``ArrayContainer`` allocation:
-    real E/H fields, three diagonal permittivity components, one to three
+    real E/H fields, one broadcast inverse-permittivity component, one to three
     axis-aligned ADE poles, and four CPML auxiliary slab arrays.  They exclude
     detector buffers, XLA temporaries, cotangents, checkpoint scheduling,
     allocator overhead, and CUDA compilation workspace, so they are explicitly
@@ -54,10 +54,10 @@ def resource_audit(
 
     pole_cases: dict[str, object] = {}
     for num_poles in (1, 2, 3):
-        # Per full-domain voxel: E/H=6, diagonal inv(epsilon)=3;
+        # Per full-domain voxel: E/H=6, broadcast inv(epsilon)=1;
         # per pole P_curr/P_prev=6 and c1/c2/c3=9.  c4 is excluded because the
         # selected carrier has not yet been chosen and certified.
-        persistent_components = 6 + 3 + 15 * num_poles
+        persistent_components = 6 + 1 + 15 * num_poles
         dynamic_checkpoint_components = 6 + 6 * num_poles
         persistent_bytes = (
             persistent_components * cells * float32_bytes

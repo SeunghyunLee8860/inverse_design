@@ -448,34 +448,60 @@ an old 80x80 FDTDX checkpoint into the new 81x81 path.
 
 ## Current implementation status (2026-08-25)
 
-Steps 1 and 2 now have a solver-free, fail-closed implementation in
-`fdtdx_parity_contract.py`, with non-editable-install provenance checking in
-`fdtdx_runtime_provenance.py` and seven focused regression tests.  The audited
-rectilinear grid is exactly `186 x 186 x 286 = 9,894,456` cells.  Its complete
-x/y/z edge hash is
+Steps 1 through 3 now have a fresh fail-closed implementation in
+`fdtdx_parity_contract.py`, `fdtdx_parity_ade.py`,
+`fdtdx_parity_fixed_materials.py`, and `fdtdx_parity_model.py`.  The model
+builder imports no historical integer layout or density carrier.  Physical
+coordinates are constrained first, and the resolved FDTDX slices and float32
+edges must match the certified arrays exactly before allocation can pass.  The
+audited rectilinear grid is exactly
+`186 x 186 x 286 = 9,894,456` cells.  Its planned float64 x/y/z edge hash is
 `15e2ce87ec5485de2712718b0f12a289e64233a69b98f4cae23b3cb5349e7805`.
-Source, incident-power, endpoint-field, and flake planes are exact z edges
-241, 236, 228, and 207, respectively.
+Pinned FDTDX stores those coordinates as float32; the realized solver-edge hash
+is `1aa397f7313f05e0b47d741d58686f076dcc7d8bf04355606fa1e7e993d6464c`.
+The maximum coordinate roundoff is `4.452886051152429e-13 m`, and the
+realized minimum pitches are `99.99985195463523 nm` laterally and
+`2.4999735614983365 nm` vertically.  Both planned and solver hashes are
+mandatory provenance; neither may substitute silently for the other.  Source,
+incident-power, endpoint-field, and flake planes are exact z edges 241, 236,
+228, and 207, respectively.
 
 On the current host, the runtime gate passes at FDTDX commit
 `f26f84b70a8cceec9b889553955a868624736bf1`.  The normal site-packages import
 is accepted only because `direct_url.json` points to the pinned clean source
 and the installed and source package trees have the identical SHA-256
 `c66b34671750258ff71478f9e9530f3abcb07a937591775236b1f7bdea739d58`.
-The grid-contract slice added seven focused tests.  The current full solver-free
-suite, including all material certificates below, is `152 passed`.
+The parity contract/ADE/fixed-material/model suite is `24 passed`; the full
+solver-free suite for this work folder is `157 passed`.
 
-The requested 2.5-nm z cells dominate CFL: `dt=2.0834738305187266 as`,
-`6,403.9988` steps per 4-um period, and `256,160` steps for 40 periods.
-That is `2,534,563,848,960` cell-steps per forward solve.  The analytic
-audit gives a one-pole lower bound, but the selected passive carrier below
-uses three poles: its persistent-array lower bound is `2.024 GiB` and its
-one-dynamic-checkpoint lower bound is `0.918 GiB`; these explicitly exclude
-XLA temporaries, cotangents, checkpoint scheduling, detectors, and CUDA
-workspace.  Therefore no wall-time or GPU peak-memory feasibility claim is
-made yet.  With the ADE carrier now selected, a dry allocation and short timed
-microbenchmark on a verified-idle permitted GPU are mandatory before any
-40-period field solve.
+The requested 2.5-nm z cells dominate CFL.  The realized FDTDX float32-edge
+CFL is `dt=2.083451820604655 as`, `6,404.0664` steps per 4-um period, and
+`256,163` steps for 40 periods.  That is `2,534,593,532,328` cell-steps per
+forward solve.  After correcting the analytic accounting to the actual
+one-component broadcast `inv_permittivity`, the selected three-pole carrier has
+a persistent-array lower bound of `1.9503207207 GiB` and a one-dynamic-state
+checkpoint lower bound of `0.9182474613 GiB`.  These exclude detector buffers,
+XLA temporaries, cotangents, checkpoint scheduling, allocator overhead, and
+CUDA workspace.
+
+A no-field Ea dry allocation passed on verified-idle B200 UUID
+`GPU-48bf3705-8160-2de5-531b-dc480c83eabe`: object placement plus device-ready
+allocation took `33.5272 s`; the ArrayContainer leaf total was
+`2,160,207,296 bytes = 2.0118498206 GiB`; all shape, PML, dt, material-state,
+and placement gates passed; zero FDTD steps ran.  A second no-field audit on
+verified-idle UUID `GPU-0e94c58d-ebdd-2b12-ce98-28159e8dd756` applied
+`rho=0,0.25,0.5,0.75,1`.  For every density, the maximum coefficient error
+through the complete `80 x 80 x 20` Au volume, adjacent-void leakage, and
+TaIrTe4 coefficient change were all exactly zero.  Setup plus all five
+readbacks took `33.6238 s`.
+
+The GPU builder now fails closed below loaded cuBLAS runtime 13.2.  The isolated
+FDTDX environment passed with `130601` (13.6.1).  The thermal PyTorch
+environment supplies `130100` (13.1) and must not be placed ahead of the FDTDX
+environment for optical GPU runs; doing so triggers JAX's documented
+silent-corruption warning.  A short timed field microbenchmark is still
+mandatory before any 40-period solve, and no wall-time or peak-memory
+feasibility claim is made yet.
 
 The nonlinear carrier is now implemented in `fdtdx_parity_ade.py` as three
 positive, damped Lorentz bases: one weighted by `rho` and two weighted by
@@ -486,24 +512,25 @@ the pinned FDTDX API reproduces every frozen float32 coefficient exactly.  On
 101 uniform densities the maximum relative complex-epsilon error is
 `1.0813927774623183e-6`; the Au endpoint error is
 `1.3956872401013224e-7`.  The coefficient hash is
-`37a0485e3108aff97a92bcc44b4190f2975bbf5e59b9a6ff4f9144eae2167ced`.
+`71f6738a4c587387c334c3a31edcf8df1ff9415b8fdf2d66537b7a65b6b07b0f`.
 JAX coefficient JVP equals the analytic JVP, and its largest relative L2 error
 against centered FD is `2.3878186766523868e-5`.
 
 The fixed TaIrTe4 carrier is independently frozen in
 `fdtdx_parity_fixed_materials.py`, with solver-axis order `x=b`, `y=a`,
 `z=c=b`.  Its coefficient hash is
-`7aa3f50f5ca3cf1f0d9222d7d5e16a7e82ca9d0a5c55d75a0617a09191148057`.
+`fa9a435d79a7d01db22ec695940ebe993e6234b62fe5567fbd55a1664d08ede5`.
 The realized float32 relative complex-epsilon errors are
 `4.306472432831919e-6` for a and `1.1435456653834023e-7` for b/c;
 both positive-Lorentz recurrences are strictly stable and reproduce exactly
 through the pinned FDTDX API.  SiO2 and Si remain the lossless real readbacks
 from the material JSON.
 
-No Maxwell field, CUDA PDE, GPU, optimizer, Lumerical, HEAT, or CHARGE run is
-claimed by this status.  `optimizer_enabled` remains false.  Representative
-`rho=0,0.25,0.5,0.75,1` setup/dry-allocation, timed short-forward, and field/Q
-controls are the next gate before source calibration or any full 40-period run.
+No Maxwell time step, CUDA PDE, optimizer, Lumerical, HEAT, or CHARGE run is
+claimed by this status.  `optimizer_enabled` remains false.  No-field setup and
+uniform-density placement are complete; the timed short-forward and field/Q
+controls are the next gates before source calibration or any full 40-period
+run.
 
 ## What completion means
 

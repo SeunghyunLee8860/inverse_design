@@ -127,6 +127,12 @@ def grid_edges() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     return x, y, z
 
 
+def fdtdx_float32_grid_edges() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Edges as stored by the pinned FDTDX RectilinearGrid."""
+
+    return tuple(np.asarray(axis, dtype=np.float32) for axis in grid_edges())
+
+
 def _edge_index(edges: np.ndarray, coordinate_m: float) -> int:
     matches = np.flatnonzero(np.isclose(edges, coordinate_m, rtol=0.0, atol=2e-18))
     if matches.size != 1:
@@ -209,14 +215,25 @@ def _array_sha256(array: np.ndarray) -> str:
     return hashlib.sha256(canonical.tobytes(order="C")).hexdigest()
 
 
+def _array_sha256_f32(array: np.ndarray) -> str:
+    canonical = np.ascontiguousarray(np.asarray(array, dtype="<f4"))
+    return hashlib.sha256(canonical.tobytes(order="C")).hexdigest()
+
+
 def grid_hashes() -> dict[str, str]:
     x, y, z = grid_edges()
+    sx, sy, sz = fdtdx_float32_grid_edges()
     joined = np.concatenate((x, y, z))
+    solver_joined = np.concatenate((sx, sy, sz))
     return {
         "x_edges_sha256": _array_sha256(x),
         "y_edges_sha256": _array_sha256(y),
         "z_edges_sha256": _array_sha256(z),
         "xyz_edges_sha256": _array_sha256(joined),
+        "fdtdx_float32_x_edges_sha256": _array_sha256_f32(sx),
+        "fdtdx_float32_y_edges_sha256": _array_sha256_f32(sy),
+        "fdtdx_float32_z_edges_sha256": _array_sha256_f32(sz),
+        "fdtdx_float32_xyz_edges_sha256": _array_sha256_f32(solver_joined),
     }
 
 
@@ -225,6 +242,10 @@ def grid_audit() -> dict[str, object]:
     shape = (x.size - 1, y.size - 1, z.size - 1)
     dx = np.diff(x)
     dz = np.diff(z)
+    solver_x, solver_y, solver_z = fdtdx_float32_grid_edges()
+    solver_dx = np.diff(solver_x)
+    solver_dy = np.diff(solver_y)
+    solver_dz = np.diff(solver_z)
     required_x_edges = (-10e-6, -9e-6, -8e-6, -4e-6, 4e-6, 8e-6, 9e-6, 10e-6)
     required_z_edges = (
         -3.0e-6,
@@ -268,6 +289,16 @@ def grid_audit() -> dict[str, object]:
             if segment.pml
         ),
         "all_required_physical_planes_are_edges": bool(exact_edges),
+        "fdtdx_float32_min_pitch_relative_error_below_2e_5": bool(
+            abs(float(solver_dz.min()) / 2.5e-9 - 1.0) < 2.0e-5
+        ),
+        "fdtdx_float32_coordinate_roundoff_below_1pm": bool(
+            max(
+                np.max(np.abs(solver_x.astype(np.float64) - x)),
+                np.max(np.abs(solver_y.astype(np.float64) - y)),
+                np.max(np.abs(solver_z.astype(np.float64) - z)),
+            ) < 1.0e-12
+        ),
     }
     return {
         "status": "PASS" if all(checks.values()) else "FAIL",
@@ -276,6 +307,18 @@ def grid_audit() -> dict[str, object]:
         "cell_count": int(np.prod(shape)),
         "minimum_pitch_m": float(min(dx.min(), dz.min())),
         "maximum_pitch_m": float(max(dx.max(), dz.max())),
+        "fdtdx_float32_min_spacings_m": [
+            float(solver_dx.min()),
+            float(solver_dy.min()),
+            float(solver_dz.min()),
+        ],
+        "fdtdx_float32_max_coordinate_roundoff_m": float(
+            max(
+                np.max(np.abs(solver_x.astype(np.float64) - x)),
+                np.max(np.abs(solver_y.astype(np.float64) - y)),
+                np.max(np.abs(solver_z.astype(np.float64) - z)),
+            )
+        ),
         "segments": {
             "x_and_y": [asdict(segment) | {"pitch_m": segment.pitch_m} for segment in lateral_segments()],
             "z": [asdict(segment) | {"pitch_m": segment.pitch_m} for segment in vertical_segments()],
@@ -283,7 +326,11 @@ def grid_audit() -> dict[str, object]:
         "placements": placement_contract(),
         "resources": resource_audit(
             shape=shape,
-            min_spacings_m=(float(dx.min()), float(dx.min()), float(dz.min())),
+            min_spacings_m=(
+                float(solver_dx.min()),
+                float(solver_dy.min()),
+                float(solver_dz.min()),
+            ),
             wavelength_m=PHYSICS.wavelength_m,
             courant_factor=PHYSICS.courant_factor,
             total_periods=PHYSICS.total_periods,

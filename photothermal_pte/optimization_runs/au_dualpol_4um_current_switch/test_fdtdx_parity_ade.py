@@ -70,7 +70,7 @@ def test_uniform_density_certificate_has_margin_and_frozen_hash() -> None:
     assert audit["maximum_relative_complex_epsilon_error"] < 1.1e-6
     assert audit["au_endpoint_relative_error"] < 1.5e-7
     assert audit["minimum_implicit_divisor"] == 1.0
-    assert coefficient_hash() == "37a0485e3108aff97a92bcc44b4190f2975bbf5e59b9a6ff4f9144eae2167ced"
+    assert coefficient_hash() == "71f6738a4c587387c334c3a31edcf8df1ff9415b8fdf2d66537b7a65b6b07b0f"
     assert audit["field_control_gate"] == {
         "status": "PENDING",
         "required_densities": [0.0, 0.25, 0.5, 0.75, 1.0],

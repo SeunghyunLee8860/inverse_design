@@ -80,6 +80,10 @@ def test_grid_hashes_bind_the_complete_rectilinear_grid() -> None:
         "y_edges_sha256",
         "z_edges_sha256",
         "xyz_edges_sha256",
+        "fdtdx_float32_x_edges_sha256",
+        "fdtdx_float32_y_edges_sha256",
+        "fdtdx_float32_z_edges_sha256",
+        "fdtdx_float32_xyz_edges_sha256",
     }
     assert all(len(value) == 64 for value in hashes.values())
     assert hashes == {
@@ -87,6 +91,10 @@ def test_grid_hashes_bind_the_complete_rectilinear_grid() -> None:
         "y_edges_sha256": "4b1a47ea8a97be981807bfc03f9d1412632c74f5361fee0ea25ee78e08fc524e",
         "z_edges_sha256": "8b09a1c773a751ad39843b71d4fb92f50819e53b1dac6a59bcf84d1613c8ff4f",
         "xyz_edges_sha256": "15e2ce87ec5485de2712718b0f12a289e64233a69b98f4cae23b3cb5349e7805",
+        "fdtdx_float32_x_edges_sha256": "63eca9f8f3d3b8360a88c663fb253ad1033ec88e2869b93a0b2321e1eb9d9350",
+        "fdtdx_float32_y_edges_sha256": "63eca9f8f3d3b8360a88c663fb253ad1033ec88e2869b93a0b2321e1eb9d9350",
+        "fdtdx_float32_z_edges_sha256": "e9b3c06dd289a0b42778271d496eb8f45daa1c24880d1bd1c6aa7bef69011236",
+        "fdtdx_float32_xyz_edges_sha256": "1aa397f7313f05e0b47d741d58686f076dcc7d8bf04355606fa1e7e993d6464c",
     }
 
 
@@ -94,13 +102,13 @@ def test_cfl_and_memory_audit_exposes_cost_without_claiming_peak_memory() -> Non
     resources = grid_audit()["resources"]
     assert resources["status"] == "ANALYTIC_LOWER_BOUND_ONLY"
     assert resources["field_run_feasibility"].startswith("UNDETERMINED")
-    assert np.isclose(resources["time"]["dt_s"], 2.0834738305187266e-18)
-    assert resources["time"]["total_steps"] == 256_160
+    assert resources["time"]["dt_s"] == 2.083451820604655e-18
+    assert resources["time"]["total_steps"] == 256_163
     assert resources["time"]["late_window_steps"] == 25_616
-    assert resources["work"]["cell_steps_per_forward"] == 2_534_563_848_960
+    assert resources["work"]["cell_steps_per_forward"] == 2_534_593_532_328
     assert resources["work"]["estimated_wall_time_s"] is None
     one_pole = resources["memory"]["pole_cases_no_c4"]["1"]
-    assert one_pole["persistent_array_lower_bound_bytes"] == 985_961_856
+    assert one_pole["persistent_array_lower_bound_bytes"] == 906_806_208
     assert one_pole["one_dynamic_checkpoint_lower_bound_bytes"] == 511_026_816
     assert "XLA_temporaries_and_cotangents" in resources["memory"]["excluded_from_lower_bound"]
 
