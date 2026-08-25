@@ -849,7 +849,11 @@ other host. Retrieve its terminal manifest, final exact mask, two exact
 claim. The synthetic 285-uW sequence reached 12.5 nm but its final
 25/12.5-nm current change was 0.5314%, so it correctly failed. This is a
 negative control only. The adaptive production evaluator runs through
-12.5 nm automatically; do not relax the 0.5% gate.
+12.5 nm automatically; do not relax the 0.5% gate. The 12.5-nm solve used
+71.03 GB peak host RAM, and a separate GPU-7 rerun observed 24,524 MiB of
+device memory while active. Treat that as a resource measurement, not an RTX
+certificate: never colocate it with the active Lumerical production GPU and
+run it only on a verified-idle host/device with sufficient memory.
 
 
 ## Continuation symmetry-break code after the active immutable run

@@ -165,7 +165,13 @@ A custom-CUDA smoke used verified-idle B200 GPUs and the same continuous
 asymmetric 285-uW synthetic heat source at all levels. Solver times were
 4.03 s (100 nm), 8.60 s (50 nm), 30.86 s (25 nm), and 163.88 s (12.5 nm).
 The complete 25-nm process used 42.39 s and 18.31 GB peak host RAM; 12.5 nm
-used 3 min 28.30 s and 71.03 GB. The adjacent-pair metrics were:
+used 3 min 28.30 s and 71.03 GB. A separate 12.5-nm rerun on physical GPU 7
+observed 24,524 MiB of device memory while the solve was active and released
+the allocation cleanly at exit. This supports GPU-memory fit on a nominal
+48-GB device, but it does not certify that an RTX host has the required host
+RAM or spare capacity. Keep the adaptive PDE fallback off the active RTX
+Lumerical GPU and use a separately verified-idle, memory-qualified device.
+The adjacent-pair metrics were:
 
 - 100/50 nm: current 1.719%, field NRMSE 0.198%, mean 0.041%, peak 0.801%;
 - 50/25 nm: current 1.014%, field NRMSE 0.0653%, mean 0.0214%, peak 0.295%;
