@@ -831,7 +831,9 @@ convergence path:
   only after size/SHA-256, mesh, policy, polarization, mask, and Q-processing
   provenance pass;
 - `36d43542`: exposes exactly one physical CUDA GPU, requires it to equal
-  `--gpu-index`, and records its UUID/model.
+  `--gpu-index`, and records its UUID/model;
+- `d1ba0fd0`: adaptively extends a failed 100/50-nm pair through 50/25 and
+  25/12.5 nm, stops at the first passing adjacent pair, and otherwise fails.
 
 Read `LUMERICAL_PRODUCTION_RUN_STATUS.md` for the complete reuse command and
 measured timing. Do not call the Lumerical development wrapper for the
@@ -839,11 +841,29 @@ PDE-only reuse because that wrapper intentionally requires a live solve
 license. Use `run_combined_gpu_python.sh` with one verified-idle physical GPU.
 Do not commit the forward raw NPZ or generated temperature evidence.
 
-The complete local solver-free regression is `275 passed in 258.22 s`.
-No final-mask Ea/Eb PDE convergence result exists on this host yet. The active
-RTX continuation artifacts live on the other host. Retrieve its terminal
-manifest, final exact mask, two exact 100-nm forwards, and later two exact
-50-nm forwards before making any pass claim. The synthetic 285-uW smoke failed
-100-to-50 nm in current and peak temperature; it is a negative control only.
-If the physical raw-Q comparison also fails, extend to 50-to-25 nm rather than
-relaxing the 0.5% gate.
+The full regression after combining the adaptive PDE and continuation
+symmetry-break changes is `279 passed in 257.30 s`. No final-mask Ea/Eb PDE convergence result
+exists on this host yet. The active RTX continuation artifacts live on the
+other host. Retrieve its terminal manifest, final exact mask, two exact
+100-nm forwards, and later two exact 50-nm forwards before making any pass
+claim. The synthetic 285-uW sequence reached 12.5 nm but its final
+25/12.5-nm current change was 0.5314%, so it correctly failed. This is a
+negative control only. The adaptive production evaluator runs through
+12.5 nm automatically; do not relax the 0.5% gate.
+
+
+## Continuation symmetry-break code after the active immutable run
+
+Commit `ac077e4c` adds an exact linearized two-utility box max-min warm start
+for the initial uniform rho=0.5 point and disables premature stage `ftol` and
+`xtol` termination. It preserves the signed epigraph objective and stage
+maximum-evaluation budget: the already evaluated uniform point stays outside
+MMA, one warm-start physics evaluation is made, and MMA receives one fewer
+evaluation.
+
+The documented active external run is immutable commit `69b2bb40`, so it does
+not contain `ac077e4c`. This host cannot see that tmux session or manifest.
+Do not claim that the old run stalled, passed, or was replaced without reading
+the external manifest. If the external audit shows that it stopped or made no
+meaningful stage progress, start a new immutable run from the latest shared
+commit and a new output root; never mutate the old checkpoint in place.

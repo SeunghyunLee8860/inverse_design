@@ -134,23 +134,26 @@ jq '{status,latest,stage_count:(.stages|length),error}' \
 
 ## Final-mask custom PDE convergence path -- 2026-08-25 21:27 UTC
 
-Commits `fb7ff239`, `b5b18174`, `27cf25fc`, and `36d43542` close the
-*implementation* gap for the custom thermal/electrical lateral-grid check.
-They do not claim that the unavailable final Ea/Eb artifacts have passed it.
+Commits `fb7ff239`, `b5b18174`, `27cf25fc`, `36d43542`, and
+`d1ba0fd0` close the *implementation* gap for the custom thermal/electrical
+lateral-grid check. They do not claim that the unavailable final Ea/Eb
+artifacts have passed it.
 
-- The exact 80x80 binary Au mask is replicated without interpolation to a
-  160x160 design grid for the 50-nm PDE solve. The 16-um TaIrTe4 grid changes
-  from 160x160 to 320x320 while all physical spans, layer thicknesses,
-  conductivities, interface conductances, contacts, and boundary conditions
-  remain fixed.
+- The exact 80x80 binary Au mask is replicated without interpolation on
+  100/50/25/12.5-nm PDE grids. The design grid can reach 640x640 and the
+  16-um TaIrTe4 grid can reach 1280x1280 while all physical spans, layer
+  thicknesses, conductivities, interface conductances, contacts, and boundary
+  conditions remain fixed.
 - Each polarization uses one unchanged native Lumerical component-Yee raw Q.
-  That Q is exact-overlap remapped independently to the 100-nm and 50-nm
-  thermal grids. No clipping, smoothing, gain, or global rescaling is allowed.
-- The 50-nm current is the reported reference. Promotion requires both PDE
-  resolutions to pass remap/residual/energy/terminal gates, preserve current
+  That Q is exact-overlap remapped independently to every executed thermal
+  grid. No clipping, smoothing, gain, or global rescaling is allowed.
+- The evaluator always runs 100 and 50 nm. If their pair fails, it adds 25 nm;
+  if 50/25 also fails, it adds 12.5 nm. It stops at the first passing adjacent
+  pair. The finer member becomes the reported reference. Every executed PDE
+  resolution must pass remap/residual/energy/terminal gates, preserve current
   sign, and keep current change, aligned TaIrTe4 temperature-field NRMSE,
   mean-temperature change, and peak-temperature change below 0.5%.
-- The result saves hash-bound 100/50-nm TaIrTe4 temperature evidence. A copied
+- The result saves hash-bound evidence for every executed resolution. A copied
   raw NPZ is accepted only when its recorded byte size and SHA-256 match.
   Reused forward JSONs must also match mesh spec, accelerator policy,
   polarization, canonical binary-mask hash, and unmodified-Q policy.
@@ -158,16 +161,21 @@ They do not claim that the unavailable final Ea/Eb artifacts have passed it.
   exactly one physical index equal to `--gpu-index`; the actual GPU index,
   UUID, model, and local device 0 mapping are written to the result.
 
-A parallel custom-CUDA smoke used verified-idle B200 GPUs 4 and 7 and the same
-continuous asymmetric 285-uW synthetic heat source. It measured 4.03 s at
-100 nm and 8.60 s at 50 nm. The current changed from 96.8908 nA to 95.2532 nA
-(1.719%), peak temperature changed 0.801%, TaIrTe4 field NRMSE was 0.198%, and
-mean temperature changed 0.041%. The gate correctly failed the current and
-peak metrics. This is a negative-control runtime/behavior check, not an Ea/Eb
-physical result and not evidence that the final design is nonconverged.
+A custom-CUDA smoke used verified-idle B200 GPUs and the same continuous
+asymmetric 285-uW synthetic heat source at all levels. Solver times were
+4.03 s (100 nm), 8.60 s (50 nm), 30.86 s (25 nm), and 163.88 s (12.5 nm).
+The complete 25-nm process used 42.39 s and 18.31 GB peak host RAM; 12.5 nm
+used 3 min 28.30 s and 71.03 GB. The adjacent-pair metrics were:
 
-The complete solver-free regression after the artifact-reuse and
-single-visible-GPU safety changes is `275 passed in 258.22 s`.
+- 100/50 nm: current 1.719%, field NRMSE 0.198%, mean 0.041%, peak 0.801%;
+- 50/25 nm: current 1.014%, field NRMSE 0.0653%, mean 0.0214%, peak 0.295%;
+- 25/12.5 nm: current 0.5314%, field NRMSE 0.0230%, mean 0.0102%, peak 0.0991%.
+
+The adaptive gate correctly exhausts 12.5 nm and still fails this synthetic
+case because current remains just above 0.5%. This is a negative-control
+runtime/behavior check, not an Ea/Eb physical result and not evidence that the
+final design is nonconverged. The complete solver-free regression after combining the adaptive PDE and
+continuation symmetry-break changes is `279 passed in 257.30 s`.
 
 If the exact forward/raw artifacts already exist, run no new Maxwell solve:
 
@@ -188,8 +196,26 @@ photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/run_combined_gp
   --stack-dz-nm 2.5 --bulk-dz-nm 50
 ```
 
-This command closes only the custom-PDE 100-to-50-nm check for the particular
-raw Q supplied. Optical x-y convergence still requires the separate 100/50-nm
-Lumerical comparison described above. If the physical final-mask PDE gate
-fails, do not weaken 0.5%; extend the custom PDE axis to 50-to-25 nm and use
-the finest passing pair.
+This command runs the adaptive custom-PDE sequence for the particular raw Q
+supplied; it stops at the first passing adjacent pair through 12.5 nm. Optical
+x-y convergence still requires the separate 100/50-nm Lumerical comparison
+described above. If the physical final-mask 25/12.5-nm pair also fails, do not
+weaken 0.5%; add 6.25 nm only on a separately verified memory-qualified B200
+rather than burdening the active RTX Lumerical production GPU.
+
+
+## Post-launch uniform-symmetry optimizer repair -- 2026-08-25
+
+Commit `ac077e4c` adds an exact linearized two-utility box max-min warm start
+before the first beta-1 MMA call and sets stage `ftol_rel=xtol_rel=0` so the
+expensive bounded stage ends by its explicit evaluation budget rather than a
+near-symmetric numerical floor. It does not alter the signed epigraph,
+DFM/grayness caps, move limit, or total stage physics-evaluation budget.
+
+The documented external process is immutable commit `69b2bb40`; therefore it
+cannot contain this later repair. The external tmux/manifest is not mounted on
+this host, so its actual current state is unknown. Read that manifest before
+acting. If it is stopped or shows no meaningful stage progress, launch a new
+immutable latest-commit run with a new output root. Do not overwrite or resume
+the old checkpoint with different code, and do not launch a duplicate while
+the old process is still alive.
