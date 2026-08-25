@@ -44,10 +44,10 @@ def test_pinned_gradient_sources_require_checkpointed_for_dispersion() -> None:
 def test_checkpoint_table_is_explicitly_only_a_lower_bound() -> None:
     audit = checkpoint_memory_lower_bounds()
     assert audit["status"] == "LOWER_BOUND_ONLY_NOT_A_FEASIBILITY_CLAIM"
-    assert set(audit["candidates"]) == {"16", "32", "64", "96"}
+    assert set(audit["candidates"]) == {"16", "32", "64", "96", "128", "192"}
     totals = [
         audit["candidates"][key]["checkpoint_plus_persistent_lower_bound_bytes"]
-        for key in ("16", "32", "64", "96")
+        for key in ("16", "32", "64", "96", "128", "192")
     ]
     assert totals == sorted(totals)
     assert "peak-memory" in audit["required_next_gate"]
