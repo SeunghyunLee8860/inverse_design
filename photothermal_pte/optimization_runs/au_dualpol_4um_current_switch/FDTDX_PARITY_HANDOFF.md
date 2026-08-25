@@ -738,11 +738,15 @@ match direct gradients on 24- and 70-step scenes, including a partial final
 slice.  Sparse regional-P resets then match the full-slice regional `c3`
 gradient, and an actual exact-grid placement confirms a 356,503,872-byte sparse
 slice payload versus 985,960,704 bytes full; the latest integrated CPU suite
-passes 230 tests.  Read `FDTDX_REVERSIBLE_ADJOINT_REPORT.md`,
-`FDTDX_REVERSIBLE_SLICE_REPORT.md`, and
-`FDTDX_REVERSIBLE_SPARSE_SLICE_REPORT.md` for the exact scope.  This is not yet
-a production gradient.  The next task is a short bounded exact-grid GPU timing
-and stability probe on separately verified-idle UUIDs.
+passes 233 tests.  Parallel exact-grid 4,096-step Ea/Eb probes then pass centered
+latent AD-FD at 6.09e-5/3.08e-4, take 21.54/21.60 seconds for value-and-grad,
+and peak near 15.67 GB.  The linear projection is 22.45/22.51 minutes per
+polarization, so two-GPU optical wall time may fit below 30 minutes, but this is
+not a production certificate.  Read `FDTDX_REVERSIBLE_ADJOINT_REPORT.md`,
+`FDTDX_REVERSIBLE_SLICE_REPORT.md`,
+`FDTDX_REVERSIBLE_SPARSE_SLICE_REPORT.md`, and
+`FDTDX_REVERSIBLE_RUNTIME_REPORT.md`.  Slice 256 is too memory-heavy at full
+horizon; next run only the bounded 16,384-step Ea/Eb probe with slice 1,024.
 
 ## What completion means
 
@@ -772,10 +776,12 @@ reevaluation.
 > repeat them.  Sliced exact-primal resets pass 24/70-step direct-gradient
 > parity, and certified TaIrTe4/Au regional-P slice storage matches the full
 > regional `c3` gradient; read `FDTDX_REVERSIBLE_SLICE_REPORT.md` and
-> `FDTDX_REVERSIBLE_SPARSE_SLICE_REPORT.md`.  Next run only a short bounded
-> exact-grid reversible timing/stability probe on freshly verified-idle GPU
-> UUIDs.  Proceed to Ea/Eb latent AD-FD only if its measured projection remains
-> inside the user runtime gate; do not run a full gradient or optimizer.
+> `FDTDX_REVERSIBLE_SPARSE_SLICE_REPORT.md`.  The parallel 4,096-step Ea/Eb
+> exact-grid latent AD-FD gate passes; read `FDTDX_REVERSIBLE_RUNTIME_REPORT.md`.
+> Slice 256 is not full-horizon feasible.  Next run only the bounded 16,384-step
+> Ea/Eb probe with slice 1,024 on freshly verified-idle GPU UUIDs to test longer
+> inverse reconstruction and runtime scaling.  Do not run a full gradient or
+> optimizer.
 > Continue only the fresh FDTDX GPU parity path for the 4-um Ea/Eb Au topology; do not run legacy scripts 10/12/13
 > and do not use optical rho^3 or c3-only linear scaling.  Preserve the canonical
 > 81x81 latent -> 500-nm finite conic filter -> tanh projection -> shared nodal
