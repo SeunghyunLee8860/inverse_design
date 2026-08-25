@@ -9,6 +9,8 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_continuation import (
     BETA_SCHEDULE,
+    MAXIMUM_CONTINUATION_EVALUATIONS,
+    MINIMUM_CONTINUATION_EVALUATIONS,
     STAGE_FTOL_REL,
     STAGE_XTOL_REL,
     ContinuationEpigraphProblem,
@@ -56,6 +58,11 @@ def test_production_stages_do_not_stop_on_tiny_balancing_step() -> None:
     assert STAGE_XTOL_REL == 0.0
 
 
+def test_continuation_evaluation_budget_is_explicit() -> None:
+    assert MINIMUM_CONTINUATION_EVALUATIONS == 54
+    assert MAXIMUM_CONTINUATION_EVALUATIONS == 188
+
+
 def test_linearized_maximin_warm_start_improves_worst_utility_plane() -> None:
     latent = np.full(CONTRACT.design_node_shape, 0.5)
     gradient_a = np.zeros_like(latent)
@@ -85,7 +92,11 @@ def test_design_constraints_activate_zero_one_two_three() -> None:
     counts = [len(active_design_constraint_names(beta)) for beta in BETA_SCHEDULE]
     assert counts == [0, 0, 1, 2, 3, 3, 3, 3]
     assert "grayness" in active_design_constraint_names(16.0)[-1]
-    assert all("conductance" not in name for beta in BETA_SCHEDULE for name in active_design_constraint_names(beta))
+    assert all(
+        "conductance" not in name
+        for beta in BETA_SCHEDULE
+        for name in active_design_constraint_names(beta)
+    )
 
 
 def test_grayness_gradient_matches_directional_finite_difference() -> None:
@@ -101,7 +112,11 @@ def test_grayness_gradient_matches_directional_finite_difference() -> None:
     finite_difference = (plus - minus) / (2.0 * step)
     adjoint = float(np.vdot(gradient, direction))
     assert 0.0 < value <= 1.0
-    assert abs(adjoint - finite_difference) / max(abs(adjoint), abs(finite_difference), 1.0e-14) < 1.0e-6
+    assert (
+        abs(adjoint - finite_difference)
+        / max(abs(adjoint), abs(finite_difference), 1.0e-14)
+        < 1.0e-6
+    )
 
 
 def test_stage_caps_are_monotone_and_final_caps_are_calibrated() -> None:
@@ -147,14 +162,12 @@ def test_high_beta_problem_has_two_epigraph_plus_three_design_constraints() -> N
 
 
 def test_stage_caps_are_checkpointed_before_first_maxwell_evaluation() -> None:
-    source = Path(__file__).with_name(
-        "41_optimize_lumerical_4um_dualpol_continuation.py"
-    ).read_text(encoding="utf-8")
+    source = (
+        Path(__file__)
+        .with_name("41_optimize_lumerical_4um_dualpol_continuation.py")
+        .read_text(encoding="utf-8")
+    )
     cap_setup = source.index('if int(state["attempt"]) == 0:')
-    checkpoint = source.index(
-        "_save_checkpoint(checkpoint_path, **state)", cap_setup
-    )
-    first_maxwell = source.index(
-        "initial_physics = driver.evaluate(latent_initial)"
-    )
+    checkpoint = source.index("_save_checkpoint(checkpoint_path, **state)", cap_setup)
+    first_maxwell = source.index("initial_physics = driver.evaluate(latent_initial)")
     assert cap_setup < checkpoint < first_maxwell

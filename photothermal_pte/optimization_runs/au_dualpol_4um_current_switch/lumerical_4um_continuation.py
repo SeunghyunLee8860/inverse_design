@@ -59,6 +59,10 @@ MAXIMUM_STAGE_ATTEMPTS = {
     64.0: 4,
     128.0: 8,
 }
+MINIMUM_CONTINUATION_EVALUATIONS = sum(STAGE_MAXEVAL[beta] for beta in BETA_SCHEDULE)
+MAXIMUM_CONTINUATION_EVALUATIONS = sum(
+    STAGE_MAXEVAL[beta] * MAXIMUM_STAGE_ATTEMPTS[beta] for beta in BETA_SCHEDULE
+)
 MOVE_LIMIT = {
     1.0: 0.025,
     2.0: 0.020,
@@ -170,7 +174,9 @@ def linearized_maximin_box_warm_start(
     initial_balanced = min(utility_a, utility_b)
     predicted_balanced = min(predicted_a, predicted_b)
     if predicted_balanced <= initial_balanced:
-        raise RuntimeError("linearized max-min warm start did not improve the objective")
+        raise RuntimeError(
+            "linearized max-min warm start did not improve the objective"
+        )
     return {
         "latent": warm_latent,
         "delta": delta,
@@ -273,9 +279,7 @@ def design_constraint_point(
     """Evaluate normalized g(x)<=0 fabrication inequalities."""
 
     active = active_design_constraint_names(beta)
-    dfm_values, dfm_gradients, _ = smooth_lumerical_250nm_constraints(
-        latent, beta
-    )
+    dfm_values, dfm_gradients, _ = smooth_lumerical_250nm_constraints(latent, beta)
     grayness, grayness_gradient = grayness_value_gradient(latent, beta)
     caps = np.asarray(dfm_caps, dtype=np.float64)
     values: list[float] = []
@@ -373,8 +377,7 @@ class ContinuationEpigraphProblem:
                 "callback_index": len(self.callback_history),
                 "current_Ea_nA": 1.0e9 * float(point["current_a_A"]),
                 "current_Eb_nA": 1.0e9 * float(point["current_b_A"]),
-                "balanced_utility_nA": 1.0e9
-                * float(point["balanced_utility_A"]),
+                "balanced_utility_nA": 1.0e9 * float(point["balanced_utility_A"]),
                 "design_constraint_names": design["names"],
                 "design_constraint_values": design["normalized_values"].tolist(),
                 "raw_DFM_values": design["raw_DFM_values"].tolist(),
@@ -402,9 +405,7 @@ class ContinuationEpigraphProblem:
         if gradient.size:
             gradient[:] = 0.0
             gradient[:2, :-1] = (
-                np.asarray(
-                    point["constraint_gradients_latent_A"], dtype=np.float64
-                )
+                np.asarray(point["constraint_gradients_latent_A"], dtype=np.float64)
                 / CURRENT_SCALE_A
             ).reshape(2, -1)
             gradient[:2, -1] = 1.0
@@ -423,14 +424,20 @@ def continuation_contract() -> dict[str, Any]:
         "maximum_stage_attempts": {
             str(key): value for key, value in MAXIMUM_STAGE_ATTEMPTS.items()
         },
+        "continuation_evaluation_budget": {
+            "first_attempt_all_stages": MINIMUM_CONTINUATION_EVALUATIONS,
+            "all_stage_retries_exhausted": MAXIMUM_CONTINUATION_EVALUATIONS,
+            "counting_rule": (
+                "each stage attempt includes its starting physics point; the initial "
+                "maximin warm start preserves rather than adds to the beta-1 budget"
+            ),
+        },
         "move_limit": {str(key): value for key, value in MOVE_LIMIT.items()},
         "design_constraint_activation": {
             str(beta): list(active_design_constraint_names(beta))
             for beta in BETA_SCHEDULE
         },
-        "grayness_caps": {
-            str(key): value for key, value in GRAYNESS_CAP.items()
-        },
+        "grayness_caps": {str(key): value for key, value in GRAYNESS_CAP.items()},
         "final_grayness_gate": GRAYNESS_CAP[BETA_SCHEDULE[-1]],
         "stage_ftol_rel": STAGE_FTOL_REL,
         "stage_xtol_rel": STAGE_XTOL_REL,
