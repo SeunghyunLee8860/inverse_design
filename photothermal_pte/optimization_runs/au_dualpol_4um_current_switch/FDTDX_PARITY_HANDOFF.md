@@ -463,7 +463,7 @@ is accepted only because `direct_url.json` points to the pinned clean source
 and the installed and source package trees have the identical SHA-256
 `c66b34671750258ff71478f9e9530f3abcb07a937591775236b1f7bdea739d58`.
 The grid-contract slice added seven focused tests.  The current full solver-free
-suite, including the ADE certificate below, is `147 passed`.
+suite, including all material certificates below, is `152 passed`.
 
 The requested 2.5-nm z cells dominate CFL: `dt=2.0834738305187266 as`,
 `6,403.9988` steps per 4-um period, and `256,160` steps for 40 periods.
@@ -489,6 +489,16 @@ the pinned FDTDX API reproduces every frozen float32 coefficient exactly.  On
 `37a0485e3108aff97a92bcc44b4190f2975bbf5e59b9a6ff4f9144eae2167ced`.
 JAX coefficient JVP equals the analytic JVP, and its largest relative L2 error
 against centered FD is `2.3878186766523868e-5`.
+
+The fixed TaIrTe4 carrier is independently frozen in
+`fdtdx_parity_fixed_materials.py`, with solver-axis order `x=b`, `y=a`,
+`z=c=b`.  Its coefficient hash is
+`7aa3f50f5ca3cf1f0d9222d7d5e16a7e82ca9d0a5c55d75a0617a09191148057`.
+The realized float32 relative complex-epsilon errors are
+`4.306472432831919e-6` for a and `1.1435456653834023e-7` for b/c;
+both positive-Lorentz recurrences are strictly stable and reproduce exactly
+through the pinned FDTDX API.  SiO2 and Si remain the lossless real readbacks
+from the material JSON.
 
 No Maxwell field, CUDA PDE, GPU, optimizer, Lumerical, HEAT, or CHARGE run is
 claimed by this status.  `optimizer_enabled` remains false.  Representative
