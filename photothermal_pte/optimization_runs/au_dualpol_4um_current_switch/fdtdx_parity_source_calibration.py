@@ -42,11 +42,11 @@ def normalized_flux_to_si_W(normalized_flux: float) -> float:
     return ETA0_OHM * float(normalized_flux)
 
 
-def polarization_components(polarization: str) -> tuple[int, int]:
+def polarization_components(polarization: str) -> tuple[int, int, int]:
     if polarization == "Ea":
-        return 1, 0  # Ey, Hx for propagation along -z
+        return 1, 0, 0  # desired Ey, Hx, transverse cross Ex
     if polarization == "Eb":
-        return 0, 1  # Ex, Hy for propagation along -z
+        return 0, 1, 1  # desired Ex, Hy, transverse cross Ey
     raise ValueError(f"unknown polarization {polarization!r}")
 
 
@@ -160,7 +160,7 @@ def _run_case(args: argparse.Namespace) -> dict[str, object]:
     incident_phasor = np.asarray(
         result.detector_states["incident_plane"]["phasor"][0, 0]
     )
-    e_component, h_component = polarization_components(args.polarization)
+    e_component, h_component, cross_component = polarization_components(args.polarization)
     e_norm = float(np.linalg.norm(incident_phasor[e_component].ravel()))
     h_norm = float(np.linalg.norm(incident_phasor[3 + h_component].ravel()))
     normalized_impedance = e_norm / h_norm
@@ -169,16 +169,12 @@ def _run_case(args: argparse.Namespace) -> dict[str, object]:
         result.detector_states["endpoint_field"]["phasor"][0, 0]
     )
     desired_endpoint_norm = float(np.linalg.norm(endpoint[e_component].ravel()))
-    leakage_endpoint_norm = float(
-        np.sqrt(
-            sum(
-                np.linalg.norm(endpoint[index].ravel()) ** 2
-                for index in range(3)
-                if index != e_component
-            )
-        )
+    cross_endpoint_norm = float(
+        np.linalg.norm(endpoint[cross_component].ravel())
     )
-    cross_ratio = leakage_endpoint_norm / desired_endpoint_norm
+    longitudinal_endpoint_norm = float(np.linalg.norm(endpoint[2].ravel()))
+    cross_ratio = cross_endpoint_norm / desired_endpoint_norm
+    longitudinal_ratio = longitudinal_endpoint_norm / desired_endpoint_norm
 
     late_W = normalized_flux_to_si_W(late_raw)
     previous_W = normalized_flux_to_si_W(previous_raw)
@@ -195,6 +191,7 @@ def _run_case(args: argparse.Namespace) -> dict[str, object]:
                 td_W,
                 normalized_impedance,
                 cross_ratio,
+                longitudinal_ratio,
             )
         )
     )
@@ -208,6 +205,9 @@ def _run_case(args: argparse.Namespace) -> dict[str, object]:
         "normalized_vacuum_impedance": normalized_impedance,
         "vacuum_impedance_error_relative": abs(normalized_impedance - 1.0),
         "cross_polarization_ratio": cross_ratio,
+        "longitudinal_polarization_ratio": longitudinal_ratio,
+        "cross_transverse_endpoint_phasor_l2": cross_endpoint_norm,
+        "longitudinal_endpoint_phasor_l2": longitudinal_endpoint_norm,
         "desired_endpoint_phasor_l2": desired_endpoint_norm,
     }
     power_scale = TARGET_POWER_W / late_W

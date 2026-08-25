@@ -36,8 +36,8 @@ def test_si_flux_conversion_uses_pinned_fdtdx_field_convention() -> None:
 
 
 def test_polarization_component_mapping_matches_minus_z_propagation() -> None:
-    assert polarization_components("Ea") == (1, 0)
-    assert polarization_components("Eb") == (0, 1)
+    assert polarization_components("Ea") == (1, 0, 0)
+    assert polarization_components("Eb") == (0, 1, 1)
     with pytest.raises(ValueError, match="unknown polarization"):
         polarization_components("Ex")
 
