@@ -166,10 +166,11 @@ Production remains blocked until a new hash-linked certificate chain proves:
    and transpose tests;
 5. full optical/thermal/electrical latent AD-FD for `Ea` and `Eb`;
 6. optical x/y/full-domain-z/PML, source/time/Q closure, thermal mesh,
-   electrical mesh, contact, and void-floor convergence; the remaining
+   electrical mesh, contact, relaxed-path floor sensitivity, and a floor-free
+   exact-binary electrical endpoint; the remaining
    thin-interface volumetric-Q gate must be bounded without committing to
    nine-hour-per-control brute-force runs;
-7. an independent final 500-nm exact-binary reevaluation using ordinary
+7. an independent final 250-nm exact-binary reevaluation using ordinary
    sampled-data dispersive Au.
 
 The historical partial-z, O3/TE1, shared-linear, and FDTDX artifacts cannot

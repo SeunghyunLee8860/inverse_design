@@ -1,6 +1,6 @@
 # Lumerical density-topology Maxwell + custom GPU-PDE route
 
-Status: `RTX_SOURCE_GATE_PASSED_EXACT_AU_BLOCKED_Q_FLUX_AND_B200`
+Status: `EXTERNAL_CONTINUATION_AND_B200_TERMINAL_CERTIFICATE_PENDING`
 
 ## Selected architecture
 
@@ -19,7 +19,7 @@ This route uses density topology, not shape/level-set optimization:
 
 ```text
 latent rho
-  -> 500-nm spatial filter
+  -> 250-nm spatial filter
   -> tanh projection with beta continuation
   -> projected topology occupancy rho_bar in [0,1]
   -> documented optical, thermal, and electrical constitutive maps
@@ -185,11 +185,13 @@ Maxwell field adjoint, full combined AD-FD, selected-mesh, or B200 gates.
 6. Full x/y/z/PML mesh convergence, source recalibration, and time/Q closure
    must pass on the same route. CV0/CV1/staircase is an explicit
    metal-interface convergence axis, not an implementation preference.
-7. The final 500-nm solid/void mask must be independently rebuilt with
+7. The final 250-nm solid/void mask must be independently rebuilt with
    ordinary dispersive Au and reevaluated for `Ia>0`, `Ib<0`.
 
-The current host is not a B200 and therefore cannot issue any B200 Maxwell
-certificate. It can run explicitly labeled RTX development diagnostics.
+The current host has B200 GPUs, but GPU hardware alone cannot issue a Maxwell
+certificate. A run still needs an idle user-owned GPU, nine available
+`lum_fdtd_solve` tasks, hash-matched source calibrations, and the complete
+fail-closed result chain. Other users' GPU processes must not be touched.
 
 ## Thermal and electrical maps
 
@@ -204,9 +206,13 @@ one arbitrary exponent. The correction is:
 - pass fixed-Q and combined AD-FD;
 - verify the final exact-binary endpoint independently.
 
-The present shared-linear thermal/electrical maps remain provisional until
-their mixture/bound and void-floor sensitivity studies are complete. They are
-not promoted merely because the optical rho-cubed law was removed.
+The continuous thermal/electrical maps retain explicit endpoint interpolation
+and tiny electrical sheet/contact floors so their adjoints remain well posed.
+Those floors are not accepted as fabricated void. Every exact empty/full or
+final-binary downstream evaluation removes void Au nodes and edges from the
+electrical matrix, records the inactive-node count, and requires it to match
+the binary mask. Thus the promoted endpoint is floor-free even though the
+differentiable relaxation is regularized.
 
 ### Nonuniform gray-Q coupling now validated on the RTX development mesh
 
@@ -281,7 +287,7 @@ chain
 
 ```text
 81x81 bounded latent rho
-  -> finite nonperiodic 500-nm conic filter
+  -> finite nonperiodic 250-nm conic filter
   -> tanh projection on the same 81x81 physical nodes
   -> one hash-bound projected occupancy for Lumerical
   -> exact four-node average to 80x80 custom-PDE and DFM cells.
@@ -526,4 +532,4 @@ interface cells are not misrepresented as pure bulk material.
    combined directional-FD gates.
 6. Only then start LD_MMA filter/projection continuation, optimize
    `max min(+Ia,-Ib)`, and independently rebuild and reevaluate the final
-   500-nm binary geometry with ordinary dispersive Au for both polarizations.
+   250-nm binary geometry with ordinary dispersive Au for both polarizations.

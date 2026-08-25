@@ -867,9 +867,10 @@ PDE-only reuse because that wrapper intentionally requires a live solve
 license. Use `run_combined_gpu_python.sh` with one verified-idle physical GPU.
 Do not commit the forward raw NPZ or generated temperature evidence.
 
-The full regression after adding the full optical-downstream lateral
-certificate and crash-consistent terminal recovery is
-`291 passed in 259.53 s`. No final-mask Ea/Eb optical/PDE convergence result
+The prior full regression after adding the optical-downstream lateral
+certificate and crash-consistent terminal recovery was
+`291 passed in 259.53 s`; the current post-audit count is recorded below. No
+final-mask Ea/Eb optical/PDE convergence result
 exists on this host yet. The active RTX
 continuation artifacts live on the other host. Retrieve its terminal
 manifest, final exact mask, two exact 100-nm forwards, and later two exact
@@ -929,3 +930,33 @@ custom-PDE sequences; up to eight such candidate attempts are permitted.
 Their peak memory is not concurrent, but their PDE wall times add. No measured
 wall-time is yet available for that terminal certificate, so do not fold in
 an invented ETA.
+
+
+## Exact-binary electrical endpoint correction -- 2026-08-26
+
+Commits `35412cb8` and `8db688b7` close a constitutive endpoint and
+provenance defect found in the final static audit. The differentiable
+continuous optimizer still uses the documented
+`1e-8` Au-sheet and `1e-10` Au/Ta-contact conductivity fractions to keep its
+electrical adjoint nonsingular. Those numerical floors are no longer carried
+into exact controls or final promotion.
+
+For exact 0/1 masks, `multiphysics_4um.py` now removes every void Au node and
+all incident sheet/contact edges from the electrical reduced system. Script 42
+and both exact empty/full downstream-control paths require this mode. Each
+resolution records the inactive node count, and the terminal gate fails unless
+it equals the number of zero mask cells. Exact mode rejects gray input and
+cannot be requested with a density gradient. It also omits unused electrical
+gradient objects, which reduces the fine-grid memory burden. Terminal
+certificates now use schema v3; continuation recovery rejects v2 or a
+certificate whose Git commit differs from its production manifest.
+
+The post-change solver-free audit passed the Christiansen n-k endpoints,
+passivity, complex derivative, shared 81x81-to-80x80 transpose, 250-nm mapping,
+and DFM derivative gates. The complete current-HEAD regression is
+`292 passed in 260.03 s`; a focused post-vectorization rerun is
+`35 passed in 5.05 s`. Both ran with `CUDA_VISIBLE_DEVICES` set to an empty
+string. No Lumerical solve or GPU job was launched. The external immutable `69b2bb40` continuation predates this correction and cannot
+supply a latest-code terminal certificate; its mask may be retrieved, but its
+final exact downstream result must be regenerated with script 43 from a current
+commit.

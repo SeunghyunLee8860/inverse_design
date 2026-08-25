@@ -1,6 +1,6 @@
 # Au topology-density and constitutive-law audit
 
-Status: `O3_REMOVED_NK_RELAXATION_IMPLEMENTED_B200_VALIDATION_PENDING`
+Status: `O3_REMOVED_NK_RELAXATION_IMPLEMENTED_PHYSICAL_CERTIFICATES_PENDING`
 
 ## Historical defect
 
@@ -70,11 +70,17 @@ intermediate-density field resonance in the full device.
 ## Binarization
 
 Gray removal is assigned to the existing finite filter, tanh projection,
-beta continuation, robust eta scenarios, and final 500-nm solid/void audit.
+beta continuation and a final 250-nm solid/void audit.
 It is not assigned to an arbitrary cubic material law.
 
 The final thresholded mask must be reevaluated in Lumerical using ordinary
-sampled-data dispersive Au, not the continuous relaxation.
+sampled-data dispersive Au, not the continuous relaxation. Its custom
+electrical solve also uses an exact topological endpoint: void Au sheet and
+contact nodes are removed from the matrix, rather than assigned the tiny
+regularization floors required by the differentiable continuous path. The
+exact evaluator records the inactive-node count and fails unless it equals the
+number of void cells. Thermal Au/air and interface maps are already exact at
+rho=0/1.
 
 ## Remaining gates
 
@@ -84,7 +90,8 @@ sampled-data dispersive Au, not the continuous relaxation.
 - component-Yee material Jacobian FD and transpose tests;
 - optical and complete latent AD-FD for both polarizations;
 - optical/thermal/electrical mesh convergence;
-- thermal/electrical mixture-law and void-floor sensitivity;
+- relaxed-path thermal/electrical mixture-law sensitivity; the final exact-binary
+  electrical path is floor-free;
 - exact-binary ordinary-Au final reevaluation.
 
 All historical O3/TE1, shared-linear FDTDX, and mesh tables remain diagnostics

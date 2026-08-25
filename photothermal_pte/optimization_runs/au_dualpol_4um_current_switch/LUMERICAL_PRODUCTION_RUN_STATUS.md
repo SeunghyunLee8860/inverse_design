@@ -299,3 +299,22 @@ terminal candidate reaching it adds four fresh Maxwell forwards plus the
 sequential fine-Q and coarse-Q adaptive PDE sequences, and up to eight
 beta-128 candidates are allowed. Peak memory is not concurrent, but PDE wall
 times add. No measured certificate wall time exists yet.
+
+
+## Exact-binary electrical endpoint correction -- 2026-08-26
+
+Commits `35412cb8` and `8db688b7` remove the continuous-path Au
+sheet/contact conductivity floors from exact empty/full controls and final
+binary promotion. Void Au nodes
+and edges are omitted from the electrical reduced system; every executed final
+PDE resolution must attest that the inactive-node count equals the zero-cell
+count. Continuous optimization keeps its regularization and adjoint unchanged.
+Terminal certificates now use schema v3, and continuation recovery rejects
+v2 or a certificate from a different Git commit. The full current-HEAD
+GPU-hidden regression is `292 passed in 260.03 s`.
+
+This is a code-path correction, not a physical final result. No final-mask
+Ea/Eb 100/50-nm Maxwell or downstream convergence artifact is available on
+this host. The external `69b2bb40` process predates this commit and the later
+terminal-certificate commits, so any retrieved mask must be certified anew by
+latest script 43. No GPU was launched while making or testing this correction.
