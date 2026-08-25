@@ -153,11 +153,11 @@ def run(
     if full_domain_z_factor == 1:
         numerical_case = balanced_case_contract(time_spec)
         expected_mesh = mesh_audit()
-    elif full_domain_z_factor == 2:
+    elif full_domain_z_factor in (2, 4):
         numerical_case = z_case_contract(time_spec, full_domain_z_factor)
         expected_mesh = z_mesh_audit(full_domain_z_factor)
     else:
-        raise ValueError("full_domain_z_factor must be 1 or 2")
+        raise ValueError("full_domain_z_factor must be 1, 2, or 4")
     source_pair, source_pair_audit = validate_source_pair(
         source_pair_path,
         source_pair_sha256,
@@ -347,7 +347,9 @@ def main() -> int:
     parser.add_argument("--total-periods", type=int, default=24)
     parser.add_argument("--window-periods", type=int, default=4)
     parser.add_argument("--courant-factor", type=float, default=0.5)
-    parser.add_argument("--full-domain-z-factor", type=int, choices=(1, 2), default=1)
+    parser.add_argument(
+        "--full-domain-z-factor", type=int, choices=(1, 2, 4), default=1
+    )
     args = parser.parse_args()
     try:
         payload = run(

@@ -25,7 +25,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_user
 
 VERSION = "fdtdx-user-balanced-full-domain-z-refinement-v1"
 CASE_VERSION = "fdtdx-user-balanced-full-domain-z-case-v1"
-SUPPORTED_FACTORS = (2,)
+SUPPORTED_FACTORS = (2, 4)
 
 
 @dataclass(frozen=True)
