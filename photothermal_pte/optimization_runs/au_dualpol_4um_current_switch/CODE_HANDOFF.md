@@ -1,5 +1,18 @@
 # Au dual-polarization PTE inverse-design code handoff
 
+## Latest FDTDX checkpoint -- user-balanced z2 comparison failed
+
+Read `FDTDX_USER_BALANCED_Z2_CHECK.md` first.  At commit `2ccc9215`, a
+full-domain z factor-2 source and exact-binary material pair passed internally
+on the `186 x 186 x 300` grid, with about 122 s total per polarization and
+Ea/Eb run concurrently on idle B200 GPUs 6/7.  Baseline-to-z2 comparison
+fails total Q, component Q, fixed-probe field, conservative 3-D Q, and
+material-region field gates.  The requested 5-nm thin-stack mesh is not
+z-converged.  Do not start x/y refinement or any optimizer.  Build a
+byte-revalidating comparison artifact next, then time z4 source-only before
+authorizing a material tail comparison.  Lumerical remains independently
+owned and untouched.
+
 ## Latest FDTDX checkpoint -- user-requested balanced baseline passed
 
 Read `FDTDX_USER_BALANCED_BASELINE.md` first.  At commit `ae571336`, the new
