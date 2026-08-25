@@ -49,6 +49,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.pde_mesh_c
 HERE = Path(__file__).resolve().parent
 REPOSITORY = Path(__file__).resolve().parents[3]
 SOURCE_OBJECT_W0_UM = 3.9561433030461415
+FINAL_CERTIFICATE_SCHEMA = (
+    "au-lumerical-exact-binary-lateral-pde-certificate-v3"
+)
 COARSE_MESH_LABEL = "fine_z2p5_bulk50_xy100_cv0_pml8_span20_z6_t1ps"
 FINE_MESH_LABEL = "fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps"
 
@@ -516,7 +519,7 @@ def main() -> int:
     output.mkdir(parents=True, exist_ok=True)
     result_path = output / "final_exact_binary_certificate.json"
     result: dict[str, Any] = {
-        "schema": "au-lumerical-exact-binary-lateral-pde-certificate-v2",
+        "schema": FINAL_CERTIFICATE_SCHEMA,
         "status": "FAILED_LUMERICAL_4UM_EXACT_BINARY_LATERAL_PDE_CERTIFICATE",
         "passed": False,
         "git_commit": _git_commit(),

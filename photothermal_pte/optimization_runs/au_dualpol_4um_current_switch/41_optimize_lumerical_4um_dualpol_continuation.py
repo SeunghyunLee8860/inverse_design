@@ -56,6 +56,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 HERE = Path(__file__).resolve().parent
 REPOSITORY = Path(__file__).resolve().parents[3]
 CHECKPOINT_SCHEMA = "au-lumerical-continuation-checkpoint-v1"
+FINAL_EXACT_BINARY_CERTIFICATE_SCHEMA = (
+    "au-lumerical-exact-binary-lateral-pde-certificate-v3"
+)
 
 
 def _parse_args() -> argparse.Namespace:
@@ -210,6 +213,10 @@ def _completed_manifest_latent(manifest: dict[str, Any]) -> np.ndarray | None:
     exact = final.get("exact_binary_evaluation")
     if not isinstance(exact, dict) or exact.get("passed") is not True:
         raise RuntimeError("passed continuation manifest lacks a passed certificate")
+    if exact.get("schema") != FINAL_EXACT_BINARY_CERTIFICATE_SCHEMA:
+        raise RuntimeError("passed continuation exact-certificate schema is stale")
+    if exact.get("git_commit") != manifest.get("git_commit"):
+        raise RuntimeError("passed continuation exact-certificate commit differs")
     currents = exact.get("currents_A", {})
     if not (
         isinstance(currents, dict)

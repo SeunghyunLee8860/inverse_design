@@ -264,9 +264,12 @@ def test_passed_manifest_recovers_hash_bound_terminal_latent(
             "LATERAL_PDE_NUMERICAL_CERTIFICATE"
         ),
         "passed": True,
+        "git_commit": "test-commit",
         "final": {
             "binary_mask": driver.artifact(mask_path),
             "exact_binary_evaluation": {
+                "schema": driver.FINAL_EXACT_BINARY_CERTIFICATE_SCHEMA,
+                "git_commit": "test-commit",
                 "passed": True,
                 "currents_A": {"Ea": 1.0e-9, "Eb": -2.0e-9},
                 "binary_mask_payload_sha256": driver.binary_mask_sha256(mask),
@@ -278,6 +281,16 @@ def test_passed_manifest_recovers_hash_bound_terminal_latent(
     }
     recovered = driver._completed_manifest_latent(manifest)
     assert np.array_equal(recovered, latent)
+
+    exact = manifest["final"]["exact_binary_evaluation"]
+    exact["schema"] = "au-lumerical-exact-binary-lateral-pde-certificate-v2"
+    with pytest.raises(RuntimeError, match="schema is stale"):
+        driver._completed_manifest_latent(manifest)
+    exact["schema"] = driver.FINAL_EXACT_BINARY_CERTIFICATE_SCHEMA
+    exact["git_commit"] = "different-commit"
+    with pytest.raises(RuntimeError, match="commit differs"):
+        driver._completed_manifest_latent(manifest)
+    exact["git_commit"] = manifest["git_commit"]
 
     state_path.write_bytes(b"tampered")
     with pytest.raises(RuntimeError, match="stage state artifact changed"):
