@@ -733,11 +733,14 @@ remains false.
 
 The alternative reverse audit has now proved the pinned dispersive ADE, six-face
 CPML, and late three-component PhasorDetector `c3` gradient against direct
-unrolled FDTDX on a 24-step real scene.  The complete CPU suite passes 224 tests.
-Read `FDTDX_REVERSIBLE_ADJOINT_REPORT.md` for the exact scope.  This is not yet a
-production gradient: the next task is sliced exact-primal resets, followed by a
-longer small-scene gradient test and only then a short exact-grid GPU timing
-probe.
+unrolled FDTDX on a 24-step real scene.  Exact-primal sliced resets then
+match direct gradients on 24- and 70-step scenes, including a partial final
+slice; the complete CPU suite passes 226 tests.  Read
+`FDTDX_REVERSIBLE_ADJOINT_REPORT.md` and
+`FDTDX_REVERSIBLE_SLICE_REPORT.md` for the exact scope.  This is not yet a
+production gradient: full-domain P makes the current reset payload too large.
+The next task is certified sparse regional-P slice storage, followed by a short
+exact-grid GPU timing probe.
 
 ## What completion means
 
@@ -764,10 +767,12 @@ reevaluation.
 > polarization, so do not repeat checkpoint-count tuning.
 > The dispersive ADE, six-face CPML, and late PhasorDetector small-scene VJP
 > audits are complete; read `FDTDX_REVERSIBLE_ADJOINT_REPORT.md` and do not
-> repeat them.  Next implement sliced exact-primal resets while preserving a
-> continuous cotangent, prove longer small-scene direct-gradient parity across
-> multiple slice lengths, and only then run a bounded exact-grid GPU timing and
-> Ea/Eb latent AD-FD probe on freshly verified-idle GPU UUIDs.
+> repeat them.  Sliced exact-primal resets also pass 24/70-step direct-gradient
+> parity; read `FDTDX_REVERSIBLE_SLICE_REPORT.md`.  Do not launch its full-P
+> prototype on the exact grid.  Next integrate the certified disjoint
+> TaIrTe4/Au regional-P checkpoints, prove sparse-versus-full slice gradient
+> parity, and only then run a bounded exact-grid GPU timing and Ea/Eb latent
+> AD-FD probe on freshly verified-idle GPU UUIDs.
 > Continue only the fresh FDTDX GPU parity path for the 4-um Ea/Eb Au topology; do not run legacy scripts 10/12/13
 > and do not use optical rho^3 or c3-only linear scaling.  Preserve the canonical
 > 81x81 latent -> 500-nm finite conic filter -> tanh projection -> shared nodal
