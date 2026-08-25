@@ -725,14 +725,14 @@ through the pinned FDTDX API.  SiO2 and Si remain the lossless real readbacks
 from the material JSON.
 
 The empty-Au, nonuniform-gray, and full-Au Maxwell field/Q/closed-flux
-controls are validated for both polarizations.  A 4,096-step exact-grid
-field-only AD-FD probe also passed for Ea and Eb, with directional errors below
-`2.5e-5`.  This is not the 40-period absorbed-power gradient certificate.  The
-32-checkpoint path projects optimistically to about 112 minutes per
-polarization and therefore fails the 30-minute production-runtime gate; 64
-checkpoints OOM at a 238.26-GiB allocation.  `optimizer_enabled` remains false.
-Read `FDTDX_AD_PROBE_REPORT.md` and reduce the checkpoint loop carry/gradient
-detector state before another full-grid derivative run.
+controls are validated for both polarizations.  Exact-grid 4,096-step Ea/Eb
+field-only AD-FD also passes.  The dynamic-only checkpoint loop removes
+1,108,179,072 immutable bytes from each saved state without changing any saved
+value or gradient; it makes 64 checkpoints fit and reduces value-and-grad to
+about 74 seconds.  The optimistic full projection is still about 77 minutes,
+so `optimizer_enabled` remains false.  Read `FDTDX_AD_PROBE_REPORT.md` and
+`FDTDX_DYNAMIC_CHECKPOINT_REPORT.md`.  The next runtime task is the dominant
+712,400,832-byte full-domain ADE P-current/P-previous carry, not a full run.
 
 ## What completion means
 
@@ -747,12 +747,15 @@ reevaluation.
 
 > Checkout the latest `agent/optimize-au-dualpol-4um-pte` commit and read
 > `photothermal_pte/optimization_runs/au_dualpol_4um_current_switch/FDTDX_PARITY_HANDOFF.md`
-> completely, then read `FDTDX_AD_PROBE_REPORT.md` and `CODE_HANDOFF.md`.
+> completely, then read `FDTDX_AD_PROBE_REPORT.md`,
+> `FDTDX_DYNAMIC_CHECKPOINT_REPORT.md`, and `CODE_HANDOFF.md`.
 > Lumerical licenses are currently unavailable: do not call Lumerical, HEAT,
 > or CHARGE.  The current checkpointed 40-period gradient is runtime-blocked;
-> do not run it, the 16-forward certificate, or an optimizer.  First separate
-> immutable material arrays and unnecessary control detectors from the
-> checkpoint loop state, then repeat the bounded Ea/Eb AD-FD/runtime gate.
+> do not run it, the 16-forward certificate, or an optimizer.  Immutable
+> material leaves are already outside the dynamic checkpoint carry.  Next
+> reduce the full-domain ADE polarization carry to the exact TaIrTe4/Au region,
+> prove generic-versus-sparse forward/c3-gradient parity, and then repeat the
+> bounded exact-grid Ea/Eb AD-FD/runtime gate.
 > Continue only the fresh FDTDX GPU parity path for the 4-um Ea/Eb Au topology; do not run legacy scripts 10/12/13
 > and do not use optical rho^3 or c3-only linear scaling.  Preserve the canonical
 > 81x81 latent -> 500-nm finite conic filter -> tanh projection -> shared nodal
