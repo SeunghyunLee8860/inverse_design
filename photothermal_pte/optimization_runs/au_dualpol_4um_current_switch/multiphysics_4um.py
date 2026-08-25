@@ -185,6 +185,7 @@ class ThermalState:
     rho: np.ndarray
     material_fraction: np.ndarray
     faces: dict[str, int]
+    parameters: dict[str, object]
 
 
 def build_thermal_state(
@@ -195,10 +196,45 @@ def build_thermal_state(
     lateral_half_span_um: int = 32,
     substrate_depth_um: int = 20,
     top_air_height_um: float = 2.0,
+    far_xy_boundary: str = "ambient_dirichlet",
+    top_air_convection_W_m2K: float = TOP_AIR_CONVECTION_W_M2K,
+    g_ta_sio2_W_m2K: float = G_TA_SIO2_W_M2K,
+    g_au_ta_W_m2K: float | None = G_AU_TA_W_M2K,
+    ta_kappa_xyz_W_mK: tuple[float, float, float] = tuple(K_TA_XYZ_W_MK),
 ) -> ThermalState:
     density = np.asarray(rho, dtype=np.float64)
     if density.shape != CONTRACT.design_shape or np.any((density < 0) | (density > 1)):
         raise ValueError("rho must be an 80x80 physical density in [0,1]")
+    ta_kappa = np.asarray(ta_kappa_xyz_W_mK, dtype=np.float64)
+    if (
+        ta_kappa.shape != (3,)
+        or not np.all(np.isfinite(ta_kappa))
+        or np.any(ta_kappa <= 0.0)
+    ):
+        raise ValueError(
+            "TaIrTe4 thermal conductivity must contain three finite positive values"
+        )
+    if far_xy_boundary not in ("ambient_dirichlet", "adiabatic"):
+        raise ValueError(
+            "far x/y thermal boundary must be ambient_dirichlet or adiabatic"
+        )
+    top_air_convection_W_m2K = float(top_air_convection_W_m2K)
+    if (
+        not np.isfinite(top_air_convection_W_m2K)
+        or top_air_convection_W_m2K < 0.0
+    ):
+        raise ValueError("top-air convection must be finite and nonnegative")
+    g_ta_sio2_W_m2K = float(g_ta_sio2_W_m2K)
+    if not np.isfinite(g_ta_sio2_W_m2K) or g_ta_sio2_W_m2K <= 0.0:
+        raise ValueError(
+            "TaIrTe4/SiO2 conductance must be finite and positive"
+        )
+    if g_au_ta_W_m2K is not None:
+        g_au_ta_W_m2K = float(g_au_ta_W_m2K)
+        if not np.isfinite(g_au_ta_W_m2K) or g_au_ta_W_m2K <= 0.0:
+            raise ValueError(
+                "Au/TaIrTe4 conductance must be finite and positive or None"
+            )
     fvm = _load(FVM_PATH, "au_dualpol_4um_fvm")
     edges = thermal_edges(
         z_refinement_factor,
@@ -248,7 +284,7 @@ def build_thermal_state(
     kappa = np.full((*shape, 3), K_AIR_W_MK, dtype=np.float64)
     kappa[si] = K_SI_W_MK
     kappa[sio2] = K_SIO2_W_MK
-    kappa[ta] = K_TA_XYZ_W_MK
+    kappa[ta] = ta_kappa
     for iz in iz_au:
         for component in range(3):
             kappa[np.ix_(ix_au, iy_au, [iz], [component])] = k_au[:, :, None, None]
@@ -261,7 +297,7 @@ def build_thermal_state(
     ta_top_face = _face_before(edges[2], 0.0)
     rz[:, :, sio2_si_face] = 1.0 / G_SIO2_SI_W_M2K
     rz[np.ix_(np.flatnonzero(x_ta), np.flatnonzero(y_ta), [ta_sio2_face])] = (
-        1.0 / G_TA_SIO2_W_M2K
+        1.0 / g_ta_sio2_W_m2K
     )
     rz[np.ix_(np.flatnonzero(x_ta), np.flatnonzero(y_ta), [ta_top_face])] = (
         1.0 / G_TA_AIR_W_M2K
@@ -270,25 +306,40 @@ def build_thermal_state(
     lower_dz = widths[2][ta_top_face]
     upper_dz = widths[2][ta_top_face + 1]
     r_air = (
-        0.5 * lower_dz / K_TA_XYZ_W_MK[2]
+        0.5 * lower_dz / ta_kappa[2]
         + 1.0 / G_TA_AIR_W_M2K
         + 0.5 * upper_dz / K_AIR_W_MK
     )
     r_au = (
-        0.5 * lower_dz / K_TA_XYZ_W_MK[2]
-        + 1.0 / G_AU_TA_W_M2K
+        0.5 * lower_dz / ta_kappa[2]
+        + (0.0 if g_au_ta_W_m2K is None else 1.0 / g_au_ta_W_m2K)
         + 0.5 * upper_dz / K_AU_W_MK
     )
     g_area = (1.0 - refined_fraction) / r_air + refined_fraction / r_au
     r_interface = (
         1.0 / g_area
-        - 0.5 * lower_dz / K_TA_XYZ_W_MK[2]
+        - 0.5 * lower_dz / ta_kappa[2]
         - 0.5 * upper_dz / k_au
     )
     if np.min(r_interface) < -1e-15:
         raise RuntimeError("negative equivalent Au/Ta interface resistance")
     rz[np.ix_(ix_au, iy_au, [ta_top_face])] = np.maximum(r_interface, 0.0)[:, :, None]
 
+    dirichlet_temperature_K = {"z_min": 0.0}
+    if far_xy_boundary == "ambient_dirichlet":
+        dirichlet_temperature_K.update(
+            {
+                "x_min": 0.0,
+                "x_max": 0.0,
+                "y_min": 0.0,
+                "y_max": 0.0,
+            }
+        )
+    top_robin = (
+        {"z_max": top_air_convection_W_m2K}
+        if top_air_convection_W_m2K > 0.0
+        else {}
+    )
     system = fvm.assemble_steady_diagonal_kappa(
         x_edges_m=edges[0],
         y_edges_m=edges[1],
@@ -296,15 +347,9 @@ def build_thermal_state(
         kappa_W_mK=kappa,
         active_mask=np.ones(shape, dtype=bool),
         interface_resistance_m2K_W={"x": rx, "y": ry, "z": rz},
-        dirichlet_temperature_K={
-            "x_min": 0.0,
-            "x_max": 0.0,
-            "y_min": 0.0,
-            "y_max": 0.0,
-            "z_min": 0.0,
-        },
-        surface_robin_heat_transfer_W_m2K={"z_max": TOP_AIR_CONVECTION_W_M2K},
-        surface_robin_temperature_K={"z_max": 0.0},
+        dirichlet_temperature_K=dirichlet_temperature_K,
+        surface_robin_heat_transfer_W_m2K=top_robin,
+        surface_robin_temperature_K={name: 0.0 for name in top_robin},
     )
     return ThermalState(
         edges=edges,
@@ -320,6 +365,13 @@ def build_thermal_state(
             "SiO2_Si": sio2_si_face,
             "TaIrTe4_SiO2": ta_sio2_face,
             "TaIrTe4_Au_or_air": ta_top_face,
+        },
+        parameters={
+            "far_xy_boundary": far_xy_boundary,
+            "top_air_convection_W_m2K": top_air_convection_W_m2K,
+            "g_ta_sio2_W_m2K": g_ta_sio2_W_m2K,
+            "g_au_ta_W_m2K": g_au_ta_W_m2K,
+            "ta_kappa_xyz_W_mK": tuple(float(value) for value in ta_kappa),
         },
     )
 
@@ -839,14 +891,16 @@ def thermal_density_gradient(
     bottom_face = state.faces["TaIrTe4_Au_or_air"]
     lower_dz = state.widths[2][bottom_face]
     upper_dz = state.widths[2][bottom_face + 1]
+    ta_kz = float(state.parameters["ta_kappa_xyz_W_mK"][2])
+    g_au_ta = state.parameters["g_au_ta_W_m2K"]
     r_air = (
-        0.5 * lower_dz / K_TA_XYZ_W_MK[2]
+        0.5 * lower_dz / ta_kz
         + 1.0 / G_TA_AIR_W_M2K
         + 0.5 * upper_dz / K_AIR_W_MK
     )
     r_au = (
-        0.5 * lower_dz / K_TA_XYZ_W_MK[2]
-        + 1.0 / G_AU_TA_W_M2K
+        0.5 * lower_dz / ta_kz
+        + (0.0 if g_au_ta is None else 1.0 / float(g_au_ta))
         + 0.5 * upper_dz / K_AU_W_MK
     )
 

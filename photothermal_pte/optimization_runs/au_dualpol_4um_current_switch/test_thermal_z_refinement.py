@@ -137,3 +137,31 @@ def test_domain_ladders_preserve_the_baseline_and_only_extend_outer_faces(
 def test_undeclared_domain_levels_fail_closed(keyword, value, message):
     with pytest.raises(ValueError, match=message):
         thermal_edges(**{keyword: value})
+
+
+def test_thermal_sensitivity_defaults_preserve_the_historical_operator():
+    signature = inspect.signature(build_thermal_state)
+    assert signature.parameters["far_xy_boundary"].default == "ambient_dirichlet"
+    assert signature.parameters["top_air_convection_W_m2K"].default == 10.0
+    assert signature.parameters["g_ta_sio2_W_m2K"].default == 7.37e6
+    assert signature.parameters["g_au_ta_W_m2K"].default == pytest.approx(
+        1.0 / 5.8e-8
+    )
+    assert signature.parameters["ta_kappa_xyz_W_mK"].default == (3.8, 14.4, 1.0)
+
+
+@pytest.mark.parametrize(
+    ("keyword", "value", "message"),
+    [
+        ("far_xy_boundary", "periodic", "far x/y thermal boundary"),
+        ("top_air_convection_W_m2K", -1.0, "top-air convection"),
+        ("g_ta_sio2_W_m2K", 0.0, "TaIrTe4/SiO2"),
+        ("g_au_ta_W_m2K", -1.0, "Au/TaIrTe4"),
+        ("ta_kappa_xyz_W_mK", (3.8, 14.4, 0.0), "thermal conductivity"),
+    ],
+)
+def test_invalid_thermal_sensitivity_parameter_fails_before_assembly(
+    keyword, value, message
+):
+    with pytest.raises(ValueError, match=message):
+        build_thermal_state(np.zeros((80, 80)), **{keyword: value})
