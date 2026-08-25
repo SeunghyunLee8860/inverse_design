@@ -79,8 +79,11 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysi
     TA_THICKNESS_M,
     current_integrand,
     electrical_load,
+    pde_grid_contract,
+    refine_exact_binary_density,
     ta_id,
     temperature_pullback,
+    thermal_edges,
 )
 
 
@@ -423,3 +426,83 @@ def test_smooth_solid_void_constraint_directional_derivatives() -> None:
     )
     assert np.all(np.isfinite(values))
     assert np.max(error) < 5e-3
+
+
+def test_refined_binary_pde_grid_preserves_exact_geometry() -> None:
+    mask = np.zeros((80, 80), dtype=np.uint8)
+    mask[7:23, 31:64] = 1
+    refined = refine_exact_binary_density(mask, target_step_m=50.0e-9)
+    assert refined.shape == (160, 160)
+    np.testing.assert_array_equal(
+        refined.reshape(80, 2, 80, 2),
+        np.broadcast_to(mask[:, None, :, None], (80, 2, 80, 2)),
+    )
+    assert np.sum(refined) * (50.0e-9) ** 2 == np.sum(mask) * STEP_M**2
+    assert pde_grid_contract(mask) == {
+        "step_m": 100.0e-9,
+        "n_design": 80,
+        "n_ta": 160,
+        "design_offset": 40,
+    }
+    assert pde_grid_contract(refined) == {
+        "step_m": 50.0e-9,
+        "n_design": 160,
+        "n_ta": 320,
+        "design_offset": 80,
+    }
+    for step, n_ta in ((100.0e-9, 160), (50.0e-9, 320)):
+        x_edges = thermal_edges(core_step_m=step)[0]
+        centers = 0.5 * (x_edges[:-1] + x_edges[1:])
+        assert np.count_nonzero((centers >= -8.0e-6) & (centers < 8.0e-6)) == n_ta
+
+
+def test_refined_electrical_discretization_preserves_linear_field_current() -> None:
+    currents: list[float] = []
+    for n_design, step_m in ((80, 100.0e-9), (160, 50.0e-9)):
+        n_ta = 2 * n_design
+        temperature = np.broadcast_to(
+            (np.arange(n_ta, dtype=np.float64) * step_m)[:, None],
+            (n_ta, n_ta),
+        ).copy()
+        psi = np.zeros(n_ta * n_ta + n_design * n_design, dtype=np.float64)
+        for index in range(n_ta):
+            psi[[ta_id(index, j, n_ta) for j in range(n_ta)]] = index / (n_ta - 1)
+        objective = float(
+            electrical_load(
+                temperature,
+                n_design=n_design,
+                step_m=step_m,
+            )
+            @ psi
+        )
+        integrated = float(
+            np.sum(
+                current_integrand(
+                    temperature,
+                    psi,
+                    n_design=n_design,
+                    step_m=step_m,
+                )
+            )
+            * step_m**2
+        )
+        pullback = float(
+            np.vdot(
+                temperature_pullback(
+                    psi, n_ta=n_ta, n_design=n_design
+                ),
+                temperature,
+            )
+        )
+        expected = (
+            -SIGMA_TA_XY_S_M[0]
+            * TA_THICKNESS_M
+            * SEEBECK_TA_XY_V_K[0]
+            * step_m
+            * n_ta
+        )
+        assert np.isclose(objective, expected, rtol=2e-13, atol=0.0)
+        assert np.isclose(integrated, expected, rtol=2e-13, atol=0.0)
+        assert np.isclose(pullback, expected, rtol=2e-13, atol=0.0)
+        currents.append(objective)
+    assert np.isclose(currents[0], currents[1], rtol=2e-13, atol=0.0)

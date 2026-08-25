@@ -66,6 +66,63 @@ SIGMA_AU_S_M = float(AU_BULK_ELECTRICAL_CONDUCTIVITY_S_M)
 SIGMA_FLOOR_FRACTION = 1.0e-8
 CONTACT_FLOOR_FRACTION = 1.0e-10
 ELECTRICAL_CONTACT_S_M2 = CONTRACT.electrical_contact_S_m2
+PDE_CORE_DXY_LEVELS_M = (100.0e-9, 50.0e-9)
+
+
+def pde_grid_contract(rho: np.ndarray) -> dict[str, int | float]:
+    """Infer one exact 8-um/16-um square PDE grid from a design density."""
+
+    density = np.asarray(rho)
+    if density.ndim != 2 or density.shape[0] != density.shape[1]:
+        raise ValueError("rho must be a square 2-D design-cell array")
+    n_design = int(density.shape[0])
+    step_m = CONTRACT.design_span_x_m / n_design
+    nearest = min(PDE_CORE_DXY_LEVELS_M, key=lambda value: abs(value - step_m))
+    if not np.isclose(step_m, nearest, rtol=0.0, atol=1.0e-18):
+        raise ValueError("rho shape does not define an approved 100/50-nm PDE grid")
+    n_ta = int(round(CONTRACT.flake_span_x_m / nearest))
+    if (
+        not np.isclose(
+            n_design * nearest,
+            CONTRACT.design_span_x_m,
+            rtol=0.0,
+            atol=1.0e-18,
+        )
+        or not np.isclose(
+            n_ta * nearest,
+            CONTRACT.flake_span_x_m,
+            rtol=0.0,
+            atol=1.0e-18,
+        )
+        or (n_ta - n_design) % 2 != 0
+    ):
+        raise RuntimeError("PDE grid does not exactly preserve the device geometry")
+    return {
+        "step_m": float(nearest),
+        "n_design": n_design,
+        "n_ta": n_ta,
+        "design_offset": (n_ta - n_design) // 2,
+    }
+
+
+def refine_exact_binary_density(
+    mask: np.ndarray, *, target_step_m: float
+) -> np.ndarray:
+    """Replicate exact 100-nm binary cells onto an approved finer PDE grid."""
+
+    value = np.asarray(mask)
+    if value.shape != CONTRACT.design_shape or not np.all((value == 0) | (value == 1)):
+        raise ValueError("mask must be the exact 80x80 zero/one cell geometry")
+    step = float(target_step_m)
+    nearest = min(PDE_CORE_DXY_LEVELS_M, key=lambda item: abs(item - step))
+    if not np.isclose(step, nearest, rtol=0.0, atol=1.0e-18):
+        raise ValueError("target PDE step must be 100 or 50 nm")
+    ratio = int(round(CONTRACT.design_pitch_m / nearest))
+    if ratio < 1 or not np.isclose(
+        ratio * nearest, CONTRACT.design_pitch_m, rtol=0.0, atol=1.0e-18
+    ):
+        raise ValueError("target PDE step must exactly divide the 100-nm mask pitch")
+    return np.repeat(np.repeat(value, ratio, axis=0), ratio, axis=1)
 
 
 def _load(path: Path, name: str):
@@ -89,10 +146,20 @@ def _face_before(edges: np.ndarray, value: float) -> int:
     return int(match[0] - 1)
 
 
-def thermal_edges() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def thermal_edges(
+    *, core_step_m: float = STEP_M
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    step = float(core_step_m)
+    nearest = min(PDE_CORE_DXY_LEVELS_M, key=lambda value: abs(value - step))
+    if not np.isclose(step, nearest, rtol=0.0, atol=1.0e-18):
+        raise ValueError("thermal core step must be 100 or 50 nm")
     negative_outer = np.asarray((-32, -28, -24, -20, -16, -14), float) * 1e-6
     negative_shoulder = np.arange(-14.0, -12.0, 0.25) * 1e-6
-    core = np.arange(-12.0, 12.0 + 0.05, 0.1) * 1e-6
+    if nearest == STEP_M:
+        core = np.arange(-12.0, 12.0 + 0.05, 0.1) * 1e-6
+    else:
+        step_um = nearest * 1.0e6
+        core = np.arange(-12.0, 12.0 + 0.5 * step_um, step_um) * 1e-6
     positive_shoulder = np.arange(12.25, 14.0 + 0.125, 0.25) * 1e-6
     positive_outer = np.asarray((16, 20, 24, 28, 32), float) * 1e-6
     lateral = np.unique(
@@ -126,14 +193,22 @@ class ThermalState:
     rho: np.ndarray
     material_fraction: np.ndarray
     faces: dict[str, int]
+    step_m: float
+    n_ta: int
+    n_design: int
+    design_offset: int
 
 
 def build_thermal_state(rho: np.ndarray) -> ThermalState:
     density = np.asarray(rho, dtype=np.float64)
-    if density.shape != CONTRACT.design_shape or np.any((density < 0) | (density > 1)):
-        raise ValueError("rho must be an 80x80 physical density in [0,1]")
+    grid = pde_grid_contract(density)
+    if not np.all(np.isfinite(density)) or np.any((density < 0) | (density > 1)):
+        raise ValueError("rho must be a finite physical density in [0,1]")
+    step_m = float(grid["step_m"])
+    n_ta = int(grid["n_ta"])
+    n_design = int(grid["n_design"])
     fvm = _load(FVM_PATH, "au_dualpol_4um_fvm")
-    edges = thermal_edges()
+    edges = thermal_edges(core_step_m=step_m)
     widths = tuple(np.diff(axis) for axis in edges)
     centers = tuple(_centers(axis) for axis in edges)
     x, y, z = centers
@@ -151,9 +226,9 @@ def build_thermal_state(rho: np.ndarray) -> ThermalState:
     sio2 = np.broadcast_to(z_sio2[None, None, :], shape)
     si = np.broadcast_to(z_si[None, None, :], shape)
     ix_au, iy_au, iz_au = map(np.flatnonzero, (x_au, y_au, z_au))
-    if (np.count_nonzero(x_ta), np.count_nonzero(y_ta)) != (N_TA, N_TA):
-        raise RuntimeError("TaIrTe4 thermal footprint is not 160x160")
-    if (ix_au.size, iy_au.size) != CONTRACT.design_shape:
+    if (np.count_nonzero(x_ta), np.count_nonzero(y_ta)) != (n_ta, n_ta):
+        raise RuntimeError("TaIrTe4 thermal footprint does not match the PDE grid")
+    if (ix_au.size, iy_au.size) != (n_design, n_design):
         raise RuntimeError("Au thermal footprint does not match design density")
 
     fraction = np.asarray(au_material_fraction(density), dtype=np.float64)
@@ -234,6 +309,10 @@ def build_thermal_state(rho: np.ndarray) -> ThermalState:
             "TaIrTe4_SiO2": ta_sio2_face,
             "TaIrTe4_Au_or_air": ta_top_face,
         },
+        step_m=step_m,
+        n_ta=n_ta,
+        n_design=n_design,
+        design_offset=int(grid["design_offset"]),
     )
 
 
@@ -395,7 +474,7 @@ def tairte4_temperature(state: ThermalState, temperature: np.ndarray) -> np.ndar
     result = np.tensordot(
         temperature[np.ix_(ix, iy, iz)], weights / np.sum(weights), axes=(2, 0)
     )
-    if result.shape != (N_TA, N_TA):
+    if result.shape != (state.n_ta, state.n_ta):
         raise RuntimeError(f"unexpected Ta temperature shape {result.shape}")
     return result
 
@@ -421,14 +500,23 @@ class ElectricalSystem:
     derivative_terms: tuple[EdgeDerivative, ...]
     rho: np.ndarray
     material_fraction: np.ndarray
+    step_m: float
+    n_ta: int
+    n_design: int
+    design_offset: int
 
 
-def ta_id(i: int, j: int) -> int:
-    return i * N_TA + j
+def ta_id(i: int, j: int, n_ta: int = N_TA) -> int:
+    return i * n_ta + j
 
 
-def au_id(i: int, j: int) -> int:
-    return N_TA * N_TA + i * N_DESIGN + j
+def au_id(
+    i: int,
+    j: int,
+    n_ta: int = N_TA,
+    n_design: int = N_DESIGN,
+) -> int:
+    return n_ta * n_ta + i * n_design + j
 
 
 def _add_edge(rows, cols, data, left: int, right: int, g: float) -> None:
@@ -437,18 +525,33 @@ def _add_edge(rows, cols, data, left: int, right: int, g: float) -> None:
     data.extend((g, g, -g, -g))
 
 
-def electrical_load(temperature_K: np.ndarray) -> np.ndarray:
+def electrical_load(
+    temperature_K: np.ndarray,
+    *,
+    n_design: int = N_DESIGN,
+    step_m: float = STEP_M,
+) -> np.ndarray:
     """Return the Shockley--Ramo objective vector for ``Jloc=-sigma*S*grad(T)``."""
 
     temperature = np.asarray(temperature_K, dtype=np.float64)
-    if temperature.shape != (N_TA, N_TA):
-        raise ValueError("temperature must be 160x160")
-    load = np.zeros(N_TA * N_TA + N_DESIGN * N_DESIGN, dtype=np.float64)
-    for i in range(N_TA):
-        for j in range(N_TA):
-            left = ta_id(i, j)
-            if i + 1 < N_TA:
-                right = ta_id(i + 1, j)
+    if (
+        temperature.ndim != 2
+        or temperature.shape[0] != temperature.shape[1]
+        or not np.all(np.isfinite(temperature))
+    ):
+        raise ValueError("temperature must be a finite square TaIrTe4 field")
+    n_ta = int(temperature.shape[0])
+    grid = pde_grid_contract(np.empty((int(n_design), int(n_design))))
+    if n_ta != int(grid["n_ta"]) or not np.isclose(
+        step_m, float(grid["step_m"]), rtol=0.0, atol=1.0e-18
+    ):
+        raise ValueError("temperature, design, and PDE step do not share one grid")
+    load = np.zeros(n_ta * n_ta + n_design * n_design, dtype=np.float64)
+    for i in range(n_ta):
+        for j in range(n_ta):
+            left = ta_id(i, j, n_ta)
+            if i + 1 < n_ta:
+                right = ta_id(i + 1, j, n_ta)
                 value = (
                     SIGMA_TA_XY_S_M[0]
                     * TA_THICKNESS_M
@@ -457,8 +560,8 @@ def electrical_load(temperature_K: np.ndarray) -> np.ndarray:
                 )
                 load[left] += value
                 load[right] -= value
-            if j + 1 < N_TA:
-                right = ta_id(i, j + 1)
+            if j + 1 < n_ta:
+                right = ta_id(i, j + 1, n_ta)
                 value = (
                     SIGMA_TA_XY_S_M[1]
                     * TA_THICKNESS_M
@@ -472,63 +575,95 @@ def electrical_load(temperature_K: np.ndarray) -> np.ndarray:
 
 def build_electrical_system(rho: np.ndarray, temperature_K: np.ndarray) -> ElectricalSystem:
     density = np.asarray(rho, dtype=np.float64)
-    if density.shape != CONTRACT.design_shape or np.any((density < 0) | (density > 1)):
-        raise ValueError("rho must be 80x80 in [0,1]")
-    node_count = N_TA * N_TA + N_DESIGN * N_DESIGN
+    grid = pde_grid_contract(density)
+    if not np.all(np.isfinite(density)) or np.any((density < 0) | (density > 1)):
+        raise ValueError("rho must be a finite physical density in [0,1]")
+    step_m = float(grid["step_m"])
+    n_ta = int(grid["n_ta"])
+    n_design = int(grid["n_design"])
+    design_offset = int(grid["design_offset"])
+    temperature = np.asarray(temperature_K, dtype=np.float64)
+    if temperature.shape != (n_ta, n_ta) or not np.all(np.isfinite(temperature)):
+        raise ValueError("temperature does not match the rho-derived Ta grid")
+    node_count = n_ta * n_ta + n_design * n_design
     rows: list[int] = []
     cols: list[int] = []
     data: list[float] = []
     derivatives: list[EdgeDerivative] = []
-    for i in range(N_TA):
-        for j in range(N_TA):
-            node = ta_id(i, j)
-            if i + 1 < N_TA:
-                _add_edge(rows, cols, data, node, ta_id(i + 1, j), SIGMA_TA_XY_S_M[0] * TA_THICKNESS_M)
-            if j + 1 < N_TA:
-                _add_edge(rows, cols, data, node, ta_id(i, j + 1), SIGMA_TA_XY_S_M[1] * TA_THICKNESS_M)
+    for i in range(n_ta):
+        for j in range(n_ta):
+            node = ta_id(i, j, n_ta)
+            if i + 1 < n_ta:
+                _add_edge(
+                    rows,
+                    cols,
+                    data,
+                    node,
+                    ta_id(i + 1, j, n_ta),
+                    SIGMA_TA_XY_S_M[0] * TA_THICKNESS_M,
+                )
+            if j + 1 < n_ta:
+                _add_edge(
+                    rows,
+                    cols,
+                    data,
+                    node,
+                    ta_id(i, j + 1, n_ta),
+                    SIGMA_TA_XY_S_M[1] * TA_THICKNESS_M,
+                )
     sigma_floor = SIGMA_AU_S_M * SIGMA_FLOOR_FRACTION
     fraction = np.asarray(au_material_fraction(density), dtype=np.float64)
     d_fraction = np.asarray(d_au_material_fraction_drho(density), dtype=np.float64)
     sigma = sigma_floor + fraction * (SIGMA_AU_S_M - sigma_floor)
     dsigma = d_fraction * (SIGMA_AU_S_M - sigma_floor)
     contact_floor = ELECTRICAL_CONTACT_S_M2 * CONTACT_FLOOR_FRACTION
-    for i in range(N_DESIGN):
-        for j in range(N_DESIGN):
-            node = au_id(i, j)
+    for i in range(n_design):
+        for j in range(n_design):
+            node = au_id(i, j, n_ta, n_design)
             for di, dj, label in ((1, 0, "Au_sheet_x"), (0, 1, "Au_sheet_y")):
                 ni, nj = i + di, j + dj
-                if ni >= N_DESIGN or nj >= N_DESIGN:
+                if ni >= n_design or nj >= n_design:
                     continue
-                right = au_id(ni, nj)
-                resistance = 0.5 * STEP_M / sigma[i, j] + 0.5 * STEP_M / sigma[ni, nj]
-                g = AU_THICKNESS_M * STEP_M / resistance
+                right = au_id(ni, nj, n_ta, n_design)
+                resistance = (
+                    0.5 * step_m / sigma[i, j]
+                    + 0.5 * step_m / sigma[ni, nj]
+                )
+                g = AU_THICKNESS_M * step_m / resistance
                 _add_edge(rows, cols, data, node, right, g)
                 for ii, jj in ((i, j), (ni, nj)):
                     dg = (
                         AU_THICKNESS_M
-                        * STEP_M
+                        * step_m
                         / resistance**2
                         * 0.5
-                        * STEP_M
+                        * step_m
                         / sigma[ii, jj] ** 2
                         * dsigma[ii, jj]
                     )
                     derivatives.append(
-                        EdgeDerivative(node, right, ii * N_DESIGN + jj, dg, label)
+                        EdgeDerivative(
+                            node,
+                            right,
+                            ii * n_design + jj,
+                            dg,
+                            label,
+                        )
                     )
-            ti, tj = DESIGN_OFFSET + i, DESIGN_OFFSET + j
-            g_contact = STEP_M**2 * (
+            ti, tj = design_offset + i, design_offset + j
+            g_contact = step_m**2 * (
                 contact_floor
                 + fraction[i, j]
                 * (ELECTRICAL_CONTACT_S_M2 - contact_floor)
             )
-            _add_edge(rows, cols, data, ta_id(ti, tj), node, g_contact)
+            ta_node = ta_id(ti, tj, n_ta)
+            _add_edge(rows, cols, data, ta_node, node, g_contact)
             derivatives.append(
                 EdgeDerivative(
-                    ta_id(ti, tj),
+                    ta_node,
                     node,
-                    i * N_DESIGN + j,
-                    STEP_M**2
+                    i * n_design + j,
+                    step_m**2
                     * (ELECTRICAL_CONTACT_S_M2 - contact_floor)
                     * d_fraction[i, j],
                     "vertical_Au_Ta_contact",
@@ -537,8 +672,12 @@ def build_electrical_system(rho: np.ndarray, temperature_K: np.ndarray) -> Elect
     matrix = sparse.coo_matrix((data, (rows, cols)), shape=(node_count, node_count)).tocsr()
     matrix.sum_duplicates()
     # Left x-min terminal psi=0; right x-max terminal psi=1.
-    low = np.asarray([ta_id(0, j) for j in range(N_TA)], dtype=np.int64)
-    high = np.asarray([ta_id(N_TA - 1, j) for j in range(N_TA)], dtype=np.int64)
+    low = np.asarray(
+        [ta_id(0, j, n_ta) for j in range(n_ta)], dtype=np.int64
+    )
+    high = np.asarray(
+        [ta_id(n_ta - 1, j, n_ta) for j in range(n_ta)], dtype=np.int64
+    )
     fixed = np.concatenate((low, high))
     fixed_values = np.concatenate((np.zeros(low.size), np.ones(high.size)))
     free_mask = np.ones(node_count, dtype=bool)
@@ -553,10 +692,18 @@ def build_electrical_system(rho: np.ndarray, temperature_K: np.ndarray) -> Elect
         free=free,
         fixed=fixed,
         fixed_values_V=fixed_values,
-        objective_gradient_psi_A=electrical_load(temperature_K),
+        objective_gradient_psi_A=electrical_load(
+            temperature,
+            n_design=n_design,
+            step_m=step_m,
+        ),
         derivative_terms=tuple(derivatives),
         rho=density.copy(),
         material_fraction=fraction.copy(),
+        step_m=step_m,
+        n_ta=n_ta,
+        n_design=n_design,
+        design_offset=design_offset,
     )
 
 
@@ -575,8 +722,8 @@ def solve_electrical(
     psi[system.free] = result.solution
     current = float(system.objective_gradient_psi_A @ psi)
     residual = np.asarray(system.full_matrix_S @ psi).reshape(-1)
-    low = float(np.sum(residual[system.fixed[:N_TA]]))
-    high = float(np.sum(residual[system.fixed[N_TA:]]))
+    low = float(np.sum(residual[system.fixed[: system.n_ta]]))
+    high = float(np.sum(residual[system.fixed[system.n_ta :]]))
     balance = abs(low + high) / max(abs(low), abs(high), np.finfo(float).tiny)
     free_residual = np.linalg.norm(residual[system.free]) / max(
         np.linalg.norm(system.reduced_rhs_A), np.finfo(float).tiny
@@ -591,16 +738,37 @@ def solve_electrical(
     }
 
 
-def current_integrand(temperature_K: np.ndarray, psi: np.ndarray) -> np.ndarray:
+def current_integrand(
+    temperature_K: np.ndarray,
+    psi: np.ndarray,
+    *,
+    n_design: int = N_DESIGN,
+    step_m: float = STEP_M,
+) -> np.ndarray:
     """Cell-centred A/m2 map whose area integral is the total PTE current."""
 
     temperature = np.asarray(temperature_K, dtype=np.float64)
-    values = np.zeros((N_TA, N_TA), dtype=np.float64)
-    for i in range(N_TA):
-        for j in range(N_TA):
-            node = ta_id(i, j)
-            if i + 1 < N_TA:
-                right = ta_id(i + 1, j)
+    if (
+        temperature.ndim != 2
+        or temperature.shape[0] != temperature.shape[1]
+        or not np.all(np.isfinite(temperature))
+    ):
+        raise ValueError("temperature must be a finite square TaIrTe4 field")
+    n_ta = int(temperature.shape[0])
+    grid = pde_grid_contract(np.empty((int(n_design), int(n_design))))
+    if n_ta != int(grid["n_ta"]) or not np.isclose(
+        step_m, float(grid["step_m"]), rtol=0.0, atol=1.0e-18
+    ):
+        raise ValueError("temperature, design, and PDE step do not share one grid")
+    expected_nodes = n_ta * n_ta + n_design * n_design
+    if np.asarray(psi).shape != (expected_nodes,):
+        raise ValueError("psi does not match the requested electrical grid")
+    values = np.zeros((n_ta, n_ta), dtype=np.float64)
+    for i in range(n_ta):
+        for j in range(n_ta):
+            node = ta_id(i, j, n_ta)
+            if i + 1 < n_ta:
+                right = ta_id(i + 1, j, n_ta)
                 contribution = -(
                     SIGMA_TA_XY_S_M[0]
                     * TA_THICKNESS_M
@@ -608,10 +776,10 @@ def current_integrand(temperature_K: np.ndarray, psi: np.ndarray) -> np.ndarray:
                     * (temperature[i + 1, j] - temperature[i, j])
                     * (psi[right] - psi[node])
                 )
-                values[i, j] += 0.5 * contribution / STEP_M**2
-                values[i + 1, j] += 0.5 * contribution / STEP_M**2
-            if j + 1 < N_TA:
-                right = ta_id(i, j + 1)
+                values[i, j] += 0.5 * contribution / step_m**2
+                values[i + 1, j] += 0.5 * contribution / step_m**2
+            if j + 1 < n_ta:
+                right = ta_id(i, j + 1, n_ta)
                 contribution = -(
                     SIGMA_TA_XY_S_M[1]
                     * TA_THICKNESS_M
@@ -619,43 +787,53 @@ def current_integrand(temperature_K: np.ndarray, psi: np.ndarray) -> np.ndarray:
                     * (temperature[i, j + 1] - temperature[i, j])
                     * (psi[right] - psi[node])
                 )
-                values[i, j] += 0.5 * contribution / STEP_M**2
-                values[i, j + 1] += 0.5 * contribution / STEP_M**2
+                values[i, j] += 0.5 * contribution / step_m**2
+                values[i, j + 1] += 0.5 * contribution / step_m**2
     return values
 
 
-def temperature_pullback(psi: np.ndarray) -> np.ndarray:
-    """Return dI/dT for the 160x160 thickness-averaged Ta field."""
+def temperature_pullback(
+    psi: np.ndarray,
+    *,
+    n_ta: int = N_TA,
+    n_design: int = N_DESIGN,
+) -> np.ndarray:
+    """Return dI/dT for a thickness-averaged Ta field."""
 
-    gradient = np.zeros((N_TA, N_TA), dtype=np.float64)
-    for i in range(N_TA):
-        for j in range(N_TA):
-            node = ta_id(i, j)
-            if i + 1 < N_TA:
-                right = ta_id(i + 1, j)
+    values = np.asarray(psi, dtype=np.float64)
+    if values.shape != (n_ta * n_ta + n_design * n_design,):
+        raise ValueError("psi does not match the requested electrical grid")
+    gradient = np.zeros((n_ta, n_ta), dtype=np.float64)
+    for i in range(n_ta):
+        for j in range(n_ta):
+            node = ta_id(i, j, n_ta)
+            if i + 1 < n_ta:
+                right = ta_id(i + 1, j, n_ta)
                 scale = (
                     SIGMA_TA_XY_S_M[0]
                     * TA_THICKNESS_M
                     * SEEBECK_TA_XY_V_K[0]
                 )
-                contribution = -scale * (psi[right] - psi[node])
+                contribution = -scale * (values[right] - values[node])
                 gradient[i, j] -= contribution
                 gradient[i + 1, j] += contribution
-            if j + 1 < N_TA:
-                right = ta_id(i, j + 1)
+            if j + 1 < n_ta:
+                right = ta_id(i, j + 1, n_ta)
                 scale = (
                     SIGMA_TA_XY_S_M[1]
                     * TA_THICKNESS_M
                     * SEEBECK_TA_XY_V_K[1]
                 )
-                contribution = -scale * (psi[right] - psi[node])
+                contribution = -scale * (values[right] - values[node])
                 gradient[i, j] -= contribution
                 gradient[i, j + 1] += contribution
     return gradient
 
 
 def explicit_temperature_pullback(state: ThermalState, psi: np.ndarray) -> np.ndarray:
-    coarse = temperature_pullback(psi)
+    coarse = temperature_pullback(
+        psi, n_ta=state.n_ta, n_design=state.n_design
+    )
     x, y, z = state.centers
     ix = np.flatnonzero((x >= -8e-6) & (x < 8e-6))
     iy = np.flatnonzero((y >= -8e-6) & (y < 8e-6))
@@ -688,12 +866,12 @@ def solve_electrical_adjoint(
 def electrical_density_gradient(
     system: ElectricalSystem, psi: np.ndarray, adjoint: np.ndarray
 ) -> np.ndarray:
-    gradient = np.zeros(N_DESIGN * N_DESIGN, dtype=np.float64)
+    gradient = np.zeros(system.n_design * system.n_design, dtype=np.float64)
     for term in system.derivative_terms:
         gradient[term.rho_index] += -term.dg_drho_S * (
             adjoint[term.left] - adjoint[term.right]
         ) * (psi[term.left] - psi[term.right])
-    return gradient.reshape(CONTRACT.design_shape)
+    return gradient.reshape(system.rho.shape)
 
 
 def _generic_face_dg(
@@ -745,7 +923,7 @@ def thermal_density_gradient(
     ix = np.flatnonzero((x >= -4e-6) & (x < 4e-6))
     iy = np.flatnonzero((y >= -4e-6) & (y < 4e-6))
     iz = np.flatnonzero((z >= 0.0) & (z < 0.05e-6))
-    result = np.zeros(CONTRACT.design_shape, dtype=np.float64)
+    result = np.zeros(state.rho.shape, dtype=np.float64)
     d_fraction = np.asarray(
         d_au_material_fraction_drho(state.rho), dtype=np.float64
     )
