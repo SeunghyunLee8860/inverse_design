@@ -1109,3 +1109,36 @@ Do not launch z8, an FDTDX adjoint, or an optimizer. The next FDTDX forensic
 task is the paper/code-backed gray-Au constitutive-law audit: replace the
 historical optical/thermal/electrical density-law mismatch with one projected
 geometry and a validated endpoint-consistent law before any AD-FD attempt.
+
+
+## Final FDTDX gray-law quarantine
+
+Commit `d27cfc82` adds a solver-free, machine-readable audit of the active
+FDTDX material and optimizer paths. The certificate is
+`/home/seunghyun200/fdtdx_results/fdtdx_gray_law_final_audit_d27cfc82/FDTDX_GRAY_LAW_FINAL_AUDIT.json`,
+SHA-256 `1d3909f126210a87b5aea182b5993a801b48939343981de436453458df2d8cb9`.
+It completed in `0.30 s`, used no GPU/Lumerical/Maxwell solve, and passed every
+audit check. Full regression is `464 passed, 7 subtests passed`.
+
+The valid audit certifies a quarantine, not production readiness. Historical
+`O3/TE1`, shared-linear FDTDX gray, and the patched fork's generic gray
+`Device` route are forbidden for production. The exact bool/integer 0/1
+air-or-ordinary-Au endpoint path remains allowed only for references. No
+strict FDTDX optical mesh is selected and all three optimizer entrypoints are
+confirmed fail-closed before output mutation or Maxwell compilation.
+
+Use one filtered/projected geometry state, not one arbitrary exponent: optical,
+thermal, electrical, and interface laws may map that same occupancy to
+different physical properties, but every map needs declared endpoints,
+derivatives, uncertainty checks, and exact-binary final promotion. The future
+`n,k`-then-square optical law passes only solver-free calculus tests and is
+owned/validated by the independent Lumerical session, not this audit.
+
+Read `FDTDX_GRAY_LAW_FINAL_AUDIT.md` next. The remaining FDTDX-side blocker is
+the actual device boundary-value problem: flake/electrode/contact geometry,
+crystal-axis angle, signed terminals, beam/stack, thermal-contact bounds,
+electrical-contact bounds, and void-floor sensitivity. Do not invent these
+inputs and do not refine the prototype mesh as if it were the target device.
+After the actual geometry and independently validated Maxwell Q are available,
+repeat thermal/electrical mesh and interface convergence, then complete the
+coupled AD-FD and exact-binary promotion gates.
