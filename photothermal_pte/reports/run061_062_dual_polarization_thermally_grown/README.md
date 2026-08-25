@@ -55,9 +55,81 @@ gates pass. The selected density and independent audit are in
 `FINAL_EXACT_BINARY_STRUCTURE.npz`, `FINAL_EXACT_BINARY_STRUCTURE.png`, and
 `FINAL_RESULT.json`.
 
-### Run062: running
+### Run062: complete
 
-The +45-degree diagonal case started automatically under the same nine-license
-`runres` reservation on GPU 3 after Run061 finalization. It retains the full
-beta schedule and will undergo the same exact-zero, two-polarization final
-validation.
+Run062 completed the full continuation through beta 128. Its selected exact
+candidate is independently exact-zero, but narrowly misses the strict 1%
+continuous-to-exact preservation gate for both polarizations.
+
+| Quantity at 285 uW | Continuous beta 128 | Selected exact binary |
+|---|---:|---:|
+| `E||a` signed current | +83.516771 nA | +82.554720 nA |
+| `E||b` signed current | +60.595267 nA | +59.959117 nA |
+| dual signed soft-min | +64.010207 nA | +63.370700 nA |
+| exact 500 nm bad cells | 116 after thresholding | **0** |
+
+The per-polarization changes are -1.1519% (`E||a`) and -1.0498% (`E||b`).
+Thus the physical and DFM gates pass, while the overall result retains the
+honest status `FAILED_EXACT_BINARY_OBJECTIVE_PRESERVATION` rather than being
+relabeled as a PASS.
+
+## Complete exact-field maps
+
+Each figure contains the exact structure, depth-integrated absorbed `Q`,
+temperature, `|grad T|`, signed `dT/db` and `dT/da`, weighting potential and
+gradient, short-circuit potential and field, signed local `J_b` and `J_a`,
+`|J|`, and signed total/axis-resolved terminal-current contribution. Red and
+blue in the contribution panels therefore show the local positive and negative
+parts of the final signed terminal current.
+
+### Run061 top-bottom
+
+![Run061 E parallel a exact fields](run061_Ea_exact_fields.png)
+
+![Run061 E parallel b exact fields](run061_Eb_exact_fields.png)
+
+### Run062 +45-degree diagonal
+
+The run062 flake, thermal fields, weighting field, `J`, and local current maps
+are plotted in the fixed crystal frame `x=b`, `y=a`. The flake is therefore a
+physical +45-degree diamond; its local device axes have not been relabeled as
+the crystal axes. The optical source remains the documented Run058
+axis-aligned no-Au proxy used by this optimization.
+
+![Run062 E parallel a exact fields](run062_Ea_exact_fields.png)
+
+![Run062 E parallel b exact fields](run062_Eb_exact_fields.png)
+
+## Current summary
+
+![Final exact current comparison](run061_062_final_current_comparison.png)
+
+![Optimization convergence](run061_062_optimization_convergence.png)
+
+The exact terminal currents and local integral checks are:
+
+| Run | Polarization | Signed current | Positive local sum | Negative local sum |
+|---|---|---:|---:|---:|
+| 061 | `E||a` | +53.605863 nA | +56.012522 nA | -2.406658 nA |
+| 061 | `E||b` | +53.333744 nA | +54.918368 nA | -1.584624 nA |
+| 062 | `E||a` | +82.554720 nA | +85.417967 nA | -2.863247 nA |
+| 062 | `E||b` | +59.959117 nA | +61.428281 nA | -1.469164 nA |
+
+The local terminal-contribution integral reproduces each certified current to
+relative error below `1.3e-16`. An independent short-circuit solve reproduces
+them below `1.1e-10`, with continuity residual below `1.2e-13`.
+
+## Saved numerical data
+
+All plotted arrays are retained in:
+
+- `run061_Ea_derived_fields.npz`
+- `run061_Eb_derived_fields.npz`
+- `run062_Ea_derived_fields.npz`
+- `run062_Eb_derived_fields.npz`
+- `run061_062_field_summary.json`
+
+Changing a colormap, colorbar range, panel layout, or labels does not require
+another Maxwell, thermal, or electrical calculation. The publication script
+`../../optimization_runs/summarize_run061_062_dual_fields.py` regenerates the
+figures from the saved exact-candidate fields.

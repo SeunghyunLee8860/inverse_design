@@ -1,0 +1,188 @@
+{
+  "schema": "run061-062-dual-polarization-complete-field-publication-v1",
+  "model": {
+    "axis_contract": "global x=b, y=a",
+    "run061_geometry": "24 x 24 um top-bottom device",
+    "run062_geometry": "24 x 24 um device physically plotted at +45 degrees",
+    "run062_optical": "Run58 axis-aligned optical proxy without Au",
+    "thermal_interface": "thermally grown TaIrTe4/SiO2, G=7.37e6 W/m2/K",
+    "electrodes": "ideal equipotential regions only in electrical solves",
+    "target_incident_power_W": 0.000285
+  },
+  "cases": [
+    {
+      "run": 61,
+      "geometry": "top_bottom",
+      "polarization": "Ea",
+      "global_status": "VALIDATED_OFFICIAL_DFM_EXACT_BINARY_PTE_OPTIMIZATION",
+      "global_passed": true,
+      "polarization_gate_passed": true,
+      "continuous_current_nA": 53.913103270874814,
+      "exact_current_nA": 53.605863353402704,
+      "exact_change_percent": -0.569879860056377,
+      "exact_500nm_bad_nodes": 0,
+      "source_power_scale_to_285uW": 2060702810.4771206,
+      "mapped_absorbed_power_at_285uW_uW": 51.09426387762523,
+      "maximum_temperature_rise_K": 0.22691097225164011,
+      "maximum_temperature_gradient_K_m": 724546.7834877453,
+      "maximum_total_J_A_m2": 304722.3511651578,
+      "positive_current_contribution_nA": 56.0125216268575,
+      "negative_current_contribution_nA": -2.4066582734547874,
+      "b_current_contribution_nA": 44.23838335649465,
+      "a_current_contribution_nA": 9.367479996908063,
+      "current_reintegration_relative_error": 1.234462890150275e-16,
+      "short_circuit_current_nA": 53.605863358941704,
+      "short_circuit_current_relative_error": 1.0332824729424847e-10,
+      "short_circuit_continuity_residual": 7.797810948393155e-14,
+      "source_field_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run061_top_bottom_dual_softmin_thermally_grown_v1/exact_attempt_beta64/exact_candidate_03_dual_physics/Ea/binary_objective_fields.npz",
+        "size_bytes": 9099690,
+        "sha256": "84e2638f107c809bd139e6a10f6646d2c542e69ecbc0142a60683a7187aae8b0"
+      }
+    },
+    {
+      "run": 61,
+      "geometry": "top_bottom",
+      "polarization": "Eb",
+      "global_status": "VALIDATED_OFFICIAL_DFM_EXACT_BINARY_PTE_OPTIMIZATION",
+      "global_passed": true,
+      "polarization_gate_passed": true,
+      "continuous_current_nA": 53.40224579050895,
+      "exact_current_nA": 53.333743661717385,
+      "exact_change_percent": -0.12827574529410413,
+      "exact_500nm_bad_nodes": 0,
+      "source_power_scale_to_285uW": 2060702810.4771206,
+      "mapped_absorbed_power_at_285uW_uW": 55.000025214676896,
+      "maximum_temperature_rise_K": 0.20580478274536212,
+      "maximum_temperature_gradient_K_m": 610249.9913246465,
+      "maximum_total_J_A_m2": 151325.44015450653,
+      "positive_current_contribution_nA": 54.918368075749044,
+      "negative_current_contribution_nA": -1.584624414031654,
+      "b_current_contribution_nA": 44.13227183000857,
+      "a_current_contribution_nA": 9.201471831708819,
+      "current_reintegration_relative_error": 1.2407613728368706e-16,
+      "short_circuit_current_nA": 53.333743667423576,
+      "short_circuit_current_relative_error": 1.0699023279903694e-10,
+      "short_circuit_continuity_residual": 1.107681096949078e-13,
+      "source_field_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_contact_anchored/run061_top_bottom_dual_softmin_thermally_grown_v1/exact_attempt_beta64/exact_candidate_03_dual_physics/Eb/binary_objective_fields.npz",
+        "size_bytes": 9079288,
+        "sha256": "fbe24258407780d640572c2f8504937b7706940c9f2238a84dc7fe90bbc496c5"
+      }
+    },
+    {
+      "run": 62,
+      "geometry": "diagonal_45",
+      "polarization": "Ea",
+      "global_status": "FAILED_EXACT_BINARY_OBJECTIVE_PRESERVATION",
+      "global_passed": false,
+      "polarization_gate_passed": false,
+      "continuous_current_nA": 83.516770949551,
+      "exact_current_nA": 82.55472009688121,
+      "exact_change_percent": -1.1519253459295387,
+      "exact_500nm_bad_nodes": 0,
+      "source_power_scale_to_285uW": 2060702810.4771206,
+      "mapped_absorbed_power_at_285uW_uW": 55.805610434131694,
+      "maximum_temperature_rise_K": 1.1589972378627136,
+      "maximum_temperature_gradient_K_m": 4661321.862072314,
+      "maximum_total_J_A_m2": 1717933.4603532422,
+      "positive_current_contribution_nA": 85.41796710562096,
+      "negative_current_contribution_nA": -2.8632470087397635,
+      "b_current_contribution_nA": 67.19297960501005,
+      "a_current_contribution_nA": 15.361740491871158,
+      "current_reintegration_relative_error": 0.0,
+      "short_circuit_current_nA": 82.55472009192871,
+      "short_circuit_current_relative_error": 5.999046157101059e-11,
+      "short_circuit_continuity_residual": 2.9888851314974847e-14,
+      "source_field_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run062_diagonal45_dual_softmin_thermally_grown_v1/exact_attempt_beta128/exact_candidate_03_dual_physics/Ea/binary_objective_fields.npz",
+        "size_bytes": 10926042,
+        "sha256": "f99bd3b1b33582331a767a809fd5ea7deccd280dd37210e2eed3507774c41940"
+      }
+    },
+    {
+      "run": 62,
+      "geometry": "diagonal_45",
+      "polarization": "Eb",
+      "global_status": "FAILED_EXACT_BINARY_OBJECTIVE_PRESERVATION",
+      "global_passed": false,
+      "polarization_gate_passed": false,
+      "continuous_current_nA": 60.59526681735294,
+      "exact_current_nA": 59.959116741772824,
+      "exact_change_percent": -1.0498345976388102,
+      "exact_500nm_bad_nodes": 0,
+      "source_power_scale_to_285uW": 2060702810.4771206,
+      "mapped_absorbed_power_at_285uW_uW": 52.62304860503728,
+      "maximum_temperature_rise_K": 0.6430351684655482,
+      "maximum_temperature_gradient_K_m": 2005976.9882006033,
+      "maximum_total_J_A_m2": 584053.3558792437,
+      "positive_current_contribution_nA": 61.42828075512566,
+      "negative_current_contribution_nA": -1.4691640133528474,
+      "b_current_contribution_nA": 48.81929189113386,
+      "a_current_contribution_nA": 11.139824850638961,
+      "current_reintegration_relative_error": 0.0,
+      "short_circuit_current_nA": 59.95911673813827,
+      "short_circuit_current_relative_error": 6.061717382983143e-11,
+      "short_circuit_continuity_residual": 3.75112270091349e-14,
+      "source_field_artifact": {
+        "path": "/data/seunghyun/tairte4/artifacts/tairte4_rotated45_edge_contact_anchored/run062_diagonal45_dual_softmin_thermally_grown_v1/exact_attempt_beta128/exact_candidate_03_dual_physics/Eb/binary_objective_fields.npz",
+        "size_bytes": 10921643,
+        "sha256": "33c4ab4ea39dd1960722577e644ea4b05b7aaf3824f37fd5eb84b205d147256c"
+      }
+    }
+  ],
+  "published_outputs": [
+    {
+      "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run061_Ea_exact_fields.png",
+      "size_bytes": 837891,
+      "sha256": "a9ef2d4108e13b2e97f7478e653765f0749df2cdbd68dc78cdee2f5fec04dce5"
+    },
+    {
+      "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run061_Ea_derived_fields.npz",
+      "size_bytes": 9493372,
+      "sha256": "a491cab47982d2af470a8bf1420011ad6be81646dfcf8c169b31ea81cb5cc2c3"
+    },
+    {
+      "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run061_Eb_exact_fields.png",
+      "size_bytes": 816561,
+      "sha256": "90e7c12ed9fc47a17e502e201e6a9b0e3789fc0065ac23833a4ed2f075c437ef"
+    },
+    {
+      "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run061_Eb_derived_fields.npz",
+      "size_bytes": 9484438,
+      "sha256": "0da0e901818f9b9076eabfdaa13762acc93b85d9299afa3ed6b464b645997776"
+    },
+    {
+      "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run062_Ea_exact_fields.png",
+      "size_bytes": 1342956,
+      "sha256": "64c3e640477040b84101b42f52ce16aff575f822278c0b0074925165904a0a6d"
+    },
+    {
+      "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run062_Ea_derived_fields.npz",
+      "size_bytes": 9190536,
+      "sha256": "25c3d7a5bd45cce6c178a240a917cfc83180d3c2f3fa4bfd84f76ae4e4942b2b"
+    },
+    {
+      "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run062_Eb_exact_fields.png",
+      "size_bytes": 1431522,
+      "sha256": "28e9f12c1c55af739a5f629559fe2c6fa981107e1a527859ad313ab103808ffb"
+    },
+    {
+      "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run062_Eb_derived_fields.npz",
+      "size_bytes": 9178114,
+      "sha256": "a0c56c46ee8aee0b4ea8828834b5f586be70648aca1f43c7fbf1b13023ec13a9"
+    },
+    {
+      "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run061_062_optimization_convergence.png",
+      "size_bytes": 257446,
+      "sha256": "080f3b091c723202f251333a0e68ed1b8692b96cf41951b735021c3f089535b9"
+    },
+    {
+      "path": "photothermal_pte/reports/run061_062_dual_polarization_thermally_grown/run061_062_final_current_comparison.png",
+      "size_bytes": 121275,
+      "sha256": "09ee2eda71f8a1c81fb1079809e7324133ee262c94fa2061fa2b9cd6e4774913"
+    }
+  ],
+  "optimization_rerun": false,
+  "postprocessing_only": true
+}

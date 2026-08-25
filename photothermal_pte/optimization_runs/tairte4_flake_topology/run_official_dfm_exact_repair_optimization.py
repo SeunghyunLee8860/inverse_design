@@ -113,32 +113,7 @@ def publish_exact_binary_structure(
         rho_binary=binary.astype(np.uint8),
     )
 
-    x_bounds = CONTRACT.design_bounds_m["x"]
-    y_bounds = CONTRACT.design_bounds_m["y"]
-    figure, axis = plt.subplots(figsize=(6.4, 5.8), constrained_layout=True)
-    image = axis.imshow(
-        binary.T,
-        origin="lower",
-        interpolation="nearest",
-        cmap="gray_r",
-        vmin=0.0,
-        vmax=1.0,
-        extent=[
-            x_bounds[0] * 1.0e6,
-            x_bounds[1] * 1.0e6,
-            y_bounds[0] * 1.0e6,
-            y_bounds[1] * 1.0e6,
-        ],
-        aspect="equal",
-    )
-    axis.set_xlabel("x = b (um)")
-    axis.set_ylabel("y = a (um)")
-    axis.set_title("Final exact-binary TaIrTe4 (black), DFM bad cells = 0")
-    colorbar = figure.colorbar(image, ax=axis, shrink=0.86)
-    colorbar.set_ticks([0.0, 1.0], labels=["void", "TaIrTe4"])
-    plot_path = published / "FINAL_EXACT_BINARY_STRUCTURE.png"
-    figure.savefig(plot_path, dpi=190)
-    plt.close(figure)
+    plot_path = plot_exact_binary_structure(published, binary)
 
     return {
         "density": {
@@ -153,6 +128,65 @@ def publish_exact_binary_structure(
         },
         "exact_bad_cell_count": 0,
     }
+
+
+def plot_exact_binary_structure(published: Path, rho: np.ndarray) -> Path:
+    """Plot exact density in the fixed crystal frame used by all field maps."""
+
+    binary = np.asarray(rho, dtype=np.float64)
+    if not np.all((binary == 0.0) | (binary == 1.0)):
+        raise RuntimeError("published exact structure is not binary")
+
+    figure, axis = plt.subplots(figsize=(6.4, 5.8), constrained_layout=True)
+    if CONTRACT.geometry_mode == "diagonal_45_contact_anchored":
+        local_u = np.linspace(-12.0, 12.0, binary.shape[0])
+        local_v = np.linspace(-12.0, 12.0, binary.shape[1])
+        u_um, v_um = np.meshgrid(local_u, local_v, indexing="ij")
+        x_um = (u_um - v_um) / np.sqrt(2.0)
+        y_um = (u_um + v_um) / np.sqrt(2.0)
+        image = axis.pcolormesh(
+            x_um.T,
+            y_um.T,
+            binary.T,
+            shading="nearest",
+            cmap="gray_r",
+            vmin=0.0,
+            vmax=1.0,
+            rasterized=True,
+        )
+        limit_um = 12.0 * np.sqrt(2.0) + 0.7
+        axis.set_xlim(-limit_um, limit_um)
+        axis.set_ylim(-limit_um, limit_um)
+        title = "Final exact-binary TaIrTe4 at +45 deg (black), DFM bad cells = 0"
+    else:
+        x_bounds = CONTRACT.design_bounds_m["x"]
+        y_bounds = CONTRACT.design_bounds_m["y"]
+        image = axis.imshow(
+            binary.T,
+            origin="lower",
+            interpolation="nearest",
+            cmap="gray_r",
+            vmin=0.0,
+            vmax=1.0,
+            extent=[
+                x_bounds[0] * 1.0e6,
+                x_bounds[1] * 1.0e6,
+                y_bounds[0] * 1.0e6,
+                y_bounds[1] * 1.0e6,
+            ],
+            aspect="equal",
+        )
+        title = "Final exact-binary TaIrTe4 (black), DFM bad cells = 0"
+    axis.set_xlabel("x = b (um)")
+    axis.set_ylabel("y = a (um)")
+    axis.set_aspect("equal")
+    axis.set_title(title)
+    colorbar = figure.colorbar(image, ax=axis, shrink=0.86)
+    colorbar.set_ticks([0.0, 1.0], labels=["void", "TaIrTe4"])
+    plot_path = published / "FINAL_EXACT_BINARY_STRUCTURE.png"
+    figure.savefig(plot_path, dpi=190)
+    plt.close(figure)
+    return plot_path
 
 
 def evaluate_exact_candidate(
