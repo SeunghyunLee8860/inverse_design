@@ -471,8 +471,9 @@ On the current host, the runtime gate passes at FDTDX commit
 is accepted only because `direct_url.json` points to the pinned clean source
 and the installed and source package trees have the identical SHA-256
 `c66b34671750258ff71478f9e9530f3abcb07a937591775236b1f7bdea739d58`.
-The parity contract/ADE/fixed-material/model suite is `24 passed`; the full
-solver-free suite for this work folder is `157 passed`.
+The parity contract/ADE/fixed-material/model/timing suite is `27 passed`;
+the full
+solver-free suite for this work folder is `160 passed`.
 
 The requested 2.5-nm z cells dominate CFL.  The realized FDTDX float32-edge
 CFL is `dt=2.083451820604655 as`, `6,404.0664` steps per 4-um period, and
@@ -499,9 +500,22 @@ The GPU builder now fails closed below loaded cuBLAS runtime 13.2.  The isolated
 FDTDX environment passed with `130601` (13.6.1).  The thermal PyTorch
 environment supplies `130100` (13.1) and must not be placed ahead of the FDTDX
 environment for optical GPU runs; doing so triggers JAX's documented
-silent-corruption warning.  A short timed field microbenchmark is still
-mandatory before any 40-period solve, and no wall-time or peak-memory
-feasibility claim is made yet.
+silent-corruption warning.
+
+The committed bounded runner `fdtdx_parity_microbenchmark.py` was then executed
+from clean commit `0b71db40198e9cfd31fe0eb3f569c6f7b9fc77d8` on verified-idle
+B200 UUID `GPU-b288c55e-827d-e6b4-d05a-4b27eb65477f`.  It ran only 8,065
+partial steps with detector recording: inactive, previous-window, and
+late-window slopes were `1.75227`, `1.78465`, and `1.85233 ms/step`.  Their
+frozen-schedule extrapolation is `452.2596 s = 7.5377 min` for one 256,163-step
+forward, so the explicit 30-minute single-forward timing gate passes.  The
+full forward was not run, all 14 detector leaves and E/H/ADE-P were finite,
+and this remains timing evidence rather than a physics result or an optimizer
+iteration estimate.  The raw JSON is outside Git at
+`/home/seunghyun200/fdtdx_parity_raw/microbenchmark_0b71db40_gpu7.json`; its
+file SHA-256 is
+`1b0c821d09ece0205b4cbec90ab1b648aff559002aeaef803e6a0914f9e5ed70`.
+No GPU peak-memory claim is made.
 
 The nonlinear carrier is now implemented in `fdtdx_parity_ade.py` as three
 positive, damped Lorentz bases: one weighted by `rho` and two weighted by
@@ -526,11 +540,11 @@ both positive-Lorentz recurrences are strictly stable and reproduce exactly
 through the pinned FDTDX API.  SiO2 and Si remain the lossless real readbacks
 from the material JSON.
 
-No Maxwell time step, CUDA PDE, optimizer, Lumerical, HEAT, or CHARGE run is
-claimed by this status.  `optimizer_enabled` remains false.  No-field setup and
-uniform-density placement are complete; the timed short-forward and field/Q
-controls are the next gates before source calibration or any full 40-period
-run.
+No full Maxwell forward, field/Q physics control, CUDA PDE, optimizer,
+Lumerical, HEAT, or CHARGE run is claimed by this status.  The 8,065 bounded
+timing steps do not validate absorption or source normalization, and
+`optimizer_enabled` remains false.  Field/Q controls are the next gates before
+source calibration or any full 40-period run.
 
 ## What completion means
 
