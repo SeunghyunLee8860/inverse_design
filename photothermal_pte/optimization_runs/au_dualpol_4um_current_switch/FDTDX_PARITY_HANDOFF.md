@@ -726,20 +726,18 @@ from the material JSON.
 
 The empty-Au, nonuniform-gray, and full-Au Maxwell field/Q/closed-flux
 controls are validated for both polarizations.  Exact-grid bounded Ea/Eb
-field-only AD-FD also passes.  Dynamic and sparse-ADE checkpoint loops remove
-immutable full-grid arrays and store P-state only on exact TaIrTe4/Au support.
-The gradient profile then removes nine nondifferentiated validation detectors,
-retaining only `au_late` and `tairte4_late`.  On 65,536 steps and 256
-checkpoints, production-profile Ea value-and-grad took 670.428 seconds, passed
-centered AD-FD at 1.4082e-3, and used 166,056,417,536 XLA peak bytes.  Its
-optimistic full projection is 43.675 minutes per polarization.  Even the
-no-detector resource lower bound projects to 42.472 minutes; two-polarization
-optical AD alone is at least 87.351 minutes per iteration before Q/PDE work.
-Therefore `optimizer_enabled` remains false and checkpoint tuning is closed.
-Read `FDTDX_AD_PROBE_REPORT.md`, `FDTDX_DYNAMIC_CHECKPOINT_REPORT.md`,
-`FDTDX_SPARSE_ADE_CHECKPOINT_REPORT.md`, and
-`FDTDX_GRADIENT_DETECTOR_REPORT.md`.  The next task is a derivation-backed audit
-of an alternative dispersive reverse/adjoint path, not a full run.
+field-only AD-FD also passes.  The checkpointed production-profile route remains
+runtime-blocked at an optimistic 87.351 minutes for two-polarization optical AD
+per iteration, so checkpoint-count tuning is closed and `optimizer_enabled`
+remains false.
+
+The alternative reverse audit has now proved the pinned dispersive ADE, six-face
+CPML, and late three-component PhasorDetector `c3` gradient against direct
+unrolled FDTDX on a 24-step real scene.  The complete CPU suite passes 224 tests.
+Read `FDTDX_REVERSIBLE_ADJOINT_REPORT.md` for the exact scope.  This is not yet a
+production gradient: the next task is sliced exact-primal resets, followed by a
+longer small-scene gradient test and only then a short exact-grid GPU timing
+probe.
 
 ## What completion means
 
@@ -763,10 +761,13 @@ reevaluation.
 > do not run it, the 16-forward certificate, or an optimizer.  Immutable arrays,
 > sparse regional ADE P-state, and gradient-detector pruning are complete.  Even
 > the detector-free 65,536-step lower bound projects above 30 minutes per
-> polarization, so do not repeat checkpoint-count tuning.  Next audit the pinned
-> FDTDX reversible/backward equations against the three-pole dispersive ADE
-> recurrence.  Derive and prove any alternative adjoint on a small dispersive
-> scene before repeating bounded exact-grid latent AD-FD and runtime gates.
+> polarization, so do not repeat checkpoint-count tuning.
+> The dispersive ADE, six-face CPML, and late PhasorDetector small-scene VJP
+> audits are complete; read `FDTDX_REVERSIBLE_ADJOINT_REPORT.md` and do not
+> repeat them.  Next implement sliced exact-primal resets while preserving a
+> continuous cotangent, prove longer small-scene direct-gradient parity across
+> multiple slice lengths, and only then run a bounded exact-grid GPU timing and
+> Ea/Eb latent AD-FD probe on freshly verified-idle GPU UUIDs.
 > Continue only the fresh FDTDX GPU parity path for the 4-um Ea/Eb Au topology; do not run legacy scripts 10/12/13
 > and do not use optical rho^3 or c3-only linear scaling.  Preserve the canonical
 > 81x81 latent -> 500-nm finite conic filter -> tanh projection -> shared nodal
