@@ -17,8 +17,13 @@ def main() -> int:
     parser.add_argument("--coarse-json", required=True, type=Path)
     parser.add_argument("--fine-json", required=True, type=Path)
     parser.add_argument("--output-json", type=Path)
+    parser.add_argument("--refinement-axis", choices=("z", "xy"), default="z")
     args = parser.parse_args()
-    result = compare_control_pair(args.coarse_json, args.fine_json)
+    result = compare_control_pair(
+        args.coarse_json,
+        args.fine_json,
+        refinement_axis=args.refinement_axis,
+    )
     rendered = json.dumps(result, indent=2, sort_keys=True)
     if args.output_json is not None:
         args.output_json.parent.mkdir(parents=True, exist_ok=True)

@@ -16,7 +16,14 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _result(tmp_path: Path, label: str, dz: float, scale: float) -> Path:
+def _result(
+    tmp_path: Path,
+    label: str,
+    dz: float,
+    scale: float,
+    *,
+    dxy: float = 100e-9,
+) -> Path:
     raw = tmp_path / f"{label}_raw.npz"
     x = np.asarray((-1.0, 1.0))
     y = np.asarray((-2.0, 2.0))
@@ -34,7 +41,7 @@ def _result(tmp_path: Path, label: str, dz: float, scale: float) -> Path:
     )
     mesh = {
         "label": label,
-        "flake_dxy_m": 100e-9,
+        "flake_dxy_m": dxy,
         "stack_dz_m": dz,
         "bulk_dz_m": 10.0 * dz,
         "outer_dxy_m": 200e-9,
@@ -94,7 +101,7 @@ def test_comparison_rejects_a_non_z_axis_change(tmp_path: Path) -> None:
     payload = json.loads(fine.read_text(encoding="utf-8"))
     payload["mesh_spec"]["pml_layers"] = 12
     fine.write_text(json.dumps(payload), encoding="utf-8")
-    with pytest.raises(RuntimeError, match="non-z mesh axis pml_layers"):
+    with pytest.raises(RuntimeError, match="fixed z mesh field pml_layers"):
         compare_control_pair(coarse, fine)
 
 
@@ -106,3 +113,20 @@ def test_comparison_rejects_raw_artifact_tampering(tmp_path: Path) -> None:
     fine.write_text(json.dumps(payload), encoding="utf-8")
     with pytest.raises(RuntimeError, match="raw NPZ SHA mismatch"):
         compare_control_pair(coarse, fine)
+
+
+def test_xy_comparison_allows_only_strict_flake_mesh_refinement(
+    tmp_path: Path,
+) -> None:
+    coarse = _result(tmp_path, "coarse", 2.5e-9, 2.0, dxy=100e-9)
+    fine = _result(tmp_path, "fine", 2.5e-9, 3.0, dxy=50e-9)
+    result = compare_control_pair(coarse, fine, refinement_axis="xy")
+    assert result["all_gates_passed"] is True
+    assert result["contract"]["refinement_axis"] == "xy"
+
+
+def test_xy_comparison_rejects_a_z_change(tmp_path: Path) -> None:
+    coarse = _result(tmp_path, "coarse", 2.5e-9, 2.0, dxy=100e-9)
+    fine = _result(tmp_path, "fine", 1.25e-9, 2.0, dxy=50e-9)
+    with pytest.raises(RuntimeError, match="fixed xy mesh field stack_dz_m"):
+        compare_control_pair(coarse, fine, refinement_axis="xy")

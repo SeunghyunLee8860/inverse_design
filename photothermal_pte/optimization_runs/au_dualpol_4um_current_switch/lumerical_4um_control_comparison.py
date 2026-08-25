@@ -31,6 +31,7 @@ FIXED_MESH_KEYS = (
     "auto_shutoff_min",
     "conformal_mesh",
 )
+REFINEMENT_AXES = ("z", "xy")
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -61,8 +62,10 @@ def _raw_npz(payload: dict[str, Any], result_path: Path) -> tuple[Path, str]:
 
 
 def _require_matching_contract(
-    coarse: dict[str, Any], fine: dict[str, Any]
+    coarse: dict[str, Any], fine: dict[str, Any], *, refinement_axis: str
 ) -> dict[str, Any]:
+    if refinement_axis not in REFINEMENT_AXES:
+        raise ValueError(f"unsupported refinement axis: {refinement_axis}")
     for label, payload in (("coarse", coarse), ("fine", fine)):
         if not bool(payload.get("all_gates_passed")):
             raise RuntimeError(f"{label} result did not pass all solver gates")
@@ -103,16 +106,25 @@ def _require_matching_contract(
     fine_mesh = fine.get("mesh_spec")
     if not isinstance(coarse_mesh, dict) or not isinstance(fine_mesh, dict):
         raise RuntimeError("coarse/fine result lacks mesh_spec")
-    for key in FIXED_MESH_KEYS:
+    changing_keys = (
+        {"stack_dz_m", "bulk_dz_m"}
+        if refinement_axis == "z"
+        else {"flake_dxy_m"}
+    )
+    all_mesh_keys = (*FIXED_MESH_KEYS, "stack_dz_m", "bulk_dz_m")
+    for key in all_mesh_keys:
+        if key in changing_keys:
+            continue
         if coarse_mesh.get(key) != fine_mesh.get(key):
             raise RuntimeError(
-                f"comparison changes non-z mesh axis {key}: "
+                f"comparison changes fixed {refinement_axis} mesh field {key}: "
                 f"{coarse_mesh.get(key)!r} != {fine_mesh.get(key)!r}"
             )
-    for key in ("stack_dz_m", "bulk_dz_m"):
+    for key in sorted(changing_keys):
         if not float(fine_mesh[key]) < float(coarse_mesh[key]):
             raise RuntimeError(f"fine {key} must be strictly smaller than coarse")
     return {
+        "refinement_axis": refinement_axis,
         "case": coarse["case"],
         "polarization": coarse["polarization"],
         "accelerator_policy": coarse["accelerator_policy"],
@@ -131,7 +143,9 @@ def _fine_relative(coarse: float, fine: float) -> float:
     return abs(coarse - fine) / max(abs(fine), np.finfo(float).tiny)
 
 
-def compare_control_pair(coarse_json: Path, fine_json: Path) -> dict[str, Any]:
+def compare_control_pair(
+    coarse_json: Path, fine_json: Path, *, refinement_axis: str = "z"
+) -> dict[str, Any]:
     """Compare source-normalized scalar and endpoint-field results.
 
     The finer result is the denominator for every relative metric.  Complex
@@ -142,7 +156,9 @@ def compare_control_pair(coarse_json: Path, fine_json: Path) -> dict[str, Any]:
     fine_path = Path(fine_json).resolve()
     coarse = _load_json(coarse_path)
     fine = _load_json(fine_path)
-    contract = _require_matching_contract(coarse, fine)
+    contract = _require_matching_contract(
+        coarse, fine, refinement_axis=refinement_axis
+    )
     coarse_npz_path, coarse_npz_sha = _raw_npz(coarse, coarse_path)
     fine_npz_path, fine_npz_sha = _raw_npz(fine, fine_path)
 
