@@ -29,11 +29,17 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import (
     evaluate_fixed_source,
+    refine_exact_binary_density,
     thermal_edges,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.objective import (
     exact_binary_promotion_passed,
     opposite_current_switching_achieved,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.pde_mesh_convergence_4um import (
+    COARSE_PDE_STEP_M,
+    FINE_PDE_STEP_M,
+    pde_mesh_convergence_audit,
 )
 
 
@@ -90,13 +96,82 @@ def _write_json(path: Path, value: Any) -> None:
 
 def _matching_artifact(result: dict[str, Any], suffix: str) -> Path:
     matches = [
-        Path(row["path"]).resolve()
+        row
         for row in result.get("raw_artifacts", [])
         if str(row.get("path", "")).endswith(suffix)
     ]
     if len(matches) != 1:
         raise RuntimeError(f"expected one exact-forward {suffix} artifact")
-    return matches[0]
+    record = matches[0]
+    path = Path(record["path"]).resolve()
+    if not path.is_file():
+        raise RuntimeError(f"missing exact-forward {suffix} artifact")
+    if int(record.get("size_bytes", -1)) != path.stat().st_size:
+        raise RuntimeError(f"exact-forward {suffix} size changed")
+    if str(record.get("sha256", "")) != _sha256(path):
+        raise RuntimeError(f"exact-forward {suffix} SHA256 changed")
+    return path
+
+
+def _pde_resolution(
+    *,
+    mask: np.ndarray,
+    component_coordinates: dict[str, tuple[np.ndarray, np.ndarray, np.ndarray]],
+    q: dict[str, np.ndarray],
+    reporting_scale: float,
+    core_step_m: float,
+) -> tuple[dict[str, Any], dict[str, np.ndarray]]:
+    density = refine_exact_binary_density(mask, target_step_m=core_step_m)
+    coupling = GrayYeeQCoupling.from_component_coordinates(
+        component_coordinates,
+        thermal_edges(core_step_m=core_step_m),
+    )
+    source_power_raw, mapping = coupling.map_power(q)
+    source_power = source_power_raw * reporting_scale
+    evaluated = evaluate_fixed_source(
+        np.asarray(density, dtype=np.float64),
+        source_power,
+        0,
+        need_gradient=False,
+    )
+    thermal = evaluated["thermal_audit"]
+    electrical = evaluated["electrical_audit"]
+    gates = {
+        "Q_mapping_conservation_lt_1e_12": float(mapping["relative_power_error"])
+        < 1.0e-12,
+        "thermal_residual_lt_1e_8": float(thermal["relative_residual"]) < 1.0e-8,
+        "thermal_energy_balance_lt_1pct": float(thermal["energy_balance_relative"])
+        < 1.0e-2,
+        "electrical_residual_lt_1e_8": float(electrical["relative_residual"]) < 1.0e-8,
+        "electrical_terminal_balance_lt_1pct": float(
+            electrical["terminal_balance_relative"]
+        )
+        < 1.0e-2,
+        "finite_nonzero_current": bool(
+            np.isfinite(evaluated["objective_A"])
+            and float(evaluated["objective_A"]) != 0.0
+        ),
+    }
+    public = {
+        "passed": all(gates.values()),
+        "core_step_m": core_step_m,
+        "design_shape": list(density.shape),
+        "ta_temperature_shape": list(np.asarray(evaluated["ta_temperature"]).shape),
+        "current_A": float(evaluated["objective_A"]),
+        "current_nA": 1.0e9 * float(evaluated["objective_A"]),
+        "mapped_source_power_W_reporting": float(np.sum(source_power)),
+        "peak_temperature_K": float(np.max(evaluated["temperature"])),
+        "ta_mean_temperature_K": float(np.mean(evaluated["ta_temperature"])),
+        "mapping": mapping,
+        "thermal": thermal,
+        "electrical": electrical,
+        "gates": gates,
+    }
+    arrays = {
+        "density": np.asarray(density, dtype=np.uint8),
+        "ta_temperature_K": np.asarray(evaluated["ta_temperature"], dtype=np.float64),
+    }
+    return public, arrays
 
 
 def _forward_command(
@@ -187,9 +262,7 @@ def _evaluate_polarization(
             check=False,
         )
     if completed.returncode != 0:
-        tail = "\n".join(
-            log_path.read_text(errors="replace").splitlines()[-80:]
-        )
+        tail = "\n".join(log_path.read_text(errors="replace").splitlines()[-80:])
         raise RuntimeError(
             f"{polarization} exact forward failed with exit {completed.returncode}\n{tail}"
         )
@@ -204,62 +277,76 @@ def _evaluate_polarization(
     ):
         raise RuntimeError(f"{polarization} exact-forward gates failed")
     raw_path = _matching_artifact(forward, "_raw.npz")
-    with np.load(raw_path, allow_pickle=False) as raw:
-        coupling = GrayYeeQCoupling.from_component_coordinates(
-            component_coordinates_from_raw(raw), thermal_edges()
-        )
-        q = component_q_from_raw(raw)
-        source_power_raw, mapping = coupling.map_power(q)
     reporting_scale = float(
         forward["reporting_normalization"]["scalar_reporting_factor"]
     )
-    source_power = source_power_raw * reporting_scale
-    evaluated = evaluate_fixed_source(
-        np.asarray(mask, dtype=np.float64),
-        source_power,
-        0,
-        need_gradient=False,
+    if not np.isfinite(reporting_scale) or reporting_scale <= 0.0:
+        raise RuntimeError("invalid exact-forward reporting scale")
+    with np.load(raw_path, allow_pickle=False) as raw:
+        component_coordinates = component_coordinates_from_raw(raw)
+        q = component_q_from_raw(raw)
+        coarse, coarse_arrays = _pde_resolution(
+            mask=mask,
+            component_coordinates=component_coordinates,
+            q=q,
+            reporting_scale=reporting_scale,
+            core_step_m=COARSE_PDE_STEP_M,
+        )
+        fine, fine_arrays = _pde_resolution(
+            mask=mask,
+            component_coordinates=component_coordinates,
+            q=q,
+            reporting_scale=reporting_scale,
+            core_step_m=FINE_PDE_STEP_M,
+        )
+    convergence = pde_mesh_convergence_audit(
+        coarse_current_A=coarse["current_A"],
+        fine_current_A=fine["current_A"],
+        coarse_ta_temperature_K=coarse_arrays["ta_temperature_K"],
+        fine_ta_temperature_K=fine_arrays["ta_temperature_K"],
+        coarse_peak_temperature_K=coarse["peak_temperature_K"],
+        fine_peak_temperature_K=fine["peak_temperature_K"],
     )
-    thermal = evaluated["thermal_audit"]
-    electrical = evaluated["electrical_audit"]
+    evidence_path = output.parent / f"pde_mesh_convergence_{polarization}.npz"
+    np.savez_compressed(
+        evidence_path,
+        coarse_density=coarse_arrays["density"],
+        fine_density=fine_arrays["density"],
+        coarse_ta_temperature_K=coarse_arrays["ta_temperature_K"],
+        fine_ta_temperature_K=fine_arrays["ta_temperature_K"],
+        coarse_current_A=np.asarray(coarse["current_A"]),
+        fine_current_A=np.asarray(fine["current_A"]),
+    )
+    native_q_power_raw = float(coarse["mapping"]["input_power_W"])
+    expected_native_q_power_raw = float(forward["P_Q_native_W_raw"])
+    native_q_json_error = abs(native_q_power_raw - expected_native_q_power_raw) / max(
+        abs(expected_native_q_power_raw), np.finfo(float).tiny
+    )
     gates = {
         "ordinary_dispersive_exact_Au_forward": True,
-        "Q_mapping_conservation_lt_1e_12": float(
-            mapping["relative_power_error"]
-        )
-        < 1.0e-12,
-        "thermal_residual_lt_1e_8": float(thermal["relative_residual"])
-        < 1.0e-8,
-        "thermal_energy_balance_lt_1pct": float(
-            thermal["energy_balance_relative"]
-        )
-        < 1.0e-2,
-        "electrical_residual_lt_1e_8": float(
-            electrical["relative_residual"]
-        )
-        < 1.0e-8,
-        "electrical_terminal_balance_lt_1pct": float(
-            electrical["terminal_balance_relative"]
-        )
-        < 1.0e-2,
-        "finite_nonzero_current": bool(
-            np.isfinite(evaluated["objective_A"])
-            and float(evaluated["objective_A"]) != 0.0
-        ),
+        "native_Q_json_power_match_lt_1e_12": native_q_json_error < 1.0e-12,
+        "coarse_100nm_PDE_passed": bool(coarse["passed"]),
+        "fine_50nm_PDE_passed": bool(fine["passed"]),
+        "PDE_100nm_to_50nm_convergence_passed": bool(convergence["passed"]),
     }
     return {
         "passed": all(gates.values()),
         "polarization": polarization,
-        "current_A": float(evaluated["objective_A"]),
-        "current_nA": 1.0e9 * float(evaluated["objective_A"]),
-        "mapped_source_power_W_reporting": float(np.sum(source_power)),
-        "mapping": mapping,
-        "thermal": thermal,
-        "electrical": electrical,
+        "current_A": fine["current_A"],
+        "current_nA": fine["current_nA"],
+        "reference_PDE_core_step_m": FINE_PDE_STEP_M,
+        "mapped_source_power_W_reporting": fine["mapped_source_power_W_reporting"],
+        "mapping": fine["mapping"],
+        "thermal": fine["thermal"],
+        "electrical": fine["electrical"],
+        "PDE_resolutions": {"100nm": coarse, "50nm": fine},
+        "PDE_mesh_convergence": convergence,
+        "native_Q_json_power_relative_error": native_q_json_error,
         "gates": gates,
         "forward_result": _artifact(json_paths[0]),
         "forward_raw": _artifact(raw_path),
         "forward_log": _artifact(log_path),
+        "PDE_mesh_convergence_evidence": _artifact(evidence_path),
     }
 
 
@@ -280,10 +367,7 @@ def main() -> int:
     try:
         with np.load(args.binary_mask_npz, allow_pickle=False) as data:
             mask = np.asarray(data[args.binary_mask_key])
-        if (
-            mask.shape != CONTRACT.design_shape
-            or not np.all((mask == 0) | (mask == 1))
-        ):
+        if mask.shape != CONTRACT.design_shape or not np.all((mask == 0) | (mask == 1)):
             raise ValueError("binary candidate must be exact 80x80 zero/one")
         mask = np.asarray(mask, dtype=np.uint8)
         exact = exact_500nm_audit(
@@ -310,9 +394,7 @@ def main() -> int:
             ),
         }
         currents = {key: row["current_A"] for key, row in rows.items()}
-        switching = opposite_current_switching_achieved(
-            currents["Ea"], currents["Eb"]
-        )
+        switching = opposite_current_switching_achieved(currents["Ea"], currents["Eb"])
         numerical_pass = all(row["passed"] for row in rows.values())
         promotion_pass = exact_binary_promotion_passed(
             numerical_pass, currents["Ea"], currents["Eb"]
@@ -340,8 +422,8 @@ def main() -> int:
             "polarizations": rows,
             "Maxwell_solver": "Lumerical FDTD 2026 R1.2 build 4522",
             "Lumerical_Maxwell_solves": {"forward": 2, "adjoint": 0},
-            "custom_CUDA_thermal_solves": {"forward": 2, "adjoint": 0},
-            "custom_CUDA_electrical_solves": {"forward": 2, "adjoint": 0},
+            "custom_CUDA_thermal_solves": {"forward": 4, "adjoint": 0},
+            "custom_CUDA_electrical_solves": {"forward": 4, "adjoint": 0},
             "Lumerical_HEAT_or_CHARGE_solves": 0,
             "FDTDX_Maxwell_solves": 0,
             "wall_s": time.monotonic() - started,

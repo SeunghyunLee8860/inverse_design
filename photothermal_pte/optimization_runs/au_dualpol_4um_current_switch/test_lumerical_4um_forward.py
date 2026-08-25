@@ -6,6 +6,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
+import pytest
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
     CONTRACT,
@@ -39,9 +40,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 )
 
 
-_RUNNER_PATH = Path(__file__).with_name(
-    "25_run_lumerical_4um_exact_au_control.py"
-)
+_RUNNER_PATH = Path(__file__).with_name("25_run_lumerical_4um_exact_au_control.py")
 _RUNNER_SPEC = importlib.util.spec_from_file_location(
     "au_dualpol_4um_exact_control_runner_test", _RUNNER_PATH
 )
@@ -55,10 +54,7 @@ _EXACT_EVALUATOR_PATH = Path(__file__).with_name(
 _EXACT_EVALUATOR_SPEC = importlib.util.spec_from_file_location(
     "au_dualpol_4um_exact_binary_evaluator_test", _EXACT_EVALUATOR_PATH
 )
-assert (
-    _EXACT_EVALUATOR_SPEC is not None
-    and _EXACT_EVALUATOR_SPEC.loader is not None
-)
+assert _EXACT_EVALUATOR_SPEC is not None and _EXACT_EVALUATOR_SPEC.loader is not None
 _EXACT_EVALUATOR = importlib.util.module_from_spec(_EXACT_EVALUATOR_SPEC)
 _EXACT_EVALUATOR_SPEC.loader.exec_module(_EXACT_EVALUATOR)
 
@@ -127,12 +123,8 @@ class _FakeFdtd:
 
 
 def test_source_contract_binds_mesh_polarization_and_calibrated_waist() -> None:
-    ea = source_calibration_contract(
-        BASELINE, "Ea", source_object_w0_m=4.0e-6
-    )
-    eb = source_calibration_contract(
-        BASELINE, "Eb", source_object_w0_m=4.0e-6
-    )
+    ea = source_calibration_contract(BASELINE, "Ea", source_object_w0_m=4.0e-6)
+    eb = source_calibration_contract(BASELINE, "Eb", source_object_w0_m=4.0e-6)
     recalibrated = source_calibration_contract(
         BASELINE, "Ea", source_object_w0_m=4.01e-6
     )
@@ -141,14 +133,17 @@ def test_source_contract_binds_mesh_polarization_and_calibrated_waist() -> None:
         "Ea",
         source_object_w0_m=4.0e-6,
     )
-    assert len(
-        {
-            ea["source_calibration_sha256"],
-            eb["source_calibration_sha256"],
-            recalibrated["source_calibration_sha256"],
-            cv0["source_calibration_sha256"],
-        }
-    ) == 4
+    assert (
+        len(
+            {
+                ea["source_calibration_sha256"],
+                eb["source_calibration_sha256"],
+                recalibrated["source_calibration_sha256"],
+                cv0["source_calibration_sha256"],
+            }
+        )
+        == 4
+    )
     assert polarization_angle_deg("Ea") == 90.0
     assert polarization_angle_deg("Eb") == 0.0
 
@@ -179,9 +174,7 @@ def test_default_source_waist_reproduces_hash_bound_binary64_value() -> None:
 
 
 def test_material_run_requires_a_matching_passed_unscaled_source_record() -> None:
-    contract = source_calibration_contract(
-        BASELINE, "Ea", source_object_w0_m=4.0e-6
-    )
+    contract = source_calibration_contract(BASELINE, "Ea", source_object_w0_m=4.0e-6)
     record = {
         "status": "PASSED_EXACT_AU_4UM_SOURCE_ONLY_NUMERICAL_GATE",
         "source_calibration_sha256": contract["source_calibration_sha256"],
@@ -263,18 +256,20 @@ def test_source_only_and_material_layout_share_solver_source_and_mesh() -> None:
     assert source.meshes == material.meshes
     assert source.meshes[0]["override z mesh"] is True
     assert source.meshes[0]["dz"] == BASELINE.bulk_dz_m
-    assert source_audit["source_calibration_contract"] == material_audit[
-        "source_calibration_contract"
-    ]
+    assert (
+        source_audit["source_calibration_contract"]
+        == material_audit["source_calibration_contract"]
+    )
     assert source.gaussians[0]["name"] == SOURCE_NAME
     assert source.powers[0]["name"] == TARGET_MONITOR
     assert material.objects[0][0] == "pabs_adv"
     assert material.objects[0][1]["name"] == PABS_GROUP
     assert len(material_audit["flux_faces"]) == 6
     assert ENDPOINT_FIELD_MONITOR in [item["name"] for item in material.powers]
-    assert material_audit["geometry"]["exact_au_geometry"][
-        "geometry_sha256"
-    ] == "9d543a428f89fe5ea2f6910d2d98b5f97dc870cd1aac9b928760a6b4656df411"
+    assert (
+        material_audit["geometry"]["exact_au_geometry"]["geometry_sha256"]
+        == "9d543a428f89fe5ea2f6910d2d98b5f97dc870cd1aac9b928760a6b4656df411"
+    )
 
 
 def test_completed_fsp_layout_audit_matches_fresh_exact_layout() -> None:
@@ -352,7 +347,9 @@ def test_arbitrary_exact_binary_mask_uses_dispersive_Au_rectangles() -> None:
     assert geometry["mask_shape_xy"] == [80, 80]
     assert geometry["occupied_cell_count"] == int(np.sum(mask))
     assert len(fdtd.imports) == 0
-    assert any(rectangle.get("material") == AU_MATERIAL for rectangle in fdtd.rectangles)
+    assert any(
+        rectangle.get("material") == AU_MATERIAL for rectangle in fdtd.rectangles
+    )
 
 
 def test_exact_binary_mask_fails_closed_on_gray_or_wrong_shape() -> None:
@@ -442,9 +439,7 @@ class _ExactMaterialReadback:
     def getfdtdindex(self, name, frequency, _fmin, _fmax, component):
         return np.sqrt(self._epsilon(name, frequency, component))
 
-    def getnumericalpermittivity(
-        self, name, frequency, _fmin, _fmax, _dt, component
-    ):
+    def getnumericalpermittivity(self, name, frequency, _fmin, _fmax, _dt, component):
         return self._epsilon(name, frequency, component)
 
 
@@ -516,3 +511,14 @@ def test_exact_binary_evaluator_forwards_lateral_mesh_override() -> None:
     assert options["--stack-dz-nm"] == "2.5"
     assert options["--bulk-dz-nm"] == "50.0"
     assert options["--outer-dxy-nm"] == "200.0"
+
+
+def test_exact_binary_evaluator_hash_binds_forward_raw_artifact(tmp_path) -> None:
+    raw = tmp_path / "forward_raw.npz"
+    raw.write_bytes(b"original")
+    result = {"raw_artifacts": [_EXACT_EVALUATOR._artifact(raw)]}
+    assert _EXACT_EVALUATOR._matching_artifact(result, "_raw.npz") == raw.resolve()
+
+    raw.write_bytes(b"modified")
+    with pytest.raises(RuntimeError, match="SHA256 changed"):
+        _EXACT_EVALUATOR._matching_artifact(result, "_raw.npz")
