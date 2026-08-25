@@ -39,8 +39,9 @@ def test_lateral_refined_grid_is_346x346_at_fixed_z2() -> None:
     assert [x.size - 1, y.size - 1, z.size - 1] == [346, 346, 300]
     assert np.array_equal(z, expected_z)
     assert mesh_audit()["yee_cell_count"] == 35_914_800
+    assert all(mesh_audit()["invariants"].values())
     assert mesh_audit()["grid_contract_sha256"] == (
-        "341c9d45790cd090ce3b59928c59351f15f6146c22fc716cea1c467752a4f81c"
+        "35235086f6908448a2bf671b4e4c3a825320713251c495dd56f85daedd51d277"
     )
 
 

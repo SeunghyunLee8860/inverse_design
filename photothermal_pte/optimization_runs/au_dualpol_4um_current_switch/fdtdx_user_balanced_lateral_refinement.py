@@ -186,7 +186,12 @@ def mesh_audit() -> dict[str, Any]:
                 for name in held_names
             ),
             "outer_air_pitch_remains_200nm": all(
-                refined_by_name[name].step_m == 200.0e-9
+                np.isclose(
+                    refined_by_name[name].step_m,
+                    200.0e-9,
+                    rtol=0.0,
+                    atol=2.0e-18,
+                )
                 for name in ("left_air_margin", "right_air_margin")
             ),
             "lateral_pml_layers_remain_8": all(
