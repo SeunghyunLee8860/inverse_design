@@ -78,6 +78,8 @@ def model_plan(polarization: str, *, air_only: bool = False) -> dict[str, object
         "au_design": volumes["Au_design"],
         "gaussian_source": [source_xy[0], source_xy[1], [planes["source"]["index"], planes["source"]["index"] + 1]],
         "incident_plane": [source_xy[0], source_xy[1], [planes["incident_power"]["index"], planes["incident_power"]["index"] + 1]],
+        "incident_plane_previous": [source_xy[0], source_xy[1], [planes["incident_power"]["index"], planes["incident_power"]["index"] + 1]],
+        "incident_plane_td": [source_xy[0], source_xy[1], [planes["incident_power"]["index"], planes["incident_power"]["index"] + 1]],
         "endpoint_field": [source_xy[0], source_xy[1], [planes["air_endpoint_field"]["index"], planes["air_endpoint_field"]["index"] + 1]],
         "flake_profile": [source_xy[0], source_xy[1], [planes["flake_profile"]["index"], planes["flake_profile"]["index"] + 1]],
         "material_flux": volumes["closed_flux_box"],
@@ -339,6 +341,28 @@ def build_model(
     )
     objects.append(incident)
     constraints.append(_lower_edge_constraint(fdtdx, incident, edges, incident_lower))
+
+    incident_previous = fdtdx.PhasorPoyntingFluxDetector(
+        name="incident_plane_previous",
+        partial_grid_shape=incident_shape,
+        wave_characters=(wave,),
+        direction="-",
+        dtype=jnp.complex64,
+        switch=previous_switch,
+        apodization=windows["previous"],
+        exact_interpolation=True,
+    )
+    incident_td = fdtdx.PoyntingFluxDetector(
+        name="incident_plane_td",
+        partial_grid_shape=incident_shape,
+        direction="-",
+        switch=late_switch,
+    )
+    for detector in (incident_previous, incident_td):
+        objects.append(detector)
+        constraints.append(
+            _lower_edge_constraint(fdtdx, detector, edges, incident_lower)
+        )
 
     for detector_name in ("endpoint_field", "flake_profile"):
         detector_shape, detector_lower = _shape_and_lower(planned[detector_name])

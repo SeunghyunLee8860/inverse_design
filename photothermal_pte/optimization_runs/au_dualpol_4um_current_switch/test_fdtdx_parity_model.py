@@ -22,6 +22,8 @@ def test_model_plan_places_every_object_at_contract_indices() -> None:
         "au_design": [[53, 133], [53, 133], [207, 227]],
         "gaussian_source": [[13, 173], [13, 173], [241, 242]],
         "incident_plane": [[13, 173], [13, 173], [236, 237]],
+        "incident_plane_previous": [[13, 173], [13, 173], [236, 237]],
+        "incident_plane_td": [[13, 173], [13, 173], [236, 237]],
         "endpoint_field": [[13, 173], [13, 173], [228, 229]],
         "flake_profile": [[13, 173], [13, 173], [207, 208]],
         "material_flux": [[12, 174], [12, 174], [53, 236]],
