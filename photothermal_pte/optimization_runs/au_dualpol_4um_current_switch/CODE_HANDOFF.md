@@ -867,3 +867,13 @@ Do not claim that the old run stalled, passed, or was replaced without reading
 the external manifest. If the external audit shows that it stopped or made no
 meaningful stage progress, start a new immutable run from the latest shared
 commit and a new output root; never mutate the old checkpoint in place.
+
+
+## Explicit continuation runtime budget
+
+Commit `fc642e67` records 54 full dual-polarization physics evaluations for
+first-attempt success across all beta stages and 188 for exhaustion of every
+allowed retry. Using the only measured production evaluation (`1089.50 s`)
+gives 16.3425 h and 56.8961 h. Treat these as planning bounds, not guaranteed
+ETAs. One evaluation is about 18.2 minutes, below 30 minutes, but a complete
+run is not a minutes-scale task. The warm start does not add to these counts.

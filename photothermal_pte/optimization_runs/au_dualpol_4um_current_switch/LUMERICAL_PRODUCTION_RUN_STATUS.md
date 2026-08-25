@@ -219,3 +219,20 @@ acting. If it is stopped or shows no meaningful stage progress, launch a new
 immutable latest-commit run with a new output root. Do not overwrite or resume
 the old checkpoint with different code, and do not launch a duplicate while
 the old process is still alive.
+
+
+## Continuation wall-time budget
+
+Commit `fc642e67` exposes the stage accounting in the serialized continuation
+contract: 54 complete dual-polarization physics evaluations when every beta
+stage passes on its first attempt, and 188 if every allowed retry is exhausted.
+Each physics evaluation contains two Lumerical forwards, two Lumerical
+adjoints, and the two downstream custom-CUDA chains.
+
+At the measured evaluation-0 wall time of `1089.50 s`, those counts correspond
+to 16.3425 h and 56.8961 h respectively. This is transparent budget
+arithmetic, not an ETA guarantee; nonuniform geometry and later projection
+stages can change solve time. The single evaluation is below 30 minutes, but
+the complete continuation is an overnight-to-multiday production job. The
+initial max-min warm start preserves the beta-1 evaluation budget rather than
+adding another solve.
