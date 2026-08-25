@@ -1,17 +1,22 @@
 # Au dual-polarization PTE inverse-design code handoff
 
-## Latest downstream diagnostic -- thermal mesh and domain size only
+## Latest downstream diagnostic -- thermal scenarios, physical bounds blocked
 
 The frozen-Q prototype thermal mesh and domain-size ladders now pass for Ea
 and Eb.  The selected diagnostic configuration is x/y factor 2, z factor 2,
 lateral half-span 48 um, Si depth 30 um, and top-air height 3 um (`548 x 548
-x 72`).  Axis-isolated tails and the combined `48/30/3` to `64/40/4 um` tail
-all pass.  Read `FDTDX_FROZEN_Q_THERMAL_DOMAIN_CONVERGENCE.md` first.
+x 72`).  Its fixed-Q scenario sweep is also complete.  Read
+`FDTDX_FROZEN_Q_THERMAL_SENSITIVITY.md` first, followed by
+`FDTDX_FROZEN_Q_THERMAL_DOMAIN_CONVERGENCE.md`.
 
-This does not validate the boundary-condition model or interface parameters.
-Optical, actual-geometry electrical, coupled AD-FD, and the production
-multiphysics mesh remain unselected; optimization remains forbidden.  The
-independently owned Lumerical session remains untouched.
+The far-x/y and top-air numerical brackets are small at the selected box, but
+this is not physical-parameter convergence.  The TaIrTe4-SiO2 conductance
+scenario changes the in-plane gradient by 854--877%, TaIrTe4 kz changes it by
+3.5--7.9%, and Au-TaIrTe4 contact scenarios change it by 5.7--10.8%.
+Device-specific accepted ranges are absent, so boundary/interface/material,
+optical, actual-geometry electrical, coupled AD-FD, production, and optimizer
+gates remain false.  The independently owned Lumerical session remains
+untouched.
 
 ## Latest downstream diagnostic -- thermal z only
 
@@ -168,6 +173,15 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     48/30/3 um.  Boundary-condition/interface uncertainty, optical,
     actual-geometry electrical, coupled, production, and optimizer gates
     remain blocked.
+
+26. `FDTDX_FROZEN_Q_THERMAL_SENSITIVITY.md`,
+    `fdtdx_frozen_q_thermal_sensitivity_case.py`, and
+    `fdtdx_frozen_q_thermal_sensitivity_certificate.py` -- hold the selected
+    diagnostic mesh/domain and frozen Q fixed while bracketing far-x/y and
+    top boundaries, both thermal contacts, and TaIrTe4 kz.  Artifact integrity
+    passes, but no scenario is promoted to a physical confidence interval.
+    The dominant TaIrTe4-SiO2 uncertainty and missing device-specific bounds
+    keep production and optimization forbidden.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.

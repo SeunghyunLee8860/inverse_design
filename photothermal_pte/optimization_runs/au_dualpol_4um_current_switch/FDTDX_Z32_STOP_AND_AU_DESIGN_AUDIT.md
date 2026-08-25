@@ -236,10 +236,13 @@ not the target device.
 
 - The frozen-Q prototype now has diagnostic x/y factor 2, z factor 2,
   and domain-size convergence.  Its selected diagnostic box has 48-um lateral
-  half-span, 30-um Si depth, and 3-um top-air height.  This does not validate
-  the boundary model: the lateral and substrate-bottom faces remain fixed at
-  ambient, the top still uses an assumed `10 W m^-2 K^-1` convection, and no
-  boundary-model or interface-conductance uncertainty certificate exists.
+  half-span, 30-um Si depth, and 3-um top-air height.  A fixed-Q numerical
+  sensitivity certificate now shows small far-x/y and top-air effects at that
+  box, but it does not supply physical confidence bounds.  Changing the named
+  TaIrTe4-SiO2 checkpoint to the repository-described low scenario changes the
+  combined in-plane gradient by 854--877%; TaIrTe4 kz changes it by 3.5--7.9%
+  and Au-TaIrTe4 contact brackets by 5.7--10.8%.  The actual support, interface
+  conductance, kz, and contact ranges remain unconfirmed.
 - The electrical model has 25,600 TaIrTe4 nodes plus 6,400 Au nodes.  It fixes
   ideal terminals over the complete left/right flake edges and solves 31,680
   free unknowns.  It assumes solver x=b, y=a with no rotation, a centered
@@ -264,10 +267,11 @@ not the target device.
 3. Obtain the actual flake outline/thickness, in-plane a-axis angle, electrode
    and pad polygons, signed output contact, patterned-Au electrical role,
    SiO2/Si stack, beam parameters, and accepted Au-TaIrTe4 contact ranges.
-4. Preserve the frozen-Q thermal x/y/z and domain-size certificates as
-   prototype diagnostics.  Next quantify boundary-condition and interface-
-   conductance uncertainty without changing Q.  Once actual geometry and an
-   independently validated Maxwell Q exist, repeat the relevant thermal gates
-   and build the electrical pitch/contact/void-floor ladder.
+4. Preserve the frozen-Q thermal x/y/z, domain-size, and scenario-sensitivity
+   certificates as prototype diagnostics.  The numerical brackets are now
+   quantified without changing Q, but device-specific physical ranges are not.
+   Obtain those ranges; then, once actual geometry and an independently
+   validated Maxwell Q exist, repeat the relevant thermal gates and build the
+   electrical pitch/contact/void-floor ladder.
 5. Only after Maxwell, thermal, electrical, and complete coupled AD-FD gates
    pass may a binary Au inverse-design route be considered.

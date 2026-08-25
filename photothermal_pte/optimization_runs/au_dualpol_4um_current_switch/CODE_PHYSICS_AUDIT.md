@@ -51,11 +51,15 @@ sample-air boundaries are insulating, and the transverse example uses an
    Lumerical `n-k` law is now implemented solver-free but has not passed its
    B200 endpoint, resonance, Jacobian, AD-FD, or mesh gates.
 
-2. **No converged mesh exists.** The historical partial-z sweep refined only
+2. **No converged Maxwell/electrical production mesh exists.** The historical
+   partial-z sweep refined only
    Au, TaIrTe4, and SiO2, and its tables are stale because they used O3/TE1,
    the old current sign, and an under-specified cache key. Its numerical
    changes are not evidence for the exact-Au route. Si, air, PML,
-   optical x/y, thermal, and electrical meshes were not certified.
+   optical x/y and electrical meshes were not certified.  A later frozen-Q
+   prototype did pass independent thermal x/y/z and domain-size ladders, but
+   it is tied to an optically unconverged Q and assumed rectangular geometry;
+   it does not select a production multiphysics mesh.
    The replacement full-domain factor-1/2/4 sweep has now also failed: every
    one of its six final factor-2 to factor-4 comparisons missed the 0.5% gate.
    Worst changes were 3.314% in total Q, 34.072% in the remapped Q field,
@@ -92,9 +96,13 @@ sample-air boundaries are insulating, and the transverse example uses an
 - The baseline optical z grid has only 2 Au cells (25 nm), 5 TaIrTe4 cells
   (20 nm), 3 SiO2 cells (95 nm), and 5 resolved-Si cells over 1.015 um
   (about 203 nm). These values are starting points, not accepted meshes.
-- The thermal model uses 100 nm lateral cells in the device, with progressively
-  coarser substrate/air cells and ambient-temperature lateral boundaries at
-  +/-32 um. Domain-size, z-mesh, and boundary-condition convergence are absent.
+- The frozen-Q thermal prototype has passed x/y factor 2, z factor 2, and a
+  `48/30/3 um` domain selection.  At that box, far-x/y and top-air numerical
+  brackets are small.  Physical-parameter convergence is nevertheless absent:
+  the named low TaIrTe4-SiO2 conductance scenario changes the combined
+  in-plane gradient by 854--877%, TaIrTe4 kz scenarios by 3.5--7.9%, and
+  Au-TaIrTe4 contact scenarios by 5.7--10.8%.  These are numerical brackets,
+  not sourced device-specific confidence intervals.
 - The electrical model is a 100 nm 2-D network. Nominal void retains tiny Au
   sheet and vertical-contact conductances to regularize otherwise disconnected
   nodes. The final current needs floor-to-zero sensitivity and lateral mesh
@@ -181,8 +189,11 @@ sample-air boundaries are insulating, and the transverse example uses an
 2. Establish optical time-window stationarity and Q/closed-flux closure.
 3. Converge the full optical z domain, including Si, air, and z-PML.
 4. Converge optical x/y and PML/domain clearance.
-5. Converge thermal x/y/z/domain/boundary placement and electrical lateral mesh.
-6. Sweep electrical void floors and uncertain Au/TaIrTe4 contacts.
+5. Supply accepted device-specific TaIrTe4-SiO2 conductance, TaIrTe4 kz,
+   Au-TaIrTe4 contact, and real support-boundary ranges; repeat the already
+   completed frozen-Q thermal mesh/domain ladder on actual geometry/Q.
+6. Converge the actual-geometry electrical lateral mesh and sweep electrical
+   void floors and uncertain Au/TaIrTe4 contacts.
 7. Issue one combined multi-direction AD-FD certificate on the chosen mesh,
    hash-linked to the mesh and device certificates.
 8. Validate the 4-um Lumerical `n-k` density carrier: ordinary-Au 4-um
