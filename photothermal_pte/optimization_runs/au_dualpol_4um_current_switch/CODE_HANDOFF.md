@@ -1,5 +1,14 @@
 # Au dual-polarization PTE inverse-design code handoff
 
+## Latest FDTDX checkpoint -- 50-nm lateral pair failed
+
+Read FDTDX_USER_BALANCED_LATERAL50_AUDIT.md first for the user-requested
+100-to-50-nm design/complete-flake x-y experiment. The hash-bound artifact
+chain is valid, but source power, component Q, conservative spatial Q, and
+material-region field gates fail. No mesh is selected and no optimizer is
+authorized. This is historical 24-period/Courant-0.5 forensic evidence only;
+it is not physics from the newer 40-period/Courant-0.25 FDTDX parity contract.
+
 ## Latest FDTDX checkpoint -- z4 tail failed; FDTDX optimization stopped
 
 Read `FDTDX_USER_BALANCED_Z4_STOP.md` first.  The z4 source and exact-binary
