@@ -9,7 +9,9 @@ import pytest
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.combined_4um import (
     relative_grid_slice,
 )
-from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import CONTRACT
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
+    CONTRACT,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.dfm import (
     MAPPING,
     exact_500nm_audit,
@@ -138,9 +140,7 @@ def test_closed_surface_phasor_uses_safe_rectangular_window() -> None:
 
 
 def test_heat_uses_realized_float32_ade_loss() -> None:
-    assert ABSORPTION_LOSS_BASIS == (
-        "realized_float32_discrete_ADE_susceptibility"
-    )
+    assert ABSORPTION_LOSS_BASIS == ("realized_float32_discrete_ADE_susceptibility")
     value = realized_discrete_susceptibility(
         (1.9996999118283947, -0.9996999118283949, 0.0032755750868792505),
         2.0 * np.pi * 299_792_458.0 / 4.0e-6,
@@ -170,9 +170,7 @@ def test_coefficient_aware_float32_drude_refit_hits_complex_target() -> None:
         fitted["realized_float32_c2"],
         fitted["realized_float32_c3"],
     )
-    realized = 1.0 + realized_discrete_susceptibility(
-        coefficients, omega, dt
-    )
+    realized = 1.0 + realized_discrete_susceptibility(coefficients, omega, dt)
     error = abs(realized - target_epsilon) / abs(target_epsilon)
     assert error < FLOAT32_ADE_REFIT_RELATIVE_TOLERANCE
 
@@ -235,8 +233,7 @@ def test_robust_contract_includes_nominal_and_all_grayness_constraints() -> None
     direction = rng.standard_normal(rho.shape)
     step = 1.0e-6
     finite_difference = (
-        grayness(rho + step * direction)
-        - grayness(rho - step * direction)
+        grayness(rho + step * direction) - grayness(rho - step * direction)
     ) / (2.0 * step)
     analytic = float(np.vdot(grayness_cotangent(rho), direction))
     assert abs(finite_difference - analytic) < 1.0e-9
@@ -252,9 +249,7 @@ def test_production_readiness_requires_hash_linked_complete_certificates(
     material = material_fraction_audit()
     device = {
         "status": DEVICE_STATUS,
-        "confirmations": {
-            name: True for name in REQUIRED_DEVICE_CONFIRMATIONS
-        },
+        "confirmations": {name: True for name in REQUIRED_DEVICE_CONFIRMATIONS},
     }
     device_path.write_text(json.dumps(device), encoding="utf-8")
     calibration = {
@@ -332,9 +327,7 @@ def test_production_readiness_requires_hash_linked_complete_certificates(
         calibrated_source_scales(historically_complete, 2.0)
     gradient["mesh_certificate_sha256"] = "wrong"
     gradient_path.write_text(json.dumps(gradient), encoding="utf-8")
-    result = readiness_audit(
-        mesh_path, gradient_path, device_path, calibration_path
-    )
+    result = readiness_audit(mesh_path, gradient_path, device_path, calibration_path)
     assert not result["ready"]
     assert "gradient_uses_mesh_certificate" in result["failed_checks"]
 
@@ -374,12 +367,7 @@ def test_weighting_integral_sign_means_plus_x_internal_current() -> None:
     psi = np.zeros(N_TA * N_TA + N_DESIGN * N_DESIGN, dtype=np.float64)
     for i in range(N_TA):
         psi[[ta_id(i, j) for j in range(N_TA)]] = i / (N_TA - 1)
-    expected = (
-        -SIGMA_TA_XY_S_M[0]
-        * TA_THICKNESS_M
-        * SEEBECK_TA_XY_V_K[0]
-        * N_TA
-    )
+    expected = -SIGMA_TA_XY_S_M[0] * TA_THICKNESS_M * SEEBECK_TA_XY_V_K[0] * N_TA
     objective = float(electrical_load(temperature) @ psi)
     integrated_map = float(np.sum(current_integrand(temperature, psi)) * STEP_M**2)
     pullback = float(np.vdot(temperature_pullback(psi), temperature))
@@ -431,26 +419,35 @@ def test_smooth_solid_void_constraint_directional_derivatives() -> None:
 def test_refined_binary_pde_grid_preserves_exact_geometry() -> None:
     mask = np.zeros((80, 80), dtype=np.uint8)
     mask[7:23, 31:64] = 1
-    refined = refine_exact_binary_density(mask, target_step_m=50.0e-9)
-    assert refined.shape == (160, 160)
-    np.testing.assert_array_equal(
-        refined.reshape(80, 2, 80, 2),
-        np.broadcast_to(mask[:, None, :, None], (80, 2, 80, 2)),
-    )
-    assert np.sum(refined) * (50.0e-9) ** 2 == np.sum(mask) * STEP_M**2
-    assert pde_grid_contract(mask) == {
-        "step_m": 100.0e-9,
-        "n_design": 80,
-        "n_ta": 160,
-        "design_offset": 40,
-    }
-    assert pde_grid_contract(refined) == {
-        "step_m": 50.0e-9,
-        "n_design": 160,
-        "n_ta": 320,
-        "design_offset": 80,
-    }
-    for step, n_ta in ((100.0e-9, 160), (50.0e-9, 320)):
+    for step, ratio in (
+        (100.0e-9, 1),
+        (50.0e-9, 2),
+        (25.0e-9, 4),
+        (12.5e-9, 8),
+    ):
+        refined = refine_exact_binary_density(mask, target_step_m=step)
+        n_design = 80 * ratio
+        n_ta = 160 * ratio
+        assert refined.shape == (n_design, n_design)
+        np.testing.assert_array_equal(
+            refined.reshape(80, ratio, 80, ratio),
+            np.broadcast_to(
+                mask[:, None, :, None],
+                (80, ratio, 80, ratio),
+            ),
+        )
+        assert np.isclose(
+            np.sum(refined) * step**2,
+            np.sum(mask) * STEP_M**2,
+            rtol=0.0,
+            atol=1.0e-30,
+        )
+        assert pde_grid_contract(refined) == {
+            "step_m": step,
+            "n_design": n_design,
+            "n_ta": n_ta,
+            "design_offset": 40 * ratio,
+        }
         x_edges = thermal_edges(core_step_m=step)[0]
         centers = 0.5 * (x_edges[:-1] + x_edges[1:])
         assert np.count_nonzero((centers >= -8.0e-6) & (centers < 8.0e-6)) == n_ta
@@ -488,18 +485,12 @@ def test_refined_electrical_discretization_preserves_linear_field_current() -> N
         )
         pullback = float(
             np.vdot(
-                temperature_pullback(
-                    psi, n_ta=n_ta, n_design=n_design
-                ),
+                temperature_pullback(psi, n_ta=n_ta, n_design=n_design),
                 temperature,
             )
         )
         expected = (
-            -SIGMA_TA_XY_S_M[0]
-            * TA_THICKNESS_M
-            * SEEBECK_TA_XY_V_K[0]
-            * step_m
-            * n_ta
+            -SIGMA_TA_XY_S_M[0] * TA_THICKNESS_M * SEEBECK_TA_XY_V_K[0] * step_m * n_ta
         )
         assert np.isclose(objective, expected, rtol=2e-13, atol=0.0)
         assert np.isclose(integrated, expected, rtol=2e-13, atol=0.0)

@@ -1,9 +1,8 @@
-"""Fail-closed 100-to-50-nm custom-PDE convergence metrics.
+"""Fail-closed adaptive custom-PDE lateral convergence metrics.
 
 The optical Yee heat source is frozen while the thermal/electrical core grid
-is refined. The 50-nm TaIrTe4 temperature is averaged over aligned 2x2 cell
-blocks before comparing it with the 100-nm field, so no interpolator or
-smoothing operation can hide a discretization change.
+is refined by aligned 2x2 cell pairs, so no interpolator or smoothing
+operation can hide a discretization change.
 """
 
 from __future__ import annotations
@@ -13,8 +12,9 @@ from typing import Any
 import numpy as np
 
 
-COARSE_PDE_STEP_M = 100.0e-9
-FINE_PDE_STEP_M = 50.0e-9
+PDE_STEPS_M = (100.0e-9, 50.0e-9, 25.0e-9, 12.5e-9)
+COARSE_PDE_STEP_M = PDE_STEPS_M[0]
+FINE_PDE_STEP_M = PDE_STEPS_M[1]
 PDE_RELATIVE_GATE = 5.0e-3
 
 
@@ -63,13 +63,25 @@ def pde_mesh_convergence_audit(
     fine_ta_temperature_K: np.ndarray,
     coarse_peak_temperature_K: float,
     fine_peak_temperature_K: float,
+    coarse_step_m: float = COARSE_PDE_STEP_M,
+    fine_step_m: float = FINE_PDE_STEP_M,
     relative_gate: float = PDE_RELATIVE_GATE,
 ) -> dict[str, Any]:
-    """Compare aligned 100/50-nm PDE solutions using the fine grid as reference."""
+    """Compare one aligned 2x PDE pair using the fine grid as reference."""
 
     gate = _finite_scalar(relative_gate, name="relative_gate")
     if gate <= 0.0:
         raise ValueError("relative_gate must be positive")
+    coarse_step = _finite_scalar(coarse_step_m, name="coarse_step_m")
+    fine_step = _finite_scalar(fine_step_m, name="fine_step_m")
+    approved = all(
+        any(np.isclose(step, item, rtol=0.0, atol=1.0e-18) for item in PDE_STEPS_M)
+        for step in (coarse_step, fine_step)
+    )
+    if not approved or not np.isclose(
+        coarse_step, 2.0 * fine_step, rtol=0.0, atol=1.0e-18
+    ):
+        raise ValueError("PDE comparison must be one approved aligned 2x pair")
     coarse_current = _finite_scalar(coarse_current_A, name="coarse_current_A")
     fine_current = _finite_scalar(fine_current_A, name="fine_current_A")
     coarse_peak = _finite_scalar(
@@ -116,9 +128,9 @@ def pde_mesh_convergence_audit(
         ),
     }
     return {
-        "method": "same_raw_Yee_Q_aligned_100nm_to_50nm_custom_PDE_v1",
-        "coarse_step_m": COARSE_PDE_STEP_M,
-        "fine_step_m": FINE_PDE_STEP_M,
+        "method": "same_raw_Yee_Q_aligned_2x_custom_PDE_pair_v2",
+        "coarse_step_m": coarse_step,
+        "fine_step_m": fine_step,
         "relative_gate": gate,
         "coarse_current_A": coarse_current,
         "fine_current_A": fine_current,

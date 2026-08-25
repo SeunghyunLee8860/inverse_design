@@ -18,17 +18,26 @@ def _fields() -> tuple[np.ndarray, np.ndarray]:
 
 def test_aligned_pde_convergence_passes_below_half_percent() -> None:
     coarse, fine = _fields()
-    audit = pde_mesh_convergence_audit(
-        coarse_current_A=1.004e-9,
-        fine_current_A=1.0e-9,
-        coarse_ta_temperature_K=coarse,
-        fine_ta_temperature_K=fine,
-        coarse_peak_temperature_K=4.016,
-        fine_peak_temperature_K=4.0,
-    )
-    assert audit["passed"] is True
-    assert audit["metrics"]["current_relative_change"] == pytest.approx(0.004)
-    assert audit["metrics"]["ta_temperature_field_nrmse"] == 0.0
+    for coarse_step, fine_step in (
+        (100.0e-9, 50.0e-9),
+        (50.0e-9, 25.0e-9),
+        (25.0e-9, 12.5e-9),
+    ):
+        audit = pde_mesh_convergence_audit(
+            coarse_current_A=1.004e-9,
+            fine_current_A=1.0e-9,
+            coarse_ta_temperature_K=coarse,
+            fine_ta_temperature_K=fine,
+            coarse_peak_temperature_K=4.016,
+            fine_peak_temperature_K=4.0,
+            coarse_step_m=coarse_step,
+            fine_step_m=fine_step,
+        )
+        assert audit["passed"] is True
+        assert audit["coarse_step_m"] == coarse_step
+        assert audit["fine_step_m"] == fine_step
+        assert audit["metrics"]["current_relative_change"] == pytest.approx(0.004)
+        assert audit["metrics"]["ta_temperature_field_nrmse"] == 0.0
 
 
 def test_pde_convergence_fails_current_sign_or_relative_gate() -> None:
@@ -79,3 +88,14 @@ def test_pde_comparison_rejects_non_aligned_or_nonfinite_fields() -> None:
     fine[0, 0] = np.nan
     with pytest.raises(ValueError, match="finite"):
         fine_to_coarse_cell_average(fine, coarse_shape=coarse.shape)
+    with pytest.raises(ValueError, match="approved aligned 2x pair"):
+        pde_mesh_convergence_audit(
+            coarse_current_A=1.0,
+            fine_current_A=1.0,
+            coarse_ta_temperature_K=coarse,
+            fine_ta_temperature_K=np.repeat(np.repeat(coarse, 2, axis=0), 2, axis=1),
+            coarse_peak_temperature_K=1.0,
+            fine_peak_temperature_K=1.0,
+            coarse_step_m=50.0e-9,
+            fine_step_m=12.5e-9,
+        )

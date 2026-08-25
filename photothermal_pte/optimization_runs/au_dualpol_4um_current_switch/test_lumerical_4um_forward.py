@@ -629,3 +629,113 @@ def test_exact_evaluator_requires_one_matching_visible_physical_gpu() -> None:
     ):
         with pytest.raises(RuntimeError):
             _EXACT_EVALUATOR._visible_cuda_device(args, environ=environment)
+
+
+def _run_fake_adaptive_pde(
+    *,
+    tmp_path,
+    monkeypatch,
+    currents_by_step_nm: dict[float, float],
+) -> tuple[dict[str, object], list[float]]:
+    args = _exact_evaluator_args()
+    mask = np.zeros(CONTRACT.design_shape, dtype=np.uint8)
+    raw_path = tmp_path / "forward_raw.npz"
+    np.savez(raw_path, placeholder=np.asarray(0))
+    forward = {
+        "all_gates_passed": True,
+        "case": "exact_binary",
+        "polarization": "Ea",
+        "mesh_spec": _EXACT_EVALUATOR._requested_mesh_spec(args),
+        "accelerator_policy": "development",
+        "Q_processing": {
+            "clipping": False,
+            "smoothing": False,
+            "gain": False,
+            "field_or_Q_rescaling": False,
+        },
+        "layout": {
+            "geometry": {
+                "exact_au_geometry": {
+                    "mask_payload_sha256": _EXACT_EVALUATOR.binary_mask_sha256(mask)
+                }
+            }
+        },
+        "reporting_normalization": {"scalar_reporting_factor": 1.0},
+        "P_Q_native_W_raw": 2.0,
+        "raw_artifacts": [_EXACT_EVALUATOR._artifact(raw_path)],
+    }
+    forward_path = tmp_path / "forward.json"
+    forward_path.write_text(_EXACT_EVALUATOR.json.dumps(forward), encoding="utf-8")
+    executed: list[float] = []
+
+    def fake_resolution(**kwargs):
+        step = float(kwargs["core_step_m"])
+        step_nm = step * 1.0e9
+        executed.append(step_nm)
+        n_design = int(round(8.0e-6 / step))
+        n_ta = 2 * n_design
+        current = currents_by_step_nm[step_nm]
+        mapping = {"input_power_W": 2.0, "relative_power_error": 0.0}
+        return (
+            {
+                "passed": True,
+                "core_step_m": step,
+                "current_A": current,
+                "current_nA": current * 1.0e9,
+                "mapped_source_power_W_reporting": 2.0,
+                "peak_temperature_K": 1.0,
+                "ta_mean_temperature_K": 1.0,
+                "mapping": mapping,
+                "thermal": {},
+                "electrical": {},
+                "gates": {},
+            },
+            {
+                "density": np.zeros((n_design, n_design), dtype=np.uint8),
+                "ta_temperature_K": np.ones((n_ta, n_ta)),
+            },
+        )
+
+    monkeypatch.setattr(_EXACT_EVALUATOR, "_pde_resolution", fake_resolution)
+    monkeypatch.setattr(
+        _EXACT_EVALUATOR, "component_coordinates_from_raw", lambda _raw: {}
+    )
+    monkeypatch.setattr(_EXACT_EVALUATOR, "component_q_from_raw", lambda _raw: {})
+    result = _EXACT_EVALUATOR._evaluate_polarization(
+        args=args,
+        polarization="Ea",
+        source_calibration=None,
+        mask=mask,
+        output=tmp_path / "work" / "forward_Ea",
+        forward_result=forward_path,
+        raw_override=raw_path,
+    )
+    return result, executed
+
+
+def test_adaptive_pde_stops_at_first_passing_adjacent_pair(
+    tmp_path, monkeypatch
+) -> None:
+    result, executed = _run_fake_adaptive_pde(
+        tmp_path=tmp_path,
+        monkeypatch=monkeypatch,
+        currents_by_step_nm={100.0: 1.02, 50.0: 1.0, 25.0: 0.996},
+    )
+    assert executed == [100.0, 50.0, 25.0]
+    assert result["passed"] is True
+    assert result["selected_PDE_resolution"] == "25nm"
+    assert result["final_PDE_comparison"] == "50nm_to_25nm"
+
+
+def test_adaptive_pde_exhausts_finest_level_and_fails_closed(
+    tmp_path, monkeypatch
+) -> None:
+    result, executed = _run_fake_adaptive_pde(
+        tmp_path=tmp_path,
+        monkeypatch=monkeypatch,
+        currents_by_step_nm={100.0: 1.06, 50.0: 1.04, 25.0: 1.02, 12.5: 1.0},
+    )
+    assert executed == [100.0, 50.0, 25.0, 12.5]
+    assert result["passed"] is False
+    assert result["selected_PDE_resolution"] == "12p5nm"
+    assert result["final_PDE_comparison"] == "25nm_to_12p5nm"

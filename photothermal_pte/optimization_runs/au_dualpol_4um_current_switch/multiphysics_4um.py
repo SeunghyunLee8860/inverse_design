@@ -66,7 +66,7 @@ SIGMA_AU_S_M = float(AU_BULK_ELECTRICAL_CONDUCTIVITY_S_M)
 SIGMA_FLOOR_FRACTION = 1.0e-8
 CONTACT_FLOOR_FRACTION = 1.0e-10
 ELECTRICAL_CONTACT_S_M2 = CONTRACT.electrical_contact_S_m2
-PDE_CORE_DXY_LEVELS_M = (100.0e-9, 50.0e-9)
+PDE_CORE_DXY_LEVELS_M = (100.0e-9, 50.0e-9, 25.0e-9, 12.5e-9)
 
 
 def pde_grid_contract(rho: np.ndarray) -> dict[str, int | float]:
@@ -79,7 +79,9 @@ def pde_grid_contract(rho: np.ndarray) -> dict[str, int | float]:
     step_m = CONTRACT.design_span_x_m / n_design
     nearest = min(PDE_CORE_DXY_LEVELS_M, key=lambda value: abs(value - step_m))
     if not np.isclose(step_m, nearest, rtol=0.0, atol=1.0e-18):
-        raise ValueError("rho shape does not define an approved 100/50-nm PDE grid")
+        raise ValueError(
+            "rho shape does not define an approved 100/50/25/12.5-nm PDE grid"
+        )
     n_ta = int(round(CONTRACT.flake_span_x_m / nearest))
     if (
         not np.isclose(
@@ -116,7 +118,7 @@ def refine_exact_binary_density(
     step = float(target_step_m)
     nearest = min(PDE_CORE_DXY_LEVELS_M, key=lambda item: abs(item - step))
     if not np.isclose(step, nearest, rtol=0.0, atol=1.0e-18):
-        raise ValueError("target PDE step must be 100 or 50 nm")
+        raise ValueError("target PDE step must be 100, 50, 25, or 12.5 nm")
     ratio = int(round(CONTRACT.design_pitch_m / nearest))
     if ratio < 1 or not np.isclose(
         ratio * nearest, CONTRACT.design_pitch_m, rtol=0.0, atol=1.0e-18
@@ -152,7 +154,7 @@ def thermal_edges(
     step = float(core_step_m)
     nearest = min(PDE_CORE_DXY_LEVELS_M, key=lambda value: abs(value - step))
     if not np.isclose(step, nearest, rtol=0.0, atol=1.0e-18):
-        raise ValueError("thermal core step must be 100 or 50 nm")
+        raise ValueError("thermal core step must be 100, 50, 25, or 12.5 nm")
     negative_outer = np.asarray((-32, -28, -24, -20, -16, -14), float) * 1e-6
     negative_shoulder = np.arange(-14.0, -12.0, 0.25) * 1e-6
     if nearest == STEP_M:
@@ -167,17 +169,48 @@ def thermal_edges(
             (negative_outer, negative_shoulder, core, positive_shoulder, positive_outer)
         )
     )
-    z = np.asarray(
-        (
-            -20.0, -12.0, -8.0, -5.0, -3.0, -2.0, -1.25,
-            -0.8, -0.55, -0.385, -0.30, -0.20, -0.10,
-            -0.09, -0.08, -0.07, -0.06, -0.05,
-            -0.04, -0.03, -0.02, -0.01, 0.0,
-            0.01, 0.02, 0.05, 0.10, 0.20, 0.40,
-            0.70, 1.0, 1.25, 1.50, 2.0,
-        ),
-        float,
-    ) * 1e-6
+    z = (
+        np.asarray(
+            (
+                -20.0,
+                -12.0,
+                -8.0,
+                -5.0,
+                -3.0,
+                -2.0,
+                -1.25,
+                -0.8,
+                -0.55,
+                -0.385,
+                -0.30,
+                -0.20,
+                -0.10,
+                -0.09,
+                -0.08,
+                -0.07,
+                -0.06,
+                -0.05,
+                -0.04,
+                -0.03,
+                -0.02,
+                -0.01,
+                0.0,
+                0.01,
+                0.02,
+                0.05,
+                0.10,
+                0.20,
+                0.40,
+                0.70,
+                1.0,
+                1.25,
+                1.50,
+                2.0,
+            ),
+            float,
+        )
+        * 1e-6
+    )
     return lateral, lateral.copy(), z
 
 
@@ -269,9 +302,7 @@ def build_thermal_state(rho: np.ndarray) -> ThermalState:
     )
     g_area = (1.0 - fraction) / r_air + fraction / r_au
     r_interface = (
-        1.0 / g_area
-        - 0.5 * lower_dz / K_TA_XYZ_W_MK[2]
-        - 0.5 * upper_dz / k_au
+        1.0 / g_area - 0.5 * lower_dz / K_TA_XYZ_W_MK[2] - 0.5 * upper_dz / k_au
     )
     if np.min(r_interface) < -1e-15:
         raise RuntimeError("negative equivalent Au/Ta interface resistance")
@@ -370,10 +401,9 @@ def map_native_q_to_thermal(
                 for axis in range(3)
             )
             first_operators[name] = operators
-            power = (
-                np.asarray(q_fields_W_m3[material][component], dtype=np.float64)
-                * np.asarray(dual_volumes_m3[material][component], dtype=np.float64)
-            )
+            power = np.asarray(
+                q_fields_W_m3[material][component], dtype=np.float64
+            ) * np.asarray(dual_volumes_m3[material][component], dtype=np.float64)
             native_total += float(np.sum(power))
             primal_total += overlap._forward(power, operators)
         primal_centers = tuple(0.5 * (edge[:-1] + edge[1:]) for edge in primal_edges)
@@ -440,7 +470,9 @@ def solve_thermal(
         for name, (cell_ids, conductance, _) in state.system.boundary_terms.items()
     }
     source = float(np.sum(rhs))
-    balance = abs(sum(boundary.values()) - source) / max(abs(source), np.finfo(float).tiny)
+    balance = abs(sum(boundary.values()) - source) / max(
+        abs(source), np.finfo(float).tiny
+    )
     return temperature, {
         "relative_residual": float(result.explicit_relative_residual),
         "iterations": int(result.iterations),
@@ -573,7 +605,9 @@ def electrical_load(
     return load
 
 
-def build_electrical_system(rho: np.ndarray, temperature_K: np.ndarray) -> ElectricalSystem:
+def build_electrical_system(
+    rho: np.ndarray, temperature_K: np.ndarray
+) -> ElectricalSystem:
     density = np.asarray(rho, dtype=np.float64)
     grid = pde_grid_contract(density)
     if not np.all(np.isfinite(density)) or np.any((density < 0) | (density > 1)):
@@ -625,10 +659,7 @@ def build_electrical_system(rho: np.ndarray, temperature_K: np.ndarray) -> Elect
                 if ni >= n_design or nj >= n_design:
                     continue
                 right = au_id(ni, nj, n_ta, n_design)
-                resistance = (
-                    0.5 * step_m / sigma[i, j]
-                    + 0.5 * step_m / sigma[ni, nj]
-                )
+                resistance = 0.5 * step_m / sigma[i, j] + 0.5 * step_m / sigma[ni, nj]
                 g = AU_THICKNESS_M * step_m / resistance
                 _add_edge(rows, cols, data, node, right, g)
                 for ii, jj in ((i, j), (ni, nj)):
@@ -653,8 +684,7 @@ def build_electrical_system(rho: np.ndarray, temperature_K: np.ndarray) -> Elect
             ti, tj = design_offset + i, design_offset + j
             g_contact = step_m**2 * (
                 contact_floor
-                + fraction[i, j]
-                * (ELECTRICAL_CONTACT_S_M2 - contact_floor)
+                + fraction[i, j] * (ELECTRICAL_CONTACT_S_M2 - contact_floor)
             )
             ta_node = ta_id(ti, tj, n_ta)
             _add_edge(rows, cols, data, ta_node, node, g_contact)
@@ -669,15 +699,13 @@ def build_electrical_system(rho: np.ndarray, temperature_K: np.ndarray) -> Elect
                     "vertical_Au_Ta_contact",
                 )
             )
-    matrix = sparse.coo_matrix((data, (rows, cols)), shape=(node_count, node_count)).tocsr()
+    matrix = sparse.coo_matrix(
+        (data, (rows, cols)), shape=(node_count, node_count)
+    ).tocsr()
     matrix.sum_duplicates()
     # Left x-min terminal psi=0; right x-max terminal psi=1.
-    low = np.asarray(
-        [ta_id(0, j, n_ta) for j in range(n_ta)], dtype=np.int64
-    )
-    high = np.asarray(
-        [ta_id(n_ta - 1, j, n_ta) for j in range(n_ta)], dtype=np.int64
-    )
+    low = np.asarray([ta_id(0, j, n_ta) for j in range(n_ta)], dtype=np.int64)
+    high = np.asarray([ta_id(n_ta - 1, j, n_ta) for j in range(n_ta)], dtype=np.int64)
     fixed = np.concatenate((low, high))
     fixed_values = np.concatenate((np.zeros(low.size), np.ones(high.size)))
     free_mask = np.ones(node_count, dtype=bool)
@@ -728,14 +756,18 @@ def solve_electrical(
     free_residual = np.linalg.norm(residual[system.free]) / max(
         np.linalg.norm(system.reduced_rhs_A), np.finfo(float).tiny
     )
-    return psi, current, {
-        "relative_residual": float(result.explicit_relative_residual),
-        "explicit_free_residual": float(free_residual),
-        "iterations": int(result.iterations),
-        "terminal_balance_relative": float(balance),
-        "low_terminal_A_per_V": low,
-        "high_terminal_A_per_V": high,
-    }
+    return (
+        psi,
+        current,
+        {
+            "relative_residual": float(result.explicit_relative_residual),
+            "explicit_free_residual": float(free_residual),
+            "iterations": int(result.iterations),
+            "terminal_balance_relative": float(balance),
+            "low_terminal_A_per_V": low,
+            "high_terminal_A_per_V": high,
+        },
+    )
 
 
 def current_integrand(
@@ -809,21 +841,13 @@ def temperature_pullback(
             node = ta_id(i, j, n_ta)
             if i + 1 < n_ta:
                 right = ta_id(i + 1, j, n_ta)
-                scale = (
-                    SIGMA_TA_XY_S_M[0]
-                    * TA_THICKNESS_M
-                    * SEEBECK_TA_XY_V_K[0]
-                )
+                scale = SIGMA_TA_XY_S_M[0] * TA_THICKNESS_M * SEEBECK_TA_XY_V_K[0]
                 contribution = -scale * (values[right] - values[node])
                 gradient[i, j] -= contribution
                 gradient[i + 1, j] += contribution
             if j + 1 < n_ta:
                 right = ta_id(i, j + 1, n_ta)
-                scale = (
-                    SIGMA_TA_XY_S_M[1]
-                    * TA_THICKNESS_M
-                    * SEEBECK_TA_XY_V_K[1]
-                )
+                scale = SIGMA_TA_XY_S_M[1] * TA_THICKNESS_M * SEEBECK_TA_XY_V_K[1]
                 contribution = -scale * (values[right] - values[node])
                 gradient[i, j] -= contribution
                 gradient[i, j + 1] += contribution
@@ -831,9 +855,7 @@ def temperature_pullback(
 
 
 def explicit_temperature_pullback(state: ThermalState, psi: np.ndarray) -> np.ndarray:
-    coarse = temperature_pullback(
-        psi, n_ta=state.n_ta, n_design=state.n_design
-    )
+    coarse = temperature_pullback(psi, n_ta=state.n_ta, n_design=state.n_design)
     x, y, z = state.centers
     ix = np.flatnonzero((x >= -8e-6) & (x < 8e-6))
     iy = np.flatnonzero((y >= -8e-6) & (y < 8e-6))
@@ -868,9 +890,11 @@ def electrical_density_gradient(
 ) -> np.ndarray:
     gradient = np.zeros(system.n_design * system.n_design, dtype=np.float64)
     for term in system.derivative_terms:
-        gradient[term.rho_index] += -term.dg_drho_S * (
-            adjoint[term.left] - adjoint[term.right]
-        ) * (psi[term.left] - psi[term.right])
+        gradient[term.rho_index] += (
+            -term.dg_drho_S
+            * (adjoint[term.left] - adjoint[term.right])
+            * (psi[term.left] - psi[term.right])
+        )
     return gradient.reshape(system.rho.shape)
 
 
@@ -924,9 +948,7 @@ def thermal_density_gradient(
     iy = np.flatnonzero((y >= -4e-6) & (y < 4e-6))
     iz = np.flatnonzero((z >= 0.0) & (z < 0.05e-6))
     result = np.zeros(state.rho.shape, dtype=np.float64)
-    d_fraction = np.asarray(
-        d_au_material_fraction_drho(state.rho), dtype=np.float64
-    )
+    d_fraction = np.asarray(d_au_material_fraction_drho(state.rho), dtype=np.float64)
     bottom_face = state.faces["TaIrTe4_Au_or_air"]
     lower_dz = state.widths[2][bottom_face]
     upper_dz = state.widths[2][bottom_face + 1]
@@ -942,10 +964,10 @@ def thermal_density_gradient(
     )
 
     def add(ii: int, jj: int, left_id: int, right_id: int, dg: float) -> None:
-        result[ii, jj] += -dg * (
-            adjoint.reshape(-1)[left_id] - adjoint.reshape(-1)[right_id]
-        ) * (
-            temperature.reshape(-1)[left_id] - temperature.reshape(-1)[right_id]
+        result[ii, jj] += (
+            -dg
+            * (adjoint.reshape(-1)[left_id] - adjoint.reshape(-1)[right_id])
+            * (temperature.reshape(-1)[left_id] - temperature.reshape(-1)[right_id])
         )
 
     for local_i, i in enumerate(ix):
@@ -967,8 +989,7 @@ def thermal_density_gradient(
                             cell,
                             axis,
                             cell,
-                            d_fraction[local_i, local_j]
-                            * (K_AU_W_MK - K_AIR_W_MK),
+                            d_fraction[local_i, local_j] * (K_AU_W_MK - K_AIR_W_MK),
                         ),
                     )
                     upper = list(cell)
@@ -985,17 +1006,14 @@ def thermal_density_gradient(
                             upper,
                             axis,
                             cell,
-                            d_fraction[local_i, local_j]
-                            * (K_AU_W_MK - K_AIR_W_MK),
+                            d_fraction[local_i, local_j] * (K_AU_W_MK - K_AIR_W_MK),
                         ),
                     )
                 lower = (i, j, k - 1)
                 if k == iz[0]:
                     area = state.widths[0][i] * state.widths[1][j]
                     dg = (
-                        area
-                        * (1.0 / r_au - 1.0 / r_air)
-                        * d_fraction[local_i, local_j]
+                        area * (1.0 / r_au - 1.0 / r_air) * d_fraction[local_i, local_j]
                     )
                 else:
                     dg = _generic_face_dg(
@@ -1004,8 +1022,7 @@ def thermal_density_gradient(
                         cell,
                         2,
                         cell,
-                        d_fraction[local_i, local_j]
-                        * (K_AU_W_MK - K_AIR_W_MK),
+                        d_fraction[local_i, local_j] * (K_AU_W_MK - K_AIR_W_MK),
                     )
                 add(local_i, local_j, int(ids[lower]), int(ids[cell]), float(dg))
                 upper = (i, j, k + 1)
@@ -1020,8 +1037,7 @@ def thermal_density_gradient(
                         upper,
                         2,
                         cell,
-                        d_fraction[local_i, local_j]
-                        * (K_AU_W_MK - K_AIR_W_MK),
+                        d_fraction[local_i, local_j] * (K_AU_W_MK - K_AIR_W_MK),
                     ),
                 )
     return result
@@ -1057,9 +1073,7 @@ def evaluate_fixed_source(
         thermal_adjoint, thermal_adjoint_audit = solve_thermal_adjoint(
             state, thermal_rhs, cuda_device
         )
-        gradient_thermal = thermal_density_gradient(
-            state, temperature, thermal_adjoint
-        )
+        gradient_thermal = thermal_density_gradient(state, temperature, thermal_adjoint)
         gradient_electrical = electrical_density_gradient(
             electrical, psi, electrical_adjoint
         )

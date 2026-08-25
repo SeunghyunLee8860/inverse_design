@@ -44,8 +44,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.objective 
     opposite_current_switching_achieved,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.pde_mesh_convergence_4um import (
-    COARSE_PDE_STEP_M,
-    FINE_PDE_STEP_M,
+    PDE_STEPS_M,
     pde_mesh_convergence_audit,
 )
 
@@ -245,6 +244,10 @@ def _cuda_device_audit(args: argparse.Namespace) -> dict[str, Any]:
     }
 
 
+def _pde_step_label(step_m: float) -> str:
+    return f"{float(step_m) * 1.0e9:g}".replace(".", "p") + "nm"
+
+
 def _pde_resolution(
     *,
     mask: np.ndarray,
@@ -438,42 +441,60 @@ def _evaluate_polarization(
     )
     if not np.isfinite(reporting_scale) or reporting_scale <= 0.0:
         raise RuntimeError("invalid exact-forward reporting scale")
+    resolutions: dict[str, dict[str, Any]] = {}
+    arrays_by_label: dict[str, dict[str, np.ndarray]] = {}
+    comparisons: dict[str, dict[str, Any]] = {}
+    previous_label: str | None = None
     with np.load(raw_path, allow_pickle=False) as raw:
         component_coordinates = component_coordinates_from_raw(raw)
         q = component_q_from_raw(raw)
-        coarse, coarse_arrays = _pde_resolution(
-            mask=mask,
-            component_coordinates=component_coordinates,
-            q=q,
-            reporting_scale=reporting_scale,
-            core_step_m=COARSE_PDE_STEP_M,
-        )
-        fine, fine_arrays = _pde_resolution(
-            mask=mask,
-            component_coordinates=component_coordinates,
-            q=q,
-            reporting_scale=reporting_scale,
-            core_step_m=FINE_PDE_STEP_M,
-        )
-    convergence = pde_mesh_convergence_audit(
-        coarse_current_A=coarse["current_A"],
-        fine_current_A=fine["current_A"],
-        coarse_ta_temperature_K=coarse_arrays["ta_temperature_K"],
-        fine_ta_temperature_K=fine_arrays["ta_temperature_K"],
-        coarse_peak_temperature_K=coarse["peak_temperature_K"],
-        fine_peak_temperature_K=fine["peak_temperature_K"],
-    )
+        for step_m in PDE_STEPS_M:
+            label = _pde_step_label(step_m)
+            resolution, arrays = _pde_resolution(
+                mask=mask,
+                component_coordinates=component_coordinates,
+                q=q,
+                reporting_scale=reporting_scale,
+                core_step_m=step_m,
+            )
+            resolutions[label] = resolution
+            arrays_by_label[label] = arrays
+            if previous_label is not None:
+                coarse = resolutions[previous_label]
+                comparison = pde_mesh_convergence_audit(
+                    coarse_current_A=coarse["current_A"],
+                    fine_current_A=resolution["current_A"],
+                    coarse_ta_temperature_K=arrays_by_label[previous_label][
+                        "ta_temperature_K"
+                    ],
+                    fine_ta_temperature_K=arrays["ta_temperature_K"],
+                    coarse_peak_temperature_K=coarse["peak_temperature_K"],
+                    fine_peak_temperature_K=resolution["peak_temperature_K"],
+                    coarse_step_m=coarse["core_step_m"],
+                    fine_step_m=resolution["core_step_m"],
+                )
+                comparison_label = f"{previous_label}_to_{label}"
+                comparisons[comparison_label] = comparison
+                if comparison["passed"]:
+                    break
+            previous_label = label
+    if not comparisons:
+        raise RuntimeError("adaptive PDE sequence did not produce one comparison")
+    selected_label = next(reversed(resolutions))
+    selected = resolutions[selected_label]
+    final_comparison_label = next(reversed(comparisons))
+    convergence = comparisons[final_comparison_label]
     evidence_path = output.parent / f"pde_mesh_convergence_{polarization}.npz"
-    np.savez_compressed(
-        evidence_path,
-        coarse_density=coarse_arrays["density"],
-        fine_density=fine_arrays["density"],
-        coarse_ta_temperature_K=coarse_arrays["ta_temperature_K"],
-        fine_ta_temperature_K=fine_arrays["ta_temperature_K"],
-        coarse_current_A=np.asarray(coarse["current_A"]),
-        fine_current_A=np.asarray(fine["current_A"]),
-    )
-    native_q_power_raw = float(coarse["mapping"]["input_power_W"])
+    evidence_arrays: dict[str, np.ndarray] = {}
+    for label, arrays in arrays_by_label.items():
+        evidence_arrays[f"density_{label}"] = arrays["density"]
+        evidence_arrays[f"ta_temperature_K_{label}"] = arrays["ta_temperature_K"]
+        evidence_arrays[f"current_A_{label}"] = np.asarray(
+            resolutions[label]["current_A"]
+        )
+    np.savez_compressed(evidence_path, **evidence_arrays)
+    first_label = next(iter(resolutions))
+    native_q_power_raw = float(resolutions[first_label]["mapping"]["input_power_W"])
     expected_native_q_power_raw = float(forward["P_Q_native_W_raw"])
     native_q_json_error = abs(native_q_power_raw - expected_native_q_power_raw) / max(
         abs(expected_native_q_power_raw), np.finfo(float).tiny
@@ -481,9 +502,12 @@ def _evaluate_polarization(
     gates = {
         "ordinary_dispersive_exact_Au_forward": True,
         "native_Q_json_power_match_lt_1e_12": native_q_json_error < 1.0e-12,
-        "coarse_100nm_PDE_passed": bool(coarse["passed"]),
-        "fine_50nm_PDE_passed": bool(fine["passed"]),
-        "PDE_100nm_to_50nm_convergence_passed": bool(convergence["passed"]),
+        "all_executed_PDE_resolution_gates_passed": all(
+            row["passed"] for row in resolutions.values()
+        ),
+        "adaptive_adjacent_PDE_pair_converged_below_0p5pct": bool(
+            convergence["passed"]
+        ),
     }
     forward_evidence = {
         "forward_result": _artifact(forward_path),
@@ -495,15 +519,18 @@ def _evaluate_polarization(
     return {
         "passed": all(gates.values()),
         "polarization": polarization,
-        "current_A": fine["current_A"],
-        "current_nA": fine["current_nA"],
-        "reference_PDE_core_step_m": FINE_PDE_STEP_M,
-        "mapped_source_power_W_reporting": fine["mapped_source_power_W_reporting"],
-        "mapping": fine["mapping"],
-        "thermal": fine["thermal"],
-        "electrical": fine["electrical"],
-        "PDE_resolutions": {"100nm": coarse, "50nm": fine},
+        "current_A": selected["current_A"],
+        "current_nA": selected["current_nA"],
+        "reference_PDE_core_step_m": selected["core_step_m"],
+        "selected_PDE_resolution": selected_label,
+        "mapped_source_power_W_reporting": selected["mapped_source_power_W_reporting"],
+        "mapping": selected["mapping"],
+        "thermal": selected["thermal"],
+        "electrical": selected["electrical"],
+        "PDE_resolutions": resolutions,
+        "PDE_mesh_comparisons": comparisons,
         "PDE_mesh_convergence": convergence,
+        "final_PDE_comparison": final_comparison_label,
         "native_Q_json_power_relative_error": native_q_json_error,
         "gates": gates,
         "forward_mode": (
@@ -579,6 +606,9 @@ def main() -> int:
                 raw_override=args.eb_raw_npz,
             ),
         }
+        pde_forward_solve_count = sum(
+            len(row["PDE_resolutions"]) for row in rows.values()
+        )
         currents = {key: row["current_A"] for key, row in rows.items()}
         switching = opposite_current_switching_achieved(currents["Ea"], currents["Eb"])
         numerical_pass = all(row["passed"] for row in rows.values())
@@ -610,8 +640,14 @@ def main() -> int:
             "Maxwell_forward_mode": result["Maxwell_forward_mode"],
             "Lumerical_Maxwell_solves": result["Lumerical_Maxwell_solves"],
             "custom_CUDA_device": custom_cuda_device,
-            "custom_CUDA_thermal_solves": {"forward": 4, "adjoint": 0},
-            "custom_CUDA_electrical_solves": {"forward": 4, "adjoint": 0},
+            "custom_CUDA_thermal_solves": {
+                "forward": pde_forward_solve_count,
+                "adjoint": 0,
+            },
+            "custom_CUDA_electrical_solves": {
+                "forward": pde_forward_solve_count,
+                "adjoint": 0,
+            },
             "Lumerical_HEAT_or_CHARGE_solves": 0,
             "FDTDX_Maxwell_solves": 0,
             "wall_s": time.monotonic() - started,
