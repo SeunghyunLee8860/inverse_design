@@ -48,6 +48,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPOSITORY = Path(__file__).resolve().parents[3]
 MESH_LABEL = "fine_z2p5_bulk50_xy100_cv0_pml8_span20_z6_t1ps"
+FINAL_XY50_MESH_LABEL = "fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps"
 SOURCE_OBJECT_W0_UM = 3.9561433030461415
 SMOKE_MAXEVAL = 2
 CURRENT_SCALE_A = 1.0e-9
@@ -172,10 +173,14 @@ class OptimizerRuntime:
     threads: int
     accelerator_policy: str = "development"
     beta: float = 4.0
+    final_xy50_source_calibration: dict[str, Path] | None = None
 
     @classmethod
     def from_environment(
-        cls, *, require_smoke_beta: bool = True
+        cls,
+        *,
+        require_smoke_beta: bool = True,
+        require_final_xy50_source_calibration: bool = False,
     ) -> "OptimizerRuntime":
         policy = os.environ.get(
             "AU_LUMERICAL_ACCELERATOR_POLICY", "development"
@@ -187,6 +192,16 @@ class OptimizerRuntime:
             raise RuntimeError(
                 "the first smoke run is restricted to the beta-4 AD-FD state"
             )
+        fine_source = None
+        if require_final_xy50_source_calibration:
+            fine_source = {
+                "Ea": _required_path(
+                    "AU_LUMERICAL_EA_FINAL_XY50_SOURCE_CALIBRATION"
+                ),
+                "Eb": _required_path(
+                    "AU_LUMERICAL_EB_FINAL_XY50_SOURCE_CALIBRATION"
+                ),
+            }
         return cls(
             output_root=_required_output_root(),
             source_calibration={
@@ -197,68 +212,157 @@ class OptimizerRuntime:
             threads=_threads(),
             accelerator_policy=policy,
             beta=beta,
+            final_xy50_source_calibration=fine_source,
         )
 
     def audit(self) -> dict[str, Any]:
-        source: dict[str, Any] = {}
+        groups: list[
+            tuple[str, dict[str, Path], str, float]
+        ] = [
+            ("optimizer_xy100", self.source_calibration, MESH_LABEL, 100.0e-9)
+        ]
+        if self.final_xy50_source_calibration is not None:
+            groups.append(
+                (
+                    "final_xy50",
+                    self.final_xy50_source_calibration,
+                    FINAL_XY50_MESH_LABEL,
+                    50.0e-9,
+                )
+            )
+        audited: dict[str, dict[str, Any]] = {}
         expected_uuid: str | None = None
         expected_solver: str | None = None
-        for polarization, path in self.source_calibration.items():
-            record = _load_json(path)
-            mesh = record.get("mesh_spec", {})
-            gpu_uuid = record.get("GPU_log_evidence", {}).get(
-                "requested_gpu_uuid"
-            )
-            gates = {
-                "source_only_case": record.get("case") == "source_only",
-                "polarization_matches": record.get("polarization")
-                == polarization,
-                "source_status_passed": str(record.get("status", "")).startswith(
-                    "PASSED_EXACT_AU_4UM_SOURCE_ONLY"
-                ),
-                "mesh_label_matches": mesh.get("label") == MESH_LABEL,
-                "stack_dz_is_2p5nm": bool(
-                    np.isclose(
-                        float(mesh.get("stack_dz_m", np.nan)),
-                        2.5e-9,
-                        rtol=0.0,
-                        atol=1.0e-18,
-                    )
-                ),
-                "bulk_dz_is_50nm": bool(
-                    np.isclose(
-                        float(mesh.get("bulk_dz_m", np.nan)),
-                        50.0e-9,
-                        rtol=0.0,
-                        atol=1.0e-18,
-                    )
-                ),
-                "CV0": mesh.get("conformal_mesh") == "conformal variant 0",
-                "accelerator_policy_matches": record.get("accelerator_policy")
-                == self.accelerator_policy,
-                "GPU_UUID_present": isinstance(gpu_uuid, str)
-                and bool(gpu_uuid),
-                "solver_version_present": isinstance(
-                    record.get("solver_version"), str
-                ),
-            }
-            if not all(gates.values()):
+        for group_name, paths, mesh_label, flake_dxy_m in groups:
+            if set(paths) != {"Ea", "Eb"}:
                 raise RuntimeError(
-                    f"{polarization} source calibration contract failed: {gates}"
+                    f"{group_name} source calibrations must contain exactly Ea/Eb"
                 )
-            if expected_uuid is None:
-                expected_uuid = str(gpu_uuid)
-                expected_solver = str(record["solver_version"])
-            elif gpu_uuid != expected_uuid or record["solver_version"] != expected_solver:
-                raise RuntimeError("Ea/Eb source GPU UUID or solver version differs")
-            source[polarization] = {
-                "artifact": artifact(path),
-                "status": record["status"],
-                "solver_version": record["solver_version"],
-                "requested_gpu_uuid": gpu_uuid,
-                "mesh_spec": mesh,
-                "gates": gates,
-            }
+            audited[group_name] = {}
+            for polarization, path in paths.items():
+                record = _load_json(path)
+                mesh = record.get("mesh_spec", {})
+                gpu_uuid = record.get("GPU_log_evidence", {}).get(
+                    "requested_gpu_uuid"
+                )
+                gates = {
+                    "source_only_case": record.get("case") == "source_only",
+                    "polarization_matches": record.get("polarization")
+                    == polarization,
+                    "source_status_passed": str(record.get("status", "")).startswith(
+                        "PASSED_EXACT_AU_4UM_SOURCE_ONLY"
+                    ),
+                    "all_source_gates_passed": record.get("all_gates_passed")
+                    is True,
+                    "mesh_label_matches": mesh.get("label") == mesh_label,
+                    "flake_dxy_matches": bool(
+                        np.isclose(
+                            float(mesh.get("flake_dxy_m", np.nan)),
+                            flake_dxy_m,
+                            rtol=0.0,
+                            atol=1.0e-18,
+                        )
+                    ),
+                    "outer_dxy_is_200nm": bool(
+                        np.isclose(
+                            float(mesh.get("outer_dxy_m", np.nan)),
+                            200.0e-9,
+                            rtol=0.0,
+                            atol=1.0e-18,
+                        )
+                    ),
+                    "stack_dz_is_2p5nm": bool(
+                        np.isclose(
+                            float(mesh.get("stack_dz_m", np.nan)),
+                            2.5e-9,
+                            rtol=0.0,
+                            atol=1.0e-18,
+                        )
+                    ),
+                    "bulk_dz_is_50nm": bool(
+                        np.isclose(
+                            float(mesh.get("bulk_dz_m", np.nan)),
+                            50.0e-9,
+                            rtol=0.0,
+                            atol=1.0e-18,
+                        )
+                    ),
+                    "mesh_accuracy_is_3": mesh.get("mesh_accuracy") == 3,
+                    "PML_is_8_layers": mesh.get("pml_layers") == 8,
+                    "lateral_span_is_20um": bool(
+                        np.isclose(
+                            float(mesh.get("lateral_span_m", np.nan)),
+                            20.0e-6,
+                            rtol=0.0,
+                            atol=1.0e-15,
+                        )
+                    ),
+                    "z_span_is_minus3_to_plus3um": bool(
+                        np.isclose(
+                            float(mesh.get("z_min_m", np.nan)),
+                            -3.0e-6,
+                            rtol=0.0,
+                            atol=1.0e-15,
+                        )
+                        and np.isclose(
+                            float(mesh.get("z_max_m", np.nan)),
+                            3.0e-6,
+                            rtol=0.0,
+                            atol=1.0e-15,
+                        )
+                    ),
+                    "simulation_time_is_1ps": bool(
+                        np.isclose(
+                            float(mesh.get("simulation_time_s", np.nan)),
+                            1.0e-12,
+                            rtol=0.0,
+                            atol=1.0e-21,
+                        )
+                    ),
+                    "auto_shutoff_min_is_1e_minus7": bool(
+                        np.isclose(
+                            float(mesh.get("auto_shutoff_min", np.nan)),
+                            1.0e-7,
+                            rtol=0.0,
+                            atol=1.0e-16,
+                        )
+                    ),
+                    "CV0": mesh.get("conformal_mesh") == "conformal variant 0",
+                    "accelerator_policy_matches": record.get("accelerator_policy")
+                    == self.accelerator_policy,
+                    "B200_promotion_state_matches": bool(
+                        record.get("B200_promotion_certified")
+                    )
+                    == (self.accelerator_policy == "b200"),
+                    "GPU_UUID_present": isinstance(gpu_uuid, str)
+                    and bool(gpu_uuid),
+                    "solver_version_present": isinstance(
+                        record.get("solver_version"), str
+                    ),
+                }
+                if not all(gates.values()):
+                    raise RuntimeError(
+                        f"{group_name}/{polarization} source calibration "
+                        f"contract failed: {gates}"
+                    )
+                if expected_uuid is None:
+                    expected_uuid = str(gpu_uuid)
+                    expected_solver = str(record["solver_version"])
+                elif (
+                    gpu_uuid != expected_uuid
+                    or record["solver_version"] != expected_solver
+                ):
+                    raise RuntimeError(
+                        "100/50-nm Ea/Eb source GPU UUID or solver version differs"
+                    )
+                audited[group_name][polarization] = {
+                    "artifact": artifact(path),
+                    "status": record["status"],
+                    "solver_version": record["solver_version"],
+                    "requested_gpu_uuid": gpu_uuid,
+                    "mesh_spec": mesh,
+                    "gates": gates,
+                }
         return {
             "output_root": str(self.output_root),
             "GPU_physical_index": self.gpu_index,
@@ -266,7 +370,11 @@ class OptimizerRuntime:
             "threads": self.threads,
             "beta": self.beta,
             "mesh_label": MESH_LABEL,
-            "source_calibrations": source,
+            "source_calibrations": audited["optimizer_xy100"],
+            "final_xy50_source_calibrations": audited.get("final_xy50"),
+            "final_xy50_source_calibrations_required": (
+                self.final_xy50_source_calibration is not None
+            ),
             "Maxwell_solver": "Lumerical FDTD 2026 R1.2 build 4522",
             "thermal_electrical_solver": "repository custom CUDA PDE",
             "Lumerical_HEAT_or_CHARGE_used": False,

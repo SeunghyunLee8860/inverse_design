@@ -449,7 +449,10 @@ def continuation_contract() -> dict[str, Any]:
             "I_Ea > 0 and I_Eb < 0",
             "continuous grayness <= final cap",
             "thresholded cell mask exact 250 nm solid/void audit",
-            "fresh ordinary-dispersive exact-binary Au Maxwell/CUDA-PDE evaluation",
+            "fresh ordinary-dispersive exact-binary Au Maxwell forwards for Ea/Eb",
+            "Ea and Eb 100-to-50-nm optical lateral comparisons below 0.5%",
+            "50-nm optical raw Q through adaptive custom-CUDA PDE convergence",
+            "fine-reference exact-binary I_Ea > 0 and I_Eb < 0",
         ],
         "posthoc_morphology_repair": False,
     }

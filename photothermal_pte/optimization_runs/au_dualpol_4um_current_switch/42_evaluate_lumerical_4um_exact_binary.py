@@ -551,8 +551,13 @@ def main() -> int:
     output.mkdir(parents=True, exist_ok=True)
     result_path = output / "exact_binary_dualpol_result.json"
     result: dict[str, Any] = {
-        "status": "FAILED_LUMERICAL_4UM_EXACT_BINARY_DUALPOL_EVALUATION",
+        "status": (
+            "FAILED_LUMERICAL_4UM_EXACT_BINARY_SINGLE_MAXWELL_MESH_"
+            "ADAPTIVE_PDE_GATE"
+        ),
         "passed": False,
+        "final_lateral_certificate_claimed": False,
+        "requires_script_43_100_to_50nm_optical_comparison": True,
         "Lumerical_HEAT_or_CHARGE_solves": 0,
         "FDTDX_Maxwell_solves": 0,
     }
@@ -616,10 +621,18 @@ def main() -> int:
             numerical_pass, currents["Ea"], currents["Eb"]
         )
         result = {
-            "status": "PASSED_LUMERICAL_4UM_EXACT_BINARY_DUALPOL_EVALUATION"
-            if promotion_pass
-            else "FAILED_LUMERICAL_4UM_EXACT_BINARY_DUALPOL_EVALUATION",
+            "status": (
+                "PASSED_LUMERICAL_4UM_EXACT_BINARY_SINGLE_MAXWELL_MESH_"
+                "ADAPTIVE_PDE_GATE"
+                if promotion_pass
+                else (
+                    "FAILED_LUMERICAL_4UM_EXACT_BINARY_SINGLE_MAXWELL_MESH_"
+                    "ADAPTIVE_PDE_GATE"
+                )
+            ),
             "passed": promotion_pass,
+            "final_lateral_certificate_claimed": False,
+            "requires_script_43_100_to_50nm_optical_comparison": True,
             "numerical_gates_passed": numerical_pass,
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "material_geometry": (

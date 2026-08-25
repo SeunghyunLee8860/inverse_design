@@ -63,6 +63,16 @@ def test_continuation_evaluation_budget_is_explicit() -> None:
     assert MAXIMUM_CONTINUATION_EVALUATIONS == 188
 
 
+def test_continuation_contract_requires_optical_lateral_and_pde_convergence() -> None:
+    from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_continuation import (
+        continuation_contract,
+    )
+
+    required = continuation_contract()["final_promotion_requires"]
+    assert any("100-to-50-nm optical lateral" in item for item in required)
+    assert any("adaptive custom-CUDA PDE convergence" in item for item in required)
+
+
 def test_linearized_maximin_warm_start_improves_worst_utility_plane() -> None:
     latent = np.full(CONTRACT.design_node_shape, 0.5)
     gradient_a = np.zeros_like(latent)

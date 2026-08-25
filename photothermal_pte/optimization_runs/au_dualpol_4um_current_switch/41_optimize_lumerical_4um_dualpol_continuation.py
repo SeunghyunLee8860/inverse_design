@@ -34,8 +34,6 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     ContinuationEpigraphProblem,
     active_design_constraint_names,
     continuation_contract,
-    design_constraint_point,
-    grayness_value_gradient,
     linearized_maximin_box_warm_start,
     stage_design_caps,
 )
@@ -90,6 +88,21 @@ def _write_json(path: Path, value: Any) -> None:
         json.dumps(value, indent=2, default=str) + "\n", encoding="utf-8"
     )
     temporary.replace(path)
+
+
+def _failure_output_root() -> Path | None:
+    """Return only an explicitly configured path outside the repository."""
+
+    for name in ("AU_LUMERICAL_OPT_OUTPUT_ROOT", "EIDL_RUN_DIR"):
+        raw = os.environ.get(name)
+        if not raw:
+            continue
+        candidate = Path(raw).expanduser().resolve()
+        try:
+            candidate.relative_to(REPOSITORY.resolve())
+        except ValueError:
+            return candidate
+    return None
 
 
 def _new_manifest(runtime: OptimizerRuntime) -> dict[str, Any]:
@@ -171,9 +184,13 @@ def _run_exact_binary_evaluation(
     binary_path: Path,
     output: Path,
 ) -> dict[str, Any]:
+    if runtime.final_xy50_source_calibration is None:
+        raise RuntimeError(
+            "final 50-nm Ea/Eb source calibrations are required for promotion"
+        )
     command = [
         sys.executable,
-        str(HERE / "42_evaluate_lumerical_4um_exact_binary.py"),
+        str(HERE / "43_certify_lumerical_4um_exact_binary_lateral.py"),
         "--binary-mask-npz",
         str(binary_path),
         "--output-dir",
@@ -184,20 +201,28 @@ def _run_exact_binary_evaluation(
         runtime.accelerator_policy,
         "--threads",
         str(runtime.threads),
-        "--ea-source-calibration",
+        "--ea-coarse-source-calibration",
         str(runtime.source_calibration["Ea"]),
-        "--eb-source-calibration",
+        "--eb-coarse-source-calibration",
         str(runtime.source_calibration["Eb"]),
+        "--ea-fine-source-calibration",
+        str(runtime.final_xy50_source_calibration["Ea"]),
+        "--eb-fine-source-calibration",
+        str(runtime.final_xy50_source_calibration["Eb"]),
     ]
     completed = subprocess.run(command, cwd=REPOSITORY, check=False)
-    result_path = output / "exact_binary_dualpol_result.json"
-    if completed.returncode != 0 or not result_path.is_file():
+    result_path = output / "final_exact_binary_certificate.json"
+    if not result_path.is_file():
         raise RuntimeError(
-            f"exact-binary evaluator failed with exit {completed.returncode}"
+            "exact-binary 100/50-nm lateral/PDE certifier failed with exit "
+            f"{completed.returncode}"
         )
     result = json.loads(result_path.read_text(encoding="utf-8"))
-    if result.get("passed") is not True:
-        raise RuntimeError("exact-binary evaluator did not pass its numerical gates")
+    if completed.returncode != 0 and result.get("error"):
+        raise RuntimeError(
+            "exact-binary certifier execution failed: "
+            f"{result.get('error')}"
+        )
     return result
 
 
@@ -210,7 +235,10 @@ def main() -> int:
         "passed": False,
     }
     try:
-        base_runtime = OptimizerRuntime.from_environment(require_smoke_beta=False)
+        base_runtime = OptimizerRuntime.from_environment(
+            require_smoke_beta=False,
+            require_final_xy50_source_calibration=True,
+        )
         output = base_runtime.output_root
         manifest_path = output / "production_manifest.json"
         checkpoint_path = output / "continuation_checkpoint.npz"
@@ -463,40 +491,64 @@ def main() -> int:
                 and binary_audit["void_pass"]
             )
             if final_beta and continuous_binary_gate and switching:
-                binary_path = output / "final_exact_binary_cell_mask.npz"
-                np.savez_compressed(binary_path, binary_mask=binary_mask)
+                attempt_binary_path = (
+                    attempt_dir / "exact_binary_candidate_cell_mask.npz"
+                )
+                np.savez_compressed(
+                    attempt_binary_path, binary_mask=binary_mask
+                )
                 exact_result = _run_exact_binary_evaluation(
                     runtime=runtime,
-                    binary_path=binary_path,
-                    output=output / "final_exact_binary_evaluation",
+                    binary_path=attempt_binary_path,
+                    output=attempt_dir / "exact_binary_certificate",
                 )
                 exact_switching = bool(
-                    exact_result["currents_A"]["Ea"] > 0.0
+                    exact_result.get("passed") is True
+                    and exact_result["currents_A"]["Ea"] > 0.0
                     and exact_result["currents_A"]["Eb"] < 0.0
                 )
-                if not exact_switching:
-                    raise RuntimeError(
-                        "relaxed design switched but the exact-binary reevaluation did not"
-                    )
-                manifest["status"] = (
-                    "PASSED_LUMERICAL_4UM_DUALPOL_EXACT_BINARY_AU_OPTIMIZATION"
-                )
-                manifest["passed"] = True
-                manifest["final"] = {
-                    "beta": beta,
-                    "continuous_stage": stage_result,
-                    "binary_mask": artifact(binary_path),
-                    "exact_binary_evaluation": exact_result,
-                    "ordinary_dispersive_Au": True,
-                    "posthoc_morphology_repair": False,
+                stage_result["exact_binary_certificate_attempt"] = {
+                    "passed": bool(exact_result.get("passed")),
+                    "opposite_current_switching_achieved": exact_switching,
+                    "binary_mask": artifact(attempt_binary_path),
+                    "result": exact_result,
                 }
-                state["beta_index"] = len(BETA_SCHEDULE)
-                state["attempt"] = 0
-                state["latent"] = latent_final
-                _save_checkpoint(checkpoint_path, **state)
+                _write_json(attempt_dir / "stage_result.json", stage_result)
+                manifest["latest"]["exact_binary_certificate_passed"] = bool(
+                    exact_result.get("passed")
+                )
+                manifest["latest"]["exact_binary_switching_achieved"] = (
+                    exact_switching
+                )
                 _write_json(manifest_path, manifest)
-                print(json.dumps(manifest["final"], indent=2, default=str))
-                return 0
+                if exact_switching:
+                    binary_path = output / "final_exact_binary_cell_mask.npz"
+                    np.savez_compressed(binary_path, binary_mask=binary_mask)
+                    manifest["status"] = (
+                        "PASSED_LUMERICAL_4UM_DUALPOL_EXACT_BINARY_AU_"
+                        "LATERAL_PDE_NUMERICAL_CERTIFICATE"
+                    )
+                    manifest["passed"] = True
+                    manifest["final"] = {
+                        "beta": beta,
+                        "continuous_stage": stage_result,
+                        "binary_mask": artifact(binary_path),
+                        "exact_binary_evaluation": exact_result,
+                        "ordinary_dispersive_Au": True,
+                        "optical_xy100_to_xy50_converged_for_Ea_and_Eb": True,
+                        "adaptive_custom_PDE_converged_for_Ea_and_Eb": True,
+                        "B200_promotion_certified": bool(
+                            exact_result.get("B200_promotion_certified")
+                        ),
+                        "posthoc_morphology_repair": False,
+                    }
+                    state["beta_index"] = len(BETA_SCHEDULE)
+                    state["attempt"] = 0
+                    state["latent"] = latent_final
+                    _save_checkpoint(checkpoint_path, **state)
+                    _write_json(manifest_path, manifest)
+                    print(json.dumps(manifest["final"], indent=2, default=str))
+                    return 0
 
             attempts_used = attempt + 1
             may_advance = bool(not final_beta and design_satisfied)
@@ -552,9 +604,10 @@ def main() -> int:
             updated_at_utc=datetime.now(timezone.utc).isoformat(),
         )
         if output is None:
-            output = Path(os.environ.get("EIDL_RUN_DIR", ".")).resolve()
-        output.mkdir(parents=True, exist_ok=True)
-        _write_json(output / "production_manifest.json", manifest)
+            output = _failure_output_root()
+        if output is not None:
+            output.mkdir(parents=True, exist_ok=True)
+            _write_json(output / "production_manifest.json", manifest)
         print(json.dumps(manifest, indent=2, default=str))
         return 1
 
