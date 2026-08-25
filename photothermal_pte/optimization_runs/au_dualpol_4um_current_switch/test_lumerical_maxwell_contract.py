@@ -120,6 +120,11 @@ def test_development_accelerator_policy_never_issues_b200_promotion(
     )
     monkeypatch.setattr(
         maxwell_contract,
+        "_installation_audit",
+        lambda: {"passed": True},
+    )
+    monkeypatch.setattr(
+        maxwell_contract,
         "_fdtd_solve_license_audit",
         lambda: {"passed": True, "tasks_available": 9},
     )
