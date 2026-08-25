@@ -33,12 +33,12 @@ diagnostic/candidate-generation task.
      references only
    - `LUMERICAL_MAXWELL_GPU_PDE_ROUTE.md`
    - `CODE_HANDOFF.md`
-3. Pin FDTDX to `/home/seunghyun/.local/fdtdx_main_src`, currently commit
+3. Pin FDTDX to `/home/seunghyun200/dependencies/fdtdx-f26f84b70a8cceec9b889553955a868624736bf1`, currently commit
    `f26f84b70a8cceec9b889553955a868624736bf1`.  Fail if a different import is
    resolved unless the change is explicitly audited and recorded.
 4. Put raw arrays, checkpoints, logs, images, and iteration results outside
    Git, under a new directory such as
-   `/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_fdtdx_parity/`.
+   `/home/seunghyun200/tairte4_raw_artifacts/au_dualpol_4um_fdtdx_parity/`.
    Commit only code, tests, small handoff/audit documents, and small manifests
    that do not contain machine-specific raw paths as authority.
 
@@ -445,6 +445,39 @@ an old 80x80 FDTDX checkpoint into the new 81x81 path.
     cell-average rule.  Keep FDTDX binary results as candidate ranking only.
 12. When Lumerical licenses return, reevaluate the candidates with ordinary
     sampled-data dispersive Au on CV0 `2.5/50 nm`, then on a finer final mesh.
+
+## Current implementation status (2026-08-25)
+
+Steps 1 and 2 now have a solver-free, fail-closed implementation in
+`fdtdx_parity_contract.py`, with non-editable-install provenance checking in
+`fdtdx_runtime_provenance.py` and seven focused regression tests.  The audited
+rectilinear grid is exactly `186 x 186 x 286 = 9,894,456` cells.  Its complete
+x/y/z edge hash is
+`15e2ce87ec5485de2712718b0f12a289e64233a69b98f4cae23b3cb5349e7805`.
+Source, incident-power, endpoint-field, and flake planes are exact z edges
+241, 236, 228, and 207, respectively.
+
+On the current host, the runtime gate passes at FDTDX commit
+`f26f84b70a8cceec9b889553955a868624736bf1`.  The normal site-packages import
+is accepted only because `direct_url.json` points to the pinned clean source
+and the installed and source package trees have the identical SHA-256
+`c66b34671750258ff71478f9e9530f3abcb07a937591775236b1f7bdea739d58`.
+The full solver-free suite is `140 passed`.
+
+The requested 2.5-nm z cells dominate CFL: `dt=2.0834738305187266 as`,
+`6,403.9988` steps per 4-um period, and `256,160` steps for 40 periods.
+That is `2,534,563,848,960` cell-steps per forward solve.  For one
+axis-aligned ADE pole, pinned FDTDX allocations give only a persistent-array
+lower bound of `0.918 GiB` and a one-dynamic-checkpoint lower bound of
+`0.476 GiB`; these explicitly exclude XLA temporaries, cotangents, checkpoint
+scheduling, detectors, and CUDA workspace.  Therefore no wall-time or GPU
+peak-memory feasibility claim is made yet.  After selecting the ADE carrier,
+a dry allocation and short timed microbenchmark on a verified-idle permitted
+GPU are mandatory before any 40-period field solve.
+
+No Maxwell field, CUDA PDE, GPU, optimizer, Lumerical, HEAT, or CHARGE run is
+claimed by this status.  `optimizer_enabled` remains false.  The next gate is
+the nonlinear n-k-to-discrete-ADE carrier and its 101-density/JVP certificate.
 
 ## What completion means
 
