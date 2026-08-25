@@ -1142,3 +1142,34 @@ inputs and do not refine the prototype mesh as if it were the target device.
 After the actual geometry and independently validated Maxwell Q are available,
 repeat thermal/electrical mesh and interface convergence, then complete the
 coupled AD-FD and exact-binary promotion gates.
+
+
+## Validated physical-device blocker
+
+Commit `5d8cf7f1` adds a CPU-only audit separating internal current-sign
+correctness from target-device validity. The certificate is
+`/home/seunghyun200/fdtdx_results/fdtdx_physical_device_blocker_audit_5d8cf7f1/FDTDX_PHYSICAL_DEVICE_BLOCKER_AUDIT.json`,
+SHA-256 `2a3ba7ce4428cb2a5b6db2a470d55f26510ca7530b95a1931b03d856fcec8890`.
+It used no GPU, Maxwell, thermal solve, or Lumerical operation. Full regression
+is `467 passed, 7 subtests passed`.
+
+The rectangular full-edge Shockley--Ramo algebra passes: analytic weighting
+ramp error is `1.4352e-11`, terminal swap flips current, and the current map
+integrates to the scalar objective. This validates the prototype sign only.
+The target-device current sign is still blocked because all ten physical
+confirmations are false.
+
+Active limitations are actual electrode polygons, arbitrary crystal rotation
+and off-diagonal tensors, 3-D weighting, optical electrode/pad geometry,
+patterned-Au electrical role/contact, and actual-geometry electrical mesh
+convergence. The patterned Au acts as an electrical shunt but has no local
+thermoelectric source, so the current code also assumes `S_Au=0`. The current
+papers root contains the AFM main paper but not its cited SI; an older Device-A
+contract points to unavailable paths and is not target-device authority.
+
+Read `FDTDX_PHYSICAL_DEVICE_BLOCKER_AUDIT.md`. The next action is to freeze the
+flake CAD/thickness, a-axis angle, electrode/pad polygons and signed terminal,
+patterned-Au electrical role, SiO2/Si stack, beam definition, and Au-TaIrTe4
+thermal/electrical contact ranges. If the intended target is the idealized
+rectangle, that choice must be explicitly confirmed. Do not select a
+thermal/electrical production mesh before this contract is defined.
