@@ -522,3 +522,91 @@ def test_exact_binary_evaluator_hash_binds_forward_raw_artifact(tmp_path) -> Non
     raw.write_bytes(b"modified")
     with pytest.raises(RuntimeError, match="SHA256 changed"):
         _EXACT_EVALUATOR._matching_artifact(result, "_raw.npz")
+
+
+def test_exact_binary_evaluator_accepts_only_hash_identical_relocated_raw(
+    tmp_path,
+) -> None:
+    original = tmp_path / "original_raw.npz"
+    relocated = tmp_path / "relocated_raw.npz"
+    original.write_bytes(b"immutable payload")
+    result = {"raw_artifacts": [_EXACT_EVALUATOR._artifact(original)]}
+    relocated.write_bytes(original.read_bytes())
+    original.unlink()
+    assert (
+        _EXACT_EVALUATOR._matching_artifact(result, "_raw.npz", override_path=relocated)
+        == relocated.resolve()
+    )
+    relocated.write_bytes(b"tampered payload")
+    with pytest.raises(RuntimeError, match="size changed|SHA256 changed"):
+        _EXACT_EVALUATOR._matching_artifact(result, "_raw.npz", override_path=relocated)
+
+
+def _exact_evaluator_args() -> SimpleNamespace:
+    return SimpleNamespace(
+        accelerator_policy="development",
+        mesh_label="fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps",
+        flake_dxy_nm=50.0,
+        stack_dz_nm=2.5,
+        bulk_dz_nm=50.0,
+        outer_dxy_nm=200.0,
+    )
+
+
+def test_reused_forward_is_bound_to_mesh_policy_polarization_and_mask() -> None:
+    args = _exact_evaluator_args()
+    mask = np.zeros(CONTRACT.design_shape, dtype=np.uint8)
+    forward = {
+        "all_gates_passed": True,
+        "case": "exact_binary",
+        "polarization": "Ea",
+        "mesh_spec": _EXACT_EVALUATOR._requested_mesh_spec(args),
+        "accelerator_policy": "development",
+        "Q_processing": {
+            "clipping": False,
+            "smoothing": False,
+            "gain": False,
+            "field_or_Q_rescaling": False,
+        },
+        "layout": {
+            "geometry": {
+                "exact_au_geometry": {
+                    "mask_payload_sha256": _EXACT_EVALUATOR.binary_mask_sha256(mask)
+                }
+            }
+        },
+    }
+    gates = _EXACT_EVALUATOR._validate_forward_record(
+        forward=forward,
+        polarization="Ea",
+        mask=mask,
+        args=args,
+    )
+    assert all(gates.values())
+
+    changed = mask.copy()
+    changed[0, 0] = 1
+    with pytest.raises(RuntimeError, match="provenance gates failed"):
+        _EXACT_EVALUATOR._validate_forward_record(
+            forward=forward,
+            polarization="Ea",
+            mask=changed,
+            args=args,
+        )
+
+
+def test_reused_dualpol_forward_arguments_are_all_or_none() -> None:
+    args = SimpleNamespace(
+        ea_forward_result=None,
+        ea_raw_npz=None,
+        eb_forward_result=None,
+        eb_raw_npz=None,
+    )
+    assert _EXACT_EVALUATOR._reuse_forward_requested(args) is False
+    args.ea_forward_result = Path("ea.json")
+    with pytest.raises(ValueError, match="requires Ea/Eb"):
+        _EXACT_EVALUATOR._reuse_forward_requested(args)
+    args.ea_raw_npz = Path("ea_raw.npz")
+    args.eb_forward_result = Path("eb.json")
+    args.eb_raw_npz = Path("eb_raw.npz")
+    assert _EXACT_EVALUATOR._reuse_forward_requested(args) is True

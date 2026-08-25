@@ -27,6 +27,12 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     component_coordinates_from_raw,
     component_q_from_raw,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_mesh_contract import (
+    LumericalMeshSpec,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_maxwell_contract import (
+    binary_mask_sha256,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import (
     evaluate_fixed_source,
     refine_exact_binary_density,
@@ -59,8 +65,12 @@ def _parse_args() -> argparse.Namespace:
         "--accelerator-policy", choices=("development", "b200"), required=True
     )
     parser.add_argument("--threads", type=int, default=8)
-    parser.add_argument("--ea-source-calibration", required=True, type=Path)
-    parser.add_argument("--eb-source-calibration", required=True, type=Path)
+    parser.add_argument("--ea-source-calibration", type=Path)
+    parser.add_argument("--eb-source-calibration", type=Path)
+    parser.add_argument("--ea-forward-result", type=Path)
+    parser.add_argument("--ea-raw-npz", type=Path)
+    parser.add_argument("--eb-forward-result", type=Path)
+    parser.add_argument("--eb-raw-npz", type=Path)
     parser.add_argument("--mesh-label", default=MESH_LABEL)
     parser.add_argument("--flake-dxy-nm", type=float, default=100.0)
     parser.add_argument("--stack-dz-nm", type=float, default=2.5)
@@ -94,7 +104,9 @@ def _write_json(path: Path, value: Any) -> None:
     temporary.replace(path)
 
 
-def _matching_artifact(result: dict[str, Any], suffix: str) -> Path:
+def _matching_artifact(
+    result: dict[str, Any], suffix: str, *, override_path: Path | None = None
+) -> Path:
     matches = [
         row
         for row in result.get("raw_artifacts", [])
@@ -103,7 +115,7 @@ def _matching_artifact(result: dict[str, Any], suffix: str) -> Path:
     if len(matches) != 1:
         raise RuntimeError(f"expected one exact-forward {suffix} artifact")
     record = matches[0]
-    path = Path(record["path"]).resolve()
+    path = Path(override_path or record["path"]).expanduser().resolve()
     if not path.is_file():
         raise RuntimeError(f"missing exact-forward {suffix} artifact")
     if int(record.get("size_bytes", -1)) != path.stat().st_size:
@@ -111,6 +123,77 @@ def _matching_artifact(result: dict[str, Any], suffix: str) -> Path:
     if str(record.get("sha256", "")) != _sha256(path):
         raise RuntimeError(f"exact-forward {suffix} SHA256 changed")
     return path
+
+
+def _requested_mesh_spec(args: argparse.Namespace) -> dict[str, Any]:
+    return LumericalMeshSpec(
+        label=args.mesh_label,
+        flake_dxy_m=args.flake_dxy_nm * 1.0e-9,
+        stack_dz_m=args.stack_dz_nm * 1.0e-9,
+        bulk_dz_m=args.bulk_dz_nm * 1.0e-9,
+        outer_dxy_m=args.outer_dxy_nm * 1.0e-9,
+        mesh_accuracy=3,
+        pml_layers=8,
+        lateral_span_m=20.0e-6,
+        z_min_m=-3.0e-6,
+        z_max_m=3.0e-6,
+        simulation_time_s=1.0e-12,
+        auto_shutoff_min=1.0e-7,
+        conformal_mesh="conformal variant 0",
+    ).audit()
+
+
+def _validate_forward_record(
+    *,
+    forward: dict[str, Any],
+    polarization: str,
+    mask: np.ndarray,
+    args: argparse.Namespace,
+) -> dict[str, bool]:
+    geometry = (
+        forward.get("layout", {}).get("geometry", {}).get("exact_au_geometry", {})
+    )
+    processing = forward.get("Q_processing", {})
+    gates = {
+        "all_original_forward_gates_passed": forward.get("all_gates_passed") is True,
+        "exact_binary_case_matches": forward.get("case") == "exact_binary",
+        "polarization_matches": forward.get("polarization") == polarization,
+        "mesh_spec_matches": forward.get("mesh_spec") == _requested_mesh_spec(args),
+        "accelerator_policy_matches": forward.get("accelerator_policy")
+        == args.accelerator_policy,
+        "binary_mask_payload_sha256_matches": geometry.get("mask_payload_sha256")
+        == binary_mask_sha256(mask),
+        "raw_Q_processing_is_unmodified": all(
+            processing.get(name) is False
+            for name in (
+                "clipping",
+                "smoothing",
+                "gain",
+                "field_or_Q_rescaling",
+            )
+        ),
+    }
+    if not all(gates.values()):
+        raise RuntimeError(
+            f"{polarization} exact-forward provenance gates failed: {gates}"
+        )
+    return gates
+
+
+def _reuse_forward_requested(args: argparse.Namespace) -> bool:
+    values = (
+        args.ea_forward_result,
+        args.ea_raw_npz,
+        args.eb_forward_result,
+        args.eb_raw_npz,
+    )
+    if any(value is not None for value in values) and not all(
+        value is not None for value in values
+    ):
+        raise ValueError(
+            "reused mode requires Ea/Eb forward-result and raw-NPZ arguments"
+        )
+    return all(value is not None for value in values)
 
 
 def _pde_resolution(
@@ -241,42 +324,66 @@ def _evaluate_polarization(
     *,
     args: argparse.Namespace,
     polarization: str,
-    source_calibration: Path,
+    source_calibration: Path | None,
     mask: np.ndarray,
     output: Path,
+    forward_result: Path | None = None,
+    raw_override: Path | None = None,
 ) -> dict[str, Any]:
     output.mkdir(parents=True)
-    command = _forward_command(
-        args=args,
+    reuse_forward = forward_result is not None or raw_override is not None
+    if reuse_forward and (forward_result is None or raw_override is None):
+        raise ValueError(
+            f"{polarization} reuse requires both forward result and raw NPZ"
+        )
+    log_path: Path | None = None
+    if reuse_forward:
+        forward_path = Path(forward_result).expanduser().resolve()
+        if not forward_path.is_file():
+            raise RuntimeError(f"missing {polarization} reused forward JSON")
+        forward = json.loads(forward_path.read_text(encoding="utf-8"))
+    else:
+        if source_calibration is None:
+            raise ValueError(
+                f"{polarization} source calibration is required for a fresh forward"
+            )
+        command = _forward_command(
+            args=args,
+            polarization=polarization,
+            source_calibration=source_calibration,
+            output=output,
+        )
+        log_path = output.parent / f"exact_forward_{polarization}.log"
+        with log_path.open("w", encoding="utf-8", errors="replace") as stream:
+            completed = subprocess.run(
+                command,
+                cwd=REPOSITORY,
+                stdout=stream,
+                stderr=subprocess.STDOUT,
+                check=False,
+            )
+        if completed.returncode != 0:
+            tail = "\n".join(log_path.read_text(errors="replace").splitlines()[-80:])
+            raise RuntimeError(
+                f"{polarization} exact forward failed with exit "
+                f"{completed.returncode}\n{tail}"
+            )
+        json_paths = sorted(output.glob("*.json"))
+        if len(json_paths) != 1:
+            raise RuntimeError(f"expected one {polarization} exact-forward JSON")
+        forward_path = json_paths[0].resolve()
+        forward = json.loads(forward_path.read_text(encoding="utf-8"))
+    forward_validation = _validate_forward_record(
+        forward=forward,
         polarization=polarization,
-        source_calibration=source_calibration,
-        output=output,
+        mask=mask,
+        args=args,
     )
-    log_path = output.parent / f"exact_forward_{polarization}.log"
-    with log_path.open("w", encoding="utf-8", errors="replace") as stream:
-        completed = subprocess.run(
-            command,
-            cwd=REPOSITORY,
-            stdout=stream,
-            stderr=subprocess.STDOUT,
-            check=False,
-        )
-    if completed.returncode != 0:
-        tail = "\n".join(log_path.read_text(errors="replace").splitlines()[-80:])
-        raise RuntimeError(
-            f"{polarization} exact forward failed with exit {completed.returncode}\n{tail}"
-        )
-    json_paths = sorted(output.glob("*.json"))
-    if len(json_paths) != 1:
-        raise RuntimeError(f"expected one {polarization} exact-forward JSON")
-    forward = json.loads(json_paths[0].read_text(encoding="utf-8"))
-    if (
-        forward.get("all_gates_passed") is not True
-        or forward.get("case") != "exact_binary"
-        or forward.get("polarization") != polarization
-    ):
-        raise RuntimeError(f"{polarization} exact-forward gates failed")
-    raw_path = _matching_artifact(forward, "_raw.npz")
+    raw_path = _matching_artifact(
+        forward,
+        "_raw.npz",
+        override_path=raw_override,
+    )
     reporting_scale = float(
         forward["reporting_normalization"]["scalar_reporting_factor"]
     )
@@ -329,6 +436,13 @@ def _evaluate_polarization(
         "fine_50nm_PDE_passed": bool(fine["passed"]),
         "PDE_100nm_to_50nm_convergence_passed": bool(convergence["passed"]),
     }
+    forward_evidence = {
+        "forward_result": _artifact(forward_path),
+        "forward_raw": _artifact(raw_path),
+        "PDE_mesh_convergence_evidence": _artifact(evidence_path),
+    }
+    if log_path is not None:
+        forward_evidence["forward_log"] = _artifact(log_path)
     return {
         "passed": all(gates.values()),
         "polarization": polarization,
@@ -343,10 +457,13 @@ def _evaluate_polarization(
         "PDE_mesh_convergence": convergence,
         "native_Q_json_power_relative_error": native_q_json_error,
         "gates": gates,
-        "forward_result": _artifact(json_paths[0]),
-        "forward_raw": _artifact(raw_path),
-        "forward_log": _artifact(log_path),
-        "PDE_mesh_convergence_evidence": _artifact(evidence_path),
+        "forward_mode": (
+            "reused_hash_bound_artifacts_without_Maxwell"
+            if reuse_forward
+            else "fresh_Lumerical_Maxwell"
+        ),
+        "forward_validation": forward_validation,
+        **forward_evidence,
     }
 
 
@@ -365,6 +482,20 @@ def main() -> int:
     }
     started = time.monotonic()
     try:
+        reuse_forward = _reuse_forward_requested(args)
+        if not reuse_forward and (
+            args.ea_source_calibration is None or args.eb_source_calibration is None
+        ):
+            raise ValueError("fresh mode requires both Ea and Eb source calibrations")
+        result["Maxwell_forward_mode"] = (
+            "reused_hash_bound_artifacts_without_Maxwell"
+            if reuse_forward
+            else "fresh_Lumerical_Maxwell"
+        )
+        result["Lumerical_Maxwell_solves"] = {
+            "forward": 0 if reuse_forward else 2,
+            "adjoint": 0,
+        }
         with np.load(args.binary_mask_npz, allow_pickle=False) as data:
             mask = np.asarray(data[args.binary_mask_key])
         if mask.shape != CONTRACT.design_shape or not np.all((mask == 0) | (mask == 1)):
@@ -384,6 +515,8 @@ def main() -> int:
                 source_calibration=args.ea_source_calibration,
                 mask=mask,
                 output=output / "forward_Ea",
+                forward_result=args.ea_forward_result,
+                raw_override=args.ea_raw_npz,
             ),
             "Eb": _evaluate_polarization(
                 args=args,
@@ -391,6 +524,8 @@ def main() -> int:
                 source_calibration=args.eb_source_calibration,
                 mask=mask,
                 output=output / "forward_Eb",
+                forward_result=args.eb_forward_result,
+                raw_override=args.eb_raw_npz,
             ),
         }
         currents = {key: row["current_A"] for key, row in rows.items()}
@@ -421,7 +556,8 @@ def main() -> int:
             "opposite_current_switching_achieved": switching,
             "polarizations": rows,
             "Maxwell_solver": "Lumerical FDTD 2026 R1.2 build 4522",
-            "Lumerical_Maxwell_solves": {"forward": 2, "adjoint": 0},
+            "Maxwell_forward_mode": result["Maxwell_forward_mode"],
+            "Lumerical_Maxwell_solves": result["Lumerical_Maxwell_solves"],
             "custom_CUDA_thermal_solves": {"forward": 4, "adjoint": 0},
             "custom_CUDA_electrical_solves": {"forward": 4, "adjoint": 0},
             "Lumerical_HEAT_or_CHARGE_solves": 0,
