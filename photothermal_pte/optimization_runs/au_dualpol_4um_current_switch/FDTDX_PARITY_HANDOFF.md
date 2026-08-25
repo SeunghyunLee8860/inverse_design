@@ -749,9 +749,12 @@ not a production certificate.  Read `FDTDX_REVERSIBLE_ADJOINT_REPORT.md`,
 keeps runtime near 22.16/22.18 projected minutes per polarization, but centered
 AD-FD is 0.004101 for Ea and 0.006556 for Eb.  Eb fails the frozen 0.005 gate,
 so slice 1,024 is blocked despite feasible memory.  Read
-`FDTDX_REVERSIBLE_LONG_SLICE_REPORT.md`.  Next run the same bounded 16,384-step
-Ea/Eb diagnostic with slice 512 to isolate inverse-reconstruction error; slice
-512 is not a full-horizon memory candidate.
+`FDTDX_REVERSIBLE_LONG_SLICE_REPORT.md`.  Repeating the same horizon with
+slice 512 makes the errors worse at 0.004593/0.007359 and raises peak memory to
+21.37 GB, so shorter resets alone do not solve the bias.  Read
+`FDTDX_REVERSIBLE_ACCUMULATION_REPORT.md`.  The latent depends only on Au-region
+`c3`; next implement and direct-test a design-only compensated regional-c3
+cotangent instead of accumulating every full-grid material cotangent.
 
 ## What completion means
 
@@ -783,11 +786,13 @@ reevaluation.
 > regional `c3` gradient; read `FDTDX_REVERSIBLE_SLICE_REPORT.md` and
 > `FDTDX_REVERSIBLE_SPARSE_SLICE_REPORT.md`.  The parallel 4,096-step Ea/Eb
 > exact-grid latent AD-FD gate passes; read `FDTDX_REVERSIBLE_RUNTIME_REPORT.md`.
-> The 16,384-step slice-1,024 gate has now failed Eb AD-FD at 0.006556
-> versus the frozen 0.005 limit; read `FDTDX_REVERSIBLE_LONG_SLICE_REPORT.md`.
-> Next run only the same bounded 16,384-step Ea/Eb diagnostic with slice 512 on
-> freshly verified-idle UUIDs to confirm reset-interval error.  Slice 512 is not
-> full-horizon memory-feasible; do not run a full gradient or optimizer.
+> The 16,384-step slice-1,024 gate fails Eb, and slice 512 makes both errors
+> worse; read `FDTDX_REVERSIBLE_LONG_SLICE_REPORT.md` and
+> `FDTDX_REVERSIBLE_ACCUMULATION_REPORT.md`.  Do not run more GPU slice searches.
+> Next implement a design-specialized VJP with only Au-region `c3` differentiable
+> and compensated regional cotangent accumulation, then prove it against direct
+> AD on small scenes before any exact-grid rerun.  Do not run a full gradient or
+> optimizer.
 > Continue only the fresh FDTDX GPU parity path for the 4-um Ea/Eb Au topology; do not run legacy scripts 10/12/13
 > and do not use optical rho^3 or c3-only linear scaling.  Preserve the canonical
 > 81x81 latent -> 500-nm finite conic filter -> tanh projection -> shared nodal
