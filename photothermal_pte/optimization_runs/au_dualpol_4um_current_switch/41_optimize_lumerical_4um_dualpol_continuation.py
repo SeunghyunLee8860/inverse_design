@@ -25,14 +25,18 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     BETA_SCHEDULE,
     DESIGN_CONSTRAINT_TOLERANCE,
     EPIGRAPH_CONSTRAINT_TOLERANCE,
+    INITIAL_MAXIMIN_WARM_STEP_FRACTION,
     MAXIMUM_STAGE_ATTEMPTS,
     MOVE_LIMIT,
+    STAGE_FTOL_REL,
     STAGE_MAXEVAL,
+    STAGE_XTOL_REL,
     ContinuationEpigraphProblem,
     active_design_constraint_names,
     continuation_contract,
     design_constraint_point,
     grayness_value_gradient,
+    linearized_maximin_box_warm_start,
     stage_design_caps,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
@@ -294,6 +298,52 @@ def main() -> int:
                 dfm_caps=np.asarray(state["dfm_caps"], dtype=np.float64),
                 grayness_cap=float(state["grayness_cap"]),
             )
+            epigraph_initial_nA = 1.0e9 * min(
+                float(initial_physics["currents_A"]["Ea"]),
+                -float(initial_physics["currents_A"]["Eb"]),
+            )
+            optimizer_latent = latent_initial
+            optimizer_maxeval = STAGE_MAXEVAL[beta]
+            warm_start_audit: dict[str, Any] | None = None
+            if (
+                beta_index == 0
+                and int(state["attempt"]) == 0
+                and np.array_equal(latent_initial, uniform_initial_latent_density())
+            ):
+                initial_point = problem.point(
+                    np.r_[latent_initial.ravel(), epigraph_initial_nA]
+                )
+                warm = linearized_maximin_box_warm_start(
+                    latent=latent_initial,
+                    current_a_A=float(initial_point["current_a_A"]),
+                    current_b_A=float(initial_point["current_b_A"]),
+                    gradient_a_latent_A=np.asarray(
+                        initial_point["gradient_a_latent_A"], dtype=np.float64
+                    ),
+                    gradient_b_latent_A=np.asarray(
+                        initial_point["gradient_b_latent_A"], dtype=np.float64
+                    ),
+                    maximum_change=(
+                        INITIAL_MAXIMIN_WARM_STEP_FRACTION * MOVE_LIMIT[beta]
+                    ),
+                )
+                optimizer_latent = np.asarray(warm["latent"], dtype=np.float64)
+                warm_physics = driver.evaluate(optimizer_latent)
+                epigraph_initial_nA = 1.0e9 * min(
+                    float(warm_physics["currents_A"]["Ea"]),
+                    -float(warm_physics["currents_A"]["Eb"]),
+                )
+                optimizer_maxeval = max(1, STAGE_MAXEVAL[beta] - 1)
+                warm_start_audit = {
+                    key: value
+                    for key, value in warm.items()
+                    if key not in {"latent", "delta"}
+                }
+                warm_start_audit["actual_currents_nA"] = {
+                    key: 1.0e9 * float(value)
+                    for key, value in warm_physics["currents_A"].items()
+                }
+                warm_start_audit["actual_balanced_utility_nA"] = epigraph_initial_nA
             variable_count = problem.variable_count
             optimizer = nlopt.opt(nlopt.LD_MMA, variable_count)
             lower_latent = np.maximum(0.0, latent_initial.ravel() - MOVE_LIMIT[beta])
@@ -315,14 +365,10 @@ def main() -> int:
                     0.1,
                 ]
             )
-            optimizer.set_ftol_rel(2.0e-3)
-            optimizer.set_xtol_rel(1.0e-4)
-            optimizer.set_maxeval(STAGE_MAXEVAL[beta])
-            epigraph_initial_nA = 1.0e9 * min(
-                float(initial_physics["currents_A"]["Ea"]),
-                -float(initial_physics["currents_A"]["Eb"]),
-            )
-            vector_initial = np.r_[latent_initial.ravel(), epigraph_initial_nA]
+            optimizer.set_ftol_rel(STAGE_FTOL_REL)
+            optimizer.set_xtol_rel(STAGE_XTOL_REL)
+            optimizer.set_maxeval(optimizer_maxeval)
+            vector_initial = np.r_[optimizer_latent.ravel(), epigraph_initial_nA]
             vector_final = optimizer.optimize(vector_initial)
             final_point = problem.point(vector_final)
             latent_final = vector_final[:-1].reshape(CONTRACT.design_node_shape)
@@ -344,6 +390,9 @@ def main() -> int:
                 ),
                 "NLopt_total_constraint_count": problem.total_constraint_count,
                 "requested_maxeval": STAGE_MAXEVAL[beta],
+                "optimizer_requested_maxeval": optimizer_maxeval,
+                "uniform_baseline_outside_optimizer": warm_start_audit is not None,
+                "initial_maximin_warm_start": warm_start_audit,
                 "reported_numevals": optimizer.get_numevals(),
                 "result_code": optimizer.last_optimize_result(),
                 "unique_physics_evaluations": len(driver.history),

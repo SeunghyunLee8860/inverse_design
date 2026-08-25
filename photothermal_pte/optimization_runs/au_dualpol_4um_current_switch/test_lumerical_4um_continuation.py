@@ -9,9 +9,12 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_continuation import (
     BETA_SCHEDULE,
+    STAGE_FTOL_REL,
+    STAGE_XTOL_REL,
     ContinuationEpigraphProblem,
     active_design_constraint_names,
     grayness_value_gradient,
+    linearized_maximin_box_warm_start,
     stage_design_caps,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
@@ -46,6 +49,36 @@ def test_production_start_is_exact_uniform_rho_half() -> None:
     latent = uniform_initial_latent_density()
     assert latent.shape == CONTRACT.design_node_shape
     assert np.array_equal(latent, np.full(CONTRACT.design_node_shape, 0.5))
+
+
+def test_production_stages_do_not_stop_on_tiny_balancing_step() -> None:
+    assert STAGE_FTOL_REL == 0.0
+    assert STAGE_XTOL_REL == 0.0
+
+
+def test_linearized_maximin_warm_start_improves_worst_utility_plane() -> None:
+    latent = np.full(CONTRACT.design_node_shape, 0.5)
+    gradient_a = np.zeros_like(latent)
+    gradient_b = np.zeros_like(latent)
+    gradient_a[0, 0] = 2.0
+    gradient_a[0, 1] = -1.0
+    gradient_b[0, 0] = 1.0
+    gradient_b[0, 1] = -2.0
+    result = linearized_maximin_box_warm_start(
+        latent=latent,
+        current_a_A=-2.0,
+        current_b_A=3.0,
+        gradient_a_latent_A=gradient_a,
+        gradient_b_latent_A=gradient_b,
+        maximum_change=0.1,
+    )
+
+    assert result["method"] == "exact_linearized_two_utility_box_dual_v1"
+    assert result["maximum_abs_change"] == 0.1
+    assert result["predicted_balanced_utility_A"] > -3.0
+    assert result["predicted_improvement_A"] > 0.0
+    assert np.all(np.asarray(result["latent"]) >= 0.0)
+    assert np.all(np.asarray(result["latent"]) <= 1.0)
 
 
 def test_design_constraints_activate_zero_one_two_three() -> None:

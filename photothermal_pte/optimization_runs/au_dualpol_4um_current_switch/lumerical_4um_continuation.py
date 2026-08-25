@@ -17,6 +17,7 @@ from dataclasses import dataclass
 from typing import Any, Callable
 
 import numpy as np
+from scipy import optimize as scipy_optimize
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
     CONTRACT,
@@ -90,6 +91,102 @@ GRAYNESS_CAP = {
 
 DESIGN_CONSTRAINT_TOLERANCE = 1.0e-3
 EPIGRAPH_CONSTRAINT_TOLERANCE = 1.0e-6
+STAGE_FTOL_REL = 0.0
+STAGE_XTOL_REL = 0.0
+INITIAL_MAXIMIN_WARM_STEP_FRACTION = 0.25
+
+
+def linearized_maximin_box_warm_start(
+    *,
+    latent: np.ndarray,
+    current_a_A: float,
+    current_b_A: float,
+    gradient_a_latent_A: np.ndarray,
+    gradient_b_latent_A: np.ndarray,
+    maximum_change: float,
+) -> dict[str, Any]:
+    """Solve the exact first-order two-utility box trust-region problem.
+
+    At exact uniform rho=0.5 both PTE currents should vanish by symmetry.  The
+    residual current difference is then at the Maxwell/PDE numerical floor.
+    A raw epigraph MMA step spends expensive evaluations balancing that tiny
+    offset instead of breaking symmetry.  This helper maximizes the
+    linearized ``min(I_Ea, -I_Eb)`` over a bounded latent-density step.
+
+    The two-constraint box problem has a scalar convex dual.  For an Ea dual
+    weight ``w``, the box support direction is selected from
+    ``w*grad(I_Ea) + (1-w)*grad(-I_Eb)``.  Minimizing that dual on ``[0,1]``
+    gives the exact max-min linearized step without inventing a polarization
+    weighting or changing the production objective.
+    """
+
+    value = np.asarray(latent, dtype=np.float64)
+    gradient_a = np.asarray(gradient_a_latent_A, dtype=np.float64)
+    gradient_b_utility = -np.asarray(gradient_b_latent_A, dtype=np.float64)
+    if (
+        value.shape != CONTRACT.design_node_shape
+        or gradient_a.shape != value.shape
+        or gradient_b_utility.shape != value.shape
+    ):
+        raise ValueError("warm-start latent and gradients must match the design shape")
+    if not (
+        np.all(np.isfinite(value))
+        and np.all(np.isfinite(gradient_a))
+        and np.all(np.isfinite(gradient_b_utility))
+    ):
+        raise ValueError("warm-start latent and gradients must be finite")
+    step = float(maximum_change)
+    if not np.isfinite(step) or step <= 0.0:
+        raise ValueError("maximum_change must be finite and positive")
+    if np.min(value) < 0.0 or np.max(value) > 1.0:
+        raise ValueError("warm-start latent must lie inside [0,1]")
+    utility_a = float(current_a_A)
+    utility_b = -float(current_b_A)
+    if not np.all(np.isfinite((utility_a, utility_b))):
+        raise ValueError("warm-start currents must be finite")
+
+    lower = np.maximum(-step, -value)
+    upper = np.minimum(step, 1.0 - value)
+
+    def dual(weight_a: float) -> float:
+        weight = float(weight_a)
+        combined = weight * gradient_a + (1.0 - weight) * gradient_b_utility
+        support = np.sum(np.maximum(combined * lower, combined * upper))
+        return float(weight * utility_a + (1.0 - weight) * utility_b + support)
+
+    minimized = scipy_optimize.minimize_scalar(
+        dual,
+        bounds=(0.0, 1.0),
+        method="bounded",
+        options={"xatol": 1.0e-12, "maxiter": 200},
+    )
+    candidates = (0.0, 1.0, float(minimized.x))
+    weight_a = min(candidates, key=dual)
+    combined = weight_a * gradient_a + (1.0 - weight_a) * gradient_b_utility
+    delta = np.where(combined > 0.0, upper, np.where(combined < 0.0, lower, 0.0))
+    warm_latent = value + delta
+    predicted_a = utility_a + float(np.sum(gradient_a * delta))
+    predicted_b = utility_b + float(np.sum(gradient_b_utility * delta))
+    initial_balanced = min(utility_a, utility_b)
+    predicted_balanced = min(predicted_a, predicted_b)
+    if predicted_balanced <= initial_balanced:
+        raise RuntimeError("linearized max-min warm start did not improve the objective")
+    return {
+        "latent": warm_latent,
+        "delta": delta,
+        "dual_weight_Ea": float(weight_a),
+        "initial_utilities_A": {"Ea": utility_a, "Eb": utility_b},
+        "predicted_utilities_A": {"Ea": predicted_a, "Eb": predicted_b},
+        "initial_balanced_utility_A": initial_balanced,
+        "predicted_balanced_utility_A": predicted_balanced,
+        "predicted_improvement_A": predicted_balanced - initial_balanced,
+        "maximum_allowed_change": step,
+        "maximum_abs_change": float(np.max(np.abs(delta))),
+        "delta_L2": float(np.linalg.norm(delta)),
+        "lower_bound_active_count": int(np.count_nonzero(delta == lower)),
+        "upper_bound_active_count": int(np.count_nonzero(delta == upper)),
+        "method": "exact_linearized_two_utility_box_dual_v1",
+    }
 
 
 def active_design_constraint_names(beta: float) -> tuple[str, ...]:
@@ -335,6 +432,9 @@ def continuation_contract() -> dict[str, Any]:
             str(key): value for key, value in GRAYNESS_CAP.items()
         },
         "final_grayness_gate": GRAYNESS_CAP[BETA_SCHEDULE[-1]],
+        "stage_ftol_rel": STAGE_FTOL_REL,
+        "stage_xtol_rel": STAGE_XTOL_REL,
+        "initial_maximin_warm_step_fraction": INITIAL_MAXIMIN_WARM_STEP_FRACTION,
         "initial_density": "exact uniform latent rho=0.5",
         "floating_Au_terminal_conductance_constraint": False,
         "objective": "maximize min(I_Ea, -I_Eb) by epigraph LD_MMA",
