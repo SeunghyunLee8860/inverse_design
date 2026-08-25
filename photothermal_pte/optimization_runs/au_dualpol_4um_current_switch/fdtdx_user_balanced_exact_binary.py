@@ -54,6 +54,11 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_user
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_user_balanced_source_pair import (
     validate_source_pair,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.fdtdx_user_balanced_z_refinement import (
+    build_model as build_z_model,
+    case_contract as z_case_contract,
+    mesh_audit as z_mesh_audit,
+)
 
 
 VERSION = "fdtdx-user-balanced-exact-binary-v1"
@@ -83,11 +88,14 @@ def source_pair_contract_checks(
     model: dict[str, Any],
     time_spec: TimeSpec,
     polarization: str,
+    numerical_case: dict[str, Any] | None = None,
 ) -> dict[str, bool]:
     contracts = source_pair["source_case_contracts"]
+    expected_case = (
+        balanced_case_contract(time_spec) if numerical_case is None else numerical_case
+    )
     return {
-        "numerical_case_exact": contracts["numerical_case_contract"]
-        == balanced_case_contract(time_spec),
+        "numerical_case_exact": contracts["numerical_case_contract"] == expected_case,
         "mesh_exact": contracts["mesh"] == model["fresh_mesh_audit"],
         "time_exact": contracts["time_contract"]
         == realized_time_contract(time_spec, model),
@@ -124,6 +132,7 @@ def run(
     total_periods: int,
     window_periods: int,
     courant_factor: float,
+    full_domain_z_factor: int = 1,
 ) -> dict[str, Any]:
     started_total = time.perf_counter()
     output = _output_directory(output_directory)
@@ -141,8 +150,20 @@ def run(
         window_periods=window_periods,
         courant_factor=courant_factor,
     )
+    if full_domain_z_factor == 1:
+        numerical_case = balanced_case_contract(time_spec)
+        expected_mesh = mesh_audit()
+    elif full_domain_z_factor == 2:
+        numerical_case = z_case_contract(time_spec, full_domain_z_factor)
+        expected_mesh = z_mesh_audit(full_domain_z_factor)
+    else:
+        raise ValueError("full_domain_z_factor must be 1 or 2")
     source_pair, source_pair_audit = validate_source_pair(
-        source_pair_path, source_pair_sha256, time_spec
+        source_pair_path,
+        source_pair_sha256,
+        time_spec,
+        expected_case_contract=numerical_case,
+        expected_mesh=expected_mesh,
     )
     if not source_pair_audit["ready"]:
         raise RuntimeError(f"source-pair artifact audit failed: {source_pair_audit}")
@@ -153,17 +174,25 @@ def run(
         raise RuntimeError("repository must be clean before balanced material solve")
 
     started_build = time.perf_counter()
-    model = build_model(
-        polarization,
-        total_periods=time_spec.total_periods,
-        window_periods=time_spec.window_periods,
-        courant_factor=time_spec.courant_factor,
-        include_adjoint_source=False,
-        air_only_source_calibration=False,
-        dispersive_state_representation="increment",
-    )
+    model_kwargs = {
+        "total_periods": time_spec.total_periods,
+        "window_periods": time_spec.window_periods,
+        "courant_factor": time_spec.courant_factor,
+        "include_adjoint_source": False,
+        "air_only_source_calibration": False,
+        "dispersive_state_representation": "increment",
+    }
+    if full_domain_z_factor == 1:
+        model = build_model(polarization, **model_kwargs)
+    else:
+        model = build_z_model(polarization, factor=full_domain_z_factor, **model_kwargs)
     contract_checks = source_pair_contract_checks(
-        source_pair, source_audit, model, time_spec, polarization
+        source_pair,
+        source_audit,
+        model,
+        time_spec,
+        polarization,
+        numerical_case,
     )
     if not all(contract_checks.values()):
         raise RuntimeError(
@@ -215,7 +244,7 @@ def run(
         ),
         "physical_one_pole_selected": model["material_law_mode"]
         == "physical-one-pole-increment-state",
-        "requested_mesh_exact": model["fresh_mesh_audit"] == mesh_audit(),
+        "requested_mesh_exact": model["fresh_mesh_audit"] == expected_mesh,
         "exact_binary_material_ready": material["ready"],
         "gray_material_law_not_used": material["exact_binary_au"][
             "gray_density_allowed"
@@ -234,7 +263,8 @@ def run(
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "polarization": polarization,
         "reference": reference,
-        "numerical_case_contract": balanced_case_contract(time_spec),
+        "full_domain_z_factor": full_domain_z_factor,
+        "numerical_case_contract": numerical_case,
         "mesh": model["fresh_mesh_audit"],
         "time_contract": realized_time_contract(time_spec, model),
         "source_contract": model["source_contract"],
@@ -317,6 +347,7 @@ def main() -> int:
     parser.add_argument("--total-periods", type=int, default=24)
     parser.add_argument("--window-periods", type=int, default=4)
     parser.add_argument("--courant-factor", type=float, default=0.5)
+    parser.add_argument("--full-domain-z-factor", type=int, choices=(1, 2), default=1)
     args = parser.parse_args()
     try:
         payload = run(
@@ -329,6 +360,7 @@ def main() -> int:
             args.total_periods,
             args.window_periods,
             args.courant_factor,
+            args.full_domain_z_factor,
         )
     except Exception as error:
         failure = {

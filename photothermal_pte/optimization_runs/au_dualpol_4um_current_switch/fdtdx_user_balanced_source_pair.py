@@ -90,7 +90,13 @@ def _recorded_file_audit(record: dict[str, Any]) -> dict[str, Any]:
 
 
 def _load_case(
-    path: Path, expected_sha256: str, polarization: str
+    path: Path,
+    expected_sha256: str,
+    polarization: str,
+    *,
+    case_version: str = CASE_VERSION,
+    case_status: str = CASE_STATUS_READY,
+    case_scope: str = CASE_SCOPE,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     supplied = path.expanduser()
     resolved = supplied.resolve()
@@ -111,11 +117,11 @@ def _load_case(
         "report_exists": exists,
         "expected_sha256_is_hex": _is_sha256(expected_sha256),
         "report_sha256_matches": actual_sha256 == expected_sha256,
-        "version_exact": payload.get("version") == CASE_VERSION,
-        "status_and_ready": payload.get("status") == CASE_STATUS_READY
+        "version_exact": payload.get("version") == case_version,
+        "status_and_ready": payload.get("status") == case_status
         and payload.get("ready") is True,
         "failed_checks_empty": payload.get("failed_checks") == [],
-        "scope_exact": payload.get("scope") == CASE_SCOPE,
+        "scope_exact": payload.get("scope") == case_scope,
         "polarization_exact": payload.get("polarization") == polarization,
         "evaluation_ready": evaluation.get("ready") is True,
         "evaluation_gates_all_true": bool(gates)
@@ -158,9 +164,28 @@ def build_pair(
     ea_sha256: str,
     eb_path: Path,
     eb_sha256: str,
+    *,
+    expected_case_contract: dict[str, Any] | None = None,
+    case_version: str = CASE_VERSION,
+    case_status: str = CASE_STATUS_READY,
+    case_scope: str = CASE_SCOPE,
 ) -> dict[str, Any]:
-    ea, ea_audit = _load_case(ea_path, ea_sha256, "Ea")
-    eb, eb_audit = _load_case(eb_path, eb_sha256, "Eb")
+    ea, ea_audit = _load_case(
+        ea_path,
+        ea_sha256,
+        "Ea",
+        case_version=case_version,
+        case_status=case_status,
+        case_scope=case_scope,
+    )
+    eb, eb_audit = _load_case(
+        eb_path,
+        eb_sha256,
+        "Eb",
+        case_version=case_version,
+        case_status=case_status,
+        case_scope=case_scope,
+    )
     cases = {"Ea": ea_audit, "Eb": eb_audit}
     powers = {
         name: float(audit["incident_power_W"])
@@ -194,7 +219,11 @@ def build_pair(
     )
 
     expected_time = TimeSpec(total_periods=24, window_periods=4, courant_factor=0.5)
-    expected_case = balanced_case_contract(expected_time)
+    expected_case = (
+        balanced_case_contract(expected_time)
+        if expected_case_contract is None
+        else expected_case_contract
+    )
     reports = (ea, eb)
     numerical_case = ea.get("numerical_case_contract")
     source_vectors_exact = ea.get("source_contract", {}).get(
@@ -300,6 +329,9 @@ def validate_source_pair(
     path: Path,
     expected_sha256: str,
     expected_time: TimeSpec,
+    *,
+    expected_case_contract: dict[str, Any] | None = None,
+    expected_mesh: dict[str, Any] | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     if not isinstance(expected_time, TimeSpec):
         raise TypeError("expected_time must be a TimeSpec")
@@ -323,7 +355,12 @@ def validate_source_pair(
         for kind, audit in records.items()
     }
     source = contracts.get("fdtdx_source", {})
-    expected_case = balanced_case_contract(expected_time)
+    expected_case = (
+        balanced_case_contract(expected_time)
+        if expected_case_contract is None
+        else expected_case_contract
+    )
+    mesh_contract = mesh_audit() if expected_mesh is None else expected_mesh
     checks = {
         "certificate_path_is_absolute": supplied.is_absolute(),
         "certificate_exists": exists,
@@ -337,7 +374,7 @@ def validate_source_pair(
         "failed_gates_empty": payload.get("failed_gates") == [],
         "numerical_case_exact": contracts.get("numerical_case_contract")
         == expected_case,
-        "mesh_exact": contracts.get("mesh") == mesh_audit(),
+        "mesh_exact": contracts.get("mesh") == mesh_contract,
         "time_request_exact": all(
             contracts.get("time_contract", {}).get(name) == value
             for name, value in expected_case["time"].items()
