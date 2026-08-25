@@ -527,6 +527,7 @@ class ElectricalSystem:
     reduced_rhs_A: np.ndarray
     free: np.ndarray
     fixed: np.ndarray
+    inactive: np.ndarray
     fixed_values_V: np.ndarray
     objective_gradient_psi_A: np.ndarray
     derivative_terms: tuple[EdgeDerivative, ...]
@@ -536,6 +537,7 @@ class ElectricalSystem:
     n_ta: int
     n_design: int
     design_offset: int
+    exact_binary_geometry: bool
 
 
 def ta_id(i: int, j: int, n_ta: int = N_TA) -> int:
@@ -606,12 +608,18 @@ def electrical_load(
 
 
 def build_electrical_system(
-    rho: np.ndarray, temperature_K: np.ndarray
+    rho: np.ndarray,
+    temperature_K: np.ndarray,
+    *,
+    exact_binary_geometry: bool = False,
 ) -> ElectricalSystem:
     density = np.asarray(rho, dtype=np.float64)
     grid = pde_grid_contract(density)
     if not np.all(np.isfinite(density)) or np.any((density < 0) | (density > 1)):
         raise ValueError("rho must be a finite physical density in [0,1]")
+    exact_binary = bool(exact_binary_geometry)
+    if exact_binary and not np.all((density == 0.0) | (density == 1.0)):
+        raise ValueError("exact-binary electrical geometry requires exact 0/1 rho")
     step_m = float(grid["step_m"])
     n_ta = int(grid["n_ta"])
     n_design = int(grid["n_design"])
@@ -645,42 +653,53 @@ def build_electrical_system(
                     ta_id(i, j + 1, n_ta),
                     SIGMA_TA_XY_S_M[1] * TA_THICKNESS_M,
                 )
-    sigma_floor = SIGMA_AU_S_M * SIGMA_FLOOR_FRACTION
     fraction = np.asarray(au_material_fraction(density), dtype=np.float64)
     d_fraction = np.asarray(d_au_material_fraction_drho(density), dtype=np.float64)
+    sigma_floor = (
+        0.0 if exact_binary else SIGMA_AU_S_M * SIGMA_FLOOR_FRACTION
+    )
     sigma = sigma_floor + fraction * (SIGMA_AU_S_M - sigma_floor)
     dsigma = d_fraction * (SIGMA_AU_S_M - sigma_floor)
-    contact_floor = ELECTRICAL_CONTACT_S_M2 * CONTACT_FLOOR_FRACTION
+    contact_floor = (
+        0.0
+        if exact_binary
+        else ELECTRICAL_CONTACT_S_M2 * CONTACT_FLOOR_FRACTION
+    )
     for i in range(n_design):
         for j in range(n_design):
             node = au_id(i, j, n_ta, n_design)
+            if exact_binary and density[i, j] == 0.0:
+                continue
             for di, dj, label in ((1, 0, "Au_sheet_x"), (0, 1, "Au_sheet_y")):
                 ni, nj = i + di, j + dj
                 if ni >= n_design or nj >= n_design:
+                    continue
+                if exact_binary and density[ni, nj] == 0.0:
                     continue
                 right = au_id(ni, nj, n_ta, n_design)
                 resistance = 0.5 * step_m / sigma[i, j] + 0.5 * step_m / sigma[ni, nj]
                 g = AU_THICKNESS_M * step_m / resistance
                 _add_edge(rows, cols, data, node, right, g)
-                for ii, jj in ((i, j), (ni, nj)):
-                    dg = (
-                        AU_THICKNESS_M
-                        * step_m
-                        / resistance**2
-                        * 0.5
-                        * step_m
-                        / sigma[ii, jj] ** 2
-                        * dsigma[ii, jj]
-                    )
-                    derivatives.append(
-                        EdgeDerivative(
-                            node,
-                            right,
-                            ii * n_design + jj,
-                            dg,
-                            label,
+                if not exact_binary:
+                    for ii, jj in ((i, j), (ni, nj)):
+                        dg = (
+                            AU_THICKNESS_M
+                            * step_m
+                            / resistance**2
+                            * 0.5
+                            * step_m
+                            / sigma[ii, jj] ** 2
+                            * dsigma[ii, jj]
                         )
-                    )
+                        derivatives.append(
+                            EdgeDerivative(
+                                node,
+                                right,
+                                ii * n_design + jj,
+                                dg,
+                                label,
+                            )
+                        )
             ti, tj = design_offset + i, design_offset + j
             g_contact = step_m**2 * (
                 contact_floor
@@ -688,17 +707,18 @@ def build_electrical_system(
             )
             ta_node = ta_id(ti, tj, n_ta)
             _add_edge(rows, cols, data, ta_node, node, g_contact)
-            derivatives.append(
-                EdgeDerivative(
-                    ta_node,
-                    node,
-                    i * n_design + j,
-                    step_m**2
-                    * (ELECTRICAL_CONTACT_S_M2 - contact_floor)
-                    * d_fraction[i, j],
-                    "vertical_Au_Ta_contact",
+            if not exact_binary:
+                derivatives.append(
+                    EdgeDerivative(
+                        ta_node,
+                        node,
+                        i * n_design + j,
+                        step_m**2
+                        * (ELECTRICAL_CONTACT_S_M2 - contact_floor)
+                        * d_fraction[i, j],
+                        "vertical_Au_Ta_contact",
+                    )
                 )
-            )
     matrix = sparse.coo_matrix(
         (data, (rows, cols)), shape=(node_count, node_count)
     ).tocsr()
@@ -708,8 +728,14 @@ def build_electrical_system(
     high = np.asarray([ta_id(n_ta - 1, j, n_ta) for j in range(n_ta)], dtype=np.int64)
     fixed = np.concatenate((low, high))
     fixed_values = np.concatenate((np.zeros(low.size), np.ones(high.size)))
+    inactive = (
+        n_ta * n_ta + np.flatnonzero(density.ravel(order="C") == 0.0)
+        if exact_binary
+        else np.empty(0, dtype=np.int64)
+    )
     free_mask = np.ones(node_count, dtype=bool)
     free_mask[fixed] = False
+    free_mask[inactive] = False
     free = np.flatnonzero(free_mask)
     reduced = matrix[free][:, free].tocsr()
     rhs = -np.asarray(matrix[free][:, fixed] @ fixed_values).reshape(-1)
@@ -719,6 +745,7 @@ def build_electrical_system(
         reduced_rhs_A=rhs,
         free=free,
         fixed=fixed,
+        inactive=inactive,
         fixed_values_V=fixed_values,
         objective_gradient_psi_A=electrical_load(
             temperature,
@@ -732,6 +759,7 @@ def build_electrical_system(
         n_ta=n_ta,
         n_design=n_design,
         design_offset=design_offset,
+        exact_binary_geometry=exact_binary,
     )
 
 
@@ -766,6 +794,11 @@ def solve_electrical(
             "terminal_balance_relative": float(balance),
             "low_terminal_A_per_V": low,
             "high_terminal_A_per_V": high,
+            "exact_binary_geometry": system.exact_binary_geometry,
+            "inactive_void_Au_node_count": int(system.inactive.size),
+            "electrical_void_Au_nodes_removed": bool(
+                system.exact_binary_geometry
+            ),
         },
     )
 
@@ -1049,11 +1082,21 @@ def evaluate_fixed_source(
     cuda_device: int,
     *,
     need_gradient: bool,
+    exact_binary_geometry: bool = False,
 ) -> dict[str, object]:
+    if exact_binary_geometry and need_gradient:
+        raise ValueError(
+            "exact-binary topology removal is nondifferentiable; "
+            "set need_gradient=False"
+        )
     state = build_thermal_state(rho)
     temperature, thermal_audit = solve_thermal(state, source_power_W, cuda_device)
     ta_temperature = tairte4_temperature(state, temperature)
-    electrical = build_electrical_system(rho, ta_temperature)
+    electrical = build_electrical_system(
+        rho,
+        ta_temperature,
+        exact_binary_geometry=exact_binary_geometry,
+    )
     psi, current, electrical_audit = solve_electrical(electrical, cuda_device)
     result: dict[str, object] = {
         "objective_A": current,

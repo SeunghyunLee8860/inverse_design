@@ -181,7 +181,9 @@ def run_component_yee_downstream(
     start = time.perf_counter()
     temperature, thermal_audit = solve_thermal(state, source_power, cuda_device)
     ta_temperature = tairte4_temperature(state, temperature)
-    electrical = build_electrical_system(rho, ta_temperature)
+    electrical = build_electrical_system(
+        rho, ta_temperature, exact_binary_geometry=True
+    )
     psi, current, electrical_audit = solve_electrical(electrical, cuda_device)
     runtime = time.perf_counter() - start
     integrand = current_integrand(ta_temperature, psi)
@@ -215,6 +217,12 @@ def run_component_yee_downstream(
         ),
         "electrical_terminal_balance_lt_1pct": (
             electrical_audit["terminal_balance_relative"] < 1.0e-2
+        ),
+        "exact_binary_void_Au_nodes_removed": bool(
+            electrical_audit["exact_binary_geometry"]
+            and electrical_audit["electrical_void_Au_nodes_removed"]
+            and int(electrical_audit["inactive_void_Au_node_count"])
+            == int(np.count_nonzero(np.asarray(rho) == 0))
         ),
         "current_integrand_consistency_lt_1e-12": current_consistency < 1.0e-12,
         "finite": bool(
@@ -289,7 +297,9 @@ def run_official_pabs_downstream(
     start = time.perf_counter()
     temperature, thermal_audit = solve_thermal(state, source_power, cuda_device)
     ta_temperature = tairte4_temperature(state, temperature)
-    electrical = build_electrical_system(rho, ta_temperature)
+    electrical = build_electrical_system(
+        rho, ta_temperature, exact_binary_geometry=True
+    )
     psi, current, electrical_audit = solve_electrical(electrical, cuda_device)
     runtime = time.perf_counter() - start
     integrand = current_integrand(ta_temperature, psi)
@@ -323,6 +333,12 @@ def run_official_pabs_downstream(
         ),
         "electrical_terminal_balance_lt_1pct": (
             electrical_audit["terminal_balance_relative"] < 1.0e-2
+        ),
+        "exact_binary_void_Au_nodes_removed": bool(
+            electrical_audit["exact_binary_geometry"]
+            and electrical_audit["electrical_void_Au_nodes_removed"]
+            and int(electrical_audit["inactive_void_Au_node_count"])
+            == int(np.count_nonzero(np.asarray(rho) == 0))
         ),
         "current_integrand_consistency_lt_1e-12": current_consistency < 1.0e-12,
         "finite": bool(

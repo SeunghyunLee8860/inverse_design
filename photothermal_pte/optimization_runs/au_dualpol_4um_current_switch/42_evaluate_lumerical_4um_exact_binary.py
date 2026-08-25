@@ -277,6 +277,7 @@ def _pde_resolution(
         source_power,
         0,
         need_gradient=False,
+        exact_binary_geometry=True,
     )
     thermal = evaluated["thermal_audit"]
     electrical = evaluated["electrical_audit"]
@@ -291,6 +292,12 @@ def _pde_resolution(
             electrical["terminal_balance_relative"]
         )
         < 1.0e-2,
+        "exact_binary_void_Au_nodes_removed": bool(
+            electrical["exact_binary_geometry"]
+            and electrical["electrical_void_Au_nodes_removed"]
+            and int(electrical["inactive_void_Au_node_count"])
+            == int(np.count_nonzero(density == 0))
+        ),
         "finite_nonzero_current": bool(
             np.isfinite(evaluated["objective_A"])
             and float(evaluated["objective_A"]) != 0.0

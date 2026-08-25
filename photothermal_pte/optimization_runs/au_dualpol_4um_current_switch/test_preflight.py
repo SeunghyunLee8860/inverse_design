@@ -79,6 +79,8 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysi
     SIGMA_TA_XY_S_M,
     STEP_M,
     TA_THICKNESS_M,
+    au_id,
+    build_electrical_system,
     current_integrand,
     electrical_load,
     pde_grid_contract,
@@ -451,6 +453,45 @@ def test_refined_binary_pde_grid_preserves_exact_geometry() -> None:
         x_edges = thermal_edges(core_step_m=step)[0]
         centers = 0.5 * (x_edges[:-1] + x_edges[1:])
         assert np.count_nonzero((centers >= -8.0e-6) & (centers < 8.0e-6)) == n_ta
+
+
+def test_exact_binary_electrical_topology_removes_void_au_nodes() -> None:
+    mask = np.zeros(CONTRACT.design_shape, dtype=np.float64)
+    mask[30:50, 35:45] = 1.0
+    temperature = np.zeros((N_TA, N_TA), dtype=np.float64)
+
+    exact = build_electrical_system(
+        mask, temperature, exact_binary_geometry=True
+    )
+    expected_inactive = N_DESIGN * N_DESIGN - int(np.count_nonzero(mask))
+    assert exact.exact_binary_geometry
+    assert exact.inactive.size == expected_inactive
+    assert exact.full_matrix_S[exact.inactive, :].nnz == 0
+    assert exact.full_matrix_S[:, exact.inactive].nnz == 0
+    assert np.intersect1d(exact.free, exact.inactive).size == 0
+    assert len(exact.derivative_terms) == 0
+
+    active = np.asarray(
+        [
+            au_id(i, j)
+            for i, j in np.argwhere(mask == 1.0)
+        ],
+        dtype=np.int64,
+    )
+    assert np.all(exact.full_matrix_S.diagonal()[active] > 0.0)
+
+    relaxed = build_electrical_system(mask, temperature)
+    assert not relaxed.exact_binary_geometry
+    assert relaxed.inactive.size == 0
+    assert np.all(
+        relaxed.full_matrix_S.diagonal()[N_TA * N_TA :] > 0.0
+    )
+    with pytest.raises(ValueError, match="exact 0/1"):
+        build_electrical_system(
+            np.full(CONTRACT.design_shape, 0.5),
+            temperature,
+            exact_binary_geometry=True,
+        )
 
 
 def test_refined_electrical_discretization_preserves_linear_field_current() -> None:
