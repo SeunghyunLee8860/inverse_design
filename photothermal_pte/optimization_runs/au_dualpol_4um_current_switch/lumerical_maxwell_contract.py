@@ -332,14 +332,46 @@ def _run_nvidia_smi() -> list[dict[str, Any]]:
     return result
 
 
+def _parse_fdtd_solve_license_inventory(
+    output: str,
+) -> tuple[int, int, dict[str, int]]:
+    """Parse the target feature and its server-side project reservations."""
+
+    feature_header = re.search(
+        r"^Users of lum_fdtd_solve:\s+\(Total of (\d+) licenses issued;\s+"
+        r"Total of (\d+) licenses in use\)\s*$",
+        output,
+        flags=re.MULTILINE,
+    )
+    if feature_header is None:
+        raise ValueError("could not parse lum_fdtd_solve usage")
+
+    section_start = feature_header.end()
+    next_feature = re.search(r"^Users of \S+:", output[section_start:], re.MULTILINE)
+    section_end = (
+        section_start + next_feature.start() if next_feature is not None else len(output)
+    )
+    feature_section = output[section_start:section_end]
+    reservations: dict[str, int] = {}
+    for count, project in re.findall(
+        r"^\s*(\d+) RESERVATIONs? for PROJECT\s+(\S+)\s*$",
+        feature_section,
+        flags=re.MULTILINE,
+    ):
+        reservations[project] = reservations.get(project, 0) + int(count)
+
+    issued, in_use = (int(value) for value in feature_header.groups())
+    return issued, in_use, reservations
+
+
 def _fdtd_solve_license_audit() -> dict[str, Any]:
     lmutil = LUMERICAL_ROOT / "licensingclient/linx64/lmutil"
     server = os.environ.get("ANSYSLMD_LICENSE_FILE", "1055@localhost")
+    project = os.environ.get("LM_PROJECT", "").strip()
     command = [
         str(lmutil),
         "lmstat",
-        "-f",
-        "lum_fdtd_solve",
+        "-a",
         "-c",
         server,
     ]
@@ -361,27 +393,44 @@ def _fdtd_solve_license_audit() -> dict[str, Any]:
             "inventory_error": f"{type(exc).__name__}: {exc}",
             "lmutil": str(lmutil),
             "license_server": server,
+            "LM_PROJECT": project or None,
             "tasks_required": GPU_SOLVE_LICENSE_TASKS_REQUIRED,
         }
-    match = re.search(
-        r"Users of lum_fdtd_solve:\s+\(Total of (\d+) licenses issued;\s+"
-        r"Total of (\d+) licenses in use\)",
-        completed.stdout,
-    )
-    if match is None:
+    try:
+        issued, in_use, reservations = _parse_fdtd_solve_license_inventory(
+            completed.stdout
+        )
+    except ValueError as exc:
         return {
             "passed": False,
-            "inventory_error": "could not parse lum_fdtd_solve usage",
+            "inventory_error": str(exc),
             "lmutil": str(lmutil),
             "license_server": server,
+            "LM_PROJECT": project or None,
             "tasks_required": GPU_SOLVE_LICENSE_TASKS_REQUIRED,
         }
-    issued, in_use = (int(value) for value in match.groups())
     available = issued - in_use
+    project_reservation = reservations.get(project, 0) if project else 0
+    global_capacity_passed = available >= GPU_SOLVE_LICENSE_TASKS_REQUIRED
+    project_reservation_passed = (
+        bool(project)
+        and project_reservation >= GPU_SOLVE_LICENSE_TASKS_REQUIRED
+    )
+    passed = global_capacity_passed or project_reservation_passed
     return {
-        "passed": available >= GPU_SOLVE_LICENSE_TASKS_REQUIRED,
+        "passed": passed,
+        "passed_via": (
+            "verified_project_reservation"
+            if project_reservation_passed
+            else "global_unreserved_capacity"
+            if global_capacity_passed
+            else None
+        ),
         "lmutil": str(lmutil),
         "license_server": server,
+        "LM_PROJECT": project or None,
+        "reservation_verified": project_reservation_passed,
+        "reservation_tasks_for_project": project_reservation,
         "tasks_issued": issued,
         "tasks_in_use": in_use,
         "tasks_available": available,
@@ -574,7 +623,7 @@ def audit_environment(
         "all_required_gates_passed": ready,
         "notes": [
             "Only FDTD time stepping uses the selected GPU; Lumerical meshing and scripts use CPU.",
-            "The installed GPU solve path requires nine free lum_fdtd_solve tasks; availability is dynamic and is rechecked immediately before launch.",
+            "The installed GPU solve path requires either nine globally free lum_fdtd_solve tasks or an exact server-verified nine-task LM_PROJECT reservation; this is rechecked immediately before launch.",
             "The B200 remains mandatory for target-accelerator promotion.",
             "A development-policy run on another NVIDIA GPU is numerical evidence only and must be repeated on the B200.",
             "Thermal and electrical solves remain the repository custom CUDA PDE solvers.",

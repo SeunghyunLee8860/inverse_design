@@ -171,6 +171,63 @@ def test_license_task_exhaustion_blocks_gpu_preflight(
     assert result["gates"]["fdtd_solve_license_tasks_available"] is False
 
 
+def test_license_audit_accepts_exact_server_verified_project_reservation(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    project = "PROJECT_seunghyun_au4um_smoke_123"
+    lmstat = f"""
+Users of lum_fdtd_solve:  (Total of 60 licenses issued;  Total of 57 licenses in use)
+
+    9 RESERVATIONs for PROJECT {project}
+    user host display (v1.0) (server/1055 123), start Tue 8/25 08:00
+
+Users of lum_fdtd_gui:  (Total of 20 licenses issued;  Total of 4 licenses in use)
+    4 RESERVATIONs for PROJECT {project}
+"""
+    monkeypatch.setenv("LM_PROJECT", project)
+    monkeypatch.setattr(
+        maxwell_contract.subprocess,
+        "run",
+        lambda *args, **kwargs: maxwell_contract.subprocess.CompletedProcess(
+            args=args[0], returncode=0, stdout=lmstat, stderr=""
+        ),
+    )
+
+    result = maxwell_contract._fdtd_solve_license_audit()
+
+    assert result["tasks_available"] == 3
+    assert result["reservation_tasks_for_project"] == 9
+    assert result["reservation_verified"] is True
+    assert result["passed_via"] == "verified_project_reservation"
+    assert result["passed"] is True
+
+
+def test_license_audit_rejects_unverified_lm_project(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    lmstat = """
+Users of lum_fdtd_solve:  (Total of 60 licenses issued;  Total of 57 licenses in use)
+    9 RESERVATIONs for PROJECT PROJECT_someone_else_456
+Users of lum_fdtd_gui:  (Total of 20 licenses issued;  Total of 4 licenses in use)
+"""
+    monkeypatch.setenv("LM_PROJECT", "PROJECT_spoofed_123")
+    monkeypatch.setattr(
+        maxwell_contract.subprocess,
+        "run",
+        lambda *args, **kwargs: maxwell_contract.subprocess.CompletedProcess(
+            args=args[0], returncode=0, stdout=lmstat, stderr=""
+        ),
+    )
+
+    result = maxwell_contract._fdtd_solve_license_audit()
+
+    assert result["tasks_available"] == 3
+    assert result["reservation_tasks_for_project"] == 0
+    assert result["reservation_verified"] is False
+    assert result["passed_via"] is None
+    assert result["passed"] is False
+
+
 def test_projected_density_hash_accepts_gray_and_is_layout_sensitive() -> None:
     density = np.asarray([[0.0, 0.25, 0.5], [0.75, 1.0, 0.125]])
     assert np.array_equal(canonical_projected_density(density), density)
