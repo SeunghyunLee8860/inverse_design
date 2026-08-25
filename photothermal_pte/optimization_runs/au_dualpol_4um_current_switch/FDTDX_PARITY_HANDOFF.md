@@ -471,9 +471,9 @@ On the current host, the runtime gate passes at FDTDX commit
 is accepted only because `direct_url.json` points to the pinned clean source
 and the installed and source package trees have the identical SHA-256
 `c66b34671750258ff71478f9e9530f3abcb07a937591775236b1f7bdea739d58`.
-The parity contract/ADE/fixed-material/model/timing suite is `27 passed`;
-the full
-solver-free suite for this work folder is `160 passed`.
+The parity contract/ADE/fixed-material/model/timing/source suite is `32 passed`.
+The full
+solver-free suite for this work folder is `168 passed`.
 
 The requested 2.5-nm z cells dominate CFL.  The realized FDTDX float32-edge
 CFL is `dt=2.083451820604655 as`, `6,404.0664` steps per 4-um period, and
@@ -517,6 +517,49 @@ file SHA-256 is
 `1b0c821d09ece0205b4cbec90ab1b648aff559002aeaef803e6a0914f9e5ed70`.
 No GPU peak-memory claim is made.
 
+Step 4, the independent all-air Ea/Eb source calibration, now passes through
+`fdtdx_parity_source_calibration.py`.  Pinned FDTDX stores
+`E_stored=E_SI/eta0` and `H_stored=H_SI`, so SI power is the detector
+`E x H` area integral multiplied by `eta0`, not divided by it.  Each case
+requires previous-versus-late phasor stability, late time-domain-versus-phasor
+agreement, vacuum normalized impedance, exact source injection polarization,
+finite detector state, a positive incident power, and a clean hash-bound run.
+
+Two fail-closed attempts were deliberately preserved rather than relabeled.
+Commit `f9730057` incorrectly combined transverse and longitudinal endpoint
+fields; its Ea/Eb file hashes are
+`e369ddc687906e386069612ce1f999d64803d43aecbd847c67e00d74da694985` and
+`056907a9db5dd1ad68d7dcfde9908d69afff8acabf4e963ba676f626ac637778`.
+Commit `2872bbda` separated those fields but still gated the propagated endpoint
+instead of the source injection plane; its hashes are
+`06f17e99ca4fbbb1339bf015ee715caf95117dd119a769a35de55befc1501f05` and
+`a87dbd41094d11219bb1399981ffa2fc6780b026003cd788c9b0594fd9a718f6`.
+These BLOCKED files remain outside Git as negative audit evidence.
+
+The corrected clean commit `a7fc44051c0eefd471b27469248162c81269129c`
+ran Ea and Eb in parallel on separately verified-idle B200 UUIDs.  Full all-air
+forward times were `172.0787 s` and `172.3871 s`.  Both source injection arrays
+were exactly `[Ex,Ey,Ez]=[0,1,0]` for Ea and `[1,0,0]` for Eb.  Their late
+incident powers were bitwise equal at `1.882400012336031e-12 W`; Ea/Eb mismatch
+was zero.  Previous-to-late mismatch was at most `6.781e-7`, time-domain-to-
+phasor mismatch at most `8.383e-6`, and vacuum impedance error `0.143502%`.
+The propagated endpoint diagnostics were retained, not used as source-purity
+gates: transverse cross ratio was `1.40093%` and longitudinal ratio `16.4410%`
+for both finite-width beams.
+
+At the requested `285 uW`, each polarization independently uses
+`power_or_Q_scale=151402463.9461828` and
+`field_amplitude_scale=12304.570855831696`; no Ea/Eb matching is performed.
+The final Ea, Eb, and aggregate files are outside Git at
+`/home/seunghyun200/fdtdx_parity_raw/source_Ea_a7fc4405_gpu6.json`,
+`source_Eb_a7fc4405_gpu7.json`, and `source_calibration_a7fc4405.json`.  Their
+file SHA-256 values are respectively
+`b3f5599225e56f1b26055c7a1755b85909fb482a031252417eae80bdb8e93a69`,
+`e10bc6f66998f7647cecd094c305203e78e7c8bda0caf5ad2aad887c69558405`, and
+`4c37e497a5b6b89a02e554b04b316716faee5c87d7e0d3058bcfeb12b977a905`.
+The aggregate status is `PASS_SOURCE_CALIBRATION`; this validates source power
+only, not any Au/TaIrTe4 device response.
+
 The nonlinear carrier is now implemented in `fdtdx_parity_ade.py` as three
 positive, damped Lorentz bases: one weighted by `rho` and two weighted by
 `rho^2`.  This exactly follows the linear-plus-quadratic decomposition of the
@@ -540,11 +583,11 @@ both positive-Lorentz recurrences are strictly stable and reproduce exactly
 through the pinned FDTDX API.  SiO2 and Si remain the lossless real readbacks
 from the material JSON.
 
-No full Maxwell forward, field/Q physics control, CUDA PDE, optimizer,
-Lumerical, HEAT, or CHARGE run is claimed by this status.  The 8,065 bounded
-timing steps do not validate absorption or source normalization, and
-`optimizer_enabled` remains false.  Field/Q controls are the next gates before
-source calibration or any full 40-period run.
+No full physical-device Maxwell field/Q control, CUDA PDE, FDTDX optimizer,
+Lumerical, HEAT, or CHARGE result is claimed by this status.  The completed
+all-air full forwards validate only source normalization, and
+`optimizer_enabled` remains false.  Empty/full/nonuniform physical-device
+field, absorption-Q, and flux-closure controls are the next gates.
 
 ## What completion means
 
