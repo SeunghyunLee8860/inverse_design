@@ -28,6 +28,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_gray_q_coupling import (
     GrayYeeQCoupling,
+    adjoint_bilinear_dot_audit,
     component_coordinates_from_raw,
     component_q_from_raw,
 )
@@ -139,17 +140,12 @@ def main() -> int:
 
         gradient_direct_cell = np.asarray(evaluated["gradient_direct_A"], float)
         gradient_direct_nodal = nodal_to_cell_vjp(gradient_direct_cell)
-        native_contraction = float(
-            sum(
-                np.sum(native_q_pullback_reporting[component] * q[component] * scale)
-                for component in "xyz"
-            )
-        )
-        thermal_contraction = float(
-            np.sum(np.asarray(evaluated["thermal_adjoint"]) * source_power)
-        )
-        contraction_error = abs(native_contraction - thermal_contraction) / max(
-            abs(native_contraction), abs(thermal_contraction), np.finfo(float).tiny
+        contraction_audit = adjoint_bilinear_dot_audit(
+            source_components=q,
+            source_pullback=native_q_pullback_reporting,
+            mapped_output=source_power,
+            output_cotangent=np.asarray(evaluated["thermal_adjoint"]),
+            source_scale=scale,
         )
         expected_raw_power = float(forward["P_Q_native_W_raw"])
         raw_power_error = abs(float(np.sum(source_power_raw)) - expected_raw_power) / max(
@@ -164,7 +160,9 @@ def main() -> int:
             "native_Q_json_power_match_lt_1e_12": raw_power_error < 1.0e-12,
             "Q_mapping_conservation_lt_1e_12": float(mapping["relative_power_error"]) < 1.0e-12,
             "Q_mapping_transpose_lt_1e_12": float(transpose["relative_error"]) < 1.0e-12,
-            "Q_pullback_contraction_lt_1e_12": contraction_error < 1.0e-12,
+            "Q_pullback_contraction_normwise_lt_1e_12": (
+                contraction_audit["normwise_relative_error"] < 1.0e-12
+            ),
             "thermal_forward_residual_lt_1e_8": float(thermal_audit["relative_residual"]) < 1.0e-8,
             "thermal_adjoint_residual_lt_1e_8": float(thermal_adjoint_audit["relative_residual"]) < 1.0e-8,
             "thermal_energy_balance_lt_1pct": float(thermal_audit["energy_balance_relative"]) < 1.0e-2,
@@ -218,7 +216,7 @@ def main() -> int:
             "gradient_direct_nodal_L2_A": float(np.linalg.norm(gradient_direct_nodal)),
             "mapping": mapping,
             "mapping_transpose": transpose,
-            "native_vs_thermal_adjoint_contraction_relative_error": contraction_error,
+            "native_vs_thermal_adjoint_contraction": contraction_audit,
             "thermal": thermal_audit,
             "thermal_adjoint": thermal_adjoint_audit,
             "electrical": electrical_audit,

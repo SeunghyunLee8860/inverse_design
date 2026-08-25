@@ -5,6 +5,7 @@ import pytest
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_gray_q_coupling import (
     GrayYeeQCoupling,
+    adjoint_bilinear_dot_audit,
 )
 
 
@@ -57,6 +58,20 @@ def test_gray_q_coupling_conserves_all_component_power() -> None:
 def test_gray_q_coupling_transpose_is_exact() -> None:
     audit = _coupling().transpose_dot_audit()
     assert audit["relative_error"] < 1.0e-12
+
+
+def test_adjoint_dot_audit_is_well_conditioned_under_signed_cancellation() -> None:
+    epsilon = 1.0e-14
+    audit = adjoint_bilinear_dot_audit(
+        source_components={"x": np.asarray((1.0, 1.0))},
+        source_pullback={"x": np.asarray((1.0, -1.0))},
+        mapped_output=np.asarray((1.0, 1.0 + epsilon)),
+        output_cotangent=np.asarray((1.0, -1.0)),
+    )
+
+    assert audit["signed_relative_error"] == pytest.approx(1.0)
+    assert audit["normwise_relative_error"] < 1.0e-12
+    assert audit["cancellation_ratio"] < 1.0e-12
 
 
 def test_gray_q_coupling_rejects_negative_physical_absorption() -> None:

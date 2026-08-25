@@ -30,6 +30,79 @@ from photothermal_pte.finite_inverse_design.finite_q_mapping import (
 COMPONENTS = "xyz"
 
 
+def adjoint_bilinear_dot_audit(
+    *,
+    source_components: Mapping[str, np.ndarray],
+    source_pullback: Mapping[str, np.ndarray],
+    mapped_output: np.ndarray,
+    output_cotangent: np.ndarray,
+    source_scale: float = 1.0,
+) -> dict[str, float]:
+    """Return a cancellation-safe audit of ``<M*x,y> = <x,M.T*y>``.
+
+    A relative error normalized only by the two signed contractions is not a
+    valid pass/fail metric when the physical result is close to zero.  That
+    situation occurs at the symmetric, uniform starting design: large
+    positive and negative current contributions cancel by roughly eight
+    orders of magnitude.  The normwise denominator below is the standard
+    Cauchy--Schwarz scale for a bilinear adjoint identity and remains well
+    conditioned under such cancellation.  The signed relative error is
+    retained as a diagnostic, but must not be used as the numerical gate.
+    """
+
+    scale = float(source_scale)
+    if not np.isfinite(scale):
+        raise ValueError("source_scale must be finite")
+    if set(source_components) != set(source_pullback):
+        raise ValueError("source and pullback component names differ")
+
+    pulled_contraction = 0.0
+    pulled_norm_bound = 0.0
+    for component in sorted(source_components):
+        source = np.asarray(source_components[component], dtype=np.float64)
+        pulled = np.asarray(source_pullback[component], dtype=np.float64)
+        if source.shape != pulled.shape:
+            raise ValueError(f"{component} source and pullback shapes differ")
+        if not np.all(np.isfinite(source)) or not np.all(np.isfinite(pulled)):
+            raise ValueError(f"{component} source or pullback is non-finite")
+        pulled_contraction += scale * float(np.sum(pulled * source))
+        pulled_norm_bound += abs(scale) * float(
+            np.linalg.norm(pulled.ravel()) * np.linalg.norm(source.ravel())
+        )
+
+    mapped = np.asarray(mapped_output, dtype=np.float64)
+    cotangent = np.asarray(output_cotangent, dtype=np.float64)
+    if mapped.shape != cotangent.shape:
+        raise ValueError("mapped output and output cotangent shapes differ")
+    if not np.all(np.isfinite(mapped)) or not np.all(np.isfinite(cotangent)):
+        raise ValueError("mapped output or output cotangent is non-finite")
+    mapped_contraction = float(np.sum(cotangent * mapped))
+    mapped_norm_bound = float(
+        np.linalg.norm(cotangent.ravel()) * np.linalg.norm(mapped.ravel())
+    )
+
+    absolute_error = abs(pulled_contraction - mapped_contraction)
+    signed_scale = max(
+        abs(pulled_contraction),
+        abs(mapped_contraction),
+        np.finfo(float).tiny,
+    )
+    normwise_scale = max(
+        pulled_norm_bound,
+        mapped_norm_bound,
+        np.finfo(float).tiny,
+    )
+    return {
+        "pullback_contraction": pulled_contraction,
+        "mapped_contraction": mapped_contraction,
+        "absolute_error": absolute_error,
+        "signed_relative_error": absolute_error / signed_scale,
+        "normwise_scale": normwise_scale,
+        "normwise_relative_error": absolute_error / normwise_scale,
+        "cancellation_ratio": signed_scale / normwise_scale,
+    }
+
+
 def _edges(values: tuple[np.ndarray, np.ndarray, np.ndarray]) -> tuple[np.ndarray, ...]:
     result = tuple(np.asarray(axis, dtype=np.float64).reshape(-1) for axis in values)
     for axis, name in zip(result, COMPONENTS, strict=True):
