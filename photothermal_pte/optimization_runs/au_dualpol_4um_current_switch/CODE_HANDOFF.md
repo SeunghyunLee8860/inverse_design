@@ -286,6 +286,24 @@ The coordinate contract is **Lumerical/FDTDX x = crystal b** and
     signed-objective AD-FD, and run only a two-iteration smoke optimization
     before review. FDTDX remains non-promotable; final binary CV0/finer
     Lumerical reevaluation is mandatory.
+41. `lumerical_4um_optimizer.py`,
+    `40_optimize_lumerical_4um_dualpol_smoke.py`, and
+    `run_lumerical_4um_dualpol_smoke_runres.sh` are the first enabled
+    Lumerical-carrier optimizer entry point. The driver is deliberately
+    restricted to exactly two LD_MMA function evaluations at beta 4. Each
+    distinct 81x81 latent state runs two imported-density Lumerical forwards,
+    one layout-only component-Yee Jacobian, two custom-CUDA PDE
+    forward/adjoint pairs, and two frozen-grid distributed-source Lumerical
+    adjoints. Ea/Eb current constraints and both smooth 500-nm solid/void
+    constraints use exact latent-coordinate transposes. The driver uses no
+    FDTDX Maxwell, Lumerical HEAT, or Lumerical CHARGE solve. Its solver-free
+    source/artifact/mapping preflight passes and the new callback tests plus
+    the existing mapping/objective tests pass (`12 passed`). This is a smoke
+    gate, not permission for a long optimization: current adjoint FSP
+    retention costs several GB per topology evaluation and the filesystem is
+    already 96% full. A passed two-evaluation record must be reviewed before
+    adding checkpoint/resume, bounded artifact retention, beta continuation,
+    or a larger evaluation budget.
 
 The scripts `00` through `09` contain the runsetup, source calibration,
 forward, thermal/electrical, and AD-FD certificates used by the code above.
@@ -405,16 +423,19 @@ forward, thermal/electrical, and AD-FD certificates used by the code above.
    but the corrected robust path has not been run.  Historical robust results
    remain invalid for promotion. Scripts 10 and 13 also remain 80x80-cell
    FDTDX optimizers and must not be pointed at the 81x81 Lumerical carrier.
-   The new nodal design map exists, but no Lumerical LD_MMA entry point is
-   enabled yet. See `ROBUST_OBJECTIVE_AUDIT.md`.
+   The new nodal design map now has one fail-closed Lumerical LD_MMA smoke
+   entry point, but it is hard-limited to two function evaluations and cannot
+   start a production continuation. See `ROBUST_OBJECTIVE_AUDIT.md`.
 8. Production optimization is now unconditionally code-blocked because the
    existing entry points still implement the historical gray/FDTDX path.
    Legacy shared-linear certificates cannot clear this gate. The new
    Lumerical `n-k` density carrier is now connected through component-Yee
    discrete adjoints for Ea and Eb. All four planned latent-variable directions
    for each polarization and their signed objective now pass centered AD-FD.
-   Production remains blocked until the Lumerical evaluation driver and the
-   selected converged mesh pass. Then issue
+   The two-evaluation Lumerical evaluation driver now exists and passes its
+   solver-free preflight. Production remains blocked until its actual smoke
+   result is reviewed, bounded artifact retention/checkpoint-resume is added,
+   and the selected converged mesh passes. Then issue
    certificates naming the selected full-domain-z grid, Courant factor, time
    windows, and same-grid Ea/Eb source calibration. The combined adjoint also derives
    its Au/TaIrTe4 material offsets from the realized placed slices; do not
@@ -706,8 +727,9 @@ Do not copy them into this worktree.
    B200 preflight.
 5. The selected bounded-cost development mesh is CV0 `2.5/50 nm`. Its R1.2
    source/empty/full controls and one complete common Ea/Eb beta-4 latent
-   AD-FD direction pass. Build the fail-closed evaluation driver without
-   rerunning these hash-bound controls. The component-Yee builder,
+   AD-FD direction pass. The fail-closed two-evaluation driver and runres
+   launcher now exist; run that smoke without rerunning the hash-bound exact
+   controls. The component-Yee builder,
    hash-bound R1.2 distributed-source adjoints,
    and all four planned beta-4 latent centered AD-FD directions for each of Ea
    and Eb now pass on the 5/50-nm staircase mesh. Their exact signed epigraph
