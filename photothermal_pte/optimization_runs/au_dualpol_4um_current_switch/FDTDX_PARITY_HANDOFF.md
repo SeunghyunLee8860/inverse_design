@@ -745,8 +745,13 @@ polarization, so two-GPU optical wall time may fit below 30 minutes, but this is
 not a production certificate.  Read `FDTDX_REVERSIBLE_ADJOINT_REPORT.md`,
 `FDTDX_REVERSIBLE_SLICE_REPORT.md`,
 `FDTDX_REVERSIBLE_SPARSE_SLICE_REPORT.md`, and
-`FDTDX_REVERSIBLE_RUNTIME_REPORT.md`.  Slice 256 is too memory-heavy at full
-horizon; next run only the bounded 16,384-step Ea/Eb probe with slice 1,024.
+`FDTDX_REVERSIBLE_RUNTIME_REPORT.md`.  The 16,384-step slice-1,024 follow-up
+keeps runtime near 22.16/22.18 projected minutes per polarization, but centered
+AD-FD is 0.004101 for Ea and 0.006556 for Eb.  Eb fails the frozen 0.005 gate,
+so slice 1,024 is blocked despite feasible memory.  Read
+`FDTDX_REVERSIBLE_LONG_SLICE_REPORT.md`.  Next run the same bounded 16,384-step
+Ea/Eb diagnostic with slice 512 to isolate inverse-reconstruction error; slice
+512 is not a full-horizon memory candidate.
 
 ## What completion means
 
@@ -778,10 +783,11 @@ reevaluation.
 > regional `c3` gradient; read `FDTDX_REVERSIBLE_SLICE_REPORT.md` and
 > `FDTDX_REVERSIBLE_SPARSE_SLICE_REPORT.md`.  The parallel 4,096-step Ea/Eb
 > exact-grid latent AD-FD gate passes; read `FDTDX_REVERSIBLE_RUNTIME_REPORT.md`.
-> Slice 256 is not full-horizon feasible.  Next run only the bounded 16,384-step
-> Ea/Eb probe with slice 1,024 on freshly verified-idle GPU UUIDs to test longer
-> inverse reconstruction and runtime scaling.  Do not run a full gradient or
-> optimizer.
+> The 16,384-step slice-1,024 gate has now failed Eb AD-FD at 0.006556
+> versus the frozen 0.005 limit; read `FDTDX_REVERSIBLE_LONG_SLICE_REPORT.md`.
+> Next run only the same bounded 16,384-step Ea/Eb diagnostic with slice 512 on
+> freshly verified-idle UUIDs to confirm reset-interval error.  Slice 512 is not
+> full-horizon memory-feasible; do not run a full gradient or optimizer.
 > Continue only the fresh FDTDX GPU parity path for the 4-um Ea/Eb Au topology; do not run legacy scripts 10/12/13
 > and do not use optical rho^3 or c3-only linear scaling.  Preserve the canonical
 > 81x81 latent -> 500-nm finite conic filter -> tanh projection -> shared nodal
