@@ -799,3 +799,20 @@ Do not copy them into this worktree.
 8. Only then start LD_MMA filter/projection continuation and finish with an
    independent 250-nm solid/void audit plus ordinary dispersive-Au binary
    reevaluation.
+
+## Active continuation update -- 2026-08-25 20:54 UTC
+
+The bounded-cost Lumerical LD_MMA continuation is now active under immutable
+commit `69b2bb4098523162421fa6078a3b1c1b3499dd00`; do not restart the obsolete
+`790a5ade` run. Read `LUMERICAL_PRODUCTION_RUN_STATUS.md` for exact paths and
+monitor commands. Its beta-1 uniform evaluation 0 passed the complete
+Lumerical-forward/custom-CUDA-PDE/Lumerical-adjoint chain in `1089.50 s`, and
+evaluation 1 (the optimizer's first changed density) has started.
+
+The previous failure was not a physical, remap, or adjoint failure. The
+uniform design's signed current contraction was cancellation dominated, so a
+signed-relative transpose metric was ill-conditioned. The replacement uses a
+normwise bilinear adjoint identity at the same `1e-12` gate and passed actual
+production data at `1.194e-18` (Ea) and `4.183e-18` (Eb). Commit `69b2bb40`
+and its regression test are already pushed to the shared branch before this
+handoff update.

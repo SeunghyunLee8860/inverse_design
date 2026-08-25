@@ -83,3 +83,50 @@ This closes only optical lateral convergence of the final mask. The custom
 thermal/electrical operators still use a 100-nm core grid; their independent
 100-to-50-nm temperature/current mesh convergence remains open and must not be
 hidden by the optical pass.
+
+## Replacement production run -- 2026-08-25 20:54 UTC
+
+The original immutable `790a5ade` run stopped during evaluation 0 because its
+physical contraction was almost exactly zero at uniform `rho=0.5`, while the
+gate divided the transpose mismatch by that cancellation-dominated signed
+value. The large positive/negative terms were about `1.43e-8` in aggregate,
+the signed contraction was about `1.71e-16`, and an absolute mismatch of only
+order `1e-25` therefore produced a misleading signed relative failure.
+
+Commit `69b2bb4098523162421fa6078a3b1c1b3499dd00` replaces that ill-conditioned
+gate with the standard Cauchy--Schwarz normwise bilinear-adjoint error. It
+retains signed relative error and cancellation ratio as diagnostics; it does
+not relax the `1e-12` threshold. The failed Ea artifact passed the repaired
+gate offline with normwise error `1.194e-18`, and the Lumerical-specific
+solver-free regression passed `110` tests.
+
+The active replacement is:
+
+- immutable run commit: `69b2bb4098523162421fa6078a3b1c1b3499dd00`;
+- detached worktree:
+  `/home/seunghyun/tairte4/worktrees/au_lumerical_continuation_69b2bb40`;
+- tmux session: `au4um_lum_prod_69b2bb40`;
+- output root:
+  `/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_69b2bb409852`;
+- manifest: `.../continuation_69b2bb409852/production_manifest.json`;
+- resume checkpoint: `.../continuation_69b2bb409852/continuation_checkpoint.npz`;
+- physical GPU 5, UUID
+  `GPU-aa047452-9c73-d10f-675f-8af800915acf`;
+- nine reserved `lum_fdtd_solve` tasks owned by the `runres` parent.
+
+Evaluation 0 at beta 1 completed all two-forward, two-custom-CUDA-PDE,
+component-Yee-Jacobian, and two-Maxwell-adjoint gates. It reported
+`I_Ea=-1.709981e-7 nA`, `I_Eb=+8.443054e-7 nA`, and balanced utility
+`min(I_Ea,-I_Eb)=-8.443054e-7 nA`; opposite switching is not yet present at
+the exact-uniform starting point. Wall time was `1089.50 s`. The repaired
+normwise contraction errors were `1.194e-18` for Ea and `4.183e-18` for Eb.
+The optimizer then started evaluation 1 at a different density hash, proving
+that the first design update is underway.
+
+Monitor the replacement without launching another copy:
+
+```bash
+tmux capture-pane -pt au4um_lum_prod_69b2bb40 -S -120
+jq '{status,latest,stage_count:(.stages|length),error}' \
+  /home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_69b2bb409852/production_manifest.json
+```
