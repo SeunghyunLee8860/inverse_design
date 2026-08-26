@@ -56,6 +56,14 @@ It started from exact uniform rho=0.5 at beta 1. Read
 `LUMERICAL_PRODUCTION_RUN_STATUS.md` for the live manifest and monitoring
 command. Do not launch a duplicate or alter that immutable worktree.
 
+The first uniform evaluation completed at essentially zero current. The
+bounded warm-start evaluation 0001 then passed with
+`I_Ea=+0.0231089668 nA`, `I_Eb=-0.0231527341 nA`, and FOM
+`+0.0231089668 nA`; evaluation 0002 is now running. This proves the optimizer
+has left the symmetric uniform saddle and found the desired signs, but it is
+only beta 1 with latent range `0.49375--0.50625`. Do not call it binarized or
+fabricable before the continuation and final exact-Au gates pass.
+
 Commit `417372bd` also fixes a fail-closed orchestration defect discovered at
 launch: a passed preflight-only manifest was previously mistaken for a
 terminal exact-binary certificate. A valid empty preflight checkpoint can now

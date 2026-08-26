@@ -4,9 +4,20 @@
 
 **RUNNING.** The corrected `S_Au` continuation is active from exact uniform
 latent/projected `rho=0.5` at beta 1. It passed the solver-free preflight and
-successfully transitioned the same checkpoint to the full run. At this
-snapshot it is in evaluation 0000's Ea Lumerical forward; no current or FOM
-has been produced yet.
+successfully transitioned the same checkpoint to the full run. The uniform
+evaluation 0000 completed in 1089.79 s with currents numerically at zero. The
+bounded max-min warm start then completed evaluation 0001 in 1105.70 s and
+already produced the target signs:
+
+- `I_Ea=+0.0231089668 nA`;
+- `I_Eb=-0.0231527341 nA`;
+- balanced FOM `+0.0231089668 nA`;
+- `opposite_current_switching_achieved=true`.
+
+The warm-start latent range is `0.49375--0.50625`, so this is a beta-1
+continuous switching point, not a fabricated binary result. Evaluation 0002
+is active at this snapshot. The run must continue through all beta/DFM/
+grayness and exact-binary promotion gates.
 
 - immutable run commit: `417372bd73dc1af395b2fed2aac87f80a6be5d2f`;
 - detached worktree:
