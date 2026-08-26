@@ -23,6 +23,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_f
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import (
     N_TA,
+    au_temperature,
     build_electrical_system,
     build_thermal_state,
     current_integrand,
@@ -91,11 +92,14 @@ def run_case(
     start = time.perf_counter()
     temperature, thermal_audit = solve_thermal(state, source_power, cuda_device)
     ta_temperature = tairte4_temperature(state, temperature)
-    electrical = build_electrical_system(rho, ta_temperature)
+    temperature_au = au_temperature(state, temperature)
+    electrical = build_electrical_system(rho, ta_temperature, temperature_au)
     psi, current, electrical_audit = solve_electrical(electrical, cuda_device)
     runtime_s = time.perf_counter() - start
     psi_ta = psi[: N_TA * N_TA].reshape(N_TA, N_TA)
-    integrand = current_integrand(ta_temperature, psi)
+    integrand = current_integrand(
+        ta_temperature, psi, electrical_system=electrical
+    )
     integrand_current = float(np.sum(integrand) * CONTRACT.design_pitch_m**2)
     current_consistency = abs(integrand_current - current) / max(abs(current), 1e-30)
     gates = {

@@ -61,6 +61,8 @@ REQUIRED_DEVICE_CONFIRMATIONS = (
     "au_tairte4_thermal_contact_scenario_accepted",
     "au_tairte4_electrical_contact_scenario_accepted",
     "electrical_void_floor_sensitivity_passed",
+    "au_50nm_transport_values_accepted_or_measured",
+    "au_tairte4_vertical_thermopower_model_accepted_or_measured",
     "signed_output_terminal_and_current_convention_confirmed",
 )
 REQUIRED_MESH_COVERAGE = (

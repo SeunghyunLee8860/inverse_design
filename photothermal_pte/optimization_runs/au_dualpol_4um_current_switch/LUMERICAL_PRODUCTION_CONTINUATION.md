@@ -1,5 +1,12 @@
 # Lumerical Au production continuation
 
+Current gate (2026-08-26): **do not launch or resume yet**. The prior run
+omitted Au thermopower and is stale. Read `LUMERICAL_ONLY_EXECUTION.md` and
+complete fresh Ea/Eb combined Maxwell/custom-PDE AD-FD with `S_Au` before
+creating a new output root. The next run must start again from exact uniform
+`rho=0.5`; an old MMA checkpoint cannot be reused after changing the objective
+and gradient.
+
 This is the production successor to the two-evaluation beta-4 smoke. The
 entry point is `41_optimize_lumerical_4um_dualpol_continuation.py`; the site
 launcher is `launch_lumerical_continuation_runres_gpu5.sh`.
@@ -14,6 +21,11 @@ site `/home/dhkim/bin/runres` incorrectly searches the current user's absent
 - Maxwell: Lumerical FDTD 2026 R1.2 only.
 - Thermal/electrical: repository custom CUDA equations only; no Lumerical
   HEAT or CHARGE.
+- Thermoelectric source: both anisotropic TaIrTe4 and in-plane floating-Au
+  contributions. The Au bulk-reference scenario is `S_Au=+1.94 uV/K`; the
+  numerical void floor has zero thermopower, and the unknown vertical
+  Au/TaIrTe4 interface thermopower is explicitly zero rather than guessed.
+- Alternative Maxwell solver: forbidden by `lumerical_only_boundary.py`.
 - Objective: maximize the epigraph `t` with `t-I_Ea<=0` and `t+I_Eb<=0`.
 - Target: `I_Ea>0` and `I_Eb<0`.
 - Beta schedule: `1, 2, 4, 8, 16, 32, 64, 128`.

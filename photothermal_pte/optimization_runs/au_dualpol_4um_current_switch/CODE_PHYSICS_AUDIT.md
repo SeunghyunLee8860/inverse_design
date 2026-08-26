@@ -4,6 +4,16 @@ Status: **production blocked**. The repository can run numerical diagnostics,
 but the historical topology is not a validated physical design and a new
 optimization must not start yet.
 
+Superseding 2026-08-26 correction: the active Maxwell route is Lumerical-only.
+The former production continuation is stopped because it omitted Au's own
+thermopower. The corrected network includes `S_Au=+1.94 uV/K` on in-plane Au
+sheet edges, its Au-temperature thermal pullback, and its direct density
+derivative. Dual-polarization fixed-Lumerical-Q custom-CUDA AD-FD passes at
+relative errors below `1.6e-6`; full combined Maxwell/PDE AD-FD is still
+required. The bulk Au value is not a certified 50-nm-film measurement, and
+the unknown vertical Au/TaIrTe4 thermopower remains an explicit zero scenario.
+See `LUMERICAL_ONLY_EXECUTION.md`.
+
 Superseding correction: the shared-linear gray law discussed below is a
 historical FDTDX consistency diagnostic, not the selected Lumerical optical
 law. The authorized route is density topology with one projected occupancy,
@@ -100,6 +110,16 @@ sample-air boundaries are insulating, and the transverse example uses an
    thermal conductance and electrical contact conductance materially affect
    heat spreading and the weighting field. They require a sweep or measured
    bounds before an experimental prediction claim.
+
+6. **Au transport is now present but remains a scenario.** The previous
+   objective used Au in optical absorption, heat spreading, electrical
+   conductance, and the weighting field, but omitted Au's local Seebeck
+   current. This was not negligible: at one beta-2 Lumerical state the new Au
+   term was `-0.001681 nA` for Ea and `+0.006137 nA` for Eb. The bulk 300 K
+   `+1.94 uV/K` reference is now active and its downstream adjoint passes, but
+   electrical conductivity, thermal conductivity, and Seebeck coefficient can
+   differ in a 50-nm patterned film. A measured/bounded film-parameter sweep
+   and a vertical-interface thermopower decision remain necessary.
 
 ## P1 numerical and modeling risks
 

@@ -61,8 +61,11 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     LUMERICAL_ROOT,
     require_lumerical_gpu,
 )
-from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (  # noqa: E402
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_provenance import (  # noqa: E402
     sha256,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_only_boundary import (  # noqa: E402
+    require_lumerical_only_source_boundary,
 )
 from photothermal_pte.validation.paper_ir_sanity import (  # noqa: E402
     validate_paper_ir_source_only_gpu as lumerical_audit,
@@ -302,6 +305,7 @@ def _load_and_validate_inputs(args: argparse.Namespace) -> dict[str, Any]:
 
 
 def main() -> int:
+    require_lumerical_only_source_boundary()
     args = _parse_args()
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):

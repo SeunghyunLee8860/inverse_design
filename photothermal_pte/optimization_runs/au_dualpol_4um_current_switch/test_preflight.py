@@ -459,9 +459,10 @@ def test_exact_binary_electrical_topology_removes_void_au_nodes() -> None:
     mask = np.zeros(CONTRACT.design_shape, dtype=np.float64)
     mask[30:50, 35:45] = 1.0
     temperature = np.zeros((N_TA, N_TA), dtype=np.float64)
+    temperature_au = np.zeros((N_DESIGN, N_DESIGN), dtype=np.float64)
 
     exact = build_electrical_system(
-        mask, temperature, exact_binary_geometry=True
+        mask, temperature, temperature_au, exact_binary_geometry=True
     )
     expected_inactive = N_DESIGN * N_DESIGN - int(np.count_nonzero(mask))
     assert exact.exact_binary_geometry
@@ -480,7 +481,7 @@ def test_exact_binary_electrical_topology_removes_void_au_nodes() -> None:
     )
     assert np.all(exact.full_matrix_S.diagonal()[active] > 0.0)
 
-    relaxed = build_electrical_system(mask, temperature)
+    relaxed = build_electrical_system(mask, temperature, temperature_au)
     assert not relaxed.exact_binary_geometry
     assert relaxed.inactive.size == 0
     assert np.all(
@@ -490,6 +491,7 @@ def test_exact_binary_electrical_topology_removes_void_au_nodes() -> None:
         build_electrical_system(
             np.full(CONTRACT.design_shape, 0.5),
             temperature,
+            temperature_au,
             exact_binary_geometry=True,
         )
 

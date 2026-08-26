@@ -18,6 +18,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysics_4um import (
     N_TA,
+    au_temperature,
     build_electrical_system,
     build_thermal_state,
     current_integrand,
@@ -25,7 +26,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysi
     solve_thermal,
     tairte4_temperature,
 )
-from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_provenance import (
     sha256,
 )
 
@@ -181,12 +182,18 @@ def run_component_yee_downstream(
     start = time.perf_counter()
     temperature, thermal_audit = solve_thermal(state, source_power, cuda_device)
     ta_temperature = tairte4_temperature(state, temperature)
+    temperature_au = au_temperature(state, temperature)
     electrical = build_electrical_system(
-        rho, ta_temperature, exact_binary_geometry=True
+        rho,
+        ta_temperature,
+        temperature_au,
+        exact_binary_geometry=True,
     )
     psi, current, electrical_audit = solve_electrical(electrical, cuda_device)
     runtime = time.perf_counter() - start
-    integrand = current_integrand(ta_temperature, psi)
+    integrand = current_integrand(
+        ta_temperature, psi, electrical_system=electrical
+    )
     integrand_current = float(np.sum(integrand) * CONTRACT.design_pitch_m**2)
     current_absolute_scale = float(
         np.sum(np.abs(integrand)) * CONTRACT.design_pitch_m**2
@@ -229,6 +236,7 @@ def run_component_yee_downstream(
             np.all(np.isfinite(source_power))
             and np.all(np.isfinite(temperature))
             and np.all(np.isfinite(ta_temperature))
+            and np.all(np.isfinite(temperature_au))
             and np.all(np.isfinite(psi))
             and np.all(np.isfinite(integrand))
         ),
@@ -247,6 +255,7 @@ def run_component_yee_downstream(
         "source_power_mirror_error": source_mirror,
         "Tmax_K": float(np.max(temperature)),
         "TaIrTe4_Tmax_K": float(np.max(ta_temperature)),
+        "Au_Tmax_K": float(np.max(temperature_au)),
         "current_A": current,
         "current_nA": current * 1.0e9,
         "current_from_integrand_A": integrand_current,
@@ -262,6 +271,7 @@ def run_component_yee_downstream(
         "source_power_W": source_power,
         "temperature_K": temperature,
         "TaIrTe4_temperature_K": ta_temperature,
+        "Au_temperature_K": temperature_au,
         "weighting_potential_TaIrTe4": psi[: N_TA * N_TA].reshape(N_TA, N_TA),
         "current_integrand_A_m2": integrand,
     }
@@ -297,12 +307,18 @@ def run_official_pabs_downstream(
     start = time.perf_counter()
     temperature, thermal_audit = solve_thermal(state, source_power, cuda_device)
     ta_temperature = tairte4_temperature(state, temperature)
+    temperature_au = au_temperature(state, temperature)
     electrical = build_electrical_system(
-        rho, ta_temperature, exact_binary_geometry=True
+        rho,
+        ta_temperature,
+        temperature_au,
+        exact_binary_geometry=True,
     )
     psi, current, electrical_audit = solve_electrical(electrical, cuda_device)
     runtime = time.perf_counter() - start
-    integrand = current_integrand(ta_temperature, psi)
+    integrand = current_integrand(
+        ta_temperature, psi, electrical_system=electrical
+    )
     integrand_current = float(np.sum(integrand) * CONTRACT.design_pitch_m**2)
     current_absolute_scale = float(
         np.sum(np.abs(integrand)) * CONTRACT.design_pitch_m**2
@@ -345,6 +361,7 @@ def run_official_pabs_downstream(
             np.all(np.isfinite(source_power))
             and np.all(np.isfinite(temperature))
             and np.all(np.isfinite(ta_temperature))
+            and np.all(np.isfinite(temperature_au))
             and np.all(np.isfinite(psi))
             and np.all(np.isfinite(integrand))
         ),
@@ -362,6 +379,7 @@ def run_official_pabs_downstream(
         "mapping": mapping,
         "Tmax_K": float(np.max(temperature)),
         "TaIrTe4_Tmax_K": float(np.max(ta_temperature)),
+        "Au_Tmax_K": float(np.max(temperature_au)),
         "current_A": current,
         "current_nA": current * 1.0e9,
         "current_from_integrand_A": integrand_current,
@@ -377,6 +395,7 @@ def run_official_pabs_downstream(
         "source_power_W": source_power,
         "temperature_K": temperature,
         "TaIrTe4_temperature_K": ta_temperature,
+        "Au_temperature_K": temperature_au,
         "weighting_potential_TaIrTe4": psi[: N_TA * N_TA].reshape(N_TA, N_TA),
         "current_integrand_A_m2": integrand,
     }

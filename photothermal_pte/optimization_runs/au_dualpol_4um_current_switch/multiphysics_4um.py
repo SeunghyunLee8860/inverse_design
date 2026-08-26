@@ -20,12 +20,12 @@ from scipy import sparse
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
     CONTRACT,
 )
-from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_material_fraction import (
     au_material_fraction,
     d_au_material_fraction_drho,
 )
-from photothermal_pte.optimization_runs.au_on_fixed_tairte4_validation.material_model import (
-    AU_BULK_ELECTRICAL_CONDUCTIVITY_S_M,
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch import (
+    lumerical_4um_overlap_remap as overlap,
 )
 from photothermal_pte.optimization_runs.cuda_thermal_adjoint import PersistentCudaCSR
 
@@ -36,11 +36,6 @@ FVM_PATH = (
     REPOSITORY
     / "photothermal_pte/validation/photothermal_stage1/anisotropic_heat_fvm.py"
 )
-OVERLAP_PATH = (
-    HERE.parent
-    / "au_on_fixed_tairte4_validation/64_validate_fdtdx_material_overlap_thermal_remap.py"
-)
-
 STEP_M = CONTRACT.design_pitch_m
 N_TA = int(round(CONTRACT.flake_span_x_m / STEP_M))
 N_DESIGN = CONTRACT.design_shape[0]
@@ -52,7 +47,7 @@ K_AIR_W_MK = 0.026
 K_SIO2_W_MK = 1.38
 K_SI_W_MK = 145.0
 K_TA_XYZ_W_MK = np.asarray((3.8, 14.4, 1.0), dtype=np.float64)
-K_AU_W_MK = 317.0
+K_AU_W_MK = CONTRACT.au_bulk_thermal_conductivity_W_mK
 G_SIO2_SI_W_M2K = 1.1e9
 G_TA_AIR_W_M2K = CONTRACT.g_ta_air_W_m2K
 G_TA_SIO2_W_M2K = CONTRACT.g_ta_sio2_W_m2K
@@ -62,7 +57,12 @@ TOP_AIR_CONVECTION_W_M2K = 10.0
 # x=b, y=a.
 SIGMA_TA_XY_S_M = np.asarray((1.10e5, 4.91e5), dtype=np.float64)
 SEEBECK_TA_XY_V_K = np.asarray((27.0e-6, -6.0e-6), dtype=np.float64)
-SIGMA_AU_S_M = float(AU_BULK_ELECTRICAL_CONDUCTIVITY_S_M)
+SIGMA_AU_S_M = CONTRACT.au_bulk_electrical_conductivity_S_m
+SEEBECK_AU_V_K = CONTRACT.au_bulk_seebeck_V_K
+# No measured Au/TaIrTe4 interfacial thermopower is available.  The Au bulk
+# source is therefore assembled on in-plane Au sheet edges only; the vertical
+# electrical contact remains a passive conductance.
+SEEBECK_AU_TA_CONTACT_V_K = CONTRACT.au_tairte4_interfacial_seebeck_V_K
 SIGMA_FLOOR_FRACTION = 1.0e-8
 CONTACT_FLOOR_FRACTION = 1.0e-10
 ELECTRICAL_CONTACT_S_M2 = CONTRACT.electrical_contact_S_m2
@@ -357,11 +357,6 @@ def map_native_q_to_thermal(
 ) -> tuple[np.ndarray, dict[str, dict[str, float]], dict[str, dict[str, object]]]:
     """Conservatively map component-specific material power to explicit cells."""
 
-    overlap = _load(OVERLAP_PATH, "au_dualpol_4um_overlap")
-    from photothermal_pte.optimization_runs.au_on_fixed_tairte4_validation.fdtdx_dynamic_pte import (
-        component_coordinates,
-    )
-
     source_power = np.zeros(state.system.shape, dtype=np.float64)
     records: dict[str, dict[str, float]] = {}
     contexts: dict[str, dict[str, object]] = {}
@@ -377,13 +372,13 @@ def map_native_q_to_thermal(
             for axis, index in enumerate(indices)
         )
         geometry = {
-            name: component_coordinates(
+            name: overlap.component_yee_coordinates(
                 realized_grid, material_slices[material], component
             )
             for component, name in enumerate(("x", "y", "z"))
         }
         primal_edges = tuple(
-            overlap._primal_edges(
+            overlap.primal_edges(
                 geometry[("x", "y", "z")[axis]][0][axis],
                 geometry[("x", "y", "z")[axis]][1][axis],
             )
@@ -395,7 +390,7 @@ def map_native_q_to_thermal(
         for component, name in enumerate(("x", "y", "z")):
             coordinates, widths = geometry[name]
             operators = tuple(
-                overlap._overlap_operator(
+                overlap.overlap_operator(
                     coordinates[axis], widths[axis], primal_edges[axis]
                 )[0]
                 for axis in range(3)
@@ -405,16 +400,16 @@ def map_native_q_to_thermal(
                 q_fields_W_m3[material][component], dtype=np.float64
             ) * np.asarray(dual_volumes_m3[material][component], dtype=np.float64)
             native_total += float(np.sum(power))
-            primal_total += overlap._forward(power, operators)
+            primal_total += overlap.forward_remap(power, operators)
         primal_centers = tuple(0.5 * (edge[:-1] + edge[1:]) for edge in primal_edges)
         primal_widths = tuple(np.diff(edge) for edge in primal_edges)
         second = tuple(
-            overlap._overlap_operator(
+            overlap.overlap_operator(
                 primal_centers[axis], primal_widths[axis], target_edges[axis]
             )[0]
             for axis in range(3)
         )
-        mapped = overlap._forward(primal_total, second)
+        mapped = overlap.forward_remap(primal_total, second)
         source_power[np.ix_(*indices)] += mapped
         mapped_total = float(np.sum(mapped))
         records[material] = {
@@ -437,16 +432,15 @@ def pullback_thermal_source_weights(
 ) -> dict[str, np.ndarray]:
     """Transpose the conservative remap to native component Yee power."""
 
-    overlap = _load(OVERLAP_PATH, "au_dualpol_4um_overlap_transpose")
     result: dict[str, np.ndarray] = {}
     for material, context in mapping_context.items():
         explicit = np.asarray(thermal_adjoint, dtype=np.float64)[
             np.ix_(*context["indices"])
         ]
-        primal = overlap._transpose(explicit, context["second"])
+        primal = overlap.transpose_remap(explicit, context["second"])
         result[material] = np.stack(
             [
-                overlap._transpose(primal, context["first"][name])
+                overlap.transpose_remap(primal, context["first"][name])
                 for name in ("x", "y", "z")
             ]
         )
@@ -511,12 +505,39 @@ def tairte4_temperature(state: ThermalState, temperature: np.ndarray) -> np.ndar
     return result
 
 
+def au_temperature(state: ThermalState, temperature: np.ndarray) -> np.ndarray:
+    """Return the thickness-averaged temperature of the Au/air design layer."""
+
+    x, y, z = state.centers
+    ix = np.flatnonzero((x >= -4e-6) & (x < 4e-6))
+    iy = np.flatnonzero((y >= -4e-6) & (y < 4e-6))
+    iz = np.flatnonzero((z >= 0.0) & (z < 0.05e-6))
+    weights = state.widths[2][iz]
+    result = np.tensordot(
+        temperature[np.ix_(ix, iy, iz)], weights / np.sum(weights), axes=(2, 0)
+    )
+    if result.shape != (state.n_design, state.n_design):
+        raise RuntimeError(f"unexpected Au temperature shape {result.shape}")
+    return result
+
+
 @dataclass(frozen=True)
 class EdgeDerivative:
     left: int
     right: int
     rho_index: int
     dg_drho_S: float
+    label: str
+
+
+@dataclass(frozen=True)
+class ThermoelectricEdge:
+    left: int
+    right: int
+    temperature_left_index: int
+    temperature_right_index: int
+    coefficient_A_K: float
+    coefficient_derivatives_A_K: tuple[tuple[int, float], ...]
     label: str
 
 
@@ -530,9 +551,14 @@ class ElectricalSystem:
     inactive: np.ndarray
     fixed_values_V: np.ndarray
     objective_gradient_psi_A: np.ndarray
+    tairte4_thermoelectric_load_A: np.ndarray
+    au_thermoelectric_load_A: np.ndarray
     derivative_terms: tuple[EdgeDerivative, ...]
+    thermoelectric_edges: tuple[ThermoelectricEdge, ...]
     rho: np.ndarray
     material_fraction: np.ndarray
+    tairte4_temperature_K: np.ndarray
+    au_temperature_K: np.ndarray
     step_m: float
     n_ta: int
     n_design: int
@@ -610,6 +636,7 @@ def electrical_load(
 def build_electrical_system(
     rho: np.ndarray,
     temperature_K: np.ndarray,
+    au_temperature_K: np.ndarray,
     *,
     exact_binary_geometry: bool = False,
 ) -> ElectricalSystem:
@@ -627,11 +654,17 @@ def build_electrical_system(
     temperature = np.asarray(temperature_K, dtype=np.float64)
     if temperature.shape != (n_ta, n_ta) or not np.all(np.isfinite(temperature)):
         raise ValueError("temperature does not match the rho-derived Ta grid")
+    temperature_au = np.asarray(au_temperature_K, dtype=np.float64)
+    if temperature_au.shape != (n_design, n_design) or not np.all(
+        np.isfinite(temperature_au)
+    ):
+        raise ValueError("Au temperature does not match the rho-derived design grid")
     node_count = n_ta * n_ta + n_design * n_design
     rows: list[int] = []
     cols: list[int] = []
     data: list[float] = []
     derivatives: list[EdgeDerivative] = []
+    thermoelectric_edges: list[ThermoelectricEdge] = []
     for i in range(n_ta):
         for j in range(n_ta):
             node = ta_id(i, j, n_ta)
@@ -680,6 +713,15 @@ def build_electrical_system(
                 resistance = 0.5 * step_m / sigma[i, j] + 0.5 * step_m / sigma[ni, nj]
                 g = AU_THICKNESS_M * step_m / resistance
                 _add_edge(rows, cols, data, node, right, g)
+                # The continuous-path conductivity floor regularizes the
+                # floating electrical matrix but is not physical Au.  It
+                # therefore generates no thermopower.  Exact-binary mode has
+                # no floor and keeps only actual solid-solid Au edges.
+                thermoelectric_g = g - AU_THICKNESS_M * sigma_floor
+                if thermoelectric_g < -1.0e-18 * AU_THICKNESS_M * SIGMA_AU_S_M:
+                    raise RuntimeError("Au thermoelectric conductance is negative")
+                thermoelectric_g = max(thermoelectric_g, 0.0)
+                coefficient_derivatives: list[tuple[int, float]] = []
                 if not exact_binary:
                     for ii, jj in ((i, j), (ni, nj)):
                         dg = (
@@ -700,6 +742,20 @@ def build_electrical_system(
                                 label,
                             )
                         )
+                        coefficient_derivatives.append(
+                            (ii * n_design + jj, dg * SEEBECK_AU_V_K)
+                        )
+                thermoelectric_edges.append(
+                    ThermoelectricEdge(
+                        left=node,
+                        right=right,
+                        temperature_left_index=i * n_design + j,
+                        temperature_right_index=ni * n_design + nj,
+                        coefficient_A_K=thermoelectric_g * SEEBECK_AU_V_K,
+                        coefficient_derivatives_A_K=tuple(coefficient_derivatives),
+                        label=f"{label}_bulk_Au_Seebeck",
+                    )
+                )
             ti, tj = design_offset + i, design_offset + j
             g_contact = step_m**2 * (
                 contact_floor
@@ -739,6 +795,20 @@ def build_electrical_system(
     free = np.flatnonzero(free_mask)
     reduced = matrix[free][:, free].tocsr()
     rhs = -np.asarray(matrix[free][:, fixed] @ fixed_values).reshape(-1)
+    tairte4_load = electrical_load(
+        temperature,
+        n_design=n_design,
+        step_m=step_m,
+    )
+    au_load = np.zeros(node_count, dtype=np.float64)
+    flat_au_temperature = temperature_au.reshape(-1)
+    for edge in thermoelectric_edges:
+        value = edge.coefficient_A_K * (
+            flat_au_temperature[edge.temperature_right_index]
+            - flat_au_temperature[edge.temperature_left_index]
+        )
+        au_load[edge.left] += value
+        au_load[edge.right] -= value
     return ElectricalSystem(
         full_matrix_S=matrix,
         reduced_matrix_S=reduced,
@@ -747,14 +817,15 @@ def build_electrical_system(
         fixed=fixed,
         inactive=inactive,
         fixed_values_V=fixed_values,
-        objective_gradient_psi_A=electrical_load(
-            temperature,
-            n_design=n_design,
-            step_m=step_m,
-        ),
+        objective_gradient_psi_A=tairte4_load + au_load,
+        tairte4_thermoelectric_load_A=tairte4_load,
+        au_thermoelectric_load_A=au_load,
         derivative_terms=tuple(derivatives),
+        thermoelectric_edges=tuple(thermoelectric_edges),
         rho=density.copy(),
         material_fraction=fraction.copy(),
+        tairte4_temperature_K=temperature.copy(),
+        au_temperature_K=temperature_au.copy(),
         step_m=step_m,
         n_ta=n_ta,
         n_design=n_design,
@@ -765,7 +836,7 @@ def build_electrical_system(
 
 def solve_electrical(
     system: ElectricalSystem, cuda_device: int
-) -> tuple[np.ndarray, float, dict[str, float | int]]:
+) -> tuple[np.ndarray, float, dict[str, float | int | str]]:
     operator = PersistentCudaCSR(system.reduced_matrix_S, cuda_device=cuda_device)
     result = operator.solve(
         system.reduced_rhs_A,
@@ -799,6 +870,16 @@ def solve_electrical(
             "electrical_void_Au_nodes_removed": bool(
                 system.exact_binary_geometry
             ),
+            "tairte4_thermoelectric_current_A": float(
+                system.tairte4_thermoelectric_load_A @ psi
+            ),
+            "au_thermoelectric_current_A": float(
+                system.au_thermoelectric_load_A @ psi
+            ),
+            "S_Au_V_K": SEEBECK_AU_V_K,
+            "S_Au_Ta_contact_V_K": SEEBECK_AU_TA_CONTACT_V_K,
+            "Au_thermopower_model": CONTRACT.au_thermopower_discretization,
+            "Au_transport_parameter_scope": CONTRACT.au_transport_parameter_scope,
         },
     )
 
@@ -809,8 +890,14 @@ def current_integrand(
     *,
     n_design: int = N_DESIGN,
     step_m: float = STEP_M,
+    electrical_system: ElectricalSystem | None = None,
 ) -> np.ndarray:
-    """Cell-centred A/m2 map whose area integral is the total PTE current."""
+    """Cell-centred A/m2 map whose area integral is the total PTE current.
+
+    Without ``electrical_system`` this returns the historical TaIrTe4-only
+    contribution.  Passing the system adds the Au sheet thermopower on the
+    corresponding cells of the TaIrTe4 reporting footprint.
+    """
 
     temperature = np.asarray(temperature_K, dtype=np.float64)
     if (
@@ -854,6 +941,26 @@ def current_integrand(
                 )
                 values[i, j] += 0.5 * contribution / step_m**2
                 values[i, j + 1] += 0.5 * contribution / step_m**2
+    if electrical_system is not None:
+        system = electrical_system
+        if (
+            system.n_ta != n_ta
+            or system.n_design != n_design
+            or not np.isclose(system.step_m, step_m, rtol=0.0, atol=1.0e-18)
+            or np.asarray(psi).shape != (system.full_matrix_S.shape[0],)
+        ):
+            raise ValueError("electrical system does not match the current map grid")
+        flat_au_temperature = system.au_temperature_K.reshape(-1)
+        for edge in system.thermoelectric_edges:
+            contribution = edge.coefficient_A_K * (
+                flat_au_temperature[edge.temperature_right_index]
+                - flat_au_temperature[edge.temperature_left_index]
+            ) * (psi[edge.left] - psi[edge.right])
+            li, lj = divmod(edge.temperature_left_index, n_design)
+            ri, rj = divmod(edge.temperature_right_index, n_design)
+            offset = system.design_offset
+            values[offset + li, offset + lj] += 0.5 * contribution / step_m**2
+            values[offset + ri, offset + rj] += 0.5 * contribution / step_m**2
     return values
 
 
@@ -887,8 +994,27 @@ def temperature_pullback(
     return gradient
 
 
-def explicit_temperature_pullback(state: ThermalState, psi: np.ndarray) -> np.ndarray:
+def au_temperature_pullback(
+    system: ElectricalSystem, psi: np.ndarray
+) -> np.ndarray:
+    """Return the Au-sheet contribution to dI/dT_Au."""
+
+    values = np.asarray(psi, dtype=np.float64)
+    if values.shape != (system.full_matrix_S.shape[0],):
+        raise ValueError("psi does not match the electrical system")
+    gradient = np.zeros(system.n_design * system.n_design, dtype=np.float64)
+    for edge in system.thermoelectric_edges:
+        contribution = edge.coefficient_A_K * (values[edge.left] - values[edge.right])
+        gradient[edge.temperature_left_index] -= contribution
+        gradient[edge.temperature_right_index] += contribution
+    return gradient.reshape((system.n_design, system.n_design))
+
+
+def explicit_temperature_pullback(
+    state: ThermalState, system: ElectricalSystem, psi: np.ndarray
+) -> np.ndarray:
     coarse = temperature_pullback(psi, n_ta=state.n_ta, n_design=state.n_design)
+    coarse_au = au_temperature_pullback(system, psi)
     x, y, z = state.centers
     ix = np.flatnonzero((x >= -8e-6) & (x < 8e-6))
     iy = np.flatnonzero((y >= -8e-6) & (y < 8e-6))
@@ -897,6 +1023,14 @@ def explicit_temperature_pullback(state: ThermalState, psi: np.ndarray) -> np.nd
     z_weight = z_weight / np.sum(z_weight)
     result = np.zeros(state.system.shape, dtype=np.float64)
     result[np.ix_(ix, iy, iz)] = coarse[:, :, None] * z_weight[None, None, :]
+    ix_au = np.flatnonzero((x >= -4e-6) & (x < 4e-6))
+    iy_au = np.flatnonzero((y >= -4e-6) & (y < 4e-6))
+    iz_au = np.flatnonzero((z >= 0.0) & (z < 0.05e-6))
+    z_weight_au = state.widths[2][iz_au]
+    z_weight_au = z_weight_au / np.sum(z_weight_au)
+    result[np.ix_(ix_au, iy_au, iz_au)] += (
+        coarse_au[:, :, None] * z_weight_au[None, None, :]
+    )
     return result
 
 
@@ -928,6 +1062,15 @@ def electrical_density_gradient(
             * (adjoint[term.left] - adjoint[term.right])
             * (psi[term.left] - psi[term.right])
         )
+    flat_au_temperature = system.au_temperature_K.reshape(-1)
+    for edge in system.thermoelectric_edges:
+        delta_temperature = (
+            flat_au_temperature[edge.temperature_right_index]
+            - flat_au_temperature[edge.temperature_left_index]
+        )
+        weighting_drop = psi[edge.left] - psi[edge.right]
+        for rho_index, derivative in edge.coefficient_derivatives_A_K:
+            gradient[rho_index] += derivative * delta_temperature * weighting_drop
     return gradient.reshape(system.rho.shape)
 
 
@@ -1092,9 +1235,11 @@ def evaluate_fixed_source(
     state = build_thermal_state(rho)
     temperature, thermal_audit = solve_thermal(state, source_power_W, cuda_device)
     ta_temperature = tairte4_temperature(state, temperature)
+    temperature_au = au_temperature(state, temperature)
     electrical = build_electrical_system(
         rho,
         ta_temperature,
+        temperature_au,
         exact_binary_geometry=exact_binary_geometry,
     )
     psi, current, electrical_audit = solve_electrical(electrical, cuda_device)
@@ -1103,6 +1248,7 @@ def evaluate_fixed_source(
         "state": state,
         "temperature": temperature,
         "ta_temperature": ta_temperature,
+        "au_temperature": temperature_au,
         "electrical_system": electrical,
         "weighting": psi,
         "thermal_audit": thermal_audit,
@@ -1112,7 +1258,7 @@ def evaluate_fixed_source(
         electrical_adjoint, electrical_adjoint_audit = solve_electrical_adjoint(
             electrical, cuda_device
         )
-        thermal_rhs = explicit_temperature_pullback(state, psi)
+        thermal_rhs = explicit_temperature_pullback(state, electrical, psi)
         thermal_adjoint, thermal_adjoint_audit = solve_thermal_adjoint(
             state, thermal_rhs, cuda_device
         )

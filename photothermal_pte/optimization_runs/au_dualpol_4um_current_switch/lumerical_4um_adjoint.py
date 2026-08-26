@@ -26,7 +26,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_yee_jacobian import (
     validate_index_detail,
 )
-from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_provenance import (
     sha256,
 )
 

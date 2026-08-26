@@ -43,6 +43,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_signed_objective import (
     signed_dual_objective_point,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_only_boundary import (
+    require_lumerical_only_source_boundary,
+)
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -216,6 +219,7 @@ class OptimizerRuntime:
         )
 
     def audit(self) -> dict[str, Any]:
+        solver_boundary = require_lumerical_only_source_boundary()
         groups: list[
             tuple[str, dict[str, Path], str, float]
         ] = [
@@ -379,6 +383,7 @@ class OptimizerRuntime:
             "thermal_electrical_solver": "repository custom CUDA PDE",
             "Lumerical_HEAT_or_CHARGE_used": False,
             "FDTDX_used": False,
+            "Lumerical_only_source_boundary": solver_boundary,
         }
 
 

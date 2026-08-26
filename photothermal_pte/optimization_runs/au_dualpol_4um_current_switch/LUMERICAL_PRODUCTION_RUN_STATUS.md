@@ -1,5 +1,32 @@
 # Active Lumerical production run
 
+## Superseding status -- 2026-08-26
+
+**STOPPED; no production optimizer is running.** The most recent continuation
+under commit `ac077e4c` was stopped intentionally after an audit found that
+the current included TaIrTe4 thermopower but omitted the floating Au sheet's
+Seebeck source. Its external artifacts remain under
+`/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_ac077e4c8f2d`.
+They are diagnostic evidence only and must not be resumed or promoted.
+
+The corrected code uses Lumerical FDTD for Maxwell, custom CUDA PDEs for
+thermal/electrical physics, and `S_Au=+1.94 uV/K`. It has passed unit/static
+gates and dual-polarization fixed-Lumerical-Q custom-PDE AD-FD. Full combined
+Lumerical Maxwell/custom-PDE AD-FD with the corrected pullback is still open.
+
+The next allowed production launch must satisfy all of the following:
+
+1. commit and push the corrected `S_Au` physics and solver boundary;
+2. pass fresh combined AD-FD for Ea and Eb;
+3. use a detached worktree at that exact passing commit;
+4. use a new empty external output root;
+5. start from exact uniform `rho=0.5`, beta 1.
+
+Do not attach the new code to any earlier continuation checkpoint. The current
+driver also refuses cross-commit resume.
+
+The remainder of this file is historical launch chronology.
+
 Snapshot time: 2026-08-25 17:32 UTC. The external manifest below is the
 authoritative live state; this committed file is only the launch handoff.
 

@@ -9,10 +9,39 @@ TaIrTe4 flake.  The target is the signed dual-polarization objective
 \max_\rho \min\left(I_{E\parallel a},-I_{E\parallel b}\right).
 \]
 
-The coordinate contract is **Lumerical/FDTDX x = crystal b** and
+The active coordinate contract is **Lumerical x = crystal b** and
 **y = crystal a**.  Do not swap the polarization labels or coordinate axes.
 
-## Active production continuation -- 2026-08-25
+## Superseding Lumerical-only handoff -- 2026-08-26
+
+Read `LUMERICAL_ONLY_EXECUTION.md` before any other run document. The active
+route is Lumerical FDTD Maxwell plus repository custom-CUDA thermal/electrical
+PDEs. No alternative Maxwell solver and no Lumerical HEAT/CHARGE may enter the
+production process. `lumerical_only_boundary.py` enforces that rule in code.
+
+The earlier production continuation is stopped and must not be resumed. It
+omitted Au's Seebeck source. The corrected model includes bulk-reference
+`S_Au=+1.94 uV/K` in the Au electrical source, Au temperature pullback, and
+density adjoint. Fixed-Lumerical-Q downstream AD-FD now passes for Ea and Eb,
+but the new full combined Maxwell/PDE AD-FD remains mandatory. After it passes,
+start a fresh committed run from exact uniform `rho=0.5` at beta 1 in a new
+empty output root. Never reuse the old MMA state or its cached currents.
+
+For the active path, read these files first:
+
+1. `LUMERICAL_ONLY_EXECUTION.md` and `lumerical_only_boundary.py`;
+2. `contract.py` and `physical_device_contract.json`;
+3. `lumerical_4um_forward.py`, `lumerical_4um_adjoint.py`, and
+   `lumerical_4um_optimizer.py`;
+4. `multiphysics_4um.py` and `33_validate_lumerical_4um_gray_q_cuda_pde.py`;
+5. `44_validate_lumerical_4um_fixed_q_au_thermopower_adfd.py`;
+6. `41_optimize_lumerical_4um_dualpol_continuation.py` only after the new
+   combined AD-FD gate passes.
+
+All alternative-solver files below are historical records, not instructions
+for the active run.
+
+## Historical production continuation -- 2026-08-25
 
 The two-evaluation beta-4 smoke is complete and is not the active production
 entry point. Read `LUMERICAL_PRODUCTION_CONTINUATION.md`, then use

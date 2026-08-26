@@ -51,6 +51,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     LUMAPI_PATH,
     LUMERICAL_ROOT,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_only_boundary import (  # noqa: E402
+    require_lumerical_only_source_boundary,
+)
 
 
 COORDINATE_MISMATCH_LIMIT_M = 2.0e-18
@@ -191,6 +194,7 @@ def _configure_lumapi() -> None:
 
 
 def main() -> int:
+    require_lumerical_only_source_boundary()
     args = _parse_args()
     forward_project = args.forward_project.expanduser().resolve()
     forward_result_path = args.forward_result_json.expanduser().resolve()

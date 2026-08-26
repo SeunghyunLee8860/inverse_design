@@ -673,7 +673,9 @@ def evaluate_binary_candidate(
             weighting_tairte4=weighting[: N_TA * N_TA].reshape(N_TA, N_TA),
             weighting_au=weighting[N_TA * N_TA :].reshape(N_DESIGN, N_DESIGN),
             current_integrand_A_m2=current_integrand(
-                np.asarray(result["ta_temperature"]), weighting
+                np.asarray(result["ta_temperature"]),
+                weighting,
+                electrical_system=result["electrical_system"],
             ),
         )
         cases[pol]["raw_fields"] = {

@@ -20,6 +20,9 @@ from typing import Any
 
 import numpy as np
 
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
+    CONTRACT,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_density import (
     density_state_audit,
     load_projected_density_file,
@@ -39,8 +42,11 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.multiphysi
     evaluate_fixed_source,
     thermal_edges,
 )
-from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_provenance import (
     sha256,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_only_boundary import (
+    require_lumerical_only_source_boundary,
 )
 
 
@@ -79,6 +85,7 @@ def _matching_artifact(result: dict[str, Any], suffix: str) -> dict[str, Any]:
 
 
 def main() -> int:
+    require_lumerical_only_source_boundary()
     args = _parse_args()
     output = args.output_dir.expanduser().resolve()
     if output.exists() and any(output.iterdir()):
@@ -179,6 +186,17 @@ def main() -> int:
                     for component in "xyz"
                 )
             ),
+            "Au_bulk_thermopower_is_active": bool(
+                float(electrical_audit["S_Au_V_K"])
+                == CONTRACT.au_bulk_seebeck_V_K
+                and electrical_audit["Au_thermopower_model"]
+                == CONTRACT.au_thermopower_discretization
+            ),
+            "unknown_Au_Ta_interface_thermopower_not_invented": bool(
+                float(electrical_audit["S_Au_Ta_contact_V_K"])
+                == CONTRACT.au_tairte4_interfacial_seebeck_V_K
+                == 0.0
+            ),
         }
         raw_output = output / "gray_q_cuda_pde_pullback.npz"
         np.savez_compressed(
@@ -188,6 +206,7 @@ def main() -> int:
             source_power_W=source_power,
             temperature_K=np.asarray(evaluated["temperature"]),
             ta_temperature_K=np.asarray(evaluated["ta_temperature"]),
+            au_temperature_K=np.asarray(evaluated["au_temperature"]),
             gradient_direct_cell_A=gradient_direct_cell,
             gradient_direct_nodal_A=gradient_direct_nodal,
             **{
@@ -220,6 +239,25 @@ def main() -> int:
             "thermal": thermal_audit,
             "thermal_adjoint": thermal_adjoint_audit,
             "electrical": electrical_audit,
+            "thermoelectric_current_components_A": {
+                "TaIrTe4": float(
+                    electrical_audit["tairte4_thermoelectric_current_A"]
+                ),
+                "Au": float(electrical_audit["au_thermoelectric_current_A"]),
+                "sum": float(evaluated["objective_A"]),
+            },
+            "Au_transport_contract": {
+                "sigma_S_m": CONTRACT.au_bulk_electrical_conductivity_S_m,
+                "k_W_mK": CONTRACT.au_bulk_thermal_conductivity_W_mK,
+                "S_V_K": CONTRACT.au_bulk_seebeck_V_K,
+                "Au_Ta_interface_S_V_K": (
+                    CONTRACT.au_tairte4_interfacial_seebeck_V_K
+                ),
+                "parameter_scope": CONTRACT.au_transport_parameter_scope,
+                "thermopower_discretization": (
+                    CONTRACT.au_thermopower_discretization
+                ),
+            },
             "electrical_adjoint": electrical_adjoint_audit,
             "gates": gates,
             "inputs": {

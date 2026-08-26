@@ -10,7 +10,9 @@
     "substrate": "285 nm SiO2 on Si",
     "illumination": "normal-incidence centered 4 um Gaussian, w0=4 um, 285 uW",
     "thermal_outer_boundary": "ambient-temperature lateral faces at +/-32 um and substrate bottom at -20 um; top convection 10 W m^-2 K^-1",
-    "electrical_void_regularization": "finite Au sheet/contact conductivity floors remain in nominal void"
+    "electrical_void_regularization": "finite Au sheet/contact conductivity floors remain in the matrix only; the floor is subtracted from the Au thermopower source so exact void generates zero Au PTE",
+    "au_transport": "bulk room-temperature scenario: sigma=1/(2.43e-8) S/m, k=317 W/(m K), S_Au=+1.94 uV/K on in-plane Au sheet edges; these are not certified 50 nm film values",
+    "au_tairte4_vertical_thermopower": "0 V/K placeholder because no measured interface/out-of-plane thermopower is available; no value is invented"
   },
   "confirmations": {
     "flake_geometry_and_thickness_from_target_device": false,
@@ -22,7 +24,9 @@
     "beam_wavelength_power_waist_center_and_incidence_confirmed": false,
     "au_tairte4_thermal_contact_scenario_accepted": false,
     "au_tairte4_electrical_contact_scenario_accepted": false,
-    "electrical_void_floor_sensitivity_passed": false
+    "electrical_void_floor_sensitivity_passed": false,
+    "au_50nm_transport_values_accepted_or_measured": false,
+    "au_tairte4_vertical_thermopower_model_accepted_or_measured": false
   },
   "required_user_inputs": [
     "flake outline or CAD and TaIrTe4 thickness",
@@ -31,7 +35,9 @@
     "whether patterned Au is electrically touching TaIrTe4 and is floating or terminal-connected",
     "SiO2 thickness and relevant Si stack",
     "4 um beam power, waist definition, center, incidence, and polarization convention",
-    "accepted Au-TaIrTe4 thermal/electrical contact ranges or measurements"
+    "accepted Au-TaIrTe4 thermal/electrical contact ranges or measurements",
+    "measured or accepted 50 nm Au electrical conductivity, thermal conductivity, and Seebeck coefficient",
+    "measured or accepted vertical Au-TaIrTe4 thermopower model"
   ],
   "literature_basis": {
     "main_paper": "Adv. Funct. Mater. 2026, doi:10.1002/adfm.75986, Eq. (6) and pp. 3-4: collection is geometry-sensitive; transverse example uses a-axis/electrode angle alpha=45 degrees",

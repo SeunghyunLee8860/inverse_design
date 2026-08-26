@@ -93,6 +93,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     audit_environment,
     require_lumerical_gpu,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_only_boundary import (  # noqa: E402
+    require_lumerical_only_source_boundary,
+)
 from photothermal_pte.validation.paper_ir_sanity import (  # noqa: E402
     validate_paper_ir_source_only_gpu as lumerical_audit,
 )
@@ -1002,6 +1005,7 @@ def _material_postprocess(
 
 
 def main() -> int:
+    require_lumerical_only_source_boundary()
     args = _parse_args()
     spec = _mesh_spec(args)
     projected_density, density_input = _projected_density(args)

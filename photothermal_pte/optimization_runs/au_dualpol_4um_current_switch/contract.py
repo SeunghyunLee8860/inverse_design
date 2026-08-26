@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 import math
 
-from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.material_fraction import (
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_material_fraction import (
     AU_MATERIAL_FRACTION_EXPONENT,
     AU_MATERIAL_FRACTION_LAW,
 )
@@ -53,6 +53,20 @@ class Contract:
     g_au_ta_W_m2K: float = 1.0 / 5.8e-8
     au_ta_electrical_contact_scenario: str = "numerical_scenario_rhoc_1e-10_ohm_m2"
     electrical_contact_S_m2: float = 1.0e10
+    au_bulk_electrical_conductivity_S_m: float = 1.0 / 2.43e-8
+    au_bulk_thermal_conductivity_W_mK: float = 317.0
+    au_bulk_seebeck_V_K: float = 1.94e-6
+    au_bulk_seebeck_reference: str = (
+        "Cusack_and_Kendall_1958_Proc_Phys_Soc_72_898_"
+        "doi_10.1088/0370-1328/72/5/429_absolute_Au_at_300K"
+    )
+    au_tairte4_interfacial_seebeck_V_K: float = 0.0
+    au_transport_parameter_scope: str = (
+        "bulk_room_temperature_reference_not_certified_for_50nm_film"
+    )
+    au_thermopower_discretization: str = (
+        "in_plane_Au_sheet_source_with_numerical_conductivity_floor_subtracted"
+    )
     au_material_fraction_law: str = AU_MATERIAL_FRACTION_LAW
     au_material_fraction_exponent: float = AU_MATERIAL_FRACTION_EXPONENT
     lumerical_optical_density_law: str = AU_DENSITY_RELAXATION.law
@@ -107,6 +121,12 @@ class Contract:
             au_role=(
                 "floating patterned nanostructure; optical absorber/scatterer and "
                 "thermal/electrical shunt, not a measurement electrode"
+            ),
+            au_thermopower_role=(
+                "bulk-reference Au Seebeck source is active on in-plane Au sheet "
+                "edges; the numerical void conductivity floor produces no "
+                "thermopower; unknown vertical Au/TaIrTe4 interface thermopower "
+                "is not invented and remains zero"
             ),
             gray_density_role=(
                 "filtered/projected topology occupancy, not carrier density; "
