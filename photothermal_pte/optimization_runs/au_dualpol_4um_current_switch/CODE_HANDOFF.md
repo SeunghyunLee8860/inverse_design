@@ -16,6 +16,18 @@ The active coordinate contract is **Lumerical x = crystal b** and
 
 ### Mandatory restart after continuation-policy audit
 
+The replacement is now running from immutable commit
+`ccf4bd0676586db2fd40ce695591c79a59a0aa62`, detached worktree
+`/home/seunghyun/tairte4/worktrees/au_lumerical_restart_ccf4bd06`, tmux
+session `au4um_lum_restart_ccf4bd06`, and external root
+`/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_restart_ccf4bd06`.
+The runres project is
+`PROJECT_seunghyun_au4um_lumerical_beta_continuation_gpu5_1488326`. At the
+launch snapshot beta 1 attempt 0 evaluation 0000 is still running, so the
+manifest correctly has no current/FOM yet. Read
+`LUMERICAL_PRODUCTION_RUN_STATUS.md` for the monitoring command and do not
+launch a duplicate.
+
 Do not resume immutable run `417372bd` or its
 `continuation_sau_417372bd` checkpoint. It was intentionally interrupted at
 beta 16 after the audit proved that the fixed local latent boxes could not

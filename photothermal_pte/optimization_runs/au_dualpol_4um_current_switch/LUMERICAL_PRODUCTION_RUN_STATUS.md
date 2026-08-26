@@ -1,5 +1,35 @@
 # Active Lumerical production run
 
+## Active corrected restart -- 2026-08-26 22:55 UTC
+
+**RUNNING.** The corrected continuation was launched from immutable commit
+`ccf4bd0676586db2fd40ce695591c79a59a0aa62` and a new exact-uniform
+`rho=0.5` checkpoint. Runtime preflight and manifest audits record Lumerical
+FDTD 2026 R1.2 Maxwell, custom CUDA thermal/electrical PDEs, physical GPU 5,
+`S_Au=+1.94 uV/K`, zero Lumerical HEAT/CHARGE solves, and zero FDTDX Maxwell
+solves. At this snapshot beta 1 attempt 0 evaluation 0000 is running its
+uniform `E||a` forward; no current or FOM exists until the full first
+two-polarization forward/PDE/adjoint evaluation completes.
+
+- immutable worktree:
+  `/home/seunghyun/tairte4/worktrees/au_lumerical_restart_ccf4bd06`;
+- tmux session: `au4um_lum_restart_ccf4bd06`;
+- runres project:
+  `PROJECT_seunghyun_au4um_lumerical_beta_continuation_gpu5_1488326`;
+- output root:
+  `/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_restart_ccf4bd06`;
+- manifest: `.../continuation_restart_ccf4bd06/production_manifest.json`;
+- checkpoint: `.../continuation_restart_ccf4bd06/continuation_checkpoint.npz`;
+- GPU UUID: `GPU-aa047452-9c73-d10f-675f-8af800915acf`.
+
+Monitor without launching another copy:
+
+```bash
+tmux capture-pane -pt au4um_lum_restart_ccf4bd06 -S -120
+jq '{status,latest,stage_count:(.stages|length),error}' \
+  /home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_restart_ccf4bd06/production_manifest.json
+```
+
 ## Optimizer restart correction -- 2026-08-26 22:42 UTC
 
 **THE `417372bd` PROCESS WAS INTENTIONALLY STOPPED AND MUST NOT BE
