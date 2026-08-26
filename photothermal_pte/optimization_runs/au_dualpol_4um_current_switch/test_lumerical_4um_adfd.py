@@ -15,7 +15,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     independent_smooth_direction,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
-    NOMINAL_MAPPING,
+    OPTIMIZER_250NM_MAPPING,
 )
 
 
@@ -149,12 +149,17 @@ def test_centered_metrics_accepts_complete_latent_mapping_chain() -> None:
     direction = independent_smooth_direction(latent.shape)
     projected_gradient = rng.standard_normal(latent.shape) * 1.0e-12
     beta = 4.0
-    latent_gradient = NOMINAL_MAPPING.vjp(latent, projected_gradient, beta)
+    latent_gradient = OPTIMIZER_250NM_MAPPING.vjp(
+        latent, projected_gradient, beta
+    )
     step = 1.0e-4
 
     def objective(value: np.ndarray) -> float:
         return float(
-            np.vdot(projected_gradient, NOMINAL_MAPPING.physical(value, beta))
+            np.vdot(
+                projected_gradient,
+                OPTIMIZER_250NM_MAPPING.physical(value, beta),
+            )
         )
 
     metrics = centered_adfd_metrics(
@@ -168,7 +173,7 @@ def test_centered_metrics_accepts_complete_latent_mapping_chain() -> None:
     projected_contraction = float(
         np.vdot(
             projected_gradient,
-            NOMINAL_MAPPING.jvp(latent, direction, beta),
+            OPTIMIZER_250NM_MAPPING.jvp(latent, direction, beta),
         )
     )
     latent_contraction = float(np.vdot(latent_gradient, direction))

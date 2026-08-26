@@ -8,7 +8,7 @@ import numpy as np
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
     LumericalNodalDesignMapping,
-    NOMINAL_MAPPING,
+    OPTIMIZER_250NM_MAPPING,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.objective import (
     epigraph_constraints,
@@ -37,7 +37,7 @@ def signed_dual_objective_point(
     gradient_a_projected_A: np.ndarray,
     gradient_b_projected_A: np.ndarray,
     epigraph_A: float,
-    mapping: LumericalNodalDesignMapping = NOMINAL_MAPPING,
+    mapping: LumericalNodalDesignMapping = OPTIMIZER_250NM_MAPPING,
 ) -> dict[str, Any]:
     """Pull both current gradients back and form exact epigraph constraints.
 

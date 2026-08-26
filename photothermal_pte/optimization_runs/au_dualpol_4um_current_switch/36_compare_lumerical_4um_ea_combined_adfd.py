@@ -22,7 +22,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     density_state_sha256,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
-    NOMINAL_MAPPING,
+    OPTIMIZER_250NM_MAPPING,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
     sha256,
@@ -273,8 +273,10 @@ def main() -> int:
         )
         step = float(manifest["step"])
         if is_latent:
-            if manifest.get("mapping") != NOMINAL_MAPPING.audit():
+            if manifest.get("mapping") != OPTIMIZER_250NM_MAPPING.audit():
                 raise RuntimeError("latent pair mapping contract differs")
+            if manifest.get("mapping_role") != "active_lumerical_optimizer_250nm":
+                raise RuntimeError("latent pair is not bound to the active 250-nm mapping")
             latent_path = _check_manifest_artifact(manifest, "latent_baseline")
             latent_plus_path = _check_manifest_artifact(manifest, "latent_plus")
             latent_minus_path = _check_manifest_artifact(manifest, "latent_minus")
@@ -288,19 +290,23 @@ def main() -> int:
                 raise RuntimeError("latent baseline semantic SHA differs")
             beta = float(manifest["beta"])
             if not np.array_equal(
-                NOMINAL_MAPPING.physical(latent, beta), baseline_density
+                OPTIMIZER_250NM_MAPPING.physical(latent, beta), baseline_density
             ):
                 raise RuntimeError("latent baseline does not reproduce projected baseline")
             if not np.array_equal(
-                NOMINAL_MAPPING.physical(latent_plus, beta), plus_density
+                OPTIMIZER_250NM_MAPPING.physical(latent_plus, beta), plus_density
             ):
                 raise RuntimeError("latent plus state does not reproduce projected plus")
             if not np.array_equal(
-                NOMINAL_MAPPING.physical(latent_minus, beta), minus_density
+                OPTIMIZER_250NM_MAPPING.physical(latent_minus, beta), minus_density
             ):
                 raise RuntimeError("latent minus state does not reproduce projected minus")
-            gradient_for_metrics = NOMINAL_MAPPING.vjp(latent, gradient, beta)
-            projected_direction = NOMINAL_MAPPING.jvp(latent, direction, beta)
+            gradient_for_metrics = OPTIMIZER_250NM_MAPPING.vjp(
+                latent, gradient, beta
+            )
+            projected_direction = OPTIMIZER_250NM_MAPPING.jvp(
+                latent, direction, beta
+            )
             projected_contraction = float(np.vdot(gradient, projected_direction))
             latent_contraction = float(np.vdot(gradient_for_metrics, direction))
             chain_scale = max(

@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
-    NOMINAL_MAPPING,
+    OPTIMIZER_250NM_MAPPING,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_signed_objective import (
     signed_dual_objective_point,
@@ -18,15 +18,19 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.objective 
 
 def test_signed_dual_point_matches_latent_directional_fd() -> None:
     rng = np.random.default_rng(7042)
-    latent = np.full(NOMINAL_MAPPING.shape, 0.5)
-    direction = rng.normal(size=NOMINAL_MAPPING.shape)
+    latent = np.full(OPTIMIZER_250NM_MAPPING.shape, 0.5)
+    direction = rng.normal(size=OPTIMIZER_250NM_MAPPING.shape)
     direction /= np.max(np.abs(direction))
-    gradient_a_projected = rng.normal(size=NOMINAL_MAPPING.shape) * 1.0e-12
-    gradient_b_projected = rng.normal(size=NOMINAL_MAPPING.shape) * 1.0e-12
+    gradient_a_projected = (
+        rng.normal(size=OPTIMIZER_250NM_MAPPING.shape) * 1.0e-12
+    )
+    gradient_b_projected = (
+        rng.normal(size=OPTIMIZER_250NM_MAPPING.shape) * 1.0e-12
+    )
     beta = 4.0
 
     def currents(value: np.ndarray) -> tuple[float, float]:
-        projected = NOMINAL_MAPPING.physical(value, beta)
+        projected = OPTIMIZER_250NM_MAPPING.physical(value, beta)
         return (
             -8.0e-9 + float(np.vdot(gradient_a_projected, projected - 0.5)),
             -15.0e-9 + float(np.vdot(gradient_b_projected, projected - 0.5)),
@@ -79,8 +83,8 @@ def test_signed_dual_point_matches_latent_directional_fd() -> None:
 
 
 def test_signed_dual_point_keeps_epigraph_valid_at_utility_tie() -> None:
-    latent = np.full(NOMINAL_MAPPING.shape, 0.5)
-    zero = np.zeros(NOMINAL_MAPPING.shape)
+    latent = np.full(OPTIMIZER_250NM_MAPPING.shape, 0.5)
+    zero = np.zeros(OPTIMIZER_250NM_MAPPING.shape)
     point = signed_dual_objective_point(
         latent=latent,
         beta=2.0,
@@ -100,12 +104,12 @@ def test_signed_dual_point_keeps_epigraph_valid_at_utility_tie() -> None:
 @pytest.mark.parametrize("field", ("latent", "gradient_a_projected_A"))
 def test_signed_dual_point_rejects_invalid_design_arrays(field: str) -> None:
     values: dict[str, object] = {
-        "latent": np.full(NOMINAL_MAPPING.shape, 0.5),
+        "latent": np.full(OPTIMIZER_250NM_MAPPING.shape, 0.5),
         "beta": 2.0,
         "current_a_A": 1.0,
         "current_b_A": -1.0,
-        "gradient_a_projected_A": np.zeros(NOMINAL_MAPPING.shape),
-        "gradient_b_projected_A": np.zeros(NOMINAL_MAPPING.shape),
+        "gradient_a_projected_A": np.zeros(OPTIMIZER_250NM_MAPPING.shape),
+        "gradient_b_projected_A": np.zeros(OPTIMIZER_250NM_MAPPING.shape),
         "epigraph_A": 0.0,
     }
     values[field] = np.zeros((3, 4))

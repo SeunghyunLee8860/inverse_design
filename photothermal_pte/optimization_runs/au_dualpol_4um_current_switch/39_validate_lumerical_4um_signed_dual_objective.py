@@ -19,7 +19,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     density_state_audit,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
-    NOMINAL_MAPPING,
+    OPTIMIZER_250NM_MAPPING,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_signed_objective import (
     signed_dual_objective_point,
@@ -106,7 +106,11 @@ def _load_certificate(path: Path, polarization: str) -> dict[str, Any]:
     if density_sha != result["density_state_binding"]["baseline_density_sha256"]:
         raise RuntimeError(f"{polarization} projected baseline density mismatch")
     beta = float(result["gradient_chain"]["beta"])
-    mapped = NOMINAL_MAPPING.physical(latent, beta)
+    if pair.get("mapping") != OPTIMIZER_250NM_MAPPING.audit():
+        raise RuntimeError(f"{polarization} pair does not use the active 250-nm mapping")
+    if pair.get("mapping_role") != "active_lumerical_optimizer_250nm":
+        raise RuntimeError(f"{polarization} pair mapping role is not production")
+    mapped = OPTIMIZER_250NM_MAPPING.physical(latent, beta)
     mapping_error = float(np.max(np.abs(mapped - projected)))
     if mapping_error != 0.0:
         raise RuntimeError(f"{polarization} latent-to-projected state is not exact")

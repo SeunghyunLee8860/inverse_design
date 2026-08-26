@@ -24,7 +24,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     density_state_audit,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
-    NOMINAL_MAPPING,
+    OPTIMIZER_250NM_MAPPING,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.validation_provenance import (
     sha256,
@@ -73,9 +73,9 @@ def main() -> int:
     direction, latent_plus, latent_minus = centered_density_pair(
         latent, step=args.step, direction_index=args.direction_index
     )
-    projected = NOMINAL_MAPPING.physical(latent, args.beta)
-    projected_plus = NOMINAL_MAPPING.physical(latent_plus, args.beta)
-    projected_minus = NOMINAL_MAPPING.physical(latent_minus, args.beta)
+    projected = OPTIMIZER_250NM_MAPPING.physical(latent, args.beta)
+    projected_plus = OPTIMIZER_250NM_MAPPING.physical(latent_plus, args.beta)
+    projected_minus = OPTIMIZER_250NM_MAPPING.physical(latent_minus, args.beta)
     arrays = {
         "latent_baseline": latent,
         "direction": direction,
@@ -104,7 +104,8 @@ def main() -> int:
         "design_coordinate": "latent_81x81_before_filter_projection",
         "beta": args.beta,
         "step": args.step,
-        "mapping": NOMINAL_MAPPING.audit(),
+        "mapping": OPTIMIZER_250NM_MAPPING.audit(),
+        "mapping_role": "active_lumerical_optimizer_250nm",
         "baseline_definition": (
             "0.5+0.16*sin(0.8*pi*x)*cos(0.6*pi*y); x,y are independent "
             "normalized nodal coordinates"
