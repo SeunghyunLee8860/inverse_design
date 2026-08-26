@@ -26,7 +26,13 @@ The runres project is
 launch snapshot beta 1 attempt 0 evaluation 0000 is still running, so the
 manifest correctly has no current/FOM yet. Read
 `LUMERICAL_PRODUCTION_RUN_STATUS.md` for the monitoring command and do not
-launch a duplicate.
+launch a duplicate. Post-launch, uniform evaluation 0000 completed in
+`1182.67 s` at the numerical current floor. The corrected `0.05` warm step
+completed evaluation 0001 in `1160.25 s` with
+`I_Ea=+0.187820814 nA`, `I_Eb=-0.179028861 nA`, and balanced FOM
+`+0.179028861 nA`; this is about `7.75x` the stopped run's small-warm-step
+FOM. Evaluation 0002 is now the first subsequent MMA point. These are beta-1
+continuous results, not a binary/fabrication certificate.
 
 Do not resume immutable run `417372bd` or its
 `continuation_sau_417372bd` checkpoint. It was intentionally interrupted at

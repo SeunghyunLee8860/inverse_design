@@ -7,9 +7,20 @@
 `rho=0.5` checkpoint. Runtime preflight and manifest audits record Lumerical
 FDTD 2026 R1.2 Maxwell, custom CUDA thermal/electrical PDEs, physical GPU 5,
 `S_Au=+1.94 uV/K`, zero Lumerical HEAT/CHARGE solves, and zero FDTDX Maxwell
-solves. At this snapshot beta 1 attempt 0 evaluation 0000 is running its
-uniform `E||a` forward; no current or FOM exists until the full first
-two-polarization forward/PDE/adjoint evaluation completes.
+solves. Uniform evaluation 0000 completed in `1182.67 s` with the expected
+numerical-zero FOM. The corrected full `0.05` max-min warm step then completed
+evaluation 0001 in `1160.25 s` with:
+
+- `I_Ea=+0.187820814 nA`;
+- `I_Eb=-0.179028861 nA`;
+- balanced FOM `+0.179028861 nA`;
+- exact latent range `0.45--0.55` and beta-1 projected range
+  `0.445946--0.554054`;
+- opposite-current switching achieved.
+
+This FOM is about `7.75x` the stopped run's `0.023108967 nA` small-warm-step
+result. MMA evaluation 0002 is active at this snapshot; beta 1 is not yet a
+completed stage or a binary/fabricable result.
 
 - immutable worktree:
   `/home/seunghyun/tairte4/worktrees/au_lumerical_restart_ccf4bd06`;
