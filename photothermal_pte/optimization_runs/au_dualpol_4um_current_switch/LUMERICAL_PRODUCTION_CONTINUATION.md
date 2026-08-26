@@ -1,11 +1,22 @@
 # Lumerical Au production continuation
 
-Current gate (2026-08-26): **do not launch or resume yet**. The prior run
-omitted Au thermopower and is stale. Read `LUMERICAL_ONLY_EXECUTION.md` and
-complete fresh Ea/Eb combined Maxwell/custom-PDE AD-FD with `S_Au` before
-creating a new output root. The next run must start again from exact uniform
-`rho=0.5`; an old MMA checkpoint cannot be reused after changing the objective
+Current gate (2026-08-26): the active-250-nm Ea/Eb combined
+Maxwell/custom-PDE AD-FD with `S_Au` passed at commit `80e3ef8a`. The prior
+production run omitted Au thermopower and remains stale. **Do not resume it.**
+The remaining pre-launch blocker on this host is the absence of passed Ea/Eb
+50-nm source-only calibration JSONs required for final promotion. Generate
+those calibrations first, then launch from a new immutable commit/worktree and
+a new empty output root. The run must start again from exact uniform
+`rho=0.5`; no old MMA checkpoint may be reused after changing the objective
 and gradient.
+
+The passing derivative evidence is external under
+`au_dualpol_4um_lumerical_s_au_combined_adfd/active250_commit_80e3ef8a`.
+Ea AD/FD are `-2.479281441e-8`/`-2.479165780e-8 A` (relative error
+`4.6651e-5`), and Eb AD/FD are
+`-4.818613528e-8`/`-4.818049197e-8 A` (relative error `1.1711e-4`).
+The beta-4 validation state is not an optimized device and does not yet have
+the target signs.
 
 This is the production successor to the two-evaluation beta-4 smoke. The
 entry point is `41_optimize_lumerical_4um_dualpol_continuation.py`; the site

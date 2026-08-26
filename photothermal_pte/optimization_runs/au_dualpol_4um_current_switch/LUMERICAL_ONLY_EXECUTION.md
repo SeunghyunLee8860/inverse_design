@@ -60,9 +60,33 @@ fixed-Q downstream AD-FD gate passed:
 Each case took about 26.5 s on one RTX 6000 Ada and performed five custom
 thermal/electrical forwards plus one adjoint pair. It performed zero Maxwell
 solves and zero Lumerical HEAT/CHARGE solves. This certifies the downstream
-density derivative with fixed optical Q only. A fresh combined Lumerical
-Maxwell/custom-PDE AD-FD for both polarizations is still required before a new
-optimization begins.
+density derivative with fixed optical Q only.
+
+The full combined blocker was subsequently closed at code commit `80e3ef8a`.
+This certificate uses the **active optimizer mapping**, not the historical
+mapping: 81x81 latent density -> 250-nm nonperiodic conic filter -> beta-4
+projection -> one shared 81x81 physical occupancy -> 80x80 custom-PDE cells.
+The centered latent step was 0.0025 in one common smooth direction.
+
+| polarization | baseline current (nA) | AD (A/rho) | centered FD (A/rho) | relative error |
+|---|---:|---:|---:|---:|
+| Ea | -7.6677681 | -2.479281441e-8 | -2.479165780e-8 | 4.6651e-5 |
+| Eb | -14.6552073 | -4.818613528e-8 | -4.818049197e-8 | 1.1711e-4 |
+
+The signed balanced-objective AD/FD error is `4.6651e-5`; its two epigraph
+constraint errors are `4.6651e-5` and `1.1711e-4`. The latent/projected
+transpose errors are `1.33e-16` and `1.37e-16`. Every gate passed without an
+empirical gradient scale or finite-difference fit. The evidence manifest is
+external at
+`/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_s_au_combined_adfd/active250_commit_80e3ef8a/active250_combined_adfd_manifest.json`.
+It records zero alternative-Maxwell solves and zero Lumerical HEAT/CHARGE
+solves.
+
+Older combined latent certificates used `NOMINAL_MAPPING`, whose conic-filter
+radius is 500 nm. They remain useful projected-density/solver evidence but do
+**not** certify the active 250-nm optimizer chain. Scripts 36, 38, and 39 now
+fail closed unless the pair identifies `OPTIMIZER_250NM_MAPPING` and its
+250-nm solid/void contract.
 
 The prior production continuation omitted `S_Au`. Its artifacts are preserved
 for diagnosis but its objective and gradients are stale. Never resume that

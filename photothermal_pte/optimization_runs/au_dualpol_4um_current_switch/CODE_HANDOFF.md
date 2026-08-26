@@ -22,10 +22,27 @@ production process. `lumerical_only_boundary.py` enforces that rule in code.
 The earlier production continuation is stopped and must not be resumed. It
 omitted Au's Seebeck source. The corrected model includes bulk-reference
 `S_Au=+1.94 uV/K` in the Au electrical source, Au temperature pullback, and
-density adjoint. Fixed-Lumerical-Q downstream AD-FD now passes for Ea and Eb,
-but the new full combined Maxwell/PDE AD-FD remains mandatory. After it passes,
-start a fresh committed run from exact uniform `rho=0.5` at beta 1 in a new
-empty output root. Never reuse the old MMA state or its cached currents.
+density adjoint. Fixed-Lumerical-Q downstream AD-FD and the full combined
+Maxwell/PDE AD-FD now pass for Ea and Eb. The combined certificate is bound to
+commit `80e3ef8a` and the active 250-nm optimizer mapping. Before a fresh
+production launch, create the missing matching 50-nm Ea/Eb source-only
+calibrations. Then start from exact uniform `rho=0.5` at beta 1 in a new empty
+output root. Never reuse the old MMA state or its cached currents.
+
+The active-250 beta-4 centered test used latent step `0.0025`. Ea AD/FD were
+`-2.479281441e-8`/`-2.479165780e-8 A` (error `4.6651e-5`); Eb AD/FD were
+`-4.818613528e-8`/`-4.818049197e-8 A` (error `1.1711e-4`). The signed
+balanced-objective error was `4.6651e-5`. Its external root is
+`/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_s_au_combined_adfd/active250_commit_80e3ef8a`.
+The test baseline currents were both negative, so this is a derivative
+certificate rather than a switching result.
+
+Important mapping correction: older CV0 combined certificates used
+`NOMINAL_MAPPING`, a 500-nm filter. They certify the projected-density physics
+but not the current 250-nm latent chain. Scripts 36, 38, and 39 now bind
+strictly to `OPTIMIZER_250NM_MAPPING` (250-nm filter, 250-nm minimum solid,
+250-nm minimum void). Do not cite an older 500-nm certificate as permission
+to run the active optimizer.
 
 For the active path, read these files first:
 
@@ -35,8 +52,12 @@ For the active path, read these files first:
    `lumerical_4um_optimizer.py`;
 4. `multiphysics_4um.py` and `33_validate_lumerical_4um_gray_q_cuda_pde.py`;
 5. `44_validate_lumerical_4um_fixed_q_au_thermopower_adfd.py`;
-6. `41_optimize_lumerical_4um_dualpol_continuation.py` only after the new
-   combined AD-FD gate passes.
+6. `38_prepare_lumerical_4um_ea_latent_adfd.py`,
+   `36_compare_lumerical_4um_combined_adfd.py`, and
+   `39_validate_lumerical_4um_signed_objective.py` for the active-250
+   derivative certificate;
+7. `41_optimize_lumerical_4um_dualpol_continuation.py` only after both 50-nm
+   source calibrations also pass.
 
 All alternative-solver files below are historical records, not instructions
 for the active run.

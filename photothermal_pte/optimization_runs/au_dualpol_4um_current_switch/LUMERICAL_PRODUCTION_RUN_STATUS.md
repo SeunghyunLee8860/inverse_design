@@ -10,15 +10,27 @@ Seebeck source. Its external artifacts remain under
 They are diagnostic evidence only and must not be resumed or promoted.
 
 The corrected code uses Lumerical FDTD for Maxwell, custom CUDA PDEs for
-thermal/electrical physics, and `S_Au=+1.94 uV/K`. It has passed unit/static
-gates and dual-polarization fixed-Lumerical-Q custom-PDE AD-FD. Full combined
-Lumerical Maxwell/custom-PDE AD-FD with the corrected pullback is still open.
+thermal/electrical physics, and `S_Au=+1.94 uV/K`. At commit `80e3ef8a` it
+passed the full combined Ea/Eb Lumerical-Maxwell/custom-PDE AD-FD through the
+active 250-nm filter/projection mapping. The errors were `4.6651e-5` for Ea
+and `1.1711e-4` for Eb. The signed balanced objective and both epigraph
+constraints passed the 1% gate. No alternative Maxwell solver and no
+Lumerical HEAT/CHARGE solver was called.
+
+The validation baseline was `I_Ea=-7.667768 nA` and
+`I_Eb=-14.655207 nA`. It is a beta-4 derivative test state, not an optimized
+candidate; opposite-current switching has not yet been achieved by that
+state. The next blocker is two missing passed 50-nm Ea/Eb source-only
+calibrations. No matching
+`fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps` JSON was present on this host
+at the post-validation audit.
 
 The next allowed production launch must satisfy all of the following:
 
-1. commit and push the corrected `S_Au` physics and solver boundary;
-2. pass fresh combined AD-FD for Ea and Eb;
-3. use a detached worktree at that exact passing commit;
+1. generate and pass the Ea and Eb 50-nm source-only calibrations on the same
+   GPU UUID, Lumerical build, and accelerator policy as the 100-nm sources;
+2. commit and push this passing handoff state;
+3. use a detached worktree at that exact commit;
 4. use a new empty external output root;
 5. start from exact uniform `rho=0.5`, beta 1.
 
