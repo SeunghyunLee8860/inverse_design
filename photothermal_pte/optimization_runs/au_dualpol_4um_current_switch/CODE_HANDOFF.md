@@ -25,9 +25,10 @@ omitted Au's Seebeck source. The corrected model includes bulk-reference
 density adjoint. Fixed-Lumerical-Q downstream AD-FD and the full combined
 Maxwell/PDE AD-FD now pass for Ea and Eb. The combined certificate is bound to
 commit `80e3ef8a` and the active 250-nm optimizer mapping. Before a fresh
-production launch, create the missing matching 50-nm Ea/Eb source-only
-calibrations. Then start from exact uniform `rho=0.5` at beta 1 in a new empty
-output root. Never reuse the old MMA state or its cached currents.
+production launch, use the matching 50-nm Ea/Eb source-only calibrations that
+passed at commit `52b6ed79`. Then start from exact uniform `rho=0.5` at beta 1
+in a new empty output root. Never reuse the old MMA state or its cached
+currents.
 
 The active-250 beta-4 centered test used latent step `0.0025`. Ea AD/FD were
 `-2.479281441e-8`/`-2.479165780e-8 A` (error `4.6651e-5`); Eb AD/FD were
@@ -36,6 +37,15 @@ balanced-objective error was `4.6651e-5`. Its external root is
 `/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_s_au_combined_adfd/active250_commit_80e3ef8a`.
 The test baseline currents were both negative, so this is a derivative
 certificate rather than a switching result.
+
+The final-promotion calibrations use
+`fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps` and live below
+`/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_development/r12_gpu5_xy50_source_only_cv0_52b6ed79`.
+Both passed on GPU UUID `GPU-aa047452-9c73-d10f-675f-8af800915acf` with
+Lumerical build `8.35.4522`; Ea/Eb incident powers are equal to the shown
+precision at `3.17671555e-14 W`. Point the two
+`AU_LUMERICAL_*_FINAL_XY50_SOURCE_CALIBRATION` variables to the corresponding
+Ea/Eb JSONs in that root.
 
 Important mapping correction: older CV0 combined certificates used
 `NOMINAL_MAPPING`, a 500-nm filter. They certify the projected-density physics
@@ -56,8 +66,8 @@ For the active path, read these files first:
    `36_compare_lumerical_4um_combined_adfd.py`, and
    `39_validate_lumerical_4um_signed_objective.py` for the active-250
    derivative certificate;
-7. `41_optimize_lumerical_4um_dualpol_continuation.py` only after both 50-nm
-   source calibrations also pass.
+7. `41_optimize_lumerical_4um_dualpol_continuation.py` with both passed 50-nm
+   source calibrations and a new empty output root.
 
 All alternative-solver files below are historical records, not instructions
 for the active run.

@@ -3,12 +3,11 @@
 Current gate (2026-08-26): the active-250-nm Ea/Eb combined
 Maxwell/custom-PDE AD-FD with `S_Au` passed at commit `80e3ef8a`. The prior
 production run omitted Au thermopower and remains stale. **Do not resume it.**
-The remaining pre-launch blocker on this host is the absence of passed Ea/Eb
-50-nm source-only calibration JSONs required for final promotion. Generate
-those calibrations first, then launch from a new immutable commit/worktree and
-a new empty output root. The run must start again from exact uniform
-`rho=0.5`; no old MMA checkpoint may be reused after changing the objective
-and gradient.
+The required Ea/Eb 50-nm source-only calibrations passed at commit
+`52b6ed79`. The numerical pre-launch blockers are therefore closed on this
+RTX development host. Launch only from a new immutable commit/worktree and a
+new empty output root. The run must start again from exact uniform `rho=0.5`;
+no old MMA checkpoint may be reused after changing the objective and gradient.
 
 The passing derivative evidence is external under
 `au_dualpol_4um_lumerical_s_au_combined_adfd/active250_commit_80e3ef8a`.
@@ -17,6 +16,13 @@ Ea AD/FD are `-2.479281441e-8`/`-2.479165780e-8 A` (relative error
 `-4.818613528e-8`/`-4.818049197e-8 A` (relative error `1.1711e-4`).
 The beta-4 validation state is not an optimized device and does not yet have
 the target signs.
+
+Set the final-promotion source variables to:
+
+- Ea:
+  `/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_development/r12_gpu5_xy50_source_only_cv0_52b6ed79/Ea/source_only_Ea_fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps.json`;
+- Eb:
+  `/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_development/r12_gpu5_xy50_source_only_cv0_52b6ed79/Eb/source_only_Eb_fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps.json`.
 
 This is the production successor to the two-evaluation beta-4 smoke. The
 entry point is `41_optimize_lumerical_4um_dualpol_continuation.py`; the site

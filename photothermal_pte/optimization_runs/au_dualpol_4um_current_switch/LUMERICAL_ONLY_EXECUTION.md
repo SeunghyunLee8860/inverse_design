@@ -88,6 +88,15 @@ radius is 500 nm. They remain useful projected-density/solver evidence but do
 fail closed unless the pair identifies `OPTIMIZER_250NM_MAPPING` and its
 250-nm solid/void contract.
 
+The required 50-nm final-promotion source calibrations also passed on
+2026-08-26 at commit `52b6ed79`, using the same GPU-5 UUID, development
+accelerator policy, Lumerical build, and CV0 z contract as the 100-nm
+calibrations. Both use mesh label
+`fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps`. Ea and Eb solver times were
+82.59 s and 82.51 s; their incident powers were both
+`3.17671555e-14 W`. The external manifest is
+`/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_development/r12_gpu5_xy50_source_only_cv0_52b6ed79/xy50_source_calibration_manifest.json`.
+
 The prior production continuation omitted `S_Au`. Its artifacts are preserved
 for diagnosis but its objective and gradients are stale. Never resume that
 MMA checkpoint. The next production run must use a new committed worktree, a

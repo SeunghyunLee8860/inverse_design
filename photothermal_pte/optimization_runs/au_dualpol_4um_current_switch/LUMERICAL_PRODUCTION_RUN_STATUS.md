@@ -20,15 +20,17 @@ Lumerical HEAT/CHARGE solver was called.
 The validation baseline was `I_Ea=-7.667768 nA` and
 `I_Eb=-14.655207 nA`. It is a beta-4 derivative test state, not an optimized
 candidate; opposite-current switching has not yet been achieved by that
-state. The next blocker is two missing passed 50-nm Ea/Eb source-only
-calibrations. No matching
-`fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps` JSON was present on this host
-at the post-validation audit.
+state. The 50-nm source-calibration blocker was closed later on 2026-08-26 at
+commit `52b6ed79`. Ea and Eb both passed on physical GPU 5 with solver build
+`8.35.4522`; their solver times were 82.59 s and 82.51 s. The common external
+root is
+`/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_development/r12_gpu5_xy50_source_only_cv0_52b6ed79`.
+At this snapshot the numerical pre-launch gates are closed, but the new
+production optimizer has not yet been launched.
 
 The next allowed production launch must satisfy all of the following:
 
-1. generate and pass the Ea and Eb 50-nm source-only calibrations on the same
-   GPU UUID, Lumerical build, and accelerator policy as the 100-nm sources;
+1. use the passed Ea and Eb 50-nm source-only calibrations from the root above;
 2. commit and push this passing handoff state;
 3. use a detached worktree at that exact commit;
 4. use a new empty external output root;
