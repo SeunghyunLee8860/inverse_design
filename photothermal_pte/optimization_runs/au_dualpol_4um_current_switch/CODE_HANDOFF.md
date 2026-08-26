@@ -14,6 +14,36 @@ The active coordinate contract is **Lumerical x = crystal b** and
 
 ## Superseding Lumerical-only handoff -- 2026-08-26
 
+### Mandatory restart after continuation-policy audit
+
+Do not resume immutable run `417372bd` or its
+`continuation_sau_417372bd` checkpoint. It was intentionally interrupted at
+beta 16 after the audit proved that the fixed local latent boxes could not
+reach the imposed grayness cap. Its last completed result was
+`I_Ea=+0.401006790 nA`, `I_Eb=-0.005742063 nA`, FOM `0.005742063 nA`, and
+grayness `0.982287727`; its stale manifest can still say `RUNNING` even though
+all processes are stopped.
+
+The corrected continuation must start from a new empty output root and exact
+uniform `rho=0.5`. It uses a `0.05` initial linearized max-min warm step,
+global `[0,1]` latent bounds with beta-dependent MMA initial steps, 96
+first-attempt physics evaluations across all beta values, an external
+feasible-objective plateau gate, best-feasible-iterate checkpointing, and an
+adaptive grayness continuation that still ends at the unchanged `0.005`
+beta-128 gate. The maximum retry budget is 308 evaluations, not an ETA or a
+requirement to exhaust them. At the measured roughly 18-minute evaluation
+time, first-attempt success is approximately 29 hours before terminal
+certification; retries are used only when objective/design/sign gates remain
+unresolved.
+
+The focused continuation/optimizer/signed-objective/250-nm-mapping regression
+is `37 passed`; the expanded Lumerical/custom-PDE suite is `178 passed`. The
+solver-free production preflight also passed with the existing same-GPU
+100-nm and 50-nm Ea/Eb source calibrations. The active physics remains
+Lumerical FDTD 2026 R1.2 Maxwell plus custom CUDA thermal/electrical solves,
+including `S_Au=+1.94 uV/K`; Lumerical HEAT, Lumerical CHARGE, and FDTDX
+remain forbidden.
+
 Read `LUMERICAL_ONLY_EXECUTION.md` before any other run document. The active
 route is Lumerical FDTD Maxwell plus repository custom-CUDA thermal/electrical
 PDEs. No alternative Maxwell solver and no Lumerical HEAT/CHARGE may enter the
@@ -47,19 +77,19 @@ precision at `3.17671555e-14 W`. Point the two
 `AU_LUMERICAL_*_FINAL_XY50_SOURCE_CALIBRATION` variables to the corresponding
 Ea/Eb JSONs in that root.
 
-The fresh corrected production continuation is running from immutable commit
+The now-stopped earlier corrected production continuation used immutable commit
 `417372bd` in detached worktree
 `/home/seunghyun/tairte4/worktrees/au_lumerical_sau_prod_417372bd`. Its tmux
 session is `au4um_lum_sau_prod_417372bd`, and its external root is
 `/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_sau_417372bd`.
 It started from exact uniform rho=0.5 at beta 1. Read
-`LUMERICAL_PRODUCTION_RUN_STATUS.md` for the live manifest and monitoring
-command. Do not launch a duplicate or alter that immutable worktree.
+`LUMERICAL_PRODUCTION_RUN_STATUS.md` for the termination audit. Do not resume
+or alter that immutable worktree.
 
 The first uniform evaluation completed at essentially zero current. The
 bounded warm-start evaluation 0001 then passed with
 `I_Ea=+0.0231089668 nA`, `I_Eb=-0.0231527341 nA`, and FOM
-`+0.0231089668 nA`; evaluation 0002 is now running. This proves the optimizer
+`+0.0231089668 nA`. This proved the optimizer
 has left the symmetric uniform saddle and found the desired signs, but it is
 only beta 1 with latent range `0.49375--0.50625`. Do not call it binarized or
 fabricable before the continuation and final exact-Au gates pass.

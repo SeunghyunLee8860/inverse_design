@@ -25,17 +25,21 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     BETA_SCHEDULE,
     DESIGN_CONSTRAINT_TOLERANCE,
     EPIGRAPH_CONSTRAINT_TOLERANCE,
-    INITIAL_MAXIMIN_WARM_STEP_FRACTION,
+    FINAL_GRAYNESS_CAP,
+    INITIAL_MAXIMIN_WARM_MAXIMUM_CHANGE,
     MAXIMUM_STAGE_ATTEMPTS,
-    MOVE_LIMIT,
+    MMA_INITIAL_STEP,
     STAGE_FTOL_REL,
     STAGE_MAXEVAL,
     STAGE_XTOL_REL,
     ContinuationEpigraphProblem,
     active_design_constraint_names,
     continuation_contract,
+    grayness_value_gradient,
     linearized_maximin_box_warm_start,
+    stage_objective_progress,
     stage_design_caps,
+    tightened_final_grayness_cap,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
     OPTIMIZER_250NM_MAPPING,
@@ -55,7 +59,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = Path(__file__).resolve().parents[3]
-CHECKPOINT_SCHEMA = "au-lumerical-continuation-checkpoint-v1"
+CHECKPOINT_SCHEMA = "au-lumerical-continuation-checkpoint-v2"
 PREFLIGHT_STATUS = "PASSED_LUMERICAL_4UM_CONTINUATION_PREFLIGHT_ONLY"
 FINAL_EXACT_BINARY_CERTIFICATE_SCHEMA = (
     "au-lumerical-exact-binary-lateral-pde-certificate-v3"
@@ -412,6 +416,7 @@ def main() -> int:
             initial_dfm, _, _ = smooth_lumerical_250nm_constraints(
                 latent_initial, beta
             )
+            initial_grayness = grayness_value_gradient(latent_initial, beta)[0]
             # Use the checkpoint logical attempt, not the next free artifact
             # directory suffix. If a process dies after creating attempt_00
             # but before finishing its first Maxwell evaluation, the restart
@@ -422,7 +427,9 @@ def main() -> int:
                 cap_record = stage_design_caps(
                     beta=beta,
                     baseline_dfm_values=initial_dfm,
+                    baseline_grayness=initial_grayness,
                     previous_dfm_caps=np.asarray(state["dfm_caps"], dtype=np.float64),
+                    previous_grayness_cap=float(state["grayness_cap"]),
                 )
                 state["dfm_caps"] = np.asarray(
                     cap_record["DFM_caps"], dtype=np.float64
@@ -461,9 +468,7 @@ def main() -> int:
                     gradient_b_latent_A=np.asarray(
                         initial_point["gradient_b_latent_A"], dtype=np.float64
                     ),
-                    maximum_change=(
-                        INITIAL_MAXIMIN_WARM_STEP_FRACTION * MOVE_LIMIT[beta]
-                    ),
+                    maximum_change=INITIAL_MAXIMIN_WARM_MAXIMUM_CHANGE,
                 )
                 optimizer_latent = np.asarray(warm["latent"], dtype=np.float64)
                 warm_physics = driver.evaluate(optimizer_latent)
@@ -484,10 +489,12 @@ def main() -> int:
                 warm_start_audit["actual_balanced_utility_nA"] = epigraph_initial_nA
             variable_count = problem.variable_count
             optimizer = nlopt.opt(nlopt.LD_MMA, variable_count)
-            lower_latent = np.maximum(0.0, latent_initial.ravel() - MOVE_LIMIT[beta])
-            upper_latent = np.minimum(1.0, latent_initial.ravel() + MOVE_LIMIT[beta])
-            optimizer.set_lower_bounds(np.r_[lower_latent, -100.0])
-            optimizer.set_upper_bounds(np.r_[upper_latent, 1000.0])
+            optimizer.set_lower_bounds(
+                np.r_[np.zeros(variable_count - 1, dtype=np.float64), -100.0]
+            )
+            optimizer.set_upper_bounds(
+                np.r_[np.ones(variable_count - 1, dtype=np.float64), 1000.0]
+            )
             optimizer.set_max_objective(problem.objective)
             tolerances = np.r_[
                 np.full(2, EPIGRAPH_CONSTRAINT_TOLERANCE),
@@ -499,7 +506,7 @@ def main() -> int:
             optimizer.add_inequality_mconstraint(problem.constraints, tolerances)
             optimizer.set_initial_step(
                 np.r_[
-                    np.full(variable_count - 1, 0.25 * MOVE_LIMIT[beta]),
+                    np.full(variable_count - 1, MMA_INITIAL_STEP[beta]),
                     0.1,
                 ]
             )
@@ -507,12 +514,18 @@ def main() -> int:
             optimizer.set_xtol_rel(STAGE_XTOL_REL)
             optimizer.set_maxeval(optimizer_maxeval)
             vector_initial = np.r_[optimizer_latent.ravel(), epigraph_initial_nA]
-            vector_final = optimizer.optimize(vector_initial)
-            final_point = problem.point(vector_final)
-            latent_final = vector_final[:-1].reshape(CONTRACT.design_node_shape)
+            vector_optimizer_terminal = optimizer.optimize(vector_initial)
+            objective_progress = stage_objective_progress(problem.callback_history)
+            selected = problem.selected_candidate()
+            final_point = selected["point"]
+            latent_final = np.asarray(selected["latent"], dtype=np.float64)
+            latent_optimizer_terminal = vector_optimizer_terminal[:-1].reshape(
+                CONTRACT.design_node_shape
+            )
             projected_final = OPTIMIZER_250NM_MAPPING.physical(latent_final, beta)
             binary_mask, binary_audit = exact_binary_cell_candidate(projected_final)
             design_satisfied = _stage_constraints_satisfied(final_point)
+            objective_converged = bool(objective_progress["converged"])
             switching = bool(
                 float(final_point["current_a_A"]) > 0.0
                 and float(final_point["current_b_A"]) < 0.0
@@ -529,11 +542,23 @@ def main() -> int:
                 "NLopt_total_constraint_count": problem.total_constraint_count,
                 "requested_maxeval": STAGE_MAXEVAL[beta],
                 "optimizer_requested_maxeval": optimizer_maxeval,
+                "latent_bounds": [0.0, 1.0],
+                "MMA_initial_step": MMA_INITIAL_STEP[beta],
+                "initial_grayness": initial_grayness,
                 "uniform_baseline_outside_optimizer": warm_start_audit is not None,
                 "initial_maximin_warm_start": warm_start_audit,
                 "reported_numevals": optimizer.get_numevals(),
                 "result_code": optimizer.last_optimize_result(),
                 "unique_physics_evaluations": len(driver.history),
+                "selected_candidate": {
+                    "callback_index": selected["callback_index"],
+                    "reason": selected["reason"],
+                    "optimizer_terminal_was_selected": bool(
+                        np.array_equal(latent_final, latent_optimizer_terminal)
+                    ),
+                },
+                "objective_progress": objective_progress,
+                "objective_converged": objective_converged,
                 "initial_currents_nA": {
                     key: 1.0e9 * float(value)
                     for key, value in initial_physics["currents_A"].items()
@@ -573,6 +598,7 @@ def main() -> int:
                 state_path,
                 latent_initial=latent_initial,
                 latent_final=latent_final,
+                latent_optimizer_terminal=latent_optimizer_terminal,
                 projected_final=projected_final,
                 binary_candidate_cell_mask=binary_mask,
             )
@@ -586,14 +612,23 @@ def main() -> int:
                 "balanced_utility_nA": stage_result["balanced_utility_nA"],
                 "grayness": stage_result["design_constraints"]["grayness"],
                 "design_constraints_satisfied": design_satisfied,
+                "objective_converged": objective_converged,
+                "opposite_current_switching_achieved": switching,
             }
             manifest["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
             _write_json(manifest_path, manifest)
 
             final_beta = beta == BETA_SCHEDULE[-1]
+            final_grayness_target_reached = bool(
+                final_beta
+                and float(state["grayness_cap"])
+                <= FINAL_GRAYNESS_CAP * (1.0 + DESIGN_CONSTRAINT_TOLERANCE)
+            )
             continuous_binary_gate = bool(
                 final_beta
                 and design_satisfied
+                and objective_converged
+                and final_grayness_target_reached
                 and float(final_point["design_constraints"]["grayness"])
                 <= float(state["grayness_cap"])
                 * (1.0 + DESIGN_CONSTRAINT_TOLERANCE)
@@ -663,14 +698,40 @@ def main() -> int:
                     return 0
 
             attempts_used = attempt + 1
-            may_advance = bool(not final_beta and design_satisfied)
+            if (
+                final_beta
+                and design_satisfied
+                and objective_converged
+                and switching
+                and not final_grayness_target_reached
+                and attempts_used < MAXIMUM_STAGE_ATTEMPTS[beta]
+            ):
+                tightened_cap = tightened_final_grayness_cap(
+                    current_cap=float(state["grayness_cap"]),
+                    achieved_grayness=float(
+                        final_point["design_constraints"]["grayness"]
+                    ),
+                )
+                manifest["latest"]["next_grayness_cap"] = tightened_cap
+                _write_json(manifest_path, manifest)
+                state["latent"] = latent_final
+                state["attempt"] = attempts_used
+                state["grayness_cap"] = tightened_cap
+                _save_checkpoint(checkpoint_path, **state)
+                continue
+
+            may_advance = bool(
+                not final_beta
+                and design_satisfied
+                and objective_converged
+                and switching
+            )
             if may_advance:
                 state["latent"] = latent_final
                 state["beta_index"] = beta_index + 1
                 state["attempt"] = 0
-                # A new stage computes a new grayness cap.  DFM caps remain
-                # monotone through state["dfm_caps"].
-                state["grayness_cap"] = np.inf
+                # The next stage computes a tighter cap while preserving the
+                # monotone DFM and grayness limits already achieved.
                 _save_checkpoint(checkpoint_path, **state)
                 checkpoint_copy = output / "checkpoints" / f"beta_{beta:03g}_completed.npz"
                 _save_checkpoint(checkpoint_copy, **state)
@@ -684,7 +745,7 @@ def main() -> int:
                 manifest["status"] = (
                     "STOPPED_UNRESOLVED_FINAL_BINARY_OR_SWITCHING_GATES"
                     if final_beta
-                    else "STOPPED_UNRESOLVED_STAGE_DESIGN_CONSTRAINTS"
+                    else "STOPPED_UNRESOLVED_STAGE_OBJECTIVE_OR_DESIGN_GATES"
                 )
                 manifest["passed"] = False
                 manifest["blocking_beta"] = beta

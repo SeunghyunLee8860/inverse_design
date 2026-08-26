@@ -37,33 +37,38 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 
 BETA_SCHEDULE = (1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0)
 
-# Each attempt includes the point at which NLopt starts.  The later stages get
-# more evaluations because their projection and active constraints are stiffer.
+# Each attempt includes the point at which NLopt starts.  A complete coupled
+# Lumerical/custom-CUDA evaluation costs minutes, so these are deliberately
+# finite budgets rather than arbitrary large iteration counts.  They are still
+# large enough to establish a short objective plateau before beta advances.
 STAGE_MAXEVAL = {
-    1.0: 5,
-    2.0: 5,
-    4.0: 6,
-    8.0: 6,
-    16.0: 7,
-    32.0: 7,
-    64.0: 8,
-    128.0: 10,
+    1.0: 12,
+    2.0: 10,
+    4.0: 10,
+    8.0: 10,
+    16.0: 12,
+    32.0: 12,
+    64.0: 14,
+    128.0: 16,
 }
 MAXIMUM_STAGE_ATTEMPTS = {
-    1.0: 1,
-    2.0: 1,
+    1.0: 2,
+    2.0: 2,
     4.0: 2,
     8.0: 2,
     16.0: 3,
     32.0: 3,
     64.0: 4,
-    128.0: 8,
+    128.0: 6,
 }
 MINIMUM_CONTINUATION_EVALUATIONS = sum(STAGE_MAXEVAL[beta] for beta in BETA_SCHEDULE)
 MAXIMUM_CONTINUATION_EVALUATIONS = sum(
     STAGE_MAXEVAL[beta] * MAXIMUM_STAGE_ATTEMPTS[beta] for beta in BETA_SCHEDULE
 )
-MOVE_LIMIT = {
+# These values are MMA initial step sizes, not permanent bounds around the
+# stage starting point.  The old fixed box made the beta-16 grayness cap
+# mathematically unreachable even after every allowed retry.
+MMA_INITIAL_STEP = {
     1.0: 0.025,
     2.0: 0.020,
     4.0: 0.018,
@@ -86,18 +91,34 @@ DFM_BASELINE_REDUCTION = {
     64.0: (0.30, 0.45),
     128.0: (0.0, 0.0),
 }
-GRAYNESS_CAP = {
-    16.0: 0.35,
-    32.0: 0.15,
+GRAYNESS_TARGET_CAP = {
+    16.0: 0.60,
+    32.0: 0.20,
     64.0: 0.040,
     128.0: 0.005,
 }
+# An active cap is the tighter of the previous cap and a controlled reduction
+# from the reprojected stage baseline, but never tighter than that beta's
+# target on its first attempt.  This is constraint continuation: it prevents
+# the optimizer from being handed a grossly infeasible subproblem while still
+# ending at the unchanged beta-128 binary gate.
+GRAYNESS_BASELINE_REDUCTION = {
+    16.0: 0.90,
+    32.0: 0.70,
+    64.0: 0.45,
+    128.0: 0.25,
+}
+FINAL_GRAYNESS_CAP = GRAYNESS_TARGET_CAP[BETA_SCHEDULE[-1]]
 
 DESIGN_CONSTRAINT_TOLERANCE = 1.0e-3
 EPIGRAPH_CONSTRAINT_TOLERANCE = 1.0e-6
 STAGE_FTOL_REL = 0.0
 STAGE_XTOL_REL = 0.0
-INITIAL_MAXIMIN_WARM_STEP_FRACTION = 0.25
+INITIAL_MAXIMIN_WARM_MAXIMUM_CHANGE = 0.050
+STAGE_PLATEAU_MINIMUM_FEASIBLE_POINTS = 6
+STAGE_PLATEAU_WINDOW = 4
+STAGE_PLATEAU_RELATIVE_TOLERANCE = 1.0e-2
+STAGE_PLATEAU_ABSOLUTE_TOLERANCE_NA = 1.0e-3
 
 
 def linearized_maximin_box_warm_start(
@@ -234,9 +255,11 @@ def stage_design_caps(
     *,
     beta: float,
     baseline_dfm_values: np.ndarray,
+    baseline_grayness: float,
     previous_dfm_caps: np.ndarray | None,
+    previous_grayness_cap: float | None,
 ) -> dict[str, Any]:
-    """Fix monotone fabrication caps for one continuation stage."""
+    """Fix monotone, locally staged fabrication caps for one beta stage."""
 
     beta_value = float(beta)
     baseline = np.asarray(baseline_dfm_values, dtype=np.float64)
@@ -250,6 +273,16 @@ def stage_design_caps(
     )
     if prior.shape != (2,) or np.any(np.isnan(prior)) or np.any(prior <= 0.0):
         raise ValueError("previous DFM caps must be positive length-two values")
+    gray_baseline = float(baseline_grayness)
+    if not np.isfinite(gray_baseline) or not 0.0 <= gray_baseline <= 1.0:
+        raise ValueError("baseline grayness must be finite inside [0,1]")
+    prior_gray = (
+        np.inf
+        if previous_grayness_cap is None
+        else float(previous_grayness_cap)
+    )
+    if np.isnan(prior_gray) or prior_gray <= 0.0:
+        raise ValueError("previous grayness cap must be positive")
     active = active_design_constraint_names(beta_value)
     caps = prior.copy()
     if active:
@@ -258,14 +291,86 @@ def stage_design_caps(
         caps[0] = min(caps[0], proposed[0])
         if len(active) >= 2:
             caps[1] = min(caps[1], proposed[1])
-    gray_cap = GRAYNESS_CAP.get(beta_value, np.inf)
+    if len(active) < 3:
+        gray_cap = np.inf
+    else:
+        target = GRAYNESS_TARGET_CAP[beta_value]
+        proposed_gray = max(
+            target,
+            GRAYNESS_BASELINE_REDUCTION[beta_value] * gray_baseline,
+        )
+        gray_cap = min(prior_gray, proposed_gray)
     return {
         "beta": beta_value,
         "active_names": list(active),
         "DFM_caps": caps,
         "grayness_cap": float(gray_cap),
+        "baseline_grayness": gray_baseline,
+        "grayness_target_cap": float(
+            GRAYNESS_TARGET_CAP.get(beta_value, np.inf)
+        ),
+        "grayness_baseline_reduction": float(
+            GRAYNESS_BASELINE_REDUCTION.get(beta_value, np.nan)
+        ),
         "calibrated_final_DFM_caps": calibrated,
         "DFM_calibration": calibration,
+    }
+
+
+def tightened_final_grayness_cap(
+    *, current_cap: float, achieved_grayness: float
+) -> float:
+    """Ratchet a feasible beta-128 cap to the immutable final binary gate."""
+
+    cap = float(current_cap)
+    achieved = float(achieved_grayness)
+    if not np.isfinite(cap) or cap <= 0.0:
+        raise ValueError("current final-stage grayness cap must be positive")
+    if not np.isfinite(achieved) or not 0.0 <= achieved <= 1.0:
+        raise ValueError("achieved grayness must be finite inside [0,1]")
+    return float(max(FINAL_GRAYNESS_CAP, min(cap, 0.25 * achieved)))
+
+
+def stage_objective_progress(
+    callback_history: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Audit whether feasible balanced utility stopped improving recently."""
+
+    feasible = [
+        row
+        for row in callback_history
+        if float(row.get("maximum_design_constraint", -np.inf))
+        <= DESIGN_CONSTRAINT_TOLERANCE
+    ]
+    values = np.asarray(
+        [float(row["balanced_utility_nA"]) for row in feasible],
+        dtype=np.float64,
+    )
+    enough = values.size >= STAGE_PLATEAU_MINIMUM_FEASIBLE_POINTS
+    has_prior_window = values.size > STAGE_PLATEAU_WINDOW
+    if has_prior_window:
+        prior_best = float(np.max(values[:-STAGE_PLATEAU_WINDOW]))
+        recent_best = float(np.max(values[-STAGE_PLATEAU_WINDOW:]))
+        improvement = recent_best - prior_best
+        tolerance = max(
+            STAGE_PLATEAU_ABSOLUTE_TOLERANCE_NA,
+            STAGE_PLATEAU_RELATIVE_TOLERANCE
+            * max(abs(recent_best), STAGE_PLATEAU_ABSOLUTE_TOLERANCE_NA),
+        )
+    else:
+        prior_best = np.nan
+        recent_best = float(np.max(values)) if values.size else np.nan
+        improvement = np.inf
+        tolerance = np.nan
+    return {
+        "converged": bool(enough and has_prior_window and improvement <= tolerance),
+        "feasible_physics_points": int(values.size),
+        "minimum_feasible_points": STAGE_PLATEAU_MINIMUM_FEASIBLE_POINTS,
+        "window": STAGE_PLATEAU_WINDOW,
+        "prior_best_balanced_utility_nA": prior_best,
+        "recent_best_balanced_utility_nA": recent_best,
+        "recent_best_improvement_nA": float(improvement),
+        "allowed_improvement_nA": float(tolerance),
     }
 
 
@@ -323,6 +428,8 @@ class ContinuationEpigraphProblem:
         self.beta = float(self.beta)
         self.dfm_caps = np.asarray(self.dfm_caps, dtype=np.float64)
         self.callback_history: list[dict[str, Any]] = []
+        self._candidate_latents: list[np.ndarray] = []
+        self._candidate_points: list[dict[str, Any]] = []
         self._last_latent: np.ndarray | None = None
         self._last_point: dict[str, Any] | None = None
 
@@ -372,6 +479,14 @@ class ContinuationEpigraphProblem:
         }
         self._last_latent = latent.copy()
         self._last_point = point
+        normalized_design = np.asarray(
+            design["normalized_values"], dtype=np.float64
+        )
+        maximum_design = (
+            float(np.max(normalized_design))
+            if normalized_design.size
+            else -np.inf
+        )
         self.callback_history.append(
             {
                 "callback_index": len(self.callback_history),
@@ -382,9 +497,59 @@ class ContinuationEpigraphProblem:
                 "design_constraint_values": design["normalized_values"].tolist(),
                 "raw_DFM_values": design["raw_DFM_values"].tolist(),
                 "grayness": design["grayness"],
+                "maximum_design_constraint": maximum_design,
+                "design_feasible": bool(
+                    maximum_design <= DESIGN_CONSTRAINT_TOLERANCE
+                ),
             }
         )
+        self._candidate_latents.append(latent.copy())
+        self._candidate_points.append(point)
         return point
+
+    def selected_candidate(self) -> dict[str, Any]:
+        """Return the best feasible point, or least-violating point if needed."""
+
+        if not self.callback_history:
+            raise RuntimeError("cannot select a continuation candidate without points")
+        feasible = [
+            index
+            for index, row in enumerate(self.callback_history)
+            if bool(row["design_feasible"])
+        ]
+        if feasible:
+            index = max(
+                feasible,
+                key=lambda candidate: float(
+                    self.callback_history[candidate]["balanced_utility_nA"]
+                ),
+            )
+            reason = "maximum_balanced_utility_among_design_feasible_points"
+        else:
+            index = min(
+                range(len(self.callback_history)),
+                key=lambda candidate: (
+                    max(
+                        0.0,
+                        float(
+                            self.callback_history[candidate][
+                                "maximum_design_constraint"
+                            ]
+                        ),
+                    ),
+                    -float(
+                        self.callback_history[candidate]["balanced_utility_nA"]
+                    ),
+                ),
+            )
+            reason = "minimum_design_violation_then_maximum_balanced_utility"
+        return {
+            "callback_index": int(index),
+            "reason": reason,
+            "latent": self._candidate_latents[index].copy(),
+            "point": self._candidate_points[index],
+            "audit": dict(self.callback_history[index]),
+        }
 
     def objective(self, vector: np.ndarray, gradient: np.ndarray) -> float:
         if gradient.size:
@@ -432,16 +597,34 @@ def continuation_contract() -> dict[str, Any]:
                 "maximin warm start preserves rather than adds to the beta-1 budget"
             ),
         },
-        "move_limit": {str(key): value for key, value in MOVE_LIMIT.items()},
+        "latent_bounds": [0.0, 1.0],
+        "stage_start_is_not_a_permanent_move_box": True,
+        "MMA_initial_step": {
+            str(key): value for key, value in MMA_INITIAL_STEP.items()
+        },
         "design_constraint_activation": {
             str(beta): list(active_design_constraint_names(beta))
             for beta in BETA_SCHEDULE
         },
-        "grayness_caps": {str(key): value for key, value in GRAYNESS_CAP.items()},
-        "final_grayness_gate": GRAYNESS_CAP[BETA_SCHEDULE[-1]],
+        "grayness_target_caps": {
+            str(key): value for key, value in GRAYNESS_TARGET_CAP.items()
+        },
+        "grayness_baseline_reduction": {
+            str(key): value
+            for key, value in GRAYNESS_BASELINE_REDUCTION.items()
+        },
+        "final_grayness_gate": FINAL_GRAYNESS_CAP,
         "stage_ftol_rel": STAGE_FTOL_REL,
         "stage_xtol_rel": STAGE_XTOL_REL,
-        "initial_maximin_warm_step_fraction": INITIAL_MAXIMIN_WARM_STEP_FRACTION,
+        "initial_maximin_warm_maximum_change": (
+            INITIAL_MAXIMIN_WARM_MAXIMUM_CHANGE
+        ),
+        "external_physics_objective_plateau_gate": {
+            "minimum_feasible_points": STAGE_PLATEAU_MINIMUM_FEASIBLE_POINTS,
+            "window": STAGE_PLATEAU_WINDOW,
+            "relative_tolerance": STAGE_PLATEAU_RELATIVE_TOLERANCE,
+            "absolute_tolerance_nA": STAGE_PLATEAU_ABSOLUTE_TOLERANCE_NA,
+        },
         "initial_density": "exact uniform latent rho=0.5",
         "floating_Au_terminal_conductance_constraint": False,
         "objective": "maximize min(I_Ea, -I_Eb) by epigraph LD_MMA",

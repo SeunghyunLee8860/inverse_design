@@ -1,5 +1,47 @@
 # Active Lumerical production run
 
+## Optimizer restart correction -- 2026-08-26 22:42 UTC
+
+**THE `417372bd` PROCESS WAS INTENTIONALLY STOPPED AND MUST NOT BE
+RESUMED.** Its last completed stage was beta 16 attempt 1, with
+`I_Ea=+0.401006790 nA`, `I_Eb=-0.005742063 nA`, balanced FOM
+`0.005742063 nA`, and grayness `0.982287727` against an infeasible fixed cap
+of `0.35`. The manifest still says `RUNNING` because SIGINT interrupted the
+Python process between atomic manifest updates; process inspection confirmed
+that its runres, optimizer, Jacobian, and Lumerical children are all gone.
+
+The complete stage audit showed that every finished beta 1--16 attempt ended
+only at `NLOPT_MAXEVAL_REACHED` (result code 5). Beta was allowed to advance
+without an objective-plateau gate, and every attempt permanently restricted
+all 6561 latent variables to a narrow box around that attempt's start. Even
+the union of all three beta-16 retry boxes had a rigorous grayness lower bound
+of about `0.422`, so the hard `0.35` cap could not be reached. This was an
+optimizer-policy failure, not a Maxwell/PDE or AD--FD failure.
+
+The replacement code starts again from exact uniform `rho=0.5` and changes
+the policy as follows:
+
+- the initial exact linearized max-min symmetry-breaking step is `0.05`
+  instead of `0.00625`;
+- MMA uses physical latent bounds `[0,1]`; the beta-dependent values are
+  initial step sizes, not permanent stage boxes;
+- first-attempt budgets are 12/10/10/10/12/12/14/16 complete physics
+  evaluations for beta 1/2/4/8/16/32/64/128;
+- beta advancement requires passed design constraints, the target current
+  signs, and a plateau of the actual feasible balanced utility;
+- the checkpoint selects the highest-FOM feasible evaluated point rather than
+  blindly accepting NLopt's terminal point;
+- grayness is tightened by constraint continuation at beta 16/32/64/128,
+  while the final beta-128 promotion gate remains exactly `0.005`;
+- the three fabrication constraints remain 250-nm solid, 250-nm void, and
+  grayness. No Au-terminal conductance constraint is introduced.
+
+The focused regression passed `37` tests and the expanded Lumerical/custom-PDE
+suite passed `178` tests. A solver-free runtime preflight passed all
+Lumerical-only, 100/50-nm calibration, CV0, 2.5/50-nm z-mesh, GPU UUID,
+no-HEAT/CHARGE, and no-FDTDX gates. The next section is retained as the
+historical record of the stopped run and is no longer the active instruction.
+
 ## Active S_Au production -- 2026-08-26 06:18 UTC
 
 **RUNNING.** The corrected `S_Au` continuation is active from exact uniform

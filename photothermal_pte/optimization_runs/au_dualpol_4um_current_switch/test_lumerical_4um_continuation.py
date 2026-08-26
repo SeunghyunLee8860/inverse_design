@@ -12,6 +12,8 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_continuation import (
     BETA_SCHEDULE,
+    FINAL_GRAYNESS_CAP,
+    INITIAL_MAXIMIN_WARM_MAXIMUM_CHANGE,
     MAXIMUM_CONTINUATION_EVALUATIONS,
     MINIMUM_CONTINUATION_EVALUATIONS,
     STAGE_FTOL_REL,
@@ -20,7 +22,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     active_design_constraint_names,
     grayness_value_gradient,
     linearized_maximin_box_warm_start,
+    stage_objective_progress,
     stage_design_caps,
+    tightened_final_grayness_cap,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
     calibrated_lumerical_250nm_dfm_caps,
@@ -62,8 +66,9 @@ def test_production_stages_do_not_stop_on_tiny_balancing_step() -> None:
 
 
 def test_continuation_evaluation_budget_is_explicit() -> None:
-    assert MINIMUM_CONTINUATION_EVALUATIONS == 54
-    assert MAXIMUM_CONTINUATION_EVALUATIONS == 188
+    assert MINIMUM_CONTINUATION_EVALUATIONS == 96
+    assert MAXIMUM_CONTINUATION_EVALUATIONS == 308
+    assert INITIAL_MAXIMIN_WARM_MAXIMUM_CHANGE == 0.05
 
 
 def test_continuation_contract_requires_optical_lateral_and_pde_convergence() -> None:
@@ -136,16 +141,23 @@ def test_grayness_gradient_matches_directional_finite_difference() -> None:
 def test_stage_caps_are_monotone_and_final_caps_are_calibrated() -> None:
     latent = _latent()
     previous = np.full(2, np.inf)
+    previous_gray = np.inf
     for beta in BETA_SCHEDULE:
         baseline = smooth_lumerical_250nm_constraints(latent, beta)[0]
+        baseline_grayness = grayness_value_gradient(latent, beta)[0]
         record = stage_design_caps(
             beta=beta,
             baseline_dfm_values=baseline,
+            baseline_grayness=baseline_grayness,
             previous_dfm_caps=previous,
+            previous_grayness_cap=previous_gray,
         )
         current = np.asarray(record["DFM_caps"])
         assert np.all(current <= previous)
         previous = current
+        current_gray = float(record["grayness_cap"])
+        assert current_gray <= previous_gray
+        previous_gray = current_gray
     calibrated, _ = calibrated_lumerical_250nm_dfm_caps()
     assert np.allclose(previous, calibrated, rtol=0.0, atol=0.0)
 
@@ -156,7 +168,9 @@ def test_high_beta_problem_has_two_epigraph_plus_three_design_constraints() -> N
     caps = stage_design_caps(
         beta=16.0,
         baseline_dfm_values=baseline,
+        baseline_grayness=grayness_value_gradient(latent, 16.0)[0],
         previous_dfm_caps=None,
+        previous_grayness_cap=None,
     )
     problem = ContinuationEpigraphProblem(
         _fake_evaluation,
@@ -175,6 +189,73 @@ def test_high_beta_problem_has_two_epigraph_plus_three_design_constraints() -> N
     assert np.all(gradients[2:, -1] == 0.0)
 
 
+def test_grayness_cap_starts_reachable_and_ratchets_to_final_gate() -> None:
+    latent = uniform_initial_latent_density()
+    beta = 16.0
+    record = stage_design_caps(
+        beta=beta,
+        baseline_dfm_values=smooth_lumerical_250nm_constraints(latent, beta)[0],
+        baseline_grayness=grayness_value_gradient(latent, beta)[0],
+        previous_dfm_caps=None,
+        previous_grayness_cap=None,
+    )
+    assert record["grayness_cap"] == pytest.approx(0.9)
+    cap = 0.08
+    for achieved in (0.075, 0.018, 0.004):
+        cap = tightened_final_grayness_cap(
+            current_cap=cap, achieved_grayness=achieved
+        )
+    assert cap == FINAL_GRAYNESS_CAP
+
+
+def test_objective_plateau_gate_rejects_a_recently_improving_stage() -> None:
+    improving = [
+        {
+            "balanced_utility_nA": float(index),
+            "maximum_design_constraint": -0.1,
+        }
+        for index in range(8)
+    ]
+    plateau = [
+        {
+            "balanced_utility_nA": 1.0 + 1.0e-5 * index,
+            "maximum_design_constraint": -0.1,
+        }
+        for index in range(8)
+    ]
+    assert stage_objective_progress(improving)["converged"] is False
+    assert stage_objective_progress(plateau)["converged"] is True
+
+
+def test_problem_selects_best_physics_point_not_nlopt_terminal_point() -> None:
+    def evaluation(latent: np.ndarray) -> dict[str, object]:
+        level = float(np.mean(latent))
+        return {
+            "passed": True,
+            "currents_A": {"Ea": level * 1.0e-9, "Eb": -level * 1.0e-9},
+            "gradient_Ea_projected_A": np.full(
+                CONTRACT.design_node_shape, 1.0e-9 / np.prod(CONTRACT.design_node_shape)
+            ),
+            "gradient_Eb_projected_A": np.full(
+                CONTRACT.design_node_shape, -1.0e-9 / np.prod(CONTRACT.design_node_shape)
+            ),
+        }
+
+    problem = ContinuationEpigraphProblem(
+        evaluation,
+        beta=1.0,
+        dfm_caps=np.full(2, np.inf),
+        grayness_cap=np.inf,
+    )
+    better = np.full(CONTRACT.design_node_shape, 0.6)
+    worse_terminal = np.full(CONTRACT.design_node_shape, 0.4)
+    problem.point(np.r_[better.ravel(), 0.6])
+    problem.point(np.r_[worse_terminal.ravel(), 0.4])
+    selected = problem.selected_candidate()
+    assert np.array_equal(selected["latent"], better)
+    assert selected["callback_index"] == 0
+
+
 def test_stage_caps_are_checkpointed_before_first_maxwell_evaluation() -> None:
     source = (
         Path(__file__)
@@ -185,6 +266,17 @@ def test_stage_caps_are_checkpointed_before_first_maxwell_evaluation() -> None:
     checkpoint = source.index("_save_checkpoint(checkpoint_path, **state)", cap_setup)
     first_maxwell = source.index("initial_physics = driver.evaluate(latent_initial)")
     assert cap_setup < checkpoint < first_maxwell
+
+
+def test_mma_uses_global_density_bounds_not_a_stage_start_box() -> None:
+    source = (
+        Path(__file__)
+        .with_name("41_optimize_lumerical_4um_dualpol_continuation.py")
+        .read_text(encoding="utf-8")
+    )
+    assert "np.zeros(variable_count - 1" in source
+    assert "np.ones(variable_count - 1" in source
+    assert "latent_initial.ravel() -" not in source
 
 
 def _load_continuation_driver():

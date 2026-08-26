@@ -5,10 +5,10 @@ Maxwell/custom-PDE AD-FD with `S_Au` passed at commit `80e3ef8a`. The prior
 production run omitted Au thermopower and remains stale. **Do not resume it.**
 The required Ea/Eb 50-nm source-only calibrations passed at commit
 `52b6ed79`. The numerical pre-launch blockers are therefore closed on this
-RTX development host. The fresh run was launched at commit `417372bd` from
-exact uniform `rho=0.5`; its live paths are in
-`LUMERICAL_PRODUCTION_RUN_STATUS.md`. Never reuse an older MMA checkpoint or
-start another process against the active output root.
+RTX development host. The run launched at commit `417372bd` was intentionally
+stopped after its continuation policy was proven unable to reach the beta-16
+grayness cap. Its paths and the replacement-policy audit are in
+`LUMERICAL_PRODUCTION_RUN_STATUS.md`. Never reuse that MMA checkpoint.
 
 The passing derivative evidence is external under
 `au_dualpol_4um_lumerical_s_au_combined_adfd/active250_commit_80e3ef8a`.
@@ -47,7 +47,10 @@ site `/home/dhkim/bin/runres` incorrectly searches the current user's absent
 - Objective: maximize the epigraph `t` with `t-I_Ea<=0` and `t+I_Eb<=0`.
 - Target: `I_Ea>0` and `I_Eb<0`.
 - Beta schedule: `1, 2, 4, 8, 16, 32, 64, 128`.
-- Optimizer: NLopt `LD_MMA`, with a beta-dependent bounded move region.
+- Optimizer: NLopt `LD_MMA`, global physical latent bounds `[0,1]`, and a
+  beta-dependent initial step. The initial step is not a permanent move box.
+- A beta advances only after the design gates, opposite-current signs, and an
+  external plateau test on feasible `min(I_Ea,-I_Eb)` points pass.
 - The run is resumable only under the same Git commit. Every completed
   attempt and beta stage has an external checkpoint.
 
