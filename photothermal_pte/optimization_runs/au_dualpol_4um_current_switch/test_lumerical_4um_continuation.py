@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import importlib.util
 from pathlib import Path
+import sys
 
 import numpy as np
+import pytest
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
     CONTRACT,
@@ -182,3 +185,41 @@ def test_stage_caps_are_checkpointed_before_first_maxwell_evaluation() -> None:
     checkpoint = source.index("_save_checkpoint(checkpoint_path, **state)", cap_setup)
     first_maxwell = source.index("initial_physics = driver.evaluate(latent_initial)")
     assert cap_setup < checkpoint < first_maxwell
+
+
+def _load_continuation_driver():
+    path = Path(__file__).with_name(
+        "41_optimize_lumerical_4um_dualpol_continuation.py"
+    )
+    name = "_test_lumerical_4um_continuation_driver"
+    spec = importlib.util.spec_from_file_location(name, path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_passed_preflight_manifest_can_transition_to_full_run() -> None:
+    driver = _load_continuation_driver()
+    manifest = {
+        "status": driver.PREFLIGHT_STATUS,
+        "passed": True,
+        "preflight_only": True,
+        "stages": [],
+        "final": None,
+    }
+    assert driver._completed_manifest_latent(manifest) is None
+
+
+def test_malformed_passed_preflight_manifest_fails_closed() -> None:
+    driver = _load_continuation_driver()
+    manifest = {
+        "status": driver.PREFLIGHT_STATUS,
+        "passed": True,
+        "preflight_only": True,
+        "stages": [{"unexpected": "physics result"}],
+        "final": None,
+    }
+    with pytest.raises(RuntimeError, match="preflight-only.*malformed"):
+        driver._completed_manifest_latent(manifest)

@@ -56,6 +56,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 HERE = Path(__file__).resolve().parent
 REPOSITORY = Path(__file__).resolve().parents[3]
 CHECKPOINT_SCHEMA = "au-lumerical-continuation-checkpoint-v1"
+PREFLIGHT_STATUS = "PASSED_LUMERICAL_4UM_CONTINUATION_PREFLIGHT_ONLY"
 FINAL_EXACT_BINARY_CERTIFICATE_SCHEMA = (
     "au-lumerical-exact-binary-lateral-pde-certificate-v3"
 )
@@ -202,6 +203,14 @@ def _completed_manifest_latent(manifest: dict[str, Any]) -> np.ndarray | None:
     """Verify and recover the terminal latent state after an interrupted commit."""
 
     if manifest.get("passed") is not True:
+        return None
+    if manifest.get("status") == PREFLIGHT_STATUS:
+        if not (
+            manifest.get("preflight_only") is True
+            and manifest.get("stages") == []
+            and manifest.get("final") is None
+        ):
+            raise RuntimeError("preflight-only continuation manifest is malformed")
         return None
     if not str(manifest.get("status", "")).startswith(
         "PASSED_LUMERICAL_4UM_DUALPOL_EXACT_BINARY_AU_"
@@ -374,7 +383,7 @@ def main() -> int:
             _write_json(manifest_path, manifest)
 
         if args.preflight_only:
-            manifest["status"] = "PASSED_LUMERICAL_4UM_CONTINUATION_PREFLIGHT_ONLY"
+            manifest["status"] = PREFLIGHT_STATUS
             manifest["passed"] = True
             manifest["preflight_only"] = True
             manifest["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
