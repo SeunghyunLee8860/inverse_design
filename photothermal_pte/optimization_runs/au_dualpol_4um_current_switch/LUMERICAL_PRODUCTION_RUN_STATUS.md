@@ -1,8 +1,41 @@
 # Active Lumerical production run
 
+## Active S_Au production -- 2026-08-26 06:18 UTC
+
+**RUNNING.** The corrected `S_Au` continuation is active from exact uniform
+latent/projected `rho=0.5` at beta 1. It passed the solver-free preflight and
+successfully transitioned the same checkpoint to the full run. At this
+snapshot it is in evaluation 0000's Ea Lumerical forward; no current or FOM
+has been produced yet.
+
+- immutable run commit: `417372bd73dc1af395b2fed2aac87f80a6be5d2f`;
+- detached worktree:
+  `/home/seunghyun/tairte4/worktrees/au_lumerical_sau_prod_417372bd`;
+- tmux session: `au4um_lum_sau_prod_417372bd`;
+- GPU: physical GPU 5, RTX 6000 Ada,
+  `GPU-aa047452-9c73-d10f-675f-8af800915acf`;
+- runres project: `PROJECT_seunghyun_au4um_lumerical_beta_continuation_gpu5_3563961`;
+- external output root:
+  `/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_sau_417372bd`;
+- manifest: `.../continuation_sau_417372bd/production_manifest.json`;
+- checkpoint: `.../continuation_sau_417372bd/continuation_checkpoint.npz`.
+
+Monitor without changing the run:
+
+```bash
+tmux capture-pane -pt au4um_lum_sau_prod_417372bd -S -120
+jq '{status,latest,stage_count:(.stages|length),error}' \
+  /home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_sau_417372bd/production_manifest.json
+```
+
+Do not start a second process on this output root and do not attach any old
+checkpoint. The runres parent owns the nine-task reservation. The production
+commit includes the preflight-to-full-run fix and passed 163 Lumerical-only
+tests before launch.
+
 ## Superseding status -- 2026-08-26
 
-**STOPPED; no production optimizer is running.** The most recent continuation
+**SUPERSEDED STOPPED RUN.** The earlier continuation
 under commit `ac077e4c` was stopped intentionally after an audit found that
 the current included TaIrTe4 thermopower but omitted the floating Au sheet's
 Seebeck source. Its external artifacts remain under

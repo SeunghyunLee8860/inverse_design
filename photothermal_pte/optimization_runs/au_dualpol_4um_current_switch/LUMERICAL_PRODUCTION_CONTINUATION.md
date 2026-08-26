@@ -5,9 +5,10 @@ Maxwell/custom-PDE AD-FD with `S_Au` passed at commit `80e3ef8a`. The prior
 production run omitted Au thermopower and remains stale. **Do not resume it.**
 The required Ea/Eb 50-nm source-only calibrations passed at commit
 `52b6ed79`. The numerical pre-launch blockers are therefore closed on this
-RTX development host. Launch only from a new immutable commit/worktree and a
-new empty output root. The run must start again from exact uniform `rho=0.5`;
-no old MMA checkpoint may be reused after changing the objective and gradient.
+RTX development host. The fresh run was launched at commit `417372bd` from
+exact uniform `rho=0.5`; its live paths are in
+`LUMERICAL_PRODUCTION_RUN_STATUS.md`. Never reuse an older MMA checkpoint or
+start another process against the active output root.
 
 The passing derivative evidence is external under
 `au_dualpol_4um_lumerical_s_au_combined_adfd/active250_commit_80e3ef8a`.

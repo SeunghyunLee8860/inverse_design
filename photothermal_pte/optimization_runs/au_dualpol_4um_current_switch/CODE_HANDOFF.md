@@ -47,6 +47,21 @@ precision at `3.17671555e-14 W`. Point the two
 `AU_LUMERICAL_*_FINAL_XY50_SOURCE_CALIBRATION` variables to the corresponding
 Ea/Eb JSONs in that root.
 
+The fresh corrected production continuation is running from immutable commit
+`417372bd` in detached worktree
+`/home/seunghyun/tairte4/worktrees/au_lumerical_sau_prod_417372bd`. Its tmux
+session is `au4um_lum_sau_prod_417372bd`, and its external root is
+`/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_sau_417372bd`.
+It started from exact uniform rho=0.5 at beta 1. Read
+`LUMERICAL_PRODUCTION_RUN_STATUS.md` for the live manifest and monitoring
+command. Do not launch a duplicate or alter that immutable worktree.
+
+Commit `417372bd` also fixes a fail-closed orchestration defect discovered at
+launch: a passed preflight-only manifest was previously mistaken for a
+terminal exact-binary certificate. A valid empty preflight checkpoint can now
+transition to the full run; a malformed preflight manifest still aborts. The
+focused tests passed 16/16 and the full Lumerical-only suite passed 163/163.
+
 Important mapping correction: older CV0 combined certificates used
 `NOMINAL_MAPPING`, a 500-nm filter. They certify the projected-density physics
 but not the current 250-nm latent chain. Scripts 36, 38, and 39 now bind
