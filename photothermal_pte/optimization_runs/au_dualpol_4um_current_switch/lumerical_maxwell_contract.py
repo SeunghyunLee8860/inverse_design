@@ -367,6 +367,28 @@ def _parse_fdtd_solve_license_inventory(
 
 
 def _fdtd_solve_license_audit() -> dict[str, Any]:
+    license_mode = os.environ.get(
+        "AU_LUMERICAL_LICENSE_MODE", "reservation_audit"
+    ).strip()
+    if license_mode not in {"reservation_audit", "direct_checkout"}:
+        raise ValueError(
+            "AU_LUMERICAL_LICENSE_MODE must be reservation_audit or "
+            f"direct_checkout, got {license_mode!r}"
+        )
+    if license_mode == "direct_checkout":
+        return {
+            "passed": True,
+            "passed_via": "direct_solver_checkout",
+            "license_mode": license_mode,
+            "prelaunch_capacity_verified": False,
+            "reservation_verified": False,
+            "tasks_required": GPU_SOLVE_LICENSE_TASKS_REQUIRED,
+            "note": (
+                "B200 site does not provide runres; the Lumerical engine must "
+                "check out its license directly and will fail closed at launch "
+                "if no entitlement is available."
+            ),
+        }
     lmutil = LUMERICAL_ROOT / "licensingclient/linx64/lmutil"
     server = os.environ.get("ANSYSLMD_LICENSE_FILE", "1055@localhost")
     project = os.environ.get("LM_PROJECT", "").strip()
@@ -453,6 +475,8 @@ def _fdtd_solve_license_audit() -> dict[str, Any]:
             "audit_attempts": attempts,
             "audit_wait_elapsed_s": elapsed_s,
             "audit_wait_limit_s": wait_s,
+            "license_mode": license_mode,
+            "prelaunch_capacity_verified": True,
         }
         if passed or not project or elapsed_s >= wait_s:
             return result
@@ -644,7 +668,8 @@ def audit_environment(
         "all_required_gates_passed": ready,
         "notes": [
             "Only FDTD time stepping uses the selected GPU; Lumerical meshing and scripts use CPU.",
-            "The installed GPU solve path requires either nine globally free lum_fdtd_solve tasks or an exact server-verified nine-task LM_PROJECT reservation; this is rechecked immediately before launch.",
+            "The reservation_audit license mode requires either nine globally free lum_fdtd_solve tasks or an exact server-verified nine-task LM_PROJECT reservation.",
+            "The explicit direct_checkout mode is for sites without runres; the Lumerical engine performs the real checkout and fails closed at solver launch if no entitlement is available.",
             "The B200 remains mandatory for target-accelerator promotion.",
             "A development-policy run on another NVIDIA GPU is numerical evidence only and must be repeated on the B200.",
             "Thermal and electrical solves remain the repository custom CUDA PDE solvers.",

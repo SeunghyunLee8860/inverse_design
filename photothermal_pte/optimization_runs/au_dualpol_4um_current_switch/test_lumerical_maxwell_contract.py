@@ -174,6 +174,30 @@ def test_license_task_exhaustion_blocks_gpu_preflight(
     assert result["gates"]["fdtd_solve_license_tasks_available"] is False
 
 
+def test_explicit_direct_checkout_defers_capacity_to_solver(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("AU_LUMERICAL_LICENSE_MODE", "direct_checkout")
+    monkeypatch.setattr(
+        maxwell_contract.subprocess,
+        "run",
+        lambda *args, **kwargs: pytest.fail("lmstat must not run in direct mode"),
+    )
+
+    result = maxwell_contract._fdtd_solve_license_audit()
+
+    assert result["passed"] is True
+    assert result["passed_via"] == "direct_solver_checkout"
+    assert result["prelaunch_capacity_verified"] is False
+    assert result["reservation_verified"] is False
+
+
+def test_unknown_license_mode_fails_closed(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("AU_LUMERICAL_LICENSE_MODE", "guess")
+    with pytest.raises(ValueError, match="AU_LUMERICAL_LICENSE_MODE"):
+        maxwell_contract._fdtd_solve_license_audit()
+
+
 def test_license_audit_accepts_exact_server_verified_project_reservation(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

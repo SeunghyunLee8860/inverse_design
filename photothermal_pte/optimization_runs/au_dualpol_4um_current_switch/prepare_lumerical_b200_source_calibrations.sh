@@ -7,9 +7,19 @@ output_root="${1:?usage: $0 NEW_CALIBRATION_ROOT}"
 gpu_index="${LUMERICAL_B200_GPU_INDEX:?set the physical B200 GPU index}"
 python_bin="${AU_LUMERICAL_PYTHON:?set the absolute Lumerical Python path}"
 lumerical_root="${AU_LUMERICAL_ROOT:?set the absolute Lumerical v261 root}"
-runres_bin="${AU_RUNRES_BIN:?set the absolute runres path}"
-reserve_module="${LUM_RESERVE_MODULE_DIR:?set the directory containing lum_reserve.py}"
+license_mode="${AU_LUMERICAL_LICENSE_MODE:-reservation_audit}"
+runres_bin="${AU_RUNRES_BIN:-}"
+reserve_module="${LUM_RESERVE_MODULE_DIR:-}"
 threads="${FDTD_THREADS:-8}"
+
+if [[ "$license_mode" != "reservation_audit" && "$license_mode" != "direct_checkout" ]]; then
+  echo "invalid AU_LUMERICAL_LICENSE_MODE: $license_mode" >&2
+  exit 2
+fi
+if [[ "$license_mode" == "reservation_audit" ]]; then
+  : "${runres_bin:?set the absolute runres path}"
+  : "${reserve_module:?set the directory containing lum_reserve.py}"
+fi
 
 if [[ -e "$output_root" ]]; then
   echo "refusing existing calibration root: $output_root" >&2
@@ -17,14 +27,20 @@ if [[ -e "$output_root" ]]; then
 fi
 for required in \
   "$python_bin" \
-  "$lumerical_root/api/python/lumapi.py" \
-  "$runres_bin" \
-  "$reserve_module/lum_reserve.py"; do
+  "$lumerical_root/api/python/lumapi.py"; do
   if [[ ! -e "$required" ]]; then
     echo "missing B200 prerequisite: $required" >&2
     exit 2
   fi
 done
+if [[ "$license_mode" == "reservation_audit" ]]; then
+  for required in "$runres_bin" "$reserve_module/lum_reserve.py"; do
+    if [[ ! -e "$required" ]]; then
+      echo "missing B200 reservation prerequisite: $required" >&2
+      exit 2
+    fi
+  done
+fi
 
 mkdir -p "$output_root"
 export PATH="$(dirname -- "$python_bin"):${PATH}"
@@ -38,7 +54,10 @@ export LUMERICAL_GPU_INDEX="$gpu_index"
 export LUMERICAL_B200_GPU_INDEX="$gpu_index"
 export CUDA_VISIBLE_DEVICES="$gpu_index"
 export LUMERICAL_SESSION_GPU_DEVICE="GPU $gpu_index"
-export LUM_RESERVE_MODULE_DIR="$reserve_module"
+export AU_LUMERICAL_LICENSE_MODE="$license_mode"
+if [[ -n "$reserve_module" ]]; then
+  export LUM_RESERVE_MODULE_DIR="$reserve_module"
+fi
 
 "$python_bin" "$script_dir/21_audit_lumerical_maxwell_preflight.py" \
   --gpu-index "$gpu_index" --accelerator-policy b200 --require-ready
@@ -49,11 +68,16 @@ run_source_only() {
   local mesh_label="$3"
   local destination="$output_root/xy${flake_dxy_nm}/${polarization}"
   mkdir -p "$destination"
-  "$runres_bin" \
-    --reserve-count 9 \
-    --reserve-wait "${AU_LUMERICAL_RESERVE_WAIT_S:-1800}" \
-    --reserve-tag "au4um_b200_source_xy${flake_dxy_nm}_${polarization}" \
-    "$script_dir/25_run_lumerical_4um_exact_au_control.py" \
+  local runner=("$python_bin" -m msopt.cli.run)
+  if [[ "$license_mode" == "reservation_audit" ]]; then
+    runner=(
+      "$runres_bin"
+      --reserve-count 9
+      --reserve-wait "${AU_LUMERICAL_RESERVE_WAIT_S:-1800}"
+      --reserve-tag "au4um_b200_source_xy${flake_dxy_nm}_${polarization}"
+    )
+  fi
+  "${runner[@]}" "$script_dir/25_run_lumerical_4um_exact_au_control.py" \
     --case source_only \
     --polarization "$polarization" \
     --gpu-index "$gpu_index" \
