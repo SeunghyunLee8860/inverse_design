@@ -36,6 +36,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     active_design_constraint_names,
     continuation_contract,
     grayness_value_gradient,
+    improving_objective_requires_extension,
     linearized_maximin_box_warm_start,
     stage_objective_progress,
     stage_design_caps,
@@ -201,6 +202,66 @@ def _verified_artifact(record: object, *, label: str) -> Path:
     ):
         raise RuntimeError(f"completed manifest {label} artifact changed")
     return path
+
+
+def _restart_seed_from_environment() -> tuple[dict[str, Any], dict[str, Any]] | None:
+    """Verify an explicitly requested stopped-run checkpoint migration."""
+
+    checkpoint_raw = os.environ.get("AU_LUMERICAL_RESTART_CHECKPOINT")
+    manifest_raw = os.environ.get("AU_LUMERICAL_RESTART_MANIFEST")
+    if not checkpoint_raw and not manifest_raw:
+        return None
+    if not checkpoint_raw or not manifest_raw:
+        raise RuntimeError(
+            "AU_LUMERICAL_RESTART_CHECKPOINT and "
+            "AU_LUMERICAL_RESTART_MANIFEST must be set together"
+        )
+    checkpoint_path = Path(checkpoint_raw).expanduser().resolve()
+    manifest_path = Path(manifest_raw).expanduser().resolve()
+    if not checkpoint_path.is_file() or not manifest_path.is_file():
+        raise RuntimeError("restart checkpoint or manifest is absent")
+
+    source_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if source_manifest.get("passed") is not False or not str(
+        source_manifest.get("status", "")
+    ).startswith("STOPPED_"):
+        raise RuntimeError("restart source must be an explicitly stopped non-passed run")
+    state = _load_checkpoint(checkpoint_path)
+    beta_index = int(state["beta_index"])
+    if not 0 <= beta_index < len(BETA_SCHEDULE):
+        raise RuntimeError("restart checkpoint beta index is terminal or invalid")
+    latest = source_manifest.get("latest")
+    if not isinstance(latest, dict):
+        raise RuntimeError("restart manifest lacks latest stage evidence")
+    if float(latest.get("beta", np.nan)) != BETA_SCHEDULE[beta_index]:
+        raise RuntimeError("restart manifest beta differs from checkpoint")
+    if int(source_manifest.get("blocking_attempts", -1)) != int(state["attempt"]):
+        raise RuntimeError("restart manifest attempt count differs from checkpoint")
+
+    stages = source_manifest.get("stages")
+    if not isinstance(stages, list) or not stages:
+        raise RuntimeError("restart manifest lacks completed stage attempts")
+    terminal_state_path = _verified_artifact(
+        stages[-1].get("state_artifact"), label="restart terminal stage state"
+    )
+    with np.load(terminal_state_path, allow_pickle=False) as arrays:
+        terminal_latent = np.asarray(arrays["latent_final"], dtype=np.float64)
+    if not np.array_equal(terminal_latent, np.asarray(state["latent"])):
+        raise RuntimeError("restart checkpoint latent differs from terminal stage state")
+
+    provenance = {
+        "schema": "au-lumerical-continuation-restart-provenance-v1",
+        "reason": "extend_same_beta_while_signed_objective_is_still_improving",
+        "source_git_commit": source_manifest.get("git_commit"),
+        "source_status": source_manifest.get("status"),
+        "source_latest": latest,
+        "source_manifest": artifact(manifest_path),
+        "source_checkpoint": artifact(checkpoint_path),
+        "source_terminal_state": artifact(terminal_state_path),
+        "resumed_beta_index": beta_index,
+        "resumed_attempt": int(state["attempt"]),
+    }
+    return state, provenance
 
 
 def _completed_manifest_latent(manifest: dict[str, Any]) -> np.ndarray | None:
@@ -372,17 +433,26 @@ def main() -> int:
             (output / "stages").mkdir()
             (output / "checkpoints").mkdir()
             manifest = _new_manifest(base_runtime)
-            latent = uniform_initial_latent_density()
-            projected = OPTIMIZER_250NM_MAPPING.physical(latent, BETA_SCHEDULE[0])
-            if not np.array_equal(projected, latent):
-                raise RuntimeError("uniform rho=0.5 is not exactly preserved at beta=1")
-            state = {
-                "latent": latent,
-                "beta_index": 0,
-                "attempt": 0,
-                "dfm_caps": np.full(2, np.inf, dtype=np.float64),
-                "grayness_cap": np.inf,
-            }
+            restart_seed = _restart_seed_from_environment()
+            if restart_seed is None:
+                latent = uniform_initial_latent_density()
+                projected = OPTIMIZER_250NM_MAPPING.physical(
+                    latent, BETA_SCHEDULE[0]
+                )
+                if not np.array_equal(projected, latent):
+                    raise RuntimeError(
+                        "uniform rho=0.5 is not exactly preserved at beta=1"
+                    )
+                state = {
+                    "latent": latent,
+                    "beta_index": 0,
+                    "attempt": 0,
+                    "dfm_caps": np.full(2, np.inf, dtype=np.float64),
+                    "grayness_cap": np.inf,
+                }
+            else:
+                state, restart_provenance = restart_seed
+                manifest["restart_provenance"] = restart_provenance
             _save_checkpoint(checkpoint_path, **state)
             _write_json(manifest_path, manifest)
 
@@ -698,6 +768,25 @@ def main() -> int:
                     return 0
 
             attempts_used = attempt + 1
+            objective_extension_required = improving_objective_requires_extension(
+                objective_converged=objective_converged,
+                design_constraints_satisfied=design_satisfied,
+                opposite_current_switching_achieved=switching,
+            )
+            if objective_extension_required:
+                manifest["latest"]["next_action"] = (
+                    "extend_same_beta_because_feasible_signed_objective_is_"
+                    "still_improving"
+                )
+                manifest["latest"]["attempt_limit_bypassed_for_objective_progress"] = (
+                    attempts_used >= MAXIMUM_STAGE_ATTEMPTS[beta]
+                )
+                _write_json(manifest_path, manifest)
+                state["latent"] = latent_final
+                state["attempt"] = attempts_used
+                _save_checkpoint(checkpoint_path, **state)
+                continue
+
             if (
                 final_beta
                 and design_satisfied

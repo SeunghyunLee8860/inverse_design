@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 import sys
 
@@ -12,15 +13,16 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_continuation import (
     BETA_SCHEDULE,
+    BASELINE_GATE_REPAIR_EVALUATIONS,
     FINAL_GRAYNESS_CAP,
     INITIAL_MAXIMIN_WARM_MAXIMUM_CHANGE,
-    MAXIMUM_CONTINUATION_EVALUATIONS,
     MINIMUM_CONTINUATION_EVALUATIONS,
     STAGE_FTOL_REL,
     STAGE_XTOL_REL,
     ContinuationEpigraphProblem,
     active_design_constraint_names,
     grayness_value_gradient,
+    improving_objective_requires_extension,
     linearized_maximin_box_warm_start,
     stage_objective_progress,
     stage_design_caps,
@@ -67,8 +69,31 @@ def test_production_stages_do_not_stop_on_tiny_balancing_step() -> None:
 
 def test_continuation_evaluation_budget_is_explicit() -> None:
     assert MINIMUM_CONTINUATION_EVALUATIONS == 96
-    assert MAXIMUM_CONTINUATION_EVALUATIONS == 308
+    assert BASELINE_GATE_REPAIR_EVALUATIONS == 308
     assert INITIAL_MAXIMIN_WARM_MAXIMUM_CHANGE == 0.05
+
+
+def test_improving_feasible_signed_objective_extends_past_attempt_limit() -> None:
+    assert improving_objective_requires_extension(
+        objective_converged=False,
+        design_constraints_satisfied=True,
+        opposite_current_switching_achieved=True,
+    )
+    assert not improving_objective_requires_extension(
+        objective_converged=True,
+        design_constraints_satisfied=True,
+        opposite_current_switching_achieved=True,
+    )
+    assert not improving_objective_requires_extension(
+        objective_converged=False,
+        design_constraints_satisfied=False,
+        opposite_current_switching_achieved=True,
+    )
+    assert not improving_objective_requires_extension(
+        objective_converged=False,
+        design_constraints_satisfied=True,
+        opposite_current_switching_achieved=False,
+    )
 
 
 def test_continuation_contract_requires_optical_lateral_and_pde_convergence() -> None:
@@ -279,6 +304,19 @@ def test_mma_uses_global_density_bounds_not_a_stage_start_box() -> None:
     assert "latent_initial.ravel() -" not in source
 
 
+def test_improving_objective_extension_precedes_attempt_limit_stop() -> None:
+    source = (
+        Path(__file__)
+        .with_name("41_optimize_lumerical_4um_dualpol_continuation.py")
+        .read_text(encoding="utf-8")
+    )
+    extension = source.index("if objective_extension_required:")
+    attempt_stop = source.index(
+        "if attempts_used >= MAXIMUM_STAGE_ATTEMPTS[beta]:", extension
+    )
+    assert extension < attempt_stop
+
+
 def _load_continuation_driver():
     path = Path(__file__).with_name(
         "41_optimize_lumerical_4um_dualpol_continuation.py"
@@ -315,3 +353,46 @@ def test_malformed_passed_preflight_manifest_fails_closed() -> None:
     }
     with pytest.raises(RuntimeError, match="preflight-only.*malformed"):
         driver._completed_manifest_latent(manifest)
+
+
+def test_explicit_stopped_checkpoint_restart_is_verified(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    driver = _load_continuation_driver()
+    latent = _latent()
+    checkpoint = tmp_path / "continuation_checkpoint.npz"
+    driver._save_checkpoint(
+        checkpoint,
+        latent=latent,
+        beta_index=0,
+        attempt=2,
+        dfm_caps=np.full(2, np.inf),
+        grayness_cap=np.inf,
+    )
+    terminal_state = tmp_path / "stage_final_state.npz"
+    np.savez_compressed(terminal_state, latent_final=latent)
+    manifest = tmp_path / "production_manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "status": "STOPPED_UNRESOLVED_STAGE_OBJECTIVE_OR_DESIGN_GATES",
+                "passed": False,
+                "git_commit": "old-commit",
+                "blocking_attempts": 2,
+                "latest": {"beta": 1.0, "attempt": 1},
+                "stages": [
+                    {
+                        "state_artifact": driver.artifact(terminal_state),
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("AU_LUMERICAL_RESTART_CHECKPOINT", str(checkpoint))
+    monkeypatch.setenv("AU_LUMERICAL_RESTART_MANIFEST", str(manifest))
+    state, provenance = driver._restart_seed_from_environment()
+    assert np.array_equal(state["latent"], latent)
+    assert state["attempt"] == 2
+    assert provenance["resumed_beta_index"] == 0
+    assert provenance["source_status"].startswith("STOPPED_")

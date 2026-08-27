@@ -39,8 +39,9 @@ BETA_SCHEDULE = (1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0)
 
 # Each attempt includes the point at which NLopt starts.  A complete coupled
 # Lumerical/custom-CUDA evaluation costs minutes, so these are deliberately
-# finite budgets rather than arbitrary large iteration counts.  They are still
-# large enough to establish a short objective plateau before beta advances.
+# finite per-attempt budgets.  If the signed objective is still improving at
+# the end of an attempt, the driver starts another attempt at the same beta;
+# it must not mistake continued improvement for a terminal failure.
 STAGE_MAXEVAL = {
     1.0: 12,
     2.0: 10,
@@ -51,6 +52,9 @@ STAGE_MAXEVAL = {
     64.0: 14,
     128.0: 16,
 }
+# These limits apply to unresolved sign/fabrication/final-binary gate repair
+# after objective convergence.  They are not caps on attempts that continue
+# making statistically meaningful objective progress.
 MAXIMUM_STAGE_ATTEMPTS = {
     1.0: 2,
     2.0: 2,
@@ -62,7 +66,7 @@ MAXIMUM_STAGE_ATTEMPTS = {
     128.0: 6,
 }
 MINIMUM_CONTINUATION_EVALUATIONS = sum(STAGE_MAXEVAL[beta] for beta in BETA_SCHEDULE)
-MAXIMUM_CONTINUATION_EVALUATIONS = sum(
+BASELINE_GATE_REPAIR_EVALUATIONS = sum(
     STAGE_MAXEVAL[beta] * MAXIMUM_STAGE_ATTEMPTS[beta] for beta in BETA_SCHEDULE
 )
 # These values are MMA initial step sizes, not permanent bounds around the
@@ -374,6 +378,27 @@ def stage_objective_progress(
     }
 
 
+def improving_objective_requires_extension(
+    *,
+    objective_converged: bool,
+    design_constraints_satisfied: bool,
+    opposite_current_switching_achieved: bool,
+) -> bool:
+    """Return whether a same-beta MMA attempt must be extended.
+
+    Attempt-count limits are safety bounds for unresolved physical or
+    fabrication gates.  Reaching such a count while a feasible signed
+    objective is still improving is not a blocker: the correct continuation
+    action is another same-beta attempt from the best retained density.
+    """
+
+    return bool(
+        not objective_converged
+        and design_constraints_satisfied
+        and opposite_current_switching_achieved
+    )
+
+
 def design_constraint_point(
     latent: np.ndarray,
     *,
@@ -586,12 +611,19 @@ def continuation_contract() -> dict[str, Any]:
     return {
         "beta_schedule": list(BETA_SCHEDULE),
         "stage_maxeval": {str(key): value for key, value in STAGE_MAXEVAL.items()},
-        "maximum_stage_attempts": {
+        "maximum_gate_repair_attempts_after_objective_convergence": {
             str(key): value for key, value in MAXIMUM_STAGE_ATTEMPTS.items()
         },
         "continuation_evaluation_budget": {
             "first_attempt_all_stages": MINIMUM_CONTINUATION_EVALUATIONS,
-            "all_stage_retries_exhausted": MAXIMUM_CONTINUATION_EVALUATIONS,
+            "baseline_gate_repair_attempts_exhausted": (
+                BASELINE_GATE_REPAIR_EVALUATIONS
+            ),
+            "improving_objective_extensions": (
+                "continue at the same beta until the audited objective plateau "
+                "gate passes; no attempt-count stop is allowed while signs and "
+                "active design constraints pass"
+            ),
             "counting_rule": (
                 "each stage attempt includes its starting physics point; the initial "
                 "maximin warm start preserves rather than adds to the beta-1 budget"
