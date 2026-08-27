@@ -46,6 +46,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     set_lumerical_projected_density,
     validate_completed_density_record,
     validate_material_jacobian,
+    validate_material_jacobian_transpose_only,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_maxwell_contract import (  # noqa: E402
     LUMAPI_PATH,
@@ -102,7 +103,93 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--density-key", default="projected_density_nodal")
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--audit-only", action="store_true")
-    return parser.parse_args()
+    parser.add_argument(
+        "--independent-fd-validation",
+        choices=("full", "stage-certified-transpose-only"),
+        default="full",
+    )
+    parser.add_argument("--independent-fd-certificate", type=Path)
+    parser.add_argument("--independent-fd-certificate-sha256")
+    parser.add_argument("--optimization-beta", type=float)
+    parser.add_argument(
+        "--validation-scope",
+        choices=("standalone", "stage-entry", "final-binary-precursor"),
+        default="standalone",
+    )
+    args = parser.parse_args()
+    certificate_values = (
+        args.independent_fd_certificate,
+        args.independent_fd_certificate_sha256,
+    )
+    if args.independent_fd_validation == "stage-certified-transpose-only":
+        if not all(certificate_values) or args.optimization_beta is None:
+            parser.error(
+                "stage-certified transpose-only validation requires the "
+                "certificate path/SHA and --optimization-beta"
+            )
+    elif any(certificate_values):
+        parser.error("a full independent FD run must not consume a certificate")
+    return args
+
+
+def _forward_gpu_binding(record: dict[str, Any]) -> list[dict[str, Any]]:
+    preflight = record.get("accelerator_preflight")
+    if not isinstance(preflight, dict):
+        return []
+    matching = preflight.get("matching_requested_gpu")
+    return matching if isinstance(matching, list) else []
+
+
+def _independent_fd_certificate_audit(
+    *,
+    path: Path,
+    expected_sha256: str,
+    beta: float,
+    forward_record: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    certificate_path = path.expanduser().resolve()
+    if not certificate_path.is_file():
+        raise FileNotFoundError(certificate_path)
+    actual_sha256 = _sha256(certificate_path)
+    if actual_sha256 != expected_sha256:
+        raise RuntimeError("stage independent-FD certificate SHA mismatch")
+    certificate = json.loads(certificate_path.read_text(encoding="utf-8"))
+    validation = certificate.get("validation")
+    gates = {
+        "certificate_status_passed": certificate.get("status")
+        == "PASSED_LUMERICAL_4UM_COMPONENT_YEE_JACOBIAN",
+        "certificate_boolean_passed": certificate.get("passed") is True,
+        "certificate_all_gates_passed": bool(certificate.get("gates"))
+        and all(certificate.get("gates", {}).values()),
+        "full_independent_mapping_FD_performed": isinstance(validation, dict)
+        and validation.get("independent_mapping_FD_performed") is True,
+        "certificate_scope_is_stage_entry": certificate.get("validation_scope")
+        == "stage-entry",
+        "optimization_beta_matches": float(
+            certificate.get("optimization_beta", np.nan)
+        )
+        == float(beta),
+        "git_commit_matches": certificate.get("git_commit") == _git_commit(),
+        "accelerator_policy_matches": certificate.get(
+            "forward_accelerator_policy"
+        )
+        == forward_record.get("accelerator_policy"),
+        "B200_promotion_state_matches": bool(
+            certificate.get("B200_promotion_certified")
+        )
+        == bool(forward_record.get("B200_promotion_certified")),
+        "physical_GPU_binding_matches": certificate.get("forward_gpu_binding")
+        == _forward_gpu_binding(forward_record),
+    }
+    audit = {
+        "artifact": _artifact(certificate_path),
+        "optimization_beta": float(beta),
+        "gates": gates,
+        "passed": all(gates.values()),
+    }
+    if not audit["passed"]:
+        raise RuntimeError(f"stage independent-FD certificate failed: {audit}")
+    return certificate, audit
 
 
 def _maximum_difference(left: np.ndarray, right: np.ndarray) -> float:
@@ -230,6 +317,9 @@ def main() -> int:
             "density_file": _artifact(density_path),
             "density_key": args.density_key,
         },
+        "independent_fd_validation_policy": args.independent_fd_validation,
+        "optimization_beta": args.optimization_beta,
+        "validation_scope": args.validation_scope,
         "Maxwell_solves": 0,
     }
     if args.audit_only:
@@ -252,6 +342,7 @@ def main() -> int:
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "git_commit": _git_commit(),
         "forward_accelerator_policy": forward_record.get("accelerator_policy"),
+        "forward_gpu_binding": _forward_gpu_binding(forward_record),
         "forward_solver_wall_time_s": forward_record.get("solver_wall_time_s"),
         "B200_promotion_certified": bool(
             forward_record.get("B200_promotion_certified")
@@ -264,6 +355,18 @@ def main() -> int:
     fdtd = None
     layout_session_started = time.perf_counter()
     try:
+        fd_certificate = None
+        fd_certificate_audit = None
+        if args.independent_fd_validation == "stage-certified-transpose-only":
+            fd_certificate, fd_certificate_audit = (
+                _independent_fd_certificate_audit(
+                    path=args.independent_fd_certificate,
+                    expected_sha256=args.independent_fd_certificate_sha256,
+                    beta=float(args.optimization_beta),
+                    forward_record=forward_record,
+                )
+            )
+            result["independent_fd_certificate"] = fd_certificate_audit
         _configure_lumapi()
         import lumapi
 
@@ -275,6 +378,19 @@ def main() -> int:
                 "forward/Jacobian solver-version mismatch: "
                 f"{forward_record['solver_version']} != {solver_version}"
             )
+        if fd_certificate_audit is not None:
+            assert fd_certificate is not None
+            fd_certificate_audit["gates"]["solver_version_matches"] = (
+                fd_certificate.get("solver_version") == solver_version
+            )
+            fd_certificate_audit["passed"] = all(
+                fd_certificate_audit["gates"].values()
+            )
+            result["independent_fd_certificate"] = fd_certificate_audit
+            if not fd_certificate_audit["passed"]:
+                raise RuntimeError(
+                    "stage independent-FD certificate solver build differs"
+                )
         fdtd.load(str(forward_project))
         completed_detail = read_lumerical_index_detail(
             fdtd, monitor_name=PABS_INDEX
@@ -296,7 +412,12 @@ def main() -> int:
         completed_layout_error = _epsilon_difference(
             completed_detail, layout_baseline
         )
-        validation = validate_material_jacobian(evaluate, rho, operator)
+        if args.independent_fd_validation == "full":
+            validation = validate_material_jacobian(evaluate, rho, operator)
+            validation_gate = "mapping_FD_and_transpose_passed"
+        else:
+            validation = validate_material_jacobian_transpose_only(rho, operator)
+            validation_gate = "current_operator_transpose_passed"
         gates = {
             "completed_vs_layout_baseline_epsilon_exact": (
                 completed_layout_error == 0.0
@@ -306,11 +427,15 @@ def main() -> int:
                 "baseline_roundtrip_epsilon_max_abs_error"
             ]
             == 0.0,
-            "mapping_FD_and_transpose_passed": validation["passed"],
+            validation_gate: validation["passed"],
             "zero_Maxwell_solves": construction["Maxwell_solves"] == 0
             and validation["Maxwell_solves"] == 0,
             "forward_density_FSP_hash_link_passed": forward_validation["passed"],
         }
+        if fd_certificate_audit is not None:
+            gates["stage_full_FD_certificate_passed"] = fd_certificate_audit[
+                "passed"
+            ]
         matrix_artifacts: dict[str, Any] = {}
         for component, matrix in operator.matrices.items():
             path = output / f"J_{component}.npz"

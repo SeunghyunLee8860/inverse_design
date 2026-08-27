@@ -5,7 +5,8 @@ physical evaluation is assembled from the already validated executable
 pieces in this directory:
 
 * one imported-density Lumerical forward for Ea and Eb,
-* one layout-only component-Yee material Jacobian,
+* one layout-only component-Yee material Jacobian, with independent FD only
+  at beta-stage entry and the final promoted precursor,
 * the custom CUDA thermal/electrical forward and adjoint for each polarization,
 * one frozen-grid distributed-source Lumerical adjoint for each polarization.
 
@@ -395,9 +396,19 @@ class LumericalEvaluationDriver:
         runtime: OptimizerRuntime,
         *,
         prune_heavy_intermediates: bool = False,
+        independent_fd_certificate: Path | None = None,
     ):
         self.runtime = runtime
         self.prune_heavy_intermediates = bool(prune_heavy_intermediates)
+        if independent_fd_certificate is None:
+            self._independent_fd_certificate: Path | None = None
+            self._independent_fd_validation_pending = True
+        else:
+            certificate = Path(independent_fd_certificate).expanduser().resolve()
+            if not certificate.is_file():
+                raise FileNotFoundError(certificate)
+            self._independent_fd_certificate = certificate
+            self._independent_fd_validation_pending = False
         self.evaluations_root = runtime.output_root / "evaluations"
         self.evaluations_root.mkdir(parents=True, exist_ok=True)
         self.history: list[dict[str, Any]] = []
@@ -597,10 +608,19 @@ class LumericalEvaluationDriver:
         return {"result_path": result_path, "result": result, "pullback": pullback}
 
     def _jacobian(
-        self, forward: dict[str, Any], density_path: Path, output: Path
+        self,
+        forward: dict[str, Any],
+        density_path: Path,
+        output: Path,
+        *,
+        validation_scope: str = "stage-entry",
+        force_full_independent_fd: bool = False,
     ) -> dict[str, Any]:
-        self._command(
-            "26_build_lumerical_4um_yee_jacobian.py",
+        full_independent_fd = bool(
+            force_full_independent_fd
+            or self._independent_fd_validation_pending
+        )
+        arguments = [
             "--forward-project",
             str(forward["fsp"]),
             "--forward-project-sha256",
@@ -615,13 +635,54 @@ class LumericalEvaluationDriver:
             "projected_density_nodal",
             "--output-dir",
             str(output),
+            "--optimization-beta",
+            str(self.runtime.beta),
+            "--validation-scope",
+            validation_scope,
+            "--independent-fd-validation",
+            "full" if full_independent_fd else "stage-certified-transpose-only",
+        ]
+        if not full_independent_fd:
+            certificate = self._independent_fd_certificate
+            if certificate is None or not certificate.is_file():
+                raise RuntimeError(
+                    "transpose-only Jacobian audit lacks a stage FD certificate"
+                )
+            arguments.extend(
+                [
+                    "--independent-fd-certificate",
+                    str(certificate),
+                    "--independent-fd-certificate-sha256",
+                    sha256(certificate),
+                ]
+            )
+        self._command(
+            "26_build_lumerical_4um_yee_jacobian.py",
+            *arguments,
             log_path=output.parent / "component_yee_jacobian.log",
         )
         result_path = output / "component_yee_jacobian_result.json"
         result = _load_json(result_path)
+        validation = result.get("validation", {})
         if result.get("passed") is not True:
             raise RuntimeError("component-Yee material Jacobian gates failed")
-        return {"result_path": result_path, "result": result}
+        if full_independent_fd:
+            if validation.get("independent_mapping_FD_performed") is not True:
+                raise RuntimeError("full independent mapping FD was not recorded")
+            if not force_full_independent_fd:
+                self._independent_fd_certificate = result_path.resolve()
+                self._independent_fd_validation_pending = False
+        elif (
+            validation.get("independent_mapping_FD_performed") is not False
+            or result.get("independent_fd_certificate", {}).get("passed")
+            is not True
+        ):
+            raise RuntimeError("stage-certified transpose-only audit is incomplete")
+        return {
+            "result_path": result_path,
+            "result": result,
+            "full_independent_FD_performed": full_independent_fd,
+        }
 
     def _adjoint(
         self,
@@ -820,6 +881,15 @@ class LumericalEvaluationDriver:
                 for polarization in ("Ea", "Eb")
             },
             "Jacobian_result": artifact(jacobian["result_path"]),
+            "Jacobian_validation": {
+                "mode": jacobian["result"]["validation"]["mode"],
+                "independent_mapping_FD_performed": jacobian[
+                    "full_independent_FD_performed"
+                ],
+                "stage_FD_certificate": jacobian["result"].get(
+                    "independent_fd_certificate"
+                ),
+            },
             "artifacts": {"gradients": artifact(gradient_path)},
             "wall_s": time.monotonic() - started,
             "gradient_Ea_projected_A": adjoint["Ea"]["gradient"],
@@ -840,6 +910,65 @@ class LumericalEvaluationDriver:
         self.history.append(persisted)
         _write_json(self.runtime.output_root / "evaluation_history.json", self.history)
         self._cache[state_hash] = record
+        return record
+
+    def audit_final_binary_precursor_independent_fd(
+        self, latent: np.ndarray, output: Path
+    ) -> dict[str, Any]:
+        """Run the one final independent mapping-FD audit before promotion.
+
+        Exact binary rectangles have no differentiable density Jacobian. The
+        audited state is therefore the continuous projected precursor that
+        deterministically generated the exact 80x80 binary mask. The separate
+        exact-binary certifier remains responsible for fresh physical forwards.
+        """
+
+        latent_value = np.asarray(latent, np.float64)
+        if latent_value.shape != CONTRACT.design_node_shape:
+            raise ValueError("final precursor latent density has the wrong shape")
+        projected = OPTIMIZER_250NM_MAPPING.physical(
+            latent_value, self.runtime.beta
+        )
+        destination = Path(output).expanduser().resolve()
+        if destination.exists():
+            raise RuntimeError(
+                f"refusing existing final precursor FD audit root: {destination}"
+            )
+        destination.mkdir(parents=True)
+        latent_path = destination / "latent_density.npy"
+        density_path = destination / "projected_density.npz"
+        np.save(latent_path, latent_value, allow_pickle=False)
+        np.savez_compressed(
+            density_path, projected_density_nodal=projected
+        )
+        forward = self._forward(
+            "Ea", density_path, destination / "forward_Ea"
+        )
+        jacobian = self._jacobian(
+            forward,
+            density_path,
+            destination / "yee_jacobian",
+            validation_scope="final-binary-precursor",
+            force_full_independent_fd=True,
+        )
+        record = {
+            "status": "PASSED_FINAL_BINARY_PRECURSOR_COMPONENT_YEE_FD_AUDIT",
+            "passed": True,
+            "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+            "optimization_beta": self.runtime.beta,
+            "exact_binary_geometry_is_nondifferentiable": True,
+            "audited_state": "continuous projected precursor of exact binary mask",
+            "inputs": {
+                "latent": artifact(latent_path),
+                "projected_density": artifact(density_path),
+            },
+            "forward_result": artifact(forward["result_path"]),
+            "Jacobian_result": artifact(jacobian["result_path"]),
+            "independent_mapping_FD_performed": True,
+            "FDTDX_Maxwell": 0,
+            "Lumerical_HEAT_or_CHARGE": 0,
+        }
+        _write_json(destination / "final_binary_precursor_fd_audit.json", record)
         return record
 
 

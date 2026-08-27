@@ -24,6 +24,21 @@ upper-endpoint `0.00310%`, and a weak central-localized direction `1.197%`
 against the internal `0.05%` limit.  No tolerance has been loosened.  The B200
 run restarts from the last completed attempt-3 state and recomputes attempt 4.
 
+## Independent-FD cadence override -- 2026-08-28
+
+At the user's direction, the extra independent component-Yee mapping-FD
+self-audit runs only at the first representative physics state before each
+beta stage (including beta 1 before continuation) and once more on the final
+continuous precursor after its fresh exact-binary physical certificate passes.
+Later evaluations and same-beta attempts reuse only a SHA-, commit-, GPU-UUID-,
+solver-build-, and beta-bound stage certificate while still rebuilding the
+25-color material Jacobian and rechecking construction roundtrip, coordinates,
+forward hashes, and the exact JVP/VJP transpose gate. The internal `0.05%`
+mapping-FD limit and all tested directions are unchanged. Exact binary
+rectangles are nondifferentiable, so their physical gate remains the fresh
+100/50-nm Ea/Eb Maxwell plus adaptive custom-PDE certificate; the last FD audit
+is explicitly bound to the continuous precursor that generated that mask.
+
 ## Physics that must not change
 
 - Maxwell: Ansys Lumerical FDTD only; no FDTDX Maxwell solve.

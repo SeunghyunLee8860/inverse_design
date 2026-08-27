@@ -128,6 +128,20 @@ def _new_manifest(runtime: OptimizerRuntime) -> dict[str, Any]:
         "optimizer": {"library": "NLopt", "version": nlopt.__version__, "algorithm": "LD_MMA"},
         "runtime": runtime.audit(),
         "continuation_contract": continuation_contract(),
+        "component_yee_independent_FD_cadence": {
+            "schema": "component-yee-independent-fd-cadence-v1",
+            "stage_policy": (
+                "one full independent mapping FD at the first representative "
+                "physics evaluation of each beta; later evaluations use the "
+                "hash-bound certificate plus fresh construction/transpose gates"
+            ),
+            "final_policy": (
+                "one final full independent mapping FD on the continuous "
+                "precursor after its exact-binary physical certificate passes"
+            ),
+            "mapping_FD_relative_limit_unchanged": True,
+            "stage_certificates": {},
+        },
         "stages": [],
         "final": None,
         "Lumerical_HEAT_or_CHARGE_solves": 0,
@@ -210,6 +224,103 @@ def _verified_artifact(
     ):
         raise RuntimeError(f"completed manifest {label} artifact changed")
     return path
+
+
+def _fd_beta_key(beta: float) -> str:
+    return f"{float(beta):g}"
+
+
+def _fd_cadence_record(manifest: dict[str, Any]) -> dict[str, Any]:
+    cadence = manifest.get("component_yee_independent_FD_cadence")
+    if not isinstance(cadence, dict):
+        raise RuntimeError("production manifest lacks component-Yee FD cadence")
+    if cadence.get("schema") != "component-yee-independent-fd-cadence-v1":
+        raise RuntimeError("component-Yee FD cadence schema changed")
+    certificates = cadence.get("stage_certificates")
+    if not isinstance(certificates, dict):
+        raise RuntimeError("component-Yee FD stage certificates are malformed")
+    return cadence
+
+
+def _stage_fd_certificate(
+    manifest: dict[str, Any], beta: float
+) -> Path | None:
+    cadence = _fd_cadence_record(manifest)
+    record = cadence["stage_certificates"].get(_fd_beta_key(beta))
+    if record is None:
+        return None
+    if not isinstance(record, dict) or float(record.get("beta", np.nan)) != float(beta):
+        raise RuntimeError("component-Yee stage FD beta record is malformed")
+    path = _verified_artifact(
+        record.get("Jacobian_result"), label=f"beta-{beta:g} stage FD certificate"
+    )
+    result = json.loads(path.read_text(encoding="utf-8"))
+    validation = result.get("validation")
+    gates = {
+        "result_passed": result.get("passed") is True,
+        "all_result_gates_passed": bool(result.get("gates"))
+        and all(result.get("gates", {}).values()),
+        "full_independent_mapping_FD_performed": isinstance(validation, dict)
+        and validation.get("independent_mapping_FD_performed") is True,
+        "scope_is_stage_entry": result.get("validation_scope") == "stage-entry",
+        "beta_matches": float(result.get("optimization_beta", np.nan))
+        == float(beta),
+        "git_commit_matches": result.get("git_commit") == _git_commit(),
+    }
+    if not all(gates.values()):
+        raise RuntimeError(
+            f"beta-{beta:g} stage FD certificate failed revalidation: {gates}"
+        )
+    return path
+
+
+def _record_stage_fd_certificate(
+    *,
+    manifest: dict[str, Any],
+    beta: float,
+    attempt: int,
+    initial_physics: dict[str, Any],
+) -> Path:
+    cadence = _fd_cadence_record(manifest)
+    key = _fd_beta_key(beta)
+    if key in cadence["stage_certificates"]:
+        raise RuntimeError(f"refusing to replace beta-{beta:g} FD certificate")
+    validation_record = initial_physics.get("Jacobian_validation")
+    if not isinstance(validation_record, dict) or validation_record.get(
+        "independent_mapping_FD_performed"
+    ) is not True:
+        raise RuntimeError("stage-entry representative did not run independent FD")
+    path = _verified_artifact(
+        initial_physics.get("Jacobian_result"),
+        label=f"beta-{beta:g} representative Jacobian",
+    )
+    result = json.loads(path.read_text(encoding="utf-8"))
+    validation = result.get("validation")
+    gates = {
+        "result_passed": result.get("passed") is True,
+        "all_result_gates_passed": bool(result.get("gates"))
+        and all(result.get("gates", {}).values()),
+        "full_independent_mapping_FD_performed": isinstance(validation, dict)
+        and validation.get("independent_mapping_FD_performed") is True,
+        "scope_is_stage_entry": result.get("validation_scope") == "stage-entry",
+        "beta_matches": float(result.get("optimization_beta", np.nan))
+        == float(beta),
+        "git_commit_matches": result.get("git_commit") == _git_commit(),
+    }
+    if not all(gates.values()):
+        raise RuntimeError(
+            f"beta-{beta:g} representative FD result failed: {gates}"
+        )
+    cadence["stage_certificates"][key] = {
+        "beta": float(beta),
+        "attempt": int(attempt),
+        "recorded_at_utc": datetime.now(timezone.utc).isoformat(),
+        "representative_density_state": initial_physics.get("density_state"),
+        "Jacobian_result": artifact(path),
+        "mapping_FD_relative_limit_unchanged": True,
+    }
+    return path
+
 
 
 def _restart_seed_from_environment() -> tuple[dict[str, Any], dict[str, Any]] | None:
@@ -489,8 +600,11 @@ def main() -> int:
             )
             attempt_dir.mkdir(parents=True)
             runtime = replace(base_runtime, output_root=attempt_dir, beta=beta)
+            stage_fd_certificate = _stage_fd_certificate(manifest, beta)
             driver = LumericalEvaluationDriver(
-                runtime, prune_heavy_intermediates=True
+                runtime,
+                prune_heavy_intermediates=True,
+                independent_fd_certificate=stage_fd_certificate,
             )
             latent_initial = np.asarray(state["latent"], dtype=np.float64)
             initial_dfm, _, _ = smooth_lumerical_250nm_constraints(
@@ -517,6 +631,15 @@ def main() -> int:
                 state["grayness_cap"] = float(cap_record["grayness_cap"])
                 _save_checkpoint(checkpoint_path, **state)
             initial_physics = driver.evaluate(latent_initial)
+            if stage_fd_certificate is None:
+                stage_fd_certificate = _record_stage_fd_certificate(
+                    manifest=manifest,
+                    beta=beta,
+                    attempt=attempt,
+                    initial_physics=initial_physics,
+                )
+                manifest["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
+                _write_json(manifest_path, manifest)
             problem = ContinuationEpigraphProblem(
                 driver.evaluate,
                 beta=beta,
@@ -747,6 +870,16 @@ def main() -> int:
                 )
                 _write_json(manifest_path, manifest)
                 if exact_switching:
+                    final_precursor_fd_audit = (
+                        driver.audit_final_binary_precursor_independent_fd(
+                            latent_final,
+                            attempt_dir / "final_binary_precursor_fd_audit",
+                        )
+                    )
+                    stage_result[
+                        "final_binary_precursor_independent_FD_audit"
+                    ] = final_precursor_fd_audit
+                    _write_json(attempt_dir / "stage_result.json", stage_result)
                     binary_path = output / "final_exact_binary_cell_mask.npz"
                     _save_final_binary_mask(binary_path, binary_mask)
                     manifest["status"] = (
@@ -759,6 +892,9 @@ def main() -> int:
                         "continuous_stage": stage_result,
                         "binary_mask": artifact(binary_path),
                         "exact_binary_evaluation": exact_result,
+                        "final_binary_precursor_independent_FD_audit": (
+                            final_precursor_fd_audit
+                        ),
                         "ordinary_dispersive_Au": True,
                         "optical_xy100_to_xy50_converged_for_Ea_and_Eb": True,
                         "adaptive_custom_PDE_converged_for_Ea_and_Eb": True,

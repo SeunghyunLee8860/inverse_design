@@ -16,6 +16,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     validate_completed_density_record,
     validate_index_detail,
     validate_material_jacobian,
+    validate_material_jacobian_transpose_only,
 )
 
 
@@ -123,6 +124,18 @@ def test_independent_mapping_audit_covers_interior_and_endpoint_directions() -> 
     assert audit["directions"]["lower_endpoint_feasible"]["scheme"] == "forward"
     assert audit["directions"]["upper_endpoint_feasible"]["scheme"] == "forward"
     assert audit["worst_transpose_dot_relative_error"] < 1.0e-12
+
+
+def test_transpose_only_audit_performs_zero_extra_layout_evaluations() -> None:
+    rho = _nonuniform_density()
+    operator, _, _ = build_colored_material_jacobian(_detail_from_density, rho)
+    audit = validate_material_jacobian_transpose_only(rho, operator)
+    assert audit["passed"] is True
+    assert audit["independent_mapping_FD_performed"] is False
+    assert audit["layout_index_detail_evaluations"] == 0
+    assert audit["Maxwell_solves"] == 0
+    assert audit["worst_transpose_dot_relative_error"] < 1.0e-12
+
 
 
 def test_coloring_fails_closed_when_material_response_is_nonlocal() -> None:

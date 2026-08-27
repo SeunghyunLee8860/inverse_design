@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import numpy as np
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
@@ -8,6 +11,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_optimizer import (
     CURRENT_SCALE_A,
     LumericalEvaluationDriver,
+    OptimizerRuntime,
     SmokeEpigraphProblem,
     initial_latent_density,
 )
@@ -101,3 +105,58 @@ def test_production_retention_prunes_only_declared_heavy_transients(tmp_path) ->
     assert all(not path.exists() for path in removable)
     assert all(path.exists() for path in retained)
     assert (evaluation / "ARTIFACT_RETENTION.json").is_file()
+
+
+def test_driver_runs_full_fd_once_then_uses_hash_bound_certificate(
+    tmp_path, monkeypatch
+) -> None:
+    runtime = OptimizerRuntime(
+        output_root=tmp_path / "attempt",
+        source_calibration={},
+        gpu_index=7,
+        threads=8,
+        accelerator_policy="b200",
+        beta=4.0,
+    )
+    driver = LumericalEvaluationDriver(runtime)
+    forward_fsp = tmp_path / "forward.fsp"
+    forward_result = tmp_path / "forward.json"
+    density = tmp_path / "density.npz"
+    forward_fsp.write_bytes(b"fsp")
+    forward_result.write_text("{}", encoding="utf-8")
+    density.write_bytes(b"density")
+    calls: list[list[str]] = []
+
+    def fake_command(script: str, *arguments: str, log_path: Path) -> None:
+        assert script == "26_build_lumerical_4um_yee_jacobian.py"
+        values = list(arguments)
+        calls.append(values)
+        output = Path(values[values.index("--output-dir") + 1])
+        mode = values[values.index("--independent-fd-validation") + 1]
+        output.mkdir(parents=True)
+        result = {
+            "passed": True,
+            "validation": {
+                "mode": mode,
+                "independent_mapping_FD_performed": mode == "full",
+            },
+        }
+        if mode != "full":
+            result["independent_fd_certificate"] = {"passed": True}
+        (output / "component_yee_jacobian_result.json").write_text(
+            json.dumps(result), encoding="utf-8"
+        )
+
+    monkeypatch.setattr(driver, "_command", fake_command)
+    forward = {"fsp": forward_fsp, "result_path": forward_result}
+    first = driver._jacobian(forward, density, tmp_path / "jacobian_1")
+    second = driver._jacobian(forward, density, tmp_path / "jacobian_2")
+
+    assert first["full_independent_FD_performed"] is True
+    assert second["full_independent_FD_performed"] is False
+    assert calls[0][calls[0].index("--independent-fd-validation") + 1] == "full"
+    assert (
+        calls[1][calls[1].index("--independent-fd-validation") + 1]
+        == "stage-certified-transpose-only"
+    )
+    assert "--independent-fd-certificate" in calls[1]

@@ -331,6 +331,71 @@ def _load_continuation_driver():
     return module
 
 
+def test_beta_fd_certificate_is_recorded_once_and_reverified(tmp_path: Path) -> None:
+    driver = _load_continuation_driver()
+    certificate = tmp_path / "component_yee_jacobian_result.json"
+    certificate.write_text(
+        json.dumps(
+            {
+                "status": "PASSED_LUMERICAL_4UM_COMPONENT_YEE_JACOBIAN",
+                "passed": True,
+                "git_commit": driver._git_commit(),
+                "optimization_beta": 1.0,
+                "validation_scope": "stage-entry",
+                "validation": {
+                    "mode": "full_independent_mapping_FD_and_transpose",
+                    "independent_mapping_FD_performed": True,
+                },
+                "gates": {"mapping_FD_and_transpose_passed": True},
+            }
+        ),
+        encoding="utf-8",
+    )
+    manifest = {
+        "component_yee_independent_FD_cadence": {
+            "schema": "component-yee-independent-fd-cadence-v1",
+            "stage_certificates": {},
+        }
+    }
+    initial = {
+        "density_state": {"density_state_sha256": "representative"},
+        "Jacobian_result": driver.artifact(certificate),
+        "Jacobian_validation": {
+            "independent_mapping_FD_performed": True,
+        },
+    }
+    recorded = driver._record_stage_fd_certificate(
+        manifest=manifest,
+        beta=1.0,
+        attempt=4,
+        initial_physics=initial,
+    )
+    assert recorded == certificate
+    assert driver._stage_fd_certificate(manifest, 1.0) == certificate
+    with pytest.raises(RuntimeError, match="refusing to replace"):
+        driver._record_stage_fd_certificate(
+            manifest=manifest,
+            beta=1.0,
+            attempt=5,
+            initial_physics=initial,
+        )
+
+
+def test_final_precursor_fd_runs_only_after_exact_binary_physics_passes() -> None:
+    source = (
+        Path(__file__)
+        .with_name("41_optimize_lumerical_4um_dualpol_continuation.py")
+        .read_text(encoding="utf-8")
+    )
+    exact_switch = source.index("if exact_switching:")
+    final_fd = source.index(
+        "driver.audit_final_binary_precursor_independent_fd", exact_switch
+    )
+    final_promotion = source.index("_save_final_binary_mask", final_fd)
+    assert exact_switch < final_fd < final_promotion
+
+
+
 def test_passed_preflight_manifest_can_transition_to_full_run() -> None:
     driver = _load_continuation_driver()
     manifest = {

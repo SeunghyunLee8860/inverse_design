@@ -705,6 +705,8 @@ def validate_material_jacobian(
         "baseline_layout_roundtrip_exact": roundtrip_error == 0.0,
     }
     return {
+        "mode": "full_independent_mapping_FD_and_transpose",
+        "independent_mapping_FD_performed": True,
         "passed": all(gates.values()),
         "directions": records,
         "worst_mapping_FD_relative_error": worst_fd,
@@ -713,6 +715,60 @@ def validate_material_jacobian(
         "transpose_dot_relative_limit": TRANSPOSE_DOT_RELATIVE_LIMIT,
         "baseline_roundtrip_epsilon_max_abs_error": roundtrip_error,
         "layout_index_detail_evaluations": evaluation_count,
+        "Maxwell_solves": 0,
+        "gates": gates,
+    }
+
+
+def validate_material_jacobian_transpose_only(
+    projected_density: np.ndarray,
+    operator: SparseYeeMaterialJacobian,
+) -> dict[str, Any]:
+    """Audit the exact discrete JVP/VJP pairing without another layout FD.
+
+    The colored finite differences used to *construct* ``operator`` remain
+    mandatory at every density state. This function omits only the extra,
+    independently directed mapping finite differences used as a periodic
+    self-audit. It is suitable only when the production orchestrator supplies
+    a hash-verified full-FD certificate for the current beta stage.
+    """
+
+    rho = canonical_density_nodes(projected_density)
+    directions = _normalized_directions(rho)
+    rng = np.random.default_rng(17_042_608)
+    cotangent = {
+        component: (
+            rng.normal(size=operator.component_shapes[component])
+            + 1j * rng.normal(size=operator.component_shapes[component])
+        )
+        for component in COMPONENTS
+    }
+    records = {
+        name: {
+            "scheme": scheme,
+            "direction_sha256": _array_sha256(direction),
+            "transpose_dot": transpose_dot_error(
+                operator, direction, cotangent
+            ),
+        }
+        for name, (direction, scheme) in directions.items()
+    }
+    worst_dot = max(
+        float(record["transpose_dot"]["relative_error"])
+        for record in records.values()
+    )
+    gates = {
+        "transpose_dot_relative_error_lt_1e_12": worst_dot
+        < TRANSPOSE_DOT_RELATIVE_LIMIT,
+    }
+    return {
+        "mode": "transpose_only_with_stage_FD_certificate",
+        "independent_mapping_FD_performed": False,
+        "passed": all(gates.values()),
+        "directions": records,
+        "worst_transpose_dot_relative_error": worst_dot,
+        "transpose_dot_relative_limit": TRANSPOSE_DOT_RELATIVE_LIMIT,
+        "layout_index_detail_evaluations": 0,
         "Maxwell_solves": 0,
         "gates": gates,
     }
