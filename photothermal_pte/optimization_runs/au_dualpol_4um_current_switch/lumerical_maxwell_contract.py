@@ -101,7 +101,7 @@ class LumericalMaxwellContract:
 
 CONTRACT = LumericalMaxwellContract()
 ACCELERATOR_POLICIES = ("b200", "development")
-GPU_SOLVE_LICENSE_TASKS_REQUIRED = 9
+GPU_SOLVE_LICENSE_TASKS_REQUIRED = 10
 
 
 def canonical_projected_density(density: np.ndarray) -> np.ndarray:
@@ -668,7 +668,7 @@ def audit_environment(
         "all_required_gates_passed": ready,
         "notes": [
             "Only FDTD time stepping uses the selected GPU; Lumerical meshing and scripts use CPU.",
-            "The reservation_audit license mode requires either nine globally free lum_fdtd_solve tasks or an exact server-verified nine-task LM_PROJECT reservation.",
+            "The B200 R1.2 GPU engine requires ten lum_fdtd_solve tasks, as verified by the build-4522 engine license log.",
             "The explicit direct_checkout mode is for sites without runres; the Lumerical engine performs the real checkout and fails closed at solver launch if no entitlement is available.",
             "The B200 remains mandatory for target-accelerator promotion.",
             "A development-policy run on another NVIDIA GPU is numerical evidence only and must be repeated on the B200.",

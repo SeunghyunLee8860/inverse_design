@@ -106,7 +106,7 @@ if [[ "$license_mode" == "direct_checkout" ]]; then
     "$script_dir/41_optimize_lumerical_4um_dualpol_continuation.py"
 fi
 exec "$runres_bin" \
-  --reserve-count 9 \
+  --reserve-count 10 \
   --reserve-wait "${AU_LUMERICAL_RESERVE_WAIT_S:-1800}" \
   --reserve-tag au4um_lumerical_b200_checkpoint_continuation \
   "$script_dir/41_optimize_lumerical_4um_dualpol_continuation.py" \

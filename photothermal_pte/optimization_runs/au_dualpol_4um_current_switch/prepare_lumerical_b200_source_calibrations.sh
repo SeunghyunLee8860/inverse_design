@@ -79,7 +79,7 @@ run_source_only() {
   if [[ "$license_mode" == "reservation_audit" ]]; then
     runner=(
       "$runres_bin"
-      --reserve-count 9
+      --reserve-count 10
       --reserve-wait "${AU_LUMERICAL_RESERVE_WAIT_S:-1800}"
       --reserve-tag "au4um_b200_source_xy${flake_dxy_nm}_${polarization}"
     )

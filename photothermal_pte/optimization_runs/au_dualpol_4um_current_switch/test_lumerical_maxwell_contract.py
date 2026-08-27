@@ -129,7 +129,7 @@ def test_development_accelerator_policy_never_issues_b200_promotion(
     monkeypatch.setattr(
         maxwell_contract,
         "_fdtd_solve_license_audit",
-        lambda: {"passed": True, "tasks_available": 9},
+        lambda: {"passed": True, "tasks_available": 10},
     )
     monkeypatch.setattr(maxwell_contract, "LUMAPI_PATH", Path(__file__))
     development = maxwell_contract.audit_environment(
@@ -162,8 +162,8 @@ def test_license_task_exhaustion_blocks_gpu_preflight(
         "_fdtd_solve_license_audit",
         lambda: {
             "passed": False,
-            "tasks_available": 8,
-            "tasks_required": 9,
+            "tasks_available": 9,
+            "tasks_required": 10,
         },
     )
     result = maxwell_contract.audit_environment(
@@ -205,7 +205,7 @@ def test_license_audit_accepts_exact_server_verified_project_reservation(
     lmstat = f"""
 Users of lum_fdtd_solve:  (Total of 60 licenses issued;  Total of 57 licenses in use)
 
-    9 RESERVATIONs for PROJECT {project}
+    10 RESERVATIONs for PROJECT {project}
     user host display (v1.0) (server/1055 123), start Tue 8/25 08:00
 
 Users of lum_fdtd_gui:  (Total of 20 licenses issued;  Total of 4 licenses in use)
@@ -223,7 +223,7 @@ Users of lum_fdtd_gui:  (Total of 20 licenses issued;  Total of 4 licenses in us
     result = maxwell_contract._fdtd_solve_license_audit()
 
     assert result["tasks_available"] == 3
-    assert result["reservation_tasks_for_project"] == 9
+    assert result["reservation_tasks_for_project"] == 10
     assert result["reservation_verified"] is True
     assert result["passed_via"] == "verified_project_reservation"
     assert result["passed"] is True
@@ -234,7 +234,7 @@ def test_license_audit_rejects_unverified_lm_project(
 ) -> None:
     lmstat = """
 Users of lum_fdtd_solve:  (Total of 60 licenses issued;  Total of 57 licenses in use)
-    9 RESERVATIONs for PROJECT PROJECT_someone_else_456
+    10 RESERVATIONs for PROJECT PROJECT_someone_else_456
 Users of lum_fdtd_gui:  (Total of 20 licenses issued;  Total of 4 licenses in use)
 """
     monkeypatch.setenv("LM_PROJECT", "PROJECT_spoofed_123")
@@ -265,7 +265,7 @@ Users of lum_fdtd_gui:  (Total of 20 licenses issued;  Total of 4 licenses in us
 """
     restored = f"""
 Users of lum_fdtd_solve:  (Total of 60 licenses issued;  Total of 57 licenses in use)
-    9 RESERVATIONs for PROJECT {project}
+    10 RESERVATIONs for PROJECT {project}
 Users of lum_fdtd_gui:  (Total of 20 licenses issued;  Total of 4 licenses in use)
 """
     outputs = iter((consumed, restored))
@@ -284,7 +284,7 @@ Users of lum_fdtd_gui:  (Total of 20 licenses issued;  Total of 4 licenses in us
 
     assert result["passed"] is True
     assert result["passed_via"] == "verified_project_reservation"
-    assert result["reservation_tasks_for_project"] == 9
+    assert result["reservation_tasks_for_project"] == 10
     assert result["audit_attempts"] == 2
 
 
