@@ -1,0 +1,58 @@
+{
+  "schema": "au-lumerical-b200-migration-bundle-v1",
+  "generated_at_utc": "2026-08-27T22:32:58.265315+00:00",
+  "source_root_recorded_for_audit_only": "/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_extend_5a6ddb68_r1",
+  "source_git_commit": "5a6ddb68b6a278c7adc261aa16582f271fc82f0d",
+  "checkpoint": {
+    "schema": "au-lumerical-continuation-checkpoint-v2",
+    "beta_index": 0,
+    "logical_attempt": 4,
+    "latent_shape": [
+      81,
+      81
+    ],
+    "latent_range": [
+      0.0,
+      1.0
+    ],
+    "terminal_latent_exact": true
+  },
+  "last_completed_physics": {
+    "beta": 1.0,
+    "attempt": 3,
+    "currents_nA": {
+      "Ea": 3.9759120393892626,
+      "Eb": -3.989552404168323
+    },
+    "balanced_utility_nA": 3.9759120393892626,
+    "grayness": 0.6610511314469607,
+    "design_constraints_satisfied": true,
+    "objective_converged": false,
+    "opposite_current_switching_achieved": true,
+    "next_action": "extend_same_beta_because_feasible_signed_objective_is_still_improving",
+    "attempt_limit_bypassed_for_objective_progress": true
+  },
+  "files": {
+    "checkpoint": {
+      "path": "continuation_checkpoint.npz",
+      "size_bytes": 38937,
+      "sha256": "ef01ba1a22d1788273ca0cdb057c67df021346dc3ae8f728a82cd6ed235d71e1"
+    },
+    "terminal_stage_state": {
+      "path": "terminal_stage_state.npz",
+      "size_bytes": 166637,
+      "sha256": "7102a9136eea072f61bc99596149622c2380c286adddc9c1930aba98c1e46c13"
+    },
+    "restart_manifest": {
+      "path": "restart_manifest.json",
+      "size_bytes": 5684,
+      "sha256": "450c38fab20c0e60be2837eca4425cbd2ce51fd059f089730d40d177d8e112de"
+    }
+  },
+  "excluded": [
+    "partial attempt-4 eval-7 forward/Jacobian artifacts",
+    "GPU-UUID-bound RTX source calibrations",
+    "FSP, H5, raw-Q, and CUDA pullback transients",
+    "credentials, SSH keys, license files, and Codex state"
+  ]
+}

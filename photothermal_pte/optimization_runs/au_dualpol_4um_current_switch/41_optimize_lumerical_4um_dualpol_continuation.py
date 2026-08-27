@@ -189,10 +189,18 @@ def _load_checkpoint(path: Path) -> dict[str, Any]:
         }
 
 
-def _verified_artifact(record: object, *, label: str) -> Path:
+def _verified_artifact(
+    record: object,
+    *,
+    label: str,
+    relative_to: Path | None = None,
+) -> Path:
     if not isinstance(record, dict):
         raise RuntimeError(f"completed manifest lacks {label} artifact")
-    path = Path(str(record.get("path", ""))).expanduser().resolve()
+    recorded = Path(str(record.get("path", ""))).expanduser()
+    if not recorded.is_absolute() and relative_to is not None:
+        recorded = relative_to / recorded
+    path = recorded.resolve()
     if not path.is_file():
         raise RuntimeError(f"completed manifest {label} artifact is absent")
     actual = artifact(path)
@@ -242,7 +250,9 @@ def _restart_seed_from_environment() -> tuple[dict[str, Any], dict[str, Any]] | 
     if not isinstance(stages, list) or not stages:
         raise RuntimeError("restart manifest lacks completed stage attempts")
     terminal_state_path = _verified_artifact(
-        stages[-1].get("state_artifact"), label="restart terminal stage state"
+        stages[-1].get("state_artifact"),
+        label="restart terminal stage state",
+        relative_to=manifest_path.parent,
     )
     with np.load(terminal_state_path, allow_pickle=False) as arrays:
         terminal_latent = np.asarray(arrays["latent_final"], dtype=np.float64)

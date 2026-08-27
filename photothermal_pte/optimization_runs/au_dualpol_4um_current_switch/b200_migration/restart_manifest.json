@@ -1,0 +1,48 @@
+{
+  "schema": "au-lumerical-dualpol-production-continuation-v1",
+  "status": "STOPPED_FOR_B200_MIGRATION_AFTER_RUNTIME_JACOBIAN_SELF_AUDIT",
+  "passed": false,
+  "git_commit": "5a6ddb68b6a278c7adc261aa16582f271fc82f0d",
+  "blocking_attempts": 4,
+  "latest": {
+    "beta": 1.0,
+    "attempt": 3,
+    "currents_nA": {
+      "Ea": 3.9759120393892626,
+      "Eb": -3.989552404168323
+    },
+    "balanced_utility_nA": 3.9759120393892626,
+    "grayness": 0.6610511314469607,
+    "design_constraints_satisfied": true,
+    "objective_converged": false,
+    "opposite_current_switching_achieved": true,
+    "next_action": "extend_same_beta_because_feasible_signed_objective_is_still_improving",
+    "attempt_limit_bypassed_for_objective_progress": true
+  },
+  "stages": [
+    {
+      "beta": 1.0,
+      "attempt": 3,
+      "status": "COMPLETED_LUMERICAL_4UM_BETA_ATTEMPT",
+      "state_artifact": {
+        "path": "terminal_stage_state.npz",
+        "size_bytes": 166637,
+        "sha256": "7102a9136eea072f61bc99596149622c2380c286adddc9c1930aba98c1e46c13"
+      }
+    }
+  ],
+  "migration_audit": {
+    "schema": "au-lumerical-b200-migration-bundle-v1",
+    "generated_at_utc": "2026-08-27T22:32:58.265022+00:00",
+    "original_manifest": {
+      "path": "/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_extend_5a6ddb68_r1/production_manifest.json",
+      "size_bytes": 49223,
+      "sha256": "34c696f2772dced3262d7c1ece8e1d0ee45770ffb16a1bffc145e398f91b786c"
+    },
+    "original_status": "FAILED_LUMERICAL_4UM_DUALPOL_BETA_CONTINUATION",
+    "original_error": "RuntimeError: 26_build_lumerical_4um_yee_jacobian.py failed with exit 1\n        \"scheme\": \"centered\",\n        \"direction_sha256\": \"f358cf94fc1191145fabb05a3ec841634d12dd781f56fc14f086f1c9c148715f\",\n        \"mapping_FD_step\": 1e-05,\n        \"mapping_FD_relative_error\": 0.011971556808915927,\n        \"transpose_dot\": {\n          \"left\": -28770.01665821542,\n          \"right\": -28770.016658215347,\n          \"relative_error\": 2.529007091174464e-15\n        }\n      },\n      \"interior_fixed_seed_random\": {\n        \"scheme\": \"centered\",\n        \"direction_sha256\": \"e4bc384e2ba16c2506aa3470b16590b80616cede34d1a64e71af14035bdce487\",\n        \"mapping_FD_step\": 1e-05,\n        \"mapping_FD_relative_error\": 0.0006122760129607082,\n        \"transpose_dot\": {\n          \"left\": 31369.751379261957,\n          \"right\": 31369.751379261823,\n          \"relative_error\": 4.290923897834228e-15\n        }\n      },\n      \"upper_endpoint_feasible\": {\n        \"scheme\": \"forward\",\n        \"direction_sha256\": \"f017ab322f8bd3bd7fb81450ae58f9dcc5bf4b9879e9a697389dffd820d54e97\",\n        \"mapping_FD_step\": 1e-05,\n        \"mapping_FD_relative_error\": 3.103851943558412e-05,\n        \"transpose_dot\": {\n          \"left\": 440707.8058397478,\n          \"right\": 440707.8058397479,\n          \"relative_error\": 2.641553434823123e-16\n        }\n      }\n    },\n    \"worst_mapping_FD_relative_error\": 0.011971556808915927,\n    \"mapping_FD_relative_limit\": 0.0005,\n    \"worst_transpose_dot_relative_error\": 4.290923897834228e-15,\n    \"transpose_dot_relative_limit\": 1e-12,\n    \"baseline_roundtrip_epsilon_max_abs_error\": 0.0,\n    \"layout_index_detail_evaluations\": 11,\n    \"Maxwell_solves\": 0,\n    \"gates\": {\n      \"mapping_FD_relative_error_lt_5e_4\": false,\n      \"transpose_dot_relative_error_lt_1e_12\": true,\n      \"baseline_layout_roundtrip_exact\": true\n    }\n  },\n  \"gates\": {\n    \"completed_vs_layout_baseline_epsilon_exact\": true,\n    \"field_index_coordinate_match\": true,\n    \"construction_roundtrip_exact\": true,\n    \"mapping_FD_and_transpose_passed\": false,\n    \"zero_Maxwell_solves\": true,\n    \"forward_density_FSP_hash_link_passed\": true\n  },\n  \"artifacts\": {\n    \"component_J\": {\n      \"x\": {\n        \"path\": \"/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_extend_5a6ddb68_r1/stages/beta_001_attempt_04/evaluations/eval_0007_c2d8b842a719/yee_jacobian/J_x.npz\",\n        \"size_bytes\": 809446,\n        \"sha256\": \"d4aa98515070468faac7a6597e8acb691182b05214cf56892d128486993a9cf2\"\n      },\n      \"y\": {\n        \"path\": \"/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_extend_5a6ddb68_r1/stages/beta_001_attempt_04/evaluations/eval_0007_c2d8b842a719/yee_jacobian/J_y.npz\",\n        \"size_bytes\": 692941,\n        \"sha256\": \"a360800cf3c2f50bdbb8df5ee19011d3caa636f323f238fa32b52bf4e127c0ad\"\n      },\n      \"z\": {\n        \"path\": \"/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_extend_5a6ddb68_r1/stages/beta_001_attempt_04/evaluations/eval_0007_c2d8b842a719/yee_jacobian/J_z.npz\",\n        \"size_bytes\": 498467,\n        \"sha256\": \"9d97fe334327c1362be9a7ba17ae82c254d0ef02dd28e56ee9d411d48f208e39\"\n      }\n    },\n    \"coordinates_and_density\": {\n      \"path\": \"/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_extend_5a6ddb68_r1/stages/beta_001_attempt_04/evaluations/eval_0007_c2d8b842a719/yee_jacobian/component_yee_coordinates_and_density.npz\",\n      \"size_bytes\": 58418,\n      \"sha256\": \"430b744536c7037e55a9ad32f07c396d2c42b09c8527f035e18776a80a45226c\"\n    }\n  },\n  \"layout_session_wall_time_s\": 247.84241493791342\n}",
+    "checkpoint_terminal_latent_exact": true,
+    "no_partial_eval_7_state_promoted": true,
+    "restart_semantics": "resume beta 1 at logical attempt 4 from the last completed attempt-3 feasible point"
+  }
+}

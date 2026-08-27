@@ -1,5 +1,21 @@
 # Au dual-polarization PTE inverse-design code handoff
 
+## B200 migration checkpoint -- 2026-08-27 22:33 UTC
+
+The RTX-host production process is no longer running.  Its last completed
+feasible state has been sealed into the committed portable bundle under
+`b200_migration/`.  Start with `B200_CHECKPOINT_HANDOFF.md`; it contains the
+exact B200 source-calibration, preflight, runres, checkpoint-resume, and new
+Codex-session instructions.
+
+The resumable state is beta 1, logical attempt 4, with last completed
+`I_Ea=+3.975912039 nA`, `I_Eb=-3.989552404 nA`, FOM `3.975912039 nA`, and
+grayness `0.661051131`.  The partial attempt-4 eval 7 is not promoted because
+its component-Yee layout Jacobian self-audit failed before a usable adjoint.
+No GPU-bound RTX source calibration is included.  Generate fresh Ea/Eb xy100
+and xy50 source-only records on the selected physical B200, then resume the
+committed checkpoint; do not restart from uniform rho=0.5.
+
 ## Scope
 
 This directory contains the code path for a 4 um Au topology on a fixed

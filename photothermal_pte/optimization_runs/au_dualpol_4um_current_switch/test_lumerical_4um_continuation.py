@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -396,3 +397,72 @@ def test_explicit_stopped_checkpoint_restart_is_verified(
     assert state["attempt"] == 2
     assert provenance["resumed_beta_index"] == 0
     assert provenance["source_status"].startswith("STOPPED_")
+
+
+def test_portable_restart_manifest_resolves_relative_terminal_state(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    driver = _load_continuation_driver()
+    latent = _latent()
+    checkpoint = tmp_path / "continuation_checkpoint.npz"
+    driver._save_checkpoint(
+        checkpoint,
+        latent=latent,
+        beta_index=0,
+        attempt=4,
+        dfm_caps=np.full(2, np.inf),
+        grayness_cap=np.inf,
+    )
+    terminal_state = tmp_path / "terminal_stage_state.npz"
+    np.savez_compressed(terminal_state, latent_final=latent)
+    relative_artifact = driver.artifact(terminal_state)
+    relative_artifact["path"] = terminal_state.name
+    manifest = tmp_path / "restart_manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "status": "STOPPED_FOR_PORTABLE_B200_MIGRATION",
+                "passed": False,
+                "git_commit": "old-commit",
+                "blocking_attempts": 4,
+                "latest": {"beta": 1.0, "attempt": 3},
+                "stages": [{"state_artifact": relative_artifact}],
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("AU_LUMERICAL_RESTART_CHECKPOINT", str(checkpoint))
+    monkeypatch.setenv("AU_LUMERICAL_RESTART_MANIFEST", str(manifest))
+    state, provenance = driver._restart_seed_from_environment()
+    assert np.array_equal(state["latent"], latent)
+    assert state["attempt"] == 4
+    assert provenance["source_terminal_state"]["path"] == str(terminal_state)
+
+
+def test_committed_b200_migration_bundle_is_hash_complete(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    driver = _load_continuation_driver()
+    bundle_root = Path(__file__).resolve().parent / "b200_migration"
+    bundle = json.loads(
+        (bundle_root / "bundle_manifest.json").read_text(encoding="utf-8")
+    )
+    assert bundle["schema"] == "au-lumerical-b200-migration-bundle-v1"
+    for record in bundle["files"].values():
+        path = bundle_root / record["path"]
+        assert path.stat().st_size == record["size_bytes"]
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == record["sha256"]
+    monkeypatch.setenv(
+        "AU_LUMERICAL_RESTART_CHECKPOINT",
+        str(bundle_root / "continuation_checkpoint.npz"),
+    )
+    monkeypatch.setenv(
+        "AU_LUMERICAL_RESTART_MANIFEST",
+        str(bundle_root / "restart_manifest.json"),
+    )
+    state, provenance = driver._restart_seed_from_environment()
+    assert state["beta_index"] == 0
+    assert state["attempt"] == 4
+    assert np.min(state["latent"]) == 0.0
+    assert np.max(state["latent"]) == 1.0
+    assert provenance["source_status"].startswith("STOPPED_FOR_B200_MIGRATION")

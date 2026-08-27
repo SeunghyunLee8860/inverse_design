@@ -1,5 +1,19 @@
 # Active Lumerical production run
 
+## B200 migration status -- 2026-08-27 22:33 UTC
+
+**STOPPED ON THE RTX HOST; PORTABLE CHECKPOINT SEALED.**  No tmux, runres,
+FDTD, or optimizer process remains.  The last completed feasible state is
+beta 1 attempt 3 with `I_Ea=+3.975912039 nA`, `I_Eb=-3.989552404 nA`, and
+balanced FOM `3.975912039 nA`.  The checkpoint advances the logical attempt
+to 4 and is committed with its bitwise-identical terminal state in
+`b200_migration/`.
+
+Attempt-4 eval 7 failed the strict component-Yee layout Jacobian self-audit
+before an adjoint result was accepted; its partial artifacts are excluded.
+Read `B200_CHECKPOINT_HANDOFF.md` and use its fresh B200 source-calibration and
+checkpoint launcher.  The older `RUNNING` sections below are chronology only.
+
 ## Active improving-objective extension -- 2026-08-27 11:57 UTC
 
 **RUNNING.** Immutable commit
