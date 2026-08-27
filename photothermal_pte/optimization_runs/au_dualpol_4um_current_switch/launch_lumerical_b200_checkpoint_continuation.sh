@@ -67,6 +67,12 @@ done
 
 export PATH="$(dirname -- "$python_bin"):${PATH}"
 export PYTHONPATH="$lumerical_root/api/python:$repository${PYTHONPATH:+:$PYTHONPATH}"
+export XDG_CONFIG_HOME="${AU_LUMERICAL_XDG_CONFIG_HOME:-$output_root/.xdg_config}"
+export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-offscreen}"
+export OMP_NUM_THREADS="$threads"
+export MKL_NUM_THREADS="$threads"
+export OPENBLAS_NUM_THREADS="$threads"
+export NUMEXPR_NUM_THREADS="$threads"
 export VC_LUMERICAL_ROOT="$lumerical_root"
 export LUMERICAL_ROOT="$lumerical_root"
 export AU_LUMERICAL_ROOT="$lumerical_root"
@@ -96,9 +102,8 @@ export AU_LUMERICAL_LICENSE_AUDIT_POLL_S="${AU_LUMERICAL_LICENSE_AUDIT_POLL_S:-5
 
 cd "$repository"
 if [[ "$license_mode" == "direct_checkout" ]]; then
-  exec "$python_bin" -m msopt.cli.run \
-    "$script_dir/41_optimize_lumerical_4um_dualpol_continuation.py" \
-    -th "$threads" -GPU "$gpu_index"
+  exec "$python_bin" -u \
+    "$script_dir/41_optimize_lumerical_4um_dualpol_continuation.py"
 fi
 exec "$runres_bin" \
   --reserve-count 9 \

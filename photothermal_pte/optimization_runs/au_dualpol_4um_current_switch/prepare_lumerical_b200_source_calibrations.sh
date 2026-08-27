@@ -45,6 +45,12 @@ fi
 mkdir -p "$output_root"
 export PATH="$(dirname -- "$python_bin"):${PATH}"
 export PYTHONPATH="$lumerical_root/api/python:$repository${PYTHONPATH:+:$PYTHONPATH}"
+export XDG_CONFIG_HOME="${AU_LUMERICAL_XDG_CONFIG_HOME:-$output_root/.xdg_config}"
+export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-offscreen}"
+export OMP_NUM_THREADS="$threads"
+export MKL_NUM_THREADS="$threads"
+export OPENBLAS_NUM_THREADS="$threads"
+export NUMEXPR_NUM_THREADS="$threads"
 export VC_LUMERICAL_ROOT="$lumerical_root"
 export LUMERICAL_ROOT="$lumerical_root"
 export AU_LUMERICAL_ROOT="$lumerical_root"
@@ -68,7 +74,8 @@ run_source_only() {
   local mesh_label="$3"
   local destination="$output_root/xy${flake_dxy_nm}/${polarization}"
   mkdir -p "$destination"
-  local runner=("$python_bin" -m msopt.cli.run)
+  local runner=("$python_bin" -u)
+  local runner_tail=()
   if [[ "$license_mode" == "reservation_audit" ]]; then
     runner=(
       "$runres_bin"
@@ -76,6 +83,7 @@ run_source_only() {
       --reserve-wait "${AU_LUMERICAL_RESERVE_WAIT_S:-1800}"
       --reserve-tag "au4um_b200_source_xy${flake_dxy_nm}_${polarization}"
     )
+    runner_tail=(-th "$threads" -GPU "$gpu_index")
   fi
   "${runner[@]}" "$script_dir/25_run_lumerical_4um_exact_au_control.py" \
     --case source_only \
@@ -96,7 +104,7 @@ run_source_only() {
     --z-max-um 3 \
     --simulation-time-ps 1 \
     --threads "$threads" \
-    -th "$threads" -GPU "$gpu_index"
+    "${runner_tail[@]}"
   local result="$destination/source_only_${polarization}_${mesh_label}.json"
   if [[ ! -f "$result" ]]; then
     echo "missing source-calibration result: $result" >&2
