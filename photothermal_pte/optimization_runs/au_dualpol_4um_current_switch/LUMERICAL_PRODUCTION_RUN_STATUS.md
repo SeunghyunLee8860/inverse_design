@@ -1,5 +1,56 @@
 # Active Lumerical production run
 
+## Active improving-objective extension -- 2026-08-27 11:57 UTC
+
+**RUNNING.** Immutable commit
+`5a6ddb68b6a278c7adc261aa16582f271fc82f0d` corrects the premature beta-1
+stop in `ccf4bd06`.  The stopped run had passed both target signs and all
+active beta-1 constraints, but its balanced FOM was still improving from
+`0.669616792 nA` to `1.123751354 nA` over the audited window.  The old policy
+incorrectly treated reaching two attempts with `objective_converged=false` as
+a terminal failure.  The replacement now extends the same beta without an
+attempt-count stop while the signed objective is still improving and the
+sign/design gates pass.  The finite attempt limits remain fail-closed bounds
+for unresolved sign, fabrication, or final-binary gates after objective
+convergence.
+
+The old terminal checkpoint and stage state were verified bit-for-bit and
+migrated into a new commit-bound manifest.  Its restart provenance records the
+source manifest/checkpoint/state hashes, beta index 0, and logical attempt 2.
+The new root passed solver-free production preflight before the full runres
+launch.  The first evaluation in `beta_001_attempt_02` re-evaluates the
+checkpoint density before another MMA step; it is active in the Ea Lumerical
+forward at this snapshot.
+
+- last source result: `I_Ea=+1.123751354 nA`,
+  `I_Eb=-1.221742358 nA`, FOM `1.123751354 nA`;
+- immutable worktree:
+  `/home/seunghyun/tairte4/worktrees/au_lumerical_extend_5a6ddb68`;
+- tmux session: `au4um_lum_extend_5a6ddb68`;
+- runres project:
+  `PROJECT_seunghyun_au4um_lumerical_beta_continuation_gpu5_3780985`;
+- active output root:
+  `/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_extend_5a6ddb68_r1`;
+- source stopped root:
+  `/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_restart_ccf4bd06`;
+- physical GPU 5, UUID
+  `GPU-aa047452-9c73-d10f-675f-8af800915acf`.
+
+Monitor without launching a duplicate:
+
+```bash
+tmux capture-pane -pt au4um_lum_extend_5a6ddb68 -S -120
+jq '{status,latest,restart_provenance,stage_count:(.stages|length),error}' \
+  /home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_extend_5a6ddb68_r1/production_manifest.json
+```
+
+Focused continuation/optimizer/signed-objective/250-nm-mapping tests passed
+`40`; the expanded Lumerical/custom-PDE suite passed `181`.  The active path
+remains Lumerical FDTD Maxwell plus custom CUDA thermal/electrical PDEs, with
+zero Lumerical HEAT/CHARGE and zero FDTDX Maxwell solves.  The similarly named
+root without `_r1` contains only a failed solver-free environment check and
+must not be used.
+
 ## Active corrected restart -- 2026-08-26 22:55 UTC
 
 **RUNNING.** The corrected continuation was launched from immutable commit

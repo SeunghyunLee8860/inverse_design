@@ -12,6 +12,48 @@ TaIrTe4 flake.  The target is the signed dual-polarization objective
 The active coordinate contract is **Lumerical x = crystal b** and
 **y = crystal a**.  Do not swap the polarization labels or coordinate axes.
 
+## Active checkpoint extension -- 2026-08-27 11:57 UTC
+
+Start here.  Production is running from immutable code commit
+`5a6ddb68b6a278c7adc261aa16582f271fc82f0d`, detached worktree
+`/home/seunghyun/tairte4/worktrees/au_lumerical_extend_5a6ddb68`, tmux session
+`au4um_lum_extend_5a6ddb68`, and runres project
+`PROJECT_seunghyun_au4um_lumerical_beta_continuation_gpu5_3780985`.  The
+active external root is
+`/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_extend_5a6ddb68_r1`.
+Do not launch another copy.
+
+The source `ccf4bd06` run stopped at beta 1 only because its hard two-attempt
+limit was reached while the feasible signed objective was still improving.
+Its last result was `I_Ea=+1.123751354 nA`,
+`I_Eb=-1.221742358 nA`, FOM `1.123751354 nA`, with both signs and all active
+beta-1 constraints passed.  This was an orchestration-policy stop, not a
+Maxwell, custom-PDE, AD--FD, license, or physics failure.
+
+Commit `5a6ddb68` changes the semantics: if the objective plateau audit is
+false while the opposite-current signs and active design constraints pass,
+the driver checkpoints the best feasible density and starts another attempt
+at the same beta regardless of the nominal gate-repair attempt count.  The
+finite attempt limits still apply after objective convergence to unresolved
+sign/fabrication/final-binary gates.  It also adds a fail-closed cross-commit
+restart path that verifies the stopped manifest, checkpoint, and terminal
+stage state before recording their hashes in `restart_provenance`.
+
+The new root passed solver-free preflight on physical GPU 5 with the existing
+100-nm and 50-nm Ea/Eb source calibrations.  It resumed beta index 0 at logical
+attempt 2 and is re-evaluating the imported checkpoint density in
+`beta_001_attempt_02`.  Focused tests passed `40`; the expanded
+Lumerical/custom-PDE suite passed `181`.  No Lumerical HEAT/CHARGE and no
+FDTDX Maxwell solve is allowed or used.
+
+Monitor only:
+
+```bash
+tmux capture-pane -pt au4um_lum_extend_5a6ddb68 -S -120
+jq '{status,latest,restart_provenance,stage_count:(.stages|length),error}' \
+  /home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_production/continuation_extend_5a6ddb68_r1/production_manifest.json
+```
+
 ## Superseding Lumerical-only handoff -- 2026-08-26
 
 ### Mandatory restart after continuation-policy audit
