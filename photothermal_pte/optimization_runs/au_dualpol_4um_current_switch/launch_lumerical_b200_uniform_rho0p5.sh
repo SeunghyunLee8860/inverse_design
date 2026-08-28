@@ -64,10 +64,7 @@ export LUMERICAL_B200_GPU_INDEX="$gpu_index"
 export CUDA_VISIBLE_DEVICES="$gpu_index"
 export LUMERICAL_SESSION_GPU_DEVICE="GPU $gpu_index"
 export AU_LUMERICAL_LICENSE_MODE="$license_mode"
-if [[ -z "${ANSYSLMD_LICENSE_FILE:-}" && -n "${LUM_RESERVE_SERVER:-}" ]]; then
-  export ANSYSLMD_LICENSE_FILE="$LUM_RESERVE_SERVER"
-fi
-: "${ANSYSLMD_LICENSE_FILE:?source the B200 site license environment first}"
+: "${ANSYSLMD_LICENSE_FILE:?set the B200 direct-checkout endpoint; do not source the runres reservation environment}"
 export FDTD_THREADS="$threads"
 export AU_LUMERICAL_LICENSE_AUDIT_WAIT_S="${AU_LUMERICAL_LICENSE_AUDIT_WAIT_S:-1800}"
 export AU_LUMERICAL_LICENSE_AUDIT_POLL_S="${AU_LUMERICAL_LICENSE_AUDIT_POLL_S:-5}"
