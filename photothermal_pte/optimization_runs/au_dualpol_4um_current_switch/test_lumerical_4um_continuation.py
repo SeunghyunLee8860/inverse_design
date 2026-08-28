@@ -343,6 +343,23 @@ def test_uniform_b200_launcher_is_direct_and_clears_restart_state() -> None:
     assert "NEW_UNIFORM_OUTPUT_ROOT" in source
 
 
+def test_direct_checkout_watchdog_retries_only_transient_license_failures() -> None:
+    source = (
+        Path(__file__)
+        .with_name("watch_lumerical_b200_direct_checkout.sh")
+        .read_text(encoding="utf-8")
+    )
+    assert 'AU_LUMERICAL_LICENSE_MODE="direct_checkout"' in source
+    assert "sleep 60" in source
+    assert 'if [[ ! -e "$output_root" ]]' in source
+    assert '"$uniform_launcher" "$output_root" "$calibration_root"' in source
+    assert '"$resume_launcher" "$optimizer_script"' in source
+    assert "watchdog_stop non_license_failure" in source
+    assert "FlexNet Licensing error:-4,132" in source
+    assert "Licensed number of users already reached" in source
+    assert "runres" not in source
+
+
 def _load_continuation_driver():
     path = Path(__file__).with_name("41_optimize_lumerical_4um_dualpol_continuation.py")
     name = "_test_lumerical_4um_continuation_driver"
