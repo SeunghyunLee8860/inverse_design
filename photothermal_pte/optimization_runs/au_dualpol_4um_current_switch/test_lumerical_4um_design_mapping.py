@@ -13,6 +13,7 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     LUMERICAL_MINIMUM_SOLID_FEATURE_M,
     LUMERICAL_MINIMUM_VOID_FEATURE_M,
     OPTIMIZER_250NM_MAPPING as NOMINAL_MAPPING,
+    RELAXED_PROJECTED_DENSITY_FLOOR,
     calibrated_lumerical_250nm_dfm_caps,
     design_state_audit,
     exact_binary_cell_candidate,
@@ -45,6 +46,21 @@ def test_lumerical_mapping_uses_nodal_carrier_and_preserves_constants() -> None:
         np.full(CONTRACT.design_node_shape, 0.5), beta=4.0
     )
     assert np.allclose(projected, 0.5, rtol=0.0, atol=2.0e-15)
+
+
+def test_optimizer_mapping_reserves_exact_endpoints_for_final_binary() -> None:
+    floor = RELAXED_PROJECTED_DENSITY_FLOOR
+    zeros = np.zeros(CONTRACT.design_node_shape, dtype=np.float64)
+    ones = np.ones(CONTRACT.design_node_shape, dtype=np.float64)
+    for beta in (1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0):
+        lower = NOMINAL_MAPPING.physical(zeros, beta)
+        upper = NOMINAL_MAPPING.physical(ones, beta)
+        assert np.allclose(lower, floor, rtol=0.0, atol=1.0e-15)
+        assert np.allclose(upper, 1.0 - floor, rtol=0.0, atol=1.0e-15)
+        assert np.count_nonzero((lower == 0.0) | (upper == 1.0)) == 0
+    audit = NOMINAL_MAPPING.audit()
+    assert audit["relaxed_projected_density_bounds"] == [floor, 1.0 - floor]
+    assert audit["exact_zero_one_reserved_for_final_binary_reevaluation"] is True
 
 
 def test_nodal_filter_projection_jvp_and_vjp() -> None:

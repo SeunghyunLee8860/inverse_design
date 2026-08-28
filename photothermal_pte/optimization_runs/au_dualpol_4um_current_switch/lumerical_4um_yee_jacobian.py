@@ -45,8 +45,8 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 
 COMPONENTS = "xyz"
 COLOR_PERIOD = 5
-BUILD_STEP = 1.0e-4
-CHECK_STEP = 1.0e-5
+BUILD_STEP = 1.0e-5
+CHECK_STEP = 3.0e-6
 MAX_LOCAL_ASSIGNMENT_DISTANCE_M = 225.0e-9
 NONZERO_ABSOLUTE_THRESHOLD = 1.0e-10
 NONZERO_RELATIVE_THRESHOLD = 1.0e-14
@@ -665,12 +665,27 @@ def validate_material_jacobian(
                     np.finfo(float).tiny,
                 )
             )
+            component_errors: dict[str, Any] = {}
+            for component in COMPONENTS:
+                difference = tangent[component] - finite_difference[component]
+                absolute_l2 = float(np.linalg.norm(difference))
+                component_reference = max(
+                    float(np.linalg.norm(tangent[component])),
+                    float(np.linalg.norm(finite_difference[component])),
+                    np.finfo(float).tiny,
+                )
+                component_errors[component] = {
+                    "absolute_l2_error": absolute_l2,
+                    "maximum_abs_error": float(np.max(np.abs(difference))),
+                    "relative_l2_error": absolute_l2 / component_reference,
+                }
             transpose = transpose_dot_error(operator, direction, cotangent)
             records[name] = {
                 "scheme": scheme,
                 "direction_sha256": _array_sha256(direction),
                 "mapping_FD_step": float(step),
                 "mapping_FD_relative_error": difference_norm / reference_norm,
+                "component_mapping_FD_errors": component_errors,
                 "transpose_dot": transpose,
             }
     finally:

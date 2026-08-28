@@ -38,6 +38,7 @@ LUMERICAL_MINIMUM_SOLID_FEATURE_M = 250.0e-9
 LUMERICAL_MINIMUM_VOID_FEATURE_M = 250.0e-9
 LUMERICAL_FILTER_RADIUS_M = 250.0e-9
 LUMERICAL_DFM_CALIBRATION_MARGIN = 1.0e-4
+RELAXED_PROJECTED_DENSITY_FLOOR = 3.0e-5
 
 
 def _projection(value: np.ndarray, *, beta: float, eta: float) -> np.ndarray:
@@ -71,6 +72,7 @@ class LumericalNodalDesignMapping:
     eta: float = CONTRACT.projection_eta
     minimum_solid_feature_m: float = CONTRACT.minimum_solid_feature_m
     minimum_void_feature_m: float = CONTRACT.minimum_void_feature_m
+    projected_density_floor: float = 0.0
 
     def __post_init__(self) -> None:
         if self.shape != CONTRACT.design_node_shape:
@@ -81,6 +83,8 @@ class LumericalNodalDesignMapping:
             raise ValueError("spacing and radius must be positive")
         if not 0.0 < self.eta < 1.0:
             raise ValueError("projection eta must lie strictly inside (0,1)")
+        if not 0.0 <= self.projected_density_floor < 0.5:
+            raise ValueError("projected density floor must lie in [0,0.5)")
         extent = int(np.ceil(self.radius_m / self.spacing_m))
         offsets = np.arange(-extent, extent + 1, dtype=np.float64) * self.spacing_m
         xx, yy = np.meshgrid(offsets, offsets, indexing="ij")
@@ -122,6 +126,9 @@ class LumericalNodalDesignMapping:
         projected = _projection(
             self.filtered(latent), beta=beta_value, eta=self.eta
         )
+        projected = 0.5 + (1.0 - 2.0 * self.projected_density_floor) * (
+            projected - 0.5
+        )
         return canonical_density_nodes(projected)
 
     def jvp(
@@ -132,9 +139,10 @@ class LumericalNodalDesignMapping:
         filtered_direction = self.filtered(
             self._array(direction, label="latent direction")
         )
-        return _projection_derivative(
+        projection_tangent = _projection_derivative(
             filtered, beta=beta_value, eta=self.eta
         ) * filtered_direction
+        return (1.0 - 2.0 * self.projected_density_floor) * projection_tangent
 
     def vjp(
         self, latent: np.ndarray, projected_cotangent: np.ndarray, beta: float
@@ -146,6 +154,7 @@ class LumericalNodalDesignMapping:
         )
         return self.filter_transpose(
             cotangent
+            * (1.0 - 2.0 * self.projected_density_floor)
             * _projection_derivative(filtered, beta=beta_value, eta=self.eta)
         )
 
@@ -167,6 +176,13 @@ class LumericalNodalDesignMapping:
             "minimum_solid_feature_nm": self.minimum_solid_feature_m * 1.0e9,
             "minimum_void_feature_nm": self.minimum_void_feature_m * 1.0e9,
             "projection_eta": self.eta,
+            "relaxed_projected_density_bounds": [
+                self.projected_density_floor,
+                1.0 - self.projected_density_floor,
+            ],
+            "exact_zero_one_reserved_for_final_binary_reevaluation": bool(
+                self.projected_density_floor > 0.0
+            ),
             "kernel_nonzero_count": int(np.count_nonzero(self.kernel)),
             "constant_preservation_max_abs": constant_error,
             "finite_nonperiodic_boundary": True,
@@ -184,6 +200,7 @@ OPTIMIZER_250NM_MAPPING = LumericalNodalDesignMapping(
     radius_m=LUMERICAL_FILTER_RADIUS_M,
     minimum_solid_feature_m=LUMERICAL_MINIMUM_SOLID_FEATURE_M,
     minimum_void_feature_m=LUMERICAL_MINIMUM_VOID_FEATURE_M,
+    projected_density_floor=RELAXED_PROJECTED_DENSITY_FLOOR,
 )
 
 

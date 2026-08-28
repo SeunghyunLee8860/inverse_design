@@ -11,6 +11,8 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     density_state_sha256,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_yee_jacobian import (
+    BUILD_STEP,
+    CHECK_STEP,
     build_colored_material_jacobian,
     transpose_dot_error,
     validate_completed_density_record,
@@ -124,6 +126,22 @@ def test_independent_mapping_audit_covers_interior_and_endpoint_directions() -> 
     assert audit["directions"]["lower_endpoint_feasible"]["scheme"] == "forward"
     assert audit["directions"]["upper_endpoint_feasible"]["scheme"] == "forward"
     assert audit["worst_transpose_dot_relative_error"] < 1.0e-12
+
+
+def test_relaxed_floor_uses_measured_stable_centered_step_regime() -> None:
+    floor = 3.0e-5
+    rho = 0.5 + (1.0 - 2.0 * floor) * (_nonuniform_density() - 0.5)
+    operator, metadata, _ = build_colored_material_jacobian(
+        _detail_from_density, rho
+    )
+    audit = validate_material_jacobian(_detail_from_density, rho, operator)
+    assert BUILD_STEP == 1.0e-5
+    assert CHECK_STEP == 3.0e-6
+    assert metadata["lower_endpoint_node_count"] == 0
+    assert metadata["upper_endpoint_node_count"] == 0
+    assert "lower_endpoint_feasible" not in audit["directions"]
+    assert "upper_endpoint_feasible" not in audit["directions"]
+    assert audit["passed"] is True
 
 
 def test_transpose_only_audit_performs_zero_extra_layout_evaluations() -> None:
