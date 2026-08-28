@@ -1,5 +1,23 @@
 # Active Lumerical production run
 
+## Fresh B200 single-MMA restart -- 2026-08-28
+
+**THE CHECKPOINT CONTINUATION BELOW IS STOPPED AND HISTORICAL.** The active
+production path now starts from exact latent/physical `rho=0.5` at beta 1 on
+B200 GPU 7. Each fixed beta owns one NLopt MMA instance until the feasible
+signed FOM plateau callback stops it; a same-beta new MMA is crash recovery
+only because NLopt does not serialize its asymptotes. Every successful physics
+evaluation writes a content-addressed, commit/beta/mesh/GPU/source-SHA-bound
+cache entry and atomically updates the best-density checkpoint.
+
+Independent component-Yee mapping FD and full-chain Ea/Eb current AD-FD run
+once at each beta entry, not at every evaluation. Final promotion additionally
+runs both audits on the continuous precursor and a separate fresh exact-binary
+100/50-nm Maxwell plus adaptive custom-CUDA PDE certificate. Maxwell remains
+Lumerical FDTD only; FDTDX and Lumerical HEAT/CHARGE remain forbidden. The B200
+launcher is `launch_lumerical_b200_uniform_rho0p5.sh` in `direct_checkout` mode.
+
+
 ## B200 migration status -- 2026-08-27 22:33 UTC
 
 **STOPPED ON THE RTX HOST; PORTABLE CHECKPOINT SEALED.**  No tmux, runres,

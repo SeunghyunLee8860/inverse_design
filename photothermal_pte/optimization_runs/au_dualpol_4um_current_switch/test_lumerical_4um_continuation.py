@@ -14,20 +14,19 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract i
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_continuation import (
     BETA_SCHEDULE,
-    BASELINE_GATE_REPAIR_EVALUATIONS,
     FINAL_GRAYNESS_CAP,
     INITIAL_MAXIMIN_WARM_MAXIMUM_CHANGE,
     MINIMUM_CONTINUATION_EVALUATIONS,
     STAGE_FTOL_REL,
+    STAGE_MAXEVAL,
     STAGE_XTOL_REL,
     ContinuationEpigraphProblem,
     active_design_constraint_names,
+    continuation_contract,
     grayness_value_gradient,
-    improving_objective_requires_extension,
     linearized_maximin_box_warm_start,
     stage_objective_progress,
     stage_design_caps,
-    tightened_final_grayness_cap,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
     calibrated_lumerical_250nm_dfm_caps,
@@ -68,33 +67,14 @@ def test_production_stages_do_not_stop_on_tiny_balancing_step() -> None:
     assert STAGE_XTOL_REL == 0.0
 
 
-def test_continuation_evaluation_budget_is_explicit() -> None:
-    assert MINIMUM_CONTINUATION_EVALUATIONS == 96
-    assert BASELINE_GATE_REPAIR_EVALUATIONS == 308
+def test_continuation_safety_ceiling_and_lifecycle_are_explicit() -> None:
+    assert MINIMUM_CONTINUATION_EVALUATIONS == 512
+    assert STAGE_MAXEVAL[1.0] == 64
+    assert STAGE_MAXEVAL[128.0] == 96
     assert INITIAL_MAXIMIN_WARM_MAXIMUM_CHANGE == 0.05
-
-
-def test_improving_feasible_signed_objective_extends_past_attempt_limit() -> None:
-    assert improving_objective_requires_extension(
-        objective_converged=False,
-        design_constraints_satisfied=True,
-        opposite_current_switching_achieved=True,
-    )
-    assert not improving_objective_requires_extension(
-        objective_converged=True,
-        design_constraints_satisfied=True,
-        opposite_current_switching_achieved=True,
-    )
-    assert not improving_objective_requires_extension(
-        objective_converged=False,
-        design_constraints_satisfied=False,
-        opposite_current_switching_achieved=True,
-    )
-    assert not improving_objective_requires_extension(
-        objective_converged=False,
-        design_constraints_satisfied=True,
-        opposite_current_switching_achieved=False,
-    )
+    lifecycle = continuation_contract()["MMA_lifecycle"]
+    assert lifecycle["normal"] == "exactly one MMA object for each fixed beta"
+    assert "crash recovery only" in lifecycle["same_beta_new_MMA"]
 
 
 def test_continuation_contract_requires_optical_lateral_and_pde_convergence() -> None:
@@ -215,23 +195,24 @@ def test_high_beta_problem_has_two_epigraph_plus_three_design_constraints() -> N
     assert np.all(gradients[2:, -1] == 0.0)
 
 
-def test_grayness_cap_starts_reachable_and_ratchets_to_final_gate() -> None:
+def test_grayness_cap_is_staged_then_fixed_at_final_beta_entry() -> None:
     latent = uniform_initial_latent_density()
-    beta = 16.0
-    record = stage_design_caps(
-        beta=beta,
-        baseline_dfm_values=smooth_lumerical_250nm_constraints(latent, beta)[0],
-        baseline_grayness=grayness_value_gradient(latent, beta)[0],
+    stage_16 = stage_design_caps(
+        beta=16.0,
+        baseline_dfm_values=smooth_lumerical_250nm_constraints(latent, 16.0)[0],
+        baseline_grayness=grayness_value_gradient(latent, 16.0)[0],
         previous_dfm_caps=None,
         previous_grayness_cap=None,
     )
-    assert record["grayness_cap"] == pytest.approx(0.9)
-    cap = 0.08
-    for achieved in (0.075, 0.018, 0.004):
-        cap = tightened_final_grayness_cap(
-            current_cap=cap, achieved_grayness=achieved
-        )
-    assert cap == FINAL_GRAYNESS_CAP
+    assert stage_16["grayness_cap"] == pytest.approx(0.9)
+    stage_128 = stage_design_caps(
+        beta=128.0,
+        baseline_dfm_values=smooth_lumerical_250nm_constraints(latent, 128.0)[0],
+        baseline_grayness=grayness_value_gradient(latent, 128.0)[0],
+        previous_dfm_caps=np.asarray(stage_16["DFM_caps"]),
+        previous_grayness_cap=float(stage_16["grayness_cap"]),
+    )
+    assert stage_128["grayness_cap"] == FINAL_GRAYNESS_CAP
 
 
 def test_objective_plateau_gate_rejects_a_recently_improving_stage() -> None:
@@ -253,6 +234,34 @@ def test_objective_plateau_gate_rejects_a_recently_improving_stage() -> None:
     assert stage_objective_progress(plateau)["converged"] is True
 
 
+def test_problem_requests_one_force_stop_after_physics_plateau() -> None:
+    stopped: list[bool] = []
+
+    def evaluation(latent: np.ndarray) -> dict[str, object]:
+        value = float(np.mean(latent))
+        return {
+            "passed": True,
+            "currents_A": {
+                "Ea": (2.0 + 1.0e-5 * value) * 1.0e-9,
+                "Eb": -(2.0 + 1.0e-5 * value) * 1.0e-9,
+            },
+            "gradient_Ea_projected_A": np.zeros(CONTRACT.design_node_shape),
+            "gradient_Eb_projected_A": np.zeros(CONTRACT.design_node_shape),
+        }
+
+    problem = ContinuationEpigraphProblem(
+        evaluation, beta=1.0, dfm_caps=np.full(2, np.inf), grayness_cap=np.inf
+    )
+    problem.bind_force_stop(lambda: stopped.append(True))
+    for index in range(8):
+        latent = np.full(CONTRACT.design_node_shape, 0.45 + 0.01 * index)
+        problem.point(np.r_[latent.ravel(), 1.0])
+    assert stopped == [True]
+    assert problem.plateau_stop_requested is True
+    assert problem.plateau_result is not None
+    assert problem.plateau_result["converged"] is True
+
+
 def test_problem_selects_best_physics_point_not_nlopt_terminal_point() -> None:
     def evaluation(latent: np.ndarray) -> dict[str, object]:
         level = float(np.mean(latent))
@@ -263,7 +272,8 @@ def test_problem_selects_best_physics_point_not_nlopt_terminal_point() -> None:
                 CONTRACT.design_node_shape, 1.0e-9 / np.prod(CONTRACT.design_node_shape)
             ),
             "gradient_Eb_projected_A": np.full(
-                CONTRACT.design_node_shape, -1.0e-9 / np.prod(CONTRACT.design_node_shape)
+                CONTRACT.design_node_shape,
+                -1.0e-9 / np.prod(CONTRACT.design_node_shape),
             ),
         }
 
@@ -305,23 +315,36 @@ def test_mma_uses_global_density_bounds_not_a_stage_start_box() -> None:
     assert "latent_initial.ravel() -" not in source
 
 
-def test_improving_objective_extension_precedes_attempt_limit_stop() -> None:
+def test_launcher_uses_one_mma_per_beta_and_callback_plateau_stop() -> None:
     source = (
         Path(__file__)
         .with_name("41_optimize_lumerical_4um_dualpol_continuation.py")
         .read_text(encoding="utf-8")
     )
-    extension = source.index("if objective_extension_required:")
-    attempt_stop = source.index(
-        "if attempts_used >= MAXIMUM_STAGE_ATTEMPTS[beta]:", extension
+    assert source.count("nlopt.opt(nlopt.LD_MMA") == 1
+    assert "problem.bind_force_stop(optimizer.force_stop)" in source
+    assert "except nlopt.ForcedStop:" in source
+    assert "objective_extension_required" not in source
+    assert "MAXIMUM_STAGE_ATTEMPTS" not in source
+    assert "tightened_final_grayness_cap" not in source
+
+
+def test_uniform_b200_launcher_is_direct_and_clears_restart_state() -> None:
+    source = (
+        Path(__file__)
+        .with_name("launch_lumerical_b200_uniform_rho0p5.sh")
+        .read_text(encoding="utf-8")
     )
-    assert extension < attempt_stop
+    assert 'license_mode="direct_checkout"' in source
+    assert "unset AU_LUMERICAL_RESTART_CHECKPOINT" in source
+    assert "unset AU_LUMERICAL_RESTART_MANIFEST" in source
+    assert "runres" not in source
+    assert "--preflight-only" in source
+    assert "NEW_UNIFORM_OUTPUT_ROOT" in source
 
 
 def _load_continuation_driver():
-    path = Path(__file__).with_name(
-        "41_optimize_lumerical_4um_dualpol_continuation.py"
-    )
+    path = Path(__file__).with_name("41_optimize_lumerical_4um_dualpol_continuation.py")
     name = "_test_lumerical_4um_continuation_driver"
     spec = importlib.util.spec_from_file_location(name, path)
     assert spec is not None and spec.loader is not None
@@ -388,12 +411,12 @@ def test_final_precursor_fd_runs_only_after_exact_binary_physics_passes() -> Non
         .read_text(encoding="utf-8")
     )
     exact_switch = source.index("if exact_switching:")
+    final_full_chain = source.index("driver.audit_full_chain_latent_adfd", exact_switch)
     final_fd = source.index(
-        "driver.audit_final_binary_precursor_independent_fd", exact_switch
+        "driver.audit_final_binary_precursor_independent_fd", final_full_chain
     )
     final_promotion = source.index("_save_final_binary_mask", final_fd)
-    assert exact_switch < final_fd < final_promotion
-
+    assert exact_switch < final_full_chain < final_fd < final_promotion
 
 
 def test_passed_preflight_manifest_can_transition_to_full_run() -> None:

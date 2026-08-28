@@ -33,6 +33,11 @@ import numpy as np
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
     CONTRACT,
 )
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_adfd import (
+    bounded_centered_latent_pair,
+    centered_adfd_metrics,
+    centered_pair_reconstruction_metrics,
+)
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_density import (
     density_state_audit,
 )
@@ -57,6 +62,9 @@ SOURCE_OBJECT_W0_UM = 3.9561433030461415
 SMOKE_MAXEVAL = 2
 CURRENT_SCALE_A = 1.0e-9
 DFM_CONSTRAINT_SCALE = 0.01
+FULL_CHAIN_ADFD_STEP = 0.0025
+FULL_CHAIN_ADFD_RELATIVE_ERROR_LIMIT = 0.01
+FULL_CHAIN_ADFD_MINIMUM_RELATIVE_SIGNAL = 1.0e-6
 
 
 def sha256(path: Path) -> str:
@@ -74,6 +82,17 @@ def artifact(path: Path) -> dict[str, Any]:
         "size_bytes": value.stat().st_size,
         "sha256": sha256(value),
     }
+
+
+def _git_commit() -> str:
+    completed = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=REPOSITORY,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    return completed.stdout.strip() if completed.returncode == 0 else "UNKNOWN"
 
 
 def initial_latent_density() -> np.ndarray:
@@ -186,9 +205,7 @@ class OptimizerRuntime:
         require_smoke_beta: bool = True,
         require_final_xy50_source_calibration: bool = False,
     ) -> "OptimizerRuntime":
-        policy = os.environ.get(
-            "AU_LUMERICAL_ACCELERATOR_POLICY", "development"
-        )
+        policy = os.environ.get("AU_LUMERICAL_ACCELERATOR_POLICY", "development")
         if policy not in ("development", "b200"):
             raise RuntimeError(f"unsupported accelerator policy: {policy}")
         beta = float(os.environ.get("AU_LUMERICAL_OPT_BETA", "4"))
@@ -199,12 +216,8 @@ class OptimizerRuntime:
         fine_source = None
         if require_final_xy50_source_calibration:
             fine_source = {
-                "Ea": _required_path(
-                    "AU_LUMERICAL_EA_FINAL_XY50_SOURCE_CALIBRATION"
-                ),
-                "Eb": _required_path(
-                    "AU_LUMERICAL_EB_FINAL_XY50_SOURCE_CALIBRATION"
-                ),
+                "Ea": _required_path("AU_LUMERICAL_EA_FINAL_XY50_SOURCE_CALIBRATION"),
+                "Eb": _required_path("AU_LUMERICAL_EB_FINAL_XY50_SOURCE_CALIBRATION"),
             }
         return cls(
             output_root=_required_output_root(),
@@ -221,9 +234,7 @@ class OptimizerRuntime:
 
     def audit(self) -> dict[str, Any]:
         solver_boundary = require_lumerical_only_source_boundary()
-        groups: list[
-            tuple[str, dict[str, Path], str, float]
-        ] = [
+        groups: list[tuple[str, dict[str, Path], str, float]] = [
             ("optimizer_xy100", self.source_calibration, MESH_LABEL, 100.0e-9)
         ]
         if self.final_xy50_source_calibration is not None:
@@ -247,18 +258,14 @@ class OptimizerRuntime:
             for polarization, path in paths.items():
                 record = _load_json(path)
                 mesh = record.get("mesh_spec", {})
-                gpu_uuid = record.get("GPU_log_evidence", {}).get(
-                    "requested_gpu_uuid"
-                )
+                gpu_uuid = record.get("GPU_log_evidence", {}).get("requested_gpu_uuid")
                 gates = {
                     "source_only_case": record.get("case") == "source_only",
-                    "polarization_matches": record.get("polarization")
-                    == polarization,
+                    "polarization_matches": record.get("polarization") == polarization,
                     "source_status_passed": str(record.get("status", "")).startswith(
                         "PASSED_EXACT_AU_4UM_SOURCE_ONLY"
                     ),
-                    "all_source_gates_passed": record.get("all_gates_passed")
-                    is True,
+                    "all_source_gates_passed": record.get("all_gates_passed") is True,
                     "mesh_label_matches": mesh.get("label") == mesh_label,
                     "flake_dxy_matches": bool(
                         np.isclose(
@@ -339,8 +346,7 @@ class OptimizerRuntime:
                         record.get("B200_promotion_certified")
                     )
                     == (self.accelerator_policy == "b200"),
-                    "GPU_UUID_present": isinstance(gpu_uuid, str)
-                    and bool(gpu_uuid),
+                    "GPU_UUID_present": isinstance(gpu_uuid, str) and bool(gpu_uuid),
                     "solver_version_present": isinstance(
                         record.get("solver_version"), str
                     ),
@@ -397,6 +403,7 @@ class LumericalEvaluationDriver:
         *,
         prune_heavy_intermediates: bool = False,
         independent_fd_certificate: Path | None = None,
+        shared_evaluations_root: Path | None = None,
     ):
         self.runtime = runtime
         self.prune_heavy_intermediates = bool(prune_heavy_intermediates)
@@ -409,10 +416,59 @@ class LumericalEvaluationDriver:
                 raise FileNotFoundError(certificate)
             self._independent_fd_certificate = certificate
             self._independent_fd_validation_pending = False
-        self.evaluations_root = runtime.output_root / "evaluations"
+        self.evaluations_root = (
+            runtime.output_root / "evaluations"
+            if shared_evaluations_root is None
+            else Path(shared_evaluations_root).expanduser().resolve()
+        )
         self.evaluations_root.mkdir(parents=True, exist_ok=True)
+        physical_contract = SCRIPT_DIR / "physical_device_contract.json"
+        self._evaluation_contract = {
+            "schema": "au-lumerical-evaluation-cache-contract-v1",
+            "git_commit": _git_commit(),
+            "optimization_beta": runtime.beta,
+            "mesh_label": MESH_LABEL,
+            "GPU_physical_index": runtime.gpu_index,
+            "accelerator_policy": runtime.accelerator_policy,
+            "threads": runtime.threads,
+            "source_calibrations": {
+                key: artifact(path)
+                for key, path in sorted(runtime.source_calibration.items())
+            },
+            "physical_device_contract": artifact(physical_contract),
+            "Maxwell_solver": "Lumerical FDTD 2026 R1.2 build 4522",
+            "thermal_electrical_solver": "repository custom CUDA PDE",
+            "FDTDX_Maxwell": 0,
+            "Lumerical_HEAT_or_CHARGE": 0,
+        }
+        payload = json.dumps(
+            self._evaluation_contract, sort_keys=True, separators=(",", ":")
+        ).encode("utf-8")
+        self._evaluation_contract_sha256 = hashlib.sha256(payload).hexdigest()
         self.history: list[dict[str, Any]] = []
         self._cache: dict[str, dict[str, Any]] = {}
+
+    def bind_independent_fd_certificate(self, certificate: Path) -> None:
+        """Bind a recovered stage-entry mapping-FD certificate to this driver."""
+
+        path = Path(certificate).expanduser().resolve()
+        if not path.is_file():
+            raise FileNotFoundError(path)
+        result = _load_json(path)
+        validation = result.get("validation", {})
+        gates = {
+            "passed": result.get("passed") is True,
+            "beta_matches": float(result.get("optimization_beta", np.nan))
+            == self.runtime.beta,
+            "independent_mapping_FD_performed": validation.get(
+                "independent_mapping_FD_performed"
+            )
+            is True,
+        }
+        if not all(gates.values()):
+            raise RuntimeError(f"recovered stage FD certificate failed: {gates}")
+        self._independent_fd_certificate = path
+        self._independent_fd_validation_pending = False
 
     @staticmethod
     def _is_prunable_heavy_artifact(path: Path) -> bool:
@@ -422,9 +478,7 @@ class LumericalEvaluationDriver:
             or path.name == "gray_q_cuda_pde_pullback.npz"
         )
 
-    def _prune_completed_evaluation(
-        self, evaluation_dir: Path
-    ) -> dict[str, Any]:
+    def _prune_completed_evaluation(self, evaluation_dir: Path) -> dict[str, Any]:
         """Remove production-only transients after gradients are persisted.
 
         JSON, logs, latent/projected density, final gradients, and small
@@ -617,8 +671,7 @@ class LumericalEvaluationDriver:
         force_full_independent_fd: bool = False,
     ) -> dict[str, Any]:
         full_independent_fd = bool(
-            force_full_independent_fd
-            or self._independent_fd_validation_pending
+            force_full_independent_fd or self._independent_fd_validation_pending
         )
         arguments = [
             "--forward-project",
@@ -674,8 +727,7 @@ class LumericalEvaluationDriver:
                 self._independent_fd_validation_pending = False
         elif (
             validation.get("independent_mapping_FD_performed") is not False
-            or result.get("independent_fd_certificate", {}).get("passed")
-            is not True
+            or result.get("independent_fd_certificate", {}).get("passed") is not True
         ):
             raise RuntimeError("stage-certified transpose-only audit is incomplete")
         return {
@@ -743,16 +795,31 @@ class LumericalEvaluationDriver:
             "rho": rho,
         }
 
-    def _load_completed(self, evaluation_dir: Path) -> dict[str, Any]:
+    def _load_completed(
+        self, evaluation_dir: Path, *, expected_state_hash: str
+    ) -> dict[str, Any]:
         result_path = evaluation_dir / "evaluation_result.json"
         result = _load_json(result_path)
-        if result.get("passed") is not True:
-            raise RuntimeError("cached evaluation is not passed")
+        gates = {
+            "passed": result.get("passed") is True,
+            "density_state_matches": result.get("density_state", {}).get(
+                "density_state_sha256"
+            )
+            == expected_state_hash,
+            "evaluation_contract_matches": result.get("evaluation_contract")
+            == self._evaluation_contract,
+            "evaluation_contract_sha256_matches": result.get(
+                "evaluation_contract_sha256"
+            )
+            == self._evaluation_contract_sha256,
+        }
+        if not all(gates.values()):
+            raise RuntimeError(f"cached evaluation contract failed: {gates}")
         gradient_path = evaluation_dir / "signed_projected_gradients.npz"
         if sha256(gradient_path) != result["artifacts"]["gradients"]["sha256"]:
             raise RuntimeError("cached evaluation gradient SHA changed")
         with np.load(gradient_path, allow_pickle=False) as arrays:
-            return {
+            loaded = {
                 **result,
                 "gradient_Ea_projected_A": np.asarray(
                     arrays["gradient_Ea_projected_A"], np.float64
@@ -760,7 +827,10 @@ class LumericalEvaluationDriver:
                 "gradient_Eb_projected_A": np.asarray(
                     arrays["gradient_Eb_projected_A"], np.float64
                 ),
+                "cache_hit": True,
+                "cache_path": str(evaluation_dir.resolve()),
             }
+        return loaded
 
     def evaluate(self, latent: np.ndarray) -> dict[str, Any]:
         latent_value = np.asarray(latent, np.float64)
@@ -772,32 +842,30 @@ class LumericalEvaluationDriver:
             or np.max(latent_value) > 1.0
         ):
             raise ValueError("latent density must be finite inside [0,1]")
-        projected = OPTIMIZER_250NM_MAPPING.physical(
-            latent_value, self.runtime.beta
-        )
+        projected = OPTIMIZER_250NM_MAPPING.physical(latent_value, self.runtime.beta)
         state = density_state_audit(projected)
         state_hash = str(state["density_state_sha256"])
         if state_hash in self._cache:
             return self._cache[state_hash]
+        cache_stem = f"state_{state_hash}"
+        candidates = sorted(self.evaluations_root.glob(f"{cache_stem}*"))
+        for candidate in candidates:
+            if (candidate / "evaluation_result.json").is_file():
+                loaded = self._load_completed(candidate, expected_state_hash=state_hash)
+                self._cache[state_hash] = loaded
+                return loaded
         evaluation_dir = self.evaluations_root / (
-            f"eval_{len(self.history):04d}_{state_hash[:12]}"
+            cache_stem
+            if not candidates
+            else f"{cache_stem}_recovery_{len(candidates):03d}"
         )
         if evaluation_dir.exists():
-            result_path = evaluation_dir / "evaluation_result.json"
-            if not result_path.is_file():
-                raise RuntimeError(
-                    f"refusing incomplete cached evaluation: {evaluation_dir}"
-                )
-            loaded = self._load_completed(evaluation_dir)
-            self._cache[state_hash] = loaded
-            return loaded
+            raise RuntimeError(f"evaluation recovery path collision: {evaluation_dir}")
         evaluation_dir.mkdir(parents=True)
         latent_path = evaluation_dir / "latent_density.npy"
         density_path = evaluation_dir / "projected_density.npz"
         np.save(latent_path, latent_value, allow_pickle=False)
-        np.savez_compressed(
-            density_path, projected_density_nodal=projected
-        )
+        np.savez_compressed(density_path, projected_density_nodal=projected)
         started = time.monotonic()
         forward = {
             polarization: self._forward(
@@ -850,14 +918,15 @@ class LumericalEvaluationDriver:
         record: dict[str, Any] = {
             "status": "PASSED_LUMERICAL_4UM_DUALPOL_OPTIMIZER_EVALUATION",
             "passed": True,
+            "evaluation_contract": self._evaluation_contract,
+            "evaluation_contract_sha256": self._evaluation_contract_sha256,
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
             "evaluation_index": len(self.history),
             "density_state": state,
             "currents_A": {"Ea": current_a, "Eb": current_b},
             "utilities_A": {"Ea": current_a, "Eb": -current_b},
             "balanced_utility_A": min(current_a, -current_b),
-            "opposite_current_switching_achieved": current_a > 0.0
-            and current_b < 0.0,
+            "opposite_current_switching_achieved": current_a > 0.0 and current_b < 0.0,
             "solver_counts": {
                 "Lumerical_forward": 2,
                 "Lumerical_adjoint": 2,
@@ -876,7 +945,9 @@ class LumericalEvaluationDriver:
                     "forward_result": artifact(forward[polarization]["result_path"]),
                     "PDE_result": artifact(pde[polarization]["result_path"]),
                     "adjoint_result": artifact(adjoint[polarization]["result_path"]),
-                    "adjoint_gradient": artifact(adjoint[polarization]["gradient_path"]),
+                    "adjoint_gradient": artifact(
+                        adjoint[polarization]["gradient_path"]
+                    ),
                 }
                 for polarization in ("Ea", "Eb")
             },
@@ -898,8 +969,7 @@ class LumericalEvaluationDriver:
         persisted = {
             key: value
             for key, value in record.items()
-            if key
-            not in {"gradient_Ea_projected_A", "gradient_Eb_projected_A"}
+            if key not in {"gradient_Ea_projected_A", "gradient_Eb_projected_A"}
         }
         _write_json(evaluation_dir / "evaluation_result.json", persisted)
         if self.prune_heavy_intermediates:
@@ -910,6 +980,246 @@ class LumericalEvaluationDriver:
         self.history.append(persisted)
         _write_json(self.runtime.output_root / "evaluation_history.json", self.history)
         self._cache[state_hash] = record
+        return record
+
+    def _evaluate_currents_only(
+        self, latent: np.ndarray, output: Path
+    ) -> dict[str, Any]:
+        """Run Ea/Eb Maxwell forwards and custom PDEs without adjoints."""
+
+        latent_value = np.asarray(latent, dtype=np.float64)
+        if latent_value.shape != CONTRACT.design_node_shape:
+            raise ValueError("current-only latent density has the wrong shape")
+        if (
+            not np.all(np.isfinite(latent_value))
+            or np.min(latent_value) < 0.0
+            or np.max(latent_value) > 1.0
+        ):
+            raise ValueError("current-only latent density must lie inside [0,1]")
+        destination = Path(output).expanduser().resolve()
+        if destination.exists():
+            raise RuntimeError(f"refusing existing current-only root: {destination}")
+        destination.mkdir(parents=True)
+        projected = OPTIMIZER_250NM_MAPPING.physical(latent_value, self.runtime.beta)
+        latent_path = destination / "latent_density.npy"
+        density_path = destination / "projected_density.npz"
+        np.save(latent_path, latent_value, allow_pickle=False)
+        np.savez_compressed(density_path, projected_density_nodal=projected)
+        started = time.monotonic()
+        forward = {
+            polarization: self._forward(
+                polarization,
+                density_path,
+                destination / f"forward_{polarization}",
+            )
+            for polarization in ("Ea", "Eb")
+        }
+        pde = {
+            polarization: self._pde(
+                polarization,
+                forward[polarization],
+                density_path,
+                destination / f"cuda_pde_{polarization}",
+            )
+            for polarization in ("Ea", "Eb")
+        }
+        currents = {
+            polarization: float(pde[polarization]["result"]["current_A"])
+            for polarization in ("Ea", "Eb")
+        }
+        record = {
+            "schema": "au-lumerical-dualpol-current-only-evaluation-v1",
+            "status": "PASSED_LUMERICAL_4UM_DUALPOL_CURRENT_ONLY_EVALUATION",
+            "passed": True,
+            "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+            "optimization_beta": self.runtime.beta,
+            "evaluation_contract": self._evaluation_contract,
+            "evaluation_contract_sha256": self._evaluation_contract_sha256,
+            "density_state": density_state_audit(projected),
+            "currents_A": currents,
+            "inputs": {
+                "latent": artifact(latent_path),
+                "projected_density": artifact(density_path),
+            },
+            "polarizations": {
+                polarization: {
+                    "forward_result": artifact(forward[polarization]["result_path"]),
+                    "PDE_result": artifact(pde[polarization]["result_path"]),
+                }
+                for polarization in ("Ea", "Eb")
+            },
+            "solver_counts": {
+                "Lumerical_forward": 2,
+                "Lumerical_adjoint": 0,
+                "Lumerical_layout_only_Jacobian_sessions": 0,
+                "custom_CUDA_PDE_runs": 2,
+                "Lumerical_HEAT_or_CHARGE": 0,
+                "FDTDX_Maxwell": 0,
+            },
+            "wall_s": time.monotonic() - started,
+        }
+        result_path = destination / "current_only_result.json"
+        _write_json(result_path, record)
+        if self.prune_heavy_intermediates:
+            candidates = [
+                path
+                for path in destination.rglob("*")
+                if path.is_file() and self._is_prunable_heavy_artifact(path)
+            ]
+            retention = {
+                "policy": "prune_heavy_current_only_adfd_intermediates_v1",
+                "pruned_at_utc": datetime.now(timezone.utc).isoformat(),
+                "pruned_file_count": len(candidates),
+                "pruned_size_bytes": int(
+                    sum(path.stat().st_size for path in candidates)
+                ),
+            }
+            for path in candidates:
+                path.unlink()
+            record["artifact_retention"] = retention
+            _write_json(result_path, record)
+        return record
+
+    def audit_full_chain_latent_adfd(
+        self,
+        latent: np.ndarray,
+        baseline_evaluation: dict[str, Any],
+        output: Path,
+        *,
+        validation_scope: str,
+        direction_index: int = 0,
+        step: float = FULL_CHAIN_ADFD_STEP,
+    ) -> dict[str, Any]:
+        """Certify the full latent-to-current chain in one independent direction."""
+
+        latent_value = np.asarray(latent, dtype=np.float64)
+        if baseline_evaluation.get("passed") is not True:
+            raise RuntimeError("full-chain AD-FD baseline evaluation did not pass")
+        direction, plus, minus, pair_audit = bounded_centered_latent_pair(
+            latent_value, step=step, direction_index=direction_index
+        )
+        pair_metrics = centered_pair_reconstruction_metrics(
+            baseline=latent_value,
+            direction=direction,
+            plus=plus,
+            minus=minus,
+            step=step,
+        )
+        destination = Path(output).expanduser().resolve()
+        if destination.exists():
+            raise RuntimeError(
+                f"refusing existing full-chain AD-FD root: {destination}"
+            )
+        destination.mkdir(parents=True)
+        pair_path = destination / "latent_centered_pair.npz"
+        np.savez_compressed(
+            pair_path,
+            latent_baseline=latent_value,
+            direction=direction,
+            latent_plus=plus,
+            latent_minus=minus,
+        )
+        plus_result = self._evaluate_currents_only(
+            plus, destination / "plus_current_only"
+        )
+        minus_result = self._evaluate_currents_only(
+            minus, destination / "minus_current_only"
+        )
+        metrics: dict[str, Any] = {}
+        gates: dict[str, bool] = {
+            "centered_pair_reconstructs_within_float64_roundoff": bool(
+                pair_metrics["within_float64_roundoff"]
+            ),
+            "baseline_beta_matches": float(
+                baseline_evaluation.get("evaluation_contract", {}).get(
+                    "optimization_beta", np.nan
+                )
+            )
+            == self.runtime.beta,
+        }
+        for polarization, gradient_key in (
+            ("Ea", "gradient_Ea_projected_A"),
+            ("Eb", "gradient_Eb_projected_A"),
+        ):
+            projected_gradient = np.asarray(
+                baseline_evaluation[gradient_key], dtype=np.float64
+            )
+            latent_gradient = OPTIMIZER_250NM_MAPPING.vjp(
+                latent_value, projected_gradient, self.runtime.beta
+            )
+            polarization_metrics = centered_adfd_metrics(
+                gradient=latent_gradient,
+                direction=direction,
+                step=step,
+                baseline_current_A=float(
+                    baseline_evaluation["currents_A"][polarization]
+                ),
+                plus_current_A=float(plus_result["currents_A"][polarization]),
+                minus_current_A=float(minus_result["currents_A"][polarization]),
+            )
+            metrics[polarization] = polarization_metrics
+            gates[f"{polarization}_same_nonzero_sign"] = bool(
+                polarization_metrics["same_nonzero_sign"]
+            )
+            gates[f"{polarization}_relative_error_below_1_percent"] = bool(
+                polarization_metrics["relative_error"]
+                <= FULL_CHAIN_ADFD_RELATIVE_ERROR_LIMIT
+            )
+            gates[f"{polarization}_relative_signal_resolved"] = bool(
+                polarization_metrics["plus_minus_signal_relative_to_current"]
+                >= FULL_CHAIN_ADFD_MINIMUM_RELATIVE_SIGNAL
+            )
+        passed = bool(all(gates.values()))
+        record = {
+            "schema": "au-lumerical-full-chain-latent-current-adfd-v1",
+            "status": (
+                "PASSED_LUMERICAL_4UM_FULL_CHAIN_LATENT_CURRENT_ADFD"
+                if passed
+                else "FAILED_LUMERICAL_4UM_FULL_CHAIN_LATENT_CURRENT_ADFD"
+            ),
+            "passed": passed,
+            "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+            "validation_scope": str(validation_scope),
+            "optimization_beta": self.runtime.beta,
+            "evaluation_contract": self._evaluation_contract,
+            "evaluation_contract_sha256": self._evaluation_contract_sha256,
+            "step": float(step),
+            "relative_error_limit": FULL_CHAIN_ADFD_RELATIVE_ERROR_LIMIT,
+            "minimum_relative_signal": FULL_CHAIN_ADFD_MINIMUM_RELATIVE_SIGNAL,
+            "direction_pair": pair_audit,
+            "pair_reconstruction": pair_metrics,
+            "metrics": metrics,
+            "gates": gates,
+            "currents_A": {
+                "baseline": baseline_evaluation["currents_A"],
+                "plus": plus_result["currents_A"],
+                "minus": minus_result["currents_A"],
+            },
+            "artifacts": {
+                "latent_pair": artifact(pair_path),
+                "plus_result": artifact(
+                    destination / "plus_current_only" / "current_only_result.json"
+                ),
+                "minus_result": artifact(
+                    destination / "minus_current_only" / "current_only_result.json"
+                ),
+            },
+            "solver_counts": {
+                "additional_Lumerical_forward": 4,
+                "additional_Lumerical_adjoint": 0,
+                "additional_layout_only_Jacobian_sessions": 0,
+                "additional_custom_CUDA_PDE_runs": 4,
+                "Lumerical_HEAT_or_CHARGE": 0,
+                "FDTDX_Maxwell": 0,
+            },
+            "exact_binary_geometry_is_nondifferentiable": (
+                validation_scope == "final-binary-continuous-precursor"
+            ),
+        }
+        result_path = destination / "full_chain_adfd_result.json"
+        _write_json(result_path, record)
+        if not passed:
+            raise RuntimeError(f"full-chain latent current AD-FD failed: {gates}")
         return record
 
     def audit_final_binary_precursor_independent_fd(
@@ -926,9 +1236,7 @@ class LumericalEvaluationDriver:
         latent_value = np.asarray(latent, np.float64)
         if latent_value.shape != CONTRACT.design_node_shape:
             raise ValueError("final precursor latent density has the wrong shape")
-        projected = OPTIMIZER_250NM_MAPPING.physical(
-            latent_value, self.runtime.beta
-        )
+        projected = OPTIMIZER_250NM_MAPPING.physical(latent_value, self.runtime.beta)
         destination = Path(output).expanduser().resolve()
         if destination.exists():
             raise RuntimeError(
@@ -938,12 +1246,8 @@ class LumericalEvaluationDriver:
         latent_path = destination / "latent_density.npy"
         density_path = destination / "projected_density.npz"
         np.save(latent_path, latent_value, allow_pickle=False)
-        np.savez_compressed(
-            density_path, projected_density_nodal=projected
-        )
-        forward = self._forward(
-            "Ea", density_path, destination / "forward_Ea"
-        )
+        np.savez_compressed(density_path, projected_density_nodal=projected)
+        forward = self._forward("Ea", density_path, destination / "forward_Ea")
         jacobian = self._jacobian(
             forward,
             density_path,
@@ -1033,8 +1337,7 @@ class SmokeEpigraphProblem:
                 "callback_index": len(self.callback_history),
                 "current_Ea_nA": 1.0e9 * float(point["current_a_A"]),
                 "current_Eb_nA": 1.0e9 * float(point["current_b_A"]),
-                "balanced_utility_nA": 1.0e9
-                * float(point["balanced_utility_A"]),
+                "balanced_utility_nA": 1.0e9 * float(point["balanced_utility_A"]),
                 "DFM_values": dfm_values.tolist(),
             }
         )
@@ -1051,8 +1354,7 @@ class SmokeEpigraphProblem:
     ) -> None:
         point = self.point(vector)
         current_constraints_nA = (
-            np.asarray(point["epigraph_constraints_A"], np.float64)
-            / CURRENT_SCALE_A
+            np.asarray(point["epigraph_constraints_A"], np.float64) / CURRENT_SCALE_A
         )
         dfm_constraints = (
             np.asarray(point["DFM_values"], np.float64) - self.dfm_caps
@@ -1066,8 +1368,7 @@ class SmokeEpigraphProblem:
             ).reshape(2, -1)
             gradient[:2, -1] = 1.0
             gradient[2:, :-1] = (
-                np.asarray(point["DFM_gradients"], np.float64)
-                / DFM_CONSTRAINT_SCALE
+                np.asarray(point["DFM_gradients"], np.float64) / DFM_CONSTRAINT_SCALE
             ).reshape(2, -1)
 
 

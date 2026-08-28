@@ -1,3 +1,9 @@
+> **Superseded on 2026-08-28.** This checkpoint-migration procedure is retained
+> only as historical recovery evidence. The user explicitly requested stopping
+> that continuation and starting a fresh exact-uniform `rho=0.5` run on this
+> B200. Use `launch_lumerical_b200_uniform_rho0p5.sh`; it clears both restart
+> variables and uses direct Lumerical license checkout without `runres`.
+
 # B200 checkpoint handoff
 
 ## What moves to the new Codex session

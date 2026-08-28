@@ -27,7 +27,6 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     EPIGRAPH_CONSTRAINT_TOLERANCE,
     FINAL_GRAYNESS_CAP,
     INITIAL_MAXIMIN_WARM_MAXIMUM_CHANGE,
-    MAXIMUM_STAGE_ATTEMPTS,
     MMA_INITIAL_STEP,
     STAGE_FTOL_REL,
     STAGE_MAXEVAL,
@@ -36,11 +35,9 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     active_design_constraint_names,
     continuation_contract,
     grayness_value_gradient,
-    improving_objective_requires_extension,
     linearized_maximin_box_warm_start,
     stage_objective_progress,
     stage_design_caps,
-    tightened_final_grayness_cap,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
     OPTIMIZER_250NM_MAPPING,
@@ -60,7 +57,8 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 
 HERE = Path(__file__).resolve().parent
 REPOSITORY = Path(__file__).resolve().parents[3]
-CHECKPOINT_SCHEMA = "au-lumerical-continuation-checkpoint-v2"
+CHECKPOINT_SCHEMA = "au-lumerical-continuation-checkpoint-v3"
+LEGACY_CHECKPOINT_SCHEMA = "au-lumerical-continuation-checkpoint-v2"
 PREFLIGHT_STATUS = "PASSED_LUMERICAL_4UM_CONTINUATION_PREFLIGHT_ONLY"
 FINAL_EXACT_BINARY_CERTIFICATE_SCHEMA = (
     "au-lumerical-exact-binary-lateral-pde-certificate-v3"
@@ -118,14 +116,31 @@ def _failure_output_root() -> Path | None:
 
 
 def _new_manifest(runtime: OptimizerRuntime) -> dict[str, Any]:
+    physical_device = json.loads(
+        (HERE / "physical_device_contract.json").read_text(encoding="utf-8")
+    )
     return {
-        "schema": "au-lumerical-dualpol-production-continuation-v1",
+        "schema": "au-lumerical-dualpol-production-continuation-v2",
         "status": "RUNNING_LUMERICAL_4UM_DUALPOL_BETA_CONTINUATION",
         "passed": False,
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
         "updated_at_utc": datetime.now(timezone.utc).isoformat(),
         "git_commit": _git_commit(),
-        "optimizer": {"library": "NLopt", "version": nlopt.__version__, "algorithm": "LD_MMA"},
+        "optimizer": {
+            "library": "NLopt",
+            "version": nlopt.__version__,
+            "algorithm": "LD_MMA",
+        },
+        "optimizer_lifecycle": {
+            "normal_MMA_instances_per_beta": 1,
+            "same_beta_restart": "crash recovery only",
+            "MMA_internal_state_serialized": False,
+            "recovery_semantics": "best successful density plus callback history; new MMA",
+        },
+        "physical_device_contract_status": physical_device.get("status"),
+        "physical_device_assumptions_confirmed": physical_device.get(
+            "assumptions_confirmed", False
+        ),
         "runtime": runtime.audit(),
         "continuation_contract": continuation_contract(),
         "component_yee_independent_FD_cadence": {
@@ -142,6 +157,20 @@ def _new_manifest(runtime: OptimizerRuntime) -> dict[str, Any]:
             "mapping_FD_relative_limit_unchanged": True,
             "stage_certificates": {},
         },
+        "full_chain_current_AD_FD_cadence": {
+            "schema": "full-chain-current-adfd-cadence-v1",
+            "stage_policy": (
+                "one independent centered latent-direction Ea/Eb current audit "
+                "at each beta entry; no per-evaluation full-chain FD"
+            ),
+            "final_policy": (
+                "one audit on the differentiable continuous precursor plus a "
+                "separate fresh exact-binary physical certificate"
+            ),
+            "relative_error_limit": 0.01,
+            "stage_certificates": {},
+        },
+        "active_stage": None,
         "stages": [],
         "final": None,
         "Lumerical_HEAT_or_CHARGE_solves": 0,
@@ -186,10 +215,22 @@ def _save_final_binary_mask(path: Path, mask: np.ndarray) -> None:
     temporary.replace(path)
 
 
+def _save_stage_progress_state(
+    path: Path, *, latent: np.ndarray, projected: np.ndarray
+) -> None:
+    temporary = path.with_suffix(path.suffix + ".tmp.npz")
+    np.savez_compressed(
+        temporary,
+        latent=np.asarray(latent, dtype=np.float64),
+        projected=np.asarray(projected, dtype=np.float64),
+    )
+    temporary.replace(path)
+
+
 def _load_checkpoint(path: Path) -> dict[str, Any]:
     with np.load(path, allow_pickle=False) as data:
         schema = str(np.asarray(data["schema"]).item())
-        if schema != CHECKPOINT_SCHEMA:
+        if schema not in {CHECKPOINT_SCHEMA, LEGACY_CHECKPOINT_SCHEMA}:
             raise RuntimeError(f"checkpoint schema changed: {schema}")
         latent = np.asarray(data["latent"], dtype=np.float64)
         if latent.shape != CONTRACT.design_node_shape:
@@ -242,9 +283,7 @@ def _fd_cadence_record(manifest: dict[str, Any]) -> dict[str, Any]:
     return cadence
 
 
-def _stage_fd_certificate(
-    manifest: dict[str, Any], beta: float
-) -> Path | None:
+def _stage_fd_certificate(manifest: dict[str, Any], beta: float) -> Path | None:
     cadence = _fd_cadence_record(manifest)
     record = cadence["stage_certificates"].get(_fd_beta_key(beta))
     if record is None:
@@ -263,8 +302,7 @@ def _stage_fd_certificate(
         "full_independent_mapping_FD_performed": isinstance(validation, dict)
         and validation.get("independent_mapping_FD_performed") is True,
         "scope_is_stage_entry": result.get("validation_scope") == "stage-entry",
-        "beta_matches": float(result.get("optimization_beta", np.nan))
-        == float(beta),
+        "beta_matches": float(result.get("optimization_beta", np.nan)) == float(beta),
         "git_commit_matches": result.get("git_commit") == _git_commit(),
     }
     if not all(gates.values()):
@@ -286,9 +324,10 @@ def _record_stage_fd_certificate(
     if key in cadence["stage_certificates"]:
         raise RuntimeError(f"refusing to replace beta-{beta:g} FD certificate")
     validation_record = initial_physics.get("Jacobian_validation")
-    if not isinstance(validation_record, dict) or validation_record.get(
-        "independent_mapping_FD_performed"
-    ) is not True:
+    if (
+        not isinstance(validation_record, dict)
+        or validation_record.get("independent_mapping_FD_performed") is not True
+    ):
         raise RuntimeError("stage-entry representative did not run independent FD")
     path = _verified_artifact(
         initial_physics.get("Jacobian_result"),
@@ -303,14 +342,11 @@ def _record_stage_fd_certificate(
         "full_independent_mapping_FD_performed": isinstance(validation, dict)
         and validation.get("independent_mapping_FD_performed") is True,
         "scope_is_stage_entry": result.get("validation_scope") == "stage-entry",
-        "beta_matches": float(result.get("optimization_beta", np.nan))
-        == float(beta),
+        "beta_matches": float(result.get("optimization_beta", np.nan)) == float(beta),
         "git_commit_matches": result.get("git_commit") == _git_commit(),
     }
     if not all(gates.values()):
-        raise RuntimeError(
-            f"beta-{beta:g} representative FD result failed: {gates}"
-        )
+        raise RuntimeError(f"beta-{beta:g} representative FD result failed: {gates}")
     cadence["stage_certificates"][key] = {
         "beta": float(beta),
         "attempt": int(attempt),
@@ -321,6 +357,65 @@ def _record_stage_fd_certificate(
     }
     return path
 
+
+def _full_chain_cadence_record(manifest: dict[str, Any]) -> dict[str, Any]:
+    cadence = manifest.get("full_chain_current_AD_FD_cadence")
+    if (
+        not isinstance(cadence, dict)
+        or cadence.get("schema") != "full-chain-current-adfd-cadence-v1"
+        or not isinstance(cadence.get("stage_certificates"), dict)
+    ):
+        raise RuntimeError("production manifest lacks full-chain AD-FD cadence")
+    return cadence
+
+
+def _stage_full_chain_certificate(manifest: dict[str, Any], beta: float) -> Path | None:
+    cadence = _full_chain_cadence_record(manifest)
+    record = cadence["stage_certificates"].get(_fd_beta_key(beta))
+    if record is None:
+        return None
+    path = _verified_artifact(
+        record.get("result"), label=f"beta-{beta:g} full-chain AD-FD"
+    )
+    result = json.loads(path.read_text(encoding="utf-8"))
+    gates = {
+        "passed": result.get("passed") is True,
+        "schema": result.get("schema")
+        == "au-lumerical-full-chain-latent-current-adfd-v1",
+        "beta_matches": float(result.get("optimization_beta", np.nan)) == float(beta),
+        "scope_is_stage_entry": result.get("validation_scope") == "stage-entry",
+        "all_physics_gates_passed": bool(result.get("gates"))
+        and all(result.get("gates", {}).values()),
+        "git_commit_matches": result.get("evaluation_contract", {}).get("git_commit")
+        == _git_commit(),
+    }
+    if not all(gates.values()):
+        raise RuntimeError(
+            f"beta-{beta:g} full-chain AD-FD revalidation failed: {gates}"
+        )
+    return path
+
+
+def _record_stage_full_chain_certificate(
+    *,
+    manifest: dict[str, Any],
+    beta: float,
+    attempt: int,
+    result_path: Path,
+    result: dict[str, Any],
+) -> None:
+    cadence = _full_chain_cadence_record(manifest)
+    key = _fd_beta_key(beta)
+    if key in cadence["stage_certificates"]:
+        raise RuntimeError(f"refusing to replace beta-{beta:g} full-chain AD-FD")
+    if result.get("passed") is not True:
+        raise RuntimeError("cannot record a failed full-chain AD-FD result")
+    cadence["stage_certificates"][key] = {
+        "beta": float(beta),
+        "attempt": int(attempt),
+        "recorded_at_utc": datetime.now(timezone.utc).isoformat(),
+        "result": artifact(result_path),
+    }
 
 
 def _restart_seed_from_environment() -> tuple[dict[str, Any], dict[str, Any]] | None:
@@ -344,7 +439,9 @@ def _restart_seed_from_environment() -> tuple[dict[str, Any], dict[str, Any]] | 
     if source_manifest.get("passed") is not False or not str(
         source_manifest.get("status", "")
     ).startswith("STOPPED_"):
-        raise RuntimeError("restart source must be an explicitly stopped non-passed run")
+        raise RuntimeError(
+            "restart source must be an explicitly stopped non-passed run"
+        )
     state = _load_checkpoint(checkpoint_path)
     beta_index = int(state["beta_index"])
     if not 0 <= beta_index < len(BETA_SCHEDULE):
@@ -354,8 +451,13 @@ def _restart_seed_from_environment() -> tuple[dict[str, Any], dict[str, Any]] | 
         raise RuntimeError("restart manifest lacks latest stage evidence")
     if float(latest.get("beta", np.nan)) != BETA_SCHEDULE[beta_index]:
         raise RuntimeError("restart manifest beta differs from checkpoint")
-    if int(source_manifest.get("blocking_attempts", -1)) != int(state["attempt"]):
-        raise RuntimeError("restart manifest attempt count differs from checkpoint")
+    blocking_count = source_manifest.get("blocking_attempts")
+    if blocking_count is None and "blocking_recovery_index" in source_manifest:
+        blocking_count = int(source_manifest["blocking_recovery_index"]) + 1
+    if int(blocking_count if blocking_count is not None else -1) != int(
+        state["attempt"]
+    ):
+        raise RuntimeError("restart manifest recovery count differs from checkpoint")
 
     stages = source_manifest.get("stages")
     if not isinstance(stages, list) or not stages:
@@ -368,11 +470,13 @@ def _restart_seed_from_environment() -> tuple[dict[str, Any], dict[str, Any]] | 
     with np.load(terminal_state_path, allow_pickle=False) as arrays:
         terminal_latent = np.asarray(arrays["latent_final"], dtype=np.float64)
     if not np.array_equal(terminal_latent, np.asarray(state["latent"])):
-        raise RuntimeError("restart checkpoint latent differs from terminal stage state")
+        raise RuntimeError(
+            "restart checkpoint latent differs from terminal stage state"
+        )
 
     provenance = {
         "schema": "au-lumerical-continuation-restart-provenance-v1",
-        "reason": "extend_same_beta_while_signed_objective_is_still_improving",
+        "reason": "explicit_cross_commit_density_recovery_from_stopped_run",
         "source_git_commit": source_manifest.get("git_commit"),
         "source_status": source_manifest.get("status"),
         "source_latest": latest,
@@ -426,16 +530,13 @@ def _completed_manifest_latent(manifest: dict[str, Any]) -> np.ndarray | None:
     if (
         mask.shape != CONTRACT.design_shape
         or not np.all((mask == 0) | (mask == 1))
-        or exact.get("binary_mask_payload_sha256")
-        != binary_mask_sha256(mask)
+        or exact.get("binary_mask_payload_sha256") != binary_mask_sha256(mask)
     ):
         raise RuntimeError("passed continuation binary-mask payload changed")
     stage = final.get("continuous_stage")
     if not isinstance(stage, dict):
         raise RuntimeError("passed continuation manifest lacks continuous stage")
-    state_path = _verified_artifact(
-        stage.get("state_artifact"), label="stage state"
-    )
+    state_path = _verified_artifact(stage.get("state_artifact"), label="stage state")
     with np.load(state_path, allow_pickle=False) as arrays:
         latent = np.asarray(arrays["latent_final"], dtype=np.float64)
     if (
@@ -451,7 +552,7 @@ def _completed_manifest_latent(manifest: dict[str, Any]) -> np.ndarray | None:
 def _attempt_directory(root: Path, beta: float, attempt: int) -> tuple[Path, int]:
     value = int(attempt)
     while True:
-        candidate = root / "stages" / f"beta_{beta:03g}_attempt_{value:02d}"
+        candidate = root / "stages" / f"beta_{beta:03g}_recovery_{value:02d}"
         if not candidate.exists():
             return candidate, value
         value += 1
@@ -506,8 +607,7 @@ def _run_exact_binary_evaluation(
     result = json.loads(result_path.read_text(encoding="utf-8"))
     if completed.returncode != 0 and result.get("error"):
         raise RuntimeError(
-            "exact-binary certifier execution failed: "
-            f"{result.get('error')}"
+            f"exact-binary certifier execution failed: {result.get('error')}"
         )
     return result
 
@@ -557,9 +657,7 @@ def main() -> int:
             restart_seed = _restart_seed_from_environment()
             if restart_seed is None:
                 latent = uniform_initial_latent_density()
-                projected = OPTIMIZER_250NM_MAPPING.physical(
-                    latent, BETA_SCHEDULE[0]
-                )
+                projected = OPTIMIZER_250NM_MAPPING.physical(latent, BETA_SCHEDULE[0])
                 if not np.array_equal(projected, latent):
                     raise RuntimeError(
                         "uniform rho=0.5 is not exactly preserved at beta=1"
@@ -605,16 +703,16 @@ def main() -> int:
                 runtime,
                 prune_heavy_intermediates=True,
                 independent_fd_certificate=stage_fd_certificate,
+                shared_evaluations_root=(
+                    output / "evaluation_cache" / f"beta_{beta:03g}"
+                ),
             )
             latent_initial = np.asarray(state["latent"], dtype=np.float64)
-            initial_dfm, _, _ = smooth_lumerical_250nm_constraints(
-                latent_initial, beta
-            )
+            initial_dfm, _, _ = smooth_lumerical_250nm_constraints(latent_initial, beta)
             initial_grayness = grayness_value_gradient(latent_initial, beta)[0]
-            # Use the checkpoint logical attempt, not the next free artifact
-            # directory suffix. If a process dies after creating attempt_00
-            # but before finishing its first Maxwell evaluation, the restart
-            # uses attempt_01 while the stage caps are still uninitialized.
+            # Use the checkpoint logical recovery count, not the next free artifact
+            # directory suffix. If a process dies before its first successful
+            # callback, stage caps remain marked as uninitialized.
             # Persist those caps before the expensive solve so such a restart
             # cannot silently disable DFM or grayness constraints.
             if int(state["attempt"]) == 0:
@@ -625,9 +723,7 @@ def main() -> int:
                     previous_dfm_caps=np.asarray(state["dfm_caps"], dtype=np.float64),
                     previous_grayness_cap=float(state["grayness_cap"]),
                 )
-                state["dfm_caps"] = np.asarray(
-                    cap_record["DFM_caps"], dtype=np.float64
-                )
+                state["dfm_caps"] = np.asarray(cap_record["DFM_caps"], dtype=np.float64)
                 state["grayness_cap"] = float(cap_record["grayness_cap"])
                 _save_checkpoint(checkpoint_path, **state)
             initial_physics = driver.evaluate(latent_initial)
@@ -638,13 +734,97 @@ def main() -> int:
                     attempt=attempt,
                     initial_physics=initial_physics,
                 )
+                driver.bind_independent_fd_certificate(stage_fd_certificate)
                 manifest["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
                 _write_json(manifest_path, manifest)
+            stage_full_chain_certificate = _stage_full_chain_certificate(manifest, beta)
+            if stage_full_chain_certificate is None:
+                stage_adfd_output = attempt_dir / "stage_entry_full_chain_adfd"
+                stage_adfd = driver.audit_full_chain_latent_adfd(
+                    latent_initial,
+                    initial_physics,
+                    stage_adfd_output,
+                    validation_scope="stage-entry",
+                )
+                stage_adfd_path = stage_adfd_output / "full_chain_adfd_result.json"
+                _record_stage_full_chain_certificate(
+                    manifest=manifest,
+                    beta=beta,
+                    attempt=attempt,
+                    result_path=stage_adfd_path,
+                    result=stage_adfd,
+                )
+                manifest["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
+                _write_json(manifest_path, manifest)
+
+            active_stage = manifest.get("active_stage")
+            history_prefix = (
+                list(active_stage.get("callback_history", []))
+                if isinstance(active_stage, dict)
+                and float(active_stage.get("beta", np.nan)) == beta
+                else []
+            )
+
+            def persist_successful_callback(
+                current_problem: ContinuationEpigraphProblem,
+            ) -> None:
+                selected_progress = current_problem.selected_candidate()
+                latent_progress = np.asarray(
+                    selected_progress["latent"], dtype=np.float64
+                )
+                projected_progress = OPTIMIZER_250NM_MAPPING.physical(
+                    latent_progress, beta
+                )
+                progress_path = attempt_dir / "latest_successful_state.npz"
+                _save_stage_progress_state(
+                    progress_path,
+                    latent=latent_progress,
+                    projected=projected_progress,
+                )
+                state["latent"] = latent_progress
+                state["attempt"] = attempt + 1
+                _save_checkpoint(checkpoint_path, **state)
+                selected_point = selected_progress["point"]
+                manifest["active_stage"] = {
+                    "status": "RUNNING_FIXED_BETA_MMA",
+                    "beta": beta,
+                    "beta_index": beta_index,
+                    "recovery_index": attempt,
+                    "MMA_internal_state_serialized": False,
+                    "callback_history": current_problem.complete_callback_history,
+                    "latest_best_currents_nA": {
+                        "Ea": 1.0e9 * float(selected_point["current_a_A"]),
+                        "Eb": 1.0e9 * float(selected_point["current_b_A"]),
+                    },
+                    "latest_best_balanced_utility_nA": (
+                        1.0e9 * float(selected_point["balanced_utility_A"])
+                    ),
+                    "latest_best_grayness": float(
+                        selected_point["design_constraints"]["grayness"]
+                    ),
+                    "state_artifact": artifact(progress_path),
+                    "updated_at_utc": datetime.now(timezone.utc).isoformat(),
+                }
+                manifest["latest"] = {
+                    "beta": beta,
+                    "recovery_index": attempt,
+                    "iteration": len(current_problem.complete_callback_history) - 1,
+                    "currents_nA": manifest["active_stage"]["latest_best_currents_nA"],
+                    "balanced_utility_nA": manifest["active_stage"][
+                        "latest_best_balanced_utility_nA"
+                    ],
+                    "grayness": manifest["active_stage"]["latest_best_grayness"],
+                }
+                manifest["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
+                _write_json(manifest_path, manifest)
+
             problem = ContinuationEpigraphProblem(
                 driver.evaluate,
                 beta=beta,
                 dfm_caps=np.asarray(state["dfm_caps"], dtype=np.float64),
                 grayness_cap=float(state["grayness_cap"]),
+                history_prefix=history_prefix,
+                progress_callback=persist_successful_callback,
             )
             epigraph_initial_nA = 1.0e9 * min(
                 float(initial_physics["currents_A"]["Ea"]),
@@ -717,8 +897,22 @@ def main() -> int:
             optimizer.set_xtol_rel(STAGE_XTOL_REL)
             optimizer.set_maxeval(optimizer_maxeval)
             vector_initial = np.r_[optimizer_latent.ravel(), epigraph_initial_nA]
-            vector_optimizer_terminal = optimizer.optimize(vector_initial)
-            objective_progress = stage_objective_progress(problem.callback_history)
+            problem.bind_force_stop(optimizer.force_stop)
+            plateau_forced_stop = False
+            try:
+                vector_optimizer_terminal = optimizer.optimize(vector_initial)
+            except nlopt.ForcedStop:
+                if not problem.plateau_stop_requested:
+                    raise
+                plateau_forced_stop = True
+                stopped_candidate = problem.selected_candidate()
+                vector_optimizer_terminal = np.r_[
+                    np.asarray(stopped_candidate["latent"]).ravel(),
+                    float(stopped_candidate["point"]["epigraph_nA"]),
+                ]
+            objective_progress = stage_objective_progress(
+                problem.complete_callback_history
+            )
             selected = problem.selected_candidate()
             final_point = selected["point"]
             latent_final = np.asarray(selected["latent"], dtype=np.float64)
@@ -728,22 +922,25 @@ def main() -> int:
             projected_final = OPTIMIZER_250NM_MAPPING.physical(latent_final, beta)
             binary_mask, binary_audit = exact_binary_cell_candidate(projected_final)
             design_satisfied = _stage_constraints_satisfied(final_point)
-            objective_converged = bool(objective_progress["converged"])
+            objective_converged = bool(
+                objective_progress["converged"] and problem.plateau_stop_requested
+            )
             switching = bool(
                 float(final_point["current_a_A"]) > 0.0
                 and float(final_point["current_b_A"]) < 0.0
             )
             stage_result = {
-                "status": "COMPLETED_LUMERICAL_4UM_BETA_ATTEMPT",
+                "status": "COMPLETED_LUMERICAL_4UM_FIXED_BETA_MMA",
                 "generated_at_utc": datetime.now(timezone.utc).isoformat(),
                 "beta": beta,
                 "beta_index": beta_index,
-                "attempt": attempt,
-                "active_design_constraints": list(
-                    active_design_constraint_names(beta)
-                ),
+                "recovery_index": attempt,
+                "normal_MMA_instance_for_beta": attempt == 0,
+                "same_beta_recovery_MMA": attempt > 0,
+                "plateau_forced_stop": plateau_forced_stop,
+                "active_design_constraints": list(active_design_constraint_names(beta)),
                 "NLopt_total_constraint_count": problem.total_constraint_count,
-                "requested_maxeval": STAGE_MAXEVAL[beta],
+                "safety_maxeval": STAGE_MAXEVAL[beta],
                 "optimizer_requested_maxeval": optimizer_maxeval,
                 "latent_bounds": [0.0, 1.0],
                 "MMA_initial_step": MMA_INITIAL_STEP[beta],
@@ -770,8 +967,7 @@ def main() -> int:
                     "Ea": 1.0e9 * float(final_point["current_a_A"]),
                     "Eb": 1.0e9 * float(final_point["current_b_A"]),
                 },
-                "balanced_utility_nA": 1.0e9
-                * float(final_point["balanced_utility_A"]),
+                "balanced_utility_nA": 1.0e9 * float(final_point["balanced_utility_A"]),
                 "opposite_current_switching_achieved": switching,
                 "design_constraints": {
                     "names": final_point["design_constraints"]["names"],
@@ -783,9 +979,7 @@ def main() -> int:
                         "raw_DFM_values"
                     ].tolist(),
                     "DFM_caps": np.asarray(state["dfm_caps"]).tolist(),
-                    "grayness": float(
-                        final_point["design_constraints"]["grayness"]
-                    ),
+                    "grayness": float(final_point["design_constraints"]["grayness"]),
                     "grayness_cap": float(state["grayness_cap"]),
                 },
                 "exact_binary_candidate_audit": {
@@ -793,7 +987,7 @@ def main() -> int:
                     for key, value in binary_audit.items()
                     if key not in {"binary", "bad_solid", "bad_void"}
                 },
-                "callback_history": problem.callback_history,
+                "callback_history": problem.complete_callback_history,
                 "wall_s": float(sum(row["wall_s"] for row in driver.history)),
             }
             state_path = attempt_dir / "stage_final_state.npz"
@@ -808,9 +1002,10 @@ def main() -> int:
             stage_result["state_artifact"] = artifact(state_path)
             _write_json(attempt_dir / "stage_result.json", stage_result)
             manifest["stages"].append(stage_result)
+            manifest["active_stage"] = None
             manifest["latest"] = {
                 "beta": beta,
-                "attempt": attempt,
+                "recovery_index": attempt,
                 "currents_nA": stage_result["final_currents_nA"],
                 "balanced_utility_nA": stage_result["balanced_utility_nA"],
                 "grayness": stage_result["design_constraints"]["grayness"],
@@ -833,8 +1028,7 @@ def main() -> int:
                 and objective_converged
                 and final_grayness_target_reached
                 and float(final_point["design_constraints"]["grayness"])
-                <= float(state["grayness_cap"])
-                * (1.0 + DESIGN_CONSTRAINT_TOLERANCE)
+                <= float(state["grayness_cap"]) * (1.0 + DESIGN_CONSTRAINT_TOLERANCE)
                 and binary_audit["solid_pass"]
                 and binary_audit["void_pass"]
             )
@@ -842,9 +1036,7 @@ def main() -> int:
                 attempt_binary_path = (
                     attempt_dir / "exact_binary_candidate_cell_mask.npz"
                 )
-                np.savez_compressed(
-                    attempt_binary_path, binary_mask=binary_mask
-                )
+                np.savez_compressed(attempt_binary_path, binary_mask=binary_mask)
                 exact_result = _run_exact_binary_evaluation(
                     runtime=runtime,
                     binary_path=attempt_binary_path,
@@ -865,20 +1057,27 @@ def main() -> int:
                 manifest["latest"]["exact_binary_certificate_passed"] = bool(
                     exact_result.get("passed")
                 )
-                manifest["latest"]["exact_binary_switching_achieved"] = (
-                    exact_switching
-                )
+                manifest["latest"]["exact_binary_switching_achieved"] = exact_switching
                 _write_json(manifest_path, manifest)
                 if exact_switching:
+                    final_full_chain_adfd = driver.audit_full_chain_latent_adfd(
+                        latent_final,
+                        final_point,
+                        attempt_dir / "final_full_chain_adfd",
+                        validation_scope="final-binary-continuous-precursor",
+                    )
+                    stage_result["final_full_chain_current_AD_FD"] = (
+                        final_full_chain_adfd
+                    )
                     final_precursor_fd_audit = (
                         driver.audit_final_binary_precursor_independent_fd(
                             latent_final,
                             attempt_dir / "final_binary_precursor_fd_audit",
                         )
                     )
-                    stage_result[
-                        "final_binary_precursor_independent_FD_audit"
-                    ] = final_precursor_fd_audit
+                    stage_result["final_binary_precursor_independent_FD_audit"] = (
+                        final_precursor_fd_audit
+                    )
                     _write_json(attempt_dir / "stage_result.json", stage_result)
                     binary_path = output / "final_exact_binary_cell_mask.npz"
                     _save_final_binary_mask(binary_path, binary_mask)
@@ -892,6 +1091,7 @@ def main() -> int:
                         "continuous_stage": stage_result,
                         "binary_mask": artifact(binary_path),
                         "exact_binary_evaluation": exact_result,
+                        "final_full_chain_current_AD_FD": final_full_chain_adfd,
                         "final_binary_precursor_independent_FD_audit": (
                             final_precursor_fd_audit
                         ),
@@ -913,48 +1113,6 @@ def main() -> int:
                     print(json.dumps(manifest["final"], indent=2, default=str))
                     return 0
 
-            attempts_used = attempt + 1
-            objective_extension_required = improving_objective_requires_extension(
-                objective_converged=objective_converged,
-                design_constraints_satisfied=design_satisfied,
-                opposite_current_switching_achieved=switching,
-            )
-            if objective_extension_required:
-                manifest["latest"]["next_action"] = (
-                    "extend_same_beta_because_feasible_signed_objective_is_"
-                    "still_improving"
-                )
-                manifest["latest"]["attempt_limit_bypassed_for_objective_progress"] = (
-                    attempts_used >= MAXIMUM_STAGE_ATTEMPTS[beta]
-                )
-                _write_json(manifest_path, manifest)
-                state["latent"] = latent_final
-                state["attempt"] = attempts_used
-                _save_checkpoint(checkpoint_path, **state)
-                continue
-
-            if (
-                final_beta
-                and design_satisfied
-                and objective_converged
-                and switching
-                and not final_grayness_target_reached
-                and attempts_used < MAXIMUM_STAGE_ATTEMPTS[beta]
-            ):
-                tightened_cap = tightened_final_grayness_cap(
-                    current_cap=float(state["grayness_cap"]),
-                    achieved_grayness=float(
-                        final_point["design_constraints"]["grayness"]
-                    ),
-                )
-                manifest["latest"]["next_grayness_cap"] = tightened_cap
-                _write_json(manifest_path, manifest)
-                state["latent"] = latent_final
-                state["attempt"] = attempts_used
-                state["grayness_cap"] = tightened_cap
-                _save_checkpoint(checkpoint_path, **state)
-                continue
-
             may_advance = bool(
                 not final_beta
                 and design_satisfied
@@ -968,7 +1126,9 @@ def main() -> int:
                 # The next stage computes a tighter cap while preserving the
                 # monotone DFM and grayness limits already achieved.
                 _save_checkpoint(checkpoint_path, **state)
-                checkpoint_copy = output / "checkpoints" / f"beta_{beta:03g}_completed.npz"
+                checkpoint_copy = (
+                    output / "checkpoints" / f"beta_{beta:03g}_completed.npz"
+                )
                 _save_checkpoint(checkpoint_copy, **state)
                 if args.stop_after_beta == beta:
                     manifest["status"] = "PAUSED_AFTER_REQUESTED_BETA"
@@ -976,30 +1136,24 @@ def main() -> int:
                     return 0
                 continue
 
-            if attempts_used >= MAXIMUM_STAGE_ATTEMPTS[beta]:
-                manifest["status"] = (
-                    "STOPPED_UNRESOLVED_FINAL_BINARY_OR_SWITCHING_GATES"
-                    if final_beta
-                    else "STOPPED_UNRESOLVED_STAGE_OBJECTIVE_OR_DESIGN_GATES"
-                )
-                manifest["passed"] = False
-                manifest["blocking_beta"] = beta
-                manifest["blocking_attempts"] = attempts_used
-                manifest["wall_s"] = time.monotonic() - started
-                _write_json(manifest_path, manifest)
-                _save_checkpoint(
-                    checkpoint_path,
-                    latent=latent_final,
-                    beta_index=beta_index,
-                    attempt=attempts_used,
-                    dfm_caps=np.asarray(state["dfm_caps"]),
-                    grayness_cap=float(state["grayness_cap"]),
-                )
-                return 2
-
+            manifest["status"] = (
+                "STOPPED_UNRESOLVED_FINAL_BINARY_OR_SWITCHING_GATES"
+                if final_beta
+                else "STOPPED_UNRESOLVED_STAGE_OBJECTIVE_OR_DESIGN_GATES"
+            )
+            manifest["passed"] = False
+            manifest["blocking_beta"] = beta
+            manifest["blocking_recovery_index"] = attempt
+            manifest["blocking_reason"] = (
+                "fixed-beta MMA ended without satisfying the audited plateau, "
+                "current-sign, active-design, and promotion gates"
+            )
+            manifest["wall_s"] = time.monotonic() - started
             state["latent"] = latent_final
-            state["attempt"] = attempts_used
+            state["attempt"] = attempt + 1
             _save_checkpoint(checkpoint_path, **state)
+            _write_json(manifest_path, manifest)
+            return 2
 
         raise RuntimeError("continuation exited without exact-binary promotion")
     except Exception as error:

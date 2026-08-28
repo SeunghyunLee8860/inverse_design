@@ -85,6 +85,55 @@ def centered_density_pair(
     return direction, np.ascontiguousarray(plus), np.ascontiguousarray(minus)
 
 
+def bounded_centered_latent_pair(
+    baseline: np.ndarray, *, step: float, direction_index: int = 0
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, dict[str, Any]]:
+    """Build a deterministic centered latent pair without crossing bounds.
+
+    The direction is fixed before any field or gradient is inspected. Nodes
+    whose symmetric perturbation would leave [0,1] are set to zero rather than
+    clipping either side, preserving an exact centered directional derivative.
+    """
+
+    rho = np.asarray(baseline, dtype=np.float64)
+    if rho.ndim != 2 or not np.all(np.isfinite(rho)):
+        raise ValueError("baseline latent density must be one finite 2-D array")
+    if np.min(rho) < 0.0 or np.max(rho) > 1.0:
+        raise ValueError("baseline latent density must lie inside [0,1]")
+    if not np.isfinite(step) or step <= 0.0:
+        raise ValueError("centered latent AD-FD step must be finite and positive")
+    original = independent_smooth_direction(rho.shape, direction_index)
+    excursion = step * np.abs(original)
+    feasible = (rho - excursion >= 0.0) & (rho + excursion <= 1.0)
+    direction = np.where(feasible, original, 0.0)
+    active = np.abs(direction) > 0.0
+    active_fraction = float(np.mean(active))
+    if not np.any(active) or active_fraction < 0.05:
+        raise RuntimeError(
+            "fewer than 5% of latent nodes support a centered AD-FD direction"
+        )
+    plus = np.ascontiguousarray(rho + step * direction)
+    minus = np.ascontiguousarray(rho - step * direction)
+    audit = {
+        "policy": "fixed_smooth_direction_with_bound_infeasible_nodes_zeroed_v1",
+        "direction_index": int(direction_index),
+        "direction_definition": smooth_direction_definition(direction_index),
+        "step": float(step),
+        "active_node_count": int(np.count_nonzero(active)),
+        "masked_node_count": int(direction.size - np.count_nonzero(active)),
+        "active_node_fraction": active_fraction,
+        "direction_Linf": float(np.max(np.abs(direction))),
+        "direction_sha256": array_sha256(
+            direction, label="bounded-adfd-latent-direction-v1"
+        ),
+        "plus_minmax": [float(np.min(plus)), float(np.max(plus))],
+        "minus_minmax": [float(np.min(minus)), float(np.max(minus))],
+        "independent_of_fields_and_gradients": True,
+        "clipping_used": False,
+    }
+    return np.ascontiguousarray(direction), plus, minus, audit
+
+
 def centered_pair_reconstruction_metrics(
     *,
     baseline: np.ndarray,
@@ -95,7 +144,10 @@ def centered_pair_reconstruction_metrics(
 ) -> dict[str, Any]:
     """Check a saved float64 pair against bounds derived from roundoff."""
 
-    arrays = [np.asarray(value, dtype=np.float64) for value in (baseline, direction, plus, minus)]
+    arrays = [
+        np.asarray(value, dtype=np.float64)
+        for value in (baseline, direction, plus, minus)
+    ]
     if any(value.shape != arrays[0].shape for value in arrays[1:]):
         raise ValueError("centered-pair array shapes differ")
     if any(value.ndim != 2 or not np.all(np.isfinite(value)) for value in arrays):

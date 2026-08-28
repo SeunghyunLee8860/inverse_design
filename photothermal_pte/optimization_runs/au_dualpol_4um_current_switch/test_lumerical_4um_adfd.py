@@ -9,6 +9,7 @@ import pytest
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_adfd import (
     SMOOTH_DIRECTION_COEFFICIENTS,
     array_sha256,
+    bounded_centered_latent_pair,
     centered_adfd_metrics,
     centered_density_pair,
     centered_pair_reconstruction_metrics,
@@ -47,9 +48,7 @@ def test_pair_contract_binds_ea_and_eb_status_to_polarization() -> None:
         }
     )
     assert eb["polarization"] == "Eb"
-    assert eb["validated_status"] == (
-        "VALIDATED_LUMERICAL_4UM_EB_LATENT_COMBINED_ADFD"
-    )
+    assert eb["validated_status"] == ("VALIDATED_LUMERICAL_4UM_EB_LATENT_COMBINED_ADFD")
 
     with pytest.raises(RuntimeError, match="polarization/status mismatch"):
         _COMPARATOR._pair_contract(
@@ -81,8 +80,12 @@ def test_smooth_direction_family_is_low_frequency_and_independent() -> None:
         assert np.max(np.abs(direction)) == 1.0
         assert np.max(np.abs(np.diff(direction, axis=0))) < 0.15
         assert np.max(np.abs(np.diff(direction, axis=1))) < 0.15
-    normalized = [direction.ravel() / np.linalg.norm(direction) for direction in directions]
-    gram = np.asarray([[np.vdot(left, right) for right in normalized] for left in normalized])
+    normalized = [
+        direction.ravel() / np.linalg.norm(direction) for direction in directions
+    ]
+    gram = np.asarray(
+        [[np.vdot(left, right) for right in normalized] for left in normalized]
+    )
     np.testing.assert_allclose(np.diag(gram), 1.0, rtol=0.0, atol=5.0e-16)
     off_diagonal = gram - np.diag(np.diag(gram))
     assert np.max(np.abs(off_diagonal)) < 0.05
@@ -99,6 +102,22 @@ def test_centered_density_pair_is_exact_and_feasible() -> None:
         centered_density_pair(np.zeros((11, 9)), step=0.0025)
 
 
+def test_bounded_centered_latent_pair_masks_only_bound_infeasible_nodes() -> None:
+    baseline = np.full((21, 19), 0.5)
+    baseline[:3] = 0.0
+    baseline[-3:] = 1.0
+    direction, plus, minus, audit = bounded_centered_latent_pair(baseline, step=0.0025)
+    assert np.all(direction[:3] == 0.0)
+    assert np.all(direction[-3:] == 0.0)
+    assert np.min(plus) >= 0.0 and np.max(plus) <= 1.0
+    assert np.min(minus) >= 0.0 and np.max(minus) <= 1.0
+    np.testing.assert_allclose(0.5 * (plus + minus), baseline, rtol=0.0, atol=1.0e-16)
+    assert audit["clipping_used"] is False
+    assert audit["independent_of_fields_and_gradients"] is True
+    with pytest.raises(RuntimeError, match="fewer than 5%"):
+        bounded_centered_latent_pair(np.zeros((21, 19)), step=0.0025)
+
+
 def test_pair_reconstruction_uses_step_scaled_float64_roundoff() -> None:
     x = np.linspace(0.29, 0.71, 81, dtype=np.float64)
     baseline = np.broadcast_to(x[:, None], (81, 81)).copy()
@@ -111,12 +130,14 @@ def test_pair_reconstruction_uses_step_scaled_float64_roundoff() -> None:
         step=0.0025,
     )
     assert metrics["within_float64_roundoff"] is True
-    assert metrics["midpoint_max_abs_error"] <= metrics[
-        "midpoint_float64_roundoff_tolerance"
-    ]
-    assert metrics["direction_max_abs_error"] <= metrics[
-        "direction_float64_roundoff_tolerance"
-    ]
+    assert (
+        metrics["midpoint_max_abs_error"]
+        <= metrics["midpoint_float64_roundoff_tolerance"]
+    )
+    assert (
+        metrics["direction_max_abs_error"]
+        <= metrics["direction_float64_roundoff_tolerance"]
+    )
 
 
 def test_centered_metrics_recovers_quadratic_directional_derivative() -> None:
@@ -138,7 +159,9 @@ def test_centered_metrics_recovers_quadratic_directional_derivative() -> None:
     )
     assert metrics["relative_error"] < 2.0e-11
     assert metrics["same_nonzero_sign"] is True
-    assert np.isclose(metrics["centered_midpoint_minus_baseline_A"], curvature * step**2)
+    assert np.isclose(
+        metrics["centered_midpoint_minus_baseline_A"], curvature * step**2
+    )
 
 
 def test_centered_metrics_accepts_complete_latent_mapping_chain() -> None:
@@ -149,9 +172,7 @@ def test_centered_metrics_accepts_complete_latent_mapping_chain() -> None:
     direction = independent_smooth_direction(latent.shape)
     projected_gradient = rng.standard_normal(latent.shape) * 1.0e-12
     beta = 4.0
-    latent_gradient = OPTIMIZER_250NM_MAPPING.vjp(
-        latent, projected_gradient, beta
-    )
+    latent_gradient = OPTIMIZER_250NM_MAPPING.vjp(latent, projected_gradient, beta)
     step = 1.0e-4
 
     def objective(value: np.ndarray) -> float:

@@ -1,5 +1,11 @@
 # Lumerical Au production continuation
 
+Current B200 policy (2026-08-28): start from exact uniform `rho=0.5` with
+`launch_lumerical_b200_uniform_rho0p5.sh` in direct-checkout mode. One MMA
+instance owns each fixed-beta problem; same-beta reconstruction is crash
+recovery only. The older attempt-based chronology below is historical.
+
+
 Current gate (2026-08-26): the active-250-nm Ea/Eb combined
 Maxwell/custom-PDE AD-FD with `S_Au` passed at commit `80e3ef8a`. The prior
 production run omitted Au thermopower and remains stale. **Do not resume it.**
@@ -25,13 +31,11 @@ Set the final-promotion source variables to:
 - Eb:
   `/home/seunghyun/tairte4_raw_artifacts/au_dualpol_4um_lumerical_development/r12_gpu5_xy50_source_only_cv0_52b6ed79/Eb/source_only_Eb_fine_z2p5_bulk50_xy50_cv0_pml8_span20_z6_t1ps.json`.
 
-This is the production successor to the two-evaluation beta-4 smoke. The
-entry point is `41_optimize_lumerical_4um_dualpol_continuation.py`; the site
-launcher is `launch_lumerical_continuation_runres_gpu5.sh`.
-On this host the launcher explicitly uses the audited reservation module in
-`worktrees/pte_true_mma/tools/lumerical_runres`; without that override the
-site `/home/dhkim/bin/runres` incorrectly searches the current user's absent
-`~/dhkim_module` and exits before reserving a license.
+The production entry point is
+`41_optimize_lumerical_4um_dualpol_continuation.py`. On the current B200 host,
+`launch_lumerical_b200_uniform_rho0p5.sh` performs the fail-closed preflight and
+then uses direct solver checkout; it does not invoke `runres`. The older GPU5
+launcher and paths below are retained only as historical development evidence.
 
 ## Optimization contract
 
@@ -48,11 +52,20 @@ site `/home/dhkim/bin/runres` incorrectly searches the current user's absent
 - Target: `I_Ea>0` and `I_Eb<0`.
 - Beta schedule: `1, 2, 4, 8, 16, 32, 64, 128`.
 - Optimizer: NLopt `LD_MMA`, global physical latent bounds `[0,1]`, and a
-  beta-dependent initial step. The initial step is not a permanent move box.
+  beta-dependent initial step. Exactly one MMA object owns a normal fixed-beta
+  lifetime; its initial step is not a permanent move box.
 - A beta advances only after the design gates, opposite-current signs, and an
-  external plateau test on feasible `min(I_Ea,-I_Eb)` points pass.
-- The run is resumable only under the same Git commit. Every completed
-  attempt and beta stage has an external checkpoint.
+  external plateau test on feasible `min(I_Ea,-I_Eb)` points pass. The plateau
+  callback requests the normal stop of that same MMA object.
+- Independent component-Yee mapping FD and one independent full-chain Ea/Eb
+  current AD-FD direction run at beta entry only, never per optimization
+  evaluation. Both run again on the final differentiable continuous precursor;
+  the exact binary geometry instead receives a fresh physical certificate.
+- The run is resumable only under the same Git commit. Every successful physics
+  evaluation atomically checkpoints the best feasible density and writes a
+  content-addressed cache. A crash recovery starts a new MMA from that density
+  while retaining callback history; it is not falsely described as serialized
+  MMA state.
 
 The fabrication constraints activate gradually:
 
@@ -120,15 +133,17 @@ evaluation is exempt and retains its complete forward artifacts.
 
 The external output root contains:
 
-- `production_manifest.json`: current beta, attempt, currents, FOM,
-  constraints, and terminal status;
-- `continuation_checkpoint.npz`: restart state;
-- `stages/beta_*/stage_result.json`: one attempt's full status;
+- `production_manifest.json`: current beta, recovery index, iteration, currents,
+  FOM, constraints, FD certificates, and terminal status;
+- `continuation_checkpoint.npz`: best successful density recovery state (not
+  serialized MMA internals);
+- `stages/beta_*_recovery_*/stage_result.json`: one fixed-beta MMA lifetime
+  or crash-recovery lifetime;
 - `checkpoints/beta_*_completed.npz`: completed-beta handoff points;
 - `final_exact_binary_cell_mask.npz` and
-  the passing attempt's `exact_binary_certificate/` only after every
+  `exact_binary_certificate/` inside the passing beta-128 recovery only after every
   continuous, optical-lateral, PDE-convergence, and sign gate passes. Failed
-  beta-128 exact candidates remain in their own attempt directories and can
+  beta-128 exact candidates remain in their own recovery directories and can
   never overwrite the final mask. The final mask is written atomically and is
   immutable; if a process dies between the passed manifest and terminal
   checkpoint writes, restart verifies the mask/state SHA and strict signs

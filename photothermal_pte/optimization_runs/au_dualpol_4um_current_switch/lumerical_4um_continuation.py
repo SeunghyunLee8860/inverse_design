@@ -37,38 +37,22 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 
 BETA_SCHEDULE = (1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0)
 
-# Each attempt includes the point at which NLopt starts.  A complete coupled
-# Lumerical/custom-CUDA evaluation costs minutes, so these are deliberately
-# finite per-attempt budgets.  If the signed objective is still improving at
-# the end of an attempt, the driver starts another attempt at the same beta;
-# it must not mistake continued improvement for a terminal failure.
+# One MMA object owns one fixed-beta subproblem for its complete lifetime.
+# These are high emergency ceilings, not routine chunks: normal termination is
+# requested from the physics callback only after the feasible signed objective
+# reaches the audited plateau.  A new same-beta MMA is permitted only as crash
+# recovery because NLopt does not expose serializable MMA asymptotes.
 STAGE_MAXEVAL = {
-    1.0: 12,
-    2.0: 10,
-    4.0: 10,
-    8.0: 10,
-    16.0: 12,
-    32.0: 12,
-    64.0: 14,
-    128.0: 16,
-}
-# These limits apply to unresolved sign/fabrication/final-binary gate repair
-# after objective convergence.  They are not caps on attempts that continue
-# making statistically meaningful objective progress.
-MAXIMUM_STAGE_ATTEMPTS = {
-    1.0: 2,
-    2.0: 2,
-    4.0: 2,
-    8.0: 2,
-    16.0: 3,
-    32.0: 3,
-    64.0: 4,
-    128.0: 6,
+    1.0: 64,
+    2.0: 48,
+    4.0: 48,
+    8.0: 48,
+    16.0: 64,
+    32.0: 64,
+    64.0: 80,
+    128.0: 96,
 }
 MINIMUM_CONTINUATION_EVALUATIONS = sum(STAGE_MAXEVAL[beta] for beta in BETA_SCHEDULE)
-BASELINE_GATE_REPAIR_EVALUATIONS = sum(
-    STAGE_MAXEVAL[beta] * MAXIMUM_STAGE_ATTEMPTS[beta] for beta in BETA_SCHEDULE
-)
 # These values are MMA initial step sizes, not permanent bounds around the
 # stage starting point.  The old fixed box made the beta-16 grayness cap
 # mathematically unreachable even after every allowed retry.
@@ -281,9 +265,7 @@ def stage_design_caps(
     if not np.isfinite(gray_baseline) or not 0.0 <= gray_baseline <= 1.0:
         raise ValueError("baseline grayness must be finite inside [0,1]")
     prior_gray = (
-        np.inf
-        if previous_grayness_cap is None
-        else float(previous_grayness_cap)
+        np.inf if previous_grayness_cap is None else float(previous_grayness_cap)
     )
     if np.isnan(prior_gray) or prior_gray <= 0.0:
         raise ValueError("previous grayness cap must be positive")
@@ -299,9 +281,16 @@ def stage_design_caps(
         gray_cap = np.inf
     else:
         target = GRAYNESS_TARGET_CAP[beta_value]
-        proposed_gray = max(
-            target,
-            GRAYNESS_BASELINE_REDUCTION[beta_value] * gray_baseline,
+        # Beta=128 is already a new fixed subproblem. Giving it the immutable
+        # final cap at entry avoids changing constraints and resetting MMA
+        # several times inside the same beta.
+        proposed_gray = (
+            target
+            if beta_value == BETA_SCHEDULE[-1]
+            else max(
+                target,
+                GRAYNESS_BASELINE_REDUCTION[beta_value] * gray_baseline,
+            )
         )
         gray_cap = min(prior_gray, proposed_gray)
     return {
@@ -310,29 +299,13 @@ def stage_design_caps(
         "DFM_caps": caps,
         "grayness_cap": float(gray_cap),
         "baseline_grayness": gray_baseline,
-        "grayness_target_cap": float(
-            GRAYNESS_TARGET_CAP.get(beta_value, np.inf)
-        ),
+        "grayness_target_cap": float(GRAYNESS_TARGET_CAP.get(beta_value, np.inf)),
         "grayness_baseline_reduction": float(
             GRAYNESS_BASELINE_REDUCTION.get(beta_value, np.nan)
         ),
         "calibrated_final_DFM_caps": calibrated,
         "DFM_calibration": calibration,
     }
-
-
-def tightened_final_grayness_cap(
-    *, current_cap: float, achieved_grayness: float
-) -> float:
-    """Ratchet a feasible beta-128 cap to the immutable final binary gate."""
-
-    cap = float(current_cap)
-    achieved = float(achieved_grayness)
-    if not np.isfinite(cap) or cap <= 0.0:
-        raise ValueError("current final-stage grayness cap must be positive")
-    if not np.isfinite(achieved) or not 0.0 <= achieved <= 1.0:
-        raise ValueError("achieved grayness must be finite inside [0,1]")
-    return float(max(FINAL_GRAYNESS_CAP, min(cap, 0.25 * achieved)))
 
 
 def stage_objective_progress(
@@ -376,27 +349,6 @@ def stage_objective_progress(
         "recent_best_improvement_nA": float(improvement),
         "allowed_improvement_nA": float(tolerance),
     }
-
-
-def improving_objective_requires_extension(
-    *,
-    objective_converged: bool,
-    design_constraints_satisfied: bool,
-    opposite_current_switching_achieved: bool,
-) -> bool:
-    """Return whether a same-beta MMA attempt must be extended.
-
-    Attempt-count limits are safety bounds for unresolved physical or
-    fabrication gates.  Reaching such a count while a feasible signed
-    objective is still improving is not a blocker: the correct continuation
-    action is another same-beta attempt from the best retained density.
-    """
-
-    return bool(
-        not objective_converged
-        and design_constraints_satisfied
-        and opposite_current_switching_achieved
-    )
 
 
 def design_constraint_point(
@@ -448,15 +400,30 @@ class ContinuationEpigraphProblem:
     beta: float
     dfm_caps: np.ndarray
     grayness_cap: float
+    history_prefix: list[dict[str, Any]] | None = None
+    progress_callback: Callable[["ContinuationEpigraphProblem"], None] | None = None
 
     def __post_init__(self) -> None:
         self.beta = float(self.beta)
         self.dfm_caps = np.asarray(self.dfm_caps, dtype=np.float64)
         self.callback_history: list[dict[str, Any]] = []
+        self.history_prefix = [dict(row) for row in (self.history_prefix or [])]
         self._candidate_latents: list[np.ndarray] = []
         self._candidate_points: list[dict[str, Any]] = []
         self._last_latent: np.ndarray | None = None
         self._last_point: dict[str, Any] | None = None
+        self._force_stop: Callable[[], None] | None = None
+        self.plateau_stop_requested = False
+        self.plateau_result: dict[str, Any] | None = None
+
+    @property
+    def complete_callback_history(self) -> list[dict[str, Any]]:
+        return [*self.history_prefix, *self.callback_history]
+
+    def bind_force_stop(self, callback: Callable[[], None]) -> None:
+        """Bind the sole NLopt lifetime stop used by the physics plateau gate."""
+
+        self._force_stop = callback
 
     @property
     def variable_count(self) -> int:
@@ -504,17 +471,13 @@ class ContinuationEpigraphProblem:
         }
         self._last_latent = latent.copy()
         self._last_point = point
-        normalized_design = np.asarray(
-            design["normalized_values"], dtype=np.float64
-        )
+        normalized_design = np.asarray(design["normalized_values"], dtype=np.float64)
         maximum_design = (
-            float(np.max(normalized_design))
-            if normalized_design.size
-            else -np.inf
+            float(np.max(normalized_design)) if normalized_design.size else -np.inf
         )
         self.callback_history.append(
             {
-                "callback_index": len(self.callback_history),
+                "callback_index": len(self.history_prefix) + len(self.callback_history),
                 "current_Ea_nA": 1.0e9 * float(point["current_a_A"]),
                 "current_Eb_nA": 1.0e9 * float(point["current_b_A"]),
                 "balanced_utility_nA": 1.0e9 * float(point["balanced_utility_A"]),
@@ -523,13 +486,30 @@ class ContinuationEpigraphProblem:
                 "raw_DFM_values": design["raw_DFM_values"].tolist(),
                 "grayness": design["grayness"],
                 "maximum_design_constraint": maximum_design,
-                "design_feasible": bool(
-                    maximum_design <= DESIGN_CONSTRAINT_TOLERANCE
-                ),
+                "design_feasible": bool(maximum_design <= DESIGN_CONSTRAINT_TOLERANCE),
             }
         )
         self._candidate_latents.append(latent.copy())
         self._candidate_points.append(point)
+        if self.progress_callback is not None:
+            self.progress_callback(self)
+        progress = stage_objective_progress(self.complete_callback_history)
+        signs_pass = bool(
+            float(point["current_a_A"]) > 0.0 and float(point["current_b_A"]) < 0.0
+        )
+        if (
+            progress["converged"]
+            and maximum_design <= DESIGN_CONSTRAINT_TOLERANCE
+            and signs_pass
+            and not self.plateau_stop_requested
+        ):
+            self.plateau_result = progress
+            self.plateau_stop_requested = True
+            if self._force_stop is None:
+                raise RuntimeError(
+                    "physics plateau reached before NLopt stop was bound"
+                )
+            self._force_stop()
         return point
 
     def selected_candidate(self) -> dict[str, Any]:
@@ -562,14 +542,12 @@ class ContinuationEpigraphProblem:
                             ]
                         ),
                     ),
-                    -float(
-                        self.callback_history[candidate]["balanced_utility_nA"]
-                    ),
+                    -float(self.callback_history[candidate]["balanced_utility_nA"]),
                 ),
             )
             reason = "minimum_design_violation_then_maximum_balanced_utility"
         return {
-            "callback_index": int(index),
+            "callback_index": int(self.callback_history[index]["callback_index"]),
             "reason": reason,
             "latent": self._candidate_latents[index].copy(),
             "point": self._candidate_points[index],
@@ -610,23 +588,22 @@ def continuation_contract() -> dict[str, Any]:
 
     return {
         "beta_schedule": list(BETA_SCHEDULE),
-        "stage_maxeval": {str(key): value for key, value in STAGE_MAXEVAL.items()},
-        "maximum_gate_repair_attempts_after_objective_convergence": {
-            str(key): value for key, value in MAXIMUM_STAGE_ATTEMPTS.items()
+        "stage_safety_maxeval": {
+            str(key): value for key, value in STAGE_MAXEVAL.items()
+        },
+        "MMA_lifecycle": {
+            "normal": "exactly one MMA object for each fixed beta",
+            "normal_stop": "callback-requested stop after audited physics plateau",
+            "same_beta_new_MMA": (
+                "crash recovery only; NLopt MMA internal asymptotes are not serializable"
+            ),
+            "beta_change_new_MMA": True,
         },
         "continuation_evaluation_budget": {
-            "first_attempt_all_stages": MINIMUM_CONTINUATION_EVALUATIONS,
-            "baseline_gate_repair_attempts_exhausted": (
-                BASELINE_GATE_REPAIR_EVALUATIONS
-            ),
-            "improving_objective_extensions": (
-                "continue at the same beta until the audited objective plateau "
-                "gate passes; no attempt-count stop is allowed while signs and "
-                "active design constraints pass"
-            ),
+            "all_stage_emergency_ceiling": MINIMUM_CONTINUATION_EVALUATIONS,
             "counting_rule": (
-                "each stage attempt includes its starting physics point; the initial "
-                "maximin warm start preserves rather than adds to the beta-1 budget"
+                "each beta lifetime includes its starting physics point; the initial "
+                "maximin warm start remains inside the beta-1 emergency ceiling"
             ),
         },
         "latent_bounds": [0.0, 1.0],
@@ -642,15 +619,12 @@ def continuation_contract() -> dict[str, Any]:
             str(key): value for key, value in GRAYNESS_TARGET_CAP.items()
         },
         "grayness_baseline_reduction": {
-            str(key): value
-            for key, value in GRAYNESS_BASELINE_REDUCTION.items()
+            str(key): value for key, value in GRAYNESS_BASELINE_REDUCTION.items()
         },
         "final_grayness_gate": FINAL_GRAYNESS_CAP,
         "stage_ftol_rel": STAGE_FTOL_REL,
         "stage_xtol_rel": STAGE_XTOL_REL,
-        "initial_maximin_warm_maximum_change": (
-            INITIAL_MAXIMIN_WARM_MAXIMUM_CHANGE
-        ),
+        "initial_maximin_warm_maximum_change": (INITIAL_MAXIMIN_WARM_MAXIMUM_CHANGE),
         "external_physics_objective_plateau_gate": {
             "minimum_feasible_points": STAGE_PLATEAU_MINIMUM_FEASIBLE_POINTS,
             "window": STAGE_PLATEAU_WINDOW,

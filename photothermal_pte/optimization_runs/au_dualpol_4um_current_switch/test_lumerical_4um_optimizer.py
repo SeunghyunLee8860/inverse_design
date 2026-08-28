@@ -4,15 +4,20 @@ import json
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.contract import (
     CONTRACT,
+)
+from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_design_mapping import (
+    OPTIMIZER_250NM_MAPPING,
 )
 from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_4um_optimizer import (
     CURRENT_SCALE_A,
     LumericalEvaluationDriver,
     OptimizerRuntime,
     SmokeEpigraphProblem,
+    artifact,
     initial_latent_density,
 )
 
@@ -50,8 +55,12 @@ def test_epigraph_callbacks_have_exact_sign_and_scale() -> None:
     problem.constraints(result, vector, gradient)
     point = problem.point(vector)
 
-    assert result[0] == (-9.0 * CURRENT_SCALE_A - point["current_a_A"]) / CURRENT_SCALE_A
-    assert result[1] == (-9.0 * CURRENT_SCALE_A + point["current_b_A"]) / CURRENT_SCALE_A
+    assert (
+        result[0] == (-9.0 * CURRENT_SCALE_A - point["current_a_A"]) / CURRENT_SCALE_A
+    )
+    assert (
+        result[1] == (-9.0 * CURRENT_SCALE_A + point["current_b_A"]) / CURRENT_SCALE_A
+    )
     assert gradient[0, -1] == 1.0
     assert gradient[1, -1] == 1.0
     assert np.allclose(
@@ -73,9 +82,7 @@ def test_same_latent_different_epigraph_does_not_repeat_physics() -> None:
         return _fake_evaluation(latent)
 
     latent = initial_latent_density()
-    problem = SmokeEpigraphProblem(
-        evaluate, beta=4.0, dfm_caps=np.asarray((1.0, 1.0))
-    )
+    problem = SmokeEpigraphProblem(evaluate, beta=4.0, dfm_caps=np.asarray((1.0, 1.0)))
     problem.point(np.r_[latent.ravel(), -9.0])
     second = problem.point(np.r_[latent.ravel(), -8.5])
     assert calls == 1
@@ -136,6 +143,7 @@ def test_driver_runs_full_fd_once_then_uses_hash_bound_certificate(
         output.mkdir(parents=True)
         result = {
             "passed": True,
+            "optimization_beta": runtime.beta,
             "validation": {
                 "mode": mode,
                 "independent_mapping_FD_performed": mode == "full",
@@ -160,3 +168,93 @@ def test_driver_runs_full_fd_once_then_uses_hash_bound_certificate(
         == "stage-certified-transpose-only"
     )
     assert "--independent-fd-certificate" in calls[1]
+    recovered = LumericalEvaluationDriver(runtime)
+    recovered.bind_independent_fd_certificate(first["result_path"])
+    assert recovered._independent_fd_validation_pending is False
+    assert recovered._independent_fd_certificate == first["result_path"]
+
+
+def test_completed_cache_is_bound_to_state_and_runtime_contract(tmp_path: Path) -> None:
+    runtime = OptimizerRuntime(
+        output_root=tmp_path / "attempt",
+        source_calibration={},
+        gpu_index=7,
+        threads=8,
+        accelerator_policy="b200",
+        beta=4.0,
+    )
+    driver = LumericalEvaluationDriver(runtime)
+    evaluation = tmp_path / "cached"
+    evaluation.mkdir()
+    gradients = evaluation / "signed_projected_gradients.npz"
+    np.savez_compressed(
+        gradients,
+        gradient_Ea_projected_A=np.ones(CONTRACT.design_node_shape),
+        gradient_Eb_projected_A=-np.ones(CONTRACT.design_node_shape),
+    )
+    state_hash = "state-hash"
+    result = {
+        "passed": True,
+        "density_state": {"density_state_sha256": state_hash},
+        "evaluation_contract": driver._evaluation_contract,
+        "evaluation_contract_sha256": driver._evaluation_contract_sha256,
+        "artifacts": {"gradients": artifact(gradients)},
+    }
+    result_path = evaluation / "evaluation_result.json"
+    result_path.write_text(json.dumps(result), encoding="utf-8")
+    loaded = driver._load_completed(evaluation, expected_state_hash=state_hash)
+    assert loaded["cache_hit"] is True
+    result["evaluation_contract"] = {**driver._evaluation_contract, "threads": 99}
+    result_path.write_text(json.dumps(result), encoding="utf-8")
+    with pytest.raises(RuntimeError, match="cached evaluation contract failed"):
+        driver._load_completed(evaluation, expected_state_hash=state_hash)
+
+
+def test_full_chain_adfd_uses_current_only_perturbations(
+    tmp_path: Path, monkeypatch
+) -> None:
+    runtime = OptimizerRuntime(
+        output_root=tmp_path / "attempt",
+        source_calibration={},
+        gpu_index=7,
+        threads=8,
+        accelerator_policy="b200",
+        beta=4.0,
+    )
+    driver = LumericalEvaluationDriver(runtime)
+    latent = np.full(CONTRACT.design_node_shape, 0.5)
+    x = np.linspace(-1.0, 1.0, CONTRACT.design_node_shape[0])[:, None]
+    y = np.linspace(-1.0, 1.0, CONTRACT.design_node_shape[1])[None, :]
+    gradient_a = 1.0e-12 * (1.2 + 0.2 * x - 0.1 * y)
+    gradient_b = -1.0e-12 * (1.1 - 0.1 * x + 0.2 * y)
+
+    def currents(value: np.ndarray) -> dict[str, float]:
+        rho = OPTIMIZER_250NM_MAPPING.physical(value, runtime.beta)
+        return {
+            "Ea": float(2.0e-9 + np.vdot(gradient_a, rho)),
+            "Eb": float(-2.0e-9 + np.vdot(gradient_b, rho)),
+        }
+
+    def fake_current_only(value: np.ndarray, output: Path) -> dict[str, object]:
+        output.mkdir(parents=True)
+        record = {"passed": True, "currents_A": currents(value)}
+        (output / "current_only_result.json").write_text(
+            json.dumps(record), encoding="utf-8"
+        )
+        return record
+
+    monkeypatch.setattr(driver, "_evaluate_currents_only", fake_current_only)
+    baseline = {
+        "passed": True,
+        "evaluation_contract": driver._evaluation_contract,
+        "currents_A": currents(latent),
+        "gradient_Ea_projected_A": gradient_a,
+        "gradient_Eb_projected_A": gradient_b,
+    }
+    result = driver.audit_full_chain_latent_adfd(
+        latent, baseline, tmp_path / "adfd", validation_scope="stage-entry"
+    )
+    assert result["passed"] is True
+    assert result["solver_counts"]["additional_Lumerical_forward"] == 4
+    assert result["solver_counts"]["additional_Lumerical_adjoint"] == 0
+    assert result["solver_counts"]["additional_layout_only_Jacobian_sessions"] == 0
