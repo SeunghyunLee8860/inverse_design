@@ -22,9 +22,11 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     STAGE_XTOL_REL,
     ContinuationEpigraphProblem,
     active_design_constraint_names,
+    beta_transition_physics_gate,
     continuation_contract,
     grayness_value_gradient,
     linearized_maximin_box_warm_start,
+    remap_latent_between_betas,
     stage_objective_progress,
     stage_design_caps,
 )
@@ -123,6 +125,51 @@ def test_design_constraints_activate_zero_one_two_three() -> None:
         for name in active_design_constraint_names(beta)
     )
 
+def test_beta_remap_preserves_projected_density_before_new_stage() -> None:
+    result = remap_latent_between_betas(
+        latent=_latent(), source_beta=2.0, target_beta=4.0
+    )
+    audit = result["audit"]
+    assert audit["passed"] is True
+    assert audit["remapped_physical_error"]["RMS"] < 2.0e-3
+    assert (
+        audit["remapped_physical_error"]["mean_abs"]
+        < 0.1 * audit["same_latent_physical_error"]["mean_abs"]
+    )
+    assert np.min(result["latent"]) >= 0.0
+    assert np.max(result["latent"]) <= 1.0
+
+
+def test_beta_transition_gate_rejects_sign_flip_and_large_fom_loss() -> None:
+    passed = beta_transition_physics_gate(
+        previous_currents_nA={"Ea": 5.0, "Eb": -5.2},
+        current_currents_A={"Ea": 4.5e-9, "Eb": -4.4e-9},
+    )
+    assert passed["passed"] is True
+    sign_flip = beta_transition_physics_gate(
+        previous_currents_nA={"Ea": 5.0, "Eb": -5.2},
+        current_currents_A={"Ea": 6.0e-9, "Eb": 1.0e-9},
+    )
+    assert sign_flip["passed"] is False
+    fom_loss = beta_transition_physics_gate(
+        previous_currents_nA={"Ea": 5.0, "Eb": -5.2},
+        current_currents_A={"Ea": 3.0e-9, "Eb": -3.0e-9},
+    )
+    assert fom_loss["passed"] is False
+
+
+def test_first_dfm_constraint_activation_is_feasible() -> None:
+    latent = _latent()
+    baseline = smooth_lumerical_250nm_constraints(latent, 4.0)[0]
+    caps = stage_design_caps(
+        beta=4.0,
+        baseline_dfm_values=baseline,
+        baseline_grayness=grayness_value_gradient(latent, 4.0)[0],
+        previous_dfm_caps=None,
+        previous_grayness_cap=None,
+    )
+    assert float(caps["DFM_caps"][0]) >= float(baseline[0])
+
 
 def test_grayness_gradient_matches_directional_finite_difference() -> None:
     rng = np.random.default_rng(20260825)
@@ -204,7 +251,7 @@ def test_grayness_cap_is_staged_then_fixed_at_final_beta_entry() -> None:
         previous_dfm_caps=None,
         previous_grayness_cap=None,
     )
-    assert stage_16["grayness_cap"] == pytest.approx(0.9)
+    assert stage_16["grayness_cap"] == pytest.approx(1.0)
     stage_128 = stage_design_caps(
         beta=128.0,
         baseline_dfm_values=smooth_lumerical_250nm_constraints(latent, 128.0)[0],

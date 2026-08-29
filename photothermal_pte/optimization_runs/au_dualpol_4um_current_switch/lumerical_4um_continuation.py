@@ -72,11 +72,14 @@ MMA_INITIAL_STEP = {
 # never relax a previously active cap.  Beta=128 uses the independently
 # calibrated exact-pass binary-reference caps.
 DFM_BASELINE_REDUCTION = {
-    4.0: (0.92, np.inf),
-    8.0: (0.85, 0.98),
-    16.0: (0.72, 0.88),
-    32.0: (0.52, 0.70),
-    64.0: (0.30, 0.45),
+    # A constraint is feasible when it is first activated. Later beta stages
+    # tighten it gradually; they must not begin with the large artificial
+    # violation that previously made MMA spend its stage repairing the cap.
+    4.0: (1.00, np.inf),
+    8.0: (0.98, 1.00),
+    16.0: (0.90, 0.97),
+    32.0: (0.75, 0.85),
+    64.0: (0.50, 0.65),
     128.0: (0.0, 0.0),
 }
 GRAYNESS_TARGET_CAP = {
@@ -91,9 +94,9 @@ GRAYNESS_TARGET_CAP = {
 # the optimizer from being handed a grossly infeasible subproblem while still
 # ending at the unchanged beta-128 binary gate.
 GRAYNESS_BASELINE_REDUCTION = {
-    16.0: 0.90,
-    32.0: 0.70,
-    64.0: 0.45,
+    16.0: 1.00,
+    32.0: 0.80,
+    64.0: 0.50,
     128.0: 0.25,
 }
 FINAL_GRAYNESS_CAP = GRAYNESS_TARGET_CAP[BETA_SCHEDULE[-1]]
@@ -107,6 +110,160 @@ STAGE_PLATEAU_MINIMUM_FEASIBLE_POINTS = 6
 STAGE_PLATEAU_WINDOW = 4
 STAGE_PLATEAU_RELATIVE_TOLERANCE = 1.0e-2
 STAGE_PLATEAU_ABSOLUTE_TOLERANCE_NA = 1.0e-3
+BETA_REMAP_MAXIMUM_ITERATIONS = 1000
+BETA_REMAP_RMS_ERROR_LIMIT = 2.0e-3
+BETA_REMAP_MAX_ERROR_LIMIT = 2.0e-2
+BETA_TRANSITION_MINIMUM_FOM_RETENTION = 0.80
+
+
+def remap_latent_between_betas(
+    *,
+    latent: np.ndarray,
+    source_beta: float,
+    target_beta: float,
+) -> dict[str, Any]:
+    """Find a bounded target-beta latent that preserves physical density.
+
+    Reusing the same latent after increasing projection beta is not a neutral
+    continuation step: it sharpens the projected density before the new
+    physics is evaluated. This deterministic, solver-free least-squares
+    remap instead preserves the source-beta projected density as closely as
+    the bounded filtered parameterization permits.
+    """
+
+    value = np.asarray(latent, dtype=np.float64)
+    if value.shape != CONTRACT.design_node_shape or not np.all(np.isfinite(value)):
+        raise ValueError("beta-remap latent must be finite with the design shape")
+    if np.min(value) < 0.0 or np.max(value) > 1.0:
+        raise ValueError("beta-remap latent must lie inside [0,1]")
+    source = float(source_beta)
+    target = float(target_beta)
+    if not np.isfinite(source) or not np.isfinite(target) or source <= 0.0:
+        raise ValueError("beta-remap source and target beta must be positive")
+    if target <= source:
+        raise ValueError("beta-remap target beta must exceed source beta")
+
+    physical_source = OPTIMIZER_250NM_MAPPING.physical(value, source)
+    same_latent_physical = OPTIMIZER_250NM_MAPPING.physical(value, target)
+
+    def objective(flat: np.ndarray) -> tuple[float, np.ndarray]:
+        candidate = np.asarray(flat, dtype=np.float64).reshape(value.shape)
+        difference = (
+            OPTIMIZER_250NM_MAPPING.physical(candidate, target) - physical_source
+        )
+        objective_value = 0.5 * float(np.mean(difference * difference))
+        gradient = OPTIMIZER_250NM_MAPPING.vjp(
+            candidate, difference / difference.size, target
+        )
+        return objective_value, gradient.ravel()
+
+    optimized = scipy_optimize.minimize(
+        objective,
+        value.ravel(),
+        jac=True,
+        method="L-BFGS-B",
+        bounds=scipy_optimize.Bounds(0.0, 1.0),
+        options={
+            "maxiter": BETA_REMAP_MAXIMUM_ITERATIONS,
+            "ftol": 1.0e-15,
+            "gtol": 1.0e-10,
+            "maxls": 50,
+        },
+    )
+    remapped = np.asarray(optimized.x, dtype=np.float64).reshape(value.shape)
+    physical_remapped = OPTIMIZER_250NM_MAPPING.physical(remapped, target)
+    remap_error = physical_remapped - physical_source
+    same_latent_error = same_latent_physical - physical_source
+    rms_error = float(np.sqrt(np.mean(remap_error * remap_error)))
+    maximum_error = float(np.max(np.abs(remap_error)))
+    passed = bool(
+        rms_error <= BETA_REMAP_RMS_ERROR_LIMIT
+        and maximum_error <= BETA_REMAP_MAX_ERROR_LIMIT
+    )
+    audit = {
+        "schema": "au-lumerical-beta-density-preserving-remap-v1",
+        "source_beta": source,
+        "target_beta": target,
+        "method": "bounded_LBFGSB_projected_density_least_squares",
+        "optimizer_success": bool(optimized.success),
+        "optimizer_status": int(optimized.status),
+        "optimizer_message": str(optimized.message),
+        "optimizer_iterations": int(optimized.nit),
+        "optimizer_function_evaluations": int(optimized.nfev),
+        "objective": float(optimized.fun),
+        "same_latent_physical_error": {
+            "RMS": float(np.sqrt(np.mean(same_latent_error * same_latent_error))),
+            "mean_abs": float(np.mean(np.abs(same_latent_error))),
+            "max_abs": float(np.max(np.abs(same_latent_error))),
+        },
+        "remapped_physical_error": {
+            "RMS": rms_error,
+            "mean_abs": float(np.mean(np.abs(remap_error))),
+            "max_abs": maximum_error,
+        },
+        "acceptance_limits": {
+            "RMS": BETA_REMAP_RMS_ERROR_LIMIT,
+            "max_abs": BETA_REMAP_MAX_ERROR_LIMIT,
+        },
+        "source_grayness": float(
+            np.mean(4.0 * physical_source * (1.0 - physical_source))
+        ),
+        "target_grayness": float(
+            np.mean(4.0 * physical_remapped * (1.0 - physical_remapped))
+        ),
+        "latent_change_L2": float(np.linalg.norm(remapped - value)),
+        "passed": passed,
+    }
+    if not passed:
+        raise RuntimeError(
+            "beta density-preserving remap exceeded its physical-density "
+            f"limits: RMS={rms_error:.6g}, max={maximum_error:.6g}"
+        )
+    return {
+        "latent": remapped,
+        "physical_source": physical_source,
+        "physical_remapped": physical_remapped,
+        "audit": audit,
+    }
+
+
+def beta_transition_physics_gate(
+    *,
+    previous_currents_nA: dict[str, float],
+    current_currents_A: dict[str, float],
+) -> dict[str, Any]:
+    """Fail closed if a beta transition destroys switching or the prior FOM."""
+
+    previous_a = float(previous_currents_nA["Ea"])
+    previous_b = float(previous_currents_nA["Eb"])
+    current_a = 1.0e9 * float(current_currents_A["Ea"])
+    current_b = 1.0e9 * float(current_currents_A["Eb"])
+    values = np.asarray((previous_a, previous_b, current_a, current_b))
+    if not np.all(np.isfinite(values)):
+        raise ValueError("beta-transition currents must be finite")
+    previous_fom = min(previous_a, -previous_b)
+    current_fom = min(current_a, -current_b)
+    sign_passed = bool(current_a > 0.0 and current_b < 0.0)
+    retention = current_fom / previous_fom if previous_fom > 0.0 else -np.inf
+    passed = bool(
+        previous_a > 0.0
+        and previous_b < 0.0
+        and sign_passed
+        and retention >= BETA_TRANSITION_MINIMUM_FOM_RETENTION
+    )
+    return {
+        "schema": "au-lumerical-beta-transition-physics-gate-v1",
+        "previous_currents_nA": {"Ea": previous_a, "Eb": previous_b},
+        "current_currents_nA": {"Ea": current_a, "Eb": current_b},
+        "previous_balanced_utility_nA": previous_fom,
+        "current_balanced_utility_nA": current_fom,
+        "balanced_utility_retention": float(retention),
+        "minimum_required_retention": BETA_TRANSITION_MINIMUM_FOM_RETENTION,
+        "current_signs_passed": sign_passed,
+        "passed": passed,
+    }
+
+
 
 
 def linearized_maximin_box_warm_start(
@@ -614,6 +771,21 @@ def continuation_contract() -> dict[str, Any]:
         "design_constraint_activation": {
             str(beta): list(active_design_constraint_names(beta))
             for beta in BETA_SCHEDULE
+        },
+        "DFM_baseline_reduction": {
+            str(key): list(value) for key, value in DFM_BASELINE_REDUCTION.items()
+        },
+        "beta_transition": {
+            "latent_initialization": (
+                "bounded L-BFGS-B remap preserving the completed-beta "
+                "physical projected density"
+            ),
+            "physical_density_RMS_error_limit": BETA_REMAP_RMS_ERROR_LIMIT,
+            "physical_density_max_error_limit": BETA_REMAP_MAX_ERROR_LIMIT,
+            "pre_MMA_current_sign_gate": "I_Ea > 0 and I_Eb < 0",
+            "pre_MMA_minimum_FOM_retention": (
+                BETA_TRANSITION_MINIMUM_FOM_RETENTION
+            ),
         },
         "grayness_target_caps": {
             str(key): value for key, value in GRAYNESS_TARGET_CAP.items()

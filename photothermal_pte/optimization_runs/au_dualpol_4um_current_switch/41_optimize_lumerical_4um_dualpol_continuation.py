@@ -33,9 +33,11 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
     STAGE_XTOL_REL,
     ContinuationEpigraphProblem,
     active_design_constraint_names,
+    beta_transition_physics_gate,
     continuation_contract,
     grayness_value_gradient,
     linearized_maximin_box_warm_start,
+    remap_latent_between_betas,
     stage_objective_progress,
     stage_design_caps,
 )
@@ -451,38 +453,82 @@ def _restart_seed_from_environment() -> tuple[dict[str, Any], dict[str, Any]] | 
         raise RuntimeError("restart manifest lacks latest stage evidence")
     if float(latest.get("beta", np.nan)) != BETA_SCHEDULE[beta_index]:
         raise RuntimeError("restart manifest beta differs from checkpoint")
-    blocking_count = source_manifest.get("blocking_attempts")
-    if blocking_count is None and "blocking_recovery_index" in source_manifest:
-        blocking_count = int(source_manifest["blocking_recovery_index"]) + 1
-    if int(blocking_count if blocking_count is not None else -1) != int(
+    checkpoint_attempt = source_manifest.get("restart_checkpoint_attempt")
+    if checkpoint_attempt is None:
+        checkpoint_attempt = source_manifest.get("blocking_attempts")
+    if checkpoint_attempt is None and "blocking_recovery_index" in source_manifest:
+        checkpoint_attempt = int(source_manifest["blocking_recovery_index"]) + 1
+    if int(checkpoint_attempt if checkpoint_attempt is not None else -1) != int(
         state["attempt"]
     ):
-        raise RuntimeError("restart manifest recovery count differs from checkpoint")
+        raise RuntimeError("restart manifest attempt differs from checkpoint")
 
     stages = source_manifest.get("stages")
     if not isinstance(stages, list) or not stages:
         raise RuntimeError("restart manifest lacks completed stage attempts")
+    terminal_stage = stages[-1]
     terminal_state_path = _verified_artifact(
-        stages[-1].get("state_artifact"),
+        terminal_stage.get("state_artifact"),
         label="restart terminal stage state",
         relative_to=manifest_path.parent,
     )
     with np.load(terminal_state_path, allow_pickle=False) as arrays:
         terminal_latent = np.asarray(arrays["latent_final"], dtype=np.float64)
-    if not np.array_equal(terminal_latent, np.asarray(state["latent"])):
-        raise RuntimeError(
-            "restart checkpoint latent differs from terminal stage state"
+    checkpoint_latent = np.asarray(state["latent"], dtype=np.float64)
+    target_beta = BETA_SCHEDULE[beta_index]
+    terminal_beta = float(terminal_stage.get("beta", target_beta))
+    prepared_beta = terminal_beta
+    if not np.array_equal(terminal_latent, checkpoint_latent):
+        transition = terminal_stage.get("beta_transition_to_next")
+        if not isinstance(transition, dict):
+            raise RuntimeError(
+                "restart checkpoint differs from terminal stage without a "
+                "verified beta-transition remap"
+            )
+        transition_state_path = _verified_artifact(
+            transition.get("state_artifact"),
+            label="restart beta-transition state",
+            relative_to=manifest_path.parent,
         )
+        with np.load(transition_state_path, allow_pickle=False) as arrays:
+            transition_latent = np.asarray(
+                arrays["target_latent"], dtype=np.float64
+            )
+        if not np.array_equal(transition_latent, checkpoint_latent):
+            raise RuntimeError(
+                "restart checkpoint differs from both terminal and remapped state"
+            )
+        prepared_beta = float(transition.get("target_beta", np.nan))
+
+    if not np.isfinite(prepared_beta) or prepared_beta > target_beta:
+        raise RuntimeError("restart checkpoint beta preparation is invalid")
+    restart_remap_audit: dict[str, Any] | None = None
+    if prepared_beta < target_beta:
+        remap = remap_latent_between_betas(
+            latent=checkpoint_latent,
+            source_beta=prepared_beta,
+            target_beta=target_beta,
+        )
+        state["latent"] = np.asarray(remap["latent"], dtype=np.float64)
+        restart_remap_audit = remap["audit"]
 
     provenance = {
-        "schema": "au-lumerical-continuation-restart-provenance-v1",
+        "schema": "au-lumerical-continuation-restart-provenance-v2",
         "reason": "explicit_cross_commit_density_recovery_from_stopped_run",
         "source_git_commit": source_manifest.get("git_commit"),
         "source_status": source_manifest.get("status"),
         "source_latest": latest,
         "source_manifest": artifact(manifest_path),
         "source_checkpoint": artifact(checkpoint_path),
+        "source_terminal_stage_reference": {
+            "beta": terminal_beta,
+            "final_currents_nA": terminal_stage.get("final_currents_nA"),
+            "balanced_utility_nA": terminal_stage.get("balanced_utility_nA"),
+        },
         "source_terminal_state": artifact(terminal_state_path),
+        "checkpoint_prepared_beta": prepared_beta,
+        "target_beta": target_beta,
+        "restart_beta_remap": restart_remap_audit,
         "resumed_beta_index": beta_index,
         "resumed_attempt": int(state["attempt"]),
     }
@@ -563,6 +609,39 @@ def _stage_constraints_satisfied(point: dict[str, Any]) -> bool:
         point["design_constraints"]["normalized_values"], dtype=np.float64
     )
     return bool(values.size == 0 or np.max(values) <= DESIGN_CONSTRAINT_TOLERANCE)
+
+def _previous_stage_currents_nA(
+    manifest: dict[str, Any], beta_index: int
+) -> dict[str, float]:
+    """Return the audited switching currents immediately before this beta."""
+
+    index = int(beta_index)
+    if index <= 0:
+        raise ValueError("beta-one has no previous-stage current reference")
+    expected_beta = BETA_SCHEDULE[index - 1]
+    for stage in reversed(manifest.get("stages", [])):
+        if float(stage.get("beta", np.nan)) != expected_beta:
+            continue
+        currents = stage.get("final_currents_nA")
+        if isinstance(currents, dict) and set(currents) == {"Ea", "Eb"}:
+            return {"Ea": float(currents["Ea"]), "Eb": float(currents["Eb"])}
+    provenance = manifest.get("restart_provenance")
+    reference = (
+        provenance.get("source_terminal_stage_reference")
+        if isinstance(provenance, dict)
+        else None
+    )
+    if (
+        isinstance(reference, dict)
+        and float(reference.get("beta", np.nan)) == expected_beta
+        and isinstance(reference.get("final_currents_nA"), dict)
+    ):
+        currents = reference["final_currents_nA"]
+        return {"Ea": float(currents["Ea"]), "Eb": float(currents["Eb"])}
+    raise RuntimeError(
+        f"missing beta-{expected_beta:g} current reference for transition gate"
+    )
+
 
 
 def _run_exact_binary_evaluation(
@@ -756,6 +835,49 @@ def main() -> int:
                 )
                 manifest["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
                 _write_json(manifest_path, manifest)
+            if beta_index > 0 and int(state["attempt"]) == 0:
+                previous_currents_nA = _previous_stage_currents_nA(
+                    manifest, beta_index
+                )
+                transition_gate = beta_transition_physics_gate(
+                    previous_currents_nA=previous_currents_nA,
+                    current_currents_A=initial_physics["currents_A"],
+                )
+                transition_gate.update(
+                    source_beta=BETA_SCHEDULE[beta_index - 1],
+                    target_beta=beta,
+                    checked_at_utc=datetime.now(timezone.utc).isoformat(),
+                )
+                manifest.setdefault("beta_transition_physics_gates", {})[
+                    _fd_beta_key(beta)
+                ] = transition_gate
+                manifest["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
+                _write_json(manifest_path, manifest)
+                if not transition_gate["passed"]:
+                    manifest.update(
+                        status="STOPPED_FAILED_BETA_TRANSITION_PHYSICS_GATE",
+                        passed=False,
+                        active_stage=None,
+                        blocking_beta=beta,
+                        blocking_recovery_index=attempt,
+                        blocking_reason=(
+                            "density-preserving beta transition failed the "
+                            "strict current-sign or 80% FOM-retention gate"
+                        ),
+                        latest={
+                            "beta": beta,
+                            "recovery_index": attempt,
+                            "currents_nA": transition_gate["current_currents_nA"],
+                            "balanced_utility_nA": transition_gate[
+                                "current_balanced_utility_nA"
+                            ],
+                        },
+                        wall_s=time.monotonic() - started,
+                        updated_at_utc=datetime.now(timezone.utc).isoformat(),
+                    )
+                    _save_checkpoint(checkpoint_path, **state)
+                    _write_json(manifest_path, manifest)
+                    return 2
 
             active_stage = manifest.get("active_stage")
             history_prefix = (
@@ -1120,11 +1242,43 @@ def main() -> int:
                 and switching
             )
             if may_advance:
-                state["latent"] = latent_final
+                next_beta = BETA_SCHEDULE[beta_index + 1]
+                beta_remap = remap_latent_between_betas(
+                    latent=latent_final,
+                    source_beta=beta,
+                    target_beta=next_beta,
+                )
+                remap_state_path = (
+                    output
+                    / "checkpoints"
+                    / f"beta_{beta:03g}_to_{next_beta:03g}_remap.npz"
+                )
+                temporary_remap_path = remap_state_path.with_suffix(".tmp.npz")
+                np.savez_compressed(
+                    temporary_remap_path,
+                    source_latent=latent_final,
+                    target_latent=np.asarray(beta_remap["latent"]),
+                    source_physical=np.asarray(beta_remap["physical_source"]),
+                    target_physical=np.asarray(beta_remap["physical_remapped"]),
+                )
+                temporary_remap_path.replace(remap_state_path)
+                transition_record = {
+                    **beta_remap["audit"],
+                    "state_artifact": artifact(remap_state_path),
+                }
+                stage_result["beta_transition_to_next"] = transition_record
+                manifest.setdefault("beta_density_preserving_transitions", {})[
+                    _fd_beta_key(next_beta)
+                ] = transition_record
+                _write_json(attempt_dir / "stage_result.json", stage_result)
+                manifest["updated_at_utc"] = datetime.now(timezone.utc).isoformat()
+                _write_json(manifest_path, manifest)
+
+                state["latent"] = np.asarray(beta_remap["latent"], dtype=np.float64)
                 state["beta_index"] = beta_index + 1
                 state["attempt"] = 0
-                # The next stage computes a tighter cap while preserving the
-                # monotone DFM and grayness limits already achieved.
+                # The next stage computes a tighter cap from a latent that
+                # preserves the completed stage's physical density.
                 _save_checkpoint(checkpoint_path, **state)
                 checkpoint_copy = (
                     output / "checkpoints" / f"beta_{beta:03g}_completed.npz"
