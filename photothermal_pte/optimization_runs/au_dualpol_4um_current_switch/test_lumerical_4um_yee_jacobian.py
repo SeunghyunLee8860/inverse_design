@@ -135,8 +135,8 @@ def test_relaxed_floor_uses_measured_stable_centered_step_regime() -> None:
         _detail_from_density, rho
     )
     audit = validate_material_jacobian(_detail_from_density, rho, operator)
-    assert BUILD_STEP == 1.0e-5
-    assert CHECK_STEP == 3.0e-6
+    assert BUILD_STEP == 1.0e-6
+    assert CHECK_STEP == 3.0e-7
     assert metadata["lower_endpoint_node_count"] == 0
     assert metadata["upper_endpoint_node_count"] == 0
     assert "lower_endpoint_feasible" not in audit["directions"]

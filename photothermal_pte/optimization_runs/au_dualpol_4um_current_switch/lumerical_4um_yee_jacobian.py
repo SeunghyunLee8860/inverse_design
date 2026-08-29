@@ -45,8 +45,14 @@ from photothermal_pte.optimization_runs.au_dualpol_4um_current_switch.lumerical_
 
 COMPONENTS = "xyz"
 COLOR_PERIOD = 5
-BUILD_STEP = 1.0e-5
-CHECK_STEP = 3.0e-6
+# The R1.2 ``index_detail`` map can change its Ey interface assignment over
+# perturbations in the 3e-6--1e-5 range for a nonuniform projected density.
+# B200 layout-only sweeps at the beta-2 production state show that the same
+# map is smooth below 1e-6 for all three Yee components. Keep construction
+# and the independent check on that converged small-step branch; the 10/3
+# ratio still makes the validation step independent of the build step.
+BUILD_STEP = 1.0e-6
+CHECK_STEP = 3.0e-7
 MAX_LOCAL_ASSIGNMENT_DISTANCE_M = 225.0e-9
 NONZERO_ABSOLUTE_THRESHOLD = 1.0e-10
 NONZERO_RELATIVE_THRESHOLD = 1.0e-14
